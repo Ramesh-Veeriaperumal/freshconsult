@@ -5,7 +5,6 @@ class Middleware::GlobalTracer
 
   def initialize(app, options = {})
     @app = app
-
   end
 
   def call(env)
@@ -19,7 +18,9 @@ class Middleware::GlobalTracer
     rescue Exception => e
       NewRelic::Agent.notice_error(e,{:description => "Middleware Global trace error"})
     ensure
-      return @app.call(env)
+      @status, @headers, @response =  @app.call(env)
+      ::NewRelic::Agent.add_custom_attributes(:requestId => env['HTTP_X_REQUEST_ID'])
+      return [@status, @headers, @response]
     end
   end
 end
