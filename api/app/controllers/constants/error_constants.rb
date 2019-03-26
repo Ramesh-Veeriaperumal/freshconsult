@@ -15,13 +15,14 @@ module ErrorConstants
     facebook_user_blocked: ['facebook_user_blocked'],
     max_limit_reached: ['dashboard_limit_exceeded', 'announcement_limit_exceeded'],
     undo_send_enqueued_alert: ['undo_send_enqueued_alert'],
-    undo_send_enqueued_agent_alert: ['undo_send_enqueued_agent_alert']
-
+    undo_send_enqueued_agent_alert: ['undo_send_enqueued_agent_alert'],
+    twitter_app_blocked: ['twitter_write_access_blocked']
   }.freeze
 
   API_HTTP_ERROR_STATUS_BY_CODE = {
     duplicate_value: 409,
-    access_denied: 403
+    access_denied: 403,
+    twitter_app_blocked: 400
   }.freeze
 
   # Reverse mapping, this will result in:
