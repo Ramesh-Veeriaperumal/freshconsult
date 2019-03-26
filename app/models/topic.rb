@@ -154,7 +154,7 @@ class Topic < ActiveRecord::Base
 
   scope :unmerged, :conditions => { :merged_topic_id => nil }
 
-  attr_accessor :trash
+  attr_accessor :trash, :publishing
 
   def self.visiblity_options(user)
     if user
