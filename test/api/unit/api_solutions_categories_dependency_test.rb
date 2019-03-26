@@ -10,7 +10,7 @@ class ApiSolutionsCategoriesDependencyTest < ActionView::TestCase
       :remove_rails_2_flash_after, :set_affiliate_cookie, :verify_authenticity_token, :language, :set_modal, :sanitize_item_id,
       :portal_check, :set_selected_tab, :page_title, :load_meta, :load_category_with_folders, :find_portal, :set_default_order,
       :unset_thread_variables, :load_portal_solution_category_ids, :run_on_slave, :ensure_proper_sts_header,
-      :set_ui_preference, :record_query_comment]
+      :set_ui_preference, :record_query_comment, :log_csrf, :remove_session_data]
     actual_filters = Solution::CategoriesController._process_action_callbacks.map { |c| c.filter.to_s }.reject { |f| f.starts_with?('_') }.compact
     assert_equal expected_filters.map(&:to_s).sort, actual_filters.sort
   end

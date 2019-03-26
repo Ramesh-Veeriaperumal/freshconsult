@@ -10,7 +10,7 @@ class ApiSolutionsFoldersDependencyTest < ActionView::TestCase
       :remove_rails_2_flash_after, :set_affiliate_cookie, :verify_authenticity_token, :language, :set_modal,
       :sanitize_item_id, :portal_check, :set_selected_tab, :load_meta, :validate_and_set_customers, :set_parent_for_old_params,
       :unset_thread_variables, :old_category, :check_new_category, :bulk_update_category, :clear_cache, :ensure_proper_sts_header,
-      :set_ui_preference, :record_query_comment]
+      :set_ui_preference, :record_query_comment, :log_csrf, :remove_session_data]
     actual_filters = Solution::FoldersController._process_action_callbacks.map { |c| c.filter.to_s }.reject { |f| f.starts_with?('_') }.compact
     assert_equal expected_filters.map(&:to_s).sort, actual_filters.sort
   end

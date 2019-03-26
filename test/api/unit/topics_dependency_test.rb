@@ -10,7 +10,7 @@ class TopicsDependencyTest < ActionView::TestCase
       :remove_rails_2_flash_after, :set_affiliate_cookie, :check_account_activation, :verify_authenticity_token, :require_user,
       :find_topic, :portal_check, :fetch_monitorship, :set_page, :after_destroy_path, :verify_ticket_permission,
       :unset_thread_variables, :redirect_for_ticket, :set_selected_tab, :fetch_vote, :toggle_vote,
-      :ensure_proper_sts_header, :record_query_comment]
+      :ensure_proper_sts_header, :record_query_comment, :log_csrf, :remove_session_data]
     actual_filters = Discussions::TopicsController._process_action_callbacks.map { |c| c.filter.to_s }.reject { |f| f.starts_with?('_') }.compact
     assert_equal expected_filters.map(&:to_s).sort, actual_filters.sort
   end

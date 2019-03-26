@@ -33,7 +33,7 @@ class Solution::FolderDrop < BaseDrop
   end
 
   def articles
-    @articles ||= @source.solution_article_meta.published.filter(@per_page, @page)
+    @articles ||= @source.sorted_solution_article_meta.published.filter(@per_page, @page)
   end
 
   def articles_count_from_cache

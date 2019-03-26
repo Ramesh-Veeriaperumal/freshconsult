@@ -7,24 +7,28 @@ namespace :failed_email_poller do
 
     begin
       $sqs_email_failure_reference.poll(:initial_timeout => false, :batch_size => 10) do |sqs_msg|
-        @args = JSON.parse(sqs_msg.body).deep_symbolize_keys
-        Rails.logger.info "FailedEmailPoller: Processing message #{@args}"
-        Sharding.select_shard_of(@args[:account_id]) do
-          begin
-            if valid_params? && valid_message?
-              email_failure = Helpdesk::Email::FailedEmailMsg.new(@args)
-              email_failure.save! note?
-              email_failure.notify
-              email_failure.trigger_observer_system_events
-            else
-              Rails.logger.info "FailedEmailPoller: Invalid message or feature unavailable. #{@args}"
+        begin
+          @args = JSON.parse(sqs_msg.body).deep_symbolize_keys
+          Rails.logger.info "FailedEmailPoller: Processing message #{@args}"
+          Sharding.select_shard_of(@args[:account_id]) do
+            begin
+              if valid_params? && valid_message?
+                email_failure = Helpdesk::Email::FailedEmailMsg.new(@args)
+                email_failure.save! note?
+                email_failure.notify
+                email_failure.trigger_observer_system_events
+              else
+                Rails.logger.info "FailedEmailPoller: Invalid message or feature unavailable. #{@args}"
+              end
+            rescue => e
+              error = [@args, e.to_s]
+              Rails.logger.info "FailedEmailPoller: Message processing exception - #{error}"
             end
-          rescue => e
-            error = [@args, e.to_s]
-            Rails.logger.info "FailedEmailPoller: Message processing exception - #{error}"
-          ensure
-            Account.reset_current_account
           end
+        rescue => e
+          Rails.logger.info "FailedEmailPoller: Error processing the account #{@args[:account_id]} - Message :: #{e.message}"
+        ensure
+          Account.reset_current_account
         end
       end
     rescue => e
