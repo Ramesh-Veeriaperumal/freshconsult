@@ -5,9 +5,9 @@ module ChannelIntegrations::Commands::Services
     include ChannelIntegrations::CommonActions::Note
     include ChannelIntegrations::CommonActions::Ticket
     include Social::Twitter::Util
-    include Redis::OthersRedis
     include Redis::RedisKeys
-    
+    include Redis::OthersRedis
+
     def receive_create_ticket(payload)
       return error_message('Invalid request') unless check_ticket_params?(payload)
 
@@ -61,6 +61,9 @@ module ChannelIntegrations::Commands::Services
       return error_message('Invalid request') unless check_note_params?(payload)
 
       if data[:status_code] >= 400
+        if (data[:status_code] == 403) && (data[:code] == ::Twitter::Error::Codes::CANNOT_WRITE)
+          set_others_redis_key_if_not_present(TWITTER_APP_BLOCKED, true)
+        end
         note_id = context[:note_id]
         schema_less_notes = current_account.schema_less_notes.find_by_note_id(note_id)
         return error_message('SchemaLessNote not found') if schema_less_notes.blank?

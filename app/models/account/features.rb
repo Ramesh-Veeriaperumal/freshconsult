@@ -21,7 +21,7 @@ class Account < ActiveRecord::Base
     :description_by_default, :ticket_fields_central_publish, :facebook_page_scope_migration,
     :agent_group_central_publish, :custom_fields_search,:update_billing_info, :fluffy,
     :allow_billing_info_update, :pricing_plan_change_2019, :tag_central_publish, :native_apps,
-    :surveys_central_publish, :id_for_choices_write, :nested_field_revamp, :session_logs, :disable_signup_captcha,
+    :surveys_central_publish, :id_for_choices_write, :nested_field_revamp, :session_logs, :bypass_signup_captcha,
     :freshvisual_configs, :ticket_field_limit_increase, :join_ticket_field_data
   ].freeze
 

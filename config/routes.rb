@@ -1888,6 +1888,7 @@ Helpkit::Application.routes.draw do
       put :update_domain
       get :validate_domain
       get :signup_validate_domain
+      post :anonymous_signup
     end
   end
 

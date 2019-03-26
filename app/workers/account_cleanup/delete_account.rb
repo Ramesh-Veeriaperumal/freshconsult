@@ -16,6 +16,7 @@ class AccountCleanup::DeleteAccount < BaseWorker
 
     begin
       clear_account_redis_keys
+
     rescue Exception  => e
       Rails.logger.info "Redis key deletion error on account cancel - #{e}"
       NewRelic::Agent.notice_error(e)        

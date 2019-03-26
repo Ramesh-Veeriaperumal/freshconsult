@@ -27,4 +27,11 @@ module AccountAdditionalSettings::AdditionalSettings
     additional_settings[:paid_by_reseller] = PAID_BY_RESELLER[paid_by_reseller] || false
     update_attributes(additional_settings: additional_settings)
   end
+
+  def mark_account_as_anonymous
+    additional_settings = self.additional_settings || {}
+    additional_settings[:anonymous_account] = true
+    update(additional_settings: additional_settings)
+    AccountCleanup::AnonymousAccountCleanup.perform_in(2.days, account_id: account_id)
+  end
 end
