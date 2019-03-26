@@ -31,7 +31,7 @@ module ModelsGroupsTestHelper
       name: group.name,
       description: group.description,
       account_id: group.account_id,
-      group_type: group.group_type,
+      group_type: group_type_hash(group),
       email_on_assign: group.email_on_assign,
       escalate_to: group.escalate_to,
       assign_time: group.assign_time,
@@ -59,6 +59,13 @@ module ModelsGroupsTestHelper
     {
       id: group.id,
       account_id: group.account_id
+    }
+  end
+
+  def group_type_hash(group)
+    {
+      id: group.group_type,
+      name: GroupType.group_type_name(group.group_type)
     }
   end
 end
