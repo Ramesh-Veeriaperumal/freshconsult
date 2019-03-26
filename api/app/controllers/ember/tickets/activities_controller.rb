@@ -25,7 +25,6 @@ module Ember
         end
 
         def log_and_render_301_archive
-          Rails.logger.debug "The ticket is archived. Id: #{params[:ticket_id]}, method: #{params[:action]}, controller: #{params[:controller]}"
           redirect_to archive_ticket_link, status: 301
         end
 

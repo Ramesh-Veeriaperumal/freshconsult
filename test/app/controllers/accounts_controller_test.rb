@@ -1,6 +1,8 @@
 require_relative '../../api/test_helper'
 
 class AccountsControllerTest < ActionController::TestCase
+  include Redis::RedisKeys
+  include Redis::OthersRedis
   def stub_signup_calls
     Signup.any_instance.stubs(:save).returns(true)
     AccountInfoToDynamo.stubs(:perform_async).returns(true)
@@ -562,5 +564,33 @@ class AccountsControllerTest < ActionController::TestCase
     assert_nil @controller.instance_variable_get(:@account)
     value = @controller.safe_send(:get_account_for_sub_domain)
     assert_equal @controller.instance_variable_get(:@account), Account.first
+  end
+
+  def test_anonymous_signup
+    anonymous_signup_key = ANONYMOUS_ACCOUNT_SIGNUP_ENABLED
+    set_others_redis_key(anonymous_signup_key, true)
+    @request.env['CONTENT_TYPE'] = 'application/json'
+    @request.env['HTTP_ACCEPT'] = 'application/json'
+    post :anonymous_signup
+    assert_response 200
+    account = Account.last
+    assert_equal account.anonymous_account?, true
+    assert_equal account.admin_first_name, 'Demo'
+    assert_equal account.admin_last_name, 'Account'
+    assert_match(/freshdeskdemo[0-9]{13}@example.com/, account.admin_email)
+    assert_match(/demo(#{DomainGenerator::DOMAIN_SUGGESTIONS.join('|')})?[0-9]{13}.freshpo.com/, account.full_domain)
+    assert_not_nil account.id
+  ensure
+    remove_others_redis_key(anonymous_signup_key)
+    account.destroy
+  end
+
+  def test_anonymous_signup_without_redis_enabled
+    anonymous_signup_key = ANONYMOUS_ACCOUNT_SIGNUP_ENABLED
+    remove_others_redis_key(anonymous_signup_key)
+    @request.env['CONTENT_TYPE'] = 'application/json'
+    @request.env['HTTP_ACCEPT'] = 'application/json'
+    post :anonymous_signup
+    assert_response 403
   end
 end

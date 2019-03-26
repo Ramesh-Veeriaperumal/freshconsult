@@ -6,7 +6,7 @@ module ApiSolutions
     include CloudFilesHelper
 
     SLAVE_ACTIONS = %w(index folder_articles).freeze
-    SKIP_KBASE_MINT_LAUNCHPARTY_ACTIONS = %w[index article_content].freeze
+    SKIP_KBASE_MINT_LAUNCHPARTY_ACTIONS = %w[index article_content show].freeze
 
     decorate_views(decorate_objects: [:folder_articles])
     before_filter :validate_query_params, only: [:folder_articles]

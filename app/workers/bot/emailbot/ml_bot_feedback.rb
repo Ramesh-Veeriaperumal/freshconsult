@@ -22,7 +22,7 @@ module Bot::Emailbot
       def send_feedback payload
         response = create_connection.post { |r| r.body = request_body(payload) }
         if response.status == 202
-          Rails.logger.info("Feedback for bot response successfully sent to central :: Account id : #{Account.current.id} :: bot_response id : #{@bot_response.id} #{response.body}")
+          Rails.logger.info("Feedback for bot response successfully sent to central :: Account id : #{Account.current.id} :: bot_response id : #{@bot_response.id}")
         else
           raise "Central publish failed with response code : #{response.status} :: Response : #{response.inspect}"
         end

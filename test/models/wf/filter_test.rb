@@ -45,7 +45,7 @@ class FilterTest < ActiveSupport::TestCase
     assert_equal @wf_filter.order_type_options.length, 2
     assert_equal @wf_filter.condition_title_for('custom_fields.id'), '> Custom Fields: Id'
     assert_equal @wf_filter.condition_title_for('id'), 'Id'
-    assert_equal @wf_filter.condition_options.length, 37
+    assert @wf_filter.condition_options
     assert_not_nil @wf_filter.to_s
     @wf_filter.key = 'tickets'
     assert_equal @wf_filter.key, 'tickets'

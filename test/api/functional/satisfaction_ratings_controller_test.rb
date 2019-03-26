@@ -9,6 +9,7 @@ class SatisfactionRatingsControllerTest < ActionController::TestCase
       sq.column_name = "cf_int0#{x + 2}"
       sq.save
     end
+    @survey_ids = survey.survey_questions.map(&:id)
   end
 
   def setup
@@ -76,13 +77,13 @@ class SatisfactionRatingsControllerTest < ActionController::TestCase
   end
 
   def test_create_with_custom_ratings
-    post :create, construct_params({ id: ticket.display_id }, ratings: { 'default_question' => 103, 'question_2' => -103, 'question_3' => 100 }, feedback: 'Feedback given Surveys')
+    post :create, construct_params({ id: ticket.display_id }, ratings: { 'default_question' => 103, "question_#{@survey_ids[0]}" => -103, "question_#{@survey_ids[1]}" => 100 }, feedback: 'Feedback given Surveys')
     assert_response 201
     match_json(survey_custom_rating_pattern(CustomSurvey::SurveyResult.last))
   end
 
   def test_create_without_default_question
-    post :create, construct_params({ id: ticket.display_id }, ratings: { 'question_2' => -103, 'question_3' => 100 }, feedback: 'Feedback given Surveys')
+    post :create, construct_params({ id: ticket.display_id }, ratings: { "question_#{@survey_ids[0]}" => -103, "question_#{@survey_ids[1]}" => 100 }, feedback: 'Feedback given Surveys')
     assert_response 400
     match_json([bad_request_error_pattern_with_nested_field('ratings', 'default_question', :not_included, code: :missing_field, list: @account.survey.survey_questions.first.face_values.join(','))])
   end
@@ -100,9 +101,9 @@ class SatisfactionRatingsControllerTest < ActionController::TestCase
   end
 
   def test_create_with_invalid_custom_ratings_value
-    post :create, construct_params({ id: ticket.display_id }, ratings: { 'default_question' => 103, 'question_3' => -102, 'question_2' => 110 }, feedback: 'Feedback given Surveys')
+    post :create, construct_params({ id: ticket.display_id }, ratings: { 'default_question' => 103, "question_#{@survey_ids[1]}" => -102, "question_#{@survey_ids[0]}" => 100 }, feedback: 'Feedback given Surveys')
     assert_response 400
-    match_json([bad_request_error_pattern_with_nested_field('ratings', 'question_3', :not_included, list: @account.survey.survey_questions.first.face_values.join(','))])
+    match_json([bad_request_error_pattern_with_nested_field('ratings', "question_#{@survey_ids[1]}", :not_included, list: @account.survey.survey_questions.first.face_values.join(','))])
   end
 
   def test_create_with_invalid_custom_ratings_data_type

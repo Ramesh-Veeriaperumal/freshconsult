@@ -6,6 +6,8 @@ class ChannelMessagePollerTest < ActionView::TestCase
   include AccountTestHelper
   include TwitterTestHelper
   include ShopifyTestHelper
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   def teardown
     cleanup_twitter_handles(@account)
@@ -42,16 +44,16 @@ class ChannelMessagePollerTest < ActionView::TestCase
   #   assert_equal note.body, payload[:body]
   # end
 
-  # def test_update_social_tweets
-  #   note = create_twitter_dm_ticket_and_note
+  def test_update_social_tweets_with_error
+    remove_others_redis_key TWITTER_APP_BLOCKED
+    payload = { "status_code": 403, "tweet_id": '100000200', "note_id": 123, "code": Twitter::Error::Codes::CANNOT_WRITE }
+    command_payload = sample_twitter_dm_acknowledgement(@account, @handle, @stream, payload)
+    push_to_channel(command_payload)
 
-  #   payload = { "status_code": 200, "tweet_id": '100000200', "note_id": note.id }
-  #   command_payload = sample_twitter_dm_acknowledgement(@account, @handle, @stream, payload)
-  #   push_to_channel(command_payload)
-
-  #   tweet = @account.tweets.last
-  #   assert_equal tweet[:tweetable_id], payload[:note_id]
-  # end
+    assert_equal true, redis_key_exists?(TWITTER_APP_BLOCKED)
+  ensure
+    remove_others_redis_key TWITTER_APP_BLOCKED
+  end
 
   def test_shopify_convert_as_ticket
     payload, command_payload = proactive_create_ticket_command

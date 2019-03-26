@@ -110,6 +110,7 @@ module TwitterTestHelper
 
     data = {}
     data[:status_code] = options[:status_code]
+    data[:code] = options[:code]
     data[:tweet_id] = options[:tweet_id] if options[:tweet_id].present?
 
     options = {
