@@ -751,9 +751,13 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     assert widget.settings[:predictive_support][:success_message] == request_params[:settings][:predictive_support][:success_message]
   end
 
-  def test_create_with_no_product_associated
+  def test_widget_create_with_portal
+    constant_widget_settings_hash = HelpWidget::DEFAULT_SETTINGS.dup
+    product1 = create_product(portal_url: 'sample.freshpo.com')
+    portal = Account.current.portals.find_by_product_id(product1.id)
     request_params = {
-      product_id: nil,
+      product_id: product1.id,
+      name: 'First new widget',
       settings: {
         components: {
           contact_form: true
@@ -764,6 +768,30 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     assert_response 201
     id = JSON.parse(@response.body)['id']
     match_json(widget_show_pattern(Account.current.help_widgets.find_by_id(id)))
+    assert Account.current.help_widgets.find_by_id(id).settings[:message] == "Welcome to #{portal.name} Support"
+    assert Account.current.help_widgets.find_by_id(id).settings[:appearance][:button_color] == portal.preferences[:tab_color]
+    assert constant_widget_settings_hash == HelpWidget::DEFAULT_SETTINGS
+  end
+
+  def test_widget_create_without_portal
+    constant_widget_hash = HelpWidget::DEFAULT_SETTINGS.dup
+    product2 = create_product
+    request_params = {
+      product_id: product2.id,
+      name: 'Second new widget',
+      settings: {
+        components: {
+          contact_form: true
+        }
+      }
+    }
+    post :create, construct_params(version: 'v2', help_widget: request_params)
+    assert_response 201
+    id = JSON.parse(@response.body)['id']
+    match_json(widget_show_pattern(Account.current.help_widgets.find_by_id(id)))
+    assert Account.current.help_widgets.find_by_id(id).settings[:message] == 'Welcome to Support'
+    assert Account.current.help_widgets.find_by_id(id).settings[:appearance][:button_color] == constant_widget_hash[:appearance][:button_color]
+    assert constant_widget_hash == HelpWidget::DEFAULT_SETTINGS
   end
 
   def test_create_with_product_associated

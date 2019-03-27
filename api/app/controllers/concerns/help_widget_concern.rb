@@ -5,7 +5,7 @@ module HelpWidgetConcern
 
     def assign_default_settings(settings_param, product_id)
       portal = get_portal(product_id)
-      settings = HelpWidget::DEFAULT_SETTINGS
+      settings = HelpWidget::DEFAULT_SETTINGS.dup
       assign_portal_defaults(portal, settings) if portal.present?
       settings[:components].merge!(settings_param[:components].symbolize_keys)
       settings
