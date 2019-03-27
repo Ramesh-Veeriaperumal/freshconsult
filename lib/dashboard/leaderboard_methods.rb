@@ -49,31 +49,43 @@ module Dashboard::LeaderboardMethods
     support_score = SupportScore.new(group_id: group_id)
     mini_list = []
     mini_list_for_all_category = support_score.get_mini_list_for_all_category Account.current, User.current, category_list, 'v2', with_current_user_position
+    users_hash = get_all_users(mini_list_for_all_category)
     mini_list_for_all_category.each do |category, leaderboard_minilist|
-      form_category_hash(category, leaderboard_minilist, mini_list)
+      form_category_hash(category, leaderboard_minilist, mini_list, users_hash)
     end
     mini_list
   end
 
-  def form_category_hash(category, leaderboard_minilist, mini_list)
-    category_hash = {}
-    user = Account.current.technicians.includes(:avatar).find(leaderboard_minilist.first.first)
-    category_hash[:name] = category.to_s
-    category_hash[:id]   = mini_list.length + 1
-    leader_hash = leader_hash_object category, leaderboard_minilist.first.second, user
-    category_hash[:rank_holders] = []
-    category_hash[:rank_holders] << leader_hash
-    leaderboard_agents = leaderboard_minilist.second
-    other_rank_holders_objects leaderboard_agents, category_hash[:rank_holders], category unless leaderboard_agents.nil?
-    mini_list << category_hash
-  end
-
-  def other_rank_holders_objects(leaderboard_agents, category_rank_list, category)
-    users_objects = Account.current.technicians.includes(:avatar).where(id: leaderboard_agents.map(&:first))
-    users_hash = users_objects.inject({}) { |users, user_object|
+  def get_all_users(mini_list_for_all_category)
+    user_ids = []
+    # collecting all user_ids so that a single query can be hit
+    mini_list_for_all_category.each do |category, rank_types|
+      # rank_types is either 'largest' or 'others'
+      rank_types.each do |type, leader_list|
+        user_ids += leader_list.map(&:first) if leader_list.present?
+      end
+    end
+    users_objects = Account.current.technicians.includes(:avatar).where(id: user_ids.uniq)
+    users_objects.each_with_object({}) { |user_object, users|
       users[user_object.id] = user_object
       users
     }
+  end
+
+  def form_category_hash(category, leaderboard_minilist, mini_list, users_hash)
+    category_hash = {}
+    user = users_hash[leaderboard_minilist[:largest].first.first.to_i]
+    category_hash[:name] = category.to_s
+    category_hash[:id]   = mini_list.length + 1
+    leader_hash = leader_hash_object category, leaderboard_minilist[:largest].first.second, user
+    category_hash[:rank_holders] = []
+    category_hash[:rank_holders] << leader_hash
+    leaderboard_agents = leaderboard_minilist[:others]
+    other_rank_holders_objects leaderboard_agents, category_hash[:rank_holders], category, users_hash unless leaderboard_agents.nil?
+    mini_list << category_hash
+  end
+
+  def other_rank_holders_objects(leaderboard_agents, category_rank_list, category, users_hash)
     leaderboard_agents.each do |leaderboard_agent|
       category_rank_list << {
         id: "#{category}_#{leaderboard_agent.last}",
@@ -202,8 +214,7 @@ module Dashboard::LeaderboardMethods
   end
 
   def user_avatar(user)
-    thumb_url = user.avatar.attachment_url_for_api(true, :thumb)
-    AttachmentDecorator.new(user.avatar).to_hash.merge(thumb_url: thumb_url)
+    AttachmentDecorator.new(user.avatar).to_hash
   end
 
   def get_time(time)

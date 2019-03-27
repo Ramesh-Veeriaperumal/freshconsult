@@ -104,7 +104,16 @@ module Redis::SortedSetRedis
         $redis_others.perform_redis_op("zrevrange", keys[category], start, count - 1, { :withscores => true })
       end
     end
-    process_piplined_result(largest_member_array, category_list)
+    process_largest_result(largest_member_array, category_list)
+  end
+
+  def process_largest_result(result_array, category_list)
+    result_hash = {}
+    result_array.each_with_index do |result, index|
+      result_hash[category_list[index]] ||= {}
+      result_hash[category_list[index]][:largest] = result
+    end
+    result_hash
   end
 
   def process_piplined_result(result_array, category_list)
