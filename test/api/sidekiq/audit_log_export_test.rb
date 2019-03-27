@@ -33,6 +33,7 @@ class AuditLogExportTest < ActiveSupport::TestCase
   end
 
   def test_export_url_response
+    skip('skipping the long running(13 minutes) test case')
     HTTParty.stubs(:get).returns(HTTParty, true)
     HTTParty.stubs(:body).returns({ status: 200, data: { export_url: 'dummy_url' }.stringify_keys! }.to_json)
     AuditLogExport.any_instance.stubs(:export_csv).returns(true)
