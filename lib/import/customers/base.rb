@@ -21,9 +21,8 @@ class Import::Customers::Base
     customer_import.update_attribute(:created_at, Time.now.utc)
     parse_csv_file
     build_error_csv_file unless @failed_items.blank?
-    handle_import_cancel unless @is_outreach_import
+    handle_import_cancel
     Rails.logger.debug "Customer stopped the #{@params[:type]} import" if redis_key_exists?(stop_redis_key) && !@is_outreach_import
-    Rails.logger.debug "Customer stopped the #{@params[:type]} import" if redis_key_exists?(stop_redis_key)
     Rails.logger.debug "#{@params[:type]} import completed. 
                         Total records:#{total_rows_to_be_imported}
                         Created:#{@created} 
@@ -52,7 +51,7 @@ class Import::Customers::Base
   private
 
     def handle_import_cancel
-      if redis_key_exists?(stop_redis_key)
+      if !@is_outreach_import && redis_key_exists?(stop_redis_key)
         customer_import && customer_import.cancelled!
       else
         customer_import && customer_import.completed!
@@ -270,7 +269,7 @@ class Import::Customers::Base
 
   def cleanup_file
     FileUtils.rm_f(failed_file_path) unless @failed_items.blank?
-    AwsWrapper::S3Object.delete(@customer_params[:file_location], S3_CONFIG[:bucket]) unless @is_outreach_import
+    AwsWrapper::S3Object.delete(@customer_params[:file_location], S3_CONFIG[:bucket])
   rescue => e
     NewRelic::Agent.notice_error(e, {:description => "Error while removing file from s3 :: account_id :: #{current_account.id}"})
   end
