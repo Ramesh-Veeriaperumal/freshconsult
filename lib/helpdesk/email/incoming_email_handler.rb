@@ -1,3 +1,4 @@
+require 'spam_watcher/spam_watcher_redis_methods'
 module Helpdesk
 	module Email
 		# handles the requsts of incoming emails from email service and creates ticket/note.
@@ -32,32 +33,25 @@ module Helpdesk
 
 			attr_accessor :additional_emails, :archived_ticket, :start_time, :actual_archive_ticket
 			def email_spam_watcher_counter(account)
-			    spam_watcher_options = {
-			          :key => "sw_solution_articles", 
-			          :threshold => 50,
-			          :sec_expire => 7200,
-			    }
-			    key  = spam_watcher_options[:key]
-			    threshold = spam_watcher_options[:threshold]
-			    sec_expire = spam_watcher_options[:sec_expire]
+				key = "sw_email_activities"
+				max_count = 50
+				sec_expire = 7200
 			    begin
 			      Timeout::timeout(SpamConstants::SPAM_TIMEOUT) {
 			        user_id = ""
 			        account_id = account.id
-			        max_count = "#{threshold}".to_i
 			        final_key = key + ":" + account_id.to_s + ":" + user_id.to_s
 			        # this case is added for the sake of skipping imports
 			        return true if ((Time.now.to_i - account.created_at.to_i) > 1.day)
 			        return true if $spam_watcher.perform_redis_op("get", account_id.to_s + "-" + user_id.to_s)
 			        count = $spam_watcher.perform_redis_op("rpush", final_key, Time.now.to_i)
-			        sec_expire = "#{sec_expire}".to_i 
 			        $spam_watcher.perform_redis_op("expire", final_key, sec_expire+1.minute)
 			        if count >= max_count
 
 			          head = $spam_watcher.perform_redis_op("lpop", final_key).to_i
 			          time_diff = Time.now.to_i - head
 			          if time_diff <= sec_expire
-			            $spam_watcher.perform_redis_op("rpush", SpamConstants::SPAM_WATCHER_BAN_KEY,final_key)
+			            SpamWatcherRedisMethods.incoming_email_spam(account)
 			          end
 			        end
 			      }
