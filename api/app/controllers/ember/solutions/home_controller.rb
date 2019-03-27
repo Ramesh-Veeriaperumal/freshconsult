@@ -27,10 +27,6 @@ module Ember
 
       private
 
-        def launch_party_name
-          FeatureConstants::KBASE_MINT
-        end
-
         def fetch_categories(portal_id)
           @category_meta = current_account.portals.where(id: portal_id).first.solution_categories_from_cache
           current_account.solution_categories.where(parent_id: @category_meta.map(&:id), language_id: (Language.current? ? Language.current.id : Language.for_current_account.id))

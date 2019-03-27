@@ -73,10 +73,6 @@ module Ember
         end
       end
 
-      def launch_party_name
-        FeatureConstants::KBASE_MINT if action_name == 'index' && params[:ids].present?
-      end
-
       def fetch_objects(items = scoper)
         @items = items.find_all_by_id(params[cname][:ids])
       end

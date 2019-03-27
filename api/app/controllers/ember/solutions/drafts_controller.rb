@@ -18,10 +18,6 @@ module Ember
           'ApiSolutions::DraftConstants'.freeze
         end
 
-        def launch_party_name
-          FeatureConstants::KBASE_MINT
-        end
-
         def validate_filter_params
           return unless validate_query_params
           return unless validate_delegator(nil, portal_id: params[:portal_id])

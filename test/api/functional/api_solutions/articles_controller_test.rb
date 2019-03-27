@@ -568,24 +568,15 @@ module ApiSolutions
     end
 
     def test_private_folder_index
-      enable_kbase_mint do
-        sample_folder = get_folder_meta
-        get :folder_articles, controller_params(version: 'private', id: sample_folder.id)
-        assert_response 200
-        assert_equal response.api_root_key, :articles
-        assert_not_nil response.api_meta[:count]
-        assert_not_nil response.api_meta[:next_page]
-        articles = sample_folder.solution_articles.where(language_id: @account.language_object.id).reorder(Solution::Constants::ARTICLE_ORDER_COLUMN_BY_TYPE[sample_folder.article_order])
-        pattern = articles.map { |article| solution_article_pattern_index(article) }
-        match_json(pattern.ordered!)
-      end
-    end
-
-    def test_private_folder_index_without_launchparty
       sample_folder = get_folder_meta
       get :folder_articles, controller_params(version: 'private', id: sample_folder.id)
-      assert_response 403
-      match_json(request_error_pattern(:require_feature, feature: 'Kbase Mint'))
+      assert_response 200
+      assert_equal response.api_root_key, :articles
+      assert_not_nil response.api_meta[:count]
+      assert_not_nil response.api_meta[:next_page]
+      articles = sample_folder.solution_articles.where(language_id: @account.language_object.id).reorder(Solution::Constants::ARTICLE_ORDER_COLUMN_BY_TYPE[sample_folder.article_order])
+      pattern = articles.map { |article| solution_article_pattern_index(article) }
+      match_json(pattern.ordered!)
     end
 
     # Delete article

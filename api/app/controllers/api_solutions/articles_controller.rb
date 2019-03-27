@@ -6,7 +6,6 @@ module ApiSolutions
     include CloudFilesHelper
 
     SLAVE_ACTIONS = %w(index folder_articles).freeze
-    SKIP_KBASE_MINT_LAUNCHPARTY_ACTIONS = %w[index article_content show].freeze
 
     decorate_views(decorate_objects: [:folder_articles])
     before_filter :validate_query_params, only: [:folder_articles]
@@ -67,10 +66,6 @@ module ApiSolutions
 
       def meta_scoper
         current_account.solution_article_meta
-      end
-
-      def launch_party_name
-        FeatureConstants::KBASE_MINT if private_api? && SKIP_KBASE_MINT_LAUNCHPARTY_ACTIONS.exclude?(action_name)
       end
 
       def create_or_update_article

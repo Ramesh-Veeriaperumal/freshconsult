@@ -268,67 +268,50 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   end
 
   def test_index_with_ids
-    enable_kbase_mint do
-      companies = []
-      BULK_CREATE_COMPANY_COUNT.times do
-        companies << create_company
-      end
-      get :index, controller_params(version: 'private', ids: companies.map(&:id).join(','))
-      assert_response 200
-      pattern = []
-      companies.each do |company|
-        pattern << company_pattern_with_associations({}, company, [])
-      end
-      match_json(pattern)
+    companies = []
+    BULK_CREATE_COMPANY_COUNT.times do
+      companies << create_company
     end
-  end
-
-  def test_index_with_ids_without_launchparty
-    company = create_company
-    get :index, controller_params(version: 'private', ids: company.id)
-    assert_response 403
-    match_json(request_error_pattern(:require_feature, feature: 'Kbase Mint'))
+    get :index, controller_params(version: 'private', ids: companies.map(&:id).join(','))
+    assert_response 200
+    pattern = []
+    companies.each do |company|
+      pattern << company_pattern_with_associations({}, company, [])
+    end
+    match_json(pattern)
   end
 
   def test_index_with_invalid_ids
-    enable_kbase_mint do
-      company = create_company
-      get :index, controller_params(version: 'private', ids: company.id + 20)
-      assert_response 200
-      assert_equal parse_response(response.body).size, 0
-    end
+    company = create_company
+    get :index, controller_params(version: 'private', ids: company.id + 20)
+    assert_response 200
+    assert_equal parse_response(response.body).size, 0
   end
 
   def test_index_with_limit_exceeded
-    enable_kbase_mint do
-      company_ids = Array.new(260) { rand(1...1000) }
-      get :index, controller_params(version: 'private', ids: company_ids.join(','))
-      assert_response 400
-      match_json([bad_request_error_pattern('ids', :too_long, element_type: :values, max_count: "#{Solution::Constants::COMPANIES_LIMIT}", current_count: company_ids.size)])
-    end
+    company_ids = Array.new(260) { rand(1...1000) }
+    get :index, controller_params(version: 'private', ids: company_ids.join(','))
+    assert_response 400
+    match_json([bad_request_error_pattern('ids', :too_long, element_type: :values, max_count: Solution::Constants::COMPANIES_LIMIT.to_s, current_count: company_ids.size)])
   end
 
   def test_index_with_valid_and_invalid_ids
-    enable_kbase_mint do
-      companies = []
-      BULK_CREATE_COMPANY_COUNT.times do
-        companies << create_company
-      end
-      valid_company = companies.first
-      company_ids = [companies.first.id, companies.last.id + 20]
-      get :index, controller_params(version: 'private', ids: company_ids.join(','))
-      assert_response 200
-      response = parse_response @response.body
-      assert_equal response.size, 1
+    companies = []
+    BULK_CREATE_COMPANY_COUNT.times do
+      companies << create_company
     end
+    valid_company = companies.first
+    company_ids = [companies.first.id, companies.last.id + 20]
+    get :index, controller_params(version: 'private', ids: company_ids.join(','))
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal response.size, 1
   end
 
   def test_index_with_string_ids_params
-    enable_kbase_mint do
-      get :index, controller_params(version: 'private', ids: 'abc')
-      assert_response 400
-      match_json([bad_request_error_pattern('ids', :array_datatype_mismatch, expected_data_type: 'Positive Integer')])
-    end
+    get :index, controller_params(version: 'private', ids: 'abc')
+    assert_response 400
+    match_json([bad_request_error_pattern('ids', :array_datatype_mismatch, expected_data_type: 'Positive Integer')])
   end
 
   def test_activities_with_invalid_type
