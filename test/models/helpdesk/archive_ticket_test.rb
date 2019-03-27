@@ -111,7 +111,6 @@ class ArchiveTicketTest < ActiveSupport::TestCase
         assert archive_test_ticket.encode_display_id
         assert_equal archive_test_ticket.ticket_id_delimiter, '#'
         assert_equal archive_test_ticket.requester_status_name, 'This ticket has been Closed'
-        assert_nil archive_test_ticket.parent_ticket
         assert_equal archive_test_ticket.sender_email, email
         assert_equal archive_test_ticket.url_protocol, 'https'
         assert_includes archive_test_ticket.support_ticket_path, "support/tickets/archived/#{archive_test_ticket.display_id}"
@@ -145,6 +144,7 @@ class ArchiveTicketTest < ActiveSupport::TestCase
 
   def test_ticket_fetch_based_on_user_with_group_ticket_permission
     user = add_test_agent(@account, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+    Agent.any_instance.stubs(:ticket_permission).returns(Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
     enable_archive_tickets do
       begin
         create_archive_ticket_with_assoc(requester_id: user.id)
@@ -159,10 +159,12 @@ class ArchiveTicketTest < ActiveSupport::TestCase
 
   def test_ticket_fetch_based_on_user_with_assigned_tickets_ticket_permission
     user = add_test_agent(@account, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
+    Agent.any_instance.stubs(:ticket_permission).returns(Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
     enable_archive_tickets do
       begin
         create_archive_ticket_with_assoc(requester_id: user.id)
         archive_test_ticket = @account.archive_tickets.last
+        @account.reload
         fetched_requester = @account.archive_tickets.permissible_condition(user).last
         assert_equal archive_test_ticket.requester_id, fetched_requester
       ensure

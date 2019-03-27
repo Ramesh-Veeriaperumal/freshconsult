@@ -20,7 +20,7 @@ class TwitterReplyDelegator < ConversationBaseDelegator
   end
 
   def check_twitter_app_state
-    errors[:twitter_app_state] << :"is blocked" if redis_key_exists?(TWITTER_APP_BLOCKED)
+    errors[:twitter] << :twitter_write_access_blocked if redis_key_exists?(TWITTER_APP_BLOCKED)
   end
 
   def validate_agent_id
