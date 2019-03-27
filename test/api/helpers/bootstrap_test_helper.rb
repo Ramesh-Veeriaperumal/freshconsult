@@ -34,7 +34,6 @@ module BootstrapTestHelper
     ret_hash = private_api_agent_pattern({}, agent).merge(
       last_active_at: agent.last_active_at.try(:utc).try(:iso8601),
       abilities: agent.user.abilities,
-      assumable_agents: agent.assumable_agents.map(&:id),
       group_ids: agent.group_ids,
       is_assumed_user: session.has_key?(:assumed_user),
       preferences: agent.preferences
