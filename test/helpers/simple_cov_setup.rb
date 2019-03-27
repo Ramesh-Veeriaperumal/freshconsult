@@ -29,7 +29,9 @@ module SimpleCovSetup
     'lib/password.rb',
     'lib/crm/salesforce.rb',
     'lib/import/forums.rb',
-    'lib/import/zendesk_data.rb'
+    'lib/import/zendesk_data.rb',
+    'app/controllers/support/search_controller.rb',
+    'app/controllers/search/search_controller.rb'
   ].freeze
 
   IGNORE_FILES = %w[lib/attachment_helper.rb lib/meta_data_check/meta_data_check_methods.rb
