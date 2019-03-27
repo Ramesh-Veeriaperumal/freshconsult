@@ -14,7 +14,7 @@ module Ember
 
     SLAVE_ACTIONS = %w(latest_note).freeze
 
-    INDEX_PRELOAD_OPTIONS = [:ticket_states, :tags, :schema_less_ticket, :ticket_status, { flexifield: [:denormalized_flexifield] }, { requester: [:avatar, :flexifield, :companies, :user_emails, :tags] }, :custom_survey_results].freeze
+    INDEX_PRELOAD_OPTIONS = [:ticket_states, :tags, :schema_less_ticket, :ticket_status, { flexifield: [:denormalized_flexifield] }, { requester: [:avatar, :flexifield, { companies: [:avatar] } , :user_emails, :tags] }, :custom_survey_results].freeze
     INDEX_PRELOAD_OPTION_MAPPING = { custom_fields: { flexifield: [:denormalized_flexifield] } }.freeze
     DEFAULT_TICKET_FILTER = :all_tickets.to_s.freeze
     SINGULAR_RESPONSE_FOR = %w(show create update split_note update_properties execute_scenario).freeze

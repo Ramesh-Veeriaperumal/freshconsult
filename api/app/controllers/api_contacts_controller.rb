@@ -264,7 +264,7 @@ class ApiContactsController < ApiApplicationController
     end
 
     def preload_options
-      [:flexifield, :default_user_company]
+      [:flexifield, :user_companies]
     end
 
     def contacts_filter_conditions

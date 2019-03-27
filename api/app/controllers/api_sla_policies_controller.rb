@@ -59,6 +59,10 @@ class ApiSlaPoliciesController < ApiApplicationController
       current_account.sla_policies
     end
 
+    def load_objects(items = scoper)
+      super items.preload(:sla_details)
+    end
+
     def update_escalation
       @item.escalations[:response]["1"] = tranform_escalation_keys(params[cname][:escalation][:response]) if params[cname][:escalation][:response].present?
       
