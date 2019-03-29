@@ -138,10 +138,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def central_custom_fields_hash
     pv_transformer = Helpdesk::Ticketfields::PicklistValueTransformer::StringToId.new(self)
-    custom_ticket_fields.inject([]) do |arr, field|
+    custom_ticket_fields.inject([]) do |arr, ff_def_entry|
       begin
+        field = ff_def_entry.ticket_field
         field_value = safe_send(field.name)
-        ff_def_entry = field.flexifield_def_entry
         custom_field = {
           name: ff_def_entry.flexifield_alias,
           label: field.label,
@@ -162,7 +162,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def custom_ticket_fields
-    @custom_tkt_fields ||= account.ticket_fields_from_cache.reject(&:default)
+    @custom_tkt_fields ||= account.flexifields_with_ticket_fields_from_cache
   end
 
   def resolution_time_by_chrs

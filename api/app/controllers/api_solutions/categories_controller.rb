@@ -32,10 +32,6 @@ module ApiSolutions
         solutions_scoper.solution_categories
       end
 
-      def launch_party_name
-        FeatureConstants::KBASE_MINT if private_api?
-      end
-
       def meta_scoper
         current_account.solution_category_meta.where(is_default: false)
       end

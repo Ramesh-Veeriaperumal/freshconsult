@@ -233,7 +233,8 @@
                                   :downgrade_msg => t('downgrade_confirm_v2', :current_plan => current_account.subscription.subscription_plan.display_name, :new_plan => plan.display_name ).html_safe,
                                   :current_plan_name => current_account.subscription.subscription_plan.display_name.upcase,
                                   :current_plan => current_plan_name,
-                                  :new_plan => plan.name.downcase
+                                  :new_plan => plan.name.downcase,
+                                  :show_omni_warning => show_omni_downgrade
                                 }
                           %>
                         </div>

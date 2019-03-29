@@ -43,12 +43,9 @@ namespace :social do
 
     time = Time.now - 16.days #2 weeks old table
     TABLES.keys.each do |table|
-      schema = TABLES[table][:schema]
-      properties = DYNAMO_DB_CONFIG[table]
       name = Social::DynamoHelper.select_table(table, time)
 
-      #Dont delete the actual table for now. Pretend delete
-      #Social::DynamoHelper.delete_table(name)
+      Social::DynamoHelper.delete_table(name)
 
       #verify if the tables exists
       if Social::DynamoHelper.table_exists?(name)

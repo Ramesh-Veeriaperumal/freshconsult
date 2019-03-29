@@ -191,7 +191,8 @@ class SupportScore < ActiveRecord::Base
       others[category].each_with_index do |person, index|
         person << start[category] + 1 + index
       end
-      largest[category] << others[category]
+      largest[category] ||= {}
+      largest[category][:others] = others[category]
     end
     largest
   end

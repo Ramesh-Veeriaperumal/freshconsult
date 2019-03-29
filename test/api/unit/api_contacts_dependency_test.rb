@@ -8,12 +8,12 @@ class ApiContactsDependencyTest < ActionView::TestCase
                         :remove_rails_2_flash_before, :check_account_state, :check_agent_deleted_forever, :set_time_zone, :check_day_pass_usage, :force_utf8_params,
                         :persist_user_agent, :set_cache_buster, :remove_pjax_param, :set_pjax_url, :set_last_active_time, :reset_language,
                         :remove_rails_2_flash_after, :set_affiliate_cookie, :verify_authenticity_token, :build_item, :load_multiple_items,
-                        :add_to_history, :redirect_to_mobile_url, :clean_params, :check_demo_site, :set_selected_tab, :load_item,
+                        :redirect_to_mobile_url, :clean_params, :check_demo_site, :set_selected_tab, :load_item,
                         :can_change_password?, :load_password_policy, :check_agent_limit, :can_make_agent, :run_on_slave, :set_mobile,
                         :init_user_email, :load_companies, :check_parent, :fetch_contacts, :set_native_mobile, :set_required_fields,
                         :unset_thread_variables, :validate_state_param,
                         :set_validatable_custom_fields, :restrict_user_primary_email_delete, :ensure_proper_sts_header,
-                        :set_ui_preference, :record_query_comment, :export_limit_reached?]
+                        :set_ui_preference, :record_query_comment, :export_limit_reached?, :log_csrf, :remove_session_data]
     actual_filters = ContactsController._process_action_callbacks.map { |c| c.filter.to_s }.reject { |f| f.starts_with?('_') }.compact
     assert_equal expected_filters.map(&:to_s).sort, actual_filters.sort
   end

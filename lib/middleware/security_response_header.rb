@@ -7,6 +7,7 @@ class Middleware::SecurityResponseHeader
   LOGIN_PATH = 'login'.freeze
   SSO_PATHS = ['/login/sso', '/login/saml', '/login/sso_v2', '/logout'].freeze
   SUPPORT_PATH = 'support'.freeze
+  SUPPORT_IMAGE_UPLOAD_PATHS = ['/tickets_uploaded_images','/tickets_uploaded_images/create_file','/forums_uploaded_images','/forums_uploaded_images/create_file'].freeze # Used in support portal
   SEC_MIDDLEWARE_IGNORED_DOMAINS_KEY = 'IGNORED_CLICKJACK_DOMAINS'.freeze
 
   def initialize(app)
@@ -28,7 +29,7 @@ class Middleware::SecurityResponseHeader
   end
 
   def ignore_path?
-    FEEDBACK_WIDGET_PATHS.include?(@req_path) || @req_path.include?(SUPPORT_PATH) || SSO_PATHS.include?(@req_path)
+    FEEDBACK_WIDGET_PATHS.include?(@req_path) || @req_path.include?(SUPPORT_PATH) || SSO_PATHS.include?(@req_path) || SUPPORT_IMAGE_UPLOAD_PATHS.include?(@req_path)
   end
 
   def login_path?

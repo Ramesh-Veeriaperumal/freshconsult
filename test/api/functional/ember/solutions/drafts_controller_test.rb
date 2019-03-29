@@ -35,53 +35,37 @@ module Ember
       end
 
       def test_index
-        enable_kbase_mint do
-          get :index, controller_params(version: 'private', portal_id: @account.main_portal.id)
-          assert_response 200
-          assert_equal parse_response(@response.body).size, ApiSolutions::DraftConstants::RECENT_DRAFTS_LIMIT
-          drafts = get_my_drafts
-          assert_equal response.api_meta[:count], drafts.size
-        end
-      end
-
-      def test_index_without_launchparty
-        get :index, controller_params(version: 'private')
-        assert_response 403
-        match_json(request_error_pattern(:require_feature, feature: 'Kbase Mint'))
+        get :index, controller_params(version: 'private', portal_id: @account.main_portal.id)
+        assert_response 200
+        assert_equal parse_response(@response.body).size, ApiSolutions::DraftConstants::RECENT_DRAFTS_LIMIT
+        drafts = get_my_drafts
+        assert_equal response.api_meta[:count], drafts.size
       end
 
       def test_index_without_privilege
-        enable_kbase_mint do
-          User.any_instance.stubs(:privilege?).with(:view_solutions).returns(false)
-          get :index, controller_params(version: 'private')
-          assert_response 403
-          match_json(request_error_pattern(:access_denied))
-          User.any_instance.unstub(:privilege?)
-        end
+        User.any_instance.stubs(:privilege?).with(:view_solutions).returns(false)
+        get :index, controller_params(version: 'private')
+        assert_response 403
+        match_json(request_error_pattern(:access_denied))
+        User.any_instance.unstub(:privilege?)
       end
 
       def test_index_without_portal_id
-        enable_kbase_mint do
-          get :index, controller_params(version: 'private')
-          assert_response 400
-          match_json([bad_request_error_pattern(:portal_id, :datatype_mismatch, code: :missing_field, expected_data_type: String)])
-        end
+        get :index, controller_params(version: 'private')
+        assert_response 400
+        match_json([bad_request_error_pattern(:portal_id, :datatype_mismatch, code: :missing_field, expected_data_type: String)])
       end
 
       def test_index_with_additional_field
-        enable_kbase_mint do
-          get :index, controller_params(version: 'private', portal_id: @account.main_portal.id, test: 'Test')
-          assert_response 400
-          match_json([bad_request_error_pattern('test', :invalid_field)])
-        end
+        get :index, controller_params(version: 'private', portal_id: @account.main_portal.id, test: 'Test')
+        assert_response 400
+        match_json([bad_request_error_pattern('test', :invalid_field)])
       end
 
       def test_index_with_invalid_portal_id
-        enable_kbase_mint do
-          get :index, controller_params(version: 'private', portal_id: 'Test')
-          assert_response 400
-          match_json([bad_request_error_pattern(:portal_id, :invalid_portal_id)])
-        end
+        get :index, controller_params(version: 'private', portal_id: 'Test')
+        assert_response 400
+        match_json([bad_request_error_pattern(:portal_id, :invalid_portal_id)])
       end
 
       private

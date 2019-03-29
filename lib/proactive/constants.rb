@@ -77,6 +77,7 @@ module Proactive::Constants
   DATE_REGEX             = /^\d{4}-\d{2}-\d{2}$/
 
   SIMPLE_OUTREACH_IMPORT_LIMIT = 1500
+  SIMPLE_OUTREACH_TRIAL_LIMIT = 10
 
   # simple outreach status
   STATUS = {

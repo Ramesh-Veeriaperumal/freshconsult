@@ -11,7 +11,7 @@ class TicketsDependencyTest < ActionView::TestCase
       :force_utf8_params, :persist_user_agent, :set_cache_buster, :remove_pjax_param,
       :set_pjax_url, :set_last_active_time, :reset_language, :remove_rails_2_flash_after,
       :set_affiliate_cookie, :verify_authenticity_token, :build_item, :load_multiple_items,
-      :add_to_history, :load_ticket_item, :build_note_body_attributes, :build_conversation_for_ticket,
+      :load_ticket_item, :build_note_body_attributes, :build_conversation_for_ticket,
       :check_for_from_email, :kbase_email_included, :set_default_source, :prepare_mobile_note_for_send_set,
       :fetch_note_attachments, :traffic_cop_warning, :check_for_public_notes,
       :check_reply_trial_customers_limit, :redirect_to_mobile_url, :portal_check, :verify_format_and_tkt_id,
@@ -29,7 +29,7 @@ class TicketsDependencyTest < ActionView::TestCase
       :show_password_expiry_warning, :load_assoc_parent, :load_tracker_ticket, :set_adjacent_list, :fetch_item_attachments,
       :load_tkt_and_templates, :check_ml_feature, :load_parent_template, :load_associated_tickets, :outbound_email_allowed?,
       :requester_widget_filter_params, :check_custom_view_feature, :ensure_proper_sts_header, :remove_skill_param,
-      :export_limit_reached?, :record_query_comment
+      :export_limit_reached?, :record_query_comment, :log_csrf, :remove_session_data
     ]
 
     actual_filters = Helpdesk::TicketsController._process_action_callbacks.map { |c| c.filter.to_s }.reject { |f| f.starts_with?('_') }.compact

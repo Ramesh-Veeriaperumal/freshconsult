@@ -7,6 +7,12 @@ class UserTest < ActiveSupport::TestCase
   include UsersHelper
   include CompanyHelper
 
+  def setup
+    super
+    @account.tags.delete_all
+    @account.tag_uses.delete_all
+  end
+
   def test_user_allowed_for_password_reset
     user = add_new_user(@account)
     assert_equal user.allow_password_reset?, true

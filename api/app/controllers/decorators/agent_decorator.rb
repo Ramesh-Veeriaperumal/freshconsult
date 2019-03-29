@@ -92,7 +92,6 @@ class AgentDecorator < ApiDecorator
     def additional_agent_info
       {
         last_active_at:       record.last_active_at.try(:utc),
-        assumable_agents:     record.assumable_agents.map(&:id),
         is_assumed_user:      @is_assumed_user,
         abilities:            record.user.abilities,
         preferences:          record.preferences

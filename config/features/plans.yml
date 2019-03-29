@@ -239,6 +239,7 @@
       - :analytics_tags_reports
       - :analytics_timesheet_resource
       - :analytics_tags_resource
+      - :proactive_outreach
     :inherits:
       - :blossom_jan_19
     :exclude: []

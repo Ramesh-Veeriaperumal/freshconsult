@@ -36,5 +36,5 @@ class HelpWidget < ActiveRecord::Base
       success_message: I18n.t('help_widget.success_message')
     },
     widget_flow: 2
-  }
+  }.freeze
 end

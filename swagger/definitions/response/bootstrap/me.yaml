@@ -11,10 +11,6 @@ properties:
             type: integer
           scoreboard_level_id:
             type: integer
-          assumable_agents:
-            type: array
-            items:
-              type: integer
           is_assumed_user:
             type: boolean
           next_level_id:

@@ -44,10 +44,6 @@ module ApiSolutions
         current_account.solution_folders
       end
 
-      def launch_party_name
-        FeatureConstants::KBASE_MINT if private_api?
-      end
-
       def meta_scoper
         current_account.solution_folder_meta.where(is_default: false)
       end

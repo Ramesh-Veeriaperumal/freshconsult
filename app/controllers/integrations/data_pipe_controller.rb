@@ -5,16 +5,17 @@ class Integrations::DataPipeController <  ApplicationController
   before_filter :app_installed?, :only => [:router]
 
   def router
-    begin 
+    begin
       account = Account.current
       shard = ShardMapping.lookup_with_account_id(account.id)
       additional_params = { extensionId: request.headers["HTTP_MKP_EXTNID"], versionId: request.headers["HTTP_MKP_VERSIONID"],
-        accountId: account.id, accountPod: shard.pod_info, 
+        accountId: account.id, accountPod: shard.pod_info,
         installedExtnId: @installed_extn_id, mkpRoute: request.headers["HTTP_MKP_ROUTE"],
-        domain: account.full_domain
+        domain: account.full_domain,
+        state: @installation_state
       }
       request_body = params[:data_pipe].merge(additional_params)
-      resp = make_request(request_body) 
+      resp = make_request(request_body)
       render :json => resp.body, :status => resp.status
     rescue => e
       Rails.logger.error("Data Pipe params: #{params}, mkpRoute: #{request.headers["HTTP_MKP_ROUTE"]},
@@ -23,20 +24,22 @@ class Integrations::DataPipeController <  ApplicationController
     end
   end
 
-  private 
+  private
     def app_installed?
-      is_install = (params && params[:data] && params[:data][:isInstall]) ? params[:data][:isInstall] : false
-      unless is_install
-        extns = installed_extensions({ type: "#{Marketplace::Constants::EXTENSION_TYPE[:plug]},#{Marketplace::Constants::EXTENSION_TYPE[:custom_app]}" })
-        render_error and return if error_status?(extns)
-        extns.body.each do |extn|
-          if(extn["extension_id"] == request.headers["HTTP_MKP_EXTNID"].to_i && extn["version_id"] == request.headers["HTTP_MKP_VERSIONID"].to_i)
-            @installed_extn_id = extn["installed_extension_id"]
+      extns = installed_extensions({ type: "#{Marketplace::Constants::EXTENSION_TYPE[:plug]},#{Marketplace::Constants::EXTENSION_TYPE[:custom_app]}" })
+      render_error and return if error_status?(extns)
+      extns.body.each do |extn|
+        if(extn["extension_id"] == request.headers["HTTP_MKP_EXTNID"].to_i)
+          @installed_extn_id = extn["installed_extension_id"]
+          @installation_state = "update"
+
+          if(extn["version_id"] == request.headers["HTTP_MKP_VERSIONID"].to_i)
+            @installation_state = "default"
           end
         end
-        if(@installed_extn_id.blank?)
-          return render_error
-        end
+      end
+      if (@installed_extn_id.blank?)
+        @installation_state = "install"
       end
     end
 
@@ -55,7 +58,7 @@ class Integrations::DataPipeController <  ApplicationController
           'Content-Type' => 'application/json',
           'MKP-APIKEY' => MarketplaceConfig::DATA_PIPE_KEY,
           'Authorization' => generate_md5_digest("#{router_url}_#{date_header}", MarketplaceConfig::API_AUTH_KEY),
-          "Date" => date_header 
+          "Date" => date_header
         },
         conn_timeout: MarketplaceConfig::DATA_PIPE_TIMEOUT[:conn],
         read_timeout: MarketplaceConfig::DATA_PIPE_TIMEOUT[:read]

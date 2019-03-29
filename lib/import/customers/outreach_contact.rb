@@ -1,4 +1,6 @@
 class Import::Customers::OutreachContact < Import::Customers::Contact
+  include Proactive::Constants
+
   def initialize(params = {})
     super params
     @contact_ids = []
@@ -17,21 +19,26 @@ class Import::Customers::OutreachContact < Import::Customers::Contact
   def parse_csv_file
     csv_file = AwsWrapper::S3Object.find(@customer_params[:file_location], S3_CONFIG[:bucket])
     row_count = 0
+    max_limit_exceeded = false
     CSVBridge.parse(content_of(csv_file)).each_slice(IMPORT_BATCH_SIZE).with_index do |rows, index|
       @failed_count = 0
       rows.each_with_index do |row, inner_index|
         row = row.collect{ |r| Helpdesk::HTMLSanitizer.clean(r.to_s) }
         (@csv_headers = row) && next if index.zero? && inner_index.zero?
 
-        break if row_count >= Proactive::Constants::SIMPLE_OUTREACH_IMPORT_LIMIT
+        break if row_count >= max_limit
 
         row_count += 1
         assign_field_values row
         next if is_user? && !@item.nil? && @item.helpdesk_agent?
 
         save_item row
+        if row_count >= max_limit
+          max_limit_exceeded = true
+          break
+        end
       end
-      break if row_count >= Proactive::Constants::SIMPLE_OUTREACH_IMPORT_LIMIT
+      break if max_limit_exceeded
     end
   rescue => e
     Rails.logger.error "Error while reading csv data ::#{e.message}\n#{e.backtrace.join("\n")}"
@@ -50,6 +57,10 @@ class Import::Customers::OutreachContact < Import::Customers::Contact
 
   def notify_mailer(param = false)
     UserNotifier.notify_proactive_outreach_import(mailer_params(param))
+  end
+
+  def max_limit
+    @max_limit ||= current_account.subscription.trial? ? SIMPLE_OUTREACH_TRIAL_LIMIT : SIMPLE_OUTREACH_IMPORT_LIMIT
   end
 
   def mailer_params(corrupted)
@@ -72,6 +83,8 @@ class Import::Customers::OutreachContact < Import::Customers::Contact
     end
     hash
   end
-  # def cleanup_file
-  # end
+
+  def cleanup_file
+    @import.attachments.destroy_all
+  end
 end

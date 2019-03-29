@@ -229,7 +229,11 @@ module Ember
 
         def fetch_objects(items = scoper, check_permission = true)
           ids = check_permission ? permissible_ticket_ids(cname_params[:ids]) : cname_params[:ids]
-          @items = items.find_all_by_param(ids)
+          @items = items.preload(preload_options).find_all_by_param(ids)
+        end
+
+        def preload_options
+          [:schema_less_ticket, :flexifield, :ticket_states, :ticket_old_body]
         end
 
         def tickets_to_update

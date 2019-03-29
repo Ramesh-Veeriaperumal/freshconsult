@@ -1,7 +1,7 @@
 class ApiTicketFieldsController < ApiApplicationController
   decorate_views
 
-  PRELOAD_ASSOC = [:nested_ticket_fields].freeze
+  PRELOAD_ASSOC = [:nested_ticket_fields, :picklist_values].freeze
 
   private
 

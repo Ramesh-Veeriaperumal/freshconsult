@@ -37,20 +37,15 @@ class Admin::SecurityController <  Admin::AdminController
     oauth2_sso_disabled = true if @account.oauth2_sso_enabled? && params[:account][:sso_options][:sso_type] != SsoUtil::SSO_TYPES[:oauth2]
     if @account.sso_enabled?
       @account.sso_options = params[:account][:sso_options]
-      if oauth2_sso_disabled
-        @account.remove_oauth2_sso_options
-        if @account.sso_options[:sso_type] == SsoUtil::SSO_TYPES[:oauth2]
-          [:agent_oauth2, :customer_oauth2].each do |key|
-            @account.sso_options[key] = @account.sso_options[key].to_bool if @account.sso_options[key].present?
-          end
-        end
-      elsif freshid_saml_sso_disabled
-        @account.remove_freshid_saml_sso_options
-        if @account.sso_options[:sso_type] == SsoUtil::SSO_TYPES[:freshid_saml]
-          [:agent_freshid_saml, :customer_freshid_saml].each do |key|
-            @account.sso_options[key] = @account.sso_options[key].to_bool if @account.sso_options[key].present?
-          end
-        end
+      @account.remove_oauth2_sso_options if oauth2_sso_disabled
+      @account.remove_freshid_saml_sso_options if freshid_saml_sso_disabled
+      sso_array = if @account.sso_options[:sso_type] == SsoUtil::SSO_TYPES[:oauth2]
+                    [:agent_oauth2, :customer_oauth2]
+                  elsif @account.sso_options[:sso_type] == SsoUtil::SSO_TYPES[:freshid_saml]
+                    [:agent_freshid_saml, :customer_freshid_saml]
+                  end
+      sso_array.each do |key|
+        @account.sso_options[key] = @account.sso_options[key].to_bool if @account.sso_options[key].present?
       end
     else
       @account.reset_sso_options

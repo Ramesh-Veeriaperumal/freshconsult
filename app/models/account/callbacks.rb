@@ -643,4 +643,18 @@ class Account < ActiveRecord::Base
     def set_disable_old_ui_changed_now
       self.disable_old_ui_changed = true
     end
+
+    def call_freshvisuals_api?
+      freshvisual_configs_enabled? && analytics_features_changed?
+    end
+
+    def analytics_features_changed?
+      reports_features = HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST
+      changes[:plan_features].present? && reports_features.any? { |f| safe_send("#{f}_feature_changed?") }
+    end
+
+    def update_freshvisual_configs
+      Reports::FreshvisualConfigs.perform_async
+    end
+    
 end
