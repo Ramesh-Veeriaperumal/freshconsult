@@ -2,7 +2,7 @@
 
   jQuery(document).ready(function(){
  invokeRedactor('<%= "user_binfo" %>','signature');
- 	<% unless freshid_enabled? %>
+ 	<% unless freshid_enabled? || current_account.sso_enabled? %>
 	    jQuery("#password_confirmation").rules("add", {
 		    equalTo: "#password"
 	  	});
