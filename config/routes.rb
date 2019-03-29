@@ -3031,6 +3031,8 @@ Helpkit::Application.routes.draw do
           get :clone_account
           post :clone_account
           post :enable_freshid
+          post :extend_higher_plan_trial
+          post :change_trial_plan
         end
       end
 

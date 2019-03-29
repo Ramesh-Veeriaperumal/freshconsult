@@ -74,7 +74,7 @@ module Ember
       def sanitize_params
         if params[cname][:inline] && params[cname][:inline].to_s == 'true'
           params[cname][:attachable_type] = "#{AttachmentConstants::INLINE_ATTACHABLE_NAMES_BY_KEY[params[cname][:inline_type].to_i]} Upload"
-          params[cname][:description] = !public_upload? && one_hop? ? 'private' : 'public'
+          params[cname][:description] = public_upload? ? 'public' : 'private'
         else
           params[cname][:attachable_type] = AttachmentConstants::STANDALONE_ATTACHMENT_TYPE
           params[cname][:user_id] ||= api_current_user.id
@@ -85,10 +85,6 @@ module Ember
 
       def public_upload?
         [:forum, :solution].include?(AttachmentConstants::INLINE_ATTACHABLE_TOKEN_BY_KEY[params[cname][:inline_type].to_i])
-      end
-
-      def one_hop?
-        current_account.features_included?(:inline_images_with_one_hop)
       end
 
       def valid_content_type?

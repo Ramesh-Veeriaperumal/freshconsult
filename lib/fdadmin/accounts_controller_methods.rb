@@ -179,4 +179,15 @@ module Fdadmin::AccountsControllerMethods
 		account.make_current
 		account.kill_account_cancellation_request_job
 	end
+
+	def trial_subscription_hash(trial_subscription)
+		return {} if trial_subscription.blank?
+		
+		{
+			status: TrialSubscription::TRIAL_STATUSES.key(trial_subscription.status),
+			created_at: trial_subscription.created_at.to_date,
+			ends_at: trial_subscription.ends_at.to_date,
+			upsell_plan: trial_subscription.trial_plan
+		}
+	end
 end

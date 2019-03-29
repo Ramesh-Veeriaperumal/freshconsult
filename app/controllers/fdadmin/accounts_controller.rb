@@ -7,6 +7,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   include EmailHelper
   include SandboxConstants
 
+  before_filter :set_current_account, only: [:extend_higher_plan_trial, :change_trial_plan]
   before_filter :check_domain_exists, :only => :change_url , :if => :non_global_pods?
   around_filter :select_slave_shard , :only => [:api_jwt_auth_feature,:sha1_enabled_feature,:select_all_feature,:show, :features, :agents, :tickets, :portal, :user_info,:check_contact_import,:latest_solution_articles]
   around_filter :select_master_shard , :only => [:collab_feature,:add_day_passes,:migrate_to_freshconnect, :add_feature, :change_url, :single_sign_on, :remove_feature,:change_account_name, :change_api_limit, :reset_login_count,:contact_import_destroy, :change_currency, :extend_trial, :reactivate_account, :suspend_account, :change_webhook_limit, :change_primary_language, :trigger_action, :clone_account]
@@ -15,8 +16,11 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   before_filter :load_user_record, :only => [:user_info, :reset_login_count]
   before_filter :symbolize_feature_name, :only => [:add_feature, :remove_feature]
   before_filter :check_freshconnect_migrate, :only => [:migrate_to_freshconnect]
+  before_filter :validate_extend_higher_plan_trial, only: [:extend_higher_plan_trial]
+  before_filter :validate_change_trial_plan, only: [:change_trial_plan]
 
   SUCCESS = 200..299
+  MAX_THP_EXTENSION_DAYS_COUNT = 20
 
   def show
     account_summary = {}
@@ -43,6 +47,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:falcon_enabled] = account.has_feature?(:falcon)
     account_summary[:account_cancellation_requested] = account.account_cancellation_requested?
     account_summary[:clone_status] = account.account_additional_settings.clone_status
+    account_summary[:trial_subscription] = trial_subscription_hash(account.trial_subscriptions.last)
     respond_to do |format|
       format.json do
         render :json => account_summary
@@ -298,6 +303,20 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
         render :json => result
       end
     end
+  end
+
+  def extend_higher_plan_trial
+    Account.current.active_trial.extend_trial(params[:days_count].to_i)
+    render json: { status: 'success' }, status: :ok
+  ensure
+    Account.reset_current_account
+  end
+
+  def change_trial_plan
+    Account.current.active_trial.change_trial_plan(params[:new_plan])
+    render json: { status: 'success' }, status: :ok
+  ensure
+    Account.reset_current_account
   end
 
   def trigger_action
@@ -740,7 +759,29 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     end
   end
 
-  private 
+  private
+
+    def set_current_account
+      Account.find(params[:account_id]).make_current
+    end
+
+    def validate_extend_higher_plan_trial
+      days_count = params[:days_count].to_i
+      unless days_count > 0 && days_count < MAX_THP_EXTENSION_DAYS_COUNT &&
+             Account.current.active_trial.present?
+        render status: :bad_request, json: { status: :notice }
+      end
+    end
+
+    def validate_change_trial_plan
+      current_plan = Account.current.subscription_plan.name.downcase
+      new_plan = params[:new_plan]
+      unless SubscriptionPlan.current_plan_names_from_cache.include?(new_plan) &&
+             SubscriptionsHelper::PLAN_RANKING[current_plan] <
+             SubscriptionsHelper::PLAN_RANKING[new_plan.downcase]
+        render status: :bad_request, json: { status: :notice }
+      end
+    end
 
     def check_freshconnect_migrate
       account = Account.current
@@ -921,5 +962,4 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     def symbolize_feature_name
       @feature_name = params[:feature_name].to_sym
     end
-
 end

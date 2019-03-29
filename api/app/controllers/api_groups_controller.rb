@@ -48,7 +48,7 @@ class ApiGroupsController < ApiApplicationController
     end
 
     def load_object
-      @item = scoper.detect { |group| group.id == params[:id].to_i }
+      @item = current_account.groups.find_by_id(params[:id])
       log_and_render_404 unless @item
     end
 
