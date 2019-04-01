@@ -143,6 +143,7 @@ class TicketFieldTest < ActiveSupport::TestCase
 
   def test_custom_dropdown
     Account.stubs(:current).returns(Account.first)
+    Migration::PopulatePicklistId.new(account_id: Account.current.id).perform
     custom_dropdown_field = create_custom_field_dropdown(name = 'test_custom_dropdown', choices = ['Choice 1', 'Choice 2', 'Choice 3'])
     choice1 = Account.current.picklist_values.find_by_value('Choice 1')
     choice2 = Account.current.picklist_values.find_by_value('Choice 2')
@@ -170,7 +171,7 @@ class TicketFieldTest < ActiveSupport::TestCase
     assert_equal(as_json['ticket_field'].include?(:nested_choices), false)
 
     dropdown_choices_with_picklist_id = custom_dropdown_field.dropdown_choices_with_picklist_id
-    expected_output = [[nil, nil], [nil, nil], [nil, nil]]
+    expected_output = [[choice1.picklist_id, choice1.picklist_id], [choice2.picklist_id, choice2.picklist_id], [choice3.picklist_id, choice3.picklist_id]]
     assert_equal(dropdown_choices_with_picklist_id, expected_output)
 
     dropdown_choices_with_id = custom_dropdown_field.dropdown_choices_with_id
@@ -182,11 +183,11 @@ class TicketFieldTest < ActiveSupport::TestCase
     assert_equal(dropdown_selected, selected_value)
 
     picklist_values_by_id = custom_dropdown_field.picklist_values_by_id
-    expected_output = { nil => choice3.value }
+    expected_output = { choice1.picklist_id => choice1.value, choice2.picklist_id => choice2.value, choice3.picklist_id => choice3.value }
     assert_equal(picklist_values_by_id, expected_output)
 
     picklist_ids_by_value = custom_dropdown_field.picklist_ids_by_value
-    expected_output = { choice1.value.downcase => nil, choice2.value.downcase => nil, choice3.value.downcase => nil }
+    expected_output = { choice1.value.downcase => choice1.picklist_id, choice2.value.downcase => choice2.picklist_id, choice3.value.downcase => choice3.picklist_id }
     assert_equal(picklist_ids_by_value, expected_output)
 
     to_xml = custom_dropdown_field.to_xml
@@ -197,6 +198,7 @@ class TicketFieldTest < ActiveSupport::TestCase
   end
 
   def test_nested_field
+    Migration::PopulatePicklistId.new(account_id: Account.current.id).perform
     nested_field_parent = create_dependent_custom_field(%w[test_custom_country test_custom_state test_custom_city])
     nested_child_fields = nested_field_parent.child_levels
     nestedfieldlevel2 = nested_child_fields.first
@@ -267,19 +269,39 @@ class TicketFieldTest < ActiveSupport::TestCase
     assert_equal(as_json['ticket_field'].include?(:nested_choices), true)
 
     picklistvaluesbyidlevel2 = nestedfieldlevel2.picklist_values_by_id
-    expected_output = { nil => state4.value }
+    expected_output = { state1.picklist_id => state1.value, 
+                        state2.picklist_id => state2.value, 
+                        state3.picklist_id => state3.value, 
+                        state4.picklist_id => state4.value 
+                    }
     assert_equal(picklistvaluesbyidlevel2, expected_output)
 
     picklistvaluesbyidlevel3 = nestedfieldlevel3.picklist_values_by_id
-    expected_output = { nil => city6.value }
+    expected_output = { city1.picklist_id => city1.value, 
+                        city2.picklist_id => city2.value, 
+                        city3.picklist_id => city3.value, 
+                        city4.picklist_id => city4.value,
+                        city5.picklist_id => city5.value,
+                        city6.picklist_id => city6.value 
+                    }
     assert_equal(picklistvaluesbyidlevel3, expected_output)
 
     picklistidsbyvaluelevel2 = nestedfieldlevel2.picklist_ids_by_value
-    expected_output = { state1.value.downcase => { country1.value => nil }, state2.value.downcase => { country1.value => nil }, state3.value.downcase => { country2.value => nil }, state4.value.downcase => { country2.value => nil } }
+    expected_output = { state1.value.downcase => { country1.value.downcase => state1.picklist_id },
+                        state2.value.downcase => { country1.value.downcase => state2.picklist_id },
+                        state3.value.downcase => { country2.value.downcase => state3.picklist_id },
+                        state4.value.downcase => { country2.value.downcase => state4.picklist_id } 
+                    }
     assert_equal(picklistidsbyvaluelevel2, expected_output)
 
     picklistidsbyvaluelevel3 = nestedfieldlevel3.picklist_ids_by_value
-    expected_output = { city1.value.downcase => { state1.value.downcase => { country1.value => nil } }, city2.value.downcase => { state2.value.downcase => { country1.value => nil } }, city3.value.downcase => { state3.value.downcase => { country2.value => nil } }, city4.value.downcase => { state3.value.downcase => { country2.value => nil } }, city5.value.downcase => { state4.value.downcase => { country2.value => nil } }, city6.value.downcase => { state4.value.downcase => { country2.value => nil } } }
+    expected_output = { city1.value.downcase => { state1.value.downcase => { country1.value.downcase => city1.picklist_id } },
+                        city2.value.downcase => { state2.value.downcase => { country1.value.downcase => city2.picklist_id } },
+                        city3.value.downcase => { state3.value.downcase => { country2.value.downcase => city3.picklist_id } },
+                        city4.value.downcase => { state3.value.downcase => { country2.value.downcase => city4.picklist_id } },
+                        city5.value.downcase => { state4.value.downcase => { country2.value.downcase => city5.picklist_id } },
+                        city6.value.downcase => { state4.value.downcase => { country2.value.downcase => city6.picklist_id } }
+                    }
     assert_equal(picklistidsbyvaluelevel3, expected_output)
   end
 end
