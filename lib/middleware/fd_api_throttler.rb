@@ -5,8 +5,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
   include Redis::RateLimitRedis
 
   FRESHDESK_DOMAIN = 'freshdesk'.freeze
-  SKIPPED_SUBDOMAINS =  %w(admin billing signup freshsignup email login emailparser mailboxparser freshops) + FreshopsSubdomains + PartnerSubdomains 
-  EXCLUDED_API_PATHS = %w(/api/channel/v2).freeze
+  SKIPPED_SUBDOMAINS =  %w(admin billing signup freshsignup email login emailparser mailboxparser freshops) + FreshopsSubdomains + PartnerSubdomains
   THROTTLE_PERIOD    =  1.hour
   API_LIMIT = 3000
   DEFAULT_USED_LIMIT = 1
@@ -21,7 +20,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
 
   # Should resolve to true for public APIs
   def correct_namespace?(path_info)
-    !EXCLUDED_API_PATHS.any? {|path| path_info.include? path}
+    CustomRequestStore.read(:api_v2_request) || CustomRequestStore.read(:pipe_api_request)
   end
 
   def call(env)

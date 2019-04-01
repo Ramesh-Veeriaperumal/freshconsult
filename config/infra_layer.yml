@@ -1,7 +1,0 @@
-API_LAYER: true
-SUPPORT_LAYER: false
-PRIVATE_API: true #Has to be false in layers except the one handling /api/_ namespace for the New UI
-PIPE_LAYER: true
-FRESHID_LAYER: false
-APIGEE_API_LAYER: false
-CHANNEL_LAYER: false #Will be true when handling /api/channel/v2/

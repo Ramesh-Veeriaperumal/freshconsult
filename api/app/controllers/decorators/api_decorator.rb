@@ -16,11 +16,11 @@ class ApiDecorator
   end
 
   def private_api?
-    defined?($infra) && $infra['PRIVATE_API']
+    CustomRequestStore.read(:private_api_request)
   end
 
   def channel_v2_api?
-    defined?($infra) && $infra['CHANNEL_LAYER']
+    CustomRequestStore.read(:channel_api_request)
   end
 
   def format_date(value, utc_format = false)

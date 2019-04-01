@@ -32,12 +32,12 @@ class Middleware::TrustedIp
           @current_account = Account.find(account_id)
           @current_account.make_current
         end
-        return execute_request(env) if channel_api?(req_path)
+        return execute_request(env) if CustomRequestStore.read(:channel_api_request)
         # Proceed only if user_credentials_id is present(i.e., authenticated user) or api request.
         if !env['rack.session']['user_credentials_id'].nil? || api_request?(req_path)
           if trusted_ips_enabled?
             # HTTP_ACTUAL_CLIENT_IP will be sent from apigee for apigee enabled account
-            current_ip = @current_account.try(:apigee_enabled?) && api_v2_request?(req_path) ? env['HTTP_ACTUAL_CLIENT_IP'] : env['CLIENT_IP']
+            current_ip = @current_account.try(:apigee_enabled?) && CustomRequestStore.read(:api_v2_request) ? env['HTTP_ACTUAL_CLIENT_IP'] : env['CLIENT_IP']
             Rails.logger.debug "Whitelisted IPS enabled: #{env['HTTP_ACTUAL_CLIENT_IP']} :: #{env['CLIENT_IP']}"
             unless valid_ip(current_ip, env['rack.session']['user_credentials_id'], req_path)
               @status, @headers, @response = set_response(req_path, 403, "/unauthorized.html",
@@ -119,10 +119,6 @@ class Middleware::TrustedIp
     @api_request ||= req_path.starts_with?('/api/')
   end
 
-  def api_v2_request?(req_path)
-    req_path.starts_with?('/api/v2')
-  end
-
   def execute_request(env)
     @status, @headers, @response = @app.call(env)
     [@status, @headers, @response]
@@ -131,9 +127,4 @@ class Middleware::TrustedIp
   def skipped_subdomain?(env)
     SKIPPED_SUBDOMAINS.include?(env["HTTP_HOST"].split(".")[0]) 
   end
-
-  def channel_api?(req_path)
-    req_path.starts_with?('/api/channel/')
-  end
 end
-

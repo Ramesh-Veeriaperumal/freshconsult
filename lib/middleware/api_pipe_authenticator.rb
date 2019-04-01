@@ -1,7 +1,7 @@
 class Middleware::ApiPipeAuthenticator
   include ErrorConstants
   RESPONSE_HEADERS = { 'Content-Type' => 'application/json' }.freeze
-  
+
   def initialize(app)
     @app = app
   end
@@ -9,7 +9,7 @@ class Middleware::ApiPipeAuthenticator
   def call(env)
     @resource = env['PATH_INFO']
     @host = env['HTTP_HOST']
-    unless pipe_request?
+    unless CustomRequestStore.read(:pipe_api_request)
       @status, @headers, @response = @app.call(env)
     else
       secret = env.delete('HTTP_PIPESECRET')
@@ -22,10 +22,6 @@ class Middleware::ApiPipeAuthenticator
       end
     end
     [@status, @headers, @response]
-  end
-
-  def pipe_request?
-    @resource.starts_with?('/api/pipe/')
   end
 
   def set_response(status, headers)

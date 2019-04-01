@@ -53,6 +53,7 @@ class TicketsControllerTest < ActionController::TestCase
   }
 
   def setup
+    CustomRequestStore.store[:private_api_request] = false
     super
     Sidekiq::Worker.clear_all
     before_all

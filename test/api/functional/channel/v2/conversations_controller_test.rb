@@ -109,7 +109,7 @@ module Channel::V2
     end
 
     def test_twitter_dm_as_note_create
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       twitter_handle_id = get_twitter_handle.twitter_user_id
       params_hash = {
@@ -132,12 +132,12 @@ module Channel::V2
       t = Helpdesk::Note.last
       match_json(show_note_pattern(params_hash, Helpdesk::Note.last))
     ensure
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
       @channel_v2_api = false
     end
 
     def test_twitter_mention_as_note_create
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       twitter_handle_id = get_twitter_handle.twitter_user_id
       params_hash = {
@@ -160,12 +160,12 @@ module Channel::V2
       t = Helpdesk::Note.last
       match_json(show_note_pattern(params_hash, Helpdesk::Note.last))
     ensure
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
       @channel_v2_api = false
     end
 
     def test_twitter_note_create_with_invalid_twitter_handle_id
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       twitter_handle_id = Faker::Number.number(3).to_i
       params_hash = {
         body: Faker::Lorem.paragraph,
@@ -188,7 +188,7 @@ module Channel::V2
                                           :invalid_twitter_handle , code: 'invalid_value'))
       match_json(pattern)
     ensure
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
   end
 end

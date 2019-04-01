@@ -39,6 +39,7 @@ class RolesControllerTest < ActionController::TestCase
   end
 
   def test_index
+    CustomRequestStore.store[:private_api_request] = true
     get :index, controller_params
     pattern = []
     Account.current.roles_from_cache.each do |role|
@@ -70,6 +71,7 @@ class RolesControllerTest < ActionController::TestCase
   end
 
   def test_bulk_update_default_agent_role_validation
+    CustomRequestStore.store[:private_api_request] = true
     role = Role.find_by_name('Agent')
     admin_role = Role.first
     post :bulk_update, construct_params({ version: 'private' },
@@ -81,6 +83,7 @@ class RolesControllerTest < ActionController::TestCase
   end
 
   def test_bulk_update_success
+    CustomRequestStore.store[:private_api_request] = true
     role = Role.first
     post :bulk_update, construct_params({ version: 'private' },
       ids: [role.id], options: { privileges: { add: ['manage_availability', 'view_admin']}})

@@ -1,4 +1,3 @@
-
 # functional
 falcon_tests = Dir.glob('test/api/functional/ember/**/*_test.rb')
 
@@ -22,6 +21,7 @@ puts "INFRA: #{$infra}"
 all_tests = ( functional_tests | unit_tests ) - falcon_tests - pipe_tests - search_tests - 
                                                 ignore_tests - channel_v2_tests - 
                                                 channel_v2_funtional_tests
+
 puts 'Public API Test suite - Tests to run'
 puts '*' * 100
 all_tests.each { |file| puts file }

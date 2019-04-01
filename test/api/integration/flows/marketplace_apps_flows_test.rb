@@ -10,6 +10,7 @@ class MarketplaceAppsFlowsTest < ActionDispatch::IntegrationTest
   @@before_all = false
 
   def setup
+    CustomRequestStore.store[:private_api_request] ||= true
     super
     stub_marketplace_response
     before_all

@@ -1,5 +1,6 @@
 class Middleware::PrivateBasicAuth
   include ErrorConstants
+
   RESPONSE_HEADERS = { 'Content-Type' => 'application/json' }.freeze
   BASIC_AUTH_PATTERN = /Basic (.*)/
   ERROR_MESSAGE = { code: :access_denied, message: ErrorConstants::ERROR_MESSAGES[:access_denied] }.to_json.freeze
@@ -11,7 +12,7 @@ class Middleware::PrivateBasicAuth
   def call(env)
     @host = env['HTTP_HOST']
     @auth_header = env['HTTP_AUTHORIZATION']
-    if @auth_header && basic_auth?
+    if CustomRequestStore.read(:private_api_request) && @auth_header && basic_auth?
       Rails.logger.debug "Private API Basic auth error :: Host: #{@host}"
       set_response(403, RESPONSE_HEADERS, ERROR_MESSAGE)
     else

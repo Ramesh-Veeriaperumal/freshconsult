@@ -26,7 +26,7 @@ module ControllerTestHelper
   end
 
   def set_request_auth_headers(user = nil)
-    if $infra['PRIVATE_API']
+    if CustomRequestStore.read(:private_api_request)
       UserSession.any_instance.stubs(:cookie_credentials).returns([(user || @agent).persistence_token, (user || @agent).id])
     else
       auth = ActionController::HttpAuthentication::Basic.encode_credentials((user || @agent).single_access_token, 'X')

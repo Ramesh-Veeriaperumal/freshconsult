@@ -320,7 +320,7 @@ class Archive::TicketsControllerTest < ActionController::TestCase
     end
 
     def requester_hash(ticket, options={})
-      if defined?($infra) && $infra['PRIVATE_API']
+      if CustomRequestStore.read(:private_api_request)
         options[:sideload_options] = ['company'] if @account.multiple_user_companies_enabled?
         ContactDecorator.new(ticket.requester, options).requester_hash
       else

@@ -1147,7 +1147,7 @@ module ApiTicketsTestHelper
   end
 
   def stub_requirements_for_stats
-    $infra['CHANNEL_LAYER'] = true
+    CustomRequestStore.store[:channel_api_request] = true
     @channel_v2_api = true
     TicketDecorator.any_instance.stubs(:private_api?).returns(true)
     Account.any_instance.stubs(:count_es_enabled?).returns(true)
@@ -1161,7 +1161,7 @@ module ApiTicketsTestHelper
     Account.any_instance.unstub(:api_es_enabled?)
     Account.any_instance.unstub(:dashboard_new_alias?)
     @channel_v2_api = false
-    $infra['CHANNEL_LAYER'] = false
+    CustomRequestStore.store[:channel_api_request] = false
   end
 
   def source_additional_info(ticket)

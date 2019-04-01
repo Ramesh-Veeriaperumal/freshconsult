@@ -113,6 +113,6 @@ class ApiValidation
   private
 
     def private_api?
-      $infra['PRIVATE_API']
+      CustomRequestStore.read(:private_api_request)
     end
 end

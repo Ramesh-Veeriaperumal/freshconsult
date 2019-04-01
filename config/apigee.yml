@@ -6,6 +6,10 @@ default: &default
   s3_bucket_name: dummy
   s3_file_name: apigee_domains_file.txt
   url: dummy
+  ips:
+    - '104.196.108.92'
+    - '35.185.49.19'
+
 
 development:
   <<: *default
