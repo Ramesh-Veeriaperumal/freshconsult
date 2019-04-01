@@ -18,7 +18,7 @@ module CoreUsersTestHelper
                         :active => 1,
                         :role => 1,
                         :agent => 1,
-                        :ticket_permission => 1,
+                        :ticket_permission => options[:ticket_permission] || 1,
                         :role_ids => ["#{role_id}"],
                         :agent_type => options[:agent_type] || 1 })
   end
@@ -90,6 +90,18 @@ module CoreUsersTestHelper
     new_user.reload
   end
 
+  def act_as_scoped_agent(permission, &block)
+    user_agent = User.current.agent
+    prev_permission = user_agent.ticket_permission
+    user_agent.ticket_permission = permission
+    user_agent.save
+    ag_grp = AgentGroup.new(user_id: User.current.id , account_id: @account.id, group_id: @account.groups.first.id)
+    ag_grp.save!
+    yield
+  ensure
+    user_agent.ticket_permission = prev_permission
+    user_agent.save
+  end
 
   def add_user_draft_attachments(params={})
     file = File.new(Rails.root.join("spec/fixtures/files/attachment.txt"))

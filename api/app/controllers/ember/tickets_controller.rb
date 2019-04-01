@@ -282,7 +282,7 @@ module Ember
       end
 
       def use_filter_factory?
-        return false if params[:filter] && (['spam', 'deleted'].include? params[:filter].to_s)
+        return false if params[:filter] && default_filter?
         Account.current.filter_factory_enabled? && !params[:ids]
       end
 

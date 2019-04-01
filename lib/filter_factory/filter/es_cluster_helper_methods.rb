@@ -7,7 +7,7 @@ module FilterFactory::Filter
     private
 
       def fetch_fql_condition(field)
-        field_name = fetch_field_name(field)
+        field_name = fetch_field_name(field).to_s
         values = fetch_values(field['value'])
         safe_send("build_#{field['operator']}_query", field_name, values, field['ff_name'])
       end
@@ -71,11 +71,15 @@ module FilterFactory::Filter
       # Modularize
       def encode_value(value)
         # Hack to handle special chars in query
+        return value unless value.is_a? String
+
         value.gsub(/['"\\]/, '\'' => SINGLE_QUOTE, '"' => DOUBLE_QUOTE, '\\' => BACK_SLASH)
       end
 
       def decode_values(values)
         # Hack to handle special characters ' " \ in query
+        return values unless values.is_a? String
+
         values.gsub(SINGLE_QUOTE, '\'').gsub(DOUBLE_QUOTE, '\"').gsub(BACK_SLASH, '\\\\\\\\')
       end
 

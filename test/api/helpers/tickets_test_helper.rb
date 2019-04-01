@@ -644,6 +644,15 @@ module ApiTicketsTestHelper
     end
   end
 
+  def private_api_ticket_index_raw_query_pattern(sql_query)
+    per_page = ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]
+    param_object = OpenStruct.new(stats: true)
+
+    Account.current.tickets.where(sql_query).first(per_page).map do |ticket|
+      index_ticket_pattern_with_associations(ticket, param_object, [:tags])
+    end
+  end
+
   def private_api_ticket_index_first_page_objects(query_hash_params)
     per_page = ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]
     Account.current.tickets.filter(params: query_hash_params, filter: 'Helpdesk::Filters::CustomTicketFilter').first(per_page)
@@ -673,6 +682,15 @@ module ApiTicketsTestHelper
     param_object = OpenStruct.new(stats: true)
 
     ticket_ids = private_api_ticket_index_first_page_objects(query_hash_params).map(&:id)
+    {
+      total: 31,
+      results: ticket_ids.map { |id| { id: id, document: 'ticketanalytics' } }
+    }.to_json
+  end
+
+  def filter_factory_es_cluster_response_with_raw_query_stub(sql_query, wf_order = 'created_at')
+    per_page = ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]
+    ticket_ids = Account.current.tickets.where(sql_query).first(per_page).map(&:id)
     {
       total: 31,
       results: ticket_ids.map { |id| { id: id, document: 'ticketanalytics' } }

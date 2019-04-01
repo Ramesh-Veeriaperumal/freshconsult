@@ -177,7 +177,7 @@ module FilterFactory::Tickets
       end
 
       def fetch_user_group_ids
-        group_ids = User.current.agent_groups.pluck(:id)
+        group_ids = User.current.agent_groups.pluck(:group_id)
         group_ids.blank? ? ['-2'] : group_ids.map(&:to_s)
       end
 

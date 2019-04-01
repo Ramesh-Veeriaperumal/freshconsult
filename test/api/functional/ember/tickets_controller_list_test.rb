@@ -1,5 +1,5 @@
 require_relative '../../test_helper'
-['account_test_helper.rb', 'shared_ownership_test_helper'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
+['account_test_helper.rb', 'shared_ownership_test_helper', 'users_test_helper'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 module Ember
   class TicketsControllerTest < ActionController::TestCase
     include ApiTicketsTestHelper
@@ -12,6 +12,7 @@ module Ember
     include Redis::OthersRedis
     include AccountTestHelper
     include SharedOwnershipTestHelper
+    include CoreUsersTestHelper
 
     CREATED_AT_OPTIONS = %w(
       any_time 5 15 30 60 240 720 1440
@@ -190,9 +191,31 @@ module Ember
       end
     end
 
-    def enable_es_api_load(params, &block)
+    def match_query_response_with_es_enabled_raw_query(query_hash_params, sql_query)
+      enable_es_api_load(query_hash_params, sql_query) do
+        response_stub = filter_factory_es_cluster_response_with_raw_query_stub(sql_query)
+        SearchService::Client.any_instance.stubs(:query).returns(SearchService::Response.new(response_stub))
+        SearchService::Response.any_instance.stubs(:records).returns(JSON.parse(response_stub))
+        get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
+        assert_response 200
+        match_json(private_api_ticket_index_raw_query_pattern(sql_query))
+      end
+    end
+
+    def match_db_and_es_query_responses_with_raw_query(query_hash_params, sql_query)
+      # Runs on DB and fetches records
+      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
+      assert_response 200
+      match_json(private_api_ticket_index_raw_query_pattern(sql_query))
+      # Checks for ES response
+      match_query_response_with_es_enabled_raw_query(query_hash_params, sql_query)
+    end
+
+    def enable_es_api_load(params, sql_query = nil, &block)
+      Account.current.launch(:filter_factory)
       Account.current.launch(:new_es_api)
       yield if block_given?
+      Account.current.rollback(:filter_factory)
       Account.current.rollback(:new_es_api)
     end
 
@@ -405,6 +428,37 @@ module Ember
         '1' => query_hash_param('test_custom_dropdown', 'is_in', [DROPDOWN_OPTIONS.sample], 'custom_field')
       }
       match_db_and_es_query_responses(query_hash_params)
+    end
+
+    def test_restricted_group_access_agent_filter
+      act_as_scoped_agent(2) do
+        status_id = @account.ticket_statuses.first.status_id
+        query_hash_params = { '0' => query_hash_param('status', 'is_in', [status_id]) }
+        agent_groups = User.current.agent.agent_groups.map(&:group_id).unshift(0)
+        query_template = "status in (%{status_id}) and (group_id in (%{group_id}) or internal_group_id in (%{group_id}) or responder_id in (%{agent_id}) or internal_agent_id in (%{agent_id}))"
+        sql_query = format(query_template, status_id: status_id, group_id: agent_groups.join(','), agent_id: User.current.id)
+        match_db_and_es_query_responses_with_raw_query(query_hash_params, sql_query)
+      end
+    end
+
+    def test_restricted_restricted_access_agent_filter
+      act_as_scoped_agent(3) do
+        status_id = @account.ticket_statuses.first.status_id
+        query_hash_params = { '0' => query_hash_param('status', 'is_in', [status_id]) }
+        query_template = "status in (%{status_id}) and (responder_id in (%{agent_id}) or internal_agent_id in (%{agent_id}))"
+        sql_query = format(query_template, status_id: status_id, agent_id: User.current.id)
+        match_db_and_es_query_responses_with_raw_query(query_hash_params, sql_query)
+      end
+    end
+
+    def test_restricted_global_access_agent_filter
+      act_as_scoped_agent(1) do
+        status_id = @account.ticket_statuses.first.status_id
+        query_hash_params = { '0' => query_hash_param('status', 'is_in', [status_id]) }
+        query_template = "status in (%{status_id})"
+        sql_query = format(query_template, status_id: status_id)
+        match_db_and_es_query_responses_with_raw_query(query_hash_params, sql_query)
+      end
     end
 
     def test_all_filters
