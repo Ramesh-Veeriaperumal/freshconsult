@@ -611,7 +611,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
       pv.sub_picklist_values.each do |l2pv|
         l2value = l2pv.value.downcase
         choice_hash[l2value] ||= {}
-        choice_hash[l2value][pv.value] = l2pv.picklist_id
+        choice_hash[l2value][pv.value.downcase] = l2pv.picklist_id
       end
     end
     choice_hash
@@ -626,7 +626,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
           l2value = l2pv.value.downcase
           choice_hash[l3value] ||= {}
           choice_hash[l3value][l2value] ||= {}
-          choice_hash[l3value][l2value][pv.value] = l3pv.picklist_id
+          choice_hash[l3value][l2value][pv.value.downcase] = l3pv.picklist_id
         end
       end
     end
