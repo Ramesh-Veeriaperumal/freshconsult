@@ -12,6 +12,8 @@ class CustomInclusionValidator < ApiValidator
     end
 
     def modified_inclusion_list
+      Rails.logger.debug "inside modified_inclusion_list"
+      Rails.logger.debug inclusion_list.inspect
       modified_inclusion_list = inclusion_list
       modified_inclusion_list |= modified_inclusion_list.map(&:to_s) if allow_string?
       modified_inclusion_list = modified_inclusion_list.collect { |x| x.is_a?(String) ? x.downcase : x }

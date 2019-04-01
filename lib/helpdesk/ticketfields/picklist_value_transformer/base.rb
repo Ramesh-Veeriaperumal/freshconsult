@@ -30,6 +30,14 @@ class Helpdesk::Ticketfields::PicklistValueTransformer::Base
       @ids_by_value_from_cache ||= MemcacheKeys.get_multi_from_cache(ticket_fields.map(&:picklist_ids_by_value_key))
     end
 
+    def values_by_id_from_cache
+      @values_by_id_from_cache ||= MemcacheKeys.get_multi_from_cache(ticket_fields.map(&:picklist_values_by_id_key))
+    end
+
+    def ids_by_value_from_cache
+      @ids_by_value_from_cache ||= MemcacheKeys.get_multi_from_cache(ticket_fields.map(&:picklist_ids_by_value_key))
+    end
+
     def account
       Account.current
     end

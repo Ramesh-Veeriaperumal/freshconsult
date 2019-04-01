@@ -141,12 +141,19 @@ module Marketplace::ApiUtil
       end
     end
 
+    def call_api(key, expiry)
+      api_response = yield
+      MemcacheKeys.cache(key, cache_data = api_response, expiry) if api_response && [200, 201].include?(api_response.status)
+      cache_data
+    end
+
     # Memcache for API calls - Checks for API Response Status and Cache only Successful Requests
-    def mkp_memcache_fetch(key, expiry=0, &block)
-      cache_data = MemcacheKeys.get_from_cache(key)
-      if cache_data.nil?
-        api_response = block.call
-        MemcacheKeys.cache(key, cache_data = api_response, expiry) if api_response && [200,201].include?(api_response.status)
+    def mkp_memcache_fetch(key, expiry=0, force = false)
+      if force
+        cache_data = call_api(key, expiry, &Proc.new)
+      else
+        cache_data = MemcacheKeys.get_from_cache(key)
+        cache_data = call_api(key, expiry, &Proc.new) if cache_data.nil?
       end
       cache_data
     end

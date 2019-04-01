@@ -318,6 +318,10 @@ class Helpdesk::TicketField < ActiveRecord::Base
   def dropdown_choices_with_id
     level1_picklist_values.collect { |c| [c.id, c.value] }
   end
+
+  def dropdown_choices_with_picklist_id
+    level1_picklist_values.collect { |c| [c.picklist_id, c.picklist_id] }
+  end
   
   def nested_choices_with_id
     self.picklist_values.collect { |c| 

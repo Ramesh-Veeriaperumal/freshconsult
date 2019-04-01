@@ -40,13 +40,13 @@ class Fdadmin::FreshopsPodController < Fdadmin::DevopsMainController
   end
 
   def create_hoot_suite_user
-    Integrations::HootsuiteRemoteUser.new(params[:hootsuite_remote_user]).save
+    Integrations::HootsuiteRemoteUser.new(validate_integration_params(params[:hootsuite_remote_user])).save
   end
 
   def create_shopify_user
     shopify_account = Integrations::ShopifyRemoteUser.find_by_account_id(params[:shopify_remote_user][:account_id])
     shopify_account ? shopify_account.remote_id = params[:shopify_remote_user][:remote_id] : 
-    shopify_account = Integrations::ShopifyRemoteUser.new(params[:shopify_remote_user])
+    shopify_account = Integrations::ShopifyRemoteUser.new(validate_integration_params(params[:shopify_remote_user]))
     shopify_account.save
   end
 
@@ -56,7 +56,7 @@ class Fdadmin::FreshopsPodController < Fdadmin::DevopsMainController
       quickbooks_account.account_id = params[:quickbooks_remote_user][:account_id]
       quickbooks_account.configs = params[:quickbooks_remote_user][:configs]
     else
-      quickbooks_account = Integrations::QuickbooksRemoteUser.new(params[:quickbooks_remote_user])
+      quickbooks_account = Integrations::QuickbooksRemoteUser.new(validate_integration_params(params[:quickbooks_remote_user]))
     end
     quickbooks_account.save
   end
@@ -66,13 +66,13 @@ class Fdadmin::FreshopsPodController < Fdadmin::DevopsMainController
     if slack_account 
       slack_account.remote_id = params[:slack_remote_user][:remote_id]
     else
-      slack_account = Integrations::SlackRemoteUser.new(params[:slack_remote_user])
+      slack_account = Integrations::SlackRemoteUser.new(validate_integration_params(params[:slack_remote_user]))
     end
     slack_account.save
   end
 
   def create_global_ebay_integration
-   Ecommerce::EbayRemoteUser.new(params[:ebay_remote_user]).save
+   Ecommerce::EbayRemoteUser.new(validate_integration_params(params[:ebay_remote_user])).save
   end
 
   def remove_remote_integration_mapping
@@ -146,6 +146,10 @@ class Fdadmin::FreshopsPodController < Fdadmin::DevopsMainController
 
   def validate_endpoint
     return VALID_METHODS.include?(params[:target_method])
+  end
+
+  def validate_integration_params(params)
+    params.permit(:remote_id, :configs, :type, :account_id)
   end
 
 end

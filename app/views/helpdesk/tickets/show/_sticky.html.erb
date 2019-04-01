@@ -1,3 +1,4 @@
+<% ticket_source =  5 %>
 <div id="sticky_header"  rel="sticky" data-scroll-top = "true" class="tkt-details-sticky btn-collapse" data-sticky-bottom="true" data-class-for-btn-wrapper="ticket-btns" data-button-text="<%= t("more") %>">
 	<div class="sticky_right">
 		<div class="status_info">
@@ -66,7 +67,9 @@
 				<li class="ticket-btns">
 					<div class="btn-group">
 						<% if privilege?(:reply_ticket)  && (@ticket.twitter? or @ticket.facebook? or @item.from_email.present? or @ticket.mobihelp? or @ticket.allow_ecommerce_reply?) %>
-							<a class="btn tooltip btn-collapse" title='<%= t('ticket.reply_to') %>' data-placement = "below" 
+							<% disabled = is_twitter_blocked? ? "disabled" : "" %>
+							<% disabled = @ticket.source == ticket_source ? disabled : "" %>
+							<a class="btn tooltip btn-collapse <%= disabled %>" title='<%= t('ticket.reply_to') %>' data-placement = "below" 
 					  		rel="note-button" data-note-type="reply" id="ReplyButton"  data-keybinding="<%= shortcut('ticket_detail.reply') %>" 
 					  		data-highlight="true" data-user='' data-domhelper-name="reply-sticky-button"
 							  data-replyto-handle="<%= @ticket.twitter? ? "#{default_twitter_body_val(@ticket)} " : "" %>" >

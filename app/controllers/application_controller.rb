@@ -136,6 +136,7 @@ class ApplicationController < ActionController::Base
     begin
       current_account.make_current
       User.current = current_user
+      log_session_details(:set_current_account) if Account.current.session_logs_enabled?
     rescue ActiveRecord::RecordNotFound
     rescue ActiveSupport::MessageVerifier::InvalidSignature
       @destroy_session = true
@@ -271,6 +272,7 @@ class ApplicationController < ActionController::Base
 
     def handle_unverified_request
       super
+      log_session_details(:handle_unverified_request) if Account.current.session_logs_enabled?
       Rails.logger.error "CSRF TOKEN NOT SET #{params.inspect}"
       if @destroy_session
         cookies.delete 'user_credentials'     
@@ -365,6 +367,10 @@ class ApplicationController < ActionController::Base
 
     def non_covered_admin_feature
       redirect_to admin_home_index_path
+    end
+
+    def log_session_details(parent)
+      Rails.logger.info "Session details logging :: #{parent} :: #{request.headers['X-CSRF-Token']} :: #{session.inspect}"
     end
 
     def log_csrf
