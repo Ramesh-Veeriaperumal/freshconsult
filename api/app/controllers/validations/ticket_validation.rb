@@ -14,7 +14,7 @@ class TicketValidation < ApiValidation
                 :product, :tags, :custom_fields, :attachments, :request_params, :item, :statuses, :status_ids, :ticket_fields, :company_id, :scenario_id,
                 :primary_id, :ticket_ids, :note_in_primary, :note_in_secondary, :convert_recepients_to_cc, :cloud_files, :skip_close_notification,
                 :related_ticket_ids, :internal_group_id, :internal_agent_id, :parent_template_id, :child_template_ids, :template_text,
-                :unique_external_id, :skill_id, :parent_id, :inline_attachment_ids, :tracker_id
+                :unique_external_id, :skill_id, :parent_id, :inline_attachment_ids, :tracker_id, :version
 
   alias_attribute :type, :ticket_type
   alias_attribute :product_id, :product
@@ -254,6 +254,7 @@ class TicketValidation < ApiValidation
     @product = item.product_id if !request_params.key?(:product_id) && item.try(:product_id)
     @item = item
     @additional_params = additional_params
+    @version = @additional_params[:version]
     fill_custom_fields(request_params, item.custom_field_via_mapping) if item && item.custom_field_via_mapping.present?
   end
 
@@ -321,12 +322,7 @@ class TicketValidation < ApiValidation
   end
 
   def required_default_fields
-    case validation_context
-    when :proactive_rule_update
-      []
-    else
-      ticket_fields.select { |x| x.default && (x.required || (x.required_for_closure && closure_status?)) }
-    end
+    tickets_api_relaxation_enabled? ? public_api_relaxed_required_default_fields : api_required_default_fields
   end
 
   def default_fields_to_validate
@@ -432,4 +428,43 @@ class TicketValidation < ApiValidation
   def date_time_regex_check(value)
     value.match(TicketConstants::DATE_TIME_REGEX).present?
   end
+
+  def public_api_relaxed_required_default_fields
+    case validation_context
+    when :create
+      mandatory_default_ticket_fields = Helpdesk::TicketField.where(name: ApiTicketConstants::TICKETS_API_RELAXATION_MANDATORY_FIELDS_FOR_CREATE)
+      mandatory_default_ticket_fields + required_for_closure_default_fields
+    when :update
+      required_for_closure_default_fields
+    else
+      required_for_submit_or_closure_default_fields
+    end
+  end
+
+  def api_required_default_fields
+    case validation_context
+    when :proactive_rule_update
+      []
+    else
+      required_for_submit_or_closure_default_fields
+    end
+  end
+
+  def required_for_submit_or_closure_default_fields
+    ticket_fields.select { |x| x.default && (x.required || (x.required_for_closure && closure_status?)) }
+  end
+
+  def required_for_closure_default_fields
+    ticket_fields.select { |x| x.default && (x.required_for_closure && closure_status?) }
+  end
+
+  private
+
+    def tickets_api_relaxation_enabled?
+      public_api? && User.current.tickets_api_relaxation?
+    end
+
+    def public_api?
+      @version == 'v2'
+    end
 end

@@ -878,6 +878,10 @@ class ApiApplicationController < MetalApiController
       @private_api ||= params[:version].to_sym == :private
     end
 
+    def public_api?
+      @public_api ||= params[:version].to_sym == :v2
+    end
+
     def import_api?
       params[:import_id].present?
     end
