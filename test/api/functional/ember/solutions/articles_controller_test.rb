@@ -406,6 +406,104 @@ module Ember
         Solution::ArticleMeta.any_instance.unstub(:save!)
       end
 
+      def test_reset_ratings_with_incorrect_credentials
+        @controller.stubs(:api_current_user).raises(ActiveSupport::MessageVerifier::InvalidSignature)
+        put :reset_ratings, construct_params(version: 'private', id: 1)
+        assert_response 401
+        assert_equal request_error_pattern(:credentials_required).to_json, response.body
+      ensure
+        @controller.unstub(:api_current_user)
+      end
+
+      def test_reset_ratings_without_delete_solution_privilege
+        User.any_instance.stubs(:privilege?).with(:delete_solution).returns(false)
+        put :reset_ratings, construct_params(version: 'private', id: 1)
+        assert_response 403
+        match_json(request_error_pattern(:access_denied))
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_reset_ratings_without_access
+        user = add_new_user(@account, active: true)
+        login_as(user)
+        put :reset_ratings, construct_params(version: 'private', id: 1)
+        assert_response 403
+        match_json(request_error_pattern(:access_denied))
+        @admin = get_admin
+        login_as(@admin)
+      end
+
+      def test_reset_ratings_for_non_existant_article
+        put :reset_ratings, construct_params(version: 'private', id: 0)
+        assert_response 404
+      end
+
+      def test_reset_ratings_with_invalid_field
+        put :reset_ratings, construct_params(version: 'private', id: 1, test: 'test')
+        assert_response 400
+        match_json([bad_request_error_pattern('test', :invalid_field)])
+      end
+
+      def test_reset_ratings_for_an_article_with_no_ratings
+        article = create_article(article_params)
+        put :reset_ratings, construct_params(version: 'private', id: article.id)
+        assert_response 400
+        match_json([bad_request_error_pattern('id', :no_ratings)])
+      end
+
+      def test_reset_ratings
+        article = create_article(article_params)
+        article.primary_article.thumbs_up!
+        article.primary_article.thumbs_down!
+        put :reset_ratings, construct_params(version: 'private', id: article.id)
+        assert_response 204
+        article.reload
+        assert_equal 0, article.primary_article.thumbs_up
+        assert_equal 0, article.primary_article.thumbs_down
+      end
+
+      def test_reset_ratings_with_language_without_multilingual_feature
+        allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
+        Account.any_instance.stubs(:features).returns(allowed_features)
+        put :reset_ratings, construct_params(version: 'private', id: 0, language: @account.language)
+        match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
+        assert_response 404
+      ensure
+        Account.any_instance.unstub(:features)
+      end
+
+      def test_reset_ratings_with_invalid_language
+        put :reset_ratings, construct_params(version: 'private', id: 0, language: 'test')
+        assert_response 404
+        match_json(request_error_pattern(:language_not_allowed, code: 'test', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
+      end
+
+      def test_reset_ratings_with_primary_language
+        article = create_article(article_params)
+        article.primary_article.thumbs_up!
+        article.primary_article.thumbs_down!
+        put :reset_ratings, construct_params(version: 'private', id: article.id, language: @account.language)
+        assert_response 204
+        article.reload
+        assert_equal 0, article.primary_article.thumbs_up
+        assert_equal 0, article.primary_article.thumbs_down
+      end
+
+      def test_reset_ratings_with_supported_language
+        languages = @account.supported_languages << 'primary'
+        language = @account.supported_languages.first
+        article_meta = create_article(article_params(lang_codes: languages))
+        article = article_meta.safe_send("#{language}_article")
+        article.thumbs_up!
+        article.thumbs_down!
+        put :reset_ratings, construct_params(version: 'private', id: article_meta.id, language: language)
+        assert_response 204
+        article.reload
+        assert_equal 0, article.thumbs_up
+        assert_equal 0, article.thumbs_down
+      end
+
       def test_votes_with_incorrect_credentials
         @controller.stubs(:api_current_user).raises(ActiveSupport::MessageVerifier::InvalidSignature)
         get :votes, controller_params(version: 'private', id: 1)

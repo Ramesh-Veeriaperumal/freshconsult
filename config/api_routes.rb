@@ -315,6 +315,7 @@ Helpkit::Application.routes.draw do
           end
           member do
             get :article_content
+            put :reset_ratings, path: '(:language)/reset_ratings'
             get :votes, path: '(:language)/votes'
           end
         end

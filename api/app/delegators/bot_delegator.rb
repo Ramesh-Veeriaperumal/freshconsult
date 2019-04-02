@@ -1,11 +1,10 @@
 class BotDelegator < BaseDelegator
   validate :can_create_bot?, if: :portal_id_dependant_actions
-  validate :validate_attachment, if: :create_or_update
+  validate :validate_attachment, if: :create_or_update?
   validate :validate_categories, on: :map_categories
   validate :validate_mock_data, on: :remove_analytics_mock_data
 
   NEW_AND_CREATE_ACTIONS = %i[new create].freeze
-  CREATE_AND_UPDATE_ACTIONS = %i[create update].freeze
 
   def initialize(record, options = {})
     @item = record
@@ -42,9 +41,5 @@ class BotDelegator < BaseDelegator
 
     def portal_id_dependant_actions
       NEW_AND_CREATE_ACTIONS.include?(validation_context)
-    end
-
-    def create_or_update
-      CREATE_AND_UPDATE_ACTIONS.include?(validation_context)
     end
 end

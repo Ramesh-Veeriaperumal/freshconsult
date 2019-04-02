@@ -318,6 +318,8 @@
   $ref: ./solutions/article/list.yaml
 /solutions/articles/{id}/article_content:
   $ref: ./solutions/article/content.yaml
+/solutions/articles/{id}/reset_ratings:
+  $ref: ./solutions/reset_ratings.yaml
 /solutions/articles/{id}/votes:
   $ref: ./solutions/article/votes.yaml
 

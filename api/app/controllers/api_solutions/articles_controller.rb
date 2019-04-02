@@ -113,7 +113,7 @@ module ApiSolutions
         delegator_params[:folder_name] = params[cname]['folder_name'] if params[cname].key?('folder_name')
         delegator_params[:category_name] = params[cname]['category_name'] if params[cname].key?('category_name')
         delegator_params[:user_id] = @article_params[language_scoper][:user_id] if @article_params[language_scoper] && @article_params[language_scoper][:user_id]
-        ArticleDelegator.new(delegator_params)
+        ArticleDelegator.new(nil, delegator_params)
       end
 
       def before_load_object

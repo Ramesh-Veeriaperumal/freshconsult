@@ -204,6 +204,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :'ember/solutions/article', only: %i[bulk_update create update]
   end
 
+  delete_solution do
+    resource :'ember/solutions/article', only: %i[reset_ratings]
+  end
+
   view_reports do
     resource :"ember/dashboard", only: %i[unresolved_tickets_data ticket_trends ticket_metrics]
     resource :"ember/year_in_review", only: [:share]

@@ -277,6 +277,8 @@ api_error_messages:
   invalid_twitter_handle: "Twitter handle doesn't exist"
   # Solutions
   invalid_portal_id: 'Portal id is invalid'
+  no_ratings: "The article doesn't have any ratings to be reset"
+
   field_validation_for_email: "It should not be blank as this is a mandatory field for sending email"
 
 
@@ -287,4 +289,3 @@ api_error_messages:
   primary_or_supported: "Primary and supported/portal languages must be modified individually"
 
   invalid_ebay_ticket_source: "Invalid ticket source"
-

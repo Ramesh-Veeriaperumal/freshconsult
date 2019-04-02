@@ -38,6 +38,14 @@ module Ember
         render_bulk_action_response(@succeeded_list, @failed_list)
       end
 
+      def reset_ratings
+        validate_request_params
+        @delegator_klass = 'ApiSolutions::ArticleDelegator'
+        return unless validate_delegator(@item)
+
+        @item.reset_ratings ? (head 204) : render_errors(@item.errors)
+      end
+
       def self.wrap_params
         ::SolutionConstants::ARTICLE_WRAP_PARAMS
       end
@@ -85,6 +93,10 @@ module Ember
           options = {}
           options[:user] = @user if @user
           [::Solutions::ArticleDecorator, options]
+        end
+
+        def validate_request_params
+          params[cname].permit([])
         end
 
         # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.

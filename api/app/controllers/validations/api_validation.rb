@@ -11,6 +11,7 @@ class ApiValidation
 
   FORMATTED_TYPES = [ActiveSupport::TimeWithZone].freeze
   CHECK_PARAMS_SET_FIELDS = [].freeze
+  CREATE_AND_UPDATE_ACTIONS = %i[create update].freeze
 
   # Set instance variables of validation class from request params or items. so that manual assignment is not needed.
   def initialize(request_params, item = nil, allow_string_param = false)
@@ -114,5 +115,9 @@ class ApiValidation
 
     def private_api?
       CustomRequestStore.read(:private_api_request)
+    end
+
+    def create_or_update?
+      CREATE_AND_UPDATE_ACTIONS.include?(validation_context)
     end
 end

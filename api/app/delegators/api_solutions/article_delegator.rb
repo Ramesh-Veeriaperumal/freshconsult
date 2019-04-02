@@ -2,13 +2,15 @@ module ApiSolutions
   class ArticleDelegator < BaseDelegator
     attr_accessor :folder_name, :category_name
     validate :agent_exists?, if: -> { @agent_id && errors[:agent_id].blank? }
-    validates :folder_name, custom_absence: { message: :translation_available_already }, if: -> { secondary_language? && folder_exists? }
-    validates :category_name, custom_absence: { message: :translation_available_already }, if: -> { secondary_language? && category_exists? }
-    validates :folder_name, required: { message: :translation_not_available }, if: -> { secondary_language? && !folder_exists? }
-    validates :category_name, required: { message: :translation_not_available }, if: -> { secondary_language? && !category_exists? }
+    validates :folder_name, custom_absence: { message: :translation_available_already }, if: -> { create_or_update? && secondary_language? && folder_exists? }
+    validates :category_name, custom_absence: { message: :translation_available_already }, if: -> { create_or_update? && secondary_language? && category_exists? }
+    validates :folder_name, required: { message: :translation_not_available }, if: -> { create_or_update? && secondary_language? && !folder_exists? }
+    validates :category_name, required: { message: :translation_not_available }, if: -> { create_or_update? && secondary_language? && !category_exists? }
     validate :create_tag_permission, if: -> { @tags }
+    validate :validate_ratings, on: :reset_ratings
 
-    def initialize(params)
+    def initialize(record, params = {})
+      @item = record
       @agent_id = params[:user_id]
       @folder_name = params[:folder_name]
       @category_name = params[:category_name]
@@ -43,6 +45,10 @@ module ApiSolutions
         errors[:tags] << "cannot_create_new_tag"
         @error_options[:tags] = { tags: new_tag.name }
       end 
+    end
+
+    def validate_ratings
+      errors[:id] << :no_ratings unless @item.thumbs_up > 0 || @item.thumbs_down > 0
     end
   end
 end
