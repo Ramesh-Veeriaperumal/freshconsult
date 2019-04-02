@@ -1,12 +1,14 @@
 class ApiSolutions::ArticleValidation < ApiValidation
-  CHECK_PARAMS_SET_FIELDS = %w(type folder_name category_name).freeze
+  CHECK_PARAMS_SET_FIELDS = %w[type folder_name category_name].freeze
   attr_accessor :title, :description, :agent_id, :status, :type, :tags,
                 :seo_data, :meta_title, :meta_keywords, :meta_description,
-                :folder_name, :category_name, :attachments, :item, :attachable
+                :folder_name, :category_name, :attachments, :attachments_list, :cloud_file_attachments, :folder_id, :unlock, :item, :attachable
 
-  validates :title, data_type: { rules: String, required: true }, custom_length: { maximum: SolutionConstants::TITLE_MAX_LENGTH, minimum: SolutionConstants::TITLE_MIN_LENGTH, message: :too_long_too_short }
+  validates :title, required: true, on: :create
+  validates :title, data_type: { rules: String }, custom_length: { maximum: SolutionConstants::TITLE_MAX_LENGTH, minimum: SolutionConstants::TITLE_MIN_LENGTH, message: :too_long_too_short }
   validates :meta_title, data_type: { rules: String, allow_nil: true }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
-  validates :description, data_type: { rules: String, required: true }
+  validates :description, required: true, on: :create
+  validates :description, data_type: { rules: String }
   validates :meta_description, data_type: { rules: String, allow_nil: true }
   validates :agent_id, custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param }, on: :update
   validates :status, custom_inclusion: {
@@ -17,7 +19,7 @@ class ApiSolutions::ArticleValidation < ApiValidation
   }
 
   # type is allowed only during creation/alteration of article in primary language
-  validates :type, required: true, if: -> { @lang_id == Account.current.language_object.id }, on: :create
+  # validates :type, required: true, if: -> { @lang_id == Account.current.language_object.id }, on: :create
   validates :type, custom_absence: { message: :cant_set_for_secondary_language }, if: -> { @lang_id != Account.current.language_object.id }
   validates :type, custom_inclusion: {
     in: Solution::Article::TYPE_NAMES_BY_KEY.keys,
@@ -47,10 +49,20 @@ class ApiSolutions::ArticleValidation < ApiValidation
     base_size: proc { |x| ValidationHelper.attachment_size(x.attachable) }
   }
 
+  validates :attachments_list, data_type: { rules: Array, allow_nil: false }, array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: false } }
+  validates :cloud_file_attachments, data_type: { rules: Array, allow_nil: false }
+  validates :cloud_file_attachments, array: { data_type: { rules: Hash, allow_nil: false } }
+  validate :validate_cloud_files, if: -> { cloud_file_attachments.present? && errors[:cloud_file_attachments].blank? }
+  validates :folder_id, data_type: { rules: Integer, allow_nil: false }
+
   def initialize(request_params, article, attachable, lang_id, allow_string_param = false)
     super(request_params, article, allow_string_param)
     @lang_id = lang_id
     @attachable = attachable
+    @attachments_list = request_params[:attachments_list] if request_params[:attachments_list]
+    @cloud_file_attachments = request_params[:cloud_file_attachments] if request_params[:cloud_file_attachments]
+    @folder_id = request_params[:folder_id] if request_params[:folder_id]
+    @unlock = request_params[:unlock] if request_params[:unlock]
 
     if request_params[:seo_data].is_a?(Hash)
       seo_data = request_params[:seo_data]
@@ -64,5 +76,14 @@ class ApiSolutions::ArticleValidation < ApiValidation
 
     def attributes_to_be_stripped
       SolutionConstants::ARTICLE_ATTRIBUTES_TO_BE_STRIPPED
+    end
+
+    def validate_cloud_files
+      cloud_file_hash_errors = []
+      @cloud_file_attachments.each_with_index do |cloud_file, index|
+        cloud_file_validator = CloudFileValidation.new(cloud_file, nil)
+        cloud_file_hash_errors << cloud_file_validator.errors.full_messages unless cloud_file_validator.valid?
+      end
+      errors[:cloud_file_attachments] << :"is invalid" if cloud_file_hash_errors.present?
     end
 end

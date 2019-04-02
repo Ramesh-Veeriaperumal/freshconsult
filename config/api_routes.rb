@@ -304,12 +304,14 @@ Helpkit::Application.routes.draw do
           end
         end
         resources :folders, controller: 'ember/solutions/folders', only: [:index, :show, :create, :update, :destroy] do
+          member do
+            resources :articles, controller: 'ember/solutions/articles', only: [:create]
+          end
           collection do
             put :bulk_update
           end
         end
-
-        resources :articles, controller: 'ember/solutions/articles', only: [:index] do
+        resources :articles, controller: 'ember/solutions/articles', only: [:index, :show, :update, :destroy] do
           collection do
             put :bulk_update
           end
@@ -319,7 +321,6 @@ Helpkit::Application.routes.draw do
             get :votes, path: '(:language)/votes'
           end
         end
-
         resources :drafts, controller: 'ember/solutions/drafts', only: [:index]
       end
     end

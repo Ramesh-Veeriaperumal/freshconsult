@@ -314,8 +314,6 @@
   $ref: ./surveys/crud.yaml
 
 #Solutions
-/solutions/articles:
-  $ref: ./solutions/article/list.yaml
 /solutions/articles/{id}/article_content:
   $ref: ./solutions/article/content.yaml
 /solutions/articles/{id}/reset_ratings:
@@ -610,12 +608,15 @@
   $ref: ./solutions/folder/create_index.yaml
 /solutions/folders/{id}:
   $ref: ./solutions/folder/read_update_delete.yaml
+/solutions/articles:
+  $ref: ./solutions/article/list_and_create.yaml
+/solutions/articles/{id}:
+  $ref: ./solutions/article/crud.yaml
 /solutions/folders/bulk_update:
   $ref: ./solutions/folder/bulk_update.yaml
 /solutions/articles/bulk_update:
   $ref: ./solutions/article/bulk_update.yaml
 /solutions/drafts:
   $ref: ./solutions/drafts/index.yaml
-
 /configs/{id}:
   $ref: ./configs/show.yaml

@@ -37,9 +37,10 @@ module Ember
       def test_index
         get :index, controller_params(version: 'private', portal_id: @account.main_portal.id)
         assert_response 200
-        assert_equal parse_response(@response.body).size, ApiSolutions::DraftConstants::RECENT_DRAFTS_LIMIT
         drafts = get_my_drafts
         assert_equal response.api_meta[:count], drafts.size
+        pattern = drafts.first(3).map { |draft| private_api_solution_article_pattern(draft.article, {}, true, nil, draft) }
+        match_json(pattern)
       end
 
       def test_index_without_privilege

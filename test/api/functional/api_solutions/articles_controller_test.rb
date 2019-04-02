@@ -15,11 +15,11 @@ module ApiSolutions
     def initial_setup
       return if @@initial_setup_run
       additional = @account.account_additional_settings
-      additional.supported_languages = ["es","ru-RU"]
+      additional.supported_languages = ['es', 'ru-RU']
       additional.save
       @account.features.enable_multilingual.create
       subscription = @account.subscription
-      subscription.state = "active"
+      subscription.state = 'active'
       subscription.save
       @account.reload
       setup_articles
@@ -52,8 +52,8 @@ module ApiSolutions
       @articlemeta.save
 
       @article = Solution::Article.new
-      @article.title = "Sample"
-      @article.description = "<b>aaa</b>"
+      @article.title = 'Sample'
+      @article.description = '<b>aaa</b>'
       @article.status = 1
       @article.language_id = @account.language_object.id
       @article.parent_id = @articlemeta.id
@@ -70,8 +70,8 @@ module ApiSolutions
       temp_article_meta.save
 
       temp_article = Solution::Article.new
-      temp_article.title = "Sample article without draft"
-      temp_article.description = "<b>Test</b>"
+      temp_article.title = 'Sample article without draft'
+      temp_article.description = '<b>Test</b>'
       temp_article.status = 2
       temp_article.language_id = @account.language_object.id
       temp_article.parent_id = temp_article_meta.id
@@ -82,14 +82,14 @@ module ApiSolutions
       @draft = Solution::Draft.new
       @draft.account = @account
       @draft.article = @article
-      @draft.title = "Sample"
+      @draft.title = 'Sample'
       @draft.category_meta = Solution::FolderMeta.first.solution_category_meta
       @draft.status = 1
       @draft.save
 
       @draft_body = Solution::DraftBody.new
       @draft_body.draft = @draft
-      @draft_body.description = "<b>aaa</b>"
+      @draft_body.description = '<b>aaa</b>'
       @draft_body.account = @account
       @draft_body.save
     end
@@ -99,27 +99,27 @@ module ApiSolutions
     end
 
     def get_article
-      @account.solution_category_meta.where(is_default: false).collect{ |x| x.solution_folder_meta }.flatten.map{ |x| x unless x.is_default}.collect{ |x| x.solution_article_meta }.flatten.collect{ |x| x.children }.flatten.first
+      @account.solution_category_meta.where(is_default: false).collect(&:solution_folder_meta).flatten.map { |x| x unless x.is_default }.collect(&:solution_article_meta).flatten.collect(&:children).flatten.first
     end
 
     def get_article_without_draft
-      article = @account.solution_category_meta.where(is_default: false).collect{ |x| x.solution_folder_meta }.flatten.map{ |x| x unless x.is_default}.collect{ |x| x.solution_article_meta }.flatten.collect{ |x| x.children }.flatten.first
+      article = @account.solution_category_meta.where(is_default: false).collect(&:solution_folder_meta).flatten.map { |x| x unless x.is_default }.collect(&:solution_article_meta).flatten.collect(&:children).flatten.first
       article.draft.destroy if article.draft.present?
       article.reload
     end
 
     def get_article_with_draft
-      article = @account.solution_category_meta.where(is_default: false).collect{ |x| x.solution_folder_meta }.flatten.map{ |x| x unless x.is_default}.collect{ |x| x.solution_article_meta }.flatten.collect{ |x| x.children }.flatten.first
-      unless article.draft.present?
+      article = @account.solution_category_meta.where(is_default: false).collect(&:solution_folder_meta).flatten.map { |x| x unless x.is_default }.collect(&:solution_article_meta).flatten.collect(&:children).flatten.first
+      if article.draft.blank?
         draft = article.build_draft_from_article
-        draft.title = "Sample"
+        draft.title = 'Sample'
         draft.save
       end
       article.reload
     end
 
     def get_folder_meta
-      @account.solution_category_meta.where(is_default: false).collect{ |x| x.solution_folder_meta }.flatten.map{ |x| x unless x.is_default}.first
+      @account.solution_category_meta.where(is_default: false).collect(&:solution_folder_meta).flatten.map { |x| x unless x.is_default }.first
     end
 
     def get_category_with_folders
@@ -135,16 +135,15 @@ module ApiSolutions
     end
 
     def get_article_without_translation
-      @account.solution_category_meta.where(is_default:false).collect{ |x| x.solution_article_meta }.flatten.map{ |x| x.children if x.children.count == 1}.flatten.reject(&:blank?).first
+      @account.solution_category_meta.where(is_default: false).collect(&:solution_article_meta).flatten.map { |x| x.children if x.children.count == 1 }.flatten.reject(&:blank?).first
     end
 
     def get_article_with_translation
-      @account.solution_category_meta.where(is_default:false).collect{ |x| x.solution_article_meta }.flatten.map{ |x| x.children if x.children.count > 1}.flatten.reject(&:blank?).first
+      @account.solution_category_meta.where(is_default: false).collect(&:solution_article_meta).flatten.map { |x| x.children if x.children.count > 1 }.flatten.reject(&:blank?).first
     end
 
-
     def get_default_folder
-      @account.solution_folder_meta.where(is_default: true).collect{ |x| x.children }.flatten.first
+      @account.solution_folder_meta.where(is_default: true).collect(&:children).flatten.first
     end
 
     def test_show_article
@@ -155,15 +154,14 @@ module ApiSolutions
     end
 
     def test_show_unavailalbe_article
-      get :show, controller_params(id: 99999)
+      get :show, controller_params(id: 99_999)
       assert_response :missing
     end
 
     def test_show_unavailalbe_article_with_language
-      get :show, controller_params({id: 99999, language: @account.supported_languages.last})
+      get :show, controller_params(id: 99_999, language: @account.supported_languages.last)
       assert_response :missing
     end
-
 
     def test_show_article_with_language_query_param
       sample_article = get_article
@@ -184,7 +182,7 @@ module ApiSolutions
       allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
       Account.any_instance.stubs(:features).returns(allowed_features)
       sample_article = get_article
-      get :show, controller_params({id: sample_article.parent_id, language: @account.language })
+      get :show, controller_params(id: sample_article.parent_id, language: @account.language)
       match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
       assert_response 404
     ensure
@@ -195,7 +193,7 @@ module ApiSolutions
       folder_meta = get_folder_meta
       title = Faker::Name.name
       paragraph = Faker::Lorem.paragraph
-      post :create, construct_params({ id: folder_meta.id }, {title: title, description: paragraph, status: 1, type: 2})
+      post :create, construct_params({ id: folder_meta.id }, title: title, description: paragraph, status: 1, type: 2)
       assert_response 201
       result = parse_response(@response.body)
       assert_equal "http://#{@request.host}/api/v2/solutions/articles/#{result['id']}", response.headers['Location']
@@ -212,7 +210,7 @@ module ApiSolutions
       folder_meta = get_folder_meta
       title = Faker::Name.name
       paragraph = Faker::Lorem.paragraph
-      post :create, construct_params({ id: folder_meta.id }, {title: title, description: paragraph, status: 1, type: 2})
+      post :create, construct_params({ id: folder_meta.id }, title: title, description: paragraph, status: 1, type: 2)
       assert_response 201
       match_json(solution_article_pattern(Solution::Article.last))
       article = Solution::Article.last
@@ -227,7 +225,7 @@ module ApiSolutions
       folder_meta = get_folder_meta
       title = Faker::Name.name
       paragraph = "<h2 style=\"color: rgb(0, 0, 0); margin-top: 1em; margin-bottom: 0.25em; overflow: hidden; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(170, 170, 170); font-family: 'Linux Libertine', Georgia, Times, serif, 'Helvetica Neue', Helvetica, Arial, sans-serif; line-height: 1.3;\">\n<span id=\"Etymology\">Etymology</span><span style=\"-webkit-user-select: none; font-size: small; font-weight: normal; margin-left: 1em; line-height: 1em; display: inline-block; white-space: nowrap; unicode-bidi: isolate; font-family: sans-serif, 'Helvetica Neue', Helvetica, Arial, sans-serif;\"><span style=\"margin-right: 0.25em; color: rgb(85, 85, 85);\">[</span><a href=\"https://en.wikipedia.org/w/index.php?title=Tamils&amp;action=edit&amp;section=1\" title=\"Edit section: Etymology\" style=\"color: rgb(11, 0, 128); background-image: none;\">edit</a><span style=\"margin-left: 0.25em; color: rgb(85, 85, 85);\">]</span></span>\n</h2>\n<p>See also: <a href=\"https://en.wikipedia.org/wiki/Sources_of_ancient_Tamil_history\" title=\"Sources of ancient Tamil history\" style=\"color: rgb(11, 0, 128); background-image: none;\">Sources of ancient Tamil history</a></p>\n<p style=\"margin-top: 0.5em; margin-bottom: 0.5em; line-height: 22.4px; color: rgb(37, 37, 37); font-family: sans-serif, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px;\">It is unknown as to whether the term <i>Thamizhar</i> and its equivalents in <a href=\"https://en.wikipedia.org/wiki/Prakrit\" title=\"Prakrit\" style=\"color: rgb(11, 0, 128); background-image: none;\">Prakrit</a> such as <i>Damela</i>, <i>Dameda</i>, <i>Dhamila</i> and <i>Damila</i> was a self designation or a term denoted by outsiders. Epigraphic evidence of an ethnic group termed as such is found in ancient Sri Lanka where a number of inscriptions have come to light datable from the 6th to the 5th century BCE mentioning <i>Damela</i> or <i>Dameda</i> persons. In the well-known <a href=\"https://en.wikipedia.org/wiki/Hathigumpha_inscription\" title=\"Hathigumpha inscription\" style=\"color: rgb(11, 0, 128); background-image: none;\">Hathigumpha inscription</a>of the <a href=\"https://en.wikipedia.org/wiki/Kalinga_(India)\" title=\"Kalinga (India)\" style=\"color: rgb(11, 0, 128); background-image: none;\">Kalinga</a> ruler <a href=\"https://en.wikipedia.org/wiki/Kharavela\" title=\"Kharavela\" style=\"color: rgb(11, 0, 128); background-image: none;\">Kharavela</a>, refers to a <i>T(ra)mira samghata</i> (Confederacy of Tamil rulers) dated to 150 BC. It also mentions that the league of Tamil kingdoms had been in existence 113 years before then.<sup id=\"cite_ref-KI157_30-0\" style=\"line-height: 1; unicode-bidi: isolate; white-space: nowrap; font-size: 11.2px; font-weight: normal; font-style: normal;\"><a href=\"https://en.wikipedia.org/wiki/Tamils#cite_note-KI157-30\" style=\"color: rgb(11, 0, 128); background-image: none;\">[29]</a></sup> In <a href=\"https://en.wikipedia.org/wiki/Amaravathi_village,_Guntur_district\" title=\"Amaravathi village, Guntur district\" style=\"color: rgb(11, 0, 128); background-image: none;\">Amaravati</a> in present-day <a href=\"https://en.wikipedia.org/wiki/Andhra_Pradesh\" title=\"Andhra Pradesh\" style=\"color: rgb(11, 0, 128); background-image: none;\">Andhra Pradesh</a> there is an inscription referring to a<i>Dhamila-vaniya</i> (Tamil trader) datable to the 3rd century AD.<sup id=\"cite_ref-KI157_30-1\" style=\"line-height: 1; unicode-bidi: isolate; white-space: nowrap; font-size: 11.2px; font-weight: normal; font-style: normal;\"><a href=\"https://en.wikipedia.org/wiki/Tamils#cite_note-KI157-30\" style=\"color: rgb(11, 0, 128); background-image: none;\">[29]</a></sup> Another inscription of about the same time in <a href=\"https://en.wikipedia.org/wiki/Nagarjunakonda\" title=\"Nagarjunakonda\" style=\"color: rgb(11, 0, 128); background-image: none;\">Nagarjunakonda</a> seems to refer to a<i>Damila</i>. A third inscription in <a href=\"https://en.wikipedia.org/wiki/Kanheri_Caves\" title=\"Kanheri Caves\" style=\"color: rgb(11, 0, 128); background-image: none;\">Kanheri Caves</a> refers to a <i>Dhamila-gharini</i> (Tamil house-holder). In the <a href=\"https://en.wikipedia.org/wiki/Buddhist\" title=\"Buddhist\" style=\"color: rgb(11, 0, 128); background-image: none;\">Buddhist</a> <a href=\"https://en.wikipedia.org/wiki/Jataka\" title=\"Jataka\" style=\"color: rgb(11, 0, 128); background-image: none;\">Jataka</a> story known as <i>Akiti Jataka</i>there is a mention to <i>Damila-rattha</i> (Tamil dynasty). There were trade relationship between the <a href=\"https://en.wikipedia.org/wiki/Roman_Empire\" title=\"Roman Empire\" style=\"color: rgb(11, 0, 128); background-image: none;\">Roman Empire</a> and <a href=\"https://en.wikipedia.org/wiki/Pandyan_Empire\" title=\"Pandyan Empire\" style=\"color: rgb(11, 0, 128); background-image: none;\">Pandyan Empire</a>. As recorded by <a href=\"https://en.wikipedia.org/wiki/Strabo\" title=\"Strabo\" style=\"color: rgb(11, 0, 128); background-image: none;\">Strabo</a>, <a href=\"https://en.wikipedia.org/wiki/Emperor_Augustus\" title=\"Emperor Augustus\" style=\"color: rgb(11, 0, 128); background-image: none;\">Emperor Augustus</a> of <a href=\"https://en.wikipedia.org/wiki/Rome\" title=\"Rome\" style=\"color: rgb(11, 0, 128); background-image: none;\">Rome</a> received at <a href=\"https://en.wikipedia.org/wiki/Antioch\" title=\"Antioch\" style=\"color: rgb(11, 0, 128); background-image: none;\">Antioch</a> an ambassador from a king called <i>Pandyan of Dramira</i>.<sup id=\"cite_ref-The_cyclop.C3.A6dia_of_India_and_of_Eastern_and_Southern_Asia_31-0\" style=\"line-height: 1; unicode-bidi: isolate; white-space: nowrap; font-size: 11.2px; font-weight: normal; font-style: normal;\"><a href=\"https://en.wikipedia.org/wiki/Tamils#cite_note-The_cyclop.C3.A6dia_of_India_and_of_Eastern_and_Southern_Asia-31\" style=\"color: rgb(11, 0, 128); background-image: none;\">[30]</a></sup> Hence, it is clear that by at least the 300 BC, the ethnic identity of Tamils has been formed as a distinct group.<sup id=\"cite_ref-KI157_30-2\" style=\"line-height: 1; unicode-bidi: isolate; white-space: nowrap; font-size: 11.2px; font-weight: normal; font-style: normal;\"><a href=\"https://en.wikipedia.org/wiki/Tamils#cite_note-KI157-30\" style=\"color: rgb(11, 0, 128); background-image: none;\">[29]</a></sup> <i>Thamizhar</i>is etymologically related to Tamil, the language spoken by Tamil people. Southworth suggests that the name comes from tam-miz &gt; tam-iz 'self-speak', or 'one's own speech'.<sup id=\"cite_ref-32\" style=\"line-height: 1; unicode-bidi: isolate; white-space: nowrap; font-size: 11.2px; font-weight: normal; font-style: normal;\"><a href=\"https://en.wikipedia.org/wiki/Tamils#cite_note-32\" style=\"color: rgb(11, 0, 128); background-image: none;\">[31]</a></sup> Zvelebil suggests an etymology of <i>tam-iz</i>, with tam meaning \"self\" or \"one's self\", and \"-iz\" having the connotation of \"unfolding sound\". Alternatively, he suggests a derivation of <i>tamiz</i> &lt; <i>tam-iz</i> &lt; <i>*tav-iz</i> &lt;<i>*tak-iz</i>, meaning in origin \"the proper process (of speaking).\"<sup id=\"cite_ref-33\" style=\"line-height: 1; unicode-bidi: isolate; white-space: nowrap; font-size: 11.2px; font-weight: normal; font-style: normal;\"><a href=\"https://en.wikipedia.org/wiki/Tamils#cite_note-33\" style=\"color: rgb(11, 0, 128); background-image: none;\">[32]</a></sup> Another theory say the term <i>Thamizhar</i> was derived from the name of the ancient people <i>Dravida</i> &gt; <i>Dramila</i> &gt; <i>Damila</i> &gt; <i>Tamila</i> &gt;<i>Tamilar</i><sup id=\"cite_ref-34\" style=\"line-height: 1; unicode-bidi: isolate; white-space: nowrap; font-size: 11.2px; font-weight: normal; font-style: normal;\"><a href=\"https://en.wikipedia.org/wiki/Tamils#cite_note-34\" style=\"color: rgb(11, 0, 128); background-image: none;\">[33]</a></sup></p>\n<p><br></p>\n"
-      post :create, construct_params({ id: folder_meta.id }, {title: title, description: paragraph, status: 1, type: 2})
+      post :create, construct_params({ id: folder_meta.id }, title: title, description: paragraph, status: 1, type: 2)
       assert_response 201
       result = parse_response(@response.body)
       assert_equal "http://#{@request.host}/api/v2/solutions/articles/#{result['id']}", response.headers['Location']
@@ -244,7 +242,7 @@ module ApiSolutions
       folder_meta = get_folder_meta
       title = Faker::Name.name
       paragraph = Faker::Lorem.paragraph
-      post :create, construct_params({ id: folder_meta.id }, {title: title, description: paragraph, status: 1, type: 2, agent_id: @agent.id})
+      post :create, construct_params({ id: folder_meta.id }, title: title, description: paragraph, status: 1, type: 2, agent_id: @agent.id)
       assert_response 400
       match_json([bad_request_error_pattern('agent_id', :invalid_field)])
     end
@@ -254,7 +252,7 @@ module ApiSolutions
       title = Faker::Name.name
       seo_title = Faker::Name.name
       paragraph = Faker::Lorem.paragraph
-      post :create, construct_params({ id: folder_meta.id }, {title: title, description: paragraph, status: 1, type: 2, tags: ['tag1','tag2','tag2'],  seo_data: { meta_title: seo_title, meta_keywords: ['tag3','tag4','tag4'] } })
+      post :create, construct_params({ id: folder_meta.id }, title: title, description: paragraph, status: 1, type: 2, tags: ['tag1', 'tag2', 'tag2'], seo_data: { meta_title: seo_title, meta_keywords: ['tag3', 'tag4', 'tag4'] })
       assert_response 201
       result = parse_response(@response.body)
       assert_equal "http://#{@request.host}/api/v2/solutions/articles/#{result['id']}", response.headers['Location']
@@ -266,7 +264,7 @@ module ApiSolutions
       assert article.status == 1
       assert article.parent.art_type == 2
       assert article.seo_data[:meta_title] == seo_title
-      assert article.seo_data[:meta_keywords] == ['tag3','tag4'].join(",")
+      assert article.seo_data[:meta_keywords] == ['tag3', 'tag4'].join(',')
       assert article.tags.map(&:name) == ['tag1', 'tag2']
     end
 
@@ -276,14 +274,14 @@ module ApiSolutions
       paragraph = Faker::Lorem.paragraph
       tags = Faker::Lorem.words(3).uniq
       tags = tags.map do |tag|
-      #Timestamp added to make sure tag names are new 
+        # Timestamp added to make sure tag names are new
         tag = "#{tag}#{Time.now.to_i}"
         assert_equal @account.tags.map(&:name).include?(tag), false
-        tag 
+        tag
       end
       User.current.reload
       remove_privilege(User.current, :create_tags)
-      post :create, construct_params({ id: folder_meta.id }, {title: title, description: paragraph, status: 1, type: 2, tags: tags })
+      post :create, construct_params({ id: folder_meta.id }, title: title, description: paragraph, status: 1, type: 2, tags: tags)
       assert_response 400
       add_privilege(User.current, :create_tags)
     end
@@ -293,10 +291,10 @@ module ApiSolutions
       title = Faker::Name.name
       paragraph = Faker::Lorem.paragraph
       tag = Faker::Lorem.word
-      @account.tags.create(:name => tag) unless @account.tags.map(&:name).include?(tag)
+      @account.tags.create(name: tag) unless @account.tags.map(&:name).include?(tag)
       User.current.reload
       remove_privilege(User.current, :create_tags)
-      post :create, construct_params({ id: folder_meta.id }, {title: title, description: paragraph, status: 1, type: 2, tags: [tag] })
+      post :create, construct_params({ id: folder_meta.id }, title: title, description: paragraph, status: 1, type: 2, tags: [tag])
       assert_response 201
       article = Solution::Article.last
       assert_equal article.tags.count, 1
@@ -308,13 +306,13 @@ module ApiSolutions
       title = Faker::Name.name
       paragraph = Faker::Lorem.paragraph
       tags = Faker::Lorem.words(3).uniq
-      tags = tags.map do |tag| 
-      #Timestamp added to make sure tag names are new
+      tags = tags.map do |tag|
+        # Timestamp added to make sure tag names are new
         tag = "#{tag}#{Time.now.to_i}"
-        assert_equal @account.tags.map(&:name).include?(tag), false 
+        assert_equal @account.tags.map(&:name).include?(tag), false
         tag
       end
-      post :create, construct_params({ id: folder_meta.id }, {title: title, description: paragraph, status: 1, type: 2, tags: tags })
+      post :create, construct_params({ id: folder_meta.id }, title: title, description: paragraph, status: 1, type: 2, tags: tags)
       assert_response 201
       article = Solution::Article.last
       assert_equal article.tags.count, tags.count
@@ -322,20 +320,19 @@ module ApiSolutions
 
     def test_create_article_without_params
       folder_meta = get_folder_meta
-      post :create, construct_params({ id: folder_meta.id }, { })
+      post :create, construct_params({ id: folder_meta.id }, {})
       assert_response 400
-      match_json([bad_request_error_pattern('title', :datatype_mismatch, code: :missing_field, expected_data_type: String),
-                  bad_request_error_pattern('description', :datatype_mismatch, code: :missing_field, expected_data_type: String),
-                  bad_request_error_pattern('type', :missing_field),
-                  bad_request_error_pattern('status', :not_included, list: [1,2].join(','), code: :missing_field)])
+      match_json([bad_request_error_pattern('title', 'Mandatory attribute missing', code: :missing_field),
+                  bad_request_error_pattern('description', 'Mandatory attribute missing', code: :missing_field),
+                  bad_request_error_pattern('status', :not_included, list: [1, 2].join(','), code: :missing_field)])
     end
 
     def test_create_article_with_invalid_params
       folder_meta = get_folder_meta
-      post :create, construct_params({ id: folder_meta.id }, { description: 1, title: 1, status: 'a', type: 'c', seo_data: 1, tags: "a" })
+      post :create, construct_params({ id: folder_meta.id }, description: 1, title: 1, status: 'a', type: 'c', seo_data: 1, tags: 'a')
       assert_response 400
-      match_json([bad_request_error_pattern('status', :not_included, list: [1,2].join(','), code: :invalid_value),
-                  bad_request_error_pattern('type', :not_included, list: [1,2].join(','), code: :invalid_value),
+      match_json([bad_request_error_pattern('status', :not_included, list: [1, 2].join(','), code: :invalid_value),
+                  bad_request_error_pattern('type', :not_included, list: [1, 2].join(','), code: :invalid_value),
                   bad_request_error_pattern('description', :datatype_mismatch, code: :datatype_mismatch, expected_data_type: 'String', given_data_type: 'Integer', prepend_msg: :input_received),
                   bad_request_error_pattern('seo_data', :datatype_mismatch, code: :datatype_mismatch, expected_data_type: 'key/value pair', given_data_type: 'Integer', prepend_msg: :input_received),
                   bad_request_error_pattern('tags', :datatype_mismatch, code: :datatype_mismatch, expected_data_type: 'Array', given_data_type: 'String', prepend_msg: :input_received),
@@ -344,32 +341,32 @@ module ApiSolutions
 
     def test_create_article_with_invalid_status_article_type
       folder_meta = get_folder_meta
-      post :create, construct_params({ id: folder_meta.id }, { description: '<b>aaaa</b>', title: 'Sample title', status: 3, type: 4 })
+      post :create, construct_params({ id: folder_meta.id }, description: '<b>aaaa</b>', title: 'Sample title', status: 3, type: 4)
       assert_response 400
-      match_json([bad_request_error_pattern('status', :not_included, list: [1,2].join(',')),
-                bad_request_error_pattern('type', :not_included, list: [1,2].join(','))])
+      match_json([bad_request_error_pattern('status', :not_included, list: [1, 2].join(',')),
+                  bad_request_error_pattern('type', :not_included, list: [1, 2].join(','))])
     end
 
     def test_create_article_with_title_exceeding_max_length
       folder_meta = get_folder_meta
-      post :create, construct_params({ id: folder_meta.id }, { description: '<b>aaaa</b>', title: 'a'*260, status: 1, type: 1 })
+      post :create, construct_params({ id: folder_meta.id }, description: '<b>aaaa</b>', title: 'a' * 260, status: 1, type: 1)
       assert_response 400
       match_json([bad_request_error_pattern('title', :too_long_too_short, current_count: 260, element_type: 'characters', max_count: 240, min_count: 3)])
     end
 
     def test_create_article_in_unavailable_folder
-      post :create, construct_params({ id: 9999 }, { description: '<b>aaaa</b>', title: 'aaaa', status: 1, type: 1 })
+      post :create, construct_params({ id: 9999 }, description: '<b>aaaa</b>', title: 'aaaa', status: 1, type: 1)
       assert_response :missing
     end
 
     def test_create_article_in_unavailable_folder_without_mandatory_fields
-      post :create, construct_params({ id: 9999 }, { description: '<b>aaaa</b>', title: 'aaaa' })
+      post :create, construct_params({ id: 9999 }, description: '<b>aaaa</b>', title: 'aaaa')
       assert_response :missing
     end
 
     def test_create_article_with_invalid_seo_data
       folder_meta = get_folder_meta
-      post :create, construct_params({ id: folder_meta.id }, { description: '<b>aaaa</b>', title: 'aaaa', status: 1, type: 1, seo_data: { meta_title: 1, meta_description: 1, meta_keywords: 1 } })
+      post :create, construct_params({ id: folder_meta.id }, description: '<b>aaaa</b>', title: 'aaaa', status: 1, type: 1, seo_data: { meta_title: 1, meta_description: 1, meta_keywords: 1 })
       assert_response 400
       match_json([bad_request_error_pattern('meta_title', :datatype_mismatch, code: :datatype_mismatch, expected_data_type: 'String', given_data_type: 'Integer', prepend_msg: :input_received),
                   bad_request_error_pattern('meta_description', :datatype_mismatch, code: :datatype_mismatch, expected_data_type: 'String', given_data_type: 'Integer', prepend_msg: :input_received),
@@ -383,7 +380,7 @@ module ApiSolutions
       status = 1
       category_name = 'translated category_name'
       folder_name = 'translated folder_name'
-      post :create, construct_params({id: sample_article.parent_id, language: @account.supported_languages.last}, {title: title, description: description, status: status, category_name: category_name, folder_name: folder_name})
+      post :create, construct_params({ id: sample_article.parent_id, language: @account.supported_languages.last }, title: title, description: description, status: status, category_name: category_name, folder_name: folder_name)
       assert_response 201
       result = parse_response(@response.body)
       assert_equal "http://#{@request.host}/api/v2/solutions/articles/#{result['id']}", response.headers['Location']
@@ -403,7 +400,7 @@ module ApiSolutions
       category_name = 'translated category_name'
       folder_name = 'translated folder_name'
       type = 1
-      post :create, construct_params({id: sample_article.parent_id, language: @account.supported_languages.first}, {title: title, description: description, status: status, category_name: category_name, folder_name: folder_name, type: type})
+      post :create, construct_params({ id: sample_article.parent_id, language: @account.supported_languages.first }, title: title, description: description, status: status, category_name: category_name, folder_name: folder_name, type: type)
       assert_response 400
       match_json([bad_request_error_pattern('type', :cant_set_for_secondary_language, code: :incompatible_field)])
     end
@@ -411,7 +408,7 @@ module ApiSolutions
     def test_update_article
       sample_article = get_article
       paragraph = Faker::Lorem.paragraph
-      params_hash  = { title: 'new title', description: paragraph, status: 2, type: 2, agent_id: @agent.id }
+      params_hash = { title: 'new title', description: paragraph, status: 2, type: 2, agent_id: @agent.id }
       put :update, construct_params({ id: sample_article.parent_id }, params_hash)
       assert_response 200
       match_json(solution_article_pattern(sample_article.reload))
@@ -424,7 +421,7 @@ module ApiSolutions
     def test_update_and_publish_a_draft
       sample_article = get_article_with_draft
       paragraph = Faker::Lorem.paragraph
-      params_hash  = { title: 'new title', description: paragraph, status: 2, type: 2, agent_id: @agent.id }
+      params_hash = { title: 'new title', description: paragraph, status: 2, type: 2, agent_id: @agent.id }
       put :update, construct_params({ id: sample_article.parent_id }, params_hash)
       assert_response 200
       match_json(solution_article_pattern(sample_article.reload))
@@ -437,7 +434,7 @@ module ApiSolutions
     def test_update_and_publish_without_draft
       sample_article = get_article_without_draft
       paragraph = Faker::Lorem.paragraph
-      params_hash  = { title: 'new title', description: paragraph, status: 2, type: 2, agent_id: @agent.id }
+      params_hash = { title: 'new title', description: paragraph, status: 2, type: 2, agent_id: @agent.id }
       put :update, construct_params({ id: sample_article.parent_id }, params_hash)
       assert_response 200
       match_json(solution_article_pattern(sample_article.reload))
@@ -450,33 +447,31 @@ module ApiSolutions
     def test_update_draft_with_unavailable_agent_id
       sample_article = get_article_with_draft
       paragraph = Faker::Lorem.paragraph
-      params_hash  = { agent_id: 9999 }
+      params_hash = { agent_id: 9999 }
       put :update, construct_params({ id: sample_article.parent_id }, params_hash)
       assert_response 400
-      match_json([bad_request_error_pattern('agent_id', :absent_in_db, resource: 'agent', attribute: 'agent_id')])
+      match_json([bad_request_error_pattern('agent_id', :invalid_agent_id)])
     end
-
 
     def test_update_article_with_unavailable_user_id
       sample_article = get_article
       paragraph = Faker::Lorem.paragraph
-      params_hash  = { title: 'new title', description: paragraph, status: 2, type: 2, agent_id: 9999 }
+      params_hash = { title: 'new title', description: paragraph, status: 2, type: 2, agent_id: 9999 }
       put :update, construct_params({ id: sample_article.parent_id }, params_hash)
       assert_response 400
-      match_json([bad_request_error_pattern('agent_id', :absent_in_db, resource: 'agent', attribute: 'agent_id')])
+      match_json([bad_request_error_pattern('agent_id', :invalid_agent_id)])
     end
-
 
     def test_update_unavailalbe_article
       paragraph = Faker::Lorem.paragraph
-      params_hash  = { title: 'new title', description: paragraph, status: 2, type: 2 }
+      params_hash = { title: 'new title', description: paragraph, status: 2, type: 2 }
       put :update, construct_params({ id: 9999 }, params_hash)
       assert_response :missing
     end
 
     def test_update_unavailable_article_with_language
       paragraph = Faker::Lorem.paragraph
-      params_hash  = { title: 'new title', description: paragraph, status: 2, type: 2 }
+      params_hash = { title: 'new title', description: paragraph, status: 2, type: 2 }
       put :update, construct_params({ id: 9999, language: @account.supported_languages.last }, params_hash)
       assert_response :missing
     end
@@ -484,7 +479,7 @@ module ApiSolutions
     def test_update_article_type
       sample_article = get_article_without_draft
       old_description = sample_article.description
-      params_hash  = { type: 2 }
+      params_hash = { type: 2 }
       put :update, construct_params({ id: sample_article.parent_id }, params_hash)
       assert_response 200
       match_json(solution_article_pattern(sample_article.reload))
@@ -500,7 +495,7 @@ module ApiSolutions
       category_name = 'category_name'
       folder_name = 'folder_name'
       language = @account.language
-      put :update, construct_params({ id: sample_article.parent_id, language: language }, { title: title, description: description, status: status, category_name: category_name, folder_name: folder_name})
+      put :update, construct_params({ id: sample_article.parent_id, language: language }, title: title, description: description, status: status, category_name: category_name, folder_name: folder_name)
       assert_response 400
       match_json([bad_request_error_pattern('folder_name', :attribute_not_required, code: :incompatible_field),
                   bad_request_error_pattern('category_name', :attribute_not_required, code: :incompatible_field)])
@@ -512,7 +507,7 @@ module ApiSolutions
       description = 'updated description'
       status = 2
       language = @account.language
-      put :update, construct_params({ id: sample_article.parent_id, language: language }, { title: title, description: description, status: status, category_name: 'category', folder_name: 'folder'})
+      put :update, construct_params({ id: sample_article.parent_id, language: language }, title: title, description: description, status: status, category_name: 'category', folder_name: 'folder')
       assert_response 400
       match_json([bad_request_error_pattern('folder_name', :attribute_not_required, code: :incompatible_field),
                   bad_request_error_pattern('category_name', :attribute_not_required, code: :incompatible_field)])
@@ -525,7 +520,7 @@ module ApiSolutions
       User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
       sample_article = get_article
       paragraph = Faker::Lorem.paragraph
-      params_hash  = { title: 'new title', description: paragraph, status: 2, type: 2, agent_id: @agent.id }
+      params_hash = { title: 'new title', description: paragraph, status: 2, type: 2, agent_id: @agent.id }
       put :update, construct_params({ id: sample_article.parent_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('agent_id', :inaccessible_field)])
@@ -589,7 +584,7 @@ module ApiSolutions
     def test_delete_article_with_language_param
       sample_article = get_article
       language_code = Language.find(sample_article.language_id).code
-      delete :destroy, construct_params({id: sample_article.parent_id, language: language_code})
+      delete :destroy, construct_params(id: sample_article.parent_id, language: language_code)
       assert_response 404
     end
 
@@ -604,7 +599,7 @@ module ApiSolutions
       get :folder_articles, controller_params(id: sample_folder.id, page: 'aaa', per_page: 'aaa')
       assert_response 400
       match_json([bad_request_error_pattern('page', :datatype_mismatch, expected_data_type: 'Positive Integer'),
-      bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
+                  bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
     end
 
     def test_create_with_attachment
@@ -615,7 +610,7 @@ module ApiSolutions
       folder_meta = get_folder_meta
       title = Faker::Name.name
       paragraph = Faker::Lorem.paragraph
-      post :create, construct_params({ id: folder_meta.id }, {title: title, description: paragraph, status: 1, type: 2, attachments: [file, file2]})
+      post :create, construct_params({ id: folder_meta.id }, title: title, description: paragraph, status: 1, type: 2, attachments: [file, file2])
       DataTypeValidator.any_instance.unstub(:valid_type?)
       assert_response 201
       result = parse_response(@response.body)
@@ -627,7 +622,7 @@ module ApiSolutions
       folder_meta = get_folder_meta
       title = Faker::Name.name
       paragraph = Faker::Lorem.paragraph
-      controller_params = {title: title, description: paragraph, status: 1, type: 2}
+      controller_params = { title: title, description: paragraph, status: 1, type: 2 }
       params = controller_params.merge('attachments' => [1, 2])
       post :create, construct_params({ id: folder_meta.id }, params)
       assert_response 400
@@ -638,7 +633,7 @@ module ApiSolutions
       folder_meta = get_folder_meta
       title = Faker::Name.name
       paragraph = Faker::Lorem.paragraph
-      controller_params = {title: title, description: paragraph, status: 1, type: 2}
+      controller_params = { title: title, description: paragraph, status: 1, type: 2 }
       params = controller_params.merge('attachments' => 'test')
       post :create, construct_params({ id: folder_meta.id }, params)
       assert_response 400
@@ -649,7 +644,7 @@ module ApiSolutions
       folder_meta = get_folder_meta
       title = Faker::Name.name
       paragraph = Faker::Lorem.paragraph
-      controller_params = {title: title, description: paragraph, status: 1, type: 2}
+      controller_params = { title: title, description: paragraph, status: 1, type: 2 }
       params = controller_params.merge('attachments' => [])
       post :create, construct_params({ id: folder_meta.id }, params)
       assert_response 201
@@ -662,7 +657,7 @@ module ApiSolutions
       folder_meta = get_folder_meta
       title = Faker::Name.name
       paragraph = Faker::Lorem.paragraph
-      controller_params = {title: title, description: paragraph, status: 1, type: 2}
+      controller_params = { title: title, description: paragraph, status: 1, type: 2 }
       params = controller_params.merge('attachments' => [file])
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
       post :create, construct_params({ id: folder_meta.id }, params)
@@ -676,7 +671,7 @@ module ApiSolutions
       file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
       sample_article = get_article
       paragraph = Faker::Lorem.paragraph
-      params_hash  = { title: 'new title', description: paragraph, status: 2, type: 2, agent_id: @agent.id }
+      params_hash = { title: 'new title', description: paragraph, status: 2, type: 2, agent_id: @agent.id }
       params = params_hash.merge('attachments' => [file, file2])
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
       put :update, construct_params({ id: sample_article.parent_id }, params)
@@ -694,7 +689,7 @@ module ApiSolutions
       Helpdesk::Attachment.any_instance.stubs(:size).returns(invalid_attachment_limit.megabytes)
       sample_article = get_article_without_draft
       paragraph = Faker::Lorem.paragraph
-      params_hash  = { title: 'new title', description: paragraph, status: 2, type: 2, agent_id: @agent.id }
+      params_hash = { title: 'new title', description: paragraph, status: 2, type: 2, agent_id: @agent.id }
       params = params_hash.merge('attachments' => [attachment])
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
       Solution::Article.any_instance.stubs(:attachments).returns([attachment])
@@ -710,7 +705,7 @@ module ApiSolutions
     def test_update_with_invalid_attachment_params_format
       sample_article = get_article
       paragraph = Faker::Lorem.paragraph
-      params_hash  = { title: 'new title', description: paragraph, status: 2, type: 2, agent_id: @agent.id }
+      params_hash = { title: 'new title', description: paragraph, status: 2, type: 2, agent_id: @agent.id }
       params = params_hash.merge('attachments' => [1, 2])
       put :update, construct_params({ id: sample_article.parent_id }, params)
       assert_response 400
@@ -723,7 +718,7 @@ module ApiSolutions
       article_title = sample_article.title
       article_description = sample_article.description
       title = 'Test Draft Title'
-      params_hash  = {
+      params_hash = {
         title: title, description: paragraph,
         status: 1, agent_id: @agent.id
       }
@@ -744,7 +739,7 @@ module ApiSolutions
       sample_article = get_article_without_draft
       paragraph = Faker::Lorem.paragraph
       title = 'Test Article Title'
-      params_hash  = {
+      params_hash = {
         title: title, description: paragraph,
         status: 2, agent_id: @agent.id
       }
@@ -765,7 +760,7 @@ module ApiSolutions
       article_title = sample_article.title
       article_description = sample_article.description
       title = 'Test Draft Title'
-      params_hash  = {
+      params_hash = {
         title: title, description: paragraph,
         status: 1, agent_id: @agent.id
       }
@@ -786,7 +781,7 @@ module ApiSolutions
       sample_article = get_article_without_draft
       paragraph = Faker::Lorem.paragraph
       title = 'Test Article Title'
-      params_hash  = {
+      params_hash = {
         title: title, description: paragraph,
         status: 2, agent_id: @agent.id
       }
@@ -804,10 +799,10 @@ module ApiSolutions
     def test_update_article_with_tags_with_privilege
       sample_article = get_article
       tags = Faker::Lorem.words(3).uniq
-      tags = tags.map do |tag| 
-      #Timestamp added to make sure tag names are new
+      tags = tags.map do |tag|
+        # Timestamp added to make sure tag names are new
         tag = "#{tag}#{Time.now.to_i}"
-        assert_equal @account.tags.map(&:name).include?(tag), false 
+        assert_equal @account.tags.map(&:name).include?(tag), false
         tag
       end
       put :update, construct_params({ id: sample_article.parent_id }, tags: tags)
@@ -818,25 +813,26 @@ module ApiSolutions
 
     def test_update_article_with_new_tags_without_privilege
       sample_article = get_article
+      initial_tag_count = sample_article.tags.count
       tags = Faker::Lorem.words(3).uniq
-      tags = tags.map do |tag| 
-      #Timestamp added to make sure tag names are new
+      tags = tags.map do |tag|
+        # Timestamp added to make sure tag names are new
         tag = "#{tag}#{Time.now.to_i}"
-        assert_equal @account.tags.map(&:name).include?(tag), false 
+        assert_equal @account.tags.map(&:name).include?(tag), false
         tag
       end
       User.current.reload
       remove_privilege(User.current, :create_tags)
       put :update, construct_params({ id: sample_article.parent_id }, tags: tags)
       assert_response 400
-      assert_equal sample_article.reload.tags.count, 0
+      assert_equal sample_article.reload.tags.count, initial_tag_count
       add_privilege(User.current, :create_tags)
     end
 
     def test_update_article_with_existing_tags_without_privilege
       sample_article = get_article
       tag = Faker::Lorem.word
-      @account.tags.create(:name => tag) unless @account.tags.map(&:name).include?(tag)
+      @account.tags.create(name: tag) unless @account.tags.map(&:name).include?(tag)
       User.current.reload
       remove_privilege(User.current, :create_tags)
       put :update, construct_params({ id: sample_article.parent_id }, tags: [tag])
@@ -846,5 +842,31 @@ module ApiSolutions
       put :update, construct_params({ id: sample_article.parent_id }, tags: [])
     end
 
+    def test_create_article_without_type
+      folder_meta = get_folder_meta
+      title = Faker::Name.name
+      paragraph = Faker::Lorem.paragraph
+      post :create, construct_params({ id: folder_meta.id }, title: title, description: paragraph, status: 1)
+      assert_response 201
+      result = parse_response(@response.body)
+      assert_equal "http://#{@request.host}/api/v2/solutions/articles/#{result['id']}", response.headers['Location']
+      match_json(solution_article_pattern(Solution::Article.last))
+      article = Solution::Article.last
+      assert article.title == title
+      assert article.desc_un_html.strip == paragraph
+      assert article.user_id == @agent.id
+      assert article.status == 1
+      assert article.parent.art_type == 1
+    end
+
+    def test_create_article_with_privateapi_cloud_attachment_params
+      folder_meta = get_folder_meta
+      title = Faker::Name.name
+      paragraph = Faker::Lorem.paragraph
+      cloud_file_params = [{ name: 'image.jpg', link: CLOUD_FILE_IMAGE_URL, provider: 'dropbox' }]
+      post :create, construct_params({ id: folder_meta.id }, title: title, description: paragraph, status: 1, cloud_file_attachments: cloud_file_params)
+      assert_response 400
+      match_json([bad_request_error_pattern('cloud_file_attachments', 'is invalid', code: :invalid_value)])
+    end
   end
 end

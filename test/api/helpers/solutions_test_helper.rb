@@ -35,7 +35,7 @@ module SolutionsTestHelper
 
   def solution_article_pattern(expected_output = {}, ignore_extra_keys = true, article)
 
-    expected_tags = expected_output[:tags] ? expected_output[:tags].map(&:downcase) : nil
+    expected_tags = expected_output[:tags] || nil
 
     {
       id: expected_output[:id] || article.parent.id,
@@ -48,49 +48,59 @@ module SolutionsTestHelper
       folder_id: expected_output[:folder_id] || article.parent.reload.solution_folder_meta.id,
       thumbs_up: expected_output[:thumbs_up] || article.solution_article_meta.thumbs_up,
       thumbs_down: expected_output[:thumbs_down] || article.solution_article_meta.thumbs_down,
+      feedback_count: expected_output[:feedback_count] || article.article_ticket.preload(:ticketable).select { |art| !art.ticketable.spam_or_deleted? }.count,
       hits: expected_output[:hits] || article.solution_article_meta.hits,
       status: expected_output[:status] || article.status,
-      tags: expected_tags || article.tags.map{|x| x.name.downcase},
+      tags: expected_tags || article.tags.map(&:name),
       seo_data: expected_output[:seo_data] || article.seo_data,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
-      attachments: Array
+      attachments: Array,
+      cloud_files: Array
     }
   end
 
   def solution_article_draft_pattern(expected_output = {}, ignore_extra_keys = true, article, draft)
-    expected_tags = expected_output[:tags] ? expected_output[:tags].map(&:downcase) : nil
+    expected_tags = expected_output[:tags] || nil
     {
       id: expected_output[:id] || article.parent.id,
       title: expected_output[:title] || draft.title,
       description: expected_output[:description] || draft.description,
-      description_text: expected_output[:description_text] || draft.draft_body.description,
+      description_text: expected_output[:description_text] || Helpdesk::HTMLSanitizer.plain(draft.draft_body.description),
       agent_id: expected_output[:agent_id] || article.user_id,
       type: expected_output[:type] || article.parent.reload.art_type,
       category_id: expected_output[:category_id] || article.parent.reload.solution_category_meta.id,
       folder_id: expected_output[:folder_id] || article.parent.reload.solution_folder_meta.id,
       thumbs_up: expected_output[:thumbs_up] || article.solution_article_meta.thumbs_up,
       thumbs_down: expected_output[:thumbs_down] || article.solution_article_meta.thumbs_down,
+      feedback_count: expected_output[:feedback_count] || article.article_ticket.preload(:ticketable).select { |art| !art.ticketable.spam_or_deleted? }.count,
       hits: expected_output[:hits] || article.solution_article_meta.hits,
       status: expected_output[:status] || article.status,
-      tags: expected_tags || article.tags.map{|x| x.name.downcase},
+      tags: expected_tags || article.tags.map(&:name),
       seo_data: expected_output[:seo_data] || article.seo_data,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
-      attachments: Array
+      attachments: Array,
+      cloud_files: Array
     }
   end
 
   def solution_article_pattern_index(expected_output = {}, ignore_extra_keys = true, article)
-    solution_article_pattern(expected_output = {}, ignore_extra_keys = true, article).except(:tags, :attachments)
+    solution_article_pattern(expected_output = {}, ignore_extra_keys = true, article)
   end
 
-  def private_api_solution_article_pattern_index(article, expected_output = {}, ignore_extra_keys = true, user = nil, draft = nil)
+  def private_api_solution_article_pattern(article, expected_output = {}, ignore_extra_keys = true, user = nil, draft = nil)
     ret_hash = if draft
-                 solution_article_draft_pattern(expected_output, ignore_extra_keys, article, draft).except(:tags)
+                 solution_article_draft_pattern(expected_output, ignore_extra_keys, article, draft)
                 else
-                  solution_article_pattern(expected_output, ignore_extra_keys, article).except(:tags)
+                  solution_article_pattern(expected_output, ignore_extra_keys, article)
                 end
+    if draft
+      ret_hash[:draft_locked] = draft.locked?
+      ret_hash[:draft_modified_by] = draft.user_id
+      ret_hash[:draft_modified_at] = %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+    end
+    ret_hash[:draft_present] = expected_output[:draft_present] || draft.present?
     ret_hash[:path] = expected_output[:path] || article.to_param
     ret_hash[:modified_at] = %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     ret_hash[:modified_by] = article.modified_by

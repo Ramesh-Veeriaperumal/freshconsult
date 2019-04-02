@@ -661,6 +661,8 @@ solution_home_quick_view_response:
   $ref: ./response/solutions/home_quick_views.yaml
 category_input:
   $ref: ./request/solutions/category_input.yaml
+article_input:
+  $ref: ./request/solutions/article_input.yaml
 category_response:
   $ref: ./response/solutions/category_response.yaml
 folder_input:

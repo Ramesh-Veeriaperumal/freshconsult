@@ -194,6 +194,7 @@ api_error_messages:
   lt_ticket_created_at: "It cannot be less than the ticket's created time"
   cannot_set_closed_at: "It cannot be set, when created_at and updated_at are not set or status is not closed"
   invalid_inline_attachments_list: "Invalid inline attachment ids : %{invalid_ids}"
+  invalid_attachments: "Invalid attachment ids : %{invalid_ids}"
   invalid_id_list: "Invalid ids : %{invalid_ids}"
   invalid_avatar: "Avatar is invalid"
   missing_avatar: "Avatar is empty"
@@ -280,12 +281,14 @@ api_error_messages:
   no_ratings: "The article doesn't have any ratings to be reset"
 
   field_validation_for_email: "It should not be blank as this is a mandatory field for sending email"
-
+  somebody_editing: "%{name} is currently editing this article."
 
   portal_language_not_supported: "Portal language is not a supported language"
   supported_language_primary: "supported language is already a primary language"
   invalid_language: "%{languages} is not a valid language"
   supported_previously_added: "Primary language cannot be modified because supported language has previously been added for this account"
   primary_or_supported: "Primary and supported/portal languages must be modified individually"
-
+  draft_locked: "Draft is locked for editing"
+  invalid_last_updated_at: "The content has changed"
+  cannot_create_new_tag: "cannot_create_new_tag: %{tags}"
   invalid_ebay_ticket_source: "Invalid ticket source"

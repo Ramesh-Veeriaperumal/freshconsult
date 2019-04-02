@@ -205,7 +205,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   delete_solution do
-    resource :'ember/solutions/article', only: %i[reset_ratings]
+    resource :'ember/solutions/article', only: %i[destroy reset_ratings]
   end
 
   view_reports do

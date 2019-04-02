@@ -4,6 +4,7 @@ module Ember
       include HelperConcern
       include BulkActionConcern
       include SolutionBulkActionConcern
+      include CloudFilesHelper
 
       before_filter :filter_ids, only: [:index]
       before_filter :validate_bulk_update_article_params, :validate_language, only: [:bulk_update]
@@ -56,6 +57,10 @@ module Ember
           'SolutionsConstants'.freeze
         end
 
+        def render_201_with_location(template_name: "api_solutions/articles/#{action_name}", location_url: 'api_solutions_article_url', item_id: @item.id)
+          render template_name, location: safe_send(location_url, item_id), status: 201
+        end
+
         def load_article
           language_id = params[:language_id] || Language.for_current_account.id
           @item = scoper.where(parent_id: params[:id], language_id: language_id).first
@@ -93,6 +98,22 @@ module Ember
           options = {}
           options[:user] = @user if @user
           [::Solutions::ArticleDecorator, options]
+        end
+
+        def add_attachment_params(builder_params)
+          builder_params[:attachments_list] = params[cname][language_scoper][:attachments_list] if params[cname][language_scoper][:attachments_list]
+          builder_params[:cloud_file_attachments] = params[cname][language_scoper][:cloud_file_attachments] if params[cname][language_scoper][:cloud_file_attachments]
+          builder_params
+        end
+
+        def parse_attachment_params
+          @article_params[language_scoper][:cloud_file_attachments] = @article_params[language_scoper][:cloud_file_attachments].map(&:to_json) if @article_params[language_scoper][:cloud_file_attachments]
+          @article_params[language_scoper][:attachments_list] = @article_params[language_scoper][:attachments_list].join(',') if @article_params[language_scoper][:attachments_list]
+        end
+
+        def add_attachments
+          parse_attachment_params
+          attachment_builder(@draft, nil, (params[cname][language_scoper] || {})[:cloud_file_attachments], (params[cname][language_scoper] || {})[:attachments_list])
         end
 
         def validate_request_params

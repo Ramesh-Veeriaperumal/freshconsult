@@ -31,7 +31,6 @@ module Ember
 
         def load_objects
           @items = fetch_folders
-          log_and_render_404 if @items.blank?
         end
 
         def render_201_with_location(template_name: "api_solutions/folders/#{action_name}", location_url: 'api_solutions_folder_url', item_id: @item.id)

@@ -5999,46 +5999,6 @@
         }
       }
     },
-    "/solutions/articles": {
-      "get": {
-        "tags": [
-          "solutions"
-        ],
-        "summary": "List articles",
-        "parameters": [
-          {
-            "name": "ids",
-            "in": "query",
-            "type": "string",
-            "description": "comma-separated ids"
-          },
-          {
-            "name": "user_id",
-            "in": "query",
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "language_id",
-            "in": "query",
-            "type": "integer",
-            "format": "int64",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/solution_article"
-            }
-          },
-          "404": {
-            "description": "Article not found"
-          }
-        }
-      }
-    },
     "/solutions/articles/{id}/article_content": {
       "get": {
         "tags": [
@@ -11039,10 +10999,171 @@
         }
       }
     },
+    "/solutions/articles": {
+      "get": {
+        "tags": [
+          "Solution Article"
+        ],
+        "summary": "List all articles",
+        "parameters": [
+          {
+            "name": "portal_id",
+            "in": "query",
+            "type": "integer",
+            "description": "Articles to be fetched based on portal_id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "categories": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/solution_article"
+                  }
+                },
+                "meta": {
+                  "$ref": "#/definitions/meta"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Solution Article"
+        ],
+        "summary": "Create a article",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/article_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/solution_article"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/solutions/articles/{id}": {
+      "get": {
+        "tags": [
+          "Solution Article"
+        ],
+        "summary": "Show article",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/solution_article"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Solution Article"
+        ],
+        "summary": "Update article",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/article_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/solution_article"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Solution Article"
+        ],
+        "summary": "Delete article",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/solutions/folders/bulk_update": {
       "put": {
         "tags": [
-          "Folders"
+          "Solution Folder"
         ],
         "summary": "Bulk update folders",
         "parameters": [
@@ -11080,7 +11201,7 @@
     "/solutions/articles/bulk_update": {
       "put": {
         "tags": [
-          "articles"
+          "Solution Article"
         ],
         "summary": "Bulk update articles",
         "parameters": [
@@ -11118,7 +11239,7 @@
     "/solutions/drafts": {
       "get": {
         "tags": [
-          "drafts"
+          "Solution draft"
         ],
         "summary": "List recent drafts for the user in the portal",
         "parameters": [
@@ -15207,6 +15328,12 @@
               "type": "array",
               "items": {
                 "$ref": "#/definitions/attachment"
+              }
+            },
+            "cloud_files": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/extended_cloud_file"
               }
             },
             "modified_at": {
@@ -21551,6 +21678,59 @@
           "description": "Array of portal ids to be mapped to category. Allowed only if the account is configured with multiple portals.",
           "items": {
             "type": "integer"
+          }
+        }
+      }
+    },
+    "article_input": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "type": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "seo_data": {
+          "type": "object",
+          "properties": {
+            "meta_title": {
+              "type": "string"
+            },
+            "meta_description": {
+              "type": "string"
+            },
+            "meta_keywords": {
+              "type": "string"
+            }
+          }
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "byte"
+          }
+        },
+        "attachments_list": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "byte"
+          }
+        },
+        "cloud_file_attachments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/cloud_file_input"
           }
         }
       }
