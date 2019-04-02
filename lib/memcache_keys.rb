@@ -20,7 +20,7 @@ module MemcacheKeys
 
   ACCOUNT_SUBSCRIPTION = "ACCOUNT_SUBSCRIPTION:%{account_id}"
 
-  ACCOUNT_GROUPS = "v5/ACCOUNT_GROUPS:%{account_id}"
+  ACCOUNT_GROUPS = "v6/ACCOUNT_GROUPS:%{account_id}"
 
   ACCOUNT_GROUP_TYPES = "v1/ACCOUNT_GROUP_TYPES:%{account_id}"
 
