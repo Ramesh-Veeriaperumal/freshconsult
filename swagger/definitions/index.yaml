@@ -675,6 +675,12 @@ article_bulk_update_input:
   $ref: ./request/solutions/article_bulk_update_input.yaml
 article_votes:
   $ref: ./response/solutions/article_votes.yaml
+autosave_input:
+  $ref: ./request/solutions/autosave_input.yaml
+autosave_response:
+  $ref: ./response/solutions/autosave_response.yaml
+draft_update_input:
+  $ref: ./request/solutions/draft_update_input.yaml
 
 #Custom translations
 languages:

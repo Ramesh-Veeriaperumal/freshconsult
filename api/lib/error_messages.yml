@@ -290,5 +290,7 @@ api_error_messages:
   primary_or_supported: "Primary and supported/portal languages must be modified individually"
   draft_locked: "Draft is locked for editing"
   invalid_last_updated_at: "The content has changed"
+  invalid_draft_author: "Draft author is invalid or doesn't have necessary privilege"
+  content_changed: "Content has been changed elsewhere"
   cannot_create_new_tag: "cannot_create_new_tag: %{tags}"
   invalid_ebay_ticket_source: "Invalid ticket source"

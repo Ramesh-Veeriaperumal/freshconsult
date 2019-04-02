@@ -24,6 +24,14 @@ module AttachmentsTestHelper
                                 attachable_id: params[:attachable_id])
   end
 
+  def create_cloud_file_attachment(params = {})
+    @account.cloud_files.create(filename: params[:filename] || 'image.jpg',
+                                url: CLOUD_FILE_IMAGE_URL,
+                                droppable_type: params[:droppable_type],
+                                droppable_id: params[:droppable_id],
+                                application_id: 20)
+  end
+
   def create_shared_attachment(item, params = {})
     item.shared_attachments.build.build_attachment(content: params[:content] || fixture_file_upload('/files/attachment.txt', 'text/plain', :binary),
                                                    account_id: @account.id)

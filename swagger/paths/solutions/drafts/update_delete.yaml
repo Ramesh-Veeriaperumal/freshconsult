@@ -1,0 +1,40 @@
+put:
+  tags: [drafts]
+  summary: Cancel the autosave session changes
+  parameters:
+    - name: article_id
+      in: path
+      type: integer
+      format: int64
+      required: true
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/draft_update_input'
+  responses: 
+    200: 
+      description: Success
+      schema:
+        $ref: '#/definitions/solution_article'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+
+delete:
+  tags: [drafts]
+  summary: Delete the draft for a solution article
+  parameters:
+    - name: article_id
+      in: path
+      type: integer
+      format: int64
+      required: true
+  responses:
+    204:
+      description: Success
+    403:
+      description: Access denied

@@ -99,6 +99,7 @@ module SolutionsTestHelper
       ret_hash[:draft_locked] = draft.locked?
       ret_hash[:draft_modified_by] = draft.user_id
       ret_hash[:draft_modified_at] = %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+      ret_hash[:draft_updated_at] = %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     end
     ret_hash[:draft_present] = expected_output[:draft_present] || draft.present?
     ret_hash[:path] = expected_output[:path] || article.to_param

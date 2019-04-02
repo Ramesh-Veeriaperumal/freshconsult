@@ -202,10 +202,12 @@ Authority::Authorization::PrivilegeList.build do
 
   publish_solution do
     resource :'ember/solutions/article', only: %i[bulk_update create update]
+    resource :'ember/solutions/draft', only: %i[autosave update delete_attachment]
   end
 
   delete_solution do
     resource :'ember/solutions/article', only: %i[destroy reset_ratings]
+    resource :'ember/solutions/draft', only: %i[destroy]
   end
 
   view_reports do

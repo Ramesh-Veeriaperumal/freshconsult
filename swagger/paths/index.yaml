@@ -618,5 +618,12 @@
   $ref: ./solutions/article/bulk_update.yaml
 /solutions/drafts:
   $ref: ./solutions/drafts/index.yaml
+/solutions/articles/{article_id}/draft/autosave:
+  $ref: ./solutions/drafts/autosave.yaml
+/solutions/articles/{article_id}/draft:
+  $ref: ./solutions/drafts/update_delete.yaml
+/solutions/articles/{article_id}/draft/{attachment_type}/{attachment_id}:
+  $ref: ./solutions/drafts/attachment_delete.yaml
+
 /configs/{id}:
   $ref: ./configs/show.yaml

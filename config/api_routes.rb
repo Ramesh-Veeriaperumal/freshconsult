@@ -322,6 +322,10 @@ Helpkit::Application.routes.draw do
           end
         end
         resources :drafts, controller: 'ember/solutions/drafts', only: [:index]
+        resource :draft, path: 'articles/:article_id/draft', controller: 'ember/solutions/drafts', only: [:destroy, :update] do
+          put :autosave
+          delete :delete_attachment, path: ':attachment_type/:attachment_id'
+        end
       end
     end
 

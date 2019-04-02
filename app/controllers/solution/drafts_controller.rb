@@ -5,6 +5,7 @@ class Solution::DraftsController < ApplicationController
   helper Solution::ArticlesHelper
   include Solution::FlashHelper
   include Solution::LanguageControllerMethods
+  include DraftsConcern
 
   before_filter :check_account_activation, :only => :publish
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
@@ -101,12 +102,6 @@ class Solution::DraftsController < ApplicationController
       render :json => { :success => false, :deleted => true }.to_json, :formats => [:js], :status => 200 and return false unless @article_meta
     end
 
-    def load_attachment
-      @assoc = (ATTACHMENT_TYPES.include?(params[:attachment_type]) && params[:attachment_type]) || ATTACHMENT_TYPES.first
-      @attachment = @article.safe_send(@assoc.pluralize.to_sym).find_by_id(params[:attachment_id])
-      @attachment = @article.draft.safe_send(@assoc.pluralize.to_sym).find_by_id(params[:attachment_id]) if @attachment.nil?
-    end
-
     def autosave_validate
       return { :success => false, :deleted => true } if @draft.article.blank?
       return autosave_content_validate if editable?
@@ -150,14 +145,6 @@ class Solution::DraftsController < ApplicationController
         :success => success,
         :msg => t("solution.draft.autosave.#{key}", lang_vars)
       }
-    end
-
-    def pseudo_delete_article_attachment
-      deleted = { @assoc.pluralize.to_sym => [@attachment.id]}
-      @draft.meta[:deleted_attachments] ||= {}
-      @draft.meta[:deleted_attachments].merge!(deleted) { |key,oldval,newval| oldval | newval }
-
-      @draft.save
     end
 
     def drafts_scoper

@@ -1,0 +1,5 @@
+type: object
+properties:
+  timestamp:
+    type: integer
+    description: Updated At timestamp of the draft

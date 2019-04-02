@@ -26,7 +26,7 @@ class Solution::Draft < ActiveRecord::Base
   after_create :add_activity_new
 
   attr_accessible :title, :meta, :description
-  attr_accessor :discarding, :publishing
+  attr_accessor :discarding, :publishing, :keep_previous_author
 
   alias_attribute :modified_by, :user_id
 
@@ -103,7 +103,8 @@ class Solution::Draft < ActiveRecord::Base
 
   def populate_defaults
     self.status ||= STATUS_KEYS_BY_TOKEN[:work_in_progress]
-    self.user_id = User.current ? User.current.id : self.user_id || article.user_id
+    self.user_id = User.current && !keep_previous_author ? User.current.id : (user_id || article.user_id)
+    self.category_meta_id ||= article.solution_folder_meta.solution_category_meta_id
   end
 
   def change_modified_at
