@@ -1,6 +1,6 @@
 class Solutions::ArticleDecorator < ApiDecorator
   delegate :title, :description, :desc_un_html, :user_id, :status, :seo_data, :language_id,
-           :parent, :parent_id, :draft, :attachments, :modified_at, :modified_by, :id, to: :record
+           :parent, :parent_id, :draft, :attachments, :modified_at, :modified_by, :id, :voters, :thumbs_up, :thumbs_down, to: :record
 
   SEARCH_CONTEXTS_WITHOUT_DESCRIPTION = [:agent_insert_solution, :filtered_solution_search]
 
@@ -80,6 +80,13 @@ class Solutions::ArticleDecorator < ApiDecorator
     ret_hash.merge!(description_hash(record_or_draft))
   end
 
+  def votes_hash
+    {
+      helpful: vote_info(:thumbs_up),
+      not_helpful: vote_info(:thumbs_down)
+    }
+  end
+
   private
 
     def folder_name
@@ -119,5 +126,13 @@ class Solutions::ArticleDecorator < ApiDecorator
 
     def get_modified_at
       @draft.try(:modified_at) || record.modified_at
+    end
+
+    def vote_info(vote_type)
+      users = voters.where('votes.vote = ?', Solution::Article::VOTES[vote_type]).select('users.id, users.name')
+      {
+        anonymous: safe_send(vote_type) - users.length,
+        users: users.map { |voter| { id: voter.id, name: voter.name } }
+      }
     end
 end

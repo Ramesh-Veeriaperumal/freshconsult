@@ -1,8 +1,12 @@
 require_relative '../../../test_helper'
+['solutions_helper.rb', 'solution_builder_helper.rb'].each { |file| require Rails.root.join('spec', 'support', file) }
+
 module Ember
   module Solutions
     class ArticlesControllerTest < ActionController::TestCase
       include SolutionsTestHelper
+      include SolutionsHelper
+      include SolutionBuilderHelper
 
       def setup
         super
@@ -22,6 +26,7 @@ module Ember
         additional = @account.account_additional_settings
         additional.supported_languages = ['es', 'ru-RU']
         additional.save
+        @account.features.enable_multilingual.create
         subscription = @account.subscription
         subscription.state = 'active'
         subscription.save
@@ -401,11 +406,96 @@ module Ember
         Solution::ArticleMeta.any_instance.unstub(:save!)
       end
 
+      def test_votes_with_incorrect_credentials
+        @controller.stubs(:api_current_user).raises(ActiveSupport::MessageVerifier::InvalidSignature)
+        get :votes, controller_params(version: 'private', id: 1)
+        assert_response 401
+        assert_equal request_error_pattern(:credentials_required).to_json, response.body
+      ensure
+        @controller.unstub(:api_current_user)
+      end
+
+      def test_votes_without_view_solutions_privilege
+        User.any_instance.stubs(:privilege?).with(:view_solutions).returns(false)
+        get :votes, controller_params(version: 'private', id: 1)
+        assert_response 403
+        match_json(request_error_pattern(:access_denied))
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_votes_without_access
+        user = add_new_user(@account, active: true)
+        login_as(user)
+        get :votes, controller_params(version: 'private', id: 1)
+        assert_response 403
+        match_json(request_error_pattern(:access_denied))
+        @admin = get_admin
+        login_as(@admin)
+      end
+
+      def test_votes_for_non_existant_article
+        get :votes, controller_params(version: 'private', id: 0)
+        assert_response 404
+      end
+
+      def test_votes
+        article = create_article(article_params)
+        article.primary_article.thumbs_up!
+        article.primary_article.thumbs_down!
+        article.reload
+        vote = article.primary_article.votes.build(vote: 1, user_id: add_new_user(@account, active: true).id)
+        vote.save
+        article.primary_article.thumbs_up!
+        get :votes, controller_params(version: 'private', id: article.id)
+        assert_response 200
+        article.reload
+        assert_equal votes_pattern(article.primary_article), response.body
+      end
+
+      def test_votes_with_language_without_multilingual_feature
+        allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
+        Account.any_instance.stubs(:features).returns(allowed_features)
+        get :votes, controller_params(version: 'private', id: 0, language: @account.language)
+        match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
+        assert_response 404
+      ensure
+        Account.any_instance.unstub(:features)
+      end
+
+      def test_votes_with_invalid_language
+        get :votes, controller_params(version: 'private', id: 0, language: 'test')
+        assert_response 404
+        match_json(request_error_pattern(:language_not_allowed, code: 'test', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
+      end
+
+      def test_votes_with_primary_language
+        article = create_article(article_params)
+        article.primary_article.thumbs_up!
+        article.primary_article.thumbs_down!
+        get :votes, controller_params(version: 'private', id: article.id, language: @account.language)
+        assert_response 200
+        article.reload
+        assert_equal votes_pattern(article.primary_article), response.body
+      end
+
+      def test_votes_with_supported_language
+        languages = @account.supported_languages << 'primary'
+        language = @account.supported_languages.first
+        article_meta = create_article(article_params(lang_codes: languages))
+        article = article_meta.safe_send("#{language}_article")
+        article.thumbs_up!
+        article.thumbs_down!
+        get :votes, controller_params(version: 'private', id: article_meta.id, language: language)
+        assert_response 200
+        assert_equal votes_pattern(article.reload), response.body
+      end
+
       private
 
         def populate_articles(folder_meta)
           return if folder_meta.article_count > 4
-          for i in 1..2 do
+          2.times do
             articlemeta = Solution::ArticleMeta.new
             articlemeta.art_type = 1
             articlemeta.solution_folder_meta_id = folder_meta.id
@@ -451,6 +541,17 @@ module Ember
               }
             ]
           }
+        end
+
+        def article_params(options = {})
+          lang_hash = { lang_codes: options[:lang_codes] }
+          category = create_category({ portal_id: Account.current.main_portal.id }.merge(lang_hash))
+          {
+            title: 'Test',
+            description: 'Test',
+            folder_id: create_folder({ visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: category.id }.merge(lang_hash)).id,
+            status: options[:status] || Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
+          }.merge(lang_hash)
         end
     end
   end

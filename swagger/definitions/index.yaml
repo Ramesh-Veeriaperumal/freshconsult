@@ -671,6 +671,8 @@ folder_bulk_update_input:
   $ref: ./request/solutions/folder_bulk_update_input.yaml
 article_bulk_update_input:
   $ref: ./request/solutions/article_bulk_update_input.yaml
+article_votes:
+  $ref: ./response/solutions/article_votes.yaml
 
 #Custom translations
 languages:

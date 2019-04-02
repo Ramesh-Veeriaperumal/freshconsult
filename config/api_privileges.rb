@@ -184,24 +184,24 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   view_solutions do
-    resource :"ember/solutions/article", only: [:index,:article_content, :folder_articles, :show]
-    resource :"ember/solutions/category", :only => [:index, :show]
-    resource :"ember/solutions/folder", :only => [:index, :category_folders, :show]
+    resource :'ember/solutions/article', only: %i[index article_content folder_articles show votes]
+    resource :'ember/solutions/category', only: %i[index show]
+    resource :'ember/solutions/folder', only: %i[index category_folders show]
     resource :"ember/search/multiquery", only: [:search_results]
-    resource :"ember/admin/bot", only: [:bot_folders]
+    resource :'ember/admin/bot', only: [:bot_folders]
     resource :'ember/solutions/home', only: %i[summary quick_views]
-    resource :"ember/solutions/draft", only: [:index]
+    resource :'ember/solutions/draft', only: %i[index]
   end
 
   manage_solutions do
-    resource :"ember/admin/bot", only: [:create_bot_folder]
-    resource :"ember/solutions/folder", only: [:create, :update, :destroy, :bulk_update]
-    resource :"ember/solutions/category", :only => [:create, :update, :destroy]
-    resource :"ember/company", only: %i[index]
+    resource :'ember/admin/bot', only: %i[create_bot_folder]
+    resource :'ember/solutions/folder', only: %i[create update destroy bulk_update]
+    resource :'ember/solutions/category', only: %i[create update destroy]
+    resource :'ember/company', only: %i[index]
   end
 
   publish_solution do
-    resource :"ember/solutions/article", only: [:bulk_update, :create, :update]
+    resource :'ember/solutions/article', only: %i[bulk_update create update]
   end
 
   view_reports do

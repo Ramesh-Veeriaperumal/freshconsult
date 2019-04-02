@@ -8,7 +8,7 @@ module Ember
       before_filter :filter_ids, only: [:index]
       before_filter :validate_bulk_update_article_params, :validate_language, only: [:bulk_update]
 
-      decorate_views(decorate_object: [:article_content])
+      decorate_views(decorate_object: [:article_content, :votes])
 
       MAX_IDS_COUNT = 10
 
@@ -43,7 +43,7 @@ module Ember
       end
 
       private
-        
+
         def constants_class
           'SolutionsConstants'.freeze
         end

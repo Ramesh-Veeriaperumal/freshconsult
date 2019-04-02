@@ -160,6 +160,13 @@
             "type": "integer",
             "format": "int64",
             "description": "Article ID for which feedbacks have to be displayed"
+          },
+          {
+            "name": "language_id",
+            "in": "query",
+            "type": "integer",
+            "format": "int64",
+            "description": "Language for which solution article feedbacks have to be retrieved"
           }
         ],
         "responses": {
@@ -6059,6 +6066,38 @@
           },
           "404": {
             "description": "Article not found"
+          }
+        }
+      }
+    },
+    "/solutions/articles/{id}/votes": {
+      "get": {
+        "tags": [
+          "solutions"
+        ],
+        "summary": "List article votes",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of the article",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/article_votes"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
           }
         }
       }
@@ -21691,22 +21730,57 @@
         }
       }
     },
-    "languages": {
+    "article_votes": {
       "type": "object",
       "properties": {
-        "primary_language": {
-          "type": "string"
-        },
-        "supported_languages": {
-          "type": "array",
-          "items": {
-            "type": "string"
+        "helpful": {
+          "type": "object",
+          "description": "List of article upvotes",
+          "properties": {
+            "anonymous": {
+              "type": "integer",
+              "description": "Number of anonymous upvotes"
+            },
+            "users": {
+              "type": "array",
+              "description": "List of logged-in users that upvoted",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
           }
         },
-        "portal_languages": {
-          "type": "array",
-          "items": {
-            "type": "string"
+        "not_helpful": {
+          "type": "object",
+          "description": "List of article downvotes",
+          "properties": {
+            "anonymous": {
+              "type": "integer",
+              "description": "Number of anonymous downvotes"
+            },
+            "users": {
+              "type": "array",
+              "description": "List of logged-in users that upvoted",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
           }
         }
       }

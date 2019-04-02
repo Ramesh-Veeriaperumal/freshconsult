@@ -309,9 +309,13 @@ Helpkit::Application.routes.draw do
           end
         end
 
-        resources :articles, controller: 'ember/solutions/articles', only: [] do
+        resources :articles, controller: 'ember/solutions/articles', only: [:index] do
           collection do
             put :bulk_update
+          end
+          member do
+            get :article_content
+            get :votes, path: '(:language)/votes'
           end
         end
 
@@ -607,10 +611,6 @@ Helpkit::Application.routes.draw do
     # account update
     put '/account_admin', to: 'account_admins#update'
     put 'account_admin/disable_billing_info_updation', to: 'account_admins#disable_billing_info_updation'
-
-    # dirty hack - check privilege fails when using 'solutions' namespace although controller action mapping is unaffected
-    get 'solutions/articles', to: 'ember/solutions/articles#index'
-    get 'solutions/articles/:id/article_content', to: 'ember/solutions/articles#article_content'
 
     resources :marketplace_apps, controller: 'ember/marketplace_apps', only: [:index]
 

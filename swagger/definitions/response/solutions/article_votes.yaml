@@ -1,0 +1,36 @@
+type: object
+properties:
+  helpful:
+    type: object
+    description: List of article upvotes
+    properties:
+      anonymous:
+        type: integer
+        description: Number of anonymous upvotes
+      users:
+        type: array
+        description: List of logged-in users that upvoted
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+  not_helpful:
+    type: object
+    description: List of article downvotes
+    properties:
+      anonymous:
+        type: integer
+        description: Number of anonymous downvotes
+      users:
+        type: array
+        description: List of logged-in users that upvoted
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string

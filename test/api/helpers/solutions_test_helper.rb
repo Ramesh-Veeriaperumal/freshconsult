@@ -267,4 +267,19 @@ module SolutionsTestHelper
       Account.current.solution_category_meta.select(:id).where('id NOT IN (?)', associated_category_ids)
     end
   end
+
+  def votes_pattern(article)
+    {
+      helpful: vote_info(article, :thumbs_up),
+      not_helpful: vote_info(article, :thumbs_down)
+    }.to_json
+  end
+
+  def vote_info(article, vote_type)
+    users = article.voters.where('votes.vote = ?', Solution::Article::VOTES[vote_type]).select('users.id, users.name')
+    {
+      anonymous: article.safe_send(vote_type) - users.length,
+      users: users.map { |voter| { id: voter.id, name: voter.name } }
+    }
+  end
 end
