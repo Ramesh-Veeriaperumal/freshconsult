@@ -1,3 +1,4 @@
+require 'spam_watcher/spam_watcher_redis_methods'
 module Helpdesk
 	module Email
 		# handles the requsts of incoming emails from email service and creates ticket/note.
@@ -32,32 +33,25 @@ module Helpdesk
 
 			attr_accessor :additional_emails, :archived_ticket, :start_time, :actual_archive_ticket
 			def email_spam_watcher_counter(account)
-			    spam_watcher_options = {
-			          :key => "sw_solution_articles", 
-			          :threshold => 50,
-			          :sec_expire => 7200,
-			    }
-			    key  = spam_watcher_options[:key]
-			    threshold = spam_watcher_options[:threshold]
-			    sec_expire = spam_watcher_options[:sec_expire]
+				key = "sw_email_activities"
+				max_count = 50
+				sec_expire = 7200
 			    begin
 			      Timeout::timeout(SpamConstants::SPAM_TIMEOUT) {
 			        user_id = ""
 			        account_id = account.id
-			        max_count = "#{threshold}".to_i
 			        final_key = key + ":" + account_id.to_s + ":" + user_id.to_s
 			        # this case is added for the sake of skipping imports
 			        return true if ((Time.now.to_i - account.created_at.to_i) > 1.day)
 			        return true if $spam_watcher.perform_redis_op("get", account_id.to_s + "-" + user_id.to_s)
 			        count = $spam_watcher.perform_redis_op("rpush", final_key, Time.now.to_i)
-			        sec_expire = "#{sec_expire}".to_i 
 			        $spam_watcher.perform_redis_op("expire", final_key, sec_expire+1.minute)
 			        if count >= max_count
 
 			          head = $spam_watcher.perform_redis_op("lpop", final_key).to_i
 			          time_diff = Time.now.to_i - head
 			          if time_diff <= sec_expire
-			            $spam_watcher.perform_redis_op("rpush", SpamConstants::SPAM_WATCHER_BAN_KEY,final_key)
+			            SpamWatcherRedisMethods.incoming_email_spam(account)
 			          end
 			        end
 			      }
@@ -565,7 +559,9 @@ module Helpdesk
 				end
 				to_emails = parse_to_emails
 				global_cc = parse_all_cc_emails(account.kbase_email, account.support_emails)
-				if max_email_limit_reached? "Ticket", to_emails, global_cc 
+				if Account.current.allow_huge_ccs_enabled?
+					global_cc = global_cc[0..48] if global_cc.present?
+				elsif max_email_limit_reached? 'Ticket', to_emails, global_cc 
 					email_processing_log "You have exceeded the limit of #{TicketConstants::MAX_EMAIL_COUNT} cc emails for the ticket"
 					return processed_email_data(PROCESSED_EMAIL_STATUS[:max_email_limit], account.id)
 				end
@@ -694,6 +690,10 @@ module Helpdesk
 				cc_array = get_email_array params[:cc]
 				cc_array.concat(additional_emails || [])
 				cc_array.compact.map{|i| i.downcase}.uniq
+				if Account.current.allow_huge_ccs_enabled?
+					cc_array = cc_array[0..48]
+				end
+				cc_array
 			end
 
 			def cleansed_html
@@ -901,7 +901,11 @@ module Helpdesk
 				parsed_cc_emails.delete(ticket.account.kbase_email)
 				cc_emails = parsed_cc_emails
 				to_emails = parse_to_emails
-				if max_email_limit_reached? "Note", to_emails, cc_emails
+
+				if Account.current.allow_huge_ccs_enabled?
+					cc_emails = cc_emails[0..48] if cc_emails.present?
+					to_emails = to_emails[0..48] if to_emails.present?
+				elsif max_email_limit_reached? 'Note', to_emails, cc_emails
 					email_processing_log "You have exceeded the limit of #{TicketConstants::MAX_EMAIL_COUNT} cc emails for the note"
 					return processed_email_data(PROCESSED_EMAIL_STATUS[:max_email_limit], ticket.account.id)
 				end

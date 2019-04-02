@@ -4,7 +4,17 @@
   <% handle = handles.first%>
   <div class="row twt-area">
     <div class="twt-msg">
-      <%= text_area "tweet", :body, :class => 'reply-input required tweet', :id => "post_tweet_textarea", :placeholder => t('social.streams.compose'), :rows => 3 , :onfocus=> "this.value = this.value;" %>
+          <%
+      args = {
+        :class => 'reply-input required tweet',
+        :id => "post_tweet_textarea",
+        :placeholder => t('social.streams.compose'),
+        :rows => 3 ,
+        :onfocus=> "this.value = this.value;"
+      }
+      args[:disabled] = "disabled" if is_twitter_blocked?
+    %>
+      <%= text_area "tweet", :body, args %>
     </div>
     <div class="twt-options clearfix">
       <div class="twt-profile image-lazy-load twt-as-main">
@@ -19,7 +29,8 @@
       <%= hidden_field_tag "twitter_handle_id", "#{handle.id}", :class => "twitter_handle_id twt-as-main" %>
       <div class="pull-right">
         <span class="pull-left tweet-counter" id="tweet_counter">280</span>
-        <button type="button" class="btn btn-default pull-left twt-submit post-twt-submit"><%= t("social.streams.twitter.post") %></button>
+        <% is_disabled = is_twitter_blocked? ? "disabled" : "" %>
+        <button <%= is_disabled %> type="button" class="btn btn-default pull-left twt-submit post-twt-submit"><%= t("social.streams.twitter.post") %></button>
       </div>
     </div>
   </div>

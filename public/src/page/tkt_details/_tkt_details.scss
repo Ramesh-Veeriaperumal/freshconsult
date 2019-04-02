@@ -1,6 +1,10 @@
 @import "../common-popover";
 @import "../../fonts/glyphs-variables";
 
+$error-bg-color: #ffecf0;
+$error-border-color: #ffd0d6;
+$error-text-color: #12344d;
+
 // Requester Info Tabs in Ticket Details page
 $message_window_bg_color: #FDFDFD;
 .ticket_show .pagearea {
@@ -452,6 +456,27 @@ li {
     display: block;
 }
 
+.twitter-blocked .warning {
+  vertical-align: middle;
+  display: inline-block;
+}
+
+ .twitter-blocked span {
+  display: inline-block;
+  height: 16px;
+  margin-left: 3px; 
+  vertical-align: middle;
+  color: #d24041;
+}
+
+ .twitter-blocked {
+  margin-bottom: 10px;
+  border-radius: 4px;
+  color: $error-text-color;
+  padding-left: 30px;
+  margin-top: 10px;
+}
+
 .pseudo_reply {
     height: 15px;
     background: #FFF;
@@ -464,6 +489,12 @@ li {
     a {
         margin: 10px;
     }
+}
+
+.pseudo_reply a.disabled {
+    pointer-events: none;
+    cursor: default;
+    color: #e9e9e9;
 }
 
 .responder_field {

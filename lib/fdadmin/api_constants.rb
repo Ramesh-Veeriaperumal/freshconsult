@@ -10,6 +10,7 @@ module Fdadmin::ApiConstants
     AbstractController::Callbacks,
     ActionController::Rescue,
     ActionController::ParamsWrapper,
+    ActionController::StrongParameters,
     ActionController::Instrumentation  # need this for active support instrumentation.
   ]
 

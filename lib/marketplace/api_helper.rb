@@ -77,6 +77,8 @@ module Marketplace::ApiHelper
     end
 
     def supported_apps?(extension, version_id)
+      # clear cache and fetch extension datails again if version_id of the app is not found in both the platforms
+      extension = extension_details(extension['extension_id'], extension['type'], true).body unless extension['platform_details'].values.flatten.include?(version_id)
       ((extension['type'] == Marketplace::Constants::EXTENSION_TYPE[:plug] || custom_app?(extension['app_type'], extension['type'])) &&
        extension['platform_details'][platform_version].include?(version_id)) ||
        extension['platform_details'][platform_version] == true

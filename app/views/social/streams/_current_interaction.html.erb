@@ -72,7 +72,7 @@
               </a>
             </li>
             
-            <% if feed.respond_to?(:favorited) %>
+            <% if feed.respond_to?(:favorited) && !(is_twitter_blocked?) %>
               <li class="icon-lst">
                 <% if feed.favorited %>
                   <a href="javascript:void(0);" data-feed-id="<%= feed.feed_id %>" data-clicked="no" class="twt-fav more-links shr-fav-btn tooltip unfav unfav-twt is-active" data-original-title="Undo Like" twipsy-content-set="true">
@@ -112,7 +112,19 @@
               <% reply_mentions << feed.user[:screen_name] unless reply_mentions.include?(feed.user[:screen_name]) %>
               <% mentions = reply_mentions.map { |mention| "@#{mention}"}.join(" ") %>
 
-              <%= text_area "tweet", :body, :class => 'reply-input required tweet', :id => "reply_text_area_#{feed.feed_id}", :placeholder => " Reply to #{feed.user[:screen_name]}", :rows => 3 , :value => "#{mentions} ", :onfocus=> "this.value = this.value;" %>
+              <%
+                args = {
+                :class => 'reply-input required tweet',
+                :id => "reply_text_area_#{feed.feed_id}",
+                :placeholder => " Reply to #{feed.user[:screen_name]}",
+                :rows => 3 ,
+                :value => "#{mentions} ",
+                :onfocus=> "this.value = this.value;"
+                }
+                args[:disabled] = "disabled" if is_twitter_blocked?
+              %>
+
+              <%= text_area "tweet", :body, args %>
             </div>
             
             <div class="twt-options clearfix">
@@ -139,7 +151,8 @@
 
               <div class="pull-right">
                 <span class="pull-left tweet-counter" id="SendTweetCounter_<%=feed.feed_id%>">280</span>
-                 <button type="button" class="btn btn-default pull-left twt-submit reply-submit" data-feed-id = "<%= feed.feed_id%>"> Reply </button>
+                <% disabled = is_twitter_blocked? ? "disabled": "" %>
+                 <button <%= disabled %> type="button" class="btn btn-default pull-left twt-submit reply-submit" data-feed-id = "<%= feed.feed_id%>"> Reply </button>
               </div>
             </div>
           </div>
@@ -155,8 +168,15 @@
               <% reply_mentions = feed.user_mentions - @all_screen_names %>
               <% reply_mentions << feed.user[:screen_name] unless reply_mentions.include?(feed.user[:screen_name]) %>
               <% mentions = reply_mentions.map { |mention| "@#{mention}"}.join(" ") %>
-
-              <%= text_area "tweet", :body, :class => 'reply-input span12 disabled required tweet', :id => "retweet_text_area_#{feed.feed_id}", :rows => 3, :value => "RT #{feed.body}" %>
+              <% replyargs = {
+                :class => 'reply-input span12 disabled required tweet',
+                :id => "retweet_text_area_#{feed.feed_id}",
+                :rows => 3,
+                :value => "RT #{feed.body}"
+                }
+                replyargs[:disabled] = "disabled" if is_twitter_blocked?
+              %>
+              <%= text_area "tweet", :body, replyargs %>
             </div>
             
             <div class="twt-options clearfix">
@@ -177,9 +197,9 @@
               <%= hidden_field_tag "stream_id", "#{feed.stream_id}" %>
               
               <%= hidden_field "tweet", :feed_id , :value => feed.feed_id %>
-
+              <% disabled = is_twitter_blocked? ? "disabled" : "" %>
               <div class="pull-right">
-                 <button type="button" class="btn btn-default pull-left twt-submit rt-submit" data-feed-id = "<%= feed.feed_id%>"> Retweet </button>
+                 <button <%= disabled %> type="button" class="btn btn-default pull-left twt-submit rt-submit" data-feed-id = "<%= feed.feed_id%>"> Retweet </button>
               </div>
             </div>
           </div>
