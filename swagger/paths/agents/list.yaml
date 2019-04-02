@@ -8,6 +8,11 @@ get:
       enum:
         - available
         - available_count
+        - with_privilege
+    - name: privilege
+      in: query
+      type: string
+      description: privilege symbol (Lists agents who has this privilege. Applicable iif with_privilege filter applied).
   responses:
     200:
       description: Success

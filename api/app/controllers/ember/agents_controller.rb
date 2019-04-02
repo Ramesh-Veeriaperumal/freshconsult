@@ -17,7 +17,7 @@ module Ember
         response.api_meta = { agents_available: agents_availability_count }
       else
         external_agents_availability if agent_availability_details?
-        response.api_meta = { count: @items_count }
+        response.api_meta = { count: @items_count } unless privilege_filter?
       end
     end
 
@@ -115,6 +115,9 @@ module Ember
           @items = []
         elsif agent_availability_details? && !current_user.privilege?(:admin_tasks)
           super(supervisor_scoper_agent_availability)
+        elsif privilege_filter?
+          @privilege_filter = true
+          @items = privilege_scoper
         else
           super
         end
@@ -153,9 +156,19 @@ module Ember
         params[:only] == 'available_count'
       end
 
+      def privilege_filter?
+        params[:only] == 'with_privilege'
+      end
+
       def agent_availability_details?
         params[:only] == 'available' && current_user.privilege?(:manage_availability)
       end
+
+      def privilege_scoper
+        privilege = params[:privilege].to_sym
+        current_account.agents_details_from_cache.select { |x| x.privilege?(privilege) }
+      end
+
       def supervisor_scoper_agent_availability
         agent_groups = current_account.agent_groups_from_cache
         current_user_id = current_user.id

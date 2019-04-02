@@ -158,13 +158,32 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     assert_equal json.api_meta, pattern[:meta]
   end
 
+  def test_agent_index_with_privilege_filter
+    get :index, controller_params(version: 'private', only: 'with_privilege', privilege: 'manage_solutions')
+    assert_response 200
+    pattern = @account.users.where(helpdesk_agent: true).order('name').select { |user| user.privilege?(:manage_solutions) }.map { |user| private_api_privilege_agent_pattern(user) }
+    match_json(pattern.ordered)
+  end
+
+  def test_agent_index_with_invalid_privilege
+    get :index, controller_params(version: 'private', only: 'with_privilege', privilege: 'dummy_bla_bla')
+    assert_response 400
+    match_json([bad_request_error_pattern('privilege', 'invalid_privilege', code: 'invalid_value')])
+  end
+
+  def test_privilege_not_allowed
+    get :index, controller_params(version: 'private', only: 'available_count', privilege: 'dummy_bla_bla')
+    assert_response 400
+    match_json([bad_request_error_pattern('privilege', 'privilege_not_allowed', code: 'invalid_value')])
+  end  
+
   def test_agent_index_with_only_filter_wrong_params
     create_rr_agent
     round_robin_groups = Group.round_robin_groups.map(&:id)
     Ember::AgentsController.any_instance.stubs(:available_chat_agents).returns(0)
     json = get :index, controller_params(version: 'private', only: 'wrong_params')
     assert_response 400
-    match_json([bad_request_error_pattern('only', :not_included, list: 'available,available_count')])
+    match_json([bad_request_error_pattern('only', :not_included, list: 'available,available_count,with_privilege')])
   ensure
     Ember::AgentsController.any_instance.unstub(:available_chat_agents)
   end
