@@ -160,9 +160,7 @@ module Cache::Memcache::Account
   def groups_from_cache
     @groups_from_cache ||= begin
       key = groups_memcache_key
-      MemcacheKeys.fetch(key) do
-        groups.find(:all, order: 'name', include: [:business_calendar, :agent_groups])
-      end
+      MemcacheKeys.fetch(key) { self.groups.find(:all, :order=>'name' ) }
     end
   end
 
