@@ -79,7 +79,9 @@ class Solution::Article < ActiveRecord::Base
 
   delegate :visible_in?, :to => :solution_folder_meta
   delegate :visible?, :to => :solution_folder_meta
-  
+
+  xss_sanitize only: [:title], plain_sanitizer: [:title]
+
   VOTE_TYPES = [:thumbs_up, :thumbs_down]
   
   SELECT_ATTRIBUTES = ["id", "thumbs_up", "thumbs_down"]
