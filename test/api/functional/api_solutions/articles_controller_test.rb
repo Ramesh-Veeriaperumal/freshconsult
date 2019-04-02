@@ -1,9 +1,13 @@
 require_relative '../../test_helper'
+['solutions_helper.rb', 'solution_builder_helper.rb'].each { |file| require Rails.root.join('spec', 'support', file) }
+
 module ApiSolutions
   class ArticlesControllerTest < ActionController::TestCase
     include SolutionsTestHelper
     include AttachmentsTestHelper
     include PrivilegesHelper
+    include SolutionsHelper
+    include SolutionBuilderHelper
 
     def setup
       super
@@ -842,6 +846,85 @@ module ApiSolutions
       put :update, construct_params({ id: sample_article.parent_id }, tags: [])
     end
 
+    def test_update_article_unpublish_with_incorrect_credentials
+      @controller.stubs(:api_current_user).raises(ActiveSupport::MessageVerifier::InvalidSignature)
+      put :update, construct_params(id: 1, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
+      assert_response 401
+      assert_equal request_error_pattern(:credentials_required).to_json, response.body
+    ensure
+      @controller.unstub(:api_current_user)
+    end
+
+    def test_update_article_unpublish_without_publish_solution_privilege
+      User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
+      put :update, construct_params(id: 1, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
+      assert_response 403
+      match_json(request_error_pattern(:access_denied))
+    ensure
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_update_article_unpublish_without_access
+      user = add_new_user(@account, active: true)
+      login_as(user)
+      put :update, construct_params(id: 1, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
+      assert_response 403
+      match_json(request_error_pattern(:access_denied))
+      @admin = get_admin
+      login_as(@admin)
+    end
+
+    def test_update_article_unpublish_for_non_existant_article
+      put :update, construct_params(id: 0, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
+      assert_response 404
+    end
+
+    def test_update_article_unpublish_with_invalid_field
+      put :update, construct_params(id: 1, test: 'test', status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
+      assert_response 400
+      match_json([bad_request_error_pattern('test', :invalid_field)])
+    end
+
+    def test_update_article_unpublish
+      article = create_article(article_params)
+      put :update, construct_params(id: article.id, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
+      assert_response 200
+      assert_equal Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], article.primary_article.status
+    end
+
+    def test_update_article_unpublish_with_language_without_multilingual_feature
+      allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
+      Account.any_instance.stubs(:features).returns(allowed_features)
+      put :update, construct_params(id: 0, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], language: @account.language)
+      match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
+      assert_response 404
+    ensure
+      Account.any_instance.unstub(:features)
+    end
+
+    def test_update_article_unpublish_with_invalid_language
+      article = create_article(article_params)
+      put :update, construct_params(id: article.id, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], language: 'test')
+      assert_response 404
+      match_json(request_error_pattern(:language_not_allowed, code: 'test', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
+    end
+
+    def test_update_article_unpublish_with_primary_language
+      article = create_article(article_params)
+      put :update, construct_params(id: article.id, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], language: @account.language)
+      assert_response 200
+      assert_equal Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], article.primary_article.status
+    end
+
+    def test_update_article_unpublish_with_supported_language
+      languages = @account.supported_languages + ['primary']
+      language = @account.supported_languages.first
+      article = create_article(article_params(lang_codes: languages))
+      put :update, construct_params(id: article.id, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], language: language)
+      assert_response 200
+      assert_equal Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], article.safe_send("#{language}_article").status
+    end
+
     def test_create_article_without_type
       folder_meta = get_folder_meta
       title = Faker::Name.name
@@ -868,5 +951,18 @@ module ApiSolutions
       assert_response 400
       match_json([bad_request_error_pattern('cloud_file_attachments', 'is invalid', code: :invalid_value)])
     end
+
+    private
+
+      def article_params(options = {})
+        lang_hash = { lang_codes: options[:lang_codes] }
+        category = create_category({ portal_id: Account.current.main_portal.id }.merge(lang_hash))
+        {
+          title: 'Test',
+          description: 'Test',
+          folder_id: create_folder({ visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: category.id }.merge(lang_hash)).id,
+          status: options[:status] || Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
+        }.merge(lang_hash)
+      end
   end
 end

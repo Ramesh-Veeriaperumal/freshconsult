@@ -928,6 +928,85 @@ module Ember
         Solution::ArticleMeta.any_instance.unstub(:save!)
       end
 
+      def test_update_article_unpublish_with_incorrect_credentials
+        @controller.stubs(:api_current_user).raises(ActiveSupport::MessageVerifier::InvalidSignature)
+        put :update, construct_params(version: 'private', id: 1, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
+        assert_response 401
+        assert_equal request_error_pattern(:credentials_required).to_json, response.body
+      ensure
+        @controller.unstub(:api_current_user)
+      end
+
+      def test_update_article_unpublish_without_publish_solution_privilege
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
+        put :update, construct_params(version: 'private', id: 1, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
+        assert_response 403
+        match_json(request_error_pattern(:access_denied))
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_update_article_unpublish_without_access
+        user = add_new_user(@account, active: true)
+        login_as(user)
+        put :update, construct_params(version: 'private', id: 1, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
+        assert_response 403
+        match_json(request_error_pattern(:access_denied))
+        @admin = get_admin
+        login_as(@admin)
+      end
+
+      def test_update_article_unpublish_for_non_existant_article
+        put :update, construct_params(version: 'private', id: 0, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
+        assert_response 404
+      end
+
+      def test_update_article_unpublish_with_invalid_field
+        put :update, construct_params(version: 'private', id: 1, test: 'test', status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
+        assert_response 400
+        match_json([bad_request_error_pattern('test', :invalid_field)])
+      end
+
+      def test_update_article_unpublish
+        article = create_article(article_params)
+        put :update, construct_params(version: 'private', id: article.id, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
+        assert_response 200
+        assert_equal Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], article.primary_article.status
+      end
+
+      def test_update_article_unpublish_with_language_without_multilingual_feature
+        allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
+        Account.any_instance.stubs(:features).returns(allowed_features)
+        put :update, construct_params(version: 'private', id: 0, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], language: @account.language)
+        match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
+        assert_response 404
+      ensure
+        Account.any_instance.unstub(:features)
+      end
+
+      def test_update_article_unpublish_with_invalid_language
+        article = create_article(article_params)
+        put :update, construct_params(version: 'private', id: article.id, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], language: 'test')
+        assert_response 404
+        match_json(request_error_pattern(:language_not_allowed, code: 'test', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
+      end
+
+      def test_update_article_unpublish_with_primary_language
+        article = create_article(article_params)
+        put :update, construct_params(version: 'private', id: article.id, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], language: @account.language)
+        assert_response 200
+        assert_equal Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], article.primary_article.status
+      end
+
+      def test_update_article_unpublish_with_supported_language
+        languages = @account.supported_languages + ['primary']
+        language = @account.supported_languages.first
+        article = create_article(article_params(lang_codes: languages))
+        put :update, construct_params(version: 'private', id: article.id, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], language: language)
+        assert_response 200
+        assert_equal Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], article.safe_send("#{language}_article").status
+      end
+
       def test_reset_ratings_with_incorrect_credentials
         @controller.stubs(:api_current_user).raises(ActiveSupport::MessageVerifier::InvalidSignature)
         put :reset_ratings, construct_params(version: 'private', id: 1)

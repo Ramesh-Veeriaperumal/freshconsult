@@ -1,5 +1,5 @@
 get:
-  tags: [solutions]
+  tags: [Solution Article]
   summary: List article votes
   parameters:
     - name: id

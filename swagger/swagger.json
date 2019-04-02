@@ -5999,103 +5999,6 @@
         }
       }
     },
-    "/solutions/articles/{id}/article_content": {
-      "get": {
-        "tags": [
-          "solutions"
-        ],
-        "summary": "List article content for an article",
-        "parameters": [
-          {
-            "$ref": "#/parameters/id"
-          },
-          {
-            "name": "language_id",
-            "in": "query",
-            "type": "integer",
-            "format": "int64",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/article_content"
-            }
-          },
-          "404": {
-            "description": "Article not found"
-          }
-        }
-      }
-    },
-    "/solutions/articles/{id}/reset_ratings": {
-      "put": {
-        "tags": [
-          "solutions"
-        ],
-        "summary": "Reset ratings of an article",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "type": "integer",
-            "description": "ID of the article",
-            "required": true
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Success"
-          },
-          "400": {
-            "description": "Bad request error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          },
-          "404": {
-            "description": "Resource not found"
-          }
-        }
-      }
-    },
-    "/solutions/articles/{id}/votes": {
-      "get": {
-        "tags": [
-          "solutions"
-        ],
-        "summary": "List article votes",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "type": "integer",
-            "format": "int64",
-            "description": "ID of the article",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/article_votes"
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          },
-          "404": {
-            "description": "Resource not found"
-          }
-        }
-      }
-    },
     "/search/solutions": {
       "get": {
         "tags": [
@@ -11156,6 +11059,103 @@
         "responses": {
           "204": {
             "description": "Success"
+          }
+        }
+      }
+    },
+    "/solutions/articles/{id}/article_content": {
+      "get": {
+        "tags": [
+          "Solution Article"
+        ],
+        "summary": "List article content for an article",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "language_id",
+            "in": "query",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/article_content"
+            }
+          },
+          "404": {
+            "description": "Article not found"
+          }
+        }
+      }
+    },
+    "/solutions/articles/{id}/reset_ratings": {
+      "put": {
+        "tags": [
+          "Solution Article"
+        ],
+        "summary": "Reset ratings of an article",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "description": "ID of the article",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/solutions/articles/{id}/votes": {
+      "get": {
+        "tags": [
+          "Solution Article"
+        ],
+        "summary": "List article votes",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of the article",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/article_votes"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
           }
         }
       }

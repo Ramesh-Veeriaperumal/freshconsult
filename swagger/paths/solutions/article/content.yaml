@@ -1,5 +1,5 @@
 get:
-  tags: [solutions]
+  tags: [Solution Article]
   summary: List article content for an article
   parameters:
     - $ref: '#/parameters/id'
