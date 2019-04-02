@@ -40,6 +40,18 @@ module Cache::Memcache::Account
     end
   end
 
+  def custom_date_time_fields_from_cache
+    @custom_date_time_fields_from_cache ||= begin
+      key = custom_date_time_fields_memcache_key
+      MemcacheKeys.fetch(key) { self.ticket_fields.where(field_type: 'custom_date_time').find(:all) }
+    end
+  end
+
+  def clear_custom_date_time_fields_cache
+    @custom_date_time_fields_from_cache = nil
+    MemcacheKeys.delete_from_cache(custom_date_time_fields_memcache_key)
+  end
+
   def section_parent_fields_from_cache
     @section_parent_fields ||= begin
       if caching_enabled?
@@ -690,5 +702,9 @@ module Cache::Memcache::Account
 
     def canned_responses_inline_images_key
       CANNED_RESPONSES_INLINE_IMAGES % { account_id: self.id }
+    end
+
+    def custom_date_time_fields_memcache_key
+      format(ACCOUNT_CUSTOM_DATE_TIME_FIELDS, account_id: self.id)
     end
 end
