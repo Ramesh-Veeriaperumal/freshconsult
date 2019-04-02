@@ -11,6 +11,11 @@ class Admin::TrialSubscriptionsControllerTest < ActionController::TestCase
   def before_all
     TrialSubscription.all.each(&:delete)
     Account.current.launch TrialSubscription::TRIAL_SUBSCRIPTION_LP_FEATURE
+    subscription = Account.current.subscription
+    if subscription.trial?
+      subscription.state = Subscription::ACTIVE
+      subscription.save!
+    end
   end
 
   def wrap_cname(params_hash)
@@ -170,5 +175,14 @@ class Admin::TrialSubscriptionsControllerTest < ActionController::TestCase
     result_array = UsageMetrics::Features.metrics(Account.current, shard, list)
     result_array.values.each{ |result| assert_include [true, false], result }
     result_array.keys.each{ |result| assert_include list, result }
+  end
+
+  def test_extending_the_trial_period
+    params_hash = { trial_plan: get_valid_plan_name }
+    post :create, construct_params({}, params_hash)
+    assert_response 204
+    account = Account.current
+    account.active_trial.extend_trial(10)
+    assert_equal(10.days.from_now.end_of_day.to_i, account.reload.active_trial.ends_at.to_i)
   end
 end

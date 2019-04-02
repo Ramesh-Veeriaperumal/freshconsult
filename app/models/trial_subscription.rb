@@ -30,13 +30,9 @@ class TrialSubscription < ActiveRecord::Base
   end
 
   def generate_features_diff(trial_plan)
-    self.features_diff = '0' # clear all features of trial subscription features diff
     existing_features = (account.features_list + account.addons.collect(&:features).flatten).uniq
-    new_features = ::PLANS[:subscription_plans][SubscriptionPlan::SUBSCRIPTION_PLANS.key(trial_plan)][:features].dup
     # for features which  aren't there, set the bit flag.
-    (new_features - existing_features).each do |f|
-      set_feature f
-    end
+    reset_features_bit(plan_features(trial_plan) - existing_features)
   end
 
   def column_name_lookup(_feature)
@@ -76,7 +72,40 @@ class TrialSubscription < ActiveRecord::Base
     (ends_at.utc.to_datetime - Time.now.utc.to_datetime).to_i if active?
   end
 
+  def extend_trial(days_count)
+    self.ends_at = days_count.days.from_now.end_of_day
+    save!
+  rescue StandardError => e
+    Rails.logger.error "Exception while extending higher plan trial, acc: #{account_id}"
+    raise e
+  end
+
+  def change_trial_plan(new_trial_plan)
+    actual_features_list = account.features_list - features_list
+    reset_features_bit(plan_features(new_trial_plan) - actual_features_list)
+    self.trial_plan = new_trial_plan
+    save!
+    TrialSubscriptionActions::PlanUpgrade.new(account, self).execute
+  rescue StandardError => e
+    Rails.logger.error "Exception while changing trial plan, acc: #{account_id}\
+    new trial plan: #{new_trial_plan}, error message: #{e.message}"
+    raise e
+  end
+
   private
+
+    def reset_features_bit(features)
+      # clear all features of trial subscription features diff
+      self.features_diff = '0'
+      features.each do |feature|
+        set_feature feature
+      end
+    end
+
+    def plan_features(trial_plan)
+      ::PLANS[:subscription_plans][
+        SubscriptionPlan::SUBSCRIPTION_PLANS.key(trial_plan)][:features].dup
+    end
 
     def calculate_result(old_plan, new_plan)
       old_plan.amount > new_plan.amount ? TrialSubscription::RESULTS[:downgraded] : TrialSubscription::RESULTS[:upgraded]

@@ -259,7 +259,7 @@ api_error_messages:
   only_field_group_allowed: Only service groups can be assigned to a ticket of type service task
   only_field_agent_allowed: Only field technicians can be assigned to a ticket of type service task
   field_agent_not_allowed: Tickets that are not of type service task cannot be assigned a field technician
-  field_group_not_allowed: Tickets that are not of type service Task cannot be assigned a field technician
+  field_group_not_allowed: Tickets that are not of type service task cannot be assigned a service group
   invalid_field_auto_assign: "Auto ticket assignment is not available for service groups."
   invalid_agent_ids: "Agent and group need to be of the same type."
   existing_import_inprogress: "We're still processing the previous import. Retry when it's complete."
