@@ -9,7 +9,7 @@ class Middleware::ApiPipeAuthenticator
   def call(env)
     @resource = env['PATH_INFO']
     @host = env['HTTP_HOST']
-    unless CustomRequestStore.read(:pipe_api_request)
+    unless pipe_request?
       @status, @headers, @response = @app.call(env)
     else
       secret = env.delete('HTTP_PIPESECRET')
@@ -22,6 +22,10 @@ class Middleware::ApiPipeAuthenticator
       end
     end
     [@status, @headers, @response]
+  end
+
+  def pipe_request?
+    @resource.starts_with?('/api/pipe/')
   end
 
   def set_response(status, headers)

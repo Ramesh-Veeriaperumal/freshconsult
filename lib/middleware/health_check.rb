@@ -1,5 +1,7 @@
 module Middleware
   class HealthCheck
+  
+    INFRA = YAML.load_file(File.join(Rails.root, 'config', 'infra_layer.yml'))
 
     def initialize(app)
       @app = app
@@ -18,7 +20,7 @@ module Middleware
     end
 
     def check_asset_compilation 
-      @check = ASSETS_DIRECTORY_EXISTS ? :ok : nil
+      @check = ASSETS_DIRECTORY_EXISTS ? :ok : (INFRA['PRIVATE_API'] ? :ok : nil) # Escape asset existence check for falcon apps
     end
   end
 end
