@@ -1,5 +1,6 @@
 module ApiSolutions
   class ArticleDelegator < BaseDelegator
+
     include SolutionConcern
 
     attr_accessor :folder_name, :category_name, :portal_id
@@ -10,11 +11,12 @@ module ApiSolutions
     validates :category_name, custom_absence: { message: :translation_available_already }, if: -> { create_or_update? && secondary_language? && category_exists? }
     validates :folder_name, required: { message: :translation_not_available }, if: -> { create_or_update? && secondary_language? && !folder_exists? }
     validates :category_name, required: { message: :translation_not_available }, if: -> { create_or_update? && secondary_language? && !category_exists? }
-    validate :create_tag_permission, if: -> { @tags }
-    validate :attachments_exist, if: -> { @attachments_list.present? }
-    validate :validate_provider, if: -> { @cloud_files.present? }
+    validate :create_tag_permission, if: -> { !filter? && @tags }
+    validate :attachments_exist, if: -> { !filter? && @attachments_list.present? }
+    validate :validate_provider, if: -> { !filter? && @cloud_files.present? }
     validate :valid_folder?, if: -> { @folder_id }
     validate :validate_ratings, on: :reset_ratings
+    validate :validate_portal_id, on: :filter
 
     def initialize(record, params = {})
       @item = record
@@ -24,6 +26,7 @@ module ApiSolutions
       @article_meta = params[:article_meta]
       @language_id = params[:language_id]
       @tags = params[:tags]
+      @portal_id = params[:portal_id]
       @attachments_list = params[:attachments_list]
       @cloud_files = params[:cloud_file_attachments]
       @folder_id = params[:folder_id]
@@ -59,6 +62,10 @@ module ApiSolutions
 
     def secondary_language?
       @language_id != Account.current.language_object.id
+    end
+
+    def filter?
+      validation_context == :filter
     end
 
     def create_tag_permission

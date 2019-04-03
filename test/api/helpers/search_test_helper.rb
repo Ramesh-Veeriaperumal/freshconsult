@@ -120,7 +120,7 @@ module SearchTestHelper
     sleep(10)
   end
 
-  def solution_article_pattern(article, context = 'spotlight')
+  def search_solution_article_pattern(article, context = 'spotlight')
     article_pattern = {
       id: article.parent_id,
       type: article.parent.art_type,
@@ -133,7 +133,7 @@ module SearchTestHelper
       modified_by: article.modified_by,
       language_id: article.language_id,
     }
-    article_pattern.merge!(article_content_pattern(article.draft || article, context))
+    article_pattern.merge!(search_article_content_pattern(article.draft || article, context))
     article_pattern.merge!(parents_info(article))
     article_pattern
   end
@@ -145,15 +145,15 @@ module SearchTestHelper
     }
   end
 
-  def article_content_pattern(item, context)
-    article_content_pattern = {
+  def search_article_content_pattern(item, context)
+    search_article_content_pattern = {
       title: item.title,
       status: item.status,
       created_at: item.created_at.try(:utc),
       updated_at: item.updated_at.try(:utc)
     }
-    article_content_pattern.merge!(description_hash(item)) unless context && SEARCH_CONTEXTS_WITHOUT_DESCRIPTION.include?(context)
-    article_content_pattern
+    search_article_content_pattern.merge!(description_hash(item)) unless context && SEARCH_CONTEXTS_WITHOUT_DESCRIPTION.include?(context)
+    search_article_content_pattern
   end
 
   def description_hash(item)

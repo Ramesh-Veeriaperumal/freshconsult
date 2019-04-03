@@ -2,12 +2,22 @@ module Ember
   module Solutions
     class ArticlesController < ApiSolutions::ArticlesController
       include HelperConcern
+      include SolutionConcern
+      include Solution::ArticleFilters
       include BulkActionConcern
       include SolutionBulkActionConcern
       include CloudFilesHelper
+      include SanitizeSerializeValues
 
+      SLAVE_ACTIONS = %w(index folder_articles filter).freeze
+
+      skip_before_filter :initialize_search_parameters, unless: :search_articles?
       before_filter :filter_ids, only: [:index]
-      before_filter :validate_bulk_update_article_params, :validate_language, only: [:bulk_update]
+      before_filter :validate_language, only: [:filter, :bulk_update]
+      before_filter :validate_filter, only: [:article_content, :filter]
+      before_filter :sanitize_filter_data, :reconstruct_params, only: [:filter]
+      before_filter :validate_bulk_update_article_params, only: [:bulk_update]
+      around_filter :use_time_zone, only: [:filter]
 
       decorate_views(decorate_object: [:article_content, :votes])
 
@@ -18,10 +28,20 @@ module Ember
         super
       end
 
+      def filter
+        @delegator_klass = "ApiSolutions::ArticleDelegator"
+        return unless validate_delegator(nil, portal_id: params[:portal_id])
+        search_articles if params[:term].present?
+        @portal_articles = scoper.portal_articles(params[:portal_id], @lang_id).preload(filter_preload_options)
+        @items = apply_scopes(@portal_articles,  @reorg_params)
+        @items = properties_and_term_filters
+        @items_count = @items.size
+        @items = paginate_items(@items)
+        response.api_root_key = :articles
+        response.api_meta = { count: @items_count, next_page: @more_items }
+      end
+
       def article_content
-        @constants_klass = 'SolutionConstants'.freeze
-        @validation_klass = 'SolutionArticleFilterValidation'.freeze
-        return unless validate_query_params
         load_article
       end
 
@@ -82,16 +102,43 @@ module Ember
           preload_options | [{ solution_article_meta: [solution_folder_meta: :customer_folders] }]
         end
 
+        def filter_preload_options
+          ::SolutionConstants::FILTER_PRELOAD_OPTIONS
+        end
+
         def filter_ids
           params[:ids] = params[:ids].try(:to_s).try(:split, ',') if params[:ids] && params[:ids].is_a?(String)
           @ids = (params[:ids] || []).map(&:to_i).reject(&:zero?).first(MAX_IDS_COUNT)
           log_and_render_404 if @ids.blank?
         end
 
+        def validate_filter
+          @constants_klass  = 'SolutionConstants'.freeze
+          @validation_klass = 'SolutionArticleFilterValidation'.freeze
+          return unless validate_query_params
+        end
+
         def validate_filter_params
           params.permit(*SolutionConstants::RECENT_ARTICLES_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
           @article_filter = SolutionArticleFilterValidation.new(params)
           render_errors(@article_filter.errors, @article_filter.error_options) unless @article_filter.valid?
+        end
+
+        def sanitize_filter_data
+          filter_fields = SolutionConstants::FILTER_FIELDS
+          filter_data   = params.select {|k,v| filter_fields.include? k}
+          sanitize_hash_values filter_data
+        end
+
+        def properties_and_term_filters
+          @items=@items.all # to avoid n+1 queries
+          filtered_articles = if params[:term].present?
+            ids = @items.map(&:id) & @results.map(&:id)
+            @items.select{|item| ids.include?(item.id)}
+          else
+            @items
+          end
+          filtered_articles.uniq
         end
 
         def decorator_options

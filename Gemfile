@@ -18,6 +18,8 @@ gem 'strong_parameters', "0.2.3" # Used for API params validation
 gem "mysql2", "~> 0.3.0"
 gem "bootsnap", :require => false
 gem 'cld2', :require => 'cld'
+gem 'has_scope', '0.6.0'
+
 
 #For instrumenting cache-performance
 gem "time_bandits", :git => 'git@github.com:freshdesk/fd_time_bandits', :tag => 'v1.2'

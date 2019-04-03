@@ -27,6 +27,7 @@ class Solution::Article < ActiveRecord::Base
   include Redis::OthersRedis
   include Solution::UrlSterilize
   include Solution::Activities
+  include Solution::ArticleFilterScoper
 
   spam_watcher_callbacks
   rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['solution_articles'] }, :if => lambda{|obj| obj.rl_enabled? }
@@ -113,6 +114,10 @@ class Solution::Article < ActiveRecord::Base
 
   def self.has_multi_language_article?
     select('distinct language_id').limit(2).length > 1
+  end
+
+  def self.portal_articles(portal_id, language_id)
+    joins({solution_folder_meta: [solution_category_meta: :portal_solution_categories]}).where('portal_solution_categories.portal_id = ? AND solution_articles.language_id = ?', portal_id, language_id)
   end
 
   def type_name

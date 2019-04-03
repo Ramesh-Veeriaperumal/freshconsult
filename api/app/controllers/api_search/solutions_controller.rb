@@ -16,7 +16,7 @@ module ApiSearch
         @search_context = :agent_spotlight_solution
       elsif params[:context] == 'insert_solutions'
         @search_context = :agent_insert_solution
-      elsif bot_map_context?
+      elsif bot_map_context? || portal_based_solutions?
         @search_context = :filtered_solution_search
       else
         @search_context = :agent_spotlight_solution
@@ -30,6 +30,10 @@ module ApiSearch
 
       def bot_map_context?
         params[:context] == 'bot_map_solution'
+      end
+
+      def portal_based_solutions?
+        params[:context] == 'portal_based_solutions'
       end
 
       def decorator_options

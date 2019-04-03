@@ -9,6 +9,7 @@ class Solutions::ArticleDecorator < ApiDecorator
     super(record)
     @user = options[:user]
     @search_context = options[:search_context]
+    @is_list_page = options[:is_list_page]
     @draft = options[:draft]
   end
 
@@ -24,14 +25,16 @@ class Solutions::ArticleDecorator < ApiDecorator
     ret_hash = {
       id: parent_id,
       type: parent.art_type,
-      category_id: category_id,
       status: status,
-      folder_id: parent.solution_folder_meta.id,
       agent_id: user_id,
       created_at: created_at.try(:utc)
     }
+    ret_hash.merge!(category_and_folder)
     ret_hash.merge!(draft_info(record_or_draft))
-    ret_hash.merge!(private_hash) if private_api?
+    if private_api?
+      ret_hash.merge!(private_hash)
+      ret_hash.merge!(last_modified(ret_hash)) if @is_list_page
+    end
     ret_hash
   end
 
@@ -43,9 +46,7 @@ class Solutions::ArticleDecorator < ApiDecorator
   end
 
   def to_hash
-    article_info.merge(
-      attachments: attachments_hash,
-      cloud_files: cloud_files_hash,
+    res_hash = article_info.merge(
       thumbs_up: parent.thumbs_up,
       thumbs_down: parent.thumbs_down,
       feedback_count: feedback_count,
@@ -53,6 +54,8 @@ class Solutions::ArticleDecorator < ApiDecorator
       tags: fetch_tags,
       seo_data: seo_data
     )
+    res_hash.merge!(attachments: attachments_hash, cloud_files: cloud_files_hash) unless @is_list_page 
+    res_hash
   end
 
   def draft_info(item)
@@ -60,7 +63,7 @@ class Solutions::ArticleDecorator < ApiDecorator
       title: item.title,
       updated_at: item.updated_at.try(:utc)
     }
-    ret_hash.merge!(description_hash(item)) unless @search_context && SEARCH_CONTEXTS_WITHOUT_DESCRIPTION.include?(@search_context)
+    ret_hash.merge!(description_hash(item)) unless @is_list_page || (@search_context && SEARCH_CONTEXTS_WITHOUT_DESCRIPTION.include?(@search_context))
     ret_hash.merge!(draft_private_hash) if private_api? && @draft.present?
     ret_hash[:draft_present] = @draft.present? if private_api?
     ret_hash
@@ -147,8 +150,14 @@ class Solutions::ArticleDecorator < ApiDecorator
       @draft || (record.status == Solution::Constants::STATUS_KEYS_BY_TOKEN[:draft] ? draft : record)
     end
 
-    def category_id
-      @draft.try(:category_meta_id) || parent.solution_category_meta.id
+    def category_and_folder
+      @category_meta = parent.solution_category_meta
+      if @category_meta.is_default
+        { :source => ::SolutionConstants::KBASE_EMAIL_SOURCE }
+      else
+        { category_id: @draft.try(:category_meta_id) || @category_meta.id,
+          folder_id: parent.solution_folder_meta.id }
+      end
     end
 
     def remove_deleted_attachments(attachments, type = :attachments)
@@ -160,7 +169,7 @@ class Solutions::ArticleDecorator < ApiDecorator
     end
 
     def feedback_count
-      @feedback_count ||= article_ticket.preload(:ticketable).reject { |article| article.ticketable.spam_or_deleted? }.count
+      @feedback_count ||= article_ticket.select { |article| !article.ticketable.spam_or_deleted? }.count
     end
 
     def vote_info(vote_type)
@@ -168,6 +177,13 @@ class Solutions::ArticleDecorator < ApiDecorator
       {
         anonymous: safe_send(vote_type) - users.length,
         users: users.map { |voter| { id: voter.id, name: voter.name } }
+      }
+    end
+
+    def last_modified resp_hash
+      {
+        last_modifier: resp_hash[:draft_modified_by] || resp_hash[:modified_by],
+        last_modified_at: resp_hash[:draft_modified_at] || resp_hash[:modified_at]
       }
     end
 end

@@ -37,15 +37,11 @@ module SolutionsTestHelper
 
     expected_tags = expected_output[:tags] || nil
 
-    {
+    resp = {
       id: expected_output[:id] || article.parent.id,
       title: expected_output[:title] || article.title,
-      description: expected_output[:description] || article.description,
-      description_text: expected_output[:description_text] || article.desc_un_html,
       agent_id: expected_output[:agent_id] || article.user_id,
       type: expected_output[:type] || article.parent.reload.art_type,
-      category_id: expected_output[:category_id] || article.parent.reload.solution_category_meta.id,
-      folder_id: expected_output[:folder_id] || article.parent.reload.solution_folder_meta.id,
       thumbs_up: expected_output[:thumbs_up] || article.solution_article_meta.thumbs_up,
       thumbs_down: expected_output[:thumbs_down] || article.solution_article_meta.thumbs_down,
       feedback_count: expected_output[:feedback_count] || article.article_ticket.preload(:ticketable).select { |art| !art.ticketable.spam_or_deleted? }.count,
@@ -54,23 +50,31 @@ module SolutionsTestHelper
       tags: expected_tags || article.tags.map(&:name),
       seo_data: expected_output[:seo_data] || article.seo_data,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
-      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
-      attachments: Array,
-      cloud_files: Array
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
+    cat_folder = if article.parent.reload.solution_category_meta.is_default
+      { :source => "kbase_email" }
+    else
+      { category_id: expected_output[:category_id] || article.parent.reload.solution_category_meta.id,
+        folder_id: expected_output[:folder_id] || article.parent.reload.solution_folder_meta.id }
+    end
+    resp.merge!(cat_folder)
+
+    unless expected_output[:action] == :filter
+      resp.merge!(description: expected_output[:description] || article.description,
+                  description_text: expected_output[:description_text] || article.desc_un_html,
+                  attachments: Array, cloud_files: Array)
+    end
+    resp
   end
 
   def solution_article_draft_pattern(expected_output = {}, ignore_extra_keys = true, article, draft)
     expected_tags = expected_output[:tags] || nil
-    {
+    resp = {
       id: expected_output[:id] || article.parent.id,
       title: expected_output[:title] || draft.title,
-      description: expected_output[:description] || draft.description,
-      description_text: expected_output[:description_text] || Helpdesk::HTMLSanitizer.plain(draft.draft_body.description),
       agent_id: expected_output[:agent_id] || article.user_id,
       type: expected_output[:type] || article.parent.reload.art_type,
-      category_id: expected_output[:category_id] || article.parent.reload.solution_category_meta.id,
-      folder_id: expected_output[:folder_id] || article.parent.reload.solution_folder_meta.id,
       thumbs_up: expected_output[:thumbs_up] || article.solution_article_meta.thumbs_up,
       thumbs_down: expected_output[:thumbs_down] || article.solution_article_meta.thumbs_down,
       feedback_count: expected_output[:feedback_count] || article.article_ticket.preload(:ticketable).select { |art| !art.ticketable.spam_or_deleted? }.count,
@@ -79,10 +83,23 @@ module SolutionsTestHelper
       tags: expected_tags || article.tags.map(&:name),
       seo_data: expected_output[:seo_data] || article.seo_data,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
-      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
-      attachments: Array,
-      cloud_files: Array
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
+
+    cat_folder = if article.parent.reload.solution_category_meta.is_default
+      { :source => "kbase_email" }
+    else
+      { category_id: expected_output[:category_id] || article.parent.reload.solution_category_meta.id,
+        folder_id: expected_output[:folder_id] || article.parent.reload.solution_folder_meta.id }
+    end
+    resp.merge!(cat_folder)
+    
+    unless expected_output[:action] == :filter
+      resp.merge!(description: expected_output[:description] || draft.description,
+                  description_text: expected_output[:description_text] || Helpdesk::HTMLSanitizer.plain(draft.draft_body.description),
+                  attachments: Array, cloud_files: Array)
+    end
+    resp
   end
 
   def solution_article_pattern_index(expected_output = {}, ignore_extra_keys = true, article)
@@ -108,6 +125,12 @@ module SolutionsTestHelper
     ret_hash[:visibility] = { user.id => article.parent.visible?(user) || false } if user
     ret_hash[:folder_visibility] = article.solution_folder_meta.visibility
     ret_hash[:language_id] = article.language_id
+    if expected_output[:action] == :filter
+      ret_hash.merge!({
+        last_modifier: ret_hash[:draft_modified_by] || ret_hash[:modified_by],
+        last_modified_at: ret_hash[:draft_modified_at] || ret_hash[:modified_at]
+      })
+    end
     ret_hash
   end
 
