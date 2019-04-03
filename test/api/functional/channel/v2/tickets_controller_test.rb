@@ -191,7 +191,7 @@ module Channel::V2
     end
 
     def test_facebook_post_ticket_create
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       fb_page_id = fetch_or_create_fb_page
       params = {
@@ -215,12 +215,12 @@ module Channel::V2
       match_json(ticket_pattern(params, t))
     ensure
       Account.any_instance.unstub(:shared_ownership_enabled?)
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
       @channel_v2_api = false
     end
 
     def test_facebook_dm_ticket_create
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       fb_page_id = fetch_or_create_fb_page
       params = {
@@ -243,12 +243,12 @@ module Channel::V2
       match_json(ticket_pattern(params, t))
     ensure
       Account.any_instance.unstub(:shared_ownership_enabled?)
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
       @channel_v2_api = false
     end
 
     def test_twitter_mention_ticket_create
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       twitter_handle_id = get_twitter_handle.twitter_user_id
       params = {
@@ -270,12 +270,12 @@ module Channel::V2
       match_json(show_ticket_pattern(params, t).except(:association_type))
     ensure
       Account.any_instance.unstub(:shared_ownership_enabled?)
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
       @channel_v2_api = false
     end
 
     def test_twitter_dm_ticket_create
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       twitter_handle_id = get_twitter_handle.twitter_user_id
       params = {
@@ -297,12 +297,12 @@ module Channel::V2
       match_json(show_ticket_pattern(params, t).except(:association_type))
     ensure
       Account.any_instance.unstub(:shared_ownership_enabled?)
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
       @channel_v2_api = false
     end
 
     def test_twitter_ticket_create_with_invalid_handle_id
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       twitter_handle_id = Faker::Number.number(3).to_i
       params = {
@@ -325,7 +325,7 @@ module Channel::V2
       match_json(pattern)
     ensure
       Account.any_instance.unstub(:shared_ownership_enabled?)
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
       @channel_v2_api = false
     end
 
@@ -441,7 +441,7 @@ module Channel::V2
     end
 
     def test_index_without_permitted_tickets
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       Helpdesk::Ticket.update_all(responder_id: nil)
       get :index, controller_params(per_page: 50)
@@ -462,12 +462,12 @@ module Channel::V2
       assert_equal expected, response.size
     ensure
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
       Agent.any_instance.unstub(:ticket_permission)
     end
 
     def test_index_with_invalid_sort_params
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       get :index, controller_params(order_type: 'test', order_by: 'test')
       assert_response 400
@@ -476,11 +476,11 @@ module Channel::V2
       match_json(pattern)
     ensure
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
 
     def test_index_sort_by_due_by_with_sla_disabled
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       Account.any_instance.stubs(:sla_management_enabled?).returns(false)
       get :index, controller_params(order_type: 'test', order_by: 'due_by')
@@ -491,11 +491,11 @@ module Channel::V2
     ensure
       Account.any_instance.unstub(:sla_management_enabled?)
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
 
     def test_index_with_extra_params
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       hash = { filter_name: 'test', company_name: 'test' }
       get :index, controller_params(hash)
@@ -505,11 +505,11 @@ module Channel::V2
       match_json pattern
     ensure
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
 
     def test_index_with_invalid_params
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       get :index, controller_params(company_id: 999, requester_id: '999', filter: 'x')
       pattern = [bad_request_error_pattern('filter', :not_included, list: 'new_and_my_open,watching,spam,deleted')]
@@ -519,11 +519,11 @@ module Channel::V2
       match_json pattern
     ensure
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
 
     def test_index_with_invalid_email_in_params
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       get :index, controller_params(email: Faker::Internet.email)
       pattern = [bad_request_error_pattern('email', :absent_in_db, resource: :contact, attribute: :email)]
@@ -531,11 +531,11 @@ module Channel::V2
       match_json pattern
     ensure
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
 
     def test_index_with_invalid_params_type
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       get :index, controller_params(company_id: 'a', requester_id: 'b')
       pattern = [bad_request_error_pattern('company_id', :datatype_mismatch, expected_data_type: 'Positive Integer')]
@@ -544,11 +544,11 @@ module Channel::V2
       match_json pattern
     ensure
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
 
     def test_index_with_monitored_by
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       get :index, controller_params(filter: 'watching')
       assert_response 200
@@ -565,11 +565,11 @@ module Channel::V2
       assert_equal 1, response.count
     ensure
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
 
     def test_index_with_new_and_my_open
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       Helpdesk::Ticket.update_all(status: 3)
       Helpdesk::Ticket.first.update_attributes(status: 2, responder_id: @agent.id,
@@ -580,11 +580,11 @@ module Channel::V2
       assert_equal 1, response.size
     ensure
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
 
     def test_index_with_default_filter
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       Helpdesk::Ticket.update_all(created_at: 2.months.ago)
       Helpdesk::Ticket.first.update_attributes(created_at: 1.months.ago,
@@ -595,11 +595,11 @@ module Channel::V2
       assert_equal 1, response.size
     ensure
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
 
     def test_index_with_default_filter_order_type
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       Helpdesk::Ticket.update_all(created_at: 2.months.ago)
       Helpdesk::Ticket.first.update_attributes(created_at: 1.months.ago,
@@ -610,11 +610,11 @@ module Channel::V2
       assert_equal 1, response.size
     ensure
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
 
     def test_index_with_default_filter_order_by
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       Helpdesk::Ticket.update_all(created_at: 2.months.ago)
       Helpdesk::Ticket.first(2).each do|x|
@@ -627,11 +627,11 @@ module Channel::V2
       assert_equal 2, response.size
     ensure
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
 
     def test_index_with_spam
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       get :index, controller_params(filter: 'spam')
       assert_response 200
@@ -645,11 +645,11 @@ module Channel::V2
       assert_equal 1, response.size
     ensure
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
 
     def test_index_with_spam_and_deleted
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       pattern = /SELECT  `helpdesk_tickets`.* FROM/
       from = 'WHERE '
@@ -668,11 +668,11 @@ module Channel::V2
       assert_equal '`helpdesk_tickets`.`account_id` = 1 AND `helpdesk_tickets`.`deleted` = 0 AND `helpdesk_tickets`.`owner_id` = 1 AND `helpdesk_tickets`.`spam` = 1', query
     ensure
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
 
     def test_index_with_deleted
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       TicketDecorator.any_instance.stubs(:private_api?).returns(true)
       tkts = Helpdesk::Ticket.select { |x| x.deleted && !x.schema_less_ticket.boolean_tc02 }
@@ -694,7 +694,7 @@ module Channel::V2
     end
 
     def test_index_with_requester_filter
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       Helpdesk::Ticket.update_all(requester_id: User.first.id)
       ticket = create_ticket(requester_id: User.last.id)
@@ -706,11 +706,11 @@ module Channel::V2
       set_wrap_params
     ensure
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
 
     def test_index_with_filter_and_requester_email
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       user = add_new_user(@account)
 
@@ -727,11 +727,11 @@ module Channel::V2
       assert_equal 1, response.count
     ensure
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
 
     def test_index_with_company
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       TicketDecorator.any_instance.stubs(:private_api?).returns(true)
       company = create_company
@@ -749,11 +749,11 @@ module Channel::V2
       match_json(pattern)
     ensure
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
 
     def test_index_with_filter_and_requester
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       user1 = add_new_user(@account)
       user2 = add_new_user(@account)
@@ -771,11 +771,11 @@ module Channel::V2
       assert_equal 1, response.count
     ensure
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
 
     def test_index_with_filter_and_company
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       Helpdesk::Ticket.update_all(status: 3)
       user = get_user_with_default_company
@@ -804,11 +804,11 @@ module Channel::V2
       assert_equal 1, response.count
     ensure
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
 
     def test_index_with_company_and_requester
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       company = Company.first
       user1 = User.first
@@ -829,11 +829,11 @@ module Channel::V2
       assert_equal 0, response.size
     ensure
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
 
     def test_index_with_requester_filter_company
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       remove_wrap_params
       user = get_user_with_default_company
@@ -857,11 +857,11 @@ module Channel::V2
       assert_equal 1, response.size
     ensure
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
 
     def test_index_with_requester_nil
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       ticket = create_ticket
       ticket.requester.destroy
@@ -872,11 +872,11 @@ module Channel::V2
       assert requester_hash.nil?
     ensure
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
 
     def test_index_with_dates
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       TicketDecorator.any_instance.stubs(:private_api?).returns(true)
       count = Account.current.tickets.where("updated_at >= ?", Time.zone.now.utc.iso8601).count
@@ -904,7 +904,7 @@ module Channel::V2
     end
 
     def test_index_with_time_zone
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       tkt = Helpdesk::Ticket.where(deleted: false, spam: false).first
       old_time_zone = Time.zone.name
@@ -917,11 +917,11 @@ module Channel::V2
       Time.zone = old_time_zone
     ensure
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
 
     def test_index_with_stats
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       get :index, controller_params(include: 'stats')
       assert_response 200
@@ -938,11 +938,11 @@ module Channel::V2
       match_json(pattern)
     ensure
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
 
     def test_index_with_empty_include
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       get :index, controller_params(include: '')
       assert_response 400
@@ -952,22 +952,22 @@ module Channel::V2
       )
     ensure
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
 
     def test_index_with_wrong_type_include
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       get :index, controller_params(include: ['test'])
       assert_response 400
       match_json([bad_request_error_pattern('include', :datatype_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: 'Array')])
     ensure
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
 
     def test_index_with_invalid_param_value
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       get :index, controller_params(include: 'test')
       assert_response 400
@@ -977,7 +977,7 @@ module Channel::V2
       )
     ensure
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
 
     def test_index_with_spam_count_es_enabled
@@ -1009,7 +1009,7 @@ module Channel::V2
     end
 
     def test_index_with_stats_with_count_es_enabled
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       Account.any_instance.stubs(:count_es_enabled?).returns(true)
       Account.any_instance.stubs(:api_es_enabled?).returns(true)
@@ -1029,7 +1029,7 @@ module Channel::V2
       Account.any_instance.unstub(:dashboard_new_alias?)
       remove_request_stub(@request_stub)
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
 
     def test_index_with_requester_with_count_es_enabled

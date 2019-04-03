@@ -557,9 +557,9 @@ class ApiApplicationController < MetalApiController
     def api_current_user
       return @current_user if defined?(@current_user)
       # Private API is supposed to work only with session based authentication
-      if $infra['PRIVATE_API'] || (get_request? && !request.authorization)
+      if CustomRequestStore.read(:private_api_request) || (get_request? && !request.authorization)
         session_auth
-      elsif $infra['CHANNEL_LAYER']
+      elsif CustomRequestStore.read(:channel_api_request)
         api_key_auth
       else
         if current_account.launched?(:api_jwt_auth) && request.env['HTTP_AUTHORIZATION'] && request.env['HTTP_AUTHORIZATION'][/^Token (.*)/]
@@ -839,7 +839,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def csrf_check_reqd?
-      return false unless $infra['PRIVATE_API']
+      return false unless CustomRequestStore.read(:private_api_request)
       request.cookies['_helpkit_session'] && !get_request?
     end
 
@@ -876,6 +876,10 @@ class ApiApplicationController < MetalApiController
 
     def private_api?
       @private_api ||= params[:version].to_sym == :private
+    end
+
+    def public_api?
+      @public_api ||= params[:version].to_sym == :v2
     end
 
     def import_api?

@@ -143,6 +143,10 @@ class User < ActiveRecord::Base
     account.multiple_user_companies_enabled?
   end
 
+  def tickets_api_relaxation?
+    User.current.privilege?(:admin_tasks) && account.skip_mandatory_checks_enabled?
+  end
+
   attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email, :sbrr_fresh_user,
                 :primary_email_attributes, :tags_updated, :keep_user_active, :escape_liquid_attributes, 
                 :role_ids_changed, :detect_language, :tag_use_updated, :user_companies_updated, 

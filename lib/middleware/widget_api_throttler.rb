@@ -1,11 +1,11 @@
-class Middleware::ChannelApiThrottler < Middleware::FdApiThrottler
+class Middleware::WidgetApiThrottler < Middleware::FdApiThrottler
   include Redis::RedisKeys
 
-  API_LIMIT = 1000
+  API_LIMIT = 500
   THROTTLE_PERIOD = 1.minute
 
   def correct_namespace?(path_info)
-    CustomRequestStore.read(:channel_api_request)
+    CustomRequestStore.read(:widget_api_request)
   end
 
   def api_expiry
@@ -17,17 +17,17 @@ class Middleware::ChannelApiThrottler < Middleware::FdApiThrottler
       api_limits = get_multiple_redis_keys(account_api_limit_key, default_api_limit_key) || []
       (api_limits[0] || api_limits[1] || API_LIMIT).to_i
     end
-   end
+  end
 
   def key
-    format(CHANNEL_API_THROTTLER, account_id: account_id)
+    format(WIDGET_API_THROTTLER, account_id: account_id)
   end
 
   def account_api_limit_key
-    format(ACCOUNT_CHANNEL_API_LIMIT, account_id: account_id)
+    format(ACCOUNT_WIDGET_API_LIMIT, account_id: account_id)
   end
 
   def default_api_limit_key
-    DEFAULT_CHANNEL_API_LIMIT
+    DEFAULT_WIDGET_API_LIMIT
   end
 end

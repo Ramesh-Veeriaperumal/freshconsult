@@ -7,6 +7,7 @@ class SurveysFlowsTest < ActionDispatch::IntegrationTest
   CURRENT_VERSION = 'private-v1'.freeze
 
   def setup
+    CustomRequestStore.store[:private_api_request] ||= true
     super
     before_all
   end

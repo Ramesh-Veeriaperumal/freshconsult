@@ -12,6 +12,7 @@ class CompanyFieldsFlowsTest < ActionDispatch::IntegrationTest
   @@before_all = false
 
   def setup
+    CustomRequestStore.store[:private_api_request] ||= true
     super
     before_all
   end

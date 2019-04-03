@@ -1,6 +1,7 @@
 class Middleware::PrivateApiThrottler < Middleware::FdApiThrottler
   include Redis::RedisKeys
   include Redis::RateLimitRedis
+
   API_CURRENT_VERSION = 'private-v1'.freeze
   THROTTLE_PERIOD = 1.minute.freeze
   API_LIMIT = 3000
@@ -12,6 +13,10 @@ class Middleware::PrivateApiThrottler < Middleware::FdApiThrottler
   def initialize(app, options = {})
     super(app, options)
     @app = app
+  end
+
+  def correct_namespace?(path_info)
+    CustomRequestStore.read(:private_api_request)
   end
 
   def api_expiry

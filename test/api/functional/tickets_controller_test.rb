@@ -2,6 +2,7 @@
 require_relative '../test_helper'
 require 'sidekiq/testing'
 require 'webmock/minitest'
+require Rails.root.join('test', 'api', 'helpers', 'privileges_helper.rb')
 ['social_tickets_creation_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 ['shared_ownership_test_helper'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 
@@ -19,6 +20,7 @@ class TicketsControllerTest < ActionController::TestCase
   include ::SocialTicketsCreationHelper
   include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
   include ::Admin::AdvancedTicketing::FieldServiceManagement::Constant
+  include PrivilegesHelper
   CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
 
   VALIDATABLE_CUSTOM_FIELDS =  %w(number checkbox decimal text paragraph date)
@@ -51,6 +53,7 @@ class TicketsControllerTest < ActionController::TestCase
   }
 
   def setup
+    CustomRequestStore.store[:private_api_request] = false
     super
     Sidekiq::Worker.clear_all
     before_all
@@ -77,6 +80,7 @@ class TicketsControllerTest < ActionController::TestCase
     @account.time_zone = Time.zone.name
     @account.save
     @account.revoke_feature :unique_contact_identifier
+    Helpdesk::TicketField.where(name: ['requester', 'subject', 'description', 'status', 'priority']).update_all(required: true)
     @@before_all_run = true
   end
 
@@ -180,6 +184,20 @@ class TicketsControllerTest < ActionController::TestCase
     sections
   end
 
+  def enable_skip_mandatory_checks_option
+    @@admin_tasks_privilege_present = User.current.privilege?(:admin_tasks)
+    @@skip_mandatory_checks_enabled = @account.skip_mandatory_checks_enabled?
+    add_privilege(User.current, :admin_tasks) unless @@admin_tasks_privilege_present
+    @account.account_additional_settings.additional_settings[:skip_mandatory_checks] = true unless @@skip_mandatory_checks_enabled
+    @controller.stubs(:public_api?).returns(true)
+  end
+
+  def disable_skip_mandatory_checks_option
+    remove_privilege(User.current, :admin_tasks) unless @@admin_tasks_privilege_present
+    @controller.unstub(:public_api?)
+    @account.account_additional_settings.additional_settings.tap { |additional_settings| additional_settings.delete(:skip_mandatory_checks) } unless @@skip_mandatory_checks_enabled
+  end
+
   def test_search_with_feature_enabled_and_invalid_params
     @account.launch :es_count_writes
     @account.launch :list_page_new_cluster
@@ -257,6 +275,846 @@ class TicketsControllerTest < ActionController::TestCase
     match_json(ticket_pattern({}, t))
     assert_equal t.requester.email, params[:email]
     assert_response 201
+  end
+
+  # test coverage for ticket creation without default mandatory fields other than for subject, description and requester with skip_mandatory_checks enabled for current user having :admin_tasks privilege thorough public API only
+
+  def test_create_ticket_without_status_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = { requester_id: User.current.id, priority: 1, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
+    post :create, construct_params({}, params)
+    t = @account.tickets.last
+    match_json(ticket_pattern(params, t))
+    match_json(ticket_pattern({}, t))
+    assert_equal t.status, 2
+    assert_response 201
+    disable_skip_mandatory_checks_option
+  end
+
+  def test_create_ticket_without_priority_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = { requester_id: User.current.id, status: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
+    post :create, construct_params({}, params)
+    t = @account.tickets.last
+    match_json(ticket_pattern(params, t))
+    match_json(ticket_pattern({}, t))
+    assert_equal t.priority, 1
+    assert_response 201
+    disable_skip_mandatory_checks_option
+  end
+
+  def test_create_ticket_without_status_and_priority_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = { requester_id: User.current.id, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
+    post :create, construct_params({}, params)
+    t = @account.tickets.last
+    match_json(ticket_pattern(params, t))
+    match_json(ticket_pattern({}, t))
+    assert_equal t.priority, 1
+    assert_equal t.status, 2
+    assert_response 201
+    disable_skip_mandatory_checks_option
+  end
+
+  def test_create_ticket_without_mandatory_type_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = ticket_params_hash.except(:type)
+    Helpdesk::TicketField.where(name: 'ticket_type').update_all(required: true)
+    post :create, construct_params({}, params)
+    t = @account.tickets.last
+    match_json(ticket_pattern(params, t))
+    match_json(ticket_pattern({}, t))
+    assert_response 201
+    assert_nil t.ticket_type
+    Helpdesk::TicketField.where(name: 'ticket_type').update_all(required: false)
+    disable_skip_mandatory_checks_option
+  end
+
+  def test_create_ticket_without_mandatory_group_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = ticket_params_hash.except(:group_id)
+    Helpdesk::TicketField.where(name: 'group').update_all(required: true)
+    post :create, construct_params({}, params)
+    t = @account.tickets.last
+    match_json(ticket_pattern(params, t))
+    match_json(ticket_pattern({}, t))
+    assert_response 201
+    assert_nil t.group
+    Helpdesk::TicketField.where(name: 'group').update_all(required: false)
+    disable_skip_mandatory_checks_option
+  end
+
+  def test_create_ticket_without_mandatory_agent_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = ticket_params_hash.except(:responder_id)
+    Helpdesk::TicketField.where(name: 'agent').update_all(required: true)
+    post :create, construct_params({}, params)
+    t = @account.tickets.last
+    match_json(ticket_pattern(params, t))
+    match_json(ticket_pattern({}, t))
+    assert_response 201
+    assert_nil t.agent
+    Helpdesk::TicketField.where(name: 'agent').update_all(required: false)
+    disable_skip_mandatory_checks_option
+  end
+
+  def test_create_ticket_without_mandatory_product_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = ticket_params_hash.except(:product_id)
+    Helpdesk::TicketField.where(name: 'product').update_all(required: true)
+    post :create, construct_params({}, params)
+    t = @account.tickets.last
+    match_json(ticket_pattern(params, t))
+    match_json(ticket_pattern({}, t))
+    assert_response 201
+    assert_nil t.product
+    Helpdesk::TicketField.where(name: 'product').update_all(required: false)
+    disable_skip_mandatory_checks_option
+  end
+
+  def test_create_ticket_without_mandatory_default_fields_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = { requester_id: User.current.id, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
+    Helpdesk::TicketField.where(default: true).update_all(required: true)
+    post :create, construct_params({}, params)
+    t = @account.tickets.last
+    match_json(ticket_pattern(params, t))
+    match_json(ticket_pattern({}, t))
+    assert_response 201
+    assert_equal t.priority, 1
+    assert_equal t.status, 2
+    assert_nil t.ticket_type
+    assert_nil t.group
+    assert_nil t.product
+    assert_nil t.agent
+    Helpdesk::TicketField.where(default: true).update_all(required: false)
+    Helpdesk::TicketField.where(name: 'subject', name: 'description', name: 'status', name: 'priority', name: 'requester').update_all(required: true)
+    disable_skip_mandatory_checks_option
+  end
+
+   # test coverage for ticket creation without mandatory custom fields when skip_mandatory_checks is enabled for current user having :admin_tasks privilege thorough public API only
+
+  def test_create_ticket_without_mandatory_custom_dropdown_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = ticket_params_hash
+    Helpdesk::TicketField.where(name: "test_custom_dropdown_#{@account.id}").update_all(required: true)
+    post :create, construct_params({}, params)
+    t = @account.tickets.last
+    match_json(ticket_pattern(params, t))
+    match_json(ticket_pattern({}, t))
+    assert_response 201
+    disable_adv_ticketing
+    Helpdesk::TicketField.where(name: "test_custom_dropdown_#{@account.id}").update_all(required: false)
+  end
+
+  def test_create_ticket_without_mandatory_custom_text_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = ticket_params_hash
+    Helpdesk::TicketField.where(name: "test_custom_text_#{@account.id}").update_all(required: true)
+    post :create, construct_params({}, params)
+    t = @account.tickets.last
+    match_json(ticket_pattern(params, t))
+    match_json(ticket_pattern({}, t))
+    assert_response 201
+    disable_adv_ticketing
+    Helpdesk::TicketField.where(name: "test_custom_text_#{@account.id}").update_all(required: false)
+  end
+
+  def test_create_ticket_without_mandatory_custom_number_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = ticket_params_hash
+    Helpdesk::TicketField.where(name: "test_custom_number_#{@account.id}").update_all(required: true)
+    post :create, construct_params({}, params)
+    t = @account.tickets.last
+    match_json(ticket_pattern(params, t))
+    match_json(ticket_pattern({}, t))
+    assert_response 201
+    disable_adv_ticketing
+    Helpdesk::TicketField.where(name: "test_custom_number_#{@account.id}").update_all(required: false)
+  end
+
+  def test_create_ticket_without_mandatory_custom_checkbox_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = ticket_params_hash
+    Helpdesk::TicketField.where(name: "test_custom_checkbox_#{@account.id}").update_all(required: true)
+    post :create, construct_params({}, params)
+    t = @account.tickets.last
+    match_json(ticket_pattern(params, t))
+    match_json(ticket_pattern({}, t))
+    assert_response 201
+    disable_adv_ticketing
+    Helpdesk::TicketField.where(name: "test_custom_checkbox_#{@account.id}").update_all(required: false)
+  end
+
+  def test_create_ticket_without_mandatory_custom_date_with_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = ticket_params_hash
+    Helpdesk::TicketField.where(name: "test_custom_date_#{@account.id}").update_all(required: true)
+    post :create, construct_params({}, params)
+    t = @account.tickets.last
+    match_json(ticket_pattern(params, t))
+    match_json(ticket_pattern({}, t))
+    assert_response 201
+    disable_adv_ticketing
+    Helpdesk::TicketField.where(name: "test_custom_date_#{@account.id}").update_all(required: false)
+  end
+
+  def test_create_ticket_without_mandatory_custom_paragraph_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = ticket_params_hash
+    Helpdesk::TicketField.where(name: "test_custom_paragraph_#{@account.id}").update_all(required: true)
+    post :create, construct_params({}, params)
+    t = @account.tickets.last
+    match_json(ticket_pattern(params, t))
+    match_json(ticket_pattern({}, t))
+    assert_response 201
+    disable_adv_ticketing
+    Helpdesk::TicketField.where(name: "test_custom_paragraph_#{@account.id}").update_all(required: false)
+  end
+
+  def test_create_ticket_without_mandatory_custom_decimal_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = ticket_params_hash
+    Helpdesk::TicketField.where(name: "test_custom_decimal_#{@account.id}").update_all(required: true)
+    post :create, construct_params({}, params)
+    t = @account.tickets.last
+    match_json(ticket_pattern(params, t))
+    match_json(ticket_pattern({}, t))
+    assert_response 201
+    disable_adv_ticketing
+    Helpdesk::TicketField.where(name: "test_custom_decimal_#{@account.id}").update_all(required: false)
+  end
+
+  def test_create_ticket_without_mandatory_custom_fields_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = ticket_params_hash
+    Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: true)
+    post :create, construct_params({}, params)
+    t = @account.tickets.last
+    match_json(ticket_pattern(params, t))
+    match_json(ticket_pattern({}, t))
+    assert_response 201
+    disable_adv_ticketing
+    Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: false)
+  end
+
+  # test coverage for ticket creation without mandatory fields through public API with skip_mandatory_checks enabled for current user having :admin_tasks privilege
+
+  def test_create_ticket_without_mandatory_fields_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = { requester_id: User.current.id, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
+    Helpdesk::TicketField.where(default: true).update_all(required: true)
+    Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: true)
+    post :create, construct_params({}, params)
+    t = @account.tickets.last
+    match_json(ticket_pattern(params, t))
+    match_json(ticket_pattern({}, t))
+    assert_response 201
+    assert_equal t.priority, 1
+    assert_equal t.status, 2
+    assert_equal t.source, 2
+    assert_nil t.ticket_type
+    assert_nil t.group
+    assert_nil t.company
+    assert_nil t.product
+    assert_nil t.agent
+    assert_nil t.custom_field["test_custom_number_#{@account.id}"]
+    assert_nil t.custom_field["test_custom_text_#{@account.id}"]
+    assert_nil t.custom_field["test_custom_dropdown_#{@account.id}"]
+    assert_nil t.custom_field["test_custom_decimal_#{@account.id}"]
+    assert_equal t.custom_field["test_custom_checkbox_#{@account.id}"], false
+    assert_nil t.custom_field["test_custom_paragraph_#{@account.id}"]
+    Helpdesk::TicketField.where(default: true).update_all(required: false)
+    Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: false)
+    disable_skip_mandatory_checks_option
+  end
+
+   # test coverage for ticket creation without default mandatory fields through public API wihout skip_mandatory_checks enabled for current user having :admin_tasks privilege
+
+  def test_create_ticket_without_status_and_without_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    @account.account_additional_settings.additional_settings[:skip_mandatory_checks] = false
+    Helpdesk::TicketField.where(name: 'status').update_all(required: true)
+    params = { email: Faker::Internet.email, priority: 1, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
+    post :create, construct_params({}, params)
+    match_json([bad_request_error_pattern('status', :not_included, code: :missing_field, list: '2,3,4,5,6,7')])
+    assert_response 400
+    Helpdesk::TicketField.where(name: 'status').update_all(required: false)
+    disable_skip_mandatory_checks_option
+  end
+
+  def test_create_ticket_without_priority_and_without_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    @account.account_additional_settings.additional_settings[:skip_mandatory_checks] = false
+    Helpdesk::TicketField.where(name: 'priority').update_all(required: true)
+    params = { email: Faker::Internet.email, status: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
+    post :create, construct_params({}, params)
+    match_json([bad_request_error_pattern('priority', :not_included, code: :missing_field, list: '1,2,3,4')])
+    assert_response 400
+    Helpdesk::TicketField.where(name: 'priority').update_all(required: false)
+    disable_skip_mandatory_checks_option
+  end
+
+  def test_create_ticket_without_priority_and_status_and_without_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    @account.account_additional_settings.additional_settings[:skip_mandatory_checks] = false
+    Helpdesk::TicketField.where(name: ['priority', 'status']).update_all(required: true)
+    params = { email: Faker::Internet.email, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
+    post :create, construct_params({}, params)
+    match_json([bad_request_error_pattern('priority', :not_included, code: :missing_field, list: '1,2,3,4'),
+                bad_request_error_pattern('status', :not_included, code: :missing_field, list: '2,3,4,5,6,7')])
+    assert_response 400
+    Helpdesk::TicketField.where(name: 'status', name: 'priority').update_all(required: false)
+    disable_skip_mandatory_checks_option
+  end
+
+  def test_create_ticket_without_mandatory_type_without_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    @account.account_additional_settings.additional_settings[:skip_mandatory_checks] = false
+    params = ticket_params_hash.except(:type)
+    Helpdesk::TicketField.where(name: 'ticket_type').update_all(required: true)
+    post :create, construct_params({}, params)
+    match_json([bad_request_error_pattern('type', :not_included, code: :missing_field, list: 'Question,Incident,Problem,Feature Request,Refund')])
+    assert_response 400
+    Helpdesk::TicketField.where(name: 'ticket_type').update_all(required: false)
+    disable_skip_mandatory_checks_option
+  end
+
+  def test_create_ticket_without_mandatory_group_without_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    @account.account_additional_settings.additional_settings[:skip_mandatory_checks] = false
+    params = ticket_params_hash.except(:group_id)
+    Helpdesk::TicketField.where(name: 'group').update_all(required: true)
+    post :create, construct_params({}, params)
+    match_json([bad_request_error_pattern('group_id', :datatype_mismatch, code: :missing_field, expected_data_type: 'Positive Integer')])
+    assert_response 400
+    Helpdesk::TicketField.where(name: 'group').update_all(required: false)
+    disable_skip_mandatory_checks_option
+  end
+
+  def test_create_ticket_without_mandatory_agent_without_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    @account.account_additional_settings.additional_settings[:skip_mandatory_checks] = false
+    params = ticket_params_hash.except(:responder_id)
+    Helpdesk::TicketField.where(name: 'agent').update_all(required: true)
+    post :create, construct_params({}, params)
+    match_json([bad_request_error_pattern('responder_id', :datatype_mismatch, code: :missing_field, expected_data_type: 'Positive Integer')])
+    assert_response 400
+    Helpdesk::TicketField.where(name: 'agent').update_all(required: false)
+    disable_skip_mandatory_checks_option
+  end
+
+  def test_create_ticket_without_mandatory_product_without_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    @account.account_additional_settings.additional_settings[:skip_mandatory_checks] = false
+    params = ticket_params_hash.except(:product_id)
+    Helpdesk::TicketField.where(name: 'product').update_all(required: true)
+    post :create, construct_params({}, params)
+    match_json([bad_request_error_pattern('product_id', :datatype_mismatch, code: :missing_field, expected_data_type: 'Positive Integer')])
+    assert_response 400
+    Helpdesk::TicketField.where(name: 'product').update_all(required: false)
+    disable_skip_mandatory_checks_option
+  end
+
+  def test_create_ticket_without_mandatory_default_fields_without_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    @account.account_additional_settings.additional_settings[:skip_mandatory_checks] = false
+    params = { requester_id: User.current.id, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
+    Helpdesk::TicketField.where(default: true).update_all(required: true)
+    post :create, construct_params({}, params)
+    match_json([bad_request_error_pattern('status', :not_included, code: :missing_field, list: '2,3,4,5,6,7'),
+                bad_request_error_pattern('priority', :not_included, code: :missing_field, list: '1,2,3,4'),
+                bad_request_error_pattern('group_id', :datatype_mismatch, code: :missing_field, expected_data_type: 'Positive Integer'),
+                bad_request_error_pattern('responder_id', :datatype_mismatch, code: :missing_field, expected_data_type: 'Positive Integer'),
+                bad_request_error_pattern('product_id', :datatype_mismatch, code: :missing_field, expected_data_type: 'Positive Integer'),
+                bad_request_error_pattern('type', :not_included, code: :missing_field, list: 'Question,Incident,Problem,Feature Request,Refund')])
+    Helpdesk::TicketField.where(default: true).update_all(required: false)
+    assert_response 400
+    disable_skip_mandatory_checks_option
+  end
+
+   # test coverage for ticket creation without mandatory custom dropdown and non dropdown fields other than choices, dependent choices, section fields through public API without skip_mandatory_check enabled for current user having :admin_tasks privilege
+
+  def test_create_ticket_without_mandatory_custom_text_without_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    @account.account_additional_settings.additional_settings[:skip_mandatory_checks] = false
+    params = ticket_params_hash
+    Helpdesk::TicketField.where(name: "test_custom_text_#{@account.id}").update_all(required: true)
+    post :create, construct_params({}, params)
+    match_json([bad_request_error_pattern('custom_fields.test_custom_text', :datatype_mismatch, code: :missing_field, expected_data_type: 'String')])
+    assert_response 400
+    disable_adv_ticketing
+    Helpdesk::TicketField.where(name: "test_custom_text_#{@account.id}").update_all(required: false)
+  end
+
+  def test_create_ticket_without_mandatory_custom_number_without_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    @account.account_additional_settings.additional_settings[:skip_mandatory_checks] = false
+    params = ticket_params_hash
+    Helpdesk::TicketField.where(name: "test_custom_number_#{@account.id}").update_all(required: true)
+    post :create, construct_params({}, params)
+    match_json([bad_request_error_pattern('custom_fields.test_custom_number', :datatype_mismatch, code: :missing_field, expected_data_type: 'Integer')])
+    assert_response 400
+    disable_adv_ticketing
+    Helpdesk::TicketField.where(name: "test_custom_number_#{@account.id}").update_all(required: false)
+  end
+
+  def test_create_ticket_without_mandatory_custom_checkbox_without_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    @account.account_additional_settings.additional_settings[:skip_mandatory_checks] = false
+    params = ticket_params_hash
+    Helpdesk::TicketField.where(name: "test_custom_checkbox_#{@account.id}").update_all(required: true)
+    post :create, construct_params({}, params)
+    match_json([bad_request_error_pattern('custom_fields.test_custom_checkbox', :datatype_mismatch, code: :missing_field, expected_data_type: 'Boolean')])
+    assert_response 400
+    disable_adv_ticketing
+    Helpdesk::TicketField.where(name: "test_custom_checkbox_#{@account.id}").update_all(required: false)
+  end
+
+  def test_create_ticket_without_mandatory_custom_date_without_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    @account.account_additional_settings.additional_settings[:skip_mandatory_checks] = false
+    params = ticket_params_hash
+    Helpdesk::TicketField.where(name: "test_custom_date_#{@account.id}").update_all(required: true)
+    post :create, construct_params({}, params)
+    match_json([bad_request_error_pattern('custom_fields.test_custom_date', :invalid_date, code: :missing_field, accepted: 'yyyy-mm-dd')])
+    assert_response 400
+    disable_adv_ticketing
+    Helpdesk::TicketField.where(name: "test_custom_date_#{@account.id}").update_all(required: false)
+  end
+
+  def test_create_ticket_without_mandatory_custom_paragraph_without_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    @account.account_additional_settings.additional_settings[:skip_mandatory_checks] = false
+    params = ticket_params_hash
+    Helpdesk::TicketField.where(name: "test_custom_paragraph_#{@account.id}").update_all(required: true)
+    post :create, construct_params({}, params)
+    match_json([bad_request_error_pattern('custom_fields.test_custom_paragraph', :datatype_mismatch, code: :missing_field, expected_data_type: 'String')])
+    assert_response 400
+    disable_adv_ticketing
+    Helpdesk::TicketField.where(name: "test_custom_paragraph_#{@account.id}").update_all(required: false)
+  end
+
+  def test_create_ticket_without_mandatory_custom_decimal_without_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    @account.account_additional_settings.additional_settings[:skip_mandatory_checks] = false
+    params = ticket_params_hash
+    Helpdesk::TicketField.where(name: "test_custom_decimal_#{@account.id}").update_all(required: true)
+    post :create, construct_params({}, params)
+    match_json([bad_request_error_pattern('custom_fields.test_custom_decimal', :datatype_mismatch, code: :missing_field, expected_data_type: 'Number')])
+    assert_response 400
+    disable_adv_ticketing
+    Helpdesk::TicketField.where(name: "test_custom_decimal_#{@account.id}").update_all(required: false)
+  end
+
+  def test_create_ticket_without_mandatory_custom_dropdown_field_withot_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    @account.account_additional_settings.additional_settings[:skip_mandatory_checks] = false
+    params = ticket_params_hash
+    Helpdesk::TicketField.where(name: "test_custom_dropdown_#{@account.id}").update_all(required: true)
+    post :create, construct_params({}, params)
+    match_json([bad_request_error_pattern('custom_fields.test_custom_dropdown', :not_included, code: :missing_field, list: 'Get Smart,Pursuit of Happiness,Armaggedon')])
+    assert_response 400
+    disable_adv_ticketing
+    Helpdesk::TicketField.where(name: "test_custom_dropdown_#{@account.id}").update_all(required: false)
+  end
+
+  def test_create_ticket_without_mandatory_custom_dropdown_and_non_dropdown_fields_without_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    @account.account_additional_settings.additional_settings[:skip_mandatory_checks] = false
+    params = ticket_params_hash
+    Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: true)
+    post :create, construct_params({}, params)
+    pattern = []
+    VALIDATABLE_CUSTOM_FIELDS.each do |custom_field|
+      pattern << bad_request_error_pattern(custom_field_error_label("test_custom_#{custom_field}"), *(ERROR_REQUIRED_PARAMS[custom_field]))
+    end
+    match_json(pattern)
+    assert_response 400
+    disable_adv_ticketing
+    Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: false)
+  end
+
+   # test coverage for ticket update without default mandatory fields with skip_mandatory_checks enabled for current user having :admin_tasks privilege thorough public API only
+
+  def test_update_ticket_type_without_mandatory_default_fields_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = { email: Faker::Internet.email, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
+    Helpdesk::TicketField.where(default: true).update_all(required: true)
+    t = create_ticket(params)
+    t.ticket_type = nil
+    t.save
+    update_params = { type: 'Question' }
+    put :update, construct_params({ id: t.display_id }, update_params)
+    t = @account.tickets.find(t.id)
+    Helpdesk::TicketField.where(default: true).update_all(required: false)
+    match_json(update_ticket_pattern({}, t.reload))
+    assert_response 200
+    assert_equal t.ticket_type, 'Question'
+    disable_skip_mandatory_checks_option
+  end
+
+  def test_update_ticket_agent_without_mandatory_fields_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = { email: Faker::Internet.email, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
+    Helpdesk::TicketField.where(default: true).update_all(required: true)
+    t = create_ticket(params)
+    responder_id = add_test_agent(@account).id
+    update_params = { responder_id: responder_id }
+    put :update, construct_params({ id: t.display_id }, update_params)
+    t = @account.tickets.find(t.id)
+    Helpdesk::TicketField.where(default: true).update_all(required: false)
+    match_json(update_ticket_pattern({}, t.reload))
+    assert_response 200
+    assert_equal t.agent.id, responder_id
+    disable_skip_mandatory_checks_option
+  end
+
+  def test_update_ticket_product_without_mandatory_fields_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = { email: Faker::Internet.email, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
+    Helpdesk::TicketField.where(default: true).update_all(required: true)
+    t = create_ticket(params)
+    product = create_product
+    update_params = { product_id: product.id }
+    put :update, construct_params({ id: t.display_id }, update_params)
+    t = @account.tickets.find(t.id)
+    Helpdesk::TicketField.where(default: true).update_all(required: false)
+    match_json(update_ticket_pattern({}, t.reload))
+    assert_response 200
+    assert_equal t.product.id, product.id
+    disable_skip_mandatory_checks_option
+  end
+
+  def test_update_ticket_group_without_mandatory_fields_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = { email: Faker::Internet.email, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
+    Helpdesk::TicketField.where(default: true).update_all(required: true)
+    t = create_ticket(params)
+    group = create_group(@account)
+    update_params = { group_id: group.id }
+    put :update, construct_params({ id: t.display_id }, update_params)
+    t = @account.tickets.find(t.id)
+    Helpdesk::TicketField.where(default: true).update_all(required: false)
+    match_json(update_ticket_pattern({}, t.reload))
+    assert_response 200
+    assert_equal t.group.id, group.id
+    disable_skip_mandatory_checks_option
+  end
+
+  def test_update_ticket_status_without_mandatory_default_fields_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = { email: Faker::Internet.email, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
+    Helpdesk::TicketField.where(default: true).update_all(required: true)
+    t = create_ticket(params)
+    update_params = { status: 3 }
+    put :update, construct_params({ id: t.display_id }, update_params)
+    t = @account.tickets.find(t.id)
+    Helpdesk::TicketField.where(default: true).update_all(required: false)
+    match_json(update_ticket_pattern({}, t.reload))
+    assert_response 200
+    assert_equal t.status, 3
+    disable_skip_mandatory_checks_option
+  end
+
+  def test_update_ticket_priority_without_mandatory_default_fields_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = { email: Faker::Internet.email, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
+    Helpdesk::TicketField.where(default: true).update_all(required: true)
+    t = create_ticket(params)
+    update_params = { priority: 3 }
+    put :update, construct_params({ id: t.display_id }, update_params)
+    t = @account.tickets.find(t.id)
+    Helpdesk::TicketField.where(default: true).update_all(required: false)
+    match_json(update_ticket_pattern({}, t.reload))
+    assert_response 200
+    assert_equal t.priority, 3
+    disable_skip_mandatory_checks_option
+  end
+
+  def test_update_ticket_description_without_mandatory_default_fields_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = { email: Faker::Internet.email, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
+    Helpdesk::TicketField.where(default: true).update_all(required: true)
+    t = create_ticket(params)
+    update_params = { description: 'updated the description' }
+    put :update, construct_params({ id: t.display_id }, update_params)
+    t = @account.tickets.find(t.id)
+    Helpdesk::TicketField.where(default: true).update_all(required: false)
+    match_json(update_ticket_pattern({}, t.reload))
+    assert_response 200
+    assert_equal t.description, 'updated the description'
+    disable_skip_mandatory_checks_option
+  end
+
+  def test_update_ticket_subject_without_mandatory_default_fields_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = { email: Faker::Internet.email, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
+    Helpdesk::TicketField.where(default: true).update_all(required: true)
+    t = create_ticket(params)
+    update_params = { subject: 'updated the subject' }
+    put :update, construct_params({ id: t.display_id }, update_params)
+    t = @account.tickets.find(t.id)
+    Helpdesk::TicketField.where(default: true).update_all(required: false)
+    match_json(update_ticket_pattern({}, t.reload))
+    assert_response 200
+    assert_equal t.subject, 'updated the subject'
+    disable_skip_mandatory_checks_option
+  end
+
+   # test coverage for ticket update without mandatory custom fields with skip_mandatory_checks enabled for current user having :admin_tasks privilege thorough public API only
+
+  def test_update_ticket_without_mandatory_custom_dropdown_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = ticket_params_hash.merge(custom_fields: {})
+    Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: true)
+    t = create_ticket(params)
+    update_params = { custom_fields: { test_custom_dropdown: 'Armaggedon' } }
+    put :update, construct_params({ id: t.display_id }, update_params)
+    t = @account.tickets.find(t.id)
+    Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: false)
+    match_json(update_ticket_pattern({}, t.reload))
+    assert_response 200
+    assert_equal t.custom_field["test_custom_dropdown_#{@account.id}"], 'Armaggedon'
+    disable_adv_ticketing
+  end
+
+  def test_update_ticket_without_mandatory_custom_text_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = ticket_params_hash
+    Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: true)
+    t = create_ticket(params)
+    update_params = { custom_fields: { test_custom_text: 'updated text' } }
+    put :update, construct_params({ id: t.display_id }, update_params)
+    t = @account.tickets.find(t.id)
+    Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: false)
+    match_json(update_ticket_pattern({}, t.reload))
+    assert_response 200
+    assert_equal t.custom_field["test_custom_text_#{@account.id}"], 'updated text'
+    disable_adv_ticketing
+  end
+
+  def test_update_ticket_without_mandatory_custom_number_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = ticket_params_hash
+    Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: true)
+    t = create_ticket(params)
+    update_params = { custom_fields: { test_custom_number: 4 } }
+    put :update, construct_params({ id: t.display_id }, update_params)
+    t = @account.tickets.find(t.id)
+    Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: false)
+    match_json(update_ticket_pattern({}, t.reload))
+    assert_response 200
+    assert_equal t.custom_field["test_custom_number_#{@account.id}"], 4
+    disable_adv_ticketing
+  end
+
+  def test_update_ticket_without_mandatory_custom_checkbox_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = ticket_params_hash
+    Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: true)
+    t = create_ticket(params)
+    update_params = { custom_fields: { test_custom_checkbox: true } }
+    put :update, construct_params({ id: t.display_id }, update_params)
+    t = @account.tickets.find(t.id)
+    Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: false)
+    match_json(update_ticket_pattern({}, t.reload))
+    assert_response 200
+    assert_equal t.custom_field["test_custom_checkbox_#{@account.id}"], true
+    disable_adv_ticketing
+  end
+
+  def test_update_ticket_without_mandatory_custom_date_with_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = ticket_params_hash
+    Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: true)
+    t = create_ticket(params)
+    update_params = { custom_fields: { test_custom_date: '2019-03-07' } }
+    put :update, construct_params({ id: t.display_id }, update_params)
+    t = @account.tickets.find(t.id)
+    Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: false)
+    match_json(update_ticket_pattern({}, t.reload))
+    assert_response 200
+    assert_equal t.custom_field["test_custom_date_#{@account.id}"], '2019-03-07'
+    disable_adv_ticketing
+  end
+
+  def test_update_ticket_without_mandatory_custom_paragraph_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = ticket_params_hash
+    Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: true)
+    t = create_ticket(params)
+    update_params = { custom_fields: { test_custom_paragraph: 'updated paragraph' } }
+    put :update, construct_params({ id: t.display_id }, update_params)
+    t = @account.tickets.find(t.id)
+    Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: false)
+    match_json(update_ticket_pattern({}, t.reload))
+    assert_response 200
+    assert_equal t.custom_field["test_custom_paragraph_#{@account.id}"], 'updated paragraph'
+    disable_adv_ticketing
+  end
+
+  def test_update_ticket_without_mandatory_custom_decimal_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = ticket_params_hash
+    Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: true)
+    t = create_ticket(params)
+    update_params = { custom_fields: { test_custom_decimal: 0.23 } }
+    put :update, construct_params({ id: t.display_id }, update_params)
+    t = @account.tickets.find(t.id)
+    Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: false)
+    match_json(update_ticket_pattern({}, t.reload))
+    assert_response 200
+    assert_equal t.custom_field["test_custom_decimal_#{@account.id}"], 0.23
+    disable_adv_ticketing
+  end
+
+  def test_update_ticket_without_mandatory_defalut_fields_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = { email: Faker::Internet.email, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
+    Helpdesk::TicketField.where(default: true).update_all(required: true)
+    t = create_ticket(params)
+    t = @account.tickets.find(t.id)
+    update_params = { status: 3, type: 'Refund' }
+    put :update, construct_params({ id: t.display_id }, update_params)
+    t.reload
+    Helpdesk::TicketField.where(default: true).update_all(required: false)
+    match_json(update_ticket_pattern({}, t.reload))
+    assert_response 200
+    assert_equal t.status, 3
+    assert_equal t.ticket_type, 'Refund'
+    disable_adv_ticketing
+  end
+
+  def test_update_ticket_without_mandatory_custom_fields_with_skip_mandatory_checks_enabled
+    enable_skip_mandatory_checks_option
+    params = ticket_params_hash
+    Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: true)
+    t = create_ticket(params)
+    update_params = { custom_fields: { test_custom_decimal: 0.23, test_custom_dropdown: 'Armaggedon' } }
+    put :update, construct_params({ id: t.display_id }, update_params)
+    t = @account.tickets.find(t.id)
+    Helpdesk::TicketField.where(default: true).update_all(required: true)
+    Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: false)
+    match_json(update_ticket_pattern({}, t.reload))
+    assert_response 200
+    assert_equal t.custom_field["test_custom_decimal_#{@account.id}"], 0.23
+    assert_equal t.custom_field["test_custom_dropdown_#{@account.id}"], 'Armaggedon'
+    disable_adv_ticketing
+  end
+
+   # test update ticket without mandatory default fields that are required for closure with skip_mandatory_checks enabled for current user having :admin_tasks privilege thorough public API only
+
+  def test_reslove_ticket_without_type_with_required_for_closure_default_fields_withotut_skip_mandatory_skips_enabled
+    enable_skip_mandatory_checks_option
+    params = ticket_params_hash.except(:type)
+    Helpdesk::TicketField.where(name: "ticket_type").update_all(required_for_closure: true)
+    t = create_ticket(params)
+    t.ticket_type = nil
+    t.save
+    update_params = { status: 4 }
+    put :update, construct_params({ id: t.display_id }, update_params)
+    Helpdesk::TicketField.where(name: 'ticket_type').update_all(required_for_closure: false)
+    assert_response 400
+    match_json([bad_request_error_pattern('type', :not_included, code: :missing_field, list: 'Question,Incident,Problem,Feature Request,Refund')])
+    disable_skip_mandatory_checks_option
+  end
+
+  def test_reslove_ticket_without_required_for_closure_default_fields_without_skip_mandatory_skips_enabled
+    enable_skip_mandatory_checks_option
+    params = ticket_params_hash.except(:product_id, :responder_id)
+    Helpdesk::TicketField.where(name: ['product', 'agent']).update_all(required_for_closure: true)
+    t = create_ticket(params)
+    update_params = { status: 4 }
+    put :update, construct_params({ id: t.display_id }, update_params)
+    Helpdesk::TicketField.where(name: ['product', 'agent']).update_all(required_for_closure: false)
+    assert_response 400
+    match_json([bad_request_error_pattern('responder_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null'),
+                bad_request_error_pattern('product_id', :datatype_mismatch, code: :missing_field, expected_data_type: 'Positive Integer')])
+    disable_skip_mandatory_checks_option
+  end
+
+  def test_resolve_ticket_with_custom_text_with_required_for_closure_without_skip_mandatory_skips_enabled
+    enable_skip_mandatory_checks_option
+    params = ticket_params_hash
+    Helpdesk::TicketField.where(name: "test_custom_text_#{@account.id}").update_all(required_for_closure: true)
+    t = create_ticket(params)
+    update_params = { status: 4 }
+    put :update, construct_params({ id: t.display_id }, update_params)
+    Helpdesk::TicketField.where(name: "test_custom_text_#{@account.id}").update_all(required_for_closure: false)
+    assert_response 400
+    match_json([bad_request_error_pattern(custom_field_error_label('test_custom_text'), *(ERROR_REQUIRED_PARAMS['text']))])
+    disable_skip_mandatory_checks_option
+  end
+
+  def test_resolve_ticket_without_required_for_closure_custom_fields_without_skip_mandatory_skips_enabled
+    enable_skip_mandatory_checks_option
+    params = ticket_params_hash
+    Helpdesk::TicketField.where(name: ["test_custom_number_#{@account.id}", "test_custom_date_#{@account.id}"]).update_all(required_for_closure: true)
+    t = create_ticket(params)
+    update_params = { status: 4 }
+    put :update, construct_params({ id: t.display_id }, update_params)
+    Helpdesk::TicketField.where(name: ["test_custom_number_#{@account.id}", "test_custom_date_#{@account.id}"]).update_all(required_for_closure: false)
+    assert_response 400
+    match_json([bad_request_error_pattern(custom_field_error_label('test_custom_number'), *(ERROR_REQUIRED_PARAMS['number'])),
+                bad_request_error_pattern(custom_field_error_label('test_custom_date'), *(ERROR_REQUIRED_PARAMS['date']))])
+    disable_skip_mandatory_checks_option
+  end
+
+  def test_close_ticket_without_type_with_required_for_closure_without_skip_mandatory_skips_enabled
+    enable_skip_mandatory_checks_option
+    params = ticket_params_hash.except(:type)
+    Helpdesk::TicketField.where(name: "ticket_type").update_all(required_for_closure: true)
+    t = create_ticket(params)
+    t.ticket_type = nil
+    t.save
+    update_params = { status: 5 }
+    put :update, construct_params({ id: t.display_id }, update_params)
+    Helpdesk::TicketField.where(name: 'ticket_type').update_all(required_for_closure: false)
+    assert_response 400
+    match_json([bad_request_error_pattern('type', :not_included, code: :missing_field, list: 'Question,Incident,Problem,Feature Request,Refund')])
+    disable_skip_mandatory_checks_option
+  end
+
+  def test_close_ticket_without_required_for_closure_default_fields_without_skip_mandatory_skips_enabled
+    enable_skip_mandatory_checks_option
+    params = ticket_params_hash.except(:product_id, :responder_id)
+    Helpdesk::TicketField.where(name: ['product', 'agent']).update_all(required_for_closure: true)
+    t = create_ticket(params)
+    update_params = { status: 5 }
+    put :update, construct_params({ id: t.display_id }, update_params)
+    Helpdesk::TicketField.where(name: ['product', 'agent']).update_all(required_for_closure: false)
+    assert_response 400
+    match_json([bad_request_error_pattern('responder_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null'),
+                bad_request_error_pattern('product_id', :datatype_mismatch, code: :missing_field, expected_data_type: 'Positive Integer')])
+    disable_skip_mandatory_checks_option
+  end
+
+  def test_close_ticket_with_custom_text_with_required_for_closure_without_skip_mandatory_skips_enabled
+    enable_skip_mandatory_checks_option
+    params = ticket_params_hash
+    Helpdesk::TicketField.where(name: "test_custom_text_#{@account.id}").update_all(required_for_closure: true)
+    t = create_ticket(params)
+    update_params = { status: 5 }
+    put :update, construct_params({ id: t.display_id }, update_params)
+    Helpdesk::TicketField.where(name: "test_custom_text_#{@account.id}").update_all(required_for_closure: false)
+    assert_response 400
+    match_json([bad_request_error_pattern(custom_field_error_label('test_custom_text'), *(ERROR_REQUIRED_PARAMS['text']))])
+    disable_skip_mandatory_checks_option
+  end
+
+  def test_close_ticket_without_required_for_closure_custom_fields_without_skip_mandatory_skips_enabled
+    enable_skip_mandatory_checks_option
+    params = ticket_params_hash
+    Helpdesk::TicketField.where(name: ["test_custom_number_#{@account.id}", "test_custom_date_#{@account.id}"]).update_all(required_for_closure: true)
+    t = create_ticket(params)
+    update_params = { status: 5 }
+    put :update, construct_params({ id: t.display_id }, update_params)
+    Helpdesk::TicketField.where(name: ["test_custom_number_#{@account.id}", "test_custom_date_#{@account.id}"]).update_all(required_for_closure: false)
+    assert_response 400
+    match_json([bad_request_error_pattern(custom_field_error_label('test_custom_number'), *(ERROR_REQUIRED_PARAMS['number'])),
+                bad_request_error_pattern(custom_field_error_label('test_custom_date'), *(ERROR_REQUIRED_PARAMS['date']))])
+    disable_skip_mandatory_checks_option
   end
 
   def test_create_with_email_config_id
@@ -3878,7 +4736,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_update_with_source_as_outbound_email_invalid
     Account.any_instance.stubs(:compose_email_enabled?).returns(false)
     t = ticket
-    params_hash = update_ticket_params_hash.except(:email).merge(source: 10)
+    params_hash = update_ticket_params_hash.except(:email).merge(source: 100)
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
     match_json([bad_request_error_pattern('source', :not_included, list: '1,2,3,5,6,7,8,9')])

@@ -28,18 +28,18 @@ module Channel::V2
     end
 
     def test_index_with_default_filter_id
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       ticket_filter = @account.ticket_filters.find_by_name('Urgent and High priority Tickets')
       get :index, controller_params(filter_id: ticket_filter.id)
       assert_response 200
     ensure
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
 
     def test_index_with_custom_filter_id
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       custom_filter = create_filter
       get :index, controller_params(filter_id: custom_filter.id)
@@ -48,11 +48,11 @@ module Channel::V2
       match_filter_response_with_es_enabled(custom_filter)
     ensure
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
 
     def test_index_with_custom_filter_id_with_permission_check
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       user = add_test_agent(@account, role: Role.find_by_name('Agent').id)
       filter_params = {
@@ -68,7 +68,7 @@ module Channel::V2
       assert_response 400
     ensure
       @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
   end
 end

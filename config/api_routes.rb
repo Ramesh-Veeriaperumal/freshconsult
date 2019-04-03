@@ -686,6 +686,7 @@ Helpkit::Application.routes.draw do
     post '/search/topics/',       to: 'ember/search/topics#results'
 
     post '/search/multiquery',    to: 'ember/search/multiquery#search_results'
+    get  '/search/multiquery',    to: 'ember/search/multiquery#search_results'
 
     post '/search/autocomplete/requesters/',    to: 'ember/search/autocomplete#requesters'
     post '/search/autocomplete/agents/',        to: 'ember/search/autocomplete#agents'

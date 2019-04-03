@@ -253,19 +253,17 @@ class Ember::AgentsControllerTest < ActionController::TestCase
   end
 
   def test_update_field_agent_with_incorrect_scope_and_role
-  #   Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
-  #   Agent.any_instance.stubs(:ticket_permission).returns(::Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
-  #   perform_fsm_operations
-  #   agent = add_test_agent(@account, { role: Role.find_by_name('Agent').id, agent_type: AgentType.agent_type_id(Agent::FIELD_AGENT), ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] })
-  #   params = { ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets], role_ids: [Role.find_by_name('Administrator').id] }
-  #   put :update, construct_params({ id: agent.id }, params)
-  #   puts "response_body ::#{response.body.inspect}, agent_id :: #{agent.inspect}"
-  #   assert_response 400
-  #   match_json([bad_request_error_pattern('ticket_permission', :field_agent_scope, :code => :invalid_value), bad_request_error_pattern('user.role_ids', :field_agent_roles, :code => :invalid_value)])
-  # ensure
-  #   agent.destroy if agent.present?
-  #   cleanup_fsm
-  #   Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+    perform_fsm_operations
+    agent = add_test_agent(@account, { role: Role.find_by_name('Agent').id, agent_type: AgentType.agent_type_id(Agent::FIELD_AGENT), ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] })
+    params = { ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets], role_ids: [Role.find_by_name('Administrator').id] }
+    put :update, construct_params({ id: agent.id }, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('ticket_permission', :field_agent_scope, :code => :invalid_value), bad_request_error_pattern('user.role_ids', :field_agent_roles, :code => :invalid_value)])
+  ensure
+    agent.destroy if agent.present?
+    cleanup_fsm
+    Account.any_instance.unstub(:field_service_management_enabled?)
   end
 
   def test_update_field_agent_with_multiple_role
@@ -290,19 +288,17 @@ class Ember::AgentsControllerTest < ActionController::TestCase
   end
 
   def test_update_field_agent_from_restricted_to_group_scope
-  #   Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
-  #   Agent.any_instance.stubs(:ticket_permission).returns(::Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
-  #   perform_fsm_operations
-  #   agent = add_test_agent(@account, { role: Role.find_by_name('Agent').id, agent_type: AgentType.agent_type_id(Agent::FIELD_AGENT), ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] })
-  #   params = { ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets]}
-  #   put :update, construct_params({ id: agent.id }, params)
-  #   puts "response_body ::#{response.body.inspect}, agent_id :: #{agent.inspect}"
-  #   assert_response 200
-  #   assert JSON.parse(response.body)['ticket_scope'] == Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets]
-  # ensure
-  #   agent.destroy if agent.present?
-  #   cleanup_fsm
-  #   Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+    perform_fsm_operations
+    agent = add_test_agent(@account, { role: Role.find_by_name('Agent').id, agent_type: AgentType.agent_type_id(Agent::FIELD_AGENT), ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] })
+    params = { ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets]}
+    put :update, construct_params({ id: agent.id }, params)
+    assert_response 200
+    assert JSON.parse(response.body)['ticket_scope'] == Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets]
+  ensure
+    agent.destroy if agent.present?
+    cleanup_fsm
+    Account.any_instance.unstub(:field_service_management_enabled?)
   end
 
   def test_update_field_agent_from_group_scope_to_restricted_scope

@@ -27,17 +27,17 @@ module Channel
 
     def test_create_contact_with_invalid_company_id
       set_jwt_auth_header('zapier')
-      post :create, construct_params({version: 'channel'}, 
-      name: Faker::Lorem.characters(10), email: Faker::Internet.email, 
+      post :create, construct_params({version: 'channel'},
+      name: Faker::Lorem.characters(10), email: Faker::Internet.email,
       company_id: 999999999)
       assert_response 400
-      match_json([bad_request_error_pattern('company_id', :absent_in_db, 
+      match_json([bad_request_error_pattern('company_id', :absent_in_db,
         resource: :company, attribute: :company_id)])
     end
 
     def test_create_contact
       set_jwt_auth_header('zapier')
-      post :create, construct_params({version: 'channel'}, 
+      post :create, construct_params({version: 'channel'},
       name: Faker::Lorem.characters(10), email: Faker::Internet.email)
       assert_response 201
       match_json(deleted_contact_pattern(User.last))
@@ -174,7 +174,7 @@ module Channel
     end
 
     def test_create_contact_freshmover_skipping_validation
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       cf = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'another_city', editable_in_signup: 'true', required_for_agent: 'true'))
       set_jwt_auth_header('freshmover')
       payload = channel_contact_create_payload
@@ -183,7 +183,7 @@ module Channel
       ignore_keys = [:was_agent, :agent_deleted_forever, :marked_for_hard_delete]
       match_json(channel_contact_pattern(User.last.reload).except(*ignore_keys))
     ensure
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
       cf.update_attribute(:required_for_agent, false)
     end
 
@@ -213,7 +213,7 @@ module Channel
     end
 
     def test_show_a_contact_with_avatar_freshmover
-      $infra['CHANNEL_LAYER'] = true
+      CustomRequestStore.store[:channel_api_request] = true
       set_jwt_auth_header('freshmover')
       file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
       sample_user = add_new_user(@account)
@@ -223,7 +223,7 @@ module Channel
       match_json(channel_contact_pattern(sample_user.reload).except(*ignore_keys))
       assert_response 200
     ensure
-      $infra['CHANNEL_LAYER'] = false
+      CustomRequestStore.store[:channel_api_request] = false
     end
 
     def test_show_a_contact_without_authentication_header

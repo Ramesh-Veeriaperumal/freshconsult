@@ -1,13 +1,15 @@
 ENV['RAILS_ENV'] = 'test'
-file_name = File.expand_path('../../../config/infra_layer.yml', __FILE__)
+require File.expand_path('../../../lib/custom_request_store', __FILE__)
 require File.expand_path('../../../test/helpers/simple_cov_setup', __FILE__)
 
-def load_environment(file_name)
+def load_environment
   puts 'Switching ON API Layer'
-  changed = change_api_layer(file_name, true)
+  CustomRequestStore.store[:api_request] = true
+  CustomRequestStore.store[:private_api_request] = true
+  changed = change_api_layer(true)
   private_changed = false
   if $PROGRAM_NAME =~ /public_api_test_suite.rb/
-    private_changed = change_private_api_layer(file_name, false)
+    private_changed = change_private_api_layer(false)
   end
 
   if !defined?($env_loaded) || $env_loaded != true
@@ -17,41 +19,31 @@ def load_environment(file_name)
   end
 ensure
     puts 'Switching OFF API Layer'
-    change_api_layer(file_name, false) if changed
-    change_private_api_layer(file_name, true) if private_changed
+    change_api_layer(false) if changed
+    change_private_api_layer(true) if private_changed
 end
 
-def change_api_layer(file_name, new_value)
-  text = File.read(file_name)
-  pattern = new_value ? /API_LAYER: false/ : /API_LAYER: true/
-  if (new_value && text =~ /API_LAYER: true/) || (new_value.is_a?(FalseClass) && text =~ /API_LAYER: false/)
+def change_api_layer(new_value)
+  if (new_value && CustomRequestStore.read(:api_request)) || (new_value.is_a?(FalseClass) && !CustomRequestStore.read(:api_request))
     new_value ? puts('API Layer already switched ON') : puts('API Layer already switched OFF')
-    puts text
     return false
   else
-    new_contents = text.gsub(pattern, "API_LAYER: #{new_value}")
-    # To merely print the contents of the file, use:
-    puts new_contents
-    # To write changes to the file, use:
-    File.open(file_name, 'w') { |file| file.puts new_contents }
+    CustomRequestStore.store[:api_request] = true
     return true
   end
 end
 
-def change_private_api_layer(file_name, new_value)
-  text = File.read(file_name)
-  pattern = new_value ? /PRIVATE_API: false/ : /PRIVATE_API: true/
-  if (new_value && text =~ /PRIVATE_API: true/) || (new_value.is_a?(FalseClass) && text =~ /PRIVATE_API: false/)
+def change_private_api_layer(new_value)
+  if (new_value && CustomRequestStore.read(:private_api_request)) || (new_value.is_a?(FalseClass) && !CustomRequestStore.read(:private_api_request))
     new_value ? puts('Private API Layer already switched ON') : puts('Private API Layer already switched OFF')
     return true
   else
-    new_contents = text.gsub(pattern, "PRIVATE_API: #{new_value}")
-    File.open(file_name, 'w') { |file| file.puts new_contents }
+    CustomRequestStore.store[:private_api_request] = false
     return false
   end
 end
 
-load_environment(file_name)
+load_environment
 require File.expand_path('../../../test/api/helpers/mock_test_validation', __FILE__)
 require 'rails/test_help'
 require 'minitest/rails'

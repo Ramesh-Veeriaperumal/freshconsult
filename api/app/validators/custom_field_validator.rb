@@ -210,10 +210,30 @@ class CustomFieldValidator < ActiveModel::EachValidator
     # required based on ticket field attribute or combination of status & ticket field attribute.
     def required_field?(record, values)
       # Should we have to raise exception or warn if current_field doen't respond to required_attribute?
-      is_required = (@required_attribute && @current_field.safe_send(@required_attribute.to_sym)) || (@closure_status && @current_field.required_for_closure)
+      is_required = tickets_api_relaxation_enabled?(record) ? required_for_closure? : required_for_submit_or_closure?
       is_required ||= @parent[@required_attribute.to_sym] if @parent.present?
       is_required = section_parent_present?(record, values) if is_required && section_field?
       is_required
+    end
+
+    def required_for_closure?
+      @closure_status && @current_field.required_for_closure
+    end
+
+    def required_for_submit_or_closure?
+      (@required_attribute && @current_field.safe_send(@required_attribute.to_sym)) || required_for_closure?
+    end
+
+    def tickets_api_relaxation_enabled?(record)
+      User.current ? (create_or_update?(record) && User.current.tickets_api_relaxation? && public_api?(record)) : false
+    end
+
+    def public_api?(record)
+      defined?(record.version).nil? ? false : record.version == 'v2'
+    end
+
+    def create_or_update?(record)
+      [:create, :update].include?(record.validation_context)
     end
 
     def section_parent_present?(record, values)

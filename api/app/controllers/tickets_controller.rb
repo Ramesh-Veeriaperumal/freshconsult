@@ -29,9 +29,9 @@ class TicketsController < ApiApplicationController
     assign_protected
     return render_request_error(:recipient_limit_exceeded, 429) if recipients_limit_exceeded?
     ticket_delegator = ticket_delegator_class.new(@item, ticket_fields: @ticket_fields,
-      custom_fields: params[cname][:custom_field], tags: cname_params[:tags],
-      company_id: params[cname][:company_id], parent_attachment_params: parent_attachment_params,
-      inline_attachment_ids: @inline_attachment_ids)
+                                                         custom_fields: params[cname][:custom_field], tags: cname_params[:tags],
+                                                         company_id: params[cname][:company_id], parent_attachment_params: parent_attachment_params,
+                                                         inline_attachment_ids: @inline_attachment_ids, version: params[:version])
     if !ticket_delegator.valid?(:create)
       render_custom_errors(ticket_delegator, true)
     elsif @item.save_ticket
@@ -52,7 +52,7 @@ class TicketsController < ApiApplicationController
     @item.assign_attributes(validatable_delegator_attributes)
     @item.assign_description_html(params[cname][:ticket_body_attributes]) if params[cname][:ticket_body_attributes]
     delegator_hash = { ticket_fields: @ticket_fields, custom_fields: custom_fields,
-                       company_id: params[cname][:company_id], tags: cname_params[:tags] }
+                       company_id: params[cname][:company_id], tags: cname_params[:tags], version: params[:version] }
     delegator_hash[:tracker_ticket_id] = cname_params[:tracker_ticket_id] if link_or_unlink?
     delegator_hash[:source] = params[cname][:source]
     ticket_delegator = ticket_delegator_class.new(@item, delegator_hash)
@@ -417,9 +417,15 @@ class TicketsController < ApiApplicationController
 
     def get_additional_params
       # placeholder function to pass additional params into ticket validation
+      { version: params[:version] }
     end
 
     def set_default_values
+      if create? && public_api? && api_current_user.tickets_api_relaxation?
+        Rails.logger.info "skip_mandatory_checks is enabled for #{Account.current.id}"
+        params[cname][:status] = ApiTicketConstants::OPEN unless params[cname][:status]
+        params[cname][:priority] = ApiTicketConstants::PRIORITIES[0] unless params[cname][:priority]
+      end
       if compose_email?
         params[cname][:status] = ApiTicketConstants::CLOSED unless params[cname].key?(:status)
         params[cname][:source] = TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]

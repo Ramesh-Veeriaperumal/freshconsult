@@ -55,6 +55,6 @@ class BaseDelegator < SimpleDelegator
     end
 
     def private_api?
-      defined?($infra) && $infra['PRIVATE_API']
+      CustomRequestStore.read(:private_api_request)
     end
 end

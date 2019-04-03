@@ -112,6 +112,8 @@ module ApiTicketConstants
   FIELD_MAPPINGS = { group: :group_id, agent: :responder_id, responder: :responder_id, requester: :requester_id, email_config: :email_config_id,
                      product: :product_id, ticket_type: :type }.freeze
 
+  TICKETS_API_RELAXATION_MANDATORY_FIELDS_FOR_CREATE = ['subject', 'description', 'requester'].freeze
+
   SEARCH_ALLOWED_DEFAULT_FIELDS = ['status'].freeze
 
   BACKGROUND_THRESHOLD = 5

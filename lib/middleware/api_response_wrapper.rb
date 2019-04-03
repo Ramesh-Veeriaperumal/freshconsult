@@ -18,19 +18,18 @@ class Middleware::ApiResponseWrapper
   private
 
   def to_be_wrapped?
-    defined?($infra) && 
-      $infra['PRIVATE_API'] && 
-      
-      @response.respond_to?(:request) && 
-      @response.request.env["ORIGINAL_FULLPATH"] && 
-      @response.request.env["ORIGINAL_FULLPATH"].starts_with?('/api/_/') &&
-      !@response.request.env["ORIGINAL_FULLPATH"].include?('/ocr_proxy/') &&
-      
-      @response.respond_to?(:code) &&
-      WRAPPABLE_RESPONSE_CODES.include?(@response.code.to_i) &&
-      
-      @headers["Content-Type"].present? &&
-      @headers["Content-Type"].starts_with?(Mime::JSON)
+    CustomRequestStore.read(:private_api_request) &&
+
+    @response.respond_to?(:request) &&
+    @response.request.env["ORIGINAL_FULLPATH"] &&
+    @response.request.env["ORIGINAL_FULLPATH"].starts_with?('/api/_/') &&
+    !@response.request.env["ORIGINAL_FULLPATH"].include?('/ocr_proxy/') &&
+
+    @response.respond_to?(:code) &&
+    WRAPPABLE_RESPONSE_CODES.include?(@response.code.to_i) &&
+
+    @headers["Content-Type"].present? &&
+    @headers["Content-Type"].starts_with?(Mime::JSON)
   end
 
   def api_root_key

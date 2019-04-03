@@ -2,7 +2,7 @@ module Ember
   module Search
     class MultiqueryController < SpotlightController
 
-      before_filter :validate_params
+      before_filter :sanitize_params, :validate_params
       before_filter :ignore_params # Hack for forums, to be removed when forums feature has been migrated to bitmap
       decorate_views(decorate_objects: [:search_results])
 
@@ -26,6 +26,10 @@ module Ember
       end
 
       private
+
+        def sanitize_params
+          params[:limit] = params[:limit].to_i if params[:limit]
+        end
 
         def validate_params
           @search_validation = SearchValidation.new(params)

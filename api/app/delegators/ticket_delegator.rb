@@ -1,7 +1,7 @@
 # A big thanks to http://blog.arkency.com/2014/05/mastering-rails-validations-objectify/ !!!!
 class TicketDelegator < BaseDelegator
   include ::Admin::AdvancedTicketing::FieldServiceManagement::Constant
-  attr_accessor :ticket_fields
+  attr_accessor :ticket_fields, :version
   validate :group_presence, if: -> { group_id && (attr_changed?('group_id') || (property_update? && required_for_closure_field?('group') && status_set_to_closed?)) }
   validate :responder_presence, if: -> { responder_id && (attr_changed?('responder_id') || (property_update? && required_for_closure_field?('agent') && status_set_to_closed?)) }
   validate :email_config_presence,  if: -> { !property_update? && email_config_id && outbound_email? && attr_changed?('email_config_id') }
@@ -67,6 +67,7 @@ class TicketDelegator < BaseDelegator
   validate :source_update_permissible?, if: -> { @source }
 
   def initialize(record, options)
+    @version = options[:version]
     @ticket_fields = options[:ticket_fields]
     @source = options[:source]
     check_params_set(options[:custom_fields]) if options[:custom_fields].is_a?(Hash)
