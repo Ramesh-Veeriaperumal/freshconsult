@@ -71,7 +71,7 @@ module ChannelIntegrations::Commands::Services
         update_errors_in_schema_less_notes(schema_less_notes, data, note_id)
       else
         return error_message('Tweet Id cannot be empty') unless data[:tweet_id].present?
-        social_tweet = current_account.tweets.find_by_tweetable_id(context[:note_id])
+        social_tweet = current_account.tweets.where(tweetable_id: context[:note_id], tweetable_type: 'Helpdesk::Note').first
         return error_message('Social::Tweet not found') if social_tweet.blank?
 
         update_tweet_in_social_tweets(social_tweet, data)

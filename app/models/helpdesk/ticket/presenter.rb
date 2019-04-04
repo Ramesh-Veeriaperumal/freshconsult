@@ -1,5 +1,6 @@
 class Helpdesk::Ticket < ActiveRecord::Base
   include RepresentationHelper
+  include TicketsNotesHelper
   FLEXIFIELD_PREFIXES = ['ffs_', 'ff_text', 'ff_int', 'ff_date', 'ff_boolean', 'ff_decimal', 'dn_slt_', 'dn_mlt_'].freeze
   REPORT_FIELDS = [:first_assign_by_bhrs, :first_response_id, :first_response_group_id, :first_assign_agent_id, :first_assign_group_id, :agent_reassigned_count, :group_reassigned_count, :reopened_count, :private_note_count, :public_note_count, :agent_reply_count, :customer_reply_count, :agent_assigned_flag, :agent_reassigned_flag, :group_assigned_flag, :group_reassigned_flag, :internal_agent_assigned_flag, :internal_agent_reassigned_flag, :internal_group_assigned_flag, :internal_group_reassigned_flag, :internal_agent_first_assign_in_bhrs, :last_resolved_at].freeze
   NEW_REPORT_FIELDS = [:first_response_agent_id].freeze # Used for backfilling, can be removed once backfilling is complete
@@ -69,6 +70,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     EMAIL_KEYS.each do |key|
       t.add proc { |x| x.cc_email_hash.try(:[], key) }, as: key
     end
+    # Source additional info
+    t.add :source_additional_info_hash, as: :source_additional_info
   end
 
   api_accessible :central_publish_associations do |t|
@@ -134,6 +137,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
       id: current_association_type,
       type: TICKET_ASSOCIATION_TOKEN_BY_KEY[current_association_type]
     }
+  end
+
+  def requester_twitter_id
+    requester.twitter_id
   end
 
   def central_custom_fields_hash

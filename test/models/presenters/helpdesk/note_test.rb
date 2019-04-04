@@ -1,9 +1,11 @@
 require_relative '../../test_helper'
+['social_tickets_creation_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 
 class NoteTest < ActiveSupport::TestCase
   include TicketsTestHelper
   include NotesTestHelper
   include ModelsAttachmentsTestHelper
+  include SocialTicketsCreationHelper
 
   def setup
     super
@@ -134,5 +136,16 @@ class NoteTest < ActiveSupport::TestCase
     job = CentralPublishWorker::ActiveNoteWorker.jobs.last
     assoc_payload = note.associations_to_publish.to_json
     assoc_payload.must_match_json_expression(central_assoc_note_pattern(note))
+  end
+
+  def test_central_publish_payload_with_source_additional_info_twitter
+    twitter_handle = get_twitter_handle
+    stream_id = get_twitter_stream_id
+    twitter_params = { twitter: { tweet_id: 12_345, tweet_type: 'DM',
+                                  twitter_handle_id: twitter_handle.id,
+                                  stream_id: stream_id } }
+    note = create_note(note_params_hash.merge(source_additional_info: twitter_params))
+    payload = note.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_note_pattern(note))
   end
 end

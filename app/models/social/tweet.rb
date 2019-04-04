@@ -1,5 +1,6 @@
 class Social::Tweet < ActiveRecord::Base
 
+  include Social::Twitter::Util
   self.table_name =  "social_tweets"
   self.primary_key = :id
 
@@ -12,6 +13,8 @@ class Social::Tweet < ActiveRecord::Base
   validates_presence_of :tweet_id, :account_id, :twitter_handle_id
   validates_uniqueness_of :tweet_id, :scope => :account_id, :message => Social::Constants::TWEET_ALREADY_EXISTS
   
+  before_update :persist_previous_changes
+  after_commit :publish_note_for_tweet, unless: :not_allowed_to_publish?
   after_destroy :remove_fd_link_in_dynamo
 
   TWEET_LENGTH = 280
@@ -61,4 +64,27 @@ class Social::Tweet < ActiveRecord::Base
     dynamo_twt_feed.delete_fd_link("#{self.account_id}_#{self.stream_id}", self.tweet_id)
   end
 
+  def persist_previous_changes
+    @previous_changes = changes
+  end
+
+  def destroy_action?
+    transaction_include_action?(:destroy)
+  end
+
+  def not_allowed_to_publish?
+    # For incoming mention and DM, source additional info is published via ticket/note create
+    is_ticket? || is_archive_ticket? || tweetable.incoming || tweetable.import_id.present? || destroy_action?
+  end
+
+  def publish_note_for_tweet
+    # For outgoing DM, source additional info is published via note create with tweet_id as nil
+    # though it has negative random number
+    return if is_dm? && tweet_id < 0
+
+    old_payload = transaction_include_action?(:create) ? {} : construct_tweet_payload_for_central(self, tweetable, @previous_changes)
+    new_payload = construct_tweet_payload_for_central(self, tweetable)
+    tweetable.model_changes = { source_additional_info: { twitter: [old_payload, new_payload] } }
+    tweetable.manual_publish_to_central(nil, :update, {}, false)
+  end
 end

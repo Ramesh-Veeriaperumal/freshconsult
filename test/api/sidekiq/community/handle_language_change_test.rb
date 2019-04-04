@@ -16,6 +16,7 @@ class HandleLanguageChangeTest < ActionView::TestCase
     Account.stubs(:current).returns(Account.first)
     @account = Account.current
     @agent = @account.agents.first
+    User.stubs(:current).returns(@agent.user)
     add_new_article
   end
 
