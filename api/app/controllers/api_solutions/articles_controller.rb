@@ -1,14 +1,16 @@
 module ApiSolutions
   class ArticlesController < ApiApplicationController
     include SolutionConcern
+    include HelperConcern
     include Solution::LanguageControllerMethods
     include Helpdesk::TagMethods
     include CloudFilesHelper
 
-    SLAVE_ACTIONS = %w(index folder_articles).freeze
+    SLAVE_ACTIONS = %w[index folder_articles].freeze
 
     decorate_views(decorate_objects: [:folder_articles])
-    before_filter :validate_query_params, only: [:folder_articles]
+    before_filter :validate_query_parameters, only: [:folder_articles]
+    before_filter :validate_draft_state, only: [:update, :destroy]
 
     def show
       @meta = @item.solution_article_meta
@@ -21,21 +23,27 @@ module ApiSolutions
 
     def create
       assign_protected
+      return unless delegator_validation
+
       render_201_with_location(item_id: @item.parent_id) if create_or_update_article
     end
 
     def update
+      return unless delegator_validation
+
+      # for an article with unassociated folder, folder needs to be set before publishing the article
+      @item.solution_article_meta.update_attributes(solution_folder_meta_id: @article_params[:folder_id]) if @article_params.key?(:folder_id)
       if @status == Solution::Article::STATUS_KEYS_BY_TOKEN[:published] && @draft
         @draft.publish!
-      elsif @article_params[language_scoper] && @status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
-        @draft = @item.build_draft_from_article unless @draft
-        attachment_params = @article_params[language_scoper].delete(:attachments)
-        build_attachments(@draft, attachment_params)
-        @draft.unlock
-        language_params = @article_params[language_scoper].extract!(:title, :description)
-        @draft.update_attributes(language_params)
+      elsif @article_params[language_scoper] && @status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft] && !article_properties? && !unpublish?
+        @draft ||= @item.build_draft_from_article
+        @draft.unlock # So that the lock in period for 'editing' status is reset
+        assign_draft_attributes(@article_params)
+        add_attachments if private_api?
+        render_custom_errors(@draft, true) unless @draft.save
         remove_lang_scoper_params
       end
+      remove_lang_scoper_params if !unpublish? && article_properties?
       create_or_update_article
     end
 
@@ -50,7 +58,7 @@ module ApiSolutions
           render '/api_solutions/articles/index'
         end
       else
-        return false
+        false
       end
     end
 
@@ -69,15 +77,17 @@ module ApiSolutions
       end
 
       def create_or_update_article
-        article_delegator = build_article_delegator
-        if !article_delegator.valid?
-          render_custom_errors(article_delegator, true)
-        elsif !construct_article_object
+        if !construct_article_object
           render_solution_item_errors
         else
           return true
         end
         false
+      end
+
+      def delegator_validation
+        @delegator_klass = 'ApiSolutions::ArticleDelegator'.freeze
+        validate_delegator(@item, delegator_params)
       end
 
       def load_objects
@@ -88,32 +98,46 @@ module ApiSolutions
               :solution_category_meta
             ]
           },
-          :article_body, :draft, draft: :draft_body
+          :article_body, :tags, :attachments, { cloud_files: :application }, :draft, draft: [:draft_body, :attachments, :cloud_files]
         ))
       end
 
       def remove_lang_scoper_params
-        # Deleting the language_scoper params except seo_data from hash as seo_data
-        # must be updated for article and rest should only be updated for draft
-        unless @article_params[language_scoper].present?
-          @article_params[language_scoper].delete_if { |k, v| k != :seo_data }
-        end
+        @article_params[language_scoper].delete_if { |k, v| !SolutionConstants::ARTICLE_PROPERTY_FIELDS.include?(k) } if @article_params[language_scoper].present?
+      end
+
+      def article_properties?
+        # Only article properties are changed.
+        (SolutionConstants::ARTICLE_PROPERTY_FIELDS.any? { |key| @article_params[language_scoper].key?(key) || @article_params.key?(key) }) && @article_params[language_scoper].except(:status, :unlock, *SolutionConstants::ARTICLE_PROPERTY_FIELDS).keys.empty?
+      end
+
+      def unpublish?
+        # If only status is present in params, then it means unpublish article
+        @article_params[language_scoper].keys.length == 1 && @article_params[language_scoper].key?(:status)
       end
 
       def construct_article_object
-        @meta = Solution::Builder.article(solution_article_meta: @article_params, language_id: @lang_id)
+        parse_attachment_params if private_api?
+        article_builder_params = { solution_article_meta: @article_params, language_id: @lang_id }
+        @meta = Solution::Builder.article(article_builder_params)
         @item = @meta.safe_send(language_scoper)
         @item.tags = @tags if @tags
         @item.create_draft_from_article if @status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft] && create?
         !(@item.errors.any? || @item.parent.errors.any?)
       end
 
-      def build_article_delegator
+      def assign_draft_attributes(lang_params)
+        @draft.title = lang_params[language_scoper][:title] if lang_params[language_scoper][:title].present?
+        @draft.description = lang_params[language_scoper][:description] if lang_params[language_scoper][:description].present?
+      end
+
+      def delegator_params
         delegator_params = { language_id: @lang_id, article_meta: @meta, tags: @tags }
         delegator_params[:folder_name] = params[cname]['folder_name'] if params[cname].key?('folder_name')
         delegator_params[:category_name] = params[cname]['category_name'] if params[cname].key?('category_name')
         delegator_params[:user_id] = @article_params[language_scoper][:user_id] if @article_params[language_scoper] && @article_params[language_scoper][:user_id]
-        ArticleDelegator.new(delegator_params)
+        delegator_params = add_attachment_params(delegator_params) if private_api?
+        delegator_params
       end
 
       def before_load_object
@@ -122,7 +146,7 @@ module ApiSolutions
 
       def load_object(items = scoper)
         @meta = load_meta(params[:id])
-        @item = items.where(parent_id: params[:id], language_id: @lang_id).first
+        @item = items.where(parent_id: params[:id], language_id: @lang_id).preload(cloud_files: :application).first
         if @item
           @draft = @item.draft
         else
@@ -142,11 +166,14 @@ module ApiSolutions
                        @item
                      end
 
+        article_obj = private_api? ? nil : @item # for private api existing obj should not be validated, only the body params should be validated.
         article = ApiSolutions::ArticleValidation.new(
-          params[cname], @item, attachable, @lang_id, string_request_params?
+          params[cname], article_obj, attachable, @lang_id, string_request_params?
         )
-        render_errors article.errors,
-                      article.error_options unless article.valid?(action_name.to_sym)
+        unless article.valid?(action_name.to_sym)
+          render_errors article.errors,
+                        article.error_options
+        end
       end
 
       def validate_create_params
@@ -158,6 +185,14 @@ module ApiSolutions
       def validate_request_keys
         fields = "SolutionConstants::#{action_name.upcase}_ARTICLE_FIELDS"
         params[cname].permit(*get_fields(fields))
+      end
+
+      def validate_draft_state
+        render_request_error_with_info(:draft_locked, 400, {}, user_id: @draft.user_id) if @draft && @draft.locked?
+      end
+
+      def remove_ignore_params
+        params[cname].except!(SolutionConstants::IGNORE_PARAMS)
       end
 
       def sanitize_params
@@ -246,7 +281,7 @@ module ApiSolutions
         end
       end
 
-      def validate_query_params
+      def validate_query_parameters
         validate_filter_params(SolutionConstants::INDEX_FIELDS)
       end
 

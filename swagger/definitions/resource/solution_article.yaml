@@ -55,6 +55,10 @@ allOf:
         type: array
         items:
           $ref: '#/definitions/attachment'
+      cloud_files:
+        type: array
+        items:
+          $ref: '#/definitions/extended_cloud_file'
       modified_at:
         type: string
         format: date-time

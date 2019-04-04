@@ -80,6 +80,11 @@ class Solution::Article < ActiveRecord::Base
   delegate :visible?, :to => :solution_folder_meta
   
   VOTE_TYPES = [:thumbs_up, :thumbs_down]
+
+  VOTES = {
+    thumbs_up: 1,
+    thumbs_down: 0
+  }.freeze
   
   SELECT_ATTRIBUTES = ["id", "thumbs_up", "thumbs_down"]
 

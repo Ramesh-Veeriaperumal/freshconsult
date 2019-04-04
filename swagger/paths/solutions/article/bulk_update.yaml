@@ -1,5 +1,5 @@
 put:
-  tags: [articles]
+  tags: [Solution Article]
   summary: Bulk update articles
   parameters:
     - name: data

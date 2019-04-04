@@ -4,7 +4,7 @@ module CloudFilesHelper
   
   def build_cloud_files attachment_json
     attachment = ActiveSupport::JSON.decode attachment_json
-    decoded_url = attachment['link']
+    decoded_url = attachment['link'] || attachment['url']
     begin
       uri = URI.parse(decoded_url) 
       return {} unless (uri.kind_of?(URI::HTTP) || uri.kind_of?(URI::HTTPS))
@@ -12,7 +12,7 @@ module CloudFilesHelper
       return {}
     end
     filename = attachment['name']
-    application_id = Integrations::Application.find_by_name(attachment['provider']).id
+    application_id = attachment['application_id'] || Integrations::Application.find_by_name(attachment['provider']).id
     return {:url => decoded_url, :filename => filename,
             :application_id => application_id}
   end

@@ -8,7 +8,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "grunt": "^0.4.5",
+    "grunt": "latest",
     "grunt-contrib-watch": "latest",
     "json-refs": "^2.0.3",
     "swagger-parser": "latest",

@@ -1,0 +1,51 @@
+get:
+  tags: [Solution Article]
+  summary: Show article
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      required: true
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/solution_article'
+    403:
+      description: Access denied
+
+put:
+  tags: [Solution Article]
+  summary: Update article
+  parameters:
+    - $ref: '#/parameters/id'
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/article_input'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/solution_article'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+
+delete:
+  tags: [Solution Article]
+  summary: Delete article
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      required: true
+  responses:
+    204:
+      description: Success

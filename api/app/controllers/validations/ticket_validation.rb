@@ -329,10 +329,6 @@ class TicketValidation < ApiValidation
     required_default_fields.select { |x| validate_field?(x) }
   end
 
-  def create_or_update?
-    [:create, :update].include?(validation_context)
-  end
-
   def compose_email_or_proactive_rule_create_update?
     [:compose_email, :proactive_rule_create, :proactive_rule_update].include?(validation_context)
   end

@@ -36,7 +36,7 @@
         </div>
         <%= content_tag(:div, t('mailbox.imap_server_info'), :class => "info-data") %>
         </br>
-        <label for="email_config_mailbox_attributes_imap_delete_from_server" class="checkbox">
+        <label for="email_config_imap_mailbox_attributes_delete_from_server" class="checkbox inline-block">
           <%= check_box("email_config[imap_mailbox_attributes]", 'delete_from_server', options = { :checked => 0, :class => "pull-left" }, checked_value = "1", unchecked_value = "0") %>
           <%= t('mailbox.delete_from_server') %>
       </label>

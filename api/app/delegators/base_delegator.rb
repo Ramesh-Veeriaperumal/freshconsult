@@ -1,6 +1,8 @@
 class BaseDelegator < SimpleDelegator
   include ActiveModel::Validations
 
+  CREATE_AND_UPDATE_ACTIONS = %i[create update].freeze
+
   attr_accessor :error_options, :draft_attachments
 
   validate :validate_draft_attachments, :validate_attachment_size, if: -> { @attachment_ids }
@@ -56,5 +58,9 @@ class BaseDelegator < SimpleDelegator
 
     def private_api?
       CustomRequestStore.read(:private_api_request)
+    end
+
+    def create_or_update?
+      CREATE_AND_UPDATE_ACTIONS.include?(validation_context)
     end
 end

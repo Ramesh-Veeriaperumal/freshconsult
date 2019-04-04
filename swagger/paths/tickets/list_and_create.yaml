@@ -45,6 +45,11 @@ get:
       type: integer
       format: int64
       description: Article ID for which feedbacks have to be displayed
+    - name: language_id
+      in: query
+      type: integer
+      format: int64
+      description: Language for which solution article feedbacks have to be retrieved
 
   responses:
     200:

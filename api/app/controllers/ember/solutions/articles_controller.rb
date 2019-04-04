@@ -4,11 +4,12 @@ module Ember
       include HelperConcern
       include BulkActionConcern
       include SolutionBulkActionConcern
+      include CloudFilesHelper
 
       before_filter :filter_ids, only: [:index]
       before_filter :validate_bulk_update_article_params, :validate_language, only: [:bulk_update]
 
-      decorate_views(decorate_object: [:article_content])
+      decorate_views(decorate_object: [:article_content, :votes])
 
       MAX_IDS_COUNT = 10
 
@@ -38,14 +39,26 @@ module Ember
         render_bulk_action_response(@succeeded_list, @failed_list)
       end
 
+      def reset_ratings
+        validate_request_params
+        @delegator_klass = 'ApiSolutions::ArticleDelegator'
+        return unless validate_delegator(@item)
+
+        @item.reset_ratings ? (head 204) : render_errors(@item.errors)
+      end
+
       def self.wrap_params
         ::SolutionConstants::ARTICLE_WRAP_PARAMS
       end
 
       private
-        
+
         def constants_class
           'SolutionsConstants'.freeze
+        end
+
+        def render_201_with_location(template_name: "api_solutions/articles/#{action_name}", location_url: 'api_solutions_article_url', item_id: @item.id)
+          render template_name, location: safe_send(location_url, item_id), status: 201
         end
 
         def load_article
@@ -85,6 +98,26 @@ module Ember
           options = {}
           options[:user] = @user if @user
           [::Solutions::ArticleDecorator, options]
+        end
+
+        def add_attachment_params(builder_params)
+          builder_params[:attachments_list] = params[cname][language_scoper][:attachments_list] if params[cname][language_scoper][:attachments_list]
+          builder_params[:cloud_file_attachments] = params[cname][language_scoper][:cloud_file_attachments] if params[cname][language_scoper][:cloud_file_attachments]
+          builder_params
+        end
+
+        def parse_attachment_params
+          @article_params[language_scoper][:cloud_file_attachments] = @article_params[language_scoper][:cloud_file_attachments].map(&:to_json) if @article_params[language_scoper][:cloud_file_attachments]
+          @article_params[language_scoper][:attachments_list] = @article_params[language_scoper][:attachments_list].join(',') if @article_params[language_scoper][:attachments_list]
+        end
+
+        def add_attachments
+          parse_attachment_params
+          attachment_builder(@draft, nil, (params[cname][language_scoper] || {})[:cloud_file_attachments], (params[cname][language_scoper] || {})[:attachments_list])
+        end
+
+        def validate_request_params
+          params[cname].permit([])
         end
 
         # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.

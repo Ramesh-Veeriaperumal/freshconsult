@@ -1,0 +1,35 @@
+type: object
+properties:
+  title:
+    type: string
+  description:
+    type: string
+  type:
+    type: integer
+    format: int64
+  status:
+    type: integer
+    format: int64
+  seo_data:
+    type: object
+    properties:
+      meta_title:
+        type: string
+      meta_description:
+        type: string
+      meta_keywords:
+        type: string
+  tags:
+    type: array
+    items:
+      type: string
+      format: byte
+  attachments_list:
+    type: array
+    items:
+      type: string
+      format: byte
+  cloud_file_attachments:
+    type: array
+    items:
+      $ref: '#/definitions/cloud_file_input'

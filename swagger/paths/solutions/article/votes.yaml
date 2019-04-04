@@ -1,0 +1,19 @@
+get:
+  tags: [Solution Article]
+  summary: List article votes
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      description: ID of the article
+      required: true
+  responses: 
+    200: 
+      description: Success
+      schema:
+        $ref: '#/definitions/article_votes'
+    403:
+      description: Access denied
+    404:
+      description: Resource not found

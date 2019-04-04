@@ -1,0 +1,47 @@
+get:
+  tags: [Solution Article]
+  summary: List all articles
+  parameters:
+    - name: portal_id
+      in: query
+      type: integer
+      description: Articles to be fetched based on portal_id
+  responses: 
+    200: 
+      description: Success
+      schema:
+        type: object
+        properties:
+          categories:
+            type: array
+            items:
+              $ref: '#/definitions/solution_article'
+          meta:
+            $ref: '#/definitions/meta'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+
+post:
+  tags: [Solution Article]
+  summary: Create a article
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/article_input'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/solution_article'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

@@ -304,18 +304,29 @@ Helpkit::Application.routes.draw do
           end
         end
         resources :folders, controller: 'ember/solutions/folders', only: [:index, :show, :create, :update, :destroy] do
+          member do
+            resources :articles, controller: 'ember/solutions/articles', only: [:create]
+          end
           collection do
             put :bulk_update
           end
         end
-
-        resources :articles, controller: 'ember/solutions/articles', only: [] do
+        resources :articles, controller: 'ember/solutions/articles', only: [:index, :show, :destroy] do
           collection do
             put :bulk_update
           end
+          member do
+            put :update, path: '(:language)', constraints: { language: Regexp.union(Language.all_codes) }
+            get :article_content
+            put :reset_ratings, path: '(:language)/reset_ratings'
+            get :votes, path: '(:language)/votes'
+          end
         end
-
         resources :drafts, controller: 'ember/solutions/drafts', only: [:index]
+        resource :draft, path: 'articles/:article_id/draft', controller: 'ember/solutions/drafts', only: [:destroy, :update] do
+          put :autosave
+          delete :delete_attachment, path: ':attachment_type/:attachment_id'
+        end
       end
     end
 
@@ -607,10 +618,6 @@ Helpkit::Application.routes.draw do
     # account update
     put '/account_admin', to: 'account_admins#update'
     put 'account_admin/disable_billing_info_updation', to: 'account_admins#disable_billing_info_updation'
-
-    # dirty hack - check privilege fails when using 'solutions' namespace although controller action mapping is unaffected
-    get 'solutions/articles', to: 'ember/solutions/articles#index'
-    get 'solutions/articles/:id/article_content', to: 'ember/solutions/articles#article_content'
 
     resources :marketplace_apps, controller: 'ember/marketplace_apps', only: [:index]
 

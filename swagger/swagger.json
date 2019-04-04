@@ -160,6 +160,13 @@
             "type": "integer",
             "format": "int64",
             "description": "Article ID for which feedbacks have to be displayed"
+          },
+          {
+            "name": "language_id",
+            "in": "query",
+            "type": "integer",
+            "format": "int64",
+            "description": "Language for which solution article feedbacks have to be retrieved"
           }
         ],
         "responses": {
@@ -4804,8 +4811,15 @@
             "type": "string",
             "enum": [
               "available",
-              "available_count"
+              "available_count",
+              "with_privilege"
             ]
+          },
+          {
+            "name": "privilege",
+            "in": "query",
+            "type": "string",
+            "description": "privilege symbol (Lists agents who has this privilege. Applicable iif with_privilege filter applied)."
           }
         ],
         "responses": {
@@ -5988,77 +6002,6 @@
           },
           "404": {
             "description": "Resource not found"
-          }
-        }
-      }
-    },
-    "/solutions/articles": {
-      "get": {
-        "tags": [
-          "solutions"
-        ],
-        "summary": "List articles",
-        "parameters": [
-          {
-            "name": "ids",
-            "in": "query",
-            "type": "string",
-            "description": "comma-separated ids"
-          },
-          {
-            "name": "user_id",
-            "in": "query",
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "language_id",
-            "in": "query",
-            "type": "integer",
-            "format": "int64",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/solution_article"
-            }
-          },
-          "404": {
-            "description": "Article not found"
-          }
-        }
-      }
-    },
-    "/solutions/articles/{id}/article_content": {
-      "get": {
-        "tags": [
-          "solutions"
-        ],
-        "summary": "List article content for an article",
-        "parameters": [
-          {
-            "$ref": "#/parameters/id"
-          },
-          {
-            "name": "language_id",
-            "in": "query",
-            "type": "integer",
-            "format": "int64",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/article_content"
-            }
-          },
-          "404": {
-            "description": "Article not found"
           }
         }
       }
@@ -10966,10 +10909,268 @@
         }
       }
     },
+    "/solutions/articles": {
+      "get": {
+        "tags": [
+          "Solution Article"
+        ],
+        "summary": "List all articles",
+        "parameters": [
+          {
+            "name": "portal_id",
+            "in": "query",
+            "type": "integer",
+            "description": "Articles to be fetched based on portal_id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "categories": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/solution_article"
+                  }
+                },
+                "meta": {
+                  "$ref": "#/definitions/meta"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Solution Article"
+        ],
+        "summary": "Create a article",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/article_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/solution_article"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/solutions/articles/{id}": {
+      "get": {
+        "tags": [
+          "Solution Article"
+        ],
+        "summary": "Show article",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/solution_article"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Solution Article"
+        ],
+        "summary": "Update article",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/article_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/solution_article"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Solution Article"
+        ],
+        "summary": "Delete article",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/solutions/articles/{id}/article_content": {
+      "get": {
+        "tags": [
+          "Solution Article"
+        ],
+        "summary": "List article content for an article",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "language_id",
+            "in": "query",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/article_content"
+            }
+          },
+          "404": {
+            "description": "Article not found"
+          }
+        }
+      }
+    },
+    "/solutions/articles/{id}/reset_ratings": {
+      "put": {
+        "tags": [
+          "Solution Article"
+        ],
+        "summary": "Reset ratings of an article",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "description": "ID of the article",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/solutions/articles/{id}/votes": {
+      "get": {
+        "tags": [
+          "Solution Article"
+        ],
+        "summary": "List article votes",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of the article",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/article_votes"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
     "/solutions/folders/bulk_update": {
       "put": {
         "tags": [
-          "Folders"
+          "Solution Folder"
         ],
         "summary": "Bulk update folders",
         "parameters": [
@@ -11007,7 +11208,7 @@
     "/solutions/articles/bulk_update": {
       "put": {
         "tags": [
-          "articles"
+          "Solution Article"
         ],
         "summary": "Bulk update articles",
         "parameters": [
@@ -11045,7 +11246,7 @@
     "/solutions/drafts": {
       "get": {
         "tags": [
-          "drafts"
+          "Solution draft"
         ],
         "summary": "List recent drafts for the user in the portal",
         "parameters": [
@@ -11069,6 +11270,155 @@
             "schema": {
               "$ref": "#/definitions/bad_request_error"
             }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/solutions/articles/{article_id}/draft/autosave": {
+      "put": {
+        "tags": [
+          "drafts"
+        ],
+        "summary": "Create or update draft content on autosave",
+        "parameters": [
+          {
+            "name": "article_id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/autosave_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/autosave_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/solutions/articles/{article_id}/draft": {
+      "put": {
+        "tags": [
+          "drafts"
+        ],
+        "summary": "Cancel the autosave session changes",
+        "parameters": [
+          {
+            "name": "article_id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/draft_update_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/solution_article"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "drafts"
+        ],
+        "summary": "Delete the draft for a solution article",
+        "parameters": [
+          {
+            "name": "article_id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/solutions/articles/{article_id}/draft/{attachment_type}/{attachment_id}": {
+      "delete": {
+        "tags": [
+          "drafts"
+        ],
+        "summary": "Delete the attachments from draft which are present in article",
+        "parameters": [
+          {
+            "name": "article_id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          },
+          {
+            "name": "attachment_type",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "enum": [
+              "attachment",
+              "cloud_file"
+            ]
+          },
+          {
+            "name": "attachment_id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
           },
           "403": {
             "description": "Access denied"
@@ -15231,6 +15581,12 @@
               "type": "array",
               "items": {
                 "$ref": "#/definitions/attachment"
+              }
+            },
+            "cloud_files": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/extended_cloud_file"
               }
             },
             "modified_at": {
@@ -21579,6 +21935,59 @@
         }
       }
     },
+    "article_input": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "type": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "seo_data": {
+          "type": "object",
+          "properties": {
+            "meta_title": {
+              "type": "string"
+            },
+            "meta_description": {
+              "type": "string"
+            },
+            "meta_keywords": {
+              "type": "string"
+            }
+          }
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "byte"
+          }
+        },
+        "attachments_list": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "byte"
+          }
+        },
+        "cloud_file_attachments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/cloud_file_input"
+          }
+        }
+      }
+    },
     "category_response": {
       "type": "object",
       "properties": {
@@ -21788,23 +22197,118 @@
         }
       }
     },
-    "languages": {
+    "article_votes": {
       "type": "object",
       "properties": {
-        "primary_language": {
+        "helpful": {
+          "type": "object",
+          "description": "List of article upvotes",
+          "properties": {
+            "anonymous": {
+              "type": "integer",
+              "description": "Number of anonymous upvotes"
+            },
+            "users": {
+              "type": "array",
+              "description": "List of logged-in users that upvoted",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "not_helpful": {
+          "type": "object",
+          "description": "List of article downvotes",
+          "properties": {
+            "anonymous": {
+              "type": "integer",
+              "description": "Number of anonymous downvotes"
+            },
+            "users": {
+              "type": "array",
+              "description": "List of logged-in users that upvoted",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "autosave_input": {
+      "type": "object",
+      "required": [
+        "title",
+        "description"
+      ],
+      "properties": {
+        "title": {
           "type": "string"
         },
-        "supported_languages": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+        "description": {
+          "type": "string"
         },
-        "portal_languages": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+        "timestamp": {
+          "type": "integer",
+          "description": "Last updated timestamp of the draft. Param should not be passed when draft is not created."
+        }
+      }
+    },
+    "autosave_response": {
+      "type": "object",
+      "properties": {
+        "timestamp": {
+          "type": "integer",
+          "description": "Updated At timestamp of the draft"
+        }
+      }
+    },
+    "draft_update_input": {
+      "type": "object",
+      "required": [
+        "title",
+        "description",
+        "modified_at",
+        "last_updated_at"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Title of the draft before autosave session started."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the draft before autosave session started."
+        },
+        "modified_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Drafts's modified at value before the autosave started."
+        },
+        "last_updated_at": {
+          "type": "string",
+          "description": "Draft's updated at timestamp based on last autosave response(Timestamp)."
+        },
+        "user_id": {
+          "type": "integer",
+          "description": "Previous author of the draft before autosave started. This param can be skipped in case of same author."
         }
       }
     },

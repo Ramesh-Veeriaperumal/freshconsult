@@ -1,0 +1,25 @@
+put:
+  tags: [drafts]
+  summary: Create or update draft content on autosave
+  parameters:
+    - name: article_id
+      in: path
+      type: integer
+      format: int64
+      required: true
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/autosave_input'
+  responses: 
+    200: 
+      description: Success
+      schema:
+        $ref: '#/definitions/autosave_response'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

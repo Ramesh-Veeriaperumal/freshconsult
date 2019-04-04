@@ -52,6 +52,16 @@ module AgentsTestHelper
     }
   end
 
+  def private_api_privilege_agent_pattern(user)
+    {
+      id: user.id,
+      contact: {
+        name: user.name,
+        email: user.email
+      }
+    }
+  end
+
   def private_api_restriced_agent_hash(expected_output ={}, agent)
     {
       id: Fixnum,

@@ -31,6 +31,16 @@ class AgentDecorator < ApiDecorator
     }
   end
 
+  def to_privilege_hash
+    {
+      id: record.id,
+      contact: {
+        name: record.name,
+        email: record.email
+      }
+    }
+  end
+
   def to_full_hash
     [agent_hash, additional_agent_info, gamification_options, socket_authentication_hash].inject(&:merge)
   end

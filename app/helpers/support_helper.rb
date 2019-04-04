@@ -906,9 +906,9 @@ module SupportHelper
   def page_tracker
     case @current_page_token
     when "topic_view"
-      "<img src='#{hit_support_discussions_topic_path(@topic)}' />".html_safe
+      "<img src='#{hit_support_discussions_topic_path(@topic)}' alt=' ' aria-hidden='true'/>".html_safe
     when "article_view"
-      "<img src='#{hit_support_solutions_article_path(@article)}' />".html_safe
+      "<img src='#{hit_support_solutions_article_path(@article)}' alt=' ' aria-hidden='true'/>".html_safe
     else
       ""
     end

@@ -4,7 +4,7 @@ class Account < ActiveRecord::Base
     :select_all, :round_robin_capping, :suggest_tickets,
     :customer_sentiment_ui, :dkim, :scheduled_ticket_export,
     :ticket_contact_export, :email_failures, :disable_emails,
-    :falcon_portal_theme, :freshid, :freshchat_integration,
+    :falcon_portal_theme, :freshid, :freshchat_integration, :allow_huge_ccs,
     :facebook_page_redirect, :announcements_tab, :shopify_actions,
     :ticket_central_publish, :company_central_publish, :solutions_central_publish,
     :launch_smart_filter, :outgoing_attachment_limit_25, :incoming_attachment_limit_25,

@@ -1,5 +1,5 @@
 get:
-  tags: [drafts]
+  tags: [Solution draft]
   summary: List recent drafts for the user in the portal
   parameters:
     - name: portal_id

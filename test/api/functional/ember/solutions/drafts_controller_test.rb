@@ -7,6 +7,8 @@ module Ember
       include SolutionsTestHelper
       include SolutionsHelper
       include SolutionBuilderHelper
+      include SolutionDraftsTestHelper
+      include AttachmentsTestHelper
 
       def setup
         super
@@ -34,12 +36,17 @@ module Ember
         end
       end
 
+      def wrap_cname(params)
+        { draft: params }
+      end
+
       def test_index
         get :index, controller_params(version: 'private', portal_id: @account.main_portal.id)
         assert_response 200
-        assert_equal parse_response(@response.body).size, ApiSolutions::DraftConstants::RECENT_DRAFTS_LIMIT
         drafts = get_my_drafts
         assert_equal response.api_meta[:count], drafts.size
+        pattern = drafts.first(3).map { |draft| private_api_solution_article_pattern(draft.article, {}, true, nil, draft) }
+        match_json(pattern)
       end
 
       def test_index_without_privilege
@@ -68,12 +75,227 @@ module Ember
         match_json([bad_request_error_pattern(:portal_id, :invalid_portal_id)])
       end
 
+      def test_autosave
+        article_with_draft
+        put :autosave, construct_params({ version: 'private', article_id: @article.parent_id }, autosave_params)
+        assert_response 200
+        match_json(autosave_pattern(@draft.reload))
+        assert_equal @draft.title, @title
+        assert_equal @draft.description, @description
+      end
+
+      def test_autosave_without_privilege
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
+        article_with_draft
+        put :autosave, construct_params({ version: 'private', article_id: @article.parent_id }, autosave_params)
+        assert_response 403
+        match_json(request_error_pattern(:access_denied))
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_autosave_without_mandatory_field
+        article_with_draft
+        put :autosave, construct_params({ version: 'private', article_id: @article.parent_id }, title: Faker::Name.name, timestamp: @draft.updation_timestamp)
+        assert_response 400
+        match_json([bad_request_error_pattern(:description, :datatype_mismatch, code: :missing_field, expected_data_type: String)])
+      end
+
+      def test_autosave_with_additional_field
+        article_with_draft
+        put :autosave, construct_params({ version: 'private', article_id: @article.parent_id }, test: 'test')
+        assert_response 400
+        match_json([bad_request_error_pattern('test', :invalid_field)])
+      end
+
+      def test_autosave_for_article_without_draft
+        article_without_draft
+        title = Faker::Name.name
+        description = Faker::Lorem.paragraph
+        put :autosave, construct_params({ version: 'private', article_id: @article.parent_id }, title: title, description: description)
+        assert_response 200
+        draft = @article.draft
+        assert_equal draft.title, title
+        assert_equal draft.description, description
+      end
+
+      def test_autosave_with_invalid_article
+        article_with_draft
+        put :autosave, construct_params({ version: 'private', article_id: 9999 }, autosave_params)
+        assert_response 404
+      end
+
+      def test_autosave_with_locked_draft
+        article_with_draft
+        Solution::Draft.any_instance.stubs(:locked?).returns(true)
+        put :autosave, construct_params({ version: 'private', article_id: @article.parent_id }, autosave_params)
+        assert_response 400
+        match_json(request_error_pattern_with_info(:draft_locked, {}, user_id: @draft.user_id))
+        Solution::Draft.any_instance.unstub(:locked?)
+      end
+
+      def test_autosave_with_invalid_timestamp
+        article_with_draft
+        params = autosave_params
+        params[:timestamp] += 5
+        put :autosave, construct_params({ version: 'private', article_id: @article.parent_id }, params)
+        assert_response 400
+        match_json(request_error_pattern_with_info(:content_changed, {}, user_id: @draft.user_id))
+      end
+
+      def test_destroy
+        article_with_draft
+        delete :destroy, controller_params(version: 'private', article_id: @article.parent_id)
+        assert_response 204
+        assert_nil @article.draft
+      end
+
+      def test_destroy_without_privilege
+        article_with_draft
+        User.any_instance.stubs(:privilege?).with(:delete_solution).returns(false)
+        delete :destroy, controller_params(version: 'private', article_id: @article.parent_id)
+        assert_response 403
+        match_json(request_error_pattern(:access_denied))
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_destroy_with_locked_draft
+        article_with_draft
+        Solution::Draft.any_instance.stubs(:locked?).returns(true)
+        delete :destroy, controller_params(version: 'private', article_id: @article.parent_id)
+        assert_response 400
+        match_json(request_error_pattern_with_info(:draft_locked, {}, user_id: @draft.user_id))
+        Solution::Draft.any_instance.unstub(:locked?)
+      end
+
+      def test_destroy_with_invalid_article
+        delete :destroy, controller_params(version: 'private', article_id: 9999)
+        assert_response 404
+      end
+
+      def test_destroy_without_draft
+        article_without_draft
+        delete :destroy, controller_params(version: 'private', article_id: @article.parent_id)
+        assert_response 404
+      end
+
+      def test_update
+        article_with_draft
+        put :update, construct_params({ version: 'private', article_id: @article.parent_id }, update_params)
+        assert_response 200
+        match_json(private_api_solution_article_pattern(@article, {}, true, nil, @draft.reload))
+      end
+
+      def test_update_without_privilege
+        article_with_draft
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
+        put :update, construct_params({ version: 'private', article_id: @article.parent_id }, update_params)
+        assert_response 403
+        match_json(request_error_pattern(:access_denied))
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_update_with_mandatory_attributes_missing
+        article_with_draft
+        put :update, construct_params({ version: 'private', article_id: @article.parent_id }, user_id: User.current.id)
+        assert_response 400
+        match_json([bad_request_error_pattern(:description, :datatype_mismatch, code: :missing_field, expected_data_type: String),
+                    bad_request_error_pattern(:title, :datatype_mismatch, code: :missing_field, expected_data_type: String),
+                    bad_request_error_pattern(:modified_at, :datatype_mismatch, code: :missing_field, expected_data_type: Integer),
+                    bad_request_error_pattern(:last_updated_at, :datatype_mismatch, code: :missing_field, expected_data_type: Integer)])
+      end
+
+      def test_update_with_additional_field
+        article_with_draft
+        put :update, construct_params({ version: 'private', article_id: @article.parent_id }, test: 'test')
+        assert_response 400
+        match_json([bad_request_error_pattern('test', :invalid_field)])
+      end
+
+      def test_update_with_invalid_author
+        article_with_draft
+        params = update_params
+        params[:user_id] = 9999
+        put :update, construct_params({ version: 'private', article_id: @article.parent_id }, params)
+        assert_response 400
+        match_json([bad_request_error_pattern('user_id', :invalid_draft_author)])
+      end
+
+      def test_update_with_invalid_article
+        article_with_draft
+        put :update, construct_params({ version: 'private', article_id: 9999 }, update_params)
+        assert_response 404
+      end
+
+      def test_update_without_draft
+        article_without_draft
+        put :update, construct_params({ version: 'private', article_id: @article.parent_id }, title: Faker::Name.name)
+        assert_response 404
+      end
+
+      def test_update_with_invalid_last_modified_at
+        article_with_draft
+        params = update_params
+        params[:last_updated_at] = params[:last_updated_at] + 5
+        put :update, construct_params({ version: 'private', article_id: @article.parent_id }, params)
+        assert_response 400
+        match_json(request_error_pattern_with_info(:content_changed, {}, user_id: @draft.user_id))
+      end
+
+      def test_delete_attachment
+        article_with_draft
+        attachment_id = create_attachment(attachable_type: 'Solution::Article', attachable_id: @article.id).id
+        delete :delete_attachment, controller_params(version: 'private', article_id: @article.parent_id, attachment_type: 'attachment', attachment_id: attachment_id)
+        assert_response 204
+        assert_equal @article.draft.meta[:deleted_attachments][:attachments].size, 1
+      end
+
+      def test_delete_attachment_without_privilege
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
+        delete :delete_attachment, controller_params(version: 'private', article_id: 1, attachment_type: 'attachment', attachment_id: 1)
+        assert_response 403
+        match_json(request_error_pattern(:access_denied))
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_delete_attachment_with_cloud_files
+        article_with_draft
+        attachment_id = create_cloud_file_attachment(droppable_type: 'Solution::Article', droppable_id: @article.id).id
+        delete :delete_attachment, controller_params(version: 'private', article_id: @article.parent_id, attachment_type: 'cloud_file', attachment_id: attachment_id)
+        assert_response 204
+        assert_equal @article.draft.meta[:deleted_attachments][:cloud_files].size, 1
+      end
+
+      def test_delete_attachment_with_invalid_attachment
+        article_with_draft
+        delete :delete_attachment, controller_params(version: 'private', article_id: @article.parent_id, attachment_type: 'attachment', attachment_id: 999)
+        assert_response 404
+      end
+
+      def test_delete_attachment_with_invalid_article_id
+        article_with_draft
+        attachment_id = create_attachment(attachable_type: 'Solution::Article', attachable_id: @article.id).id
+        delete :delete_attachment, controller_params(version: 'private', article_id: 999, attachment_type: 'attachment', attachment_id: attachment_id)
+        assert_response 404
+      end
+
       private
 
         def get_my_drafts
           @account.solution_drafts.where(user_id: User.current.id).joins(:article, category_meta: :portal_solution_categories).where('portal_solution_categories.portal_id = ? AND solution_articles.language_id = ?', @account.main_portal.id, 6).order('modified_at desc')
         end
 
+        def autosave_params
+          @title = Faker::Name.name
+          @description = Faker::Lorem.paragraph
+          { title: @title, description: @description, timestamp: @draft.updation_timestamp }
+        end
+
+        def update_params
+          @title = Faker::Name.name
+          @description = Faker::Lorem.paragraph
+          @agent = add_test_agent(@account)
+          { title: @title, description: @description, modified_at: @draft.modified_at.to_i, user_id: @agent.id, last_updated_at: @draft.updation_timestamp }
+        end
     end
   end
 end

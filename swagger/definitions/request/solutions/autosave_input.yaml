@@ -1,0 +1,12 @@
+type: object
+required:
+  - title
+  - description
+properties:
+  title:
+    type: string
+  description:
+    type: string
+  timestamp:
+    type: integer
+    description: Last updated timestamp of the draft. Param should not be passed when draft is not created.

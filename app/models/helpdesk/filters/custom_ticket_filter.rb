@@ -449,7 +449,10 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
 
   def add_article_feedback_conditions(params)
-    add_condition("article_tickets.article_id", :is, params[:article_id]) if params[:article_id].present? && self.name == "article_feedback"
+    if params[:article_id].present? && self.name == 'article_feedback'
+      article_id = params[:language_id].present? ? Account.current.solution_articles.where(parent_id: params[:article_id], language_id: params[:language_id]).first.id : params[:article_id]
+      add_condition('article_tickets.article_id', :is, article_id)
+    end
     add_condition("solution_articles.user_id", :is, User.current.id) if self.name == "my_article_feedback"
   end
 

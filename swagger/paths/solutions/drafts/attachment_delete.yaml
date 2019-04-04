@@ -1,0 +1,24 @@
+delete:
+  tags: [drafts]
+  summary: Delete the attachments from draft which are present in article
+  parameters:
+    - name: article_id
+      in: path
+      type: integer
+      format: int64
+      required: true
+    - name: attachment_type
+      in: path
+      type: string
+      required: true
+      enum: ["attachment", "cloud_file"]
+    - name: attachment_id
+      in: path
+      type: integer
+      format: int64
+      required: true
+  responses:
+    204:
+      description: Success
+    403:
+      description: Access denied

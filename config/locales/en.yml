@@ -6046,7 +6046,7 @@ en:
       name: DKIM
       title: DKIM Settings
       help: How to configure DKIM settings?
-      help_note: DKIM helps you digitally sign email from your help desk with your email domain name(s). This helps build you brand identity in all communications with your customers.
+      help_note: DKIM helps you digitally sign email from your helpdesk with your email domain name(s). This helps you build brand identity in all communications with your customers.
       description: Please update the following DNS settings in your Internet Service Provider's website. Once you have copied all the settings for each domain, you can click the Verify button to validate that the settings are active
       config: Configure
       configuring: Configuring...
@@ -7794,7 +7794,9 @@ en:
         all: All
         search_twitter: "Search twitter for updates "
         no_activity_available: "No activity available"
+        twitter_blocked: "Unable to reach twitter servers at the moment. Please reply directly from Twitter"
         click_activity: "Click on a stream to see activity"
+        twitter_blocked: "Unable to reach twitter servers at the moment. Please reply directly from Twitter"
       search:
         exclude_handles: Filter out tweets from these handles
         img_twitter: <i class="ficon-twitter fsize-18" size="18"></i>

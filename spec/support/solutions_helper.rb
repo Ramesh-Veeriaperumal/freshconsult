@@ -6,7 +6,7 @@ module SolutionsHelper
     c_params = create_solution_category_alone(solution_default_params(:category, :name, {
       :name => params[:name],
       :description => params[:description]
-    }))
+    }).merge(lang_codes: params[:lang_codes]))
     c_params[:solution_category_meta][:is_default] = params[:is_default] if params[:is_default].present?
     c_params[:solution_category_meta][:portal_ids] = params[:portal_ids] if params[:portal_ids].present?
     category_meta = Solution::Builder.category(c_params)
@@ -20,7 +20,7 @@ module SolutionsHelper
       }).merge({
         :category_id => params[:category_meta_id] || params[:category_id] || create_category.id,
         :visibility => params[:visibility] || Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:anyone]
-      }))
+      }).merge(lang_codes: params[:lang_codes]))
     f_params[:solution_folder_meta][:is_default] = params[:is_default] if params[:is_default].present?
     folder_meta = Solution::Builder.folder(f_params)
     folder_meta
@@ -36,7 +36,7 @@ module SolutionsHelper
         :status => params[:status] || 2,
         :user_id => params[:user_id] || @agent.id,
         :attachments => params[:attachments]
-      }))
+      }).merge(lang_codes: params[:lang_codes]))
     current_user_present = User.current.present?
     Account.current.users.find(params[:user_id] || @agent.id).make_current unless current_user_present
     article_meta = Solution::Builder.article(params.deep_symbolize_keys)
