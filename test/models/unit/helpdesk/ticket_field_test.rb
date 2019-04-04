@@ -199,6 +199,7 @@ class TicketFieldTest < ActiveSupport::TestCase
   end
 
   def test_nested_field
+    Account.stubs(:current).returns(Account.first)
     Migration::PopulatePicklistId.new(account_id: Account.current.id).perform
     Account.stubs(:current).returns(Account.first)
     nested_field_parent = create_dependent_custom_field(%w[test_custom_country test_custom_state test_custom_city])
@@ -305,5 +306,7 @@ class TicketFieldTest < ActiveSupport::TestCase
                         city6.value.downcase => { state4.value.downcase => { country2.value.downcase => city6.picklist_id } }
                     }
     assert_equal(picklistidsbyvaluelevel3, expected_output)
+  ensure
+    Account.unstub(:current)
   end
 end

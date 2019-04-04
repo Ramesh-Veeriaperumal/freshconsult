@@ -32,7 +32,7 @@ module Helpdesk::Utils::ManageCcEmails
             #{in_reply_to.to_s} and note.user_id : #{note.user_id.to_s}"
           return ticket_cc_hash
         end
-      elsif (ticket.requester_id == note.user_id || note.user.agent?)
+      elsif ((ticket.requester_id == note.user_id || note.user.agent?) && !note.third_party_response?)
         # if the note is from requester or agent and not a reply to notification
         # or automation mail then replace the existing reply_cc with new Cc
         ticket_cc_hash[:reply_cc] = filtered_cc_emails
