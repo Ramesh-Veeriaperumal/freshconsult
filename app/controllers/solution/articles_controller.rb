@@ -315,6 +315,7 @@ class Solution::ArticlesController < ApplicationController
       if (@article.draft.present? && latest_content?)
         @draft = @article.draft
         if params[:previous_author].present?
+          @draft.keep_previous_author = true
           @draft.user = (User.find(params[:previous_author].to_i) || current_user)
           @draft.modified_at = Time.parse(params[:original_updated_at])
           update_draft_attributes
