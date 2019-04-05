@@ -70,15 +70,15 @@ module Reports::ConstructReport
      :all,
      :include => @val, 
      :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id", 
-     :select => "#{@val}_id, 
+     :select => ActiveRecord::Base.send(:sanitize_sql_array, ["?, 
                 avg(helpdesk_ticket_states.avg_response_time) as avgresponsetime,
                 avg(TIME_TO_SEC(TIMEDIFF(helpdesk_ticket_states.first_response_time, helpdesk_tickets.created_at))) as avgfirstresptime, 
                 sum(case when helpdesk_ticket_states.inbound_count = 1 then 1 else 0 end ) as fcr_tickets, 
                 sum(case when (helpdesk_tickets.due_by >= helpdesk_ticket_states.resolved_at) then 1 else 0 end) as sla_tickets, 
                 avg(helpdesk_ticket_states.resolution_time_by_bhrs) as avgresolutiontime,
-                count(*) as resolved_tickets", 
+                count(*) as resolved_tickets", "#{@val}_id"]),
      :conditions => "#{date_condition}",
-     :group => "#{@val}_id")
+     :group => ActiveRecord::Base.send(:sanitize_sql_array, ["?", "#{@val}_id"]))
  end
 
  def date_condition
