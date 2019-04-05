@@ -31,9 +31,9 @@ class Admin::Sandbox::CreateAccountWorker < BaseWorker
       # Sync Config changes from production to sandbox
       ::Admin::Sandbox::DataToFileWorker.perform_async({})
     rescue StandardError => e
-      Rails.logger.error "Error in creating sandbox account #{e.backtrace[0..10].inspect}"
-      NewRelic::Agent.notice_error(e, 'Sandbox signup error')
+      Rails.logger.error "Error in creating sandbox account :: Error: #{e.inspect} :: Backtrace: #{e.backtrace[0..50].inspect}"
       @job.update_last_error(e, :build_error) if @job
+      NewRelic::Agent.notice_error(e, description: 'Sandbox signup error')
     ensure
       Thread.current[:create_sandbox_account] = nil
     end
