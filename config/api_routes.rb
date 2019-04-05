@@ -4,6 +4,8 @@ Helpkit::Application.routes.draw do
       collection do
         post :outbound_email, to: 'tickets#create', defaults: { _action: 'compose_email' }
         post :bulk_archive, to: 'tickets/bulk_actions#bulk_archive'
+        put :bulk_watch, to: 'tickets/subscriptions#bulk_watch'
+        put :bulk_unwatch, to: 'tickets/subscriptions#bulk_unwatch'
       end
       member do
         put :restore
@@ -17,6 +19,9 @@ Helpkit::Application.routes.draw do
         post :reply_to_forward, to: 'api_conversations#reply_to_forward'
         post :time_entries, to: 'time_entries#create'
         get :sessions, to: 'admin/freshmarketer#sessions'
+        post :watch, to: 'tickets/subscriptions#watch'
+        put :unwatch, to: 'tickets/subscriptions#unwatch'
+        get :watchers, to: 'tickets/subscriptions#watchers'
         resource :bot_response, controller: 'tickets/bot_response', only: [:show, :update]
       end
     end
@@ -439,8 +444,8 @@ Helpkit::Application.routes.draw do
         delete :empty_trash, to: 'ember/tickets/delete_spam#empty_trash'
         delete :empty_spam, to: 'ember/tickets/delete_spam#empty_spam'
         put :delete_forever, to: 'ember/tickets/delete_spam#delete_forever'
-        put :bulk_watch, to: 'ember/subscriptions#bulk_watch'
-        put :bulk_unwatch, to: 'ember/subscriptions#bulk_unwatch'
+        put :bulk_watch, to: 'tickets/subscriptions#bulk_watch'
+        put :bulk_unwatch, to: 'tickets/subscriptions#bulk_unwatch'
         post :export_csv
       end
       member do
@@ -486,9 +491,6 @@ Helpkit::Application.routes.draw do
       resource :summary, controller: 'ticket_summary', only: [:show, :update, :destroy]
 
       member do
-        post :watch, to: 'ember/subscriptions#watch'
-        put :unwatch, to: 'ember/subscriptions#unwatch'
-        get :watchers, to: 'ember/subscriptions#watchers'
         put :update_properties, to: 'ember/tickets#update_properties'
         get :failed_email_details, to: 'ember/tickets#fetch_errored_email_details'
         post :suppression_list_alert, to: 'ember/tickets#suppression_list_alert'

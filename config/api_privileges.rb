@@ -17,7 +17,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/attachment", only: [:create, :show]
     resource :"ember/freshcaller/setting", only: %i[index desktop_notification redirect_url]
     resource :"ember/conversation", only: %i[create ticket_conversations full_text]
-    resource :"ember/subscription"
     resource :"ember/ticket_field", only: [:index]
     resource :"ember/todo", only: [:index, :create, :update, :destroy]
     resource :"ember/twitter_handles", only: %i[index check_following]
@@ -25,6 +24,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :'admin/canned_form', only: [:index, :show, :create_handle]
     resource :"tickets/bot_response", only: %i[show update]
     resource :"tickets/bulk_action", only: %i[bulk_archive]
+    resource :"tickets/subscription"
 
     resource :"ember/agent", only: %i[index me achievements update]
     resource :"ember/group", only: [:index]

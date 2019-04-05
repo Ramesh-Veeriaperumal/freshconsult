@@ -1,4 +1,4 @@
-module Ember
+module Tickets
   class SubscriptionsController < ApiApplicationController
     include TicketConcern
     include HelperConcern

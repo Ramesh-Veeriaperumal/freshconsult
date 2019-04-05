@@ -420,7 +420,7 @@ module BocGroups
                   'api/app/controllers/api_company_fields_controller.rb',
                   'api/app/controllers/time_entries_controller.rb',
                   'api/app/controllers/ember/company_fields_controller.rb',
-                  'api/app/controllers/ember/subscriptions_controller.rb',
+                  'api/app/controllers/tickets/subscriptions_controller.rb',
                   'api/app/controllers/ember/groups_controller.rb',
                   'api/app/controllers/ember/time_entries_controller.rb',
                   'api/app/controllers/ember/ticket_filters_controller.rb',
