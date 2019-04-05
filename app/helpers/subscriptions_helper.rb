@@ -227,7 +227,7 @@ module SubscriptionsHelper
   end
 
   def fetch_currencies
-    options_for_select(BILLING_CURRENCIES, :selected => current_account.currency_name)
+    options_for_select(SUPPORTED_CURRENCIES, :selected => current_account.currency_name)
   end
 
   def default_currency?
