@@ -1,0 +1,73 @@
+get:
+  tags: [solutions]
+  summary: List articles based on filters
+  parameters:
+    - name: portal_id
+      in: query
+      type: string
+      description: Portal ID
+      required: true
+    - name: language_id
+      in: query
+      type: integer
+      format: int64
+    - name: author
+      in: query
+      type: string
+      description: Filter by author
+    - name: status
+      in: query
+      type: string
+      description: Filter by status
+    - name: term
+      in: query
+      type: string
+      description: Term search
+    - name: page
+      in: query
+      type: string
+      description: Page number
+    - name: tags
+      in: query
+      type: array
+      items:
+        type: string
+      description: Filter by tags
+    - name: category
+      in: query
+      type: array
+      items:
+        type: string
+      description: Filter by categories
+    - name: folder
+      in: query
+      type: array
+      items:
+        type: string
+      description: Filter by folders
+    - name: created_at
+      in: query
+      type: string
+      description: >
+        properties:
+        { start:
+            type: string,
+          end: 
+            type: string }
+    - name: last_modified
+      in: query
+      type: string
+      description: >
+        properties:
+        { start:
+            type: string,
+          end: 
+            type: string }
+
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/solution_article'
+    404:
+      description: Article not found

@@ -311,8 +311,10 @@ Helpkit::Application.routes.draw do
             put :bulk_update
           end
         end
+
         resources :articles, controller: 'ember/solutions/articles', only: [:index, :show, :destroy] do
           collection do
+            get :filter
             put :bulk_update
           end
           member do

@@ -623,6 +623,8 @@
   $ref: ./solutions/drafts/update_delete.yaml
 /solutions/articles/{article_id}/draft/{attachment_type}/{attachment_id}:
   $ref: ./solutions/drafts/attachment_delete.yaml
+/solutions/articles/filter:
+  $ref: ./solutions/article/filter.yaml
 
 /configs/{id}:
   $ref: ./configs/show.yaml

@@ -144,6 +144,7 @@ class TicketFieldTest < ActiveSupport::TestCase
   def test_custom_dropdown
     Account.stubs(:current).returns(Account.first)
     Migration::PopulatePicklistId.new(account_id: Account.current.id).perform
+    Account.stubs(:current).returns(Account.first)
     custom_dropdown_field = create_custom_field_dropdown(name = 'test_custom_dropdown', choices = ['Choice 1', 'Choice 2', 'Choice 3'])
     choice1 = Account.current.picklist_values.find_by_value('Choice 1')
     choice2 = Account.current.picklist_values.find_by_value('Choice 2')
@@ -199,6 +200,7 @@ class TicketFieldTest < ActiveSupport::TestCase
 
   def test_nested_field
     Migration::PopulatePicklistId.new(account_id: Account.current.id).perform
+    Account.stubs(:current).returns(Account.first)
     nested_field_parent = create_dependent_custom_field(%w[test_custom_country test_custom_state test_custom_city])
     nested_child_fields = nested_field_parent.child_levels
     nestedfieldlevel2 = nested_child_fields.first
