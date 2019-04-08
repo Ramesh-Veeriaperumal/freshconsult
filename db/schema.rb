@@ -11,7 +11,8 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20190115115017) do
+
+ActiveRecord::Schema.define(:version => 20190320094855) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -3788,6 +3789,7 @@ ActiveRecord::Schema.define(:version => 20190115115017) do
     t.decimal  "day_pass_amount",                        :precision => 10, :scale => 2
     t.datetime "discount_expires_at"
     t.integer  "subscription_currency_id",  :limit => 8
+    t.text     "additional_info"
   end
 
   add_index "subscriptions", ["account_id"], :name => "index_subscriptions_on_account_id"
