@@ -412,6 +412,7 @@ module ApiSolutions
       language = Language.find(1)
       @account.account_additional_settings[:supported_languages] = [language.to_key]
       @account.account_additional_settings.save
+      @account.clear_account_additional_settings_from_cache
       params = create_solution_category_alone(solution_default_params(:category).merge(lang_codes: [language.to_key, :primary]))
       category_meta = Solution::Builder.category(params)
       post :create, construct_params({ id: category_meta.id, language: language.to_key },  name: Faker::Name.name, description: Faker::Lorem.paragraph)
