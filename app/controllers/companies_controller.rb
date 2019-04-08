@@ -142,7 +142,7 @@ class CompaniesController < ApplicationController
                             end
       company_users       = company_user_list.limit(Company::MAX_DISPLAY_COMPANY_CONTACTS)
       company_users_size  = company_user_list.count('1')
-      render partial: "companies/#{component_type}",
+      render partial: "companies/contacts_list",
              locals: { company: @company, company_users: company_users,
                        company_users_size: company_users_size }
     elsif ['archive_tickets', 'recent_tickets'].include?(component_type)

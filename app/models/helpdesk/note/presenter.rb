@@ -1,5 +1,6 @@
 class Helpdesk::Note < ActiveRecord::Base
   include RepresentationHelper
+  include TicketsNotesHelper
   DATETIME_FIELDS = ["last_modified_timestamp", "created_at", "updated_at"]
   BODY_HASH_FIELDS = ["body", "body_html", "full_text", "full_text_html"]
   EMAIL_FIELDS = ["from_email", "to_emails", "cc_emails", "bcc_emails"]
@@ -37,6 +38,9 @@ class Helpdesk::Note < ActiveRecord::Base
     t.add proc { |x| x.attachments.map(&:id) }, as: :attachment_ids
     t.add proc { |x| x.survey_result_assoc.id }, as: :feedback_id, :if => proc { |x| x.feedback? }
 
+    # Source additional info
+    t.add :source_additional_info_hash, as: :source_additional_info
+
     # the custom sources i.e. tweet, fb, others are custom sources and will be revisited.
     # (ASSOCIATION_REFS_BASED_ON_TYPE).each do |key|
     #   t.add proc { |x| x.safe_send(key).id }, as: "#{key}_id".to_sym, :if => proc { |x| x.safe_send(key) }
@@ -61,6 +65,10 @@ class Helpdesk::Note < ActiveRecord::Base
 
   def survey_result_assoc
     @survey_result_assoc ||= (survey_remark || custom_survey_remark).survey_result
+  end
+
+  def requester_twitter_id
+    user.twitter_id
   end
 
   # associations
@@ -102,18 +110,6 @@ class Helpdesk::Note < ActiveRecord::Base
       "survey_id": survey_result_assoc.survey_id
     }
   end
-
-
-  # def tweet_hash
-  #   twitter_handle = tweet.twitter_handle
-  #   {
-  #     "id": tweet.id,
-  #     "tweet_id": tweet.tweet_id,
-  #     "type": tweet.tweet_type,
-  #     "stream_id": tweet.stream_id,
-  #     "twitter_handle_id": twitter_handle.id
-  #   }
-  # end
 
   # def fb_post_hash
   #   {

@@ -109,4 +109,13 @@ module Social::Twitter::Util
       account_id: Account.current.id.to_s
     }
   end
+
+  def construct_tweet_payload_for_central(tweet, note, prev_changes = {})
+    twt_hash = {
+      'tweet_id': prev_changes.key?('tweet_id') ? nil : tweet.tweet_id.to_s,
+      'type': tweet.tweet_type,
+      'stream_id': tweet.stream_id
+    }
+    twt_hash.merge(note.twt_handle_info(tweet))
+  end
 end

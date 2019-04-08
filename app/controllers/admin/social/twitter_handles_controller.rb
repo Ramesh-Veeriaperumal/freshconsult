@@ -58,7 +58,7 @@ class Admin::Social::TwitterHandlesController < ApplicationController
         handle.activate_mention_streams
         handle.initialise_smart_filter if handle.smart_filter_enabled?
         post_command_to_central(Social::TwitterHandle::ACTIVATE_HANDLE_COMMAND,
-                                'helpkit', handle)
+                                'twitter', handle)
       end
     rescue StandardError => e
       error_msg = "Error while activating the handle :: #{handle.id} :: #{handle.account_id} :: Exception: #{e.message} :: #{e.backtrace[0..50]}"
