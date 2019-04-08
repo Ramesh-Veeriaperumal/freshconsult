@@ -1,8 +1,10 @@
 require_relative '../unit_test_helper'
+require_relative '../test_helper'
 require_relative '../../test_transactions_fixtures_helper'
 ['twitter_test_helper', 'account_test_helper', 'shopify_test_helper'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 
 class ChannelMessagePollerTest < ActionView::TestCase
+  include UsersTestHelper
   include AccountTestHelper
   include TwitterTestHelper
   include ShopifyTestHelper
@@ -43,6 +45,17 @@ class ChannelMessagePollerTest < ActionView::TestCase
   #   assert_equal tweet[:tweetable_id], note.id
   #   assert_equal note.body, payload[:body]
   # end
+
+  def test_update_social_tweets
+    note = create_twitter_dm_ticket_and_note
+
+    payload = { "status_code": 200, "tweet_id": '100000200', "note_id": note.id }
+    command_payload = sample_twitter_dm_acknowledgement(@account, @handle, @stream, payload)
+    push_to_channel(command_payload)
+
+    tweet = @account.tweets.last
+    assert_equal tweet[:tweetable_id], payload[:note_id]
+  end
 
   def test_update_social_tweets_with_error
     remove_others_redis_key TWITTER_APP_BLOCKED
@@ -137,7 +150,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
       [payload, sample_twitter_create_note_command(@account, @handle, @stream, payload)]
     end
 
-    def create_twitter_dm_ticket
+    def create_twitter_dm_ticket_and_note
       payload, command_payload = twitter_create_ticket_command
       push_to_channel(command_payload)
 
@@ -147,10 +160,12 @@ class ChannelMessagePollerTest < ActionView::TestCase
       ticket.notes.build({ body: Faker::Lorem.characters(100), user_id: user.id })
       ticket.save!
 
-      ticket.notes.last.create_tweet({tweet_id: nil, tweet_type: 'dm', twitter_handle_id: @handle.id, stream_id: @stream.id})
-      ticket.notes.save!
+      last_note = ticket.notes.last
 
-      ticket.notes.last
+      last_note.build_tweet(tweet_id: random_tweet_id, tweet_type: 'dm', twitter_handle_id: @handle.id, stream_id: @stream.id)
+      last_note.save!
+
+      last_note
     end
 
     def proactive_create_ticket_command(description=nil)
@@ -173,9 +188,13 @@ class ChannelMessagePollerTest < ActionView::TestCase
     end
 
     def create_twitter_user
-      user = @account.users.build
+      user = add_new_user(@account)
       user.twitter_id = Faker::Lorem.characters(10)
       user.save
       user
+    end
+
+    def random_tweet_id
+      -"#{Time.now.utc.to_i}#{rand(100...999)}".to_i
     end
 end

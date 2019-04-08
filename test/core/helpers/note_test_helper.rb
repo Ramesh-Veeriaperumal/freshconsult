@@ -20,6 +20,15 @@ module NoteTestHelper
                                       :account_id => test_note.account_id)
       end
     end
+    if params[:source_additional_info].present?
+      twitter_params = params[:source_additional_info][:twitter]
+      if twitter_params.present?
+        test_note.build_tweet(tweet_id: twitter_params[:tweet_id],
+                              tweet_type: twitter_params[:tweet_type],
+                              twitter_handle_id: twitter_params[:twitter_handle_id],
+                              stream_id: twitter_params[:stream_id])
+      end
+    end
     test_note.save_note
     test_note
   end

@@ -56,7 +56,8 @@ module NotesTestHelper
       attachment_ids: note.attachments.map(&:id),
       user_id: note.user_id,
       notable_id: note.notable.display_id,
-      notable_type: note.notable_type
+      notable_type: note.notable_type,
+      source_additional_info: source_additional_info_hash(note)
     }
     ret_hash["feedback_id"] = note.survey_result_assoc.id if note.feedback?
     # ASSOCIATION_REFS_BASED_ON_TYPE.each do |ref|
@@ -76,23 +77,28 @@ module NotesTestHelper
     }
     ret_hash["feedback"] = feedback_hash(note) if note.feedback?
     # ret_hash["fb_post"] = fb_post_hash(note) if note.fb_post.present?
-    # ret_hash["tweet"] = tweet_hash(note) if note.tweet.present?
     # ret_hash["freshfone_call"] = Hash if note.freshfone_call.present?
     # ret_hash["freshcaller_call"] = freshcaller_call_hash(note) if note.freshcaller_call.present?
     ret_hash
   end
 
-  # def tweet_hash(note)
-  #   tweet = note.tweet
-  #   twitter_handle = note.tweet.twitter_handle
-  #   ret_hash = {
-  #     id: tweet.id,
-  #     tweet_id: tweet.tweet_id,
-  #     type: tweet.tweet_type,
-  #     stream_id: tweet.stream_id,
-  #     twitter_handle_id: twitter_handle.id
-  #   }
-  # end
+  def source_additional_info_hash(note)
+    tweet = note.tweet
+    return if tweet.blank?
+
+    twitter_handle = tweet.twitter_handle
+    {
+      twitter: {
+        tweet_id: tweet.tweet_id.to_s,
+        type: tweet.tweet_type,
+        support_handle_id: twitter_handle.twitter_user_id.to_s,
+        support_screen_name: twitter_handle.screen_name,
+        requester_screen_name: tweet.tweetable.user.twitter_id,
+        twitter_handle_id: twitter_handle.id,
+        stream_id: tweet.stream_id
+      }
+    }
+  end
 
   # def freshcaller_call_hash(note)
   #   call = note.freshcaller_call

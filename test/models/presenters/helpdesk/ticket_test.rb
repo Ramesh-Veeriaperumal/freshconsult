@@ -1,12 +1,14 @@
 require_relative '../../test_helper'
 ['ticket_fields_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
 ['note_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+['social_tickets_creation_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 
 class TicketTest < ActiveSupport::TestCase
   include TicketsTestHelper
   include TicketFieldsTestHelper
   include ModelsGroupsTestHelper
   include NoteHelper
+  include SocialTicketsCreationHelper
 
   CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
   DROPDOWN_CHOICES = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon']
@@ -222,5 +224,11 @@ class TicketTest < ActiveSupport::TestCase
   ensure
     @account.subscription.state = 'active'
     @account.subscription.save
+  end
+
+  def test_central_publish_payload_with_source_additional_info_twitter
+    t = create_twitter_ticket
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
   end
 end

@@ -26,7 +26,7 @@ class Helpdesk::Note < ActiveRecord::Base
   
   attr_accessor :nscname, :disable_observer, :send_survey, :include_surveymonkey_link, :quoted_text, 
                 :skip_notification, :changes_for_observer, :disable_observer_rule, :last_note_id, 
-                :post_to_forum_topic, :import_note
+                :post_to_forum_topic, :import_note, :model_changes
 
   attr_protected :attachments, :notable_id
 
@@ -448,6 +448,8 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def add_cc_email
+      return if third_party_response?
+      
       cc_email_hash_value = notable.cc_email_hash.nil? ? Helpdesk::Ticket.default_cc_hash : notable.cc_email_hash
       if fwd_email? || reply_to_forward?
         fwd_emails = self.to_emails | self.cc_emails | self.bcc_emails | cc_email_hash_value[:fwd_emails]

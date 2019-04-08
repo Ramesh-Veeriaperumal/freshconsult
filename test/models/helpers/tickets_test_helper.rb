@@ -138,7 +138,7 @@ module TicketsTestHelper
       urgent: ticket.urgent,
       spam: ticket.spam,
       trained: ticket.trained,
-      fr_due_by: ticket.frDueBy,
+      fr_due_by: ticket.frDueBy.try(:utc).try(:iso8601),
       to_emails: ticket.to_emails,
       cc_emails: ticket.cc_email[:cc_emails],
       fwd_emails: ticket.cc_email[:fwd_emails],
@@ -163,10 +163,29 @@ module TicketsTestHelper
       internal_group_id: ticket.internal_group_id,
       on_state_time: ticket.on_state_time,
       associates: render_assoc_hash(ticket.association_type),
-      associates_rdb: ticket.associates_rdb
+      associates_rdb: ticket.associates_rdb,
+      source_additional_info: source_additional_info_hash(ticket)
     }
     ret_hash[:skill_id] = ticket.sl_skill_id if Account.current.skill_based_round_robin_enabled?
     ret_hash
+  end
+
+  def source_additional_info_hash(ticket)
+    tweet = ticket.tweet
+    return if tweet.blank?
+
+    twitter_handle = tweet.twitter_handle
+    {
+      twitter: {
+        tweet_id: tweet.tweet_id.to_s,
+        type: tweet.tweet_type,
+        support_handle_id: twitter_handle.twitter_user_id.to_s,
+        support_screen_name: twitter_handle.screen_name,
+        requester_screen_name: ticket.requester.twitter_id,
+        twitter_handle_id: twitter_handle.id,
+        stream_id: tweet.stream_id
+      }
+    }
   end
 
   def cp_assoc_ticket_pattern(expected_output = {}, ticket)

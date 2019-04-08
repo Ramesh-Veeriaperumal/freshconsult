@@ -108,6 +108,7 @@ module SocialTicketsCreationHelper
       product_id: options[:twitter_handle].product_id,
       group_id:   options[:group_id] || (options[:twitter_handle].product ? options[:twitter_handle].product.primary_email_config.group_id : nil),
       source:     Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],
+      cc_email: Helpdesk::Ticket.default_cc_hash,
       created_at: Time.zone.now, # Time.at(Time.parse(tweet[:posted_time]).to_i),
       tweet_attributes: tweet_attributes_params(options),
       ticket_body_attributes: {
