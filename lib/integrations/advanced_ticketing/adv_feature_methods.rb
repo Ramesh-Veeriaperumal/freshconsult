@@ -18,7 +18,7 @@ module Integrations::AdvancedTicketing
     end
 
     def remove_feature feature
-      Rails.logger.info "Disable feautre :: #{feature}"
+      Rails.logger.info "Disable feautre :: #{feature}"      
       current_account.revoke_feature(feature)
       NewPlanChangeWorker.perform_async({:features => [feature], :action => "drop"})
     end

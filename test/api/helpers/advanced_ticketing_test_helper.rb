@@ -35,13 +35,13 @@ module AdvancedTicketingTestHelper
   def create_success_pattern(app)
     assert_response 204
     assert Account.current.safe_send("#{app}_enabled?")
-    assert_equal 1,Account.current.installed_applications.with_name(app).count
+    assert_equal 1, Account.current.installed_applications.with_name(app).count
   end
 
   def destroy_success_pattern(app)
     assert_response 204
     assert_equal false, Account.current.safe_send("#{app}_enabled?")
-    assert_equal 0,Account.current.installed_applications.with_name(app).count
+    assert_equal 0, Account.current.installed_applications.with_name(app).count
   end
 
   def metrics_hash

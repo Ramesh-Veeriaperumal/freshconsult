@@ -1,10 +1,8 @@
 module Ember
   module Admin
     class AdvancedTicketingController < ApiApplicationController
-      before_filter :perform_fsm_operations, only: :create, :if => :feature_fsm?
       before_filter :validate_destroy, only: :destroy
-      before_filter :cleanup_fsm, only: :destroy, :if => :fsm?
-
+      
       include HelperConcern
       include Integrations::AdvancedTicketing::AdvFeatureMethods
       include ::Admin::AdvancedTicketing::FieldServiceManagement::Util

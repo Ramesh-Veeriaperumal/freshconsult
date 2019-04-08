@@ -60,6 +60,8 @@ class Subscription < ActiveRecord::Base
   FREE = "free"
   SUSPENDED = "suspended"
 
+  DEFAULT_FIELD_AGENT_COUNT = 10
+
   concerned_with :presenter
 
   publishable on: [:update]
@@ -98,7 +100,8 @@ class Subscription < ActiveRecord::Base
   after_commit :reactivate_account, on: :update, :if => :non_suspended?
   attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
-  
+  serialize :additional_info, Hash
+
   scope :paying_subscriptions, { 
     :conditions => ["state = '#{ACTIVE}' AND amount > 0.00"],
     :include => "currency" }
@@ -469,6 +472,10 @@ class Subscription < ActiveRecord::Base
     (Time.zone.now + 2.days) >= next_renewal_at
   end
 
+  def field_agent_limit_with_safe_access
+    self.additional_info.try(:[], :field_agent_limit) || Subscription::DEFAULT_FIELD_AGENT_COUNT
+  end
+  
   protected
   
     def set_renewal_at
