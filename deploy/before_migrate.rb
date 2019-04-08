@@ -99,6 +99,7 @@ run "ln -nfs #{shared_path}/config/email_bot_ml_feedback_config.yml #{node[:rel_
 run "ln -nfs #{shared_path}/config/growthscore_app.yml #{node[:rel_path]}/config/growthscore_app.yml"
 run "ln -nfs #{shared_path}/config/datadog.yml #{node[:rel_path]}/config/datadog.yml"
 run "ln -nfs #{shared_path}/config/freshvisuals.yml #{node[:rel_path]}/config/helpdesk_reports/freshvisuals.yml"
+run "ln -nfs #{shared_path}/config/freno.yml #{node[:rel_path]}/config/freno.yml"
 
 
 #supreme-code-console
