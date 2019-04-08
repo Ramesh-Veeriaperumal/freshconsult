@@ -1,0 +1,19 @@
+post:
+  tags: [onboarding]
+  description: Convert anonymous account to trial
+  parameters:
+      - name: email
+        in: body
+        description: Domain name to change
+        schema:
+          $ref: '#/definitions/onboarding_anonymous_to_trial_input'
+
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/onboarding_anonymous_to_trial'
+    400:
+      description: Bad request error
+      schema:
+        $ref: '#/definitions/bad_request_error'

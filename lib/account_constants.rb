@@ -95,6 +95,7 @@ module AccountConstants
   MAX_INVOICE_EMAILS = 1
 
   ANONYMOUS_EMAIL = 'freshdeskdemo'.freeze
+  ANONYMOUS_ACCOUNT_NAME = 'Example'.freeze
 
   def attachment_limit
     @attachment_limit ||= Account.current.outgoing_attachment_limit_25_enabled? ? 25 : ATTACHMENT_LIMIT

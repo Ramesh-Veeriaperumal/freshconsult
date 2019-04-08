@@ -256,6 +256,24 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     User.current.unstub(:privilege?)
   end
 
+  def test_account_with_anonymous_key_present
+    Account.any_instance.stubs(:anonymous_account?).returns(true)
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+  ensure
+    Account.any_instance.unstub(:anonymous_account?)
+  end
+
+  def test_account_with_anonymous_key_not_present
+    Account.any_instance.stubs(:anonymous_account?).returns(false)
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+  ensure
+    Account.any_instance.unstub(:anonymous_account?)
+  end
+
   def test_collaboration_without_freshconnect
     Account.any_instance.stubs(:collaboration_enabled?).returns(true)
     Account.current.add_feature(:collaboration)

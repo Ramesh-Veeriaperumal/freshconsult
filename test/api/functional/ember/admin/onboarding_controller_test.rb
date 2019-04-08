@@ -15,12 +15,22 @@ class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
     before_all
   end
 
+  def teardown
+    AdminEmail::AssociatedAccounts.unstub(:find)
+  end
+
   def before_all
     @user = create_test_account
+    AdminEmail::AssociatedAccounts.stubs(:find).returns(Array.new(2))
   end
 
   def channels_params
     @channels ||= %w[phone forums social]
+  end
+
+  def unset_anonymous_flag
+    @account.account_additional_settings.additional_settings.delete(:anonymous_to_trial)
+    @account.account_additional_settings.save
   end
 
   def test_channel_update_with_valid_channels
@@ -209,4 +219,69 @@ class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
     assert_equal @account.domain, new_domain
   end
 
+  def test_anonymous_to_trial_already_trial
+    admin_email = Faker::Internet.email
+    post :anonymous_to_trial, construct_params(version: 'private', admin_email: admin_email)
+    assert_response 400
+    pattern = validation_error_pattern(bad_request_error_pattern(:anonymous_to_trial,
+                                                                 :account_in_trial, code: 'invalid_value'))
+    match_json(pattern)
+  end
+
+  def test_anonymous_to_trial_email_limit_reached
+    admin_email = Faker::Internet.email
+    @account.account_additional_settings.mark_account_as_anonymous
+    AdminEmail::AssociatedAccounts.stubs(:find).returns(Array.new(11))
+    post :anonymous_to_trial, construct_params(version: 'private', admin_email: admin_email)
+    assert_response 400
+    pattern = validation_error_pattern(bad_request_error_pattern(:anonymous_to_trial,
+                                                                 :email_limit_reached, code: 'invalid_value', limit: Signup::MAX_ACCOUNTS_COUNT))
+    match_json(pattern)
+  ensure
+    AdminEmail::AssociatedAccounts.unstub(:find)
+    unset_anonymous_flag
+  end
+
+  def test_anonymous_to_trial_success
+    @account.account_additional_settings.mark_account_as_anonymous
+    new_admin_email = Faker::Internet.email
+    post :anonymous_to_trial, construct_params(version: 'private', admin_email: new_admin_email)
+    assert_response 200
+    match_json(anonymous_to_trial_success_pattern(new_admin_email))
+  end
+
+  def test_anonymous_to_trial_user_update_failure
+    user = add_new_user(@account)
+    @account.account_additional_settings.mark_account_as_anonymous
+    post :anonymous_to_trial, construct_params(version: 'private', admin_email: user.email)
+    errors = JSON.parse(@response.body)['errors']
+    assert_response 409
+    assert_equal errors[0]['message'], 'It should be a unique value'
+  ensure
+    user.destroy
+    unset_anonymous_flag
+  end
+
+  def test_anonymous_to_trial_user_account_update_failure
+    admin_email = Faker::Internet.email
+    AccountAdditionalSettings.any_instance.stubs(:save!).raises(ActiveRecord::RecordInvalid)
+    @account.account_additional_settings.mark_account_as_anonymous
+    post :anonymous_to_trial, construct_params(version: 'private', admin_email: admin_email)
+    assert_not_equal admin_email, @account.admin_email
+    assert_response 500
+  ensure
+    AccountAdditionalSettings.any_instance.unstub(:save!)
+    unset_anonymous_flag
+  end
+
+  def test_name_company_name_from_email_methods
+    admin_email = 'Ethan.hunt@freshdesk.com'
+    @account.account_additional_settings.mark_account_as_anonymous
+    post :anonymous_to_trial, construct_params(version: 'private', admin_email: admin_email)
+    parsed_response = JSON.parse(response.body)
+    assert_response 200
+    assert_equal parsed_response['first_name'], 'Ethan hunt'
+    assert_equal parsed_response['last_name'], 'Ethan hunt'
+    assert_equal parsed_response['company_name'], 'freshdesk'
+  end
 end

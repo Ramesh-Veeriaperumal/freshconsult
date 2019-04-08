@@ -423,7 +423,7 @@ module Ember
           message = Ecommerce::Ebay::Api.new(ebay_account_id: @ticket.ebay_question.ebay_account_id).make_ebay_api_call(:reply_to_buyer, ticket: @ticket, note: @item)
           @item.build_ebay_question(user_id: current_user.id, item_id: @ticket.ebay_question.item_id, ebay_account_id: @ticket.ebay_question.ebay_account_id, account_id: @ticket.account_id)
           if message && @item.ebay_question.save
-            Ecommerce::EbayMessageWorker.new.perform(ebay_account_id: @ticket.ebay_question.ebay_account_id, ticket_id: @ticket.id, note_id: @item.id, start_time: message[:timestamp].to_time)
+            Ecommerce::EbayMessageWorker.perform_async(ebay_account_id: @ticket.ebay_question.ebay_account_id, ticket_id: @ticket.id, note_id: @item.id, start_time: message[:timestamp].to_time)
             render_response(true)
           else
             @item.deleted = true

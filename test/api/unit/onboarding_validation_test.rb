@@ -63,4 +63,19 @@ class OnboardingValidationTest < ActionView::TestCase
     onboarding_validation = OnboardingValidation.new({ attempt: attempt, send_to: send_to }, nil)
     assert onboarding_validation.valid?(:test_email_forwarding)
   end
+
+  def test_valid_email_for_admin_email
+    onboarding_validation = OnboardingValidation.new({ admin_email: Faker::Internet.email }, nil)
+    assert onboarding_validation.valid?(:anonymous_to_trial)
+  end
+
+  def test_invalid_email_for_admin_email
+    onboarding_validation = OnboardingValidation.new({ admin_email: Faker::Lorem.word }, nil)
+    refute onboarding_validation.valid?(:anonymous_to_trial)
+  end
+
+  def test_empty_value_for_admin_email
+    onboarding_validation = OnboardingValidation.new({ admin_email: '' }, nil)
+    refute onboarding_validation.valid?(:anonymous_to_trial)
+  end
 end

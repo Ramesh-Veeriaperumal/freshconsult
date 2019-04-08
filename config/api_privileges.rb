@@ -59,6 +59,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :account_admin, only: [:update, :disable_billing_info_updation]
     resource :"admin/api_account", only: [:cancel, :download_file]
     resource :"admin/api_data_export", only: [:account_export]
+    resource :"ember/admin/onboarding", only: %i[update_activation_email resend_activation_email update_channel_config suggest_domains validate_domain_name customize_domain anonymous_to_trial]
   end
 
   manage_email_settings do
@@ -143,7 +144,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/portal", only: [:show, :update]
     resource :audit_log, only: [:filter, :export, :event_name]
     resource :'ember/omni_channel', only: [:index]
-    resource :"ember/admin/onboarding", only: %i[update_activation_email resend_activation_email update_channel_config suggest_domains validate_domain_name customize_domain]
     resource :"admin/subscription", only: [:show, :plans]
     resource :"ember/ocr_proxy"
     resource :'ember/admin/advanced_ticketing', only: [:create, :destroy, :insights]

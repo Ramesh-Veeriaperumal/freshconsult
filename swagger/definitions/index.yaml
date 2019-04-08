@@ -130,6 +130,8 @@ onboarding_validate_domain_name_input:
   $ref: ./request/onboarding/validate_domain_name.yaml
 onboarding_customize_domain_input:
   $ref: ./request/onboarding/customize_domain.yaml
+onboarding_anonymous_to_trial_input:
+  $ref: ./request/onboarding/anonymous_to_trial.yaml
 update_channels_input:
   $ref: ./request/onboarding/update_channels.yaml
 suppression_list:
@@ -506,6 +508,8 @@ onboarding_suggest_domains:
   $ref: './response/onboarding/suggest_domains.yaml'
 onboarding_customize_domain:
   $ref: './response/onboarding/customize_domain.yaml'
+onboarding_anonymous_to_trial:
+  $ref: './response/onboarding/anonymous_to_trial.yaml'
 
 #Ticket Templates
 ticket_templates_index:

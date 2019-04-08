@@ -373,6 +373,8 @@
   $ref: ./onboarding/validate_domain_name.yaml
 /onboarding/customize_domain:
   $ref: ./onboarding/customize_domain.yaml
+/onboarding/anonymous_to_trial:
+  $ref: ./onboarding/anonymous_to_trial.yaml
 
 # Trial Widget
 /trial_widget:

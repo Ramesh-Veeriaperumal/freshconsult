@@ -125,6 +125,7 @@ module BootstrapTestHelper
       pattern[:subscription][:invoice_email] = account.invoice_emails.first if User.current.privilege?(:manage_account)
     end
     pattern[:contact_info] = account.contact_info.presence
+    pattern[:anonymous_account] = true if account.anonymous_account?
     pattern
   end
 
