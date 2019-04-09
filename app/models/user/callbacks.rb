@@ -266,6 +266,7 @@ class User < ActiveRecord::Base
 
   def update_user_related_changes
     @model_changes = self.changes.clone
+    @model_changes.merge!(flexifield.changes)
     # @model_changes.symbolize_keys!
   end
 

@@ -29,7 +29,10 @@ PRESENTER_TESTS = [
   'test/models/presenters/custom_survey/survey_test.rb',
   'test/models/presenters/survey_handle_test.rb',
   'test/models/presenters/survey_result_test.rb',
-  'test/models/presenters/survey_test.rb'
+  'test/models/presenters/survey_test.rb',
+  'test/models/presenters/user_test.rb',
+  'test/models/presenters/helpdesk/company_test.rb'
+
 ]
 SIDEKIQ_TESTS = Dir.glob('test/api/sidekiq/**/*_test.rb')
 SKIP_FILES_SIDEKIQ = Dir.glob('test/api/sidekiq/sandbox/*_test.rb') + Dir.glob('test/api/sidekiq/admin/sla/*_test.rb') + Dir.glob('test/api/sidekiq/community/clear_site_map_test.rb')
