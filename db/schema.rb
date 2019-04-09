@@ -4936,7 +4936,8 @@ ActiveRecord::Schema.define(:version => 20190115115017) do
     t.boolean  'ff_boolean30'
   end
 
-  add_index 'ticket_field_data', ['account_id', 'flexifield_set_id'], name: 'index_flexifields_on_account_id_and_flexifield_set_id'
+  add_index 'ticket_field_data', ['account_id', 'flexifield_set_id'],
+            name: 'unique_index_flexifields_on_account_id_and_flexifield_set_id', :unique => true
   add_index 'ticket_field_data', ['flexifield_def_id'], name: 'index_flexifields_on_flexifield_def_id'
   execute 'ALTER TABLE ticket_field_data ADD PRIMARY KEY (id,account_id)'
 end

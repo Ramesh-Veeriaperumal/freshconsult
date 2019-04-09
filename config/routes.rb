@@ -1763,11 +1763,6 @@ Helpkit::Application.routes.draw do
 
   end
 
-  match '/activity_reports/customer' => 'reports/customer_reports#index', :as => :customer_activity
-  match '/activity_reports/helpdesk' => 'reports/helpdesk_reports#index', :as => :helpdesk_activity
-  match '/activity_reports/customer/generate' => 'reports/customer_reports#generate', :as => :customer_activity_generate
-  match '/activity_reports/helpdesk/generate' => 'reports/helpdesk_reports#generate', :as => :helpdesk_activity_generate
-  match '/activity_reports/helpdesk/export_to_excel' => 'reports/helpdesk_reports#export_to_excel', :as => :helpdesk_activity_export
   match '/gamification/reports' => 'reports/gamification_reports#index', :as => :scoreboard_activity
   match '/survey/reports' => 'reports/survey_reports#index', :as => :survey_activity
   match '/survey/analytics' => 'reports/survey_reports#index', :as => :survey_analytics_activity
