@@ -54,6 +54,33 @@ class Ember::TrialWidgetControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:email_notification_eligible?)
   end
 
+  def test_index_with_onboarding_v2_tasks_complete
+    Account.current.launch(:new_onboarding)
+    setup_keys = @account.setup_keys
+    setup_keys.map { |setup_key| Account.any_instance.stubs("#{setup_key}_setup?".to_sym).returns(true) }
+    Account.any_instance.stubs(:support_channel_setup?).returns(true)
+    get :index, controller_params({ version: 'private' }, false)
+    response_tasks = parse_response(response.body)['tasks']
+    assert_response 200
+    assert_equal response_tasks.include?('name' => 'support_channel', 'isComplete' => true), true
+    assert_equal response_tasks.include?('name' => 'manage_conversation_video', 'isComplete' => true), true
+    assert_equal response_tasks.include?('name' => 'ticket_list_tour', 'isComplete' => true), true
+    assert_equal response_tasks.include?('name' => 'explore_conversation_features', 'isComplete' => true), true
+    assert_equal response_tasks.include?('name' => 'agent_productivity_video', 'isComplete' => true), true
+    assert_equal response_tasks.include?('name' => 'canned_response_tour', 'isComplete' => true), true
+    assert_equal response_tasks.include?('name' => 'explore_productivity_features', 'isComplete' => true), true
+    assert_equal response_tasks.include?('name' => 'report_video', 'isComplete' => true), true
+    assert_equal response_tasks.include?('name' => 'report_tour', 'isComplete' => true), true
+    assert_equal response_tasks.include?('name' => 'explore_performance_feature', 'isComplete' => true), true
+    assert_equal response_tasks.include?('name' => 'app_video', 'isComplete' => true), true
+    assert_equal response_tasks.include?('name' => 'app_integration', 'isComplete' => true), true
+    assert_equal response_tasks.include?('name' => 'explore_extend_capability_features', 'isComplete' => true), true
+    match_json(new_trial_widget_index_pattern)
+  ensure
+    Account.current.rollback(:new_onboarding)
+    setup_keys.map { |setup_key| Account.any_instance.unstub("#{setup_key}_setup?".to_sym) }
+  end
+
   def test_sales_manager
     WebMock.allow_net_connect!
     get :sales_manager, controller_params({ version: 'private' }, false)
