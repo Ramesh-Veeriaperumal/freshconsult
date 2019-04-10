@@ -6,7 +6,7 @@ class SubscriptionDelegator < BaseDelegator
   end
 
   def validate_user_id
-    user = Account.current.agents_from_cache.detect { |x| user_id == x.user_id }
-    errors[:user_id] << :"is invalid" unless user
+    user_exists = Account.current.users.exists?(id: user_id, helpdesk_agent: true)
+    errors[:user_id] << :"is invalid" unless user_exists
   end
 end
