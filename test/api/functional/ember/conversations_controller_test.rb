@@ -4,6 +4,7 @@ Sidekiq::Testing.fake!
 ['canned_responses_helper.rb', 'group_helper.rb', 'social_tickets_creation_helper.rb', 'twitter_helper.rb', 'dynamo_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module Ember
   class ConversationsControllerTest < ActionController::TestCase
+    include ApiTicketsTestHelper
     include ConversationsTestHelper
     include AttachmentsTestHelper
     include GroupHelper
@@ -417,6 +418,20 @@ module Ember
       match_json(private_note_pattern(params_hash, Helpdesk::Note.last))
       match_json(private_note_pattern({}, Helpdesk::Note.last))
       assert Helpdesk::Note.last.attachments.size == attachment_ids.size
+    end
+
+    def test_reply_with_child_description_attachment_ids
+      Account.any_instance.stubs(:parent_child_tickets_enabled?).returns(true)
+      child_attachment_ids = []
+      create_parent_child_tickets
+      child_attachment_ids << create_attachment(attachable_type: 'Helpdesk::Ticket', attachable_id: @child_ticket.id).id
+      params_hash = reply_note_params_hash.merge(attachment_ids: child_attachment_ids, user_id: @agent.id)
+      post :reply, construct_params({ version: 'private', id: @parent_ticket.display_id }, params_hash)
+      assert_response 201
+      match_json(private_note_pattern(params_hash, @account.notes.last))
+      match_json(private_note_pattern({}, @account.notes.last))
+      assert @account.notes.last.attachments.size == child_attachment_ids.size
+      Account.any_instance.unstub(:parent_child_tickets_enabled?)
     end
 
     def test_reply_with_inline_attachment_ids
