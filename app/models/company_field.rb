@@ -4,6 +4,7 @@ class CompanyField < ActiveRecord::Base
 
   include DataVersioning::Model
   include CompanyFieldsConstants
+  include ContactCompanyFields::PublisherMethods
 
   serialize :field_options
 
@@ -11,8 +12,15 @@ class CompanyField < ActiveRecord::Base
 
   validates_uniqueness_of :name, :scope => [:account_id, :company_form_id]
 
+  before_save  :construct_model_changes, on: :update
   after_save   :prepare_to_update_segment_filter
   after_commit :update_segment_filter, on: :update
+
+  before_destroy :save_deleted_company_field_info
+
+  concerned_with :presenter
+
+  publishable
 
   DEFAULT_FIELD_PROPS = {
     :default_name           => { type: 1, dom_type: :text,
@@ -153,5 +161,9 @@ class CompanyField < ActiveRecord::Base
     if @marked_as_deleted
       UpdateSegmentFilter.perform_async({ custom_field: attributes, type: self.class.name })
     end
+  end
+
+  def save_deleted_company_field_info
+    @deleted_model_info = as_api_response(:central_publish_destroy)
   end
 end

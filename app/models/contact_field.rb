@@ -3,17 +3,24 @@ class ContactField < ActiveRecord::Base
   self.primary_key = :id
 
   include DataVersioning::Model
-  
+  include ContactCompanyFields::PublisherMethods
+
   serialize :field_options
 
   belongs_to_account
 
-  before_save   :set_portal_edit
+  before_save   :set_portal_edit, :construct_model_changes
   before_create :populate_label
   after_save    :prepare_to_update_segment_filter
   after_commit :toggle_multiple_companies_feature, :update_segment_filter, on: :update
 
+  before_destroy :save_deleted_contact_field_info
+
   validates_uniqueness_of :name, :scope => [:account_id, :contact_form_id]
+
+  concerned_with :presenter
+
+  publishable
 
   scope :customer_visible, :conditions => { :visible_in_portal => true }
   scope :customer_editable, :conditions => { :editable_in_portal => true }
@@ -99,5 +106,9 @@ class ContactField < ActiveRecord::Base
     if @marked_as_deleted
       UpdateSegmentFilter.perform_async({ custom_field: attributes, type: self.class.name })
     end
+  end
+
+  def save_deleted_contact_field_info
+    @deleted_model_info = as_api_response(:central_publish_destroy)
   end
 end
