@@ -104,3 +104,6 @@ lv-LV:
 test-ui:
   - 35
   - Test-UI
+long-text:
+  - 36
+  - Long-Text
