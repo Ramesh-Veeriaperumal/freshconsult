@@ -1,9 +1,12 @@
 class Users::ContactDeleteForeverWorker < BaseWorker
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include Utils::Freno
 
   sidekiq_options :queue => :contact_delete_forever, :retry => 0, :backtrace => true, :failures => :exhausted
-  
+
+  APPLICATION_NAME = 'ContactDeleteForeverWorker'.freeze
+
   attr_accessor :args
 
   def perform(args)
@@ -11,12 +14,13 @@ class Users::ContactDeleteForeverWorker < BaseWorker
       args.symbolize_keys!
       @args     = args
       @account  = Account.current
-      key       = CONTACT_DELETE_FOREVER_KEY % {:shard => ActiveRecord::Base.current_shard_selection.shard.to_s}
+      shard_name = ActiveRecord::Base.current_shard_selection.shard.to_s
+      key = format(CONTACT_DELETE_FOREVER_KEY, shard: shard_name)
 
       redis_sidekiq_concurrency = get_contact_delete_forever_concurrency
       redis_val = get_others_redis_key(key)
       if redis_val.present? && redis_val.to_i >= redis_sidekiq_concurrency
-        Users::ContactDeleteForeverWorker.perform_in(get_next_time, {:user_id => args[:user_id]})
+        rerun_after(get_next_time, args)
         increment_others_redis(key) # Because of ensure decrement
         return
       end
@@ -25,22 +29,16 @@ class Users::ContactDeleteForeverWorker < BaseWorker
       @user = @account.all_contacts.where(:deleted => true).find_by_id args[:user_id]
       return if @user.blank? || @user.agent_deleted_forever?
 
-      if @user.was_agent?
-        send_event_to_central
-        remove_user_companies
-        destroy_contact_field_data
-        destroy_avatar
-        anonymize_data
+      # Check for any replication lag detected by Freno for the current user's shard in DB.
+      lag_seconds = get_replication_lag_for_shard(APPLICATION_NAME, shard_name)
+      if lag_seconds > 0
+        Rails.logger.debug("Warning: Freno: ContactDeleteForeverWorker: replication lag: #{lag_seconds} secs :: user:: #{args[:user_id]} shard :: #{shard_name}")
+        rerun_after(lag_seconds, args)
+        return
+      elsif @user.was_agent?
+        delete_agent_data
       else
-        destroy_user_tickets
-        destroy_user_notes
-        destroy_user_archive_tickets
-        destroy_user_replies
-        destroy_user_topics
-        destroy_user_calls
-        destroy_custom_survey_results
-        destroy_survey_results
-        destroy_user
+        delete_contact_data
       end
     rescue Exception => e
       puts e.inspect, args.inspect
@@ -52,6 +50,30 @@ class Users::ContactDeleteForeverWorker < BaseWorker
   end
 
   private
+
+    def rerun_after(lag, args)
+      Users::ContactDeleteForeverWorker.perform_in(lag, args)
+    end
+
+    def delete_agent_data
+      send_event_to_central
+      remove_user_companies
+      destroy_contact_field_data
+      destroy_avatar
+      anonymize_data
+    end
+
+    def delete_contact_data
+      destroy_user_tickets
+      destroy_user_notes
+      destroy_user_archive_tickets
+      destroy_user_replies
+      destroy_user_topics
+      destroy_user_calls
+      destroy_custom_survey_results
+      destroy_survey_results
+      destroy_user
+    end
 
     def remove_user_companies
       @user.companies = []
