@@ -33,7 +33,8 @@ class Account < ActiveRecord::Base
     :tag_central_publish, :native_apps, :archive_tickets_api, :bot_agent_response,
     :fetch_ticket_from_ref_first, :query_from_singleton, :surveys_central_publish,
     :id_for_choices_write, :fluffy, :session_logs, :nested_field_revamp, :service_worker, :kbase_mint,
-    :freshvisual_configs, :ticket_field_limit_increase, :join_ticket_field_data, :byepass_signup_captcha
+    :freshvisual_configs, :ticket_field_limit_increase, :join_ticket_field_data, :byepass_signup_captcha,
+    :contact_field_central_publish, :company_field_central_publish
   ].freeze
 
   DB_FEATURES = [

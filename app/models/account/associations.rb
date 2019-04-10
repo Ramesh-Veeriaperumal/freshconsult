@@ -402,4 +402,10 @@ class Account < ActiveRecord::Base
   has_many :picklist_values, class_name: 'Helpdesk::PicklistValue', include: [:pickable]
 
   has_many :custom_translations, class_name: 'CustomTranslation', dependent: :destroy, inverse_of: :account
+
+  has_many :contact_fields, class_name: 'ContactField', dependent: :destroy
+  has_many :contact_field_choices, class_name: 'ContactFieldChoice', dependent: :destroy
+
+  has_many :company_fields, class_name: 'CompanyField', dependent: :destroy
+  has_many :company_field_choices, class_name: 'CompanyFieldChoice', dependent: :destroy
 end

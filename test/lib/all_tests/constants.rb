@@ -31,7 +31,11 @@ PRESENTER_TESTS = [
   'test/models/presenters/survey_result_test.rb',
   'test/models/presenters/survey_test.rb',
   'test/models/presenters/user_test.rb',
-  'test/models/presenters/helpdesk/company_test.rb'
+  'test/models/presenters/helpdesk/company_test.rb',
+  'test/models/presenters/helpdesk/contact_field_test.rb',
+  'test/models/presenters/helpdesk/contact_field_choice_test.rb',
+  'test/models/presenters/helpdesk/company_field_test.rb',
+  'test/models/presenters/helpdesk/company_field_choice_test.rb'
 
 ]
 SIDEKIQ_TESTS = Dir.glob('test/api/sidekiq/**/*_test.rb')
