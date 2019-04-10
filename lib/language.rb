@@ -1,6 +1,5 @@
 class Language
-
-	AVAILABLE_LOCALES_WITH_ID = YAML::load(ERB.new(File.read("#{Rails.root}/config/languages.yml")).result)
+  include Languages::Constants
 
 	attr_accessor :code, :id, :name
 
@@ -104,9 +103,10 @@ class Language
 			Language.for_current_user
 		end
 
-		def fetch_from_browser params
-			Language.find_by_code(params[:request_language])
-		end
+    def fetch_from_browser(params)
+      code = LANGUAGE_ALT_CODE[params[:request_language]] || params[:request_language]
+      Language.find_by_code(code)
+    end
 
 		def fetch_from_portal params
 			Language.find_by_code(Portal.current.language) if Portal.current
