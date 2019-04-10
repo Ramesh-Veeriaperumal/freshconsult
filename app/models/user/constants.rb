@@ -77,4 +77,5 @@ class User < ActiveRecord::Base
 
   FRESHID_IGNORED_EMAIL_IDS = ["custserv@freshdesk.com"]
   CONTACT_NAME_SANITIZER_REGEX = /www\..*|\/|"/.freeze
+  CONTACT_COMPANY_PRIVILEGES_SPLIT = [:manage_companies, :delete_company].freeze
 end

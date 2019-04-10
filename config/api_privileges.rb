@@ -89,6 +89,9 @@ Authority::Authorization::PrivilegeList.build do
 
   delete_contact do
     resource :"ember/contact", only: [:bulk_delete, :destroy, :bulk_restore, :restore, :whitelist, :bulk_whitelist, :hard_delete]
+  end
+
+  delete_company do
     resource :"ember/company", only: [:bulk_delete, :destroy]
   end
 
@@ -105,11 +108,14 @@ Authority::Authorization::PrivilegeList.build do
 
   manage_contacts do
     resource :"ember/contact", only: [:create, :update, :quick_create]
-    resource :"ember/company", only: [:create, :update]
-    resource :"ember/search/autocomplete", only: [:companies]
     resource :"ember/tickets/requester", only: [:update]
     resource :"ember/contact/todo", only: [:create, :update, :destroy]
     resource :customer_note, only: [:create, :update, :destroy]
+    resource :"ember/search/autocomplete", only: [:companies]
+  end
+
+  manage_companies do
+    resource :"ember/company", only: [:create, :update]
   end
 
   manage_users do

@@ -6,7 +6,8 @@ module CustomerImportConstants
   INDEX_FIELDS = ['status'].freeze
   ALLOWED_STATUS_PARAMS = Admin::DataImport::IMPORT_STATUS.keys.map(&:to_s) - ['started', 'file_created'].freeze + ['in_progress'].freeze
 
-  WRAP_PARAMS = [:api_customer_import, exclude: [], format: [:json, :multipart_form]].freeze
+  CONTACT_IMPORT_WRAP_PARAMS = [:api_contact_import, exclude: [], format: [:json, :multipart_form]].freeze
+  COMPANY_IMPORT_WRAP_PARAMS = [:api_company_import, exclude: [], format: [:json, :multipart_form]].freeze
 
   INVALID_CSV_FILE_ERROR = { file: :invalid_csv_file }.freeze
   IMPORT_STARTED = { import_status: Admin::DataImport::IMPORT_STATUS[:started] }.freeze

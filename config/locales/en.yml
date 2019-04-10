@@ -2487,9 +2487,11 @@ en:
         delete_topic: Delete and Moderate forum topic
         customers: Customers
         view_contacts: View customers tab
-        manage_segments: Create or edit new contact segment or company segment
-        manage_contacts: Create or edit new contact or company
-        delete_contact: Delete contact or company
+        manage_segments: Create or edit contact segment or company segment
+        manage_contacts: Create or edit contact
+        manage_companies: Create or edit company
+        delete_contact: Delete contact
+        delete_company: Delete company
         export_tickets: Export Tickets
         export_customers: Export Customer
         export_reports: Export Reports

@@ -8,6 +8,9 @@ module Ember
       before_filter :ticket_permission?, :validate_requester_delegator
 
       REQUESTER_FIELDS = %w[company contact].freeze
+      OBJECT_PRIVILEGE_MAP = {
+        company: :manage_companies
+      }.freeze
       ACTION = :requester_update
 
       def update
@@ -15,17 +18,28 @@ module Ember
           REQUESTER_FIELDS.each do |type|
             object = instance_variable_get("@#{type}")
             next if object.blank?
-            cname_params[type.to_sym][:customer_id] = @company.id if type.eql?('contact') && @contact.companies.blank? && add_company
+
+            object_type = type.to_sym
+            cname_params[object_type][:customer_id] = @company.id if object_type == :contact &&
+                                                                     @contact.companies.blank? &&
+                                                                     add_company
+            next if OBJECT_PRIVILEGE_MAP[object_type] &&
+                    !user_has_privilege?(OBJECT_PRIVILEGE_MAP[object_type])
+            
             render_errors(object.errors) unless object.update_attributes(cname_params[type.to_sym])
-            safe_send("#{type}_decorator")
           end
           @item.update_attributes(owner_id: @company.id) if add_company
         end
-      rescue Exception => e
+        REQUESTER_FIELDS.each { |type| safe_send("#{type}_decorator") }
+      rescue StandardError => e
         Rails.logger.error "Error while updating requester, Param: #{cname_params.inspect}, Error - #{e.message}"
       end
 
       private
+
+        def user_has_privilege?(privilege)
+          api_current_user.privilege?(privilege)
+        end
 
         def feature_name
           FeatureConstants::REQUESTER_WIDGET
@@ -53,7 +67,18 @@ module Ember
           # Need to check unassociated_company use case in old behaviour
           # @unassociated_company = @company.blank? ? false : @item.requester.companies.exclude?(@company)
           company_name = cname_params[:company].try(:[], :name)
-          @company ||= current_account.companies.find_by_name(company_name) || current_account.companies.new if company_name && !company_deleted
+          if @company.blank? && company_name.present? && !company_deleted
+            @company ||= current_account.companies.find_by_name(company_name)
+            return if @company.present?
+
+            if user_has_privilege?(:manage_companies)
+              @company = current_account.companies.new
+            else
+              render_request_error(:action_restricted, 403,
+                                   action: ACTION,
+                                   reason: 'Unsufficient privilege to create new company')
+            end
+          end
         end
 
         def validate_params
@@ -131,11 +156,11 @@ module Ember
         end
 
         def contact_decorator
-          @contact = ContactDecorator.new(@contact, name_mapping: @contact_name_mapping)
+          @contact = ContactDecorator.new(@contact, name_mapping: @contact_name_mapping) if @contact.present?
         end
 
         def company_decorator
-          @company = CompanyDecorator.new(@company, name_mapping: @company_name_mapping)
+          @company = CompanyDecorator.new(@company, name_mapping: @company_name_mapping) if @company.present?
         end
 
         def render_requester_errors

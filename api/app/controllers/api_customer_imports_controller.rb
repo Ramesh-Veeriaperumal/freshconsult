@@ -29,8 +29,7 @@ class ApiCustomerImportsController < ApiApplicationController
 
   def cancel
     return head 404 unless in_progress_values.include?(@import.import_status)
-    key = format(Object.const_get("STOP_#{import_type.upcase}_IMPORT"), account_id: Account.current.id)
-    set_others_redis_key(key, true)
+    set_others_redis_key(stop_import_key, true)
     @import.cancelled!
     fetch_import_details(@import)
     return unless @import_item[:completed_records]
@@ -46,15 +45,7 @@ class ApiCustomerImportsController < ApiApplicationController
     fetch_import_details(@import)
   end
 
-  def self.wrap_params
-    WRAP_PARAMS
-  end
-
   private
-
-    def scoper
-      current_account.safe_send(:"#{import_type}_imports")
-    end
 
     def load_object
       @import = scoper.find_by_id(params[:id])
@@ -72,10 +63,6 @@ class ApiCustomerImportsController < ApiApplicationController
     def import_exists?
       @import = scoper.safe_send(:"running_#{import_type}_imports").first
       @import.present?
-    end
-
-    def import_type
-      @import_type ||= request.path.include?('contact') ? 'contact' : 'company'
     end
 
     def build_object
@@ -127,6 +114,4 @@ class ApiCustomerImportsController < ApiApplicationController
       params_hash = params[cname].merge(import_type: import_type)
       return false unless validate_body_params(nil, params_hash)
     end
-
-    wrap_parameters(*wrap_params)
 end

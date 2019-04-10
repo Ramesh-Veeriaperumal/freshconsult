@@ -5,7 +5,7 @@ class PicklistValueTest < ActiveSupport::TestCase
   include TicketFieldsTestHelper
 
   def test_picklist_id_null_without_feature
-    @account.rollback :redis_picklist_id
+    Account.current.rollback :redis_picklist_id
     ticket_field = create_custom_field_dropdown(Faker::Lorem.word)
     ticket_field.picklist_values.each do |pv|
       assert_nil pv.picklist_id
@@ -32,7 +32,7 @@ class PicklistValueTest < ActiveSupport::TestCase
   end
 
   def test_picklist_id_value_with_db
-    @account.launch :redis_picklist_id
+    Account.current.launch :redis_picklist_id
     current_max_picklist_id = @account.picklist_values.maximum(:picklist_id).to_i
     $redis_display_id.perform_redis_op("SCRIPT", :flush)
     ticket_field = create_custom_field_dropdown(Faker::Lorem.word)
@@ -44,7 +44,7 @@ class PicklistValueTest < ActiveSupport::TestCase
   ensure
     ticket_field.destroy if ticket_field
     Redis::DisplayIdLua.load_picklist_id_lua_script
-    @account.rollback :redis_picklist_id
+    Account.current.rollback :redis_picklist_id
   end
 
 end

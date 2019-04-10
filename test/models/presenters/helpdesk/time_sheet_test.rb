@@ -17,12 +17,12 @@ class TimeSheetTest < ActiveSupport::TestCase
 
   def before_all
     return if self.class.before_all_run
-    @account.launch :time_sheets_central_publish
+    Account.current.launch :time_sheets_central_publish
     self.class.before_all_run = true
   end
 
   def test_central_publish_with_launch_party_disabled
-    @account.rollback :time_sheets_central_publish
+    Account.current.rollback :time_sheets_central_publish
     ticket = create_ticket(ticket_params_hash)
     ticket.reload
     CentralPublisher::Worker.jobs.clear
@@ -30,7 +30,7 @@ class TimeSheetTest < ActiveSupport::TestCase
     time_sheet.save
     assert_equal 0, CentralPublisher::Worker.jobs.size
   ensure
-    @account.launch :time_sheets_central_publish
+    Account.current.launch :time_sheets_central_publish
   end
 
   def test_central_publish_time_sheet_create_and_user_association

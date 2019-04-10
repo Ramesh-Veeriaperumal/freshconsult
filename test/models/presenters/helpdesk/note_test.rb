@@ -18,23 +18,22 @@ class NoteTest < ActiveSupport::TestCase
     return if @@before_all_run
     @account.subscription.state = 'active'
     @account.subscription.save
-    @account.launch(:note_central_publish)
+    Account.current.launch(:note_central_publish)
     # @account.add_feature(:freshcaller)
     # ::Freshcaller::Account.new(account_id: @account.id).save
     @account.reload
     @account.save
-
     @ticket = create_ticket
     @@before_all_run = true
   end
 
   def test_central_publish_with_launch_party_disabled
-    @account.rollback(:note_central_publish)
+    Account.current.rollback(:note_central_publish)
     CentralPublishWorker::ActiveNoteWorker.jobs.clear
     note = create_note(note_params_hash)
     assert_equal 0, CentralPublishWorker::ActiveNoteWorker.jobs.size
   ensure
-    @account.launch(:note_central_publish)
+    Account.current.launch(:note_central_publish)
   end
 
   def test_central_publish_with_launch_party_enabled

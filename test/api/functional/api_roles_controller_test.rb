@@ -1,11 +1,14 @@
 require_relative '../test_helper'
+require_relative '../../core/helpers/users_test_helper'
 class ApiRolesControllerTest < ActionController::TestCase
+  include CoreUsersTestHelper
   include RolesTestHelper
   def wrap_cname(params)
     { api_role: params }
   end
 
   def test_index
+    CustomRequestStore.store[:private_api_request] = false
     get :index, controller_params
     pattern = []
     Account.current.roles_from_cache.each do |role|
@@ -58,4 +61,105 @@ class ApiRolesControllerTest < ActionController::TestCase
     assert JSON.parse(response.body).count == 1
     assert_nil response.headers['Link']
   end
+
+  def test_create_custom_role_with_contact_privilege_without_feature
+    privileges = ['manage_tickets', 'edit_ticket_properties', 'view_forums',
+                  'view_contacts', 'manage_contacts', 'view_reports', '', '0',
+                  '0', '0', '0']
+    test_role = create_role(name: 'new role1', privilege_list: privileges)
+    test_agent = add_agent(Account.current, role_ids: test_role.id)
+    assert_equal true, test_agent.privilege?(:manage_companies)
+    assert_equal test_agent.privilege?(:manage_contacts), test_agent.privilege?(:manage_companies)
+  end
+
+  def test_create_custom_role_with_contact_privilege_with_feature
+    Account.current.launch(:contact_company_split)
+    privileges = ['manage_tickets', 'edit_ticket_properties', 'view_forums',
+                  'view_contacts', 'manage_contacts', 'view_reports', '', '0',
+                  '0', '0', '0']
+    test_role = create_role(name: 'new role2', privilege_list: privileges)
+    test_agent = add_agent(Account.current, role_ids: test_role.id)
+    assert_equal false, test_agent.privilege?(:manage_companies)
+    assert_not_equal test_agent.privilege?(:manage_contacts), test_agent.privilege?(:manage_companies)
+  ensure
+    Account.current.rollback :contact_company_split
+  end
+
+  def test_create_custom_role_without_contact_privilege_with_feature
+    Account.current.launch(:contact_company_split)
+    privileges = ['manage_tickets', 'edit_ticket_properties', 'view_forums',
+                  'view_contacts', 'view_reports', '', '0', '0', '0', '0']
+    test_role = create_role(name: 'new role3', privilege_list: privileges)
+    test_agent = add_agent(Account.current, role_ids: test_role.id)
+    assert_equal false, test_agent.privilege?(:manage_companies)
+    assert_equal test_agent.privilege?(:manage_contacts), test_agent.privilege?(:manage_companies)
+  ensure
+    Account.current.rollback :contact_company_split
+  end
+
+  def test_create_custom_role_without_contact_privilege_without_feature
+    privileges = ['manage_tickets', 'edit_ticket_properties', 'view_forums',
+                  'view_contacts', 'view_reports', '', '0', '0', '0', '0']
+    test_role = create_role(name: 'new role4', privilege_list: privileges)
+    test_agent = add_agent(Account.current, role_ids: test_role.id)
+    assert_equal false, test_agent.privilege?(:manage_companies)
+    assert_equal test_agent.privilege?(:manage_contacts), test_agent.privilege?(:manage_companies)
+  end
+
+  def test_create_custom_role_without_contact_privilege_with_company_privilege_without_feature
+    privileges = ['manage_tickets', 'edit_ticket_properties', 'view_forums',
+                  'view_contacts', 'manage_companies', 'view_reports', '', '0',
+                  '0', '0', '0']
+    test_role = create_role(name: 'new role5', privilege_list: privileges)
+    test_agent = add_agent(Account.current, role_ids: test_role.id)
+    assert_equal false, test_agent.privilege?(:manage_companies)
+    assert_equal test_agent.privilege?(:manage_contacts), test_agent.privilege?(:manage_companies)
+  end
+
+  def test_create_custom_role_with_contact_delete_privilege_without_feature
+    test_role = create_role(name: 'new role6', privilege_list: ['manage_tickets', 'edit_ticket_properties', 'view_forums', 'view_contacts','delete_contact',
+                                                           'view_reports', '', '0', '0', '0', '0'])
+    test_agent = add_agent(Account.current, role_ids: test_role.id)
+    assert_equal true, test_agent.privilege?(:delete_company)
+    assert_equal test_agent.privilege?(:delete_contact), test_agent.privilege?(:delete_company)
+  end
+
+  def test_create_custom_role_with_contact_delete_privilege_with_feature
+    Account.current.launch(:contact_company_split)
+    test_role = create_role(name: 'new role7', privilege_list: ['manage_tickets', 'edit_ticket_properties', 'view_forums', 'view_contacts','delete_contact',
+                                                           'view_reports', '', '0', '0', '0', '0'])
+    test_agent = add_agent(Account.current, role_ids: test_role.id)
+    assert_equal false, test_agent.privilege?(:delete_company)
+    assert_not_equal test_agent.privilege?(:delete_contact), test_agent.privilege?(:delete_company)
+  ensure
+    Account.current.rollback :contact_company_split
+  end
+
+  def test_create_custom_role_without_contact_delete_privilege_with_feature
+    Account.current.launch(:contact_company_split)
+    test_role = create_role(name: 'new role8', privilege_list: ['manage_tickets', 'edit_ticket_properties', 'view_forums', 'view_contacts',
+                                                           'view_reports', '', '0', '0', '0', '0'])
+    test_agent = add_agent(Account.current, role_ids: test_role.id)
+    assert_equal false, test_agent.privilege?(:delete_company)
+    assert_equal test_agent.privilege?(:delete_contact), test_agent.privilege?(:delete_company)
+  ensure
+    Account.current.rollback :contact_company_split
+  end
+
+  def test_create_custom_role_without_contact_delete_privilege_without_feature
+    test_role = create_role(name: 'new role9', privilege_list: ['manage_tickets', 'edit_ticket_properties', 'view_forums', 'view_contacts',
+                                                           'view_reports', '', '0', '0', '0', '0'])
+    test_agent = add_agent(Account.current, role_ids: test_role.id)
+    assert_equal false, test_agent.privilege?(:delete_company)
+    assert_equal test_agent.privilege?(:delete_contact), test_agent.privilege?(:delete_company)
+  end
+
+  def test_create_custom_role_without_contact_delete_privilege_with_company_delete_privilege_without_feature
+    test_role = create_role(name: 'new role10', privilege_list: ['manage_tickets', 'edit_ticket_properties', 'view_forums', 'view_contacts', 'delete_company',
+                                                           'view_reports', '', '0', '0', '0', '0'])
+    test_agent = add_agent(Account.current, role_ids: test_role.id)
+    assert_equal false, test_agent.privilege?(:delete_company)
+    assert_equal test_agent.privilege?(:delete_contact), test_agent.privilege?(:delete_company)
+  end
+
 end

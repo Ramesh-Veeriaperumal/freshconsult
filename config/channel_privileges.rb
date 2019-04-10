@@ -7,6 +7,9 @@ Authority::Authorization::PrivilegeList.build do
 
   manage_contacts do
     resource :"channel/api_contact", only: [:create, :index, :show]
+  end
+
+  manage_companies do
     resource :"channel/api_company", only: [:create]
   end
 end

@@ -7,6 +7,8 @@ class Role < ActiveRecord::Base
 
   before_destroy :destroy_user_privileges
   after_update :update_user_privileges
+  before_create :set_or_remove_company_privilege
+  before_update :set_or_remove_company_privilege
 
 # uncomment for chat privileges phase 2
   # after_commit  ->(obj) { obj.update_liveChat_role } , on: :create
@@ -152,5 +154,20 @@ class Role < ActiveRecord::Base
         user.update_attribute(:privileges, privileges)
       end 
     end
-   
+
+    def set_or_remove_company_privilege
+      return if account.launched?(:contact_company_split)
+
+      if privilege?(:manage_contacts)
+        self.privileges = (privileges.to_i | (1 << PRIVILEGES[:manage_companies])).to_s
+      elsif privilege?(:manage_companies)
+        self.privileges = (privileges.to_i & ~(1 << PRIVILEGES[:manage_companies])).to_s
+      end
+
+      if privilege?(:delete_contact)
+        self.privileges = (privileges.to_i | (1 << PRIVILEGES[:delete_company])).to_s
+      elsif privilege?(:delete_company)
+        self.privileges = (privileges.to_i & ~(1 << PRIVILEGES[:delete_company])).to_s
+      end
+    end
 end

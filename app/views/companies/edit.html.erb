@@ -20,7 +20,7 @@
 	<br/>
 	<%= render :partial => "form", :locals => { :f => f } %>
     <div class="floatl mt20">
-	    <% if privilege?(:delete_contact) %>
+	    <% if privilege?(:delete_company) %>
 				<%= link_to(t('delete'), @company, :confirm => "#{t('company.info1')}?", :method => :delete, :class => "btn" ) %>
 	    <% end %>
     </div>

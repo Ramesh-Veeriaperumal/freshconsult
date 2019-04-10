@@ -38,12 +38,12 @@ class TicketTest < ActiveSupport::TestCase
   end
 
   def test_central_publish_with_launch_party_disabled
-    @account.rollback(:ticket_central_publish)
+    Account.current.rollback(:ticket_central_publish)
     CentralPublishWorker::ActiveTicketWorker.jobs.clear
     t = create_ticket(ticket_params_hash)
     assert_equal 0, CentralPublishWorker::ActiveTicketWorker.jobs.size
   ensure
-    @account.launch(:ticket_central_publish)
+    Account.current.launch(:ticket_central_publish)
   end
 
   def test_central_publish_with_launch_party_enabled

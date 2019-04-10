@@ -112,4 +112,6 @@
   :manage_availability: 111
   :contractor: 112
   :manage_calls: 113
-:max_value: 113
+  :manage_companies: 114
+  :delete_company: 115
+:max_value: 115
