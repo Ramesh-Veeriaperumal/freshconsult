@@ -3,15 +3,7 @@ include Social::Util
 
 class Helpdesk::DetectUserLanguage
 
-  # https://developers.google.com/translate/v2/using_rest#language-params
-  GOOGLE_LANGUAGES = {
-    :ja      => "ja-JP",
-    :nb      => "nb-NO",
-    :pt      => "pt-PT",
-    :ru      => "ru-RU",
-    :sv      => "sv-SE",
-    :"zh-TW" => "zh-CN"
-  }
+  include Languages::Constants
 
   def self.set_user_language!(user, text)
     language, time_taken = language_detect(text)
@@ -19,7 +11,7 @@ class Helpdesk::DetectUserLanguage
     # Hack for hypenated language codes
     if language
       log_result("successful", user.email, time_taken, language)
-      language = GOOGLE_LANGUAGES.has_key?(language.to_sym) ? GOOGLE_LANGUAGES[language.to_sym] : language
+      language = LANGUAGE_ALT_CODE.has_key?(language.to_sym) ? LANGUAGE_ALT_CODE[language.to_sym] : language
       user.language = (I18n.available_locales_with_name.map{
         |lang,sym| sym.to_s }.include? language) ? language : user.account.language
     else
