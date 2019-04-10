@@ -231,4 +231,16 @@ class TicketTest < ActiveSupport::TestCase
     payload = t.central_publish_payload.to_json
     payload.must_match_json_expression(cp_ticket_pattern(t))
   end
+
+  def test_source_additional_info_twitter_with_handle_destroy_ticket_update
+    Account.any_instance.stubs(:twitter_handle_publisher_enabled?).returns(false)
+    handle = create_twitter_handle
+    t = create_twitter_ticket(twitter_handle: handle)
+    handle.delete
+    t.update_attributes(status: 5)
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+  ensure
+    Account.any_instance.unstub(:twitter_handle_publisher_enabled?)
+  end
 end

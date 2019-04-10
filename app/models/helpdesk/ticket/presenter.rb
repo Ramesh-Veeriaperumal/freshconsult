@@ -140,7 +140,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def requester_twitter_id
-    requester.twitter_id
+    requester.present? ? requester.twitter_id : nil
   end
 
   def central_custom_fields_hash

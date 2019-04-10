@@ -98,6 +98,21 @@ module SocialTicketsCreationHelper
     handle
   end
 
+  def create_twitter_handle
+    handle = FactoryGirl.build(:seed_twitter_handle)
+    handle.account_id = Account.current.id
+    handle.save
+    handle
+  end
+
+  def create_twitter_stream(handle_id)
+    stream = FactoryGirl.build(:seed_dm_twitter_stream)
+    stream.account_id = Account.current.id
+    stream.social_id = handle_id
+    stream.save
+    stream
+  end
+
   def create_twitter_ticket(options = {})
     options[:tweet] ||= new_tweet(stream_id: options[:stream_id])
     requester = options[:requester] || create_tweet_user(options[:tweet][:user])

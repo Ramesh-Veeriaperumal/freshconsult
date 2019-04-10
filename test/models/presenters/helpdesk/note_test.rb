@@ -148,4 +148,20 @@ class NoteTest < ActiveSupport::TestCase
     payload = note.central_publish_payload.to_json
     payload.must_match_json_expression(central_publish_note_pattern(note))
   end
+
+  def test_source_additional_info_twitter_handle_destroy_note_update
+    Account.any_instance.stubs(:twitter_handle_publisher_enabled?).returns(false)
+    handle = create_twitter_handle
+    stream_id = create_twitter_stream(handle.id).id
+    twitter_params = { twitter: { tweet_id: 12_346, tweet_type: 'DM',
+                                  twitter_handle_id: handle.id,
+                                  stream_id: stream_id } }
+    note = create_note(note_params_hash.merge(source_additional_info: twitter_params))
+    handle.delete
+    note.update_attributes(body: "Update note body")
+    payload = note.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_note_pattern(note))
+  ensure
+    Account.any_instance.unstub(:twitter_handle_publisher_enabled?)
+  end
 end
