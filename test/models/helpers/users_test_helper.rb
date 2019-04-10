@@ -13,7 +13,7 @@ module ModelsUsersTestHelper
                         :active => 1,
                         :role => 1,
                         :agent => 1,
-                        :ticket_permission => 1,
+                        :ticket_permission => options[:ticket_permission] || Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets],
                         :role_ids => ["#{role_id}"],
                         :agent_type => options[:agent_type] || 1 })
   end

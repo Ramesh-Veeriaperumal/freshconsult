@@ -247,7 +247,7 @@ module Cache::Memcache::Account
 
   def twitter_handles_from_cache
     key = handles_memcache_key
-    MemcacheKeys.fetch(key) { self.twitter_handles.all }
+    fetch_from_cache(key) { self.twitter_handles.all }
   end
 
   def twitter_reauth_check_from_cache
@@ -419,10 +419,8 @@ module Cache::Memcache::Account
   end
 
   def api_webhooks_rules_from_cache
-    key = ACCOUNT_API_WEBHOOKS_RULES % { :account_id => self.id }
-    MemcacheKeys.fetch(key) do
-      api_webhook_rules.all
-    end
+    key = format(ACCOUNT_API_WEBHOOKS_RULES, account_id: self.id)
+    fetch_from_cache(key) { api_webhook_rules.all }
   end
 
   def installed_app_business_rules_from_cache
@@ -535,17 +533,13 @@ module Cache::Memcache::Account
   end
 
   def contact_password_policy_from_cache
-    @contact_password_policy_from_cache ||= begin
-      key = password_policy_memcache_key(PasswordPolicy::USER_TYPE[:contact])
-      MemcacheKeys.fetch(key) { self.contact_password_policy }
-    end
+    key = password_policy_memcache_key(PasswordPolicy::USER_TYPE[:contact])
+    fetch_from_cache(key) { self.contact_password_policy }
   end
 
   def agent_password_policy_from_cache
-    @agent_password_policy_from_cache ||= begin
-      key = password_policy_memcache_key(PasswordPolicy::USER_TYPE[:agent])
-      MemcacheKeys.fetch(key) { self.agent_password_policy }
-    end
+    key = password_policy_memcache_key(PasswordPolicy::USER_TYPE[:agent])
+    fetch_from_cache(key) { self.agent_password_policy }
   end
 
   def latest_trial_subscription_from_cache
@@ -555,12 +549,12 @@ module Cache::Memcache::Account
 
   def clear_contact_password_policy_from_cache
     key = password_policy_memcache_key(PasswordPolicy::USER_TYPE[:contact])
-    MemcacheKeys.delete_from_cache(key)
+    delete_value_from_cache(key)
   end
 
   def clear_agent_password_policy_from_cache
     key = password_policy_memcache_key(PasswordPolicy::USER_TYPE[:agent])
-    MemcacheKeys.delete_from_cache(key)
+    delete_value_from_cache(key)
   end
 
 

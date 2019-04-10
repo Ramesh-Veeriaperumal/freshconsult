@@ -8,8 +8,8 @@ module Cache::Memcache::VARule
 	end
   
   def clear_api_webhook_rules_from_cache
-  	key = ACCOUNT_API_WEBHOOKS_RULES % { :account_id => self.account_id }
-		MemcacheKeys.delete_from_cache key
+    key = format(ACCOUNT_API_WEBHOOKS_RULES, account_id: self.account_id)
+    delete_value_from_cache(key)
   end
 
   def clear_installed_app_business_rules_from_cache
