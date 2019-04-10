@@ -72,12 +72,12 @@ module AccountCleanup
           delete_spam_days = account.account_additional_settings.delete_spam_tickets_days
           number_of_days = delete_spam_days ? delete_spam_days : NUMBER_OF_DAYS
           while true
-            ticket_ids = select_values('helpdesk_tickets', "updated_at < '#{number_of_days.days.ago}' and account_id = #{@account_id} and (deleted = true or spam = true) LIMIT #{batch_size}")
-            break if ticket_ids.size.zero?
+            @ticket_ids = select_values('helpdesk_tickets', "updated_at < '#{number_of_days.days.ago}' and account_id = #{@account_id} and (deleted = true or spam = true) LIMIT #{batch_size}")
+            break if @ticket_ids.size.zero?
 
             # Check for any replication lag detected by Freno for the current user's shard in DB.
             lag = get_replication_lag_for_shard(APPLICATION_NAME, shard_name)
-            lag > 0 ? rerun_after(lag, shard_name) && return : proceed_with_delete(ticket_ids)
+            lag > 0 ? rerun_after(lag, shard_name) && return : proceed_with_delete
           end
         end
       end
@@ -90,20 +90,20 @@ module AccountCleanup
         AccountCleanup::DeleteSpamTicketsCleanup.perform_in(lag.seconds.from_now, account_id: @account_id)
       end
 
-      def proceed_with_delete(ticket_ids)
-        note_ids = select_values('helpdesk_notes', "account_id = #{@account_id} and notable_id in (#{ticket_ids.join(',')}) and notable_type = 'Helpdesk::Ticket'")
+      def proceed_with_delete
+        @note_ids = select_values('helpdesk_notes', "account_id = #{@account_id} and notable_id in (#{@ticket_ids.join(',')}) and notable_type = 'Helpdesk::Ticket'")
         execute_on_db('run_on_master') do
           # To delete from S3 as well
-          delete_attachments(ticket_ids, POLYMORPHIC_TYPE_VALUES[:helpdesk_tickets])
-          delete_attachments(note_ids, POLYMORPHIC_TYPE_VALUES[:helpdesk_notes])
+          delete_attachments(@ticket_ids, POLYMORPHIC_TYPE_VALUES[:helpdesk_tickets])
+          delete_attachments(@note_ids, POLYMORPHIC_TYPE_VALUES[:helpdesk_notes])
 
-          perform_es_deletion(ticket_ids)
+          perform_es_deletion
 
           delete_associated_data
           delete_polymorphic_association_data
 
-          execute_delete('helpdesk_notes', note_ids)
-          execute_delete('helpdesk_tickets', ticket_ids)
+          execute_delete('helpdesk_notes', @note_ids)
+          execute_delete('helpdesk_tickets', @ticket_ids)
         end
       end
 
@@ -164,8 +164,8 @@ module AccountCleanup
       ids = ActiveRecord::Base.connection.select_values(query)
     end
 
-    def perform_es_deletion(ticket_ids)
-      manual_publish_subscribers(Helpdesk::Ticket, ticket_ids)
+    def perform_es_deletion
+      manual_publish_subscribers(Helpdesk::Ticket, @ticket_ids)
     end
 
     def manual_publish_subscribers(klass, object_ids)
