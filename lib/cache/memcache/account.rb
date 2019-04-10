@@ -492,7 +492,7 @@ module Cache::Memcache::Account
 
   def account_additional_settings_from_cache
     key = ACCOUNT_ADDITIONAL_SETTINGS % { :account_id => self.id }
-    MemcacheKeys.fetch(key) { self.account_additional_settings }
+    fetch_from_cache(key) { self.account_additional_settings }
   end
 
   def account_status_groups_from_cache
@@ -504,7 +504,7 @@ module Cache::Memcache::Account
 
   def clear_account_additional_settings_from_cache
     key = ACCOUNT_ADDITIONAL_SETTINGS % { :account_id => self.id }
-    MemcacheKeys.delete_from_cache(key)
+    delete_value_from_cache(key)
   end
 
   def cti_installed_app_from_cache

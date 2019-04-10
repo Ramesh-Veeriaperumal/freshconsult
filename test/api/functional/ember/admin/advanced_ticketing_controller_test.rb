@@ -1,4 +1,5 @@
 require_relative '../../../test_helper'
+require 'sidekiq/testing'
 
 module Ember
   module Admin
@@ -12,7 +13,6 @@ module Ember
         super
         Integrations::InstalledApplication.any_instance.stubs(:marketplace_enabled?).returns(false)
       end
-
       def teardown
         super
         Integrations::InstalledApplication.unstub(:marketplace_enabled?)
@@ -92,9 +92,9 @@ module Ember
             Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
             fields_count_before_installation = Account.current.ticket_fields.size
             total_fsm_fields_count = CUSTOM_FIELDS_TO_RESERVE.size
-
-            post :create, construct_params({version: 'private'}, {name: 'field_service_management'})
-
+            Sidekiq::Testing.inline! do
+              post :create, construct_params({ version: 'private' }, { name: 'field_service_management' })
+            end
             assert_response 204          
             assert Account.current.field_service_management_enabled?
             fields_count_after_installation = Account.current.ticket_fields.size
@@ -109,19 +109,21 @@ module Ember
         enable_fsm do
           begin
             Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
-            post :create, construct_params({version: 'private'}, {name: 'field_service_management'})
+            Sidekiq::Testing.inline! do
+              post :create, construct_params({version: 'private'}, {name: 'field_service_management'})
 
-            assert_response 204
-            assert Account.current.field_service_management_enabled?
-            assert Account.current.parent_child_tickets_enabled?
+              assert_response 204
+              assert Account.current.field_service_management_enabled?
+              assert Account.current.parent_child_tickets_enabled?
 
-            fields_count_after_installation = Account.current.ticket_fields.size
-            total_fsm_fields_count = CUSTOM_FIELDS_TO_RESERVE.size
+              fields_count_after_installation = Account.current.ticket_fields.size
+              total_fsm_fields_count = CUSTOM_FIELDS_TO_RESERVE.size
 
-            delete :destroy, controller_params(version: 'private', id: 'field_service_management')
+              delete :destroy, controller_params(version: 'private', id: 'field_service_management')
 
-            fields_count_after_destroy = Account.current.ticket_fields.size
-            assert fields_count_after_destroy == (fields_count_after_installation - total_fsm_fields_count)
+              fields_count_after_destroy = Account.current.ticket_fields.size
+              assert fields_count_after_destroy == (fields_count_after_installation - total_fsm_fields_count)
+            end
           ensure
             Account.any_instance.unstub(:disable_old_ui_enabled?)
           end
@@ -182,6 +184,9 @@ module Ember
       end
 
       def test_destroy_parent_child
+        Account.current.installed_applications.with_name(:parent_child_tickets).each do |inst_app|
+          inst_app.destroy
+        end
         create_installed_application(:parent_child_tickets) do
           delete :destroy, controller_params(version: 'private', id: 'parent_child_tickets')
           destroy_success_pattern(:parent_child_tickets)

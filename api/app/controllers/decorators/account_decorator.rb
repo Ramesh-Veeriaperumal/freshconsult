@@ -32,6 +32,7 @@ class AccountDecorator < ApiDecorator
     trial_subscription = record.latest_trial_subscription_from_cache
     ret_hash[:trial_subscription] = trial_subscription_hash(trial_subscription) if trial_subscription
     ret_hash[:account_cancellation_requested] = record.account_cancellation_requested?
+    ret_hash[:anonymous_account] = true if record.anonymous_account?
     ret_hash
   end
 

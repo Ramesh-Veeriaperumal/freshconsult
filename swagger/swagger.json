@@ -6776,6 +6776,38 @@
         }
       }
     },
+    "/onboarding/anonymous_to_trial": {
+      "post": {
+        "tags": [
+          "onboarding"
+        ],
+        "description": "Convert anonymous account to trial",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "body",
+            "description": "Domain name to change",
+            "schema": {
+              "$ref": "#/definitions/onboarding_anonymous_to_trial_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/onboarding_anonymous_to_trial"
+            }
+          },
+          "400": {
+            "description": "Bad request error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
     "/trial_widget": {
       "post": {
         "summary": "Trial Widget Steps",
@@ -13876,6 +13908,15 @@
         }
       }
     },
+    "onboarding_anonymous_to_trial_input": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "Admin email to convert the account to trial"
+        }
+      }
+    },
     "update_channels_input": {
       "type": "object",
       "description": "Channels Array",
@@ -19581,6 +19622,26 @@
               }
             }
           }
+        }
+      }
+    },
+    "onboarding_anonymous_to_trial": {
+      "type": "object",
+      "properties": {
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "company_name": {
+          "type": "string"
+        },
+        "anonymous_account": {
+          "type": "boolean"
         }
       }
     },

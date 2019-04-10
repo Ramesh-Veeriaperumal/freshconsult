@@ -669,6 +669,7 @@ Helpkit::Application.routes.draw do
         get :suggest_domains
         post :validate_domain_name
         put :customize_domain
+        post :anonymous_to_trial
       end
     end
 

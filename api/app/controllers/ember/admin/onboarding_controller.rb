@@ -4,7 +4,7 @@ module Ember
       include HelperConcern
       include ::Onboarding::OnboardingHelperMethods
 
-      before_filter :validate_body_params, only: [:update_activation_email, :update_channel_config, :test_email_forwarding]
+      before_filter :validate_body_params, only: [:update_activation_email, :update_channel_config, :test_email_forwarding, :anonymous_to_trial]
       before_filter :set_user_email_config, only: [:update_activation_email]
       before_filter :check_onboarding_finished, only: [:update_channel_config]
       before_filter :check_forward_verification_email_ticket, only: [:forward_email_confirmation]
@@ -68,6 +68,26 @@ module Ember
         return unless validate_delegator(@item, new_domain: @full_domain)
         @support_email_configured = current_account.support_email_setup?
         current_account.mark_customize_domain_setup_and_save if current_account.update_default_domain_and_email_config(params[:subdomain])
+      end
+
+      def anonymous_to_trial
+        return unless validate_delegator(email: params[cname]['admin_email'])
+
+        update_current_user_info
+        ActiveRecord::Base.transaction do
+          if @item.save
+            update_admin_related_info
+            convert_to_trial
+          else
+            render_errors(@item.errors)
+          end
+        end
+        response.api_root_key = :account_configs
+      rescue StandardError => e
+        current_account.reload
+        error_msg = "Error while activating the anonymous account :: ID :: #{@item.id} :: Message :: #{e.message} :: Backtrace :: #{e.backtrace[0..20]}"
+        Rails.logger.error(error_msg)
+        render_base_error(:internal_error, 500)
       end
 
       private

@@ -53,7 +53,7 @@ def build_setup(category) {
                 aws s3 cp s3://testengineering/Dockerfile-backend/elasticsearch.yml /home/jenkins/helpkit/config/elasticsearch.yml
                 aws s3 cp s3://testengineering/Dockerfile-backend/redis.yml /home/jenkins/helpkit/config/redis.yml
                 aws s3 cp s3://testengineering/Dockerfile-backend/channel_api_keys.yml /home/jenkins/helpkit/config/channel_api_keys.yml
-	        sudo service mysql start
+	        sudo service mysqld start
 	        sudo service elasticsearch start
             export CODECOV_TOKEN="${params.CODECOV_TOKEN}"
 	      	"""

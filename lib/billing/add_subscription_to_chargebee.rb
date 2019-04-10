@@ -9,19 +9,19 @@ class Billing::AddSubscriptionToChargebee
       account = Account.current
       subscription = account.subscription
       set_billing_site(subscription)
-      subscription.billing.create_subscription(account)
+      subscription.billing.create_subscription(account, {}, true)
+      add_default_addons(subscription)
       subscription.save #to update resp. currency amount
       EmailServiceProvider.perform_async
       Subscription::AddAffiliateSubscription.perform(account)
     rescue Exception => e
       logger.info "#{e}"
       logger.info e.backtrace.join("\n")
-      logger.info "something is wrong: #{e.message}"
+      logger.error "Error while adding new sign up subscription to Chargebee: #{e.message}"
       NewRelic::Agent.notice_error(e)   
       raise e 
     end
   end
-
   private
     def set_billing_site(subscription)
       currency = fetch_currency(subscription.account)
@@ -37,4 +37,11 @@ class Billing::AddSubscriptionToChargebee
       COUNTRY_MAPPING[country].nil? ? DEFAULT_CURRENCY : COUNTRY_MAPPING[country]  
     end
 
+    def add_default_addons(subscription)
+      addons_to_be_added = Subscription::Addon.addons_on_signup_list
+      if addons_to_be_added.include?(Subscription::Addon::FSM_ADDON)
+        subscription.additional_info = { :field_agent_limit => Subscription::DEFAULT_FIELD_AGENT_COUNT }
+      end
+      subscription.addons = Subscription::Addon.where('name in (?)', addons_to_be_added)
+    end
 end

@@ -7,6 +7,7 @@ class SAAS::AccountDataCleanup
   include AddTamDefaultFieldsHelper
   include SAAS::DropFeatureData
   include SAAS::AddFeatureData
+  include Admin::AdvancedTicketing::FieldServiceManagement::Util
 
   attr_accessor :account, :features_to_process, :action
 
@@ -351,7 +352,22 @@ class SAAS::AccountDataCleanup
     account.revoke_feature :custom_encrypted_fields
     account.remove_encrypted_fields
   end
-  
+
+  def handle_field_service_management_add_data
+    Rails.logger.info "Adding FSM for account #{account.id}"
+    Account.current.add_feature(:field_service_management)
+    Account.current.launch(:field_service_management_lp)
+    perform_fsm_operations
+  end
+
+  def handle_field_service_management_drop_data
+    Rails.logger.info "Removing FSM for account #{account.id}"
+    Account.current.revoke_feature(:field_service_management)
+    Account.current.subscription.additional_info[:field_agent_limit] = 0
+    Account.current.subscription.save
+    cleanup_fsm
+  end
+
   private
 
   def default_portal_preferences

@@ -75,6 +75,7 @@ class TicketDecorator < ApiDecorator
 
   def description_hash
     return false unless private_api? || description_allowed?
+    ticket_body = record.ticket_body
     {
       description: ticket_body.description_html,
       description_text: ticket_body.description
@@ -97,29 +98,33 @@ class TicketDecorator < ApiDecorator
     end
   end
 
+  def ticket_states_association
+    @ticket_states_association ||= ticket_states
+  end
+
   def stats
     return unless private_api? || channel_v2_api? || @sideload_options.include?('stats')
     states = {
-      agent_responded_at: ticket_states.agent_responded_at.try(:utc),
-      requester_responded_at: ticket_states.requester_responded_at.try(:utc),
-      first_responded_at: ticket_states.first_response_time.try(:utc),
-      status_updated_at: ticket_states.status_updated_at.try(:utc),
-      reopened_at: ticket_states.opened_at.try(:utc)
+      agent_responded_at: ticket_states_association.agent_responded_at.try(:utc),
+      requester_responded_at: ticket_states_association.requester_responded_at.try(:utc),
+      first_responded_at: ticket_states_association.first_response_time.try(:utc),
+      status_updated_at: ticket_states_association.status_updated_at.try(:utc),
+      reopened_at: ticket_states_association.opened_at.try(:utc)
     }.merge(dirty_fixed_stats)
     return states unless channel_v2_api?
     states.merge({
-      first_assigned_at: ticket_states.first_assigned_at.try(:utc),
-      assigned_at: ticket_states.assigned_at.try(:utc),
-      sla_timer_stopped_at: ticket_states.sla_timer_stopped_at.try(:utc),
-      avg_response_time_by_bhrs: ticket_states.avg_response_time_by_bhrs,
-      resolution_time_by_bhrs: ticket_states.resolution_time_by_bhrs,
-      on_state_time: ticket_states.on_state_time,
-      inbound_count: ticket_states.inbound_count,
-      outbound_count: ticket_states.outbound_count,
-      group_escalated: ticket_states.group_escalated,
-      first_resp_time_by_bhrs: ticket_states.first_resp_time_by_bhrs,
-      avg_response_time: ticket_states.avg_response_time,
-      resolution_time_updated_at: ticket_states.resolution_time_updated_at.try(:utc)
+      first_assigned_at: ticket_states_association.first_assigned_at.try(:utc),
+      assigned_at: ticket_states_association.assigned_at.try(:utc),
+      sla_timer_stopped_at: ticket_states_association.sla_timer_stopped_at.try(:utc),
+      avg_response_time_by_bhrs: ticket_states_association.avg_response_time_by_bhrs,
+      resolution_time_by_bhrs: ticket_states_association.resolution_time_by_bhrs,
+      on_state_time: ticket_states_association.on_state_time,
+      inbound_count: ticket_states_association.inbound_count,
+      outbound_count: ticket_states_association.outbound_count,
+      group_escalated: ticket_states_association.group_escalated,
+      first_resp_time_by_bhrs: ticket_states_association.first_resp_time_by_bhrs,
+      avg_response_time: ticket_states_association.avg_response_time,
+      resolution_time_updated_at: ticket_states_association.resolution_time_updated_at.try(:utc)
     })
   end
 
@@ -138,10 +143,11 @@ class TicketDecorator < ApiDecorator
 
   def tweet
     return unless (Account.current.has_feature?(:advanced_twitter) || Account.current.basic_twitter_enabled?) && record.twitter?
+    tweet = record.tweet
     {
-      tweet_id: record.tweet.tweet_id.to_s,
-      tweet_type: record.tweet.tweet_type,
-      twitter_handle_id: record.tweet.twitter_handle_id
+      tweet_id: tweet.tweet_id.to_s,
+      tweet_type: tweet.tweet_type,
+      twitter_handle_id: tweet.twitter_handle_id
     }
   end
 
@@ -160,15 +166,16 @@ class TicketDecorator < ApiDecorator
 
   def tweet_public_hash
     return unless (Account.current.has_feature?(:advanced_twitter) || Account.current.basic_twitter_enabled?) && record.twitter? && record.tweet.twitter_handle
+    tweet = record.tweet
     handle = record.tweet.twitter_handle
     tweet_hash = {
-      id: record.tweet.tweet_id.to_s,
-      type: record.tweet.tweet_type,
+      id: tweet.tweet_id.to_s,
+      type: tweet.tweet_type,
       support_handle_id: handle.twitter_user_id.to_s,
       support_screen_name: handle.screen_name,
       requester_screen_name: record.requester.twitter_id
     }
-    tweet_hash[:stream_id] = record.tweet.stream_id if channel_v2_api?
+    tweet_hash[:stream_id] = tweet.stream_id if channel_v2_api?
     tweet_hash
   end
 
@@ -231,9 +238,10 @@ class TicketDecorator < ApiDecorator
 
   def archive_hash
     return nil unless private_api? && Account.current.features_included?(:archive_tickets) && record.archive_child
+    archive_ticket = record.archive_ticket
     {
-      id: record.archive_ticket.display_id,
-      subject: record.archive_ticket.subject
+      id: archive_ticket.display_id,
+      subject: archive_ticket.subject
     }
   end
 
@@ -279,6 +287,10 @@ class TicketDecorator < ApiDecorator
     topic_hash(topic)
   end
 
+  def schema_less_ticket_association
+    @schema_less_ticket_association ||= schema_less_ticket
+  end
+
   def simple_hash
     {
       id: display_id,
@@ -290,14 +302,14 @@ class TicketDecorator < ApiDecorator
       company_id: company_id,
       status: status,
       subject: subject,
-      product_id: schema_less_ticket.try(:product_id),
+      product_id: schema_less_ticket_association.try(:product_id),
       type: ticket_type,
       due_by: due_by.try(:utc),
       fr_due_by: frDueBy.try(:utc),
       is_escalated: isescalated,
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc),
-      email_failure_count: schema_less_ticket.failure_count
+      email_failure_count: schema_less_ticket_association.failure_count
     }
   end
 
@@ -312,7 +324,7 @@ class TicketDecorator < ApiDecorator
       email_config_id: email_config_id,
       company_id: company_id,
       status: status,
-      to_emails: schema_less_ticket.try(:to_emails),
+      to_emails: schema_less_ticket_association.try(:to_emails),
       association_type: association_type,
       associated_tickets_count: subsidiary_tkts_count,
       can_be_associated: can_be_associated?,
@@ -421,8 +433,8 @@ class TicketDecorator < ApiDecorator
 
   def sender_email
     record.requester.reload unless record.requester.emails.present?
-    if record.requester.emails.include?(schema_less_ticket.try(:sender_email))
-      schema_less_ticket.try(:sender_email)
+    if record.requester.emails.include?(schema_less_ticket_association.try(:sender_email))
+      schema_less_ticket_association.try(:sender_email)
     end 
   end
 
@@ -480,7 +492,7 @@ class TicketDecorator < ApiDecorator
 
   def dirty_fixed_stats
     DIRTY_FIX_MAPPING.each_with_object({}) do |(key, value), res|
-      res[key] = ticket_states.safe_send(key).try(:utc) || (value.include?(status) ? ticket_states.updated_at.try(:utc) : nil)
+      res[key] = ticket_states_association.safe_send(key).try(:utc) || (value.include?(status) ? ticket_states_association.updated_at.try(:utc) : nil)
       res
     end
   end

@@ -24,7 +24,7 @@ class User < ActiveRecord::Base
   after_update  :destroy_scheduled_ticket_exports, :if => :privileges_changed?
   after_update :set_user_companies_changes
 
-  after_update :send_alert_email, if: [:email_id_changed?, :agent?]
+  after_update :send_alert_email, if: [:email_id_changed?, :agent?, :non_anonymous_account?]
   before_save :set_time_zone, :set_default_company
   before_save :set_language, :unless => :detect_language?
   before_save :trigger_perishable_token_reset, if: :email_id_changed?
@@ -199,6 +199,10 @@ class User < ActiveRecord::Base
 
   def delete_user_authorizations
     authorizations.authorizations_without_freshid.destroy_all if authorizations.exists?
+  end
+
+  def non_anonymous_account?
+    !account.anonymous_account?
   end
 
   protected
