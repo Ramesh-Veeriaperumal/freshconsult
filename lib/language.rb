@@ -16,6 +16,9 @@ class Language
 									:name => lang.last) 
 					arr
 				end)
+	TEST_LANGUAGES = [:"test-ui", :"long-text"].freeze
+
+	PROD_LANGUAGES = LANGUAGES.reject { |x| TEST_LANGUAGES.map(&:to_s).include?(x.code.to_s) }
 	
 	alias :to_s :name
 	alias :to_i :id

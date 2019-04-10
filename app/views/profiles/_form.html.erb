@@ -20,12 +20,6 @@
           		jQuery(this).groupPlaceholders();
   			});
   	});
-
-	//Hiding Testing UI language for production env
-  	var is_prod_env = <%= Rails.env.production? %>;
-  	if(is_prod_env) {
-  		jQuery("#user_language option[value='test-ui']").remove();
-  	}
   });
 <% end %>
 <% content_for :onload_script do %>
