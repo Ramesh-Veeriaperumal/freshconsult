@@ -22,7 +22,7 @@ class Account < ActiveRecord::Base
     :agent_group_central_publish, :custom_fields_search,:update_billing_info, :fluffy,
     :allow_billing_info_update, :pricing_plan_change_2019, :tag_central_publish, :native_apps,
     :surveys_central_publish, :id_for_choices_write, :nested_field_revamp, :session_logs, :bypass_signup_captcha,
-    :freshvisual_configs, :ticket_field_limit_increase, :join_ticket_field_data,
+    :freshvisual_configs, :ticket_field_limit_increase, :join_ticket_field_data, :contact_company_split,
     :contact_field_central_publish, :company_field_central_publish
   ].freeze
 

@@ -67,4 +67,5 @@ class User < ActiveRecord::Base
 
   VA_LAZY_EVALUATIONS = [:segments].freeze
   CONTACT_NAME_SANITIZER_REGEX = /www\..*|\/|"/
+  CONTACT_COMPANY_PRIVILEGES_SPLIT = [:manage_companies, :delete_company].freeze
 end

@@ -520,23 +520,27 @@ class User < ActiveRecord::Base
       if params[:user][:added_companies].present?
         to_be_added = JSON.parse params[:user][:added_companies]
         to_be_added.each do |comp|
-          new_comp = account.companies.find_or_create_by_name(comp["company_name"])
-          user_companies.build(:company_id => new_comp.id,
-                               :client_manager => comp["client_manager"],
-                               :default => comp["default_company"])
+          new_comp = find_or_create_company(comp['company_name'])
+          next if new_comp.blank?
+
+          user_companies.build(company_id: new_comp.id,
+                               client_manager: comp['client_manager'],
+                               default: comp['default_company'])
         end
       end
 
       if params[:user][:edited_companies].present?
         to_be_edited = JSON.parse params[:user][:edited_companies]
         to_be_edited.each do |comp|
-          u_comp = user_companies.find { |uc| uc.company_id == comp["id"] }
-          if comp["company_name"].present?
-            new_comp = account.companies.find_or_create_by_name(comp["company_name"])
-            u_comp.company_id = new_comp.id
-            u_comp.default = comp["default_company"]
-            u_comp.client_manager = comp["client_manager"]
-          end
+          next if comp['company_name'].blank?
+
+          u_comp = user_companies.find { |uc| uc.company_id == comp['id'] }
+          new_comp = find_or_create_company(comp['company_name'])
+          next if new_comp.blank?
+
+          u_comp.company_id = new_comp.id
+          u_comp.default = comp['default_company']
+          u_comp.client_manager = comp['client_manager']
         end
       end
     end
@@ -896,8 +900,8 @@ class User < ActiveRecord::Base
 
   def company_name= name
     if name.present?
-      comp = account.companies.find_or_create_by_name(name)
-      build_or_update_company(comp.id)
+      comp = find_or_create_company(name)
+      build_or_update_company(comp.id) if comp.present?
     else
       mark_user_company_destroy
     end
@@ -1144,8 +1148,8 @@ class User < ActiveRecord::Base
 
   def assign_company comp_name
     if has_multiple_companies_feature?
-      comp = account.companies.find_or_create_by_name(comp_name)
-      self.user_companies.build(:company_id => comp.id) if
+      comp = find_or_create_company(comp_name)
+      self.user_companies.build(company_id: comp.id) if comp.present? &&
         self.user_companies.find_by_company_id(comp.id).blank?
     else
       self.company_name = comp_name
@@ -1272,7 +1276,23 @@ class User < ActiveRecord::Base
     save
   end
 
+  def privilege?(privilege)
+    if CONTACT_COMPANY_PRIVILEGES_SPLIT.include?(privilege) &&
+       !account.launched?(:contact_company_split)
+      privilege = privilege == :manage_companies ? :manage_contacts : :delete_contact
+    end
+    super
+  end
+
   private
+
+    def find_or_create_company(name)
+      if User.current.privilege?(:manage_companies)
+        account.companies.find_or_create_by_name(name)
+      else
+        account.companies.find_by_name(name)
+      end
+    end
 
     def freshid_enabled_account?
       account.freshid_enabled?

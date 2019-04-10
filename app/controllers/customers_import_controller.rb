@@ -6,6 +6,10 @@ class CustomersImportController < ApplicationController
    before_filter :validate_customer_type
    before_filter :validate_params, :only => [:map_fields, :create]
    before_filter :file_info, :only => :create
+   PRIVILEGE_MAP = {
+    contact: :manage_contacts,
+    company: :manage_companies,
+   }
 
    #------------------------------------Customers include both contacts and companies-----------------------------------------------
 
@@ -46,6 +50,11 @@ class CustomersImportController < ApplicationController
   def validate_params
     params.symbolize_keys
     session_fields = session[:map_fields]
+    unless has_privilege?
+      flash_msg = { notice: t(:'flash.general.insufficient_privilege.admin') }
+      return redirect_to "/#{params[:type].pluralize}", flash: flash_msg
+    end
+
     if session_fields.nil? || !params[:file].blank?
       redirect_to "/imports/#{params[:type]}", 
           :flash=>{:error =>t(:'flash.customers_import.no_file')} if params[:file].blank?
@@ -85,5 +94,9 @@ class CustomersImportController < ApplicationController
 
   def set_selected_tab
     @selected_tab = :customers
+  end
+
+  def has_privilege?
+    current_user.privilege? PRIVILEGE_MAP[params[:type].to_sym]
   end
 end
