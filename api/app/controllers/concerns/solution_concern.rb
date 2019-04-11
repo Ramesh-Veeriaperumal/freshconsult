@@ -1,6 +1,8 @@
 module SolutionConcern
   extend ActiveSupport::Concern
 
+  include Cache::Memcache::Account
+
   def validate_language
     if params.key?(:language)
       permitted_languages = Account.current.supported_languages
@@ -44,5 +46,10 @@ module SolutionConcern
     elsif @item.parent.errors.any?
       render_custom_errors @item.parent
     end
+  end
+
+  def fetch_unassociated_categories(language_id)
+    category_meta_ids = unassociated_categories_from_cache
+    current_account.solution_categories.where(parent_id: category_meta_ids, language_id: language_id)
   end
 end

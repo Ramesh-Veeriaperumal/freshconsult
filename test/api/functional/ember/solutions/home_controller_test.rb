@@ -121,6 +121,8 @@ module Ember
       def test_quick_views_with_valid_params
         skip('Pattern change and count mismatch happens. Will be fixed in this PR. #4609')
         solution_test_setup
+        category = create_category
+        @account.portal_solution_categories.where(solution_category_meta_id: category.id).last.destroy
         create_article(article_params)
         portal = Account.current.main_portal
         get :quick_views, controller_params(version: 'private', portal_id: portal.id)

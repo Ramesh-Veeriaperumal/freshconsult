@@ -1,9 +1,13 @@
 require_relative '../../../test_helper'
+['solutions_helper.rb', 'solution_builder_helper.rb'].each { |file| require Rails.root.join('spec', 'support', file) }
+
 module Ember
   module Solutions
     class FoldersControllerTest < ActionController::TestCase
       include SolutionsTestHelper
       include SolutionFoldersTestHelper
+      include SolutionBuilderHelper
+      include SolutionsHelper
 
       def setup
         super
@@ -76,6 +80,25 @@ module Ember
         assert sample_folder.reload.description == old_description
         assert sample_folder.reload.solution_folder_meta.visibility == visibility
         assert sample_folder.reload.solution_folder_meta.customer_ids == [@account.customer_ids.last]
+      end
+
+      def test_update_folder_name_and_category
+        category_meta = get_category
+        name = category_meta.solution_folder_meta.first.name
+        new_folder = create_folder(name: name)
+        params_hash = { name: "#{Faker::Name.name} #{Time.now.utc}", category_id: category_meta.id }
+        put :update, construct_params({ id: Solution::FolderMeta.last.id, version: 'private' }, params_hash)
+        assert_response 200
+      end
+
+      def test_update_category_with_duplicate_name
+        category_meta = get_category
+        name = category_meta.solution_folder_meta.first.name
+        new_folder = create_folder(name: name)
+        params_hash = { name: name, category_id: category_meta.id }
+        put :update, construct_params({ id: Solution::FolderMeta.last.id, version: 'private' }, params_hash)
+        assert_response 409
+        match_json(validation_error_pattern(:name, :duplicate_value))
       end
 
       def test_bulk_update
@@ -154,6 +177,19 @@ module Ember
               {
                 field: 'properties',
                 nested_field: "properties.#{field}",
+                message: :string,
+                code: code.to_s
+              }
+            ]
+          }
+        end
+
+        def validation_error_pattern(field, code)
+          {
+            description: 'Validation failed',
+            errors: [
+              {
+                field: field.to_s,
                 message: :string,
                 code: code.to_s
               }

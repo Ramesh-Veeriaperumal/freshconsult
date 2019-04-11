@@ -1,5 +1,5 @@
 class Solutions::CategoryDecorator < ApiDecorator
-  delegate :id, :name, :description, :parent, :primary_category, :solution_folder_meta, :portal_solution_categories, to: :record
+  delegate :id, :name, :description, :parent, :primary_category, :solution_folder_meta, :portal_solution_categories, :parent_id, to: :record
 
   def initialize(record, options = {})
     super(record)
@@ -26,6 +26,14 @@ class Solutions::CategoryDecorator < ApiDecorator
       folders_count: folders_count,
       folders: solution_folder_meta[0..2].map { |folder_meta| Solutions::FolderDecorator.new(folder_meta).summary_hash },
       position: portal_solution_categories.select { |portal_solution_category| portal_solution_category.portal_id == @portal_id.to_i }.first.position
+    }
+  end
+
+  def unassociated_category_hash
+    {
+      id: parent_id,
+      name: name,
+      description: description
     }
   end
 

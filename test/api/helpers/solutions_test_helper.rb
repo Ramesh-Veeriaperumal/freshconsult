@@ -250,7 +250,7 @@ module SolutionsTestHelper
     @published_articles = fetch_published_articles
     @all_feedback = Account.current.article_tickets.select(:id).where(article_id: get_article_ids(@articles))
     @my_feedback = Account.current.article_tickets.select(:id).where(article_id: get_article_ids(@articles.select{ |article| article.user_id == User.current.id }))
-    @orphan_categories = fetch_unassociated_categories_from_cache || []
+    @orphan_categories = fetch_unassociated_categories.map { |category| unassociated_category_pattern(category) }
     response.api_root_key = :quick_views
     {
      all_categories: @categories.count,
@@ -266,8 +266,10 @@ module SolutionsTestHelper
   end
 
   def fetch_categories(portal_id)
-    @category_meta = Account.current.portals.where(id: portal_id).first.solution_categories_from_cache
-    Account.current.solution_categories.where(parent_id: @category_meta.map(&:id), language_id: (Language.current? ? Language.current.id : Language.for_current_account.id))
+    @category_meta = Account.current.portals.find_by_id(portal_id).public_category_meta.order('portal_solution_categories.position').all
+    portal_categories = Account.current.solution_categories.where(parent_id: @category_meta.map(&:id), language_id: (Language.current? ? Language.current.id : Language.for_current_account.id))
+    @category_meta << Account.current.solution_category_meta.where(is_default: true).first
+    portal_categories
   end
 
   def fetch_articles
@@ -277,7 +279,7 @@ module SolutionsTestHelper
       article_meta << categ_meta.solution_article_meta.preload(&:current_article)
     end
     article_meta.flatten!
-    Account.current.solution_articles.select([:id,:user_id,:status]).where(parent_id: article_meta.map(&:id), language_id: (Language.current? ? Language.current.id : Language.for_current_account.id))
+    Account.current.solution_articles.select([:id, :user_id, :status]).where(parent_id: article_meta.map(&:id), language_id: (Language.current? ? Language.current.id : Language.for_current_account.id))
   end
 
   def fetch_drafts
@@ -295,11 +297,19 @@ module SolutionsTestHelper
     @articles.where(status: Solution::Constants::STATUS_KEYS_BY_TOKEN[:published])
   end
 
-  def fetch_unassociated_categories_from_cache
-    CustomMemcacheKeys.fetch(CustomMemcacheKeys::UNASSOCIATED_CATEGORIES % {account_id: Account.current.id}, "Unassociated categories for #{Account.current.id}") do
-      associated_category_ids = Account.current.portal_solution_categories.map(&:solution_category_meta_id).uniq
-      Account.current.solution_category_meta.select(:id).where('id NOT IN (?)', associated_category_ids)
-    end
+  def fetch_unassociated_categories
+    associated_category_ids = Account.current.portal_solution_categories.map(&:solution_category_meta_id).uniq
+    @account.solution_categories.where('parent_id NOT IN (?) AND language_id = ?', associated_category_ids, @account.language_object.id)
+  end
+
+  def unassociated_category_pattern(category)
+    {
+      category: {
+        id: category.parent_id,
+        name: category.name,
+        description: category.description
+      }
+    }
   end
 
   def votes_pattern(article)

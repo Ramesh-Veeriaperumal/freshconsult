@@ -675,9 +675,24 @@ module Cache::Memcache::Account
     MemcacheKeys.delete_from_cache(key)
   end
 
+  def unassociated_categories_from_cache
+    MemcacheKeys.fetch(unassociated_categories_memcache_key) do
+      associated_category_ids = Account.current.portal_solution_categories.pluck(:solution_category_meta_id).uniq
+      Account.current.solution_category_meta.where('id NOT IN (?)', associated_category_ids).pluck(:id)
+    end
+  end
+
+  def clear_unassociated_categories_cache
+    MemcacheKeys.delete_from_cache(unassociated_categories_memcache_key)
+  end
+
   private
     def permissible_domains_memcache_key id = self.id
       HELPDESK_PERMISSIBLE_DOMAINS % { :account_id => id }
+    end
+
+    def unassociated_categories_memcache_key
+      UNASSOCIATED_CATEGORIES % { account_id: Account.current.id }
     end
 
     def ticket_types_memcache_key
