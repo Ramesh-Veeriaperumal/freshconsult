@@ -17,7 +17,7 @@ module SharedPersonalMethods
   def index
     @current_tab = params[:current_tab] || default_tab
     cookies[:"#{human_name}_show_tab"] = @current_tab
-    @order_by = params[:recently_created] ? "created_at desc" : "name"
+    @order_by = params.key?('recently_created') && params[:recently_created].to_bool ? 'created_at desc' : 'name'
     @per_page =  ((params[:per_page].blank? || params[:per_page].to_i.zero? || params[:per_page].to_i > 15) ?
       15 :  params[:per_page])
     @page = params[:page].to_i.zero? ? nil : params[:page]
