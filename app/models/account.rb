@@ -507,7 +507,13 @@ class Account < ActiveRecord::Base
   end
 
   def set_custom_dashboard_limit(dashboard_limits, type = :min)
-    dashboard_limits ||= DASHBOARD_LIMITS[type]
+    if self.field_service_management_enabled?
+      limit = DASHBOARD_LIMITS[type].clone
+      limit[:dashboard] += 1
+      dashboard_limits = limit
+    else
+      dashboard_limits ||= DASHBOARD_LIMITS[type]
+    end
     account_additional_settings.additional_settings = (account_additional_settings.additional_settings || {}).merge(dashboard_limits: dashboard_limits)
     account_additional_settings.save
   end

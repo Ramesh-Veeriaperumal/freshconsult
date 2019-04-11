@@ -539,6 +539,15 @@ en:
     drag_and_drop_field: Drag & Drop Field
     default_field_error: Default fields cannot be dropped into section
     encrypted_text: "Encrypted Field"
+  fsm_dashboard:
+    name: Field service metrics
+    widgets:
+      service_tasks_resolution_trend: Service tasks resolution trend
+      incoming_service_tasks_trend: Incoming service tasks trend
+      service_tasks_avg_resolution: Service tasks avg resolution
+      service_tasks_due_today: Service tasks due today
+      unassigned_service_tasks: Unassigned service tasks
+      overdue_service_tasks: Overdue service tasks
   ticket_fields:
     fields:
       fsm_fields_edit: This default field cannot be edited
@@ -12495,7 +12504,7 @@ en:
           point1: 'Assign conversations to a group or team member'
           point2: 'Know who your customers are - their profile, navigation path, and previous ticket details to reply with context.'
           point3: 'Resolve conversations and choose between converting them to a new ticket or appending to an existing one.'
-  
+
   mailer_notifier:
     hi: 'Hi,'
     hey_user: 'Hey %{user_name}'

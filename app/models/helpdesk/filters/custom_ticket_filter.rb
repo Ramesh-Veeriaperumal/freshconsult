@@ -752,6 +752,19 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     Helpdesk::DeactivateFilterWidgets.perform_async({ filter_id: self.id })
   end
 
+  def self.add_default_custom_filters(default_custom_filter_conditions)
+    default_custom_filter_conditions.each do |name,filter_data|
+      ticket_filter = Account.current.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
+      ticket_filter.name = I18n.t("fsm_dashboard.widgets.#{name}")
+      ticket_filter.match = :and
+      ticket_filter.model_class_name = 'Helpdesk::Ticket'
+      ticket_filter.query_hash = filter_data[:filter]
+      ticket_filter.visibility = { :visibility => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents], :user_id => Account.current.account_managers.first }
+      ticket_filter.account_id = Account.current.id
+      ticket_filter.save
+    end
+  end
+
   class << self
     include Cache::Memcache::Helpdesk::Filters::CustomTicketFilter
   end

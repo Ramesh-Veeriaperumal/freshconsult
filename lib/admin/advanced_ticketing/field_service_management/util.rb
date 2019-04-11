@@ -1,6 +1,7 @@
 module Admin::AdvancedTicketing::FieldServiceManagement
   module Util
     include Admin::AdvancedTicketing::FieldServiceManagement::Constant
+    include Dashboard::Custom::CustomDashboardConstants
     include Helpdesk::Ticketfields::ControllerMethods
     include Cache::Memcache::Helpdesk::Section
     include GroupConstants
@@ -13,6 +14,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         create_section
         create_field_agent_type
         add_data_to_group_type
+        create_fsm_dashboard if Account.current.fsm_dashboard_enabled?
         expire_cache
       rescue StandardError => e
         cleanup_fsm
@@ -117,7 +119,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
 
         section.save
       end
-      
+
       def add_data_to_group_type
         group_type = GroupType.create_group_type(Account.current, FIELD_GROUP_NAME)
         raise "Field group type did not get created" unless group_type
@@ -128,12 +130,86 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         raise "Field agent type did not get created" unless agent_type
       end
 
+      def create_fsm_dashboard
+        options = create_fsm_default_custom_filters
+        dashboard_object = DashboardObjectConcern.new(I18n.t("fsm_dashboard.name"))
+        dashboard_object_with_widget = add_widgets_to_fsm_dashboard(dashboard_object, options)
+        fsm_dashboard = Dashboard.new(dashboard_object_with_widget.get_dashboard_payload(:db))
+        raise "Failed to create fsm dashboard" unless fsm_dashboard.save
+      end
+
+      def create_fsm_default_custom_filters
+        default_custom_filters_conditions = get_fsm_filter_conditions
+        Helpdesk::Filters::CustomTicketFilter.add_default_custom_filters(default_custom_filters_conditions)
+        default_custom_filters_conditions.keys.collect { |key|  [key,{ ticket_filter_id: Account.current.ticket_filters.where( name: I18n.t("fsm_dashboard.widgets.#{key}")).first.id }]}.to_h
+      end
+
+      def add_widgets_to_fsm_dashboard(dashboard_object,options)
+        trends_x_position = 0
+        scorecard_x_postion = 0
+        WIDGETS.each do |widget_name, type|
+          if type == WIDGET_MODULE_TOKEN_BY_NAME[SCORE_CARD]
+            position = { x: scorecard_x_postion, y: Y_AXIS_POSITION[:scorecard] }
+            dashboard_object.add_widget(type, position, I18n.t("fsm_dashboard.widgets.#{widget_name}"), options[widget_name])
+            scorecard_x_postion += SCORECARD_DIMENSIONS[:width]
+          else
+            position = { x: trends_x_position, y: Y_AXIS_POSITION[:trend] }
+            trends_x_position += TREND_DIMENSIONS[:width]
+            dashboard_object.add_widget(type, position, I18n.t("fsm_dashboard.widgets.#{widget_name}"))
+          end
+        end
+        dashboard_object
+      end
+
+      def get_fsm_filter_conditions
+        start_time = Account.current.custom_date_time_fields_from_cache.find { |x| x.name == TicketFilterConstants::FSM_APPOINTMENT_START_TIME + "_#{Account.current.id}" }
+        end_time = Account.current.custom_date_time_fields_from_cache.find { |x| x.name == TicketFilterConstants::FSM_APPOINTMENT_END_TIME + "_#{Account.current.id}" }
+
+        filter_conditions = {
+                              FSM_TICKET_FILTERS[0] => {
+                                name: I18n.t('fsm_dashboard.widgets.service_tasks_due_today'),
+                                filter: [
+                                  { 'condition' => "flexifields.#{start_time.column_name}", "operator" => 'is', 'value' => 'today', 'ff_name' => "#{start_time.name}" }
+                                ]
+                              },
+
+                              FSM_TICKET_FILTERS[1] => {
+                                name: I18n.t('fsm_dashboard.widgets.unassigned_service_tasks'),
+                                filter: [
+                                  { 'condition' => 'responder_id', 'operator' => 'is_in', 'value' => '-1', 'ff_name' => 'default' }
+                                ]
+                              },
+
+                              FSM_TICKET_FILTERS[2] => {
+                                name: I18n.t('fsm_dashboard.widgets.overdue_service_tasks'),
+                                filter: [
+                                  { 'condition' => "flexifields.#{end_time.column_name}", 'operator' => 'is', 'value' => 'in_the_past', 'ff_name' => "#{end_time.name}" }
+                                ]
+                              }
+                            }
+        all_filter_conditions = filter_conditions.each { |k,v| v[:filter] += COMMON_FILTER_CONDITIONS }
+        all_filter_conditions
+      end
+
       def cleanup_fsm
         destroy_custom_fields
         destroy_sections
         destroy_service_ticket_type
         destroy_field_agent
         destroy_field_group
+        destroy_fsm_dashboard_and_filters if Account.current.fsm_dashboard_enabled?
+      end
+
+      def destroy_fsm_dashboard_and_filters
+        fsm_dashboard = Account.current.dashboards.find_by_name(I18n.t("fsm_dashboard.name"))
+        fsm_dashboard.try(:destroy)
+        destroy_fsm_ticket_filters
+      end
+
+      def destroy_fsm_ticket_filters
+        FSM_TICKET_FILTERS.each do |name|
+          Account.current.dashboard_widgets.find_by_name(I18n.t("fsm_dashboard.widgets.#{name}")).try(:destroy)
+        end
       end
 
       def destroy_custom_fields

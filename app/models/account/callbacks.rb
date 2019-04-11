@@ -13,7 +13,8 @@ class Account < ActiveRecord::Base
   before_destroy :backup_changes, :make_shard_mapping_inactive
 
   after_create :populate_features, :change_shard_status, :make_current
-  after_update :change_shard_mapping, :update_default_business_hours_time_zone, 
+  after_update :change_dashboard_limit, :if => :field_service_management_enabled_changed?
+  after_update :change_shard_mapping, :update_default_business_hours_time_zone,
                :update_google_domain, :update_route_info, :update_users_time_zone
 
   after_update :clear_domain_cache, :if => :account_domain_changed?
@@ -28,8 +29,8 @@ class Account < ActiveRecord::Base
   before_validation :downcase_full_domain, :only => [:create , :update] , :if => :full_domain_changed?
   
   after_destroy :remove_global_shard_mapping, :remove_from_master_queries
-  after_destroy :remove_shard_mapping, :destroy_route_info
   after_destroy :destroy_freshid_account
+  after_destroy :remove_shard_mapping, :destroy_route_info
 
   after_commit :add_to_billing, :enable_elastic_search, on: :create
   after_commit :clear_api_limit_cache, :update_redis_display_id, on: :update
@@ -211,6 +212,14 @@ class Account < ActiveRecord::Base
     reset_ocr_account_id
     groups.ocr_enabled_groups.each do |group|
       group.turn_off_automatic_ticket_assignment
+    end
+  end
+
+  def change_dashboard_limit
+    if field_service_management_enabled?
+      account_additional_settings.increment_dashboard_limit
+    else
+      account_additional_settings.decrement_dashboard_limit
     end
   end
 
@@ -614,6 +623,10 @@ class Account < ActiveRecord::Base
 
     def disable_old_ui_changed?
       self.changes[:plan_features].present? && bitmap_feature_changed?(Fdadmin::FeatureMethods::BITMAP_FEATURES_WITH_VALUES[:disable_old_ui])
+    end
+
+    def field_service_management_enabled_changed?
+      @all_changes[:plan_features].present? && bitmap_feature_changed?(Fdadmin::FeatureMethods::BITMAP_FEATURES_WITH_VALUES[:field_service_management])
     end
 
     def call_freshvisuals_api?
