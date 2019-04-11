@@ -3,6 +3,34 @@ module CompaniesTestHelper
   include ContactFieldsHelper
   include CompanyHelper
   # Patterns
+
+  def company_payload_pattern (expected_output ={}, company)
+    domains = company.domains.nil? ? nil : company.domains.split(',')
+    expected_output[:ignore_created_at] ||= true
+    expected_output[:ignore_updated_at] ||= true
+    company_payload_hash = {
+      id: Fixnum,
+      name: expected_output[:name] || company.name,
+      cust_identifier: expected_output[:cust_identifier],
+      account_id: expected_output[:account_id] || company.account_id,
+      sla_policy_id: expected_output[:sla_policy_id] || company.sla_policy_id,
+      delta: expected_output[:delta] || company.delta,
+      import_id: expected_output[:import_id] || company.import_id,
+      description: company.description,
+      domains: expected_output[:domains] || domains,
+      note: company.note,
+      custom_fields: company.custom_field_hash('company') || company.custom_field.map { |k, v| [CustomFieldDecorator.display_name(k), v.respond_to?(:utc) ? v.strftime('%F') : v] }.to_h,
+      health_score: company.health_score,
+      account_tier: company.account_tier,
+      industry: company.industry,
+      renewal_date: format_renewal_date(company.renewal_date),
+      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      avatar: expected_output[:avatar] || get_contact_avatar(company)
+    }
+    company_payload_hash
+  end
+
   def company_pattern(expected_output = {}, company)
     domains = company.domains.nil? ? nil : company.domains.split(',')
     expected_output[:ignore_created_at] ||= true

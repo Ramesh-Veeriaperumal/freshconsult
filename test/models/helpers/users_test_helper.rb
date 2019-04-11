@@ -86,7 +86,7 @@ module UsersTestHelper
   end
   
   def central_publish_user_pattern(user)
-    {
+    pattern = {
       id: user.id,
       name: user.name,
       type: user.helpdesk_agent ? 'agent' : 'contact',
@@ -128,7 +128,9 @@ module UsersTestHelper
       blocked_at: user.blocked_at.try(:utc).try(:iso8601), 
       deleted_at: user.deleted_at.try(:utc).try(:iso8601), 
       created_at: user.created_at.try(:utc).try(:iso8601), 
-      updated_at: user.updated_at.try(:utc).try(:iso8601)
+      updated_at: user.updated_at.try(:utc).try(:iso8601),
     }
+    pattern[:custom_fields] = user.custom_field_hash('contact') unless user.helpdesk_agent
+    pattern
   end
 end

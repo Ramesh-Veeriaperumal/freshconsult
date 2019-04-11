@@ -266,6 +266,7 @@ class User < ActiveRecord::Base
                        :removed => @removed_roles || [] }
       @model_changes.merge!("roles" => role_changes)
     end
+    @model_changes.merge!(flexifield.changes)
     # @model_changes.symbolize_keys!
   end
 
