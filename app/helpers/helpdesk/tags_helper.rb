@@ -66,7 +66,7 @@ module Helpdesk::TagsHelper
 
   def ticket_tags_filter_link(tag)
     if falcon_enabled?
-      link = %{/a/tickets/filters/search?q[]=tags:[#{CGI.escape(tag.name.dump)}]}
+      link = %{/a/tickets/filters/search?q[]=tags:["#{safe_filter_tag(tag.name)}"]}
     else
       link = "/helpdesk/tickets/filter/tags/#{tag.id}"
     end
@@ -124,4 +124,8 @@ module Helpdesk::TagsHelper
     end
   end
 
+  # Custom function to escape double qoutes and backslash
+  def safe_filter_tag(string)
+    CGI.escape(string.gsub(/(\")/) { |match| '\\' + match })
+  end
 end
