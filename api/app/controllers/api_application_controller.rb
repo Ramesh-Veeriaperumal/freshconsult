@@ -45,7 +45,7 @@ class ApiApplicationController < MetalApiController
   before_filter :set_time_zone, :check_day_pass_usage_with_user_time_zone, :set_msg_id
   before_filter :force_utf8_params
   before_filter :set_cache_buster
-  before_filter :set_service_worker
+  before_filter :set_service_worker, if: :private_api?
 
   include AuthenticationSystem
   include HelpdeskSystem
