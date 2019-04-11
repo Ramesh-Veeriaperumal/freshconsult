@@ -293,6 +293,7 @@ Helpkit::Application.routes.draw do
     end
 
     post '/audit_log/export', to: 'audit_logs#export'
+    get '/audit_log/export/:id', to: 'audit_logs#export_s3_url'
   end
 
   ember_routes = proc do

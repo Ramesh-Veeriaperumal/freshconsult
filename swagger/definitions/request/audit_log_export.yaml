@@ -6,6 +6,9 @@ properties:
   to:
     type: string
     enum: ["2018-11-30"]
+  recieve_via:
+    type: string
+    enum: ['email/api']
   condition:
     type: string
   filter:
@@ -25,3 +28,4 @@ properties:
 required:
   - from
   - to
+  - recieve_via

@@ -25,9 +25,12 @@ class DataExport < ActiveRecord::Base
                    :file_created => 2,
                    :file_uploaded => 3,
                    :completed => 4,
-                   :failed => 5}
+                   :failed => 5,
+                   no_logs: 6}
 
   EXPORT_IN_PROGRESS_STATUS = [:started, :file_created, :file_upload].freeze
+
+  EXPORT_COMPLETED_STATUS = [4, 5, 6]
 
   scope :ticket_export, :conditions => { :source => EXPORT_TYPE[:ticket] }, :order => "id"
   scope :data_backup, conditions: { source: EXPORT_TYPE[:backup] }, :limit => 1, order: 'id desc'
@@ -36,13 +39,12 @@ class DataExport < ActiveRecord::Base
   scope :call_history_export, :conditions => { :source => EXPORT_TYPE[:call_history] }
   scope :agent_export, :conditions => { :source => EXPORT_TYPE[:agent] }, :order => "id"
   scope :reports_export, :conditions => { :source => EXPORT_TYPE[:reports] }, :order => "id"
-  scope :audit_log_export, conditions: { source: EXPORT_TYPE[:audit_log] }
+  scope :audit_log_export, conditions: { source: EXPORT_TYPE[:audit_log] }, order: 'id'
   scope :current_exports, :conditions => ["status = #{EXPORT_STATUS[:started]} and last_error is null"]
   scope :running_ticket_exports, :conditions => ["source = #{EXPORT_TYPE[:ticket]} and status NOT in (?)", [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]]
   scope :running_archive_ticket_exports, :conditions => ["source = #{EXPORT_TYPE[:archive_ticket]} and status NOT in (?)", [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]]
   scope :running_contact_exports, conditions: ["source = #{EXPORT_TYPE[:contact]} and status NOT in (?)", [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]]
   scope :running_company_exports, conditions: ["source = #{EXPORT_TYPE[:company]} and status NOT in (?)", [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]]
-  scope :running_audit_log_exports, conditions: ["source = #{EXPORT_TYPE[:audit_log]} and status NOT in (?)", [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]]
   scope :old_data_backup, lambda{ |threshold = OLD_BACKUP_UPPER_THRESHOLD_DAYS.days.ago| { 
     conditions: ["source = #{EXPORT_TYPE[:backup]} and created_at <= (?) and created_at >= (?)", 
       threshold, OLD_BACKUP_LOWER_THRESHOLD_DAYS.days.ago] }}
@@ -70,6 +72,10 @@ class DataExport < ActiveRecord::Base
 
   def failure!(error)
     self.update_attributes(:last_error => error, :status => EXPORT_STATUS[:failed])
+  end
+
+  def no_logs!
+    self.update_attributes(:status => EXPORT_STATUS[:no_logs])
   end
 
   def completed?
@@ -121,7 +127,7 @@ class DataExport < ActiveRecord::Base
   end
 
   def self.audit_log_export_limit_reached?
-    export = Account.current.data_exports.running_audit_log_exports.last
-    export.present? && export.status == 1
+    export = Account.current.data_exports.audit_log_export.last
+    export && export.status && EXPORT_COMPLETED_STATUS.exclude?(export.status) && export.token
   end
 end

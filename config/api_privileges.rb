@@ -148,7 +148,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :api_role, only: [:index, :bulk_update]
     resource :'admin/canned_form'
     resource :"ember/portal", only: [:show, :update]
-    resource :audit_log, only: [:filter, :export, :event_name]
+    resource :audit_log, only: [:filter, :export, :event_name, :export_s3_url]
     resource :'ember/omni_channel', only: [:index]
     resource :"admin/subscription", only: [:show, :plans]
     resource :"ember/ocr_proxy"

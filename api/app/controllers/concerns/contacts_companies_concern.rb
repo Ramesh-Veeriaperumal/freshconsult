@@ -78,6 +78,7 @@ module ContactsCompaniesConcern
       url = AwsWrapper::S3Object.url_for(attachment.content.path(:original), attachment.content.bucket_name, options)
       @export_details.merge!(download_url: url)
     end
+    @export_details
   end
 
   def fetch_status

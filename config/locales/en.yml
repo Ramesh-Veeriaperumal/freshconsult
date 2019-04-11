@@ -7699,6 +7699,8 @@ en:
       subject: "Audit Log Export for %{domain}"
       body: "You can download the file from <a href=%{url}>here</a>.If the link does not work, copy and paste the URL below in your browser's address bar:"
       note: "This link will expire in 15 days."
+    no_logs_mail:
+      body: "There is no logs for given request. Please try with different timeline or filter"
     agents:
       fields:
         name: "Name"

@@ -294,5 +294,10 @@ api_error_messages:
   content_changed: "Content has been changed elsewhere"
   cannot_create_new_tag: "cannot_create_new_tag: %{tags}"
   invalid_ebay_ticket_source: "Invalid ticket source"
+
+
+  audit_log_export: 'your request is in process'
+
   account_in_trial: 'Account is already in trial'
   email_limit_reached: 'You have already created %{limit} accounts with this email'
+

@@ -154,7 +154,7 @@ module AuditLog::AuditLogHelper
         if report_data
           report_data.each_pair do |key, value|
             if AuditLogConstants::EXPORT_ENRICHED_KEYS.include?(key)
-              value = value == :destroy ? ["destroy"] : value.to_s.to_a
+              value = value == :destroy ? ['delete'] : value.to_s.to_a
               value_arr.push(value)
             elsif key == :name
               name = value[:name].to_s.to_a

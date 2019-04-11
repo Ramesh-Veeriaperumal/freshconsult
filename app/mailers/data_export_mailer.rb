@@ -171,7 +171,7 @@ class DataExportMailer < ActionMailer::Base
     end.deliver
   end
 
-   def audit_log_export(options)
+  def audit_log_export(options)
     headers = {
       :subject => safe_send("#{options[:type]}_export_subject", options),
       :to => options[:email],
@@ -207,29 +207,47 @@ class DataExportMailer < ActionMailer::Base
       part.html { render 'default_template', formats: [:html] }
     end.deliver
   end
- 
-  def broadcast_message options={}
+
+  def no_logs(options)
+    headers = {
+      :subject => 'Audit Log Export',
+      :to => options[:email],
+      :from => AppConfig['from_email'],
+      :bcc => AppConfig['reports_email'],
+      :sent_on => Time.zone.now,
+      'Reply-to' => ''
+    }
+    @message = I18n.t('export_data.no_logs_mail.body')
+    headers.merge!(make_header(nil, nil, Account.current.id, 'Audit_log_export'))
+    @user = options[:user]
+    @account = Account.current
+    mail(headers) do |part|
+      part.html { render 'default_template', formats: [:html] }
+    end.deliver
+  end
+
+  def broadcast_message(options = {})
     message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@private-notification.freshdesk.com"
     ticket = Helpdesk::Ticket.find_by_display_id(options[:ticket_id])
     begin
       configure_email_config ticket.reply_email_config
       headers = {
-        "Message-ID"                =>  "<#{message_id}>",
-        "Auto-Submitted"            =>  "auto-generated",
-        "X-Auto-Response-Suppress"  =>  "DR, RN, OOF, AutoReply",
+        'Message-ID'                =>  "<#{message_id}>",
+        'Auto-Submitted'            =>  'auto-generated',
+        'X-Auto-Response-Suppress'  =>  'DR, RN, OOF, AutoReply',
         :subject                    => options[:subject],
         :to                         => options[:to_email],
         :from                       => options[:from_email],
         :sent_on                    => Time.now
       }
 
-      headers.merge!(make_header(options[:ticket_id], nil, options[:account_id], "Broadcast Message"))
-      headers.merge!({"X-FD-Email-Category" => ticket.reply_email_config.category}) if ticket.reply_email_config.category.present?
+      headers.merge!(make_header(options[:ticket_id], nil, options[:account_id], 'Broadcast Message'))
+      headers['X-FD-Email-Category'] = ticket.reply_email_config.category if ticket.reply_email_config.category.present?
       @url = options[:url]
       @subject = options[:ticket_subject]
       @content = options[:content]
       mail(headers) do |part|
-        part.html { render "broadcast_message", :formats => [:html] }
+        part.html { render 'broadcast_message', formats: [:html] }
       end.deliver
     ensure
       remove_email_config
@@ -237,6 +255,7 @@ class DataExportMailer < ActionMailer::Base
   end
 
   private
+
     def ticket_export_subject(options)
       options[:export_params][:archived_tickets] && options[:export_params][:use_es] ? options[:export_params][:export_name] : formatted_export_subject(options)
     end
@@ -248,10 +267,10 @@ class DataExportMailer < ActionMailer::Base
     def formatted_export_subject(options)
       filter = I18n.t("export_data.#{options[:export_params][:ticket_state_filter]}")
       I18n.t('export_data.ticket_export.subject',
-            :filter => filter,
-            :start_date => options[:export_params][:start_date].to_date, 
-            :end_date => options[:export_params][:end_date].to_date,
-            :domain => options[:domain])
+             filter: filter,
+             start_date: options[:export_params][:start_date].to_date,
+             end_date: options[:export_params][:end_date].to_date,
+             domain: options[:domain])
     end
 
     def customer_export_subject(options)
@@ -260,7 +279,7 @@ class DataExportMailer < ActionMailer::Base
              domain: options[:domain])
     end
 
-  # TODO-RAILS3 Can be removed oncewe fully migrate to rails3
-  # Keep this include at end
-  include MailerDeliverAlias
+    # TODO-RAILS3 Can be removed oncewe fully migrate to rails3
+    # Keep this include at end
+    include MailerDeliverAlias
 end

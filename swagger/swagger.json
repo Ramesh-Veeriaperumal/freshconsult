@@ -14236,6 +14236,12 @@
             "2018-11-30"
           ]
         },
+        "recieve_via": {
+          "type": "string",
+          "enum": [
+            "email/api"
+          ]
+        },
         "condition": {
           "type": "string"
         },
@@ -14264,7 +14270,8 @@
       },
       "required": [
         "from",
-        "to"
+        "to",
+        "recieve_via"
       ]
     },
     "conversation_template": {

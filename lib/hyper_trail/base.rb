@@ -24,20 +24,22 @@ class HyperTrail::Base
     JSON.parse response.body
   end
 
-  def fetch_job_id
+  def trigger_export
     url = export_base_url
     Rails.logger.info "Export Request => url #{url}, params #{params.inspect}"
     response = HTTParty.post(url, basic_auth: basic_auth, headers: { 'Content-Type' => 'application/json' }, body: params.to_json)
+
     if response.code != 202
       Rails.logger.debug "HT Fail. #{response.code} #{response.body}"
-      return { data: [] }
+      return { data: response }
     end
     JSON.parse response.body
   end
 
-  def trigger_export
+  def retrive_export_data
     user_id = User.current.id
-    AuditLogExport.perform_at(2.seconds.from_now, export_job_id: params['job_id'], basic_auth: basic_auth, time: 0, user_id: user_id)
+    AuditLogExport.perform_at(2.seconds.from_now, export_job_id: params['job_id'], time: 0, user_id: user_id,
+                                                  receive_via: params[:receive_via])
   end
 
   private
