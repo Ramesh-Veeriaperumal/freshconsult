@@ -8,86 +8,95 @@ module SearchService
     end
 
     def query(payload = nil, uuid = nil, additional_log_info = {})
-      query_request = SearchService::Request.new(query_path, :post, uuid, payload, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), @account_id, additional_log_info)
+      uuid ||= fetch_uuid
+      query_request = SearchService::Request.new(query_path, :post, uuid, payload, request_headers('X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"), @account_id, additional_log_info)
       query_request.response
     end
 
     def analytics_query(payload = nil, uuid = nil, additional_log_info = {})
-      query_request = SearchService::Request.new(analytics_query_path, :post, uuid, payload, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), @account_id, additional_log_info)
+      uuid ||= fetch_uuid
+      query_request = SearchService::Request.new(analytics_query_path, :post, uuid, payload, request_headers('X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"), @account_id, additional_log_info)
       query_request.response
     end
 
     def multi_query(payload = nil, uuid = nil, additional_log_info = {})
+      uuid ||= fetch_uuid
       query_request = SearchService::Request.new(multi_query_path, :post, uuid, payload, request_headers('X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"), @account_id, additional_log_info, MULTI_QUERY_TIMEOUT)
       query_request.response
     end
 
     def multi_aggregate(payload = nil, uuid = nil, additional_log_info = {})
-      query_request = SearchService::Request.new(multi_aggregate_path, :post, uuid, payload, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), @account_id, additional_log_info)
+      uuid ||= fetch_uuid
+      query_request = SearchService::Request.new(multi_aggregate_path, :post, uuid, payload, request_headers('X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"), @account_id, additional_log_info)
       query_request.response
     end
 
     def aggregate(payload = nil, uuid = nil, additional_log_info = {})
-      query_request = SearchService::Request.new(aggregate_path, :post, uuid, payload, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), @account_id, additional_log_info)
+      uuid ||= fetch_uuid
+      query_request = SearchService::Request.new(aggregate_path, :post, uuid, payload, request_headers('X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"), @account_id, additional_log_info)
       query_request.response
     end
 
     def write_object(entity, version, parent_id, type, locale = nil)
-      uuid = Thread.current[:message_uuid].try(:first) || UUIDTools::UUID.timestamp_create.hexdigest
+      uuid = fetch_uuid
       payload = { payload: entity.to_esv2_json, version: version, parent_id: parent_id }
       payload.merge!({ language: locale }) if locale.present?
-      write_request = SearchService::Request.new(write_path(type, entity.id), :post, uuid, payload.to_json, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), @account_id)
+      write_request = SearchService::Request.new(write_path(type, entity.id), :post, uuid, payload.to_json, request_headers('X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"), @account_id)
       write_request.response
     end
 
     # Time published from RMQ used as version stamp
     def write_count_object(entity, version)
-     uuid = Thread.current[:message_uuid].try(:first) || UUIDTools::UUID.timestamp_create.hexdigest
-     type = 'ticketanalytics'
-     payload = { payload: entity.to_search_count_es_json, version: version }
-     path = write_path(type, entity.id)
-     write_request = SearchService::Request.new(path , :post, uuid, payload.to_json, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), Account.current.id)
-     Rails.logger.debug("Count search Service Request Write account_id :: #{Account.current.id} :: UUID :: #{uuid.inspect} :: path :: #{path} :: version :: #{version}")
-     write_request.response
+      uuid = fetch_uuid
+      type = 'ticketanalytics'
+      payload = { payload: entity.to_search_count_es_json, version: version }
+      path = write_path(type, entity.id)
+      write_request = SearchService::Request.new(path, :post, uuid, payload.to_json, request_headers('X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"), Account.current.id)
+      Rails.logger.debug("Count search Service Request Write account_id :: #{Account.current.id} :: UUID :: #{uuid.inspect} :: path :: #{path} :: version :: #{version}")
+      write_request.response
     end
 
     def delete_object(type, id)
-      uuid = Thread.current[:message_uuid].try(:first) || UUIDTools::UUID.timestamp_create.hexdigest
-      delete_request = SearchService::Request.new(delete_path(type, id), :delete, uuid, {}.to_json, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), @account_id)
+      uuid = fetch_uuid
+      delete_request = SearchService::Request.new(delete_path(type, id), :delete, uuid, {}.to_json, request_headers('X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"), @account_id)
       delete_request.response
     end
 
     def delete_by_query(type, params)
-      uuid = Thread.current[:message_uuid].try(:first) || UUIDTools::UUID.timestamp_create.hexdigest
-      delete_request = SearchService::Request.new(delete_by_query_path(type), :delete, uuid, {filters: params}.to_json, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), @account_id)
+      uuid = fetch_uuid
+      delete_request = SearchService::Request.new(delete_by_query_path(type), :delete, uuid, { filters: params }.to_json, request_headers('X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"), @account_id)
       delete_request.response
     end
 
     def tenant_bootstrap
-      uuid = Thread.current[:message_uuid].try(:first) || UUIDTools::UUID.timestamp_create.hexdigest
+      uuid = fetch_uuid
       tenant_request = SearchService::Request.new(tenants_path, :post, uuid, { id: @account_id }.to_json, request_headers({ 'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}" }.merge!(sandbox_header)), @account_id)
       tenant_request.response
     end
 
     def tenant_suspend
-      uuid = Thread.current[:message_uuid].try(:first) || UUIDTools::UUID.timestamp_create.hexdigest
-      tenant_request = SearchService::Request.new("#{tenant_path}/suspend", :put, uuid, {}.to_json, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), @account_id)
+      uuid = fetch_uuid
+      tenant_request = SearchService::Request.new("#{tenant_path}/suspend", :put, uuid, {}.to_json, request_headers('X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"), @account_id)
       tenant_request.response
     end
 
     def tenant_destroy
-      uuid = Thread.current[:message_uuid].try(:first) || UUIDTools::UUID.timestamp_create.hexdigest
-      tenant_request = SearchService::Request.new(tenant_path, :delete, uuid, {}.to_json, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), @account_id)
+      uuid = fetch_uuid
+      tenant_request = SearchService::Request.new(tenant_path, :delete, uuid, {}.to_json, request_headers('X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"), @account_id)
       tenant_request.response
     end
 
     def tenant_reactivate
-      uuid = Thread.current[:message_uuid].try(:first) || UUIDTools::UUID.timestamp_create.hexdigest
-      tenant_request = SearchService::Request.new("#{tenant_path}/reactivate", :put, uuid, {}.to_json, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), @account_id)
+      uuid = fetch_uuid
+      tenant_request = SearchService::Request.new("#{tenant_path}/reactivate", :put, uuid, {}.to_json, request_headers('X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"), @account_id)
       tenant_request.response
     end
 
     private
+
+      def fetch_uuid
+        Thread.current[:message_uuid].try(:first) || UUIDTools::UUID.timestamp_create.hexdigest
+      end
 
       def service_host
         ES_V2_CONFIG[:esv2_service_host]
