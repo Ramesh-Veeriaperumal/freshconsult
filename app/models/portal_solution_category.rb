@@ -1,5 +1,7 @@
 class PortalSolutionCategory < ActiveRecord::Base
 
+  include Cache::Memcache::Account
+  
   self.primary_key = :id
 	belongs_to_account
 	belongs_to :portal
@@ -12,6 +14,7 @@ class PortalSolutionCategory < ActiveRecord::Base
 
 	delegate :name, :to => :solution_category
 
+  after_commit :clear_unassociated_categories_cache
   after_commit ->(obj) { obj.safe_send(:clear_cache_with_condition) }, on: :update
 
   CACHEABLE_ATTRS = ["portal_id","position"]

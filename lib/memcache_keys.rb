@@ -234,7 +234,9 @@ module MemcacheKeys
   HELP_WIDGETS = "v1/HELP_WIDGETS:%{account_id}:%{id}"
 
   INSTALLED_APPS_HASH = 'INSTALLED_APPS_HASH:%{account_id}'.freeze
-    
+  
+  UNASSOCIATED_CATEGORIES = 'UNASSOCIATED_CATEGORIES:%{account_id}'.freeze
+
   def fetch_from_cache(key, &block)
     @cached_values = {} unless @cached_values
     return @cached_values[key] if @cached_values[key]
