@@ -13,7 +13,9 @@ module Account::Setup
 
   NON_CHECKLIST_KEYS = ACCOUNT_SETUP_FEATURES_LIST[:non_checklist_keys]
 
-  SETUP_KEYS = INDEPENDENT_SETUP_KEYS.merge(CONDITION_BASED_SETUP_KEYS).merge(NON_CHECKLIST_KEYS).sort_by { |key, value| value }.to_h.keys
+  ONBOARDING_V2_KEYS = ACCOUNT_SETUP_FEATURES_LIST[:onboarding_v2_keys]
+
+  SETUP_KEYS = INDEPENDENT_SETUP_KEYS.merge(CONDITION_BASED_SETUP_KEYS).merge(NON_CHECKLIST_KEYS).merge(ONBOARDING_V2_KEYS).sort_by { |key, value| value }.to_h.keys
 
   SETUP_KEYS_DISPLAY_ORDER = ACCOUNT_SETUP_FEATURES_LIST[:setup_keys_display_order]
 

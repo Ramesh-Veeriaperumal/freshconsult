@@ -23,7 +23,7 @@ module CompaniesTestHelper
       description: company.description,
       domains: expected_output[:domains] || domains,
       note: company.note,
-      custom_fields: company.custom_fields_hash || company.custom_field.map { |k, v| [CustomFieldDecorator.display_name(k), v.respond_to?(:utc) ? v.strftime('%F') : v] }.to_h,
+      custom_fields: company.custom_field_hash('company') || company.custom_field.map { |k, v| [CustomFieldDecorator.display_name(k), v.respond_to?(:utc) ? v.strftime('%F') : v] }.to_h,
       health_score: company.health_score,
       account_tier: company.account_tier,
       industry: company.industry,

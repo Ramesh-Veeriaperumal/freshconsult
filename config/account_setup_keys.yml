@@ -5,6 +5,7 @@
   support_email: 3 
   automation: 5 
   data_import: 6
+  support_channel: 19
 :condition_based_setup_keys:
   twitter: 4
   custom_app: 7
@@ -20,6 +21,20 @@
   team_inbox: 16
   canned_response: 17
   sample_data: 18
+
+:onboarding_v2_keys:
+  manage_conversation_video: 20
+  ticket_list_tour: 21
+  explore_conversation_features: 22
+  agent_productivity_video: 23
+  canned_response_tour: 24
+  explore_productivity_features: 25
+  report_video: 26
+  report_tour: 27
+  explore_performance_feature: 28
+  app_video: 29
+  app_integration: 30
+  explore_extend_capability_features: 31
 
 :setup_keys_display_order:
   - new_account
@@ -41,3 +56,16 @@
   - team_inbox
   - canned_response
   - sample_data
+  - support_channel
+  - manage_conversation_video
+  - ticket_list_tour
+  - explore_conversation_features
+  - agent_productivity_video
+  - canned_response_tour
+  - explore_productivity_features
+  - report_video
+  - report_tour
+  - explore_performance_feature
+  - app_video
+  - app_integration
+  - explore_extend_capability_features

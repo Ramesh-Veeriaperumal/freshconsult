@@ -85,12 +85,14 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
   end
 
   def by_pass_throttle?
+    return true if CustomRequestStore.read(:api_request)
     return true if  SKIPPED_SUBDOMAINS.include?(@sub_domain)
     return true unless @mobihelp_auth.blank?
     return true if !@mobile_user_agent.blank? && @mobile_user_agent[/#{AppConfig['app_name']}_Native/].present? 
 
     SKIPPED_PATHS.each{|p| return true if @path_info.include? p}
     return false if API_FORMATS.any?{|x| @api_path.include?(x)}
+    
     if @content_type
       Rails.logger.debug "Account ID :: #{@account_id} ::: Content type on API:: #{@content_type}" if @account_id
       return !THROTTLED_TYPES.include?(@content_type)

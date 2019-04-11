@@ -1,5 +1,6 @@
 class Middleware::RequestInitializer
   include Middleware::RequestVerifier
+  REQUEST_TYPES = ['pipe', 'private', 'freshid', 'channel', 'apigee', 'widget'].freeze
 
   def initialize(app)
     @app = app
@@ -12,13 +13,14 @@ class Middleware::RequestInitializer
   end
 
   def set_request_type(env)
-    CustomRequestStore.store[:api_request] = true if api_request?(env)
-    CustomRequestStore.store[:pipe_api_request] = true if pipe_api_request?(env)
-    CustomRequestStore.store[:private_api_request] = true if private_api_request?(env)
-    CustomRequestStore.store[:freshid_api_request] = true if freshid_api_request?(env)
-    CustomRequestStore.store[:channel_api_request] = true if channel_api_request?(env)
-    CustomRequestStore.store[:api_v2_request] ||= true if api_v2_request?(env)
-    CustomRequestStore.store[:apigee_api_request] = true if apigee_api_request?(env)
-    CustomRequestStore.store[:widget_api_request] = true if widget_api_request?(env)
+    return unless api_request?(env)
+
+    CustomRequestStore.store[:api_request] = true
+    REQUEST_TYPES.each do |type|
+      if safe_send("#{type}_api_request?", env)
+        return CustomRequestStore.store["#{type}_api_request".to_sym] = true
+      end
+    end
+    CustomRequestStore.store[:api_v2_request] = true
   end
 end

@@ -1,8 +1,10 @@
 class User < ActiveRecord::Base
   include RepresentationHelper
+  include CustomFieldsHelper
 
   DATETIME_FIELDS = [:last_login_at, :current_login_at, :last_seen_at, :blocked_at, :deleted_at, :created_at, :updated_at]
   CONTACT_CREATE_DESTROY = ["contact_create", "contact_destroy"]
+  FLEXIFIELD_PREFIXES = %w[cf_str cf_date cf_text cf_int cf_boolean].freeze
   AGENT_UPDATE = "agent_update"
   NEW_CONTACT = "agent_to_contact_conversion"
   NEW_AGENT = "contact_to_agent_conversion"
@@ -46,6 +48,7 @@ class User < ActiveRecord::Base
     u.add :parent_id
     u.add :unique_external_id
     u.add :import_id
+    u.add proc { |x| x.custom_field_hash('contact') }, as: :custom_fields, unless: proc { |t| t.helpdesk_agent? }
     DATETIME_FIELDS.each do |key|
       u.add proc { |x| x.utc_format(x.send(key)) }, as: key
     end
@@ -73,9 +76,18 @@ class User < ActiveRecord::Base
 
   def model_changes_for_central
     payload_type = central_payload_type
-    return {} if CONTACT_CREATE_DESTROY.include?(payload_type) || 
-                 payload_type == AGENT_UPDATE
-    @model_changes
+    return {} if CONTACT_CREATE_DESTROY.include?(payload_type) || payload_type == AGENT_UPDATE
+
+    changes = @model_changes.clone
+    flexifield_changes = changes.select { |k, v| k.to_s.starts_with?(*FLEXIFIELD_PREFIXES) }
+    return changes if flexifield_changes.blank?
+
+    contact_cf_name_mapping = account.contact_form.contact_fields_from_cache.each_with_object({}) { |entry, hash| hash[entry.column_name] = entry.name }
+    flexifield_changes.each_pair do |key, val|
+      changes[contact_cf_name_mapping[key.to_s]] = val
+      changes.delete(key)
+    end
+    changes
   end
 
   def misc_changes_for_central
