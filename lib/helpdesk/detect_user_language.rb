@@ -2,16 +2,13 @@ require 'google/api_client'
 include Social::Util
 
 class Helpdesk::DetectUserLanguage
-
-  include Languages::Constants
-
   def self.set_user_language!(user, text)
     language, time_taken = language_detect(text)
 
     # Hack for hypenated language codes
     if language
       log_result("successful", user.email, time_taken, language)
-      language = LANGUAGE_ALT_CODE.has_key?(language.to_sym) ? LANGUAGE_ALT_CODE[language.to_sym] : language
+      language = Languages::Constants::LANGUAGE_ALT_CODE[language] || language
       user.language = (I18n.available_locales_with_name.map{
         |lang,sym| sym.to_s }.include? language) ? language : user.account.language
     else
