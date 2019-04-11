@@ -7,6 +7,7 @@ module Proactive
     include MultipleValidationConcern
     include SimpleOutreachConstants
 
+    before_filter :access_denied, if: :email_outreach_disabled?, except: [:index, :show]
     before_filter :log_cname_params # Added since the action key will not be logged normally
     before_filter :check_proactive_feature, :generate_jwt_token
     skip_before_filter :build_object, only: [:create]
@@ -90,6 +91,10 @@ module Proactive
       def log_cname_params
         Rails.logger.info("Processing SimpleOutreachesController : #{action_name}")
         Rails.logger.info("Controller Parameters : #{cname_params.to_json} ")
+      end
+
+      def email_outreach_disabled?
+        return true if current_account.disable_simple_outreach_enabled? || !current_account.simple_outreach_enabled?
       end
   end
 end
