@@ -1032,6 +1032,11 @@ module ApiTicketsTestHelper
     end
   end
 
+  def create_article_feedback_ticket
+    ticket = create_ticket
+    ticket.create_article_ticket(article_id: Account.current.solution_articles.where(language_id: Account.current.language_object.id).first.id)
+  end
+
   def assert_link_failure(ticket_id, pattern = nil)
     assert_response 400
     match_json([bad_request_error_pattern(*pattern)]) if pattern.present?

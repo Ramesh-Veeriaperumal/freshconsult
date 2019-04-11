@@ -356,6 +356,12 @@ module Ember
       match_json([bad_request_error_pattern('exclude', :not_included, list: ApiTicketConstants::EXCLUDABLE_FIELDS.join(','))])
     end
 
+    def test_index_with_article_feedback_filter
+      create_article_feedback_ticket
+      get :index, controller_params({version: 'private'}, filter: 'article_feedback', portal_id: @account.main_portal.id, language_id: @account.language_object.id)
+      assert_response 200
+    end
+
     def test_show_when_account_suspended
       ticket = create_ticket
       change_subscription_state('suspended')

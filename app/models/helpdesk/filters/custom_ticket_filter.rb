@@ -220,7 +220,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       
       ##### Some hack for default values
       defs["helpdesk_subscriptions.user_id".to_sym] = ({:operator => :is_in,:is_in => :dropdown, :options => [], :name => "helpdesk_subscriptions.user_id", :container => :dropdown})
-      defs["article_tickets.article_id".to_sym] = ({:operator => :is,:is => :numeric, :options => [], :name => "article_tickets.article_id", :container => :numeric})
+      defs["article_tickets.article_id".to_sym] = ({:operator => :is_in, :is_in => :dropdown, :options => [], :name => "article_tickets.article_id", :container => :dropdown})
       defs["solution_articles.user_id".to_sym] = ({:operator => :is,:is => :numeric, :options => [], :name => "solution_articles.user_id", :container => :numeric})
       defs[:"helpdesk_tickets.display_id"] = ({:operator => :is_in, :is_in => :dropdown, :options => [], :name => "helpdesk_tickets.display_id", :container => :dropdown})
       defs[:spam] = ({:operator => :is,:is => :boolean, :options => [], :name => :spam, :container => :boolean})
@@ -453,6 +453,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       article_id = params[:language_id].present? ? Account.current.solution_articles.where(parent_id: params[:article_id], language_id: params[:language_id]).first.id : params[:article_id]
       add_condition('article_tickets.article_id', :is, article_id)
     end
+    add_condition("article_tickets.article_id", :is_in, Solution::Article.portal_articles(params[:portal_id],params[:language_id]).pluck(:id).join(',')) if params[:portal_id].present? && params[:language_id].present? && self.name == 'article_feedback'
     add_condition("solution_articles.user_id", :is, User.current.id) if self.name == "my_article_feedback"
   end
 
