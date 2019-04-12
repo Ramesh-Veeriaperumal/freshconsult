@@ -12,10 +12,11 @@ module Freshcaller::CallConcern
 
   def ticket_params
     params_hash = { source: TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone],
-                subject: ticket_title,
-                phone: @options[:customer_number],
-                name: @options[:customer_number],
-                ticket_body_attributes: { description_html: description, description: description } }
+                    subject: ticket_title,
+                    phone: @options[:customer_number],
+                    name: @options[:customer_number],
+                    cc_email: Helpdesk::Ticket.default_cc_hash,
+                    ticket_body_attributes: { description_html: description, description: description } }
     params_hash = params_hash.merge(requester_id: @contact.id) if @contact.present?
     params_hash = params_hash.merge(meta_data: { 'created_by' => @creator.id }, responder_id: @agent.id) if @agent.present?
     params_hash

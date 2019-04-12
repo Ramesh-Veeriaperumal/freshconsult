@@ -178,7 +178,8 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     result = parse_response(@response.body)
     call = ::Freshcaller::Call.last
     match_json(ticket_with_note_pattern(call))
-    assert_equal call.notable.notable.description.present?, true 
+    assert_equal Helpdesk::Ticket.default_cc_hash, call.notable.notable.cc_email
+    assert_equal call.notable.notable.description.present?, true
     assert_equal call.notable.notable.description_html.include?('Abandoned call'), true
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
   end
@@ -193,6 +194,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     put :update, construct_params(params)
     call = ::Freshcaller::Call.where(fc_call_id: call_id).all.first
     assert_equal user.id, call.notable.notable.responder_id
+    assert_equal Helpdesk::Ticket.default_cc_hash, call.notable.notable.cc_email
     match_json(ticket_with_note_pattern(call))
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
   end
@@ -212,6 +214,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     assert_equal user.id, call_notable.responder_id
     assert_equal subject, call_notable.subject
     assert_equal description, call_notable.description
+    assert_equal Helpdesk::Ticket.default_cc_hash, call.notable.notable.cc_email
     match_json(ticket_with_note_pattern(call))
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
   end
@@ -223,6 +226,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     put :update, construct_params(convert_call_to_note_params(call_id, 'completed'))
     call = ::Freshcaller::Call.last
     match_json(ticket_with_note_pattern(call))
+    assert_equal Helpdesk::Ticket.default_cc_hash, call.notable.notable.cc_email
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
   end
 
