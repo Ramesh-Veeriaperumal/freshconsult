@@ -68,7 +68,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def requester_twitter_id
-    user.twitter_id
+    user.present? ? user.twitter_id : nil
   end
 
   # associations

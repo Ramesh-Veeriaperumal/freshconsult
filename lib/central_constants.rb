@@ -11,8 +11,8 @@ module CentralConstants
       'Solution::Article' => '0.0',
       'Bot::FeedbackMapping' => '0.0',
       'Subscription' => '1.0',
-      'User' => '0.0',
-      'Company' => '0.0',
+      'User' => '0.1',
+      'Company' => '0.1',
       'Agent' => '2.0',
       'VaRule' => '0.0',
       'Group' => '3.0',
@@ -37,6 +37,10 @@ module CentralConstants
       'CustomSurvey::SurveyQuestion' => '0.0',
       'CustomSurvey::SurveyQuestionChoice' => '0.0',
       'CustomSurvey::SurveyHandle' => '0.0',
-      'CustomSurvey::SurveyResult' => '0.0'
+      'CustomSurvey::SurveyResult' => '0.0',
+      'ContactField' => '0.0',
+      'ContactFieldChoice' => '0.0',
+      'CompanyField' => '0.0',
+      'CompanyFieldChoice' => '0.0'
   }
 end

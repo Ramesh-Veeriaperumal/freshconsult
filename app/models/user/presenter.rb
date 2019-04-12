@@ -63,7 +63,7 @@ class User < ActiveRecord::Base
       action = @model_changes["helpdesk_agent"][0] ? "create" : "destroy"
       user_type = "contact"
     end
-    "#{user_type}_#{action}"
+    import_id.present? ? "import_#{user_type}_#{action}" : "#{user_type}_#{action}"
   end
 
   def agent_or_contact
@@ -85,8 +85,9 @@ class User < ActiveRecord::Base
     contact_cf_name_mapping = account.contact_form.contact_fields_from_cache.each_with_object({}) { |entry, hash| hash[entry.column_name] = entry.name }
     flexifield_changes.each_pair do |key, val|
       changes[contact_cf_name_mapping[key.to_s]] = val
+      changes.delete(key)
     end
-    changes.except(*flexifield_changes.keys)
+    changes
   end
 
   def misc_changes_for_central

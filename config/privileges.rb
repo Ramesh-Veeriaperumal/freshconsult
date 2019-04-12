@@ -369,6 +369,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/customer", :only => [:index]
     resource :"search/v2/spotlight", :only => [:customers]
     resource :"integrations/service_proxy", :only => [:fetch]
+    resource :customers_import
 
     # Used by V2 API
     resource :"api_contact", :only => [:index, :show]
@@ -379,12 +380,6 @@ Authority::Authorization::PrivilegeList.build do
   manage_contacts do
     resource :contact, :only => [:new, :create, :autocomplete, :quick_contact_with_company,
                :create_contact, :update_contact, :update_description_and_tags, :contact_email, :edit, :update, :verify_email]
-    resource :customer, :only => [:new, :create, :edit, :update] #should deprecate
-    resource :company,  :only => [:new, :create, :edit, :update, :create_company, :update_company, :update_notes, :quick, :sla_policies]
-    resource :"search/autocomplete", :only => [:companies]
-    resource :"search/v2/autocomplete", :only => [:companies]
-    resource :"search/v2/mobile/autocomplete", :only => [:companies]
-    resource :customers_import
     resource :contact_merge
     resource :"search/v2/merge_contact", :only => [:index]
     resource :user_email
@@ -395,29 +390,40 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/ticket", :only => [:update_requester]
 
     # Used by V2 API
-    resource :"api_contact", :only => [:create, :update]
-    resource :"api_company", :only => [:create, :update]
+    resource :"api_contact", :only => [:create, :update]  
 
     # Used by API V2 Search
     resource :"api_search/contact", :only => [:index]
-    resource :"api_search/company", :only => [:index]
 
     # This privilege should only be used for API. This should have only read permission. 
     # Agent who has access to contact/company create will obviously know the custom field names.
     # So access to read the list of custom fields for an account through API should also be given at the same level of privilege as contact/company create.
     resource :api_contact_field, :only => [:index]
+  end
+
+  manage_companies do
+    resource :customer, only: [:new, :create, :edit, :update] # should deprecate
+    resource :company,  :only => [:new, :create, :edit, :update, :create_company, :update_company, :update_notes, :quick, :sla_policies]
+    resource :"search/autocomplete", :only => [:companies]
+    resource :"search/v2/autocomplete", :only => [:companies]
+    resource :"search/v2/mobile/autocomplete", :only => [:companies]
+    resource :"api_company", :only => [:create, :update]
+    resource :"api_search/company", :only => [:index]
     resource :api_company_field , :only => [:index]
   end
 
   delete_contact do
     resource :contact, :only => [:destroy, :restore, :unblock]
     resource :customer, :only => [:destroy] #should deprecate
-    resource :company, :only => [:destroy]
     # is this the correct place to put this ?
     resource :user, :only => [:destroy, :block]
 
     # Used by V2 API
     resource :"api_contact", :only => [:destroy, :restore]
+  end
+
+  delete_company do
+    resource :company, :only => [:destroy]
     resource :"api_company", :only => [:destroy]
   end
 

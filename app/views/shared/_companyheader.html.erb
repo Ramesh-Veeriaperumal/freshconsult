@@ -72,12 +72,19 @@ jQuery(document).ready(function(){
 					"data-submit-loading" => t('please_wait'),
 					"data-target"=>"#customer_export" %>
 			<% end %>
-			<% if privilege?(:manage_contacts) %>
-				&middot;  
-	  		 	<%= link_to(t('import'), "/imports/#{type}", :'data-pjax' => "#body-container", :title => t('customer_import.import_csv', :type => type.pluralize.capitalize), :class => " margin-right", :id => "customers_import") %>
-	  			<%= link_to t('company.new'), new_company_path, :class => "btn", :'data-pjax' => "#body-container" %>			
-	  			<%= link_to(t('contacts.new'), new_contact_url, :class => "btn", :'data-pjax' => "#body-container") %>
-			<% end %>      
+			<%if type == 'contact' && privilege?(:manage_contacts)%>
+        &middot;  
+          <%= link_to(t('import'), "/imports/contact", :'data-pjax' => "#body-container", :title => t('customer_import.import_csv', :type => 'Contacts'), :class => "", :id => "customers_import") %>
+      <%elsif type == 'company' && privilege?(:manage_companies)%>
+        &middot;
+          <%= link_to(t('import'), "/imports/company", :'data-pjax' => "#body-container", :title => t('customer_import.import_csv', :type => 'Companies'), :class => "", :id => "customers_import") %>
+      <%end%> 
+      <%if privilege?(:manage_contacts)%>
+        <%= link_to(t('contacts.new'), new_contact_url, :class => "margin-left btn", :'data-pjax' => "#body-container") %>
+      <%end%>
+      <%if privilege?(:manage_companies)%>
+        <%= link_to t('company.new'), new_company_path, :class => "margin-left btn", :'data-pjax' => "#body-container" %>
+      <%end%>
         </div>
 	</div>
 </div>

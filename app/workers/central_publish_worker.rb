@@ -57,4 +57,12 @@ module CentralPublishWorker
   class SurveyWorker < CentralPublisher::Worker
     sidekiq_options queue: 'surveys_central_publish', retry: 5, dead: true, failures: :exhausted
   end
+
+  class ContactFieldWorker < CentralPublisher::Worker
+    sidekiq_options queue: 'contact_field_central_publish', retry: 5, dead: true, failures: :exhausted
+  end
+
+  class CompanyFieldWorker < CentralPublisher::Worker
+    sidekiq_options queue: 'company_field_central_publish', retry: 5, dead: true, failures: :exhausted
+  end
 end

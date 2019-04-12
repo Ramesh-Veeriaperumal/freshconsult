@@ -35,7 +35,7 @@
   <% end %>
 <% end %>
 <div class="company_box">
-  <% if privilege?(:manage_contacts) %>
+  <% if privilege?(:manage_companies) %>
   <div class="action_buttons">
       <%= link_to t('edit'), edit_company_path(@company), :class => "last" %>
   </div>
@@ -72,7 +72,7 @@
     <%=t('company.info5')%>
   </label>
   <%= f.text_area :note, :id => "comp_notes", :cols => 20,:rows => 5  %>
-  <% if privilege?(:manage_contacts) %>
+  <% if privilege?(:manage_companies) %>
     <div class="align-right"> 
       <%= link_to(t('cancel'), '#' , :class => "btn btn-small", :id => "edit_notes_cancel") %>
       <%= f.submit t('save'), :class=>"btn btn-primary btn-small"  %> &nbsp;

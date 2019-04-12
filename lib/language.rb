@@ -1,7 +1,4 @@
 class Language
-
-	AVAILABLE_LOCALES_WITH_ID = YAML::load(ERB.new(File.read("#{Rails.root}/config/languages.yml")).result)
-
 	attr_accessor :code, :id, :name
 
 	def initialize(args)
@@ -10,12 +7,15 @@ class Language
 		end
 	end
 
-	LANGUAGES = (AVAILABLE_LOCALES_WITH_ID.each.inject([]) do |arr, (code, lang)| 
+	LANGUAGES = (Languages::Constants::AVAILABLE_LOCALES_WITH_ID.each.inject([]) do |arr, (code, lang)| 
 					# added code.dup as string keys of a hash are frozen by default
 					arr << self.new(:code => code.dup, :id => lang.first, 
 									:name => lang.last) 
 					arr
 				end)
+	TEST_LANGUAGES = [:"test-ui", :"long-text"].freeze
+
+	PROD_LANGUAGES = LANGUAGES.reject { |x| TEST_LANGUAGES.map(&:to_s).include?(x.code.to_s) }
 	
 	alias :to_s :name
 	alias :to_i :id
@@ -101,9 +101,10 @@ class Language
 			Language.for_current_user
 		end
 
-		def fetch_from_browser params
-			Language.find_by_code(params[:request_language])
-		end
+    def fetch_from_browser(params)
+      code = Languages::Constants::LANGUAGE_ALT_CODE[params[:request_language]] || params[:request_language]
+      Language.find_by_code(code)
+    end
 
 		def fetch_from_portal params
 			Language.find_by_code(Portal.current.language) if Portal.current
