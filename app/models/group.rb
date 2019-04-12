@@ -8,7 +8,6 @@ class Group < ActiveRecord::Base
   include Redis::OthersRedis
   include Redis::RoundRobinRedis
   include BusinessCalendarExt::Association
-  include AccountOverrider
   include RoundRobinCapping::Methods
   include DataVersioning::Model
   include GroupConstants

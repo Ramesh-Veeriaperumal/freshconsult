@@ -316,7 +316,7 @@ class Ember::GroupsControllerTest < ActionController::TestCase
     pattern = [] 
     get :index, controller_params(version: 'private')
     User.current.groups.order(:name).all.each do |group|
-      pattern << private_group_pattern(group)
+      pattern << private_group_pattern_index(group)
     end   
     assert_response 200
     match_json(pattern.ordered!)
