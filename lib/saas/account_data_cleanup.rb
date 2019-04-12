@@ -85,6 +85,7 @@ class SAAS::AccountDataCleanup
       status.save
       ModifyTicketStatus.perform_async({ :status_id => status.status_id, :status_name => status.name })
     end
+    account.ticket_fields_from_cache.find { |ticket_field| ticket_field.field_type == 'default_status' }.save # Clearing memcache using ticket_field after commit callback. FR-ID: FD-19425
   end
 
   def handle_custom_ticket_fields_drop_data
