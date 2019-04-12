@@ -38,6 +38,10 @@ module CentralConstants
     'CustomSurvey::SurveyQuestion' => '0.0',
     'CustomSurvey::SurveyQuestionChoice' => '0.0',
     'CustomSurvey::SurveyHandle' => '0.0',
-    'CustomSurvey::SurveyResult' => '0.0'
+    'CustomSurvey::SurveyResult' => '0.0',
+    'ContactField' => '0.0',
+    'ContactFieldChoice' => '0.0',
+    'CompanyField' => '0.0',
+    'CompanyFieldChoice' => '0.0'
   }
 end

@@ -50,7 +50,7 @@ module Tickets
 
     def test_watch_ticket_with_invalid_user_id
       ticket = create_ticket
-      params_hash = { user_id: @agent.id + 100 }
+      params_hash = { user_id: @agent.id + 10_000 }
       post :watch, construct_params({ id: ticket.display_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('user_id', :absent_in_db, resource: :contact, attribute: :user_id)])
@@ -162,7 +162,7 @@ module Tickets
 
     def test_bulk_watch_with_invalid_user_id
       ticket_ids = create_n_tickets(BULK_TICKET_CREATE_COUNT)
-      params_hash = { ids: ticket_ids, user_id: @agent.id + 100 }
+      params_hash = { ids: ticket_ids, user_id: @agent.id + 10_000 }
       post :bulk_watch, construct_params({}, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('user_id', :absent_in_db, resource: :contact, attribute: :user_id)])

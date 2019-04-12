@@ -342,7 +342,7 @@ module Ember
           if @include_original_attachments
             attachments = @ticket.all_attachments
           elsif @attachment_ids
-            attachments = (@ticket.all_attachments | conversations_attachments).select { |x| @attachment_ids.include?(x.id) }
+            attachments = (@ticket.all_attachments | conversations_attachments | child_tickets_attachments).select { |x| @attachment_ids.include?(x.id) }
           end
           account_attachments = get_account_attachments(attachments)
           attachments.push(account_attachments).flatten
@@ -360,6 +360,12 @@ module Ember
       def conversations_attachments
         @converation_attachments ||= begin
           @ticket.notes.visible.preload(:attachments).map(&:attachments).flatten
+        end
+      end
+
+      def child_tickets_attachments
+        @child_tickets_attachments ||= begin
+          @ticket.assoc_parent_ticket? ? @ticket.associated_subsidiary_tickets('assoc_parent', [:attachments]).map(&:attachments).flatten : []
         end
       end
 

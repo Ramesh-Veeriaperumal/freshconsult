@@ -18,23 +18,22 @@ class NoteTest < ActiveSupport::TestCase
     return if @@before_all_run
     @account.subscription.state = 'active'
     @account.subscription.save
-    @account.launch(:note_central_publish)
+    Account.current.launch(:note_central_publish)
     # @account.add_feature(:freshcaller)
     # ::Freshcaller::Account.new(account_id: @account.id).save
     @account.reload
     @account.save
-
     @ticket = create_ticket
     @@before_all_run = true
   end
 
   def test_central_publish_with_launch_party_disabled
-    @account.rollback(:note_central_publish)
+    Account.current.rollback(:note_central_publish)
     CentralPublishWorker::ActiveNoteWorker.jobs.clear
     note = create_note(note_params_hash)
     assert_equal 0, CentralPublishWorker::ActiveNoteWorker.jobs.size
   ensure
-    @account.launch(:note_central_publish)
+    Account.current.launch(:note_central_publish)
   end
 
   def test_central_publish_with_launch_party_enabled
@@ -147,5 +146,21 @@ class NoteTest < ActiveSupport::TestCase
     note = create_note(note_params_hash.merge(source_additional_info: twitter_params))
     payload = note.central_publish_payload.to_json
     payload.must_match_json_expression(central_publish_note_pattern(note))
+  end
+
+  def test_source_additional_info_twitter_handle_destroy_note_update
+    Account.any_instance.stubs(:twitter_handle_publisher_enabled?).returns(false)
+    handle = create_twitter_handle
+    stream_id = create_twitter_stream(handle.id).id
+    twitter_params = { twitter: { tweet_id: 12_346, tweet_type: 'DM',
+                                  twitter_handle_id: handle.id,
+                                  stream_id: stream_id } }
+    note = create_note(note_params_hash.merge(source_additional_info: twitter_params))
+    handle.delete
+    note.update_attributes(body: "Update note body")
+    payload = note.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_note_pattern(note))
+  ensure
+    Account.any_instance.unstub(:twitter_handle_publisher_enabled?)
   end
 end

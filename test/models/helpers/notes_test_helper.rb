@@ -91,10 +91,10 @@ module NotesTestHelper
       twitter: {
         tweet_id: tweet.tweet_id.to_s,
         type: tweet.tweet_type,
-        support_handle_id: twitter_handle.twitter_user_id.to_s,
-        support_screen_name: twitter_handle.screen_name,
+        support_handle_id: twitter_handle.present? ? twitter_handle.twitter_user_id.to_s : nil,
+        support_screen_name:  twitter_handle.present? ? twitter_handle.screen_name : nil,
         requester_screen_name: tweet.tweetable.user.twitter_id,
-        twitter_handle_id: twitter_handle.id,
+        twitter_handle_id: twitter_handle.present? ? twitter_handle.id : nil,
         stream_id: tweet.stream_id
       }
     }

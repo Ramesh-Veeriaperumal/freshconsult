@@ -6,7 +6,7 @@ class ApiCompanyFieldsControllerTest < ActionController::TestCase
   end
 
   def test_index_with_privilege
-    User.any_instance.stubs(:privilege?).with(:manage_contacts).returns(true).at_most_once
+    User.any_instance.stubs(:privilege?).with(:manage_companies).returns(true).at_most_once
     get :index, controller_params
     assert_response 200
     assert JSON.parse(response.body).count > 1
@@ -15,7 +15,7 @@ class ApiCompanyFieldsControllerTest < ActionController::TestCase
   end
 
   def test_index_without_privilege
-    User.any_instance.stubs(:privilege?).with(:manage_contacts).returns(false).at_most_once
+    User.any_instance.stubs(:privilege?).with(:manage_companies).returns(false).at_most_once
     User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false).at_most_once
     get :index, controller_params
     assert_response 403

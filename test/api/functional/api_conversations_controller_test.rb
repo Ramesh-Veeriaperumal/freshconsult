@@ -309,6 +309,23 @@ class ApiConversationsControllerTest < ActionController::TestCase
     assert Helpdesk::Note.last.attachments.count == 2
   end
 
+  def test_forward_with_child_description_attachment_ids
+    # byebug
+    Account.any_instance.stubs(:parent_child_tickets_enabled?).returns(true)
+    child_attachment_ids = []
+    create_parent_child_tickets
+    child_attachment_ids << create_attachment(attachable_type: 'Helpdesk::Ticket', attachable_id: @child_ticket.id).id
+    params_hash = forward_note_params_hash.merge(attachment_ids: child_attachment_ids, include_original_attachments: false)
+    stub_attachment_to_io do
+      post :forward, construct_params({ id: @parent_ticket.display_id }, params_hash)
+    end
+    assert_response 201
+    match_json(private_note_pattern(params_hash, @account.notes.last))
+    match_json(private_note_pattern({}, @account.notes.last))
+    assert @account.notes.last.attachments.size == child_attachment_ids.size
+    Account.any_instance.unstub(:parent_child_tickets_enabled?)
+  end
+
   def test_forward_with_ticket_with_attachment
     t = create_ticket(attachments: { resource: fixture_file_upload('files/attachment.txt', 'plain/text', :binary) })
     params = forward_note_params_hash

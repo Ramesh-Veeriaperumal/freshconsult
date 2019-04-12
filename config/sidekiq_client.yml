@@ -318,6 +318,8 @@ defaults: &defaults
     - [surveys_central_publish]
     - [anonymous_account_cleanup]
     - [freshvisual_configs]
+    - [contact_field_central_publish]
+    - [company_field_central_publish]
     
 development:
   <<: *defaults

@@ -7,10 +7,10 @@
 			<span class='contact-name ellipsis'> / <%= h(@company.name) %></span>
 		</h3>
 		<div class='btn-group pull-right'>
-			<% if privilege?(:manage_contacts) %>
+			<% if privilege?(:manage_companies) %>
 				<%= link_to t('edit'), edit_company_path(@company), :class => "btn", :'data-pjax' => "#body-container" %>
 			<% end %>
-			<% if privilege?(:delete_contact) %>
+			<% if privilege?(:delete_company) %>
 				<%= link_to("<i class='icon-trash'></i>".html_safe, @company, :method => :delete, :class => "btn hide", :id => 'delete_customer' ) %>
 					<button 
 						class="btn"
@@ -67,7 +67,7 @@
 					<h4 class="conv-title"><%=t('company.notes')%></h4>
 					<%= f.text_area :note, :class=> "sp_paragraph",:cols => 0,:rows => 0, :placeholder => t("company.info5") %>
 					<%= f.hidden_field :id, :value => @company.id, :id => 'companyid' %>
-					<% if privilege?(:manage_contacts) %>
+					<% if privilege?(:manage_companies) %>
 						<div class='clearfix'>
 							<div class='error ajax-error pull-left'></div>
 							<div class="pull-right hide form-save"> 
@@ -84,7 +84,7 @@
 		</div>
 		<div class='contact-sidebar'>
 			<div class='contact-sidebar-content'>	
-				<% if privilege?(:manage_contacts) %> 
+				<% if privilege?(:manage_companies) %> 
 					<div class="sidepanel">
 					<h4 class="app-title"><%=t('companies.add_contact')%> 	
 						<p class='sub-title break-word'>
@@ -114,7 +114,7 @@
 						<% end %>
 					</div>
 				<% end %>
-				<% if privilege?(:manage_contacts) %> 
+				<% if privilege?(:manage_companies) %> 
 					<div class="sidepanel">
 						<h4 class="app-title"><%= t('company.sla_policy_name') %></h4> 
 						<div id="sla_policy" class="sloading loading-small loading-center"

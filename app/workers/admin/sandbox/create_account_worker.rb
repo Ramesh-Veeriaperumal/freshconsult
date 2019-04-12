@@ -81,8 +81,8 @@ class Admin::Sandbox::CreateAccountWorker < BaseWorker
         subscription.sneaky_save
       end
     rescue StandardError => e
-      Rails.logger.error "Error in extending sandbox trail period #{e.message} #{e.backtrace[0..10].inspect}"
-      NewRelic::Agent.notice_error(e, 'Sandbox trial extension error')
+      Rails.logger.error "Error in extending sandbox trial period #{e.message} #{e.backtrace[0..10].inspect}"
+      NewRelic::Agent.notice_error(e, description: 'Sandbox trial extension error')
     ensure
       Account.reset_current_account
     end

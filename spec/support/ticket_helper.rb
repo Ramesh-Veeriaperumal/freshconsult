@@ -28,6 +28,7 @@ module TicketHelper
                                          :product_id => params[:product_id],
                                          :sl_skill_id => params[:skill_id],
                                          :company_id => params[:company_id],
+                                         :import_id => params[:import_id],
                                          :ticket_type => params[:type] || "Question")
     test_ticket.build_ticket_body(:description => params[:description] || Faker::Lorem.paragraph)
     if params[:attachments]

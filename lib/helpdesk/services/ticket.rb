@@ -30,6 +30,8 @@ module Helpdesk
               reset_ticket_display_id(self.account.id)
               retry
             end
+          elsif e.message =~ /'index_helpdesk_tickets_on_account_id_and_import_id'/
+            raise e # Raising exception here so that it gets rescued in api_application_controller.rb
           else
             Rails.logger.error e.backtrace
             NewRelic::Agent.notice_error(e, {:description => "Error occured when saving ticket"})

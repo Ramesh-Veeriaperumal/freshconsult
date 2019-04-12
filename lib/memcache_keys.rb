@@ -250,7 +250,7 @@ module MemcacheKeys
     
   def fetch_from_cache(key, &block)
     @cached_values = {} unless @cached_values
-    return @cached_values[key] if @cached_values[key]
+    return @cached_values[key] if @cached_values.include? key
     val = MemcacheKeys.fetch(key, &block)
     @cached_values[key] = val
     val

@@ -13,12 +13,10 @@ class AuditLogExport < BaseWorker
 
   def perform(args)
     args.symbolize_keys!
-    create_export 'audit_log'
     set_current_user(args[:user_id])
+    create_export 'audit_log'
     url = export_job_id_url(args[:export_job_id])
-    encoded_url = URI.encode(url)
-    args[:basic_auth].symbolize_keys!
-    response = HTTParty.get(encoded_url, basic_auth: args[:basic_auth]).body
+    response = HTTParty.get(url, basic_auth: basic_auth.symbolize_keys!).body
     response = JSON.parse(response).symbolize_keys
     if AuditLogConstants::WAITING_STATUSES.include? response[:status]
       if args[:time] <= 20
@@ -33,8 +31,14 @@ class AuditLogExport < BaseWorker
     end
     temp_file = set_temp_file
     csv_file = File.join(FileUtils.mkdir_p(AuditLogConstants::CSV_FILE), %(#{temp_file}.csv))
-    translate_json_file(csv_file, response[:data]['export_url'], args[:export_job_id])
-    write_to_s3(csv_file)
+    res = translate_json_file(csv_file, response[:data]['export_url'], args[:export_job_id])
+    @data_export.save_hash!(args[:export_job_id])
+    if res == 0
+      @data_export.no_logs!
+      DataExportMailer.no_logs(audit_log_failure_params) if args[:receive_via] == AuditLogConstants::RECEIVE_VIA[0]
+    else
+      write_to_s3(csv_file, args[:receive_via], args[:export_job_id])
+    end
   rescue Exception => e
     @data_export.failure!(e.message + "\n" + e.backtrace.join("\n"))
   end
@@ -44,6 +48,13 @@ class AuditLogExport < BaseWorker
       user = Account.current.users.find(user_id)
       user.make_current
     end
+  end
+
+  def basic_auth
+    {
+      username: HyperTrail::CONFIG['audit_log_file_export']['username'],
+      password: HyperTrail::CONFIG['audit_log_file_export']['password']
+    }
   end
 
   def export_job_id_url(job_id)
@@ -65,6 +76,7 @@ class AuditLogExport < BaseWorker
     end
     system("tar -xf #{filename} -C tmp/")
     file = open("tmp/#{job_id}.json")
+    return 0 if File.size(file).zero?
     CSV.open(csv_file, 'wb') do |csv|
       csv << AuditLogConstants::COLUMN_HEADER
     end
@@ -91,22 +103,27 @@ class AuditLogExport < BaseWorker
     report_data
   end
 
-  def write_to_s3(export_file)
+  def write_to_s3(export_file, receive_via, job_id)
     file_path = "audit_log/#{Account.current.id}"
     write_options = { content_type: 'text/csv' }
     file = File.open(export_file)
     AwsWrapper::S3Object.store(file_path, file, S3_CONFIG[:bucket], write_options)
     upload_file export_file
-    DataExportMailer.audit_log_export(audit_log_email_params)
+    hash_file_name = job_id
+    @data_export.save_hash!(hash_file_name)
+    url = Rails.application.routes.url_helpers.download_file_url(@data_export.source, hash_file_name,
+                                                                 host: Account.current.host,
+                                                                 protocol: 'https')
+    DataExportMailer.audit_log_export(audit_log_email_params(url)) if receive_via == AuditLogConstants::RECEIVE_VIA[0]
   end
 
-  def audit_log_email_params
+  def audit_log_email_params(url)
     domain = Account.current.full_domain
     user = User.current
     options = {
       user: user,
       domain: domain,
-      url: hash_url(domain),
+      url: url,
       email: user.email,
       type: 'audit_log'
     }

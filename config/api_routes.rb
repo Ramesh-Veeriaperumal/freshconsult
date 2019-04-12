@@ -112,7 +112,7 @@ Helpkit::Application.routes.draw do
       end
       collection do
         post :merge, to: 'contacts/merge#merge'
-        resources :imports, controller: 'api_customer_imports', only: [:index, :create, :show] do
+        resources :imports, controller: 'api_contact_imports', only: [:index, :create, :show] do
           member do
             put :cancel
           end
@@ -217,7 +217,7 @@ Helpkit::Application.routes.draw do
 
     resources :companies, as: 'api_companies', controller: 'api_companies', except: [:new, :edit] do
       collection do
-        resources :imports, controller: 'api_customer_imports', only: [:index, :create, :show] do
+        resources :imports, controller: 'api_company_imports', only: [:index, :create, :show] do
           member do
             put :cancel
           end
@@ -293,6 +293,7 @@ Helpkit::Application.routes.draw do
     end
 
     post '/audit_log/export', to: 'audit_logs#export'
+    get '/audit_log/export/:id', to: 'audit_logs#export_s3_url'
   end
 
   ember_routes = proc do
@@ -540,7 +541,7 @@ Helpkit::Application.routes.draw do
         put :bulk_send_invite
         put :bulk_whitelist
         post :quick_create
-        resources :imports, controller: 'api_customer_imports', only: [:index, :create, :show] do
+        resources :imports, controller: 'api_contact_imports', only: [:index, :create, :show] do
           member do
             put :cancel
           end
@@ -561,7 +562,7 @@ Helpkit::Application.routes.draw do
     resources :companies, controller: 'ember/companies', only: [:index, :show, :create, :update] do
       collection do
         put :bulk_delete
-        resources :imports, controller: 'api_customer_imports', only: [:index, :create, :show] do
+        resources :imports, controller: 'api_company_imports', only: [:index, :create, :show] do
           member do
             put :cancel
           end

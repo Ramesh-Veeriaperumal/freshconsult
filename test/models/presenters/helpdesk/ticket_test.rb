@@ -38,12 +38,12 @@ class TicketTest < ActiveSupport::TestCase
   end
 
   def test_central_publish_with_launch_party_disabled
-    @account.rollback(:ticket_central_publish)
+    Account.current.rollback(:ticket_central_publish)
     CentralPublishWorker::ActiveTicketWorker.jobs.clear
     t = create_ticket(ticket_params_hash)
     assert_equal 0, CentralPublishWorker::ActiveTicketWorker.jobs.size
   ensure
-    @account.launch(:ticket_central_publish)
+    Account.current.launch(:ticket_central_publish)
   end
 
   def test_central_publish_with_launch_party_enabled
@@ -230,5 +230,17 @@ class TicketTest < ActiveSupport::TestCase
     t = create_twitter_ticket
     payload = t.central_publish_payload.to_json
     payload.must_match_json_expression(cp_ticket_pattern(t))
+  end
+
+  def test_source_additional_info_twitter_with_handle_destroy_ticket_update
+    Account.any_instance.stubs(:twitter_handle_publisher_enabled?).returns(false)
+    handle = create_twitter_handle
+    t = create_twitter_ticket(twitter_handle: handle)
+    handle.delete
+    t.update_attributes(status: 5)
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+  ensure
+    Account.any_instance.unstub(:twitter_handle_publisher_enabled?)
   end
 end

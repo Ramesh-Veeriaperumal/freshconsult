@@ -350,6 +350,14 @@ module Channel::V2
       Account.any_instance.unstub(:shared_ownership_enabled?)
     end
 
+    def test_update_with_duplicate_import_id
+      ticket_with_import_id = create_ticket(import_id: 1004)
+      ticket_to_update = create_ticket
+      put :update, construct_params({ id: ticket_to_update.display_id, version: 'private' }, { import_id: ticket_with_import_id.import_id })
+      assert_response 409
+      assert_equal response.body, request_error_pattern(:duplicate_value).to_json
+    end
+
     def test_ticket_close_after_reopened
       t = create_ticket(status: 5)
       before_reopen_closed_at = t.closed_at
@@ -438,6 +446,18 @@ module Channel::V2
       assert_response 400
     ensure
       Account.any_instance.unstub(:shared_ownership_enabled?)
+    end
+
+    def test_create_with_duplicate_import_id
+      ticket = create_ticket(import_id: 1003)
+      params = {
+        requester_id: requester.id, status: 2, priority: 2,
+        subject: Faker::Name.name, description: Faker::Lorem.paragraph,
+        import_id: ticket.import_id
+      }
+      post :create, construct_params({ version: 'private' }, params)
+      assert_response 409
+      assert_equal response.body, request_error_pattern(:duplicate_value).to_json
     end
 
     def test_index_without_permitted_tickets

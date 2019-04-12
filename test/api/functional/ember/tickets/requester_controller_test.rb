@@ -5,6 +5,7 @@ module Ember
       include ApiTicketsTestHelper
       include ContactFieldsHelper
       include CompaniesTestHelper
+      include RolesTestHelper
 
       def setup
         super
@@ -156,6 +157,22 @@ module Ember
       ensure
         contact_required_field.required_for_agent = false
         contact_required_field.save
+      end
+
+      def test_update_requester_to_respond_403_on_company_creation
+        privileges = ['manage_tickets', 'mange_contacts', 'view_contacts']
+        role_without_manage_companies = create_role(name: Faker::Name.name,
+                                                    privilege_list: privileges)
+        @agent = add_agent(@account, name: 'Agent without manage company privilege',
+                                     role: role_without_manage_companies.id,
+                                     role_ids: [role_without_manage_companies.id],
+                                     privileges: role_without_manage_companies.privileges)
+        create_session
+        params_hash = { contact: { name: Faker::Lorem.word },
+                        company: { name: Faker::Lorem.word } }
+        put :update, construct_params({ version: 'private',
+                                        id: @ticket.display_id }, params_hash)
+        assert_response 403
       end
     end
   end

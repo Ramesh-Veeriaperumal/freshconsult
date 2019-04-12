@@ -1,0 +1,9 @@
+get:
+  tags: [audit_log]
+  summary: Audit log export
+  description: Audit log export file will be responded in json format which contains s3 link.
+  responses:
+    200:
+      description: URL of the s3 link to be downloaded
+    404:
+      description: Data Export not found

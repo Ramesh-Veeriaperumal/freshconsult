@@ -59,6 +59,7 @@ module ApiConstants
                        AdminSubscriptionConstants::LOAD_OBJECT_EXCEPT +
                        AdvancedTicketingConstants::LOAD_OBJECT_EXCEPT +
                        CannedResponseConstants::LOAD_OBJECT_EXCEPT +
+                       AuditLogConstants::LOAD_OBJECT_EXCEPT +
                        Solutions::HomeConstants::LOAD_OBJECT_EXCEPT
 
   NO_CONTENT_TYPE_REQUIRED = ApiTicketConstants::NO_CONTENT_TYPE_REQUIRED +

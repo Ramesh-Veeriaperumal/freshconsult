@@ -2,13 +2,18 @@ require_relative '../test_helper'
 require 'faker'
 require Rails.root.join('spec', 'support', 'user_helper.rb')
 require Rails.root.join('spec', 'support', 'company_helper.rb')
+require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
 
 class UserTest < ActiveSupport::TestCase
   include UsersHelper
   include CompanyHelper
+  include AccountTestHelper
+  include PrivilegesHelper
 
   def setup
     super
+    @account = create_test_account if @account.nil?
+    @account.make_current
     @account.tags.delete_all
     @account.tag_uses.delete_all
   end
@@ -293,6 +298,7 @@ class UserTest < ActiveSupport::TestCase
 
   def test_assign_company
     user = User.new
+    User.any_instance.stubs(:privilege?).with(:manage_companies).returns(true)
     assert_equal user.name_details, ''
     assert_not_nil user.assign_company(Faker::Name.name)
     User.any_instance.stubs(:has_multiple_companies_feature?).returns(false)
@@ -303,6 +309,7 @@ class UserTest < ActiveSupport::TestCase
     assert_equal user.no_of_assigned_tickets('group'), 0
   ensure
     User.any_instance.unstub(:has_multiple_companies_feature?)
+    User.any_instance.unstub(:privilege?)
     SBRR::QueueAggregator::User.any_instance.unstub(:relevant_queues)
     SBRR::Queue::User.any_instance.unstub(:zscore)
   end
