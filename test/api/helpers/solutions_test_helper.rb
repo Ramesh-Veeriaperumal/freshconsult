@@ -44,7 +44,7 @@ module SolutionsTestHelper
       type: expected_output[:type] || article.parent.reload.art_type,
       thumbs_up: expected_output[:thumbs_up] || article.solution_article_meta.thumbs_up,
       thumbs_down: expected_output[:thumbs_down] || article.solution_article_meta.thumbs_down,
-      feedback_count: expected_output[:feedback_count] || article.article_ticket.preload(:ticketable).select { |art| !art.ticketable.spam_or_deleted? }.count,
+      feedback_count: expected_output[:feedback_count] || article.article_ticket.where(ticketable_type: 'Helpdesk::Ticket').preload(:ticketable).select { |art| !art.ticketable.spam_or_deleted? }.count,
       hits: expected_output[:hits] || article.solution_article_meta.hits,
       status: expected_output[:status] || article.status,
       tags: expected_tags || article.tags.map(&:name),
@@ -248,8 +248,8 @@ module SolutionsTestHelper
     @drafts =  fetch_drafts
     @my_drafts = @drafts.empty? ? [] : @drafts.where(user_id: User.current.id)
     @published_articles = fetch_published_articles
-    @all_feedback = Account.current.article_tickets.select(:id).where(article_id: get_article_ids(@articles))
-    @my_feedback = Account.current.article_tickets.select(:id).where(article_id: get_article_ids(@articles.select{ |article| article.user_id == User.current.id }))
+    @all_feedback = Account.current.article_tickets.select(:id).where(article_id: get_article_ids(@articles), ticketable_type: 'Helpdesk::Ticket').reject { |article_ticket| article_ticket.ticketable.spam_or_deleted? }
+    @my_feedback = Account.current.article_tickets.select(:id).where(article_id: get_article_ids(@articles.select { |article| article.user_id == User.current.id }), ticketable_type: 'Helpdesk::Ticket').reject { |article_ticket| article_ticket.ticketable.spam_or_deleted? }
     @orphan_categories = fetch_unassociated_categories.map { |category| unassociated_category_pattern(category) }
     response.api_root_key = :quick_views
     {

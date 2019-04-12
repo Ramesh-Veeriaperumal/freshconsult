@@ -169,7 +169,7 @@ class Solutions::ArticleDecorator < ApiDecorator
     end
 
     def feedback_count
-      @feedback_count ||= article_ticket.select { |article| !article.ticketable.spam_or_deleted? }.count
+      @feedback_count ||= article_ticket.where(ticketable_type: 'Helpdesk::Ticket').preload(:ticketable).reject { |article_ticket| article_ticket.ticketable.spam_or_deleted? }.count
     end
 
     def vote_info(vote_type)

@@ -23,8 +23,8 @@ module Ember
         @drafts =  fetch_drafts
         @my_drafts = @drafts.empty? ? [] : @drafts.where(user_id: current_user.id)
         @published_articles = fetch_published_articles
-        @all_feedback = current_account.article_tickets.where(article_id: get_article_ids(@articles)).preload(:ticketable).reject { |article| article.ticketable.spam_or_deleted? }
-        @my_feedback = current_account.article_tickets.where(article_id: get_article_ids(@articles.select { |article| article.user_id == current_user.id })).preload(:ticketable).reject { |article| article.ticketable.spam_or_deleted? }
+        @all_feedback = current_account.article_tickets.where(article_id: get_article_ids(@articles), ticketable_type: 'Helpdesk::Ticket').preload(:ticketable).reject { |article_ticket| article_ticket.ticketable.spam_or_deleted? }
+        @my_feedback = current_account.article_tickets.where(article_id: get_article_ids(@articles.select { |article| article.user_id == current_user.id }), ticketable_type: 'Helpdesk::Ticket').preload(:ticketable).reject { |article| article.ticketable.spam_or_deleted? }
         @orphan_categories = fetch_unassociated_categories(@lang_id)
         response.api_root_key = :quick_views
       end
