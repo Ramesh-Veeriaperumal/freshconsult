@@ -1,5 +1,6 @@
 require_relative '../../test_helper'
 ['dashboard_object.rb', 'widget_object.rb','search_service_result.rb'].each { |filename| require_relative "#{Rails.root}/test/api/helpers/custom_dashboard/#{filename}"}
+require "#{Rails.root}/test/core/helpers/account_test_helper.rb"
 require "#{Rails.root}/test/api/helpers/custom_dashboard_test_helper.rb"
 module Ember
   class CustomDashboardControllerTest < ActionController::TestCase
@@ -14,6 +15,8 @@ module Ember
     include Redis::SortedSetRedis
     include ApiTicketsTestHelper
     include ProductsTestHelper
+    include AccountTestHelper
+    include Helpdesk::SharedOwnershipMigrationMethods
 
     def setup
       super
@@ -424,6 +427,30 @@ module Ember
       get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: PERCENTAGE)
       assert_response 200
       match_json(bar_chart_preview_response_percentage_pattern(field.id))
+    end
+
+    def test_widget_data_preview_for_bar_chart_with_internal_group_percentage_representation
+      enable_feature(:shared_ownership) do
+        add_internal_fields
+        field = Account.current.ticket_fields.find_by_field_type('default_internal_group')
+        ::Search::Dashboard::Custom::Count.any_instance.stubs(:fetch_count).returns(bar_chart_preview_es_response_stub(field.id))
+        get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: PERCENTAGE)
+        assert_response 200
+        match_json(bar_chart_preview_response_percentage_pattern(field.id))
+        delete_internal_fields
+      end
+    end
+
+    def test_widget_data_preview_for_bar_chart_internal_agent_with_percentage_representation
+      enable_feature(:shared_ownership) do
+        add_internal_fields
+        field = Account.current.ticket_fields.find_by_field_type('default_internal_agent')
+        ::Search::Dashboard::Custom::Count.any_instance.stubs(:fetch_count).returns(bar_chart_preview_es_response_stub(field.id))
+        get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: PERCENTAGE)
+        assert_response 200
+        match_json(bar_chart_preview_response_percentage_pattern(field.id))
+        delete_internal_fields
+      end
     end
 
     def test_widget_data_preview_for_ticket_trend_card_with_invalid_metric

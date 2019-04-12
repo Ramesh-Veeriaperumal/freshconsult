@@ -7,7 +7,9 @@ class Dashboard::Custom::BarChart < Dashboards
     requester: 'requester_id',
     group: 'group_id',
     agent: 'responder_id',
-    product: 'product_id'
+    product: 'product_id',
+    internal_agent: 'internal_agent_id',
+    internal_group: 'internal_group_id'
   }.freeze
   GROUP_OPTIONS_FOR_ES = ['representation'].freeze
 
