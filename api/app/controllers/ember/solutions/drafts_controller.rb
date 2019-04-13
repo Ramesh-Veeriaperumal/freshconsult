@@ -86,7 +86,7 @@ module Ember
         end
 
         def preload_options
-          [{ article: { solution_article_meta: :solution_folder_meta } }, :attachments, :draft_body]
+          [{ article: [{ solution_article_meta: [:solution_folder_meta, :solution_category_meta] }, :attachments, :cloud_files, :tags] }, :attachments, :cloud_files, :draft_body]
         end
     end
   end

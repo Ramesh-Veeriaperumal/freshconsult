@@ -8,8 +8,7 @@ module Ember
       def summary
         return unless validate_query_params
         return unless validate_delegator(nil, portal_id: params[:portal_id])
-
-        @items = current_account.solution_category_meta.joins(:portal_solution_categories).where('solution_category_meta.is_default = ? AND portal_solution_categories.portal_id = ?', false, params[:portal_id]).order('portal_solution_categories.position').preload([:portal_solution_categories, :primary_category, solution_folder_meta: [:primary_folder, :solution_article_meta]])
+        @items = current_account.solution_category_meta.joins(:portal_solution_categories).where('solution_category_meta.is_default = ? AND portal_solution_categories.portal_id = ?', false, params[:portal_id]).order('portal_solution_categories.position').preload(preload_options)
         response.api_root_key = :categories
       end
 
@@ -68,6 +67,10 @@ module Ember
 
         def constants_class
           'Solutions::HomeConstants'.freeze
+        end
+
+        def preload_options
+          [:portal_solution_categories, :primary_category, solution_folder_meta: [:primary_folder, :solution_article_meta]]
         end
     end
   end

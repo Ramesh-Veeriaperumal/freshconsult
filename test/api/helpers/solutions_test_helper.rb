@@ -42,10 +42,7 @@ module SolutionsTestHelper
       title: expected_output[:title] || article.title,
       agent_id: expected_output[:agent_id] || article.user_id,
       type: expected_output[:type] || article.parent.reload.art_type,
-      thumbs_up: expected_output[:thumbs_up] || article.solution_article_meta.thumbs_up,
-      thumbs_down: expected_output[:thumbs_down] || article.solution_article_meta.thumbs_down,
       feedback_count: expected_output[:feedback_count] || article.article_ticket.where(ticketable_type: 'Helpdesk::Ticket').preload(:ticketable).select { |art| !art.ticketable.spam_or_deleted? }.count,
-      hits: expected_output[:hits] || article.solution_article_meta.hits,
       status: expected_output[:status] || article.status,
       tags: expected_tags || article.tags.map(&:name),
       seo_data: expected_output[:seo_data] || article.seo_data,
@@ -59,6 +56,16 @@ module SolutionsTestHelper
         folder_id: expected_output[:folder_id] || article.parent.reload.solution_folder_meta.id }
     end
     resp.merge!(cat_folder)
+
+    if expected_output[:request_language] && expected_output[:request_language] == true
+      resp.merge!(thumbs_up: expected_output[:thumbs_up] || article.thumbs_up,
+                  thumbs_down: expected_output[:thumbs_down] || article.thumbs_down,
+                  hits: expected_output[:hits] || article.hits)
+    else
+      resp.merge!(thumbs_up: expected_output[:thumbs_up] || article.solution_article_meta.thumbs_up,
+                  thumbs_down: expected_output[:thumbs_down] || article.solution_article_meta.thumbs_down,
+                  hits: expected_output[:hits] || article.solution_article_meta.hits)
+    end
 
     unless expected_output[:action] == :filter
       resp.merge!(description: expected_output[:description] || article.description,

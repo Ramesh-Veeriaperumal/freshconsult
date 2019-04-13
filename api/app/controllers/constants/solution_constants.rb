@@ -21,7 +21,7 @@ module SolutionConstants
   ARTICLE_FIELDS = %w[category_name folder_name description
                       title status seo_data type folder_id unlock].freeze | ARTICLE_ARRAY_FIELDS |
                    ['seo_data' => ARTICLE_SEO_DATA_FIELDS]
-  ARTICLE_PROPERTY_FIELDS = %w[tags seo_data user_id folder_id].freeze
+  ARTICLE_PROPERTY_FIELDS = %w[tags seo_data user_id folder_id type].freeze
 
   CREATE_ARTICLE_FIELDS = { all: ARTICLE_FIELDS }.freeze
   UPDATE_ARTICLE_FIELDS = { all: ARTICLE_FIELDS, admin_tasks: ['agent_id'] }.freeze
@@ -46,7 +46,7 @@ module SolutionConstants
   TITLE_MAX_LENGTH = 240
   TITLE_MIN_LENGTH = 3
 
-  INDEX_PRELOAD_OPTIONS = [{ solution_article_meta: [:solution_folder_meta, :solution_category_meta] }, :article_body, :draft, draft: :draft_body].freeze
+  INDEX_PRELOAD_OPTIONS = [{ solution_article_meta: [:solution_folder_meta, :solution_category_meta] }, :article_body, { article_ticket: :ticketable }, :draft, draft: :draft_body].freeze
 
   FILTER_PRELOAD_OPTIONS = [{ solution_article_meta: [:solution_folder_meta, :solution_category_meta] }, :draft, :article_ticket, {article_ticket: :ticketable} , :tags, tags: :tag_uses].freeze
 

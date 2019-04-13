@@ -11,6 +11,7 @@ module ApiSolutions
     decorate_views(decorate_objects: [:folder_articles])
     before_filter :validate_query_parameters, only: [:folder_articles]
     before_filter :validate_draft_state, only: [:update, :destroy]
+    before_filter :language_metric_presence
 
     def show
       @meta = @item.solution_article_meta
@@ -189,6 +190,10 @@ module ApiSolutions
 
       def validate_draft_state
         render_request_error_with_info(:draft_locked, 400, {}, user_id: @draft.user_id) if @draft && @draft.locked?
+      end
+
+      def language_metric_presence
+        @language_metric = private_api? || params.key?(:language) # Needed to fetch overall/language metrics in public api call.
       end
 
       def remove_ignore_params

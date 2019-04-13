@@ -1,7 +1,7 @@
 class Solutions::ArticleDecorator < ApiDecorator
   delegate :title, :description, :desc_un_html, :user_id, :status, :seo_data, :language_id,
            :parent, :parent_id, :draft, :attachments, :cloud_files, :article_ticket, :modified_at,
-           :modified_by, :id, :to_param, :tags, :voters, :thumbs_up, :thumbs_down, to: :record
+           :modified_by, :id, :to_param, :tags, :voters, :thumbs_up, :thumbs_down, :hits, to: :record
 
   SEARCH_CONTEXTS_WITHOUT_DESCRIPTION = [:agent_insert_solution, :filtered_solution_search].freeze
 
@@ -11,6 +11,7 @@ class Solutions::ArticleDecorator < ApiDecorator
     @search_context = options[:search_context]
     @is_list_page = options[:is_list_page]
     @draft = options[:draft]
+    @language_metric = options[:language_metric]
   end
 
   def fetch_tags
@@ -31,10 +32,7 @@ class Solutions::ArticleDecorator < ApiDecorator
     }
     ret_hash.merge!(category_and_folder)
     ret_hash.merge!(draft_info(record_or_draft))
-    if private_api?
-      ret_hash.merge!(private_hash)
-      ret_hash.merge!(last_modified(ret_hash)) if @is_list_page
-    end
+    ret_hash.merge!(private_hash) if private_api?
     ret_hash
   end
 
@@ -46,16 +44,21 @@ class Solutions::ArticleDecorator < ApiDecorator
   end
 
   def to_hash
-    res_hash = article_info.merge(
-      thumbs_up: parent.thumbs_up,
-      thumbs_down: parent.thumbs_down,
-      feedback_count: feedback_count,
-      hits: parent.hits,
+    ret_hash = article_info.merge(
       tags: fetch_tags,
       seo_data: seo_data
     )
-    res_hash.merge!(attachments: attachments_hash, cloud_files: cloud_files_hash) unless @is_list_page 
-    res_hash
+    unless @is_list_page
+      ret_hash[:attachments] = attachments_hash
+      ret_hash[:cloud_files] = cloud_files_hash
+    end
+    ret_hash.merge!(article_metrics)
+    if private_api?
+      ret_hash[:draft_present] = @draft.present?
+      ret_hash.merge!(draft_private_hash) if @draft.present?
+      ret_hash.merge!(last_modified(ret_hash)) if @is_list_page
+    end
+    ret_hash
   end
 
   def draft_info(item)
@@ -64,8 +67,6 @@ class Solutions::ArticleDecorator < ApiDecorator
       updated_at: item.updated_at.try(:utc)
     }
     ret_hash.merge!(description_hash(item)) unless @is_list_page || (@search_context && SEARCH_CONTEXTS_WITHOUT_DESCRIPTION.include?(@search_context))
-    ret_hash.merge!(draft_private_hash) if private_api? && @draft.present?
-    ret_hash[:draft_present] = @draft.present? if private_api?
     ret_hash
   end
 
@@ -160,6 +161,15 @@ class Solutions::ArticleDecorator < ApiDecorator
       end
     end
 
+    def article_metrics
+      {
+        feedback_count: feedback_count,
+        thumbs_up: @language_metric ? thumbs_up : parent.thumbs_up,
+        thumbs_down: @language_metric ? thumbs_down : parent.thumbs_down,
+        hits: @language_metric ? hits : parent.hits
+      }
+    end
+
     def remove_deleted_attachments(attachments, type = :attachments)
       if @draft.meta.present? && @draft.meta[:deleted_attachments].present? && @draft.meta[:deleted_attachments][type].present?
         deleted_att_ids = @draft.meta[:deleted_attachments][type]
@@ -168,16 +178,16 @@ class Solutions::ArticleDecorator < ApiDecorator
       attachments
     end
 
-    def feedback_count
-      @feedback_count ||= article_ticket.where(ticketable_type: 'Helpdesk::Ticket').preload(:ticketable).reject { |article_ticket| article_ticket.ticketable.spam_or_deleted? }.count
-    end
-
     def vote_info(vote_type)
       users = voters.where('votes.vote = ?', Solution::Article::VOTES[vote_type]).select('users.id, users.name')
       {
         anonymous: safe_send(vote_type) - users.length,
         users: users.map { |voter| { id: voter.id, name: voter.name } }
       }
+    end
+
+    def feedback_count
+      @feedback_count ||= article_ticket.where(ticketable_type: 'Helpdesk::Ticket').preload(:ticketable).reject { |article_ticket| article_ticket.ticketable.spam_or_deleted? }.count
     end
 
     def last_modified resp_hash
