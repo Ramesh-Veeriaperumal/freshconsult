@@ -5,6 +5,7 @@ module Middleware::RequestVerifier
   PIPE_PATH = '/api/pipe/'.freeze
   FRESHID_PATH = '/api/freshid/'.freeze
   CHANNEL_PATH = '/api/channel/v2'.freeze
+  CHANNEL_v1_PATH = '/api/channel/'.freeze
   PRIVATE_API_PATH = '/api/_/'.freeze
   API_V2_PATH = '/api/v2/'.freeze
   WIDGET_PATH = '/api/widget/'.freeze
@@ -31,6 +32,10 @@ module Middleware::RequestVerifier
 
   def channel_api_request?(env = nil)
     verify_path?(env['PATH_INFO'], CHANNEL_PATH)
+  end
+
+  def channel_v1_api_request?(env = nil)
+    verify_path?(env['PATH_INFO'], CHANNEL_v1_PATH) && !channel_api_request?(env)
   end
 
   def api_v2_request?(env = nil)

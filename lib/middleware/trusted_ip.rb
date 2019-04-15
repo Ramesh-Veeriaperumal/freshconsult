@@ -32,7 +32,8 @@ class Middleware::TrustedIp
           @current_account = Account.find(account_id)
           @current_account.make_current
         end
-        return execute_request(env) if CustomRequestStore.read(:channel_api_request)
+        return execute_request(env) if CustomRequestStore.read(:channel_api_request) || CustomRequestStore.read(:channel_v1_api_request)
+
         # Proceed only if user_credentials_id is present(i.e., authenticated user) or api request.
         if !env['rack.session']['user_credentials_id'].nil? || api_request?(req_path)
           if trusted_ips_enabled?

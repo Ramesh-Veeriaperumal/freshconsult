@@ -20,6 +20,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
 
   def allowed?(env)
     begin
+      return true if by_pass_throttle?
       return true if !env['SHARD'].present? || !env['SHARD'].ok?
 
       Sharding.run_on_shard(env['SHARD'].shard_name) do 
@@ -28,7 +29,6 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
           current_account = Account.find(@account_id)
           current_account.api_limit.to_i
         end
-        return true if by_pass_throttle?
         remove_others_redis_key(key) if get_others_redis_key(key+"_expiry").nil?
         @count = get_others_redis_key(key).to_i
         return api_limit > @count
