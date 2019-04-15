@@ -254,6 +254,7 @@ api_error_messages:
   no_matching_privilege: "No matching privileges found for: '%{list}'"
   default_role_modified: "You cannot modify a default role."
   missing_privileges: "Please check privileges that are dependent on: '%{list}'"
+
   should_be_child: A ticket of type %{type} cannot be created without parent_id
   to_service_task_not_possible: The type of a ticket can not be updated to service task
   from_service_task_not_possible: The type of a service task ticket can not be updated
@@ -267,6 +268,31 @@ api_error_messages:
   invalid_import_value: "Invalid value. Should be set as the index of field"
   invalid_import_fields: "Invalid fields: %{invalid_values}"
   rule_type_not_allowed: "Rule type not allowed: %{rule_type}"
+
+  unexpected_parameter_error: "Parameter '%{value}' is not allowed for '%{name}'"
+  invalid_attribute_for_rules: "'%{name}' is only available for '%{value}'"
+  invalid_attribute_for_key: "Allowed attribute :'%{list}'"
+  expecting_value_for_event_field: "Expecting these field '%{value}' present for request parameter '%{name}'"
+  condition_set_operator_error: "Operator should be given only if there are multiple conditions_set"
+
+  invalid_position: "Position should be greater than 0 and less than %{max_position}"
+  invalid_field_type: "Invalid data type"
+  invalid_nested_field: "There is no field/value matching the given %{field_name}"
+
+  invalid_value_in_field: "Invalid value: '%{value}' for '%{field_name}'"
+  invalid_field_name: "Invalid field name: %{field_name}"
+  invalid_data_type: "Expecting '%{expected_type}' but found '%{actual_type}'"
+  not_allowed: "Invalid key: %{key}"
+  invalid_value: "Value not present: %{value}"
+  field_not_allowed: "'%{field}' not allowed"
+  level_field_not_allowed: "'%{field_name}' not allowed in '%{level}'"
+  level_field_value_not_allowed: "'%{value}' not allowed in %{field_name}"
+  level_missing_field: "Field missing :%{field}"
+  field_not_found: "%{field_name}: not found"
+  expecting_previous_condition_set: "Can't set %{current} without giving %{previous}"
+  invalid_email_list: "Field contains invalid email address(s): '%{list}'"
+  unexpected_members_for_performer: "Members should only be present for type 1"
+
   fsm_ticket_scenario_failure: "Cannot run scenarios on a ticket of type service task"
   invalid_upload_file_type: "Invalid file type(%{current_extension}). Please upload yml/yaml file."
   mismatch_language: "Language code in file and url do not match."
@@ -276,6 +302,8 @@ api_error_messages:
   unsupported_language: "Language given in the request URL (%{language_code}) is not found. Allowed languages are %{list}"
   empty_supported_language: "No supported languages added in this account."
   invalid_twitter_handle: "Twitter handle doesn't exist"
+  duplicate_name_in_automations: "A rule already exists with name - '%{name}'"
+  case_sensitive_not_allowed: "'case_sensitive' not allowed in '%{name}'"
   # Solutions
   invalid_portal_id: 'Portal id is invalid'
   no_ratings: "The article doesn't have any ratings to be reset"
@@ -294,10 +322,11 @@ api_error_messages:
   content_changed: "Content has been changed elsewhere"
   cannot_create_new_tag: "cannot_create_new_tag: %{tags}"
   invalid_ebay_ticket_source: "Invalid ticket source"
-
+  webhook_auth_header_error: "Both username and api_key should not be present"
 
   audit_log_export: 'your request is in process'
 
   account_in_trial: 'Account is already in trial'
-  email_limit_reached: 'You have already created %{limit} accounts with this email'
+
+  invalid_feature_name: "invalid feature name: '%{feature_name}'"
 

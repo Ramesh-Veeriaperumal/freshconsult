@@ -112,4 +112,29 @@ module AutomationTestHelper
       ] }
     )
   end
+
+  def sample_json_for_observer
+    observer_payload = JSON.parse('{"active":true,"performer":{"type":1},
+    "events":[{"field_name":"priority","from":1,"to":2},{"field_name":"ticket_type","from":"Question","to":"Incident"},
+    {"field_name":"status","from":3,"to":4}],"conditions":{"condition_set_1":{"match_type":"all","ticket":[{"field_name":"group_id","operator":"is","value":1}]}},
+      "actions":[{"field_name":"group_id","value":1}]}')
+    observer_payload['name'] = Faker::Lorem.characters(20)
+    observer_payload
+  end
+
+  def sample_json_for_dispatcher
+    dispatcher_payload = JSON.parse('{"name":"test 1234423","active":false,
+      "conditions":{"condition_set_1":{"match_type":"all","ticket":[{"field_name":"ticket_type","operator":"in","value":"Refund"}]},
+      "operator":"any","condition_set_2":{"match_type":"all","ticket":[{"field_name":"ticket_type","operator":"in","value":"Question"},
+        {"field_name":"subject_or_description","operator":"contains","value":"billing"}]}},"actions":[{"field_name":"group_id","value":4}] }')
+    dispatcher_payload['name'] = Faker::Lorem.characters(20)
+    dispatcher_payload
+  end
+
+  def set_default_fields(sample_response)
+    sample_response['affected_tickets_count'] = 0
+    sample_response['outdated'] = false
+    sample_response['last_updated_by'] = User.current.id
+    sample_response
+  end
 end

@@ -1,5 +1,6 @@
 module Tickets
   class ObserverWorker < BaseWorker
+    include AutomationRuleHelper
 
     sidekiq_options :queue => :ticket_observer, :retry => 0, :backtrace => true, :failures => :exhausted
     SYSTEM_DOER_ID = -1
@@ -23,15 +24,20 @@ module Tickets
           Thread.current[:observer_doer_id] = doer_id || SYSTEM_DOER_ID
           aggregated_response_time = 0
           observer_rules = account.observer_rules_from_cache
+          rule_ids_with_exec_count = {}
           observer_rules.each do |vr|
             Va::Logger::Automation.set_rule_id(vr.id)
             ticket = nil
             time = Benchmark.realtime {
-              ticket = vr.check_events doer, evaluate_on, current_events
+              ticket = account.automation_revamp_enabled? ? 
+                        vr.check_rule_events(doer, evaluate_on, current_events) : 
+                        vr.check_events(doer, evaluate_on, current_events)
             }
+            rule_ids_with_exec_count[vr.id] = 1 if ticket.present?
             Va::Logger::Automation.log_execution_and_time(time, (ticket.present? ? 1 : 0), rule_type)
             aggregated_response_time += vr.response_time[:matches] || 0
           end
+          update_ticket_execute_count(rule_ids_with_exec_count) if rule_ids_with_exec_count.present?
           end_time = Time.now.utc
           total_time = end_time - start_time
           Va::Logger::Automation.unset_rule_id

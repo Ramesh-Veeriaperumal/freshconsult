@@ -2,7 +2,7 @@ require_relative '../test_helper'
 
 class ApiTicketFieldsControllerTest < ActionController::TestCase
   include TicketFieldsTestHelper
-  include Admin::AdvancedTicketing::FieldServiceManagement::Util
+  include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
   def wrap_cname(_params)
     remove_wrap_params
     {}
@@ -250,7 +250,7 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
   def test_index_with_fsm_fields
     Account.stubs(:current).returns(Account.first)
     old_ticket_fields_count = @account.ticket_fields.size
-    fsm_fields_count = Admin::AdvancedTicketing::FieldServiceManagement::Constant::CUSTOM_FIELDS_TO_RESERVE.count
+    fsm_fields_count = ::Admin::AdvancedTicketing::FieldServiceManagement::Constant::CUSTOM_FIELDS_TO_RESERVE.count
     reserve_fsm_custom_fields
     get :index, controller_params({}, {})
     assert_response 200

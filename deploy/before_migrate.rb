@@ -100,6 +100,7 @@ run "ln -nfs #{shared_path}/config/growthscore_app.yml #{node[:rel_path]}/config
 run "ln -nfs #{shared_path}/config/datadog.yml #{node[:rel_path]}/config/datadog.yml"
 run "ln -nfs #{shared_path}/config/freshvisuals.yml #{node[:rel_path]}/config/helpdesk_reports/freshvisuals.yml"
 run "ln -nfs #{shared_path}/config/freno.yml #{node[:rel_path]}/config/freno.yml"
+run "ln -nfs #{shared_path}/config/automation_rule_redis.yml #{node[:rel_path]}/config/automation_rule_redis.yml"
 
 
 #supreme-code-console

@@ -1,5 +1,7 @@
 module Va
   module Constants
+    # va_rule execution count key expiry
+    RULE_EXEC_COUNT_EXPIRY_DURATION = 604800 # 7 days
     
     OPERATOR_TYPES = {
       :email       => [ "is", "is_not", "contains", "does_not_contain" ],
@@ -106,11 +108,15 @@ module Va
       '5' => 'DELETE'
     }
 
+    WEBHOOK_REQUEST_TYPES_ID = WEBHOOK_REQUEST_TYPES.invert
+
     WEBHOOK_CONTENT_TYPES = {
       '1' => 'XML',
       '2' => 'JSON',
       '3' => 'X-FORM-URLENCODED'
     }
+
+    WEBHOOK_CONTENT_TYPES_ID = WEBHOOK_CONTENT_TYPES.invert
 
     LAZY_EVALUATIONS = {
       'User'             => [:segments],
@@ -146,6 +152,7 @@ module Va
         "source" => [I18n.t('ticket.source'), TicketConstants.readable_source_names_by_key],
         "product_id" => [I18n.t('admin.products.product_label_msg'), "products", "id"],
         "created_at" => [I18n.t('ticket.created_during.title'), VAConfig::CREATED_DURING_NAMES_BY_KEY],
+        "updated_at" => [I18n.t('ticket.updated_during.title'), VAConfig::CREATED_DURING_NAMES_BY_KEY],
         "responder_id" => [I18n.t('ticket.agent'), "technicians", "id"],
         "group_id" => [I18n.t('ticket.group'), "groups", "id"],
         "internal_agent_id" => [I18n.t('ticket.internal_agent'), "technicians", "id"],
@@ -218,6 +225,7 @@ module Va
         "send_email_to_group" => [I18n.t('send_email_to_group')],
         "send_email_to_agent" => [I18n.t('send_email_to_agent')],
         "send_email_to_requester" => [I18n.t('send_email_to_requester')],
+        "forward_ticket" => [I18n.t('forward_ticket')],
         "delete_ticket" => [I18n.t('delete_the_ticket')],
         "mark_as_spam" => [I18n.t('mark_as_spam')],
         "skip_notification" => [I18n.t('dispatch.skip_notifications')],

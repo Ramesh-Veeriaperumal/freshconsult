@@ -1,11 +1,11 @@
 class TicketDecorator < ApiDecorator
-  delegate :ticket_body, :custom_field_via_mapping, :cc_email, :email_config_id, 
-    :fr_escalated, :group_id, :priority, :requester_id, :responder, :responder_id, 
-    :source, :spam, :status, :subject, :display_id, :ticket_type, :schema_less_ticket, 
-    :deleted, :due_by, :frDueBy, :isescalated, :description, :internal_group_id, 
-    :internal_agent_id, :association_type, :associates, :associated_ticket?, 
-    :can_be_associated?, :description_html, :tag_names, :attachments, 
-    :attachments_sharable, :company_id, :cloud_files, :ticket_states, :skill_id, 
+  delegate :ticket_body, :custom_field_via_mapping, :cc_email, :email_config_id,
+    :fr_escalated, :group_id, :priority, :requester_id, :responder, :responder_id,
+    :source, :spam, :status, :subject, :display_id, :ticket_type, :schema_less_ticket,
+    :deleted, :due_by, :frDueBy, :isescalated, :description, :internal_group_id,
+    :internal_agent_id, :association_type, :associates, :associated_ticket?,
+    :can_be_associated?, :description_html, :tag_names, :attachments,
+    :attachments_sharable, :company_id, :cloud_files, :ticket_states, :skill_id,
     :subsidiary_tkts_count, :import_id, :id, to: :record
 
   delegate :multiple_user_companies_enabled?, to: 'Account.current'
@@ -373,11 +373,11 @@ class TicketDecorator < ApiDecorator
     ret_hash
   end
 
-  def whitelisted_properties_for_activities 
+  def whitelisted_properties_for_activities
     ret_hash = whitelisted_properties
     if archived?
       ret_hash[:archived] = true
-    else 
+    else
       ret_hash[:tags] = tag_names
       ret_hash[:fr_due_by] = frDueBy.try(:utc)
       ret_hash[:status] = status
@@ -435,7 +435,7 @@ class TicketDecorator < ApiDecorator
     record.requester.reload unless record.requester.emails.present?
     if record.requester.emails.include?(schema_less_ticket_association.try(:sender_email))
       schema_less_ticket_association.try(:sender_email)
-    end 
+    end
   end
 
   private

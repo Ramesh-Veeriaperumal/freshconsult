@@ -37,6 +37,7 @@ class CustomSurvey::Survey < ActiveRecord::Base
   CUSTOMER_RATINGS_COLOR  = Hash[*CUSTOMER_RATINGS_MAP.map { |i| [i[1], i[3]] }.flatten]
   CUSTOMER_RATINGS_TEXT_BGCOLOR = Hash[*CUSTOMER_RATINGS_MAP.map { |i| [i[1], i[4]] }.flatten]
   CUSTOMER_RATINGS_STYLE  = Hash[*CUSTOMER_RATINGS_MAP.map { |i| [i[1], i[5]] }.flatten]
+  CUSTOMER_RATINGS_FACE_VALUE = CUSTOMER_RATINGS_MAP.map { |i| i[1] }.flatten
 
   CUSTOMER_RATINGS_BY_TOKEN = CUSTOMER_RATINGS.invert
 

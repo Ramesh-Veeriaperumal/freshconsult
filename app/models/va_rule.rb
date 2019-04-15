@@ -33,10 +33,11 @@ class VaRule < ActiveRecord::Base
   after_commit :clear_api_webhook_rules_from_cache, :if => :api_webhook_rule?
   after_commit :clear_installed_app_business_rules_from_cache, :if => :installed_app_business_rule?
   after_commit :log_rule_change, if: :automated_rule?
+  after_update :reorder_rules, if: :position_changed?
 
   attr_writer :conditions, :actions, :events, :performer, :rule_operator,
               :rule_performer, :rule_events, :rule_conditions
-  attr_accessor :triggered_event, :response_time
+  attr_accessor :triggered_event, :response_time, :affected_tickets_count
 
   attr_accessible :name, :description, :match_type, :active, :filter_data, :action_data, :rule_type, :position
 
@@ -82,16 +83,20 @@ class VaRule < ActiveRecord::Base
   end
 
   def condition_data
+    return self[:filter_data] if supervisor_rule?
     has_condition_data? && (observer_rule? || api_webhook_rule?) ?
           self[:condition_data].symbolize_keys : self[:condition_data]
   end
 
   def has_condition_data?
-    self[:condition_data].present?
+    supervisor_rule? ? self[:filter_data].present? : self[:condition_data].present?
   end
 
   def rule_operator
-     @rule_operator ||= (observer_rule? ? condition_data[:conditions].keys.first.to_sym : condition_data.keys.first.to_sym) if has_condition_data?
+     @rule_operator ||= self[:match_type].to_sym  if supervisor_rule?
+     @rule_operator ||= (observer_rule? ? 
+                          condition_data[:conditions].keys.first.to_sym : 
+                          condition_data.keys.first.to_sym) if has_condition_data?
   end
  
    def rule_performer
@@ -99,21 +104,45 @@ class VaRule < ActiveRecord::Base
    end
  
    def rule_events
-     @rule_events ||= condition_data[:events].collect{ |e| Va::Event.new(e.symbolize_keys, account) } if has_condition_data?
+     @rule_events ||= condition_data[:events].collect{ |e| 
+      Va::Event.new(e.symbolize_keys, account) } if has_condition_data?
    end
  
    def rule_conditions
-     if has_condition_data?
-       @rule_conditions ||= begin
-         if observer_rule?
-           condition_data[:conditions].values.first
-         elsif dispatchr_rule?
-           condition_data.values.first
-         end
-       end
+     return unless has_condition_data?
+     @rule_conditions ||= begin
+       _conditions = if observer_rule?
+          condition_data[:conditions].values.first if condition_data[:conditions].present?
+        elsif dispatchr_rule?
+          condition_data.values.first
+        elsif supervisor_rule?
+          condition_data
+        end
+        unless supervisor_rule?
+          _conditions.each do |condition|
+            condition[:field_type] = fetch_field_type(condition)
+          end
+        end
+        _conditions
      end
    end
 
+  def fetch_field_type(condition)
+    case condition[:evaluate_on]
+    when :requester
+      contact_field = account.contact_form.custom_contact_fields.detect{ |cnf| cnf.name == condition[:name] }
+      contact_field.present? ? contact_field.field_type.to_sym : :default
+    when :company
+      company_field = account.company_form.custom_company_fields.detect{ |csf| csf.name == condition[:name] }
+      company_field.present? ? company_field.field_type.to_sym : :default
+    else
+      ff = account.flexifields_with_ticket_fields_from_cache.detect{ |ff| 
+          ff.flexifield_name == condition[:name] || ff.flexifield_alias == condition[:name] }
+      ticket_field = ff.present? ? ff.ticket_field : nil
+      ticket_field.present? && ticket_field.parent_id.nil? ? ticket_field.field_type.to_sym : :default
+    end
+  end
+  
   def deserialize_action(act_hash)
     act_hash.symbolize_keys!
     Va::Action.new(act_hash, self)
@@ -169,6 +198,39 @@ class VaRule < ActiveRecord::Base
       end
     end
     return to_ret
+  end
+
+  def check_rule_events(doer, evaluate_on, current_events)
+    Va::Logger::Automation.log "********* RULE PERFORMER *********"
+    performer_matched = rule_performer.matches? doer, evaluate_on
+    Va::Logger::Automation.log "rule performer matched=#{performer_matched}"
+    return unless performer_matched
+    event_matched = rule_event_matches? current_events, evaluate_on
+    Va::Logger::Automation.log "rule event matched=#{event_matched}"
+    check_rule_conditions evaluate_on, nil, doer if event_matched
+  end
+
+  def rule_event_matches?(current_events, evaluate_on)
+    Va::Logger::Automation.log "********* RULE EVENTS *********"
+    rule_events.each do  |e|
+      if e.event_matches?(current_events, evaluate_on)
+        @triggered_event = {e.name => current_events[e.name]}
+        Va::Logger::Automation.log "matched rule event=#{@triggered_event.inspect}"
+        return true
+      end
+    end
+    false
+  end
+
+  def check_rule_conditions(evaluate_on, actions=nil, doer=nil)
+    Va::Logger::Automation.log "********* RULE CONDITIONS *********"
+    is_a_match = false
+    benchmark { is_a_match = RuleEngine::NestedCondition.new(evaluate_on,
+                              rule_operator).process_block(rule_conditions) }
+    Va::Logger::Automation.log "rule condition matched=#{is_a_match}"
+    Va::Logger::Automation.log "********* RULE ACTIONS *********"
+    trigger_actions(evaluate_on, doer) if is_a_match
+    is_a_match ? evaluate_on : nil
   end
 
   def negation_operator?(operator)
@@ -423,13 +485,13 @@ class VaRule < ActiveRecord::Base
 
     def has_events?
       return unless observer_rule? || api_webhook_rule?
-      errors.add(:base,I18n.t("errors.events_empty")) if 
-        ((account.automation_revamp_enabled? && condition_data[:events].blank?) || 
-            (!account.automation_revamp_enabled? && filter_data[:events].blank?))
+      unless account.automation_revamp_enabled?
+        errors.add(:base,I18n.t("errors.events_empty")) if filter_data[:events].blank?
+      end
     end
     
     def has_conditions?
-      return unless supervisor_rule?
+      return if automation_rule?
       errors.add(:base,I18n.t("errors.conditions_empty")) if
         ((!account.automation_revamp_enabled? && filter_data.blank?) || 
           (account.automation_revamp_enabled? && condition_data.blank?))
@@ -503,4 +565,27 @@ class VaRule < ActiveRecord::Base
         errors.add(:base,I18n.t("admin.va_rules.webhook.action_data_limit_exceed"))
       end
     end
+
+    def position_changed?
+      position = changes[:position]
+      account.automation_revamp_enabled? && position.present? && (position.first != position.last)
+    end
+
+    def reorder_rules
+      position = changes[:position]
+      rule_type = VAConfig::RULES_BY_ID[self.rule_type]
+      rule_association = VAConfig::ASSOCIATION_MAPPING[rule_type]
+      if position.present? && rule_association.present?
+        rules = account.safe_send("all_#{rule_association}".to_sym)
+        old_rule_position = position.first
+        new_rule_position = position.last
+        reorder_from_higher_pos = old_rule_position > new_rule_position
+        reorder_by = reorder_from_higher_pos ? '+' : '-'
+        position_upper_index = reorder_from_higher_pos ? old_rule_position : new_rule_position
+        position_lower_index = reorder_from_higher_pos ? new_rule_position : old_rule_position
+        rules.where('position >= ? and position <= ? and id != ?',
+                    position_lower_index, position_upper_index, self.id).update_all("position = position #{reorder_by} 1")
+      end
+end
+
 end

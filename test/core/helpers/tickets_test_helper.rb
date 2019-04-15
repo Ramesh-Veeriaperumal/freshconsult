@@ -48,6 +48,8 @@ module CoreTicketsTestHelper
   end
 
   def create_ticket(params = {}, group = nil, internal_group = nil)
+    group ||= @account.groups.find_by_id(params[:group_id]) if params.key?(:group_id)
+    internal_group ||= @account.groups.find_by_id(params[:internal_group_id]) if params.key?(:internal_group_id)
     requester_id = params[:requester_id] #|| User.find_by_email("rachel@freshdesk.com").id
     unless requester_id
       user = add_new_user(@account)
@@ -64,12 +66,17 @@ module CoreTicketsTestHelper
                                          :responder_id => params[:responder_id],
                                          :source => params[:source] || 2,
                                          :priority => params[:priority] || 2,
+                                         :product_id => params[:product_id],
                                          :ticket_type => params[:ticket_type],
-                                         :cc_email => Helpdesk::Ticket.default_cc_hash.merge(cc_emails: cc_emails, fwd_emails: fwd_emails),
+                                         :to_email => params[:to_email],
+                                         :cc_email => Helpdesk::Ticket.default_cc_hash.merge(cc_emails: cc_emails, 
+                                                        fwd_emails: fwd_emails, tkt_cc: cc_emails),
                                          :created_at => params[:created_at],
                                          :account_id => account_id,
                                          :custom_field => params[:custom_field])
-    test_ticket.build_ticket_body(:description => Faker::Lorem.paragraph)
+    test_ticket.sender_email = params[:sender_email] if params[:sender_email].present?
+    test_ticket.tag_ids = params[:tag_ids] if params.key?(:tag_ids)
+    test_ticket.build_ticket_body(:description => params[:description] || Faker::Lorem.paragraph)
     if params[:attachments]
       params[:attachments].each do |attach|
         test_ticket.attachments.build(:content => attach[:resource],

@@ -30,7 +30,8 @@ module VAConfig
 
   ASSOCIATION_MAPPING = { 
                           dispatcher: :va_rules,
-                          observer: :observer_rules
+                          observer: :observer_rules,
+                          supervisor: :supervisor_rules
                         }
 
   def self.handler(field, account, evaluate_on_type = nil)

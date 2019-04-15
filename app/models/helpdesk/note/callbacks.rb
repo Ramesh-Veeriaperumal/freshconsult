@@ -21,6 +21,8 @@ class Helpdesk::Note < ActiveRecord::Base
   after_commit :notify_ticket_monitor, on: :create
 
   after_commit :send_notifications, on: :create, :if => :human_note_for_ticket?
+  after_commit :notifying_agents, on: :create, :if => :automated_note_for_ticket?
+  after_commit :send_forward_ticket_email, on: :create, :if => :automation_fwd_email?
 
   #https://github.com/rails/rails/issues/988#issuecomment-31621550
   after_commit ->(obj) { obj.update_es_index }, on: :create, :if => :human_note_for_ticket?
@@ -232,14 +234,11 @@ class Helpdesk::Note < ActiveRecord::Base
                 :include_surveymonkey_link => false})
       end
       # Forward case
-      if fwd_email?
-        Helpdesk::TicketNotifier.send_later(:deliver_forward, notable, self) unless only_kbase?
-        create_fwd_note_activity(self.to_emails)
-      end
+      send_forward_ticket_email(true) if fwd_email?
     end
 
     def notifying_agents
-      if note? && !self.to_emails.blank? && !incoming 
+      if (note? || automated_note_for_ticket?) && !self.to_emails.blank? && !incoming 
         if reply_to_forward?
           Helpdesk::TicketNotifier.send_later(:deliver_reply_to_forward, notable, self)
         else
@@ -482,6 +481,12 @@ class Helpdesk::Note < ActiveRecord::Base
     def enqueue_for_NER
       NERWorker.perform_async({:obj_id => self.id, :obj_type => :notes, 
         :text => self.body, :html => self.body_html}) if ((self.user.language == 'en') && account.launched?(:ner))
+    end
+
+    def send_forward_ticket_email(create_activity = false)
+      return if import_note
+      Helpdesk::TicketNotifier.send_later(:deliver_forward, notable, self) unless only_kbase?
+      create_fwd_note_activity(self.to_emails) if create_activity
     end
 end
 

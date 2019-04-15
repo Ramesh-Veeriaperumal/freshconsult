@@ -8,8 +8,8 @@ module Ember
       include Redis::RedisKeys
       include Redis::HashMethods
       include Redis::OthersRedis
-      include Admin::AdvancedTicketing::FieldServiceManagement::Constant
-      include Admin::AdvancedTicketing::FieldServiceManagement::Util
+      include ::Admin::AdvancedTicketing::FieldServiceManagement::Constant
+      include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
 
       def setup
         super

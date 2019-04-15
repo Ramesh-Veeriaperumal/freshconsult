@@ -11,6 +11,7 @@ class VaRule < ActiveRecord::Base
     v.add :description
     v.add :match_type
     v.add :filter_data
+    v.add :condition_data
     v.add :filtered_action_data, as: :action_data
     v.add :account_id
     v.add :rule_type

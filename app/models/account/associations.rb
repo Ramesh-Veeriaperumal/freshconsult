@@ -133,17 +133,19 @@ class Account < ActiveRecord::Base
   has_many :va_rules, :class_name => 'VaRule', :conditions => {
   :rule_type => VAConfig::BUSINESS_RULE, :active => true }, :order => "position"
   has_many :all_va_rules, :class_name => 'VaRule', :conditions => {
-  :rule_type => VAConfig::BUSINESS_RULE }, :order => "position"
+    rule_type: VAConfig::BUSINESS_RULE
+  }, order: 'active desc, position'
 
   has_many :supervisor_rules, :class_name => 'VaRule', :conditions => {
   :rule_type => VAConfig::SUPERVISOR_RULE, :active => true }, :order => "position"
   has_many :all_supervisor_rules, :class_name => 'VaRule', :conditions => {
-  :rule_type => VAConfig::SUPERVISOR_RULE }, :order => "position"
+  :rule_type => VAConfig::SUPERVISOR_RULE }, :order => 'active desc, position'
 
   has_many :observer_rules, :class_name => 'VaRule', :conditions => {
   :rule_type => VAConfig::OBSERVER_RULE, :active => true }, :order => "position"
-  has_many :all_observer_rules, :class_name => 'VaRule', :conditions => {
-  :rule_type => VAConfig::OBSERVER_RULE }, :order => "position"
+  has_many :all_observer_rules, class_name: 'VaRule', conditions: {
+    rule_type: VAConfig::OBSERVER_RULE
+  }, order: 'active desc, position'
 
   has_many :api_webhook_rules, :class_name => 'VaRule', :conditions => {
   :rule_type => VAConfig::API_WEBHOOK_RULE, :active => true }, :order => "position"

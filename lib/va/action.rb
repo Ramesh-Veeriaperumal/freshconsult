@@ -3,6 +3,8 @@ class Va::Action
   include Va::Action::Restrictions
   include Va::Webhook::Trigger
   include ParserUtil
+  include Concerns::ApplicationViewConcern
+  include Concerns::TicketsViewConcern
 
   #including Redis keys for notify_cc - will be removed later
   include Redis::RedisKeys
@@ -14,7 +16,9 @@ class Va::Action
 
   attr_accessor :action_key, :act_hash, :doer, :triggered_event, :va_rule, :skip_record_action, :logger_actions
 
-  IRREVERSIBLE_ACTIONS = [:add_comment, :add_watcher, :send_email_to_agent, :send_email_to_group, :send_email_to_requester, :add_tag, :delete_ticket, :mark_as_spam, :internal_group_id, :internal_agent_id]
+  IRREVERSIBLE_ACTIONS = [:add_comment, :add_watcher, :send_email_to_agent, 
+    :send_email_to_group, :send_email_to_requester, :forward_ticket, :add_tag, 
+    :delete_ticket, :mark_as_spam, :internal_group_id, :internal_agent_id, :add_note]
 
   ACTION_PRIVILEGE =
     {  
@@ -145,15 +149,13 @@ class Va::Action
   end
 
   def add_comment(act_on)
-    note = act_on.notes.build()
-    note.build_note_body
-    note.note_body.body_html = substitute_placeholders(act_on, :comment)
-    note.account_id = act_on.account_id
-    note.user = User.current
-    note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]
-    note.incoming = false
-    note.private = "true".eql?(act_hash[:private])
-    note.build_note_and_sanitize
+    note_params = { 
+      note_body_key: 'comment',
+      source:  'note',
+      private: 'true'.eql?(act_hash[:private])
+    }
+    note = build_note act_on, note_params, false
+    sanitize_note note
     record_action(act_on)
   end
   
@@ -222,15 +224,9 @@ class Va::Action
     return if act_on.spam?
     if act_on.requester_has_email? && !(act_on.ecommerce? || act_on.requester.ebay_user?)
       act_on.account.make_current
-      if self.va_rule.automation_rule?
-        Helpdesk::TicketNotifier.send_later(:email_to_requester, act_on, 
-        substitute_placeholders_for_requester(act_on, :email_body),
-                      substitute_placeholders_for_requester(act_on, :email_subject))
-      else
-      Helpdesk::TicketNotifier.email_to_requester(act_on, 
-        substitute_placeholders_for_requester(act_on, :email_body),
-                      substitute_placeholders_for_requester(act_on, :email_subject)) 
-      end
+      Helpdesk::TicketNotifier.send_later(:email_to_requester, act_on, 
+      substitute_placeholders_for_requester(act_on, :email_body),
+                    substitute_placeholders_for_requester(act_on, :email_subject))
       record_action(act_on)
     end
   end
@@ -253,6 +249,23 @@ class Va::Action
     end
   end
   
+  def forward_ticket(act_on)
+    note_params = {
+      note_body_key: 'fwd_note_body',
+      source:  'automation_rule_forward',
+      private: true
+    }
+    note = build_note act_on, note_params
+    note.note_body.body_html.concat(quoted_text(act_on, true)) if act_hash[:show_quoted_text] == 'true'
+    note.schema_less_note.to_emails = act_hash[:fwd_to]
+    note.schema_less_note.cc_emails = act_hash[:fwd_cc]
+    note.schema_less_note.bcc_emails = act_hash[:fwd_bcc]
+    note.schema_less_note.from_email = act_on.account.default_email
+    sanitize_note note
+    activity_params = { helpdesk_name: act_on.account.helpdesk_name, to_emails: act_hash[:fwd_to], cc_emails: act_hash[:fwd_cc], bcc_emails: act_hash[:fwd_bcc] }
+    record_action(act_on, activity_params)
+  end
+
   def delete_ticket(act_on)
     act_on.deleted = true
     record_action(act_on, act_on)
@@ -261,6 +274,24 @@ class Va::Action
   def mark_as_spam(act_on)
     act_on.spam = true 
     record_action(act_on, act_on)
+  end
+
+  def add_note(act_on)
+    note_params = {
+      note_body_key: 'note_body',
+      source:  'automation_rule',
+      private: true
+    }
+    note = build_note act_on, note_params
+    agent_emails = []
+    act_hash[:notify_agents] = [].push(act_hash[:notify_agents]) if act_hash[:notify_agents].is_a?(String) 
+    (act_hash[:notify_agents]).each do |agent_id|  
+      agent_emails<<(act_on.account.users.find(agent_id).email) 
+    end
+    note.schema_less_note.to_emails = agent_emails
+    note.build_note_and_sanitize
+    account_name = {account_name: act_on.account.helpdesk_name}
+    record_action(act_on,account_name)
   end
 
   def skip_notification(act_on)
@@ -297,7 +328,7 @@ class Va::Action
         when EVENT_PERFORMER
           event_performing_agent(act_on, doer)
         else 
-          act_on.account.users.find(a_id)
+          act_on.account.technicians.find(a_id)
         end
       rescue ActiveRecord::RecordNotFound
       end
@@ -308,16 +339,10 @@ class Va::Action
     end
 
     def send_internal_email act_on, receipients
-      act_on.account.make_current 
-       if self.va_rule.automation_rule?
-         Helpdesk::TicketNotifier.send_later(:internal_email, act_on, 
+      act_on.account.make_current
+      Helpdesk::TicketNotifier.send_later(:internal_email, act_on,
         receipients, substitute_placeholders(act_on, :email_body),
-          substitute_placeholders(act_on, :email_subject))
-       else
-         Helpdesk::TicketNotifier.internal_email(act_on, 
-         receipients, substitute_placeholders(act_on, :email_body),
-           substitute_placeholders(act_on, :email_subject)) 
-       end
+        substitute_placeholders(act_on, :email_subject))
      end
 
     def substitute_placeholders_for_requester act_on, content_key
@@ -331,7 +356,7 @@ class Va::Action
       content           = RedCloth.new(content).to_html unless content_key == :email_subject
 
       placeholder_hash  = {'ticket' => act_on, 'helpdesk_name' => act_on.account.helpdesk_name,
-                          'comment' => act_on.notes.visible.exclude_source(Helpdesk::Note::EXCLUDE_SOURCE).last}
+                           'comment' => act_on.notes.visible.exclude_source(Helpdesk::Note::EXCLUDE_SOURCE).last}
       placeholder_hash.merge!('event_performer' => doer) if doer.present?
 
       Liquid::Template.parse(content).render(placeholder_hash)
@@ -343,5 +368,23 @@ class Va::Action
 
     def is_automation_rule?
       @va_rule.present? ? @va_rule.automation_rule? : false      
+    end
+
+    def build_note act_on, note_params, system_added = true
+      note = act_on.notes.build
+      note.build_note_body
+      note.build_schema_less_note
+      note.account_id = act_on.account_id
+      note.note_body.body_html = substitute_placeholders(act_on, note_params[:note_body_key].to_sym)
+      note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[note_params[:source]]
+      note.private = note_params[:private]
+      note.user = system_added ? nil : User.current
+      note.incoming = false
+      note
+    end
+
+    def sanitize_note note
+      note.build_note_and_sanitize
+      note.build_note_schema_less_associated_attributes
     end
 end

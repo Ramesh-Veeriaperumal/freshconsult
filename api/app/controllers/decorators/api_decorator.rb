@@ -31,4 +31,8 @@ class ApiDecorator
   def app_current?
     Thread.current[:app_integration].present?
   end
+
+  def current_account
+    @current_account ||= Account.current
+  end
 end

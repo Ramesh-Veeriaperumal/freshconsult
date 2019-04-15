@@ -85,7 +85,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       emails_string = comment.to_emails.join(", ")
       emails = get_email_array emails_string
       agents_list = ticket.account.technicians.where(:email => emails)
-      email_notification = ticket.account.email_notifications.find_by_notification_type(EmailNotification::NOTIFY_COMMENT) 
+      email_notification = (comment.source == EmailNotification::SOURCE_IS_AUTOMAION_RULE) ? ticket.account.email_notifications.find_by_notification_type(EmailNotification::SYSTEM_NOTIFY_NOTE_CC) : 
+      ticket.account.email_notifications.find_by_notification_type(EmailNotification::NOTIFY_COMMENT)
       language_group_agent_notification(agents_list, email_notification, ticket, comment)
   end
 
@@ -98,9 +99,9 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       a_plain_template = Liquid::Template.parse(agent_plain_template.gsub("{{ticket.description}}", "{{ticket.description_text}}"))
       a_s_template = Liquid::Template.parse(agent_template.first) 
       html_version = a_template.render('ticket' => ticket.to_liquid, 
-                'helpdesk_name' => ticket.account.helpdesk_name, 'comment' => comment).html_safe
+                'helpdesk_name' => ticket.account.helpdesk_name, 'comment' => comment,'account_name' => comment.account.helpdesk_name.to_liquid).html_safe
       plain_version = a_plain_template.render('ticket' => ticket.to_liquid, 
-                'helpdesk_name' => ticket.account.helpdesk_name, 'comment' => comment).html_safe
+                'helpdesk_name' => ticket.account.helpdesk_name, 'comment' => comment,'account_name' => comment.account.helpdesk_name.to_liquid).html_safe
       headers = { :ticket => ticket,
        :notification_type => e_notification.notification_type,
        :receips => receips,

@@ -3,8 +3,8 @@ require_relative '../../test_transactions_fixtures_helper'
 require "#{Rails.root}/test/api/helpers/custom_field_validator_test_helper.rb"
 
 class FsmTicketValidationTest < ActionView::TestCase
-	include Admin::AdvancedTicketing::FieldServiceManagement::Util
-	include Admin::AdvancedTicketing::FieldServiceManagement::Constant
+	include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
+	include ::Admin::AdvancedTicketing::FieldServiceManagement::Constant
 
 	def setup
 		Account.stubs(:current).returns(Account.first)

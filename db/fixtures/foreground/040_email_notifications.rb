@@ -79,6 +79,12 @@ EmailNotification.seed_many(:account_id, :notification_type, [
   :agent_subject_template => 'Note Added - [#{{ticket.id}}] {{ticket.subject}}'
 },
 {
+  :notification_type => EmailNotification::SYSTEM_NOTIFY_NOTE_CC,
+  :account_id => account.id, :requester_notification => false, :agent_notification => true,
+  :agent_template => '<p>Hi , <br/><br/> {{account_name}} added a note and wants you to have a look.</p><br> Ticket URL:<br> {{ticket.url}} <br><br> Subject: <br>{{ticket.subject}}<br><br> Requester: {{ticket.requester.name}} <br><br> Note Content: <br> {{comment.body}}',
+  :agent_subject_template => 'Note Added - [#{{ticket.id}}] {{ticket.subject}}'
+},
+{
   :notification_type => EmailNotification::NEW_TICKET_CC,
   :account_id => account.id, :requester_notification => false, :agent_notification => false,
   :requester_template => '<p>{{ticket.requester.name}} submitted a new ticket to {{ticket.portal_name}} and requested that we copy you</p><br><br>Ticket Description: <br>{{ticket.description}}',

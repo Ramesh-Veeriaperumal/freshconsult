@@ -330,6 +330,8 @@ automation_rule:
   $ref: ./resource/automation_rule.yaml
 automation_rule_common:
   $ref: ./resource/automation_rule_common.yaml
+automation_rule_summary:
+  $ref: ./resource/automation_rule_summary.yaml
 
 # RESPONSE
 meta:
@@ -693,3 +695,7 @@ languages:
 # Config Data 
 configs_show:
   $ref: ./response/configs/show.yaml
+
+# Account features
+account_feature_enable_disable:
+  $ref: './request/accounts/feature.yaml'

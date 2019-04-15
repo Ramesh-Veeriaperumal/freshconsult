@@ -13,7 +13,7 @@ module Concerns::ApplicationViewConcern
       :translate => true
     }
     options = default_options.merge(options)
-    time_format = (current_account.date_type(options[:format]) if current_account) || "%a, %-d %b, %Y at %l:%M %p"
+    time_format = (current_account.date_type(options[:format]) if defined?(current_account).present?) || "%a, %-d %b, %Y at %l:%M %p"
     unless options[:include_year]
       time_format = time_format.gsub(/,\s.\b[%Yy]\b/, "") if (date_time.year == Time.now.year)
     end
