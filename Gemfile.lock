@@ -1062,7 +1062,7 @@ GEM
     omniauth-google-oauth2 (0.1.13)
       omniauth (~> 1.0)
       omniauth-oauth2
-    omniauth-mailchimp (1.0.3)
+    omniauth-mailchimp (2.1.0)
       omniauth (~> 1.0)
       omniauth-oauth2
     omniauth-oauth (1.1.0)
@@ -1573,7 +1573,7 @@ DEPENDENCIES
   omniauth-constantcontact2 (= 1.0.4)
   omniauth-google (= 1.0.2)
   omniauth-google-oauth2 (= 0.1.13)
-  omniauth-mailchimp (= 1.0.3)
+  omniauth-mailchimp (= 2.1.0)
   omniauth-oauth (= 1.1.0)
   omniauth-oauth2 (= 1.1.2)
   omniauth-openid (= 1.0.1)
