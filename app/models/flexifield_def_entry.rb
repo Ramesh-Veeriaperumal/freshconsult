@@ -22,7 +22,8 @@ class FlexifieldDefEntry < ActiveRecord::Base
   #https://github.com/rails/rails/issues/988#issuecomment-31621550
   after_commit ->(obj) { obj.clear_flexifield_def_entry_cache }, on: :create
   after_commit ->(obj) { obj.clear_flexifield_def_entry_cache }, on: :destroy
-  
+  after_commit :clear_custom_date_time_field_cache
+
   ViewColumn = Struct.new(:object,:content) do
     def viewname
       object.name.gsub(/flexifield_/,"").titleize
@@ -85,7 +86,13 @@ class FlexifieldDefEntry < ActiveRecord::Base
   def ensure_alias_is_one_word
     flexifield_alias.gsub!(/\s+/,"_")
   end
-  
+
+  def clear_custom_date_time_field_cache
+    if self.flexifield_coltype == TicketConstants::DATE_TIME_FIELD
+      Account.current.clear_custom_date_time_fields_cache
+    end
+  end
+
 private
   def set_account_id
     self.account_id = flexifield_def.account_id
