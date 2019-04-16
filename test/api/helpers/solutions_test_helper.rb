@@ -42,10 +42,7 @@ module SolutionsTestHelper
       title: expected_output[:title] || article.title,
       agent_id: expected_output[:agent_id] || article.user_id,
       type: expected_output[:type] || article.parent.reload.art_type,
-      thumbs_up: expected_output[:thumbs_up] || article.solution_article_meta.thumbs_up,
-      thumbs_down: expected_output[:thumbs_down] || article.solution_article_meta.thumbs_down,
-      feedback_count: expected_output[:feedback_count] || article.article_ticket.preload(:ticketable).select { |art| !art.ticketable.spam_or_deleted? }.count,
-      hits: expected_output[:hits] || article.solution_article_meta.hits,
+      feedback_count: expected_output[:feedback_count] || article.article_ticket.where(ticketable_type: 'Helpdesk::Ticket').preload(:ticketable).select { |art| !art.ticketable.spam_or_deleted? }.count,
       status: expected_output[:status] || article.status,
       tags: expected_tags || article.tags.map(&:name),
       seo_data: expected_output[:seo_data] || article.seo_data,
@@ -59,6 +56,16 @@ module SolutionsTestHelper
         folder_id: expected_output[:folder_id] || article.parent.reload.solution_folder_meta.id }
     end
     resp.merge!(cat_folder)
+
+    if expected_output[:request_language] && expected_output[:request_language] == true
+      resp.merge!(thumbs_up: expected_output[:thumbs_up] || article.thumbs_up,
+                  thumbs_down: expected_output[:thumbs_down] || article.thumbs_down,
+                  hits: expected_output[:hits] || article.hits)
+    else
+      resp.merge!(thumbs_up: expected_output[:thumbs_up] || article.solution_article_meta.thumbs_up,
+                  thumbs_down: expected_output[:thumbs_down] || article.solution_article_meta.thumbs_down,
+                  hits: expected_output[:hits] || article.solution_article_meta.hits)
+    end
 
     unless expected_output[:action] == :filter
       resp.merge!(description: expected_output[:description] || article.description,
@@ -248,9 +255,9 @@ module SolutionsTestHelper
     @drafts =  fetch_drafts
     @my_drafts = @drafts.empty? ? [] : @drafts.where(user_id: User.current.id)
     @published_articles = fetch_published_articles
-    @all_feedback = Account.current.article_tickets.select(:id).where(article_id: get_article_ids(@articles))
-    @my_feedback = Account.current.article_tickets.select(:id).where(article_id: get_article_ids(@articles.select{ |article| article.user_id == User.current.id }))
-    @orphan_categories = fetch_unassociated_categories_from_cache || []
+    @all_feedback = Account.current.article_tickets.select(:id).where(article_id: get_article_ids(@articles), ticketable_type: 'Helpdesk::Ticket').reject { |article_ticket| article_ticket.ticketable.spam_or_deleted? }
+    @my_feedback = Account.current.article_tickets.select(:id).where(article_id: get_article_ids(@articles.select { |article| article.user_id == User.current.id }), ticketable_type: 'Helpdesk::Ticket').reject { |article_ticket| article_ticket.ticketable.spam_or_deleted? }
+    @orphan_categories = fetch_unassociated_categories.map { |category| unassociated_category_pattern(category) }
     response.api_root_key = :quick_views
     {
      all_categories: @categories.count,
@@ -266,8 +273,10 @@ module SolutionsTestHelper
   end
 
   def fetch_categories(portal_id)
-    @category_meta = Account.current.portals.where(id: portal_id).first.solution_categories_from_cache
-    Account.current.solution_categories.where(parent_id: @category_meta.map(&:id), language_id: (Language.current? ? Language.current.id : Language.for_current_account.id))
+    @category_meta = Account.current.portals.find_by_id(portal_id).public_category_meta.order('portal_solution_categories.position').all
+    portal_categories = Account.current.solution_categories.where(parent_id: @category_meta.map(&:id), language_id: (Language.current? ? Language.current.id : Language.for_current_account.id))
+    @category_meta << Account.current.solution_category_meta.where(is_default: true).first
+    portal_categories
   end
 
   def fetch_articles
@@ -277,7 +286,7 @@ module SolutionsTestHelper
       article_meta << categ_meta.solution_article_meta.preload(&:current_article)
     end
     article_meta.flatten!
-    Account.current.solution_articles.select([:id,:user_id,:status]).where(parent_id: article_meta.map(&:id), language_id: (Language.current? ? Language.current.id : Language.for_current_account.id))
+    Account.current.solution_articles.select([:id, :user_id, :status]).where(parent_id: article_meta.map(&:id), language_id: (Language.current? ? Language.current.id : Language.for_current_account.id))
   end
 
   def fetch_drafts
@@ -295,11 +304,19 @@ module SolutionsTestHelper
     @articles.where(status: Solution::Constants::STATUS_KEYS_BY_TOKEN[:published])
   end
 
-  def fetch_unassociated_categories_from_cache
-    CustomMemcacheKeys.fetch(CustomMemcacheKeys::UNASSOCIATED_CATEGORIES % {account_id: Account.current.id}, "Unassociated categories for #{Account.current.id}") do
-      associated_category_ids = Account.current.portal_solution_categories.map(&:solution_category_meta_id).uniq
-      Account.current.solution_category_meta.select(:id).where('id NOT IN (?)', associated_category_ids)
-    end
+  def fetch_unassociated_categories
+    associated_category_ids = Account.current.portal_solution_categories.map(&:solution_category_meta_id).uniq
+    @account.solution_categories.where('parent_id NOT IN (?) AND language_id = ?', associated_category_ids, @account.language_object.id)
+  end
+
+  def unassociated_category_pattern(category)
+    {
+      category: {
+        id: category.parent_id,
+        name: category.name,
+        description: category.description
+      }
+    }
   end
 
   def votes_pattern(article)

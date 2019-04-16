@@ -1190,6 +1190,63 @@ module Ember
       Account.any_instance.unstub(:bcc_email)
     end
 
+    def test_agent_reply_template_with_signature_as_portal_and_helpdesk_name
+      remove_wrap_params
+      t = create_ticket
+
+      portal = Account.current.portals.find_by_main_portal(true)
+      portal_name = portal.name
+      portal.name = portal_name+' test'
+      portal.save!
+
+      notification_template = '<div>{{helpdesk_name}}<br>{{ticket.portal_name}}</div>'
+      agent_signature = '<div>{{helpdesk_name}}<br>{{ticket.portal_name}}</div>'
+      Agent.any_instance.stubs(:signature_value).returns(agent_signature)
+      EmailNotification.any_instance.stubs(:get_reply_template).returns(notification_template)
+      bcc_emails = "#{Faker::Internet.email},#{Faker::Internet.email}"
+      Account.any_instance.stubs(:bcc_email).returns(bcc_emails)
+      get :reply_template, construct_params({ version: 'private', id: t.display_id }, false)
+      assert_response 200
+
+      match_json(reply_template_pattern(template: "<div>#{Account.current.helpdesk_name}<br>#{Account.current.portal_name}</div>",
+                                        signature: "<div>#{Account.current.helpdesk_name}<br>#{Account.current.portal_name}</div>",
+                                        bcc_emails: bcc_emails.split(',')))
+      Agent.any_instance.unstub(:signature_value)
+      EmailNotification.any_instance.unstub(:get_reply_template)
+    ensure
+      Account.any_instance.unstub(:bcc_email)
+      portal.name = portal_name
+      portal.save!
+    end
+
+    def test_agent_forward_template_with_signature_as_portal_and_helpdesk_name
+      remove_wrap_params
+      t = create_ticket
+
+      portal = Account.current.portals.find_by_main_portal(true)
+      portal_name = portal.name
+      portal.name = portal_name+' test'
+      portal.save!
+
+      notification_template = '<div>{{helpdesk_name}}<br>{{ticket.portal_name}}</div>'
+      agent_signature = '<div>{{helpdesk_name}}<br>{{ticket.portal_name}}</div>'
+      Agent.any_instance.stubs(:signature_value).returns(agent_signature)
+      EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
+      bcc_emails = "#{Faker::Internet.email},#{Faker::Internet.email}"
+      Account.any_instance.stubs(:bcc_email).returns(bcc_emails)
+      get :forward_template, construct_params({ version: 'private', id: t.display_id }, false)
+      assert_response 200
+      match_json(forward_template_pattern(template: "<div>#{Account.current.helpdesk_name}<br>#{Account.current.portal_name}</div>",
+                                        signature: "<div>#{Account.current.helpdesk_name}<br>#{Account.current.portal_name}</div>",
+                                        bcc_emails: bcc_emails.split(',')))
+      Agent.any_instance.unstub(:signature_value)
+      EmailNotification.any_instance.unstub(:get_forward_template)
+    ensure
+      Account.any_instance.unstub(:bcc_email)
+      portal.name = portal_name
+      portal.save!
+    end
+
     def test_agent_reply_template_with_xss_payload
       Account.current.launch(:escape_liquid_for_reply)
       remove_wrap_params

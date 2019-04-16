@@ -226,7 +226,7 @@ class Helpdesk::TicketTemplatesController < ApplicationController
     elsif @item.child_template? and has_parent
       edit_helpdesk_ticket_template_path(@parent)
     else
-      helpdesk_my_ticket_templates_path(@current_tab,:recently_created => true)
+      helpdesk_my_ticket_templates_path(@current_tab, recently_created: action_name == 'create')
     end
   end
 

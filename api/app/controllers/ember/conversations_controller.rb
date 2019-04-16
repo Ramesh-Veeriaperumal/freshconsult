@@ -389,7 +389,7 @@ module Ember
       def signature
         (@user || api_current_user)
           .try(:agent)
-          .try(:parsed_signature, 'ticket' => @ticket, 'helpdesk_name' => Account.current.portal_name)
+          .try(:parsed_signature, 'ticket' => @ticket, 'helpdesk_name' => Account.current.helpdesk_name)
       end
 
       def set_custom_errors(item = @item)
@@ -491,7 +491,7 @@ module Ember
         @ticket.escape_liquid_attributes = current_account.launched?(:escape_liquid_for_reply)
         Liquid::Template.parse(liquid_content).render(
           'ticket' => @ticket,
-          'helpdesk_name' => Account.current.portal_name
+          'helpdesk_name' => Account.current.helpdesk_name
         )
       end
 

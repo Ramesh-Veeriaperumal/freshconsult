@@ -1,5 +1,5 @@
 module Dashboard::Custom::CustomDashboardConstants
-  
+
   WIDGETS_DATA_FIELDS = %w(type)
   WIDGET_DATA_PREVIEW_FIELDS = %w(type ticket_filter_id)
 
@@ -82,4 +82,7 @@ module Dashboard::Custom::CustomDashboardConstants
 
   NUMBER = 0
   PERCENTAGE = 1
+
+  SCORECARD_DIMENSIONS = { height: 1, width: 1 }.freeze
+  TREND_DIMENSIONS = { height: 1, width: 2 }.freeze
 end

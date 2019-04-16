@@ -181,6 +181,38 @@ module ApiSolutions
       match_json(request_error_pattern(:language_not_allowed, code: 'xaasd', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
     end
 
+    def test_show_article_metrics_with_language_query_param
+      languages = @account.supported_languages + ['primary']
+      language = @account.supported_languages.first
+      article_meta = create_article(article_params(lang_codes: languages))
+      translated_article = article_meta.safe_send("#{language}_article")
+      3.times do
+        translated_article.thumbs_up!
+      end
+      article_meta.primary_article.thumbs_up!
+      translated_article.reload
+      get :show, controller_params(id: translated_article.parent_id, language: language)
+      assert_response 200
+      assert_equal translated_article.thumbs_up, JSON.parse(response.body)['thumbs_up']
+      match_json(solution_article_pattern({ request_language: true }, true, translated_article))
+    end
+
+    def test_show_article_metrics_without_language_query_param
+      languages = @account.supported_languages + ['primary']
+      language = @account.supported_languages.first
+      article_meta = create_article(article_params(lang_codes: languages))
+      translated_article = article_meta.safe_send("#{language}_article")
+      3.times do
+        translated_article.thumbs_up!
+      end
+      article_meta.primary_article.thumbs_up!
+      article_meta.reload
+      get :show, controller_params(id: article_meta.id)
+      assert_response 200
+      assert_equal article_meta.thumbs_up, JSON.parse(response.body)['thumbs_up']
+      match_json(solution_article_pattern(article_meta.primary_article))
+    end
+
     # Feature Check
     def test_show_article_with_language_and_without_multilingual_feature
       allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])

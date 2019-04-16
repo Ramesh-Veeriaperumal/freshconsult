@@ -45,7 +45,7 @@ module ApiSearch
         post :results, construct_params(version: 'private', context: 'spotlight', term: article.title, limit: 3)
       end
       assert_response 200
-      assert_equal [search_solution_article_pattern(article)].to_json, response.body
+      match_json [search_solution_article_pattern(article)]
     end
 
     def test_results_with_insert_solutions_context
@@ -54,7 +54,7 @@ module ApiSearch
         post :results, construct_params(version: 'private', context: 'insert_solutions', term: article.title, limit: 3)
       end
       assert_response 200
-      assert_equal [search_solution_article_pattern(article, :agent_insert_solution)].to_json, response.body
+      match_json [search_solution_article_pattern(article, :agent_insert_solution)]
     end
 
     def test_results_with_bot_map_context
@@ -63,7 +63,7 @@ module ApiSearch
         post :results, construct_params(version: 'private', context: 'bot_map_solution', term: article.title, limit: 3)
       end
       assert_response 200
-      assert_equal [search_solution_article_pattern(article, :filtered_solution_search)].to_json, response.body
+      match_json [search_solution_article_pattern(article, :filtered_solution_search)]
     end
 
     def test_results_without_solutions_privilege

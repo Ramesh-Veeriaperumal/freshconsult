@@ -35,10 +35,12 @@ module ApiSolutions
     end
 
     def create_tag_permission
-      new_tags = @tags - Account.current.tags.where(name: @tags).map(&:name)
-      if new_tags && !User.current.privilege?(:create_tags)
-        errors[:tags] << 'cannot_create_new_tag'
-        @error_options[:tags] = { tags: new_tags }
+      unless User.current.privilege?(:create_tags)
+        new_tags = @tags - Account.current.tags.where(name: @tags).map(&:name)
+        if new_tags.present?
+          errors[:tags] << 'cannot_create_new_tag'
+          @error_options[:tags] = { tags: new_tags }
+        end
       end
     end
   end

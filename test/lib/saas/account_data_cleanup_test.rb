@@ -8,7 +8,7 @@ class AccountDataCleanupTest < ActionView::TestCase
   include TicketHelper
   include GroupHelper
   include FacebookTestHelper
-  include UsersTestHelper
+  include CoreUsersTestHelper
   include TicketFieldsTestHelper
   include SocialTicketsCreationHelper
   include ContactFieldsHelper
@@ -124,5 +124,19 @@ class AccountDataCleanupTest < ActionView::TestCase
     SAAS::AccountDataCleanup.new(@account, ['smart_filter', 'shared_ownership', 'link_tickets', 'parent_child_tickets_toggle', 'parent_child_tickets', 'multiple_companies_toggle', 'tam_default_fields', 'unique_contact_identifier', 'custom_dashboard', 'disable_old_ui', 'link_tickets_toggle'], 'add').perform_cleanup
   ensure
     Account.current.destroy if !Account.current.nil? && Account.current.id != 1 && !Account.current.id.nil?
+  end
+
+  def test_handle_custom_status_drop_data
+    @account = create_new_account(Faker::Lorem.word, Faker::Internet.email)
+    new_status = Helpdesk::TicketStatus.new(name: 'temp', customer_display_name: 'temp', stop_sla_timer: false, deleted: false, is_default: false, account_id: @account.id, ticket_field_id: 5)
+    new_status.save
+    ticket_field = @account.ticket_fields.where(field_type: 'default_status')[0]
+    updated_at = ticket_field.updated_at
+    sleep(1)
+    SAAS::AccountDataCleanup.new(Account.current, ['custom_status'], 'drop').perform_cleanup
+    ticket_field = @account.ticket_fields.where(field_type: 'default_status')[0]
+    non_deleted_custom_statuses = @account.ticket_statuses.where(is_default: false).find { |status| status.deleted == false }
+    assert ticket_field.updated_at > updated_at # to check if perform_cleanup updates ticket_field
+    assert_nil non_deleted_custom_statuses
   end
 end

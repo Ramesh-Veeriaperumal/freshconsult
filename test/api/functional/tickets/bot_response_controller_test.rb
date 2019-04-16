@@ -14,7 +14,7 @@ class Tickets::BotResponseControllerTest < ActionController::TestCase
 
   def teardown
     @ticket.destroy
-    @bot.destroy
+    @bot.destroy if @bot
   end
   ###############UPDATE BOT RESPONSE##############
 

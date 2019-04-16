@@ -807,7 +807,7 @@ module Ember
         put :bulk_update, construct_params({ version: 'private' }, ids: [article.parent_id], properties: { tags: tags })
         assert_response 204
         article.reload
-        assert (article.reload.tags.map(&:name) - tags).empty?
+        assert (tags - article.reload.tags.map(&:name)).empty?
       end
 
       def test_bulk_update_tags_without_tags_privilege
@@ -817,6 +817,18 @@ module Ember
         tags = [Faker::Name.name, Faker::Name.name]
         put :bulk_update, construct_params({ version: 'private' }, ids: [article.parent_id], properties: { tags: tags })
         assert_response 400
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_bulk_update_old_tags_without_tags_privilege
+        User.any_instance.stubs(:privilege?).with(:create_tags).returns(false)
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+        article = @account.solution_articles.where(language_id: 6).last
+        tag = Helpdesk::Tag.where(name: Faker::Name.name, account_id: @account.id).first_or_create
+        put :bulk_update, construct_params({ version: 'private' }, ids: [article.parent_id], properties: { tags: [tag.name] })
+        assert_response 204
+        assert ([tag.name] - article.reload.tags.map(&:name)).empty?
       ensure
         User.any_instance.unstub(:privilege?)
       end

@@ -1,5 +1,8 @@
 module Admin::AdvancedTicketing::FieldServiceManagement
   module Constant
+    include ::Dashboard::Custom::CustomDashboardConstants
+    include ApiTicketConstants
+
     CUSTOM_FIELDS_TO_RESERVE = [
       {
         label: 'Contact',
@@ -54,5 +57,35 @@ module Admin::AdvancedTicketing::FieldServiceManagement
     FSM_FIELDS_PREFIX = 'cf_fsm_'.freeze
     SUPPORT_AGENT_TYPE = 1
     SUPPORT_GROUP_TYPE = 1
+
+    SCORE_CARD = 'scorecard'.freeze
+
+    TICKET_TREND_CARD = 'ticket_trend_card'.freeze
+
+    TIME_TREND_CARD = 'time_trend_card'.freeze
+
+    WIDGETS = {
+      'incoming_service_tasks_trend' => WIDGET_MODULE_TOKEN_BY_NAME[TICKET_TREND_CARD],
+      'service_tasks_resolution_trend' => WIDGET_MODULE_TOKEN_BY_NAME[TICKET_TREND_CARD],
+      'service_tasks_avg_resolution' => WIDGET_MODULE_TOKEN_BY_NAME[TIME_TREND_CARD],
+      'service_tasks_due_today' => WIDGET_MODULE_TOKEN_BY_NAME[SCORE_CARD],
+      'unassigned_service_tasks' => WIDGET_MODULE_TOKEN_BY_NAME[SCORE_CARD],
+      'overdue_service_tasks' => WIDGET_MODULE_TOKEN_BY_NAME[SCORE_CARD]
+    }.freeze
+
+    FSM_TICKET_FILTERS = ["service_tasks_due_today", "unassigned_service_tasks", "overdue_service_tasks"].freeze
+
+    FSM_WIDGETS_COUNT = WIDGETS.size
+
+    FSM_TICKET_FILTER_COUNT = FSM_TICKET_FILTERS.size
+
+    COMMON_FILTER_CONDITIONS = [
+      { 'condition' => 'status', 'operator' => 'is_in', 'value' => "#{OPEN},#{PENDING}", 'ff_name' => 'default' },
+      { 'condition' => 'spam', 'operator' => 'is', 'value' => false },
+      { 'condition' => 'deleted', 'operator' => 'is', 'value' => false },
+      { 'condition' => 'ticket_type', 'operator' => 'is_in', 'value' => SERVICE_TASK_TYPE, 'ff_name' => 'default' }
+   ].freeze
+
+    Y_AXIS_POSITION = { trend: 0, scorecard: 1 }.freeze
   end
 end

@@ -1,5 +1,7 @@
 require_relative '../../../test_helper'
 ['solutions_helper.rb', 'solution_builder_helper.rb'].each { |file| require Rails.root.join('spec', 'support', file) }
+require 'sidekiq/testing'
+Sidekiq::Testing.fake!
 
 module Ember
   module Solutions
@@ -7,10 +9,19 @@ module Ember
       include SolutionsTestHelper
       include SolutionsHelper
       include SolutionBuilderHelper
+      include ArchiveTicketTestHelper
+      include TicketHelper
+
+      ARCHIVE_DAYS = 30
 
       def setup
         super
         before_all
+        @account.make_current
+        @account.enable_ticket_archiving(ARCHIVE_DAYS)
+        Sidekiq::Worker.clear_all
+        @account.features.send(:archive_tickets).create
+        create_archive_ticket_with_assoc(created_at: 40.days.ago, updated_at: 40.days.ago, create_association: true)
       end
 
       @@before_all_run = false
@@ -121,11 +132,29 @@ module Ember
       def test_quick_views_with_valid_params
         skip('Pattern change and count mismatch happens. Will be fixed in this PR. #4609')
         solution_test_setup
+        category = create_category
+        @account.portal_solution_categories.where(solution_category_meta_id: category.id).last.destroy
         create_article(article_params)
         portal = Account.current.main_portal
         get :quick_views, controller_params(version: 'private', portal_id: portal.id)
         assert_response 200
         match_json(quick_views_pattern(portal.id))
+      end
+
+      def test_quick_views_with_archive_tickets
+        # article tickets that are archived should not be present in feedback count
+        stub_archive_assoc_for_show(@archive_association) do
+          portal = Account.current.main_portal
+          article_meta = create_article(article_params)
+          archive_ticket = @account.archive_tickets.find_by_ticket_id(@archive_ticket.id)
+          article_ticket = @archive_ticket.build_article_ticket(article_id: article_meta.primary_article.id)
+          article_ticket.ticketable_type = 'Helpdesk::ArticleTicket'
+          article_ticket.save!
+          article_ticket.reload
+          get :quick_views, controller_params(version: 'private', portal_id: portal.id)
+          assert_response 200
+          match_json(quick_views_pattern(portal.id))
+        end
       end
     end
   end

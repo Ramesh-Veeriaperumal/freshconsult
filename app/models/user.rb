@@ -1321,10 +1321,14 @@ class User < ActiveRecord::Base
   private
 
     def find_or_create_company(name)
-      if User.current.privilege?(:manage_companies)
-        account.companies.find_or_create_by_name(name)
+      if User.current.present?
+        if User.current.privilege?(:manage_companies)
+          account.companies.find_or_create_by_name(name)
+        else
+          account.companies.find_by_name(name)
+        end
       else
-        account.companies.find_by_name(name)
+        account.companies.find_or_create_by_name(name)
       end
     end
 

@@ -34,7 +34,7 @@ class Account < ActiveRecord::Base
     :fetch_ticket_from_ref_first, :query_from_singleton, :surveys_central_publish,
     :id_for_choices_write, :fluffy, :session_logs, :nested_field_revamp, :service_worker, :kbase_mint,
     :freshvisual_configs, :ticket_field_limit_increase, :join_ticket_field_data, :byepass_signup_captcha,
-    :contact_field_central_publish, :company_field_central_publish, :contact_company_split
+    :contact_field_central_publish, :company_field_central_publish, :contact_company_split, :simple_outreach, :disable_simple_outreach, :fsm_dashboard
   ].freeze
 
   DB_FEATURES = [
@@ -395,7 +395,7 @@ class Account < ActiveRecord::Base
     user_settings = current_user.old_notes_first? if current_user != :no_user
     user_settings.nil? ? account_additional_settings.old_notes_first? : user_settings
   end
-  
+
   # Need to cleanup bellow code snippet block with 2019 plan changes release
   # START
   def has_feature?(feature)

@@ -1,25 +1,19 @@
 module Facebook
   module TicketActions
     module DirectMessage
-      
       include Social::Util
       include Facebook::Util
       include Facebook::TicketActions::Util
-          
+
       def create_tickets(threads)
         threads.each do |thread|
-          thread.symbolize_keys!
-          msg_ids = thread[:messages]["data"].map { |msg| msg["id"]}
-          fb_msg = latest_message(thread[:id])
+          thread = HashWithIndifferentAccess.new(thread)
+          fb_msg          = latest_message(thread[:id])
           previous_ticket = fb_msg.try(:postable)
-
-          last_reply = unless previous_ticket.blank?
-            if (!previous_ticket.notes.blank? && !previous_ticket.notes.latest_facebook_message.blank?)
-              previous_ticket.notes.latest_facebook_message.first
-            else
-              previous_ticket
-            end
-          end
+          last_reply = if previous_ticket.present? && previous_ticket.notes.exists?
+                         previous_ticket.notes.latest_facebook_message.try(:first)
+                       end
+          last_reply = last_reply.presence || previous_ticket
           if last_reply && (Time.zone.now < (last_reply.created_at + @fan_page.dm_thread_time.seconds))
             add_as_note(thread, previous_ticket)
           else
@@ -30,95 +24,88 @@ module Facebook
 
       private
 
-      def add_as_note(thread, ticket)
-        thread_id = thread[:id]
-        messages  = thread[:messages].symbolize_keys!
-        messages[:data].reverse.each do |message|
-          message.symbolize_keys!
-          next if ((@fan_page.created_at > Time.zone.parse(message[:created_time])) || @account.facebook_posts.exists?(:post_id => message[:id]))
-          user = facebook_user(message[:from])
-          @note = ticket.notes.build(
-            :private    =>  true ,
-            :incoming   =>  true,
-            :source     =>  Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"],
-            :account_id =>  @fan_page.account_id,
-            :user       =>  user,
-            :created_at =>  Time.zone.parse(message[:created_time]),
-            :fb_post_attributes => {
-              :post_id          =>  message[:id],
-              :facebook_page_id =>  @fan_page.id,
-              :account_id       =>  @account.id,
-              :msg_type         =>  'dm',
-              :thread_id        =>  thread_id,
-              :thread_key       =>  thread[:id]
+        def add_as_note(thread, ticket)
+          thread_id         = thread[:id]
+          messages          = thread[:messages]
+          filtered_messages = filter_messages_from_data_set(messages)
+          filtered_messages.reverse_each do |message|
+            user                       = facebook_user(message[:from])
+            @note                      = ticket.notes.build(
+              private:            true,
+              incoming:           true,
+              source:             Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook'],
+              account_id:         @fan_page.account_id,
+              user:               user,
+              created_at:         Time.zone.parse(message[:created_time]),
+              fb_post_attributes: {
+                post_id:          message[:id],
+                facebook_page_id: @fan_page.id,
+                account_id:       @account.id,
+                msg_type:         'dm',
+                thread_id:        thread_id,
+                thread_key:       thread[:id]
+              }
+            )
+            body_html                  = html_content_from_message(message, @note)
+            @note.note_body_attributes = {
+              body_html: body_html
             }
-          )
-          body_html = html_content_from_message(message, @note)
-          @note.note_body_attributes = {
-            :body_html => body_html
-          }
-
-          begin
-            user.make_current
-            unless @note.save_note
-              Rails.logger.debug "error while saving the note #{@note.errors.to_json}"
-            end
-          ensure
-            User.reset_current_user
+            save_facebook_note(user)
           end
         end
-      end
 
-      def add_as_ticket(thread)
-        messages = thread[:messages].symbolize_keys!
-        messages = filter_messages_from_data_set(messages)
-        message  = messages.last
-        group_id = Account.current.features?(:social_revamp) ? @fan_page.dm_stream.ticket_rules.first.group_id : @fan_page.group_id
-        
-        return if !message or @account.facebook_posts.exists?(:post_id => message[:id])
-        first_message_from_customer = message
-        message.symbolize_keys!
-        profile = if is_a_page?(message[:from], @fan_page.page_id)
-                    first_message_from_customer, notes_to_be_skipped = find_user_with_skipped_messages(messages)
-                    return unless first_message_from_customer
-                    first_message_from_customer[:from]
-                  else
-                    message[:from]
-                  end
-        requester = facebook_user(profile)
-
-        @ticket = @account.tickets.build(
-          :subject      =>  truncate_subject(tokenize(first_message_from_customer[:message]), 100),
-          :requester    =>  requester,
-          :product_id   =>  @fan_page.product_id,
-          :group_id     =>  group_id,
-          :source       =>  Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook],
-          :created_at   =>  Time.zone.parse(first_message_from_customer[:created_time]),
-          :fb_post_attributes => {
-            :post_id            =>  first_message_from_customer[:id],
-            :facebook_page_id   =>  @fan_page.id,
-            :account_id         =>  @account.id,
-            :msg_type           =>  'dm',
-            :thread_id          =>  thread[:id],
-            :thread_key         =>  thread[:id]
-          }
-        )
-        description_html = html_content_from_message(first_message_from_customer, @ticket)
-        @ticket.ticket_body_attributes = {
-          :description_html => description_html
-        }
-
-        if @ticket.save_ticket
-          add_as_note(thread, @ticket) if messages.size > 1
-        else
-          Rails.logger.debug "error while saving the ticket:: #{@ticket.errors.to_json}"
+        def save_facebook_note(user)
+          user.make_current
+          Rails.logger.debug "error while saving the note #{@note.errors.to_json}" unless @note.save_note
+        ensure
+          User.reset_current_user
         end
-      end
 
-      def note_skip_conditions(message, ticket)
-        note_created_at = message[:created_time]
-        ((@fan_page.created_at > Time.zone.parse(note_created_at)) || (ticket.created_at > Time.zone.parse(note_created_at)) || @account.facebook_posts.exists?(:post_id => message[:id]))
-      end
+        def add_as_ticket(thread)
+          messages = thread[:messages]
+          messages = filter_messages_from_data_set(messages)
+          message  = messages.last
+          group_id = @fan_page.dm_stream.ticket_rules.first.group_id
+          return if !message || @account.facebook_posts.exists?(post_id: message[:id])
+
+          first_message_from_customer = message
+          profile   = if is_a_page?(message[:from], @fan_page.page_id)
+                        first_message_from_customer, _notes_to_be_skipped = first_customer_message(messages)
+                        return unless first_message_from_customer
+
+                        first_message_from_customer[:from]
+                      else
+                        message[:from]
+                      end
+          requester = facebook_user(profile)
+
+          @ticket = @account.tickets.build(
+            subject:            truncate_subject(tokenize(first_message_from_customer[:message]), 100),
+            requester:          requester,
+            product_id:         @fan_page.product_id,
+            group_id:           group_id,
+            source:             Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook],
+            created_at:         Time.zone.parse(first_message_from_customer[:created_time]),
+            fb_post_attributes: {
+              post_id:          first_message_from_customer[:id],
+              facebook_page_id: @fan_page.id,
+              account_id:       @account.id,
+              msg_type:         'dm',
+              thread_id:        thread[:id],
+              thread_key:       thread[:id]
+            }
+          )
+          description_html               = html_content_from_message(first_message_from_customer, @ticket)
+          @ticket.ticket_body_attributes = {
+            description_html: description_html
+          }
+
+          if @ticket.save_ticket
+            add_as_note(thread, @ticket) if messages.size > 1
+          else
+            Rails.logger.debug "error while saving the ticket:: #{@ticket.errors.to_json}"
+          end
+        end
     end
   end
 end

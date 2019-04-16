@@ -145,6 +145,18 @@ module Ember
       params_hash
     end
 
+    def setup_fsm
+      Account.stubs(:current).returns(Account.first)
+      Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+      perform_fsm_operations
+    end
+
+    def destroy_fsm
+      cleanup_fsm
+      Account.unstub(:field_service_management_enabled?)
+      Account.unstub(:current)
+    end
+
     def test_index_with_invalid_filter_id
       get :index, controller_params(version: 'private', filter: @account.ticket_filters.last.id + 10)
       assert_response 400
@@ -354,6 +366,12 @@ module Ember
       get :index, controller_params(version: 'private', exclude: 'attachment')
       assert_response 400
       match_json([bad_request_error_pattern('exclude', :not_included, list: ApiTicketConstants::EXCLUDABLE_FIELDS.join(','))])
+    end
+
+    def test_index_with_article_feedback_filter
+      create_article_feedback_ticket
+      get :index, controller_params({version: 'private'}, filter: 'article_feedback', portal_id: @account.main_portal.id, language_id: @account.language_object.id)
+      assert_response 200
     end
 
     def test_show_when_account_suspended
@@ -4729,6 +4747,26 @@ module Ember
         Account.unstub(:field_service_management_enabled?)
         Account.unstub(:current)
       end
+    end
+
+    def test_filter_by_appointment_time_with_in_the_past_option
+      setup_fsm
+      fsm_ticket_1 = create_service_task_ticket(fsm_appointment_start_time: '2018-12-03T18:30:00Z')
+      fsm_ticket_2 = create_service_task_ticket(fsm_appointment_start_time: '2019-01-23T18:30:00Z')
+      fsm_ticket_3 = create_service_task_ticket(fsm_appointment_start_time: '2019-11-01T18:30:00Z')
+      query_hash_params = {
+            '0' => { 'condition' => 'cf_fsm_appointment_start_time', 'operator' => 'is', 'value' => 'in_the_past', 'type' => 'custom_field' }
+          }
+      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
+      assert_response 200
+      response_body = JSON.parse(response.body)
+      assert response_body.find { |ticket| ticket['id'] == fsm_ticket_3.id }.nil?
+      assert response_body.find { |ticket| ticket['id'] == fsm_ticket_1.id || ticket['id'] == fsm_ticket_2.id }.present?
+    ensure
+      fsm_ticket_1.destroy
+      fsm_ticket_2.destroy
+      fsm_ticket_3.destroy
+      destroy_fsm
     end
 
     def test_service_task_tickets_order_by_appointment_time_desc

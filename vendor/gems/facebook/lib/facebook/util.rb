@@ -269,9 +269,9 @@ module Facebook
     end
 
     def filter_messages_from_data_set(data_set)
-      message_id_arr   = data_set[:data].collect{|message| message["id"]}
-      existing_msg_arr = Account.current.facebook_posts.where(:post_id => message_id_arr).pluck(:post_id)
-      data_set[:data].reject {|message| ((existing_msg_arr.include? message['id']) || @fan_page.created_at > Time.zone.parse(message['created_time']))}
+      message_id_arr   = data_set[:data].collect { |message| message[:id] }
+      existing_msg_arr = Account.current.facebook_posts.where(post_id: message_id_arr).pluck(:post_id).to_set
+      data_set[:data].reject { |message| ((existing_msg_arr.include? message[:id]) || @fan_page.created_at > Time.zone.parse(message[:created_time])) }
     end
 
     def social_revamp_enabled?

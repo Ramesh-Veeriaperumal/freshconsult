@@ -62,7 +62,15 @@ class AccountAdditionalSettings < ActiveRecord::Base
   end
 
   def custom_dashboard_limits
-    additional_settings.present? && additional_settings[:dashboard_limits].present? ? additional_settings[:dashboard_limits] : DASHBOARD_LIMITS[:min]
+    if additional_settings.present? && additional_settings[:dashboard_limits].present?
+      additional_settings[:dashboard_limits]
+    elsif Account.current.field_service_management_enabled?
+      dashboard_limits = DASHBOARD_LIMITS[:min].clone
+      dashboard_limits[:dashboard] += 1
+      dashboard_limits
+    else
+      DASHBOARD_LIMITS[:min]
+    end
   end
 
   def delete_spam_tickets_days
@@ -162,6 +170,18 @@ class AccountAdditionalSettings < ActiveRecord::Base
 
   def widget_predictive_support_hash
     additional_settings[:widget_predictive_support] || {}
+  end
+
+  def increment_dashboard_limit
+    return if self.additional_settings[:dashboard_limits].nil?
+    self.additional_settings[:dashboard_limits][:dashboard] += 1
+    self.save
+  end
+
+  def decrement_dashboard_limit
+    return if self.additional_settings[:dashboard_limits].nil?
+    self.additional_settings[:dashboard_limits][:dashboard] -= 1
+    self.save
   end
 
   private

@@ -186,11 +186,16 @@ class Solution::FolderMeta < ActiveRecord::Base
 		clear_cache unless (previous_changes.keys & ['solution_category_meta_id', 'position']).empty?
 	end
 
-	def name_uniqueness
-    self.solution_folders.each do |f|
-      f.name_uniqueness_validation
-      if f.errors[:name].any?
-        errors.add(:name, I18n.t("activerecord.errors.messages.taken"))
+  def name_uniqueness
+    solution_folders.each do |folder|
+      # inverse_of doesn't work in language association
+      # We need to check against new name for validation if modified.New value will be available only in language association.
+      language_key = Language.for_current_account.id == folder.language_id ? 'primary' : Language.find(folder.language.id).to_key
+      child_assoc = "#{language_key}_folder".to_sym
+      folder = safe_send(child_assoc) if association_cache[child_assoc].present?
+      folder.name_uniqueness_validation
+      if folder.errors[:name].any?
+        errors.add(:name, I18n.t('activerecord.errors.messages.taken'))
         break
       end
     end

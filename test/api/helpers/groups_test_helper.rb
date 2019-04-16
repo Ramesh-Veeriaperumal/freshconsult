@@ -13,6 +13,18 @@ module GroupsTestHelper
     group_json
   end 
 
+  def private_group_pattern_index(expected_output = {}, group)
+    group_json = group_json(expected_output, group)
+    group_json.delete(:business_hour_id)
+    group_json.delete(:unassigned_for)
+    group_json.delete(:created_at)
+    group_json.delete(:updated_at)
+    group_json.delete(:group_type)
+    group_json.delete(:escalate_to)
+    group_json[:agent_ids] = group.agent_groups.pluck(:user_id)
+    group_json
+  end
+
   def private_group_pattern_with_ocr(expected_output={}, group)
     group_json=private_group_pattern(expected_output={},group)
     group_json[:allow_agents_to_change_availability]= group.toggle_availability if ocr_enabled?

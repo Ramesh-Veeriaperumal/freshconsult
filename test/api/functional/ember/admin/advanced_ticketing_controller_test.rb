@@ -8,6 +8,8 @@ module Ember
       include Redis::RedisKeys
       include Redis::HashMethods
       include Redis::OthersRedis
+      include Admin::AdvancedTicketing::FieldServiceManagement::Constant
+      include Admin::AdvancedTicketing::FieldServiceManagement::Util
 
       def setup
         super
@@ -89,6 +91,8 @@ module Ember
       def test_create_fsm
         enable_fsm do
           begin
+            old_ticket_filter_count = Account.current.ticket_filters.count
+            create_fsm_dashboard
             Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
             fields_count_before_installation = Account.current.ticket_fields.size
             total_fsm_fields_count = CUSTOM_FIELDS_TO_RESERVE.size
@@ -97,8 +101,12 @@ module Ember
             end
             assert_response 204          
             assert Account.current.field_service_management_enabled?
+            dashboard = Account.current.dashboards.where(name: FSM_DASHBOARD_NAME)
             fields_count_after_installation = Account.current.ticket_fields.size
             assert fields_count_after_installation == (total_fsm_fields_count + fields_count_before_installation)
+            assert dashboard.present?
+            assert dashboard.first.widgets.count, FSM_WIDGETS_COUNT
+            assert Account.current.ticket_filters.count == old_ticket_filter_count + FSM_TICKET_FILTER_COUNT
           ensure
             Account.any_instance.unstub(:disable_old_ui_enabled?)
           end

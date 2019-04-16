@@ -7,8 +7,8 @@ module ChannelIntegrations::Commands::Services
     include Email::EmailService::EmailCampaignDelivery
 
     def receive_send_bulk_emails(payload)
-      if Account.current.subscription.suspended?
-        Rails.logger.info("Bulk emails sent for #{payload[:context][:from]} :: Account ID : #{payload['account_id']}")
+      if invalid_account?
+        Rails.logger.info("invalid_account :: Bulk emails sent for #{payload[:context][:from]} :: Account ID : #{payload['account_id']}")
         return default_error_format.merge(data: { reason: "Account ID : #{payload['account_id']} is suspended" })
       end
       deliver_email_campaign(payload[:data].merge(payload.slice(:account_id)))
@@ -70,6 +70,10 @@ module ChannelIntegrations::Commands::Services
       line_items_title = line_items.map { |li| li['title'] }
       shopify_payload['line_items'] = line_items_title.join(', ')
       shopify_payload
+    end
+
+    def invalid_account?
+      current_account.subscription.suspended? || current_account.disable_simple_outreach_enabled? || !current_account.simple_outreach_enabled?
     end
   end
 end

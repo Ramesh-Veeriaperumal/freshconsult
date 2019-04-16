@@ -247,7 +247,9 @@ module MemcacheKeys
   PLANS_AGENT_COSTS_BY_CURRENCY = 'PLANS_AGENT_COSTS_BY_CURRENCY:%{currency_name}'.freeze
 
   ACCOUNT_AGENT_TYPES = "v1/ACCOUNT_AGENT_TYPES:%{account_id}"
-    
+
+  UNASSOCIATED_CATEGORIES = 'UNASSOCIATED_CATEGORIES:%{account_id}'.freeze
+
   def fetch_from_cache(key, &block)
     @cached_values = {} unless @cached_values
     return @cached_values[key] if @cached_values.include? key
