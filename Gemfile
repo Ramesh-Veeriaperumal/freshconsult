@@ -22,7 +22,7 @@ gem 'has_scope', '0.6.0'
 
 
 #For instrumenting cache-performance
-gem "time_bandits", :git => 'git@github.com:freshdesk/fd_time_bandits', :tag => 'v1.2'
+gem "time_bandits", :git => 'git@github.com:freshdesk/fd_time_bandits', :tag => 'v1.3'
 
 gem "connection_pool"
 gem "clamav-client", "3.1.0", require: "clamav/client"
