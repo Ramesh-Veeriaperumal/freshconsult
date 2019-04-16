@@ -109,12 +109,12 @@
         total_rules += 1
         next if @account.cascade_dispatcher_enabled?
         if evaluate_on.present?
-          update_ticket_execute_count if rule_ids_with_exec_count.present? # when cascade_dispatcher is disabled
+          update_ticket_execute_count(rule_ids_with_exec_count) if rule_ids_with_exec_count.present? # when cascade_dispatcher is disabled
           log_total_execution_info(total_rules, rule_type, start_time, Time.now.utc)
           return
         end
       end
-      update_ticket_execute_count if rule_ids_with_exec_count.present? # when cascade_dispatcher is enabled
+      update_ticket_execute_count(rule_ids_with_exec_count) if rule_ids_with_exec_count.present? # when cascade_dispatcher is enabled
       log_total_execution_info(total_rules, rule_type, start_time, Time.now.utc)
     end
 
