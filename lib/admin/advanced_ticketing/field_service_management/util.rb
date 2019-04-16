@@ -129,7 +129,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         agent_type = AgentType.create_agent_type(Account.current, FIELD_AGENT)
         raise "Field agent type did not get created" unless agent_type
       end
-
+      
       def create_fsm_dashboard
         options = create_fsm_default_custom_filters
         dashboard_object = DashboardObjectConcern.new(I18n.t("fsm_dashboard.name"))
@@ -198,6 +198,9 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         destroy_field_agent
         destroy_field_group
         destroy_fsm_dashboard_and_filters if Account.current.fsm_dashboard_enabled?
+      rescue StandardError => e
+        Rails.logger.error "Error in Disabling FSM, account id: #{Account.current.id}, message: #{e.message}"
+        render_request_error(:internal_server_error, 500)
       end
 
       def destroy_fsm_dashboard_and_filters

@@ -293,7 +293,7 @@ class Account < ActiveRecord::Base
       undo_send: false, timeline: false, twitter_microservice: true, twitter_handle_publisher: true,
       old_link_back_url_validation: false, shopify_actions: true, stop_contacts_count_query: false,
       twitter_dm_outgoing_attachment: false, twitter_mention_outgoing_attachment: false,
-      product_central_publish: false, field_service_management_lp: false, fsm_dashboard: false, help_widget: false,
+      product_central_publish: false, field_service_management_lp: false, fsm_dashboard: false, help_widget: false, disable_field_service_management: false,
       bot_email_channel: false, bot_email_central_publish: false, company_central_publish: false,
       sso_login_expiry_limitation: false, csat_email_scan_compatibility: false,
       email_deprecated_style_parsing: false, saml_ecrypted_assertion: false,
