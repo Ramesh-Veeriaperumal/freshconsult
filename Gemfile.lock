@@ -234,8 +234,8 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/fd_time_bandits
-  revision: 45aa86613da84d5ff971babc67908333b08cc96c
-  tag: v1.2
+  revision: 5d1aadf2e504b9455b0ed7fbe26031231a4164e8
+  tag: v1.3
   specs:
     time_bandits (0.10.12)
       activesupport (>= 2.3.2)
