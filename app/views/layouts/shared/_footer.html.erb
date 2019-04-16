@@ -176,7 +176,8 @@
   <script type="text/javascript">
     jQuery(document).ready(function() {
       // Send a postmessage to indicate that helpkit DOMContentLoaded
-      window.parent.postMessage({action: "helpkit-loaded"}, window.origin);
+      
+      window.parent.postMessage({action: "helpkit-loaded"}, window.location.origin);
     });
   </script>
 <% end %>
