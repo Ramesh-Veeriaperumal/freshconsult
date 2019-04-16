@@ -11,7 +11,7 @@ module Admin
 
     def test_link_to_new_account
       stub_create_account
-      account_additional_settings = Account.current.account_additional_settings
+      account_additional_settings = ::Account.current.account_additional_settings
       account_additional_settings.additional_settings ||= {}
       account_additional_settings.additional_settings.delete(:freshmarketer)
       account_additional_settings.save
@@ -59,9 +59,9 @@ module Admin
 
     def test_index
       stub_experiment_details
-      account_additional_settings = Account.current.account_additional_settings
+      account_additional_settings = ::Account.current.account_additional_settings
       freshmarketer_hash = {
-        acc_id: Account.current.id,
+        acc_id: ::Account.current.id,
         auth_token: 'ABC',
         cdn_script: "<script>alert('hi')</script>",
         app_url: 'http://freshmarketer.io',
@@ -76,7 +76,7 @@ module Admin
     end
 
     def test_index_without_linking
-      account_additional_settings = Account.current.account_additional_settings
+      account_additional_settings = ::Account.current.account_additional_settings
       account_additional_settings.additional_settings ||= {}
       account_additional_settings.additional_settings.delete(:freshmarketer)
       account_additional_settings.save
