@@ -1276,6 +1276,10 @@ class User < ActiveRecord::Base
     save
   end
 
+  def freshid_enabled_and_agent?
+    agent? && freshid_enabled_account? && email_allowed_in_freshid?
+  end
+
   def privilege?(privilege)
     if CONTACT_COMPANY_PRIVILEGES_SPLIT.include?(privilege) &&
        !account.launched?(:contact_company_split)
@@ -1300,10 +1304,6 @@ class User < ActiveRecord::Base
 
     def freshid_enabled_account?
       account.freshid_enabled?
-    end
-
-    def freshid_enabled_and_agent?
-      agent? && freshid_enabled_account? && email_allowed_in_freshid?
     end
 
     def freshid_disabled_or_customer?
