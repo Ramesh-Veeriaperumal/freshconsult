@@ -149,7 +149,7 @@ module Admin::AutomationDelegatorHelper
       not_included_error("ticket[:#{actual[:field_name]}][:value]", level1_expected.map(&:value) + ANY_NONE.values)
       return
     end
-    if actual.key?(:nested_fields)
+    if actual[:nested_fields].present?
       level2_expected = level1_expected.find_by_value(actual[:value])
       validate_nested_level_type(level2_expected, actual, 'level2')
       return if errors.messages.present? || (ANY_NONE.values.include?(actual[:nested_fields][:level2][:value]) &&

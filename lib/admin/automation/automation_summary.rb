@@ -146,10 +146,16 @@ module Admin::Automation::AutomationSummary
       nested_data = data[:nested_rule].presence || data[:nested_rules].presence
       translated_key = data.key?(:value) ? :"#{type}_value" : :"#{type}_from_to"
       values = data.key?(:value) ? [data[:value]] : [data[:from], data[:to]]
-      sentence = create_sentence(data[field_name], translated_key, values)
+
+      array = []
+      array << generate_key(data[field_name], data[:evaluate_on] || 'ticket')
+      array << generate_operator(data[:operator]) if data[:operator].present?
+      array << generate_value(data[field_name], data[:value], ' OR ') if data[:value].present?
+      sentence = array.join(' ')
+
       nested_data.each do |nested_value|
         nested_sentence = nested_fields_sentence_generate(nested_value, "#{type}_nested")
-        sentence = "#{sentence}#{nested_sentence}"
+        sentence = "#{sentence}#{I18n.t('admin.automation_summary.and')}#{nested_sentence}"
       end
       sentence
     end

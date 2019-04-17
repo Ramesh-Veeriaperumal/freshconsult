@@ -293,6 +293,10 @@ module Admin::AutomationValidationHelper
     data_type_class = expected[:data_type].to_s.constantize
     is_expected_data_type = (value.is_a?(Array) && value.all? {|x| x.is_a?(data_type_class)}) ||
                             value.is_a?(expected_data_type == 'multiple' ? Array : data_type_class)
+    # WARN - this will basically ignore all the validation, need to remove this check
+    if expected_data_type == 'single'
+      is_expected_data_type = true
+    end
     is_expected_data_type || none_value?(value, CONDITION_NONE_FIELDS.include?(expected[:name]))
   end
 
