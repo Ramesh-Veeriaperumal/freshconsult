@@ -20,18 +20,21 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
 
   # Should resolve to true for public APIs
   def correct_namespace?(path_info)
-    CustomRequestStore.read(:api_v2_request) || CustomRequestStore.read(:pipe_api_request)
+    CustomRequestStore.read(:api_v2_request) ||
+      CustomRequestStore.read(:pipe_api_request) ||
+      CustomRequestStore.read(:channel_v1_api_request)
   end
 
   def call(env)
     @request      = Rack::Request.new(env)
-    @host         = env['HTTP_HOST']
-    @shard        = fetch_shard(env)
 
     unless correct_namespace?(@request.env["PATH_INFO"])
       @status, @headers, @response = @app.call(@request.env)
       return [@status, @headers, @response]
     end
+
+    @host         = env['HTTP_HOST']
+    @shard        = fetch_shard(env)
 
     if shard_not_found?
       Rails.logger.debug "Domain Not Found while throttling :: Host: #{@host}"

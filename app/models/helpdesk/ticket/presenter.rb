@@ -8,7 +8,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   DATETIME_FIELDS = [:due_by, :closed_at, :resolved_at, :created_at, :updated_at, :first_response_time, :first_assigned_at].freeze
   TAG_KEYS = [:add_tag, :remove_tag].freeze
   WATCHER_KEYS = [:add_watcher, :remove_watcher].freeze
-  SYSTEM_ACTIONS = [:add_comment, :add_a_cc, :email_to_requester, :email_to_group, :email_to_agent].freeze
+  SYSTEM_ACTIONS = [:add_comment, :add_a_cc, :email_to_requester, :email_to_group, :email_to_agent, :add_note, :forward_ticket].freeze
   DONT_CARE_VALUE = '*'.freeze
 
   acts_as_api

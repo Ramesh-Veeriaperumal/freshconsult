@@ -1,19 +1,82 @@
 class Admin::AutomationsController < ApiApplicationController
-  include HelperConcern
   include Admin::AutomationConstants
+  include HelperConcern
+  include Admin::AutomationHelper
+  include Redis::AutomationRuleRedis
+  include AutomationRuleHelper
+  include Va::Constants
+
+  prepend_before_filter :check_for_allowed_rule_type
 
   ROOT_KEY = :rule
   decorate_views(decorate_objects: [:index])
 
   def index
     super
+    fetch_executed_ticket_counts if current_account.automation_rule_execution_count_enabled?
     response.api_meta = {
       count: @items_count,
-      cascading_rules: current_account.cascade_dispatcher_enabled?
+      cascading_rules: current_account.cascade_dispatcher_enabled?,
+      active_rules: scoper.active.count
     }
   end
 
+  def create
+    assign_protected
+    automation_delegator = automation_delegator_class.new(params, params[cname], params[:rule_type].to_i)
+    if automation_delegator.invalid?(action_name.to_sym)
+      render_custom_errors(automation_delegator, true)
+    elsif params[:preview] || @item.save
+      render_201_with_location
+    end
+  end
+
+  def update
+    assign_protected
+    automation_delegator = automation_delegator_class.new(params, params[cname], params[:rule_type].to_i)
+    if automation_delegator.invalid?(action_name.to_sym)
+      render_custom_errors(automation_delegator, true)
+    elsif !(params[:preview] || @item.update_attributes(params[cname]))
+      render_custom_errors
+    end
+  end
+
+  protected
+
+    def before_build_object
+      @item = scoper.new
+    end
+
   private
+
+    def fetch_executed_ticket_counts
+      rule_ids = @items.map(&:id)
+      data = get_rules_executed_count(rule_ids)
+      result = data.inject([]) do |_d, count|
+        count.each_with_index {|value, index| _d[index] =  _d[index].to_i + value.to_i }
+        _d
+      end
+      @items.each_with_index {|item, index| item.affected_tickets_count = result[index] }
+    end
+
+    def check_for_allowed_rule_type
+      rule_name = VAConfig::RULES_BY_ID[params[:rule_type].to_i]
+      unless VAConfig::ASSOCIATION_MAPPING.key?(rule_name)
+        render_request_error(:rule_type_not_allowed, 404, rule_type: params[:rule_type])
+      end
+    end
+
+    def assign_protected
+      va_rule_params = params[cname]
+      @conditions = va_rule_params[:conditions]
+      @performers = va_rule_params[:performer]
+      @events = va_rule_params[:events]
+      @actions = va_rule_params[:actions]
+      set_automations_fields
+      @item.last_updated_by = current_user.id
+      @item.active ||= false
+      @old_rule_position = @item.position
+    end
 
     def scoper
       rule_type = VAConfig::RULES_BY_ID[params[:rule_type].to_i]
@@ -21,21 +84,45 @@ class Admin::AutomationsController < ApiApplicationController
       current_account.safe_send("all_#{rule_association}".to_sym) unless rule_association.nil?
     end
 
-    def validate_filter_params(_additional_fields = [])
-      validate_query_params
-    end
-
     def load_object(items = scoper)
       @item = items.find_by_id(params[:id]) unless items.nil?
       log_and_render_404 unless @item
     end
 
+    def validate_filter_params(_additional_fields = [])
+      super fields_to_validate
+    end
+
+    def automation_validation_class
+      "Admin::AutomationValidation".constantize
+    end
+
+    def validate_params
+      if params[cname].blank?
+        render_errors([[:payload, :invalid_json]])
+      else
+        automation_validation = automation_validation_class.new(params, nil, false)
+        if automation_validation.invalid?(params[:action].to_sym)
+          render_errors(automation_validation.errors, automation_validation.error_options)
+        else
+          check_automation_params
+        end
+      end
+    end
+
+    def automation_delegator_class
+      'Admin::AutomationRules::AutomationDelegator'.constantize
+    end
+
+    def render_201_with_location
+      render "#{controller_path}/#{action_name}", status: 201
+    end
+
     def constants_class
       Admin::AutomationConstants.to_s.freeze
     end
-    
+
     def launch_party_name
       FeatureConstants::AUTOMATION_REVAMP
     end
-
 end

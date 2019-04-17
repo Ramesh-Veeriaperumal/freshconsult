@@ -1,6 +1,7 @@
   class Helpdesk::Dispatcher
 
     include RoundRobinCapping::Methods
+    include AutomationRuleHelper
     
     #including Redis keys for notify_cc - will be removed later
     include Redis::RedisKeys
@@ -90,13 +91,17 @@
       rule_type = VAConfig::RULES_BY_ID[VAConfig::RULES[:dispatcher]]
       evaluate_on = @ticket
       total_rules = 0 # used if cascade_dispatcher feature not present
+      rule_ids_with_exec_count = {}
       @account.va_rules.each do |vr|
         begin
           Va::Logger::Automation.set_rule_id(vr.id)
           evaluate_on = nil
           time = Benchmark.realtime {
-            evaluate_on = vr.pass_through(@ticket,nil,@user)
+            evaluate_on = @account.automation_revamp_enabled? ? 
+                            vr.check_rule_conditions(@ticket, nil, @user) : 
+                            vr.pass_through(@ticket, nil, @user)
           }
+          rule_ids_with_exec_count[vr.id] = 1 if evaluate_on.present?
           Va::Logger::Automation.log_execution_and_time(time, (evaluate_on.present? ? 1 : 0), rule_type)
         rescue Exception => e
           Va::Logger::Automation.log_error(DISPATCHER_ERROR, e)
@@ -104,10 +109,12 @@
         total_rules += 1
         next if @account.cascade_dispatcher_enabled?
         if evaluate_on.present?
+          update_ticket_execute_count(rule_ids_with_exec_count) if rule_ids_with_exec_count.present? # when cascade_dispatcher is disabled
           log_total_execution_info(total_rules, rule_type, start_time, Time.now.utc)
           return
         end
       end
+      update_ticket_execute_count(rule_ids_with_exec_count) if rule_ids_with_exec_count.present? # when cascade_dispatcher is enabled
       log_total_execution_info(total_rules, rule_type, start_time, Time.now.utc)
     end
 

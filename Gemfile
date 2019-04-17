@@ -97,7 +97,7 @@ gem "omniauth-google", "1.0.2"
 gem "omniauth-google-oauth2", "0.1.13"
 gem "omniauth-quickbooks", "0.0.2"
 gem "omniauth-salesforce", :git => "git://github.com/sathishfreshdesk/omniauth-salesforce.git", :branch => "master"
-gem "omniauth-mailchimp", "1.0.3"
+gem "omniauth-mailchimp", "2.1.0"
 gem "omniauth-constantcontact2", "1.0.4"
 
 gem "dynamics_crm", :git => 'git@github.com:TinderBox/dynamics_crm.git', :branch => "master"
@@ -212,7 +212,7 @@ gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 gem 'freshdesk_features', :git => 'git@github.com:freshdesk/freshdesk-features.git', :branch => "freshdesk", :require => true
 gem 'launchparty', :git => 'git@github.com:freshdesk/launch-party.git', :tag => 'v0.2.1'
 gem 'binarize', "0.1.1", :git => 'git@github.com:freshdesk/binarize.git', :branch => 'not_a_model_column'
-gem 'rule_engine', git: 'git@github.com:freshdesk/rule_engine.git', tag: 'hv0.0.1'
+gem 'rule_engine', git: 'git@github.com:freshdesk/rule_engine.git', tag: 'hv0.0.3'
 gem 'freshid', :git => 'git@github.com:freshdesk/freshid-ruby-client.git', :tag => 'v3.0.3'
 
 gem 'net-http-persistent', '~> 2.9.4'

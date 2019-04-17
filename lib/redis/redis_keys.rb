@@ -1,5 +1,5 @@
 module Redis::RedisKeys
-  
+
   include Redis::Keys::DisplayId
   include Redis::Keys::Integrations
   include Redis::Keys::Marketplace
@@ -15,7 +15,7 @@ module Redis::RedisKeys
   include Redis::Keys::SpamWatcher
   include Redis::Keys::Tickets
 
-  # Please do not any new key in this file. 
+  # Please do not any new key in this file.
   # Please add new key in respective file based on its redis host.
 
   #Timestamp key for Redis AOF reference.
@@ -63,13 +63,13 @@ module Redis::RedisKeys
   ACCOUNT_TOPIC_KEYS = [TOPIC_HIT_TRACKER].freeze
 
 
-  def newrelic_begin_rescue 
-    begin 
-      yield 
-    rescue Exception => e 
-      NewRelic::Agent.notice_error(e) 
-      return  
-    end 
+  def newrelic_begin_rescue
+    begin
+      yield
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e)
+      return
+    end
   end
-  
+
 end

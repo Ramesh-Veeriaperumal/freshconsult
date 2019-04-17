@@ -381,6 +381,13 @@ Helpkit::Application.routes.draw do
     end
 
     post '/account/export', to: 'admin/api_data_exports#account_export'
+    
+    scope module: 'admin' do
+      scope module: 'account' do
+        post 'features/:name', to: 'features#create'
+        delete 'features/:name', to: 'features#destroy'
+      end
+    end
 
     resources :topics, controller: 'ember/discussions/topics', only: [:show] do
       member do
@@ -707,9 +714,8 @@ Helpkit::Application.routes.draw do
     post '/search/autocomplete/tags/',          to: 'ember/search/autocomplete#tags'
 
     scope '/automations/:rule_type' do
-      resources :rules, controller: 'admin/automations', only: [:index, :destroy]
+      resources :rules, controller: 'admin/automations', only: [:index, :create, :update, :destroy, :show]
     end
-
   end
 
   pipe_routes = proc do

@@ -40,7 +40,7 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
   include RabbitMq::Publisher
 
   SOURCES = %w{email form note status meta twitter feedback facebook 
-               forward_email phone mobihelp mobihelp_app_review summary}
+               forward_email phone mobihelp mobihelp_app_review summary automation_rule_forward}
 
   NOTE_TYPE = { true => :private, false => :public }
   
@@ -176,11 +176,23 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
   end 
   
   def fwd_email?
+    user_fwd_email? || automation_fwd_email?
+  end
+
+  def user_fwd_email?
     source == SOURCE_KEYS_BY_TOKEN["forward_email"]
+  end
+
+  def automation_fwd_email?
+    source == SOURCE_KEYS_BY_TOKEN["automation_rule_forward"]
   end
 
   def email_conversation?
     email? or fwd_email?
+  end
+
+  def automated_note_for_ticket?
+    (source == SOURCE_KEYS_BY_TOKEN["automation_rule"])
   end
 
   def kind

@@ -4376,6 +4376,7 @@ ActiveRecord::Schema.define(:version => 20190320094855) do
   end
 
   add_index "va_rules", ["account_id", "rule_type"], :name => "index_va_rules_on_account_id_and_rule_type"
+  add_index 'va_rules', ['account_id', 'rule_type', 'position'], :name => 'index_va_rules_on_account_id_rule_type_and_position'
 
   create_table "votes", :force => true do |t|
     t.integer  "vote",          :limit => 1,  :default => 1

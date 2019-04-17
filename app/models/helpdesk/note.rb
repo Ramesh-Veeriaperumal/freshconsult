@@ -234,7 +234,15 @@ class Helpdesk::Note < ActiveRecord::Base
   end 
   
   def fwd_email?
+    user_fwd_email? || automation_fwd_email?
+  end
+
+  def user_fwd_email?
     source == SOURCE_KEYS_BY_TOKEN["forward_email"]
+  end
+
+  def automation_fwd_email?
+    source == SOURCE_KEYS_BY_TOKEN["automation_rule_forward"]
   end
 
   def email_conversation?
@@ -491,6 +499,10 @@ class Helpdesk::Note < ActiveRecord::Base
       (self.notable.is_a? Helpdesk::Ticket) && user && (source != SOURCE_KEYS_BY_TOKEN['meta'])
     end
 
+    def automated_note_for_ticket?
+      (source == SOURCE_KEYS_BY_TOKEN["automation_rule"])
+    end
+     
     # Replied by third pary to the forwarded email
     # Use this method only after checking human_note_for_ticket? and user.customer?
     def replied_by_third_party? 

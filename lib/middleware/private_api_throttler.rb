@@ -6,10 +6,6 @@ class Middleware::PrivateApiThrottler < Middleware::FdApiThrottler
   THROTTLE_PERIOD = 1.minute.freeze
   API_LIMIT = 3000
 
-  def correct_namespace?(path_info)
-    true
-  end
-
   def initialize(app, options = {})
     super(app, options)
     @app = app

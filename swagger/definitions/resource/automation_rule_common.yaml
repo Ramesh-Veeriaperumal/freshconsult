@@ -6,3 +6,5 @@ properties:
     type: integer
   affected_tickets_count:
     type: integer
+  Summary: 
+    $ref: '#/definitions/automation_rule_summary'

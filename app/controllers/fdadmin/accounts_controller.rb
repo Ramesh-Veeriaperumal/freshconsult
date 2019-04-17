@@ -26,7 +26,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary = {}
     account = Account.find_by_id(params[:account_id]).make_current
     shard_info = ShardMapping.find(params[:account_id])
-    account_summary[:account_info] = fetch_account_info(account) 
+    account_summary[:account_info] = fetch_account_info(account)
     account_summary[:reputation] = account.reputation
     account_summary[:passes] = account.day_pass_config.available_passes
     account_summary[:contact_details] = { email: account.admin_email , phone: account.admin_phone }
@@ -78,7 +78,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     feature_info[:launch_party] = account.all_launched_features
     feature_info[:bitmap_list] = account.features_list
     feature_info[:db_feature_list] = account.features.map(&:to_sym)
-    
+
     respond_to do |format|
       format.json do
         render :json => feature_info
@@ -130,10 +130,10 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       render :json => {:status => "error"} and return unless /[0-9]/.match(params[:passes_count])
       day_pass_config = account.day_pass_config
       passes_count = params[:passes_count].to_i
-      render :json => { :status => "notice" } and return if passes_count > 30 
+      render :json => { :status => "notice" } and return if passes_count > 30
       day_pass_config.update_attributes(:available_passes => (day_pass_config.available_passes +  passes_count))
     end
-    result[:account_id] = account.id 
+    result[:account_id] = account.id
     result[:account_name] = account.name
     result[:status] = "success"
     respond_to do |format|
@@ -197,7 +197,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     else
       result[:status] = "notice"
     end
-    result[:account_id] = account.id 
+    result[:account_id] = account.id
     result[:account_name] = account.name
     Account.reset_current_account
     respond_to do |format|
@@ -221,7 +221,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     else
       result[:status] = "notice"
     end
-    result[:account_id] = account.id 
+    result[:account_id] = account.id
     result[:account_name] = account.name
     Account.reset_current_account
     respond_to do |format|
@@ -265,9 +265,9 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       format.json do
         render :json => result
       end
-    end 
+    end
   end
-  
+
   def change_currency
     account = Account.find_by_id(params[:account_id]).make_current
     result = {:account_id => account.id , :account_name => account.name }
@@ -285,7 +285,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       format.json do
         render :json => result
       end
-    end 
+    end
   end
 
   def extend_trial
@@ -388,7 +388,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
         email_config.save
       end
       current_account.full_domain = new_url
-      result[:account_id] = current_account.id 
+      result[:account_id] = current_account.id
       result[:account_name] = current_account.name
       if current_account.save
         result[:status] = "success"
@@ -499,7 +499,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   def unblock_outgoing_email
     result = {}
-    Sharding.admin_select_shard_of(params[:account_id]) do 
+    Sharding.admin_select_shard_of(params[:account_id]) do
       account = Account.find(params[:account_id])
       account.make_current
       result[:account_id] = account.id
@@ -529,15 +529,15 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   def ehawk_spam_details
     spam_details = {}
-    Sharding.admin_select_shard_of(params[:account_id]) do 
+    Sharding.admin_select_shard_of(params[:account_id]) do
       account = Account.find(params[:account_id])
       account.make_current
       spam_details[:account_blacklisted] = spam_blacklisted?(account)
       spam_details[:outgoing_blocked] = outgoing_blocked?(params[:account_id])
       spam_details[:status] = account.ehawk_reputation_score
       signup_params = get_account_signup_params params[:account_id]
-      spam_details[:reason] = signup_params["api_response"]["reason"] 
-      spam_details[:wl_details] = signup_params["api_response"]["wl_details"] 
+      spam_details[:reason] = signup_params["api_response"]["reason"]
+      spam_details[:wl_details] = signup_params["api_response"]["wl_details"]
       Account.reset_current_account
     end
     spam_details
@@ -548,7 +548,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     shard_mapping = ShardMapping.find(params[:account_id])
     shard_mapping.status = ShardMapping::STATUS_CODE[:ok]
     shard_mapping.save
-    Sharding.admin_select_shard_of(params[:account_id]) do 
+    Sharding.admin_select_shard_of(params[:account_id]) do
       account = Account.find(params[:account_id])
       result[:account_id] = account.id
       result[:account_name] = account.name
@@ -576,7 +576,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     shard_mapping = ShardMapping.find(params[:account_id])
     shard_mapping.status = ShardMapping::STATUS_CODE[:not_found]
     shard_mapping.save
-    Sharding.admin_select_shard_of(params[:account_id]) do 
+    Sharding.admin_select_shard_of(params[:account_id]) do
       account = Account.find(params[:account_id])
       result[:account_id] = account.id
       result[:account_name] = account.name
@@ -631,8 +631,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   def check_domain_exists
     request_parameters = {
-      :old_domain => params[:domain_name], 
-      :new_domain => params[:new_url], 
+      :old_domain => params[:domain_name],
+      :new_domain => params[:new_url],
       :target_method => :check_domain_availability
     }
     response = Fdadmin::APICalls.connect_main_pod(request_parameters)
@@ -645,7 +645,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     result[:user_id] = @user.id
     result[:second_email] = @user.second_email
     result[:name] = @user.name
-    result[:account_id] = @user.account_id 
+    result[:account_id] = @user.account_id
     result[:language] = @user.language
     result[:time_zone] = @user.time_zone
     result[:phone] = @user.phone
@@ -654,7 +654,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     result[:fb_profile_id] = @user.fb_profile_id
     result[:failed_login_count] = @user.failed_login_count
     respond_to do |format|
-      format.json do 
+      format.json do
         render :json => result
         end
       end
@@ -664,10 +664,10 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     result = {}
     @user.failed_login_count = 0
     if @user.save
-    result[:status] = "success" 
+    result[:status] = "success"
     result[:failed_login_count] = @user.failed_login_count
     respond_to do |format|
-      format.json do 
+      format.json do
         render :json => result
         end
       end
@@ -676,7 +676,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   def contact_import_destroy
     result = {}
-    account = Account.find_by_id(params[:account_id]) 
+    account = Account.find_by_id(params[:account_id])
     begin
       account.make_current
       key = format(STOP_CONTACT_IMPORT, account_id: account.id)
@@ -688,7 +688,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       Account.reset_current_account
     end
     respond_to do |format|
-      format.json do 
+      format.json do
         render :json => result
       end
     end
@@ -833,7 +833,6 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       )
     end
 
-
     def validate_params
       render :json => {:status => "error"} and return unless /^[0-9]/.match(params[:new_limit])
     end
@@ -860,19 +859,19 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     end
 
     def load_user_record
-      if (!params[:email].blank? || params[:user_id].blank?) 
+      if (!params[:email].blank? || params[:user_id].blank?)
         account_id = params[:account_id]
         user_id = params[:user_id]
-        @user = user_id.present? ? User.find_by_id_and_account_id(user_id,account_id) : User.find_by_account_id_and_email_and_helpdesk_agent(account_id,params[:email],1) 
+        @user = user_id.present? ? User.find_by_id_and_account_id(user_id,account_id) : User.find_by_account_id_and_email_and_helpdesk_agent(account_id,params[:email],1)
       end
        unless @user
         respond_to do |format|
-          format.json do 
+          format.json do
             render :json => {:status => "Please check the entered value"}.to_json
           end
         end
       end
-      
+
     end
 
     def get_freshfone_details(account)

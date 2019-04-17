@@ -2552,8 +2552,11 @@ en:
         integrations: "Integrations"
         apps: Apps
         dispatcher: Dispatch'r
+        dispatcher_new_name: Ticket create
         supervisor: Supervisor
+        supervisor_new_name: Time trigger
         observer: Observer
+        observer_new_name: Ticket update
         sla: SLA Policies
         ticket-fields: Ticket Fields
         customer-fields: Customer Fields
@@ -2747,6 +2750,138 @@ en:
         events: "Events"
         conditions: "Conditions"
         custom_field_name: 'Set %{field_name} as'
+    automation_summary:
+      '1': 'Selected'
+      '0': 'Not Selected'
+      account_tier: "Account tier"
+      action: "%{field_name}"
+      action_priority: 'Set Priority as'
+      action_ticket_type: 'Set Type as'
+      action_status: 'Set Status as'
+      action_responder_id: 'Assign to Agent'
+      action_group_id: 'Assign to Group'
+      action_product_id: 'Assign to Product'
+      action_key_value: "%{field_name} %{field_value}"
+      action_nested_value: " And %{field_name} as %{field_value}"
+      action_value: "Set %{field_name} as %{field_value}"
+      action_webhook:  "%{field_name} Method-: %{field_from} Url-: %{field_to}"
+      actions: "Actions"
+      active: "Active"
+      add_comment: "Add comment"
+      add_note: "Add note and notify to agents"
+      action_add_tag: "Add Tag"
+      action_add_watcher: "Add watcher"
+      agent_responded_at: "Hour Since Agent responded"
+      and: " And "
+      assigned_group: 'Assigned Group'
+      assigned_at: "Hour Since Assigned"
+      closed_at: "Hour Since Closed"
+      company_name: "Company name"
+      condition: "Check If %{field_name}"
+      condition_all: "AND"
+      condition_any: "OR"
+      condition_nested_value: " And %{field_name} is %{field_value}"
+      condition_value: "Check If %{field_name} is %{field_value}"
+      conditions: "Conditions"
+      contact_name: "Contact name"
+      contains: "Contains"
+      contains_any_of: "Contains any of"
+      contains_none_of: "Contains none of"
+      created_at: "created at"
+      created_at_since: "Hour Since Ticket created"
+      customer_feedback: "Customer Feedback Rating"
+      delete_ticket: "Delete ticket"
+      delete: 'Deleted'
+      description: "Description"
+      does_not_contain: "Does not contain"
+      domain: "Domain"
+      domains: "Domains"
+      due_by_since: "Hour Since Ticket is Overdue"
+      due_by: "Due Date is changed"
+      during: "During"
+      email: "Email"
+      ends_with: "Ends with"
+      ends_with_any_of: 'Ends with any of' 
+      event: "When %{field_name}"
+      event_agent: "Event Performing Agent"
+      event_from_to: "When %{field_name} is changed from %{field_from} to %{field_to}"
+      event_nested_from_to: " And %{field_name} is changed from %{field_from} to %{field_to}"
+      event_value: "When %{field_name} is %{field_value}"
+      events: "Events"
+      first_assigned_at: "Hour Since First assigned"
+      frDueBy: "Hour Since first Response Due"
+      from_email: "Requester email"
+      greater_than: "Greater than"
+      group_id: "Group"
+      health_score: "Health score"
+      in: "In"
+      inbound_count: "Requester Interactions"
+      industry: "Industry"
+      internal_agent_id: "Internal agent"
+      internal_group_id: "Internal group"
+      is: "Is"
+      is_any_of: "Is any of"
+      is_none_of: "Is none of"
+      is_not: "Is not"
+      job_title: "Job title"
+      language: "Language"
+      last_interaction: "Last interaction"
+      last_updated_by: "last updated by"
+      less_than: "Less than"
+      mail_del_failed_others: "Mail sent to cc or forward address failed"
+      mail_del_failed_requester: "Mail sent to requester address failed"
+      mark_as_spam: "Mark As Spam"
+      marked_spam: "Marked As Spam"
+      name: "Name"
+      none_agent: "None"
+      not_in: "Not in"
+      not_selected: "Not selected"
+      note_added_value: "When %{field_value} %{field_name}"
+      note_type: "Note is Added"
+      opened_at: "Hour Since Reopened"
+      operator: "%{field_name}"
+      outbound_count: "Agent Interactions"
+      pending_since: "Hour Since Pending"
+      performer_1: "Agent"
+      performer_2: "Requester"
+      performer_3: "Agent or Requester"
+      performer_4: "System"
+      performer: "When an action performed by %{field_name}"
+      performer_value: "When an action performed by %{field_name} %{field_value} "
+      position: "Position"
+      priority: "Priority"
+      product_id: "Product"
+      renewal_date: "Renewal date"
+      reply_sent: "Reply is Sent"
+      requester_responded_at: "Hour Since Requester responded"
+      resolved_at: "Hour Since Resolved"
+      responder_id: "Agent"
+      segments: "Segments"
+      selected: "Selected"
+      send_email_to_agent: 'Send Email to Agent'
+      send_email_to_group: 'Send Email to Group'
+      send_email_to_requester: 'Send Email to Requester'
+      skip_notification: 'Skip Notification'
+      source: 'Source'
+      starts_with: 'Starts with'
+      starts_with_any_of: 'Starts with any of'
+      status: 'Status'
+      subject: 'Subject'
+      subject_or_description: 'Subject or description'
+      tag_ids: 'Tags'
+      tags_id: 'Tags'
+      ticket_action: 'Ticket'
+      ticket_cc: 'Ticket cc'
+      ticket_type: 'Ticket Type'
+      ticlet_cc: 'CC Email'
+      time_sheet_action: 'Time Entry'
+      time_zone: 'Time zone'
+      to_email: 'To email'
+      trigger_webhook: 'Trigger Webhook'
+      update: 'Updated'
+      forward_ticket: 'Forward to %{fwd_to}'
+      with_cc: 'Cc: %{fwd_cc}'
+      with_bcc: 'Bcc: %{fwd_bcc}'
   ends_with: Ends with
   last_name: Last Name
   forum:
@@ -3651,6 +3786,8 @@ en:
         new: "Sent email to group <strong>%{group_list}</strong>"
       email_to_agent:
         new: "Sent email to agent %{agent_list}"
+      forward_ticket:
+        new: "Forwarded ticket to %{agent_list}"
       property_delete:
         new: "%{property} as <strong>%{property_value}</strong> as the %{property} <strong>%{deleted_property_value}</strong> was deleted"
   credit_card_info: Credit card information
@@ -3924,6 +4061,7 @@ en:
       set: "Set "
       send: "Sent "
       none: "None"
+      forward: "forwarded "
       mark_spam: "Marked the ticket <b>%{ticket} </b> as spam"
       delete_ticket: "Deleted the ticket <b>%{ticket} </b>"
       bulk_change: "Changing"
@@ -3948,6 +4086,7 @@ en:
       internal_agent_failure: "<b>Unable to set the internal agent, consider updating this scenario if the agent has been deleted recently or removed from the respective internal group.</b>"
       private_note: "a <b>private note</b>"
       note: "<b>note</b>"
+      ticket: "ticket"
       add_watchers: "Watcher(s) - <b>%{watchers}</b>"
       add_tags: "the tag(s) [<b>%{tags}</b>]"
       email_to_requester: "an email to the requester"
@@ -3956,6 +4095,8 @@ en:
       bulk_email_to_group: "an email to the group"
       bulk_email_to_agent: "an email to the agent"
       custom_fields: "%{action} as <b>%{value}</b>"
+      forward_to: "to %{to_emails}"
+      forward_cc: " with CC to %{cc_emails}"
     new: New Scenario
     title: Scenario Automations
     tour: Help me automate a common scenario
@@ -5890,7 +6031,7 @@ en:
         info1: "This notification is sent out to an agent when the resolution due by time of a ticket is nearing violation. This email could contain the ticket URL making it easier for the agent to check the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       agent_template_25:
         topic: Agent Invitation Email
-        info1: "The Agent Invitation Email is sent when an existing Freshworks agent (Agent is already active in any of the other Freshdesk accounts or in any of the other Freshworks products - Freshchat, Freshchaller, Freshsales, Freshservice, Freshmarketer) is added in your helpdesk.<br/><br/>\"User Activation Email\" is sent to a new Freshworks agent. And \"Agent Invitation Email\" is sent to an Agent who is already an active Freshworks agent."
+        info1: "The Agent Invitation Email is sent when an existing Freshworks agent (Agent is already active in any of the other Freshdesk accounts or in any of the other Freshworks products - Freshchat, Freshchaller, Freshsales, Freshservice, Freshmarketer) is added in your helpdesk.<br/><br/>\"User Activation Email\" is sent to a new Freshworks agent. And \"Agent Invitation Email\" is sent to an Agent who is already an active Freshworks agent."
       cc_notification_19:
         topic: New Ticket cc
         info1: "This notification will be sent out to the cc-ed persons if the Requester has included email addresses under cc while submitting a ticket to your helpdesk. This email should ideally contain the Requester’s name {{ticket.requester.name}} and ticket description {{ticket.description}}."

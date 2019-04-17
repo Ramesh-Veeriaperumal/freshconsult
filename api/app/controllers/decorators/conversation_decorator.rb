@@ -175,7 +175,7 @@ class ConversationDecorator < ApiDecorator
   end
 
   def requester_hash
-    return {} unless @sideload_options.include?('requester')
+    return {} if !@sideload_options.include?('requester') || record.user.blank?
     contact_decorator = ContactDecorator.new(record.user, {}).to_hash
     {
       requester: contact_decorator

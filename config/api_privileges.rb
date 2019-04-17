@@ -155,10 +155,11 @@ Authority::Authorization::PrivilegeList.build do
     resource :'ember/admin/advanced_ticketing', only: [:create, :destroy, :insights]
     resource :help_widget, only: [:index, :create, :show, :update, :destroy, :freshmarketer_info]
     resource :"admin/trial_subscription", only: [:usage_metrics]
-    resource :"admin/automation", only: [:index, :destroy]
+    resource :"admin/automation", only: [:index, :create, :show, :update, :destroy]
     resource :"admin/custom_translations/upload", only: [:upload]
     resource :"admin/custom_translations/download", only: [:primary, :secondary]
     resource :"settings/helpdesk", only: [:update]
+    resource :"admin/account/feature", only: [:create, :destroy]
   end
 
   edit_ticket_properties do

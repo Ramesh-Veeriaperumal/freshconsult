@@ -3,6 +3,7 @@ module Admin
     include Redis::RedisKeys
     include Redis::OthersRedis
     include SchedulerSemaphoreMethods
+    include AutomationRuleHelper
 
     sidekiq_options :queue => :supervisor, :retry => 0, :backtrace => true, :failures => :exhausted
     SUPERVISOR_ERROR = 'SUPERVISOR_EXECUTION_FAILED'.freeze
@@ -21,7 +22,7 @@ module Admin
         supervisor_tickets_limit = get_others_redis_key(SUPERVISOR_TICKETS_LIMIT).to_i unless account.whitelist_supervisor_sla_limitation_enabled?
         # SUPERVISOR_TICKETS_LIMIT redis key holds the max number of tickets that can be pick in a single rake job
         # To bypass this max limit check, use 'whitelist_supervisor_sla_limitation' launch party feature
-
+        rule_ids_with_exec_count = {}
         supervisor_rules.each do |rule|
           begin
             rule_start_time = Time.now.utc
@@ -39,6 +40,7 @@ module Admin
             .visible.joins(joins).readonly(false).find_each do |ticket|
               next if ticket.service_task?
               tickets_count +=  1
+              rule_ids_with_exec_count[rule.id] = tickets_count
               Va::Logger::Automation.set_thread_variables(account.id, ticket.id, nil, rule.id)
               if supervisor_tickets_limit && (tickets_count > supervisor_tickets_limit)
                 Va::Logger::Automation.log "SUPERVISOR: Tickets limit exceeded, exceeded_ticket_id=#{ticket.id}"
@@ -84,6 +86,7 @@ module Admin
             log_info(account.id, rule.id) { Va::Logger::Automation.log_error(SUPERVISOR_ERROR, nil) }
           end
         end
+        update_ticket_execute_count(rule_ids_with_exec_count) if rule_ids_with_exec_count.present?
         end_time = Time.now.utc
         total_time = end_time - start_time
         log_info(account.id) { 

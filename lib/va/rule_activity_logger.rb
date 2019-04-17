@@ -3,7 +3,7 @@ class Va::RuleActivityLogger
   EVENT_PERFORMER = -2
   ACTION_PREFIX = 'automations.activity.'
   DONT_CARE     = ActivityConstants::DONT_CARE_VALUE
-  RULE_MISC_CHANGES = [:email_to_requester, :email_to_group, :email_to_agent, :add_watcher, :add_a_cc, :add_comment]
+  RULE_MISC_CHANGES = [:email_to_requester, :email_to_group, :email_to_agent, :add_watcher, :add_a_cc, :add_comment, :add_note, :forward_ticket]
   attr_accessor :action_key, :act_hash, :value, :doer, :bulk_scenario, :ticket, :rule_id
 
   def initialize(act_hash, doer, bulk_scenario = false, activity = {})
@@ -224,6 +224,13 @@ class Va::RuleActivityLogger
       {:send_email_to_group => msg_log.html_safe}
     end
 
+    def add_note(params=nil)
+      verb = fetch_activity_prefix('add')
+      add_system_changes({:add_note => [true]})
+      msg_log = "#{params[:helpdesk_name].presence} #{verb} #{I18n.t('automations.activity.private_note')}"
+      {:add_note => msg_log.html_safe}
+    end
+
     def send_email_to_agent(agent = nil)
       verb = fetch_activity_prefix('send')
       if agent.nil?
@@ -234,6 +241,22 @@ class Va::RuleActivityLogger
         msg_log = "#{verb} #{I18n.t('automations.activity.email_to_agent', params)}"
       end
       {:send_email_to_agent => msg_log.html_safe}
+    end
+
+    def forward_ticket(params = nil)
+      verb = fetch_activity_prefix('forward')
+      params[:to_emails] =  params[:to_emails].to_sentence
+      params[:cc_emails] =  params[:cc_emails].to_sentence
+      action_msg = "#{verb}#{I18n.t('automations.activity.ticket')}"
+      if params.nil?
+        msg_log = "#{action_msg.capitalize}"
+      else
+        msg_log = "#{params[:helpdesk_name].presence} #{action_msg} 
+        #{I18n.t('automations.activity.forward_to', params)}
+        #{params[:cc_emails].present? ? 
+        I18n.t('automations.activity.forward_cc', params) : '' }"
+      end
+      {:forward_ticket => msg_log.html_safe}
     end
 
     def delete_ticket(ticket = nil)

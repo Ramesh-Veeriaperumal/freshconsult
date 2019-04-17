@@ -2,7 +2,7 @@ require_relative '../../test_helper'
 class Ember::AgentsControllerTest < ActionController::TestCase
   include AgentsTestHelper
   include PrivilegesHelper
-  include Admin::AdvancedTicketing::FieldServiceManagement::Util
+  include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
 
   def wrap_cname(params)
     { agent: params }

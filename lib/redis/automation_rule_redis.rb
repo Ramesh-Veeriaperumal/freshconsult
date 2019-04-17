@@ -1,0 +1,77 @@
+module Redis::AutomationRuleRedis
+  include Redis::Keys::AutomationRules
+
+
+  def inc_automation_rule_exec_count(rule_id, incr_by = 1)
+    rule_key = automation_rule_id(rule_id)
+    incr_redis_key_in_hash(account_automation_key, rule_key, incr_by)
+  end
+
+  def set_expiry_of_account_rule(expiry_time = 86400) # 1 day
+    return false if get_expiry_of_hash(account_automation_key) >= 0
+    set_expiry_of_hash(account_automation_key, expiry_time)
+  end
+
+  def get_multi_automation_key_values(rule_ids = [], options = {})
+    get_multi_redis_key_in_hash(account_automation_key(options), rule_ids.map { |id| automation_rule_id(id) })
+  end
+
+  private
+
+    def account_automation_key(options = {})
+      current_time = Time.zone.now
+      format(AUTOMATION_RULES_BY_DATE, { account_id: Account.current.id,
+                                mm: (options[:month] || current_time.month),
+                                dd: (options[:day] || current_time.day) })
+    end
+
+    def automation_rule_id(rule_id)
+      format(AUTOMATION_RULE_ID, { rule_id: rule_id })
+    end
+
+    def redis_key_exists?(key)
+      newrelic_begin_rescue do
+        $redis_automation_rule.perform_redis_op('exists', key)
+      end
+    end
+
+    def get_expiry_of_hash(redis_key)
+      newrelic_begin_rescue do
+        $redis_automation_rule.perform_redis_op('ttl', redis_key)
+      end
+    end
+
+    def set_expiry_of_hash(redis_key, expiry_time)
+      newrelic_begin_rescue do
+        $redis_automation_rule.perform_redis_op('expire', redis_key, expiry_time)
+      end
+    end
+
+    def set_redis_keys_in_hash(redis_key, keys)
+      newrelic_begin_rescue do
+        $redis_automation_rule.perform_redis_op('hmset', redis_key, keys)
+      end
+    end
+
+    def incr_redis_key_in_hash(redis_key, key, incr_by)
+      newrelic_begin_rescue do
+        $redis_automation_rule.perform_redis_op('hincrby', redis_key, key, incr_by)
+      end
+    end
+
+    def get_multi_redis_key_in_hash(redis_key, keys)
+      keys = *keys
+      newrelic_begin_rescue do
+        $redis_automation_rule.perform_redis_op('hmget', redis_key, keys)
+      end
+    end
+
+    def perform_in_redis_transaction
+      newrelic_begin_rescue do
+        $redis_automation_rule.multi do
+          yield
+        end
+      end
+    end
+
+end
