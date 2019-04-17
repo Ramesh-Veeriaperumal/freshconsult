@@ -381,12 +381,11 @@ Helpkit::Application.routes.draw do
     end
 
     post '/account/export', to: 'admin/api_data_exports#account_export'
-    
-    scope module: 'admin' do
-      scope module: 'account' do
-        post 'features/:name', to: 'features#create'
-        delete 'features/:name', to: 'features#destroy'
-      end
+
+    resource :accounts, controller: 'admin/api_accounts' do
+          collection do
+            post :cancel
+          end
     end
 
     resources :topics, controller: 'ember/discussions/topics', only: [:show] do
