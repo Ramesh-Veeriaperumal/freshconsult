@@ -19,7 +19,7 @@ gem "mysql2", "~> 0.3.0"
 gem "bootsnap", :require => false
 
 #For instrumenting cache-performance
-gem "time_bandits", :git => 'git@github.com:freshdesk/fd_time_bandits', :tag => 'v1.2'
+gem "time_bandits", :git => 'git@github.com:freshdesk/fd_time_bandits', :tag => 'v1.3'
 
 gem "connection_pool"
 gem "clamav-client", "3.1.0", require: "clamav/client"
@@ -93,7 +93,7 @@ gem "omniauth-google", "1.0.2"
 gem "omniauth-google-oauth2", "0.1.13"
 gem "omniauth-quickbooks", "0.0.2"
 gem "omniauth-salesforce", :git => "git://github.com/sathishfreshdesk/omniauth-salesforce.git", :branch => "master"
-gem "omniauth-mailchimp", "1.0.3"
+gem "omniauth-mailchimp", "2.1.0"
 gem "omniauth-constantcontact2", "1.0.4"
 
 gem "dynamics_crm", :git => 'git@github.com:TinderBox/dynamics_crm.git', :branch => "master"
