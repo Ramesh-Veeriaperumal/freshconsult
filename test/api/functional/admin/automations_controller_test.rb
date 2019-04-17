@@ -40,15 +40,19 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
 
   def test_invalid_rule_type
     get :index, controller_params(rule_type: 123)
-    assert_response 400
+    assert_response 404
     match_json('code' => 'rule_type_not_allowed',
                'message' => 'Rule type not allowed: 123')
   end
 
   def test_delete_dispatcher_rule
-    va_rule = create_dispatcher_rule
-    delete :destroy, 
-      controller_params(rule_type: VAConfig::RULES[:dispatcher]).merge(id: va_rule.id)
+    va_rule_request = sample_json_for_dispatcher
+    post :create, construct_params({ rule_type: VAConfig::RULES[:dispatcher] }.merge(va_rule_request), va_rule_request)
+    assert_response 201
+    parsed_response = JSON.parse(response.body)
+    rule_id = parsed_response['id'].to_i
+    delete :destroy,
+      controller_params(rule_type: VAConfig::RULES[:dispatcher]).merge(id: rule_id)
     assert_response 204
   end
 
@@ -69,14 +73,14 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
 
   def test_create_observer_rule
     va_rule_request = sample_json_for_observer
-    post :create, construct_params({ rule_type: VAConfig::RULES[:observer] }, va_rule_request)
+    post :create, construct_params({ rule_type: VAConfig::RULES[:observer] }.merge(va_rule_request), va_rule_request)
 
     assert_response 201
     parsed_response = JSON.parse(response.body)
-    va_rule_id = parsed_response['id']
-    custom_response = parsed_response.slice!('created_at', 'updated_at', 'id', 'position')
-    sample_response = set_default_fields(va_rule_request)
-    match_custom_json(custom_response, sample_response)
+    va_rule_id = parsed_response['id'].to_i
+    rule = Account.current.account_va_rules.find(va_rule_id)
+    sample_response = automation_rule_pattern(rule)
+    match_custom_json(parsed_response, sample_response)
   ensure
     va_rules = Account.current.account_va_rules.find_by_id(va_rule_id)
     va_rules.destroy if va_rules.present?
@@ -84,13 +88,13 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
 
   def test_create_dispatcher_rule
     va_rule_request = sample_json_for_dispatcher
-    post :create, construct_params({ rule_type: VAConfig::RULES[:dispatcher] }, va_rule_request)
+    post :create, construct_params({ rule_type: VAConfig::RULES[:dispatcher] }.merge(va_rule_request), va_rule_request)
     assert_response 201
     parsed_response = JSON.parse(response.body)
-    va_rule_id = parsed_response['id']
-    custom_response = parsed_response.slice!('created_at', 'updated_at', 'id', 'position')
-    sample_response = set_default_fields(va_rule_request)
-    match_custom_json(custom_response, sample_response)
+    va_rule_id = parsed_response['id'].to_i
+    rule = Account.current.account_va_rules.find(va_rule_id)
+    sample_response = automation_rule_pattern(rule)
+    match_custom_json(parsed_response, sample_response)
   ensure
     va_rules = Account.current.account_va_rules.find_by_id(va_rule_id)
     va_rules.destroy if va_rules.present?
@@ -99,7 +103,7 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
   def test_automation_revamp_feature_not_enabled_create
     toggle_automation_revamp_feature(false)
     va_rule_request = sample_json_for_observer
-    post :create, construct_params({ rule_type: VAConfig::RULES[:observer] }, va_rule_request)
+    post :create, construct_params({ rule_type: VAConfig::RULES[:observer] }.merge(va_rule_request), va_rule_request)
     assert_response 403
     match_json('code' => 'require_feature',
                'message' => 'The Automation Revamp feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
@@ -109,14 +113,14 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
 
   def test_show_for_dispatcher
     va_rule_request = sample_json_for_dispatcher
-    post :create, construct_params({ rule_type: VAConfig::RULES[:dispatcher] }, va_rule_request)
+    post :create, construct_params({ rule_type: VAConfig::RULES[:dispatcher] }.merge(va_rule_request), va_rule_request)
     parsed_response = JSON.parse(response.body)
-    va_rule_id = parsed_response['id']
+    va_rule_id = parsed_response['id'].to_i
     get :show, controller_params(rule_type: VAConfig::RULES[:dispatcher]).merge(id: va_rule_id)
     assert_response(200)
-    custom_response = parsed_response.slice!('created_at', 'updated_at', 'id', 'position')
-    sample_response = set_default_fields(va_rule_request)
-    match_custom_json(custom_response, sample_response)
+    rule = Account.current.account_va_rules.find(va_rule_id)
+    sample_response = automation_rule_pattern(rule)
+    match_custom_json(parsed_response, sample_response)
   ensure
     va_rules = Account.current.account_va_rules.find_by_id(va_rule_id)
     va_rules.destroy if va_rules.present?
@@ -125,14 +129,14 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
   def test_show_for_observer
     rule_type = VAConfig::RULES[:observer]
     va_rule_request = sample_json_for_observer
-    post :create, construct_params({ rule_type: rule_type }, va_rule_request)
+    post :create, construct_params({ rule_type: rule_type }.merge(va_rule_request), va_rule_request)
     parsed_response = JSON.parse(response.body)
-    va_rule_id = parsed_response['id']
+    va_rule_id = parsed_response['id'].to_i
     get :show, controller_params(rule_type: rule_type).merge(id: va_rule_id)
     assert_response(200)
-    custom_response = parsed_response.slice!('created_at', 'updated_at', 'id', 'position')
-    sample_response = set_default_fields(va_rule_request)
-    match_custom_json(custom_response, sample_response)
+    rule = Account.current.account_va_rules.find(va_rule_id)
+    sample_response = automation_rule_pattern(rule)
+    match_custom_json(parsed_response, sample_response)
   ensure
     va_rules = Account.current.account_va_rules.find_by_id(va_rule_id)
     va_rules.destroy if va_rules.present?
@@ -142,20 +146,18 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
     rule_type = VAConfig::RULES[:dispatcher]
     4.times do
       va_rule_request = sample_json_for_dispatcher
-      post :create, construct_params({ rule_type: rule_type }, va_rule_request)
+      post :create, construct_params({ rule_type: rule_type }.merge(va_rule_request), va_rule_request)
     end
     position_mapping = get_va_rules_position
-    last_position = position_mapping.count
-    expected_position_reorder = {}
-    position_mapping.keys.each_with_index do |key, index|
-      expected_position_reorder.merge!((key.to_i - 1).to_s => position_mapping[key]) if index != 0
-    end
-    id = position_mapping.values.first
-    expected_position_reorder[:last_position] = id
-    put :update, construct_params({ rule_type: rule_type, id: id }, { 'position': last_position })
+    positions = position_mapping.keys
+    first_value = [positions[0], position_mapping[positions[0]]]
+    last_value = [positions[1], position_mapping[positions[1]]]
+    put :update, construct_params({ rule_type: rule_type, id: first_value[1] }, { 'position': last_value[0] })
     assert_response(200)
+    position_mapping[first_value[0]] = last_value[1]
+    position_mapping[last_value[0]] = first_value[1]
     actual_position_mapping = get_va_rules_position
-    match_custom_json(actual_position_mapping, expected_position_reorder)
+    match_custom_json(actual_position_mapping, position_mapping)
   end
 
   def get_va_rules_position

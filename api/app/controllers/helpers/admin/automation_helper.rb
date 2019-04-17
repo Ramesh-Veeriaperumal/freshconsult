@@ -71,7 +71,9 @@ module Admin::AutomationHelper
 
     def set_conditions_data
       if @conditions.blank?
-        @condition_data.merge!(conditions: @item.condition_data[:conditions]) if @item.observer_rule?
+        @condition_data.merge!(conditions: (@item.condition_data.present? && 
+                                            @item.condition_data[:conditions]) || 
+                                           {:all=>[]}) if @item.observer_rule?
         return
       end
       @nested_conditions = construct_condition_data
@@ -112,20 +114,32 @@ module Admin::AutomationHelper
           is_key_present = event.key?(key)
           event_value = event[key]
           hash.merge!(construct_data(key.to_sym, event_value, is_key_present, EVENT_NESTED_FIELDS, true, true))
-          key.to_s == 'from_nested_field' && is_key_present ? hash.merge!(construct_from_nested_rules(event)) : hash
+          case key
+          when :from_nested_field
+            if is_key_present
+              hash.merge!(construct_from_nested_rules(event, :nested_rule, event[:from_nested_field], event[:to_nested_field]))
+              hash.merge!(construct_from_nested_rules(event, :from_nested_rules, event[:from_nested_field], event[:from_nested_field]))
+            end
+          when :to_nested_field
+            if is_key_present
+              hash.merge!(construct_from_nested_rules(event, :to_nested_rules, event[:to_nested_field], event[:to_nested_field]))
+            end
+          end
+          hash
         end
       end
     end
 
-    def construct_from_nested_rules(event)
-      nested_rule = event[:from_nested_field].each.map do |key, value|
-        {
-          name: value[:field_name],
-          from: value[:value],
-          to: event[:to_nested_field][key][:value]
-        }
+    def construct_from_nested_rules(event, event_key, from_nested_field, to_nested_field)
+      nested_rule = from_nested_field.each.map do |key, value|
+        field = ticket_field_by_name(value[:field_name])
+        field_name = field.present? ? field.column_name : value[:field_name]
+        initial_hash = { name: field_name }
+        event_key != :nested_rule ? initial_hash.merge!({value: value[:value]}) : 
+                                    initial_hash.merge!({from: value[:value],
+                                                         to: to_nested_field[key][:value]})
       end
-      { nested_rule: nested_rule }
+      { "#{event_key}": nested_rule }
     end
 
     def construct_action_nested_fields(action)
@@ -163,8 +177,11 @@ module Admin::AutomationHelper
       key = DB_FIELD_NAME_CHANGE_MAPPING[key] if DB_FIELD_NAME_CHANGE.include?(key)
       value = construct_nested_fields_data(value) if
             nested_field_names.present? && nested_field_names.include?(key)
-      if is_event && value.present? && TRANSFORMABLE_EVENT_FIELDS.include?(original_key.to_sym) && !DEFAULT_EVENT_TICKET_FIELDS.include?(value.to_sym)
-        field = current_account.ticket_fields_from_cache.find { |tf| tf.name ==  "#{value}_#{Account.current.id}" }
+      if is_event && value.present? && 
+         TRANSFORMABLE_EVENT_FIELDS.include?(original_key.to_sym) && 
+         !value.is_a?(Array) &&
+         !DEFAULT_EVENT_TICKET_FIELDS.include?(value.to_sym)
+        field = ticket_fields.find { |tf| tf.name ==  "#{value}_#{Account.current.id}" }
         value = field.column_name if field.present?
       end
       if key == :name
@@ -256,5 +273,13 @@ module Admin::AutomationHelper
         converted << value
       end
       converted
+    end
+
+    def ticket_fields
+      @ticket_fields ||= current_account.ticket_fields_from_cache
+    end
+
+    def ticket_field_by_name(field_name)
+      ticket_fields.find { |tf| tf.name ==  "#{field_name}_#{Account.current.id}" }
     end
 end

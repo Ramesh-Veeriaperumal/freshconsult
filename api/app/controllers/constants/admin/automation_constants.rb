@@ -249,7 +249,7 @@ module Admin::AutomationConstants
     { name: :mail_del_failed_others, field_type: :label, expect_from_to: false }.freeze
   ].freeze
 
-  EVENT_ANY_FIELDS = %i[priority ticket_type status group_id responder_id note_type].freeze
+  EVENT_ANY_FIELDS = %i[priority ticket_type status group_id responder_id note_type customer_feedback].freeze
   EVENT_NONE_FIELDS = %i[group_id responder_id].freeze
 
   FROM_TO = %i[from to].freeze
@@ -304,20 +304,20 @@ module Admin::AutomationConstants
     { name: :last_interaction, field_type: :text, data_type: :String }.freeze,
     { name: :created_at, field_type: :date_time, data_type: :String }.freeze,
     { name: :updated_at, field_type: :date_time, data_type: :String }.freeze,
-    { name: :inbound_count, field_type: :number, data_type: :String }.freeze,
-    { name: :outbound_count, field_type: :number, data_type: :String }.freeze,
+    { name: :inbound_count, field_type: :number, data_type: :Integer }.freeze,
+    { name: :outbound_count, field_type: :number, data_type: :Integer }.freeze,
 
-    { name: :hours_since_created, field_type: :hours, data_type: :String }.freeze,
-    { name: :pending_since, field_type: :hours, data_type: :String }.freeze,
-    { name: :resolved_at, field_type: :hours, data_type: :String }.freeze,
-    { name: :closed_at, field_type: :hours, data_type: :String }.freeze,
-    { name: :opened_at, field_type: :hours, data_type: :String }.freeze,
-    { name: :first_assigned_at, field_type: :hours, data_type: :String }.freeze,
-    { name: :assigned_at, field_type: :hours, data_type: :String }.freeze,
-    { name: :requester_responded_at, field_type: :hours, data_type: :String }.freeze,
-    { name: :agent_responded_at, field_type: :hours, data_type: :String }.freeze,
-    { name: :frDueBy, field_type: :hours, data_type: :String }.freeze,
-    { name: :due_by, field_type: :hours, data_type: :String }.freeze
+    { name: :hours_since_created, field_type: :hours, data_type: :Integer }.freeze,
+    { name: :pending_since, field_type: :hours, data_type: :Integer }.freeze,
+    { name: :resolved_at, field_type: :hours, data_type: :Integer }.freeze,
+    { name: :closed_at, field_type: :hours, data_type: :Integer }.freeze,
+    { name: :opened_at, field_type: :hours, data_type: :Integer }.freeze,
+    { name: :first_assigned_at, field_type: :hours, data_type: :Integer }.freeze,
+    { name: :assigned_at, field_type: :hours, data_type: :Integer }.freeze,
+    { name: :requester_responded_at, field_type: :hours, data_type: :Integer }.freeze,
+    { name: :agent_responded_at, field_type: :hours, data_type: :Integer }.freeze,
+    { name: :frDueBy, field_type: :hours, data_type: :Integer }.freeze,
+    { name: :due_by, field_type: :hours, data_type: :Integer }.freeze
   ].freeze
 
   CONDITION_NONE_FIELDS = %i[ticket_type product_id group_id responder_id internal_group_id
@@ -418,7 +418,7 @@ module Admin::AutomationConstants
   DELEGATOR_IGNORE_FIELDS = (%i[subject subject_or_description reply_sent trigger_webhook from_email to_email
                                mail_del_failed_requester mail_del_failed_others add_a_cc add_comment delete_ticket
                                mark_as_spam skip_notification due_by from_email to_email ticket_cc last_interaction
-                               inbound_count outbound_count description] + TIME_BASED_FILTERS).uniq.freeze
+                               inbound_count outbound_count description forward_ticket ticlet_cc] + TIME_BASED_FILTERS).uniq.freeze
 
   DEFAULT_FIELDS = (DEFAULT_FIELDS_DELEGATORS + DELEGATOR_IGNORE_FIELDS).freeze
 

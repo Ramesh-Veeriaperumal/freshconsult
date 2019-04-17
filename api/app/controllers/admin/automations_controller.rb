@@ -13,7 +13,7 @@ class Admin::AutomationsController < ApiApplicationController
 
   def index
     super
-    fetch_executed_ticket_counts if current_account.automation_rule_execution_count_enabled?
+    fetch_executed_ticket_counts if current_account.automation_rule_execution_count_enabled? && @items.size > 0
     response.api_meta = {
       count: @items_count,
       cascading_rules: current_account.cascade_dispatcher_enabled?,

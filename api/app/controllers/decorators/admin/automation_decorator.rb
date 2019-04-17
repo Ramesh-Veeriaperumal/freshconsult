@@ -123,8 +123,8 @@ class Admin::AutomationDecorator < ApiDecorator
     def construct_nested_data(nested_values)
       nested_values && nested_values.each_with_index.inject({}) do |nested_hash, (nested_value, index)|
         nested_hash.merge!("level#{index + 2}".to_sym => NESTED_DATA_FIELDS.inject({}) do |hash, key|
-                                                            hash.merge!(construct_data(key.to_sym, nested_value[key], nested_value.key?(key)))
-                                                          end)
+          hash.merge!(construct_data(key.to_sym, nested_value[key], nested_value.key?(key), nil, nil, nil, true))
+        end)
       end
     end
 
