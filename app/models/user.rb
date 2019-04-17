@@ -1221,13 +1221,6 @@ class User < ActiveRecord::Base
     Rails.logger.info "FRESHID User created :: a=#{self.account_id}, u=#{self.id}, email=#{self.email}, uuid=#{self.freshid_authorization.uid}"
   end
 
-  def sync_profile_from_freshid(freshid_user)
-    return if freshid_user.nil?
-    self.freshid_authorization = self.authorizations.build(provider: Freshid::Constants::FRESHID_PROVIDER, uid: freshid_user.uuid)
-    assign_freshid_attributes_to_agent(freshid_user)
-    Rails.logger.info "FRESHID User created :: a=#{self.account_id}, u=#{self.id}, email=#{self.email}, uuid=#{self.freshid_authorization.uid}"
-  end
-
   def destroy_freshid_user
     if freshid_enabled_account? && email_allowed_in_freshid? && freshid_authorization.present?
       remove_freshid_user
@@ -1310,6 +1303,10 @@ class User < ActiveRecord::Base
     save
   end
 
+  def freshid_enabled_and_agent?
+    agent? && freshid_enabled_account? && email_allowed_in_freshid?
+  end
+
   def privilege?(privilege)
     if CONTACT_COMPANY_PRIVILEGES_SPLIT.include?(privilege) &&
        !account.launched?(:contact_company_split)
@@ -1334,10 +1331,6 @@ class User < ActiveRecord::Base
 
     def freshid_enabled_account?
       account.freshid_enabled?
-    end
-
-    def freshid_enabled_and_agent?
-      agent? && freshid_enabled_account? && email_allowed_in_freshid?
     end
 
     def freshid_disabled_or_customer?

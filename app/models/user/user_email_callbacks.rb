@@ -30,6 +30,7 @@ class User < ActiveRecord::Base
   #------User email callbacks ends here------------------------------
 
   before_update :make_inactive, if: -> { email_id_changed? && !@keep_user_active }
+  before_update :make_agent_active, if: -> { email_id_changed? && @keep_user_active && freshid_enabled_and_agent? }
   after_commit :send_activation_email, on: :update, :if => [:email_updated?]
 
   def send_activation_email
@@ -141,4 +142,7 @@ class User < ActiveRecord::Base
     self[:email].present?
   end
 
+  def make_agent_active
+    self.active = true if self.primary_email
+  end
 end
