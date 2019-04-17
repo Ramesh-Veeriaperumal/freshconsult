@@ -11595,68 +11595,6 @@
           }
         }
       }
-    },
-    "/feature/{name}": {
-      "post": {
-        "tags": [
-          "Account Feature"
-        ],
-        "summary": "Account feature enable",
-        "description": "Enable bitmap & launchparty features",
-        "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "description": "feature name to disable",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Success"
-          },
-          "400": {
-            "description": "Bad Request Error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Account Feature"
-        ],
-        "summary": "Account feature disable",
-        "description": "Disable bitmap & launchparty features",
-        "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "description": "feature name to disable",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Success"
-          },
-          "400": {
-            "description": "Bad Request Error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          }
-        }
-      }
     }
   },
   "definitions": {
@@ -17140,46 +17078,6 @@
         },
         "affected_tickets_count": {
           "type": "integer"
-        },
-        "Summary": {
-          "$ref": "#/definitions/automation_rule_summary"
-        }
-      }
-    },
-    "automation_rule_summary": {
-      "type": "object",
-      "properties": {
-        "performer": {
-          "type": "string"
-        },
-        "events": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "conditions": {
-          "type": "object",
-          "properties": {
-            "condition_set_1": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "condition_set_2": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        },
-        "actions": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         }
       }
     },
@@ -21019,9 +20917,6 @@
         },
         {
           "$ref": "#/definitions/automation_rule_common"
-        },
-        {
-          "$ref": "#/definitions/extension_generic"
         }
       ]
     },
@@ -22518,18 +22413,6 @@
         "url": {
           "type": "string",
           "description": "Config Information"
-        }
-      }
-    },
-    "account_feature_enable_disable": {
-      "type": "object",
-      "required": [
-        "name"
-      ],
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "Bitmap/Launchparty feature name"
         }
       }
     }

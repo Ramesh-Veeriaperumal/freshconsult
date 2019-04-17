@@ -695,7 +695,3 @@ languages:
 # Config Data 
 configs_show:
   $ref: ./response/configs/show.yaml
-
-# Account features
-account_feature_enable_disable:
-  $ref: './request/accounts/feature.yaml'

@@ -30,43 +30,43 @@ properties:
           type: string
   conditions:
     type: object
-    properties:
-      condition_set_1:
+    properties: 
+      condition_set_1: 
         type: object
-        properties:
-          match_type:
+        properties: 
+          match_type: 
             type: string
             enum: ['all', 'any']
-          ticket/contact/company:
+          ticket/contact/company: 
             type: array
-            items:
+            items: 
               type: object
-              properties:
-                field_name:
+              properties: 
+                field_name: 
                   type: string
-                operator:
+                operator: 
                   type: string
-                value:
+                value: 
                   type: string
-      operator:
+      operator: 
         type: string
         enum: ['and', 'or']
-      condition_set_2:
+      condition_set_2: 
         type: object
-        properties:
-          match_type:
+        properties: 
+          match_type: 
             type: string
             enum: ['all', 'any']
-          ticket/contact/company:
+          ticket/contact/company: 
             type: array
-            items:
+            items: 
               type: object
-              properties:
-                field_name:
+              properties: 
+                field_name: 
                   type: string
-                operator:
+                operator: 
                   type: string
-                value:
+                value: 
                   type: string
   actions:
     type: array

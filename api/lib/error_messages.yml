@@ -327,6 +327,3 @@ api_error_messages:
   audit_log_export: 'your request is in process'
 
   account_in_trial: 'Account is already in trial'
-
-  invalid_feature_name: "invalid feature name: '%{feature_name}'"
-
