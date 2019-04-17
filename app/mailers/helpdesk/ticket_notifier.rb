@@ -99,9 +99,9 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       a_plain_template = Liquid::Template.parse(agent_plain_template.gsub("{{ticket.description}}", "{{ticket.description_text}}"))
       a_s_template = Liquid::Template.parse(agent_template.first) 
       html_version = a_template.render('ticket' => ticket.to_liquid, 
-                'helpdesk_name' => ticket.account.helpdesk_name, 'comment' => comment,'account_name' => comment.account.helpdesk_name.to_liquid).html_safe
+                'helpdesk_name' => ticket.account.helpdesk_name, 'comment' => comment,'account_name' => ticket.account.helpdesk_name.to_liquid).html_safe
       plain_version = a_plain_template.render('ticket' => ticket.to_liquid, 
-                'helpdesk_name' => ticket.account.helpdesk_name, 'comment' => comment,'account_name' => comment.account.helpdesk_name.to_liquid).html_safe
+                'helpdesk_name' => ticket.account.helpdesk_name, 'comment' => comment,'account_name' => ticket.account.helpdesk_name.to_liquid).html_safe
       headers = { :ticket => ticket,
        :notification_type => e_notification.notification_type,
        :receips => receips,
