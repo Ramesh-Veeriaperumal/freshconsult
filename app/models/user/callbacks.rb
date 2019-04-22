@@ -25,8 +25,7 @@ class User < ActiveRecord::Base
   after_update :set_user_companies_changes
 
   after_update :send_alert_email, if: [:email_id_changed?, :agent?, :non_anonymous_account?]
-  before_save :set_time_zone, if: :set_time_zone?
-  before_save :set_default_company
+  before_save :set_time_zone, :set_default_company
   before_save :set_language, :unless => :detect_language?
   before_save :trigger_perishable_token_reset, if: :email_id_changed?
   before_save :sanitize_contact_name, :set_contact_name, :update_user_related_changes
@@ -103,12 +102,8 @@ class User < ActiveRecord::Base
     clear_agent_caches if (agent? or helpdesk_agent_updated?)
   end
 
-  def set_time_zone?
-    self.new_record? ? true : (time_zone_changed? && (time_zone.nil? || validate_time_zone(time_zone)))
-  end
-
   def set_time_zone
-    self.time_zone = account.time_zone
+    self.time_zone = account.time_zone if time_zone.nil? || validate_time_zone(time_zone) #by Shan temp
   end
 
   def set_contractor_privilege
