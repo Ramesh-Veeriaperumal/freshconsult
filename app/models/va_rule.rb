@@ -227,6 +227,7 @@ class VaRule < ActiveRecord::Base
     is_a_match = false
     benchmark { is_a_match = RuleEngine::NestedCondition.new(evaluate_on,
                               rule_operator).process_block(rule_conditions) }
+    is_a_match = true if rule_conditions.blank? && observer_rule?
     Va::Logger::Automation.log "rule condition matched=#{is_a_match}"
     Va::Logger::Automation.log "********* RULE ACTIONS *********"
     trigger_actions(evaluate_on, doer) if is_a_match

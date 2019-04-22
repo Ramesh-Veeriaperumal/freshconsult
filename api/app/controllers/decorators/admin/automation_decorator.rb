@@ -55,8 +55,30 @@ class Admin::AutomationDecorator < ApiDecorator
     def events_hash
       return [] if record.rule_events.nil?
       record.rule_events.map do |event|
-        EVENT_FIELDS.inject({}) do |hash, key|
+        event_hash = EVENT_FIELDS.inject({}) do |hash, key|
           hash.merge!(construct_data(key.to_sym, event.rule[key], event.rule.key?(key), EVENT_NESTED_FIELDS, nil, nil, true))
+        end
+        event_hash = event_hash.symbolize_keys
+        reconstruct_nested_data(event_hash) if (event_hash.keys & NESTED_FIELD_CONSTANTS.values).present?
+        event_hash
+      end
+    end
+
+    def reconstruct_nested_data(data_hash)
+      %i[from to value].each do |nested_key|
+        parent = ANY_NONE_VALUES.include?(data_hash[nested_key])
+        data_hash.delete NESTED_FIELD_CONSTANTS[nested_key] if parent
+
+        nested_field = data_hash[NESTED_FIELD_CONSTANTS[nested_key]]
+        next if nested_field.blank? || !nested_field.is_a?(Hash)
+        nested_field.symbolize_keys!
+        NESTED_LEVEL_COUNT.times do |_level_num|
+          nested_field.delete :"level#{_level_num + NESTED_LEVEL_COUNT}" if parent
+          nested_data = nested_field[:"level#{_level_num + NESTED_LEVEL_COUNT}"]
+          next if nested_data.blank? || !nested_data.is_a?(Hash)
+          nested_data.symbolize_keys!
+          current = ANY_NONE_VALUES.include?(nested_data[:value])
+          parent = current
         end
       end
     end

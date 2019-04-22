@@ -2882,6 +2882,8 @@ en:
       forward_ticket: 'Forward to %{fwd_to}'
       with_cc: 'Cc: %{fwd_cc}'
       with_bcc: 'Bcc: %{fwd_bcc}'
+      updated_at: 'Updated At'
+      none: 'NONE'
   ends_with: Ends with
   last_name: Last Name
   forum:

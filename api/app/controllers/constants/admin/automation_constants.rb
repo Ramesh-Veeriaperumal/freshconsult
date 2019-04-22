@@ -66,7 +66,7 @@ module Admin::AutomationConstants
 
   TIME_SHEET_ACTION = %w[new_time_entry updated_time_entry].freeze
 
-  DOMAIN = 'domain'.freeze
+  DOMAIN = 'domains'.freeze
 
   NAME = 'name'.freeze
 
@@ -86,7 +86,7 @@ module Admin::AutomationConstants
 
   EVENT_NESTED_FIELDS = %i[nested_rules from_nested_rules to_nested_rules from_nested_field to_nested_field].freeze
 
-  EVENT_COMMON_FIELDS = %i[from to value rule_type].freeze + EVENT_NESTED_FIELDS
+  EVENT_COMMON_FIELDS = %i[from to value].freeze + EVENT_NESTED_FIELDS
 
   CONDITON_SET_NESTED_FIELDS = %i[nested_fields nested_rules].freeze
 
@@ -175,6 +175,8 @@ module Admin::AutomationConstants
 
   ANY_NONE = { NONE: '', ANY: '--', ANY_WITHOUT_NONE: '##' }.freeze
 
+  ANY_NONE_VALUES = ['', '--', '##'].freeze
+
   CHECKBOX_OPERATORS = %w[selected not_selected].freeze
 
   MAXIMUM_CONDITION_SET_COUNT = 2
@@ -205,7 +207,7 @@ module Admin::AutomationConstants
   # Observer + Dispatcher + Based on feature
   TAM_COMPANY_FIELDS = %i[health_score account_tier industry renewal_date].freeze
 
-  COMPANY_FIELDS = %i[name domain].freeze + TAM_COMPANY_FIELDS
+  COMPANY_FIELDS = %i[name domains].freeze + TAM_COMPANY_FIELDS
 
   VA_ATTRS = %i[name position last_updated_by active performer events conditions actions].freeze
 
@@ -448,4 +450,14 @@ module Admin::AutomationConstants
 
   BUSINESS_HOURS_FIELDS = %i[created_at updated_at].freeze
 
+  CASE_SENSITIVE_FIELDS = %i[text paragraph]
+
+
+  NESTED_LEVEL_COUNT = 2
+
+  NESTED_FIELD_CONSTANTS = {
+      from: :from_nested_field,
+      to: :to_nested_field,
+      value: :nested_field
+  }.freeze
 end.freeze

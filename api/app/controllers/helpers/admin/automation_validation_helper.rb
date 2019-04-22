@@ -36,7 +36,7 @@ module Admin::AutomationValidationHelper
 
   def condition_validation(expected, actual)
     operator_list = if supervisor_rule? && expected[:field_type] == :email && !Account.current.supervisor_with_text_field_enabled?
-      FIELD_TYPE[expected[:"#{field_type}_supervisor"]]
+      FIELD_TYPE["#{expected[:field_type]}_supervisor".to_sym]
     else
       FIELD_TYPE[expected[:field_type]]
     end
