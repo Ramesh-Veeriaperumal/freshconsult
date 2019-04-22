@@ -51,16 +51,7 @@ class AgentObserver < ActiveRecord::Observer
 
     def handle_capping(agent)
       return unless agent.available_changed?
-
-      action = agent.available ? "add_agent_to_group_capping" : "remove_agent_from_group_capping"
-      agent.groups.each do |group|
-        group.safe_send(action, agent.user_id) if group.round_robin_capping_enabled?
-        
-        Rails.logger.debug "RR Success : #{action} : #{agent.user_id} : #{group.id} : #{group.round_robin_capping_enabled?} : #{group.list_capping_range.inspect}
-                            #{group.list_unassigned_tickets_in_group.inspect}".squish
-      end
-
-      Groups::AssignTickets.perform_async({:agent_id => agent.id}) if agent.available
+      Groups::SyncAndAssignTickets.perform_async({ agent_id: agent.id })
     end
 
     def sync_to_export_service(agent)
