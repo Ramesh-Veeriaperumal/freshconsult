@@ -72,22 +72,22 @@ module Ember
 
       def anonymous_to_trial
         return unless validate_delegator(email: params[cname]['admin_email'])
-
-        update_current_user_info
         ActiveRecord::Base.transaction do
-          if @item.save
-            update_admin_related_info
-            convert_to_trial
-          else
-            render_errors(@item.errors)
-          end
+          update_admin_related_info
+          update_current_user_info
+          convert_to_trial
+          enable_external_services
         end
         response.api_root_key = :account_configs
       rescue StandardError => e
         current_account.reload
         error_msg = "Error while activating the anonymous account :: ID :: #{@item.id} :: Message :: #{e.message} :: Backtrace :: #{e.backtrace[0..20]}"
         Rails.logger.error(error_msg)
-        render_base_error(:internal_error, 500)
+        if @item.errors.present?
+          render_errors(@item.errors)
+        else
+          render_base_error(:internal_error, 500)
+        end
       end
 
       private

@@ -1,5 +1,6 @@
 module Onboarding::OnboardingHelperMethods
   include Onboarding::OnboardingRedisMethods
+  include AccountsHelper
 
   def complete_admin_onboarding
     complete_account_onboarding
@@ -14,10 +15,10 @@ module Onboarding::OnboardingHelperMethods
   end
 
   def update_current_user_info
-    @email = Mail::Address.new(params[cname]['admin_email'])
     @item.keep_user_active = true
     @item.email = params[cname]['admin_email']
     @item.name = name_from_email
+    @item.save!
   end
 
   def update_admin_account_config
@@ -31,14 +32,22 @@ module Onboarding::OnboardingHelperMethods
   end
 
   def update_account_info
+    @email = Mail::Address.new(params[cname]['admin_email'])
     current_account.name = company_name_from_email
     current_account.save!
+  end
+
+  def enable_external_services
+    current_account.safe_send(:add_to_billing)
+    add_to_crm(current_account.id)
+    add_account_info_to_dynamo(params[cname]['admin_email'])
+    current_account.enable_fresh_connect
+    enqueue_for_enrichment
   end
 
   def update_portal_info
     portal_to_be_updated = current_account.main_portal
     return if portal_to_be_updated.name != AccountConstants::ANONYMOUS_ACCOUNT_NAME
-
     portal_to_be_updated.name = company_name_from_email
     portal_to_be_updated.save!
   end
@@ -46,7 +55,6 @@ module Onboarding::OnboardingHelperMethods
   def update_email_config_name
     email_config = current_account.primary_email_config
     return if email_config.name != AccountConstants::ANONYMOUS_ACCOUNT_NAME
-
     email_config.name = company_name_from_email
     email_config.save!
   end
@@ -58,6 +66,11 @@ module Onboarding::OnboardingHelperMethods
   end
 
   private
+
+    def enqueue_for_enrichment
+      return unless Rails.env.production? || !current_account.ehawk_spam? || !current_account.opt_out_analytics_enabled?
+      ContactEnrichment.perform_async(email_update: true)
+    end
 
     def name_from_email
       @email.local.tr('.', ' ')

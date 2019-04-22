@@ -250,6 +250,23 @@ class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
     match_json(anonymous_to_trial_success_pattern(new_admin_email))
   end
 
+  def test_anonymous_to_trial_portal_and_email_config_as_default_name
+    @account.account_additional_settings.mark_account_as_anonymous
+    Portal.any_instance.stubs(:name).returns(AccountConstants::ANONYMOUS_ACCOUNT_NAME)
+    EmailConfig.any_instance.stubs(:name).returns(AccountConstants::ANONYMOUS_ACCOUNT_NAME)
+    new_admin_email = Faker::Internet.email
+    post :anonymous_to_trial, construct_params(version: 'private', admin_email: new_admin_email)
+    Portal.any_instance.unstub(:name)
+    EmailConfig.any_instance.unstub(:name)
+    assert_response 200
+    match_json(anonymous_to_trial_success_pattern(new_admin_email))
+    assert_equal @account.main_portal.name, company_name_from_email
+    assert_equal @account.primary_email_config.name, company_name_from_email
+  ensure
+    Portal.any_instance.unstub(:name)
+    EmailConfig.any_instance.unstub(:name)
+  end
+
   def test_anonymous_to_trial_user_update_failure
     user = add_new_user(@account)
     @account.account_additional_settings.mark_account_as_anonymous
@@ -283,5 +300,20 @@ class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
     assert_equal parsed_response['first_name'], 'Ethan hunt'
     assert_equal parsed_response['last_name'], 'Ethan hunt'
     assert_equal parsed_response['company_name'], 'freshdesk'
+  end
+
+  def test_third_party_apps_called_for_anonymous_account
+    Account.any_instance.stubs(:sandbox?).returns(false)
+    Account.any_instance.expects(:enable_fresh_connect).once
+    Account.any_instance.expects(:add_to_billing).once
+    @controller.expects(:add_to_crm).once
+    @controller.expects(:add_account_info_to_dynamo).once
+    @controller.expects(:enqueue_for_enrichment).once
+    @account.account_additional_settings.mark_account_as_anonymous
+    new_admin_email = Faker::Internet.email
+    post :anonymous_to_trial, construct_params(version: 'private', admin_email: new_admin_email)
+  ensure
+    unset_anonymous_flag
+    Account.any_instance.unstub(:sandbox?)
   end
 end

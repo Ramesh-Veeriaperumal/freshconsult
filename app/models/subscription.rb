@@ -87,13 +87,12 @@ class Subscription < ActiveRecord::Base
 
 
   before_create :set_renewal_at
-  before_save :update_amount
-  
-  before_update :cache_old_model
+  before_save :update_amount, unless: :anonymous_account?
 
-  after_update :add_to_crm
-  after_update :update_reseller_subscription
-  after_commit :update_social_subscription, :add_free_freshfone_credit, :update_crm, :dkim_category_change, :update_ticket_activity_export, on: :update
+  before_update :cache_old_model
+  after_update :add_to_crm, :update_reseller_subscription, unless: :anonymous_account?
+  after_commit :update_crm, on: :update, unless: :anonymous_account?
+  after_commit :update_social_subscription, :add_free_freshfone_credit, :dkim_category_change, :update_ticket_activity_export, on: :update
   after_commit :clear_account_susbcription_cache
   after_commit :schedule_account_block,  on: :update, :if => :suspended?
   after_commit :suspend_tenant,  on: :update, :if => :trial_to_suspended?
@@ -649,4 +648,7 @@ class Subscription < ActiveRecord::Base
       #BlockAccount.perform_in(Account::BLOCK_GRACE_PERIOD.from_now, {:account_id => self.account.id})
     end
 
+    def anonymous_account?
+      account.anonymous_account?
+    end
  end
