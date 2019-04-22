@@ -74,7 +74,7 @@ module Va::Observer::Util
 
       if self.class == Helpdesk::Ticket
         args[:model_changes] = @model_changes
-        args[:sbrr_state_attributes] = sbrr_state_attributes if Account.current.skill_based_round_robin_enabled?
+        include_sbrr_state_attributes(args) if Account.current.skill_based_round_robin_enabled?
         args[:sla_args] = {:sla_on_background => sla_on_background, :sla_state_attributes => sla_state_attributes, :sla_calculation_time => sla_calculation_time.to_i}
       end
       if inline
@@ -121,6 +121,13 @@ module Va::Observer::Util
 
     def set_automation_thread_variables
       Va::Logger::Automation.set_thread_variables(Account.current.id, fetch_ticket_id, User.current.try(:id))
+    end
+    
+    def include_sbrr_state_attributes(args)
+      args[:sbrr_state_attributes] = sbrr_state_attributes
+      args[:sbrr_state_attributes].each_key do |attribute|
+        args[:sbrr_state_attributes][attribute] = @model_changes[attribute][0] if @model_changes[attribute].present?
+      end
     end
 
 end
