@@ -2,6 +2,7 @@ class Account < ActiveRecord::Base
   require 'launch_party/feature_class_mapping'
 
   before_create :set_default_values, :set_shard_mapping, :save_route_info
+  before_create :update_currency_for_anonymous_account, if: :is_anonymous_account
   before_create :add_features_to_binary_column
   validates_inclusion_of :time_zone, :in => TIME_ZONES, :unless => :time_zone_updation_running?
   before_update :check_default_values, :backup_changes, :check_timezone_update
@@ -30,13 +31,15 @@ class Account < ActiveRecord::Base
   after_destroy :remove_global_shard_mapping, :remove_from_master_queries
   after_destroy :remove_shard_mapping, :destroy_route_info
   after_destroy :destroy_freshid_account
-
-  after_commit :add_to_billing, :enable_elastic_search, on: :create
+  
+  after_commit :enable_elastic_search, on: :create
+  after_commit :add_to_billing, on: :create, unless: :is_anonymous_account
   after_commit :clear_api_limit_cache, :update_redis_display_id, on: :update
   after_commit ->(obj) { obj.clear_cache }, on: :update
   after_commit ->(obj) { obj.clear_cache }, on: :destroy
-  
-  after_commit :enable_searchv2, :enable_count_es, :enable_collab, :set_falcon_preferences, :enable_fresh_connect, on: :create
+
+  after_commit :enable_fresh_connect, on: :create, unless: :is_anonymous_account
+  after_commit :enable_searchv2, :enable_count_es, :enable_collab, :set_falcon_preferences, on: :create
   after_commit :disable_searchv2, :disable_count_es, on: :destroy
   after_commit :update_sendgrid, on: :create
   after_commit :remove_email_restrictions, on: :update , :if => :account_verification_changed?
@@ -465,6 +468,10 @@ class Account < ActiveRecord::Base
       if full_domain_changed? or ssl_enabled_changed?
         freshfone_account.update_voice_url
       end
+    end
+
+    def update_currency_for_anonymous_account
+        subscription.set_billing_params('USD')
     end
 
     def update_livechat_url_time_zone
