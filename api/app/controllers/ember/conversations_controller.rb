@@ -28,6 +28,7 @@ module Ember
     SINGULAR_RESPONSE_FOR = %w[reply create update tweet facebook_reply broadcast ecommerce_reply].freeze
     SLAVE_ACTIONS = %w(ticket_conversations).freeze
     DUMMY_ID_FOR_UNDO_SEND_NOTE = 9_007_199_254_740_991
+    QUOTED_TEXT_SPLITTER = '<div class="freshdesk_quote">'.freeze
 
     def ticket_conversations
       validate_filter_params
@@ -137,7 +138,7 @@ module Ember
         @inline_attachment_ids = params[:inline].map(&:to_i)
         @attachments = attachments
         @content = body_html
-        @quoted_text = compute_quoted_text(body_html, full_text_html)
+        @quoted_text = compute_quoted_text(full_text_html)
         @quoted_text = nil if @quoted_text.blank?
         @cc_emails = params[:cc]
         @bcc_emails = params[:bcc]
@@ -564,10 +565,11 @@ module Ember
         assign_from_email
       end
 
-      def compute_quoted_text(body_html, full_text_html)
+      def compute_quoted_text(full_text_html)
         if full_text_html.present?
-          full_text_html.slice! body_html
-          full_text_html
+          quoted_content = full_text_html.split(QUOTED_TEXT_SPLITTER, 2)[1]
+          quoted_content = QUOTED_TEXT_SPLITTER + quoted_content unless quoted_content.nil?
+          quoted_content
         end
       end
 
