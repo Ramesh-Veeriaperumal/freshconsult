@@ -8,6 +8,7 @@ class Facebook::Core::Splitter
   def split
     if @feed.entry_changes
       #find the page using the global facebookmapping table check this code
+      Rails.logger.info('Facebook::Core::Splitter')
       mapping = Social::FacebookPageMapping.find_by_facebook_page_id(@feed.page_id)
       account_id = mapping.account_id if mapping
 

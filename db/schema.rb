@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20190320094855) do
+ActiveRecord::Schema.define(:version => 20190404121959) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -3392,8 +3392,6 @@ ActiveRecord::Schema.define(:version => 20190320094855) do
   end
 
   add_index "social_facebook_pages", ["account_id", "page_id"], :name => "index_pages_on_account_id"
-  add_index "social_facebook_pages", ["page_id"], :name => "facebook_page_id", :unique => true
-  add_index "social_facebook_pages", ["page_id"], :name => "index_page_id", :unique => true
   add_index "social_facebook_pages", ["product_id"], :name => "index_product_id"
 
   create_table "social_fb_posts", :force => true do |t|

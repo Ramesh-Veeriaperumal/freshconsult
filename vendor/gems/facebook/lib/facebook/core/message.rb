@@ -7,14 +7,15 @@ module Facebook
       
       attr_accessor :page_id, :realtime_message, :fan_page, :dynamo_helper
       
-      def initialize(page_id, message)
+      def initialize(page_id, message, account_id = nil)
         @page_id          = page_id
         @realtime_message = message
         @dynamo_helper    = Social::Dynamo::Facebook.new
+        @account_id       = account_id
       end
 
       def account_and_page_validity
-        select_fb_shard_and_account(page_id) do |account|    
+        select_shard_without_fb_mapping(page_id, @account_id) do |account|
           if account.present? and account.active?
             @fan_page = account.facebook_pages.find_by_page_id(page_id)
             {

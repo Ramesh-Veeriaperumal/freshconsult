@@ -347,9 +347,10 @@ module ApiSearch
 
     def test_contacts_time_zone_filter
       time_zone1, time_zone2 = @account.contacts.map(&:time_zone).reject(&:blank?).uniq.first(2)
+      time_zone2 = time_zone1 if time_zone2.nil? # HACK: to prevent error if all the users are in same timezone
       contacts = @account.contacts.select { |x| [time_zone1, time_zone2].include?(x.time_zone) }
       stub_public_search_response(contacts) do
-        get :index, controller_params(query: '"time_zone:\'' + time_zone1 + '\' or time_zone:\'' + time_zone2 + '\'"')
+        get :index, controller_params(query: '"time_zone:\'' + time_zone1.to_s + '\' or time_zone:\'' + time_zone2.to_s + '\'"')
       end
       assert_response 200
       pattern = contacts.map { |contact| public_search_contact_pattern(contact) }
