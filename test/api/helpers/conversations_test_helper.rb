@@ -141,7 +141,7 @@ module ConversationsTestHelper
       cc_emails:  note.cc_emails,
       bcc_emails: note.bcc_emails,
       source: note.source,
-      source_additional_info: nil
+      source_additional_info: source_additional_info(note)
     }
     single_note = note_pattern({}, note)
     single_note.merge(index_note)
@@ -290,7 +290,7 @@ module ConversationsTestHelper
       type: note.tweet.tweet_type,
       support_handle_id: handle.twitter_user_id.to_s,
       support_screen_name: handle.screen_name,
-      requester_screen_name: note.notable.requester.twitter_id
+      requester_screen_name: note.user.twitter_id
     }
     tweet_hash[:stream_id] = note.tweet.stream_id if @channel_v2_api
     tweet_hash

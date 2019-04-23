@@ -2186,43 +2186,6 @@ module Ember
 
     private
 
-      def with_twitter_update_stubbed
-        @twit = sample_twitter_object
-        media_id = rand(10 ** 15)
-        Twitter::REST::Client.any_instance.stubs(:update).returns(@twit)
-        Twitter::REST::Client.any_instance.stubs(:upload).returns(media_id)
-        unless GNIP_ENABLED
-          Social::DynamoHelper.stubs(:update).returns(dynamo_update_attributes(@twit.id))
-          Social::DynamoHelper.stubs(:get_item).returns(sample_dynamo_get_item_params)
-        end
-
-        yield
-
-        Twitter::REST::Client.any_instance.unstub(:update)
-        Twitter::REST::Client.any_instance.unstub(:upload)
-        unless GNIP_ENABLED
-          Social::DynamoHelper.unstub(:update)
-          Social::DynamoHelper.unstub(:get_item)
-        end
-      end
-
-      def with_twitter_dm_stubbed(sample_dm_reply)
-        Twitter::REST::Client.any_instance.stubs(:create_direct_message).returns(sample_dm_reply)
-        unless GNIP_ENABLED
-          Social::DynamoHelper.stubs(:insert).returns({})
-          Social::DynamoHelper.stubs(:update).returns({})
-        end
-
-        yield
-
-
-        Twitter::REST::Client.any_instance.unstub(:create_direct_message)
-        unless GNIP_ENABLED
-          Social::DynamoHelper.unstub(:insert)
-          Social::DynamoHelper.unstub(:update)
-        end
-      end
-
       def archive_note_payload(note, payload)
         payload.merge!({
           source: note.source,
