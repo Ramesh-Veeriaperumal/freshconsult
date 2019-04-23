@@ -84,6 +84,7 @@ class Social::FacebookPage < ActiveRecord::Base
   end
   
   def create_mapping
+    Rails.logger.debug('From social_fb_page')
     fb_page_mapping = Social::FacebookPageMapping.find_by_facebook_page_id(page_id)
     
     if fb_page_mapping

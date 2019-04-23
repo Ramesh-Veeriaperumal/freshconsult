@@ -25,13 +25,11 @@ module Sqs
     def process
       return if @page_id.nil?
       @messages.each do |message|
-        fb_message = Facebook::Core::Message.new(page_id, message)
+        fb_message = Facebook::Core::Message.new(page_id, message, @messages_feed['account_id'])
         validity = fb_message.account_and_page_validity
         if validity[:valid_account] && validity[:realtime_messaging] && validity[:import_dms]
           if validity[:valid_page]
-            select_fb_shard_and_account(page_id) do |account|
-              @account_id = account.id
-            end
+            set_account_id(page_id, @messages_feed)
             if page_rate_limit_reached?(@account_id,page_id)
               Sqs::Message.new("{}").requeue(JSON.parse(@raw_obj),{:delay_seconds => 900})
             else           
