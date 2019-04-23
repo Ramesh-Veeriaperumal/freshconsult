@@ -302,7 +302,7 @@ module Admin::AutomationDelegatorHelper
   end
   
   def validate_case_sensitive(field, dom_type)
-    field_not_allowed('case_sensitive') if dom_type.to_sym != :text
+    field_not_allowed('case_sensitive') unless CASE_SENSITIVE_FIELDS.include?(dom_type.to_sym)
     not_included_error(field[:field_name], BOOLEAN) unless BOOLEAN.include?(field[:case_sensitive])
   end
 
@@ -402,7 +402,7 @@ module Admin::AutomationDelegatorHelper
     values = *value
     values.each do |val|
       if current_account.company_domains.find_by_domain(val).blank?
-        invalid_value('company[:domain]', val)
+        invalid_value('company[:domains]', val)
       end
     end
   end

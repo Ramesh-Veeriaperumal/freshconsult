@@ -33,7 +33,7 @@ module Admin::Automation::AutomationSummary
         event.rule.deep_symbolize_keys
         sentence << I18n.t('admin.automation_summary.condition_any') if sentence.present?
         sentence << if event.rule.key?(:nested_rule)
-                      nested_fields_sentence_generate(event.rule, :event)
+                      event_nested_sentence_generate(event.rule)
                     else
                       event_sentence_generate(event.rule)
                     end
@@ -150,7 +150,7 @@ module Admin::Automation::AutomationSummary
       array = []
       array << generate_key(data[field_name], data[:evaluate_on] || 'ticket')
       array << generate_operator(data[:operator]) if data[:operator].present?
-      array << generate_value(data[field_name], data[:value], ' OR ') if data[:value].present?
+      array << generate_value(data[field_name], data[:value], ' OR ') unless data[:value].nil?
       sentence = array.join(' ')
 
       nested_data.each do |nested_value|
@@ -160,10 +160,22 @@ module Admin::Automation::AutomationSummary
       sentence
     end
 
+    def event_nested_sentence_generate(data)
+      nested_data = data[:nested_rule].presence || data[:nested_rules].presence
+      array = []
+      array << event_sentence_generate(data)
+      nested_data.each do |nested_value|
+        array << event_sentence_generate(nested_value)
+      end
+      sentence = array.join(I18n.t('admin.automation_summary.and'))
+      sentence
+    end
+
     def create_sentence(field_name, cons_field_name, value = nil, evaluate_on = 'ticket', type = nil)
       name = generate_key(field_name, evaluate_on, ', ', type)
-      value1 = generate_value(field_name, value.first) if value.present?
-      value2 = generate_value(field_name, value.second) if value.present? && value.length == 2
+      value1 = generate_value(field_name, value.first || I18n.t('admin.automation_summary.none')) if value.present?
+      value2 = generate_value(field_name, value.second ||
+                  I18n.t('admin.automation_summary.none')) if value.present? && value.length == 2
       I18n.t("admin.automation_summary.#{cons_field_name}",
              field_name: name, field_value: value1, field_from: value1, field_to: value2)
     end
@@ -200,6 +212,8 @@ module Admin::Automation::AutomationSummary
       end
       value = if @custom_checkbox.include?(field_name) || field_name.to_s.include?('ff_boolean')
                 I18n.t("admin.automation_summary.#{value}")
+              elsif field_name.to_sym == :tag_ids
+                fetch_tag_names(value)
               else
                 get_value(field_name, value, separator)
               end
@@ -296,6 +310,10 @@ module Admin::Automation::AutomationSummary
       @custom_requester_fields ||= record.account.contact_form.custom_contact_fields.inject({}) do |hash, key|
         hash.merge!(key[:name].to_s => key[:label])
       end
+    end
+
+    def fetch_tag_names(tag_ids)
+      Account.current.tags.where(id: tag_ids).select("name").map(&:name).join(', ')
     end
 
     alias_method :internal_agent_id, :responder_id

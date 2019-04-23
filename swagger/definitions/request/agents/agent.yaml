@@ -27,3 +27,5 @@ properties:
         type: boolean
   shortcuts_enabled:
     type: boolean
+  avatar_id:
+    type: integer

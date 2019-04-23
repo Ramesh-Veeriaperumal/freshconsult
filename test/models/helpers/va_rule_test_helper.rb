@@ -13,6 +13,7 @@ module VaRuleTestHelper
       description: va_rule.description,
       match_type: va_rule.match_type,
       filter_data: va_rule.filter_data,
+      condition_data: va_rule.condition_data,
       action_data: va_rule.action_data,
       account_id: va_rule.account_id,
       rule_type: va_rule.rule_type,

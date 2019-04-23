@@ -36,7 +36,7 @@ class Account < ActiveRecord::Base
     :freshvisual_configs, :ticket_field_limit_increase, :join_ticket_field_data, :byepass_signup_captcha,
     :contact_field_central_publish, :company_field_central_publish, :contact_company_split,
     :simple_outreach, :disable_simple_outreach, :fsm_dashboard, :supervisor_with_text_field,
-    :automation_rule_execution_count
+    :automation_rule_execution_count, :disable_field_service_management
   ].freeze
 
   DB_FEATURES = [

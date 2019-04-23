@@ -99,10 +99,7 @@ class AgentGroup < ActiveRecord::Base
     end
 
     def add_to_group_capping
-      if user.agent.available?
-        self.group.add_agent_to_group_capping(self.user_id)
-        Groups::AssignTickets.perform_async({:agent_id => user.agent.id, :group_id => group_id})
-      end
+      Groups::SyncAndAssignTickets.perform_async({ agent_id: user.agent.id, group_id: group_id })
     end
     
     def remove_from_group_capping

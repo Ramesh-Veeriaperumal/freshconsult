@@ -109,25 +109,118 @@ module Admin::AutomationHelper
     end
 
     def construct_events_data
-      @events.map do |event|
-        PERMITTED_EVENTS_PARAMS.inject({}) do |hash, key|
-          is_key_present = event.key?(key)
-          event_value = event[key]
-          hash.merge!(construct_data(key.to_sym, event_value, is_key_present, EVENT_NESTED_FIELDS, true, true))
-          case key
-          when :from_nested_field
-            if is_key_present
-              hash.merge!(construct_from_nested_rules(event, :nested_rule, event[:from_nested_field], event[:to_nested_field]))
-              hash.merge!(construct_from_nested_rules(event, :from_nested_rules, event[:from_nested_field], event[:from_nested_field]))
-            end
-          when :to_nested_field
-            if is_key_present
-              hash.merge!(construct_from_nested_rules(event, :to_nested_rules, event[:to_nested_field], event[:to_nested_field]))
-            end
-          end
-          hash
+      result = []
+      @events.each do |event|
+        next if event.blank? || !event.is_a?(Hash)
+        event = event.deep_symbolize_keys
+        field_name = event[:field_name]
+        next if field_name.blank? || !field_name.is_a?(String)
+        field_name = field_name.to_sym
+        if DEFAULT_EVENT_TICKET_FIELDS.include?(field_name) || SYSTEM_EVENT_FIELDS.include?(field_name)
+          event_data = default_field_data(event)
+        else
+          tf = ticket_field_by_name(field_name)
+          next if tf.blank?
+          event_data = custom_field_event_data(tf, event)
+        end
+        result << event_data
+      end
+      result
+    end
+
+    def default_field_data(field)
+      field_data = {}
+      field_data[:name] = field[:field_name]
+      field_hash =  EVENT_FIELDS_HASH.find {|field_hash| field_hash[:name] == field[:field_name].to_sym }
+      if field_hash[:expect_from_to]
+        field_data[:from] = field[:from]
+        field_data[:to] = field[:to]
+      else
+        field_data[:value] = field[:value] unless field_hash[:field_type] == :label
+      end
+      field_data
+    end
+
+    def custom_field_event_data(tf, event)
+      event_data = {}
+      if tf[:field_type] == 'nested_field'
+        event_data = construct_nested_field_rule(event, tf, true)
+      elsif tf[:field_type] == "custom_checkbox"
+        event_data[:name] = tf.column_name
+        event_data[:value] = event[:value].to_s
+      else
+        event_data[:name] = tf.column_name
+        event_data[:from] = event[:from]
+        event_data[:to] = event[:to]
+      end
+      event_data
+    end
+
+    def construct_nested_field_rule(field, tf, is_event = false)
+      if is_event
+        data = _event_nested_rule(tf, field)
+      else
+        data = {}
+        data[:name] = tf[:name]
+        data[:value] = field[:value]
+        data[:rule_type] = 'nested_rule'
+        data[:nested_rules] = _nested_data(field[:nested_field], tf.id, is_event, _any_none(data[:value]))
+      end
+      data
+    end
+
+    def _event_nested_rule(tf, field)
+      data = {}
+      data[:name] = tf[:column_name]
+      data[:from] = field[:from]
+      data[:to] = field[:to]
+      data[:rule_type] = ['nested_rule'] * 2
+      data[:from_nested_rules] = _nested_data(field[:from_nested_field], tf[:id],true, _any_none(data[:from]))
+      data[:to_nested_rules] = _nested_data(field[:to_nested_field], tf[:id], true, _any_none(data[:to]))
+      data[:nested_rule] = merge_arrays_of_hash(transform_hash_key(data[:from_nested_rules], [:value], [:from]),
+                                                 transform_hash_key(data[:to_nested_rules], [:value], [:to]))
+      data
+    end
+
+
+    def _nested_data(field, parent_id, is_event, parent_value)
+      data = []
+      NESTED_LEVEL_COUNT.times.each do |_level_num|
+        nested_field = find_nested_field_by_level(parent_id, _level_num + NESTED_LEVEL_COUNT)
+        next if nested_field.blank?
+
+        level = field.try(:[], :"level#{_level_num + NESTED_LEVEL_COUNT}")
+        value = level.try(:[], :value) || parent_value || "" # in case of only two value in nested field
+        name = is_event ? nested_field.column_name : nested_field.name
+        data << { name: name, value: value }
+        parent_value = _any_none(parent_value)
+      end
+      data
+    end
+
+    def merge_arrays_of_hash(left, right)
+      merged_arr = []
+      left.each_with_index do |_l, index|
+        merged_arr << _l.merge(right[index])
+      end
+      merged_arr
+    end
+
+    def transform_hash_key(data, old_key_names = [], new_key_names = [])
+      return [] if data.blank?
+      transformed_data = data.dup
+      old_key_names.size.times do |index|
+        transformed_data.map! do |_each_data|
+          dup_data = _each_data.clone
+          dup_data[new_key_names[index]] = dup_data.delete old_key_names[index]
+          dup_data
         end
       end
+      transformed_data
+    end
+
+    def _any_none(val)
+      ANY_NONE_VALUES.find {|_value| _value == val }
     end
 
     def construct_from_nested_rules(event, event_key, from_nested_field, to_nested_field)
@@ -277,6 +370,14 @@ module Admin::AutomationHelper
 
     def ticket_fields
       @ticket_fields ||= current_account.ticket_fields_from_cache
+    end
+
+    def event_ticket_fields
+      @event_tfs ||= current_account.event_flexifields_with_ticket_fields_from_cache
+    end
+
+    def find_nested_field_by_level(parent_id, level)
+      ticket_fields.find { |tf| tf[:parent_id] == parent_id && tf[:level] == level}
     end
 
     def ticket_field_by_name(field_name)

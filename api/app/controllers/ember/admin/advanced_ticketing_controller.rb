@@ -2,7 +2,8 @@ module Ember
   module Admin
     class AdvancedTicketingController < ApiApplicationController
       before_filter :validate_destroy, only: :destroy
-      
+      before_filter :check_privilege_for_fsm_disable, only: :destroy, if: -> { fsm? }
+
       include HelperConcern
       include Integrations::AdvancedTicketing::AdvFeatureMethods
       include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
@@ -81,6 +82,11 @@ module Ember
         validate_delegator(nil, { feature: params[:id] })
       end
 
+      def check_privilege_for_fsm_disable
+        unless Account.current.disable_field_service_management_enabled? && User.current.privilege?(:manage_account)
+          render_request_error :access_denied, 403
+        end
+      end
     end
   end
 end
