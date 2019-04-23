@@ -7152,6 +7152,7 @@ en:
         tags_merge: Tag with the same name exists. Do you want to merge these tags?
         remove_tags: Remove Tag association
         remove_confirmation: Are you sure you want to remove the tag association?
+        confirmation_warning: Please note that this can take several minutes to complete if you remove tags from a large number of association
         delete_confirmation: "Are you sure you want to delete the selected tag(s)?"
       tag:
         ticket: Ticket
