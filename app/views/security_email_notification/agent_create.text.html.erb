@@ -8,6 +8,6 @@
 		agent_data_key: t("mailer_notifier.role", count: @changes.size),
 		agent_data_value: @changes.to_sentence) %>
 <br><br>
-<%= t("mailer_notifier.security_notification.current_agent_stats", full_time: @model.account.all_agents.full_time_agents.size, occasional: @model.account.all_agents.occasional_agents.size) %><br><br>
+<%= t("mailer_notifier.security_notification.current_agent_stats", full_time: @model.account.all_agents.full_time_support_agents.size, occasional: @model.account.all_agents.occasional_agents.size) %><br><br>
 
 <%= render :partial => "footer" %>

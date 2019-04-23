@@ -21,7 +21,7 @@ module Ember
 
       def before_all
         # Every test is stubbed so no need to create tickets and agents repeatedly
-        @agent   = @account.agents.full_time_agents.first.user
+        @agent   = @account.agents.full_time_support_agents.first.user
         @ticket  = @@ticket || create_ticket(responder_id: @agent.id)
         @rule    = @account.account_va_rules.first
 

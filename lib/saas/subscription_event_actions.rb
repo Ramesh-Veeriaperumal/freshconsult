@@ -18,7 +18,7 @@ class SAAS::SubscriptionEventActions
 
   ADD_DATA_FEATURES_V2  = [:link_tickets_toggle, :parent_child_tickets_toggle, :multiple_companies_toggle,
                            :tam_default_fields, :smart_filter, :contact_company_notes, :unique_contact_identifier, :custom_dashboard, 
-                           :personal_canned_response, :round_robin].freeze
+                           :personal_canned_response, :round_robin, :field_service_management].freeze
 
   DASHBOARD_PLANS = [SubscriptionPlan::SUBSCRIPTION_PLANS[:estate],
                      SubscriptionPlan::SUBSCRIPTION_PLANS[:forest],

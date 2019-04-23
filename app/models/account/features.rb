@@ -36,7 +36,7 @@ class Account < ActiveRecord::Base
     :freshvisual_configs, :ticket_field_limit_increase, :join_ticket_field_data, :byepass_signup_captcha,
     :contact_field_central_publish, :company_field_central_publish, :contact_company_split,
     :simple_outreach, :disable_simple_outreach, :fsm_dashboard, :supervisor_with_text_field,
-    :automation_rule_execution_count, :disable_field_service_management, :disable_mint_analytics
+    :automation_rule_execution_count, :disable_field_service_management, :disable_mint_analytics, :addon_based_billing
   ].freeze
 
   DB_FEATURES = [
@@ -334,6 +334,10 @@ class Account < ActiveRecord::Base
   def falcon_ui_enabled?(current_user = :no_user)
     valid_user = (current_user == :no_user ? true : (current_user && current_user.is_falcon_pref?))
     valid_user && (falcon_enabled? || check_admin_mint? || disable_old_ui_enabled?)
+  end
+
+  def fsm_addon_billing_enabled?
+    @fsm_addon_billing ||= disable_old_ui_enabled? && addon_based_billing_enabled?
   end
 
   def check_admin_mint?

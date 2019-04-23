@@ -304,7 +304,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def eligible_for_free_plan?
-    (account.full_time_agents.count <= AGENTS_FOR_FREE_PLAN)
+    (account.full_time_support_agents.count <= AGENTS_FOR_FREE_PLAN)
   end
 
   def convert_to_free
@@ -387,18 +387,33 @@ class Subscription < ActiveRecord::Base
 
 
   def chk_change_agents 
-    if(agent_limit && agent_limit < account.full_time_agents.count)
-     errors.add(:base,I18n.t("subscription.error.lesser_agents", {:agent_count => account.full_time_agents.count}))
+    if(agent_limit && agent_limit < account.full_time_support_agents.count)
+     errors.add(:base,I18n.t("subscription.error.lesser_agents", {:agent_count => account.full_time_support_agents.count}))
+     Agent::SUPPORT_AGENT
     end  
   end
 
+  def chk_change_field_agents
+    if field_agent_limit && field_agent_limit < field_agents_count
+      errors.add(:base, I18n.t('subscription.error.lesser_field_agents', agent_count: field_agents_count))
+      Agent::FIELD_AGENT
+    end
+  end
+
+  def field_agents_count
+    return @field_agents_count if @field_agents_count.present?
+    return @field_agents_count = 0 if AgentType.agent_type_id(Agent::FIELD_AGENT).blank?
+
+    @field_agents_count = account.agents.where(:agent_type => AgentType.agent_type_id(Agent::FIELD_AGENT)).count
+  end
+
   def non_free_agents 
-    non_free_agents =  (agent_limit || account.full_time_agents.count) - free_agents
+    non_free_agents =  (agent_limit || account.full_time_support_agents.count) - free_agents
     (non_free_agents > 0) ? non_free_agents : 0
   end
 
   def available_free_agents
-    agents = agent_limit || account.full_time_agents.count
+    agents = agent_limit || account.full_time_support_agents.count
     if (free_agents >= agents) 
       available_free_slots = (free_agents - agents).to_s + " available"
     else
@@ -471,8 +486,30 @@ class Subscription < ActiveRecord::Base
     (Time.zone.now + 2.days) >= next_renewal_at
   end
 
+  def field_agent_limit
+    self.additional_info.try(:[], :field_agent_limit)
+  end
+
+  def field_agent_limit=(value)
+    self.additional_info ||= {}
+    self.additional_info[:field_agent_limit] = value 
+  end
+
   def field_agent_limit_with_safe_access
-    self.additional_info.try(:[], :field_agent_limit) || Subscription::DEFAULT_FIELD_AGENT_COUNT
+    self.additional_info.try(:[], :field_agent_limit) || DEFAULT_FIELD_AGENT_COUNT
+  end
+
+  def reset_field_agent_limit
+    return unless self.additional_info.try(:[], :field_agent_limit).present?
+    self.additional_info = self.additional_info.except(:field_agent_limit)
+    save
+  end
+
+  def field_agents_display_count
+    count = field_agents_count
+    limit = field_agent_limit || 0
+    return count > limit ? count : limit if count > 0 || limit > 0
+    DEFAULT_FIELD_AGENT_COUNT
   end
   
   protected
@@ -519,6 +556,7 @@ class Subscription < ActiveRecord::Base
     
     def validate_on_update
       chk_change_agents unless trial?
+      chk_change_field_agents if account.addon_based_billing_enabled? && account.field_service_management_enabled?
     end
 
     def finished_trial?
@@ -599,7 +637,8 @@ class Subscription < ActiveRecord::Base
     def addon_mapping
       {
         :day_pass => subscription_plan.canon_name,
-        :freshfone => :freshfonecredits
+        :freshfone => :freshfonecredits,
+        :field_service_management => :field_service_management
       }
     end
 

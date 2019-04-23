@@ -62,10 +62,11 @@ class Account < ActiveRecord::Base
   scope :premium_accounts, {:conditions => {:premium => true}}
               
   scope :non_premium_accounts, {:conditions => {:premium => false}}
-
+  # Alias so that any dynamic reference to full_time_agents won't fail.
+  alias :full_time_agents :full_time_support_agents
   
   Limits = {
-    'agent_limit' => Proc.new {|a| a.full_time_agents.count }
+    'agent_limit' => Proc.new {|a| a.full_time_support_agents.count }
   }
   
   Limits.each do |name, meth|
@@ -271,7 +272,7 @@ class Account < ActiveRecord::Base
   
   def can_add_agents?(agent_count)
     subscription.agent_limit.nil? or 
-      (subscription.agent_limit >= (agent_count + full_time_agents.count))
+      (subscription.agent_limit >= (agent_count + full_time_support_agents.count))
   end
 
   def agent_limit_reached?(agent_limit)

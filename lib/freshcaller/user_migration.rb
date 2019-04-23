@@ -21,7 +21,7 @@ module Freshcaller
     def fetch_freshfone_users
       account = ::Account.current
       account_admin.make_current
-      account.agents.full_time_agents.find_in_batches(batch_size: 10) do |agent_batch|
+      account.agents.full_time_support_agents.find_in_batches(batch_size: 10) do |agent_batch|
         agent_batch.each do |agent|
           agent.update_attribute(:freshcaller_enabled, true) unless agent.freshcaller_agent
         end

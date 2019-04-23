@@ -109,7 +109,8 @@ class Account < ActiveRecord::Base
   has_many :contacts, :class_name => 'User' , :conditions => { :helpdesk_agent => false , :deleted =>false }
   has_many :agents, :through =>:users , :conditions =>{:users=>{:deleted => false}}, :order => "users.name"
   has_many :available_agents, :class_name => 'Agent', :through => :users, :source =>:agent, :conditions =>{:available => true}, :order => "users.name"
-  has_many :full_time_agents, :through =>:users, :conditions => { :occasional => false,
+  has_many :full_time_support_agents, :through =>:users, :conditions => { :occasional => false,
+                                                                  :agent_type => Agent::SUPPORT_AGENT_TYPE,
                                                                   :users=> { :deleted => false } }
   has_many :all_contacts , :class_name => 'User', :conditions => { :helpdesk_agent => false }
   has_many :all_agents, :class_name => 'Agent', :through =>:all_users  , :source =>:agent

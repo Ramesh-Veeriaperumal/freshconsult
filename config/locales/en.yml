@@ -5153,6 +5153,7 @@ en:
   subscription:
     error:
       lesser_agents: Your freshdesk account currently has %{agent_count} agents, you cannot subscribe to a lesser number of agents. Please delete some agents and try again.
+      lesser_field_agents: Your account currently has %{agent_count} field technicians, and you are trying to subscribe to a lesser number. Please delete some field technicians and try again.
       choose_plan: Please choose a plan to proceed.
       card_update_limit_exceeded: You've exceeded the hourly limit for updating your credit card. Please try again later.
       invalid_currency: The currency you have chosen is invalid.

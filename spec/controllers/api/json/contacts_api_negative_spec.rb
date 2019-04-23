@@ -27,7 +27,7 @@ RSpec.describe ContactsController do
   it "should not convert contact to agent if agent limit exceeds" do
     state =  @account.subscription[:state]
     agent_limit = @account.subscription[:agent_limit]
-    @account.subscription.update_attributes(:state => "active", :agent_limit => @account.full_time_agents.count)
+    @account.subscription.update_attributes(:state => "active", :agent_limit => @account.full_time_support_agents.count)
     contact = add_new_user(@account,{})   
     put :make_agent, {:id => contact.id,:format => 'json'} 
     bad_request_status?(response.status).should be true
