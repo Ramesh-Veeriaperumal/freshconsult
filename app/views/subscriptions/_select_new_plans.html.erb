@@ -4,6 +4,7 @@
   current_plan_name = subscribed_plan.name.downcase
   current_plan_ranking = SubscriptionsHelper::PLAN_RANKING["#{current_plan_name}"] || 0 # default rank as zero
   has_credit_card = current_account.has_credit_card?
+  field_agent_limit = @subscription.field_agents_display_count
 %>
 <div id="ChangePlan">
   <div class="plans">
@@ -59,40 +60,22 @@
                     <p class="plan-details plan-feature-list">
                       <% unless SubscriptionsHelper::PLANS_FEATURES["#{plan.name.downcase}"].nil? %>
                         <% SubscriptionsHelper::PLANS_FEATURES["#{plan.name.downcase}"].each do |feature_name| %>
-                          <% if feature_name != "omni_channel_option" %>
-                          <span><%= t("features.#{feature_name}").html_safe %></span>
+                          <% if feature_name == "omni_channel_option" %>
+                            <%= render :partial => "/subscriptions/features/info-box/ocr_info", :locals => { :plan => plan, 
+                              :feature_name => feature_name }%>
+                          <% elsif feature_name == "fsm_option" %>
+                            <%= render :partial => "/subscriptions/features/info-box/fsm_info", :locals => { :plan => plan,
+                              :feature_name => feature_name }%>
                           <% else %>
-                            <div class="omni-features hide">
-                              <h4 class="omni-title"><%= t('omni_channel') %></h4>
-                              <% omni_amount = plan.omni_channel_cost(@subscription.currency_name) %>
-                              <% show_sign = omni_amount != 0 && !plan.free_omni_channel_plan? %>
-                              <p class="omni-price <%= 'free-omni-channel' if plan.free_omni_channel_plan? %>">
-                                <span class="price-value">
-                                  <%= '+' if show_sign %> <%= format_amount(omni_amount, @subscription.currency_name) %>
-                                </span>
-                                <span class="free">Free</span>
-                                <% if show_sign %>
-                                  <span class="per-agent"> <%= t('per_agent_per_month') %></span>
-                                <% end %>
-                              </p>
-                              <% SubscriptionsHelper::OMNI_FEATURES["#{plan.name.downcase.split(' ').first}#{feature_name}"].each do |feature_item| %>
-                              <span class="omni-features-list"><%= t("features.#{feature_item}").html_safe %></span>
-                              <% end%>
-                              <% if show_sign %>
-                                <p class="toggle-omni-billing hide">
-                                  <span class="omni-toggle-holder">
-                                    <%= t('omni_channel') %>
-                                    <input rel="toggle" type="checkbox" data-plan-id="<%= plan.id %>" data-plan="<%= plan_name_id %>" id="exclude-omni" name="stop_sla_timer" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" checked=true />
-                                  </span>
-                                </p>
-                              <% end %>
-                            </div>
+                            <span><%= t("features.#{feature_name}").html_safe %></span>
                           <% end %>
                         <% end %>
                       <% end %>
                     </p>
+                    <%= render :partial => "/subscriptions/features/features_toggle", :locals => { :plan => plan,
+                      :plan_name_id => plan_name_id }%>
                   </div>
-                  <% subscribe_direct_flag =  (current_account.full_time_agents.count) <= plan.free_agents %>
+                  <% subscribe_direct_flag =  (current_account.full_time_support_agents.count) <= plan.free_agents %>
                   <% if is_new_sprout %>
 
                     <%= plan_button(plan, t('choose_plan'), "btn btn-flat", subscribe_direct_flag, true, equal_plan_check ? t('change_equal_plan_title', :to_plan => plan.display_name): t(subscription.trial? ? 'change_plan_title' : 'downgrade_plan_title'),
@@ -142,6 +125,7 @@
                                       :agent_limit => plan.free_agents , :plan => plan ,
                                       :currency => @subscription.currency_name , :plan_switch => false,
                                       :show_omni_warning => show_omni_downgrade,
+                                      :field_agent_limit => field_agent_limit,
                                       :submit_flag => false, :downgrade_message_flag => true ,
                                       :downgrade_msg => I18n.t('sprout_free_plan_v2', :current_plan =>current_account.subscription.subscription_plan.display_name, :new_plan => plan.display_name)
                                     }
@@ -152,6 +136,7 @@
                                   :locals => {
                                     :agent_limit => plan.free_agents , :plan => plan ,
                                     :show_omni_warning => show_omni_downgrade,
+                                    :field_agent_limit => field_agent_limit,
                                     :currency => @subscription.currency_name , :plan_switch => false,
                                     :submit_flag => true, :downgrade_message_flag => false
                                   }
@@ -182,6 +167,7 @@
                               :locals => {
                                 :agent_limit => "", :plan => plan , :currency => @subscription.currency_name ,
                                 :show_omni_warning => show_omni_downgrade,
+                                :field_agent_limit => field_agent_limit,
                                 :plan_switch => true, :submit_flag => true, :downgrade_message_flag => false
                               }
                         %>
@@ -195,6 +181,7 @@
                                   :agent_limit => "", :plan => plan , :currency => @subscription.currency_name ,
                                   :show_omni_warning => show_omni_downgrade,
                                   :plan_switch => true, :submit_flag => false, :downgrade_message_flag => true ,
+                                  :field_agent_limit => field_agent_limit,
                                   :downgrade_msg => t('downgrade_confirm_v2', :current_plan => current_account.subscription.subscription_plan.display_name,
                                       :new_plan => plan.display_name)
                                 }

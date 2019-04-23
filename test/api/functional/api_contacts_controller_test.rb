@@ -1136,11 +1136,11 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user = get_user_with_email
     role_ids = Role.limit(2).pluck(:id)
     group_ids = [create_group(@account).id]
-    Subscription.any_instance.stubs(:agent_limit).returns(@account.full_time_agents.count - 1)
+    Subscription.any_instance.stubs(:agent_limit).returns(@account.full_time_support_agents.count - 1)
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     params = { occasional: false, signature: Faker::Lorem.paragraph, ticket_scope: 2, role_ids: role_ids, group_ids: group_ids }
     put :make_agent, construct_params({ id: sample_user.id }, params)
-    match_json([bad_request_error_pattern(:occasional, :max_agents_reached, code: :incompatible_value, max_count: (@account.full_time_agents.count - 1))])
+    match_json([bad_request_error_pattern(:occasional, :max_agents_reached, code: :incompatible_value, max_count: (@account.full_time_support_agents.count - 1))])
     assert_response 400
   ensure
     Subscription.any_instance.unstub(:agent_limit)

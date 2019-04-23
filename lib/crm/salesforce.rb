@@ -83,7 +83,7 @@ class CRM::Salesforce < Resque::Job
     return nil if crm_ids.nil?
 
     next_renewal_date = account.subscription.next_renewal_at.to_s(:db)
-    agent_count = account.full_time_agents.count.to_s
+    agent_count = account.full_time_support_agents.count.to_s
     
     record_attributes = { :Customer_Status__c => CUSTOMER_STATUS[:trial], 
       :Account_Renewal_Date__c => next_renewal_date,

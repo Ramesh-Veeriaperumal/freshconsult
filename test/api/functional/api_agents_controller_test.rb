@@ -446,7 +446,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
     agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
     role_ids = Role.limit(2).pluck(:id)
     group_ids = [create_group(@account).id]
-    Subscription.any_instance.stubs(:agent_limit).returns(@account.full_time_agents.count)
+    Subscription.any_instance.stubs(:agent_limit).returns(@account.full_time_support_agents.count)
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     params = { name: Faker::Name.name, phone: Faker::PhoneNumber.phone_number, mobile: Faker::PhoneNumber.phone_number, email: Faker::Internet.email, time_zone: 'Central Time (US & Canada)', language: 'hu', occasional: true, signature: Faker::Lorem.paragraph, ticket_scope: 2,
                role_ids: role_ids, group_ids: group_ids, job_title: Faker::Name.name }
@@ -465,12 +465,12 @@ class ApiAgentsControllerTest < ActionController::TestCase
     agent.agent.update_attributes(occasional: true)
     role_ids = Role.limit(2).pluck(:id)
     group_ids = [create_group(@account).id]
-    Subscription.any_instance.stubs(:agent_limit).returns(@account.full_time_agents.count - 1)
+    Subscription.any_instance.stubs(:agent_limit).returns(@account.full_time_support_agents.count - 1)
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     params = { name: Faker::Name.name, phone: Faker::PhoneNumber.phone_number, mobile: Faker::PhoneNumber.phone_number, email: Faker::Internet.email, time_zone: 'Central Time (US & Canada)', language: 'hu', occasional: false, signature: Faker::Lorem.paragraph, ticket_scope: 2,
                role_ids: role_ids, group_ids: group_ids, job_title: Faker::Name.name }
     put :update, construct_params({ id: agent.id }, params)
-    match_json([bad_request_error_pattern(:occasional, :max_agents_reached, code: :incompatible_value, max_count: (@account.full_time_agents.count - 1))])
+    match_json([bad_request_error_pattern(:occasional, :max_agents_reached, code: :incompatible_value, max_count: (@account.full_time_support_agents.count - 1))])
     assert_response 400
   ensure
     Subscription.any_instance.unstub(:agent_limit)

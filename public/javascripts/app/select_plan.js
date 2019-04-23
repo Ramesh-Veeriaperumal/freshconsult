@@ -11,6 +11,7 @@ window.App = window.App || {};
     clone_button : null,
     selected_plan : null,
     agents : null,
+    field_agents_count: null,
     current_plan_id : null,
     currency : null,
     original_data : null,
@@ -18,6 +19,7 @@ window.App = window.App || {};
     billing_cycle : null,
     subscribed_plan_id : null,
     omni_disabled: null,
+    addons: {},
     initialize: function (currency, billing_cycle, subscribed_plan_id) {
       this.currency = currency;
       this.billing_cycle = billing_cycle;
@@ -40,6 +42,8 @@ window.App = window.App || {};
       $(document).on('click'+$this.namespace(),  '.omni-toggle-holder .toggle-button', function(){ $this.toggleOmniPlans(this) })
       $(document).on('click'+$this.namespace(),  '.omni-billing-edit .toggle-button', function(){ $this.toggleOmniPlans(this) })
       $(document).on('click'+$this.namespace(),  '#omni-disable-confirmation-submit', function(){ $this.submitPlanUpdate(this) })
+      $(document).on('click'+$this.namespace(),  '.fsm-toggle-holder .toggle-button', function(){ $this.toggleFSMAddon(this, false) })
+      $(document).on('change'+$this.namespace(), '#field-agents-text-box', function(){ $this.fieldAgentChange(this) })
     },
     billingCancel: function (ev) {
       ev.preventDefault();
@@ -87,6 +91,16 @@ window.App = window.App || {};
         agent.value = this.agents;
       }
     },
+    fieldAgentChange: function (agent) {
+      if(this.IsNumeric(agent.value) && agent.value != 0) {
+        var agents = Math.abs(agent.value);
+        $(".billing-submit").attr("disabled", "true");
+        this.addons['field_service_management']['value'] = agents;
+        this.calculateCost();
+      } else {
+        agent.value = this.field_agents_count;
+      }
+    },
     callCalculateCost: function(planId, parentPlanElement){
       if(planId) {
         this.calculateCost(planId);
@@ -108,7 +122,8 @@ window.App = window.App || {};
       var non_omni_plan = null;
       var non_omni_plan_id = null;
       var parent_plan_element = this.parentPlanItem(selectedItem);
-      if(jQuery(parent_plan_element).find(".toggle-button").hasClass("active")) {
+      var toggle_button = this.selected_plan ? '.omni-toggle-holder .toggle-button' : '.omni-billing-edit .toggle-button'
+      if(jQuery(parent_plan_element).find(toggle_button).hasClass("active")) {
        non_omni_plan = jQuery(parent_plan_element).prev().attr("data-omni-plan-id").replace(/_/,"_omni_");
        return jQuery(jQuery("[data-omni-plan-id='"+non_omni_plan+"']")[0]).attr("data-plan-id");
       } else {
@@ -164,6 +179,34 @@ window.App = window.App || {};
         this.calculateCost(plan_id);
       }
     },
+    toggleFSMAddon: function(toggler, editBilling) {
+      var parent_plan = this.selected_plan;
+      var fsm_addon_key = 'field_service_management';
+      var fsm_addon_value = $("#field-agents-text-box").val();
+      if(editBilling || (parent_plan.hasClass('active') && !parent_plan.hasClass('hide'))) {
+        $(".billing-submit").attr("disabled", "true");
+        $(toggler).hasClass("active") ? this.addAddon(fsm_addon_key, fsm_addon_value) : this.removeAddon(fsm_addon_key);
+        this.calculateCost();
+      }
+    },
+    enableFSMandShowFieldAgents: function() {
+      var billing_template = $("#billing-template"); 
+      billing_template.find("#field_agents").removeClass('hide');
+      billing_template.find("input[name='addons[field_service_management][enabled]']").val('true');
+      billing_template.find("input[name='addons[field_service_management][value]']").val($("#field-agents-text-box").val());
+    },
+    disableFSMandHideFieldAgents: function() {
+      var billing_template = $("#billing-template");
+      billing_template.find("#field_agents").addClass('hide');
+      billing_template.find("input[name='addons[field_service_management][enabled]']").val('false');
+      billing_template.find("input[name='addons[field_service_management][value]']").val('');
+    },
+    addAddon: function(key, value) {
+      this.addons[key] = { enabled: true, value: value };
+    },
+    removeAddon: function(key) {
+      delete this.addons[key];
+    },
     submitPlanUpdate: function() {
       jQuery(".billing-actions .submit-confirm").hide();
       jQuery(".billing-actions #commit").show().trigger("click");
@@ -174,7 +217,9 @@ window.App = window.App || {};
       current_plan = btn.data("plan"),
       plan_cost = btn.data("planCost"),
       has_free_agents = btn.data("freePlan");
+      var billing_template = $("#billing-template");
       $(".toggle-omni-billing").hide();
+      $(".toggle-fsm-billing").hide();
 
       this.current_active_plan_flag = btn.data("currentPlan");
       if(this.selected_plan != null) {
@@ -189,6 +234,8 @@ window.App = window.App || {};
       }
       this.selected_plan  = $("#plan-"+current_plan).addClass('active');
       this.agents = $("#agents-text-box").val();
+      this.field_agents_count = $("#field-agents-text-box").val();
+
       if(has_free_agents && !this.current_active_plan_flag){
         if(btn.attr('class').indexOf("plan-button1") >= 0)
           $('.active').removeClass("free-plan-options");  
@@ -199,26 +246,35 @@ window.App = window.App || {};
           $(".toggle-omni-billing:visible").hide();
         } else {
           var parent = jQuery(this.selected_plan)? "#"+jQuery(this.selected_plan).attr("id") : "#plan-"+button.id.replace("_button", "");
-          $(parent + " .toggle-omni-billing").show();
+          $(parent).find(".toggle-omni-billing").show();
+          var fsm_billing_toggle = $(parent).find(".toggle-fsm-billing");
+          var fsm_addon_key = 'field_service_management';
+          var fsm_addon_value = $("#field-agents-text-box").val();
+          if($('#fsm-toggle').is(':checked') && fsm_billing_toggle.length) {
+            fsm_billing_toggle.show();
+            this.addAddon(fsm_addon_key, fsm_addon_value) 
+          } else {
+            this.removeAddon(fsm_addon_key);
+          }
         }
-        $("#billing-template").addClass("sloading inner-form-hide");
+        billing_template.addClass("sloading inner-form-hide");
       }
       if(this.current_active_plan_flag){
         
         this.original_data = $(".subscribed-plan-details").html();
         $(".subscribed-plan-details").html($("#billing-template").show());
-        $("#billing-template .billing-cancel").show();
+        billing_template.find(".billing-cancel").show();
       }
       else {
-        $("#billing-template").detach().appendTo(this.selected_plan).show();
-        $("#billing-template .billing-cancel").hide();
+        billing_template.detach().appendTo(this.selected_plan).show();
+        billing_template.find(".billing-cancel").hide();
         if (this.original_data != null) {
           $(".omni-billing-edit").hide();
           var data_content = this.original_data
           $(".subscribed-plan-details").html(data_content);
           this.original_data = null;
         }
-      } 
+      }
       this.calculateCost(null);
     },
     calculateCost: function (planID) { 
@@ -228,38 +284,44 @@ window.App = window.App || {};
 
       var plan_id = planID || this.currentPlanId();
       this.calculate_request = $.post( "/subscription/calculate_amount",
-        { "billing_cycle": this.billing_cycle, "agent_limit" : this.agents, 
+        { "billing_cycle": this.billing_cycle, "agent_limit" : this.agents,
+          "addons" : this.addons,
           "plan_id" : plan_id, "currency" : this.currency },
         function(data){
-          $(".billing-submit").removeAttr("disabled");
-          $("#billing-template").removeClass("sloading inner-form-hide");
-          $("#billing-template").html(data);
+          var billing_template = $("#billing-template");
+          var billing_actions = $(".billing-actions")
+;         $(".billing-submit").removeAttr("disabled");
+          billing_template.removeClass("sloading inner-form-hide").html(data);
           $("#plan_id").val(plan_id);
           if($this.current_active_plan_flag) {
-            if(jQuery(".subscribed-plan-details .billing-info-divider:visible").length <= 0) {
+            if($(".subscribed-plan-details .billing-info-divider:visible").length <= 0) {
               $(".omni-billing-edit").show();
             }
-            $("#billing-template .billing-cancel").show();
-            $("#billing-template .billing-submit").val(I18n.t('common_js_translations.update_plan'));
-            $("#billing-template .billing-submit").addClass('btn-primary');
-            // $("#billing-template .billing-submit").removeClass('btn-flat');
+            billing_template.find(".billing-cancel").show();
+            billing_template.find(".billing-submit").val(I18n.t('common_js_translations.update_plan')).addClass('btn-primary');
+
             if($this.omni_disabled) {
-              jQuery(".billing-actions .submit-confirm").show();
-              jQuery(".billing-actions #commit").hide();
-            } else if(jQuery("#omni-billing-edit .toggle-button").hasClass("active")) {
-              jQuery(".billing-actions .submit-confirm").hide();
-              jQuery(".billing-actions #commit").show();
+              billing_actions.find(".submit-confirm").show();
+              billing_actions.find("#commit").hide();
+            } else if($("#omni-billing-edit .toggle-button").hasClass("active")) {
+              billing_actions.find(".submit-confirm").hide();
+              billing_actions.find("#commit").show();
               $this.omni_disabled = null;
               this.omni_disabled = null;
             }
           } 
           else {
-            $("#billing-template .billing-cancel").hide();
-            // $("#billing-template .billing-submit").addClass('btn-flat');
-            $("#billing-template .billing-submit").removeClass('btn-primary');
+            billing_template.find(".billing-cancel").hide();
+            billing_template.find(".billing-submit").removeClass('btn-primary');
             var curren_plan_id = $this.selected_plan.attr("id");
             if(curren_plan_id) {
-              $("#"+curren_plan_id+" .toggle-omni-billing").removeClass("hide");              
+              var fsm_toggle = '#' + curren_plan_id + ' .toggle-fsm-billing';
+              $("#"+curren_plan_id + " .toggle-omni-billing").removeClass("hide");      
+              if($(fsm_toggle + ':visible').length && $(fsm_toggle + ' .toggle-button').hasClass('active')) {
+                $this.enableFSMandShowFieldAgents();
+              } else {
+                $this.disableFSMandHideFieldAgents();
+              }        
             }
           }
           $this.perMonthCost();
@@ -273,11 +335,13 @@ window.App = window.App || {};
       var no_of_months = parseInt(jQuery("#number-of-months").text());
       var per_month_amount  = Math.floor(this.currencyToNumber(total_cost) / no_of_months);
       var per_month_cost = this.currencyToNumber($("#cost-per-month-value").val());
-      var you_save = currency_symbol+""+((per_month_cost * 12 * agent_count) - this.currencyToNumber(total_cost));
+      var per_month_discounted_cost = this.currencyToNumber($("#discounted-cost-per-month-value").val());
+      var you_save = currency_symbol+""+((per_month_cost - per_month_discounted_cost) * 12 * agent_count);
+      var per_month_charges = $(".per-month-charges");
 
       $(".you-save-amount").text(you_save);
-      $(".per-month-charges .symbol").text(currency_symbol);
-      $(".per-month-charges .amount").text(per_month_amount);
+      per_month_charges.find(".symbol").text(currency_symbol);
+      per_month_charges.find(".amount").text(per_month_amount);
     },
 
     currencyToNumber: function(currency_val) {

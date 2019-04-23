@@ -22,7 +22,7 @@ module AgentsHelper
   
   # Should be used only if NOT trial account
   def available_agents
-    current_account.subscription.agent_limit - current_account.full_time_agents.size
+    current_account.subscription.agent_limit - current_account.full_time_support_agents.size
   end
   
   def available_passes

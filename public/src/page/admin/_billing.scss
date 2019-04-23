@@ -62,8 +62,7 @@
 
 .choose-plan-container {
 	border-bottom: 1px solid #dadfe3;
-	margin: 20px 0;
-	padding-bottom: 10px;
+	margin-top: 20px;
 }
 
 .choose-plan-drop {
@@ -81,40 +80,106 @@
   margin-right: 12px;
 }
 
-.showing-omni-features {
-	border-bottom: 1px solid #dadfe3;
+.features {
+  display: flex;
+	
+  &__icon {
+  	@include margin-right(12px);
+  }
+
+  &__wrapper {
+  	display: flex;
+ 	-webkit-flex: 1; /* Safari 6.1+ */
+  	-ms-flex: 1; /* IE 10 */ 
+  	flex: 1;
+  	align-items: center;
+  	padding: 20px;
+  }
+
+  &__content {
+  	flex-grow: 1;
+
+  	h4 {
+  		padding-bottom: 4px;
+  	}
+  	.highlight {
+		color: #40894c;
+		font-weight: bold;
+	}
+  }
+
+  .vr-line {
+  	border-left: 1px dashed #dadfe3;
+    height: auto;
+    margin: 10px 0;
+  }
 }
 
-.omni-features {
-	margin-bottom: 30px;
 
-	.omni-title {
-		font-weight: bold;
-		line-height: 24px;
-		font-size: 15px;
+.features-card {
+	border-top: 1px solid #dadfe3;
+	padding: 25px 0;
+
+	&.ocr-card {
+	  min-height: 150px;
 	}
 
-	p.omni-price {
-		color: #930003;
-		font-size: 15px;
-		letter-spacing: -0.5px;
-		line-height: normal;
-		font-weight: bold;
+	&__title {
+	  font-weight: bold;
+	  line-height: 24px;
+	  font-size: 15px;
 	}
-}
 
-.omni-title {
-	font-size: 15px;
-	font-weight: bold;
-}
+	&__price {
+	  color: #930003;
+	  font-size: 15px;
+	  letter-spacing: -0.5px;
+	  line-height: normal;
+	  font-weight: bold;
 
-.omni-features-list {
-	list-style: disc;
-  display: list-item;
-  font-size: 15px;
-  font-weight: 300;
-  line-height: 24px;
-  margin-left: 20px;
+	  .free {
+		display: none;
+	  }
+
+	  &.slashed {
+
+	  	.price-value {
+	  	  color: #b1bdc8;
+	  	  font-weight: 300;
+	  	  display: inline-block;
+    	  padding: 0px 2px;
+
+    	  &::before {
+	    	content: '';
+			border-top: 1px solid #b1bdc8;
+			height: 0px;
+			display: block;
+			width: 100%;
+			transform: rotate(164deg);
+			position: relative;
+			top: 12px;
+			padding: 0 2px;
+    	  }
+	  	}
+	  }
+
+	  &.slashed-free .free {
+		display: inline-block;
+	  }
+
+	  .per-agent {
+	  	vertical-align: baseline;
+	  }
+	}
+
+	&__features--list {
+	  list-style: disc;
+	  display: list-item;
+	  font-size: 15px;
+	  font-weight: 300;
+	  line-height: 24px;
+	  margin-left: 20px;
+	}
 }
 
 .well-active {
@@ -267,7 +332,7 @@
 	background: #FFDE5E;
 	color: #333;
 	font-weight: 400;
-	margin-bottom: 30px;
+	margin-bottom: 15px;
 	span{
 		margin: 5px auto;
 		display: none;
@@ -326,6 +391,7 @@ dt.vertical-top {
 			@include text-align(left);
 			width: 28%;
 			font-weight: bold;
+			vertical-align: middle;
 		}
 		.agents-split{
 			border-top:1px dashed #afafaf;
@@ -345,15 +411,24 @@ dt.vertical-top {
 	}
 }
 
-.toggle-omni-billing {
-  border-top: 1px solid #dadfe3;
-  margin-top: 35px;
-  font-weight: bold;
-  position: relative;
-  padding-top: 8px;
-  .omni-toggle-holder {
-  	position: relative;
-    top: 12px;
+.features-billing {
+
+  &__toggle {
+  	font-weight: bold;
+  	padding-top: 16px;
+  	margin: 0;
+
+  	&:first-child {
+  	  border-top: 1px solid #dadfe3;
+  	}
+
+  	&:last-child {
+  	  padding-bottom: 8px;
+  	}
+
+  	.toggle-button {
+  	  float: right;
+  	}
   }
 }
 
@@ -485,63 +560,25 @@ input[type=text].input-agent-count{
 	td{
 		vertical-align:top;
 		@include border-right(1px solid #efefef);
-		padding: 20px 20px 20px;
+		padding: 20px 20px 40px;
 		overflow: hidden;
 		position: relative;
 		&:last-child{
 			@include border-right(0);
 		}
+
+		#billing-template dt {
+			width: 38%;
+		}
 	}
 	.plan-details{
 		.lead{ margin-bottom: 0; }
-		p{
-			font-size:13px;
-		}
-		p.omni-price{
-			font-size:15px;
-			.free {
-				display: none;
-			}
 
-			&.free-omni-channel {
-				color: #b1bdc8;
-				font-weight: 300;
-    		position: relative;
-				
-				.price-value {
-			    display: inline-block;
-			    overflow: hidden;
-			    vertical-align: bottom;
-			     padding: 0 2px;
-
-					&:before {
-						content: '';
-						border-top: 1px solid #b1bdc8;
-						height: 0px;
-						display: block;
-						width: 100%;
-						transform: rotate(164deg);
-						position: relative;
-						top: 12px;
-						padding: 0 8px;
-						left: -38%;
-					}
-				}
-				.free {
-					display: inline-block;
-					color: #930003;
-					font-weight: bold;
-				}
-			}
-
-		}
 		p.plan-details{
 			@include min-height(300px);
 			font-weight: 300;
 			font-size: 15px;
 			line-height: 1.8;
-			margin-bottom: 25px;
-			padding-bottom: 15px;
 			
 			span {
 				display: list-item;
@@ -613,7 +650,6 @@ input[type=text].input-agent-count{
 		margin-top:6px;
 	}
 	.billing {
-		min-height: 190px;
 		td{
 			border:0;
 			vertical-align:middle;

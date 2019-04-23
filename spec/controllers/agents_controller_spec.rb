@@ -64,7 +64,7 @@ describe AgentsController do
   end
 
   it "should not create a new agent more than the subscriped agent limit" do
-    @account.subscription.update_attributes(:state => "active", :agent_limit => @account.full_time_agents.count)
+    @account.subscription.update_attributes(:state => "active", :agent_limit => @account.full_time_support_agents.count)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     test_email = Faker::Internet.email
     post :create, { :agent => { :occasional => "false",
@@ -211,7 +211,7 @@ describe AgentsController do
     end
 
   it "should convert a full time agent to occasional" do
-    user = @account.full_time_agents.last.user
+    user = @account.full_time_support_agents.last.user
     agent = user.agent
     get :edit, :id => agent.id
     response.body.should =~ /Edit Agent/
@@ -233,7 +233,7 @@ describe AgentsController do
   end
 
   it "should check_agent_limit for update" do
-    @account.subscription.update_attributes(:state => "active", :agent_limit => @account.full_time_agents.count)
+    @account.subscription.update_attributes(:state => "active", :agent_limit => @account.full_time_support_agents.count)
     user = add_test_agent(@account)
     agent = user.agent
     agent.occasional = true

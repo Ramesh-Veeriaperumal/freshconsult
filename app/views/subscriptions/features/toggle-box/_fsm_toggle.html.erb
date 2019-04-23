@@ -1,0 +1,33 @@
+ <div id="field-service-management" class="features__wrapper">
+ 	<img alt="field service management" class="features__icon" src="/assets/field-service-management.svg" width="52">
+    <div class="features__content">
+    	<h4>
+    		<%= t('fsm_title') %>
+			<input rel="toggle" type="checkbox" id="fsm-toggle" name="fsm-toggle" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" />
+    	</h4>
+      <h5 class="lead-note">
+        <%= t('fsm_content') %>
+        <span class="highlight"> <%= t('fsm_content_highlight') %> </span>
+      </h5>
+	</div>
+</div>
+
+<script type="text/javascript">
+jQuery(document).ready(function() {
+
+    jQuery(document).on('click', "#field-service-management .toggle-button", function(i){
+      var fsm_state = jQuery(i.target).closest(".toggle-button").hasClass("active");
+      jQuery(".plan-change-addons input[name='addons[field_service_management][enabled]']").val(fsm_state);
+      jQuery(".fsm-card").toggle();
+    });
+
+});
+</script>
+
+<% if current_account.field_service_management_enabled?  %>
+  <script type="text/javascript">
+    jQuery(document).ready(function() {
+      jQuery("#field-service-management .toggle-button").trigger("click");
+    });
+  </script>
+<% end %>

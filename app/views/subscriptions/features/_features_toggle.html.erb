@@ -1,0 +1,21 @@
+ <% omni_amount = plan.omni_channel_cost(@subscription.currency_name) 
+ show_ocr_toggle = omni_amount != 0 && !plan.free_omni_channel_plan? %>
+
+<div class="features-billing">
+	<% if show_ocr_toggle %>
+		<p class="features-billing__toggle toggle-omni-billing hide">
+		  <span class="omni-toggle-holder">
+		    <input rel="toggle" type="checkbox" data-plan-id="<%= plan.id %>" data-plan="<%= plan_name_id %>" id="exclude-omni" name="stop_sla_timer" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" checked=true />
+		    <%= t('omni_channel') %>
+		  </span>
+		</p>
+	<% end %>
+	<% if fsm_supported_plan?(plan) %>
+		<p class="features-billing__toggle toggle-fsm-billing hide">
+		  <span class="fsm-toggle-holder">
+		    <input rel="toggle" type="checkbox" data-plan-id="<%= plan.id %>" data-plan="<%= plan_name_id %>" id="billing-fsm-toggle" name="stop_sla_timer" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" checked=true />
+		    <%= t('fsm_title') %>
+		  </span>
+		</p>
+	<% end %>
+</div>

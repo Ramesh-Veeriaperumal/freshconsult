@@ -1,6 +1,8 @@
 <%= form_tag plan_subscription_url, :id => "plan_form" do %>
 <%
 	billing_cycle = params[:billing_cycle].present? ? params[:billing_cycle].to_i : @subscription.renewal_period
+	addons = params[:addons]
+    field_agent_limit = addons.try(:[], :field_service_management).try(:[], :value) || @subscription.field_agents_display_count
 %>
 <div class="billing-cost">
 	<hr class="billing-divider" />
@@ -21,12 +23,12 @@
 		<dd>
 			<%
         agent_limit = if @cached_subscription.new_sprout? and @subscription.free_agents == @subscription.agent_limit
-          current_account.full_time_agents.count
+          current_account.full_time_support_agents.count
         else
           @subscription.agent_limit
         end
       %>
-		  <input type="text" size="4" value="<%= agent_limit || current_account.full_time_agents.count %>" 
+		  <input type="text" size="4" value="<%= agent_limit || current_account.full_time_support_agents.count %>"
 		  			 name="agent_limit" id="agents-text-box" class="text input-agent-count" autocomplete="off" />
 		</dd>
 		  <% if @subscription.free_agents > 0 %>
@@ -49,7 +51,16 @@
 		  	x <b id="cost-per-agent"><%= cost_per_agent(@subscription_plan.name, billing_cycle, @subscription.currency_name) %></b> x <b id="number-of-months"> <%= billing_cycle %> </b>
 		  <% end %>
 	</dl>
-  
+	<% if fsm_supported_plan?(@subscription_plan) %>
+	<dl id="field_agents" class="hide">
+		<dt> <%= t('agent.field_agents') %> </dt>
+		<dd>
+			<input type="text" size="4" value="<%= field_agent_limit %>" 
+		  			 name="field_agent_limit" id="field-agents-text-box" class="text input-agent-count" autocomplete="off" />
+		 </dd>
+		  	x <b id="cost-per-field-agent"><%= cost_per_field_agent(@subscription.currency_name) %></b> x <b id="number-of-months"> <%= billing_cycle %> </b>
+	</dl>
+  	<% end %>
 		<dl class="tr-total" id="total-cost">
 			<% if discount %>
 		  	<dt>
@@ -86,6 +97,7 @@
   		<dd class="numbers">
 				<p>
 				<input type="hidden" value="<%= cost_per_agent(@subscription_plan.name, SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:monthly], @subscription.currency_name) %>" id="cost-per-month-value">
+				<input type="hidden" value="<%= cost_per_agent(@subscription_plan.name, billing_cycle, @subscription.currency_name) %>" id="discounted-cost-per-month-value">
 				</p>
 				<span class="you-save-amount"></span>
   		</dd>
@@ -102,6 +114,11 @@
 	<div class="billing-actions">
 		<input type="hidden" id="plan_id" name="plan_id" value="" />
 		<input type="hidden" id="currency" name="currency" value="<%= @subscription.currency_name %>" />
+		<% if fsm_supported_plan?(@subscription_plan) %>
+			<input type="hidden" name="addons[field_service_management][enabled]" value="false" />
+			<input type="hidden" name="addons[field_service_management][value]" value="<%= field_agent_limit %>" />
+		<% end %>
+
 		<% current_subscription = Subscription.find(current_account.subscription.id) %>
 		<% downgrade_confirm = ( (@subscription.subscription_plan_id < current_subscription.subscription_plan_id) or (current_subscription.classic? and @subscription.sprout?) ) ? true : false %>
 		<% submit_text = @subscription.state == 'trial' ? t('enter_payment') : @subscription.non_free_agents <= @subscription.free_agents ? t('activate_free_plan') : t('make_payment') %>
