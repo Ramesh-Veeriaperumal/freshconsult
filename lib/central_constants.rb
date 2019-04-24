@@ -11,7 +11,7 @@ module CentralConstants
     'Solution::Article' => '0.0',
     'Bot::FeedbackMapping' => '0.0',
     'User' => '0.1',
-    'Company' => '0.1',
+    'Company' => '1.1',
     'Subscription' => '1.0',
     'Agent' => '2.0',
     'VaRule' => '0.0',
