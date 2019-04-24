@@ -79,7 +79,7 @@
 							<%= t('agent.info4') %>
 						</a>
 
-            <% if(@agent.user.active? && !freshid_enabled?) %>
+            <% if(@agent.user.active? && !freshid_integration_enabled?) %>
             	 <a href="#reset_password_template"
 					rel="freshdialog"
 					title="<%= t('reset_password_title') %>"

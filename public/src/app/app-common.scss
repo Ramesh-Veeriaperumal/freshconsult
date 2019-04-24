@@ -4916,3 +4916,10 @@ div[class*='checkbox-ticket']{
     }
   }
 }
+
+.freshid-sso-button{
+	font-size: 16px;
+	@include margin-left(26px);
+	@include margin-right(29px);
+    line-height: 24px;
+}

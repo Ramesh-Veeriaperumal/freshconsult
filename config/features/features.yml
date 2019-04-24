@@ -96,11 +96,11 @@
       :smart_filter: 91
       :ticket_summary: 92
       :shared_ownership: 93
-      :oauth2: 94
+      :autobots_1: 94
       :cascade_dispatcher: 95
       :hipaa: 96
       :custom_encrypted_fields: 97
-      :freshid_saml: 98
+      :autobots_2: 98
       :google_signin: 99
       :twitter_signin: 100
       :facebook_signin: 101
@@ -343,7 +343,6 @@
   :falcon: false
   :opt_out_analytics: false
   :disable_old_ui: true
-  :oauth2: false
   :field_service_management: false
   :chat_enable: false
   :survey_links: true

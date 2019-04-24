@@ -14,4 +14,8 @@ class Authorization < ActiveRecord::Base
     find_by_provider_and_uid_and_account_id(hash['provider'], hash['uid'],account_id)
   end
 
+  def notify_uuid_change_to_user!
+    user.notify_uuid_change_to_user!
+  end
+
 end

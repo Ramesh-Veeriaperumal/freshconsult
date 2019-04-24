@@ -17,7 +17,8 @@ class Support::LoginController < SupportController
   before_filter :only => :create do |c|
     redirect_to_freshid_login if params[:user_session].try(:[], :email) && freshid_agent?(params[:user_session][:email])
   end
-  before_filter :authenticate_with_freshid, only: :new, if: :freshid_enabled_and_not_logged_in?
+  before_filter :authenticate_with_freshid, only: :new, if: :freshid_integration_enabled_and_not_logged_in?
+
 
   def new
     if current_account.sso_enabled? && !current_account.freshid_sso_enabled? && check_request_referrer 

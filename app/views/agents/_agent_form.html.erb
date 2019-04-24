@@ -98,14 +98,14 @@
               <div class="controls">
                 <%= text_field(:user, :email, :class => "text required email input-xlarge",
                       :value => @agent.user.email, :placeholder => t('user.email')) %>
-                <%if freshid_enabled? %>
+                <%if freshid_integration_enabled? %>
                 <div id="searching-agent-email"> 
                   <div class="loading-box sloading loading-small loading-left hide"><%= t("search.searching") %></div>
                 </div>
                 <% end %>
               </div>
             </li>
-            <% if freshid_enabled? %>
+            <% if freshid_integration_enabled? %>
                   <div class="freshworks-info control-group hide clear">
                     <div class="fresh_id_fields arrow_box">
                       <div class="fresh_id_info">
@@ -402,7 +402,7 @@
 			var role_details = {};
 			var groups = {};
 			var group_details = {};
-      var freshid_enabled= <%= freshid_enabled? %>;
+      var freshid_enabled= <%= freshid_integration_enabled? %>;
 			var userName = '<%= @agent.user.name %>';
       var userEmail = '<%= @agent.user.email %>';
       window.App = window.App || {};

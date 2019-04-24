@@ -147,7 +147,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     result = {}
     begin
       account = Account.current
-      org_created = check_create_organisation(account)
+      org_created = account.freshid_org_v2_enabled? || check_create_organisation(account)
       render :json => {:status => "notice"}.to_json and return unless org_created
       if account.collab_settings.nil?
         Freshconnect::RegisterFreshconnect.perform_async
@@ -346,11 +346,11 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
         if account.sso_enabled?
           Rails.logger.info "SSO has been enabled for this account. So, you can't enable freshid"
           result[:status] = "notice"
-        elsif account.freshid_enabled?
+        elsif account.freshid_integration_enabled?
           Rails.logger.info "Freshid has already been enabled for this account"
           result[:status] = "notice"
         else
-          Freshid::AgentsMigration.new.perform
+          account.enable_freshid
           account.launch(:freshworks_omnibar) # it will be enabled by default in podus.
           result[:status] = "success"
         end
@@ -781,7 +781,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
     def check_freshconnect_migrate
       account = Account.current
-      render :json => {:status => "notice"}.to_json and return unless account.freshid_enabled? && account.falcon_enabled? && !account.freshconnect_account.present?
+      render :json => {:status => "notice"}.to_json and return unless account.freshid_integration_enabled? && account.falcon_enabled? && !account.freshconnect_account.present?
     end
 
     def check_create_organisation(account)
@@ -793,7 +793,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       existing_account = Freshid::Account.find_by_domain(freshid_account_params[:domain])
       return false unless existing_account
       fd_account = Freshid::Account.new(freshid_account_params)
-      existing_organisation = fd_account.organisation
+      existing_organisation = fd_account.organisation_from_cache
       if !existing_organisation
         #org does not exist, create one
         response = account.create_freshid_org_without_account_and_user
@@ -807,11 +807,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       RestClient::Request.execute(
         method: :post,
         url: "#{CollabConfig['freshconnect_url']}/migrate/account",
-        payload: {
-          domain: account.full_domain,
-          account_id: account.id.to_s,
-          enabled: fc_enabled
-        }.to_json,
+        payload: freshconnect_payload(fc_enabled, account),
         headers: {
           'Content-Type' => 'application/json',
           'ProductName' => 'freshdesk',
@@ -957,5 +953,15 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
     def symbolize_feature_name
       @feature_name = params[:feature_name].to_sym
+    end
+
+    def freshconnect_payload(fc_enabled, account)
+      payload = { domain: account.full_domain,
+                  account_id: account.id.to_s,
+                  enabled: fc_enabled }
+      payload.merge!(fresh_id_version: Freshid::V2::Constants::FRESHID_SIGNUP_VERSION_V2,
+                     organisation_id: account.organisation_from_cache.try(:organisation_id),
+                     organisation_domain: account.organisation_from_cache.try(:domain)) if account.freshid_org_v2_enabled?
+      payload.to_json
     end
 end

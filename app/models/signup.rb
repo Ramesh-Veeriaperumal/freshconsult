@@ -5,7 +5,7 @@ class Signup < ActivePresenter::Base
 
   presents :account, :user
   
-  attr_accessor :contact_first_name, :contact_last_name, :org_id, :join_token
+  attr_accessor :contact_first_name, :contact_last_name, :org_id, :join_token, :fresh_id_version
   before_validation :build_primary_email, :build_portal, :build_roles, :build_admin,
     :build_subscription, :build_account_configuration, :set_time_zone, :build_password_policy
   
@@ -13,6 +13,7 @@ class Signup < ActivePresenter::Base
 
   after_save :make_user_current, :set_i18n_locale, :populate_seed_data
   after_save :create_freshid_org_and_account, if: :freshid_signup_allowed?
+  after_save :create_freshid_v2_org_and_account, if: :freshid_v2_signup_allowed?
 
   MAX_ACCOUNTS_COUNT = 10
   #Using this as the version of Rack::Utils we are using doesn't have support for 429
@@ -40,9 +41,14 @@ class Signup < ActivePresenter::Base
   end
 
   def create_freshid_org_and_account
+    account.launch_freshid_with_omnibar(false) if freshid_v1_signup?
     account.create_freshid_org_and_account(org_id, join_token, user)
   end
 
+  def create_freshid_v2_org_and_account
+    account.launch_freshid_with_omnibar(true) if freshid_v2_signup?
+    account.create_freshid_v2_account(user, join_token)
+  end
   private
     def build_primary_email
       account.build_primary_email_config(
@@ -102,7 +108,7 @@ class Signup < ActivePresenter::Base
     end
 
     def build_password_policy
-    account.build_default_password_policy(PasswordPolicy::USER_TYPE[:agent]) unless account.freshid_enabled?
+    account.build_default_password_policy(PasswordPolicy::USER_TYPE[:agent]) unless account.freshid_integration_enabled?
     account.build_default_password_policy(PasswordPolicy::USER_TYPE[:contact])
    end
 
@@ -149,7 +155,11 @@ class Signup < ActivePresenter::Base
     end
 
     def freshid_signup_allowed?
-      redis_key_exists? FRESHID_NEW_ACCOUNT_SIGNUP_ENABLED
+      (fresh_id_version.blank? && redis_key_exists?(FRESHID_NEW_ACCOUNT_SIGNUP_ENABLED)) || freshid_v1_signup?
+    end
+
+    def freshid_v2_signup_allowed?
+      (fresh_id_version.blank? && redis_key_exists?(FRESHID_V2_NEW_ACCOUNT_SIGNUP_ENABLED)) || freshid_v2_signup?
     end
 
     # * * * POD Operation Methods Begin * * *
@@ -192,6 +202,14 @@ class Signup < ActivePresenter::Base
       shard_mapping.domains.build({:domain => account.full_domain}) 
       shard_mapping.id = shard_mapping_id
       shard_mapping.save!
+    end
+
+    def freshid_v1_signup?
+      @freshid_v1_signup ||= (fresh_id_version == Freshid::V2::Constants::FRESHID_SIGNUP_VERSION_V1)
+    end
+
+    def freshid_v2_signup?
+      @freshid_v2_signup ||= (fresh_id_version == Freshid::V2::Constants::FRESHID_SIGNUP_VERSION_V2)
     end
     # * * * POD Operation Methods Ends * * *
 end

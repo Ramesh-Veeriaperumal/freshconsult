@@ -12657,8 +12657,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     email:
       subject: "%{account_name}: Here's your new helpdesk URL"
       greeting: "Hello %{name},"
-      agent_line: "The administrator has changed the URL of your helpdesk. Going forward, you can login by hitting the URL: <a href='%{url}'> %{url} </a> (bookmark this for easier access)"
-      admin_line: "The URL of your helpdesk has changed. Going forward, you can login by hitting the URL: <a href='%{url}'> %{url} </a> (bookmark this for easier access)"
+      agent_line: "The administrator has changed the URL of your helpdesk. Your new helpdesk URL is: <a href='%{url}'> %{url} </a> (bookmark this for easier access)"
+      admin_line: "The URL of your helpdesk has changed. Your new helpdesk URL is: <a href='%{url}'> %{url} </a> (bookmark this for easier access)"
       cheers: "Cheers,"
       team: "Freshdesk Team"
   fixtures:

@@ -233,6 +233,8 @@ module MemcacheKeys
 
   HELP_WIDGETS = "v1/HELP_WIDGETS:%{account_id}:%{id}"
 
+  ORGANISATION_BY_ACCOUNT_ID = 'ORGANISATION_BY_ACCOUNT_ID:%{account_id}'.freeze
+
   INSTALLED_APPS_HASH = 'INSTALLED_APPS_HASH:%{account_id}'.freeze
   
   UNASSOCIATED_CATEGORIES = 'UNASSOCIATED_CATEGORIES:%{account_id}'.freeze
@@ -249,6 +251,10 @@ module MemcacheKeys
     MemcacheKeys.delete_from_cache(key)
     @cached_values.delete(key) if @cached_values
   end
+
+  ORGANISATION_BY_ORGANISATION_ID  = 'ORGANISATION_BY_ORGANISATION_ID:%{organisation_id}'.freeze
+
+  ACCOUNT_ID_BY_ORGANISATION = 'ACCOUNT_ID_BY_ORGANISATION:%{organisation_id}'.freeze
 
   class << self
 

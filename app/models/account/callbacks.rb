@@ -30,10 +30,11 @@ class Account < ActiveRecord::Base
   
   after_destroy :remove_global_shard_mapping, :remove_from_master_queries
   after_destroy :remove_shard_mapping, :destroy_route_info
-  after_destroy :destroy_freshid_account
+  after_destroy :destroy_freshid_account, if: :freshid_integration_enabled?
   
   after_commit :enable_elastic_search, on: :create
   after_commit :add_to_billing, on: :create, unless: :is_anonymous_account
+
   after_commit :clear_api_limit_cache, :update_redis_display_id, on: :update
   after_commit ->(obj) { obj.clear_cache }, on: :update
   after_commit ->(obj) { obj.clear_cache }, on: :destroy
@@ -56,7 +57,9 @@ class Account < ActiveRecord::Base
   after_commit :mark_customize_domain_setup_and_save, on: :create, if: :full_signup?
   after_commit :update_advanced_ticketing_applications, on: :update, if: :disable_old_ui_changed
 
-  after_rollback :destroy_freshid_account_on_rollback, on: :create, if: :freshid_signup_allowed?
+  after_commit :remove_organisation_account_mapping, on: :destroy, if: :freshid_org_v2_enabled?
+
+  after_rollback :destroy_freshid_account_on_rollback, on: :create, if: :freshid_integration_signup_allowed?
   publishable on: [:create, :update]
 
   include MemcacheKeys
@@ -116,7 +119,7 @@ class Account < ActiveRecord::Base
       self.launch(:falcon_signup)           # To track falcon signup accounts
       self.launch(:falcon_portal_theme)  unless redis_key_exists?(DISABLE_PORTAL_NEW_THEME)   # Falcon customer portal
     end
-    launch_freshid_with_omnibar if freshid_signup_allowed?
+    launch_freshid_with_omnibar if freshid_integration_signup_allowed?
   end
 
   def update_activity_export
@@ -137,28 +140,6 @@ class Account < ActiveRecord::Base
 
   def parent_child_infra_features_present?
     PARENT_CHILD_INFRA_FEATURES.any? { |f| self.safe_send("#{f}_enabled?")}
-  end
-
-  def destroy_freshid_account
-    account_params = {
-      name: self.name,
-      account_id: self.id,
-      domain: self.full_domain,
-      destroy: true
-    }
-    Freshid::AccountDetailsUpdate.perform_async(account_params)
-  end
-  
-  alias_method :destroy_freshid_account_on_rollback, :destroy_freshid_account
-
-  def enable_freshid
-    Rails.logger.info "FRESHID Enqueuing worker for migration :: a=#{self.id}, d=#{self.full_domain}"
-    Freshid::AgentsMigration.perform_async
-  end
-
-  def disable_freshid
-    Rails.logger.info "FRESHID Enqueuing worker for revert migration :: a=#{self.id}, d=#{self.full_domain}"
-    Freshid::AgentsMigration.perform_async({ revert_migration: true })
   end
 
   # Need to revisit when we push all the events for an account
@@ -187,11 +168,6 @@ class Account < ActiveRecord::Base
       name: name,
       full_domain: full_domain,
     }
-  end
-
-  def launch_freshid_with_omnibar
-    launch(:freshid)
-    launch(:freshworks_omnibar) if omnibar_signup_allowed?
   end
 
   def enable_new_onboarding
@@ -246,7 +222,7 @@ class Account < ActiveRecord::Base
     end
 
     def account_domain_changed?
-      @all_changes.key?("full_domain")
+      @all_changes.present? && @all_changes.key?("full_domain")
     end
 
     def account_ssl_changed?
@@ -254,27 +230,19 @@ class Account < ActiveRecord::Base
     end
 
     def account_name_changed?
-      @all_changes.key?("name")
+      @all_changes.present? && @all_changes.key?("name")
     end
 
     def sso_enabled_changed?
       @all_changes.key?('sso_enabled')
     end
 
-    def update_freshid?
-      freshid_enabled? && (account_domain_changed? || account_name_changed?)
-    end
-
-    def sso_enabled_freshid_account?
-      sso_enabled? && freshid_enabled? && !freshid_sso_enabled?
-    end
-
-    def sso_disabled_not_freshid_account?
-      !sso_enabled? && sso_enabled_changed? && !freshid_enabled? && freshid_signup_allowed?
-    end
-
     def remove_email_restrictions
       AccountActivation::RemoveRestrictionsWorker.perform_async
+    end
+
+    def falcon_ui_applicable?
+      ismember?(FALCON_ENABLED_LANGUAGES, self.language)
     end
 
     def enabled_custom_encrypted_fields?
@@ -564,30 +532,6 @@ class Account < ActiveRecord::Base
         CRMApp::Freshsales::AdminUpdate.perform_at(15.minutes.from_now, {:account_id => self.id})
         Subscriptions::AddLead.perform_at(15.minutes.from_now, {:account_id => self.id})
       end
-    end
-
-    def update_account_details_in_freshid
-      account = self.make_current
-      account_details_params = { name: account.name, account_id: account.id }
-      account_details_params[:domain] = account_domain_changed? ? @all_changes[:full_domain].first : account.full_domain
-      account_details_params[:new_domain] = account_domain_changed? ? account.full_domain : nil
-      Freshid::AccountDetailsUpdate.perform_async(account_details_params)
-    end
-
-    def falcon_ui_applicable?
-      ismember?(FALCON_ENABLED_LANGUAGES, self.language)
-    end
-
-    def freshid_signup_allowed?
-      redis_key_exists? FRESHID_NEW_ACCOUNT_SIGNUP_ENABLED
-    end
-
-    def omnibar_signup_allowed?
-      redis_key_exists? FRESHWORKS_OMNIBAR_SIGNUP_ENABLED
-    end
-
-    def freshid_migration_not_in_progress?
-      !freshid_migration_in_progress?
     end
 
     def freshconnect_signup_allowed?

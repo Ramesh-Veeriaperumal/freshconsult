@@ -18,7 +18,15 @@
 		<% unless is_assumed_user? %>
 			<div class="separator"></div>
 			<div class="link-to-freshID">
-				<a target="_blank" href="<%= Freshid::Config.profile_url(Freshid::Config.login_url(freshid_authorize_callback_url, freshid_logout_url)) %>"><%= t("profile.freshid_profile_link") %></a>
+				<% freshid_profile_update_url = begin
+					if current_account.freshid_org_v2_enabled?
+						Freshid::V2::UrlGenerator.profile_url(Freshid::V2::UrlGenerator.login_url(freshid_authorize_callback_url))
+					else
+						Freshid::Config.profile_url(Freshid::Config.login_url(freshid_authorize_callback_url, freshid_logout_url))
+					end
+				end
+				%>
+				<a target="_blank" href="<%= freshid_profile_update_url %>"><%= t("profile.freshid_profile_link") %></a>
 				<span class="info-data"><%= t("profile.freshid_profile_info") %></span>
 			</div>
 		<% end %>

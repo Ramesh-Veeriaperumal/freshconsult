@@ -40,9 +40,9 @@ class AccountsController < ApplicationController
   before_filter :check_for_existing_accounts, only: [:email_signup, :new_signup_free]
 
   before_filter :ensure_proper_user, :only => [:edit_domain]
-  before_filter :check_activation_mail_job_status, :only => [:edit_domain, :update_domain], :unless => :freshid_enabled?
+  before_filter :check_activation_mail_job_status, :only => [:edit_domain, :update_domain], :unless => :freshid_integration_enabled?
   before_filter :validate_domain_name, :only => [:update_domain]
-  after_filter  :kill_account_activation_email_job, :only => [:update_domain], :unless => :freshid_enabled?
+  after_filter  :kill_account_activation_email_job, :only => [:update_domain], :unless => :freshid_integration_enabled?
   before_filter :build_user, :only => [ :new, :create ]
   before_filter :build_metrics, :only => [ :create ]
   before_filter :load_billing, :only => [ :show, :new, :create, :payment_info ]
@@ -142,7 +142,7 @@ class AccountsController < ApplicationController
     if @user_session.save
       @current_user.reload
       @current_user.primary_email.update_attributes({verified: false}) if new_freshid_signup
-      @current_account.schedule_account_activation_email(@current_user.id) unless freshid_enabled?
+      @current_account.schedule_account_activation_email(@current_user.id) unless freshid_integration_enabled?
       render :layout => false
       return
     else
@@ -508,6 +508,9 @@ class AccountsController < ApplicationController
       metrics_obj, account_obj = build_metrics
       params[:signup][:metrics] = metrics_obj
       params[:signup][:account_details] = account_obj
+      if params[:join_token].present?
+        params[:signup][:fresh_id_version] = params[:fresh_id_version].present? ? params[:fresh_id_version] : Freshid::V2::Constants::FRESHID_SIGNUP_VERSION_V1
+      end
     end
 
     def assign_language

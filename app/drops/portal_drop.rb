@@ -292,10 +292,6 @@ class PortalDrop < BaseDrop
     source.personalized_articles?
   end
 
-  def freshid_feature?
-    source.account.freshid_enabled?
-  end
-
   include Solution::PortalCacheMethods
 
   private

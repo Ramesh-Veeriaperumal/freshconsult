@@ -12,6 +12,10 @@
   <%= f.error_messages %>
   <ul class="security-form">
     <li class="inline-field">
+      <% if current_account.freshid_org_v2_enabled? && !current_account.sso_enabled? %>
+        <a href="<%= Freshid::V2::UrlGenerator.security_url %>" class="freshid-sso-button" target="_blank"><span class="ficon-open-in-new-window"></span></a>
+        <span class="enable_heading"> <%=t(".enable_sso")%> </span>
+      <% else %>
       <%= check_box('account', 'sso_enabled', options = { :checked => current_account.sso_enabled, :disabled => current_account.freshid_migration_in_progress? }, checked_value = "1", unchecked_value = "0") %> <span class="enable_heading"> <%=t(".enable_sso")%> </span>
       <div class="extra_tabbed lead" id="sso_enabled_content" style="display:<%= current_account.sso_enabled ? "block": "none" %>;">
         <%= sso_enable_warning_if_freshid_enabled %>
@@ -119,6 +123,7 @@
         </ul>
         <!-- SSO END -->
       </div>
+      <% end %>
     </li>
     <li>
       <%= check_box('account', 'ssl_enabled', options = { :checked => current_account.ssl_enabled}, checked_value = "1", unchecked_value = "0") %> <span class="enable_heading"> <%= t('.enable_SSL') %> </span>
@@ -267,7 +272,7 @@
               <%= t('.password_policy_info4') if(@agent_policy.new_record? or @contact_policy.new_record?) %>
             </p>
           <div class="row-fluid"> 
-            <% unless freshid_enabled? %>
+            <% unless current_account.freshid_integration_enabled? %>
               <div class="span6 input-xlarge password-policy-container">
                 <div class="btn-bold pb5"><%= t('.for_agents') %></div>
                 <%= render :partial => "password_security",

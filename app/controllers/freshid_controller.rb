@@ -10,62 +10,27 @@ class FreshidController < ApplicationController
                      :set_locale, only: :event_callback
 
   def authorize_callback
-    user = fetch_user_by_code(params[:code], freshid_authorize_callback_url, current_account)
-    Rails.logger.info "FRESHID authorize_callback :: user_present=#{user.present?} , user=#{user.try(:id)}, valid_user=#{user.try(:valid_user?)}"
-    freshid_auth_failure_redirect_back and return if user.nil? && !authorize_via_freshworks_login_page?
-    show_login_error(user.nil?, !user.try(:valid_user?)) and return if user.nil? || !user.valid_user?
-    activate_user user
-    create_user_session user
+    current_account.freshid_org_v2_enabled? ? authorize_callback_v2_helper :
+      authorize_callback_helper
   end
 
-  def agent_authorize_callback_helper(url)
-    user = fetch_user_by_code(params[:code], url, current_account)
-    Rails.logger.info "FRESHID authorize_callback :: user_present=#{user.present?} , user=#{user.try(:id)}, valid_user=#{user.try(:valid_user?)}"
-    show_login_error(user.nil?, !user.try(:valid_user?)) and return if user.nil? || !user.valid_user?
-    activate_user user
-    create_user_session(user)
-  end
-
-  def customer_authorize_callback_helper(url)
-    freshid_user_data = fetch_freshid_end_user_by_code(params[:code], url, current_account)
-    email = freshid_user_data.try(:[], :email)
-    user = nil
-    if email.present?
-      user = current_account.user_emails.user_for_email(email) || current_account.users.new(email: email)
-      Rails.logger.info "FRESHID authorize_callback :: user_present=#{user.present?} , user=#{user.try(:id)}, valid_user=#{user.try(:valid_user?)}"
-      user.assign_freshid_attributes_to_contact(freshid_user_data)
-      user.save if user.changed?
-    end
-    show_login_error(user.nil?, !user.try(:valid_user?)) and return if user.nil? || !user.valid_user?
-    create_user_session(user)
-  end
-
-  def oauth_agent_authorize_callback
-    agent_authorize_callback_helper(freshid_oauth_agent_authorize_callback_url)
-  end
-
-  def oauth_customer_authorize_callback
-    customer_authorize_callback_helper(freshid_oauth_customer_authorize_callback_url)
-  end
-
-  def saml_agent_authorize_callback
-    agent_authorize_callback_helper(freshid_saml_agent_authorize_callback_url)
-  end
-
-  def saml_customer_authorize_callback
-    customer_authorize_callback_helper(freshid_saml_customer_authorize_callback_url)
+  def customer_authorize_callback
+    current_account.freshid_org_v2_enabled? ? customer_authorize_callback_v2_helper :
+      customer_authorize_callback_helper
   end
 
   private
 
-    def create_user_session(user)
+    def create_user_session(user, access_token = nil, refresh_token = nil, access_token_expires_in = nil)
       @user_session = current_account.user_sessions.new(user)
       @user_session.web_session = true
       if @user_session.save
         @current_user_session = @user_session
         @current_user = @user_session.record
+        store_freshid_tokens(access_token, refresh_token, access_token_expires_in) if (access_token.present? && refresh_token.present?)
         Rails.logger.info "FRESHID create_user_session :: a=#{current_account.try(:id)}, u=#{@current_user.try(:id)}"
         perform_after_login if @current_user.agent?
+        set_freshid_session_state if current_account.freshid_org_v2_enabled?
         redirect_back_or_default(default_return_url) if grant_day_pass
       else
         redirect_to login_url
@@ -91,8 +56,8 @@ class FreshidController < ApplicationController
       cookies[:helpdesk_url] = { :value => current_portal.host, :domain => AppConfig['base_domain'][Rails.env] } if current_portal
     end
 
-    def authorize_via_freshworks_login_page?
-      !session[:authorize]
+    def authorize_via_freshdesk_login?
+      session[:authorize]
     end  
 
     def default_return_url
@@ -102,5 +67,62 @@ class FreshidController < ApplicationController
         # TODO-EMBERAPI: Cookie deletion does not seem reflect properly on the client
         from_cookie || '/'
       end
+    end
+
+    def set_freshid_session_state
+      cookies[:session_state] = params[:session_state]
+    end
+
+    def authorize_callback_helper 
+      user = fetch_user_by_code(params[:code], freshid_authorize_callback_url, current_account)
+      Rails.logger.info "FRESHID authorize_callback :: user_present=#{user.present?} , user=#{user.try(:id)}, valid_user=#{user.try(:valid_user?)}"
+      freshid_auth_failure_redirect_back and return if user.nil? && authorize_via_freshdesk_login?
+      show_login_error(user.nil?, !user.try(:valid_user?)) and return if user.nil? || !user.valid_user?
+      activate_user user
+      create_user_session(user)
+    end
+    
+    def authorize_callback_v2_helper
+      org_domain = current_account.organisation_domain
+      response = Freshid::V2::LoginUtil.fetch_user_by_code_freshid(org_domain, params[:code], freshid_authorize_callback_url, current_account)
+      user = response.present? ? response[:user] : nil
+      Rails.logger.info "FRESHID V2 authorize_callback :: user_present=#{user.present?} , user=#{user.try(:id)}, valid_user=#{user.try(:valid_user?)}, organisation domain:#{org_domain}"
+      freshid_auth_failure_redirect_back and return if user.nil? && authorize_via_freshdesk_login?
+      show_login_error(user.nil?, !user.try(:valid_user?)) and return if user.nil? || !user.valid_user?
+      activate_user user
+      create_user_session(user, response[:access_token], response[:refresh_token], response[:access_token_expires_in])
+    end
+    
+    def customer_authorize_callback_helper
+      freshid_user_data = fetch_freshid_end_user_by_code(params[:code], freshid_customer_authorize_callback_url, current_account)
+      email = freshid_user_data.try(:[], :email)
+      user = nil
+      if email.present?
+        user = current_account.user_emails.user_for_email(email) || current_account.users.new(email: email)
+        Rails.logger.info "FRESHID authorize_callback :: user_present=#{user.present?} , user=#{user.try(:id)}, valid_user=#{user.try(:valid_user?)}"
+        user.assign_freshid_attributes_to_contact(freshid_user_data)
+        user.save if user.changed?
+      end
+      show_login_error(user.nil?, !user.try(:valid_user?)) and return if user.nil? || !user.valid_user?
+      create_user_session(user)
+    end
+    
+    def customer_authorize_callback_v2_helper
+      freshid_user_data = fetch_freshid_end_user_by_code(params[:code], freshid_customer_authorize_callback_url, current_account)
+      email = freshid_user_data.try(:[], :email)
+      user = nil
+      if email.present?
+        user = current_account.user_emails.user_for_email(email) || current_account.users.new(email: email)
+        Rails.logger.info "FRESHID authorize_callback :: user_present=#{user.present?} , user=#{user.try(:id)}, valid_user=#{user.try(:valid_user?)}"
+        user.assign_freshid_attributes_to_contact(freshid_user_data)
+        user.save if user.changed?
+      end
+      show_login_error(user.nil?, !user.try(:valid_user?)) and return if user.nil? || !user.valid_user?
+      create_user_session(user)
+    end
+
+    def store_freshid_tokens(access_token, refresh_token, access_token_expires_in)
+      @current_user.store_user_access_token(access_token, access_token_expires_in)
+      @current_user.store_user_refresh_token(refresh_token)
     end
 end

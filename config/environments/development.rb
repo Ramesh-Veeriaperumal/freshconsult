@@ -60,3 +60,14 @@ end
 # YML related changes
 FileUtils.cp('config/redis_development.yml', 'config/redis.yml')
 FileUtils.cp('config/elasticsearch_development.yml', 'config/elasticsearch.yml')
+
+if defined?(PhusionPassenger)
+  PhusionPassenger.on_event(:starting_worker_process) do |forked|
+    if forked
+      $organisation_client = Freshworks::Organisation::V2::OrganisationService::Client.new
+      $account_client = Freshworks::Account::V2::AccountService::Client.new
+      $user_client = Freshworks::User::V2::UserService::Client.new
+      $user_hash_client = Freshworks::User::V2::UserHashService::Client.new
+    end
+  end
+end

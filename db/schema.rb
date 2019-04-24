@@ -61,6 +61,7 @@ ActiveRecord::Schema.define(:version => 20190412095235) do
     t.integer  "reputation",        :limit => 1, :default => 0
     t.string   "plan_features"
     t.integer  "account_type",      :limit => 4, :default => 0
+    t.integer  "freshid_account_id", :limit => 8
   end
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain", :unique => true
@@ -397,6 +398,8 @@ ActiveRecord::Schema.define(:version => 20190412095235) do
     t.integer  "account_id", :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "refresh_token"
+    t.text     "access_token"
   end
 
   add_index "authorizations", ["account_id", "user_id"], :name => "index_authorizations_on_account_id_and_user_id"
@@ -2948,6 +2951,28 @@ ActiveRecord::Schema.define(:version => 20190412095235) do
   end
 
   add_index "oauth_applications", ["uid", "account_id"], :name => "index_oauth_applications_on_uid_and_account_id", :unique => true
+
+  create_table "organisation_account_mappings", :force => true do |t|
+    t.integer  "account_id",      :limit => 8, :null => false
+    t.integer  "organisation_id", :limit => 8, :null => false
+    t.datetime "created_at",                   :null => false
+    t.datetime "updated_at",                   :null => false
+  end
+
+  add_index "organisation_account_mappings", ["account_id"], :name => "index_organisations_on_account_id", :unique => true
+  add_index "organisation_account_mappings", ["organisation_id"], :name => "index_organisations_on_organisation_id"
+
+  create_table "organisations", :force => true do |t|
+    t.integer  "organisation_id",  :limit => 8, :null => false
+    t.string   "domain",                        :null => false
+    t.string   "name"
+    t.string   "alternate_domain"
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
+  end
+
+  add_index "organisations", ["domain"], :name => "index_organisations_on_domain", :unique => true
+  add_index "organisations", ["organisation_id"], :name => "index_organisations_on_organisation_id", :unique => true
 
   create_table "outgoing_email_domain_categories", :force => true do |t|
     t.integer    "account_id", :limit => 8, :null => false

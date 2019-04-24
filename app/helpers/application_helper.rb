@@ -734,7 +734,7 @@ module ApplicationHelper
         }
       avatar_image_generator(img_tag_options, profile_size, profile_class)
     else
-      name = Account.current.freshid_enabled? && user.name.nil? ? "" : user.name
+      name = Account.current.freshid_integration_enabled? && user.name.nil? ? "" : user.name
       avatar_generator(name, profile_size, profile_class, options)
     end
   end
@@ -2203,7 +2203,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   end
 
   def sso_enable_warning_if_freshid_enabled
-    if (current_account.freshid_enabled? && current_account.freshconnect_enabled? && !current_account.sso_enabled?)
+    if (current_account.freshid_integration_enabled? && current_account.freshconnect_enabled? && !current_account.sso_enabled?)
       return content_tag('div', "<span class='sso-info'>
             <span class='ficon-notice-o fsize-24 muted'></span>
           </span>

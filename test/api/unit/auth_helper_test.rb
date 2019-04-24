@@ -30,6 +30,8 @@ class AuthHelperTest < ActionView::TestCase
     user = mock
     user.stubs(:deleted).returns(false)
     account.stubs(:freshid_enabled?).returns(false)
+    account.stubs(:freshid_org_v2_enabled?).returns(false)
+    account.stubs(:freshid_integration_enabled?).returns(false)
     user.stubs(:valid_password?).returns(false)
     user.expects(:update_failed_login_count).with(false, 'sample@freshdesk.com', nil).returns(nil)
     User.expects(:find_by_user_emails).with('sample@freshdesk.com').returns(user).once
@@ -45,6 +47,8 @@ class AuthHelperTest < ActionView::TestCase
     user = mock
     user.stubs(:deleted).returns(false)
     account.stubs(:freshid_enabled?).returns(true)
+    account.stubs(:freshid_org_v2_enabled?).returns(false)
+    account.stubs(:freshid_integration_enabled?).returns(true)
     user.stubs(:valid_freshid_password?).returns(false)
     user.expects(:update_failed_login_count).with(false, 'sample@freshdesk.com', nil).returns(nil)
     User.expects(:find_by_user_emails).with('sample@freshdesk.com').returns(user).once
@@ -61,6 +65,8 @@ class AuthHelperTest < ActionView::TestCase
     user.stubs(:deleted).returns(false)
     user.stubs(:failed_login_count).returns(0)
     account.stubs(:freshid_enabled?).returns(true)
+    account.stubs(:freshid_org_v2_enabled?).returns(false)
+    account.stubs(:freshid_integration_enabled?).returns(true)
     user.stubs(:valid_freshid_password?).returns(true)
     user.expects(:update_failed_login_count).with(true, 'sample@freshdesk.com', nil).returns(user)
     User.expects(:find_by_user_emails).with('sample@freshdesk.com').returns(user).once

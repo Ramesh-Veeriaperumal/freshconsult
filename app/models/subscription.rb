@@ -96,9 +96,9 @@ class Subscription < ActiveRecord::Base
   after_commit :update_crm, on: :update, unless: :anonymous_account?
   after_commit :update_social_subscription, :add_free_freshfone_credit, :dkim_category_change, :update_ticket_activity_export, on: :update
   after_commit :clear_account_susbcription_cache
-  after_commit :schedule_account_block,  on: :update, :if => :suspended?
+  after_commit :schedule_account_block, :update_status_in_freshid, on: :update, :if => [:moved_to_suspended?]
   after_commit :suspend_tenant,  on: :update, :if => :trial_to_suspended?
-  after_commit :reactivate_account, on: :update, :if => :non_suspended?
+  after_commit :reactivate_account, :update_status_in_freshid, on: :update, :if => [:moved_from_suspended?]
   attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
   serialize :additional_info, Hash
@@ -263,8 +263,12 @@ class Subscription < ActiveRecord::Base
     state == 'free'
   end
 
-  def non_suspended?
-    @old_subscription.state.eql?(SUSPENDED) && !self.state.eql?(SUSPENDED)
+  def moved_to_suspended?
+    @old_subscription.state != SUSPENDED && self.state == SUSPENDED
+  end
+
+  def moved_from_suspended?
+    @old_subscription.state == SUSPENDED && self.state != SUSPENDED
   end
   
   def non_new_sprout?
@@ -686,6 +690,14 @@ class Subscription < ActiveRecord::Base
         Rails.logger.debug("Added trial suspended redis key for account_id: #{self.account.id}")
       end
       #BlockAccount.perform_in(Account::BLOCK_GRACE_PERIOD.from_now, {:account_id => self.account.id})
+    end
+
+    def update_status_in_freshid
+      account.update_account_details_in_freshid(true)
+    end
+
+    def freshid_status
+      status = (state == SUSPENDED) ? :inactive : :active
     end
 
     def anonymous_account?
