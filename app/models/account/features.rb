@@ -27,7 +27,7 @@ class Account < ActiveRecord::Base
     :bot_email_channel, :bot_email_central_publish, :description_by_default,
     :bot_chat_history, :new_es_api, :filter_factory, :ticket_fields_central_publish,
     :shopify_actions, :skip_invoice_due_warning, :automation_revamp,
-    :scheduled_export_fix, :compact_lang_detection,
+    :scheduled_export_fix, :compact_lang_detection, :ticket_type_filter_in_trends_widget,
     :facebook_page_scope_migration, :agent_group_central_publish, :custom_fields_search,
     :update_billing_info, :allow_billing_info_update, :pricing_plan_change_2019,
     :tag_central_publish, :native_apps, :archive_tickets_api, :bot_agent_response,

@@ -319,4 +319,17 @@ module CustomDashboardTestHelper
   def announcement_show_response_hash(announcement, user_ids)
     announcement.as_json['dashboard_announcement'].merge(viewers: user_ids)
   end
+
+  def widget_config_data(config_param = {})
+    { group_ids: config_param[:group_ids].presence || [0],
+      product_id: config_param[:product_id].presence || 0,
+      ticket_type: config_param[:ticket_type].presence || 0,
+      date_range: config_param[:date_range].presence || 3,
+      metric: config_param[:metric].presence || 1 }
+  end
+
+  def ticket_type_picklist_value(ticket_type)
+    pick_list = @account.ticket_types_from_cache.select { |x| x.value == ticket_type }
+    pick_list.present? ? pick_list[0].id : 0
+  end
 end

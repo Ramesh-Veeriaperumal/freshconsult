@@ -192,6 +192,12 @@ class Dashboards
         "value"     => "#{product_id}"}
   end
 
+  def redshift_ticket_type_filter(ticket_type)
+    { 'condition' => 'ticket_type',
+      'operator'  => 'is_in',
+      'value'     => ticket_type.to_s }
+  end
+
   def handle_redshift_filters options={}
     filter_params = []
     filter_params = (filter_params << redshift_user_filter) if (options[:include_user].present? || User.current.assigned_ticket_permission)
