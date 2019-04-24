@@ -162,6 +162,7 @@
       - :scenario_automation
       - :customize_table_view
       - :personal_canned_response
+      - :allow_auto_suggest_solutions
       - :omni_channel
       - :split_tickets
       - :collision
@@ -211,7 +212,6 @@
       - :custom_password_policy
       - :sitemap
       - :contact_company_notes
-      - :allow_auto_suggest_solutions
       - :assume_identity
       - :sla_management
       - :canned_forms
