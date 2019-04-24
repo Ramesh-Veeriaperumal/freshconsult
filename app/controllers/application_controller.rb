@@ -99,7 +99,6 @@ class ApplicationController < ActionController::Base
         }
       end
     end
-    cookies[HashedData["state"]] = HashedData[current_account.subscription.state] if current_account.subscription
   end
   
   def set_time_zone
@@ -131,6 +130,7 @@ class ApplicationController < ActionController::Base
     begin
       current_account.make_current
       User.current = current_user
+      set_account_meta_cookies
       log_session_details(:set_current_account) if Account.current.session_logs_enabled?
     rescue ActiveRecord::RecordNotFound
     rescue ActiveSupport::MessageVerifier::InvalidSignature
