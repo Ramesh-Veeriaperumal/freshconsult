@@ -61,6 +61,8 @@ class Account < ActiveRecord::Base
 		subscription.save!
 	end
 
+  # Any new changes made to this method please validate if it needs to be added to
+  # perform_anonymous_account_cancellation method too
   def perform_account_cancellation(feedback = {})
     response = Billing::Subscription.new.cancel_subscription(self)
     if response
@@ -73,6 +75,11 @@ class Account < ActiveRecord::Base
     else 
       Rails.logger.info "Account cancellation failed."
     end
+  end
+
+  def perform_anonymous_account_cancellation
+    create_deleted_customers_info
+    clear_account_data
   end
   
   def schedule_account_cancellation_request(feedback)

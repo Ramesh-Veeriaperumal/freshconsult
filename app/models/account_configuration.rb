@@ -11,9 +11,8 @@ class AccountConfiguration < ActiveRecord::Base
 
   validate :ensure_values
   validate :admin_notification_emails, on: :update, if: :notification_email_changed?
-
-  after_update :update_billing, :update_reseller_subscription
-  after_commit :update_crm_and_map, on: :update, :unless => :sandbox?
+  after_update :update_billing, :update_reseller_subscription, unless: :anonymous_account?
+  after_commit :update_crm_and_map, on: :update, unless: [:sandbox?, :anonymous_account?]
   after_commit :populate_industry_based_default_data, on: :update
   include Concerns::DataEnrichmentConcern
 
@@ -127,5 +126,9 @@ class AccountConfiguration < ActiveRecord::Base
       if User.current.nil? && company_contact_info_updated? && !Account.current.sample_data_setup? && Account.current.subscription.trial?
         DefaultDataPopulation.perform_async({:industry => company_info[:industry]})
       end
+    end
+
+    def anonymous_account?
+      account.anonymous_account?
     end
 end

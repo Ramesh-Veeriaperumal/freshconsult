@@ -8,6 +8,7 @@ class AccountsController < ApplicationController
   include MixpanelWrapper 
   include Onboarding::OnboardingRedisMethods
   include AccountConstants
+  include AccountsHelper
 
   layout :choose_layout 
 
@@ -111,6 +112,7 @@ class AccountsController < ApplicationController
 
   def anonymous_signup
     @signup = Signup.new(params[:signup])
+    @signup.account.is_anonymous_account = true
     if @signup.save
       mark_account_as_anonymous
       finish_signup
@@ -518,25 +520,13 @@ class AccountsController < ApplicationController
         params[:signup][:contact_first_name] = params[:user][:first_name]
         params[:signup][:contact_last_name] = params[:user][:last_name]
       end
-    end
-
-    def add_account_info_to_dynamo
-      AccountInfoToDynamo.perform_async({email: params[:signup][:user_email]})
-    end
-
-    def add_to_crm(account_id)
-      if (Rails.env.production? or Rails.env.staging?)
-        Subscriptions::AddLead.perform_at(ThirdCRM::ADD_LEAD_WAIT_TIME.minute.from_now, { :account_id => account_id,
-          :signup_id => params[:signup_id]})
-        Rails.logger.info "Signup Freshsales :: #{account_id} :: Invoking signup worker"
-        CRMApp::Freshsales::Signup.perform_at(5.minutes.from_now, { account_id: account_id,
-          fs_cookie: params[:fs_cookie] })
-      end  
     end  
 
     def perform_account_cancel(feedback)
-      update_crm
-      deliver_mail(feedback)
+      unless current_account.anonymous_account?
+        update_crm
+        deliver_mail(feedback)
+      end
       create_deleted_customers_info
 
       if current_account.subscription.active? or current_account.subscription_payments.present?
@@ -662,10 +652,12 @@ class AccountsController < ApplicationController
     def finish_signup
       @signup.user.reset_perishable_token!
       save_account_sign_up_params(@signup.account.id, params[:signup].merge({"signup_method" => action}))
-      add_account_info_to_dynamo
+      unless @signup.account.anonymous_account?
+        add_account_info_to_dynamo(params[:signup][:user_email])
+        add_to_crm(@signup.account.id, params)
+      end
       set_account_onboarding_pending unless @signup.account.launched?(:new_onboarding)
       mark_new_account_setup
-      add_to_crm(@signup.account.id)
     end
 
     def set_additional_signup_params

@@ -240,4 +240,14 @@ module EmailHelper
     update_freshops_activity(account, "Outgoing emails blocked due to blacklisted spam rules match", "block_outgoing_email") if !(Account.current.subscription.active?)
   end
 
+  def custom_bot_attack_rules
+    if ($custom_bot_attack_rules.blank? || $custom_bot_rules_checked_time.blank? || $custom_bot_rules_checked_time < 5.minutes.ago)
+      custome_bot_rules_list = get_all_members_in_a_redis_set(CUSTOM_BOT_RULES)
+      $custom_bot_attack_rules = (custome_bot_rules_list.present? ? 
+                  custome_bot_rules_list : Helpdesk::Email::Constants::CUSTOM_BOT_RULES)
+      $custom_bot_rules_checked_time = Time.now
+    end
+    return $custom_bot_attack_rules
+  end
+
 end
