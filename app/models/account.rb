@@ -38,7 +38,7 @@ class Account < ActiveRecord::Base
                   :language, :ssl_enabled, :whitelisted_ip_attributes, :account_additional_settings_attributes,
                   :primary_email_config_attributes, :main_portal_attributes, :account_type, :time_zone
 
-  attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate, :model_changes, :disable_old_ui_changed
+  attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate, :model_changes, :disable_old_ui_changed, :is_anonymous_account
 
   include Account::Setup
   include Account::BackgroundFixtures
@@ -236,7 +236,7 @@ class Account < ActiveRecord::Base
   end
 
   def anonymous_account?
-    account_additional_settings.additional_settings[:anonymous_account] if account_additional_settings.additional_settings.present?
+    account_additional_settings.additional_settings[:anonymous_account] if account_additional_settings.try(:additional_settings).present?
   end
   class << self # class methods
 

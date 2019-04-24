@@ -27,14 +27,12 @@ class AnonymousAccountCleanupTest < ActionView::TestCase
     @account.account_additional_settings.mark_account_as_anonymous
     Account.stubs(:current).returns(@account.reload)
     args = { account_id: @account.id }
-    ChargeBee::Subscription.any_instance.stubs(:cancel_subscription).returns(true)
     Sidekiq::Testing.inline! do
       AccountCleanup::AnonymousAccountCleanup.new.perform(args)
     end
     account = Account.find_by_id(account_id)
     assert_nil account
   ensure
-    ChargeBee::Subscription.any_instance.unstub(:cancel_subscription)
     Account.unstub(:current)
     account.destroy if account
   end

@@ -34,5 +34,19 @@ module AccountsHelper
   def populate_language_list list
     list.collect { |lang| "<div>#{h(lang)}</div>" }.join.html_safe
   end
-  
+
+  def add_account_info_to_dynamo(signup_email)
+    AccountInfoToDynamo.perform_async(email: signup_email)
+  end
+
+  def add_to_crm(account_id, signup_params = {})
+    if Rails.env.production? || Rails.env.staging?
+      Subscriptions::AddLead.perform_at(ThirdCRM::ADD_LEAD_WAIT_TIME.minute.from_now,
+                                        account_id: account_id,
+                                        signup_id: signup_params[:signup_id])
+      CRMApp::Freshsales::Signup.perform_at(5.minutes.from_now,
+                                            account_id: account_id,
+                                            fs_cookie: signup_params[:fs_cookie])
+    end
+  end
 end
