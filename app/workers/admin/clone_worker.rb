@@ -67,6 +67,10 @@ class Admin::CloneWorker < BaseWorker
         Freshid::AgentsMigration.new.perform(revert_migration: true)
         # TODO: Need to stop sending emails
         Freshid::AgentsMigration.new.perform
+      elsif clone_account.freshid_org_v2_enabled?
+        User.run_without_current_user do
+          clone_account.create_all_users_in_freshid
+        end
       end
     end
 
@@ -94,6 +98,9 @@ class Admin::CloneWorker < BaseWorker
         ::Sync::Workflow.new(nil, false, @clone_account_id, true, branch_name).sync_config_from_production(committer)
         destroy_tickets(clone_account)
         destroy_twitter_handles(clone_account)
+        User.run_without_current_user do
+          clone_account.delete_all_users_in_freshid if clone_account.freshid_org_v2_enabled?
+        end
       end
       @account.make_current
     end

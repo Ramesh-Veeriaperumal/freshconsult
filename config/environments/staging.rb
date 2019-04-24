@@ -81,6 +81,14 @@ Helpkit::Application.configure do
     config.action_controller.asset_host = Proc.new { |source, request= nil, *_|
       $asset_sync_https_url.sample
     }
+    PhusionPassenger.on_event(:starting_worker_process) do |forked|
+      if forked
+        $organisation_client = Freshworks::Organisation::V2::OrganisationService::Client.new
+        $account_client = Freshworks::Account::V2::AccountService::Client.new
+        $user_client = Freshworks::User::V2::UserService::Client.new
+        $user_hash_client = Freshworks::User::V2::UserHashService::Client.new
+      end
+    end
   end
 
 end

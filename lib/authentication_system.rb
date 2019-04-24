@@ -50,7 +50,7 @@ module AuthenticationSystem
 
     def current_user_session
       return @current_user_session if defined?(@current_user_session)
-      return if api_request? && current_account.freshid_enabled? && (freshid_authorized? == false)
+      return if api_request? && current_account.freshid_integration_enabled? && (freshid_authorized? == false)
       if is_native_mobile?
         handle_mobile_authentication(request,params)
       else

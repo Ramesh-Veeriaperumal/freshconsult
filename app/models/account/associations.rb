@@ -1,5 +1,7 @@
 class Account < ActiveRecord::Base
 
+  has_one :organisation_account_mapping
+  has_one :organisation, :through => :organisation_account_mapping, :class_name => 'Organisation'
   has_many :tickets, :class_name => 'Helpdesk::Ticket'
   has_many :ticket_bodies, :class_name => 'Helpdesk::TicketBody'
   has_many :notes, :class_name => 'Helpdesk::Note'
@@ -251,7 +253,7 @@ class Account < ActiveRecord::Base
   has_many :day_pass_usages
   has_many :day_pass_purchases, :order => "created_at desc"
 
-  delegate :addons, :currency_name, :billing, :to => :subscription
+  delegate :addons, :currency_name, :billing, :freshid_status, :to => :subscription
 
   has_one :zendesk_import, :class_name => 'Admin::DataImport' , :conditions => {:source => Admin::DataImport::IMPORT_TYPE[:zendesk]}
 

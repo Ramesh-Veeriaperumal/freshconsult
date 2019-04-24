@@ -76,6 +76,7 @@ run "ln -nfs #{shared_path}/config/fdadmin_api_config.yml #{node[:rel_path]}/con
 run "ln -nfs #{shared_path}/config/hashed_data.yml #{node[:rel_path]}/config/hashed_data.yml"
 run "ln -nfs #{shared_path}/config/recaptcha_v2.yml #{node[:rel_path]}/config/recaptcha_v2.yml"
 run "ln -nfs #{shared_path}/config/freshid.yml #{node[:rel_path]}/config/freshid.yml"
+run "ln -nfs #{shared_path}/config/freshid_v2.yml #{node[:rel_path]}/config/freshid_v2.yml"
 run "ln -nfs #{shared_path}/config/ner_api.yml #{node[:rel_path]}/config/ner_api.yml"
 run "ln -nfs #{shared_path}/config/smart_filter.yml #{node[:rel_path]}/config/smart_filter.yml"
 run "ln -nfs #{shared_path}/config/heap_analytics.yml #{node[:rel_path]}/config/heap_analytics.yml"

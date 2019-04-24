@@ -64,6 +64,6 @@ class ApiProfilesController < ApiApplicationController
 
     def add_api_meta response
       response.api_meta = { csrf_token: form_authenticity_token }
-      response.api_meta[:freshid_profile_url] = freshid_profile_url if current_account.freshid_enabled?
+      response.api_meta[:freshid_profile_url] = freshid_profile_url if current_account.freshid_integration_enabled?
     end
 end

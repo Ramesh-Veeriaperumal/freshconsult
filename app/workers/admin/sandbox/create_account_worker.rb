@@ -61,6 +61,7 @@ class Admin::Sandbox::CreateAccountWorker < BaseWorker
         account_account_type: Account::ACCOUNT_TYPES[:sandbox],
         time_zone: @account.time_zone
       }
+      params.merge!(freshid_v2_signup_params) if @account.freshid_org_v2_enabled?
       Thread.current[:create_sandbox_account] = true
       Sharding.run_on_shard(SANDBOX_SHARD_CONFIG) do
         signup = Signup.new(params)
@@ -103,4 +104,21 @@ class Admin::Sandbox::CreateAccountWorker < BaseWorker
         return current_domain_suggestion if valid_domain?(current_domain_suggestion + '.' + BASE_DOMAIN)
       end
     end
+
+    def freshid_v2_signup_params
+      @account.make_current
+      @user.make_current
+      join_token = Freshid::V2::Models::Organisation.join_token
+      {
+        join_token: join_token,
+        fresh_id_version: Freshid::V2::Constants::FRESHID_SIGNUP_VERSION_V2
+      }
+    rescue Exception => e
+      Rails.logger.error("FRESHID exception in Admin::Sandbox::CreateAccountWorker, freshid_account_params: #{e.message}, #{e.backtrace}")
+      freshid_params = {}
+    ensure
+      User.reset_current_user
+      Account.reset_current_account
+    end
+
 end

@@ -27,7 +27,7 @@ class Account < ActiveRecord::Base
   
   is_a_launch_target
   
-  concerned_with :associations, :constants, :validations, :callbacks, :features, :solution_associations, :multilingual, :sso_methods, :presenter, :subscription_methods
+  concerned_with :associations, :constants, :validations, :callbacks, :features, :solution_associations, :multilingual, :sso_methods, :presenter, :subscription_methods, :freshid_methods
 
   include CustomerDeprecationMethods
   
@@ -713,55 +713,6 @@ class Account < ActiveRecord::Base
     !bots_count_from_cache.zero?
   end
 
-  def create_freshid_org_and_account(org_id, join_token, user)
-    return unless freshid_enabled?
-    response = org_id.present? ? create_freshid_account_with_user_for_org(org_id, join_token, user) : create_freshid_org_with_account_and_user(user)
-    sync_user_info_from_freshid(user, response)
-    user.enqueue_activation_email
-  end
-
-  def create_freshid_account_with_user_for_org(org_id, join_token, user)
-    organisation = Freshid::Organisation.new(id: org_id)
-    organisation.create_account(join_token, freshid_attributes)
-  end
-
-  def create_freshid_org_with_account_and_user(user)
-    payload = { organisation: { name: name }, account: freshid_attributes, user: user.freshid_attributes }
-    Freshid::Organisation.create(payload)
-  end
-
-  def create_freshid_org_without_account_and_user
-    Freshid::Organisation.create_for_account(name)
-  end
-
-  def map_freshid_org_to_account(org_id)
-    Freshid::Organisation.new(id: org_id).map_to_account(full_domain)
-  end
-
-  def freshid_attributes
-    { name: name, domain: full_domain }
-  end
-
-  def sync_user_info_from_freshid(user, response)
-    user_info = response[:user]
-    freshid_user = user_info.present? ? Freshid::User.new(response[:user]) : nil
-    user.sync_profile_from_freshid(freshid_user)
-    user.save
-  end
-
-
-  def initiate_freshid_migration
-    set_others_redis_key(freshid_migration_in_progress_key, Time.now.to_i)
-  end
-
-  def freshid_migration_complete
-    remove_others_redis_key(freshid_migration_in_progress_key)
-  end
-
-  def freshid_migration_in_progress?
-    redis_key_exists? freshid_migration_in_progress_key
-  end
-
   def account_cancel_requested?
     redis_key_exists?(account_cancel_request_job_key)
   end
@@ -968,10 +919,6 @@ class Account < ActiveRecord::Base
       encryption_key = AccountEncryptionKeys.find(id, :hipaa_key)
       set_others_redis_key(cf_encryption_key, encryption_key, 1.day)
       encryption_key
-    end
-
-    def freshid_migration_in_progress_key
-      FRESHID_MIGRATION_IN_PROGRESS_KEY % {account_id: self.id}
     end
 
     def cf_encryption_key

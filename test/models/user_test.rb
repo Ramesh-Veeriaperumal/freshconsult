@@ -227,13 +227,16 @@ class UserTest < ActiveSupport::TestCase
 
   def test_user_sync_from_freshid
     user = add_new_user(@account)
-    freshid_user = Freshid::User.new(uuid: 1, first_name: Faker::Name.first_name, last_name: Faker::Name.last_name, name: Faker::Name.name, email: Faker::Internet.email, password: Faker::Name.name)
+    Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(false)
+    freshid_user = Freshid::User.new(uuid: Faker::Number.number(10), first_name: Faker::Name.first_name, last_name: Faker::Name.last_name, name: Faker::Name.name, email: Faker::Internet.email, password: Faker::Name.name)
     assert_equal user.sync_profile_from_freshid(freshid_user), true
     freshid_user_data = {
       first_name: Faker::Name.first_name,
       last_name: Faker::Name.last_name
     }
     assert_equal user.assign_freshid_attributes_to_contact(freshid_user_data), true
+  ensure
+    Account.any_instance.unstub(:freshid_org_v2_enabled?)
   end
 
   def test_max_user_companies

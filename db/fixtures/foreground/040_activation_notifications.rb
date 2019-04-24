@@ -15,7 +15,7 @@ EmailNotification.seed_many(:account_id, :notification_type, [
     :notification_type => EmailNotification::PASSWORD_RESET,
     :account_id => account.id, 
     :requester_notification => true, 
-    :agent_notification => !account.freshid_enabled?,
+    :agent_notification => !account.freshid_integration_enabled?,
     :agent_template => 'Hey {{agent.name}},<br /><br />
               A request to change your password has been made.<br /><br />
               To reset your password, click on the link below:<br />

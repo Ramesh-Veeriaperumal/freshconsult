@@ -131,13 +131,23 @@ module AccountTestHelper
       features: account.features_list,
       created_at: account.created_at.try(:utc).try(:iso8601),
       updated_at: account.updated_at.try(:utc).try(:iso8601),
-      premium: account.premium
+      premium: account.premium,
+      freshid_account_id: account.freshid_account_id
     }
   end
 
   def central_publish_account_association_pattern(_expected_output = {})
     {
-      subscription: Hash
+      subscription: Hash,
+      organisation: nil
     }
   end
+
+  def central_publish_account_association_for_freshid_v2_pattern(_expected_output = {})
+    {
+      subscription: Hash,
+      organisation: Hash
+    }
+  end
+
 end

@@ -11,8 +11,8 @@ class Ember::Freshcaller::SettingsController < ApiApplicationController
     }
     if current_account.freshcaller_account.present? && current_account.has_features?(:freshcaller, :freshcaller_widget)
       @settings.merge!(
-        freshid_enabled: current_account.freshid_enabled?,
-        token: current_account.freshid_enabled? ? nil : sign_payload(email: current_user.email),
+        freshid_enabled: current_account.freshid_integration_enabled?,
+        token: current_account.freshid_integration_enabled? ? nil : sign_payload(email: current_user.email),
         freshcaller_widget_url: freshcaller_widget_url
       )
     end

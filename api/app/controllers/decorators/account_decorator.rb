@@ -24,7 +24,7 @@ class AccountDecorator < ApiDecorator
       created_at: record.created_at.try(:utc)
     }
     ret_hash.merge!(sandbox_info)
-    ret_hash[:collaboration] = collaboration_hash if record.collaboration_enabled? || (record.freshconnect_enabled? && record.freshid_enabled? && User.current.freshid_authorization)
+    ret_hash[:collaboration] = collaboration_hash if record.collaboration_enabled? || (record.freshconnect_enabled? && record.freshid_integration_enabled? && User.current.freshid_authorization)
     ret_hash[:social_options] = social_options_hash if record.features?(:twitter) || record.basic_twitter_enabled?
     ret_hash[:dashboard_limits] = record.account_additional_settings.custom_dashboard_limits if record.custom_dashboard_enabled?
     ret_hash[:freshchat] = freshchat_options_hash if record.freshchat_enabled?
@@ -33,6 +33,7 @@ class AccountDecorator < ApiDecorator
     ret_hash[:trial_subscription] = trial_subscription_hash(trial_subscription) if trial_subscription
     ret_hash[:account_cancellation_requested] = record.account_cancellation_requested?
     ret_hash[:anonymous_account] = true if record.anonymous_account?
+    ret_hash[:organisation_domain] = organisation_domain
     ret_hash
   end
 
@@ -161,5 +162,10 @@ class AccountDecorator < ApiDecorator
 
     def account_admin?
       User.current.privilege?(:manage_account)
+    end
+
+    def organisation_domain
+      organisation = record.organisation_from_cache
+      organisation.try(:alternate_domain) || organisation.try(:domain)
     end
 end

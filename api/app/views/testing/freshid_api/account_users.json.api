@@ -1,0 +1,1 @@
+JSON.generate({ freshid_data: @data})

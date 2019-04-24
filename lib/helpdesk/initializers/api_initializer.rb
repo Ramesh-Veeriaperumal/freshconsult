@@ -11,15 +11,6 @@ Helpkit::Application.configure do
   config.middleware.insert_before 'Middleware::TrustedIp', 'Middleware::FreshidCallbackApiAuthenticator'
   config.middleware.use Middleware::ApiResponseWrapper
 
-  # used by freshid requests
-  Freshid.user_class            = 'User'
-  Freshid.account_class         = 'Account'
-  Freshid.authorization_class   = 'Authorization'
-  Freshid.domain_mapping_class  = 'DomainMapping'
-  Freshid.events_to_track       = %w[PROFILE_UPDATED USER_ACTIVATED PASSWORD_UPDATED RESET_PASSWORD]
-  Freshid::CallbackMethods.safe_send(:prepend, Freshid::CallbackMethodsExtensions)
-  Freshid::ApiCalls.safe_send(:prepend, Freshid::ApiCallsExtensions)
-  Freshid::SnsErrorNotification.safe_send(:prepend, Freshid::SnsErrorNotificationExtensions)
   # used by pipe requests
   config.middleware.use BatchApi::RackMiddleware do |batch_config|
     # you can set various configuration options:

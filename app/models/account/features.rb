@@ -36,7 +36,8 @@ class Account < ActiveRecord::Base
     :freshvisual_configs, :ticket_field_limit_increase, :join_ticket_field_data, :byepass_signup_captcha,
     :contact_field_central_publish, :company_field_central_publish, :contact_company_split,
     :simple_outreach, :disable_simple_outreach, :fsm_dashboard, :supervisor_with_text_field,
-    :automation_rule_execution_count, :disable_field_service_management, :disable_mint_analytics, :addon_based_billing
+    :automation_rule_execution_count, :disable_field_service_management, :disable_mint_analytics,
+    :freshid_org_v2, :hide_agent_login, :addon_based_billing
   ].freeze
 
   DB_FEATURES = [
@@ -58,9 +59,9 @@ class Account < ActiveRecord::Base
     :denormalized_flexifields, :custom_dashboard, :support_bot, :image_annotation,
     :tam_default_fields, :todos_reminder_scheduler, :smart_filter, :ticket_summary,
     :opt_out_analytics, :freshchat, :disable_old_ui, :contact_company_notes,
-    :sandbox, :oauth2, :session_replay, :segments, :freshconnect, :proactive_outreach,
+    :sandbox, :session_replay, :segments, :freshconnect, :proactive_outreach,
     :audit_logs_central_publish, :audit_log_ui, :omni_channel_routing, :undo_send,
-    :custom_encrypted_fields, :freshid_saml, :custom_translations, :parent_child_infra,
+    :custom_encrypted_fields, :custom_translations, :parent_child_infra,
     :canned_forms, :social_tab, :customize_table_view, :public_url_toggle,
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
     :social_tab, :unresolved_tickets_widget_for_sprout, :scenario_automation,

@@ -2,7 +2,7 @@
 
   jQuery(document).ready(function(){
  invokeRedactor('<%= "user_binfo" %>','signature');
- 	<% unless freshid_enabled? || current_account.sso_enabled? %>
+ 	<% unless current_account.freshid_integration_enabled? || current_account.sso_enabled? %>
 	    jQuery("#password_confirmation").rules("add", {
 		    equalTo: "#password"
 	  	});
@@ -87,7 +87,7 @@ jQuery('.email').on('keyup', function(){
 <%= fields_for "user", @profile do |usr| %>
     <%= error_messages_for :user %>
  	<ul class="ui-form">
-    <% if freshid_enabled? %>
+    <% if freshid_integration_enabled? %>
 		<li>
 			<div class="upload-avatar">
 				<%= render :partial => "/shared/profile_avatar", :locals => { :user => user } %>
@@ -129,20 +129,20 @@ jQuery('.email').on('keyup', function(){
 				<%= text_field(:user, :company_name, :class => "text disabled", :id => "contact_customer", :disabled =>true ) %>
 			</li>
 		<%end%>
-		<% unless freshid_enabled? %>
+		<% unless freshid_integration_enabled? %>
 			<li>
 				<%= render :partial => "/shared/profileavatar", :locals => { :user => user, :type => "edit" } %>
 			</li>
 		<% end %>
 			<% if current_account.multi_timezone_enabled? %>
-			<li <% if freshid_enabled? %> class="freshid_field" <% end %>>
+			<li <% if freshid_integration_enabled? %> class="freshid_field" <% end %>>
 				<%= label(:user , :time_zone, t("account.time_zone")) %>
 				<%= time_zone_select(:user, :time_zone, ActiveSupport::TimeZone.all, :default => user.time_zone) %>
 			</li>
 			<% end %>
 			<% if feature?(:multi_language) %>
         <% if current_account.falcon_ui_enabled?(current_user) %>
-          <li <% if freshid_enabled? %> class="freshid_field" <% end %>>
+          <li <% if freshid_integration_enabled? %> class="freshid_field" <% end %>>
             <%= label(:user, :language, t('account.language')) %>
             <%= select(:user, :language, mint_locales_with_separator, {:selected => user.language.to_sym()})%>
             <a href="javascript:toggleMessage()">
@@ -151,7 +151,7 @@ jQuery('.email').on('keyup', function(){
             <%= render partial:'ui/falcon_languages_alert' %>
           </li>
         <% else %>
-  				<li <% if freshid_enabled? %> class="freshid_field" <% end %>>
+  				<li <% if freshid_integration_enabled? %> class="freshid_field" <% end %>>
   					<%= label(:user, :language, t('account.language')) %>
   					<%= select(:user, :language, I18n.available_locales_with_name , {:selected => user.language.to_sym()})%>
   				</li>

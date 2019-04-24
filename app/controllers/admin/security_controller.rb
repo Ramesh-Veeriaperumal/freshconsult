@@ -14,7 +14,7 @@ class Admin::SecurityController <  Admin::AdminController
 
   def update
     @account = current_account
-    @account.sso_enabled = params[:account][:sso_enabled]
+    @account.sso_enabled = (@account.freshid_org_v2_enabled? && !@account.sso_enabled?) ? "0" : params[:account][:sso_enabled]
     @account.ssl_enabled = params[:account][:ssl_enabled]
     new_account_configuration = @account.account_configuration.contact_info.dup
     new_account_configuration[:notification_emails] = params[:account][:account_configuration_attributes]

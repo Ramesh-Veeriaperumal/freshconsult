@@ -58,7 +58,7 @@ module BootstrapTestHelper
       init_auth_token: String,
       collab_url: String,
       rts_url: String,
-      freshconnect_enabled: account.freshconnect_enabled? && account.freshid_enabled? && User.current.freshid_authorization
+      freshconnect_enabled: account.freshconnect_enabled? && account.freshid_integration_enabled? && User.current.freshid_authorization
     }
   end
 
@@ -104,11 +104,12 @@ module BootstrapTestHelper
       ssl_enabled: account.ssl_enabled?
     }
 
-    pattern[:collaboration] = collab_pattern(account) if ( account.collaboration_enabled? || (account.freshconnect_enabled? && account.freshid_enabled? && User.current.freshid_authorization))
+    pattern[:collaboration] = collab_pattern(account) if ( account.collaboration_enabled? || (account.freshconnect_enabled? && account.freshid_integration_enabled? && User.current.freshid_authorization))
     pattern[:social_options] = social_options_hash if account.features?(:twitter) || account.basic_twitter_enabled?
     pattern[:dashboard_limits] = account.account_additional_settings.custom_dashboard_limits if account.custom_dashboard_enabled?
     pattern[:freshchat] = freshchat_hash if account.freshchat_enabled?
     pattern[:account_cancellation_requested] =  account.account_cancellation_requested?
+    pattern[:organisation_domain] = account.organisation_from_cache.try(:alternate_domain) || account.organisation_from_cache.try(:domain)
     pattern.merge!(sandbox_info(account))
     first_invoice = account.subscription.subscription_invoices.first
     if User.current.privilege?(:manage_users) || User.current.privilege?(:manage_account)

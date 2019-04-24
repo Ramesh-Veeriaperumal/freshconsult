@@ -1,5 +1,5 @@
 <%= @microsoft_teams_status if @microsoft_teams_status %>
-<% if freshid_enabled? %>
+<% if current_account.freshid_integration_enabled? %>
   <%= render :partial => "freshid_edit" %>
 <% else %>
   <%= content_tag( :h3, t("profile.edit"), :class => "title itil-hide" ) %>

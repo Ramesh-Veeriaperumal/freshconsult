@@ -1,4 +1,5 @@
 class Fdadmin::FreshopsPodController < Fdadmin::DevopsMainController
+  include Freshid::ControllerMethods
 
   VALID_METHODS = [:clear_domain_mapping_cache_for_pods,:check_domain_availability,:change_domain_mapping_for_pod,
                    :set_shard_mapping_for_pods,:remove_shard_mapping_for_pod]
@@ -105,6 +106,10 @@ class Fdadmin::FreshopsPodController < Fdadmin::DevopsMainController
         mobile_info[:sso_logout_url] = account.sso_logout_url
         mobile_info[:google_signin_enabled] = account.features_included?(:google_signin)
         mobile_info[:facebook_signin_enabled] = account.features_included?(:facebook_signin)
+        if account.freshid_org_v2_enabled?
+          mobile_info[:freshid_org_v2_enabled] = "true"
+          mobile_info[:org_login_url] = account.freshid_login_url
+        end
       end
     end
     return mobile_info

@@ -64,6 +64,8 @@ class UserSessionsControllerTest < ActionController::TestCase
     user = create_user_for_session
     current_account.launch(:freshid)
     Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(true)
     Account.any_instance.stubs(:all_technicians).returns(user)
     User.any_instance.stubs(:find_by_freshid_uuid).returns(user)
     Freshid::Login.any_instance.stubs(:authenticate_user).returns(Faker::Number.number(5))
@@ -81,6 +83,8 @@ class UserSessionsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:all_technicians)
     User.any_instance.unstub(:find_by_freshid_uuid)
     Account.any_instance.unstub(:freshid_enabled?)
+    Account.any_instance.unstub(:freshid_org_v2_enabled?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
     Freshid::Login.any_instance.unstub(:authenticate_user)
     UserSession.any_instance.unstub(:save)
     UserSession.any_instance.unstub(:record)
@@ -91,6 +95,8 @@ class UserSessionsControllerTest < ActionController::TestCase
     user = create_user_for_session
     current_account.launch(:freshid)
     Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(true)
     Freshid::Login.any_instance.stubs(:authenticate_user).returns(Faker::Number.number(5))
     UserSession.any_instance.stubs(:save).returns(true)
     UserSession.any_instance.stubs(:record).returns(user)
@@ -104,6 +110,8 @@ class UserSessionsControllerTest < ActionController::TestCase
   ensure
     current_account.rollback(:freshid)
     Account.any_instance.unstub(:freshid_enabled?)
+    Account.any_instance.unstub(:freshid_org_v2_enabled?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
     Freshid::Login.any_instance.unstub(:authenticate_user)
     UserSession.any_instance.unstub(:save)
     UserSession.any_instance.unstub(:record)
@@ -114,6 +122,8 @@ class UserSessionsControllerTest < ActionController::TestCase
     user = add_new_user(current_account)
     current_account.launch(:freshid)
     Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(true)
     Account.any_instance.stubs(:all_technicians).returns(user)
     User.any_instance.stubs(:find_by_freshid_uuid).returns(user)
     Freshid::Login.any_instance.stubs(:authenticate_user).returns(Faker::Number.number(5))
@@ -131,6 +141,8 @@ class UserSessionsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:all_technicians)
     User.any_instance.unstub(:find_by_freshid_uuid)
     Account.any_instance.unstub(:freshid_enabled?)
+    Account.any_instance.unstub(:freshid_org_v2_enabled?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
     Freshid::Login.any_instance.unstub(:authenticate_user)
     UserSession.any_instance.unstub(:save)
     UserSession.any_instance.unstub(:record)
@@ -142,6 +154,8 @@ class UserSessionsControllerTest < ActionController::TestCase
     current_account.launch(:freshid)
     User.any_instance.stubs(:password_expired?).returns(true)
     Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(true)
     Account.any_instance.stubs(:all_technicians).returns(user)
     User.any_instance.stubs(:find_by_freshid_uuid).returns(user)
     Freshid::Login.any_instance.stubs(:authenticate_user).returns(Faker::Number.number(5))
@@ -160,6 +174,8 @@ class UserSessionsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:all_technicians)
     User.any_instance.unstub(:find_by_freshid_uuid)
     Account.any_instance.unstub(:freshid_enabled?)
+    Account.any_instance.unstub(:freshid_org_v2_enabled?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
     Freshid::Login.any_instance.unstub(:authenticate_user)
     UserSession.any_instance.unstub(:save)
     UserSession.any_instance.unstub(:record)
@@ -213,14 +229,20 @@ class UserSessionsControllerTest < ActionController::TestCase
 
   def test_user_session_destroy_for_freshid_agent
     Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(true)
     delete :destroy, construct_params(format: 'html')
     assert_response 302
   ensure
     Account.any_instance.unstub(:freshid_enabled?)
+    Account.any_instance.unstub(:freshid_org_v2_enabled?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
   end
 
   def test_session_destroy_with_oauth_enabled
     Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(true)
     Account.any_instance.stubs(:oauth2_enabled?).returns(true)
     Account.any_instance.stubs(:sso_enabled?).returns(true)
     Account.any_instance.stubs(:agent_oauth2_sso_enabled?).returns(true)
@@ -229,12 +251,16 @@ class UserSessionsControllerTest < ActionController::TestCase
   ensure
     Account.any_instance.unstub(:oauth2_enabled?)
     Account.any_instance.unstub(:freshid_enabled?)
+    Account.any_instance.unstub(:freshid_org_v2_enabled?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
     Account.any_instance.unstub(:sso_enabled?)
     Account.any_instance.unstub(:agent_oauth2_sso_enabled?)
   end
 
   def test_session_destroy_with_agent_saml_auth_enabled
     Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(true)
     Account.any_instance.stubs(:freshid_saml_enabled?).returns(true)
     Account.any_instance.stubs(:sso_enabled?).returns(true)
     Account.any_instance.stubs(:agent_freshid_saml_sso_enabled?).returns(true)
@@ -242,6 +268,8 @@ class UserSessionsControllerTest < ActionController::TestCase
     assert_response 302
   ensure
     Account.any_instance.unstub(:freshid_enabled?)
+    Account.any_instance.unstub(:freshid_org_v2_enabled?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
     Account.any_instance.unstub(:freshid_saml_enabled?)
     Account.any_instance.unstub(:sso_enabled?)
     Account.any_instance.unstub(:agent_freshid_saml_sso_enabled?)
@@ -266,6 +294,8 @@ class UserSessionsControllerTest < ActionController::TestCase
     user = add_new_user(current_account)
     @controller.stubs(:current_user).returns(user)
     Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(true)
     Account.any_instance.stubs(:oauth2_enabled?).returns(true)
     Account.any_instance.stubs(:sso_enabled?).returns(true)
     Account.any_instance.stubs(:customer_oauth2_sso_enabled?).returns(true)
@@ -275,6 +305,8 @@ class UserSessionsControllerTest < ActionController::TestCase
     @controller.unstub(:current_user)
     Account.any_instance.unstub(:oauth2_enabled?)
     Account.any_instance.unstub(:freshid_enabled?)
+    Account.any_instance.unstub(:freshid_org_v2_enabled?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
     Account.any_instance.unstub(:sso_enabled?)
     Account.any_instance.unstub(:customer_oauth2_sso_enabled?)
   end
@@ -283,6 +315,8 @@ class UserSessionsControllerTest < ActionController::TestCase
     user = add_new_user(current_account)
     @controller.stubs(:current_user).returns(user)
     Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(true)
     Account.any_instance.stubs(:freshid_saml_enabled?).returns(true)
     Account.any_instance.stubs(:sso_enabled?).returns(true)
     Account.any_instance.stubs(:customer_freshid_saml_sso_enabled?).returns(true)
@@ -291,6 +325,8 @@ class UserSessionsControllerTest < ActionController::TestCase
   ensure
     @controller.unstub(:current_user)
     Account.any_instance.unstub(:freshid_enabled?)
+    Account.any_instance.unstub(:freshid_org_v2_enabled?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
     Account.any_instance.unstub(:freshid_saml_enabled?)
     Account.any_instance.unstub(:sso_enabled?)
     Account.any_instance.unstub(:customer_freshid_saml_sso_enabled?)
@@ -314,6 +350,8 @@ class UserSessionsControllerTest < ActionController::TestCase
   def test_agent_login_when_sso_enabled_for_logged_in_user
     Account.any_instance.stubs(:oauth2_enabled?).returns(true)
     Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(true)
     Account.any_instance.stubs(:sso_enabled?).returns(true)
     Account.any_instance.stubs(:agent_oauth2_sso_enabled?).returns(true)
     get :agent_login
@@ -322,6 +360,8 @@ class UserSessionsControllerTest < ActionController::TestCase
   ensure
     Account.any_instance.unstub(:oauth2_enabled?)
     Account.any_instance.unstub(:freshid_enabled?)
+    Account.any_instance.unstub(:freshid_org_v2_enabled?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
     Account.any_instance.unstub(:sso_enabled?)
     Account.any_instance.unstub(:agent_oauth2_sso_enabled?)
   end
@@ -330,15 +370,19 @@ class UserSessionsControllerTest < ActionController::TestCase
     @controller.stubs(:current_user).returns(nil)
     Account.any_instance.stubs(:oauth2_enabled?).returns(true)
     Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(true)
     Account.any_instance.stubs(:sso_enabled?).returns(true)
     Account.any_instance.stubs(:agent_oauth2_sso_enabled?).returns(true)
     get :agent_login
     assert_response 302
-    assert_includes response.redirect_url, 'oauth_agent_authorize_callback'
+    assert_includes response.redirect_url, '/oauth/authorize'
   ensure
     @controller.unstub(:current_user)
     Account.any_instance.unstub(:oauth2_enabled?)
     Account.any_instance.unstub(:freshid_enabled?)
+    Account.any_instance.unstub(:freshid_org_v2_enabled?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
     Account.any_instance.unstub(:sso_enabled?)
     Account.any_instance.unstub(:agent_oauth2_sso_enabled?)
   end
@@ -361,6 +405,8 @@ class UserSessionsControllerTest < ActionController::TestCase
   def test_customer_login_when_sso_enabled_for_logged_in_customer
     Account.any_instance.stubs(:oauth2_enabled?).returns(true)
     Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(true)
     Account.any_instance.stubs(:sso_enabled?).returns(true)
     Account.any_instance.stubs(:customer_oauth2_sso_enabled?).returns(true)
     get :customer_login
@@ -369,6 +415,8 @@ class UserSessionsControllerTest < ActionController::TestCase
   ensure
     Account.any_instance.unstub(:oauth2_enabled?)
     Account.any_instance.unstub(:freshid_enabled?)
+    Account.any_instance.unstub(:freshid_org_v2_enabled?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
     Account.any_instance.unstub(:sso_enabled?)
     Account.any_instance.unstub(:customer_oauth2_sso_enabled?)
   end
@@ -377,15 +425,19 @@ class UserSessionsControllerTest < ActionController::TestCase
     @controller.stubs(:current_user).returns(nil)
     Account.any_instance.stubs(:oauth2_enabled?).returns(true)
     Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(true)
     Account.any_instance.stubs(:sso_enabled?).returns(true)
     Account.any_instance.stubs(:customer_oauth2_sso_enabled?).returns(true)
     get :customer_login
     assert_response 302
-    assert_includes response.redirect_url, 'oauth_customer_authorize_callback'
+    assert_includes response.redirect_url, '/oauth/authorize'
   ensure
     @controller.unstub(:current_user)
     Account.any_instance.unstub(:oauth2_enabled?)
     Account.any_instance.unstub(:freshid_enabled?)
+    Account.any_instance.unstub(:freshid_org_v2_enabled?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
     Account.any_instance.unstub(:sso_enabled?)
     Account.any_instance.unstub(:customer_oauth2_sso_enabled?)
   end
@@ -433,6 +485,8 @@ class UserSessionsControllerTest < ActionController::TestCase
   def test_signup_complete_for_freshid_enabled_account
     user = add_new_user(current_account)
     Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(true)
     UserSession.any_instance.stubs(:save).returns(true)
     UserEmail.any_instance.stubs(:update_attributes).returns(true)
     User.any_instance.stubs(:deliver_admin_activation).returns(true)
@@ -441,6 +495,8 @@ class UserSessionsControllerTest < ActionController::TestCase
     assert_response 302
   ensure
     Account.any_instance.unstub(:freshid_enabled?)
+    Account.any_instance.unstub(:freshid_org_v2_enabled?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
     UserSession.any_instance.unstub(:save)
     UserEmail.any_instance.unstub(:update_attributes)
     User.any_instance.unstub(:deliver_admin_activation)

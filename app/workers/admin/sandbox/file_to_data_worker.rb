@@ -13,6 +13,9 @@ class Admin::Sandbox::FileToDataWorker < BaseWorker
     Sharding.admin_select_shard_of(@account.id) do
       @job = @account.sandbox_job
       @sandbox_account_id = @job.sandbox_account_id
+      User.run_without_current_user do
+        pre_migration_activities
+      end
       @job.mark_as!(:provision_staging)
       ::Sync::Workflow.new(@sandbox_account_id, false).provision_staging_instance(committer)
       @job.mark_shard_as!(:ok)
@@ -83,6 +86,21 @@ class Admin::Sandbox::FileToDataWorker < BaseWorker
         Freshid::AgentsMigration.new.perform(revert_migration: true)
         # TODO: Need to stop sending emails
         Freshid::AgentsMigration.new.perform
+      elsif sandbox_account.freshid_org_v2_enabled?
+        User.run_without_current_user do
+          sandbox_account.create_all_users_in_freshid
+        end
       end
+    end
+
+    def pre_migration_activities
+      current_account = Account.current
+      Sharding.admin_select_shard_of(@sandbox_account_id) do
+        sandbox_account = Account.find(@sandbox_account_id).make_current
+        sandbox_account.delete_all_users_in_freshid if sandbox_account.freshid_org_v2_enabled?
+      end
+    ensure
+      Account.reset_current_account
+      current_account.make_current
     end
 end

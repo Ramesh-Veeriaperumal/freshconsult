@@ -151,6 +151,27 @@ Helpkit::Application.routes.draw do
     match 'export/ticket_activities' => 'export#ticket_activities', :defaults => { format: 'json' }, :as => :ticket_activities, via: :get
     match 'rake_task/run_rake_task' => 'rake_task#run_rake_task', :defaults => { format: 'json' }, :as => :run_rake_task, via: :get
 
+    namespace :testing do
+      resources :freshid_api, only: [] do
+        collection do
+          get :find_organisation_by_id
+          get :find_organisation_by_domain
+          get :find_account_by_id
+          get :find_account_by_domain
+          get :organisation_accounts_by_org_domain
+          get :user_accounts_by_id
+          get :user_accounts_by_email
+          get :find_user_by_id
+          get :find_user_by_email
+          get :account_users
+          get :modify_admin_rights
+          get :organisation_admins
+          get :deliver_reset_password_instruction
+          get :create_user_activation_hash
+        end
+      end
+    end
+
     resources :automation_essentials, only: [] do
       collection do
         get :lp_launched_features

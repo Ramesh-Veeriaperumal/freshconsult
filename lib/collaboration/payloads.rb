@@ -47,7 +47,7 @@ class Collaboration::Payloads
     end
 
     def freshid_and_freshconnect_enabled?
-      current_account.freshid_enabled? && User.current.freshid_authorization && current_account.freshconnect_enabled?
+      current_account.freshid_integration_enabled? && User.current.freshid_authorization && current_account.freshconnect_enabled?
     end
 
     def payload_params

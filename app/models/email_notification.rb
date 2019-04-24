@@ -143,8 +143,8 @@ class EmailNotification < ActiveRecord::Base
   end
 
   def visible_to_agent?
-    return false if token == :password_reset_email and account.freshid_enabled?
-    return false if token == :agent_invitation_email and !account.freshid_enabled?
+    return false if token == :password_reset_email and account.freshid_integration_enabled?
+    return false if token == :agent_invitation_email and !account.freshid_integration_enabled?
     EmailNotification.agent_visible_template?(self.notification_type)
   end
 
