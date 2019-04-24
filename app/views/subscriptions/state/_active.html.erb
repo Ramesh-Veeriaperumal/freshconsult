@@ -8,6 +8,8 @@
     plan = @subscription.subscription_plan
     is_new_sprout = new_sprout?(plan.name)
     plan_id = plan.name.parameterize.underscore
+    field_agent_limit = @subscription.field_agent_limit || 0
+    show_field_agent_info = fsm_supported_plan?(plan) && current_account.field_service_management_enabled? && field_agent_limit > 0
   %>
 
 <div class="well-active well-active-new">
@@ -38,19 +40,33 @@
 
   <input type="hidden" data-omni-plan-id="<%= plan.name.parameterize.underscore %>" data-plan-id="<%= plan.id %>"/>
   <div class="calculate-container" id="<%= plan.name.parameterize.underscore %>">
+    <div class="features-billing-edit hide">
     <% if plan.omni_plan? || plan.basic_variant? %>
-      <p class="omni-billing-edit hide">
+      <p class="omni-billing-edit features-billing-edit__toggle">
         <span><%= t('omni_channel') %></span>
         <input rel="toggle" type="checkbox" data-plan="<%= plan_id %>"  id="exclude-omni" name="omni-edit-toggle" data-checked-label="<%= t('plain_yes') %>" 
         <%= plan.name.include?('Omni')? "checked='true'" : '' %> />
       </p>
     <% end %>
+    <% if fsm_supported_plan?(plan) %> 
+      <p class="fsm-billing-edit features-billing-edit__toggle">
+        <span><%= t('fsm_title') %></span>
+        <input rel="toggle" type="checkbox" data-plan-id="<%= plan.id %>" id="edit-billing-fsm-toggle" name="fsm-edit-toggle" data-checked-label="<%= t('plain_yes') %>"
+        <%= current_account.field_service_management_enabled? ? 'checked' : '' %> />
+      </p>
+    <% end %>
+    </div>
     <div class="subscribed-plan-details current-plan-info">
       <div id="info_1" class="subscription-info-divider <%= is_new_sprout ? 'free-divider' : ''%>">
         <ul>
           <li>
             <%= is_new_sprout ? t('free_plan') : t('agent_seats',:no_of_agents => @subscription.agent_limit) %>
           </li>
+          <% if show_field_agent_info %>
+          <li>
+            <%= t('field_agent_seats',:no_of_field_agents => field_agent_limit) %>
+          </li>
+          <% end %>
           <li>
             <% if is_new_sprout %>
               <%= t('free_plan_agents_v2') %>

@@ -43,12 +43,13 @@ window.App = window.App || {};
       $(document).on('click'+$this.namespace(),  '.omni-billing-edit .toggle-button', function(){ $this.toggleOmniPlans(this) })
       $(document).on('click'+$this.namespace(),  '#omni-disable-confirmation-submit', function(){ $this.submitPlanUpdate(this) })
       $(document).on('click'+$this.namespace(),  '.fsm-toggle-holder .toggle-button', function(){ $this.toggleFSMAddon(this, false) })
+      $(document).on('click'+$this.namespace(),  '.fsm-billing-edit .toggle-button', function(){ $this.toggleFSMAddon(this, true) })
       $(document).on('change'+$this.namespace(), '#field-agents-text-box', function(){ $this.fieldAgentChange(this) })
     },
     billingCancel: function (ev) {
       ev.preventDefault();
       $("#billing-template").detach().appendTo('#Pagearea').hide();
-      $(".omni-billing-edit").hide();
+      $(".features-billing-edit").addClass('hide');
       var data_content = this.original_data;
       $(".subscribed-plan-details").html(data_content);
     },
@@ -242,14 +243,15 @@ window.App = window.App || {};
         else
           $('.active').addClass("free-plan-options");
       }else{
+        var fsm_addon_key = 'field_service_management';
+        var fsm_addon_value = $("#field-agents-text-box").val();
         if(button.classList != undefined && button.classList.contains("edit-plan")) {
           $(".toggle-omni-billing:visible").hide();
+          $('#edit-billing-fsm-toggle').is(':checked') ? this.addAddon(fsm_addon_key, fsm_addon_value) : this.removeAddon(fsm_addon_key);
         } else {
           var parent = jQuery(this.selected_plan)? "#"+jQuery(this.selected_plan).attr("id") : "#plan-"+button.id.replace("_button", "");
           $(parent).find(".toggle-omni-billing").show();
           var fsm_billing_toggle = $(parent).find(".toggle-fsm-billing");
-          var fsm_addon_key = 'field_service_management';
-          var fsm_addon_value = $("#field-agents-text-box").val();
           if($('#fsm-toggle').is(':checked') && fsm_billing_toggle.length) {
             fsm_billing_toggle.show();
             this.addAddon(fsm_addon_key, fsm_addon_value) 
@@ -295,7 +297,7 @@ window.App = window.App || {};
           $("#plan_id").val(plan_id);
           if($this.current_active_plan_flag) {
             if($(".subscribed-plan-details .billing-info-divider:visible").length <= 0) {
-              $(".omni-billing-edit").show();
+              $(".features-billing-edit").removeClass('hide');
             }
             billing_template.find(".billing-cancel").show();
             billing_template.find(".billing-submit").val(I18n.t('common_js_translations.update_plan')).addClass('btn-primary');
@@ -309,6 +311,7 @@ window.App = window.App || {};
               $this.omni_disabled = null;
               this.omni_disabled = null;
             }
+            $('#edit-billing-fsm-toggle').is(':checked') ? $this.enableFSMandShowFieldAgents() : $this.disableFSMandHideFieldAgents();
           } 
           else {
             billing_template.find(".billing-cancel").hide();
@@ -317,11 +320,9 @@ window.App = window.App || {};
             if(curren_plan_id) {
               var fsm_toggle = '#' + curren_plan_id + ' .toggle-fsm-billing';
               $("#"+curren_plan_id + " .toggle-omni-billing").removeClass("hide");      
-              if($(fsm_toggle + ':visible').length && $(fsm_toggle + ' .toggle-button').hasClass('active')) {
-                $this.enableFSMandShowFieldAgents();
-              } else {
-                $this.disableFSMandHideFieldAgents();
-              }        
+              $(fsm_toggle + ':visible').length && $(fsm_toggle + ' .toggle-button').hasClass('active') ?
+                $this.enableFSMandShowFieldAgents()
+                : $this.disableFSMandHideFieldAgents();       
             }
           }
           $this.perMonthCost();
