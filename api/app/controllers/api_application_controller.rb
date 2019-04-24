@@ -662,6 +662,7 @@ class ApiApplicationController < MetalApiController
       end
       set_current_portal
 
+      set_account_meta_cookies
       User.current = api_current_user
       Thread.current[:message_uuid] = request.try(:uuid).to_a
       if private_api?
