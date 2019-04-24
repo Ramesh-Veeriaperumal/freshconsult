@@ -51,6 +51,7 @@
   <%= javascript_include_tag :'cdn/ticket_fields' %>
   <%= javascript_tag do %>
     // Localizing ticket fields js elements
+    fsmFeature = <%= Account.current.field_service_management_enabled? %>
     customFields = <%= @ticket_field_json.to_json.html_safe %>;
     customSection = <%= @section_data_json.to_json.html_safe %>;
     multi_sections_enabled = <%= Account.current.multi_dynamic_sections_enabled? &&
