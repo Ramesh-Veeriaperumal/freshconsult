@@ -235,6 +235,7 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                     metric = widget_queries.metric;
                     var product_id = widget_queries.productId;
                     var groups = widget_queries.groupIds;
+                    var ticket_type = widget_queries.ticketType;
            
                     if (groups) {
                         var groupsList =  (groups.split(",").length > 1 ) ?   groups.split(",") : groups;
@@ -242,6 +243,9 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                     }
                     if (product_id) {
                         jQuery('#product_id').val(product_id).trigger('change');
+                    }
+                    if (ticket_type) {
+                        jQuery('#ticket_type').val(ticket_type).trigger('change');
                     }
                     jQuery("#date_range").val(date);
                     jQuery('#sprout-datepicker').val(date);
@@ -667,9 +671,13 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                 var date = widget_queries.dateRange;
                 var active_metric = widget_queries.metric;
                 var product_id = widget_queries.productId;
+                var ticket_type = widget_queries.ticketType;
 
                 if(product_id) {
                     HelpdeskReports.CoreUtil.default_available_filter.push("product_id");
+                }
+                if(ticket_type) {
+                    HelpdeskReports.CoreUtil.default_available_filter.push("ticket_type");
                 }
                 _FD.core.setReportFilters();
             }else{
