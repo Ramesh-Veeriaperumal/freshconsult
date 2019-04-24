@@ -1,9 +1,7 @@
 require_relative '../../test_helper'
-['agents_test_helper.rb', 'privileges_helper.rb', 'attachments_test_helper.rb'].each { |file| require Rails.root.join('test', 'api', 'helpers', file) }
 class Ember::AgentsControllerTest < ActionController::TestCase
   include AgentsTestHelper
   include PrivilegesHelper
-  include AttachmentsTestHelper
   include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
 
   def wrap_cname(params)
@@ -18,16 +16,13 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     email_params
   end
 
-  def get_or_create_agent(agent_type = nil)
-    if Account.current.agents.last.nil?
-      @account = Account.current
-      agent_type_id = 1
-      if agent_type.present?
-        agent_type_id = AgentType.create_agent_type(@account, agent_type).agent_type_id
-      end
-      add_test_agent(@account, role: Role.find_by_name('Agent').id, agent_type: agent_type_id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
+  def get_or_create_agent
+    if Account.first.agents.last.nil?
+      @account = Account.first
+      field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
+      return add_test_agent(@account, role: Role.find_by_name('Agent').id, agent_type: field_agent_type.agent_type_id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets]) if Account.first.agents.last.nil?
     else
-      Account.current.agents.last.user
+      Account.first.agents.last
     end
   end
 
@@ -49,7 +44,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     pattern = {:succeeded => success_pattern.ordered, :failed => failure_pattern.ordered}
     match_json(pattern)
   end
-
+  
   def test_multiple_agent_creation_with_freshid
     @account.launch(:freshid)
     valid_emails = [Faker::Internet.email, Faker::Internet.email]
@@ -71,7 +66,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     Freshid::User.unstub(:create)
     @account.rollback(:freshid)
   end
-
+  
   def test_multiple_agent_creation_with_existing_user_in_freshid
     @account.launch(:freshid)
     fid_user_params = { first_name: "Existing", last_name: "User", phone: "543210", mobile: "9876543210" }
@@ -83,12 +78,12 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     post :create_multiple, construct_params(version: 'private', agents: agent_params)
     assert_response 202
     @account.reload
-
+  
     user = @account.users.find_by_email(valid_email)
     assert_equal user.name, "#{fid_user_params[:first_name]} #{fid_user_params[:last_name]}"
     assert_equal user.phone, fid_user_params[:phone]
     assert_equal user.mobile, fid_user_params[:mobile]
-
+  
     User.any_instance.unstub(:deliver_agent_invitation!)
     Freshid::User.unstub(:create)
     @account.rollback(:freshid)
@@ -180,7 +175,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     get :index, controller_params(version: 'private', only: 'available_count', privilege: 'dummy_bla_bla')
     assert_response 400
     match_json([bad_request_error_pattern('privilege', 'privilege_not_allowed', code: 'invalid_value')])
-  end
+  end  
 
   def test_agent_index_with_only_filter_wrong_params
     create_rr_agent
@@ -194,7 +189,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_availability
-    user = get_or_create_agent
+    user = add_test_agent(@account, role: Role.find_by_name('Agent').id)
     add_privilege(User.current,:manage_availability)
     params_hash = { ticket_assignment: { available: false } }
     put :update, construct_params({ version: 'private', id: user.id }, params_hash)
@@ -214,14 +209,14 @@ class Ember::AgentsControllerTest < ActionController::TestCase
   end
 
   def test_update_freshchat_token
-    user = get_or_create_agent
     token = Faker::Number.number(10)
     params_hash = { freshchat_token: token }
-    put :update, construct_params({ version: 'private', id: user.id }, params_hash)
-    user.reload
-    assert_equal user.text_uc01[:agent_preferences][:freshchat_token], token
+    currentuser = User.current
+    put :update, construct_params({ version: 'private', id: currentuser.id }, params_hash)
+    currentuser.reload
+    assert_equal currentuser.text_uc01[:agent_preferences][:freshchat_token],token
     assert_response 200
-    match_json(private_api_agent_pattern(user.agent))
+    match_json(private_api_agent_pattern(currentuser.agent))
   end
 
   def test_accept_gdpr_with_admin_and_not_gdpr_pending
@@ -243,6 +238,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
   end
 
   def test_accept_gdpr_with_agent_access
+    
      user = add_test_agent(@account, role: Role.find_by_name('Agent').id)
      login_as(user)
      post :complete_gdpr_acceptance, construct_params(version: 'private')
@@ -385,7 +381,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     put :assume_identity, construct_params({ version: 'private', id: user.id }, {})
     assert_response 204
   end
-
+  
   def test_revert_identity
     user = add_test_agent(@account, role: Role.find_by_name('Agent').id)
     add_privilege(User.current, :manage_users)
@@ -393,7 +389,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     get :revert_identity, construct_params(version: 'private')
     assert_response 204
   end
-
+  
    def test_agent_availability_without_admin_task_privilege
     group = create_group_with_agents(@account, role: Role.find_by_name('Supervisor').id)
     current_user = User.current
@@ -434,6 +430,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     assert_response 202
     ensure
       Account.any_instance.unstub(:roles_from_cache)
+    
   end
 
   def test_enable_undo_send
@@ -449,52 +446,4 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     post :disable_undo_send, construct_params(id: @agent.id)
     assert_response 204
   end
-
-  def test_update_with_avatar_id
-    user = get_or_create_agent
-    file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
-    attachment_id = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
-    params_hash = { avatar_id: attachment_id }
-    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
-    put :update, construct_params({ version: 'private', id: user.id }, params_hash)
-    assert_equal user.avatar.content_file_name, 'image33kb.jpg'
-    assert_response 200
-  ensure
-    DataTypeValidator.any_instance.unstub(:valid_type?)
-  end
-
-  def test_update_with_avatar_id_null_removes_avatar_correctly
-    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
-    user = get_or_create_agent
-    params_hash = { avatar_id: nil }
-    put :update, construct_params({ version: 'private', id: user.id }, params_hash)
-    assert_nil user.avatar
-    assert_response 200
-  ensure
-    DataTypeValidator.any_instance.unstub(:valid_type?)
-  end
-
-  def test_update_with_invalid_avatar_id
-    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
-    user = get_or_create_agent
-    invalid_id = Faker::Number.number(3)
-    params_hash = { avatar_id: invalid_id.to_i }
-    put :update, construct_params({ version: 'private', id: user.id }, params_hash)
-    assert_response 400
-    match_json([bad_request_error_pattern(:attachment_ids, :invalid_list, list: invalid_id.to_s)])
-  ensure
-    DataTypeValidator.any_instance.unstub(:valid_type?)
-  end
-
-  def test_update_with_invalid_avatar_extension
-    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
-    user = get_or_create_agent
-    attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: user.id).id
-    params_hash = { avatar_id: attachment_id }
-    put :update, construct_params({ version: 'private', id: user.id }, params_hash)
-    assert_response 400
-    match_json([bad_request_error_pattern(:avatar_id, :upload_jpg_or_png_file, current_extension: '.txt')])
-  ensure
-    DataTypeValidator.any_instance.unstub(:valid_type?)
-  end
-end
+end  

@@ -1,26 +1,26 @@
 class ApiAgentsController < ApiApplicationController
-  include HelperConcern
-
   skip_before_filter :check_privilege, only: :revert_identity
   before_filter :check_gdpr_pending?, only: :complete_gdpr_acceptance
-  SLAVE_ACTIONS = %w[index achievements].freeze
+  SLAVE_ACTIONS = %w(index achievements).freeze
 
   def update
     assign_protected
-    return unless validate_delegator(params[cname].slice(:role_ids, :group_ids), agent_delegator_params)
-
-    params[cname][:user_attributes].each do |k, v|
-      @item.user.safe_send("#{k}=", v)
+    agent_delegator = AgentDelegator.new(params[cname].slice(:role_ids, :group_ids))
+    if agent_delegator.invalid?
+      render_custom_errors(agent_delegator, true)
+    else
+      params[cname][:user_attributes].each do |k, v|
+        @item.user.safe_send("#{k}=", v)
+      end
+      @item.user_changes = @item.user.agent.user_changes || {}
+      @item.user_changes.merge!(@item.user.changes)
+      if params[cname].key?(:group_ids)
+        group_ids = params[cname].delete(:group_ids)
+        @item.build_agent_groups_attributes(group_ids)
+      end
+      return if @item.update_attributes(params[cname].except(:user_attributes))
+      render_custom_errors
     end
-    @item.user_changes = @item.user.agent.user_changes || {}
-    @item.user_changes.merge!(@item.user.changes)
-    if params[cname].key?(:group_ids)
-      group_ids = params[cname].delete(:group_ids)
-      @item.build_agent_groups_attributes(group_ids)
-    end
-    return if @item.update_attributes(params[cname].except(:user_attributes))
-
-    render_custom_errors
   end
 
   def destroy
@@ -46,14 +46,6 @@ class ApiAgentsController < ApiApplicationController
   end
 
   private
-
-    def constants_class
-      :AgentConstants.to_s.freeze
-    end
-
-    def agent_delegator_params
-      {}
-    end
 
     def after_load_object
       if (update? && (!User.current.can_edit_agent?(@item) || !agent_update_allowed?)) || (destroy? && (!User.current.can_edit_agent?(@item) || current_user_update?))

@@ -13849,9 +13849,6 @@
         },
         "shortcuts_enabled": {
           "type": "boolean"
-        },
-        "avatar_id": {
-          "type": "integer"
         }
       }
     },
