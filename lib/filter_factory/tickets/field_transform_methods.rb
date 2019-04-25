@@ -27,6 +27,8 @@ module FilterFactory::Tickets
             safe_send("transform_#{field['condition']}", field) if include_choice?(field['value'], '0')
           elsif field_name == WATCHER
             transform_watcher_condition(field)
+          elsif fsm_appointment_filter?(field) # check for fsm appointment times
+            transform_fsm_appointment_times_condition(field)
           end
         end
         append_special_conditions
@@ -93,6 +95,17 @@ module FilterFactory::Tickets
         else
           transformed_condition = safe_send("#{value}_condition")
         end
+        condition.merge! transformed_condition
+      end
+
+      def transform_fsm_appointment_times_condition(condition)
+        value = condition['value']
+        transformed_condition = if value.include? ' - '
+                                  from, to = value.split(' - ').map { |date| Time.zone.parse(date).utc.iso8601 }
+                                  fetch_date_range(from, to)
+                                else
+                                  safe_send("fsm_#{value}_condition")
+                                end
         condition.merge! transformed_condition
       end
 
@@ -236,6 +249,36 @@ module FilterFactory::Tickets
         fetch_date_range(Time.zone.now.utc.iso8601, 8.hours.from_now.utc.iso8601)
       end
 
+      # Adding time filter for Field Service Management
+
+      def fsm_yesterday_condition
+        fetch_date_range(Time.zone.now.yesterday.beginning_of_day.utc.iso8601, Time.zone.now.yesterday.end_of_day.utc.iso8601)
+      end
+
+      def fsm_today_condition
+        fetch_date_range(Time.zone.now.beginning_of_day.utc.iso8601, Time.zone.now.end_of_day.utc.iso8601)
+      end
+
+      def fsm_tomorrow_condition
+        fetch_date_range(Time.zone.now.tomorrow.beginning_of_day.utc.iso8601, Time.zone.now.tomorrow.end_of_day.utc.iso8601)
+      end
+
+      def fsm_last_week_condition
+        fetch_date_range(Time.zone.now.beginning_of_day.ago(7.days).utc.iso8601, Time.zone.now.beginning_of_day.utc.iso8601)
+      end
+
+      def fsm_week_condition
+        fetch_date_range(Time.zone.now.beginning_of_week.utc.iso8601, Time.zone.now.end_of_week.utc.iso8601)
+      end
+
+      def fsm_next_week_condition
+        fetch_date_range(Time.zone.now.tomorrow.beginning_of_day.utc.iso8601, Time.zone.now.tomorrow.advance(days: 7).end_of_day.utc.iso8601)
+      end
+
+      def fsm_in_the_past_condition
+        fetch_date_range(nil, Time.zone.now.utc.iso8601)
+      end
+
       def any_time_condition
         fetch_date_range(nil, 30.days.from_now.utc.iso8601)
       end
@@ -246,6 +289,10 @@ module FilterFactory::Tickets
 
       def include_choice?(value, choice)
         value.is_a?(Array) ? value.include?(choice) : value.to_s.split(',').include?(choice)
+      end
+
+      def fsm_appointment_filter?(condition)
+        condition['ff_name'] && TicketFilterConstants::FSM_DATE_TIME_FIELDS.include?(TicketDecorator.display_name(condition['ff_name']))
       end
   end
 end

@@ -13,6 +13,7 @@ module Ember
     include AccountTestHelper
     include SharedOwnershipTestHelper
     include CoreUsersTestHelper
+    include AdvancedTicketingTestHelper
 
     CREATED_AT_OPTIONS = %w(
       any_time 5 15 30 60 240 720 1440
@@ -293,6 +294,76 @@ module Ember
     def test_next_8_hrs_dueby_filter
       query_hash_params = { '0' => query_hash_param('due_by', 'due_by_op', [4]) }
       match_db_and_es_query_responses(query_hash_params)
+    end
+
+    def test_fsm_last_week_appointment_time_filter
+      Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+      perform_fsm_operations
+      query_hash_params = { '0' => query_hash_param('cf_fsm_appointment_start_time', 'is', 'today', 'custom_field') }
+      match_db_and_es_query_responses(query_hash_params)
+    ensure
+      cleanup_fsm
+      Account.any_instance.unstub(:field_service_management_enabled?)
+    end
+
+    def test_fsm_in_the_past_appointment_time_filter
+      Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+      perform_fsm_operations
+      query_hash_params = { '0' => query_hash_param('cf_fsm_appointment_start_time', 'is', 'in_the_past', 'custom_field') }
+      match_db_and_es_query_responses(query_hash_params)
+    ensure
+      cleanup_fsm
+      Account.any_instance.unstub(:field_service_management_enabled?)
+    end
+
+    def test_fsm_yesterday_appointment_time_filter
+      Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+      perform_fsm_operations
+      query_hash_params = { '0' => query_hash_param('cf_fsm_appointment_start_time', 'is', 'yesterday', 'custom_field') }
+      match_db_and_es_query_responses(query_hash_params)
+    ensure
+      cleanup_fsm
+      Account.any_instance.unstub(:field_service_management_enabled?)
+    end
+
+    def test_fsm_today_appointment_time_filter
+      Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+      perform_fsm_operations
+      query_hash_params = { '0' => query_hash_param('cf_fsm_appointment_start_time', 'is', 'today', 'custom_field') }
+      match_db_and_es_query_responses(query_hash_params)
+    ensure
+      cleanup_fsm
+      Account.any_instance.unstub(:field_service_management_enabled?)
+    end
+
+    def test_fsm_tomorrow_appointment_time_filter
+      Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+      perform_fsm_operations
+      query_hash_params = { '0' => query_hash_param('cf_fsm_appointment_start_time', 'is', 'tomorrow', 'custom_field') }
+      match_db_and_es_query_responses(query_hash_params)
+    ensure
+      cleanup_fsm
+      Account.any_instance.unstub(:field_service_management_enabled?)
+    end
+
+    def test_fsm_this_week_appointment_time_filter
+      Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+      perform_fsm_operations
+      query_hash_params = { '0' => query_hash_param('cf_fsm_appointment_start_time', 'is', 'week', 'custom_field') }
+      match_db_and_es_query_responses(query_hash_params)
+    ensure
+      cleanup_fsm
+      Account.any_instance.unstub(:field_service_management_enabled?)
+    end
+
+    def test_fsm_next_week_appointment_time_filter
+      Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+      perform_fsm_operations
+      query_hash_params = { '0' => query_hash_param('cf_fsm_appointment_start_time', 'is', 'next_week', 'custom_field') }
+      match_db_and_es_query_responses(query_hash_params)
+    ensure
+      cleanup_fsm
+      Account.any_instance.unstub(:field_service_management_enabled?)
     end
 
     def test_all_unresolved_filter

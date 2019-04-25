@@ -233,6 +233,7 @@ module Freshquery
       attribute :spam, :deleted, :trashed, :status_stop_sla_timer, :status_deleted, type: :boolean
       attribute :product_id, :source, :company_id, :association_type, :watchers, :tag_ids, type: :positive_integer
       attribute :requester_id, transform: :requester_id, type: :positive_integer
+      attribute :fsm_appointment_start_time, :fsm_appointment_end_time, type: :date_time
       custom_dropdown mappings: :custom_dropdown_mappings, choices: :custom_dropdown_choices
     end
   end
