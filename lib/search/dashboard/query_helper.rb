@@ -1,4 +1,5 @@
 module Search::Dashboard::QueryHelper
+  include Admin::AdvancedTicketing::FieldServiceManagement::Util
   # For search service count cluster migration. This file is used for filter params to FQL Strings.
 
   # Field mapping used to transform to search service field
@@ -23,9 +24,10 @@ module Search::Dashboard::QueryHelper
     conditions = []
     wf_conditions.each do |field|
       cond_field = (COLUMN_MAPPING[field['condition']].presence || field['condition'].to_s)
-      field_values = field['value'].to_s.split(',')
-      if cond_field.include?("flexifields")  
-      	conditions << transform_flexifield_filter(field["ff_name"].gsub("_#{Account.current.id}" , ""), field_values) 
+      field_values = field['value'].to_s.split(',').map { |value| encode_value(value)} # Hack to handle special chars in query
+      if cond_field.include?('flexifields')
+        conditions << transform_flexifield_filter(field['ff_name'].gsub("_#{Account.current.id}", ''), field_values)
+
       elsif cond_field.present?
       	conditions << transform_field(cond_field, field_values) 
       end
@@ -137,13 +139,17 @@ module Search::Dashboard::QueryHelper
 
   #handling flexifields 
   def transform_flexifield_filter(field_name, values)
-    queries = []
-    if values.include?("-1")
-      values.delete("-1") 
-      queries << "#{field_name}:null"
+    if TicketFilterConstants::FSM_DATE_TIME_FIELDS.include?(field_name) #fsm appointment fields check
+      transform_fsm_appointment_times(field_name, values)
+    else
+      queries = []
+      if values.include?("-1")
+        values.delete("-1") 
+        queries << "#{field_name}:null"
+      end
+      queries.push(*values.map { |val| "#{field_name}:'#{val}'" }) if values.present?
+  	  queries.length >1 ? add_or_condition(queries)  : queries.first
     end
-    queries.push(values.map{|v| "#{field_name}:'#{v}'"}) if values.present?
-  	queries.length >1 ? add_or_condition(queries)  : queries.first
   end
 
     # Only one value can be chosen
@@ -212,4 +218,38 @@ module Search::Dashboard::QueryHelper
     safe_send("transform_#{field_name}", field_name, values) rescue transform_filter(field_name, values)
   end
 
+  # for FSM appointment start time and end time fields
+  def transform_fsm_appointment_times(field_name, values)
+    field_name = fsm_field_display_name(field_name)
+    value = values.first
+    date_filter_values = TicketFilterConstants::DATE_TIME_FILTER_DEFAULT_OPTIONS_HASH
+    start_time, end_time = case value
+                            when date_filter_values[:today]
+                              [Time.zone.now.beginning_of_day, Time.zone.now.end_of_day]
+                            when date_filter_values[:tomorrow]
+                              [Time.zone.now.tomorrow.beginning_of_day, Time.zone.now.tomorrow.end_of_day]
+                            when date_filter_values[:yesterday]
+                              [Time.zone.now.yesterday.beginning_of_day, Time.zone.now.yesterday.end_of_day]
+                            when date_filter_values[:week]
+                              [Time.zone.now.beginning_of_week, Time.zone.now.end_of_week]
+                            when date_filter_values[:last_week]
+                              [Time.zone.now.beginning_of_day.ago(7.days), Time.zone.now.beginning_of_day]
+                            when date_filter_values[:next_week]
+                              [Time.zone.now.tomorrow.beginning_of_day, Time.zone.now.tomorrow.advance(days: 7).end_of_day]
+                            when date_filter_values[:in_the_past]
+                              [nil, Time.zone.now]
+                            else
+                              start, finish = value.split(' - ')
+                              [Time.zone.parse(start), Time.zone.parse(finish)]
+                            end
+    to_es_condition(field_name, start_time.try(:utc).try(:iso8601), end_time.utc.iso8601)
+  end
+
+  def to_es_condition(field_name, start_time, end_time)
+    if start_time.nil?
+      "#{field_name}:<'#{end_time}'"
+    else
+      "#{field_name}:>'#{start_time}' AND #{field_name}:<'#{end_time}'"
+    end
+  end
 end
