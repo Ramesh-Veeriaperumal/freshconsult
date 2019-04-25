@@ -22,12 +22,13 @@ namespace :account_cleanup do
   end
   
   desc "This task deletes the deleted ( soft delete ) and spam tickets which have not been updated for more than 30 days"
-  task :delete_spam_tickets_cleanup => :environment do
+  task :accounts_spam_cleanup, [:type] => :environment do |t,args|
+    account_type = args.type || "trial_accounts"
     Sharding.run_on_all_slaves do
-      Account.current_pod.active_accounts.find_in_batches do |accounts|
+      Account.current_pod.safe_send(account_type).find_in_batches do |accounts|
         accounts.each do |account|
           account_id = account.id
-          puts "Enqueuing #{account_id} to Delete Spam Tickets Cleanup"
+          puts "#{account_type} enqueuing #{account_id} to Delete Spam Tickets Cleanup"
           AccountCleanup::DeleteSpamTicketsCleanup.perform_async( :account_id => account_id)
         end
       end
