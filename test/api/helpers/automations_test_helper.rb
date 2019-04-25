@@ -1,6 +1,7 @@
 module AutomationTestHelper
   include Admin::Automation::AutomationSummary
   include Va::Constants
+  include Admin::AutomationConstants
 
   def rules_pattern(rules)
     rules.map do |rule|
@@ -88,9 +89,19 @@ module AutomationTestHelper
       condition_data.merge!({field_name: condition[:name]}) unless condition[:name].nil?
       condition_data.merge!({operator: condition[:operator]}) unless condition[:operator].nil?
       condition_data.merge!({value: condition[:value]}) unless condition[:value].nil?
+      condition_data = support_for_old_operators(condition_data)
       condition_hash[evaluate_on_type.to_sym] << condition_data
     end
     condition_hash
+  end
+
+  def support_for_old_operators(data)
+    data = data.symbolize_keys
+    if data[:operator].is_a?(String) && OLD_OPERATOR_MAPPING.key?(data[:operator].to_sym)
+      data[:value] = *data[:value]
+      data[:operator] = OLD_OPERATOR_MAPPING[data[:operator].to_sym]
+    end
+    data
   end
 
   def actions_pattern(action_data)

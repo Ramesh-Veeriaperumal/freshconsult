@@ -279,9 +279,10 @@ module Admin::AutomationConstants
     phone_number: %i[is is_not contains_any_of contains_none_of starts_with ends_with is_any_of is_none_of]
   }.freeze
 
-  ARRAY_VALUE_EXPECTING_OPERATOR = %i[contains_all_of contains_none_of contains_any_of is_any_of is_none_of in not_in all].freeze
+  ARRAY_VALUE_EXPECTING_OPERATOR = %i[contains_all_of contains_none_of contains_any_of
+                                      is_any_of is_none_of in not_in all starts_with ends_with].freeze
 
-  SINGLE_VALUE_EXPECTING_OPERATOR = %i[is is_not greater_than less_than during starts_with ends_with].freeze
+  SINGLE_VALUE_EXPECTING_OPERATOR = %i[is is_not greater_than less_than during].freeze
 
   NO_VALUE_EXPECTING_OPERATOR = %i[selected not_selected].freeze
 
@@ -445,7 +446,9 @@ module Admin::AutomationConstants
 
   OLD_OPERATOR_MAPPING = {
       contains: :contains_any_of,
-      does_not_contains: :contains_none_of
+      does_not_contain: :contains_none_of,
+      starts_with: :starts_with,
+      ends_with: :ends_with
   }.freeze
 
   BUSINESS_HOURS_FIELDS = %i[created_at updated_at].freeze

@@ -1,7 +1,8 @@
 if @note
   note_hash = ConversationDecorator.new(@note, {ticket: @item}).to_hash
-  note_hash.merge!(user: @user.to_hash)
-
+  unless @user
+    note_hash.merge!(user: @user.to_hash)
+  end
   JSON.generate(note_hash)
 else
   JSON.generate(
