@@ -1,8 +1,11 @@
 require_relative '../../api/test_helper'
+require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
 
 class AccountsControllerTest < ActionController::TestCase
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include AccountTestHelper
+  
   def stub_signup_calls
     Signup.any_instance.stubs(:save).returns(true)
     AccountInfoToDynamo.stubs(:perform_async).returns(true)
@@ -572,9 +575,12 @@ class AccountsControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:anonymous_account?).returns(true)
     anonymous_signup_key = ANONYMOUS_ACCOUNT_SIGNUP_ENABLED
     set_others_redis_key(anonymous_signup_key, true)
+    Account.any_instance.expects(:add_to_billing).never
+    Account.any_instance.expects(:enable_fresh_connect).never
     @request.env['CONTENT_TYPE'] = 'application/json'
     @request.env['HTTP_ACCEPT'] = 'application/json'
-    post :anonymous_signup
+    params = signup_params.symbolize_keys!
+    post :anonymous_signup, params
     assert_response 200
     account = Account.last
     assert_equal account.anonymous_account?, true
@@ -583,12 +589,16 @@ class AccountsControllerTest < ActionController::TestCase
     assert_match(/freshdeskdemo[0-9]{13}@example.com/, account.admin_email)
     assert_match(/demo(#{DomainGenerator::DOMAIN_SUGGESTIONS.join('|')})?[0-9]{13}.freshpo.com/, account.full_domain)
     assert_not_nil account.id
+    key = format(ACCOUNT_SIGN_UP_PARAMS, account_id: account.id)
+    value = JSON.parse(get_others_redis_key(key)).symbolize_keys!
+    assert_equal value[:fs_cookie], params[:fs_cookie]
+    assert_equal value[:signup_id], params[:signup_id]
   ensure
     Account.any_instance.unstub(:anonymous_account?)
     remove_others_redis_key(anonymous_signup_key)
     account.destroy
   end
-
+ 
   def test_anonymous_signup_without_redis_enabled
     anonymous_signup_key = ANONYMOUS_ACCOUNT_SIGNUP_ENABLED
     remove_others_redis_key(anonymous_signup_key)
@@ -596,24 +606,5 @@ class AccountsControllerTest < ActionController::TestCase
     @request.env['HTTP_ACCEPT'] = 'application/json'
     post :anonymous_signup
     assert_response 403
-  end
-
-  def test_third_party_apps_not_called_for_anonymous_signup
-    Account.any_instance.stubs(:anonymous_account?).returns(true)
-    anonymous_signup_key = ANONYMOUS_ACCOUNT_SIGNUP_ENABLED
-    set_others_redis_key(anonymous_signup_key, true)
-    @controller.expects(:add_to_crm).never
-    @controller.expects(:add_account_info_to_dynamo).never
-    Account.any_instance.expects(:add_to_billing).never
-    Account.any_instance.expects(:enable_fresh_connect).never
-    @request.env['CONTENT_TYPE'] = 'application/json'
-    @request.env['HTTP_ACCEPT'] = 'application/json'
-    post :anonymous_signup
-    assert_response 200
-    account = Account.last
-  ensure
-    Account.any_instance.unstub(:anonymous_account?)
-    remove_others_redis_key(anonymous_signup_key)
-    account.destroy
   end
 end
