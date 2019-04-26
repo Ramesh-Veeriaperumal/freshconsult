@@ -13,10 +13,12 @@ class Export::Ticket < Struct.new(:export_params)
   DISASSOCIATED_MODELS = {
     archive_tickets: [:ticket_states]
   }.freeze
+  TICKET_STATE_FILTER = TicketConstants::STATES_HASH.keys.map(&:to_s)
 
   def perform
     begin
       initialize_params
+      validate_ticket_state_filter if export_params.key? :ticket_state_filter
       set_current_user
       data_export_type = export_params[:archived_tickets] ? 'archive_ticket' : 'ticket'
       create_export data_export_type
@@ -61,6 +63,10 @@ class Export::Ticket < Struct.new(:export_params)
       export_params[:format] = FILE_FORMAT[0] unless FILE_FORMAT.include? export_params[:format]
       delete_invisible_fields
       format_contact_company_params
+    end
+
+    def validate_ticket_state_filter
+      raise StandardError, 'Export::Ticket ticket_state_filter is invalid' unless TICKET_STATE_FILTER.include? export_params[:ticket_state_filter]
     end
 
     def add_url_to_export_fields
