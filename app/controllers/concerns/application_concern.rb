@@ -18,7 +18,6 @@ module Concerns::ApplicationConcern
   def set_shard_for_payload  # For log
     if Thread.current[:shard_selection]
       Thread.current[:shard_name_payload] = Thread.current[:shard_selection].shard
-      cookies[HashedData["shard_name"]] = HashedData[Thread.current[:shard_selection].shard]
     end
   end
 
@@ -106,4 +105,8 @@ module Concerns::ApplicationConcern
     env['SHARD'] ||= ShardMapping.lookup_with_domain(request_host)
   end
 
+  def set_account_meta_cookies
+    cookies[HashedData['shard_name']] = HashedData[env['SHARD'].shard_name] if env['SHARD']
+    cookies[HashedData['state']] = HashedData[Account.current.subscription.state] if Account.current
+  end
 end

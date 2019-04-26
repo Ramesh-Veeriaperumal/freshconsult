@@ -173,10 +173,12 @@
 			                        <span class='ficon-lock locked'></span>
 			                        <%=t('account.branding_toggle.disable_branding') %>
 			                    <% end %>
-			                    <div class="branding-upgrade-message">
-			                      <% options = (current_user.privilege?(:manage_account)) ? {:tag => :a, :href => subscription_url} : {:tag => :p} %>
-			                      <%= content_tag(options[:tag], t('subscription.upgrade.message'), :href => options[:href]) %>
-			                    </div>
+			                    <% unless current_account.anonymous_account? %>
+				                    <div class="branding-upgrade-message">
+				                      <% options = (current_user.privilege?(:manage_account)) ? {:tag => :a, :href => subscription_url} : {:tag => :p} %>
+				                      <%= content_tag(options[:tag], t('subscription.upgrade.message'), :href => options[:href]) %>
+				                    </div>
+				                  <% end %>
 			                <% end %>
 			              </div>
 			            </div>

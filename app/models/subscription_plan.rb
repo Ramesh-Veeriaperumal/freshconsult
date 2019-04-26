@@ -133,6 +133,18 @@ class SubscriptionPlan < ActiveRecord::Base
     }
   }.freeze
   
+  PLANS_FSM_COST = {
+    'Estate Omni Jan 19': {
+      EUR: 29.0, INR: 1999.0, USD: 29.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0
+    },
+    'Estate Jan 19': {
+      EUR: 29.0, INR: 1999.0, USD: 29.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0
+    },
+    'Forest Jan 19': {
+      EUR: 29.0, INR: 1999.0, USD: 29.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0
+    }
+  }.freeze
+
   FREE_OMNI_PLANS = ['Forest Jan 19'].freeze
   
   def fetch_discount(billing_cycle)
@@ -206,6 +218,10 @@ class SubscriptionPlan < ActiveRecord::Base
   def omni_channel_cost(in_currency)
     costs = PLANS_OMNI_COST[name.to_sym]
     costs.nil? ? 0 : costs[in_currency.to_sym]
+  end
+
+  def fsm_cost(in_currency)
+    PLANS_FSM_COST[name.to_sym] && PLANS_FSM_COST[name.to_sym][in_currency.to_sym]
   end
 
   def free_omni_channel_plan?

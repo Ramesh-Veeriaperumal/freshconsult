@@ -28,11 +28,7 @@ module Freshconnect
         RestClient::Request.execute(
           method: :post,
           url: CollabConfig['freshconnect_endpoint'],
-          payload: {
-            domain: account.full_domain,
-            account_id: account.id.to_s,
-            enabled: true
-          }.to_json,
+          payload: freshconnect_payload,
           headers: {
             'Content-Type' => 'application/json',
             'ProductName' => 'freshdesk',
@@ -59,6 +55,16 @@ module Freshconnect
 
       def account
         ::Account.current
+      end
+
+      def freshconnect_payload
+        payload = { domain: account.full_domain,
+                    account_id: account.id.to_s,
+                    enabled: true }
+        payload.merge!(fresh_id_version: Freshid::V2::Constants::FRESHID_SIGNUP_VERSION_V2,
+                      organisation_id: account.organisation_from_cache.try(:organisation_id),
+                      organisation_domain: account.organisation_from_cache.try(:domain)) if account.freshid_org_v2_enabled?
+        payload.to_json
       end
   end
 end

@@ -3162,6 +3162,9 @@ en:
   omni_channel: Omni-channel
   omni_warning: All omni-channel settings will be removed permanently expect the ability to convert chats and calls to tickets
   omni_channel_content: Best-in-class ticketing, phone and chat features in one plan
+  fsm_title: Field service management
+  fsm_content: Connect and collaborate with your field workforce to deliver productive and exceptional customer service on site. Available from
+  fsm_content_highlight: Estate + Forest
   choose_different_plan: Choose a different plan
   downgrade_plan: "Note: If you downgrade a plan, you might lose some of the existing features"
   downgrade_plan_v2: "Note: If you downgrade your plan, you might lose some features!"
@@ -4700,6 +4703,7 @@ en:
     full_time: Full time
     occasional: Occasional
     field_agent: Field technician
+    field_agents: Field technicians
     day_pass_expired: Your day pass has expired, please login to acquire a new day pass.
     insufficient_day_pass: Unable to allocate a day pass for you, please contact your administrator.
     password_reset_message: "Do you want to reset %{requester}'s password?"
@@ -4968,6 +4972,7 @@ en:
   subscription:
     error:
       lesser_agents: Your freshdesk account currently has %{agent_count} agents, you cannot subscribe to a lesser number of agents. Please delete some agents and try again.
+      lesser_field_agents: Your account currently has %{agent_count} field technicians, and you are trying to subscribe to a lesser number. Please delete some field technicians and try again.
       choose_plan: Please choose a plan to proceed.
       card_update_limit_exceeded: You've exceeded the hourly limit for updating your credit card. Please try again later.
       invalid_currency: The currency you have chosen is invalid.
@@ -5534,6 +5539,7 @@ en:
   add_more_agents: "Add more agents at %{amount} per agent/month"
   zendesk_backup: Backup file
   per_agent_per_month: "/agent/month"
+  per_field_agent_per_month: "/field technician/month"
   twoday: 2 Days
   profile:
     change_password: Change Password
@@ -5621,6 +5627,7 @@ en:
     whitelisted_ip_desc: "Whitelisted IP addresses"
     scenario_automations_desc: "Scenario automations"
     parent_child_desc: "Parent child ticketing"
+    fsm_desc: "Field service management"
     custom_tabel_view_desc: "Custom table view"
     skill_based_assignment_desc: "Skill based assignment"
     custom_mailbox_desc: "Custom email servers"
@@ -6985,6 +6992,7 @@ en:
         tags_merge: Tag with the same name exists. Do you want to merge these tags?
         remove_tags: Remove Tag association
         remove_confirmation: Are you sure you want to remove the tag association?
+        confirmation_warning: Please note that this can take several minutes to complete if you remove tags from a large number of association
         delete_confirmation: "Are you sure you want to delete the selected tag(s)?"
       tag:
         ticket: Ticket
@@ -12649,8 +12657,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     email:
       subject: "%{account_name}: Here's your new helpdesk URL"
       greeting: "Hello %{name},"
-      agent_line: "The administrator has changed the URL of your helpdesk. Going forward, you can login by hitting the URL: <a href='%{url}'> %{url} </a> (bookmark this for easier access)"
-      admin_line: "The URL of your helpdesk has changed. Going forward, you can login by hitting the URL: <a href='%{url}'> %{url} </a> (bookmark this for easier access)"
+      agent_line: "The administrator has changed the URL of your helpdesk. Your new helpdesk URL is: <a href='%{url}'> %{url} </a> (bookmark this for easier access)"
+      admin_line: "The URL of your helpdesk has changed. Your new helpdesk URL is: <a href='%{url}'> %{url} </a> (bookmark this for easier access)"
       cheers: "Cheers,"
       team: "Freshdesk Team"
   fixtures:

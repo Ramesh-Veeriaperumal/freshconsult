@@ -21,6 +21,12 @@
   <input type="hidden" name="agent_limit" value="<%= agent_limit %>" />
   <input type="hidden" name="plan_id" value="<%= plan.id %>" />
   <input type="hidden" name="currency" value="<%= currency %>" />
+  <% if fsm_supported_plan?(plan) %>
+    <div class="plan-change-addons">
+      <input type="hidden" name="addons[field_service_management][enabled]" value="false" />
+      <input type="hidden" name="addons[field_service_management][value]" value="<%= field_agent_limit %>" />
+    </div>
+  <% end %>
   <% if plan_switch %>
   	<input type="hidden" name="plan_switch" value="1" />
   <% end %>

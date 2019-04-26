@@ -498,6 +498,8 @@ class ApiApplicationController < MetalApiController
       else
         current_account.make_current
       end
+
+      set_account_meta_cookies
       User.current = api_current_user
       Thread.current[:message_uuid] = request.try(:uuid).to_a
     rescue ActiveRecord::RecordNotFound, ShardNotFound

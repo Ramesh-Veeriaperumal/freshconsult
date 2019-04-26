@@ -29,7 +29,7 @@ module Fdadmin::AccountsControllerMethods
 		end
 		return {  free_agents: account.subscription.free_agents,
 							agent_limit: account.subscription.agent_limit,
-							full_time: account.full_time_agents.count,
+							full_time: account.full_time_support_agents.count,
 							total_agents: account.agents.count,
 							agents_detail: agent_array
 							}

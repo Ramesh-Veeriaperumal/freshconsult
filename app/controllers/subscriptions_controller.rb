@@ -10,6 +10,7 @@ class SubscriptionsController < ApplicationController
   before_filter :admin_selected_tab
   before_filter :load_objects, :load_subscription_plan, :cache_objects
   before_filter :load_coupon, :only => [ :calculate_amount, :plan ]
+  before_filter :modify_addons_temporarily, :only => [ :calculate_amount, :plan ], :if => :addon_based_features_enabled?
   before_filter :load_billing, :validate_subscription, :only => :billing
   before_filter :load_freshfone_credits, :only => [:show]
   before_filter :valid_currency?, :only => :plan
@@ -23,11 +24,17 @@ class SubscriptionsController < ApplicationController
   restrict_perform :billing
   ssl_required :billing
 
+  attr_accessor :addon_params
+
   CARD_UPDATE_REQUEST_LIMIT = 5
   NO_PRORATION_PERIOD_CYCLES = [ 1 ]
   ACTIVE = "active"
   FREE = "free"
 
+  ADDON_CHANGES_TO_LISTEN = [Subscription::Addon::FSM_ADDON].freeze
+  ADDON_PARAMS_NAMES_MAP = {
+    "field_service_management": Subscription::Addon::FSM_ADDON
+  }.freeze
 
   def calculate_amount
     scoper.set_billing_params(params[:currency])
@@ -136,9 +143,34 @@ class SubscriptionsController < ApplicationController
       plans << scoper.subscription_plan if scoper.subscription_plan.classic?
 
       @subscription = scoper
-      @addons = scoper.addons
+      @addons = addon_based_features_enabled? ? scoper.addons.dup : scoper.addons
       @plans = plans.uniq
       @currency = scoper.currency_name
+    end
+
+    def modify_addons_temporarily
+      @addon_params = params['addons'] || {}
+
+      enabled_addon_names_from_params = ADDON_PARAMS_NAMES_MAP.map do |addon_type, addon_name|
+        addon_name if addon_enabled?(addon_type)
+      end.compact
+      disabled_addon_names_from_params = ADDON_PARAMS_NAMES_MAP.values - enabled_addon_names_from_params
+
+      create_new_addons_list(enabled_addon_names_from_params, disabled_addon_names_from_params)
+    end
+
+    def addon_enabled?(addon_type)
+      addon_params[addon_type].present? && addon_params[addon_type]['enabled'] == 'true' && addon_params[addon_type]['value'].to_i > 0
+    end
+
+    def create_new_addons_list(enabled_addon_names, disabled_addon_names)
+      # Remove disabled addons to the instance variable(this doesn't remove addons from the DB).
+      @addons.reject! { |addon| disabled_addon_names.include?(addon.name) }
+
+      # Add enabled addons to the instance variable(this doesn't add addons to the DB).
+      enabled_addon_names -= @addons.map(&:name) # To remove duplicates.
+      addons_to_add = Subscription::Addon.where(name: enabled_addon_names)
+      @addons.push(*addons_to_add)
     end
 
     def load_coupon
@@ -177,8 +209,13 @@ class SubscriptionsController < ApplicationController
         SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual]
       scoper.plan = @subscription_plan
       scoper.agent_limit = params[:agent_limit]
+      populate_addon_based_limits if addon_based_features_enabled?
       scoper.free_agents = @subscription_plan.free_agents
       @addons = scoper.applicable_addons(@addons, @subscription_plan)
+    end
+
+    def populate_addon_based_limits
+      scoper.field_agent_limit = addon_params['field_service_management']['value'].to_i if addon_params['field_service_management'].present? && addon_params['field_service_management']['enabled'] == 'true'
     end
 
     def load_freshfone_credits
@@ -202,12 +239,21 @@ class SubscriptionsController < ApplicationController
 
     #Error Check
     def check_for_subscription_errors
-      if scoper.chk_change_agents
-        Rails.logger.debug "Subscription Error::::::: Agent Limit exceeded"
-        flash[:notice] = t("subscription.error.lesser_agents",
-              { :agent_count => current_account.full_time_agents.count} )
+      if agent_type = scoper.chk_change_agents || (addon_based_features_enabled? && fsm_addon_present? && scoper.chk_change_field_agents)
+        Rails.logger.debug "Subscription Error::::::: #{agent_type} Limit exceeded, account id: #{current_account.id}"
+
+        agent_count, error_class = if agent_type == Agent::SUPPORT_AGENT
+          [current_account.full_time_support_agents.count, 'lesser_agents']
+        else
+          [scoper.field_agents_count, 'lesser_field_agents']
+        end
+        flash[:notice] = t("subscription.error.#{error_class}", agent_count: agent_count)
         redirect_to subscription_url
       end
+    end
+
+    def fsm_addon_present?
+      @addons.any? { |addon| addon.name == Subscription::Addon::FSM_ADDON }
     end
 
     #chargebee and model updates
@@ -314,18 +360,32 @@ class SubscriptionsController < ApplicationController
     #No proration(credit) in monthly downgrades
     def prorate?
       coupon = coupon_applicable? ? @coupon : nil
-      !(@cached_subscription.active? and (scoper.total_amount(scoper.addons, coupon) < @cached_subscription.amount) and
+      addons = addon_based_features_enabled? ? @addons : scoper.addons
+      !(@cached_subscription.active? and (scoper.total_amount(addons, coupon) < @cached_subscription.amount) and
         NO_PRORATION_PERIOD_CYCLES.include?(@cached_subscription.renewal_period))
     end
 
     def update_features
-      #Check for addon changes also if customers are allowed to choose the addons.
-      return if scoper.subscription_plan_id == @cached_subscription.subscription_plan_id
+      return unless plan_changed? || addons_changed?
+
       ProductFeedbackWorker.perform_async(omni_channel_ticket_params) if omni_plan_change?
       SAAS::SubscriptionEventActions.new(scoper.account, @cached_subscription, @cached_addons).change_plan
       if Account.current.active_trial.present?
         Account.current.active_trial.update_result!(@cached_subscription, Account.current.subscription)
       end
+    end
+
+    def plan_changed?
+      scoper.subscription_plan_id != @cached_subscription.subscription_plan_id
+    end
+
+    def addons_changed?
+      return false unless addon_based_features_enabled?
+      # Too risky to check for all addon changes and proceed with ADD_DATA, DROP_DATA. So, checking only for ADDON_CHANGES_TO_LISTEN now.
+      cached_addon_names = @cached_addons.map(&:name)
+      addon_names = @addons.map(&:name)
+      changed_addons_names = cached_addon_names - addon_names | addon_names - cached_addon_names
+      (ADDON_CHANGES_TO_LISTEN & changed_addons_names).present?
     end
 
     #Events
@@ -422,5 +482,9 @@ class SubscriptionsController < ApplicationController
       @cached_subscription.subscription_plan.omni_plan? ||
         @cached_subscription.subscription_plan.free_omni_channel_plan? ||
         scoper.subscription_plan.omni_plan? || scoper.subscription_plan.free_omni_channel_plan?
+    end
+
+    def addon_based_features_enabled?
+      current_account.fsm_addon_billing_enabled?
     end
 end

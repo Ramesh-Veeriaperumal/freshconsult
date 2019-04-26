@@ -8,6 +8,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
     private
 
       def perform_fsm_operations
+        return if service_task_type_already_present?
         create_service_task_field_type
         reserve_fsm_custom_fields
         create_section
@@ -17,11 +18,15 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       rescue StandardError => e
         cleanup_fsm
         Rails.logger.error "error in performing fsm operations, account id: #{Account.current.id}, message: #{e.message}"
-        render_request_error(:something_wrong_in_fsm_enable, 500)
+        NewRelic::Agent.notice_error(e, description: "error in performing fsm operations, account id: #{Account.current.id}, message: #{e.message}")
       end
 
       def feature_fsm?
         cname_params[:name].to_sym == FSM_FEATURE
+      end
+
+      def service_task_type_already_present?
+        Account.current.picklist_values.find_by_value(SERVICE_TASK_TYPE).present?
       end
 
       def create_service_task_field_type

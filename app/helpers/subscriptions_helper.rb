@@ -22,11 +22,11 @@ module SubscriptionsHelper
     "sprout jan 19" => [ "email_ticketing", "ticket_dispatch_automation" ,"knowledge_base", "basic_social", "freshcaller", "omni_channel_option"],
     "blossom jan 19" => [ "everything_in_sprout", "multiple_mailboxes", "app_gallery", "time_event_automation", "custom_domain", "helpdesk_report", "custom_ticket_fields_and_views", "agent_collision", "omni_channel_option"],
     "garden jan 19" => [ "everything_in_blossom", "satisfaction_survey", "timesheets", "sla_reminders", "agent_performance_report", "ticket_templates", "m_k_base"],
-    "estate jan 19" => [ "everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "auto_ticket_assignment", "enterprise_reports", "custom_dashboard", "custom_surveys"],
-    "forest jan 19" => [ "everything_in_estate", "ip_whitelisting", "skill_based_assignment", "sandbox", "custom_data_center", "hippa_compliance", "extend_api", "omni_channel_option"],
+    "estate jan 19" => [ "everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "auto_ticket_assignment", "enterprise_reports", "custom_dashboard", "custom_surveys", "fsm_option"],
+    "forest jan 19" => [ "everything_in_estate", "ip_whitelisting", "skill_based_assignment", "sandbox", "custom_data_center", "hippa_compliance", "extend_api", "omni_channel_option", "fsm_option"],
 
     "garden omni jan 19" => [ "everything_in_blossom", "satisfaction_survey", "timesheets", "sla_reminders", "agent_performance_report", "ticket_templates", "m_k_base", "omni_channel_option"],
-    "estate omni jan 19" => [ "everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "auto_ticket_assignment", "enterprise_reports", "custom_dashboard", "custom_surveys", "omni_channel_option"]
+    "estate omni jan 19" => [ "everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "auto_ticket_assignment", "enterprise_reports", "custom_dashboard", "custom_surveys", "omni_channel_option", "fsm_option"]
 
   }
 
@@ -69,7 +69,7 @@ module SubscriptionsHelper
       "sla_reminders_desc", "forums_desc", "agent_performance_report_desc", "satisfaction_survey_desc",
       "scheduled_reports_desc", "custom_surveys_desc", "custom_apps_desc", "timesheets_desc", "chat_faq", "chat_message", "ivr", "masking_recording"],
     "estate jan 19" => ["multiple_products_desc", "multiple_sla_business_desc", "portal_customization_desc",
-      "custom_ssl_desc", "auto_ticket_assignment_desc", "enterprise_reports_desc", "custom_dashboard_desc", "chatbots", "inapp_chat", "smart_calls", "barging_monitoring", "omni_analytics"],
+      "custom_ssl_desc", "auto_ticket_assignment_desc", "enterprise_reports_desc", "custom_dashboard_desc", "chatbots", "inapp_chat", "smart_calls", "barging_monitoring", "omni_analytics", "fsm_desc"],
     "garden omni jan 19" => ["multilingual_kbase_desc", "dynamic_email_alert_desc",
       "sla_reminders_desc", "forums_desc", "agent_performance_report_desc",
       "scheduled_reports_desc", "custom_surveys_desc", "custom_apps_desc", "timesheets_desc", "co_browsing"],
@@ -216,6 +216,11 @@ module SubscriptionsHelper
     amount = (plan_info.plan.price/plan_info.plan.period)/100
     format_amount(amount, currency)
   end
+
+  def cost_per_field_agent(currency)
+    amount = current_account.subscription.retrieve_addon_price(:field_service_management)
+    format_amount(amount, currency)
+  end
     
   def format_amount(amount, currency)    
     number_to_currency(amount, :unit => CURRENCY_UNITS[currency], :separator => ".", 
@@ -260,6 +265,10 @@ module SubscriptionsHelper
 
   def freshfone_allowed?
     feature?(:freshfone) && !freshfone_trial_states?
+  end
+
+  def fsm_supported_plan?(plan)
+    current_account.fsm_addon_billing_enabled? && PLANS_FEATURES["#{plan.name.downcase}"].include?('fsm_option') 
   end
 
   def previous_plan?(plan)

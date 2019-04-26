@@ -292,7 +292,7 @@ class PartnerAdmin::AffiliatesController < ApplicationController
             :twitter => !account.twitter_handles.blank?,
             :facebook => !account.facebook_pages.blank?, 
             :emails_configured => account.all_email_configs.count,
-            :agent_count => account.full_time_agents.count,
+            :agent_count => account.full_time_support_agents.count,
             :portal_count => account.portals.count,
             :chat => account.features?(:chat)
           }

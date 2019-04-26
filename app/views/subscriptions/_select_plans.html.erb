@@ -47,7 +47,7 @@
                     </p>
                   </div>
 
-                  <% subscribe_direct_flag =  (current_account.full_time_agents.count) <= plan.free_agents %>
+                  <% subscribe_direct_flag =  (current_account.full_time_support_agents.count) <= plan.free_agents %>
                   <% if subscribe_direct_flag %>
                     <!-- By default it will be hidden. Will be shown once Choose plan button is clicked. Showing part Handled in js -->
                     <!-- activate-options class has css display:none -->

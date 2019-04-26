@@ -114,7 +114,8 @@ module Social::Twitter::Util
     twt_hash = {
       'tweet_id': prev_changes.key?('tweet_id') ? nil : tweet.tweet_id.to_s,
       'type': tweet.tweet_type,
-      'stream_id': tweet.stream_id
+      'stream_id': tweet.stream_id,
+      'requester_screen_name': note.requester_twitter_id
     }
     twt_hash.merge(note.twt_handle_info(tweet))
   end

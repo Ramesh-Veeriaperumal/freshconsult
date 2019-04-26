@@ -35,19 +35,22 @@
 	  			<button type="submit" class="btn btn-primary btn-login"> <%= t('.login') %> </button>
 	  		</div>
 	  	</div>
-      <% if current_account.freshid_enabled? %>
+      <% if current_account.freshid_integration_enabled? && !current_account.hide_agent_login_enabled? %>
         <section class="freshid_login">
           <div class="agent-login-link">
             <i class="ficon-helpdesk_new agent-login-icon"></i>
             <div class="link-content">
               <span><%= t('portal.agent_login_info') %> </span>
-              <% login_url = (current_account.agent_oauth2_sso_enabled? || current_account.agent_freshid_saml_sso_enabled?)  ? agent_login_url : Freshid::Config.login_url(freshid_authorize_callback_url, freshid_logout_url) %>
+              <%
+                  @freshid_login_url = current_account.freshid_enabled? ? Freshid::Config.login_url(freshid_authorize_callback_url, freshid_logout_url, {}) : Freshid::V2::UrlGenerator.login_url(freshid_authorize_callback_url, {})
+                  login_url = (current_account.agent_oauth2_sso_enabled? || current_account.agent_freshid_saml_sso_enabled?)  ? agent_login_url : @freshid_login_url 
+              %>
               <%= link_to t('portal.agent_signin'), login_url %>
             </div>
           </div>
           <% if current_account.customer_oauth2_sso_enabled? || current_account.customer_freshid_saml_sso_enabled? %>
-            <div class="agent-login-link">
-              <i class="ficon-helpdesk_new agent-login-icon"></i>
+            <div class="customer-login-link">
+              <i class="ficon-helpdesk_new customer-login-icon"></i>
               <div class="link-content">
                 <span> <%= t('portal.customer_login_info') %> </span>
                 <%= link_to t('portal.agent_signin'), customer_login_url %>

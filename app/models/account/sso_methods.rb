@@ -8,16 +8,16 @@ class Account < ActiveRecord::Base
     HashWithIndifferentAccess.new({:login_url => "",:logout_url => "", :sso_type => ""})
   end
 
+  def oauth2_sso_enabled?
+    self.sso_options.present? && self.sso_options[:sso_type] == SsoUtil::SSO_TYPES[:oauth2]
+  end
+
   def agent_oauth2_sso_enabled?
-    self.sso_options.present? && self.sso_options[:sso_type] == SsoUtil::SSO_TYPES[:oauth2] && self.sso_options[:agent_oauth2] == true
+    oauth2_sso_enabled? && self.sso_options[:agent_oauth2] == true
   end
 
   def customer_oauth2_sso_enabled?
-    self.sso_options.present? && self.sso_options[:sso_type] == SsoUtil::SSO_TYPES[:oauth2] && self.sso_options[:customer_oauth2] == true
-  end
-
-  def oauth2_sso_enabled?
-    agent_oauth2_sso_enabled? || customer_oauth2_sso_enabled?
+    oauth2_sso_enabled? && self.sso_options[:customer_oauth2] == true
   end
 
   def is_saml_sso?
@@ -25,8 +25,7 @@ class Account < ActiveRecord::Base
   end
 
   def enable_agent_oauth2_sso!(logout_redirect_url)
-    puts "Freshid not enabled" or return unless self.freshid_enabled?
-    add_feature(:oauth2)
+    puts "Freshid not enabled" or return unless self.freshid_integration_enabled?
     sso_config = { sso_type: SsoUtil::SSO_TYPES[:oauth2], agent_oauth2: true, agent_oauth2_config: { logout_redirect_url: logout_redirect_url }}
     self.sso_options = customer_oauth2_sso_enabled? ? self.sso_options.merge(sso_config) : sso_config
     self.sso_enabled = true
@@ -41,8 +40,7 @@ class Account < ActiveRecord::Base
   end
 
   def enable_customer_oauth2_sso!(logout_redirect_url)
-    puts "Freshid not enabled" or return unless self.freshid_enabled?
-    add_feature(:oauth2)
+    puts "Freshid not enabled" or return unless self.freshid_integration_enabled?
     sso_config = { sso_type: SsoUtil::SSO_TYPES[:oauth2], customer_oauth2: true, customer_oauth2_config: { logout_redirect_url: logout_redirect_url }}
     self.sso_options = agent_oauth2_sso_enabled? ? self.sso_options.merge(sso_config) : sso_config
     self.sso_enabled = true
@@ -57,13 +55,11 @@ class Account < ActiveRecord::Base
   end
 
   def disable_oauth2_sso
-    reset_feature(:oauth2)
     self.sso_options.delete(:sso_type) if self.sso_options.present?
     self.sso_enabled = false
   end
 
   def remove_oauth2_sso_options
-    revoke_feature(:oauth2)
     remove_agent_oauth2_sso_options
     remove_customer_oauth2_sso_options
   end
@@ -97,20 +93,19 @@ class Account < ActiveRecord::Base
   end
 
   def freshid_saml_sso_enabled?
-    agent_freshid_saml_sso_enabled? || customer_freshid_saml_sso_enabled?
+    self.sso_options.present? && self.sso_options[:sso_type] == SsoUtil::SSO_TYPES[:freshid_saml]
   end
 
   def agent_freshid_saml_sso_enabled?
-    self.sso_options.present? && self.sso_options[:sso_type] == SsoUtil::SSO_TYPES[:freshid_saml] && self.sso_options[:agent_freshid_saml] == true
+    freshid_saml_sso_enabled? && self.sso_options[:agent_freshid_saml] == true
   end
 
   def customer_freshid_saml_sso_enabled?
-    self.sso_options.present? && self.sso_options[:sso_type] == SsoUtil::SSO_TYPES[:freshid_saml] && self.sso_options[:customer_freshid_saml] == true
+    freshid_saml_sso_enabled? && self.sso_options[:customer_freshid_saml] == true
   end
 
   def enable_agent_freshid_saml_sso!(logout_redirect_url)
-    puts "Freshid not enabled" or return unless self.freshid_enabled?
-    add_feature(:freshid_saml)
+    puts "Freshid not enabled" or return unless self.freshid_integration_enabled?
     sso_config = { sso_type: SsoUtil::SSO_TYPES[:freshid_saml], agent_freshid_saml: true, agent_freshid_saml_config: { logout_redirect_url: logout_redirect_url }}
     self.sso_options = customer_freshid_saml_sso_enabled? ? self.sso_options.merge(sso_config) : sso_config
     self.sso_enabled = true
@@ -125,8 +120,7 @@ class Account < ActiveRecord::Base
   end
 
   def enable_customer_freshid_saml_sso!(logout_redirect_url)
-    puts "Freshid not enabled" or return unless self.freshid_enabled?
-    add_feature(:freshid_saml)
+    puts "Freshid not enabled" or return unless self.freshid_integration_enabled?
     sso_config = { sso_type: SsoUtil::SSO_TYPES[:freshid_saml], customer_freshid_saml: true, customer_freshid_saml_config: { logout_redirect_url: logout_redirect_url }}
     self.sso_options = agent_freshid_saml_sso_enabled? ? self.sso_options.merge(sso_config) : sso_config
     self.sso_enabled = true
@@ -141,13 +135,11 @@ class Account < ActiveRecord::Base
   end
 
   def disable_freshid_saml_sso
-    reset_feature(:freshid_saml)
     self.sso_options.delete(:sso_type) if self.sso_options.present?
     self.sso_enabled = false
   end
 
   def remove_freshid_saml_sso_options
-    revoke_feature(:freshid_saml)
     remove_agent_freshid_saml_sso_options
     remove_customer_freshid_saml_sso_options
   end

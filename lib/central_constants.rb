@@ -3,7 +3,7 @@ module CentralConstants
   # In case of addition(non-breaking changes on consumer) Bump the minor version. update from 0.0 to 0.1
   # In case of any breaking changes, bump the majore version, update from 0.0 to 1.0
   MODEL_PAYLOAD_VERSION = {
-      'Account' => '1.0',
+      'Account' => '1.1',
       'Helpdesk::Ticket' => '2.1',
       'Helpdesk::Note' => '0.1',
       'Solution::Category' => '0.0',
@@ -12,7 +12,7 @@ module CentralConstants
       'Bot::FeedbackMapping' => '0.0',
       'Subscription' => '1.0',
       'User' => '0.1',
-      'Company' => '0.1',
+      'Company' => '1.1',
       'Agent' => '2.0',
       'VaRule' => '0.0',
       'Group' => '3.0',

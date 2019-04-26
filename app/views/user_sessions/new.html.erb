@@ -34,13 +34,14 @@
 				</div>
 			 </li>
 			<%end%>
-      <% if current_account.freshid_enabled? %>
+      <% if current_account.freshid_integration_enabled? %>
         <section class="freshid_login">
           <div class="agent-login-link">
             <i class="ficon-helpdesk_new agent-login-icon"></i>
             <div class="link-content">
               <span><%= t('portal.agent_login_info') %> </span>
-              <%= link_to t('portal.agent_signin'), Freshid::Config.login_url(freshid_authorize_callback_url, freshid_logout_url) %>
+              <% @freshid_login_url = current_account.freshid_org_v2_enabled? ? Freshid::V2::UrlGenerator.login_url(freshid_authorize_callback_url) : Freshid::Config.login_url(freshid_authorize_callback_url, freshid_logout_url) %>
+              <%= link_to t('portal.agent_signin'), @freshid_login_url %>
             </div>
           </div>
         </section>

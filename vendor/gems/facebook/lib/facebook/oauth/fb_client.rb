@@ -85,6 +85,7 @@ module Facebook
           #Check if Facebook Page is already assossiated with an account
           unless Account.current.facebook_pages.find_by_page_id(page[:id])
             page_source = Social::FacebookPageMapping.find_by_facebook_page_id(page[:id])
+            Rails.logger.debug('From RT block')
             if page_source
               source_account = page_source.shard.domains.main_portal.first
               if source_account
