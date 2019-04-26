@@ -22,6 +22,7 @@ class ContactDeleteForeverWorkerTest < ActionView::TestCase
     @account = Account.first
     Account.stubs(:current).returns(@account)
     Account.current.launch(:contact_delete_forever)
+    Users::ContactDeleteForeverWorker.clear
   end
 
   def teardown
@@ -42,6 +43,12 @@ class ContactDeleteForeverWorkerTest < ActionView::TestCase
     args = construct_args(usr.id)
     Users::ContactDeleteForeverWorker.new.perform(args)
     assert_equal 0, ::Users::ContactDeleteForeverWorker.jobs.size
+  end
+
+  def test_contact_delete_worker_runs_with_delay
+    usr = create_contact(deleted: true)
+    usr.delete_forever!
+    assert_equal 1, ::Users::ContactDeleteForeverWorker.jobs.size
   end
 
   def test_contact_gets_deleted_by_worker

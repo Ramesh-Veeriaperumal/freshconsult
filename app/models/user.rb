@@ -694,7 +694,7 @@ class User < ActiveRecord::Base
     new_pref = { :marked_for_hard_delete => true }
     self.merge_preferences = { :user_preferences => new_pref }
     self.save!
-    Users::ContactDeleteForeverWorker.perform_async({:user_id => self.id})
+    Users::ContactDeleteForeverWorker.perform_in(HARD_DELETE_DELAY, user_id: id)
   end
 
   def update_account_info_and_verify(user_params)
