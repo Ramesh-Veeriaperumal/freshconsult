@@ -592,7 +592,7 @@ class AccountsController < ApplicationController
 
     def finish_signup
       @signup.user.reset_perishable_token!
-      save_account_sign_up_params(@signup.account.id, params[:signup].merge({"signup_method" => action}))
+      save_account_sign_up_params(@signup.account.id, params[:signup].merge('signup_method' => action, 'fs_cookie' => params[:fs_cookie], 'signup_id' => params[:signup_id]))
       unless @signup.account.anonymous_account?
         add_account_info_to_dynamo(params[:signup][:user_email])
         add_to_crm(@signup.account.id, params)

@@ -9,6 +9,8 @@ class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
   include OnboardingTestHelper
   include TicketHelper
   include EmailHelper
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   def setup
     super
@@ -303,16 +305,20 @@ class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
   end
 
   def test_third_party_apps_called_for_anonymous_account
+    params = signup_params
+    key = format(ACCOUNT_SIGN_UP_PARAMS, account_id: @account.id)
+    set_others_redis_key(key, params.to_json)
     Account.any_instance.stubs(:sandbox?).returns(false)
     Account.any_instance.expects(:enable_fresh_connect).once
     Account.any_instance.expects(:add_to_billing).once
-    @controller.expects(:add_to_crm).once
+    @controller.expects(:add_to_crm).with(@account.id, params.symbolize_keys!).once
     @controller.expects(:add_account_info_to_dynamo).once
     @controller.expects(:enqueue_for_enrichment).once
     @account.account_additional_settings.mark_account_as_anonymous
     new_admin_email = Faker::Internet.email
     post :anonymous_to_trial, construct_params(version: 'private', admin_email: new_admin_email)
   ensure
+    remove_others_redis_key(key)
     unset_anonymous_flag
     Account.any_instance.unstub(:sandbox?)
   end
