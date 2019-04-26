@@ -3,7 +3,7 @@ module Ember
     skip_before_filter :check_privilege
 
     def load_objects
-      @items = current_account.twitter_handles
+      @items = current_account.twitter_handles_from_cache
     end
 
     def check_following
