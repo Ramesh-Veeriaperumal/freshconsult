@@ -43,5 +43,7 @@ class Billing::AddSubscriptionToChargebee
         subscription.additional_info = { :field_agent_limit => Subscription::DEFAULT_FIELD_AGENT_COUNT }
       end
       subscription.addons = Subscription::Addon.where('name in (?)', addons_to_be_added)
+      features_to_add = subscription.addons.map { |addon| addon.features }.flatten
+      NewPlanChangeWorker.new.perform({:features => [features_to_add], :action => "add"}) if features_to_add.size > 0
     end
 end

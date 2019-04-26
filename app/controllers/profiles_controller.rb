@@ -228,7 +228,7 @@ protected
   end
 
   def user_params
-    if freshid_enabled?
+    if freshid_integration_enabled?
       params[:user].permit(*USER_UPDATABLE_ATTRIBUTES_FRESHID)
     else
       params[:user].permit(*USER_UPDATABLE_ATTRIBUTES)

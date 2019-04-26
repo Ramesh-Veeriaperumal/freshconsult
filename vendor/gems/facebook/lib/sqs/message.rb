@@ -27,15 +27,13 @@ module Sqs
     #Process all Facebook Feed Changes for a particular page
     def process
       entry_changes.each do |entry_change|
-        fb_feed = Facebook::Core::Feed.new(page_id, entry_change)
+        fb_feed = Facebook::Core::Feed.new(page_id, entry_change, @feed['account_id'])
         next if fb_feed.realtime_feed["value"].blank?
         @account_id = nil
         valid_account, valid_page = fb_feed.account_and_page_validity
         next unless valid_account
-        if valid_page 
-          select_fb_shard_and_account(page_id) do |account|
-            @account_id = account.id
-          end
+        if valid_page
+          set_account_id(page_id, @feed)
           if page_rate_limit_reached?(@account_id,page_id)
             requeue(JSON.parse(raw_obj),{:delay_seconds => 900})
           else

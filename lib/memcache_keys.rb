@@ -248,6 +248,12 @@ module MemcacheKeys
 
   ACCOUNT_AGENT_TYPES = "v1/ACCOUNT_AGENT_TYPES:%{account_id}"
 
+  ORGANISATION_BY_ACCOUNT_ID = 'ORGANISATION_BY_ACCOUNT_ID:%{account_id}'.freeze
+
+  ORGANISATION_BY_ORGANISATION_ID  = 'ORGANISATION_BY_ORGANISATION_ID:%{organisation_id}'.freeze
+
+  ACCOUNT_ID_BY_ORGANISATION = 'ACCOUNT_ID_BY_ORGANISATION:%{organisation_id}'.freeze
+
   UNASSOCIATED_CATEGORIES = 'UNASSOCIATED_CATEGORIES:%{account_id}'.freeze
 
   def fetch_from_cache(key, &block)

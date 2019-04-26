@@ -68,7 +68,7 @@
       </tr>
       <tr>
         <th>Agents</th>
-        <td>Subscribed - <%=@account.subscription.agent_limit%>  Free - <%= @account.subscription.free_agents %>  Full time - <%= @account.full_time_agents.count %> Total - <%= @account.agents.count %> Ocassional - <%=@account.agents.count - (@account.full_time_agents.count ||= 0)%></td>
+        <td>Subscribed - <%=@account.subscription.agent_limit%>  Free - <%= @account.subscription.free_agents %>  Full time - <%= @account.full_time_support_agents.count %> Total - <%= @account.agents.count %> Ocassional - <%=@account.agents.count - (@account.full_time_support_agents.count ||= 0)%></td>
       </tr>
       <tr>
         <th>Tickets</th>

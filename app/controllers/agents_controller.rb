@@ -33,7 +33,7 @@ class AgentsController < ApplicationController
   before_filter :check_occasional_agent_params, :only => [:index]
   before_filter :set_filter_data, :only => [ :update,  :create]
   before_filter :set_skill_data, :only => [:new, :edit]
-  before_filter :access_denied, only: :reset_password, if: :freshid_enabled?
+  before_filter :access_denied, only: :reset_password, if: :freshid_integration_enabled?
 
   def load_object
     @agent = scoper.find(params[:id])
@@ -48,7 +48,7 @@ class AgentsController < ApplicationController
 
   def search_in_freshworks
     email_changed = params[:new_email].present? && params[:new_email].casecmp(params[:old_email]) != 0
-    user = email_changed ? Freshid::User.find_by_email(params[:new_email].to_s) : current_account.users.find_by_email(params[:old_email].to_s)
+    user = email_changed ? freshid_user_details : current_account.users.find_by_email(params[:old_email].to_s)
     user_hash = user.present? ? (email_changed ? user_info_hash(User.new, user.as_json.symbolize_keys)[:user] : user_info_hash(user)[:user]) : nil
     render :json => { :user_info => user_hash }
   end
@@ -143,7 +143,7 @@ class AgentsController < ApplicationController
     #for live chat sync
     # @agent.agent_role_ids = params[:user][:role_ids]
     #check_agent_limit
-    if @user.signup!({:user => params[:user]}, nil, !freshid_enabled?)       
+    if @user.signup!({:user => params[:user]}, nil, !freshid_integration_enabled?)       
       @agent.user_id = @user.id
       @agent.scoreboard_level_id = params[:agent][:scoreboard_level_id]
       @agent.freshcaller_enabled = (params[:freshcaller_agent].try(:to_bool) || false)
@@ -186,7 +186,7 @@ class AgentsController < ApplicationController
             :email => agent_email,
             :helpdesk_agent => true,
             :role_ids => [current_account.roles.find_by_name("Agent").id]
-            }}, nil, !freshid_enabled?)
+            }}, nil, !freshid_integration_enabled?)
           @user.create_agent
           @new_users << @user
         # Has no use in getting started
@@ -568,6 +568,11 @@ private
     else
       AgentType.agent_type_id(Agent::SUPPORT_AGENT)
     end
+  end
+
+  def freshid_user_details
+    current_account.freshid_org_v2_enabled? ? Freshid::V2::Models::User.find_by_email(params[:new_email].to_s) : 
+          Freshid::User.find_by_email(params[:new_email].to_s) 
   end
 end
 

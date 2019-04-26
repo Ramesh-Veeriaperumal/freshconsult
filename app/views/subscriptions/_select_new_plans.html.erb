@@ -92,7 +92,7 @@
                       <% end %>
                     </p>
                   </div>
-                  <% subscribe_direct_flag =  (current_account.full_time_agents.count) <= plan.free_agents %>
+                  <% subscribe_direct_flag =  (current_account.full_time_support_agents.count) <= plan.free_agents %>
                   <% if is_new_sprout %>
 
                     <%= plan_button(plan, t('choose_plan'), "btn btn-flat", subscribe_direct_flag, true, equal_plan_check ? t('change_equal_plan_title', :to_plan => plan.display_name): t(subscription.trial? ? 'change_plan_title' : 'downgrade_plan_title'),

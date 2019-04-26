@@ -5153,6 +5153,7 @@ en:
   subscription:
     error:
       lesser_agents: Your freshdesk account currently has %{agent_count} agents, you cannot subscribe to a lesser number of agents. Please delete some agents and try again.
+      lesser_field_agents: Your account currently has %{agent_count} field technicians, and you are trying to subscribe to a lesser number. Please delete some field technicians and try again.
       choose_plan: Please choose a plan to proceed.
       card_update_limit_exceeded: You've exceeded the hourly limit for updating your credit card. Please try again later.
       invalid_currency: The currency you have chosen is invalid.
@@ -7152,6 +7153,7 @@ en:
         tags_merge: Tag with the same name exists. Do you want to merge these tags?
         remove_tags: Remove Tag association
         remove_confirmation: Are you sure you want to remove the tag association?
+        confirmation_warning: Please note that this can take several minutes to complete if you remove tags from a large number of association
         delete_confirmation: "Are you sure you want to delete the selected tag(s)?"
       tag:
         ticket: Ticket
@@ -12813,8 +12815,8 @@ en:
     email:
       subject: "%{account_name}: Here's your new helpdesk URL"
       greeting: "Hello %{name},"
-      agent_line: "The administrator has changed the URL of your helpdesk. Going forward, you can login by hitting the URL: <a href='%{url}'> %{url} </a> (bookmark this for easier access)"
-      admin_line: "The URL of your helpdesk has changed. Going forward, you can login by hitting the URL: <a href='%{url}'> %{url} </a> (bookmark this for easier access)"
+      agent_line: "The administrator has changed the URL of your helpdesk. Your new helpdesk URL is: <a href='%{url}'> %{url} </a> (bookmark this for easier access)"
+      admin_line: "The URL of your helpdesk has changed. Your new helpdesk URL is: <a href='%{url}'> %{url} </a> (bookmark this for easier access)"
       cheers: "Cheers,"
       team: "Freshdesk Team"
   fixtures:

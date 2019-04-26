@@ -14,6 +14,7 @@ module Dashboard::Custom::TrendCardMethods
 
   ALL_PRODUCTS = 0
   ALL_GROUPS = 0
+  ALL_TYPES = 0
 
   REPORTS_TIMEOUT = 5
 
@@ -22,7 +23,8 @@ module Dashboard::Custom::TrendCardMethods
     def fetch_redshift_data(req_params)
       received, expiry, dump_time = Dashboard::RedshiftRequester.new(req_params, REPORTS_TIMEOUT).fetch_records
       if is_redshift_error?(received)
-        Rails.logger.info "Error in TrendCard query: #{Account.current.id}: #{@dashboard.id}: #{received.inspect}"
+        dashboard_id = @dashboard.id if @dashboard
+        Rails.logger.info "Error in TrendCard query: #{Account.current.id}: #{dashboard_id}: #{received.inspect}"
         return { error: 'Reports service unavailable', status: 503 }
       end
       { data: received, last_dump_time: dump_time }
@@ -55,16 +57,30 @@ module Dashboard::Custom::TrendCardMethods
           time_zone: Time.zone.name
         }
         req_params[:refresh_frequency] = refresh_interval if refresh_interval
-        req_params[:filter] = construct_redshift_filter(options[:group_ids].present? ? options[:group_ids].join(',') : nil, options[:product_id])
+        req_params[:filter] = construct_redshift_filter(options)
         req_params
       end
     end
 
-    def construct_redshift_filter(group_ids, product_id)
+    def construct_redshift_filter(options)
       filter_params = []
-      filter_params << redshift_group_filter(group_ids) if group_ids && group_ids.to_i != ALL_GROUPS
-      filter_params << redshift_product_filter(product_id) if product_id && product_id.to_i != ALL_PRODUCTS
-      filter_params
+      filter_params << construct_redshift_group_filter(options[:group_ids])
+      filter_params << construct_redshift_product_filter(options[:product_id])
+      filter_params << construct_redshift_ticket_type_filter(options[:ticket_type]) if Account.current.ticket_type_filter_in_trends_widget_enabled?
+      filter_params.compact
+    end
+
+    def construct_redshift_group_filter(group_ids)
+      group_ids = group_ids.join(',') if group_ids.present?
+      redshift_group_filter(group_ids) if group_ids && group_ids.to_i != ALL_GROUPS
+    end
+
+    def construct_redshift_product_filter(product_id)
+      redshift_product_filter(product_id) if product_id.to_i != ALL_PRODUCTS
+    end
+
+    def construct_redshift_ticket_type_filter(ticket_type)
+      redshift_ticket_type_filter(ticket_type) if ticket_type.to_i != ALL_TYPES
     end
 
     def format_date(start_date, end_date = Time.zone.now)

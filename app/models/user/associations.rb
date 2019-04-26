@@ -106,8 +106,8 @@ class User < ActiveRecord::Base
   :order => "created_at desc"
   
   has_one :agent , :class_name => 'Agent' , :foreign_key => "user_id", :dependent => :destroy
-  has_one :full_time_agent, :class_name => 'Agent', :foreign_key => "user_id", :conditions => { 
-      :occasional => false  } #no direct use, need this in account model for pass through.
+  has_one :full_time_support_agent, :class_name => 'Agent', :foreign_key => "user_id", :conditions => { 
+      :occasional => false, :agent_type => Agent::SUPPORT_AGENT_TYPE  } #no direct use, need this in account model for pass through.
   
   has_many :agent_groups , :class_name =>'AgentGroup', :foreign_key => "user_id"
   has_many :groups, :through => :agent_groups, :dependent => :destroy #https://github.com/rails/rails/issues/7618#issuecomment-11682784

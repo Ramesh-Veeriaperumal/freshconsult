@@ -23,7 +23,7 @@ RSpec.describe ContactsController do
   it "should not allow to create more agents than allowed by the plan" do
     contact = FactoryGirl.build(:user)
     contact.save
-    @account.subscription.update_attributes(:state => "active", :agent_limit => @account.full_time_agents.count)
+    @account.subscription.update_attributes(:state => "active", :agent_limit => @account.full_time_support_agents.count)
     @request.env['HTTP_REFERER'] = 'sessions/new'
     put :make_agent, :id => contact.id
     @account.agents.find_by_user_id(contact.id).should be_nil

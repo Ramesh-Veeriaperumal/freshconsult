@@ -1,0 +1,28 @@
+defaults: &defaults
+  region_code: ""
+  end_point: ""
+  client_id: ""
+  client_secret: ""
+  callback_api_secret: ""
+  product_id: ""
+  product_domain: ""
+  freshid_request_timeout: 1
+
+  #customer_base_url:  ""
+  #customer_client_id: ""
+  #customer_client_secret: ""
+
+development:
+  <<: *defaults
+
+slave:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults

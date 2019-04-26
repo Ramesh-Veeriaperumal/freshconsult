@@ -310,15 +310,14 @@ module Ember
       @account.revoke_feature(:undo_send)
     end
 
-    def test_reply_template_after_undo
+    def test_reply_template_after_undo_no_quoted_text
       @account.add_feature(:undo_send)
       remove_wrap_params
       t = create_ticket
-      t.display_id = 15
       time = Time.now.utc
       note_body = {}
       note_body['body_html'] = 'Body html'
-      note_body['full_text_html'] = 'Body html plus full text html'
+      note_body['full_text_html'] = 'Body html'
       set_body_data(1, t.display_id, time, note_body)
       notification_template = '<div>{{ticket.id}}</div>'
       Agent.any_instance.stubs(:signature_value).returns('')
@@ -326,7 +325,34 @@ module Ember
       bcc_emails = "#{Faker::Internet.email};#{Faker::Internet.email}"
       Account.any_instance.stubs(:bcc_email).returns(bcc_emails)
       post :reply_template, construct_params({ version: 'private', id: t.display_id, body: 'Undo', attachments: [], inline: [], time: time }, false)
+      quoted_text = JSON.parse(response.body)['quoted_text']
       assert_response 200
+      assert_equal nil, quoted_text
+      Agent.any_instance.unstub(:signature_value)
+      EmailNotification.any_instance.unstub(:get_reply_template)
+    ensure
+      Account.any_instance.unstub(:bcc_email)
+      @account.revoke_feature(:undo_send)
+    end
+
+    def test_quoted_text_reply_template_after_undo
+      @account.add_feature(:undo_send)
+      remove_wrap_params
+      t = create_ticket
+      time = Time.now.utc
+      note_body = {}
+      note_body['body_html'] = 'Body html'
+      note_body['full_text_html'] = 'Body html <div class="freshdesk_quote">" hello "</div class="freshdesk_quote">'
+      set_body_data(1, t.display_id, time, note_body)
+      notification_template = '<div>{{ticket.id}}</div>'
+      Agent.any_instance.stubs(:signature_value).returns('')
+      EmailNotification.any_instance.stubs(:get_reply_template).returns(notification_template)
+      bcc_emails = "#{Faker::Internet.email};#{Faker::Internet.email}"
+      Account.any_instance.stubs(:bcc_email).returns(bcc_emails)
+      post :reply_template, construct_params({ version: 'private', id: t.display_id, body: 'Undo', attachments: [], inline: [], time: time }, false)
+      quoted_text = JSON.parse(response.body)['quoted_text']
+      assert_response 200
+      assert_equal '<div class="freshdesk_quote">" hello "</div class="freshdesk_quote">', quoted_text
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_reply_template)
     ensure
@@ -2159,43 +2185,6 @@ module Ember
     end
 
     private
-
-      def with_twitter_update_stubbed
-        @twit = sample_twitter_object
-        media_id = rand(10 ** 15)
-        Twitter::REST::Client.any_instance.stubs(:update).returns(@twit)
-        Twitter::REST::Client.any_instance.stubs(:upload).returns(media_id)
-        unless GNIP_ENABLED
-          Social::DynamoHelper.stubs(:update).returns(dynamo_update_attributes(@twit.id))
-          Social::DynamoHelper.stubs(:get_item).returns(sample_dynamo_get_item_params)
-        end
-
-        yield
-
-        Twitter::REST::Client.any_instance.unstub(:update)
-        Twitter::REST::Client.any_instance.unstub(:upload)
-        unless GNIP_ENABLED
-          Social::DynamoHelper.unstub(:update)
-          Social::DynamoHelper.unstub(:get_item)
-        end
-      end
-
-      def with_twitter_dm_stubbed(sample_dm_reply)
-        Twitter::REST::Client.any_instance.stubs(:create_direct_message).returns(sample_dm_reply)
-        unless GNIP_ENABLED
-          Social::DynamoHelper.stubs(:insert).returns({})
-          Social::DynamoHelper.stubs(:update).returns({})
-        end
-
-        yield
-
-
-        Twitter::REST::Client.any_instance.unstub(:create_direct_message)
-        unless GNIP_ENABLED
-          Social::DynamoHelper.unstub(:insert)
-          Social::DynamoHelper.unstub(:update)
-        end
-      end
 
       def archive_note_payload(note, payload)
         payload.merge!({

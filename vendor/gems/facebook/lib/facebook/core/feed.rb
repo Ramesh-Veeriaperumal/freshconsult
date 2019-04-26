@@ -10,9 +10,10 @@ module Facebook
       attr_accessor :page_id, :realtime_feed, :sender_id, :fan_page
       
       #Initialize a facebook change object
-      def initialize(page_id, entry_change)
+      def initialize(page_id, entry_change, account_id = nil)
         @page_id         = page_id
         @realtime_feed   = entry_change
+        @account_id      = account_id
       end
                  
       def process_feed(raw_obj)
@@ -29,7 +30,7 @@ module Facebook
       end
       
       def account_and_page_validity
-        select_fb_shard_and_account(page_id) do |account|    
+        select_shard_without_fb_mapping(page_id, @account_id) do |account|
           if account.present? and account.active?
             @fan_page = account.facebook_pages.find_by_page_id(page_id)  
             [true, @fan_page.valid_page?]

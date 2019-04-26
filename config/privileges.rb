@@ -676,6 +676,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"agent", :only => [:api_key]
     resource :"rake_task", only: [:run_rake_task]
     resource :automation_essential
+    resource :"testing/freshid_api"
   end
 
   manage_skills do

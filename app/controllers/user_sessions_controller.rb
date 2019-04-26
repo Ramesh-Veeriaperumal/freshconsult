@@ -24,8 +24,8 @@ class UserSessionsController < ApplicationController
   skip_after_filter :set_last_active_time
   before_filter :decode_jwt_payload, :check_jwt_required_fields, :only => [:jwt_sso_login]
   before_filter :redirect_to_freshid_login, :only =>[:create], :if => :is_freshid_agent_and_not_mobile?
-  before_filter :redirect_to_agent_sso_freshid_authorize, only: :agent_login, if: :agent_freshid_sso_enabled_and_not_logged_in?
-  before_filter :redirect_to_customer_sso_freshid_authorize, only: :customer_login, if: :customer_freshid_sso_enabled_and_not_logged_in?
+  before_filter :redirect_to_agent_sso_freshid_authorize, only: :agent_login, if: -> { !logged_in? && freshid_integration_enabled? }
+  before_filter :redirect_to_customer_sso_freshid_authorize, only: :customer_login, if: -> { !logged_in? && freshid_integration_enabled? }
 
   def new
     flash.keep
@@ -190,7 +190,7 @@ class UserSessionsController < ApplicationController
 
   def customer_login
     redirect_url = logged_in? ? support_home_url : support_login_path
-    redirect_to redirect_url
+	  redirect_to redirect_url
   end
 
   def show
@@ -198,7 +198,7 @@ class UserSessionsController < ApplicationController
   end
   
   def create
-    if is_native_mobile? && freshid_enabled?
+    if is_native_mobile? && freshid_integration_enabled?
       freshid_user_authentication
       return if @freshid_login_errors.present?
     else
@@ -260,6 +260,7 @@ class UserSessionsController < ApplicationController
     return if current_account.sso_enabled? and current_account.sso_logout_url.present? and !is_native_mobile?
     if current_user.present? && freshid_agent?(current_user.email)
       Rails.logger.info "FRESHID destroy :: a=#{current_account.try(:id)}, u=#{current_user.try(:id)}"
+      redirect_to Freshid::V2::UrlGenerator.freshid_logout(support_home_url) and return if current_account.freshid_org_v2_enabled?
       url = if agent_oauth2_enabled?
         current_account.agent_oauth2_logout_redirect_url
       elsif agent_freshid_saml_enabled?
@@ -267,7 +268,7 @@ class UserSessionsController < ApplicationController
       end
       url = url.presence || support_home_url
       redirect_to freshid_logout(url) and return
-    elsif current_user.present? && !current_user.agent?
+    elsif current_user.present? && !current_user.agent? && customer_freshid_sso_enabled?
       url = if customer_oauth2_enabled?
         current_account.customer_oauth2_logout_redirect_url
       elsif customer_freshid_saml_enabled?
@@ -287,7 +288,7 @@ class UserSessionsController < ApplicationController
   end
 
   def freshid_user_authentication
-    freshid_login = Freshid::Login.new(params[:user_session])
+    freshid_login = current_account.freshid_org_v2_enabled? ? Freshid::V2::Login.new(params[:user_session]) : Freshid::Login.new(params[:user_session])
     create_user_session and return unless freshid_login.credentials_provided?
 
     uuid = freshid_login.authenticate_user
@@ -301,6 +302,7 @@ class UserSessionsController < ApplicationController
     Rails.logger.info "FRESHID freshid_destroy :: a=#{current_account.try(:id)}, u=#{current_user.try(:id)}"
     logout_user
     return if current_account.sso_enabled? and current_account.sso_logout_url.present? and !is_native_mobile?
+    redirect_to Freshid::V2::UrlGenerator.freshid_logout(support_home_url) and return if current_account.freshid_org_v2_enabled?
     redirect_to params[:redirect_uri]
   end
 
@@ -333,7 +335,7 @@ class UserSessionsController < ApplicationController
     end
     if @current_user.active_freshid_agent?
       redirect_to support_login_url(params: {new_account_signup: true, signup_email: @current_user.email}) and return
-    elsif freshid_enabled?
+    elsif freshid_integration_enabled?
       new_freshid_signup = @current_user.active = true
     end
     @user_session = current_account.user_sessions.new(@current_user)

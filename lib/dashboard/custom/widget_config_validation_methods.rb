@@ -5,6 +5,7 @@ module Dashboard::Custom::WidgetConfigValidationMethods
   ALL_GROUPS = 0
   ALL_PRODUCTS = 0
   PRODUCT_NONE = -1
+  ALL_TYPES = 0
 
   #  :default_requester and :default_company removed considering the huge count
   VALID_GROUP_BY_FIELDS = [:default_source, :default_internal_group, :default_internal_agent,
@@ -67,5 +68,9 @@ module Dashboard::Custom::WidgetConfigValidationMethods
 
   def validate_date_range(date_range)
     DATE_FIELDS_MAPPING[date_range.to_i]
+  end
+
+  def validate_ticket_type(ticket_type)
+    ticket_type.blank? || ticket_type.to_i == ALL_TYPES || Account.current.ticket_types_from_cache.map(&:id).include?(ticket_type.to_i)
   end
 end

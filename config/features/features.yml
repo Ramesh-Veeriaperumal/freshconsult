@@ -96,11 +96,11 @@
       :smart_filter: 91
       :ticket_summary: 92
       :shared_ownership: 93
-      :oauth2: 94
+      :autobots_1: 94
       :cascade_dispatcher: 95
       :hipaa: 96
       :custom_encrypted_fields: 97
-      :freshid_saml: 98
+      :autobots_2: 98
       :google_signin: 99
       :twitter_signin: 100
       :facebook_signin: 101
@@ -341,10 +341,8 @@
   :freshcaller: false
   :freshcaller_widget: false
   :falcon: false
-  :support_bot: false
   :opt_out_analytics: false
   :disable_old_ui: true
-  :oauth2: false
   :field_service_management: false
   :chat_enable: false
   :survey_links: true
@@ -373,3 +371,42 @@
   :facebook_signin: true
   :signup_link: true
   :moderate_posts_with_links: true
+  :open_forums: false
+  :captcha: false
+  :moderate_all_posts: false
+  :hide_portal_forums: false
+  :forum_captcha_disable: false
+  :public_ticket_url: false
+  :id_less_tickets: false
+  :no_list_view_count_query: false
+  :client_debugging: false
+  :collision_socket: false
+  :resource_rate_limit: false
+  :domain_restricted_access: false
+  :limit_mobihelp_results: false
+  :ecommerce: false
+  :freshfone_call_metrics: false
+  :cobrowsing: false
+  :threading_without_user_check: false
+  :freshfone_call_monitoring: false
+  :freshfone_caller_id_masking: false
+  :agent_conference: false
+  :freshfone_warm_transfer: false
+  :restricted_helpdesk: false
+  :freshfone_acw: false
+  :cti: false
+  :all_notify_by_custom_server: false
+  :freshfone_gv_forward: false
+  :chat: false
+  :freshreports_analytics: false
+  :disable_old_reports: false
+  :tokenize_emoji: false
+  :report_field_regenerate: false
+  :reports_regenerate_data: false
+  :saml_old_issuer: false
+  :spam_dynamo: false
+  :es_multilang_solutions: false
+  :sort_by_customer_response: false
+  :saml_unspecified_nameid: false
+  :euc_hide_agent_metrics: false
+  :single_session_per_user: false

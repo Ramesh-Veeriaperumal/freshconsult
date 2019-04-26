@@ -1,8 +1,13 @@
 require_relative '../test_helper'
 
+['social_tickets_creation_helper.rb', 'twitter_helper.rb', 'note_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+
 class ConversationsControllerTest < ActionController::TestCase
   include ConversationsTestHelper
   include AttachmentsTestHelper
+  include SocialTicketsCreationHelper
+  include TwitterHelper
+  include NoteHelper
   def wrap_cname(params)
     { conversation: params }
   end
@@ -928,6 +933,22 @@ class ConversationsControllerTest < ActionController::TestCase
     User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
+  end
+
+  def test_ticket_conversation_with_twitter
+    @twitter_handle = get_twitter_handle
+    @default_stream = @twitter_handle.default_stream
+    ticket = create_twitter_ticket
+    with_twitter_update_stubbed do
+      create_twitter_note(ticket)
+    end
+    get :ticket_conversations, controller_params(id: ticket.display_id)
+    result_pattern = []
+    ticket.notes.visible.exclude_source('meta').each do |n|
+      result_pattern << index_note_pattern(n)
+    end
+    assert_response 200
+    match_json(result_pattern)
   end
 
   def test_reply_with_nil_array_fields

@@ -72,7 +72,11 @@ Sidekiq.configure_client do |config|
       'Admin::CloneWorker',
       'Freshid::AccountDetailsUpdate',
       'MigrationWorker',
-      'DataExportCleanup'
+      'DataExportCleanup',
+      'Freshid::V2::ProcessEvents',
+      'Freshid::V2::AccountDetailsUpdate',
+      'FreshidRetryWorker'
+      
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "AccountCreation::PopulateSeedData",
@@ -104,7 +108,8 @@ Sidekiq.configure_client do |config|
       "Admin::Sandbox::DataToFileWorker",
       "Admin::Sandbox::DiffWorker",
       'Admin::Sandbox::MergeWorker',
-      'Tickets::UndoSendWorker'
+      'Tickets::UndoSendWorker',
+      'Freshid::V2::ProcessEvents'
     ]
   end
 end
@@ -173,7 +178,10 @@ Sidekiq.configure_server do |config|
       'Admin::CloneWorker',
       'Freshid::AccountDetailsUpdate',
       'MigrationWorker',
-      'DataExportCleanup'
+      'DataExportCleanup',
+      'Freshid::V2::ProcessEvents',
+      'Freshid::V2::AccountDetailsUpdate',
+      'FreshidRetryWorker'
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
       "AccountCreation::PopulateSeedData",
@@ -263,7 +271,10 @@ Sidekiq.configure_server do |config|
       'Admin::CloneWorker',
       'Freshid::AccountDetailsUpdate',
       'MigrationWorker',
-      'DataExportCleanup'
+      'DataExportCleanup',
+      'Freshid::V2::ProcessEvents',
+      'Freshid::V2::AccountDetailsUpdate',
+      'FreshidRetryWorker'
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",

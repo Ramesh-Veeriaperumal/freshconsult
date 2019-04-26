@@ -25,7 +25,7 @@ class User < ActiveRecord::Base
   include PasswordPolicies::UserHelpers
   include Redis::FreshidPasswordRedis
 
-  concerned_with :constants, :associations, :callbacks, :user_email_callbacks, :rabbitmq, :esv2_methods, :presenter
+  concerned_with :constants, :associations, :callbacks, :user_email_callbacks, :rabbitmq, :esv2_methods, :presenter, :freshid_methods
 
   include CustomerDeprecationMethods, CustomerDeprecationMethods::NormalizeParams # Placed here to handle deprecated Customer class. Has to be after associations
 
@@ -1019,7 +1019,7 @@ class User < ActiveRecord::Base
     if self.save
       self.cti_phone = nil
       agent.destroy
-      deliver_password_reset_instructions!(nil) if freshid_enabled_account?
+      deliver_password_reset_instructions!(nil) if freshid_integration_enabled_account?
       freshfone_user.destroy if freshfone_user
 
       expiry_period = self.user_policy ? FDPasswordPolicy::Constants::GRACE_PERIOD : FDPasswordPolicy::Constants::NEVER.to_i.days
@@ -1051,7 +1051,7 @@ class User < ActiveRecord::Base
       self.set_password_expiry({:password_expiry_date =>
           (Time.now.utc + expiry_period).to_s}, false)
       reset_persistence_token
-      self.active = self.primary_email.verified = false if freshid_enabled_account?
+      self.active = self.primary_email.verified = false if freshid_integration_enabled_account?
       save ? true : (raise ActiveRecord::Rollback)
     end
   end
@@ -1200,79 +1200,6 @@ class User < ActiveRecord::Base
     !account.verified? && self.privilege?(:admin_tasks)
   end
 
-  def create_freshid_user
-    return if freshid_disabled_or_customer?
-    Rails.logger.info "FRESHID Creating user :: a=#{self.account_id}, u=#{self.id}, email=#{self.email}"
-    self.name = name_from_email if !self.name.present?
-    freshid_user = Freshid::User.create(freshid_attributes)
-    sync_profile_from_freshid(freshid_user)
-  end
-
-  def create_freshid_user!
-    create_freshid_user
-    save!
-    enqueue_activation_email unless Account.current.try(:sandbox?)
-  end
-
-  def sync_profile_from_freshid(freshid_user)
-    return if freshid_user.nil?
-    self.freshid_authorization = self.authorizations.build(provider: Freshid::Constants::FRESHID_PROVIDER, uid: freshid_user.uuid)
-    assign_freshid_attributes_to_agent(freshid_user)
-    Rails.logger.info "FRESHID User created :: a=#{self.account_id}, u=#{self.id}, email=#{self.email}, uuid=#{self.freshid_authorization.uid}"
-  end
-
-  def destroy_freshid_user
-    if freshid_enabled_account? && email_allowed_in_freshid? && freshid_authorization.present?
-      remove_freshid_user
-      freshid_authorization.destroy
-      self.password_salt = self.crypted_password = nil
-    end
-  end
-
-  def valid_freshid_password?(incoming_password)
-    password_available = password_flag_exists?(email) || false
-    valid = password_available && valid_password?(incoming_password)
-    ApiAuthLogger.log "FRESHID API auth Before FRESHID login a=#{account_id}, u=#{id}, password_available=#{password_available}, valid=#{valid}"
-    unless valid
-      remove_password_flag(email, account_id)
-      valid = valid_freshid_login?(incoming_password)
-      ApiAuthLogger.log "FRESHID API auth After FRESHID login a=#{account_id}, u=#{id}, valid=#{valid}"
-      update_with_fid_password(incoming_password) if valid
-    end
-    valid
-  end
-
-  def reset_tokens!
-    reset_persistence_token!
-    reset_perishable_token!
-    remove_password_flag(email, account_id)
-  end
-
-  def assign_freshid_attributes_to_contact freshid_user_data
-    custom_user_info = freshid_user_data[:custom_user_info] || {}
-    self.name = "#{freshid_user_data[:first_name]} #{freshid_user_data[:last_name]}".strip if freshid_user_data.key?(:first_name) || freshid_user_data.key?(:last_name)
-    self.phone = freshid_user_data[:phone] if freshid_user_data.key?(:phone)
-    self.mobile = freshid_user_data[:mobile] if freshid_user_data.key?(:mobile)
-    self.job_title = freshid_user_data[:job_title] if freshid_user_data.key?(:job_title)
-    self.assign_company(company) if freshid_user_data.key?(:company)
-    self.assign_external_id(custom_user_info[:external_id]) if custom_user_info.key?(:external_id)
-    self.active = true
-  end
-
-  def freshid_attributes
-    freshid_first_name, freshid_middle_name, freshid_last_name = freshid_split_names
-    { 
-      first_name: freshid_first_name.presence,
-      middle_name: freshid_middle_name.presence,
-      last_name: freshid_last_name.presence,
-      email: email,
-      phone: phone.presence,
-      mobile: mobile.presence,
-      job_title: job_title.presence,
-      domain: account.full_domain
-    }
-  end
-
   def gdpr_pending?
     agent_preferences[:gdpr_acceptance]
   end
@@ -1283,10 +1210,6 @@ class User < ActiveRecord::Base
 
   def agent_preferences
     self.preferences[:agent_preferences]
-  end
-
-  def active_freshid_agent?
-    active_and_verified? && freshid_enabled_and_agent?
   end
 
   def email_id_changed?
@@ -1301,10 +1224,6 @@ class User < ActiveRecord::Base
     new_pref = { simple_outreach_unsubscribe: true }
     self.merge_preferences = { user_preferences: new_pref }
     save
-  end
-
-  def freshid_enabled_and_agent?
-    agent? && freshid_enabled_account? && email_allowed_in_freshid?
   end
 
   def privilege?(privilege)
@@ -1327,48 +1246,6 @@ class User < ActiveRecord::Base
       else
         account.companies.find_or_create_by_name(name)
       end
-    end
-
-    def freshid_enabled_account?
-      account.freshid_enabled?
-    end
-
-    def freshid_disabled_or_customer?
-      !freshid_enabled_and_agent?
-    end
-
-    def freshid_agent_not_signed_up_admin?
-      freshid_enabled_and_agent? && !signed_up_admin?
-    end
-
-    def signed_up_admin?
-      account.admin_email == email
-    end
-
-    def email_allowed_in_freshid?
-      !FRESHID_IGNORED_EMAIL_IDS.include?(self.email)
-    end
-
-    def valid_freshid_login?(incoming_password)
-      freshid_login = Freshid::Login.new({ email: email, password: incoming_password })
-      freshid_login.authenticate_user
-      freshid_login.valid_credentials?
-    end
-
-    def update_with_fid_password(fid_password)
-      self.password = fid_password
-      User.where(id: id).update_all(crypted_password: self.crypted_password, password_salt: self.password_salt)
-      self.reload
-      set_password_flag(email)
-    end
-
-    def assign_freshid_attributes_to_agent freshid_user
-      self.name = freshid_user.full_name
-      self.phone = freshid_user.phone
-      self.mobile = freshid_user.mobile
-      self.job_title = freshid_user.job_title
-      self.active = self.primary_email.verified = freshid_user.active?
-      self.password_salt = self.crypted_password = nil
     end
 
     def name_part(part)
@@ -1488,11 +1365,6 @@ class User < ActiveRecord::Base
 
     def format_name
       (name =~ SPECIAL_CHARACTERS_REGEX and name !~ /".+"/) ? "\"#{name}\"" : name
-    end
-
-    def freshid_split_names
-      name_splits = self.name.split(" ")
-      [name_splits.first, name_splits[1..-2].join(" "), name_splits[1..-1].last]
     end
 
     def build_or_update_company comp_id

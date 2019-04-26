@@ -47,7 +47,7 @@ class Agent < ActiveRecord::Base
   attr_accessor :agent_role_ids, :freshcaller_enabled, :user_changes, :group_changes, :ocr_update
 
   scope :with_conditions ,lambda {|conditions| { :conditions => conditions} }
-  scope :full_time_agents, :conditions => { :occasional => false, 'users.deleted' => false }
+  scope :full_time_support_agents, :conditions => { :occasional => false, :agent_type => SUPPORT_AGENT_TYPE, 'users.deleted' => false}
   scope :occasional_agents, :conditions => { :occasional => true, 'users.deleted' => false }
   scope :list , lambda {{ :include => :user , :order => :name }}  
 

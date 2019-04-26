@@ -103,7 +103,7 @@ module Ember
       end
 
       def create_user_and_make_agent(item)
-        item.signup!({}, nil, !current_account.freshid_enabled?, false) && item.create_agent
+        item.signup!({}, nil, !current_account.freshid_integration_enabled?, false) && item.create_agent
       end
 
       def agent_creation_error(item)

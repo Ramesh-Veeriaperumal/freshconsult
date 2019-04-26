@@ -356,16 +356,15 @@ class SAAS::AccountDataCleanup
 
   def handle_field_service_management_add_data
     Rails.logger.info "Adding FSM for account #{account.id}"
-    Account.current.add_feature(:field_service_management)
-    Account.current.launch(:field_service_management_lp)
+    account.add_feature(:field_service_management)
+    account.launch(:field_service_management_lp)
     perform_fsm_operations
   end
 
   def handle_field_service_management_drop_data
     Rails.logger.info "Removing FSM for account #{account.id}"
     Account.current.revoke_feature(:field_service_management)
-    Account.current.subscription.additional_info[:field_agent_limit] = 0
-    Account.current.subscription.save
+    Account.current.subscription.reset_field_agent_limit
     cleanup_fsm
   end
 

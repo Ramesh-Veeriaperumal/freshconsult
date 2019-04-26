@@ -1,6 +1,6 @@
 account = Account.current
 
-if account.freshid_enabled?
+if account.freshid_integration_enabled?
   EmailNotification.seed(:account_id, :notification_type) do |s|
     s.notification_type = EmailNotification::AGENT_INVITATION
     s.account_id = account.id

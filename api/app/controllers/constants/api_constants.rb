@@ -60,7 +60,8 @@ module ApiConstants
                        AdvancedTicketingConstants::LOAD_OBJECT_EXCEPT +
                        CannedResponseConstants::LOAD_OBJECT_EXCEPT +
                        AuditLogConstants::LOAD_OBJECT_EXCEPT +
-                       Solutions::HomeConstants::LOAD_OBJECT_EXCEPT
+                       Solutions::HomeConstants::LOAD_OBJECT_EXCEPT +
+                       Testing::FreshidApiConstants::LOAD_OBJECT_EXCEPT
 
   NO_CONTENT_TYPE_REQUIRED = ApiTicketConstants::NO_CONTENT_TYPE_REQUIRED +
                              ContactConstants::NO_CONTENT_TYPE_REQUIRED +

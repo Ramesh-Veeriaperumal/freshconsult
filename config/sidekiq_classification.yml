@@ -186,6 +186,7 @@
     - simple_outreach_import
     - clone
     - anonymous_account_cleanup
+    - freshid_retry_worker
   :external:
     - code_console_execution
     - integrations
@@ -217,6 +218,9 @@
     - widget_upload_config
     - bot_email_reply
     - bot_email_ml_feedback
+    - freshid_v2_events
+    - freshid_v2_agents_migration
+    - freshid_account_details_update_v2
     - http_request
   :free:
     - free_sla

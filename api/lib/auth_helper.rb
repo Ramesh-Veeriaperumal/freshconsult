@@ -6,7 +6,7 @@ class AuthHelper
       ApiAuthLogger.log "FRESHID API version=V2, auth_type=UN_PASS, a=#{account.id}"
       if user && !user.deleted
         Sharding.run_on_master do
-          valid_pwd = account.freshid_enabled? ? user.valid_freshid_password?(pwd) : user.valid_password?(pwd)
+          valid_pwd = account.freshid_integration_enabled? ? user.valid_freshid_password?(pwd) : user.valid_password?(pwd)
           user.update_failed_login_count(valid_pwd, username, ip)
         end
       end

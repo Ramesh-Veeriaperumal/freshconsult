@@ -6,6 +6,6 @@
 <%end%>
 <%= t("mailer_notifier.security_notification.deleted_agent_info", agent_name: @model.name) %>
 <br><br>
-<%= t("mailer_notifier.security_notification.current_agent_stats", full_time: @model.account.all_agents.full_time_agents.size, occasional: @model.account.all_agents.occasional_agents.size) %><br><br>
+<%= t("mailer_notifier.security_notification.current_agent_stats", full_time: @model.account.all_agents.full_time_support_agents.size, occasional: @model.account.all_agents.occasional_agents.size) %><br><br>
 
 <%= render :partial => "footer" %>

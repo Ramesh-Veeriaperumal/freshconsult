@@ -143,7 +143,7 @@ class ConversationDecorator < ApiDecorator
       type: record.tweet.tweet_type,
       support_handle_id: handle.twitter_user_id.to_s,
       support_screen_name: handle.screen_name,
-      requester_screen_name: record.notable.requester.twitter_id
+      requester_screen_name: record.user.twitter_id
     }
     tweet_hash[:stream_id] = record.tweet.stream_id if channel_v2_api?
     tweet_hash

@@ -58,8 +58,10 @@ class User < ActiveRecord::Base
   after_commit :enqueue_activation_email, on: :update, if: [:freshid_enabled_and_agent?, :converted_to_agent_or_email_updated?]
   after_commit :push_contact_deleted_info, on: :update, :if => :deleted?
   after_rollback :remove_freshid_user, on: :create, if: :freshid_enabled_and_agent?
-  after_rollback :remove_freshid_user, on: :update, if: [:freshid_enabled_account?, :converted_to_agent?]
-  after_commit :tag_update_central_publish, on: :update, :if => :tags_updated?
+  after_rollback :remove_freshid_user, on: :update, if: [:freshid_integration_enabled_account?, :converted_to_agent?]
+  after_commit :tag_update_central_publish, :on => :update, :if => :tags_updated?
+
+
 
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
@@ -75,19 +77,6 @@ class User < ActiveRecord::Base
     
   def tags_updated?
     self.tags_updated
-  end
-
-  def update_freshid_user
-    destroy_freshid_user # Delete old email user from freshID
-    create_freshid_user # Create new email user in freshID
-  end
-
-  def send_activation_mail_on_create
-    enqueue_activation_email if @all_changes.nil? && !Thread.current[:create_sandbox_account] # new record saved successfully
-  end
-
-  def remove_freshid_user
-    Freshid::User.new({ uuid: freshid_authorization.uid, domain: account.full_domain }).destroy
   end
 
   def blocked_deleted?

@@ -2,7 +2,7 @@ class Dashboard::Custom::SlaTrendCard < Dashboards
   include Cache::Memcache::Dashboard::CacheData
   include Dashboard::Custom::TrendCardMethods
 
-  CONFIG_FIELDS = [:group_ids, :product_id, :metric, :date_range].freeze
+  CONFIG_FIELDS = [:group_ids, :product_id, :metric, :date_range, :ticket_type].freeze
 
   CACHE_EXPIRY = 3600
 

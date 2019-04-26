@@ -10,9 +10,9 @@ module Dashboard::Custom::CustomDashboardConstants
   LEADERBOARD_ATTRIBUTES = [:group_id]
   CSAT_ATTRIBUTES = [:group_ids, :time_range]
   FORUM_MODERATION_ATTRIBUTES = []
-  TICKET_TREND_CARD_ATTRIBUTES = [:group_ids, :product_id, :metric, :date_range, :threshold_max, :threshold_min].freeze
-  TIME_TREND_CARD_ATTRIBUTES = [:group_ids, :product_id, :metric, :date_range, :threshold_max, :threshold_min].freeze
-  SLA_TREND_CARD_ATTRIBUTES = [:group_ids, :product_id, :metric, :date_range, :threshold_max, :threshold_min].freeze
+  TICKET_TREND_CARD_ATTRIBUTES = [:group_ids, :product_id, :ticket_type, :metric, :date_range, :threshold_max, :threshold_min].freeze
+  TIME_TREND_CARD_ATTRIBUTES = [:group_ids, :product_id, :ticket_type, :metric, :date_range, :threshold_max, :threshold_min].freeze
+  SLA_TREND_CARD_ATTRIBUTES = [:group_ids, :product_id, :ticket_type, :metric, :date_range, :threshold_max, :threshold_min].freeze
 
   WIDGETS_ATTRIBUTES_FIELDS = [widgets_attributes:
     [:widget_type, :name, :x, :y, :width, :height, :refresh_interval, :config_data] |
@@ -32,9 +32,9 @@ module Dashboard::Custom::CustomDashboardConstants
   LEADERBOARD_PREVIEW_FIELDS = %w(group_id)
   CSAT_PREVIEW_FIELDS = %w(group_ids time_range)
   FORUM_MODERATION_PREVIEW_FIELDS = %w().freeze
-  TICKET_TREND_CARD_PREVIEW_FIELDS = %w(group_ids product_id metric date_range)
-  TIME_TREND_CARD_PREVIEW_FIELDS = %w(group_ids product_id metric date_range)
-  SLA_TREND_CARD_PREVIEW_FIELDS = %w(group_ids product_id metric date_range)
+  TICKET_TREND_CARD_PREVIEW_FIELDS = %w[group_ids product_id metric date_range ticket_type].freeze
+  TIME_TREND_CARD_PREVIEW_FIELDS = %w[group_ids product_id metric date_range ticket_type].freeze
+  SLA_TREND_CARD_PREVIEW_FIELDS = %w[group_ids product_id metric date_range ticket_type].freeze
   BAR_CHART_DATA_FIELDS = %w(widget_id)
   CREATE_ANNOUNCEMENT_FIELDS = %w(announcement_text)
   END_ANNOUNCEMENT_FIELDS = %w(deactivate)

@@ -2,7 +2,7 @@ class Subscription::AddonMapping < ActiveRecord::Base
   self.primary_key = :id
   not_sharded
 
-  DROP_DATA_ADDONS  = ["Round Robin", Subscription::Addon::FSM_ADDON].freeze
+  DROP_DATA_ADDONS  = ["Round Robin"].freeze
   ADD_DATA_ADDONS   = ["Round Robin"].freeze
 
   belongs_to :subscription, :class_name => "Subscription"

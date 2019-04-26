@@ -11,7 +11,7 @@ module Users
     end
 
     def deliver_password_reset_instructions!(portal)
-      return if agent? && Account.current.freshid_enabled?
+      return if agent? && Account.current.freshid_integration_enabled?
       portal = Portal.current || account.main_portal
       reply_email = portal.main_portal ? account.default_friendly_email : portal.friendly_email 
       email_config = portal.main_portal ? account.primary_email_config : portal.primary_email_config
@@ -131,7 +131,7 @@ module Users
     end
   
     def deliver_admin_activation
-      UserNotifier.send_later(:deliver_admin_activation,self) unless Account.current.freshid_enabled?
+      UserNotifier.send_later(:deliver_admin_activation,self) unless Account.current.freshid_integration_enabled?
     end
 
     def restrict_domain
@@ -148,10 +148,10 @@ module Users
  
     def generate_activation_url(portal)
       url = ""
-      if agent? && Account.current.freshid_enabled?
+      if agent? && Account.current.freshid_integration_enabled?
         host_info = { host: host(portal), protocol: url_protocol }
         redirect_url = (Account.current.agent_oauth2_sso_enabled? || Account.current.agent_freshid_saml_sso_enabled? ? agent_login_url(host_info) : helpdesk_dashboard_url(host_info))
-        url = Freshid::User.generate_activation_url(redirect_url, self.freshid_authorization.uid) if self.freshid_authorization.present?
+        url =  generate_freshid_activation_hash(redirect_url) if self.freshid_authorization.present?
         Rails.logger.error "FRESHID Activation url is empty :: uid = #{self.id}, auth = #{self.freshid_authorization.inspect}" if url.blank?
       else
         url = register_url(perishable_token, :host => host(portal), :protocol => url_protocol)
@@ -159,6 +159,15 @@ module Users
       url
     end
 
+    def generate_freshid_activation_hash(redirect_url)
+      if Account.current.freshid_org_v2_enabled?
+        url = Freshid::V2::Models::UserHash.create_activation_hash(self.freshid_authorization.uid, redirect_url, Account.current.organisation_domain)
+        url.try(:dup)
+      else
+        Freshid::User.generate_activation_url(redirect_url, self.freshid_authorization.uid)
+      end
+    end
+  
     def host(portal)
       portal.portal_url.present? ? portal.portal_url : account.host
     end

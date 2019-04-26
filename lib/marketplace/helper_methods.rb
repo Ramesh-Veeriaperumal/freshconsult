@@ -88,7 +88,7 @@ module Marketplace::HelperMethods
     end
     if per_agent_plan?
       return Account.current.subscription.new_sprout? ? 
-             Account.current.full_time_agents.count : Account.current.subscription.agent_limit
+             Account.current.full_time_support_agents.count : Account.current.subscription.agent_limit
     else
       return Marketplace::Constants::ACCOUNT_ADDON_APP_UNITS
     end

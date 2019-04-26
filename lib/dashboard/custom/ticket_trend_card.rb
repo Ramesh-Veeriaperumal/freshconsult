@@ -3,7 +3,7 @@ class Dashboard::Custom::TicketTrendCard < Dashboards
   include Dashboard::Custom::TrendCardMethods
   # include MemcacheKeys
 
-  CONFIG_FIELDS = [:group_ids, :product_id, :metric, :date_range].freeze
+  CONFIG_FIELDS = [:group_ids, :product_id, :metric, :date_range, :ticket_type].freeze
 
   CACHE_EXPIRY = 3600
 
