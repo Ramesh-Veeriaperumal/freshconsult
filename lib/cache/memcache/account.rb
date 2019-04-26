@@ -313,6 +313,12 @@ module Cache::Memcache::Account
     end
   end
 
+  def ticket_fields_name_type_mapping_cache
+    fetch_from_cache(ticket_fields_name_type_mapping_key) do
+      ticket_fields_from_cache.select { |field| field.default == false }.map { |x| [x.name, x.field_type] }.to_h
+    end
+  end
+
   def ticket_fields_from_cache
     @ticket_fields_from_cache ||= begin
       key = format(ACCOUNT_TICKET_FIELDS, account_id: id)
@@ -769,6 +775,10 @@ module Cache::Memcache::Account
 
     def canned_responses_inline_images_key
       CANNED_RESPONSES_INLINE_IMAGES % { account_id: self.id }
+    end
+
+    def ticket_fields_name_type_mapping_key
+      @ticket_fields_name_type_mapping_key ||= format(ACCOUNT_TICKET_FIELDS_NAME_TYPE_MAPPING, account_id: id)
     end
 
     def sources

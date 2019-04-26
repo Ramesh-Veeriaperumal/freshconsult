@@ -1,5 +1,6 @@
 module Cache::Memcache::Helpdesk::TicketField
   include MemcacheKeys
+  include Cache::Memcache::Account
 
   PICKLIST_KEYS = { 'default_ticket_type' => ACCOUNT_TICKET_TYPES }.freeze
 
@@ -30,6 +31,8 @@ module Cache::Memcache::Helpdesk::TicketField
 
     MemcacheKeys.delete_from_cache(picklist_values_by_id_key)
     MemcacheKeys.delete_from_cache(picklist_ids_by_value_key)
+
+    delete_value_from_cache ticket_fields_name_type_mapping_key
     # In Scripts, clear_all_section_ticket_fields_cache in Cache::Memcache::Helpdesk::Section
   end
 

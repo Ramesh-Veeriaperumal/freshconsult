@@ -9,6 +9,7 @@ class TicketFieldData < ActiveRecord::Base
 
   ALLOWED_FIELD_TYPES = ['custom_dropdown', 'custom_number', 'custom_checkbox', 'nested_field', 'custom_date'].freeze
   NEW_DROPDOWN_COLUMN_NAMES = column_names.grep(/ffs.+/)[80..249]
+  NEW_DROPDOWN_COLUMN_NAMES_SET = Set.new(NEW_DROPDOWN_COLUMN_NAMES)
 
   def ff_def
     self[:flexifield_def_id]
@@ -68,7 +69,7 @@ class TicketFieldData < ActiveRecord::Base
   end
 
   def write_ff_attribute(attribute, value, field_type)
-    if self.class.flexiblefield_names.include?(attribute.to_s) && ALLOWED_FIELD_TYPES.include?(field_type)
+    if self.class.flexiblefield_names_set.include?(attribute.to_s) && ALLOWED_FIELD_TYPES.include?(field_type)
       self[attribute] = value
     else
       Rails.logger.info "Trying to write #{attribute} with value #{value}; Field doesnt exist"
@@ -76,7 +77,7 @@ class TicketFieldData < ActiveRecord::Base
   end
 
   def read_ff_attribute(attribute, field_type)
-    if self.class.flexiblefield_names.include?(attribute.to_s) && ALLOWED_FIELD_TYPES.include?(field_type)
+    if self.class.flexiblefield_names_set.include?(attribute.to_s) && ALLOWED_FIELD_TYPES.include?(field_type)
       self[attribute]
     else
       Rails.logger.info "Trying to read #{attribute}; Field doesnt exist"
@@ -86,6 +87,10 @@ class TicketFieldData < ActiveRecord::Base
   class << self
     def flexiblefield_names
       @flexiblefield_names ||= column_names.grep(/ff.+/)
+    end
+
+    def flexiblefield_names_set
+      @flexiblefield_names_set ||= Set.new(flexiblefield_names)
     end
   end
 

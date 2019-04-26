@@ -28,8 +28,8 @@ class Flexifield < ActiveRecord::Base
     @flexiblefield_names ||= column_names.grep(/ff.+/)
   end
 
-  def self.flexiblefield_names_hash
-    @flexiblefield_names_hash ||= Hash[flexiblefield_names.collect { |item| [item.to_sym, ''] }]
+  def self.flexiblefield_names_set
+    @flexiblefield_names_set ||= Set.new(flexiblefield_names)
   end
   
   def ff_def
@@ -84,11 +84,11 @@ class Flexifield < ActiveRecord::Base
   end
 
   def write_ff_attribute(attribute, value, ff_alias)
-    if TicketFieldData::NEW_DROPDOWN_COLUMN_NAMES.include?(attribute.to_s)
+    if TicketFieldData::NEW_DROPDOWN_COLUMN_NAMES_SET.include?(attribute.to_s)
       flexifield_set.ticket_field_data.set_ff_value(ff_alias, value)
       return
     end
-    if self.class.flexiblefield_names_hash.key?(attribute.to_sym)
+    if self.class.flexiblefield_names_set.include?(attribute.to_s)
       write_attribute(attribute, value)
       flexifield_set.ticket_field_data.set_ff_value(ff_alias, value) if id_for_choices_write_enabled?
     elsif SERIALIZED_ATTRIBUTES.include?(attribute)
@@ -99,9 +99,9 @@ class Flexifield < ActiveRecord::Base
   end
 
   def read_ff_attribute(attribute, field_type, ff_alias)
-    if TicketFieldData::NEW_DROPDOWN_COLUMN_NAMES.include?(attribute.to_s)
+    if TicketFieldData::NEW_DROPDOWN_COLUMN_NAMES_SET.include?(attribute.to_s)
       flexifield_set.ticket_field_data.get_ff_value(ff_alias)
-    elsif self.class.flexiblefield_names_hash.key?(attribute.to_sym)
+    elsif self.class.flexiblefield_names_set.include?(attribute.to_s)
       if field_type == 'dropdown' && ticket_field_limit_increase_enabled?
         flexifield_set.ticket_field_data.get_ff_value(ff_alias)
       else

@@ -26,7 +26,7 @@ class TicketDecorator < ApiDecorator
     @last_broadcast_message = options[:last_broadcast_message]
     @sideload_options = options[:sideload_options] || []
     @discard_options = options[:discard_options] || []
-    @custom_fields_mapping = Account.current.ticket_fields_from_cache.select { |field| field.default == false }.map { |x| [x.name, x.field_type] }.to_h
+    @custom_fields_mapping = options[:custom_fields_mapping] || {}
   end
 
   def custom_fields
