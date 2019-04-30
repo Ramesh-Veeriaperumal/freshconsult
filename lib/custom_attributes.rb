@@ -1,5 +1,4 @@
 module CustomAttributes
-  include Admin::AdvancedTicketing::FieldServiceManagement::Util
   CUSTOM_COLUMN_MAPPING = { custom_text: :custom_single_line_texts, custom_paragraph: :custom_paragraphs, custom_decimal: :custom_decimals, custom_number: :custom_numbers }.freeze  
   def get_custom_field_value(name)
     respond_to?(name) ? safe_send(name) : custom_field_value(name)
@@ -29,7 +28,7 @@ module CustomAttributes
       val = get_custom_field_value(field.name)
       if val
         display_name = TicketDecorator.display_name(field.name)
-        field_display_name = fsm_field_display_name(display_name)
+        field_display_name = display_name.gsub('cf_', '')
         fsm_date_time_hash[field_display_name] = val
       end
     end
