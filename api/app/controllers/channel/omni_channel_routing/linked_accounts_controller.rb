@@ -11,7 +11,7 @@ module Channel::OmniChannelRouting
       linked_accounts << { id: current_account.id.to_s, product: 'freshdesk', domain: current_account.full_domain }
       if current_account.freshchat_account
         freshchat_account = current_account.freshchat_account
-        linked_accounts << { id: freshchat_account.app_id, product: 'freshchat', domain: URI::parse(Freshchat::Account::CONFIG[:agentWidgetHostUrl]).host, enabled: freshchat_account.enabled } if freshchat_account.enabled
+        linked_accounts << { id: freshchat_account.app_id, product: 'freshchat', domain: freshchat_account.api_domain, enabled: freshchat_account.enabled } if freshchat_account.enabled
       end
       if current_account.freshcaller_account
         freshcaller_account = current_account.freshcaller_account

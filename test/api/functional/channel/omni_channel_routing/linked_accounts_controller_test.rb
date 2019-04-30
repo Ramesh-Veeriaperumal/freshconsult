@@ -8,7 +8,7 @@ class Channel::OmniChannelRouting::LinkedAccountsControllerTest < ActionControll
     @account.reload
     append_header
     expected_json = { accounts: [{ id: @account.id.to_s, product: 'freshdesk', domain: @account.full_domain }, 
-      { id: @freshchat.app_id, product: 'freshchat', domain: URI::parse(Freshchat::Account::CONFIG[:agentWidgetHostUrl]).host, enabled: true }, 
+      { id: @freshchat.app_id, product: 'freshchat', domain: @freshchat.api_domain, enabled: true }, 
       { id: @freshcaller.freshcaller_account_id.to_s, product: 'freshcaller', domain: @freshcaller.domain }] }
     get :index, controller_params(version: 'channel/ocr/accounts')
     match_json(expected_json)
