@@ -11,7 +11,7 @@ class Middleware::ApplicationLogger
   def initialize(app, options = {})
     @app = app
     @@logger ||= CustomLogger.new("#{Rails.root}/log/application.log")
-    @@server_ip ||= Socket.ip_address_list.detect(&:ipv4_private?).try(:ip_address)
+    @@server_ip ||= ( ENV['DOCKER_HOST_IP'] || Socket.ip_address_list.detect(&:ipv4_private?).try(:ip_address) )
     @controller_log_info = nil
   end
 
