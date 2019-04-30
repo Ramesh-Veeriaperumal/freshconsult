@@ -38,15 +38,6 @@
 	min-width: 94px;
 }
 
-.omni-billing-edit {
-	text-align: left;
-	padding-left: 10px;
-
-	.toggle-button {
-	    margin-left: 48px;
-	}
-}
-
 .omni_warning {
 	border: 1px solid #ffd0d6;
 	padding: 18px;
@@ -389,7 +380,7 @@ dt.vertical-top {
 		}
 		dt{
 			@include text-align(left);
-			width: 28%;
+			width: 38%;
 			font-weight: bold;
 			vertical-align: middle;
 		}
@@ -429,6 +420,14 @@ dt.vertical-top {
   	.toggle-button {
   	  float: right;
   	}
+  }
+}
+
+.features-billing-edit {
+
+  &__toggle {
+	display: inline-block;
+	padding: 0 15px 0 10px;
   }
 }
 
@@ -565,10 +564,6 @@ input[type=text].input-agent-count{
 		position: relative;
 		&:last-child{
 			@include border-right(0);
-		}
-
-		#billing-template dt {
-			width: 38%;
 		}
 	}
 	.plan-details{
@@ -881,7 +876,7 @@ input[type=text].input-agent-count{
 		}
 		width: auto;
 		@include float(left);
-		max-width: 40%;
+		max-width: 50%;
 	}
 	.free-divider{
 		ul{

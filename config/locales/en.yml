@@ -12022,6 +12022,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   buy_plan: "Buy this Plan"
   classic_label: "Classic"
   agent_seats: "%{no_of_agents} agent seats"
+  field_agent_seats: "%{no_of_field_agents} field technician seats"
   free_plan: "Free Plan"
   view_invoices: "View Invoices: "
   subscribed_billing: "%{billing_cycle} billing"

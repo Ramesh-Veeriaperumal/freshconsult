@@ -211,12 +211,12 @@
       - :custom_password_policy
       - :sitemap
       - :contact_company_notes
-      - :allow_auto_suggest_solutions
       - :assume_identity
       - :sla_management
       - :canned_forms
       - :session_replay
       - :image_annotation
+      - :allow_auto_suggest_solutions
       - :custom_apps
       - :fa_developer
       - :forums

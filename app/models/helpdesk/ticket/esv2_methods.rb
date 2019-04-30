@@ -35,6 +35,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #
   def to_esv2_json
     custom_attr = account.launched?(:custom_fields_search) ? fetch_custom_attributes : esv2_custom_attributes
+    fsm_appointment_times = fetch_fsm_appointment_times
     as_json({
       :root => false,
       :tailored_json => true,
@@ -50,7 +51,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
                   :frDueBy, :priority, :ticket_type, :subject, :description
                 ]
     }, false).merge(custom_attr)
-            .merge(attachments: es_v2_attachments).to_json
+            .merge(attachments: es_v2_attachments)
+            .merge(fsm_appointment_times).to_json
   end
 
   # Flexifield denormalized

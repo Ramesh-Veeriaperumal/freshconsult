@@ -190,5 +190,9 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       def fsm?
         params[:id] == FSM_FEATURE.to_s
       end
+
+      def fsm_field_display_name(field_name)
+        field_name.gsub('cf_', '')
+      end
   end
 end

@@ -1,5 +1,12 @@
 module CustomAttributes
-  CUSTOM_COLUMN_MAPPING = { custom_text: :custom_single_line_texts, custom_paragraph: :custom_paragraphs, custom_decimal: :custom_decimals, custom_number: :custom_numbers }.freeze  
+  
+  include Admin::AdvancedTicketing::FieldServiceManagement::Constant
+  include Admin::AdvancedTicketing::FieldServiceManagement::Util
+
+  CUSTOM_COLUMN_MAPPING = { custom_text: :custom_single_line_texts, custom_paragraph: :custom_paragraphs, custom_decimal: :custom_decimals, custom_number: :custom_numbers }.freeze
+
+  FSM_DATE_TIME_FIELDS = [FSM_APPOINTMENT_START_TIME, FSM_APPOINTMENT_END_TIME].freeze
+  
   def get_custom_field_value(name)
     respond_to?(name) ? safe_send(name) : custom_field_value(name)
   end
@@ -17,5 +24,20 @@ module CustomAttributes
       end
     end
     denormalized_hash
+  end
+
+  def fetch_fsm_appointment_times
+    return {} unless account.field_service_management_enabled?
+    fsm_date_time_fields = FSM_DATE_TIME_FIELDS.collect { |x| x + "_#{account.id}" }
+    fsm_date_time_hash = {}
+    account.custom_date_time_fields_from_cache.select { |x| fsm_date_time_fields.include?(x.name) }.each do |field|
+      val = get_custom_field_value(field.name)
+      if val
+        display_name = TicketDecorator.display_name(field.name)
+        field_display_name = fsm_field_display_name(display_name)
+        fsm_date_time_hash[field_display_name] = val
+      end
+    end
+    fsm_date_time_hash
   end
 end
