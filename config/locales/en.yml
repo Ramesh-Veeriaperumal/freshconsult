@@ -3165,6 +3165,8 @@ en:
   fsm_title: Field service management
   fsm_content: Connect and collaborate with your field workforce to deliver productive and exceptional customer service on site. Available from
   fsm_content_highlight: Estate + Forest
+  fsm_warning_title: Are you sure you want to disable Field service management?
+  fsm_warning_content: Disabling Field service management will delete all field technicians and service groups from your account. Are you sure you want to proceed?
   choose_different_plan: Choose a different plan
   downgrade_plan: "Note: If you downgrade a plan, you might lose some of the existing features"
   downgrade_plan_v2: "Note: If you downgrade your plan, you might lose some features!"

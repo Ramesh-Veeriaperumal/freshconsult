@@ -54,6 +54,8 @@
         <input rel="toggle" type="checkbox" data-plan-id="<%= plan.id %>" id="edit-billing-fsm-toggle" name="fsm-edit-toggle" data-checked-label="<%= t('plain_yes') %>"
         <%= current_account.field_service_management_enabled? ? 'checked' : '' %> />
       </p>
+      <%= render :partial => "subscriptions/features/dialogs/fsm_disable", :locals => {
+        :current_account => current_account, :identifier => 'fsm-billing-edit' } %>
     <% end %>
     </div>
     <div class="subscribed-plan-details current-plan-info">
