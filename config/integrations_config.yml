@@ -7,6 +7,11 @@ app:
   onedrive:
     client_id: "0000000044164F31"
     client_secret: "0aJhfYIgkDDPb-cE57TehreBwVlRKQd4"
+  office365:
+    development: 
+      originator_id: ""
+    test:
+      originator_id: ""
   cloud_elements:
     development:
       server_url: "https://staging.cloud-elements.com"
