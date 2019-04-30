@@ -100,6 +100,10 @@ class Company < ActiveRecord::Base
     self.company_domains.loaded? ? self.company_domains.map(&:domain) : self.company_domains.pluck(:domain)
   end
 
+  def domain_list_with_id
+    self.company_domains.map { |e| { 'id' => e.id, 'domain' => e.domain } } # pluck(:id,:domain) can be done after rails 4 migration
+  end
+
   def domains
     @domain_str ||= domain_list.join(',')
   end

@@ -9,7 +9,7 @@ module CompaniesTestHelper
   # Patterns
 
   def company_payload_pattern (expected_output ={}, company)
-    domains = company.domains.nil? ? nil : company.domains.split(',')
+    domains = company.domains.nil? ? nil : company.domain_list_with_id
     expected_output[:ignore_created_at] ||= true
     expected_output[:ignore_updated_at] ||= true
     company_payload_hash = {

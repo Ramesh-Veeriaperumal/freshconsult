@@ -1,5 +1,6 @@
 module FilterFactory::Filter
   module EsClusterHelperMethods
+    include Admin::AdvancedTicketing::FieldServiceManagement::Util
     SINGLE_QUOTE = '#&$!SinQuo'.freeze
     DOUBLE_QUOTE = '#&$!DouQuo'.freeze
     BACK_SLASH = '#&$!BacSla'.freeze
@@ -42,7 +43,8 @@ module FilterFactory::Filter
 
       def fetch_field_name(field)
         if field['ff_name'] && field['ff_name'] != 'default'
-          field['ff_name'].gsub("_#{Account.current.id}", '')
+          field_name = TicketDecorator.display_name(field['ff_name'])
+          TicketFilterConstants::FSM_DATE_TIME_FIELDS.include?(field_name) ? fsm_field_display_name(field_name) : field_name
         else
           column_mappings[field['condition']].presence || field['condition']
         end

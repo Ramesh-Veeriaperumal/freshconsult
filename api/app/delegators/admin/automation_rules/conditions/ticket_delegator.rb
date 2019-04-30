@@ -27,7 +27,7 @@ module Admin::AutomationRules::Conditions
           end
           validate_operator_custom_fields(field, custom_field.dom_type.to_sym, 'ticket') unless
               CUSTOM_FILEDS_WITH_CHOICES.include? custom_field.dom_type.to_sym
-          validate_case_sensitive(field, custom_field.dom_type) if field.has_key? :case_sensitive
+          validate_case_sensitive(field, custom_field.dom_type, "condition[:#{field[:field_name]}]") if field.has_key? :case_sensitive
           validate_custom_ticket_field(field, custom_field, custom_field.dom_type,
                                        :condition) if custom_field.present?
         end

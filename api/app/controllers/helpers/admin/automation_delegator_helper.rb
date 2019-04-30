@@ -218,8 +218,6 @@ module Admin::AutomationDelegatorHelper
     output = *value
     if TAGS.include? name
       tag_validation(name, output)
-    elsif name == RESPONDER_ID
-      user_validation(name, output)
     elsif BUSINESS_HOURS_FIELDS.include?(name.to_sym)
       validate_business_calendar(name, data)
     else
@@ -229,7 +227,6 @@ module Admin::AutomationDelegatorHelper
 
   def validate_business_calendar(field_name, data)
     if data.present? && data.key?(:business_hours_id)
-      Rails.logger.info "\n\n#{data[:business_hours_id]}"
       unless business_calendars.include?(data[:business_hours_id])
         not_included_error("conditions[#{field_name}][:business_hours_id]", business_calendars)
       end
@@ -296,24 +293,12 @@ module Admin::AutomationDelegatorHelper
   end
 
   def validate_field_values(name, value, source_list)
-    value.each do |val|
-      not_included_error(name, source_list) unless source_list.include?(val)
-    end
+    not_included_error(name, source_list) if (value & source_list).size != value.size
   end
   
-  def validate_case_sensitive(field, dom_type)
-    field_not_allowed('case_sensitive') unless CASE_SENSITIVE_FIELDS.include?(dom_type.to_sym)
-    not_included_error(field[:field_name], BOOLEAN) unless BOOLEAN.include?(field[:case_sensitive])
-  end
-
-  def user_validation(name, values)
-    values.each do |value|
-      next if ANY_NONE.values.include?(value)
-
-      if current_account.users.find_by_id(value).blank?
-        invalid_value(name, value)
-      end
-    end
+  def validate_case_sensitive(field, dom_type, type = nil)
+    field_not_allowed("#{type}case_sensitive") unless CASE_SENSITIVE_FIELDS.include?(dom_type.to_sym)
+    not_included_error("#{type}#{field[:field_name]}", BOOLEAN) unless BOOLEAN.include?(field[:case_sensitive])
   end
 
   def tag_validation(name, values)
@@ -335,6 +320,7 @@ module Admin::AutomationDelegatorHelper
         product_id: product_ids,
         group_id: group_ids,
         add_watcher: all_agents,
+        responder_id: all_agents,
         internal_agent_id: all_agents,
         internal_group_id: group_ids,
         ticket_type: ticket_types,
@@ -372,14 +358,13 @@ module Admin::AutomationDelegatorHelper
   def validate_other_custom_field(name, *value, type)
     name = name.chomp("_#{current_account.id}") if name.ends_with? "_#{current_account.id}"
     value.flatten.each do |val|
-      if type == Integer
+      if type == Integer || type == Float
         # handling it for now to support front-end. Should not be done this way
-        conv_value = val.to_i.to_s
+        conv_value = type == Float ? val.to_f.to_s : val.to_i.to_s
         invalid_value(name, val) if conv_value != val.to_s
       else
         invalid_data_type(name, type, val) unless val.is_a? type
       end
-
     end
   end
 
@@ -430,9 +415,9 @@ module Admin::AutomationDelegatorHelper
     (error_options[field_name.to_sym] ||= {}).merge!(field_name: field_name)
   end
 
-  def invalid_value(field_name, value)
+  def invalid_value(field_name, value, message = :invalid_value_in_field )
     field_name = field_name.chomp("_#{current_account.id}") if field_name.ends_with? "_#{current_account.id}"
-    errors[field_name.to_sym] << :invalid_value_in_field
+    errors[field_name.to_sym] << message
     (error_options[field_name.to_sym] ||= {}).merge!(field_name: field_name, value: value)
   end
 
@@ -506,6 +491,14 @@ module Admin::AutomationDelegatorHelper
 
   private
 
+  def internal_group_ids
+    @internal_group_ids  ||= current_account.account_status_groups_from_cache.collect(&:group_id).uniq
+  end
+
+  def internal_agent_ids
+    @internal_agent_ids  ||= current_account.agent_groups.where(:group_id => internal_group_ids).pluck(:user_id).uniq
+  end
+
   def valid_health_score_choices
     @valid_health_score_choices ||= company_form.default_health_score_choices
   end
@@ -537,8 +530,6 @@ module Admin::AutomationDelegatorHelper
   def business_calendars
     @busines_hours_ids ||= current_account.business_calendar.pluck(:id)
   end
-
-
 
   AUTOMATION_RULE_TYPES.each do |item|
     define_method "#{item.to_s}_rule?" do

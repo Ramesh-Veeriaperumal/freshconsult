@@ -134,10 +134,12 @@ class Admin::AutomationDecorator < ApiDecorator
         evaluate_on_type = condition[:evaluate_on] || DEFAULT_EVALUATE_ON
         evaluate_on = EVALUATE_ON_MAPPING_INVERT[evaluate_on_type.to_sym] || evaluate_on_type.to_sym
         condition_hash[evaluate_on] ||= []
-        condition_hash[evaluate_on] << CONDITION_SET_FIELDS.inject({}) do |hash, key|
+        condition_set_data = CONDITION_SET_FIELDS.inject({}) do |hash, key|
           hash.merge!(construct_data(key.to_sym, condition[key], condition.key?(key),
-                      CONDITON_SET_NESTED_FIELDS, hash[:field_name], evaluate_on))
+                                     CONDITON_SET_NESTED_FIELDS, hash[:field_name], evaluate_on))
         end
+        support_for_old_operators(condition_set_data)
+        condition_hash[evaluate_on] << condition_set_data
       end
       condition_hash
     end
@@ -160,6 +162,7 @@ class Admin::AutomationDecorator < ApiDecorator
           url: action[:url],
           field_name: action[:name]
       }
+      action_hash.select! { |_, value| value.present? }
       if action.key?(:need_authentication)
         action_hash.delete :need_authentication
         action_hash[:auth_header] = {}
@@ -191,5 +194,14 @@ class Admin::AutomationDecorator < ApiDecorator
         value = current_account.tags.where("id in (?)", value).pluck(:name)
       end
       has_key ? { key => value } : {}
+    end
+
+
+    def support_for_old_operators(data)
+      data.symbolize_keys!
+      if data[:operator].is_a?(String) && OLD_OPERATOR_MAPPING.key?(data[:operator].to_sym)
+        data[:value] = *data[:value]
+        data[:operator] = OLD_OPERATOR_MAPPING[data[:operator].to_sym]
+      end
     end
 end

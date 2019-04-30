@@ -17,12 +17,12 @@ module Admin::AutomationRules::Conditions
           company_field_validation(company)
         else
           custom_field = company_form_fields.find { |t| t.name == "cf_#{company[:field_name]}" }
-          field_not_found_error("company[#{company[:field_name]}]") if custom_field.blank?
+          field_not_found_error("condition[:company][#{company[:field_name]}]") if custom_field.blank?
           return if errors.messages.present?
 
           validate_operator_custom_fields(company, custom_field.dom_type.to_sym, 'company') unless
               CUSTOM_FILEDS_WITH_CHOICES.include? custom_field.dom_type.to_sym
-          validate_case_sensitive(company, custom_field.dom_type) if company.has_key? :case_sensitive
+          validate_case_sensitive(company, custom_field.dom_type, "company[:#{company[:field_name]}]") if company.has_key? :case_sensitive
           validate_customer_field(company, custom_field.dom_type.to_sym, 'company') if custom_field.present?
         end
       end

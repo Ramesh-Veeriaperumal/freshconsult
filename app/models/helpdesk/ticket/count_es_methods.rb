@@ -19,6 +19,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def to_search_count_es_json
+    fsm_appointment_times = fetch_fsm_appointment_times
     as_json({
       :root => false,
       :tailored_json => true,
@@ -27,7 +28,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
                     :status_deleted, :product_id, :trashed
                   ].concat(ticket_states_columns),
       :only => ticket_indexed_fields.concat([:updated_at])
-      },false).merge(count_es_ffs_fields).merge(schema_less_fields).map{ |k, v| [k, v] }.to_h.to_json
+      }, false).merge(count_es_ffs_fields).merge(schema_less_fields).merge(fsm_appointment_times).map{ |k, v| [k, v] }.to_h.to_json
   end
 
   def count_es_columns

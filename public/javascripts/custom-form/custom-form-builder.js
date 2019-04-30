@@ -299,7 +299,7 @@
       if(this.section_instance.getNumSections(id) > 0) {
         return;
       }
-      if(fsm_fields.indexOf(this.settings.currentData._object.name) == -1){
+      if(!(fsmFeature && fsm_fields.indexOf(this.settings.currentData._object.name) != -1)) {
         if($(sourcefield).closest('ul').hasClass('section-body')){
           //Section Field
           this.section_instance.deleteSecFieldsdialog(sourcefield, id);

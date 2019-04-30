@@ -341,8 +341,6 @@ module Admin::AutomationValidationHelper
         unexpected_value_for_attribute(:"#{field_name}[:auth_header]", invalid_auth_keys.join(','))
       elsif username.present? && api_key.present?
         unexpected_parameter(:"#{field_name}[:auth_header]", :webhook_auth_header_error)
-      elsif username.present? && !password.present?
-        missing_field_error(:"#{field_name}[:auth_header]", :password)
       else
         invalid_data_type(:"#{field_name}[:auth_header][:api_key]",
                           :String, :invalid) if api_key.present? && !api_key.is_a?(String)

@@ -13,8 +13,8 @@ require Rails.root.join('test', 'api', 'helpers', 'ticket_fields_test_helper.rb'
 class Admin::Dispatcher::WorkerTest < ActionView::TestCase
 
   include AutomationRulesTestHelper
-  include TicketsTestHelper
-  include UsersTestHelper
+  include CoreTicketsTestHelper
+  include CoreUsersTestHelper
   include SharedOwnershipTestHelper
   include TicketFieldsTestHelper
 

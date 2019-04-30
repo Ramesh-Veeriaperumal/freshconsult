@@ -259,10 +259,20 @@ module Admin::AutomationHelper
       if action[:auth_header].present?
         action_hash[:need_authentication] = "true"
         action_hash[:username] = action[:auth_header][:username] if action[:auth_header][:username].present?
-        action_hash[:password] = action[:auth_header][:password] if action[:auth_header][:password].present?
+        action_hash[:password] = action[:auth_header][:password].present? ? action[:auth_header][:password] : password_of_existing_webhook
         action_hash[:api_key] = action[:auth_header][:api_key] if action[:auth_header][:api_key].present?
       end
       action_hash
+    end
+
+    def password_of_existing_webhook
+      webhook_rule = retrieve_existing_property(@item.action_data, :field_name, :trigger_webhook)
+      webhook_rule.try(:[], :password)
+    end
+
+    def retrieve_existing_property(data, key, name)
+      return nil if data.blank? || !data.is_a?(Array)
+      data.find { |each_data| (each_data[key].to_sym rescue each_data[key]) == name }
     end
 
     def construct_data(key, value, has_key = true, nested_field_names = nil, is_ticket = false, is_event = false)

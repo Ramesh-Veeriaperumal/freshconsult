@@ -2884,6 +2884,7 @@ en:
       with_bcc: 'Bcc: %{fwd_bcc}'
       updated_at: 'Updated At'
       none: 'NONE'
+      assigned_agent: "Assigned Agent"
   ends_with: Ends with
   last_name: Last Name
   forum:

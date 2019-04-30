@@ -15,7 +15,7 @@ class Company < ActiveRecord::Base
     u.add proc { |x| x.custom_field_hash('company') }, as: :custom_fields
     u.add :sla_policy_id
     u.add :note
-    u.add :domain_list, as: :domains
+    u.add :domain_list_with_id, as: :domains
     u.add :delta
     u.add :import_id
     u.add :avatar

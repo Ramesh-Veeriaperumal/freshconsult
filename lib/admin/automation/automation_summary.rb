@@ -225,7 +225,8 @@ module Admin::Automation::AutomationSummary
       when DEFAULT_ANY_NONE.include?(value)
         DEFAULT_ANY_NONE[value]
       when FIELD_WITH_IDS.include?(field_name.to_sym)
-        get_name(field_name, value, separator)
+        value == 0 && field_name == :responder_id ? I18n.t("admin.automation_summary.assigned_agent") :
+            get_name(field_name, value, separator)
       when value.is_a?(Array)
         array = []
         value.each { |val| array << (DEFAULT_ANY_NONE.include?(val) ? DEFAULT_ANY_NONE[val] : val) }
