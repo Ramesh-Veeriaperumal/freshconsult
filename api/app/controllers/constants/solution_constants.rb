@@ -55,5 +55,6 @@ module SolutionConstants
   INDEX_FIELDS = %w[language].freeze
   RECENT_ARTICLES_FIELDS = %w[ids user_id language_id].freeze
   ARTICLE_CONTENT_FIELDS = %w[language_id].freeze
+  REORDER_FIELDS = %w[position portal_id].freeze
   KBASE_EMAIL_SOURCE = "kbase_email".freeze
 end

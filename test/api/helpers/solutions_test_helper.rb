@@ -319,6 +319,33 @@ module SolutionsTestHelper
     }
   end
 
+  def validation_error_pattern(field, code)
+    {
+      description: 'Validation failed',
+      errors: [
+        {
+          field: field.to_s,
+          message: :string,
+          code: code.to_s
+        }
+      ]
+    }
+  end
+
+  def bulk_validation_error_pattern(field, code)
+    {
+      description: 'Validation failed',
+      errors: [
+        {
+          field: 'properties',
+          nested_field: "properties.#{field}",
+          message: :string,
+          code: code.to_s
+        }
+      ]
+    }
+  end
+
   def votes_pattern(article)
     {
       helpful: vote_info(article, :thumbs_up),

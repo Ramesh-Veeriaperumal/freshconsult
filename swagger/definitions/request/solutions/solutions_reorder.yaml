@@ -1,0 +1,5 @@
+type: object
+properties:
+  position:
+    type: integer
+    description: New position of the item

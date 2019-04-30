@@ -6,6 +6,7 @@ module Ember
       include Solution::ArticleFilters
       include BulkActionConcern
       include SolutionBulkActionConcern
+      include SolutionReorderConcern
       include CloudFilesHelper
       include SanitizeSerializeValues
 
@@ -74,7 +75,7 @@ module Ember
       private
 
         def constants_class
-          'SolutionsConstants'.freeze
+          'SolutionConstants'.freeze
         end
 
         def render_201_with_location(template_name: "api_solutions/articles/#{action_name}", location_url: 'api_solutions_article_url', item_id: @item.id)
@@ -145,6 +146,16 @@ module Ember
           options = {}
           options[:user] = @user if @user
           [::Solutions::ArticleDecorator, options]
+        end
+
+        def reorder_scoper
+          @reorder_item.solution_folder_meta.solution_article_meta
+        end
+
+        def load_reorder_item
+          @reorder_item ||= load_meta(params[:id])
+          log_and_render_404 unless @reorder_item
+          @reorder_item
         end
 
         def add_attachment_params(builder_params)

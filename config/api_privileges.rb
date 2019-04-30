@@ -201,13 +201,13 @@ Authority::Authorization::PrivilegeList.build do
 
   manage_solutions do
     resource :'ember/admin/bot', only: %i[create_bot_folder]
-    resource :'ember/solutions/folder', only: %i[create update destroy bulk_update]
-    resource :'ember/solutions/category', only: %i[create update destroy]
+    resource :'ember/solutions/folder', only: %i[create update destroy bulk_update reorder]
+    resource :'ember/solutions/category', only: %i[create update destroy reorder]
     resource :'ember/company', only: %i[index]
   end
 
   publish_solution do
-    resource :'ember/solutions/article', only: %i[bulk_update create update]
+    resource :'ember/solutions/article', only: %i[bulk_update create update reorder]
     resource :'ember/solutions/draft', only: %i[autosave update delete_attachment]
   end
 

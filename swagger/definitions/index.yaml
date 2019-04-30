@@ -687,6 +687,8 @@ autosave_response:
   $ref: ./response/solutions/autosave_response.yaml
 draft_update_input:
   $ref: ./request/solutions/draft_update_input.yaml
+solutions_reorder:
+  $ref: ./request/solutions/solutions_reorder.yaml
 
 #Custom translations
 languages:

@@ -628,5 +628,13 @@
 /solutions/articles/filter:
   $ref: ./solutions/article/filter.yaml
 
+/solutions/categories/{id}/reorder:
+  $ref: ./solutions/category/reorder.yaml
+/solutions/folders/{id}/reorder:
+  $ref: ./solutions/folder/reorder.yaml
+/solutions/articles/{id}/reorder:
+  $ref: ./solutions/article/reorder.yaml
+
+
 /configs/{id}:
   $ref: ./configs/show.yaml

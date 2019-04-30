@@ -5,6 +5,7 @@ module Ember
       include HelperConcern
       include BulkActionConcern
       include SolutionBulkActionConcern
+      include SolutionReorderConcern
 
       before_filter :validate_language, only: [:index]
       before_filter :validate_bulk_update_folder_params, only: [:bulk_update]
@@ -25,8 +26,18 @@ module Ember
 
       private
 
+        def reorder_scoper
+          @reorder_item.solution_category_meta.solution_folder_meta
+        end
+
+        def load_reorder_item
+          @reorder_item ||= load_meta(params[:id])
+          log_and_render_404 unless @reorder_item
+          @reorder_item
+        end
+
         def constants_class
-          'SolutionsConstants'.freeze
+          'SolutionConstants'.freeze
         end
 
         def load_objects
