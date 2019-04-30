@@ -304,7 +304,7 @@ class Account < ActiveRecord::Base
       archive_tickets_api: false, redis_picklist_id: true, bot_agent_response: false, fluffy: false,
       nested_field_revamp: false, service_worker: false, kbase_mint: false, freshvisual_configs: false,
       ticket_type_filter_in_trends_widget: false,
-      freshid_org_v2: false, hide_agent_login: false, addon_based_billing: false
+      freshid_org_v2: false, hide_agent_login: false, addon_based_billing: false, office365_adaptive_card: false
     }, :merge
   )
 

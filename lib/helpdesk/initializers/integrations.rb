@@ -29,4 +29,6 @@ module Integrations
   CRM_TO_HELPDESK_FORMULA_ID = cloud_elements_hash["crm_formula_template_id"]
   HELPDESK_TO_CRM_FORMULA_ID = cloud_elements_hash["fd_formula_template_id"]
   CLOUD_ELEMENTS_URL = cloud_elements_hash["server_url"]
+  #========================================================
+  OFFICE365_ORIGINATOR_ID = hash['app']['office365'][Rails.env]['originator_id']
 end

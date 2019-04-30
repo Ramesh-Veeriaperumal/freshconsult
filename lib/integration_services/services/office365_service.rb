@@ -1,12 +1,13 @@
 module IntegrationServices::Services
   class Office365Service < IntegrationServices::Service
     include Helpdesk::TicketNotifierHelper
+    include Integrations::Office365::AdaptiveCardHelper
 
      EMAIL_HTML = "<html>
                     <head>
                       <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">
                       <script type=\"application/ld+json\">
-                      %{actionable_content}
+                      %{message_card_content}
                       </script>
                     </head>
                     <body>
@@ -37,29 +38,46 @@ module IntegrationServices::Services
           :recipient => email_id, 
           :reply_email => ticket.reply_email, 
           :subject => title_for_message_card,
-          :html => (EMAIL_HTML % { :actionable_content => JSON.pretty_generate(email_head).html_safe, 
-                                   :hidden_ticket_identifier => hidden_ticket_identifier(ticket)
-                                 })
+          :html => generate_html_content
         }
+      end
+
+      def account_name
+        account.domain.capitalize
       end
 
       def title_for_message_card
         "[##{ticket.display_id}] #{ticket.subject}"
       end
 
-      def email_head
-        generate_head(title_for_message_card, trim_message)
+      def generate_html_content
+        message_card_content = JSON.pretty_generate(generate_message_card_payload).html_safe
+        ticket_identifier = hidden_ticket_identifier(ticket)
+
+        if account.office365_adaptive_card_enabled?
+          adaptive_card_content = JSON.pretty_generate(generate_adaptive_card_payload).html_safe
+          format(EMAIL_HTML_ADAPTIVE, adaptive_card_content: adaptive_card_content, message_card_content: message_card_content, hidden_ticket_identifier: ticket_identifier)
+        else
+          format(EMAIL_HTML, message_card_content: message_card_content, hidden_ticket_identifier: ticket_identifier)
+        end
       end
 
-      def generate_head(title_for_message_card, content_from_push_to_office)
-        { "@context" => "http://schema.org/extensions", 
+      def generate_message_card_payload
+        payload = {
+          '@context' => 'http://schema.org/extensions',
           "@type" => "MessageCard",
           "hideOriginalBody" => "true",
           "themeColor" => "0072C6",
           "title" => title_for_message_card,
-          "text" => content_from_push_to_office,
+          "text" => trim_message,
           "potentialAction" => generate_potential_action
         }
+        payload['originator'] = originator if account.office365_adaptive_card_enabled? && originator.present?
+        payload
+      end
+
+      def originator
+        Integrations::OFFICE365_ORIGINATOR_ID
       end
 
       def generate_potential_action
