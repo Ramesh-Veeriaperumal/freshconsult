@@ -1,6 +1,8 @@
 module Onboarding::OnboardingHelperMethods
   include Onboarding::OnboardingRedisMethods
   include AccountsHelper
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   def complete_admin_onboarding
     complete_account_onboarding
@@ -39,7 +41,8 @@ module Onboarding::OnboardingHelperMethods
 
   def enable_external_services
     current_account.safe_send(:add_to_billing)
-    add_to_crm(current_account.id)
+    signup_params = construct_signup_params
+    add_to_crm(current_account.id, signup_params)
     add_account_info_to_dynamo(params[cname]['admin_email'])
     current_account.enable_fresh_connect
     enqueue_for_enrichment
@@ -78,5 +81,13 @@ module Onboarding::OnboardingHelperMethods
 
     def company_name_from_email
       Freemail.free?(@email.address) ? name_from_email : @email.domain.split('.').first
+    end
+
+    def construct_signup_params
+      key = format(ACCOUNT_SIGN_UP_PARAMS, account_id: current_account.id)
+      response = get_others_redis_key(key)
+      return {} if response.blank?
+
+      JSON.parse(response).symbolize_keys!
     end
 end

@@ -133,6 +133,7 @@ class TicketsController < ApiApplicationController
     def decorator_options(options = {})
       options[:name_mapping] = @name_mapping || (params[:exclude].to_s.include?('custom_fields') ? {} : get_name_mapping)
       options[:sideload_options] = sideload_options.to_a if index? || show?
+      options[:custom_fields_mapping] = Account.current.ticket_fields_name_type_mapping_cache
       super(options)
     end
 

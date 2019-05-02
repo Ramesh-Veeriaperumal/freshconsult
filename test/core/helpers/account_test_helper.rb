@@ -116,6 +116,13 @@ module AccountTestHelper
     }
   end
 
+  def signup_params
+    {
+      'fs_cookie' => Faker::Lorem.characters(50),
+      'signup_id' => Faker::Number.number(2)
+    }
+  end
+
   def central_publish_account_post(account)
     {
       id: account.id, 
