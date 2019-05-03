@@ -21,6 +21,7 @@ class Admin::Dispatcher::WorkerTest < ActionView::TestCase
   CUSTOM_FIELD_TYPES = [:checkbox, :number, :decimal, :nestedlist, :date]
 
   def setup
+    create_test_account if Account.first.nil?
     Account.stubs(:current).returns(Account.first)
     @account = Account.current
   end
