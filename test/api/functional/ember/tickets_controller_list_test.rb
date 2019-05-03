@@ -299,6 +299,7 @@ module Ember
     def test_fsm_last_week_appointment_time_filter
       Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
       perform_fsm_operations
+      Account.first.make_current
       query_hash_params = { '0' => query_hash_param('cf_fsm_appointment_start_time', 'is', 'today', 'custom_field') }
       match_db_and_es_query_responses(query_hash_params)
     ensure
@@ -309,6 +310,7 @@ module Ember
     def test_fsm_in_the_past_appointment_time_filter
       Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
       perform_fsm_operations
+      Account.first.make_current
       query_hash_params = { '0' => query_hash_param('cf_fsm_appointment_start_time', 'is', 'in_the_past', 'custom_field') }
       match_db_and_es_query_responses(query_hash_params)
     ensure
@@ -319,6 +321,7 @@ module Ember
     def test_fsm_yesterday_appointment_time_filter
       Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
       perform_fsm_operations
+      Account.first.make_current
       query_hash_params = { '0' => query_hash_param('cf_fsm_appointment_start_time', 'is', 'yesterday', 'custom_field') }
       match_db_and_es_query_responses(query_hash_params)
     ensure
@@ -329,6 +332,7 @@ module Ember
     def test_fsm_today_appointment_time_filter
       Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
       perform_fsm_operations
+      Account.first.make_current
       query_hash_params = { '0' => query_hash_param('cf_fsm_appointment_start_time', 'is', 'today', 'custom_field') }
       match_db_and_es_query_responses(query_hash_params)
     ensure
@@ -339,6 +343,7 @@ module Ember
     def test_fsm_tomorrow_appointment_time_filter
       Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
       perform_fsm_operations
+      Account.first.make_current
       query_hash_params = { '0' => query_hash_param('cf_fsm_appointment_start_time', 'is', 'tomorrow', 'custom_field') }
       match_db_and_es_query_responses(query_hash_params)
     ensure
@@ -349,6 +354,7 @@ module Ember
     def test_fsm_this_week_appointment_time_filter
       Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
       perform_fsm_operations
+      Account.first.make_current
       query_hash_params = { '0' => query_hash_param('cf_fsm_appointment_start_time', 'is', 'week', 'custom_field') }
       match_db_and_es_query_responses(query_hash_params)
     ensure
@@ -359,6 +365,7 @@ module Ember
     def test_fsm_next_week_appointment_time_filter
       Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
       perform_fsm_operations
+      Account.first.make_current
       query_hash_params = { '0' => query_hash_param('cf_fsm_appointment_start_time', 'is', 'next_week', 'custom_field') }
       match_db_and_es_query_responses(query_hash_params)
     ensure

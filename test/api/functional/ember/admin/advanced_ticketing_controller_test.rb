@@ -92,8 +92,8 @@ module Ember
         enable_fsm do
           begin
             old_ticket_filter_count = Account.current.ticket_filters.count
-            Account.any_instance.stubs(:fsm_dashboard_enabled?).returns(true)
             Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
+            Account.any_instance.stubs(:fsm_dashboard_enabled?).returns(true)
             fields_count_before_installation = Account.current.ticket_fields.size
             total_fsm_fields_count = CUSTOM_FIELDS_TO_RESERVE.size
             Sidekiq::Testing.inline! do
@@ -105,11 +105,23 @@ module Ember
             fields_count_after_installation = Account.current.ticket_fields.size
             assert fields_count_after_installation == (total_fsm_fields_count + fields_count_before_installation)
             assert dashboard.present?
-            assert dashboard.first.widgets.count == FSM_WIDGETS_COUNT
+            widgets = dashboard.first.widgets
+            assert_equal widgets.count, FSM_WIDGETS_COUNT
             assert Account.current.ticket_filters.count == old_ticket_filter_count + FSM_TICKET_FILTER_COUNT
+            pick_list_id = Account.current.ticket_types_from_cache.find { |x| x.value == SERVICE_TASK_TYPE }.id
+            widget = widgets.find { |element| element.name == I18n.t('fsm_dashboard.widgets.' + SERVICE_TASKS_INCOMING_TREND_WIDGET_NAME) }
+            assert_equal widget[:config_data][:ticket_type], pick_list_id
+            assert_equal widget[:config_data][:metric], ::Dashboard::Custom::TicketTrendCard::METRICS_MAPPING.key('RECEIVED_TICKETS')
+            widget = widgets.find { |element| element.name == I18n.t('fsm_dashboard.widgets.' + SERVICE_TASKS_RESOLUTION_TREND_WIDGET_NAME) }
+            assert_equal widget[:config_data][:ticket_type], pick_list_id
+            assert_equal widget[:config_data][:metric], ::Dashboard::Custom::TicketTrendCard::METRICS_MAPPING.key('RESOLVED_TICKETS')
+            widget = widgets.find { |element| element.name == I18n.t('fsm_dashboard.widgets.' + SERVICE_TASKS_AVG_RESOLUTION_WIDGET_NAME) }
+            assert_equal widget[:config_data][:ticket_type], pick_list_id
+            assert_equal widget[:config_data][:metric], ::Dashboard::Custom::TimeTrendCard::METRICS_MAPPING.key('AVG_RESOLUTION_TIME')
           ensure
             Account.any_instance.unstub(:disable_old_ui_enabled?)
             Account.any_instance.unstub(:fsm_dashboard_enabled?)
+            destroy_fsm_dashboard_and_filters
           end
         end
       end

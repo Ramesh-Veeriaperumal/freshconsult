@@ -149,10 +149,11 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         default_custom_filters_conditions.keys.collect { |key|  [key,{ ticket_filter_id: Account.current.ticket_filters.where( name: I18n.t("fsm_dashboard.widgets.#{key}")).first.id }]}.to_h
       end
 
-      def add_widgets_to_fsm_dashboard(dashboard_object,options)
+      def add_widgets_to_fsm_dashboard(dashboard_object, options)
         trends_x_position = 0
         scorecard_x_postion = 0
-        WIDGETS.each do |widget_name, type|
+        picklist_id = ticket_type_picklist_id(SERVICE_TASK_TYPE)
+        WIDGETS_NAME_TO_TYPE_MAP.each do |widget_name, type|
           if type == WIDGET_MODULE_TOKEN_BY_NAME[SCORE_CARD]
             position = { x: scorecard_x_postion, y: Y_AXIS_POSITION[:scorecard] }
             dashboard_object.add_widget(type, position, I18n.t("fsm_dashboard.widgets.#{widget_name}"), options[widget_name])
@@ -160,10 +161,25 @@ module Admin::AdvancedTicketing::FieldServiceManagement
           else
             position = { x: trends_x_position, y: Y_AXIS_POSITION[:trend] }
             trends_x_position += TREND_DIMENSIONS[:width]
-            dashboard_object.add_widget(type, position, I18n.t("fsm_dashboard.widgets.#{widget_name}"))
+            dashboard_object.add_widget(type, position, I18n.t("fsm_dashboard.widgets.#{widget_name}"), trend_widget_config(picklist_id, TRENDS_WIDGET_TO_METRIC_MAP[widget_name]))
           end
         end
         dashboard_object
+      end
+
+      def trend_widget_config(picklist_id, metric_value)
+        { group_ids: [::Dashboard::Custom::WidgetConfigValidationMethods::ALL_GROUPS],
+          product_id: ::Dashboard::Custom::WidgetConfigValidationMethods::ALL_PRODUCTS,
+          ticket_type: picklist_id,
+          date_range: ::Dashboard::Custom::WidgetConfigValidationMethods::DATE_FIELDS_MAPPING.key('This month'),
+          metric: metric_value }
+      end
+
+      def ticket_type_picklist_id(ticket_type)
+        pick_list = Account.current.ticket_types_from_cache.find { |x| x.value == ticket_type }
+        raise 'Failed to find picklist id for ticket_type ' + ticket_type unless pick_list
+
+        pick_list.id
       end
 
       def get_fsm_filter_conditions

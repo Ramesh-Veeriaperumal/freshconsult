@@ -149,6 +149,8 @@ module Ember
       Account.stubs(:current).returns(Account.first)
       Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
       perform_fsm_operations
+      Account.reset_current_account
+      Account.stubs(:current).returns(Account.first)
     end
 
     def destroy_fsm
@@ -716,6 +718,7 @@ module Ember
       enable_adv_ticketing([:field_service_management]) do
         begin
           perform_fsm_operations
+          Account.first.make_current
           parent_ticket = create_ticket
           params = { parent_id: parent_ticket.display_id, email: Faker::Internet.email,
                      description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
@@ -733,6 +736,7 @@ module Ember
       enable_adv_ticketing([:field_service_management]) do
         begin
           perform_fsm_operations
+          Account.first.make_current
           parent_ticket = create_ticket
           params = { parent_id: parent_ticket.display_id, email: Faker::Internet.email,
                      description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
@@ -750,6 +754,7 @@ module Ember
       enable_adv_ticketing([:field_service_management]) do
         begin
           perform_fsm_operations
+          Account.first.make_current
           parent_ticket = create_ticket
           params = { parent_id: parent_ticket.display_id, email: Faker::Internet.email,
                      description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
@@ -768,6 +773,7 @@ module Ember
       enable_adv_ticketing([:field_service_management]) do
         begin
           perform_fsm_operations
+          Account.first.make_current
           parent_ticket = create_ticket
           params = { parent_id: parent_ticket.display_id, email: Faker::Internet.email,
                      description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
@@ -787,6 +793,7 @@ module Ember
       enable_adv_ticketing([:field_service_management]) do
         begin
           perform_fsm_operations
+          Account.first.make_current
           params = { email: Faker::Internet.email,
                    description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
                    priority: 2, status: 2, type: SERVICE_TASK_TYPE, 
@@ -805,6 +812,7 @@ module Ember
       enable_adv_ticketing([:field_service_management]) do
        begin
          perform_fsm_operations
+         Account.first.make_current
          parent_ticket = create_ticket
          params = { responder_id: @agent.id, parent_id: parent_ticket.display_id, email: Faker::Internet.email,
                    description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
@@ -865,6 +873,7 @@ module Ember
       enable_adv_ticketing([:field_service_management]) do
         begin 
           perform_fsm_operations
+          Account.first.make_current
           group = create_group(@account)    
           parent_ticket = create_ticket
           params = { group_id: group.id, parent_id: parent_ticket.display_id, email: Faker::Internet.email,
@@ -917,7 +926,8 @@ module Ember
     def test_update_service_task_ticket_type_with_all_fsm_fields_valid
       enable_adv_ticketing([:field_service_management]) do
         begin
-          perform_fsm_operations      
+          perform_fsm_operations
+          Account.first.make_current
           fsm_ticket = create_service_task_ticket
           params = {custom_fields: { cf_fsm_contact_name: Faker::Lorem.characters(10), cf_fsm_service_location: Faker::Lorem.characters(10), cf_fsm_phone_number: Faker::Lorem.characters(10), cf_fsm_appointment_start_time: '2019-10-10T12:23:00', cf_fsm_appointment_end_time: '2019-10-11T12:23:00' }}
           put :update, construct_params({ id: fsm_ticket.display_id, version: 'private' }, params)
@@ -932,6 +942,7 @@ module Ember
       enable_adv_ticketing([:field_service_management]) do
         begin
           perform_fsm_operations
+          Account.first.make_current
           fsm_ticket = create_service_task_ticket
           params = {custom_fields: { cf_fsm_contact_name: Faker::Lorem.characters(10), cf_fsm_service_location: Faker::Lorem.characters(10), cf_fsm_phone_number: Faker::Lorem.characters(10), cf_fsm_appointment_start_time: Faker::Lorem.characters(10), cf_fsm_appointment_end_time: Faker::Lorem.characters(10) }}
           put :update, construct_params({ id: fsm_ticket.display_id, version: 'private' }, params)
@@ -948,6 +959,7 @@ module Ember
       enable_adv_ticketing([:field_service_management]) do
         begin
           perform_fsm_operations
+          Account.first.make_current
           fsm_ticket = create_service_task_ticket
           params = {custom_fields: { cf_fsm_contact_name: 'test', cf_fsm_service_location: 'test', cf_fsm_phone_number: 'test', cf_fsm_appointment_start_time: '2019-10-12T10:23:00', cf_fsm_appointment_end_time: '2019-10-11T12:23:00'}}
           put :update, construct_params({ id: fsm_ticket.display_id, version: 'private' }, params)
@@ -962,7 +974,8 @@ module Ember
     def test_update_non_service_task_ticket_to_service_task_failure 
       enable_adv_ticketing([:field_service_management]) do
         begin
-          perform_fsm_operations      
+          perform_fsm_operations
+          Account.first.make_current
           ticket = create_ticket
           params = {:type => SERVICE_TASK_TYPE, custom_fields: { cf_fsm_contact_name: "test", cf_fsm_service_location: "test", cf_fsm_phone_number: "test" } }
           put :update, construct_params({ id: ticket.display_id, version: 'private' }, params)
@@ -4602,6 +4615,7 @@ module Ember
 
     def test_update_ticket_with_type_service_task_without_mandatory_custom_fields
       perform_fsm_operations
+      Account.first.make_current
       ticket = create_ticket({type: SERVICE_TASK_TYPE})
       params_hash = { description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10) }      
       put :update, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
@@ -4629,6 +4643,7 @@ module Ember
       enable_adv_ticketing([:field_service_management]) do
         begin
           perform_fsm_operations
+          Account.first.make_current
           parent_ticket = create_ticket
           params_hash = { parent_id: parent_ticket.display_id, email: Faker::Internet.email,
                           description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
