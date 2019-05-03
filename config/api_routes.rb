@@ -333,6 +333,7 @@ Helpkit::Application.routes.draw do
         resources :folders, controller: 'ember/solutions/folders', only: [:index, :show, :create, :update, :destroy] do
           member do
             resources :articles, controller: 'ember/solutions/articles', only: [:create]
+            put :reorder
           end
           collection do
             put :bulk_update
@@ -344,13 +345,22 @@ Helpkit::Application.routes.draw do
             get :filter
             put :bulk_update
           end
+
           member do
             put :update, path: '(:language)', constraints: { language: Regexp.union(Language.all_codes) }
             get :article_content
             put :reset_ratings, path: '(:language)/reset_ratings'
             get :votes, path: '(:language)/votes'
+            put :reorder
           end
         end
+
+        resources :categories, controller: 'ember/solutions/categories', only: [] do
+          member do
+            put :reorder
+          end
+        end
+
         resources :drafts, controller: 'ember/solutions/drafts', only: [:index]
         resource :draft, path: 'articles/:article_id/draft', controller: 'ember/solutions/drafts', only: [:destroy, :update] do
           put :autosave

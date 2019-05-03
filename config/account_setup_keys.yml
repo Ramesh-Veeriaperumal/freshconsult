@@ -5,7 +5,6 @@
   support_email: 3 
   automation: 5 
   data_import: 6
-  support_channel: 19
 :condition_based_setup_keys:
   twitter: 4
   custom_app: 7
@@ -23,6 +22,7 @@
   sample_data: 18
 
 :onboarding_v2_keys:
+  support_channel: 19
   manage_conversation_video: 20
   ticket_list_tour: 21
   explore_conversation_features: 22

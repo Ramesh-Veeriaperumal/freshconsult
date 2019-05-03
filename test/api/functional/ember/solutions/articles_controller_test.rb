@@ -162,7 +162,7 @@ module Ember
 
       def test_index_with_no_params
         article_ids = []
-        article_ids = @account.solution_articles.all.collect(&:parent_id)
+        article_ids = @account.solution_articles.limit(10).collect(&:parent_id)
         get :index, controller_params(version: 'private')
         assert_response 400
         match_json([bad_request_error_pattern('language_id', :missing_field)])
@@ -177,7 +177,7 @@ module Ember
 
       def test_index_with_valid_ids
         article_ids = []
-        article_ids = @account.solution_articles.where(language_id: 6).collect(&:parent_id)
+        article_ids = @account.solution_articles.where(language_id: 6).limit(10).collect(&:parent_id)
         get :index, controller_params(version: 'private', ids: article_ids.join(','), language_id: 6)
         articles = @account.solution_articles.where(parent_id: article_ids, language_id: 6).first(10)
         assert_response 200
@@ -187,7 +187,7 @@ module Ember
 
       def test_index_with_valid_ids_array
         article_ids = []
-        article_ids = @account.solution_articles.where(language_id: 6).collect(&:parent_id)
+        article_ids = @account.solution_articles.where(language_id: 6).limit(10).collect(&:parent_id)
         get :index, controller_params(version: 'private', ids: article_ids, language_id: 6)
         articles = @account.solution_articles.where(parent_id: article_ids, language_id: 6).first(10)
         assert_response 200
@@ -209,7 +209,7 @@ module Ember
 
       def test_index_with_additional_params
         article_ids = []
-        article_ids = @account.solution_articles.where(language_id: 6).collect(&:parent_id)
+        article_ids = @account.solution_articles.where(language_id: 6).limit(10).collect(&:parent_id)
         get :index, controller_params(version: 'private', ids: article_ids.join(','), language_id: 6, test: 2)
         articles = @account.solution_articles.where(parent_id: article_ids, language_id: 6).first(10)
         assert_response 400
@@ -218,7 +218,7 @@ module Ember
 
       def test_index_with_invalid_language_id
         article_ids = []
-        article_ids = @account.solution_articles.all.collect(&:parent_id)
+        article_ids = @account.solution_articles.limit(10).collect(&:parent_id)
         get :index, controller_params(version: 'private', ids: article_ids.join(','), language_id: 1000)
         assert_response 400
         match_json([bad_request_error_pattern('language_id', :not_included, list: @account.all_portal_language_objects.map(&:id))])
@@ -226,7 +226,7 @@ module Ember
 
       def test_index_with_valid_ids_and_user_id
         article_ids = []
-        article_ids = @account.solution_articles.where(language_id: 6).collect(&:parent_id)
+        article_ids = @account.solution_articles.where(language_id: 6).limit(10).collect(&:parent_id)
         get :index, controller_params(version: 'private', ids: article_ids.join(','), user_id: @agent.id, language_id: 6)
         articles = @account.solution_articles.where(parent_id: article_ids, language_id: 6).first(10)
         assert_response 200
@@ -924,7 +924,7 @@ module Ember
         articles = folder.solution_article_meta.pluck(:id)
         put :bulk_update, construct_params({ version: 'private' }, ids: articles)
         assert_response 400
-        match_json(error_pattern(:properties, :missing_field))
+        match_json(validation_error_pattern(:properties, :missing_field))
       end
 
       def test_bulk_update_articles_exception
@@ -1472,12 +1472,43 @@ module Ember
         assert_response 200
         match_json([])
       end
+      
+      def test_reorder_without_position
+        folder = @account.solution_folder_meta.where(is_default: false).first
+        populate_articles(folder)
+        put :reorder, construct_params(version: 'private', id: folder.solution_article_meta.first.id)
+        match_json(validation_error_pattern(:position, :missing_field))
+        assert_response 400
+      end
+
+      def test_reorder
+        folder = @account.solution_folder_meta.where(is_default: false).first
+        populate_articles(folder)
+        old_id_order = folder.solution_article_meta.pluck(:id)
+        put :reorder, construct_params({ version: 'private', id: folder.solution_article_meta.first.id }, position: 10)
+        assert_response 204
+        new_id_order = folder.solution_article_meta.pluck(:id)
+        assert old_id_order.slice(1, 9) == new_id_order.slice(0, 9)
+        assert old_id_order[0] == new_id_order[9]
+        assert old_id_order.slice(10, old_id_order.size) == new_id_order.slice(10, new_id_order.size)
+      end
+      
+      def test_reorder_without_privilege
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
+        folder = @account.solution_folder_meta.where(is_default: false).first
+        populate_articles(folder)
+        put :reorder, construct_params({ version: 'private' }, id: folder.solution_article_meta.first.id, position: 2)
+        assert_response 403
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
 
       private
 
         def populate_articles(folder_meta)
-          return if folder_meta.article_count > 4
-          2.times do
+          return if folder_meta.article_count > 10
+
+          (1..10).each do |i|
             articlemeta = Solution::ArticleMeta.new
             articlemeta.art_type = 1
             articlemeta.solution_folder_meta_id = folder_meta.id
@@ -1487,7 +1518,7 @@ module Ember
             articlemeta.save
 
             article_with_lang = Solution::Article.new
-            article_with_lang.title = Faker::Name.name
+            article_with_lang.title = "#{Faker::Name.name} #{i}"
             article_with_lang.description = '<b>aaa</b>'
             article_with_lang.status = 1
             article_with_lang.language_id = @account.language_object.id
@@ -1496,33 +1527,6 @@ module Ember
             article_with_lang.user_id = @account.agents.first.id
             article_with_lang.save
           end
-        end
-
-        def bulk_validation_error_pattern(field, code)
-          {
-            description: 'Validation failed',
-            errors: [
-              {
-                field: 'properties',
-                nested_field: "properties.#{field}",
-                message: :string,
-                code: code.to_s
-              }
-            ]
-          }
-        end
-
-        def error_pattern(field, code)
-          {
-            description: 'Validation failed',
-            errors: [
-              {
-                field: field.to_s,
-                message: :string,
-                code: code.to_s
-              }
-            ]
-          }
         end
 
         def article_params(options = {})

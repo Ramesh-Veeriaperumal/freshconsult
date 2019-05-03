@@ -301,6 +301,13 @@ GIT
       rest-client
 
 GIT
+  remote: git@github.com:freshdesk/prometheus_exporter.git
+  revision: 43968255f3c8a3c8e81d3bb41cce233f8bc61253
+  branch: v1.0
+  specs:
+    prometheus_exporter (1.0)
+
+GIT
   remote: git@github.com:freshdesk/retire.git
   revision: e8e30b1fa67ae0e3146f9809d3a8158f9c35980e
   specs:
@@ -975,6 +982,7 @@ GEM
       i18n (~> 0.6)
     ice_nine (0.11.2)
     iconv (1.0.4)
+    idn-ruby (0.1.0)
     inflecto (0.0.2)
     innertube (1.0.2)
     insensitive_hash (0.2.3)
@@ -1629,6 +1637,7 @@ DEPENDENCIES
   pg
   postoffice!
   premailer (~> 1.8.0)
+  prometheus_exporter!
   pronto
   pronto-brakeman
   pronto-rails_best_practices

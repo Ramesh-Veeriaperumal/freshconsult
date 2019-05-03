@@ -21,4 +21,8 @@ class Freshchat::Account < ActiveRecord::Base
       self.preferences.deep_merge!({"#{method_name}" => value })
     end
   end
+
+  def api_domain
+    URI::parse(Freshchat::Account::CONFIG[:apiHostUrl]).host
+  end
 end

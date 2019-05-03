@@ -284,9 +284,11 @@ class ApiContactsControllerTest < ActionController::TestCase
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     Rack::Test::UploadedFile.any_instance.stubs(:size).returns(20_000_000)
     post :create, construct_params({},  params)
-    DataTypeValidator.any_instance.unstub(:valid_type?)
     match_json([bad_request_error_pattern('avatar', :invalid_size, max_size: '5 MB', current_size: '19.1 MB')])
     assert_response 400
+  ensure
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+    Rack::Test::UploadedFile.any_instance.unstub(:size)
   end
 
   def test_create_contact_with_invalid_field_in_custom_fields
@@ -316,10 +318,11 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         tags: tags,
                                         avatar: file,
                                         custom_fields: { 'department' => 'Sample Dept' })
-    DataTypeValidator.any_instance.stubs(:valid_type?)
     match_json(deleted_contact_pattern(User.last))
     assert User.last.avatar.content_content_type == 'image/jpeg'
     assert_response 201
+  ensure
+    DataTypeValidator.any_instance.unstub(:valid_type?)
   end
 
   # Custom fields validation during creation

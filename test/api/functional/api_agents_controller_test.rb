@@ -1,6 +1,8 @@
 require_relative '../test_helper'
+['agents_test_helper.rb', 'attachments_test_helper.rb'].each { |file| require Rails.root.join('test', 'api', 'helpers', file) }
 class ApiAgentsControllerTest < ActionController::TestCase
   include AgentsTestHelper
+  include AttachmentsTestHelper
   def wrap_cname(params)
     { api_agent: params }
   end
@@ -599,5 +601,12 @@ class ApiAgentsControllerTest < ActionController::TestCase
     delete :destroy, construct_params(id: @agent.id)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
+  end
+
+  def test_update_fails_with_avatar_id
+    agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    put :update, construct_params({ id: @agent.id }, avatar_id: Faker::Number.number(10))
+    match_json([bad_request_error_pattern('avatar_id', :invalid_field)])
+    assert_response 400
   end
 end

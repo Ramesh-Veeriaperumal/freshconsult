@@ -7,10 +7,6 @@ module Ember
 
     decorate_views(decorate_object: [:show, :achievements], decorate_objects: [:index, :create_multiple])
 
-    def constants_class
-      :AgentConstants.to_s.freeze
-    end
-
     def index
       super
       if availability_count?
@@ -22,13 +18,16 @@ module Ember
     end
 
     def update
+      mark_avatar_for_destroy
       super
+      assign_avatar if params[cname][:avatar_id].present? && @delegator.draft_attachments.present?
     end
 
     def create_multiple
       @errors = []
       build_default_required_params
-      return unless validate_params
+      return unless validate_agent_params
+
       build_objects
       validate_items_to_create
       create_objects
@@ -38,13 +37,37 @@ module Ember
 
     private
 
+      def validate_params
+        validate_body_params(@item)
+      end
+
+      def constants_class
+        'Ember::AgentConstants'.freeze
+      end
+
+      def agent_delegator_params
+        agent_params = {}
+        agent_params[:attachment_ids] = Array.wrap(params[cname][:avatar_id].to_i) if params[cname][:avatar_id].present?
+        agent_params
+      end
+
+      def mark_avatar_for_destroy
+        user_avatar = @item.user.avatar
+        avatar_id = user_avatar.id if params[cname].key?('avatar_id') && user_avatar
+        params[cname][:user_attributes][:avatar_attributes] = { id: avatar_id, _destroy: 1 } if avatar_id.present? && avatar_id != params[cname][:avatar_id]
+      end
+
+      def assign_avatar
+        @item.user.avatar = @delegator.draft_attachments.first
+      end
+
       def build_default_required_params
         params[cname][:agents].each do |agent|
           agent[:name] ||= agent[:email].split('@')[0]
         end
       end
 
-      def validate_params
+      def validate_agent_params
         params[cname][:agents].each do |agent_params|
           return false unless validate_request(nil, agent_params, nil)
         end
@@ -128,7 +151,7 @@ module Ember
       end
 
       def sanitize_params
-        agent_channels = AgentConstants::AGENT_CHANNELS
+        agent_channels = ::AgentConstants::AGENT_CHANNELS
         if params[cname][agent_channels[:ticket_assignment]]
           params[cname][:available] = params[cname][agent_channels[:ticket_assignment]]['available']
           params[cname].except!(*[agent_channels[:ticket_assignment]])

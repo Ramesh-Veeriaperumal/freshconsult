@@ -1,2 +1,3 @@
 agentWidgetHostUrl: "https://web.freshchat.com"
 visitorWidgetHostUrl: "https://wchat.freshchat.com"
+apiHostUrl: "https://api.freshchat.com"

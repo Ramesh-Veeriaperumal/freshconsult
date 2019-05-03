@@ -168,20 +168,53 @@ module Ember
         assert_response 400
       end
 
+      def test_reorder_without_privilege
+        User.any_instance.stubs(:privilege?).with(:manage_solutions).returns(false)
+        sample_category_meta = get_category_with_folders
+        put :reorder, construct_params({ version: 'private' }, id: sample_category_meta.solution_folder_meta.first.id, position: sample_category_meta.solution_folder_meta.size)
+        assert_response 403
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_reorder_without_position
+        sample_category_meta = get_category_with_folders
+        put :reorder, construct_params(version: 'private', id: sample_category_meta.solution_folder_meta.first.id)
+        match_json(validation_error_pattern(:position, :missing_field))
+      end
+
+      def test_reorder
+        sample_category_meta = get_category_with_folders
+        populate_folders(sample_category_meta)
+        old_id_order = sample_category_meta.solution_folder_meta.pluck(:id)
+        put :reorder, construct_params({ version: 'private', id: sample_category_meta.solution_folder_meta.first.id }, position: 10)
+        assert_response 204
+        new_id_order = sample_category_meta.reload.solution_folder_meta.pluck(:id)
+        assert old_id_order.slice(1, 9) == new_id_order.slice(0, 9)
+        assert old_id_order[0] == new_id_order[9]
+        assert old_id_order.slice(10, old_id_order.size) == new_id_order.slice(10, new_id_order.size)
+      end
+
       private
 
-        def bulk_validation_error_pattern(field, code)
-          {
-            description: 'Validation failed',
-            errors: [
-              {
-                field: 'properties',
-                nested_field: "properties.#{field}",
-                message: :string,
-                code: code.to_s
-              }
-            ]
-          }
+        def populate_folders(category_meta)
+          return if category_meta.solution_folder_meta.size > 10
+
+          (1..10).each do |index|
+            @folder_meta = Solution::FolderMeta.new
+            @folder_meta.visibility = 1
+            @folder_meta.solution_category_meta = category_meta
+            @folder_meta.account = @account
+            @folder_meta.save
+
+            @folder = Solution::Folder.new
+            @folder.name = "#{Faker::Name.name} #{index}"
+            @folder.description = "test description #{index}"
+            @folder.account = @account
+            @folder.parent_id = @folder_meta.id
+            @folder.language_id = Language.find_by_code(@account.language).id
+            @folder.save
+          end
         end
 
         def validation_error_pattern(field, code)
