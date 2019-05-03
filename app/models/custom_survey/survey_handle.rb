@@ -30,7 +30,7 @@ class CustomSurvey::SurveyHandle < ActiveRecord::Base
     create_handle_internal(ticket=nil, send_while, survey_id, note=nil, preview=true)
   end
   
-  def record_survey_result rating
+  def record_survey_result(rating, source = nil)
     old_rating = CustomSurvey::Survey::old_rating rating.to_i
 
     ActiveRecord::Base.transaction do
@@ -47,7 +47,12 @@ class CustomSurvey::SurveyHandle < ActiveRecord::Base
         },
         :rating           => old_rating
       })
-      destroy
+      if source.present? && source == NEW_VIA_PORTAL
+        # Delay destroy by 10 secs to accomodate central publish create success.
+        ModelDestroyWorker.perform_in(DESTROY_HANDLE_DELAY_INTERVAL, { id: id, association_with_account: 'survey_handles' })
+      else
+        destroy
+      end
     end
   end
 

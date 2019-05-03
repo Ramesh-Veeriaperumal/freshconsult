@@ -78,7 +78,7 @@ var Feedback = {
 			}, 3000);
 		}
 	},
-  surveySaveHit: function(event, rating, surveyCode){
+  surveySaveHit: function(event, rating, surveyCode, source){
     var submitData = jQuery('#survey_form').data();
     var emailScanCompatible = (submitData && submitData.emailScanCompatible);
     if(emailScanCompatible && event) {
@@ -86,6 +86,9 @@ var Feedback = {
       event.preventDefault();
     }
     var hitUrl = '/support/custom_surveys/' + surveyCode + '/' + rating + '/hit';
+    if (source) { 
+      hitUrl = hitUrl + '?source=' + source;
+    }
     jQuery.ajax({
       url: hitUrl,
       type: 'GET',
