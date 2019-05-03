@@ -18,10 +18,11 @@ class RabbitmqWorker
 
     # Publish to ES Count
     if count_routing_key?(exchange_key, rounting_key)
-      sqs_msg_obj = (Ryuken::CountPerformer.perform_async(message) rescue nil)
-      Rails.logger.info "CountES SQS Message id - #{sqs_msg_obj.try(:message_id)} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
+      parsed_message = JSON.parse(message)
+      publish_to_analytics_cluster(parsed_message, rounting_key, exchange_key)
+      publish_to_legacy_count_cluster(parsed_message, rounting_key, exchange_key)
     end
-    
+
     # Publish to Search-v2
     #
     if search_routing_key?(exchange_key, rounting_key)
@@ -248,5 +249,23 @@ class RabbitmqWorker
         sqs_msg_obj = sqs_v2_push(SQS[:collab_ticket_update_queue], message, nil)
         Rails.logger.info "Collaboration SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{routing_key} :: Exchange - #{exchange_key}"
       end
+    end
+
+    def publish_to_legacy_count_cluster(message, rounting_key, exchange_key)
+      message[:legacy] = true
+      message[:analytics] = false
+      sqs_msg_obj = Ryuken::LegacyCountPerformer.perform_async(message.to_json)
+      Rails.logger.info "CountES Legacy SQS Message id - #{sqs_msg_obj.try(:message_id)} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
+    rescue Exception => e
+      Rails.logger.debug "Error while publishing to legacy count cluster :: #{e.message}"
+    end
+
+    def publish_to_analytics_cluster(message, rounting_key, exchange_key)
+      message[:legacy] = false
+      message[:analytics] = true
+      sqs_msg_obj = Ryuken::AnalyticsCountPerformer.perform_async(message.to_json)
+      Rails.logger.info "CountES Analytics SQS Message id - #{sqs_msg_obj.try(:message_id)} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
+    rescue Exception => e
+      Rails.logger.debug "Error while publishing to analytics cluster :: #{e.message}"
     end
 end

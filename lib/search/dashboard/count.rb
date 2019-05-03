@@ -9,29 +9,27 @@ module Search
         @options = options
       end
 
-      def index_es_count_document
+      def index_es_count_document(legacy_index = true, analytics_index = true)
         payload.symbolize_keys!
         Time.use_zone('UTC') do
           model_class = payload[:klass_name]
-          document_id = payload[:document_id]
-          version_stamp = payload[:version].to_i
-          model_object  = model_class.constantize.find_by_id(document_id)
+          model_object = model_class.constantize.find_by_id(payload[:document_id])
           return if model_object.nil?
-          version = {
-            version_type: 'external',
-            version: version_stamp
-          }
-          Search::Dashboard::CountClient.new('put', document_path(model_class, document_id, version), model_object.to_count_es_json) if Account.current.features?(:countv2_writes)
-          SearchService::Client.new(@account_id).write_count_object(model_object, version_stamp) if Account.current.launched?(:count_service_es_writes)
+
+          if ticket_delete_or_spam?(model_object)
+            remove_es_count_document(legacy_index, analytics_index)
+          else
+            push_document_update(model_object, legacy_index, analytics_index)
+          end
         end
       end
 
-      def remove_es_count_document
+      def remove_es_count_document(legacy_index = true, analytics_index = true)
         payload.symbolize_keys!
         model_class = payload[:klass_name]
         document_id = payload[:document_id]
-        Search::Dashboard::CountClient.new(:delete, document_path(model_class, document_id), nil, Search::Utils::SEARCH_LOGGING[:response]).response if Account.current.features?(:countv2_writes)
-        SearchService::Client.new(@account_id).delete_object('ticketanalytics', document_id) if Account.current.launched?(:count_service_es_writes)
+        delete_from_analytics_cluster(document_id) if analytics_index && Account.current.launched?(:count_service_es_writes)
+        delete_from_legacy_cluster(model_class, document_id) if legacy_index && Account.current.features?(:countv2_writes)
       end
 
       def alias_name
@@ -100,6 +98,38 @@ module Search
 
       def es_shard_name
         Account.current.dashboard_shard_name.to_s.gsub('_', '')
+      end
+
+      def ticket_delete_or_spam?(model_object)
+        model_object.class == Helpdesk::Ticket && (model_object.deleted || model_object.spam)
+      end
+
+      def push_document_update(model_object, legacy_index, analytics_index)
+        version_stamp = payload[:version].to_i
+        version = {
+          version_type: 'external',
+          version: version_stamp
+        }
+        write_to_analytics_cluster(model_object, version_stamp) if analytics_index && Account.current.launched?(:count_service_es_writes)
+        write_to_legacy_cluster(model_object.to_count_es_json, version) if legacy_index && Account.current.features?(:countv2_writes)
+      end
+
+      def write_to_legacy_cluster(object_json, version)
+        model_class = payload[:klass_name]
+        document_id = payload[:document_id]
+        Search::Dashboard::CountClient.new('put', document_path(model_class, document_id, version), object_json)
+      end
+
+      def write_to_analytics_cluster(model_object, version_stamp)
+        SearchService::Client.new(@account_id).write_count_object(model_object, version_stamp)
+      end
+
+      def delete_from_legacy_cluster(model_class, document_id)
+        Search::Dashboard::CountClient.new(:delete, document_path(model_class, document_id), nil, Search::Utils::SEARCH_LOGGING[:response]).response
+      end
+
+      def delete_from_analytics_cluster(document_id)
+        SearchService::Client.new(@account_id).delete_object('ticketanalytics', document_id)
       end
     end
   end

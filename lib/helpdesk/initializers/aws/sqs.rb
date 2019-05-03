@@ -41,7 +41,7 @@ end unless Rails.env.development?
 
 # SQS v2 Queues list
  SQS_V2_QUEUES =  [
-  :search_etl_queue, :count_etl_queue, :reports_etl_msg_queue, :iris_etl_msg_queue,
+  :search_etl_queue, :count_etl_queue, :analytics_etl_queue, :reports_etl_msg_queue, :iris_etl_msg_queue,
   :activity_queue, :sqs_es_index_queue, :cti_screen_pop, :auto_refresh_queue,
   :auto_refresh_alb_queue, :agent_collision_alb_queue, :marketplace_app_queue,
   :free_customer_email_queue, :active_customer_email_queue, :trial_customer_email_queue,

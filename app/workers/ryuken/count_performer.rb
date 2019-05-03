@@ -1,28 +1,21 @@
 class Ryuken::CountPerformer
-  include Shoryuken::Worker
-  
-  shoryuken_options queue: ::SQS[:count_etl_queue],
-                    body_parser: :json
-                    # retry_intervals: [360, 1200, 3600] #=> Depends on visibility timeout
-                    # batch: true, #=> Batch processing. Max 10 messages. sqs_msg, args = ARRAY
-                    # auto_delete: true
-  
   def perform(sqs_msg, args)
     begin
-      return unless Account.current.count_es_writes_enabled?
-      search_payload = args["#{args['object']}_properties"].merge({
-        'version' => (args['action_epoch'] * 1000000).ceil
-      })
+      search_payload = args["#{args['object']}_properties"].merge(
+        'version' => (args['action_epoch'] * 1_000_000).ceil
+      )
+      legacy = args['legacy'].nil? ? true : args['legacy']
+      analytics = args['analytics'].nil? ? true : args['analytics']
       case search_payload['action']
       when 'destroy'
-        Search::Dashboard::Count.new(search_payload).remove_es_count_document
+        Search::Dashboard::Count.new(search_payload).remove_es_count_document(legacy, analytics)
       else
-        Search::Dashboard::Count.new(search_payload).index_es_count_document
+        Search::Dashboard::Count.new(search_payload).index_es_count_document(legacy, analytics)
       end
       sqs_msg.delete
     rescue Exception => e
       Rails.logger.error "Count ES exception - #{e.message} - #{e.backtrace.first}"
-      NewRelic::Agent.notice_error(e, { arguments: args })
+      NewRelic::Agent.notice_error(e, arguments: args)
       raise e
     end
   end
