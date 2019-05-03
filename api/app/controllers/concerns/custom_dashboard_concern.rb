@@ -20,7 +20,7 @@ module CustomDashboardConcern
   def sanitize_widgets_attributes
     cname_params[:widgets_attributes].each do |widget|
       widget[:config_data].each  do |widget_attr, value|
-        if widget_attr == :ticket_type
+        if widget_attr == 'ticket_type'
           widget[widget_attr] = value if Account.current.ticket_type_filter_in_trends_widget_enabled?
         else
           widget[widget_attr] = value
