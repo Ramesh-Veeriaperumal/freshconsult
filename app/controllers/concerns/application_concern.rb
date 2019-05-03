@@ -107,7 +107,11 @@ module Concerns::ApplicationConcern
   end
 
   def set_account_meta_cookies
-    cookies[HashedData['shard_name']] = HashedData[env['SHARD'].shard_name] if env['SHARD']
-    cookies[HashedData['state']] = HashedData[Account.current.subscription.state] if Account.current
+    set_httponly_cookie(HashedData['shard_name'], HashedData[env['SHARD'].shard_name]) if env['SHARD']
+    set_httponly_cookie(HashedData['state'], HashedData[Account.current.subscription.state]) if Account.current
+  end
+
+  def set_httponly_cookie(cookie_name, cookie_val)
+    cookies[cookie_name] = { value: cookie_val, httponly: true }
   end
 end
