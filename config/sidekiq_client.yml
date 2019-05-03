@@ -305,6 +305,7 @@ defaults: &defaults
     - [anonymous_account_cleanup]
     - [contact_field_central_publish]
     - [company_field_central_publish]
+    - [model_destroy]
 
 development:
   <<: *defaults

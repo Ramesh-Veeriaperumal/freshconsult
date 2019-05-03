@@ -40,6 +40,7 @@
     - ocr_agent_sync
     - ocr_task_sync
     - freshvisual_configs
+    - model_destroy
 
   :central_realtime:
     - central_publish
