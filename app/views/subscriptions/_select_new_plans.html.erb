@@ -240,6 +240,8 @@
 
   </div>
 </div>
+<%= render :partial => "subscriptions/features/dialogs/fsm_disable", :locals => {
+  :current_account => current_account, :identifier => 'fsm-billing-change' } %>
 
 <div id="billing-template" class="billing hide" >
   <%= render :partial => "calculate_amount", :locals => { :amount => 0, :discount => nil, :monthly_amount => 0 } %>

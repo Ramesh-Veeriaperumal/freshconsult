@@ -20,6 +20,7 @@ window.App = window.App || {};
     subscribed_plan_id : null,
     omni_disabled: null,
     addons: {},
+    fsm_addon_key: 'field_service_management',
     initialize: function (currency, billing_cycle, subscribed_plan_id) {
       this.currency = currency;
       this.billing_cycle = billing_cycle;
@@ -42,9 +43,15 @@ window.App = window.App || {};
       $(document).on('click'+$this.namespace(),  '.omni-toggle-holder .toggle-button', function(){ $this.toggleOmniPlans(this) })
       $(document).on('click'+$this.namespace(),  '.omni-billing-edit .toggle-button', function(){ $this.toggleOmniPlans(this) })
       $(document).on('click'+$this.namespace(),  '#omni-disable-confirmation-submit', function(){ $this.submitPlanUpdate(this) })
-      $(document).on('click'+$this.namespace(),  '.fsm-toggle-holder .toggle-button', function(){ $this.toggleFSMAddon(this, false) })
-      $(document).on('click'+$this.namespace(),  '.fsm-billing-edit .toggle-button', function(){ $this.toggleFSMAddon(this, true) })
+      $(document).on('click'+$this.namespace(),  '.fsm-toggle-holder .toggle-button', function(ev, triggerType){ $this.toggleFSMAddon(this, false, triggerType) })
+      $(document).on('click'+$this.namespace(),  '.fsm-billing-edit .toggle-button', function(ev, triggerType){ $this.toggleFSMAddon(this, true, triggerType) })
       $(document).on('change'+$this.namespace(), '#field-agents-text-box', function(){ $this.fieldAgentChange(this) })
+      $(document).on('click'+$this.namespace(),  '#warning-fsm-billing-change-submit', function(){ $this.checkAndRemoveFSM('submit') })
+      $(document).on('click'+$this.namespace(),  '#warning-fsm-billing-change-cancel', function(){ $this.checkAndRemoveFSM('cancel', false) })
+      $(document).on('click'+$this.namespace(),  '#warning-fsm-billing-change .modal-header .close', function(){ $this.checkAndRemoveFSM('cancel', false) })
+      $(document).on('click'+$this.namespace(),  '#warning-fsm-billing-edit-submit', function(){ $this.checkAndRemoveFSM('submit') })
+      $(document).on('click'+$this.namespace(),  '#warning-fsm-billing-edit-cancel', function(){ $this.checkAndRemoveFSM('cancel', true) })
+      $(document).on('click'+$this.namespace(),  '#warning-fsm-billing-edit .modal-header .close', function(){ $this.checkAndRemoveFSM('cancel', true) })
     },
     billingCancel: function (ev) {
       ev.preventDefault();
@@ -180,14 +187,29 @@ window.App = window.App || {};
         this.calculateCost(plan_id);
       }
     },
-    toggleFSMAddon: function(toggler, editBilling) {
+    toggleFSMAddon: function(toggler, editBilling, triggerType) {
       var parent_plan = this.selected_plan;
-      var fsm_addon_key = 'field_service_management';
-      var fsm_addon_value = $("#field-agents-text-box").val();
       if(editBilling || (parent_plan.hasClass('active') && !parent_plan.hasClass('hide'))) {
+        if($(toggler).hasClass("active")) {
+          if(triggerType != 'reset') {
+            $(".billing-submit").attr("disabled", "true");
+            this.addAddon(this.fsm_addon_key, $("#field-agents-text-box").val());
+            this.calculateCost();
+          }
+        } else {
+          var fsmWarning = editBilling ? $("#warning-btn-fsm-billing-edit") : $("#warning-btn-fsm-billing-change"); 
+          fsmWarning.length ? fsmWarning.trigger("click") : this.checkAndRemoveFSM('submit');
+        }
+      }
+    },
+    checkAndRemoveFSM: function(action, editBilling) {
+      if(action === 'submit') {
         $(".billing-submit").attr("disabled", "true");
-        $(toggler).hasClass("active") ? this.addAddon(fsm_addon_key, fsm_addon_value) : this.removeAddon(fsm_addon_key);
+        this.removeAddon(this.fsm_addon_key);
         this.calculateCost();
+      } else if(action === 'cancel') {
+        var toggler = editBilling ? $(".fsm-billing-edit .toggle-button") : this.selected_plan.find('.fsm-toggle-holder .toggle-button');
+        toggler.trigger("click", "reset");
       }
     },
     enableFSMandShowFieldAgents: function() {
@@ -243,20 +265,19 @@ window.App = window.App || {};
         else
           $('.active').addClass("free-plan-options");
       }else{
-        var fsm_addon_key = 'field_service_management';
         var fsm_addon_value = $("#field-agents-text-box").val();
         if(button.classList != undefined && button.classList.contains("edit-plan")) {
           $(".toggle-omni-billing:visible").hide();
-          $('#edit-billing-fsm-toggle').is(':checked') ? this.addAddon(fsm_addon_key, fsm_addon_value) : this.removeAddon(fsm_addon_key);
+          $('#edit-billing-fsm-toggle').is(':checked') ? this.addAddon(this.fsm_addon_key, fsm_addon_value) : this.removeAddon(this.fsm_addon_key);
         } else {
           var parent = jQuery(this.selected_plan)? "#"+jQuery(this.selected_plan).attr("id") : "#plan-"+button.id.replace("_button", "");
           $(parent).find(".toggle-omni-billing").show();
           var fsm_billing_toggle = $(parent).find(".toggle-fsm-billing");
           if($('#fsm-toggle').is(':checked') && fsm_billing_toggle.length) {
             fsm_billing_toggle.show();
-            this.addAddon(fsm_addon_key, fsm_addon_value) 
+            this.addAddon(this.fsm_addon_key, fsm_addon_value) 
           } else {
-            this.removeAddon(fsm_addon_key);
+            this.removeAddon(this.fsm_addon_key);
           }
         }
         billing_template.addClass("sloading inner-form-hide");
