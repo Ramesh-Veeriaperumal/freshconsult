@@ -59,7 +59,7 @@ class Account < ActiveRecord::Base
 
   after_commit :remove_organisation_account_mapping, on: :destroy, if: :freshid_org_v2_enabled?
 
-  after_rollback :destroy_freshid_account_on_rollback, on: :create, if: :freshid_integration_signup_allowed?
+  after_rollback :destroy_freshid_account_on_rollback, on: :create, if: -> { freshid_integration_signup_allowed? && !domain_already_exists? }
   publishable on: [:create, :update]
 
   include MemcacheKeys
@@ -620,4 +620,8 @@ class Account < ActiveRecord::Base
       Reports::FreshvisualConfigs.perform_async
     end
     
+    def domain_already_exists?
+      domain_mapping = DomainMapping.find_by_domain(full_domain) if full_domain.present?
+      domain_mapping.present? && id != domain_mapping.account_id
+    end
 end
