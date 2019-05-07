@@ -57,7 +57,7 @@
         <div class="span6 widget_option">
           <label class="control-label"><%= t(".feedbackwidget_use_https") %></label>
   				<div class="controls">
-  					<input type="checkbox" rel="toggle" type="checkbox" id="httpsHttp" class="httpsHttp" data-checked-label=<%= t('plain_yes') %> data-unchecked-label=<%= t('plain_no') %> />
+  					<input type="checkbox" rel="toggle" type="checkbox" id="httpsHttp" class="httpsHttp" data-checked-label=<%= t('plain_yes') %> data-unchecked-label=<%= t('plain_no') %> checked="checked"/>
   				</div>
         </div>
 	  	</div>
@@ -72,8 +72,8 @@
         <div class="span6 widget_option">
           <label class="control-label"><%= t(".feedbackwidget_use_captcha") %> </label>
   				<div class="controls">
-  					<input type="hidden" name="captcha" rel="pseudo" value="" data-set-query-string="true"/>
-  					<input type="checkbox" rel="toggle" type="checkbox" class="captchapseudoCheckbox" data-checked-label=<%= t('plain_yes') %> data-unchecked-label=<%= t('plain_no')%> />
+  					<input type="hidden" name="captcha" rel="pseudo" data-set-query-string="true" value="yes"/>
+  					<input type="checkbox" rel="toggle" type="checkbox" class="captchapseudoCheckbox" data-checked-label=<%= t('plain_yes') %> data-unchecked-label=<%= t('plain_no')%> checked="checked"/>
   				</div>
         </div>
   		</div>
