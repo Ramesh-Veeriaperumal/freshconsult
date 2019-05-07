@@ -10,14 +10,17 @@ SIDEKIQ_CLASSIFICATION_MAPPING = SIDEKIQ_CLASSIFICATION[:classification].inject(
   t_h
 end
 
-$sidekiq_datastore = proc { Redis::Namespace.new(config["namespace"], :redis => $sidekiq_conn) }
-$sidekiq_redis_pool_size = sidekiq_config[:redis_pool_size] || sidekiq_config[:concurrency]
-$sidekiq_redis_timeout = sidekiq_config[:timeout]
+MIN_SIDEKIQ_CONNECTIONS = 7
+
+pool_size = sidekiq_config[:redis_pool_size] || sidekiq_config[:concurrency]
+sidekiq_redis_pool_size = (pool_size > MIN_SIDEKIQ_CONNECTIONS ? pool_size+2 : MIN_SIDEKIQ_CONNECTIONS)
+
+redis_config = { url: "redis://#{config['host']}:#{config['port']}", network_timeout: sidekiq_config[:timeout], namespace: config["namespace"] }
 
 poll_interval = config['scheduled_poll_interval']
 
 Sidekiq.configure_client do |config|
-  config.redis = ConnectionPool.new(:size => 1, :timeout => $sidekiq_redis_timeout, &$sidekiq_datastore)
+  config.redis = redis_config.merge({:size => 1})
   config.client_middleware do |chain|
     chain.add Middleware::Sidekiq::Client::BelongsToAccount, :ignore => [
       "FreshopsToolsWorker",
@@ -118,8 +121,8 @@ Sidekiq.configure_server do |config|
   # ActiveRecord::Base.logger = Logger.new(STDOUT)
   # Sidekiq::Logging.logger = ActiveRecord::Base.logger
   # Sidekiq::Logging.logger.level = ActiveRecord::Base.logger.level
-  config.redis = ConnectionPool.new(:size => $sidekiq_redis_pool_size, :timeout => $sidekiq_redis_timeout, &$sidekiq_datastore)
-  config.reliable_fetch!
+  config.redis = redis_config.merge({:size => sidekiq_redis_pool_size})
+  config.super_fetch!
   config.average_scheduled_poll_interval = poll_interval if poll_interval.present?
   #https://forums.aws.amazon.com/thread.jspa?messageID=290781#290781
   #Making AWS as thread safe
