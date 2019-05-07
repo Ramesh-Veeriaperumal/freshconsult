@@ -241,7 +241,6 @@ api_error_messages:
   something_wrong_in_fsm_enable: "Something went wrong while trying to reserve fields for field service management."
   agent_type_change_not_allowed: "You cannot change the agent type"
   agent_group_type_mismatch: "Agent and group need to be of the same type"
-  date_limit_exceeded: "The maximum range for appointment dates is 15 days."
   invalid_date_time_range: "Invalid date time range, end time should be greater or equal to the start time."
   field_agent_scope: "Field technician should have restricted or group scope"
   field_agent_roles: "Field technician should have agent role"
