@@ -39,7 +39,7 @@
 			Feedback.refreshTab();
 		}
 		<% if @rating_via_handle %>
-			Feedback.surveySaveHit(null, "<%= @rating %>","<%= @survey_code %>");
+			Feedback.surveySaveHit(null, "<%= @rating %>","<%= @survey_code %>","<%= @source %>");
 		<% end %>
 	</script>
 <% end %>
@@ -47,7 +47,7 @@
 <body class="single">
 	<div class="cust-survey-wrapper content rounded-6">
 		<%= form_for :survey_handle, html: {
-					id: 'survey_form', method: :post, onsubmit: csat_email_scan_compatibile ? "javascript:Feedback.surveySaveHit(event, '#{@rating}', '#{@survey_code}')" : "javascript:Feedback.submit(event)", 'data-email-scan-compatible': csat_email_scan_compatibile, 'data-handle': @survey_handle.id_token } do |f| -%>
+					id: 'survey_form', method: :post, onsubmit: csat_email_scan_compatibile ? "javascript:Feedback.surveySaveHit(event, '#{@rating}', '#{@survey_code}', '#{@source}')" : "javascript:Feedback.submit(event)", 'data-email-scan-compatible': csat_email_scan_compatibile, 'data-handle': @survey_handle.id_token } do |f| -%>
 			<div class="highlighter">
 				<% if csat_email_scan_compatibile %>
 					<h2></h2>

@@ -2698,7 +2698,9 @@ Helpkit::Application.routes.draw do
     resources :solutions, :only => [:index, :show]
 
     namespace :solutions do
+      match '/categories/:id', :action => 'show'
       match '/folders/:id/page/:page' => 'folders#show'
+      match '/categories/:category_id/folders/:id' => 'folders#show'
       resources :folders, :only => :show
 
       resources :articles, :only => [:show, :destroy, :index] do
@@ -2719,7 +2721,9 @@ Helpkit::Application.routes.draw do
       resources :solutions, :only => [:index, :show]
 
       namespace :solutions do
+        match '/categories/:id', :action => 'show'
         match '/folders/:id/page/:page' => 'folders#show'
+        match '/categories/:category_id/folders/:id' => 'folders#show'
         resources :folders, :only => :show
 
         resources :articles, :only => [:show, :destroy, :index] do
@@ -2794,7 +2798,7 @@ Helpkit::Application.routes.draw do
       :controller => 'integrations/user_credentials', :action => 'oauth_install', :as => :user_oauth_install
     match '/http_request_proxy/fetch',
       :controller => 'integrations/http_request_proxy', :action => 'fetch', :as => :http_proxy
-    
+
     namespace :canned_forms do
       get :agent_preview, action: 'preview'
       post :preview, action: 'preview'

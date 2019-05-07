@@ -2781,6 +2781,7 @@ en:
       failed: "Error when adding day passes"
     facebook:
       updated: Facebook setting has been updated
+      redirect_error: 'Oops! Something went wrong. Please try again.'
     application:
       already: "App is already installed."
       uninstall:
