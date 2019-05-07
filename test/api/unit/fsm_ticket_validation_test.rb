@@ -9,6 +9,8 @@ class FsmTicketValidationTest < ActionView::TestCase
 	def setup
 		Account.stubs(:current).returns(Account.first)
 		perform_fsm_operations
+		Account.reset_current_account
+      	Account.stubs(:current).returns(Account.first)
 		ticket_fields = Account.current.ticket_fields_from_cache
 		@params_hash = { requester_id: 1, description: Faker::Lorem.paragraph,  ticket_fields: [], subject: Faker::Lorem.characters(10),ticket_type: SERVICE_TASK_TYPE, priority: 1, statuses: statuses, status: 2, ticket_fields: ticket_fields   }
 	end

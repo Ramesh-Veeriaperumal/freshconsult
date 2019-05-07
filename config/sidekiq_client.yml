@@ -324,6 +324,7 @@ defaults: &defaults
     - [freshid_retry_worker]
     - [contact_field_central_publish]
     - [company_field_central_publish]
+    - [model_destroy]
     
 development:
   <<: *defaults

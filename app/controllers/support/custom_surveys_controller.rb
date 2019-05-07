@@ -15,6 +15,7 @@ class Support::CustomSurveysController < SupportController #for Portal Customiza
         @rating = CustomSurvey::Survey::CUSTOMER_RATINGS_BY_TOKEN.fetch(params[:rating], CustomSurvey::Survey::EXTREMELY_HAPPY)
         @survey_code = params[:survey_code]
         @rating_via_handle = true
+        @source = params[:source]
         set_portal_page :csat_survey
         render 'new'
       end
@@ -25,7 +26,7 @@ class Support::CustomSurveysController < SupportController #for Portal Customiza
     respond_to do |format|
       format.json do
         @rating = params[:rating]
-        @survey_handle.record_survey_result @rating unless @survey_handle.preview?
+        @survey_handle.record_survey_result(@rating, params[:source]) unless @survey_handle.preview?
           render :json => {:submit_url => @survey_handle.feedback_url(@rating)}.to_json
       end
     end
@@ -47,7 +48,7 @@ class Support::CustomSurveysController < SupportController #for Portal Customiza
          render :json => {:url_new_via_handle => ""}
        else
          survey_handle_hash = @survey_handle.id_token
-         render :json => {:url_new_via_handle => support_customer_custom_survey_url(survey_handle_hash, CustomSurvey::Survey::CUSTOMER_RATINGS[@rating.to_i])}
+         render :json => {:url_new_via_handle => "#{support_customer_custom_survey_url(survey_handle_hash, CustomSurvey::Survey::CUSTOMER_RATINGS[@rating.to_i])}?source=#{CustomSurvey::SurveyHandle::NEW_VIA_PORTAL}"}
        end
     end
   end

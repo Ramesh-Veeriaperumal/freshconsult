@@ -140,6 +140,8 @@ class TicketFilterValidationTest < ActionView::TestCase
     Account.stubs(:current).returns(Account.first)
     Account.current.stubs(:field_service_management_enabled?).returns(true)
     perform_fsm_operations
+    Account.reset_current_account
+    Account.stubs(:current).returns(Account.first)
     query_hash_params = {
       '0' => { 'condition' => 'cf_fsm_appointment_start_time', 'operator' => 'is', 'value' => { from: '2018-12-02T12:12:00', to: '2018-12-12T10:12:00' }, 'type' => 'custom_field' }
     }
@@ -154,6 +156,8 @@ class TicketFilterValidationTest < ActionView::TestCase
     Account.stubs(:current).returns(Account.first)
     Account.current.stubs(:field_service_management_enabled?).returns(true)
     perform_fsm_operations
+    Account.reset_current_account
+    Account.stubs(:current).returns(Account.first)
     query_hash_params = {
       '0' => { 'condition' => 'cf_fsm_appointment_start_time', 'operator' => 'is', 'value' => { from: '2018-12-02T12:12:00', to: '2018-12-12T10:12:00' }, 'type' => 'custom_field' },
       '1' => { 'condition' => 'cf_fsm_appointment_end_time', 'operator' => 'is', 'value' => { from: '2018-12-02T12:12:00', to: '2018-12-12T10:12:00' }, 'type' => 'custom_field' }
@@ -169,6 +173,8 @@ class TicketFilterValidationTest < ActionView::TestCase
     Account.stubs(:current).returns(Account.first)
     Account.current.stubs(:field_service_management_enabled?).returns(true)
     perform_fsm_operations
+    Account.reset_current_account
+    Account.stubs(:current).returns(Account.first)
     failed_option = []
     TicketFilterConstants::DATE_TIME_FILTER_DEFAULT_OPTIONS.each do |value|
       query_hash_params = {

@@ -613,9 +613,12 @@ module Ember
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(5, widget_config_data(ticket_type: '0'))
+      update_dashboard_list(dashboard_object)
       post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
       response_hash = JSON.parse(response.body).deep_symbolize_keys
-      assert_response 400, response_hash
+      assert_response 201, response_hash
+      widget = Account.current.dashboards.find(response_hash[:id]).widgets
+      assert_equal nil, widget[0][:config_data][:ticket_type]
     ensure
       User.any_instance.unstub(:privilege?)
     end

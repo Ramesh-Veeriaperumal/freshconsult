@@ -11,6 +11,7 @@ Sidekiq::Testing.fake!
 class InlineImageShredderTest < ActionView::TestCase
   include CoreTicketsTestHelper
   include AttachmentsTestHelper
+  include NoteTestHelper
 
   def setup
     Account.stubs(:current).returns(Account.first)
@@ -29,11 +30,11 @@ class InlineImageShredderTest < ActionView::TestCase
     end
   end
 
-  def create_attachment_for_account(requester)
+  def create_attachment_for_account(attachable, attachable_type = nil)
     attachment = @account.attachments.new
-    attachment.description = "abcx"
-    attachment.attachable_id = requester.id
-    attachment.attachable_type = "Ticket::Inline"
+    attachment.description = 'abcx'
+    attachment.attachable_id = attachable.id
+    attachment.attachable_type = attachable_type || (attachable.is_a?(Helpdesk::Note) ? 'Note::Inline' : 'Ticket::Inline')
     attachment.content_file_name = 'testattach'
     attachment.content_content_type = 'text/binary'
     attachment.content_file_size = 80
@@ -59,16 +60,18 @@ class InlineImageShredderTest < ActionView::TestCase
 
   def test_inline_image_shredder_worker_runs_with_attachments_present
     requester = @account.users.first
-    inline_attachment_ids = []
-    inline_attachment_ids << create_attachment_for_account(requester)
-    InlineImageShredder.any_instance.stubs(:get_attachment_ids).returns(inline_attachment_ids)
     ticket = create_ticket(requester_id: requester.id)
     create_archive_ticket_with_id(ticket.id)
     args = construct_args(ticket)
+    inline_attachment_ids = []
+    inline_attachment_ids << create_attachment_for_account(ticket)
+    InlineImageShredder.any_instance.stubs(:get_attachment_ids).returns(inline_attachment_ids)
     InlineImageShredder.new.perform(args)
     @account.reload
-    assert_equal 0, @account.attachments.where(id: inline_attachment_ids).length
+    assert_empty @account.attachments.where(id: inline_attachment_ids)
     assert_equal 0, InlineImageShredder.jobs.size
+  ensure
+    InlineImageShredder.any_instance.unstub(:get_attachment_ids)
   end
   
   def test_inline_image_shredder_worker_errors_out_without_body_content
@@ -107,5 +110,70 @@ class InlineImageShredderTest < ActionView::TestCase
     }
     InlineImageShredder.new.perform(args)
     assert_equal 0, InlineImageShredder.jobs.size
+  end
+
+  def test_inline_image_shredder_worker_with_inline_attachments_not_belonging_to_note
+    requester = @account.users.first
+    note1 = create_note(user_id: requester.id)
+    note2 = create_note(user_id: requester.id)
+    inline_attachment_id1 = create_attachment_for_account(note1)
+    inline_attachment_id2 = create_attachment_for_account(note2)
+    inline_attachment_ids = []
+    inline_attachment_ids << inline_attachment_id1
+    inline_attachment_ids << inline_attachment_id2 # extra note id
+    args = {
+      model_name: 'Helpdesk::Note',
+      model_id: note1.id
+    }
+    InlineImageShredder.any_instance.stubs(:get_attachment_ids).returns(inline_attachment_ids)
+    InlineImageShredder.new.perform(args)
+    @account.reload
+    assert_empty @account.attachments.where(id: inline_attachment_id1)
+    assert_present @account.attachments.where(id: inline_attachment_id2)
+    assert_equal 0, InlineImageShredder.jobs.size
+  ensure
+    InlineImageShredder.any_instance.unstub(:get_attachment_ids)
+  end
+
+  def test_inline_image_shredder_worker_with_inline_attachments_not_belonging_to_ticket
+    requester = @account.users.first
+    ticket1 = create_ticket(requester_id: requester.id)
+    ticket2 = create_ticket(requester_id: requester.id)
+    inline_attachment_id1 = create_attachment_for_account(ticket1)
+    inline_attachment_id2 = create_attachment_for_account(ticket2)
+    inline_attachment_ids = []
+    inline_attachment_ids << inline_attachment_id1
+    inline_attachment_ids << inline_attachment_id2 # extra ticket id
+    args = {
+      model_name: 'Helpdesk::Ticket',
+      model_id: ticket1.id
+    }
+    InlineImageShredder.any_instance.stubs(:get_attachment_ids).returns(inline_attachment_ids)
+    InlineImageShredder.new.perform(args)
+    @account.reload
+    assert_empty @account.attachments.where(id: inline_attachment_id1)
+    assert_present @account.attachments.where(id: inline_attachment_id2)
+    assert_equal 0, InlineImageShredder.jobs.size
+  ensure
+    InlineImageShredder.any_instance.unstub(:get_attachment_ids)
+  end
+
+  def test_inline_image_shredder_worker_type_tickets_image_upload
+    requester = @account.users.first
+    ticket = create_ticket(requester_id: requester.id)
+    inline_attachment_id = create_attachment_for_account(ticket, 'Tickets Image Upload')
+    inline_attachment_ids = []
+    inline_attachment_ids << inline_attachment_id
+    args = {
+      model_name: 'Helpdesk::Ticket',
+      model_id: ticket.id
+    }
+    InlineImageShredder.any_instance.stubs(:get_attachment_ids).returns(inline_attachment_ids)
+    InlineImageShredder.new.perform(args)
+    @account.reload
+    assert_empty @account.attachments.where(id: inline_attachment_ids)
+    assert_equal 0, InlineImageShredder.jobs.size
+  ensure
+    InlineImageShredder.any_instance.unstub(:get_attachment_ids)
   end
 end

@@ -64,18 +64,25 @@ module Admin::AdvancedTicketing::FieldServiceManagement
 
     TIME_TREND_CARD = 'time_trend_card'.freeze
 
-    WIDGETS = {
-      'incoming_service_tasks_trend' => WIDGET_MODULE_TOKEN_BY_NAME[TICKET_TREND_CARD],
-      'service_tasks_resolution_trend' => WIDGET_MODULE_TOKEN_BY_NAME[TICKET_TREND_CARD],
-      'service_tasks_avg_resolution' => WIDGET_MODULE_TOKEN_BY_NAME[TIME_TREND_CARD],
-      'service_tasks_due_today' => WIDGET_MODULE_TOKEN_BY_NAME[SCORE_CARD],
-      'unassigned_service_tasks' => WIDGET_MODULE_TOKEN_BY_NAME[SCORE_CARD],
-      'overdue_service_tasks' => WIDGET_MODULE_TOKEN_BY_NAME[SCORE_CARD]
+    SERVICE_TASKS_INCOMING_TREND_WIDGET_NAME = 'incoming_service_tasks_trend'.freeze
+    SERVICE_TASKS_RESOLUTION_TREND_WIDGET_NAME = 'service_tasks_resolution_trend'.freeze
+    SERVICE_TASKS_AVG_RESOLUTION_WIDGET_NAME = 'service_tasks_avg_resolution'.freeze
+    SERVICE_TASKS_DUE_TODAY_WIDGET_NAME = 'service_tasks_due_today'.freeze
+    SERVICE_TASKS_UNASSIGNED_WIDGET_NAME = 'unassigned_service_tasks'.freeze
+    SERVICE_TASKS_OVERDUE_WIDGET_NAME = 'overdue_service_tasks'.freeze
+
+    WIDGETS_NAME_TO_TYPE_MAP = {
+      SERVICE_TASKS_INCOMING_TREND_WIDGET_NAME => WIDGET_MODULE_TOKEN_BY_NAME[TICKET_TREND_CARD],
+      SERVICE_TASKS_RESOLUTION_TREND_WIDGET_NAME => WIDGET_MODULE_TOKEN_BY_NAME[TICKET_TREND_CARD],
+      SERVICE_TASKS_AVG_RESOLUTION_WIDGET_NAME => WIDGET_MODULE_TOKEN_BY_NAME[TIME_TREND_CARD],
+      SERVICE_TASKS_DUE_TODAY_WIDGET_NAME => WIDGET_MODULE_TOKEN_BY_NAME[SCORE_CARD],
+      SERVICE_TASKS_UNASSIGNED_WIDGET_NAME => WIDGET_MODULE_TOKEN_BY_NAME[SCORE_CARD],
+      SERVICE_TASKS_OVERDUE_WIDGET_NAME => WIDGET_MODULE_TOKEN_BY_NAME[SCORE_CARD]
     }.freeze
 
     FSM_TICKET_FILTERS = ["service_tasks_due_today", "unassigned_service_tasks", "overdue_service_tasks"].freeze
 
-    FSM_WIDGETS_COUNT = WIDGETS.size
+    FSM_WIDGETS_COUNT = WIDGETS_NAME_TO_TYPE_MAP.size
 
     FSM_TICKET_FILTER_COUNT = FSM_TICKET_FILTERS.size
 
@@ -87,5 +94,11 @@ module Admin::AdvancedTicketing::FieldServiceManagement
    ].freeze
 
     Y_AXIS_POSITION = { trend: 0, scorecard: 1 }.freeze
+
+    TRENDS_WIDGET_TO_METRIC_MAP = {
+      SERVICE_TASKS_INCOMING_TREND_WIDGET_NAME => ::Dashboard::Custom::TicketTrendCard::METRICS_MAPPING.key('RECEIVED_TICKETS'),
+      SERVICE_TASKS_RESOLUTION_TREND_WIDGET_NAME => ::Dashboard::Custom::TicketTrendCard::METRICS_MAPPING.key('RESOLVED_TICKETS'),
+      SERVICE_TASKS_AVG_RESOLUTION_WIDGET_NAME => ::Dashboard::Custom::TimeTrendCard::METRICS_MAPPING.key('AVG_RESOLUTION_TIME')
+    }.freeze
   end
 end

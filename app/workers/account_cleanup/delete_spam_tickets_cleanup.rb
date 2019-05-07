@@ -169,11 +169,10 @@ module AccountCleanup
     end
 
     def manual_publish_subscribers(klass, object_ids)
-      key = Account.current.count_es_writes_enabled? ? "RMQ_CLEANUP_TICKET_KEY" : "RMQ_GENERIC_TICKET_KEY"
-      Account.current.tickets.where(id:object_ids).find_in_batches(:batch_size => 300) do |tickets|
+      Account.current.tickets.where(id: object_ids).find_in_batches(batch_size: 300) do |tickets|
         tickets.each do |t|
           t.save_deleted_ticket_info
-          t.manual_publish(["destroy", RabbitMq::Constants.const_get(key), {:manual_publish => true}], [:destroy, nil])
+          t.manual_publish(['destroy', RabbitMq::Constants::RMQ_GENERIC_TICKET_KEY, manual_publish: true], [:destroy, nil])
         end
       end
     end

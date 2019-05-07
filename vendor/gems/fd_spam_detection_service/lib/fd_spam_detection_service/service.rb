@@ -111,7 +111,7 @@ module FdSpamDetectionService
       Rails.logger.info "Sending check_spam_content score request for account_id : #{@user}"
       res = HTTParty.post(url, :body => {:message => @content, :username => @user, :account_creation_date => date}) # by default level is set as 3 in spam service side. We can change label later 
       Rails.logger.info "Response by spam service for check spam content #{res.body}"
-      process_response(JSON.parse(res))
+      process_response(JSON.parse(res.body))
     rescue Exception => e
       Rails.logger.info "Error in SDS check spam content: #{e.message} - #{e.backtrace}"
       NewRelic::Agent.notice_error(e)

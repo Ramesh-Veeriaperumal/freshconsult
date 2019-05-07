@@ -9,14 +9,15 @@ class FacebookRedirectAuthController < ApplicationController
   def complete
     state = "#{params[:state]}"
     host_url = get_others_redis_key(state)
-    failure unless host_url
+    failure && return unless host_url
     redirect_to "#{host_url}?code=#{params[:code]}"
   end
 
   private
 
   def failure
-    redirect_to "#{AppConfig['integrations_url'][Rails.env]}"
+    flash[:error] = I18n.t('flash.facebook.redirect_error')
+    redirect_to admin_home_index_path
   end
 
   def check_params

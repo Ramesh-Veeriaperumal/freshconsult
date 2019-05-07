@@ -17,6 +17,7 @@ aws:
   - <%= SQS[:facebook_realtime_queue] %>
   - <%= SQS[:fb_message_realtime_queue] %>
   - <%= SQS[:count_etl_queue] %>
+  - <%= SQS[:analytics_etl_queue] %>
   - <%= SQS[:free_customer_email_queue] %>
   - <%= SQS[:trial_customer_email_queue] %>
   - <%= SQS[:active_customer_email_queue] %>

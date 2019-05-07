@@ -3,7 +3,10 @@ class InlineImageShredder < BaseWorker
 
   sidekiq_options :queue => :inline_image_shredder, :retry => 0, :backtrace => true, :failures => :exhausted
 
-  TYPES_TO_BE_DELETED = ['Tickets Image Upload', 'Forums Image Upload', 'Ticket::Inline', 'Note::Inline']
+  TYPES_TO_BE_DELETED = ['Tickets Image Upload', 'Forums Image Upload', 'Ticket::Inline', 'Note::Inline'].freeze
+
+  # For attachment with below types, we are checking whether that attachment belongs to the respective model.
+  MODEL_INLINE_TYPES = ['Ticket::Inline', 'Note::Inline'].freeze
 
   def perform(args)
     args.symbolize_keys!
@@ -11,8 +14,10 @@ class InlineImageShredder < BaseWorker
     return unless AwsWrapper::S3Object.exists?(path, S3_CONFIG[:bucket])
     content = AwsWrapper::S3Object.read(path, S3_CONFIG[:bucket])
     attachment_ids = get_attachment_ids(content)
+    Rails.logger.debug " Deleting ------> #{attachment_ids}"
     Account.current.attachments.where(id: attachment_ids).find_each(batch_size: 300) do |attachment|
-      attachment.destroy if should_delete?(attachment.id, attachment.attachable_type)
+      Rails.logger.debug " Deleting ------> #{attachment.id}"
+      attachment.destroy if should_delete?(attachment.id, attachment.attachable_type, attachment.attachable_id, args[:model_id])
     end
     AwsWrapper::S3Object.delete(path, S3_CONFIG[:bucket])
   rescue AWS::S3::Errors::NoSuchKey => e
@@ -21,9 +26,11 @@ class InlineImageShredder < BaseWorker
 
   private
 
-    def should_delete?(attachment_id, attachment_type)
+    def should_delete?(attachment_id, attachment_type, attachable_id, model_id)
       return false unless TYPES_TO_BE_DELETED.include?(attachment_type)
       return false if attachment_type == 'Tickets Image Upload' && Account.current.canned_responses_inline_images_from_cache.include?(attachment_id)
+      return false if MODEL_INLINE_TYPES.include?(attachment_type) && model_id != attachable_id
+
       true
     end
 end
