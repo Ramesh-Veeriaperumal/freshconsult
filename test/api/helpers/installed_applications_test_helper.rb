@@ -49,6 +49,10 @@ module InstalledApplicationsTestHelper
     auth_info.symbolize_keys.except(*Integrations::Constants::EXCLUDE_FROM_APP_CONFIGS_HASH)
   end
 
+  def delete_all_existing_applications
+    Integrations::InstalledApplication.delete_all
+  end
+
   def create_application(app_name, options = {})
     application = Integrations::Application.find_by_name(app_name)
     unless application

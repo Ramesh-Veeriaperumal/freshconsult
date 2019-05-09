@@ -96,6 +96,7 @@ module Ember
             Account.any_instance.stubs(:fsm_dashboard_enabled?).returns(true)
             fields_count_before_installation = Account.current.ticket_fields.size
             total_fsm_fields_count = CUSTOM_FIELDS_TO_RESERVE.size
+            Account.current.subscription.update_attributes(additional_info: { field_agent_limit: 10 })
             Sidekiq::Testing.inline! do
               post :create, construct_params({ version: 'private' }, { name: 'field_service_management' })
             end
@@ -108,6 +109,7 @@ module Ember
             widgets = dashboard.first.widgets
             assert_equal widgets.count, FSM_WIDGETS_COUNT
             assert Account.current.ticket_filters.count == old_ticket_filter_count + FSM_TICKET_FILTER_COUNT
+            assert Account.current.subscription.additional_info[:field_agent_limit].present? == false
             pick_list_id = Account.current.ticket_types_from_cache.find { |x| x.value == SERVICE_TASK_TYPE }.id
             widget = widgets.find { |element| element.name == I18n.t('fsm_dashboard.widgets.' + SERVICE_TASKS_INCOMING_TREND_WIDGET_NAME) }
             assert_equal widget[:config_data][:ticket_type], pick_list_id
@@ -139,10 +141,15 @@ module Ember
                 Account.any_instance.stubs(:disable_field_service_management_enabled?).returns(true)
                 fields_count_after_installation = Account.current.ticket_fields.size
                 total_fsm_fields_count = CUSTOM_FIELDS_TO_RESERVE.size
+                Account.current.subscription.update_attributes(additional_info: { field_agent_limit: 10 })
+                Account.current.subscription.addons = Subscription::Addon.where(name: Subscription::Addon::FSM_ADDON)
+                Account.current.subscription.save
                 delete :destroy, controller_params(version: 'private', id: 'field_service_management')
                 assert_response 204
                 fields_count_after_destroy = Account.current.ticket_fields.size
                 assert fields_count_after_destroy == (fields_count_after_installation - total_fsm_fields_count)
+                assert Account.current.subscription.additional_info[:field_agent_limit].present? == false
+                assert Account.current.subscription.addons.count.zero?
             end
           ensure
             User.any_instance.unstub(:privilege?)
