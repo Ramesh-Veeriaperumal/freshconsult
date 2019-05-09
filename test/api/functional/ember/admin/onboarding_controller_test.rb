@@ -68,16 +68,6 @@ class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
     assert_equal @user.account.admin_email, new_email
   end
 
-  def test_update_activation_email_with_active_freshid_agent_email
-    new_email = Faker::Internet.email
-    User.any_instance.stubs(:active_freshid_agent?).returns(true)
-    put :update_activation_email, construct_params(version: 'private', new_email: new_email)
-    assert_response 302
-    assert_includes response.redirect_url, 'support/login?active_freshid_agent=true&signup_email'
-  ensure
-    User.any_instance.unstub(:active_freshid_agent?)
-  end
-
   def test_update_activation_email_with_invalid_email
     put :update_activation_email, construct_params(version: 'private', new_email: Faker::Lorem.word)
     assert_response 400

@@ -1,10 +1,9 @@
 require_relative '../../api/test_helper'
-require Rails.root.join('spec', 'support', 'user_helper.rb')
 require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
+
 class AccountsControllerTest < ActionController::TestCase
   include Redis::RedisKeys
   include Redis::OthersRedis
-  include UsersHelper
   include AccountTestHelper
 
   def stub_signup_calls
@@ -27,10 +26,6 @@ class AccountsControllerTest < ActionController::TestCase
     User.any_instance.unstub(:deliver_admin_activation)
     User.any_instance.unstub(:perishable_token)
     User.any_instance.unstub(:reset_perishable_token!)
-  end
-
-  def current_account
-    Account.first
   end
 
   def test_new_signup
@@ -611,34 +606,5 @@ class AccountsControllerTest < ActionController::TestCase
     @request.env['HTTP_ACCEPT'] = 'application/json'
     post :anonymous_signup
     assert_response 403
-  end
-
-  def test_anonymous_signup_complete_with_active_freshid_agent
-    user = add_test_agent(current_account)
-    User.any_instance.stubs(:active_freshid_agent?).returns(true)
-    UserSession.any_instance.stubs(:record).returns(user)
-    get :anonymous_signup_complete, account_id: Account.first.id
-    assert_response 302
-    assert_includes response.redirect_url, 'support/login?active_freshid_agent=true&signup_email'
-  ensure
-    User.any_instance.unstub(:active_freshid_agent?)
-    UserSession.any_instance.unstub(:record)
-  end
-
-  def test_anonymous_signup_complete_with_default_login
-    user = nil
-    UserSession.any_instance.stubs(:record).returns(user)
-    get :anonymous_signup_complete, account_id: Account.first.id
-    assert_response 302
-    assert_includes response.redirect_url, '/login'
-  ensure
-    UserSession.any_instance.unstub(:record)
-  end
-
-  def test_anonymous_signup_complete_for_new_agent
-    user = add_test_agent(current_account)
-    get :anonymous_signup_complete, account_id: Account.first.id
-    assert_response 302
-    assert_includes response.redirect_url, '/a/getstarted'
   end
 end

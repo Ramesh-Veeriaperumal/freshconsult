@@ -18,9 +18,6 @@ class Admin::OnboardingController < Admin::AdminController
     if current_user.save
       update_account_config
     end
-    if current_user.active_freshid_agent?
-      redirect_to support_login_url(params: { active_freshid_agent: true, signup_email: @user_email_config[:new_email] }) && return
-    end
   end
 
   def resend_activation_email
