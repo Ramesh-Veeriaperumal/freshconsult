@@ -77,6 +77,10 @@ class FlexifieldDef < ActiveRecord::Base
     flexifield_def_entries.nil? ? [] : non_text_fields.map(&:flexifield_alias)                                                   
   end
 
+  def text_ff_aliases
+    flexifield_def_entries.nil? ? [] : text_fields.map(&:flexifield_alias)
+  end
+
   def ff_fields
     flexifield_def_entries.nil? ? [] : flexifield_def_entries.map(&:flexifield_name)
   end

@@ -94,11 +94,7 @@ class TicketFilterValidation < FilterValidation
 
   def check_dates_and_range(query)
     given_date_range = (@query_hash[query]['value'][:to].to_datetime - @query_hash[query]['value'][:from].to_datetime).to_f
-    if given_date_range > DATE_RANGE
-      errors[:"query_hash[#{query}]"] << :date_limit_exceeded
-    elsif given_date_range < 0
-      errors[:"query_hash[#{query}]"] << :invalid_date_time_range
-    end
+    errors[:"query_hash[#{query}]"] << :invalid_date_time_range if given_date_range < 0
   rescue Exception => e
     errors[:"query_hash[#{query}]"] << :query_format_invalid
   end

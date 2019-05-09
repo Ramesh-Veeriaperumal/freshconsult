@@ -76,10 +76,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def ticket_custom_field_hash
-    # Sending only non text custom fields in the JSON (All except the single line and paragraph fields)
-    {
-      "custom_fields" => custom_field.select { |k,v| non_text_ff_aliases.include?(k.to_s) }.stringify_keys
-    }    
+    if Account.current.try(:text_custom_fields_in_etl_enabled?)
+      # Sending all custom fields(including text fields). Truncate the text fields if it is more than 100.
+      text_field_aliases = text_ff_aliases
+      {
+        "custom_fields" => custom_field.merge(custom_field) { |k, v| text_field_aliases.include?(k.to_s) ? v.try(:truncate, 100) : v }.stringify_keys
+      }
+    else
+      {
+        "custom_fields" => custom_field.select { |k, v| non_text_ff_aliases.include?(k.to_s) }.stringify_keys
+      }
+    end
   end
 
   def ticket_states_hash

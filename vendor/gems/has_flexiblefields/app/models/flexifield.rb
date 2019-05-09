@@ -18,7 +18,7 @@ class Flexifield < ActiveRecord::Base
 
   delegate :to_ff_alias, :to_ff_field, :to_ff_def_entry,
            :ff_aliases, :non_text_ff_aliases,
-           :ff_fields, :non_text_ff_fields, :text_and_number_ff_fields, :text_ff_fields, :to => :flexifield_def
+           :ff_fields, :non_text_ff_fields, :text_and_number_ff_fields, :text_ff_fields, :text_ff_aliases, :to => :flexifield_def
 
   zero_downtime_migration_methods :methods => {:remove_columns => ["ff_boolean11","ff_boolean12","ff_boolean13","ff_boolean14","ff_boolean15","ff_boolean16","ff_boolean17","ff_boolean18","ff_boolean19","ff_boolean20"] }
 

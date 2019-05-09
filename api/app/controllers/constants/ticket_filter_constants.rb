@@ -33,7 +33,5 @@ module TicketFilterConstants
 
   DATE_FIELD_REGEX = /^[0-9]{4}\-[0-1][0-9]\-[0-3][0-9]$/i
 
-  DATE_RANGE = 15
-
   SORTABLE_CUSTOM_FIELDS = { 'appointment_start_time' => FSM_APPOINTMENT_START_TIME }.freeze
 end.freeze

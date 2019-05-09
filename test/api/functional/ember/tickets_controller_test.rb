@@ -754,7 +754,7 @@ module Ember
       enable_adv_ticketing([:field_service_management]) do
         begin
           perform_fsm_operations
-          Account.first.make_current
+          Account.stubs(:current).returns(Account.first)
           parent_ticket = create_ticket
           params = { parent_id: parent_ticket.display_id, email: Faker::Internet.email,
                      description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
@@ -765,6 +765,7 @@ module Ember
           match_json([bad_request_error_pattern('custom_fields.cf_fsm_appointment_end_time', :invalid_date_time_range)])
         ensure
           cleanup_fsm
+          Account.unstub(:current)
         end
       end
     end
@@ -959,7 +960,7 @@ module Ember
       enable_adv_ticketing([:field_service_management]) do
         begin
           perform_fsm_operations
-          Account.first.make_current
+          Account.stubs(:current).returns(Account.first)
           fsm_ticket = create_service_task_ticket
           params = {custom_fields: { cf_fsm_contact_name: 'test', cf_fsm_service_location: 'test', cf_fsm_phone_number: 'test', cf_fsm_appointment_start_time: '2019-10-12T10:23:00', cf_fsm_appointment_end_time: '2019-10-11T12:23:00'}}
           put :update, construct_params({ id: fsm_ticket.display_id, version: 'private' }, params)
@@ -4761,6 +4762,25 @@ module Ember
         cleanup_fsm
         Account.unstub(:field_service_management_enabled?)
         Account.unstub(:current)
+      end
+    end
+
+    def test_update_fsm_appointment_start_time_with_value_less_than_end_time
+      enable_adv_ticketing([:field_service_management]) do
+        begin
+          perform_fsm_operations
+          Account.stubs(:current).returns(Account.first)
+          time = Time.zone.now
+          fsm_ticket = create_service_task_ticket(fsm_contact_name: 'User', fsm_service_location: 'Location', fsm_phone_number: '123344', fsm_appointment_start_time: time.utc.iso8601, fsm_appointment_end_time: (time + 1.hour).utc.iso8601)
+          params = { custom_fields: { cf_fsm_appointment_start_time: (time + 2.hours).utc.iso8601, cf_fsm_appointment_end_time: (time + 1.hour).utc.iso8601 } }
+          put :update, construct_params({ id: fsm_ticket.display_id, version: 'private' }, params)
+          assert_response 400
+          match_json([bad_request_error_pattern('custom_fields.cf_fsm_appointment_start_time', :invalid_date_time_range)])
+        ensure
+          fsm_ticket.destroy
+          cleanup_fsm
+          Account.unstub(:current)
+        end
       end
     end
 
