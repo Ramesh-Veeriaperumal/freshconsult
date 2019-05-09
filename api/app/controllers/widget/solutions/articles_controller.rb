@@ -37,7 +37,7 @@ module Widget
         def load_object(items = scoper)
           meta_item = items.find_by_id(params[:id])
           @item = meta_item.current_article if meta_item.present?
-          log_and_render_404 if @item.nil?
+          log_and_render_404 if @item.blank?
         end
 
         def before_load_object

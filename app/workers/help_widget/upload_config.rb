@@ -53,6 +53,7 @@ class HelpWidget::UploadConfig < BaseWorker
 
     def delete_json
       AwsWrapper::S3Object.delete(widget_path, S3_CONFIG[:help_widget_bucket])
+      AwsWrapper::S3Object.delete(zero_byte_file_path, S3_CONFIG[:help_widget_bucket])
     end
 
     def widget_json
@@ -69,10 +70,14 @@ class HelpWidget::UploadConfig < BaseWorker
 
     def log_error statement, e
       Rails.logger.error "#{statement} - #{Account.current.id} - #{@args.inspect} - #{e.message}"
-      FreshdeskErrorsMailer.error_email(nil, @args, e, {
-        :subject => "#{statement} - #{Account.current.id}", 
-        :recipients => ["the-a-team@freshworks.com"]
-      })
+      return if Rails.env.development? || Rails.env.test?
+
+      params = @args.merge(
+        account_id: Account.current.id,
+        domain: Account.current.full_domain
+      )
+      FreshdeskErrorsMailer.error_email(nil, params, e,
+                                        subject: "#{Rails.env} - #{statement}",
+                                        recipients: ['the-a-team@freshworks.com'])
     end
 end
-
