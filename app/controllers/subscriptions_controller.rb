@@ -27,7 +27,6 @@ class SubscriptionsController < ApplicationController
   attr_accessor :addon_params
 
   CARD_UPDATE_REQUEST_LIMIT = 5
-  NO_PRORATION_PERIOD_CYCLES = [ 1 ]
   ACTIVE = "active"
   FREE = "free"
 
@@ -362,7 +361,7 @@ class SubscriptionsController < ApplicationController
       coupon = coupon_applicable? ? @coupon : nil
       addons = addon_based_features_enabled? ? @addons : scoper.addons
       !(@cached_subscription.active? and (scoper.total_amount(addons, coupon) < @cached_subscription.amount) and
-        NO_PRORATION_PERIOD_CYCLES.include?(@cached_subscription.renewal_period))
+        Subscription::NO_PRORATION_PERIOD_CYCLES.include?(@cached_subscription.renewal_period))
     end
 
     def update_features
