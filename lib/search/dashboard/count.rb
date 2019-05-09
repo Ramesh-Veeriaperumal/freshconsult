@@ -16,11 +16,7 @@ module Search
           model_object = model_class.constantize.find_by_id(payload[:document_id])
           return if model_object.nil?
 
-          if ticket_delete_or_spam?(model_object)
-            remove_es_count_document(legacy_index, analytics_index)
-          else
-            push_document_update(model_object, legacy_index, analytics_index)
-          end
+          push_document_update(model_object, legacy_index, analytics_index)
         end
       end
 
