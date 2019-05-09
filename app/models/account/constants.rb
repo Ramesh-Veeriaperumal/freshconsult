@@ -158,7 +158,7 @@ class Account < ActiveRecord::Base
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES =  {:anonymous_tickets => true, :open_solutions => true, :auto_suggest_solutions => true,
                             :open_forums => false, :google_signin => true, :twitter_signin => true, :facebook_signin => true,
-                            :signup_link => true, :captcha => false,
+                            :signup_link => true, :captcha => true,
                             :moderate_all_posts => false, :moderate_posts_with_links => true, :hide_portal_forums => false,
                             :forum_captcha_disable => false, :public_ticket_url => false }
 
@@ -298,7 +298,7 @@ class Account < ActiveRecord::Base
       description_by_default: false, ticket_fields_central_publish: false, fluffy: false, disable_field_service_management: false, facebook_page_scope_migration: false, agent_group_central_publish: false, custom_fields_search: false,
       update_billing_info: false, allow_billing_info_update: false, tag_central_publish: false, redis_picklist_id: true,
       nested_field_revamp: false, freshvisual_configs: false, freshid_org_v2: false, hide_agent_login: false, addon_based_billing: false,
-      kbase_mint: false
+      kbase_mint: false, text_custom_fields_in_etl: false
     }, :merge
   )
 

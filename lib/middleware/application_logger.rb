@@ -16,19 +16,28 @@ class Middleware::ApplicationLogger
   end
 
   def call(env)
-     env[:start_time] = Time.now
-     @app.call(env).tap do |response|
-        status, headers, body = *response
-        duration = (Time.now - env[:start_time]) * 1000
-        payload = set_payload(env)
-        payload[:duration] = duration.round(2)
-        payload[:status] = status
-        @@logger.info format_payload(payload)
-     end
+    env[:obj_allocation] = object_allocation
+    env[:start_time] = Time.zone.now
+    @app.call(env).tap do |response|
+      status, _headers, _body = *response
+      duration = (Time.zone.now - env[:start_time]) * 1000
+      payload = set_payload(env)
+      payload[:duration] = duration.round(2)
+      payload[:status] = status
+      payload[:oa] = object_allocation - env[:obj_allocation]
+      @@logger.info format_payload(payload)
+    end
   end
 
   private
-    def format_payload payload
+
+    # Returns total allocations monitored by GC. Diff between allocations at the start and the end
+    #   of the request, may not give an accurate object allocation stat for a req, if, GC had kicked in.
+    def object_allocation
+      GC.stat(:total_allocated_objects) || 0
+    end
+
+    def format_payload(payload)
       log_format(payload)
     end
 
@@ -80,5 +89,4 @@ class Middleware::ApplicationLogger
     def controller_action request
       request.env["action_dispatch.request.path_parameters"] ? request.env["action_dispatch.request.path_parameters"][:action] : controller_log_info[:action]
     end
-
 end

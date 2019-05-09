@@ -34,7 +34,7 @@
       
       <div class="visible-merge-note">
           <%= t("discussions.topic_merge.visibility_info", 
-              :visibility => Forum.visibility_keys[@source_topics.first.forum.forum_visibility]).html_safe %>
+              :visibility => h(Forum.visibility_keys[@source_topics.first.forum.forum_visibility])).html_safe %>
         </div>
       
       <div id="title_results" class="merge_results hide">

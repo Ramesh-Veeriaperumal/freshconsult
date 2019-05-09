@@ -8,7 +8,7 @@ var WidgetConfig = function () {};
 	WidgetConfig = function (urls, account_url, help_widget_enabled) {
 		this.urls = urls;
 		this.account_url = account_url;
-		this.asset_url = this.urls.http;
+		this.asset_url = this.urls.https;
 		this.help_widget_enabled = help_widget_enabled;
 		this.initialize();
 	};
@@ -21,10 +21,10 @@ var WidgetConfig = function () {};
 		PLACEHOLDERS: ['offset', 'formHeight', 'buttonText'],
 
 		initialize: function () {
+			this.retries = 0;
+			this.onConfigChange.bind(this);
 			this.setDefaults();
-			this.bindHandlers();
-			this.initWidget();
-			this.activeForm.trigger("change");
+			this.afterRenderForm();
 		},
 		initWidget: function () {
 			FreshWidget.init("", {
@@ -39,12 +39,25 @@ var WidgetConfig = function () {};
 		setDefaults: function () {
 			this.formHash = $H();
 			this.formHash.set('queryString', '');
+		},
+		setForm: function(){
 			if (this.help_widget_enabled) {
-				this.activeForm = $("#fw-tab-content form");
+				return this.activeForm = $("#fw-tab-content form");
 			} else {
-				this.activeForm = $("#fw-tab-content form:visible");
+				return this.activeForm = $("#fw-tab-content form:visible");
 			}
 		},
+		afterRenderForm: function(){
+			if(this.setForm().serializeArray().length > 0) {
+				this.bindHandlers();
+				this.initWidget();
+				this.activeForm.trigger("change");
+			} else if(this.retries < 15){
+				this.retries += 1;
+				setTimeout(this.afterRenderForm.bind(this),1000);
+			}
+		},
+
 		bindHandlers: function () {
 			var $this = this;
 			$("#fw-tab-content form").change(function (ev) { $this.onConfigChange(); });

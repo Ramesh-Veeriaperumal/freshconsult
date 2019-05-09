@@ -1,4 +1,6 @@
 class Helpdesk::Ticket < ActiveRecord::Base
+  include Admin::AdvancedTicketing::FieldServiceManagement::Constant
+
   validates_presence_of :requester_id, :message => "should be a valid email address"
   validates_numericality_of :source, :status, :only_integer => true
   validates_numericality_of :requester_id, :responder_id, :only_integer => true, :allow_nil => true
@@ -31,6 +33,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   validate :requester_company_id_validation, :if => :company_id_changed?
+  validate :check_appointment_time_range, if: -> { errors.blank? && Account.current.field_service_management_enabled? && self.ticket_type == SERVICE_TASK_TYPE }
 
   def due_by_validation
     self.errors.add(:base,t('helpdesk.tickets.show.due_date.earlier_date_and_time')) if due_by_changed? and (due_by < created_at_date)
@@ -120,6 +123,22 @@ class Helpdesk::Ticket < ActiveRecord::Base
         :company_id,
         "The requester does not belong to the specified company"
       )
+    end
+  end
+
+  def check_appointment_time_range
+    start_time = FSM_APPOINTMENT_START_TIME + "_#{Account.current.id}"
+    end_time = FSM_APPOINTMENT_END_TIME + "_#{Account.current.id}"
+    unless self.custom_field[start_time].nil? || self.custom_field[end_time].nil?
+      if self.custom_field[end_time] < self.custom_field[start_time]
+        start_time_ff = custom_field_name_mapping.key(start_time) 
+        end_time_ff = custom_field_name_mapping.key(end_time)
+        if self.flexifield.changes.key?(end_time_ff)
+          self.errors.add(:"custom_fields.#{FSM_APPOINTMENT_END_TIME}", 'invalid_date_time_range')
+        else
+          self.errors.add(:"custom_fields.#{FSM_APPOINTMENT_START_TIME}", 'invalid_date_time_range')
+        end
+      end
     end
   end
 
