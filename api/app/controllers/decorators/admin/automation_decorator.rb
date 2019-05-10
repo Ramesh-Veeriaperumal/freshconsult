@@ -59,6 +59,7 @@ class Admin::AutomationDecorator < ApiDecorator
           hash.merge!(construct_data(key.to_sym, event.rule[key], event.rule.key?(key), EVENT_NESTED_FIELDS, nil, nil, true))
         end
         event_hash = event_hash.symbolize_keys
+          transform_value(event_hash)
         reconstruct_nested_data(event_hash) if (event_hash.keys & NESTED_FIELD_CONSTANTS.values).present?
         event_hash
       end
@@ -105,10 +106,12 @@ class Admin::AutomationDecorator < ApiDecorator
         elsif action[:name].to_sym == :trigger_webhook
           construct_webhook(action)
         else
-          ACTION_FIELDS.inject({}) do |hash, key|
+          action_data = ACTION_FIELDS.inject({}) do |hash, key|
             action[:value] = action[:value].split(',').flatten if action[:name].to_sym == :add_tag
             hash.merge!(construct_data(key.to_sym, action[key], action.key?(key)))
           end
+          transform_value(action_data)
+          action_data
         end
       end
     end
@@ -138,7 +141,9 @@ class Admin::AutomationDecorator < ApiDecorator
           hash.merge!(construct_data(key.to_sym, condition[key], condition.key?(key),
                                      CONDITON_SET_NESTED_FIELDS, hash[:field_name], evaluate_on))
         end
-        support_for_old_operators(condition_set_data)
+        support_for_old_operators(condition_set_data) unless record.supervisor_rule?
+        transform_value(condition_set_data)
+        add_operator_for_nested_field(condition_set_data)
         condition_hash[evaluate_on] << condition_set_data
       end
       condition_hash
@@ -155,12 +160,13 @@ class Admin::AutomationDecorator < ApiDecorator
     def construct_webhook(action)
       action = action.deep_symbolize_keys
       action_hash = {
-          content_type: Va::Constants::WEBHOOK_CONTENT_TYPES[action[:content_type]].to_s,
-          content_layout: action[:content_layout].to_s,
-          request_type: Va::Constants::WEBHOOK_REQUEST_TYPES[action[:request_type]].to_s,
-          content: action[:params],
-          url: action[:url],
-          field_name: action[:name]
+        content_type: Va::Constants::WEBHOOK_CONTENT_TYPES[action[:content_type]].to_s,
+        content_layout: action[:content_layout].to_s,
+        request_type: Va::Constants::WEBHOOK_REQUEST_TYPES[action[:request_type]].to_s,
+        content: action[:params],
+        custom_headers: action[:custom_headers],
+        url: action[:url],
+        field_name: action[:name]
       }
       action_hash.select! { |_, value| value.present? }
       if action.key?(:need_authentication)
@@ -186,7 +192,7 @@ class Admin::AutomationDecorator < ApiDecorator
                                                             !COMPANY_FIELDS.include?(value.to_sym) && 
                                                             !CONDITION_CONTACT_FIELDS.include?(value.to_sym)
         if is_event && value.present? && TRANSFORMABLE_EVENT_FIELDS.include?(key.to_sym) && !DEFAULT_EVENT_TICKET_FIELDS.include?(value.to_sym)
-          field = current_account.ticket_fields_from_cache.find { |tf| tf.column_name == value }
+          field = custom_ticket_fields_from_cache.find { |tf| tf.column_name == value }
           value = TicketDecorator.display_name(field.name) if field.present?
         end
       end
@@ -196,12 +202,80 @@ class Admin::AutomationDecorator < ApiDecorator
       has_key ? { key => value } : {}
     end
 
+    def add_operator_for_nested_field(data)
+      data.symbolize_keys!
+      nested_fields = data[:nested_fields]
+      return if nested_fields.blank?
+      NESTED_LEVEL_COUNT.times do |level_no|
+        level_name = :"level#{level_no + 2}"
+        level_data = nested_fields[level_name]
+        level_data[:operator] ||= :is if level_data.present?
+      end
+    end
+
 
     def support_for_old_operators(data)
       data.symbolize_keys!
-      if data[:operator].is_a?(String) && OLD_OPERATOR_MAPPING.key?(data[:operator].to_sym)
+      # convert value to array
+      if data[:operator].is_a?(String) && NEW_ARRAY_VALUE_OPERATOR_MAPPING.key?(data[:operator].to_sym)
         data[:value] = *data[:value]
-        data[:operator] = OLD_OPERATOR_MAPPING[data[:operator].to_sym]
+        data[:operator] = NEW_ARRAY_VALUE_OPERATOR_MAPPING[data[:operator].to_sym]
       end
     end
+
+    def transform_value(data)
+      data.symbolize_keys!
+      name = data[:field_name].to_sym
+      all_fields = custom_number_fields + custom_decimal_fields + DEFAULT_FIELD_VALUE_CONVERTER
+      return unless all_fields.include?(name)
+      change_value(name, data)
+    end
+
+    def change_value(name, data)
+      type = field_type(name)
+      EVENT_VALUES_KEY.each do |key|
+        next unless data.key?(key)
+        if data[key].is_a?(Array)
+          data[key].map! do |value|
+            ANY_NONE_VALUES.include?(value) ? value : convert_value(value, type)
+          end
+        else
+          data[key] = ANY_NONE_VALUES.include?(data[key]) ? data[key] : convert_value(data[key], type)
+          data[key] = *data[key] if ARRAY_VALUE_EXPECTING_FIELD.include?(name)
+        end
+      end
+    end
+
+    def field_type(name)
+      type = :Integer if custom_number_fields.include?(name)
+      type = :Float if custom_decimal_fields.include?(name)
+      type || DEFAULT_FIELD_VALUE_TYPE[name]
+    end
+
+    def convert_value(value, type)
+      case type
+        when :Integer
+          value.to_s.to_i
+        when :Float
+          value.to_s.to_f
+        else
+          value.to_s
+      end
+    end
+
+  def custom_number_fields
+    field_type = proc {  |field| field.field_type == "custom_number"}
+    field_name = proc { |field| TicketDecorator.display_name(field.name) }
+    @custom_number_field ||= custom_ticket_fields_from_cache.select(&field_type).map(&field_name)
+  end
+
+  def custom_decimal_fields
+    field_type = proc {  |field| field.field_type == "custom_decimal"}
+    field_name = proc { |field| TicketDecorator.display_name(field.name) }
+    @custom_decimal_field ||= custom_ticket_fields_from_cache.select(&field_type).map(&field_name)
+  end
+
+  def custom_ticket_fields_from_cache
+    @custom_tf_from_cache ||= current_account.ticket_fields_from_cache
+  end
 end

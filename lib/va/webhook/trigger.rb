@@ -14,7 +14,8 @@ module Va::Webhook::Trigger
     if act_hash[:content_layout].to_i == SIMPLE_WEBHOOK
       params[:body] = generate_body_from_hash act_on, content_type
     else
-      params[:body] = substitute_placeholders_in_format(act_on, :params, content_type)
+      params[:body] = act_hash[:new_webhook_api] ? generate_body_for_new_webhook_api(act_on, content_type) :
+                          substitute_placeholders_in_format(act_on, :params, content_type)
     end
 
     throttler_args = {

@@ -17,19 +17,21 @@ module Admin
 
     validates :performer, presence: true, data_type: { rules: Hash }, if: -> { observer_rule? && @request_params.key?(:performer) }, on: :update
     validates :events, presence: true, data_type: { rules: Array }, if: -> { observer_rule? && @request_params.key?(:events) }, on: :update
-    validates :conditions, presence: true, data_type: { rules: Hash }, if: -> { @request_params.key?(:conditions) }, on: :update
+    validates :conditions, data_type: { rules: Hash }, if: -> { @request_params.key?(:conditions) }, on: :update
+    validates :conditions, presence: true, if: -> { @request_params.key?(:conditions) && !observer_rule? }, on: :update
     validates :actions, presence: true, data_type: { rules: Array }, if: -> { @request_params.key?(:actions) }, on: :update
 
     validate :unpermitted_params
     validate :validate_params
     validate :system_event, if: -> { performer.present? && events.present? && events.is_a?(Array) }
 
-    def initialize(request_params, item = nil, allow_string_param = false)
+    def initialize(request_params, cf_fields, item = nil, allow_string_param = false)
       @request_params = request_params
       @type_name = :rule
       AutomationConstants::PERMITTED_PARAMS.each do |param|
         safe_send("#{param}=", request_params[param])
       end
+      cf_fields.each_pair {|key, value| safe_send("#{key}=", value) }
       self.skip_hash_params_set = true
       super(request_params, item, allow_string_param)
     end
@@ -67,7 +69,7 @@ module Admin
       end
 
       def validate_events
-        event_validation = Admin::AutomationRules::Events::TicketValidation.new(events, nil, false)
+        event_validation = Admin::AutomationRules::Events::TicketValidation.new(events, custom_ticket_event, rule_type)
         is_valid = event_validation.valid?
         unless is_valid
           merge_to_parent_errors(event_validation)
@@ -77,7 +79,7 @@ module Admin
       end
 
       def validate_actions
-        action_validation = Admin::AutomationRules::Actions::TicketValidation.new(actions, nil, rule_type, false)
+        action_validation = Admin::AutomationRules::Actions::TicketValidation.new(actions, custom_ticket_action, rule_type)
         is_valid = action_validation.valid?
         unless is_valid
           merge_to_parent_errors(action_validation)
@@ -137,7 +139,7 @@ module Admin
 
       def validate_conditions_properties(set, field_type)
         validate_class = "Admin::AutomationRules::Conditions::#{field_type.to_s.camelcase}Validation".constantize
-        condition_validation = validate_class.new(conditions[:"condition_set_#{set}"][field_type], nil, set, rule_type, false)
+        condition_validation = validate_class.new(conditions[:"condition_set_#{set}"][field_type], safe_send(:"custom_#{field_type}_condition"), set, rule_type)
         is_valid = condition_validation.valid?
         unless is_valid
           merge_to_parent_errors(condition_validation)

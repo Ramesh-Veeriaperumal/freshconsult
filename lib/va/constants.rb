@@ -2,6 +2,10 @@ module Va
   module Constants
     # va_rule execution count key expiry
     RULE_EXEC_COUNT_EXPIRY_DURATION = 604800 # 7 days
+
+    DEFAULT_FIELD_HANDLER = {
+        created_at: :date_time
+    }.freeze
     
     OPERATOR_TYPES = {
       :email       => [ "is", "is_not", "contains", "does_not_contain" ],

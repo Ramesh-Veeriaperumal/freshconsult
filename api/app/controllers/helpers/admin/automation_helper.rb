@@ -1,7 +1,7 @@
 # This Admin::AutomationHelper is helper for automations_controller
 module Admin::AutomationHelper
   include Admin::AutomationConstants
-
+  include Va::Constants
   private
 
     def check_automation_params
@@ -246,16 +246,26 @@ module Admin::AutomationHelper
       action_hash
     end
 
+    def webhook_content(action)
+      if action[:content_layout].to_s == '1' || action[:content_type] == 'JSON'
+        action[:content].to_hash rescue action[:content]
+      else
+        action[:content].to_s
+      end
+    end
+
     def construct_webhook(action)
       action = action.dup
       action_hash = {
-        content_type: Va::Constants::WEBHOOK_CONTENT_TYPES_ID[action[:content_type]].to_s,
-        content_layout: action[:content_layout].to_s,
-        request_type: Va::Constants::WEBHOOK_REQUEST_TYPES_ID[action[:request_type]].to_s,
-        params: action[:content],
+        request_type: WEBHOOK_REQUEST_TYPES_ID[action[:request_type]].to_s,
         url: action[:url],
-        name: action[:field_name]
+        name: action[:field_name],
+        new_webhook_api: true,
       }
+      action_hash[:content_type] = WEBHOOK_CONTENT_TYPES_ID[action[:content_type]].to_s if action[:content_type].present?
+      action_hash[:content_layout] = action[:content_layout].to_s if action[:content_layout].present?
+      action_hash[:params] = webhook_content(action) if action[:content].present?
+      action[:custom_headers] = action[:custom_headers].to_hash if action[:custom_headers].present?
       if action[:auth_header].present?
         action_hash[:need_authentication] = "true"
         action_hash[:username] = action[:auth_header][:username] if action[:auth_header][:username].present?
@@ -291,6 +301,8 @@ module Admin::AutomationHelper
         value = "#{value}_#{Account.current.id}" if !DEFAULT_FIELDS.include?(value.to_sym) && is_ticket && !is_event
         value = "cf_#{value}" if !is_ticket && !COMPANY_FIELDS.include?(value.to_sym) && !CONDITION_CONTACT_FIELDS.include?(value.to_sym)
         value = SUPERVISOR_FIELD_MAPPING[value.to_sym] if @item.supervisor_rule? && SUPERVISOR_FIELD_MAPPING.key?(value.to_sym)
+        name_changed = DISPLAY_FIELD_NAME_CHANGE[value.to_sym]
+        value = name_changed if name_changed.present? &&  !@item.supervisor_rule?
       end
       has_key ? { key => value } : {}
     end
@@ -346,6 +358,7 @@ module Admin::AutomationHelper
     def construct_condition(condition_set, evaluate_on)
       evaluate_on = EVALUATE_ON_MAPPING[evaluate_on] || evaluate_on
       condition_set.map do |condition|
+        return {} if condition.blank?
         PERMITTED_CONDITION_SET_VALUES.inject({}) do |hash, key|
           is_ticket = evaluate_on == :ticket
           hash.merge!(evaluate_on: evaluate_on) unless @item.supervisor_rule?

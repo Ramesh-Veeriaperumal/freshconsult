@@ -326,3 +326,6 @@ api_error_messages:
   audit_log_export: 'your request is in process'
 
   account_in_trial: 'Account is already in trial'
+
+  extra_level_field: "Dependent field should not be present if the parent value is ''/--/##"
+  non_unique_field_automation: "A field with name '%{name}' is already there"

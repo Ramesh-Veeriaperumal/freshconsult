@@ -37,7 +37,7 @@ fields:
         renewal_date: date
         segments: object_id_array
 
-        created_at: date_time
+        created_during: date_time
         updated_at: date_time
         opened_at: date_time
         pending_since: date_time

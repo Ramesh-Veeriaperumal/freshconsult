@@ -5,6 +5,7 @@ class Admin::AutomationsController < ApiApplicationController
   include Redis::AutomationRuleRedis
   include AutomationRuleHelper
   include Va::Constants
+  include Admin::Automation::CustomFieldHelper
 
   prepend_before_filter :check_for_allowed_rule_type
 
@@ -101,7 +102,10 @@ class Admin::AutomationsController < ApiApplicationController
       if params[cname].blank?
         render_errors([[:payload, :invalid_json]])
       else
-        automation_validation = automation_validation_class.new(params, nil, false)
+        cf_fields = { custom_ticket_event: custom_event_ticket_field, custom_ticket_action: custom_action_ticket_field,
+                      custom_ticket_condition: custom_condition_ticket_field, custom_contact_condition: custom_condition_contact,
+                      custom_company_condition: custom_condition_company }
+        automation_validation = automation_validation_class.new(params, cf_fields, nil, false)
         if automation_validation.invalid?(params[:action].to_sym)
           render_errors(automation_validation.errors, automation_validation.error_options)
         else

@@ -1,12 +1,14 @@
 module Admin::AutomationRules::Conditions
   class CompanyValidation < ApiValidation
-    include Admin::AutomationValidationHelper
+    include Admin::Automation::ConditionHelper
+    include Admin::AutomationConstants
 
-    VALID_ATTRIBUTES = (Admin::AutomationConstants::CONDITION_COMPANY_FIELDS +
+    DEFAULT_ATTRIBUTES = (Admin::AutomationConstants::CONDITION_COMPANY_FIELDS +
                         Admin::AutomationConstants::TAM_COMPANY_FIELDS).uniq
 
-    attr_accessor(*VALID_ATTRIBUTES)
-    attr_accessor :invalid_attributes, :type_name, :rule_type, :field_position
+    attr_accessor(*DEFAULT_ATTRIBUTES)
+    attr_accessor :invalid_attributes, :type_name, :rule_type, :field_position, :custom_field_hash,
+                  :validator_type
 
     validate :company_conditions_attribute_type
     validate :errors_for_invalid_attributes, if: -> { invalid_attributes.present? }
@@ -50,22 +52,14 @@ module Admin::AutomationRules::Conditions
             feature: :tam_default_fields
           } }, unless: :tam_default_fields_enabled?
 
-    def initialize(request_params, _item, set, rule_type, _allow_string_param = false)
-      @rule_type = rule_type
-      @type_name = "conditions[:condition_set_#{set}][:company]"
-      super(initialize_params(request_params, VALID_ATTRIBUTES), nil, false)
+    def initialize(request_params, custom_fields, set, rule_type)
+      @type_name = :"conditions[:condition_set_#{set}][:company]"
+      @validator_type = :condition
+      super(initialize_params(request_params, DEFAULT_ATTRIBUTES, custom_fields, rule_type), nil, false)
     end
 
     def company_conditions_attribute_type
-      Admin::AutomationConstants::CONDITION_COMPANY_FIELDS_HASH.each do |condition|
-        attribute_value = safe_send(condition[:name])
-        next if attribute_value.blank?
-        @field_position = 1
-        attribute_value.each do |each_attribute|
-          condition_validation(condition, each_attribute)
-          @field_position += 1
-        end
-      end
+      attribute_type(Admin::AutomationConstants::CONDITION_COMPANY_FIELDS_HASH + custom_field_hash)
     end
 
     def tam_default_fields_enabled?

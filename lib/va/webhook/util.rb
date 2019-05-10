@@ -70,4 +70,18 @@ module Va::Webhook::Util
       end
     end
 
+    def generate_body_for_new_webhook_api(act_on, content_type)
+      unless act_hash[:params].nil?
+        act_hash[:params] = substitute_placeholders_in_format(act_on, :params)
+        case content_type
+          when XML
+            act_hash[:params].to_s
+          when JAVASCRIPT_OBJECT_NOTATION
+            act_hash[:params].to_json
+          when URL_ENCODED
+            act_hash[:params].to_hash.to_query
+        end
+      end
+    end
+
 end

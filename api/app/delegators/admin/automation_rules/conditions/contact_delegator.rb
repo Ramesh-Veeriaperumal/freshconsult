@@ -19,11 +19,6 @@ module Admin::AutomationRules::Conditions
           validate_field_values(contact[:field_name], value, default_fields[contact[:field_name].to_sym] + [*ANY_NONE[:NONE]])
         else
           custom_field = contact_form_fields.find { |t| t.name == "cf_#{contact[:field_name]}" }
-          field_not_found_error("condition[:contact[#{contact[:field_name]}]") if custom_field.blank?
-          return if errors.messages.present?
-
-          validate_operator_custom_fields(contact, custom_field.dom_type.to_sym, 'contact') unless
-              CUSTOM_FILEDS_WITH_CHOICES.include? custom_field.dom_type.to_sym
           validate_case_sensitive(contact, custom_field.dom_type, "contact[:#{contact[:field_name]}]") if contact.has_key? :case_sensitive
           validate_customer_field(contact, custom_field.dom_type.to_sym, 'contact') if custom_field.present?
         end

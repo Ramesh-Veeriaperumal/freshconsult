@@ -14,10 +14,8 @@ module Admin::AutomationRules::Conditions
 
     def validate_conditions
       @ticket_conditions.each do |field|
-        next if DELEGATOR_IGNORE_FIELDS.include?(field[:field_name].to_sym)
+        next if field.blank? || DELEGATOR_IGNORE_FIELDS.include?(field[:field_name].to_sym)
         if DEFAULT_FIELDS_DELEGATORS.include?(field[:field_name].to_sym)
-          validate_default_field_operator(field)
-          return if errors.messages.present?
           validate_default_ticket_field(field[:field_name], field[:value], field)
         else
           custom_field = custom_ticket_fields.find { |t| t.name == "#{field[:field_name]}_#{current_account.id}" }
@@ -25,8 +23,6 @@ module Admin::AutomationRules::Conditions
             field_not_found_error("condition[#{field[:field_name]}]")
             return
           end
-          validate_operator_custom_fields(field, custom_field.dom_type.to_sym, 'ticket') unless
-              CUSTOM_FILEDS_WITH_CHOICES.include? custom_field.dom_type.to_sym
           validate_case_sensitive(field, custom_field.dom_type, "condition[:#{field[:field_name]}]") if field.has_key? :case_sensitive
           validate_custom_ticket_field(field, custom_field, custom_field.dom_type,
                                        :condition) if custom_field.present?

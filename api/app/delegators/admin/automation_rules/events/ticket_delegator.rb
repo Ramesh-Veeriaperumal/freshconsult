@@ -20,9 +20,6 @@ module Admin::AutomationRules::Events
           end
         else
           custom_field = custom_ticket_fields.find { |t| t.name == "#{event[:field_name]}_#{current_account.id}" }
-          field_not_found_error("event[#{event[:field_name]}]") if custom_field.blank?
-          return if errors.messages.present?
-
           validate_custom_field_event(event, custom_field, :event) if custom_field.present?
         end
       end

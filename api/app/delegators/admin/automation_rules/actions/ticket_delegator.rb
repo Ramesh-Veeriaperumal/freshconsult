@@ -27,9 +27,6 @@ module Admin::AutomationRules::Actions
           end
         else
           custom_field = custom_ticket_fields.find { |t| t.name == "#{action[:field_name]}_#{current_account.id}" }
-          field_not_found_error("action[#{action[:field_name]}]") if custom_field.blank?
-          return if errors.messages.present?
-
           validate_custom_ticket_field(action, custom_field, custom_field.dom_type,
                                        :action) if custom_field.present?
         end

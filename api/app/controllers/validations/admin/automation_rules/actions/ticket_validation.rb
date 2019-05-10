@@ -1,16 +1,17 @@
 module Admin::AutomationRules::Actions
   class TicketValidation < ApiValidation
-    include Admin::AutomationValidationHelper
+    include Admin::Automation::ActionHelper
     include Admin::AutomationConstants
 
-    VALID_ATTRIBUTES = (Admin::AutomationConstants::DEFAULT_ACTION_TICKET_FIELDS +
+    DEFAULT_ATTRIBUTES = (Admin::AutomationConstants::DEFAULT_ACTION_TICKET_FIELDS +
                         Admin::AutomationConstants::SEND_EMAIL_ACTION_FIELDS).uniq
 
-    attr_accessor(*VALID_ATTRIBUTES)
-    attr_accessor :invalid_attributes, :type_name, :rule_type, :field_position, :actions
+    attr_accessor(*DEFAULT_ATTRIBUTES)
+    attr_accessor :invalid_attributes, :type_name, :rule_type, :field_position, :actions, :custom_field_hash,
+                  :validator_type
 
     validates :actions, presence: true, data_type: { rules: Array, required: true },
-              array: { data_type: { rules: Hash }, hash: -> { ACTIONS_HASH } }
+                        array: { data_type: { rules: Hash }, hash: -> { ACTIONS_HASH } }
 
     validate :invalid_parameter_for_controller
     validate :add_watcher_feature, if: -> { add_watcher.present? }
@@ -19,11 +20,11 @@ module Admin::AutomationRules::Actions
 
     validate :action_attribute_type
 
-    def initialize(request_params, _item, rule_type, _allow_string_param = false)
-      @rule_type = rule_type
+    def initialize(request_params, custom_fields, rule_type)
       @type_name = :actions
+      @validator_type = :action
       instance_variable_set("@actions", request_params)
-      super(initialize_params(request_params, VALID_ATTRIBUTES), nil, false)
+      super(initialize_params(request_params, DEFAULT_ATTRIBUTES, custom_fields, rule_type), nil, false)
     end
 
     def invalid_parameter_for_controller
@@ -35,15 +36,7 @@ module Admin::AutomationRules::Actions
     end
 
     def action_attribute_type
-      ACTION_FIELDS_HASH.each do |action|
-        attribute_value = safe_send(action[:name])
-        next if attribute_value.blank?
-        @field_position = 1
-        attribute_value.each do |each_attribute|
-          action_validation(action, each_attribute)
-          @field_position += 1
-        end
-      end
+      attribute_type(ACTION_FIELDS_HASH + custom_field_hash)
     end
   end
 end

@@ -7,9 +7,9 @@ class VaRule < ActiveRecord::Base
   TICKET_CREATED_EVENT = { :ticket_action => :created }
   CASCADE_DISPATCHER_DATA  = [
     [ :first, "dispatch.no_cascade",    0 ],
-    [ :all,   "dispatch.cascade",        1 ] 
+    [ :all,   "dispatch.cascade",        1 ]
   ]
-  
+
 
   xss_sanitize  :only => [:name, :description], :plain_sanitizer => [:name, :description]
 
@@ -20,7 +20,7 @@ class VaRule < ActiveRecord::Base
   concerned_with :presenter
 
   publishable on: [:create, :update, :destroy]
-  
+
   validates_presence_of :name, :rule_type
   validates_uniqueness_of :name, :scope => [:account_id, :rule_type] , :unless => :automation_rule?
   validate :has_events?, :has_conditions?, :has_actions?, :has_safe_conditions?, :has_valid_action_data?
@@ -42,7 +42,7 @@ class VaRule < ActiveRecord::Base
   attr_accessible :name, :description, :match_type, :active, :filter_data, :action_data, :rule_type, :position
 
   belongs_to_account
-  
+
   has_one :app_business_rule, :class_name=>'Integrations::AppBusinessRule', :dependent => :destroy
   has_one :installed_application, :class_name => 'Integrations::InstalledApplication', through: :app_business_rule
   scope :active, :conditions => { :active => true }
@@ -94,38 +94,52 @@ class VaRule < ActiveRecord::Base
 
   def rule_operator
      @rule_operator ||= self[:match_type].to_sym  if supervisor_rule?
-     @rule_operator ||= (observer_rule? ? 
-                          condition_data[:conditions].keys.first.to_sym : 
+     @rule_operator ||= (observer_rule? ?
+                          condition_data[:conditions].keys.first.to_sym :
                           condition_data.keys.first.to_sym) if has_condition_data?
   end
- 
+
    def rule_performer
      @rule_performer ||= Va::Performer.new(condition_data[:performer].symbolize_keys) if has_condition_data?
    end
- 
+
    def rule_events
-     @rule_events ||= condition_data[:events].collect{ |e| 
+     @rule_events ||= condition_data[:events].collect{ |e|
       Va::Event.new(e.symbolize_keys, account) } if has_condition_data?
    end
- 
-   def rule_conditions
-     return unless has_condition_data?
-     @rule_conditions ||= begin
-       _conditions = if observer_rule?
-          condition_data[:conditions].values.first if condition_data[:conditions].present?
-        elsif dispatchr_rule?
-          condition_data.values.first
-        elsif supervisor_rule?
-          condition_data
+
+  def rule_conditions
+    return unless has_condition_data?
+    conditions = []
+    if observer_rule? || dispatchr_rule?
+      modify_condition_sets
+      conditions = condition_sets
+    elsif supervisor_rule?
+      conditions = condition_data
+    end
+    @rule_conditions ||= conditions
+  end
+
+  def modify_condition_sets
+    condition_sets.each do |set|
+      if set.is_a?(Hash) && (set.key?(:any) || set.key?(:all))
+        set.each_pair do |_, conditions|
+          conditions.each { |condition| field_type(condition) }
         end
-        unless supervisor_rule?
-          _conditions.each do |condition|
-            condition[:field_type] = fetch_field_type(condition)
-          end
-        end
-        _conditions
-     end
-   end
+      else
+        field_type(set)
+      end
+    end
+  end
+
+  def condition_sets
+    condition_sets = observer_rule? ? condition_data[:conditions] : condition_data
+    condition_sets.present? ? condition_sets.first[1] : {}
+  end
+
+  def field_type(condition)
+    condition[:field_type] = fetch_field_type(condition)
+  end
 
   def fetch_field_type(condition)
     case condition[:evaluate_on]
@@ -136,13 +150,13 @@ class VaRule < ActiveRecord::Base
       company_field = account.company_form.custom_company_fields.detect{ |csf| csf.name == condition[:name] }
       company_field.present? ? company_field.field_type.to_sym : :default
     else
-      ff = account.flexifields_with_ticket_fields_from_cache.detect{ |ff| 
+      ff = account.flexifields_with_ticket_fields_from_cache.detect{ |ff|
           ff.flexifield_name == condition[:name] || ff.flexifield_alias == condition[:name] }
       ticket_field = ff.present? ? ff.ticket_field : nil
       ticket_field.present? && ticket_field.parent_id.nil? ? ticket_field.field_type.to_sym : :default
     end
   end
-  
+
   def deserialize_action(act_hash)
     act_hash.symbolize_keys!
     Va::Action.new(act_hash, self)
@@ -169,7 +183,7 @@ class VaRule < ActiveRecord::Base
     end
     return false
   end
-  
+
   def pass_through(evaluate_on, actions=nil, doer=nil)
     Va::Logger::Automation.log "********* CONDITIONS *********"
     is_a_match = false
@@ -179,7 +193,7 @@ class VaRule < ActiveRecord::Base
     trigger_actions(evaluate_on, doer) if is_a_match
     is_a_match ? evaluate_on : nil
   end
-  
+
   def matches(evaluate_on, actions=nil)
     return true if conditions.empty?
     Va::Logger::Automation.log "match_type=#{match_type}"
@@ -250,7 +264,7 @@ class VaRule < ActiveRecord::Base
       evaluate_on # for backward compatibility
     end
   end
-  
+
   def trigger_actions(evaluate_on, doer=nil)
     Va::RuleActivityLogger.initialize_activities if automation_rule?
     return false unless check_user_privilege
@@ -276,12 +290,12 @@ class VaRule < ActiveRecord::Base
     Va::RuleActivityLogger.initialize_activities
     actions.each { |a| a.record_action_for_bulk(doer) }
   end
-  
+
   def filter_query
     query_strings = []
     params = []
     c_operator = (match_type.to_sym == :any ) ? ' or ' : ' and '
-    
+
     conditions.each do |c|
       c_query = c.filter_query
       unless c_query.blank?
@@ -305,7 +319,7 @@ class VaRule < ActiveRecord::Base
     end
     query_strings.empty? ? [] : ([ query_strings.join(c_operator) ] + params)
   end
-  
+
   def get_joins(conditions)
     all_joins = [""]
     JOINS_HASH.each do |table,join|
@@ -320,7 +334,7 @@ class VaRule < ActiveRecord::Base
 
     action_data.each do |action_data|
       action_data.symbolize_keys!
-      if action_data[:name] == 'trigger_webhook' 
+      if action_data[:name] == 'trigger_webhook'
         action_data[:password] = '' and return
       end
     end
@@ -331,12 +345,12 @@ class VaRule < ActiveRecord::Base
     from_action_data, to_action_data = action_data_change
     webhook_action = nil
 
-    
+
     to_action_data.each do |action_data|
       action_data.symbolize_keys!
       if action_data[:name] == 'trigger_webhook'
         return if action_data[:need_authentication].blank? || action_data[:api_key].present?
-        if action_data[:password].blank? 
+        if action_data[:password].blank?
           webhook_action = action_data
         else
           action_data[:password] = encrypt(action_data[:password])
@@ -357,8 +371,8 @@ class VaRule < ActiveRecord::Base
   end
 
   def conditions_changed?
-    self.changes.key?(:match_type) || 
-      (self.changes.key?(:filter_data) && 
+    self.changes.key?(:match_type) ||
+      (self.changes.key?(:filter_data) &&
        self.changes[:filter_data][0] != self.changes[:filter_data][1])
   end
 
@@ -410,7 +424,7 @@ class VaRule < ActiveRecord::Base
   def self.cascade_dispatcher_option
     CASCADE_DISPATCHER_DATA.map { |i| [I18n.t(i[1]), i[2]] }
   end
-  
+
   # Used for sending webhook failure notifications
   def rule_type_desc
     if dispatchr_rule?
@@ -424,12 +438,12 @@ class VaRule < ActiveRecord::Base
 
   def rule_path
     if observer_rule?
-      Rails.application.routes.url_helpers.edit_admin_observer_rule_url(self.id, 
-                                                        host: Account.current.host, 
+      Rails.application.routes.url_helpers.edit_admin_observer_rule_url(self.id,
+                                                        host: Account.current.host,
                                                         protocol: Account.current.url_protocol)
     elsif dispatchr_rule?
-      Rails.application.routes.url_helpers.edit_admin_va_rule_url(self.id, 
-                                                        host: Account.current.host, 
+      Rails.application.routes.url_helpers.edit_admin_va_rule_url(self.id,
+                                                        host: Account.current.host,
                                                         protocol: Account.current.url_protocol)
     else
       I18n.t('not_available')
@@ -438,7 +452,7 @@ class VaRule < ActiveRecord::Base
 
   def check_user_privilege
     return true unless automation_rule?
-    
+
     actions.each do |action|
       if Va::Action::ACTION_PRIVILEGE.key?(action.action_key.to_sym)
         return false unless
@@ -463,7 +477,7 @@ class VaRule < ActiveRecord::Base
   def contains_send_email_action?
     actions.any? {|action| action.contains? 'send_email'}
   end
-  
+
   def contains_add_watcher_action?
     actions.any? do |action|
       action.contains? 'add_watcher'
@@ -490,14 +504,14 @@ class VaRule < ActiveRecord::Base
         errors.add(:base,I18n.t("errors.events_empty")) if filter_data[:events].blank?
       end
     end
-    
+
     def has_conditions?
       return if automation_rule?
       errors.add(:base,I18n.t("errors.conditions_empty")) if
-        ((!account.automation_revamp_enabled? && filter_data.blank?) || 
+        ((!account.automation_revamp_enabled? && filter_data.blank?) ||
           (account.automation_revamp_enabled? && condition_data.blank?))
     end
-    
+
     def has_actions?
       errors.add(:base,I18n.t("errors.actions_empty")) if (action_data.blank?)
     end
@@ -505,27 +519,27 @@ class VaRule < ActiveRecord::Base
     def encrypt data
       public_key = OpenSSL::PKey::RSA.new(File.read("config/cert/public.pem"))
       Base64.encode64(public_key.public_encrypt(data))
-    end  
+    end
 
     def negatable_conditions(negatable_columns = [])
       conditions = []
       actions.map do |act|
         if negatable_columns.include? act.action_key
-          conditions << (Va::Condition.new({ 
-            :name => act.action_key, 
-            :value => act.value, 
+          conditions << (Va::Condition.new({
+            :name => act.action_key,
+            :value => act.value,
             :operator => VAConfig::NEGATE_OPERATOR
           }, account))
         elsif ( act.action_key.eql?("set_nested_fields") && negatable_columns.include?(act.act_hash[:category_name]) )
-          conditions << (Va::Condition.new({ 
-            :name => act.act_hash[:category_name], 
-            :value => act.value, 
+          conditions << (Va::Condition.new({
+            :name => act.act_hash[:category_name],
+            :value => act.value,
             :operator => VAConfig::NEGATE_OPERATOR
           }, account))
           act.act_hash[:nested_rules].each do |field|
-            conditions << (Va::Condition.new({ 
-              :name => field[:name], 
-              :value => field[:value], 
+            conditions << (Va::Condition.new({
+              :name => field[:name],
+              :value => field[:value],
               :operator => VAConfig::NEGATE_OPERATOR
             }, account))
           end
@@ -587,6 +601,6 @@ class VaRule < ActiveRecord::Base
         rules.where('position >= ? and position <= ? and id != ?',
                     position_lower_index, position_upper_index, self.id).update_all("position = position #{reorder_by} 1")
       end
-end
+    end
 
 end
