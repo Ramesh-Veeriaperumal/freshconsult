@@ -11,7 +11,7 @@ class Sync::FileToData::Transformer
     'Helpdesk::NestedTicketField'       => ['name'],
     'FlexifieldDef'                     => ['name'],
     'FlexifieldDefEntry'                => ['flexifield_alias', 'flexifield_name'],
-    'VaRule'                            => ['filter_data', 'action_data'],
+    'VaRule'                            => ['filter_data', 'action_data', 'condition_data', 'last_updated_by'],
     'Helpdesk::SlaPolicy'               => ['escalations', 'conditions'],
     'Helpdesk::TicketTemplate'          => ['template_data', 'data_description_html'],
     'Helpdesk::TicketStatus'            => ['status_id'],

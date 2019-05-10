@@ -11,7 +11,7 @@ class Sync::DataToFile::Transformer
     'FlexifieldDef'               => [['name']],
     'FlexifieldDefEntry'          => [['flexifield_alias']],
     'Helpdesk::TicketTemplate'    => [['template_data', 'data_description_html']],
-    'VaRule'                      => [['filter_data', 'action_data']],
+    'VaRule'                      => [['filter_data', 'action_data', 'condition_data', 'last_updated_by']],
     'Helpdesk::SharedAttachment'  => [['attachment_id'], lambda { |transformer, object| !transformer.skip_transformation?(object.read_attribute('attachment_id'), object.class.to_s) }],
     'Admin::Skill'                => [['filter_data']],
     'Admin::CannedResponses::Response' => [['content_html']],
