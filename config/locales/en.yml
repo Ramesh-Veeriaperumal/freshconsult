@@ -2741,6 +2741,12 @@ en:
         description: "Description"
         match_type: "Match any/all conditions"
         filter_data: "Conditions"
+        condition_data: "Condition Data"
+        condition_set_1: "Condition Set 1"
+        match_type_1: "Match Type 1"
+        condition_set_2: "Condition Set 2"
+        match_type_2: "Match Type 2"
+        operator: "Operator"
         action_data: "Actions"
         active: "Rule state"
         position: "Position"
@@ -2768,6 +2774,7 @@ en:
       actions: "Actions"
       active: "Active"
       add_comment: "Add comment"
+      add_a_cc: "Add CC"
       add_note: "Add note and notify to agents"
       action_add_tag: "Add Tag"
       action_add_watcher: "Add watcher"
@@ -9946,7 +9953,8 @@ en:
   last_one_eighty_days: Last 180 days
   set_date: Select Time Period
   any_time: Any time
-  any: Any
+  any: any
+  all: all
   Source: Source
   Subject: Subject
   Requester: Search a requester

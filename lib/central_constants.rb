@@ -14,7 +14,7 @@ module CentralConstants
     'Company' => '1.1',
     'Subscription' => '1.0',
     'Agent' => '2.0',
-    'VaRule' => '0.0',
+    'VaRule' => '0.1',
     'Group' => '3.0',
     'Post' => '0.0',
     'Helpdesk::TimeSheet' => '1.0',
