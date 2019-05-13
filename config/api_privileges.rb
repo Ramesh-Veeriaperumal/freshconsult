@@ -253,4 +253,12 @@ Authority::Authorization::PrivilegeList.build do
   view_analytics do
     resource :"ember/config", only: [:show]
   end
+
+  manage_dispatch_rules do
+    resource :"admin/automation", only: [:index, :create, :show, :update, :destroy]
+  end
+
+  manage_supervisor_rules do
+    resource :"admin/automation", only: [:index, :create, :show, :update, :destroy]
+  end
 end

@@ -8,6 +8,7 @@ class Admin::AutomationsController < ApiApplicationController
   include Admin::Automation::CustomFieldHelper
 
   prepend_before_filter :check_for_allowed_rule_type
+  before_filter :check_privilege
 
   ROOT_KEY = :rule
   decorate_views(decorate_objects: [:index])
@@ -128,5 +129,22 @@ class Admin::AutomationsController < ApiApplicationController
 
     def launch_party_name
       FeatureConstants::AUTOMATION_REVAMP
+    end
+
+    def check_privilege
+      success = super
+      return unless success
+      case VAConfig::RULES_BY_ID[params[:rule_type].to_i]
+      when :dispatcher
+        render_request_error(:access_denied, 403) unless User.current.privilege?(:manage_dispatch_rules)
+      when :observer
+        render_request_error(:access_denied, 403) unless current_account.create_observer_enabled? &&
+            User.current.privilege?(:manage_dispatch_rules)
+      when :supervisor
+        render_request_error(:access_denied, 403) unless current_account.supervisor_enabled? &&
+            User.current.privilege?(:manage_supervisor_rules)
+      else
+        # For scenario_automation and rest
+      end
     end
 end
