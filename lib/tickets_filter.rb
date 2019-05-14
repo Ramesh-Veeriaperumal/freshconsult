@@ -3,7 +3,7 @@ module TicketsFilter
   include Helpdesk::Ticketfields::TicketStatus
   
   DEFAULT_FILTER = "new_and_my_open"
-  DEFAULT_VISIBLE_FILTERS = %w( new_and_my_open ongoing_collab shared_by_me shared_with_me unresolved all_tickets raised_by_me monitored_by spam deleted )
+  DEFAULT_VISIBLE_FILTERS = %w[new_and_my_open ongoing_collab shared_by_me shared_with_me unresolved all_tickets raised_by_me monitored_by spam deleted unresolved_service_tasks].freeze
   DEFAULT_FILTERS_FEATURES = [
     ["shared_by_me",   :shared_ownership, "Shared ownership"],
     ["shared_with_me", :shared_ownership, "Shared ownership"],
@@ -11,7 +11,8 @@ module TicketsFilter
     ["due_today",      :sla_management,   "SLA Policy"],
     ["overdue",        :sla_management,   "SLA Policy"],
     ["monitored_by",   :add_watcher,      "Add watcher"],
-    ["watching",       :add_watcher,      "Add watcher"]
+    ["watching",       :add_watcher,      "Add watcher"],
+    ['unresolved_service_tasks', :field_service_management, 'Field service management']
   ]
 
   IGNORE_FILTER_ON_FEATURE = {
@@ -230,6 +231,7 @@ module TicketsFilter
   def self.default_visible_filters(param_filter_id = nil)
     visible_filters = default_accessible_filters(param_filter_id)
     visible_filters.collect do |filter|
+      filter.merge!(field_agent_sort_options) if filter[:id] == 'unresolved_service_tasks'
       CustomFilterConstants::REMOVE_QUERY_HASH.include?(filter[:id]) ? filter :
           filter.merge(query_hash: Helpdesk::Filters::CustomTicketFilter.new.default_filter_query_hash(filter[:id]))
     end
@@ -272,7 +274,14 @@ module TicketsFilter
   def self.default_scope
     eval "Helpdesk::Ticket"
   end
-  
+
+  def self.field_agent_sort_options
+    {
+      order_by: 'appointment_start_time',
+      order_type: 'asc'
+    }
+  end
+
   protected
     def self.load_conditions(user,filter)
       donot_stop_sla_status_query = "select status_id from helpdesk_ticket_statuses where 

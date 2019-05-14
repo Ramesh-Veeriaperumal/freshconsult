@@ -28,6 +28,10 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     { "condition" => "status", "operator" => "is_in", "value" => 0}
   end
 
+  def self.service_task_type_condition
+    { 'condition' => 'ticket_type', 'operator' => 'is_in', 'value' => Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE }
+  end
+
   def on_hold_filter
     [{ "condition" => "status", "operator" => "is_in", "value" => (Helpdesk::TicketStatus::onhold_statuses(Account.current)).join(',')},
       { "condition" => "spam", "operator" => "is", "value" => false},{ "condition" => "deleted", "operator" => "is", "value" => false}]
@@ -37,6 +41,13 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     [{ "condition" => "requester_id", "operator" => "is_in", "value" => [User.current.id]},
      { "condition" => "spam", "operator" => "is", "value" => false},
      { "condition" => "deleted", "operator" => "is", "value" => false}]
+  end
+
+  def unresolved_service_tasks_filter
+    [Helpdesk::Filters::CustomTicketFilter.unresolved_condition,
+     Helpdesk::Filters::CustomTicketFilter.service_task_type_condition,
+     Helpdesk::Filters::CustomTicketFilter.deleted_condition(false),
+     Helpdesk::Filters::CustomTicketFilter.spam_condition(false)]
   end
 
   def self.collab_filter_condition(display_ids)
@@ -114,7 +125,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
                       "new" => "spam:false AND deleted:false AND agent_id:null AND status:#{OPEN}",
                    }
 
-  DYNAMIC_DEFAULT_FILTERS = ["on_hold", "raised_by_me", "ongoing_collab", "shared_by_me", "shared_with_me"]
+  DYNAMIC_DEFAULT_FILTERS = ['on_hold', 'raised_by_me', 'ongoing_collab', 'shared_by_me', 'shared_with_me', 'unresolved_service_tasks'].freeze
 
   USER_COLUMNS = ["responder_id", "helpdesk_subscriptions.user_id", "internal_agent_id"]
   GROUP_COLUMNS = ["group_id", "internal_group_id"]
@@ -281,6 +292,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       shared_by_me_filter
     elsif("shared_with_me" == filter_name and Account.current.shared_ownership_enabled?)
       shared_with_me_filter
+    elsif filter_name == 'unresolved_service_tasks'
+      unresolved_service_tasks_filter
     else
       DEFAULT_FILTERS.fetch(filter_name, DEFAULT_FILTERS[default_value]).dclone
     end
@@ -391,7 +404,14 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       action_hash.push({ "condition" => "deleted", "operator" => "is", "value" => false})
     end
 
-    action_hash = default_filter(params[:filter_name], !!params[:export_fields], ["json", "xml","nmobile"].include?(params[:format])) if params[:data_hash].blank?
+    if params[:data_hash].blank?
+      action_hash = default_filter(params[:filter_name], !!params[:export_fields], ['json', 'xml', 'nmobile'].include?(params[:format]))
+      if params[:filter_name].eql?('unresolved_service_tasks')
+        sort_options = TicketsFilter.field_agent_sort_options
+        @order = sort_options[:order_by] unless params[:wf_order]
+        @order_type = sort_options[:order_type] unless params[:wf_order_type]
+      end
+    end
     action_hash = remove_invalid_conditions(action_hash)
     self.query_hash = action_hash
 

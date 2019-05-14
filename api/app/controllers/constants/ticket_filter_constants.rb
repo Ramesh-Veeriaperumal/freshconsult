@@ -4,7 +4,7 @@ module TicketFilterConstants
   HIDDEN_FILTERS = %w[overdue due_today on_hold new open article_feedback my_article_feedback].freeze
 
   FILTER = (Helpdesk::Filters::CustomTicketFilter::DEFAULT_FILTERS.keys |
-      %w(watching on_hold raised_by_me shared_by_me shared_with_me)).freeze
+      %w[watching on_hold raised_by_me shared_by_me shared_with_me unresolved_service_tasks]).freeze
 
   INDEX_FIELDS = %w[filter ids company_id requester_id email order_by order_type updated_since include query_hash only article_id exclude portal_id language_id].freeze
 

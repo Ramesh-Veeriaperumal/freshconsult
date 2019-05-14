@@ -243,5 +243,29 @@ module Ember
       put :destroy, construct_params({ version: 'private', id: filter2.id }, false)
       assert_response 204
     end
+
+    def test_list_all_filters_when_fsm_enabled
+      Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+      get :index, controller_params.merge(version: 'private')
+      assert_response 200
+      match_custom_json(response.body, ticket_filter_index_pattern)
+      fsm_filter = JSON.parse(response.body).find { |x| x['id'] == 'unresolved_service_tasks' }
+      assert fsm_filter.present?
+      assert_equal 'appointment_start_time', fsm_filter['order_by']
+      assert_equal 'asc', fsm_filter['order_type']
+    ensure
+      Account.any_instance.unstub(:field_service_management_enabled?)
+    end
+
+    def test_list_all_filters_when_fsm_disabled
+      Account.any_instance.stubs(:field_service_management_enabled?).returns(false)
+      get :index, controller_params.merge(version: 'private')
+      assert_response 200
+      match_custom_json(response.body, ticket_filter_index_pattern)
+      fsm_filter = JSON.parse(response.body).find { |x| x['id'] == 'unresolved_service_tasks' }
+      assert_equal nil, fsm_filter
+    ensure
+      Account.any_instance.unstub(:field_service_management_enabled?)
+    end
   end
 end
