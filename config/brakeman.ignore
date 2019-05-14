@@ -41,6 +41,25 @@
     {
       "warning_type": "Mass Assignment",
       "warning_code": 17,
+      "fingerprint": "59d8c3eb18bf4c627bb5b7873ce46de6ebfba5b889fa31e3965f4741de62a65f",
+      "message": "Unprotected mass assignment",
+      "file": "app/controllers/support/notes_controller.rb",
+      "line": 24,
+      "link": "http://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "Helpdesk::Ticket.find_by_param(params[:ticket_id], current_account).notes.build({ \"incoming\" => true, \"private\" => false, \"source\" => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[\"note\"], \"user_id\" => ((current_user and current_user.id)), \"account_id\" => ((current_account and current_account.id)) }.merge(params[:helpdesk_note].permit(*[{ :attachments => ([:resource]) }, { :inline_attachment_ids => ([]) }, { :note_body_attributes => ([:body_html]) }])))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Support::NotesController",
+        "method": "create"
+      },
+      "user_input": "params[:helpdesk_note].permit(*[{ :attachments => ([:resource]) }, { :inline_attachment_ids => ([]) }, { :note_body_attributes => ([:body_html]) }])",
+      "confidence": "Medium",
+      "note": ""
+    },
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 17,
       "fingerprint": "8efec8ab9c7908eb2d213289fb93130ffd8491fe0070bf466dc326fefe528ea0",
       "message": "Unprotected mass assignment",
       "file": "app/controllers/support/notes_controller.rb",
@@ -77,6 +96,6 @@
       "note": ""
     }
   ],
-  "updated": "2019-02-11 18:07:01 +0530",
+  "updated": "2019-05-13 15:28:24 +0530",
   "brakeman_version": "3.3.0"
 }
