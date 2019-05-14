@@ -244,7 +244,7 @@ class SubscriptionsController < ApplicationController
         agent_count, error_class = if agent_type == Agent::SUPPORT_AGENT
           [current_account.full_time_support_agents.count, 'lesser_agents']
         else
-          [scoper.field_agents_count, 'lesser_field_agents']
+          [current_account.field_agents_count, 'lesser_field_agents']
         end
         flash[:notice] = t("subscription.error.#{error_class}", agent_count: agent_count)
         redirect_to subscription_url

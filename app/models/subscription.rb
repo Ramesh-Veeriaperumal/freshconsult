@@ -401,17 +401,10 @@ class Subscription < ActiveRecord::Base
   end
 
   def chk_change_field_agents
-    if field_agent_limit && field_agent_limit < field_agents_count
-      errors.add(:base, I18n.t('subscription.error.lesser_field_agents', agent_count: field_agents_count))
+    if field_agent_limit && field_agent_limit < account.field_agents_count
+      errors.add(:base, I18n.t('subscription.error.lesser_field_agents', agent_count: account.field_agents_count))
       Agent::FIELD_AGENT
     end
-  end
-
-  def field_agents_count
-    return @field_agents_count if @field_agents_count.present?
-    return @field_agents_count = 0 if AgentType.agent_type_id(Agent::FIELD_AGENT).blank?
-
-    @field_agents_count = account.agents.where(:agent_type => AgentType.agent_type_id(Agent::FIELD_AGENT)).count
   end
 
   def non_free_agents 
@@ -507,7 +500,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def field_agents_display_count
-    count = field_agents_count
+    count = account.field_agents_count
     limit = field_agent_limit || 0
     return count > limit ? count : limit if count > 0 || limit > 0
     DEFAULT_FIELD_AGENT_COUNT

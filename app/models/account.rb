@@ -66,12 +66,14 @@ class Account < ActiveRecord::Base
   alias :full_time_agents :full_time_support_agents
 
   Limits = {
-    'agent_limit' => Proc.new {|a| a.full_time_support_agents.count }
+    'agent_limit' => Proc.new { |a| a.full_time_support_agents.count },
+    'field_agent_limit' => Proc.new { |a| a.field_agents_count }
   }
   
   Limits.each do |name, meth|
     define_method("reached_#{name}?") do
       return false unless self.subscription
+
       self.subscription.safe_send(name) && self.subscription.safe_send(name) <= meth.call(self)
     end
   end
@@ -270,8 +272,10 @@ class Account < ActiveRecord::Base
       (subscription.agent_limit >= (agent_count + full_time_support_agents.count))
   end
 
-  def agent_limit_reached?(agent_limit)
-    agent_limit && agents_from_cache.find_all { |a| a.occasional == false && a.user.deleted == false }.count >= agent_limit
+  def support_agent_limit_reached?(agent_limit)
+    return false if agent_limit.blank?
+
+    agents_from_cache.find_all { |a| a.agent_type == 1 && a.occasional == false && a.user.deleted == false }.count >= agent_limit
   end
   
   def get_max_display_id
@@ -805,6 +809,13 @@ class Account < ActiveRecord::Base
 
   def new_2019_pricing_enabled?
     redis_key_exists?(NEW_2019_PRICING_ENABLED) || ismember?(NEW_2019_PRICING_TEST_USERS, admin_email)
+  end
+
+  def field_agents_count
+    return @field_agents_count if @field_agents_count.present?
+    return @field_agents_count = 0 if AgentType.agent_type_id(Agent::FIELD_AGENT).blank?
+
+    @field_agents_count = agents.where(agent_type: AgentType.agent_type_id(Agent::FIELD_AGENT)).count
   end
   # END
 

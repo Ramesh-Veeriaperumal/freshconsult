@@ -11,7 +11,9 @@ module AgentsHelper
   AGENT_SORT_ORDER_TYPE = [:ASC, :DESC]
   
   def check_agents_limit
-    content_tag(:div, fetch_upgrade_error_msg,:class => "errorExplanation") if current_account.reached_agent_limit?
+    return content_tag(:div, fetch_upgrade_error_msg('support_agent'), :class => 'errorExplanation') if current_account.reached_agent_limit?
+
+    content_tag(:div, fetch_upgrade_error_msg('field_agent'), :class => 'errorExplanation') if current_account.reached_field_agent_limit?
   end
     
   # 1. Agent should not be deleted
@@ -19,12 +21,28 @@ module AgentsHelper
   def can_edit?(agent)
     current_user.can_edit_agent?(agent)
   end
+
+  def agents_count_tooltip
+    if current_account.field_service_management_enabled?
+      "data-placement='below' class='agent-list-count bg-dark tooltip' title='#{available_agents} #{t('agent.full_time').downcase.gsub(" ", "-")}, #{available_field_agents} #{t('agent.field_agents').downcase}'"
+    else
+      "class='agent-list-count bg-dark'"
+    end
+  end
+
+  def show_buy_more_link
+    privilege?(:manage_account) && (current_account.reached_agent_limit? || current_account.reached_field_agent_limit?)
+  end
   
   # Should be used only if NOT trial account
   def available_agents
     current_account.subscription.agent_limit - current_account.full_time_support_agents.size
   end
   
+  def available_field_agents
+    (current_account.subscription.field_agent_limit || 0) - current_account.field_agents_count
+  end
+
   def available_passes
     current_account.day_pass_config.available_passes
   end
@@ -33,35 +51,33 @@ module AgentsHelper
     current_account.subscription.trial? || available_agents > 0
   end
   
+  def field_agents_available?
+    current_account.subscription.trial? || available_field_agents > 0
+  end
+
   def passes_available?
     available_passes > 0
   end
 
-  def fetch_upgrade_error_msg
+  def fetch_upgrade_error_msg(agent_type)
     if privilege?(:manage_account)
-      t('maximum_agents_admin_msg').html_safe
+      agent_type == 'support_agent' ? t('maximum_agents_admin_msg').html_safe : t('maximum_field_agents_admin_msg').html_safe
     else
-      t('maximum_agents_msg').html_safe
+      agent_type == 'support_agent' ? t('maximum_agents_msg').html_safe : t('maximum_field_agents_msg').html_safe
      end
   end
   
   def agents_exceeded?(agent)
-   if agent.new_record?
-     current_account.reached_agent_limit?
-   else 
-     agent.occasional?
-   end
- end 
+    agent.new_record? ? current_account.reached_agent_limit? : agent.occasional?
+  end
  
   def full_time_disabled?(agent)
-   if agent.new_record?
-     current_account.reached_agent_limit?
-   elsif agent.occasional?
-     current_account.reached_agent_limit?
-   else
-     false
-   end
- end
+    (agent.new_record? || agent.occasional?) ? current_account.reached_agent_limit? : false
+  end
+
+  def field_agent_disabled?(agent)
+    agent.new_record? && current_account.reached_field_agent_limit?
+  end
 
   def is_support_agent?(agent)
     agent.agent_type == AgentType.agent_type_id(Agent::SUPPORT_AGENT)
@@ -169,6 +185,10 @@ module AgentsHelper
       :group_tickets => 'agent.group',
       :assigned_tickets => 'agent.individual'
     } 
+  end
+
+  def field_service_management_enabled?
+    Account.current.field_service_management_enabled?
   end
 
   # ITIL Related Methods starts here
