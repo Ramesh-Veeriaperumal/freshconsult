@@ -9623,8 +9623,10 @@ en:
   folder_edit_not_allowed: "This folder can't be modified"
   never: Never
   always: Always
-  maximum_agents_admin_msg: "You have reached the maximum number of full time agents your subscription allows. You need to delete an existing full time agent or <a href='/subscription'>purchase additional agents</a> for your account. You can also choose to add occasional agents below. "
-  maximum_agents_msg: "You have reached the maximum number of agents your subscription allows. You need to delete an existing agent or contact your account administrator to purchase additional agents. "
+  maximum_agents_admin_msg: "You have reached the maximum number of full time agents your subscription allows. You need to delete an existing full time agent or <a href='/subscription'>purchase additional agents</a> for your account. You can also choose to add occasional agents below."
+  maximum_field_agents_admin_msg: "You have reached the maximum number of field technicians your subscription allows. Please delete an existing field technician or <a href='/subscription'>purchase additional seats</a> for your account."
+  maximum_agents_msg: "You have reached the maximum number of agents your subscription allows. You need to delete an existing agent or contact your account administrator to purchase additional agents."
+  maximum_field_agents_msg: "You have reached the maximum number of field technicians your subscription allows. Please delete an existing field technician or contact your account administrator to purchase additional seats."
   contact_agent_deleted_forever: "This contact has been deleted forever"
   contact_marked_for_hard_delete: "This contact has been scheduled for permanent delete"
   contact_without_email_id: "Contact with email id can only be converted to agent"

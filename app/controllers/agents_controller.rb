@@ -26,6 +26,7 @@ class AgentsController < ApplicationController
     :convert_to_contact, :reset_score, :reset_password ]
   before_filter :check_current_user, :only => [ :destroy, :convert_to_contact, :reset_password ]
   before_filter :check_agent_limit, :only =>  [:restore, :create] 
+  before_filter :check_field_agent_limit, only: [:restore, :create], if: :field_service_management_enabled?
   before_filter :check_agent_limit_on_update, :validate_params, :can_edit_roles_and_permissions, :only => [:update]
   before_filter :set_selected_tab
   before_filter :set_native_mobile, :only => :show
@@ -396,9 +397,18 @@ class AgentsController < ApplicationController
   
   def check_agent_limit
     if current_account.reached_agent_limit?
-      if (@agent && !@agent.occasional?) || (params[:agent] && params[:agent][:occasional] != true)
+      if (@agent && !@agent.occasional?) || (params[:agent] && params[:agent][:occasional] != true && params[:agent][:agent_type] == AgentType.agent_type_id(Agent::SUPPORT_AGENT))
         flash[:notice] = t('maximum_agents_msg')
         redirect_to :back 
+      end
+    end
+  end
+
+  def check_field_agent_limit
+    if current_account.reached_field_agent_limit?
+      if (@agent && @agent.field_agent?) || (params[:agent] && params[:agent][:agent_type] == AgentType.agent_type_id(Agent::FIELD_AGENT))
+        flash[:notice] = t('maximum_field_agents_msg')
+        redirect_to :back
       end
     end
   end
