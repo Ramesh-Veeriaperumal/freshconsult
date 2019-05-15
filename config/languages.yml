@@ -1,95 +1,95 @@
---- 
-ar: 
+---
+ar:
   - 1
   - Arabic
-ca: 
+ca:
   - 2
   - Catalan
-cs: 
+cs:
   - 3
   - Czech
-da: 
+da:
   - 4
   - Danish
-de: 
+de:
   - 5
   - German
-en: 
+en:
   - 6
   - English
-es-LA: 
+es-LA:
   - 7
   - Spanish (Latin America)
-es: 
+es:
   - 8
   - Spanish
-et: 
+et:
   - 9
   - Estonian
-fi: 
+fi:
   - 10
   - Finnish
-fr: 
+fr:
   - 11
   - French
-hu: 
+hu:
   - 12
   - Hungarian
-id: 
+id:
   - 13
   - Indonesian
-it: 
+it:
   - 14
   - Italian
-ja-JP: 
+ja-JP:
   - 15
   - Japanese
-ko: 
+ko:
   - 16
   - Korean
-nb-NO: 
+nb-NO:
   - 17
   - Norwegian
-nl: 
+nl:
   - 18
   - Dutch
-pl: 
+pl:
   - 19
   - Polish
-pt-BR: 
+pt-BR:
   - 20
   - Portuguese (BR)
-pt-PT: 
+pt-PT:
   - 21
   - Portuguese/Portugal
-ru-RU: 
+ru-RU:
   - 22
   - Russian
-sk: 
+sk:
   - 23
   - Slovak
-sl: 
+sl:
   - 24
   - Slovenian
-sv-SE: 
+sv-SE:
   - 25
   - Swedish
-tr: 
+tr:
   - 26
   - Turkish
-vi: 
+vi:
   - 27
   - Vietnamese
-zh-CN: 
+zh-CN:
   - 28
   - Chinese
-uk: 
+uk:
   - 29
   - Ukrainian
-he: 
+he:
   - 30
   - Hebrew
-th: 
+th:
   - 31
   - Thai
 ro:
@@ -101,9 +101,30 @@ zh-TW:
 lv-LV:
   - 34
   - Latvian
-test-ui:
+bs:
   - 35
+  - Bosnian
+bg:
+  - 36
+  - Bulgarian
+hr:
+  - 37
+  - Croatian
+el:
+  - 38
+  - Greek
+ms:
+  - 39
+  - Malay
+lt:
+  - 40
+  - Lithuanian
+sr:
+  - 41
+  - Serbian
+test-ui:
+  - 42
   - Test-UI
 long-text:
-  - 36
+  - 43
   - Long-Text
