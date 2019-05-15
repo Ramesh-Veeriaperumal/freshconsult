@@ -4863,6 +4863,15 @@ div.email-preview-holder{
   padding: 10px;
 }
 
+.email-preview-holder ol, ul{
+	margin: 8px 0 4px 0;
+	padding: 0 0 0 40px;
+}
+
+.email-preview-holder ul{
+	list-style: disc outside;
+}
+
 span.email-preview-footer{
   margin-top: 10px;
 }
