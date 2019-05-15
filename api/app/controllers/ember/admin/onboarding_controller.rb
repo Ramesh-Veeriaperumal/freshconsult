@@ -15,13 +15,14 @@ module Ember
         @item.email = @user_email_config[:new_email]
         @item.keep_user_active = true
         ActiveRecord::Base.transaction do
-          if @item.save
-            update_account_config
-            head 204
-          else
-            render_errors(@item.errors)
-          end
+          update_account_config if @item.save!
         end
+        if current_user.active_freshid_agent?
+          current_user.reset_persistence_token!
+        end
+        head 204
+      rescue StandardError
+        render_errors(@item.errors) if @item.errors.present?
       end
 
       def update_channel_config

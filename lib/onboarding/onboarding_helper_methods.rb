@@ -53,6 +53,7 @@ module Onboarding::OnboardingHelperMethods
     return if portal_to_be_updated.name != AccountConstants::ANONYMOUS_ACCOUNT_NAME
     portal_to_be_updated.name = company_name_from_email
     portal_to_be_updated.save!
+    current_portal.reload
   end
 
   def update_email_config_name
