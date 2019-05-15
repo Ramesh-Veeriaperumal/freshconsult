@@ -1,0 +1,301 @@
+import groovy.json.JsonSlurperClassic
+
+ //Assinging variable
+ jobName = env.JOB_NAME
+ build   = env.BUILD_NUMBER
+ buildno = build.toInteger()
+ failing_category = ""
+
+
+def send_email() {
+    def jobName = currentBuild.fullDisplayName
+    def authorLogin = params.ghprbPullAuthorLogin
+    def authorEmail = params.ghprbPullAuthorEmail
+    def pullTitle = params.ghprbPullTitle
+    def pullLink = params.ghprbPullLink
+    def pullId = params.ghprbPullId
+    def jobUrl = env.BUILD_URL
+    def mailRecipients = authorEmail + ", cc:freshdesk-tech-leads@freshworks.com, bcc:mahendran.kumaraguru@freshworks.com, bcc:nagarajan.raman@freshworks.com"
+
+    emailext body: "Build Failed on PR <a href=${pullLink}>#${pullId}</a> <strong>$pullTitle <br/><br/>Author:</strong> $authorLogin<br/><br/><strong>Job URL:</strong> $jobUrl ",
+        mimeType: 'text/html',
+        subject: "[Jenkins] Falcon-Backend Unit Test Build Failed - #${buildno}",
+        to: "${mailRecipients}",
+        replyTo: "${mailRecipients}"
+}
+
+//Encryption check
+def encryption_check() {
+
+   image = "792634465463.dkr.ecr.us-east-1.amazonaws.com/freshdesk/backend"
+
+   docker.image(image).inside {
+
+      source = params.ghprbSourceBranch
+
+      sh  """#!/bin/bash
+	       source /etc/profile.d/rvm.sh
+	       cd /home/jenkins/
+	       git clone -b $source git@github.com:freshdesk/helpkit.git
+	       cd /home/jenkins/helpkit/
+	      """
+      
+      sh '''#!/bin/bash
+         cd /home/jenkins/helpkit
+         source /etc/profile.d/rvm.sh
+         function validate_ejson() {
+                  git diff --raw $ghprbSourceBranch origin/$ghprbTargetBranch
+                  for f in \$(git diff --raw $ghprbSourceBranch origin/$ghprbTargetBranch | awk  '{print \$6}' | grep .ejson)
+                     do
+                        tf=\$(mktemp)
+                        git show :\$f > \$tf
+                        ./deploy/config/dynamic_config_util.rb validate --file="\$tf"
+                        if [ \$? -ne 0 ]; then
+                           echo "ERROR: EJSON file \$f validation failed" && { echo "ERROR: You have secrets not encrypted, run \"ejson encrypt ./deploy/config/*.ejson\" and try again"; exit 1; }
+                        fi
+                        rm -f \$tf
+                     done
+         }
+
+         validate_ejson'''
+
+   }
+ 
+         
+         
+
+}
+
+//Specfiy the branch to checkout based on PR condition
+def checkout(type) {
+     
+       if(type=='pullrequest') {
+           branch = params.ghprbSourceBranch
+       }else{
+           branch = params.BRANCH
+       }
+
+       sh  """#!/bin/bash
+	        source /etc/profile.d/rvm.sh
+	        cd /home/jenkins/
+	        git clone -b $branch git@github.com:freshdesk/helpkit.git
+	        cd /home/jenkins/helpkit/
+	       	"""
+          
+
+}
+
+
+//Build setup based on category
+def build_setup(category) {
+
+        sh  """#!/bin/bash
+	        source /etc/profile.d/rvm.sh
+                aws s3 cp s3://testengineering/Dockerfile-backend/s3.yml /home/jenkins/helpkit/config/s3.yml
+                aws s3 cp s3://testengineering/Dockerfile-backend/elasticsearch.yml /home/jenkins/helpkit/config/elasticsearch.yml
+                aws s3 cp s3://testengineering/Dockerfile-backend/redis.yml /home/jenkins/helpkit/config/redis.yml
+                aws s3 cp s3://testengineering/Dockerfile-backend/channel_api_keys.yml /home/jenkins/helpkit/config/channel_api_keys.yml
+	        sudo service mysqld start
+	        sudo service elasticsearch start
+            export CODECOV_TOKEN="${params.CODECOV_TOKEN}"
+	      	"""
+
+	    if(category != 'private' && category != 'public') {
+
+	      sh  """#!/bin/bash
+		      source /etc/profile.d/rvm.sh
+		      redis-server --daemonize yes
+		      cd /home/jenkins/helpkit/
+		      bundle install
+            bundle exec rake db:create RAILS_ENV=test
+	          bundle exec rake db:bootstrap RAILS_ENV=test
+	      	  """
+	      }
+
+
+	    if(category == 'sandbox')  {
+
+	     sh '''#!/bin/bash
+	        source /etc/profile.d/rvm.sh
+	        cd /home/jenkins/helpkit/
+	        echo "create database sandbox${BUILD_NUMBER}" | mysql -uroot
+            sed -i "s/sandbox_test/sandbox${BUILD_NUMBER}/g" config/database.yml
+	        bundle exec rake db:sandbox_shard_setup RAILS_ENV=test
+            mkdir tmp/sandbox_test
+            git init tmp/sandbox_test/
+            git config --global user.email "sample@freshdesk.com"
+            git config --global user.name "Sample"
+            '''
+	     }
+
+}
+
+
+//Execute testCases
+def execute_test_cases(category) {
+
+        if(category == 'pronto') {
+           sh """#!/bin/bash
+              source /usr/local/rvm/scripts/rvm
+              cd /home/jenkins/helpkit/
+              rm -rf Gemfile*	
+              PRONTO_GITHUB_ACCESS_TOKEN="${params.PRONTO_TOKEN}" PRONTO_PULL_REQUEST_ID=$params.ghprbPullId pronto run -f github_status github_pr -c origin/falcon-prestaging
+              """
+       }
+
+        if(category == 'public') {
+           sh """#!/bin/bash
+              source /etc/profile.d/rvm.sh
+              cd /home/jenkins/helpkit/
+              ruby test/parallel_test.rb 3 public
+              if ((\$? != 0)); then
+                exit 1
+              fi
+              yes | cp -rf /home/jenkins/helpkit/tmp/coverage /home/jenkins/workspace/$jobName/tmp/
+              yes | cp -rf /home/jenkins/helpkit/test/reports/*.xml /home/jenkins/workspace/$jobName/test/reports/
+              """
+        }
+
+        if(category == 'private') {
+           sh """#!/bin/bash
+              source /etc/profile.d/rvm.sh
+              cd /home/jenkins/helpkit/
+              ruby test/parallel_test.rb 5 private
+              if ((\$? != 0)); then
+                exit 1
+              fi
+              yes | cp -rf /home/jenkins/helpkit/tmp/coverage /home/jenkins/workspace/$jobName/tmp/
+              yes | cp -rf /home/jenkins/helpkit/test/reports/*.xml /home/jenkins/workspace/$jobName/test/reports/
+              """
+        }
+
+        if(category == 'sandbox') {
+           sh """#!/bin/bash
+              source /etc/profile.d/rvm.sh
+              cd /home/jenkins/helpkit/
+              bundle exec ruby test/api/suites/sandbox_test_suite.rb
+              yes | cp -rf /home/jenkins/helpkit/tmp/coverage /home/jenkins/workspace/$jobName/tmp/
+              """
+        }
+
+}
+
+//Publish Reports
+def publish_report(category) {
+
+                 publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true,
+		                             reportDir: '/home/jenkins/workspace/${JOB_NAME}/tmp/coverage', reportFiles: 'index.html',
+		                             reportName: "coverage $category", reportTitles: ''])
+}
+
+
+//Distribted run based on category
+def distributed_run(category) {
+
+   timestamps {
+   
+   image_name = "";
+   
+   if(category != 'pronto') {
+             image_name = "792634465463.dkr.ecr.us-east-1.amazonaws.com/freshdesk/backend"
+                      
+   }else{
+             image_name = "792634465463.dkr.ecr.us-east-1.amazonaws.com/fworks/pronto"
+
+   }
+ 
+
+
+   
+   
+   //Image name where this job has to run
+	       docker.image(image_name).inside {
+       
+							    //Checkout stage
+						stage(category) {
+					
+							    //Branch checkout
+							  if(jobName.contains("pullrequest")) {
+					                checkout("pullrequest")
+							   }else{
+							        checkout("normal")
+							   }
+
+
+                           //Build setup
+							    if(category != 'pronto') {
+					    			//Intialization process
+					            	build_setup(category)
+					    		}
+		
+					    	     //Executing test cases
+			                     try{
+						               execute_test_cases(category)
+						         }
+						         catch (e) {
+						         
+						            //Not applicable for pronto since it will lots of warning which in turnes make buid unstable
+						            if(category != 'pronto') {
+						               echo "issue with test execution" + e
+                           failing_category = category
+                                 echo "Build UNSTABLE"
+						               currentBuild.result = 'UNSTABLE'
+						            }else{
+						                echo "Verifiy Pronto code" + e
+						            }
+
+						               
+						         }
+		
+					    		 finally {
+						    		if(category != 'pronto') {
+						    		     //Publish Report
+								            publish_report(category)
+						    		}
+						         }
+
+                        
+							
+				             
+					    }	         
+                  }
+            }
+       }
+
+
+ //Machine label where this jobs needs to run
+ node("spot_backend") {
+     
+     //Creating Sub directory
+     sh "sudo rm -rf /home/jenkins/workspace/$jobName/tmp"
+     sh "sudo rm -rf /home/jenkins/workspace/$jobName/test"
+     sh "mkdir -p /home/jenkins/workspace/$jobName/tmp/"
+     sh "mkdir -p /home/jenkins/workspace/$jobName/test/reports/"
+      
+    //Encryption check starts here
+    if(jobName.contains("pullrequest")) {
+       encryption_check();
+    } 
+    //Parallel Test starts here
+    parallel Public: {
+           distributed_run("public");
+    },Private: {
+           distributed_run("private");
+    },Sandbox: {
+           distributed_run("sandbox");
+    },Pronto: {
+           distributed_run("pronto");
+    }
+    
+    //Extracting xml file
+    junit  testResults: "test/reports/*.xml"
+
+    if(currentBuild.result == "UNSTABLE") {
+        send_email();  
+    }
+
+    if (failing_category) {
+      echo "***Issue with test execution. A process in " + failing_category + " test suite failed. Please check !***"
+    }
+ }
+ 
