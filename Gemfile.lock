@@ -194,17 +194,17 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/central-publisher.git
-  revision: ad6686078fd57214a9440842f5d449f20f0efc3e
-  tag: v1.0.15
+  revision: fec8e3a41251f5062a21090afb4452060f6b5a47
+  tag: v1.0.18
   specs:
-    central-publisher (1.0.15)
-      active_record_shards (~> 3.2.0)
+    central-publisher (1.0.18)
+      active_record_shards (>= 3.2.0)
       faraday (= 0.9)
       faraday_middleware (~> 0.10.0)
-      newrelic_rpm (~> 5.5.0)
-      rails (~> 3.2.22.3)
+      newrelic_rpm (>= 5.5.0)
+      rails (>= 3.2.22.3)
       redis (= 3.3.1)
-      sidekiq (~> 3.5.4)
+      sidekiq (>= 3.5.4)
       uuidtools
 
 GIT

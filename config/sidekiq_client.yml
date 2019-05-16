@@ -306,6 +306,8 @@ defaults: &defaults
     - [contact_field_central_publish]
     - [company_field_central_publish]
     - [model_destroy]
+    - [freshcaller_account_central_publish]
+    - [freshchat_account_central_publish]
 
 development:
   <<: *defaults
