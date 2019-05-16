@@ -8,6 +8,7 @@ require Rails.root.join('test', 'core', 'helpers', 'automation_rules_test_helper
 require Rails.root.join('test', 'core', 'helpers', 'tickets_test_helper.rb')
 require Rails.root.join('test', 'core', 'helpers', 'users_test_helper.rb')
 require Rails.root.join('test', 'core', 'helpers', 'shared_ownership_test_helper.rb')
+require Rails.root.join('test', 'core', 'helpers', 'groups_test_helper.rb')
 require Rails.root.join('test', 'api', 'helpers', 'ticket_fields_test_helper.rb')
 
 class Admin::Dispatcher::WorkerTest < ActionView::TestCase
@@ -35,6 +36,7 @@ class Admin::Dispatcher::WorkerTest < ActionView::TestCase
     options[:fields].each do |field_name|
       options[:operators].each do |operator|
         define_method "test_dispatcher_condition_#{field_name}_#{operator}" do
+          Rails.logger.debug "start test_dispatcher_condition_#{field_name}_#{operator}"
           Account.current.launch :automation_revamp
           Account.current.add_feature :shared_ownership
           initialize_internal_agent_with_default_internal_group
@@ -53,15 +55,44 @@ class Admin::Dispatcher::WorkerTest < ActionView::TestCase
               operator: operator, 
               value: rule_value}]
           }
+          group = Account.current.groups.first || create_group(Account.current)
+          rule.action_data = options[:actions].map do |action|
+            generate_action_data(action, not_operator)
+          end
           rule.save
           ticket_value = generate_value(operator_type, field_name, false) if ["greater_than", "less_than"].include?(operator)
           ticket_value = not_operator ? generate_value(operator_type, field_name, true) : rule_value unless ticket_value
           ticket_params = generate_ticket_params(field_name, ticket_value)
           ticket = Sidekiq::Testing.inline! { create_ticket(ticket_params.symbolize_keys) }
           ticket = ticket.reload
-          assert_equal ticket.group_id, 4
+          rule.action_data.each do |action|
+            verify_action_data(action, ticket, not_operator)
+          end
+          Rails.logger.debug "end test_dispatcher_condition_#{field_name}_#{operator}"
         end
       end
+    end
+  end
+
+  def verify_action_data(action, ticket, not_operator)
+    case true
+    when ['priority', 'ticket_type', 'status', 'responder_id', 'product_id', 'group_id'].include?(action[:name])
+      assert_equal ticket.safe_send(action[:name]), action[:value]
+    end
+  end
+
+  def generate_action_data(action, not_operator)
+    case true
+    when ['responder_id', 'group_id'].include?(action)
+      {
+        name: action,
+        value: generate_value(:object_id, action, not_operator)
+      }
+    when ['priority', 'ticket_type', 'status', 'product_id'].include?(action)
+      {
+        name: action,
+        value: generate_value(:choicelist, action, not_operator)
+      }
     end
   end
 
@@ -74,7 +105,8 @@ class Admin::Dispatcher::WorkerTest < ActionView::TestCase
       field_name = 'cc_emails'
     when 'subject_or_description'
       field_name = 'subject'
-    when 'created_at'
+    when 'created_during'
+      field_name = 'created_at'
       ticket_value = Time.zone.today + 23.hours
     when 'internal_agent_id'
       internal_group = ticket_value ? @account.technicians.find_by_id(ticket_value).groups.first : nil
@@ -124,8 +156,10 @@ class Admin::Dispatcher::WorkerTest < ActionView::TestCase
       when 'internal_group_id'
         group = @account.ticket_statuses.visible.where(is_default: false).first.status_groups.first.group
         not_operator ? nil : group.id
-      else
-        not_operator ? 1 : 2
+      when 'group_id'
+        not_operator ? nil : Account.current.groups.first.id
+      when 'responder_id'
+        not_operator ? nil : Account.current.technicians.first.id
       end
     when :object_id_array
       @account.tags.new(name: Faker::Name.name).save if @account.tags.count == 0
