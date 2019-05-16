@@ -113,7 +113,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
   end
 
   def web_request?(env)
-    env["HTTP_COOKIE"]["_helpkit_session"]
+    env["HTTP_COOKIE"].try(:[],"_helpkit_session").present?
   end
 
 end
