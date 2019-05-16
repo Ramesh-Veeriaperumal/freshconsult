@@ -42,6 +42,8 @@ module CentralConstants
     'ContactField' => '0.0',
     'ContactFieldChoice' => '0.0',
     'CompanyField' => '0.0',
-    'CompanyFieldChoice' => '0.0'
+    'CompanyFieldChoice' => '0.0',
+    'Freshcaller::Account' => '0.0',
+    'Freshchat::Account' => '0.0'
   }
 end

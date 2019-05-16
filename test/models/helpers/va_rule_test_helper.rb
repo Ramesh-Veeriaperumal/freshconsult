@@ -15,6 +15,8 @@ module VaRuleTestHelper
       filter_data: va_rule.filter_data,
       condition_data: va_rule.condition_data,
       action_data: va_rule.action_data,
+      last_updated_by: va_rule.last_updated_by,
+      outdated: va_rule.outdated,
       account_id: va_rule.account_id,
       rule_type: va_rule.rule_type,
       active: va_rule.active,

@@ -481,7 +481,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     params_hash = { avatar_id: invalid_id.to_i }
     put :update, construct_params({ version: 'private', id: user.id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern(:attachment_ids, :invalid_list, list: invalid_id.to_s)])
+    match_json([bad_request_error_pattern(:attachment_ids, :invalid_list, list: invalid_id.to_i.to_s)])
   ensure
     DataTypeValidator.any_instance.unstub(:valid_type?)
   end
