@@ -105,6 +105,8 @@ class Admin::AutomationDecorator < ApiDecorator
           construct_action_nested_fields(action)
         elsif action[:name].to_sym == :trigger_webhook
           construct_webhook(action)
+        elsif INTEGRATION_API_NAME_MAPPING.key?(action[:name].to_sym)
+          construct_marketplace_app(action)
         else
           action_data = ACTION_FIELDS.inject({}) do |hash, key|
             action[:value] = action[:value].split(',').flatten if action[:name].to_sym == :add_tag
@@ -157,13 +159,22 @@ class Admin::AutomationDecorator < ApiDecorator
       end
     end
 
+    def construct_marketplace_app(action)
+      action_hash = action.to_hash.dup.symbolize_keys
+      action_hash[:field_name] = INTEGRATION_API_NAME_MAPPING[action_hash[:name].to_sym]
+      action_hash.delete :name
+      action_hash.delete :value
+      action_hash.delete :include_va_rule
+      action_hash
+    end
+
     def construct_webhook(action)
       action = action.deep_symbolize_keys
       action_hash = {
         content_type: Va::Constants::WEBHOOK_CONTENT_TYPES[action[:content_type]].to_s,
         content_layout: action[:content_layout].to_s,
         request_type: Va::Constants::WEBHOOK_REQUEST_TYPES[action[:request_type]].to_s,
-        content: action[:params],
+        content: webhook_content(action),
         custom_headers: action[:custom_headers],
         url: action[:url],
         field_name: action[:name]
@@ -177,6 +188,14 @@ class Admin::AutomationDecorator < ApiDecorator
         action_hash[:auth_header][:api_key] = action[:api_key] if action[:api_key].present?
       end
       action_hash
+    end
+
+    def webhook_content(action)
+      if action[:content_layout].to_s == '1' || action[:content_type] == '2'
+        JSON.parse(action[:params]) rescue action[:params]
+      else
+        action[:params].to_s
+      end
     end
 
     def construct_data(key, value, has_key, nested_field_names = nil, field_name=nil, evaluate_on = nil, is_event = false)

@@ -89,14 +89,12 @@ module Admin
 
       def validate_conditions
         self.type_name = :conditions
-        if (dispatcher_rule? || supervisor_rule?) && !condition_set_present?(:condition_set_1)
-          invalid_condition_error(:condition_set_1)
-        end
         previous = true
         set_count = 0
         (1..Admin::AutomationConstants::MAXIMUM_CONDITIONAL_SET_COUNT).each do |set|
           name = :"condition_set_#{set}"
           current = condition_set_present?(name)
+          invalid_condition_error(name) if set == 1 && !current
           if current
             set_count += 1
             # if condition_set_1 is not available and condition_set_2 given, its invalid and so on.

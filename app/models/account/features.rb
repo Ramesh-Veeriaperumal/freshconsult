@@ -35,7 +35,7 @@ class Account < ActiveRecord::Base
     :id_for_choices_write, :fluffy, :session_logs, :nested_field_revamp, :service_worker, :kbase_mint,
     :freshvisual_configs, :ticket_field_limit_increase, :join_ticket_field_data, :byepass_signup_captcha,
     :contact_field_central_publish, :company_field_central_publish, :contact_company_split,
-    :simple_outreach, :disable_simple_outreach, :fsm_dashboard, :supervisor_with_text_field,
+    :simple_outreach, :disable_simple_outreach, :fsm_dashboard, :supervisor_text_field,
     :automation_rule_execution_count, :disable_field_service_management, :disable_mint_analytics,
     :freshid_org_v2, :hide_agent_login, :addon_based_billing, :office365_adaptive_card,
     :text_custom_fields_in_etl

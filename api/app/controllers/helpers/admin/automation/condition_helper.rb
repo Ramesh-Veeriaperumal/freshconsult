@@ -17,7 +17,7 @@ module Admin::Automation::ConditionHelper
         is_expected_data_type = valid_condition_data_type?(expected, actual[:value], expected_data_type)
         invalid_data_type("#{expected[:name]}[:value]", expected[:data_type], :invalid) unless is_expected_data_type
         validate_email(expected[:name], actual[:value]) if EMAIL_FIELD_TYPE.include?(expected[:field_type]) && is_expected_data_type &&
-            EMAIL_VALIDATOR_OPERATORS.include?(actual[:operator].to_sym)
+                                                           EMAIL_VALIDATOR_OPERATORS.include?(actual[:operator].to_sym)
         validate_date(expected[:name], actual[:value]) if expected[:field_type] == :date && is_expected_data_type
         validate_business_hours(expected[:name], actual) if BUSINESS_HOURS_FIELDS.include?(expected[:name])
       else
@@ -67,15 +67,12 @@ module Admin::Automation::ConditionHelper
 
   def valid_condition_data_type?(expected, value, expected_data_type)
     data_type_class = expected[:data_type].to_s.constantize
-    is_expected_data_type = (value.is_a?(Array) && value.all? {|x| x.is_a?(data_type_class)}) ||
-        value.is_a?(expected_data_type == 'multiple' ? Array : data_type_class)
-    # WARN - this will basically ignore all the validation, need to remove this check
-    if expected_data_type == 'single'
-      is_expected_data_type = true
-    end
+    array_values_check = value.is_a?(Array) && value.all? {|x| x.is_a?(data_type_class) || none_value?(x, none_field?(expected))}
+    is_expected_data_type = value.is_a?(expected_data_type == 'multiple' ? Array : data_type_class)
+    is_expected_data_type &&= array_values_check if expected_data_type == 'multiple'
     expected[:allow_any_type] || is_expected_data_type ||
-        none_value?(value, none_field?(expected)) ||
-        any_none_value?(value, expected_data_type == 'single' && expected[:field_type] == :nested_field)
+      none_value?(value, none_field?(expected)) ||
+      any_none_value?(value, expected_data_type == 'single' && expected[:field_type] == :nested_field)
   end
 
   def none_field?(expected)

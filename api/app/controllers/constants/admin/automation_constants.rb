@@ -1,4 +1,8 @@
 module Admin::AutomationConstants
+  include Admin::Automation::ActionConstants
+  include Admin::Automation::ConditionConstants
+  include Admin::Automation::EventConstants
+
   VALIDATION_CLASS = 'Admin::AutomationValidation'.freeze
 
   INDEX_FIELDS = %i[rule_type].freeze
@@ -23,7 +27,7 @@ module Admin::AutomationConstants
   FIELD_VALUE_CHANGE_MAPPING = {
     ticlet_cc: :ticket_cc,
     tag_ids: :tag_names,
-    created_during: :created_at,
+    created_during: :created_at
   }.freeze
 
   DISPLAY_FIELD_NAME_CHANGE = FIELD_VALUE_CHANGE_MAPPING.invert.freeze
@@ -146,6 +150,14 @@ module Admin::AutomationConstants
 
   SEND_EMAIL_ACTION_FIELDS = %i[send_email_to_group send_email_to_agent send_email_to_requester].freeze
 
+  INTEGRATION_ACTION_FIELDS = %i[marketplace_app_slack_v2 marketplace_app_office_365].freeze
+
+  INTEGRATION_DB_NAME_MAPPING = { marketplace_app_slack_v2: :'Integrations::RuleActionHandler',
+                                  marketplace_app_office_365: :'Integrations::Office365ActionHandler' }.freeze
+
+  INTEGRATION_API_NAME_MAPPING = INTEGRATION_DB_NAME_MAPPING.invert.freeze
+  INTEGRATION_DB_NAME_VALUE = { marketplace_app_slack_v2: :slack_trigger, marketplace_app_office_365: :office365_trigger }.freeze
+
   DEFAULT_EVENT_TICKET_FIELDS = %i[priority ticket_type status group_id responder_id note_type reply_sent due_by
                                    ticket_action time_sheet_action customer_feedback].freeze
 
@@ -159,6 +171,8 @@ module Admin::AutomationConstants
 
   DISPATCHER_CONDITION_TICKET_FIELDS = %i[created_at ticket_cc subject_or_description internal_agent_id
                                           internal_group_id tag_ids ticlet_cc tag_names].freeze
+
+  SUPERVISOR_CONDITION_TICKET_FIELDS = %i[contact_name company_name].freeze
 
   SEND_EMAIL_FIELDS = %i[send_email_to_group send_email_to_agent send_email_to_requester].freeze
 
@@ -202,192 +216,7 @@ module Admin::AutomationConstants
 
   VA_ATTRS = %i[name position last_updated_by active performer events conditions actions].freeze
 
-  ACTION_FIELDS_HASH = [
-    { name: :priority, field_type: :dropdown, data_type: :Integer }.freeze,
-    { name: :ticket_type, field_type: :dropdown, data_type: :String }.freeze,
-    { name: :status, field_type: :dropdown, data_type: :Integer }.freeze,
-    { name: :add_tag, field_type: :dropdown, data_type: :Array, multiple: true, value: String }.freeze,
-    { name: :add_a_cc, field_type: :text, data_type: :String, non_unique_field: true }.freeze,
-    { name: :trigger_webhook, field_type: :webhook, data_type: :Integer }.freeze,
-    { name: :add_watcher, field_type: :dropdown, value: :Integer, multiple: true, data_type: Array }.freeze,
-    { name: :add_comment, field_type: :text, data_type: String, non_unique_field: true }.freeze,
-    { name: :responder_id, field_type: :dropdown, data_type: :Integer }.freeze,
-    { name: :product_id, field_type: :dropdown, data_type: :Integer }.freeze,
-    { name: :group_id, field_type: :dropdown, data_type: :Integer }.freeze,
-    { name: :send_email_to_group, field_type: :email, data_type: :Integer }.freeze,
-    { name: :send_email_to_agent, field_type: :email, data_type: :Integer }.freeze,
-    { name: :send_email_to_requester, field_type: :email, data_type: :Integer }.freeze,
-    { name: :add_note, field_type: :add_note_type, data_type: String }.freeze,
-    { name: :forward_ticket, field_type: :forward_note, data_type: :Integer }.freeze,
-    { name: :delete_ticket, field_type: :label }.freeze,
-    { name: :mark_as_spam, field_type: :label }.freeze,
-    { name: :skip_notification, field_type: :label }.freeze
-  ].freeze
-
-  CUSTOM_FIELD_ACTION_HASH = {
-    nested_field: { field_type: :nested_field, data_type: :String }.freeze,
-    custom_dropdown: { field_type: :dropdown, data_type: :String }.freeze,
-    custom_checkbox: { field_type: :dropdown, data_type: :Integer }.freeze,
-    custom_text: { field_type: :text, data_type: :String }.freeze,
-    custom_paragraph: { field_type: :text, data_type: :String }.freeze,
-    custom_number: { field_type: :text, data_type: :String, allow_any_type: true }.freeze, # data type should be number and should be changed after frontend validation
-    custom_decimal: { field_type: :text, data_type: :Float, allow_any_type: true }.freeze, # data type should be number and should be changed after frontend validation
-    custom_date: { field_type: :text, data_type: :String }.freeze
-  }.freeze
-
-  ACTION_NONE_FIELDS = %i[responder_id product_id group_id].freeze
-
-  EVENT_FIELDS_HASH = [
-    { name: :priority, field_type: :dropdown, expect_from_to: true, data_type: :Integer }.freeze,
-    { name: :ticket_type, field_type: :dropdown, expect_from_to: true, data_type: :String }.freeze,
-    { name: :status, field_type: :dropdown, expect_from_to: true, data_type: :Integer }.freeze,
-    { name: :group_id, field_type: :dropdown, expect_from_to: true, data_type: :Integer }.freeze,
-    { name: :responder_id, field_type: :dropdown, expect_from_to: true }.freeze,
-    { name: :note_type, field_type: :dropdown, expect_from_to: false, data_type: :String }.freeze,
-    { name: :reply_sent, field_type: :label, expect_from_to: false }.freeze,
-    { name: :due_by, field_type: :label, expect_from_to: false }.freeze,
-    { name: :ticket_action, field_type: :dropdown, expect_from_to: false, data_type: :String }.freeze,
-    { name: :time_sheet_action, field_type: :dropdown, expect_from_to: false, data_type: :String }.freeze,
-    { name: :customer_feedback, field_type: :dropdown, expect_from_to: false, data_type: :Integer }.freeze,
-    { name: :mail_del_failed_requester, field_type: :label, expect_from_to: false }.freeze,
-    { name: :mail_del_failed_others, field_type: :label, expect_from_to: false }.freeze
-  ].freeze
-
-  CUSTOM_FIELD_EVENT_HASH = {
-    nested_field: { field_type: :nested_field, data_type: :String, expect_from_to: true, custom_field: true }.freeze,
-    custom_dropdown: { field_type: :dropdown, data_type: :String, expect_from_to: true, custom_field: true }.freeze,
-    custom_checkbox: { field_type: :dropdown, data_type: :Integer, expect_from_to: false, custom_field: true }.freeze, # need to make integer after frontend validation done
-  }.freeze
-
-  EVENT_ANY_FIELDS = %i[priority ticket_type status group_id responder_id note_type customer_feedback].freeze
-  EVENT_NONE_FIELDS = %i[group_id responder_id].freeze
-
   FROM_TO = %i[from to].freeze
-
-  FIELD_TYPE = {
-    text: %i[is is_not contains does_not_contain starts_with ends_with is_any_of is_none_of],
-    old_text: %i[is is_not contains does_not_contain starts_with ends_with],
-    paragraph: %i[is is_not contains does_not_contain starts_with ends_with is_any_of is_none_of],
-    email: %i[is is_not contains does_not_contain is_any_of is_none_of],
-    old_email: %i[is is_not contains does_not_contain],
-    add_note_type: %i[is is_not contains does_not_contain is_any_of is_none_of],
-    checkbox: %i[selected not_selected],
-    choicelist: %i[in not_in],
-    dropdown: %i[in not_in],
-    dropdown_blank: %i[in not_in],
-    number: %i[is is_not greater_than less_than is_any_of is_none_of],
-    decimal: %i[is is_not greater_than less_than],
-    hours: %i[is greater_than less_than],
-    nested_field: %i[is is_not is_any_of is_none_of],
-    supervisor_nested_field: %i[is],
-    greater: %i[greater_than],
-    object_id: %i[in not_in],
-    date_time: %i[during greater_than less_than],
-    date: %i[is is_not greater_than less_than],
-    tags: %i[in not_in and],
-    url: %i[is is_not contains does_not_contain starts_with ends_with is_any_of is_none_of],
-    phone_number: %i[is is_not contains does_not_contain starts_with ends_with is_any_of is_none_of]
-  }.freeze
-
-  EMAIL_FIELD_TYPE = %i[email old_email].freeze
-
-  SUPERVISOR_FIELD_TYPE = {
-      text: :old_text,
-      email: :old_email,
-      number: :decimal,
-      nested_field: :supervisor_nested_field
-  }.freeze
-
-  ARRAY_VALUE_EXPECTING_OPERATOR = %i[contains_all_of does_not_contain contains
-                                      is_any_of is_none_of in not_in all starts_with ends_with].freeze
-
-  SINGLE_VALUE_EXPECTING_OPERATOR = %i[is is_not greater_than less_than during].freeze
-
-  SUPERVISOR_SINGLE_VALUE_OPERATOR = %i[contains does_not_contain starts_with ends_with].freeze
-
-  NO_VALUE_EXPECTING_OPERATOR = %i[selected not_selected].freeze
-
-  CONDITION_TICKET_FIELDS_HASH = [
-    { name: :from_email, field_type: :email, data_type: :String }.freeze,
-    { name: :to_email, field_type: :email, data_type: :String }.freeze,
-    { name: :ticket_cc, field_type: :email, data_type: :String }.freeze,
-    { name: :ticlet_cc, field_type: :email, data_type: :String }.freeze,
-    { name: :ticket_type, field_type: :object_id, data_type: :String }.freeze,
-    { name: :status, field_type: :object_id, data_type: :Integer }.freeze,
-    { name: :priority, field_type: :object_id, data_type: :Integer }.freeze,
-    { name: :source, field_type: :object_id, data_type: :Integer }.freeze,
-    { name: :product_id, field_type: :object_id, data_type: :Integer }.freeze,
-    { name: :group_id, field_type: :object_id, data_type: :Integer }.freeze,
-    { name: :responder_id, field_type: :object_id, data_type: :Integer }.freeze,
-    { name: :internal_group_id, field_type: :object_id, data_type: :Integer }.freeze,
-    { name: :internal_agent_id, field_type: :object_id, data_type: :Integer }.freeze,
-    { name: :tag_names, field_type: :tags, data_type: :String }.freeze,
-    { name: :subject, field_type: :text, data_type: :String }.freeze,
-    { name: :subject_or_description, field_type: :text, data_type: :String }.freeze,
-    { name: :description, field_type: :text, data_type: :String }.freeze,
-    { name: :last_interaction, field_type: :text, data_type: :String }.freeze,
-    { name: :created_at, field_type: :date_time, data_type: :String }.freeze,
-    { name: :updated_at, field_type: :date_time, data_type: :String }.freeze,
-    { name: :inbound_count, field_type: :number, data_type: :Integer, allow_any_type: true }.freeze,
-    { name: :outbound_count, field_type: :number, data_type: :Integer, allow_any_type: true }.freeze,
-
-    { name: :hours_since_created, field_type: :hours, data_type: :Integer }.freeze,
-    { name: :pending_since, field_type: :hours, data_type: :Integer }.freeze,
-    { name: :resolved_at, field_type: :hours, data_type: :Integer }.freeze,
-    { name: :closed_at, field_type: :hours, data_type: :Integer }.freeze,
-    { name: :opened_at, field_type: :hours, data_type: :Integer }.freeze,
-    { name: :first_assigned_at, field_type: :hours, data_type: :Integer }.freeze,
-    { name: :assigned_at, field_type: :hours, data_type: :Integer }.freeze,
-    { name: :requester_responded_at, field_type: :hours, data_type: :Integer }.freeze,
-    { name: :agent_responded_at, field_type: :hours, data_type: :Integer }.freeze,
-    { name: :frDueBy, field_type: :hours, data_type: :Integer }.freeze,
-    { name: :due_by, field_type: :hours, data_type: :Integer }.freeze
-  ].freeze
-
-  CUSTOM_FIELD_CONDITION_HASH = {
-    nested_field: { field_type: :nested_field, data_type: :String, custom_field: true }.freeze,
-    custom_dropdown: { field_type: :object_id, data_type: :String, custom_field: true }.freeze,
-    custom_checkbox: { field_type: :checkbox, data_type: :String, custom_field: true }.freeze,
-    custom_text: { field_type: :text, data_type: :String, custom_field: true }.freeze,
-    custom_paragraph: { field_type: :text, data_type: :String, custom_field: true }.freeze,
-    custom_number: { field_type: :number, data_type: :String, custom_field: true, allow_any_type: true }.freeze, # data type should be number and should be changed after frontend validation
-    custom_decimal: { field_type: :decimal, data_type: :Float, custom_field: true, allow_any_type: true }.freeze, # data type should be number and should be changed after frontend validation
-    custom_date: { field_type: :date, data_type: :String, custom_field: true }.freeze,
-    custom_date_time: { field_type: :date_time, data_type: :String, custom_field: true }.freeze
-  }.freeze
-
-  CONDITION_NONE_FIELDS = %i[ticket_type product_id group_id responder_id internal_group_id
-                             internal_agent_id health_score account_tier industry].freeze
-
-  CONDITION_CONTACT_FIELDS_HASH = [
-    { name: :email, field_type: :email, data_type: :String }.freeze,
-    { name: :name, field_type: :text, data_type: :String }.freeze,
-    { name: :job_title, field_type: :text, data_type: :String }.freeze,
-    { name: :time_zone, field_type: :choicelist, data_type: :String }.freeze,
-    { name: :language, field_type: :choicelist, data_type: :String }.freeze,
-    { name: :segments, field_type: :object_id, data_type: :Integer }.freeze
-  ].freeze
-
-  CONDITION_COMPANY_FIELDS_HASH = [
-    { name: :domains, field_type: :text, data_type: :String }.freeze,
-    { name: :name, field_type: :text, data_type: :String }.freeze,
-    { name: :segments, field_type: :object_id, data_type: :Integer }.freeze,
-    { name: :health_score, field_type: :choicelist, data_type: :String }.freeze,
-    { name: :account_tier, field_type: :object_id, data_type: :String }.freeze,
-    { name: :industry, field_type: :object_id, data_type: :String }.freeze,
-    { name: :renewal_date, field_type: :date, data_type: :String }.freeze
-  ].freeze
-
-  CUSTOM_CONDITION_CONTACT_HASH = CUSTOM_CONDITION_COMPANY_HASH = {
-    custom_dropdown: { field_type: :dropdown, data_type: :String, custom_field: true }.freeze,
-    custom_checkbox: { field_type: :checkbox, data_type: :String, custom_field: true }.freeze,
-    custom_text: { field_type: :text, data_type: :String, custom_field: true }.freeze,
-    custom_url: { field_type: :url, data_type: :String, custom_field: true }.freeze,
-    custom_paragraph: { field_type: :text, data_type: :String, custom_field: true }.freeze,
-    custom_number: { field_type: :number, data_type: :String, custom_field: true, allow_any_type: true }.freeze, # data type should be number and should be changed after frontend validation
-    custom_phone_number: { field_type: :text, data_type: :String, custom_field: true }.freeze, # data type should be number and should be changed after frontend validation
-    custom_date: { field_type: :date, data_type: :String, custom_field: true }.freeze
-  }.freeze
 
   CUSTOM_FIELD_TYPE_HASH = {
     text: String,
@@ -450,7 +279,10 @@ module Admin::AutomationConstants
 
   CONDITION_SET_REQUEST_VALUES = %i[field_name operator value nested_fields case_sensitive business_hours_id].freeze
 
-  ACTION_REQUEST_PRAMS = %i[field_name value nested_fields] + WEBHOOK_PERMITTED_PARAMS + SEND_EMAIL_TO_PARAMS + FORWARD_TICKET_PARAMS + ADD_NOTE_PARAMS
+  MARKETPLACE_INTEGRATION_PARAMS = %i[push_to slack_text office365_text].freeze
+
+  ACTION_REQUEST_PRAMS = (%i[field_name value nested_fields] + WEBHOOK_PERMITTED_PARAMS + SEND_EMAIL_TO_PARAMS +
+                         FORWARD_TICKET_PARAMS + ADD_NOTE_PARAMS + MARKETPLACE_INTEGRATION_PARAMS).freeze
 
   PERFORMER_REQUEST_PRAMS = %i[type members].freeze
 
@@ -462,20 +294,21 @@ module Admin::AutomationConstants
   DELEGATOR_IGNORE_FIELDS = (%i[subject subject_or_description reply_sent trigger_webhook from_email to_email
                                 mail_del_failed_requester mail_del_failed_others add_a_cc add_comment delete_ticket
                                 mark_as_spam skip_notification due_by from_email to_email ticket_cc last_interaction
-                                inbound_count outbound_count description forward_ticket ticlet_cc] + TIME_BASED_FILTERS).uniq.freeze
+                                inbound_count outbound_count description forward_ticket ticlet_cc] + TIME_BASED_FILTERS +
+                                SUPERVISOR_CONDITION_TICKET_FIELDS).uniq.freeze
 
   DEFAULT_FIELDS = (DEFAULT_FIELDS_DELEGATORS + DELEGATOR_IGNORE_FIELDS).freeze
 
   TIME_BASE_DUPLICATE = %i[created_at_since due_by_since].freeze
 
-  SUPERVISOR_INVLAID_CONDITION_FIELD = %i[from_email subject description last_interaction subject_or_description internal_agent_id
-                                          internal_group_id tag_ids email name job_title time_zone language segments domain health_score
-                                          account_tier industry renewal_date ticket_cc].freeze
+  SUPERVISOR_INVLAID_TICKET_FIELD = %i[from_email subject description last_interaction subject_or_description internal_agent_id
+                                       internal_group_id tag_ids email name job_title time_zone language segments domain health_score
+                                       account_tier industry renewal_date ticket_cc].freeze
 
   SUMMARY_DEFAULT_FIELDS = (DEFAULT_CONDITION_TICKET_FIELDS + OBSERVER_CONDITION_TICKET_FIELDS + DISPATCHER_CONDITION_TICKET_FIELDS +
-                            TICKET_STATE_FILTERS + PERMITTED_PARAMS + DEFAULT_ACTION_TICKET_FIELDS + DEFAULT_FIELDS +
-                            DEFAULT_EVENT_TICKET_FIELDS + CONDITION_CONTACT_FIELDS + CONDITION_COMPANY_FIELDS + SYSTEM_EVENT_FIELDS +
-                            VA_ATTRS + TIME_BASED_FILTERS + SEND_EMAIL_ACTION_FIELDS + TAM_COMPANY_FIELDS).uniq.freeze
+                            SUPERVISOR_CONDITION_TICKET_FIELDS + TICKET_STATE_FILTERS + PERMITTED_PARAMS + DEFAULT_ACTION_TICKET_FIELDS +
+                            DEFAULT_FIELDS + DEFAULT_EVENT_TICKET_FIELDS + CONDITION_CONTACT_FIELDS + CONDITION_COMPANY_FIELDS +
+                            SYSTEM_EVENT_FIELDS + VA_ATTRS + TIME_BASED_FILTERS + SEND_EMAIL_ACTION_FIELDS + TAM_COMPANY_FIELDS).uniq.freeze
 
   INVALID_SUPERVISOR_CONDITION_CF = %i[text paragraph].freeze
 
@@ -509,20 +342,26 @@ module Admin::AutomationConstants
   NESTED_EVENT_LABEL = %i[from_nested_field to_nested_field].freeze
 
   DEFAULT_FIELD_VALUE_TYPE = {
-      status: :Integer,
-      priority: :Integer,
-      source: :Integer,
-      responder_id: :Integer,
-      group_id: :Integer,
-      internal_group_id: :Integer,
-      internal_agent_id: :Integer,
-      add_watcher: :Integer,
-      product_id: :Integer,
-      inbound_count: :Integer,
-      outbound_count: :Integer
+    status: :Integer,
+    priority: :Integer,
+    source: :Integer,
+    responder_id: :Integer,
+    group_id: :Integer,
+    internal_group_id: :Integer,
+    internal_agent_id: :Integer,
+    add_watcher: :Integer,
+    product_id: :Integer,
+    inbound_count: :Integer,
+    outbound_count: :Integer
   }.freeze
 
   ARRAY_VALUE_EXPECTING_FIELD = %i[add_watcher].freeze
 
   DEFAULT_FIELD_VALUE_CONVERTER = DEFAULT_FIELD_VALUE_TYPE.keys.freeze
+
+  PRIVATE_API_ROOT_KEY_MAPPING = {
+    1 => :ticket_creation_rule,
+    3 => :time_trigger_rule,
+    4 => :ticket_update_rule
+  }.freeze
 end.freeze

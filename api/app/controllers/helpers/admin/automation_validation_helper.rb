@@ -4,7 +4,7 @@ module Admin::AutomationValidationHelper
   include Admin::AutomationErrorHelper
 
   def initialize_params(request_params, default_fields, custom_fields, rule_type)
-    @rule_type = rule_type
+    @rule_type = rule_type.to_i
     cf_names = custom_fields[0]
     create_attr_accessor_for_cf(cf_names)
     self.custom_field_hash = custom_fields[1]
@@ -37,15 +37,27 @@ module Admin::AutomationValidationHelper
     attributes.each do |item|
       attribute_value = safe_send(item[:name])
       next if attribute_value.blank?
-      @field_position = 1
-      attribute_value.each do |each_attribute|
-        if @field_position > 1 && item[:non_unique_field]
-          not_allowed_error(item[:name], :non_unique_field_automation)
-          next
-        end
-        safe_send(:"#{validator_type}_validation", item, each_attribute)
-        @field_position += 1
+      if invalid_attribute_for_rule?(item[:invalid_rule_types])
+        unexpected_parameter(item[:name])
+        next
       end
+      execute_field_validation(item, attribute_value)
+    end
+  end
+
+  def invalid_attribute_for_rule?(invalid_rule_types)
+    invalid_rule_types.include?(@rule_type)
+  end
+
+  def execute_field_validation(field_hash, fields)
+    @field_position = 1
+    fields.each do |each_attribute|
+      if @field_position > 1 && field_hash[:non_unique_field]
+        not_allowed_error(field_hash[:name], :non_unique_field_automation)
+        next
+      end
+      safe_send(:"#{validator_type}_validation", field_hash, each_attribute)
+      @field_position += 1
     end
   end
 
@@ -152,6 +164,14 @@ module Admin::AutomationValidationHelper
     unless Account.current.any_survey_feature_enabled_and_active?
       errors[:"any_survey[:condition]"] << :require_feature
       error_options.merge!(:"any_survey[:condition]" => {feature: :survey, # I am not sure about the feature please check
+                                                         code: :access_denied})
+    end
+  end
+
+  def supervisor_text_field?
+    unless Account.current.supervisor_text_field_enabled?
+      errors[:"supervisor_text_field[:condition]"] << :require_feature
+      error_options.merge!(:"supervisor_text_field[:condition]" => {feature: :supervisor_text_field, # I am not sure about the feature please check
                                                          code: :access_denied})
     end
   end
