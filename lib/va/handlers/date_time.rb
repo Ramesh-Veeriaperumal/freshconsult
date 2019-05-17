@@ -26,7 +26,7 @@ class Va::Handlers::DateTime < Va::RuleHandler
       end
 
       def holidays(evaluated_on_value)
-        in_bhrs(fetch_business_hours) { !Time.workday?(evaluated_on_value.in_time_zone(Time.zone),fetch_business_hours) }
+        in_bhrs(fetch_business_hours) { Time.holiday?(evaluated_on_value.in_time_zone(Time.zone),fetch_business_hours) }
       end
 
       def fetch_business_hours
