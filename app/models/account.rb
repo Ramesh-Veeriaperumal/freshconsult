@@ -534,9 +534,7 @@ class Account < ActiveRecord::Base
   def verify_account_with_email
     unless verified?
       self.reputation = 1
-      if self.save
-        Rails.logger.info "Account Verification Completed account_id: #{self.id} signup_method: #{self.signup_method}"
-      end
+      self.save
     end
   end
 

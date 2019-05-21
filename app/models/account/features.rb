@@ -130,7 +130,6 @@ class Account < ActiveRecord::Base
       features_not_migrated = feature_names -
                               DB_TO_BITMAP_MIGRATION_P2_FEATURES_LIST -
                               DB_TO_LP_MIGRATION_P2_FEATURES_LIST
-      Rails.logger.info("These features are not yet migrated: #{features_not_migrated.inspect}")
       has_features?(*features_migrated_to_bmp) &&
         launched?(*features_migrated_to_lp) &&
         super(*features_not_migrated)
