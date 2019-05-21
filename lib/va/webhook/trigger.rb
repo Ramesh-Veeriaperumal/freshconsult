@@ -27,7 +27,8 @@ module Va::Webhook::Trigger
       ticket_id: act_on.id,
       account_id: Account.current.id,
       webhook_created_at: Time.now.utc.to_f,
-      webhook_limit: Account.current.account_additional_settings_from_cache.webhook_limit
+      webhook_limit: Account.current.account_additional_settings_from_cache.webhook_limit,
+      webhook_validation_enabled: Account.current.webhook_blacklist_ip_enabled?
     }
     
     ::WebhookV1Worker.perform_async(throttler_args)

@@ -290,6 +290,7 @@ api_error_messages:
   field_not_found: "%{field_name}: not found"
   expecting_previous_condition_set: "Can't set %{current} without giving %{previous}"
   invalid_email_list: "Field contains invalid email address(s): '%{list}'"
+  invalid_url: "Webhook contains Blacklist url: '%{value}'"
   unexpected_members_for_performer: "Members should only be present for type 1"
 
   fsm_ticket_scenario_failure: "Cannot run scenarios on a ticket of type service task"

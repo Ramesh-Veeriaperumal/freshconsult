@@ -63,6 +63,13 @@ module Admin::AutomationErrorHelper
     error_options.merge!(error_message)
   end
 
+  def invalid_url(name, url)
+    errors[construct_key(name)] << :invalid_url
+    error_message = {}
+    error_message[construct_key(name)] = {value: url}
+    error_options.merge!(error_message)
+  end
+
   def not_allowed_error(name, message = :case_sensitive_not_allowed)
     errors[construct_key(name)] << message
     error_message = {}

@@ -1,6 +1,7 @@
 module Admin::Automation::ActionHelper
   include Admin::AutomationConstants
   include Admin::AutomationValidationHelper
+  include Admin::Automation::WebhookValidations
 
   def action_validation(expected, actual)
     case expected[:field_type]
@@ -46,6 +47,10 @@ module Admin::Automation::ActionHelper
     validate_auth_header(expected[:name], actual[:auth_header]) if actual.key?(:auth_header)
 
     headers = actual[:custom_headers]
+    if Account.current.webhook_blacklist_ip_enabled? && !valid_webhook_url?(actual[:url])
+      invalid_url(:trigger_webhook, actual[:url]) 
+    end
+    
     invalid_data_type(:"#{expected[:name]}[:custom_headers]", :JSON, :invalid) if actual.key?(:custom_headers) && !headers.is_a?(Hash)
     validate_based_on_http_method(actual[:request_type].to_sym, expected, actual)
 

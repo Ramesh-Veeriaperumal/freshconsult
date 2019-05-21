@@ -2,6 +2,7 @@ class WebhookV1Worker < ::BaseWorker
   include Sidekiq::Worker
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include Admin::Automation::WebhookValidations
   
   SUCCESS     = 200..299
   REDIRECTION = 300..399
@@ -14,12 +15,16 @@ class WebhookV1Worker < ::BaseWorker
     args.symbolize_keys!
     Va::Logger::Automation.set_thread_variables(args[:account_id], args[:ticket_id], nil, args[:rule_id])
     Va::Logger::Automation.log "WEBHOOK: TRIGGERED, info=#{args.inspect}"
+    if args[:webhook_validation_enabled] && !valid_webhook_url?(args[:params]["domain"])
+      Va::Logger::Automation.log "WEBHOOK: Validation Fails for URL = #{args[:params]["domain"]} and Account_id = #{args[:account_id]}"
+      return 
+    end
     @response = HttpRequestProxy.new.fetch_using_req_params(
       args[:params].symbolize_keys,
       args[:auth_header].symbolize_keys,
       args[:custom_headers]
     )
-    Va::Logger::Automation.log "WEBHOOK: response=#{@response.inspect}"
+    Va::Logger::Automation.log "WEBHOOK: response=#{@response[:status]}"
     response_status = @response[:status]
     case response_status
     when SUCCESS
