@@ -216,7 +216,7 @@ module Redis::Keys::Others
   TWITTER_APP_BLOCKED = 'TWITTER_APP_BLOCKED'.freeze
 
   ANONYMOUS_ACCOUNT_SIGNUP_ENABLED = 'ANONYMOUS_ACCOUNT_SIGNUP_ENABLED'.freeze
-
+  
   # Facebook Mapping table deprecation
   FB_MAPPING_ENABLED  = 'FB_MAPPING_ENABLED'.freeze
 end

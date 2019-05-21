@@ -2,6 +2,7 @@ class Admin::VaRulesController < Admin::AdminController
   include ModelControllerMethods
   include Va::Constants
   include Admin::AdvancedTicketing::FieldServiceManagement::Constant
+  include Admin::Automation::WebhookValidations
 
   # skip_before_filter :check_automation_feature
   before_filter :escape_html_entities_in_json
@@ -51,6 +52,10 @@ class Admin::VaRulesController < Admin::AdminController
       @va_rule.action_data = params[:action_data].blank? ? [] : (ActiveSupport::JSON.decode params[:action_data])
       if va_rules_controller? or observer_rules_controller?
         @va_rule.action_data.each do |action|
+          if action["name"] == "trigger_webhook" && Account.current.webhook_blacklist_ip_enabled? && !valid_webhook_url?(action["url"])
+            flash[:error] = t("admin.va_rules.webhook.invalid_url") 
+            error = true
+          end
           if action["custom_headers"].present?
             headers = RailsSanitizer.full_sanitizer.sanitize(action["custom_headers"])
             headers = headers.split(/[\r\n]+/).map { |x| x.split(":", 2).map(&:strip).reject { |x| x == "" } }
@@ -68,11 +73,11 @@ class Admin::VaRulesController < Admin::AdminController
               flash[:error] = t("admin.va_rules.webhook.custom_headers_limit_error", :limit => MAX_CUSTOM_HEADERS)
               error = true
             end
-            if error
-              load_config
-              edit_data
-              render :action => params[:action] == 'update' ? 'edit' : 'new'
-            end
+          end
+          if error
+            load_config
+            edit_data
+            render :action => params[:action] == 'update' ? 'edit' : 'new'
           end
         end
       end

@@ -2171,6 +2171,7 @@ en:
         custom_headers_limit_error: "You cannot set more than %{limit} custom headers"
         custom_headers_pair_mismatch: "Kindly ensure that all headers have values"
         action_data_limit_exceed: "You are not allowed to save more than 63K characters in action data"
+        invalid_url: "The Domin you have entered in Trigger Webhook is blocked. Please enter another domain."
       index:
         human_name: Dispatch’r Rule
       remember_to_save: 'After updating, please remember to save it.'
