@@ -10,10 +10,8 @@ class Community::GenerateSitemap < BaseWorker
         @account = Account.find_by_id(account_id).make_current
         key = SITEMAP_OUTDATED % { :account_id => @account.id }
         if portal_redis_key_exists?(key)
-          Rails.logger.info ":::::: GenerateSitemap: Sitemap key is set for account #{account_id} ::::::"
           generate if @account.sitemap_enabled?
           remove_portal_redis_key(key)
-          Rails.logger.info ":::::: GenerateSitemap: Sitemap key is removed for account #{account_id} ::::::"
         end
       end
     end
@@ -22,7 +20,6 @@ class Community::GenerateSitemap < BaseWorker
   private
 
   def generate
-    Rails.logger.info ":::::: GenerateSitemap: Sitemap feature is enabled for account #{@account.id} ::::::"
     @account.portals.each do |portal|
       portal.make_current
       build(portal)

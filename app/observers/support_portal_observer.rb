@@ -21,7 +21,6 @@ class SupportPortalObserver < ActiveRecord::Observer
 		return unless Account.current
 		return if get_portal_redis_key(PORTAL_CACHE_ENABLED) === "false"
 		return if (args.first.present? && args.first.class.name == "Account" && !args.first.changes.has_key?("ssl_enabled"))
-		Rails.logger.debug "::::::::::Sweeping from portal"
 		key = PORTAL_CACHE_VERSION % { :account_id => Account.current.id }
 		increment_portal_redis_version key
 	end
