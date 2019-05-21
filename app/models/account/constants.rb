@@ -305,7 +305,7 @@ class Account < ActiveRecord::Base
       nested_field_revamp: false, service_worker: false, kbase_mint: false, freshvisual_configs: false,
       ticket_type_filter_in_trends_widget: false,
       freshid_org_v2: false, hide_agent_login: false, addon_based_billing: false, office365_adaptive_card: false,
-      text_custom_fields_in_etl: false
+      text_custom_fields_in_etl: false, recalculate_daypass: false
     }, :merge
   )
 

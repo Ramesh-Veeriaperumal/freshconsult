@@ -1,7 +1,12 @@
 class Billing::ChargebeeWrapper
 
-	CHARGEBEE_REST_URL = "https://%{subdomain}.chargebee.com/api/v2"
-	PRODUCT_NAME = 'fdesk'.freeze
+	CHARGEBEE_REST_URL = "https://%{subdomain}.chargebee.com/api/v2/%{resource_type}".freeze
+	PRODUCT_NAME       = 'fdesk'.freeze
+  DAY_PASS_CALC      = 'Daypass recalculation'.freeze
+  CB_RESOURCES       = {
+                          plans: 'plans',
+                          add_credits: 'promotional_credits/add'
+                       }.freeze
 
 	def initialize
     subscription = Account.current.subscription
@@ -98,7 +103,7 @@ class Billing::ChargebeeWrapper
 	end
 
 	def retrieve_plans_by_id(plan_ids, subdomain, api_key)
-		url = format(CHARGEBEE_REST_URL, subdomain: subdomain) + '/plans'
+		url = format(CHARGEBEE_REST_URL, subdomain: subdomain, resource_type: CB_RESOURCES[:plans])
 		JSON.parse(RestClient::Request.execute({
 		 	method: :get, 
 			url: url, 
@@ -112,10 +117,39 @@ class Billing::ChargebeeWrapper
 		}))["list"].collect{ |list| list["plan"].symbolize_keys! }
 	end
 
+  def add_daypass_credits(amount_to_be_added)
+    url = format(CHARGEBEE_REST_URL, subdomain: currency.billing_site, resource_type: CB_RESOURCES[:add_credits])
+    JSON.parse(RestClient::Request.execute(build_rest_format(url, credits_params(amount_to_be_added))))
+  end
+
 	def change_term_end(account_id, data)
 		Rails.logger.debug ":::ChargeBee - Change Term End - Params sent:::"
 		Rails.logger.debug data.inspect
 		ChargeBee::Subscription.change_term_end(account_id, data)
 	end
+
+  private
+    def credits_params(amount_to_be_added)
+      { 
+        customer_id: Account.current.id,
+        amount: amount_to_be_added*100,
+        description: DAY_PASS_CALC
+      }
+    end
+
+    def build_rest_format(url, params, req_type = :post)
+      {
+        method: req_type, 
+        url: url, 
+        user: currency.billing_api_key, 
+        headers: { 
+          params: params
+        }
+      }
+    end
+
+    def currency
+      @currency ||= Account.current.subscription.currency
+    end
 
 end
