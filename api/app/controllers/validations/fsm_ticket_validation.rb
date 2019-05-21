@@ -1,12 +1,11 @@
 class FsmTicketValidation < TicketValidation
   def custom_fields_to_validate
-    account_id = Account.current.id
-    # Restricting the custom fields to validate to FSM fields alone when the ticket type is service task
-    required_fields_fsm_with_id = Admin::AdvancedTicketing::FieldServiceManagement::Constant::CUSTOM_FIELDS_TO_RESERVE.map { |x| "#{x[:name]}_#{account_id}" }
-    tkt_fields = []
-    TicketsValidationHelper.custom_non_dropdown_fields(self).each do |field|
-      tkt_fields << field if required_fields_fsm_with_id.include?(field.name)
-    end
-    create_or_update? ? tkt_fields : tkt_fields.select { |x| validate_field?(x) }
+    # Restricting the custom fields to validate to FSM section fields alone when the ticket type is service task
+    fsm_section = Account.current.sections.preload(:section_fields).find_by_label(Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_SECTION)
+    return [] if fsm_section.blank?
+
+    fsm_field_ids = fsm_section.section_fields.map(&:ticket_field_id)
+    fsm_fields_to_validate = TicketsValidationHelper.custom_non_dropdown_fields(self).select { |x| fsm_field_ids.include?(x.id)}
+    create_or_update? ? fsm_fields_to_validate : fsm_fields_to_validate.select { |x| validate_field?(x) }
   end
 end

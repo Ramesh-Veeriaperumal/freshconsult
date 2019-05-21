@@ -57,6 +57,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
     FSM_FIELDS_PREFIX = 'cf_fsm_'.freeze
     SUPPORT_AGENT_TYPE = 1
     SUPPORT_GROUP_TYPE = 1
+    SERVICE_TASK_SECTION = 'Service task section'.freeze
 
     SCORE_CARD = 'scorecard'.freeze
 
