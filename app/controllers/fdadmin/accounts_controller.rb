@@ -793,7 +793,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       existing_account = Freshid::Account.find_by_domain(freshid_account_params[:domain])
       return false unless existing_account
       fd_account = Freshid::Account.new(freshid_account_params)
-      existing_organisation = fd_account.organisation_from_cache
+      existing_organisation = fd_account.organisation
       if !existing_organisation
         #org does not exist, create one
         response = account.create_freshid_org_without_account_and_user
