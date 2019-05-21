@@ -80,7 +80,10 @@
         <div class="billing-info-divider">
           <% subscription_end = @subscription.next_renewal_at - Time.now %>
           <ul>
-            <li class="price"> <%= format_amount(@subscription.amount, @currency) %> </li>
+            <li class="price"> <%= format_amount(@subscription.amount_with_tax_safe_access, @currency) %> </li>
+            <%if tax_inclusive?(@subscription)%>
+              <li class = "tax-text"> <%=t('tax_inclusion') %> </li>
+            <%end%>
             <% if subscription_end > 0 %>
               <li class="muted"> <%= t('next_renewal', :renewal_period => distance_of_time_in_words(@subscription.next_renewal_at, Time.now.to_s) ) %> </li>
             <% else %>

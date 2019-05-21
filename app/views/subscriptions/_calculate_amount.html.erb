@@ -73,6 +73,9 @@
   				<b class="total" id="total-cost-currency-value">
   					<%= format_amount(amount, @subscription.currency_name) %>
   				</b>
+  				<%if tax_inclusive?(@subscription)%>
+  					<p class="tax-text"><%=t('tax_inclusion') %></p>
+  				<%end%>
   				<p class="per-month-charges <%= billing_cycle == 1 ? 'hide' : '' %>">
   					(<span class="symbol"></span><span class="amount"></span>/<%= t('date.month')%>)
   				</p>

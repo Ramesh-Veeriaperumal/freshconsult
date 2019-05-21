@@ -69,9 +69,13 @@ module SubscriptionsHelper
   def get_payment_string(period,amount)
     amount = format_amount(amount, current_account.currency_name)
     if period == SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual]
-        return t('amount_billed_annually', :amount => amount ).html_safe 
+      return sanitize(t('amount_billed_annually', :amount => amount, tax_string: tax_string))
     end
-    return  t('amount_billed_per_month',{:amount => amount,:period => SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[period]}).html_safe
+    sanitize(t('amount_billed_per_month',:amount => amount,:period => SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[period], tax_string: tax_string))
+  end
+
+  def tax_string
+    tax_inclusive?(current_account.subscription) ? "<span class='tax-text'> " + t('tax_inclusion') + '</span>.' : '.'
   end
 
   def get_amount_string(period,amount)
@@ -213,4 +217,7 @@ module SubscriptionsHelper
     end
   end
 
+  def tax_inclusive?(subscription)
+    subscription.additional_info[:amount_with_tax].present? && subscription.additional_info[:amount_with_tax] != subscription.amount ? true : false
+  end
  end

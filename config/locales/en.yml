@@ -722,6 +722,7 @@ en:
     unsolved: Unsolved
   payment_info: Payment information
   billing_address: Billing Address
+  tax_inclusion: (Inclusive of tax)
   support:
     tickets:
       ticket_survey:
@@ -5194,8 +5195,8 @@ en:
     transaction_details: "Payments and Refund details"
   activate: Activate
   feedbackwidget_button_text: Label
-  amount_billed_per_month: You will be billed <b>%{amount} %{period}</b>.
-  amount_billed_annually: You will be billed <b>%{amount} annually</b>.
+  amount_billed_per_month: You will be billed <b>%{amount} %{period}</b>%{tax_string}
+  amount_billed_annually: You will be billed <b>%{amount} annually</b>%{tax_string}
   currency_note: <a href='/subscription'>Click here</a> to change your currency. <br> Please note that you cannot change the currency once you enter the card information.
   import_zendesk_summary: Import from zendesk summary
   user_activation_email: User Activation Email
