@@ -28,9 +28,9 @@ module SBRR
       end
 
       def next_agent
-        is_user_eligible = false
+        is_user_eligible = true
         count = 0
-        while !is_user_eligible && count < MAX_NEXT_AGENT_RETRY do
+        while is_user_eligible && count < MAX_NEXT_AGENT_RETRY
           user_id, score = queue.top #checking top here to generate relevant queues
           SBRR.log "TOP USER #{user_id}, #{"%16d" % score.to_i}" 
           user = Account.current.users.find_by_id(user_id) if user_id
