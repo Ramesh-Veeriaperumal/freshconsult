@@ -59,6 +59,7 @@ class Admin::Sandbox::FileToDataWorker < BaseWorker
         reindex_account(sandbox_account)
         post_account_activities(sandbox_account, addition_settings_info)
         disable_private_inline(sandbox_account)
+        sandbox_account.reset_picklist_id
         freshid_migration(sandbox_account)
       end
     ensure

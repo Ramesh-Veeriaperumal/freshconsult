@@ -27,7 +27,7 @@ class Admin::Sandbox::Job < ActiveRecord::Base
   end
 
   def update_last_error(e, state)
-    self.last_error =  e.to_s
+    self.last_error = e.to_s + " :: Backtrace: #{e.backtrace[0..20].inspect}"
     mark_as!(state)
   end
 

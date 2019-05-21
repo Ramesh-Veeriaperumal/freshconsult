@@ -10,7 +10,7 @@ module Sync::Util
     gitClient.checkout_branch
   end
 
-  def commit_config_to_git(repo_path, master_account_id = nil, sandbox = false)
+  def generate_config(repo_path, master_account_id = nil, sandbox = false)
     all_relations = RELATIONS
     all_relations += CLONE_RELATIONS if @clone
     all_relations.each do |relation|
@@ -18,7 +18,7 @@ module Sync::Util
     end
   end
 
-  def sync_config_to_remote(account_id, repo_path, message, author, email)
+  def commit_and_push_config_to_git(account_id, repo_path, message, author, email)
     branch    = branch_name(account_id)
     gitClient = Sync::GitClient.new(repo_path, branch)
     gitClient.commit_all_changed_files(message, author, email)
