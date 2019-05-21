@@ -101,4 +101,24 @@ class UserTest < ActiveSupport::TestCase
     payload = user.central_publish_payload.to_json
     payload.must_match_json_expression(central_publish_user_pattern(user))
   end
+
+  def test_cf_dropdown_with_null_choice_id
+    label = Faker::Lorem.characters(10)
+    choices = [{ value: Faker::Lorem.characters(10), position: 1 }, { value: Faker::Lorem.characters(10), position: 2 }]
+    create_contact_field(cf_params(type: 'dropdown',
+                                   field_type: 'custom_dropdown',
+                                   label: label,
+                                   editable_in_signup: 'true',
+                                   custom_field_choices_attributes: choices))
+    user = add_new_user(@account)
+    CentralPublishWorker::UserWorker.jobs.clear
+    user.reload
+    User.any_instance.stubs(:fetch_choice_id).returns(nil)
+    user.update_attributes(custom_field: { "cf_#{label}": choices.last[:value] })
+    assert_equal 1, CentralPublishWorker::UserWorker.jobs.size
+    payload = user.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_user_pattern(user))
+  ensure
+    User.any_instance.unstub(:fetch_choice_id)
+  end
 end

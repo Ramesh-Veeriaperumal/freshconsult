@@ -126,6 +126,41 @@ class CompanyTest < ActiveSupport::TestCase
     assert_equal({ 'account_id' => [0, @account.id], 'company_id' => [nil, company.id], 'company_form_id' => [nil, @account.id], column_name => [nil, 'hello'] }, job['args'][1]['model_changes'])
   end
 
+  def test_cf_dropdown_update_custom_fields
+    label = Faker::Lorem.characters(10)
+    choices = [{ value: Faker::Lorem.characters(10), position: 1 }, { value: Faker::Lorem.characters(10), position: 2 }]
+    create_company_field(company_params(type: 'dropdown',
+                                        field_type: 'custom_dropdown',
+                                        label: label,
+                                        custom_field_choices_attributes: choices))
+    company = create_company
+    CentralPublishWorker::CompanyWorker.jobs.clear
+    company.reload
+    company.update_attributes(custom_field: { "cf_#{label}": choices.last[:value] })
+    assert_equal 1, CentralPublishWorker::CompanyWorker.jobs.size
+    payload = company.central_publish_payload.to_json
+    payload.must_match_json_expression(company_payload_pattern(company))
+  end
+
+  def test_cf_dropdown_update_with_null_choice_id
+    label = Faker::Lorem.characters(10)
+    choices = [{ value: Faker::Lorem.characters(10), position: 1 }, { value: Faker::Lorem.characters(10), position: 2 }]
+    create_company_field(company_params(type: 'dropdown',
+                                        field_type: 'custom_dropdown',
+                                        label: label,
+                                        custom_field_choices_attributes: choices))
+    company = create_company
+    CentralPublishWorker::CompanyWorker.jobs.clear
+    company.reload
+    Company.any_instance.stubs(:fetch_choice_id).returns(nil)
+    company.update_attributes(custom_field: { "cf_#{label}": choices.last[:value] })
+    assert_equal 1, CentralPublishWorker::CompanyWorker.jobs.size
+    payload = company.central_publish_payload.to_json
+    payload.must_match_json_expression(company_payload_pattern(company))
+  ensure
+    Company.any_instance.unstub(:fetch_choice_id)
+  end
+
   def test_central_publish_company_destroy
     company = create_company
     pattern_to_match = company_destroy_pattern(company)
