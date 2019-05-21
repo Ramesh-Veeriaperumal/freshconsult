@@ -193,6 +193,8 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
     alias :card_updated :card_added
 
     def card_deleted(content)
+      return unless @billing_data && @billing_data.card.present?
+
       @account.subscription.clear_billing_info
       @account.subscription.save
       auto_collection_off_trigger
