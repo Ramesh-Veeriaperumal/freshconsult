@@ -67,3 +67,5 @@ UnsupportedFeaturesList = YAML.load_file(Rails.root.join('config', 'features', '
 ProactiveServiceConfig = YAML.load_file(Rails.root.join('config', 'proactive_service.yml'))[Rails.env]
 
 FrenoConfig = YAML.load_file(File.join(Rails.root, 'config', 'freno.yml'))[Rails.env]
+
+FreddySkillsConfig = YAML.load_file(Rails.root.join('config', 'freddy_skills_config.yml'))[Rails.env].with_indifferent_access

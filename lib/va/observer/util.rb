@@ -11,7 +11,7 @@ module Va::Observer::Util
     end
   end
 
-  def trigger_observer model_changes, inline = false, system_event = false
+  def trigger_observer(model_changes, inline = false, system_event = false)
     @model_changes = model_changes.symbolize_keys unless model_changes.nil?
     @system_event = system_event
     if user_present?
@@ -29,7 +29,7 @@ module Va::Observer::Util
       return observer_condition
     end
 
-    def filter_observer_events(queue_events=true, inline=false)
+    def filter_observer_events(queue_events = true, inline = false)
       observer_changes = filter_observer_changes
       Va::Logger::Automation.log "Triggered object=#{self.class}, id=#{self.id}"
       Va::Logger::Automation.log("model_changes=#{@model_changes.inspect}, observer_changes_blank=#{observer_changes.blank?}, skip_observer=not_queue_events=#{!queue_events}") if observer_changes.blank? || !queue_events
@@ -61,15 +61,17 @@ module Va::Observer::Util
       observer_changes
     end
 
-    def send_events observer_changes, inline = false
+    def send_events(observer_changes, inline = false)
       observer_changes.merge! ticket_event observer_changes
       doer = User.current
       doer_id = (self.class == Helpdesk::Ticket) ? doer.id : self.safe_send(FETCH_DOER_ID[self.class.name])
+      note_id = self.id if self.class == Helpdesk::Note
       args = {
         :doer_id => doer_id,
         :ticket_id => fetch_ticket_id,
         :current_events => observer_changes,
-        :enqueued_class => self.class.name
+        :enqueued_class => self.class.name,
+        note_id: note_id
       }
 
       if self.class == Helpdesk::Ticket
