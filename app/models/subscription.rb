@@ -509,6 +509,7 @@ class Subscription < ActiveRecord::Base
   def reset_field_agent_limit
     return if self.additional_info.try(:[], :field_agent_limit).nil?
     self.additional_info = self.additional_info.except(:field_agent_limit)
+    Rails.logger.info "Resetting field agent limit:: Account:: #{self.account_id}"
     save
   end
 

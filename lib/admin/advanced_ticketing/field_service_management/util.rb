@@ -5,6 +5,13 @@ module Admin::AdvancedTicketing::FieldServiceManagement
     include Cache::Memcache::Helpdesk::Section
     include GroupConstants
 
+    def notify_fsm_dev(subject, message)
+      message = {} unless message
+      message[:environment] = Rails.env
+      topic = SNS['field_service_management']
+      DevNotification.publish(topic, subject, message.to_json) unless Rails.env.development? || Rails.env.test?
+    end
+
     private
 
       def perform_fsm_operations
