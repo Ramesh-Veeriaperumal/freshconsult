@@ -64,7 +64,7 @@ module Admin::AutomationConstants
 
   FIELD_WITH_IDS = %i[priority status group_id responder_id language product_id customer_feedback
                       source add_watcher trigger_webhook request_type add_note internal_agent_id
-                      internal_group_id].freeze
+                      internal_group_id freddy_suggestion].freeze
 
   RESPONDER_ID = 'responder_id'.freeze
 
@@ -168,6 +168,8 @@ module Admin::AutomationConstants
 
   OBSERVER_CONDITION_TICKET_FIELDS = %i[updated_at last_interaction subject_or_description internal_agent_id
                                         internal_group_id tag_ids tag_names].freeze
+
+  OBSERVER_CONDITION_FREDDY_FIELD = %i[freddy_suggestion].freeze
 
   DISPATCHER_CONDITION_TICKET_FIELDS = %i[created_at ticket_cc subject_or_description internal_agent_id
                                           internal_group_id tag_ids ticlet_cc tag_names].freeze
@@ -286,10 +288,10 @@ module Admin::AutomationConstants
 
   PERFORMER_REQUEST_PRAMS = %i[type members].freeze
 
-  DEFAULT_FIELDS_DELEGATORS = (%i[priority ticket_type add_watcher status source product_id responder_id group_id
-                                  add_tag created_at updated_at note_type ticket_action time_sheet_action
-                                  customer_feedback ticket_cc ticlet_cc tag_names tag_ids internal_agent_id
-                                  add_note internal_group_id] + SEND_EMAIL_ACTION_FIELDS).freeze
+  DEFAULT_FIELDS_DELEGATORS = ((%i[priority ticket_type add_watcher status source product_id responder_id group_id
+                                   add_tag created_at updated_at note_type ticket_action time_sheet_action
+                                   customer_feedback ticket_cc ticlet_cc tag_names tag_ids internal_agent_id
+                                   add_note internal_group_id freddy_suggestion]) + SEND_EMAIL_ACTION_FIELDS).freeze
 
   DELEGATOR_IGNORE_FIELDS = (%i[subject subject_or_description reply_sent trigger_webhook from_email to_email
                                 mail_del_failed_requester mail_del_failed_others add_a_cc add_comment delete_ticket
@@ -308,7 +310,7 @@ module Admin::AutomationConstants
   SUMMARY_DEFAULT_FIELDS = (DEFAULT_CONDITION_TICKET_FIELDS + OBSERVER_CONDITION_TICKET_FIELDS + DISPATCHER_CONDITION_TICKET_FIELDS +
                             SUPERVISOR_CONDITION_TICKET_FIELDS + TICKET_STATE_FILTERS + PERMITTED_PARAMS + DEFAULT_ACTION_TICKET_FIELDS +
                             DEFAULT_FIELDS + DEFAULT_EVENT_TICKET_FIELDS + CONDITION_CONTACT_FIELDS + CONDITION_COMPANY_FIELDS +
-                            SYSTEM_EVENT_FIELDS + VA_ATTRS + TIME_BASED_FILTERS + SEND_EMAIL_ACTION_FIELDS + TAM_COMPANY_FIELDS).uniq.freeze
+                            SYSTEM_EVENT_FIELDS + VA_ATTRS + TIME_BASED_FILTERS + SEND_EMAIL_ACTION_FIELDS + TAM_COMPANY_FIELDS + OBSERVER_CONDITION_FREDDY_FIELD).uniq.freeze
 
   INVALID_SUPERVISOR_CONDITION_CF = %i[text paragraph].freeze
 
@@ -324,6 +326,8 @@ module Admin::AutomationConstants
   }.freeze
 
   BUSINESS_HOURS_FIELDS = %i[created_at updated_at].freeze
+
+  FREDDY_ACCEPTED_VALUES = %w[thank_you_note].freeze
 
   CASE_SENSITIVE_FIELDS = %i[text paragraph].freeze
 

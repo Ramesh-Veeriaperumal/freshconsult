@@ -323,6 +323,10 @@ module Admin::Automation::AutomationSummary
       Account.current.tags.where(id: tag_ids).select("name").map(&:name).join(', ')
     end
 
+    def freddy_suggestion
+      { 'thank_you_note' => I18n.t('admin.automation_summary.thank_you_note') }
+    end
+
     alias_method :internal_agent_id, :responder_id
     alias_method :internal_group_id, :group_id
 end

@@ -15,6 +15,7 @@ module Tickets
         Va::Logger::Automation.set_thread_variables(account.id, ticket_id, doer_id)
 
         evaluate_on = account.tickets.find_by_id ticket_id
+        evaluate_on.thank_you_note_id = args[:note_id]
         evaluate_on.attributes = args[:attributes]
         doer = account.users.find_by_id doer_id unless system_event
         Va::Logger::Automation.log("system_event=#{system_event}, user_nil=#{doer.nil?}") if (system_event || doer.nil?)
@@ -26,17 +27,21 @@ module Tickets
           observer_rules = account.observer_rules_from_cache
           rule_ids_with_exec_count = {}
           observer_rules.each do |vr|
-            Va::Logger::Automation.set_rule_id(vr.id)
-            ticket = nil
-            time = Benchmark.realtime {
-              ticket = account.automation_revamp_enabled? ? 
-                        vr.check_rule_events(doer, evaluate_on, current_events) : 
-                        vr.check_events(doer, evaluate_on, current_events)
-            }
-            rule_ids_with_exec_count[vr.id] = 1 if ticket.present?
-            Va::Logger::Automation.log_execution_and_time(time, (ticket.present? ? 1 : 0), rule_type)
-            aggregated_response_time += vr.response_time[:matches] || 0
-          end
+            begin
+              Va::Logger::Automation.set_rule_id(vr.id)
+              ticket = nil
+              time = Benchmark.realtime {
+                ticket = account.automation_revamp_enabled? ? 
+                          vr.check_rule_events(doer, evaluate_on, current_events) : 
+                          vr.check_events(doer, evaluate_on, current_events)
+              }
+              rule_ids_with_exec_count[vr.id] = 1 if ticket.present?
+              Va::Logger::Automation.log_execution_and_time(time, (ticket.present? ? 1 : 0), rule_type)
+              aggregated_response_time += vr.response_time[:matches] || 0
+            ensure
+              Thread.current[:thank_you_note] = nil
+            end
+          end          
           update_ticket_execute_count(rule_ids_with_exec_count) if rule_ids_with_exec_count.present?
           end_time = Time.now.utc
           total_time = end_time - start_time

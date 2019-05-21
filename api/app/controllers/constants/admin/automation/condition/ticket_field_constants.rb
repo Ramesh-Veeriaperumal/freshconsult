@@ -70,7 +70,9 @@ module Admin::Automation::Condition::TicketFieldConstants
     { name: :company_name, field_type: :text, data_type: :String,
       invalid_rule_types: [1, 4] }.freeze,
     { name: :contact_name, field_type: :old_text, data_type: :String,
-      invalid_rule_types: [1, 4] }.freeze
+      invalid_rule_types: [1, 4] }.freeze,
+    { name: :freddy_suggestion, field_type: :freddy_field_type, data_type: :String,
+      invalid_rule_types: [1, 3] }.freeze
   ].freeze
 
   CUSTOM_FIELD_CONDITION_HASH = {

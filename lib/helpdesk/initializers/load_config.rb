@@ -71,3 +71,5 @@ ProactiveServiceConfig = YAML.load_file(Rails.root.join('config', 'proactive_ser
 GrowthScoreConfig = YAML.load_file(File.join(Rails.root, 'config', 'growthscore_app.yml'))[Rails.env]
 
 FrenoConfig = YAML.load_file(File.join(Rails.root, 'config', 'freno.yml'))[Rails.env]
+
+FreddySkillsConfig = YAML.load_file(Rails.root.join('config', 'freddy_skills_config.yml'))[Rails.env].with_indifferent_access

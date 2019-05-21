@@ -31,7 +31,8 @@ module Tickets
       :checked,
       :unchecked,
       :internal_agent_id,
-      :internal_group_id
+      :internal_group_id,
+      :thank_you_note
     ].freeze
 
     ARRAY_CONTENT_TYPES = [
@@ -277,6 +278,12 @@ module Tickets
         {
           status: value[0].to_i,
           status_label: @query_data_hash[:status_name][value[0].to_i] || value[1]
+        }
+      end
+
+      def thank_you_note(value)
+        {
+          thank_you_note: value[0]
         }
       end
 

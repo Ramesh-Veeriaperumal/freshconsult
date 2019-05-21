@@ -2,9 +2,9 @@ class Helpdesk::Note < ActiveRecord::Base
 
   # rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['helpdesk_notes'] }, :if => lambda{|obj| obj.rl_enabled? }
 
-  # Any changes related to note or reply made in this file should be replicated in 
+  # Any changes related to note or reply made in this file should be replicated in
   # send_and_set_helper if required
-  before_create :update_parent_sender_email, :if => :email? 
+  before_create :update_parent_sender_email, :if => :email?
   before_create :validate_schema_less_note, :update_observer_events
   before_create :create_broadcast_message, :if => :broadcast_note?
   before_save :load_schema_less_note, :update_category, :load_note_body, :ticket_cc_email_backup
@@ -13,6 +13,7 @@ class Helpdesk::Note < ActiveRecord::Base
   before_destroy :save_deleted_note_info
 
   after_create :update_content_ids, :update_parent, :add_activity
+  after_commit :trigger_detect_thank_you_note_worker, on: :create, if: :detect_thank_you_note?
   after_commit :fire_create_event, on: :create
   # Doing update note count before pushing to ticket_states queue
   # So that note count will be reflected if the rmq publish happens via ticket states queue
@@ -84,7 +85,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
   end
 
-  def update_sentiment 
+  def update_sentiment
     if Account.current.customer_sentiment_enabled?
       if User.current.nil? || User.current.language.nil? || User.current.language = "en"
         is_agent_performed = notable.agent_performed?(self.user)
@@ -129,13 +130,13 @@ class Helpdesk::Note < ActiveRecord::Base
     def update_content_ids
       header = self.header_info
       return if inline_attachments.empty? or header.nil? or header[:content_ids].blank?
-      
-      inline_attachments.each_with_index do |attach, index| 
+
+      inline_attachments.each_with_index do |attach, index|
         content_id = header[:content_ids][attach.content_file_name+"#{index}"]
         self.note_body.body_html = self.note_body.body_html.sub("cid:#{content_id}", attach.inline_url) if content_id
         self.note_body.full_text_html = self.note_body.full_text_html.sub("cid:#{content_id}", attach.inline_url) if content_id
       end
-      
+
       # note_body.update_attribute(:body_html,self.note_body.body_html)
       # For rails 2.3.8 this was the only i found with which we can update an attribute without triggering any after or before callbacks
       #Helpdesk::Note.update_all("note_body.body_html= #{ActiveRecord::Base.connection.quote(body_html)}", ["id=? and account_id=?", id, account_id]) if body_html_changed?
@@ -146,7 +147,7 @@ class Helpdesk::Note < ActiveRecord::Base
       requester_emails = notable.requester.emails
       if requester_emails.length == 1 && !requester_emails.include?(notable.sender_email)
         notable.sender_email = notable.requester.email
-      end 
+      end
     end
 
 
@@ -177,7 +178,7 @@ class Helpdesk::Note < ActiveRecord::Base
           Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT, notable, self)
         end
 
-        if inbound_email? && !self.private? && notable.included_in_cc?(user.email)          
+        if inbound_email? && !self.private? && notable.included_in_cc?(user.email)
           additional_emails = [notable.requester.email] if !notable.included_in_cc?(notable.requester.email)
           # Using cc notification to send notification to requester about new comment by cc
           Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {:additional_emails => additional_emails,
@@ -238,7 +239,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def notifying_agents
-      if (note? || automated_note_for_ticket?) && !self.to_emails.blank? && !incoming 
+      if (note? || automated_note_for_ticket?) && !self.to_emails.blank? && !incoming
         if reply_to_forward?
           Helpdesk::TicketNotifier.send_later(:deliver_reply_to_forward, notable, self)
         else
@@ -286,7 +287,7 @@ class Helpdesk::Note < ActiveRecord::Base
       return schema_less_note.category = CATEGORIES[:customer_feedback] if self.feedback?
 
       if notable.customer_performed?(user)
-        schema_less_note.category = case 
+        schema_less_note.category = case
         when replied_by_third_party?
           CATEGORIES[:third_party_response]
         when private? && notable.agent_as_requester?(user.id)
@@ -350,8 +351,8 @@ class Helpdesk::Note < ActiveRecord::Base
     def ticket_cc_email_backup
       @prev_cc_email = notable.cc_email.dup unless notable.cc_email.nil?
     end
-    
-    # VA - Observer Rule 
+
+    # VA - Observer Rule
     def update_observer_events
       return if user.nil? || !human_note_for_ticket? || feedback? ||
                !(notable.instance_of? Helpdesk::Ticket) || broadcast_note? ||
@@ -382,11 +383,11 @@ class Helpdesk::Note < ActiveRecord::Base
       # Should not trigger the reply sent observer rule - when the forward/reply to forward is made
       ( !note? && !fwd_email? && !reply_to_forward? )
     end
- 
+
     def api_webhook_note_check
       (notable.instance_of? Helpdesk::Ticket) && !meta? && allow_api_webhook? && !notable.spam_or_deleted?
     end
-    
+
     ##### ****** Methods related to reports starts here ******* #####
     def update_note_count_for_reports
       return if notable.blank? || notable.frozen? # Added frozen check because when ticket is destoyed, note gets destroyed and notable will be frozen. So cant modify schema_less_ticket.
@@ -403,7 +404,7 @@ class Helpdesk::Note < ActiveRecord::Base
         notable.schema_less_ticket.save
       end
     end
-    
+
     # This can be put in a separate module and can be included wherever needed.
     # This remains common for all active record transactions
     def model_transaction_action
@@ -413,9 +414,9 @@ class Helpdesk::Note < ActiveRecord::Base
         action = "update"
       elsif self.safe_send(:transaction_include_action?, :destroy)
         action = "destroy"
-      end 
+      end
     end
-    
+
     def reports_note_category
       case schema_less_note.category
       when CATEGORIES[:customer_response]
@@ -429,12 +430,12 @@ class Helpdesk::Note < ActiveRecord::Base
         Rails.logger.debug "Undefined note category #{schema_less_note.category}"
       end
     end
-    
+
     def report_note_metrics?
       human_note_for_ticket? && !feedback? && !summary_note?
     end
     ######## ****** Methods related to reports ends here ******** #####
-    
+
 
     # preventing deletion from elastic search
     def deleted_archive_note
@@ -446,7 +447,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
     def format_cc_emails_hash
       {   :cc_emails => fetch_valid_emails(schema_less_note.cc_emails_hash[:cc_emails]),
-          :dropped_cc_emails => fetch_valid_emails(schema_less_note.cc_emails_hash[:dropped_cc_emails]) 
+          :dropped_cc_emails => fetch_valid_emails(schema_less_note.cc_emails_hash[:dropped_cc_emails])
         }
     end
 
@@ -475,11 +476,11 @@ class Helpdesk::Note < ActiveRecord::Base
     def google_calendar_enabled?
       self.account.installed_applications.with_name("google_calendar").present?
     end
-    
+
     # Trigger background job for NER API on creation of incoming notes
 
     def enqueue_for_NER
-      NERWorker.perform_async({:obj_id => self.id, :obj_type => :notes, 
+      NERWorker.perform_async({:obj_id => self.id, :obj_type => :notes,
         :text => self.body, :html => self.body_html}) if ((self.user.language == 'en') && account.launched?(:ner))
     end
 
@@ -488,5 +489,12 @@ class Helpdesk::Note < ActiveRecord::Base
       Helpdesk::TicketNotifier.send_later(:deliver_forward, notable, self) unless only_kbase?
       create_fwd_note_activity(self.to_emails) if create_activity
     end
-end
 
+    def detect_thank_you_note?
+      account.detect_thank_you_note_enabled? && !meta? && !summary_note? && !feedback? && !automated_note_for_ticket? && !automation_fwd_email?
+    end
+
+    def trigger_detect_thank_you_note_worker
+      ::Freddy::DetectThankYouNoteWorker.perform_async(ticket_id: notable.id, note_id: id)
+    end
+end

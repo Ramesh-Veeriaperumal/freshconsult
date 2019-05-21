@@ -191,6 +191,7 @@
     - anonymous_account_cleanup
     - freshid_retry_worker
   :external:
+    - thank_you_note
     - code_console_execution
     - integrations
     - api_webhook_rule

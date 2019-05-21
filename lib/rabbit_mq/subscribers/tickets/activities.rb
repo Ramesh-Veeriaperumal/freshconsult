@@ -11,7 +11,7 @@ module RabbitMq::Subscribers::Tickets::Activities
                                  :association_type, :internal_group_id, :internal_agent_id, :sl_skill_id]
   PROPERTIES_TO_CONVERT       = [:group_id, :product_id, :status, :association_type, :internal_group_id, :sl_skill_id]
   PROPERTIES_AS_ARRAY         = [:add_tag, :add_watcher, :rule, :add_a_cc, :add_comment, :email_to_requester,
-                                 :email_to_group, :email_to_agent, :association_type]
+                                 :email_to_group, :email_to_agent, :association_type, :thank_you_note]
   PROPERTIES_RENAME_MAP       = {}
   SHARED_OWNERSHIP_PROPERTIES = [:internal_group_id, :internal_agent_id]
 

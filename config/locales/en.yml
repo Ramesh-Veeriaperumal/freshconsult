@@ -2893,6 +2893,8 @@ en:
       updated_at: 'Updated At'
       none: 'NONE'
       assigned_agent: "Assigned Agent"
+      freddy_suggestion: "Freddy Suggestion"
+      thank_you_note: "Thank you Note"
   ends_with: Ends with
   last_name: Last Name
   forum:

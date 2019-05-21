@@ -74,6 +74,8 @@ fields:
         custom_phone_number: text
         custom_url: text
 
+        freddy_suggestion: freddy_type
+
     event:
         default: default
         priority: update

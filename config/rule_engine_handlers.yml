@@ -2,3 +2,5 @@ va_handlers:
     rule:
         checkbox: RuleEngine::Handlers::Rules::BooleanWithDefaultValue
         missing_field: RuleEngine::Handlers::Rules::MissingField
+        freddy_type: RuleEngine::Handlers::Rules::FreddyType
+        

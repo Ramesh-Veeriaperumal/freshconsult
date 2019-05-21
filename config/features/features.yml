@@ -326,7 +326,7 @@
       :reports_99: 321
       :reports_100: 322
       :freshreports_analytics: 323
-      :disable_old_reports: 324
+      :disable_old_reports: 324      
       :article_filters: 325
       :adv_article_bulk_actions: 326
       :auto_article_order: 327
@@ -360,6 +360,16 @@
       :solutions_28: 355
       :solutions_29: 356
       :solutions_30: 357
+      :detect_thank_you_note_eligible: 358
+      :detect_thank_you_note: 359
+      :freddy_3: 360
+      :freddy_4: 361
+      :freddy_5: 362
+      :freddy_6: 363
+      :freddy_7: 364
+      :freddy_8: 365
+      :freddy_9: 366
+      :freddy_10: 367
 :selectable_features:
   :redis_display_id: true
   :branding: true

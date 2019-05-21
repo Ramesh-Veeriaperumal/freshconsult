@@ -274,6 +274,9 @@ api_error_messages:
   expecting_value_for_event_field: "Expecting these field '%{value}' present for request parameter '%{name}'"
   condition_set_operator_error: "Operator should be given only if there are multiple conditions_set"
 
+  expecting_detect_thank_you_note_feature: "Detect Thank you note must be enabled to save this condition"
+  expecting_note_or_reply_event: "Thank you note in condition can only be used for 'add private note/reply sent' events performed by customer"
+
   invalid_position: "Position should be greater than 0 and less than %{max_position}"
   invalid_field_type: "Invalid data type"
   invalid_nested_field: "There is no field/value matching the given %{field_name}"

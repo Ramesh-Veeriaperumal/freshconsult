@@ -260,7 +260,8 @@ module Admin::AutomationDelegatorHelper
         time_sheet_action: TIME_SHEET_ACTION,
         customer_feedback: CustomSurvey::Survey::CUSTOMER_RATINGS_FACE_VALUE,
         language: LANGUAGE_CODES,
-        time_zone: ContactConstants::TIMEZONES
+        time_zone: ContactConstants::TIMEZONES,
+        freddy_suggestion: FREDDY_ACCEPTED_VALUES
     }
     @default_fields.merge!(tam_fields) if current_account.tam_default_fields_enabled?
     @default_fields

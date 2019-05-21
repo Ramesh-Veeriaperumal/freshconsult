@@ -1,0 +1,17 @@
+defaults: &defaults
+  detect_thank_you_note:
+    url: dummy
+    timeout: 2 
+    confidence_threshold: 80  
+  
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults

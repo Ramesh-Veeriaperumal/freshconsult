@@ -14,9 +14,11 @@ module Admin::AutomationRules::Conditions
     validate :multi_timezone_enabled?, if: -> { time_zone.present? }
     validate :errors_for_invalid_attributes, if: -> { invalid_attributes.present? }
 
-    def initialize(request_params, custom_fields, set, rule_type)
+    def initialize(request_params, custom_fields, set, rule_type, additional_options = {})
       @type_name = :"conditions[:condition_set_#{set}][:contact]"
       @validator_type = :condition
+      @events = additional_options[:events]
+      @performer = additional_options[:performer]
       super(initialize_params(request_params, DEFAULT_ATTRIBUTES, custom_fields, rule_type), nil, false)
     end
 
