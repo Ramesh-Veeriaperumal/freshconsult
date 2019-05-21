@@ -255,6 +255,7 @@ class Billing::BillingController < ApplicationController
       
       plan = subscription_plan(billing_subscription.plan_id)
       subscription.addons = subscription.applicable_addons(addons, plan)
+      update_field_agent_limit(subscription, billing_subscription)
       subscription.save #to update amount in subscription
     end
 
