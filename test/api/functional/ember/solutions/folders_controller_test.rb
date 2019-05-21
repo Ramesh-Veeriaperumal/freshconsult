@@ -23,6 +23,7 @@ module Ember
         additional.supported_languages = ['es', 'ru-RU']
         additional.save
         @account.features.enable_multilingual.create
+        @account.add_feature(:auto_article_order)
         @@initial_setup_run = true
       end
 
@@ -54,6 +55,24 @@ module Ember
       def test_create_folder
         category_meta = get_category
         post :create, construct_params({ id: category_meta.id, version: 'private' }, name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 1)
+        assert_response 201
+        result = parse_response(@response.body)
+        match_json(solution_folder_pattern_private(Solution::Folder.last))
+      end
+
+      def test_create_folder_with_article_order_without_feature
+        Account.any_instance.stubs(:auto_article_order_enabled?).returns(false)
+        category_meta = get_category
+        post :create, construct_params({ id: category_meta.id, version: 'private' }, name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], article_order: Solution::Constants::ARTICLE_ORDER_KEYS_TOKEN[:custom])
+        assert_response 400
+        match_json([bad_request_error_pattern(:article_order, :require_feature_for_attribute, code: :inaccessible_field, feature: :auto_article_order, attribute: :article_order)])
+      ensure
+        Account.any_instance.unstub(:auto_article_order_enabled?)
+      end
+
+      def test_create_folder_with_article_order_with_feature
+        category_meta = get_category
+        post :create, construct_params({ id: category_meta.id, version: 'private' }, name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], article_order: Solution::Constants::ARTICLE_ORDER_KEYS_TOKEN[:custom])
         assert_response 201
         result = parse_response(@response.body)
         match_json(solution_folder_pattern_private(Solution::Folder.last))

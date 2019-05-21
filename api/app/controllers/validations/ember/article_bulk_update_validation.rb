@@ -15,7 +15,17 @@ class ArticleBulkUpdateValidation < ApiValidation
   end
 
   def validate_properties
-    errors[:properties] << :select_a_field if properties.blank?
+    if properties.blank?
+      errors[:properties] << :select_a_field
+    elsif !Account.current.adv_article_bulk_actions_enabled?
+      advanced_article_bulk_action_error(:agent_id) if properties[:agent_id]
+      advanced_article_bulk_action_error(:tags) if properties[:tags]
+    end
     errors.blank?
+  end
+
+  def advanced_article_bulk_action_error(field)
+    errors[:"properties[:#{field}]"] << :require_feature
+    error_options[:"properties[:#{field}]"] = { feature: :adv_article_bulk_actions, code: :access_denied }
   end
 end

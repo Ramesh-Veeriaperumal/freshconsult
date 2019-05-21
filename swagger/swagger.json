@@ -11562,6 +11562,117 @@
         }
       }
     },
+    "/solutions/categories/{id}/reorder": {
+      "put": {
+        "tags": [
+          "Solution Category"
+        ],
+        "summary": "Reorder a category",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/solutions_reorder"
+            }
+          },
+          {
+            "name": "portal_id",
+            "in": "query",
+            "type": "integer",
+            "description": "Portal ID in which the order has to be changed"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/solutions/folders/{id}/reorder": {
+      "put": {
+        "tags": [
+          "Solution Folder"
+        ],
+        "summary": "Reorder a folder",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "position",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/solutions_reorder"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/solutions/articles/{id}/reorder": {
+      "put": {
+        "tags": [
+          "Solution article"
+        ],
+        "summary": "Reorder a article",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "position",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/solutions_reorder"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/configs/{id}": {
       "get": {
         "tags": [
@@ -22484,6 +22595,15 @@
         "user_id": {
           "type": "integer",
           "description": "Previous author of the draft before autosave started. This param can be skipped in case of same author."
+        }
+      }
+    },
+    "solutions_reorder": {
+      "type": "object",
+      "properties": {
+        "position": {
+          "type": "integer",
+          "description": "New position of the item"
         }
       }
     },

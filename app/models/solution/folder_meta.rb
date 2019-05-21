@@ -176,6 +176,10 @@ class Solution::FolderMeta < ActiveRecord::Base
 	    end
 	end
 
+  def article_order
+    Account.current.auto_article_order_enabled? ? self[:article_order] : Solution::Constants::ARTICLE_ORDER_KEYS_TOKEN[:custom]
+  end
+
 	private
 
 	def clear_cache

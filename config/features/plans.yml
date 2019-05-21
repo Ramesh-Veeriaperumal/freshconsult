@@ -198,6 +198,8 @@
       - :analytics_widget_delete
       - :analytics_helpdesk_in_depth_report
       - :reverse_notes
+      - :article_filters
+      - :auto_article_order
     :inherits:
       - :sprout_jan_19
     :exclude: []
@@ -240,6 +242,7 @@
       - :analytics_timesheet_resource
       - :analytics_tags_resource
       - :proactive_outreach
+      - :adv_article_bulk_actions
     :inherits:
       - :blossom_jan_19
     :exclude: []

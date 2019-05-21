@@ -44,7 +44,7 @@ module Ember
         populate_categories(@account.main_portal)
         portal_solution_categories = @account.main_portal.portal_solution_categories.joins(:solution_category_meta).where('solution_category_meta.is_default' => false)
         put :reorder, construct_params(version: 'private', id: portal_solution_categories.first.solution_category_meta_id, portal_id: @account.main_portal.id)
-        match_json(validation_error_pattern(:position, :missing_field))
+        match_json(validation_error_pattern(bad_request_error_pattern(:position, 'It should be a/an Positive Integer', code: :missing_field)))
       end
 
       def test_reorder_without_portal_id
@@ -52,7 +52,7 @@ module Ember
         portal_solution_categories = @account.main_portal.portal_solution_categories.joins(:solution_category_meta).where('solution_category_meta.is_default' => false)
         put :reorder, construct_params({ version: 'private', id: portal_solution_categories.first.solution_category_meta_id }, position: 1)
         assert_response 400
-        match_json(validation_error_pattern(:portal_id, :invalid_value))
+        match_json(validation_error_pattern(bad_request_error_pattern(:portal_id, :invalid_portal_id, code: :invalid_value)))
       end
 
       def test_reorder

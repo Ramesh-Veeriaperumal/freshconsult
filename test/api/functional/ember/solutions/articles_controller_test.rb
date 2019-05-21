@@ -39,6 +39,10 @@ module Ember
         subscription = @account.subscription
         subscription.state = 'active'
         subscription.save
+
+        @account.add_feature(:article_filters)
+        @account.add_feature(:adv_article_bulk_actions)
+
         @account.reload
         setup_articles
         @@initial_setup_run = true
@@ -801,6 +805,17 @@ module Ember
         User.any_instance.unstub(:privilege?)
       end
 
+      def test_bulk_update_tags_without_feature
+        Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(false)
+        article = @account.solution_articles.where(language_id: 6).last
+        tags = [Faker::Name.name, Faker::Name.name]
+        put :bulk_update, construct_params({ version: 'private' }, ids: [article.parent_id], properties: { tags: tags })
+        assert_response 403
+        match_json(validation_error_pattern(bad_request_error_pattern('properties[:tags]', :require_feature, feature: :adv_article_bulk_actions, code: :access_denied)))
+      ensure
+        Account.any_instance.unstub(:adv_article_bulk_actions_enabled?)
+      end
+
       def test_bulk_update_tags
         article = @account.solution_articles.where(language_id: 6).last
         tags = [Faker::Name.name, Faker::Name.name]
@@ -831,6 +846,21 @@ module Ember
         assert ([tag.name] - article.reload.tags.map(&:name)).empty?
       ensure
         User.any_instance.unstub(:privilege?)
+      end
+
+      def test_bulk_update_author_without_feature
+        Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(false)
+        folder = @account.solution_folder_meta.where(is_default: false).first
+        populate_articles(folder)
+        articles = folder.solution_article_meta.pluck(:id)
+        agent_id = add_test_agent.id
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+        User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
+        put :bulk_update, construct_params({ version: 'private' }, ids: articles, properties: { agent_id: agent_id })
+        assert_response 403
+        match_json(validation_error_pattern(bad_request_error_pattern('properties[:agent_id]', :require_feature, feature: :adv_article_bulk_actions, code: :access_denied)))
+      ensure
+        Account.any_instance.unstub(:adv_article_bulk_actions_enabled?)
       end
 
       def test_bulk_update_author
@@ -924,7 +954,7 @@ module Ember
         articles = folder.solution_article_meta.pluck(:id)
         put :bulk_update, construct_params({ version: 'private' }, ids: articles)
         assert_response 400
-        match_json(validation_error_pattern(:properties, :missing_field))
+        match_json(validation_error_pattern(bad_request_error_pattern(:properties, :select_a_field, code: :missing_field)))
       end
 
       def test_bulk_update_articles_exception
@@ -1198,6 +1228,23 @@ module Ember
         get :votes, controller_params(version: 'private', id: article_meta.id, language: language)
         assert_response 200
         assert_equal votes_pattern(article.reload), response.body
+      end
+
+      def test_article_filters_without_feature
+        Account.any_instance.stubs(:article_filters_enabled?).returns(false)
+        get :filter, controller_params(version: 'private', portal_id: @portal_id, folder: 1)
+        assert_response 403
+        match_json(request_error_pattern(:require_feature, feature: :article_filters))
+      ensure
+        Account.any_instance.unstub(:article_filters_enabled?)
+      end
+
+      def test_article_filters_without_feature_with_default_filter_field
+        Account.any_instance.stubs(:article_filters_enabled?).returns(false)
+        get :filter, controller_params(version: 'private', portal_id: @portal_id)
+        assert_response 200
+      ensure
+        Account.any_instance.unstub(:article_filters_enabled?)
       end
 
       def test_article_filters_without_mandatory_fields
@@ -1477,8 +1524,8 @@ module Ember
         folder = @account.solution_folder_meta.where(is_default: false).first
         populate_articles(folder)
         put :reorder, construct_params(version: 'private', id: folder.solution_article_meta.first.id)
-        match_json(validation_error_pattern(:position, :missing_field))
         assert_response 400
+        match_json(validation_error_pattern(bad_request_error_pattern(:position, 'It should be a/an Positive Integer', code: :missing_field)))
       end
 
       def test_reorder

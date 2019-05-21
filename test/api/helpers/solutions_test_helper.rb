@@ -319,16 +319,10 @@ module SolutionsTestHelper
     }
   end
 
-  def validation_error_pattern(field, code)
+  def validation_error_pattern(value)
     {
       description: 'Validation failed',
-      errors: [
-        {
-          field: field.to_s,
-          message: :string,
-          code: code.to_s
-        }
-      ]
+      errors: [value]
     }
   end
 

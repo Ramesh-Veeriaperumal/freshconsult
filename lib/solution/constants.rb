@@ -54,6 +54,7 @@ module Solution::Constants
   ].freeze
 
   ARTICLE_ORDER_COLUMN_BY_TYPE = Hash[*ARTICLE_ORDER_TYPE.map { |i| [i[2], i[1]] }.flatten]
+  ARTICLE_ORDER_KEYS_TOKEN = Hash[*ARTICLE_ORDER_TYPE.map { |i| [i[0], i[2]] }.flatten]
 
   BOT_VISIBILITIES = [VISIBILITY_KEYS_BY_TOKEN[:anyone], VISIBILITY_KEYS_BY_TOKEN[:bot]].freeze
 
