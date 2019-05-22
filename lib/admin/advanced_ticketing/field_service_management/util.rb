@@ -134,6 +134,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       end
 
       def cleanup_fsm
+        remove_fsm_addon_and_reset_agent_limit
         destroy_custom_fields
         destroy_sections
         destroy_service_ticket_type
@@ -189,6 +190,15 @@ module Admin::AdvancedTicketing::FieldServiceManagement
 
       def fsm?
         params[:id] == FSM_FEATURE.to_s
+      end
+
+      def reset_field_agent_limit
+        Account.current.subscription.reset_field_agent_limit unless Account.current.field_service_management_enabled?
+      end
+
+      def remove_fsm_addon_and_reset_agent_limit
+        Account.current.subscription.remove_addon(Subscription::Addon::FSM_ADDON)
+        reset_field_agent_limit
       end
 
       def fsm_field_display_name(field_name)

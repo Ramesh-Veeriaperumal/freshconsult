@@ -52,6 +52,8 @@
     - surveys_central_publish
     - contact_field_central_publish
     - company_field_central_publish
+    - freshcaller_account_central_publish
+    - freshchat_account_central_publish
   :scheduled:
     - scheduled_reports
     - scheduled_reports_cleanup

@@ -162,6 +162,7 @@
       - :scenario_automation
       - :customize_table_view
       - :personal_canned_response
+      - :allow_auto_suggest_solutions
       - :omni_channel
       - :split_tickets
       - :collision
@@ -216,7 +217,6 @@
       - :canned_forms
       - :session_replay
       - :image_annotation
-      - :allow_auto_suggest_solutions
       - :custom_apps
       - :fa_developer
       - :forums

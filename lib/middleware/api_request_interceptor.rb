@@ -54,7 +54,7 @@ class Middleware::ApiRequestInterceptor
   end
 
   def respond_500(error, env)
-    notify_new_relic_agent(error, env['REQUEST_URI'], env['action_dispatch.request_id'], description: 'Error occurred while processing API', request_method: env['REQUEST_METHOD'], request_body: env['rack.input'].gets)
+    notify_new_relic_agent(error, env['REQUEST_URI'], env['action_dispatch.request_id'], description: 'Error occurred while processing API', request_method: env['REQUEST_METHOD'])
     Rails.logger.error("API StandardError ::  Host: #{@host}, #{error.message}\n#{error.backtrace.join("\n")}")
     message =  { code: INTERNAL_ERROR, message: ErrorConstants::ERROR_MESSAGES[:internal_error] }
     set_response(500, RESPONSE_HEADERS, message)

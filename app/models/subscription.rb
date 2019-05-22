@@ -64,6 +64,8 @@ class Subscription < ActiveRecord::Base
 
   DEFAULT_FIELD_AGENT_COUNT = 10
 
+  NO_PRORATION_PERIOD_CYCLES = [SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:monthly]].freeze
+
   concerned_with :presenter
 
   publishable on: [:update]
@@ -399,17 +401,10 @@ class Subscription < ActiveRecord::Base
   end
 
   def chk_change_field_agents
-    if field_agent_limit && field_agent_limit < field_agents_count
-      errors.add(:base, I18n.t('subscription.error.lesser_field_agents', agent_count: field_agents_count))
+    if field_agent_limit && field_agent_limit < account.field_agents_count
+      errors.add(:base, I18n.t('subscription.error.lesser_field_agents', agent_count: account.field_agents_count))
       Agent::FIELD_AGENT
     end
-  end
-
-  def field_agents_count
-    return @field_agents_count if @field_agents_count.present?
-    return @field_agents_count = 0 if AgentType.agent_type_id(Agent::FIELD_AGENT).blank?
-
-    @field_agents_count = account.agents.where(:agent_type => AgentType.agent_type_id(Agent::FIELD_AGENT)).count
   end
 
   def non_free_agents 
@@ -504,19 +499,38 @@ class Subscription < ActiveRecord::Base
     self.additional_info.try(:[], :field_agent_limit) || DEFAULT_FIELD_AGENT_COUNT
   end
 
-  def reset_field_agent_limit
-    return unless self.additional_info.try(:[], :field_agent_limit).present?
-    self.additional_info = self.additional_info.except(:field_agent_limit)
-    save
-  end
-
   def field_agents_display_count
-    count = field_agents_count
+    count = account.field_agents_count
     limit = field_agent_limit || 0
     return count > limit ? count : limit if count > 0 || limit > 0
     DEFAULT_FIELD_AGENT_COUNT
   end
   
+  def reset_field_agent_limit
+    return if self.additional_info.try(:[], :field_agent_limit).nil?
+    self.additional_info = self.additional_info.except(:field_agent_limit)
+    save
+  end
+
+  def remove_addon(addon_name)
+    attempt = 0
+    no_of_retries = 3
+    begin
+      if addons.any? { |addon| addon.name == addon_name }
+        new_addons = addons.reject { |addon| addon.name == addon_name }
+        Billing::Subscription.new.update_subscription(self, prorate_on_addons_removal?, new_addons)
+        self.addons = new_addons
+        save
+      end
+    rescue StandardError => e
+      attempt += 1
+      retry if attempt < no_of_retries
+      Rails.logger.error "Exception while removing addon:: #{addon_name} Account:: #{Account.current.id} #{e.message} \n #{e.body}"
+      NewRelic::Agent.notice_error(e, description: "Exception while removing addon:: #{addon_name}, Account:: #{Account.current.id}, Message: #{e.message}")
+      raise e
+    end
+  end
+
   protected
   
     def set_renewal_at
@@ -692,6 +706,10 @@ class Subscription < ActiveRecord::Base
       #BlockAccount.perform_in(Account::BLOCK_GRACE_PERIOD.from_now, {:account_id => self.account.id})
     end
 
+    def prorate_on_addons_removal?
+      NO_PRORATION_PERIOD_CYCLES.exclude?(self.renewal_period)
+    end
+
     def update_status_in_freshid
       account.update_account_details_in_freshid(true)
     end
@@ -703,5 +721,4 @@ class Subscription < ActiveRecord::Base
     def anonymous_account?
       account.anonymous_account?
     end
-
  end

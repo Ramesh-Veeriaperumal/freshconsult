@@ -29,10 +29,10 @@
       <% else %>
         <%= "#{t('agent.info2')} " %>
         <% if @existing_user.deleted %>
-          <% if current_account.reached_agent_limit? || @agent.occasional? %>
-            <%= link_to( t('contacts.info2'), {:controller => :contacts, :action => :make_occasional_agent, :id => @existing_user.id}, :method => :put, :confirm => t('contacts.convert_note'), 'data-domhelper-name' => 'convert-agent-occasional' )%>
-          <% else %>
+          <% if agents_available? || field_agents_available? %>
             <%= link_to( t('contacts.info2'), {:controller => :contacts, :action => :make_agent, :id => @existing_user.id}, :method => :put, :confirm => t('contacts.convert_note'), 'data-domhelper-name' => 'convert-agent-fulltime' )%>
+          <% else %>
+            <%= link_to( t('contacts.info2'), {:controller => :contacts, :action => :make_occasional_agent, :id => @existing_user.id}, :method => :put, :confirm => t('contacts.convert_note'), 'data-domhelper-name' => 'convert-agent-occasional' )%>
           <% end %>
         <% else %>
           <%= link_to(t('agent.view_user') , @existing_user ) %>
@@ -73,11 +73,11 @@
             <% end %>
             <% if current_account.field_service_management_enabled? %>
               <div class="radio inline <%= 'agent-type-button-disabled' if edit? && is_support_agent?(@agent) %>">
-                <%= radio_button 'agent', 'agent_type', 'field_agent', :checked => is_field_agent?(@agent), :disabled => full_time_disabled?(@agent) %>
-                <span class="<%= 'muted' if @agent.new_record? && !agents_available? %>">
+                <%= radio_button 'agent', 'agent_type', 'field_agent', :checked => is_field_agent?(@agent), :disabled => field_agent_disabled?(@agent) %>
+                <span class="<%= 'muted' if @agent.new_record? && !field_agents_available? %>">
                   <strong><%= t('agent.field_agent') %></strong><br />
-                  <% if !@current_account.subscription.trial? && (@agent.new_record? || @agent.occasional?) %>
-                    <%= agents_available? ? t('agent.available_seats', :count => available_agents ) : t('agent.no_seats') %>
+                  <% if !@current_account.subscription.trial? && @agent.new_record? %>
+                    <%= field_agents_available? ? t('agent.available_seats', :count => available_field_agents ) : t('agent.no_seats') %>
                   <% end %>
                   &nbsp;
                 </span>

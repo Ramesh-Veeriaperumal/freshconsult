@@ -65,4 +65,12 @@ module CentralPublishWorker
   class CompanyFieldWorker < CentralPublisher::Worker
     sidekiq_options queue: 'company_field_central_publish', retry: 5, dead: true, failures: :exhausted
   end
+
+  class FreshcallerAccountWorker < CentralPublisher::Worker
+    sidekiq_options queue: 'freshcaller_account_central_publish', retry: 5, dead: true, failures: :exhausted
+  end
+
+  class FreshchatAccountWorker < CentralPublisher::Worker
+    sidekiq_options queue: 'freshchat_account_central_publish', retry: 5, dead: true, failures: :exhausted
+  end
 end

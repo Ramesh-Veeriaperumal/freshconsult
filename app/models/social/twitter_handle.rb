@@ -1,5 +1,6 @@
 class Social::TwitterHandle < ActiveRecord::Base
-  publishable on: [:create, :update, :destroy]
+  publishable on: [:create, :destroy]
+  publishable on: :update, if: :changes_except_last_dm?
   self.table_name =  "social_twitter_handles"
   self.primary_key = :id
 
@@ -111,6 +112,11 @@ class Social::TwitterHandle < ActiveRecord::Base
       Rails.logger.error "Error while activating the stream :: #{stream.id} :: account id :: #{stream.account_id}"
       raise
     end
+  end
+  def changes_except_last_dm?
+    changes = self.previous_changes || {}
+    changes.except!('last_dm_id')
+    changes.present?
   end
 
 end

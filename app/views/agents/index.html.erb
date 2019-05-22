@@ -13,15 +13,15 @@
                   <% if @current_account.subscription.agent_limit.nil? %>
                     <%= t('agent.account_suspended') %>
                   <% else %>
-                      <% if agents_available? %> 
-                        <span class="agent-list-count bg-dark"><%=available_agents%></span>&nbsp;
+                      <% if agents_available? || field_agents_available?%>
+                        <span <%= agents_count_tooltip().html_safe %> ><%= available_agents + available_field_agents %></span>&nbsp;
                         <%= t('agent.available_seats_without_count') %>
                       <% else %>
                         <span class="agent-list-count bg-red"><%=available_agents%></span>&nbsp;
                         <%= t('agent.no_seats') %> 
-                        <% if privilege?(:manage_account) %>
-                          - <%= link_to t('agent.buy'), subscription_path, :class => "margin-right" %> 
-                        <% end %>
+                      <% end %>
+                      <% if show_buy_more_link %>
+                        - <%= link_to t('agent.buy'), subscription_path, :class => "margin-right" %> 
                       <% end %>
                   <% end %>
                 <% else %>
