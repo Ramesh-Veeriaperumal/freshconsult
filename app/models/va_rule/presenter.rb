@@ -13,6 +13,8 @@ class VaRule < ActiveRecord::Base
     v.add :filter_data
     v.add :condition_data
     v.add :filtered_action_data, as: :action_data
+    v.add :last_updated_by
+    v.add :outdated
     v.add :account_id
     v.add :rule_type
     v.add :active

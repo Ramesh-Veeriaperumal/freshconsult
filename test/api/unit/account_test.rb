@@ -319,7 +319,7 @@ class AccountTest < ActionView::TestCase
   end
 
   def test_agent_limit_reached?
-    Account.current.agent_limit_reached?(1)
+    Account.current.support_agent_limit_reached?(1)
     assert_equal response.status, 200
   end
 

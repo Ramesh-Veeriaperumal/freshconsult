@@ -9,6 +9,7 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     # Account.current.features.marketplace.destroy if mkt_place
     # Account.current.reload
     Integrations::InstalledApplication.any_instance.stubs(:marketplace_enabled?).returns(false)
+    delete_all_existing_applications
     APP_NAMES.each { |app_name| create_application(app_name) }
   end
 

@@ -29,6 +29,11 @@ class Time
           !business_calendar_config.holidays.any?{|h| h.strftime("%d %m") == day.to_date.strftime("%d %m") }
     end
 
+    def self.holiday?(day, business_calendar_config = nil)
+      business_calendar_config ||= BusinessCalendar.config
+      business_calendar_config.holidays.any?{|h| h.strftime("%d %m") == day.to_date.strftime("%d %m") }
+    end
+
     # True if this time falls on a weekday.
     def self.weekday?(day,business_calendar_config = nil)
       # TODO AS: Internationalize this!

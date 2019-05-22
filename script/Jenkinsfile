@@ -25,7 +25,7 @@ def send_email() {
 }
 
 //Encryption check
-def keycheck() {
+def encryption_check() {
 
    image = "792634465463.dkr.ecr.us-east-1.amazonaws.com/freshdesk/backend"
 
@@ -273,8 +273,9 @@ def distributed_run(category) {
      sh "mkdir -p /home/jenkins/workspace/$jobName/test/reports/"
       
     //Encryption check starts here
-    keycheck();
-     
+    if(jobName.contains("pullrequest")) {
+       encryption_check();
+    } 
     //Parallel Test starts here
     parallel Public: {
            distributed_run("public");

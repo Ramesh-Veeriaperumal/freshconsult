@@ -17,7 +17,7 @@ integration_test = [
   'test/api/integration/flows/sla_flow_test.rb'
 ]
 
-sidekiq_tests = Dir.glob('test/api/sidekiq/*_test.rb')
+sidekiq_tests = Dir.glob('test/api/sidekiq/*_test.rb') | Dir.glob('test/api/sidekiq/*/*_test.rb')
 shoryuken_tests = Dir.glob('test/api/shoryuken/*_test.rb')
 # Files to skip
 skip_files = [

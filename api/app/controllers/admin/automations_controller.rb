@@ -5,8 +5,10 @@ class Admin::AutomationsController < ApiApplicationController
   include Redis::AutomationRuleRedis
   include AutomationRuleHelper
   include Va::Constants
+  include Admin::Automation::CustomFieldHelper
 
   prepend_before_filter :check_for_allowed_rule_type
+  before_filter :check_privilege
 
   ROOT_KEY = :rule
   decorate_views(decorate_objects: [:index])
@@ -101,7 +103,10 @@ class Admin::AutomationsController < ApiApplicationController
       if params[cname].blank?
         render_errors([[:payload, :invalid_json]])
       else
-        automation_validation = automation_validation_class.new(params, nil, false)
+        cf_fields = { custom_ticket_event: custom_event_ticket_field, custom_ticket_action: custom_action_ticket_field,
+                      custom_ticket_condition: custom_condition_ticket_field, custom_contact_condition: custom_condition_contact,
+                      custom_company_condition: custom_condition_company }
+        automation_validation = automation_validation_class.new(params, cf_fields, nil, false)
         if automation_validation.invalid?(params[:action].to_sym)
           render_errors(automation_validation.errors, automation_validation.error_options)
         else
@@ -124,5 +129,22 @@ class Admin::AutomationsController < ApiApplicationController
 
     def launch_party_name
       FeatureConstants::AUTOMATION_REVAMP
+    end
+
+    def check_privilege
+      success = super
+      return unless success
+      case VAConfig::RULES_BY_ID[params[:rule_type].to_i]
+      when :dispatcher
+        render_request_error(:access_denied, 403) unless User.current.privilege?(:manage_dispatch_rules)
+      when :observer
+        render_request_error(:access_denied, 403) unless current_account.create_observer_enabled? &&
+            User.current.privilege?(:manage_dispatch_rules)
+      when :supervisor
+        render_request_error(:access_denied, 403) unless current_account.supervisor_enabled? &&
+            User.current.privilege?(:manage_supervisor_rules)
+      else
+        # For scenario_automation and rest
+      end
     end
 end

@@ -194,17 +194,17 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/central-publisher.git
-  revision: ad6686078fd57214a9440842f5d449f20f0efc3e
-  tag: v1.0.15
+  revision: fec8e3a41251f5062a21090afb4452060f6b5a47
+  tag: v1.0.18
   specs:
-    central-publisher (1.0.15)
-      active_record_shards (~> 3.2.0)
+    central-publisher (1.0.18)
+      active_record_shards (>= 3.2.0)
       faraday (= 0.9)
       faraday_middleware (~> 0.10.0)
       newrelic_rpm (~> 5.5.0)
       rails (~> 3.2.22.3)
       redis (= 3.3.1)
-      sidekiq (~> 3.5.4)
+      sidekiq (>= 3.5.4)
       uuidtools
 
 GIT
@@ -328,8 +328,8 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/rule_engine.git
-  revision: f35cddd774ec8f7db95398233d5e59f1b57f8002
-  tag: hv0.0.3
+  revision: 0d1c8a21ce06c7d3461ccc92ff6a8fec334c8423
+  tag: hv0.0.4
   specs:
     rule_engine (0.0.1)
 

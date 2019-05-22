@@ -38,6 +38,10 @@ module Concerns::ApplicationConcern
     Thread.current[:portal] = nil
   end
 
+  def unset_current_languge
+    Thread.current[:language] = nil
+  end
+
   def set_msg_id
     Thread.current[:message_uuid] = request.try(:uuid).to_a
   end

@@ -7,8 +7,9 @@ class ApiUserHelper
 
     def agent_limit_reached?(occasional = false)
       return false if occasional
+
       agent_limit = Account.current.subscription.agent_limit
-      [Account.current.agent_limit_reached?(agent_limit), agent_limit]
+      [Account.current.support_agent_limit_reached?(agent_limit), agent_limit]
     end
   end
 end

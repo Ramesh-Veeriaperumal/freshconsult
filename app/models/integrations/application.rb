@@ -1,7 +1,8 @@
-# encoding: utf-8
-class Integrations::Application < ActiveRecord::Base 
+class Integrations::Application < ActiveRecord::Base
   self.primary_key = :id
   include Integrations::Constants
+
+  attr_accessible :name, :display_name, :description, :listing_order, :options, :account_id, :application_type, :dip
 
   serialize :options, Hash
   has_one :custom_widget, 

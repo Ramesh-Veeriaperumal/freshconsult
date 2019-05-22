@@ -2,11 +2,17 @@ module AuditLog::Translators::AutomationRule
   def readable_rule_changes(model_changes)
     model_changes.keys.each do |attribute|
       case attribute
+      when :condition_data
+        if dispatcher_rule?
+          translate_condition_data(model_changes[attribute])
+        elsif observer_rule?
+          translate_observer_events(model_changes[attribute])
+        end
       when :filter_data
         if dispatcher_rule? || supervisor_rule?
           translate_filter_action(model_changes[attribute], :conditions)
         elsif observer_rule?
-          translate_observer_events(model_changes[attribute])
+          translate_observer_events(model_changes[attribute], true)
         end
       when :action_data
         translate_filter_action(model_changes[attribute], :actions)
@@ -20,7 +26,7 @@ module AuditLog::Translators::AutomationRule
     model_changes
   end
 
-  def translate_observer_events(model_changes)
+  def translate_observer_events(model_changes, is_filter = false)
     %i[events performer conditions].each do |key|
       case key
       when :events
@@ -36,8 +42,29 @@ module AuditLog::Translators::AutomationRule
           changes.delete :members
         end
       when :conditions
-        translate_filter_action([model_changes[0][key], model_changes[1][key]], :conditions)
+        is_filter ? translate_filter_action([model_changes[0][key], model_changes[1][key]], :conditions) :
+            translate_condition_data([model_changes[0][key], model_changes[1][key]])
       end
+    end
+  end
+
+  def translate_condition_data(changes)
+    # translate the condition array e.g. changes = [{"field_name": "status", "value": 2}]
+    was_single_set = changes[0].values.flatten.first.key?(:evaluate_on)
+    is_single_set = changes[1].values.flatten.first.key?(:evaluate_on)
+    case condition_set_case_mapping(is_single_set, was_single_set)
+    when :single_sets
+      translate_filter_action([changes[0].first[1], changes[1].first[1]], :conditions)
+    when :set_added
+      old = changes[0].first[1]
+      translate_filter_action([old, changes[1].first[1][0].first[1]], :conditions)
+      translate_filter_action([[], changes[1].first[1][1].first[1]], :conditions)
+    when :set_removed
+      translate_filter_action([changes[0].first[1][0].first[1], changes[1].first[1]], :conditions)
+      translate_filter_action([changes[0].first[1][1].first[1], []], :conditions)
+    else
+      translate_filter_action([changes[0].first[1][0].first[1], changes[1].first[1][0].first[1]],:conditions)
+      translate_filter_action([changes[0].first[1][1].first[1], changes[1].first[1][1].first[1]], :conditions)
     end
   end
 
@@ -110,10 +137,10 @@ module AuditLog::Translators::AutomationRule
       end
       next unless readable.present? && readable.length > 1
       if readable[1].is_a?(Hash)
-        action[key] = if action[key].is_a?(String)
-                        readable[1][action[key]]
+        action[key] = if action[key].is_a?(String) || action[key].is_a?(Integer)
+                        readable[1][action[key].to_s]
                       else
-                        action[key].map {|val| readable[1][val]}.join(', ')
+                        action[key].map {|val| readable[1][val.to_s]}.join(', ')
                       end
         next
       end
@@ -126,7 +153,7 @@ module AuditLog::Translators::AutomationRule
                          val << I18n.t('none') if (action[key].respond_to? :include?) && action[key].include?(I18n.t('none'))
                          val.join(', ')
                        else
-                         ''
+                         action[key].is_a?(Array) && action[key].include?(I18n.t('none')) ? [I18n.t('none')] : ''
                        end
       action[key] = readable_value
     end
@@ -232,6 +259,18 @@ module AuditLog::Translators::AutomationRule
     values = action.reject {|field| keys.include? field.to_sym}
     action.select! {|field| keys.include? field.to_sym}
     action.merge!(value: values)
+  end
+
+  def condition_set_case_mapping(is_single, was_single)
+    if is_single && was_single
+      :single_sets
+    elsif was_single && !is_single
+      :set_added
+    elsif !was_single && is_single
+      :set_removed
+    else
+      :double_sets
+    end
   end
 
   def set_rule_type(rule_type)

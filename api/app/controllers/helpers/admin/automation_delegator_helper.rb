@@ -73,37 +73,6 @@ module Admin::AutomationDelegatorHelper
     end
   end
 
-  def validate_nested_field_operator(actual)
-    level1 = actual
-    level2 = actual[:nested_fields].try(:[], :level2)
-    level3 = actual[:nested_fields].try(:[], :level3)
-    validate_each_operator(level1, nil)
-    return if ARRAY_VALUE_EXPECTING_OPERATOR.include?(level1[:operator].to_sym) || errors.messages.present?
-
-    validate_each_operator(level2, actual[:operator]) if level2.present?
-    return if level2.blank? || ARRAY_VALUE_EXPECTING_OPERATOR.include?(level2[:operator].to_sym) ||
-        errors.messages.present?
-
-    validate_each_operator(level3, level2[:operator]) if level3.present?
-  end
-
-  def validate_each_operator(level, parent_operator)
-    nested_operator = FIELD_TYPE[:nested_field].include?(level[:operator].to_sym)
-    not_included_error('ticket[:operator]', FIELD_TYPE[:nested_field]) if nested_operator.blank?
-    not_included_error('ticket[:field_name]', FIELD_TYPE[:nested_field]) if
-        FIELD_TYPE[:nested_field].include?(parent_operator) && nested_operator
-    array_value = ARRAY_VALUE_EXPECTING_OPERATOR.include?(level[:operator].to_sym)
-    valid_data_type = array_value ? level[:value].is_a?(Array) : level[:value].is_a?(String)
-    invalid_data_type("ticket[#{level[:field_name]}][:value]", Array, level[:value]) unless valid_data_type
-  end
-
-  def validate_dependent_field_names(field, field_param)
-    actual_names = fetch_children_field_names(field_param)
-    actual_names.each do |name|
-      field_not_found_error(name) if field.nested_ticket_fields.find_by_name(name).blank?
-    end
-  end
-
   def fetch_children_field_names(field_param)
     actual_names = []
     LEVELS.each do |level|
@@ -117,8 +86,6 @@ module Admin::AutomationDelegatorHelper
     if evaluate_on == :event
       validate_nested_field_event(field, field.picklist_values, actual)
     else
-      validate_dependent_field_names(field, actual)
-      validate_nested_field_operator(actual) if evaluate_on == :condition
       validate_nested_values(field.picklist_values, actual)
     end
   end
@@ -132,7 +99,6 @@ module Admin::AutomationDelegatorHelper
   def validate_nested_field_event(field, expected, actual)
     FROM_TO.each do |type|
       param = translator_event_nested_field(actual, type)
-      validate_dependent_field_names(field, param)
       validate_nested_values(expected, param)
     end
   end
@@ -254,44 +220,6 @@ module Admin::AutomationDelegatorHelper
     end
   end
 
-  def validate_default_field_operator(field)
-    CONDITION_TICKET_FIELDS_HASH.each do |op|
-      if op[:name] == field[:field_name].to_sym
-       not_included_error("condition[ticket][#{field[:field_name]}][operator]", FIELD_TYPE[op[:field_type]]) unless
-           FIELD_TYPE[op[:field_type]].include? field[:operator].to_sym
-       return if errors.messages.present?
-
-       validate_value_operator(field)
-      end
-    end
-  end
-
-  def validate_value_operator(field)
-    if SINGLE_VALUE_EXPECTING_OPERATOR.include? field[:operator].to_sym
-      invalid_data_type("condition[:ticket][:#{field[:field_name]}][:value]", 'Single value',
-                        field[:value]) if field[:value].is_a?(Array)
-    else
-      invalid_data_type("condition[:ticket][:#{field[:field_name]}][:value]", Array, field[:value]) unless
-          field[:value].is_a?(Array)
-    end
-  end
-
-  def validate_operator_custom_fields(field, dom_type, type)
-    unless field.has_key? :operator
-      field_not_found('operator')
-      return
-    end
-    unless FIELD_TYPE[dom_type].include? field[:operator].to_sym
-      not_included_error("condition[:#{type}][#{field[:field_name]}][:operator]", FIELD_TYPE[dom_type])
-      return
-    end
-    if ARRAY_VALUE_EXPECTING_OPERATOR.include? field[:operator].to_sym
-      invalid_data_type("condition[:#{type}][#{field[:field_name]}]", Array, field[:value]) unless field[:value].is_a?(Array)
-    else
-      invalid_data_type("condition[:#{type}][#{field[:field_name]}]", 'Single value', field[:value]) if field[:value].is_a?(Array)
-    end
-  end
-
   def validate_field_values(name, value, source_list)
     not_included_error(name, source_list) if (value & source_list).size != value.size
   end
@@ -360,8 +288,7 @@ module Admin::AutomationDelegatorHelper
     value.flatten.each do |val|
       if type == Integer || type == Float
         # handling it for now to support front-end. Should not be done this way
-        conv_value = type == Float ? val.to_f.to_s : val.to_i.to_s
-        invalid_value(name, val) if conv_value != val.to_s
+        # invalid_value(name, val) unless conv_value.is_a?(type)
       else
         invalid_data_type(name, type, val) unless val.is_a? type
       end
@@ -464,7 +391,7 @@ module Admin::AutomationDelegatorHelper
   end
 
   def company_form_fields
-    @company_form_fields ||= company_form.fields
+    @company_form_fields ||= company_form.company_fields_from_cache
   end
 
   def contact_form
@@ -472,7 +399,7 @@ module Admin::AutomationDelegatorHelper
   end
 
   def contact_form_fields
-    @contact_form_fields ||= contact_form.fields
+    @contact_form_fields ||= contact_form.contact_fields_from_cache
   end
 
   def all_agents

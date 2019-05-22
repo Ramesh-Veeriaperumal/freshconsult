@@ -14,7 +14,7 @@ module CentralConstants
     'Company' => '1.1',
     'Subscription' => '1.0',
     'Agent' => '2.0',
-    'VaRule' => '0.0',
+    'VaRule' => '0.1',
     'Group' => '3.0',
     'Post' => '0.0',
     'Helpdesk::TimeSheet' => '1.0',
@@ -42,6 +42,8 @@ module CentralConstants
     'ContactField' => '0.0',
     'ContactFieldChoice' => '0.0',
     'CompanyField' => '0.0',
-    'CompanyFieldChoice' => '0.0'
+    'CompanyFieldChoice' => '0.0',
+    'Freshcaller::Account' => '0.0',
+    'Freshchat::Account' => '0.0'
   }
 end

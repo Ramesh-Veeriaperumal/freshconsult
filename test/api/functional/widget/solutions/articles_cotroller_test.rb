@@ -86,6 +86,7 @@ module Widget
         get :show, controller_params(id: @article.parent_id)
         assert_response 200
         match_json(widget_article_show_pattern(@article))
+        assert_nil Language.current
       end
 
       def test_show_article_with_attachments
@@ -96,18 +97,21 @@ module Widget
         get :show, controller_params(id: att_article.parent_id)
         assert_response 200
         match_json(widget_article_show_pattern(att_article))
+        assert_nil Language.current
       end
 
       def test_show_article_without_widget_id
         @request.env['HTTP_X_WIDGET_ID'] = nil
         get :show, controller_params(id: @article.parent_id)
         assert_response 400
+        assert_nil Language.current
       end
 
       def test_show_article_with_wrong_widget_id
         @request.env['HTTP_X_WIDGET_ID'] = 100
         get :show, controller_params(id: @article.parent_id)
         assert_response 400
+        assert_nil Language.current
       end
 
       def test_show_article_without_portal
@@ -125,6 +129,7 @@ module Widget
         assert_response 204
         @article.reload
         assert @article.hits == 1
+        assert_nil Language.current
       end
 
       def test_thumbs_up_article
@@ -133,6 +138,7 @@ module Widget
         assert_response 204
         @article.reload
         assert @article.thumbs_up == old_count + 1
+        assert_nil Language.current
       end
 
       def test_thumbs_down_article
@@ -141,12 +147,14 @@ module Widget
         assert_response 204
         @article.reload
         assert @article.thumbs_down == old_count + 1
+        assert_nil Language.current
       end
 
       def test_suggested_articles
         get :suggested_articles, controller_params
         assert_response 200
         match_json(get_suggested_articles)
+        assert_nil Language.current
       end
 
       def test_suggested_articles_without_open_solutions
@@ -154,6 +162,7 @@ module Widget
         get :suggested_articles, controller_params
         assert_response 403
         Account.any_instance.unstub(:features?)
+        assert_nil Language.current
       end
 
       def test_suggested_articles_with_solution_disabled
@@ -162,6 +171,7 @@ module Widget
         get :suggested_articles, controller_params
         assert_response 400
         match_json(request_error_pattern(:solution_article_not_enabled, 'solution_article_not_enabled'))
+        assert_nil Language.current
       end
 
       def test_show_without_open_solutions
@@ -169,6 +179,7 @@ module Widget
         get :show, controller_params(id: @article.parent_id)
         assert_response 403
         Account.any_instance.unstub(:features?)
+        assert_nil Language.current
       end
 
       def test_show_without_feature
@@ -176,6 +187,7 @@ module Widget
         get :show, controller_params(id: @article.parent_id)
         assert_response 403
         Account.any_instance.unstub(:help_widget_enabled?)
+        assert_nil Language.current
       end
 
       def test_show_with_solution_disabled
@@ -184,6 +196,7 @@ module Widget
         get :show, controller_params(id: @article.parent_id)
         assert_response 400
         match_json(request_error_pattern(:solution_article_not_enabled, 'solution_article_not_enabled'))
+        assert_nil Language.current
       end
     end
   end

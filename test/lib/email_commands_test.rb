@@ -90,6 +90,8 @@ class EmailCommandsTest < ActionView::TestCase
   def test_process_email_commands_errors
     dummy_user = User.first
     email_param = HashWithIndifferentAccess.new
+    Helpdesk::Ticket.any_instance.stubs(:agent_as_requester?).returns(false)
+    Account.any_instance.stubs(:email_commands_enabled?).returns(true)
     EmailCommandsTest.any_instance.stubs(:get_email_cmd_regex).raises(Exception.new('sample exception in test case'))
     email_param[:text] = 'hello'
     processed_command = process_email_commands(@dummy_ticket, dummy_user, nil, email_param, nil)

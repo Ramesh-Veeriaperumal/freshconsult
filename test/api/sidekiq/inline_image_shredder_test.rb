@@ -5,6 +5,7 @@ require 'minitest'
 
 require Rails.root.join('test', 'core', 'helpers', 'tickets_test_helper.rb')
 require Rails.root.join('test', 'api', 'helpers', 'attachments_test_helper.rb')
+require Rails.root.join('test', 'core', 'helpers', 'note_test_helper.rb')
 
 Sidekiq::Testing.fake!
 

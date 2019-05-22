@@ -42,7 +42,7 @@ module Admin::Automation::AutomationSummary
     end
 
     def conditions_summary
-      return {} if record.rule_conditions.nil?
+      return {} if record.rule_conditions.blank?
       conditions = record.rule_conditions
       operator = record.rule_operator
       if conditions.first && (conditions.first.key?(:all) || conditions.first.key?(:any))
@@ -110,6 +110,7 @@ module Admin::Automation::AutomationSummary
       array << generate_key(data[:name], data[:evaluate_on] || 'ticket')
       array << generate_operator(data[:operator]) if data[:operator].present?
       array << generate_value(data[:name], data[:value], ' OR ') if data[:value].present?
+      array << generate_case_sensitive(data[:case_sensitive]) if data[:case_sensitive].present?
       sentence = array.join(' ')
       I18n.t('admin.automation_summary.condition', field_name: sentence)
     end
@@ -234,6 +235,11 @@ module Admin::Automation::AutomationSummary
       else
         value
       end
+    end
+
+    def generate_case_sensitive(value)
+      value = add_html_tag(value, 2)
+      "and Match Case is #{value}"
     end
 
     def generate_operator(t_value)

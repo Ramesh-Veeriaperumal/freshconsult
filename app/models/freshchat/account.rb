@@ -11,6 +11,13 @@ class Freshchat::Account < ActiveRecord::Base
   
   belongs_to_account
   serialize :preferences, Hash
+  publishable
+  concerned_with :presenter
+
+  before_save :construct_model_changes, on: :update
+  before_destroy :save_deleted_freshchat_account_info
+
+  attr_accessor :model_changes, :deleted_model_info
 
   [:portal_widget_enabled, :token].each do |method_name|
     define_method "#{method_name}" do
@@ -24,5 +31,14 @@ class Freshchat::Account < ActiveRecord::Base
 
   def api_domain
     URI::parse(Freshchat::Account::CONFIG[:apiHostUrl]).host
+  end
+
+  def construct_model_changes
+    @model_changes = self.changes.clone.to_hash
+    @model_changes.symbolize_keys!
+  end
+
+  def save_deleted_freshchat_account_info
+    @deleted_model_info = as_api_response(:central_publish_destroy)
   end
 end

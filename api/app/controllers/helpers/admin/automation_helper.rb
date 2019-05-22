@@ -1,7 +1,8 @@
 # This Admin::AutomationHelper is helper for automations_controller
 module Admin::AutomationHelper
   include Admin::AutomationConstants
-
+  include Va::Constants
+  include Admin::Automation::ConstructData
   private
 
     def check_automation_params
@@ -246,35 +247,6 @@ module Admin::AutomationHelper
       action_hash
     end
 
-    def construct_webhook(action)
-      action = action.dup
-      action_hash = {
-        content_type: Va::Constants::WEBHOOK_CONTENT_TYPES_ID[action[:content_type]].to_s,
-        content_layout: action[:content_layout].to_s,
-        request_type: Va::Constants::WEBHOOK_REQUEST_TYPES_ID[action[:request_type]].to_s,
-        params: action[:content],
-        url: action[:url],
-        name: action[:field_name]
-      }
-      if action[:auth_header].present?
-        action_hash[:need_authentication] = "true"
-        action_hash[:username] = action[:auth_header][:username] if action[:auth_header][:username].present?
-        action_hash[:password] = action[:auth_header][:password].present? ? action[:auth_header][:password] : password_of_existing_webhook
-        action_hash[:api_key] = action[:auth_header][:api_key] if action[:auth_header][:api_key].present?
-      end
-      action_hash
-    end
-
-    def password_of_existing_webhook
-      webhook_rule = retrieve_existing_property(@item.action_data, :field_name, :trigger_webhook)
-      webhook_rule.try(:[], :password)
-    end
-
-    def retrieve_existing_property(data, key, name)
-      return nil if data.blank? || !data.is_a?(Array)
-      data.find { |each_data| (each_data[key].to_sym rescue each_data[key]) == name }
-    end
-
     def construct_data(key, value, has_key = true, nested_field_names = nil, is_ticket = false, is_event = false)
       original_key = key
       key = DB_FIELD_NAME_CHANGE_MAPPING[key] if DB_FIELD_NAME_CHANGE.include?(key)
@@ -291,16 +263,21 @@ module Admin::AutomationHelper
         value = "#{value}_#{Account.current.id}" if !DEFAULT_FIELDS.include?(value.to_sym) && is_ticket && !is_event
         value = "cf_#{value}" if !is_ticket && !COMPANY_FIELDS.include?(value.to_sym) && !CONDITION_CONTACT_FIELDS.include?(value.to_sym)
         value = SUPERVISOR_FIELD_MAPPING[value.to_sym] if @item.supervisor_rule? && SUPERVISOR_FIELD_MAPPING.key?(value.to_sym)
+        name_changed = DISPLAY_FIELD_NAME_CHANGE[value.to_sym]
+        value = name_changed if name_changed.present? &&  !@item.supervisor_rule?
       end
       has_key ? { key => value } : {}
     end
 
     def construct_actions_data
       @actions.map do |action|
+        name = action[:field_name].to_sym
         if action.key?(:nested_fields)
           construct_action_nested_fields(action)
-        elsif action[:field_name].to_sym == :trigger_webhook
+        elsif name == :trigger_webhook
           construct_webhook(action)
+        elsif INTEGRATION_ACTION_FIELDS.include?(name)
+          construct_marketplace_app(action)
         else
           PERMITTED_ACTIONS_PARAMS.inject({}) do |hash, key|
             action[:value] = transform_add_tag_field(action) if action[:field_name].to_sym == :add_tag
@@ -346,6 +323,7 @@ module Admin::AutomationHelper
     def construct_condition(condition_set, evaluate_on)
       evaluate_on = EVALUATE_ON_MAPPING[evaluate_on] || evaluate_on
       condition_set.map do |condition|
+        return {} if condition.blank?
         PERMITTED_CONDITION_SET_VALUES.inject({}) do |hash, key|
           is_ticket = evaluate_on == :ticket
           hash.merge!(evaluate_on: evaluate_on) unless @item.supervisor_rule?

@@ -15,24 +15,24 @@ class AccountsController < ApplicationController
                                                                           :create, :rebrand, :dashboard, :rabbitmq_exchange_info, :edit_domain,
                                                                           :anonymous_signup]
 
-  skip_before_filter :set_locale, :except => [:cancel, :show, :edit, :manage_languages, :edit_domain]
+  skip_before_filter :set_locale, except: [:cancel, :show, :edit, :manage_languages, :edit_domain, :anonymous_signup_complete]
   skip_before_filter :set_time_zone, :set_current_account,
-    :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show, :manage_languages, :update_languages, :edit_domain, :validate_domain, :update_domain]
+    except: [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show, :manage_languages, :update_languages, :edit_domain, :validate_domain, :update_domain, :anonymous_signup_complete]
   skip_before_filter :check_account_state
   skip_before_filter :redirect_to_mobile_url
   skip_before_filter :check_day_pass_usage, 
-    :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show, :manage_languages, :update_languages]
+    except: [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show, :manage_languages, :update_languages, :anonymous_signup_complete]
   skip_filter :select_shard, 
 
-    :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages, :edit_domain, :validate_domain, :update_domain]
+    except: [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages, :edit_domain, :validate_domain, :update_domain, :anonymous_signup_complete]
   skip_before_filter :ensure_proper_protocol, :ensure_proper_sts_header,
 
-    :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages]
+    except: [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages, :anonymous_signup_complete]
   skip_before_filter :determine_pod, 
-    :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages]
+    except: [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages, :anonymous_signup_complete]
   skip_after_filter :set_last_active_time
 
-  around_filter :select_latest_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,:manage_languages,:update_languages, :edit_domain, :validate_domain, :update_domain]
+  around_filter :select_latest_shard, except: [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,:manage_languages,:update_languages, :edit_domain, :validate_domain, :update_domain, :anonymous_signup_complete]
 
   before_filter :anonymous_signup_enabled?, :build_anonymous_signup_params, only: [:anonymous_signup]
   before_filter :validate_signup_email, only: [:email_signup, :new_signup_free]
@@ -317,6 +317,17 @@ class AccountsController < ApplicationController
     end
   end
 
+  def anonymous_signup_complete
+    if current_user.nil?
+      flash[:notice] = 'Please provide valid login details!!'
+      redirect_to login_url
+    elsif current_user.active_freshid_agent?
+      current_user.reset_persistence_token!
+      redirect_to support_login_url(params: { new_account_signup: true, signup_email: current_user.email })
+    else
+      redirect_to '/a/getstarted'
+    end
+  end
 
   protected
 

@@ -35,6 +35,8 @@ module TicketFiltersHelper
     else
       basic_pattern[:default] = true
       basic_pattern[:hidden] = true if TicketsFilter.accessible_filters(TicketFilterConstants::HIDDEN_FILTERS).include?(filter[:id])
+      basic_pattern[:order_by] = filter[:order_by] if filter[:order_by]
+      basic_pattern[:order_type] = filter[:order_type] if filter[:order_type]
       if CustomFilterConstants::REMOVE_QUERY_HASH.exclude?(filter[:id])
         basic_pattern[:query_hash] = query_hash_pattern_output(filter[:query_hash])
       end

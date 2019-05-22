@@ -182,6 +182,7 @@ module Ember
         article_feedback my_article_feedback
         watching on_hold
         raised_by_me shared_by_me shared_with_me
+        unresolved_service_tasks
       )
       match_json([bad_request_error_pattern(:filter, :not_included, list: valid_filters.join(', '))])
       Account.current.unstub(:freshconnect_enabled?)

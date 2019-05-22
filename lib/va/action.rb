@@ -102,7 +102,7 @@ class Va::Action
       group = act_on.account.groups.find(g_id)
     rescue ActiveRecord::RecordNotFound
     end
-    act_on.group = group if group || value.empty?
+    act_on.group = group if group || value.blank?
     record_action(act_on, group)
   end
 

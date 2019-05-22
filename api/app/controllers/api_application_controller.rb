@@ -36,7 +36,7 @@ class ApiApplicationController < MetalApiController
 
   around_filter :run_on_slave, if: :on_slave?
 
-  before_filter :unset_current_portal, :unset_shard_for_payload, :set_current_account, :set_shard_for_payload
+  before_filter :unset_current_portal, :unset_shard_for_payload, :unset_current_languge, :set_current_account, :set_shard_for_payload
   before_filter :ensure_proper_fd_domain, :ensure_proper_protocol, unless: :private_api?
   before_filter :authenticate_jwt_request, if: :app_authorization?
   include Authority::FreshdeskRails::ControllerHelpers
@@ -93,7 +93,7 @@ class ApiApplicationController < MetalApiController
  # This should be the last arount filter , can be make available to public as needed
   around_filter :response_cache, only: [:index, :show], if: :private_api?
 
-  after_filter :remove_session_data
+  after_filter :remove_session_data, :unset_current_languge
 
   SINGULAR_RESPONSE_FOR = %w(show create update).freeze
   COLLECTION_RESPONSE_FOR = %w(index search).freeze

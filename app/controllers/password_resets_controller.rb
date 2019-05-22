@@ -71,7 +71,8 @@ class PasswordResetsController < SupportController
   private
 
     def deliver_password_reset_instructions
-      @user.deliver_password_reset_instructions!(current_portal) unless freshid_agent?(params[:email])
+      return @user.deliver_password_reset_instructions!(current_portal) unless freshid_agent?(params[:email])
+
       if freshid_org_v2_enabled?
         Freshid::V2::Models::User.deliver_reset_password_instruction(@user.email, current_portal.full_url)
       else

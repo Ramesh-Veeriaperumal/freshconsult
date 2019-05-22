@@ -78,6 +78,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   alias_attribute :company_id, :owner_id
   alias_attribute :skill_id, :sl_skill_id
+  alias_attribute :created_during, :created_at # to support the created_at for dispatcher rule
 
   scope :created_at_inside, lambda { |start, stop|
           { :conditions => [" helpdesk_tickets.created_at >= ? and helpdesk_tickets.created_at <= ?", start, stop] }

@@ -364,7 +364,6 @@ class SAAS::AccountDataCleanup
   def handle_field_service_management_drop_data
     Rails.logger.info "Removing FSM for account #{account.id}"
     Account.current.revoke_feature(:field_service_management)
-    Account.current.subscription.reset_field_agent_limit
     cleanup_fsm
   end
 
