@@ -9,6 +9,7 @@ class Admin::AutomationsController < ApiApplicationController
 
   prepend_before_filter :check_for_allowed_rule_type
   before_filter :check_privilege
+  after_filter :response_api_root_key, only: [:index, :create, :show, :update]
 
   ROOT_KEY = :rule
   decorate_views(decorate_objects: [:index])
@@ -50,6 +51,12 @@ class Admin::AutomationsController < ApiApplicationController
     end
 
   private
+
+    def response_api_root_key
+      rule_type = params[:rule_type].to_i
+      root_key = PRIVATE_API_ROOT_KEY_MAPPING[rule_type]
+      response.api_root_key = params[:action] == 'index' ? root_key.to_s.pluralize : root_key
+    end
 
     def fetch_executed_ticket_counts
       rule_ids = @items.map(&:id)
@@ -96,7 +103,7 @@ class Admin::AutomationsController < ApiApplicationController
     end
 
     def automation_validation_class
-      "Admin::AutomationValidation".constantize
+      'Admin::AutomationValidation'.constantize
     end
 
     def validate_params

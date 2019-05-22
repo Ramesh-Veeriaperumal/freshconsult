@@ -46,7 +46,7 @@ module Admin::AutomationValidationHelper
   end
 
   def invalid_attribute_for_rule?(invalid_rule_types)
-    invalid_rule_types.include?(@rule_type)
+    invalid_rule_types.is_a?(Array) && invalid_rule_types.include?(@rule_type)
   end
 
   def execute_field_validation(field_hash, fields)

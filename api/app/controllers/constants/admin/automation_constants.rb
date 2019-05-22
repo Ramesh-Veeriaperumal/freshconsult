@@ -80,6 +80,8 @@ module Admin::AutomationConstants
 
   COMPANY = 'company'.freeze
 
+  RESPONDER_ACTIONS_ID = [0, -2].freeze
+
   LEVELS = %i[level2 level3].freeze
 
   DB_FIELD_NAME_CHANGE_MAPPING = FIELD_NAME_CHANGE_MAPPING.inject({}) { |hash, field_mapping| hash.merge!(field_mapping[1] => field_mapping[0]) }
@@ -92,7 +94,7 @@ module Admin::AutomationConstants
 
   EVENT_NESTED_FIELDS = %i[nested_rules from_nested_rules to_nested_rules from_nested_field to_nested_field].freeze
 
-  EVENT_VALUES_KEY = %i[from to value].freeze
+  EVENT_VALUES_KEY = %i[from to value email_to].freeze
   EVENT_COMMON_FIELDS = EVENT_VALUES_KEY + EVENT_NESTED_FIELDS
 
   CONDITON_SET_NESTED_FIELDS = %i[nested_fields nested_rules].freeze
@@ -145,7 +147,8 @@ module Admin::AutomationConstants
   VA_RULE_ATTRIBUTES = %i[name position active].freeze
 
   DEFAULT_ACTION_TICKET_FIELDS = %i[priority ticket_type status add_tag add_a_cc trigger_webhook add_watcher
-                                    add_comment responder_id product_id group_id delete_ticket mark_as_spam
+                                    add_comment responder_id product_id internal_agent_id
+                                    internal_group_id group_id delete_ticket mark_as_spam
                                     skip_notification forward_ticket add_note].freeze
 
   SEND_EMAIL_ACTION_FIELDS = %i[send_email_to_group send_email_to_agent send_email_to_requester].freeze
@@ -336,7 +339,7 @@ module Admin::AutomationConstants
   NESTED_FIELD_CONSTANTS = {
     from: :from_nested_field,
     to: :to_nested_field,
-    value: :nested_field
+    value: :nested_fields
   }.freeze
 
   VALID_DEFAULT_REQUEST_PARAMS_HASH = %i[field_name operator value from to].freeze
@@ -346,18 +349,13 @@ module Admin::AutomationConstants
   NESTED_EVENT_LABEL = %i[from_nested_field to_nested_field].freeze
 
   DEFAULT_FIELD_VALUE_TYPE = {
-    status: :Integer,
-    priority: :Integer,
-    source: :Integer,
-    responder_id: :Integer,
-    group_id: :Integer,
-    internal_group_id: :Integer,
-    internal_agent_id: :Integer,
-    add_watcher: :Integer,
-    product_id: :Integer,
-    inbound_count: :Integer,
-    outbound_count: :Integer
-  }.freeze
+    status: :Integer, priority: :Integer, source: :Integer, responder_id: :Integer, group_id: :Integer,
+    internal_group_id: :Integer, internal_agent_id: :Integer, add_watcher: :Integer, product_id: :Integer,
+    inbound_count: :Integer, outbound_count: :Integer, customer_feedback: :Integer,
+    send_email_to_group: :Integer, send_email_to_agent: :Integer
+  }.merge(TIME_BASED_FILTERS.each_with_object({}) do |field, data|
+    data[field] = :Integer
+  end).freeze
 
   ARRAY_VALUE_EXPECTING_FIELD = %i[add_watcher].freeze
 
@@ -367,5 +365,14 @@ module Admin::AutomationConstants
     1 => :ticket_creation_rule,
     3 => :time_trigger_rule,
     4 => :ticket_update_rule
+  }.freeze
+
+  SUPERVISOR_OPERATOR_CONVERSION_FIELD = %i[status priority source responder_id group_id product_id ticket_type].freeze
+
+  SUPERVISOR_OPERATOR_FROM_TO = {
+    is: :in,
+    is_not: :not_in,
+    in: :in,
+    not_in: :not_in
   }.freeze
 end.freeze

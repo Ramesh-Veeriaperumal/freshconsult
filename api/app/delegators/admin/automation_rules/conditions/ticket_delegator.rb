@@ -19,7 +19,7 @@ module Admin::AutomationRules::Conditions
           validate_default_ticket_field(field[:field_name], field[:value], field)
         else
           custom_field = custom_ticket_fields.find { |t| t.name == "#{field[:field_name]}_#{current_account.id}" }
-          if custom_field.blank? || (supervisor_rule? && INVALID_SUPERVISOR_CONDITION_CF.include?(custom_field.flexifield_coltype.to_sym))
+          if custom_field.blank?
             field_not_found_error("condition[#{field[:field_name]}]")
             return
           end

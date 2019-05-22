@@ -22,6 +22,10 @@ module Admin::Automation::Action::TicketFieldConstants
       invalid_rule_types: [] }.freeze,
     { name: :group_id, field_type: :dropdown, data_type: :Integer,
       invalid_rule_types: [] }.freeze,
+    { name: :internal_group_id, field_type: :dropdown, data_type: :Integer,
+      invalid_rule_types: [3] }.freeze,
+    { name: :internal_agent_id, field_type: :dropdown, data_type: :Integer,
+      invalid_rule_types: [3] }.freeze,
     { name: :send_email_to_group, field_type: :email, data_type: :Integer,
       invalid_rule_types: [] }.freeze,
     { name: :send_email_to_agent, field_type: :email, data_type: :Integer,
@@ -45,15 +49,25 @@ module Admin::Automation::Action::TicketFieldConstants
   ].freeze
 
   CUSTOM_FIELD_ACTION_HASH = {
-    nested_field: { field_type: :nested_field, data_type: :String }.freeze,
-    custom_dropdown: { field_type: :dropdown, data_type: :String }.freeze,
-    custom_checkbox: { field_type: :dropdown, data_type: :Integer }.freeze,
-    custom_text: { field_type: :text, data_type: :String }.freeze,
-    custom_paragraph: { field_type: :text, data_type: :String }.freeze,
-    custom_number: { field_type: :text, data_type: :String, allow_any_type: true }.freeze, # data type should be number and should be changed after frontend validation
-    custom_decimal: { field_type: :text, data_type: :Float, allow_any_type: true }.freeze, # data type should be number and should be changed after frontend validation
-    custom_date: { field_type: :text, data_type: :String }.freeze
+    nested_field: { field_type: :nested_field, data_type: :String,
+                    invalid_rule_types: [] }.freeze,
+    custom_dropdown: { field_type: :dropdown, data_type: :String,
+                       invalid_rule_types: [] }.freeze,
+    custom_checkbox: { field_type: :dropdown, data_type: :Integer,
+                       invalid_rule_types: [] }.freeze,
+    custom_text: { field_type: :text, data_type: :String,
+                   invalid_rule_types: [] }.freeze,
+    custom_paragraph: { field_type: :text, data_type: :String,
+                        invalid_rule_types: [] }.freeze,
+    custom_number: { field_type: :text, data_type: :String, allow_any_type: true,
+                     invalid_rule_types: [] }.freeze, # data type should be number and should be changed after frontend validation
+    custom_decimal: { field_type: :text, data_type: :Float, allow_any_type: true,
+                      invalid_rule_types: [] }.freeze, # data type should be number and should be changed after frontend validation
+    custom_date: { field_type: :text, data_type: :String,
+                   invalid_rule_types: [] }.freeze
   }.freeze
 
-  ACTION_NONE_FIELDS = %i[responder_id product_id group_id].freeze
+  ACTION_NONE_FIELDS = %i[responder_id product_id group_id internal_agent_id internal_group_id].freeze
+
+  TICKET_PERFORMING_CREATING_AGENT_FIELD = %i[responder_id internal_agent_id send_email_to_agent].freeze
 end

@@ -13,7 +13,7 @@ module Admin::AutomationRules::Conditions
 
     validate :shared_ownership_feature, if: -> { internal_agent_id.present? || internal_group_id.present? }
     validate :multi_product_feature, if: -> { product_id.present? }
-    validate :supervisor_text_field?, if: -> { contact_name.present? || company_name.present? || (from_email.present? && supervisor_rule?) }
+    validate :supervisor_text_field?, if: -> { contact_name.present? || company_name.present? || ((from_email.present? || to_email.present?) && supervisor_rule?) }
 
     validate :ticket_conditions_attribute_type
 
