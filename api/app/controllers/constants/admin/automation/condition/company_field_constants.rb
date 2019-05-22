@@ -1,8 +1,8 @@
 module Admin::Automation::Condition::CompanyFieldConstants
   CONDITION_COMPANY_FIELDS_HASH = [
-    { name: :domains, field_type: :text, data_type: :String,
+    { name: :domains, field_type: :object_id, data_type: :String,
       invalid_rule_types: [3] }.freeze,
-    { name: :name, field_type: :text, data_type: :String,
+    { name: :name, field_type: :object_id, data_type: :String,
       invalid_rule_types: [3] }.freeze,
     { name: :segments, field_type: :object_id, data_type: :Integer,
       invalid_rule_types: [3] }.freeze,

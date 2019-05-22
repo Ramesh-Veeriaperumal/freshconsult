@@ -4,10 +4,9 @@ module Admin::AutomationDelegatorHelper
   def validate_customer_field(contact, dom_type, form)
     case dom_type
     when :dropdown_blank
-      validate_dropdown_dom_customer(contact, form)
+      validate_dropdown_dom(contact, :condition, form.to_sym)
     when :checkbox
       field_not_allowed("[:#{contact[:field_name]}][:value]") if contact.has_key? :value
-      not_included_error(contact[:field_name], CHECKBOX_OPERATORS) unless CHECKBOX_OPERATORS.include? contact[:operator]
     when :date
       validate_date_field(contact[:value])
     when :url
@@ -22,9 +21,9 @@ module Admin::AutomationDelegatorHelper
     when :nested_field
       validate_nested_field(field, ticket, evaluate_on)
     when :dropdown_blank
-      validate_dropdown_dom_ticket(ticket, evaluate_on)
+      validate_dropdown_dom(ticket, evaluate_on, :ticket)
     when :checkbox
-      validate_checkbox(ticket, evaluate_on)
+      validate_checkbox(ticket, evaluate_on) if evaluate_on != :condition
     when :date
       validate_date_field(ticket[:value])
     else
@@ -33,53 +32,36 @@ module Admin::AutomationDelegatorHelper
   end
 
   def validate_checkbox(ticket, evaluate_on)
+    not_included_error("#{evaluate_on}[:ticket][:#{ticket[:field_name]}][:value]",
+                       CHECKBOX_VALUES) unless CHECKBOX_VALUES.include? ticket[:value]
+  end
+
+  def validate_dropdown_dom(field, evaluate_on, type)
+    choices = fetch_dropdown_choices(field[:field_name], type, evaluate_on)
+    actual = *field[:value]
+    actual.each do |act|
+      not_included_error("#{evaluate_on}[#{type}]#{field[:field_name]}[:value]", choices) unless choices.include? act
+    end
+  end
+
+  def fetch_dropdown_choices(field_name, type, evaluate_on)
+    case type
+    when :ticket
+      TicketsValidationHelper.custom_dropdown_field_choices["#{field_name}_#{current_account.id}"] + fetch_any_none(evaluate_on)
+    when :contact
+      contact_form_dropdown_choices(field_name) + fetch_any_none(evaluate_on)
+    when :company
+      company_form_dropdown_choices(field_name) + fetch_any_none(evaluate_on)
+    end
+  end
+
+  def fetch_any_none(evaluate_on)
     case evaluate_on
-    when :condition
-      field_not_allowed("#{evaluate_on}[:ticket][:#{ticket[:field_name]}][:value]") if ticket.has_key? :value
-      not_included_error("#{evaluate_on}[:ticket][:#{ticket[:field_name]}][:operator]", CHECKBOX_OPERATORS) unless CHECKBOX_OPERATORS.include? ticket[:operator]
+    when :event
+      ANY_NONE.values
     else
-      field_not_allowed("#{evaluate_on}[:ticket][:#{ticket[:field_name]}][:value]") if ticket.has_key? :operator
-      not_included_error("#{evaluate_on}[:ticket][:#{ticket[:field_name]}][:value]", CHECKBOX_VALUES) unless CHECKBOX_VALUES.include? ticket[:value]
+      [ANY_NONE[:NONE]]
     end
-  end
-
-  def validate_dropdown_dom_ticket(ticket, evaluate_on)
-    if evaluate_on == :condition
-      unless FIELD_TYPE[:dropdown].include?(ticket[:operator].to_sym)
-        not_included_error("#{ticket[:field_name]}[:operator]", FIELD_TYPE[:dropdown])
-        return
-      end
-      dropdown_field_array(ticket)
-    else
-      validate_dropdown_field(ticket[:field_name], ticket[:value],
-                              TicketsValidationHelper.custom_dropdown_field_choices["#{ticket[:field_name]}_#{current_account.id}"] +
-                                  ANY_NONE.values)
-    end
-  end
-
-  def validate_dropdown_dom_customer(contact, form)
-    choices = form == COMPANY ? company_form_dropdown_choices(contact[:field_name]) :
-                  contact_form_dropdown_choices(contact[:field_name])
-    if ARRAY_VALUE_EXPECTING_OPERATOR.include?(contact[:operator].to_sym)
-      unless contact[:value].is_a?(Array)
-        invalid_data_type("condition[:contact[#{contact[:field_name]}]]", Array, contact[:value])
-        return
-      end
-      contact[:value].each { |val| validate_dropdown_field(contact[:field_name], val, choices) }
-    else
-      not_included_error('condition[:operator]',
-                         FIELD_TYPE[:nested_field]) unless FIELD_TYPE[:nested_field].include?(contact[:operator].to_sym)
-      validate_dropdown_field(contact[:field_name], contact[:value], choices)
-    end
-  end
-
-  def fetch_children_field_names(field_param)
-    actual_names = []
-    LEVELS.each do |level|
-      actual_names << "#{field_param[:nested_fields].try(:[], level).try(:[],
-                          :field_name)}_#{current_account.id}" if field_param[:nested_fields].try(:[], level).present?
-    end
-    actual_names
   end
 
   def validate_nested_field(field, actual, evaluate_on)
@@ -163,21 +145,6 @@ module Admin::AutomationDelegatorHelper
     else
       invalid_data_type(level, Array, actual[:nested_fields][level.to_sym][:value])
     end
-  end
-
-  def dropdown_field_array(ticket)
-    expected = TicketsValidationHelper.custom_dropdown_field_choices["#{ticket[:field_name]}_#{current_account.id}"] <<
-        ANY_NONE[:NONE]
-    unless ticket[:value].is_a?(Array)
-      invalid_data_type(ticket[:field_name], Array, "#{ticket[:value].class}")
-      return
-    end
-    not_included_error(ticket[:field_name], expected) unless (ticket[:value] & expected) == ticket[:value]
-  end
-
-  def validate_dropdown_field(field_name, value, choices)
-    choices << ANY_NONE[:ANY]
-    not_included_error(field_name, choices.uniq) unless choices.include? value
   end
 
   def validate_default_ticket_field(name, value, data = nil)
@@ -314,10 +281,12 @@ module Admin::AutomationDelegatorHelper
   def company_domain_validation(value)
     values = *value
     values.each do |val|
-      if current_account.company_domains.find_by_domain(val).blank?
-        invalid_value('company[:domains]', val)
-      end
+      invalid_value('company[:domains]', val) unless val.is_a?(String)
     end
+    # TODO: For now we are doing string validation only
+    # values.each do |val|
+    #   invalid_value('company[:domains]', val) if current_account.company_domains.find_by_domain(val).blank?
+    # end
   end
 
   def invalid_data_type(name, expected, actual)
