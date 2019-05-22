@@ -7,7 +7,7 @@ class MakeAgentValidation < ApiValidation
   validates :ticket_scope, custom_inclusion: { in: AgentConstants::TICKET_SCOPES, detect_type: true }
   validates :group_ids, data_type: { rules: Array }, array: { custom_numericality: { only_integer: true, greater_than: 0 } }
   validates :role_ids, data_type: { rules: Array }, array: { custom_numericality: { only_integer: true, greater_than: 0 } }
-  validate :check_agent_limit, if: -> { occasional == false }
+  validate :check_agent_limit, if: -> { occasional.blank? }
 
   def check_agent_limit
     agent_limit_reached, agent_limit = ApiUserHelper.agent_limit_reached?
