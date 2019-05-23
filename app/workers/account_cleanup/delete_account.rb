@@ -5,14 +5,11 @@ class AccountCleanup::DeleteAccount < BaseWorker
   include Redis::RedisKeys
   include Redis::OthersRedis
   include Redis::DisplayIdRedis
-  include SandboxConstants
 
 
   def perform(args)
     account = Account.current
     return if account.active?
-
-    ::Admin::Sandbox::DeleteWorker.new.perform(event: SANDBOX_DELETE_EVENTS[:deactivate]) if account.production_with_sandbox?
     deleted_customer = DeletedCustomers.find_by_account_id(account.id)
 
     update_status(deleted_customer, STATUS[:in_progress])
