@@ -39,7 +39,7 @@ class DeleteSandboxTest < ActionView::TestCase
       Admin::Sandbox::FileToDataWorker.new.perform
       update_data_for_delete_sandbox(@sandbox_account_id)
       @account.make_current
-      Admin::Sandbox::DeleteWorker.new.perform(event: 'deactivate')
+      Admin::Sandbox::DeleteWorker.new.perform
       @account.reload
       assert_equal @account.sandbox_job, nil
       sandbox_account_exists(@sandbox_account_id)

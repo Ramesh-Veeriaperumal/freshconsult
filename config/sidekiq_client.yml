@@ -326,8 +326,7 @@ defaults: &defaults
     - [model_destroy]
     - [freshcaller_account_central_publish]
     - [freshchat_account_central_publish]
-    - [thank_you_note]  
-    - [sandbox_cleanup]
+    - [thank_you_note]
 
 development:
   <<: *defaults

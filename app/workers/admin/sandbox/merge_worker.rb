@@ -1,7 +1,5 @@
 class Admin::Sandbox::MergeWorker < BaseWorker
   include SandboxHelper
-  include SandboxConstants
-
   sidekiq_options queue: :sandbox_merge, retry: 0, backtrace: true, failures: :exhausted
 
   def perform
@@ -50,12 +48,11 @@ class Admin::Sandbox::MergeWorker < BaseWorker
     def post_merge_activities
       account_activities
       update_last_sync_details
-      @account.reset_picklist_id
     end
 
     def delete_sandbox
       @job.mark_as!(:destroy_sandbox)
-      ::Admin::Sandbox::DeleteWorker.perform_async(event: SANDBOX_DELETE_EVENTS[:merge])
+      ::Admin::Sandbox::DeleteWorker.perform_async
     end
 
     def update_last_sync_details

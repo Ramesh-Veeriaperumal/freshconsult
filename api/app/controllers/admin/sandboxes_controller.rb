@@ -47,7 +47,7 @@ class Admin::SandboxesController < ApiApplicationController
 
   def destroy
     @item.mark_as!(:destroy_sandbox)
-    ::Admin::Sandbox::DeleteWorker.perform_async(event: SANDBOX_DELETE_EVENTS[:deactivate])
+    ::Admin::Sandbox::DeleteWorker.perform_async
     head 204
   end
 
