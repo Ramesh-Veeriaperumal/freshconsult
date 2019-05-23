@@ -10,22 +10,6 @@
         "shared_secret": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:mEzHOD1rmelTu1Z99BqFy5c3RBvhfSG+:eAr4r3wwdrIS61KusbSAfJVFrep//XEJjwAgLuihqZTaSBCdOqLfE2xnfZl5yYei]",
         "_account_url": "updateproduct.freshpo.com"
       },
-      "apigee_config": {
-        "api_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:k4boCTKx2XgQIge34uLf0NlGaSZuM+Wh:/Jkvm7h7spE88kLU5Yg/4Fe3GKusnPJr4ogfnXRnB77WW9H1yxC44bYFx7EXQbaO]",
-        "_api_proxy": "freshdesk",
-        "_enabled": "true",
-        "_hostname": "freshworks-test.apigee.net",
-        "_ips": [
-          "104.154.179.1",
-          "104.198.35.174",
-          "104.196.108.92",
-          "35.185.49.19"
-        ],
-        "_s3_bucket_name": "cdn.freshpo.com",
-        "_s3_file_name": "apigee_domains_file.txt",
-        "_url": "https://thilak-trial-test.apigee.net",
-        "_channel_framework_api_proxy": "channel_framework"
-      },
       "app_integration": {
         "freshconnect": {
           "token": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:y0jeEuHQzDRuwwqTMxrwKKRu2K7HNjuV:EtDruba3JEg3CC1jhT+I53fSIvwoalJe94QWc4pOvS7LrbsjehQyY8ySodSSCE3y/1Nd3jHmaq9gmQzxQ7N+/WgepTDHNwTY1pyfgO/QkW/xuaFhj0vVFU8uQfV2BgJfh64LrBy3a14=]"
@@ -1553,8 +1537,6 @@
     "hk-app-buffer": {
     },
     "hk-bg-shoryuken": {
-    },
-    "fc-app-api-apigee": {
     },
     "fc-bg-sidekiq-misc": {
     },

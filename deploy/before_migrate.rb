@@ -87,7 +87,6 @@ run "ln -nfs #{shared_path}/config/central.yml #{node[:rel_path]}/config/central
 run "ln -nfs #{shared_path}/config/kafka_collector.yml #{node[:rel_path]}/config/kafka_collector.yml"
 run "ln -nfs #{shared_path}/config/channel_framework.yml #{node[:rel_path]}/config/channel_framework.yml"
 run "ln -nfs #{shared_path}/config/channel_api_keys.yml #{node[:rel_path]}/config/channel_api_keys.yml"
-run "ln -nfs #{shared_path}/config/apigee.yml #{node[:rel_path]}/config/apigee.yml"
 run "ln -nfs #{shared_path}/config/freshchat.yml #{node[:rel_path]}/config/freshchat.yml"
 run "ln -nfs #{shared_path}/config/formserv.yml #{node[:rel_path]}/config/formserv.yml"
 run "ln -nfs #{shared_path}/config/freshmarketer.yml #{node[:rel_path]}/config/freshmarketer.yml"

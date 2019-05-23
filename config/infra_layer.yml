@@ -2,4 +2,3 @@ API_LAYER: true
 SUPPORT_LAYER: false
 PIPE_LAYER: true
 FRESHID_LAYER: false
-APIGEE_API_LAYER: false

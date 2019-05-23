@@ -369,7 +369,6 @@ HEREDOC
     @is_pipeline_layer = opsworks.pipeline_layer?()
     @is_support_layer = opsworks.support_layer?()
     @is_fc_api_public_layer = opsworks.fc_api_public_layer?()
-    @is_fc_api_apigee_layer = opsworks.fc_api_apigee_layer?()
     @is_freshid_layer = opsworks.freshid_layer?()
     @is_resque_layer = opsworks.resque_layer?()
     @is_sidekiq_layer = opsworks.sidekiq_layer?()
@@ -611,7 +610,6 @@ HEREDOC
       "fc-app-api-premium" => "-premium-api",
       "hk-app-premium" => "-premium-app",
       "fc-app-archive" => "-falcon-archive",
-      "fc-app-api-apigee" => "-apigee",
       "fc-app-api-sling" => "-premium-api",
       "hk-app-pipeline-sling" => "-pipeline",
       "fc-app-phonepe" => "-falcon",
