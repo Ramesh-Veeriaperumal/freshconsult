@@ -119,7 +119,10 @@ class Account < ActiveRecord::Base
       self.launch(:falcon_signup)           # To track falcon signup accounts
       self.launch(:falcon_portal_theme)  unless redis_key_exists?(DISABLE_PORTAL_NEW_THEME)   # Falcon customer portal
     end
-    launch_freshid_with_omnibar if freshid_integration_signup_allowed?
+
+    if freshid_integration_signup_allowed?
+      freshid_v2_signup? ? launch_freshid_with_omnibar(true) : launch_freshid_with_omnibar
+    end
   end
 
   def update_activity_export

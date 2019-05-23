@@ -236,4 +236,8 @@ class Account < ActiveRecord::Base
     def freshid_migration_in_progress_key
       FRESHID_MIGRATION_IN_PROGRESS_KEY % {account_id: self.id}
     end
+
+    def freshid_v2_signup?
+      @freshid_v2_signup ||= (self.fresh_id_version == Freshid::V2::Constants::FRESHID_SIGNUP_VERSION_V2)
+    end
 end
