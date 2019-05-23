@@ -49,7 +49,9 @@ module Ember
       private
 
         def decorate_objects
-          options = { sideload_options: ['requester', 'company'], name_mapping: name_mapping }
+          sideload_options = ['requester', 'company']
+          sideload_options << params['include'] if params['include']
+          options = { sideload_options: sideload_options.compact, name_mapping: name_mapping }
           @items.map! { |item| TicketDecorator.new(item, options) } if @items
         end
 
@@ -115,6 +117,11 @@ module Ember
             @filter_params.merge!(cf_name => value) if cf_name.present?
           end
           @filter_params.delete(:custom_fields)
+        end
+
+        def validate_results_param
+          @search_validation = SearchTicketValidation.new(params)
+          render_custom_errors(@search_validation, true) unless @search_validation.valid?
         end
     end
   end

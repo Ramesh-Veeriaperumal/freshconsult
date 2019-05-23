@@ -98,5 +98,23 @@ module Ember::Search
       assert_response 200
       assert_equal [search_ticket_pattern(ticket)].to_json, response.body
     end
+
+    def test_custom_fields_in_response
+      ticket_field = create_custom_field('custom_number_test', 'number')
+      ticket = create_ticket(custom_field: { 'custom_number_test_1': '3' })
+      stub_private_search_response([ticket]) do
+        post :results, construct_params(version: 'private', context: 'spotlight', searchSort: 'relevance', include: 'custom_fields', term: ticket.subject)
+      end
+      assert_response 200
+      assert_equal JSON.parse(response.body)[0]['custom_fields']['custom_number_test'], 3
+    ensure
+      ticket_field.try(:destroy)
+    end
+
+    def test_invalid_include_parameter
+      post :results, construct_params(version: 'private', context: 'spotlight', searchSort: 'relevance', include: 'some_fields')
+      assert_response 400
+      match_json([bad_request_error_pattern('include', :not_included, list: SearchTicketValidation::ALLOWED_INCLUDE_PARAMS.join(','), code: :invalid_value)])
+    end
   end
 end

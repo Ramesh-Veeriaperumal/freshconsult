@@ -5,6 +5,8 @@ module Ember
       decorate_views(decorate_objects: [:results])
 
       around_filter :run_on_slave
+      # Validating the search params sent in the url for searching.
+      before_filter :validate_results_param, only: [:results]
 
       COLLECTION_RESPONSE_FOR = %w(results).freeze
 
@@ -47,6 +49,10 @@ module Ember
           @@esv2_company_search_models ||= {
             'company' => { model: 'Company', associations: [] }
           }
+        end
+
+        def validate_results_param
+          # define the specific validation in derived class.
         end
     end
   end
