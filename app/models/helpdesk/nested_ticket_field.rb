@@ -19,6 +19,8 @@ class Helpdesk::NestedTicketField < ActiveRecord::Base
     
   before_create :populate_label
 
+  alias_attribute :i18n_label, :label
+
   def dom_type
   	"dropdown_blank"
   end

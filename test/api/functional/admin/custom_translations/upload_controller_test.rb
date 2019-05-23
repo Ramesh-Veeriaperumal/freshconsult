@@ -18,6 +18,8 @@ class Admin::CustomTranslations::UploadControllerTest < ActionController::TestCa
   CLASS_NAME_MAPPING = {
     'Helpdesk::TicketField' => 'ticket_fields'
   }.freeze
+
+  DEFAULT_FIELDS = ['requester', 'subject', 'priority', 'group', 'agent', 'product', 'description', 'company'].freeze
   def wrap_cname(params)
     params
   end
@@ -54,7 +56,7 @@ class Admin::CustomTranslations::UploadControllerTest < ActionController::TestCa
     Account.current.ticket_fields.where(name: name).limit(1).first
   end
 
-  def yaml_payload(fields)
+  def yaml_payload(fields, only_customer_label = false)
     payload = { @language => { 'custom_translations' => { 'ticket_fields' => {}, 'company_fields' => {}, 'contact_fields' => {} } } }
     fields.each do |field|
       field_translations = {
@@ -67,6 +69,7 @@ class Admin::CustomTranslations::UploadControllerTest < ActionController::TestCa
         choices_keys.map { |choice| choices[choice[0]] = Faker::Lorem.word }
         field_translations['choices'] = choices
       end
+      field_translations.slice!('customer_label') if only_customer_label
       translation_field_type = CLASS_NAME_MAPPING[field.class.to_s]
       payload[@language]['custom_translations'][translation_field_type][field.name] = field_translations
     end
@@ -108,6 +111,46 @@ class Admin::CustomTranslations::UploadControllerTest < ActionController::TestCa
     assert_response 202
     translation = get_field_translation(fields[0])
     assert translation == payload[@language]['custom_translations']['ticket_fields'][fields[0].name], 'Translations do not match!'
+  end
+
+  DEFAULT_FIELDS.map do |field|
+    define_method "test_ticket_field_upload_with_#{field}" do
+      db_field = get_ticket_field(field)
+      payload = yaml_payload([db_field], true)
+      write_yaml(payload)
+      @request.env['CONTENT_TYPE'] = 'multipart/form-data'
+      file = fixture_file_upload('files/translation_file.yaml', 'test/yaml', :binary)
+      stub_params_for_translations(payload)
+      Sidekiq::Testing.inline! do
+        post :upload, construct_params({ id: @language }, translation_file: file)
+      end
+      unstub_params_for_translations
+      assert_response 202
+      translation = get_field_translation(db_field)
+      refute_empty translation
+      assert_nil translation['label']
+      assert_nil translation['choices']
+      assert_equal translation['customer_label'], payload[@language]['custom_translations']['ticket_fields'][db_field.name]['customer_label']
+    end
+
+    define_method "test_ticket_field_upload_with_#{field}_even_label_and_choices" do
+      db_field = get_ticket_field(field)
+      payload = yaml_payload([db_field], false)
+      write_yaml(payload)
+      @request.env['CONTENT_TYPE'] = 'multipart/form-data'
+      file = fixture_file_upload('files/translation_file.yaml', 'test/yaml', :binary)
+      stub_params_for_translations(payload)
+      Sidekiq::Testing.inline! do
+        post :upload, construct_params({ id: @language }, translation_file: file)
+      end
+      unstub_params_for_translations
+      assert_response 202
+      translation = get_field_translation(db_field)
+      refute_empty translation
+      assert_nil translation['label']
+      assert_nil translation['choices']
+      assert_equal translation['customer_label'], payload[@language]['custom_translations']['ticket_fields'][db_field.name]['customer_label']
+    end
   end
 
   def test_ticket_field_upload_with_dropdown

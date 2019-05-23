@@ -2,6 +2,8 @@ require_relative '../../../test_helper'
 class Admin::CustomTranslations::DownloadControllerTest < ActionController::TestCase
   include TicketFieldsTestHelper
   CHOICES = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'].freeze
+  DEFAULT_FIELDS = ['requester', 'subject', 'priority', 'group', 'agent', 'product', 'description', 'company'].freeze
+  INVALID_TICKET_FIELDS = ['default_internal_group', 'default_internal_agent', 'default_source'].freeze
 
   def setup
     super
@@ -26,7 +28,7 @@ class Admin::CustomTranslations::DownloadControllerTest < ActionController::Test
 
   def create_custom_translations(field, lang)
     language_id = Language.find_by_code(lang).id
-    label = field.as_api_response(:custom_translation)[:label] + '_' + Faker::Lorem.word
+    label = field.as_api_response(:custom_translation)[:label] + '_' + Faker::Lorem.word unless DEFAULT_FIELDS.include?(field.name)
     customer_label = field.as_api_response(:custom_translation)[:customer_label] + '_' + Faker::Lorem.word
 
     if field.field_type == 'nested_field' && field.parent_id.present?
@@ -47,6 +49,7 @@ class Admin::CustomTranslations::DownloadControllerTest < ActionController::Test
       translated_data['choices'] = translated_data['choices'].merge(tmp_translations['choices'])
     end
 
+    translated_data.slice!('customer_label') if DEFAULT_FIELDS.include?(field.name)
     if field.custom_translations.present?
       custom_translation_record = field.safe_send("#{lang}_translation")
       custom_translation_record.translations = translated_data
@@ -62,8 +65,8 @@ class Admin::CustomTranslations::DownloadControllerTest < ActionController::Test
     assert_response 200
     primary_lang = Account.current.language
     ticket_fields = YAML.load(response.body)[primary_lang]['custom_translations']['ticket_fields'].count
-    acc_tkt_fields = Account.current.ticket_fields_with_nested_fields.where(default: false).count
-    assert acc_tkt_fields + 2 == ticket_fields
+    acc_tkt_fields = Account.current.ticket_fields_with_nested_fields.where('field_type not in (?)', INVALID_TICKET_FIELDS).count
+    assert_equal acc_tkt_fields, ticket_fields
   ensure
     unstub_for_custom_translations
   end
@@ -578,5 +581,47 @@ class Admin::CustomTranslations::DownloadControllerTest < ActionController::Test
     assert (response_field['choices'].all? { |x, y| y.include?(ch[x]) })
   ensure
     unstub_for_custom_translations
+  end
+
+  DEFAULT_FIELDS.map do |field|
+    define_method "test_primary_#{field}" do
+      stub_for_custom_translations
+      db_field = Account.current.ticket_fields.find_by_name(field)
+      get :primary, construct_params({})
+      assert_response 200
+      response_field = YAML.safe_load(response.body)['en']['custom_translations']['ticket_fields'][field]
+      refute_empty response_field
+      assert_nil response_field['label']
+      assert_equal response_field['customer_label'], db_field.label_in_portal
+      assert_nil response_field['choices']
+      unstub_for_custom_translations
+    end
+
+    define_method "test_secondary_without_translation_#{field}" do
+      stub_for_custom_translations
+      get :secondary, construct_params('id' => 'fr')
+      assert_response 200
+      response_field = YAML.safe_load(response.body)['fr']['custom_translations']['ticket_fields'][field]
+      refute_empty response_field
+      assert_nil response_field['label']
+      assert_empty response_field['customer_label']
+      assert_nil response_field['choices']
+      unstub_for_custom_translations
+    end
+
+    define_method "test_secondary_with_translation_#{field}" do
+      stub_for_custom_translations
+      db_field = Account.current.ticket_fields.find_by_name(field)
+      translations = create_custom_translations(db_field, 'fr')
+      get :secondary, construct_params('id' => 'fr')
+      assert_response 200
+      response_field = YAML.safe_load(response.body)['fr']['custom_translations']['ticket_fields'][field]
+      refute_empty response_field
+      assert_nil response_field['label']
+      assert_equal response_field['customer_label'], translations.translations['customer_label']
+      assert_nil response_field['choices']
+      unstub_for_custom_translations
+      translations.destroy
+    end
   end
 end

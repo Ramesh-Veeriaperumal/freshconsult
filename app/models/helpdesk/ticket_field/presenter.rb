@@ -1,6 +1,9 @@
 class Helpdesk::TicketField < ActiveRecord::Base
   include RepresentationHelper
 
+  TRANSLATION_CHOICE_FIELDS = ['nested_field', 'custom_dropdown', 'default_status', 'default_ticket_type'].freeze
+  LABEL_AND_CHOICES_TRANSLATION_AVAILABLE_DEFAULT_FIELDS = ['default_status', 'default_ticket_type'].freeze
+
   acts_as_api
 
   api_accessible :central_publish do |tf|
@@ -35,13 +38,13 @@ class Helpdesk::TicketField < ActiveRecord::Base
   end
 
   api_accessible :custom_translation do |tf|
-    tf.add :label
+    tf.add :label, unless: :only_customer_label_field?
     tf.add :label_in_portal, as: :customer_label
     tf.add proc { |field| field.fetch_custom_field_choices }, as: :choices, if: :field_with_choice?
   end
 
   api_accessible :custom_translation_secondary do |t|
-    t.add ->(model, options) { model.fetch_label(options[:lang]) }, as: :label
+    t.add ->(model, options) { model.fetch_label(options[:lang]) }, as: :label, unless: :only_customer_label_field?
     t.add ->(model, options) { model.fetch_customer_label(options[:lang]) }, as: :customer_label
     t.add ->(model, options) { model.fetch_choices(options[:lang]) }, as: :choices, if: :field_with_choice?
   end
@@ -75,7 +78,11 @@ class Helpdesk::TicketField < ActiveRecord::Base
   end
 
   def field_with_choice?
-    ['nested_field', 'custom_dropdown', 'default_status', 'default_ticket_type'].include?(field_type)
+    TRANSLATION_CHOICE_FIELDS.include?(field_type)
+  end
+
+  def only_customer_label_field?
+    default && LABEL_AND_CHOICES_TRANSLATION_AVAILABLE_DEFAULT_FIELDS.exclude?(field_type)
   end
 
   # fetch the choices list for the given ticket field

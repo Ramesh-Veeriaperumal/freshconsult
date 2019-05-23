@@ -393,7 +393,8 @@ module TicketFieldsTestHelper
   def requester_ticket_field_pattern(tf)
     ticket_field_pattern(tf).merge(
       portal_cc: tf.field_options['portalcc'],
-      portal_cc_to: tf.field_options['portalcc_to']
+      portal_cc_to: tf.field_options['portalcc_to'],
+      label: 'Search a requester'
     )
   end
 

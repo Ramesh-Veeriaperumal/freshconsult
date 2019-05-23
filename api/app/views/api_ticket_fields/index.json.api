@@ -2,7 +2,7 @@ JSON.generate(@items.map do |ticket_field|
   response_hash = {
     id: ticket_field.id,
     name: ticket_field.name,
-    label: ticket_field.label,
+    label: ticket_field.i18n_label,
     description: ticket_field.description,
     position: ticket_field.position,
     required_for_closure: ticket_field.required_for_closure,
