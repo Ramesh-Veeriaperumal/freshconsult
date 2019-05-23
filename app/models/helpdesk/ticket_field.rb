@@ -167,19 +167,19 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
 
   # Enumerator constant for mapping the CSS class name to the field type
-  FIELD_CLASS = { default_subject: { type: :default, dom_type: 'text', form_field: 'subject', visible_in_view_form: false },
-                  default_requester: { type: :default, dom_type: 'requester', form_field: 'email', visible_in_view_form: false },
-                  default_ticket_type: { type: :default, dom_type: 'dropdown_blank' },
-                  default_status: { type: :default, dom_type: 'dropdown' },
-                  default_priority: { type: :default, dom_type: 'dropdown' },
-                  default_group: { type: :default, dom_type: 'dropdown_blank', form_field: 'group_id' },
-                  default_agent: { type: :default, dom_type: 'dropdown_blank', form_field: 'responder_id' },
-                  default_internal_group: { type: :default, dom_type: 'dropdown_blank', form_field: 'internal_group_id' },
-                  default_internal_agent: { type: :default, dom_type: 'dropdown_blank', form_field: 'internal_agent_id' },
-                  default_source: { type: :default, dom_type: 'hidden' },
-                  default_description: { type: :default, dom_type: 'html_paragraph', form_field: 'description_html', visible_in_view_form: false },
-                  default_product: { type: :default, dom_type: 'dropdown_blank', form_field: 'product_id' },
-                  default_company: { type: :default, dom_type: 'dropdown_blank', form_field: 'company_id' },
+  FIELD_CLASS = { default_subject: { type: :default, dom_type: 'text', form_field: 'subject', visible_in_view_form: false, i18n_label: 'subject' },
+                  default_requester: { type: :default, dom_type: 'requester', form_field: 'email', visible_in_view_form: false, i18n_label: 'requester' },
+                  default_ticket_type: { type: :default, dom_type: 'dropdown_blank', i18n_label: 'ticket_type' },
+                  default_status: { type: :default, dom_type: 'dropdown', i18n_label: 'status' },
+                  default_priority: { type: :default, dom_type: 'dropdown', i18n_label: 'priority' },
+                  default_group: { type: :default, dom_type: 'dropdown_blank', form_field: 'group_id', i18n_label: 'group' },
+                  default_agent: { type: :default, dom_type: 'dropdown_blank', form_field: 'responder_id', i18n_label: 'agent' },
+                  default_internal_group: { type: :default, dom_type: 'dropdown_blank', form_field: 'internal_group_id', i18n_label: 'internal_group' },
+                  default_internal_agent: { type: :default, dom_type: 'dropdown_blank', form_field: 'internal_agent_id', i18n_label: 'internal_agent' },
+                  default_source: { type: :default, dom_type: 'hidden', i18n_label: 'source' },
+                  default_description: { type: :default, dom_type: 'html_paragraph', form_field: 'description_html', visible_in_view_form: false, i18n_label: 'description' },
+                  default_product: { type: :default, dom_type: 'dropdown_blank', form_field: 'product_id', i18n_label: 'product' },
+                  default_company: { type: :default, dom_type: 'dropdown_blank', form_field: 'company_id', i18n_label: 'company' },
                   custom_text: { type: :custom,  dom_type: 'text' },
                   custom_paragraph: { type: :custom,  dom_type: 'paragraph' },
                   custom_checkbox: { type: :custom,  dom_type: 'checkbox' },
@@ -197,6 +197,11 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   def field_name
     FIELD_CLASS[field_type.to_sym][:form_field] || name
+  end
+
+  def i18n_label
+    default_label = FIELD_CLASS[field_type.to_sym] && FIELD_CLASS[field_type.to_sym][:i18n_label] # adding condition here for skill from decorator
+    default_label ? I18n.t("ticket_fields.fields.#{default_label}") : label
   end
   
   def visible_in_view_form?
