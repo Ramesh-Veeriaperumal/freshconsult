@@ -112,11 +112,8 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     end
 
     def throttle?
-      if is_fluffy_enabled? || is_apigee_enabled?
-        return false
-      else
-        !skipped_domain? && account_id
-      end
+      return false if is_fluffy_enabled?
+      !skipped_domain? && account_id
     end
 
     def increment_redis_key(used)
@@ -226,7 +223,4 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
       Account.current && Account.current.fluffy_enabled? && @request.env['HTTP_X_FW_RATELIMITING_MANAGED'] == "true"
     end
 
-    def is_apigee_enabled?
-      Account.current && Account.current.apigee_enabled?
-    end
 end

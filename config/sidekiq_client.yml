@@ -248,7 +248,6 @@ defaults: &defaults
     - [merge_topics]
     - [report_post_worker]
     - [contact_delete_forever]
-    - [apigee_api]
     - [email_service_provider]
     - [calculate_sla]
     - [forum_ban_user]

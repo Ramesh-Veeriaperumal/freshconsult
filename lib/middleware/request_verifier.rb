@@ -1,6 +1,5 @@
 module Middleware::RequestVerifier
 
-  CONFIG = YAML::load_file(File.join(Rails.root, 'config', 'apigee.yml'))[Rails.env].freeze
   API_PATH = '/api/'.freeze
   PIPE_PATH = '/api/pipe/'.freeze
   FRESHID_PATH = '/api/freshid/'.freeze
@@ -16,10 +15,6 @@ module Middleware::RequestVerifier
 
   def private_api_request?(env = nil)
     verify_path?(env['PATH_INFO'], PRIVATE_API_PATH)
-  end
-
-  def apigee_api_request?(env = nil)
-    is_apigee?(env)
   end
 
   def pipe_api_request?(env = nil)
@@ -52,11 +47,4 @@ module Middleware::RequestVerifier
       resource.starts_with?(path)
     end
 
-    def is_apigee?(env)
-      unless Rails.env.development?
-        source_ip = env['HTTP_X_FORWARDED_FOR']
-        return CONFIG['ips'].include?(source_ip)
-      end
-      false
-    end
 end

@@ -152,21 +152,6 @@ class Account < ActiveRecord::Base
     "CentralPublishWorker::AccountWorker"
   end
 
-  def crud_apigee_kvm(action, plan_name, domain = nil, map_identifier = "default")
-    if ApigeeConfig::ALLOWED_ACTIONS.exclude?(action)
-      Rails.logger.info "#{action} is not a valid action"
-      return false
-    end
-    params = {
-      action: action.to_sym,
-      account_id: self.id,
-      domain: (domain || self.full_domain),
-      plan: plan_name,
-      map_identifier: map_identifier
-    }
-    Apigee::KVMActionWorker.perform_async(params)
-  end
-
   def save_deleted_model_info
     @deleted_model_info = {
       id: id,
