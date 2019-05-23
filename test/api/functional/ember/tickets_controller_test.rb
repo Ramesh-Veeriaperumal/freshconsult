@@ -810,7 +810,7 @@ module Ember
       end
     end
 
-    def test_create_service_task_ticket_with_invalid_field_agent_failure
+    def test_create_service_task_ticket_with_support_agent
       enable_adv_ticketing([:field_service_management]) do
        begin
          perform_fsm_operations
@@ -821,8 +821,7 @@ module Ember
                    priority: 2, status: 2, type: SERVICE_TASK_TYPE, 
                    custom_fields: { cf_fsm_contact_name: "test", cf_fsm_service_location: "test", cf_fsm_phone_number: "test" } }      
          post :create, construct_params({version: 'private'}, params)
-         match_json([bad_request_error_pattern('responder_id', :only_field_agent_allowed, :code => :invalid_value)])
-         assert_response 400
+         assert_response 201
        ensure
         cleanup_fsm
        end
