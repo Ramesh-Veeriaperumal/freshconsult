@@ -1,11 +1,9 @@
 class Admin::Sandbox::DeleteWorker < BaseWorker
   include MemcacheKeys
-  include SandboxConstants
 
   sidekiq_options queue: :delete_sandbox, retry: 0, backtrace: true, failures: :exhausted
 
-  def perform(args)
-    args.symbolize_keys!
+  def perform
     @account = Account.current
     Sharding.select_shard_of(@account.id) do
       @sandbox_job = @account.sandbox_job
@@ -14,7 +12,6 @@ class Admin::Sandbox::DeleteWorker < BaseWorker
       @account.mark_as!(:production_without_sandbox)
       (@account.account_additional_settings.additional_settings[:sandbox] ||= {})[:status] = 'destroy_complete'
       @account.account_additional_settings.save!
-      schedule_sandbox_cleanup(@account.id, @sandbox_job.sandbox_account_id, args[:event])
       @sandbox_job.destroy
     end
   rescue StandardError => error
@@ -59,18 +56,6 @@ class Admin::Sandbox::DeleteWorker < BaseWorker
       ]
       account_domain_keys.each do |key|
         MemcacheKeys.delete_from_cache key
-      end
-    end
-
-    def schedule_sandbox_cleanup(master_account_id, sandbox_account_id, event)
-      args = {
-        master_account_id: master_account_id,
-        sandbox_account_id: sandbox_account_id
-      }
-      if event == SANDBOX_DELETE_EVENTS[:merge]
-        Admin::Sandbox::CleanupWorker.perform_at(1.month.from_now, args)
-      else
-        Admin::Sandbox::CleanupWorker.perform_async(args)
       end
     end
 end

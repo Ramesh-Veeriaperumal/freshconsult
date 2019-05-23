@@ -868,14 +868,6 @@ class Account < ActiveRecord::Base
     end.to_h
   end
 
-  def reset_picklist_id
-    return unless redis_picklist_id_enabled?
-
-    key = PICKLIST_ID % { account_id: id }
-    computed_id = picklist_values.maximum('picklist_id').to_i
-    set_display_id_redis_key(key, computed_id)
-  end
-
   protected
   
     def external_url_is_valid?(url) 

@@ -9,16 +9,14 @@ module Sync
       @username      =  SANDBOX_USERNAME
       @repo_path     =  repo_path
       @branch        =  branch
-      @repo_client   =  Rugged::Repository.new("#{repo_path}/.git") if repo_path_exists?
-      @current_account = Account.current
+      @repo_client   =  Rugged::Repository.new("#{repo_path}/.git") if File.directory?("#{repo_path}/.git")
     end
 
     def get_changes(target, source)
       run_git_command do
-        add_and_fetch_branch(source) if @current_account.sandbox_single_branch_enabled?
-        execute_command "git checkout #{source}"
-        execute_command "git checkout #{target}"
-        execute_command "git merge -s resolve origin/#{source} --no-commit --no-ff"
+        run_and_log "git checkout #{source}"
+        run_and_log "git checkout #{target}"
+        run_and_log "git merge -s resolve origin/#{source} --no-commit --no-ff "
       end
       diff                      =  repo_client.head.target.tree.diff(repo_client.index)
       diff_changes              =  {}
@@ -29,45 +27,36 @@ module Sync
       diff_changes
     end
 
-    def remove_branch(stale_branch, master)
+    def remove_repo(stale_branch, master)
       if repo_client.branches.to_a.collect(&:name).include?("origin/#{stale_branch}")
         Sync::Logger.log 'Branch found. Deleting the branch'
         run_git_command do
-          execute_command("git checkout #{master}")
-          execute_command("git push origin --delete #{stale_branch}")
-          execute_command("git branch -d #{stale_branch}")
+          run_and_log("git checkout #{master}")
+          run_and_log("git push origin --delete #{stale_branch}")
+          run_and_log("git branch -d #{stale_branch}")
         end
       else
         Sync::Logger.log 'Branch not found.'
       end
     end
 
-    def remove_remote_branch(branch_name)
-      if branch_exists?(branch_name, true)
-        Sync::Logger.log "Remote Branch found. Deleting branch: #{branch_name}"
-        execute_command("git push #{repo_url} --delete #{branch_name}")
-      else
-        Sync::Logger.log "Remote Branch not found: #{branch_name}"
-      end
-    end
-
     def create_branch(new_branch)
       run_git_command do
-        execute_command("git checkout -b #{new_branch}")
-        execute_command("git push -u origin #{new_branch}")
+        run_and_log("git checkout -b #{new_branch}")
+        run_and_log("git push -u origin #{new_branch}")
       end
     end
 
     def create_tag(tag, branch)
       run_git_command do
-        execute_command("git tag #{tag} #{branch}")
-        execute_command("git push origin #{tag}")
+        run_and_log("git tag #{tag} #{branch}")
+        run_and_log("git push origin #{tag}")
       end
     end
 
     def fetch_origin
       run_git_command do
-        execute_command('git fetch origin')
+        run_and_log('git fetch origin')
       end
     end
 
@@ -75,17 +64,17 @@ module Sync
       # checkout the source branch
 
       run_git_command do
-        execute_command "git checkout -b #{source} origin/#{source}"
-        execute_command "git checkout #{target}"
+        run_and_log "git checkout -b #{source} origin/#{source}"
+        run_and_log "git checkout #{target}"
       end
 
       conflicts = merge_conflicts(target, source)
 
       if conflicts.blank?
         run_git_command do
-          execute_command "git checkout #{target}"
-          execute_command "git merge --squash origin/#{source}"
-          execute_command "git commit -m \"#{message}\" --author \"#{author} <#{email}>\""
+          run_and_log "git checkout #{target}"
+          run_and_log "git merge --squash origin/#{source}"
+          run_and_log "git commit -m \"#{message}\" --author \"#{author} <#{email}>\""
         end
         [true, conflicts]
       else
@@ -123,14 +112,14 @@ module Sync
 
     def push_changes_to_remote
       run_git_command do
-        execute_command("git push origin #{@branch}")
+        run_and_log("git push origin #{@branch}")
       end
     end
 
     def commit_all_changed_files(message, author, email)
       run_git_command do
-        execute_command('git add -A .')
-        execute_command("git commit -m \"#{message}\" --author \"#{author} <#{email}>\" ")
+        run_and_log('git add -A .')
+        run_and_log("git commit -m \"#{message}\" --author \"#{author} <#{email}>\" ")
       end
     end
 
@@ -167,12 +156,15 @@ module Sync
     # end
 
     def checkout_branch
-      if @current_account.sandbox_single_branch_enabled?
-        clone_repo_with_single_branch
-      else
-        clone_repo
-        fetch_and_switch
-      end
+      # @repo_client ||= Rugged::Repository.clone_at(@repo_url, @repo_path, {
+      #   transfer_progress: lambda { |total_objects, indexed_objects, received_objects, local_objects, total_deltas, indexed_deltas, received_bytes|
+      #     print "."
+      #   },
+      #   credentials: credentials,
+      #   checkout_branch: @branch
+      # })
+      clone_repo
+      fetch_and_switch
     end
 
     def fetch_and_switch
@@ -181,54 +173,30 @@ module Sync
       # Create the branch
       if branch.nil?
         run_git_command do
-          execute_command 'git checkout master'
-          execute_command "git checkout -b #{@branch}"
-          execute_command "git push origin -u #{@branch}"
+          run_and_log 'git checkout master'
+          run_and_log "git checkout -b #{@branch}"
+          run_and_log "git push origin -u #{@branch}"
         end
       else
         run_git_command do
-          execute_command "git checkout origin/#{@branch}"
-          execute_command "git checkout -b #{@branch}"
+          run_and_log "git checkout origin/#{@branch}"
+          run_and_log "git checkout -b #{@branch}"
         end
       end
     end
 
     def clone_repo
-      @repo_client ||= Rugged::Repository.clone_at(@repo_url, @repo_path,
-                                                   transfer_progress: lambda { |total_objects, indexed_objects, received_objects, local_objects, total_deltas, indexed_deltas, received_bytes|
-                                                     print '.'
-                                                   },
-                                                   credentials: credentials)
+      FileUtils.mkdir_p(@repo_path)
+      run_git_command do
+        run_and_log('git init')
+        run_and_log("git remote add origin #{@repo_url}")
+        run_and_log('git fetch --all')
+      end
+      @repo_client ||= Rugged::Repository.new("#{@repo_path}/.git") if File.directory?("#{@repo_path}/.git")
     end
 
     def credentials
       Rugged::Credentials::SshKey.new(privatekey: @private_key, publickey: @public_key, passphrase: '', username: @username)
-    end
-
-    def clone_repo_with_single_branch
-      Rails.logger.info 'Starting single branch git clone...'
-      FileUtils.remove_dir(@repo_path) if repo_path_exists?
-      branch_name = branch_exists?(@branch) ? @branch : 'master'
-      execute_command("git clone #{repo_url} --branch #{branch_name} --single-branch #{@repo_path}")
-      @repo_client ||= Rugged::Repository.new("#{@repo_path}/.git") if repo_path_exists?
-      Rails.logger.info 'Single branch git clone completed...'
-
-      # Create branch if not present and switch
-      branch = repo_client.branches["origin/#{@branch}"]
-      create_branch(@branch.to_s) if branch.nil?
-    end
-
-    def branch_exists?(branch_name, use_repo_url = false)
-      remote = !use_repo_url && repo_path_exists? ? 'origin' : @repo_url
-      command = "git ls-remote --heads #{remote} #{branch_name}"
-      execute_command(command, true).present?
-    end
-
-    def add_and_fetch_branch(branch_name)
-      return false unless branch_exists?(branch_name)
-
-      execute_command("git remote set-branches --add origin #{branch_name}")
-      execute_command("git fetch origin #{branch_name}:#{branch_name}")
     end
 
     def run_git_command
@@ -237,17 +205,9 @@ module Sync
       Dir.chdir Rails.root
     end
 
-    def execute_command(command, log_and_return_full_output = false)
-      Sync::Logger.log(command)
-      # `` returns console output (entire result)
-      # system() returns true/false corresponding success/failure of command
-      output = log_and_return_full_output ? `#{command}` : system(command)
-      Sync::Logger.log(output)
-      output
-    end
-
-    def repo_path_exists?
-      File.directory?("#{@repo_path}/.git")
+    def run_and_log(command, log = true)
+      Sync::Logger.log command
+      Sync::Logger.log system(command)
     end
 
     class ConfigConflictError < StandardError
