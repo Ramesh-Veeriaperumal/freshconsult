@@ -44,9 +44,4 @@ module SandboxConstants
   MERGE_FIELDS = %w(sandbox meta).freeze
 
   SANDBOX_NOTIFICATION_STATUS = [6, 8, 9, 10, 98].freeze
-
-  SANDBOX_DELETE_EVENTS = {
-    merge: 'merge',
-    deactivate: 'deactivate'
-  }.freeze
 end.freeze

@@ -24,7 +24,7 @@ class Account < ActiveRecord::Base
     :surveys_central_publish, :id_for_choices_write, :nested_field_revamp, :session_logs, :bypass_signup_captcha,
     :freshvisual_configs, :ticket_field_limit_increase, :join_ticket_field_data, :contact_company_split,
     :contact_field_central_publish, :company_field_central_publish, :simple_outreach, :disable_simple_outreach, :disable_field_service_management, :disable_mint_analytics,
-    :freshid_org_v2, :hide_agent_login, :addon_based_billing, :kbase_mint, :text_custom_fields_in_etl, :webhook_blacklist_ip, :sandbox_single_branch, :recalculate_daypass].freeze
+    :freshid_org_v2, :hide_agent_login, :addon_based_billing, :kbase_mint, :text_custom_fields_in_etl, :webhook_blacklist_ip, :recalculate_daypass].freeze
 
   DB_FEATURES = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone].freeze
 
