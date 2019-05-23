@@ -1,5 +1,6 @@
 class TrialSubscription < ActiveRecord::Base
   include FreshdeskFeatures::Feature
+  include Redis::RateLimitRedis
 
   belongs_to_account
   belongs_to :actor, class_name: :User
@@ -74,6 +75,7 @@ class TrialSubscription < ActiveRecord::Base
 
   def extend_trial(days_count)
     self.ends_at = days_count.days.from_now.end_of_day
+    set_redis_expiry(account_api_limit_key, self.ends_at.to_i - Time.now.to_i) if get_redis_api_expiry(account_api_limit_key) > 0
     save!
   rescue StandardError => e
     Rails.logger.error "Exception while extending higher plan trial, acc: #{account_id}"
@@ -116,6 +118,10 @@ class TrialSubscription < ActiveRecord::Base
       MemcacheKeys.delete_from_cache key
     end
 
+    def account_api_limit_key
+      ACCOUNT_API_LIMIT % { account_id: Account.current.id }
+    end
+    
     def recalculate_daypass_enabled?
       false
     end

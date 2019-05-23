@@ -1,4 +1,5 @@
 class TrialSubscription < ActiveRecord::Base
+  include Redis::RateLimitRedis
   after_commit -> { change_trial_subscription(:cancel) }, on: :update,
                                                           if: :trigger_feature_downgrade?
   after_commit -> {
@@ -6,7 +7,9 @@ class TrialSubscription < ActiveRecord::Base
     push_data_to_autopilot(:activate)
   }, on: :create, if: :active?
 
-  after_commit -> { push_data_to_autopilot(:cancel) }, on: :update,
+  after_commit -> { 
+    remove_account_api_limit_key
+    push_data_to_autopilot(:cancel) }, on: :update,
     if: :cancelling_the_trial?
 
   private
@@ -39,6 +42,16 @@ class TrialSubscription < ActiveRecord::Base
         plan: self.trial_plan,
         name: self.actor.name
       })
+    end
+
+    def account_api_limit_key
+      ACCOUNT_API_LIMIT % { account_id: Account.current.id }
+    end
+
+    def remove_account_api_limit_key
+      if get_redis_api_expiry(account_api_limit_key) > 0
+        set_account_api_limit(nil)
+      end
     end
 
     def cancelling_the_trial?
