@@ -1,18 +1,23 @@
 get:
   tags: [Solution Article]
-  summary: List all articles
+  summary: List all articles in folder
   parameters:
     - name: portal_id
       in: query
       type: integer
       description: Articles to be fetched based on portal_id
+    - name: folder_id
+      in: path
+      required: true
+      type: integer
+      format: int64
   responses: 
     200: 
       description: Success
       schema:
         type: object
         properties:
-          categories:
+          articles:
             type: array
             items:
               $ref: '#/definitions/solution_article'
@@ -34,6 +39,11 @@ post:
       required: true
       schema:
         $ref: '#/definitions/article_input'
+    - name: folder_id
+      in: path
+      required: true
+      type: integer
+      format: int64
   responses:
     200:
       description: Success

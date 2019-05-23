@@ -10798,7 +10798,7 @@
         }
       }
     },
-    "/solutions/folders": {
+    "/solutions/categories/{category_id}/folders": {
       "post": {
         "tags": [
           "Solution Folder"
@@ -10812,6 +10812,13 @@
             "schema": {
               "$ref": "#/definitions/folder_input"
             }
+          },
+          {
+            "name": "category_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
           }
         ],
         "responses": {
@@ -10836,11 +10843,18 @@
         "tags": [
           "Solution Folder"
         ],
-        "summary": "List folders",
+        "summary": "List all folders in category",
         "parameters": [
           {
             "name": "language_id",
             "in": "query",
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "category_id",
+            "in": "path",
+            "required": true,
             "type": "integer",
             "format": "int64"
           }
@@ -10849,7 +10863,18 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/solution_folder"
+              "type": "object",
+              "properties": {
+                "folders": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/folder_response"
+                  }
+                },
+                "meta": {
+                  "$ref": "#/definitions/meta"
+                }
+              }
             }
           },
           "400": {
@@ -10948,18 +10973,25 @@
         }
       }
     },
-    "/solutions/articles": {
+    "/solutions/folders/{folder_id}/articles": {
       "get": {
         "tags": [
           "Solution Article"
         ],
-        "summary": "List all articles",
+        "summary": "List all articles in folder",
         "parameters": [
           {
             "name": "portal_id",
             "in": "query",
             "type": "integer",
             "description": "Articles to be fetched based on portal_id"
+          },
+          {
+            "name": "folder_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
           }
         ],
         "responses": {
@@ -10968,7 +11000,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "categories": {
+                "articles": {
                   "type": "array",
                   "items": {
                     "$ref": "#/definitions/solution_article"
@@ -11004,6 +11036,13 @@
             "schema": {
               "$ref": "#/definitions/article_input"
             }
+          },
+          {
+            "name": "folder_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
           }
         ],
         "responses": {
@@ -15034,103 +15073,6 @@
           }
         }
       }
-    },
-    "sla_policy": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "active": {
-          "type": "boolean"
-        },
-        "sla_target": {
-          "type": "object",
-          "properties": {
-            "priority_4": {
-              "$ref": "#/definitions/sla_target_response"
-            },
-            "priority_3": {
-              "$ref": "#/definitions/sla_target_response"
-            },
-            "priority_2": {
-              "$ref": "#/definitions/sla_target_response"
-            },
-            "priority_1": {
-              "$ref": "#/definitions/sla_target_response"
-            }
-          }
-        },
-        "applicable_to": {
-          "type": "object",
-          "properties": {
-            "product_ids": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              }
-            },
-            "company_ids": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              }
-            },
-            "group_ids": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              }
-            },
-            "sources": {
-              "type": "array",
-              "items": {
-                "type": "integer",
-                "enum": [
-                  1,
-                  2,
-                  3,
-                  7,
-                  8,
-                  9,
-                  10
-                ]
-              }
-            },
-            "ticket_types": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "Question",
-                  "Incident",
-                  "Problem",
-                  "Feature Request"
-                ]
-              }
-            }
-          }
-        },
-        "escalation": {
-          "type": "object",
-          "properties": {
-            "response": {
-              "$ref": "#/definitions/sla_escalation_level"
-            },
-            "resolution": {
-              "$ref": "#/definitions/sla_escalation_response"
-            }
-          }
-        }
-      },
-      "required": [
-        "name",
-        "sla_target",
-        "applicable_to"
-      ]
     },
     "draft": {
       "type": "object",

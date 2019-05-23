@@ -7,6 +7,11 @@ post:
       required: true
       schema:
         $ref: '#/definitions/folder_input'
+    - name: category_id
+      in: path
+      required: true
+      type: integer
+      format: int64
   responses:
     200:
       description: Success
@@ -21,17 +26,29 @@ post:
 
 get:
   tags: [Solution Folder]
-  summary: List folders
+  summary: List all folders in category
   parameters:
     - name: language_id
       in: query
+      type: integer
+      format: int64
+    - name: category_id
+      in: path
+      required: true
       type: integer
       format: int64
   responses:
     200:
       description: Success
       schema:
-        $ref: '#/definitions/solution_folder'
+        type: object
+        properties:
+          folders:
+            type: array
+            items:
+              $ref: '#/definitions/folder_response'
+          meta:
+            $ref: '#/definitions/meta'  
     400:
       description: Bad Request Error
       schema:
