@@ -3,6 +3,7 @@ require 'sidekiq/testing'
 Sidekiq::Testing.fake!
 
 class Admin::TrialSubscriptionsControllerTest < ActionController::TestCase
+  include Redis::RateLimitRedis
   def setup
     super
     before_all
@@ -16,10 +17,33 @@ class Admin::TrialSubscriptionsControllerTest < ActionController::TestCase
       subscription.state = Subscription::ACTIVE
       subscription.save!
     end
+
+    plan_api_rate_limits = {
+      "Sprout Jan 19": 0,
+      "Blossom Jan 19": 3000,
+      "Garden Jan 19": 3000,
+      "Estate Jan 19": 5000,
+      "Forest Jan 19": 5000,
+      "Garden Omni Jan 19": 3000,
+      "Estate Omni Jan 19": 5000
+    }
+
+    SubscriptionPlan.select([:id, :name]).each do |sp|
+      limit = plan_api_rate_limits[sp.name.to_sym]
+      $rate_limit.perform_redis_op("set", "PLAN_API_LIMIT:#{sp.id}", limit) if limit.present?
+    end
   end
 
   def wrap_cname(params_hash)
     { trial_subscription: params_hash }
+  end
+
+  def account_api_limit_key
+    ACCOUNT_API_LIMIT % { account_id: Account.current.id }
+  end
+
+  def find_plan_by_name(plan_name)
+    SubscriptionPlan.cached_current_plans.find { |plan| plan.name == plan_name }
   end
 
   def get_valid_plan_name
@@ -184,5 +208,86 @@ class Admin::TrialSubscriptionsControllerTest < ActionController::TestCase
     account = Account.current
     account.active_trial.extend_trial(10)
     assert_equal(10.days.from_now.end_of_day.to_i, account.reload.active_trial.ends_at.to_i)
+  end
+
+  def test_set_expiry_api_limit_on_extend_trial
+    set_account_api_limit(3000)
+    set_redis_expiry(account_api_limit_key, 1829361)
+    trial_plan_name = get_valid_plan_name
+    params_hash = { trial_plan: trial_plan_name }
+    post :create, construct_params({}, params_hash)
+    assert_response 204
+    account = Account.current
+    account.active_trial.extend_trial(10)
+    assert_equal(10.days.from_now.end_of_day.to_i, account.reload.active_trial.ends_at.to_i)
+    assert_equal (get_redis_api_expiry(account_api_limit_key) / 86400).round, 10
+  end
+
+  def test_setnot_expiry_api_limit_on_extend_trial
+    set_account_api_limit(3000)
+    set_redis_expiry(account_api_limit_key, 1829361)
+    trial_plan_name = get_valid_plan_name
+    params_hash = { trial_plan: trial_plan_name }
+    post :create, construct_params({}, params_hash)
+    assert_response 204
+    set_account_api_limit(0)
+    account = Account.current
+    account.active_trial.extend_trial(10)
+    assert_equal(10.days.from_now.end_of_day.to_i, account.reload.active_trial.ends_at.to_i)
+    assert_equal (get_redis_api_expiry(account_api_limit_key) / 86400).round, -1
+  end
+
+  def test_set_expiry_api_limit_on_trial_with_redis_key_absence
+    set_account_api_limit(nil)
+    trial_plan = get_valid_plan_name
+    plan_key = format(PLAN_API_LIMIT, plan_id: find_plan_by_name(trial_plan).id)
+    params_hash = { trial_plan: trial_plan }
+    post :create, construct_params({}, params_hash)
+    assert_response 204
+    assert_equal get_account_api_limit, get_api_rate_limit(plan_key)
+    assert_equal (get_redis_api_expiry(account_api_limit_key) / 86400).round, Subscription::TRIAL_DAYS
+  end
+
+  def test_set_expiry_api_limit_with_redis_key_and_ttl_presence
+    set_account_api_limit(3000)
+    set_redis_expiry(account_api_limit_key, 1829361)
+    trial_plan_name = get_valid_plan_name
+    plan_key = format(PLAN_API_LIMIT, plan_id: find_plan_by_name(trial_plan_name).id)
+    params_hash = { trial_plan: trial_plan_name }
+    post :create, construct_params({}, params_hash)
+    assert_response 204
+    assert_equal get_account_api_limit, get_api_rate_limit(plan_key)
+    assert_equal (get_redis_api_expiry(account_api_limit_key) / 86400).round, Subscription::TRIAL_DAYS
+  end
+
+  def test_set_api_limit_with_redis_key_presence_and_ttl_absence
+    set_account_api_limit(3000)
+    post :create, construct_params({}, trial_plan: get_valid_plan_name)
+    assert_response 204
+    assert_equal get_account_api_limit, "3000"
+  end
+
+  def test_remove_account_api_limit_on_cancel_with_ttl_presence
+    set_account_api_limit(nil)
+    params_hash = { trial_plan: get_valid_plan_name }
+    post :create, construct_params({}, params_hash)
+    assert_response 204
+    put :cancel, construct_params({})
+    assert_response 204
+    assert_equal get_account_api_limit, nil
+  end
+
+  def test_setnot_account_api_limit_on_cancel_with_ttl_absence
+    set_account_api_limit(nil)
+    trial_plan_name = get_valid_plan_name
+    plan_key = format(PLAN_API_LIMIT, plan_id: find_plan_by_name(trial_plan_name).id)
+    params_hash = { trial_plan: trial_plan_name }
+    post :create, construct_params({}, params_hash)
+    assert_response 204
+    set_redis_expiry(account_api_limit_key, 0)
+    set_account_api_limit(get_api_rate_limit(plan_key))
+    put :cancel, construct_params({})
+    assert_response 204
+    assert_equal get_account_api_limit, get_api_rate_limit(plan_key)
   end
 end
