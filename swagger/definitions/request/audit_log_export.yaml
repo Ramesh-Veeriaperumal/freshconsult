@@ -19,12 +19,20 @@ properties:
         properties: 
           entity: 
             type: array
+            items:
+              type: string
           ids:
             type: array
+            items:
+              type: integer
       performed_by:
         type: array
+        items:
+          type: integer
       action:
         type: array
+        items:
+          type: string
 required:
   - from
   - to
