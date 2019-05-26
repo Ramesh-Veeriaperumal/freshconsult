@@ -64,7 +64,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :sbrr_ticket_dequeued, :sbrr_user_score_incremented, :sbrr_fresh_ticket, :skip_sbrr, :model_changes,
     :schedule_observer, :required_fields_on_closure, :observer_args, :skip_sbrr_save, 
     :sbrr_state_attributes, :escape_liquid_attributes, :update_sla, :sla_on_background,
-    :sla_calculation_time, :import_ticket, :ocr_update, :skip_ocr_sync, :custom_fields_hash
+    :sla_calculation_time, :import_ticket, :ocr_update, :skip_ocr_sync, :custom_fields_hash, :thank_you_note_id
 
     # :skip_sbrr_assigner and :skip_sbrr_save can be combined together if needed.
     # Added :system_changes, :activity_type, :misc_changes for activity_revamp -
@@ -816,7 +816,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def schema_less_attributes(attribute, args)
-    Rails.logger.debug "schema_less_attributes - method_missing :: args is #{args} and attribute :: #{attribute}"
     build_schema_less_ticket unless schema_less_ticket
     args = args.first if args && args.is_a?(Array)
     (attribute.to_s.include? '=') ? schema_less_ticket.safe_send(attribute, args) : schema_less_ticket.safe_send(attribute)
@@ -1338,7 +1337,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def invoke_ticket_observer_worker(args)
-    job_id = ::Tickets::ObserverWorker.perform_async(args)
+    delay = args[:note_id].present? && Account.current.detect_thank_you_note_enabled?
+    job_id = delay ? ::Tickets::ObserverWorker.perform_in(2.seconds, args) : ::Tickets::ObserverWorker.perform_async(args)
     Va::Logger::Automation.set_thread_variables(Account.current.id, id, args[:doer_id], nil)
     Va::Logger::Automation.log "Triggering Observer, job_id=#{job_id}, info=#{args.inspect}"
     Va::Logger::Automation.unset_thread_variables
@@ -1370,6 +1370,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def eligible_for_ocr?
     account.omni_channel_routing_enabled? && rr_active?
+  end
+  
+  def thank_you_note
+    @thank_you_note ||= evaluate_on.notes.find_by_id(thank_you_note_id)
   end
 
   private

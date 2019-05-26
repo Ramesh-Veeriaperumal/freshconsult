@@ -16,7 +16,7 @@ class Integrations::IntegratedResourcesController < ApplicationController
         render :json => newIntegratedResource
       end
     rescue Exception => msg
-      puts "Something went wrong while creating an integrated resource ( #{msg})"
+      Rails.logger.error "Something went wrong while creating an integrated resource ( #{msg})"
       render :json => {:status=>:error}
     end
   end
@@ -31,7 +31,7 @@ class Integrations::IntegratedResourcesController < ApplicationController
         render :json => newIntegratedResource
       end
     rescue Exception => msg
-      puts "Something went wrong while updating an integrated resource ( #{msg})"
+      Rails.logger.error "Something went wrong while updating an integrated resource ( #{msg})"
       render :json => {:status=>:error}
     end
   end
@@ -46,7 +46,7 @@ class Integrations::IntegratedResourcesController < ApplicationController
         render :json => {:status=>:error}
       end
     rescue Exception => msg
-      puts "Something went wrong while deleting an integrated resource ( #{msg})"
+      Rails.logger.error "Something went wrong while deleting an integrated resource ( #{msg})"
       render :json => {:status=>:error}
     end
   end

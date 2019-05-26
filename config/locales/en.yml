@@ -727,6 +727,7 @@ en:
     unsolved: Unsolved
   payment_info: Payment information
   billing_address: Billing Address
+  tax_inclusion: (Inclusive of tax)
   support:
     tickets:
       ticket_survey:
@@ -2171,6 +2172,7 @@ en:
         custom_headers_limit_error: "You cannot set more than %{limit} custom headers"
         custom_headers_pair_mismatch: "Kindly ensure that all headers have values"
         action_data_limit_exceed: "You are not allowed to save more than 63K characters in action data"
+        invalid_url: "The Domin you have entered in Trigger Webhook is blocked. Please enter another domain."
       index:
         human_name: Dispatch’r Rule
       remember_to_save: 'After updating, please remember to save it.'
@@ -5007,8 +5009,8 @@ en:
     transaction_details: "Payments and Refund details"
   activate: Activate
   feedbackwidget_button_text: Label
-  amount_billed_per_month: You will be billed <b>%{amount} %{period}</b>.
-  amount_billed_annually: You will be billed <b>%{amount} annually</b>.
+  amount_billed_per_month: You will be billed <b>%{amount} %{period}</b>%{tax_string}
+  amount_billed_annually: You will be billed <b>%{amount} annually</b>%{tax_string}
   currency_note: <a href='/subscription'>Click here</a> to change your currency. <br> Please note that you cannot change the currency once you enter the card information.
   import_zendesk_summary: Import from zendesk summary
   user_activation_email: User Activation Email

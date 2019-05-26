@@ -14,7 +14,7 @@ class Helpdesk::Note < ActiveRecord::Base
   SCHEMA_LESS_ATTRIBUTES = ['from_email', 'to_emails', 'cc_emails', 'bcc_emails', 'header_info', 'category', 
                             'response_time_in_seconds', 'response_time_by_bhrs', 'email_config_id', 'subject',
                             'last_modified_user_id', 'last_modified_timestamp', 'sentiment','dynamodb_range_key',
-                            'failure_count', 'quoted_parsing_done'
+                            'failure_count', 'quoted_parsing_done', 'thank_you_note'
                           ]
 
   self.table_name =  "helpdesk_notes"
@@ -457,6 +457,15 @@ class Helpdesk::Note < ActiveRecord::Base
     def mobihelp?
       self.source == SOURCE_KEYS_BY_TOKEN['mobihelp'] || self.source == SOURCE_KEYS_BY_TOKEN['mobihelp_app_review']
     end
+
+    def automated_note_for_ticket?
+      (source == SOURCE_KEYS_BY_TOKEN["automation_rule"])
+    end
+
+    def automation_fwd_email?
+      source == SOURCE_KEYS_BY_TOKEN["automation_rule_forward"]
+    end
+
 
   private
   

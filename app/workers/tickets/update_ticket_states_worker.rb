@@ -31,7 +31,7 @@ module Tickets
       ensure
         return if @note.blank?
         inline = args[:send_and_set] ? true : false
-        @note.trigger_observer(args[:model_changes], inline) unless args[:freshdesk_webhook]
+        @note.trigger_observer(args[:model_changes], inline, false) unless args[:freshdesk_webhook]
         Va::Logger::Automation.unset_thread_variables
       end
     end

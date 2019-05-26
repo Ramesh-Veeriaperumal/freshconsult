@@ -1,53 +1,53 @@
 class Admin::Sandbox::Job < ActiveRecord::Base
   self.table_name = "admin_sandbox_jobs"
+
+  belongs_to_account
+  serialize :additional_data, Hash
+  include SandboxConstants
   
   before_create :set_default_values
-  
-  STATUSES = [
-    [:enqueued,           1],
-    [:sync_from_prod,     2],
-    [:provision_staging,  3],
-    [:complete,           4]
-  ]
 
-  STATUS_KEYS_BY_TOKEN = Hash[*STATUSES.map { |i| [i[0], i[1]] }.flatten]
-  
+  def mark_as!(state)
+    raise StandardError unless STATUS_KEYS_BY_TOKEN.key?(state)
+    self.status = STATUS_KEYS_BY_TOKEN[state]
+    self.save!
+  end
+
+  STATUS_KEYS_BY_TOKEN.keys.each do |name|
+    define_method "#{name}?" do
+      self.status == STATUS_KEYS_BY_TOKEN[name.to_sym]
+    end
+  end
+
+  def mark_shard_as!(state)
+    raise StandardError unless ShardMapping::STATUS_CODE.key?(state)
+    shard        = ShardMapping.find_by_account_id(self.sandbox_account_id)
+    shard.status = ShardMapping::STATUS_CODE[state]
+    shard.save!
+  end
+
+  def update_last_error(e, state)
+    self.last_error = e.to_s + " :: Backtrace: #{e.backtrace[0..20].inspect}"
+    mark_as!(state)
+  end
+
+  def diff
+    self.additional_data[:diff] || {}
+  end
+
+  def conflict?
+    self.additional_data[:conflict]
+  end
+
+  def last_diff
+    self.additional_data[:last_diff]
+  end
+
+  private
+
   def set_default_values
-    self.status       = STATUS_KEYS_BY_TOKEN[:enqueued]
+    self.status = STATUS_KEYS_BY_TOKEN[:enqueued]
     self.initiated_by = User.current.id
   end
-  
-  def sync_from_prod
-    self.status = STATUS_KEYS_BY_TOKEN[:sync_from_prod]
-    self.save
-  end
-  
-  def provision_staging
-    self.status = STATUS_KEYS_BY_TOKEN[:provision_staging]
-    self.save
-  end
-  
-  def complete
-    self.status = STATUS_KEYS_BY_TOKEN[:complete]
-    self.save
-  end
-  
-  def set_sandbox_to_maintainance_mode
-    shard        = ShardMapping.find_by_account_id(self.sandbox_account_id)
-    shard.status = ShardMapping::STATUS_CODE[:maintenance]
-    shard.save
-  end
-  
-  def set_sandbox_to_partial
-    shard        = ShardMapping.find_by_account_id(self.sandbox_account_id)
-    shard.status = ShardMapping::STATUS_CODE[:partial]
-    shard.save
-  end
-  
-  def set_sandbox_to_live
-    shard        = ShardMapping.find_by_account_id(self.sandbox_account_id)
-    shard.status = ShardMapping::STATUS_CODE[:ok]
-    shard.save
-  end
-  
+
 end

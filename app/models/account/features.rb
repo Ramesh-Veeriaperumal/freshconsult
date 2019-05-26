@@ -24,8 +24,7 @@ class Account < ActiveRecord::Base
     :surveys_central_publish, :id_for_choices_write, :nested_field_revamp, :session_logs, :bypass_signup_captcha,
     :freshvisual_configs, :ticket_field_limit_increase, :join_ticket_field_data, :contact_company_split,
     :contact_field_central_publish, :company_field_central_publish, :simple_outreach, :disable_simple_outreach, :disable_field_service_management, :disable_mint_analytics,
-    :freshid_org_v2, :hide_agent_login, :addon_based_billing, :kbase_mint, :text_custom_fields_in_etl
-  ].freeze
+    :freshid_org_v2, :hide_agent_login, :addon_based_billing, :kbase_mint, :text_custom_fields_in_etl, :webhook_blacklist_ip, :sandbox_single_branch, :recalculate_daypass].freeze
 
   DB_FEATURES = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone].freeze
 
@@ -51,7 +50,8 @@ class Account < ActiveRecord::Base
     :performance_report, :custom_password_policy, :social_tab, :scenario_automation,
     :omni_channel, :ticket_volume_report, :sla_management_v2, :api_v2, :cascade_dispatcher,
     :personal_canned_response, :marketplace, :reverse_notes,
-    :freshreports_analytics, :disable_old_reports
+    :freshreports_analytics, :disable_old_reports, :article_filters, :adv_article_bulk_actions,
+    :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
@@ -110,7 +110,6 @@ class Account < ActiveRecord::Base
       features_not_migrated = feature_names -
                               DB_TO_BITMAP_MIGRATION_P2_FEATURES_LIST -
                               DB_TO_LP_MIGRATION_P2_FEATURES_LIST
-      Rails.logger.info("These features are not yet migrated: #{features_not_migrated.inspect}")
       has_features?(*features_migrated_to_bmp) &&
         launched?(*features_migrated_to_lp) &&
         super(*features_not_migrated)
@@ -391,6 +390,10 @@ class Account < ActiveRecord::Base
     return true unless reverse_notes_enabled?
     user_settings = current_user.old_notes_first? if current_user != :no_user
     user_settings.nil? ? account_additional_settings.old_notes_first? : user_settings
+  end
+
+  def detect_thank_you_note_enabled?
+    detect_thank_you_note_eligible_enabled? && has_feature?(:detect_thank_you_note)
   end
   # STOP
 end

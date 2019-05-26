@@ -327,6 +327,49 @@
       :reports_100: 322
       :freshreports_analytics: 323
       :disable_old_reports: 324
+      :article_filters: 325
+      :adv_article_bulk_actions: 326
+      :auto_article_order: 327
+      :solutions_1: 328
+      :solutions_2: 329
+      :solutions_3: 330
+      :solutions_4: 331
+      :solutions_5: 332
+      :solutions_6: 333
+      :solutions_7: 334
+      :solutions_8: 335
+      :solutions_9: 336
+      :solutions_10: 337
+      :solutions_11: 338
+      :solutions_12: 339
+      :solutions_13: 340
+      :solutions_14: 341
+      :solutions_15: 342
+      :solutions_16: 343
+      :solutions_17: 344
+      :solutions_18: 345
+      :solutions_19: 346
+      :solutions_20: 347
+      :solutions_21: 348
+      :solutions_22: 349
+      :solutions_23: 350
+      :solutions_24: 351
+      :solutions_25: 352
+      :solutions_26: 353
+      :solutions_27: 354
+      :solutions_28: 355
+      :solutions_29: 356
+      :solutions_30: 357
+      :detect_thank_you_note_eligible: 358
+      :detect_thank_you_note: 359
+      :freddy_3: 360
+      :freddy_4: 361
+      :freddy_5: 362
+      :freddy_6: 363
+      :freddy_7: 364
+      :freddy_8: 365
+      :freddy_9: 366
+      :freddy_10: 367
 :selectable_features:
   :redis_display_id: true
   :branding: true

@@ -1206,7 +1206,7 @@ class Helpdesk::TicketsController < ApplicationController
       # Parse time with default TZ set as UTC:
       time = time_string.nil? ? nil : Time.parse(time_string)
     rescue ArgumentError
-      puts "Time format mismatch. Start time and end time should be like #{Time.now.to_formatted_s(:db)}"
+      Rails.logger.error("Time format mismatch. Start time and end time should be like #{Time.now.to_formatted_s(:db)}")
     ensure
       # Reset to previous TZ:
       Time.zone = old_tz

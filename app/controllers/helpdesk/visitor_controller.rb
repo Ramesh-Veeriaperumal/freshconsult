@@ -2,7 +2,6 @@ class Helpdesk::VisitorController < ApplicationController
   before_filter :set_selected_tab 
   
   def index 
-    puts "Visitor Index called..."
   end
 
   private

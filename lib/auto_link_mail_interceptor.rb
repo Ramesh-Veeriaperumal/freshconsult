@@ -45,7 +45,6 @@ class AutoLinkMailInterceptor
     end
 
     def self.encode_body(part, autolinked_body)
-      Rails.logger.debug "DEBUG :: INSIDE encode_body :: #{part.content_transfer_encoding}"
       case (part.content_transfer_encoding || "").downcase
         when "base64" then
           part.body = Mail::Encodings::Base64.encode(autolinked_body)

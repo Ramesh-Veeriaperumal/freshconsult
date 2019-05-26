@@ -29,6 +29,7 @@ class SAAS::SubscriptionEventActions
 
   DROP  = "drop"
   ADD   = "add"
+  DEFAULT_DAY_PASS_LIMIT = 3
 
   SELECTABLE_DB_FEATURES = (Account::SELECTABLE_FEATURES.keys +
                            Account::TEMPORARY_FEATURES.keys +
@@ -57,6 +58,7 @@ class SAAS::SubscriptionEventActions
       handle_collab_feature
       add_chat_feature
       disable_chat_routing unless account.has_feature?(:chat_routing)
+      handle_daypass if recalculate_daypass_enabled?
     end
 
     if add_ons_changed?
@@ -222,5 +224,49 @@ class SAAS::SubscriptionEventActions
       else
         CollabPreEnableWorker.perform_async(false)
       end
+    end
+
+    def handle_daypass
+      return unless daypass_calc_needed?
+      
+      new_plan_dp_amount, old_plan_dp_amount = fetch_daypass_amount
+      return if new_plan_dp_amount == old_plan_dp_amount
+
+      credits_to_be_added = calc_daypass_and_credits(new_plan_dp_amount, old_plan_dp_amount)
+      Billing::ChargebeeWrapper.new.add_daypass_credits(credits_to_be_added.to_i) if credits_to_be_added > 0
+      daypass_config.reload
+      daypass_config.try_auto_recharge
+    rescue StandardError => e
+      Rails.logger.info("Error while handling day_pass calculation - #{Account.current.id}-#{e.inspect}")
+    end
+
+    def daypass_calc_needed?
+      daypass_config = account.day_pass_config
+      daypass_config.available_passes > DEFAULT_DAY_PASS_LIMIT && account.day_pass_purchases.present? && account.subscription.active?
+    end
+
+    def fetch_daypass_amount
+      [@new_plan.retrieve_addon_price(:day_pass), @old_plan.retrieve_addon_price(:day_pass)]
+    end
+
+    def calc_daypass_and_credits(new_plan_dp_amount, old_plan_dp_amount)
+      amount_needed = new_plan_dp_amount.to_f * daypass_config.available_passes
+      dp_purchase_amount = old_plan_dp_amount.to_f * daypass_config.available_passes
+
+      if dp_purchase_amount > amount_needed # downgrade
+        dp_purchase_amount - amount_needed
+      else # upgrade
+        daypass_config.available_passes = (dp_purchase_amount.to_i / new_plan_dp_amount.to_i)
+        daypass_config.save
+        dp_purchase_amount % new_plan_dp_amount
+      end
+    end
+
+    def daypass_config
+      @daypass_config ||= account.day_pass_config
+    end
+
+    def recalculate_daypass_enabled?
+      Account.current.recalculate_daypass_enabled?
     end
 end

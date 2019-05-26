@@ -84,4 +84,21 @@ module Billing::BillingHelper
         @account.subscription_plan.omni_plan? || @account.subscription_plan.free_omni_channel_plan?
     end
 
+    def update_field_agent_limit(subscription, billing_subscription)
+      fsm_addon = subscription.addons.find { |addon| addon.name == Subscription::Addon::FSM_ADDON }
+      existing_field_agent_limit = subscription.field_agent_limit
+      if fsm_addon
+        new_field_agent_limit = billing_subscription.addons.find { |addon| addon.id ==
+          fsm_addon.billing_addon_id.to_s }.quantity
+        subscription.field_agent_limit = new_field_agent_limit
+        if existing_field_agent_limit && new_field_agent_limit < existing_field_agent_limit
+          params = { account_id: subscription.account_id, old_field_agent_limit: existing_field_agent_limit, new_field_agent_limit: new_field_agent_limit }
+          msg = 'FSM addon quantity dropped from Chargebee. There may be additional (no more charged) field agents in Freshdesk'
+          Rails.logger.info " #{msg} #{params.inspect}"
+          Admin::AdvancedTicketing::FieldServiceManagement::Util.notify_fsm_dev(msg, params)
+        end
+      else
+        subscription.reset_field_agent_limit
+      end
+    end
 end

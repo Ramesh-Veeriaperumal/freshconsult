@@ -224,7 +224,6 @@ class ApiApplicationController < MetalApiController
     end
 
     def check_account_state
-      Rails.logger.info "::: Check account state :::"
       render_request_error(:account_suspended, 403) unless current_account.active?
     end
 
@@ -649,10 +648,8 @@ class ApiApplicationController < MetalApiController
     end
 
     def check_day_pass_usage_with_user_time_zone
-      Rails.logger.info "::: day pass check started :::"
       user_zone = TimeZone.find_time_zone
       Time.use_zone(user_zone) { check_day_pass_usage }
-      Rails.logger.info "::: day pass check done :::"
     end
 
     def run_on_slave

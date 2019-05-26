@@ -209,7 +209,6 @@ class ContactsController < ApplicationController
     end
 
     load_companies
-    Rails.logger.info "$$$$$$$$ -> #{@user.inspect}"
 
     respond_to do |format|
       format.html { }

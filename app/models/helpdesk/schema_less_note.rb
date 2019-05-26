@@ -1,5 +1,5 @@
 class Helpdesk::SchemaLessNote < ActiveRecord::Base
-	
+
 	include RabbitMq::Publisher
 	# Including this because we are doing business hour calculation in rabbitmq for reports
 	include BusinessHoursCalculation
@@ -7,7 +7,7 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
 
 	self.table_name =  "helpdesk_schema_less_notes"
 	self.primary_key = :id
-	
+
 	alias_attribute :header_info, :text_nc01
 	alias_attribute :category, :int_nc01
 	alias_attribute :response_time_in_seconds, :int_nc02
@@ -17,14 +17,14 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
 	alias_attribute :note_properties, :text_nc02
 
 	alias_attribute :sentiment, :int_nc04
-	
+
 	serialize :to_emails
 	serialize :cc_emails
 	serialize :bcc_emails
 	serialize :header_info
 	serialize :text_nc02, Hash
 
-	belongs_to_account	
+	belongs_to_account
 	belongs_to :note, :class_name =>'Helpdesk::Note'
 
 	attr_protected :note_id, :account_id
@@ -41,7 +41,7 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
 	def self.category_column
 		:int_nc01
 	end
-	
+
 	def last_modified_user_id
 		note_properties[:last_modified_user_id] if note_properties.is_a?(Hash)
 	end
@@ -72,7 +72,7 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
 		  	emails
 		else
 		  	emails[:cc_emails] if emails.present?
-		end    
+		end
 	end
 
 	def cc_emails=(emails)
@@ -84,7 +84,7 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
 
 	def cc_emails_hash
 		emails = read_attribute(:cc_emails)
-		if emails.is_a?(Array) || emails.is_a?(String)  || emails.blank?  
+		if emails.is_a?(Array) || emails.is_a?(String)  || emails.blank?
 		  {:cc_emails => emails, :dropped_cc_emails => []}
 		else
 		  emails
@@ -92,7 +92,7 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
 	end
 
 	def cc_and_bcc_emails_count
-		if ((!cc_emails.blank? && cc_emails.is_a?(Array) && cc_emails.count >= TicketConstants::MAX_EMAIL_COUNT) || 
+		if ((!cc_emails.blank? && cc_emails.is_a?(Array) && cc_emails.count >= TicketConstants::MAX_EMAIL_COUNT) ||
 				(!bcc_emails.blank? && bcc_emails.is_a?(Array) && bcc_emails.count >= TicketConstants::MAX_EMAIL_COUNT) ||
 				(!to_emails.blank? && to_emails.is_a?(Array) && to_emails.count >= TicketConstants::MAX_EMAIL_COUNT))
 			self.errors.add(:base,"You have exceeded the limit of #{TicketConstants::MAX_EMAIL_COUNT} emails")
@@ -101,10 +101,18 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
 		return true
 	end
 
+	def thank_you_note
+		note_properties[:thank_you_note]
+	end
+
+	def thank_you_note=(val)
+	   note_properties[:thank_you_note] = val
+	end
+
 	private
 
 	def email_failures
 		note_properties
 	end
-	
+
 end

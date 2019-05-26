@@ -175,6 +175,10 @@ class Solution::FolderMeta < ActiveRecord::Base
 	      customer_folders.build({:customer_id => cust_id}) unless self.customer_ids.include?(cust_id)
 	    end
 	end
+
+  def article_order
+    Account.current.auto_article_order_enabled? ? self[:article_order] : Solution::Constants::ARTICLE_ORDER_KEYS_TOKEN[:custom]
+  end
 	
 	private
 

@@ -160,31 +160,35 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def central_custom_fields_hash
     pv_transformer = Helpdesk::Ticketfields::PicklistValueTransformer::StringToId.new(self)
-    custom_ticket_fields.inject([]) do |arr, ff_def_entry|
+    arr = []
+    custom_ticket_fields.each do |field|
       begin
-        field = ff_def_entry.ticket_field
         field_value = safe_send(field.name)
         custom_field = {
-          name: ff_def_entry.flexifield_alias,
+          name: field.name,
           label: field.label,
-          type: ff_def_entry.flexifield_coltype,
+          type: field.flexifield_coltype,
           value: field.field_type == 'custom_date' ? utc_format(field_value) : field_value,
-          column: ff_def_entry.flexifield_name
+          column: field.column_name
         }
         if field.flexifield_coltype == 'dropdown'
-          picklist_id = pv_transformer.transform(field_value, ff_def_entry.flexifield_name) if field_value # fetch picklist_id of the field
+          if field_value
+            picklist_id = pv_transformer.transform(field_value, field.column_name) # fetch picklist_id of the field
+            custom_field[:value] = nil if picklist_id.blank?
+          end
           custom_field[:choice_id] = picklist_id
         end
         arr.push(custom_field)
       rescue Exception => e
-        Rails.logger.error "Error while fetching ticket custom field value - #{e}\n#{e.message}\n#{e.backtrace.join("\n")}"
+        Rails.logger.error("Error while fetching ticket custom field #{field.name} - account #{account.id} - #{e.message} :: #{e.backtrace[0..10].inspect}")
         NewRelic::Agent.notice_error(e)
       end
     end
+    arr
   end
 
   def custom_ticket_fields
-    @custom_tkt_fields ||= account.flexifields_with_ticket_fields_from_cache
+    @custom_tkt_fields ||= account.ticket_fields_from_cache.reject(&:default)
   end
 
   def resolution_time_by_chrs
