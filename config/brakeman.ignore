@@ -1491,6 +1491,25 @@
       "note": ""
     },
     {
+      "warning_type": "Mass Assignment",
+      "warning_code": 17,
+      "fingerprint": "59d8c3eb18bf4c627bb5b7873ce46de6ebfba5b889fa31e3965f4741de62a65f",
+      "message": "Unprotected mass assignment",
+      "file": "app/controllers/support/notes_controller.rb",
+      "line": 24,
+      "link": "http://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "Helpdesk::Ticket.find_by_param(params[:ticket_id], current_account).notes.build({ \"incoming\" => true, \"private\" => false, \"source\" => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[\"note\"], \"user_id\" => ((current_user and current_user.id)), \"account_id\" => ((current_account and current_account.id)) }.merge(params[:helpdesk_note].permit(*[{ :attachments => ([:resource]) }, { :inline_attachment_ids => ([]) }, { :note_body_attributes => ([:body_html]) }])))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Support::NotesController",
+        "method": "create"
+      },
+      "user_input": "params[:helpdesk_note].permit(*[{ :attachments => ([:resource]) }, { :inline_attachment_ids => ([]) }, { :note_body_attributes => ([:body_html]) }])",
+      "confidence": "Medium",
+      "note": ""
+    },
+    {
       "warning_type": "SQL Injection",
       "warning_code": 0,
       "fingerprint": "5b3ca8d41afe33ed67005b2f34be8996757bcd43bb73706a487c5d4dc95d711a",
@@ -2959,6 +2978,26 @@
       "note": ""
     },
     {
+      "warning_type": "Command Injection",
+      "warning_code": 14,
+      "fingerprint": "dee8fcea81c5fed12ccda999b8db62a7612f9a31fba9d63e1e036dee8cdeddbf",
+      "check_name": "Execute",
+      "message": "Possible command injection",
+      "file": "lib/sync/git_client.rb",
+      "line": 244,
+      "link": "https://brakemanscanner.org/docs/warning_types/command_injection/",
+      "code": "`#{command}`",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Sync::GitClient",
+        "method": "execute_command"
+      },
+      "user_input": "command",
+      "confidence": "Medium",
+      "note": ""
+    },
+    {
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "df150cd257b31c0d069d69d246fbd9033e75e817387cfedb8572c2cd85a0cedc",
@@ -3454,6 +3493,6 @@
       "note": "The embed is within quoted text"
     }
   ],
-  "updated": "2019-02-19 22:51:46 +0530",
-  "brakeman_version": "4.3.1"
+  "updated": "2019-05-14 14:59:04 +0530",
+  "brakeman_version": "3.3.0"
 }

@@ -74,4 +74,7 @@ module Redis::AutomationRuleRedis
       end
     end
 
+    def get_automation_redis_key(key)
+      newrelic_begin_rescue { $redis_automation_rule.perform_redis_op('get', key) }
+    end
 end

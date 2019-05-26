@@ -25,7 +25,7 @@ module AutomationTestHelper
       automations_hash.merge!(meta: meta_hash(rule)) unless list_page
       automations_hash.merge!({performer: perfromer_pattern(rule.rule_performer)}) if rule.observer_rule?
       automations_hash.merge!({events: events_pattern(rule.rule_events)}) if rule.observer_rule?
-      automations_hash.merge!({conditions: conditions_pattern(rule.rule_conditions, rule.rule_operator)}) if 
+      automations_hash.merge!({conditions: conditions_pattern(rule.rule_conditions, rule.rule_operator)}) if
           rule.observer_rule? || rule.dispatchr_rule? || rule.supervisor_rule?
       automations_hash
   end
@@ -70,7 +70,7 @@ module AutomationTestHelper
       conditions = {}
       condition_data.each_with_index  do |condition_set, index|
         conditions[:operator] = READABLE_OPERATOR[operator.to_s] if index == 1
-        conditions["condition_set_#{index + 1}".to_sym] = condition_set_hash(condition_set.values.first, 
+        conditions["condition_set_#{index + 1}".to_sym] = condition_set_hash(condition_set.values.first,
             condition_set.keys.first)
       end
       conditions
@@ -157,5 +157,12 @@ module AutomationTestHelper
     sample_response['outdated'] = false
     sample_response['last_updated_by'] = User.current.id
     sample_response
+  end
+
+
+  def observer_rule_json_with_thank_you_note
+    observer_payload = JSON.parse('{ "active": true, "performer": { "type": 2 }, "events": [ { "field_name": "reply_sent" }, { "field_name": "note_type", "value": "public" } ], "conditions": { "condition_set_1": { "match_type": "all", "ticket": [ { "field_name": "freddy_suggestion", "operator": "is_not", "value": "thank_you_note" }, { "field_name": "status", "operator": "in", "value": [ 3, 4 ] } ] }, "operator": "and", "condition_set_2": { "match_type": "any", "ticket": [ { "field_name": "status", "operator": "not_in", "value": [ 2, 4, 5 ] } ] } }, "actions": [ { "field_name": "status", "value": 2 } ] }')
+    observer_payload['name'] = Faker::Lorem.characters(20)
+    observer_payload
   end
 end

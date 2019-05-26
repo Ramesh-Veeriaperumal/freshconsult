@@ -20,7 +20,7 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
   end
 
   def toggle_automation_revamp_feature(enable)
-    enable ? Account.current.launch(:automation_revamp) : 
+    enable ? Account.current.launch(:automation_revamp) :
       Account.current.rollback(:automation_revamp)
   end
 
@@ -165,4 +165,82 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
       hash.merge!(x.position.to_s => x.id.to_s)
     end
   end
+
+  def test_create_observer_rule_with_thank_you_note_feature_disabled
+    Account.current.stubs(:detect_thank_you_note_enabled?).returns(false)
+    va_rule_request = observer_rule_json_with_thank_you_note
+    post :create, construct_params({ rule_type: VAConfig::RULES[:observer] }.merge(va_rule_request), va_rule_request)
+    assert_response 403
+    parsed_response = JSON.parse(response.body)
+    match_json({
+      'description': 'Validation failed',
+      'errors': [
+        {
+          'field': 'freddy_suggestion[:condition]',
+          'message': 'The detect_thank_you_note feature(s) is/are not supported in your plan. Please upgrade your account to use it.',
+          'code': 'access_denied'
+        }
+      ]
+    })
+  end
+
+  def test_create_observer_rule_with_thank_you_note_feature_enabled
+    Account.current.stubs(:detect_thank_you_note_enabled?).returns(true)
+    va_rule_request = observer_rule_json_with_thank_you_note
+    post :create, construct_params({ rule_type: VAConfig::RULES[:observer] }.merge(va_rule_request), va_rule_request)
+    assert_response 201
+    parsed_response = JSON.parse(response.body)
+    va_rule_id = parsed_response['id'].to_i
+    rule = Account.current.account_va_rules.find(va_rule_id)
+    sample_response = automation_rule_pattern(rule)
+    match_custom_json(parsed_response, sample_response)
+  ensure
+    va_rule = Account.current.account_va_rules.find_by_id(va_rule_id)
+    va_rule.destroy if va_rule.present?
+  end
+
+  def test_create_observer_rule_with_thank_you_note_wrong_performer
+    Account.current.stubs(:detect_thank_you_note_enabled?).returns(true)
+    va_rule_request = observer_rule_json_with_thank_you_note
+    va_rule_request['performer']['type'] = 1
+    post :create, construct_params({ rule_type: VAConfig::RULES[:observer] }.merge(va_rule_request), va_rule_request)
+    assert_response 400
+    parsed_response = JSON.parse(response.body)
+    match_json({
+      'description': 'Validation failed',
+      'errors': [
+        {
+          'field': 'conditions[:condition_set_1][:ticket][:freddy_suggestion][2]',
+          'message': "Thank you note in condition can only be used for 'add private note/reply sent' events performed by customer",
+          'code': 'invalid_value'
+        }
+      ]
+    })
+  end
+
+  def test_create_observer_rule_with_thank_you_note_wrong_event
+    Account.current.stubs(:detect_thank_you_note_enabled?).returns(true)
+    va_rule_request = observer_rule_json_with_thank_you_note
+    va_rule_request['events'] = [
+      {
+        'field_name': 'priority',
+        'from': '--',
+        'to': '--'
+      }
+    ]
+    post :create, construct_params({ rule_type: VAConfig::RULES[:observer] }.merge(va_rule_request), va_rule_request)
+    assert_response 400
+    parsed_response = JSON.parse(response.body)
+    match_json({
+      'description': 'Validation failed',
+      'errors': [
+        {
+          'field': 'conditions[:condition_set_1][:ticket][:freddy_suggestion][2]',
+          'message': "Thank you note in condition can only be used for 'add private note/reply sent' events performed by customer",
+          'code': 'invalid_value'
+        }
+      ]
+      })
+  end
+
 end

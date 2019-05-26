@@ -452,7 +452,8 @@ class Subscription < ActiveRecord::Base
 
   def total_amount(addons, coupon_code)      
     subscription_estimate(addons, coupon_code)
-    self.amount = to_currency(@response.estimate.amount)
+    self.amount = to_currency(response.estimate.sub_total)
+    self.additional_info[:amount_with_tax] = to_currency(response.estimate.amount)
   end
 
   def discount_amount(addons, coupon_code)
@@ -504,10 +505,15 @@ class Subscription < ActiveRecord::Base
     return count > limit ? count : limit if count > 0 || limit > 0
     DEFAULT_FIELD_AGENT_COUNT
   end
+
+  def amount_with_tax_safe_access
+    self.additional_info[:amount_with_tax].presence || self.amount
+  end
   
   def reset_field_agent_limit
     return if self.additional_info.try(:[], :field_agent_limit).nil?
     self.additional_info = self.additional_info.except(:field_agent_limit)
+    Rails.logger.info "Resetting field agent limit:: Account:: #{self.account_id}"
     save
   end
 
@@ -556,7 +562,8 @@ class Subscription < ActiveRecord::Base
         self.amount = subscription_plan.amount
       else
         response = Billing::Subscription.new.calculate_update_subscription_estimate(self, addons)
-        self.amount = to_currency(response.estimate.amount)
+        self.amount = to_currency(response.estimate.sub_total)
+        self.additional_info.merge!(amount_with_tax: to_currency(response.estimate.amount))
       end
     end
 

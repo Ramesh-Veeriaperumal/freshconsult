@@ -274,6 +274,9 @@ api_error_messages:
   expecting_value_for_event_field: "Expecting these field '%{value}' present for request parameter '%{name}'"
   condition_set_operator_error: "Operator should be given only if there are multiple conditions_set"
 
+  expecting_detect_thank_you_note_feature: "Detect Thank you note must be enabled to save this condition"
+  expecting_note_or_reply_event: "Thank you note in condition can only be used for 'add private note/reply sent' events performed by customer"
+
   invalid_position: "Position should be greater than 0 and less than %{max_position}"
   invalid_field_type: "Invalid data type"
   invalid_nested_field: "There is no field/value matching the given %{field_name}"
@@ -290,6 +293,7 @@ api_error_messages:
   field_not_found: "%{field_name}: not found"
   expecting_previous_condition_set: "Can't set %{current} without giving %{previous}"
   invalid_email_list: "Field contains invalid email address(s): '%{list}'"
+  invalid_url: "Webhook contains Blacklist url: '%{value}'"
   unexpected_members_for_performer: "Members should only be present for type 1"
 
   fsm_ticket_scenario_failure: "Cannot run scenarios on a ticket of type service task"

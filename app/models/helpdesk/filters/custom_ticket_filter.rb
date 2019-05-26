@@ -436,7 +436,6 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   def make_duplicate_params(array_list)
     benchmark_ticket_filter {
       @cloned_data = Marshal.load(Marshal.dump(array_list))
-      Rails.logger.info "Marshal"
     }
 
     benchmark_ticket_filter {
@@ -445,7 +444,6 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
           res_hash[obj['ff_name']] = obj
         end
       end
-      Rails.logger.info "loop end"
     }
   end
 

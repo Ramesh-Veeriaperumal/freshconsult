@@ -16,6 +16,6 @@ module Search
 
     def initialize(request_params)
       super(request_params, nil, true)
-     end
+    end
   end
 end

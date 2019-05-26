@@ -191,6 +191,7 @@
     - anonymous_account_cleanup
     - freshid_retry_worker
   :external:
+    - thank_you_note
     - code_console_execution
     - integrations
     - api_webhook_rule
@@ -225,6 +226,7 @@
     - freshid_v2_agents_migration
     - freshid_account_details_update_v2
     - http_request
+    - sandbox_cleanup
   :free:
     - free_sla
     - free_supervisor

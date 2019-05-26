@@ -5,7 +5,7 @@ module Admin::AutomationValidationHelper
 
   def initialize_params(request_params, default_fields, custom_fields, rule_type)
     @rule_type = rule_type.to_i
-    cf_names = custom_fields[0]
+    cf_names = custom_fields.first.to_a
     create_attr_accessor_for_cf(cf_names)
     self.custom_field_hash = custom_fields[1]
     set_params(request_params, default_fields + cf_names)
@@ -46,7 +46,7 @@ module Admin::AutomationValidationHelper
   end
 
   def invalid_attribute_for_rule?(invalid_rule_types)
-    invalid_rule_types.include?(@rule_type)
+    invalid_rule_types.is_a?(Array) && invalid_rule_types.include?(@rule_type)
   end
 
   def execute_field_validation(field_hash, fields)
@@ -173,6 +173,14 @@ module Admin::AutomationValidationHelper
       errors[:"supervisor_text_field[:condition]"] << :require_feature
       error_options.merge!(:"supervisor_text_field[:condition]" => {feature: :supervisor_text_field, # I am not sure about the feature please check
                                                          code: :access_denied})
+    end
+  end
+
+  def detect_thank_you_note_feature
+    unless Account.current.detect_thank_you_note_enabled?
+      errors[:"freddy_suggestion[:condition]"] << :require_feature
+      error_options.merge!("freddy_suggestion[:condition]": { feature: :detect_thank_you_note,
+                                                              code: :access_denied })
     end
   end
 end

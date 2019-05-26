@@ -33,12 +33,12 @@ module Admin::Automation::EventHelper
   end
 
   def validate_event_value(expected, actual)
-    if actual[:value].blank?
-      missing_field_error(expected[:name], :value)
-    else
+    if actual.key?(:value)
       is_expected_data_type = valid_event_data_type?(expected, actual[:value])
       expected_type = ERROR_MESSAGE_DATA_TYPE_MAP[expected[:data_type]]
       invalid_data_type(expected[:name], expected_type, :invalid) unless is_expected_data_type
+    else
+      missing_field_error(expected[:name], :value)
     end
     if actual.key?(:from) || actual.key?(:to)
       unexpected_value_for_attribute(expected[:name], :'from/to')

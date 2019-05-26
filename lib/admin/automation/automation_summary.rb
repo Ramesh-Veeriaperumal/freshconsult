@@ -226,14 +226,26 @@ module Admin::Automation::AutomationSummary
       when DEFAULT_ANY_NONE.include?(value)
         DEFAULT_ANY_NONE[value]
       when FIELD_WITH_IDS.include?(field_name.to_sym)
-        value == 0 && field_name == :responder_id ? I18n.t("admin.automation_summary.assigned_agent") :
-            get_name(field_name, value, separator)
+        get_id_value(field_name, value, separator)
       when value.is_a?(Array)
         array = []
         value.each { |val| array << (DEFAULT_ANY_NONE.include?(val) ? DEFAULT_ANY_NONE[val] : val) }
         array.join(separator)
       else
         value
+      end
+    end
+
+    def get_id_value(field_name, value, separator)
+      if field_name == :responder_id && RESPONDER_ACTIONS_ID.include?(value)
+        case value
+        when 0
+          I18n.t("admin.automation_summary.assigned_agent")
+        when -2
+          I18n.t("admin.automation_summary.ticket_creating_agent")
+        end
+      else
+        get_name(field_name, value, separator)
       end
     end
 
@@ -321,6 +333,10 @@ module Admin::Automation::AutomationSummary
 
     def fetch_tag_names(tag_ids)
       Account.current.tags.where(id: tag_ids).select("name").map(&:name).join(', ')
+    end
+
+    def freddy_suggestion
+      { 'thank_you_note' => I18n.t('admin.automation_summary.thank_you_note') }
     end
 
     alias_method :internal_agent_id, :responder_id

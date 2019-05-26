@@ -3,6 +3,9 @@ module Cache
     include Redis::RedisKeys
     include Redis::OthersRedis
 
+    WEBHOOK_BLACKLIST_IP = 'WEBHOOK_BLACKLIST_IP'.freeze
+    WEBHOOK_BLACKLIST_DOMAIN = 'WEBHOOK_BLACKLIST_DOMAIN'.freeze
+
     LOCAL_CACHE_PREFIX = 'LC:'.freeze
 
     def fetch_lcached_set(key, expiry)

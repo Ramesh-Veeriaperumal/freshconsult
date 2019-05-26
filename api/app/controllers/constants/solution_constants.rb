@@ -28,6 +28,7 @@ module SolutionConstants
 
   FILTER_ATTRIBUTES = %w[author status created_at last_modified tags category folder].freeze
   FILTER_FIELDS = %w[portal_id language_id term page per_page].freeze | FILTER_ATTRIBUTES
+  ADVANCED_FILTER_FIELDS = %w[created_at last_modified tags category folder language_id].freeze
 
   IGNORE_PARAMS = %w[folder_id unlock attachments_list cloud_file_attachments].freeze
 

@@ -377,7 +377,7 @@ class ApplicationController < ActionController::Base
       start_token = session[:_csrf_token] if session
       yield
       end_token = session[:_csrf_token] if session
-      Rails.logger.info "CSRF observed :: changed :: #{start_token != end_token}:: #{start_token} :: #{end_token}"
+      Rails.logger.info "CSRF observed :: changed :: true :: #{start_token} :: #{end_token}" if start_token != end_token
     end
 
     def remove_session_data

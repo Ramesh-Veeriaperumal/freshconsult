@@ -33,9 +33,7 @@ module Admin::AutomationRules::Events
         validate_nested_field(custom_field, event, evaluate_on)
       when :dropdown_blank
         FROM_TO.each do |type|
-          validate_dropdown_field(event[:field_name], event[type],
-              TicketsValidationHelper.custom_dropdown_field_choices["#{event[:field_name]}_#{current_account.id}"] +
-                  ANY_NONE.values)
+          validate_dropdown_dom(event, :event, :ticket)
         end
       when :checkbox
         possible_values = CHECKBOX_VALUES

@@ -38,7 +38,8 @@ class Account < ActiveRecord::Base
     :simple_outreach, :disable_simple_outreach, :fsm_dashboard, :supervisor_text_field,
     :automation_rule_execution_count, :disable_field_service_management, :disable_mint_analytics,
     :freshid_org_v2, :hide_agent_login, :addon_based_billing, :office365_adaptive_card,
-    :text_custom_fields_in_etl
+    :text_custom_fields_in_etl, :webhook_blacklist_ip, :recalculate_daypass, 
+    :sandbox_single_branch
   ].freeze
 
   DB_FEATURES = [
@@ -68,7 +69,8 @@ class Account < ActiveRecord::Base
     :social_tab, :unresolved_tickets_widget_for_sprout, :scenario_automation,
     :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2, :cascade_dispatcher,
     :personal_canned_response, :marketplace, :reverse_notes,
-    :freshreports_analytics, :disable_old_reports
+    :freshreports_analytics, :disable_old_reports, :article_filters, :adv_article_bulk_actions,
+    :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
@@ -129,7 +131,6 @@ class Account < ActiveRecord::Base
       features_not_migrated = feature_names -
                               DB_TO_BITMAP_MIGRATION_P2_FEATURES_LIST -
                               DB_TO_LP_MIGRATION_P2_FEATURES_LIST
-      Rails.logger.info("These features are not yet migrated: #{features_not_migrated.inspect}")
       has_features?(*features_migrated_to_bmp) &&
         launched?(*features_migrated_to_lp) &&
         super(*features_not_migrated)
@@ -421,6 +422,10 @@ class Account < ActiveRecord::Base
       features.delete_if { |feature| PRICING_PLAN_MIGRATION_FEATURES_2019.include?(feature) }
     end
     super
+  end
+
+  def detect_thank_you_note_enabled?
+    detect_thank_you_note_eligible_enabled? && has_feature?(:detect_thank_you_note)
   end
   # STOP
 end

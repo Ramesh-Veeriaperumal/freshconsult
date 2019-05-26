@@ -270,6 +270,7 @@ class VaRule < ActiveRecord::Base
     return false unless check_user_privilege
     @triggered_event ||= TICKET_CREATED_EVENT
     add_rule_to_system_changes(evaluate_on) if evaluate_on.respond_to?(:system_changes)
+    add_thank_you_note_to_system_changes(evaluate_on) if Thread.current[:thank_you_note].present?
     actions.each { |a| a.trigger(evaluate_on, doer, triggered_event) }
   end
 
@@ -284,6 +285,12 @@ class VaRule < ActiveRecord::Base
     else
       evaluate_on.system_changes = base_hash
     end
+  end
+
+  def add_thank_you_note_to_system_changes(evaluate_on)
+    result_hash = Thread.current[:thank_you_note]
+    evaluate_on.system_changes[self.id.to_s][:thank_you_note] = [result_hash[:result]] if result_hash[:rule_id] == self.id
+    Thread.current[:thank_you_note] = nil
   end
 
   def fetch_actions_for_flash_notice(doer)

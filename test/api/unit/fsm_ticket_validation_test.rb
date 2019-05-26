@@ -10,7 +10,7 @@ class FsmTicketValidationTest < ActionView::TestCase
 		Account.stubs(:current).returns(Account.first)
 		perform_fsm_operations
 		Account.reset_current_account
-      	Account.stubs(:current).returns(Account.first)
+    Account.stubs(:current).returns(Account.first)
 		ticket_fields = Account.current.ticket_fields_from_cache
 		@params_hash = { requester_id: 1, description: Faker::Lorem.paragraph,  ticket_fields: [], subject: Faker::Lorem.characters(10),ticket_type: SERVICE_TASK_TYPE, priority: 1, statuses: statuses, status: 2, ticket_fields: ticket_fields   }
 	end
@@ -66,11 +66,20 @@ class FsmTicketValidationTest < ActionView::TestCase
 		ticket = FsmTicketValidation.new(controller_params, nil)
 		assert ticket.valid?(:update)
 	end
+
 	def test_other_custom_fields_when_creating_ticket_type_service_task
 		CustomFieldValidatorTestHelper.new(account_id: Account.current.id, name: 'second_1', label: 'second', label_in_portal: 'second', description: nil, active: true, field_type: 'nested_field', position: 22, required: true, visible_in_portal: false, editable_in_portal: false, required_in_portal: false, required_for_closure: false, flexifield_def_entry_id: 4, prefered_ff_col: nil, import_id: nil)
 		@ticket_fields = Account.current.ticket_fields_from_cache
 		controller_params = @params_hash.merge( custom_fields: {cf_fsm_contact_name_1: Faker::Lorem.characters(10),cf_fsm_service_location_1: Faker::Lorem.characters(10), cf_fsm_phone_number_1: Faker::Lorem.characters(10)})
 		ticket = FsmTicketValidation.new(controller_params, nil)
 		assert ticket.valid?(:create)
+	end
+
+	def test_other_require_for_closure_custom_fields_when_creating_ticket_type_service_task_passes
+		CustomFieldValidatorTestHelper.new(account_id: Account.current.id, name: 'second_2', label: 'second', label_in_portal: 'second', description: nil, active: true, field_type: 'nested_field', position: 23, required: false, visible_in_portal: false, editable_in_portal: false, required_in_portal: false, required_for_closure: true, flexifield_def_entry_id: 4, prefered_ff_col: nil, import_id: nil)
+		@ticket_fields = Account.current.ticket_fields_from_cache
+		controller_params = @params_hash.merge({status: 5, custom_fields: {cf_fsm_contact_name_1: Faker::Lorem.characters(10),cf_fsm_service_location_1: Faker::Lorem.characters(10), cf_fsm_phone_number_1: Faker::Lorem.characters(10)}})
+		ticket = FsmTicketValidation.new(controller_params, nil)
+		assert ticket.valid?(:update)
 	end
 end

@@ -28,7 +28,7 @@ module Admin::Automation::CustomFieldHelper
   def invalid_nested_level?(name, operator, nested_name, value, level_name, level_data)
     must_have_nested = expect_nested_level?(operator, value)
     error_field = true
-    if level_name == :level3 && level_data.blank?
+    if (level_name == :level3 || level_name == :level2) && level_data.blank?
       error_field = true
     elsif must_have_nested && level_data.blank?
       missing_field_error("#{name}[#{nested_name}]", level_name)
@@ -84,7 +84,11 @@ module Admin::Automation::CustomFieldHelper
   end
 
   def custom_condition_ticket_field
-    condition_field = custom_ticket_fields.select{ |tf| CUSTOM_FIELD_CONDITION_HASH[tf.field_type.to_sym].present? }
+    condition_field = custom_ticket_fields.select do |tf|
+      CUSTOM_FIELD_CONDITION_HASH[tf.field_type.to_sym].present? &&
+        !(params[:rule_type].to_i == 3 &&
+            SUPERVISOR_FEATURE_CUSTOM_FIELDS.include?(tf.field_type.to_sym) && !current_account.supervisor_text_field_enabled?)
+    end
     custom_fields = []
     field_hash = []
     condition_field.each do |ef|

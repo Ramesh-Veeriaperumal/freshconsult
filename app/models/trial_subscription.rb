@@ -115,4 +115,8 @@ class TrialSubscription < ActiveRecord::Base
       key = MemcacheKeys::TRIAL_SUBSCRIPTION % { :account_id => self.account_id }
       MemcacheKeys.delete_from_cache key
     end
+
+    def recalculate_daypass_enabled?
+      false
+    end
 end

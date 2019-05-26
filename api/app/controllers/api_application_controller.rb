@@ -447,7 +447,6 @@ class ApiApplicationController < MetalApiController
 
     # will take items as one argument and is_array (whether scoper is a AR or array as another argument.)
     def paginate_items(items)
-      Rails.logger.info ":::Pagination started:::"
       is_array = !items.respond_to?(:scoped) # check if it is array or AR
       paginated_items = items.paginate(paginate_options(is_array))
 
@@ -960,7 +959,7 @@ class ApiApplicationController < MetalApiController
       start_token = session[:_csrf_token] if session
       yield
       end_token = session[:_csrf_token] if session
-      Rails.logger.info "CSRF observed :: changed :: #{start_token != end_token}:: #{start_token} :: #{end_token} :: Tab :: #{request.env['HTTP_X_CLIENT_INSTANCE_ID']}"
+      Rails.logger.info "CSRF observed :: changed :: true :: #{start_token} :: #{end_token} :: Tab :: #{request.env['HTTP_X_CLIENT_INSTANCE_ID']}" if start_token != end_token
     end
 
     def remove_session_data

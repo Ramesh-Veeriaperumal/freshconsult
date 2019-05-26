@@ -534,9 +534,7 @@ class Account < ActiveRecord::Base
   def verify_account_with_email
     unless verified?
       self.reputation = 1
-      if self.save
-        Rails.logger.info "Account Verification Completed account_id: #{self.id} signup_method: #{self.signup_method}"
-      end
+      self.save
     end
   end
 
@@ -868,6 +866,14 @@ class Account < ActiveRecord::Base
     @custom_dropdown_choice_hash ||= custom_dropdown_fields_from_cache.collect do |x|
       [x.name, x.dropdown_choices_with_name.flatten.uniq]
     end.to_h
+  end
+
+  def reset_picklist_id
+    return unless redis_picklist_id_enabled?
+
+    key = PICKLIST_ID % { account_id: id }
+    computed_id = picklist_values.maximum('picklist_id').to_i
+    set_display_id_redis_key(key, computed_id)
   end
 
   protected

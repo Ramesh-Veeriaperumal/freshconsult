@@ -44,33 +44,35 @@ module Admin::Automation::Condition::TicketFieldConstants
       invalid_rule_types: [1] }.freeze,
     { name: :outbound_count, field_type: :number, data_type: :Integer, allow_any_type: true,
       invalid_rule_types: [1] }.freeze,
-
+    # we need to remoeve allow_any_type: true to all the places
     { name: :hours_since_created, field_type: :hours, data_type: :Integer,
-      invalid_rule_types: [1, 4] }.freeze,
+      invalid_rule_types: [1, 4], allow_any_type: true }.freeze,
     { name: :pending_since, field_type: :hours, data_type: :Integer,
-      invalid_rule_types: [1, 4] }.freeze,
+      invalid_rule_types: [1, 4], allow_any_type: true }.freeze,
     { name: :resolved_at, field_type: :hours, data_type: :Integer,
-      invalid_rule_types: [1, 4] }.freeze,
+      invalid_rule_types: [1, 4], allow_any_type: true }.freeze,
     { name: :closed_at, field_type: :hours, data_type: :Integer,
-      invalid_rule_types: [1, 4] }.freeze,
+      invalid_rule_types: [1, 4], allow_any_type: true }.freeze,
     { name: :opened_at, field_type: :hours, data_type: :Integer,
-      invalid_rule_types: [1, 4] }.freeze,
+      invalid_rule_types: [1, 4], allow_any_type: true }.freeze,
     { name: :first_assigned_at, field_type: :hours, data_type: :Integer,
-      invalid_rule_types: [1, 4] }.freeze,
+      invalid_rule_types: [1, 4], allow_any_type: true }.freeze,
     { name: :assigned_at, field_type: :hours, data_type: :Integer,
-      invalid_rule_types: [1, 4] }.freeze,
+      invalid_rule_types: [1, 4], allow_any_type: true }.freeze,
     { name: :requester_responded_at, field_type: :hours, data_type: :Integer,
-      invalid_rule_types: [1, 4] }.freeze,
+      invalid_rule_types: [1, 4], allow_any_type: true }.freeze,
     { name: :agent_responded_at, field_type: :hours, data_type: :Integer,
-      invalid_rule_types: [1, 4] }.freeze,
+      invalid_rule_types: [1, 4], allow_any_type: true }.freeze,
     { name: :frDueBy, field_type: :hours, data_type: :Integer,
-      invalid_rule_types: [1, 4] }.freeze,
+      invalid_rule_types: [1, 4], allow_any_type: true }.freeze,
     { name: :due_by, field_type: :hours, data_type: :Integer,
-      invalid_rule_types: [1, 4] }.freeze,
+      invalid_rule_types: [1, 4], allow_any_type: true }.freeze,
     { name: :company_name, field_type: :text, data_type: :String,
       invalid_rule_types: [1, 4] }.freeze,
     { name: :contact_name, field_type: :old_text, data_type: :String,
-      invalid_rule_types: [1, 4] }.freeze
+      invalid_rule_types: [1, 4] }.freeze,
+    { name: :freddy_suggestion, field_type: :freddy_field_type, data_type: :String,
+      invalid_rule_types: [1, 3] }.freeze
   ].freeze
 
   CUSTOM_FIELD_CONDITION_HASH = {
@@ -83,7 +85,7 @@ module Admin::Automation::Condition::TicketFieldConstants
     custom_text: { field_type: :text, data_type: :String, custom_field: true,
                    invalid_rule_types: [] }.freeze,
     custom_paragraph: { field_type: :text, data_type: :String, custom_field: true,
-                        invalid_rule_types: [3] }.freeze,
+                        invalid_rule_types: [] }.freeze,
     custom_number: { field_type: :number, data_type: :String, custom_field: true, allow_any_type: true,
                      invalid_rule_types: [] }.freeze, # data type should be number and should be changed after frontend validation
     custom_decimal: { field_type: :decimal, data_type: :Float, custom_field: true, allow_any_type: true,
@@ -94,4 +96,6 @@ module Admin::Automation::Condition::TicketFieldConstants
 
   CONDITION_NONE_FIELDS = %i[ticket_type product_id group_id responder_id internal_group_id
                              internal_agent_id health_score account_tier industry].freeze
+
+  SUPERVISOR_FEATURE_CUSTOM_FIELDS = %i[custom_text custom_paragraph].freeze
 end

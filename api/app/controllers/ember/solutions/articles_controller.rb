@@ -15,6 +15,7 @@ module Ember
       skip_before_filter :initialize_search_parameters, unless: :search_articles?
       before_filter :filter_ids, only: [:index]
       before_filter :validate_language, only: [:filter, :bulk_update]
+      before_filter :check_filter_feature, only: [:filter]
       before_filter :validate_filter, only: [:article_content, :filter]
       before_filter :sanitize_filter_data, :reconstruct_params, only: [:filter]
       before_filter :validate_bulk_update_article_params, only: [:bulk_update]
@@ -176,6 +177,10 @@ module Ember
 
         def validate_request_params
           params[cname].permit([])
+        end
+
+        def check_filter_feature
+          render_request_error(:require_feature, 403, feature: :article_filters) unless current_account.article_filters_enabled? || (params.keys & SolutionConstants::ADVANCED_FILTER_FIELDS).empty?
         end
 
         # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.

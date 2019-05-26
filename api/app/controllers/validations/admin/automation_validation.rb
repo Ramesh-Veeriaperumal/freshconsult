@@ -137,7 +137,8 @@ module Admin
 
       def validate_conditions_properties(set, field_type)
         validate_class = "Admin::AutomationRules::Conditions::#{field_type.to_s.camelcase}Validation".constantize
-        condition_validation = validate_class.new(conditions[:"condition_set_#{set}"][field_type], safe_send(:"custom_#{field_type}_condition"), set, rule_type)
+        additional_options = { events: events, performer: performer }
+        condition_validation = validate_class.new(conditions[:"condition_set_#{set}"][field_type], safe_send(:"custom_#{field_type}_condition"), set, rule_type, additional_options)
         is_valid = condition_validation.valid?
         unless is_valid
           merge_to_parent_errors(condition_validation)

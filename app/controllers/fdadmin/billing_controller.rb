@@ -192,6 +192,8 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
     alias :card_updated :card_added
 
     def card_deleted(content)
+      return unless @billing_data && @billing_data.card.present?
+      
       @account.subscription.clear_billing_info
       @account.subscription.save
       auto_collection_off_trigger
@@ -248,6 +250,7 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
       
       plan = subscription_plan(billing_subscription.plan_id)
       subscription.addons = subscription.applicable_addons(addons, plan)
+      update_field_agent_limit(subscription, billing_subscription)
       subscription.save #to update amount in subscription
     end
 

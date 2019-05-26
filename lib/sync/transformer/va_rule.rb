@@ -30,6 +30,8 @@ module Sync::Transformer::VaRule
   end
 
   def transform_va_rule_condition_data(data, mapping_table = {})
+    return data unless data
+
     va_conditions = data.key?(:events) ? data[:conditions] || [] : data
     if va_conditions.first[1][0].key?(:evaluate_on)
       transform_condition_data_conditions(va_conditions.first[1], mapping_table)

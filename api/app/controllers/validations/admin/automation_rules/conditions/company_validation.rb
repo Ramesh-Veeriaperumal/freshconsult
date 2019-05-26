@@ -52,9 +52,11 @@ module Admin::AutomationRules::Conditions
             feature: :tam_default_fields
           } }, unless: :tam_default_fields_enabled?
 
-    def initialize(request_params, custom_fields, set, rule_type)
+    def initialize(request_params, custom_fields, set, rule_type, additional_options = {})
       @type_name = :"conditions[:condition_set_#{set}][:company]"
       @validator_type = :condition
+      @events = additional_options[:events]
+      @performer = additional_options[:performer]
       super(initialize_params(request_params, DEFAULT_ATTRIBUTES, custom_fields, rule_type), nil, false)
     end
 

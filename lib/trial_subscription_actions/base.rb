@@ -35,4 +35,8 @@ class TrialSubscriptionActions::Base < SAAS::SubscriptionEventActions
     def plan_changed?
       true
     end
+
+    def trial_subscription?
+      true
+    end
 end

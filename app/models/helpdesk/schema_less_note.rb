@@ -101,6 +101,14 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
     return true
   end
 
+  def thank_you_note
+    note_properties[:thank_you_note]
+  end
+
+  def thank_you_note=(val)
+    note_properties[:thank_you_note] = val
+  end
+
   private
 
   def email_failures
