@@ -318,7 +318,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def skip_dispatcher?
     @skip_dispatcher ||= begin
       _skip_dispatcher = import_id || outbound_email? || !requester.valid_user? || service_task?
-      Va::Logger::Automation.log "Skipping dispatcher" if _skip_dispatcher
+      Va::Logger::Automation.log('Skipping dispatcher', true) if _skip_dispatcher
       _skip_dispatcher
     end
   end
@@ -908,7 +908,7 @@ private
     @execute_observer ||= begin
       _execute_observer = user_present? && !disable_observer_rule && !import_ticket && !service_task?
       SBRR.log "Ticket ##{self.display_id} save done. Model_changes #{@model_changes.inspect}"
-      Va::Logger::Automation.log "Skipping observer" unless _execute_observer
+      Va::Logger::Automation.log('Skipping observer', true) unless _execute_observer
       _execute_observer
     end
   end

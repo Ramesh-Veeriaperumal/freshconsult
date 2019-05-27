@@ -16,7 +16,7 @@ class Tickets::SendAndSetWorker < BaseWorker
     args[:ticket_changes].try(:symbolize_keys!)
     @account = Account.current
     Va::Logger::Automation.set_thread_variables(@account.id, args[:ticket_changes].try(:[], :ticket_id), args[:ticket_changes].try(:[], :doer_id))
-    Va::Logger::Automation.log "Send and Set Worker, info=#{args.inspect}"
+    Va::Logger::Automation.log("Send and Set Worker, info=#{args.inspect}", true)
     fire_ticket_observer(args)
     fire_note_observer(args)
     fire_notifications

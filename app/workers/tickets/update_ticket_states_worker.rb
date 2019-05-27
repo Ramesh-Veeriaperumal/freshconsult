@@ -20,7 +20,7 @@ module Tickets
         @note = account.notes.find_by_id args[:id]
         Va::Logger::Automation.set_thread_variables(account.id, @note.try(:notable_id), args[:current_user_id])
         if @note.blank?
-          Va::Logger::Automation.log "Observer not triggered, since the note is not present, info=#{args.inspect}"
+          Va::Logger::Automation.log("Observer not triggered, since the note is not present, info=#{args.inspect}", true)
           return
         end
         @note.save_response_time if should_save_response_time?

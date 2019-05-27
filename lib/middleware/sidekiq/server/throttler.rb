@@ -27,12 +27,12 @@ module Middleware
             log_content = "throttler_count=#{rate_limit.throttler_count}, webhook_limit=#{rate_limit.threshold}"
 
             rate_limit.within_bounds do
-              Va::Logger::Automation.log "WEBHOOK: TRIGGERING, #{log_content}"
+              Va::Logger::Automation.log("WEBHOOK: TRIGGERING, #{log_content}", true)
               yield
             end
 
             rate_limit.exceeded do |delay|
-              Va::Logger::Automation.log "WEBHOOK: EXCEEDED, #{log_content}, perform_in=#{delay}"
+              Va::Logger::Automation.log("WEBHOOK: EXCEEDED, #{log_content}, perform_in=#{delay}", true)
               worker.class.perform_in(delay, webhook_args)
             end
 
@@ -48,7 +48,7 @@ module Middleware
           key = WEBHOOK_DROP_NOTIFY % {:account_id => webhook_args['account_id']}
           count = increment_others_redis(key)
           if count == 1
-            Va::Logger::Automation.log "WEBHOOK: DROPPED, created_time=#{Time.at(webhook_args['webhook_created_at']).utc}"
+            Va::Logger::Automation.log("WEBHOOK: DROPPED, created_time=#{Time.at(webhook_args['webhook_created_at']).utc}", true)
             set_others_redis_expiry(key, DROP_AFTER)
             Sharding.select_shard_of(webhook_args['account_id']) do
               account = Account.find(webhook_args['account_id']).make_current

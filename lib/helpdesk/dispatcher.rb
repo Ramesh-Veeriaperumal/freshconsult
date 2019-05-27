@@ -23,7 +23,7 @@
       #queue 'Spam' and everything else into the dispatcher queue
       job_queue = "Worker" if ( !job_queues.include?(job_queue) || Rails.env.development? || Rails.env.test? )
       job_id = "Admin::Dispatcher::#{job_queue}".constantize.perform_async(args)
-      Va::Logger::Automation.log "Triggering Dispatcher, job_id=#{job_id}, job_queue=#{job_queue}"
+      Va::Logger::Automation.log("Triggering Dispatcher, job_id=#{job_id}, job_queue=#{job_queue}", true)
     rescue Exception => e   
       NewRelic::Agent.notice_error(e)
     end
@@ -37,7 +37,7 @@
       @sla_attributes    = params['sla_args'] && params['sla_args']['sla_state_attributes']
       @sla_calculation_time = params['sla_args'] && params['sla_args']['sla_calculation_time']
       Va::Logger::Automation.set_thread_variables(@account.id, params['ticket_id'], params['user_id'])
-      Va::Logger::Automation.log("user_nil=#{@user.nil?}, ticket_nil=#{@ticket.nil?}") if (@user.nil? || @ticket.nil?)
+      Va::Logger::Automation.log("user_nil=#{@user.nil?}, ticket_nil=#{@ticket.nil?}", true) if @user.nil? || @ticket.nil?
     end
 
     def execute
@@ -92,6 +92,7 @@
       evaluate_on = @ticket
       total_rules = 0 # used if cascade_dispatcher feature not present
       rule_ids_with_exec_count = {}
+      Va::Logger::Automation.log('Dispatcher execution starts', true)
       @account.va_rules.each do |vr|
         begin
           Va::Logger::Automation.set_rule_id(vr.id)
