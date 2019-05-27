@@ -38,8 +38,8 @@ class Account < ActiveRecord::Base
     :simple_outreach, :disable_simple_outreach, :fsm_dashboard, :supervisor_text_field,
     :automation_rule_execution_count, :disable_field_service_management, :disable_mint_analytics,
     :freshid_org_v2, :hide_agent_login, :addon_based_billing, :office365_adaptive_card,
-    :text_custom_fields_in_etl, :webhook_blacklist_ip, :recalculate_daypass, 
-    :sandbox_single_branch
+    :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check,
+    :webhook_blacklist_ip, :recalculate_daypass, :sandbox_single_branch
   ].freeze
 
   DB_FEATURES = [
@@ -373,6 +373,10 @@ class Account < ActiveRecord::Base
 
   def undo_send_enabled?
     has_feature?(:undo_send) || launched?(:undo_send)
+  end
+
+  def email_spoof_check_feature?
+    email_spoof_check_enabled? && !disable_email_spoof_check_enabled?
   end
 
   # Checks if a bitmap feature has been added or removed

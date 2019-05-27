@@ -21,6 +21,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include Redis::RedisKeys
   include Redis::OthersRedis
   include Helpdesk::LanguageDetection
+  include ::Email::AntiSpoof
 
   class UserCreationError < StandardError
   end
@@ -1230,6 +1231,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         puts e.message
       end
     end
+    ticket.schema_less_ticket.additional_info.merge!(generate_spoof_data_hash(params[:spam_info])) if Account.current.email_spoof_check_feature?
     ticket
   end
 

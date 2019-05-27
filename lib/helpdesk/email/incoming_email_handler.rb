@@ -23,6 +23,7 @@ module Helpdesk
 			include Helpdesk::EmailParser::Constants
 			include Helpdesk::Email::NoteMethods
 			include Helpdesk::LanguageDetection
+			include ::Email::AntiSpoof
 
 			class UserCreationError < StandardError
 			end
@@ -778,8 +779,17 @@ module Helpdesk
 						Rails.logger.info "Spam rules triggered for ticket with message_id #{params[:message_id]}: #{spam_data['rules'].inspect}"
 					rescue => e
 						puts e.message
-						end
 					end
+				end
+				begin
+				  if Account.current.email_spoof_check_feature?
+					  spam_data ||= JSON.parse(params[:spam_info])
+					  ticket.schema_less_ticket.additional_info.merge!(generate_spoof_data_hash(spam_data))
+				  end
+				rescue Exception => e
+				  Rails.logger.error("Exception wile parsing spam info hash for email spoof data :: #{e.inspect} :: #{e.backtrace}")
+				  NewRelic::Agent.notice_error(e, description: 'error occured while trying to parse spam_info')
+				end
 				ticket
 			end
 

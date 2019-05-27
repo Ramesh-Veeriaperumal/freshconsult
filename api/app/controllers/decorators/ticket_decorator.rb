@@ -443,6 +443,10 @@ class TicketDecorator < ApiDecorator
     end
   end
 
+  def email_spam_data
+    record.schema_less_ticket.additional_info[:email_spoof_data] if Account.current.email_spoof_check_feature?
+  end
+
   private
 
   def handle_timestamps(meta_info)
