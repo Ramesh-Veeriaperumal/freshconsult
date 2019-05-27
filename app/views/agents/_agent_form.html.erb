@@ -402,6 +402,7 @@
 			var role_details = {};
 			var groups = {};
 			var group_details = {};
+      var fsm_group_type = null;
       var freshid_enabled= <%= freshid_integration_enabled? %>;
 			var userName = '<%= @agent.user.name %>';
       var userEmail = '<%= @agent.user.email %>';
@@ -424,8 +425,14 @@
           groups[<%= group.id %>] = <%= @agent.groups.include?(group) %>;
           group_details[<%= group.id %>] = ["<%= group.name %>", "<%= escape_javascript(group.description)%>", "<%= group.group_type %>"];
       <% end %>
+
+      <% group_type = GroupType.group_type_id(GroupConstants::FIELD_GROUP_NAME) %>
+      <% if group_type.present? %>
+        fsm_group_type = <%= group_type %>
+      <% end %>
+
       App.Agents.Form.initializeData({userName: userName, roles: roles, userEmail: userEmail,
-				role_details: role_details, freshid_enabled: freshid_enabled, groups: groups, group_details: group_details, SkillBasedRRFlag: <%=@manage_skills%>});
+				role_details: role_details, freshid_enabled: freshid_enabled, groups: groups, group_details: group_details, fsm_group_type: fsm_group_type, SkillBasedRRFlag: <%=@manage_skills%>});
     });
 
   })(jQuery);

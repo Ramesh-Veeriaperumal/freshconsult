@@ -105,6 +105,6 @@ api_error_messages:
   field_agent_scope: "Field technician should have restricted or group scope"
   field_agent_roles: "Field technician should have agent role"
   invalid_field_auto_assign: "Auto ticket assignment is not available for service groups."
-  invalid_agent_ids: "Agent and group need to be of the same type."
   agent_type_change_not_allowed: "You cannot change the agent type"
-  agent_group_type_mismatch: "Agent and group need to be of the same type"
+  should_not_be_field_agent: "Field technicians cannot be assigned to support groups."
+  should_not_be_support_group: "Support groups cannot be assigned to Field technicians."
