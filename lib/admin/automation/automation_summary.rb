@@ -109,7 +109,10 @@ module Admin::Automation::AutomationSummary
       array = []
       array << generate_key(data[:name], data[:evaluate_on] || 'ticket')
       array << generate_operator(data[:operator]) if data[:operator].present?
-      array << generate_value(data[:name], data[:value], ' OR ') if data[:value].present?
+      if data[:value].present?
+        data[:value] = CGI.escapeHTML(data[:value]) if SUBJECT_DESCRIPTION_FIELDS.include?(data[:name]) && data[:value].is_a?(String)
+        array << generate_value(data[:name], data[:value], ' OR ')
+      end
       array << generate_case_sensitive(data[:case_sensitive]) if data[:case_sensitive].present?
       sentence = array.join(' ')
       I18n.t('admin.automation_summary.condition', field_name: sentence)
