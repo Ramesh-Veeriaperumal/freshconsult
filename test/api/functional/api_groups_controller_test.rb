@@ -2,6 +2,7 @@ require_relative '../test_helper'
 class ApiGroupsControllerTest < ActionController::TestCase
   include GroupsTestHelper
   include GroupHelper
+  include UsersHelper
   include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
   include GroupConstants
   
@@ -25,8 +26,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
     add_data_to_group_type
     create_field_agent_type
     group = create_group(@account, { name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph }, group_type = 2)
-    put :update, construct_params({ id: group.id }, escalate_to: 1, unassigned_for: '30m',
-                                                    auto_ticket_assign: true)
+    put :update, construct_params({ id: group.id }, escalate_to: 1, unassigned_for: '30m', auto_ticket_assign: true)
     assert_response 400
     res = JSON.parse response.body
     match_json([bad_request_error_pattern('ticket_assign_type', :invalid_field_auto_assign, :code => :invalid_value)])
@@ -46,40 +46,6 @@ class ApiGroupsControllerTest < ActionController::TestCase
     assert_response 400
     res = JSON.parse response.body
     match_json([bad_request_error_pattern('ticket_assign_type', :invalid_field_auto_assign, :code => :invalid_value)])
-  ensure
-    destroy_field_group
-    destroy_field_agent
-    revoke_fsm_feature_and_rollback_lp
-    Account.unstub(:current)
-  end
-
-  def test_agent_type_and_group_type_check_invalid
-    Account.stubs(:current).returns(Account.first)
-    enabling_fsm_feature_and_lp
-    add_data_to_group_type
-    create_field_agent_type
-    group = create_group_with_agents(@account, { name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph }, group_type = 2)
-    put :update, construct_params({ id: group.id }, escalate_to: 1, unassigned_for: '30m',
-                                                    auto_ticket_assign: true, agent_ids: [1])
-    assert_response 400
-    res = JSON.parse response.body
-    match_json([bad_request_error_pattern('ticket_assign_type', :invalid_field_auto_assign, :code => :invalid_value),
-                bad_request_error_pattern('agent_groups', :invalid_agent_ids, :code => :invalid_value)])
-  ensure
-    destroy_field_group
-    destroy_field_agent
-    revoke_fsm_feature_and_rollback_lp
-    Account.unstub(:current)
-  end
-
-  def test_agent_type_and_group_type_check_valid
-    Account.stubs(:current).returns(Account.first)
-    enabling_fsm_feature_and_lp
-    add_data_to_group_type
-    create_field_agent_type
-    post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, auto_ticket_assign: true, group_type: SUPPORT_GROUP_NAME, agent_ids: [1])
-    assert_response 201
-    match_json(group_pattern(Group.last))
   ensure
     destroy_field_group
     destroy_field_agent
@@ -165,6 +131,52 @@ class ApiGroupsControllerTest < ActionController::TestCase
                                        agent_ids: [agent_id])
     assert_response 400
     match_json([bad_request_error_pattern('agent_ids', :invalid_list, list: agent_id.to_s)])
+  end
+
+  def test_create_field_group_with_field_agent
+    Account.stubs(:current).returns(Account.first)
+    enabling_fsm_feature_and_lp
+    add_data_to_group_type
+    create_field_agent_type
+    agent = add_test_agent(Account.current, role: Role.find_by_name('Agent').id, agent_type: AgentType.agent_type_id(Agent::FIELD_AGENT), ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
+    post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, unassigned_for: '30m', group_type: FIELD_GROUP_NAME, agent_ids: [agent.id])
+    assert_response 201
+    match_json(group_pattern(Group.last))
+  ensure
+    destroy_field_group
+    destroy_field_agent
+    revoke_fsm_feature_and_rollback_lp
+    Account.unstub(:current)
+  end
+
+  def test_create_field_group_with_support_agent
+    Account.stubs(:current).returns(Account.first)
+    enabling_fsm_feature_and_lp
+    add_data_to_group_type
+    agent = add_test_agent(Account.current, role: Role.find_by_name('Agent').id, agent_type: AgentType.agent_type_id(Agent::SUPPORT_AGENT), ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
+    post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, unassigned_for: '30m', group_type: FIELD_GROUP_NAME, agent_ids: [agent.id])
+    assert_response 201
+    match_json(group_pattern(Group.last))
+  ensure
+    destroy_field_group
+    destroy_field_agent
+    revoke_fsm_feature_and_rollback_lp
+    Account.unstub(:current)
+  end
+
+  def test_create_support_group_with_field_agent
+    Account.stubs(:current).returns(Account.first)
+    enabling_fsm_feature_and_lp
+    create_field_agent_type
+    agent = add_test_agent(Account.current, role: Role.find_by_name('Agent').id, agent_type: AgentType.agent_type_id(Agent::FIELD_AGENT), ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
+    post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, auto_ticket_assign: true, group_type: SUPPORT_GROUP_NAME, agent_ids: [agent.id])
+    assert_response 400
+    match_json([bad_request_error_pattern('agent_ids', :should_not_be_field_agent)])
+  ensure
+    agent.destroy
+    destroy_field_agent
+    revoke_fsm_feature_and_rollback_lp
+    Account.unstub(:current)
   end
 
   def test_index
@@ -298,6 +310,57 @@ class ApiGroupsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: group.id }, agent_ids: [1])
     assert_response 200
     match_json(group_pattern({ agent_ids: [1] }, group.reload))
+  end
+
+  def test_update_field_group_with_field_agent
+    Account.stubs(:current).returns(Account.first)
+    enabling_fsm_feature_and_lp
+    add_data_to_group_type
+    create_field_agent_type
+    group = create_group(@account, { name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph }, GroupType.group_type_id(FIELD_GROUP_NAME))
+    agent = add_test_agent(Account.current, role: Role.find_by_name('Agent').id, agent_type: AgentType.agent_type_id(Agent::FIELD_AGENT), ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
+    put :update, construct_params({ id: group.id }, agent_ids: [agent.id])
+    assert_response 200
+    match_json(group_pattern(Group.last))
+  ensure
+    agent.destroy
+    destroy_field_group
+    destroy_field_agent
+    revoke_fsm_feature_and_rollback_lp
+    Account.unstub(:current)
+  end
+
+  def test_update_field_group_with_support_agent
+    Account.stubs(:current).returns(Account.first)
+    enabling_fsm_feature_and_lp
+    add_data_to_group_type
+    agent = add_test_agent(Account.current, role: Role.find_by_name('Agent').id, agent_type: AgentType.agent_type_id(Agent::SUPPORT_AGENT), ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
+    group = create_group(@account, { name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph }, group_type: GroupType.group_type_id(FIELD_GROUP_NAME))
+    put :update, construct_params({ id: group.id }, agent_ids: [agent.id])
+    assert_response 200
+    match_json(group_pattern(Group.last))
+  ensure
+    agent.destroy
+    destroy_field_group
+    destroy_field_agent
+    revoke_fsm_feature_and_rollback_lp
+    Account.unstub(:current)
+  end
+
+  def test_update_support_group_with_field_agent
+    Account.stubs(:current).returns(Account.first)
+    enabling_fsm_feature_and_lp
+    create_field_agent_type
+    group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
+    agent = add_test_agent(Account.current, role: Role.find_by_name('Agent').id, agent_type: AgentType.agent_type_id(Agent::FIELD_AGENT), ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
+    put :update, construct_params({ id: group.id }, agent_ids: [agent.id])
+    assert_response 400
+    match_json([bad_request_error_pattern('agent_ids', :should_not_be_field_agent)])
+  ensure
+    agent.destroy
+    destroy_field_agent
+    revoke_fsm_feature_and_rollback_lp
+    Account.unstub(:current)
   end
 
   def test_update_group_type_of_group

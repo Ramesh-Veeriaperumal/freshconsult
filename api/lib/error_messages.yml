@@ -240,7 +240,7 @@ api_error_messages:
   fsm_dynamic_sections_absence: "Dynamic sections feature has to be enabled for field service management to be enabled."
   something_wrong_in_fsm_enable: "Something went wrong while trying to reserve fields for field service management."
   agent_type_change_not_allowed: "You cannot change the agent type"
-  agent_group_type_mismatch: "Agent and group need to be of the same type"
+  should_not_be_support_group: "Support groups cannot be assigned to Field technicians"
   invalid_date_time_range: "Invalid date time range, end time should be greater or equal to the start time."
   field_agent_scope: "Field technician should have restricted or group scope"
   field_agent_roles: "Field technician should have agent role"
@@ -261,7 +261,7 @@ api_error_messages:
   field_agent_not_allowed: Tickets that are not of type service task cannot be assigned a field technician
   field_group_not_allowed: Tickets that are not of type service task cannot be assigned a service group
   invalid_field_auto_assign: "Auto ticket assignment is not available for service groups."
-  invalid_agent_ids: "Agent and group need to be of the same type."
+  should_not_be_field_agent: "Field technicians cannot be assigned to support groups"
   existing_import_inprogress: "We're still processing the previous import. Retry when it's complete."
   invalid_import_value: "Invalid value. Should be set as the index of field"
   invalid_import_fields: "Invalid fields: %{invalid_values}"
