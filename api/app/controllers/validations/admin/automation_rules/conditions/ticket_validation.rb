@@ -17,8 +17,8 @@ module Admin::AutomationRules::Conditions
 
     validate :ticket_conditions_attribute_type
 
-    validate :detect_thank_you_note_feature, if: -> { freddy_suggestion.present? }
-    validate :thank_you_note_condition_validation, if: -> { freddy_suggestion.present? }
+    validate :detect_thank_you_note_feature, if: -> { freddy_suggestion.present? }, on: :create
+    validate :thank_you_note_condition_validation, if: -> { freddy_suggestion.present? }, on: :create
     validate :errors_for_invalid_attributes, if: -> { invalid_attributes.present? }
 
     def initialize(request_params, custom_fields, set, rule_type, additional_options = {})

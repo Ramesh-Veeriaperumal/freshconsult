@@ -495,6 +495,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def trigger_detect_thank_you_note_worker
+      Rails.logger.info "Enqueueing DetectThankYouNoteWorker T :: #{notable.id} , N :: #{id}"
       ::Freddy::DetectThankYouNoteWorker.perform_async(ticket_id: notable.id, note_id: id)
     end
 end
