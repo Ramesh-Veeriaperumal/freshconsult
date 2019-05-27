@@ -397,7 +397,7 @@ class AgentsController < ApplicationController
   
   def check_agent_limit
     if current_account.reached_agent_limit?
-      if (@agent && !@agent.occasional?) || (params[:agent] && params[:agent][:occasional] != true && params[:agent][:agent_type] == AgentType.agent_type_id(Agent::SUPPORT_AGENT))
+      if (@agent && @agent.support_agent? && !@agent.occasional?) || (params[:agent] && params[:agent][:occasional] != true && params[:agent][:agent_type] == AgentType.agent_type_id(Agent::SUPPORT_AGENT))
         flash[:notice] = t('maximum_agents_msg')
         redirect_to :back 
       end

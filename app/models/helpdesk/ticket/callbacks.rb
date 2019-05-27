@@ -635,7 +635,7 @@ private
   def validate_agent_and_ticket_type
     agent = self.responder.agent
     return true unless agent
-    self.errors.add(:responder_id, ErrorConstants::ERROR_MESSAGES[:only_field_agent_allowed]) and return false if (self.service_task? && !agent.field_agent?)
+
     self.errors.add(:responder_id, ErrorConstants::ERROR_MESSAGES[:field_agent_not_allowed]) and return false if (!self.service_task? && agent.field_agent?)
   end
 
