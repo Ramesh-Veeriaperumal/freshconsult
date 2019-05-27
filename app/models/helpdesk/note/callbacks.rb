@@ -325,7 +325,7 @@ class Helpdesk::Note < ActiveRecord::Base
         }
         job_id = ::Tickets::UpdateTicketStatesWorker.perform_async(args)
         Va::Logger::Automation.set_thread_variables(account_id, notable_id, user_id)
-        Va::Logger::Automation.log "Triggering UpdateTicketStatesWorker, job_id=#{job_id}, info=#{args.inspect}"
+        Va::Logger::Automation.log("Triggering UpdateTicketStatesWorker, job_id=#{job_id}, info=#{args.inspect}", true)
         Va::Logger::Automation.unset_thread_variables
       end
     end

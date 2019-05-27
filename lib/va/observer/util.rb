@@ -17,7 +17,7 @@ module Va::Observer::Util
     if user_present?
       filter_observer_events(true, inline)
     else
-      Va::Logger::Automation.log "user_present=false, @model_changes=#{@model_changes.inspect}, current_user_present=#{User.current.present?}, survey_result?=#{survey_result?}, system_event?=#{system_event?}, zendesk_import?=#{zendesk_import?}, freshdesk_webhook?=#{freshdesk_webhook?}, sent_for_enrichment?=#{sent_for_enrichment?}"
+      Va::Logger::Automation.log("user_present=false, @model_changes=#{@model_changes.inspect}, current_user_present=#{User.current.present?}, survey_result?=#{survey_result?}, system_event?=#{system_event?}, zendesk_import?=#{zendesk_import?}, freshdesk_webhook?=#{freshdesk_webhook?}, sent_for_enrichment?=#{sent_for_enrichment?}", true)
     end
   end
 
@@ -31,7 +31,7 @@ module Va::Observer::Util
 
     def filter_observer_events(queue_events = true, inline = false)
       observer_changes = filter_observer_changes
-      Va::Logger::Automation.log "Triggered object=#{self.class}, id=#{self.id}"
+      Va::Logger::Automation.log("Triggered object=#{self.class}, id=#{self.id}", true)
       Va::Logger::Automation.log("model_changes=#{@model_changes.inspect}, observer_changes_blank=#{observer_changes.blank?}, skip_observer=not_queue_events=#{!queue_events}") if observer_changes.blank? || !queue_events
       return observer_changes unless queue_events
       if observer_changes.present?
@@ -57,7 +57,7 @@ module Va::Observer::Util
       end
       TICKET_EVENTS.each(&filter_changes)
       Account.current.event_flexifields_with_ticket_fields_from_cache.map(&:flexifield_name).each(&filter_changes)
-      Va::Logger::Automation.log "Observer changes matching the ticket and event flexifields #{observer_changes.inspect}"
+      Va::Logger::Automation.log("Observer changes matching the ticket and event flexifields #{observer_changes.inspect}", true)
       observer_changes
     end
 

@@ -133,7 +133,6 @@ class TicketsController < ApiApplicationController
         preload_options << (ApiTicketConstants::INCLUDE_PRELOAD_MAPPING[assoc] || assoc)
         increment_api_credit_by(2)
       end
-      Rails.logger.info ":::preloads: #{preload_options.inspect}"
       preload_options
     end
 

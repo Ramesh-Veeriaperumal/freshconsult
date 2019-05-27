@@ -86,7 +86,6 @@ class VaRule < ActiveRecord::Base
   end
 
   def check_events doer, evaluate_on, current_events
-    Va::Logger::Automation.log "********* PERFORMER *********"
     performer_matched = performer.matches? doer, evaluate_on
     Va::Logger::Automation.log "performer matched=#{performer_matched}"
     return unless performer_matched
@@ -96,7 +95,6 @@ class VaRule < ActiveRecord::Base
   end
 
   def event_matches? current_events, evaluate_on
-    Va::Logger::Automation.log "********* EVENTS *********"
     events.each do  |e|
       if e.event_matches?(current_events, evaluate_on)
         @triggered_event = {e.name => current_events[e.name]}
@@ -108,11 +106,9 @@ class VaRule < ActiveRecord::Base
   end
   
   def pass_through(evaluate_on, actions=nil, doer=nil)
-    Va::Logger::Automation.log "********* CONDITIONS *********"
     is_a_match = false
     benchmark { is_a_match = matches(evaluate_on, actions) }
-    Va::Logger::Automation.log "condition matched=#{is_a_match}"
-    Va::Logger::Automation.log "********* ACTIONS *********"
+    Va::Logger::Automation.log("condition matched=#{is_a_match}")
     trigger_actions(evaluate_on, doer) if is_a_match
     is_a_match ? evaluate_on : nil
   end
@@ -436,8 +432,7 @@ class VaRule < ActiveRecord::Base
 
     def log_rule_change
       Va::Logger::Automation.set_thread_variables(account_id, nil, User.current.try(:id), id)
-      Va::Logger::Automation.log "type=#{VAConfig::RULES_BY_ID[self.rule_type]}, name=#{self.name}"
-      Va::Logger::Automation.log "********* Changes *********"
+      Va::Logger::Automation.log("type=#{VAConfig::RULES_BY_ID[rule_type]}, name=#{self.name}", true)
       model_changes
     end
 
