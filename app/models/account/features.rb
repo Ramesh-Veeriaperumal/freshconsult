@@ -23,8 +23,10 @@ class Account < ActiveRecord::Base
     :allow_billing_info_update, :pricing_plan_change_2019, :tag_central_publish, :native_apps,
     :surveys_central_publish, :id_for_choices_write, :nested_field_revamp, :session_logs, :bypass_signup_captcha,
     :freshvisual_configs, :ticket_field_limit_increase, :join_ticket_field_data, :contact_company_split,
-    :contact_field_central_publish, :company_field_central_publish, :simple_outreach, :disable_simple_outreach, :disable_field_service_management, :disable_mint_analytics,
-    :freshid_org_v2, :hide_agent_login, :addon_based_billing, :kbase_mint, :text_custom_fields_in_etl, :webhook_blacklist_ip, :recalculate_daypass, :sandbox_single_branch
+    :contact_field_central_publish, :company_field_central_publish, :simple_outreach, :disable_simple_outreach,
+    :disable_field_service_management, :disable_mint_analytics, :freshid_org_v2, :hide_agent_login,
+    :addon_based_billing, :kbase_mint, :text_custom_fields_in_etl, :email_spoof_check,
+    :disable_email_spoof_check, :webhook_blacklist_ip, :recalculate_daypass, :sandbox_single_branch
   ].freeze
 
   DB_FEATURES = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone].freeze
@@ -357,6 +359,10 @@ class Account < ActiveRecord::Base
 
   def undo_send_enabled?
     has_feature?(:undo_send) || launched?(:undo_send)
+  end
+
+  def email_spoof_check_feature?
+    email_spoof_check_enabled? && !disable_email_spoof_check_enabled?
   end
 
   def automatic_ticket_assignment_enabled?
