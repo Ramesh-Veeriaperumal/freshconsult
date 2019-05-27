@@ -5,6 +5,7 @@ class SubscriptionsController < ApplicationController
   include Redis::RedisKeys
   include Redis::OthersRedis
 
+  before_filter :prevent_actions_for_sandbox
   skip_before_filter :check_account_state
 
   before_filter :admin_selected_tab

@@ -203,6 +203,7 @@
     - freshid_v2_agents_migration
     - freshid_account_details_update_v2
     - sandbox_cleanup
+    - update_sandbox_subscription
   :free:
     - free_sla
     - free_supervisor

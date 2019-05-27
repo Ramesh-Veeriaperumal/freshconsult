@@ -243,6 +243,17 @@ class ApplicationController < ActionController::Base
     access_denied unless logged_in?
   end
 
+  def prevent_actions_for_sandbox
+    if current_account.sandbox?
+      respond_to do |format|
+        restricted_error = { error: :forbidden }
+        format.xml { render xml: restricted_error.to_xml }
+        format.html { render_403 }
+        format.any { render json: restricted_error }
+      end
+    end
+  end
+
   protected
     # Possible dead code
     def silence_logging
