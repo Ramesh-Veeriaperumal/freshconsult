@@ -99,6 +99,8 @@ class Subscription < ActiveRecord::Base
   after_commit :schedule_account_block, :update_status_in_freshid, on: :update, :if => [:moved_to_suspended?]
   after_commit :suspend_tenant,  on: :update, :if => :trial_to_suspended?
   after_commit :reactivate_account, :update_status_in_freshid, on: :update, :if => [:moved_from_suspended?]
+  after_commit :update_sandbox_subscription, on: :update, if: :account_has_sandbox?
+
   attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
   serialize :additional_info, Hash
@@ -726,5 +728,15 @@ class Subscription < ActiveRecord::Base
 
     def anonymous_account?
       account.anonymous_account?
+    end
+
+    def update_sandbox_subscription
+      sandbox_account_id = account.sandbox_job.sandbox_account_id
+      sandbox_state = moved_to_suspended? ? SUSPENDED : TRIAL
+      ::Admin::Sandbox::UpdateSubscriptionWorker.perform_async(account_id: account_id, sandbox_account_id: sandbox_account_id, state: sandbox_state)
+    end
+
+    def account_has_sandbox?
+      account.production_with_sandbox? && (moved_to_suspended? || moved_from_suspended?)
     end
  end

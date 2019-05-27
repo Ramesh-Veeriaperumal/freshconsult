@@ -327,6 +327,7 @@ defaults: &defaults
     - [freshcaller_account_central_publish]
     - [freshchat_account_central_publish]
     - [sandbox_cleanup]
+    - [update_sandbox_subscription]
     - [thank_you_note]
 
 development:

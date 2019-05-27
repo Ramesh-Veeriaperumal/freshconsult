@@ -75,8 +75,8 @@ Sidekiq.configure_client do |config|
       'Freshid::V2::ProcessEvents',
       'Freshid::V2::AccountDetailsUpdate',
       'FreshidRetryWorker',
-      'Admin::Sandbox::CleanupWorker'
-      
+      'Admin::Sandbox::CleanupWorker',
+      'Admin::Sandbox::UpdateSubscriptionWorker'
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "AccountCreation::PopulateSeedData",
@@ -181,7 +181,8 @@ Sidekiq.configure_server do |config|
       'Freshid::V2::ProcessEvents',
       'Freshid::V2::AccountDetailsUpdate',
       'FreshidRetryWorker',
-      'Admin::Sandbox::CleanupWorker'
+      'Admin::Sandbox::CleanupWorker',
+      'Admin::Sandbox::UpdateSubscriptionWorker'
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
       "AccountCreation::PopulateSeedData",
@@ -275,7 +276,8 @@ Sidekiq.configure_server do |config|
       'Freshid::V2::ProcessEvents',
       'Freshid::V2::AccountDetailsUpdate',
       'FreshidRetryWorker',
-      'Admin::Sandbox::CleanupWorker'
+      'Admin::Sandbox::CleanupWorker',
+      'Admin::Sandbox::UpdateSubscriptionWorker'
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",

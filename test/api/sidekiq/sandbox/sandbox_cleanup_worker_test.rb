@@ -6,12 +6,10 @@ require Rails.root.join('test', 'api', 'sidekiq', 'sandbox', 'provision_sandbox_
 
 class CleanupWorkerTest < ActionView::TestCase
   include AccountTestHelper
-  include ProvisionSandboxTestHelper
 
   GIT_ROOT_PATH = Rails.root.join('tmp', 'sandbox').to_s.freeze
 
   def setup
-    test_cleanup_sandbox
     super
   end
 
