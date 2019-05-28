@@ -1691,6 +1691,7 @@ module Channel::V2
       Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:api_es_enabled?)
       Account.any_instance.unstub(:dashboard_new_alias?)
+    end
 
     def test_sla_calculation_if_created_at_current_time
       BusinessCalendar.any_instance.stubs(:holidays).returns([])
