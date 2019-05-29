@@ -98,7 +98,7 @@ run "ln -nfs #{shared_path}/config/datadog.yml #{node[:rel_path]}/config/datadog
 run "ln -nfs #{shared_path}/config/freshvisuals.yml #{node[:rel_path]}/config/helpdesk_reports/freshvisuals.yml"
 run "ln -nfs #{shared_path}/config/freno.yml #{node[:rel_path]}/config/freno.yml"
 run "ln -nfs #{shared_path}/config/freddy_skills_config.yml #{node[:rel_path]}/config/freddy_skills_config.yml"
-
+run "ln -nfs #{shared_path}/config/facebook_gateway.yml #{node[:rel_path]}/config/facebook_gateway.yml"
 
 #supreme-code-console
 run "ln -nfs #{shared_path}/config/api_config_internal_tools.yml #{node[:rel_path]}/config/api_config_internal_tools.yml"

@@ -40,6 +40,7 @@
     - ocr_task_sync
     - freshvisual_configs
     - model_destroy
+    - gateway_facebook_page
 
   :central_realtime:
     - central_publish
