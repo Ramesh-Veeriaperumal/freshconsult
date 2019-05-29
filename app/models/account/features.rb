@@ -346,6 +346,10 @@ class Account < ActiveRecord::Base
     launched?(:help_widget)
   end
 
+  def new_onboarding_enabled?
+    launched?(:new_onboarding) || launched?(:onboarding_v2)
+  end
+
   def bitmap_feature_changed?(feature_val)
     old_feature = self.changes[:plan_features][0].to_i
     new_feature = self.changes[:plan_features][1].to_i

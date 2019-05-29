@@ -12,15 +12,35 @@ def self.plan_list(all_addons, estate_addons, garden_addons, blossom_addons, est
     	:price => plan_price[:forest], :classic => true, :display_name => "Forest" },
 
 		{ :name => "Sprout Jan 17", :amount => 0, :free_agents => 50000, :day_pass_amount => 0.00,
-    	:addons => sprout_17_addons, :price => plan_price[:sprout_jan_17], :classic => false, :display_name => "Sprout"},
+    	:addons => sprout_17_addons, :price => plan_price[:sprout_jan_17], :classic => true, :display_name => "Sprout"},
 		{ :name => "Blossom Jan 17", :amount => 25, :free_agents => 0, :day_pass_amount => 2.00,
-	    :addons => blossom_17_addons, :price => plan_price[:blossom_jan_17], :classic => false, :display_name => "Blossom"},
+	    :addons => blossom_17_addons, :price => plan_price[:blossom_jan_17], :classic => true, :display_name => "Blossom"},
 		{ :name => "Garden Jan 17", :amount => 44, :free_agents => 0, :day_pass_amount => 3.00,
-	    :addons => garden_17_addons, :price => plan_price[:garden_jan_17], :classic => false, :display_name => "Garden"},
+	    :addons => garden_17_addons, :price => plan_price[:garden_jan_17], :classic => true, :display_name => "Garden"},
 		{ :name => "Estate Jan 17", :amount => 59, :free_agents => 0, :day_pass_amount => 4.00,
-	    :addons => estate_17_addons, :price => plan_price[:estate_jan_17], :classic => false, :display_name => "Estate"},
+	    :addons => estate_17_addons, :price => plan_price[:estate_jan_17], :classic => true, :display_name => "Estate"},
 		{ :name => "Forest Jan 17", :amount => 99, :free_agents => 0, :day_pass_amount => 5.00,
-	    :price => plan_price[:forest_jan_17], :classic => false, :display_name => "Forest"},
+	    :price => plan_price[:forest_jan_17], :classic => true, :display_name => "Forest"},
+
+    { name: 'Sprout Jan 19', amount: 0.0, renewal_period: 1, trial_period: 1, free_agents: 50000, day_pass_amount: 0,
+        price: plan_price[:sprout_jan_19], classic: false, display_name: 'Sprout', :addons => sprout_17_addons },
+    { name: 'Blossom Jan 19', amount: 19.0, renewal_period: 1, trial_period: 1, free_agents: 0,
+        day_pass_amount: 1, price: plan_price[:blossom_jan_19], classic: false, display_name: 'Blossom',
+        :addons => blossom_17_addons },
+    { name: 'Garden Jan 19', amount: 35.0, renewal_period: 1, trial_period: 1, free_agents: 0,
+        day_pass_amount: 2, price: plan_price[:garden_jan_19], classic: false, display_name: 'Garden',
+        :addons => garden_17_addons },
+    { name: 'Estate Jan 19', amount: 65.0, renewal_period: 1, trial_period: 1, free_agents: 0,
+        day_pass_amount: 4, price: plan_price[:estate_jan_19], classic: false, display_name: 'Estate',
+        :addons => estate_17_addons },
+    { name: 'Forest Jan 19', amount: 125.0, renewal_period: 1, trial_period: 1, free_agents: 0,
+        day_pass_amount: 6, price: plan_price[:forest_jan_19], classic: false, display_name: 'Forest' },
+    { name: 'Garden Omni Jan 19', amount: 39.0, renewal_period: 1, trial_period: 1, free_agents: 0,
+        day_pass_amount: 2, price: plan_price[:garden_omni_jan_19], classic: false, display_name: 'Garden',
+        :addons => garden_17_addons },
+    { name: 'Estate Omni Jan 19', amount: 69.0, renewal_period: 1, trial_period: 1, free_agents: 0,
+        day_pass_amount: 4, price: plan_price[:estate_omni_jan_19], classic: false, display_name: 'Estate',
+        :addons => estate_17_addons }
 	]
 end
 
@@ -100,7 +120,70 @@ def self.plan_price
 			"GBP" => 79.0,
 			"AUD" => 125.0,
 			"BRL" => 270.0
-		}
+		},
+    sprout_jan_19: {
+          'EUR' => 0.0,
+          'INR' => 0.0,
+          'USD' => 0.0,
+          'ZAR' => 0.0,
+          'GBP' => 0.0,
+          'AUD' => 0.0,
+          'BRL' => 0.0
+        },
+        blossom_jan_19: {
+          'EUR' => 15.0,
+          'INR' => 999.0,
+          'USD' => 15.0,
+          'ZAR' => 209.0,
+          'GBP' => 11.0,
+          'AUD' => 19.0,
+          'BRL' => 39.0
+        },
+        garden_jan_19: {
+          'EUR' => 29.0,
+          'INR' => 1999.0,
+          'USD' => 29.0,
+          'ZAR' => 409.0,
+          'GBP' => 21.0,
+          'AUD' => 39.0,
+          'BRL' => 109.0
+        },
+        estate_jan_19: {
+          'EUR' => 49.0,
+          'INR' => 3099.0,
+          'USD' => 49.0,
+          'ZAR' => 669.0,
+          'GBP' => 35.0,
+          'AUD' => 69.0,
+          'BRL' => 139.0
+        },
+        garden_omni_jan_19: {
+          'EUR' => 29.0,
+          'INR' => 1999.0,
+          'USD' => 29.0,
+          'ZAR' => 409.0,
+          'GBP' => 21.0,
+          'AUD' => 39.0,
+          'BRL' => 109.0
+         },
+        estate_omni_jan_19: {
+          'EUR' => 49.0,
+          'INR' => 3099.0,
+          'USD' => 49.0,
+          'ZAR' => 669.0,
+          'GBP' => 35.0,
+          'AUD' => 69.0,
+          'BRL' => 139.0
+         },
+        forest_jan_19: {
+          'EUR' => 109.0,
+          'INR' => 7899.0,
+          'USD' => 109.0,
+          'ZAR' => 1499.0,
+          'GBP' => 85.0,
+          'AUD' => 149.0,
+          'BRL' => 409.0
+        }
 	}
 end
 

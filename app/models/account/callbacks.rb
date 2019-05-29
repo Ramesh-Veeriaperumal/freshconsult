@@ -159,7 +159,8 @@ class Account < ActiveRecord::Base
   end
 
   def enable_new_onboarding
-    if (has_feature?(:falcon) && LOCALES_FOR_NEW_ONBOARDING.include?(language))
+    if onboarding_applicable?
+      launch :onboarding_v2 if redis_key_exists?(ONBOARDING_V2_ENABLED)
       launch :new_onboarding
     end
   end
@@ -567,6 +568,10 @@ class Account < ActiveRecord::Base
 
     def update_freshvisual_configs
       Reports::FreshvisualConfigs.perform_async
+    end
+
+    def onboarding_applicable?
+      has_feature?(:falcon) && LOCALES_FOR_NEW_ONBOARDING.include?(language)
     end
     
     def domain_already_exists?
