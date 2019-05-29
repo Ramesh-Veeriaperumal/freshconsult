@@ -32,16 +32,16 @@ module AutomationTestHelper
 
   def meta_hash(record)
     {
-        total_active_count: Account.current.account_va_rules.where(rule_type: record.rule_type.to_i, active: true).count,
-        total_count: Account.current.account_va_rules.where(rule_type: record.rule_type.to_i).count
+      total_active_count: Account.current.account_va_rules.where(rule_type: record.rule_type.to_i, active: true).count,
+      total_count: Account.current.account_va_rules.where(rule_type: record.rule_type.to_i).count
     }
   end
 
   def perfromer_pattern(performer)
     return {} if performer.nil?
     performer_hash = {}
-    performer_hash.merge!({type: performer.type.to_i}) unless performer.type.nil?
-    performer_hash.merge!({members: performer.members}) unless performer.members.nil?
+    performer_hash[:type] = performer.type.to_i unless performer.type.nil?
+    performer_hash[:members] = performer.members unless performer.members.nil?
     performer_hash
   end
 
@@ -49,10 +49,10 @@ module AutomationTestHelper
     return [] if events.nil?
     events.map do |e|
       events_hash = {}
-      events_hash.merge!({field_name: e.rule[:name]}) unless e.rule[:name].nil?
-      events_hash.merge!({to:  e.rule[:to]}) unless e.rule[:to].nil?
-      events_hash.merge!({from: e.rule[:from]}) unless e.rule[:from].nil?
-      events_hash.merge!({value: e.rule[:value]}) unless e.rule[:value].nil?
+      events_hash[:field_name] = e.rule[:name] unless e.rule[:name].nil?
+      events_hash[:to] = e.rule[:to] unless e.rule[:to].nil?
+      events_hash[:from] = e.rule[:from] unless e.rule[:from].nil?
+      events_hash[:value] = e.rule[:value] unless e.rule[:value].nil?
       events_hash
     end
   end
@@ -60,7 +60,7 @@ module AutomationTestHelper
   def conditions_pattern(condition_data, operator)
     return {} if condition_data.nil?
     conditions_hash(condition_data,
-                        operator)
+                    operator)
   end
 
   def conditions_hash(condition_data, operator)
@@ -68,10 +68,10 @@ module AutomationTestHelper
         (condition_data.first.key?(:all) || condition_data.first.key?(:any)))
     if nested_condition
       conditions = {}
-      condition_data.each_with_index  do |condition_set, index|
+      condition_data.each_with_index do |condition_set, index|
         conditions[:operator] = READABLE_OPERATOR[operator.to_s] if index == 1
         conditions["condition_set_#{index + 1}".to_sym] = condition_set_hash(condition_set.values.first,
-            condition_set.keys.first)
+                                                                             condition_set.keys.first)
       end
       conditions
     else
@@ -86,9 +86,9 @@ module AutomationTestHelper
       condition_data = {}
       evaluate_on_type = condition[:evaluate_on] || 'ticket'
       condition_hash[evaluate_on_type.to_sym] ||= []
-      condition_data.merge!({field_name: condition[:name]}) unless condition[:name].nil?
-      condition_data.merge!({operator: condition[:operator]}) unless condition[:operator].nil?
-      condition_data.merge!({value: condition[:value]}) unless condition[:value].nil?
+      condition_data[:field_name] = condition[:name] unless condition[:name].nil?
+      condition_data[:operator] = condition[:operator] unless condition[:operator].nil?
+      condition_data[:value] = condition[:value] unless condition[:value].nil?
       condition_data = support_for_old_operators(condition_data)
       condition_hash[evaluate_on_type.to_sym] << condition_data
     end
@@ -96,10 +96,10 @@ module AutomationTestHelper
   end
 
   def support_for_old_operators(data)
-    data = data.symbolize_keys
-    if data[:operator].is_a?(String) && OLD_OPERATOR_MAPPING.key?(data[:operator].to_sym)
+    data.symbolize_keys!
+    if data[:operator].is_a?(String) && NEW_ARRAY_VALUE_OPERATOR_MAPPING.key?(data[:operator].to_sym)
       data[:value] = *data[:value]
-      data[:operator] = OLD_OPERATOR_MAPPING[data[:operator].to_sym]
+      data[:operator] = NEW_ARRAY_VALUE_OPERATOR_MAPPING[data[:operator].to_sym]
     end
     data
   end
@@ -108,12 +108,12 @@ module AutomationTestHelper
     return {} if action_data.nil?
     action_data.map do |a|
       action_hash = {}
-      action_hash.merge!({field_name: a[:name]}) unless  a[:name].nil?
+      action_hash[:field_name] = a[:name] unless a[:name].nil?
       %i[value email_to email_subject email_body request_type
-        url need_authentication username password api_key custom_headers
-        content_layout params].each do |key|
-          action_hash.merge!(key.to_sym => a[key.to_sym]) unless  a[key.to_sym].nil?
-       end
+         url need_authentication username password api_key custom_headers
+         content_layout params responder_id].each do |key|
+        action_hash.merge!(key.to_sym => a[key.to_sym]) unless a[key.to_sym].nil?
+      end
       action_hash
     end
   end
@@ -148,7 +148,7 @@ module AutomationTestHelper
     dispatcher_payload = JSON.parse('{"name":"test 1234423","active":false,
       "conditions":{"condition_set_1":{"match_type":"all","ticket":[{"field_name":"ticket_type","operator":"in","value":["Refund"]}]},
       "operator":"or","condition_set_2":{"match_type":"all","ticket":[{"field_name":"ticket_type","operator":"in","value":["Question"]},
-        {"field_name":"subject_or_description","operator":"contains_any_of","value":["billing"]}]}},"actions":[{"field_name":"status","value":2}] }')
+        {"field_name":"subject_or_description","operator":"contains","value":["billing"]}]}},"actions":[{"field_name":"status","value":2}] }')
     dispatcher_payload['name'] = Faker::Lorem.characters(20)
     dispatcher_payload
   end
@@ -158,7 +158,6 @@ module AutomationTestHelper
     sample_response['last_updated_by'] = User.current.id
     sample_response
   end
-
 
   def observer_rule_json_with_thank_you_note
     observer_payload = JSON.parse('{ "active": true, "performer": { "type": 2 }, "events": [ { "field_name": "reply_sent" }, { "field_name": "note_type", "value": "public" } ], "conditions": { "condition_set_1": { "match_type": "all", "ticket": [ { "field_name": "freddy_suggestion", "operator": "is_not", "value": "thank_you_note" }, { "field_name": "status", "operator": "in", "value": [ 3, 4 ] } ] }, "operator": "and", "condition_set_2": { "match_type": "any", "ticket": [ { "field_name": "status", "operator": "not_in", "value": [ 2, 4, 5 ] } ] } }, "actions": [ { "field_name": "status", "value": 2 } ] }')
