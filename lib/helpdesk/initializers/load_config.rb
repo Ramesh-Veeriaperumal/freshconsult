@@ -73,3 +73,5 @@ GrowthScoreConfig = YAML.load_file(File.join(Rails.root, 'config', 'growthscore_
 FrenoConfig = YAML.load_file(File.join(Rails.root, 'config', 'freno.yml'))[Rails.env]
 
 FreddySkillsConfig = YAML.load_file(Rails.root.join('config', 'freddy_skills_config.yml'))[Rails.env].with_indifferent_access
+
+FacebookGatewayConfig = YAML.load_file(Rails.root.join('config', 'facebook_gateway.yml'))[Rails.env]

@@ -329,6 +329,7 @@ defaults: &defaults
     - [sandbox_cleanup]
     - [update_sandbox_subscription]
     - [thank_you_note]
+    - [gateway_facebook_page]
 
 development:
   <<: *defaults

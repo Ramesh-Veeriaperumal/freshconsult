@@ -38,8 +38,8 @@ class Account < ActiveRecord::Base
     :simple_outreach, :disable_simple_outreach, :fsm_dashboard, :supervisor_text_field,
     :automation_rule_execution_count, :disable_field_service_management, :disable_mint_analytics,
     :freshid_org_v2, :hide_agent_login, :addon_based_billing, :office365_adaptive_card,
-    :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check,
-    :webhook_blacklist_ip, :recalculate_daypass, :sandbox_single_branch
+    :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,
+    :recalculate_daypass, :sandbox_single_branch, :fb_page_api_improvement
   ].freeze
 
   DB_FEATURES = [
