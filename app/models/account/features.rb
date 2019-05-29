@@ -375,6 +375,10 @@ class Account < ActiveRecord::Base
     has_feature?(:undo_send) || launched?(:undo_send)
   end
 
+  def new_onboarding_enabled?
+    launched?(:new_onboarding) || launched?(:onboarding_v2)
+  end
+
   def email_spoof_check_feature?
     email_spoof_check_enabled? && !disable_email_spoof_check_enabled?
   end

@@ -81,7 +81,7 @@
 	  var APP_ENV = "<%= Rails.env %>";
 	</script>
 
-<% if !current_account.launched?(:new_onboarding) && (current_user.privilege?(:admin_tasks) && current_account.onboarding_pending?)  %>	
+<% if !current_account.new_onboarding_enabled? && (current_user.privilege?(:admin_tasks) && current_account.onboarding_pending?)  %>	
   <%= javascript_include_tag :'cdn/admin_onboarding' %>	
   <%= render partial: "admin_onboarding/onboarding_modal" %>	
 <% else %>
