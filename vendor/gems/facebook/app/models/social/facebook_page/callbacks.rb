@@ -10,28 +10,31 @@ class Social::FacebookPage < ActiveRecord::Base
 
   include Social::Constants
   include MixpanelWrapper
-  include Facebook::GatewayJwt
-  include Admin::Social::FacebookGatewayHelper
 
+  before_create  :create_mapping
   before_destroy :unregister_stream_subscription
+  after_destroy  :remove_mapping
 
-  after_commit :create_gateway_and_facebook_page_subscription, :send_mixpanel_event, on: :create
+  after_commit :subscribe_realtime, :send_mixpanel_event, on: :create
   after_commit :build_default_streams,  on: :create,  :if => :facebook_revamp_enabled?
   after_commit :delete_default_streams, on: :destroy, :if => :facebook_revamp_enabled?
-  after_commit :remove_gateway_page_subscription, on: :destroy
 
   after_update :fetch_fb_wall_posts
   after_commit :clear_cache
   before_destroy :save_deleted_page_info
 
   def cleanup(push_to_sidekiq = false)
-    if can_cleanup?
-      unsubscribe_realtime
-      if push_to_sidekiq
-        Social::FacebookDelta.perform_async({ :page_id => self.page_id, :discard_feed => true })
-      else
-        Social::FacebookDelta.new.add_feeds_to_sqs(self.page_id, true)
-      end
+    unsubscribe_realtime
+    if push_to_sidekiq
+      Social::FacebookDelta.perform_async({ :page_id => self.page_id, :discard_feed => true })
+    else
+      Social::FacebookDelta.new.add_feeds_to_sqs(self.page_id, true)
+    end
+  end
+
+  def subscribe_realtime
+    if enable_page && company_or_visitor?
+      Facebook::PageTab::Configure.new(self).execute("subscribe_realtime")
     end
   end
   
@@ -51,11 +54,6 @@ class Social::FacebookPage < ActiveRecord::Base
   end
   
   private
-
-  def can_cleanup?
-    gateway_fb_accounts_count, gateway_fb_accounts = gateway_facebook_page_mapping_details(page_id)
-    gateway_fb_accounts_count.to_i.zero? || (gateway_fb_accounts_count == 1 && gateway_fb_accounts.include?(Account.current.id))
-  end
   
   def build_stream(name, type)
     stream_params = facebook_stream_params(name, type)
@@ -85,13 +83,24 @@ class Social::FacebookPage < ActiveRecord::Base
     self.facebook_streams.destroy_all
   end
   
-  def create_gateway_and_facebook_page_subscription
-    Social::GatewayFacebookWorker.perform_async(page_id: page_id, action: 'create')
+  def create_mapping
+    Rails.logger.debug('From social_fb_page')
+    fb_page_mapping = Social::FacebookPageMapping.find_by_facebook_page_id(page_id)
+    
+    if fb_page_mapping
+      errors.add(:base, "Facebook page already in use") 
+    else
+      facebook_page_mapping = Social::FacebookPageMapping.new(:account_id => account_id)
+      facebook_page_mapping.facebook_page_id = page_id
+      facebook_page_mapping.save
+    end    
   end
 
-  def remove_gateway_page_subscription
-    Social::GatewayFacebookWorker.perform_async(page_id: page_id, action: 'destroy')
+  def remove_mapping
+    fb_page_mapping = Social::FacebookPageMapping.find_by_facebook_page_id(page_id)
+    fb_page_mapping.destroy if fb_page_mapping
   end
+
 
   # Unsubscribing the realtime feed and pushing into the sidekiq
   def unregister_stream_subscription
@@ -105,7 +114,7 @@ class Social::FacebookPage < ActiveRecord::Base
 
   def fetch_fb_wall_posts
     Social::FacebookDelta.perform_async({ :page_id => self.page_id }) if fetch_delta?
-    Social::GatewayFacebookWorker.perform_async(page_id: page_id, action: 'update') if page_token_changed?
+    subscribe_realtime if page_token_changed?
   end
 
   def send_mixpanel_event
@@ -119,5 +128,5 @@ class Social::FacebookPage < ActiveRecord::Base
   def save_deleted_page_info
     @deleted_model_info = as_api_response(:central_publish)
   end
-
+  
 end

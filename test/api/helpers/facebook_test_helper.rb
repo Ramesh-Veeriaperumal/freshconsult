@@ -52,9 +52,6 @@ module FacebookTestHelper
       'entry' => {
         'id' => page_id.to_s,
         'time' => time.to_i,
-        'account_id': @account.id,
-        'pod': ChannelFrameworkConfig['pod'],
-        'region': 'us-east-1',
         'messaging' => [
           {
             'sender' => {
@@ -204,18 +201,13 @@ module FacebookTestHelper
 
   def wrap_central_payload(payload)
     {
-      'meta': {},
-      'data': {
-        'payload_type': 'facebook_realtime_feeds',
-        'payload': payload,
-        'account_id': @account.id,
-        'pod': ChannelFrameworkConfig['pod'],
-        'region': 'us-east-1'
-      },
-      'entry': {
-        'account_id': @account.id,
-        'pod': ChannelFrameworkConfig['pod'],
-        'region': 'us-east-1'
+      "meta": {},
+      "data": {
+        "payload_type": "facebook_realtime_feeds",
+        "payload": payload,
+        "account_id": @account.id,
+        "pod": ChannelFrameworkConfig['pod'],
+        "region": "us-east-1"
       }
     }
   end

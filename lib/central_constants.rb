@@ -22,7 +22,7 @@ module CentralConstants
     'Social::TwitterHandle' => '0.0',
     'Social::TwitterStream' => '0.0',
     'Integrations::InstalledApplication' => '0.0',
-    'Social::FacebookPage' => '0.1',
+    'Social::FacebookPage' => '0.0',
     'Product' => '0.0',
     'Bot::Response' => '0.0',
     'Helpdesk::TicketField' => '0.0',

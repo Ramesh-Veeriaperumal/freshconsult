@@ -18,7 +18,6 @@
           <table class="table table-striped">
           	<% @associated_fb_pages.each do |fb_page| %>
               <% source = fb_page.delete(:source) %>
-              <% limit_reached = fb_page.delete(:limit_reached) %>
               <tr>
                 <td class="fb_list_pic">
                   <div class="preview_pic">
@@ -34,11 +33,7 @@
                     <b><%= fb_page[:page_name] %></b>
                   </label>
         					<% if source %>
-                    <% if limit_reached %>
-                      <p class="muted"> <%= t('facebook_tab.page_limit_reached', {:source => source}) %> </p>
-                    <% else %>
-                      <p class="muted"> <%= t('facebook_tab.multi_page_add', {:source => source}) %> </p>
-                    <% end %>
+        						<p class="muted"> <%= t('facebook_tab.page_added', {:source => source}) %> </p>
         					<% end %>
                 </td>
               </tr>
