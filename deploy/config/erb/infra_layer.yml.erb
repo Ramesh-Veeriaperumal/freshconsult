@@ -8,7 +8,6 @@
 API_LAYER: <%= @is_fc_app_layer || @is_fc_api_layer || @is_pipeline_layer %>
 SUPPORT_LAYER: <%= @is_support_layer %>
 PIPE_LAYER: <%= @is_pipeline_layer %>
-PRIVATE_API: <%= @is_fc_app_layer && !@is_fc_api_public_layer && !@is_fc_api_apigee_layer && !@is_fc_api_channel_layer %>
+PRIVATE_API: <%= @is_fc_app_layer && !@is_fc_api_public_layer && !@is_fc_api_channel_layer %>
 FRESHID_LAYER: <%= @is_freshid_layer %>
-APIGEE_API_LAYER: <%= @is_fc_api_apigee_layer %>
 CHANNEL_LAYER: <%= @is_fc_api_channel_layer %>

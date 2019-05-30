@@ -282,7 +282,7 @@ class Account < ActiveRecord::Base
       freshchat_integration: false, froala_editor_forums: false, note_central_publish: false,
       ticket_central_publish: false, solutions_central_publish: false, freshid: false,
       launch_smart_filter: true, onboarding_inlinemanual: false, incoming_attachment_limit_25: false,
-      fetch_ticket_from_ref_first: false, outgoing_attachment_limit_25: false, whitelist_sso_login: false, apigee: false,
+      fetch_ticket_from_ref_first: false, outgoing_attachment_limit_25: false, whitelist_sso_login: false,
       contact_delete_forever: false, imap_error_status_check: false, va_any_field_without_none: false,
       auto_complete_off: false, freshworks_omnibar: false, dependent_field_validation: false,
       post_central_publish: false, twitter_common_redirect: false, installed_app_publish: false,
@@ -295,9 +295,9 @@ class Account < ActiveRecord::Base
       saml_ecrypted_assertion: false, quoted_text_parsing_feature: false,
       product_central_publish: false, help_widget: false, company_central_publish: false,
       field_service_management_lp: false, bot_email_channel: false, allow_huge_ccs: false,
-      description_by_default: false, ticket_fields_central_publish: false, fluffy: false, disable_field_service_management: false, facebook_page_scope_migration: false, agent_group_central_publish: false, custom_fields_search: false,
+      description_by_default: false, ticket_fields_central_publish: false, fluffy: false, disable_field_service_management: false, facebook_page_scope_migration: false, agent_group_central_publish: false, custom_fields_search: true,
       update_billing_info: false, allow_billing_info_update: false, tag_central_publish: false, redis_picklist_id: true,
-      nested_field_revamp: false, freshvisual_configs: false, freshid_org_v2: false, hide_agent_login: false, addon_based_billing: false,
+      nested_field_revamp: true, freshvisual_configs: false, freshid_org_v2: false, hide_agent_login: false, addon_based_billing: false,
       kbase_mint: false, text_custom_fields_in_etl: false, recalculate_daypass: false
     }, :merge
   )

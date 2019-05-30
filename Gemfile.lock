@@ -273,10 +273,10 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/freshid-ruby-client.git
-  revision: e0abce727e1fedcd517a17c865b26c3e90ea6f0a
-  tag: v4.0.0
+  revision: c7236dec8e15a363e734a98f9c0d01d014b6b737
+  tag: v4.0.2
   specs:
-    freshid (4.0.0)
+    freshid (4.0.2)
       freshid-sdk
 
 GIT
@@ -300,6 +300,13 @@ GIT
       grpc (~> 1.17.0)
       opentracing (>= 0.4.1)
       rest-client
+
+GIT
+  remote: git@github.com:freshdesk/prometheus_exporter.git
+  revision: 5c5a0c9496355201f8b8380d77d16672d0c8d1fc
+  tag: v1.0.1
+  specs:
+    prometheus_exporter (1.0)
 
 GIT
   remote: git@github.com:freshdesk/retire.git
@@ -1606,6 +1613,7 @@ DEPENDENCIES
   pg
   postoffice!
   premailer (~> 1.8.0)
+  prometheus_exporter!
   pronto
   pronto-brakeman
   pronto-rails_best_practices

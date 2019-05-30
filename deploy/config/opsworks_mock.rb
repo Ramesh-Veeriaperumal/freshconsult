@@ -78,8 +78,7 @@ class Node < Hash
       },
       :api => {
         :prefix => "fc-app-api",
-        :public => { :prefix => "fc-app-api-public" },
-        :apigee => { :prefix => "fc-app-api-apigee" }
+        :public => { :prefix => "fc-app-api-public" }
       },
       :resque => {
         :prefix =>  "fc-bg-rescue"
@@ -220,12 +219,6 @@ class OpsWorks
     layers = Array::new()
     layers = @node[:opsworks][:instance][:layers]
     layers.any? {|layer| layer.include?(@node[:falcon][:api][:public][:prefix])}
-  end
-
-  def fc_api_apigee_layer?()
-    layers = Array::new()
-    layers = @node[:opsworks][:instance][:layers]
-    layers.any? {|layer| layer.include?(@node[:falcon][:api][:apigee][:prefix])}
   end
 
   def fc_frontend?()

@@ -4,11 +4,7 @@ if Infra['API_LAYER']
   Helpkit::Application.configure do
     config.middleware.delete 'Middleware::ApiThrottler'
     config.middleware.insert_before ActionDispatch::ParamsParser, "Middleware::ApiRequestInterceptor"
-
-    # API layer uses new verison API throttler. Hence deleted the above middleware and inserted new.
-    unless Infra['APIGEE_API_LAYER']
-      config.middleware.insert_before 'Middleware::ApiRequestInterceptor', 'Middleware::FdApiThrottler', max: 1000
-    end
+    config.middleware.insert_before 'Middleware::ApiRequestInterceptor', 'Middleware::FdApiThrottler', max: 1000
 
     if Infra['PIPE_LAYER']
       config.middleware.insert_before 'Middleware::ApiRequestInterceptor', 'Middleware::ApiPipeAuthenticator'

@@ -7,7 +7,7 @@ class Signup < ActivePresenter::Base
   
   attr_accessor :contact_first_name, :contact_last_name, :org_id, :join_token, :fresh_id_version
   before_validation :build_primary_email, :build_portal, :build_roles, :build_admin,
-    :build_subscription, :build_account_configuration, :set_time_zone, :build_password_policy
+    :build_subscription, :build_account_configuration, :set_time_zone, :build_password_policy, :set_freshid_signup_version
   
   before_validation :create_global_shard
 
@@ -41,12 +41,10 @@ class Signup < ActivePresenter::Base
   end
 
   def create_freshid_org_and_account
-    account.launch_freshid_with_omnibar(false) if freshid_v1_signup?
     account.create_freshid_org_and_account(org_id, join_token, user)
   end
 
   def create_freshid_v2_org_and_account
-    account.launch_freshid_with_omnibar(true) if freshid_v2_signup?
     account.create_freshid_v2_account(user, join_token)
   end
   private
@@ -210,6 +208,10 @@ class Signup < ActivePresenter::Base
 
     def freshid_v2_signup?
       @freshid_v2_signup ||= (fresh_id_version == Freshid::V2::Constants::FRESHID_SIGNUP_VERSION_V2)
+    end
+
+    def set_freshid_signup_version
+      account.fresh_id_version = fresh_id_version
     end
     # * * * POD Operation Methods Ends * * *
 end

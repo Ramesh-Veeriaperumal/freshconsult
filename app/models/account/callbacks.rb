@@ -119,7 +119,10 @@ class Account < ActiveRecord::Base
       self.launch(:falcon_signup)           # To track falcon signup accounts
       self.launch(:falcon_portal_theme)  unless redis_key_exists?(DISABLE_PORTAL_NEW_THEME)   # Falcon customer portal
     end
-    launch_freshid_with_omnibar if freshid_integration_signup_allowed?
+
+    if freshid_integration_signup_allowed?
+      freshid_v2_signup? ? launch_freshid_with_omnibar(true) : launch_freshid_with_omnibar
+    end
   end
 
   def update_activity_export
@@ -145,21 +148,6 @@ class Account < ActiveRecord::Base
   # Need to revisit when we push all the events for an account
   def central_publish_worker_class
     "CentralPublishWorker::AccountWorker"
-  end
-
-  def crud_apigee_kvm(action, plan_name, domain = nil, map_identifier = "default")
-    if ApigeeConfig::ALLOWED_ACTIONS.exclude?(action)
-      Rails.logger.info "#{action} is not a valid action"
-      return false
-    end
-    params = {
-      action: action.to_sym,
-      account_id: self.id,
-      domain: (domain || self.full_domain),
-      plan: plan_name,
-      map_identifier: map_identifier
-    }
-    Apigee::KVMActionWorker.perform_async(params)
   end
 
   def save_deleted_model_info

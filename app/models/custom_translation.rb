@@ -1,6 +1,7 @@
 # This model is used to add translations for custom fields, surveys and etc.
 class CustomTranslation < ActiveRecord::Base
   include DataVersioning::Model
+  include Cache::FragmentCache::Base
 
   self.primary_key = :id
   self.table_name = 'custom_translations'
@@ -9,6 +10,7 @@ class CustomTranslation < ActiveRecord::Base
   belongs_to_account
   attr_accessible :language_id, :translations, :translatable_id, :translatable_type
   clear_memcache [TICKET_FIELDS_FULL]
+  after_commit :clear_fragment_caches
 
   scope :only_ticket_fields, { :conditions => ['translatable_type = ?', 'Helpdesk::TicketField'] }
 

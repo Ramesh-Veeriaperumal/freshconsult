@@ -6,7 +6,7 @@ class Account < ActiveRecord::Base
     :year_in_review_2017, :falcon_portal_theme, :freshid, :freshchat_integration,
     :announcements_tab, :sso_login_expiry_limitation, :es_msearch, :ticket_central_publish,
     :solutions_central_publish, :launch_smart_filter, :outgoing_attachment_limit_25,
-    :whitelist_sso_login, :apigee, :admin_only_mint, :customer_notes_s3, :undo_send,
+    :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :undo_send,
     :imap_error_status_check, :va_any_field_without_none, :encode_emoji, :auto_complete_off,
     :csat_email_scan_compatibility, :dependent_field_validation, :post_central_publish,
     :encode_emoji_subject, :note_central_publish, :db_to_bitmap_features_migration_phase2,
