@@ -290,6 +290,12 @@ module Cache::Memcache::Account
     end
   end
 
+  def ticket_fields_name_type_mapping_cache
+    fetch_from_cache(ticket_fields_name_type_mapping_key(id)) do
+      ticket_fields_with_nested_fields.all.select { |field| field.default == false }.map { |x| [x.name, x.field_type] }.to_h
+    end
+  end
+
   def ticket_fields_from_cache
     key = format(ACCOUNT_TICKET_FIELDS, account_id: self.id)
     fetch_from_cache(key) { ticket_fields_with_nested_fields.all }
@@ -719,5 +725,9 @@ module Cache::Memcache::Account
 
     def custom_date_time_fields_memcache_key
       format(ACCOUNT_CUSTOM_DATE_TIME_FIELDS, account_id: self.id)
+    end
+
+    def ticket_fields_name_type_mapping_key(account_id)
+      format(ACCOUNT_TICKET_FIELDS_NAME_TYPE_MAPPING, account_id: account_id)
     end
 end
