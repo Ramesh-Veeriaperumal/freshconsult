@@ -258,7 +258,6 @@ api_error_messages:
   to_service_task_not_possible: The type of a ticket can not be updated to service task
   from_service_task_not_possible: The type of a service task ticket can not be updated
   only_field_group_allowed: Only service groups can be assigned to a ticket of type service task
-  only_field_agent_allowed: Only field technicians can be assigned to a ticket of type service task
   field_agent_not_allowed: Tickets that are not of type service task cannot be assigned a field technician
   field_group_not_allowed: Tickets that are not of type service task cannot be assigned a service group
   invalid_field_auto_assign: "Auto ticket assignment is not available for service groups."

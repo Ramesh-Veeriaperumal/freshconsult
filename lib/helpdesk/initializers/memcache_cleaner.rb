@@ -36,7 +36,7 @@ module MemcacheCleaner
   private
 
     def clear_ticket_field_response(cache_key, acc_id_hash)
-      language_codes = self.class.name.to_s.eql?('CustomTranslation') ? [Language.find(self.language_id).try(:to_key)] : Account.current.all_languages
+      language_codes = self.class.name.to_s.eql?('CustomTranslation') ? [Language.find(self.language_id).try(:code)] : Account.current.all_languages
       result = []
       language_codes.each do |code|
         status = (MemcacheKeys.delete_from_cache cache_key % acc_id_hash.merge(language_code: code))

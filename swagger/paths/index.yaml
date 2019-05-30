@@ -599,11 +599,11 @@
   $ref: ./solutions/category/list_and_create.yaml
 /solutions/categories/{id}:
   $ref: ./solutions/category/crud.yaml
-/solutions/folders:
+/solutions/categories/{category_id}/folders:
   $ref: ./solutions/folder/create_index.yaml
 /solutions/folders/{id}:
   $ref: ./solutions/folder/read_update_delete.yaml
-/solutions/articles:
+/solutions/folders/{folder_id}/articles:
   $ref: ./solutions/article/list_and_create.yaml
 /solutions/articles/{id}:
   $ref: ./solutions/article/crud.yaml

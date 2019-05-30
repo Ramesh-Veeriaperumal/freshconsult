@@ -37,7 +37,6 @@ module BocGroups
                     'app/controllers/user_sessions_controller.rb',
                     'app/controllers/password_resets_controller.rb',
                     'app/workers/launch_party_action_worker.rb',
-                    'app/workers/apigee/kvm_action_worker.rb',
                     'app/workers/freshid/account_details_update.rb',
                     'app/workers/freshid/agents_migration.rb',
                     'app/workers/freshid/process_events.rb',

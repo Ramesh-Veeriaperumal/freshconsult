@@ -16,8 +16,16 @@ module Redis::RateLimitRedis
     handle_exception { return $rate_limit.perform_redis_op("INCRBY", key, used) }
   end
 
+  def get_redis_api_expiry(key)
+    handle_exception { $rate_limit.perform_redis_op("ttl", key) }
+  end
+
   def set_redis_expiry(key, expires)
     handle_exception { $rate_limit.perform_redis_op("expire", key, expires) }
+  end
+
+  def get_api_rate_limit(key)
+    handle_exception { $rate_limit.perform_redis_op("get", key) }
   end
 
   def get_multiple_redis_keys(*keys)

@@ -115,6 +115,7 @@ class Admin::CustomTranslations::Upload < BaseWorker
 
   def compare_and_merge(field_object, translations)
     field_object = field_object.parent unless field_object.level.nil?
+    translations.slice!('customer_label') if field_object.only_customer_label_field?
     existing_translation = field_object.safe_send(language_translation)
     if existing_translation.nil?
       translations.delete_if { |key, value| value.nil? || value == '' }

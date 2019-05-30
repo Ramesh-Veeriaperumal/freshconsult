@@ -6,7 +6,7 @@ class TicketFieldDecorator < ApiDecorator
 
   delegate :id, :default, :description, :label, :position, :required_for_closure, :has_section?,
            :field_type, :required, :required_in_portal, :label_in_portal, :editable_in_portal, :visible_in_portal,
-           :level, :ticket_field_id, :picklist_values, to: :record
+           :level, :ticket_field_id, :picklist_values, :i18n_label, to: :record
 
   # Not including default_agent and default_group because its choices are not needed for private API
   DEFAULT_FIELDS = %w[default_priority default_source default_status default_ticket_type default_product default_skill].freeze
@@ -190,8 +190,9 @@ class TicketFieldDecorator < ApiDecorator
   end
 
   def translated_label_in_portal
-    label = level.to_i > 1 ? "customer_label_#{level}" : 'customer_label'
-    translation_record.present? ? translation_record.translations[label] || label_in_portal : label_in_portal
+    choice = level.to_i > 1 ? "customer_label_#{level}" : 'customer_label'
+    label = translation_record.translations[choice] if translation_record.present?
+    label || label_in_portal
   end
 
   private
@@ -304,7 +305,8 @@ class TicketFieldDecorator < ApiDecorator
 
     def translated_label
       choice = level.to_i > 1 ? "label_#{level}" : 'label'
-      translation_record.present? ? translation_record.translations[choice] || record.label : record.label
+      label = translation_record.translations[choice] if translation_record.present?
+      label || i18n_label
     end
 
     def current_user_supported_language
@@ -328,12 +330,14 @@ class TicketFieldDecorator < ApiDecorator
 
     def translated_choice(picklist_value)
       choices = translation_record.present? && translation_record.translations['choices']
-      choices ? choices["choice_#{picklist_value.picklist_id}"] || picklist_value.value : picklist_value.value
+      choice = choices["choice_#{picklist_value.picklist_id}"] if choices
+      choice || picklist_value.value
     end
 
     def translated_status(status_id, value)
       choices = translation_record.present? && translation_record.translations['choices']
-      choices ? choices["choice_#{status_id}"] || value : value
+      choice = choices["choice_#{status_id}"] if choices
+      choice || value
     end
 
     def section_field_hash(section)

@@ -302,8 +302,8 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/prometheus_exporter.git
-  revision: 43968255f3c8a3c8e81d3bb41cce233f8bc61253
-  branch: v1.0
+  revision: 5c5a0c9496355201f8b8380d77d16672d0c8d1fc
+  tag: v1.0.1
   specs:
     prometheus_exporter (1.0)
 

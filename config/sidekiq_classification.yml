@@ -31,7 +31,6 @@
     - livechat_worker
     - smart_filter_tweet_to_ticket
     - channel_framework_command
-    - apigee_api
     - calculate_sla
     - add_agent_to_round_robin
     - toggle_agent_from_all_roundrobin_groups

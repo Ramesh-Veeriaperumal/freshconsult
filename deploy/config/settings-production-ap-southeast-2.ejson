@@ -1062,20 +1062,6 @@
         "_agent_widget_host_url": "https://web.freshchat.com",
         "_visitor_widget_host_url": "https://wchat.freshchat.com"
       },
-      "apigee_config": {
-        "api_key": "EJ[1:gW13mkgwtwPFM1PceeVMaEwW+iEGrTpx8LMHNF08vRE=:pcXPJCcUSISxcTSQcJVNnqxI7UVPbygw:+CoOm/pABBajjZ9KKDx1Uhhl+yRf6WqkBA6A71aNbLv0J4cnNgfVN0gnT2WIIgFw]",
-        "_enabled": "true",
-        "_hostname": "freshworks-prod.apigee.net",
-        "_api_proxy": "freshdesk",
-        "_s3_bucket_name": "aus-cdn.freshdesk.com",
-        "_s3_file_name": "apigee_domains_file.txt",
-        "_url": "https://freshworks-prod.apigee.net",
-        "_ips": [
-          "104.196.108.92",
-          "35.185.49.19"
-        ],
-        "_channel_framework_api_proxy": "channel_framework"
-      },
       "formserv": {
         "api_token": "EJ[1:gW13mkgwtwPFM1PceeVMaEwW+iEGrTpx8LMHNF08vRE=:Sbkh8eALLHMCNbivV1YbqlbZjla4U+qS:BPpzQBTjezZwK0I9vGXL0AV/xoNzc9jLfKXEm8UP72VDiTqt9iHCKq1JBQIhey/E]",
         "_formserv_url": "https://formservsdn.freshworksapi.com/api/v1/forms",
@@ -1253,8 +1239,6 @@
     "hk-app-ecommerce": {
     },
     "fc-bg-sidekiq-dedicated": {
-    },
-    "fc-app-api-apigee": {
     },
     "fc-bg-sidekiq-scheduled": {
     },

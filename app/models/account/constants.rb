@@ -284,7 +284,7 @@ class Account < ActiveRecord::Base
       freshchat_integration: false, froala_editor_forums: false, note_central_publish: false,
       ticket_central_publish: false, solutions_central_publish: false, freshid: false,
       launch_smart_filter: true, onboarding_inlinemanual: false, incoming_attachment_limit_25: false,
-      fetch_ticket_from_ref_first: false, outgoing_attachment_limit_25: false, whitelist_sso_login: false, apigee: false,
+      fetch_ticket_from_ref_first: false, outgoing_attachment_limit_25: false, whitelist_sso_login: false,
       contact_delete_forever: false, imap_error_status_check: false, va_any_field_without_none: false,
       auto_complete_off: false, freshworks_omnibar: false, dependent_field_validation: false,
       post_central_publish: false, twitter_common_redirect: false, installed_app_publish: false,
@@ -302,7 +302,7 @@ class Account < ActiveRecord::Base
       facebook_page_scope_migration: false, agent_group_central_publish: false, custom_fields_search: false,
       update_billing_info: false, allow_billing_info_update: false, tag_central_publish: false,
       archive_tickets_api: false, redis_picklist_id: true, bot_agent_response: false, fluffy: false,
-      nested_field_revamp: false, service_worker: false, kbase_mint: false, freshvisual_configs: false,
+      nested_field_revamp: true, service_worker: false, kbase_mint: false, freshvisual_configs: false,
       ticket_type_filter_in_trends_widget: false,
       freshid_org_v2: false, hide_agent_login: false, addon_based_billing: false, office365_adaptive_card: false,
       text_custom_fields_in_etl: false, recalculate_daypass: false

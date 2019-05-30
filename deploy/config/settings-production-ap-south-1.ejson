@@ -811,20 +811,6 @@
           "_podapsouth1": "freshopspodapsouth1"
         }
       },
-      "apigee_config": {
-        "api_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:RZYgrTaKHqva9as5VkfXdBF+AtE3ww/M:tCqFW9sZrDerY0wI2CDmibW5/qWHgsAbAqJk5re5ZDe4IeW2dPcTePZYQy6mkoma]",
-        "_enabled": "true",
-        "_hostname": "freshworks-prod.apigee.net",
-        "_api_proxy": "freshdesk",
-        "_s3_bucket_name": "ind-cdn.freshdesk.com",
-        "_s3_file_name": "apigee_domains_file.txt",
-        "_url": "https://freshworks-prod.apigee.net",
-        "_ips": [
-          "104.196.108.92",
-          "35.185.49.19"
-        ],
-        "_channel_framework_api_proxy": "channel_framework"
-      },
       "sqs_queues": {
         "_twitter_realtime_queue": "social_gnip_2_0_tweet_production",
         "_facebook_realtime_queue": "social_fb_feed_production",
@@ -1283,8 +1269,6 @@
     "_docker": null
   },
   "layer_settings": {
-    "fc-app-api-apigee": {
-    },
     "fc-bg-sidekiq-community": {
     },
     "fc-bg-sidekiq-mailbox-jobs": {

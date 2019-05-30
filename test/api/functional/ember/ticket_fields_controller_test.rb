@@ -188,10 +188,10 @@ module Ember
       get :index, controller_params(version: 'private')
       assert_response 200
       response = parse_response @response.body
-      status_field = response.find { |field| field['type'] == 'default_status' }
-      assert_equal status_field['label'].downcase, status_field['name'].downcase
-      assert_equal status_field['name'].downcase, status_field['label_for_customers'].downcase
-      choice = status_field['choices'].find { |choices| choices['choice_id'] == status.status_id }
+      status_response = response.find { |field| field['type'] == 'default_status' }
+      assert_equal status_response['label'], status_field.i18n_label
+      assert_equal status_response['name'].downcase, status_response['label_for_customers'].downcase
+      choice = status_response['choices'].find { |choices| choices['choice_id'] == status.status_id }
       assert_equal status.name.downcase, choice['label'].downcase
       assert_equal choice['customer_display_name'], status.customer_display_name
     ensure
@@ -224,7 +224,7 @@ module Ember
       assert_response 200
       response = parse_response @response.body
       type_field = response.find { |field| field['type'] == 'default_ticket_type' }
-      assert_equal  type_field['label'].downcase, 'type'
+      assert_equal  type_field['label'], type.i18n_label
       assert_equal 'type', type_field['label_for_customers'].downcase
       choice = type_field['choices'].find { |x| x['id'] == db_choice.id }
       assert_equal choice['label'], db_choice.value
@@ -416,6 +416,36 @@ module Ember
         assert_response 200
         Ember::TicketFieldsController.any_instance.unstub(:response_cache_data)
       end
+    end
+
+    def test_all_field_label_has_i18n_label_for_english
+      User.any_instance.stubs(:language).returns('en')
+      get :index, controller_params(version: 'private')
+      assert_response 200
+      response = parse_response @response.body
+      response.each do |field|
+        if field['id'] > 0 # to avoid skill
+          db_field = Account.current.ticket_fields.find(field['id']) 
+          assert_equal field['label'], db_field.i18n_label
+        end
+      end
+    ensure
+      User.any_instance.unstub(:language)
+    end
+
+    def test_all_field_label_has_i18n_label_for_french
+      User.any_instance.stubs(:language).returns('fr')
+      get :index, controller_params(version: 'private')
+      assert_response 200
+      response = parse_response @response.body
+      response.each do |field|
+        if field['id'] > 0 # to avoid skill
+          db_field = Account.current.ticket_fields.find(field['id'])
+          assert_equal field['label'], db_field.i18n_label
+        end
+      end
+    ensure
+      User.any_instance.unstub(:language)
     end
 
     private

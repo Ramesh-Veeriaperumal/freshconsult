@@ -429,17 +429,6 @@ class ContactSegmentTest < ActiveSupport::TestCase
     assert_not_includes segment_match.ids(segment_ids: [segment.id]), segment.id
   end
 
-  def test_contact_segment_with_custom_dropdown_is_in_invalid_case_sensitive
-    choices = Faker::Lorem.words(10)
-    input_params = [{ name: 'custom_dropdown', value: choices, operator: 'is_in', options: {choices: choices} }]
-    segment, fields = create_segment(input_params)
-    dropdown_value = choices[Faker::Number.between(0, 9)].swapcase
-    contact_hash = { custom_fields: { fields.first.name.to_sym => dropdown_value } }
-    contact = create_contact(contact_hash)
-    segment_match = Segments::Match::Contact.new(contact)
-    assert_not_includes segment_match.ids(segment_ids: [segment.id]), segment.id
-  end
-
   def test_contact_segment_with_missing_field
     input_params = [{ name: 'custom_dropdown', value: Faker::Lorem.word, operator: 'is_in', create_field: false }]
     segment, fields = create_segment(input_params)

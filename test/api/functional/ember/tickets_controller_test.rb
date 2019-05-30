@@ -810,7 +810,7 @@ module Ember
       end
     end
 
-    def test_create_service_task_ticket_with_invalid_field_agent_failure
+    def test_create_service_task_ticket_with_support_agent
       enable_adv_ticketing([:field_service_management]) do
        begin
          perform_fsm_operations
@@ -821,8 +821,7 @@ module Ember
                    priority: 2, status: 2, type: SERVICE_TASK_TYPE, 
                    custom_fields: { cf_fsm_contact_name: "test", cf_fsm_service_location: "test", cf_fsm_phone_number: "test" } }      
          post :create, construct_params({version: 'private'}, params)
-         match_json([bad_request_error_pattern('responder_id', :only_field_agent_allowed, :code => :invalid_value)])
-         assert_response 400
+         assert_response 201
        ensure
         cleanup_fsm
        end
@@ -1974,68 +1973,69 @@ module Ember
       params_hash = update_ticket_params_hash.merge(type: 'Problem', status: 5)
       params_hash.delete(:fr_due_by)
       params_hash.delete(:due_by)
+      Account.current.instance_variable_set('@ticket_fields_from_cache', nil)
       put :update, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       match_json(ticket_show_pattern(Helpdesk::Ticket.last))
       assert_response 200
       dependent_field.update_attribute(:required, false)
     end
 
-    #  def test_update_properties_with_property_type_with_date_field_and_type_changed
-    #   skip('failures and errors 21')
-    #   sections = construct_sections('type')
-    #   create_section_fields(3, sections, false)
-    #   new_custom_field = create_custom_field('name', 'text')
-    #   custom_field1 = Helpdesk::TicketField.where(field_type: 'custom_date').select(&:section_field?)
-    #   custom_field2 = Helpdesk::TicketField.where(field_type: 'custom_number').select(&:section_field?)
-    #   ticket = create_ticket
-    #   ticket.update_attribute(:ticket_type, 'Problem')
-    #   ticket.update_attribute(:custom_field, custom_field1[0].name.to_sym => '2018-02-21')
-    #   ticket.update_attribute(:custom_field, custom_field2[0].name.to_sym => 45)
-    #   params_hash = {
-    #     type: 'Refund'
-    #   }
-    #   put :update, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
-    #   match_json(ticket_show_pattern(Helpdesk::Ticket.last))
-    #   assert_response 200
-    #   params = {
-    #     custom_fields: {}
-    #   }
-    #   params[:custom_fields][new_custom_field.label.to_sym] = 'Padmashri'
-    #   params[:custom_fields][custom_field1[0].label.to_sym] = '2018-02-21'
-    #   put :update, construct_params({ version: 'private', id: ticket.display_id }, params)
-    #   match_json(ticket_show_pattern(Helpdesk::Ticket.last))
-    #   assert_response 200
-    # end
+    def test_update_properties_with_property_type_with_date_field_and_type_changed
+      sections = construct_sections('type')
+      create_section_fields(3, sections, false)
+      new_custom_field = create_custom_field('name', 'text')
+      custom_field1 = Helpdesk::TicketField.where(field_type: 'custom_date').select(&:section_field?)
+      custom_field2 = Helpdesk::TicketField.where(field_type: 'custom_number').select(&:section_field?)
+      ticket = create_ticket
+      ticket.update_attribute(:ticket_type, 'Problem')
+      ticket.update_attribute(:custom_field, custom_field1[0].name.to_sym => '2018-02-21')
+      ticket.update_attribute(:custom_field, custom_field2[0].name.to_sym => 45)
+      params_hash = {
+        type: 'Refund'
+      }
+      Account.current.instance_variable_set('@ticket_fields_from_cache', nil)
+      put :update, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      match_json(ticket_show_pattern(Helpdesk::Ticket.last))
+      assert_response 200
+      params = {
+        custom_fields: {}
+      }
+      params[:custom_fields][new_custom_field.label.to_sym] = 'Padmashri'
+      params[:custom_fields][custom_field1[0].label.to_sym] = '2018-02-21'
+      put :update, construct_params({ version: 'private', id: ticket.display_id }, params)
+      match_json(ticket_show_pattern(Helpdesk::Ticket.last))
+      assert_response 200
+    end
 
-    # def test_update_closure_and_type_updated_with_dependent_field_with_two_levels_filled
-    #   skip('failures and errors 21')
-    #   sections = [
-    #     {
-    #       title: 'section5',
-    #       value_mapping: ['Question'],
-    #       ticket_fields: ['dependent']
-    #     }
-    #   ]
-    #   section_ids = create_section_fields(3, sections, false, true, "_1234568910", 20)
-    #   @account.reload
-    #   dependent_field = @account.section_fields.where(section_id: section_ids[0])[0].ticket_field
-    #   dependent_field.update_attribute(:required, true)
-    #   params = ticket_params_hash.merge(custom_field: {}, type: 'Question')
-    #   params[:custom_field][dependent_field.name] = 'USA'
-    #   child_level_fields = Helpdesk::TicketField.where(parent_id: dependent_field.id)
-    #   params[:custom_field][child_level_fields[0].name.to_sym] = 'California'
-    #   params.delete('fr_due_by')
-    #   params.delete('due_by')
-    #   @account.reload
-    #   ticket = create_ticket(params)
-    #   params_hash = update_ticket_params_hash.merge(type: 'Problem', status: 5)
-    #   params_hash.delete(:fr_due_by)
-    #   params_hash.delete(:due_by)
-    #   put :update, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
-    #   match_json(ticket_show_pattern(Helpdesk::Ticket.last))
-    #   assert_response 200
-    #   dependent_field.update_attribute(:required, false)
-    # end
+    def test_update_closure_and_type_updated_with_dependent_field_with_two_levels_filled
+      sections = [
+        {
+          title: 'section5',
+          value_mapping: ['Question'],
+          ticket_fields: ['dependent']
+        }
+      ]
+      section_ids = create_section_fields(3, sections, false, true, '_1234568910', 20)
+      @account.reload
+      dependent_field = @account.section_fields.where(section_id: section_ids[0])[0].ticket_field
+      dependent_field.update_attribute(:required, true)
+      params = ticket_params_hash.merge(custom_field: {}, type: 'Question')
+      params[:custom_field][dependent_field.name] = 'USA'
+      child_level_fields = Helpdesk::TicketField.where(parent_id: dependent_field.id)
+      params[:custom_field][child_level_fields[0].name.to_sym] = 'California'
+      params.delete('fr_due_by')
+      params.delete('due_by')
+      @account.reload
+      ticket = create_ticket(params)
+      params_hash = update_ticket_params_hash.merge(type: 'Problem', status: 5)
+      params_hash.delete(:fr_due_by)
+      params_hash.delete(:due_by)
+      Account.current.instance_variable_set('@ticket_fields_from_cache', nil)
+      put :update, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      match_json(ticket_show_pattern(Helpdesk::Ticket.last))
+      assert_response 200
+      dependent_field.update_attribute(:required, false)
+    end
 
     def test_update_closure_and_type_updated_with_dependent_field_with_all_levels_filled
       sections = [

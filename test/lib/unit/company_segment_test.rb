@@ -358,17 +358,6 @@ class CompanySegmentTest < ActiveSupport::TestCase
     assert_not_includes segment_match.ids(segment_ids: [segment.id]), segment.id
   end
 
-  def test_company_segment_with_custom_dropdown_is_in_invalid_case_sensitive
-    choices = Faker::Lorem.words(10)
-    input_params = [{ name: 'custom_dropdown', value: choices, operator: 'is_in', options: {choices: choices} }]
-    segment, fields = create_segment(input_params)
-    dropdown_value = choices[Faker::Number.between(0, 9)].swapcase
-    company_hash = { custom_fields: { fields.first.name.to_sym => dropdown_value } }
-    company = create_company(company_hash)
-    segment_match = Segments::Match::Company.new(company)
-    assert_not_includes segment_match.ids(segment_ids: [segment.id]), segment.id
-  end
-
   def test_company_segment_with_missing_field
     input_params = [{ name: 'custom_dropdown', value: Faker::Lorem.word, operator: 'is_in', create_field: false }]
     segment, fields = create_segment(input_params)

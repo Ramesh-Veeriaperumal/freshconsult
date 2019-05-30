@@ -86,6 +86,10 @@ class TicketDecorator < ApiDecorator
     @sideload_options.include?('description')
   end
 
+  def custom_fields_allowed?
+    @sideload_options.include?('custom_fields')
+  end
+
   def freshfone_call
     if freshfone_enabled?
       call = record.freshfone_call
@@ -355,6 +359,7 @@ class TicketDecorator < ApiDecorator
     ret_hash[:company] = company_search_hash if company_id.present?
     ret_hash[:requester] = requester_hash if requester_hash
     ret_hash[:archived] = archived? if archived?
+    ret_hash[:custom_fields] = custom_fields if custom_fields_allowed?
     ret_hash
   end
 

@@ -8,6 +8,8 @@ class Admin::CustomTranslations::DownloadController < ApiApplicationController
     ]]
   ].freeze
 
+  INVALID_TICKET_FIELDS = ['default_internal_group', 'default_internal_agent', 'default_source'].freeze
+
   def scoper; end
 
   def load_object; end
@@ -83,9 +85,7 @@ class Admin::CustomTranslations::DownloadController < ApiApplicationController
       ticket_fields = {}
 
       Account.current.ticket_fields_with_nested_fields.preload(PRELOAD_ASSOC).each do |ticket_field|
-        if !ticket_field.default || ['default_status', 'default_ticket_type'].include?(ticket_field.field_type)
-          ticket_fields = ticket_fields.merge(ticket_field.name => ticket_field.as_api_response(:custom_translation).stringify_keys)
-        end
+        ticket_fields = ticket_fields.merge(ticket_field.name => ticket_field.as_api_response(:custom_translation).stringify_keys) unless INVALID_TICKET_FIELDS.include?(ticket_field.field_type)
       end
 
       ticket_fields
@@ -96,9 +96,7 @@ class Admin::CustomTranslations::DownloadController < ApiApplicationController
       lang = Language.find_by_code(language_id).to_key
 
       Account.current.ticket_fields_with_nested_fields.preload(preload_assoc(lang)).each do |x|
-        if !x.default || ['default_status', 'default_ticket_type'].include?(x.field_type)
-          ticket_fields = ticket_fields.merge(x.name => x.as_api_response(:custom_translation_secondary, lang: lang).stringify_keys)
-        end
+        ticket_fields = ticket_fields.merge(x.name => x.as_api_response(:custom_translation_secondary, lang: lang).stringify_keys) unless INVALID_TICKET_FIELDS.include?(x.field_type)
       end
 
       ticket_fields
