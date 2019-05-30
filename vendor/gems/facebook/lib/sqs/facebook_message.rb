@@ -4,7 +4,6 @@ module Sqs
     include Sqs::Constants    
     include Social::Dynamo::UnprocessedFeed
     include Social::Util
-    include Facebook::RedisMethods
 
     attr_accessor :page_id, :raw_obj, :entry, :messages_feed , :messages 
 
