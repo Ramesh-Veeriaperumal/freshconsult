@@ -17,7 +17,7 @@ class Helpdesk::InlineAttachmentsController < ApplicationController
     decoded_hash = Helpdesk::Attachment.decode_token(params[:token])
     attachment = current_account.attachments.where(:id => decoded_hash[:id]).first
     if attachment.present?
-      redirect_to attachment.authenticated_s3_get_url(:expires => 5.minutes)
+      redirect_to attachment.authenticated_s3_get_url(expires: attachment.expiry)
     else
       render_404
     end

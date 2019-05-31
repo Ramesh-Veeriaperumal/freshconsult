@@ -17,6 +17,9 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
   MAX_DIMENSIONS = 16000000
 
+  ATTACHMENT_EXPIRY = 5.minutes
+  ATTACHMENT_REDIRECT_EXPIRY = 10.seconds
+
   NON_THUMBNAIL_RESOURCES = ["Helpdesk::Ticket", "Helpdesk::Note", "Account",
     "Helpdesk::ArchiveTicket", "Helpdesk::ArchiveNote"]
 
@@ -314,6 +317,10 @@ class Helpdesk::Attachment < ActiveRecord::Base
     file.write(AwsWrapper::S3Object.read(self.content.path, self.content.bucket_name))
     file.flush.seek(0, IO::SEEK_SET) # flush data to file and set RW pointer to beginning
     file
+  end
+
+  def expiry
+    self.account.attachment_redirect_expiry_enabled? ? ATTACHMENT_REDIRECT_EXPIRY : ATTACHMENT_EXPIRY
   end
 
   private
