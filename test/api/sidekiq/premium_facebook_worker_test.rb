@@ -27,6 +27,7 @@ class PremiumFacebookWorkerTest < ActionView::TestCase
   def setup
     Facebook::KoalaWrapper::DirectMessage.any_instance.stubs(:fetch_page_scope_id).returns(nil)
     Account.stubs(:current).returns(Account.first)
+    HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(true)
     @account = Account.current
     @fb_page = create_test_facebook_page(@account)
     @user_id = rand(10**10)

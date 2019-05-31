@@ -11,6 +11,8 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
   include GroupsTestHelper
   include FacebookTestHelper
   include Facebook::Constants
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   def teardown
     Social::FacebookPage.any_instance.stubs(:unsubscribe_realtime).returns(true)
@@ -27,6 +29,7 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
     Facebook::Core::Comment.any_instance.unstub(:fetch_page_scope_id)
     Facebook::Core::ReplyToComment.any_instance.unstub(:fetch_page_scope_id)
     Facebook::Core::Status.any_instance.unstub(:fetch_page_scope_id)
+    remove_others_redis_key(FB_MAPPING_ENABLED)
   end
 
   def setup
@@ -36,6 +39,8 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
     Facebook::Core::Comment.any_instance.stubs(:fetch_page_scope_id).returns(nil)
     Facebook::Core::ReplyToComment.any_instance.stubs(:fetch_page_scope_id).returns(nil)
     Facebook::Core::Status.any_instance.stubs(:fetch_page_scope_id).returns(nil)
+    set_others_redis_key_if_not_present(FB_MAPPING_ENABLED, true)
+    HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(true)
     @account = Account.current || Account.first
     user = @account.nil? ? @account.users.first : create_test_account
     @fb_page = create_test_facebook_page(@account)

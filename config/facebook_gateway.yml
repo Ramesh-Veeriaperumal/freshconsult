@@ -1,0 +1,28 @@
+development:
+  jwt_secret: "9rQ7H5RVm35vSvNUDWFjZPz3YKsqxp8p"
+  jwt_default_expiry: 100000
+  service_url: "http://localhost:3006"
+  route: "gateway/facebook/pages"
+  request_owner: "helpkit"
+  max_page_limit: 10
+test:
+  jwt_secret: "9rQ7H5RVm35vSvNUDWFjZPz3YKsqxp8p"
+  jwt_default_expiry: 100000
+  service_url: "http://localhost:3006"
+  route: "gateway/facebook/pages"
+  request_owner: "helpkit"
+  max_page_limit: 10
+staging:
+  jwt_secret: ""
+  jwt_default_expiry: 100000
+  service_url: ""
+  route: "gateway/facebook/pages"
+  request_owner: "helpkit"
+  max_page_limit: 10
+production:
+  jwt_secret: ""
+  jwt_default_expiry: 100000
+  service_url: ""
+  route: "gateway/facebook/pages"
+  request_owner: "helpkit"
+  max_page_limit: 10
