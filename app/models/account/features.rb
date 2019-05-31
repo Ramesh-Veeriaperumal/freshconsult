@@ -26,7 +26,7 @@ class Account < ActiveRecord::Base
     :contact_field_central_publish, :company_field_central_publish, :simple_outreach, :disable_simple_outreach,
     :disable_field_service_management, :disable_mint_analytics, :freshid_org_v2, :hide_agent_login,
     :addon_based_billing, :kbase_mint, :text_custom_fields_in_etl, :email_spoof_check,
-    :disable_email_spoof_check, :webhook_blacklist_ip, :recalculate_daypass, :sandbox_single_branch
+    :disable_email_spoof_check, :webhook_blacklist_ip, :recalculate_daypass, :sandbox_single_branch, :fb_page_api_improvement
   ].freeze
 
   DB_FEATURES = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone].freeze
