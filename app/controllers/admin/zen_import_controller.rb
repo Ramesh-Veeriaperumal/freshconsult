@@ -2,6 +2,7 @@ class Admin::ZenImportController < Admin::AdminController
   
   include Import::Zen::Redis
 
+  before_filter :prevent_actions_for_sandbox
   before_filter :update_status, :only => [ :index, :status ]
 
   def index

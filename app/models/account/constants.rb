@@ -250,7 +250,7 @@ class Account < ActiveRecord::Base
       es_v1_enabled: false, es_v2_reads: false, fb_msg_realtime: false,
       force_index_tickets: false, freshfone_call_tracker: false, freshfone_caller_id_masking: false,
       freshfone_new_notifications: false, freshfone_onboarding: false, gamification_perf: false,
-      gamification_quest_perf: false, lambda_exchange: false,
+      gamification_quest_perf: false, lambda_exchange: false, automation_revamp: false, automation_rule_execution_count: false,
       list_page_new_cluster: false, meta_read: false, most_viewed_articles: false,
       multifile_attachments: true, new_footer_feedback_box: false, new_leaderboard: false,
       periodic_login_feature: false, restricted_helpdesk: false,
@@ -298,7 +298,8 @@ class Account < ActiveRecord::Base
       description_by_default: false, ticket_fields_central_publish: false, fluffy: false, disable_field_service_management: false, facebook_page_scope_migration: false, agent_group_central_publish: false, custom_fields_search: true,
       update_billing_info: false, allow_billing_info_update: false, tag_central_publish: false, redis_picklist_id: true,
       nested_field_revamp: true, freshvisual_configs: false, freshid_org_v2: false, hide_agent_login: false, addon_based_billing: false,
-      kbase_mint: false, text_custom_fields_in_etl: false, recalculate_daypass: false
+      kbase_mint: false, text_custom_fields_in_etl: false, recalculate_daypass: false,  email_spoof_check: false,
+      disable_email_spoof_check: false
     }, :merge
   )
 

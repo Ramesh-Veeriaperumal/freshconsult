@@ -49,6 +49,7 @@ class Admin::CloneWorker < BaseWorker
         end
         clone_account.safe_send(:enable_searchv2)
         post_account_activities(clone_account)
+        clone_account.reset_picklist_id
         freshid_migration(clone_account)
       end
     end

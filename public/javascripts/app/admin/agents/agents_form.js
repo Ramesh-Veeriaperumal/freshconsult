@@ -20,6 +20,7 @@ window.App.Agents = window.App.Agents || {};
 	role_details: {},
 	groups: {},
 	group_details: {},
+    fsm_group_type: null,
 	freshid_enabled: {},
 	userEmail: '',
   initializeData: function(data) {
@@ -29,6 +30,7 @@ window.App.Agents = window.App.Agents || {};
     this.role_details = data.role_details;
     this.groups = data.groups;
     this.group_details = data.group_details;
+    this.fsm_group_type = data.fsm_group_type;
     this.freshid_enabled = data.freshid_enabled;
     this.userEmail = data.userEmail;
     this.bindHandlers();
@@ -222,19 +224,28 @@ window.App.Agents = window.App.Agents || {};
 		});
 
 		$doc.on("click.agent-roles", '#add-group', function(){
-		  const field_agent = 2, support_agent = 1;
-		  $("#agent_group ul").children().remove();
-		  for(var key in _this.groups){
-		  	const agent_type = $("#agent_agent_type_field_agent").prop('checked') ? field_agent : support_agent
-		    if(!_this.groups[key] && _this.group_details[key][2] == agent_type) {
-		      $("#agent_group ul").append(JST["app/admin/agents/templates/item_checkbox"]({
-    				type: 'group',
-    				key: key,
-    				details: _this.group_details[key]
-    			}));
-		    }
-		  }
-		});
+          $("#agent_group ul").children().remove();
+          for(var key in _this.groups){
+          var fsm_agent = $("#agent_agent_type_field_agent").prop('checked') ? true : false
+            if (fsm_agent) {
+                if (!_this.groups[key] && _this.group_details[key][2] == _this.fsm_group_type) {
+                    $("#agent_group ul").append(JST["app/admin/agents/templates/item_checkbox"]({
+                        type: 'group',
+                        key: key,
+                        details: _this.group_details[key]
+                    }));
+                }
+            } else {
+                if (!_this.groups[key]) {
+                    $("#agent_group ul").append(JST["app/admin/agents/templates/item_checkbox"]({
+                        type: 'group',
+                        key: key,
+                        details: _this.group_details[key]
+                    }));
+                }
+            }
+          }
+        });
 
 		$("input[name='agent[agent_type]']").on( "change", function(event) {
 			var agentType = event.target.value;

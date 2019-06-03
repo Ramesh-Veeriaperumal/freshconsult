@@ -829,7 +829,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
     end
 
     def language
-      @language = User.current ? User.current.language_object : Language.find_by_code(I18n.locale) # setting portal language for not logged in users
+      Language.find_by_code(I18n.locale)
     end
 
     def translation_record

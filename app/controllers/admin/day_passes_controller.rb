@@ -1,5 +1,6 @@
 class Admin::DayPassesController < ApplicationController
   
+  before_filter :prevent_actions_for_sandbox
   before_filter :set_selected_tab
   before_filter :load_config
   before_filter :load_purchases, :only => [:index]
