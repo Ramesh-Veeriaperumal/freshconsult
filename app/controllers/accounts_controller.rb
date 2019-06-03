@@ -608,7 +608,7 @@ class AccountsController < ApplicationController
         add_account_info_to_dynamo(params[:signup][:user_email])
         add_to_crm(@signup.account.id, params)
       end
-      set_account_onboarding_pending unless @signup.account.launched?(:new_onboarding)
+      set_account_onboarding_pending unless @signup.account.new_onboarding_enabled?
       mark_new_account_setup
     end
 

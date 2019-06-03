@@ -1,7 +1,7 @@
 class Middleware::ChannelApiThrottler < Middleware::FdApiThrottler
   include Redis::RedisKeys
 
-  API_LIMIT = 1000
+  API_LIMIT = 2000
   THROTTLE_PERIOD = 1.minute
 
   def correct_namespace?(path_info)
@@ -29,5 +29,9 @@ class Middleware::ChannelApiThrottler < Middleware::FdApiThrottler
 
   def default_api_limit_key
     DEFAULT_CHANNEL_API_LIMIT
+  end
+
+  def throttled_in_fluffy?
+    @request.env['HTTP_X_FW_RATELIMITING_MANAGED'] == "true"
   end
 end

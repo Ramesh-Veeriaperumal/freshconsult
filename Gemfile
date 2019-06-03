@@ -136,7 +136,7 @@ gem "braintree","2.10.0"
 gem "lockfile","1.4.3"
 
 gem "newrelic_rpm","~> 5.5.0"
-gem 'prometheus_exporter', :git => "git@github.com:freshdesk/prometheus_exporter.git", :tag => "v1.0.1"
+gem 'prometheus_exporter', :git => "git@github.com:freshdesk/prometheus_exporter.git", :tag => "v1.0.2"
 gem "ddtrace"
 gem "dogstatsd-ruby"
 
@@ -213,8 +213,8 @@ gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 gem 'freshdesk_features', :git => 'git@github.com:freshdesk/freshdesk-features.git', :branch => "freshdesk", :require => true
 gem 'launchparty', :git => 'git@github.com:freshdesk/launch-party.git', :tag => 'v0.2.1'
 gem 'binarize', "0.1.1", :git => 'git@github.com:freshdesk/binarize.git', :branch => 'not_a_model_column'
-gem 'rule_engine', git: 'git@github.com:freshdesk/rule_engine.git', tag: 'hv0.0.4'
-gem 'freshid', :git => 'git@github.com:freshdesk/freshid-ruby-client.git', :tag => 'v4.0.0'
+gem 'rule_engine', git: 'git@github.com:freshdesk/rule_engine.git', tag: 'hv0.0.5'
+gem 'freshid', :git => 'git@github.com:freshdesk/freshid-ruby-client.git', :tag => 'v4.0.2'
 gem "freshid-sdk", :git => 'git@github.com:freshdesk/platforms-sdk-ruby.git', tag: '1.0.0', glob: 'gems/freshid-sdk/freshid-sdk.gemspec'
 
 gem 'net-http-persistent', '~> 2.9.4'

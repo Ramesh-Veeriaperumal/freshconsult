@@ -78,15 +78,15 @@ module Account::Setup
     self.falcon_ui_enabled?(User.current) && self.features_included?(:forums)
   end
 
-	# TRIAL WIDGET CLEANUP - can be removed after trial widget deprecation
-	def custom_app_eligible?
-		!self.launched?(:new_onboarding)
-	end
+  # TRIAL WIDGET CLEANUP - can be removed after trial widget deprecation
+  def custom_app_eligible?
+    !new_onboarding_enabled?
+  end
 
-	# TRIAL WIDGET CLEANUP - can be removed after trial widget deprecation
-	def reports_eligible?
-		!self.launched?(:new_onboarding)
-	end
+  # TRIAL WIDGET CLEANUP - can be removed after trial widget deprecation
+  def reports_eligible?
+    !new_onboarding_enabled?
+  end
 
 
 	FALCON_SETUP_KEYS.each do |setup_key|

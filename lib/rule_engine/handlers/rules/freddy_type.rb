@@ -10,6 +10,7 @@ module RuleEngine
         result = evaluate_condition(evaluate_on)
         rule_id = Thread.current[:automation_log_vars][:rule_id]
         Thread.current[:thank_you_note] = { rule_id: rule_id, result: result } if result && rule_id.present?
+        Rails.logger.info "is_thank_you_note Result R :: #{rule_id} , T :: #{evaluate_on.id} , N :: #{evaluate_on.thank_you_note.try(:id)} , res :: #{result}"
         result
       end
 
@@ -17,6 +18,7 @@ module RuleEngine
         result = evaluate_condition(evaluate_on)
         rule_id = Thread.current[:automation_log_vars][:rule_id]
         Thread.current[:thank_you_note] = { rule_id: rule_id, result: result } if !result && rule_id.present?
+        Rails.logger.info "is_not_thank_you_note Result R :: #{rule_id} , T :: #{evaluate_on.id} , N :: #{evaluate_on.thank_you_note.try(:id)} , res :: #{!result}"
         !result
       end
 

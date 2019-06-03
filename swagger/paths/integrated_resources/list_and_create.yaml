@@ -6,7 +6,6 @@ post:
       in: body
       required: true
       schema:
-        type: object
         $ref: '#/definitions/integrated_resource_create'
   responses:
     201:

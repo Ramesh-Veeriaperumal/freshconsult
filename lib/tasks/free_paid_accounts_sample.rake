@@ -25,21 +25,31 @@ namespace :traffic_switch do
       end
     end
 
+    # The S3 File (haproxy-domains/billed_domains.lst) holds the billed domains which should not be treated
+    # as sample domains during FREE or PARTIAL Traffic switch
+    s3 = Aws::S3::Client.new(region: 'us-east-1')
+    billed_domains_list = []
+    begin
+      billed_domains_object = s3.get_object({key: 'haproxy-domains/billed_domains.lst', bucket: bucket_name})
+      billed_domains_list = billed_domains_object.body.string.split('\n').uniq
+    rescue Aws::S3::Errors::ServiceError
+      puts 'S3 File - haproxy-domains/billed_domains.lst not found'
+    end
+
     free_account_ids.each do | acc_id | 
       domain = DomainMapping.find_by_account_id_and_portal_id(acc_id, nil).try(:domain)
-      free_account_domains << domain if domain
+      free_account_domains << domain if domain && !(billed_domains_list.include? domain)
     end
 
     paid_account_details.each do | acc_id, plan_id | 
       domain = DomainMapping.find_by_account_id_and_portal_id(acc_id, nil).try(:domain)
-      paid_account_domains[plan_id] << domain if domain
+      paid_account_domains[plan_id] << domain if domain && !(billed_domains_list.include? domain)
     end
 
     File.open("/tmp/free_domains.lst", "w") do |f|
       free_account_domains.each { |domain| f.puts(domain) }
     end
 
-    s3 = Aws::S3::Client.new(region: 'us-east-1')
     s3.put_object(key: "haproxy-domains/free_domains.lst", bucket: bucket_name, body: IO.read("/tmp/free_domains.lst"))
 
     file_name_mappings = { 0 => "/tmp/t1.lst", 1 => "/tmp/t2.lst", 2 => "/tmp/t3.lst", 3 => "/tmp/t4.lst"}

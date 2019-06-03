@@ -1362,7 +1362,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     delay = args[:note_id].present? && Account.current.detect_thank_you_note_enabled?
     job_id = delay ? ::Tickets::ObserverWorker.perform_in(2.seconds, args) : ::Tickets::ObserverWorker.perform_async(args)
     Va::Logger::Automation.set_thread_variables(Account.current.id, id, args[:doer_id], nil)
-    Va::Logger::Automation.log "Triggering Observer, job_id=#{job_id}, info=#{args.inspect}"
+    Va::Logger::Automation.log("Triggering Observer, job_id=#{job_id}, info=#{args.inspect}", true)
     Va::Logger::Automation.unset_thread_variables
   end
 

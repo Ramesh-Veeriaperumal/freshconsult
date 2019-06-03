@@ -272,10 +272,10 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/freshid-ruby-client.git
-  revision: e0abce727e1fedcd517a17c865b26c3e90ea6f0a
-  tag: v4.0.0
+  revision: c7236dec8e15a363e734a98f9c0d01d014b6b737
+  tag: v4.0.2
   specs:
-    freshid (4.0.0)
+    freshid (4.0.2)
       freshid-sdk
 
 GIT
@@ -302,10 +302,10 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/prometheus_exporter.git
-  revision: 5c5a0c9496355201f8b8380d77d16672d0c8d1fc
-  tag: v1.0.1
+  revision: de9d9ed0a5b8ef890d49f245b9401896bab76a1d
+  tag: v1.0.2
   specs:
-    prometheus_exporter (1.0)
+    prometheus_exporter (1.0.2)
 
 GIT
   remote: git@github.com:freshdesk/retire.git
@@ -328,8 +328,8 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/rule_engine.git
-  revision: 0d1c8a21ce06c7d3461ccc92ff6a8fec334c8423
-  tag: hv0.0.4
+  revision: fe9b4db5cd24e93f8c42b27bade9ff12de7f2700
+  tag: hv0.0.5
   specs:
     rule_engine (0.0.1)
 

@@ -18,3 +18,5 @@ properties:
   badges:
     description: Badges earned by an agent in gamification
     type: array
+    items:
+      type: integer

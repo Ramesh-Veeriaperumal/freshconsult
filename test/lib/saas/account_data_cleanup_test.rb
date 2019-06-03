@@ -98,7 +98,7 @@ class AccountDataCleanupTest < ActionView::TestCase
     Account.any_instance.stubs(:features?).with(:round_robin_load_balancing).returns(false)
     group = create_group @account, ticket_assign_type: Group::TICKET_ASSIGN_TYPE[:skill_based]
     SAAS::AccountDataCleanup.new(@account, ['skill_based_round_robin'], 'drop').perform_cleanup
-    assert_equal @account.reload.groups.skill_based_round_robin_enabled.length, 0
+    assert_equal @account.reload.groups.skill_based_round_robin_enabled.length, 0 if @account.try(:id)
   ensure
     Account.any_instance.unstub(:features?)
     Account.current.destroy if !Account.current.nil? && Account.current.id != 1 && !Account.current.id.nil?

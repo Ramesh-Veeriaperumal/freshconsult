@@ -1,0 +1,6 @@
+type: object
+properties:
+  DKIM:
+    enum: [true, false, nil]
+  SPF:
+    enum: [true, false, nil]

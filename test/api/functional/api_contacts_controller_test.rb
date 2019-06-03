@@ -1121,7 +1121,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_make_agent_with_array_fields_invalid
     sample_user = add_new_user(@account)
-    params = { role_ids: '1,2', group_ids: '34,4' }
+    params = { role_ids: '1,2', group_ids: '34,4', occasional: true }
     put :make_agent, construct_params({ id: sample_user.id }, params)
     match_json([bad_request_error_pattern(:role_ids, :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String),
                 bad_request_error_pattern(:group_ids, :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String)])
@@ -1130,7 +1130,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_make_agent_with_array_fields_invalid_model
     sample_user = add_new_user(@account)
-    params = { role_ids: [123, 567], group_ids: [466, 566] }
+    params = { role_ids: [123, 567], group_ids: [466, 566], occasional: true }
     put :make_agent, construct_params({ id: sample_user.id }, params)
     match_json([bad_request_error_pattern(:role_ids, :invalid_list, list: params[:role_ids].join(', ')),
                 bad_request_error_pattern(:group_ids, :invalid_list, list: params[:group_ids].join(', '))])

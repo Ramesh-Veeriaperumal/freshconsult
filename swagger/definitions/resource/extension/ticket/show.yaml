@@ -17,6 +17,8 @@
       $ref: '#/definitions/ticket_topic'
     stats:
       $ref: '#/definitions/ticket_stats'
+    email_spam_data:
+      $ref: '#/definitions/email_spam_data'
     collaboration:
       type: object
       properties:

@@ -19,7 +19,7 @@ class Group < ActiveRecord::Base
   before_save :reset_toggle_availability, :create_model_changes
   before_save :set_default_type_if_needed, on: [:create]
   before_destroy :backup_user_ids, :save_deleted_group_info
-  validate :agent_id_validation, :auto_ticket_assign_validation, if: -> {Account.current.field_service_management_enabled?}
+  validate :support_group_agent_validation, :auto_ticket_assign_validation, if: -> { Account.current.field_service_management_enabled? }
 
   after_commit :round_robin_actions, :clear_cache
   after_commit :nullify_tickets_and_widgets, :destroy_group_in_liveChat, on: :destroy
@@ -267,23 +267,22 @@ class Group < ActiveRecord::Base
       self.group_type = GroupType.group_type_id(SUPPORT_GROUP_NAME) unless self.group_type
     end
 
-    def agent_id_validation
-      @group_type = GroupType.group_type_name(self.group_type)
-      type = GROUPS_AGENTS_MAPPING[@group_type]
-      user_ids = self.agent_groups.map(&:user_id)
-      agents = Account.current.agents_from_cache
-      group_agent_type = AgentType.agent_type_id(type)
-      invalid_update = agents.any? { |x| x.agent_type != group_agent_type && user_ids.include?(x.user_id) }
-
-      if invalid_update
-        self.errors.add(:agent_groups, 'invalid_agent_ids') 
-        return false
+    def support_group_agent_validation
+      if self.support_agent_group? && self.agent_changes.present?
+        user_ids = self.agent_groups.map(&:user_id)
+        agents = Account.current.agents_from_cache
+        invalid_update = agents.any? { |x| user_ids.include?(x.user_id) && !x.support_agent?  }
+        if invalid_update
+          self.errors.add(:agent_ids, ErrorConstants::ERROR_MESSAGES[:should_not_be_field_agent])
+          return false
+        end
       end
       true
     end
 
     def auto_ticket_assign_validation
-      if @group_type == FIELD_GROUP_NAME && !self.ticket_assign_type.eql?(TICKET_ASSIGN_TYPE[:default])
+      group_type_name = GroupType.group_type_name(self.group_type)
+      if group_type_name == FIELD_GROUP_NAME && !self.ticket_assign_type.eql?(TICKET_ASSIGN_TYPE[:default])
         self.errors.add(:ticket_assign_type, 'invalid_field_auto_assign') 
         return false
       end

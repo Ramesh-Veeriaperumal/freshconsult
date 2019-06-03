@@ -37,7 +37,7 @@ class Agent < ActiveRecord::Base
   validates_presence_of :user_id
   validate :validate_signature
   validate :check_agent_type_changed, on: :update
-  validate :validate_agent_group_types, :if => :check_agent_group_types?
+  validate :validate_field_agent_groups, if: :check_field_agent_groups?
   validate :check_ticket_permission, if: -> { Account.current.field_service_management_enabled? }
   # validate :only_primary_email, :on => [:create, :update] moved to user.rb
 
@@ -327,8 +327,8 @@ class Agent < ActiveRecord::Base
       self.groups.round_robin_groups.disallowing_toggle_availability.count('1') == 0
   end
 
-  def check_agent_group_types?
-    account.field_service_management_enabled? && self.agent_groups.present?
+  def check_field_agent_groups?
+    account.field_service_management_enabled? && self.agent_groups.present? && field_agent?
   end
 
   def reset_to_beginner_level
@@ -414,11 +414,11 @@ class Agent < ActiveRecord::Base
     true
   end
 
-  # checking whether agent type and group type are same
-  def validate_agent_group_types
+  # checking whether field agent has only field groups associated
+  def validate_field_agent_groups
     invalid_groups = self.agent_groups.map(&:group_id) - fetch_valid_groups.map(&:id)
     if invalid_groups.present?
-      self.errors[:group_ids] << :agent_group_type_mismatch
+      self.errors.add(:group_ids, ErrorConstants::ERROR_MESSAGES[:should_not_be_support_group])
       return false
     end
     true

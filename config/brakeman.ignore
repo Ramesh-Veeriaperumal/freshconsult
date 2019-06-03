@@ -2978,6 +2978,26 @@
       "note": ""
     },
     {
+      "warning_type": "Command Injection",
+      "warning_code": 14,
+      "fingerprint": "dee8fcea81c5fed12ccda999b8db62a7612f9a31fba9d63e1e036dee8cdeddbf",
+      "check_name": "Execute",
+      "message": "Possible command injection",
+      "file": "lib/sync/git_client.rb",
+      "line": 244,
+      "link": "https://brakemanscanner.org/docs/warning_types/command_injection/",
+      "code": "`#{command}`",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Sync::GitClient",
+        "method": "execute_command"
+      },
+      "user_input": "command",
+      "confidence": "Medium",
+      "note": ""
+    },
+    {
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "df150cd257b31c0d069d69d246fbd9033e75e817387cfedb8572c2cd85a0cedc",

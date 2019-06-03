@@ -180,8 +180,9 @@ class Admin::AutomationDecorator < ApiDecorator
           value = TicketDecorator.display_name(field.name) if field.present?
         end
       end
-      if key == :value && field_name == :tag_names
-        value = current_account.tags.where("id in (?)", value).pluck(:name)
+      if key == :value
+        value = current_account.tags.where("id in (?)", value).pluck(:name) if field_name == :tag_names
+        value = CGI.escapeHTML(value) if SUBJECT_DESCRIPTION_FIELDS.include?(field_name) && value.is_a?(String)
       end
       has_key ? { key => value } : {}
     end

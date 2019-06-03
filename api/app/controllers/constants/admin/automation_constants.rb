@@ -72,6 +72,8 @@ module Admin::AutomationConstants
 
   TIME_SHEET_ACTION = %w[new_time_entry updated_time_entry].freeze
 
+  SUBJECT_DESCRIPTION_FIELDS = %w[subject description subject_or_description].freeze
+
   DOMAIN = 'domains'.freeze
 
   NAME = 'name'.freeze

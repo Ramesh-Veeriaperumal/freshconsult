@@ -578,8 +578,11 @@ class AccountsControllerTest < ActionController::TestCase
 
   def test_anonymous_signup
     Account.any_instance.stubs(:anonymous_account?).returns(true)
+    Account.any_instance.stubs(:onboarding_applicable?).returns(true)
     anonymous_signup_key = ANONYMOUS_ACCOUNT_SIGNUP_ENABLED
     set_others_redis_key(anonymous_signup_key, true)
+    onboarding_v2_key = ONBOARDING_V2_ENABLED
+    set_others_redis_key(onboarding_v2_key, true)
     Account.any_instance.expects(:add_to_billing).never
     Account.any_instance.expects(:enable_fresh_connect).never
     @request.env['CONTENT_TYPE'] = 'application/json'
@@ -591,6 +594,8 @@ class AccountsControllerTest < ActionController::TestCase
     assert_equal account.anonymous_account?, true
     assert_equal account.admin_first_name, 'Demo'
     assert_equal account.admin_last_name, 'Account'
+    assert_equal account.launched?(:onboarding_v2), true
+    assert_equal account.launched?(:new_onboarding), true
     assert_match(/freshdeskdemo[0-9]{13}@example.com/, account.admin_email)
     assert_match(/demo(#{DomainGenerator::DOMAIN_SUGGESTIONS.join('|')})?[0-9]{13}.freshpo.com/, account.full_domain)
     assert_not_nil account.id
@@ -600,8 +605,10 @@ class AccountsControllerTest < ActionController::TestCase
     assert_equal value[:signup_id], params[:signup_id]
   ensure
     Account.any_instance.unstub(:anonymous_account?)
+    Account.any_instance.unstub(:onboarding_applicable?)
     remove_others_redis_key(anonymous_signup_key)
-    account.destroy
+    remove_others_redis_key(onboarding_v2_key)
+    account.destroy if account.present?
   end
 
   def test_anonymous_signup_without_redis_enabled
@@ -619,7 +626,7 @@ class AccountsControllerTest < ActionController::TestCase
     UserSession.any_instance.stubs(:record).returns(user)
     get :anonymous_signup_complete, account_id: Account.first.id
     assert_response 302
-    assert_includes response.redirect_url, 'support/login?active_freshid_agent=true&signup_email'
+    assert_includes CGI.unescape(response.redirect_url), "support/login?new_account_signup=true&signup_email=#{user.email}"
   ensure
     User.any_instance.unstub(:active_freshid_agent?)
     UserSession.any_instance.unstub(:record)

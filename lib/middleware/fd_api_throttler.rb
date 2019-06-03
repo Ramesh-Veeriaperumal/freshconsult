@@ -112,7 +112,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     end
 
     def throttle?
-      return false if is_fluffy_enabled?
+      return false if throttled_in_fluffy?
       !skipped_domain? && account_id
     end
 
@@ -219,7 +219,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
       Thread.current[:account] = nil
     end
 
-    def is_fluffy_enabled?
+    def throttled_in_fluffy?
       Account.current && Account.current.fluffy_enabled? && @request.env['HTTP_X_FW_RATELIMITING_MANAGED'] == "true"
     end
 

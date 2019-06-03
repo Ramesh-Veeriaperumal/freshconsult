@@ -18,7 +18,8 @@ module Tickets
         evaluate_on.thank_you_note_id = args[:note_id]
         evaluate_on.attributes = args[:attributes]
         doer = account.users.find_by_id doer_id unless system_event
-        Va::Logger::Automation.log("system_event=#{system_event}, user_nil=#{doer.nil?}") if (system_event || doer.nil?)
+
+        Va::Logger::Automation.log("system_event=#{system_event}, user_nil=#{doer.nil?}", true) if system_event || doer.nil?
         if evaluate_on.present? and (doer.present? || system_event)
           start_time = Time.now.utc
           rule_type = VAConfig::RULES_BY_ID[VAConfig::RULES[:observer]]
@@ -63,7 +64,7 @@ module Tickets
             klass.safe_send(action[:method], action[:args])
           end
         else
-          Va::Logger::Automation.log "Skipping observer worker, ticket present?=#{evaluate_on.present?}, user present?=#{(doer.present? || system_event)}"
+          Va::Logger::Automation.log("Skipping observer worker, ticket present?=#{evaluate_on.present?}, user present?=#{(doer.present? || system_event)}", true)
         end
       rescue => e
         Va::Logger::Automation.log_error(OBSERVER_ERROR, e, args)

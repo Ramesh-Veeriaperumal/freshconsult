@@ -28,7 +28,7 @@ module SandboxHelper
       settings[:plan_features]       = account.plan_features
       account_additional_settings    = account.account_additional_settings
       settings[:email_template]      = account_additional_settings.additional_settings[:email_template]
-      settings[:supported_languages] = account_additional_settings .supported_languages
+      settings[:supported_languages] = account_additional_settings.supported_languages
       settings
     end
   end

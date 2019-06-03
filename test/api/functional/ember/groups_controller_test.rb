@@ -26,11 +26,11 @@ class Ember::GroupsControllerTest < ActionController::TestCase
   # end
 
   def enabling_fsm_feature
-    @account.add_feature(:field_service_management)
+    Account.current.add_feature(:field_service_management)
   end
 
   def revoke_fsm_feature
-    @account.revoke_feature(:field_service_management)
+    Account.current.revoke_feature(:field_service_management)
   end
 
   def test_show_group
@@ -139,7 +139,8 @@ class Ember::GroupsControllerTest < ActionController::TestCase
     Account.current.unstub(:omni_channel_routing_enabled?)
   end
 
-  def test_create_support_group_with_field_agent
+  def test_create_field_group_with_support_agent
+    Account.stubs(:current).returns(Account.first)
     enabling_fsm_feature
     add_data_to_group_type
     post :create, construct_params({version: 'private'},{
@@ -152,12 +153,36 @@ class Ember::GroupsControllerTest < ActionController::TestCase
       unassigned_for: '30m',
       group_type: FIELD_GROUP_NAME
     })
-    assert_response 400
-    res = JSON.parse response.body
-    assert_equal res["errors"][0]["code"],"invalid_value"
+    assert_response 201
+    match_json(private_group_pattern(Group.last))
   ensure
     destroy_field_group
     revoke_fsm_feature
+    Account.unstub(:current)
+  end
+
+  def test_create_support_group_with_field_agent
+    Account.stubs(:current).returns(Account.first)
+    enabling_fsm_feature
+    create_field_agent_type
+    agent = add_test_agent(Account.current, role: Role.find_by_name('Agent').id, agent_type: AgentType.agent_type_id(Agent::FIELD_AGENT), ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
+    post :create, construct_params({ version: 'private' }, {
+      name: Faker::Lorem.characters(10),
+      description: Faker::Lorem.paragraph,
+      assignment_type: 0,
+      business_hour_id: 1,
+      escalate_to: 1,
+      agent_ids: [agent.id],
+      unassigned_for: '30m',
+      group_type: SUPPORT_GROUP_NAME
+    })
+    assert_response 400
+    match_json([bad_request_error_pattern('agent_ids', :should_not_be_field_agent)])
+  ensure
+    agent.destroy
+    destroy_field_agent
+    revoke_fsm_feature
+    Account.unstub(:current)
   end
 
   def test_create_field_group_with_assignment_type_invalid

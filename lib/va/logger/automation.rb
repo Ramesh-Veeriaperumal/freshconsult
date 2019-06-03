@@ -3,36 +3,23 @@ class Va::Logger::Automation
   EXECUTION_COMPLETED = 'EXECUTION COMPLETED'
 
   class << self
-    def log_path
-      "#{Rails.root}/log/automation.log"
-    end
 
-    def logger
-      @@automation_logger ||= Logger.new(log_path)
-    end
-
-    def log(content, am_logger = false)
+    def log(content, append_default_content = false)
       return if Thread.current[:automation_log_vars].blank?
-      context_txt = standard_content
-      log_text_array = content.split('\n').map{ |c| "#{context_txt}, content=#{c}" }
-      log_text_array.each do |log_text|
-        Rails.logger.info(log_text)
-        logger.info(log_text) if am_logger
-      end
-    rescue => e
-      Rails.logger.info "Error in writing to automation.log #{content.inspect}"
-      Rails.logger.info e.inspect
-      NewRelic::Agent.notice_error(e, { :custom_params => { :description => "Error in writing to automation.log, #{e.message}" }})
+      context_txt = log_content(append_default_content)
+      Rails.logger.info("#{context_txt}#{content}")
     end
 
-    def standard_content
+    def log_content(append_default_content, content = '')
       automation_log_vars = Thread.current[:automation_log_vars]
-      content = "#{Time.now.utc.strftime '%Y-%m-%d %H:%M:%S'} uuid=#{Thread.current[:message_uuid].try(:join, ' ')}, A=#{automation_log_vars[:account_id]}, T=#{automation_log_vars[:ticket_id]}, U=#{automation_log_vars[:user_id]}, R=#{automation_log_vars[:rule_id]}"
-      content << ", time=#{automation_log_vars[:time]}" if automation_log_vars[:time]
-      content << ", type=#{automation_log_vars[:rule_type]}" if automation_log_vars[:rule_type]
-      content << ", start_time=#{automation_log_vars[:start_time]}" if automation_log_vars[:start_time]
-      content << ", end_time=#{automation_log_vars[:end_time]}" if automation_log_vars[:end_time]
-      content << ", executed=#{automation_log_vars[:executed]}" if automation_log_vars[:executed]
+      content = "A=#{automation_log_vars[:account_id]} T=#{automation_log_vars[:ticket_id]} " if append_default_content
+      content += "U=#{automation_log_vars[:user_id]} " if automation_log_vars[:user_id] && append_default_content
+      content += "R=#{automation_log_vars[:rule_id]} " if automation_log_vars[:rule_id]
+      content += "time=#{automation_log_vars[:time]} " if automation_log_vars[:time]
+      content += "type=#{automation_log_vars[:rule_type]} " if automation_log_vars[:rule_type]
+      content += "start_time=#{automation_log_vars[:start_time]} " if automation_log_vars[:start_time]
+      content += "end_time=#{automation_log_vars[:end_time]} " if automation_log_vars[:end_time]
+      content += "executed=#{automation_log_vars[:executed]} " if automation_log_vars[:executed]
       content
     end
 
@@ -65,7 +52,7 @@ class Va::Logger::Automation
     end
 
     def log_error error, exception, args=nil
-      log "error_message=#{error}, info=#{args.inspect}, exception=#{exception.try(:message)}, backtrace=#{exception.try(:backtrace)}"
+      log("error_message=#{error}, info=#{args.inspect}, exception=#{exception.try(:message)}, backtrace=#{exception.try(:backtrace)}", true)
     end
 
     def unset_execution_and_time

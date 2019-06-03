@@ -394,7 +394,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
     params = { group_ids: [group.id] }
     Account.stubs(:current).returns(Account.first)
     put :update, construct_params({ id: agent.id }, params)
-    match_json([bad_request_error_pattern('group_ids', :agent_group_type_mismatch)])
+    match_json([bad_request_error_pattern('group_ids', :should_not_be_support_group)])
     assert_response 400
   ensure
     agent.destroy
@@ -412,8 +412,8 @@ class ApiAgentsControllerTest < ActionController::TestCase
     params = { group_ids: [group.id] }
     Account.stubs(:current).returns(Account.first)
     put :update, construct_params({ id: agent.id }, params)
-    match_json([bad_request_error_pattern('group_ids', :agent_group_type_mismatch)])
-    assert_response 400
+    assert_response 200
+    assert JSON.parse(response.body)['group_ids'].include?(group.id)
   ensure
     agent.destroy
     group.destroy

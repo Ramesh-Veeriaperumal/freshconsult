@@ -14,9 +14,9 @@ class WebhookV1Worker < ::BaseWorker
   def perform(args)
     args.symbolize_keys!
     Va::Logger::Automation.set_thread_variables(args[:account_id], args[:ticket_id], nil, args[:rule_id])
-    Va::Logger::Automation.log "WEBHOOK: TRIGGERED, info=#{args.inspect}"
+    Va::Logger::Automation.log("WEBHOOK: TRIGGERED, info=#{args.inspect}", true)
     if args[:webhook_validation_enabled] && !valid_webhook_url?(args[:params]["domain"])
-      Va::Logger::Automation.log "WEBHOOK: Validation Fails for URL = #{args[:params]["domain"]} and Account_id = #{args[:account_id]}"
+      Va::Logger::Automation.log("WEBHOOK: Validation Fails for URL = #{args[:params]['domain']}", true)
       return 
     end
     @response = HttpRequestProxy.new.fetch_using_req_params(
@@ -24,7 +24,7 @@ class WebhookV1Worker < ::BaseWorker
       args[:auth_header].symbolize_keys,
       args[:custom_headers]
     )
-    Va::Logger::Automation.log "WEBHOOK: response=#{@response[:status]}"
+    Va::Logger::Automation.log("WEBHOOK: response=#{@response[:status]}")
     response_status = @response[:status]
     case response_status
     when SUCCESS

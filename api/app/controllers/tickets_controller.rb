@@ -207,7 +207,6 @@ class TicketsController < ApiApplicationController
         preload_options << (ApiTicketConstants::INCLUDE_PRELOAD_MAPPING[assoc.to_sym] || assoc)
         increment_api_credit_by(2) unless assoc.to_s == DESCRIPTION && current_account.description_by_default_enabled?
       end
-      Rails.logger.info ":::preloads: #{preload_options.inspect}"
       preload_options
     end
 

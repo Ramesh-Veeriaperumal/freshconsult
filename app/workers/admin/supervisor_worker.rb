@@ -41,9 +41,10 @@ module Admin
               next if ticket.service_task?
               tickets_count +=  1
               rule_ids_with_exec_count[rule.id] = tickets_count
-              Va::Logger::Automation.set_thread_variables(account.id, ticket.id, nil, rule.id)
               if supervisor_tickets_limit && (tickets_count > supervisor_tickets_limit)
-                Va::Logger::Automation.log "SUPERVISOR: Tickets limit exceeded, exceeded_ticket_id=#{ticket.id}"
+                log_info(account.id, rule.id, ticket.id) {
+                  Va::Logger::Automation.log("SUPERVISOR: Tickets limit exceeded, exceeded_ticket_id=#{ticket.id}", true)
+                }
                 break
               end
               begin
@@ -52,7 +53,6 @@ module Admin
                   rule.trigger_actions ticket
                   subscription_changed = (rule.contains_add_watcher_action? && ticket.subscriptions.present?)
                   properties_changed = ticket.properties_updated?
-                  Va::Logger::Automation.log "Ticket property changed=#{properties_changed}, Ticket subscriptions changed=#{subscription_changed}"
                   # Note: if ticket has watcher and rule contains add watcher action, it will execute below method.
                   properties_changed ||= subscription_changed
                   ticket.save_ticket! if properties_changed
@@ -75,8 +75,8 @@ module Admin
             log_format = logging_format(account, ticket_ids, rule, rule_total_time, conditions, negate_conditions, joins)
             custom_logger.info "#{log_format}" unless custom_logger.nil?
             log_info(account.id, rule.id) {
-              Va::Logger::Automation.log "conditions=#{conditions.inspect}, 
-              negate_conditons=#{negate_conditions.inspect}, joins=#{joins.inspect}, tickets=#{ticket_ids.inspect}"
+              Va::Logger::Automation.log("conditions=#{conditions.inspect},
+              negate_conditons=#{negate_conditions.inspect}, joins=#{joins.inspect}, tickets=#{ticket_ids.inspect}", true)
               Va::Logger::Automation.log_execution_and_time(rule_total_time, ticket_ids.size, rule_type, rule_start_time, rule_end_time)
             }
           rescue Exception => e

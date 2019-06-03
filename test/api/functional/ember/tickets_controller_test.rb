@@ -1,7 +1,7 @@
 require_relative '../../test_helper'
 require 'webmock/minitest'
-['canned_responses_helper.rb', 'group_helper.rb', 'social_tickets_creation_helper.rb', 'ticket_template_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
-['account_test_helper.rb', 'shared_ownership_test_helper.rb'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
+['canned_responses_helper.rb', 'social_tickets_creation_helper.rb', 'ticket_template_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+['account_test_helper.rb', 'groups_test_helper.rb', 'shared_ownership_test_helper.rb'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 ['tickets_test_helper.rb', 'bot_response_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
 
 module Ember
@@ -9,7 +9,7 @@ module Ember
     include ApiTicketsTestHelper
     include ScenarioAutomationsTestHelper
     include AttachmentsTestHelper
-    include GroupHelper
+    include GroupsTestHelper
     include CannedResponsesHelper
     include CannedResponsesTestHelper
     include SocialTestHelper

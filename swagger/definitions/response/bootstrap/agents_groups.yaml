@@ -19,6 +19,8 @@ properties:
                   type: string
             group_ids:
               type: array
+              items:
+                type: integer
             type:
               type: string  
       groups:
@@ -32,5 +34,7 @@ properties:
               type: string
             agent_ids:
               type: array
+              items:
+                type: integer
             type:
               type: string 

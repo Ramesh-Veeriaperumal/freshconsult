@@ -953,6 +953,22 @@ module Helpdesk
                              .add_email_to_ticket(Helpdesk::Ticket.first, { email: 'customfrom@test.com' }, { email: 'customto@test.com' }, User.first)
         assert_equal 'success', add_email_response[:processed_status]
       end
+
+      def test_incoming_email_perform_with_email_spoof_check
+        Account.any_instance.stubs(:email_spoof_check_feature?).returns(true)
+        Helpdesk::Ticket.any_instance.stubs(:save_ticket!).returns(true)
+        id = Faker::Lorem.characters(50)
+        subject = 'Test Subject'
+        params = default_params(id, subject)
+        ShardMapping.stubs(:fetch_by_domain).returns(ShardMapping.first)
+        Helpdesk::Email::SpamDetector.any_instance.stubs(:check_spam).returns(spam: nil)
+        params[:attachments] = 1
+        Helpdesk::Ticket.any_instance.stubs(:agent_performed?).returns(true)
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
+        success_response = incoming_email_handler.perform(domain: 'localhost.freshpo.com',
+                                                          email: 'support@localhost.freshpo.com')
+        assert_equal 'success', success_response[:processed_status]
+      end
     end
   end
 end

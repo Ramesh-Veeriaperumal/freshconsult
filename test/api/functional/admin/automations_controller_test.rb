@@ -24,13 +24,6 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
       Account.current.rollback(:automation_revamp)
   end
 
-  def test_get_observer_rules
-    get :index, controller_params(rule_type: VAConfig::RULES[:observer])
-    assert_response 200
-    rules = Account.current.all_observer_rules
-    match_json(rules_pattern(rules))
-  end
-
   def test_get_dispatcher_rules
     get :index, controller_params(rule_type: VAConfig::RULES[:dispatcher])
     assert_response 200

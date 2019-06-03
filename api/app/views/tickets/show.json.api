@@ -51,8 +51,10 @@ response_hash.merge!(channel_v2_attributes) if channel_v2_attributes
 sla_policy_hash = @item.sla_policy_hash
 facebook = @item.facebook_public_hash
 tweet = @item.tweet_public_hash
+email_spam = @item.email_spam_data
 source_additional_info.merge!(facebook: facebook) if facebook.present?
 source_additional_info.merge!(twitter: tweet) if tweet.present?
+source_additional_info[:email_spam_data] = email_spam if email_spam.present?
 source_additional_info = source_additional_info.presence
 response_hash.merge!(source_additional_info: source_additional_info)
 response_hash.merge!(deleted: @item.deleted) if @item.deleted

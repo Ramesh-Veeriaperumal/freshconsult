@@ -333,7 +333,7 @@ class Helpdesk::Note < ActiveRecord::Base
         }
         job_id = ::Tickets::UpdateTicketStatesWorker.perform_async(args)
         Va::Logger::Automation.set_thread_variables(account_id, notable_id, user_id)
-        Va::Logger::Automation.log "Triggering UpdateTicketStatesWorker, job_id=#{job_id}, info=#{args.inspect}"
+        Va::Logger::Automation.log("Triggering UpdateTicketStatesWorker, job_id=#{job_id}, info=#{args.inspect}", true)
         Va::Logger::Automation.unset_thread_variables
       end
     end
@@ -495,6 +495,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def trigger_detect_thank_you_note_worker
+      Rails.logger.info "Enqueueing DetectThankYouNoteWorker T :: #{notable.id} , N :: #{id}"
       ::Freddy::DetectThankYouNoteWorker.perform_async(ticket_id: notable.id, note_id: id)
     end
 end

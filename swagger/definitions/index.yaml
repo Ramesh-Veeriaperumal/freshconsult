@@ -1,7 +1,3 @@
-id:
-  type: integer
-  format: int64
-  minimum: 1
 custom_field:
   type: object
 
@@ -229,6 +225,8 @@ freshfone_call:
   $ref: ./resource/freshfone_call.yaml
 ticket_topic:
   $ref: ./resource/ticket_topic.yaml
+email_spam_data:
+  $ref: ./resource/email_spam_data.yaml
 survey_question:
   $ref: ./resource/survey_question.yaml
 survey:
