@@ -36,7 +36,7 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
   before_destroy :save_deleted_picklist_info
 
   after_commit :clear_ticket_types_cache
-
+  
   concerned_with :presenter
 
   publishable

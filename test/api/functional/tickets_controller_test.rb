@@ -57,6 +57,7 @@ class TicketsControllerTest < ActionController::TestCase
     super
     Sidekiq::Worker.clear_all
     before_all
+    destroy_all_fsm_fields_and_service_task_type
   end
 
   @@before_all_run = false
@@ -82,6 +83,14 @@ class TicketsControllerTest < ActionController::TestCase
     @account.revoke_feature :unique_contact_identifier
     Helpdesk::TicketField.where(name: ['requester', 'subject', 'description', 'status', 'priority']).update_all(required: true)
     @@before_all_run = true
+  end
+
+  def destroy_all_fsm_fields_and_service_task_type
+    fsm_fields = CUSTOM_FIELDS_TO_RESERVE.collect { |x| x[:name] + "_#{@account.id}" }
+    fsm_fields.each do |fsm_field|
+			@account.ticket_fields.find_by_name(fsm_field).try(:destroy)
+		end
+    @account.picklist_values.find_by_value(SERVICE_TASK_TYPE).try(:destroy)
   end
 
   def wrap_cname(params = {})
@@ -125,6 +134,12 @@ class TicketsControllerTest < ActionController::TestCase
     company = Company.create(name: Faker::Name.name, account_id: @account.id)
     company.save
     company
+  end
+
+  def ticket_type_list
+    ticket_type = 'Question,Incident,Problem,Feature Request,Refund'
+    ticket_type << ",#{SERVICE_TASK_TYPE}" if Account.current.picklist_values.map(&:value).include?(SERVICE_TASK_TYPE)
+    ticket_type
   end
 
 
@@ -574,7 +589,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.except(:type)
     Helpdesk::TicketField.where(name: 'ticket_type').update_all(required: true)
     post :create, construct_params({}, params)
-    match_json([bad_request_error_pattern('type', :not_included, code: :missing_field, list: 'Question,Incident,Problem,Feature Request,Refund')])
+    match_json([bad_request_error_pattern('type', :not_included, code: :missing_field, list: ticket_type_list)])
     assert_response 400
     Helpdesk::TicketField.where(name: 'ticket_type').update_all(required: false)
     disable_skip_mandatory_checks_option
@@ -627,7 +642,7 @@ class TicketsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('group_id', :datatype_mismatch, code: :missing_field, expected_data_type: 'Positive Integer'),
                 bad_request_error_pattern('responder_id', :datatype_mismatch, code: :missing_field, expected_data_type: 'Positive Integer'),
                 bad_request_error_pattern('product_id', :datatype_mismatch, code: :missing_field, expected_data_type: 'Positive Integer'),
-                bad_request_error_pattern('type', :not_included, code: :missing_field, list: 'Question,Incident,Problem,Feature Request,Refund')])
+                bad_request_error_pattern('type', :not_included, code: :missing_field, list: ticket_type_list)])
     Helpdesk::TicketField.where(default: true).update_all(required: false)
     assert_response 400
     disable_skip_mandatory_checks_option
@@ -1016,7 +1031,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, update_params)
     Helpdesk::TicketField.where(name: 'ticket_type').update_all(required_for_closure: false)
     assert_response 400
-    match_json([bad_request_error_pattern('type', :not_included, code: :missing_field, list: 'Question,Incident,Problem,Feature Request,Refund')])
+    match_json([bad_request_error_pattern('type', :not_included, code: :missing_field, list: ticket_type_list)])
     disable_skip_mandatory_checks_option
   end
 
@@ -1072,7 +1087,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, update_params)
     Helpdesk::TicketField.where(name: 'ticket_type').update_all(required_for_closure: false)
     assert_response 400
-    match_json([bad_request_error_pattern('type', :not_included, code: :missing_field, list: 'Question,Incident,Problem,Feature Request,Refund')])
+    match_json([bad_request_error_pattern('type', :not_included, code: :missing_field, list: ticket_type_list)])
     disable_skip_mandatory_checks_option
   end
 
@@ -1454,7 +1469,7 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({}, params)
     match_json([bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
                 bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7'),
-                bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request,Refund'),
+                bad_request_error_pattern('type', :not_included, list: ticket_type_list),
                 bad_request_error_pattern('source', :not_included, list: sources_list)])
     assert_response 400
   end
@@ -2951,7 +2966,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
                 bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7'),
-                bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request,Refund'),
+                bad_request_error_pattern('type', :not_included, list: ticket_type_list),
                 bad_request_error_pattern('source', :not_included, list: '1,2,3,5,6,7,8,9,10')])
   end
 
@@ -4391,7 +4406,7 @@ class TicketsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('product_id', :datatype_mismatch, code: :missing_field, expected_data_type: 'Positive Integer'),
                 bad_request_error_pattern('priority', :not_included, code: :missing_field, list: '1,2,3,4'),
                 bad_request_error_pattern('status', :not_included, code: :missing_field, list: '2,3,4,5,6,7'),
-                bad_request_error_pattern('type', :not_included, code: :missing_field, list: 'Question,Incident,Problem,Feature Request,Refund')])
+                bad_request_error_pattern('type', :not_included, code: :missing_field, list: ticket_type_list)])
     assert_response 400
   ensure
     default_non_required_fiels.map { |x| x.toggle!(:required) }
@@ -4437,7 +4452,7 @@ class TicketsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('product_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null'),
                 bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
                 bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7'),
-                bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request,Refund'),
+                bad_request_error_pattern('type', :not_included, list: ticket_type_list),
                 bad_request_error_pattern('source', :not_included, list: '1,2,3,5,6,7,8,9,10')])
     assert_response 400
   ensure

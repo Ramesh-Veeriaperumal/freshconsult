@@ -568,6 +568,7 @@ en:
       created_at: Created
       tags: Tags
       company: Company
+      fsm_fields_moved_out: Default fields in this section cannot be moved out of the section.
     saving_ticket: "Saving ticket fields..."
     untitled: Untitled
     properties: Properties

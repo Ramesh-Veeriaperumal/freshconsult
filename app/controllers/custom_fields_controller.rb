@@ -6,6 +6,7 @@ class CustomFieldsController < Admin::AdminController
   include Cache::Memcache::Helpdesk::Section
   include FlexifieldConstants
   include Helpdesk::Ticketfields::Validations
+  include Admin::AdvancedTicketing::FieldServiceManagement::Constant
 
   before_filter :check_ticket_field_count, :only => [ :update ]
   helper_method :denormalized_field?
@@ -20,43 +21,49 @@ class CustomFieldsController < Admin::AdminController
     @invalid_fields = []
     @invalid_sections = []
     @fields_id_with_sections = []
-
-    if (params[:jsonSectionData] && params[:jsonSectionData].length >= 2)
+    err_str = ''
+    if params[:jsonSectionData].present?
       sections_data = ActiveSupport::JSON.decode params[:jsonSectionData]
-      if current_account.multi_dynamic_sections_enabled?
-        @fields_id_with_sections = fetch_fields_with_sections(sections_data)
+      err = check_if_fsm_fields_removed_from_service_task_section if sections_data.present? && sections_data.any? { |x| x['label'] == SERVICE_TASK_SECTION }
+      err_str << err if err.present?
+    end
+
+    if err_str.blank?
+      if (params[:jsonSectionData] && params[:jsonSectionData].length >= 2)
+        if current_account.multi_dynamic_sections_enabled?
+          @fields_id_with_sections = fetch_fields_with_sections(sections_data)
+        end
+      end
+
+      field_data_group_by_action = field_data.group_by { |f_d| f_d["action"] }
+      TICKET_FIELD_ACTIONS.each do |action|
+        next if action == "create" && !current_account.custom_ticket_fields_enabled?
+        field_data_group_by_action[action].each do |f_d|
+          f_d.symbolize_keys!
+          # f_d.delete(:choices) unless("nested_field".eql?(f_d[:field_type]) || 
+          #                             "custom_dropdown".eql?(f_d[:field_type]) || 
+          #                             "default_ticket_type".eql?(f_d[:field_type]))
+          f_d[:field_options].delete("section_present") if delete_section_present_key? f_d
+          safe_send("#{action}_field", f_d)
+        end
+      end
+
+      # adding sections data...
+      sections_attributes(sections_data)
+
+      unless @invalid_sections.empty?
+        @invalid_sections.each do |field|
+          field.symbolize_keys!
+          reset_section_fields(field[:section_fields]) unless field[:section_fields].nil?
+          delete_section_data(account=current_account, field)
+          reset_parent_field(field[:parent_ticket_field_id])
+        end
       end
     end
 
-    field_data_group_by_action = field_data.group_by { |f_d| f_d["action"] }
-    TICKET_FIELD_ACTIONS.each do |action|
-      next if action == "create" && !current_account.custom_ticket_fields_enabled?
-      field_data_group_by_action[action].each do |f_d|
-        f_d.symbolize_keys!
-        # f_d.delete(:choices) unless("nested_field".eql?(f_d[:field_type]) || 
-        #                             "custom_dropdown".eql?(f_d[:field_type]) || 
-        #                             "default_ticket_type".eql?(f_d[:field_type]))
-        f_d[:field_options].delete("section_present") if delete_section_present_key? f_d
-        safe_send("#{action}_field", f_d)
-      end
-    end
-
-    # adding sections data...
-    sections_attributes(sections_data)
-
-    unless @invalid_sections.empty?
-      @invalid_sections.each do |field|
-        field.symbolize_keys!
-        reset_section_fields(field[:section_fields]) unless field[:section_fields].nil?
-        delete_section_data(account=current_account, field)
-        reset_parent_field(field[:parent_ticket_field_id])
-      end
-    end
-
-    err_str = ""
     @invalid_fields.each do |tf|
       tf.errors.each do |attr,msg|
-        if(!err_str.include? "#{tf.label} : #{msg}")
+        if err_str.exclude? "#{tf.label} : #{msg}"
           err_str << " #{tf.label} : #{msg} "
         end  
       end  
@@ -330,5 +337,21 @@ class CustomFieldsController < Admin::AdminController
 
     def ticket_field_limit_increase_enabled?
       @ticket_field_limit_increase_enabled ||= Account.current.ticket_field_limit_increase_enabled?
+    end
+
+    def check_if_fsm_fields_removed_from_service_task_section
+      sections_data = ActiveSupport::JSON.decode params[:jsonSectionData]
+      fsm_section = sections_data.select { |section| section['label'] == SERVICE_TASK_SECTION }
+      return if fsm_section.blank?
+
+      fields_deleted_from_section = fsm_section.first['section_fields'].collect { |x| x['ticket_field_id'] if x.key?('action') && x['action'].eql?('delete') }.compact
+      return if fields_deleted_from_section.blank?
+
+      fsm_fields = CUSTOM_FIELDS_TO_RESERVE.collect { |x| x[:label] }
+      fsm_fields_to_be_deleted = ActiveSupport::JSON.decode(params[:jsonData]).collect { |x| x['label'] if x['action'].eql?('delete') && fsm_fields.include?(x['label']) }.compact
+      if fsm_fields_to_be_deleted.empty?
+        err_msg = I18n.t('ticket_fields.fields.fsm_fields_moved_out').to_s
+      end
+      err_msg
     end
 end

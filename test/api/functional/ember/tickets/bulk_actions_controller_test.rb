@@ -448,9 +448,12 @@ module Ember
         incorrect_values = { priority: 90, status: statuses.last + 1, type: 'jksadjxyz' }
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.merge(incorrect_values) }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        ticket_type_list = 'Question,Incident,Problem,Feature Request,Refund'
+        service_task = ::Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE
+        ticket_type_list << ",#{service_task}" if Account.current.picklist_values.map(&:value).include?(service_task)
         match_json([bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
                     bad_request_error_pattern('status', :not_included, list: statuses.join(',')),
-                    bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request,Refund')])
+                    bad_request_error_pattern('type', :not_included, list: ticket_type_list)])
         assert_response 400
       end
 

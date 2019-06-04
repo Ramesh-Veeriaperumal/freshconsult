@@ -315,7 +315,7 @@ module Ember
           create_parent_child_tickets
           Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
           Helpdesk::Ticket.any_instance.stubs(:associates).returns([@child_ticket.display_id])
-          get :associated_tickets, construct_params({ version: 'private', id: @parent_ticket.display_id, type: 'Service Task' }, false)
+          get :associated_tickets, construct_params({ version: 'private', id: @parent_ticket.display_id, type: Faker::Lorem.characters(10) }, false)
           assert_response 400
           Helpdesk::Ticket.any_instance.unstub(:associates=)
           Helpdesk::Ticket.any_instance.unstub(:associates)

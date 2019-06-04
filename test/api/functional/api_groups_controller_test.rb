@@ -23,7 +23,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   def test_update_ticket_assign_type_for_field_group
     Account.stubs(:current).returns(Account.first)
     enabling_fsm_feature_and_lp
-    add_data_to_group_type
+    create_field_group_type
     create_field_agent_type
     group = create_group(@account, { name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph }, group_type = 2)
     put :update, construct_params({ id: group.id }, escalate_to: 1, unassigned_for: '30m', auto_ticket_assign: true)
@@ -40,7 +40,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   def test_create_field_group_with_ticket_assign_type
     Account.stubs(:current).returns(Account.first)
     enabling_fsm_feature_and_lp
-    add_data_to_group_type
+    create_field_group_type
     create_field_agent_type
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, auto_ticket_assign: true, group_type: FIELD_GROUP_NAME)
     assert_response 400
@@ -136,7 +136,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   def test_create_field_group_with_field_agent
     Account.stubs(:current).returns(Account.first)
     enabling_fsm_feature_and_lp
-    add_data_to_group_type
+    create_field_group_type
     create_field_agent_type
     agent = add_test_agent(Account.current, role: Role.find_by_name('Agent').id, agent_type: AgentType.agent_type_id(Agent::FIELD_AGENT), ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, unassigned_for: '30m', group_type: FIELD_GROUP_NAME, agent_ids: [agent.id])
@@ -152,7 +152,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   def test_create_field_group_with_support_agent
     Account.stubs(:current).returns(Account.first)
     enabling_fsm_feature_and_lp
-    add_data_to_group_type
+    create_field_group_type
     agent = add_test_agent(Account.current, role: Role.find_by_name('Agent').id, agent_type: AgentType.agent_type_id(Agent::SUPPORT_AGENT), ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, unassigned_for: '30m', group_type: FIELD_GROUP_NAME, agent_ids: [agent.id])
     assert_response 201
@@ -194,7 +194,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   end
 
   def test_index_for_validate_filter_params_valid
-    add_data_to_group_type
+    create_field_group_type
     3.times do
       create_group(@account,{},2)
     end
@@ -315,7 +315,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   def test_update_field_group_with_field_agent
     Account.stubs(:current).returns(Account.first)
     enabling_fsm_feature_and_lp
-    add_data_to_group_type
+    create_field_group_type
     create_field_agent_type
     group = create_group(@account, { name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph }, GroupType.group_type_id(FIELD_GROUP_NAME))
     agent = add_test_agent(Account.current, role: Role.find_by_name('Agent').id, agent_type: AgentType.agent_type_id(Agent::FIELD_AGENT), ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
@@ -333,7 +333,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   def test_update_field_group_with_support_agent
     Account.stubs(:current).returns(Account.first)
     enabling_fsm_feature_and_lp
-    add_data_to_group_type
+    create_field_group_type
     agent = add_test_agent(Account.current, role: Role.find_by_name('Agent').id, agent_type: AgentType.agent_type_id(Agent::SUPPORT_AGENT), ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
     group = create_group(@account, { name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph }, group_type: GroupType.group_type_id(FIELD_GROUP_NAME))
     put :update, construct_params({ id: group.id }, agent_ids: [agent.id])

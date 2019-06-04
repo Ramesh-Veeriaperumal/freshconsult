@@ -8,6 +8,7 @@ class FsmTicketValidationTest < ActionView::TestCase
 
 	def setup
 		Account.stubs(:current).returns(Account.first)
+		destroy_all_fsm_fields_with_section_and_type
 		perform_fsm_operations
 		Account.reset_current_account
     Account.stubs(:current).returns(Account.first)
@@ -17,6 +18,7 @@ class FsmTicketValidationTest < ActionView::TestCase
 
 	def teardown
 		cleanup_fsm
+		Account.any_instance.unstub(:field_service_management_enabled?)
 		Account.unstub(:current)
 	end
 
@@ -29,6 +31,15 @@ class FsmTicketValidationTest < ActionView::TestCase
 			statuses << h
 		end
 		statuses
+	end
+
+	def destroy_all_fsm_fields_with_section_and_type
+		fsm_fields = CUSTOM_FIELDS_TO_RESERVE.collect { |x| x[:name] + "_#{Account.current.id}" }
+    	fsm_fields.each do |fsm_field|
+			Account.current.ticket_fields.find_by_name(fsm_field).try(:destroy)
+		end
+		Account.current.sections.find_by_label(SERVICE_TASK_SECTION).try(:destroy)
+    	Account.current.picklist_values.find_by_value(SERVICE_TASK_TYPE).try(:destroy)
 	end
 
 	def test_create_ticket_with_type_service_task_invalid
