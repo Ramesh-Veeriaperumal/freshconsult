@@ -171,6 +171,7 @@ namespace :scheduler do
           next unless account
           account.make_current
           next if (!fb_page.valid_page? || check_if_premium_facebook_account?(account.id))
+          Rails.logger.info("Enqueuing facebook worker for page :: #{fb_page.id} :: account id #{account.id}")
           class_constant.perform_async({:fb_page_id => fb_page.id}) 
         end
       end
@@ -227,6 +228,7 @@ namespace :scheduler do
     
     include Redis::RedisKeys
     include Redis::OthersRedis
+
     account_type = args.type || "paid"
     puts "Running #{account_type} facebook worker initiated at #{Time.zone.now}"
     if account_type == "paid"

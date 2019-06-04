@@ -7,6 +7,8 @@ module SegmentFiltersTestHelper
   COMPANY_FILTER_PARAMS = {"name"=>"First Com Filter", "query_hash"=>[{"condition"=>"created_at", "operator"=>"is_greater_than", "type"=>"default", "value"=>"today"}]}
 
   COMPANY_UPDATED_FILTER_PARAMS = {"name"=>"First Com Filter", "query_hash"=>[{"condition"=>"created_at", "operator"=>"is_greater_than", "type"=>"default", "value"=>"month"}]}
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   def create_contact_segment
     contact_filter = @account.contact_filters.new({name: Faker::Name.name, data: CONTACT_FILTER_PARAMS["query_hash"]})
@@ -32,9 +34,46 @@ module SegmentFiltersTestHelper
     Ember::Segments::BaseFiltersController.const_set(:SEGMENT_LIMIT, '5368709119.0')
     Ember::Segments::ContactFiltersController.any_instance.stubs(:limit_exceeded?).returns(false)
     Ember::Segments::CompanyFiltersController.any_instance.stubs(:limit_exceeded?).returns(false)
-    post :create, construct_params({ version: 'private'}, filter_params)
+    post :create, construct_params({ version: 'private' }, filter_params)
     assert_response 200
     Ember::Segments::BaseFiltersController.safe_send(:remove_const, :SEGMENT_LIMIT)
+  end
+
+  def test_create_segment_filter_failure_on_default_limit_exceeding
+    limit = Ember::Segments::BaseFiltersController::MAX_SEGMENT_LIMIT
+    remove_others_redis_key(segment_limit_key)
+    Ember::Segments::ContactFiltersController.any_instance.stubs(:current_filter_count).returns(limit)
+    Ember::Segments::CompanyFiltersController.any_instance.stubs(:current_filter_count).returns(limit)
+    post :create, construct_params({ version: 'private' }, filter_params)
+    assert_response 400
+    match_json([{ field: 'current_usage',
+                  message: limit.to_s,
+                  code: :invalid_value }])
+  end
+
+  def test_create_segment_filter_success_when_redis_is_set
+    limit = Ember::Segments::BaseFiltersController::MAX_SEGMENT_LIMIT
+    set_others_redis_key(segment_limit_key, limit + 10)
+    Ember::Segments::ContactFiltersController.any_instance.stubs(:current_filter_count).returns(limit)
+    Ember::Segments::CompanyFiltersController.any_instance.stubs(:current_filter_count).returns(limit)
+    post :create, construct_params({ version: 'private' }, filter_params)
+    assert_response 200
+  ensure
+    remove_others_redis_key(segment_limit_key)
+  end
+
+  def test_create_segment_filter_failure_on_redis_limit_exceeding
+    limit = Ember::Segments::BaseFiltersController::MAX_SEGMENT_LIMIT + 10
+    set_others_redis_key(segment_limit_key, limit)
+    Ember::Segments::ContactFiltersController.any_instance.stubs(:current_filter_count).returns(limit)
+    Ember::Segments::CompanyFiltersController.any_instance.stubs(:current_filter_count).returns(limit)
+    post :create, construct_params({ version: 'private'}, filter_params)
+    assert_response 400
+    match_json([{ field: 'current_usage',
+                  message: limit.to_s,
+                  code: :invalid_value }])
+  ensure
+    remove_others_redis_key(segment_limit_key)
   end
 
   def test_update_segment_filter
@@ -57,4 +96,10 @@ module SegmentFiltersTestHelper
     delete :destroy, construct_params({id: segment.id, version: 'private'})
     assert_response 204
   end
+
+  private
+
+    def segment_limit_key
+      format(SEGMENT_LIMIT, account_id: @account.id)
+    end
 end

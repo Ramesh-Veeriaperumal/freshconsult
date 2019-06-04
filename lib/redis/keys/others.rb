@@ -220,4 +220,7 @@ module Redis::Keys::Others
 
   # Facebook Mapping table deprecation
   FB_MAPPING_ENABLED  = 'FB_MAPPING_ENABLED'.freeze
+
+  # Customer segments max limit
+  SEGMENT_LIMIT = 'SEGMENT_LIMIT'.freeze
 end
