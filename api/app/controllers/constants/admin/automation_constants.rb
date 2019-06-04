@@ -30,6 +30,8 @@ module Admin::AutomationConstants
     created_during: :created_at
   }.freeze
 
+  CUSTOM_TEXT_FIELD_TYPES = %i[custom_text custom_paragraph].freeze
+
   DISPLAY_FIELD_NAME_CHANGE = FIELD_VALUE_CHANGE_MAPPING.invert.freeze
 
   SUPERVISOR_FIELD_MAPPING = { hours_since_created: :created_at }.freeze
