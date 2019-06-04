@@ -14,6 +14,7 @@ class MergeTicketsAttachments < BaseWorker
     source_ticket.cloud_files.each do |cloud_file|
       source_description_note.cloud_files.build(url: cloud_file.url, application_id: cloud_file.application_id, filename: cloud_file.filename)
     end
+    source_ticket.inline_attachments.update_all(attachable_type: 'Note::Inline', attachable_id: source_description_note.id)
     source_description_note.save_note
   end
 end
