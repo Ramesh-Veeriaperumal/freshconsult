@@ -254,7 +254,6 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
     response = parse_response @response.body
     assert_equal old_ticket_fields_count + fsm_fields_count, response.count
   ensure
-    destroy_custom_fields
     Account.unstub(:current)
   end
 end

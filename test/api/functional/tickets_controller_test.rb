@@ -42,6 +42,7 @@ class TicketsControllerTest < ActionController::TestCase
     super
     Sidekiq::Worker.clear_all
     before_all
+    destroy_all_fsm_fields_and_service_task_type
   end
 
   @@before_all_run = false
@@ -65,6 +66,14 @@ class TicketsControllerTest < ActionController::TestCase
     @account.save
     @account.revoke_feature :unique_contact_identifier
     @@before_all_run = true
+  end
+
+  def destroy_all_fsm_fields_and_service_task_type
+    fsm_fields = CUSTOM_FIELDS_TO_RESERVE.collect { |x| x[:name] + "_#{@account.id}" }
+    fsm_fields.each do |fsm_field|
+			@account.ticket_fields.find_by_name(fsm_field).try(:destroy)
+		end
+    @account.picklist_values.find_by_value(SERVICE_TASK_TYPE).try(:destroy)
   end
 
   def wrap_cname(params = {})

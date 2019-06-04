@@ -35,6 +35,8 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
 
   before_destroy :save_deleted_picklist_info
 
+  after_commit :clear_ticket_types_cache
+  
   concerned_with :presenter
 
   publishable
@@ -96,6 +98,11 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
 
   def save_deleted_picklist_info
     @deleted_model_info = as_api_response(:central_publish_destroy)
+  end
+
+  def clear_ticket_types_cache
+    return if pickable_id != Account.current.ticket_fields_from_cache.find { |x| x.name == 'ticket_type' }.id
+    Account.current.clear_ticket_types_from_cache
   end
   
   private
