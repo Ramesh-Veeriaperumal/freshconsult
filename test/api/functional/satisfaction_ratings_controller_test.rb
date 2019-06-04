@@ -31,6 +31,10 @@ class SatisfactionRatingsControllerTest < ActionController::TestCase
     create_ticket
   end
 
+  def survey_count
+    @account.new_survey_enabled? ? @account.custom_survey_results.count : @account.survey_results.count
+  end
+
   def test_create_custom_survey
     post :create, construct_params({ id: ticket.display_id }, ratings: { 'default_question' => 103 })
     assert_response 201
@@ -254,5 +258,13 @@ class SatisfactionRatingsControllerTest < ActionController::TestCase
     response_json = JSON.parse(response.body)
     assert_equal response_json.size, CustomSurvey::SurveyResult.count
     match_json(pattern)
+  end
+
+  def test_meta_count_in_private_scope
+    ticket_obj = create_ticket
+    result = create_survey_result(ticket_obj, 3)
+    get :index, controller_params(version: 'private')
+    assert_response 200
+    assert_equal response.api_meta[:count], survey_count
   end
 end

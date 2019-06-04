@@ -1,0 +1,29 @@
+get:
+  tags: [Satisfaction ratings]
+  summary: List all
+  description: Lists satisfaction ratings
+  parameters:
+    - name: created_since
+      in: query
+      type: string
+      format: date-time
+      description: list the satisfaction ratings created since given time.
+    - name: user_id
+      in: query
+      type: integer
+      format: int64
+      description: list the satisfaction ratings by specific user.
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          satisfaction_ratings:
+            type: array
+            items:
+              $ref: '#/definitions/survey_satisfaction_ratings'
+          meta:
+            $ref: '#/definitions/meta'
+    403:
+      description: Access denied

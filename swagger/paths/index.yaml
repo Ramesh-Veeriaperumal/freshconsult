@@ -312,6 +312,8 @@
   $ref: ./surveys/index.yaml
 /surveys/{id}:
   $ref: ./surveys/crud.yaml
+/surveys/satisfaction_surveys:
+  $ref: ./surveys/satisfaction_survey.yaml
 
 #Search
 /search/solutions:

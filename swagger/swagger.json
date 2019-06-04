@@ -6012,6 +6012,53 @@
         }
       }
     },
+    "/surveys/satisfaction_surveys": {
+      "get": {
+        "tags": [
+          "Satisfaction ratings"
+        ],
+        "summary": "List all",
+        "description": "Lists satisfaction ratings",
+        "parameters": [
+          {
+            "name": "created_since",
+            "in": "query",
+            "type": "string",
+            "format": "date-time",
+            "description": "list the satisfaction ratings created since given time."
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "type": "integer",
+            "format": "int64",
+            "description": "list the satisfaction ratings by specific user."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "satisfaction_ratings": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/survey_satisfaction_ratings"
+                  }
+                },
+                "meta": {
+                  "$ref": "#/definitions/meta"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/search/solutions": {
       "get": {
         "tags": [
@@ -15519,6 +15566,52 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/survey_question"
+          }
+        }
+      }
+    },
+    "survey_satisfaction_ratings": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "survey_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "user_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "agent_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "feedback": {
+          "type": "string"
+        },
+        "group_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "ticket_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ratings": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
           }
         }
       }

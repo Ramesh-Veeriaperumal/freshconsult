@@ -5,6 +5,13 @@ class SatisfactionRatingsController < ApiApplicationController
   SLAVE_ACTIONS = %w(survey_results).freeze
 
   COLLECTION_RESPONSE_FOR = ['survey_results'].freeze
+
+  def index
+    super
+    response.api_meta = { count: @items_count } if private_api?
+    response.api_root_key = :satisfaction_ratings
+  end
+
   def scoper(item = @ticket)
     custom_survey? ? custom_survey_results(item) : classic_survey_results(item)
   end

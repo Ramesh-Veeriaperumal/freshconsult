@@ -24,12 +24,18 @@ module TimeEntriesTestHelper
   # Helpers
   def create_time_entry(options = {})
     ticket_id = create_ticket.display_id if options[:ticket_id].blank?
+    # match_json(result_pattern.ordered!) fails sporadically when more
+    # than one timesheet contains the same executed_at value
+    if options[:executed_at].blank?
+      latest_time_sheet = Helpdesk::TimeSheet.first
+      options[:executed_at] = latest_time_sheet.present? ? (latest_time_sheet.executed_at + 2.minutes).to_s : Time.zone.now.to_s
+    end
     time_entry = FactoryGirl.build(:time_sheet, user_id: options[:agent_id] || @agent.id,
                                                 workable_id: options[:ticket_id] || ticket_id,
                                                 account_id: @account.id,
                                                 timer_running: options.key?(:timer_running) ? options[:timer_running] : options[:time_spent].blank?,
                                                 time_spent: options[:time_spent] || 0,
-                                                executed_at: options[:executed_at] || Time.zone.now.to_s,
+                                                executed_at: options[:executed_at],
                                                 billable: options.key?(:billable) ? options[:billable] : true,
                                                 note: Faker::Lorem.sentence)
     time_entry.save
