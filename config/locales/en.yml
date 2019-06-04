@@ -2897,6 +2897,7 @@ en:
       ticket_creating_agent: "Ticket Creating Agent"
       freddy_suggestion: "Freddy Suggestion"
       thank_you_note: "Thank you Note"
+      created_during: "Created"
   ends_with: Ends with
   last_name: Last Name
   forum:

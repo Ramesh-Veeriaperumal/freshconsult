@@ -3,12 +3,16 @@ module AuditLog::Translators::AutomationRule
     model_changes.keys.each do |attribute|
       case attribute
       when :condition_data
+        next if !automation_revamp_enabled? || supervisor_rule?
+
         if dispatcher_rule?
           translate_condition_data(model_changes[attribute])
         elsif observer_rule?
           translate_observer_events(model_changes[attribute])
         end
       when :filter_data
+        next if automation_revamp_enabled? && !supervisor_rule?
+
         if dispatcher_rule? || supervisor_rule?
           translate_filter_action(model_changes[attribute], :conditions)
         elsif observer_rule?
@@ -287,5 +291,9 @@ module AuditLog::Translators::AutomationRule
 
   def supervisor_rule?
     @rule_type == VAConfig::SUPERVISOR_RULE
+  end
+
+  def automation_revamp_enabled?
+    Account.current.automation_revamp_enabled?
   end
 end

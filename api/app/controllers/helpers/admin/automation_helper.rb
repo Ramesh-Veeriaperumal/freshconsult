@@ -50,8 +50,15 @@ module Admin::AutomationHelper
           condition.permit(*CONDITION_SET_REQUEST_VALUES) if condition.is_a?(Hash)
           condition = convert_tag_fields(condition) if condition[:field_name] == TAG_NAMES && key == :ticket
           condition[:field_name] = 'ticlet_cc' if condition[:field_name] == 'ticket_cc' && key == :ticket
+          add_case_sensitive_key(condition)
         end
       end
+    end
+
+    def add_case_sensitive_key(data)
+      data[:case_sensitive] ||= false and return if DEFAULT_TEXT_FIELDS.include?(data[:field_name].to_sym)
+      field = ticket_fields.find { |tf| tf.name == "#{data[:field_name]}_#{current_account.id}" }
+      data[:case_sensitive] ||= false if field.present? && CUSTOM_TEXT_FIELD_TYPES.include?(field.field_type.to_sym)
     end
 
     def set_automations_fields
@@ -182,7 +189,6 @@ module Admin::AutomationHelper
                                                  transform_hash_key(data[:to_nested_rules], [:value], [:to]))
       data
     end
-
 
     def _nested_data(field, parent_id, is_event, parent_value)
       data = []

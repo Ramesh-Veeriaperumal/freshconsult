@@ -109,7 +109,7 @@ module Admin::Automation::AutomationSummary
       array = []
       array << generate_key(data[:name], data[:evaluate_on] || 'ticket')
       array << generate_operator(data[:operator]) if data[:operator].present?
-      if data[:value].present?
+      if data.key? :value
         field = custom_ticket_fields.find { |tf| tf.name == data[:name] }
         data[:value] = data[:value].is_a?(Array) ? data[:value].map { |val| CGI.escapeHTML(val) } :
                            CGI.escapeHTML(data[:value]) if SUBJECT_DESCRIPTION_FIELDS.include?(data[:name]) ||
