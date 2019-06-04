@@ -249,7 +249,7 @@ module SolutionsTestHelper
     }
   end
 
-  def quick_views_pattern portal_id
+  def quick_views_pattern(portal_id = nil)
     @categories = fetch_categories(portal_id)
     @articles = fetch_articles
     @drafts =  fetch_drafts
@@ -273,9 +273,13 @@ module SolutionsTestHelper
   end
 
   def fetch_categories(portal_id)
-    @category_meta = Account.current.portals.find_by_id(portal_id).public_category_meta.order('portal_solution_categories.position').all
+    if portal_id.present?
+      @category_meta = Account.current.portals.find_by_id(portal_id).public_category_meta.order('portal_solution_categories.position').all
+    else
+      @category_meta = Account.current.public_category_meta
+    end
     portal_categories = Account.current.solution_categories.where(parent_id: @category_meta.map(&:id), language_id: (Language.current? ? Language.current.id : Language.for_current_account.id))
-    @category_meta << Account.current.solution_category_meta.where(is_default: true).first
+    @category_meta += [Account.current.solution_category_meta.where(is_default: true).first]
     portal_categories
   end
 

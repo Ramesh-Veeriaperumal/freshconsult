@@ -10613,8 +10613,7 @@
             "name": "portal_id",
             "in": "query",
             "type": "string",
-            "description": "Portal ID",
-            "required": true
+            "description": "Portal ID"
           }
         ],
         "responses": {

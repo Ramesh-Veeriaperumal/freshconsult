@@ -31,9 +31,13 @@ module Ember
       private
 
         def fetch_categories(portal_id)
-          @category_meta = current_account.portals.find_by_id(portal_id).public_category_meta.order('portal_solution_categories.position').all
+          if portal_id.present?
+            @category_meta = current_account.portals.find_by_id(portal_id).public_category_meta.order('portal_solution_categories.position').all
+          else
+            @category_meta = current_account.public_category_meta
+          end
           portal_categories = current_account.solution_categories.where(parent_id: @category_meta.map(&:id), language_id: @lang_id)
-          @category_meta << current_account.solution_category_meta.where(is_default: true).first
+          @category_meta += [current_account.solution_category_meta.where(is_default: true).first]
           portal_categories
         end
 
