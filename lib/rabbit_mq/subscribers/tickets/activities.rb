@@ -233,7 +233,7 @@ module RabbitMq::Subscribers::Tickets::Activities
   end
 
   def system_changes?
-    (va_rule_changes? && ticket_changes_present?)
+    (va_rule_changes? || round_robin?) && ticket_changes_present?
   end
 
   def ticket_changes_present?
