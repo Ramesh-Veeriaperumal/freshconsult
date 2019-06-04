@@ -2770,7 +2770,7 @@ en:
       action_group_id: 'Assign to Group'
       action_product_id: 'Assign to Product'
       action_key_value: "%{field_name} %{field_value}"
-      action_nested_value: " And %{field_name} as %{field_value}"
+      action_nested_value: " And %{field_name} %{field_operator} %{field_value}"
       action_value: "Set %{field_name} as %{field_value}"
       action_webhook:  "%{field_name} Method-: %{field_from} Url-: %{field_to}"
       actions: "Actions"
@@ -2782,35 +2782,36 @@ en:
       action_add_watcher: "Add watcher"
       agent_responded_at: "Hour Since Agent responded"
       and: " And "
+      as: "as"
       assigned_group: 'Assigned Group'
       assigned_at: "Hour Since Assigned"
       closed_at: "Hour Since Closed"
       company_name: "Company name"
-      condition: "Check If %{field_name}"
+      condition: "If %{field_name}"
       condition_all: "AND"
       condition_any: "OR"
-      condition_nested_value: " And %{field_name} is %{field_value}"
-      condition_value: "Check If %{field_name} is %{field_value}"
+      condition_nested_value: " And %{field_name} %{field_operator} %{field_value}"
+      condition_value: "If %{field_name} is %{field_value}"
       conditions: "Conditions"
       contact_name: "Contact name"
-      contains: "Contains"
-      contains_any_of: "Contains any of"
-      contains_none_of: "Contains none of"
+      contains: "contains"
+      contains_any_of: "contains any of"
+      contains_none_of: "contains none of"
       created_at: "created at"
       created_at_since: "Hour Since Ticket created"
       customer_feedback: "Customer Feedback Rating"
       delete_ticket: "Delete ticket"
       delete: 'Deleted'
       description: "Description"
-      does_not_contain: "Does not contain"
+      does_not_contain: "does not contain"
       domain: "Domain"
       domains: "Domains"
       due_by_since: "Hour Since Ticket is Overdue"
       due_by: "Due Date is changed"
-      during: "During"
+      during: "during"
       email: "Email"
-      ends_with: "Ends with"
-      ends_with_any_of: 'Ends with any of' 
+      ends_with: "ends with"
+      ends_with_any_of: 'ends with any of' 
       event: "When %{field_name}"
       event_agent: "Event Performing Agent"
       event_from_to: "When %{field_name} is changed from %{field_from} to %{field_to}"
@@ -2820,30 +2821,30 @@ en:
       first_assigned_at: "Hour Since First assigned"
       frDueBy: "Hour Since first Response Due"
       from_email: "Requester email"
-      greater_than: "Greater than"
+      greater_than: "greater than"
       group_id: "Group"
       health_score: "Health score"
-      in: "In"
+      in: "is"
       inbound_count: "Requester Interactions"
       industry: "Industry"
       internal_agent_id: "Internal agent"
       internal_group_id: "Internal group"
-      is: "Is"
-      is_any_of: "Is any of"
-      is_none_of: "Is none of"
-      is_not: "Is not"
+      is: "is"
+      is_any_of: "is any of"
+      is_none_of: "is not"
+      is_not: "is not"
       job_title: "Job title"
       language: "Language"
       last_interaction: "Last interaction"
       last_updated_by: "last updated by"
-      less_than: "Less than"
+      less_than: "less than"
       mail_del_failed_others: "Mail sent to cc or forward address failed"
       mail_del_failed_requester: "Mail sent to requester address failed"
       mark_as_spam: "Mark As Spam"
       marked_spam: "Marked As Spam"
       name: "Name"
       none_agent: "None"
-      not_in: "Not in"
+      not_in: "is not"
       not_selected: "Not selected"
       note_added_value: "When %{field_value} %{field_name}"
       note_type: "Note is Added"
@@ -2872,8 +2873,8 @@ en:
       send_email_to_requester: 'Send Email to Requester'
       skip_notification: 'Skip Notification'
       source: 'Source'
-      starts_with: 'Starts with'
-      starts_with_any_of: 'Starts with any of'
+      starts_with: 'starts with'
+      starts_with_any_of: 'starts with any of'
       status: 'Status'
       subject: 'Subject'
       subject_or_description: 'Subject or description'
@@ -2891,7 +2892,7 @@ en:
       forward_ticket: 'Forward to %{fwd_to}'
       with_cc: 'Cc: %{fwd_cc}'
       with_bcc: 'Bcc: %{fwd_bcc}'
-      updated_at: 'Updated At'
+      updated_at: 'updated At'
       none: 'NONE'
       assigned_agent: "Assigned Agent"
       ticket_creating_agent: "Ticket Creating Agent"
