@@ -31,7 +31,7 @@ namespace :traffic_switch do
     billed_domains_list = []
     begin
       billed_domains_object = s3.get_object({key: 'haproxy-domains/billed_domains.lst', bucket: bucket_name})
-      billed_domains_list = billed_domains_object.body.string.split('\n').uniq
+      billed_domains_list = billed_domains_object.body.string.split("\n").uniq
     rescue Aws::S3::Errors::ServiceError
       puts 'S3 File - haproxy-domains/billed_domains.lst not found'
     end
