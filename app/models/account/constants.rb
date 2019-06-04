@@ -299,7 +299,8 @@ class Account < ActiveRecord::Base
       update_billing_info: false, allow_billing_info_update: false, tag_central_publish: false, redis_picklist_id: true,
       nested_field_revamp: true, freshvisual_configs: false, freshid_org_v2: false, hide_agent_login: false, addon_based_billing: false,
       kbase_mint: false, text_custom_fields_in_etl: false, recalculate_daypass: false,  email_spoof_check: false,
-      disable_email_spoof_check: false, attachment_redirect_expiry: false, solutions_agent_portal: false, solutions_agent_metrics: false
+      disable_email_spoof_check: false, attachment_redirect_expiry: false, solutions_agent_portal: false, solutions_agent_metrics: false,
+      sandbox_single_branch: false
     }, :merge
   )
 
