@@ -159,6 +159,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/custom_translations/upload", only: [:upload]
     resource :"admin/custom_translations/download", only: [:primary, :secondary]
     resource :"settings/helpdesk", only: [:update]
+    resource :"admin/account/feature", only: [:create, :destroy]
   end
 
   edit_ticket_properties do

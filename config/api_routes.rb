@@ -411,6 +411,13 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    scope module: 'admin' do
+      scope module: 'account' do
+        post 'features/:name', to: 'features#create'
+        delete 'features/:name', to: 'features#destroy'
+      end
+    end
+
     post '/account/export', to: 'admin/api_data_exports#account_export'
 
     resource :accounts, controller: 'admin/api_accounts' do

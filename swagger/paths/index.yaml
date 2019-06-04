@@ -638,3 +638,6 @@
 
 /configs/{id}:
   $ref: ./configs/show.yaml
+
+/feature/{name}:
+  $ref: ./accounts/feature.yaml

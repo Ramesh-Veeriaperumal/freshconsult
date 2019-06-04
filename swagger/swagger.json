@@ -11743,6 +11743,68 @@
           }
         }
       }
+    },
+    "/feature/{name}": {
+      "post": {
+        "tags": [
+          "Account Feature"
+        ],
+        "summary": "Account feature enable",
+        "description": "Enable bitmap & launchparty features",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "description": "feature name to disable",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Account Feature"
+        ],
+        "summary": "Account feature disable",
+        "description": "Disable bitmap & launchparty features",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "description": "feature name to disable",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -15403,6 +15465,25 @@
         }
       }
     },
+    "email_spam_data": {
+      "type": "object",
+      "properties": {
+        "DKIM": {
+          "enum": [
+            true,
+            false,
+            "nil"
+          ]
+        },
+        "SPF": {
+          "enum": [
+            true,
+            false,
+            "nil"
+          ]
+        }
+      }
+    },
     "survey_question": {
       "type": "object",
       "properties": {
@@ -16515,6 +16596,9 @@
             "stats": {
               "$ref": "#/definitions/ticket_stats"
             },
+            "email_spam_data": {
+              "$ref": "#/definitions/email_spam_data"
+            },
             "collaboration": {
               "type": "object",
               "properties": {
@@ -16581,6 +16665,9 @@
             },
             "stats": {
               "$ref": "#/definitions/ticket_stats"
+            },
+            "email_spam_data": {
+              "$ref": "#/definitions/email_spam_data"
             },
             "collaboration": {
               "type": "object",
@@ -22638,6 +22725,18 @@
         "url": {
           "type": "string",
           "description": "Config Information"
+        }
+      }
+    },
+    "account_feature_enable_disable": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Bitmap/Launchparty feature name"
         }
       }
     }
