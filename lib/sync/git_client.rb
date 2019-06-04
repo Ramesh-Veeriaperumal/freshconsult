@@ -130,7 +130,7 @@ module Sync
     def commit_all_changed_files(message, author, email)
       run_git_command do
         execute_command('git add -A .')
-        execute_command("git commit -m \"#{message}\" --author \"#{author} <#{email}>\" ")
+        execute_command("git commit -m \"#{message}\" --author \"#{author} <#{email}>\" ", true)
       end
     end
 
