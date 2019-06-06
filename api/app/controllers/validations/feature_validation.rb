@@ -1,5 +1,5 @@
 class FeatureValidation < ApiValidation
-  include Admin::Account::FeatureConstants
+  include Admin::AccountFeatureConstants
 
   attr_accessor :name
 

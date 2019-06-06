@@ -412,10 +412,8 @@ Helpkit::Application.routes.draw do
     end
 
     scope module: 'admin' do
-      scope module: 'account' do
-        post 'features/:name', to: 'features#create'
-        delete 'features/:name', to: 'features#destroy'
-      end
+      post 'features/:name', to: 'account_features#create'
+      delete 'features/:name', to: 'account_features#destroy'
     end
 
     post '/account/export', to: 'admin/api_data_exports#account_export'
@@ -634,7 +632,7 @@ Helpkit::Application.routes.draw do
         get :check_following
       end
     end
-    
+
     resources :surveys, controller: 'ember/surveys', only: [:index, :show] do
       collection do
         get :satisfaction_ratings, to: 'satisfaction_ratings#index'

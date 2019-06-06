@@ -3,7 +3,7 @@ require 'webmock/minitest'
 require_relative "../../../test_helper.rb"
 Sidekiq::Testing.fake!
 
-class Admin::Account::FeaturesControllerTest < ActionController::TestCase
+class Admin::AccountFeaturesControllerTest < ActionController::TestCase
   # include ApiAccountHelper
 
   def test_feature_enable_for_valid_input
