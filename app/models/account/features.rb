@@ -22,7 +22,7 @@ class Account < ActiveRecord::Base
     :trial_subscription, :installed_app_publish, :es_tickets,
     :twitter_dm_outgoing_attachment, :twitter_mention_outgoing_attachment,
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017, :year_in_review_2018,
-    :new_onboarding, :onboarding_v2, :onboarding_inlinemanual, :skip_portal_cname_chk,
+    :new_onboarding, :onboarding_v2, :onboarding_i18n, :onboarding_inlinemanual, :skip_portal_cname_chk,
     :product_central_publish, :help_widget, :redis_picklist_id,
     :bot_email_channel, :bot_email_central_publish, :description_by_default,
     :bot_chat_history, :new_es_api, :filter_factory, :ticket_fields_central_publish,
@@ -38,8 +38,8 @@ class Account < ActiveRecord::Base
     :simple_outreach, :disable_simple_outreach, :fsm_dashboard, :supervisor_text_field,
     :automation_rule_execution_count, :disable_field_service_management, :disable_mint_analytics,
     :freshid_org_v2, :hide_agent_login, :addon_based_billing, :office365_adaptive_card,
-    :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check,
-    :webhook_blacklist_ip, :recalculate_daypass, :sandbox_single_branch
+    :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,
+    :recalculate_daypass, :sandbox_single_branch, :fb_page_api_improvement, :fuzzy_search
   ].freeze
 
   DB_FEATURES = [

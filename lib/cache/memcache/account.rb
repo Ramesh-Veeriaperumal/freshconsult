@@ -314,8 +314,8 @@ module Cache::Memcache::Account
   end
 
   def ticket_fields_name_type_mapping_cache
-    fetch_from_cache(ticket_fields_name_type_mapping_key) do
-      ticket_fields_from_cache.select { |field| field.default == false }.map { |x| [x.name, x.field_type] }.to_h
+    fetch_from_cache(ticket_fields_name_type_mapping_key(id)) do
+      ticket_fields_with_nested_fields.all.select { |field| field.default == false }.map { |x| [x.name, x.field_type] }.to_h
     end
   end
 
@@ -777,8 +777,8 @@ module Cache::Memcache::Account
       CANNED_RESPONSES_INLINE_IMAGES % { account_id: self.id }
     end
 
-    def ticket_fields_name_type_mapping_key
-      @ticket_fields_name_type_mapping_key ||= format(ACCOUNT_TICKET_FIELDS_NAME_TYPE_MAPPING, account_id: id)
+    def ticket_fields_name_type_mapping_key(account_id)
+      format(ACCOUNT_TICKET_FIELDS_NAME_TYPE_MAPPING, account_id: account_id)
     end
 
     def sources

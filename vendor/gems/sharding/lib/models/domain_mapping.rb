@@ -1,19 +1,24 @@
-
 class DomainMapping < ActiveRecord::Base
 
   self.primary_key = :id
 	not_sharded
     
-    validates_uniqueness_of :domain
+  validates_uniqueness_of :domain
 
-    after_update :clear_cache, :update_route53 , :if => :domain_changed?
-  	after_destroy :clear_cache,:delete_route_53
+  after_update :clear_cache, :update_route53, :if => :domain_changed?
+  after_destroy :clear_cache, :delete_route_53
 
-    after_commit :clear_cache, :create_route_53 , :on => :create
+  after_commit :clear_cache, :create_route_53, :on => :create
 
-	belongs_to :shard, :class_name => 'ShardMapping',:foreign_key => :account_id
+  belongs_to :shard, :class_name => 'ShardMapping', :foreign_key => :account_id
 
-	scope :main_portal, :conditions => ['portal_id IS NULL']
+  scope :main_portal, :conditions => ['portal_id IS NULL']
+
+  def self.domain_names(account_ids)
+    raise 'Too_Many_Accounts_In_Query_Limit' if account_ids.length > 15
+
+    where(portal_id: nil, account_id: account_ids).pluck(:domain)
+  end
 
 	def act_as_directory
   end
