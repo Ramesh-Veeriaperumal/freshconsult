@@ -1,4 +1,4 @@
-module Admin::Account::FeatureConstants
+module Admin::AccountFeatureConstants
   CREATE_FIELDS = DESTROY_FIELDS = %i[name].freeze
   ALLOWED_FEATURE_FOR_PRIVATE_API = %i[cascade_dispatcher cascade_dispatchr].freeze
   VALIDATION_CLASS = 'FeatureValidation'.freeze
