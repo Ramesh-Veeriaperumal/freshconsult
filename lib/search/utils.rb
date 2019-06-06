@@ -131,6 +131,12 @@ class Search::Utils
     portal_company_users:             'portalCompanyUsers'
   }
 
+  FUZZY_TEMPLATE_BY_CONTEXT = {
+    agent_spotlight_solution: 'agentSpotlightSolutionFuzzy',
+    agent_insert_solution: 'agentInsertSolutionFuzzy',
+    agent_spotlight_global: 'agentSpotlightGlobalFuzzy'
+  }.freeze
+
   # _Note_: Parent ID to be used for routing.
   #
   PARENT_BASED_ROUTING  = {
@@ -210,6 +216,8 @@ class Search::Utils
     template_key = template_context(context, exact_match, locale)
     if(Account.current.launched?(:es_v2_splqueries) && Search::Utils::SPECIAL_TEMPLATES.has_key?(template_key))
       Search::Utils::SPECIAL_TEMPLATES[template_key]
+    elsif Account.current.launched?(:fuzzy_search) && Search::Utils::FUZZY_TEMPLATE_BY_CONTEXT.key?(template_key)
+      Search::Utils::FUZZY_TEMPLATE_BY_CONTEXT[template_key]
     else
       Search::Utils::TEMPLATE_BY_CONTEXT[template_key]
     end

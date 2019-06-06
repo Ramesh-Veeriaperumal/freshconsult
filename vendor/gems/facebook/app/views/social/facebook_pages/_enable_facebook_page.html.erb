@@ -33,9 +33,13 @@
                 <label for="enable_page_<%=fb_page[:page_id] %>">
                   <b><%= fb_page[:page_name] %></b>
                 </label>
-    					<% if source %>
-    						<p class="muted"> <%= t('facebook_tab.page_added', {:source => source}) %> </p>
-    					<% end %>
+              <% if source %>
+                <% if limit_reached %>
+                  <p class="muted"> <%= t('facebook_tab.page_limit_reached', {:source => source}) %> </p>
+                <% else %>
+                  <p class="muted"> <%= t('facebook_tab.multi_page_add', {:source => source}) %> </p>
+                <% end %>
+              <% end %>
               </td>
             </tr>
             <% end %>

@@ -10,6 +10,8 @@ module Facebook
       include Facebook::Oauth::Constants
       include Facebook::Exception::Handler
       include Redis::OthersRedis
+      include Facebook::GatewayJwt
+      include Admin::Social::FacebookGatewayHelper
 
       attr_accessor :fb_app_id, :call_back_url, :oauth,:account_url
 
@@ -38,7 +40,13 @@ module Facebook
       # Gets the access token and page token once code is passed
       def auth(code)
         access_token code
-        REALTIME_BLOCK.call(fetch_facebook_pages, @oauth_access_token)
+        gateway_facebook = {
+          gateway_facebook_url: gateway_facebook_url,
+          gateway_facebook_route: gateway_facebook_route,
+          create_payload_option: create_payload_option,
+          authorization_token: authorization_token
+        }
+        REALTIME_BLOCK.call(fetch_facebook_pages, @oauth_access_token, gateway_facebook)
       end
 
       def generate_url(offset)
@@ -74,29 +82,58 @@ module Facebook
         PAGE_TAB_BLOCK.call(tabs_added)
       end
       
-      REALTIME_BLOCK = Proc.new { |pages, oauth_access_token|
+      REALTIME_BLOCK = Proc.new { |pages, oauth_access_token, gateway_facebook|
         graph        = Koala::Facebook::API.new(oauth_access_token)
         profile      = graph.get_object("me")
         fb_pages     = Array.new
+        page_ids     = []
+        pages.each { |page| page_ids.push(page['id'].to_s) }
+        if Account.current.fb_page_api_improvement_enabled?
+          pages_info = {}
+          page_ids.each_slice(50) do |page_ids_sub_list|
+            pages_info.merge!(graph.get_objects(page_ids_sub_list, fields: PAGE_FIELDS))
+          end
+        end
+        fd_linked_pages = Hash.new []
+        begin
+          request_params = { :method => 'post', auth_header: gateway_facebook[:authorization_token] }
+          params = { 
+            domain: gateway_facebook[:gateway_facebook_url], 
+            rest_url: "#{gateway_facebook[:gateway_facebook_route]}/bulk_fetch",
+            body: {
+              facebookPageIds: page_ids
+            }.to_json
+          }
+          response = HttpRequestProxy.new.fetch_using_req_params(params, request_params, gateway_facebook[:create_payload_option])
+          response_text = JSON.parse response[:text]
+          fd_linked_pages.merge!(response_text.try(:[], 'pages') ? response_text['pages'] : {})
+          Rails.logger.info("Gateway Bulk Fetch for Facebook, Account:: #{Account.current.id}, response status::#{response[:status]}")
+        rescue StandardError => e
+          Rails.logger.error("An Exception occured while getting bulk page details from Gateway for account::#{Account.current.id}, \n
+            message::#{e.message}, backtrace::#{e.backtrace.join('\n')}")
+        end
         pages.each do |page|
           page.symbolize_keys!
           page_id = page[:id]
-          
+          limit_reached = false
           #Check if Facebook Page is already assossiated with an account
           unless Account.current.facebook_pages.find_by_page_id(page[:id])
-            page_source = Social::FacebookPageMapping.find_by_facebook_page_id(page[:id])
-            Rails.logger.debug('From RT block')
-            if page_source
-              source_account = page_source.shard.domains.main_portal.first
-              if source_account
-                source_string = "#{source_account.domain}"
-                page_id = nil
-              end
-              Rails.logger.debug "Linked FB page info :: #{Account.current.id} :: #{page[:access_token]} :: #{page[:id]} :: #{source_account}" 
+            total_accounts_count = fd_linked_pages[page_id].length
+            all_domains = DomainMapping.domain_names(fd_linked_pages[page_id])
+            source_string = all_domains.join(', ') unless all_domains.empty?
+            other_pods_count = total_accounts_count - all_domains.length
+            source_string.concat(" +#{other_pods_count} more #{'account'.pluralize(other_pods_count)}") unless other_pods_count.zero? || source_string.empty?
+
+            if total_accounts_count >= FacebookGatewayConfig['max_page_limit']
+              limit_reached = true
+              page_id = nil
             end
           end
-          
-          page_info    = graph.get_object(page[:id], :fields => PAGE_FIELDS)
+          page_info = if Account.current.fb_page_api_improvement_enabled? && pages_info[page[:id].to_s].present?
+            pages_info[page[:id].to_s]
+          else
+            graph.get_object(page[:id], :fields => PAGE_FIELDS)
+          end
           page_info    = page_info.deep_symbolize_keys
           fb_pages << {
             :profile_id      => profile["id"] ,
@@ -112,7 +149,8 @@ module Facebook
             :last_error      => nil,
             :message_since   => (Time.now - 1.week).utc.to_i,
             :enable_page     => true,
-            :realtime_messaging => Account.current.launched?(:fb_msg_realtime) ? 1 : 0
+            :realtime_messaging => Account.current.launched?(:fb_msg_realtime) ? 1 : 0,
+            :limit_reached => limit_reached
           } unless page[:access_token].blank?
         end
         fb_pages
