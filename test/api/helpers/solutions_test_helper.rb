@@ -208,7 +208,8 @@ module SolutionsTestHelper
   end
 
   def summary_pattern(portal_id)
-    Account.current.solution_category_meta.joins(:portal_solution_categories).where('solution_category_meta.is_default = ? AND portal_solution_categories.portal_id = ?', false, portal_id).order('portal_solution_categories.position').preload([:portal_solution_categories, :primary_category, solution_folder_meta: [:primary_folder, :solution_article_meta]]).map { |category| category_summary_pattern(category, portal_id) }
+    portal = Account.current.portals.where(id: portal_id).first
+    portal.solution_category_meta.joins(:portal_solution_categories).where(is_default: false).preload([:portal_solution_categories, :primary_category, solution_folder_meta: [:primary_folder, :solution_article_meta]]).map { |category| category_summary_pattern(category, portal_id) }
   end
 
   def category_summary_pattern(category, portal_id)

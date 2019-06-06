@@ -8,7 +8,8 @@ module Ember
       def summary
         return unless validate_query_params
         return unless validate_delegator(nil, portal_id: params[:portal_id])
-        @items = current_account.solution_category_meta.joins(:portal_solution_categories).where('solution_category_meta.is_default = ? AND portal_solution_categories.portal_id = ?', false, params[:portal_id]).order('portal_solution_categories.position').preload(preload_options)
+        portal = current_account.portals.where(id: params[:portal_id]).first
+        @items = portal.solution_category_meta.where(is_default: false).preload(preload_options)
         response.api_root_key = :categories
       end
 
