@@ -50,6 +50,10 @@ module Channel
         end
         portal_id = @account.main_portal.id
         @bot = Account.current.bots.where(portal_id: portal_id).first || create_bot(portal_id)
+        @account_id = Account.current.id
+        Account.reset_current_account
+        Account.find(@account_id).make_current
+
         @before_all_run = true
       end
 
