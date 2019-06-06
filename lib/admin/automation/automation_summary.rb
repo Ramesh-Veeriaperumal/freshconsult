@@ -110,7 +110,7 @@ module Admin::Automation::AutomationSummary
       array << generate_key(data[:name], data[:evaluate_on] || 'ticket')
       array << generate_operator(data[:operator]) if data[:operator].present?
       if data.key? :value
-        field = custom_ticket_fields.find { |tf| tf.name == data[:name] }
+        field = ticket_fields.find { |tf| tf.name == data[:name] }
         data[:value] = data[:value].is_a?(Array) ? data[:value].map { |val| CGI.escapeHTML(val) } :
                            CGI.escapeHTML(data[:value]) if SUBJECT_DESCRIPTION_FIELDS.include?(data[:name]) ||
             (field.present? && CUSTOM_TEXT_FIELD_TYPES.include?(field.field_type.to_sym))
@@ -179,7 +179,7 @@ module Admin::Automation::AutomationSummary
 
     def create_sentence(field_name, cons_field_name, value = nil, evaluate_on = 'ticket', type = nil)
       name = generate_key(field_name, evaluate_on, ', ', type)
-      field = custom_ticket_fields.find { |tf| tf.name == field_name.to_s }
+      field = ticket_fields.find { |tf| tf.name == field_name.to_s }
       value = value.map { |val| CGI.escapeHTML(val) } if field.present? && CUSTOM_TEXT_FIELD_TYPES.include?(field.field_type.to_sym)
       value1 = generate_value(field_name, value.first || I18n.t('admin.automation_summary.none')) if value.present?
       value2 = generate_value(field_name, value.second ||
@@ -336,6 +336,10 @@ module Admin::Automation::AutomationSummary
       @custom_requester_fields ||= record.account.contact_form.custom_contact_fields.inject({}) do |hash, key|
         hash.merge!(key[:name].to_s => key[:label])
       end
+    end
+
+    def ticket_fields
+      @ticket_fields ||= Account.current.ticket_fields_from_cache
     end
 
     def fetch_tag_names(tag_ids)
