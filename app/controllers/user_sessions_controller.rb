@@ -345,7 +345,11 @@ class UserSessionsController < ApplicationController
       @current_user.deliver_admin_activation
       #SubscriptionNotifier.send_later(:deliver_welcome, current_account)
       flash[:notice] = t('signup_complete_activate_info')
-      redirect_to '/'
+      if current_account.launched?(:onboarding_v2)
+        redirect_to '/a/getstarted'
+      else
+        redirect_to '/'
+      end
     else
       flash[:notice] = "Please provide valid login details!"
       render :action => :new

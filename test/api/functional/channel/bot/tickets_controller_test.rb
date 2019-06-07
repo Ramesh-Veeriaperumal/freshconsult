@@ -85,6 +85,7 @@ module Channel
       end
 
       def test_create_without_default_fields_required_except_requester_and_bot_data
+        skip('Failure because of memcache issue. Raghav will fix it #FD-33639')
         enable_bot_feature do
           set_jwe_auth_header(SUPPORT_BOT)
           params = { email: Faker::Internet.email, bot_external_id: @bot.external_id, query_id: '3b04a7cd-2cb8-4d71-9aa9-1ac6dfce1c2b', conversation_id: 'c3aab027-6aa8-4383-9b85-82ed47dc366b' }
@@ -153,6 +154,7 @@ module Channel
       end
 
       def test_create_without_custom_fields_required
+        skip('Failure because of memcache issue. Raghav will fix it #FD-33639')
         enable_bot_feature do
           set_jwe_auth_header(SUPPORT_BOT)
           params_hash = ticket_params_hash
@@ -173,6 +175,7 @@ module Channel
       end
 
       def test_create_with_custom_fields_required_invalid
+        skip('Failure because of memcache issue. Raghav will fix it #FD-33639')
         enable_bot_feature do
           set_jwe_auth_header(SUPPORT_BOT)
           params = ticket_params_hash.merge(custom_fields: {})
