@@ -9715,6 +9715,38 @@
         }
       }
     },
+    "/admin/ticket_fields": {
+      "post": {
+        "tags": [
+          "ticket fields"
+        ],
+        "description": "Create a ticket field",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ticket_field_request"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ticket_field_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
     "/roles": {
       "get": {
         "tags": [
@@ -15452,6 +15484,53 @@
         },
         "product_id": {
           "type": "integer"
+        }
+      }
+    },
+    "ticket_field": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "label_for_customers": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "position": {
+          "type": "integer"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "custom_text",
+            "custom_paragraph",
+            "custom_checkbox",
+            "custom_number",
+            "custom_dropdown",
+            "custom_date",
+            "custom_date_time",
+            "custom_decimal",
+            "nested_field",
+            "encrypted_text"
+          ]
+        },
+        "required_for_closure": {
+          "type": "boolean"
+        },
+        "required_for_agents": {
+          "type": "boolean"
+        },
+        "required_for_customers": {
+          "type": "boolean"
+        },
+        "customers_can_edit": {
+          "type": "boolean"
+        },
+        "displayed_to_customers": {
+          "type": "boolean"
         }
       }
     },
@@ -21956,6 +22035,184 @@
     },
     "group_response": {
       "$ref": "./definitions/response/groups/private_group_response.yaml"
+    },
+    "ticket_field_request": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ticket_field"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "choices": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "string"
+                  },
+                  "choices": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "choices": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "value": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "nested_ticket_fields": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": "string"
+                  },
+                  "label_in_portal": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ticket_field_response": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ticket_field"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "default": {
+              "type": "boolean"
+            },
+            "choices": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "value": {
+                    "type": "string"
+                  },
+                  "position": {
+                    "type": "integer"
+                  },
+                  "choices": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "value": {
+                          "type": "string"
+                        },
+                        "position": {
+                          "type": "integer"
+                        },
+                        "choices": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "value": {
+                                "type": "string"
+                              },
+                              "position": {
+                                "type": "integer"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "nested_ticket_fields": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "label_in_portal": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "level": {
+                    "type": "integer",
+                    "enum": [
+                      2,
+                      3
+                    ]
+                  },
+                  "ticket_field_id": {
+                    "type": "integer"
+                  },
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/extension_generic"
+        }
+      ]
     },
     "role_response": {
       "$ref": "./definitions/response/roles/private_role_response.yaml"

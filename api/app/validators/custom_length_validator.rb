@@ -16,11 +16,11 @@ class CustomLengthValidator < ApiValidator
     end
 
     def message
-      :too_long
+      options[:custom_message] || :too_long
     end
 
     def custom_error_options
-      { max_count: options[:maximum], current_count: value.length, element_type: :characters, min_count: options[:minimum] || 0 }
+      { max_count: options[:maximum], current_count: value.length, element_type: :characters, min_count: options[:minimum] || 0, elements: attribute.to_s.singularize }
     end
 
     def skip_validation?

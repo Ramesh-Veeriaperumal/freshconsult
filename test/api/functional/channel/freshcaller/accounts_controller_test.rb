@@ -10,11 +10,14 @@ class Channel::Freshcaller::AccountsControllerTest < ActionController::TestCase
   def teardown
     super
     @account.revoke_feature(:freshcaller)
+    CustomRequestStore.store[:private_api_request] = @initial_private_api_request
   end
 
   @initial_setup_run = false
 
   def initial_setup
+    @initial_private_api_request = CustomRequestStore.store[:private_api_request]
+    CustomRequestStore.store[:private_api_request] = true
     @account.reload
     return if @initial_setup_run
     @account.add_feature(:freshcaller)

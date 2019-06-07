@@ -521,6 +521,10 @@
 /groups/{id}:
   $ref: ./groups/crud.yaml
 
+#Ticket Fields Public API
+/admin/ticket_fields:
+  $ref: ./admin/ticket_fields/list_and_create.yaml
+
 #Roles Private API
 /roles:
   $ref: ./roles/index.yaml

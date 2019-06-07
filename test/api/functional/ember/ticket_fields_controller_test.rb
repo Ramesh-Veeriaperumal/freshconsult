@@ -199,7 +199,10 @@ module Ember
     end
 
     def test_index_with_custom_translations_for_type_with_same_user_language
+      Account.current.launch :redis_picklist_id
       type = Account.current.ticket_fields.find_by_field_type(:default_ticket_type)
+      type.picklist_values.build(value: Faker::Lorem.characters(10))
+      type.save
       db_choice = Account.current.ticket_types_from_cache.last
       stub_params_for_custom_translations('fr')
       ct = create_custom_translation(type.id, 'fr', type.label, type.label_in_portal, [[db_choice.picklist_id, db_choice.value]]).translations
@@ -209,14 +212,18 @@ module Ember
       type_field = response.find { |field| field['type'] == 'default_ticket_type' }
       assert_equal type_field['label'], ct['label']
       assert_equal type_field['label_for_customers'], ct['customer_label']
-      choice = type_field['choices'].find { |choices| choices['id'] == db_choice.id }
+      choice = type_field['choices'].find { |x| x['choice_id'] == db_choice.picklist_id }
       assert_equal choice['label'], ct['choices']["choice_#{db_choice.picklist_id}"]
     ensure
+      Account.current.rollback :redis_picklist_id
       unstub_params_for_custom_translations
     end
 
     def test_index_with_custom_translations_for_type_with_different_user_language
+      Account.current.launch :redis_picklist_id
       type = Account.current.ticket_fields.find_by_field_type(:default_ticket_type)
+      type.picklist_values.build(value: Faker::Lorem.characters(10))
+      type.save
       db_choice = Account.current.ticket_types_from_cache.last
       stub_params_for_custom_translations('en')
       ct = create_custom_translation(type.id, 'fr', type.label, type.label_in_portal, [[db_choice.picklist_id, db_choice.value]]).translations
@@ -226,9 +233,10 @@ module Ember
       type_field = response.find { |field| field['type'] == 'default_ticket_type' }
       assert_equal  type_field['label'], type.i18n_label
       assert_equal 'type', type_field['label_for_customers'].downcase
-      choice = type_field['choices'].find { |x| x['id'] == db_choice.id }
+      choice = type_field['choices'].find { |x| x['choice_id'] == db_choice.picklist_id }
       assert_equal choice['label'], db_choice.value
     ensure
+      Account.current.rollback :redis_picklist_id
       unstub_params_for_custom_translations
     end
 
@@ -347,7 +355,6 @@ module Ember
     end
 
     def stub_params_for_custom_translations(language)
-      Helpdesk::PicklistValue.any_instance.stubs(:picklist_id).returns(:id) # once picklist_id migration went live need to remove this stubbing in all places
       Account.any_instance.stubs(:custom_translations_enabled?).returns(true)
       User.any_instance.stubs(:language).returns(language)
     end
@@ -355,7 +362,6 @@ module Ember
     def unstub_params_for_custom_translations
       Account.any_instance.unstub(:custom_translations_enabled?)
       User.any_instance.unstub(:language)
-      Helpdesk::PicklistValue.any_instance.unstub(:picklist_id)
     end
 
     def test_ticket_field_cache_miss_agent_with_account_language

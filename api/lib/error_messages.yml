@@ -67,10 +67,19 @@ api_error_messages:
   no_content_required: "Content should not be sent in the request"
   email_cant_be_updated: "Email cannot be updated"
   invalid_field: "Unexpected/invalid field in request"
+  invalid_choices_field: "Unexpected/invalid field for choices in request."
   inaccessible_field: "Cannot be set, due to insufficient permissions."
   invalid_content_type: "Content-Type header is set to %{content_type}. It should be set to application/json"
   invalid_accept_header: "Accept header is set to %{accept_header}. It should have application/json or */*"
   duplicate_value: "Record already exists."
+
+  duplicate_choices: "Duplicate options present in choices. Please remove duplicates and try again."
+  exceeded_limit: "You've exceeded the maximum number of %{field_type} fields you can create."
+  duplicate_labels_ticket_field: Labels for ticket fields should be unique
+  duplicate_label_nested_fields: "Labels within a nested field should be unique."
+  min_elements: "A minimum of %{min_count} %{elements} are required."
+  count_mismatch: "Labels required for level 2 and 3 items for nested_field type."
+
   email_already_taken: "There are already users present with the emails, %{invalid_emails}"
   "has already been taken": "It should be a unique value"
   "Email has already been taken": "It should be a unique value"
@@ -285,6 +294,7 @@ api_error_messages:
   invalid_data_type: "Expecting '%{expected_type}' but found '%{actual_type}'"
   not_allowed: "Invalid key: %{key}"
   invalid_value: "Value not present: %{value}"
+  invalid_nested_level: "Labels required for level 2 and 3 items for nested_field type."
   field_not_allowed: "'%{field}' not allowed"
   level_field_not_allowed: "'%{field_name}' not allowed in '%{level}'"
   level_field_value_not_allowed: "'%{value}' not allowed in %{field_name}"

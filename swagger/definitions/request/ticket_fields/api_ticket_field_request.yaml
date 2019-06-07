@@ -1,0 +1,35 @@
+type: object
+properties:
+  choices:
+    type: array
+    items:
+      type: object
+      properties:
+        value:
+          type: string
+        choices:
+          type: array
+          items:
+            type: object
+            properties:
+              value:
+                type: string
+              choices:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    value:
+                      type: string
+
+  nested_ticket_fields:
+    type: array
+    items:
+      type: object
+      properties:
+        label:
+          type: string
+        label_in_portal:
+          type: string
+        description:
+          type: string

@@ -144,6 +144,7 @@ class TicketFieldsControllerTest < ActionController::TestCase
                {"value" => "Freshservice"},
                {"value" => "Freshchat"}
                ]
+    CentralPublishWorker::TicketFieldWorker.jobs.clear
     put :update, :jsonData => @default_fields.push({:type => "dropdown",
                                                     :field_type => "custom_dropdown",
                                                     :label => labels[0],
@@ -171,6 +172,7 @@ class TicketFieldsControllerTest < ActionController::TestCase
     assert_equal job[:args][1].slice(*event_params.keys), event_params    
     payload = field.central_publish_payload.to_json
     payload.must_match_json_expression(ticket_field_publish_pattern(field))
+    CentralPublishWorker::TicketFieldWorker.jobs.clear
   end
 
   def test_edit_a_custom_field
@@ -453,7 +455,7 @@ class TicketFieldsControllerTest < ActionController::TestCase
     payload.must_match_json_expression(ticket_field_publish_pattern(custom_field))
   end
   
-  # # Enter Section Fields
+  # Enter Section Fields
 
   def test_create_a_section_with_section_fields
     parent_ticket_field = @account.ticket_fields.find_by_field_type("default_ticket_type")

@@ -1,9 +1,12 @@
 module ErrorConstants
   API_ERROR_CODES = {
     missing_field: %w(missing_field fill_a_mandatory_field),
-    duplicate_value: ['has already been taken', 'already exists in the selected category', 'Email has already been taken', 'email_already_taken', 'already exists in the selected category.'],
-    invalid_field: ['invalid_field'],
+    duplicate_value: ['has already been taken', 'already exists in the selected category', 'Email has already been taken', 'email_already_taken', 'already exists in the selected category.', 'duplicate_choices', 'duplicate_label_nested_field', 'duplicate_labels_ticket_field'],
+    exceeded_limit: ['exceeded_limit'],
+    under_limit: ['min_elements'],
+    invalid_field: ['invalid_field', 'invalid_choices_field'],
     datatype_mismatch: %w(datatype_mismatch per_page_invalid array_datatype_mismatch limit_invalid),
+    count_mismatch: %w[count_mismatch],
     invalid_size: ['invalid_size'],
     incompatible_field: ['incompatible_field'],
     inaccessible_field: ['inaccessible_field'],
@@ -27,7 +30,7 @@ module ErrorConstants
 
   # Reverse mapping, this will result in:
   # {'has already been taken' => :duplicate_value,
-  # 'already exists in the selected category' => :duplicate_value
+  # 'already  exists in the selected category' => :duplicate_value
   # 'can't be blank' => :invalid_value
   # ...}
   API_ERROR_CODES_BY_VALUE = Hash[*API_ERROR_CODES.flat_map { |code, errors| errors.flat_map { |error| [error.to_sym, code] } }].freeze

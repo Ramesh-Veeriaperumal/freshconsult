@@ -66,7 +66,7 @@ class ApiProfileValidationTest < ActionView::TestCase
     errors = agent.errors.sort.to_h
     error_options = agent.error_options.sort.to_h
     assert_equal({ job_title: :too_long, time_zone: :not_included }, errors)
-    assert_equal({ job_title: { min_count: 0, max_count: 255, current_count: 300, element_type: :characters },
+    assert_equal({ job_title: { min_count: 0, max_count: 255, current_count: 300, element_type: :characters, elements: 'job_title' },
                    language: {},
                    time_zone: { list: TIME_ZONE_LIST } },
                    error_options)

@@ -32,7 +32,7 @@ JSON.generate(@items.map do |ticket_field|
             } 
           end
         end.compact,
-        picklist_mapping_ids: section.section_picklist_mappings.map(&:picklist_value_id)
+        picklist_mapping_ids: section.picklist_ids
       }
     end
     response_hash.merge!(sections: sections)

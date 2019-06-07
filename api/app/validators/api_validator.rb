@@ -11,7 +11,7 @@ class ApiValidator < ActiveModel::EachValidator
     @record = record
     attributes.each do |attribute|
       @internal_values = {}
-      @value = record.read_attribute_for_validation(attribute)
+      @value = options[attribute].try(:value) || record.read_attribute_for_validation(attribute)
       @attribute = attribute
       next if skip_validation?
       record.error_options[attribute] ||= {}

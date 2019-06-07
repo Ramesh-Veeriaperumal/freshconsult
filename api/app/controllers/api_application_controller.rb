@@ -75,7 +75,7 @@ class ApiApplicationController < MetalApiController
   # Redefine below method in your controllers to check strong parameters and other validations that do not require a DB call.
   before_filter :validate_params, only: [:create, :update]
 
-  # Manipulating the parameters similar to the attributes that the model understands.
+  # Manipulating the parameters similar to the attributes that the model understands and escape/sanitize(HTML/CSS) in request params.
   before_filter :sanitize_params, only: [:create, :update]
 
   # This is not moved inside create because, controlelrs redefining create needn't call build_object again.

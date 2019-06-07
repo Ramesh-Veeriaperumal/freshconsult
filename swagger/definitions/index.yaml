@@ -215,6 +215,8 @@ fb_post:
   $ref: ./resource/fb_post.yaml
 fb_page:
   $ref: ./resource/fb_page.yaml
+ticket_field:
+  $ref: ./resource/ticket_field.yaml
 ticket_filter:
   $ref: ./resource/ticket_filter.yaml
 tweet_post:
@@ -616,6 +618,16 @@ group_request:
 group_response:
   $ref: ./definitions/response/groups/private_group_response.yaml
 
+# Ticket Fields Public API
+ticket_field_request:
+  allOf:
+    - $ref: '#/definitions/ticket_field'
+    - $ref: ./request/ticket_fields/api_ticket_field_request.yaml
+ticket_field_response:
+  allOf:
+    - $ref: '#/definitions/ticket_field'
+    - $ref: ./response/ticket_fields/api_ticket_field_response.yaml
+    - $ref: '#/definitions/extension_generic'
 #Roles Private API
 role_response:
   $ref: ./definitions/response/roles/private_role_response.yaml

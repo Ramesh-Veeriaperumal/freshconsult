@@ -1,3 +1,4 @@
+# this validates the values in custom fields for ticket being submitted.
 class DefaultFieldValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, _value)
     # return if attribute has already an error.

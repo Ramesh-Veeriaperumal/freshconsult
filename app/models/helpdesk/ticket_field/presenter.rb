@@ -6,33 +6,55 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   acts_as_api
 
-  api_accessible :central_publish do |tf|
+  api_accessible :base do |tf|
     tf.add :id
-    tf.add :account_id
-    tf.add :ticket_form_id, as: :form_id
-    tf.add :name
     tf.add :label
-    tf.add :label_in_portal
     tf.add :description
+    tf.add :position
+    tf.add :default
+    tf.add :required_for_closure
+    tf.add proc { |object| object.utc_format(object.created_at) }, as: :created_at
+    tf.add proc { |object| object.utc_format(object.updated_at) }, as: :updated_at
+  end
+
+  api_accessible :common_field_api, extend: :base do |tf|
+    tf.add proc { |obj| TicketDecorator.display_name(obj.name) }, as: :name
+    tf.add :label_in_portal, as: :label_for_customers
+    tf.add :field_type, as: :type
+    tf.add :required, as: :required_for_agents
+    tf.add :required_in_portal, as: :required_for_customers
+    tf.add :visible_in_portal, as: :displayed_to_customers
+    tf.add :editable_in_portal, as: :customers_can_edit
+  end
+
+  api_accessible :nested_field_api, extend: :common_field_api do |tf|
+    tf.add :nested_ticket_fields, template: :api
+    tf.add proc { |object| object.nested_dropdown_choices_with_display_id }, as: :choices
+  end
+
+  api_accessible :custom_dropdown_field_api, extend: :common_field_api do |tf|
+    tf.add proc { |object| object.custom_dropdown_choices_with_display_id }, as: :choices
+  end
+
+  api_accessible :central_publish, extend: :base do |tf|
+    tf.add :account_id
+    tf.add :name
+    tf.add :ticket_form_id, as: :form_id
+    tf.add :label_in_portal
     tf.add :active
     tf.add :field_type
-    tf.add :position
     tf.add :required
     tf.add :visible_in_portal
     tf.add :editable_in_portal
     tf.add :required_in_portal
-    tf.add :required_for_closure
     tf.add :flexifield_def_entry_id, as: :def_entry_id
     tf.add :field_options
-    tf.add :default
     tf.add :level
     tf.add :import_id
     tf.add :column_name
-    tf.add proc { |t| t.utc_format(t.created_at) }, as: :created_at
-    tf.add proc { |t| t.utc_format(t.updated_at) }, as: :updated_at
+    tf.add proc { |object| object.section_field? }, as: :belongs_to_section
     tf.add proc { |t| t.sections_hash }, as: :sections, if: proc { |t| t.has_sections? || t.section_field? }
-    tf.add proc { |t| t.section_field? }, as: :belongs_to_section
-    tf.add proc { |t| t.nested_ticket_fields.map(&:central_publish_payload) }, as: :nested_ticket_fields, if: proc { |t| t.nested_field? }
+    tf.add proc { |object| object.nested_ticket_fields.map(&:central_publish_payload) }, as: :nested_ticket_fields, if: proc { |obj| obj.nested_field? }
     tf.add proc { |t| t.ticket_field_choices_payload }, as: :choices
     # tf.add :associations
   end
@@ -126,6 +148,35 @@ class Helpdesk::TicketField < ActiveRecord::Base
     end
 
     nested_field_child
+  end
+
+  # nested_choices with picklist_ids
+  def nested_dropdown_choices_with_display_id
+    nested_choices_with_display_id(picklist_values)
+  end
+
+  def nested_choices_with_display_id(picklist_values)
+    picklist_values.collect do |picklist_value|
+      {
+        id: picklist_value.picklist_id,
+        value: picklist_value.value,
+        position: picklist_value.position,
+        choices: nested_choices_with_display_id(picklist_value.sub_picklist_values)
+      }
+    end
+  end
+
+  # custom_dropdown choices with_picklist_ids
+  def custom_dropdown_choices_with_display_id
+    picklist_values.collect { |picklist_value| picklist_hash(picklist_value) }
+  end
+
+  def picklist_hash(picklist_value)
+    {
+      value: picklist_value.value,
+      id: picklist_value.picklist_id,
+      position: picklist_value.position
+    }
   end
 
   def central_payload_type
