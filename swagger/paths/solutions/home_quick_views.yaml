@@ -6,6 +6,12 @@ get:
       in: query
       type: string
       description: Portal ID
+      required: true
+    - name: language
+      in: query
+      type: string
+      description: Language code, Ex:en.(Applicable only if multilingual enabled. If not given, account's primary language will be used) 
+      required: false
   responses:
     200:
       description: Success

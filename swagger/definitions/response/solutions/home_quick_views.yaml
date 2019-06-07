@@ -27,4 +27,10 @@ properties:
           type: string
   unassociated_categories_count:
     type: number
+  outdated:
+    type: number
+    description: Available only for secondary languages.
+  not_translated:
+    type: number
+    description: Available only for secondary languages.
 

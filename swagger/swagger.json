@@ -10667,7 +10667,15 @@
             "name": "portal_id",
             "in": "query",
             "type": "string",
-            "description": "Portal ID"
+            "description": "Portal ID",
+            "required": true
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "type": "string",
+            "description": "Language code, Ex:en.(Applicable only if multilingual enabled. If not given, account's primary language will be used)",
+            "required": false
           }
         ],
         "responses": {
@@ -22388,6 +22396,14 @@
         },
         "unassociated_categories_count": {
           "type": "number"
+        },
+        "outdated": {
+          "type": "number",
+          "description": "Available only for secondary languages."
+        },
+        "not_translated": {
+          "type": "number",
+          "description": "Available only for secondary languages."
         }
       }
     },

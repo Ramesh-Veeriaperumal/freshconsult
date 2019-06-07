@@ -41,6 +41,10 @@ module SolutionConcern
     Language.find_by_code(params[:language] || Account.current.language)
   end
 
+  def secondary_language?
+    Language.for_current_account != current_request_language
+  end
+
   def render_solution_item_errors
     if @item.errors.any?
       render_custom_errors

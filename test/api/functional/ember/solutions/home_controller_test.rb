@@ -189,6 +189,25 @@ module Ember
         end
       end
 
+      def test_quick_views_with_primary_language
+        solution_test_setup
+        create_article(article_params)
+        portal = Account.current.main_portal
+        get :quick_views, controller_params(version: 'private', portal_id: portal.id, language: @account.language)
+        assert_response 200
+        match_json(quick_views_pattern(portal.id, Language.find_by_code(@account.language).id))
+      end
+
+      def test_quick_views_with_secondary_language
+        solution_test_setup
+        language = Language.find_by_code(:es)
+        create_article(article_params)
+        portal = Account.current.main_portal
+        get :quick_views, controller_params(version: 'private', portal_id: portal.id, language: language.code)
+        assert_response 200
+        match_json(quick_views_pattern(portal.id, language.id))
+      end
+
       private
 
         def article_params(options = {})
