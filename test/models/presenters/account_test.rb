@@ -41,4 +41,19 @@ class AccountTest < ActiveSupport::TestCase
     assert_equal 'account_update', job['args'][0]
     assert_equal({ 'added' => [], 'removed' => ["skill_based_round_robin"] }, job['args'][1]['model_changes']['features'])
   end
+
+  def test_create_with_freshid_v2
+    remove_others_redis_key(FRESHID_NEW_ACCOUNT_SIGNUP_ENABLED)
+    set_others_redis_key(FRESHID_V2_NEW_ACCOUNT_SIGNUP_ENABLED, true)
+    CentralPublishWorker::AccountWorker.jobs.clear
+    create_new_account(Faker::Name.first_name, Faker::Internet.email)
+    assert_equal 1, CentralPublishWorker::AccountWorker.jobs.size
+    payload = @account.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_account_post(@account))
+    assoc_payload = @account.associations_to_publish.to_json
+    assoc_payload.must_match_json_expression(central_publish_account_association_for_freshid_v2_pattern(@account))
+  ensure
+    set_others_redis_key(FRESHID_NEW_ACCOUNT_SIGNUP_ENABLED, true)
+    remove_others_redis_key(FRESHID_V2_NEW_ACCOUNT_SIGNUP_ENABLED)
+  end
 end

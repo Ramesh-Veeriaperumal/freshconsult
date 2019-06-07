@@ -511,6 +511,36 @@ class Subscription < ActiveRecord::Base
   def amount_with_tax_safe_access
     self.additional_info[:amount_with_tax].presence || self.amount
   end
+
+  def field_agent_limit
+    self.additional_info.try(:[], :field_agent_limit)
+  end
+
+   def field_agent_limit=(value)
+    self.additional_info ||= {}
+    self.additional_info[:field_agent_limit] = value 
+  end
+
+  def field_agent_limit_with_safe_access
+    self.additional_info.try(:[], :field_agent_limit) || DEFAULT_FIELD_AGENT_COUNT
+  end
+
+  def amount_with_tax_safe_access
+    self.additional_info[:amount_with_tax].presence || self.amount
+  end
+
+  def reset_field_agent_limit
+    return unless self.additional_info.try(:[], :field_agent_limit).present?
+    self.additional_info = self.additional_info.except(:field_agent_limit)
+    save
+  end
+
+  def field_agents_display_count
+    count = account.field_agents_count
+    limit = field_agent_limit || 0
+    return count > limit ? count : limit if count > 0 || limit > 0
+    DEFAULT_FIELD_AGENT_COUNT
+  end
   
   def reset_field_agent_limit
     return if self.additional_info.try(:[], :field_agent_limit).nil?

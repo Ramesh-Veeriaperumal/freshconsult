@@ -113,6 +113,11 @@ class Social::TwitterHandle < ActiveRecord::Base
       raise
     end
   end
+  def changes_except_last_dm?
+    changes = self.previous_changes || {}
+    changes.except!('last_dm_id')
+    changes.present?
+  end
 
   def changes_except_last_dm?
     changes = self.previous_changes || {}

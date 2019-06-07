@@ -2,7 +2,7 @@ module Subscription::Currencies::Constants
 
   BILLING_CURRENCIES = [ "EUR", "INR", "USD", "ZAR", "GBP", "AUD", "BRL"]
   DEFAULT_CURRENCY = "USD"
-
+  CURRENCY_NOT_SUPPORTED = ["BRL"]
   COUNTRY_MAPPING = 	{
     "INDIA" => "INR",
     "SOUTH AFRICA" => "ZAR",
@@ -28,5 +28,8 @@ module Subscription::Currencies::Constants
     "AUD" => "\u0024",
     "BRL" => "R$"
   }
+  SUPPORTED_CURRENCIES = BILLING_CURRENCIES.reject do |currency|
+    CURRENCY_NOT_SUPPORTED.include? currency
+  end
 
 end

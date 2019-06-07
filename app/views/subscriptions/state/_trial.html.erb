@@ -39,15 +39,14 @@
       </span>
       <%= select_tag :currency, fetch_currencies, :id => "switch-currency", :class => "select2" %>
     </div>
-  </div>  
-  <img alt="omni channel experience" class="omni-channel-icon" src="/assets/omni-channel.svg" width="52">
-  <div class="choose-plan-title">
-    <h4 href="#"> 
-      <%= t('omni_channel') %>
-      <input rel="toggle" type="checkbox" id="omni-toggle" name="omni-toggle" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" />
-    </h4>
+  </div> 
+  <div class="features">
+    <%= render :partial => "/subscriptions/features/toggle-box/ocr_toggle", :locals => { :plan => plan }%>
+    <% if current_account.fsm_addon_billing_enabled? %>
+      <span class="vr-line"></span>
+      <%= render :partial => "/subscriptions/features/toggle-box/fsm_toggle", :locals => { :current_account => current_account }%>
+    <% end %>
   </div>
-  <%= content_tag(:h5, t('omni_channel_content'), :class => "lead-note pb15") %>
 <% else %>
   <div class="plan-section-title">
     <div class="pull-right">
@@ -65,16 +64,6 @@
 <script type="text/javascript">
 jQuery(document).ready(function() {
 
-    var toHide = ['plan-garden_jan_19', 'plan-estate_jan_19']
-
-
-    jQuery(document).on('click', ".choose-plan-title .toggle-button", function(i){
-      if(jQuery(i.target).closest(".toggle-button").hasClass("active")) {
-        show_omni_plans();
-      } else {
-        hide_omni_plans();
-      }
-    });
 
   jQuery('#switch-currency').on('change', function(){
     jQuery("#ChangePlan").empty();
@@ -96,46 +85,5 @@ jQuery(document).ready(function() {
     } );
   }
 
-  function show_omni_plans() {
-    jQuery(".plan-feature-list").addClass("showing-omni-features");
-    toHide.each(function(item){
-      jQuery("#"+item).addClass("hide");
-    });
-
-    jQuery(".pricelist").each(function(){
-      if(jQuery(this).attr("id").indexOf("omni") > 0) {
-        jQuery(this).removeClass("hide");
-      }
-    });
-    jQuery(".omni-features").delay(300).removeClass("hide");
-  }
-
-  function hide_omni_plans() {
-    jQuery(".plan-feature-list").removeClass("showing-omni-features");
-    toHide.each(function(item){
-      jQuery("#"+item).removeClass("hide");
-    });
-
-    jQuery(".pricelist").each(function(){
-      if(jQuery(this).attr("id").indexOf("omni") > 0) {
-        jQuery(this).addClass("hide");
-      }
-    });
-    jQuery(".omni-features").addClass("hide");
-  }
-
 });
 </script>
-
-<script type="text/javascript">
-
-</script>
-
-
-<% if plan.omni_plan? || plan.free_omni_channel_plan? %>
-  <script type="text/javascript">
-    jQuery(document).ready(function() {
-      jQuery(".choose-plan-title .toggle-button").trigger("click");
-    });
-  </script>
-<% end %>

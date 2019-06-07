@@ -97,9 +97,9 @@ module SupportHelper
     # Showing portal login link or signout link based on user logged in condition
     if portal['user']
       # Show switch to agent portal if the loggedin user is an agent
-      output << %(<b><a href="#{ portal['helpdesk_url']}">#{ t('header.goto_agent_portal') }</a></b> | ) if portal['user'].agent?
+      output << %(<b><a href="#{ portal['helpdesk_url']}">#{ t('header.goto_agent_portal') }</a></b>) if portal['user'].agent?
       # Showing profile settings path for loggedin user
-      output << %(<b><a href="#{ portal['profile_url'] }">#{ t('header.edit_profile') }</a></b>)
+      output << %(| <b><a href="#{ portal['profile_url'] }">#{ t('header.edit_profile') }</a></b>) unless Account.current.anonymous_account?
       # Showing Signout path for loggedin user
       output << %(- <b><a href="#{ portal['logout_url'] }">#{ t('header.signout') }</a></b>)
     else
@@ -391,7 +391,7 @@ module SupportHelper
     element_class = " #{required ? 'required' : '' } control-label #{field[:name]}-label #{"company_label" if field.field_type == "default_company" && @ticket.new_record?}"
     # adding :for attribute for requester(as email) element => to enable accessability
     if field[:name] == "requester"
-      label_tag "#{object_name}_#{field[:name]}", field[:label_in_portal].html_safe, :class => element_class, :for => "#{object_name}_email"
+      label_tag "#{object_name}_#{field[:name]}", field.translated_label_in_portal.html_safe, :class => element_class, :for => "#{object_name}_email"
     elsif field.respond_to?(:encrypted_field?) && field.encrypted_field?
       label_tag "#{object_name}_#{field[:name]}",
                 content_tag(:span, "", :class => "ficon-encryption-lock encrypted", :title => t('custom_fields.encrypted_text'), 'data-toggle' => 'tooltip', 'data-placement' => 'top' ) +

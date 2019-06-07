@@ -2,7 +2,7 @@ class AddIndexToTicketFieldData < ActiveRecord::Migration
   shard(:all)
 
   def migrate(direction)
-    send(direction)
+    self.send(direction)
   end
 
   def up
@@ -19,3 +19,4 @@ class AddIndexToTicketFieldData < ActiveRecord::Migration
     end
   end
 end
+

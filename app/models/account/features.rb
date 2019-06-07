@@ -39,7 +39,8 @@ class Account < ActiveRecord::Base
     :automation_rule_execution_count, :disable_field_service_management, :disable_mint_analytics,
     :freshid_org_v2, :hide_agent_login, :addon_based_billing, :office365_adaptive_card,
     :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,
-    :recalculate_daypass, :sandbox_single_branch, :fb_page_api_improvement, :fuzzy_search
+    :recalculate_daypass, :sandbox_single_branch, :fb_page_api_improvement, :attachment_redirect_expiry, 
+    :solutions_agent_portal, :solutions_agent_metrics, :fuzzy_search
   ].freeze
 
   DB_FEATURES = [
@@ -430,6 +431,10 @@ class Account < ActiveRecord::Base
       features.delete_if { |feature| PRICING_PLAN_MIGRATION_FEATURES_2019.include?(feature) }
     end
     super
+  end
+
+  def detect_thank_you_note_enabled?
+    detect_thank_you_note_eligible_enabled? && has_feature?(:detect_thank_you_note)
   end
 
   def detect_thank_you_note_enabled?

@@ -117,6 +117,7 @@ helpdesk:
     - sanitize_monkey_patch
     - paperclip_ssrf_patch
     - app_integration
+    - sprockets_monkey_patch
     - facebook_fallback_config
     - hyper_trail
     - default_data_config

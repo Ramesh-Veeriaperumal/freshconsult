@@ -780,4 +780,12 @@ class Helpdesk::TicketField < ActiveRecord::Base
     def custom_field?
       !self.default
     end
+
+    def language
+      Language.find_by_code(I18n.locale)
+    end
+
+    def translation_record
+      @translation_record ||= Account.current.custom_translations_enabled? && Account.current.supported_languages.include?(language.code) ? safe_send("#{language.to_key}_translation") : nil
+    end
 end

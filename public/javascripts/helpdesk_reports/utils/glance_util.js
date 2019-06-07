@@ -272,7 +272,6 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                 } else {
                     _FD.actions.setDefaultOnFail(metric);
                 }
-
             },
             submitActiveMetric: function (active) {
                 var prev_metric = HelpdeskReports.locals.active_metric;
@@ -663,7 +662,6 @@ HelpdeskReports.ReportUtil.Glance = (function () {
 
         },
         setDefaultValues: function () {
-
             var current_params = [];
             //when coming to reports via dashboard widgets
             var widget_queries_present = window.localStorage.getItem('storage:dashboard/reports-query-params');
@@ -681,12 +679,10 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                 if(ticket_type) {
                     HelpdeskReports.CoreUtil.default_available_filter.push("ticket_type");
                 }
-
                 _FD.core.setReportFilters();
             }else{
                 var date = _FD.core.setReportFilters();
                 var active_metric = _FD.constants.default_metric;
-
                 HelpdeskReports.SavedReportUtil.applyLastCachedReport();
             }
             _FD.setActiveMetric(active_metric);
@@ -704,7 +700,7 @@ HelpdeskReports.ReportUtil.Glance = (function () {
             HelpdeskReports.locals.default_params = current_params.slice();
             HelpdeskReports.locals.visited_metrics = [];
             _FD.actions.submitReports();
-
+            
         },
         setActiveMetric: function (metric) {
             HelpdeskReports.locals.active_metric = metric;

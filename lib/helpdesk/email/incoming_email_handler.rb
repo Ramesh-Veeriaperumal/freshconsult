@@ -766,29 +766,41 @@ module Helpdesk
 			end
 
 			def update_spam_data(ticket)
-				spam_data = JSON.parse(params[:spam_info]) if(antispam_enabled?(ticket.account) && !params[:spam_done].nil? && params[:spam_done].to_s.downcase == "true")
-				if(params[:spam_done].nil? or params[:spam_done].to_s.downcase == "false")
+				# check if spam check done @ email service. If not do it here.
+				if(!params[:spam_done].nil? && params[:spam_done].to_s.downcase == "true")
+					spam_data = JSON.parse(params[:spam_info])
+				else
 					spam_data = check_for_spam(params) 
+					# add is_spam attribute if spam check done locally
 					spam_data.merge!({'is_spam' => spam_data['spam']}).with_indifferent_access
 				end
-				if spam_data.present?
-					begin
-						ticket.sds_spam = spam_data['is_spam']
-						ticket.spam_score = spam_data['score']
-						ticket.spam = true if spam_data['is_spam'] == true
-						Rails.logger.info "Spam rules triggered for ticket with message_id #{params[:message_id]}: #{spam_data['rules'].inspect}"
-					rescue => e
-						puts e.message
+				if(spam_data.present?)
+				# check the intersection of 2 arrays(affected rules and spam rules) and ensure the spam rule present
+					if(!spam_data['rules'].nil? && (spam_data['rules'] & custom_bot_attack_rules).size != 0)
+						ticket.skip_notification = true;
+						ticket.spam = true;
+						Rails.logger.info "Skip notification set and ticket marked as spam due to CUSTOM_BOT_ATTACK"
+					end
+
+					if (antispam_enabled?(ticket.account))
+						begin
+							ticket.sds_spam = spam_data['is_spam']
+							ticket.spam_score = spam_data['score']
+							ticket.spam = true if spam_data['is_spam'] == true
+							Rails.logger.info "Spam rules triggered for ticket with message_id #{params[:message_id]}: #{spam_data['rules'].inspect}"
+						rescue => e
+							Rails.logger.info e.message
+						end
 					end
 				end
 				begin
-				  if Account.current.email_spoof_check_feature?
-					  spam_data ||= JSON.parse(params[:spam_info])
-					  ticket.schema_less_ticket.additional_info.merge!(generate_spoof_data_hash(spam_data))
-				  end
+					if Account.current.email_spoof_check_feature?
+						spam_data ||= JSON.parse(params[:spam_info])
+						ticket.schema_less_ticket.additional_info.merge!(generate_spoof_data_hash(spam_data))
+					end
 				rescue Exception => e
-				  Rails.logger.error("Exception wile parsing spam info hash for email spoof data :: #{e.inspect} :: #{e.backtrace}")
-				  NewRelic::Agent.notice_error(e, description: 'error occured while trying to parse spam_info')
+					Rails.logger.error("Exception wile parsing spam info hash for email spoof data :: #{e.inspect} :: #{e.backtrace}")
+					NewRelic::Agent.notice_error(e, description: 'error occured while trying to parse spam_info')
 				end
 				ticket
 			end

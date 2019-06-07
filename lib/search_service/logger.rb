@@ -2,7 +2,7 @@ module SearchService
   class Logger
     attr_accessor :log_uuid, :log_data
 
-    MULTIQUERY = '/multi_query'
+    MULTIQUERY = '/multi_query'.freeze
 
     def initialize(uuid, log_data)
       @log_uuid = uuid || UUIDTools::UUID.timestamp_create.hexdigest

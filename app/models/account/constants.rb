@@ -253,6 +253,7 @@ class Account < ActiveRecord::Base
       force_index_tickets: false, freshfone_call_tracker: false, freshfone_caller_id_masking: false,
       freshfone_new_notifications: false, freshfone_onboarding: false, gamification_perf: false,
       gamification_quest_perf: false, onboarding_v2: false, lambda_exchange: false, automation_revamp: false,
+      automation_rule_execution_count: false,
       list_page_new_cluster: false, meta_read: false, most_viewed_articles: false,
       multifile_attachments: true, new_footer_feedback_box: false, new_leaderboard: false,
       periodic_login_feature: false, restricted_helpdesk: false,
@@ -306,7 +307,7 @@ class Account < ActiveRecord::Base
       ticket_type_filter_in_trends_widget: false,
       freshid_org_v2: false, hide_agent_login: false, addon_based_billing: false, office365_adaptive_card: false,
       text_custom_fields_in_etl: false, email_spoof_check: false, disable_email_spoof_check: false,
-      recalculate_daypass: false, sandbox_single_branch: false
+      recalculate_daypass: false, sandbox_single_branch: false, attachment_redirect_expiry: false, solutions_agent_portal: false, solutions_agent_metrics: false
     }, :merge
   )
 

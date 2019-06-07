@@ -126,6 +126,29 @@ class Helpdesk::Ticket < ActiveRecord::Base
     }
   end
 
+  def source_additional_info_hash
+    source_info = {}
+    source_info[:twitter] = tweet_info_hash if tweet.present?
+    source_info.presence
+  end
+
+  def association_hash
+    render_assoc_hash(association_type)
+  end
+
+  def render_assoc_hash(current_association_type)
+    return nil if current_association_type.blank?
+
+    {
+      id: current_association_type,
+      type: TICKET_ASSOCIATION_TOKEN_BY_KEY[current_association_type]
+    }
+  end
+
+  def requester_twitter_id
+    requester.present? ? requester.twitter_id : nil
+  end
+
   def association_hash
     render_assoc_hash(association_type)
   end

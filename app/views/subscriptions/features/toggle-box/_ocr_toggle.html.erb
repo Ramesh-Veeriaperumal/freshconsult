@@ -1,0 +1,60 @@
+<div id="omni-channel" class="features__wrapper">
+	<img alt="omni channel experience" class="features__icon" src="/assets/omni-channel.svg" width="52">
+	<div class="features__content">
+		<h4>
+			<%= t('omni_channel') %> 
+			<input rel="toggle" type="checkbox" id="omni-toggle" name="omni-toggle" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" />
+		</h4>
+		<%= content_tag(:h5, t('omni_channel_content'), :class => "lead-note") %>
+	</div>
+</div>
+
+<script type="text/javascript">
+jQuery(document).ready(function() {
+
+	var toHide = ['plan-garden_jan_19', 'plan-estate_jan_19'];
+
+    jQuery(document).on('click', "#omni-channel .toggle-button", function(i){
+      if(jQuery(i.target).closest(".toggle-button").hasClass("active")) {
+        show_omni_plans();
+      } else {
+        hide_omni_plans();
+      }
+    });
+
+  function show_omni_plans() {
+    toHide.each(function(item){
+      jQuery("#"+item).addClass("hide");
+    });
+
+    jQuery(".pricelist").each(function(){
+      if(jQuery(this).attr("id").indexOf("omni") > 0) {
+        jQuery(this).removeClass("hide");
+      }
+    });
+    jQuery(".ocr-card").delay(300).removeClass("hide");
+  }
+
+  function hide_omni_plans() {
+    toHide.each(function(item){
+      jQuery("#"+item).removeClass("hide");
+    });
+
+    jQuery(".pricelist").each(function(){
+      if(jQuery(this).attr("id").indexOf("omni") > 0) {
+        jQuery(this).addClass("hide");
+      }
+    });
+    jQuery(".ocr-card").addClass("hide");
+  }
+
+});
+</script>
+
+<% if plan.omni_plan? || plan.free_omni_channel_plan? %>
+  <script type="text/javascript">
+    jQuery(document).ready(function() {
+      jQuery("#omni-channel .toggle-button").trigger("click");
+    });
+  </script>
+<% end %>
