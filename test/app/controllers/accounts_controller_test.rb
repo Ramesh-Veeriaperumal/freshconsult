@@ -186,6 +186,34 @@ class AccountsControllerTest < ActionController::TestCase
     assert parsed_response['success']
   end
 
+  def test_signup_with_reserved_keyword_in_email
+    Freemail.stubs(:free?).returns(true)
+    user_email = "#{Account::RESERVED_DOMAINS.sample}@freshdesk.com"
+    params = account_params_without_domain(user_email)
+    get :new_signup_free, params
+    subdomain = user_email.split('@')[0]
+    full_domain = Regexp.new("#{subdomain}(#{DomainGenerator::DOMAIN_SUGGESTIONS.join('|')}).freshpo.com")
+    response_url = parse_response(@response.body)['url'].split('/')[2]
+    assert_match(full_domain, response_url)
+    assert_response 200
+  ensure
+    Freemail.unstub(:free?)
+  end
+
+  def test_signup_with_reserved_keyword_in_email_domain
+    Freemail.stubs(:free?).returns(false)
+    user_email = "#{Faker::Lorem.word}@#{Account::RESERVED_DOMAINS.sample}.com"
+    params = account_params_without_domain(user_email)
+    get :new_signup_free, params
+    subdomain = user_email.split('@')[1].split('.')[0]
+    full_domain = Regexp.new("#{subdomain}(#{DomainGenerator::DOMAIN_SUGGESTIONS.join('|')}).freshpo.com")
+    response_url = parse_response(@response.body)['url'].split('/')[2]
+    assert_match(full_domain, response_url)
+    assert_response 200
+  ensure
+    Freemail.unstub(:free?)
+  end
+
   def test_edit
     get :edit
     assert_response 200
