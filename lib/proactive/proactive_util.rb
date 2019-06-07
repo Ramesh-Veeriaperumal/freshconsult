@@ -1,5 +1,7 @@
 module Proactive::ProactiveUtil
   include ::Proactive::Constants
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   def make_http_call(route, request_method)
     hrp = HttpRequestProxy.new
@@ -42,5 +44,16 @@ module Proactive::ProactiveUtil
   def generate_jwt_token
     jwt_payload = { account_id: current_account.id, sub: 'helpkit', domain: current_account.full_domain }
     @auth = "Token #{sign_payload(jwt_payload)}"
+  end
+
+  def outreach_import_limit
+    custom_limit = get_others_redis_hash_value(CUSTOM_EMAIL_OUTREACH_LIMIT, Account.current.id)
+    limit = if custom_limit
+              custom_limit.to_i
+            elsif current_account.subscription.trial?
+              SIMPLE_OUTREACH_TRIAL_LIMIT
+            else
+              SIMPLE_OUTREACH_IMPORT_LIMIT
+            end    
   end
 end

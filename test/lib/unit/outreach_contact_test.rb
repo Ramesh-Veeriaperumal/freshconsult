@@ -57,6 +57,21 @@ class OutreachContactTest < ActionView::TestCase
   def test_outreach_contact_import_trial_limit
     stub_limit_and_run('SIMPLE_OUTREACH_TRIAL_LIMIT', 1)
   end
+  
+  def test_outreach_contact_import_for_custom_limit
+    setup_stubs
+    file_path = 'test/api/fixtures/files/contacts_import.csv'
+    output, status = Open3.capture2('wc', '-l', file_path)
+    row_count = output.strip.split(' ')[0].to_i
+    Subscription.any_instance.stubs(:trial?).returns(false)
+    key = CUSTOM_EMAIL_OUTREACH_LIMIT
+    $redis_others.perform_redis_op('hset', key, 1, 1)
+    contact_ids = Import::Customers::OutreachContact.new(@args).import
+    @import_entry.reload
+    $redis_others.perform_redis_op('del', key)
+    check_assert(contact_ids.size, 1)
+    clear_stubs
+  end
 
   private
 

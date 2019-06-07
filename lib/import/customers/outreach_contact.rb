@@ -1,5 +1,6 @@
 class Import::Customers::OutreachContact < Import::Customers::Contact
   include Proactive::Constants
+  include Proactive::ProactiveUtil
 
   def initialize(params = {})
     super params
@@ -60,7 +61,7 @@ class Import::Customers::OutreachContact < Import::Customers::Contact
   end
 
   def max_limit
-    @max_limit ||= current_account.subscription.trial? ? SIMPLE_OUTREACH_TRIAL_LIMIT : SIMPLE_OUTREACH_IMPORT_LIMIT
+    @max_limit ||= outreach_import_limit
   end
 
   def mailer_params(corrupted)
