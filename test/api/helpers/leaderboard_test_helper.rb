@@ -178,7 +178,7 @@ module LeaderboardTestHelper
     def leaderboard_group_agents_pattern(group_agents_score)
       [
         {
-          'name' => 'mvp', 'id' => 1, 'rank_holders' => group_agents_score.reverse.collect.with_index do |s, i|
+          'name' => 'mvp', 'id' => 1, 'rank_holders' => group_agents_score.reverse.first(50).collect.with_index do |s, i|
             { 'score' => s[1].to_f, 'id' => 'mvp_' + (i + 1).to_s, 'rank' => i + 1, 'user_id' => s[0], 'avatar' => nil }
           end
         },
