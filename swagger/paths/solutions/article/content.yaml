@@ -3,10 +3,10 @@ get:
   summary: List article content for an article
   parameters:
     - $ref: '#/parameters/id'
-    - name: language_id
+    - name: language
       in: query
-      type: integer
-      format: int64
+      type: string
+      description: Language code
       required: true
   responses:
     200:

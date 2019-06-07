@@ -6,6 +6,11 @@ get:
       in: query
       type: integer
       description: Articles to be fetched based on portal_id
+    - name: language
+      in: query
+      type: string
+      description: Language code
+      required: true
     - name: folder_id
       in: path
       required: true

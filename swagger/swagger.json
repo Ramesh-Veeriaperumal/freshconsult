@@ -11081,6 +11081,13 @@
             "description": "Articles to be fetched based on portal_id"
           },
           {
+            "name": "language",
+            "in": "query",
+            "type": "string",
+            "description": "Language code",
+            "required": true
+          },
+          {
             "name": "folder_id",
             "in": "path",
             "required": true,
@@ -11253,10 +11260,10 @@
             "$ref": "#/parameters/id"
           },
           {
-            "name": "language_id",
+            "name": "language",
             "in": "query",
-            "type": "integer",
-            "format": "int64",
+            "type": "string",
+            "description": "Language code",
             "required": true
           }
         ],
@@ -11620,10 +11627,10 @@
             "required": true
           },
           {
-            "name": "language_id",
+            "name": "language",
             "in": "query",
-            "type": "integer",
-            "format": "int64"
+            "type": "string",
+            "description": "Language code"
           },
           {
             "name": "author",
