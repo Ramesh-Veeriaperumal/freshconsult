@@ -635,6 +635,8 @@
   $ref: ./solutions/drafts/attachment_delete.yaml
 /solutions/articles/filter:
   $ref: ./solutions/article/filter.yaml
+/solutions/articles/untranslated_articles/{language}:
+  $ref: ./solutions/article/untranslated_articles.yaml
 
 /solutions/categories/{id}/reorder:
   $ref: ./solutions/category/reorder.yaml

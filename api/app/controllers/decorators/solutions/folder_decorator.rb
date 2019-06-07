@@ -50,6 +50,15 @@ class Solutions::FolderDecorator < ApiDecorator
     }
   end
 
+  def untranslated_filter_hash
+    folder = record.safe_send("#{@lang_code}_available?") ? record.safe_send("#{@lang_code}_folder") : record.primary_folder
+    {
+      id: record.id,
+      name: folder.name,
+      language: folder.language_code
+    }
+  end
+
   private
 
     def current_language_articles

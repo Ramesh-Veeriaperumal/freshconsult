@@ -1,0 +1,3 @@
+JSON.generate(@items.map do |item|
+  Solutions::ArticleDecorator.new(item, draft: item.draft, language_code: @lang_code).untranslated_filter_hash
+end)

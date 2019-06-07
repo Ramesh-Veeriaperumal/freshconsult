@@ -11,12 +11,14 @@ module ApiSolutions
     validates :category_name, custom_absence: { message: :translation_available_already }, if: -> { create_or_update? && secondary_language? && category_exists? }
     validates :folder_name, required: { message: :translation_not_available }, if: -> { create_or_update? && secondary_language? && !folder_exists? }
     validates :category_name, required: { message: :translation_not_available }, if: -> { create_or_update? && secondary_language? && !category_exists? }
-    validate :create_tag_permission, if: -> { !filter? && @tags }
-    validate :attachments_exist, if: -> { !filter? && @attachments_list.present? }
-    validate :validate_provider, if: -> { !filter? && @cloud_files.present? }
+    validate :create_tag_permission, if: -> { !filters? && @tags }
+    validate :attachments_exist, if: -> { !filters? && @attachments_list.present? }
+    validate :validate_provider, if: -> { !filters? && @cloud_files.present? }
     validate :valid_folder?, if: -> { @folder_id }
     validate :validate_ratings, on: :reset_ratings
-    validate :validate_portal_id, on: :filter
+    validate :validate_portal_id, if: :filters?
+
+    FILTER_ACTIONS = %i[filter untranslated_articles].freeze
 
     def initialize(record, params = {})
       @item = record
@@ -64,8 +66,8 @@ module ApiSolutions
       @language_id != Account.current.language_object.id
     end
 
-    def filter?
-      validation_context == :filter
+    def filters?
+      FILTER_ACTIONS.include?(validation_context)
     end
 
     def create_tag_permission

@@ -1305,7 +1305,7 @@ module Ember
       def test_article_filters_without_mandatory_fields
         get :filter, controller_params(version: 'private', :author=>"1")
         assert_response 400
-        match_json([bad_request_error_pattern('portal_id', "Mandatory attribute missing", code: :missing_field)])
+        match_json([bad_request_error_pattern('portal_id', 'Mandatory attribute missing', code: :missing_field)])
       end
 
       def test_filter_without_view_solutions_privilege
@@ -1741,6 +1741,58 @@ module Ember
         Account.any_instance.unstub(:all_portal_language_objects)
       end
 
+      def test_untranslated_articles_without_portal_id
+        get :untranslated_articles, controller_params(version: 'private', language: 'es')
+        assert_response 400
+        match_json([bad_request_error_pattern('portal_id', 'Mandatory attribute missing', code: :missing_field)])
+      end
+
+      def test_untranslated_articles_with_invalid_portal_id
+        get :untranslated_articles, controller_params(version: 'private', language: 'es', portal_id: 'test')
+        assert_response 400
+        match_json([bad_request_error_pattern(:portal_id, :invalid_portal_id)])
+      end
+
+      def test_untranslated_articles_without_multilingual_feature
+        allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
+        Account.any_instance.stubs(:features).returns(allowed_features)
+        get :untranslated_articles, controller_params(version: 'private', language: 'es', portal_id: @account.main_portal.id)
+        match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
+        assert_response 404
+      ensure
+        Account.any_instance.unstub(:features)
+      end
+
+      def test_untranslated_articles_with_invalid_language
+        get :untranslated_articles, controller_params(version: 'private', language: 'test', portal_id: @account.main_portal.id)
+        assert_response 404
+        match_json(request_error_pattern(:language_not_allowed, code: 'test', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
+      end
+
+      def test_untranslated_articles_with_invalid_param
+        get :untranslated_articles, controller_params(version: 'private', language: 'es', portal_id: @account.main_portal.id, test: 'test')
+        assert_response 400
+        match_json([bad_request_error_pattern(:test, :invalid_field)])
+      end
+
+      def test_untranslated_articles_without_privilege
+        User.any_instance.stubs(:privilege?).with(:view_solutions).returns(false)
+        get :untranslated_articles, controller_params(version: 'private', language: 'es', portal_id: @account.main_portal.id)
+        assert_response 403
+        match_json(request_error_pattern(:access_denied))
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_untranslated_articles
+        @portal_id = @account.main_portal.id
+        @language = Language.find_by_code('es')
+        get :untranslated_articles, controller_params(version: 'private', language: @language.code, portal_id: @portal_id)
+        assert_response 200
+        untranslated_articles = untranslated_language_articles.first(30)
+        pattern = untranslated_articles.map { |article| untranslated_article_pattern(article, @language.code) }
+        match_json(pattern)
+      end
+
       private
 
         def get_valid_not_supported_language
@@ -1804,6 +1856,11 @@ module Ember
           @draft_body.description = '<b>aaa</b>'
           @draft_body.account = @account
           @draft_body.save
+        end
+
+        def untranslated_language_articles
+          translated_ids = @account.solution_articles.portal_articles(@portal_id, @language.id).pluck(:parent_id)
+          Solution::Article.portal_articles(@portal_id, @account.language_object.id).where('parent_id NOT IN (?)', (translated_ids.presence || ''))
         end
     end
   end

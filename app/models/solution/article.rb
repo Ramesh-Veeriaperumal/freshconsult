@@ -118,8 +118,8 @@ class Solution::Article < ActiveRecord::Base
     select('distinct language_id').limit(2).length > 1
   end
 
-  def self.portal_articles(portal_id, language_id)
-    joins({solution_folder_meta: [solution_category_meta: :portal_solution_categories]}).where('portal_solution_categories.portal_id = ? AND solution_articles.language_id = ?', portal_id, language_id)
+  def self.portal_articles(portal_id, language_ids)
+    joins({ solution_folder_meta: [solution_category_meta: :portal_solution_categories] }).where('portal_solution_categories.portal_id = ? AND solution_articles.language_id IN (?)', portal_id, language_ids)
   end
 
   def type_name
