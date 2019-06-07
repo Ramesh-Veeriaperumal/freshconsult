@@ -25,7 +25,7 @@ class Account < ActiveRecord::Base
   end
 
   def is_simple_sso?
-    self.sso_options.key? :sso_type and self.sso_options[:sso_type] == SsoUtil::SSO_TYPES[:simple]
+    self.sso_options.key? :sso_type and self.sso_options[:sso_type] == SsoUtil::SSO_TYPES[:simple_sso]
   end
 
   def enable_agent_oauth2_sso!(logout_redirect_url)
