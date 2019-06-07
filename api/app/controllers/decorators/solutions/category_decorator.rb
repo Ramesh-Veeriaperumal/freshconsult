@@ -1,9 +1,15 @@
 class Solutions::CategoryDecorator < ApiDecorator
-  delegate :id, :name, :description, :parent, :primary_category, :solution_folder_meta, :portal_solution_categories, :parent_id, to: :record
+  delegate :name, :description, :language_code, to: :record
+  delegate :id, :portal_solution_categories, :solution_folder_meta, to: :parent
 
   def initialize(record, options = {})
     super(record)
     @portal_id = options[:portal_id]
+    @lang_code = options[:language_code]
+  end
+
+  def parent
+    @parent ||= record.parent
   end
 
   def portal_ids_visible?
@@ -12,26 +18,26 @@ class Solutions::CategoryDecorator < ApiDecorator
 
   def visible_in_portals
     if private_api?
-      record.parent.portal_solution_categories.map { |portal_solution_category| { portal_id: portal_solution_category.portal_id, position: portal_solution_category.position } }
+      portal_solution_categories.map { |portal_solution_category| { portal_id: portal_solution_category.portal_id, position: portal_solution_category.position } }
     else
-      record.parent.portal_solution_categories.map(&:portal_id)
+      portal_solution_categories.map(&:portal_id)
     end
   end
 
   def summary_hash
     {
       id: id,
-      name: primary_category.name,
-      language_id: primary_category.language_id,
+      name: name,
+      language: language_code,
       folders_count: folders_count,
-      folders: solution_folder_meta[0..2].map { |folder_meta| Solutions::FolderDecorator.new(folder_meta).summary_hash },
-      position: portal_solution_categories.select { |portal_solution_category| portal_solution_category.portal_id == @portal_id.to_i }.first.position
+      position: portal_solution_categories.select { |portal_solution_category| portal_solution_category.portal_id == @portal_id.to_i }.first.position,
+      folders: current_language_folders.first(::SolutionConstants::SUMMARY_LIMIT).map { |folder| Solutions::FolderDecorator.new(folder, language_code: @lang_code).summary_hash }
     }
   end
 
   def unassociated_category_hash
     {
-      id: parent_id,
+      id: id,
       name: name,
       description: description
     }
@@ -39,7 +45,11 @@ class Solutions::CategoryDecorator < ApiDecorator
 
   private
 
+    def current_language_folders
+      solution_folder_meta.map { |folder_meta| folder_meta.safe_send("#{@lang_code}_folder") }.compact
+    end
+
     def folders_count
-      solution_folder_meta.size
+      current_language_folders.length
     end
 end

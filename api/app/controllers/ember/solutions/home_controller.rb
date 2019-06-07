@@ -6,10 +6,11 @@ module Ember
       include SolutionConcern
 
       def summary
+        return unless validate_language
         return unless validate_query_params
         return unless validate_delegator(nil, portal_id: params[:portal_id])
         portal = current_account.portals.where(id: params[:portal_id]).first
-        @items = portal.solution_category_meta.where(is_default: false).preload(preload_options)
+        @items = portal.solution_categories.joins(:solution_category_meta).where('solution_category_meta.is_default = ? AND language_id = ?', false, @lang_id).preload(preload_options)
         response.api_root_key = :categories
       end
 
@@ -75,7 +76,7 @@ module Ember
         end
 
         def preload_options
-          [:portal_solution_categories, :primary_category, solution_folder_meta: [:primary_folder, :solution_article_meta]]
+          [solution_category_meta: [:portal_solution_categories, solution_folder_meta: [:"#{@lang_code}_folder", { solution_article_meta: :"#{@lang_code}_article" }]]]
         end
     end
   end

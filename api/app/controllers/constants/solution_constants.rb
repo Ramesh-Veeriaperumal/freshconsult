@@ -58,4 +58,5 @@ module SolutionConstants
   ARTICLE_CONTENT_FIELDS = %w[language_id].freeze
   REORDER_FIELDS = %w[position portal_id].freeze
   KBASE_EMAIL_SOURCE = "kbase_email".freeze
+  SUMMARY_LIMIT = 3
 end

@@ -207,30 +207,50 @@ module SolutionsTestHelper
     { description: "API V1 Description" }.to_json
   end
 
-  def summary_pattern(portal_id)
+  def summary_preload_options(language_code)
+    [solution_category_meta: [:portal_solution_categories, solution_folder_meta: [:"#{language_code}_folder", { solution_article_meta: :"#{language_code}_article" }]]]
+  end
+
+  def summary_pattern(portal_id, language)
     portal = Account.current.portals.where(id: portal_id).first
-    portal.solution_category_meta.joins(:portal_solution_categories).where(is_default: false).preload([:portal_solution_categories, :primary_category, solution_folder_meta: [:primary_folder, :solution_article_meta]]).map { |category| category_summary_pattern(category, portal_id) }
+    portal.solution_categories.joins(:solution_category_meta).where('solution_category_meta.is_default = ? AND language_id = ?', false, language.id).preload(summary_preload_options(language.code)).map { |category| category_summary_pattern(category, portal_id, language.code) }
   end
 
-  def category_summary_pattern(category, portal_id)
+  def category_summary_pattern(category, portal_id, language_code)
     {
-      id: category.id,
+      id: category.parent_id,
       name: category.name,
-      language_id: category.primary_category.language_id,
-      folders_count: category.solution_folder_meta.count,
-      folders: category.solution_folder_meta[0..2].map { |folder| folder_summary_pattern(folder) },
-      position: category.portal_solution_categories.select { |portal_solution_category| portal_solution_category.portal_id == portal_id }.first.position
+      language: category.language_code,
+      folders_count: folders_count(category, language_code),
+      position: category.parent.portal_solution_categories.select { |portal_solution_category| portal_solution_category.portal_id == portal_id }.first.position,
+      folders: current_language_folders(category, language_code).first(::SolutionConstants::SUMMARY_LIMIT).map { |folder| folder_summary_pattern(folder, language_code) }
     }
   end
 
-  def folder_summary_pattern(folder)
+  def current_language_folders(category, language_code)
+    category.solution_folder_meta.map { |folder_meta| folder_meta.safe_send("#{language_code}_folder") }.compact
+  end
+
+  def folders_count(category, language_code)
+    current_language_folders(category, language_code).length
+  end
+
+  def folder_summary_pattern(folder, language_code)
     {
-      id: folder.id,
+      id: folder.parent_id,
       name: folder.name,
-      language_id: folder.primary_folder.language_id,
-      articles_count: folder.solution_article_meta.count,
-      position: folder.position
+      language: folder.language_code,
+      articles_count: articles_count(folder, language_code),
+      position: folder.parent.position
     }
+  end
+
+  def current_language_articles(folder, language_code)
+    folder.solution_article_meta.map { |article_meta| article_meta.safe_send("#{language_code}_article") }.compact
+  end
+
+  def articles_count(folder, language_code)
+    current_language_articles(folder, language_code).length
   end
 
   def visible_in_portals_payload(category)

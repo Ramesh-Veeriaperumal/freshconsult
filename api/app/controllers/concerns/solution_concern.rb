@@ -19,6 +19,7 @@ module SolutionConcern
       end
       return false if invalid_language
     end
+    @lang_code = current_request_language.to_key
     @lang_id = current_request_language.id
   end
 

@@ -10628,6 +10628,13 @@
             "type": "string",
             "description": "Portal ID",
             "required": true
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "type": "string",
+            "description": "Language Code",
+            "required": false
           }
         ],
         "responses": {
@@ -22300,8 +22307,8 @@
               "name": {
                 "type": "string"
               },
-              "language_id": {
-                "type": "integer"
+              "language": {
+                "type": "string"
               },
               "folders_count": {
                 "type": "integer"
@@ -22321,8 +22328,8 @@
                     "name": {
                       "type": "string"
                     },
-                    "language_id": {
-                      "type": "integer"
+                    "language": {
+                      "type": "string"
                     },
                     "articles_count": {
                       "type": "integer"
