@@ -10949,6 +10949,40 @@
         }
       }
     },
+    "/solutions/folders/{language}": {
+      "get": {
+        "tags": [
+          "Solution Folder"
+        ],
+        "summary": "List all folders",
+        "parameters": [
+          {
+            "name": "language",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/solution_folder"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/solutions/folders/{id}": {
       "get": {
         "tags": [
@@ -11381,7 +11415,7 @@
         }
       }
     },
-    "/solutions/drafts": {
+    "/solutions/drafts/{language}": {
       "get": {
         "tags": [
           "Solution draft"
@@ -11393,6 +11427,13 @@
             "in": "query",
             "type": "string",
             "description": "Portal ID",
+            "required": true
+          },
+          {
+            "name": "language",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
             "required": true
           }
         ],

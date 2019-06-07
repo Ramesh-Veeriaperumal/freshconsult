@@ -330,12 +330,13 @@ Helpkit::Application.routes.draw do
             get :quick_views
           end
         end
-        resources :folders, controller: 'ember/solutions/folders', only: [:index, :show, :create, :update, :destroy] do
+        resources :folders, controller: 'ember/solutions/folders', only: [:show, :create, :update, :destroy] do
           member do
             resources :articles, controller: 'ember/solutions/articles', only: [:create]
             put :reorder
           end
           collection do
+            get :index, path: '(:language)', constraints: { language: Regexp.union(Language.all_codes) }
             put :bulk_update
           end
         end
@@ -361,7 +362,11 @@ Helpkit::Application.routes.draw do
           end
         end
 
-        resources :drafts, controller: 'ember/solutions/drafts', only: [:index]
+        resources :drafts, controller: 'ember/solutions/drafts' do
+          collection do
+            get :index, path: '(:language)', constraints: { language: Regexp.union(Language.all_codes) }
+          end
+        end
         resource :draft, path: 'articles/:article_id/draft', controller: 'ember/solutions/drafts', only: [:destroy, :update] do
           put :autosave
           delete :delete_attachment, path: ':attachment_type/:attachment_id'
