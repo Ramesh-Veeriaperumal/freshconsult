@@ -9,6 +9,8 @@ module Widget
       super
       @widget = create_widget
       @request.env['HTTP_X_WIDGET_ID'] = @widget.id
+      @client_id = UUIDTools::UUID.timestamp_create.hexdigest
+      @request.env['HTTP_X_CLIENT_ID'] = @client_id
       current_product = @widget.product_id
       @current_portal = current_product ? @account.portals.find_by_product_id(current_product) : current_account.main_portal_from_cache
     end

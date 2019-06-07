@@ -7,6 +7,8 @@ module AttachmentConstants
 
   STANDALONE_ATTACHMENT_TYPE = 'UserDraft'.freeze
 
+  WIDGET_ATTACHMENT_TYPE = 'WidgetDraft'.freeze
+
   INLINE_ATTACHABLE_TYPES = [
     [:ticket,              'Tickets Image',            1],
     [:forum,               'Forums Image',             2],
@@ -30,7 +32,8 @@ module AttachmentConstants
     'company'          => 'Company',
     'user_draft'       => 'UserDraft',
     'account'          => 'Account',
-    'portal'           => 'Portal'
+    'portal'           => 'Portal',
+    'widget_draft'     => 'WidgetDraft'
   }.freeze
 
   ATTACHMENT_DESCRIPTION = {

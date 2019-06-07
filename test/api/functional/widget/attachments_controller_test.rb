@@ -16,6 +16,8 @@ module Widget
     def before_all
       @widget = create_widget
       @request.env['HTTP_X_WIDGET_ID'] = @widget.id
+      @client_id = UUIDTools::UUID.timestamp_create.hexdigest
+      @request.env['HTTP_X_CLIENT_ID'] = @client_id
       @request.env['CONTENT_TYPE'] = 'multipart/form-data'
       @account.launch :help_widget
     end
@@ -32,7 +34,10 @@ module Widget
       assert_response 200
       latest_attachment = Helpdesk::Attachment.last
       match_json(id: latest_attachment.id)
-      assert_equal latest_attachment.attachable_type, 'UserDraft'
+      assert_equal latest_attachment.attachable_id, @widget.id
+      assert_equal latest_attachment.attachable_type, 'WidgetDraft'
+      assert_equal latest_attachment.description, @client_id.to_s
+      assert_equal latest_attachment.attachable, @widget
     end
 
     def test_create_attachment_with_contact_form_disabled

@@ -18,6 +18,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
   MAX_DIMENSIONS = 16000000
 
+  DRAFT_ATTACHMENTS = ['UserDraft', 'WidgetDraft'].freeze
+
   NON_THUMBNAIL_RESOURCES = ["Helpdesk::Ticket", "Helpdesk::Note", "Account",
     "Helpdesk::ArchiveTicket", "Helpdesk::ArchiveNote"]
 
@@ -384,7 +386,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def draft_attachment?
-    self.attachable_type == "UserDraft"
+    DRAFT_ATTACHMENTS.include?(attachable_type)
   end
 
   def mark_draft_attachment_for_cleanup

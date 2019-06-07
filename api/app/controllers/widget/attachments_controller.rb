@@ -6,7 +6,6 @@ module Widget
 
     skip_before_filter :check_privilege
     before_filter :check_feature
-    before_filter :validate_widget
     before_filter :set_widget_portal_as_current
 
     decorate_views
@@ -19,11 +18,12 @@ module Widget
     private
 
       def sanitize_params
-        params[cname][:attachable_type] = AttachmentConstants::ATTACHABLE_TYPES['user_draft']
-        params[cname][:attachable_id] = current_account.id
-        params[cname][:description] = 'fresh_widget'
-        ParamsHelper.assign_and_clean_params(AttachmentConstants::PARAMS_MAPPINGS, params[cname])
-        ParamsHelper.clean_params(AttachmentConstants::PARAMS_TO_REMOVE, params[cname])
+        validate_widget
+        params[cname][:attachable_type] = AttachmentConstants::ATTACHABLE_TYPES['widget_draft']
+        params[cname][:attachable_id] = @widget_id
+        params[cname][:description] = @client_id
+        ParamsHelper.assign_and_clean_params(AttachmentConstants::PARAMS_MAPPINGS, params)
+        ParamsHelper.clean_params(AttachmentConstants::PARAMS_TO_REMOVE, params)
       end
 
       def validate_params
