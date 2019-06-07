@@ -11416,13 +11416,20 @@
         }
       }
     },
-    "/solutions/articles/bulk_update": {
+    "/solutions/articles/bulk_update/{language}": {
       "put": {
         "tags": [
           "Solution Article"
         ],
         "summary": "Bulk update articles",
         "parameters": [
+          {
+            "name": "language",
+            "in": "path",
+            "type": "integer",
+            "description": "Specifies language code of the article (Multilingual feature must be enabled for the account.if value is not given, primary language will be considered)",
+            "required": true
+          },
           {
             "name": "data",
             "in": "body",
@@ -11820,7 +11827,7 @@
     "/solutions/articles/{id}/reorder": {
       "put": {
         "tags": [
-          "Solution article"
+          "Solution Article"
         ],
         "summary": "Reorder a article",
         "parameters": [

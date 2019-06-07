@@ -348,7 +348,7 @@ Helpkit::Application.routes.draw do
         resources :articles, controller: 'ember/solutions/articles', only: [:index, :show, :destroy] do
           collection do
             get :filter, path: 'filter/(:language)', constraints: { language: Regexp.union(Language.all_codes) }
-            put :bulk_update
+            put :bulk_update, path: 'bulk_update/(:language)', constraints: { language: Regexp.union(Language.all_codes) }
           end
 
           member do

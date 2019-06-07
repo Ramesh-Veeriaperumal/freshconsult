@@ -623,7 +623,7 @@
   $ref: ./solutions/article/votes.yaml
 /solutions/folders/bulk_update:
   $ref: ./solutions/folder/bulk_update.yaml
-/solutions/articles/bulk_update:
+/solutions/articles/bulk_update/{language}:
   $ref: ./solutions/article/bulk_update.yaml
 /solutions/drafts/{language}:
   $ref: ./solutions/drafts/index.yaml

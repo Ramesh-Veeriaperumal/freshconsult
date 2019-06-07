@@ -406,7 +406,7 @@ module Ember
         paragraph = Faker::Lorem.paragraph
         tags = Faker::Lorem.words(3).uniq
         tags = tags.map do |tag|
-          tag = "#{tag}#{Time.now.to_i}"
+          tag = "#{tag}_solutions_#{Time.now.to_i}"
           assert_equal @account.tags.map(&:name).include?(tag), false
           tag
         end
@@ -969,6 +969,58 @@ module Ember
         assert_response 202
       ensure
         Solution::ArticleMeta.any_instance.unstub(:save!)
+      end
+
+      def test_bulk_update_author_with_language_param
+        folder = @account.solution_folder_meta.where(is_default: false).first
+        populate_articles(folder)
+        articles = folder.solution_article_meta.pluck(:id)
+        agent_id = add_test_agent.id
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+        User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
+        put :bulk_update, construct_params({ version: 'private', language: @account.language }, ids: articles, properties: { agent_id: agent_id })
+        assert_response 204
+        assert folder.reload.solution_article_meta.all? { |meta| meta.solution_articles.where(language_id: @account.language_object.id).first.user_id == agent_id }
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_bulk_update_author_for_secondary_language
+        article_meta = get_article_meta_with_translation
+        articles = [article_meta.id]
+        agent_id = add_test_agent.id
+        article_translations = article_meta.children.pluck(:language_id)
+        language = Language.find((article_translations - [Language.find_by_code(@account.language).code]).sample)
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+        User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
+        put :bulk_update, construct_params({ version: 'private', language: language.code }, ids: articles, properties: { agent_id: agent_id })
+        assert_response 204
+        article_meta.children.where(language_id: language.id).first.user_id = agent_id
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_bulk_update_author_for_non_supported_language
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+        User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
+        non_supported_language = get_valid_not_supported_language
+        put :bulk_update, construct_params({ version: 'private', language: non_supported_language }, ids: [1], properties: { agent_id: 1 })
+        assert_response 404
+        match_json(request_error_pattern(:language_not_allowed, code: non_supported_language, list: (@account.supported_languages + [@account.language]).sort.join(', ')))
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_bulk_update_with_language_without_multilingual_feature
+        Account.any_instance.stubs(:multilingual?).returns(false)
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+        User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
+        put :bulk_update, construct_params({ version: 'private', language: get_valid_not_supported_language }, ids: [1], properties: { agent_id: 1 })
+        assert_response 404
+        match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
+      ensure
+        Account.any_instance.unstub(:multilingual?)
+        User.any_instance.unstub(:privilege?)
       end
 
       def test_update_article_unpublish_with_incorrect_credentials
@@ -1690,6 +1742,15 @@ module Ember
       end
 
       private
+
+        def get_valid_not_supported_language
+          languages = @account.supported_languages + [@account.language]
+          Language.all.map(&:code).find { |language| !languages.include?(language) }
+        end
+
+        def get_article_meta_with_translation
+          @account.solution_category_meta.where(is_default: false).collect(&:solution_article_meta).flatten.map { |x| x if x.children.count > 1 }.flatten.reject(&:blank?).first
+        end
 
         def populate_articles(folder_meta)
           return if folder_meta.article_count > 10
