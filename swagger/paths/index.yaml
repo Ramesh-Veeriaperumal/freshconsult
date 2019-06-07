@@ -521,6 +521,10 @@
 /groups/{id}:
   $ref: ./groups/crud.yaml
 
+#Ticket Fields Public API
+/admin/ticket_fields:
+  $ref: ./admin/ticket_fields/list_and_create.yaml
+
 #Roles Private API
 /roles:
   $ref: ./roles/index.yaml
@@ -603,6 +607,8 @@
   $ref: ./solutions/category/crud.yaml
 /solutions/categories/{category_id}/folders:
   $ref: ./solutions/folder/create_index.yaml
+/solutions/folders/{language}:
+  $ref: ./solutions/folder/list.yaml
 /solutions/folders/{id}:
   $ref: ./solutions/folder/read_update_delete.yaml
 /solutions/folders/{folder_id}/articles:
@@ -617,9 +623,9 @@
   $ref: ./solutions/article/votes.yaml
 /solutions/folders/bulk_update:
   $ref: ./solutions/folder/bulk_update.yaml
-/solutions/articles/bulk_update:
+/solutions/articles/bulk_update/{language}:
   $ref: ./solutions/article/bulk_update.yaml
-/solutions/drafts:
+/solutions/drafts/{language}:
   $ref: ./solutions/drafts/index.yaml
 /solutions/articles/{article_id}/draft/autosave:
   $ref: ./solutions/drafts/autosave.yaml

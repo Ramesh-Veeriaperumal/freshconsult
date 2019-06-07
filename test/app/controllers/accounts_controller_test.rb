@@ -38,10 +38,12 @@ class AccountsControllerTest < ActionController::TestCase
     account_name = Faker::Lorem.word
     domain_name = Faker::Lorem.word
     user_email = Faker::Internet.email
+    Account.stubs(:current).returns(Account.first)
     get :new_signup_free, callback: '', user: { name: Faker::Name.name, email: user_email, time_zone: 'Chennai', language: 'en' }, account: { account_name: account_name, account_domain: domain_name, locale: I18n.default_locale, time_zone: 'Chennai', user_name: 'Support', user_password: 'test1234', user_password_confirmation: 'test1234', user_email: user_email, user_helpdesk_agent: true, new_plan_test: true }, format: 'json'
     assert_response 200
   ensure
     unstub_signup_calls
+    Account.unstub(:current)
   end
 
   def test_signup_with_session_params
@@ -61,10 +63,12 @@ class AccountsControllerTest < ActionController::TestCase
     account_name = Faker::Lorem.word
     domain_name = Faker::Lorem.word
     user_email = Faker::Internet.email
+    Account.stubs(:current).returns(Account.first)
     get :new_signup_free, callback: '', user: { name: Faker::Name.name, email: user_email, time_zone: 'Chennai', language: 'en' }, account: { account_name: account_name, account_domain: domain_name, locale: I18n.default_locale, time_zone: 'Chennai', user_name: 'Support', user_password: 'test1234', user_password_confirmation: 'test1234', user_email: user_email, user_helpdesk_agent: true, new_plan_test: true }, format: 'html'
     assert_response 200
   ensure
     unstub_signup_calls
+    Account.unstub(:current)
   end
 
   def test_new_signup_with_nmobile_format
@@ -72,10 +76,12 @@ class AccountsControllerTest < ActionController::TestCase
     account_name = Faker::Lorem.word
     domain_name = Faker::Lorem.word
     user_email = Faker::Internet.email
+    Account.stubs(:current).returns(Account.first)
     get :new_signup_free, callback: '', user: { name: Faker::Name.name, email: user_email, time_zone: 'Chennai', language: 'en' }, account: { account_name: account_name, account_domain: domain_name, locale: I18n.default_locale, time_zone: 'Chennai', user_name: 'Support', user_password: 'test1234', user_password_confirmation: 'test1234', user_email: user_email, user_helpdesk_agent: true, new_plan_test: true }, format: 'nmobile'
     assert_response 200
   ensure
     unstub_signup_calls
+    Account.unstub(:current)
   end
 
   def test_email_signup

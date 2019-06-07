@@ -24,7 +24,7 @@ class Admin::Dispatcher::WorkerTest < ActionView::TestCase
   def setup
     create_test_account if Account.first.nil?
     Account.stubs(:current).returns(Account.first)
-    @account = Account.current
+    @account = Account.first
   end
 
   def teardown

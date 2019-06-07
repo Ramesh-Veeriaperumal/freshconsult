@@ -7,10 +7,10 @@ get:
       type: string
       description: Portal ID
       required: true
-    - name: language_id
+    - name: language
       in: query
-      type: integer
-      format: int64
+      type: string
+      description: Language code
     - name: author
       in: query
       type: string

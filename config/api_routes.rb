@@ -307,6 +307,10 @@ Helpkit::Application.routes.draw do
 
     resources :email_notifications, controller: 'admin/api_email_notifications', only: [:show, :update]
 
+    namespace :admin do
+      resources :ticket_fields, only: [:create]
+    end
+
     resources :help_widgets, controller: 'help_widgets' do
       collection do
         get :freshmarketer_info
@@ -330,20 +334,21 @@ Helpkit::Application.routes.draw do
             get :quick_views
           end
         end
-        resources :folders, controller: 'ember/solutions/folders', only: [:index, :show, :create, :update, :destroy] do
+        resources :folders, controller: 'ember/solutions/folders', only: [:show, :create, :update, :destroy] do
           member do
             resources :articles, controller: 'ember/solutions/articles', only: [:create]
             put :reorder
           end
           collection do
+            get :index, path: '(:language)', constraints: { language: Regexp.union(Language.all_codes) }
             put :bulk_update
           end
         end
 
         resources :articles, controller: 'ember/solutions/articles', only: [:index, :show, :destroy] do
           collection do
-            get :filter
-            put :bulk_update
+            get :filter, path: 'filter/(:language)', constraints: { language: Regexp.union(Language.all_codes) }
+            put :bulk_update, path: 'bulk_update/(:language)', constraints: { language: Regexp.union(Language.all_codes) }
           end
 
           member do
@@ -361,7 +366,11 @@ Helpkit::Application.routes.draw do
           end
         end
 
-        resources :drafts, controller: 'ember/solutions/drafts', only: [:index]
+        resources :drafts, controller: 'ember/solutions/drafts' do
+          collection do
+            get :index, path: '(:language)', constraints: { language: Regexp.union(Language.all_codes) }
+          end
+        end
         resource :draft, path: 'articles/:article_id/draft', controller: 'ember/solutions/drafts', only: [:destroy, :update] do
           put :autosave
           delete :delete_attachment, path: ':attachment_type/:attachment_id'
@@ -808,6 +817,7 @@ Helpkit::Application.routes.draw do
         get 'filters/:filter_id', to: 'channel/v2/ticket_misc#index'
       end
     end
+    post 'tickets/bulk_archive', to: 'channel/v2/tickets/bulk_actions#bulk_archive'
     get '/account', to: 'channel/v2/accounts#show'
     resources :ticket_filters, controller: 'channel/v2/ticket_filters', only: [:index, :show]
     resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :show, :index]

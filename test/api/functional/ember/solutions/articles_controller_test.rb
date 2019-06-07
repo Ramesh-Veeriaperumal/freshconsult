@@ -33,7 +33,7 @@ module Ember
         $redis_others.perform_redis_op('set', 'PHONE_NUMBER_SPAM_REGEX', '(1|I)..?8(1|I)8..?85(0|O)..?78(0|O)6|(1|I)..?877..?345..?3847|(1|I)..?877..?37(0|O)..?3(1|I)89|(1|I)..?8(0|O)(0|O)..?79(0|O)..?9(1|I)86|(1|I)..?8(0|O)(0|O)..?436..?(0|O)259|(1|I)..?8(0|O)(0|O)..?969..?(1|I)649|(1|I)..?844..?922..?7448|(1|I)..?8(0|O)(0|O)..?75(0|O)..?6584|(1|I)..?8(0|O)(0|O)..?6(0|O)4..?(1|I)88(0|O)|(1|I)..?877..?242..?364(1|I)|(1|I)..?844..?782..?8(0|O)96|(1|I)..?844..?895..?(0|O)4(1|I)(0|O)|(1|I)..?844..?2(0|O)4..?9294|(1|I)..?8(0|O)(0|O)..?2(1|I)3..?2(1|I)7(1|I)|(1|I)..?855..?58(0|O)..?(1|I)8(0|O)8|(1|I)..?877..?424..?6647|(1|I)..?877..?37(0|O)..?3(1|I)89|(1|I)..?844..?83(0|O)..?8555|(1|I)..?8(0|O)(0|O)..?6(1|I)(1|I)..?5(0|O)(0|O)7|(1|I)..?8(0|O)(0|O)..?584..?46(1|I)(1|I)|(1|I)..?844..?389..?5696|(1|I)..?844..?483..?(0|O)332|(1|I)..?844..?78(0|O)..?675(1|I)|(1|I)..?8(0|O)(0|O)..?596..?(1|I)(0|O)65|(1|I)..?888..?573..?5222|(1|I)..?855..?4(0|O)9..?(1|I)555|(1|I)..?844..?436..?(1|I)893|(1|I)..?8(0|O)(0|O)..?89(1|I)..?4(0|O)(0|O)8|(1|I)..?855..?662..?4436')
         $redis_others.perform_redis_op('set', 'CONTENT_SPAM_CHAR_REGEX', 'ℴ|ℕ|ℓ|ℳ|ℱ|ℋ|ℝ|ⅈ|ℯ|ℂ|○|ℬ|ℂ|ℙ|ℹ|ℒ|ⅉ|ℐ')
         additional = @account.account_additional_settings
-        additional.supported_languages = ['es', 'ru-RU']
+        additional.supported_languages = ['es', 'ru-RU'] # dont remove it.
         additional.save
         @account.features.enable_multilingual.create
         subscription = @account.subscription
@@ -116,6 +116,7 @@ module Ember
         @category.parent_id = @@category_meta.id
         @category.account = @account
         @category.save
+        @category_with_lang = @category
 
         @folder = Solution::Folder.new
         @folder.name = "es folder #{Time.now}"
@@ -124,6 +125,7 @@ module Ember
         @folder.parent_id = @folder_meta.id
         @folder.language_id = Language.find_by_code('es').id
         @folder.save
+        @folder_with_lang = @folder
 
         @article_with_lang = Solution::Article.new
         @article_with_lang.title = 'es article'
@@ -134,6 +136,7 @@ module Ember
         @article_with_lang.account_id = @account.id
         @article_with_lang.user_id = @account.agents.first.id
         @article_with_lang.save
+        @article_with_lang = @article_with_lang
       end
 
       def wrap_cname(params)
@@ -169,20 +172,20 @@ module Ember
         article_ids = @account.solution_articles.limit(10).collect(&:parent_id)
         get :index, controller_params(version: 'private')
         assert_response 400
-        match_json([bad_request_error_pattern('language_id', :missing_field)])
+        match_json([bad_request_error_pattern('language', :missing_field)])
       end
 
       def test_index_with_invalid_ids
         valid_article_id = @account.solution_articles.last.parent_id
         invalid_ids = [valid_article_id + 10, valid_article_id + 20]
-        get :index, controller_params(version: 'private', ids: invalid_ids.join(','), language_id: 6)
+        get :index, controller_params(version: 'private', ids: invalid_ids.join(','), language: 'en')
         assert_response 404
       end
 
       def test_index_with_valid_ids
         article_ids = []
         article_ids = @account.solution_articles.where(language_id: 6).limit(10).collect(&:parent_id)
-        get :index, controller_params(version: 'private', ids: article_ids.join(','), language_id: 6)
+        get :index, controller_params(version: 'private', ids: article_ids.join(','), language: 'en')
         articles = @account.solution_articles.where(parent_id: article_ids, language_id: 6).first(10)
         assert_response 200
         pattern = articles.map { |article| private_api_solution_article_pattern(article) }
@@ -192,7 +195,7 @@ module Ember
       def test_index_with_valid_ids_array
         article_ids = []
         article_ids = @account.solution_articles.where(language_id: 6).limit(10).collect(&:parent_id)
-        get :index, controller_params(version: 'private', ids: article_ids, language_id: 6)
+        get :index, controller_params(version: 'private', ids: article_ids, language: 'en')
         articles = @account.solution_articles.where(parent_id: article_ids, language_id: 6).first(10)
         assert_response 200
         pattern = articles.map { |article| private_api_solution_article_pattern(article) }
@@ -203,7 +206,7 @@ module Ember
         article_ids = []
         article_ids = @account.solution_articles.where(language_id: 8).map(&:parent_id)
         Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code('es')])
-        get :index, controller_params(version: 'private', ids: article_ids, language_id: 8)
+        get :index, controller_params(version: 'private', ids: article_ids, language: 'es')
         articles = @account.solution_articles.where(parent_id: article_ids, language_id: 8).first(10)
         assert_response 200
         pattern = articles.map { |article| private_api_solution_article_pattern(article) }
@@ -214,7 +217,7 @@ module Ember
       def test_index_with_additional_params
         article_ids = []
         article_ids = @account.solution_articles.where(language_id: 6).limit(10).collect(&:parent_id)
-        get :index, controller_params(version: 'private', ids: article_ids.join(','), language_id: 6, test: 2)
+        get :index, controller_params(version: 'private', ids: article_ids.join(','), language: 'en', test: 2)
         articles = @account.solution_articles.where(parent_id: article_ids, language_id: 6).first(10)
         assert_response 400
         match_json([bad_request_error_pattern('test', :invalid_field)])
@@ -223,15 +226,15 @@ module Ember
       def test_index_with_invalid_language_id
         article_ids = []
         article_ids = @account.solution_articles.limit(10).collect(&:parent_id)
-        get :index, controller_params(version: 'private', ids: article_ids.join(','), language_id: 1000)
+        get :index, controller_params(version: 'private', ids: article_ids.join(','), language: '1000')
         assert_response 400
-        match_json([bad_request_error_pattern('language_id', :not_included, list: @account.all_portal_language_objects.map(&:id))])
+        match_json([bad_request_error_pattern('language', :not_included, list: @account.all_portal_language_objects.map(&:code))])
       end
 
       def test_index_with_valid_ids_and_user_id
         article_ids = []
         article_ids = @account.solution_articles.where(language_id: 6).limit(10).collect(&:parent_id)
-        get :index, controller_params(version: 'private', ids: article_ids.join(','), user_id: @agent.id, language_id: 6)
+        get :index, controller_params(version: 'private', ids: article_ids.join(','), user_id: @agent.id, language: 'en')
         articles = @account.solution_articles.where(parent_id: article_ids, language_id: 6).first(10)
         assert_response 200
         pattern = articles.map { |article| private_api_solution_article_pattern(article, {}, true, @agent) }
@@ -240,7 +243,7 @@ module Ember
 
       def test_index_with_both_draft_and_article
         draft = @account.solution_drafts.last
-        get :index, controller_params(version: 'private', ids: draft.article.parent_id, language_id: 6)
+        get :index, controller_params(version: 'private', ids: draft.article.parent_id, language: 'en')
         response_body = JSON.parse(response.body).last
         assert_response 200
         response_body.must_match_json_expression private_api_solution_article_pattern(draft.article)
@@ -248,13 +251,13 @@ module Ember
 
       def test_article_content_with_invalid_id
         article = @account.solution_articles.where(language_id: 6).last
-        get :article_content, controller_params(version: 'private', id: article.parent_id + 20, language_id: 6)
+        get :article_content, controller_params(version: 'private', id: article.parent_id + 20, language: 'en')
         assert_response 404
       end
 
       def test_article_content
         article = @account.solution_articles.where(language_id: 6).last
-        get :article_content, controller_params(version: 'private', id: article.parent_id, language_id: 6)
+        get :article_content, controller_params(version: 'private', id: article.parent_id, language: 'en')
         assert_response 200
         match_json(article_content_pattern(article))
       end
@@ -262,7 +265,7 @@ module Ember
       def test_article_content_with_different_language
         Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code('es')])
         article = @account.solution_articles.where(language_id: 8).last
-        get :article_content, controller_params(version: 'private', id: article.parent_id, language_id: 8)
+        get :article_content, controller_params(version: 'private', id: article.parent_id, language: 'es')
         assert_response 200
         match_json(article_content_pattern(article))
         Account.any_instance.unstub(:all_portal_language_objects)
@@ -273,26 +276,26 @@ module Ember
         Account.current.reload
         get :article_content, controller_params(version: 'private', id: article.parent_id)
         assert_response 400
-        match_json([bad_request_error_pattern('language_id', :missing_field)])
+        match_json([bad_request_error_pattern('language', :missing_field)])
       end
 
       def test_article_content_with_additional_params
         article = @account.solution_articles.where(language_id: 6).last
-        get :article_content, controller_params(version: 'private', id: article.parent_id, language_id: 6, test: 2)
+        get :article_content, controller_params(version: 'private', id: article.parent_id, language: 'en', test: 2)
         assert_response 400
         match_json([bad_request_error_pattern('test', :invalid_field)])
       end
 
       def test_article_content_with_invalid_language_id
         article = @account.solution_articles.where(language_id: 6).last
-        get :article_content, controller_params(version: 'private', id: article.parent_id, language_id: 1000)
-        assert_response 400
-        match_json([bad_request_error_pattern('language_id', :not_included, list: @account.all_portal_language_objects.map(&:id))])
+        get :article_content, controller_params(version: 'private', id: article.parent_id, language: '1000')
+        assert_response 404
+        match_json(request_error_pattern(:language_not_allowed, code: '1000', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
       end
 
       def test_article_content_with_both_draft_and_article
         draft = @account.solution_drafts.last
-        get :article_content, controller_params(version: 'private', id: draft.article.parent_id, language_id: 6)
+        get :article_content, controller_params(version: 'private', id: draft.article.parent_id, language: 'en')
         assert_response 200
         match_json(article_content_pattern(draft.article))
       end
@@ -403,7 +406,7 @@ module Ember
         paragraph = Faker::Lorem.paragraph
         tags = Faker::Lorem.words(3).uniq
         tags = tags.map do |tag|
-          tag = "#{tag}#{Time.now.to_i}"
+          tag = "#{tag}_solutions_#{Time.now.to_i}"
           assert_equal @account.tags.map(&:name).include?(tag), false
           tag
         end
@@ -968,6 +971,58 @@ module Ember
         Solution::ArticleMeta.any_instance.unstub(:save!)
       end
 
+      def test_bulk_update_author_with_language_param
+        folder = @account.solution_folder_meta.where(is_default: false).first
+        populate_articles(folder)
+        articles = folder.solution_article_meta.pluck(:id)
+        agent_id = add_test_agent.id
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+        User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
+        put :bulk_update, construct_params({ version: 'private', language: @account.language }, ids: articles, properties: { agent_id: agent_id })
+        assert_response 204
+        assert folder.reload.solution_article_meta.all? { |meta| meta.solution_articles.where(language_id: @account.language_object.id).first.user_id == agent_id }
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_bulk_update_author_for_secondary_language
+        article_meta = get_article_meta_with_translation
+        articles = [article_meta.id]
+        agent_id = add_test_agent.id
+        article_translations = article_meta.children.pluck(:language_id)
+        language = Language.find((article_translations - [Language.find_by_code(@account.language).code]).sample)
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+        User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
+        put :bulk_update, construct_params({ version: 'private', language: language.code }, ids: articles, properties: { agent_id: agent_id })
+        assert_response 204
+        article_meta.children.where(language_id: language.id).first.user_id = agent_id
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_bulk_update_author_for_non_supported_language
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+        User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
+        non_supported_language = get_valid_not_supported_language
+        put :bulk_update, construct_params({ version: 'private', language: non_supported_language }, ids: [1], properties: { agent_id: 1 })
+        assert_response 404
+        match_json(request_error_pattern(:language_not_allowed, code: non_supported_language, list: (@account.supported_languages + [@account.language]).sort.join(', ')))
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_bulk_update_with_language_without_multilingual_feature
+        Account.any_instance.stubs(:multilingual?).returns(false)
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+        User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
+        put :bulk_update, construct_params({ version: 'private', language: get_valid_not_supported_language }, ids: [1], properties: { agent_id: 1 })
+        assert_response 404
+        match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
+      ensure
+        Account.any_instance.unstub(:multilingual?)
+        User.any_instance.unstub(:privilege?)
+      end
+
       def test_update_article_unpublish_with_incorrect_credentials
         @controller.stubs(:api_current_user).raises(ActiveSupport::MessageVerifier::InvalidSignature)
         put :update, construct_params(version: 'private', id: 1, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
@@ -1132,7 +1187,7 @@ module Ember
       end
 
       def test_reset_ratings_with_supported_language
-        languages = @account.supported_languages << 'primary'
+        languages = @account.supported_languages + ['primary']
         language = @account.supported_languages.first
         article_meta = create_article(article_params(lang_codes: languages))
         article = article_meta.safe_send("#{language}_article")
@@ -1219,7 +1274,7 @@ module Ember
       end
 
       def test_votes_with_supported_language
-        languages = @account.supported_languages << 'primary'
+        languages = @account.supported_languages + ['primary']
         language = @account.supported_languages.first
         article_meta = create_article(article_params(lang_codes: languages))
         article = article_meta.safe_send("#{language}_article")
@@ -1280,11 +1335,17 @@ module Ember
       def test_article_filters
         article_ids = []
         article_ids = @account.solution_articles.where(language_id: 6).collect(&:parent_id)
-        get :filter, controller_params(version: 'private', :portal_id=>@portal_id, language_id: 6)
+        get :filter, controller_params(version: 'private', portal_id: @portal_id, language: 'en')
         articles = @account.solution_articles.where(parent_id: article_ids, language_id: 6).first(10)
         assert_response 200
         pattern = articles.map { |article| private_api_solution_article_pattern(article, {action: :filter}, true, nil, article.draft) }
         match_json(pattern)
+      end
+
+      def test_article_filters_with_invalid_language
+        get :filter, controller_params(version: 'private', portal_id: @portal_id, language: 'sample')
+        assert_response 404
+        match_json(request_error_pattern(:language_not_allowed, code: 'sample', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
       end
 
       def test_article_filters_all_attributes
@@ -1550,7 +1611,146 @@ module Ember
         User.any_instance.unstub(:privilege?)
       end
 
+      def test_article_filters_with_secondary_language_nodata
+        Account.any_instance.stubs(:supported_languages).returns(['et'])
+        Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code('et')])
+        get :filter, controller_params(version: 'private', portal_id: @portal_id, language: 'et')
+        assert_response 200
+        match_json([])
+        Account.any_instance.unstub(:supported_languages)
+        Account.any_instance.unstub(:all_portal_language_objects)
+      end
+
+      def test_article_filters_with_secondary_language
+        languages = @account.supported_languages + ['primary']
+        language = @account.supported_languages.first
+        articles = @account.solution_articles.where(language_id: Language.find_by_code(language).id)
+        if articles.blank?
+          article_meta = create_article(article_params(lang_codes: languages))
+          articles = [article_meta.safe_send("#{language}_article")]
+        end
+        Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code(language)])
+        get :filter, controller_params(version: 'private', portal_id: @portal_id, language: language)
+        assert_response 200
+        pattern = articles.map { |article| private_api_solution_article_pattern(article, { action: :filter }, true, nil, article.draft) }
+        match_json(pattern)
+        Account.any_instance.unstub(:all_portal_language_objects)
+      end
+
+      def test_article_filters_all_attributes_with_secondary_language
+        languages = @account.supported_languages + ['primary']
+        language = @account.supported_languages.first
+        author_id = @account.agents.first.id
+        article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id, lang_codes: languages)
+        article = article_meta.safe_send("#{language}_article")
+        tag = Faker::Lorem.characters(7)
+        create_tag_use(@account, taggable_type: "Solution::Article", taggable_id: article.id, name: tag, allow_skip: true)
+        Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code(language)])
+        get :filter, controller_params({ version: 'private', portal_id: "#{@portal_id}", language: language, status: "2", 
+              author: "#{author_id}", category: ["#{@@category_meta.id}"], folder: ["#{@@folder_meta.id}"], 
+              created_at: { start: "20190101", end: "21190101" }, last_modified: { start: "20190101", end: "21190101" }, tags: [tag] }, false)
+        article.reload
+        assert_response 200
+        pattern = private_api_solution_article_pattern(article, { action: :filter }, true, nil, article.draft)
+        match_json([pattern])
+        Account.any_instance.unstub(:all_portal_language_objects)
+      end
+
+      def test_article_filters_with_diff_sec_lang
+        author_id = add_test_agent.id
+        languages = @account.supported_languages + ['primary']
+        language = @account.supported_languages.first
+        article_meta = create_article({user_id: author_id, folder_meta_id: @@folder_meta.id, lang_codes: languages})
+        Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code('ru-RU')])
+        get :filter, controller_params({ version: 'private', portal_id: "#{@portal_id}", language: 'ru-RU', author: "#{author_id}" }, false)
+        assert_response 200
+        match_json([])
+        Account.any_instance.unstub(:all_portal_language_objects)
+      end
+
+      def test_article_filters_by_category_folder_with_sec_lang
+        languages = @account.supported_languages + ['primary']
+        language  = @account.supported_languages.first
+        author_id = add_test_agent.id
+        article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id, lang_codes: languages)
+        article = article_meta.safe_send("#{language}_article")
+        Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code(language)])
+        get :filter, controller_params({ version: 'private', portal_id: "#{@portal_id}", language: language, category: ["#{@@category_meta.id}"], folder: ["#{@@folder_meta.id}"], author: "#{author_id}"}, false)
+        article.reload
+        assert_response 200
+        pattern = private_api_solution_article_pattern(article, { action: :filter }, true, nil, article.draft)
+        match_json([pattern])
+        Account.any_instance.unstub(:all_portal_language_objects)
+      end
+
+      def test_article_filters_by_category_folder_mismatched_with_sec_lang
+        languages = @account.supported_languages + ['primary']
+        language  = @account.supported_languages.first
+        article_meta = create_article({folder_meta_id: @@folder_meta.id, lang_codes: languages})
+        Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code(language)])
+        get :filter, controller_params({ version: 'private', portal_id: "#{@portal_id}", language: language, category: ["10101010100000"], folder: ["#{@@folder_meta.id}"] }, false)
+        assert_response 200
+        match_json([])
+        Account.any_instance.unstub(:all_portal_language_objects)
+      end
+
+      def test_article_filters_by_status_with_sec_lang
+        languages = @account.supported_languages + ['primary']
+        language  = @account.supported_languages.first
+        articles = @account.solution_articles.where(status: "2", language_id: 8)
+        if articles.blank?
+           article_meta = create_article({ folder_meta_id: @@folder_meta.id, lang_codes: languages })
+           articles = [article_meta.safe_send("#{language}_article")]
+        end
+        Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code(language)])
+        get :filter, controller_params({ version: 'private', portal_id: "#{@portal_id}", language: language, status: "2" }, false)
+        assert_response 200
+        pattern = articles.map { |article| private_api_solution_article_pattern(article, { action: :filter }, true, nil, article.draft) }
+        match_json(pattern)
+        Account.any_instance.unstub(:all_portal_language_objects)
+      end
+
+      def test_article_filters_by_author_lastmodified_with_sec_lang
+        languages = @account.supported_languages + ['primary']
+        language  = @account.supported_languages.first
+        author_id = add_test_agent.id
+        article_meta = create_article({:user_id=>author_id, :folder_meta_id=>@@folder_meta.id, lang_codes: languages})
+        article = article_meta.safe_send("#{language}_article")
+        Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code(language)])
+        get :filter, controller_params({ version: 'private', portal_id: "#{@portal_id}", language: language, author: "#{author_id}", last_modified: { start: "20190101", end: "21190101" }}, false)
+        article.reload
+        assert_response 200
+        pattern = private_api_solution_article_pattern(article, {action: :filter}, true, nil, article.draft)
+        match_json([pattern])
+        Account.any_instance.unstub(:all_portal_language_objects)
+      end
+
+      def test_article_filters_by_author_createdat_mismatched_with_sec_lang
+        languages = @account.supported_languages + ['primary']
+        language  = @account.supported_languages.first
+        author_id = add_test_agent.id
+        article_meta = create_article({:user_id=>author_id, :folder_meta_id=>@@folder_meta.id, lang_codes: languages})
+        articles = article_meta.safe_send("#{language}_article")
+        start_date = Time.now + 10.days
+        end_date = Time.now + 20.days
+        Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code(language)])
+        get :filter, controller_params({version: 'private', :portal_id=>"#{@portal_id}", language: language, 
+              :author=> "#{author_id}", :created_at => {:start=>"#{start_date}",:end=>"#{end_date}"}},false)
+        assert_response 200
+        match_json([])
+        Account.any_instance.unstub(:all_portal_language_objects)
+      end
+
       private
+
+        def get_valid_not_supported_language
+          languages = @account.supported_languages + [@account.language]
+          Language.all.map(&:code).find { |language| !languages.include?(language) }
+        end
+
+        def get_article_meta_with_translation
+          @account.solution_category_meta.where(is_default: false).collect(&:solution_article_meta).flatten.map { |x| x if x.children.count > 1 }.flatten.reject(&:blank?).first
+        end
 
         def populate_articles(folder_meta)
           return if folder_meta.article_count > 10

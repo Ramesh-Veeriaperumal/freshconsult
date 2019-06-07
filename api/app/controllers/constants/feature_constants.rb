@@ -10,6 +10,8 @@ module FeatureConstants
   SATISFACTION_RATINGS_WITH_LINK = SATISFACTION_RATINGS | [:survey_links]
   BOT = :support_bot
   TICKET_TEMPLATES = [:ticket_templates]
+  TICKET_FIELDS = [:custom_ticket_fields].freeze
+  ENCRYPTED_FIELDS = [:denormalized_flexifields, :hipaa, :custom_encrypted_fields].freeze
   CONTACT_COMPANY_NOTES = :contact_company_notes
   CANNED_FORMS = :canned_forms
   SANDBOX = :sandbox

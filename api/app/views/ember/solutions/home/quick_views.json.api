@@ -14,4 +14,10 @@
     category: Solutions::CategoryDecorator.new(category).unassociated_category_hash
   }
 end
+
+if @secondary_language
+  @count_hash[:outdated] = @outdated_articles
+  @count_hash[:not_translated] = @not_translated_articles
+end
+
 JSON.generate(@count_hash)

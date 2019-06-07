@@ -121,7 +121,7 @@ class DefaultFieldValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h.sort
     assert_equal({ tags: :array_too_long }.sort, errors)
-    assert_equal({ source: {}, status: {}, priority: {}, type: {}, group_id: {}, responder_id: {}, product_id: {}, subject: {}, description: {}, email: {}, phone: {}, mobile: {}, client_manager: {}, company_id: {}, tags: { min_count: 0,max_count: 32, current_count: 54, element_type: :characters }, address: {}, job_title: {}, twitter_id: {}, language: {}, time_zone: {}, domains: {}, note: {} }, test.error_options)
+    assert_equal({ source: {}, status: {}, priority: {}, type: {}, group_id: {}, responder_id: {}, product_id: {}, subject: {}, description: {}, email: {}, phone: {}, mobile: {}, client_manager: {}, company_id: {}, tags: { min_count: 0,max_count: 32, current_count: 54, element_type: :characters, elements: 'tag' }, address: {}, job_title: {}, twitter_id: {}, language: {}, time_zone: {}, domains: {}, note: {} }, test.error_options)
   end
 
   def test_string_rejection_validator

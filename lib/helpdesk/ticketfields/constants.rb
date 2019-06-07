@@ -72,6 +72,23 @@ module Helpdesk::Ticketfields::Constants
     decimal: DECIMAL_FIELD_COUNT
   }.freeze
 
+  TEXT_AND_DROPDOWN_FIELD_DETAILS = {
+    'denormalized_and_text': ['dn', 'text'],
+    'ffs_and_text_only': ['ffs', 'text'],
+    'ffs_and_dropdown_only': ['ffs', 'dropdown']
+  }.freeze
+
+  DEFAULT_MAX_ALLOWED_FIELDS = {
+    paragraph: TEXT_FIELD_COUNT,
+    number: NUMBER_FIELD_COUNT,
+    date: DATE_FIELD_COUNT,
+    checkbox: CHECKBOX_FIELD_COUNT,
+    decimal: DECIMAL_FIELD_COUNT,
+    encrypted_text: SERIALIZED_ESLT_FIELDS.length
+  }.freeze
+
+  MIN_CHOICES_COUNT = 1
+
   CUSTOM_FIELD_LABEL_PREFIX = 'cf_'
   ENCRYPTED_FIELD_LABEL_PREFIX = 'cf_enc_'
 end

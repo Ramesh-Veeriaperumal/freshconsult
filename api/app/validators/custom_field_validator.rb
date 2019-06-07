@@ -1,3 +1,4 @@
+# this validates the values in custom fields for the ticket being submitted.
 class CustomFieldValidator < ActiveModel::EachValidator
   ATTRS = [:current_field, :parent, :is_required, :required_attribute, :closure_status, :custom_fields, :current_field_defined, :nested_fields, :attribute, :section_field_mapping].freeze
   attr_accessor(*ATTRS)

@@ -1,4 +1,4 @@
-# Overriding default validator to add custom message to inclusion validation.
+# Overriding default validator to add custom message to regex validation.
 
 class CustomFormatValidator < ApiValidator
   private

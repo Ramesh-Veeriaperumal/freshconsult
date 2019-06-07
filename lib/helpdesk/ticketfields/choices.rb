@@ -5,7 +5,7 @@ module Helpdesk::Ticketfields::Choices
   def ticket_field_choices_payload
     case field_type
     when 'custom_dropdown'
-      choices_by_id(Hash[picklist_values.reject(&:destroyed?).map { |pv| [pv.id, pv.value] }])
+      custom_dropdown_choices
     when 'nested_field'
       nested_field_payload(picklist_values.reject(&:destroyed?))
     when *DEFAULT_FIELDS
@@ -17,22 +17,27 @@ module Helpdesk::Ticketfields::Choices
 
   private
 
+    def custom_dropdown_choices
+      picklist_values.reject(&:destroyed?).collect { |picklist_value| picklist_hash_with_id_and_display_id(picklist_value) }
+    end
+
+    def picklist_hash_with_id_and_display_id(picklist_value)
+      {
+        label: picklist_value.value,
+        value: picklist_value.value,
+        id: picklist_value.id,
+        picklist_id: picklist_value.picklist_id
+      }
+    end
+
     def nested_field_payload(pvs)
       pvs.collect do |c|
         {
           label: c.value,
           value: c.value,
+          id: c.id,
+          picklist_id: c.picklist_id,
           choices: nested_field_payload(c.sub_picklist_values.reject(&:destroyed?))
-        }
-      end
-    end
-
-    def choices_by_id(list)
-      list.map do |k, v|
-        {
-          label: v,
-          value: v,
-          id: k # Needed as it is used in section data.
         }
       end
     end
@@ -98,7 +103,6 @@ module Helpdesk::Ticketfields::Choices
       status_group_info
     end
 
-
     def default_status?(status_id)
       Helpdesk::Ticketfields::TicketStatus::DEFAULT_STATUSES.keys.include?(status_id)
     end
@@ -113,7 +117,8 @@ module Helpdesk::Ticketfields::Choices
         {
           label: type.value,
           value: type.value,
-          id: type.id # Needed as it is used in section data.
+          id: type.id,
+          picklist_id: type.picklist_id # Needed as it is used in section data.
         }
       end
     end
@@ -127,6 +132,4 @@ module Helpdesk::Ticketfields::Choices
         }
       end
     end
-
-
 end

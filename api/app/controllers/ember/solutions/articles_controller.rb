@@ -14,7 +14,7 @@ module Ember
 
       skip_before_filter :initialize_search_parameters, unless: :search_articles?
       before_filter :filter_ids, only: [:index]
-      before_filter :validate_language, only: [:filter, :bulk_update]
+      before_filter :validate_language, only: [:filter, :bulk_update, :article_content, :index]
       before_filter :check_filter_feature, only: [:filter]
       before_filter :validate_filter, only: [:article_content, :filter]
       before_filter :sanitize_filter_data, :reconstruct_params, only: [:filter]
@@ -84,14 +84,12 @@ module Ember
         end
 
         def load_article
-          language_id = params[:language_id] || Language.for_current_account.id
-          @item = scoper.where(parent_id: params[:id], language_id: language_id).first
+          @item = scoper.where(parent_id: params[:id], language_id: @lang_id).first
           log_and_render_404 unless @item
         end
 
         def load_objects
-          language_id = params[:language_id] || Language.for_current_account.id
-          @items = scoper.preload(conditional_preload_options).where(parent_id: @ids, language_id: language_id)
+          @items = scoper.preload(conditional_preload_options).where(parent_id: @ids, language_id: @lang_id)
           # Instead of using validation to give 4xx response for bad ids,
           # we are going to tolerate and send response for the good ones alone.
           # Because the primary use case for this is Recently used Solution articles

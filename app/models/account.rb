@@ -40,6 +40,8 @@ class Account < ActiveRecord::Base
 
   attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate, :model_changes, :disable_old_ui_changed, :is_anonymous_account
 
+  attr_writer :no_of_ticket_fields_built
+
   include Account::Setup
   include Account::BackgroundFixtures
 
@@ -802,6 +804,10 @@ class Account < ActiveRecord::Base
       requester_notification: true,
       agent_notification: false,
       notification_type: EmailNotification::BOT_RESPONSE_TEMPLATE)
+  end
+
+  def no_of_ticket_fields_built
+    @no_of_ticket_fields_built ||= ticket_fields_only.select(1).count
   end
 
   def falcon_and_encrypted_fields_enabled?

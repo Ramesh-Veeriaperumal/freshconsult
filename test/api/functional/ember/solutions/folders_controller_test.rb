@@ -40,6 +40,26 @@ module Ember
         match_json(pattern)
       end
 
+      def test_index_language
+        language = @account.supported_languages.first
+        get :index, controller_params(version: 'private', language: language)
+        assert_response 200
+        categories = get_category_folders
+        pattern = []
+        categories.each do |category|
+          category.solution_folders.where('language_id = ?', Language.find_by_code(language).id).each do |f|
+            pattern << solution_folder_pattern_private(f)
+          end
+        end
+        match_json(pattern)
+      end
+
+      def test_index_invalid_language
+        get :index, controller_params(version: 'private', language: 'test')
+        assert_response 404
+        match_json(request_error_pattern(:language_not_allowed, code: 'test', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
+      end
+
       def test_index_category_folders
         sample_category_meta = get_category_with_folders
         get :category_folders, controller_params(version: 'private', id: sample_category_meta.id)
