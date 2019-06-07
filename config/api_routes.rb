@@ -817,6 +817,7 @@ Helpkit::Application.routes.draw do
         get 'filters/:filter_id', to: 'channel/v2/ticket_misc#index'
       end
     end
+    post 'tickets/bulk_archive', to: 'channel/v2/tickets/bulk_actions#bulk_archive'
     get '/account', to: 'channel/v2/accounts#show'
     resources :ticket_filters, controller: 'channel/v2/ticket_filters', only: [:index, :show]
     resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :show, :index]
