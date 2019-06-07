@@ -76,12 +76,13 @@ class DomainGenerator
 	private
 
 	def generate_helpdesk_domain
-		([""] + DOMAIN_SUGGESTIONS).each do |suggestion|
-			current_domain_suggestion = "#{domain_prefix}#{suggestion}.#{HELPDESK_BASE_DOMAIN}"
-			return current_domain_suggestion if valid_domain?(current_domain_suggestion)
-		end
-		return nil
-	end
+      ([''] + DOMAIN_SUGGESTIONS).each do |suggestion|
+        current_domain_suggestion = "#{domain_prefix}#{suggestion}.#{HELPDESK_BASE_DOMAIN}"
+        current_domain_prefix = current_domain_suggestion.split('.')[0]
+        return current_domain_suggestion if valid_domain?(current_domain_suggestion) && !Account::RESERVED_DOMAINS.include?(current_domain_prefix)
+      end
+      nil
+    end
 
 	def domain_prefix
 		@domain_prefix ||= self.safe_send("email_#{domain_prefix_type}")
