@@ -103,6 +103,45 @@ class SubscriptionPlan < ActiveRecord::Base
     'Sprout', 'Blossom', 'Garden', 'Estate', 'Forest'
   ].freeze
 
+  OMNI_PLANS = [
+    ['Estate Omni Jan 19', 'Estate Jan 19'],
+    ['Garden Omni Jan 19', 'Garden Jan 19']
+  ].freeze
+
+  OMNI_TO_BASIC_PLAN_MAP = OMNI_PLANS.each_with_object({}) do |plan, hash|
+    hash[plan[0].to_sym] = plan[1]
+  end.freeze
+
+  BASIC_PLAN_TO_OMNI_MAP = OMNI_PLANS.each_with_object({}) do |plan, hash|
+    hash[plan[1].to_sym] = plan[0]
+  end.freeze
+  
+  PLANS_OMNI_COST = {
+    'Garden Omni Jan 19': {
+      EUR: 10.0, INR: 700.0, USD: 10.0, ZAR: 140.0, GBP: 9.0, AUD: 15.0, BRL: 40.0
+    },
+    'Estate Omni Jan 19': {
+      EUR: 20.0, INR: 1500.0, USD: 20.0, ZAR: 285.0, GBP: 15.0, AUD: 25.0, BRL: 75.0
+    },
+    'Forest Jan 19': {
+      EUR: 30.0, INR: 2100.0, USD: 30.0, ZAR: 425.0, GBP: 25.0, AUD: 40.0, BRL: 115.0
+    }
+  }.freeze
+  
+  PLANS_FSM_COST = {
+    'Estate Omni Jan 19': {
+      EUR: 29.0, INR: 1999.0, USD: 29.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0
+    },
+    'Estate Jan 19': {
+      EUR: 29.0, INR: 1999.0, USD: 29.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0
+    },
+    'Forest Jan 19': {
+      EUR: 29.0, INR: 1999.0, USD: 29.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0
+    }
+  }.freeze
+
+  FREE_OMNI_PLANS = ['Forest Jan 19'].freeze
+
   def fetch_discount(billing_cycle)
     BILLING_CYCLE_DISCOUNT[self.name].fetch(billing_cycle,1)
   end
@@ -155,4 +194,28 @@ class SubscriptionPlan < ActiveRecord::Base
     price[currency]
   end
   
+  def basic_variant_name
+    OMNI_TO_BASIC_PLAN_MAP[name.to_sym]
+  end
+
+  def basic_variant?
+    BASIC_PLAN_TO_OMNI_MAP.key? name.to_sym
+  end
+
+  def omni_plan_name
+    BASIC_PLAN_TO_OMNI_MAP[name.to_sym]
+  end
+  
+  def omni_channel_cost(in_currency)
+    costs = PLANS_OMNI_COST[name.to_sym]
+    costs.nil? ? 0 : costs[in_currency.to_sym]
+  end
+
+  def fsm_cost(in_currency)
+    PLANS_FSM_COST[name.to_sym] && PLANS_FSM_COST[name.to_sym][in_currency.to_sym]
+  end
+
+  def free_omni_channel_plan?
+    FREE_OMNI_PLANS.include? name
+  end
 end
