@@ -56,5 +56,6 @@ module Admin::AdvancedTicketing::FieldServiceManagement
     SUPPORT_GROUP_TYPE = 1
     FSM_APPOINTMENT_START_TIME = 'cf_fsm_appointment_start_time'.freeze
     FSM_APPOINTMENT_END_TIME = 'cf_fsm_appointment_end_time'.freeze
+    SERVICE_TASK_SECTION = 'Service task section'.freeze
   end
 end

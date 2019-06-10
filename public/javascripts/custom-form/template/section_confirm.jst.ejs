@@ -19,7 +19,8 @@
   <div class="modal-header">
     <!-- <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button> -->
     <h3>
-      <% if(confirm_type != 'available'){%>
+			<% var condition = typeof(fsm_field) == "undefined" ? confirm_type != 'available' : confirm_type != 'available' && !(fsm_field && confirm_type == 'secToForm'); %>
+      <% if(condition){%>
         <%= translate.get('confirm_text') %>
       <% } else { %>
         <%= translate.get('oops_btn') %>
@@ -68,8 +69,8 @@
 	<% } else if(confirm_type == 'secToForm'){%>
 
 		<div>
-			<%= translate.get('field_remove_all_section') %> 
-		</div>	
+			<%= fsm_field ? translate.get('fsm_fields_moved_out') : translate.get('field_remove_all_section') %>
+		</div>
 
 	<% } else if(confirm_type == 'deleteField'){%>
 
@@ -107,11 +108,12 @@
   </div>
   <span class="seperator"></span> 
   <div class="alignright modal-footer">
-    <% if(confirm_type != 'available'){%>
-    <button class="btn" data-dismiss="modal" aria-hidden="true" id="<%= field_cancel %>"><%= translate.get('cancel') %> </button>
-    <% } %>
-    <a class="btn btn-primary" id="<%= field_submit %>">
-    	<% 
+		<% if(confirm_type != 'available'){%>
+			<% var confirm_condition = typeof(fsm_field) == "undefined" ? false : fsm_field && confirm_type == 'secToForm'; %>
+    <button class="btn" data-dismiss="modal" aria-hidden="true" id="<%= field_cancel %>"><%= confirm_condition ? translate.get('ok_btn') : translate.get('cancel') %> </button>
+		<% } %>
+	<a class="<%= confirm_condition ? '' : 'btn btn-primary' %>" id="<%= field_submit %>">
+		<% 
     		switch(confirm_type) {
     			case 'available':
     			case 'deleteError':
@@ -134,8 +136,10 @@
     				break; 
 
     			case 'secToForm':
-    				print(translate.get('continue_btn'));
-    				break; 
+						if(!fsm_field) {
+							print(translate.get('continue_btn'));
+						}
+						break;
     		}
     	%>
     </a> 

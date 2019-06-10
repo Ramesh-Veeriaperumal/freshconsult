@@ -219,4 +219,8 @@ module Redis::Keys::Others
   ONBOARDING_V2_ENABLED = 'ONBOARDING_V2_ENABLED'.freeze
   # Facebook Mapping table deprecation
   FB_MAPPING_ENABLED  = 'FB_MAPPING_ENABLED'.freeze
+
+  #Customer segments max limit
+  SEGMENT_LIMIT = 'SEGMENT_LIMIT'.freeze
+
 end

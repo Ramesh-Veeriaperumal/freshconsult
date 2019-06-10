@@ -279,10 +279,14 @@
 			if(fsm_fields.indexOf(field) == -1){
 				this.options.ui		= field; //Field or ui.item
 				var no_of_existence	= $(this.options.formContainer).find("[data-id = '"+id+"']").length,
-				confirm_type	= (no_of_existence == 1) ? 'confirmDeleteField' : 'deleteSecField';
+				confirm_type	= (no_of_existence == 1) ? 'confirmDeleteField' : 'deleteSecField',
+				is_fsm_field = fsmFields.indexOf(this.options.builder_instance.data.get(field.data('id')).name) > -1,
+				fsm_feature = fsmFeature;
 
 				$(this.options.dialogContainer).html(JST['custom-form/template/section_confirm']({
-				'confirm_type':confirm_type
+				'confirm_type':confirm_type,
+				'fsm_field': is_fsm_field,
+				'fsm_feature': fsm_feature
 				}));
 				$(this.options.sectionConfirmModal).modal('show');
 			}
@@ -539,6 +543,8 @@
 			var parent		= $(ui.item).closest('ul'),
 				id			= $(ui.item).data('id');
 			this.options.parent_id = $(ui.item).parents("li.custom-field").attr("data-id");
+			var is_fsm_field = fsmFields.indexOf(this.options.builder_instance.data.get(id).name) > -1;
+
 			//position change
 			if ( (parent.parents('li').data('section-id') != ui.sender.parents('li').data('section-id'))
 						&& (parent.parents('li.custom-field').attr('data-id') == ui.sender.parents('li.custom-field').attr('data-id'))) {
@@ -546,13 +552,15 @@
 						&& parent.find('li[data-id=' + id + ']:visible').length <= 1 ) {
 
 					$(this.options.dialogContainer).html(JST['custom-form/template/section_confirm']( {
-						'confirm_type':'move'
+						'confirm_type':'move',
+						fsm_field: is_fsm_field
 					}));
 					$(this.options.sectionConfirmModal).modal('show');
 				} else {
 					this.cancelSorting();
 					$(this.options.dialogContainer).html(JST['custom-form/template/section_confirm']({
-						'confirm_type':'available'
+						'confirm_type':'available',
+						fsm_field: is_fsm_field
 					}));
 					$(this.options.sectionConfirmModal).modal('show');
 				}
@@ -602,7 +610,8 @@
     
 		sectionToFormDialogue: function(ui){
 			this.options.ui = ui;
-			var parent = $(ui.item).closest('ul');
+			var parent = $(ui.item).closest('ul'), fsm_feature = fsmFeature;
+			var is_fsm_field = fsmFields.indexOf(this.options.builder_instance.data.get(ui.item.data('id')).name) > -1;
 
 				if (parent.hasClass('section-body')) {
 					return;
@@ -611,7 +620,9 @@
 		  if (ui.sender && ui.sender.hasClass('section-body')) {
 
 			$(this.options.dialogContainer).html(JST['custom-form/template/section_confirm']({
-				'confirm_type':'secToForm'
+				'confirm_type':'secToForm',
+				'fsm_field': is_fsm_field,
+				'fsm_feature': fsm_feature			
 			}));
 			$(this.options.sectionConfirmModal).modal('show');
 

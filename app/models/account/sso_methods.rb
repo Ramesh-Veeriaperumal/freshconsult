@@ -1,7 +1,7 @@
 class Account < ActiveRecord::Base
 
   def allow_sso_login?
-    sso_enabled? || launched?(:whitelist_sso_login)
+    (sso_enabled? && (is_saml_sso? || is_simple_sso?)) || launched?(:whitelist_sso_login)
   end
 
   def set_sso_options_hash
@@ -22,6 +22,10 @@ class Account < ActiveRecord::Base
 
   def is_saml_sso?
     self.sso_options.key? :sso_type and self.sso_options[:sso_type] == SsoUtil::SSO_TYPES[:saml]
+  end
+
+  def is_simple_sso?
+    self.sso_options.key? :sso_type and self.sso_options[:sso_type] == SsoUtil::SSO_TYPES[:simple_sso]
   end
 
   def enable_agent_oauth2_sso!(logout_redirect_url)

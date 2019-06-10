@@ -7,7 +7,6 @@ class AccountCleanup::DeleteAccount < BaseWorker
   include Redis::DisplayIdRedis
   include SandboxConstants
 
-
   def perform(args)
     account = Account.current
     return if account.active?
