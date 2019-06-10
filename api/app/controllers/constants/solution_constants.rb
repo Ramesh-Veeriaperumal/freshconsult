@@ -51,7 +51,7 @@ module SolutionConstants
 
   FILTER_PRELOAD_OPTIONS = [{ solution_article_meta: [:solution_folder_meta, :solution_category_meta] }, :draft, :article_ticket, { article_ticket: :ticketable }, :tags, tags: :tag_uses].freeze
 
-  LOAD_OBJECT_EXCEPT = [:category_folders, :folder_articles, :article_content, :filter].freeze
+  LOAD_OBJECT_EXCEPT = [:category_folders, :folder_articles, :article_content, :filter, :untranslated_articles].freeze
 
   INDEX_FIELDS = %w[language].freeze
 
@@ -60,7 +60,7 @@ module SolutionConstants
   REORDER_FIELDS = %w[position portal_id].freeze
 
   KBASE_EMAIL_SOURCE = 'kbase_email'.freeze
-
+  UNTRANSLATED_ARTICLES_FIELDS = %w[portal_id language category folder status page per_page].freeze
   INSERT_SOLUTION_ACTIONS = %w[index article_content].freeze
 
   SUMMARY_LIMIT = 3

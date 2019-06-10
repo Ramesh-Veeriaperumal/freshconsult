@@ -11748,6 +11748,73 @@
         }
       }
     },
+
+    "/solutions/articles/untranslated_articles/{language}": {
+      "get": {
+        "tags": [
+          "solutions"
+        ],
+        "summary": "List untranslated articles for the portal in given language",
+        "parameters": [
+          {
+            "name": "portal_id",
+            "in": "query",
+            "type": "string",
+            "description": "Portal ID",
+            "required": true
+          },
+          {
+            "name": "language",
+            "in": "path",
+            "type": "string",
+            "description": "Language code in which untranslated articles have to be retrieved",
+            "required": true
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "type": "string",
+            "description": "Filter by status"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "string",
+            "description": "Page number"
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Filter by categories"
+          },
+          {
+            "name": "folder",
+            "in": "query",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Filter by folders"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/untranslated_articles"
+            }
+          },
+          "404": {
+            "description": "Article not found"
+          }
+        }
+      }
+    },
+
     "/solutions/categories/{id}/reorder": {
       "put": {
         "tags": [
@@ -16186,6 +16253,54 @@
           }
         }
       ]
+    },
+    "untranslated_articles": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        },
+        "status": {
+          "type": "integer"
+        },
+        "draft_present": {
+          "type": "boolean"
+        },
+        "language": {
+          "type": "string"
+        },
+        "category": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "language": {
+              "type": "string"
+            }
+          }
+        },
+        "folder": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "language": {
+              "type": "string"
+            }
+          }
+        }
+      }
     },
     "extension_generic": {
       "type": "object",

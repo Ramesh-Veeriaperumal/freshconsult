@@ -1,0 +1,30 @@
+type: object
+properties:
+  id:
+    type: integer
+  title:
+    type: string
+  status:
+    type: integer
+  draft_present:
+    type: boolean
+  language:
+    type: string
+  category:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      language:
+        type: string
+  folder:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      language:
+        type: string

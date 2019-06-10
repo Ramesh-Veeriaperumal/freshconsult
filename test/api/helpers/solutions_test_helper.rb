@@ -398,4 +398,34 @@ module SolutionsTestHelper
       users: users.map { |voter| { id: voter.id, name: voter.name } }
     }
   end
+
+  def untranslated_article_pattern(article, lang_code)
+    {
+      id: article.parent_id,
+      title: (article.draft || article).title,
+      status: article.status,
+      draft_present: article.draft.present?,
+      language: article.language_code,
+      category: untranslated_category_pattern(article.solution_folder_meta.solution_category_meta, lang_code),
+      folder: untranslated_folder_pattern(article.solution_folder_meta, lang_code)
+    }
+  end
+
+  def untranslated_folder_pattern(folder_meta, lang_code)
+    folder = folder_meta.safe_send("#{lang_code}_available?") ? folder_meta.safe_send("#{lang_code}_folder") : folder_meta.primary_folder
+    {
+      id: folder_meta.id,
+      name: folder.name,
+      language: folder.language_code
+    }
+  end
+
+  def untranslated_category_pattern(category_meta, lang_code)
+    category = category_meta.safe_send("#{lang_code}_available?") ? category_meta.safe_send("#{lang_code}_category") : category_meta.primary_category
+    {
+      id: category_meta.id,
+      name: category.name,
+      language: category.language_code
+    }
+  end
 end

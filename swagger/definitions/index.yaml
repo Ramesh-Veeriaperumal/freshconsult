@@ -255,6 +255,8 @@ solution_article:
   $ref: ./resource/solution_article.yaml
 solution_folder:
   $ref: ./resource/solution_folder.yaml
+untranslated_articles:
+  $ref: ./resource/untranslated_articles.yaml
 extension_generic:
   $ref: ./resource/extension/generic.yaml
 extended_contact:

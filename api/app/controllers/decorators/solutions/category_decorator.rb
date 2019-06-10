@@ -35,6 +35,15 @@ class Solutions::CategoryDecorator < ApiDecorator
     }
   end
 
+  def untranslated_filter_hash
+    category = record.safe_send("#{@lang_code}_available?") ? record.safe_send("#{@lang_code}_category") : record.primary_category
+    {
+      id: record.id,
+      name: category.name,
+      language: category.language_code
+    }
+  end
+
   def unassociated_category_hash
     {
       id: id,
