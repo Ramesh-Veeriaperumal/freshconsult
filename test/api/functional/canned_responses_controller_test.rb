@@ -495,7 +495,7 @@ class CannedResponsesControllerTest < ActionController::TestCase
   end
 
   def test_update_title
-    ca_response1 = create_canned_response(@@ca_folder_all.id)
+    ca_response1 = create_canned_response(@@ca_folder_all.id, ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me])
     title = Faker::App.name
     canned_response = {
       title: title

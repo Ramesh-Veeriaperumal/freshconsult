@@ -6,7 +6,6 @@ get:
       in: query
       type: string
       description: Portal ID
-      required: true
   responses:
     200:
       description: Success

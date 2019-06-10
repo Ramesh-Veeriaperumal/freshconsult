@@ -8,7 +8,8 @@ module Ember
       def summary
         return unless validate_query_params
         return unless validate_delegator(nil, portal_id: params[:portal_id])
-        @items = current_account.solution_category_meta.joins(:portal_solution_categories).where('solution_category_meta.is_default = ? AND portal_solution_categories.portal_id = ?', false, params[:portal_id]).order('portal_solution_categories.position').preload(preload_options)
+        portal = current_account.portals.where(id: params[:portal_id]).first
+        @items = portal.solution_category_meta.where(is_default: false).preload(preload_options)
         response.api_root_key = :categories
       end
 
@@ -31,9 +32,13 @@ module Ember
       private
 
         def fetch_categories(portal_id)
-          @category_meta = current_account.portals.find_by_id(portal_id).public_category_meta.order('portal_solution_categories.position').all
+          if portal_id.present?
+            @category_meta = current_account.portals.find_by_id(portal_id).public_category_meta.order('portal_solution_categories.position').all
+          else
+            @category_meta = current_account.public_category_meta
+          end
           portal_categories = current_account.solution_categories.where(parent_id: @category_meta.map(&:id), language_id: @lang_id)
-          @category_meta << current_account.solution_category_meta.where(is_default: true).first
+          @category_meta += [current_account.solution_category_meta.where(is_default: true).first]
           portal_categories
         end
 

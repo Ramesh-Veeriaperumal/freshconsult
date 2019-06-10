@@ -326,6 +326,8 @@ api_error_messages:
   invalid_ebay_ticket_source: "Invalid ticket source"
   webhook_auth_header_error: "Both username and api_key should not be present"
 
+  invalid_feature_name: "invalid feature name: '%{feature_name}'"
+
   audit_log_export: 'your request is in process'
 
   account_in_trial: 'Account is already in trial'

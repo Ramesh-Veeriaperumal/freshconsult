@@ -142,7 +142,7 @@ class Ember::GroupsControllerTest < ActionController::TestCase
   def test_create_field_group_with_support_agent
     Account.stubs(:current).returns(Account.first)
     enabling_fsm_feature
-    add_data_to_group_type
+    create_field_group_type
     post :create, construct_params({version: 'private'},{
       name: Faker::Lorem.characters(10),
       description: Faker::Lorem.paragraph,
@@ -187,7 +187,7 @@ class Ember::GroupsControllerTest < ActionController::TestCase
 
   def test_create_field_group_with_assignment_type_invalid
     enabling_fsm_feature
-    add_data_to_group_type
+    create_field_group_type
     post :create, construct_params({version: 'private'},{
       name: Faker::Lorem.characters(10),
       description: Faker::Lorem.paragraph,
@@ -275,7 +275,7 @@ class Ember::GroupsControllerTest < ActionController::TestCase
   def test_update_group_type
     enabling_fsm_feature
     Account.stubs(:current).returns(@account)
-    add_data_to_group_type
+    create_field_group_type
     group = create_group_private_api(@account)
     put :update, construct_params({version:'private', id: group.id }, escalate_to: 1, unassigned_for: '30m', agent_ids: [1], group_type: FIELD_GROUP_NAME)
     assert_response 400

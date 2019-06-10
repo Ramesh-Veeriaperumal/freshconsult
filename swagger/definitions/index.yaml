@@ -231,6 +231,8 @@ survey_question:
   $ref: ./resource/survey_question.yaml
 survey:
   $ref: ./resource/survey.yaml
+survey_satisfaction_ratings:
+  $ref: ./resource/survey_satisfaction_ratings.yaml
 ticket_stats:
   $ref: ./resource/extension/ticket/stats.yaml
 portal:
@@ -695,3 +697,7 @@ languages:
 # Config Data 
 configs_show:
   $ref: ./response/configs/show.yaml
+
+# Account features
+account_feature_enable_disable:
+  $ref: './request/accounts/feature.yaml'

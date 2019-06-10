@@ -74,7 +74,7 @@ module Ember
       def test_summary_without_portal_id
         get :summary, controller_params(version: 'private')
         assert_response 400
-        match_json([bad_request_error_pattern(:portal_id, :datatype_mismatch, code: :missing_field, expected_data_type: String)])
+        match_json([bad_request_error_pattern('portal_id', :missing_field)])
       end
 
       def test_summary_with_invalid_field
@@ -99,8 +99,8 @@ module Ember
 
       def test_quick_views_without_portal_id
         get :quick_views, controller_params(version: 'private')
-        assert_response 400
-        match_json([bad_request_error_pattern(:portal_id, :datatype_mismatch, code: :missing_field, expected_data_type: String)])
+        assert_response 200
+        match_json(quick_views_pattern)
       end
 
       def test_quick_views_with_invalid_portal_id

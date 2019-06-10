@@ -5,7 +5,7 @@ module Facebook
       include Social::Dynamo::UnprocessedFeed    
       
       def raise_newrelic_error(error)
-        Rails.logger.error error
+        Rails.logger.error error.inspect
         Rails.logger.debug "Error while processing facebook - #{@exception.to_s}:::#{@exception.backtrace.join('\n')}"
         NewRelic::Agent.notice_error(@exception, error)
       end

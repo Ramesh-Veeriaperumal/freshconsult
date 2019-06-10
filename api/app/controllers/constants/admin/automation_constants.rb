@@ -30,6 +30,8 @@ module Admin::AutomationConstants
     created_during: :created_at
   }.freeze
 
+  CUSTOM_TEXT_FIELD_TYPES = %i[custom_text custom_paragraph].freeze
+
   DISPLAY_FIELD_NAME_CHANGE = FIELD_VALUE_CHANGE_MAPPING.invert.freeze
 
   SUPERVISOR_FIELD_MAPPING = { hours_since_created: :created_at }.freeze
@@ -41,6 +43,10 @@ module Admin::AutomationConstants
   TAG_NAMES = 'tag_names'.freeze
 
   TAGS = %w[tag_names add_tag].freeze
+
+  DEFAULT_TEXT_FIELDS = %i[subject description subject_or_description].freeze
+
+  CUSTOM_TEXT_FIELD_TYPES = %i[custom_text custom_paragraph].freeze
 
   LANGUAGE_HASH = I18n.available_locales_with_name.each_with_object({}) do |arr, hash|
     hash[arr.last.to_s] = arr.first
@@ -177,7 +183,7 @@ module Admin::AutomationConstants
   OBSERVER_CONDITION_FREDDY_FIELD = %i[freddy_suggestion].freeze
 
   DISPATCHER_CONDITION_TICKET_FIELDS = %i[created_at ticket_cc subject_or_description internal_agent_id
-                                          internal_group_id tag_ids ticlet_cc tag_names].freeze
+                                          internal_group_id tag_ids ticlet_cc tag_names created_during].freeze
 
   SUPERVISOR_CONDITION_TICKET_FIELDS = %i[contact_name company_name].freeze
 

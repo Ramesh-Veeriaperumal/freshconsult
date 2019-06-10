@@ -89,6 +89,9 @@ module AutomationTestHelper
       condition_data[:field_name] = condition[:name] unless condition[:name].nil?
       condition_data[:operator] = condition[:operator] unless condition[:operator].nil?
       condition_data[:value] = condition[:value] unless condition[:value].nil?
+      condition_data[:case_sensitive] = condition[:case_sensitive] unless condition[:case_sensitive].nil?
+      condition_data[:case_sensitive] = false if DEFAULT_TEXT_FIELDS.include?(condition[:name].to_sym) &&
+                                                !condition.key?(:case_sensitive) && condition[:last_updated_by].present?
       condition_data = support_for_old_operators(condition_data)
       condition_hash[evaluate_on_type.to_sym] << condition_data
     end

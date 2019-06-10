@@ -1010,6 +1010,15 @@ module ApiTicketsTestHelper
     ticket
   end
 
+  def create_ticket_with_inline_attachments(min = 0, max = 1)
+    ticket = create_ticket
+    rand(min..max).times do
+      ticket.inline_attachments << create_attachment(attachable_type: 'Ticket::Inline', attachable_id: ticket.id)
+    end
+    ticket.save
+    ticket
+  end
+
   def create_parent_ticket
     create_ticket
     parent_ticket = Helpdesk::Ticket.last

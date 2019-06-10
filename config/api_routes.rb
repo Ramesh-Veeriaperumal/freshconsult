@@ -411,6 +411,11 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    scope module: 'admin' do
+      post 'features/:name', to: 'account_features#create'
+      delete 'features/:name', to: 'account_features#destroy'
+    end
+
     post '/account/export', to: 'admin/api_data_exports#account_export'
 
     resource :accounts, controller: 'admin/api_accounts' do
@@ -627,7 +632,13 @@ Helpkit::Application.routes.draw do
         get :check_following
       end
     end
-    resources :surveys, controller: 'ember/surveys', only: [:index, :show]
+
+    resources :surveys, controller: 'ember/surveys', only: [:index, :show] do
+      collection do
+        get :satisfaction_ratings, to: 'satisfaction_ratings#index'
+      end
+    end
+
     resources :portals, controller: 'ember/portals', only: [:index, :update, :show] do
       member do
         get :bot_prerequisites

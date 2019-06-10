@@ -16,12 +16,12 @@ module Admin::AdvancedTicketing::FieldServiceManagement
     private
 
       def perform_fsm_operations
-        return if service_task_type_already_present?
         create_service_task_field_type
-        reserve_fsm_custom_fields
-        create_section
+        fsm_fields_to_be_created = fetch_fsm_fields_to_be_created
+        reserve_fsm_custom_fields(fsm_fields_to_be_created)
+        create_section(fsm_fields_to_be_created)
         create_field_agent_type
-        add_data_to_group_type
+        create_field_group_type
         create_fsm_dashboard if Account.current.fsm_dashboard_enabled?
         expire_cache
       rescue StandardError => e
@@ -34,11 +34,9 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         cname_params[:name].to_sym == FSM_FEATURE
       end
 
-      def service_task_type_already_present?
-        Account.current.picklist_values.find_by_value(SERVICE_TASK_TYPE).present?
-      end
-
       def create_service_task_field_type
+        return if Account.current.ticket_types_from_cache.map(&:value).include?(SERVICE_TASK_TYPE)
+        
         type_field = Account.current.ticket_fields.find_by_field_type('default_ticket_type')
         picklist_values = type_field.picklist_values
         picklist_choices = picklist_values.map { |picklist| { value: picklist.value, id: picklist.id, position: picklist.position, _destroy: 0 } }
@@ -54,9 +52,9 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       end
 
       # Reserve the required FSM custom fields. refer: CUSTOM_FIELDS_TO_RESERVE
-      def reserve_fsm_custom_fields
+      def reserve_fsm_custom_fields(fields_to_be_created)
         last_occupied_position = ticket_fields.count + 1
-        CUSTOM_FIELDS_TO_RESERVE.each_with_index do |custom_field, index|
+        fields_to_be_created.each_with_index do |custom_field, index|
           payload = custom_field_generator(custom_field.merge(position: last_occupied_position + index))
           create_field(payload, Account.current)
         end
@@ -107,39 +105,60 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       end
 
       # create a dynamic section named "Service Task" and attach the reserved custom fields to them.
-      def create_section
+      def create_section(fields_to_be_created)
         # TODO: check for section limit.
-        service_task_picklist = Account.current.ticket_fields.find_by_field_type('default_ticket_type').picklist_values.find_by_value('Service Task')
+        service_task_picklist = Account.current.ticket_fields.find_by_field_type('default_ticket_type').picklist_values.find_by_value(SERVICE_TASK_TYPE)
         picklist_id = service_task_picklist.id
         parent_ticket_field_id = service_task_picklist.pickable_id
 
         # Build Section picklist_mappings
-        section = Account.current.sections.build
-        section.label = 'Service task section'
-        section.section_picklist_mappings.build(picklist_value_id: picklist_id)
+        service_task_section = Account.current.sections.find_by_label(SERVICE_TASK_SECTION)
+        unless service_task_section.present?
+          service_task_section = Account.current.sections.build
+          service_task_section.label = SERVICE_TASK_SECTION
+          service_task_section.section_picklist_mappings.build(picklist_value_id: picklist_id)
+        end
 
         # Build Section fields
         section_fields = []
-        CUSTOM_FIELDS_TO_RESERVE.each_with_index do |custom_field, index|
+        if service_task_section.section_fields.blank?
+          fields_to_be_created = CUSTOM_FIELDS_TO_RESERVE
+          fields_to_be_created.each do |field|
+            field_data = Account.current.ticket_fields.find_by_name(field[:name]+ "_#{Account.current.id}")
+            next if field_data.field_options["section"] 
+            
+            field_data.field_options = { "section" => true }
+            field_data.save
+          end
+          ticket_type_field = Account.current.ticket_fields.find_by_name('ticket_type')
+          if !ticket_type_field.field_options["section_present"]
+            ticket_type_field.field_options = { "section_present" => true}
+            ticket_type_field.save
+          end
+        end
+        fields_to_be_created.each_with_index do |custom_field, index|
           field = Account.current.ticket_fields.find_by_name("#{custom_field[:name]}_#{Account.current.id}")
           section_fields << { parent_ticket_field_id: parent_ticket_field_id, ticket_field_id: field.id, position: index + 1 }
         end
-
+        section_data = service_task_section
         section_fields.each do |section_field|
-          section.section_fields.build(section_field)
+          section_data.section_fields.build(section_field)
         end
-
-        section.save
+        section_data.save
       end
 
-      def add_data_to_group_type
-        group_type = GroupType.create_group_type(Account.current, FIELD_GROUP_NAME)
-        raise "Field group type did not get created" unless group_type
+      def create_field_group_type
+        if Account.current.group_types.find_by_name(FIELD_GROUP_NAME).nil?
+          group_type = GroupType.create_group_type(Account.current, FIELD_GROUP_NAME)
+          raise "Field group type did not get created" unless group_type
+        end
       end
 
       def create_field_agent_type
-        agent_type = AgentType.create_agent_type(Account.current, FIELD_AGENT)
-        raise "Field agent type did not get created" unless agent_type
+        if Account.current.agent_types.find_by_name(FIELD_AGENT).nil?
+          agent_type = AgentType.create_agent_type(Account.current, FIELD_AGENT)
+          raise "Field agent type did not get created" unless agent_type
+        end
       end
       
       def create_fsm_dashboard
@@ -221,15 +240,11 @@ module Admin::AdvancedTicketing::FieldServiceManagement
 
       def cleanup_fsm
         remove_fsm_addon_and_reset_agent_limit
-        destroy_custom_fields
-        destroy_sections
-        destroy_service_ticket_type
         destroy_field_agent
         destroy_field_group
-        destroy_fsm_dashboard_and_filters if Account.current.fsm_dashboard_enabled?
       rescue StandardError => e
         Rails.logger.error "Error in Disabling FSM, account id: #{Account.current.id}, message: #{e.message}"
-        render_request_error(:internal_server_error, 500)
+        NewRelic::Agent.notice_error(e, description: "error in cleaning fsm, account id: #{Account.current.id}, message: #{e.message}")
       end
 
       def destroy_fsm_dashboard_and_filters
@@ -241,36 +256,6 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       def destroy_fsm_ticket_filters
         FSM_TICKET_FILTERS.each do |name|
           Account.current.dashboard_widgets.find_by_name(I18n.t("fsm_dashboard.widgets.#{name}")).try(:destroy)
-        end
-      end
-
-      def destroy_custom_fields
-        CUSTOM_FIELDS_TO_RESERVE.each do |custom_field|
-          name = "#{custom_field[:name]}_#{Account.current.id}"
-          field = Account.current.ticket_fields.find_by_name(name)
-          field.destroy if field.present?
-        end
-      end
-
-      def destroy_sections
-        Account.current.picklist_values.find_by_value(SERVICE_TASK_TYPE).try(:section).try(:destroy)
-      end
-
-      def destroy_service_ticket_type
-        type_field = Account.current.ticket_fields.preload(:picklist_values => :section).find_by_field_type('default_ticket_type')
-        return unless type_field.present?
-        picklist_values = type_field.picklist_values
-
-        new_picklist_values = picklist_values.reject {|picklist| picklist[:value] === SERVICE_TASK_TYPE}
-        service_task_type = picklist_values.find_by_value(SERVICE_TASK_TYPE)
-        service_task_type.destroy if service_task_type.present? && new_picklist_values.size > 0
-
-        field_options = type_field[:field_options] || {}
-        section_present_in_other_picklists = new_picklist_values.any? {|picklist| picklist.section.present?}
-
-        if !section_present_in_other_picklists && field_options[:section_present].present?
-          field_options.delete(:section_present)
-          type_field.update_attributes({field_options: field_options})
         end
       end
 
@@ -305,6 +290,11 @@ module Admin::AdvancedTicketing::FieldServiceManagement
 
       def fsm_field_display_name(field_name)
         field_name.gsub('cf_', '')
+      end
+
+      def fetch_fsm_fields_to_be_created
+        custom_fields_available = Account.current.flexifield_def_entries.map(&:flexifield_alias)
+        CUSTOM_FIELDS_TO_RESERVE.select { |x| !custom_fields_available.include?(x[:name] + "_#{Account.current.id}") }
       end
   end
 end

@@ -208,7 +208,8 @@ module SolutionsTestHelper
   end
 
   def summary_pattern(portal_id)
-    Account.current.solution_category_meta.joins(:portal_solution_categories).where('solution_category_meta.is_default = ? AND portal_solution_categories.portal_id = ?', false, portal_id).order('portal_solution_categories.position').preload([:portal_solution_categories, :primary_category, solution_folder_meta: [:primary_folder, :solution_article_meta]]).map { |category| category_summary_pattern(category, portal_id) }
+    portal = Account.current.portals.where(id: portal_id).first
+    portal.solution_category_meta.joins(:portal_solution_categories).where(is_default: false).preload([:portal_solution_categories, :primary_category, solution_folder_meta: [:primary_folder, :solution_article_meta]]).map { |category| category_summary_pattern(category, portal_id) }
   end
 
   def category_summary_pattern(category, portal_id)
@@ -249,7 +250,7 @@ module SolutionsTestHelper
     }
   end
 
-  def quick_views_pattern portal_id
+  def quick_views_pattern(portal_id = nil)
     @categories = fetch_categories(portal_id)
     @articles = fetch_articles
     @drafts =  fetch_drafts
@@ -273,9 +274,13 @@ module SolutionsTestHelper
   end
 
   def fetch_categories(portal_id)
-    @category_meta = Account.current.portals.find_by_id(portal_id).public_category_meta.order('portal_solution_categories.position').all
+    if portal_id.present?
+      @category_meta = Account.current.portals.find_by_id(portal_id).public_category_meta.order('portal_solution_categories.position').all
+    else
+      @category_meta = Account.current.public_category_meta
+    end
     portal_categories = Account.current.solution_categories.where(parent_id: @category_meta.map(&:id), language_id: (Language.current? ? Language.current.id : Language.for_current_account.id))
-    @category_meta << Account.current.solution_category_meta.where(is_default: true).first
+    @category_meta += [Account.current.solution_category_meta.where(is_default: true).first]
     portal_categories
   end
 

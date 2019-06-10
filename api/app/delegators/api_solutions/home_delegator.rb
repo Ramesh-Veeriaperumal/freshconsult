@@ -1,7 +1,7 @@
 module ApiSolutions
   class HomeDelegator < BaseDelegator
     include SolutionConcern
-    validate :validate_portal_id, if: :portal_id_dependant_actions?
+    validate :validate_portal_id, if: -> { @portal_id && portal_id_dependant_actions? }
 
     def initialize(record, options = {})
       options.each do |key, value|

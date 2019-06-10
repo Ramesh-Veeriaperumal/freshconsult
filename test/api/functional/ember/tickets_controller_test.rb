@@ -44,6 +44,7 @@ module Ember
       Account.current.features.es_v2_writes.destroy
       Account.current.reload
       @account.sections.map(&:destroy)
+      destroy_all_fsm_fields_and_service_task_type
       tickets_controller_before_all(@@before_all_run)
       @@before_all_run=true unless @@before_all_run
     end
@@ -66,6 +67,14 @@ module Ember
       @account.ticket_fields.custom_fields.each do |x|
         x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
       end
+    end
+
+    def destroy_all_fsm_fields_and_service_task_type
+      fsm_fields = CUSTOM_FIELDS_TO_RESERVE.collect { |x| x[:name] + "_#{Account.current.id}" }
+      fsm_fields.each do |fsm_field|
+        Account.current.ticket_fields.find_by_name(fsm_field).try(:destroy)
+      end
+      Account.current.picklist_values.find_by_value(SERVICE_TASK_TYPE).try(:destroy)
     end
 
    def change_subscription_state(subscription_state)
@@ -4591,6 +4600,8 @@ module Ember
     def test_create_ticket_with_date_time_custom_field
       @account.ticket_fields.find_by_column_name("ff_date06").try(:destroy)
       create_custom_field('appointment_time', 'date_time', '06', true)
+      Account.reset_current_account
+      @account = Account.first
       params_hash = { email: Faker::Internet.email, description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
                           priority: 2, status: 2, type: 'Problem', responder_id: @agent.id, custom_fields: { appointment_time: '2019-01-12T12:11:00'}}
       post :create, construct_params({ version: 'private' }, params_hash)

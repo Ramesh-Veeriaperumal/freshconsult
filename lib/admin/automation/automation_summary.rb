@@ -109,8 +109,11 @@ module Admin::Automation::AutomationSummary
       array = []
       array << generate_key(data[:name], data[:evaluate_on] || 'ticket')
       array << generate_operator(data[:operator]) if data[:operator].present?
-      if data[:value].present?
-        data[:value] = CGI.escapeHTML(data[:value]) if SUBJECT_DESCRIPTION_FIELDS.include?(data[:name]) && data[:value].is_a?(String)
+      if data.key? :value
+        field = ticket_fields.find { |tf| tf.name == data[:name] }
+        data[:value] = data[:value].is_a?(Array) ? data[:value].map { |val| CGI.escapeHTML(val) } :
+                           CGI.escapeHTML(data[:value]) if SUBJECT_DESCRIPTION_FIELDS.include?(data[:name]) ||
+            (field.present? && CUSTOM_TEXT_FIELD_TYPES.include?(field.field_type.to_sym))
         array << generate_value(data[:name], data[:value], ' OR ')
       end
       array << generate_case_sensitive(data[:case_sensitive]) if data[:case_sensitive].present?
@@ -151,15 +154,14 @@ module Admin::Automation::AutomationSummary
       translated_key = data.key?(:value) ? :"#{type}_value" : :"#{type}_from_to"
       values = data.key?(:value) ? [data[:value]] : [data[:from], data[:to]]
 
-      array = []
-      array << generate_key(data[field_name], data[:evaluate_on] || 'ticket')
-      array << generate_operator(data[:operator]) if data[:operator].present?
-      array << generate_value(data[field_name], data[:value], ' OR ') unless data[:value].nil?
-      sentence = array.join(' ')
-
+      key = generate_key(data[field_name], data[:evaluate_on] || 'ticket')
+      operator = data[:operator].present? ? data[:operator] : 'as'
+      operator = generate_operator(operator)
+      value = generate_value(data[field_name], data[:value], ' OR ') unless data[:value].nil?
+      sentence = I18n.t("admin.automation_summary.#{translated_key}", field_name: key, field_operator: operator, field_value: value)
       nested_data.each do |nested_value|
         nested_sentence = nested_fields_sentence_generate(nested_value, "#{type}_nested")
-        sentence = "#{sentence}#{I18n.t('admin.automation_summary.and')}#{nested_sentence}"
+        sentence = "#{sentence}#{nested_sentence}"
       end
       sentence
     end
@@ -177,6 +179,8 @@ module Admin::Automation::AutomationSummary
 
     def create_sentence(field_name, cons_field_name, value = nil, evaluate_on = 'ticket', type = nil)
       name = generate_key(field_name, evaluate_on, ', ', type)
+      field = ticket_fields.find { |tf| tf.name == field_name.to_s }
+      value = value.map { |val| CGI.escapeHTML(val) } if field.present? && CUSTOM_TEXT_FIELD_TYPES.include?(field.field_type.to_sym)
       value1 = generate_value(field_name, value.first || I18n.t('admin.automation_summary.none')) if value.present?
       value2 = generate_value(field_name, value.second ||
                   I18n.t('admin.automation_summary.none')) if value.present? && value.length == 2
@@ -332,6 +336,10 @@ module Admin::Automation::AutomationSummary
       @custom_requester_fields ||= record.account.contact_form.custom_contact_fields.inject({}) do |hash, key|
         hash.merge!(key[:name].to_s => key[:label])
       end
+    end
+
+    def ticket_fields
+      @ticket_fields ||= Account.current.ticket_fields_from_cache
     end
 
     def fetch_tag_names(tag_ids)

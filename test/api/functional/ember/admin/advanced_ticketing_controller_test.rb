@@ -15,6 +15,7 @@ module Ember
         super
         Integrations::InstalledApplication.any_instance.stubs(:marketplace_enabled?).returns(false)
       end
+
       def teardown
         super
         Integrations::InstalledApplication.unstub(:marketplace_enabled?)
@@ -22,6 +23,13 @@ module Ember
 
       def wrap_cname(params)
         { advanced_ticketing: params }
+      end
+
+      def destroy_fsm_fields_and_section
+        CUSTOM_FIELDS_TO_RESERVE.each do |field|
+          Account.current.ticket_fields.find_by_name(field[:name] + "_#{Account.current.id}").destroy
+        end
+        Account.current.sections.find_by_label(SERVICE_TASK_SECTION).destroy
       end
 
       def test_create_parent_child
@@ -80,10 +88,10 @@ module Ember
       def test_create_with_disable_old_ui_enabled
         disable_feature(:parent_child_tickets) do
           Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
-          post :create, construct_params({version: 'private'}, {name: 'parent_child_tickets'})
+          post :create, construct_params({ version: 'private' }, name: 'parent_child_tickets')
           assert_response 204
           assert Account.current.parent_child_tickets_enabled?
-          assert_equal 0,Account.current.installed_applications.with_name('parent_child_tickets').count
+          assert_equal 0, Account.current.installed_applications.with_name('parent_child_tickets').count
           Account.any_instance.unstub(:disable_old_ui_enabled?)
         end
       end
@@ -98,11 +106,11 @@ module Ember
             total_fsm_fields_count = CUSTOM_FIELDS_TO_RESERVE.size
             Account.current.subscription.update_attributes(additional_info: { field_agent_limit: 10 })
             Sidekiq::Testing.inline! do
-              post :create, construct_params({ version: 'private' }, { name: 'field_service_management' })
+              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
             end
             assert_response 204
             assert Account.current.field_service_management_enabled?
-            dashboard = Account.current.dashboards.where(name: I18n.t("fsm_dashboard.name"))
+            dashboard = Account.current.dashboards.where(name: I18n.t('fsm_dashboard.name'))
             fields_count_after_installation = Account.current.ticket_fields.size
             assert fields_count_after_installation == (total_fsm_fields_count + fields_count_before_installation)
             assert dashboard.present?
@@ -122,8 +130,55 @@ module Ember
             assert_equal widget[:config_data][:metric], ::Dashboard::Custom::TimeTrendCard::METRICS_MAPPING.key('AVG_RESOLUTION_TIME')
           ensure
             Account.any_instance.unstub(:disable_old_ui_enabled?)
-            Account.any_instance.unstub(:fsm_dashboard_enabled?)
             destroy_fsm_dashboard_and_filters
+          end
+        end
+      end
+
+      def test_destroy_fsm_without_any_data_loss
+        enable_fsm do
+          begin
+            Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
+            Sidekiq::Testing.inline! do
+              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+              assert_response 204
+              assert Account.current.field_service_management_enabled?
+
+              fields_count_after_installation = Account.current.ticket_fields.size
+
+              delete :destroy, controller_params(version: 'private', id: 'field_service_management')
+              fields_count_after_destroy = Account.current.ticket_fields.size
+              assert_equal true, Account.current.picklist_values.find_by_value(SERVICE_TASK_TYPE).present?
+              assert_equal true, Account.current.sections.find_by_label(SERVICE_TASK_SECTION).present?
+              assert fields_count_after_destroy == fields_count_after_installation
+            end
+          ensure
+            Account.any_instance.unstub(:disable_old_ui_enabled?)
+          end
+        end
+      end
+
+      def test_reenable_fsm_without_any_data_loss
+        enable_fsm do
+          begin
+            Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
+            Sidekiq::Testing.inline! do
+              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+              assert_response 204
+              assert Account.current.field_service_management_enabled?
+
+              delete :destroy, controller_params(version: 'private', id: 'field_service_management')
+              assert_equal false, Account.current.field_service_management_enabled?
+
+              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+              assert_response 204
+              assert Account.current.field_service_management_enabled?
+              assert_equal true, Account.current.picklist_values.find_by_value(SERVICE_TASK_TYPE).present?
+              assert_equal true, Account.current.sections.find_by_label(SERVICE_TASK_SECTION).present?
+              assert Account.current.sections.find_by_label(SERVICE_TASK_SECTION).section_fields.size == CUSTOM_FIELDS_TO_RESERVE.size
+            end
+          ensure
+            Account.any_instance.unstub(:disable_old_ui_enabled?)
           end
         end
       end
@@ -132,24 +187,24 @@ module Ember
         enable_fsm do
           begin
             Sidekiq::Testing.inline! do
-                post :create, construct_params({ version: 'private' }, name: 'field_service_management')
-                assert_response 204
-                assert Account.current.field_service_management_enabled?
-                User.stubs(:current).returns(User.first)
-                User.any_instance.stubs(:privilege?).with(:manage_account).returns(true)
-                User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
-                Account.any_instance.stubs(:disable_field_service_management_enabled?).returns(true)
-                fields_count_after_installation = Account.current.ticket_fields.size
-                total_fsm_fields_count = CUSTOM_FIELDS_TO_RESERVE.size
-                Account.current.subscription.update_attributes(additional_info: { field_agent_limit: 10 })
-                Account.current.subscription.addons = Subscription::Addon.where(name: Subscription::Addon::FSM_ADDON)
-                Account.current.subscription.save
-                delete :destroy, controller_params(version: 'private', id: 'field_service_management')
-                assert_response 204
-                fields_count_after_destroy = Account.current.ticket_fields.size
-                assert fields_count_after_destroy == (fields_count_after_installation - total_fsm_fields_count)
-                assert Account.current.subscription.additional_info[:field_agent_limit].present? == false
-                assert Account.current.subscription.addons.count.zero?
+              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+              assert_response 204
+              assert Account.current.field_service_management_enabled?
+              User.stubs(:current).returns(User.first)
+              User.any_instance.stubs(:privilege?).with(:manage_account).returns(true)
+              User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
+              Account.any_instance.stubs(:disable_field_service_management_enabled?).returns(true)
+              fields_count_after_installation = Account.current.ticket_fields.size
+              total_fsm_fields_count = CUSTOM_FIELDS_TO_RESERVE.size
+              Account.current.subscription.update_attributes(additional_info: { field_agent_limit: 10 })
+              Account.current.subscription.addons = Subscription::Addon.where(name: Subscription::Addon::FSM_ADDON)
+              Account.current.subscription.save
+              delete :destroy, controller_params(version: 'private', id: 'field_service_management')
+              assert_response 204
+              fields_count_after_destroy = Account.current.ticket_fields.size
+              assert fields_count_after_destroy == fields_count_after_installation
+              assert Account.current.subscription.additional_info[:field_agent_limit].present? == false
+              assert Account.current.subscription.addons.count.zero?
             end
           ensure
             User.any_instance.unstub(:privilege?)
@@ -163,19 +218,21 @@ module Ember
         enable_fsm do
           begin
             Sidekiq::Testing.inline! do
-                post :create, construct_params({ version: 'private' }, name: 'field_service_management')
-                assert_response 204
-                assert Account.current.field_service_management_enabled?
-                User.stubs(:current).returns(User.first)
-                User.any_instance.stubs(:privilege?).with(:manage_account).returns(true)
-                User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
-                delete :destroy, controller_params(version: 'private', id: 'field_service_management')
-                assert_response 403
-                match_json(request_error_pattern(:access_denied))
+              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+              assert_response 204
+              assert Account.current.field_service_management_enabled?
+              User.stubs(:current).returns(User.first)
+              Account.any_instance.stubs(:disable_field_service_management_enabled?).returns(false)
+              User.any_instance.stubs(:privilege?).with(:manage_account).returns(true)
+              User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
+              delete :destroy, controller_params(version: 'private', id: 'field_service_management')
+              assert_response 403
+              match_json(request_error_pattern(:access_denied))
             end
           ensure
             User.any_instance.unstub(:privilege?)
             User.unstub(:current)
+            Account.any_instance.unstub(:disable_field_service_management_enabled?)
           end
         end
       end
@@ -184,21 +241,103 @@ module Ember
         enable_fsm do
           begin
             Sidekiq::Testing.inline! do
-                post :create, construct_params({ version: 'private' }, name: 'field_service_management')
-                assert_response 204
-                assert Account.current.field_service_management_enabled?
-                User.stubs(:current).returns(User.first)
-                User.any_instance.stubs(:privilege?).with(:manage_account).returns(false)
-                User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
-                Account.any_instance.stubs(:disable_field_service_management_enabled?).returns(true)
-                delete :destroy, controller_params(version: 'private', id: 'field_service_management')
-                assert_response 403
-                match_json(request_error_pattern(:access_denied))
+              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+              assert_response 204
+              assert Account.current.field_service_management_enabled?
+              User.stubs(:current).returns(User.first)
+              User.any_instance.stubs(:privilege?).with(:manage_account).returns(false)
+              User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
+              delete :destroy, controller_params(version: 'private', id: 'field_service_management')
+              assert_response 403
+              match_json(request_error_pattern(:access_denied))
             end
           ensure
-            Account.any_instance.unstub(:disable_field_service_management_enabled?)
             User.any_instance.unstub(:privilege?)
             User.unstub(:current)
+          end
+        end
+      end
+
+      def test_reenable_fsm_without_any_data_loss_when_fsm_field_is_deleted
+        enable_fsm do
+          begin
+            Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
+            Sidekiq::Testing.inline! do
+              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+              assert_response 204
+              assert Account.current.field_service_management_enabled?
+
+              delete :destroy, controller_params(version: 'private', id: 'field_service_management')
+              assert_equal false, Account.current.field_service_management_enabled?
+
+              Account.current.ticket_fields.find_by_name(CUSTOM_FIELDS_TO_RESERVE.first[:name] + "_#{Account.current.id}").destroy
+              Account.reset_current_account
+              Account.stubs(:current).returns(Account.first)
+              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+              assert_response 204
+              assert Account.current.field_service_management_enabled?
+              assert_equal true, Account.current.ticket_fields.find_by_name(CUSTOM_FIELDS_TO_RESERVE.first[:name] + "_#{Account.current.id}").present?
+            end
+          ensure
+            Account.any_instance.unstub(:disable_old_ui_enabled?)
+          end
+        end
+      end
+
+      def test_reenable_fsm_without_any_data_loss_when_fsm_section_is_deleted
+        enable_fsm do
+          begin
+            Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
+            Sidekiq::Testing.inline! do
+              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+              assert_response 204
+              assert Account.current.field_service_management_enabled?
+
+              delete :destroy, controller_params(version: 'private', id: 'field_service_management')
+              assert_equal false, Account.current.field_service_management_enabled?
+
+              destroy_fsm_fields_and_section
+
+              Account.reset_current_account
+              Account.stubs(:current).returns(Account.first)
+              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+              assert_response 204
+              assert Account.current.field_service_management_enabled?
+              assert_equal true, Account.current.sections.find_by_label(SERVICE_TASK_SECTION).present?
+              assert Account.current.sections.find_by_label(SERVICE_TASK_SECTION).section_fields.size == CUSTOM_FIELDS_TO_RESERVE.size
+            end
+          ensure
+            Account.any_instance.unstub(:disable_old_ui_enabled?)
+          end
+        end
+      end
+
+      def test_reenable_fsm_without_any_data_loss_when_service_task_type_is_deleted
+        enable_fsm do
+          begin
+            Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
+            Sidekiq::Testing.inline! do
+              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+              assert_response 204
+              assert Account.current.field_service_management_enabled?
+
+              delete :destroy, controller_params(version: 'private', id: 'field_service_management')
+              assert_equal false, Account.current.field_service_management_enabled?
+
+              destroy_fsm_fields_and_section
+              Account.current.picklist_values.find_by_value(SERVICE_TASK_TYPE).destroy
+
+              Account.reset_current_account
+              Account.stubs(:current).returns(Account.first)
+              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+              assert_response 204
+              assert Account.current.field_service_management_enabled?
+              assert_equal true, Account.current.picklist_values.find_by_value(SERVICE_TASK_TYPE).present?
+              assert_equal true, Account.current.sections.find_by_label(SERVICE_TASK_SECTION).present?
+              assert Account.current.sections.find_by_label(SERVICE_TASK_SECTION).section_fields.size == CUSTOM_FIELDS_TO_RESERVE.size
+            end
+          ensure
+            Account.any_instance.unstub(:disable_old_ui_enabled?)
           end
         end
       end
@@ -207,15 +346,15 @@ module Ember
         enable_fsm do
           begin
             Sidekiq::Testing.inline! do
-                post :create, construct_params({ version: 'private' }, name: 'field_service_management')
-                assert_response 204
-                assert Account.current.field_service_management_enabled?
-                User.stubs(:current).returns(User.first)
-                User.any_instance.stubs(:privilege?).with(:manage_account).returns(false)
-                User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
-                delete :destroy, controller_params(version: 'private', id: 'field_service_management')
-                assert_response 403
-                match_json(request_error_pattern(:access_denied))
+              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+              assert_response 204
+              assert Account.current.field_service_management_enabled?
+              User.stubs(:current).returns(User.first)
+              User.any_instance.stubs(:privilege?).with(:manage_account).returns(false)
+              User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
+              delete :destroy, controller_params(version: 'private', id: 'field_service_management')
+              assert_response 403
+              match_json(request_error_pattern(:access_denied))
             end
           ensure
             User.any_instance.unstub(:privilege?)

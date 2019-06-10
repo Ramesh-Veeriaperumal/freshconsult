@@ -170,6 +170,24 @@ module Ember
         end
       end
 
+      def test_inline_image_merge_success
+        primary_ticket = create_ticket
+        source_tickets = inline_attachment_ids = []
+        2.times.each do
+          ticket = create_ticket_with_inline_attachments
+          inline_attachment_ids += ticket.inline_attachments.map(&:id)
+          source_tickets << ticket
+        end
+        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets.map(&:display_id))
+        Sidekiq::Testing.inline! do
+          put :merge, construct_params({ version: 'private' }, request_params)
+          assert_response 204
+          inline_attachment = Helpdesk::Attachment.where(id: inline_attachment_ids.first, account_id: @account.id).first
+          assert_equal 'Note::Inline', inline_attachment.attachable_type
+          assert_equal inline_attachment.attachable.notable_id, primary_ticket.id
+        end
+      end
+
       def test_merge_spammed_ticket
         primary_ticket = create_ticket(spam: true)
         source_tickets_ids = create_n_tickets(BULK_TICKET_CREATE_COUNT)

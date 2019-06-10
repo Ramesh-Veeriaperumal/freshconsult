@@ -51,6 +51,7 @@
   <%= javascript_include_tag :'cdn/ticket_fields' %>
   <%= javascript_tag do %>
     // Localizing ticket fields js elements
+    fsmFields = <%= Admin::AdvancedTicketing::FieldServiceManagement::Util::CUSTOM_FIELDS_TO_RESERVE.collect { |x| x[:name]+"_#{Account.current.id}" }.to_json.html_safe %>;
     fsmFeature = <%= Account.current.field_service_management_enabled? %>
     customFields = <%= @ticket_field_json.to_json.html_safe %>;
     customSection = <%= @section_data_json.to_json.html_safe %>;
@@ -167,7 +168,8 @@
       field_has_section:  '<%= t("ticket_fields.formfield_props.field_has_section") %>',
       sandbox_notification_for_ticketfields: '<%= t("sandbox.sandbox_notification_for_ticketfields").html_safe %>',
       fsm_fields_edit: '<%= t("ticket_fields.fields.fsm_fields_edit") %>',
-      fsm_section_delete: '<%= t("ticket_fields.section.fsm_section_delete") %>'
+      fsm_section_delete: '<%= t("ticket_fields.section.fsm_section_delete") %>',
+      fsm_fields_moved_out: '<%= t("ticket_fields.fields.fsm_fields_moved_out") %>'
     };
 
     window['translate'] = {}; 
