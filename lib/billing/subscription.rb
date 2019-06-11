@@ -45,8 +45,8 @@ class Billing::Subscription < Billing::ChargebeeWrapper
   end
 
   #instance methods
-  def create_subscription(account, subscription_params = {}, new_signup = false)
-    data = create_subscription_params(account, subscription_params, new_signup)
+  def create_subscription(account, subscription_params = {})
+    data = create_subscription_params(account, subscription_params)
     super(data)
   end
 
@@ -144,13 +144,12 @@ class Billing::Subscription < Billing::ChargebeeWrapper
   end
   
   private
-    def create_subscription_params(account, subscription_params, new_signup = false)
+    def create_subscription_params(account, subscription_params)
       subscription_info = if subscription_params
         subscription_data(account.subscription).merge(subscription_params)
       else
         subscription_data(account.subscription)
       end
-      subscription_info[:addons] = signup_addon_data(account.subscription) if new_signup
       account_info(account).merge(subscription_info)
     end
 
@@ -171,12 +170,6 @@ class Billing::Subscription < Billing::ChargebeeWrapper
         :plan_id => plan_code(subscription), 
         :plan_quantity => subscription.agent_limit.blank? ? TRIAL_PLAN_QUANTITY : subscription.agent_limit
       }
-    end
-
-    def signup_addon_data(subscription)
-      Subscription::Addon.where('name in (?)',  Subscription::Addon.addons_on_signup_list).map do |addon|
-        { id: addon.billing_addon_id, quantity: addon.billing_quantity(subscription) }
-      end
     end
 
     def plan_code(subscription)

@@ -107,4 +107,4 @@ api_error_messages:
   invalid_field_auto_assign: "Auto ticket assignment is not available for service groups."
   agent_type_change_not_allowed: "You cannot change the agent type"
   should_not_be_field_agent: "Field technicians cannot be assigned to support groups."
-  should_not_be_support_group: "Support groups cannot be assigned to Field technicians."
+  should_not_be_support_group: "Field technicians cannot join Support groups"
