@@ -223,7 +223,6 @@ module Redis::Keys::Others
 
   # Proactive service
   CUSTOM_EMAIL_OUTREACH_LIMIT = "CUSTOM_EMAIL_OUTREACH_LIMIT".freeze
-
-  # Customer segments max limit
-  SEGMENT_LIMIT = 'SEGMENT_LIMIT'.freeze
+  #Customer segments max limit
+  SEGMENT_LIMIT = "SEGMENT_LIMIT:%{account_id}".freeze
 end
