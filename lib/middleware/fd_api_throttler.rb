@@ -12,6 +12,9 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
   API_CURRENT_VERSION = 'v2'.freeze
   NOT_FOUND_RESPONSE = [404, { 'Content-Type' => 'application/json' }, [' ']].freeze
   LIMIT_EXCEEDED_MESSAGE = [{ message: 'You have exceeded the limit of requests per hour' }.to_json].freeze
+  HTTP_X_FW_RATELIMITING_MANAGED = 'HTTP_X_FW_RATELIMITING_MANAGED'.freeze
+  API_THROTTLING_MANAGED = 'HTTP_OVERRIDE_THROTTLING'.freeze
+  TRUE_STRING = 'true'.freeze
 
   def initialize(app, options = {})
     super(app, options)
@@ -29,7 +32,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     @request      = Rack::Request.new(env)
 
     unless correct_namespace?(@request.env["PATH_INFO"])
-      @status, @headers, @response = @app.call(@request.env)
+      call_next
       return [@status, @headers, @response]
     end
 
@@ -39,10 +42,16 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     if shard_not_found?
       Rails.logger.debug "Domain Not Found while throttling :: Host: #{@host}"
       @status, @headers, @response = NOT_FOUND_RESPONSE
+    # Skips throttling when the header API_THROTTLING_MANAGED is present, which might
+    #   be set by Fluffy or HAProxy. User set headers has to be unset. Evaded the feature checks as well
+    #   Shard and account info will still be fetched for domain validation, and memoized for rest of the request
+    elsif skip_on_header
+      Rails.logger.debug "Skipping on header"
+      call_next
     elsif throttle?
       throttle_and_proceed
     else
-      @status, @headers, @response = @app.call(@request.env)
+      call_next
     end
     set_version_headers unless @status == 404 # Version will not be present if status is 404
     [@status, @headers, @response]
@@ -53,6 +62,10 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
   end
 
   private
+
+    def call_next
+      @status, @headers, @response = @app.call(@request.env)
+    end
 
     def handle_expiry_not_set
       retry_value = retry_after.to_i
@@ -112,8 +125,11 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     end
 
     def throttle?
-      return false if throttled_in_fluffy?
-      !skipped_domain? && account_id
+      if is_fluffy_enabled?
+        return false
+      else
+        !skipped_domain? && account_id
+      end
     end
 
     def increment_redis_key(used)
@@ -219,8 +235,15 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
       Thread.current[:account] = nil
     end
 
-    def throttled_in_fluffy?
-      Account.current && Account.current.fluffy_enabled? && @request.env['HTTP_X_FW_RATELIMITING_MANAGED'] == "true"
+    def is_fluffy_enabled?
+      Account.current && Account.current.fluffy_enabled? && check_fluffy_header
     end
 
+    def skip_on_header
+      @request.env[API_THROTTLING_MANAGED] == TRUE_STRING
+    end
+
+    def check_fluffy_header
+      @request.env[HTTP_X_FW_RATELIMITING_MANAGED] == TRUE_STRING
+    end
 end
