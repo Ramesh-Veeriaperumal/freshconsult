@@ -1,5 +1,4 @@
 include Redis::OthersRedis
-include Redis::Keys::Subscription
 class Subscription::Addon < ActiveRecord::Base
   self.primary_key = :id
 	not_sharded
@@ -31,14 +30,6 @@ class Subscription::Addon < ActiveRecord::Base
   }.freeze
 
   FSM_ADDON = 'Field Service Management'.freeze
-  ADDONS_ON_SIGNUP = [FSM_ADDON] 
-  ENABLE_ADDONS_ON_SIGNUP_WITH_EMAIL = { FSM_ADDON => "+fsm" }.freeze
-
-  def self.addons_on_signup_list
-    addons_enabled_for_all_trial_accounts = get_all_members_in_a_redis_set(ADDONS_TO_BE_ENABLED_ON_SIGNUP)
-    ADDONS_ON_SIGNUP.select { |addon| addons_enabled_for_all_trial_accounts.try(:include?, addon) || 
-      Account.current.admin_email.include?(ENABLE_ADDONS_ON_SIGNUP_WITH_EMAIL[addon]) }
-  end
 
   def self.fetch_addon(addon_id)
     find_by_name(addon_id.tr('_', ' ').titleize) 
@@ -58,7 +49,7 @@ class Subscription::Addon < ActiveRecord::Base
     when ADDON_TYPES[:for_account]
       1
     when ADDON_TYPES[:field_agent_quantity]
-      subscription.field_agent_limit_with_safe_access
+      subscription.field_agent_limit
     end
   end
 

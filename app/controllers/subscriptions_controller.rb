@@ -159,6 +159,7 @@ class SubscriptionsController < ApplicationController
       create_new_addons_list(enabled_addon_names_from_params, disabled_addon_names_from_params)
     end
 
+    # Not allowing add-ons if it's value is not greater than 0. Chargebee allows addons with more than 0 quantity.
     def addon_enabled?(addon_type)
       addon_params[addon_type].present? && addon_params[addon_type]['enabled'] == 'true' && addon_params[addon_type]['value'].to_i > 0
     end
@@ -215,7 +216,13 @@ class SubscriptionsController < ApplicationController
     end
 
     def populate_addon_based_limits
-      scoper.field_agent_limit = addon_params['field_service_management']['value'].to_i if addon_params['field_service_management'].present? && addon_params['field_service_management']['enabled'] == 'true'
+      field_service_addon = addon_params['field_service_management']
+
+      if field_service_addon.present? && field_service_addon['enabled'] == 'true'
+        scoper.field_agent_limit = field_service_addon['value'].to_i
+      else
+        scoper.additional_info = scoper.additional_info.except(:field_agent_limit)
+      end
     end
 
     def load_freshfone_credits
@@ -239,7 +246,7 @@ class SubscriptionsController < ApplicationController
 
     #Error Check
     def check_for_subscription_errors
-      if agent_type = scoper.chk_change_agents || (addon_based_features_enabled? && fsm_addon_present? && scoper.chk_change_field_agents)
+      if agent_type = scoper.chk_change_agents || (addon_based_features_enabled? && scoper.chk_change_field_agents)
         Rails.logger.debug "Subscription Error::::::: #{agent_type} Limit exceeded, account id: #{current_account.id}"
 
         agent_count, error_class = if agent_type == Agent::SUPPORT_AGENT
@@ -250,10 +257,6 @@ class SubscriptionsController < ApplicationController
         flash[:notice] = t("subscription.error.#{error_class}", agent_count: agent_count)
         redirect_to subscription_url
       end
-    end
-
-    def fsm_addon_present?
-      @addons.any? { |addon| addon.name == Subscription::Addon::FSM_ADDON }
     end
 
     #chargebee and model updates
@@ -366,26 +369,46 @@ class SubscriptionsController < ApplicationController
     end
 
     def update_features
-      return unless plan_changed? || addons_changed?
+      perform_ui_based_addon_operations if addon_based_features_enabled?
+      return unless plan_changed?
 
       ProductFeedbackWorker.perform_async(omni_channel_ticket_params) if omni_plan_change?
-      SAAS::SubscriptionEventActions.new(scoper.account, @cached_subscription, @cached_addons).change_plan
+      SAAS::SubscriptionEventActions.new(scoper.account, @cached_subscription, @cached_addons, features_to_skip).change_plan
       if Account.current.active_trial.present?
         Account.current.active_trial.update_result!(@cached_subscription, Account.current.subscription)
       end
     end
 
-    def plan_changed?
-      scoper.subscription_plan_id != @cached_subscription.subscription_plan_id
+    # SAAS::SubscriptionEventActions will remove the BM feature corresponding to the addon if the addon get's removed.
+    # For FSM, we have a usecase where zero field agent limit is possible with FSM enabled.
+    # => We maintain field agent limit in chargebee through an addon and adding addon with zero quantity is not possible through chargebee.
+    # So, FSM like addons(UI based addons), we are not going to remove BM in the Plans and billings flow.
+    # => It is taken care in the drop_data_based_on_params method if the feature is actually removed.
+    # Same case for add add-on as well. So, we need to skip them as well.
+    def features_to_skip
+      ADDON_PARAMS_NAMES_MAP.keys
     end
 
-    def addons_changed?
-      return false unless addon_based_features_enabled?
-      # Too risky to check for all addon changes and proceed with ADD_DATA, DROP_DATA. So, checking only for ADDON_CHANGES_TO_LISTEN now.
-      cached_addon_names = @cached_addons.map(&:name)
-      addon_names = @addons.map(&:name)
-      changed_addons_names = cached_addon_names - addon_names | addon_names - cached_addon_names
-      (ADDON_CHANGES_TO_LISTEN & changed_addons_names).present?
+    def perform_ui_based_addon_operations
+      [SAAS::SubscriptionEventActions::ADD, SAAS::SubscriptionEventActions::DROP].each do |action|
+        feature_list = if action == SAAS::SubscriptionEventActions::ADD
+                         addon_params.map { |feature, value| feature.to_sym if !Account.current.has_feature?(feature.to_sym) && value['enabled'] == 'true' }.compact
+                       else
+                         addon_params.map { |feature, value| feature.to_sym if Account.current.has_feature?(feature.to_sym) && value['enabled'] == 'false' }.compact
+                       end
+
+        next if feature_list.blank?
+
+        Rails.logger.debug ":::::: #{action}_data_based_on_params, features to #{action}: #{feature_list.inspect}"
+        action == SAAS::SubscriptionEventActions::ADD ? feature_list.each { |f| Account.current.add_feature(f) } : feature_list.each { |f| Account.current.revoke_feature(f) }
+        # So, the features get updated in Saas::SubscriptionEventActions calls.
+        Account.current.reload
+        NewPlanChangeWorker.perform_async(features: feature_list, action: action)
+      end
+    end
+
+    def plan_changed?
+      scoper.subscription_plan_id != @cached_subscription.subscription_plan_id
     end
 
     #Events
