@@ -14,7 +14,7 @@ class SAAS::SubscriptionEventActions
                            :custom_domain, :css_customization, :custom_roles,
                            :dynamic_sections, :custom_survey, :mailbox,
                            :helpdesk_restriction_toggle, :ticket_templates,
-                           :round_robin_load_balancing, :multi_timezone, :field_service_management].freeze
+                           :round_robin_load_balancing, :multi_timezone, :field_service_management, :custom_translations].freeze
 
   ADD_DATA_FEATURES_V2  = [:link_tickets_toggle, :parent_child_tickets_toggle, :multiple_companies_toggle,
                            :tam_default_fields, :smart_filter, :contact_company_notes, :unique_contact_identifier, :custom_dashboard, 
@@ -132,6 +132,7 @@ class SAAS::SubscriptionEventActions
 
     def add_new_plan_features
       plan_features.delete(:support_bot) if account.revoke_support_bot?
+      plan_features.delete(:custom_translations) unless account.redis_picklist_id_enabled?
       plan_features.each do |feature|
         account.set_feature(feature)
       end
