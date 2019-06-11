@@ -1,7 +1,7 @@
 module ErrorConstants
   API_ERROR_CODES = {
     missing_field: %w(missing_field fill_a_mandatory_field),
-    duplicate_value: ['has already been taken', 'already exists in the selected category', 'Email has already been taken', 'email_already_taken', 'already exists in the selected category.', 'duplicate_choices', 'duplicate_label_nested_field', 'duplicate_labels_ticket_field'],
+    duplicate_value: ['has already been taken', 'already exists in the selected category', 'Email has already been taken', 'email_already_taken', 'already exists in the selected category.', 'duplicate_choices', 'duplicate_label_nested_fields', 'duplicate_labels_ticket_field'],
     exceeded_limit: ['exceeded_limit'],
     under_limit: ['min_elements'],
     invalid_field: ['invalid_field', 'invalid_choices_field'],
