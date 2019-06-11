@@ -50,7 +50,8 @@ SKIP_FILES_PUBLIC = ['test/api/functional/shared_ownership_ticket_test.rb']
 SUCCESSFUL_SEARCH_TESTS = [
 	"test/api/functional/api_search/contacts_controller_test.rb",
 	"test/api/functional/api_search/companies_controller_test.rb",
-  "test/api/functional/api_search/tickets_controller_test.rb"
+  "test/api/functional/api_search/tickets_controller_test.rb",
+  "test/api/functional/api_search/autocomplete_controller_test.rb"
 ]
 
 LIB_TESTS = Dir.glob('test/lib/unit/*_test.rb') + Dir.glob('test/lib/*_test.rb') + Dir.glob('test/lib/helpdesk/**/*_test.rb') + Dir.glob('test/lib/integration_services/**/*_test.rb') + Dir.glob('test/lib/saas/*_test.rb') + Dir.glob('test/lib/spam/*_test.rb') + Dir.glob('test/lib/integrations/**/*_test.rb') + Dir.glob('test/lib/crm/**/*_test.rb') + Dir.glob('test/lib/marketplace/*_test.rb') + Dir.glob('test/lib/reports/*_test.rb') + Dir.glob('test/lib/dashboard/*_test.rb') + Dir.glob('test/lib/email/*_test.rb')
