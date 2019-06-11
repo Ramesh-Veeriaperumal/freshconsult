@@ -346,9 +346,13 @@ class CustomFieldsController < Admin::AdminController
 
       fields_deleted_from_section = fsm_section.first['section_fields'].collect { |x| x['ticket_field_id'] if x.key?('action') && x['action'].eql?('delete') }.compact
       return if fields_deleted_from_section.blank?
-
+      ticket_field_data = ActiveSupport::JSON.decode(params[:jsonData])
       fsm_fields = CUSTOM_FIELDS_TO_RESERVE.collect { |x| x[:label] }
-      fsm_fields_to_be_deleted = ActiveSupport::JSON.decode(params[:jsonData]).collect { |x| x['label'] if x['action'].eql?('delete') && fsm_fields.include?(x['label']) }.compact
+
+      fsm_fields_moved = ticket_field_data.collect { |x| x['label'] if fields_deleted_from_section.include?(x['id']) && fsm_fields.include?(x['label'])  }.compact
+      return if fsm_fields_moved.blank?
+
+      fsm_fields_to_be_deleted = ticket_field_data.collect { |x| x['label'] if x['action'].eql?('delete') && fsm_fields.include?(x['label']) }.compact
       if fsm_fields_to_be_deleted.empty?
         err_msg = I18n.t('ticket_fields.fields.fsm_fields_moved_out').to_s
       end
