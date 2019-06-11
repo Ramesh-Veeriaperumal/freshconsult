@@ -8,7 +8,6 @@ module Widget
     skip_before_filter :check_privilege
     before_filter :check_feature
     before_filter :check_ticket_permission, only: :create
-    before_filter :set_widget_portal_as_current
     before_filter :check_recaptcha, unless: :predictive_ticket?
     before_filter :validate_attachment_ids, if: :attachment_ids?
 
@@ -37,7 +36,26 @@ module Widget
         validate_widget
         return if @error.present?
         return render_request_error(:ticket_creation_not_allowed, 400, id: @widget_id) unless @help_widget.ticket_creation_enabled?
-        super
+        @ticket_fields = ticket_fields_scoper
+        @name_mapping = TicketsValidationHelper.name_mapping(@ticket_fields) # -> {:text_1 => :text}
+        # Should not allow any key value pair inside custom fields hash if no custom fields are available for accnt.
+        custom_fields = @name_mapping.empty? ? [nil] : @name_mapping.values
+        default_fields = @ticket_fields.select(&:default).map { |tf| (ApiTicketConstants::FIELD_MAPPINGS[tf.name.to_sym] || tf.name.to_sym).to_s }
+        field = default_fields | "#{constants_class}::#{original_action_name.upcase}_FIELDS".constantize | ['custom_fields' => custom_fields]
+        params[cname].permit(*field)
+        set_default_values
+        params_hash = params[cname].merge(statuses: Helpdesk::TicketStatus.status_objects_from_cache(current_account), ticket_fields: @ticket_fields)
+        additional_params = get_additional_params
+        ticket = validation_class.new(params_hash, @item, string_request_params?, additional_params)
+        render_custom_errors(ticket, true) unless ticket.valid?(original_action_name.to_sym)
+      end
+
+      def ticket_fields_scoper
+        set_widget_portal_as_current
+        ticket_fields_scoper = @current_portal.customer_editable_ticket_fields
+        # additionally fetching sublevel nested fields because only parent level is saved with editable_in_portal in db
+        ticket_fields_scoper << ticket_fields_scoper.map { |tf| Account.current.ticket_fields_from_cache.select { |tfc| tfc if tfc.parent_id == tf.id } if tf.field_type == 'nested_field' }.compact
+        ticket_fields_scoper.flatten
       end
 
       def attachment_ids?
