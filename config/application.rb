@@ -124,6 +124,7 @@ module Helpkit
     # GlobalRequestStore should always before any business logic Middleware.
     # ApplicationLogger should always follow GlobalRequestStore.
 
+    config.middleware.delete 'ActiveRecord::QueryCache'
     config.middleware.insert_before 0, "Middleware::CorsEnabler"
     config.middleware.insert_before 0, "Middleware::SecurityResponseHeader"
     config.middleware.insert_before 0, "Middleware::ApplicationLogger" if ENV['MIDDLEWARE_LOG_ENABLE'] == 'true'
