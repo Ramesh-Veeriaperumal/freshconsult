@@ -28,3 +28,4 @@ aws:
   - <%= SQS[:custom_mailbox_status] %>
   - <%= SQS[:bot_feedback_queue] %>
   - <%= SQS[:fd_scheduler_export_cleanup_queue] %>
+  - <%= SQS[:spam_trash_delete_queue] %>
