@@ -42,7 +42,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/integrated_user"
 
     resource :"ember/search/ticket", only: [:results]
-    resource :"ember/search/autocomplete", only: %i[requesters agents companies tags]
+    resource :"api_search/autocomplete", only: %i[requesters agents companies companies_search tags]
     resource :"ember/leaderboard", only: [:agents, :groups]
     resource :"ember/product_feedback"
     resource :"ember/ticket_template", only: %i[show index]
@@ -111,7 +111,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/tickets/requester", only: [:update]
     resource :"ember/contact/todo", only: [:create, :update, :destroy]
     resource :customer_note, only: [:create, :update, :destroy]
-    resource :"ember/search/autocomplete", only: [:companies]
+    resource :"api_search/autocomplete", only: [:companies, :companies_search]
   end
 
   manage_companies do

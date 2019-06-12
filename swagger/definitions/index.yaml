@@ -404,6 +404,8 @@ contact_post_activity:
   $ref: './response/contacts/post.yaml'
 contact_ticket_activity:
   $ref: './response/contacts/ticket.yaml'
+company_search:
+  $ref: './response/search/company.yaml'
 
 twitter_handle:
   $ref: './resource/twitter_handle.yaml'

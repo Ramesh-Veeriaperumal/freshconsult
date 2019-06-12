@@ -532,6 +532,26 @@ module Ember
         AwsWrapper::S3Object.unstub(:read)
         remove_others_redis_key(ADVANCED_TICKETING_METRICS)
       end
+
+      def test_fsm_enable_failure
+        Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+        AdvancedTicketingControllerTest.any_instance.stubs(:create_service_task_field_type).raises(RuntimeError)
+        Helpdesk::PicklistValue.any_instance.stubs(:find_by_value).returns(nil)
+        Ember::Admin::AdvancedTicketingControllerTest.any_instance.expects(:notify_fsm_dev).once
+        perform_fsm_operations
+      ensure
+        AdvancedTicketingControllerTest.any_instance.unstub(:create_service_task_field_type)
+        Account.any_instance.unstub(:field_service_management_enabled?)
+        Helpdesk::PicklistValue.any_instance.unstub(:find_by_value)
+      end
+
+      def test_fsm_disable_failure
+        AdvancedTicketingControllerTest.any_instance.stubs(:remove_fsm_addon_and_reset_agent_limit).raises(RuntimeError)
+        Ember::Admin::AdvancedTicketingControllerTest.any_instance.expects(:notify_fsm_dev).once
+        cleanup_fsm
+      ensure
+        AdvancedTicketingControllerTest.any_instance.unstub(:remove_fsm_addon_and_reset_agent_limit)
+      end
     end
   end
 end

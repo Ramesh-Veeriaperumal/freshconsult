@@ -74,7 +74,7 @@ module ApiTicketConstants
   ATTRIBUTES_TO_BE_STRIPPED = %w(email phone name subject type tags cc_emails twitter_id custom_fields).freeze
 
   EXPORT_CSV_HASH_FIELDS = %w(ticket_fields contact_fields company_fields).freeze
-  EXPORT_CSV_FIELDS = %w(format date_filter ticket_state_filter start_date end_date query_hash).freeze | EXPORT_CSV_HASH_FIELDS
+  EXPORT_CSV_FIELDS = ['format', 'date_filter', 'ticket_state_filter', 'start_date', 'end_date', 'query_hash', 'filter_name'].freeze | EXPORT_CSV_HASH_FIELDS
 
   CLOSED = Helpdesk::Ticketfields::TicketStatus::CLOSED
   RESOLVED = Helpdesk::Ticketfields::TicketStatus::RESOLVED

@@ -11,7 +11,7 @@ module TicketFieldsTestHelper
   DEFAULT_FIELDS = %w[default_priority default_source default_status default_ticket_type default_product default_skill].freeze
 
 
-  def create_custom_field(name, type, field_num = '05', required = false, required_for_closure = false)
+  def create_custom_field(name, type, field_num = '05', required = false, required_for_closure = false, editable_in_portal = false)
     ticket_field_exists = @account.ticket_fields.find_by_name("#{name}_#{@account.id}")
     if ticket_field_exists
       ticket_field_exists.update_attributes(required: required, required_for_closure: required_for_closure)
@@ -36,6 +36,7 @@ module TicketFieldsTestHelper
                                                            description: '',
                                                            required: required,
                                                            required_for_closure: required_for_closure,
+                                                           editable_in_portal: editable_in_portal,
                                                            column_name: flexifield_def_entry.flexifield_name,
                                                            flexifield_def_entry_id: flexifield_def_entry.id)
     parent_custom_field.save

@@ -114,6 +114,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
                       "all_tickets" => [spam_condition(false),deleted_condition(false),created_in_last_month],
                       "unresolved" => [unresolved_condition, spam_condition(false), deleted_condition(false)],
                       "article_feedback" => [spam_condition(false), deleted_condition(false)],
+                      'unresolved_article_feedback' => [unresolved_condition, spam_condition(false), deleted_condition(false)],
                       "my_article_feedback" => [spam_condition(false), deleted_condition(false)]
                    }
   DEFAULT_FILTERS_FOR_SEARCH = { 
@@ -467,7 +468,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
 
   def add_article_feedback_conditions(params)
-    if params[:article_id].present? && self.name == 'article_feedback'
+    if params[:article_id].present? && ['article_feedback', 'unresolved_article_feedback'].include?(self.name)
       article_id = params[:language_id].present? ? Account.current.solution_articles.where(parent_id: params[:article_id], language_id: params[:language_id]).first.id : params[:article_id]
       add_condition('article_tickets.article_id', :is, article_id)
     end
@@ -599,7 +600,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     all_joins[0].concat(tags_join) if all_conditions[0].include?("helpdesk_tags.name")
     all_joins[0].concat(statues_join) if all_conditions[0].include?("helpdesk_ticket_statuses")
     all_joins[0].concat(schema_less_join) if join_schema_less?(all_conditions)
-    all_joins[0].concat(article_tickets_join) if self.name == "article_feedback"
+    all_joins[0].concat(article_tickets_join) if ['article_feedback', 'unresolved_article_feedback'].include?(self.name)
     all_joins[0].concat(articles_join) if self.name == "my_article_feedback"
     all_joins[0].concat(states_join) if sort_by_response?
     all_joins

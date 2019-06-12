@@ -25,9 +25,16 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         create_fsm_dashboard if Account.current.fsm_dashboard_enabled?
         expire_cache
       rescue StandardError => e
-        cleanup_fsm
-        Rails.logger.error "error in performing fsm operations, account id: #{Account.current.id}, message: #{e.message}"
-        NewRelic::Agent.notice_error(e, description: "error in performing fsm operations, account id: #{Account.current.id}, message: #{e.message}")
+        log_operation_failure('Enable', e)
+      end
+
+      def log_operation_failure(operation, exception)
+        msg = "#{operation} FSM feature failed"
+        error_msg = "#{msg}, account id: #{Account.current.id}, message: #{exception.message}"
+        Rails.logger.error error_msg
+        NewRelic::Agent.notice_error(exception, description: error_msg)
+        msg_param = { account_id: Account.current.id, message: exception.message }
+        notify_fsm_dev(msg, msg_param)
       end
 
       def feature_fsm?
@@ -243,8 +250,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         destroy_field_agent
         destroy_field_group
       rescue StandardError => e
-        Rails.logger.error "Error in Disabling FSM, account id: #{Account.current.id}, message: #{e.message}"
-        NewRelic::Agent.notice_error(e, description: "error in cleaning fsm, account id: #{Account.current.id}, message: #{e.message}")
+        log_operation_failure('Disable', e)
       end
 
       def destroy_fsm_dashboard_and_filters

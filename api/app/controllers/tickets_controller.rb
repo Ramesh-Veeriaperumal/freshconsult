@@ -402,7 +402,7 @@ class TicketsController < ApiApplicationController
 
     def validate_params
       # We are obtaining the mapping in order to swap the field names while rendering(both successful and erroneous requests), instead of formatting the fields again.
-      @ticket_fields = Account.current.ticket_fields_from_cache
+      @ticket_fields = ticket_fields_scoper
       @name_mapping = TicketsValidationHelper.name_mapping(@ticket_fields) # -> {:text_1 => :text}
       # Should not allow any key value pair inside custom fields hash if no custom fields are available for accnt.
       custom_fields = @name_mapping.empty? ? [nil] : @name_mapping.values
@@ -413,6 +413,10 @@ class TicketsController < ApiApplicationController
       additional_params = get_additional_params
       ticket = validation_class.new(params_hash, @item, string_request_params?, additional_params)
       render_custom_errors(ticket, true) unless ticket.valid?(original_action_name.to_sym)
+    end
+
+    def ticket_fields_scoper
+      Account.current.ticket_fields_from_cache
     end
 
     def get_additional_params

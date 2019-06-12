@@ -12,8 +12,22 @@ module Widget
       @request.env['HTTP_X_WIDGET_ID'] = @widget.id
       @client_id = UUIDTools::UUID.timestamp_create.hexdigest
       @request.env['HTTP_X_CLIENT_ID'] = @client_id
+      before_all
       log_out
       controller.class.any_instance.stubs(:api_current_user).returns(nil)
+    end
+
+    @@before_all_run = false
+
+    def before_all
+      @account.sections.map(&:destroy)
+      return if @@before_all_run
+      toggle_required_attribute(Helpdesk::TicketField.where(required_in_portal: true))
+      # editable in portal custom_fields
+      create_custom_field('test_custom_text_1_editable', 'text', '05', false, false, true)
+      # not editable in portal custom_fields
+      create_custom_field('test_custom_text_2_not_editable', 'text', '05', false, false, false)
+      @@before_all_run = true
     end
 
     def teardown
@@ -145,7 +159,10 @@ module Widget
     def test_create_with_product_id
       @request.env['HTTP_X_WIDGET_ID'] = create_widget(form_type: 2).id
       product = create_product
-      params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph, product_id: product.id, status: 2, priority: 2, subject: Faker::Name.name }
+      product_field = Helpdesk::TicketField.where(name: 'product').first
+      product_field.editable_in_portal = true
+      product_field.save
+      params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph, product_id: product.id, status: 2, responder_id: @agent.id, subject: Faker::Name.name }
       post :create, construct_params({ version: 'widget' }, params)
       t = Helpdesk::Ticket.last
       assert_response 201
@@ -170,15 +187,14 @@ module Widget
       @request.env['HTTP_X_WIDGET_ID'] = create_widget(settings: settings).id
       default_non_required_fields = Helpdesk::TicketField.where(required_in_portal: false, default: 1)
       toggle_required_attribute(default_non_required_fields)
+      non_editable_fields = Helpdesk::TicketField.where(editable_in_portal: false, default: 1)
+      toggle_editable_in_portal(non_editable_fields)
       params_hash = {
         subject: 1,
         description: 1,
-        group_id: 'z',
         product_id: 'y',
         responder_id: 'x',
         status: 999,
-        priority: 999,
-        type: 'Test',
         email: Faker::Internet.email
       }
       post :create, construct_params({ version: 'widget' }, params_hash)
@@ -187,12 +203,9 @@ module Widget
       ticket_type_list << ",#{service_task}" if Account.current.picklist_values.map(&:value).include?(service_task)
       match_json([bad_request_error_pattern('description', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Integer'),
                   bad_request_error_pattern('subject',  :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Integer'),
-                  bad_request_error_pattern('group_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'String'),
                   bad_request_error_pattern('responder_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'String'),
                   bad_request_error_pattern('product_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'String'),
-                  bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
-                  bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7,8'),
-                  bad_request_error_pattern('type', :not_included, list: ticket_type_list)])
+                  bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7,8')])
       assert_response 400
       toggle_required_attribute(default_non_required_fields)
     end
@@ -200,7 +213,8 @@ module Widget
     def test_create_without_custom_fields_required
       settings = settings_hash(form_type: 2)
       @request.env['HTTP_X_WIDGET_ID'] = create_widget(settings: settings).id
-      params_hash = ticket_params_hash
+      params_hash = { email: Faker::Internet.email, description: Faker::Lorem.paragraph, responder_id: @agent.id, subject: Faker::Lorem.words(10).join(' '),
+                      status: 2}
       custom_fields = Helpdesk::TicketField.where(name: [@custom_field_names])
       toggle_required_attribute(custom_fields)
       post :create, construct_params({ version: 'widget' }, params_hash)
@@ -281,6 +295,25 @@ module Widget
       post :create, construct_params({ version: 'widget' }, params)
       assert_response 400
       match_json(request_error_pattern(:ticket_creation_not_allowed, 'ticket_creation_not_allowed'))
+    end
+
+    def test_create_with_editable_in_portal_fields_returns_success
+      settings = settings_hash(form_type: 2)
+      @request.env['HTTP_X_WIDGET_ID'] = create_widget(settings: settings).id
+      params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph, status: 2, subject: Faker::Lorem.words(10).join(' '), responder_id: @agent.id, custom_fields: { test_custom_text_1_editable: 'test' } }
+      post :create, construct_params({ version: 'widget' }, params)
+      t = Helpdesk::Ticket.last
+      assert_response 201
+      match_json(id: t.display_id)
+    end
+
+    def test_create_with_not_editable_in_portal_fields_returns_failure
+      settings = settings_hash(form_type: 2)
+      @request.env['HTTP_X_WIDGET_ID'] = create_widget(settings: settings).id
+      params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph, subject: Faker::Lorem.words(10).join(' '), custom_fields: { test_custom_text_2_not_editable: 'test' } }
+      post :create, construct_params({ version: 'widget' }, params)
+      assert_response 400
+      match_json(validation_error_pattern(bad_request_error_pattern(:test_custom_text_2_not_editable, 'Unexpected/invalid field in request', code: 'invalid_field')))
     end
   end
 end

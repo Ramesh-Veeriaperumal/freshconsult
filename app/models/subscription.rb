@@ -60,8 +60,6 @@ class Subscription < ActiveRecord::Base
   FREE = "free"
   SUSPENDED = "suspended"
 
-  DEFAULT_FIELD_AGENT_COUNT = 10
-
   NO_PRORATION_PERIOD_CYCLES = [SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:monthly]].freeze
 
   concerned_with :presenter
@@ -497,15 +495,10 @@ class Subscription < ActiveRecord::Base
     self.additional_info[:field_agent_limit] = value 
   end
 
-  def field_agent_limit_with_safe_access
-    self.additional_info.try(:[], :field_agent_limit) || DEFAULT_FIELD_AGENT_COUNT
-  end
-
   def field_agents_display_count
     count = account.field_agents_count
     limit = field_agent_limit || 0
-    return count > limit ? count : limit if count > 0 || limit > 0
-    DEFAULT_FIELD_AGENT_COUNT
+    count > limit ? count : limit
   end
 
   def amount_with_tax_safe_access

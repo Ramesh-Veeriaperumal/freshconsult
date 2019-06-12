@@ -318,6 +318,8 @@
 #Search
 /search/solutions:
   $ref: ./search/solutions.yaml
+/companies/autocomplete:
+  $ref: ./search/companies.yaml
 
 #Dashboard activities
 /dashboards/activities:

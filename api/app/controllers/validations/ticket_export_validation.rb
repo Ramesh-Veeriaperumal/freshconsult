@@ -2,13 +2,14 @@ class TicketExportValidation < ExportCsvValidation
   include ExportHelper
 
   attr_accessor :contact_fields, :company_fields, :ticket_fields,
-                :query_hash, :format, :ticket_state_filter, :date_filter, :start_date, :end_date
+                :query_hash, :format, :ticket_state_filter, :date_filter, :start_date, :end_date, :filter_name
 
   FORMAT = %w(csv xls).freeze
   DATE_FILTER = TicketConstants::CREATED_BY_NAMES_BY_KEY.keys.map(&:to_s)
   TICKET_STATE_FILTER = TicketConstants::STATES_HASH.keys.map(&:to_s)
 
   validates :format, required: true, data_type: { rules: String }, custom_inclusion: { in: FORMAT }
+  validates :filter_name, data_type: { rules: String }, custom_inclusion: { in: TicketConstants::DEFAULT_FILTER_EXPORT }
   validates :date_filter, required: true, data_type: { rules: String }, custom_inclusion: { in: DATE_FILTER }
   validates :ticket_state_filter, required: true, data_type: { rules: String }, custom_inclusion: { in: TICKET_STATE_FILTER }
   validates :start_date, date_time: { allow_nil: false }

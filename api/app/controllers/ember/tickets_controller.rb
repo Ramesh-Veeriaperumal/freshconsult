@@ -556,9 +556,10 @@ module Ember
 
       def build_export_hash
         cname_params.merge!(export_fields: cname_params[:ticket_fields],
-                            data_hash: QueryHash.new(cname_params[:query_hash]).to_system_format,
                             current_user_id: api_current_user.id,
                             portal_url: portal_url)
+        cname_params[:data_hash] = QueryHash.new(cname_params[:query_hash]).to_system_format unless TicketConstants::DEFAULT_FILTER_EXPORT.include?(cname_params[:filter_name])
+        cname_params
       end
 
       def parent_child_params

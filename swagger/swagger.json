@@ -6086,6 +6086,43 @@
         }
       }
     },
+    "/companies/autocomplete": {
+      "get": {
+        "tags": [
+          "search"
+        ],
+        "summary": "Search companies by name",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "type": "string",
+            "description": "search term for companies",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/company_search"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/dashboards/activities": {
       "get": {
         "tags": [
@@ -18548,6 +18585,26 @@
             "description": "Ticket's created time",
             "type": "string",
             "format": "date-time"
+          }
+        }
+      }
+    },
+    "company_search": {
+      "type": "object",
+      "properties": {
+        "companies": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "format": "int64"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
           }
         }
       }

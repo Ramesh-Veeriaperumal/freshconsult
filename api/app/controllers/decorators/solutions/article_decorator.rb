@@ -1,7 +1,7 @@
 class Solutions::ArticleDecorator < ApiDecorator
   delegate :title, :description, :desc_un_html, :user_id, :status, :seo_data, :language_id,
            :parent, :parent_id, :draft, :attachments, :cloud_files, :article_ticket, :modified_at,
-           :modified_by, :id, :to_param, :tags, :voters, :thumbs_up, :thumbs_down, :hits, to: :record
+           :modified_by, :id, :to_param, :tags, :voters, :thumbs_up, :thumbs_down, :hits, :tickets, to: :record
 
   SEARCH_CONTEXTS_WITHOUT_DESCRIPTION = [:agent_insert_solution, :filtered_solution_search].freeze
 
@@ -200,7 +200,7 @@ class Solutions::ArticleDecorator < ApiDecorator
     end
 
     def feedback_count
-      @feedback_count ||= article_ticket.where(ticketable_type: 'Helpdesk::Ticket').preload(:ticketable).reject { |article_ticket| article_ticket.ticketable.spam_or_deleted? }.count
+      @feedback_count ||= tickets.unresolved.reject(&:spam_or_deleted?).count
     end
 
     def last_modified resp_hash

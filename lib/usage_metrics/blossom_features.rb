@@ -70,7 +70,7 @@ module UsageMetrics::BlossomFeatures
   end
 
   def session_replay(args)
-    args[:account].session_replay_enabled? && current_account.account_additional_settings.freshmarketer_linked?
+    args[:account].session_replay_enabled? && args[:account].account_additional_settings.freshmarketer_linked?
   end
 
   def custom_domain(args)

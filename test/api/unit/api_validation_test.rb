@@ -32,7 +32,7 @@ class ApiValidationTest < ActionView::TestCase
     refute api_validation.valid?(BULK_ACTIONS.sample)
     assert api_validation.errors.full_messages.include?('Ids too_long')
     assert_equal({ ids: { max_count: ApiConstants::MAX_ITEMS_FOR_BULK_ACTION,
-                          current_count: 110, element_type: :values, min_count: 0 } }, api_validation.error_options)
+                          current_count: 110, element_type: :values, min_count: 0, elements: 'id' } }, api_validation.error_options)
   end
 
   def test_bulk_action_with_valid_params

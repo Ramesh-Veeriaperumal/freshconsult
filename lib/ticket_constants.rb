@@ -366,6 +366,8 @@ module TicketConstants
 
   DATE_TIME_REGEX = /^\d{4}-\d{2}-\d{2}/i
 
+  DEFAULT_FILTER_EXPORT = ['monitored_by'].freeze
+
   def self.translate_priority_name(priority)
     I18n.t(PRIORITY_NAMES_BY_KEY[priority])
   end
