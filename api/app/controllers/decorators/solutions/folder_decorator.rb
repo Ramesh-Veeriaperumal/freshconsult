@@ -1,14 +1,19 @@
 class Solutions::FolderDecorator < ApiDecorator
-  delegate :id, :name, :description, :parent_id, :primary_folder, :solution_article_meta, :position, to: :record
+  delegate :name, :description, :language_code, to: :record
 
-  delegate :position, :article_order, to: :parent
+  delegate :id, :position, :article_order, :solution_article_meta, :visibility, :customer_folders, :solution_category_meta_id, to: :parent
+
+  def initialize(record, options = {})
+    super(record)
+    @lang_code = options[:language_code]
+  end
 
   def to_hash
     response_hash = {
-      id: parent_id,
+      id: id,
       name: name,
       description: description,
-      visibility: parent.visibility,
+      visibility: visibility,
       created_at: created_at,
       updated_at: updated_at
     }
@@ -20,7 +25,7 @@ class Solutions::FolderDecorator < ApiDecorator
   end
 
   def company_ids_visible?
-    parent.visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users]
+    visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users]
   end
 
   def parent
@@ -28,26 +33,39 @@ class Solutions::FolderDecorator < ApiDecorator
   end
 
   def company_ids
-    parent.customer_folders.map(&:customer_id)
+    customer_folders.map(&:customer_id)
   end
 
   def category_id
-    parent.solution_category_meta_id
+    solution_category_meta_id
   end
 
   def summary_hash
     {
       id: id,
-      name: primary_folder.name,
-      language_id: primary_folder.language_id,
+      name: name,
+      language: language_code,
       articles_count: articles_count,
       position: position
     }
   end
 
+  def untranslated_filter_hash
+    folder = record.safe_send("#{@lang_code}_available?") ? record.safe_send("#{@lang_code}_folder") : record.primary_folder
+    {
+      id: record.id,
+      name: folder.name,
+      language: folder.language_code
+    }
+  end
+
   private
 
+    def current_language_articles
+      solution_article_meta.map { |article_meta| article_meta.safe_send("#{@lang_code}_article") }.compact
+    end
+
     def articles_count
-      solution_article_meta.length
+      current_language_articles.length
     end
 end

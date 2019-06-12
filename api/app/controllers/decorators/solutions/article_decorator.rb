@@ -12,6 +12,7 @@ class Solutions::ArticleDecorator < ApiDecorator
     @is_list_page = options[:is_list_page]
     @draft = options[:draft]
     @language_metric = options[:language_metric]
+    @lang_code = options[:language_code]
   end
 
   def fetch_tags
@@ -90,6 +91,18 @@ class Solutions::ArticleDecorator < ApiDecorator
     {
       helpful: vote_info(:thumbs_up),
       not_helpful: vote_info(:thumbs_down)
+    }
+  end
+
+  def untranslated_filter_hash
+    {
+      id: parent_id,
+      title: record_or_draft.title,
+      status: record.status,
+      draft_present: @draft.present?,
+      language: record.language_code,
+      category: Solutions::CategoryDecorator.new(record.solution_folder_meta.solution_category_meta, language_code: @lang_code).untranslated_filter_hash,
+      folder: Solutions::FolderDecorator.new(record.solution_folder_meta, language_code: @lang_code).untranslated_filter_hash
     }
   end
 

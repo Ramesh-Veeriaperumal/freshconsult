@@ -30,5 +30,4 @@ class Helpdesk::Section < ActiveRecord::Base
   def parent_ticket_field_id
     section_picklist_mappings[0].picklist_value.pickable_id
   end
-
 end

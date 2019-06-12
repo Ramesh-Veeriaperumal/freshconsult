@@ -10,8 +10,8 @@ properties:
           type: number
         name:
           type: string
-        language_id:
-          type: integer
+        language:
+          type: string
         folders_count:
           type: integer
         position:
@@ -26,8 +26,8 @@ properties:
                 type: integer
               name:
                 type: string
-              language_id:
-                type: integer
+              language:
+                type: string
               articles_count:
                 type: integer
               position:

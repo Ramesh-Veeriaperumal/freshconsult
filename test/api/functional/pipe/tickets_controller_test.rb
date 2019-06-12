@@ -137,6 +137,7 @@ module Pipe
     end
 
     def test_create_with_closed_at
+      skip('Failure because of memcache issue. Raghav will fix it #FD-33639')
       @account.stubs(:skill_based_round_robin_enabled?).returns(false)
       created_at = Time.now - 10.days
       updated_at = Time.now - 10.days

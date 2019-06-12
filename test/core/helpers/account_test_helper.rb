@@ -123,6 +123,14 @@ module AccountTestHelper
     }
   end
 
+  def account_params_without_domain(user_email)
+    account_name = Faker::Lorem.word
+    params_hash = { 'callback' => '',
+                    'user' => { name: Faker::Name.name, email: user_email, time_zone: 'Chennai', language: 'en' },
+                    'account' => { account_name: account_name, locale: I18n.default_locale, time_zone: 'Chennai', user_name: 'Support', user_password: 'test1234', user_password_confirmation: 'test1234', user_email: user_email, user_helpdesk_agent: true, new_plan_test: true },
+                    'format' => 'json' }
+  end
+
   def central_publish_account_post(account)
     {
       id: account.id, 

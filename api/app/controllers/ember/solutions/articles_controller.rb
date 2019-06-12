@@ -10,16 +10,17 @@ module Ember
       include CloudFilesHelper
       include SanitizeSerializeValues
 
-      SLAVE_ACTIONS = %w(index folder_articles filter).freeze
+      SLAVE_ACTIONS = %w[index folder_articles filter untranslated_articles].freeze
 
       skip_before_filter :initialize_search_parameters, unless: :search_articles?
       before_filter :filter_ids, only: [:index]
-      before_filter :validate_language, only: [:filter, :bulk_update]
+      before_filter :validate_language, only: [:filter, :bulk_update, :untranslated_articles, :article_content, :index]
       before_filter :check_filter_feature, only: [:filter]
-      before_filter :validate_filter, only: [:article_content, :filter]
-      before_filter :sanitize_filter_data, :reconstruct_params, only: [:filter]
+      before_filter :validate_filter, only: [:article_content, :filter, :untranslated_articles]
+      before_filter :sanitize_filter_data, :reconstruct_params, only: [:filter, :untranslated_articles]
       before_filter :validate_bulk_update_article_params, only: [:bulk_update]
-      around_filter :use_time_zone, only: [:filter]
+      before_filter :filter_delegator_validation, only: [:filter, :untranslated_articles]
+      around_filter :use_time_zone, only: [:filter, :untranslated_articles]
 
       decorate_views(decorate_object: [:article_content, :votes])
 
@@ -31,16 +32,16 @@ module Ember
       end
 
       def filter
-        @delegator_klass = "ApiSolutions::ArticleDelegator"
-        return unless validate_delegator(nil, portal_id: params[:portal_id])
         search_articles if params[:term].present?
-        @portal_articles = scoper.portal_articles(params[:portal_id], @lang_id).preload(filter_preload_options)
+        @portal_articles = scoper.portal_articles(params[:portal_id], [@lang_id]).preload(filter_preload_options)
         @items = apply_scopes(@portal_articles,  @reorg_params)
         @items = properties_and_term_filters
-        @items_count = @items.size
-        @items = paginate_items(@items)
-        response.api_root_key = :articles
-        response.api_meta = { count: @items_count, next_page: @more_items }
+        paginate_filter_items
+      end
+
+      def untranslated_articles
+        @items = apply_scopes(untranslated_language_articles, @reorg_params)
+        paginate_filter_items
       end
 
       def article_content
@@ -84,14 +85,17 @@ module Ember
         end
 
         def load_article
-          language_id = params[:language_id] || Language.for_current_account.id
-          @item = scoper.where(parent_id: params[:id], language_id: language_id).first
+          @item = scoper.where(parent_id: params[:id], language_id: @lang_id).first
           log_and_render_404 unless @item
         end
 
+        def untranslated_language_articles
+          translated_ids = current_account.solution_articles.portal_articles(params[:portal_id], @lang_id).pluck(:parent_id)
+          Solution::Article.portal_articles(params[:portal_id], current_account.language_object.id).where('parent_id NOT IN (?)', (translated_ids.presence || '')).preload(untranslated_articles_preload_options)
+        end
+
         def load_objects
-          language_id = params[:language_id] || Language.for_current_account.id
-          @items = scoper.preload(conditional_preload_options).where(parent_id: @ids, language_id: language_id)
+          @items = scoper.preload(conditional_preload_options).where(parent_id: @ids, language_id: @lang_id)
           # Instead of using validation to give 4xx response for bad ids,
           # we are going to tolerate and send response for the good ones alone.
           # Because the primary use case for this is Recently used Solution articles
@@ -181,6 +185,22 @@ module Ember
 
         def check_filter_feature
           render_request_error(:require_feature, 403, feature: :article_filters) unless current_account.article_filters_enabled? || (params.keys & SolutionConstants::ADVANCED_FILTER_FIELDS).empty?
+        end
+
+        def untranslated_articles_preload_options
+          [{ solution_folder_meta: [{ solution_category_meta: :primary_category }, :primary_folder] }, :draft]
+        end
+
+        def filter_delegator_validation
+          @delegator_klass = 'ApiSolutions::ArticleDelegator'
+          return unless validate_delegator(nil, portal_id: params[:portal_id])
+        end
+
+        def paginate_filter_items
+          @items_count = @items.size
+          @items = paginate_items(@items)
+          response.api_root_key = :articles
+          response.api_meta = { count: @items_count, next_page: @more_items }
         end
 
         # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.

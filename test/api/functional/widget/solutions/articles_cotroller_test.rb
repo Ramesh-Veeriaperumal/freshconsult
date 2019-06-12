@@ -38,6 +38,8 @@ module Widget
         @widget.save
         @portal = @account.portals.find_by_product_id(@widget.product_id)
         @request.env['HTTP_X_WIDGET_ID'] = @widget.id
+        @client_id = UUIDTools::UUID.timestamp_create.hexdigest
+        @request.env['HTTP_X_CLIENT_ID'] = @client_id
       end
 
       def article_params(category, status = nil)

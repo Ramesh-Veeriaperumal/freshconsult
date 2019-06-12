@@ -20,6 +20,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
     :level, :parent_id, :prefered_ff_col, :import_id, :choices, :picklist_values_attributes, 
     :ticket_statuses_attributes, :ticket_form_id, :column_name, :flexifield_coltype
 
+  attr_accessor :skip_populate_choices
+
   CUSTOM_FIELD_PROPS = {
     custom_text: { type: :custom, dom_type: :text },
     custom_paragraph: { type: :custom, dom_type: :paragraph },
@@ -38,8 +40,10 @@ class Helpdesk::TicketField < ActiveRecord::Base
   DATE_TIME_FIELD = 'date_time'.freeze
 
   SECTION_LIMIT = 2
+  NESTED_FIELD_LIMIT = 2
 
   SECTION_DROPDOWNS = ["default_ticket_type", "custom_dropdown"]
+  NESTED_FIELD = 'nested_field'.freeze
   VERSION_MEMBER_KEY = 'TICKET_FIELD_LIST'.freeze
 
   concerned_with :presenter
@@ -67,7 +71,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
                              :class_name => 'Helpdesk::PicklistValue',
                              :include => {:sub_picklist_values => :sub_picklist_values},
                              :dependent => :destroy, 
-                             :order => "position"
+                             order: 'position',
+                             autosave: true
 
   has_many :level1_picklist_values, :as => :pickable, 
                              :class_name => 'Helpdesk::PicklistValue',
@@ -149,9 +154,9 @@ class Helpdesk::TicketField < ActiveRecord::Base
   end
 
   def dropdown_field?
-    self.field_type.include?("dropdown")
+    field_type.include?('dropdown')
   end
-   
+
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :account_id
   validates_associated :flexifield_def_entry
@@ -205,6 +210,10 @@ class Helpdesk::TicketField < ActiveRecord::Base
                   encrypted_text: { type: :custom,  dom_type: 'encrypted_text' },
                   custom_date_time: { type: :custom, dom_type: 'date', visible_in_view_form: false }}.freeze
 
+  CUSTOM_FIELD_TYPES = Helpdesk::TicketField::FIELD_CLASS.select { |field_name, prop| prop[:type] == :custom }.keys.map(&:to_s).freeze
+
+  MODIFIABLE_CUSTOM_FIELD_TYPES = Helpdesk::TicketField::FIELD_CLASS.select { |field_name, prop| prop[:type] == :custom }.except(:custom_date_time).keys.map(&:to_s).freeze
+
   def dom_type
     FIELD_CLASS[field_type.to_sym][:dom_type]
   end
@@ -225,6 +234,11 @@ class Helpdesk::TicketField < ActiveRecord::Base
   
   def is_default_field?
     (FIELD_CLASS[field_type.to_sym][:type] === :default)
+  end
+
+  # Check for meta programming requirement.
+  def custom_dropdown_field?
+    field_type == 'custom_dropdown'
   end
 
   def parent_field
@@ -248,7 +262,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   end
 
   def nested_field?
-    field_type == "nested_field"
+    field_type == 'nested_field'
   end
 
   def self.default_field_order
@@ -564,6 +578,10 @@ class Helpdesk::TicketField < ActiveRecord::Base
     # end
   end
 
+  def construct_choice(choice_attributes)
+    picklist_values.build(choice_attributes)
+  end
+
   def picklist_values_by_id
     case level
     when nil
@@ -656,6 +674,13 @@ class Helpdesk::TicketField < ActiveRecord::Base
     self.field_type == CUSTOM_DATE_TIME
   end
 
+  def self.field_name(label, account_id)
+    label = label.gsub(/[^ _0-9a-zA-Z]+/, '')
+    label = "rand#{rand(999_999)}" if label.blank?
+    label = "cf_#{label}"
+    "#{label.strip.gsub(/\s/, '_').gsub(/\W/, '').downcase}_#{account_id}".squeeze('_')
+  end
+
   protected
 
     def group_agents(ticket, internal_group = false)
@@ -686,7 +711,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
     end
 
     def populate_choices
-      return unless @choices
+      return if !@choices || skip_populate_choices
+
       if(["nested_field"].include?(self.field_type))
         clear_picklist_cache
         run_through_picklists(@choices, picklist_values, self)

@@ -3,7 +3,11 @@ module WidgetConcern
 
   def validate_widget
     @widget_id = request.env['HTTP_X_WIDGET_ID']
-    return render_request_error(:widget_id_not_given, 400) unless @widget_id
+    return render_request_error(:widget_id_not_given, 400) if @widget_id.blank?
+    
+    @client_id = request.env['HTTP_X_CLIENT_ID']
+    return render_request_error(:cliend_id_not_given, 400) if @client_id.blank?
+
     @help_widget = current_account.help_widget_from_cache(@widget_id.to_i)
     render_request_error(:invalid_help_widget, 400, id: @widget_id) unless @help_widget
   end

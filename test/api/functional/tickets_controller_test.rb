@@ -1465,8 +1465,10 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_create_inclusion_invalid
     sources_list = @account.compose_email_enabled? ? '1,2,3,5,6,7,8,9,10' : '1,2,3,5,6,7,8,9'
+    type_field_names = @account.ticket_fields.where(field_type: 'default_ticket_type').all.first.picklist_values.map(&:value).join(',')
     params = ticket_params_hash.merge(requester_id: requester.id, priority: 90, status: 56, type: 'jk', source: '89')
     post :create, construct_params({}, params)
+
     match_json([bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
                 bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7'),
                 bad_request_error_pattern('type', :not_included, list: ticket_type_list),
@@ -2962,6 +2964,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_update_inclusion_invalid
     t = ticket
     params_hash = update_ticket_params_hash.merge(requester_id: requester.id, priority: 90, status: 56, type: 'jk', source: '89')
+    type_field_names = Account.current.ticket_type_values.map(&:value).join(',')
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
     match_json([bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
@@ -4397,6 +4400,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_create_with_all_default_fields_required_invalid
     default_non_required_fiels = Helpdesk::TicketField.where(required: false, default: 1)
+    type_field_names = Account.current.ticket_type_values.map(&:value).join(',')
     default_non_required_fiels.map { |x| x.toggle!(:required) }
     post :create, construct_params({},  requester_id: @agent.id)
     match_json([bad_request_error_pattern('description', :datatype_mismatch, code: :missing_field, expected_data_type: String),
@@ -4434,6 +4438,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_all_default_fields_required_invalid
+    type_field_names = Account.current.ticket_type_values.map(&:value).join(',')
     default_non_required_fiels = Helpdesk::TicketField.where(required: false, default: 1)
     default_non_required_fiels.map { |x| x.toggle!(:required) }
     put :update, construct_params({ id: ticket.display_id },  subject: nil,

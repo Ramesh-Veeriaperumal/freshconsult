@@ -1,0 +1,68 @@
+type: object
+properties:
+  id:
+    type: integer
+  name:
+    type: string
+  default:
+    type: boolean
+  choices:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: integer
+        value:
+          type: string
+        position:
+          type: integer
+        choices:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              value:
+                type: string
+              position:
+                type: integer
+              choices:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    value:
+                      type: string
+                    position:
+                      type: integer
+ 
+  nested_ticket_fields:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        label:
+          type: string
+        label_in_portal:
+          type: string
+        description:
+          type: string
+        level:
+          type: integer
+          enum: [2,3]
+        ticket_field_id:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time

@@ -72,10 +72,12 @@ class CannedResponseFoldersControllerTest < ActionController::TestCase
 
   def test_show_responses_in_personal_folder_of_self
     login_as(@agent)
-
+    @agent.stubs(:privilege?).with(:manage_tickets).returns(true)
     ::Search::V2::Count::AccessibleMethods.any_instance.stubs(:es_request).returns(nil)
+
     get :show, construct_params({ version: 'v2' }, false).merge(id: @ca_folder_personal.id)
     ::Search::V2::Count::AccessibleMethods.any_instance.unstub(:es_request)
+    @agent.unstub(:privilege?)
 
     assert_response 200
     match_json(ca_responses_pattern(@ca_folder_personal))

@@ -6,10 +6,11 @@ module Ember
       include SolutionConcern
 
       def summary
+        return unless validate_language
         return unless validate_query_params
         return unless validate_delegator(nil, portal_id: params[:portal_id])
         portal = current_account.portals.where(id: params[:portal_id]).first
-        @items = portal.solution_category_meta.where(is_default: false).preload(preload_options)
+        @items = portal.solution_categories.joins(:solution_category_meta).where('solution_category_meta.is_default = ? AND language_id = ?', false, @lang_id).preload(preload_options)
         response.api_root_key = :categories
       end
 
@@ -26,6 +27,11 @@ module Ember
         @all_feedback = current_account.article_tickets.where(article_id: get_article_ids(@articles), ticketable_type: 'Helpdesk::Ticket').preload(:ticketable).reject { |article_ticket| article_ticket.ticketable.spam_or_deleted? }
         @my_feedback = current_account.article_tickets.where(article_id: get_article_ids(@articles.select { |article| article.user_id == current_user.id }), ticketable_type: 'Helpdesk::Ticket').preload(:ticketable).reject { |article| article.ticketable.spam_or_deleted? }
         @orphan_categories = fetch_unassociated_categories(@lang_id)
+        @secondary_language = secondary_language?
+        if @secondary_language
+          @outdated_articles = @articles.select { |article| article.outdated == true }.size
+          @not_translated_articles = @article_meta.size - @articles.size
+        end
         response.api_root_key = :quick_views
       end
 
@@ -43,14 +49,14 @@ module Ember
         end
 
         def fetch_articles
+          @article_meta = []
           return [] if @category_meta.empty?
 
-          article_meta = []
           @category_meta.each do |categ_meta|
-            article_meta << categ_meta.solution_article_meta.preload(&:current_article)
+            @article_meta << categ_meta.solution_article_meta.preload(&:current_article)
           end
-          article_meta.flatten!
-          current_account.solution_articles.select([:id, :user_id, :status]).where(parent_id: article_meta.map(&:id), language_id: @lang_id)
+          @article_meta.flatten!
+          current_account.solution_articles.select([:id, :user_id, :status, :outdated]).where(parent_id: @article_meta.map(&:id), language_id: @lang_id)
         end
 
         def fetch_drafts
@@ -75,7 +81,7 @@ module Ember
         end
 
         def preload_options
-          [:portal_solution_categories, :primary_category, solution_folder_meta: [:primary_folder, :solution_article_meta]]
+          [solution_category_meta: [:portal_solution_categories, solution_folder_meta: [:"#{@lang_code}_folder", { solution_article_meta: :"#{@lang_code}_article" }]]]
         end
     end
   end

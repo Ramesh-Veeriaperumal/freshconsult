@@ -8,7 +8,10 @@ module Widget
     def setup
       super
       @account.launch :help_widget
-      @request.env['HTTP_X_WIDGET_ID'] = create_widget.id
+      @widget = create_widget
+      @request.env['HTTP_X_WIDGET_ID'] = @widget.id
+      @client_id = UUIDTools::UUID.timestamp_create.hexdigest
+      @request.env['HTTP_X_CLIENT_ID'] = @client_id
       log_out
       controller.class.any_instance.stubs(:api_current_user).returns(nil)
     end
@@ -64,7 +67,7 @@ module Widget
 
     def test_create_with_attachment_ids
       attachment_ids = []
-      attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
+      attachment_ids << create_attachment(attachable_type: 'WidgetDraft', attachable_id: @widget.id, description: @client_id).id
       params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }
       params[:attachment_ids] = attachment_ids
       post :create, construct_params({ version: 'widget' }, params)
@@ -77,7 +80,17 @@ module Widget
 
     def test_create_with_invalid_attachable
       attachment_ids = []
-      attachment_ids << create_attachment(attachable_type: 'Account', attachable_id: @agent.id).id
+      attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
+      params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }
+      params[:attachment_ids] = attachment_ids
+      post :create, construct_params({ version: 'widget' }, params)
+      assert_response 400
+      match_json(validation_error_pattern(bad_request_error_pattern(:attachment_ids, "There are no records matching the ids: '#{attachment_ids.first}'", code: 'invalid_value')))
+    end
+
+    def test_create_with_invalid_client_id
+      attachment_ids = []
+      attachment_ids << create_attachment(attachable_type: 'WidgetDraft', attachable_id: @widget.id, description: '1234').id
       params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }
       params[:attachment_ids] = attachment_ids
       post :create, construct_params({ version: 'widget' }, params)
@@ -93,6 +106,16 @@ module Widget
       result = parse_response(@response.body)
       assert_response 400
       match_json(validation_error_pattern(bad_request_error_pattern(:attachment_ids, "There are no records matching the ids: '100'", code: 'invalid_value')))
+    end
+
+    def test_create_with_invalid_widget_id
+      attachment_ids = []
+      attachment_ids << create_attachment(attachable_type: 'WidgetDraft', attachable_id: 1234, description: @client_id).id
+      params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }
+      params[:attachment_ids] = attachment_ids
+      post :create, construct_params({ version: 'widget' }, params)
+      assert_response 400
+      match_json(validation_error_pattern(bad_request_error_pattern(:attachment_ids, "There are no records matching the ids: '#{attachment_ids.first}'", code: 'invalid_value')))
     end
 
     def test_create_with_partial_required_fields

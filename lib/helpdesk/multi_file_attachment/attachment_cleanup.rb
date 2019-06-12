@@ -45,7 +45,7 @@ class Helpdesk::MultiFileAttachment::AttachmentCleanup
     end
 
     def destroy_attachment attach, account_id
-      attach.destroy if attach.attachable_type == "UserDraft"
+      attach.destroy if Helpdesk::Attachment::DRAFT_ATTACHMENTS.include?(attach.attachable_type)
       remove_member_from_redis_set(@key, construct_set_value(attach.id, account_id))
     rescue => e
       puts "** Something went wrong when destroying stale attachment #{attach.inspect}. ** #{e.inspect} **"

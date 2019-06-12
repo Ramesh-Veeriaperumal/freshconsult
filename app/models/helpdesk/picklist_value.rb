@@ -17,13 +17,14 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
   has_many :sub_picklist_values, :as => :pickable, 
                                  :class_name => 'Helpdesk::PicklistValue', 
                                  :dependent => :destroy,
-                                 :order => "position"
+                                 order: 'position',
+                                 autosave: true
 
   has_one :section_picklist_mapping, :class_name => 'Helpdesk::SectionPicklistValueMapping', 
                                      :dependent => :destroy
   has_one :section, :class_name => 'Helpdesk::Section', :through => :section_picklist_mapping
 
-  attr_accessible :value, :choices, :position
+  attr_accessible :value, :choices, :position, :picklist_id
 
   accepts_nested_attributes_for :sub_picklist_values, :allow_destroy => true
   
@@ -90,6 +91,15 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
 
   def self.with_exclusive_scope(method_scoping = {}, &block) # for account_id in sub_picklist_values query
     with_scope(method_scoping, :overwrite, &block)
+  end
+
+  def assign_position_and_value(position, value)
+    self.position = position
+    self.value = value
+  end
+
+  def construct_choice(choice_attributes)
+    sub_picklist_values.build(choice_attributes)
   end
 
   def construct_model_changes

@@ -27,8 +27,8 @@ module SolutionConstants
   UPDATE_ARTICLE_FIELDS = { all: ARTICLE_FIELDS, admin_tasks: ['agent_id'] }.freeze
 
   FILTER_ATTRIBUTES = %w[author status created_at last_modified tags category folder].freeze
-  FILTER_FIELDS = %w[portal_id language_id term page per_page].freeze | FILTER_ATTRIBUTES
-  ADVANCED_FILTER_FIELDS = %w[created_at last_modified tags category folder language_id].freeze
+  FILTER_FIELDS = %w[portal_id language term page per_page].freeze | FILTER_ATTRIBUTES
+  ADVANCED_FILTER_FIELDS = %w[created_at last_modified tags category folder].freeze
 
   IGNORE_PARAMS = %w[folder_id unlock attachments_list cloud_file_attachments].freeze
 
@@ -49,13 +49,19 @@ module SolutionConstants
 
   INDEX_PRELOAD_OPTIONS = [{ solution_article_meta: [:solution_folder_meta, :solution_category_meta] }, :article_body, { article_ticket: :ticketable }, :draft, draft: :draft_body].freeze
 
-  FILTER_PRELOAD_OPTIONS = [{ solution_article_meta: [:solution_folder_meta, :solution_category_meta] }, :draft, :article_ticket, {article_ticket: :ticketable} , :tags, tags: :tag_uses].freeze
+  FILTER_PRELOAD_OPTIONS = [{ solution_article_meta: [:solution_folder_meta, :solution_category_meta] }, :draft, :article_ticket, { article_ticket: :ticketable }, :tags, tags: :tag_uses].freeze
 
-  LOAD_OBJECT_EXCEPT = [:category_folders, :folder_articles, :article_content, :filter].freeze
+  LOAD_OBJECT_EXCEPT = [:category_folders, :folder_articles, :article_content, :filter, :untranslated_articles].freeze
 
   INDEX_FIELDS = %w[language].freeze
-  RECENT_ARTICLES_FIELDS = %w[ids user_id language_id].freeze
-  ARTICLE_CONTENT_FIELDS = %w[language_id].freeze
+
+  RECENT_ARTICLES_FIELDS = %w[ids user_id language].freeze
+  ARTICLE_CONTENT_FIELDS = %w[language].freeze
   REORDER_FIELDS = %w[position portal_id].freeze
-  KBASE_EMAIL_SOURCE = "kbase_email".freeze
+
+  KBASE_EMAIL_SOURCE = 'kbase_email'.freeze
+  UNTRANSLATED_ARTICLES_FIELDS = %w[portal_id language category folder status page per_page].freeze
+  INSERT_SOLUTION_ACTIONS = %w[index article_content].freeze
+
+  SUMMARY_LIMIT = 3
 end

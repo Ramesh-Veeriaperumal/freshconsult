@@ -312,6 +312,8 @@ Metrics/ModuleLength:
 
 Metrics/ClassLength:
   Max: 150
+  Exclude:
+   - test/**/*.rb
   # Test if this works pre-commit hooks
 
 Lint/UselessAssignment:

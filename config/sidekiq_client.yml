@@ -323,6 +323,8 @@ defaults: &defaults
     - [freshid_retry_worker]
     - [contact_field_central_publish]
     - [company_field_central_publish]
+    - [archive_account_tickets_channel_queue]
+    - [archive_tickets_channel_queue]
     - [model_destroy]
     - [freshcaller_account_central_publish]
     - [freshchat_account_central_publish]

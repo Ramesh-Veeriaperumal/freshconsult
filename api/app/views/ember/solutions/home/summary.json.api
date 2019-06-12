@@ -1,3 +1,3 @@
 JSON.generate(@items.map do |item|
-  Solutions::CategoryDecorator.new(item, portal_id: params[:portal_id]).summary_hash
+  Solutions::CategoryDecorator.new(item, portal_id: params[:portal_id], language_code: @lang_code).summary_hash
 end)

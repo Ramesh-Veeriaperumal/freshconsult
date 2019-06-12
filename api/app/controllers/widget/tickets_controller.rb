@@ -10,7 +10,7 @@ module Widget
     before_filter :check_ticket_permission, only: :create
     before_filter :set_widget_portal_as_current
     before_filter :check_recaptcha, unless: :predictive_ticket?
-    before_filter :delegate_attachment_ids, if: :attachment_ids?
+    before_filter :validate_attachment_ids, if: :attachment_ids?
 
     private
 
@@ -44,9 +44,12 @@ module Widget
         @attachment_ids.present?
       end
 
-      def delegate_attachment_ids
-        @delegator_klass = 'BaseDelegator'
-        validate_delegator(@item, attachment_ids: @attachment_ids)
+      def validate_attachment_ids
+        @delegator_klass = 'WidgetAttachmentDelegator'
+        validate_delegator(@item,
+                            attachment_ids: @attachment_ids,
+                            widget_id: @widget_id,
+                            widget_client_id: @client_id)
       end
 
       def remove_ignore_params

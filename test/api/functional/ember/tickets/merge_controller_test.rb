@@ -174,7 +174,7 @@ module Ember
         primary_ticket = create_ticket
         source_tickets = inline_attachment_ids = []
         2.times.each do
-          ticket = create_ticket_with_inline_attachments
+          ticket = create_ticket_with_inline_attachments(1, 2)
           inline_attachment_ids += ticket.inline_attachments.map(&:id)
           source_tickets << ticket
         end

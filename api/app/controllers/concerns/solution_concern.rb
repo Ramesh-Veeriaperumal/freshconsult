@@ -8,7 +8,7 @@ module SolutionConcern
       permitted_languages = Account.current.supported_languages
       permitted_languages += [Account.current.language] unless create?
       invalid_language = true
-      if !Account.current.multilingual?
+      if !SolutionConstants::INSERT_SOLUTION_ACTIONS.include?(params[:action]) && !Account.current.multilingual?
         render_request_error(:require_feature, 404, feature: 'MultilingualFeature')
       elsif destroy?
         log_and_render_404
@@ -19,6 +19,7 @@ module SolutionConcern
       end
       return false if invalid_language
     end
+    @lang_code = current_request_language.to_key
     @lang_id = current_request_language.id
   end
 
@@ -38,6 +39,10 @@ module SolutionConcern
 
   def current_request_language
     Language.find_by_code(params[:language] || Account.current.language)
+  end
+
+  def secondary_language?
+    Language.for_current_account != current_request_language
   end
 
   def render_solution_item_errors

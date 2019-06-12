@@ -7,6 +7,11 @@ get:
       type: string
       description: Portal ID
       required: true
+    - name: language
+      in: path
+      type: integer
+      format: int64
+      required: true
   responses: 
     200: 
       description: Success

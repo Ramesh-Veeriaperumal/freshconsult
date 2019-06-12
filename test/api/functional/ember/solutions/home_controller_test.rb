@@ -29,20 +29,15 @@ module Ember
       def before_all
         return if @@before_all_run
 
+        additional = @account.account_additional_settings
+        additional.supported_languages = ['es', 'ru-RU']
+        additional.save
+        @account.features.enable_multilingual.create
         subscription = @account.subscription
         subscription.state = 'active'
         subscription.save
         @account.reload
         @@before_all_run = true
-      end
-
-      def article_params(folder_visibility = Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone])
-        category = create_category(portal_id: Account.current.main_portal.id)
-        {
-          title: 'Test',
-          description: 'Test',
-          folder_id: create_folder(visibility: folder_visibility, category_id: category.id).id
-        }
       end
 
       def test_summary_with_incorrect_credentials
@@ -91,10 +86,48 @@ module Ember
 
       def test_summary
         portal_id = Account.current.main_portal.id
+        language = Account.current.language_object
         create_article(article_params)
         get :summary, controller_params(version: 'private', portal_id: portal_id)
         assert_response 200
-        match_json(summary_pattern(portal_id))
+        match_json(summary_pattern(portal_id, language))
+      end
+
+      def test_summary_with_language_without_multilingual_feature
+        allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
+        Account.any_instance.stubs(:multilingual?).returns(false)
+        portal_id = Account.current.main_portal.id
+        get :summary, controller_params(version: 'private', portal_id: portal_id, language: @account.language)
+        match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
+        assert_response 404
+      ensure
+        Account.any_instance.unstub(:multilingual?)
+      end
+
+      def test_summary_with_invalid_language
+        portal_id = Account.current.main_portal.id
+        get :summary, controller_params(version: 'private', portal_id: portal_id, language: 'test')
+        assert_response 404
+        match_json(request_error_pattern(:language_not_allowed, code: 'test', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
+      end
+
+      def test_summary_with_primary_language
+        portal_id = Account.current.main_portal.id
+        language = Account.current.language_object
+        create_article(article_params)
+        get :summary, controller_params(version: 'private', portal_id: portal_id, language: @account.language)
+        assert_response 200
+        match_json(summary_pattern(portal_id, language))
+      end
+
+      def test_summary_with_supported_language
+        portal_id = Account.current.main_portal.id
+        languages = @account.supported_languages + ['primary']
+        language = @account.supported_languages_objects.first
+        article_meta = create_article(article_params(lang_codes: languages))
+        get :summary, controller_params(version: 'private', portal_id: portal_id, language: language.code)
+        assert_response 200
+        match_json(summary_pattern(portal_id, language))
       end
 
       def test_quick_views_without_portal_id
@@ -130,7 +163,6 @@ module Ember
       end
 
       def test_quick_views_with_valid_params
-        skip('Pattern change and count mismatch happens. Will be fixed in this PR. #4609')
         solution_test_setup
         category = create_category
         @account.portal_solution_categories.where(solution_category_meta_id: category.id).last.destroy
@@ -156,6 +188,38 @@ module Ember
           match_json(quick_views_pattern(portal.id))
         end
       end
+
+      def test_quick_views_with_primary_language
+        solution_test_setup
+        create_article(article_params)
+        portal = Account.current.main_portal
+        get :quick_views, controller_params(version: 'private', portal_id: portal.id, language: @account.language)
+        assert_response 200
+        match_json(quick_views_pattern(portal.id, Language.find_by_code(@account.language).id))
+      end
+
+      def test_quick_views_with_secondary_language
+        solution_test_setup
+        language = Language.find_by_code(:es)
+        create_article(article_params)
+        portal = Account.current.main_portal
+        get :quick_views, controller_params(version: 'private', portal_id: portal.id, language: language.code)
+        assert_response 200
+        match_json(quick_views_pattern(portal.id, language.id))
+      end
+
+      private
+
+        def article_params(options = {})
+          lang_hash = { lang_codes: options[:lang_codes] }
+          category = create_category({ portal_id: Account.current.main_portal.id }.merge(lang_hash))
+          {
+            title: options[:title] || 'Test',
+            description: 'Test',
+            folder_id: create_folder({ visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: category.id }.merge(lang_hash)).id,
+            status: options[:status] || Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
+          }.merge(lang_hash)
+        end
     end
   end
 end

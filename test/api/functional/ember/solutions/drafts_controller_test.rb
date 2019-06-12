@@ -23,6 +23,10 @@ module Ember
         subscription = @account.subscription
         subscription.state = 'active'
         subscription.save
+        additional = @account.account_additional_settings
+        additional.supported_languages = ['es', 'ru-RU']
+        additional.save
+        @account.features.enable_multilingual.create
         @account.reload
         setup_articles
         @@before_all_run = true
@@ -41,7 +45,6 @@ module Ember
       end
 
       def test_index
-        skip('Elements mismatch. Suicide squad will check and fix in their solutions revamp')
         get :index, controller_params(version: 'private', portal_id: @account.main_portal.id)
         assert_response 200
         drafts = get_my_drafts
@@ -74,6 +77,24 @@ module Ember
         get :index, controller_params(version: 'private', portal_id: 'Test')
         assert_response 400
         match_json([bad_request_error_pattern(:portal_id, :invalid_portal_id)])
+      end
+
+      def test_index_with_language
+        languages = @account.supported_languages + ['primary']
+        language = @account.supported_languages.first
+        article = create_article(article_params(lang_codes: languages, status: 1))
+        get :index, controller_params(version: 'private', portal_id: @account.main_portal.id, language: language)
+        assert_response 200
+        drafts = get_my_drafts(Language.find_by_code(language).id)
+        assert_equal response.api_meta[:count], drafts.size
+        pattern = drafts.first(3).map { |draft| private_api_solution_article_pattern(draft.article, {}, true, nil, draft) }
+        match_json(pattern)
+      end
+
+      def test_index_invalid_language
+        get :index, controller_params(version: 'private', portal_id: @account.main_portal.id, language: 'test')
+        assert_response 404
+        match_json(request_error_pattern(:language_not_allowed, code: 'test', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
       end
 
       def test_autosave
@@ -281,8 +302,19 @@ module Ember
 
       private
 
-        def get_my_drafts
-          @account.solution_drafts.where(user_id: User.current.id).joins(:article, category_meta: :portal_solution_categories).where('portal_solution_categories.portal_id = ? AND solution_articles.language_id = ?', @account.main_portal.id, 6).order('modified_at desc')
+        def article_params(options = {})
+          lang_hash = { lang_codes: options[:lang_codes] }
+          category = create_category({ portal_id: Account.current.main_portal.id }.merge(lang_hash))
+          {
+            title: options[:title] || 'Test',
+            description: 'Test',
+            folder_id: create_folder({ visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: category.id }.merge(lang_hash)).id,
+            status: options[:status] || Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
+          }.merge(lang_hash)
+        end
+
+        def get_my_drafts(language = 6)
+          @account.solution_drafts.where(user_id: User.current.id).joins(:article, category_meta: :portal_solution_categories).where('portal_solution_categories.portal_id = ? AND solution_articles.language_id = ?', @account.main_portal.id, language)
         end
 
         def autosave_params
