@@ -564,6 +564,26 @@ module Ember
       ensure
         @controller.unstub(:fetch_activities)
       end
+
+      def test_system_add_note_activity
+        stub_data = system_add_note_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
+        match_json(system_add_note_activity_pattern(stub_data))
+        assert_response 200
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
+
+      def test_system_forward_ticket_activity
+        stub_data = system_forward_ticket_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: @ticket.display_id)
+        match_json(system_forward_ticket_activity_pattern(stub_data))
+        assert_response 200
+      ensure
+        @controller.unstub(:fetch_activities)
+      end
     end
   end
 end

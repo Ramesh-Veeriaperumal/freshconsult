@@ -245,8 +245,9 @@ class Va::RuleActivityLogger
 
     def forward_ticket(params = nil)
       verb = fetch_activity_prefix('forward')
-      params[:to_emails] =  params[:to_emails].to_sentence
-      params[:cc_emails] =  params[:cc_emails].to_sentence
+      params[:to_emails] =  params[:to_emails].to_sentence if params[:to_emails]
+      params[:cc_emails] =  params[:cc_emails].to_sentence if params[:cc_emails]
+      add_system_changes(forward_ticket: [true])
       action_msg = "#{verb}#{I18n.t('automations.activity.ticket')}"
       if params.nil?
         msg_log = "#{action_msg.capitalize}"

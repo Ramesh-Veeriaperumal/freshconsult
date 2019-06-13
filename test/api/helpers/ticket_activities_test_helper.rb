@@ -324,6 +324,20 @@ module TicketActivitiesTestHelper
     get_activity_data(params)
   end
 
+  def system_add_note_activity
+    params = {}
+    params[:content] = '{ "add_note": true }'
+    params[:event_type] = 'system'
+    get_activity_data(params)
+  end
+
+  def system_forward_ticket_activity
+    params = {}
+    params[:content] = '{ "forward_ticket": true }'
+    params[:event_type] = 'system'
+    get_activity_data(params)
+  end
+
   # PATTERNS
   def property_update_activity_pattern(ticket_activity_data)
     result = []
@@ -1000,6 +1014,36 @@ module TicketActivitiesTestHelper
       result << result_common_hash(tkt_data, content).merge(actions: [
                                                               {
                                                                 type: :parent_ticket_reopened
+                                                              }
+                                                            ])
+    end
+    result
+  end
+
+  def system_add_note_activity_pattern(ticket_activity_data)
+    result = []
+    ticket_activity_data.ticket_data.each do |tkt_data|
+      content = JSON.parse(tkt_data.record.content).deep_symbolize_keys
+      performer_type = tkt_data.event_type.to_sym
+      result << result_common_hash(tkt_data, content).merge(actions: [
+                                                              {
+                                                                type: :add_note,
+                                                                content: { add_note: true }
+                                                              }
+                                                            ])
+    end
+    result
+  end
+
+  def system_forward_ticket_activity_pattern(ticket_activity_data)
+    result = []
+    ticket_activity_data.ticket_data.each do |tkt_data|
+      content = JSON.parse(tkt_data.record.content).deep_symbolize_keys
+      performer_type = tkt_data.event_type.to_sym
+      result << result_common_hash(tkt_data, content).merge(actions: [
+                                                              {
+                                                                type: :forward_ticket,
+                                                                content: { forward_ticket: true }
                                                               }
                                                             ])
     end
