@@ -16,5 +16,8 @@ module AccountsControllerTestHelper
     assert_equal(email, Account.current.admin_email)
   end
 
+  def assert_account_created_with_feature(feature)
+    assert Account.current.has_feature?(feature)
+  end
 
 end
