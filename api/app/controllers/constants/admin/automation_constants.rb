@@ -30,6 +30,11 @@ module Admin::AutomationConstants
     created_during: :created_at
   }.freeze
 
+  DATE_FIELDS_OPERATOR_MAPPING = {
+    greater_than: :after,
+    less_than: :before
+  }.freeze
+
   CUSTOM_TEXT_FIELD_TYPES = %i[custom_text custom_paragraph].freeze
 
   DISPLAY_FIELD_NAME_CHANGE = FIELD_VALUE_CHANGE_MAPPING.invert.freeze

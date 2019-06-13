@@ -10,6 +10,7 @@ class Admin::AutomationsController < ApiApplicationController
   prepend_before_filter :check_for_allowed_rule_type
   before_filter :check_privilege
   after_filter :response_api_root_key, only: [:index, :create, :show, :update]
+  before_filter :fetch_rule_positions_in_ui, only: [:update], if: :position_changed? # re-order
 
   ROOT_KEY = :rule
   decorate_views(decorate_objects: [:index])
@@ -153,5 +154,17 @@ class Admin::AutomationsController < ApiApplicationController
       else
         # For scenario_automation and rest
       end
+    end
+
+    def position_changed?
+      params[cname].key?(:position)
+    end
+
+    def fetch_rule_positions_in_ui
+      rule_association = VAConfig::ASSOCIATION_MAPPING[VAConfig::RULES_BY_ID[params[:rule_type].to_i]]
+      positions_array = current_account.safe_send(rule_association).pluck(:position)
+      old_db_position = @item.position
+      params[cname][:position] = new_db_position = positions_array[params[cname][:position] - 1]
+      @item.frontend_positions = [positions_array.index(old_db_position) + 1, positions_array.index(new_db_position) + 1]
     end
 end

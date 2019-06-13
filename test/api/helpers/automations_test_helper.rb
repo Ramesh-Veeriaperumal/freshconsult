@@ -148,7 +148,7 @@ module AutomationTestHelper
   end
 
   def sample_json_for_dispatcher
-    dispatcher_payload = JSON.parse('{"name":"test 1234423","active":false,
+    dispatcher_payload = JSON.parse('{"name":"test 1234423","active":true,
       "conditions":{"condition_set_1":{"match_type":"all","ticket":[{"field_name":"ticket_type","operator":"in","value":["Refund"]}]},
       "operator":"or","condition_set_2":{"match_type":"all","ticket":[{"field_name":"ticket_type","operator":"in","value":["Question"]},
         {"field_name":"subject_or_description","operator":"contains","value":["billing"]}]}},"actions":[{"field_name":"status","value":2}] }')
@@ -166,5 +166,25 @@ module AutomationTestHelper
     observer_payload = JSON.parse('{ "active": true, "performer": { "type": 2 }, "events": [ { "field_name": "reply_sent" }, { "field_name": "note_type", "value": "public" } ], "conditions": { "condition_set_1": { "match_type": "all", "ticket": [ { "field_name": "freddy_suggestion", "operator": "is_not", "value": "thank_you_note" }, { "field_name": "status", "operator": "in", "value": [ 3, 4 ] } ] }, "operator": "and", "condition_set_2": { "match_type": "any", "ticket": [ { "field_name": "status", "operator": "not_in", "value": [ 2, 4, 5 ] } ] } }, "actions": [ { "field_name": "status", "value": 2 } ] }')
     observer_payload['name'] = Faker::Lorem.characters(20)
     observer_payload
+  end
+
+  def get_va_rules_position
+    Account.current.va_rules.where('id is not null').inject({}) do |hash, x|
+      next if x.position.nil?
+
+      hash.merge!(x.id.to_s => x.position.to_s)
+    end
+  end
+
+  def create_rules(num, rule_type)
+    created_ids = []
+    num.times do
+      va_rule_request = sample_json_for_dispatcher # depending on rule_type fetch json
+      next if va_rule_request.nil?
+
+      post :create, construct_params({ rule_type: rule_type }.merge(va_rule_request), va_rule_request)
+      created_ids << JSON.parse(response.body)['id']
+    end
+    created_ids
   end
 end
