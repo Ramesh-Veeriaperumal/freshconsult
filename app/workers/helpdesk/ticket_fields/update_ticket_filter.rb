@@ -24,7 +24,7 @@ class Helpdesk::TicketFields::UpdateTicketFilter < BaseWorker
     end
 
     # Gets all dashboards with bar chart widgets to mark the ticket field deleted state
-    account.dashboards.joins(:widgets).where('dashboard_widgets.widget_type = 1').each do |dashboard|
+    account.dashboards.joins(:widgets).where('dashboard_widgets.widget_type = 1').group(:dashboard_id).each do |dashboard|
       dirty = false
       dashboard.widgets.each do |widget|
         next unless widget.config_data[:categorised_by] == field_id
