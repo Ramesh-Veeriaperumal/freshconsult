@@ -71,6 +71,7 @@ class AccountDecorator < ApiDecorator
       }
       ret_hash[:mrr] = subscription.cmrr if User.current.privilege?(:admin_tasks) || User.current.privilege?(:manage_account)
       ret_hash[:invoice_email] = record.invoice_emails.first if account_admin?
+      ret_hash[:field_agent_limit] = (subscription.field_agent_limit || 0) if Account.current.field_service_management_enabled?
       ret_hash
     end
 
