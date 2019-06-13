@@ -51,7 +51,7 @@ class Mobile::SettingsController < ApplicationController
                     facebook_signin_enabled = account.features_included?(:facebook_signin)
                     if account.freshid_org_v2_enabled?
                       freshid_org_v2_enabled = true
-                      org_login_url = account.freshid_login_url
+                      org_login_url = freshid_login_url
                       redirect_url = full_domain.present? ? full_domain+'sso/login' : ""
                     end
                   end
