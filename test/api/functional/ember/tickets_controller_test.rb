@@ -386,6 +386,16 @@ module Ember
       assert_response 200
     end
 
+    def test_index_with_ids_of_ticket_created_greater_than_month
+      ticket = Account.current.tickets.last
+      ticket.created_at = Time.now - 45.days
+      ticket.save
+      get :index, controller_params(version: 'private', ids: ticket.display_id)
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal 1, response.size
+    end
+
     def test_show_when_account_suspended
       ticket = create_ticket
       change_subscription_state('suspended')

@@ -431,8 +431,7 @@ module Ember
       end
 
       def tickets_filter
-        filtered_tickets = current_account.tickets.permissible(api_current_user).filter(ticket_filter_params)
-        filtered_tickets = params[:ids].present? ? filtered_tickets.where(display_id: params[:ids]) : filtered_tickets
+        filtered_tickets = params[:ids].present? ? current_account.tickets.permissible(api_current_user).where(display_id: params[:ids]) : current_account.tickets.permissible(api_current_user).filter(ticket_filter_params)
         params[:updated_since].present? ? filtered_tickets.where('helpdesk_tickets.updated_at >= ?', Time.parse(params[:updated_since])) : filtered_tickets
       end
 
