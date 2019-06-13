@@ -4,6 +4,7 @@ autopilot:
     contact_url: "https://api2.autopilothq.com/v1/contact"
     trigger_url: "https://api2.autopilothq.com/v1/trigger/%{trigger_code}/contact/%{person_id}"
     contact_with_trigger_url: "https://api2.autopilothq.com/v1/trigger/%{trigger_code}/contact"
+    delete_contact_url: "https://api2.autopilothq.com/v1/contact/%{email_id}"
   staging: 
     <<: *common
     access_key: "9a0e8aa4369f4103b0bbe9ce8ef19ee5"
