@@ -1,6 +1,7 @@
 require_relative '../../api/test_helper'
 require Rails.root.join('spec', 'support', 'user_helper.rb')
 require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
+require 'sidekiq/testing'
 class AccountsControllerTest < ActionController::TestCase
   include Redis::RedisKeys
   include Redis::OthersRedis
@@ -681,5 +682,44 @@ class AccountsControllerTest < ActionController::TestCase
     get :anonymous_signup_complete, account_id: Account.first.id
     assert_response 302
     assert_includes response.redirect_url, '/a/getstarted'
+  end
+
+  def test_lead_deleted_from_autopilot_during_account_deletion
+    WebMock.allow_net_connect!
+    ThirdCRM.any_instance.expects(:delete_lead).once
+    ThirdCRM.any_instance.stubs(:associated_accounts).returns('1')
+    Account.any_instance.stubs(:admin_email).returns(Faker::Internet.email)
+    create_sample_account(Faker::Lorem.word, Faker::Internet.email)
+    account_id = @account.id
+    Account.stubs(:current).returns(@account.reload)
+    args = { account_id: @account.id }
+    Sidekiq::Testing.inline! do
+      CRMApp::Freshsales::DeletedCustomer.new.perform(args)
+    end
+  ensure
+    WebMock.disable_net_connect!
+    Account.unstub(:current)
+    ThirdCRM.any_instance.unstub(:associated_accounts)
+    Account.any_instance.unstub(:admin_email)
+  end
+
+  def test_lead_updated_from_autopilot_during_account_deletion
+    WebMock.allow_net_connect!
+    ThirdCRM.any_instance.expects(:update_lead).once
+    AdminEmail::AssociatedAccounts.stubs(:find).returns([Account.first, Account.last])
+    Account.any_instance.stubs(:admin_email).returns(Faker::Internet.email)
+    create_sample_account(Faker::Lorem.word, Faker::Internet.email)
+    create_sample_account(Faker::Lorem.word, Faker::Internet.email)
+    account_id = @account.id
+    Account.stubs(:current).returns(@account.reload)
+    args = { account_id: @account.id }
+    Sidekiq::Testing.inline! do
+      CRMApp::Freshsales::DeletedCustomer.new.perform(args)
+    end
+  ensure
+    WebMock.disable_net_connect!
+    Account.unstub(:current)
+    AdminEmail::AssociatedAccounts.unstub(:find)
+    Account.any_instance.unstub(:admin_email)
   end
 end
