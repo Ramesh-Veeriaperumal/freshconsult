@@ -1,7 +1,7 @@
 module Freshfone
   class TrialCallTriggerWorker < BaseWorker
 
-    sidekiq_options :queue => :freshfone_trial_worker, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :freshfone_trial_worker, :retry => 0, :failures => :exhausted
 
     def perform(args)
       Rails.logger.info 'Freshfone Trial Call Trigger Worker'

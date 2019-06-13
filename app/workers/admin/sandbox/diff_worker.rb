@@ -1,6 +1,6 @@
 class Admin::Sandbox::DiffWorker < BaseWorker
   include SandboxHelper
-  sidekiq_options queue: :sandbox_diff, retry: 0, backtrace: true, failures: :exhausted
+  sidekiq_options queue: :sandbox_diff, retry: 0,  failures: :exhausted
 
   def perform
     committer = {

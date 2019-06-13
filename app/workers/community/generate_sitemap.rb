@@ -2,7 +2,7 @@ class Community::GenerateSitemap < BaseWorker
   include Redis::RedisKeys
   include Redis::PortalRedis
 
-  sidekiq_options :queue => :generate_sitemap, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :generate_sitemap, :retry => 0, :failures => :exhausted
 
   def perform(account_id)
     Sharding.select_shard_of(account_id) do

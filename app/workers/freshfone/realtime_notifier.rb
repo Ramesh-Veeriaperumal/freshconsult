@@ -6,7 +6,7 @@ module Freshfone
     include Freshfone::CallsRedisMethods
     include Mobile::Actions::Push_Notifier
 
-    sidekiq_options :queue => :freshfone_notifications, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :freshfone_notifications, :retry => 0, :failures => :exhausted
 
     attr_accessor :params, :agents, :current_account, :current_call, :current_number, :tid
 

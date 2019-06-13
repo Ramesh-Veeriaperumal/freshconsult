@@ -3,7 +3,7 @@ module Integrations
 
     include Sidekiq::Worker
     include Integrations::CtiHelper
-    sidekiq_options :queue => :cti, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :cti, :retry => 0, :failures => :exhausted
 
     def perform(call_id)
       begin

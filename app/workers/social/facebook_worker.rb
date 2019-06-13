@@ -3,7 +3,7 @@ module Social
     include Facebook::RedisMethods
     include Facebook::Exception::Handler
 
-    sidekiq_options queue: :facebook, retry: 0, backtrace: true, failures: :exhausted
+    sidekiq_options queue: :facebook, retry: 0,  failures: :exhausted
 
     ERROR_MESSAGES = {
       access_token_error: 'access token',

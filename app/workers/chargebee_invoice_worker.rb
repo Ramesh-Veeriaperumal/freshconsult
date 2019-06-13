@@ -2,7 +2,7 @@ class ChargebeeInvoiceWorker
 
   include Sidekiq::Worker
 
-  sidekiq_options :queue => :chargebee_invoice, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :chargebee_invoice, :retry => 0, :failures => :exhausted
 
   def perform(content)
     account = Account.current

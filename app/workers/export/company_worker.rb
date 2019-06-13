@@ -1,7 +1,7 @@
 class Export::CompanyWorker
   include Sidekiq::Worker
 
-  sidekiq_options :queue => :company_export, :retry => 0, :backtrace => true,
+  sidekiq_options :queue => :company_export, :retry => 0,
                   :failures => :exhausted
 
   def perform(args)

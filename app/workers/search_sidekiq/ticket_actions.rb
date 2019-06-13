@@ -1,7 +1,7 @@
 #encoding: utf-8
 class SearchSidekiq::TicketActions < SearchSidekiq::BaseWorker
 
-  sidekiq_options :queue => :new_es_index, :retry => 2, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :new_es_index, :retry => 2, :failures => :exhausted
 
   class DocumentAdd < SearchSidekiq::TicketActions
     def perform(args)

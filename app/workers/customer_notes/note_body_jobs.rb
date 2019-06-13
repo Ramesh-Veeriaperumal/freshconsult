@@ -1,5 +1,5 @@
 class CustomerNotes::NoteBodyJobs < BaseWorker
-  sidekiq_options :queue => :customer_note_body_queue, :retry => 4, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :customer_note_body_queue, :retry => 4, :failures => :exhausted
 
   def perform(args)
     args.symbolize_keys!

@@ -2,7 +2,7 @@ module Admin::Sla::Reminder
   class Base < BaseWorker
     include SlaSidekiq
     include SchedulerSemaphoreMethods
-    sidekiq_options :queue => :sla_reminders, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :sla_reminders, :retry => 0, :failures => :exhausted
 
     def perform
       account = Account.current

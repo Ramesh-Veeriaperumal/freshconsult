@@ -1,6 +1,6 @@
 class ExportAgents < BaseWorker
 
-  sidekiq_options :queue => :export_agents, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :export_agents, :retry => 0, :failures => :exhausted
 
   def perform args
     begin

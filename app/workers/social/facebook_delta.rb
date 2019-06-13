@@ -4,7 +4,7 @@ module Social
     include Sidekiq::Worker
     include Social::Dynamo::UnprocessedFeed
 
-    sidekiq_options :queue => :facebook_delta, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :facebook_delta, :retry => 0, :failures => :exhausted
 
     def perform(args)
       account = Account.current

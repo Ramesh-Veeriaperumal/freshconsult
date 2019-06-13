@@ -1,9 +1,8 @@
 class Groups::RoundRobinCapping < BaseWorker
   
-  sidekiq_options :queue => :round_robin_capping, 
-                  :retry => 0, 
-                  :backtrace => true, 
-                  :failures => :exhausted
+  sidekiq_options queue:  :round_robin_capping,
+                  retry:  0,
+                  failures: :exhausted
 
   include Redis::RoundRobinRedis
   include RoundRobinCapping::Methods

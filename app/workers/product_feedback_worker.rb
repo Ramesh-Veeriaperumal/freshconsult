@@ -1,5 +1,5 @@
 class ProductFeedbackWorker < BaseWorker
-  sidekiq_options queue: :product_feedback, retry: 0, backtrace: true, failures: :exhausted
+  sidekiq_options queue: :product_feedback, retry: 0,  failures: :exhausted
 
   def perform(payload)
     payload.symbolize_keys!

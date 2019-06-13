@@ -3,7 +3,7 @@ class Social::Gnip::SmartFilterTweetToTicketWorker < BaseWorker
   include Social::Util
   include Social::Gnip::Util
 
-  sidekiq_options :queue => :smart_filter_tweet_to_ticket, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :smart_filter_tweet_to_ticket, :retry => 0, :failures => :exhausted
 
   def perform(args)
     args = args.deep_symbolize_keys

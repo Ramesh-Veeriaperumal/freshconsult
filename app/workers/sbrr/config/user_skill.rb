@@ -2,10 +2,9 @@ module SBRR
   module Config
     class UserSkill < BaseWorker
 
-      sidekiq_options :queue => :sbrr_config_user_skill, 
-                      :retry => 0, 
-                      :backtrace => true, 
-                      :failures => :exhausted
+      sidekiq_options queue: :sbrr_config_user_skill,
+                      retry: 0,
+                      failures: :exhausted
 
       def perform args
         begin

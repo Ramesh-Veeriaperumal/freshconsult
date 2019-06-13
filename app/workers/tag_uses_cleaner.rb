@@ -3,7 +3,7 @@
 class TagUsesCleaner
   include Sidekiq::Worker
 
-  sidekiq_options :queue => :tag_uses_destroy, :retry => 2, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :tag_uses_destroy, :retry => 2, :failures => :exhausted
   
   def perform(args)
     args.symbolize_keys!

@@ -1,9 +1,8 @@
 class Groups::ToggleAgentFromGroups < BaseWorker
 
-  sidekiq_options :queue => :toggle_agent_from_all_roundrobin_groups,
-                  :retry => 2,
-                  :backtrace => true,
-                  :failures => :exhausted
+  sidekiq_options queue:  :toggle_agent_from_all_roundrobin_groups,
+                  retry: 2,
+                  failures:  :exhausted
 
   def perform(args)
     account = Account.current

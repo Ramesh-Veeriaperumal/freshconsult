@@ -2,7 +2,7 @@ class Helpdesk::TicketFields::UpdateTicketFilter < BaseWorker
   include Dashboard::Custom::CacheKeys
   include Cache::Memcache::Dashboard::Custom::CacheData
 
-  sidekiq_options :queue => :update_ticket_filter, :retry => 1, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :update_ticket_filter, :retry => 1, :failures => :exhausted
 
   def perform(args)
     args.symbolize_keys!

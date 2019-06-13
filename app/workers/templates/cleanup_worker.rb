@@ -1,6 +1,6 @@
 class Templates::CleanupWorker < BaseWorker
 
-  sidekiq_options :queue => :templates_cleanup, :retry => 0, :backtrace => true,
+  sidekiq_options :queue => :templates_cleanup, :retry => 0,
                   :failures => :exhausted
 
   def perform(args)

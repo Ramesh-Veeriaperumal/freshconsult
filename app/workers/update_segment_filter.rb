@@ -1,6 +1,6 @@
 class UpdateSegmentFilter < BaseWorker
   include Segments::WorkerConstants
-  sidekiq_options queue: :update_segment_filter, retry: 0, backtrace: true, failures: :exhausted
+  sidekiq_options queue: :update_segment_filter, retry: 0,  failures: :exhausted
 
   def perform(args)
     return unless Account.current.segments_enabled?

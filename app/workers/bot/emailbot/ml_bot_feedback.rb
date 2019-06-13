@@ -1,6 +1,6 @@
 module Bot::Emailbot
   class MlBotFeedback < BaseWorker
-    sidekiq_options queue: :bot_email_ml_feedback, retry: 0, backtrace: true, failures: :exhausted
+    sidekiq_options queue: :bot_email_ml_feedback, retry: 0,  failures: :exhausted
     FEEDBACK_CONFIG = YAML.load(ERB.new(File.read("#{Rails.root}/config/email_bot_ml_feedback_config.yml")).result)[Rails.env]
     PAYLOAD_TYPE = "freshdesk-email-bot-feedback"
     TYPE = "FEEDBACK"

@@ -1,7 +1,7 @@
 module Tickets
   class BulkScenario < BaseWorker
 
-    sidekiq_options :queue => :bulk_scenario, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :bulk_scenario, :retry => 0, :failures => :exhausted
     include Helpdesk::BulkActionMethods
 
     def perform(args)

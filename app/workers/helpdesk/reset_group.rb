@@ -5,7 +5,7 @@ class Helpdesk::ResetGroup < BaseWorker
   include Redis::HashMethods
   include Dashboard::Custom::CacheKeys
 
-  sidekiq_options queue: :reset_group, retry: 0, backtrace: true, failures: :exhausted
+  sidekiq_options queue: :reset_group, retry: 0,  failures: :exhausted
   BATCH_LIMIT = 50
   # 2 - csat 3 - leaderboard 5 - ticket_trend_card 6 - time_trend_card 7 - sla_trend_card
   DASHBOARD_GROUP_WIDGETS = [2, 3, 5, 6, 7].freeze

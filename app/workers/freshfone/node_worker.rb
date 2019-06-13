@@ -1,6 +1,6 @@
 module Freshfone
   class NodeWorker < BaseWorker
-    sidekiq_options :queue => :freshfone_node, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :freshfone_node, :retry => 0, :failures => :exhausted
 
     def perform(message, channel, freshfone_node_session)
 

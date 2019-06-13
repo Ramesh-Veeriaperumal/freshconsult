@@ -1,6 +1,6 @@
 class DefaultDataPopulation
   include Sidekiq::Worker
-  sidekiq_options :queue => :default_data_population, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :default_data_population, :retry => 0, :failures => :exhausted
 
   def perform(args = {})
     args.symbolize_keys!

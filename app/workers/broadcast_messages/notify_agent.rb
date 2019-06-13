@@ -1,6 +1,6 @@
 class BroadcastMessages::NotifyAgent < BaseWorker 
 
-  sidekiq_options :queue => :broadcast_note, :retry => 3, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :broadcast_note, :retry => 3, :failures => :exhausted
 
   def perform(args)
     args.symbolize_keys!

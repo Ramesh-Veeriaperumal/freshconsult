@@ -1,6 +1,6 @@
 class Community::DispatchSpamDigest < BaseWorker
 
-  sidekiq_options :queue => :spam_digest_mailer, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :spam_digest_mailer, :retry => 0, :failures => :exhausted
 
   def perform
     current_account = Account.current

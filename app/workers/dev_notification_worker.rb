@@ -1,6 +1,6 @@
 class DevNotificationWorker < BaseWorker
   
-  sidekiq_options :queue => :dev_notification_worker, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :dev_notification_worker, :retry => 0, :failures => :exhausted
     
   def perform args
     name    = args["name"]

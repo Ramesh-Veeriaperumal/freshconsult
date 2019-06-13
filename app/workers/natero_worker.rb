@@ -1,5 +1,5 @@
 class NateroWorker < BaseWorker
-  sidekiq_options :queue => :natero_worker, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :natero_worker, :retry => 0, :failures => :exhausted
 
   def perform(params)
     Rails.logger.info "Natero worker"

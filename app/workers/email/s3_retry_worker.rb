@@ -1,6 +1,6 @@
 class Email::S3RetryWorker < BaseWorker
 
-	sidekiq_options :queue => 's3_retry_worker', :retry => false, :backtrace => true
+	sidekiq_options :queue => 's3_retry_worker', :retry => false
 
 	include Helpdesk::Email::MessageProcessingUtil
 	include EnvelopeParser

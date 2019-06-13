@@ -1,6 +1,6 @@
 module Scheduler
   class CancelMessage < BaseWorker
-    sidekiq_options queue: :scheduler_cancel_message, retry: 5, backtrace: true, failures: :exhausted
+    sidekiq_options queue: :scheduler_cancel_message, retry: 5,  failures: :exhausted
 
     def perform(args)
       args.deep_symbolize_keys!

@@ -1,6 +1,6 @@
 class Import::ContactWorker
   include Sidekiq::Worker
-  sidekiq_options :queue => :contact_import, :retry => 0, :backtrace => true,
+  sidekiq_options :queue => :contact_import, :retry => 0,
                   :failures => :exhausted
 
   class SpamAccountError < StandardError

@@ -2,10 +2,9 @@ module SBRR
   module Config
     class AgentGroup < BaseWorker
 
-      sidekiq_options :queue => :sbrr_config_agent_group, 
-                      :retry => 0, 
-                      :backtrace => true, 
-                      :failures => :exhausted
+      sidekiq_options queue:  :sbrr_config_agent_group,
+                      retry: 0,
+                      failures: :exhausted
 
       def perform args
         Thread.current[:sbrr_log] = [self.jid]

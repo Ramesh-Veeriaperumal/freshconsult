@@ -1,6 +1,6 @@
 class Tickets::BulkChildTktCreation < BaseWorker
 
-  sidekiq_options :queue => :bulk_child_tkt_creation, :retry => 0, :backtrace => true,
+  sidekiq_options :queue => :bulk_child_tkt_creation, :retry => 0,
                   :failures => :exhausted
 
   def perform(args)

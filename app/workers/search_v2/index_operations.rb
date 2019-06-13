@@ -2,7 +2,7 @@ class SearchV2::IndexOperations
   
   include Sidekiq::Worker
 
-  sidekiq_options :queue => :es_v2_queue, :retry => 2, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :es_v2_queue, :retry => 2, :failures => :exhausted
   
   class UpdateArticleFolder < SearchV2::IndexOperations
     def perform(args)

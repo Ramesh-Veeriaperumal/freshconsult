@@ -1,9 +1,8 @@
 module Archive
   class DeleteArchiveTicket < BaseWorker
-    sidekiq_options :queue => :delete_archive_ticket, 
-                    :retry => 0,
-                    :backtrace => true, 
-                    :failures => :exhausted
+    sidekiq_options queue: :delete_archive_ticket,
+                    retry: 0,
+                    failures: :exhausted
 
   
     def perform(args)

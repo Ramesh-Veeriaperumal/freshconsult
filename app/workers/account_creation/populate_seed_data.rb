@@ -2,7 +2,7 @@ module AccountCreation
 
   class PopulateSeedData < BaseWorker
 
-    sidekiq_options :queue => :account_creation_fixtures, :retry => 5, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :account_creation_fixtures, :retry => 5, :failures => :exhausted
     sidekiq_retry_in { 30 }
 
 

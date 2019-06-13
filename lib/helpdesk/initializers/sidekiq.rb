@@ -15,7 +15,7 @@ $sidekiq_redis_pool_size = sidekiq_config[:redis_pool_size] || sidekiq_config[:c
 $sidekiq_redis_timeout = sidekiq_config[:timeout]
 
 poll_interval = config['scheduled_poll_interval']
-
+Sidekiq.default_worker_options = { backtrace: 10 }
 Sidekiq.configure_client do |config|
   config.redis = ConnectionPool.new(:size => 1, :timeout => $sidekiq_redis_timeout, &$sidekiq_datastore)
   config.client_middleware do |chain|
@@ -121,6 +121,18 @@ Sidekiq.configure_server do |config|
   config.redis = ConnectionPool.new(:size => $sidekiq_redis_pool_size, :timeout => $sidekiq_redis_timeout, &$sidekiq_datastore)
   config.reliable_fetch!
   config.average_scheduled_poll_interval = poll_interval if poll_interval.present?
+  config.error_handlers << proc { |ex, ctx_hash|
+    begin
+      log_tags = (ctx_hash.try(:[], 'message_uuid') || [])
+      log_tags << ctx_hash['jid']
+    rescue StandardError => e
+      log_tags = []
+    end
+    Rails.logger.tagged(log_tags) do
+      Rails.logger.error "Sidekiq worker failed: #{ex.message}, context: #{ctx_hash.inspect}"
+      Rails.logger.error "Sidekiq worker Backtrace: #{ex.backtrace.join(', ')}"
+    end
+  }
   #https://forums.aws.amazon.com/thread.jspa?messageID=290781#290781
   #Making AWS as thread safe
   AWS.eager_autoload!

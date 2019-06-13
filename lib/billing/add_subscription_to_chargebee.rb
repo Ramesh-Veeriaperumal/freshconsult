@@ -2,7 +2,7 @@ class Billing::AddSubscriptionToChargebee
   include Sidekiq::Worker
   include Subscription::Currencies::Constants
   
-  sidekiq_options :queue => :chargebee_add_subscription, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :chargebee_add_subscription, :retry => 0, :failures => :exhausted
 
   def perform
     begin

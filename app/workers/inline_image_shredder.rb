@@ -1,7 +1,7 @@
 class InlineImageShredder < BaseWorker
   include InlineImagesUtil
 
-  sidekiq_options :queue => :inline_image_shredder, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :inline_image_shredder, :retry => 0, :failures => :exhausted
 
   TYPES_TO_BE_DELETED = ['Tickets Image Upload', 'Forums Image Upload', 'Ticket::Inline', 'Note::Inline'].freeze
 

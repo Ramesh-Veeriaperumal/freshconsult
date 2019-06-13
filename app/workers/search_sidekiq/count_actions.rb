@@ -1,7 +1,7 @@
 #encoding: utf-8
 class SearchSidekiq::CountActions < SearchSidekiq::BaseWorker
 
-  sidekiq_options :queue => :esv2_count_index, :retry => 2, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :esv2_count_index, :retry => 2, :failures => :exhausted
 
   class DocumentAdd < SearchSidekiq::CountActions
     def perform(args)

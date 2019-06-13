@@ -1,6 +1,6 @@
 module CentralPublish
   class UpdateTag < BaseWorker
-    sidekiq_options :queue => :update_taggables_queue, :retry => 5, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :update_taggables_queue, :retry => 5, :failures => :exhausted
 
     def perform(args)
 

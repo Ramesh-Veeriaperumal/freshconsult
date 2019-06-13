@@ -1,6 +1,6 @@
 class Reports::ScheduledReports < ScheduledTaskBase
 
-  sidekiq_options :queue => :scheduled_reports, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :scheduled_reports, :retry => 0, :failures => :exhausted
 
   include HelpdeskReports::Helper::PlanConstraints
 

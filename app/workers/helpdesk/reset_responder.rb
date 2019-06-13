@@ -3,7 +3,7 @@ class Helpdesk::ResetResponder < BaseWorker
   include Redis::RedisKeys
   include Redis::OthersRedis
 
-  sidekiq_options :queue => :reset_responder, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :reset_responder, :retry => 0, :failures => :exhausted
   BATCH_LIMIT = 50
 
   def perform(args)

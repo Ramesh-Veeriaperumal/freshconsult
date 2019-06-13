@@ -1,5 +1,5 @@
 class RunRakeTask < BaseWorker
-  sidekiq_options :queue => :run_rake_task, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :run_rake_task, :retry => 0, :failures => :exhausted
 
   def perform(args)
     if Rails.env.production?

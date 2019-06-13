@@ -1,6 +1,6 @@
 class Tickets::BulkTicketActions < BaseWorker
 
-  sidekiq_options :queue => :bulk_ticket_actions, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :bulk_ticket_actions, :retry => 0, :failures => :exhausted
   include Helpdesk::ToggleEmailNotification
   include Helpdesk::BulkActionMethods
 

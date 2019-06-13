@@ -1,7 +1,6 @@
 class ScheduledExport::Ticket::Config < BaseWorker
   sidekiq_options :queue => :scheduled_ticket_export_config, 
-                  :retry => 2, 
-                  :backtrace => true, 
+                  :retry => 2,
                   :failures => :exhausted
 
   def perform args

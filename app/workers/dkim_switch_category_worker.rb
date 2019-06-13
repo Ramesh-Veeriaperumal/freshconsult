@@ -5,7 +5,7 @@ class DkimSwitchCategoryWorker
   include Redis::OthersRedis
   include Dkim::UtilityMethods
 
-  sidekiq_options :queue => :dkim_general, :retry => 5, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :dkim_general, :retry => 5, :failures => :exhausted
   
   sidekiq_retry_in do |count|
     (count+15).minutes

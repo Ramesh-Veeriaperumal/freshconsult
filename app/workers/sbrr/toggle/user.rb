@@ -2,10 +2,9 @@ module SBRR
   module Toggle
     class User < BaseWorker
 
-      sidekiq_options :queue => :sbrr_user_toggle, 
-                      :retry => 0, 
-                      :backtrace => true, 
-                      :failures => :exhausted
+      sidekiq_options queue: :sbrr_user_toggle,
+                      retry: 0,
+                      failures: :exhausted
 
       def perform args
         Thread.current[:sbrr_log] = [self.jid]

@@ -1,7 +1,7 @@
 class Admin::Sandbox::FileToDataWorker < BaseWorker
   include SandboxHelper
   include Sync::Constants
-  sidekiq_options queue: :sandbox_file_to_data, retry: 0, backtrace: true, failures: :exhausted
+  sidekiq_options queue: :sandbox_file_to_data, retry: 0,  failures: :exhausted
 
   def perform
     committer = {

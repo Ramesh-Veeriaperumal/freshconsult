@@ -3,10 +3,9 @@ require 'spam/spam_check'
 module Admin
   class SpamCheckerWorker < BaseWorker
 
-    sidekiq_options :queue => :email_notification_spam_queue, 
-                    :retry => 0, 
-                    :backtrace => true, 
-                    :failures => :exhausted
+    sidekiq_options queue: :email_notification_spam_queue,
+                    retry: 0,
+                    failures: :exhausted
     def perform args
       begin
         subject = args['subject']

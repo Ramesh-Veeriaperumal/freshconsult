@@ -1,6 +1,6 @@
 class Tickets::UnlinkTickets < BaseWorker
 
-  sidekiq_options :queue => :unlink_tickets, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :unlink_tickets, :retry => 0, :failures => :exhausted
 
   def perform(args)
     current_account  = Account.current

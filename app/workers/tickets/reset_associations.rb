@@ -1,6 +1,6 @@
 class Tickets::ResetAssociations < BaseWorker
 
-  sidekiq_options :queue => :reset_associations, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :reset_associations, :retry => 0, :failures => :exhausted
 
   def perform(args)
     execute_on_db {

@@ -1,6 +1,6 @@
 class Freshid::V2::AgentsMigration < BaseWorker
   include Freshid::MigrationUtil
-  sidekiq_options queue: :freshid_v2_agents_migration, retry: 0, backtrace: true, failures: :exhausted
+  sidekiq_options queue: :freshid_v2_agents_migration, retry: 0,  failures: :exhausted
 
   def perform(args = {})
     args.symbolize_keys!

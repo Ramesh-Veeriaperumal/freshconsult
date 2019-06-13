@@ -1,6 +1,6 @@
 module Freshconnect
   class RegisterFreshconnect < BaseWorker
-    sidekiq_options queue: :register_freshconnect, retry: 0, backtrace: true, failures: :exhausted
+    sidekiq_options queue: :register_freshconnect, retry: 0,  failures: :exhausted
 
     SUCCESS = 200..299
 

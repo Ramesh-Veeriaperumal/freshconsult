@@ -1,7 +1,7 @@
 module Integrations
   class IntegrationsWorker < ::BaseWorker
 
-    sidekiq_options :queue => :integrations, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :integrations, :retry => 0, :failures => :exhausted
 
     def perform(options = {})
       options = options.symbolize_keys
