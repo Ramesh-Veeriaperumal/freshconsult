@@ -34,7 +34,7 @@ module Helpdesk::Permission
 
     def can_view_helpdesk_ticket?(ticket = owner_object)
       return false unless ::User.current
-      ::User.current.agent? ? ::User.current.has_ticket_permission?(ticket) : ::User.current.has_customer_ticket_permission?(ticket)
+      ::User.current.agent? ? (ticket.requester_id == ::User.current.id || ::User.current.has_ticket_permission?(ticket)) : ::User.current.has_customer_ticket_permission?(ticket)
     end
 
     def can_view_helpdesk_note?
