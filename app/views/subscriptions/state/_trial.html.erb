@@ -64,6 +64,9 @@
 <script type="text/javascript">
 jQuery(document).ready(function() {
 
+  // Adding the below logic for currency change
+
+  var toHide = ['plan-garden_jan_19', 'plan-estate_jan_19'];
 
   jQuery('#switch-currency').on('change', function(){
     jQuery("#ChangePlan").empty();
@@ -77,12 +80,35 @@ jQuery(document).ready(function() {
     function(data){
       jQuery("#ChangePlan").removeClass("sloading");
       jQuery("#ChangePlan").html(data);
-      if(jQuery(".choose-plan-title .toggle-button").hasClass("active")) {
-        show_omni_plans();
-      } else {
-        hide_omni_plans();
+      jQuery("#omni-channel .toggle-button").hasClass("active") ? show_omni_plans() : hide_omni_plans();
+      jQuery("#field-service-management .toggle-button").hasClass("active") ? jQuery(".fsm-card").removeClass("hide") : jQuery(".fsm-card").addClass("hide");
+    });
+  }
+
+  function show_omni_plans() {
+    toHide.each(function(item){
+      jQuery("#"+item).addClass("hide");
+    });
+
+    jQuery(".pricelist").each(function(){
+      if(jQuery(this).attr("id").indexOf("omni") > 0) {
+        jQuery(this).removeClass("hide");
       }
-    } );
+    });
+    jQuery(".ocr-card").removeClass("hide");
+  }
+
+  function hide_omni_plans() {
+    toHide.each(function(item){
+      jQuery("#"+item).removeClass("hide");
+    });
+
+    jQuery(".pricelist").each(function(){
+      if(jQuery(this).attr("id").indexOf("omni") > 0) {
+        jQuery(this).addClass("hide");
+      }
+    });
+    jQuery(".ocr-card").addClass("hide");
   }
 
 });

@@ -42,7 +42,7 @@ module SearchService
       additional_info.each { |k, v| output << "#{k}=#{v}" }
       # when fuzzy search is launched
       if Account.current.launched?(:fuzzy_search) && endpoint.ends_with?(MULTIQUERY)
-        parsed_response = JSON.parse(response_payload)
+        parsed_response = JSON.parse(response.body)
         contexts = parsed_response['results'].keys
         totals = contexts.map { |c| parsed_response['results'][c]['total'] }
         contexts.zip(totals).each { |context, total| output << "context: #{context}, total: #{total}" }

@@ -134,7 +134,8 @@ class Search::Utils
   FUZZY_TEMPLATE_BY_CONTEXT = {
     agent_spotlight_solution: 'agentSpotlightSolutionFuzzy',
     agent_insert_solution: 'agentInsertSolutionFuzzy',
-    agent_spotlight_global: 'agentSpotlightGlobalFuzzy'
+    agent_spotlight_global: 'agentSpotlightGlobalFuzzy',
+    agent_spotlight_suggest: 'agentSpotlightSuggestFuzzy'
   }.freeze
 
   # _Note_: Parent ID to be used for routing.

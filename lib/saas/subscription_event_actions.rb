@@ -1,6 +1,6 @@
 class SAAS::SubscriptionEventActions
 
-  attr_accessor :account, :old_plan, :add_ons, :new_plan, :existing_add_ons
+  attr_accessor :account, :old_plan, :add_ons, :new_plan, :existing_add_ons, :skipped_features
 
   DROP_DATA_FEATURES_V2 = [:create_observer, :supervisor, :add_watcher, :custom_ticket_views, :custom_apps,
                            :custom_ticket_fields, :custom_company_fields, :custom_contact_fields, :occasional_agent,
@@ -13,7 +13,8 @@ class SAAS::SubscriptionEventActions
                            :custom_domain, :css_customization, :custom_roles,
                            :dynamic_sections, :custom_survey, :mailbox,
                            :helpdesk_restriction_toggle, :ticket_templates,
-                           :round_robin_load_balancing, :multi_timezone, :field_service_management].freeze
+                           :round_robin_load_balancing, :multi_timezone, :field_service_management, :custom_translations,
+                           :field_service_management_toggle].freeze
 
   ADD_DATA_FEATURES_V2  = [:link_tickets_toggle, :parent_child_tickets_toggle, :multiple_companies_toggle, 
                            :tam_default_fields, :smart_filter, :contact_company_notes, :unique_contact_identifier, :custom_dashboard,
@@ -40,11 +41,12 @@ class SAAS::SubscriptionEventActions
   #
   #change plan will enqueue a job to sidekiq to handle data deletion if its a downgrade.
   ####################################################################################################################
-  def initialize(account, old_plan = nil, add_ons = [])
+  def initialize(account, old_plan = nil, add_ons = [], features_to_skip = [])
     @account     = account || Account.current
     @new_plan    = Account.current.subscription
     @old_plan    = old_plan
     set_existing_addon_feature(add_ons)
+    @skipped_features = features_to_skip
   end
 
   def change_plan
@@ -64,6 +66,10 @@ class SAAS::SubscriptionEventActions
     if add_ons_changed?
       to_be_added = account_add_ons - existing_add_ons
       to_be_removed = existing_add_ons - account_add_ons
+      if account.fsm_addon_billing_enabled? && skipped_features.present?
+        to_be_added.reject! { |feature| skipped_features.include?(feature) }
+        to_be_removed.reject! { |feature| skipped_features.include?(feature) }
+      end
       
       #add on removal case. we need to remove the feature in this case.
       to_be_removed.each do |addon|
@@ -133,6 +139,7 @@ class SAAS::SubscriptionEventActions
 
     def add_new_plan_features
       plan_features.delete(:support_bot) if account.revoke_support_bot?
+      plan_features.delete(:custom_translations) unless account.redis_picklist_id_enabled?
       plan_features.each do |feature|
         account.set_feature(feature)
       end

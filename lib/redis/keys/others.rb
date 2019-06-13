@@ -221,6 +221,6 @@ module Redis::Keys::Others
   FB_MAPPING_ENABLED  = 'FB_MAPPING_ENABLED'.freeze
 
   #Customer segments max limit
-  SEGMENT_LIMIT = 'SEGMENT_LIMIT'.freeze
+  SEGMENT_LIMIT = "SEGMENT_LIMIT:%{account_id}".freeze
 
 end
