@@ -1,0 +1,22 @@
+get:
+  tags: [search]
+  summary: Search companies by name
+  parameters:
+    - name: name
+      in: query
+      type: string
+      description: search term for companies
+      required: true
+  responses:
+    200:
+      description: Success
+      schema:
+        type: array
+        items:
+          $ref: '#/definitions/company_search'
+    403:
+      description: Access denied
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

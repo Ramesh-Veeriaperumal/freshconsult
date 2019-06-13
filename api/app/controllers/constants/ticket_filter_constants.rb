@@ -1,7 +1,7 @@
 module TicketFilterConstants
   # ControllerConstants
 
-  HIDDEN_FILTERS = %w[overdue due_today on_hold new open article_feedback my_article_feedback].freeze
+  HIDDEN_FILTERS = %w[overdue due_today on_hold new open article_feedback my_article_feedback unresolved_article_feedback].freeze
 
   FILTER = (Helpdesk::Filters::CustomTicketFilter::DEFAULT_FILTERS.keys |
       %w[watching on_hold raised_by_me shared_by_me shared_with_me unresolved_service_tasks]).freeze

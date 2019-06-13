@@ -170,4 +170,8 @@ module SAAS::DropFeatureData
       end
     end
   end
+
+  def handle_custom_translations_drop_data
+    Account.current.custom_translations.find_each(&:destroy)
+  end
 end

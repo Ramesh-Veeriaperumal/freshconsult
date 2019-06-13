@@ -226,9 +226,11 @@ module ApiSearch
 
     def test_contacts_email_null
       contacts = @account.contacts.select { |x| x.email.nil? }
-      get :index, controller_params(query: '"email : null"')
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: '"email : null"')
+      end
       assert_response 200
-      pattern = contacts.map { |contact| index_contact_pattern(contact) }
+      pattern = contacts.map { |contact| public_search_contact_pattern(contact) }
       match_json(results: pattern, total: contacts.size)
     end
 

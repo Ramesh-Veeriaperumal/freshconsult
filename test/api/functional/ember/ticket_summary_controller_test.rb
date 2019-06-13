@@ -280,7 +280,7 @@ class TicketSummaryControllerTest < ActionController::TestCase
     User.any_instance.stubs(:has_ticket_permission?).returns(false)
     t = create_ticket
     note = create_ticket_summary(t)
-    put :update, construct_params({ version: 'private', ticket_id: note.notable_id }, update_ticket_summary_params_hash)
+    put :update, construct_params({ version: 'private', ticket_id: t.display_id }, update_ticket_summary_params_hash)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
     User.any_instance.unstub(:has_ticket_permission?)
@@ -292,7 +292,7 @@ class TicketSummaryControllerTest < ActionController::TestCase
     t = create_ticket
     note = create_ticket_summary(t)
     params_hash = update_ticket_summary_params_hash
-    put :update, construct_params({ version: 'private', ticket_id: note.notable_id }, params_hash)
+    put :update, construct_params({ version: 'private', ticket_id: t.display_id }, params_hash)
     assert_response 200
     note = Helpdesk::Note.find(note.id)
     match_json(update_private_ticket_summary_pattern(params_hash, note))
@@ -316,7 +316,7 @@ class TicketSummaryControllerTest < ActionController::TestCase
     note = create_ticket_summary(t)
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     stub_attachment_to_io do
-      put :update, construct_params({ version: 'private', ticket_id: note.notable_id }, params_hash)
+      put :update, construct_params({ version: 'private', ticket_id: t.display_id }, params_hash)
     end
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response 200
@@ -336,7 +336,7 @@ class TicketSummaryControllerTest < ActionController::TestCase
     params_hash = update_ticket_summary_params_hash.merge(inline_attachment_ids: inline_attachment_ids)
     t = create_ticket
     note = create_ticket_summary(t)
-    put :update, construct_params({ version: 'private', ticket_id: note.notable_id }, params_hash)
+    put :update, construct_params({ version: 'private', ticket_id: t.display_id }, params_hash)
     assert_response 200
     note = Helpdesk::Note.find(note.id)
     match_json(update_private_ticket_summary_pattern(params_hash, note))
@@ -359,7 +359,7 @@ class TicketSummaryControllerTest < ActionController::TestCase
     params_hash = update_ticket_summary_params_hash.merge(inline_attachment_ids: inline_attachment_ids)
     t = create_ticket
     note = create_ticket_summary(t)
-    put :update, construct_params({ version: 'private', ticket_id: note.notable_id }, params_hash)
+    put :update, construct_params({ version: 'private', ticket_id: t.display_id }, params_hash)
     assert_response 400
     match_json([bad_request_error_pattern('inline_attachment_ids', :invalid_inline_attachments_list, invalid_ids: invalid_ids.join(', '))])
   end
@@ -383,7 +383,7 @@ class TicketSummaryControllerTest < ActionController::TestCase
     Account.current.add_feature(:ticket_summary)
     t = create_ticket(spam: true)
     note = create_ticket_summary(t)
-    put :update, construct_params({ version: 'private', ticket_id: note.notable_id },
+    put :update, construct_params({ version: 'private', ticket_id: t.display_id },
                                     update_ticket_summary_params_hash)
     assert_response 403
   ensure
@@ -396,7 +396,7 @@ class TicketSummaryControllerTest < ActionController::TestCase
     ticket = create_ticket
     note = create_ticket_summary(ticket)
     params_hash = update_ticket_summary_params_hash.merge(user_id: user.id)
-    put :update, construct_params({ version: 'private', ticket_id: note.notable_id }, params_hash)
+    put :update, construct_params({ version: 'private', ticket_id: ticket.display_id }, params_hash)
     match_json([bad_request_error_pattern('last_edited_user_id', :"is invalid")])
     assert_response 400
     Account.current.revoke_feature(:ticket_summary)
@@ -406,7 +406,7 @@ class TicketSummaryControllerTest < ActionController::TestCase
     Account.current.add_feature(:ticket_summary)
     ticket = create_ticket
     note = create_ticket_summary(ticket)
-    get :show, construct_params(version: 'private', ticket_id: note.notable_id)
+    get :show, construct_params(version: 'private', ticket_id: ticket.display_id)
     assert_response 200
     Account.current.revoke_feature(:ticket_summary)
   end
@@ -421,6 +421,7 @@ class TicketSummaryControllerTest < ActionController::TestCase
 
   def test_show_summary_note_without_feature
     ticket = create_ticket
+    note = create_ticket_summary(ticket)
     get :show, construct_params(version: 'private', ticket_id: ticket.display_id)
     match_json('code' => 'app_unavailable',
                'message' => 'The Ticket summary feature is not enabled. Please make sure to install Summary app')

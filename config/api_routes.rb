@@ -102,6 +102,7 @@ Helpkit::Application.routes.draw do
       post :solutions, to: 'solutions#results'
       get :solutions, to: 'solutions#results'
     end
+    get '/companies/autocomplete', to: 'api_search/autocomplete#companies'
 
     resources :contacts, as: 'api_contacts', controller: 'api_contacts', except: [:new, :edit] do
       member do
@@ -759,10 +760,10 @@ Helpkit::Application.routes.draw do
     post '/search/multiquery',    to: 'ember/search/multiquery#search_results'
     get  '/search/multiquery',    to: 'ember/search/multiquery#search_results'
 
-    post '/search/autocomplete/requesters/',    to: 'ember/search/autocomplete#requesters'
-    post '/search/autocomplete/agents/',        to: 'ember/search/autocomplete#agents'
-    post '/search/autocomplete/companies/',     to: 'ember/search/autocomplete#companies'
-    post '/search/autocomplete/tags/',          to: 'ember/search/autocomplete#tags'
+    post '/search/autocomplete/requesters', to: 'api_search/autocomplete#requesters'
+    post '/search/autocomplete/companies', to: 'api_search/autocomplete#companies_search'
+    post '/search/autocomplete/agents', to: 'api_search/autocomplete#agents'
+    post '/search/autocomplete/tags', to: 'api_search/autocomplete#tags'
 
     scope '/automations/:rule_type' do
       resources :rules, controller: 'admin/automations', only: [:index, :create, :update, :destroy, :show]

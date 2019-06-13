@@ -5872,6 +5872,7 @@ en:
     custom_domain_desc: "Custom domain"
     app_gallery_desc: "Marketplace"
     multiple_mailboxes_desc: "Multiple mailbox"
+    custom_translations: "Multilingual Ticket Forms"
   zendesk_account: "Zendesk Account Details"
   zendesk_import_files: "Select what to import?"
   file_url: Full XML Export URL

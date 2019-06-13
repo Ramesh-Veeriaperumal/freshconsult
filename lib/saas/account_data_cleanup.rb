@@ -367,6 +367,8 @@ class SAAS::AccountDataCleanup
     cleanup_fsm
   end
 
+  alias handle_field_service_management_toggle_drop_data handle_field_service_management_drop_data
+
   private
 
   def default_portal_preferences

@@ -121,6 +121,13 @@ module HelpWidgetsTestHelper
     end
   end
 
+  def toggle_editable_in_portal(fields)
+    fields.each do |field|
+      field.editable_in_portal = !field.editable_in_portal
+      field.save
+    end
+  end
+
   def freshmarketer_hash
     {
       acc_id: '4151515152535E435F41585143594C5A5F5F5B',

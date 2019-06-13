@@ -188,7 +188,7 @@ module Ember
       valid_filters = %w(
         spam deleted overdue pending open due_today new
         monitored_by new_and_my_open all_tickets unresolved
-        article_feedback my_article_feedback
+        article_feedback unresolved_article_feedback my_article_feedback
         watching on_hold
         raised_by_me shared_by_me shared_with_me
         unresolved_service_tasks
@@ -2896,6 +2896,40 @@ module Ember
       @account.rollback(:ticket_contact_export)
     end
 
+    def test_export_csv_monitor_by_me
+      User.any_instance.stubs(:privilege?).with(:export_tickets).returns(true)
+      User.any_instance.stubs(:privilege?).with(:export_customers).returns(false)
+      export_fields = Helpdesk::TicketModelExtension.allowed_ticket_export_fields
+      params_hash = { ticket_fields: export_fields.map { |i| { i[1] => I18n.t(i[0]) } if i[5] == :ticket }.compact.inject(&:merge),
+                      contact_fields: { 'name' => 'Requester Name', 'mobile' => 'Mobile Phone' },
+                      company_fields: { 'name' => 'Company Name' },
+                      format: 'csv', date_filter: '30',
+                      ticket_state_filter: 'resolved_at', start_date: 6.days.ago.iso8601, end_date: Time.zone.now.iso8601,
+                      query_hash: [], filter_name: 'monitored_by' }
+      post :export_csv, construct_params({ version: 'private' }, params_hash)
+      assert_response 204
+      jobs = ::Tickets::Export::TicketsExport.jobs
+      assert jobs.last['args'].first['filter_name'] == 'monitored_by'
+      assert jobs.last['args'].first['data_hash'].nil?
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_export_csv_with_invalid_filtername
+      User.any_instance.stubs(:privilege?).with(:export_tickets).returns(true)
+      User.any_instance.stubs(:privilege?).with(:export_customers).returns(false)
+      export_fields = Helpdesk::TicketModelExtension.allowed_ticket_export_fields
+      params_hash = { ticket_fields: export_fields.map { |i| { i[1] => I18n.t(i[0]) } if i[5] == :ticket }.compact.inject(&:merge),
+                      contact_fields: { 'name' => 'Requester Name', 'mobile' => 'Mobile Phone' },
+                      company_fields: { 'name' => 'Company Name' },
+                      format: 'csv', date_filter: '30',
+                      ticket_state_filter: 'resolved_at', start_date: 6.days.ago.iso8601, end_date: Time.zone.now.iso8601,
+                      query_hash: [], filter_name: 'test' }
+      post :export_csv, construct_params({ version: 'private' }, params_hash)
+      assert_response 400
+      match_json(validation_error_pattern(bad_request_error_pattern(:filter_name, "It should be one of these values: '#{TicketConstants::DEFAULT_FILTER_EXPORT.join(',')}'", code: 'invalid_value')))
+      User.any_instance.unstub(:privilege?)
+    end
+
     def test_export_csv_with_limit_reach
       export_ids = [] 
       DataExport.ticket_export_limit.times do
@@ -4686,8 +4720,8 @@ module Ember
         get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
         assert_response 200
         response_body = JSON.parse(response.body)
-        assert response_body.find { |ticket| ticket['id'] == fsm_ticket_1.id }.present?
-        assert response_body.find { |ticket| ticket['id'] == fsm_ticket_2.id }.nil?
+        assert response_body.find { |ticket| ticket['id'] == fsm_ticket_1.display_id }.present?
+        assert response_body.find { |ticket| ticket['id'] == fsm_ticket_2.display_id }.nil?
       ensure
         fsm_ticket_1.destroy
         fsm_ticket_2.destroy
@@ -4712,8 +4746,8 @@ module Ember
         get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
         assert_response 200
         response_body = JSON.parse(response.body)
-        assert response_body.find { |ticket| ticket['id'] == fsm_ticket_1.id }.present?
-        assert response_body.find { |ticket| ticket['id'] == fsm_ticket_2.id }.nil?
+        assert response_body.find { |ticket| ticket['id'] == fsm_ticket_1.display_id }.present?
+        assert response_body.find { |ticket| ticket['id'] == fsm_ticket_2.display_id }.nil?
       ensure
         fsm_ticket_1.destroy
         fsm_ticket_2.destroy
@@ -4738,8 +4772,8 @@ module Ember
         get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
         assert_response 200
         response_body = JSON.parse(response.body)
-        assert response_body.find { |ticket| ticket['id'] == fsm_ticket_1.id }.present?
-        assert response_body.find { |ticket| ticket['id'] == fsm_ticket_2.id }.nil?
+        assert response_body.find { |ticket| ticket['id'] == fsm_ticket_1.display_id }.present?
+        assert response_body.find { |ticket| ticket['id'] == fsm_ticket_2.display_id }.nil?
       ensure
         fsm_ticket_1.destroy
         fsm_ticket_2.destroy
@@ -4766,8 +4800,8 @@ module Ember
         get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
         assert_response 200
         response_body = JSON.parse(response.body)
-        assert response_body.find { |ticket| ticket['id'] == fsm_ticket_2.id }.present?
-        assert response_body.find { |ticket| ticket['id'] == fsm_ticket_1.id || ticket['id'] == fsm_ticket_3.id }.nil?
+        assert response_body.find { |ticket| ticket['id'] == fsm_ticket_2.display_id }.present?
+        assert response_body.find { |ticket| ticket['id'] == fsm_ticket_1.display_id || ticket['id'] == fsm_ticket_3.display_id }.nil?
       ensure
         fsm_ticket_1.destroy
         fsm_ticket_2.destroy
@@ -4807,8 +4841,8 @@ module Ember
       get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
       assert_response 200
       response_body = JSON.parse(response.body)
-      assert response_body.find { |ticket| ticket['id'] == fsm_ticket_3.id }.nil?
-      assert response_body.find { |ticket| ticket['id'] == fsm_ticket_1.id || ticket['id'] == fsm_ticket_2.id }.present?
+      assert response_body.find { |ticket| ticket['id'] == fsm_ticket_3.display_id }.nil?
+      assert response_body.find { |ticket| ticket['id'] == fsm_ticket_1.display_id || ticket['id'] == fsm_ticket_2.id }.present?
     ensure
       fsm_ticket_1.destroy
       fsm_ticket_2.destroy
@@ -4830,8 +4864,8 @@ module Ember
       assert_response 200
       ticket_list = JSON.parse(response.body)
       assert ticket_list.size >= 5
-      assert_equal ticket_list[0]['id'], fsm_ticket1.id
-      assert_equal ticket_list[1]['id'], fsm_ticket2.id
+      assert_equal ticket_list[0]['id'], fsm_ticket1.display_id
+      assert_equal ticket_list[1]['id'], fsm_ticket2.display_id
     ensure
       Account.any_instance.unstub(:field_service_management_enabled?)
       cleanup_fsm
@@ -4862,8 +4896,8 @@ module Ember
       assert_response 200
       ticket_list = JSON.parse(response.body)
       assert ticket_list.size == 2
-      assert_equal ticket_list[1]['id'], fsm_ticket1.id
-      assert_equal ticket_list[0]['id'], fsm_ticket2.id
+      assert_equal ticket_list[1]['id'], fsm_ticket1.display_id
+      assert_equal ticket_list[0]['id'], fsm_ticket2.display_id
     ensure
       Account.any_instance.unstub(:field_service_management_enabled?)
       cleanup_fsm

@@ -263,7 +263,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
   private
 
   def email_failures
-    @failures ||= additional_info.slice(:dynamodb_range_key, :failure_count)
+    additional_info
   end
   
 end

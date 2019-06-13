@@ -16,7 +16,7 @@ module UsageMetrics::Features
                    :omni_channel_support, :installed_apps, :ticket_templates, :timesheets,
                    :data_center_location, :advanced_social, :todos_reminder_scheduler,
                    :custom_status, :session_replay, :custom_domain, :requester_widget,
-                   :contact_company_notes, :audit_log_ui, :segments, :sandbox, :support_bot,
+                   :contact_company_notes, :segments, :sandbox, :support_bot,
                    :ticket_summary, :canned_forms, :allow_auto_suggest_solutions].freeze
   FEATURES_TRUE_BY_DEFAULT = [:default_ticket_view, :private_note,
                               :agent_performance, :ticket_export, :default_dashboard, :default_dispatcher,
