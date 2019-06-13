@@ -16,7 +16,6 @@ class Ryuken::FacebookRealtime
       body = get_message(sqs_msg.body, type)
 
       if body.present?
-        puts "FEED ===> #{body}"
         Sqs::Message.new(body).process
       else
         Rails.logger.debug "Message intented for another pod"

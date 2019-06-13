@@ -132,6 +132,20 @@ module FacebookTestHelper
     }]
   end
 
+  def sample_cover_photo_feed(page_id, user_id, feed_id, time, message)
+    fb_feed = [{
+      'id'   => "#{feed_id}_#{page_id}",
+      'type' => 'cover_photo',
+      'from' => {
+        'name' => Faker::Lorem.words(1).to_s,
+        'id'   => user_id.to_s
+      },
+      'message' => message,
+      'created_time' => time.to_s,
+      'updated_time' => Time.now.utc.to_s
+    }]
+  end
+
   def sample_comment_feed(post_id, user_id, comment_id, time)
     comments = {
       'data' => [
@@ -173,7 +187,7 @@ module FacebookTestHelper
     })
   end
 
-  def sample_realtime_comment(page_id, post_id, comment_id, user_id, time)
+  def sample_realtime_comment(page_id, post_id, comment_id, user_id, time, parent_id = nil)
     wrap_central_payload({
       'entry' =>
         {
@@ -188,7 +202,7 @@ module FacebookTestHelper
                 'comment_id' => "#{post_id}_#{comment_id}",
                 'post_id' => "#{@fb_page.page_id}_#{post_id}",
                 'verb' => 'add',
-                'parent_id' => "#{@fb_page.page_id}_#{post_id}",
+                'parent_id' => parent_id ? "#{@fb_page.page_id}_#{parent_id}" : "#{@fb_page.page_id}_#{post_id}",
                 'created_time' => Time.now.utc.to_i,
                 'is_hidden' => false
               }
