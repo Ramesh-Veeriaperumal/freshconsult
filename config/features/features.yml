@@ -265,8 +265,8 @@
       :analytics_tickets_resource: 260
       :analytics_timesheet_resource: 261
       :analytics_tags_resource: 262
-      :analytics_csat_questions: 263
-      :analytics_csat_responses: 264
+      :analytics_surveys: 263
+      :analytics_survey_results: 264
       :reports_43: 265
       :reports_44: 266
       :reports_45: 267
