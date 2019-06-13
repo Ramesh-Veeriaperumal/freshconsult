@@ -5,7 +5,9 @@ module Sync::Transformer::VaRule
     'group_id' => 'Group',
     'tag_ids' => 'Helpdesk::Tag',
     'product_id' => 'Product',
-    'business_hours_id' => 'BusinessCalendar'
+    'business_hours_id' => 'BusinessCalendar',
+    'internal_group_id' => 'Group',
+    'internal_agent_id' => 'User'
   }.freeze
   STATUS_DATA_NAME_MAPPINGS = {
     'status' => 'Helpdesk::TicketStatus'
