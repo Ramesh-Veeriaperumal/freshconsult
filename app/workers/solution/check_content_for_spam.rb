@@ -5,7 +5,7 @@ class Solution::CheckContentForSpam < BaseWorker
   include Redis::PortalRedis
   include Email::Antivirus::EHawk
 
-  sidekiq_options :queue => :kbase_content_spam_checker, :retry => 1, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :kbase_content_spam_checker, :retry => 1, :failures => :exhausted
 
   def perform(args)
     args.symbolize_keys!

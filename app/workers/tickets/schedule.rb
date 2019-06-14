@@ -1,6 +1,6 @@
 class Tickets::Schedule < ScheduledTaskBase
   
-  sidekiq_options :queue => :scheduled_ticket_export, :retry => 4, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :scheduled_ticket_export, :retry => 4, :failures => :exhausted
 
   attr_accessor :task, :params
 

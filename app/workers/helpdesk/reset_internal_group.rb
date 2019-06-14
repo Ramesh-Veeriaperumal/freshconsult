@@ -3,7 +3,7 @@ class Helpdesk::ResetInternalGroup < BaseWorker
   include Redis::RedisKeys
   include Redis::OthersRedis
   
-  sidekiq_options :queue => :reset_internal_group, :retry => 1, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :reset_internal_group, :retry => 1, :failures => :exhausted
 
   def perform(args)
     args.symbolize_keys!

@@ -2,7 +2,7 @@ module Freshfone
   class AcwWorker < BaseWorker
     include Freshfone::AcwUtil
 
-    sidekiq_options queue: :freshfone_trial_worker, retry: 0, backtrace: true,
+    sidekiq_options queue: :freshfone_trial_worker, retry: 0,
                     failures: :exhausted
 
     attr_accessor :params, :agent, :current_account

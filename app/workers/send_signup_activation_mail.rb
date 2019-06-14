@@ -1,6 +1,6 @@
 class SendSignupActivationMail < BaseWorker
 
-  sidekiq_options :queue => :send_signup_activation_mail, :retry => 2, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :send_signup_activation_mail, :retry => 2, :failures => :exhausted
 
   def perform(args)
     args.symbolize_keys!

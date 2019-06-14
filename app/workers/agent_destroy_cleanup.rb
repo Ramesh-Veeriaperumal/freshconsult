@@ -4,7 +4,7 @@ class AgentDestroyCleanup < BaseWorker
   include Redis::SortedSetRedis
   include MemcacheKeys
 
-  sidekiq_options :queue => :agent_destroy_cleanup, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :agent_destroy_cleanup, :retry => 0, :failures => :exhausted
 
   USER_ASSOCIATED_MODELS = [:report_filters, :user_skills, :ticket_subscriptions, :email_notification_agents]
   

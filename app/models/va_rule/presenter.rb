@@ -43,6 +43,8 @@ class VaRule < ActiveRecord::Base
       changes["action_data"].each do |actions|
         hide_sensitive_info(actions)
       end
+    elsif changes.has_key?('position') && self.frontend_positions.present?
+      changes[:position] = self.frontend_positions # position from ui perspective
     end
     changes
   end

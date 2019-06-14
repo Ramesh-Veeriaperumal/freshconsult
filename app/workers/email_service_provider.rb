@@ -1,7 +1,7 @@
 require 'resolv'
 class EmailServiceProvider
   include Sidekiq::Worker
-  sidekiq_options :queue => :email_service_provider, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :email_service_provider, :retry => 0, :failures => :exhausted
   TIMEOUT = 10.seconds
   EMAIL_SERVICE_PROVIDER_MAPPING = {
       'hotmail' => 'outlook',

@@ -3,7 +3,7 @@ class RemoveEncryptedFieldsWorker
   include Cache::Memcache::CompanyField
   include Cache::Memcache::ContactField
 
-  sidekiq_options :queue => :remove_encrypted_fields, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :remove_encrypted_fields, :retry => 0, :failures => :exhausted
 
   def perform
     @account ||= Account.current

@@ -357,6 +357,18 @@ module Tickets
         ConversationDecorator.new(note, ticket: @ticket).to_hash
       end
 
+      def add_note(value = true)
+        {
+          add_note: value
+        }
+      end
+
+      def forward_ticket(value = true)
+        {
+          forward_ticket: value
+        }
+      end
+
       def delete_status(value)
         {
           deleted_value: value[0],

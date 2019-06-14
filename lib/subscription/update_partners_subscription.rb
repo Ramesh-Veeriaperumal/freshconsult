@@ -1,7 +1,7 @@
 class Subscription::UpdatePartnersSubscription
   include Sidekiq::Worker
 
-  sidekiq_options :queue => :partners_event_queue, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :partners_event_queue, :retry => 0, :failures => :exhausted
 
   USER_AGENT = "Freshdesk"
   REQUEST_URL = AppConfig["reseller_portal"]["portal_url"][Rails.env]

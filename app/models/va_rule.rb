@@ -25,6 +25,7 @@ class VaRule < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => [:account_id, :rule_type] , :unless => :automation_rule?
   validate :has_events?, :has_conditions?, :has_actions?, :has_safe_conditions?, :has_valid_action_data?
   validate :any_restricted_actions?
+  validate :valid_position?, if: :position_changed?
 
   before_save :set_encrypted_password
   before_save :migrate_filter_data, :if => :conditions_changed?
@@ -37,7 +38,7 @@ class VaRule < ActiveRecord::Base
 
   attr_writer :conditions, :actions, :events, :performer, :rule_operator,
               :rule_performer, :rule_events, :rule_conditions
-  attr_accessor :triggered_event, :response_time, :affected_tickets_count
+  attr_accessor :triggered_event, :response_time, :affected_tickets_count, :frontend_positions
 
   attr_accessible :name, :description, :match_type, :active, :filter_data, :action_data, :rule_type, :position
 
@@ -585,26 +586,24 @@ class VaRule < ActiveRecord::Base
       end
     end
 
+    def valid_position?
+      errors.add(:base, I18n.t('admin.va_rules.position')) if position.nil? || !position.is_a?(Integer)
+    end
+
     def position_changed?
-      position = changes[:position]
-      account.automation_revamp_enabled? && position.present? && (position.first != position.last)
+      changes[:position].present?
     end
 
     def reorder_rules
-      position = changes[:position]
-      rule_type = VAConfig::RULES_BY_ID[self.rule_type]
-      rule_association = VAConfig::ASSOCIATION_MAPPING[rule_type]
-      if position.present? && rule_association.present?
-        rules = account.safe_send("all_#{rule_association}".to_sym)
-        old_rule_position = position.first
-        new_rule_position = position.last
-        reorder_from_higher_pos = old_rule_position > new_rule_position
-        reorder_by = reorder_from_higher_pos ? '+' : '-'
-        position_upper_index = reorder_from_higher_pos ? old_rule_position : new_rule_position
-        position_lower_index = reorder_from_higher_pos ? new_rule_position : old_rule_position
-        rules.where('position >= ? and position <= ? and id != ?',
-                    position_lower_index, position_upper_index, self.id).update_all("position = position #{reorder_by} 1")
-      end
+      rule_association = VAConfig::ASSOCIATION_MAPPING[VAConfig::RULES_BY_ID[rule_type]]
+      rules = account.safe_send("all_#{rule_association}".to_sym)
+      old_rule_position = changes[:position][0]
+      new_rule_position = changes[:position][1]
+      reorder_from_higher_pos = old_rule_position > new_rule_position
+      reorder_by = reorder_from_higher_pos ? '+' : '-'
+      position_upper_index = reorder_from_higher_pos ? old_rule_position : new_rule_position
+      position_lower_index = reorder_from_higher_pos ? new_rule_position : old_rule_position
+      rules.where('position >= ? and position <= ? and id != ?',
+                  position_lower_index, position_upper_index, id).update_all("position = position #{reorder_by} 1")
     end
-
 end

@@ -1,7 +1,7 @@
 module Integrations
   class ApiWebhookRuleWorker < ::BaseWorker
 
-    sidekiq_options :queue => :api_webhook_rule, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :api_webhook_rule, :retry => 0, :failures => :exhausted
 
     def perform(args={})
       begin

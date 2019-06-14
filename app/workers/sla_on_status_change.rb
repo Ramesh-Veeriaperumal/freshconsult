@@ -1,7 +1,7 @@
 
 class SlaOnStatusChange < BaseWorker
 
-  sidekiq_options :queue => :sla_on_status_change, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :sla_on_status_change, :retry => 0, :failures => :exhausted
   
   def perform(args)
     Thread.current[:sbrr_log] = [self.jid]

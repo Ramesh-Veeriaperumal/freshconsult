@@ -1,7 +1,6 @@
 class ScheduledExport::ActivitiesExport < BaseWorker
   sidekiq_options :queue => :activity_export,
                   :retry => 15,
-                  :backtrace => true,
                   :failures => :exhausted
 
   DEFAULT_ACTION = 'update'

@@ -1,7 +1,7 @@
 ### MULTILINGUAL SOLUTIONS - META READ HACK!!
 class Community::HandleLanguageChange < BaseWorker
 
-	sidekiq_options :queue => :solution_language_change, :retry => 0, :backtrace => true, :failures => :exhausted
+	sidekiq_options :queue => :solution_language_change, :retry => 0, :failures => :exhausted
 
 	SOLUTION_CLASSES = ["Solution::Category", "Solution::Folder", "Solution::Article"]
 

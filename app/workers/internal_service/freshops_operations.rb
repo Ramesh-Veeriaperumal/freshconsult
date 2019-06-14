@@ -1,7 +1,7 @@
 class InternalService::FreshopsOperations < BaseWorker
   include Sidekiq::Worker
   include InternalService::FreshopsUtils
-  sidekiq_options queue: :freshops_service, retry: 0, backtrace: true, failures: :exhausted
+  sidekiq_options queue: :freshops_service, retry: 0,  failures: :exhausted
 
   def perform(args)
     args.symbolize_keys!

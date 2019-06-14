@@ -6,7 +6,7 @@ class DkimRecordVerificationWorker
   
   MAX_INTERVAL_MINUTES = 240
 
-  sidekiq_options :queue => :dkim_verifier, :retry => 15, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :dkim_verifier, :retry => 15, :failures => :exhausted
   
   sidekiq_retry_in do |count|
     next_retry = ((count+1)*30 > MAX_INTERVAL_MINUTES ? MAX_INTERVAL_MINUTES : (count+1)*30)

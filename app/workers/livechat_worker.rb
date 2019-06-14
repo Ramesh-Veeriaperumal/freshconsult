@@ -17,7 +17,7 @@ class LivechatWorker < BaseWorker
 	SUBURL = (Rails.env == "development") ? ":4000" : ""
 	URL = "http://" + ChatConfig['communication_url'] + SUBURL
 
-  sidekiq_options :queue => :livechat_worker, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :livechat_worker, :retry => 0, :failures => :exhausted
 
 	def perform(args)
 		worker_method_name = args["worker_method"]

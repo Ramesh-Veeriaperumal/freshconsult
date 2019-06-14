@@ -1,5 +1,5 @@
 class AccountCleanup::DeleteAccount < BaseWorker
-  sidekiq_options :queue => :delete_account, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :delete_account, :retry => 0, :failures => :exhausted
 
   include FreshdeskCore::Model
   include Redis::RedisKeys

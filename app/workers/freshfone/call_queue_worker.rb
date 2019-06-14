@@ -3,7 +3,7 @@ module Freshfone
     include Freshfone::FreshfoneUtil
     include Freshfone::Queue
 
-    sidekiq_options :queue => :freshfone_notifications, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :freshfone_notifications, :retry => 0, :failures => :exhausted
 
     attr_accessor :params, :agent, :current_account
 

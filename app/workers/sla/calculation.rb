@@ -2,7 +2,6 @@ module Sla
   class Calculation < BaseWorker
     sidekiq_options :queue => :calculate_sla,
                     :retry => false,
-                    :backtrace => true,
                     :failures => :exhausted
 
     def perform args

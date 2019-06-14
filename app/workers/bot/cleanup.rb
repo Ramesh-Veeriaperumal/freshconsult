@@ -1,6 +1,6 @@
 class Bot::Cleanup < BaseWorker
 
-  sidekiq_options queue: :bot_cleanup, retry: 0, backtrace: true, failures: :exhausted
+  sidekiq_options queue: :bot_cleanup, retry: 0,  failures: :exhausted
 
   def perform(args = {})
     args.symbolize_keys!

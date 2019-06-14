@@ -1,7 +1,7 @@
 class Import::SkillWorker
   include Sidekiq::Worker
 
-  sidekiq_options :queue => :skill_import, :retry => 0, :backtrace => true,
+  sidekiq_options :queue => :skill_import, :retry => 0,
                   :failures => :exhausted
 
   def perform(args)

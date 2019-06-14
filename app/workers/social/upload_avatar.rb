@@ -1,7 +1,7 @@
 module Social
   class UploadAvatar < BaseWorker
     
-    sidekiq_options :queue => :upload_avatar_worker, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :upload_avatar_worker, :retry => 0, :failures => :exhausted
       
     def perform(args)
       if args['twitter_handle_id']

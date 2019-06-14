@@ -58,6 +58,9 @@ properties:
                 type: string
               trial_days:
                 type: integer
+              field_agent_limit:
+                type: integer
+                description: Available only if Field Service Management feature is enbaled
           settings:
             type: object
             properties:

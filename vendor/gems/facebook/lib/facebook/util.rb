@@ -44,6 +44,10 @@ module Facebook
       core_obj.fetch_parent_data
       core_obj.fan_page.default_ticket_rule.convert_fb_feed_to_ticket?(false, core_obj.koala_post.by_company?, (core_obj.koala_comment.by_visitor? || convert_company_comment_to_ticket), core_obj.koala_comment.description) && !user_blocked?(core_obj.koala_comment.requester_fb_id)
     end
+
+    def convert_cover_photo_comment_to_ticket?(core_obj)
+      core_obj.fan_page.default_ticket_rule.convert_fb_feed_to_ticket?(false, false, core_obj.koala_comment.by_visitor?, core_obj.koala_comment.description, false, true) && !user_blocked?(core_obj.koala_comment.requester_fb_id)
+    end
     
     #Parse the feed content from facebook post
     def html_content_from_feed(feed, item, original_post = nil)

@@ -3,7 +3,7 @@ class PodDnsUpdate
 
   DNS_CONFIG = YAML.load_file(File.join(Rails.root, 'config', 'pod_dns_config.yml'))
 
-  sidekiq_options :queue => :pod_route_update, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :pod_route_update, :retry => 0, :failures => :exhausted
 
   def perform(request_parameters)
     if request_parameters["target_method"]

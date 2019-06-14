@@ -3,7 +3,7 @@ class Subscriptions::AddDeletedEvent < BaseWorker
   include Subscription::Events::CalculateRevenue
   include Subscription::Events::Constants
 
-  sidekiq_options :queue => :subscription_events_queue, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :subscription_events_queue, :retry => 0, :failures => :exhausted
 
   def perform(args)
     account = Account.current

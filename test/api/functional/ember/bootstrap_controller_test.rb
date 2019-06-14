@@ -437,6 +437,28 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     Account.current.rollback(:update_billing_info)
   end
 
+  def test_account_with_field_service_management_enabled
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+    Subscription.any_instance.stubs(:field_agent_limit).returns(5)
+    get :account, controller_params(version: 'private')
+    parsed_response = parse_response response.body
+    assert_response 200
+    assert_equal parsed_response['account']['subscription']['field_agent_limit'], 5
+  ensure
+    Subscription.unstub(:field_agent_limit)
+    Account.unstub(:field_service_management_enabled?)
+  end
+
+  def test_account_with_field_service_management_not_enabled
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(false)
+    get :account, controller_params(version: 'private')
+    parsed_response = parse_response response.body
+    assert_response 200
+    assert_nil parsed_response['account']['subscription']['field_agent_limit']
+  ensure
+    Account.unstub(:field_service_management_enabled?)
+  end
+
   def set_user_privileges(add_privileges, remove_privileges)
     add_privileges.each do |privilege|
       User.any_instance.stubs(:privilege?).with(privilege).returns(true)

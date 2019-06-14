@@ -29,7 +29,7 @@ class Account < ActiveRecord::Base
   end
 
   def update_crm
-      CRMApp::Freshsales::DeletedCustomer.perform_async({account_id: self.id}) if Rails.env.production?
+    CRMApp::Freshsales::DeletedCustomer.perform_async(account_id: self.id, admin_email: self.admin_email) if Rails.env.production?
   end
 
   def create_deleted_customers_info

@@ -1,7 +1,7 @@
 class Admin::CloneWorker < BaseWorker
   include Sync::Constants
   include Cache::Memcache::Twitter
-  sidekiq_options :queue => :clone, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :clone, :retry => 0, :failures => :exhausted
 
   def perform(args)
     args.symbolize_keys!

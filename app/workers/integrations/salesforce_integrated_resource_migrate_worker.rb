@@ -1,7 +1,7 @@
 module Integrations
   class SalesforceIntegratedResourceMigrateWorker < ::BaseWorker
     include Sidekiq::Worker
-    sidekiq_options :queue => :salesforce_integrated_resource_migrate, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :salesforce_integrated_resource_migrate, :retry => 0, :failures => :exhausted
     def perform
       begin
         current_account = Account.current

@@ -4,7 +4,7 @@ class Freshid::V2::AccountDetailsUpdate < BaseWorker
   include Redis::SortedSetRedis
   include Freshid::SnsErrorNotificationExtensions
 
-  sidekiq_options :queue => :freshid_account_details_update_v2, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :freshid_account_details_update_v2, :retry => 0, :failures => :exhausted
   ERROR_ACCOUNT_UPDATE = "FRESHID V2 account details update SQS push error"
 
   def perform(args)

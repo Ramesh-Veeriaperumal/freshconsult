@@ -108,9 +108,11 @@ module Admin::Automation::AutomationSummary
       field_name =  is_supervisor && TIME_BASE_DUPLICATE.include?(field_name) ? :"#{field_name}_since" : data[:name].to_sym
       array = []
       array << generate_key(data[:name], data[:evaluate_on] || 'ticket')
-      array << generate_operator(data[:operator]) if data[:operator].present?
+      field = ticket_fields.find { |tf| tf.name == data[:name] }
+      field.present? && field.field_type == 'custom_date' && data[:operator].present? ?
+          array << generate_operator(DATE_FIELDS_OPERATOR_MAPPING[data[:operator].to_sym]) :
+          array << generate_operator(data[:operator]) if data[:operator].present?
       if data.key? :value
-        field = ticket_fields.find { |tf| tf.name == data[:name] }
         data[:value] = data[:value].is_a?(Array) ? data[:value].map { |val| CGI.escapeHTML(val) } :
                            CGI.escapeHTML(data[:value]) if SUBJECT_DESCRIPTION_FIELDS.include?(data[:name]) ||
             (field.present? && CUSTOM_TEXT_FIELD_TYPES.include?(field.field_type.to_sym))

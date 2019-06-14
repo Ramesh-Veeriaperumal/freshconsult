@@ -1,9 +1,8 @@
 class MigrationWorker < BaseWorker
 
-  sidekiq_options :queue => :migration,
-                  :retry => false,
-                  :backtrace => true,
-                  :failures => :exhausted
+  sidekiq_options queue:  :migration,
+                  retry: false,
+                  failures: :exhausted
 
   def perform args
     args = args.deep_symbolize_keys

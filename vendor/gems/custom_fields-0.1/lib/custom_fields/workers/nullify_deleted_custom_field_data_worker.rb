@@ -2,7 +2,7 @@ module CustomFields
   module Workers
     class NullifyDeletedCustomFieldDataWorker < BaseWorker
 
-      sidekiq_options :queue => :nullify_deleted_custom_field_data, :retry => 0, :backtrace => true, :failures => :exhausted
+      sidekiq_options :queue => :nullify_deleted_custom_field_data, :retry => 0, :failures => :exhausted
 
       BATCH_LIMIT = 500
 

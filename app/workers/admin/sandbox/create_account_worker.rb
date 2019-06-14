@@ -1,5 +1,5 @@
 class Admin::Sandbox::CreateAccountWorker < BaseWorker
-  sidekiq_options queue: :create_sandbox_account, retry: 0, backtrace: true, failures: :exhausted
+  sidekiq_options queue: :create_sandbox_account, retry: 0,  failures: :exhausted
 
   include AccountConstants
 

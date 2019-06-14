@@ -3,7 +3,7 @@ class Community::ForumBanUser < BaseWorker
   include SpamAttachmentMethods
   include SpamPostMethods
 
-  sidekiq_options :queue => :forum_ban_user, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :forum_ban_user, :retry => 0, :failures => :exhausted
 
   def perform(params)
     account = Account.current

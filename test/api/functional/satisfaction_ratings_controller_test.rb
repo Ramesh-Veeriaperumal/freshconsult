@@ -93,9 +93,9 @@ class SatisfactionRatingsControllerTest < ActionController::TestCase
   end
 
   def test_create_with_invalid_custom_ratings
-    post :create, construct_params({ id: ticket.display_id }, ratings: { 'default_question' => 103, 'question_10' => -103 }, feedback: 'Feedback given Surveys')
+    post :create, construct_params({ id: ticket.display_id }, ratings: { 'default_question' => 103, "question_#{@survey_ids[10]}" => -103 }, feedback: 'Feedback given Surveys')
     assert_response 400
-    match_json([bad_request_error_pattern('question_10',  :invalid_field)])
+    match_json([bad_request_error_pattern("question_#{@survey_ids[10]}",  :invalid_field)])
   end
 
   def test_create_with_invalid_custom_ratings_type

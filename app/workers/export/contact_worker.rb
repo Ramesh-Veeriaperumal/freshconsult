@@ -1,7 +1,7 @@
 class Export::ContactWorker
   include Sidekiq::Worker
 
-  sidekiq_options :queue => :contact_export, :retry => 0, :backtrace => true,
+  sidekiq_options :queue => :contact_export, :retry => 0,
                   :failures => :exhausted
 
   def perform(args)

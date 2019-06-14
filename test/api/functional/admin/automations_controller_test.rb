@@ -135,28 +135,25 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
     va_rules.destroy if va_rules.present?
   end
 
-  def test_reorder_from_low_to_higher_index
+  def test_reorder_rules
     rule_type = VAConfig::RULES[:dispatcher]
-    4.times do
-      va_rule_request = sample_json_for_dispatcher
-      post :create, construct_params({ rule_type: rule_type }.merge(va_rule_request), va_rule_request)
+    created_ids = create_rules(10, rule_type)
+    passed = true
+    test_cases = Random.new.rand(2..5)
+    test_cases.times do
+      rules = get_va_rules_position
+      rule_id = rules.to_a.sample[0] # get random id
+      new_visual_position = Random.new.rand(1..rules.count) # re-ordering randomly
+      pos_should_be = rules.to_a[new_visual_position - 1][1]  # after update rule should have this position
+      put :update, construct_params({ rule_type: rule_type, id: rule_id }, { 'position': new_visual_position })
+      assert_response 200
+      position_is = Account.current.va_rules.find(rule_id).position
+      passed = false unless position_is.to_i == pos_should_be.to_i
+      break unless passed
     end
-    position_mapping = get_va_rules_position
-    positions = position_mapping.keys
-    first_value = [positions[0], position_mapping[positions[0]]]
-    last_value = [positions[1], position_mapping[positions[1]]]
-    put :update, construct_params({ rule_type: rule_type, id: first_value[1] }, { 'position': last_value[0] })
-    assert_response(200)
-    position_mapping[first_value[0]] = last_value[1]
-    position_mapping[last_value[0]] = first_value[1]
-    actual_position_mapping = get_va_rules_position
-    match_custom_json(actual_position_mapping, position_mapping)
-  end
-
-  def get_va_rules_position
-    Account.current.all_va_rules.where('id is not null').inject({}) do |hash, x|
-      hash.merge!(x.position.to_s => x.id.to_s)
-    end
+    assert passed
+  ensure
+    Account.current.account_va_rules.where(id: created_ids).destroy_all
   end
 
   def test_create_observer_rule_with_thank_you_note_feature_disabled

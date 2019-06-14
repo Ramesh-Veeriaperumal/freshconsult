@@ -247,4 +247,22 @@ class Support::TicketsControllerTest < ActionController::TestCase
     cleanup_archive_ticket(@archive_ticket, {conversations: true})
     user.destroy
   end
+
+  def test_verify_attachment_access_for_requester
+    @account.make_current
+    group_id1 = Account.current.groups.find_by_name('QA')
+    agent1 = add_agent(Account.current, active: true, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets], group_id: group_id1)
+    agent1.make_current
+    group_id2 = Account.current.groups.find_by_name('Sales')
+    agent2 = add_agent(Account.current, active: true, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets], group_id: group_id2)
+    ticket = create_ticket_with_attachments(requester_id: agent1.id)
+    ticket.responder_id = agent2.id
+    ticket.save!
+    attachment = ticket.attachments.first
+    login_as(agent1)
+    assert agent1.has_customer_ticket_permission?(ticket)
+    assert attachment.can_view_helpdesk_ticket?(ticket)
+    log_out
+    ticket.destroy
+  end
 end

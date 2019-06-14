@@ -2,10 +2,9 @@ class Users::DetectLanguage < BaseWorker
   include Redis::RedisKeys
   include Redis::OthersRedis
 
-  sidekiq_options :queue => :detect_user_language, 
-                  :retry => 0, 
-                  :backtrace => true, 
-                  :failures => :exhausted
+  sidekiq_options queue: :detect_user_language,
+                  retry: 0,
+                  failures: :exhausted
 
   def perform(args)
     args.symbolize_keys!

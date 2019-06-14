@@ -1,9 +1,8 @@
 class HelpWidget::UploadConfig < BaseWorker
 
-  sidekiq_options :queue => :widget_upload_config, 
-                  :retry => 1, 
-                  :backtrace => true, 
-                  :failures => :exhausted
+  sidekiq_options queue: :widget_upload_config,
+                  retry: 1,
+                  failures: :exhausted
   
   S3_UPLOAD_OPTIONS = { 
     :acl => 'public-read',

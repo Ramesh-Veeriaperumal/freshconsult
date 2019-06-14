@@ -1,6 +1,6 @@
 module Freshfone
   class TrackerWorker < BaseWorker
-    sidekiq_options :queue => :freshfone_node, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :freshfone_node, :retry => 0, :failures => :exhausted
 
     attr_accessor :current_account, :current_call, :call_id, :status
 

@@ -1,5 +1,5 @@
 class MergeTickets < BaseWorker
-  sidekiq_options :queue => :merge_tickets, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :merge_tickets, :retry => 0, :failures => :exhausted
   STATES_TO_BE_MOVED = ["first_response_time", "requester_responded_at", "agent_responded_at"]
   ACTIVITIES_TO_BE_DISCARDED = ["activities.tickets.new_ticket.long", "activities.tickets.status_change.long"]
 

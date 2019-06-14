@@ -22,6 +22,7 @@ class AnonymousAccountCleanupTest < ActionView::TestCase
   end
 
   def test_anonymous_account_cleanup
+    ThirdCRM.any_instance.expects(:delete_lead).never
     create_sample_account(Faker::Lorem.word, Faker::Internet.email)
     account_id = @account.id
     @account.account_additional_settings.mark_account_as_anonymous

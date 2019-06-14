@@ -1,6 +1,6 @@
 class Solution::FlushPortalCache < BaseWorker
 
-  sidekiq_options :queue => :flush_portal_solution_cache, :retry => 1, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :flush_portal_solution_cache, :retry => 1, :failures => :exhausted
 
   def perform(args)
     args.symbolize_keys!

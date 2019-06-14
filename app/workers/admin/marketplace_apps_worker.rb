@@ -4,7 +4,7 @@ module Admin
 
     RETRY_COUNT = 10
 
-    sidekiq_options :queue => :marketplace_apps, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :marketplace_apps, :retry => 0, :failures => :exhausted
 
     def perform(args)
       begin

@@ -32,15 +32,16 @@ module HelpdeskReports::Constants::FreshvisualFeatureMapping
   end.reduce(&:merge)
 
   # Curated reports list maintained in Freshvisuals.
-  CURATED_REPORTS_LIST = ['Agent performance', 'Group performance', 'Helpdesk in-depth', 'Performance distribution', 'Ticket volume trends',
-                          'Top Customer analysis', 'Ticket Lifecycle', 'Time sheet summary', 'Satisfaction survey', 'Shared ownership',
-                          'Linked tickets summary', 'Parent tickets summary', 'Tags summary', 'Field service trends'].freeze
+  CURATED_REPORTS_LIST = ['Agent Performance', 'Group Performance', 'Helpdesk Ticket Volume', 'Helpdesk Performance', 'Performance Distribution', 'Ticket Volume Trends',
+                          'Top Customer Analysis', 'Ticket Lifecycle', 'Time Sheet Summary', 'Satisfaction Survey Results', 'Satisfaction Survey Volume', 'Shared Ownership',
+                          'Linked Tickets Summary', 'Parent Tickets Summary', 'Tags Summary', 'Field Service Volume Trends',
+                          'Field Service Performance'].freeze
 
   # CURATED_REPORTS = {:agent_performance=>{:config_type=>:curated_reports, :value=>"Agent performance"}, :group_performance=>{:config_type=>:curated_reports, :value=>"Group performance"},...}
   CURATED_REPORTS = Hash[CURATED_REPORTS_LIST.map { |c| [c.tr('-', '_').parameterize('_').to_sym, { config_type: :curated_reports, value: c }] }]
 
   # List of Freshdesk resources that can be restricted at the account level in Fresh Visuals.
-  RESOURCE_RESTRICTION_LIST = ['Tickets', 'Timesheets', 'Tags', 'CSAT questions', 'CSAT responses'].freeze
+  RESOURCE_RESTRICTION_LIST = ['Tickets', 'Timesheets', 'Tags', 'Surveys', 'Survey results'].freeze
 
   # RESOURCE_RESTRICTION = {:tickets=>{:config_type=>:resource_restriction, :value=>"Tickets"}, :csat=>{:config_type=>:resource_restriction, :value=>"CSAT"}, :timesheet=>{:config_type=>:resource_restriction, :value=>"Timesheet"}, :tags=>{:config_type=>:resource_restriction, :value=>"Tags"}}
   RESOURCE_RESTRICTION = Hash[RESOURCE_RESTRICTION_LIST.map { |c| [c.parameterize('_').to_sym, { config_type: :resource_restriction, value: c }] }]
@@ -58,9 +59,9 @@ module HelpdeskReports::Constants::FreshvisualFeatureMapping
 
     # Existing Reports features that have mapping in freshvisuals.
     timesheets: CURATED_REPORTS[:time_sheet_summary],
-    advanced_reporting: CURATED_REPORTS[:helpdesk_in_depth],
+    advanced_reporting: [CURATED_REPORTS[:helpdesk_ticket_volume], CURATED_REPORTS[:helpdesk_performance]],
     auto_ticket_export: FEATURE_CONFIGS[:landing_data_schedules],
-    surveys: CURATED_REPORTS[:satisfaction_survey],
+    surveys: [CURATED_REPORTS[:satisfaction_survey_results], CURATED_REPORTS[:satisfaction_survey_volume]],
     enterprise_reporting: [CURATED_REPORTS[:ticket_volume_trends], CURATED_REPORTS[:performance_distribution], CURATED_REPORTS[:ticket_lifecycle], CURATED_REPORTS[:top_customer_analysis]],
     performance_report: [CURATED_REPORTS[:agent_performance], CURATED_REPORTS[:group_performance]],
     ticket_volume_report: CURATED_REPORTS[:ticket_volume_trends],
@@ -92,23 +93,23 @@ module HelpdeskReports::Constants::FreshvisualFeatureMapping
     analytics_widget_delete: FEATURE_CONFIGS[:widget_delete],
     analytics_agent_performance: CURATED_REPORTS[:agent_performance],
     analytics_group_performance: CURATED_REPORTS[:group_performance],
-    analytics_helpdesk_in_depth_report: CURATED_REPORTS[:helpdesk_in_depth],
+    analytics_helpdesk_in_depth_report: [CURATED_REPORTS[:helpdesk_ticket_volume], CURATED_REPORTS[:helpdesk_performance]],
     analytics_performance_distribution: CURATED_REPORTS[:performance_distribution],
     analytics_ticket_volume_trend: CURATED_REPORTS[:ticket_volume_trends],
     analytics_customer_analysis: CURATED_REPORTS[:top_customer_analysis],
     analytics_ticket_lifecycle_report: CURATED_REPORTS[:ticket_lifecycle],
     analytics_time_sheet_summary_report: CURATED_REPORTS[:time_sheet_summary],
-    analytics_satisfaction_survey_report: CURATED_REPORTS[:satisfaction_survey],
+    analytics_satisfaction_survey_report: [CURATED_REPORTS[:satisfaction_survey_results], CURATED_REPORTS[:satisfaction_survey_volume]],
     analytics_shared_ownership: CURATED_REPORTS[:shared_ownership],
     analytics_linked_tracker_ticket: CURATED_REPORTS[:linked_tickets_summary],
     analytics_child_parent_ticket: CURATED_REPORTS[:parent_tickets_summary],
     analytics_tags_reports: CURATED_REPORTS[:tags_summary],
-    field_service_management: CURATED_REPORTS[:field_service_trends],
+    field_service_management: [CURATED_REPORTS[:field_service_volume_trends], CURATED_REPORTS[:field_service_performance]],
     analytics_tickets_resource: RESOURCE_RESTRICTION[:tickets],
     analytics_timesheet_resource: RESOURCE_RESTRICTION[:timesheets],
     analytics_tags_resource: RESOURCE_RESTRICTION[:tags],
-    analytics_csat_questions: RESOURCE_RESTRICTION[:csat_questions],
-    analytics_csat_responses: RESOURCE_RESTRICTION[:csat_responses]
+    analytics_surveys: RESOURCE_RESTRICTION[:surveys],
+    analytics_survey_results: RESOURCE_RESTRICTION[:survey_results]
   }.freeze
 
   # Certain resources has to be enabled if some curated reports related to them is enabled. So, keeping a map like this.
@@ -117,17 +118,19 @@ module HelpdeskReports::Constants::FreshvisualFeatureMapping
     RESOURCE_RESTRICTION[:tickets][:value] => [
       CURATED_REPORTS[:agent_performance][:value],
       CURATED_REPORTS[:group_performance][:value],
-      CURATED_REPORTS[:helpdesk_in_depth][:value],
+      CURATED_REPORTS[:helpdesk_ticket_volume][:value],
+      CURATED_REPORTS[:helpdesk_performance][:value],
       CURATED_REPORTS[:performance_distribution][:value],
       CURATED_REPORTS[:ticket_volume_trends][:value],
       CURATED_REPORTS[:ticket_lifecycle][:value],
       CURATED_REPORTS[:shared_ownership][:value],
       CURATED_REPORTS[:linked_tickets_summary][:value],
       CURATED_REPORTS[:parent_tickets_summary][:value],
-      CURATED_REPORTS[:field_service_trends][:value]
+      CURATED_REPORTS[:field_service_volume_trends][:value],
+      CURATED_REPORTS[:field_service_performance][:value]
     ],
-    RESOURCE_RESTRICTION[:csat_questions][:value] => [CURATED_REPORTS[:satisfaction_survey][:value], CURATED_REPORTS[:top_customer_analysis][:value]],
-    RESOURCE_RESTRICTION[:csat_responses][:value] => [CURATED_REPORTS[:satisfaction_survey][:value], CURATED_REPORTS[:top_customer_analysis][:value]],
+    RESOURCE_RESTRICTION[:surveys][:value] => [CURATED_REPORTS[:satisfaction_survey_results][:value], CURATED_REPORTS[:satisfaction_survey_volume][:value], CURATED_REPORTS[:top_customer_analysis][:value]],
+    RESOURCE_RESTRICTION[:survey_results][:value] => [CURATED_REPORTS[:satisfaction_survey_results][:value], CURATED_REPORTS[:satisfaction_survey_volume][:value], CURATED_REPORTS[:top_customer_analysis][:value]],
     RESOURCE_RESTRICTION[:timesheets][:value] => [CURATED_REPORTS[:time_sheet_summary][:value]],
     RESOURCE_RESTRICTION[:tags][:value] => [CURATED_REPORTS[:tags_summary][:value]]
   }.freeze
@@ -182,5 +185,5 @@ end
 # analytics_tickets_resource
 # analytics_timesheet_resource
 # analytics_tags_resource
-# analytics_csat_questions
-# analytics_csat_responses
+# analytics_surveys
+# analytics_survey_results

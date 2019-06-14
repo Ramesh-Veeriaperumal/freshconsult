@@ -209,7 +209,7 @@
       :ticket_volume_report: 204
       :omni_channel: 205
       :personal_canned_response: 206
-      :seafarers_15: 207
+      :proactive_spam_detection: 207
       :api_v2: 208
       :seafarers_17: 209
       :seafarers_18: 210
@@ -265,8 +265,8 @@
       :analytics_tickets_resource: 260
       :analytics_timesheet_resource: 261
       :analytics_tags_resource: 262
-      :analytics_csat_questions: 263
-      :analytics_csat_responses: 264
+      :analytics_surveys: 263
+      :analytics_survey_results: 264
       :reports_43: 265
       :reports_44: 266
       :reports_45: 267
@@ -453,3 +453,4 @@
   :saml_unspecified_nameid: false
   :euc_hide_agent_metrics: false
   :single_session_per_user: false
+  :proactive_spam_detection: true

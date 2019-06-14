@@ -5,7 +5,7 @@ class Subscriptions::SubscriptionAddEvents < BaseWorker
   include Subscription::Events::AssignEventCode
   include Subscription::Events::CalculateRevenue
 
-  sidekiq_options :queue => :subscription_events_queue, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :subscription_events_queue, :retry => 0, :failures => :exhausted
 
   def perform(args)
     args.symbolize_keys!

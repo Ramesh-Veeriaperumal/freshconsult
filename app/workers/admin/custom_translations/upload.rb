@@ -1,6 +1,6 @@
 # Worker to validate and store the custom translations in the YML file uploaded by the user
 class Admin::CustomTranslations::Upload < BaseWorker
-  sidekiq_options queue: :custom_translations_upload_queue, retry: 0, backtrace: true, failures: :exhausted
+  sidekiq_options queue: :custom_translations_upload_queue, retry: 0,  failures: :exhausted
 
   PRELOAD_ASSOC = [
     :picklist_values,

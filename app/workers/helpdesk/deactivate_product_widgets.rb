@@ -1,5 +1,5 @@
 class Helpdesk::DeactivateProductWidgets < BaseWorker
-  sidekiq_options queue: :deactivate_product_widgets, retry: 0, backtrace: true, failures: :exhausted
+  sidekiq_options queue: :deactivate_product_widgets, retry: 0,  failures: :exhausted
 
   include Cache::Memcache::Dashboard::Custom::CacheData
 

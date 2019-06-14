@@ -2,7 +2,7 @@ class SearchV2::Manager
   
   include Sidekiq::Worker
 
-  sidekiq_options :queue => :es_v2_queue, :retry => 2, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :es_v2_queue, :retry => 2, :failures => :exhausted
   
   class EnableSearch < SearchV2::Manager
     def perform

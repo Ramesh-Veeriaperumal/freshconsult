@@ -1,5 +1,5 @@
 class NewPlanChangeWorker < BaseWorker
-  sidekiq_options :queue => :plan_change_workerv2, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :plan_change_workerv2, :retry => 0, :failures => :exhausted
 
   def perform(args)
   	args.symbolize_keys!

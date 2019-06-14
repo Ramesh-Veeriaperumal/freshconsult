@@ -1,6 +1,6 @@
 class Community::SolutionBinarizeSync < BaseWorker
 
-  sidekiq_options :queue => :solution_binarize_sync, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :solution_binarize_sync, :retry => 0, :failures => :exhausted
 
   MODELS = {
     :solution_category_meta => [:solution_categories],

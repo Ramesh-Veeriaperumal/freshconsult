@@ -1,9 +1,8 @@
 class Groups::SyncAndAssignTickets < BaseWorker
   
-  sidekiq_options :queue => :assign_tickets_to_agents,
-                  :retry => 2, 
-                  :backtrace => true, 
-                  :failures => :exhausted
+  sidekiq_options queue: :assign_tickets_to_agents,
+                  retry: 2,
+                  failures:  :exhausted
 
   include Redis::RoundRobinRedis
   include RoundRobinCapping::Methods

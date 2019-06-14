@@ -1,7 +1,7 @@
 module Integrations
   class CloudElementsLoggerEmailWorker < ::BaseWorker
     include Sidekiq::Worker
-    sidekiq_options :queue => :cloud_elements_logger_email, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :cloud_elements_logger_email, :retry => 0, :failures => :exhausted
 
     def perform options
       options = options.symbolize_keys

@@ -1,7 +1,7 @@
 class Community::ReportPostWorker < BaseWorker
   include Rails.application.routes.url_helpers
 
-  sidekiq_options :queue => :report_post_worker, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :report_post_worker, :retry => 0, :failures => :exhausted
 
     def perform(params)
       params.symbolize_keys!

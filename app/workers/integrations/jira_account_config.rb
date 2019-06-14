@@ -4,7 +4,7 @@ module Integrations
     include Integrations::Jira::Helper
     include Integrations::Jira::Constant 
 
-    sidekiq_options :queue => :jira_acc_config_updates, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :jira_acc_config_updates, :retry => 0, :failures => :exhausted
 
     JIRA_TIMEOUT = 180
 

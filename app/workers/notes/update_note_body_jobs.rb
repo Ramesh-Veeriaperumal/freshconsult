@@ -1,6 +1,6 @@
 class Notes::UpdateNoteBodyJobs < BaseWorker 
   
-   sidekiq_options :queue => :helpdesk_update_note_body_queue, :retry => 4, :backtrace => true, :failures => :exhausted
+   sidekiq_options :queue => :helpdesk_update_note_body_queue, :retry => 4, :failures => :exhausted
  
   def perform(args)
     begin

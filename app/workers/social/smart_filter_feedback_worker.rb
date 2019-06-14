@@ -5,10 +5,9 @@ class Social::SmartFilterFeedbackWorker < BaseWorker
   include Social::SmartFilter
   include Social::Util
 
-  sidekiq_options :queue => :smart_filter_feedback, 
-                  :retry => 3,
-                  :backtrace => true, 
-                  :failures => :exhausted
+  sidekiq_options queue: :smart_filter_feedback,
+                  retry: 3,
+                  failures: :exhausted
   
   def perform(args)   
     args.symbolize_keys!

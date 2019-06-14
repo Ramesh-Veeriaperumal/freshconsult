@@ -4,7 +4,6 @@ class Channel::CommandWorker < BaseWorker
 
   sidekiq_options queue: :channel_framework_command,
                   retry: 0,
-                  backtrace: true,
                   failures: :exhausted
 
   def perform(args, msg_id = nil)

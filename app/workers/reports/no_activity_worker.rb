@@ -1,6 +1,6 @@
 class Reports::NoActivityWorker < BaseWorker
   
-  sidekiq_options :queue => :reports_no_activity, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :reports_no_activity, :retry => 0, :failures => :exhausted
   
 
   def perform params

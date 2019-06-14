@@ -1,6 +1,6 @@
 # This worker simply destroy the model object passed to it. For cases where we need to do a delayed destroy we can use this.
 class ModelDestroyWorker < BaseWorker
-  sidekiq_options queue: :model_destroy, retry: 0, backtrace: true, failures: :exhausted
+  sidekiq_options queue: :model_destroy, retry: 0,  failures: :exhausted
 
   def perform(args)
     args.symbolize_keys!
