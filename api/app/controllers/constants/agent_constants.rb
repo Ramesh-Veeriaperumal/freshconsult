@@ -8,4 +8,5 @@ module AgentConstants
   VALIDATABLE_DELEGATOR_ATTRIBUTES = %w( agent_role_ids group_ids ).freeze
 
   FIELD_MAPPINGS = { :"user.primary_email.email" => :email, :"user.base" => :email }.freeze
+  RESTRICTED_PARAMS = ['name', 'job_title', 'phone', 'mobile'].freeze
 end.freeze
