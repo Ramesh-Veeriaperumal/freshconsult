@@ -1,0 +1,31 @@
+get:
+  tags: [subscription]
+  description: Estimate for the subscription with the specified plan/cycle.
+  summary: Estimate subscription
+  parameters:
+    - name: plan_id
+      in: query
+      type: integer
+      format: int64
+      description: Plan ID to estimate
+    - name: agent_seats
+      in: query
+      type: integer
+      description: Agent limit to estimate
+      required: true
+    - name: renewal_period
+      in: query
+      type: integer
+      description: One of the renewal period from [1, 3, 6, 12]
+      required: true
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/subscription_estimate'
+    403:
+      description: Access denied
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

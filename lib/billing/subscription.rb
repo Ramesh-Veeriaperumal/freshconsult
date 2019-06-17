@@ -3,14 +3,14 @@ class Billing::Subscription < Billing::ChargebeeWrapper
   include Marketplace::ApiMethods
   include SubscriptionsHelper
 
-  CUSTOMER_INFO   = { :first_name => :admin_first_name, :last_name => :admin_last_name, 
+  CUSTOMER_INFO   = { :first_name => :admin_first_name, :last_name => :admin_last_name,
                        :company => :name }
 
   CREDITCARD_INFO = { :number => :number, :expiry_month => :month, :expiry_year => :year,
-                      :cvv => :verification_value }   
+                      :cvv => :verification_value }
 
-  ADDRESS_INFO    = { :first_name => :first_name, :last_name => :last_name, :billing_addr1 => :address1, 
-                      :billing_addr2 => :address2, :billing_city => :city, :billing_state => :state, 
+  ADDRESS_INFO    = { :first_name => :first_name, :last_name => :last_name, :billing_addr1 => :address1,
+                      :billing_addr2 => :address2, :billing_city => :city, :billing_state => :state,
                       :billing_country => :country, :billing_zip => :zip }
 
   TRIAL_PLAN_QUANTITY = "1"
@@ -43,9 +43,9 @@ class Billing::Subscription < Billing::ChargebeeWrapper
   end
 
   def self.current_plans_costs_per_agent_from_cache(currency)
-    MemcacheKeys.fetch(format(MemcacheKeys::PLANS_AGENT_COSTS_BY_CURRENCY, 
+    MemcacheKeys.fetch(format(MemcacheKeys::PLANS_AGENT_COSTS_BY_CURRENCY,
       currency_name: currency.name)) do
-      Billing::Subscription.new.current_plans_costs_per_agent(currency)  
+      Billing::Subscription.new.current_plans_costs_per_agent(currency)
     end
   end
 
@@ -71,12 +71,12 @@ class Billing::Subscription < Billing::ChargebeeWrapper
   end
 
   def calculate_update_subscription_estimate(subscription, addons)
-    data = subscription_data(subscription).merge(:id => subscription.account_id) 
+    data = subscription_data(subscription).merge(:id => subscription.account_id)
     merge_addon_data(data, subscription, addons)
-    attributes = cancelled_subscription?(subscription.account_id) ? { :subscription => data } : 
+    attributes = cancelled_subscription?(subscription.account_id) ? { :subscription => data } :
                                 { :subscription => data, :end_of_term => true }
     attributes.merge!(:replace_addon_list => true)
-    
+
     update_subscription_estimate(attributes)
   end
 
@@ -85,9 +85,9 @@ class Billing::Subscription < Billing::ChargebeeWrapper
     data = data.merge(address_details)
     data.merge!(:addons => marketplace_addons(subscription))
     ChargeBee::Subscription.update(subscription.account_id, data)
-  end 
+  end
 
-  def update_admin(config)    
+  def update_admin(config)
     update_customer(config.account_id, customer_data(config.account))
   end
 
@@ -96,11 +96,11 @@ class Billing::Subscription < Billing::ChargebeeWrapper
   end
 
   def purchase_freshfone_credits(account, quantity)
-    update_non_recurring_addon(freshfone_addon(account, quantity))    
-  end  
+    update_non_recurring_addon(freshfone_addon(account, quantity))
+  end
 
   def cancel_subscription(account)
-    cancelled_subscription?(account.id) ? true : super(account.id) 
+    cancelled_subscription?(account.id) ? true : super(account.id)
   end
 
   def reactivate_subscription(subscription, data = {})
@@ -118,7 +118,7 @@ class Billing::Subscription < Billing::ChargebeeWrapper
   def cancelled_subscription?(account_id)
     retrieve_subscription(account_id).subscription.status.eql?("cancelled")
   end
-  
+
   def retrieve_plan(plan_name, renewal_period = 1)
     super chargebee_plan_id(plan_name, renewal_period)
   end
@@ -133,7 +133,7 @@ class Billing::Subscription < Billing::ChargebeeWrapper
       true
     rescue ChargeBee::APIError => error
       return false if error.http_code == 404
-      NewRelic::Agent.notice_error(error)      
+      NewRelic::Agent.notice_error(error)
     end
   end
 
@@ -143,7 +143,7 @@ class Billing::Subscription < Billing::ChargebeeWrapper
       result = retrieve_coupon(coupon_code)
       coupon = JSON.parse(result.coupon.to_json)["values"]
 
-      return true if applicable_to_plan?(coupon, subscription) and can_be_redeemed?(coupon)      
+      return true if applicable_to_plan?(coupon, subscription) and can_be_redeemed?(coupon)
       false
     rescue ChargeBee::APIError => error
       return false if error.http_code == 404
@@ -157,26 +157,40 @@ class Billing::Subscription < Billing::ChargebeeWrapper
     SubscriptionPlan.current_plan_names_from_cache.each do |plan_name|
       plans_to_agent_cost[plan_name] = {}
       Billing::Subscription::BILLING_PERIOD.keys.each do |billing_period|
-        chargebee_plan_id = chargebee_plan_id(plan_name, billing_period) 
+        chargebee_plan_id = chargebee_plan_id(plan_name, billing_period)
         chargebee_id_to_subscription_plan_name[chargebee_plan_id] = plan_name
       end
     end
-    plans = retrieve_plans_by_id(chargebee_id_to_subscription_plan_name.keys, 
+    plans = retrieve_plans_by_id(chargebee_id_to_subscription_plan_name.keys,
       currency.billing_site, currency.billing_api_key)
     plans.each do |plan|
       amt = (plan[:price]/plan[:period])/100
       plans_to_agent_cost[chargebee_id_to_subscription_plan_name[
-        plan[:id]]][Billing::Subscription::BILLING_PERIOD[plan[:period]]] = 
+        plan[:id]]][Billing::Subscription::BILLING_PERIOD[plan[:period]]] =
         format_amount(amt, currency.name)
     end
     plans_to_agent_cost
   rescue StandardError => e
     Rails.logger.error "Exception while fetching plan deatils from ChargeBee
       #{e.backtrace}"
-    NewRelic::Agent.notice_error(e, description: 'Exception while fetching plan 
+    NewRelic::Agent.notice_error(e, description: 'Exception while fetching plan
       deatils from ChargeBee #{e.backtrace} for Account #{Account.current.id}')
   end
-  
+
+  def fetch_estimate_info(subscription, addons)
+    addon_data = {}
+    ids = []
+    quantity = []
+    merge_addon_data(addon_data, subscription, addons)
+    addon_data[:addons].each do |addon|
+      ids << addon[:id].to_s
+      quantity << addon[:quantity]
+    end
+    addon_data[:ids] = ids
+    addon_data[:quantity] = quantity
+    retrieve_estimate_content(subscription, addon_data)
+  end
+
   private
     def create_subscription_params(account, subscription_params)
       subscription_info = if subscription_params
@@ -193,15 +207,15 @@ class Billing::Subscription < Billing::ChargebeeWrapper
         :customer => customer_data(account)
       }
     end
-    
+
     def customer_data(account)
       data = CUSTOMER_INFO.inject({}) { |h, (k, v)| h[k] = account.safe_send(v).to_str; h }
       data.merge(:email => account.invoice_emails.first)
     end
-    
+
     def subscription_data(subscription)
-      { 
-        :plan_id => plan_code(subscription), 
+      {
+        :plan_id => plan_code(subscription),
         :plan_quantity => subscription.agent_limit.blank? ? TRIAL_PLAN_QUANTITY : subscription.agent_limit
       }
     end
@@ -219,17 +233,17 @@ class Billing::Subscription < Billing::ChargebeeWrapper
     end
 
     def day_pass_data(account, quantity)
-      { 
+      {
         :subscription_id => account.id,
-        :addon_id => account.plan_name.to_s, 
+        :addon_id => account.plan_name.to_s,
         :addon_quantity => quantity
       }
     end
 
     def freshfone_addon(account, quantity)
-      { 
+      {
         :subscription_id => account.id,
-        :addon_id => "freshfonecredits", 
+        :addon_id => "freshfonecredits",
         :addon_quantity => quantity
       }
     end
@@ -252,14 +266,14 @@ class Billing::Subscription < Billing::ChargebeeWrapper
 
     def extend_trial(subscription)
       return retrieve_subscription(subscription.account_id).subscription.trial_end if subscription.trial?
-        
+
       1.hour.from_now.to_i if subscription.suspended? and subscription.card_number.blank?
     end
 
     def create_estimate_params(subscription, addons, discount)
       data = subscription_data(subscription)
       merge_addon_data(data, subscription, addons)
-      data.merge!(:coupon => discount)      
+      data.merge!(:coupon => discount)
       { :subscription => data, :end_of_term => true, :replace_addon_list => true }
     end
 
@@ -268,7 +282,7 @@ class Billing::Subscription < Billing::ChargebeeWrapper
     end
 
     def can_be_redeemed?(coupon)
-      coupon["max_redemptions"].to_i.eql?(0) or 
+      coupon["max_redemptions"].to_i.eql?(0) or
         coupon["max_redemptions"].to_i > coupon["redemptions"].to_i
     end
 
@@ -284,8 +298,8 @@ class Billing::Subscription < Billing::ChargebeeWrapper
       end
     end
 
-    def marketplace_addons(subscription)  
-      marketplace_addons = []    
+    def marketplace_addons(subscription)
+      marketplace_addons = []
       begin
         all_addons = retrieve_subscription(subscription.account_id).subscription.addons
         if all_addons
@@ -302,5 +316,5 @@ class Billing::Subscription < Billing::ChargebeeWrapper
         return marketplace_addons
       end
     end
-    
+
 end

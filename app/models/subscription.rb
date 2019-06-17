@@ -531,6 +531,19 @@ class Subscription < ActiveRecord::Base
     end
   end
 
+  def fetch_immediate_estimate
+    @fetch_immediate_estimate ||= begin
+      self.addons = applicable_addons(present_subscription.addons, subscription_plan)
+      Billing::Subscription.new.fetch_estimate_info(self, addons)
+    end
+  end
+
+  def fetch_subscription_estimate
+    self.addons = applicable_addons(present_subscription.addons, subscription_plan)
+    applicable_coupon = verify_coupon(present_subscription.coupon)
+    subscription_estimate(addons, applicable_coupon)
+  end
+
   protected
   
     def set_renewal_at
@@ -614,6 +627,14 @@ class Subscription < ActiveRecord::Base
    
    
   private
+
+    def verify_coupon(old_coupon)
+      old_coupon.present? && billing.coupon_applicable?(self, old_coupon) ? old_coupon : nil
+    end
+
+    def present_subscription
+      @present_subscription ||= cache_old_model
+    end
 
     #CRM
     def free_customer?
