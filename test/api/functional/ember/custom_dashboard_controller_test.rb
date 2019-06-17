@@ -623,6 +623,7 @@ module Ember
     end
 
     def test_create_dashboard_with_time_trends_widget_and_ticket_type_with_lp_disabled
+      Account.any_instance.stubs(:ticket_type_filter_in_trends_widget_enabled?).returns(false)
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(5, widget_config_data(ticket_type: '0'))
@@ -633,6 +634,7 @@ module Ember
       widget = Account.current.dashboards.find(response_hash[:id]).widgets
       assert_equal nil, widget[0][:config_data][:ticket_type]
     ensure
+      Account.any_instance.unstub(:ticket_type_filter_in_trends_widget_enabled?)
       User.any_instance.unstub(:privilege?)
     end
 
