@@ -93,7 +93,7 @@ module Features
           account.launch(feature_name)
         elsif Account::DB_TO_BITMAP_MIGRATION_P2_FEATURES_LIST.include? to_sym
           if Account.current.present? # to handle signups
-            account.add_feature(feature_name)
+            Account.current.add_feature(feature_name)
           else
             account.set_feature(feature_name)
           end
@@ -107,7 +107,7 @@ module Features
         if Account::DB_TO_LP_MIGRATION_P2_FEATURES_LIST.include? to_sym
           account.rollback(feature_name)
         elsif Account::DB_TO_BITMAP_MIGRATION_P2_FEATURES_LIST.include? to_sym
-          account.revoke_feature(feature_name)
+          Account.current.revoke_feature(feature_name)
         else
           Rails.logger.info "FEATURE #{feature_name} not migrated"
         end
