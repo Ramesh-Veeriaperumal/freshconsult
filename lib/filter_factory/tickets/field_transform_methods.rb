@@ -108,8 +108,8 @@ module FilterFactory::Tickets
         elsif value.to_s.is_number?
           transformed_condition = fetch_date_range(Time.zone.now.ago(value.first.to_i.minutes).utc.iso8601)
         elsif value.include? '-'
-          from, to = value.split(' - ').map { |date| Time.zone.parse(date).utc.iso8601 }
-          transformed_condition = fetch_date_range(from, to)
+          from, to = value.split(' - ')
+          transformed_condition = fetch_date_range(Time.zone.parse(from).utc.iso8601, Time.zone.parse(to).end_of_day.utc.iso8601)
         else
           transformed_condition = safe_send("#{value}_condition")
         end
