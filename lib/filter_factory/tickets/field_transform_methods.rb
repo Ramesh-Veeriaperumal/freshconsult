@@ -16,6 +16,14 @@ module FilterFactory::Tickets
 
     SPECIAL_API_FIELDS = [:updated_since, :due_by, :any_group_id, :any_agent_id].freeze
 
+    # appointment start time(custom datetime) is indexed in ES under fsm_appointment_start_time name.
+    ES_SORTABLE_CUSTOM_FIELDS_MAP = [
+      ['appointment_start_time', 'fsm_appointment_start_time', 'cf_fsm_appointment_start_time']
+    ].freeze
+
+    REQUEST_ES_SORTABLE_MAP = Hash[*ES_SORTABLE_CUSTOM_FIELDS_MAP.map { |i| [i[0], i[1]] }.flatten]
+    ES_FDFIELD_SORTABLE_MAP = Hash[*ES_SORTABLE_CUSTOM_FIELDS_MAP.map { |i| [i[1], i[2]] }.flatten]
+
     private
 
       def handle_custom_field_values
@@ -32,6 +40,16 @@ module FilterFactory::Tickets
           end
         end
         append_special_conditions
+        handle_order_by_fsm_appointment_start_time
+      end
+
+      def handle_order_by_fsm_appointment_start_time
+        if args[:filter_name].eql?('unresolved_service_tasks')
+          sort_options = TicketsFilter.field_agent_sort_options
+          args[:order_by] = sort_options[:order_by] unless args[:order_by]
+          args[:order_type] = sort_options[:order_type] unless args[:order_type]
+        end
+        args[:order_by] = REQUEST_ES_SORTABLE_MAP[args[:order_by]] if REQUEST_ES_SORTABLE_MAP.key? args[:order_by]
       end
 
       def transform_responder_id(condition)

@@ -302,5 +302,15 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         custom_fields_available = Account.current.flexifield_def_entries.map(&:flexifield_alias)
         CUSTOM_FIELDS_TO_RESERVE.select { |x| !custom_fields_available.include?(x[:name] + "_#{Account.current.id}") }
       end
+
+      def fsm_appointment_start_time_ff_column_name
+        start_time = Account.current.custom_date_time_fields_from_cache.find { |x| x.name == TicketFilterConstants::FSM_APPOINTMENT_START_TIME + "_#{Account.current.id}" }
+        start_time.column_name
+      end
+
+      def fsm_appointment_end_time_ff_column_name
+        end_time = Account.current.custom_date_time_fields_from_cache.find { |x| x.name == TicketFilterConstants::FSM_APPOINTMENT_END_TIME + "_#{Account.current.id}" }
+        end_time.column_name
+      end
   end
 end
