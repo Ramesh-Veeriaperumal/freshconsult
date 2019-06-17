@@ -14,6 +14,7 @@ module Redis::RedisKeys
   include Redis::Keys::Session
   include Redis::Keys::SpamWatcher
   include Redis::Keys::Tickets
+  include Redis::Keys::Semaphore
 
   # Please do not any new key in this file. 
   # Please add new key in respective file based on its redis host.
