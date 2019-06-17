@@ -14,4 +14,5 @@ module AgentConstants
   FIELD_MAPPINGS = { :"user.primary_email.email" => :email, :"user.base" => :email }.freeze
   IGNORE_PARAMS = %w[shortcuts_enabled ticket_assignment].freeze
   DELEGATOR_CLASS = 'AgentDelegator'.freeze
+  RESTRICTED_PARAMS = ['name', 'job_title', 'phone', 'mobile'].freeze
 end.freeze

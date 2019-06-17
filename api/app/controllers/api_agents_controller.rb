@@ -5,6 +5,18 @@ class ApiAgentsController < ApiApplicationController
   before_filter :check_gdpr_pending?, only: :complete_gdpr_acceptance
   SLAVE_ACTIONS = %w[index achievements].freeze
 
+  def check_edit_privilege
+    if current_account.freshid_enabled?
+      AgentConstants::RESTRICTED_PARAMS.any? do |key|
+        if @item.user_changes.key?(key)
+          @item.errors[:base] << :cannot_edit_inaccessible_fields
+          return false
+        end
+      end
+    end
+    true
+  end
+
   def update
     assign_protected
     return unless validate_delegator(params[cname].slice(:role_ids, :group_ids), agent_delegator_params)
@@ -14,6 +26,7 @@ class ApiAgentsController < ApiApplicationController
     end
     @item.user_changes = @item.user.agent.user_changes || {}
     @item.user_changes.merge!(@item.user.changes)
+    return render_custom_errors(@item) unless check_edit_privilege
     if params[cname].key?(:group_ids)
       group_ids = params[cname].delete(:group_ids)
       @item.build_agent_groups_attributes(group_ids)

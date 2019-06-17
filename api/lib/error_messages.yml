@@ -16,6 +16,7 @@ api_error_messages:
   timer_running_true: "It cannot be set, if timer_running was true already"
   timer_running_false: "It cannot be set, if timer_running is false"
   cant_update_user: "It cannot be set, when the timer is running"
+  cannot_edit_inaccessible_fields: "Not allowed to edit Agent's profile information(name, phone, mobile and title)"
   cannot_set_answer: "It cannot be set, for topics belonging to forums that are not of type Question"
   cannot_set_forum_type: "It cannot be set, when the forum already has topics"
   cannot_set_company_ids: "It cannot be set, unless the forum is visible to selected companies only"
