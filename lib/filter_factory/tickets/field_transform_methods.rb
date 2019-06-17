@@ -301,6 +301,10 @@ module FilterFactory::Tickets
         fetch_date_range(nil, 30.days.from_now.utc.iso8601)
       end
 
+      def fsm_none_condition
+        { operator: 'is', value: '-1' }
+      end
+
       def fetch_date_range(from = nil, to = nil)
         { operator: 'is_greater_than', value: { from: from, to: to } }
       end

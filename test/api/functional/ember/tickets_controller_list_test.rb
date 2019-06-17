@@ -373,6 +373,17 @@ module Ember
       Account.any_instance.unstub(:field_service_management_enabled?)
     end
 
+    def test_fsm_none_appointment_time_filter
+      Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+      perform_fsm_operations
+      Account.first.make_current
+      query_hash_params = { '0' => query_hash_param('cf_fsm_appointment_start_time', 'is', 'none', 'custom_field') }
+      match_db_and_es_query_responses(query_hash_params)
+    ensure
+      cleanup_fsm
+      Account.any_instance.unstub(:field_service_management_enabled?)
+    end
+
     def test_all_unresolved_filter
       query_hash_params = { '0' => query_hash_param('status', 'is_in', [0]) }
       match_db_and_es_query_responses(query_hash_params)
