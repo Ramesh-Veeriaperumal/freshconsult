@@ -6,6 +6,11 @@ import groovy.json.JsonSlurperClassic
  buildno = build.toInteger()
  failing_category = ""
 
+  if(jobName.contains("merge")) {
+        def HEAD_COMMIT_URL = params.commit_url
+        currentBuild.description = "<a href='$HEAD_COMMIT_URL'>commit_link</a>"
+    }
+
 
 def send_email() {
     def jobName = currentBuild.fullDisplayName
