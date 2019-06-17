@@ -55,7 +55,7 @@ class Ember::Freshcaller::SettingsControllerTest < ActionController::TestCase
     create_freshcaller_account
     create_freshcaller_enabled_agent
     get :index, controller_params(version: 'private')
-    match_json(freshcaller_account_enabled: true, freshcaller_agent_enabled: true, freshcaller_widget_url: /\/widget\//, freshid_enabled: false, token: String)
+    match_json(freshcaller_account_enabled: true, freshcaller_agent_enabled: true, freshcaller_widget_url: /\/widget\//, freshid_enabled: false, token: String, fresh_id_version: nil)
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:ok]
   ensure
     delete_freshcaller_agent
@@ -73,7 +73,7 @@ class Ember::Freshcaller::SettingsControllerTest < ActionController::TestCase
     create_freshcaller_account
     create_freshcaller_enabled_agent
     get :index, controller_params(version: 'private')
-    match_json(freshcaller_account_enabled: true, freshcaller_agent_enabled: true, freshcaller_widget_url: /\/widget\//, freshid_enabled: 'true', token: NilClass)
+    match_json(freshcaller_account_enabled: true, freshcaller_agent_enabled: true, freshcaller_widget_url: /\/widget\//, freshid_enabled: 'true', token: NilClass, fresh_id_version: 'V1')
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:ok]
   ensure
     delete_freshcaller_agent

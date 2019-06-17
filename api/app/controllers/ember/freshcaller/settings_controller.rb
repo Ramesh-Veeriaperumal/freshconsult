@@ -10,10 +10,16 @@ class Ember::Freshcaller::SettingsController < ApiApplicationController
       freshcaller_agent_enabled: current_user.agent.freshcaller_agent.present? && current_user.agent.freshcaller_agent.fc_enabled
     }
     if current_account.freshcaller_account.present? && current_account.has_features?(:freshcaller, :freshcaller_widget)
+      fresh_id_version = if current_account.freshid_enabled?
+        Freshid::V2::Constants::FRESHID_SIGNUP_VERSION_V1
+      elsif current_account.freshid_org_v2_enabled?
+        Freshid::V2::Constants::FRESHID_SIGNUP_VERSION_V2
+      end
       @settings.merge!(
         freshid_enabled: current_account.freshid_integration_enabled?,
         token: current_account.freshid_integration_enabled? ? nil : sign_payload(email: current_user.email),
-        freshcaller_widget_url: freshcaller_widget_url
+        freshcaller_widget_url: freshcaller_widget_url,
+        fresh_id_version: fresh_id_version
       )
     end
     response.api_root_key = 'freshcaller_settings'

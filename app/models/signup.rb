@@ -5,7 +5,8 @@ class Signup < ActivePresenter::Base
 
   presents :account, :user
   
-  attr_accessor :contact_first_name, :contact_last_name, :new_plan_test, :org_id, :join_token, :fresh_id_version
+  attr_accessor :contact_first_name, :contact_last_name, :new_plan_test, :org_id, :join_token, :fresh_id_version, :org_domain
+
   before_validation :build_primary_email, :build_portal, :build_roles, :build_admin,
     :build_subscription, :build_account_configuration, :set_time_zone, :build_password_policy
   
@@ -47,7 +48,7 @@ class Signup < ActivePresenter::Base
 
   def create_freshid_v2_org_and_account
     account.launch_freshid_with_omnibar(true) if freshid_v2_signup?
-    account.create_freshid_v2_account(user, join_token)
+    account.create_freshid_v2_account(user, join_token, org_domain)
   end
   private
     def build_primary_email

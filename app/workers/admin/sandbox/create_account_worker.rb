@@ -111,7 +111,8 @@ class Admin::Sandbox::CreateAccountWorker < BaseWorker
       join_token = Freshid::V2::Models::Organisation.join_token
       {
         join_token: join_token,
-        fresh_id_version: Freshid::V2::Constants::FRESHID_SIGNUP_VERSION_V2
+        fresh_id_version: Freshid::V2::Constants::FRESHID_SIGNUP_VERSION_V2,
+        org_domain: @account.organisation_domain
       }
     rescue Exception => e
       Rails.logger.error("FRESHID exception in Admin::Sandbox::CreateAccountWorker, freshid_account_params: #{e.message}, #{e.backtrace}")

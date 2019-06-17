@@ -100,7 +100,7 @@ class Admin::Freshcaller::SignupController < Admin::AdminController
   end
 
   def signup_params
-    {
+    create_new_account_params = {
       signup: {
         user_name: current_user.name,
         user_email: current_user.email,
@@ -121,23 +121,35 @@ class Admin::Freshcaller::SignupController < Admin::AdminController
         }
       }.merge(plan_name: Subscription::FRESHCALLER_PLAN_MAPPING[current_account.plan_name])
         .reject { |_key, val| val.nil? },
-      session_json: current_account.conversion_metric.try(:session_json),
-      source: 'Freshdesk',
-      medium: 'in-product',
-      country: current_account.conversion_metric.try(:country),
-      first_referrer: "#{protocol}#{current_account.full_domain}"
-    }
+        session_json: current_account.conversion_metric.try(:session_json),
+        source: 'Freshdesk',
+        medium: 'in-product',
+        country: current_account.conversion_metric.try(:country),
+        first_referrer: "#{protocol}#{current_account.full_domain}"
+      }
+    create_new_account_params.merge!(freshid_v2_params(true)) if current_account.freshid_org_v2_enabled?
+    create_new_account_params
   end
 
   def linking_params
-    params.merge(account_name: current_account.name, 
-                 account_id: current_account.id, 
-                 activation_required: false,
-                 app: "Freshdesk",
-                 freshdesk_calls_url: "#{protocol}#{current_account.full_domain}/api/channel/freshcaller_calls",
-                 domain_url: "#{protocol}#{current_account.full_domain}",
-                 access_token: current_user.single_access_token,
-                 account_region: ShardMapping.fetch_by_account_id(current_account.id).region)
+    link_params = params.merge(account_name: current_account.name,
+                      account_id: current_account.id,
+                      activation_required: false,
+                      app: 'Freshdesk',
+                      freshdesk_calls_url: "#{protocol}#{current_account.full_domain}/api/channel/freshcaller_calls",
+                      domain_url: "#{protocol}#{current_account.full_domain}",
+                      access_token: current_user.single_access_token,
+                      account_region: ShardMapping.fetch_by_account_id(current_account.id).region)
+    link_params.merge!(freshid_v2_params) if current_account.freshid_org_v2_enabled?
+    link_params
   end
 
+  def freshid_v2_params(create_new_account = false)
+    freshid_params = {
+      fresh_id_version: Freshid::V2::Constants::FRESHID_SIGNUP_VERSION_V2,
+      organisation_domain: current_account.organisation_domain
+    }
+    freshid_params[:join_token] = Freshid::V2::Models::Organisation.join_token if create_new_account
+    freshid_params
+  end
 end
