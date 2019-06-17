@@ -41,4 +41,22 @@ class AccountTest < ActiveSupport::TestCase
     assert_equal 'account_update', job['args'][0]
     assert_equal({ 'added' => [], 'removed' => ["skill_based_round_robin"] }, job['args'][1]['model_changes']['features'])
   end
+
+  def test_account_publish_for_suspended_account?
+    Account.stubs(:current).returns(Account.first || create_test_account)
+    Subscription.any_instance.stubs(:suspended?).returns(true)
+    pass_value = Account.disallow_payload?('account_destroy')
+    assert_equal false, pass_value
+    Account.unstub(:current)
+    Subscription.any_instance.unstub(:suspended?)
+  end
+
+  def test_account_publish_for_suspended_account_fail
+    Account.stubs(:current).returns(Account.first || create_test_account)
+    Subscription.any_instance.stubs(:suspended?).returns(true)
+    pass_value = Account.disallow_payload?('default_value')
+    assert_equal true, pass_value
+    Account.unstub(:current)
+    Subscription.any_instance.unstub(:suspended?)
+  end
 end
