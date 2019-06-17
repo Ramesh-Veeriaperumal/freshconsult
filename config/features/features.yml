@@ -211,20 +211,20 @@
       :personal_canned_response: 206
       :proactive_spam_detection: 207
       :api_v2: 208
-      :seafarers_17: 209
-      :seafarers_18: 210
-      :seafarers_19: 211
-      :seafarers_20: 212
-      :seafarers_21: 213
-      :seafarers_22: 214
-      :seafarers_23: 215
-      :seafarers_24: 216
-      :seafarers_25: 217
-      :seafarers_26: 218
-      :seafarers_27: 219
-      :seafarers_28: 220
-      :seafarers_29: 221
-      :seafarers_30: 222
+      :bi_reports: 209
+      :contact_merge_ui: 210
+      :multiple_user_emails: 211
+      :facebook_realtime: 212
+      :autorefresh_node: 213
+      :updated_twilio_client: 214
+      :count_es_reads: 215
+      :reports_regenerate_data: 216
+      :chat_enable: 217
+      :sandbox_account: 218
+      :portal_cc: 219
+      :disable_rr_toggle: 220
+      :count_es_writes: 221
+      :round_robin_revamp: 222
       :analytics_landing_search: 223
       :analytics_landing_data_schedules: 224
       :analytics_landing_new_report: 225
@@ -330,11 +330,11 @@
       :article_filters: 325
       :adv_article_bulk_actions: 326
       :auto_article_order: 327
-      :solutions_1: 328
-      :solutions_2: 329
-      :solutions_3: 330
-      :solutions_4: 331
-      :solutions_5: 332
+      :business_hours: 328
+      :scenario_automations: 329
+      :social_revamp: 330
+      :spam_dynamo: 331
+      :activity_revamp: 332
       :solutions_6: 333
       :solutions_7: 334
       :solutions_8: 335
@@ -415,7 +415,7 @@
   :signup_link: true
   :moderate_posts_with_links: true
   :open_forums: false
-  :captcha: false
+  :captcha: true
   :moderate_all_posts: false
   :hide_portal_forums: false
   :forum_captcha_disable: false
@@ -447,10 +447,25 @@
   :report_field_regenerate: false
   :reports_regenerate_data: false
   :saml_old_issuer: false
-  :spam_dynamo: false
+  :spam_dynamo: true
   :es_multilang_solutions: false
   :sort_by_customer_response: false
   :saml_unspecified_nameid: false
   :euc_hide_agent_metrics: false
   :single_session_per_user: false
   :proactive_spam_detection: true
+  :bi_reports: false
+  :contact_merge_ui: false
+  :multiple_user_emails: false
+  :facebook_realtime: false
+  :autorefresh_node: false
+  :updated_twilio_client: false
+  :count_es_reads: false
+  :chat_enable: false
+  :sandbox_account: false
+  :portal_cc: false
+  :disable_rr_toggle: false
+  :count_es_writes: false
+  :round_robin_revamp: false
+  :social_revamp: true
+  :activity_revamp: true
