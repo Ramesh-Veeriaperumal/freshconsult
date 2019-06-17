@@ -1,8 +1,11 @@
 <blockquote><%=msg%></blockquote>
 <div class="survey-details">
 	<span class="muted"><%=SurveyI18N.response_to%>:</span>
-	<a href="/helpdesk/tickets/<%=ticket.display_id%>" target="_blank"><%-ticket.subject%>
+	<%if(ticket.permissible){%><a href="/helpdesk/tickets/<%=ticket.display_id%>" target="_blank"><%-ticket.subject%>
 	<span class="muted">#<%=ticket.display_id%></span></a>
+	<%}else{%>
+	<span class="muted"><%-ticket.subject%>#<%=ticket.display_id%></span>
+	<%}%>
 </div>
 <div class="survey-details">
 	<%if(group){%><span class="muted"><%=SurveyI18N.group%>:</span> <%=group.name%>,<%}%> 

@@ -125,6 +125,7 @@ class CustomSurvey::SurveyResult < ActiveRecord::Base
     json[:customer][:avatar] = customer.avatar_url
     json[:survey_remark] ||= {"feedback" => {"body" => ''}}
     json[:rating] = question_rating question_column
+    json[:surveyable][:permissible] = User.current.has_ticket_permission?(surveyable) if User.current
     json
   end
 
