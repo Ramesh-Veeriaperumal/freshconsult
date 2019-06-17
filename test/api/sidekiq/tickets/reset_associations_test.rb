@@ -13,6 +13,7 @@ class ResetAssociationsTest < ActionView::TestCase
   include TestCaseMethods
   include ControllerTestHelper
   include ConversationsTestHelper
+  include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
 
   def setup
     Account.stubs(:current).returns(Account.first)
@@ -85,7 +86,16 @@ class ResetAssociationsTest < ActionView::TestCase
       create_parent_child_tickets
       Tickets::ResetAssociations.new.perform(parent_child_feature_disable: true)
       parent_child_tickets = @account.tickets.where(association_type: [1,2])
-      assert_equal parent_child_tickets.count, 0
+      service_task_type = Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE
+
+      service_tasks_associates_rdb = parent_child_tickets.map do |ticket|
+        ticket.associates_rdb if ticket.ticket_type == service_task_type
+      end
+      parent_child_tickets.reject! do |ticket|
+        ticket.ticket_type == service_task_type || service_tasks_associates_rdb.include?(ticket.display_id)
+      end
+
+      assert_equal parent_child_tickets.size, 0
     end
   end
 
@@ -97,6 +107,48 @@ class ResetAssociationsTest < ActionView::TestCase
       Account.any_instance.stubs(:tickets).raises(RuntimeError)
       Tickets::ResetAssociations.new.perform(ticket_ids: ticket_ids)
       Account.any_instance.unstub(:tickets)
+    end
+  end
+
+  def test_reset_association_with_service_tasks_child
+    service_task_type = Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE
+
+    enable_adv_ticketing([:field_service_management]) do
+      perform_fsm_operations
+      fsm_ticket = create_service_task_ticket
+
+      child_tickets_before = @account.tickets.where(association_type: [2])
+      service_task_count_before = child_tickets_before.select { |t| t.ticket_type == service_task_type }.count
+      Tickets::ResetAssociations.new.perform(parent_child_feature_disable: true)
+      child_tickets_after = @account.tickets.where(association_type: [2])
+      service_task_count_after = child_tickets_after.select { |t| t.ticket_type == service_task_type }.count
+
+      assert_equal service_task_count_before, service_task_count_after
+    end
+  end
+
+  def test_reset_association_with_service_tasks_parent
+    service_task_type = Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE
+
+    enable_adv_ticketing([:field_service_management]) do
+      perform_fsm_operations
+      fsm_ticket = create_service_task_ticket
+
+      parent_tickets_before = @account.tickets.where(association_type: [1])
+      parent_tickets_count_before = parent_tickets_before.select do |parent_ticket|
+        subsidiary_tickets = parent_ticket.associated_subsidiary_tickets('assoc_parent')
+        subsidiary_tickets.any? { |t| t.ticket_type == service_task_type }
+      end.count
+
+      Tickets::ResetAssociations.new.perform(parent_child_feature_disable: true)
+
+      parent_tickets_after = @account.tickets.where(association_type: [1])
+      parent_tickets_count_after = parent_tickets_after.select do |parent_ticket|
+        subsidiary_tickets = parent_ticket.associated_subsidiary_tickets('assoc_parent')
+        subsidiary_tickets.any? { |t| t.ticket_type == service_task_type }
+      end.count
+
+      assert_equal parent_tickets_count_before, parent_tickets_count_after
     end
   end
 end
