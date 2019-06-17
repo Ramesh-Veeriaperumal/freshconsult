@@ -72,9 +72,9 @@ module IntegrationServices::Services
       def format_order(order)
         order["admin_url"] = "#{server_url}/admin/orders/#{order["id"]}"
         required_keys = [
-          "currency", "customer", "email", "financial_status", 
-          "fulfillment_status", "id", "line_items", "order_number", "total_price", 
-          "cancelled_at", "can_cancel", "can_refund_full_order", "admin_url"
+          'currency', 'customer', 'email', 'financial_status',
+          'fulfillment_status', 'id', 'line_items', 'order_number', 'total_price',
+          'cancelled_at', 'can_cancel', 'can_refund_full_order', 'admin_url', 'name'
         ]
         order.select {|key| required_keys.include?(key) }
       end
