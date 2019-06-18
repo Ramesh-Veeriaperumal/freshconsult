@@ -5,6 +5,10 @@ class Integrations::Marketplace::QuickbooksSsoController < Integrations::Marketp
     :set_time_zone, :check_day_pass_usage, :set_locale, :only => [:open_id, :open_id_complete]
 
   def open_id
+    unless valid_quickbook_claim_id?
+      render text: 'Invalid claimed_id', status: 400
+      return
+    end
     url = Integrations::Quickbooks::Constant::OPENID_URL
     return_url = integrations_marketplace_quickbooks_sso_open_id_complete_url + "?app=quickbooks"
     if (params[:operation])
@@ -68,4 +72,14 @@ class Integrations::Marketplace::QuickbooksSsoController < Integrations::Marketp
     initialize_attr(data)
   end
 
+  # claimed_id can be used for SSRF attack. validate if the URL is an expected URL
+
+  def valid_quickbook_claim_id?
+    claimed_id = params['openid.claimed_id']
+    if claimed_id.present? && UriParser.valid_url?(claimed_id)
+      uri = URI.parse(claimed_id)
+      return uri.host == Integrations::Quickbooks::Constant::INTUIT_OPEN_ID_HOST
+    end
+    false
+  end
 end
