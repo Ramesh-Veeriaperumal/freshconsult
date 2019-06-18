@@ -2,6 +2,8 @@ module Social
   class FacebookWorker < BaseWorker
     include Facebook::RedisMethods
     include Facebook::Exception::Handler
+    include SidekiqSemaphore
+    include Redis::Keys::Semaphore
 
     sidekiq_options queue: :facebook, retry: 0,  failures: :exhausted
 
@@ -15,13 +17,17 @@ module Social
       return if app_rate_limit_reached?
       Koala.config.api_version = Facebook::Constants::GRAPH_API_VERSION
       account = Account.current
-      if msg && msg['fb_page_id']
-        fan_page = account.facebook_pages.find_by_id(msg['fb_page_id'])
-        fetch_from_fb fan_page if fan_page
-      else
-        fb_pages = account.facebook_pages.valid_pages
-        fb_pages.each do |page|
-          fetch_from_fb(page)
+      page_id = msg && msg['fb_page_id']
+      key = format(FACEBOOK_SEMAPHORE, account_id: account.id, page_id: page_id || 0)
+      semaphore(key) do
+        if page_id
+          fan_page = account.facebook_pages.find_by_id(msg['fb_page_id'])
+          fetch_from_fb fan_page if fan_page
+        else
+          fb_pages = account.facebook_pages.valid_pages
+          fb_pages.each do |page|
+            fetch_from_fb(page)
+          end
         end
       end
     ensure

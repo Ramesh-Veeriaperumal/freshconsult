@@ -629,8 +629,6 @@ class AccountsControllerTest < ActionController::TestCase
     assert_equal account.anonymous_account?, true
     assert_equal account.admin_first_name, 'Demo'
     assert_equal account.admin_last_name, 'Account'
-    assert_equal account.launched?(:onboarding_v2), true
-    assert_equal account.launched?(:new_onboarding), true
     assert_match(/freshdeskdemo[0-9]{13}@example.com/, account.admin_email)
     assert_match(/demo(#{DomainGenerator::DOMAIN_SUGGESTIONS.join('|')})?[0-9]{13}.freshpo.com/, account.full_domain)
     assert_not_nil account.id

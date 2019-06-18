@@ -282,10 +282,14 @@ module Ember
       end
 
       def use_filter_factory?
-        return false if params[:filter] && default_filter?
+        return false if params[:filter] && !es_supported_filter?(params[:filter]) && default_filter?
+
         Account.current.filter_factory_enabled? && !params[:ids]
       end
 
+      def es_supported_filter?(filter)
+        TicketFilterConstants::ES_SUPPORTED_FILTERS.include?(filter)
+      end
       # def ticket_filterer_params
       #   preloads = params[:include] ? (params[:include].split(',') + conditional_preload_options).compact : conditional_preload_options
       #   params.merge(include: preloads)

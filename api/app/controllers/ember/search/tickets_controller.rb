@@ -49,9 +49,14 @@ module Ember
       private
 
         def decorate_objects
+          options = {}
+          options[:name_mapping] = name_mapping
           sideload_options = ['requester', 'company']
-          sideload_options << params['include'] if params['include']
-          options = { sideload_options: sideload_options.compact, name_mapping: name_mapping }
+          if params['include']
+            sideload_options << params['include']
+            options[:custom_fields_mapping] = Account.current.ticket_fields_name_type_mapping_cache if Account.current.field_service_management_enabled?
+          end
+          options[:sideload_options] = sideload_options.compact
           @items.map! { |item| TicketDecorator.new(item, options) } if @items
         end
 

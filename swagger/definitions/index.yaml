@@ -586,6 +586,8 @@ subscription_show:
   $ref: ./response/subscription/show.yaml
 plans:
   $ref: ./response/subscription/plans.yaml
+subscription_estimate:
+  $ref: ./response/subscription/estimate.yaml
 
 #Advanced Ticketing
 advanced_ticketing_create:

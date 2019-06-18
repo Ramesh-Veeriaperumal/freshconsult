@@ -16,6 +16,7 @@ api_error_messages:
   timer_running_true: "It cannot be set, if timer_running was true already"
   timer_running_false: "It cannot be set, if timer_running is false"
   cant_update_user: "It cannot be set, when the timer is running"
+  cannot_edit_inaccessible_fields: "Not allowed to edit Agent's profile information(name, phone, mobile and title)"
   cannot_set_answer: "It cannot be set, for topics belonging to forums that are not of type Question"
   cannot_set_forum_type: "It cannot be set, when the forum already has topics"
   cannot_set_company_ids: "It cannot be set, unless the forum is visible to selected companies only"
@@ -344,3 +345,6 @@ api_error_messages:
 
   extra_level_field: "Dependent field should not be present if the parent value is ''/--/##"
   non_unique_field_automation: "A field with name '%{name}' is already there"
+  invalid_plan_id: "Plan id is invalid"
+  cannot_apply_renewal_period: "Cannot apply renewal period to a free plan"
+  cannot_estimate_free_plan: "Cannot estimate free plan"

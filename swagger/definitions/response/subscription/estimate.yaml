@@ -1,0 +1,40 @@
+type: object
+properties:
+  immediate_invoice:
+    type: object
+    properties:
+      date_from:
+        type: string
+        format: date-time
+      date_to:
+        type: string
+        format: date-time
+      amount:
+        type: integer
+      days_remaining:
+        type: integer
+  next_invoice:
+    type: object
+    properties:
+      date_from:
+        type: string
+        format: date-time
+      date_to:
+        type: string
+        format: date-time
+      amount:
+        type: integer
+      discount_amount:
+        type: number
+        format: float
+  credit_amount_available:
+    type: integer
+  credit_amount_allocated:
+    type: integer
+  agent_seats:
+    type: integer
+  renewal_period:
+    type: integer
+  plan_id:
+    type: integer
+    format: int64

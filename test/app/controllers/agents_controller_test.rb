@@ -520,4 +520,17 @@ class AgentsControllerTest < ActionController::TestCase
     log_out
   end
 
+  def test_update_unpermitted_fields
+    login_admin
+    @user = Account.current.account_managers.first.make_current
+    user = add_test_agent(@account)
+    role_id = Account.current.roles.find_by_name('Agent').id
+    Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    put :update, id: user.agent.id, user: { 'name' => Faker::Name.name }
+    assert_response 403
+  ensure
+    Account.any_instance.unstub(:freshid_enabled?)
+    user.destroy
+    log_out
+  end
 end

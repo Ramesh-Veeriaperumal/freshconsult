@@ -308,6 +308,19 @@ module Ember
       match_json({ 'count' => 87 })
     end
 
+    def test_widget_data_preview_for_scorecard_with_none_custom_filter
+      Account.current.launch(:count_service_es_reads)
+      none_hash = { data_hash: [{ 'condition' => 'flexifields.ff_date01', 'operator' => 'is', 'ff_name' => 'cf_fsm_appointment_start_time', 'value' => 'none' }] }
+      ticket_filter = create_filter(nil, none_hash)
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new('records' => { 'results' => { ticket_filter.id.to_s => { 'total' => 77 } } }))
+      get :widget_data_preview, controller_params(version: 'private', type: 'scorecard', ticket_filter_id: ticket_filter.id)
+      assert_response 200
+      match_json('count' => 77)
+    ensure
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+    end
+
     # Bar chart preview tests
 
     def test_widget_data_preview_for_bar_chart_with_invalid_filter
@@ -610,6 +623,7 @@ module Ember
     end
 
     def test_create_dashboard_with_time_trends_widget_and_ticket_type_with_lp_disabled
+      Account.any_instance.stubs(:ticket_type_filter_in_trends_widget_enabled?).returns(false)
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(5, widget_config_data(ticket_type: '0'))
@@ -620,6 +634,7 @@ module Ember
       widget = Account.current.dashboards.find(response_hash[:id]).widgets
       assert_equal nil, widget[0][:config_data][:ticket_type]
     ensure
+      Account.any_instance.unstub(:ticket_type_filter_in_trends_widget_enabled?)
       User.any_instance.unstub(:privilege?)
     end
 

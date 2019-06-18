@@ -5,7 +5,8 @@ class Billing::ChargebeeWrapper
   DAY_PASS_CALC      = 'Daypass recalculation'.freeze
   CB_RESOURCES       = {
                           plans: 'plans',
-                          add_credits: 'promotional_credits/add'
+                          add_credits: 'promotional_credits/add',
+                          estimate: 'estimates/update_subscription'
                        }.freeze
 
 	def initialize
@@ -128,12 +129,28 @@ class Billing::ChargebeeWrapper
 		ChargeBee::Subscription.change_term_end(account_id, data)
 	end
 
+  def retrieve_estimate_content(subscription, addon_data)
+    url = format(CHARGEBEE_REST_URL, subdomain: subscription.currency.billing_site, resource_type: CB_RESOURCES[:estimate])
+    JSON.parse(RestClient::Request.execute(build_rest_format(url, estimate_params(subscription, addon_data))))['estimate']
+  end
+
   private
     def credits_params(amount_to_be_added)
       { 
         customer_id: Account.current.id,
         amount: amount_to_be_added*100,
         description: DAY_PASS_CALC
+      }
+    end
+
+    def estimate_params(subscription, addon_data)
+      subscription_plan = "#{subscription.subscription_plan.canon_name}_#{Billing::Subscription::BILLING_PERIOD[subscription.renewal_period]}"
+      {
+        'subscription[id]' => subscription.account_id,
+        'subscription[plan_id]' => subscription_plan,
+        'subscription[plan_quantity]' => subscription.agent_limit,
+        'addon[id]' => addon_data[:ids],
+        'addon[quantity]' => addon_data[:quantity]
       }
     end
 

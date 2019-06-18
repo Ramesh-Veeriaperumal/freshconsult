@@ -161,7 +161,7 @@ namespace :scheduler do
   def enqueue_facebook(task_name)
     class_constant = FACEBOOK_TASKS[task_name][:class_name].constantize
     queue_name = class_constant.get_sidekiq_options["queue"]
-    puts "::::Queue Name::: #{queue_name}"
+    Rails.logger.info "::::Queue Name::: #{queue_name}"
     if empty_queue?(queue_name)
       Sharding.run_on_all_slaves do
         Account.reset_current_account
@@ -176,7 +176,7 @@ namespace :scheduler do
         end
       end
     else
-      puts "Facebook Worker is already running . skipping at #{Time.zone.now}. Type #{task_name}" 
+      Rails.logger.info "Facebook Worker is already running . skipping at #{Time.zone.now}. Type #{task_name}"
     end
   end
 

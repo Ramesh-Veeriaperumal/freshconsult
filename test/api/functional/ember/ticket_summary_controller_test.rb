@@ -12,13 +12,15 @@ class TicketSummaryControllerTest < ActionController::TestCase
   def setup
     super
     MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
+    Account.stubs(:current).returns(Account.first || create_test_account)
     Account.current.features.es_v2_writes.destroy
     Account.find(Account.current.id).make_current
   end
 
   def teardown
-    super
     MixpanelWrapper.unstub(:send_to_mixpanel)
+    Account.unstub(:current)
+    super
   end
   def wrap_cname(params)
     { ticket_summary: params }

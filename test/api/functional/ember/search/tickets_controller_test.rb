@@ -100,14 +100,16 @@ module Ember::Search
     end
 
     def test_custom_fields_in_response
-      ticket_field = create_custom_field('custom_number_test', 'number')
-      ticket = create_ticket(custom_field: { 'custom_number_test_1': '3' })
+      Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+      ticket_field = create_custom_field('custom_date_time_test', 'date_time')
+      ticket = create_ticket(custom_field: { 'custom_date_time_test_1': '2019-10-10T12:23:37Z' })
       stub_private_search_response([ticket]) do
         post :results, construct_params(version: 'private', context: 'spotlight', searchSort: 'relevance', include: 'custom_fields', term: ticket.subject)
       end
       assert_response 200
-      assert_equal JSON.parse(response.body)[0]['custom_fields']['custom_number_test'], 3
+      assert_equal JSON.parse(response.body)[0]['custom_fields']['custom_date_time_test'], '2019-10-10T12:23:37Z'
     ensure
+      Account.any_instance.unstub(:field_service_management_enabled?)
       ticket_field.try(:destroy)
     end
 

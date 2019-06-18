@@ -61,7 +61,7 @@ module Facebook
           end
         end
         user_id = user_mapping.try(:user_id)
-        user = Account.current.all_users.find(user_id) if user_id.present?
+        user = Account.current.all_users.find_by_id(user_id) if user_id.present?
         user
       end
 

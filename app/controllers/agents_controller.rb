@@ -12,6 +12,8 @@ class AgentsController < ApplicationController
   include Freshcaller::AgentHelper
   include Freshid::CallbackMethods
 
+  RESTRICTED_PARAMS = ['name', 'job_title', 'phone', 'mobile'].freeze
+
   skip_before_filter :check_account_state, :only => :destroy
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:info_for_node]
   
@@ -45,6 +47,15 @@ class AgentsController < ApplicationController
     if AppConfig['demo_site'][Rails.env] == current_account.full_domain
       error_responder(t(:'flash.not_allowed_in_demo_site'), 'forbidden')
     end
+  end
+
+  def check_edit_privilege
+    if freshid_enabled?
+      AgentConstants::RESTRICTED_PARAMS.any? do |key|
+        return false if @agent.user_changes.key?(key)
+      end
+    end
+    true
   end
 
   def search_in_freshworks
@@ -208,7 +219,6 @@ class AgentsController < ApplicationController
     params['agent']['agent_type'] = params['agent']['agent_type'] == 'field_agent' ? AgentType.agent_type_id(Agent::FIELD_AGENT) : AgentType.agent_type_id(Agent::SUPPORT_AGENT)
   end
 
-  
   def update
     @agent.occasional = params[:agent][:occasional] || false
     #check_agent_limit
@@ -222,9 +232,10 @@ class AgentsController < ApplicationController
     params[:user].each do |k, v|
       @agent.user.safe_send("#{k}=", v)
     end
-
     @agent.user_changes = @agent.user.agent.user_changes || {}
     @agent.user_changes.merge!(@agent.user.changes)
+    return render json: { success: false, errors: t(:'flash.agents.edit.not_allowed_to_edit_inaccessible_fields') }, status: 403 unless check_edit_privilege
+
     group_ids = params[nscname].delete(:group_ids)
     @agent.build_agent_groups_attributes(group_ids)
     if @agent.update_attributes(params[nscname])

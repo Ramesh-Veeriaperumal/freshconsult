@@ -2,6 +2,7 @@ class Subscription < ActiveRecord::Base
   include RepresentationHelper
 
   DATETIME_FIELDS = [:created_at, :updated_at, :next_renewal_at, :discount_expires_at]
+  SUBSCRIPTION_UPDATE = 'subscription_update'.freeze
 
   acts_as_api
 
@@ -33,6 +34,12 @@ class Subscription < ActiveRecord::Base
 
   def model_changes_for_central
     self.previous_changes
+  end
+
+  def self.disallow_payload?(payload_type)
+    return false if payload_type == SUBSCRIPTION_UPDATE
+
+    super
   end
 
   def relationship_with_account

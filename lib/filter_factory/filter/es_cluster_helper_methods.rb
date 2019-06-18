@@ -1,5 +1,6 @@
 module FilterFactory::Filter
   module EsClusterHelperMethods
+    include FilterFactory::Filter::Mappings
     include Admin::AdvancedTicketing::FieldServiceManagement::Util
     SINGLE_QUOTE = '#&$!SinQuo'.freeze
     DOUBLE_QUOTE = '#&$!DouQuo'.freeze
@@ -89,8 +90,17 @@ module FilterFactory::Filter
         scoper[:ar_class].constantize
                          .joins(fetch_joins)
                          .where(account_id: Account.current.id, id: object_ids)
-                         .order("#{order_by} #{order_type.upcase}")
+                         .order(fetch_order)
                          .scoped
+      end
+
+      def fetch_order
+        order_mappings = "FilterFactory::Filter::Mappings::#{scoper[:documents].upcase}_ORDER_BY_MAPPINGS".constantize
+        if order_mappings.key?(order_by.to_sym)
+          safe_send(order_mappings[order_by.to_sym], order_by, order_type)
+        else
+          "#{order_by} #{order_type.upcase}"
+        end
       end
 
       def fetch_fql_runner_response(query)
