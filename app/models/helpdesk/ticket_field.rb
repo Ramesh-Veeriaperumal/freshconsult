@@ -116,7 +116,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   end
 
   def update_ticket_filter
-    return unless dropdown_field? or field_type == "default_internal_group"
+    return unless dropdown_field? || nested_field? || field_type == 'default_internal_group'
     # 1. when the custom dropdown is being deleted, delete conditions associated with the field in ticket filters
     # 2. when the shared_ownership feature is disabled, shared_ownership fields will be deleted.
     #     Change the conditions with internal/any type to primary. Ex: any_agent_id to responder_id

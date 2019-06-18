@@ -49,8 +49,14 @@ module Facebook
       # => Broad: Will be created as a single ticket.
       def fetch_and_process_comment(fb_post = nil, convert_company_comment_to_ticket = false)
         #Explicitly logging second call made within the exception handler
+        # in_reply_to will be nil for comment on a cover photo. Facebook gives us different IDs for post_id and parent_id
+        # for a comment on the cover photo.
         self.fan_page.log_api_hits
-        Facebook::Core::Comment.new(self.fan_page, in_reply_to).process(fb_post.try(:postable), convert_company_comment_to_ticket)
+        if in_reply_to.nil?
+          Facebook::Core::Comment.new(self.fan_page, self.koala_comment.feed_id).process(fb_post.try(:postable), false, true)
+        else
+          Facebook::Core::Comment.new(self.fan_page, in_reply_to).process(fb_post.try(:postable), convert_company_comment_to_ticket)
+        end
       end
       
     end

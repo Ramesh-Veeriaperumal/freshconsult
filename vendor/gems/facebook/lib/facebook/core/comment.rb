@@ -26,7 +26,7 @@ module Facebook
       end   
       
       
-      def process(force_convert = false, convert_company_comment_to_ticket = false)
+      def process(force_convert = false, convert_company_comment_to_ticket = false, cover_photo_comment = false)
         #Comment is not converted to a fd_item as yet
         if self.fd_item.nil?
           #Comment can be added as a note
@@ -36,8 +36,11 @@ module Facebook
           #Case to convert a post to a ticket via a comment happens only when it's a visitor comment  
           elsif convert_post_to_ticket?(self, true)
             process_post
+          # When a comment is added on a cover photo and is not by the company
+          elsif convert_cover_photo_comment_to_ticket?(self)
+            self.fd_item = add_as_ticket(self.fan_page, self.koala_comment, ticket_attributes, self.koala_post)
           #Post will be converted to a ticket only when social_revamp is enabled 
-          elsif social_revamp_enabled? && convert_comment_to_ticket?(self, convert_company_comment_to_ticket)
+          elsif social_revamp_enabled? && convert_comment_to_ticket?(self, convert_company_comment_to_ticket) && !cover_photo_comment
             # This gets the root parent post.
             original_post = get_koala_feed(POST_TYPE[:post], post_id)
             self.fd_item = add_as_ticket(self.fan_page, self.koala_comment, ticket_attributes, original_post)
