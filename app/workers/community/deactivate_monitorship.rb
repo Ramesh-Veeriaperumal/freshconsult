@@ -1,6 +1,6 @@
 class Community::DeactivateMonitorship < BaseWorker
 
-	sidekiq_options :queue => :deactivate_monitorship, :retry => 0, :backtrace => true, :failures => :exhausted
+	sidekiq_options :queue => :deactivate_monitorship, :retry => 0, :failures => :exhausted
 
 	def perform(user_id)
 		user = Account.current.all_users.find_by_id(user_id)

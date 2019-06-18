@@ -5,7 +5,7 @@ module Reports
     include HelpdeskReports::Export::FieldsHelper
     include HelpdeskReports::Constants::Export
 
-    sidekiq_options :queue => :parallel_report_exports, :retry => 0, :backtrace => true
+    sidekiq_options :queue => :parallel_report_exports, :retry => 0
 
     def self.export(tickets, args)
       args.symbolize_keys!

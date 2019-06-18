@@ -35,10 +35,10 @@ module Admin::AutomationRules
     end
 
     def position_valid?
-      rule_count ||= current_account.account_va_rules.find_all_by_rule_type(rule_type).count
+      rule_count ||= current_account.safe_send(VAConfig::ASSOCIATION_MAPPING[VAConfig::RULES_BY_ID[rule_type]]).count
       if position < 1 || position > rule_count
         errors[:position] << :invalid_position
-        error_options[:position] = { max_position: rule_count }
+        error_options[:position] = { max_position: rule_count + 1 }
       end
     end
 

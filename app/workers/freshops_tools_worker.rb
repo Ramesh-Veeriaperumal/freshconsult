@@ -2,7 +2,7 @@ class FreshopsToolsWorker < BaseWorker
   
   include Sidekiq::Worker
   include FreshopsToolsWorkerMethods
-  sidekiq_options :queue => :code_console_execution, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :code_console_execution, :retry => 0, :failures => :exhausted
 # The method name is passed as a parameter to call that corresponding method.
   def perform(args)
     if SHARD_OPS.has_value?(args["method_name"])

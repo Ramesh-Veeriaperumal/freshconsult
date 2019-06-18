@@ -1,7 +1,7 @@
 # Used for updating the company for tickets in reports
 class Reports::UpdateTicketsCompany < BaseWorker
   
-  sidekiq_options :queue => :update_tickets_company, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :update_tickets_company, :retry => 0, :failures => :exhausted
 
   def perform(args)
     args.symbolize_keys!

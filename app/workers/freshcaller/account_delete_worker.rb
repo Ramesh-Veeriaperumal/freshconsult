@@ -1,7 +1,7 @@
 module Freshcaller
   class AccountDeleteWorker < BaseWorker
 
-    sidekiq_options queue: :freshcaller_account_delete, retry: 0, backtrace: true, failures: :exhausted
+    sidekiq_options queue: :freshcaller_account_delete, retry: 0,  failures: :exhausted
 
     def perform(params)
       begin

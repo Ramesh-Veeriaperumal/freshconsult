@@ -1,7 +1,7 @@
 class PrimaryLanguageChange
   include Sidekiq::Worker
 
-  sidekiq_options queue: :primary_language_change, retry: 0, backtrace: true, failures: :exhausted
+  sidekiq_options queue: :primary_language_change, retry: 0,  failures: :exhausted
 
   SOLUTION_CLASSES = ["Solution::Category", "Solution::Folder", "Solution::Article"]
 

@@ -1,6 +1,6 @@
 class MergeContacts < BaseWorker
 
-  sidekiq_options :queue => :merge_contacts, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :merge_contacts, :retry => 0, :failures => :exhausted
 
   include RabbitMq::Helper
 

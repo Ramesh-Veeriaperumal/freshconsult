@@ -1,6 +1,6 @@
 module CentralPublish
   class UpdateTaggables < BaseWorker
-    sidekiq_options :queue => :update_taggables_queue, :retry => 2, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :update_taggables_queue, :retry => 2, :failures => :exhausted
 
     def perform(args)
       args = args.deep_symbolize_keys

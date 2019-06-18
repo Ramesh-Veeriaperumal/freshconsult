@@ -1,6 +1,6 @@
 class Community::MergeTopicsWorker < BaseWorker
 
-  sidekiq_options :queue => :merge_topics, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :merge_topics, :retry => 0, :failures => :exhausted
 
 
   def perform(args)

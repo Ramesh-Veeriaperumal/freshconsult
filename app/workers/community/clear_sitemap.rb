@@ -1,7 +1,7 @@
 class Community::ClearSitemap < BaseWorker
   include MemcacheKeys
 
-  sidekiq_options :queue => :clear_sitemap, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :clear_sitemap, :retry => 0, :failures => :exhausted
 
   def perform(account_id, portal_id)
     key = SITEMAP_KEY % { :account_id => account_id, :portal_id => portal_id }

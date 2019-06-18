@@ -7,7 +7,7 @@ module Freshfone
     include Freshfone::Conference::Branches::RoundRobinHandler
     include Freshfone::SimultaneousCallHandler
     
-    sidekiq_options queue: :freshfone_notifications, retry: 0, backtrace: true, failures: :exhausted
+    sidekiq_options queue: :freshfone_notifications, retry: 0,  failures: :exhausted
 
     attr_accessor :params, :agent, :current_account, :current_call, :current_number, 
       :freshfone_users, :available_agents, :busy_agents, :tid, :current_user

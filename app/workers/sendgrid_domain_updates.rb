@@ -12,7 +12,7 @@ class SendgridDomainUpdates < BaseWorker
 
   TIMEOUT = SendgridWebhookConfig::CONFIG[:timeout]
 
-  sidekiq_options :queue => :sendgrid_domain_updates, :retry => 3, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :sendgrid_domain_updates, :retry => 3, :failures => :exhausted
 
   def perform(args)
     sleep(5)

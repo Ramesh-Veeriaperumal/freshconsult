@@ -1,6 +1,6 @@
 module Bot::Emailbot
   class SendBotEmail < BaseWorker
-    sidekiq_options queue: :bot_email_reply, retry: 0, backtrace: true, failures: :exhausted
+    sidekiq_options queue: :bot_email_reply, retry: 0,  failures: :exhausted
 
     def perform(args)
       args = args.deep_symbolize_keys

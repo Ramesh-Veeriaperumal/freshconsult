@@ -2,7 +2,7 @@ class Admin::Sandbox::MergeWorker < BaseWorker
   include SandboxHelper
   include SandboxConstants
 
-  sidekiq_options queue: :sandbox_merge, retry: 0, backtrace: true, failures: :exhausted
+  sidekiq_options queue: :sandbox_merge, retry: 0,  failures: :exhausted
 
   def perform
     committer = {

@@ -1,6 +1,6 @@
 class Tickets::UpdateTicketBodyJobs < BaseWorker 
 
-  sidekiq_options :queue => :helpdesk_update_ticket_body_queue, :retry => 4, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :helpdesk_update_ticket_body_queue, :retry => 4, :failures => :exhausted
  
   def perform(args)
     begin

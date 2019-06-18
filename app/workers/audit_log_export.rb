@@ -9,7 +9,7 @@ class AuditLogExport < BaseWorker
   require 'json'
   require 'zip'
   require 'tempfile'
-  sidekiq_options queue: :audit_log_export, retry: 5, backtrace: true, failures: :exhausted
+  sidekiq_options queue: :audit_log_export, retry: 5,  failures: :exhausted
 
   def perform(args)
     args.symbolize_keys!

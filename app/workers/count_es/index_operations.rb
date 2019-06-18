@@ -3,7 +3,7 @@ class CountES::IndexOperations
   include MemcacheKeys  
   include Sidekiq::Worker
 
-  sidekiq_options :queue => :count_es_queue, :retry => 2, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :count_es_queue, :retry => 2, :failures => :exhausted
   
   class UpdateTaggables < CountES::IndexOperations
     def perform(args)

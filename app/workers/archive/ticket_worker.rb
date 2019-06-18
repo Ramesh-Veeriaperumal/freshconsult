@@ -1,7 +1,7 @@
 module Archive
   class TicketWorker < BaseWorker
     include Utils::Freno
-    sidekiq_options queue: ::ArchiveSikdekiqConfig['archive_ticket'], retry: 0, backtrace: true, failures: :exhausted
+    sidekiq_options queue: ::ArchiveSikdekiqConfig['archive_ticket'], retry: 0,  failures: :exhausted
     APPLICATION_NAME="ArchiveWorker"
 
     def perform(args)

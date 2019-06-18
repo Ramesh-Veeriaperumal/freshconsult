@@ -2,7 +2,7 @@ class PopulateAccountSetupData < BaseWorker
 
 	include Marketplace::ApiUtil
 
-	sidekiq_options :queue => :populate_account_setup, :retry => 0, :backtrace => true, :failures => :exhausted
+	sidekiq_options :queue => :populate_account_setup, :retry => 0, :failures => :exhausted
 
 	DEFAULT_AUTOMATION_RULES_COUNT = {
 		:scn_automations => 3,

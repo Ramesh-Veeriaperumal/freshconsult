@@ -5,7 +5,7 @@ module Admin
     include SchedulerSemaphoreMethods
     include AutomationRuleHelper
 
-    sidekiq_options :queue => :supervisor, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :supervisor, :retry => 0, :failures => :exhausted
     SUPERVISOR_ERROR = 'SUPERVISOR_EXECUTION_FAILED'.freeze
     TICKET_SAVE_ERROR = 'TICKET_SAVE_FAILED'.freeze
 

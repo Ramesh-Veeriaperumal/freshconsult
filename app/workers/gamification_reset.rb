@@ -1,6 +1,6 @@
 class GamificationReset < BaseWorker
 
-  sidekiq_options :queue => :reset_gamification_score, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :reset_gamification_score, :retry => 0, :failures => :exhausted
 
   def perform(args={})
   	Thread.current[:gamification_reset] = true

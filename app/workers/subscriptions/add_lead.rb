@@ -1,7 +1,7 @@
 class Subscriptions::AddLead < BaseWorker
 	include Sidekiq::Worker
 
-	sidekiq_options :queue => :marketo_queue, :retry => 0, :backtrace => true, :failures => :exhausted
+	sidekiq_options :queue => :marketo_queue, :retry => 0, :failures => :exhausted
 
 	def perform(args = {})
 	  crm = ThirdCRM.new

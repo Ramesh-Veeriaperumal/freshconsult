@@ -1,10 +1,9 @@
 class Social::SmartFilterInitWorker < BaseWorker
   include Social::SmartFilter
   include Social::Util
-  sidekiq_options :queue => :smart_filter_initialise, 
-                  :retry => true,
-                  :backtrace => true, 
-                  :failures => :exhausted
+  sidekiq_options queue: :smart_filter_initialise,
+                  retry: true,
+                  failures: :exhausted
 
   def perform(args)   
     args.symbolize_keys!

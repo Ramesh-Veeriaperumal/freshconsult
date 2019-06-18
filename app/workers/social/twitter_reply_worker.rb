@@ -3,7 +3,7 @@ module Social
     include Conversations::Twitter
     include Social::Twitter::Util
 
-    sidekiq_options queue: :twitter_reply, retry: 0, backtrace: true, failures: :exhausted
+    sidekiq_options queue: :twitter_reply, retry: 0,  failures: :exhausted
 
     class TwitterReplyError < StandardError
     end

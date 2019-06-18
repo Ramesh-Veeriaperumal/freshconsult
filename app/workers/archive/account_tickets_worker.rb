@@ -1,6 +1,6 @@
 module Archive
   class AccountTicketsWorker < BaseWorker
-    sidekiq_options queue: ::ArchiveSikdekiqConfig['archive_account_tickets'], retry: 0, backtrace: true, failures: :exhausted
+    sidekiq_options queue: ::ArchiveSikdekiqConfig['archive_account_tickets'], retry: 0,  failures: :exhausted
 
     def perform(args)
       @account = Account.current

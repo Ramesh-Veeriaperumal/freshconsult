@@ -1,6 +1,6 @@
 class Reports::Export < BaseWorker
   
-  sidekiq_options :queue => :report_export_queue, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :report_export_queue, :retry => 0, :failures => :exhausted
   
 
   def perform params

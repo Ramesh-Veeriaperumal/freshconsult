@@ -1,6 +1,6 @@
 class Social::Gnip::RuleWorker < BaseWorker
 
-  sidekiq_options :queue => :twitter_gnip_worker, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :twitter_gnip_worker, :retry => 0, :failures => :exhausted
   
   
   include Gnip::Constants

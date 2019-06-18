@@ -1,7 +1,7 @@
 class Export::DataExport
   include Sidekiq::Worker
 
-  sidekiq_options :queue => :data_export, :retry => 0, :backtrace => true,
+  sidekiq_options :queue => :data_export, :retry => 0,
                   :failures => :exhausted
 
   def perform(params)

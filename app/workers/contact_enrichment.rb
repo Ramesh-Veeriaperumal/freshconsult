@@ -3,7 +3,7 @@ class ContactEnrichment
   include Sidekiq::Worker
   include Redis::RedisKeys
   include Redis::OthersRedis
-  sidekiq_options :queue => :data_enrichment, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :data_enrichment, :retry => 0, :failures => :exhausted
 
   def perform(args = {})
     email_update = args['email_update']

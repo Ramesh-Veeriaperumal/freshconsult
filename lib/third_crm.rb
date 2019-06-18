@@ -10,9 +10,10 @@ class ThirdCRM
   AUTOPILOT_CREDENTIALS = {"autopilotapikey" => AUTOPILOT_TOKENS['access_key'], "Content-Type" => 'application/json'}
 
   REQUEST_TYPES = {
-    :get => "get",
-    :post => "post"
-  }
+    get: 'get',
+    post: 'post',
+    delete: 'delete'
+  }.freeze
 
   AUTOPILOT_STATES = {'active' => 'Customer', 'suspended' => 'Trial Expired', 'trial' => 'Trial', 'free' => 'Free'}
 
@@ -61,28 +62,41 @@ class ThirdCRM
     update_lead(contact_data)
   end
 
-  def mark_as_deleted_customer
-    contact_data = {"custom"=>{"string--Customer--Status"=>"Deleted"}}
-    update_lead(contact_data.merge({"Email" => Account.current.admin_email}))
+  def update_lead_info(admin_email)
+    count = associated_accounts(admin_email).split(',').count
+    if count > 1
+      remaining_account_ids = (@associated_account_id_list.split(',') - ["#{Account.current.id}"]).join(',')
+      contact_data = { 'custom' => { 'string--Associated--Accounts' => remaining_account_ids } }
+      update_lead(contact_data.merge('Email' => admin_email))
+    else
+      delete_lead(admin_email)
+    end
   end
 
-  def lead_info(account)
-
+  def associated_accounts(admin_email)
     # Fetch list of associated accounts from dynamodb for the given email id
-    associated_accounts = AdminEmail::AssociatedAccounts.find account.admin_email
+    associated_accounts = AdminEmail::AssociatedAccounts.find admin_email
 
     # Creating comma separated account ids
 
     if associated_accounts.present?
-        @associated_account_id_list = associated_accounts.map(&:id).join(', ')
+        @associated_account_id_list = associated_accounts.map(&:id).join(',')
     end
+  end
 
+  def lead_info(account)
+    associated_accounts(account.admin_email)
     account_info = user_info(account)
     subscription_info = subscription_info(account)
     misc = account.conversion_metric ? signup_info(account.conversion_metric) : {'default' => {}, 'custom' => {}}
     lead_details = account_info['default'].merge(misc['default'])
     lead_details["custom"] = account_info['custom'].merge(subscription_info['custom']).merge(misc['custom'])
     {"contact" => lead_details}
+  end
+
+  def delete_lead(admin_email)
+    trigger_url = format(AUTOPILOT_TOKENS['delete_contact_url'], email_id: admin_email)
+    make_api(REQUEST_TYPES[:delete], trigger_url)
   end
 
   private
@@ -167,6 +181,8 @@ class ThirdCRM
         RestClient.safe_send(req_type, url, AUTOPILOT_CREDENTIALS)
       elsif req_type.to_s == REQUEST_TYPES[:post]
         RestClient.safe_send(req_type, url, data, AUTOPILOT_CREDENTIALS)
+      elsif req_type.to_s == REQUEST_TYPES[:delete]
+        RestClient.safe_send(req_type, url, AUTOPILOT_CREDENTIALS)
       end
     end
 end

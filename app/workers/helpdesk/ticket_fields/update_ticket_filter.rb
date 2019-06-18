@@ -2,7 +2,7 @@ class Helpdesk::TicketFields::UpdateTicketFilter < BaseWorker
   include Dashboard::Custom::CacheKeys
   include Cache::Memcache::Dashboard::Custom::CacheData
 
-  sidekiq_options :queue => :update_ticket_filter, :retry => 1, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :update_ticket_filter, :retry => 1, :failures => :exhausted
 
   def perform(args)
     args.symbolize_keys!
@@ -24,7 +24,7 @@ class Helpdesk::TicketFields::UpdateTicketFilter < BaseWorker
     end
 
     # Gets all dashboards with bar chart widgets to mark the ticket field deleted state
-    account.dashboards.joins(:widgets).where('dashboard_widgets.widget_type = 1').each do |dashboard|
+    account.dashboards.joins(:widgets).where('dashboard_widgets.widget_type = 1').group(:dashboard_id).each do |dashboard|
       dirty = false
       dashboard.widgets.each do |widget|
         next unless widget.config_data[:categorised_by] == field_id

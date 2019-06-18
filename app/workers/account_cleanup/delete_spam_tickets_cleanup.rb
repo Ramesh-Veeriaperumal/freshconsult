@@ -1,7 +1,7 @@
 module AccountCleanup
   class DeleteSpamTicketsCleanup < BaseWorker
 
-    sidekiq_options :queue => :delete_spam_tickets, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :delete_spam_tickets, :retry => 0, :failures => :exhausted
     APPLICATION_NAME = 'DeleteSpamTicketsCleanup'.freeze
 
     include AccountCleanup::Common

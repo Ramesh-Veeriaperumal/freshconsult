@@ -4,7 +4,7 @@ class Social::Gnip::ReplayWorker < BaseWorker
   include Social::Constants
   include Gnip::Constants
 
-  sidekiq_options :queue => :twitter_replay_worker, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :twitter_replay_worker, :retry => 0, :failures => :exhausted
 
   def perform(options)
     return unless Rails.env.production? #Dont let replay run for non-production environments

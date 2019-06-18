@@ -2,7 +2,7 @@ module Tickets
   class ObserverWorker < BaseWorker
     include AutomationRuleHelper
 
-    sidekiq_options :queue => :ticket_observer, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :ticket_observer, :retry => 0, :failures => :exhausted
     SYSTEM_DOER_ID = -1
     OBSERVER_ERROR = 'OBSERVER_EXECUTION_FAILED'.freeze
 

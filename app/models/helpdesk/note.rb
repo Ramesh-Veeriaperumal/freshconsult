@@ -444,7 +444,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
   protected
 
-    def send_reply_email  
+    def send_reply_email
       if fwd_email?
         Helpdesk::TicketNotifier.send_later(:deliver_forward, notable, self) unless only_kbase?
       elsif self.to_emails.present? or self.cc_emails.present? or self.bcc_emails.present? and !self.private
@@ -527,7 +527,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def only_kbase?
-      (self.to_emails | self.cc_emails | self.bcc_emails).compact == [self.account.kbase_email]
+      ((to_emails || []) | (cc_emails || []) | (bcc_emails || [])).compact == [account.kbase_email]
     end
 
     def first_customer_note(ticket, from_time, to_time)

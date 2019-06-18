@@ -1,6 +1,6 @@
 class Community::ClearModerationRecords < BaseWorker
 
-  sidekiq_options :queue => :clear_moderation_records, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :clear_moderation_records, :retry => 0, :failures => :exhausted
 
   def perform(obj_id, obj_class, topic_ids = nil)
   	Post::SPAM_SCOPES_DYNAMO.values.each do |scope|

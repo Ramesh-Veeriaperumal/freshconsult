@@ -1,7 +1,7 @@
 module Freshfone
   class EndTrialCallWorker < BaseWorker
 
-    sidekiq_options :queue => :freshfone_trial_worker, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :freshfone_trial_worker, :retry => 0, :failures => :exhausted
 
     def perform(params)
       Rails.logger.info "Freshfone End Trial Call worker"

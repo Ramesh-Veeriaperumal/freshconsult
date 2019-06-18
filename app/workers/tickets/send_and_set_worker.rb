@@ -2,7 +2,7 @@ class Tickets::SendAndSetWorker < BaseWorker
 
   include Helpdesk::Ticketfields::TicketStatus
   
-  sidekiq_options :queue => :send_and_set_observer, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :send_and_set_observer, :retry => 0, :failures => :exhausted
   SEND_AND_SET_OBSERVER_ERROR = 'SEND_AND_SET_OBSERVER_EXECUTION_FAILED'.freeze
   SEND_AND_SET_OBSERVER_TICKET_ERROR = (SEND_AND_SET_OBSERVER_ERROR + '::TICKET').freeze
   SEND_AND_SET_OBSERVER_NOTE_ERROR = (SEND_AND_SET_OBSERVER_ERROR + '::NOTE').freeze

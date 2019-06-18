@@ -1,9 +1,7 @@
 class Users::UpdateLanguage < BaseWorker
-
-  sidekiq_options :queue => :update_user_language, 
-  :retry => 0, 
-  :backtrace => true, 
-  :failures => :exhausted
+  sidekiq_options queue: :update_user_language,
+                  retry: 0,
+                  failures: :exhausted
 
   BATCH_LIMIT = 500
 

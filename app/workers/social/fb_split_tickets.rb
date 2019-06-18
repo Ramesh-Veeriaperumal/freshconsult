@@ -1,7 +1,7 @@
 module Social
   class FbSplitTickets < BaseWorker
     
-    sidekiq_options :queue => :fb_split_tickets, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :fb_split_tickets, :retry => 0, :failures => :exhausted
   
     def perform(args)
       @account = Account.current

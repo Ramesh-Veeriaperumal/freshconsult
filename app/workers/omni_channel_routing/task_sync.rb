@@ -2,7 +2,7 @@ module OmniChannelRouting
   class TaskSync < BaseWorker
     include ::OmniChannelRouting::Util
 
-    sidekiq_options queue: :ocr_task_sync, retry: 5, backtrace: true, failures: :exhausted
+    sidekiq_options queue: :ocr_task_sync, retry: 5,  failures: :exhausted
 
     def perform(args)
       args.symbolize_keys!

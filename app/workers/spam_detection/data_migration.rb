@@ -1,7 +1,7 @@
 module SpamDetection
 	class DataMigration < BaseWorker
 
-		sidekiq_options :queue => :spam_data_migration, :retry => 3, :backtrace => true, :failures => :exhausted
+		sidekiq_options :queue => :spam_data_migration, :retry => 3, :failures => :exhausted
 
 		STARTING_TIME_RANGE = 5 # in days
 		MAX_TIME_RANGE = 30 # in days

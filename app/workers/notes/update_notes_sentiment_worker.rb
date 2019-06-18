@@ -5,10 +5,9 @@ module Notes
     include Redis::RedisKeys
     include Redis::OthersRedis
 
-    sidekiq_options :queue => :update_notes_sentiment,
-                    :retry => 0,
-                    :backtrace => true,
-                    :failures => :exhausted
+    sidekiq_options queue: :update_notes_sentiment,
+                    retry: 0,
+                    failures: :exhausted
 
     def perform(args)
       args.symbolize_keys!

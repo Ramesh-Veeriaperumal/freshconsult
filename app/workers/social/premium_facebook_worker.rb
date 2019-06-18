@@ -1,6 +1,6 @@
 module Social
   class PremiumFacebookWorker < Social::FacebookWorker
-    sidekiq_options queue: :premium_facebook, retry: 0, backtrace: true, failures: :exhausted
+    sidekiq_options queue: :premium_facebook, retry: 0, failures: :exhausted
 
     def perform(args)
       Rails.logger.debug "Premium Facebook Worker starting at #{Time.now.utc} for account #{args['account_id']}"

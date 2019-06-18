@@ -2168,6 +2168,7 @@ en:
         object_id_array_in: 'Contains any of'
         object_id_array_and: 'Contains all of'
         object_id_array_not_in: 'Contains none of'
+      position: "Invalid Position"
     webhook:
       jira_hook_title: JIRA Issue Creation
       jira_hook_description: You could use a webhook to automatically create issues inside your JIRA account when a ticket is raised in Freshdesk.
@@ -2899,6 +2900,8 @@ en:
       freddy_suggestion: "Freddy Suggestion"
       thank_you_note: "Thank you Note"
       created_during: "Created"
+      before: 'Before'
+      after: 'After'
   ends_with: Ends with
   last_name: Last Name
   forum:

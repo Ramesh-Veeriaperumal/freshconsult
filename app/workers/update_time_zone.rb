@@ -4,7 +4,6 @@ class UpdateTimeZone < BaseWorker
 
   sidekiq_options queue: :update_time_zone,
                   retry: 3,
-                  backtrace: true,
                   failures: :exhausted
 
   def perform(args)

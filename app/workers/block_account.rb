@@ -1,5 +1,5 @@
 class BlockAccount < BaseWorker
-  sidekiq_options queue: :block_account, retry: 3, backtrace: true, failures: :exhausted
+  sidekiq_options queue: :block_account, retry: 3,  failures: :exhausted
 
   RECIPIENTS = ['fd-shadowfax@freshdesk.com'].freeze
   def perform(args)

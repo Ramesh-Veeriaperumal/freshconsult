@@ -13,7 +13,7 @@
 
 class NERWorker < BaseWorker
 
-  sidekiq_options :queue => :ner_worker, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :ner_worker, :retry => 0, :failures => :exhausted
   MAXIMUM_LENGTH = 3000
   UTC_TIMEZONE = "Etc/UTC"
 

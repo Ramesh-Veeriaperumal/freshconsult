@@ -1,7 +1,7 @@
 module Integrations::ContactsSync
   class Base < ::BaseWorker
 
-    sidekiq_options :queue => :contacts_sync, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :contacts_sync, :retry => 0, :failures => :exhausted
 
     def perform(app_name, sync_method, meta_data={})
       installed_app = Account.current.installed_applications.with_name(app_name).first

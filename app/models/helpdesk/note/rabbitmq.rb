@@ -3,8 +3,9 @@ class Helpdesk::Note < ActiveRecord::Base
   include Publish
 
   ACTOR_TYPE = {
-    :agent   => 1,
-    :contact => 2
+    agent: 1,
+    contact: 2,
+    system: 3
   }
 
   def manual_publish_to_rmq(uuid, action, key, options = {})
@@ -42,7 +43,7 @@ class Helpdesk::Note < ActiveRecord::Base
       "source"      =>   source,
       "category"    =>   schema_less_note.category,
       "user_id"     =>   user_id,
-      "agent"       =>   (human_note_for_ticket? && notable.agent_performed?(user)),
+      'agent'       =>   automated_note_for_ticket? ? false : (human_note_for_ticket? && notable.agent_performed?(user)),
       "private"     =>   private,
       "incoming"    =>   incoming,
       "deleted"     =>   deleted,
@@ -53,7 +54,11 @@ class Helpdesk::Note < ActiveRecord::Base
       # @ARCHIVE TODO Currently setting archive as false. 
       # Will change it once "archiving tickets" feature is rolled out.
       "archive"     =>   notable.archive || false,
-      "actor_type"  =>   (user.agent? ? ACTOR_TYPE[:agent] : ACTOR_TYPE[:contact])
+      'actor_type'  =>   (if automated_note_for_ticket?
+                            ACTOR_TYPE[:system]
+                          else
+                            user.agent? ? ACTOR_TYPE[:agent] : ACTOR_TYPE[:contact]
+                          end)
     }
   end
   

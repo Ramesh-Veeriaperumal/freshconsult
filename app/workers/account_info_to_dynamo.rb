@@ -6,7 +6,7 @@ class AccountInfoToDynamo < BaseWorker
 
   SKIP_NOTIFICIATION_DOMAINS = ["freshdesk.com"]
 
-  sidekiq_options :queue => :account_info_to_dynamo, :retry => 2, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :account_info_to_dynamo, :retry => 2, :failures => :exhausted
 
   def perform(args)
     args.symbolize_keys!

@@ -3,7 +3,7 @@ class Users::ContactDeleteForeverWorker < BaseWorker
   include Redis::OthersRedis
   include Utils::Freno
 
-  sidekiq_options :queue => :contact_delete_forever, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :contact_delete_forever, :retry => 0, :failures => :exhausted
 
   APPLICATION_NAME = 'ContactDeleteForeverWorker'.freeze
 

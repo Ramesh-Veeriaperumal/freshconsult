@@ -4,7 +4,7 @@ module Freshfone
     include Freshfone::FreshfoneUtil
     include Freshfone::CallsRedisMethods
 
-    sidekiq_options queue: :freshfone_trial_worker, retry: 0, backtrace: true,
+    sidekiq_options queue: :freshfone_trial_worker, retry: 0,
                     failures: :exhausted
 
     attr_accessor :params, :current_account, :current_call

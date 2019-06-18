@@ -4,7 +4,7 @@ class DkimCategoryChangerWorker
   include Redis::RedisKeys
   include Redis::OthersRedis
 
-  sidekiq_options :queue => :dkim_general, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :dkim_general, :retry => 0, :failures => :exhausted
 
   def perform
     account = Account.current

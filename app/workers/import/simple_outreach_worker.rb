@@ -1,5 +1,5 @@
 class Import::SimpleOutreachWorker < Import::ContactWorker
-  sidekiq_options :queue => :simple_outreach_import, :retry => 0, :backtrace => true,
+  sidekiq_options :queue => :simple_outreach_import, :retry => 0,
                   :failures => :exhausted
 
   def perform(args)

@@ -2,7 +2,7 @@ module Freshfone
   class FreshcallerMigrationWorker < BaseWorker
     include Freshcaller::Migration
 
-    sidekiq_options queue: :freshcaller_migration_worker, retry: 0, backtrace: true, failures: :exhausted
+    sidekiq_options queue: :freshcaller_migration_worker, retry: 0,  failures: :exhausted
 
     attr_accessor :params, :current_account
 

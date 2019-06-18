@@ -3,7 +3,7 @@ module Integrations
 
     include Sidekiq::Worker
 
-    sidekiq_options :queue => :github, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :github, :retry => 0, :failures => :exhausted
 
     def perform(options = {})
       current_account = Account.current

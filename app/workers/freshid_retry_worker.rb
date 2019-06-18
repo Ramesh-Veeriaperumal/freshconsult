@@ -1,5 +1,5 @@
 class FreshidRetryWorker < BaseWorker
-  sidekiq_options :queue => :freshid_retry_worker, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :freshid_retry_worker, :retry => 0, :failures => :exhausted
 
   RETRY_LIMIT = 5
   FRESHID_V2_FALLBACK_SUPPORTED_ERROR_CODES = [1, 2, 4, 8, 10, 13, 14].freeze

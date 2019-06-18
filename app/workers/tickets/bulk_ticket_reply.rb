@@ -1,6 +1,6 @@
 class Tickets::BulkTicketReply < BaseWorker
 
-  sidekiq_options :queue => :bulk_ticket_reply, :retry => 0, :backtrace => true, :failures => :exhausted
+  sidekiq_options :queue => :bulk_ticket_reply, :retry => 0, :failures => :exhausted
 
   def perform(args)
     begin

@@ -26,6 +26,8 @@ module RabbitMq::Subscribers::Notes::Activities
   end
 
   def act_note_valid?(action)
+    return true if automated_note_for_ticket? && create_action?(action)
+
     (create_action?(action) || destroy_action?(action)) && human_note_for_ticket?
   end
 

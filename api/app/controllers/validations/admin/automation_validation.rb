@@ -41,10 +41,18 @@ module Admin
       def validate_params
         return if errors.present?
 
+        validate_position if position.present?
         validate_performer if observer_rule? && performer.present?
         validate_events if observer_rule? && events.present?
         validate_actions if actions.present?
         validate_conditions if conditions.present?
+      end
+
+      def validate_position
+        unless position.is_a?(Integer)
+          errors[:position] << :invalid_data_type
+          error_options[:position] = { expected_type: Integer, actual_type: position.class }
+        end
       end
 
       def system_event

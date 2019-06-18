@@ -1,9 +1,7 @@
 class Tickets::UpdateCompanyId < BaseWorker
-
-  sidekiq_options :queue => :update_tickets_company_id,
-                  :retry => 2,
-                  :backtrace => true,
-                  :failures => :exhausted
+  sidekiq_options queue: :update_tickets_company_id,
+                  retry: 2,
+                  failures: :exhausted
 
   include RabbitMq::Helper
 

@@ -1,6 +1,6 @@
 module Ecommerce
   class EbayMessageWorker < BaseWorker
-    sidekiq_options :queue => :ebay_message_worker, :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :ebay_message_worker, :retry => 0, :failures => :exhausted
 
     def perform(args)
       begin

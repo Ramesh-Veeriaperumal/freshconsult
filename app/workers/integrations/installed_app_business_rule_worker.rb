@@ -1,7 +1,7 @@
 module Integrations
   class InstalledAppBusinessRuleWorker < ::BaseWorker
 
-    sidekiq_options :queue => :installed_app_business_rule , :retry => 0, :backtrace => true, :failures => :exhausted
+    sidekiq_options :queue => :installed_app_business_rule , :retry => 0, :failures => :exhausted
 
     def perform(args={})
       begin
