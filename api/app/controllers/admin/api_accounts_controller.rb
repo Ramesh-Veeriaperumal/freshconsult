@@ -2,6 +2,7 @@ module Admin
   class ApiAccountsController < ApiApplicationController
     
     include HelperConcern
+    include ApiAdminAccountsControllerMethods
     
     before_filter :validate_params, :validate_delegator, only: [:cancel]
     before_filter :validate_query_params, only: [:download_file]
@@ -27,7 +28,12 @@ module Admin
       )
       s3_url.nil? ? head(404) : redirect_to(s3_url, status: 302)
     end
-    
+
+    def support_tickets
+      @unresolved_tickets = fetch_unresolved_tickets(current_user.email)
+      response.api_root_key = :support_tickets
+    end
+
     private
       def load_object
         @item = current_account

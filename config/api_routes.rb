@@ -419,6 +419,7 @@ Helpkit::Application.routes.draw do
       collection do
         post :cancel
         get :download_file, path: '/:type/download'
+        get :support_tickets
       end
     end
 
