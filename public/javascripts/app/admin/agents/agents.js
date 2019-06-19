@@ -1,7 +1,7 @@
 /*jslint browser: true, devel: true */
 /*global  App:true */
 window.App = window.App || {};
-
+window.App.Channel = window.App.Channel || new MessageChannel();
 
 (function ($) {
 	"use strict";
@@ -12,7 +12,8 @@ window.App = window.App || {};
 			this.onVisit(data);
 		},
 		onVisit: function (data) {
-			this.initializeSubModules();
+      this.initializeSubModules();
+      this.bindHandlers();
 			if(this.currentModule !== ''){
 				this[this.currentModule].onVisit();
 			}
@@ -33,6 +34,16 @@ window.App = window.App || {};
 			$doc.off(".agent-roles");
 			$(document).off('.agentEvents');
 			this.currentModule = '';
-		}
+		},
+		bindHandlers: function () {
+			this.startWatchRoutes();
+		},
+		startWatchRoutes: function () {
+			var isIframe = (window !== window.top);
+			if (isIframe) {
+        // Transfer data through the channel
+        window.App.Channel.port1.postMessage({ action: "update_iframe_url", path: '/admin' + location.pathname });
+			}
+    },
 	};
 }(window.jQuery));

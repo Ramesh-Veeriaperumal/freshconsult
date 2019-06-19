@@ -2,6 +2,8 @@
 /*global  App */
 
 window.App = window.App || {};
+window.App.Channel = window.App.Channel || new MessageChannel();
+
 (function ($) {
 	"use strict";
 
@@ -61,8 +63,16 @@ window.App = window.App || {};
 		},
 
 		bindHandlers: function () {
-
+			this.startWatchRoutes();
 		},
+
+		startWatchRoutes: function () {
+			var isIframe = (window !== window.top);
+			if (isIframe) {
+        // Transfer data through the channel
+        window.App.Channel.port1.postMessage({ action: "update_iframe_url", path: location.pathname });
+			}
+    },
 
 		onLeave: function (data) {
 			if (this.current_module !== '') {

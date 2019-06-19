@@ -2,6 +2,8 @@
 /*global  App */
 
 window.App = window.App || {};
+window.App.Channel = window.App.Channel || new MessageChannel();
+
 (function ($) {
 	"use strict";
 	var inherit_parent=[],newValues={},oldValues={},element;
@@ -705,8 +707,9 @@ window.App = window.App || {};
 	  },
 	  initDynamicSection: function(){
 	  	$('.dynamic_sections').trigger('change');
-	  },
+		},
 		bindEvents:function(){ //bind events
+			this.startWatchRoutes();
 			invokeRedactor('template_data_ticket_body_attributes_description_html', 'template');
 			$('body')
 		    .on("change.template_form",'#template_data_group_id', function(e){
@@ -992,6 +995,15 @@ window.App = window.App || {};
 			   	 $('.form_btn').attr('disabled',false);
 			   }
 			}.bind(this))
+		},
+		startWatchRoutes: function () {
+			var isIframe = (window !== window.top);
+			if (isIframe) {
+				var prefix = '/admin';
+				var emberizedPath = location.pathname.includes('helpdesk') ? prefix + location.pathname.replace('helpdesk/', '') : prefix + location.pathname;
+        // Transfer data through the channel
+        window.App.Channel.port1.postMessage({ action: "update_iframe_url", path: emberizedPath });
+			}
 		}
 
 	};
