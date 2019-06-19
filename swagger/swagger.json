@@ -10446,6 +10446,26 @@
         }
       }
     },
+    "/accounts/support_tickets": {
+      "get": {
+        "tags": [
+          "Account"
+        ],
+        "description": "Number of support tickets raised/discussed by this company in the last 3 months",
+        "summary": "Support tickets count",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/support_tickets"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/data_export/export": {
       "post": {
         "tags": [
@@ -23457,6 +23477,16 @@
         }
       }
     },
+    
+    "support_tickets": {
+      "type": "object",
+      "properties": {
+        "unresolved_count": {
+          "type": "integer"
+        }
+      }
+    },
+    
     "account_feature_enable_disable": {
       "type": "object",
       "required": [
