@@ -1,0 +1,32 @@
+get:
+  tags: [subscription]
+  description: Account subscription details
+  summary: Account subscription details
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/subscription_response'
+    403:
+      description: Access denied
+put:
+  tags: [subscription]
+  description: Update account subscription
+  summary: Update account subscription
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/subscription_update_request'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/subscription_response'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
