@@ -10,6 +10,7 @@
 window.App = window.App || {};
 
 window.App.Groups = window.App.Groups || {};
+window.App.Channel = window.App.Channel || new MessageChannel();
 
 (function($) {
     'use strict';
@@ -47,7 +48,17 @@ window.App.Groups = window.App.Groups || {};
         },
 
         bindHandlers: function(){
-            
+            this.startWatchRoutes();
+        },
+
+        startWatchRoutes: function () {
+          jQuery(document).one('pjax:success', function() {
+            var isIframe = (window !== window.top);
+            if (isIframe) {
+              // Transfer data through the channel
+              window.App.Channel.port1.postMessage({ action: "update_iframe_url", path: location.pathname });
+            }
+          });
         },
 
         onLeave: function(data){

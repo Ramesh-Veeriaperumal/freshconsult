@@ -2,6 +2,8 @@
 /*global  App, nativePlaceholderSupport */
 
 window.App = window.App || {};
+window.App.Channel = window.App.Channel || new MessageChannel();
+
 (function ($) {
   "use strict";
 
@@ -89,20 +91,18 @@ window.App = window.App || {};
         e.preventDefault();
         var filter = $('.feedbacks-filter-me') && $('.feedbacks-filter-me').parent().hasClass('active') ? 'my_article_feedback' : 'article_feedback';
         var article_id = $(e.currentTarget).data('articleId');
-        window.parent.postMessage({action: "ticket_filter", filter: filter, article_id: article_id}, window.location.origin);
+        window.App.Channel.port1.postMessage({action: "ticket_filter", filter: filter, article_id: article_id});
       } else {
         $(e.currentTarget).attr('target','_top');
       }
     },
 
     startWatchRoutes: function () {
-      jQuery(document).one('pjax:success', function() {
-        var isIframe = (window !== window.top);
-        var postMessage = window.parent.postMessage;
-        if (postMessage && isIframe) {
-          window.parent.postMessage({ action: "update_iframe_url", path: location.pathname }, window.location.origin)
-        }
-      });
+      var isIframe = (window !== window.top);
+      if (isIframe) {
+        // Transfer data through the channel
+        window.App.Channel.port1.postMessage({ action: "update_iframe_url", path: location.pathname });
+      }
     },
 
     isIe: function () {

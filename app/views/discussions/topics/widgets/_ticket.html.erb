@@ -33,12 +33,17 @@
     topicToTicket('#topic-ticket-link', { action: 'topic_ticket', ticketId: <%= topic.ticket.display_id %> })
   <% end %>
 
+  jQuery(document).ready(function(){
+    window.App = window.App || {};
+    window.App.Channel = window.App.Channel || new MessageChannel();
+	});
+
   function topicToTicket(element, data) {
     jQuery(element).on('click', function (event) {
       var isIe = document.documentMode || /Edge/.test(navigator.userAgent);
       if (!isIe) {
         event.preventDefault();
-        window.parent.postMessage(data, window.location.origin);
+        window.App.Channel.port1.postMessage(data);
       }
     });
   }
