@@ -167,6 +167,16 @@ class Account < ActiveRecord::Base
   #Features that need to connect to the FDnode server
   FD_NODE_FEATURES = ['cti']
 
+  # DB to Bitmap/LP migration starts
+  # until cleanup is done, these features will still be read from DB
+  FEATURES_TO_BE_REMOVED = [
+    :bi_reports, :contact_merge_ui, :multiple_user_emails,
+    :facebook_realtime, :autorefresh_node, :updated_twilio_client, :count_es_reads,
+    :reports_regenerate_data, :chat_enable, :sandbox_account, :portal_cc,
+    :disable_rr_toggle, :count_es_writes, :round_robin_revamp, :business_hours,
+    :scenario_automations, :social_revamp, :spam_dynamo, :activity_revamp
+  ].to_set.freeze
+
   TEMPORARY_AND_SELECTABLE_FEATURES_TO_BITMAP = [
     :gamification_enable, :personalized_email_replies, :agent_collision,
     :cascade_dispatchr, :cascade_dispatcher, :id_less_tickets, :reply_to_based_tickets,
@@ -185,16 +195,12 @@ class Account < ActiveRecord::Base
     :tokenize_emoji, :custom_dashboard, :report_field_regenerate,
     :saml_old_issuer, :redis_display_id, :es_multilang_solutions,
     :sort_by_customer_response, :survey_links, :tags_filter_reporting,
-    :saml_unspecified_nameid, :euc_hide_agent_metrics, :single_session_per_user,
-    :bi_reports, :contact_merge_ui, :multiple_user_emails, :facebook_realtime,
-    :autorefresh_node, :updated_twilio_client, :count_es_reads,
-    :reports_regenerate_data, :chat_enable, :sandbox_account, :portal_cc,
-    :disable_rr_toggle, :count_es_writes, :round_robin_revamp, :business_hours,
-    :scenario_automations, :social_revamp, :spam_dynamo, :activity_revamp
+    :saml_unspecified_nameid, :euc_hide_agent_metrics, :single_session_per_user
   ].to_set.freeze
 
   TEMPORARY_AND_SELECTABLE_FEATURES_TO_LP = (
-    TEMPORARY_AND_SELECTABLE_FEATURES_TO_BITMAP
+    TEMPORARY_AND_SELECTABLE_FEATURES_TO_BITMAP +
+    FEATURES_TO_BE_REMOVED
   ).each_with_object(
     SELECTABLE_FEATURES.dup.merge(TEMPORARY_FEATURES.dup)
   ) do |fname, temp_features|
@@ -224,11 +230,12 @@ class Account < ActiveRecord::Base
       *DB_TO_BITMAP_MIGRATION_FEATURES_LIST, # phase 1 (plan features)
       *ADMIN_CUSTOMER_PORTAL_FEATURES.keys,
       *TEMPORARY_AND_SELECTABLE_FEATURES_TO_BITMAP
-    ].to_set
+    ].to_set - FEATURES_TO_BE_REMOVED
   ).freeze
 
   DB_TO_LP_MIGRATION_P2_FEATURES_LIST = (
     TEMPORARY_AND_SELECTABLE_FEATURES_TO_LP.keys.to_set -
+    FEATURES_TO_BE_REMOVED -
     DB_TO_BITMAP_MIGRATION_P2_FEATURES_LIST
   ).freeze
   # DB to Bitmap/LP migration ends
