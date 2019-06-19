@@ -14,10 +14,12 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     super
     @currency_map = Hash[Subscription::Currency.all.collect{ |cur| [cur.name, cur] }]
   end
-
+  
   def test_valid_show
+    @account = Account.current
     get :show, construct_params(version: 'private')
     assert_response 200
+    match_json(subscription_response(@account.subscription))
   end
 
   def test_show_no_privilege
@@ -238,6 +240,24 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
               ]
           }
       ]
+    end
+
+    def subscription_response(subscription)
+      {
+        'id': subscription.id,
+        'state': subscription.state,
+        'plan_id': subscription.subscription_plan_id,
+        'renewal_period': subscription.renewal_period,
+        'agent_seats': subscription.agent_limit,
+        'card_number': subscription.card_number,
+        'card_expiration': subscription.card_expiration,
+        'name_on_card': (subscription.billing_address.name_on_card if subscription.billing_address.present?),
+        'updated_at': %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+        'created_at': %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+        'currency': subscription.currency.name,
+        'addons': nil
+      
+      }
     end
 
     def immediate_invoice_stub

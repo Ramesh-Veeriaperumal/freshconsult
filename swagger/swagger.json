@@ -11834,7 +11834,6 @@
         }
       }
     },
-
     "/solutions/articles/untranslated_articles/{language}": {
       "get": {
         "tags": [
@@ -21544,13 +21543,30 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "integer"
+          "type": "integer",
+          "format": "int64"
         },
         "state": {
           "type": "string"
         },
-        "subscription_plan_id": {
+        "plan_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "renewal_period": {
           "type": "integer"
+        },
+        "agent_seats": {
+          "type": "integer"
+        },
+        "card_number": {
+          "type": "string"
+        },
+        "card_expiration": {
+          "type": "string"
+        },
+        "name_on_card": {
+          "type": "string"
         },
         "created_at": {
           "type": "string",
