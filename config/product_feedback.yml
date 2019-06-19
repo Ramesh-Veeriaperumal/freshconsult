@@ -1,5 +1,7 @@
 common: &common
   feedback_path: api/channel/tickets
+  contacts_path: api/v2/contacts
+  tickets_path: api/v2/tickets
 
 development:
   <<: *common
