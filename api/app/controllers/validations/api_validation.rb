@@ -1,7 +1,7 @@
 class ApiValidation
   include ActiveModel::Validations
   include ActiveModel::Validations::Callbacks
-  attr_accessor :error_options, :allow_string_param, :ids, :attachment_ids, :skip_bulk_validations, :skip_hash_params_set
+  attr_accessor :error_options, :allow_string_param, :ids, :attachment_ids, :skip_bulk_validations, :skip_hash_params_set, :skip_hash_params_set_for_parameters
 
   before_validation :trim_attributes
   validates :ids, required: true, data_type: { rules: Array, allow_nil: false },
@@ -82,7 +82,7 @@ class ApiValidation
       else
         instance_variable_set("@#{key}", value)
       end
-      set_instance_variables(value) if value.is_a?(Hash) && !skip_hash_params_set
+      set_instance_variables(value) if value.is_a?(Hash) && !(skip_hash_params_set || skip_hash_params_set_for_parameters.try(:include?, key))
     end
   end
 

@@ -175,9 +175,14 @@
 <% if current_user && current_user.is_falcon_pref? %>
   <script type="text/javascript">
     jQuery(document).ready(function() {
-      // Send a postmessage to indicate that helpkit DOMContentLoaded
-      
-      window.parent.postMessage({action: "helpkit-loaded"}, window.location.origin);
+      window.App = window.App || {};
+			window.App.Channel = window.App.Channel || new MessageChannel();
+			// Transfer port2 to ember
+			window.parent.postMessage('init', window.location.origin, [window.App.Channel.port2]);
+      try {
+				// Send a postmessage to indicate that helpkit DOMContentLoaded
+				window.App.Channel.port1.postMessage({action: "helpkit-loaded"});
+			} catch(e) {}
     });
   </script>
 <% end %>

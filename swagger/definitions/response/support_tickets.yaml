@@ -1,0 +1,4 @@
+type: object
+properties:
+  unresolved_count:
+    type: integer

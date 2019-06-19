@@ -1,5 +1,5 @@
 class Admin::SubscriptionDecorator < ApiDecorator
-  delegate :id, :state, :subscription_plan_id, :renewal_period, :agent_limit, to: :record
+  delegate :id, :state, :subscription_plan_id, :renewal_period, :agent_limit, :card_number, :card_expiration, :billing_address, to: :record
 
   def initialize(record, options)
     super(record)
@@ -13,7 +13,12 @@ class Admin::SubscriptionDecorator < ApiDecorator
     {
       id: id,
       state: state,
-      subscription_plan_id: subscription_plan_id,
+      plan_id: subscription_plan_id,
+      renewal_period: renewal_period,
+      agent_seats: agent_limit,
+      card_number: card_number,
+      card_expiration: card_expiration,
+      name_on_card: (billing_address.name_on_card if billing_address.present?),
       updated_at: updated_at,
       created_at: created_at,
       currency: currency_info,

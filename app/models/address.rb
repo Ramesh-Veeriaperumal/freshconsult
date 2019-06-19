@@ -13,7 +13,10 @@ class Address < ActiveRecord::Base
   def humanize
     "#{first_name} #{last_name} \n#{address1} #{address2} \n#{state} #{city} \n#{country} #{zip}"
   end
-  
+
+  def name_on_card
+    "#{first_name} #{last_name}"
+  end
   
   def self.required_fields
     [:state, :zip, :first_name, :last_name,:address1, :city, :country]

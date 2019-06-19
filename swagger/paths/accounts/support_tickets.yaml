@@ -1,0 +1,11 @@
+get:
+  tags: [Account]
+  description: Number of support tickets raised/discussed by this company in the last 3 months
+  summary: Support tickets count
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/support_tickets'
+    403:
+      description: Access denied

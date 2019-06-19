@@ -86,10 +86,15 @@
 		<% end %>
 	});
 
+	jQuery(document).ready(function(){
+		window.App = window.App || {};
+		window.App.Channel = window.App.Channel || new MessageChannel();
+	});
+
 	jQuery("#manage-account-languages").on("click", function(e){
     if(!jQuery.browser.msie && !jQuery.browser.msedge) {
 		  e.preventDefault();
 		}
-		window.parent.postMessage({action: "manage-language"}, window.origin);
+		window.App.Channel.port1.postMessage({action: "manage-language"});
 	});
 </script>

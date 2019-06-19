@@ -61,6 +61,8 @@ class DefaultFieldValidator < ActiveModel::EachValidator
           string_rejection_validator(record, options_hash)
         when :date_time
           date_time_validator(record, options_hash)
+        when :hash
+          hash_validator(record, options_hash)
         else
           raise ArgumentError, "No validator with this #{validator} name exists in #{self.class}"
         end
@@ -110,5 +112,9 @@ class DefaultFieldValidator < ActiveModel::EachValidator
 
     def date_time_validator(record, options_hash)
       DateTimeValidator.new(options_hash).validate(record)
+    end
+    
+    def hash_validator(record, options_hash)
+      HashValidator.new(options_hash).validate(record)
     end
 end

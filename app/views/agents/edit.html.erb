@@ -30,7 +30,7 @@
         form.ajaxSubmit({
           success: function(data){
             form.data('formChanged', false);
-            top.location.reload();
+            window.location.replace(window.location.origin + '/agents')
           },
           error: function(data){
             window.location.reload();

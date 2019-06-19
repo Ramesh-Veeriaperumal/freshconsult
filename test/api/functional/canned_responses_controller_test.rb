@@ -495,12 +495,11 @@ class CannedResponsesControllerTest < ActionController::TestCase
   end
 
   def test_update_title
-    ca_response1 = create_canned_response(@@ca_folder_all.id)
+    ca_response1 = create_canned_response(@@ca_folder_all.id, ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me])
     title = Faker::App.name
     canned_response = {
       title: title
     }
-    p "agent: #{@agent.inspect} privilege?: #{@agent.privilege?(:manage_canned_responses)} :: ca_response: #{ca_response1.inspect}"
     put :update, construct_params(build_ca_param(canned_response)).merge(id: ca_response1.id)
     p "canned_response :: #{canned_response.inspect} :: response.body ::#{response.body.inspect}"
     assert_response 200

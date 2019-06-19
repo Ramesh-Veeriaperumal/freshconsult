@@ -97,7 +97,7 @@ module Rack #:nodoc:
         env["SERVER_PORT"] = 443 if fd_ssl?(env)
       end
       req = Rack::Request.new(env)
-      if req.params["openid.mode"]
+      if req.params['openid.mode'] && !ssrf_request?(env)
         complete_authentication(env)
       end
 
@@ -276,6 +276,25 @@ module Rack #:nodoc:
         env["rack.url_scheme"] == 'https'
       end
 
+      # This is a quick hack to prevent SSRF attack specifically for quickbooks
+      # We are still vulnerable to SSRF attacks from other sources
+      # More URLS will need to be added after analysis
+      def ssrf_request?(env)
+        req_path = env['PATH_INFO']
+        if req_path && req_path.include?('integrations/marketplace/quickbooks_sso/open_id')
+          begin
+            req = Rack::Request.new(env)
+            claimed_id = req.params['openid.claimed_id']
+            if claimed_id
+              uri = URI.parse(claimed_id)
+              return uri.host != 'openid.intuit.com'
+            end
+          rescue
+            return true
+          end
+        end
+        false
+      end
 
   end
 end
