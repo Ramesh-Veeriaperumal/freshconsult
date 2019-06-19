@@ -125,6 +125,7 @@ test:
   twitter_realtime_queue: social_gnip_2_0_tweet_test
   facebook_realtime_queue: social_fb_feed_test
   search_etl_queue: search_etl_queue_test
+  spam_trash_delete_queue: spam_trash_delete_queue_test
   count_etl_queue: count_etl_queue_test
   custom_mailbox_realtime_queue: custom_mailbox_test
   forums_moderation_queue: forum_moderation_test
