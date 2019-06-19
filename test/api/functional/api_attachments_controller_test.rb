@@ -41,7 +41,7 @@ class ApiAttachmentsControllerTest < ActionController::TestCase
   def test_destroy_attachment_with_all_ticket_permission
     user = User.current
     user.agent.update_attributes(ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets])
-    ticket_id = create_ticket.display_id
+    ticket_id = create_ticket.id
     attachment = create_attachment(attachable_type: 'Helpdesk::Ticket', attachable_id: ticket_id)
     delete :destroy, controller_params(id: attachment.id)
     assert_response 204
@@ -50,7 +50,7 @@ class ApiAttachmentsControllerTest < ActionController::TestCase
   def test_destroy_attachment_with_assigned_ticket_permission
     user = User.current
     user.agent.update_attributes(ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
-    ticket_id = create_ticket(responder_id: user.id).display_id
+    ticket_id = create_ticket(responder_id: user.id).id
     attachment = create_attachment(attachable_type: 'Helpdesk::Ticket', attachable_id: ticket_id)
     delete :destroy, controller_params(id: attachment.id)
     assert_response 204
@@ -60,7 +60,7 @@ class ApiAttachmentsControllerTest < ActionController::TestCase
     user = User.current
     group = create_group_with_agents(Account.current, agent_list: [user.id])
     user.agent.update_attributes(ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
-    ticket_id = create_ticket({}, group).display_id
+    ticket_id = create_ticket({}, group).id
     attachment = create_attachment(attachable_type: 'Helpdesk::Ticket', attachable_id: ticket_id)
     delete :destroy, controller_params(id: attachment.id)
     assert_response 204
@@ -69,7 +69,7 @@ class ApiAttachmentsControllerTest < ActionController::TestCase
   def test_destroy_attachment_without_assigned_ticket_permission
     user = User.current
     user.agent.update_attributes(ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
-    ticket_id = create_ticket.display_id
+    ticket_id = create_ticket.id
     attachment = create_attachment(attachable_type: 'Helpdesk::Ticket', attachable_id: ticket_id)
     delete :destroy, controller_params(id: attachment.id)
     assert_response 403
@@ -78,7 +78,7 @@ class ApiAttachmentsControllerTest < ActionController::TestCase
   def test_destroy_attachment_without_group_ticket_permission
     user = User.current
     user.agent.update_attributes(ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
-    ticket_id = create_ticket.display_id
+    ticket_id = create_ticket.id
     attachment = create_attachment(attachable_type: 'Helpdesk::Ticket', attachable_id: ticket_id)
     delete :destroy, controller_params(id: attachment.id)
     assert_response 403

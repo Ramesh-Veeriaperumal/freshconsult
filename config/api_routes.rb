@@ -744,11 +744,13 @@ Helpkit::Application.routes.draw do
                                         only: [:index]
     resources :agent_password_policy, controller: 'ember/agent_password_policies',
                                         only: [:index]
-    resource :subscription, controller: 'admin/subscriptions', only: [:show] do
+    
+   resource :subscription, controller: 'admin/subscriptions', only: [:show, :update] do
       collection do
         get :estimate
       end
-    end
+   end
+    
     get '/plans', to: 'admin/subscriptions#plans'
 
     get '/yearin_review', to: 'ember/year_in_review#index'
