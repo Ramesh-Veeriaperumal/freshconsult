@@ -7,6 +7,7 @@ JSON.generate(@items.map do |item|
   response_hash = {
     id: item.id,
     title: item.title_text,
+    active: !item.active.zero?,
     created_at: item.created_at,
     updated_at: item.updated_at
   }

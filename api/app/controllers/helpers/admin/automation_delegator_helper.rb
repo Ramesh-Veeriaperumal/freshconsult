@@ -348,8 +348,8 @@ module Admin::AutomationDelegatorHelper
   end
 
   def duplicate_rule_name_error(name)
-    errors[name.to_sym] << :duplicate_name_in_automations
-    (error_options[name.to_sym] ||= {}).merge!(name: name)
+    errors[:name] << :duplicate_name_in_automations
+    (error_options[:name] ||= {}).merge!(name: name)
   end
 
   def custom_ticket_fields

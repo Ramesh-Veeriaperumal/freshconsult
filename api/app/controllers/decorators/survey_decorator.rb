@@ -1,5 +1,5 @@
 class SurveyDecorator < ApiDecorator
-  delegate :id, :title_text, :survey_questions, to: :record
+  delegate :id, :title_text, :active, :survey_questions, to: :record
 
   def initialize(record, options)
     super(record)

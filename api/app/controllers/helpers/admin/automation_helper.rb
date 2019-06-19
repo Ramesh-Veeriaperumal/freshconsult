@@ -50,7 +50,7 @@ module Admin::AutomationHelper
           condition.permit(*CONDITION_SET_REQUEST_VALUES) if condition.is_a?(Hash)
           condition = convert_tag_fields(condition) if condition[:field_name] == TAG_NAMES && key == :ticket
           condition[:field_name] = 'ticlet_cc' if condition[:field_name] == 'ticket_cc' && key == :ticket
-          add_case_sensitive_key(condition)
+          add_case_sensitive_key(condition) if condition.present?
         end
       end
     end
