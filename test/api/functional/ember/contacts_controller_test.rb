@@ -266,7 +266,7 @@ module Ember
                                                              email: Faker::Internet.email)
       assert_response 400
       match_json([bad_request_error_pattern(
-        'company_id', :datatype_mismatch,
+        'company', :datatype_mismatch,
         expected_data_type: 'key/value pair')]
       )
       company_field.update_attributes({:required_for_agent => false})
