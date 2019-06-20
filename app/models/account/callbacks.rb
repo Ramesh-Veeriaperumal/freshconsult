@@ -13,7 +13,7 @@ class Account < ActiveRecord::Base
   before_update :clear_ocr_data, if: :ocr_feature_disabled?
   before_destroy :backup_changes, :make_shard_mapping_inactive
 
-  after_create :populate_features, :change_shard_status, :make_current
+  after_create :make_current, :populate_features, :change_shard_status
   after_update :change_dashboard_limit, :if => :field_service_management_enabled_changed?
   after_update :change_shard_mapping, :update_default_business_hours_time_zone,
                :update_google_domain, :update_route_info, :update_users_time_zone
@@ -126,6 +126,13 @@ class Account < ActiveRecord::Base
     end
     if freshid_integration_signup_allowed?
       freshid_v2_signup? ? launch_freshid_with_omnibar(true) : launch_freshid_with_omnibar
+    if redis_key_exists?(ENABLE_AUTOMATION_REVAMP)
+      launch(:automation_revamp)
+      launch(:automation_rule_execution_count)
+      if redis_key_exists?(ENABLE_THANK_YOU_DETECTOR)
+        add_feature(:detect_thank_you_note)
+        add_feature(:detect_thank_you_note_eligible)
+      end
     end
   end
 
