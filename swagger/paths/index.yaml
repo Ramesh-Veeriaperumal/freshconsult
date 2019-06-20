@@ -485,7 +485,7 @@
   $ref: ./freshmarketer/disable_integration.yaml
 
 /subscription:
-  $ref: ./subscription/show.yaml
+  $ref: ./subscription/show_and_update.yaml
 /subscription/estimate:
   $ref: ./subscription/estimate.yaml
 /plans:

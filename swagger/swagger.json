@@ -8938,7 +8938,41 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/subscription_show"
+              "$ref": "#/definitions/subscription_response"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "subscription"
+        ],
+        "description": "Update account subscription",
+        "summary": "Update account subscription",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/subscription_update_request"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/subscription_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
             }
           },
           "403": {
@@ -21559,7 +21593,7 @@
         }
       }
     },
-    "subscription_show": {
+    "subscription_response": {
       "type": "object",
       "properties": {
         "id": {
@@ -21605,7 +21639,8 @@
             "type": "object",
             "properties": {
               "id": {
-                "type": "number"
+                "type": "number",
+                "format": "int64"
               },
               "name": {
                 "type": "string"
@@ -21654,6 +21689,23 @@
               }
             }
           }
+        }
+      }
+    },
+    "subscription_update_request": {
+      "type": "object",
+      "properties": {
+        "plan_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "renewal_period": {
+          "type": "integer",
+          "description": "One of the value in [1, 3, 6, 12]"
+        },
+        "agent_seats": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },

@@ -56,6 +56,7 @@ module SurveysTestHelper
     {
       id: survey.id,
       title: survey.title_text,
+      active: !survey.active.zero?,
       created_at: survey.created_at,
       updated_at: survey.updated_at
     }

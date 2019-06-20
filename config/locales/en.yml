@@ -2832,7 +2832,7 @@ en:
       internal_group_id: "Internal group"
       is: "is"
       is_any_of: "is any of"
-      is_none_of: "is not"
+      is_none_of: "is none of"
       is_not: "is not"
       job_title: "Job title"
       language: "Language"

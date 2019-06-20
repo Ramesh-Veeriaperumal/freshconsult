@@ -29,13 +29,14 @@ properties:
   addons:
     type: array
     items:
-        type: object
-        properties:
-          id:
-            type: number
-          name:
+      type: object
+      properties:
+        id:
+          type: number
+          format: int64
+        name:
+          type: string
+        features_list:
+          type: array
+          items:
             type: string
-          features_list:
-            type: array
-            items:
-              type: string
