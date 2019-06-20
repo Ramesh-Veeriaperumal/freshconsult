@@ -286,12 +286,6 @@ class VaRule < ActiveRecord::Base
     Thread.current[:thank_you_note] = nil
   end
 
-  def add_thank_you_note_to_system_changes(evaluate_on)
-    result_hash = Thread.current[:thank_you_note]
-    evaluate_on.system_changes[self.id.to_s][:thank_you_note] = [result_hash[:result]] if result_hash[:rule_id] == self.id
-    Thread.current[:thank_you_note] = nil
-  end
-
   def fetch_actions_for_flash_notice(doer)
     Va::RuleActivityLogger.initialize_activities
     actions.each { |a| a.record_action_for_bulk(doer) }
