@@ -10,7 +10,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   before_filter :load_object
   before_filter :check_application_installable, :only => [:install, :update]
   before_filter :set_auth_key, :only => [:install,:update]
-  before_filter :check_jira_authenticity, :only => [:install, :update]
+  # before_filter :check_jira_authenticity, :only => [:install, :update]
   before_filter :populate_zoho_domain, :only => [:install, :update], :if => :application_is_zoho?
   before_filter :redirect_old_slack, :only => [:update], :if => :application_is_slack? #Remove this when slackv1 is obselete.
   before_filter :update_ratelimit, :only => [:update] #For security, prevent port scanning.
