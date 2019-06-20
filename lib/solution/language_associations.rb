@@ -128,7 +128,6 @@ module Solution::LanguageAssociations
     def method_missing(method, *args, &block)
 			super
 		rescue NoMethodError => e
-			Rails.logger.debug "#{self.class.name} :: method_missing :: args is #{args.inspect} and method:: #{method}"
 			args = args.first if args.present? && args.is_a?(Array)
       child_assoc = self.class.name.chomp('Meta').gsub("Solution::", '').downcase
 			return ((args.present? || args.nil?) ? self.safe_send("current_#{child_assoc}").safe_send(method, args) :
