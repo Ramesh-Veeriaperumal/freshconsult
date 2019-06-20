@@ -126,6 +126,7 @@ class Account < ActiveRecord::Base
     end
     if freshid_integration_signup_allowed?
       freshid_v2_signup? ? launch_freshid_with_omnibar(true) : launch_freshid_with_omnibar
+    end
     if redis_key_exists?(ENABLE_AUTOMATION_REVAMP)
       launch(:automation_revamp)
       launch(:automation_rule_execution_count)
