@@ -110,7 +110,7 @@ module Admin::Automation::AutomationSummary
       array << generate_key(data[:name], data[:evaluate_on] || 'ticket')
       field = ticket_fields.find { |tf| tf.name == data[:name] }
       field.present? && field.field_type == 'custom_date' && data[:operator].present? ?
-          array << generate_operator(DATE_FIELDS_OPERATOR_MAPPING[data[:operator].to_sym]) :
+          array << generate_operator(DATE_FIELDS_OPERATOR_MAPPING[data[:operator].to_sym] || data[:operator]) :
           array << generate_operator(data[:operator]) if data[:operator].present?
       if data.key? :value
         data[:value] = data[:value].is_a?(Array) ? data[:value].map { |val| CGI.escapeHTML(val) } :
@@ -251,7 +251,8 @@ module Admin::Automation::AutomationSummary
         when 0
           I18n.t("admin.automation_summary.assigned_agent")
         when -2
-          I18n.t("admin.automation_summary.ticket_creating_agent")
+          record.dispatchr_rule? ? I18n.t("admin.automation_summary.ticket_creating_agent") :
+                                   I18n.t("admin.automation_summary.event_agent")
         end
       else
         get_name(field_name, value, separator)
@@ -315,6 +316,12 @@ module Admin::Automation::AutomationSummary
     def customer_feedback
       @customer_feedback ||= record.account.active_custom_survey_choices.inject({}) do |hash, key|
         hash.merge!(key[:face_value].to_s => key[:value])
+      end
+    end
+
+    def segments
+      @segments ||= record.account.contact_filters_from_cache.inject({}) do |hash, key|
+        hash.merge!(key.id.to_s => key.name)
       end
     end
 

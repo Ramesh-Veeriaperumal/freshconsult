@@ -371,6 +371,7 @@ class VaRule < ActiveRecord::Base
   end
 
   def conditions_changed?
+    return if account.automation_revamp_enabled?
     self.changes.key?(:match_type) ||
       (self.changes.key?(:filter_data) &&
        self.changes[:filter_data][0] != self.changes[:filter_data][1])
@@ -506,7 +507,7 @@ class VaRule < ActiveRecord::Base
     end
 
     def has_conditions?
-      return if automation_rule?
+      return if automation_rule? || account_id == 0
       errors.add(:base,I18n.t("errors.conditions_empty")) if
         ((!account.automation_revamp_enabled? && filter_data.blank?) ||
           (account.automation_revamp_enabled? && condition_data.blank?))

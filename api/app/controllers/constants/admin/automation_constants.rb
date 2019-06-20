@@ -75,7 +75,7 @@ module Admin::AutomationConstants
 
   FIELD_WITH_IDS = %i[priority status group_id responder_id language product_id customer_feedback
                       source add_watcher trigger_webhook request_type add_note internal_agent_id
-                      internal_group_id freddy_suggestion].freeze
+                      internal_group_id freddy_suggestion segments].freeze
 
   RESPONDER_ID = 'responder_id'.freeze
 

@@ -225,4 +225,8 @@ module Redis::Keys::Others
   CUSTOM_EMAIL_OUTREACH_LIMIT = "CUSTOM_EMAIL_OUTREACH_LIMIT".freeze
   #Customer segments max limit
   SEGMENT_LIMIT = "SEGMENT_LIMIT:%{account_id}".freeze
+
+  # Automation revamp - temporary
+  ENABLE_AUTOMATION_REVAMP = 'ENABLE_AUTOMATION_REVAMP'.freeze
+  ENABLE_THANK_YOU_DETECTOR = 'ENABLE_THANK_YOU_DETECTOR'.freeze
 end
