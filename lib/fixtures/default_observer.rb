@@ -14,6 +14,15 @@ module Fixtures
         ]
       }
 
+      condition_data_hash = { 
+        events: [
+          { name: 'reply_sent' },
+          { value: 'public', name: 'note_type' }
+        ],
+        performer: { type: Va::Performer::AGENT },
+        conditions: { any: [{ evaluate_on: 'ticket', value: [''],
+                              operator: 'in', name: 'responder_id' }] } }
+
       auto_assign_action_data = [
         {:name => 'responder_id', :value => Va::Action::EVENT_PERFORMER}
       ]
@@ -28,6 +37,7 @@ module Fixtures
         s.active = true
         s.filter_data = auto_assign_filter_data
         s.action_data = auto_assign_action_data
+        s.condition_data = condition_data_hash
       end
 
       ticket_reopen_filter_data = {
@@ -38,6 +48,24 @@ module Fixtures
         :conditions => [
           {:evaluate_on => "ticket", :value => ["2"], :operator => 'not_in', :name => 'status' }
         ]
+      }
+
+      conditions = account.detect_thank_you_note_enabled? ?
+                    { any: [{ any: [{ evaluate_on: :ticket, name: 'status',
+                                     operator: 'not_in', value: [4, 5] }] },
+                           { all: [{ evaluate_on: :ticket, name: 'freddy_suggestion',
+                                    operator: 'is_not', value: 'thank_you_note' },
+                                  { evaluate_on: :ticket, name: 'status', operator: 'in',
+                                    value: [4, 5] }] }] } :
+                    { any: [{ evaluate_on: 'ticket', value: ['2'],
+                              operator: 'not_in', name: 'status' }] }
+
+      ticket_reopen_condition_data = {
+        events: [
+          { name: 'reply_sent' }
+        ],
+        performer: { type: Va::Performer::CUSTOMER },
+        conditions: conditions
       }
 
       ticket_reopen_action_data = [
@@ -61,6 +89,7 @@ module Fixtures
 
       ticket_reopen_rule.filter_data = ticket_reopen_filter_data
       ticket_reopen_rule.action_data = ticket_reopen_action_data
+      ticket_reopen_rule.condition_data = ticket_reopen_condition_data
       ticket_reopen_rule.save!(:validate => false) #It should skip any_restricted_actions? validation for the default rule.
       
     end
