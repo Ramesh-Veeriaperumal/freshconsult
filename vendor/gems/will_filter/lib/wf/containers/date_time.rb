@@ -61,6 +61,8 @@ module Wf
           get_sql_condition(::Time.now.in_time_zone(agent_time_zone).tomorrow.beginning_of_day, ::Time.now.in_time_zone(agent_time_zone).tomorrow.advance(days: 7).end_of_day)
         elsif value == date_time_filter_options_hash[:in_the_past]
           return [" #{condition.full_key} <= '#{::Time.now.in_time_zone(agent_time_zone)}' "]
+        elsif value == date_time_filter_options_hash[:none]
+          return [" #{condition.full_key} is null"]
         else
           condition_key = condition.full_key
           begin

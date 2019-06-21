@@ -347,12 +347,13 @@ module Ember
       notification_template = '<div>{{ticket.id}}</div>'
       Agent.any_instance.stubs(:signature_value).returns('')
       EmailNotification.any_instance.stubs(:get_reply_template).returns(notification_template)
+      Ember::ConversationsController.any_instance.stubs(:get_quoted_content).returns(note_body['full_text_html'])
       bcc_emails = "#{Faker::Internet.email};#{Faker::Internet.email}"
       Account.any_instance.stubs(:bcc_email).returns(bcc_emails)
       post :reply_template, construct_params({ version: 'private', id: t.display_id, body: 'Undo', attachments: [], inline: [], time: time }, false)
       quoted_text = JSON.parse(response.body)['quoted_text']
       assert_response 200
-      assert_equal '<div class="freshdesk_quote">" hello "</div class="freshdesk_quote">', quoted_text if quoted_text.present?
+      assert_equal '<div class="freshdesk_quote">" hello "</div class="freshdesk_quote">', quoted_text
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_reply_template)
     ensure

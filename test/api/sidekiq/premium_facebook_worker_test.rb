@@ -12,6 +12,9 @@ class PremiumFacebookWorkerTest < ActionView::TestCase
   include AccountTestHelper
   include GroupsTestHelper
   include FacebookTestHelper
+  include Redis::Keys::Semaphore
+  include Redis::Semaphore
+
   def teardown
     Social::FacebookPage.any_instance.stubs(:unsubscribe_realtime).returns(true)
     super
@@ -54,6 +57,7 @@ class PremiumFacebookWorkerTest < ActionView::TestCase
     msg_id = thread_id + 20
     time = Time.now.utc
     dm = sample_dms(thread_id, @user_id, msg_id, time)
+    del_semaphore(semaphore_key)
     Koala::Facebook::API.any_instance.stubs(:get_connections).returns(dm)
     Social::PremiumFacebookWorker.new.perform('account_id' => @account.id)
     Koala::Facebook::API.any_instance.unstub(:get_connections)
@@ -63,6 +67,9 @@ class PremiumFacebookWorkerTest < ActionView::TestCase
     ticket = @account.facebook_posts.find_by_post_id(dm_msg_id).postable
     assert_equal ticket.is_a?(Helpdesk::Ticket), true
     assert_equal verify_ticket_properties(ticket, direct_message_data), true
+    assert_equal semaphore_exists?(semaphore_key), false
+  ensure
+    del_semaphore(semaphore_key)
   end
 
   def test_dm_is_converted_to_ticket_with_group
@@ -84,6 +91,8 @@ class PremiumFacebookWorkerTest < ActionView::TestCase
     ticket = @account.facebook_posts.find_by_post_id(dm_msg_id).postable
     assert_equal ticket.is_a?(Helpdesk::Ticket), true
     assert_equal ticket.group_id, group.id
+  ensure
+    del_semaphore(semaphore_key)
   end
 
   def test_second_dm_after_threading_interval_is_converted_into_a_new_ticket
@@ -103,6 +112,8 @@ class PremiumFacebookWorkerTest < ActionView::TestCase
     second_msg_id = HashWithIndifferentAccess.new(dm[1])[:messages][:data][0][:id]
     assert_equal @account.facebook_posts.find_by_post_id(first_msg_id).postable.is_a?(Helpdesk::Ticket), true
     assert_equal @account.facebook_posts.find_by_post_id(second_msg_id).postable.is_a?(Helpdesk::Ticket), true
+  ensure
+    del_semaphore(semaphore_key)
   end
 
   def test_second_dm_within_threading_interval_is_added_as_a_note_on_same_ticket
@@ -122,6 +133,8 @@ class PremiumFacebookWorkerTest < ActionView::TestCase
     assert_equal note.is_a?(Helpdesk::Note), true
 
     verify_note_properties(note, second_msg_data)
+  ensure
+    del_semaphore(semaphore_key)
   end
 
   def test_multiple_dm_messages_within_thread_interval_to_notes_on_same_ticket
@@ -139,6 +152,8 @@ class PremiumFacebookWorkerTest < ActionView::TestCase
     fb_posts = @account.facebook_posts
     assert_equal fb_posts.find_by_post_id(first_msg_id).postable.is_a?(Helpdesk::Note), true
     assert_equal fb_posts.find_by_post_id(second_msg_id).postable.is_a?(Helpdesk::Note), true
+  ensure
+    del_semaphore(semaphore_key)
   end
 
   def test_do_not_convert_dm_by_worker_when_realtime_messaging_is_enabled
@@ -154,11 +169,12 @@ class PremiumFacebookWorkerTest < ActionView::TestCase
     direct_message_data = HashWithIndifferentAccess.new(dm[0])['messages']['data'][0]
     dm_msg_id = direct_message_data['id']
     assert_nil @account.facebook_posts.find_by_post_id(dm_msg_id)
+  ensure
+    del_semaphore(semaphore_key)
   end
 
   def test_do_not_convert_dm_when_import_dms_is_not_choosen
     @fb_page.update_attributes(import_dms: false)
-
     thread_id = rand(10**10)
     msg_id = thread_id + 20
     time = Time.now.utc
@@ -169,6 +185,27 @@ class PremiumFacebookWorkerTest < ActionView::TestCase
     direct_message_data = HashWithIndifferentAccess.new(dm[0])['messages']['data'][0]
     dm_msg_id = direct_message_data['id']
     assert_nil @account.facebook_posts.find_by_post_id(dm_msg_id)
+  ensure
+    del_semaphore(semaphore_key)
+  end
+
+  def test_do_not_execute_worker_when_another_already_running
+    set_semaphore(semaphore_key, Time.now.utc.to_s)
+    thread_id = rand(10**10)
+    msg_id = thread_id + 20
+    time = Time.now.utc
+    dm = sample_dms(thread_id, @user_id, msg_id, time)
+    Koala::Facebook::API.any_instance.stubs(:get_connections).returns(dm)
+    Social::PremiumFacebookWorker.new.perform('account_id' => @account.id)
+    Koala::Facebook::API.any_instance.unstub(:get_connections)
+    dm = HashWithIndifferentAccess.new(dm[0])
+    direct_message_data = dm[:messages][:data][0]
+    dm_msg_id = direct_message_data[:id]
+    ticket = @account.facebook_posts.find_by_post_id(dm_msg_id)
+    assert_equal ticket, nil
+    assert_equal semaphore_exists?(semaphore_key), true
+  ensure
+    del_semaphore(semaphore_key)
   end
 
   # def test_post_is_converted_to_ticket
@@ -192,4 +229,8 @@ class PremiumFacebookWorkerTest < ActionView::TestCase
   #   assert_equal ticket.requester.fb_profile_id, feed[0][:from]['id']
   #   assert_equal ticket.description, feed[0][:message]
   # end
+
+  def semaphore_key
+    format(FACEBOOK_SEMAPHORE, account_id: @account.id, page_id: 0)
+  end
 end

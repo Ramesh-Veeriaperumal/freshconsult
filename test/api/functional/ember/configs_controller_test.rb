@@ -19,6 +19,7 @@ class Ember::ConfigsControllerTest < ActionController::TestCase
 
   def test_config_response
     User.any_instance.stubs(:time_zone).returns('Casablanca')
+    User.any_instance.stubs(:language).returns('en')
     get :show, controller_params(version: 'private', id: 'freshvisuals')
     assert_response 200
     end_point = JSON.parse(response.body)['url']
@@ -28,9 +29,26 @@ class Ember::ConfigsControllerTest < ActionController::TestCase
     assert_equal payload[:email], @user.email
     assert_equal payload[:userId], @user.id
     assert_equal payload[:timezone], 'Africa/Casablanca'
+    assert_equal payload[:language], 'en'
     assert_equal payload[:portalUrl], "#{@account.url_protocol}://#{@account.full_domain}"
+    assert_equal payload[:page], 'home'
   ensure
     User.any_instance.unstub(:time_zone)
+    User.any_instance.unstub(:language)
+  end
+
+  def test_config_response_with_null_user_language
+    User.any_instance.stubs(:language).returns(nil)
+    Account.any_instance.stubs(:language).returns('ar')
+    get :show, controller_params(version: 'private', id: 'freshvisuals')
+    assert_response 200
+    end_point = JSON.parse(response.body)['url']
+    payload_segment = end_point.split('.')[1]
+    payload = JSON.parse(JWT.base64url_decode(payload_segment), symbolize_names: true)
+    assert_equal payload[:language], 'ar'
+  ensure
+    User.any_instance.unstub(:language)
+    Account.any_instance.unstub(:language)
   end
 
   def test_invalid_config_response

@@ -27,11 +27,13 @@ module TicketFilterConstants
 
   FSM_DATE_TIME_FIELDS = [FSM_APPOINTMENT_START_TIME, FSM_APPOINTMENT_END_TIME].freeze
 
-  DATE_TIME_FILTER_DEFAULT_OPTIONS = ['today', 'tomorrow', 'yesterday', 'week', 'last_week', 'next_week', 'in_the_past'].freeze
+  DATE_TIME_FILTER_DEFAULT_OPTIONS = ['today', 'tomorrow', 'yesterday', 'week', 'last_week', 'next_week', 'in_the_past', 'none'].freeze
 
   DATE_TIME_FILTER_DEFAULT_OPTIONS_HASH = Hash[DATE_TIME_FILTER_DEFAULT_OPTIONS.map { |option| [option.to_sym, option] }]
 
   DATE_FIELD_REGEX = /^[0-9]{4}\-[0-1][0-9]\-[0-3][0-9]$/i
 
   SORTABLE_CUSTOM_FIELDS = { 'appointment_start_time' => FSM_APPOINTMENT_START_TIME }.freeze
+
+  ES_SUPPORTED_FILTERS = ['unresolved_service_tasks'].freeze
 end.freeze

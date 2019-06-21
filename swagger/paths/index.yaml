@@ -486,6 +486,8 @@
 
 /subscription:
   $ref: ./subscription/show.yaml
+/subscription/estimate:
+  $ref: ./subscription/estimate.yaml
 /plans:
   $ref: ./subscription/plans.yaml
 

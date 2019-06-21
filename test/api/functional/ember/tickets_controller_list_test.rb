@@ -271,6 +271,11 @@ module Ember
       match_db_and_es_query_responses(query_hash_params)
     end
 
+    def test_created_at_filter_with_custom_date_range
+      query_hash_params = { '0' => query_hash_param('created_at', 'is_greater_than', 'from' => 2.days.ago.utc.iso8601, 'to' => 1.day.ago.utc.iso8601) }
+      match_db_and_es_query_responses(query_hash_params)
+    end
+
     def test_multiple_groups_filter
       query_hash_params = { '0' => query_hash_param('group_id', 'is_in', @account.groups.map(&:id).sample(rand(1..3))) }
       match_db_and_es_query_responses(query_hash_params)
@@ -367,6 +372,17 @@ module Ember
       perform_fsm_operations
       Account.first.make_current
       query_hash_params = { '0' => query_hash_param('cf_fsm_appointment_start_time', 'is', 'next_week', 'custom_field') }
+      match_db_and_es_query_responses(query_hash_params)
+    ensure
+      cleanup_fsm
+      Account.any_instance.unstub(:field_service_management_enabled?)
+    end
+
+    def test_fsm_none_appointment_time_filter
+      Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+      perform_fsm_operations
+      Account.first.make_current
+      query_hash_params = { '0' => query_hash_param('cf_fsm_appointment_start_time', 'is', 'none', 'custom_field') }
       match_db_and_es_query_responses(query_hash_params)
     ensure
       cleanup_fsm

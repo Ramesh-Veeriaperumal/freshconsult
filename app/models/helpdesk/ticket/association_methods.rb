@@ -221,9 +221,29 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     def reset_assoc_parent
-      remove_prime_associates("assoc_parent")
-      nullify_assoc_type
-      remove_all_associates
+      subsidiary_tickets = self.associated_subsidiary_tickets('assoc_parent')
+
+      # Service task logic.
+      service_task_type = Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE
+      service_task_present = subsidiary_tickets.any? { |t| t.ticket_type == service_task_type }
+      subsidiary_tickets.reject! { |t| t.ticket_type == service_task_type } if service_task_present
+
+      remove_prime_associates('assoc_parent', subsidiary_tickets)
+
+      if service_task_present
+        # If everything in subsidiary_tickets is a service task, subsidiary_tickets will be []. No need to perform the next operations(Only parent-child has to be removed).
+        return if subsidiary_tickets.blank?
+
+        # Instead of destroying the parent key via remove_all_associates: remove only the normal child ticket IDs in dynamo.
+        ids_to_remove = subsidiary_tickets.map(&:display_id)
+        update_associates(ids_to_remove, 'DELETE')
+
+        # Updating count to service tasks count after removing normal child tickets.
+        update_associates_count(self)
+      else
+        nullify_assoc_type
+        remove_all_associates
+      end
     end
 
     def reset_child
@@ -231,8 +251,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       remove_subsidiary_associates("child", @assoc_parent_ticket)
     end
 
-    def remove_prime_associates type
-      self.associated_subsidiary_tickets(type).each do |r|
+    def remove_prime_associates(type, subsidiary_tickets = nil)
+      (subsidiary_tickets || self.associated_subsidiary_tickets(type)).each do |r|
         nullify_assoc_type(r)
         r.remove_all_associates
       end

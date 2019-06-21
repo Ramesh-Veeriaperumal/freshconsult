@@ -249,15 +249,19 @@ module Search::Dashboard::QueryHelper
                               [Time.zone.now.tomorrow.beginning_of_day, Time.zone.now.tomorrow.advance(days: 7).end_of_day]
                             when date_filter_values[:in_the_past]
                               [nil, Time.zone.now]
+                            when date_filter_values[:none]
+                              [nil, nil]
                             else
                               start, finish = value.split(' - ')
                               [Time.zone.parse(start), Time.zone.parse(finish)]
                             end
-    to_es_condition(field_name, start_time.try(:utc).try(:iso8601), end_time.utc.iso8601)
+    to_es_condition(field_name, start_time.try(:utc).try(:iso8601), end_time.try(:utc).try(:iso8601))
   end
 
   def to_es_condition(field_name, start_time, end_time)
-    if start_time.nil?
+    if start_time.nil? && end_time.nil?
+      "#{field_name}:null"
+    elsif start_time.nil?
       "#{field_name}:<'#{end_time}'"
     else
       "#{field_name}:>'#{start_time}' AND #{field_name}:<'#{end_time}'"

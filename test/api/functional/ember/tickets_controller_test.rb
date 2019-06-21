@@ -4891,6 +4891,13 @@ module Ember
       }
     end
 
+    def es_response_stub(ticket_ids)
+      {
+        total: ticket_ids.size,
+        results: ticket_ids.map { |id| { id: id, document: 'ticketanalytics' } }
+      }.to_json
+    end
+
     def test_service_task_tickets_order_by_appointment_time_asc
       Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
       Account.stubs(:current).returns(Account.first)
@@ -4918,6 +4925,91 @@ module Ember
       get :index, controller_params(version: 'private', updated_since: Time.zone.now.iso8601, order_by: 'appointment_start_time')
       assert_response 400
       match_json([bad_request_error_pattern('order_by', :not_included, list: sort_field_options.join(','), code: :invalid_value)])
+    end
+
+    def test_service_task_tickets_order_by_appointment_time_desc_es
+      Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+      Account.any_instance.stubs(:filter_factory_enabled?).returns(true)
+      Account.any_instance.stubs(:new_es_api_enabled?).returns(true)
+      Account.stubs(:current).returns(Account.first)
+      perform_fsm_operations
+      Account.reset_current_account
+      Account.stubs(:current).returns(Account.first)
+      fsm_ticket1 = create_service_task_ticket(fsm_appointment_start_time: Time.zone.today.advance(days: 3).strftime('%Y-%m-%dT%H:%m:%S'))
+      fsm_ticket2 = create_service_task_ticket(fsm_appointment_start_time: Time.zone.today.advance(days: 2).strftime('%Y-%m-%dT%H:%m:%S'))
+      ticket = create_ticket
+      SearchService::Client.any_instance.stubs(:query).returns(SearchService::Response.new(nil))
+      ticket_ids = [fsm_ticket1.id, fsm_ticket2.id, ticket.id]
+      SearchService::Response.any_instance.stubs(:records).returns(JSON.parse(es_response_stub(ticket_ids)))
+      query_hash_params = { '0' => query_hash_param('created_at', 'is_greater_than', 'last_month') }
+      get :index, controller_params({ version: 'private', order_by: 'appointment_start_time', order_type: 'desc', query_hash: query_hash_params }, false)
+      assert_response 200
+      ticket_list = JSON.parse(response.body)
+      assert_equal ticket_list.size, ticket_ids.size
+      assert_equal ticket_list[0]['id'], fsm_ticket1.id
+      assert_equal ticket_list[1]['id'], fsm_ticket2.id
+      assert_equal ticket_list[2]['id'], ticket.id
+    ensure
+      Account.any_instance.unstub(:filter_factory_enabled?)
+      Account.any_instance.unstub(:new_es_api_enabled?)
+      SearchService::Client.any_instance.unstub(:query)
+      SearchService::Response.any_instance.unstub(:records)
+      cleanup_fsm
+      Account.any_instance.unstub(:field_service_management_enabled?)
+      Account.unstub(:current)
+    end
+
+    def test_service_task_tickets_order_by_appointment_time_asc_ec
+      Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+      Account.any_instance.stubs(:filter_factory_enabled?).returns(true)
+      Account.any_instance.stubs(:new_es_api_enabled?).returns(true)
+      Account.stubs(:current).returns(Account.first)
+      perform_fsm_operations
+      Account.reset_current_account
+      Account.stubs(:current).returns(Account.first)
+      fsm_ticket1 = create_service_task_ticket(fsm_appointment_start_time: Time.zone.today.advance(days: 3).strftime('%Y-%m-%dT%H:%m:%S'))
+      fsm_ticket2 = create_service_task_ticket(fsm_appointment_start_time: Time.zone.today.advance(days: 2).strftime('%Y-%m-%dT%H:%m:%S'))
+      SearchService::Client.any_instance.stubs(:query).returns(SearchService::Response.new(nil))
+      ticket_ids = [fsm_ticket1.id, fsm_ticket2.id]
+      SearchService::Response.any_instance.stubs(:records).returns(JSON.parse(es_response_stub(ticket_ids)))
+      query_hash_params = { '0' => query_hash_param('ticket_type', 'is_in', ['Service Task']) }
+      get :index, controller_params({ version: 'private', order_by: 'appointment_start_time', order_type: 'asc', query_hash: query_hash_params }, false)
+      assert_response 200
+      ticket_list = JSON.parse(response.body)
+      assert_equal ticket_list.size, 2
+      assert_equal ticket_list[1]['id'], fsm_ticket1.id
+      assert_equal ticket_list[0]['id'], fsm_ticket2.id
+    ensure
+      Account.any_instance.unstub(:filter_factory_enabled?)
+      Account.any_instance.unstub(:new_es_api_enabled?)
+      SearchService::Client.any_instance.unstub(:query)
+      SearchService::Response.any_instance.unstub(:records)
+      cleanup_fsm
+      Account.any_instance.unstub(:field_service_management_enabled?)
+      Account.unstub(:current)
+    end
+
+    def test_filter_unresolved_service_tasks_ec
+      setup_fsm
+      Account.any_instance.stubs(:filter_factory_enabled?).returns(true)
+      Account.any_instance.stubs(:new_es_api_enabled?).returns(true)
+      fsm_ticket1 = create_service_task_ticket(fsm_appointment_start_time: Time.zone.today.advance(days: 3).strftime('%Y-%m-%dT%H:%m:%S'))
+      fsm_ticket2 = create_service_task_ticket(fsm_appointment_start_time: Time.zone.today.advance(days: 2).strftime('%Y-%m-%dT%H:%m:%S'))
+      ticket_ids = [fsm_ticket2.id, fsm_ticket1.id]
+      SearchService::Client.any_instance.stubs(:query).returns(SearchService::Response.new(nil))
+      SearchService::Response.any_instance.stubs(:records).returns(JSON.parse(es_response_stub(ticket_ids)))
+      get :index, controller_params({ version: 'private', filter: 'unresolved_service_tasks' }, false)
+      assert_response 200
+      ticket_list = JSON.parse(response.body)
+      assert_equal ticket_list.size, 2
+      assert_equal ticket_list[1]['id'], fsm_ticket1.id
+      assert_equal ticket_list[0]['id'], fsm_ticket2.id
+    ensure
+      Account.any_instance.unstub(:filter_factory_enabled?)
+      Account.any_instance.unstub(:new_es_api_enabled?)
+      SearchService::Client.any_instance.unstub(:query)
+      SearchService::Response.any_instance.unstub(:records)
+      destroy_fsm
     end
   end
 end

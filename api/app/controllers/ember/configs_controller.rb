@@ -3,6 +3,7 @@ module Ember
     include HelperConcern
     skip_before_filter :load_object, only: [:show]
     before_filter :validate_query_params, :check_feature
+    LOAD_TYPE = 'home'.freeze
 
     def show
       @config = fetch_config_data
@@ -27,6 +28,8 @@ module Ember
           firstName: current_user.name,
           email: current_user.email,
           timezone: TimeZone.fetch_tzinfoname,
+          language: current_user.language || current_account.language,
+          page: LOAD_TYPE,
           tenantId: current_account.id,
           portalUrl: "#{current_account.url_protocol}://#{current_account.full_domain}",
           userId: current_user.id,
