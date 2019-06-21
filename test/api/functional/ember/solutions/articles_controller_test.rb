@@ -192,6 +192,23 @@ module Ember
         match_json(pattern)
       end
 
+      def test_index_with_language_id
+        language_id = 6
+        article_ids = @account.solution_articles.where(language_id: 6).limit(10).collect(&:parent_id)
+        get :index, controller_params(version: 'private', ids: article_ids.join(','), language_id: language_id)
+        articles = @account.solution_articles.where(parent_id: article_ids, language_id: language_id).first(10)
+        assert_response 200
+        pattern = articles.map { |article| private_api_solution_article_pattern(article) }
+        match_json(pattern)
+      end
+
+      def test_index_with_invalid_language_id
+        language_id = 6
+        article_ids = @account.solution_articles.where(language_id: 6).limit(10).collect(&:parent_id)
+        get :index, controller_params(version: 'private', ids: article_ids.join(','), language_id: 0)
+        assert_response 404
+      end
+
       def test_index_with_valid_ids_array
         article_ids = []
         article_ids = @account.solution_articles.where(language_id: 6).limit(10).collect(&:parent_id)
@@ -223,7 +240,7 @@ module Ember
         match_json([bad_request_error_pattern('test', :invalid_field)])
       end
 
-      def test_index_with_invalid_language_id
+      def test_index_with_invalid_language
         article_ids = []
         article_ids = @account.solution_articles.limit(10).collect(&:parent_id)
         get :index, controller_params(version: 'private', ids: article_ids.join(','), language: '1000')
@@ -260,6 +277,21 @@ module Ember
         get :article_content, controller_params(version: 'private', id: article.parent_id, language: 'en')
         assert_response 200
         match_json(article_content_pattern(article))
+      end
+
+      def test_article_content_with_language_id
+        language_id = 6
+        article = @account.solution_articles.where(language_id: language_id).last
+        get :article_content, controller_params(version: 'private', id: article.parent_id, language_id: language_id)
+        assert_response 200
+        match_json(article_content_pattern(article))
+      end
+
+      def test_article_content_with_invalid_language_id
+        language_id = 6
+        article = @account.solution_articles.where(language_id: language_id).last
+        get :article_content, controller_params(version: 'private', id: article.parent_id, language_id: 0)
+        assert_response 404
       end
 
       def test_article_content_with_different_language

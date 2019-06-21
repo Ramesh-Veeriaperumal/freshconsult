@@ -14,6 +14,7 @@ module Ember
 
       skip_before_filter :initialize_search_parameters, unless: :search_articles?
       before_filter :filter_ids, only: [:index]
+      before_filter :modify_and_cleanup_language_param, only: [:article_content]
       before_filter :validate_language, only: [:filter, :bulk_update, :untranslated_articles, :article_content, :index]
       before_filter :check_filter_feature, only: [:filter]
       before_filter :validate_filter, only: [:article_content, :filter, :untranslated_articles]
@@ -125,6 +126,8 @@ module Ember
         end
 
         def validate_filter_params
+          return unless modify_and_cleanup_language_param
+
           params.permit(*SolutionConstants::RECENT_ARTICLES_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
           @article_filter = SolutionArticleFilterValidation.new(params)
           render_errors(@article_filter.errors, @article_filter.error_options) unless @article_filter.valid?
@@ -201,6 +204,15 @@ module Ember
           @items = paginate_items(@items)
           response.api_root_key = :articles
           response.api_meta = { count: @items_count, next_page: @more_items }
+        end
+
+        def modify_and_cleanup_language_param
+          return true unless params[:language_id]
+
+          language = Language.find(params[:language_id])
+          log_and_render_404 && return unless language
+          params[:language] = language.code
+          params.delete(:language_id)
         end
 
         # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.
