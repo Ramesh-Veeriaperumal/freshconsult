@@ -1,5 +1,8 @@
 class Account < ActiveRecord::Base
   include RepresentationHelper
+
+  ACCOUNT_DESTROY = 'account_destroy'.freeze
+
   acts_as_api
   
   api_accessible :central_publish do |s|
@@ -57,4 +60,9 @@ class Account < ActiveRecord::Base
     }
   end
 
+  def self.disallow_payload?(payload_type)
+    return false if payload_type == ACCOUNT_DESTROY
+
+    super
+  end
 end

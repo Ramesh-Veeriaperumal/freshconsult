@@ -569,4 +569,15 @@ class ApiAgentsControllerTest < ActionController::TestCase
     assert_response 403
     match_json(request_error_pattern(:access_denied))
   end
+
+  def test_update_agent_with_unpermitted_fields
+    agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    params = { name: Faker::Name.name }
+    Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    put :update, construct_params({ id: agent.id }, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('base', :cannot_edit_inaccessible_fields)])
+  ensure
+    Account.any_instance.unstub(:freshid_enabled?)
+  end
 end

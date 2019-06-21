@@ -8,6 +8,10 @@ module Redis::Semaphore
     $semaphore.perform_redis_op("set", key, value)
   end
 
+  def set_semaphore_with_expiry(key, value, options)
+    newrelic_begin_rescue { $semaphore.perform_redis_op('set', key, value, options) }
+  end
+
   def semaphore_exists?(key)
     $semaphore.perform_redis_op("exists", key)
   end

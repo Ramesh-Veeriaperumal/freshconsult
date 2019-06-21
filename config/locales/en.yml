@@ -2913,6 +2913,7 @@ en:
       edit:
         not_allowed: You cannot edit this agent
         agent_type_change_not_allowed: You cannot change the agent type
+        not_allowed_to_edit_inaccessible_fields: Not allowed to edit Agent's profile information(name, phone, mobile and title) 
     roles:
       create:
         success: The role "%{name}" has been created

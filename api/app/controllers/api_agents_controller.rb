@@ -3,6 +3,18 @@ class ApiAgentsController < ApiApplicationController
     render "#{controller_path}/show"
   end
 
+  def check_edit_privilege
+    if current_account.freshid_enabled?
+      AgentConstants::RESTRICTED_PARAMS.any? do |key|
+        if @item.user_changes.key?(key)
+          @item.errors[:base] << :cannot_edit_inaccessible_fields
+          return false 
+        end
+      end
+    end
+    true
+  end
+
   def update
     assign_protected
     agent_delegator = AgentDelegator.new(params[cname].slice(:role_ids, :group_ids))
@@ -14,6 +26,7 @@ class ApiAgentsController < ApiApplicationController
       end
       @item.user_changes = @item.user.agent.user_changes || {}
       @item.user_changes.merge!(@item.user.changes)
+      return render_custom_errors(@item) unless check_edit_privilege
       group_ids = params[cname].delete(:group_ids)
       @item.build_agent_groups_attributes(group_ids)
       return if @item.update_attributes(params[cname].except(:user_attributes))

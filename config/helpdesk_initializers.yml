@@ -56,6 +56,7 @@ helpdesk:
     - riak
     - ruby193_monkey_patches
     - core_ext/active_record/relation
+    - central_publisher/active_record/base
     - secret_token
     - session_store
     - sidekiq

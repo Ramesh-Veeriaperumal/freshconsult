@@ -47,6 +47,15 @@ class AgentsController < ApplicationController
     end
   end
 
+  def check_edit_privilege
+    if freshid_enabled?
+      AgentConstants::RESTRICTED_PARAMS.any? do |key|
+        return false if @agent.user_changes.key?(key)
+      end
+    end
+    true
+  end
+
   def search_in_freshworks
     email_changed = params[:new_email].present? && params[:new_email].casecmp(params[:old_email]) != 0
     user = email_changed ? freshid_user_details : current_account.users.find_by_email(params[:old_email].to_s)
@@ -208,7 +217,6 @@ class AgentsController < ApplicationController
     params['agent']['agent_type'] = params['agent']['agent_type'] == 'field_agent' ? AgentType.agent_type_id(Agent::FIELD_AGENT) : AgentType.agent_type_id(Agent::SUPPORT_AGENT)
   end
 
-  
   def update
     @agent.occasional = params[:agent][:occasional] || false
     #check_agent_limit
@@ -222,9 +230,10 @@ class AgentsController < ApplicationController
     params[:user].each do |k, v|
       @agent.user.safe_send("#{k}=", v)
     end
-
     @agent.user_changes = @agent.user.agent.user_changes || {}
     @agent.user_changes.merge!(@agent.user.changes)
+    return render json: { success: false, errors: t(:'flash.agents.edit.not_allowed_to_edit_inaccessible_fields') }, status: 403 unless check_edit_privilege
+
     group_ids = params[nscname].delete(:group_ids)
     @agent.build_agent_groups_attributes(group_ids)
     if @agent.update_attributes(params[nscname])

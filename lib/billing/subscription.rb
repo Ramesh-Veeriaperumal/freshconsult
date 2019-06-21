@@ -142,7 +142,21 @@ class Billing::Subscription < Billing::ChargebeeWrapper
       NewRelic::Agent.notice_error(error)
     end
   end
-  
+
+  def fetch_estimate_info(subscription, addons)
+    addon_data = {}
+    ids = []
+    quantity = []
+    merge_addon_data(addon_data, subscription, addons)
+    addon_data[:addons].each do |addon|
+      ids << addon[:id].to_s
+      quantity << addon[:quantity]
+    end
+    addon_data[:ids] = ids
+    addon_data[:quantity] = quantity
+    retrieve_estimate_content(subscription, addon_data)
+  end
+
   private
     def create_subscription_params(account, subscription_params)
       subscription_info = if subscription_params
