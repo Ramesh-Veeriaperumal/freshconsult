@@ -462,10 +462,10 @@ module FreshdeskCore::Model
     end
 
     def remove_from_spam_detection_service(account)
-      if account.launched?(:spam_detection_service)
+      if account.proactive_spam_detection_enabled?
         result = FdSpamDetectionService::Service.new(account.id).delete_tenant
         Rails.logger.info "Response for deleting tenant in SDS: #{result}"
-        account.rollback(:spam_detection_service)
+        account.revoke_feature(:proactive_spam_detection)
       end
     end
 

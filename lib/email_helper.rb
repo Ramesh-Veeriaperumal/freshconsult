@@ -167,7 +167,7 @@ module EmailHelper
   end
 
   def update_freshops_activity(account, reason, action_name)
-    url_params = { :app_name => "helpkit", 
+    url_params = { :app_name => 'helpkit',
     :activity => {
       :email => Helpdesk::EMAIL[:auto_block_user],
       :reason => reason,
@@ -180,7 +180,7 @@ module EmailHelper
   end
 
   def antispam_enabled? account
-    (((account.subscription.free? || account.subscription.trial?) && !(account.launched?(:whitelist_spam_detection_service))) || (account.subscription.active? && account.launched?(:spam_detection_service)))
+    account.proactive_spam_detection_enabled?
   end
 
   def collab_email_reply? email_subject
