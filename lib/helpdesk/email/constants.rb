@@ -34,7 +34,9 @@ module Helpdesk::Email::Constants
 								:inactive_account => "Inactive account",
 								:failed_article => "Article creation failed",
 								:max_email_limit => "Reached max allowed email limit in Ticket/Note",
-								:noop_collab_email_reply => "No Operation: Collab Email Reply "
+								:noop_collab_email_reply => "No Operation: Collab Email Reply ",
+                :fd_fwd_email => 'Email sent to freshdesk mail box directly ',
+                :wildcard_email => 'Email address does not match the configured emails '
 							} # add according to need
 	PROCESSED_EMAIL_TYPE = { :ticket => "ticket", :note => "note", :article => "article", :invalid => "invalid" }
 

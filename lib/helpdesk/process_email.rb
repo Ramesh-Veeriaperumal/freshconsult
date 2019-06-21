@@ -22,6 +22,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include Redis::OthersRedis
   include Helpdesk::LanguageDetection
   include ::Email::AntiSpoof
+  include ::Email::PerformUtil
 
   class UserCreationError < StandardError
   end
@@ -150,6 +151,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
             from_email = envelope_from_email
           end
         end
+
+        # check for wildcards and forward ticket create
+        if account.launched?(:check_wc_fwd)
+          fw_result = fwd_wildcards_result(params, email_config, account)
+          return fw_result[:message] if fw_result[:status]
+        end
+
         user = existing_user(account, from_email)
 
         unless user

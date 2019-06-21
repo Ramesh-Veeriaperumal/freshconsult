@@ -24,6 +24,7 @@ module Helpdesk
 			include Helpdesk::Email::NoteMethods
 			include Helpdesk::LanguageDetection
 			include ::Email::AntiSpoof
+      include ::Email::PerformUtil
 
 			class UserCreationError < StandardError
 			end
@@ -129,7 +130,14 @@ module Helpdesk
 									from_email = envelope_from_email
 								end
 							end
-							user = existing_user(account, from_email)
+
+              # check for wildcards and forward ticket create
+              if account.launched?(:check_wc_fwd)
+                fw_result = fwd_wildcards_result(params, email_config, account)
+                return fw_result[:message] if fw_result[:status]
+              end
+
+              user = existing_user(account, from_email)
 							unless user
 								text_part
 								user = create_new_user(account, from_email, email_config)
