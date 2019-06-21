@@ -29,7 +29,7 @@ class Account < ActiveRecord::Base
     :disable_email_spoof_check, :onboarding_i18n, :webhook_blacklist_ip, :recalculate_daypass, :sandbox_single_branch,
     :fb_page_api_improvement, :attachment_redirect_expiry, :solutions_agent_portal, :solutions_agent_metrics, :fuzzy_search,
     :delete_trash_daily, :ticket_type_filter_in_trends_widget, :automation_revamp, :prevent_fwd_email_ticket_create, 
-    :enable_wildcard_ticket_create, :check_wc_fwd
+    :enable_wildcard_ticket_create, :check_wc_fwd, :requester_privilege
   ].freeze
 
   DB_FEATURES = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone].freeze

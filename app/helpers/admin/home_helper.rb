@@ -109,7 +109,7 @@
       },
       :"email-notifications"           =>   {
         :url                           =>   "/admin/email_notifications",
-        :privilege                     =>   privilege?(:manage_email_settings)
+        :privilege                     =>   privilege?(:manage_email_settings) || privilege?(:manage_requester_notifications)
       },
       :"canned-response"               =>   {
         :url                           =>   "/helpdesk/canned_responses/folders",

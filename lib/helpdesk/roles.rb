@@ -114,7 +114,21 @@ module Helpdesk
       :livechat_export_transcripts,
       :livechat_manage_shortcodes,
       :livechat_view_reports,
-      :manage_dashboard
+      :manage_dashboard,
+      :manage_requester_notifications,
+      :untitled_core_admin_2019_1,
+      :untitled_core_admin_2019_2,
+      :untitled_core_admin_2019_3,
+      :untitled_core_admin_2019_4,
+      :untitled_core_admin_2019_5,
+      :untitled_core_supervisor_2019_1,
+      :untitled_core_supervisor_2019_2,
+      :untitled_core_supervisor_2019_3,
+      :untitled_core_supervisor_2019_4,
+      :untitled_core_supervisor_2019_5,
+      :untitled_core_agent_2019_6,
+      :untitled_core_agent_2019_7,
+      :untitled_core_agent_2019_8
     ]
     
     ADMINISTRATOR = [
@@ -224,7 +238,21 @@ module Helpdesk
       :livechat_export_transcripts,
       :livechat_manage_shortcodes,
       :livechat_view_reports,
-      :manage_dashboard
+      :manage_dashboard,
+      :manage_requester_notifications,
+      :untitled_core_admin_2019_1,
+      :untitled_core_admin_2019_2,
+      :untitled_core_admin_2019_3,
+      :untitled_core_admin_2019_4,
+      :untitled_core_admin_2019_5,
+      :untitled_core_supervisor_2019_1,
+      :untitled_core_supervisor_2019_2,
+      :untitled_core_supervisor_2019_3,
+      :untitled_core_supervisor_2019_4,
+      :untitled_core_supervisor_2019_5,
+      :untitled_core_agent_2019_6,
+      :untitled_core_agent_2019_7,
+      :untitled_core_agent_2019_8
     ]
     
     SUPERVISOR = [
@@ -313,7 +341,15 @@ module Helpdesk
       :livechat_export_transcripts,
       :livechat_manage_shortcodes,
       :livechat_view_reports,
-      :manage_dashboard
+      :manage_dashboard,
+      :untitled_core_supervisor_2019_1,
+      :untitled_core_supervisor_2019_2,
+      :untitled_core_supervisor_2019_3,
+      :untitled_core_supervisor_2019_4,
+      :untitled_core_supervisor_2019_5,
+      :untitled_core_agent_2019_6,
+      :untitled_core_agent_2019_7,
+      :untitled_core_agent_2019_8
     ]
     
     AGENT = [
@@ -372,7 +408,10 @@ module Helpdesk
       :livechat_accept_chat,
       :livechat_initiat_agent_chat,
       :livechat_view_visitors,
-      :livechat_intiate_visitor_chat
+      :livechat_intiate_visitor_chat,
+      :untitled_core_agent_2019_6,
+      :untitled_core_agent_2019_7,
+      :untitled_core_agent_2019_8
     ]
     
     
