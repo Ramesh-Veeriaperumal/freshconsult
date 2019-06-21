@@ -49,7 +49,7 @@ gem 'iconv', '~> 1.0.4'
 gem 'thrift', '~> 0.9.2.0'
 gem 'charlock_holmes', "0.7.3"
 gem "tnef", "1.0.2"
-gem "central-publisher", :git => 'git@github.com:freshdesk/central-publisher.git', :tag => 'v2.0.1'
+gem "central-publisher", git: 'git@github.com:freshdesk/central-publisher.git', tag: 'v2.0.2'
 
 group :development, :test do
   gem 'active_record_query_trace'
