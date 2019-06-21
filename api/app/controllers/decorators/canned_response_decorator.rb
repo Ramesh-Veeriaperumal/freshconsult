@@ -10,7 +10,9 @@ class CannedResponseDecorator < ApiDecorator
   def to_full_hash
     to_hash.merge(content: content,
                   content_html: content_html,
-                  attachments: attachments_hash)
+                  attachments: attachments_hash,
+                  created_at: created_at.try(:utc),
+                  updated_at: updated_at.try(:utc))
   end
 
   def to_hash

@@ -20,7 +20,9 @@ module CannedResponseFoldersTestHelper
     {
       id: folder.id,
       name: folder.display_name,
-      canned_responses: responses_listing_pattern(folder.id)
+      canned_responses: responses_listing_pattern(folder.id),
+      created_at: folder.created_at.try(:utc).try(:iso8601),
+      updated_at: folder.updated_at.try(:utc).try(:iso8601)
     }
   end
 
@@ -35,6 +37,8 @@ module CannedResponseFoldersTestHelper
       {
         id: folder.id,
         name: folder.display_name,
+        created_at: folder.created_at.try(:utc).try(:iso8601),
+        updated_at: folder.updated_at.try(:utc).try(:iso8601),
         personal: folder.personal?,
         responses_count: folder.visible_responses_count
       }
