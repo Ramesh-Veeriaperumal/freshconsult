@@ -949,7 +949,7 @@ private
   end
 
   def update_spam_detection_service
-    if (Account.current.launched?(:spam_detection_service) && @model_changes.include?(:spam) &&
+    if (Account.current.proactive_spam_detection_enabled?  && @model_changes.include?(:spam) &&
      self.source.eql?(Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]))
       type = @model_changes[:spam][1] ? :spam : :ham
       SpamDetection::LearnTicketWorker.perform_async({ :ticket_id => self.id, 

@@ -180,7 +180,7 @@ module EmailHelper
   end
 
   def antispam_enabled? account
-    (((account.subscription.free? || account.subscription.trial?) && !(account.launched?(:whitelist_spam_detection_service))) || (account.subscription.active? && account.launched?(:spam_detection_service)))
+    account.proactive_spam_detection_enabled?
   end
 
   def collab_email_reply? email_subject

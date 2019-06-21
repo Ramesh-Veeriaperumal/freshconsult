@@ -438,7 +438,7 @@ class Helpdesk::ConversationsController < ApplicationController
       end 
 
       def learn_valid_ticket_data
-        if (current_account.launched?(:spam_detection_service) && @parent.notes.count == 0 &&
+        if (current_account.proactive_spam_detection_enabled? && @parent.notes.count.zero? &&
          @parent.source.eql?(Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]) && !@parent.spam?)
           SpamDetection::LearnTicketWorker.perform_async({ :ticket_id => @parent.id, 
             :type => Helpdesk::Email::Constants::MESSAGE_TYPE_BY_NAME[:ham]})
