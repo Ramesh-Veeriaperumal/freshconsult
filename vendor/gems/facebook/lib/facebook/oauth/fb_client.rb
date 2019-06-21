@@ -95,22 +95,25 @@ module Facebook
           end
         end
         fd_linked_pages = Hash.new []
-        begin
-          request_params = { :method => 'post', auth_header: gateway_facebook[:authorization_token] }
-          params = { 
-            domain: gateway_facebook[:gateway_facebook_url], 
-            rest_url: "#{gateway_facebook[:gateway_facebook_route]}/bulk_fetch",
-            body: {
-              facebookPageIds: page_ids
-            }.to_json
-          }
-          response = HttpRequestProxy.new.fetch_using_req_params(params, request_params, gateway_facebook[:create_payload_option])
-          response_text = JSON.parse response[:text]
-          fd_linked_pages.merge!(response_text.try(:[], 'pages') ? response_text['pages'] : {})
-          Rails.logger.info("Gateway Bulk Fetch for Facebook, Account:: #{Account.current.id}, response status::#{response[:status]}")
-        rescue StandardError => e
-          Rails.logger.error("An Exception occured while getting bulk page details from Gateway for account::#{Account.current.id}, \n
-            message::#{e.message}, backtrace::#{e.backtrace.join('\n')}")
+
+        if page_ids.present?
+          begin
+            request_params = { method: 'post', auth_header: gateway_facebook[:authorization_token] }
+            params = {
+              domain: gateway_facebook[:gateway_facebook_url],
+              rest_url: "#{gateway_facebook[:gateway_facebook_route]}/bulk_fetch",
+              body: {
+                facebookPageIds: page_ids
+              }.to_json
+            }
+            response = HttpRequestProxy.new.fetch_using_req_params(params, request_params, gateway_facebook[:create_payload_option])
+            response_text = JSON.parse response[:text]
+            fd_linked_pages.merge!(response_text.try(:[], 'pages') ? response_text['pages'] : {})
+            Rails.logger.info("Gateway Bulk Fetch for Facebook, Account:: #{Account.current.id}, response status::#{response[:status]}")
+          rescue StandardError => e
+            Rails.logger.error("An Exception occured while getting bulk page details from Gateway for account::#{Account.current.id}, \n
+              message::#{e.message}, backtrace::#{e.backtrace.join('\n')}")
+          end
         end
         pages.each do |page|
           page.symbolize_keys!
@@ -122,7 +125,7 @@ module Facebook
             all_domains = DomainMapping.domain_names(fd_linked_pages[page_id])
             source_string = all_domains.join(', ') unless all_domains.empty?
             other_pods_count = total_accounts_count - all_domains.length
-            source_string.concat(" +#{other_pods_count} more #{'account'.pluralize(other_pods_count)}") unless other_pods_count.zero? || source_string.empty?
+            source_string.concat(" +#{other_pods_count} more #{'account'.pluralize(other_pods_count)}") if source_string.present? && other_pods_count > 0
 
             if total_accounts_count >= FacebookGatewayConfig['max_page_limit']
               limit_reached = true
