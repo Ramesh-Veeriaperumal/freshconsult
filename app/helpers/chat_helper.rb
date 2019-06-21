@@ -42,7 +42,7 @@ module ChatHelper
   end
 
   def portal_chat_enabled?
-    if chat_enabled? && current_chat_widget.show_on_portal
+    if chat_enabled? && current_chat_widget.present? && current_chat_widget.show_on_portal
       if logged_in?
         return current_user.customer?
       else
