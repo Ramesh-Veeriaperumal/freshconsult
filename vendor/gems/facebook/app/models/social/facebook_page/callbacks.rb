@@ -15,7 +15,7 @@ class Social::FacebookPage < ActiveRecord::Base
 
   before_destroy :unregister_stream_subscription
 
-  after_commit :create_gateway_and_facebook_page_subscription, :send_mixpanel_event, on: :create
+  after_commit :subscribe_realtime, :send_mixpanel_event, on: :create
   after_commit :build_default_streams,  on: :create,  :if => :facebook_revamp_enabled?
   after_commit :delete_default_streams, on: :destroy, :if => :facebook_revamp_enabled?
   after_commit :remove_gateway_page_subscription, on: :destroy
@@ -85,7 +85,7 @@ class Social::FacebookPage < ActiveRecord::Base
     self.facebook_streams.destroy_all
   end
   
-  def create_gateway_and_facebook_page_subscription
+  def subscribe_realtime
     Social::GatewayFacebookWorker.perform_async(page_id: page_id, action: 'create')
   end
 
