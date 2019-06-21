@@ -171,8 +171,8 @@ module Widget
         @widget.settings[:components][:solution_articles] = false
         @widget.save
         get :suggested_articles, controller_params
-        assert_response 400
-        match_json(request_error_pattern(:solution_article_not_enabled, 'solution_article_not_enabled'))
+        assert_response 200
+        match_json(get_suggested_articles)
         assert_nil Language.current
       end
 
@@ -185,10 +185,10 @@ module Widget
       end
 
       def test_show_without_feature
-        Account.any_instance.stubs(:help_widget_enabled?).returns(false)
+        Account.any_instance.stubs(:all_launched_features).returns([])
         get :show, controller_params(id: @article.parent_id)
         assert_response 403
-        Account.any_instance.unstub(:help_widget_enabled?)
+        Account.any_instance.unstub(:all_launched_features)
         assert_nil Language.current
       end
 
@@ -196,8 +196,8 @@ module Widget
         @widget.settings[:components][:solution_articles] = false
         @widget.save
         get :show, controller_params(id: @article.parent_id)
-        assert_response 400
-        match_json(request_error_pattern(:solution_article_not_enabled, 'solution_article_not_enabled'))
+        assert_response 200
+        match_json(widget_article_show_pattern(@article))
         assert_nil Language.current
       end
     end

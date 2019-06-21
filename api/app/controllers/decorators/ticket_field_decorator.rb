@@ -12,11 +12,12 @@ class TicketFieldDecorator < ApiDecorator
   DEFAULT_FIELDS = %w[default_priority default_source default_status default_ticket_type default_product default_skill].freeze
 
   FIELD_NAME_MAPPINGS = {
-    'product': 'product_id',
-    'group': 'group_id',
-    'agent': 'responder_id',
-    'ticket_type': 'type'
-  }
+    'product' => 'product_id',
+    'group' => 'group_id',
+    'agent' => 'responder_id',
+    'ticket_type' => 'type',
+    'requester' => 'email'
+  }.freeze
 
   def portal_cc
     record.field_options.try(:[], 'portalcc')
@@ -39,8 +40,8 @@ class TicketFieldDecorator < ApiDecorator
   end
 
   # use the below function in case the client does not do the field name mapping
-  def validatable_field_name 
-    default ? (FIELD_NAME_MAPPINGS[record.name.to_sym] || record.name) : TicketDecorator.display_name(record.name)
+  def validatable_field_name
+    default ? (FIELD_NAME_MAPPINGS[record.name] || record.name) : TicketDecorator.display_name(record.name)
   end
 
   def nested_ticket_field_name
