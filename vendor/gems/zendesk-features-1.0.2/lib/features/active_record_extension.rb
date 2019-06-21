@@ -6,7 +6,7 @@ module Features
         builder.instance_eval(&block)
         builder.build
 
-        has_many :features, :class_name => 'Features::Feature', :dependent => :destroy do
+        has_many :features, :class_name => 'Features::Feature', :inverse_of => :account, :dependent => :destroy do
           def available?(feature_name)
             proxy_association.owner.features?(*Feature.sym_to_class(feature_name).required_features.map(&:to_sym))
           end

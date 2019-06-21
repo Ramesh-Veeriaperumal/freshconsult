@@ -50,7 +50,7 @@ class Account < ActiveRecord::Base
 
   accepts_nested_attributes_for :conversion_metric
 
-  has_many :features
+  has_many :features, inverse_of: :account
   has_many :flexi_field_defs, :class_name => 'FlexifieldDef'
   has_one  :ticket_field_def,  :class_name => 'FlexifieldDef',
       :conditions => {:module => "Ticket"}
