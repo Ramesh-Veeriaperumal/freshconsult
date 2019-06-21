@@ -53,5 +53,6 @@ module Helpdesk::Email::Constants
 
 	RETRY_FAILED_MESSAGE_PATH = "retry_failed_messages"
 	PERMANENT_FAILED_MESSAGE_PATH = "dead_failed_messages"
+	CUSTOM_BOT_RULES = ['CUSTOM_BOT_ATTACK', 'CUSTOM_RUSSIAN_SPAM'].freeze
 
 end

@@ -113,27 +113,27 @@
                           <%= label(:user, :name, t('user.full_name'), :class => "control-label" )%>
                           <div class="controls freshid_controls">
                             <%= text_field(:user, :name, :class => "text required name uneditable-input",
-                            :value => @agent.user.name, :placeholder => t('user.name')) %>
+                            :value => @agent.user.name, :placeholder => t('user.name'), :disabled => true) %>
                           </div>
                         </li>
                         <li class="control-group">
                     <%= label(:user, :phone, t('user.phone'), :class => "control-label" )%>
                     <div class="controls freshid_controls">
-                        <%= text_field(:user, :phone, :class => "text margin-bottom uneditable-input", :value => "#{@agent.user.phone}", :placeholder => t('user.work') ) %>
+                        <%= text_field(:user, :phone, :class => "text margin-bottom uneditable-input", :value => "#{@agent.user.phone}", :placeholder => t('user.work'), :disabled => true ) %>
                     </div>
                   </li>
                   <li class="control-group">
                     <%= label(:user, :phone, t('user.mobile_phone'), :class => "control-label" )%>
                     <div class="controls freshid_controls">
                         <%= text_field(:user, :mobile, :class => "text uneditable-input",
-                              :value => "#{@agent.user.mobile}", :placeholder => t('user.mobile')) %>
+                              :value => "#{@agent.user.mobile}", :placeholder => t('user.mobile'), :disabled => true) %>
                     </div>
                   </li>
                   <li class="control-group">
                   <%= label(:user, :job_title, t('user.title'), :class => "control-label" ) %>
                   <div class="controls freshid_controls">
                     <%= text_field(:user, :job_title, :class => "text uneditable-input",
-                        :value => "#{@agent.user.job_title}", :placeholder => t('user.title')) %>
+                        :value => "#{@agent.user.job_title}", :placeholder => t('user.title'), :disabled => true) %>
                   </div>
                 </li>
                 </div>
@@ -230,13 +230,13 @@
               <% if current_account.agent_scope_enabled? %>
                 <span id="role_and_scope"></span>
               <% else %>
-               t('agent.roles')
+                <%= t('agent.roles') %>                
               <% end %>
             </h5>
   				</li>
           <% if(@agent.user != current_user) %>
+          <% if current_account.agent_scope_enabled? %>
           <li class="control-group" id="agent_ticket_permission">
-          <% if(current_account.agent_scope_enabled?) %>
             <label class="control-label"><%=t('agent.ticket_scope')%></label>
             <ul class="controls">
               <li id="global_scope">
@@ -249,20 +249,20 @@
               <li>
                 <label class="radio">
                  <%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets] ,{:id=>"agent_group_tickets", :class => "radio"}) %>
-                 <%=t('agent.group_access')%>
-                 <%= content_tag( :span, t('agent.group_info'), :class => "muted info_data" ) %>
-               </label>
+                 <%=t('agent.group')%>
+                  <%= content_tag( :span, t('agent.group_info'), :class => "muted info_data" ) %>
+              </label>
               </li>
               <li>
                 <label class="radio">
                  <%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] ,{:id=>"agent_assigned_tickets", :class => "radio"}) %>
                  <%=t('agent.individual')%>
-                 <%= content_tag( :span, t('agent.individual_info'), :class => "muted info_data" ) %>
+                  <%= content_tag( :span, t('agent.individual_info'), :class => "muted info_data" ) %>
                </label>
               </li>
             </ul>
-          <%end%>
           </li>
+          <%end%>
   				<li id="agent_role_wrapper" class="agent-role control-group hide">
   					<%= label(:agent, :roles, t('agent.role'), :class => "control-label") %>
   					<div class="controls" id="selected-roles">
@@ -299,17 +299,17 @@
         </li>
       </ul>
     </li>
-		<li class="agent-role control-group">
-			<%= label(:agent, :roles, t('agent.role'), :class => "control-label") %>
-				<ul class="controls disc-styled">
+    <li class="agent-role control-group">
+      <%= label(:agent, :roles, t('agent.role'), :class => "control-label") %>
+        <ul class="controls disc-styled">
           <% @agent.user.roles.each do |role| %>
-    				<li>
+            <li>
               <b><%= role.name %></b>
               <%= content_tag( :span, role.description, :class => "muted info_data ellipsis" ) %>
-    				</li>
+            </li>
           <% end %>
-				</ul>
-		</li>
+        </ul>
+    </li>
     <% end %>
 
 		<%  if current_account.freshcaller_enabled? %>
@@ -405,6 +405,7 @@
       var fsm_group_type = null;
       var freshid_enabled= <%= freshid_integration_enabled? %>;
 			var userName = '<%= @agent.user.name %>';
+      var userEmail = '<%= @agent.user.email %>';
       window.App = window.App || {};
       App.Agents = App.Agents || {};
       App.Agents.Form = App.Agents.Form || {};
@@ -430,7 +431,7 @@
         fsm_group_type = <%= group_type %>
       <% end %>
 
-      App.Agents.Form.initializeData({userName: userName, roles: roles,
+      App.Agents.Form.initializeData({userName: userName, roles: roles, userEmail: userEmail,
 				role_details: role_details, freshid_enabled: freshid_enabled, groups: groups, group_details: group_details, fsm_group_type: fsm_group_type, SkillBasedRRFlag: <%=@manage_skills%>});
     });
 

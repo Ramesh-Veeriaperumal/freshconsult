@@ -31,8 +31,14 @@ class FreshidController < ApplicationController
         Rails.logger.info "FRESHID create_user_session :: a=#{current_account.try(:id)}, u=#{@current_user.try(:id)}"
         perform_after_login if @current_user.agent?
         set_freshid_session_state if current_account.freshid_org_v2_enabled?
-        redirect_back_or_default(default_return_url) if grant_day_pass
+        return unless grant_day_pass
+        if is_native_mobile?
+          cookies['mobile_access_token'] = { :value => @current_user.mobile_auth_token, :http_only => true }
+          cookies['fd_mobile_email'] = { :value => @current_user.email, :http_only => true }
+        end
+        redirect_back_or_default(default_return_url)
       else
+        cookies['mobile_access_token'] = { :value => 'failed', :http_only => true } if is_native_mobile?
         redirect_to login_url
       end
     end

@@ -1,5 +1,6 @@
 // @import "../fonts/proximanova-fonts";
 @import "../pattern/lib/rtl-mixins";
+@import "settings/settings";
 
 $font-stack-sans: -apple-system,
   BlinkMacSystemFont,
@@ -658,8 +659,7 @@ li.active > a:focus{
      @include margin-left(60px);
      @include margin-right(10px);
      margin-top: 20px;
-     margin-bottom: 20px
-
+     margin-bottom: 20px;
    }
 }
 
@@ -764,10 +764,6 @@ body.community {
       margin-top: 3px;
     }
   }
-
-
-
-
 
   .toggle-container{
     .toggle-handle{
@@ -899,14 +895,12 @@ input[type='radio']
       padding: 2px;
       outline: none;
        &:before {
-      border: 2px solid #fff;
-      position: relative;
-      left: -4px;
-      top: -4px;
+          border: 2px solid #fff;
+          position: relative;
+          @include left(-4px);
+          top: -4px;
        }
-
     }
-
 }
 
 .scl-welcome input[type="text"]{
@@ -1196,33 +1190,31 @@ div[class$="-toggle"]{
     .dropdown-menu {
       min-width: 260px;
     }
-      width: 260px;
-      .bad_to_good, .good_to_bad{
-            width: 147px;
-    padding-left: 50px;
-    &:before{
-    width: 80px;
-    }
-    b.caret{
-    border: 0px;
-      &:after, &:before {
+    width: 260px;
+    .bad_to_good, .good_to_bad {
+      width: 147px;
+      padding-left: 50px;
+      &:before{
+        width: 80px;
+      }
+      b.caret{
       border: 0px;
-      content: "";
-      position: absolute;
-      background: #748491;
-      height: 2px;
-      width: 6px;
-      border-radius: 3px;
-      transform: rotate(45deg);
-      right: $fields-font-size;
+        &:after, &:before {
+          border: 0px;
+          content: "";
+          position: absolute;
+          background: #748491;
+          height: 2px;
+          width: 6px;
+          border-radius: 3px;
+          transform: rotate(45deg);
+          right: $fields-font-size;
+        }
+        &:before {
+          transform: rotate(135deg);
+          right: 9px;
+        }
       }
-
-      &:before {
-        transform: rotate(135deg);
-        right: 9px;
-      }
-    }
-
     }
   }
 }
@@ -1317,8 +1309,6 @@ div[class$="-toggle"]{
   }
 
   background: #fff;
-  /*box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.14);*/
-  /*border: solid 1px $app-btn-disabled;*/
   border-radius: 6px;
   border: none;
   box-shadow: 0 2px 14px 0 #dee1e1, 0 18px 24px 0 rgba(91, 91, 91, 0.21);
@@ -1331,7 +1321,7 @@ div[class$="-toggle"]{
       padding-top: 30px;
       .close {
         position: initial;
-        float: right;
+        @include float(right);
         background: #fff;
         border: none;
         box-shadow: none;
@@ -1694,13 +1684,7 @@ div[class$="-toggle"]{
   .edit_agent .redactor_editor{
     min-height: 320px;
   }
-  .redactor_editor {
-    p,
-    li,
-    div {
-      font-size: 14px;
-    }
-  }
+
 }
 
 .survey-rep-filter{
@@ -1749,10 +1733,6 @@ div[class$="-toggle"]{
   position: relative;
 }
 
-.customer-portal .portal-section .captcha {
-  margin-left: 144px;
-}
-
 /* admin pages changes */
 .customer-portal {
   .controls.multiple-check {
@@ -1788,7 +1768,6 @@ div[class$="-toggle"]{
   font-size: 20px;
   position: relative;
   top: 1px;
-  left: 4px;
 }
 
 .alert-assume-agent {
@@ -1958,7 +1937,7 @@ div[class$="-toggle"]{
   .muted {
     color: #6f7c87;
   }
-  
+
   h3.lead{
     font-family: $font-family-semibold;
     padding-top: 48px;
@@ -1982,7 +1961,7 @@ div[class$="-toggle"]{
     font-family: $font-family-semibold;
     font-weight: 600;
   }
-  
+
   .required_star {
     top: 0;
     color: #ff5959;
@@ -2039,7 +2018,7 @@ div[class$="-toggle"]{
   .muted {
     color: #6f7c87;
   }
-  
+
   h3.lead{
     font-family: $font-family-semibold;
     padding-top: 48px;
@@ -2063,7 +2042,7 @@ div[class$="-toggle"]{
     font-family: $font-family-semibold;
     font-weight: 600;
   }
-  
+
   .required_star {
     top: 0;
     color: #ff5959;
@@ -2106,6 +2085,39 @@ div[class$="-toggle"]{
 .sandbox-notification-content {
   background: #fffade;
   margin: 30px 40px 0;
+
+  a:hover {
+    text-decoration: underline;
+    color: #448ee1;
+    opacity: 1;
+  }
+}
+
+.list-page.group-management .table .item_info:after,
+.pagearea .edit_role .lead:after,
+.modal-header .modal-roles-header:after{
+   content: "\200E";
+}
+
+#CustomFieldsPropsDialog .modal.nested-field-modal{
+  .add-choice.selected-field, .nested-section:last-child .selected-field {
+    .dropchoice .input-wrapper {
+      border-color: $app-primary-btn-background;
+    }
+  }
+  .nested-note {
+    .error {
+      color: $app-delete-bg-color;
+    }
+  }
+}
+.sso-notification-content {
+  background: #fffade;
+  padding: 5px 10px;
+  font-size: 12px;
+  margin: 7px 0px;
+  border-left: 3px #fead00 solid;
+  line-height: 16px;
 
   a:hover {
     text-decoration: underline;

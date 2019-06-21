@@ -78,7 +78,7 @@ class Discussions::ForumsController < ApplicationController
 		respond_to do |format|
 			format.html
 			format.xml  { render :xml => @forum.to_xml(:include => :topics) }
-			format.json  { render :json => @forum.to_json(:include => :topics) }
+			format.json  { render json: @forum.to_json(include: { topics: {except: :hits} } ) }
 			format.atom
 		end
 	end

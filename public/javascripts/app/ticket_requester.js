@@ -105,7 +105,7 @@ window.App.Tickets = window.App.Tickets || {};
           callback(choices);
           _this.toggleLoadingSymbol(false, 'company_name');
           if(response.responseJSON.results.length === 0){
-              _this.bindErrorMessage($('#company_name'),TICKET_DETAILS_DATA['new_company_message']);
+              _this.bindErrorMessage($('#company_name'), '');
           }else{
             invalidCompanyName=false;
           }
@@ -201,7 +201,7 @@ window.App.Tickets = window.App.Tickets || {};
 	                _this.highlightModifiedFields(modified_fields);
 	                _this.bindErrorMessage($('#company_name'),TICKET_DETAILS_DATA['company_message']);
 	              } else {
-	                _this.bindErrorMessage($('#company_name'),TICKET_DETAILS_DATA['new_company_message']);
+	                _this.bindErrorMessage($('#company_name'),'');
 	                _this.clearCompanyFieldValues();  
 	              }
 	              _this.toggleRequesterEdit(true);

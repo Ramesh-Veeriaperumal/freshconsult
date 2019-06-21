@@ -279,7 +279,7 @@ class VaRule < ActiveRecord::Base
       evaluate_on.system_changes = base_hash
     end
   end
-
+  
   def add_thank_you_note_to_system_changes(evaluate_on)
     result_hash = Thread.current[:thank_you_note]
     evaluate_on.system_changes[self.id.to_s][:thank_you_note] = [result_hash[:result]] if result_hash[:rule_id] == self.id

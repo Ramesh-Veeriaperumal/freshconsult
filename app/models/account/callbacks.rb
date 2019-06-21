@@ -124,7 +124,9 @@ class Account < ActiveRecord::Base
       self.launch(:falcon_signup)           # To track falcon signup accounts
       self.launch(:falcon_portal_theme)  unless redis_key_exists?(DISABLE_PORTAL_NEW_THEME)   # Falcon customer portal
     end
-    launch_freshid_with_omnibar if freshid_integration_signup_allowed?
+    if freshid_integration_signup_allowed?
+      freshid_v2_signup? ? launch_freshid_with_omnibar(true) : launch_freshid_with_omnibar
+    end
     if redis_key_exists?(ENABLE_AUTOMATION_REVAMP)
       launch(:automation_revamp)
       launch(:automation_rule_execution_count)
@@ -152,7 +154,7 @@ class Account < ActiveRecord::Base
   end
 
   def parent_child_infra_features_present?
-    PARENT_CHILD_INFRA_FEATURES.any? { |f| self.safe_send("#{f}_enabled?")} 
+    PARENT_CHILD_INFRA_FEATURES.any? { |f| self.safe_send("#{f}_enabled?")}
   end
 
   # Need to revisit when we push all the events for an account

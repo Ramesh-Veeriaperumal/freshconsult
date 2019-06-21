@@ -8,6 +8,8 @@
     plan = @subscription.subscription_plan
     is_new_sprout = new_sprout?(plan.name)
     plan_id = plan.name.parameterize.underscore
+    field_agent_limit = @subscription.field_agent_limit || 0
+    show_field_agent_info = fsm_supported_plan?(plan) && current_account.field_service_management_enabled? && field_agent_limit > 0
   %>
 
 <div class="well-active well-active-new">
@@ -38,19 +40,35 @@
 
   <input type="hidden" data-omni-plan-id="<%= plan.name.parameterize.underscore %>" data-plan-id="<%= plan.id %>"/>
   <div class="calculate-container" id="<%= plan.name.parameterize.underscore %>">
+    <div class="features-billing-edit hide">
     <% if plan.omni_plan? || plan.basic_variant? %>
-      <p class="omni-billing-edit hide">
+      <p class="omni-billing-edit features-billing-edit__toggle">
         <span><%= t('omni_channel') %></span>
         <input rel="toggle" type="checkbox" data-plan="<%= plan_id %>"  id="exclude-omni" name="omni-edit-toggle" data-checked-label="<%= t('plain_yes') %>" 
         <%= plan.name.include?('Omni')? "checked='true'" : '' %> />
       </p>
     <% end %>
+    <% if fsm_supported_plan?(plan) %> 
+      <p class="fsm-billing-edit features-billing-edit__toggle">
+        <span><%= t('fsm_title') %></span>
+        <input rel="toggle" type="checkbox" data-plan-id="<%= plan.id %>" id="edit-billing-fsm-toggle" name="fsm-edit-toggle" data-checked-label="<%= t('plain_yes') %>"
+        <%= current_account.field_service_management_enabled? ? 'checked' : '' %> />
+      </p>
+      <%= render :partial => "subscriptions/features/dialogs/fsm_disable", :locals => {
+        :current_account => current_account, :identifier => 'fsm-billing-edit' } %>
+    <% end %>
+    </div>
     <div class="subscribed-plan-details current-plan-info">
       <div id="info_1" class="subscription-info-divider <%= is_new_sprout ? 'free-divider' : ''%>">
         <ul>
           <li>
             <%= is_new_sprout ? t('free_plan') : t('agent_seats',:no_of_agents => @subscription.agent_limit) %>
           </li>
+          <% if show_field_agent_info %>
+          <li>
+            <%= t('field_agent_seats',:no_of_field_agents => field_agent_limit) %>
+          </li>
+          <% end %>
           <li>
             <% if is_new_sprout %>
               <%= t('free_plan_agents_v2') %>
@@ -123,14 +141,13 @@
 <% end %>
   <div class="choose-plan-drop" style="<%= 'display:none' if @selected_plan.nil? %>">
   <% if current_account.new_2019_pricing_enabled? %>
-    <img alt="omni channel experience" class="omni-channel-icon" src="/assets/omni-channel.svg" width="52" />
-    <div class="choose-plan-title">
-      <h4 href="#"> 
-        <%= t('omni_channel') %>
-        <input rel="toggle" type="checkbox" id="omni-toggle" name="omni-toggle" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>"/>
-      </h4>
-    </div>
-    <%= content_tag(:h5, t('omni_channel_content'), :class => "lead-note pb15") %>
+  <div class="features">
+    <%= render :partial => "/subscriptions/features/toggle-box/ocr_toggle", :locals => { :plan => plan }%>
+    <% if current_account.fsm_addon_billing_enabled? %>
+      <span class="vr-line"></span>
+      <%= render :partial => "/subscriptions/features/toggle-box/fsm_toggle", :locals => { :current_account => current_account }%>
+    <% end %>
+  </div>
   <% end %>
     <%= render :partial => "/subscriptions/select_new_plans", :locals => {:plans => @plans, :subscription => @subscription, 
       :show_all => false } %>
@@ -141,45 +158,6 @@
 
 
 <script type="text/javascript">
-jQuery(document).ready(function() {
-
-    var toHide = ['plan-garden_jan_19', 'plan-estate_jan_19']
-
-
-    jQuery(document).on('click', ".choose-plan-title .toggle-button", function(i){
-      if(jQuery(i.target).closest(".toggle-button").hasClass("active")) {
-        jQuery(".plan-feature-list").addClass("showing-omni-features");
-        //jQuery("#ChangePlan").animate({'left': '-100%'}, 200).css("opacity", 0).animate({'left': '100%'}, 1);
-        toHide.each(function(item){
-          jQuery("#"+item).addClass("hide");
-        });
-
-        jQuery(".pricelist").each(function(){
-          if(jQuery(this).attr("id").indexOf("omni") > 0) {
-            jQuery(this).removeClass("hide");
-          }
-        });
-        //jQuery("#ChangePlan").css("opacity", 1).animate({'left': '0'}, 220);
-        jQuery(".omni-features").delay(300).removeClass("hide");
-        window.scrollTo(0,290);
-      } else {
-        jQuery(".plan-feature-list").removeClass("showing-omni-features");
-        //jQuery("#ChangePlan").animate({'left': '100%'}, 200).css("opacity", 0).animate({'left': '-100%'}, 1);
-        toHide.each(function(item){
-          jQuery("#"+item).removeClass("hide");
-        });
-
-        jQuery(".pricelist").each(function(){
-          if(jQuery(this).attr("id").indexOf("omni") > 0) {
-            jQuery(this).addClass("hide");
-          }
-        });
-        jQuery(".omni-features").addClass("hide");
-        //jQuery("#ChangePlan").css("opacity", 1).animate({'left': '0'}, 220);
-      }
-    });
-
-});
   (function($){    
     $(".plan-expand").click(function(ev){
       ev.preventDefault();
@@ -191,14 +169,6 @@ jQuery(document).ready(function() {
   })(jQuery);
 </script>
 
-
-<% if plan.omni_plan? || plan.free_omni_channel_plan? %>
-  <script type="text/javascript">
-    jQuery(document).ready(function() {
-      jQuery(".choose-plan-title .toggle-button").trigger("click");
-    });
-  </script>
-<% end %>
 
 <div id="omni-disable-confirmation" style="display: none;">
  <%= t('disable_omni_content') %>

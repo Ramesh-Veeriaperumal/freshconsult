@@ -15,7 +15,8 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   has_many :cti_phones, :class_name =>'Integrations::CtiPhone', :dependent => :destroy
   has_many :va_rules, through: :app_business_rules
   has_many :sync_accounts, :class_name => 'Integrations::SyncAccount', :dependent => :destroy
-  attr_protected :application_id
+  attr_protected :application_id, :account_id
+  attr_accessible :configs, :application
   
   validate :check_existing_app, :on => :create
   before_destroy :before_destroy_customize

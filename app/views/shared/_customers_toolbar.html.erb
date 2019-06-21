@@ -63,7 +63,7 @@
   				'#{ path }/restore', 'restore')", :class => "btn", :disabled => "disabled") %>
   		<% elsif cookies[:contacts_sort].eql?("blocked") %>  	
         	<%= button_to_function(t('unblock'), "validate_then_submit('#{ path }/unblock', 'unblock')", :class => "btn", :disabled => "disabled") %>
-  		<% elsif privilege?(:delete_contact)  || privilege?(:delete_company) %> 
+  		<% elsif privilege?(:delete_contact) || privilege?(:delete_company) %> 
   				<%= button_to_function(t('delete'), "delete_customer()", :class => "btn", :disabled => "disabled") %>
   		<% end %>
   	</div>
