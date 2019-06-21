@@ -15,4 +15,5 @@ module Redis::Keys::Tickets
   RIAK_FAILED_NOTE_DELETION               = "RIAK:FAILED_NOTE_DELETION".freeze
   REPORT_TICKET_FILTERS                   = "REPORT_TICKET_FILTERS:%{account_id}:%{user_id}:%{session_id}:%{report_type}".freeze
   ARTICLE_FEEDBACK_FILTER                 = "ARTICLE_FEEDBACK_FILTER:%{account_id}:%{user_id}:%{session_id}".freeze
+  UNDO_SEND_TIMER                         = 'UNDO_SEND_TIMER:%{account_id}'.freeze
 end

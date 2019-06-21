@@ -20,6 +20,7 @@ module Ember
     include Redis::UndoSendRedis
     include Redis::RedisKeys
     include Redis::OthersRedis
+    include Redis::TicketsRedis
 
     BULK_ATTACHMENT_CREATE_COUNT = 2
     BULK_NOTE_CREATE_COUNT       = 2
@@ -263,13 +264,37 @@ module Ember
     def test_reply_with_undo_send
       @account.add_feature(:undo_send)
       user = other_user
+      User.any_instance.stubs(:enabled_undo_send?).returns(true)
       user.preferences[:agent_preferences][:undo_send] = true
       params_hash = reply_note_params_hash
       params_hash[:user_id] = user.id
-      post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      Sidekiq::Testing.inline! do
+        post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      end
       assert_response 201
       user.preferences[:agent_preferences][:undo_send] = false
       @account.revoke_feature(:undo_send)
+      User.any_instance.unstub(:enabled_undo_send?)
+    end
+
+    def test_reply_with_undo_send_with_variable_timer_value
+      key = UNDO_SEND_TIMER % { :account_id => Account.current.id }
+      set_tickets_redis_key(key, "20")
+      @account.add_feature(:undo_send)
+      user = other_user
+      User.any_instance.stubs(:enabled_undo_send?).returns(true)
+      user.preferences[:agent_preferences][:undo_send] = true
+      params_hash = reply_note_params_hash
+      params_hash[:user_id] = user.id
+      Sidekiq::Testing.inline! do
+        post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      end
+      assert_equal 20.seconds + UNDO_SEND_TIMER_BUFFER, undo_send_timer_value
+      assert_response 201
+      user.preferences[:agent_preferences][:undo_send] = false
+      @account.revoke_feature(:undo_send)
+      remove_tickets_redis_key(key)
+      User.any_instance.unstub(:enabled_undo_send?)
     end
 
     def test_dummy_id_generated_with_undo_send
