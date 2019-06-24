@@ -165,4 +165,17 @@ module AccountTestHelper
     }
   end
 
+  def setup_field_service_management_feature
+    account_id = @account.id
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+    perform_fsm_operations
+    Account.reset_current_account
+    @account = Account.find(account_id)
+    @account.make_current
+
+    yield if block_given?
+  ensure
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    cleanup_fsm
+  end
 end

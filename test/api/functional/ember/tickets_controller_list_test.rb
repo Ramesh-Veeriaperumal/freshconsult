@@ -38,7 +38,7 @@ module Ember
       @@before_all_run=true unless @@before_all_run
     end
 
-    @@before_all_run=false
+    @@before_all_run = false
 
     def sample_arr(max = 4)
       (1..max).to_a.sample(rand(1..max))
@@ -119,13 +119,14 @@ module Ember
       params_hash
     end
 
-    def match_db_and_es_query_responses(query_hash_params)
+    def match_db_and_es_query_responses(query_hash_params, order_by = 'created_at', order_type = 'desc')
       # Runs on DB and fetches records
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
+      params = { version: 'private', query_hash: query_hash_params, order_by: order_by, order_type: order_type }
+      get :index, controller_params(params, false)
       assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params, order_by, order_type))
       # Checks for ES response
-      match_query_response_with_es_enabled(query_hash_params)
+      match_query_response_with_es_enabled(query_hash_params, order_by, order_type)
     end
 
     def match_db_and_es_filter_responses(ticket_filter)
@@ -135,14 +136,15 @@ module Ember
       match_query_response_with_es_enabled(ticket_filter.data)
     end
 
-    def match_query_response_with_es_enabled(query_hash_params)
+    def match_query_response_with_es_enabled(query_hash_params, order_by = 'created_at', order_type = 'desc')
       enable_es_api_load(query_hash_params) do
-        response_stub = filter_factory_es_cluster_response_stub(query_hash_params)
+        response_stub = filter_factory_es_cluster_response_stub(query_hash_params, order_by, order_type)
         SearchService::Client.any_instance.stubs(:query).returns(SearchService::Response.new(response_stub))
         SearchService::Response.any_instance.stubs(:records).returns(JSON.parse(response_stub))
-        get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
+        params = { version: 'private', query_hash: query_hash_params, order_by: order_by, order_type: order_type }
+        get :index, controller_params(params, false)
         assert_response 200
-        match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+        match_json(private_api_ticket_index_query_hash_pattern(query_hash_params, order_by, order_type))
       end
     end
 
@@ -169,15 +171,15 @@ module Ember
       end
     end
 
-    def match_default_filter_response_with_es_enabled(filter_name)
+    def match_default_filter_response_with_es_enabled(filter_name, order_by = 'created_at', order_type = 'desc')
       enable_es_api_load(filter_name) do
-        response_stub = filter_factory_default_filter_es_response_stub(filter_name)
+        response_stub = filter_factory_default_filter_es_response_stub(filter_name, order_by, order_type)
         SearchService::Client.any_instance.stubs(:query).returns(SearchService::Response.new(response_stub))
         SearchService::Response.any_instance.stubs(:records).returns(JSON.parse(response_stub))
         get :index, controller_params({ version: 'private', filter: filter_name }, false)
         assert_response 200
 
-        match_json(private_api_ticket_index_default_filter_pattern(filter_name))
+        match_json(private_api_ticket_index_default_filter_pattern(filter_name, order_by, order_type))
       end
     end
 
@@ -305,7 +307,7 @@ module Ember
       Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
       perform_fsm_operations
       Account.first.make_current
-      query_hash_params = { '0' => query_hash_param('cf_fsm_appointment_start_time', 'is', 'today', 'custom_field') }
+      query_hash_params = { '0' => query_hash_param('cf_fsm_appointment_start_time', 'is', 'last_week', 'custom_field') }
       match_db_and_es_query_responses(query_hash_params)
     ensure
       cleanup_fsm
@@ -753,6 +755,66 @@ module Ember
         query_hash_params = { '0' => query_hash_param('any_agent_id', 'is_in', [@internal_agent.id]) }
 
         match_db_and_es_query_responses(query_hash_params)
+      end
+    end
+
+    def test_filter_unresolved_service_tasks
+      setup_field_service_management_feature do
+        filter_name = 'unresolved_service_tasks'
+        get :index, controller_params(version: 'private', filter: filter_name)
+        assert_response 200
+        match_json(private_api_ticket_index_default_filter_pattern(filter_name, 'appointment_start_time', 'asc'))
+        match_default_filter_response_with_es_enabled(filter_name, 'appointment_start_time', 'asc')
+      end
+    end
+
+    def test_order_by_appointment_start_time_asc
+      setup_field_service_management_feature do
+        query_hash = { '0' => query_hash_param('ticket_type', 'is_in', ['Service Task']) }
+        match_db_and_es_query_responses(query_hash, 'appointment_start_time', 'asc')
+      end
+    end
+
+    def test_order_by_appointment_start_time_desc
+      setup_field_service_management_feature do
+        query_hash = { '0' => query_hash_param('ticket_type', 'is_in', ['Service Task']) }
+        match_db_and_es_query_responses(query_hash, 'appointment_start_time', 'desc')
+      end
+    end
+
+    def test_fsm_appointment_start_time_with_custom_range
+      setup_field_service_management_feature do
+        date_range = {
+          'from' => Time.zone.now.strftime('%Y-%m-%dT%H:%m:%SZ'),
+          'to' => Time.zone.now.advance(days: 4).strftime('%Y-%m-%dT%H:%m:%SZ')
+        }
+        query_hash = { '0' => query_hash_param('cf_fsm_appointment_start_time', 'is', date_range, 'custom_field') }
+        match_db_and_es_query_responses(query_hash)
+      end
+    end
+
+    def test_fsm_appointment_end_time_with_custom_range
+      setup_field_service_management_feature do
+        date_range = {
+          'from' => Time.zone.now.ago(4.days).strftime('%Y-%m-%dT%H:%m:%SZ'),
+          'to' => Time.zone.now.strftime('%Y-%m-%dT%H:%m:%SZ')
+        }
+        query_hash = { '0' => query_hash_param('cf_fsm_appointment_end_time', 'is', date_range, 'custom_field') }
+        match_db_and_es_query_responses(query_hash)
+      end
+    end
+
+    def test_fsm_appointment_start_and_end_time_with_custom_range
+      setup_field_service_management_feature do
+        date_range = {
+          'from' => Time.zone.now.ago(4.days).strftime('%Y-%m-%dT%H:%m:%SZ'),
+          'to' => Time.zone.now.advance(days: 4).strftime('%Y-%m-%dT%H:%m:%SZ')
+        }
+        query_hash = {
+          '0' => query_hash_param('cf_fsm_appointment_end_time', 'is', date_range, 'custom_field'),
+          '1' => query_hash_param('cf_fsm_appointment_end_time', 'is', date_range, 'custom_field')
+        }
+        match_db_and_es_query_responses(query_hash)
       end
     end
 
