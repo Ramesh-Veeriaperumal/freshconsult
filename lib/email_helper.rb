@@ -167,7 +167,7 @@ module EmailHelper
   end
 
   def update_freshops_activity(account, reason, action_name)
-    url_params = { :app_name => "helpkit", 
+    url_params = { :app_name => 'helpkit',
     :activity => {
       :email => Helpdesk::EMAIL[:auto_block_user],
       :reason => reason,
@@ -180,7 +180,7 @@ module EmailHelper
   end
 
   def antispam_enabled? account
-    (((account.subscription.free? || account.subscription.trial?) && !(account.launched?(:whitelist_spam_detection_service))) || (account.subscription.active? && account.launched?(:spam_detection_service)))
+    account.proactive_spam_detection_enabled?
   end
 
   def collab_email_reply? email_subject
@@ -238,6 +238,16 @@ module EmailHelper
     additional_info << "Outgoing emails blocked!!" if !(Account.current.subscription.active?)
     notify_account_blocks(account, subject, additional_info)
     update_freshops_activity(account, "Outgoing emails blocked due to blacklisted spam rules match", "block_outgoing_email") if !(Account.current.subscription.active?)
+  end
+
+  def custom_bot_attack_rules
+    if ($custom_bot_attack_rules.blank? || $custom_bot_rules_checked_time.blank? || $custom_bot_rules_checked_time < 5.minutes.ago)
+      custome_bot_rules_list = get_all_members_in_a_redis_set(CUSTOM_BOT_RULES)
+      $custom_bot_attack_rules = (custome_bot_rules_list.present? ? 
+                  custome_bot_rules_list : Helpdesk::Email::Constants::CUSTOM_BOT_RULES)
+      $custom_bot_rules_checked_time = Time.now
+    end
+    return $custom_bot_attack_rules
   end
 
 end

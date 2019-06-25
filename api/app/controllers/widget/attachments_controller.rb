@@ -5,7 +5,6 @@ module Widget
     include AttachmentsValidationConcern
 
     skip_before_filter :check_privilege
-    before_filter :check_feature
     before_filter :set_widget_portal_as_current
 
     decorate_views
@@ -18,6 +17,9 @@ module Widget
     private
 
       def sanitize_params
+        check_anonymous_tickets
+        return if @error.present?
+
         validate_widget
         params[cname][:attachable_type] = AttachmentConstants::ATTACHABLE_TYPES['widget_draft']
         params[cname][:attachable_id] = @widget_id

@@ -302,6 +302,15 @@ module Ember
         contact = Ember::ContactValidation.new(params[cname], @item, string_request_params?)
         render_custom_errors(contact, true) unless contact.valid?(action_name.to_sym)
       end
+      
+      def field_mappings
+        mappings = super
+        if (action_name.to_sym == :quick_create)
+          mappings.merge!(company_name: :company_name) 
+        else
+          mappings.merge!(company_name: :company)
+        end
+      end
 
       def current_segment
         @current_segment ||= contact_filters.find_by_id(params[:filter])

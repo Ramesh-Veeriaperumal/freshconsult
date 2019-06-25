@@ -4,7 +4,7 @@ module WidgetConcern
   def validate_widget
     @widget_id = request.env['HTTP_X_WIDGET_ID']
     return render_request_error(:widget_id_not_given, 400) if @widget_id.blank?
-    
+
     @client_id = request.env['HTTP_X_CLIENT_ID']
     return render_request_error(:cliend_id_not_given, 400) if @client_id.blank?
 
@@ -26,6 +26,10 @@ module WidgetConcern
     render_request_error(:require_feature, 403, feature: :open_solutions) unless current_account.features?(:open_solutions)
   end
 
+  def check_anonymous_tickets
+    render_request_error(:require_feature, 403, feature: :anonymous_tickets) unless current_account.features?(:anonymous_tickets)
+  end
+
   def add_attachments
     @item.attachments = current_account.attachments.where(id: @attachment_ids) if @attachment_ids.present?
   end
@@ -38,5 +42,9 @@ module WidgetConcern
       )
     end
     Language.fetch_from_portal({}).make_current unless Language.current?
+  end
+
+  def launch_party_name
+    FeatureConstants::HELP_WIDGET
   end
 end

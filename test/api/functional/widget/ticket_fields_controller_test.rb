@@ -4,6 +4,7 @@ module Widget
   class TicketFieldsControllerTest < ActionController::TestCase
     include TicketFieldsTestHelper
     include HelpWidgetsTestHelper
+    include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
 
     def setup
       super
@@ -12,6 +13,8 @@ module Widget
       @client_id = UUIDTools::UUID.timestamp_create.hexdigest
       @request.env['HTTP_X_CLIENT_ID'] = @client_id
       current_product = @widget.product_id
+      @account.launch :help_widget
+      @account.add_feature(:anonymous_tickets)
       @current_portal = current_product ? @account.portals.find_by_product_id(current_product) : current_account.main_portal_from_cache
     end
 
@@ -30,6 +33,13 @@ module Widget
       get :index, controller_params
       assert_response 200
       assert JSON.parse(response.body).count > 1
+    end
+
+    def test_index_default_field_name
+      get :index, controller_params
+      assert_response 200
+      parsed_response = JSON.parse(response.body)
+      assert parsed_response.find { |x| x['name'] == 'email' }.present?
     end
 
     # def test_index_scoper
@@ -51,8 +61,28 @@ module Widget
       @widget.settings[:components][:contact_form] = false
       @widget.save
       get :index, controller_params
-      assert_response 400
-      match_json(request_error_pattern(:contact_form_not_enabled, 'contact_form_not_enabled'))
+      assert_response 200
+      assert JSON.parse(response.body).count > 1
+    end
+
+    def test_index_without_help_widget_launch
+      Account.any_instance.stubs(:all_launched_features).returns([])
+      get :index, controller_params
+      assert_response 403
+      Account.any_instance.unstub(:all_launched_features)
+    end
+
+    def test_index_without_anonymous_tickets
+      Account.any_instance.stubs(:features?).with(:anonymous_tickets).returns(false)
+      get :index, controller_params
+      assert_response 403
+      Account.any_instance.unstub(:features?)
+    end
+
+    def test_index_with_choices
+      get :index, controller_params
+      assert_response 200
+      assert JSON.parse(response.body).count > 1
     end
   end
 end

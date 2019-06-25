@@ -1,4 +1,10 @@
 module Admin::RolesHelper
+  include Utils::RequesterPrivilege
+
+  # TODO: refactor bellow stmt after launch all of contacts and companies
+  # privilege split up.
+  MANAGE_COMPANIES = { dom_type: 'check_box', id: 'manage_companies' }.freeze
+  DELETE_COMPANY = { dom_type: 'check_box', id: 'delete_company' }.freeze
 
   def role_sections
       [
@@ -90,11 +96,12 @@ module Admin::RolesHelper
                  [{ :dom_type => "check_box", :id => "manage_contacts" },
                   { dom_type: 'check_box', id: 'manage_segments' },
                   { :dom_type => "check_box", :id => "delete_contact" },
-                  {:dom_type => "check_box", :id => "export_customers"}]
-                
-             }]
-             
-         },
+                  {:dom_type => "check_box", :id => "export_customers" }].tap do |arr|
+                    if current_account.launched? :contact_company_split
+                      arr.insert(1, MANAGE_COMPANIES)
+                      arr.insert(4, DELETE_COMPANY)
+                    end
+                  end }] },
 
          # *************************** Outreaches *******************************
 
@@ -143,7 +150,8 @@ module Admin::RolesHelper
                     { :dom_type => "check_box", :id => "manage_email_settings" },
                     { :dom_type => "check_box", :id => "manage_ticket_list_views" },
                     { :dom_type => "check_box", :id => "manage_ticket_templates" },
-                    { :dom_type => "check_box", :id => "manage_bots", not_display: !current_account.support_bot_enabled? }
+                    { :dom_type => "check_box", :id => "manage_bots", not_display: !current_account.support_bot_enabled? },
+                    { dom_type: 'check_box', id: 'manage_requester_notifications', not_display: !has_requester_feature? }
                     ]
                },
 

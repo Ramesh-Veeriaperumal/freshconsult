@@ -8938,7 +8938,41 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/subscription_show"
+              "$ref": "#/definitions/subscription_response"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "subscription"
+        ],
+        "description": "Update account subscription",
+        "summary": "Update account subscription",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/subscription_update_request"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/subscription_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
             }
           },
           "403": {
@@ -10446,6 +10480,26 @@
         }
       }
     },
+    "/accounts/support_tickets": {
+      "get": {
+        "tags": [
+          "Account"
+        ],
+        "description": "Number of support tickets raised/discussed by this company in the last 3 months",
+        "summary": "Support tickets count",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/support_tickets"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/data_export/export": {
       "post": {
         "tags": [
@@ -11834,7 +11888,6 @@
         }
       }
     },
-
     "/solutions/articles/untranslated_articles/{language}": {
       "get": {
         "tags": [
@@ -21540,17 +21593,34 @@
         }
       }
     },
-    "subscription_show": {
+    "subscription_response": {
       "type": "object",
       "properties": {
         "id": {
-          "type": "integer"
+          "type": "integer",
+          "format": "int64"
         },
         "state": {
           "type": "string"
         },
-        "subscription_plan_id": {
+        "plan_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "renewal_period": {
           "type": "integer"
+        },
+        "agent_seats": {
+          "type": "integer"
+        },
+        "card_number": {
+          "type": "string"
+        },
+        "card_expiration": {
+          "type": "string"
+        },
+        "name_on_card": {
+          "type": "string"
         },
         "created_at": {
           "type": "string",
@@ -21569,7 +21639,8 @@
             "type": "object",
             "properties": {
               "id": {
-                "type": "number"
+                "type": "number",
+                "format": "int64"
               },
               "name": {
                 "type": "string"
@@ -21618,6 +21689,23 @@
               }
             }
           }
+        }
+      }
+    },
+    "subscription_update_request": {
+      "type": "object",
+      "properties": {
+        "plan_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "renewal_period": {
+          "type": "integer",
+          "description": "One of the value in [1, 3, 6, 12]"
+        },
+        "agent_seats": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -23441,6 +23529,16 @@
         }
       }
     },
+    
+    "support_tickets": {
+      "type": "object",
+      "properties": {
+        "unresolved_count": {
+          "type": "integer"
+        }
+      }
+    },
+    
     "account_feature_enable_disable": {
       "type": "object",
       "required": [

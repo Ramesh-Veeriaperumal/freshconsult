@@ -3,6 +3,8 @@ module Widget
     class ArticlesController < ApiApplicationController
       include WidgetConcern
 
+      RELAXED_ACTIONS = [:suggested_articles, :show].freeze
+
       skip_before_filter :check_privilege
       skip_before_filter :load_object, only: [:suggested_articles]
 
@@ -41,9 +43,6 @@ module Widget
         end
 
         def before_load_object
-          check_feature
-          return if @error.present?
-
           check_open_solutions
           return if @error.present?
 
@@ -51,9 +50,15 @@ module Widget
           return if @error.present?
 
           set_widget_portal_as_current
-          return render_request_error(:solution_article_not_enabled, 400, id: @widget_id) unless @help_widget.solution_articles_enabled?
-          
+          return render_request_error(:solution_article_not_enabled, 400, id: @widget_id) unless solution_article_enabled
+
           set_current_language
+        end
+
+        def solution_article_enabled
+          return true if RELAXED_ACTIONS.include?(action_name.to_sym)
+
+          @help_widget.solution_articles_enabled?
         end
 
         def decorator_options

@@ -41,7 +41,8 @@ module AuditLog::Translators::AutomationRule
           changes[key][:type] = 'default'
           next unless changes[key].key?(:members)
           changes[key][:value] = agent_list.to_a.select do |arr|
-            changes[key][:members].include? arr[0]
+            is_integer = changes[key][:members].first.is_a?(Integer)
+            changes[key][:members].include? is_integer ? arr[0].to_i : arr[0]
           end.map {|ar| ar[1]}
           changes.delete :members
         end

@@ -4,7 +4,6 @@ module Helpdesk
       include Redis::UndoSendRedis
       include ::Utils::Sanitizer
 
-      UNDO_SEND_TIMER = 11.seconds
       NOTE_ASSOCIATED_ATTRIBUTES = [:support_email, :changes_for_observer,
                                     :disable_observer_rule, :nscname,
                                     :disable_observer, :send_survey,
@@ -110,7 +109,7 @@ module Helpdesk
       def send_to_sidekiq_and_set_redis_flags(args)
         if valid?
           ticket_display_id = args[:ticket_id]
-          jobid = ::Tickets::UndoSendWorker.perform_in(UNDO_SEND_TIMER, args)
+          jobid = ::Tickets::UndoSendWorker.perform_in(undo_send_timer_value, args)
           undo_send_enqueued(user_id, ticket_display_id, created_at.iso8601, jobid)
           enqueue_undo_send_traffic_cop_msg(ticket_display_id, user_id)
           true

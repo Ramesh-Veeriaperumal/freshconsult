@@ -1,0 +1,17 @@
+<div class="features-card ocr-card hide">
+  <h4 class="features-card__title"><%= t('omni_channel') %></h4>
+  <% omni_amount = plan.omni_channel_cost(@subscription.currency_name) %>
+  <% show_sign = omni_amount != 0 && !plan.free_omni_channel_plan? %>
+  <p class="features-card__price <%= 'slashed slashed-free' if plan.free_omni_channel_plan? %>">
+    <span class="price-value">
+      <%= '+' if show_sign %> <%= format_amount(omni_amount, @subscription.currency_name) %>
+    </span>
+    <span class="free"> <%= t('subscription.free') %></span>
+    <% if show_sign %>
+      <span class="per-agent"> <%= t('per_agent_per_month') %></span>
+    <% end %>
+  </p>
+  <% SubscriptionsHelper::OMNI_FEATURES["#{plan.name.downcase.split(' ').first}#{feature_name}"].each do |feature_item| %>
+  <span class="features-card__features--list"><%= t("features.#{feature_item}").html_safe %></span>
+  <% end%>
+</div>

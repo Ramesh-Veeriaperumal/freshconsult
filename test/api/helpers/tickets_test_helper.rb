@@ -17,6 +17,7 @@ module ApiTicketsTestHelper
   include ForumHelper
   include AttachmentsTestHelper
   include Helpdesk::Email::Constants
+  include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
 
   CUSTOM_FIELDS_CHOICES = Faker::Lorem.words(5).uniq.freeze
   DROPDOWN_OPTIONS = Faker::Lorem.words(5).freeze
@@ -103,6 +104,21 @@ module ApiTicketsTestHelper
        requester.user_companies.create(company_id: company_id) if requester && company_id
        ticket.company_id = company_id
        ticket.save
+    end
+
+    enable_feature(:field_service_management) do
+      perform_fsm_operations
+      parent_ticket = create_ticket
+      create_service_task_ticket(assoc_parent_id: parent_ticket.display_id)
+      create_service_task_ticket(assoc_parent_id: parent_ticket.display_id)
+      parent_ticket = create_ticket
+      10.times.each do |i|
+        params = { assoc_parent_id: parent_ticket.display_id, fsm_contact_name: Faker::Name.name,
+                   fsm_phone_number: Faker::Number.number(10), fsm_service_location: Faker::Address.city,
+                   fsm_appointment_start_time: Time.zone.now.advance(days: i * 2 - 10).strftime('%Y-%m-%dT%H:%m:%SZ'),
+                   fsm_appointment_end_time: (Time.zone.now.advance(days: i * 2 - 10) + rand(20..60).minutes).strftime('%Y-%m-%dT%H:%m:%SZ') }
+        create_service_task_ticket(params)
+      end
     end
   end
 
@@ -243,9 +259,14 @@ module ApiTicketsTestHelper
     }
   end
 
+  def date_diplay_format(type, date)
+    @name_type_mapping ||= Account.current.ticket_fields_name_type_mapping_cache
+    @name_type_mapping[type] == Helpdesk::TicketField::CUSTOM_DATE_TIME ? date.strftime('%Y-%m-%dT%H:%m:%SZ') : date.strftime('%F')
+  end
+
   def ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
     expected_custom_field = (expected_output[:custom_fields] && ignore_extra_keys) ? expected_output[:custom_fields].ignore_extra_keys! : expected_output[:custom_fields]
-    custom_field = ticket.custom_field_via_mapping.map { |k, v| [TicketDecorator.display_name(k), v.respond_to?(:utc) ? v.strftime('%F') : v] }.to_h
+    custom_field = ticket.custom_field_via_mapping.map { |k, v| [TicketDecorator.display_name(k), v.respond_to?(:utc) ? date_diplay_format(k, v) : v] }.to_h
     ticket_custom_field = (custom_field && ignore_extra_keys) ? custom_field.as_json.ignore_extra_keys! : custom_field.as_json
     description_html = format_ticket_html(expected_output[:description]) if expected_output[:description]
 
@@ -632,11 +653,12 @@ module ApiTicketsTestHelper
     end
   end
 
-  def private_api_ticket_index_query_hash_pattern(query_hash, wf_order = 'created_at')
+  def private_api_ticket_index_query_hash_pattern(query_hash, wf_order = 'created_at', order_type = 'desc')
     query_hash_params = {}
     query_hash_params[:query_hash] = query_hash
     query_hash_params[:wf_model] = 'Helpdesk::Ticket'
     query_hash_params[:wf_order] = wf_order
+    query_hash_params[:wf_order_type] = order_type
     query_hash_params[:data_hash] = QueryHash.new(query_hash_params[:query_hash].values).to_system_format
     param_object = OpenStruct.new(stats: true)
     pattern_array = private_api_ticket_index_first_page_objects(query_hash_params).map do |ticket|
@@ -648,7 +670,7 @@ module ApiTicketsTestHelper
     per_page = ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]
     param_object = OpenStruct.new(stats: true)
 
-    Account.current.tickets.where(sql_query).first(per_page).map do |ticket|
+    Account.current.tickets.where(sql_query).order('created_at desc').first(per_page).map do |ticket|
       index_ticket_pattern_with_associations(ticket, param_object, [:tags])
     end
   end
@@ -673,11 +695,12 @@ module ApiTicketsTestHelper
     }.to_json
   end
 
-  def filter_factory_es_cluster_response_stub(query_hash, wf_order = 'created_at')
+  def filter_factory_es_cluster_response_stub(query_hash, wf_order = 'created_at', wf_order_type = 'desc')
     query_hash_params = {}
     query_hash_params[:query_hash] = query_hash
     query_hash_params[:wf_model] = 'Helpdesk::Ticket'
     query_hash_params[:wf_order] = wf_order
+    query_hash_params[:wf_order_type] = wf_order_type
     query_hash_params[:data_hash] = QueryHash.new(query_hash_params[:query_hash].values).to_system_format
     param_object = OpenStruct.new(stats: true)
 
@@ -690,7 +713,7 @@ module ApiTicketsTestHelper
 
   def filter_factory_es_cluster_response_with_raw_query_stub(sql_query, wf_order = 'created_at')
     per_page = ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]
-    ticket_ids = Account.current.tickets.where(sql_query).first(per_page).map(&:id)
+    ticket_ids = Account.current.tickets.where(sql_query).order('created_at desc').first(per_page).map(&:id)
     {
       total: 31,
       results: ticket_ids.map { |id| { id: id, document: 'ticketanalytics' } }
@@ -712,11 +735,13 @@ module ApiTicketsTestHelper
     end
   end
 
-  def filter_factory_default_filter_es_response_stub(filter_name)
+  def filter_factory_default_filter_es_response_stub(filter_name, order_by = 'created_at', order_type = 'desc')
     query_hash_params = {}
     query_hash_params[:wf_model] = 'Helpdesk::Ticket'
     filter = Helpdesk::Filters::CustomTicketFilter.new.default_filter(filter_name)
     query_hash_params[:data_hash] = filter
+    query_hash_params[:wf_order] = order_by
+    query_hash_params[:wf_order_type] = order_type
     param_object = OpenStruct.new(stats: true)
 
     ticket_ids = private_api_ticket_index_first_page_objects(query_hash_params).map(&:id)
@@ -726,11 +751,13 @@ module ApiTicketsTestHelper
     }.to_json
   end
 
-  def private_api_ticket_index_default_filter_pattern(filter_name)
+  def private_api_ticket_index_default_filter_pattern(filter_name, order_by = 'created_at', order_type = 'desc')
     query_hash_params = {}
     query_hash_params[:wf_model] = 'Helpdesk::Ticket'
     filter = Helpdesk::Filters::CustomTicketFilter.new.default_filter(filter_name)
     query_hash_params[:data_hash] = filter
+    query_hash_params[:wf_order] = order_by
+    query_hash_params[:wf_order_type] = order_type
     param_object = OpenStruct.new(stats: true)
     pattern_array = private_api_ticket_index_first_page_objects(query_hash_params).map do |ticket|
       index_ticket_pattern_with_associations(ticket, param_object, [:tags])

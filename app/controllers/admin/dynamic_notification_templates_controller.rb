@@ -1,8 +1,10 @@
 class Admin::DynamicNotificationTemplatesController < Admin::AdminController
   include LiquidSyntaxParser
   include Spam::SpamAction
+  include Utils::RequesterPrivilege
 
   before_filter :load_item, :validate_liquid, :detect_spam_action
+  before_filter :access_denied, if: :check_privileges, except: :index
 
   def update
     if @errors.present?
@@ -55,5 +57,33 @@ class Admin::DynamicNotificationTemplatesController < Admin::AdminController
   def extract_subject_and_message
     dynamic_notfn = params[:dynamic_notification_template]
     return dynamic_notfn["subject"], dynamic_notfn["description"]
+  end
+
+  def check_privileges
+    return if has_all_privileges? || @dynamic_notification.nil?
+
+    !(check_requester_privilege || check_other_privilege)
+  end
+
+  def check_requester_privilege
+    accessing_requester_template && has_requester_privilege?
+  end
+
+  def requester_template?
+    @dynamic_notification.requester_template?
+  end
+
+  def check_other_privilege
+    !accessing_requester_template && has_other_notifications_privilege?
+  end
+
+  def accessing_requester_template
+    requester_template? || building_requester_template?
+  end
+
+  def building_requester_template?
+    if params[:id].nil?
+      DynamicNotificationTemplate::CATEGORIES[:requester].to_s == params[:dynamic_notification_template].try(:[], :category).to_s
+    end
   end
 end	

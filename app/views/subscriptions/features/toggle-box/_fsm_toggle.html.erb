@@ -1,0 +1,57 @@
+ <div id="field-service-management" class="features__wrapper">
+ 	<img alt="field service management" class="features__icon" src="/assets/field-service-management.svg" width="40">
+    <div class="features__content">
+    	<h4>
+    		<%= t('fsm_title') %>
+			<input rel="toggle" type="checkbox" id="fsm-toggle" name="fsm-toggle" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" />
+    	</h4>
+      <h5 class="lead-note">
+        <%= t('fsm_content') %>
+        <span class="highlight"> <%= t('fsm_content_highlight') %> </span>
+      </h5>
+	</div>
+</div>
+<%= render :partial => "subscriptions/features/dialogs/fsm_disable", :locals => {
+  :current_account => current_account, :identifier => 'fsm-toggle-box' } %>
+
+<script type="text/javascript">
+jQuery(document).ready(function() {
+
+    jQuery(document).on('click', "#field-service-management .toggle-button", function(i){
+      if(jQuery(i.target).closest(".toggle-button").hasClass("active")) {
+        jQuery(".fsm-card").delay(300).removeClass("hide");
+        jQuery(".plan-change-addons input[name='addons[field_service_management][enabled]']").val(true);
+      } else {
+        var warning_box =jQuery("#warning-btn-fsm-toggle-box");
+        if(warning_box.length) {
+          warning_box.trigger("click");
+        } else {
+          jQuery(".fsm-card").addClass("hide");
+          jQuery(".plan-change-addons input[name='addons[field_service_management][enabled]']").val(false);
+        }
+      }
+    });
+
+    jQuery(document).on('click', "#warning-fsm-toggle-box-cancel", function(i){
+      jQuery("#field-service-management .toggle-button").trigger("click");
+    });
+
+    jQuery(document).on('click', "#warning-fsm-toggle-box .modal-header .close", function(i){
+      jQuery("#field-service-management .toggle-button").trigger("click");
+    });
+
+    jQuery(document).on('click', "#warning-fsm-toggle-box-submit", function(i){
+      jQuery(".fsm-card").addClass("hide");
+      jQuery(".plan-change-addons input[name='addons[field_service_management][enabled]']").val(false);
+    });
+
+});
+</script>
+
+<% if current_account.field_service_management_enabled?  %>
+  <script type="text/javascript">
+    jQuery(document).ready(function() {
+      jQuery("#field-service-management .toggle-button").trigger("click");
+    });
+  </script>
+<% end %>

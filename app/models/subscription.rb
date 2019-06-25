@@ -89,7 +89,7 @@ class Subscription < ActiveRecord::Base
   before_create :set_renewal_at
   before_save :update_amount, unless: :anonymous_account?
 
-  before_update :cache_old_model
+  before_update :cache_old_model, :cache_old_addons
   after_update :add_to_crm, :update_reseller_subscription, unless: :anonymous_account?
   after_commit :update_crm, on: :update, unless: :anonymous_account?
   after_commit :update_social_subscription, :add_free_freshfone_credit, :dkim_category_change, :update_ticket_activity_export, on: :update
@@ -504,6 +504,36 @@ class Subscription < ActiveRecord::Base
   def amount_with_tax_safe_access
     self.additional_info[:amount_with_tax].presence || self.amount
   end
+
+  def field_agent_limit
+    self.additional_info.try(:[], :field_agent_limit)
+  end
+
+   def field_agent_limit=(value)
+    self.additional_info ||= {}
+    self.additional_info[:field_agent_limit] = value 
+  end
+
+  def field_agent_limit_with_safe_access
+    self.additional_info.try(:[], :field_agent_limit) || DEFAULT_FIELD_AGENT_COUNT
+  end
+
+  def amount_with_tax_safe_access
+    self.additional_info[:amount_with_tax].presence || self.amount
+  end
+
+  def reset_field_agent_limit
+    return unless self.additional_info.try(:[], :field_agent_limit).present?
+    self.additional_info = self.additional_info.except(:field_agent_limit)
+    save
+  end
+
+  def field_agents_display_count
+    count = account.field_agents_count
+    limit = field_agent_limit || 0
+    return count > limit ? count : limit if count > 0 || limit > 0
+    DEFAULT_FIELD_AGENT_COUNT
+  end
   
   def reset_field_agent_limit
     return if self.additional_info.try(:[], :field_agent_limit).nil?
@@ -529,6 +559,14 @@ class Subscription < ActiveRecord::Base
       NewRelic::Agent.notice_error(e, description: "Exception while removing addon:: #{addon_name}, Account:: #{Account.current.id}, Message: #{e.message}")
       raise e
     end
+  end
+
+
+  def update_subscription(params)
+    return false unless save_subscription(params)
+
+    update_features if plan_changed?
+    add_to_subscription_events
   end
 
   def fetch_immediate_estimate
@@ -586,6 +624,10 @@ class Subscription < ActiveRecord::Base
     def cache_old_model
       @old_subscription = Subscription.find id
     end
+
+    def cache_old_addons
+      @old_addons = Subscription.find(id).addons.dup
+    end
     
     def validate_on_update
       chk_change_agents unless trial?
@@ -624,12 +666,39 @@ class Subscription < ActiveRecord::Base
     def paying_account?
       state == 'active' and amount > 0
     end
-   
-   
+
   private
+
+    def save_subscription(params)
+      self.renewal_period = params[:renewal_period] if params[:renewal_period].present?
+      self.agent_limit = params[:agent_seats] if params[:agent_seats]
+      if params[:plan_id].present? && params[:plan_id] != plan_id
+        new_plan = SubscriptionPlan.current.find_by_id(params[:plan_id])
+        self.plan = new_plan
+        self.addons = applicable_addons(addons, new_plan)
+        self.free_agents = new_plan.free_agents
+        convert_to_free if new_sprout?
+      end
+      applicable_coupon = verify_coupon(present_subscription.coupon)
+      response = billing.update_subscription(self, prorate?(applicable_coupon), addons)
+      billing.add_discount(account, applicable_coupon) if response.subscription.coupon != applicable_coupon
+      set_next_renewal_at(response.subscription)
+      save
+    rescue ChargeBee::InvalidRequestError => e
+      Rails.logger.error("Exception on updating the subscription account_id: \
+        #{account_id}, message: #{e.json_obj[:message]}")
+      errors.add(e.error_code, e.json_obj[:message])
+      false
+    end
 
     def verify_coupon(old_coupon)
       old_coupon.present? && billing.coupon_applicable?(self, old_coupon) ? old_coupon : nil
+    end
+
+    # No proration(credit) in monthly downgrades
+    def prorate?(applicable_coupon)
+      !(present_subscription.active? && (total_amount(addons, applicable_coupon) < present_subscription.amount) &&
+        NO_PRORATION_PERIOD_CYCLES.include?(present_subscription.renewal_period))
     end
 
     def present_subscription
@@ -742,6 +811,30 @@ class Subscription < ActiveRecord::Base
 
     def anonymous_account?
       account.anonymous_account?
+    end
+
+    def plan_changed?
+      @old_subscription.subscription_plan_id != subscription_plan_id
+    end
+
+    def update_features
+      SAAS::SubscriptionEventActions.new(account, @old_subscription, @old_addons).change_plan
+      account.active_trial.update_result!(@old_subscription, self) if account.active_trial.present?
+    end
+
+    def add_to_subscription_events
+      Subscriptions::SubscriptionAddEvents.perform_async(
+        account_id: account_id,
+        subscription_id: id,
+        subscription_hash: subscription_info(@old_subscription)
+      )
+    end
+
+    def subscription_info(subscription)
+      subscription_attributes = SUBSCRIPTION_ATTRIBUTES.each_with_object({}) do |(k, v), hash|
+        hash[k] = subscription.safe_send(v)
+      end
+      subscription_attributes.merge!(next_renewal_at: subscription.next_renewal_at.to_s(:db))
     end
 
     def update_sandbox_subscription

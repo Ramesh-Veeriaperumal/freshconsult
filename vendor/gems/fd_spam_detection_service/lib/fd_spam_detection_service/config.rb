@@ -11,10 +11,10 @@ module FdSpamDetectionService
     def self.account_enable(account_id)
     	account = Account.find_by_id(account_id)
       account.make_current
-    	unless account.blank? or account.launched?(:spam_detection_service)
+    	unless account.blank? || account.proactive_spam_detection_enabled?
         result = FdSpamDetectionService::Service.new(account.id).add_tenant
         if result
-          account.launch(:spam_detection_service)
+          account.add_feature(:proactive_spam_detection)
           SpamDetection::DataMigration.perform_async
         end
         Rails.logger.info "Response for adding tenant #{account_id} in SDS: #{result}"

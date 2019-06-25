@@ -485,7 +485,7 @@
   $ref: ./freshmarketer/disable_integration.yaml
 
 /subscription:
-  $ref: ./subscription/show.yaml
+  $ref: ./subscription/show_and_update.yaml
 /subscription/estimate:
   $ref: ./subscription/estimate.yaml
 /plans:
@@ -567,7 +567,6 @@
 # Account Admin
 /account_admin:
   $ref: ./account_admin/update.yaml
-
 /account_admin/disable_billing_info_updation:
   $ref: ./account_admin/disable_billing_info_updation.yaml
 
@@ -576,6 +575,8 @@
   $ref: ./accounts/cancel.yaml
 /accounts/{type}/download:
   $ref: ./accounts/download.yaml
+/accounts/support_tickets:
+  $ref: ./accounts/support_tickets.yaml
 
 # Account Export
 /data_export/export:

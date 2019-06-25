@@ -1,0 +1,11 @@
+type: object
+properties:
+  plan_id:
+    type: integer
+    format: int64
+  renewal_period:
+    type: integer
+    description: One of the value in [1, 3, 6, 12]
+  agent_seats:
+    type: integer
+    format: int64

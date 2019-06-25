@@ -171,10 +171,12 @@
 			                        <span class='ficon-lock locked'></span>
 			                        <%=t('account.branding_toggle.disable_branding') %>
 			                    <% end %>
-			                    <div class="branding-upgrade-message">
-			                      <% options = (current_user.privilege?(:manage_account)) ? {:tag => :a, :href => subscription_url} : {:tag => :p} %>
-			                      <%= content_tag(options[:tag], t('subscription.upgrade.message'), :href => options[:href]) %>
-			                    </div>
+			                    <% unless current_account.anonymous_account? %>
+				                    <div class="branding-upgrade-message">
+				                      <% options = (current_user.privilege?(:manage_account)) ? {:tag => :a, :href => subscription_url} : {:tag => :p} %>
+				                      <%= content_tag(options[:tag], t('subscription.upgrade.message'), :href => options[:href]) %>
+				                    </div>
+				                  <% end %>
 			                <% end %>
 			              </div>
 			            </div>
@@ -254,18 +256,23 @@
 
 	DATE_FORMATS_BINDING = <%= AccountConstants::DATEFORMATS.to_json.html_safe%>
 
+	jQuery(document).ready(function(){
+		window.App = window.App || {};
+		window.App.Channel = window.App.Channel || new MessageChannel();
+	});
+
 	jQuery("#edit-branding").on("click", function(e){
 		if(!(isIe())) {
 			e.preventDefault();
 		}
-		window.parent.postMessage({action: "preferences"}, window.origin);
+		window.App.Channel.port1.postMessage({action: "preferences"});
 	});
 
 	jQuery("#manage-language-button").on("click", function(e){
 		if(!(isIe())) {
 			e.preventDefault();
 		}
-		window.parent.postMessage({action: "manage-language"}, window.origin);
+		window.App.Channel.port1.postMessage({action: "manage-language"});
 	});
 	
 	function isIe() {

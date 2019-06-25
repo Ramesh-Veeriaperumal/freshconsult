@@ -142,7 +142,11 @@ module Helpdesk::RequesterWidgetHelper
     obj_name    = object_name field
     class_name  = FIELDS_INFO[obj_name][:form].clone
     class_name = 'field_maxlength '+ class_name if field.name == "address"
-    enabled     = FIELDS_INFO[obj_name][:disabled_fields].exclude?(field.name)
+    if obj_name == :company && privilege?(:manage_companies).blank?
+      enabled = false
+    else
+      enabled = FIELDS_INFO[obj_name][:disabled_fields].exclude?(field.name)
+    end
     required    = enabled ? field.required_for_agent : false
     value       = field_value(field, object)
     placeholder = field.dom_placeholder

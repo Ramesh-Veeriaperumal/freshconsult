@@ -57,7 +57,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"channel/freshcaller/account", only: [:destroy]
     resource :"admin/trial_subscription", only: [:create, :cancel]
     resource :account_admin, only: [:update, :disable_billing_info_updation]
-    resource :"admin/api_account", only: [:cancel, :download_file]
+    resource :"admin/api_account", only: [:cancel, :download_file, :support_tickets]
     resource :"admin/api_data_export", only: [:account_export]
     resource :"ember/admin/onboarding", only: %i[update_activation_email resend_activation_email update_channel_config suggest_domains validate_domain_name customize_domain anonymous_to_trial]
   end
@@ -150,7 +150,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/portal", only: [:show, :update]
     resource :audit_log, only: [:filter, :export, :event_name, :export_s3_url]
     resource :'ember/omni_channel', only: [:index]
-    resource :"admin/subscription", only: [:show, :plans, :estimate]
+    resource :"admin/subscription", only: [:show, :plans, :update, :estimate]
     resource :"ember/ocr_proxy"
     resource :'ember/admin/advanced_ticketing', only: [:create, :destroy, :insights]
     resource :help_widget, only: [:index, :create, :show, :update, :destroy, :freshmarketer_info]

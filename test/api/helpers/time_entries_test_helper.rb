@@ -23,7 +23,7 @@ module TimeEntriesTestHelper
 
   # Helpers
   def create_time_entry(options = {})
-    ticket_id = create_ticket.display_id if options[:ticket_id].blank?
+    ticket_id = create_ticket.id if options[:ticket_id].blank?
     # match_json(result_pattern.ordered!) fails sporadically when more
     # than one timesheet contains the same executed_at value
     if options[:executed_at].blank?

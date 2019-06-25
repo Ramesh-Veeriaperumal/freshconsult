@@ -10,14 +10,38 @@ class Ember::ContactValidation < ContactValidation
   }
 
   def initialize(request_params, item, allow_string_param = false)
+    self.skip_hash_params_set_for_parameters = ['company']
     super(request_params, item, allow_string_param)
     company_hash_validation = {
       company_name: {
-        data_type: { rules: Hash }
+        data_type: { rules: Hash },
+        hash: { validatable_fields_hash: proc { |x| x.company_hash_structure } }
       }
     }
     DEFAULT_FIELD_VALIDATIONS.merge!(company_hash_validation) unless \
       [:quick_create, :requester_update, :update_password].include?(@action.try(:to_sym))
+  end
+
+  def company_hash_structure
+    {
+      id: {
+        custom_numericality: {
+          greater_than: 0,
+          only_integer: true
+        }
+      },
+      name: {
+        data_type: { rules: String },
+        custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
+      },
+      view_all_tickets: {
+        data_type: {
+          rules: 'Boolean',
+          ignore_string: :allow_string_param,
+          allow_nil: true
+        }
+      }
+    }
   end
 
   def check_duplicates_multiple_companies

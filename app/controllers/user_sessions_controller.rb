@@ -15,7 +15,6 @@ class UserSessionsController < ApplicationController
 
   prepend_around_filter :rescue_from_shard_not_found, :only => [:freshid_destroy]
   skip_before_filter :check_privilege, :verify_authenticity_token  
-  skip_before_filter :require_user, :except => [:destroy, :freshid_destroy]
   skip_before_filter :check_account_state
   before_filter :check_for_sso_login, only: [:sso_login, :jwt_sso_login]
   before_filter :check_sso_params, :only => :sso_login

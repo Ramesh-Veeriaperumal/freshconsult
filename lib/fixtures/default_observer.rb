@@ -50,13 +50,22 @@ module Fixtures
         ]
       }
 
+      conditions = account.detect_thank_you_note_enabled? ?
+                    { any: [{ any: [{ evaluate_on: :ticket, name: 'status',
+                                     operator: 'not_in', value: [4, 5] }] },
+                           { all: [{ evaluate_on: :ticket, name: 'freddy_suggestion',
+                                    operator: 'is_not', value: 'thank_you_note' },
+                                  { evaluate_on: :ticket, name: 'status', operator: 'in',
+                                    value: [4, 5] }] }] } :
+                    { any: [{ evaluate_on: 'ticket', value: ['2'],
+                              operator: 'not_in', name: 'status' }] }
+
       ticket_reopen_condition_data = {
         events: [
           { name: 'reply_sent' }
         ],
         performer: { type: Va::Performer::CUSTOMER },
-        conditions: { any: [{ evaluate_on: 'ticket', value: ['2'],
-                              operator: 'not_in', name: 'status' }] }
+        conditions: conditions
       }
 
       ticket_reopen_action_data = [

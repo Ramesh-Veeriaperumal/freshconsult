@@ -325,6 +325,7 @@ class TicketsController < ApiApplicationController
       end
 
       @status = params[cname].delete(:status) if params[cname].key?(:status) # We are removing status from params as status= model method makes memcache calls.
+      reset_nested_fields_params if params[cname][:custom_field] && update?
     end
 
     def prepare_tags
@@ -560,6 +561,40 @@ class TicketsController < ApiApplicationController
       (custom_field_error_mappings || {}).merge(ApiTicketConstants::FIELD_MAPPINGS)
     end
 
+    def reset_nested_fields_params
+      nested_fields = Account.current.nested_fields_from_cache
+      nested_fields.each do |nf|
+        first_level_name = nf.name
+        second_level_name = nf.nested_ticket_fields.first.name
+        third_level = nf.nested_ticket_fields.second
+        params[cname][:custom_field][second_level_name] = nil if reset_second_level?(first_level_name, second_level_name)
+        params[cname][:custom_field][third_level.name] = nil if third_level_present?(third_level) && reset_third_level?(first_level_name, second_level_name, third_level.name)
+      end
+    end
+
+    def reset_second_level?(first_level_name, second_level_name)
+      reset_param?(first_level_name) && can_be_reset?(second_level_name)
+    end
+
+    def reset_third_level?(first_level_name, second_level_name, third_level_name)
+      (reset_param?(first_level_name) || reset_param?(second_level_name)) && can_be_reset?(third_level_name)
+    end
+
+    def reset_param?(name)
+      params[cname][:custom_field][name] && existing_value?(name)
+    end
+
+    def existing_value?(name)
+      params[cname][:custom_field][name] != @item.custom_field[name]
+    end
+
+    def can_be_reset?(name)
+      @item.custom_field[name] && !params[cname][:custom_field][name]
+    end
+
+    def third_level_present?(third_level)
+      third_level.present?
+    end
 
     # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.
     wrap_parameters(*wrap_params)

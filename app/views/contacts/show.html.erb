@@ -82,8 +82,9 @@
 						</ul>
 					<% end %>
 				<% end %>
-
-				<%= link_to t('ticket.merge_btn'), new_contact_merge_path({:parent_user => @user.id }), :title => t('merge_contacts.merge_contact'), :class => "btn last", "data-width" => "800", :rel => "freshdialog", "data-target" => "#contact-mergebox", "data-template-footer" => "" unless (@merged_user or @user.deleted?)%>
+				<% if privilege?(:manage_contacts) %>
+					<%= link_to t('ticket.merge_btn'), new_contact_merge_path({:parent_user => @user.id }), :title => t('merge_contacts.merge_contact'), :class => "btn last", "data-width" => "800", :rel => "freshdialog", "data-target" => "#contact-mergebox", "data-template-footer" => "" unless (@merged_user or @user.deleted?)%>
+				<% end %>
 
 				<% if privilege?(:delete_contact) and @user != current_user and 
 											!@user.deleted? and !@user.spam? and !@user.blocked? %>

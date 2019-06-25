@@ -1,4 +1,5 @@
 module Admin::EmailNotificationsHelper
+	include Utils::RequesterPrivilege # methods used in erb files, don't remove
 
 	def get_requester_content(email_notification,language)
 		content = define_template(email_notification,language,:requester)

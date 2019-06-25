@@ -16,13 +16,13 @@
 			<%= t('topic.details',
 					:user_path => link_to_user(topic.user, :class => 'hover-link'),
 					:created_time => topic.created_at.to_i,
-					:time_ago => formated_date(topic.created_at) ).html_safe %>
+					:time_ago => h(formated_date(topic.created_at)) ).html_safe %>
 
 			<% if topic.posts_count > 1 %>
 				<%= t('topic.last_post',
 							:user_path => link_to_user(topic.last_post.user, :class => 'hover-link'),
 							:created_time => topic.last_post.created_at.to_i,
-							:time_ago => formated_date(topic.last_post.created_at),
+							:time_ago => h(formated_date(topic.last_post.created_at)),
 							:last_reply => pjax_link_to("#{t('topic.last_reply')}", "#{discussions_topic_path(topic)}/page/last#post_#{topic.last_post.id}")
 					).html_safe %>
 			<% end %>

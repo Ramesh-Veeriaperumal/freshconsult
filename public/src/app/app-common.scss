@@ -1593,7 +1593,7 @@ p.info-text{
     color:$default_txt_color;
     background: #FFF;
     text-decoration:none;
-	@include text-shadow(none);	
+	@include text-shadow(none);
 }
 
 .tkt_views.active a{
@@ -2059,12 +2059,12 @@ a.submit_link:hover{
 }
 
 .tkt_view_search {
-	&.hasSearch { 
-		padding-top: 0px;	
+	&.hasSearch {
+		padding-top: 0px;
 	}
 }
 
-.filter-search{	
+.filter-search{
 	background-color: #EEE;
 }
 
@@ -2676,7 +2676,7 @@ a.mobile_switchBtn {
 
 	    .remove-language {
 	    	@include float(left);
-	    	
+
 	    	.remove-icon {
 	    		cursor: pointer;
 	    	}
@@ -2692,7 +2692,7 @@ a.mobile_switchBtn {
 
 				.ficon-eye {
 					display: none;
-				}	
+				}
 				.ficon-eye-disabled {
 					display: inline-block;
 				}
@@ -3969,7 +3969,7 @@ body.popup-body{ min-width: 0px; }
 	margin-top: 12px;
 }
 .modal-bulk-header-button{
-	font-weight: 500;	
+	font-weight: 500;
 }
 .execute_scenario{
 	.scenario-search{
@@ -4045,7 +4045,7 @@ $adm-bdr:#F0F0F0;
 }
 
 .edit_social_twitter_stream{
-  min-height: 1050px;	
+  min-height: 1050px;
 }
 
 .adm-social{
@@ -4458,6 +4458,8 @@ $adm-bdr:#F0F0F0;
 	width:80px;
 	font-weight:bold;
 	word-break: break-word;
+  -ms-word-wrap: break-word;
+  word-wrap: break-word;
 }
 
 // End
@@ -4791,7 +4793,7 @@ $adm-bdr:#F0F0F0;
 	top: 2px;
     position: absolute;
     right: 9px;
-    padding: 5px;    
+    padding: 5px;
     cursor: pointer;
 }
 .dateClear {
@@ -4812,7 +4814,7 @@ input.date {
 	top: 3px;
     position: absolute;
     right: 9px;
-    padding: 5px;    
+    padding: 5px;
     cursor: pointer;
 }
 .dateClear {
@@ -4829,7 +4831,7 @@ input.date {
 		top: 7px;
 	    position: absolute;
 	    right: 9px;
-	    padding: 5px;    
+	    padding: 5px;
 	    cursor: pointer;
 	}
 }
@@ -4861,6 +4863,16 @@ div.email-preview-holder{
   padding: 10px;
 }
 
+.email-preview-holder{
+	ol, ul{
+		margin: 8px 0 4px 0;
+		padding: 0 0 0 40px;
+	}
+	ul{
+		list-style: disc outside;
+	}
+}
+
 span.email-preview-footer{
   margin-top: 10px;
 }
@@ -4870,7 +4882,7 @@ span.email-preview-footer{
 	.email-preview-content-container{
 		overflow-y: scroll;
 		height: 350px;
-	}	
+	}
 }
 
 div[class*='checkbox-ticket']{
@@ -4896,9 +4908,28 @@ div[class*='checkbox-ticket']{
 	}
 }
 
+/*---------- Twitter Images CSS -------*/
+.twitter_media_content {
+  padding-top: 18px;
+  .twitter_image {
+    overflow: hidden;
+    cursor: pointer;
+    width: 180px;
+    height: 180px;
+    display: inline-block;
+    @include margin-right(10px);
+    border: 1px solid #dadfe3;
+    img {
+      object-fit: cover;
+      height: 100% !important;
+      width: 100%;
+    }
+  }
+}
+
 .freshid-sso-button{
-  font-size: 16px;
-  @include margin-left(26px);
-  @include margin-right(29px);
-  line-height: 24px;
+	font-size: 16px;
+	@include margin-left(26px);
+	@include margin-right(29px);
+    line-height: 24px;
 }

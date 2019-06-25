@@ -5,6 +5,8 @@ class Sync::DataToFile::Transformer
   include Sync::Transformer::SlaPolicy
   attr_accessor :mapping_table, :account, :master_account_id
 
+  DEFAULT_SANDBOX_ID_OFFSET = 1000000000000.freeze
+
   TRANSFORMATION_COLUMNS = {
     'Helpdesk::TicketField'       => [['name']],
     'Helpdesk::NestedTicketField' => [['name']],
@@ -57,7 +59,7 @@ class Sync::DataToFile::Transformer
       end
     end
     master_account_shard = ShardMapping.fetch_by_account_id(@master_account_id)
-    @offset_value = Integer(SANDBOX_ID_OFFSET[master_account_shard.shard_name])
+    @offset_value = Integer(SANDBOX_ID_OFFSET[master_account_shard.shard_name] || DEFAULT_SANDBOX_ID_OFFSET)
     @current_shard = ActiveRecord::Base.current_shard_selection.shard.to_s
     @autoincrement_id = AutoIncrementId[@current_shard].to_i
   end

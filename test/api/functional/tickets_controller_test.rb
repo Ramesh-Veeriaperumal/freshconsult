@@ -29,6 +29,7 @@ class TicketsControllerTest < ActionController::TestCase
   UPDATE_CUSTOM_FIELDS_VALUES = { 'country' => 'Australia', 'state' => 'Queensland', 'city' => 'Brisbane', 'number' => 12, 'decimal' => '8900.89',  'checkbox' => false, 'text' => Faker::Name.name, 'paragraph' =>  Faker::Lorem.paragraph, 'dropdown' => 'Armaggedon', 'date' => '2015-09-09' }
   CUSTOM_FIELDS_VALUES_INVALID = { 'number' => '1.90', 'decimal' => 'dd', 'checkbox' => 'iu', 'text' => Faker::Lorem.characters(300), 'paragraph' =>  12_345, 'date' => '31-13-09' }
   UPDATE_CUSTOM_FIELDS_VALUES_INVALID = { 'number' => '1.89', 'decimal' => 'addsad', 'checkbox' => 'nmbm', 'text' => Faker::Lorem.characters(300), 'paragraph' =>  3_543_534, 'date' => '2015-09-09T09:00' }
+  UPDATE_NESTED_FIELD_VALUES = { 'country' => 'USA', 'state' => 'Texas', 'city' => 'Austin' }.freeze
 
   ERROR_PARAMS =  {
       'number' => [:datatype_mismatch, expected_data_type: 'Integer', prepend_msg: :input_received, given_data_type: String],
@@ -4912,6 +4913,62 @@ class TicketsControllerTest < ActionController::TestCase
     @account.ticket_fields.custom_fields.each do |x|
       x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
     end
+  end
+
+  def test_update_with_nested_field_with_first_level
+    params = ticket_params_hash.merge(custom_field: {})
+    ['country', 'state', 'city'].each do |custom_field|
+      params[:custom_field]["test_custom_#{custom_field}_#{@account.id}"] = CUSTOM_FIELDS_VALUES[custom_field]
+    end
+    t = create_ticket(params)
+    update_params = update_ticket_params_hash.merge(custom_fields: {})
+    update_params[:custom_fields][:test_custom_country] = UPDATE_CUSTOM_FIELDS_VALUES['country']
+    Sidekiq::Testing.inline! do
+      put :update, construct_params({ id: t.display_id }, update_params)
+    end
+    response = parse_response @response.body
+    assert_response 200
+    assert_equal response['custom_fields']['test_custom_country'], 'Australia'
+    assert_nil response['custom_fields']['test_custom_state']
+    assert_nil response['custom_fields']['test_custom_city']
+  end
+
+  def test_update_with_nested_field_with_second_level
+    params = ticket_params_hash.merge(custom_field: {})
+    ['country', 'state', 'city'].each do |custom_field|
+      params[:custom_field]["test_custom_#{custom_field}_#{@account.id}"] = CUSTOM_FIELDS_VALUES[custom_field]
+    end
+    t = create_ticket(params)
+    update_params = update_ticket_params_hash.merge(custom_fields: {})
+    update_params[:custom_fields][:test_custom_state] = UPDATE_NESTED_FIELD_VALUES['state']
+    Sidekiq::Testing.inline! do
+      put :update, construct_params({ id: t.display_id }, update_params)
+    end
+    response = parse_response @response.body
+    assert_response 200
+    assert_equal response['custom_fields']['test_custom_country'], 'USA'
+    assert_equal response['custom_fields']['test_custom_state'], 'Texas'
+    assert_nil response['custom_fields']['test_custom_city']
+  end
+
+  def test_update_with_nested_field_with_first_two_levels
+    params = ticket_params_hash.merge(custom_field: {})
+    ['country', 'state', 'city'].each do |custom_field|
+      params[:custom_field]["test_custom_#{custom_field}_#{@account.id}"] = CUSTOM_FIELDS_VALUES[custom_field]
+    end
+    t = create_ticket(params)
+    update_params = update_ticket_params_hash.merge(custom_fields: {})
+    ['country', 'state'].each do |custom_field|
+      update_params[:custom_fields]["test_custom_#{custom_field}"] = UPDATE_CUSTOM_FIELDS_VALUES[custom_field]
+    end
+    Sidekiq::Testing.inline! do
+      put :update, construct_params({ id: t.display_id }, update_params)
+    end
+    response = parse_response @response.body
+    assert_response 200
+    assert_equal response['custom_fields']['test_custom_country'], 'Australia'
+    assert_equal response['custom_fields']['test_custom_state'], 'Queensland'
+    assert_nil response['custom_fields']['test_custom_city']
   end
 
   def test_update_with_section_fields_absence_check_error_with_format_validatable_fields

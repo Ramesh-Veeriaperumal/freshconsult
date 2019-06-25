@@ -4016,7 +4016,7 @@ vi:
     no_forums_info_1: "Không có topic trong forum"
     no_forums_info_2: "Tại sao không bắt đầu một %{start_topic_link}?"
     article:
-      see_all_articles: "Xem tất car %{count} bài"
+      see_all_articles: "Xem tất cả %{count} bài"
       more_articles: "Nhiều bài viết trong <span class='folder-name'>%{article_name}</span>"
       modified_on: "Sửa đổi trên:"
     topic:

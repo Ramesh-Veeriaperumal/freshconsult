@@ -12,8 +12,6 @@ module Helpdesk::TicketCustomFields
     end
 
     def custom_field_attribute attribute, args    
-      Rails.logger.debug "method_missing :: custom_field_attribute  args is #{args.inspect}  and attribute: #{attribute}"
-
       attribute = attribute.to_s
       return custom_field[attribute] unless attribute.include?("=")
         

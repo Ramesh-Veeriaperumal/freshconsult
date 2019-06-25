@@ -54,7 +54,7 @@ class Support::Solutions::ArticlesController < SupportController
   end
 
   def hit
-    @article.current_article.hit! unless agent?
+    @article.current_article.hit! if !agent? || current_account.solutions_agent_metrics_enabled?
     render_tracker
   end
   

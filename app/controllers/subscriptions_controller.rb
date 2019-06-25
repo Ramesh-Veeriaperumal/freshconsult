@@ -472,7 +472,8 @@ class SubscriptionsController < ApplicationController
     end
 
     def valid_currency?
-      unless BILLING_CURRENCIES.include?(params[:currency])
+      billing_currencies = scoper.trial? ? SUPPORTED_CURRENCIES : BILLING_CURRENCIES
+      unless billing_currencies.include?(params[:currency])
         flash[:error] = t("subscription.error.invalid_currency")
         redirect_to subscription_url
       end

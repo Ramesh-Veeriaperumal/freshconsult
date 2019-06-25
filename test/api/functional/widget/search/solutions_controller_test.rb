@@ -105,8 +105,8 @@ module Widget
         stub_private_search_response([@article]) do
           post :results, construct_params(version: 'widget', term: @article.title, limit: 3)
         end
-        assert_response 400
-        match_json(request_error_pattern(:solution_article_not_enabled, 'solution_article_not_enabled'))
+        assert_response 200
+        assert_equal [widget_article_search_pattern(@article)].to_json, response.body
         assert_nil Language.current
       end
 
@@ -117,6 +117,16 @@ module Widget
         end
         assert_response 403
         Account.any_instance.unstub(:features?)
+        assert_nil Language.current
+      end
+
+      def test_results_without_help_widget
+        Account.any_instance.stubs(:all_launched_features).returns([])
+        stub_private_search_response([@article]) do
+          post :results, construct_params(version: 'widget', term: @article.title, limit: 3)
+        end
+        assert_response 403
+        Account.any_instance.unstub(:all_launched_features)
         assert_nil Language.current
       end
     end

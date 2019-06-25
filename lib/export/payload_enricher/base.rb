@@ -24,9 +24,7 @@ class Export::PayloadEnricher::Base
   def field_value(object, name)
     object.safe_send(name)
   rescue Exception => e
-    Rails.logger.error "[Export::PayloadEnricher::Base] Exception occured while 
-        trying to get value for property: #{name} on object: #{object.inspect},
-        Exception => #{e.message} - #{e.backtrace.inspect}"
+    Rails.logger.error "Enricher Method missing #{e.message}"
     return nil
   end
 

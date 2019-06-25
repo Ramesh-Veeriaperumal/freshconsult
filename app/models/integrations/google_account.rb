@@ -11,6 +11,8 @@ class Integrations::GoogleAccount < ActiveRecord::Base
   belongs_to :account
   belongs_to :sync_tag, :class_name => "Helpdesk::Tag"
   attr_protected :account_id, :sync_tag_id
+  attr_accessible :overwrite_existing_user, :sync_group_id, :sync_group_name, :name, :email, :token, :secret
+
   serialize :last_sync_status, Hash
   has_many :google_contacts, :dependent => :destroy # TODO: Handle the destroy through single query.
   attr_accessor :last_sync_index, :import_groups, :donot_update_sync_time, :access_token # Non persisted property used only for importing.

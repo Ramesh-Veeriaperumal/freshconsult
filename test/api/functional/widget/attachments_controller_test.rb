@@ -20,6 +20,7 @@ module Widget
       @request.env['HTTP_X_CLIENT_ID'] = @client_id
       @request.env['CONTENT_TYPE'] = 'multipart/form-data'
       @account.launch :help_widget
+      @account.add_feature(:anonymous_tickets)
     end
 
     def attachment_params_hash
@@ -38,6 +39,24 @@ module Widget
       assert_equal latest_attachment.attachable_type, 'WidgetDraft'
       assert_equal latest_attachment.description, @client_id.to_s
       assert_equal latest_attachment.attachable, @widget
+    end
+
+    def test_create_attachment_without_help_widget_launch
+      Account.any_instance.stubs(:all_launched_features).returns([])
+      post :create, construct_params({ version: 'widget' }, attachment_params_hash)
+      assert_response 403
+      Account.any_instance.unstub(:all_launched_features)
+    end
+
+    def test_create_attachment_without_anonymous_tickets
+      @widget.settings[:components][:contact_form] = false
+      @widget.save
+      DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+      Account.any_instance.stubs(:features?).with(:anonymous_tickets).returns(false)
+      post :create, construct_params({ version: 'widget' }, attachment_params_hash)
+      DataTypeValidator.any_instance.unstub(:valid_type?)
+      assert_response 403
+      Account.any_instance.unstub(:features?)
     end
 
     def test_create_attachment_with_contact_form_disabled

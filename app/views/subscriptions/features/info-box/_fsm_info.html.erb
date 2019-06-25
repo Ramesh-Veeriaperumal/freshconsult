@@ -1,0 +1,11 @@
+<% if fsm_supported_plan?(plan) %>
+	<div class="features-card fsm-card hide">
+	  <h4 class="features-card__title"><%= t('fsm_title') %></h4>
+	  <% fsm_amount = plan.fsm_cost(@subscription.currency_name) %>
+	  <p class="features-card__price">
+	    <span> + </span>
+	    <span class="price-value"> <%= format_amount(fsm_amount, @subscription.currency_name) %> </span>
+	    <span class="per-agent"> <%= t('per_field_agent_per_month') %></span>
+	  </p>
+	</div>
+<% end %>

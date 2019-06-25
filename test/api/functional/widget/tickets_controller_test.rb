@@ -8,6 +8,7 @@ module Widget
     def setup
       super
       @account.launch :help_widget
+      @account.add_feature(:anonymous_tickets)
       @widget = create_widget
       @request.env['HTTP_X_WIDGET_ID'] = @widget.id
       @client_id = UUIDTools::UUID.timestamp_create.hexdigest
@@ -79,6 +80,14 @@ module Widget
       match_json(id: t.display_id)
     end
 
+    def test_create_without_help_widget_launch
+      Account.any_instance.stubs(:help_widget_enabled?).returns(false)
+      params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }
+      post :create, construct_params({ version: 'widget' }, params)
+      assert_response 403
+      Account.any_instance.unstub(:help_widget_enabled?)
+    end
+
     def test_create_with_attachment_ids
       attachment_ids = []
       attachment_ids << create_attachment(attachable_type: 'WidgetDraft', attachable_id: @widget.id, description: @client_id).id
@@ -122,7 +131,7 @@ module Widget
       match_json(validation_error_pattern(bad_request_error_pattern(:attachment_ids, "There are no records matching the ids: '100'", code: 'invalid_value')))
     end
 
-    def test_create_with_invalid_widget_id
+    def test_create_with_attachment_invalid_widget_id
       attachment_ids = []
       attachment_ids << create_attachment(attachable_type: 'WidgetDraft', attachable_id: 1234, description: @client_id).id
       params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }

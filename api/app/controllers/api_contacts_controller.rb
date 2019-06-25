@@ -307,7 +307,6 @@ class ApiContactsController < ApiApplicationController
 
     def field_mappings
       mappings = (custom_field_error_mappings || {}).merge(ContactConstants::FIELD_MAPPINGS)
-      mappings.merge!(company_name: :company_name) if (action_name.to_sym == :quick_create)
       mappings
     end
 

@@ -13,7 +13,7 @@ class Helpdesk::AttachmentsController < ApplicationController
   def show
     style = params[:style] || "original"
 
-    options = { expires: 300.seconds, secure: true, response_content_type: @attachment.content_content_type }
+    options = { expires: @attachment.expiry, secure: true, response_content_type: @attachment.content_content_type }
     options.merge!({ response_content_disposition: 'attachment' }) if params[:download]
 
     attachment_content = @attachment.content

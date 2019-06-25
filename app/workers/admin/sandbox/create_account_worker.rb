@@ -5,6 +5,7 @@ class Admin::Sandbox::CreateAccountWorker < BaseWorker
 
   RANDOM_NUMBER_RANGE = 10**5
   BASE_DOMAIN         = AppConfig['base_domain'][Rails.env]
+  FEATURE_TYPES       = %w[launch features_list].freeze
 
   def perform(args)
     args.symbolize_keys!
@@ -41,6 +42,7 @@ class Admin::Sandbox::CreateAccountWorker < BaseWorker
     def post_account_creation_activites
       Sharding.select_shard_of @job.sandbox_account_id do
         sandbox_account = Account.find(@job.sandbox_account_id).make_current
+        FEATURE_TYPES.each { |feature_type| rollback_sign_up_features(@account, sandbox_account, feature_type) }
         (sandbox_account.account_additional_settings.additional_settings[:sandbox] ||= {})[:production_url] = @account.full_domain
         sandbox_account.account_additional_settings.save
         sandbox_account.reputation = @account.verified? # Verify the sandbox account
@@ -48,6 +50,16 @@ class Admin::Sandbox::CreateAccountWorker < BaseWorker
       end
     ensure
       Account.reset_current_account
+    end
+
+    def rollback_sign_up_features(main_account, sandbox_account, feature_type)
+      main_account_features = main_account.safe_send(feature_type)
+      sandbox_account_features = sandbox_account.safe_send(feature_type)
+      features_to_rollback = sandbox_account_features - main_account_features
+      action = feature_type == 'launch' ? 'rollback' : 'revoke_feature'
+      features_to_rollback.each do |feature|
+        sandbox_account.safe_send(action, feature)
+      end
     end
 
     def signup_account

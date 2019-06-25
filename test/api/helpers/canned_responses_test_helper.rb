@@ -18,7 +18,9 @@ module CannedResponsesTestHelper
       title: ca_response.title,
       content: ca_response.content,
       content_html: ca_response.content_html,
-      folder_id: ca_response.folder_id
+      folder_id: ca_response.folder_id,
+      created_at: ca_response.created_at.try(:utc).try(:iso8601),
+      updated_at: ca_response.updated_at.try(:utc).try(:iso8601)
     }
   end
 

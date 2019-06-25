@@ -729,9 +729,12 @@ class Helpdesk::TicketsController < ApplicationController
     company_save_success = true
     company_attributes = params[:company]
     company_name = company_attributes[:name] if company_attributes.present? && company_attributes[:name].present?
-    @company ||= current_account.companies.find_by_name(company_name) || current_account.companies.new if company_name && !@company_deleted
+    if @company.blank? && company_name.present? && !@company_deleted
+      @company = current_account.companies.find_by_name(company_name)
+      @company ||= current_account.companies.new if current_user.privilege?(:manage_companies)
+    end
 
-    if @company && company_attributes
+    if @company && company_attributes && current_user.privilege?(:manage_companies)
         @company.assign_attributes(company_attributes)
         set_company_validatable_custom_fields
         set_validatable_default_fields

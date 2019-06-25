@@ -10,6 +10,13 @@ module TicketFieldsTestHelper
 
   DEFAULT_FIELDS = %w[default_priority default_source default_status default_ticket_type default_product default_skill].freeze
 
+  FIELD_NAME_MAPPINGS = {
+    'product' => 'product_id',
+    'group' => 'group_id',
+    'agent' => 'responder_id',
+    'ticket_type' => 'type',
+    'requester' => 'email'
+  }.freeze
 
   def create_custom_field(name, type, field_num = '05', required = false, required_for_closure = false, editable_in_portal = false)
     ticket_field_exists = @account.ticket_fields.find_by_name("#{name}_#{@account.id}")
@@ -389,6 +396,76 @@ module TicketFieldsTestHelper
     }
     pattern[:choices] = hash[:choices] || Array if hash[:choices] || tf.choices.present?
     pattern
+  end
+
+  def widget_ticket_field_pattern(tf, hash = {})
+    pattern = nil
+    if tf.has_section?
+      pattern = widget_section_field_pattern(tf)
+    else
+      pattern = ticket_field_pattern(tf)
+    end
+    pattern[:belongs_to_section] = tf.field_options.try(:[], 'section').present?
+    pattern[:name] = tf.default ? FIELD_NAME_MAPPINGS[tf.name] || tf.name : tf.name[0..-3]
+    pattern
+  end
+
+  def widget_requester_ticket_field_pattern(tf)
+    widget_ticket_field_pattern(tf).merge(
+      portal_cc: tf.field_options['portalcc'],
+      portal_cc_to: tf.field_options['portalcc_to'],
+      label: 'Search a requester'
+    )
+  end
+
+  def widget_ticket_field_nested_pattern(tf, hash = {})
+    nested_ticket_field_pattern = []
+    tf.nested_ticket_fields.each do |x|
+      nested_ticket_field_pattern << nested_ticket_fields_pattern(x)
+    end
+    widget_ticket_field_pattern(tf, hash).merge(
+      nested_ticket_fields: nested_ticket_field_pattern
+    )
+  end
+
+  def widget_picklist_value_pattern(picklist_value)
+    {
+      'label' => picklist_value.value,
+      'value' => picklist_value.value,
+      'id' => picklist_value.id,
+      'choice_id' => picklist_value.picklist_id
+    }
+  end
+
+  def widget_custom_dropdown_ticket_field_pattern(tf)
+    widget_ticket_field_pattern(tf).merge!(sections: tf.section_field?)
+  end
+
+  def widget_section_field_pattern(tf)
+    pattern = ticket_field_pattern(tf)
+    sections = tf.dynamic_section_fields.includes(:section).map(&:section).uniq
+    section_pattern = sections.each_with_object([]) do |field, array_list|
+      array_list << widget_section_field(field)
+    end
+    pattern[:sections] = section_pattern
+    pattern
+  end
+
+  def widget_section_field(field)
+    {
+      id: field.id,
+      label: field.label,
+      section_fields: field.section_fields.map do |sf|
+        if sf.ticket_field.editable_in_portal
+          {
+            id: sf.id,
+            position: sf.position,
+            ticket_field_id: sf.ticket_field_id
+          } 
+        end
+      end.compact,
+      picklist_mapping_ids: field.section_picklist_mappings.map(&:picklist_value_id)
+    }
   end
 
   def requester_ticket_field_pattern(tf)

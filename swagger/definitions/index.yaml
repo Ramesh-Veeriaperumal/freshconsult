@@ -582,10 +582,12 @@ freshmarketer_session:
   $ref: ./response/freshmarketer/session.yaml
 
 #subscription
-subscription_show:
+subscription_response:
   $ref: ./response/subscription/show.yaml
 plans:
   $ref: ./response/subscription/plans.yaml
+subscription_update_request:
+  $ref: ./request/subscription/update.yaml
 subscription_estimate:
   $ref: ./response/subscription/estimate.yaml
 
@@ -716,6 +718,9 @@ languages:
 configs_show:
   $ref: ./response/configs/show.yaml
 
+# Account support ticket
+support_tickets:
+  $ref: ./response/support_tickets.yaml
 # Account features
 account_feature_enable_disable:
   $ref: './request/accounts/feature.yaml'

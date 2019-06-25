@@ -13,7 +13,7 @@ class Account < ActiveRecord::Base
   before_update :clear_ocr_data, if: :ocr_feature_disabled?
   before_destroy :backup_changes, :make_shard_mapping_inactive
 
-  after_create :populate_features, :change_shard_status, :make_current
+  after_create :make_current, :populate_features, :change_shard_status
   after_update :change_dashboard_limit, :if => :field_service_management_enabled_changed?
   after_update :change_shard_mapping, :update_default_business_hours_time_zone,
                :update_google_domain, :update_route_info, :update_users_time_zone
@@ -124,7 +124,17 @@ class Account < ActiveRecord::Base
       self.launch(:falcon_signup)           # To track falcon signup accounts
       self.launch(:falcon_portal_theme)  unless redis_key_exists?(DISABLE_PORTAL_NEW_THEME)   # Falcon customer portal
     end
-    launch_freshid_with_omnibar if freshid_integration_signup_allowed?
+    if freshid_integration_signup_allowed?
+      freshid_v2_signup? ? launch_freshid_with_omnibar(true) : launch_freshid_with_omnibar
+    end
+    if redis_key_exists?(ENABLE_AUTOMATION_REVAMP)
+      launch(:automation_revamp)
+      launch(:automation_rule_execution_count)
+      if redis_key_exists?(ENABLE_THANK_YOU_DETECTOR)
+        add_feature(:detect_thank_you_note)
+        add_feature(:detect_thank_you_note_eligible)
+      end
+    end
   end
 
   def update_activity_export
@@ -144,7 +154,7 @@ class Account < ActiveRecord::Base
   end
 
   def parent_child_infra_features_present?
-    PARENT_CHILD_INFRA_FEATURES.any? { |f| self.safe_send("#{f}_enabled?")} 
+    PARENT_CHILD_INFRA_FEATURES.any? { |f| self.safe_send("#{f}_enabled?")}
   end
 
   # Need to revisit when we push all the events for an account
