@@ -46,6 +46,7 @@ class ApiApplicationController < MetalApiController
   before_filter :force_utf8_params
   before_filter :set_cache_buster
   before_filter :set_service_worker, if: :private_api?
+  before_filter :delete_user_credentials_cookie, if: :private_api?
 
   include AuthenticationSystem
   include HelpdeskSystem
@@ -972,5 +973,9 @@ class ApiApplicationController < MetalApiController
       else
         cookies.delete 'service_worker'
       end
+    end
+
+    def delete_user_credentials_cookie
+      cookies.delete 'user_credentials' if cookies['user_credentials'].present?
     end
 end
