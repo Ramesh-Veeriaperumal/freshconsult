@@ -25,42 +25,61 @@
 		<%= render :partial => "fontsettings" %>
 	</div>
 	<ul class="tabs nav-tabs" id="email-notifications-tabs">
-		<li class="first active">
+		<%
+			default_header_class = 'first active'
+		if has_all_privileges? || has_other_notifications_privilege?%>
+		<li class="<%=default_header_class%>">
 			<a id="agent-tab" data-toggle="tab" href="#agent"><%=t('email_notifications.agent_notifications')%></a>
 		</li>
-		<li >
-			<a id="requester-tab" data-toggle="tab" href="#requester"><%=t('email_notifications.requestor_notifications')%></a>
-		</li>
-		<li>
-			<a id="cc_notification-tab" data-toggle="tab" href="#cc_notification"><%=t('email_notifications.cc_notifications')%></a>
-		</li>
-		<li>
-			<a id="template-tab" data-toggle="tab" href="#template"><%=t('email_notifications.notification_template')%></a>
-		</li>
+		<%
+		default_header_class = ''
+		end%>
+		<%if has_all_privileges? || has_requester_privilege?%>
+			<li class="<%=default_header_class%>">
+				<a id="requester-tab" data-toggle="tab" href="#requester"><%=t('email_notifications.requestor_notifications')%></a>
+			</li>
+		<%end%>
+		<%if has_all_privileges? || has_other_notifications_privilege?%>
+			<li>
+				<a id="cc_notification-tab" data-toggle="tab" href="#cc_notification"><%=t('email_notifications.cc_notifications')%></a>
+			</li>
+			<li>
+				<a id="template-tab" data-toggle="tab" href="#template"><%=t('email_notifications.notification_template')%></a>
+			</li>
+		<%end%>
 	</ul>
 	
 	<div class="list-page-body tab-content">
-		<div class="tab-pane active" id="agent"> 
-			<table class="table table-striped">
-				<%= render :partial => 'agent_notification', :collection => @agent_notifications %>
-			</table>
-		</div>
-		<div class="tab-pane hide" id="requester"> 
-			<table class="table table-striped">
-				<%= render :partial => 'user_notification', :collection => @user_notifications %>
-			</table>
-		</div>
-		<div class="tab-pane hide" id="cc_notification"> 
-			<table class="table table-striped ">
-				<%= render :partial => 'cc_notification', :collection => @cc_notifications %>
-			</table>	
-		</div>
-		<div class="tab-pane hide" id="template"> 
-			<table class="table table-striped ">
-				<%= render :partial => 'reply_template', :collection => @reply_templates %>
-				<%= render :partial => 'forward_template', :collection => @forward_templates %>
-			</table>	
-		</div>
+		<% default_class = 'active'
+		if has_all_privileges? || has_other_notifications_privilege?
+			default_class = 'hide'
+		%>
+			<div class="tab-pane active" id="agent"> 
+				<table class="table table-striped">
+					<%= render :partial => 'agent_notification', :collection => @agent_notifications %>
+				</table>
+			</div>
+		<%end%>
+		<%if has_all_privileges? || has_requester_privilege?%>
+			<div class="tab-pane <%=default_class%>" id="requester"> 
+				<table class="table table-striped">
+					<%= render :partial => 'user_notification', :collection => @user_notifications %>
+				</table>
+			</div>
+		<%end%>
+		<%if has_all_privileges? || has_other_notifications_privilege?%>
+			<div class="tab-pane hide" id="cc_notification"> 
+				<table class="table table-striped ">
+					<%= render :partial => 'cc_notification', :collection => @cc_notifications %>
+				</table>	
+			</div>
+			<div class="tab-pane hide" id="template"> 
+				<table class="table table-striped ">
+					<%= render :partial => 'reply_template', :collection => @reply_templates %>
+					<%= render :partial => 'forward_template', :collection => @forward_templates %>
+				</table>	
+			</div>
+		<%end%>
 	</div>
 </div>
 <% content_for :helpcard do %> 

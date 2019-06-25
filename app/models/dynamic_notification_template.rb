@@ -76,6 +76,10 @@ class DynamicNotificationTemplate < ActiveRecord::Base
 		email_notification.outdate_email_notification!(category)
 	end
 
+	def requester_template?
+		self.category == CATEGORIES[:requester]
+	end
+
 	def self.deactivate!(language)
 		removed_notifications = self.for_language(language) 
 		removed_notifications.each do |l|

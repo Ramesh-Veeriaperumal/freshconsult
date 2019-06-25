@@ -15,7 +15,6 @@ module Has
         begin
           super(method, *args, &block)
         rescue NoMethodError => e
-          Rails.logger.debug "#{self.class.name} method_missing :: args is #{args.inspect} and method:: #{method}"
           return custom_field_attribute(method, args) if custom_field_aliases.include?(
                                                                       method.to_s.chomp("=").chomp("?"))
           raise e

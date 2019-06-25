@@ -257,8 +257,8 @@ class Account < ActiveRecord::Base
       round_robin_capping: false, sidekiq_dispatchr_feature: false,
       supervisor_dashboard: false, support_new_ticket_cache: false,
       synchronous_apps: false, ticket_list_page_filters_cache: false,
-      spam_detection_service: false, skip_hidden_tkt_identifier: false,
-      agent_collision_alb: false, auto_refresh_alb: false, countv2_template_read: false,
+      skip_hidden_tkt_identifier: false, agent_collision_alb: false,
+      auto_refresh_alb: false, countv2_template_read: false,
       customer_sentiment_ui: false, portal_solution_cache_fetch: false, activity_ui: false,
       customer_sentiment: false, countv2_template_write: false, logout_logs: false,
       gnip_2_0: false, froala_editor: false, es_v2_splqueries: false,
@@ -300,7 +300,8 @@ class Account < ActiveRecord::Base
       nested_field_revamp: true, freshvisual_configs: false, freshid_org_v2: false, hide_agent_login: false, addon_based_billing: false,
       kbase_mint: false, text_custom_fields_in_etl: false, recalculate_daypass: false,  email_spoof_check: false,
       disable_email_spoof_check: false, attachment_redirect_expiry: false, solutions_agent_portal: false, solutions_agent_metrics: false,
-      sandbox_single_branch: false, ticket_type_filter_in_trends_widget: true
+      sandbox_single_branch: false, ticket_type_filter_in_trends_widget: true, prevent_fwd_email_ticket_create: false, enable_wildcard_ticket_create: false,
+      check_wc_fwd: false, requester_privilege: false
     }, :merge
   )
 

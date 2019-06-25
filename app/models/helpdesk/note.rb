@@ -493,7 +493,6 @@ class Helpdesk::Note < ActiveRecord::Base
       begin
         super
       rescue NoMethodError => e
-        Rails.logger.debug "method_missing :: args is #{args.inspect} and method:: #{method}"  
         if(SCHEMA_LESS_ATTRIBUTES.include?(method.to_s.chomp("=").chomp("?")))
           load_schema_less_note
           args = args.first if args && args.is_a?(Array)

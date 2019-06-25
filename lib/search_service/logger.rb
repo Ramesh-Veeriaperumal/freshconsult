@@ -2,8 +2,6 @@ module SearchService
   class Logger
     attr_accessor :log_uuid, :log_data
 
-    MULTIQUERY = '/multi_query'.freeze
-
     def initialize(uuid, log_data)
       @log_uuid = uuid || UUIDTools::UUID.timestamp_create.hexdigest
       @log_data = log_data
@@ -40,13 +38,6 @@ module SearchService
       output << "redirect_time=#{redirect_time}"
 
       additional_info.each { |k, v| output << "#{k}=#{v}" }
-      # when fuzzy search is launched
-      if Account.current.launched?(:fuzzy_search) && endpoint.ends_with?(MULTIQUERY)
-        parsed_response = JSON.parse(response.body)
-        contexts = parsed_response['results'].keys
-        totals = contexts.map { |c| parsed_response['results'][c]['total'] }
-        contexts.zip(totals).each { |context, total| output << "context: #{context}, total: #{total}" }
-      end
 
       output << "request_payload=#{request_payload}" if request_payload
       output << "response_payload=#{response_payload}" if response_payload

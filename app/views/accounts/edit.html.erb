@@ -258,18 +258,23 @@
 
 	DATE_FORMATS_BINDING = <%= AccountConstants::DATEFORMATS.to_json.html_safe%>
 
+	jQuery(document).ready(function(){
+		window.App = window.App || {};
+		window.App.Channel = window.App.Channel || new MessageChannel();
+	});
+
 	jQuery("#edit-branding").on("click", function(e){
 		if(!jQuery.browser.msie && !jQuery.browser.msedge) {
 			e.preventDefault();
 		}
-		window.parent.postMessage({action: "preferences"}, window.origin);
+		window.App.Channel.port1.postMessage({action: "preferences"});
 	});
 
 	jQuery("#manage-language-button").on("click", function(e){
 		if(!jQuery.browser.msie && !jQuery.browser.msedge) {
 			e.preventDefault();
 		}
-		window.parent.postMessage({action: "manage-language"}, window.origin);
+		window.App.Channel.port1.postMessage({action: "manage-language"});
 	});
 
 	var set_default_date = function(element){

@@ -27,6 +27,7 @@ module Features
 
     after_create :add_bitmap_or_lp_feature
     after_destroy :revoke_bitmap_or_lp_feature
+    belongs_to :account, inverse_of: :features
   
     def available?
       feature_owner_instance.features.available?(to_sym)

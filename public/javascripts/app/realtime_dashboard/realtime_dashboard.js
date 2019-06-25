@@ -2,6 +2,7 @@
 /*global  App:true */
 
 window.App = window.App || {};
+window.App.Channel = window.App.Channel || new MessageChannel();
 
 (function ($) {
 	"use strict";
@@ -12,6 +13,8 @@ window.App = window.App || {};
 		},
 		onVisit: function (data) {
 
+			this.bindHandlers();
+
 			if(App.namespace != "helpdesk/dashboard/index") {
 				return false;
 			}
@@ -20,6 +23,18 @@ window.App = window.App || {};
 		},
 		onLeave: function (data) {
 			RealtimeDashboard.CoreUtil.destroy();
-		}
+		},
+		bindHandlers: function () {
+			this.startWatchRoutes();
+		},
+
+		startWatchRoutes: function () {
+			var isIframe = (window !== window.top);
+			if (isIframe) {
+				var prefix = '/admin';
+				var emberizedPath = location.pathname.includes('helpdesk') ? prefix + location.pathname.replace('helpdesk/', '') : prefix + location.pathname;
+				window.App.Channel.port1.postMessage({ action: "update_iframe_url", path: emberizedPath });
+			}
+		},
 	};
 }(window.jQuery));

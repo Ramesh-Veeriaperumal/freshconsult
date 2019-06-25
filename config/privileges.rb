@@ -533,6 +533,11 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_email_config", :only => [:index, :show]
   end
 
+  manage_requester_notifications do
+    resource :"admin/email_notification"
+    resource :"admin/dynamic_notification_template"
+  end
+
   # **************** super admin *******************
   # super_admin
   admin_tasks do

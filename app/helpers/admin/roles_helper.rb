@@ -1,4 +1,5 @@
 module Admin::RolesHelper
+  include Utils::RequesterPrivilege
 
   # TODO: refactor bellow stmt after launch all of contacts and companies
   # privilege split up.
@@ -149,7 +150,8 @@ module Admin::RolesHelper
                     { :dom_type => "check_box", :id => "manage_email_settings" },
                     { :dom_type => "check_box", :id => "manage_ticket_list_views" },
                     { :dom_type => "check_box", :id => "manage_ticket_templates" },
-                    { :dom_type => "check_box", :id => "manage_bots", not_display: !current_account.support_bot_enabled? }
+                    { :dom_type => "check_box", :id => "manage_bots", not_display: !current_account.support_bot_enabled? },
+                    { dom_type: 'check_box',    id: 'manage_requester_notifications', not_display: !has_requester_feature? }
                     ]
                },
 

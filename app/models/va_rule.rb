@@ -263,8 +263,9 @@ class VaRule < ActiveRecord::Base
   end
 
   def conditions_changed?
-    self.changes.key?(:match_type) || 
-      (self.changes.key?(:filter_data) && 
+    return if account.automation_revamp_enabled?
+    self.changes.key?(:match_type) ||
+      (self.changes.key?(:filter_data) &&
        self.changes[:filter_data][0] != self.changes[:filter_data][1])
   end
 
