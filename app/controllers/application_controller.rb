@@ -53,7 +53,7 @@ class ApplicationController < ActionController::Base
   #before_filter :print_logs
   around_filter :log_csrf
   before_filter :verify_authenticity_token, :if => :web_request?
-  before_filter :delete_user_credentials_cookie, :if => :web_request?
+  # before_filter :delete_user_credentials_cookie, :if => :web_request?
 
   # See ActionController::Base for details 
   # Uncomment this to filter the contents of submitted sensitive data parameters
