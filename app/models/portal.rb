@@ -58,6 +58,8 @@ class Portal < ActiveRecord::Base
 
   has_one :template, :class_name => 'Portal::Template'
 
+  has_one :freddy_bot, class_name: 'Freddy::Bot', dependent: :destroy
+  
   has_many :portal_forum_categories,
     :class_name => 'PortalForumCategory',
     :foreign_key => :portal_id,
