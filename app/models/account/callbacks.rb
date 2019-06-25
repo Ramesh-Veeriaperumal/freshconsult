@@ -268,6 +268,7 @@ class Account < ActiveRecord::Base
       # self.new_record? is false in after create hook so using id_changed? method which will be true in all the hook except
       # after_commit for new record or modified record.
       admin_only_mint_on_launch(changes)
+      versionize_timestamp unless id_changed?
       trigger_launchparty_feature_callbacks unless self.id_changed?
     end
 
