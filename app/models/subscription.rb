@@ -2,6 +2,7 @@ class Subscription < ActiveRecord::Base
   include Redis::RedisKeys
   include Redis::OthersRedis
   include Cache::Memcache::SubscriptionPlan
+  include Onboarding::OnboardingRedisMethods
   
   self.primary_key = :id
   SUBSCRIPTION_TYPES = ["active", "trial", "free", "suspended"]
@@ -100,6 +101,7 @@ class Subscription < ActiveRecord::Base
   after_commit :suspend_tenant,  on: :update, :if => :trial_to_suspended?
   after_commit :reactivate_account, :update_status_in_freshid, on: :update, :if => [:moved_from_suspended?]
   after_commit :update_sandbox_subscription, on: :update, if: :account_has_sandbox?
+  after_commit :complete_onboarding, on: :update, if: :upgrade_from_trial?
 
   attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
@@ -811,6 +813,14 @@ class Subscription < ActiveRecord::Base
       sandbox_account_id = account.sandbox_job.sandbox_account_id
       sandbox_state = moved_to_suspended? ? SUSPENDED : TRIAL
       ::Admin::Sandbox::UpdateSubscriptionWorker.perform_async(account_id: account_id, sandbox_account_id: sandbox_account_id, state: sandbox_state)
+    end
+
+    def complete_onboarding
+      complete_account_onboarding
+    end
+
+    def upgrade_from_trial?
+      (@old_subscription.state.eql?(TRIAL) || @old_subscription.state.eql?(SUSPENDED)) && (state.eql?(ACTIVE) || state.eql?(FREE)) && account.onboarding_pending?
     end
 
     def account_has_sandbox?
