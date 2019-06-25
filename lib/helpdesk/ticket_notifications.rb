@@ -6,6 +6,7 @@ module Helpdesk::TicketNotifications
 	module InstanceMethods
 
 		include Helpdesk::Ticketfields::TicketStatus
+    include Redis::UndoSendRedis
 		
 		def autoreply     
       #dont send email if user creates ticket by "save and close"
@@ -34,13 +35,14 @@ module Helpdesk::TicketNotifications
     notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT) if send_agent_assigned_notification?
     
     if @model_changes.key?(:status) && !self.schedule_observer
+      undo_send_time = User.current.enabled_undo_send? ? undo_send_timer_value : 0.seconds
       if (status == RESOLVED)
-        notify_by_email(EmailNotification::TICKET_RESOLVED) 
+        notify_by_email(EmailNotification::TICKET_RESOLVED, false, undo_send_time)
         notify_watchers("resolved")
         return
       end
       if (status == CLOSED)
-        notify_by_email(EmailNotification::TICKET_CLOSED)
+        notify_by_email(EmailNotification::TICKET_CLOSED, false, undo_send_time)
         notify_watchers("closed")
         return
       end
@@ -61,13 +63,13 @@ module Helpdesk::TicketNotifications
     Helpdesk::TicketNotifier.notify_by_email(notification_type, self, nil, opts) if notify_enabled?(notification_type)
   end
   
-  def notify_by_email(notification_type, internal_notification = false)
+  def notify_by_email(notification_type, internal_notification = false, time = 0.seconds)
     if notify_enabled?(notification_type)
       if (self.requester.language != nil)
         if self.send_and_set
           enqueue_notification(notification_type, 90.seconds.from_now, internal_notification)
         else
-          Helpdesk::TicketNotifier.send_later(:notify_by_email, notification_type, self, nil, {:internal_notification => internal_notification})
+          enqueue_notification(notification_type, time.from_now, internal_notification)
         end
       else
         enqueue_notification(notification_type, 5.minutes.from_now, internal_notification)
