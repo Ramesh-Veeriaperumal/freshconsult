@@ -142,6 +142,7 @@ module Helpkit
       r.define_rule( :match => "^/(support(?!\/(theme)))/.*", :type => :fixed, :metric => :rpm, :limit => 30,:per_ip => true ,:per_url => true, :include_host => true )
       r.define_rule( :match => "^/(accounts\/new_signup_free).*", :type => :fixed, :metric => :rpd, :limit => 5,:per_ip => true)
       r.define_rule( :match => "^/(accounts\/email_signup).*", :type => :fixed, :metric => :rpd, :limit => 5,:per_ip => true)
+      r.define_rule( :match => "^/(accounts\/anonymous_signup).*", :type => :fixed, :metric => :rpd, :limit => 5,:per_ip => true)
       r.define_rule( :match => "^/(public\/tickets)/.*", :type => :fixed, :metric => :rpm, :limit => 10,:per_ip => true)
       r.define_rule( :match => "^/(login\/sso).*", :type => :fixed, :metric => :rpm, :limit => 10,:per_ip => true)
       r.define_rule( :match => "^/integrations\/sugarcrm\/settings_update", :type => :fixed, :metric => :rph, :limit => 5,:per_ip => true)
