@@ -279,7 +279,7 @@ class AccountsControllerTest < ActionController::TestCase
   def test_update_domain_with_domain_update_failure
     Account.any_instance.stubs(:freshid_enabled?).returns(true)
     Account.any_instance.stubs(:update_default_domain_and_email_config).returns(false)
-    get :update_domain, company_domain: "ab#{Faker::Lorem.word}cd"
+    get :update_domain, company_domain: Faker::Internet.domain_word
     parsed_response = parse_response response.body
     assert_equal parsed_response['success'], false
   ensure
