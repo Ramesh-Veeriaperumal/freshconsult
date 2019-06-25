@@ -2,6 +2,7 @@ class Helpdesk::ResetResponder < BaseWorker
 
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include BulkOperationsHelper
 
   sidekiq_options :queue => :reset_responder, :retry => 0, :backtrace => true, :failures => :exhausted
   BATCH_LIMIT = 50
@@ -13,7 +14,7 @@ class Helpdesk::ResetResponder < BaseWorker
       user_id     = args[:user_id]
       user        = account.all_users.find_by_id(user_id)
       reason      = args[:reason].symbolize_keys!
-      options     = {:reason => reason, :manual_publish => true}
+      options     = { reason: reason, manual_publish: true, rate_limit: rate_limit_options(args) }
       ticket_ids  = []
       ocr_enabled = account.omni_channel_routing_enabled?
       return if user.nil?
