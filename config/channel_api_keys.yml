@@ -19,6 +19,10 @@ defaults: &defaults
     auth_type: "jwt"
     jwt_secret: ["0bc477b3c1df7c17be0999c247907b11"]
     jwt_default_expiry: "30"
+  freddy:
+    auth_type: "jwt"
+    jwt_secret: ["0bc477b3c1df7c17be0999c247907b12"]
+    jwt_default_expiry: "30"
   freshmover:
     auth_type: jwt
     jwt_secret: c424bc33cae8d6fcab671a2f26161cc6

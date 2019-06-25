@@ -217,6 +217,7 @@ module FreshdeskCore::Model
                     'parent_child_templates',
                     'collab_settings',
                     'bots',
+                    'freddy_bots',
                     'bot_tickets',
                     'canned_form_handles',
                     'contact_notes',

@@ -1,0 +1,52 @@
+get:
+  summary: Get answers visible to bot
+  description: API to get answers visible to bot
+  tags: [Bot]
+  parameters:
+    - name: id
+      in: path
+      required: true
+      type: number
+    - name: account_id
+      in: query
+      required: true
+      type: number
+    - name: portal_id
+      in: query
+      required: true
+      type: number
+    - name: product
+      in: query
+      required: true
+      type: string
+    - name: user_id
+      required: true
+      in: query
+      type: number
+    - name: page
+      in: query
+      required: true
+      type: number
+    - name: per_page
+      in: query
+      required: true
+      type: number
+    - name: order_by
+      in: query
+      required: true
+      type: string
+    - name: order_type
+      in: query
+      required: true
+      type: string
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/bot_answers'
+    400:
+      description: Bad request error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

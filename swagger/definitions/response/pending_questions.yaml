@@ -1,0 +1,32 @@
+type: object
+properties:
+  id:
+    type: number
+    description: unique id for pending question
+  query_id:
+    type: string
+    description: unique id for pending questions used for view conversation
+  query:
+    type: string
+    description: contains description of pending questions
+  received_at:
+    type: string
+    description: created time
+  source:
+    type: string
+    description: pending question from ticket or bot
+  instances:
+    type: number
+    description: Total number of time question asked.
+  chat_id:
+    type: string
+    description: for viewing conversation
+  customer_id:
+    type: string
+    description: for viewing conversation
+  client_id:
+    type: string
+    description: for viewing conversation
+  score:
+    type: number
+    description: contains score for an question

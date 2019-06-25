@@ -141,4 +141,4 @@
       Va::Logger::Automation.unset_rule_id
       Va::Logger::Automation.log_execution_and_time(total_time, total_tickets, rule_type, start_time, end_time)
     end
-end
+  end

@@ -443,6 +443,14 @@
   $ref: ./bots/analytics.yaml
 /bots/{id}/remove_analytics_mock_data:
   $ref: ./bots/remove_analytics_mock_data.yaml
+/bots/{id}/pending:
+  $ref: ./bots/pending_questions.yaml
+/bots/{id}/similar_questions:
+  $ref: ./bots/similar_questions.yaml
+/bots/{id}/mapped_questions:
+  $ref: ./bots/mapped_questions.yaml
+/bots/{id}/answers:
+  $ref: ./bots/bot_answers.yaml
 
 # Discussions
 /topics/{id}:
