@@ -60,14 +60,31 @@ class Admin::DynamicNotificationTemplatesController < Admin::AdminController
   end
 
   def check_privileges
-    return if @dynamic_notification.nil?
+    return if has_all_privileges? || @dynamic_notification.nil?
 
-    !(has_other_notifications_privilege? && check_requester_privilege)
+    !(check_requester_privilege || check_other_privilege)
   end
 
   def check_requester_privilege
-    true unless @dynamic_notification.requester_template?
-    has_requester_privilege?
+    accessing_requester_template && has_requester_privilege?
+  end
+
+  def requester_template?
+    @dynamic_notification.requester_template?
+  end
+
+  def check_other_privilege
+    !accessing_requester_template && has_other_notifications_privilege?
+  end
+
+  def accessing_requester_template
+    requester_template? || building_requester_template?
+  end
+
+  def building_requester_template?
+    if params[:id].nil?
+      DynamicNotificationTemplate::CATEGORIES[:requester].to_s == params[:dynamic_notification_template].try(:[], :category).to_s
+    end
   end
 
 end	

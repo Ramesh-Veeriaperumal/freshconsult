@@ -127,12 +127,12 @@ class Admin::EmailNotificationsController < Admin::AdminController
   end
 
   def check_privileges
-    return if @email_notification.nil?
-    !(has_other_notifications_privilege? && check_requester_privilege)
+    return if has_all_privileges? || @email_notification.nil?
+
+    !(check_requester_privilege || check_other_notification_privilege)
   end
 
   def check_requester_privilege
-    true unless @email_notification.visible_to_requester?
-    has_requester_privilege?
+    has_requester_privilege? && accessing_requester_info?
   end
 end
