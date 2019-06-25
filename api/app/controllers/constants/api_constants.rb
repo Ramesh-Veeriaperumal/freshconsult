@@ -63,6 +63,18 @@ module ApiConstants
                        Solutions::HomeConstants::LOAD_OBJECT_EXCEPT +
                        Testing::FreshidApiConstants::LOAD_OBJECT_EXCEPT
 
+  SKIP_LOGS_FOR = {
+    bootstrap: %w[me index account],
+    ticket_fields: %w[index],
+    agents_groups: %w[index],
+    setting: %w[index desktop_notification],
+    draft: %w[show_draft],
+    installed_applications: %w[index],
+    subscription: %w[watchers],
+    marketplace_app: %w[index],
+    dashboard: %w[unresolved_tickets_data ticket_trends ticket_metrics survey_info scorecard]
+  }.freeze
+
   NO_CONTENT_TYPE_REQUIRED = ApiTicketConstants::NO_CONTENT_TYPE_REQUIRED +
                              ContactConstants::NO_CONTENT_TYPE_REQUIRED +
                              SubscriptionConstants::NO_CONTENT_TYPE_REQUIRED +
