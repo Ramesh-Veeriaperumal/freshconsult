@@ -3258,6 +3258,19 @@ ActiveRecord::Schema.define(:version => 20190412095235) do
 
   add_index "section_picklist_value_mappings", ["account_id", "section_id"], :name => "index_sec_picklist_mappings_on_account_id_and_section_id"
 
+  create_table 'sessions', force: true do |t|
+    t.string   'session_id', null: false
+    t.text     'data'
+    t.integer  'account_id',  :limit => 8
+    t.integer  'user_id',  :limit => 8
+    t.datetime 'created_at'
+    t.datetime 'updated_at'
+  end
+
+  add_index 'sessions', ['account_id', 'session_id'], name: 'index_sessions_on_account_id_and_session_id', unique: true
+  add_index 'sessions', ['account_id', 'user_id'], name: 'index_sessions_on_account_id_and_user_id'
+  add_index 'sessions', ['account_id', 'updated_at'], name: 'index_sessions_on_account_id_and_updated_at'
+
   create_table "shard_mappings", :primary_key => "account_id", :force => true do |t|
     t.string  "shard_name",                           :null => false
     t.integer "status",     :default => 200,          :null => false
