@@ -955,3 +955,15 @@ ul.user_list{
 //------------------------------------------------------------------------------------
 //								Segment changes end
 //------------------------------------------------------------------------------------
+
+.agents-search {
+	width: 400px;
+	text-indent: 30px;
+}
+
+.agents-search-icon {
+	position: absolute;
+	font-size: 15px;
+	@include margin-left(12px);
+	top: 26px;
+}
