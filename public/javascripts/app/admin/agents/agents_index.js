@@ -22,6 +22,34 @@ window.App.Agents = window.App.Agents || {};
 			if($("#agentTab li.active .agent-list-count").data("agentCount") < 20){
 				$(".sort_list").hide();
 			}
+
+		    var agents_search_autocomplete_index_path = $('.agents-search').attr('autocomplete-path');
+		    $('.agents-search').select2({
+		    	minimumInputLength: 2,
+		    	multiple: true,
+		    	ajax: {
+		        	url: agents_search_autocomplete_index_path,
+		        	quietMillis: 1000,
+		        	data: function (term) {
+		            		return { q: term };
+		        	},
+		        	results: function (data) {
+		            		return { results: data.results };
+		        	}
+		      	},
+		      	formatResult: function(result) {
+			    	var email = result.email;
+			    	if(email.trim() != "")
+			    		email = "  (" + email + ")";
+			    	return "<b>"+ result.value + "</b><br><span class='falcon-select2-override select2_list_detail'>" + email + "</span>";
+			    },
+		      	formatSelection: function(result) {
+			    	pjaxify("/users/" + result.id);
+			    },
+			    formatSelectionCssClass: function(result) {
+			    	return "hide";
+			    }
+		    });
 		});
 
 		$doc.on('click.agentEvents', ".delete_agent_btn", function(){
