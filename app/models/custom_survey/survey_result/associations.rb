@@ -86,10 +86,26 @@ class CustomSurvey::SurveyResult < ActiveRecord::Base
 
   }}
 
+  scope :permissible_survey, lambda { |user| { 
+      :conditions => permissible_condition(user)}
+  }
+
   scope :export_data, lambda {|condition| {
     :conditions => ["`survey_results`.`survey_id` = ? and 
                      `survey_results`.`created_at` between ? and ?",
                      condition[:survey_id], condition[:start_date], condition[:end_date]]  
   }}
+
+  class << self
+
+    def permissible_condition user
+      if user.assigned_tickets_permission?
+        ["agent_id = ?", user.id]
+      elsif user.group_tickets_permission?
+        ["(group_id IN (?) OR agent_id = ?)", user.associated_group_ids, user.id]
+      end
+    end
+    
+  end
 
 end

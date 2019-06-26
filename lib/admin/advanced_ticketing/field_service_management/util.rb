@@ -285,6 +285,12 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         params[:id] == FSM_FEATURE.to_s
       end
 
+      def fetch_already_available_fields
+        custom_fields_available = Account.current.flexifield_def_entries.map(&:flexifield_alias)
+        fields_to_be_created = CUSTOM_FIELDS_TO_RESERVE.select { |x| !custom_fields_available.include?(x[:name] + "_#{Account.current.id}") }
+        fields_to_be_created
+      end
+    
       def reset_field_agent_limit
         Account.current.subscription.reset_field_agent_limit unless Account.current.field_service_management_enabled?
       end

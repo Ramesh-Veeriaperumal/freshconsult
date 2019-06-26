@@ -17,6 +17,18 @@ class ApiAgentsController < ApiApplicationController
     true
   end
 
+  def check_edit_privilege
+    if current_account.freshid_enabled?
+      AgentConstants::RESTRICTED_PARAMS.any? do |key|
+        if @item.user_changes.key?(key)
+          @item.errors[:base] << :cannot_edit_inaccessible_fields
+          return false 
+        end
+      end
+    end
+    true
+  end
+
   def update
     assign_protected
     return unless validate_delegator(params[cname].slice(:role_ids, :group_ids), agent_delegator_params)

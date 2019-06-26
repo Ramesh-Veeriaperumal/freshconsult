@@ -8611,7 +8611,7 @@ en:
         jira_note_info: "This text will be added to the issue description in JIRA."
         widget_title: "Widget Title"
         username: "Username"
-        password: "Password"
+        password: "API token"
         jira_status_sync: "For any change in JIRA issue status %{dropdown}"
         jira_comment_sync: "For any comment added in JIRA issue %{dropdown}"
         do_nothing: "Do nothing."
