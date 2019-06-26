@@ -226,7 +226,6 @@ module Redis::Keys::Others
   #Customer segments max limit
   SEGMENT_LIMIT = "SEGMENT_LIMIT:%{account_id}".freeze
 
-
   # Enable logs for specific account when supressed
   ENABLE_LOGS = 'ENABLE_LOGS:%{account_id}'.freeze
 
