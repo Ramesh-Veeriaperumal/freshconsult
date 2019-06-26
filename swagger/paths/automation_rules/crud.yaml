@@ -1,6 +1,7 @@
 get:
   tags: ['automation rules']
   summary: Show rule
+  description: "[DRAFT Version]"
   parameters:
     - $ref: '#/parameters/id'
   responses:
@@ -24,6 +25,7 @@ delete:
 put:
   tags: ['automation rules']
   summary: Update rule
+  description: "[DRAFT Version]"
   parameters:
     - $ref: '#/parameters/id'
     - name: data
