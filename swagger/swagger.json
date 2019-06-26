@@ -11953,7 +11953,6 @@
         }
       }
     },
-
     "/solutions/categories/{id}/reorder": {
       "put": {
         "tags": [
@@ -17734,74 +17733,41 @@
           }
         },
         "conditions": {
-          "type": "object",
-          "properties": {
-            "condition_set_1": {
-              "type": "object",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "match_type": {
+                "type": "string"
+              },
               "properties": {
-                "match_type": {
-                  "type": "string",
-                  "enum": [
-                    "all",
-                    "any"
-                  ]
-                },
-                "ticket/contact/company": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "field_name": {
-                        "type": "string"
-                      },
-                      "operator": {
-                        "type": "string"
-                      },
-                      "value": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            "operator": {
-              "type": "string",
-              "enum": [
-                "and",
-                "or"
-              ]
-            },
-            "condition_set_2": {
-              "type": "object",
-              "properties": {
-                "match_type": {
-                  "type": "string",
-                  "enum": [
-                    "all",
-                    "any"
-                  ]
-                },
-                "ticket/contact/company": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "field_name": {
-                        "type": "string"
-                      },
-                      "operator": {
-                        "type": "string"
-                      },
-                      "value": {
-                        "type": "string"
-                      }
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "resource_type": {
+                      "type": "string"
+                    },
+                    "field_name": {
+                      "type": "string"
+                    },
+                    "operator": {
+                      "type": "string"
+                    },
+                    "value": {
+                      "type": "string"
                     }
                   }
                 }
               }
             }
           }
+        },
+        "operator": {
+          "type": "string"
         },
         "actions": {
           "type": "array",
@@ -23529,7 +23495,6 @@
         }
       }
     },
-    
     "support_tickets": {
       "type": "object",
       "properties": {
@@ -23538,7 +23503,6 @@
         }
       }
     },
-    
     "account_feature_enable_disable": {
       "type": "object",
       "required": [
