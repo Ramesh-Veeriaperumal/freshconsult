@@ -10,6 +10,7 @@ class Account < ActiveRecord::Base
   include Redis::OthersRedis
   include Redis::DisplayIdRedis
   include Redis::OthersRedis
+  include Redis::PortalRedis
   include AccountConstants
   include Helpdesk::SharedOwnershipMigrationMethods
   include Onboarding::OnboardingRedisMethods
@@ -880,6 +881,14 @@ class Account < ActiveRecord::Base
     key = PICKLIST_ID % { account_id: id }
     computed_id = picklist_values.maximum('picklist_id').to_i
     set_display_id_redis_key(key, computed_id)
+  end
+
+  def delete_sitemap
+    key = format(SITEMAP_OUTDATED, account_id: id)
+    remove_portal_redis_key(key)
+    portals.map(&:clear_sitemap_cache)
+    AwsWrapper::S3Object.find_with_prefix(S3_CONFIG[:bucket], "sitemap/#{id}/").map(&:delete)
+    Rails.logger.info ":::::: Sitemap is deleted (redis, cache & S3) for account #{id} ::::::"
   end
 
   protected

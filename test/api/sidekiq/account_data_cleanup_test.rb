@@ -9,6 +9,7 @@ require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
 class NewPlanChangeWorkerTest < ActionView::TestCase
   include AccountTestHelper
   include GroupsTestHelper
+  include MemcacheKeys
   def test_round_robin_load_balancing_drop_data
     create_test_account   
     group = @account.groups[0]
@@ -69,5 +70,13 @@ class NewPlanChangeWorkerTest < ActionView::TestCase
     end
     assert mock_marketplace_response.verify
     assert freshrequest_mock.verify
+  end
+
+  def test_sitemap_drop_data
+    assert_nothing_raised do
+      create_test_account
+      MemcacheKeys.expects(:delete_from_cache).with(format(SITEMAP_KEY, account_id: @account.id, portal_id: @account.main_portal.id)).once
+      SAAS::AccountDataCleanup.new(@account, ['sitemap'], 'drop').perform_cleanup
+    end
   end
 end
