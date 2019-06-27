@@ -21,7 +21,7 @@ module SubscriptionsHelper
     "sprout jan 19" => [ "email_ticketing", "ticket_dispatch_automation" ,"knowledge_base", "basic_social", "freshcaller", "omni_channel_option"],
     "blossom jan 19" => [ "everything_in_sprout", "multiple_mailboxes", "app_gallery", "time_event_automation", "custom_domain", "helpdesk_report", "custom_ticket_fields_and_views", "agent_collision", "omni_channel_option"],
     "garden jan 19" => [ "everything_in_blossom", "satisfaction_survey", "timesheets", "sla_reminders", "agent_performance_report", "ticket_templates", "m_k_base"],
-    "estate jan 19" => [ "everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "auto_ticket_assignment", "enterprise_reports", "custom_dashboard", "custom_surveys", "fsm_option"],
+    "estate jan 19" => [ "everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "auto_ticket_assignment", "enterprise_reports", "custom_dashboard", "custom_surveys", "fsm_option", "custom_translations"],
     "forest jan 19" => [ "everything_in_estate", "ip_whitelisting", "skill_based_assignment", "sandbox", "custom_data_center", "hippa_compliance", "extend_api", "omni_channel_option", "fsm_option"],
 
     "garden omni jan 19" => [ "everything_in_blossom", "satisfaction_survey", "timesheets", "sla_reminders", "agent_performance_report", "ticket_templates", "m_k_base", "omni_channel_option"],
@@ -69,7 +69,7 @@ module SubscriptionsHelper
       "sla_reminders_desc", "forums_desc", "agent_performance_report_desc", "satisfaction_survey_desc",
       "scheduled_reports_desc", "custom_surveys_desc", "custom_apps_desc", "timesheets_desc", "chat_faq", "chat_message", "ivr", "masking_recording"],
     "estate jan 19" => ["multiple_products_desc", "multiple_sla_business_desc", "portal_customization_desc",
-      "custom_ssl_desc", "auto_ticket_assignment_desc", "enterprise_reports_desc", "custom_dashboard_desc", "chatbots", "inapp_chat", "smart_calls", "barging_monitoring", "omni_analytics", "fsm_desc"],
+      "custom_ssl_desc", "auto_ticket_assignment_desc", "enterprise_reports_desc", "custom_dashboard_desc", "chatbots", "inapp_chat", "smart_calls", "barging_monitoring", "omni_analytics", "fsm_desc", "custom_translations"],
     "garden omni jan 19" => ["multilingual_kbase_desc", "dynamic_email_alert_desc",
       "sla_reminders_desc", "forums_desc", "agent_performance_report_desc",
       "scheduled_reports_desc", "custom_surveys_desc", "custom_apps_desc", "timesheets_desc", "co_browsing"],
@@ -100,7 +100,16 @@ module SubscriptionsHelper
     "blossom jan 17" => 2,
     "garden jan 17" => 3,
     "estate jan 17" => 4,
-    "forest jan 17" => 5
+    "forest jan 17" => 5,
+
+    "sprout jan 19" => 1,
+    "blossom jan 19" => 2,
+    "garden jan 19" => 3,
+    "estate jan 19" => 4,
+    "forest jan 19" => 5,
+
+    "garden omni jan 19" => 3,
+    "estate omni jan 19" => 4
   }
 
   EQUAL_PLAN_HASH = {
@@ -108,10 +117,21 @@ module SubscriptionsHelper
     "blossom jan 17" => {:type_flag => 0, :features => ["forums_desc"]},
     "garden jan 17" => {:type_flag => 0, :features => ["multiple_products_desc", "multiple_sla_business_desc"]},
     "estate jan 17" => {:type_flag => 2, :features => []},
-    "forest jan 17" => {:type_flag => 2, :features => []}
+    "forest jan 17" => {:type_flag => 2, :features => []},
+
+    "sprout jan 19" => {:type_flag => 0, :features => ["scenario_automations_desc", "custom_tabel_view_desc", "sla_desc", "business_hours_desc", "agent_scope_desc", "agent_group_pf_report"]},
+    "blossom jan 19" => {:type_flag => 0, :features => ["sla_reminders_desc", "agent_group_pf_report", "timesheets_desc", "canned_forms_desc", "custom_apps_desc", "customer_360_desc", "customer_journey_desc"]},
+    "garden jan 19" => {:type_flag => 0, :features => ["parent_child_desc"]},
+    "estate jan 19" => {:type_flag => 2, :features => []},
+    "garden omni jan 19" => {:type_flag => 0, :features => ["parent_child_desc"]},
+    "estate omni jan 19" => {:type_flag => 2, :features => ["scenario_automations_desc"]},
+    "forest jan 19" => {:type_flag => 2, :features => []}
   }
 
-  NEW_SPROUT = "Sprout Jan 17"
+  NEW_SPROUT = [ "Sprout Jan 17", "Sprout Jan 19"].freeze
+
+  OMNI_PLANS_SERIES = SubscriptionPlan::JAN_2019_PLAN_NAMES.reject { |name| SubscriptionPlan::OMNI_TO_BASIC_PLAN_MAP.key(name) }
+  NON_OMNI_PLANS_SERIES = SubscriptionPlan::JAN_2019_PLAN_NAMES.reject { |name| SubscriptionPlan::BASIC_PLAN_TO_OMNI_MAP.key(name) }
 
   def get_payment_string(period,amount)
     amount = format_amount(amount, current_account.currency_name)
@@ -263,7 +283,7 @@ module SubscriptionsHelper
   end
   
   def new_sprout?(plan_name)
-    plan_name == NEW_SPROUT
+    NEW_SPROUT.include?(plan_name)
   end
 
   def get_current_plans(is_old_plan)
@@ -274,11 +294,29 @@ module SubscriptionsHelper
     end
   end
 
-  def tax_inclusive?(subscription)
-    subscription.additional_info[:amount_with_tax].present? && subscription.additional_info[:amount_with_tax] != subscription.amount ? true : false
+  def get_plan_names(account_subscription_plan)
+    plan_name = account_subscription_plan.name
+    if SubscriptionPlan::PLAN_NAMES_BEFORE_2017_AND_NOT_GRAND_PARENT.include?(plan_name)
+      SubscriptionPlan::PLAN_NAMES_BEFORE_2017_AND_NOT_GRAND_PARENT
+    elsif SubscriptionPlan::JAN_2017_PLAN_NAMES.include?(plan_name)
+      SubscriptionPlan::JAN_2017_PLAN_NAMES
+    elsif SubscriptionPlan::BASIC_PLAN_TO_OMNI_MAP.key(plan_name).present?
+      OMNI_PLANS_SERIES
+    else
+      NON_OMNI_PLANS_SERIES
+    end
+  end
+
+  def losing_features(plan_name, account)
+    if account.new_2019_pricing_enabled?
+      PLANS_FEATURES_LOSS_2019["#{plan_name.downcase}"]
+    else
+      PLANS_FEATURES_LOSS["#{plan_name.downcase}"]
+    end
   end
 
   def tax_inclusive?(subscription)
     subscription.additional_info[:amount_with_tax].present? && subscription.additional_info[:amount_with_tax] != subscription.amount ? true : false
   end
 end
+ 
