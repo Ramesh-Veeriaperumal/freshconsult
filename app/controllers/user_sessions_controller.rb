@@ -25,6 +25,7 @@ class UserSessionsController < ApplicationController
   before_filter :redirect_to_freshid_login, :only =>[:create], :if => :is_freshid_agent_and_not_mobile?
   before_filter :redirect_to_agent_sso_freshid_authorize, only: :agent_login, if: -> { !logged_in? && freshid_integration_enabled? }
   before_filter :redirect_to_customer_sso_freshid_authorize, only: :customer_login, if: -> { !logged_in? && freshid_integration_enabled? }
+  before_filter :check_exisiting_saml_session, only: :saml_login
 
   def new
     flash.keep
@@ -36,6 +37,19 @@ class UserSessionsController < ApplicationController
     else
       #Redirect to portal login by default
       return redirect_to support_login_path
+    end
+  end
+
+  def check_exisiting_saml_session
+    return if params[:SAMLResponse].blank?
+
+    response = OneLogin::RubySaml::Response.new(params[:SAMLResponse], { settings: get_saml_settings(current_account) }.merge(SAML_SSO_RESPONSE_SETTINGS))
+    response.settings.issuer = nil
+    
+    # checking current user and New login user are same or not
+    if response.present? && response.is_valid? && @current_user.present? && current_account.launched?(:sso_unique_session) && (@current_user.email != response.name_id) 
+      logout_user(false)
+      @current_user = nil
     end
   end
 
@@ -305,7 +319,7 @@ class UserSessionsController < ApplicationController
     redirect_to params[:redirect_uri]
   end
 
-  def logout_user
+  def logout_user(allow_sso_redirection = true)
     remove_old_filters if current_user && current_user.agent?
 
     mark_agent_unavailable if can_turn_off_round_robin?
@@ -320,7 +334,7 @@ class UserSessionsController < ApplicationController
       current_user_session.destroy
     end
 
-    if current_account.sso_enabled? and current_account.sso_logout_url.present? and !is_native_mobile?
+    if current_account.sso_enabled? && current_account.sso_logout_url.present? && !is_native_mobile? && allow_sso_redirection
       sso_redirect_url = generate_sso_url(current_account.sso_logout_url)
       redirect_to sso_redirect_url and return
     end
