@@ -35,6 +35,12 @@ module Admin::AutomationConstants
     less_than: :before
   }.freeze
 
+  TAGS_OPERATOR_MAPPING = {
+    in: :contains_any_of,
+    not_in: :contains_none_of,
+    and: :contains_all_of
+  }.freeze
+
   CUSTOM_TEXT_FIELD_TYPES = %i[custom_text custom_paragraph].freeze
 
   DISPLAY_FIELD_NAME_CHANGE = FIELD_VALUE_CHANGE_MAPPING.invert.freeze
