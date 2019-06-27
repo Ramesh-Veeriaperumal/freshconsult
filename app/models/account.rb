@@ -825,6 +825,14 @@ class Account < ActiveRecord::Base
     set_display_id_redis_key(key, computed_id)
   end
 
+  def delete_sitemap
+    key = format(SITEMAP_OUTDATED, account_id: id)
+    remove_portal_redis_key(key)
+    portals.map(&:clear_sitemap_cache)
+    AwsWrapper::S3Object.find_with_prefix(S3_CONFIG[:bucket], "sitemap/#{id}/").map(&:delete)
+    Rails.logger.info ":::::: Sitemap is deleted (redis, cache & S3) for account #{id} ::::::"
+  end
+
   protected
   
     def external_url_is_valid?(url) 

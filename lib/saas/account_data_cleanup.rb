@@ -315,6 +315,10 @@ class SAAS::AccountDataCleanup
     account.clear_bots_from_cache
   end
 
+  def handle_sitemap_drop_data
+    account.delete_sitemap
+  end
+
   def handle_custom_dashboard_drop_data
     account.dashboards.destroy_all
   end
