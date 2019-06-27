@@ -51,6 +51,7 @@ class Va::Action
       @triggered_event = triggered_event
       Va::Logger::Automation.log "action=#{action_key.inspect}, value=#{value.inspect}"
       return safe_send(action_key, act_on) if respond_to?(action_key)
+      Thread.current[:dispatcher_set_priority] = true if action_key == 'priority' && va_rule.dispatchr_rule?
       if act_on.respond_to?("#{action_key}=")
         act_on.safe_send("#{action_key}=", value)
         record_action(act_on)

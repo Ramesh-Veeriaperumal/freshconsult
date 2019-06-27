@@ -57,7 +57,8 @@ class Account < ActiveRecord::Base
     :omni_channel, :ticket_volume_report, :sla_management_v2, :api_v2, :cascade_dispatcher,
     :personal_canned_response, :marketplace, :reverse_notes,
     :freshreports_analytics, :disable_old_reports, :article_filters, :adv_article_bulk_actions,
-    :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible, :autofaq, :proactive_spam_detection
+    :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible, :ticket_properties_suggester, :ticket_properties_suggester_eligible,
+    :autofaq, :proactive_spam_detection 
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
@@ -404,6 +405,10 @@ class Account < ActiveRecord::Base
     return true unless reverse_notes_enabled?
     user_settings = current_user.old_notes_first? if current_user != :no_user
     user_settings.nil? ? account_additional_settings.old_notes_first? : user_settings
+  end
+
+  def ticket_properties_suggester_enabled?
+    ticket_properties_suggester_eligible_enabled? && has_feature?(:ticket_properties_suggester)
   end
 
   def detect_thank_you_note_enabled?
