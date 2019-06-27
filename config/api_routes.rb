@@ -559,6 +559,7 @@ Helpkit::Application.routes.draw do
         put :create_child_with_template
         put :requester, to: 'ember/tickets/requester#update'
         post :parse_template, to: 'ember/tickets#parse_template'
+        get :ticket_field_suggestions, to: 'ember/tickets#ticket_field_suggestions'
       end
       resources :activities, controller: 'ember/tickets/activities', only: [:index]
       resource :summary, controller: 'ticket_summary', only: [:show, :update, :destroy]

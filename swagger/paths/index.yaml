@@ -99,6 +99,9 @@
   $ref: ./conversations/undo_send.yaml
 /tickets/{id}/bot_response:
   $ref: ./tickets/bot_response.yaml
+/tickets/{id}/ticket_field_suggestions:
+  $ref: ./tickets/ticket_field_suggestions.yaml
+
 
 /tickets/archived/{id}:
   $ref: ./archive_tickets/crud.yaml

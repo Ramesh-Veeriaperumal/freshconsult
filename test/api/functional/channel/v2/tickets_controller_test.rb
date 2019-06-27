@@ -65,7 +65,7 @@ module Channel::V2
 
     def fb_page_params_hash
       {
-        :profile_id=>Faker::Number.number(15), 
+        :profile_id=>Faker::Number.number(15),
         :access_token=>Faker::Lorem.characters,
         :page_id=>Faker::Number.number(15),
         :page_name=>Faker::Name.name,

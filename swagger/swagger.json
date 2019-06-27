@@ -2029,6 +2029,40 @@
         }
       }
     },
+    "/tickets/{id}/ticket_field_suggestions": {
+      "get": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Show ticket field suggestions for a ticket",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ticket_field_suggestions"
+            }
+          },
+          "204": {
+            "description": "Not found"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
     "/tickets/archived/{id}": {
       "get": {
         "tags": [
@@ -19051,6 +19085,22 @@
         },
         "updated_at": {
           "format": "date-time"
+        }
+      }
+    },
+    "ticket_field_suggestions": {
+      "type": "object",
+      "properties": {
+        "group": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "priority": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "ticket_type": {
+          "type": "string"
         }
       }
     },

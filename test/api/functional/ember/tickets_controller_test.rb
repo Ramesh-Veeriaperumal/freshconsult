@@ -2,7 +2,7 @@ require_relative '../../test_helper'
 require 'webmock/minitest'
 ['canned_responses_helper.rb', 'social_tickets_creation_helper.rb', 'ticket_template_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 ['account_test_helper.rb', 'groups_test_helper.rb', 'shared_ownership_test_helper.rb'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
-['tickets_test_helper.rb', 'bot_response_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
+['tickets_test_helper.rb', 'bot_response_test_helper.rb', 'ticket_properties_suggester_test_helper'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
 
 module Ember
   class TicketsControllerTest < ActionController::TestCase
@@ -29,6 +29,7 @@ module Ember
     include DiscussionsTestHelper
     include BotResponseTestHelper
     include TicketFiltersHelper
+    include TicketPropertiesSuggesterTestHelper
     include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
     include ::Admin::AdvancedTicketing::FieldServiceManagement::Constant
     ARCHIVE_DAYS = 120
@@ -91,7 +92,7 @@ module Ember
       ticket = Helpdesk::Ticket.where('source != ?', 10).last || create_ticket(ticket_params_hash)
       ticket
     end
-    
+
     def account
       @account ||= Account.current
     end
@@ -522,7 +523,7 @@ module Ember
       params = { email: Faker::Name.name, status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph, custom_fields: { email: 0 } }
       post :create, construct_params({ version: 'private' }, params)
       match_json([
-        bad_request_error_pattern(:email, :invalid_format, accepted: 'valid email address'), 
+        bad_request_error_pattern(:email, :invalid_format, accepted: 'valid email address'),
         bad_request_error_pattern(custom_field_error_label('email'), :datatype_mismatch, expected_data_type: 'String', given_data_type: 'Integer', prepend_msg: :input_received)
       ])
       assert_response 400
@@ -636,10 +637,10 @@ module Ember
     def test_create_with_shared_attachments_using_ticket_templates
       @account = Account.first.make_current
       @agent = get_admin
-      @groups = [] 
+      @groups = []
       @groups << create_group(@account)
       @current_user = User.current
-      # normal ticket template attachment 
+      # normal ticket template attachment
       ticket_template = create_tkt_template(
         name: Faker::Name.name,
         association_type: Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:parent],
@@ -701,7 +702,7 @@ module Ember
       assert_response 201
       ticket = Helpdesk::Ticket.last
       match_json(ticket_show_pattern(ticket))
-      assert_equal inline_attachment_ids.size, ticket.inline_attachments.size 
+      assert_equal inline_attachment_ids.size, ticket.inline_attachments.size
     end
 
     def test_create_with_invalid_inline_attachment_ids
@@ -742,8 +743,8 @@ module Ember
           parent_ticket = create_ticket
           params = { parent_id: parent_ticket.display_id, email: Faker::Internet.email,
                      description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
-                     priority: 2, status: 2, type: SERVICE_TASK_TYPE, 
-                     custom_fields: { cf_fsm_contact_name: "test", cf_fsm_service_location: "test", cf_fsm_phone_number: "test" } }      
+                     priority: 2, status: 2, type: SERVICE_TASK_TYPE,
+                     custom_fields: { cf_fsm_contact_name: "test", cf_fsm_service_location: "test", cf_fsm_phone_number: "test" } }
           post :create, construct_params({ version: 'private' }, params)
           assert_response 201
         ensure
@@ -779,7 +780,7 @@ module Ember
           params = { parent_id: parent_ticket.display_id, email: Faker::Internet.email,
                      description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
                      priority: 2, status: 2, type: SERVICE_TASK_TYPE,
-                     custom_fields: { cf_fsm_contact_name: 'test', cf_fsm_service_location: 'test', cf_fsm_phone_number: 'test', cf_fsm_appointment_start_time: '2019-10-12T12:23:00', cf_fsm_appointment_end_time: '2019-10-11T12:23:00' } }  
+                     custom_fields: { cf_fsm_contact_name: 'test', cf_fsm_service_location: 'test', cf_fsm_phone_number: 'test', cf_fsm_appointment_start_time: '2019-10-12T12:23:00', cf_fsm_appointment_end_time: '2019-10-11T12:23:00' } }
           post :create, construct_params({ version: 'private' }, params)
           assert_response 400
           match_json([bad_request_error_pattern('custom_fields.cf_fsm_appointment_end_time', :invalid_date_time_range)])
@@ -817,15 +818,15 @@ module Ember
           Account.first.make_current
           params = { email: Faker::Internet.email,
                    description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
-                   priority: 2, status: 2, type: SERVICE_TASK_TYPE, 
+                   priority: 2, status: 2, type: SERVICE_TASK_TYPE,
                    custom_fields: { cf_fsm_contact_name:
-                    "test", cf_fsm_service_location: "test", cf_fsm_phone_number: "test" } }  
+                    "test", cf_fsm_service_location: "test", cf_fsm_phone_number: "test" } }
           post :create, construct_params({version: 'private'}, params)
           match_json([bad_request_error_pattern('ticket_type', :should_be_child, :type => SERVICE_TASK_TYPE, :code => :invalid_value)])
           assert_response 400
         ensure
           cleanup_fsm
-        end 
+        end
       end
     end
 
@@ -837,8 +838,8 @@ module Ember
          parent_ticket = create_ticket
          params = { responder_id: @agent.id, parent_id: parent_ticket.display_id, email: Faker::Internet.email,
                    description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
-                   priority: 2, status: 2, type: SERVICE_TASK_TYPE, 
-                   custom_fields: { cf_fsm_contact_name: "test", cf_fsm_service_location: "test", cf_fsm_phone_number: "test" } }      
+                   priority: 2, status: 2, type: SERVICE_TASK_TYPE,
+                   custom_fields: { cf_fsm_contact_name: "test", cf_fsm_service_location: "test", cf_fsm_phone_number: "test" } }
          post :create, construct_params({version: 'private'}, params)
          assert_response 201
        ensure
@@ -849,7 +850,7 @@ module Ember
 
     def test_create_non_service_task_ticket_with_invalid_field_agent_failure
       enable_adv_ticketing([:field_service_management]) do
-        begin 
+        begin
           perform_fsm_operations
           Account.stubs(:current).returns(Account.first)
           field_agent = create_field_agent
@@ -869,7 +870,7 @@ module Ember
 
     def test_create_non_service_task_ticket_with_invalid_field_agent_and_group_failure
       enable_adv_ticketing([:field_service_management]) do
-        begin 
+        begin
           perform_fsm_operations
           Account.stubs(:current).returns(Account.first)
           field_group = create_field_agent_group
@@ -888,18 +889,18 @@ module Ember
         end
       end
     end
-    
+
     def test_create_service_task_ticket_with_invalid_field_group_failure
       enable_adv_ticketing([:field_service_management]) do
-        begin 
+        begin
           perform_fsm_operations
           Account.first.make_current
-          group = create_group(@account)    
+          group = create_group(@account)
           parent_ticket = create_ticket
           params = { group_id: group.id, parent_id: parent_ticket.display_id, email: Faker::Internet.email,
                      description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
-                     priority: 2, status: 2, type: SERVICE_TASK_TYPE, 
-                     custom_fields: { cf_fsm_contact_name: "test", cf_fsm_service_location: "test", cf_fsm_phone_number: "test" } }      
+                     priority: 2, status: 2, type: SERVICE_TASK_TYPE,
+                     custom_fields: { cf_fsm_contact_name: "test", cf_fsm_service_location: "test", cf_fsm_phone_number: "test" } }
           post :create, construct_params({version: 'private'}, params)
           match_json([bad_request_error_pattern('group_id', :only_field_group_allowed, :code => :invalid_value)])
           assert_response 400
@@ -909,9 +910,9 @@ module Ember
       end
     end
 
-    def test_create_non_service_task_ticket_with_invalid_field_group_failure 
+    def test_create_non_service_task_ticket_with_invalid_field_group_failure
       enable_adv_ticketing([:field_service_management]) do
-        begin 
+        begin
           perform_fsm_operations
           Account.stubs(:current).returns(Account.first)
           field_group = create_field_agent_group
@@ -928,10 +929,10 @@ module Ember
       end
     end
 
-    def test_update_service_task_ticket_type_failure 
+    def test_update_service_task_ticket_type_failure
       enable_adv_ticketing([:field_service_management]) do
         begin
-          perform_fsm_operations      
+          perform_fsm_operations
           fsm_ticket = create_service_task_ticket
           params = {:type => "Question"}
           put :update, construct_params({ id: fsm_ticket.display_id, version: 'private' }, params)
@@ -991,7 +992,7 @@ module Ember
       end
     end
 
-    def test_update_non_service_task_ticket_to_service_task_failure 
+    def test_update_non_service_task_ticket_to_service_task_failure
       enable_adv_ticketing([:field_service_management]) do
         begin
           perform_fsm_operations
@@ -1049,11 +1050,11 @@ module Ember
 
     def test_create_with_new_tag_without_privilege
       tags = Faker::Lorem.words(3).uniq
-      tags = tags.map do |tag| 
+      tags = tags.map do |tag|
       #Timestamp added to make sure tag names are new
         tag = "#{tag}#{Time.now.to_i}"
         assert_equal @account.tags.map(&:name).include?(tag), false
-        tag 
+        tag
       end
       User.current.reload
       remove_privilege(User.current, :create_tags)
@@ -1087,11 +1088,11 @@ module Ember
 
     def test_create_with_tag_with_privilege
       tags = Faker::Lorem.words(3).uniq
-      tags = tags.map do |tag| 
+      tags = tags.map do |tag|
       #Timestamp added to make sure tag names are new
         tag = "#{tag}#{Time.now.to_i}"
         assert_equal @account.tags.map(&:name).include?(tag), false
-        tag 
+        tag
       end
       params = {
         requester_id: User.current.id,
@@ -1153,6 +1154,110 @@ module Ember
       assert_response 200
       str = "test # #{t.display_id}"
       match_json({ evaluated_text: str })
+    end
+
+    def test_ticket_field_suggestions_with_none_set
+      WebMock.allow_net_connect!
+      @account = Account.first.presence || create_test_account
+      Account.stubs(:current).returns(@account)
+      ticket = create_ticket_for_ticket_properties_suggester
+      args = { ticket_id: ticket.id, action: 'predict', dispatcher_set_priority: false }
+      response_stub = ResponseStub.new(ticket_properties_suggester_json, 200)
+      HTTParty.stubs(:post).returns(response_stub)
+      ::Freddy::TicketPropertiesSuggesterWorker.new.perform(args)
+      ticket.reload
+      get :ticket_field_suggestions, construct_params({ version: 'private', id: ticket.display_id }, false)
+      assert_response 200
+      response = ticket_field_suggestions(ticket)
+      
+      assert_equal true, keys_present?(['priority', 'group', 'ticket_type'], response['ticket_field_suggestions'])
+      WebMock.disable_net_connect!
+    end
+
+    def test_ticket_field_suggestions_with_priority_set
+      WebMock.allow_net_connect!
+      @account = Account.first.presence || create_test_account
+      Account.stubs(:current).returns(@account)
+      ticket = create_ticket_for_ticket_properties_suggester
+      ticket.priority = 2
+      ticket.save!
+      args = { ticket_id: ticket.id, action: 'predict', dispatcher_set_priority: false }
+      response_stub = ResponseStub.new(ticket_properties_suggester_json, 200)
+      HTTParty.stubs(:post).returns(response_stub)
+      ::Freddy::TicketPropertiesSuggesterWorker.new.perform(args)
+      ticket.reload
+      get :ticket_field_suggestions, construct_params({ version: 'private', id: ticket.display_id }, false)
+      assert_response 200
+      response = ticket_field_suggestions(ticket)
+      assert_equal true, keys_present?(['group', 'ticket_type'], response['ticket_field_suggestions'])
+      WebMock.disable_net_connect!
+    end
+
+    def test_ticket_field_suggestions_with_group_set
+      WebMock.allow_net_connect!
+      @account = Account.first.presence || create_test_account
+      Account.stubs(:current).returns(@account)
+      ticket = create_ticket_for_ticket_properties_suggester
+      group = @account.groups.new
+      group.name = "test_group_for_ticket_properties_suggester"
+      group.save!
+      ticket.group = group
+      ticket.save!
+      args = { ticket_id: ticket.id, action: 'predict', dispatcher_set_priority: false }
+      response_stub = ResponseStub.new(ticket_properties_suggester_json, 200)
+      HTTParty.stubs(:post).returns(response_stub)
+      ::Freddy::TicketPropertiesSuggesterWorker.new.perform(args)
+      ticket.reload
+      get :ticket_field_suggestions, construct_params({ version: 'private', id: ticket.display_id }, false)
+      assert_response 200
+      response = ticket_field_suggestions(ticket)
+      assert_equal true, keys_present?(['priority','ticket_type'], response['ticket_field_suggestions'])
+      WebMock.disable_net_connect!
+    end
+
+    def test_ticket_field_suggestions_with_type_set
+      WebMock.allow_net_connect!
+      @account = Account.first.presence || create_test_account
+      Account.stubs(:current).returns(@account)
+      ticket = create_ticket_for_ticket_properties_suggester
+      ticket_type = @account.ticket_fields.find_by_name('ticket_type')
+      ticket.ticket_type  = ticket_type.picklist_values.first.value
+      ticket.save!
+      args = { ticket_id: ticket.id, action: 'predict', dispatcher_set_priority: false }
+      response_stub = ResponseStub.new(ticket_properties_suggester_json, 200)
+      HTTParty.stubs(:post).returns(response_stub)
+      ::Freddy::TicketPropertiesSuggesterWorker.new.perform(args)
+      ticket.reload
+      get :ticket_field_suggestions, construct_params({ version: 'private', id: ticket.display_id }, false)
+      assert_response 200
+      response = ticket_field_suggestions(ticket)
+      assert_equal true, keys_present?(['priority', 'group'], response['ticket_field_suggestions'])
+      WebMock.disable_net_connect!
+    end
+
+    def test_ticket_field_suggestions_with_all_set      
+      WebMock.allow_net_connect!
+      @account = Account.first.presence || create_test_account
+      Account.stubs(:current).returns(@account)
+      ticket = create_ticket_for_ticket_properties_suggester
+      ticket.priority = 2       
+      group = @account.groups.new
+      group.name = "test_group_for_ticket_properties_suggester_all_set"
+      group.save!
+      ticket.group = group     
+      ticket_type = @account.ticket_fields.find_by_name('ticket_type')
+      ticket.ticket_type  = ticket_type.picklist_values.first.value
+      ticket.save!
+      args = { ticket_id: ticket.id, action: 'predict', dispatcher_set_priority: false }
+      response_stub = ResponseStub.new(ticket_properties_suggester_json, 200)
+      HTTParty.stubs(:post).returns(response_stub)
+      ::Freddy::TicketPropertiesSuggesterWorker.new.perform(args)
+      ticket.reload
+      get :ticket_field_suggestions, construct_params({ version: 'private', id: ticket.display_id }, false)
+      assert_response 200      
+      response = ticket_field_suggestions(ticket)
+      assert_equal true, keys_absent?(['priority', 'group', 'ticket_type'], response['ticket_field_suggestions'])
+      WebMock.disable_net_connect!
     end
 
     def test_parse_template_malformed
@@ -1291,7 +1396,7 @@ module Ember
       args = {'ticket_id' => ticket.id, 'user_id' => ticket.requester_id, 'is_webhook' => ticket.freshdesk_webhook?, 'sla_args' => {'sla_on_background' => ticket.sla_on_background, 'sla_state_attributes' => ticket.sla_state_attributes, 'sla_calculation_time' => ticket.sla_calculation_time.to_i}}
       disptchr = Helpdesk::Dispatcher.new(args)
       disptchr.execute
-      assert_equal 1, ::Bot::Emailbot::SendBotEmail.jobs.size 
+      assert_equal 1, ::Bot::Emailbot::SendBotEmail.jobs.size
       Bot.any_instance.unstub(:email_channel)
       Account.any_instance.unstub(:support_bot_configured?)
       Account.any_instance.unstub(:bot_email_channel_enabled?)
@@ -1304,8 +1409,8 @@ module Ember
       ::Bot::Emailbot::SendBotEmail.jobs.clear
       args = {'ticket_id' => ticket.id, 'user_id' => ticket.requester_id, 'is_webhook' => ticket.freshdesk_webhook?, 'sla_args' => {'sla_on_background' => ticket.sla_on_background, 'sla_state_attributes' => ticket.sla_state_attributes, 'sla_calculation_time' => ticket.sla_calculation_time.to_i}}
       disptchr = Helpdesk::Dispatcher.new(args)
-      disptchr.execute 
-      assert_equal 0, ::Bot::Emailbot::SendBotEmail.jobs.size 
+      disptchr.execute
+      assert_equal 0, ::Bot::Emailbot::SendBotEmail.jobs.size
       Account.any_instance.unstub(:support_bot_configured?)
       Account.any_instance.unstub(:bot_email_channel_enabled?)
     end
@@ -1317,8 +1422,8 @@ module Ember
       ::Bot::Emailbot::SendBotEmail.jobs.clear
       args = {'ticket_id' => ticket.id, 'user_id' => ticket.requester_id, 'is_webhook' => ticket.freshdesk_webhook?, 'sla_args' => {'sla_on_background' => ticket.sla_on_background, 'sla_state_attributes' => ticket.sla_state_attributes, 'sla_calculation_time' => ticket.sla_calculation_time.to_i}}
       disptchr = Helpdesk::Dispatcher.new(args)
-      disptchr.execute   
-      assert_equal 0, ::Bot::Emailbot::SendBotEmail.jobs.size 
+      disptchr.execute
+      assert_equal 0, ::Bot::Emailbot::SendBotEmail.jobs.size
       Account.any_instance.unstub(:support_bot_configured?)
       Account.any_instance.unstub(:bot_email_channel_enabled?)
     end
@@ -1438,7 +1543,7 @@ module Ember
       match_json(ticket_show_pattern(t.reload))
       scenario_activities = scenario[:action_data]
       scenario_activities.map do |hash|
-        if hash[:comment] 
+        if hash[:comment]
           hash.delete(:comment)
         end
       end
@@ -1477,7 +1582,7 @@ module Ember
       match_json(ticket_show_pattern(parent_ticket.reload))
       scenario_activities = scenario[:action_data]
       scenario_activities.map do |hash|
-        if hash[:comment] 
+        if hash[:comment]
           hash.delete(:comment)
         end
       end
@@ -1489,10 +1594,10 @@ module Ember
     end
 
     def test_execute_scenario
-      scenario = create_scn_automation_rule(scenario_automation_params.merge({action_data: [{:name=>"ticket_type", :value=>"Question"}, 
-                                                                                            {:name=>"add_comment", :comment=>"hey test1"}, 
-                                                                                            {:name=>"add_tag", :value=>"hey,tag1,tag2"}, 
-                                                                                            {:name=>"add_watcher", :value=>[8, 1]}, 
+      scenario = create_scn_automation_rule(scenario_automation_params.merge({action_data: [{:name=>"ticket_type", :value=>"Question"},
+                                                                                            {:name=>"add_comment", :comment=>"hey test1"},
+                                                                                            {:name=>"add_tag", :value=>"hey,tag1,tag2"},
+                                                                                            {:name=>"add_watcher", :value=>[8, 1]},
                                                                                             {:name=>"add_comment", :comment=>"hey test3"}]}));
       ticket = create_ticket(ticket_params_hash)
       put :execute_scenario, construct_params({ version: 'private', id: ticket.display_id }, scenario_id: scenario.id)
@@ -1500,7 +1605,7 @@ module Ember
       match_json(ticket_show_pattern(ticket.reload))
       scenario_activities = scenario[:action_data]
       scenario_activities.map do |hash|
-        if hash[:comment] 
+        if hash[:comment]
           hash.delete(:comment)
         end
       end
@@ -1748,7 +1853,7 @@ module Ember
       assert_equal description, ticket.description
       assert_equal requester_id, ticket.requester_id
       assert_equal sender_email, ticket.sender_email
-      assert_equal attachment_ids, ticket.attachment_ids      
+      assert_equal attachment_ids, ticket.attachment_ids
     end
 
     def test_update_properties_with_subject_description_requester_source_email
@@ -1776,7 +1881,7 @@ module Ember
       assert_equal description, ticket.description
       assert_equal requester_id, ticket.requester_id
       assert_equal sender_email, ticket.sender_email
-      assert_equal attachment_ids, ticket.attachment_ids      
+      assert_equal attachment_ids, ticket.attachment_ids
     end
     def test_update_properties_with_subject_description_requester_with_default_company
       ticket = create_ticket
@@ -1784,7 +1889,7 @@ module Ember
       description = Faker::Lorem.paragraph
       sample_requester = get_user_with_default_company
       requester_id = sample_requester.id
-      sender_email = sample_requester.email      
+      sender_email = sample_requester.email
       company_id = sample_requester.user_companies.first.company_id if sample_requester.user_companies.first.present?
       params_hash = {
         subject: subject,
@@ -1810,7 +1915,7 @@ module Ember
       description = Faker::Lorem.paragraph
       sample_requester = get_user_with_multiple_companies
       requester_id = sample_requester.id
-      sender_email = sample_requester.email      
+      sender_email = sample_requester.email
       company_id = sample_requester.user_companies.where(default: false).first.company.id
       params_hash = {
         subject: subject,
@@ -2432,16 +2537,16 @@ module Ember
     def test_update_properties_with_new_tag_without_privilege
       ticket = create_ticket
       tags = Faker::Lorem.words(3).uniq
-      tags = tags.map do |tag| 
+      tags = tags.map do |tag|
       #Timestamp added to make sure tag names are new
         tag = "#{tag}#{Time.now.to_i}"
         assert_equal @account.tags.map(&:name).include?(tag), false
-        tag 
+        tag
       end
       User.current.reload
       remove_privilege(User.current, :create_tags)
       params_hash = { tags: tags }
-      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash) 
+      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
       assert_equal ticket.tags.count, 0
       add_privilege(User.current, :create_tags)
@@ -2454,7 +2559,7 @@ module Ember
       User.current.reload
       remove_privilege(User.current, :create_tags)
       params_hash = { tags: [tag] }
-      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash) 
+      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 200
       assert_equal ticket.tags.count, 1
       add_privilege(User.current, :create_tags)
@@ -2463,10 +2568,10 @@ module Ember
     def test_update_properties_with_tag_with_privilege
       ticket = create_ticket
       tags = Faker::Lorem.words(3).uniq
-      tags = tags.map do |tag| 
+      tags = tags.map do |tag|
       #Timestamp added to make sure tag names are new
         tag = "#{tag}#{Time.now.to_i}"
-        assert_equal @account.tags.map(&:name).include?(tag), false 
+        assert_equal @account.tags.map(&:name).include?(tag), false
         tag
       end
       params_hash = { tags: tags }
@@ -2485,7 +2590,7 @@ module Ember
       put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 200
       t = Account.current.tickets.find_by_display_id(t.display_id)
-      assert_equal inline_attachment_ids.size, t.inline_attachments.size 
+      assert_equal inline_attachment_ids.size, t.inline_attachments.size
     end
 
     def test_update_properties_with_invalid_inline_attachment_ids
@@ -2823,7 +2928,7 @@ module Ember
       ]
       cust_dropdown_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
       create_section_fields(cust_dropdown_field.id, sections, false)
-     
+
       t = create_ticket
       params = { custom_fields: { test_custom_dropdown: dropdown_value } }
       ['paragraph'].each do |custom_field|
@@ -2941,15 +3046,15 @@ module Ember
     end
 
     def test_export_csv_with_limit_reach
-      export_ids = [] 
+      export_ids = []
       DataExport.ticket_export_limit.times do
         export_entry = @account.data_exports.new(
-                            :source => DataExport::EXPORT_TYPE["ticket".to_sym], 
+                            :source => DataExport::EXPORT_TYPE["ticket".to_sym],
                             :user => User.current,
                             :status => DataExport::EXPORT_STATUS[:started]
                             )
         export_entry.save
-        export_ids << export_entry.id  
+        export_ids << export_entry.id
       end
       params_hash = { ticket_fields: {"display_id": "id" }, contact_fields: {"name":"Requester Name","mobile":"Mobile Phone" },
                       company_fields:{"name":"Company Name"},
@@ -2980,7 +3085,7 @@ module Ember
       @account.make_current
       DataExport.archive_ticket_export_limit.times do
         export_entry = @account.data_exports.new(
-                            :source => DataExport::EXPORT_TYPE["archive_ticket".to_sym], 
+                            :source => DataExport::EXPORT_TYPE["archive_ticket".to_sym],
                             :user => User.current,
                             :status => DataExport::EXPORT_STATUS[:started]
                             )
@@ -2999,16 +3104,16 @@ module Ember
     end
 
     def test_export_csv_with_limit_reach_per_user
-      export_ids = [] 
+      export_ids = []
       agent1 = add_test_agent(@account)
       DataExport.ticket_export_limit.times do
         export_entry = @account.data_exports.new(
-                            :source => DataExport::EXPORT_TYPE["ticket".to_sym], 
+                            :source => DataExport::EXPORT_TYPE["ticket".to_sym],
                             :user => agent1,
                             :status => DataExport::EXPORT_STATUS[:started]
                             )
         export_entry.save
-        export_ids << export_entry.id  
+        export_ids << export_entry.id
       end
       agent2 = add_test_agent(@account).make_current
       params_hash = { ticket_fields: {"display_id": "id" }, contact_fields: {"name":"Requester Name","mobile":"Mobile Phone" },
@@ -3339,7 +3444,7 @@ module Ember
         child_attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
         params = ticket_params_hash.merge(parent_id: parent.display_id, attachment_ids: child_attachment_ids)
         stub_attachment_to_io do
-          post :create, construct_params({ version: 'private' }, params)  
+          post :create, construct_params({ version: 'private' }, params)
         end
         child = Account.current.tickets.last
         match_json(ticket_show_pattern(child))
@@ -3459,7 +3564,7 @@ module Ember
 
     def test_new_ticket_with_parent_multiple_child
       enable_adv_ticketing(%i(parent_child_tickets)) do
-        
+
           @account = Account.first.make_current
           @agent = get_admin
           @groups = []
@@ -3744,7 +3849,7 @@ module Ember
         match_json([bad_request_error_pattern('child_template_ids', :child_template_list, invalid_ids: @parent_template.id)])
       end
     end
- 
+
     def test_create_child_with_template_to_invalid_parent
       enable_adv_ticketing([:parent_child_tickets]) do
         ticket = create_ticket
@@ -4618,7 +4723,7 @@ module Ember
         begin
           perform_fsm_operations
           params_hash = { email: Faker::Internet.email, description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
-                          priority: 2, status: 2, type: SERVICE_TASK_TYPE}      
+                          priority: 2, status: 2, type: SERVICE_TASK_TYPE}
           post :create, construct_params({ version: 'private' }, params_hash)
           assert_response 400
         ensure
@@ -4632,7 +4737,7 @@ module Ember
         begin
           perform_fsm_operations
           params_hash = { email: Faker::Internet.email, description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
-                          priority: 2, status: 2, type: 'Problem', responder_id: @agent.id }      
+                          priority: 2, status: 2, type: 'Problem', responder_id: @agent.id }
           post :create, construct_params({ version: 'private' }, params_hash)
           assert_response 201
         ensure
@@ -4659,8 +4764,8 @@ module Ember
     def test_create_ticket_with_date_time_custom_field_invalid
       @account.ticket_fields.find_by_column_name("ff_date06").try(:destroy)
       create_custom_field('appointment_time', 'date_time', true)
-      params_hash = { email: Faker::Internet.email, description: Faker::Lorem.characters(10), 
-                      subject: Faker::Lorem.characters(10), priority: 2, status: 2, type: 'Problem', 
+      params_hash = { email: Faker::Internet.email, description: Faker::Lorem.characters(10),
+                      subject: Faker::Lorem.characters(10), priority: 2, status: 2, type: 'Problem',
                       responder_id: @agent.id, custom_fields: { appointment_time: 'Test'}}
       post :create, construct_params({ version: 'private' }, params_hash)
       assert_response 400
@@ -4674,7 +4779,7 @@ module Ember
       perform_fsm_operations
       Account.first.make_current
       ticket = create_ticket({type: SERVICE_TASK_TYPE})
-      params_hash = { description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10) }      
+      params_hash = { description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10) }
       put :update, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
     ensure
@@ -4686,7 +4791,7 @@ module Ember
         begin
           perform_fsm_operations
           ticket = create_ticket
-          params_hash = { description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10) }      
+          params_hash = { description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10) }
           put :update, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
           assert_response 200
         ensure

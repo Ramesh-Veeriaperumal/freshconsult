@@ -71,7 +71,7 @@ module Channel
         @create_group ||= create_group_with_agents(@account, agent_list: [agent_id])
         params_hash = { email: email, cc_emails: cc_emails, description: description, subject: subject,
                         priority: 2, status: 2, type: 'Problem', responder_id: agent_id, tags: tags,
-                        due_by: 14.days.since.iso8601, fr_due_by: 1.day.since.iso8601, group_id: @create_group.id, bot_external_id: @bot.external_id, query_id: '3b04a7cd-2cb8-4d71-9aa9-1ac6dfce1c2b', conversation_id: 'c3aab027-6aa8-4383-9b85-82ed47dc366b' }
+                        due_by: 14.days.since.iso8601, fr_due_by: 1.day.since.iso8601, group_id: @create_group.id, bot_external_id: @bot.external_id, query_id: '3b04a7cd-2cb8-4d71-9aa9-1ac6dfce1c2b', conversation_id: 'c3aab027-6aa8-4383-9b85-82ed47dc366b'}
         params_hash
       end
 

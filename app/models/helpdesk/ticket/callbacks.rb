@@ -88,7 +88,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :update_spam_detection_service, :if => :model_changes?
   after_commit :spam_feedback_to_smart_filter, :on => :update, :if => :twitter_ticket_spammed?
   after_commit :tag_update_central_publish, :on => :update, :if => :tags_updated?
-
+  after_commit :trigger_ticket_properties_suggester_feedback, on: :update, if: :ticket_properties_suggester_feedback_required?
 
 
   # Callbacks will be executed in the order in which they have been included.
@@ -597,6 +597,24 @@ class Helpdesk::Ticket < ActiveRecord::Base
     OmniChannelRouting::TaskSync.perform_async(id: display_id, attributes: round_robin_attributes, changes: changes)
   end
 
+  def trigger_ticket_properties_suggester_feedback    
+    trigger_feedback = false     
+    ticket_properties_suggester_hash = schema_less_ticket.try(:ticket_properties_suggester_hash)
+    suggested_fields = ticket_properties_suggester_hash[:suggested_fields] if ticket_properties_suggester_hash.present?
+      
+    TicketPropertiesSuggester::Util::ML_FIELDS_TO_PRODUCT_FIELDS_MAP.each do |field, value|
+      next if !model_changes.key?(field)            
+      suggested_fields[value.to_sym][:updated] = true     
+      trigger_feedback = true
+    end 
+    if trigger_feedback       
+      ticket_properties_suggester_hash[:suggested_fields] = suggested_fields
+      schema_less_ticket.ticket_properties_suggester_hash = ticket_properties_suggester_hash
+      schema_less_ticket.save!
+      ::Freddy::TicketPropertiesSuggesterWorker.perform_async(ticket_id: id, action: 'feedback', model_changes: model_changes)
+    end
+  end
+
 private
 
   def tags_updated?
@@ -1027,4 +1045,18 @@ private
       field_changes[:group_id] = @model_changes[:group_id].map(&:to_s).map(&:presence) if @model_changes.key?(:group_id)
     end
   end
+
+  def ticket_properties_suggester_feedback_required?
+    schema_less_ticket.ticket_properties_suggester_hash.present? && performed_by_agent? && !all_predicted_fields_updated?
+  end
+
+  def performed_by_agent?
+    User.current.present? && User.current.agent?
+  end
+
+  def all_predicted_fields_updated?
+    suggested_fields = schema_less_ticket.ticket_properties_suggester_hash[:suggested_fields]
+    suggested_fields.present? && suggested_fields.all? { |k,v| v[:updated] }
+  end
+
 end

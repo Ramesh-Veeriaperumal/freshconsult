@@ -229,6 +229,7 @@
     - freshid_v2_agents_migration
     - freshid_account_details_update_v2
     - http_request
+    - ticket_properties_suggester
     - sandbox_cleanup
     - update_sandbox_subscription
   :free:

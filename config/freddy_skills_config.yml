@@ -3,6 +3,11 @@ defaults: &defaults
     url: dummy
     timeout: 2 
     confidence_threshold: 80
+  
+  ticket_properties_suggester:
+    url: "https://autodispatch-361773157.freshworksapi.com/"
+    timeout: 5
+    expiry_in_days: 7  
 
   system42:
     host: 'https://system42-serv-dev.staging.freddyproject.com'
