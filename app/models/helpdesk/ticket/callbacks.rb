@@ -1,6 +1,5 @@
 class Helpdesk::Ticket < ActiveRecord::Base
   # rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['helpdesk_tickets'] }, :if => lambda{|obj| obj.rl_enabled? }
-
   before_validation :populate_requester, :load_ticket_status, :set_default_values
   before_validation :assign_flexifield, :assign_email_config_and_product, :on => :create
   before_validation :validate_assoc_parent_ticket, :if => :child_ticket?
@@ -89,6 +88,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :spam_feedback_to_smart_filter, :on => :update, :if => :twitter_ticket_spammed?
   after_commit :tag_update_central_publish, :on => :update, :if => :tags_updated?
   after_commit :trigger_ticket_properties_suggester_feedback, on: :update, if: :ticket_properties_suggester_feedback_required?
+
 
 
   # Callbacks will be executed in the order in which they have been included.
@@ -1046,6 +1046,14 @@ private
     end
   end
 
+  def ticket_delete_or_spam?
+    (@model_changes.key?(:deleted) || @model_changes.key?(:spam)) && spam_or_deleted?
+  end
+
+  def ticket_restored?
+    (@model_changes.key?(:deleted) || @model_changes.key?(:spam)) && !spam_or_deleted?
+  end
+
   def ticket_properties_suggester_feedback_required?
     schema_less_ticket.ticket_properties_suggester_hash.present? && performed_by_agent? && !all_predicted_fields_updated?
   end
@@ -1058,5 +1066,4 @@ private
     suggested_fields = schema_less_ticket.ticket_properties_suggester_hash[:suggested_fields]
     suggested_fields.present? && suggested_fields.all? { |k,v| v[:updated] }
   end
-
 end

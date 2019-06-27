@@ -43,4 +43,19 @@ class SchedulerService::Utils::LoggerClient
       Rails.logger.error("Exception in Scheduler Logger :: #{e.message}")
       NewRelic::Agent.notice_error(e)
   end
-end 
+
+  def save_response_information(response, job_id, group)
+    if group == ::SchedulerClientKeys['ticket_delete_group_name']
+      ticket_id = parse_job_id(job_id)[2]
+      trace_id = response.headers[:x_request_id]
+      ticket = Account.current.tickets.where(id: ticket_id).first
+      ticket && ticket.update_scheduler_trace_id(trace_id)
+    end
+  end
+
+  private
+
+    def parse_job_id(job_id)
+      job_id.split('_')
+    end
+end

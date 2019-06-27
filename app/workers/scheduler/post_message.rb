@@ -3,7 +3,7 @@ module Scheduler
     sidekiq_options queue: :scheduler_post_message, retry: 5,  failures: :exhausted
 
     def perform(args)
-      args.deep_symbolize_keys!
+      args = args.deep_symbolize_keys
       payload = args[:payload]
       job_id = payload[:job_id]
       scheduler_client = SchedulerService::Client.new(
@@ -15,7 +15,7 @@ module Scheduler
         scheduler_type: payload[:data][:scheduler_type]
       )
       response = scheduler_client.schedule_job
-      Rails.logger.info "scheduler response message successful job_id:::: #{job_id} :::: #{response}"
+      Rails.logger.info "scheduler response message successful job_id:::: #{job_id} :::: #{response} :::: #{response.headers[:x_request_id]}"
       response
     end
   end

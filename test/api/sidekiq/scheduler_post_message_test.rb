@@ -27,6 +27,7 @@ class SchedulerPostMessageTest < ActionView::TestCase
     @reminder = get_new_reminder('test delete', @ticket.id, nil, nil, @user.id)
     params = todo_job_params
     res = ::Scheduler::PostMessage.new.perform(payload: params)
+    refute response.blank?
     assert_includes SUCCESS, res.to_i, "Expected one of #{SUCCESS}, got #{res}"
   end
 
@@ -43,6 +44,34 @@ class SchedulerPostMessageTest < ActionView::TestCase
       params.delete(:scheduled_time)
       ::Scheduler::PostMessage.new.perform(payload: params)
     end
+  end
+
+  def test_save_information_in_ticket_schedule
+    scheduler_client = Scheduler::PostMessage.new
+    ticket = create_test_ticket(email: 'sample@freshdesk.com')
+    payload = {
+      job_id: ticket_job_id(ticket),
+      message_type: ApiTicketConstants::TICKET_DELETE_MESSAGE_TYPE,
+      group: ::SchedulerClientKeys['ticket_delete_group_name'],
+      scheduled_time: Time.zone.now + 10.minutes,
+      data: {
+        account_id: Account.current.id,
+        ticket_id: ticket.id,
+        enqueued_at: Time.now.to_i,
+        scheduler_type: ApiTicketConstants::TICKET_DELETE_SCHEDULER_TYPE
+      },
+      sqs: {
+        url: SQS_V2_QUEUE_URLS[SQS[:spam_trash_delete_free_acc_queue]]
+      }
+    }
+    resp_stub = ActionDispatch::TestResponse.new
+    resp_stub.header = { x_request_id: rand(100) }
+    RestClient::Request.any_instance.stubs(:execute).returns(resp_stub)
+    response = scheduler_client.perform(payload: payload)
+    ticket.reload
+    assert_equal ticket.scheduler_trace_id, response.headers[:x_request_id]
+  ensure
+    RestClient::Request.any_instance.unstub(:execute)
   end
 
   private
@@ -63,5 +92,9 @@ class SchedulerPostMessageTest < ActionView::TestCase
         },
         scheduled_time: 1.day.from_now.iso8601
       }
+    end
+
+    def ticket_job_id(ticket)
+      [Account.current.id, 'ticket', ticket.id].join('_')
     end
 end

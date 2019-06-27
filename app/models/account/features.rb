@@ -42,7 +42,7 @@ class Account < ActiveRecord::Base
     :recalculate_daypass, :sandbox_single_branch, :fb_page_api_improvement, :attachment_redirect_expiry, 
     :solutions_agent_portal, :solutions_agent_metrics, :fuzzy_search, :delete_trash_daily,
     :prevent_fwd_email_ticket_create, :enable_wildcard_ticket_create, :check_wc_fwd, :requester_privilege,
-    :prevent_parallel_update, :sso_unique_session
+    :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule
   ].freeze
 
   DB_FEATURES = [

@@ -28,6 +28,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
                             :dependent => :destroy, :autosave => false
                             
 	has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
+  delegate :scheduler_trace_id, :update_scheduler_trace_id, :reset_scheduler_trace_id, to: :schema_less_ticket
 
   belongs_to :email_config
 
