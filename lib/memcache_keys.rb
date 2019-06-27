@@ -241,8 +241,6 @@ module MemcacheKeys
   
   UNASSOCIATED_CATEGORIES = 'UNASSOCIATED_CATEGORIES:%{account_id}'.freeze
 
-  SESSION_BY_ID = 'v1/SESSION_BY_ID:%{session_id}'.freeze
-
   def fetch_from_cache(key, &block)
     @cached_values = {} unless @cached_values
     return @cached_values[key] if @cached_values[key]

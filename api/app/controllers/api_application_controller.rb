@@ -30,8 +30,6 @@ class ApiApplicationController < MetalApiController
   before_filter :set_time_zone, :check_day_pass_usage_with_user_time_zone, :set_msg_id
   before_filter :force_utf8_params
   before_filter :set_cache_buster
-  # before_filter :delete_user_credentials_cookie, if: :private_api?
-
   include AuthenticationSystem
   include HelpdeskSystem
   include SubscriptionSystem
@@ -672,9 +670,5 @@ class ApiApplicationController < MetalApiController
       Thread.current[:current_ip] = request.env['CLIENT_IP']
     rescue Exception => e
       Rails.logger.debug "Error getting currernt IP : #{e.message}"
-    end
-
-    def delete_user_credentials_cookie
-      cookies.delete 'user_credentials' if cookies['user_credentials'].present?
     end
 end
