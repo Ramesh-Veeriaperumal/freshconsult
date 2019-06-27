@@ -35,6 +35,44 @@ class ExportControllerTest < ActionController::TestCase
     StubbedActivityExportResponse.any_instance.unstub(:date)
   end
 
+  def test_export_with_file_not_found
+    Account.current.launch :activity_export
+    date = Faker::Date.between(20.days.ago, Time.zone.today)
+    thrift = $activities_export_thrift_transport
+    $activities_export_thrift_transport = StubbedThriftBufferedTransport.new
+    StubbedActivityExportResponse.any_instance.stubs(:date).returns(date)
+    StubbedActivityExportResponse.any_instance.stubs(:error_message).returns('File not found')
+    StubbedActivityExportResponse.any_instance.stubs(:file_url).returns(nil)
+    @controller.stubs(:thrift_client).returns(StubbedTicketActivityExportClient.new)
+    get :ticket_activities, controller_params
+    assert_response 404
+  ensure
+    @controller.unstub(:thrift_client)
+    $activities_export_thrift_transport = thrift
+    StubbedActivityExportResponse.any_instance.unstub(:date)
+    StubbedActivityExportResponse.any_instance.unstub(:error_message)
+    StubbedActivityExportResponse.any_instance.unstub(:file_url)
+  end
+
+  def test_export_with_file_not_found_without_error_message
+    Account.current.launch :activity_export
+    date = Faker::Date.between(20.days.ago, Time.zone.today)
+    thrift = $activities_export_thrift_transport
+    $activities_export_thrift_transport = StubbedThriftBufferedTransport.new
+    StubbedActivityExportResponse.any_instance.stubs(:date).returns(date)
+    StubbedActivityExportResponse.any_instance.stubs(:error_message).returns(nil)
+    StubbedActivityExportResponse.any_instance.stubs(:file_url).returns(nil)
+    @controller.stubs(:thrift_client).returns(StubbedTicketActivityExportClient.new)
+    get :ticket_activities, controller_params
+    assert_response 400
+  ensure
+    @controller.unstub(:thrift_client)
+    $activities_export_thrift_transport = thrift
+    StubbedActivityExportResponse.any_instance.unstub(:date)
+    StubbedActivityExportResponse.any_instance.unstub(:error_message)
+    StubbedActivityExportResponse.any_instance.unstub(:file_url)
+  end
+
   def test_get_export_file_url_for_invalid_params
     Account.current.launch :activity_export
     get :ticket_activities, controller_params(created_at: 'adsasd')

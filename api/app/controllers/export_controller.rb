@@ -54,10 +54,14 @@ class ExportController < ApiApplicationController
             'url' => r.file_url
           }
         end
-      else @response.first.error_message
-           @export.errors[:created_at] << :invalid_value
-           @export.error_options[:created_at] = { prepend_msg: 'created at is an ', append_msg: ". #{@response.first.error_message}." }
-           render_custom_errors(@export, true)
+      else
+        if @response.first.error_message == 'File not found'
+          render_base_error(:file_not_found, 404)
+          return
+        end
+        @export.errors[:created_at] << :invalid_value
+        @export.error_options[:created_at] = { value: @response.first.date, prepend_msg: 'created at is an ', append_msg: ". #{@response.first.error_message}." }
+        render_custom_errors(@export, true)
       end
     end
 end
