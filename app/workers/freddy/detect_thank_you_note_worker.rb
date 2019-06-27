@@ -16,7 +16,9 @@ module Freddy
       options[:body] = { text: note.try(:body) }.to_json
       options[:timeout] = FreddySkillsConfig[:detect_thank_you_note][:timeout]
       url = FreddySkillsConfig[:detect_thank_you_note][:url]
-      http_response = HTTParty.post(url, options)
+      http_response = {}
+      time_taken = Benchmark.realtime { http_response = HTTParty.post(url, options) }
+      Rails.logger.info "Time Taken for thank_you_ml - #{account.id} T - #{ticket_id} time - #{time_taken}"
       parsed_response = JSON.parse http_response.parsed_response
       if (parsed_response.is_a? Hash) && (http_response.code == SUCCESS)
         note.schema_less_note.thank_you_note = parsed_response.symbolize_keys

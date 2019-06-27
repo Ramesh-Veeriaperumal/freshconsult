@@ -52,4 +52,7 @@ class Helpdesk::Note < ActiveRecord::Base
     { note_body_attributes: [:body_html] }
   ]
 
+  BLACKLISTED_THANK_YOU_DETECTOR_NOTE_SOURCES = [SOURCE_KEYS_BY_TOKEN['feedback'], SOURCE_KEYS_BY_TOKEN['meta'], SOURCE_KEYS_BY_TOKEN['summary'],
+                                                 SOURCE_KEYS_BY_TOKEN['automation_rule_forward'], SOURCE_KEYS_BY_TOKEN['automation_rule']].freeze
+
 end
