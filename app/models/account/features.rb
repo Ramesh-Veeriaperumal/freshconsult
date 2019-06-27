@@ -41,7 +41,8 @@ class Account < ActiveRecord::Base
     :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,
     :recalculate_daypass, :sandbox_single_branch, :fb_page_api_improvement, :attachment_redirect_expiry, 
     :solutions_agent_portal, :solutions_agent_metrics, :fuzzy_search, :delete_trash_daily,
-    :prevent_fwd_email_ticket_create, :enable_wildcard_ticket_create, :check_wc_fwd, :requester_privilege
+    :prevent_fwd_email_ticket_create, :enable_wildcard_ticket_create, :check_wc_fwd, :requester_privilege,
+    :prevent_parallel_update
   ].freeze
 
   DB_FEATURES = [

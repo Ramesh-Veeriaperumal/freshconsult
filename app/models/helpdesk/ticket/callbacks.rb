@@ -53,6 +53,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save :update_dueby, :unless => :manual_sla?
 
+  before_save :check_parallel_transaction, if: :prevent_parallel_update_enabled?
+
   before_update :update_isescalated, :if => :check_due_by_change
   before_update :update_fr_escalated, :if => :check_frdue_by_change
 
@@ -898,6 +900,23 @@ private
   def start_recording_timestamps
     self.record_timestamps = true
     true
+  end
+
+  def prevent_parallel_update_enabled?
+    Account.current.prevent_parallel_update_enabled?
+  end
+
+  def check_parallel_transaction
+    live_ticket = account.tickets.find_by_id(id)
+    if live_ticket.present?
+      LBRR_REFLECTION_KEYS.each do |attribute|
+        next unless (safe_send(attribute) == live_ticket.safe_send(attribute)) && changes.key?(attribute)
+
+        Rails.logger.debug "Resetting #{attribute} in check_parallel_transaction"
+        safe_send("#{attribute}=", changes[attribute].first)
+        @model_changes.delete(attribute)
+      end
+    end
   end
 
   def trigger_observer_events

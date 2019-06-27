@@ -155,6 +155,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.activity_type = activity_type
   end
 
+  def count_mismatch?(ticket_count, db_count, operation)
+    (ticket_count < 0) ||
+      (ticket_count.zero? && (operation == 'decr')) ||
+      ((db_count + 1 != ticket_count) && (operation == 'decr')) ||
+      ((db_count - 1 != ticket_count) && (operation == 'incr'))
+  end
+
   def change_agents_ticket_count group, user_id, operation
     if user_id.nil? or group.nil?
       group.lrem_from_rr_capping_queue(self.display_id) if group.present? && operation=="decr"
@@ -168,11 +175,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
       old_score = zscore_round_robin_redis(key, user_id)
       Rails.logger.debug "score for ticket #{display_id} : #{old_score}"
       next unless old_score.present?
+      ticket_count = agents_ticket_count(old_score)
+      ticket_count_in_redis = get_round_robin_redis(group.round_robin_agent_capping_key(user_id)).to_i
+      status_ids = Helpdesk::TicketStatus.sla_timer_on_status_ids(account)
+      db_count = group.tickets.visible.where('responder_id = ? and status in (?)', user_id, status_ids).count
+      if count_mismatch?(ticket_count, db_count, operation) || count_mismatch?(ticket_count_in_redis, db_count, operation)
+        Rails.logger.debug "RR count mismatch: #{ticket_count} #{db_count} #{operation}"
+        Groups::RoundRobinCapping.perform_async(group_id: group.id, reset_capping: true)
+        return
+      end
 
       agent_key = group.round_robin_agent_capping_key(user_id)
       watch_round_robin_redis(agent_key)
       
-      ticket_count     = agents_ticket_count(old_score)
       new_ticket_count = operation=="decr" ? ticket_count-1 : ticket_count+1
       timestamp        = last_assigned_timestamp(old_score) if operation == 'decr'
 
@@ -181,8 +196,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
       result = group.update_agent_capping_with_lock(user_id, new_score, operation)
 
       if result.is_a?(Array) && result[1].present?
-        status_ids = Helpdesk::TicketStatus::sla_timer_on_status_ids(account)
-        db_count = group.tickets.visible.where("responder_id = ? and status in (?)", user_id, status_ids).count
         Rails.logger.debug "RR SUCCESS #{operation}ementing count for ticket : #{display_id} - 
           #{user_id}, #{group.id}, #{status_ids.inspect}, #{new_score}, #{db_count}, #{result.inspect}".squish
         if operation=="incr"
