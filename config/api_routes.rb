@@ -886,6 +886,12 @@ Helpkit::Application.routes.draw do
       resources :tickets, controller: 'channel/bot/tickets', only: [:create]
     end
 
+    scope '/freshconnect' do
+      resources :contacts, controller: 'channel/freshconnect/contacts', only: [:show]
+      resources :groups, controller: 'channel/freshconnect/groups', only: [:index]
+      resources :agents_groups, controller: 'channel/freshconnect/agents_groups', only: [:index]
+    end
+
     scope '/freddy' do
       resources :bots, controller: 'channel/freddy/bots', only: [:create, :update]
     end
