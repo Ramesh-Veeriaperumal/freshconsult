@@ -230,8 +230,7 @@ module FreshdeskCore::Model
                     'help_widgets',
                     'bot_responses',
                     'custom_translations',
-                    'ticket_field_data',
-                    'sessions'].freeze
+                    'ticket_field_data'].freeze
 
   STATUS = {
       :deleted => 0,
