@@ -21692,6 +21692,15 @@
             "amount": {
               "type": "integer"
             },
+            "amount_due": {
+              "type": "integer"
+            },
+            "credits_applied": {
+              "type": "integer"
+            },
+            "discount_amount": {
+              "type": "integer"
+            },
             "days_remaining": {
               "type": "integer"
             }
@@ -21720,9 +21729,6 @@
         "credit_amount_available": {
           "type": "integer"
         },
-        "credit_amount_allocated": {
-          "type": "integer"
-        },
         "agent_seats": {
           "type": "integer"
         },
@@ -21732,6 +21738,10 @@
         "plan_id": {
           "type": "integer",
           "format": "int64"
+        },
+        "plan_cost": {
+          "description": "Plan cost per agent per month",
+          "type": "integer"
         }
       }
     },
