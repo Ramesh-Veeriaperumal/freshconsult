@@ -580,7 +580,7 @@ module Ember
       def set_dummy_note_id
         # for undo_send, since we don't have a note id for 10 seconds,
         # we are rendering a note with dummy note id with the maximum integer limit in javascipt
-        @item.id = DUMMY_ID_FOR_UNDO_SEND_NOTE
+        @item.id = DUMMY_ID_FOR_UNDO_SEND_NOTE - @ticket.display_id
       end
 
       wrap_parameters(*wrap_params)
