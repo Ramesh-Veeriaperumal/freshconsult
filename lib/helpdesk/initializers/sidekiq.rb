@@ -138,6 +138,7 @@ Sidekiq.configure_server do |config|
   #Making AWS as thread safe
   AWS.eager_autoload!
   config.server_middleware do |chain|
+    chain.add Middleware::Sidekiq::Server::UnsetThread
     chain.add Middleware::Sidekiq::Server::BelongsToAccount, :ignore => [
       "FreshopsToolsWorker",
       "Social::TwitterReplyStreamWorker",
