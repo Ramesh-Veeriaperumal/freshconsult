@@ -5023,4 +5023,18 @@ ActiveRecord::Schema.define(:version => 20190412095235) do
             name: 'unique_index_flexifields_on_account_id_and_flexifield_set_id', unique: true
   add_index 'ticket_field_data', ['flexifield_def_id'], name: 'index_flexifields_on_flexifield_def_id'
   execute 'ALTER TABLE ticket_field_data ADD PRIMARY KEY (id,account_id)'
+
+  create_table 'freddy_bots', force: true do |t|
+    t.string   'name', null: false
+    t.integer  'account_id', limit: 8, null: false
+    t.integer  'portal_id', limit: 8
+    t.text     'widget_config', null: false
+    t.integer  'cortex_id', limit: 8, null: false
+    t.boolean  'status', default: false
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+  end
+
+  add_index 'freddy_bots', ['account_id', 'portal_id'],  name: 'index_bot_on_account_id_and_portal_id', unique: true
+  add_index 'freddy_bots', ['account_id', 'cortex_id'],  name: 'index_bot_on_account_id_and_cortex_id', unique: true
 end

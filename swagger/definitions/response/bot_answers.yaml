@@ -1,0 +1,23 @@
+type: object
+properties:
+  id:
+    type: number
+    description: unique id for pending question
+  answer_id:
+    type: string
+    description: freshdesk article id
+  title:
+    type: string
+    description: contains tile of article
+  answer_useful:
+    type: string
+    description: count of thumbs up by cx
+  answer_not_useful:
+    type: string
+    description: count of thumbs down by cx
+  view:
+    type: string
+    description: view count by cx
+  score:
+    type: number
+    description: contains score for an article

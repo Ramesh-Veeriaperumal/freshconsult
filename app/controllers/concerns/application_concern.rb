@@ -118,4 +118,15 @@ module Concerns::ApplicationConcern
   def set_httponly_cookie(cookie_name, cookie_val)
     cookies[cookie_name] = { value: cookie_val, httponly: true }
   end
+
+  def can_supress_logs?
+    return false unless Rails.env.production?
+    ApiConstants::SKIP_LOGS_FOR.keys.include?(cname.to_sym) &&
+    ApiConstants::SKIP_LOGS_FOR[cname.to_sym].include?(action_name)
+  end
+
+  def log_enabled_for_account?
+    log_enable_key = format(ENABLE_LOGS, account_id:  current_account.id)
+    redis_key_exists?(log_enable_key)
+  end
 end

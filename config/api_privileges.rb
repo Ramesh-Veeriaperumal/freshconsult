@@ -131,6 +131,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/group", only: [:show, :index, :update]
     resource :"ember/agent", only: %i[update]
     resource :"ember/ocr_proxy"
+    resource :"ember/freddy"
+    resource :"ember/flow"
     resource :'ember/omni_channel', only: [:index]
   end
 
@@ -152,6 +154,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :'ember/omni_channel', only: [:index]
     resource :"admin/subscription", only: [:show, :plans, :update, :estimate]
     resource :"ember/ocr_proxy"
+    resource :"ember/freddy"
+    resource :"ember/flow"
     resource :'ember/admin/advanced_ticketing', only: [:create, :destroy, :insights]
     resource :help_widget, only: [:index, :create, :show, :update, :destroy, :freshmarketer_info]
     resource :"admin/trial_subscription", only: [:usage_metrics]

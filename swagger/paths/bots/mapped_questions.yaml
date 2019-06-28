@@ -1,0 +1,87 @@
+get:
+  summary: Related questions mapped to answers
+  description: API to get mapped questions of answers
+  tags: [Bot]
+  parameters:
+    - name: id
+      in: path
+      type: number
+      required: true
+    - name: account_id
+      in: query
+      required: true
+      type: number
+    - name: portal_id
+      in: query
+      required: true
+      type: number
+    - name: product
+      in: query
+      required: true
+      type: string
+    - name: user_id
+      required: true
+      in: query
+      type: number
+    - name: article_id
+      in: query
+      required: true
+      type: number
+  responses:
+    200:
+      description: Success
+    400:
+      description: Bad request error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+
+post:
+  summary: Related questions mapped to answers
+  description: API to get mapped questions of answers
+  tags: [Bot]
+  parameters:
+    - name: id
+      in: path
+      type: number
+      required: true
+    - name: account_id
+      in: query
+      required: true
+      type: number
+    - name: portal_id
+      in: query
+      required: true
+      type: number
+    - name: product
+      in: query
+      required: true
+      type: string
+    - name: user_id
+      required: true
+      in: query
+      type: number
+    - name: article_id
+      in: query
+      required: true
+      type: number
+    - name: question_id
+      in: query
+      type: number
+      required: true
+    - name: mapped_vote
+      in: query
+      type: boolean
+      required: true
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/similar_questions'
+    400:
+      description: Bad request error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

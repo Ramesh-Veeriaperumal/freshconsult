@@ -171,7 +171,7 @@ module Facebook
           message[:shares][:data].each_with_index do |share, i|
             if share[:link]
               url = share[:link]
-              file = open(url) # Moved here to avoid multiple calls
+              file = URI.parse(url).open # Moved here to avoid multiple calls
               stickers_url, inline_attachment = create_inline_attachment_and_get_url(url, item, i, file)
               inline_attachments.push(inline_attachment) if attachment_present?(inline_attachment)
               

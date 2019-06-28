@@ -54,6 +54,7 @@ class Solutions::ArticleDecorator < ApiDecorator
       ret_hash[:cloud_files] = cloud_files_hash
     end
     ret_hash.merge!(article_metrics)
+    ret_hash[:language_id] = language_id if channel_v2_api?
     if private_api?
       ret_hash[:draft_present] = @draft.present?
       ret_hash.merge!(draft_private_hash) if @draft.present?

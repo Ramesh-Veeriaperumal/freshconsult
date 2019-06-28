@@ -1,0 +1,40 @@
+get:
+  summary: Get similar questions
+  description: API to get similar questions
+  tags: [Bot]
+  parameters:
+    - name: id
+      in: path
+      required: true
+      type: number
+    - name: account_id
+      in: query
+      required: true
+      type: number
+    - name: portal_id
+      in: query
+      required: true
+      type: number
+    - name: product
+      in: query
+      required: true
+      type: string
+    - name: user_id
+      in: query
+      required: true
+      type: number
+    - name: query
+      in: query
+      required: true
+      type: string
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/similar_questions'
+    400:
+      description: Bad request error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

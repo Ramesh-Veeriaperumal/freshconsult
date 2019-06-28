@@ -4,8 +4,9 @@ class Helpdesk::ResetGroup < BaseWorker
   include Cache::Memcache::Dashboard::Custom::CacheData
   include Redis::HashMethods
   include Dashboard::Custom::CacheKeys
+  include BulkOperationsHelper
 
-  sidekiq_options queue: :reset_group, retry: 0,  failures: :exhausted
+  sidekiq_options queue: :reset_group, retry: 0, failures: :exhausted
   BATCH_LIMIT = 50
   # 2 - csat 3 - leaderboard 5 - ticket_trend_card 6 - time_trend_card 7 - sla_trend_card
   DASHBOARD_GROUP_WIDGETS = [2, 3, 5, 6, 7].freeze
@@ -15,7 +16,7 @@ class Helpdesk::ResetGroup < BaseWorker
     account   = Account.current
     group_id  = args[:group_id]
     reason    = args[:reason].symbolize_keys!
-    options   = { reason: reason, manual_publish: true }
+    options   = { reason: reason, manual_publish: true, rate_limit: rate_limit_options(args) }
 
     handle_dashboards_widgets(group_id)
 
@@ -24,12 +25,12 @@ class Helpdesk::ResetGroup < BaseWorker
     if account.shared_ownership_enabled?
       #  Changed reason hash for shared ownership
       reason[:delete_internal_group]  = reason.delete(:delete_group)
-      options                         = { :reason => reason, :manual_publish => true }
-      updates_hash                    = { :internal_group_id => nil, :internal_agent_id => nil }
+      options                         = { reason: reason, manual_publish: true }
+      updates_hash                    = { internal_group_id: nil, internal_agent_id: nil }
 
       tickets = nil
       Sharding.run_on_slave do
-        tickets = account.tickets.where(:internal_group_id => group_id)
+        tickets = account.tickets.where(internal_group_id: group_id)
       end
       tickets.update_all_with_publish(updates_hash, {}, options)
     end
@@ -37,10 +38,9 @@ class Helpdesk::ResetGroup < BaseWorker
     return unless account.features_included?(:archive_tickets)
 
     account.archive_tickets.where(group_id: group_id).update_all_with_publish({ group_id: nil }, {})
-
   rescue Exception => e
     Rails.logger.info "Error in ResetGroup worker :: #{e.inspect}, #{args.inspect}"
-    NewRelic::Agent.notice_error(e, { args: args })
+    NewRelic::Agent.notice_error(e, args: args)
   end
 
   private

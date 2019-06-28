@@ -1,3 +1,6 @@
 agentWidgetHostUrl: "https://web.freshchat.com"
-visitorWidgetHostUrl: "https://wchat.freshchat.com"
+visitorWidgetHostUrl: "https://webchat-mrorange.freshpori.com"
 apiHostUrl: "https://api.freshchat.com"
+signup: 
+  host: "https://mr-orange.freshpori.com/v2/internal/"
+  secret: "OYZQS8DOM0xZL8vMGZOFwUi9abDxxAMabiOYZQS8DOM0xZL8vMGZOFwUi9abDxxAMat"

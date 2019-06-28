@@ -1,6 +1,7 @@
 class SearchV2::IndexOperations
   
   include Sidekiq::Worker
+  include BulkOperationsHelper
 
   sidekiq_options :queue => :es_v2_queue, :retry => 2, :failures => :exhausted
   
@@ -28,7 +29,7 @@ class SearchV2::IndexOperations
     def perform(args)
       args.symbolize_keys!
       tag = Account.current.tags.find(args[:tag_id])
-      tag.tag_uses.preload(:taggable).find_in_batches do |taguses|
+      tag.tag_uses.preload(:taggable).find_in_batches_with_rate_limit(rate_limit: rate_limit_options(args)) do |taguses|
         taguses.map(&:taggable).map(&:sqs_manual_publish_without_feature_check)
       end if tag and Account.current.try(:features_included?, :es_v2_writes)
     end

@@ -1,11 +1,11 @@
 class Middleware::ChannelApiThrottler < Middleware::FdApiThrottler
   include Redis::RedisKeys
 
-  API_LIMIT = 2000
+  API_LIMIT = 4000
   THROTTLE_PERIOD = 1.minute
 
   def correct_namespace?(path_info)
-    CustomRequestStore.read(:channel_api_request)
+    CustomRequestStore.read(:channel_api_request) || CustomRequestStore.read(:channel_v1_api_request)
   end
 
   def api_expiry

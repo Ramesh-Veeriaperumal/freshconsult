@@ -467,4 +467,33 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
       User.any_instance.stubs(:privilege?).with(privilege).returns(false)
     end
   end
+
+  def test_supress_logs_for_account_action
+    Rails.env.stubs(:production?).returns(true)
+    Account.current.launch(:supress_logs)
+    current_log_level = ActiveRecord::Base.logger.level
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    assert_equal ActiveRecord::Base.logger.level, current_log_level
+  ensure
+    Rails.env.unstub(:production?)
+    Account.current.rollback(:supress_logs)
+  end
+
+  def test_supress_logs_for_account_action_with_log_enabled_for_account
+    Rails.env.stubs(:production?).returns(true)
+    Account.current.launch(:supress_logs)
+    log_enable_key = format(ENABLE_LOGS, account_id:  Account.current.id)
+    set_others_redis_key(log_enable_key, true)
+    current_log_level = ActiveRecord::Base.logger.level
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    assert_equal ActiveRecord::Base.logger.level, current_log_level
+  ensure
+    Rails.env.unstub(:production?)
+    Account.current.rollback(:supress_logs)
+    remove_others_redis_key(log_enable_key)
+  end
 end

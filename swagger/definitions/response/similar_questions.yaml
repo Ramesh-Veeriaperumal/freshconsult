@@ -1,0 +1,14 @@
+type: object
+properties:
+  id:
+    type: number
+    description: unique id for question
+  question:
+    type: string
+    description: contains description of questions
+  source:
+    type: string
+    description: pending question from ticket or bot
+  score:
+    type: number
+    description: contains score for an question
