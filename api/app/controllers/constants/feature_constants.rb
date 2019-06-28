@@ -6,4 +6,5 @@ module FeatureConstants
   SURVEYS = [:surveys]
   SATISFACTION_RATINGS = [:surveys]
   SATISFACTION_RATINGS_WITH_LINK =  SATISFACTION_RATINGS | [:survey_links]
+  AUTOFAQ = :autofaq
 end

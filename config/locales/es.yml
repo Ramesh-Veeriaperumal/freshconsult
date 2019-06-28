@@ -4166,7 +4166,7 @@ es:
     login_or_signup: '%{login} o %{signup} para ingresar a su cuenta'
     to_post_comment: ' para publicar un comentario'
     to_submit_ticket: ' para enviar una nueva consulta'
-    login_to_submit_ticket: '<a href=%{login_url}>Iniciar Sension</a> Para enviar un Ticket'
+    login_to_submit_ticket: '<a href=%{login_url}>Iniciar sesión</a> para enviar un nuevo ticket'
     login_signup_to_submit_ticket: >-
       <a href=%{login_url}>Inicia Sesion</a> o <a
       href=%{signup_url}>Registrate</a> para crear un nuevo Ticket
@@ -4178,8 +4178,7 @@ es:
       <a href=%{topic_reply_url}>Inicia Sesion</a> o <a
       href=%{signup_url}>Registrate</a>para postear en un Topic
     login_signup_to_post_comment: >-
-      <a href=%{topic_reply_url}>Inicia Sension</a> o <a
-      href=%{signup_url}>Registrate</a> para postear un comentario
+      <a href=%{topic_reply_url}>Inicie sesión</a> o <a href=%{signup_url}>regístrese</a> para publicar un comentario
     to_post_topic: ' para publicar un tema'
     preview:
       view_on_helpdesk: Ver en Helpdesk

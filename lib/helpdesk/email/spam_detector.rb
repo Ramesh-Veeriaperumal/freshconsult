@@ -30,14 +30,12 @@ class Helpdesk::Email::SpamDetector
     domain = get_domain_from_envelope(envelope)
     Sharding.select_shard_of(domain) do
       account = Account.find_by_full_domain(domain)
-      if account && account.proactive_spam_detection_enabled?
-        raw_eml = self.class.construct_raw_mail(params)
-        Rails.logger.info "Spam check triggered for the email"
-        response = FdSpamDetectionService::Service.new(account.id, raw_eml).check_spam
-        Rails.logger.info "Response for spam check: #{response.spam?} : Account Info: #{account.id}"
-        Rails.logger.info "Spam Result: #{response.to_param.inspect} : Account Info: #{account.id}"
-        spam_data = ticket_spam_info(response)
-      end
+      raw_eml = self.class.construct_raw_mail(params)
+      Rails.logger.info "Spam check triggered for the email"
+      response = FdSpamDetectionService::Service.new(account.id, raw_eml).check_spam
+      Rails.logger.info "Response for spam check: #{response.spam?} : Account Info: #{account.id}"
+      Rails.logger.info "Spam Result: #{response.to_param.inspect} : Account Info: #{account.id}"
+      spam_data = ticket_spam_info(response)
     end
     spam_data
   rescue ShardNotFound

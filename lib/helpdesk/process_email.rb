@@ -1230,13 +1230,20 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
   def update_spam_data(ticket)
     if params[:spam_info].present?
-      begin
-        ticket.sds_spam = params[:spam_info]['spam']
-        ticket.spam_score = params[:spam_info]['score']
-        ticket.spam = true if params[:spam_info]['spam'] == true
-        Rails.logger.info "Spam rules triggered for ticket with message_id #{params[:message_id]}: #{params[:spam_info]['rules']}"
-      rescue => e
-        puts e.message
+      if(!params[:spam_info]['rules'].nil? && (params[:spam_info]['rules'] & custom_bot_attack_rules).size != 0)
+        ticket.skip_notification = true
+        ticket.spam = true
+        Rails.logger.info 'Skip notification set and ticket marked as spam due to CUSTOM_BOT_ATTACK'
+      end
+      if (!ticket.nil? && !ticket.account.nil? && antispam_enabled?(ticket.account))
+        begin
+          ticket.sds_spam = params[:spam_info]['spam']
+          ticket.spam_score = params[:spam_info]['score']
+          ticket.spam = true if params[:spam_info]['spam'] == true
+          Rails.logger.info "Spam rules triggered for ticket with message_id #{params[:message_id]}: #{params[:spam_info]['rules']}"
+        rescue => e
+          puts e.message
+        end
       end
     end
     ticket.schema_less_ticket.additional_info.merge!(generate_spoof_data_hash(params[:spam_info])) if Account.current.email_spoof_check_feature?

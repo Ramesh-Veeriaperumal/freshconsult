@@ -2,6 +2,7 @@ class Helpdesk::ResetGroup < BaseWorker
 
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include BulkOperationsHelper
 
   sidekiq_options :queue => :reset_group, :retry => 0, :backtrace => true, :failures => :exhausted
   BATCH_LIMIT = 50
@@ -12,7 +13,7 @@ class Helpdesk::ResetGroup < BaseWorker
       account   = Account.current
       group_id  = args[:group_id]
       reason    = args[:reason].symbolize_keys!
-      options   = {:reason => reason, :manual_publish => true}
+      options   = { reason: reason, manual_publish: true, rate_limit: rate_limit_options(args) }
 
       account.tickets.where(group_id: group_id).update_all_with_publish({ group_id: nil }, {}, options)
 

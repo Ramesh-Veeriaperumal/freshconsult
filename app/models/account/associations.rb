@@ -380,6 +380,7 @@ class Account < ActiveRecord::Base
   has_many :bot_tickets, class_name: 'Bot::Ticket'
   has_many :bot_responses, class_name: 'Bot::Response'
   has_many :bots, class_name: 'Bot', dependent: :destroy
+  has_many :freddy_bots, class_name: 'Freddy::Bot', dependent: :destroy
   has_many :bot_feedback_mappings, class_name: 'Bot::FeedbackMapping'
 
   has_many :canned_forms, class_name: 'Admin::CannedForm', order: 'updated_at desc'

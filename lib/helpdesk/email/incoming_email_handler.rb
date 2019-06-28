@@ -785,8 +785,8 @@ module Helpdesk
 				if(spam_data.present?)
 				# check the intersection of 2 arrays(affected rules and spam rules) and ensure the spam rule present
 					if(!spam_data['rules'].nil? && (spam_data['rules'] & custom_bot_attack_rules).size != 0)
-						ticket.skip_notification = true;
-						ticket.spam = true;
+						ticket.skip_notification = true
+						ticket.spam = true
 						Rails.logger.info "Skip notification set and ticket marked as spam due to CUSTOM_BOT_ATTACK"
 					end
 

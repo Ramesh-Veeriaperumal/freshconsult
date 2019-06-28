@@ -1151,8 +1151,11 @@ select{
       padding: 0 4px 0 3px;
       margin:4px 0px 4px 0;
       .select2-highlighted {
-      background: $app-btn-hover;
-      color: $app-text-color;
+        background: $app-btn-hover;
+        color: $app-text-color;
+        .falcon-select2-override.select2_list_detail {
+          color: #6f7c87;
+        }
       }
     }
 }
