@@ -13,7 +13,8 @@ end
 $sidekiq_datastore = proc { Redis::Namespace.new(config['namespace'], redis: Redis.new(host: config['host'], port: config['port'], tcp_keepalive: config['keepalive'])) }
 $sidekiq_redis_pool_size = sidekiq_config[:redis_pool_size] || sidekiq_config[:concurrency]
 # setting redis connection pool size of sidekiq client to (concurrency / 2) because of limitations from redis-labs
-$sidekiq_client_redis_pool_size = ($sidekiq_redis_pool_size/2).to_i || $sidekiq_redis_pool_size
+$sidekiq_client_redis_pool_size = ($sidekiq_redis_pool_size / 2).to_i
+$sidekiq_client_redis_pool_size = $sidekiq_redis_pool_size if $sidekiq_client_redis_pool_size.zero?
 $sidekiq_redis_timeout = sidekiq_config[:timeout]
 
 
