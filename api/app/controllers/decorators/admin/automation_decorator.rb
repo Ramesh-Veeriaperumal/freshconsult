@@ -13,7 +13,7 @@ class Admin::AutomationDecorator < ApiDecorator
   def to_hash(add_html_tag = true, list_page = false)
     response = {
       name: name,
-      position: position,
+      position: visual_position,
       active: active,
       outdated: outdated,
       last_updated_by: last_updated_by,
@@ -30,6 +30,13 @@ class Admin::AutomationDecorator < ApiDecorator
   end
 
   private
+
+    def visual_position
+      rule_association = VAConfig::ASSOCIATION_MAPPING[VAConfig::RULES_BY_ID[record.rule_type.to_i]]
+      all_rules_positions = current_account.safe_send("all_#{rule_association}".to_sym).pluck(:position)
+      va_rule_visual_position = all_rules_positions.index(position)
+      va_rule_visual_position.present? ? (va_rule_visual_position + 1) : nil
+    end
 
     def meta_hash
       {
