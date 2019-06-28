@@ -35,6 +35,7 @@ class ApiApplicationController < MetalApiController
   prepend_before_filter :determine_pod
 
   around_filter :run_on_slave, if: :on_slave?
+  around_filter :supress_logs, if: :can_supress_logs?
 
   before_filter :unset_current_portal, :unset_shard_for_payload, :unset_current_languge, :set_current_account, :set_shard_for_payload
   before_filter :ensure_proper_fd_domain, :ensure_proper_protocol, unless: :private_api?
@@ -971,6 +972,20 @@ class ApiApplicationController < MetalApiController
         cookies[:service_worker] = true
       else
         cookies.delete 'service_worker'
+      end
+    end
+
+    def supress_logs(temporary_level = Logger::ERROR)
+      if Account.current.launched?(:disable_supress_logs)
+        yield
+      else
+        begin
+          old_level = ActiveRecord::Base.logger.level
+          ActiveRecord::Base.logger.level = temporary_level
+          yield
+        ensure
+          ActiveRecord::Base.logger.level = old_level
+        end
       end
     end
 end

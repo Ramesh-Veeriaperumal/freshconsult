@@ -24,8 +24,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
   # Should resolve to true for public APIs
   def correct_namespace?(path_info)
     CustomRequestStore.read(:api_v2_request) ||
-      CustomRequestStore.read(:pipe_api_request) ||
-      CustomRequestStore.read(:channel_v1_api_request)
+      CustomRequestStore.read(:pipe_api_request)
   end
 
   def call(env)

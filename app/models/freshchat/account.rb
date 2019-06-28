@@ -2,7 +2,7 @@ class Freshchat::Account < ActiveRecord::Base
   
   include DataVersioning::Model
 
-  CONFIG = YAML.load_file(File.join(Rails.root, 'config', 'freshchat.yml')).symbolize_keys
+  CONFIG = YAML.load_file(File.join(Rails.root, 'config', 'freshchat.yml')).deep_symbolize_keys
 
   VERSION_MEMBER_KEY = 'FRESHCHAT_ACCOUNT_LIST'.freeze
 

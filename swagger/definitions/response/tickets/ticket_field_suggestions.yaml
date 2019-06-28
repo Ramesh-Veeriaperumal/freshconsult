@@ -1,0 +1,10 @@
+type: object
+properties:         
+  group:
+    type: integer
+    format: int64
+  priority:
+    type: integer
+    format: int64
+  ticket_type:
+    type: string

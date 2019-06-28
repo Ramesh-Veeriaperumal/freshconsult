@@ -2798,6 +2798,7 @@ en:
       contains: "contains"
       contains_any_of: "contains any of"
       contains_none_of: "contains none of"
+      contains_all_of: "contains all of"
       created_at: "created at"
       created_at_since: "Hour Since Ticket created"
       customer_feedback: "Customer Feedback Rating"
@@ -4915,6 +4916,7 @@ en:
     add_skills: Add Skills
     more: more
     member: Member of
+    search_placeholder: Search all agents
   account_admin: Account admin
   right: Right
   footer:

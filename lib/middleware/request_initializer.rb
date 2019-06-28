@@ -13,14 +13,19 @@ class Middleware::RequestInitializer
   end
 
   def set_request_type(env)
-    return unless api_request?(env)
+    resource = trim_multiple_slashes(env['PATH_INFO'])
+    return unless api_request?(resource)
 
     CustomRequestStore.store[:api_request] = true
     REQUEST_TYPES.each do |type|
-      if safe_send("#{type}_api_request?", env)
-        return CustomRequestStore.store["#{type}_api_request".to_sym] = true
-      end
+      return CustomRequestStore.store["#{type}_api_request".to_sym] = true if safe_send("#{type}_api_request?", resource)
     end
     CustomRequestStore.store[:api_v2_request] = true
   end
+
+  private
+
+    def trim_multiple_slashes(resource)
+      resource.gsub(/^\/+/, '/')
+    end
 end

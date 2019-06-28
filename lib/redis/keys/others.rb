@@ -226,6 +226,12 @@ module Redis::Keys::Others
   #Customer segments max limit
   SEGMENT_LIMIT = "SEGMENT_LIMIT:%{account_id}".freeze
 
+  # Enable logs for specific account when supressed
+  ENABLE_LOGS = 'ENABLE_LOGS:%{account_id}'.freeze
+
+  BULK_OPERATIONS_RATE_LIMIT_BATCH_SIZE = 'BULK_OPERATIONS_RATE_LIMIT_BATCH_SIZE:%{class_name}'.freeze
+  BULK_OPERATIONS_RATE_LIMIT_NEXT_RUN_AT = 'BULK_OPERATIONS_RATE_LIMIT_NEXT_RUN_AT:%{class_name}'.freeze
+
   # Automation revamp - temporary
   ENABLE_AUTOMATION_REVAMP = 'ENABLE_AUTOMATION_REVAMP'.freeze
   ENABLE_THANK_YOU_DETECTOR = 'ENABLE_THANK_YOU_DETECTOR'.freeze

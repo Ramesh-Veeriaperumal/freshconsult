@@ -5,8 +5,9 @@
 <div class="list-page">
     <div class="list-page-header" >
       <div class="row-fluid">
-        <div class="span6"><h3 class="lead"><%=t('agent.title')%></h4></div>
-         <div class="span6 pull-right pagination-right">
+        <div class="span1"><h3 class="lead"><%=t('agent.title')%></h4></div>
+        <div class="span4"><%= render :partial => "agents_search"%></div>
+         <div class="span7 pull-right pagination-right">
           <% if @current_account.subscription.plan_name != 'Sprout Jan 17'%>
             <span class="agent-count-message">
                 <% unless @current_account.subscription.trial? %>
@@ -51,12 +52,12 @@
     </div>
 </div>
 <%= javascript_tag do %>
-   (function($){
-     var show_sandbox_notification = <%= Account.current.account_type == 2 %>
-     var notification_message = '<%=t("sandbox.sandbox_notification_for_agents").html_safe %>';
-     if(show_sandbox_notification){
+ (function($){
+    var show_sandbox_notification = <%= Account.current.account_type == 2 %>
+    var notification_message = '<%=t("sandbox.sandbox_notification_for_agents").html_safe %>';
+    if(show_sandbox_notification){
              jQuery("#noticeajax").html(notification_message).show();
              closeableFlash('#noticeajax');
-     }
-   })(jQuery)
- <% end %>
+    }
+ })(jQuery)
+<% end %>

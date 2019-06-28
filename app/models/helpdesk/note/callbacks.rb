@@ -491,7 +491,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def detect_thank_you_note?
-      account.detect_thank_you_note_enabled? && !meta? && !summary_note? && !feedback? && !automated_note_for_ticket? && !automation_fwd_email?
+      account.detect_thank_you_note_enabled? && !BLACKLISTED_THANK_YOU_DETECTOR_NOTE_SOURCES.include?(source) && user.customer?
     end
 
     def trigger_detect_thank_you_note_worker

@@ -1,6 +1,7 @@
   class Helpdesk::Dispatcher
 
     include RoundRobinCapping::Methods
+    include TicketPropertiesSuggester::Util
     include AutomationRuleHelper
     
     #including Redis keys for notify_cc - will be removed later
@@ -60,6 +61,8 @@
       }
       # To send bot response for tickets created via email
       ::Bot::Emailbot::SendBotEmail.perform_async(ticket_id: @ticket.id) if source_email?
+      dispatcher_set_priority = Thread.current[:dispatcher_set_priority].present? ? true : false
+      ::Freddy::TicketPropertiesSuggesterWorker.perform_async(ticket_id: @ticket.id, action: 'predict', dispatcher_set_priority: dispatcher_set_priority) if trigger_ticket_properties_suggester?
     rescue Exception => e
       Va::Logger::Automation.log_error(DISPATCHER_ERROR, e)
       NewRelic::Agent.notice_error(e)
@@ -141,4 +144,4 @@
       Va::Logger::Automation.unset_rule_id
       Va::Logger::Automation.log_execution_and_time(total_time, total_tickets, rule_type, start_time, end_time)
     end
-end
+  end

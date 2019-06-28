@@ -25,13 +25,14 @@ class DeleteSpamTrashTicketTest < ActionView::TestCase
 
   class SqsHash
     def initialize(body)
+      @queue_name = ::SQS[:spam_trash_delete_free_acc_queue]
       @body = body.to_json
     end
 
     def delete
       self.body = {}.to_json
     end
-    attr_accessor :body
+    attr_accessor :body, :queue_name
   end
 
   def test_delete_spam_trash_ticket_with_spam_day_setting

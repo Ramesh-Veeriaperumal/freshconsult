@@ -45,30 +45,38 @@ class Admin::SubscriptionDecorator < ApiDecorator
       immediate_invoice: immediate_invoice_hash,
       next_invoice: next_invoice_hash(next_billing_at)
     }
-    allocated_credit = 0
+    plan_item = @future_subscription_estimate.estimate.line_items.detect { |item| item.entity_type == 'plan' }
+    ret_hash[:plan_cost] = modified_amount(plan_item.unit_amount / renewal_period)
     available_credit = 0
     if @immediate_subscription_estimate['credit_note_estimates'].present?
       @immediate_subscription_estimate['credit_note_estimates'].each do |credit|
-        allocated_credit += credit['amount_allocated']
         available_credit += credit['amount_available']
       end
     end
-    ret_hash[:credit_amount_allocated] = (allocated_credit / 100)
-    ret_hash[:credit_amount_available] = (available_credit / 100)
+    ret_hash[:credit_amount_available] = modified_amount(available_credit)
     ret_hash
   end
 
   def immediate_invoice_hash
     ret_hash = {}
+    discount_amount = 0
     invoice_estimate = @immediate_subscription_estimate['invoice_estimate']
     if invoice_estimate.present?
+      if invoice_estimate['discounts'].present?
+        invoice_estimate['discounts'].each do |discount|
+          discount_amount += discount['amount']
+        end
+      end
       invoice_item = invoice_estimate['line_items'][0]
       invoice_from = Time.zone.at(invoice_item['date_from']).to_datetime
       invoice_to = Time.zone.at(invoice_item['date_to']).to_datetime
       ret_hash = {
         date_from: invoice_from,
         date_to: invoice_to,
-        amount: (invoice_estimate['amount_due'] / 100),
+        amount: modified_amount(invoice_estimate['total']),
+        amount_due: modified_amount(invoice_estimate['amount_due']),
+        credits_applied: modified_amount(invoice_estimate['credits_applied']),
+        discount_amount: modified_amount(discount_amount),
         days_remaining: (invoice_to - Time.zone.now.to_datetime).to_i
       }
     end
@@ -84,8 +92,8 @@ class Admin::SubscriptionDecorator < ApiDecorator
     {
       date_from: next_billing_at,
       date_to: (next_billing_at + renewal_period.months),
-      amount: invoice_estimate.amount / 100,
-      discount_amount: discount_amount / 100
+      amount: modified_amount(invoice_estimate.amount),
+      discount_amount: modified_amount(discount_amount)
     }
   end
 
@@ -109,5 +117,9 @@ class Admin::SubscriptionDecorator < ApiDecorator
         cost_per_agent: @plans_to_agent_cost[plan_name][billing_cycle]
       }
     end
+  end
+
+  def modified_amount(amount)
+    amount / 100
   end
 end

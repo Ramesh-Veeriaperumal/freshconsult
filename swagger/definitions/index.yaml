@@ -423,6 +423,8 @@ summary:
   $ref: ./response/tickets/summary.yaml
 bot_response:
   $ref: ./response/tickets/bot_response.yaml
+ticket_field_suggestions:
+  $ref: ./response/tickets/ticket_field_suggestions.yaml
 bot_index:
   type: array
   items:
@@ -433,6 +435,28 @@ bot_create:
   $ref: './response/bot_create.yaml'
 bot_show:
   $ref: './response/bot_show.yaml'
+pending_questions:
+  type: object
+  properties:
+    questions:
+      type: array
+      items:
+        $ref: './response/pending_questions.yaml'
+    meta:
+      $ref: '#/definitions/meta'
+similar_questions:
+  type: array
+  items:
+    $ref: './response/similar_questions.yaml'
+bot_answers:
+  type: object
+  properties:
+    answers:
+      type: array
+      items:
+        $ref: './response/bot_answers.yaml'
+    meta:
+      $ref: '#/definitions/meta'
 bot_list:
   $ref: './response/bot_list.yaml'
 bot_product_data:

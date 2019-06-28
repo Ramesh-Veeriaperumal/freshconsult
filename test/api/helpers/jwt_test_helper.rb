@@ -2,6 +2,10 @@ module JwtTestHelper
   TWITTER = 'twitter'.freeze
   PROACTIVE = 'proactive'.freeze
   FRESHMOVER = 'freshmover'.freeze
+  FREDDY = 'freddy'.freeze
+  FRESHCONNECT = 'freshconnect'.freeze
+  JWT_SECRET_SOURCES = [TWITTER, PROACTIVE, FRESHMOVER, FRESHCONNECT].freeze
+
   def generate_jwt_token(user_id, account_id, jti, iat, algorithm = 'HS256')
     payload = {:jti => jti, :iat => iat,
                :user_id => user_id, :account_id => account_id}
@@ -10,9 +14,8 @@ module JwtTestHelper
   end
 
   def generate_custom_jwt_token(source_name)
-    return generate_twitter_jwt(source_name) if source_name == TWITTER
-    return generate_proactive_jwt(source_name) if source_name == PROACTIVE
-    return generate_freshmover_jwt(source_name) if source_name == FRESHMOVER
+    return generate_freddy_jwt(source_name) if source_name == FREDDY
+    return generate_jwt_for_jwt_secret_sources(source_name) if JWT_SECRET_SOURCES.include?(source_name)
 
     domain = @account.full_domain.split('.')[0]
     account_details = {"domain_name": domain,
@@ -27,19 +30,14 @@ module JwtTestHelper
     custom_jwt
   end
 
-  def generate_twitter_jwt(source_name)
+  def generate_jwt_for_jwt_secret_sources(source_name)
     payload = { enc_payload: { 'account_id' => @account.id, "timestamp": Time.now.iso8601 } }
-    JWT.encode payload, CHANNEL_API_CONFIG[source_name]['jwt_secret'], 'HS256', source: source_name
+    JWT.encode payload, CHANNEL_API_CONFIG[source_name.to_sym][:jwt_secret], 'HS256', source: source_name
   end
 
-  def generate_proactive_jwt(source_name)
-    payload = { enc_payload: { 'account_id' => @account.id, "timestamp": Time.now.iso8601 } }
-    JWT.encode payload, CHANNEL_API_CONFIG[source_name]['jwt_secret'], 'HS256', source: source_name
-  end
-
-  def generate_freshmover_jwt(source_name)
-    payload = { enc_payload: { 'account_id' => @account.id, "timestamp": Time.now.iso8601 } }
-    JWT.encode payload, CHANNEL_API_CONFIG[source_name.to_sym]['jwt_secret'], 'HS256', source: source_name
+  def generate_freddy_jwt(source_name)
+    payload = { enc_payload: { 'source' => source_name, "timestamp": Time.now.iso8601 } }
+    JWT.encode payload, CHANNEL_API_CONFIG[source_name.to_sym][:jwt_secret][0], 'HS256', source: source_name
   end
 
   def set_jwt_auth_header(source)

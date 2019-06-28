@@ -155,7 +155,7 @@ module Ember
     def export_limit_reached?
       if DataExport.ticket_export_limit_reached?(User.current)
         export_limit = DataExport.ticket_export_limit
-        return render_request_error_with_info(:export_ticket_limit_reached, 429, {max_limit: export_limit}, {:max_simultaneous_export => export_limit }) 
+        return render_request_error_with_info(:export_ticket_limit_reached, 429, {max_limit: export_limit}, {:max_simultaneous_export => export_limit })
       end
     end
 
@@ -166,6 +166,22 @@ module Ember
       Export::Ticket.enqueue(build_export_hash)
       head 204
     end
+
+    def ticket_field_suggestions
+      response.api_root_key = :ticket_field_suggestions
+      @ticket_field_suggestions = {}
+      ticket_properties_suggester_hash = @item.schema_less_ticket.ticket_properties_suggester_hash
+      return if ticket_properties_suggester_hash.blank?
+
+      expiry_time = ticket_properties_suggester_hash[:expiry_time]
+      current_time = Time.now.to_i
+      return if expiry_time.present? && expiry_time - current_time < 0
+
+      @ticket_field_suggestions = ticket_properties_suggester_hash[:suggested_fields].each_with_object({}) do |(field, value), hash|
+        hash[field] = value[:response] if !value[:updated] && value[:conf] == 'high'
+      end
+    end
+
 
     protected
 

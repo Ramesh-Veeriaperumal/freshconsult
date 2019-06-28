@@ -1,0 +1,15 @@
+<%= fields_for :agents_search do |f| %>
+  <span class="ficon-search-new agents-search-icon"></span>
+  <%= f.text_field 'agents_search',
+    {
+      :'data-type' => "agents",
+      :'autocomplete-path' => agents_search_autocomplete_index_path,
+      :placeholder => t('agent.search_placeholder'),
+      :value => "",
+      :name => "agents_search",
+      :'data-name' => "agents_search",
+      :id => "agents-search-bar",
+      :class => "agents-search"
+    }
+  %>
+<%end%>

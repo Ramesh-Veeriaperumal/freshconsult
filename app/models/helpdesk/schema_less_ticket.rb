@@ -159,6 +159,20 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
     self.reports_hash.merge!('first_assign_group_id' => group_id)
   end
 
+  def scheduler_trace_id
+    additional_info[:scheduler_trace_id]
+  end
+
+  def update_scheduler_trace_id(value)
+    additional_info[:scheduler_trace_id] = value
+    self.save
+  end
+
+  def reset_scheduler_trace_id
+    additional_info[:scheduler_trace_id] = nil
+    self.save
+  end
+
 	["agent", "group", "internal_agent", "internal_group"].each do |type|
 		define_method("set_#{type}_assigned_flag") do
 			return if reports_hash.has_key?("#{type}_reassigned_flag")
@@ -258,6 +272,14 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 
   def subsidiary_tkts_count=(value)
     additional_info[:subsidiary_tkts_count] = value
+  end
+
+  def ticket_properties_suggester_hash
+    additional_info[:ticket_properties_suggester_hash]
+  end 
+
+  def ticket_properties_suggester_hash=(value)
+    additional_info[:ticket_properties_suggester_hash] = value
   end
 
   private

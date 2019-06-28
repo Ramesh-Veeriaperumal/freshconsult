@@ -13,7 +13,7 @@ module ChannelAuthentication
     auth_token = header_token
     if auth_token
       config = auth_token[:config]
-      payload = auth_token[:source] == CHANNELS[:ocr] ? verify_ocr_token(auth_token,config) : verify_token(auth_token, config)
+      payload = config[:jwt_secret].is_a?(Array) ? verify_token_array_format(auth_token, config) : verify_token(auth_token, config)
       decrypt_payload(payload, config) if payload.present? && auth_token[:source] == CHANNELS[:zapier]
     else
       invalid_credentials_error unless params[:controller] == 'channel/tickets'
@@ -28,7 +28,7 @@ module ChannelAuthentication
       verified_payload.present? ? verified_payload : invalid_credentials_error
     end  
 
-    def verify_ocr_token(auth_token,config)
+    def verify_token_array_format(auth_token, config)
       jwt_token = config[:auth_type] == TYPE_JWE ? jwe_decryption(auth_token[:token],config[:secret_key]) : auth_token[:token]
       verified_payload = {}
       config[:jwt_secret].each do |secret|

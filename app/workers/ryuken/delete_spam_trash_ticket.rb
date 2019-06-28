@@ -3,7 +3,7 @@ class Ryuken::DeleteSpamTrashTicket
   include Utils::Freno
   include SqsHelperMethods
 
-  shoryuken_options queue: ::SQS[:spam_trash_delete_queue], body_parser: :json
+  shoryuken_options queue: [::SQS[:spam_trash_delete_free_acc_queue], ::SQS[:spam_trash_delete_paid_acc_queue]], body_parser: :json
 
   APPLICATION_NAME = 'DeleteSpamTicketsCleanup'.freeze
   NUMBER_OF_DAYS = 30
@@ -29,6 +29,6 @@ class Ryuken::DeleteSpamTrashTicket
 
     def rerun_after(sqs_msg, lag, shard_name)
       Rails.logger.debug("Warning: Freno: Ryuken::DeleteSpamTrashTicket: replication lag: #{lag} secs :: shard :: #{shard_name}")
-      requeue(::SQS[:spam_trash_delete_queue], JSON.parse(sqs_msg.body), { requeue_limit: 5, requeue_delay: [60, lag].max })
+      requeue(sqs_msg.queue_name, JSON.parse(sqs_msg.body), { requeue_limit: 5, requeue_delay: [60, lag].max })
     end
 end

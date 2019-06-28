@@ -397,6 +397,24 @@ Helpkit::Application.routes.draw do
         get '*all', to: 'ember/ocr_proxy#execute'
         put '*all', to: 'ember/ocr_proxy#execute'
       end
+    end 
+
+    resources :autofaq, controller: 'ember/freddy' do
+      collection do
+        get '*all', to: 'ember/freddy#execute'
+        put '*all', to: 'ember/freddy#execute'
+        post '*all', to: 'ember/freddy#execute'
+        delete '*all', to: 'ember/freddy#execute'
+      end
+    end
+
+    resources :botflow, controller: 'ember/flows' do
+      collection do
+        get '*all', to: 'ember/flows#execute'
+        put '*all', to: 'ember/flows#execute'
+        post '*all', to: 'ember/flows#execute'
+        delete '*all', to: 'ember/flows#execute'
+      end
     end
 
     # trial subscriptions
@@ -541,6 +559,7 @@ Helpkit::Application.routes.draw do
         put :create_child_with_template
         put :requester, to: 'ember/tickets/requester#update'
         post :parse_template, to: 'ember/tickets#parse_template'
+        get :ticket_field_suggestions, to: 'ember/tickets#ticket_field_suggestions'
       end
       resources :activities, controller: 'ember/tickets/activities', only: [:index]
       resource :summary, controller: 'ticket_summary', only: [:show, :update, :destroy]
@@ -867,6 +886,17 @@ Helpkit::Application.routes.draw do
     scope '/bot' do
       resources :tickets, controller: 'channel/bot/tickets', only: [:create]
     end
+
+    scope '/freshconnect' do
+      resources :contacts, controller: 'channel/freshconnect/contacts', only: [:show]
+      resources :groups, controller: 'channel/freshconnect/groups', only: [:index]
+      resources :agents_groups, controller: 'channel/freshconnect/agents_groups', only: [:index]
+    end
+
+    scope '/freddy' do
+      resources :bots, controller: 'channel/freddy/bots', only: [:create, :update]
+    end
+
     match '/bots/:id/training_completed', to: 'channel/bot/services#training_completed', via: :post
   end
 

@@ -46,11 +46,16 @@ module Facebook
                 thread_key:       thread[:id]
               }
             )
+            begin
             body_html                  = html_content_from_message(message, @note)
             @note.note_body_attributes = {
               body_html: body_html
             }
             save_facebook_note(user)
+            rescue OpenURI::HTTPError, URI::InvalidURIError, RuntimeError, StandardError => e
+              Rails.logger.debug "Error in add_as_note Err:#{e.message}, Message: #{message.inspect}, Shares:#{message[:shares]}"
+              return nil
+            end
           end
         end
 
@@ -95,7 +100,9 @@ module Facebook
               thread_key:       thread[:id]
             }
           )
+          begin
           description_html               = html_content_from_message(first_message_from_customer, @ticket)
+          
           @ticket.ticket_body_attributes = {
             description_html: description_html
           }
@@ -104,6 +111,10 @@ module Facebook
             add_as_note(thread, @ticket) if messages.size > 1
           else
             Rails.logger.debug "error while saving the ticket:: #{@ticket.errors.to_json}"
+          end
+          rescue OpenURI::HTTPError, URI::InvalidURIError, RuntimeError, StandardError => e
+            Rails.logger.debug "Error in add_as_note Err:#{e.message}, Message: #{message.inspect}, Shares:#{message[:shares]}"
+            return nil
           end
         end
     end

@@ -10,7 +10,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/tickets/delete_spam", only: %i[spam bulk_spam unspam bulk_unspam]
     resource :"ember/tickets/activity"
     resource :"ember/canned_response", only: %i[search]
-    resource :"ember/ticket", only: %i[index show create execute_scenario spam latest_note create_child_with_template parse_template fetch_errored_email_details suppression_list_alert]
+    resource :"ember/ticket", only: %i[index show create execute_scenario spam latest_note create_child_with_template parse_template fetch_errored_email_details suppression_list_alert ticket_field_suggestions]
     resource :"ember/tickets/bulk_action", only: %i[bulk_execute_scenario bulk_link bulk_unlink]
     resource :"ember/tickets/associate", only: [:link, :unlink, :associated_tickets, :prime_association, :associated_tickets_count]
     resource :"ember/ticket_filter", only: [:index, :show, :create, :update, :destroy]
@@ -131,6 +131,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/group", only: [:show, :index, :update]
     resource :"ember/agent", only: %i[update]
     resource :"ember/ocr_proxy"
+    resource :"ember/freddy"
+    resource :"ember/flow"
     resource :'ember/omni_channel', only: [:index]
   end
 
@@ -152,6 +154,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :'ember/omni_channel', only: [:index]
     resource :"admin/subscription", only: [:show, :plans, :update, :estimate]
     resource :"ember/ocr_proxy"
+    resource :"ember/freddy"
+    resource :"ember/flow"
     resource :'ember/admin/advanced_ticketing', only: [:create, :destroy, :insights]
     resource :help_widget, only: [:index, :create, :show, :update, :destroy, :freshmarketer_info]
     resource :"admin/trial_subscription", only: [:usage_metrics]

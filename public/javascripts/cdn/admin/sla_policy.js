@@ -49,7 +49,7 @@
 			if(email.trim() != "")
 				email = "  (" + email + ")";	
 			
-			return "<b>"+ result.value + "</b><br><span class='select2_list_detail'>" + email + "</span>"; 
+			return "<b>"+ result.value + "</b><br><span class='falcon-select2-override select2_list_detail'>" + email + "</span>"; 
 		}
 		
 		agFormatSelection = function(result) {

@@ -2,8 +2,24 @@ defaults: &defaults
   detect_thank_you_note:
     url: dummy
     timeout: 2 
-    confidence_threshold: 80  
+    confidence_threshold: 80
   
+  ticket_properties_suggester:
+    url: "https://autodispatch-361773157.freshworksapi.com/"
+    timeout: 5
+    expiry_in_days: 7  
+
+  system42:
+    host: 'https://system42-serv-dev.staging.freddyproject.com'
+    secret: 'd320b639-f0f2-465d-bc04-23be99d764cc'
+    timeout: 3
+    internal: '38e8cbde-83a6-4bba-a5db-12ea4fd3b2f3'
+
+  flowserv:
+    host: 'http://flow-serv.staging.freddyproject.com'
+    secret: 'FreshDeskDev'
+    timeout: 3
+
 development:
   <<: *defaults
 

@@ -41,7 +41,8 @@ class Account < ActiveRecord::Base
     :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,
     :recalculate_daypass, :sandbox_single_branch, :fb_page_api_improvement, :attachment_redirect_expiry, 
     :solutions_agent_portal, :solutions_agent_metrics, :fuzzy_search, :delete_trash_daily,
-    :prevent_fwd_email_ticket_create, :enable_wildcard_ticket_create, :check_wc_fwd, :requester_privilege, 
+    :prevent_fwd_email_ticket_create, :enable_wildcard_ticket_create, :check_wc_fwd, :requester_privilege,
+    :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule,
     :csat_email_scan_compatibility, :mint_portal_applicable, :twitter_microservice, :quoted_text_parsing_feature
   ].freeze
 
@@ -73,7 +74,8 @@ class Account < ActiveRecord::Base
     :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2, :cascade_dispatcher,
     :personal_canned_response, :marketplace, :reverse_notes,
     :freshreports_analytics, :disable_old_reports, :article_filters, :adv_article_bulk_actions,
-    :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible, :proactive_spam_detection
+    :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible, :autofaq, :proactive_spam_detection,
+    :ticket_properties_suggester, :ticket_properties_suggester_eligible
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
@@ -433,6 +435,10 @@ class Account < ActiveRecord::Base
       features.delete_if { |feature| PRICING_PLAN_MIGRATION_FEATURES_2019.include?(feature) }
     end
     super
+  end
+
+  def ticket_properties_suggester_enabled?
+    ticket_properties_suggester_eligible_enabled? && has_feature?(:ticket_properties_suggester)
   end
 
   def detect_thank_you_note_enabled?

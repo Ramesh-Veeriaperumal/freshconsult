@@ -96,7 +96,8 @@ class SubscriptionPlan < ActiveRecord::Base
   ].freeze
 
   JAN_2019_PLAN_NAMES = [
-    'Sprout Jan 19', 'Blossom Jan 19', 'Garden Jan 19', 'Estate Jan 19', 'Forest Jan 19'
+    'Sprout Jan 19', 'Blossom Jan 19', 'Garden Jan 19', 'Estate Jan 19',
+    'Garden Omni Jan 19', 'Estate Omni Jan 19', 'Forest Jan 19'
   ].freeze
 
   PLAN_NAMES_BEFORE_2017_AND_NOT_GRAND_PARENT = [

@@ -2,7 +2,8 @@ development:
   twitter_realtime_queue: social_gnip_2_0_tweet_dev
   facebook_realtime_queue: social_fb_feed_dev
   search_etl_queue: search_etl_queue_dev
-  spam_trash_delete_queue: spam_trash_delete_queue_dev
+  spam_trash_delete_free_acc_queue: spam_trash_delete_free_acc_queue_dev
+  spam_trash_delete_paid_acc_queue: spam_trash_delete_paid_acc_queue_dev
   count_etl_queue: count_etl_queue_dev
   analytics_etl_queue: analytics_etl_queue_dev
   sqs_es_index_queue: sqs_es_index_queue_dev
@@ -48,7 +49,8 @@ staging:
   twitter_realtime_queue: social_gnip_2_0_tweet_staging
   facebook_realtime_queue: social_fb_feed_staging
   search_etl_queue: search_etl_queue_staging
-  spam_trash_delete_queue: spam_trash_delete_queue_staging
+  spam_trash_delete_free_acc_queue: spam_trash_delete_free_acc_queue_staging
+  spam_trash_delete_paid_acc_queue: spam_trash_delete_paid_acc_queue_staging
   count_etl_queue: count_etl_queue_staging
   analytics_etl_queue: analytics_etl_queue_staging
   custom_mailbox_realtime_queue: custom_mailbox_staging
@@ -89,7 +91,8 @@ production:
   twitter_realtime_queue: social_gnip_tweet_production
   facebook_realtime_queue: social_fb_feed_production
   search_etl_queue: search_etl_queue_production
-  spam_trash_delete_queue: spam_trash_delete_queue_production
+  spam_trash_delete_free_acc_queue: spam_trash_delete_free_acc_queue_production
+  spam_trash_delete_paid_acc_queue: spam_trash_delete_paid_acc_queue_production
   count_etl_queue: count_etl_queue_procution
   analytics_etl_queue: analytics_etl_queue_procution
   custom_mailbox_realtime_queue: custom_mailbox_production
@@ -129,7 +132,8 @@ test:
   twitter_realtime_queue: social_gnip_2_0_tweet_test
   facebook_realtime_queue: social_fb_feed_test
   search_etl_queue: search_etl_queue_test
-  spam_trash_delete_queue: spam_trash_delete_queue_test
+  spam_trash_delete_free_acc_queue: spam_trash_delete_free_acc_queue_test
+  spam_trash_delete_paid_acc_queue: spam_trash_delete_paid_acc_queue_test
   count_etl_queue: count_etl_queue_test
   analytics_etl_queue: analytics_etl_queue_test
   custom_mailbox_realtime_queue: custom_mailbox_test

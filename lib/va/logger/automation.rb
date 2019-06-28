@@ -65,6 +65,7 @@ class Va::Logger::Automation
 
     def unset_thread_variables
       Thread.current[:automation_log_vars]  = nil
+      Thread.current[:dispatcher_set_priority] = nil
     end
   end
 end

@@ -9,36 +9,36 @@ module Middleware::RequestVerifier
   API_V2_PATH = '/api/v2/'.freeze
   WIDGET_PATH = '/api/widget/'.freeze
 
-  def api_request?(env = nil)
-    verify_path?(env['PATH_INFO'], API_PATH)
+  def api_request?(resource = nil)
+    verify_path?(resource, API_PATH)
   end
 
-  def private_api_request?(env = nil)
-    verify_path?(env['PATH_INFO'], PRIVATE_API_PATH)
+  def private_api_request?(resource = nil)
+    verify_path?(resource, PRIVATE_API_PATH)
   end
 
-  def pipe_api_request?(env = nil)
-    verify_path?(env['PATH_INFO'], PIPE_PATH)
+  def pipe_api_request?(resource = nil)
+    verify_path?(resource, PIPE_PATH)
   end
 
-  def freshid_api_request?(env = nil)
-    verify_path?(env['PATH_INFO'], FRESHID_PATH)
+  def freshid_api_request?(resource = nil)
+    verify_path?(resource, FRESHID_PATH)
   end
 
-  def channel_api_request?(env = nil)
-    verify_path?(env['PATH_INFO'], CHANNEL_PATH)
+  def channel_api_request?(resource = nil)
+    verify_path?(resource, CHANNEL_PATH)
   end
 
-  def channel_v1_api_request?(env = nil)
-    verify_path?(env['PATH_INFO'], CHANNEL_v1_PATH) && !channel_api_request?(env)
+  def channel_v1_api_request?(resource = nil)
+    verify_path?(resource, CHANNEL_v1_PATH) && !channel_api_request?(resource)
   end
 
-  def api_v2_request?(env = nil)
-    verify_path?(env['PATH_INFO'], API_V2_PATH)
+  def api_v2_request?(resource = nil)
+    verify_path?(resource, API_V2_PATH)
   end
 
-  def widget_api_request?(env = nil)
-    verify_path?(env['PATH_INFO'], WIDGET_PATH)
+  def widget_api_request?(resource = nil)
+    verify_path?(resource, WIDGET_PATH)
   end
 
   private
