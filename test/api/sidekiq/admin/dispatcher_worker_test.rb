@@ -114,6 +114,8 @@ class Admin::Dispatcher::WorkerTest < ActionView::TestCase
       return {internal_agent_id: ticket_value, 
               internal_group_id: internal_group.try(:id),
               status: status}
+    when 'to_email'
+      field_name = 'to_emails'
     when 'internal_group_id'
       internal_group = ticket_value ? @account.groups.find_by_id(ticket_value) : nil
       status = internal_group.status_groups.first.status.status_id if internal_group.present?
