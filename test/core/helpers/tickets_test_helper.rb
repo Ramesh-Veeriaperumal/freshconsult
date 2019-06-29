@@ -73,7 +73,9 @@ module CoreTicketsTestHelper
                                                         fwd_emails: fwd_emails, tkt_cc: cc_emails),
                                          :created_at => params[:created_at],
                                          :account_id => account_id,
-                                         :custom_field => params[:custom_field])
+                                         :custom_field => params[:custom_field],
+                                         :to_emails => params[:to_emails]
+                                       )
     test_ticket.sender_email = params[:sender_email] if params[:sender_email].present?
     test_ticket.tag_ids = params[:tag_ids] if params.key?(:tag_ids)
     test_ticket.build_ticket_body(:description => params[:description] || Faker::Lorem.paragraph)
