@@ -675,7 +675,7 @@ module Ember
         initial_tag_count = sample_article.tags.count
         tags = Faker::Lorem.words(3).uniq
         tags = tags.map do |tag|
-          tag = "#{tag}#{Time.now.to_i}"
+          tag = "#{tag}-#{Time.now.to_i}"
           assert_equal @account.tags.map(&:name).include?(tag), false
           tag
         end
@@ -701,7 +701,7 @@ module Ember
         initial_tag_count = sample_article.tags.count
         tags = Faker::Lorem.words(3).uniq
         tags = tags.map do |tag|
-          tag = "#{tag}#{Time.now.to_i}"
+          tag = "#{tag}_#{Time.now.to_i}"
           assert_equal @account.tags.map(&:name).include?(tag), false
           tag
         end
