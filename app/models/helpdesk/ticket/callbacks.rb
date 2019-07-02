@@ -319,7 +319,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def skip_dispatcher?
     @skip_dispatcher ||= begin
-      _skip_dispatcher = import_id || outbound_email? || !requester.valid_user? || service_task?
+      _skip_dispatcher = import_id || outbound_email? || !requester.valid_user? || service_task? || spam_or_deleted?
       Va::Logger::Automation.log('Skipping dispatcher', true) if _skip_dispatcher
       _skip_dispatcher
     end
