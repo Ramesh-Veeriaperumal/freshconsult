@@ -259,6 +259,14 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
   def subsidiary_tkts_count=(value)
     additional_info[:subsidiary_tkts_count] = value
   end
+	
+  def ticket_properties_suggester_hash
+    additional_info[:ticket_properties_suggester_hash]
+  end
+
+  def ticket_properties_suggester_hash=(value)
+    additional_info[:ticket_properties_suggester_hash] = value
+  end
 
   private
 

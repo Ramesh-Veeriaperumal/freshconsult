@@ -5,6 +5,7 @@ class SupportController < ApplicationController
   layout :resolve_layout
   before_filter :portal_context
   before_filter :strip_url_locale
+  before_filter :check_sitemap_feature, only: [:sitemap]
   before_filter :set_language
   before_filter :redirect_to_locale, :except => [:sitemap, :robots]
   around_filter :run_on_slave , :only => [:index,:show],
@@ -338,5 +339,9 @@ class SupportController < ApplicationController
   def render_request_error(code, status, params_hash = {})
     @error = RequestError.new(code, params_hash)
     render '/request_error', status: status
+  end
+
+  def check_sitemap_feature
+    render_404 unless current_account.sitemap_enabled?
   end
 end

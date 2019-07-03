@@ -6,7 +6,6 @@ rate_limit = YAML.load_file(File.join(Rails.root, 'config', 'rate_limit.yml'))[R
 display_id_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_display_id.yml'))[Rails.env]
 round_robin_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_round_robin.yml'))[Rails.env]
 redis_session_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_session.yml'))[Rails.env]
-sidekiq_config = YAML::load_file(File.join(Rails.root, 'config', 'sidekiq.yml'))[Rails.env]
 mobile_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_mobile.yml'))[Rails.env]
 #$redis = Redis.new(:host => config["host"], :port => config["port"])
 
@@ -28,13 +27,12 @@ $redis_display_id = Redis.new(:host => display_id_config["host"], :port => displ
 $redis_mkp = Redis.new(:host => config["host"], :port => config["port"], :timeout => config["timeout"], :tcp_keepalive => config["keepalive"])
 $redis_round_robin = Redis.new(:host => round_robin_config["host"], :port => round_robin_config["port"], :timeout => round_robin_config["timeout"], :tcp_keepalive => round_robin_config["keepalive"])
 $redis_session = Redis.new(:host => redis_session_config["host"], :port => redis_session_config["port"],:timeout => redis_session_config["timeout"], :tcp_keepalive => redis_session_config["keepalive"])
-$sidekiq_conn = Redis.new(:host => sidekiq_config["host"], :port => sidekiq_config["port"], :tcp_keepalive => sidekiq_config["keepalive"])
 $redis_mobile = Redis.new(:host => mobile_config["host"], :port => mobile_config["port"], :timeout => mobile_config["timeout"], :tcp_keepalive => mobile_config["keepalive"])
 $semaphore = Redis.new(:host => config["host"], :port => config["port"], :timeout => config["timeout"], :tcp_keepalive => config["keepalive"])
 
 # Include connection objects to new redis instances here. This is used for redis_maintenance.rake.
 # There are 3 DBs per region, having one connection object per DB below.
-REDIS_UNIQUE_CONNECTION_OBJECTS = [$redis_tickets, $rate_limit, $sidekiq_conn]
+REDIS_UNIQUE_CONNECTION_OBJECTS = [$redis_tickets, $rate_limit]
 
 #Loading Redis Display Id's Lua script
 Redis::DisplayIdLua.load_display_id_lua_script_to_redis

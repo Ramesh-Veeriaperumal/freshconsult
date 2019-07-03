@@ -257,7 +257,7 @@ module FreshdeskCore::Model
     remove_whitelist_users(account.id)
     remove_remote_integration_mappings(account.id)
     remove_round_robin_redis_info(account)
-    delete_sitemap(account)
+    account.delete_sitemap
     remove_from_spam_detection_service(account)
     delete_canned_forms(account)
     delete_widget_data_from_s3(account)
@@ -406,23 +406,6 @@ module FreshdeskCore::Model
 
     def remove_remote_integration_mappings(account_id)
       RemoteIntegrationsMapping.where(account_id: account_id).delete_all
-    end
-
-
-    def delete_sitemap(account)
-      key = SITEMAP_OUTDATED % { :account_id => account.id }
-      remove_portal_redis_key(key)
-
-      account.portals.each do |portal|
-          portal.clear_sitemap_cache
-      end
-
-      path = "sitemap/#{account.id}/"
-      objects = AwsWrapper::S3Object.find_with_prefix(S3_CONFIG[:bucket],path)
-      objects.each do |object|
-        object.delete
-      end
-      Rails.logger.info ":::::: Sitemap is deleted (redis, cache & S3) for account #{account.id} ::::::"
     end
 
     def remove_round_robin_redis_info(account)

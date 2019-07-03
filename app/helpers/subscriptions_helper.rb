@@ -130,6 +130,9 @@ module SubscriptionsHelper
 
   NEW_SPROUT = [ "Sprout Jan 17", "Sprout Jan 19"].freeze
 
+  OMNI_PLANS_SERIES = SubscriptionPlan::JAN_2019_PLAN_NAMES.reject { |name| SubscriptionPlan::OMNI_TO_BASIC_PLAN_MAP.key(name) }
+  NON_OMNI_PLANS_SERIES = SubscriptionPlan::JAN_2019_PLAN_NAMES.reject { |name| SubscriptionPlan::BASIC_PLAN_TO_OMNI_MAP.key(name) }
+
   def get_payment_string(period,amount)
     amount = format_amount(amount, current_account.currency_name)
     if period == SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual]
@@ -297,8 +300,10 @@ module SubscriptionsHelper
       SubscriptionPlan::PLAN_NAMES_BEFORE_2017_AND_NOT_GRAND_PARENT
     elsif SubscriptionPlan::JAN_2017_PLAN_NAMES.include?(plan_name)
       SubscriptionPlan::JAN_2017_PLAN_NAMES
+    elsif SubscriptionPlan::BASIC_PLAN_TO_OMNI_MAP.key(plan_name).present?
+      OMNI_PLANS_SERIES
     else
-      SubscriptionPlan::JAN_2019_PLAN_NAMES
+      NON_OMNI_PLANS_SERIES
     end
   end
 

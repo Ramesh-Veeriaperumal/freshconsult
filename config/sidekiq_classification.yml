@@ -205,6 +205,7 @@
     - freshid_account_details_update_v2
     - sandbox_cleanup
     - update_sandbox_subscription
+    - ticket_properties_suggester
   :free:
     - free_sla
     - free_supervisor

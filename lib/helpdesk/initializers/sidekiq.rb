@@ -10,13 +10,16 @@ SIDEKIQ_CLASSIFICATION_MAPPING = SIDEKIQ_CLASSIFICATION[:classification].inject(
   t_h
 end
 
-$sidekiq_datastore = proc { Redis::Namespace.new(config["namespace"], :redis => $sidekiq_conn) }
+$sidekiq_datastore = proc { Redis::Namespace.new(config['namespace'], redis: Redis.new(host: config['host'], port: config['port'], tcp_keepalive: config['keepalive'])) }
 $sidekiq_redis_pool_size = sidekiq_config[:redis_pool_size] || sidekiq_config[:concurrency]
+# setting redis connection pool size of sidekiq client to (concurrency / 2) because of limitations from redis-labs
+$sidekiq_client_redis_pool_size = ($sidekiq_redis_pool_size / 2).to_i
+$sidekiq_client_redis_pool_size = $sidekiq_redis_pool_size if $sidekiq_client_redis_pool_size.zero?
 $sidekiq_redis_timeout = sidekiq_config[:timeout]
 
 
 Sidekiq.configure_client do |config|
-  config.redis = ConnectionPool.new(:size => 1, :timeout => $sidekiq_redis_timeout, &$sidekiq_datastore)
+  config.redis = ConnectionPool.new(size: $sidekiq_client_redis_pool_size, timeout: $sidekiq_redis_timeout, &$sidekiq_datastore)
   config.client_middleware do |chain|
     chain.add Middleware::Sidekiq::Client::BelongsToAccount, :ignore => [
       "FreshopsToolsWorker",
@@ -112,6 +115,7 @@ Sidekiq.configure_server do |config|
   #Making AWS as thread safe
   AWS.eager_autoload!
   config.server_middleware do |chain|
+    chain.add Middleware::Sidekiq::Server::UnsetThread
     chain.add Middleware::Sidekiq::Server::BelongsToAccount, :ignore => [
       "FreshopsToolsWorker",
       "Social::TwitterReplyStreamWorker",

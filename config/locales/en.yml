@@ -2535,6 +2535,8 @@ en:
         manage_canned_responses: Manage canned responses
         manage_dispatch_rules: Manage Dispatch'r and Observer rules
         manage_supervisor_rules: Manage Supervisor rules
+        manage_ticket_create_update_rules: Manage automation rules that run on ticket creation and ticket updates
+        manage_time_tiggers_rules: Manage automation rules that run on time triggers
         manage_scenario_automation_rules: Manage Scenario automation rules
         manage_email_settings: Manage Email Commands
         manage_ticket_list_views: Manage ticket list views
