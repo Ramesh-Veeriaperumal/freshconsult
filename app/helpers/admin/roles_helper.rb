@@ -5,6 +5,8 @@ module Admin::RolesHelper
   # privilege split up.
   MANAGE_COMPANIES = { dom_type: 'check_box', id: 'manage_companies' }.freeze
   DELETE_COMPANY = { dom_type: 'check_box', id: 'delete_company' }.freeze
+  AUTOMATION_MANAGE_ROLE_MAP = { manage_dispatch_rules: 'manage_ticket_create_update_rules', manage_supervisor_rules: 'manage_time_tiggers_rules' }.freeze
+  AUTOMATION_ROLES = AUTOMATION_MANAGE_ROLE_MAP.keys.freeze
 
   def role_sections
       [
@@ -241,7 +243,9 @@ module Admin::RolesHelper
       html = eval "#{element[:dom_type]}_tag('#{name}', '#{privilege}',
       #{@role.abilities.include?(privilege.to_sym)}, { :class => '#{parent} #{element[:class]}',
       :id => '#{element[:id]}', :disabled => #{disabled}})"
-      html = (html + t('admin.roles.privilege.'+ element[:id])).html_safe
+      content_desc = current_account.automation_revamp_enabled? && AUTOMATION_ROLES.include?(element[:id].to_sym) ?
+                        AUTOMATION_MANAGE_ROLE_MAP[element[:id].to_sym] : element[:id]
+      html = (html + t("admin.roles.privilege.#{content_desc}")).html_safe
     end
 
     def build_hidden(element, parent, disabled)
