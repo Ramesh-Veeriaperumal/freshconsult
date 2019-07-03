@@ -124,6 +124,17 @@ class PrivateApiFlowsTest < ActionDispatch::IntegrationTest
     remove_key(account_api_limit_key)
   end
 
+  def test_account_version_header_after_launch_party_change
+    requests, redis_timestamp, version_set = private_api_keys_values
+    set_others_redis_hash(version_redis_key, version_set)
+    old_acc_version = Digest::MD5.hexdigest(version_set.values.join)
+    @account.launch(:test_feature)
+    new_acc_version = Digest::MD5.hexdigest(get_others_redis_hash(version_redis_key).values.join)
+    get requests.first
+    assert_not_equal old_acc_version, response.headers['X-Account-Data-Version']
+    assert_equal new_acc_version, response.headers['X-Account-Data-Version']
+  end
+
   def test_account_version_header_custom_tranlsation_with_user_supported_language
     requests, redis_timestamp, version_set = private_api_keys_values
     account_support_language = user_language = 'fr'

@@ -1,7 +1,7 @@
 class AdminSubscriptionDelegator < BaseDelegator
   attr_accessor :plan_id
   validate :validate_not_active_plan, on: :update
-  validate :validate_plan_id, if: -> { @plan_id.present? }
+  validate :validate_plan_id, on: :update, if: -> { @plan_id.present? }
   validate :validate_estimate_on_free_plan, on: :estimate, if: -> { @plan_id.present? }
   validate :validate_renewal_period_based_on_plan
   

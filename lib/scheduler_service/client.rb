@@ -42,9 +42,10 @@ class SchedulerService::Client
         }
       )
       scheduler_response = scheduler_request.execute
+      logger.save_response_information(scheduler_response, job_id, group)
       logger.log_request(uuid, payload.to_json, scheduler_type)
       logger.log_response(uuid, scheduler_response, scheduler_type)
-      scheduler_response.code
+      scheduler_response
     rescue RestClient::BadRequest => e
       raise SchedulerService::Errors::BadRequestException.new(e.message)
     rescue RestClient::GatewayTimeout => ex
@@ -64,9 +65,10 @@ class SchedulerService::Client
         }
       )
       scheduler_response = scheduler_request.execute
+      logger.save_response_information(scheduler_response, job_id, group)
       logger.log_request(uuid, end_point.to_json, scheduler_type)
       logger.log_response(uuid, scheduler_response, scheduler_type)
-      scheduler_response.code
+      scheduler_response
     rescue RestClient::BadRequest => e
       raise SchedulerService::Errors::BadRequestException.new(e.message)
     rescue RestClient::GatewayTimeout => ex

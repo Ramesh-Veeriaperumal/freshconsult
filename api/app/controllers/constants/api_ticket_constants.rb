@@ -142,4 +142,8 @@ module ApiTicketConstants
   SECONDARY_TICKET_PARAMS = %w(tracker_id).freeze
 
   MAX_PAGE_LIMIT = 300
+
+  TICKET_DELETE_DAYS = 30
+  TICKET_DELETE_MESSAGE_TYPE = 'ticket_delete_message_type'.freeze
+  TICKET_DELETE_SCHEDULER_TYPE = 'ticket_delete_scheduler_type'.freeze
 end.freeze

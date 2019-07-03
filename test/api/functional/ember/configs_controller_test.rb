@@ -32,6 +32,7 @@ class Ember::ConfigsControllerTest < ActionController::TestCase
     assert_equal payload[:language], 'en'
     assert_equal payload[:portalUrl], "#{@account.url_protocol}://#{@account.full_domain}"
     assert_equal payload[:page], 'home'
+    assert_equal payload[:exp], payload[:iat] + FreshVisualsConfig['early_expiration'].to_i
   ensure
     User.any_instance.unstub(:time_zone)
     User.any_instance.unstub(:language)

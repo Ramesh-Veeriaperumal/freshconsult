@@ -320,6 +320,7 @@ defaults: &defaults
     - [surveys_central_publish]
     - [anonymous_account_cleanup]
     - [freshvisual_configs]
+    - [ticket_properties_suggester]
     - [freshid_retry_worker]
     - [contact_field_central_publish]
     - [company_field_central_publish]

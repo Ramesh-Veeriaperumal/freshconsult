@@ -164,7 +164,12 @@ class Admin::AutomationsController < ApiApplicationController
       rule_association = VAConfig::ASSOCIATION_MAPPING[VAConfig::RULES_BY_ID[params[:rule_type].to_i]]
       positions_array = current_account.safe_send(rule_association).pluck(:position)
       old_db_position = @item.position
-      params[cname][:position] = new_db_position = positions_array[params[cname][:position] - 1]
-      @item.frontend_positions = [positions_array.index(old_db_position) + 1, positions_array.index(new_db_position) + 1]
+      new_db_position = positions_array[params[cname][:position] - 1]
+      if new_db_position.nil?
+        render_request_error(:invalid_position, 403, max_position: positions_array.size + 1)
+      else
+        params[cname][:position] = new_db_position
+        @item.frontend_positions = [positions_array.index(old_db_position) + 1, positions_array.index(new_db_position) + 1]
+      end
     end
 end

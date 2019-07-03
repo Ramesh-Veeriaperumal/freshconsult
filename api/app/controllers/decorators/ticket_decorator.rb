@@ -1,4 +1,5 @@
 class TicketDecorator < ApiDecorator
+  include TicketPropertiesSuggester::Util
   delegate :ticket_body, :custom_field_via_mapping, :cc_email, :email_config_id,
     :fr_escalated, :group_id, :priority, :requester_id, :responder, :responder_id,
     :source, :spam, :status, :subject, :display_id, :ticket_type, :schema_less_ticket,
@@ -335,7 +336,9 @@ class TicketDecorator < ApiDecorator
       tags: tag_names
     }
     hash[:custom_fields] = custom_fields unless @discard_options.include?('custom_fields')
-    [hash, simple_hash, feedback_hash, shared_ownership_hash, skill_hash].inject(&:merge!)
+    result = [hash, simple_hash, feedback_hash, shared_ownership_hash, skill_hash].inject(&:merge!)
+    result.merge!(predict_ticket_fields_hash) if ticket_properties_suggester_enabled?
+    result
   end
 
   def to_search_hash
@@ -441,6 +444,23 @@ class TicketDecorator < ApiDecorator
     if record.requester.emails.include?(schema_less_ticket_association.try(:sender_email))
       schema_less_ticket_association.try(:sender_email)
     end
+  end
+
+  def predict_ticket_fields_hash
+    hash = { predict_ticket_fields: false }    
+    ticket_properties_suggester_hash = schema_less_ticket.try(:ticket_properties_suggester_hash)
+    suggested_fields = ticket_properties_suggester_hash[:suggested_fields] if ticket_properties_suggester_hash.present?
+    return hash if suggested_fields.blank?    
+    return hash if suggested_fields.all? { |k,v| v[:updated] }
+
+    expiry_time = ticket_properties_suggester_hash[:expiry_time]
+    current_time = Time.now.to_i
+    if expiry_time.present? && current_time - expiry_time > 0
+      ::Freddy::TicketPropertiesSuggesterWorker.perform_async(ticket_id: record.id, action: 'predict', dispatcher_set_priority: false)
+      return hash
+    end
+    hash[:predict_ticket_fields] = true
+    hash
   end
 
   def email_spam_data

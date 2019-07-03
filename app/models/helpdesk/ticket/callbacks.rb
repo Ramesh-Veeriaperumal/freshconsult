@@ -1,6 +1,5 @@
 class Helpdesk::Ticket < ActiveRecord::Base
   # rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['helpdesk_tickets'] }, :if => lambda{|obj| obj.rl_enabled? }
-
   before_validation :populate_requester, :load_ticket_status, :set_default_values
   before_validation :assign_flexifield, :assign_email_config_and_product, :on => :create
   before_validation :validate_assoc_parent_ticket, :if => :child_ticket?
@@ -53,6 +52,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save :update_dueby, :unless => :manual_sla?
 
+  before_save :check_parallel_transaction, if: :prevent_parallel_update_enabled?
+
   before_update :update_isescalated, :if => :check_due_by_change
   before_update :update_fr_escalated, :if => :check_frdue_by_change
 
@@ -86,6 +87,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :update_spam_detection_service, :if => :model_changes?
   after_commit :spam_feedback_to_smart_filter, :on => :update, :if => :twitter_ticket_spammed?
   after_commit :tag_update_central_publish, :on => :update, :if => :tags_updated?
+  after_commit :trigger_ticket_properties_suggester_feedback, on: :update, if: :ticket_properties_suggester_feedback_required?
 
 
 
@@ -595,6 +597,24 @@ class Helpdesk::Ticket < ActiveRecord::Base
     OmniChannelRouting::TaskSync.perform_async(id: display_id, attributes: round_robin_attributes, changes: changes)
   end
 
+  def trigger_ticket_properties_suggester_feedback    
+    trigger_feedback = false     
+    ticket_properties_suggester_hash = schema_less_ticket.try(:ticket_properties_suggester_hash)
+    suggested_fields = ticket_properties_suggester_hash[:suggested_fields] if ticket_properties_suggester_hash.present?
+      
+    TicketPropertiesSuggester::Util::ML_FIELDS_TO_PRODUCT_FIELDS_MAP.each do |field, value|
+      next if !model_changes.key?(field)            
+      suggested_fields[value.to_sym][:updated] = true     
+      trigger_feedback = true
+    end 
+    if trigger_feedback       
+      ticket_properties_suggester_hash[:suggested_fields] = suggested_fields
+      schema_less_ticket.ticket_properties_suggester_hash = ticket_properties_suggester_hash
+      schema_less_ticket.save!
+      ::Freddy::TicketPropertiesSuggesterWorker.perform_async(ticket_id: id, action: 'feedback', model_changes: model_changes)
+    end
+  end
+
 private
 
   def tags_updated?
@@ -665,6 +685,11 @@ private
     @model_changes.merge!(:round_robin_assignment => [nil, true]) if round_robin_assignment
     @model_changes.merge!(schema_less_ticket.changes) unless schema_less_ticket.nil?
     @model_changes.merge!(flexifield.before_save_changes) unless flexifield.nil?
+    if ticket_field_data.present?
+      changes = ticket_field_data.attribute_changes.reject { |k,v|
+                  !TicketFieldData::NEW_DROPDOWN_COLUMN_NAMES_SET.include?(k.to_s) }
+      @model_changes.merge!(changes)
+    end
     @model_changes.merge!({ tags: [] }) if self.tags_updated #=> Hack for when only tags are updated to trigger ES publish
     @model_changes.symbolize_keys!
   end
@@ -900,6 +925,23 @@ private
     true
   end
 
+  def prevent_parallel_update_enabled?
+    Account.current.prevent_parallel_update_enabled?
+  end
+
+  def check_parallel_transaction
+    live_ticket = account.tickets.find_by_id(id)
+    if live_ticket.present?
+      LBRR_REFLECTION_KEYS.each do |attribute|
+        next unless (safe_send(attribute) == live_ticket.safe_send(attribute)) && changes.key?(attribute)
+
+        Rails.logger.debug "Resetting #{attribute} in check_parallel_transaction"
+        safe_send("#{attribute}=", changes[attribute].first)
+        @model_changes.delete(attribute)
+      end
+    end
+  end
+
   def trigger_observer_events
     filter_observer_events(true)
   end
@@ -1007,5 +1049,26 @@ private
       field_changes[:agent_id] = @model_changes[:responder_id].map(&:to_s).map(&:presence) if @model_changes.key?(:responder_id)
       field_changes[:group_id] = @model_changes[:group_id].map(&:to_s).map(&:presence) if @model_changes.key?(:group_id)
     end
+  end
+
+  def ticket_delete_or_spam?
+    (@model_changes.key?(:deleted) || @model_changes.key?(:spam)) && spam_or_deleted?
+  end
+
+  def ticket_restored?
+    (@model_changes.key?(:deleted) || @model_changes.key?(:spam)) && !spam_or_deleted?
+  end
+
+  def ticket_properties_suggester_feedback_required?
+    schema_less_ticket.ticket_properties_suggester_hash.present? && performed_by_agent? && !all_predicted_fields_updated?
+  end
+
+  def performed_by_agent?
+    User.current.present? && User.current.agent?
+  end
+
+  def all_predicted_fields_updated?
+    suggested_fields = schema_less_ticket.ticket_properties_suggester_hash[:suggested_fields]
+    suggested_fields.present? && suggested_fields.all? { |k,v| v[:updated] }
   end
 end

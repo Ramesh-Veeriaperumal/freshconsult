@@ -423,6 +423,8 @@ summary:
   $ref: ./response/tickets/summary.yaml
 bot_response:
   $ref: ./response/tickets/bot_response.yaml
+ticket_field_suggestions:
+  $ref: ./response/tickets/ticket_field_suggestions.yaml
 bot_index:
   type: array
   items:

@@ -109,11 +109,11 @@ class VaRule < ActiveRecord::Base
       Va::Event.new(e.symbolize_keys, account) } if has_condition_data?
    end
 
-  def rule_conditions
+  def rule_conditions(with_dispatcher_key = nil)
     return unless has_condition_data?
     conditions = []
     if observer_rule? || dispatchr_rule?
-      modify_condition_sets
+      modify_condition_sets(with_dispatcher_key)
       conditions = condition_sets
     elsif supervisor_rule?
       conditions = condition_data
@@ -121,14 +121,18 @@ class VaRule < ActiveRecord::Base
     @rule_conditions ||= conditions
   end
 
-  def modify_condition_sets
+  def modify_condition_sets(with_dispatcher_key = nil)
     condition_sets.each do |set|
       if set.is_a?(Hash) && (set.key?(:any) || set.key?(:all))
         set.each_pair do |_, conditions|
-          conditions.each { |condition| field_type(condition) }
+          conditions.each do |condition|
+            field_type(condition)
+            fetch_dispatcher_column(condition, condition[:name]) if with_dispatcher_key
+          end
         end
       else
         field_type(set)
+        fetch_dispatcher_column(set, set[:name]) if with_dispatcher_key
       end
     end
   end
@@ -140,6 +144,10 @@ class VaRule < ActiveRecord::Base
 
   def field_type(condition)
     condition[:field_type] = fetch_field_type(condition)
+  end
+
+  def fetch_dispatcher_column(condition, name)
+    condition[:name] = Va::Condition::DISPATCHER_COLUMNS.key?(name) ? Va::Condition::DISPATCHER_COLUMNS[name] : name
   end
 
   def fetch_field_type(condition)
@@ -234,7 +242,7 @@ class VaRule < ActiveRecord::Base
   def check_rule_conditions(evaluate_on, actions=nil, doer=nil)
     is_a_match = false
     benchmark { is_a_match = RuleEngine::NestedCondition.new(evaluate_on,
-                              rule_operator).process_block(rule_conditions) }
+                              rule_operator).process_block(rule_conditions(true)) }
     is_a_match = true if rule_conditions.blank? && observer_rule?
     Va::Logger::Automation.log("rule condition matched=#{is_a_match}")
     trigger_actions(evaluate_on, doer) if is_a_match

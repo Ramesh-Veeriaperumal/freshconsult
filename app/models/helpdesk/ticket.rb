@@ -48,7 +48,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   concerned_with :associations, :validations, :presenter, :callbacks, :riak, :s3, :mysql,
                  :attributes, :rabbitmq, :permissions, :esv2_methods, :count_es_methods,
                  :round_robin_methods, :association_methods, :skill_based_round_robin,
-                 :sla_calculation_methods
+                 :sla_calculation_methods, :kairos_methods
 
   text_datastore_callbacks :class => "ticket"
   spam_watcher_callbacks :user_column => "requester_id", :import_column => "import_id"
@@ -1086,6 +1086,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
     @custom_field ||= retrieve_ff_values_via_mapping
   end
 
+  def custom_field_by_column_name
+    @custom_field_by_column_name ||= begin
+      custom_field.each_with_object({}) do |field, mapping|
+        mapping[custom_field_column_name_mappings[field.first].to_s] = field.last
+      end
+    end
+  end
+
   def custom_field= custom_field_hash
     self.custom_fields_hash = custom_field_hash
     @custom_field = new_record? ? custom_field_hash : nil
@@ -1106,6 +1114,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
     @custom_field_mapping ||= begin
       self.account.ticket_fields.custom_fields.inject({}) { |a, f|
         a[f.name] = f.field_type
+        a
+      }
+    end
+  end
+
+  def custom_field_column_name_mappings
+    @custom_field_column_name_mappings ||= begin
+      self.account.ticket_fields_with_nested_fields.custom_fields.each_with_object({}) { |f, a|
+        a[f.name] = f.column_name.to_sym
         a
       }
     end

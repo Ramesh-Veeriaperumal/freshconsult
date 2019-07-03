@@ -217,18 +217,6 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('renewal_period', :datatype_mismatch, expected_data_type: 'Positive Integer')])
   end
 
-  def test_subscription_estimate_with_invalid_plan
-    get :estimate, controller_params({ version: 'private', agent_seats: 1, renewal_period: 1, plan_id: Faker::Number.number(3) }, false)
-    assert_response 400
-    match_json([bad_request_error_pattern('plan_id', :invalid_plan_id, code: :invalid_value)])
-  end
-
-  def test_subscription_estimate_with_invalid_plan_id
-    get :estimate, controller_params({ version: 'private', agent_seats: 1, renewal_period: 1, plan_id: Faker::Lorem.word }, false)
-    assert_response 400
-    bad_request_error_pattern('plan_id', :invalid_plan_id, code: :invalid_value)
-  end
-
   def test_subscription_estimate_with_free_plan
     SubscriptionPlan.any_instance.stubs(:amount).returns(0)
     get :estimate, controller_params({ version: 'private', agent_seats: 1, renewal_period: 12, plan_id: 6 }, false)
@@ -249,30 +237,45 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
   private
 
     def stub_chargebee_requests
-      chargebee_estimate = ChargeBee::Estimate.new({})
+      chargebee_subscription = ChargeBee::Subscription.create({
+        :plan_id => 'estate_jan_17_monthly',
+        :billing_address => {
+          :first_name => Faker::Name.first_name,
+          :last_name => Faker::Name.last_name,
+          :line1 => 'PO Box 9999',
+          :city => 'Walnut',
+          :state => 'California',
+          :zip => '91789',
+          :country => 'US'
+        },
+        :customer => {
+          :first_name => Faker::Name.first_name,
+          :last_name => Faker::Name.last_name,
+          :email => Faker::Internet.email
+        }
+      })
+      chargebee_estimate = ChargeBee::Estimate.create_subscription({
+        :billing_address => {
+          :line1 => 'PO Box 9999',
+          :city => 'Walnut',
+          :zip => '91789',
+          :country => 'US'
+        },
+        :subscription => {
+          :plan_id => 'estate_jan_17_monthly'
+        }
+      })
       Subscription.any_instance.stubs(:active?).returns(true)
-      ChargeBee::Subscription.stubs(:retrieve).returns(ChargeBee::Subscription.new({}))
-      ChargeBee::Subscription.any_instance.stubs(:subscription).returns(ChargeBee::Subscription.new({}))
-      ChargeBee::Subscription.any_instance.stubs(:coupon).returns(nil)
+      Billing::Subscription.any_instance.stubs(:calculate_update_subscription_estimate).returns(chargebee_estimate)
+      ChargeBee::Subscription.stubs(:retrieve).returns(chargebee_subscription)
       RestClient::Request.stubs(:execute).returns(immediate_invoice_stub.to_json)
-      ChargeBee::Estimate.stubs(:update_subscription).returns(chargebee_estimate)
-      ChargeBee::Estimate.any_instance.stubs(:estimate).returns(chargebee_estimate)
-      ChargeBee::Estimate::Discount.any_instance.stubs(:amount).returns(1000)
-      ChargeBee::Estimate.any_instance.stubs(:discounts).returns([ChargeBee::Estimate::Discount.new({})])
-      ChargeBee::Estimate.any_instance.stubs(:amount).returns(1000)
     end
 
     def unstub_chargebee_requests
       Subscription.any_instance.unstub(:active?)
+      Billing::Subscription.any_instance.unstub(:calculate_update_subscription_estimate)
       ChargeBee::Subscription.unstub(:retrieve)
-      ChargeBee::Subscription.any_instance.unstub(:subscription)
-      ChargeBee::Subscription.any_instance.unstub(:coupon)
       RestClient::Request.unstub(:execute)
-      ChargeBee::Estimate.unstub(:update_subscription)
-      ChargeBee::Estimate.any_instance.unstub(:estimate)
-      ChargeBee::Estimate::Discount.any_instance.unstub(:amount)
-      ChargeBee::Estimate.any_instance.unstub(:discounts)
-      ChargeBee::Estimate.any_instance.unstub(:amount)
     end
 
     def mock_plan(id, plan_name)

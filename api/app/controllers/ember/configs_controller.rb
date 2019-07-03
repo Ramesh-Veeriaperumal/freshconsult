@@ -35,7 +35,7 @@ module Ember
           userId: current_user.id,
           sessionExpiration: Time.now.to_i + FreshVisualsConfig['session_expiration'].to_i,
           iat: Time.now.to_i,
-          exp: Time.now.to_i + FreshVisualsConfig['session_expiration'].to_i
+          exp: Time.now.to_i + FreshVisualsConfig['early_expiration'].to_i
         }
       end
 

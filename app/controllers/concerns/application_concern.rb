@@ -121,12 +121,8 @@ module Concerns::ApplicationConcern
 
   def can_supress_logs?
     return false unless Rails.env.production?
-    ApiConstants::SKIP_LOGS_FOR.keys.include?(cname.to_sym) &&
-    ApiConstants::SKIP_LOGS_FOR[cname.to_sym].include?(action_name)
-  end
 
-  def log_enabled_for_account?
-    log_enable_key = format(ENABLE_LOGS, account_id:  current_account.id)
-    redis_key_exists?(log_enable_key)
+    ApiConstants::SKIP_LOGS_FOR.key?(cname.to_sym) &&
+      ApiConstants::SKIP_LOGS_FOR[cname.to_sym].include?(action_name)
   end
 end

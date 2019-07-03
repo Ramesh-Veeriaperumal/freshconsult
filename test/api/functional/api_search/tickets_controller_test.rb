@@ -70,7 +70,7 @@ module ApiSearch
                       created_at: n.days.until.iso8601, updated_at: (n + 2).days.until.iso8601 }
       params_hash[:tags] = [] if n == 5
       params_hash[:group_id] = nil if n == 4
-      params_hash[:agent_id] = nil if n == 3
+      params_hash[:agent_id] = nil if n == 3      
       params_hash
     end
 

@@ -37,6 +37,8 @@ fields:
         domains: text_array
         renewal_date: date
         segments: object_id_array
+        to_emails: email
+        domain_list: text_array
 
         created_during: date_time
         updated_at: date_time

@@ -46,10 +46,27 @@ class SchedulerCancelMessageTest < ActionView::TestCase
     end
   end
 
+  def test_save_information_in_ticket_schedule
+    scheduler_client = Scheduler::CancelMessage.new
+    ticket = create_test_ticket(email: 'sample@freshdesk.com')
+    resp_stub = ActionDispatch::TestResponse.new
+    resp_stub.header = { x_request_id: rand(100) }
+    RestClient::Request.any_instance.stubs(:execute).returns(resp_stub)
+    responses = scheduler_client.perform(job_ids: Array(ticket_job_id(ticket)), group_name: ::SchedulerClientKeys['ticket_delete_group_name']) 
+    ticket.reload
+    assert_equal ticket.scheduler_trace_id, responses.first.headers[:x_request_id]
+  ensure
+    RestClient::Request.any_instance.unstub(:execute)
+  end
+
   private
 
     def job_id
       [Account.current.id, 'reminder', @reminder.id].join('_')
+    end
+
+    def ticket_job_id(ticket)
+      [Account.current.id, 'ticket', ticket.id].join('_')
     end
 
     def group_name

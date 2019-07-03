@@ -11,18 +11,23 @@ class Groups::RoundRobinCapping < BaseWorker
     args = args.deep_symbolize_keys
     Sharding.run_on_slave do 
       group = Account.current.groups.find_by_id(args[:group_id])
-      @model_changes = args[:model_changes]
-      @capping_limit_change = args[:model_changes][:capping_limit]
-      if group.lbrr_enabled?
-        group.delete_round_robin_list
-        if capping_enabled? || lbrr_init?
-          init_capping(group)
-        elsif capping_increased?
-          rebalance_capping(group)
-        end
-      else
+      if args[:reset_capping]
         group.shutdown_capping(group.agents.pluck(:user_id))
-        group.create_round_robin_list if group.round_robin_enabled?
+        init_capping(group)
+      else
+        @model_changes = args[:model_changes]
+        @capping_limit_change = args[:model_changes][:capping_limit]
+        if group.lbrr_enabled?
+          group.delete_round_robin_list
+          if capping_enabled? || lbrr_init?
+            init_capping(group)
+          elsif capping_increased?
+            rebalance_capping(group)
+          end
+        else
+          group.shutdown_capping(group.agents.pluck(:user_id))
+          group.create_round_robin_list if group.round_robin_enabled?
+        end
       end
     end
   end

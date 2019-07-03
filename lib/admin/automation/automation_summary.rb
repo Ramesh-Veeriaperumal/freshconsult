@@ -109,6 +109,7 @@ module Admin::Automation::AutomationSummary
       array = []
       array << generate_key(data[:name], data[:evaluate_on] || 'ticket')
       field = ticket_fields.find { |tf| tf.name == data[:name] }
+      data[:operator] = TAGS_OPERATOR_MAPPING[data[:operator].to_sym] || data[:operator] if field_name == :tag_ids
       field.present? && field.field_type == 'custom_date' && data[:operator].present? ?
           array << generate_operator(DATE_FIELDS_OPERATOR_MAPPING[data[:operator].to_sym] || data[:operator]) :
           array << generate_operator(data[:operator]) if data[:operator].present?

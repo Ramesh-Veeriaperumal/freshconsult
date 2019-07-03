@@ -19,9 +19,13 @@ class Helpdesk::ResetResponder < BaseWorker
       ocr_enabled = account.omni_channel_routing_enabled?
       return if user.nil?
 
-      account.tickets.preload(:group).assigned_to(user).find_each do |ticket|
-        ticket_ids.push(ticket.id) if ticket.group.try(:automatic_ticket_assignment_enabled?)
-      end if account.automatic_ticket_assignment_enabled?
+      if account.automatic_ticket_assignment_enabled?
+        status_ids = Helpdesk::TicketStatus.sla_timer_on_status_ids(account)
+        group_ids = account.groups_from_cache.select(&:automatic_ticket_assignment_enabled?).map(&:id)
+        account.tickets.visible.sla_on_tickets(status_ids).where(group_id: group_ids).assigned_to(user).select('id').find_in_batches do |tickets|
+          ticket_ids.concat(tickets.map(&:id))
+        end
+      end
 
       # Reset agent and internal agent for tickets
       account.tickets.where(responder_id: user.id).update_all_with_publish({ responder_id: nil }, {}, options)
@@ -34,13 +38,15 @@ class Helpdesk::ResetResponder < BaseWorker
         tickets.update_all_with_publish(updates_hash, {}, options)
       end
 
-      account.tickets.where("id in (?)", ticket_ids).preload(:group).find_each do |ticket|
-        if ticket.group.try(:skill_based_round_robin_enabled?)
-          trigger_sbrr ticket
-        elsif ocr_enabled && ticket.group.omni_channel_routing_enabled? && ticket.eligible_for_ocr?
-          ticket.sync_task_changes_to_ocr(nil)
-        elsif ticket.group.capping_enabled?
-          ticket.assign_tickets_to_agents
+      ticket_ids.each_slice(100).each do |ticket_ids_slice|
+        account.tickets.where('id in (?)', ticket_ids_slice).preload(:group).find_each do |ticket|
+          if ticket.group.try(:skill_based_round_robin_enabled?)
+            trigger_sbrr ticket
+          elsif ocr_enabled && ticket.group.omni_channel_routing_enabled? && ticket.eligible_for_ocr?
+            ticket.sync_task_changes_to_ocr(nil)
+          elsif ticket.group.capping_enabled?
+            ticket.assign_tickets_to_agents
+          end
         end
       end
 
