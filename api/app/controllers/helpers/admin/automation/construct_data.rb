@@ -19,7 +19,7 @@ module Admin::Automation::ConstructData
     action_hash[:content_type] = WEBHOOK_CONTENT_TYPES_ID[action[:content_type]].to_s if action[:content_type].present?
     action_hash[:content_layout] = action[:content_layout].to_s if action[:content_layout].present?
     action_hash[:params] = webhook_content(action) if action[:content].present?
-    action[:custom_headers] = action[:custom_headers].to_hash if action[:custom_headers].present?
+    action_hash[:custom_headers] = action[:custom_headers].to_hash if action[:custom_headers].present?
     construct_auth_header(action, action_hash)
     action_hash
   end
