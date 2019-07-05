@@ -3744,8 +3744,7 @@ de:
       tickets:
         create:
           success: >-
-            Ihr Ticket wurde erstellt und eine Kopie an Ihre E-Mail-Adresse
-            verschickt.
+            Ihr Ticket wurde erstellt.
           success_cc_drop: >-
             Ihr Ticket wurde erstellt, aber folgende CC-Adressen sind durch
             Moderation weggefallen.
