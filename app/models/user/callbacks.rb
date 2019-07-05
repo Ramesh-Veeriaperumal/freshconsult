@@ -40,7 +40,8 @@ class User < ActiveRecord::Base
 
   before_destroy :save_deleted_user_info
 
-  after_commit :clear_agent_caches, on: :create, :if => :agent?
+  after_commit ->(obj) { obj.clear_agent_caches }, on: :create, if: :agent?
+  after_commit ->(obj) { obj.clear_agent_caches }, on: :destroy, if: :agent?
   after_commit :update_agent_caches, on: :update
 
   after_commit :subscribe_event_create, on: :create, :if => :allow_api_webhook?
@@ -291,7 +292,8 @@ class User < ActiveRecord::Base
   end
 
   def clear_agent_caches
-    clear_agent_list_cache 
+    clear_agent_list_cache
+    clear_agent_details_cache
     clear_agent_name_cache if @model_changes.key?(:name)
   end
 
