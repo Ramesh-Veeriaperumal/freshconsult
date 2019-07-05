@@ -19,6 +19,7 @@ class Account < ActiveRecord::Base
   include Account::ChannelUtils
   include ParserUtil
   include InlineImagesUtil
+  include Cache::Memcache::Admin::CustomData
 
   has_many_attachments
   
