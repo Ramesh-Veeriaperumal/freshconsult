@@ -171,7 +171,7 @@ module Facebook
       }
 
       def profile_name(profile_id, fan_page)
-        user = sandbox do
+        _error_msg, user, _code = sandbox do
           @fan_page = fan_page
           rest = Koala::Facebook::API.new(fan_page.access_token)
           rest.get_object(profile_id,{:fields => PROFILE_NAME_FIELDS}).symbolize_keys
