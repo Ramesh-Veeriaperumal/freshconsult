@@ -223,42 +223,31 @@
       }
     }).trigger("focusout");
 
-    jQuery('#new_helpdesk_ticket [type=submit]').click(function(event) {
-      var _form = jQuery('#new_helpdesk_ticket');
-      var validForm = _form.valid();
-      _form.find('.datepicker_popover').each(function(index) {
-        validForm = jQuery(this).valid() && validForm;
-      });
-
-      if(!validForm) {
-        event.preventDefault(event);
-        event.stopPropagation();
-        return false;
-      }
-
-      var cc_emails = _form.find('input[name="cc_emails"]')
-      var cc_emails_val = cc_emails.val()
-      if (cc_emails_val && cc_emails_val.split(",").length >= 50) {
-        alert('You can add upto 50 CC emails');
-        event.preventDefault(event);
-        event.stopPropagation();
-        return false;
-      }
-      
-      if(getFromSessionStorage('seenArticlesArray') && getFromSessionStorage('seenArticlesArray').length > 0){
-        var _seenArticles = getFromSessionStorage('seenArticlesArray').slice().splice(-50); // only taking last 50 items
-        jQuery('#meta_seen_articles').val(JSON.stringify(_seenArticles));
-        removeFromSessionStorage('seenArticlesArray');
-      }
-      _form.find("button, a.btn").attr('disabled',true);
-      <% if current_account.session_replay_enabled? && current_account.account_additional_settings.freshmarketer_linked? %>
-        if(typeof window.FM !== 'undefined') {
-          var requester_email = jQuery('#helpdesk_ticket_email').val();
-          window.FM.identify(requester_email);
-          console.log('Session identified: ' + requester_email);
+    jQuery('#new_helpdesk_ticket').bind("submit", function(){
+      var _form = jQuery(this);
+      if(_form.valid())
+      {
+        var cc_emails = _form.find('input[name="cc_emails"]')
+        var cc_emails_val = cc_emails.val()
+        if (cc_emails_val && cc_emails_val.split(",").length >= 50) {
+          alert('You can add upto 50 CC emails');
+          return false;
         }
-      <% end %>
-      _form.submit();
+        if(getFromSessionStorage('seenArticlesArray') && getFromSessionStorage('seenArticlesArray').length > 0){
+          var _seenArticles = getFromSessionStorage('seenArticlesArray').slice().splice(-50); // only taking last 50 items
+          jQuery('#meta_seen_articles').val(JSON.stringify(_seenArticles));
+          removeFromSessionStorage('seenArticlesArray');
+        }
+        _form.find("button, a.btn").attr('disabled',true);
+        <% if current_account.session_replay_enabled? && current_account.account_additional_settings.freshmarketer_linked? %>
+          if(typeof window.FM !== 'undefined') {
+            var requester_email = jQuery('#helpdesk_ticket_email').val();
+            window.FM.identify(requester_email);
+            console.log('Session identified: ' + requester_email);
+          }
+        <% end %>
+      }
     });
+
   })(jQuery);
 <% end %>
