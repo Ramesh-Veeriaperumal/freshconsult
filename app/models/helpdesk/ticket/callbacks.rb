@@ -319,7 +319,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def skip_dispatcher?
     @skip_dispatcher ||= begin
-      _skip_dispatcher = import_id || outbound_email? || !requester.valid_user? || service_task?
+      _skip_dispatcher = import_id || outbound_email? || !requester.valid_user? || service_task? || spam_or_deleted?
       Va::Logger::Automation.log('Skipping dispatcher', true) if _skip_dispatcher
       _skip_dispatcher
     end
@@ -685,6 +685,11 @@ private
     @model_changes.merge!(:round_robin_assignment => [nil, true]) if round_robin_assignment
     @model_changes.merge!(schema_less_ticket.changes) unless schema_less_ticket.nil?
     @model_changes.merge!(flexifield.before_save_changes) unless flexifield.nil?
+    if account.ticket_field_limit_increase_enabled? && ticket_field_data.present?
+      changes = ticket_field_data.attribute_changes.reject { |k,v|
+                  !TicketFieldData::NEW_DROPDOWN_COLUMN_NAMES_SET.include?(k.to_s) }
+      @model_changes.merge!(changes)
+    end
     @model_changes.merge!({ tags: [] }) if self.tags_updated #=> Hack for when only tags are updated to trigger ES publish
     @model_changes.symbolize_keys!
   end

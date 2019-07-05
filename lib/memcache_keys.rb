@@ -258,6 +258,10 @@ module MemcacheKeys
 
   UNASSOCIATED_CATEGORIES = 'UNASSOCIATED_CATEGORIES:%{account_id}'.freeze
 
+  AGENTS_USERS_VALUE = 'v1/AGENTS_USERS_VALUE:%{account_id}'.freeze
+
+  ACCOUNT_AGENT_GROUPS_ONLY_IDS = 'v1/AGENTS_GROUPS_IDS_ONLY:%{account_id}'.freeze
+
   def fetch_from_cache(key, &block)
     @cached_values = {} unless @cached_values
     return @cached_values[key] if @cached_values.include? key

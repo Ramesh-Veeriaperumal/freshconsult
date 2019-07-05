@@ -3800,6 +3800,27 @@ module Ember
       end
     end
 
+    def test_create_child_with_template_inherit_all
+      enable_adv_ticketing([:parent_child_tickets]) do
+        create_parent_child_template(1)
+        child_template_ids = @child_templates.map(&:id)
+        @child_templates.last.template_data = { 'inherit_parent' => 'all' }
+        @child_templates.last.save
+        user = get_user_with_multiple_companies
+        parent_ticket = create_ticket(requester_id: user.id)
+        parent_ticket.company = user.companies.last
+        parent_ticket.save
+        Sidekiq::Testing.inline! do
+          put :create_child_with_template, construct_params({ version: 'private', id: parent_ticket.display_id, parent_template_id: @parent_template.id, child_template_ids: child_template_ids }, false)
+        end
+        assert_response 204
+        child_ticket = Account.current.tickets.last
+        TicketConstants::CHILD_DEFAULT_FD_MAPPING.each do |field|
+          assert child_ticket.safe_send(field) == parent_ticket.safe_send(field)
+        end
+      end
+    end
+
     def test_create_child_with_invalid_parent_template
       enable_adv_ticketing([:parent_child_tickets]) do
         create_parent_child_template(1)

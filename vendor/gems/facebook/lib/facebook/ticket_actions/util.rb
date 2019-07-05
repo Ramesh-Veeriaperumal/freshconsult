@@ -138,15 +138,25 @@ module Facebook
         else
           flash[:notice] = t(:'flash.tickets.reply.success')
         end
-      end  
+      end 
+
+      def update_facebook_errors_in_schemaless_notes(error, note_id)
+        schema_less_notes = Account.current.schema_less_notes.find_by_note_id(note_id)
+        schema_less_notes.note_properties[:errors] ||= {}
+        fb_errors = { facebook: { error_code: error[:code], error_message: error[:message] } }
+        schema_less_notes.note_properties[:errors].merge!(fb_errors)
+        schema_less_notes.save!
+      end
       
       #send reply to a ticket/note
       def send_reply(fan_page, parent, note, msg_type)
-        sandbox {
+        error_msg, return_value, error_code = sandbox do
           @fan_page  = fan_page
           rest       = Koala::Facebook::API.new(fan_page.page_token)
           msg_type == POST_TYPE[:message] ? send_dm(rest, parent, note, fan_page) : send_comment(rest, parent, note)
-        }
+        end
+        update_facebook_errors_in_schemaless_notes({ code: error_code, message: error_msg }, @item.id) if error_msg.present? || error_code.present?
+        return_value
       end
 
       #reply to a comment in fb

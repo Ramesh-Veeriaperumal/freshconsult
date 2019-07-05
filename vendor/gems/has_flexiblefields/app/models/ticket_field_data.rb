@@ -84,6 +84,10 @@ class TicketFieldData < ActiveRecord::Base
     end
   end
 
+  def attribute_changes
+    @attribute_changes ||= {}
+  end
+
   class << self
     def flexiblefield_names
       @flexiblefield_names ||= column_names.grep(/ff.+/)
@@ -109,6 +113,8 @@ class TicketFieldData < ActiveRecord::Base
     end
 
     def process_while_writing(field, ff_value)
+      old_value = read_transformer.transform(self[field.column_name], field.flexifield_name)
+      attribute_changes[field.column_name.to_s] = [old_value, ff_value]
       field_type = field.field_type
       value = case field_type
               when 'custom_dropdown', 'nested_field'

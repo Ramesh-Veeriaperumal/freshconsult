@@ -119,7 +119,7 @@ module Facebook
           page.symbolize_keys!
           page_id = page[:id]
           limit_reached = false
-          #Check if Facebook Page is already assossiated with an account
+          # Check if Facebook Page is already assossiated with an account
           unless Account.current.facebook_pages.find_by_page_id(page[:id])
             total_accounts_count = fd_linked_pages[page_id].length
             all_domains = DomainMapping.domain_names(fd_linked_pages[page_id])
@@ -127,6 +127,10 @@ module Facebook
             other_pods_count = total_accounts_count - all_domains.length
             source_string.concat(" +#{other_pods_count} more #{'account'.pluralize(other_pods_count)}") if source_string.present? && other_pods_count > 0
 
+            # In case, the page has already been added to 10 accounts,
+            # we set the page_id to nil and send the page object to frontend for page association
+            # In case the user tries to associate this page, it will fail as this page object will
+            # not have page_id present
             if total_accounts_count >= FacebookGatewayConfig['max_page_limit']
               limit_reached = true
               page_id = nil
@@ -135,7 +139,7 @@ module Facebook
           page_info = if Account.current.fb_page_api_improvement_enabled? && pages_info[page[:id].to_s].present?
             pages_info[page[:id].to_s]
           else
-            graph.get_object(page[:id], :fields => PAGE_FIELDS)
+            graph.get_object(page[:id], fields: PAGE_FIELDS)
           end
           page_info    = page_info.deep_symbolize_keys
           fb_pages << {
@@ -171,7 +175,7 @@ module Facebook
       }
 
       def profile_name(profile_id, fan_page)
-        user = sandbox do
+        _error_msg, user, _code = sandbox do
           @fan_page = fan_page
           rest = Koala::Facebook::API.new(fan_page.access_token)
           rest.get_object(profile_id,{:fields => PROFILE_NAME_FIELDS}).symbolize_keys

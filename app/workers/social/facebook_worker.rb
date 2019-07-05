@@ -46,21 +46,23 @@ module Social
       end
 
       def fetch_fb_messages(fan_page)
-        sandbox do
+        _error_msg, user, _code = sandbox do
           @fan_page = fan_page
           fb_worker = Facebook::KoalaWrapper::DirectMessage.new(@fan_page)
           fb_worker.fetch_messages
         end
+        user
       end
 
       def fetch_fb_posts(fan_page)
-        sandbox do
+        _error_msg, user, _code = sandbox do
           @fan_page = fan_page
           if @fan_page.company_or_visitor?
             fb_posts = Facebook::Graph::Posts.new(@fan_page)
             fb_posts.fetch_latest_posts
           end
         end
+        user
       end
   end
 end

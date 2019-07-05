@@ -526,9 +526,9 @@
   $ref: ./email_notifications/show_and_update.yaml
 
 # Automation rules
-/automation_rules:
+/automations/{automation_type_id}/rules:
   $ref: ./automation_rules/list_and_create.yaml
-/automation_rules/{id}:
+/automations/{automation_type_id}/rules/{id}:
   $ref: ./automation_rules/crud.yaml
 #Groups Private API
 /groups:

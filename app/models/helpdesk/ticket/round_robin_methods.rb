@@ -179,7 +179,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
       ticket_count_in_redis = get_round_robin_redis(group.round_robin_agent_capping_key(user_id)).to_i
       status_ids = Helpdesk::TicketStatus.sla_timer_on_status_ids(account)
       db_count = group.tickets.visible.where('responder_id = ? and status in (?)', user_id, status_ids).count
-      if count_mismatch?(ticket_count, db_count, operation) || count_mismatch?(ticket_count_in_redis, db_count, operation)
+      if account.retrigger_lbrr_enabled? &&
+         (count_mismatch?(ticket_count, db_count, operation) ||
+          count_mismatch?(ticket_count_in_redis, db_count, operation))
         Rails.logger.debug "RR count mismatch: #{ticket_count} #{db_count} #{operation}"
         Groups::RoundRobinCapping.perform_async(group_id: group.id, reset_capping: true)
         return

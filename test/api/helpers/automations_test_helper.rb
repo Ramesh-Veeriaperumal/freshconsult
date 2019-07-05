@@ -12,7 +12,7 @@ module AutomationTestHelper
   def automation_rule_pattern(rule, list_page = false)
     automations_hash = {
         name: rule.name,
-        position: rule.position,
+        position: fetch_visual_position(rule),
         active: rule.active,
         actions: actions_pattern(rule.action_data),
         outdated: rule.outdated,
@@ -28,6 +28,12 @@ module AutomationTestHelper
       automations_hash.merge!({conditions: conditions_pattern(rule.rule_conditions, rule.rule_operator)}) if
           rule.observer_rule? || rule.dispatchr_rule? || rule.supervisor_rule?
       automations_hash
+  end
+
+  def fetch_visual_position(rule)
+    rule_association = VAConfig::ASSOCIATION_MAPPING[VAConfig::RULES_BY_ID[rule.rule_type]]
+    all_rules_positions = rule.account.safe_send("all_#{rule_association}".to_sym).pluck(:position)
+    all_rules_positions.index(rule.position) + 1
   end
 
   def meta_hash(record)

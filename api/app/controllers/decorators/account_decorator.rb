@@ -103,29 +103,47 @@ class AccountDecorator < ApiDecorator
       }
     end
 
+    def agent_types
+      @agent_types ||= begin
+        record.agent_types_from_cache.each_with_object({}) do |agent_type, mapping|
+          mapping[agent_type.agent_type_id] = agent_type.name
+        end
+      end
+    end
+
+    def group_types
+      @group_types ||= begin
+        record.group_types_from_cache.each_with_object({}) do |group_type, mapping|
+          mapping[group_type.group_type_id] = group_type.name
+        end
+      end
+    end
+
     def agents_hash
-      agents = record.users.where(:helpdesk_agent => true).select("id,name,email").find(:all, include: [:agent])
-      agents.map do |agent|
-        AgentDecorator.new(agent, group_mapping_ids: agent_groups[:agents][agent.id] || []).to_restricted_hash
+      field_service_mgmt_enabled = record.field_service_management_enabled?
+      record.account_agent_details_from_cache.map do |agent|
+        type_name =  field_service_mgmt_enabled ? agent_types[agent[AgentConstants::AGENTS_USERS_DETAILS[:agent_type]]] : :support_agent
+        data = { id: agent[AgentConstants::AGENTS_USERS_DETAILS[:user_id]] }
+        data[:contact] = {
+          name: agent[AgentConstants::AGENTS_USERS_DETAILS[:user_name]],
+          email: agent[AgentConstants::AGENTS_USERS_DETAILS[:user_email]]
+        }
+        data[:group_ids] = agent_groups[:agents][agent[AgentConstants::AGENTS_USERS_DETAILS[:user_id]]] || []
+        data.merge!(type: type_name)
       end
     end
 
     def groups_hash
       groups = record.groups_from_cache
+      group_type_map = Account.current.group_type_mapping
       groups.map do |group|
         GroupDecorator.new(group, agent_mapping_ids: agent_groups[:groups][group.id] || [],
-                                  group_type_mapping: Account.current.group_type_mapping).to_restricted_hash
+                                  group_type_mapping: group_type_map).to_restricted_hash
       end
     end
 
     def agent_groups
-      @agent_group_mapping ||= begin
-        record.agent_groups_from_cache.inject(agents: {}, groups: {}) do |mapping, ag|
-          (mapping[:agents][ag.user_id] ||= []).push(ag.group_id)
-          (mapping[:groups][ag.group_id] ||= []).push(ag.user_id)
-          mapping
-        end
-      end
+      @agent_groups ||= record.agent_groups_ids_only_from_cache
     end
 
     def include_survey_manually?

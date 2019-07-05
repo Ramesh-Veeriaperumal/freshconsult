@@ -3,6 +3,12 @@ get:
   summary: Show rule
   description: "[DRAFT Version]"
   parameters:
+    - name: automation_type_id
+      in: path
+      type: integer
+      enum: [1,3,4]
+      format: int64
+      required: true
     - $ref: '#/parameters/id'
   responses:
     200:
@@ -16,6 +22,12 @@ delete:
   summary: Delete rule
   description: Destroys the rule, will not be able to restore
   parameters:
+    - name: automation_type_id
+      in: path
+      type: integer
+      enum: [1,3,4]
+      format: int64
+      required: true
     - $ref: '#/parameters/id'
   responses:
     204:
@@ -27,6 +39,12 @@ put:
   summary: Update rule
   description: "[DRAFT Version]"
   parameters:
+    - name: automation_type_id
+      in: path
+      type: integer
+      enum: [1,3,4]
+      format: int64
+      required: true
     - $ref: '#/parameters/id'
     - name: data
       in: body

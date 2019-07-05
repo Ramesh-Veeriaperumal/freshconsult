@@ -1,4 +1,5 @@
 class Facebook::Core::Splitter
+  include Admin::Social::FacebookGatewayHelper
 
   def initialize(feed)
     @intial_feed = feed
@@ -7,10 +8,10 @@ class Facebook::Core::Splitter
 
   def split
     if @feed.entry_changes
-      #find the page using the global facebookmapping table check this code
+      # find the page using the global facebookmapping table check this code
       Rails.logger.info('Facebook::Core::Splitter')
-      mapping = Social::FacebookPageMapping.find_by_facebook_page_id(@feed.page_id)
-      account_id = mapping.account_id if mapping
+      status, gateway_fb_accounts_count, gateway_fb_accounts = gateway_facebook_page_mapping_details(@feed.page_id)
+      account_id = gateway_fb_accounts.first if status == 200 && gateway_fb_accounts_count > 0
 
       shard = ShardMapping.lookup_with_account_id(account_id)
 
