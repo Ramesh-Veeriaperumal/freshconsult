@@ -143,12 +143,18 @@ class Helpdesk::ConversationsController < ApplicationController
   end
 
   def facebook
-    if @item.save_note
-      send_facebook_reply(params[:parent_post])
-      process_and_redirect
+    error_message = check_fb_page_validity
+    if error_message.blank?
+      if @item.save_note
+        send_facebook_reply(params[:parent_post])
+        process_and_redirect
+      else
+        # Flash here
+        flash[:error] = 'failure'
+        create_error(:facebook)
+      end
     else
-      # Flash here
-      flash[:error] = "failure"
+      flash[:error] = error_message
       create_error(:facebook)
     end
   end
@@ -190,6 +196,13 @@ class Helpdesk::ConversationsController < ApplicationController
   end
 
   protected
+
+    def check_fb_page_validity
+      fb_page = @parent.fb_post.present? ? @parent.fb_post.facebook_page : nil
+      return I18n.t('social.streams.facebook_pages.engage_info.add_facebook').to_s if fb_page.blank?
+
+      fb_page.reauth_required? ? I18n.t('reauthorize_facebook').to_s : nil
+    end
 
     def verify_permission
       verify_ticket_permission(@parent)
