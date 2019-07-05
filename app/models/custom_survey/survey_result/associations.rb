@@ -88,7 +88,8 @@ class CustomSurvey::SurveyResult < ActiveRecord::Base
 
   scope :permissible_survey, lambda { |user| {
     conditions: permissible_condition(user)
-  }}
+  }
+}
 
   scope :export_data, lambda {|condition| {
     :conditions => ["`survey_results`.`survey_id` = ? and 
