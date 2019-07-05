@@ -124,4 +124,3 @@ helpdesk:
     - saml_config
     - datadog
     - freshvisuals
-    - prometheus
