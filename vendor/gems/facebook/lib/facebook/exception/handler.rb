@@ -47,7 +47,7 @@ module Facebook
                     raise_sns_notification(error_params[:error_msg][0..50], error_params) : 
                     update_error_and_notify(error_params)
               elsif facebook_user_blocked?
-                  return :fb_user_blocked
+                return [@exception.fb_error_message, :fb_user_blocked, @exception.fb_error_code]
               else
                  raise_newrelic_error(error_params)
               end 
@@ -66,9 +66,14 @@ module Facebook
           ensure
             @fan_page.log_api_hits
           end
-          
-          @exception.nil? ? return_value : :failure
-              
+
+          if @exception.present? && @exception.is_a?(Koala::Facebook::APIError)
+            [@exception.fb_error_message, :failure, @exception.fb_error_code]
+          elsif @exception.present?
+            [@exception.message, :failure, 500]
+          else
+            [nil, return_value, nil]
+          end
         end
         
         
