@@ -53,8 +53,16 @@ class Social::FacebookPage < ActiveRecord::Base
   private
 
   def can_cleanup?
-    gateway_fb_accounts_count, gateway_fb_accounts = gateway_facebook_page_mapping_details(page_id)
+    status, gateway_fb_accounts_count, gateway_fb_accounts = gateway_facebook_page_mapping_details(page_id)
+    notify_gateway_failure if status != 200
     gateway_fb_accounts_count == 1 && gateway_fb_accounts.include?(Account.current.id)
+  end
+
+  def notify_gateway_failure
+    message = OpenStruct.new(message: "Gateway couldn't be connected to verify facebook page unsubscription")
+    SocialErrorsMailer.deliver_facebook_exception(message, page_id: page_id, account_id: Account.current.id, token: access_token) unless Rails.env.test?
+    Rails.logger.warn("Gateway couldn't be connected to verify facebook page unsubscription for \n
+      facebookPage::#{page_id}, account::#{Account.current.id}, token::#{access_token}")
   end
   
   def build_stream(name, type)

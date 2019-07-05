@@ -18,6 +18,7 @@
           <table class="table table-striped">
           	<% @new_fb_pages.each do |fb_page| %>
             <% source = fb_page.delete(:source) %>
+            <% limit_reached = fb_page.delete(:limit_reached) %>
             <tr>
               <td class="fb_list_pic">
                  <div class="preview_pic">

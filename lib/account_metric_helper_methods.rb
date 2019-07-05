@@ -1,22 +1,21 @@
 module AccountMetricHelperMethods
-  MODELS_TO_IGNORE = [Account, AdminUser, AffiliateDiscount, AffiliateDiscountMapping, 
-    CustomFields::Migrations::CustomFieldData, Delayed::Job, DomainMapping, FlexifieldPicklistVal, 
-    GlobalBlacklistedIp, Helpdesk::Issue, Helpdesk::Mysql::DynamicTable, Helpdesk::NoteBody, 
-    Helpdesk::TicketBody, Helpdesk::TicketIssue, Integrations::AppBusinessRule, 
-    Integrations::Widget, Moderatorship, PasswordReset, PodShardCondition, ShardMapping, SQSPost, 
-    Subscription::Addon, Subscription::Currency, Subscription::PlanAddon, 
-    SubscriptionAffiliate, SubscriptionAnnouncement, SubscriptionPlan, 
-    Freshfone::Address, Social::FacebookPageMapping, 
-    GoogleDomain, Helpdesk::UserAccess, Helpdesk::GroupAccess, DeletedCustomers, Wf::Filter,
-    Features::Feature, Integrations::GoogleAccount]
+  MODELS_TO_IGNORE = [Account, AdminUser, AffiliateDiscount, AffiliateDiscountMapping,
+                      CustomFields::Migrations::CustomFieldData, Delayed::Job, DomainMapping,
+                      FlexifieldPicklistVal, GlobalBlacklistedIp, Helpdesk::Issue, Helpdesk::Mysql::DynamicTable,
+                      Helpdesk::NoteBody, Helpdesk::TicketBody, Helpdesk::TicketIssue, Integrations::AppBusinessRule,
+                      Integrations::Widget, Moderatorship, PasswordReset, PodShardCondition, ShardMapping, SQSPost,
+                      Subscription::Addon, Subscription::Currency, Subscription::PlanAddon,
+                      SubscriptionAffiliate, SubscriptionAnnouncement, SubscriptionPlan,
+                      Freshfone::Address, GoogleDomain, Helpdesk::UserAccess, Helpdesk::GroupAccess,
+                      DeletedCustomers, Wf::Filter, Features::Feature, Integrations::GoogleAccount].freeze
 
   MODEL_META = [
-    "facebook_tickets",
-    "facebook_notes",
-    "orphan_topics",
-    "twitter_tickets",
-    "twitter_notes"
-  ]
+    'facebook_tickets',
+    'facebook_notes',
+    'orphan_topics',
+    'twitter_tickets',
+    'twitter_notes'
+  ].freeze
 
   def build_model_data(account)
     data = []

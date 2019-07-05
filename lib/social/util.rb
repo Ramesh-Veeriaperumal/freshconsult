@@ -23,22 +23,6 @@ module Social::Util
       NewRelic::Agent.notice_error(e, :custom_params => custom_params)
     end
   end
-  
-  def select_fb_shard_and_account(page_id, &block)
-    mapping = Social::FacebookPageMapping.find_by_facebook_page_id(page_id)
-    account_id = mapping ? mapping.account_id : nil
-    if account_id
-      select_shard_and_account(account_id, &block)
-    else
-      Rails.logger.error "FacebookPageMapping not present for #{page_id}"
-      yield(nil) if block_given?
-    end
-  end
-
-  def fetch_account_id_if_exist?(data)
-    account_id = redis_key_exists?(FB_MAPPING_ENABLED) && fetch_account_id(data)
-    return account_id if account_id.present?
-  end
 
   def fetch_account_id(data)
     return if data.blank?
@@ -50,26 +34,18 @@ module Social::Util
   end
 
   def set_account_id(page_id, data)
-    account_id = fetch_account_id_if_exist?(data)
-    if account_id
-      @account_id = account_id
-    else
-      select_fb_shard_and_account(page_id) do |account|
-        @account_id = account.id
-      end
-    end
+    @account_id = fetch_account_id(data)
   end
 
   def select_shard_without_fb_mapping(page_id, data, &block)
-    account_id = fetch_account_id_if_exist?(data)
+    account_id = fetch_account_id(data)
     if account_id
       select_shard_and_account(account_id) do |account|
         yield(account)
       end
     else
-      select_fb_shard_and_account(page_id) do |account|
-        yield(account)
-      end
+      Rails.logger.error "Issues with account info for facebook page::#{page_id}"
+      yield(nil) if block_given?
     end
   end
   
