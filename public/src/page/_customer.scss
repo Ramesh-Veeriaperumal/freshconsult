@@ -966,4 +966,5 @@ ul.user_list{
 	font-size: 15px;
 	@include margin-left(12px);
 	top: 26px;
+	z-index: 99;
 }
