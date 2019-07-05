@@ -58,7 +58,6 @@ class SAAS::SubscriptionEventActions
       add_new_plan_features
       handle_custom_dasboard_launch
       handle_collab_feature
-      add_chat_feature
       disable_chat_routing unless account.has_feature?(:chat_routing)
       handle_daypass if recalculate_daypass_enabled?
     end
@@ -173,15 +172,6 @@ class SAAS::SubscriptionEventActions
 
     def remove_chat_feature
       account.revoke_feature(:chat) if !account.subscription.is_chat_plan? && account.has_feature?(:chat)
-    end
-
-    # Need to be removed once we won't support live chat
-    def add_chat_feature
-      account.add_feature(:chat) if new_plan_has_livechat? && !account.has_feature?(:chat) &&  account.chat_setting.site_id.present?
-    end
-
-    def new_plan_has_livechat?
-      account.subscription.is_chat_plan?
     end
 
     def disable_chat_routing
