@@ -684,7 +684,7 @@ class AccountsControllerTest < ActionController::TestCase
 
   def test_lead_deleted_from_autopilot_during_account_deletion
     WebMock.allow_net_connect!
-    ThirdCRM.any_instance.expects(:delete_lead).once
+    ThirdCRM.any_instance.expects(:delete_lead_from_autopilot).once
     ThirdCRM.any_instance.stubs(:associated_accounts).returns('1')
     Account.any_instance.stubs(:admin_email).returns(Faker::Internet.email)
     create_sample_account(Faker::Lorem.word, Faker::Internet.email)

@@ -8,10 +8,12 @@ class ThirdCRM
 
   ADD_LEAD_WAIT_TIME = 5
   AUTOPILOT_CREDENTIALS = {"autopilotapikey" => AUTOPILOT_TOKENS['access_key'], "Content-Type" => 'application/json'}
+  FRESHMARKETER_API_HEADERS = { 'fm-token' => ThirdCrm::FRESHMARKETER_CONFIG['access_key'], 'Content-Type' => 'application/json' }
 
   REQUEST_TYPES = {
     get: 'get',
     post: 'post',
+    put: 'put',
     delete: 'delete'
   }.freeze
 
@@ -50,6 +52,8 @@ class ThirdCRM
     cancel: 'false'
   }
 
+  FRESHMARKETER_REQUEST_TYPES = ['post', 'put', 'delete'].freeze
+
   def add_signup_data(account, options = {})
     @signup_id = options[:signup_id]
     @old_email = options[:old_email]
@@ -69,37 +73,40 @@ class ThirdCRM
       contact_data = { 'custom' => { 'string--Associated--Accounts' => remaining_account_ids } }
       update_lead(contact_data.merge('Email' => admin_email))
     else
-      delete_lead(admin_email)
+      delete_lead_from_freshmarketer(admin_email)
+      delete_lead_from_autopilot(admin_email)
     end
-  end
-
-  def associated_accounts(admin_email)
-    # Fetch list of associated accounts from dynamodb for the given email id
-    associated_accounts = AdminEmail::AssociatedAccounts.find admin_email
-
-    # Creating comma separated account ids
-
-    if associated_accounts.present?
-        @associated_account_id_list = associated_accounts.map(&:id).join(',')
-    end
-  end
-
-  def lead_info(account)
-    associated_accounts(account.admin_email)
-    account_info = user_info(account)
-    subscription_info = subscription_info(account)
-    misc = account.conversion_metric ? signup_info(account.conversion_metric) : {'default' => {}, 'custom' => {}}
-    lead_details = account_info['default'].merge(misc['default'])
-    lead_details["custom"] = account_info['custom'].merge(subscription_info['custom']).merge(misc['custom'])
-    {"contact" => lead_details}
-  end
-
-  def delete_lead(admin_email)
-    trigger_url = format(AUTOPILOT_TOKENS['delete_contact_url'], email_id: admin_email)
-    make_api(REQUEST_TYPES[:delete], trigger_url)
   end
 
   private
+
+    def associated_accounts(admin_email)
+      # Fetch list of associated accounts from dynamodb for the given email id
+      associated_accounts = AdminEmail::AssociatedAccounts.find admin_email
+      # Creating comma separated account ids
+      if associated_accounts.present?
+        @associated_account_id_list = associated_accounts.map(&:id).join(',')
+      end
+    end
+
+    def lead_info(account)
+      associated_accounts(account.admin_email)
+      account_info = user_info(account)
+      subscription_info = subscription_info(account)
+      misc = account.conversion_metric ? signup_info(account.conversion_metric) : {'default' => {}, 'custom' => {}}
+      lead_details = account_info['default'].merge(misc['default'])
+      lead_details["custom"] = account_info['custom'].merge(subscription_info['custom']).merge(misc['custom'])
+      {"contact" => lead_details}
+    end
+
+    def delete_lead_from_autopilot(admin_email)
+      trigger_url = format(AUTOPILOT_TOKENS['delete_contact_url'], email_id: admin_email)
+      make_ap_api(REQUEST_TYPES[:delete], trigger_url)
+    end
+
+    def delete_lead_from_freshmarketer(admin_email)
+      make_fm_api(REQUEST_TYPES[:delete], "#{ThirdCrm::FRESHMARKETER_CONFIG['contact_url']}/#{admin_email}")
+    end
 
     def beacon_report_info(_account, args)
       {
@@ -126,12 +133,39 @@ class ThirdCRM
     end
 
     def add_lead_to_crm(lead_record)
+      add_lead_to_freshmarketer(lead_record)
+      add_lead_to_autopilot(lead_record)
+    end
+
+    def add_lead_to_autopilot(lead_record)
       trigger_url = AUTOPILOT_TOKENS['contact_with_trigger_url']  % {:trigger_code => AUTOPILOT_TOKENS['trigger_code']}
-      make_api(REQUEST_TYPES[:post], trigger_url, lead_record.to_json)
+      make_ap_api(REQUEST_TYPES[:post], trigger_url, lead_record.to_json)
+    end
+
+    def add_lead_to_freshmarketer(lead_record)
+      # AP trigger endpoint does 2 things
+      # 1. upserts contact
+      # 2. onboards contact to the given trigger
+
+      # FM doesn't provide trigger api. So, workaround is to
+      # 1. upsert contact first
+      make_fm_api(REQUEST_TYPES[:put], ThirdCrm::FRESHMARKETER_CONFIG['contact_url'], lead_record)
+      # 2. add contact to list (set trigger to that list in the FM app).
+      lead_record['lists'] = [ThirdCrm::FRESHMARKETER_CONFIG['list_id']]
+      make_fm_api(REQUEST_TYPES[:put], ThirdCrm::FRESHMARKETER_CONFIG['contact_url'], lead_record)
     end
 
     def update_lead(lead_record)
-      make_api(REQUEST_TYPES[:post], AUTOPILOT_TOKENS["contact_url"], {"contact" => lead_record}.to_json)
+      update_lead_in_freshmarketer(lead_record)
+      update_lead_in_autopilot(lead_record)
+    end
+
+    def update_lead_in_autopilot(lead_record)
+      make_ap_api(REQUEST_TYPES[:post], AUTOPILOT_TOKENS['contact_url'], { 'contact' => lead_record }.to_json)
+    end
+
+    def update_lead_in_freshmarketer(lead_record)
+      make_fm_api(REQUEST_TYPES[:put], ThirdCrm::FRESHMARKETER_CONFIG['contact_url'], lead_record)
     end
 
     def user_info(account)
@@ -176,7 +210,7 @@ class ThirdCRM
       }
     end
 
-    def make_api(req_type, url, data={})
+    def make_ap_api(req_type, url, data = {}) 
       if req_type.to_s == REQUEST_TYPES[:get]
         RestClient.safe_send(req_type, url, AUTOPILOT_CREDENTIALS)
       elsif req_type.to_s == REQUEST_TYPES[:post]
@@ -184,5 +218,64 @@ class ThirdCRM
       elsif req_type.to_s == REQUEST_TYPES[:delete]
         RestClient.safe_send(req_type, url, AUTOPILOT_CREDENTIALS)
       end
+      Rails.logger.info("make_ap_api successful for #{url} #{req_type} account_id:#{Account.current.id}")
+    end
+
+    def make_fm_api(req_type, url, data = {})
+      if FRESHMARKETER_REQUEST_TYPES.include?(req_type)
+        begin
+          if req_type.to_s == REQUEST_TYPES[:delete]
+            RestClient.safe_send(
+              req_type,
+              url,
+              FRESHMARKETER_API_HEADERS
+            )
+          else
+            fm_payload = data.deep_dup
+            lists = fm_payload.delete('lists')
+            fm_payload = transform_for_fm(fm_payload['contact'] || fm_payload)
+            fm_payload['lists'] = lists if lists.present?
+            RestClient.safe_send(
+              req_type,
+              url,
+              fm_payload.to_json,
+              FRESHMARKETER_API_HEADERS
+            )
+          end
+        rescue RestClient::Conflict => e
+          err_msg = "Contact already present in Freshmarketer list :: FD AccountId: #{Account.current.id} err: #{e}"
+          Rails.logger.error(err_msg)
+          NewRelic::Agent.notice_error(e, description: err_msg)
+        rescue => e
+          err_response = e.response if e.instance_of?(RestClient::BadRequest)
+          err_msg = "Error sending contact data to Freshmarketer :: FD AccountId: #{Account.current.id} e.message:#{e.message} e.response:#{err_response} req_type:#{req_type} url:#{url} fm_payload:#{fm_payload.to_json}"
+          Rails.logger.error(err_msg)
+          NewRelic::Agent.notice_error(e, description: err_msg)
+        end
+        Rails.logger.info("make_fm_api successful for #{url} #{req_type} account_id:#{Account.current.id}")
+      end
+    end
+
+    def transform_for_fm(data)
+      fm_data = { 'custom_field' => {} }
+      return unless data.is_a?(Hash)
+
+      Rails.logger.info("ap_payload:#{data.to_json}")
+      transform(data.stringify_keys!, fm_data)
+      transform(data['default'].stringify_keys!, fm_data) if data.key?('default')
+      fm_data = transform(data['custom'].stringify_keys!, fm_data) if data.key?('custom')
+      Rails.logger.info("fm_payload:#{fm_data.to_json}")
+      fm_data
+    end
+
+    def transform(ap_data, fm_data)
+      ap_data.each do |ap_key, val|
+        if ThirdCrm::AP_VS_FM_DEFAULT_FIELDS.key?(ap_key)
+          fm_data[ThirdCrm::AP_VS_FM_DEFAULT_FIELDS[ap_key]] = val.to_s
+        elsif ThirdCrm::AP_VS_FM_CUSTOM_FIELDS.key?(ap_key)
+          fm_data['custom_field'][ThirdCrm::AP_VS_FM_CUSTOM_FIELDS[ap_key]] = val.to_s
+        end
+      end
+      fm_data
     end
 end
