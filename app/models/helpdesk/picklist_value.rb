@@ -112,6 +112,7 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
 
   def clear_ticket_types_cache
     return if pickable_id != Account.current.ticket_fields_from_cache.find { |x| x.name == 'ticket_type' }.id
+
     Account.current.clear_ticket_types_from_cache
   end
   

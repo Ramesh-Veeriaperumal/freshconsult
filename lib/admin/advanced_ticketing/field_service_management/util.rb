@@ -290,7 +290,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         fields_to_be_created = CUSTOM_FIELDS_TO_RESERVE.select { |x| !custom_fields_available.include?(x[:name] + "_#{Account.current.id}") }
         fields_to_be_created
       end
-    
+
       def reset_field_agent_limit
         Account.current.subscription.reset_field_agent_limit unless Account.current.field_service_management_enabled?
       end

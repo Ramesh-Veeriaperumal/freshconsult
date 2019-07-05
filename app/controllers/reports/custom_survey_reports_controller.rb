@@ -14,7 +14,7 @@ class Reports::CustomSurveyReportsController < ApplicationController
   helper_method :enable_schedule_report?
 
   attr_accessor :report_type
-  
+
   def index
     @hide_agent_reporting = Account.current.hide_agent_metrics_feature?
     @surveys = surveys_json
@@ -99,7 +99,7 @@ class Reports::CustomSurveyReportsController < ApplicationController
     def scoped_survey
       if current_user.all_tickets_permission?
         @scoped_survey_results = survey.survey_results
-      else 
+      else
         @scoped_survey_results = survey.survey_results.permissible_survey(current_user)
       end
     end

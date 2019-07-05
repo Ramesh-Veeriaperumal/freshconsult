@@ -98,7 +98,7 @@ module Settings
 
     def test_change_api_v2_limit_max
       set_default_limit
-      put :change_api_v2_limit, construct_params({ version: 'pipe', limit: 130000})
+      put :change_api_v2_limit, construct_params(version: 'pipe', limit: 130_000)
       expected = {
         old_limit: nil,
         limit: ::Pipe::HelpdeskConstants::MAX_API_LIMIT

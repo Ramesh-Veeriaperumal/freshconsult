@@ -176,13 +176,13 @@ namespace :scheduler do
         end
       end
     else
-      Rails.logger.info "Facebook Worker is already running . skipping at #{Time.zone.now}. Type #{task_name}" 
+      Rails.logger.info "Facebook Worker is already running . skipping at #{Time.zone.now}. Type #{task_name}"
     end
   end
-  
+
   def enqueue_twitter(task_name)
     class_constant = TWITTER_TASKS[task_name][:class_name].constantize
-    queue_name = class_constant.get_sidekiq_options["queue"]
+    queue_name = class_constant.get_sidekiq_options['queue']
     puts "::::Queue Name::: #{queue_name}"
     if empty_queue?(queue_name)
       Sharding.run_on_all_slaves do
@@ -191,13 +191,15 @@ namespace :scheduler do
           Account.reset_current_account
           account = twitter_handle.account
           next if account.blank? || account.launched?(:twitter_microservice)
+
           account.make_current
-          next if (!twitter_handle.capture_dm_as_ticket || check_if_premium_twitter_account?(account.id))
-          class_constant.perform_async({:twt_handle_id => twitter_handle.id}) 
+          next if !twitter_handle.capture_dm_as_ticket || check_if_premium_twitter_account?(account.id)
+
+          class_constant.perform_async(twt_handle_id: twitter_handle.id)
         end
       end
     else
-      puts "Twitter Worker is already running . skipping at #{Time.zone.now}. Type #{task_name}" 
+      puts "Twitter Worker is already running . skipping at #{Time.zone.now}. Type #{task_name}"
     end
   end
 
