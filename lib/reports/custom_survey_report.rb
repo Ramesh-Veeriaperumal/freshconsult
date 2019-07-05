@@ -48,10 +48,10 @@ module Reports::CustomSurveyReport
 
     csv_string = CSVBridge.generate do |csv|
       csv << csv_headers
-      Account.current.custom_survey_results.
-            export_data(conditions).agent_filter(agent_id).
-            group_filter(group_id).
-            find_in_batches(:include => include_array) do |sr_results|
+      Account.current.custom_survey_results.permissible_survey(User.current)
+             .export_data(conditions).agent_filter(agent_id)
+             .group_filter(group_id)
+             .find_in_batches(include: include_array) do |sr_results|
               
               size = sr_results.size
               @survey_data_exists = true if size > 0

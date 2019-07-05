@@ -108,7 +108,7 @@ class Fdadmin::FreshopsPodController < Fdadmin::DevopsMainController
         mobile_info[:facebook_signin_enabled] = account.features_included?(:facebook_signin)
         if account.freshid_org_v2_enabled?
           mobile_info[:freshid_org_v2_enabled] = "true"
-          mobile_info[:org_login_url] = account.freshid_login_url
+          mobile_info[:org_login_url] = freshid_login_url
         end
       end
     end

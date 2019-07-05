@@ -100,7 +100,7 @@ window.App = window.App || {};
       }
     },
     fieldAgentChange: function (agent) {
-      if(this.IsNumeric(agent.value) && agent.value != 0) {
+      if(this.IsNumeric(agent.value)) {
         var agents = Math.abs(agent.value);
         $(".billing-submit").attr("disabled", "true");
         this.addons['field_service_management']['value'] = agents;

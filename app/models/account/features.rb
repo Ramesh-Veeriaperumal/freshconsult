@@ -33,7 +33,7 @@ class Account < ActiveRecord::Base
     :tag_central_publish, :native_apps, :archive_tickets_api, :bot_agent_response,
     :fetch_ticket_from_ref_first, :query_from_singleton, :surveys_central_publish,
     :id_for_choices_write, :fluffy, :session_logs, :nested_field_revamp, :service_worker, :kbase_mint,
-    :freshvisual_configs, :ticket_field_limit_increase, :join_ticket_field_data, :byepass_signup_captcha,
+    :freshvisual_configs, :ticket_field_limit_increase, :join_ticket_field_data, :bypass_signup_captcha,
     :contact_field_central_publish, :company_field_central_publish, :contact_company_split,
     :simple_outreach, :disable_simple_outreach, :fsm_dashboard, :supervisor_text_field,
     :automation_rule_execution_count, :disable_field_service_management, :disable_mint_analytics,
@@ -42,7 +42,8 @@ class Account < ActiveRecord::Base
     :recalculate_daypass, :sandbox_single_branch, :fb_page_api_improvement, :attachment_redirect_expiry, 
     :solutions_agent_portal, :solutions_agent_metrics, :fuzzy_search, :delete_trash_daily,
     :prevent_fwd_email_ticket_create, :enable_wildcard_ticket_create, :check_wc_fwd, :requester_privilege,
-    :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr
+    :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr,
+    :csat_email_scan_compatibility, :mint_portal_applicable, :twitter_microservice, :quoted_text_parsing_feature
   ].freeze
 
   DB_FEATURES = [
