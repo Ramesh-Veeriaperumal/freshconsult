@@ -23,91 +23,29 @@ module Social::Util
       NewRelic::Agent.notice_error(e, :custom_params => custom_params)
     end
   end
-  
-  def select_fb_shard_and_account(page_id, &block)
-    mapping = Social::FacebookPageMapping.find_by_facebook_page_id(page_id)
-    account_id = mapping ? mapping.account_id : nil
+
+  def fetch_account_id(data)
+    return if data.blank?
+    if data.is_a?(Hash) && data['account_id'].present? && data['account_id'].to_i.nonzero?
+      data['account_id']
+    elsif !data.is_a?(Hash) && data.to_i.nonzero? # !data.is_a?(Hash) to avoid exception
+      data
+    end
+  end
+
+  def set_account_id(page_id, data)
+    @account_id = fetch_account_id(data)
+  end
+
+  def select_shard_without_fb_mapping(page_id, data, &block)
+    account_id = fetch_account_id(data)
     if account_id
-      select_shard_and_account(account_id, &block)
+      select_shard_and_account(account_id) do |account|
+        yield(account)
+      end
     else
-      Rails.logger.error "FacebookPageMapping not present for #{page_id}"
+      Rails.logger.error "Issues with account info for facebook page::#{page_id}"
       yield(nil) if block_given?
-    end
-  end
-
-  def fetch_account_id_if_exist?(data)
-    account_id = redis_key_exists?(FB_MAPPING_ENABLED) && fetch_account_id(data)
-    return account_id if account_id.present?
-  end
-
-  def fetch_account_id(data)
-    return if data.blank?
-    if data.is_a?(Hash) && data['account_id'].present? && data['account_id'].to_i.nonzero?
-      data['account_id']
-    elsif !data.is_a?(Hash) && data.to_i.nonzero? # !data.is_a?(Hash) to avoid exception
-      data
-    end
-  end
-
-  def set_account_id(page_id, data)
-    account_id = fetch_account_id_if_exist?(data)
-    if account_id
-      @account_id = account_id
-    else
-      select_fb_shard_and_account(page_id) do |account|
-        @account_id = account.id
-      end
-    end
-  end
-
-  def select_shard_without_fb_mapping(page_id, data, &block)
-    account_id = fetch_account_id_if_exist?(data)
-    if account_id
-      select_shard_and_account(account_id) do |account|
-        yield(account)
-      end
-    else
-      select_fb_shard_and_account(page_id) do |account|
-        yield(account)
-      end
-    end
-  end
-  
-  def fetch_account_id_if_exist?(data)
-    account_id = redis_key_exists?(FB_MAPPING_ENABLED) && fetch_account_id(data)
-    return account_id if account_id.present?
-  end
-
-  def fetch_account_id(data)
-    return if data.blank?
-    if data.is_a?(Hash) && data['account_id'].present? && data['account_id'].to_i.nonzero?
-      data['account_id']
-    elsif !data.is_a?(Hash) && data.to_i.nonzero? # !data.is_a?(Hash) to avoid exception
-      data
-    end
-  end
-
-  def set_account_id(page_id, data)
-    account_id = fetch_account_id_if_exist?(data)
-    if account_id
-      @account_id = account_id
-    else
-      select_fb_shard_and_account(page_id) do |account|
-        @account_id = account.id
-      end
-    end
-  end
-
-  def select_shard_without_fb_mapping(page_id, data, &block)
-    account_id = fetch_account_id_if_exist?(data)
-    if account_id
-      select_shard_and_account(account_id) do |account|
-        yield(account)
-      end
-    else
-      select_fb_shard_and_account(page_id) do |account|
-        yield(account)
-      end
     end
   end
   

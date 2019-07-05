@@ -44,10 +44,6 @@ module SocialTicketsCreationHelper
       import_company_posts false
       realtime_subscription true
     end
-
-    factory :seed_facebook_mapping, class: Social::FacebookPageMapping do
-      facebook_page_id (Time.now.to_f * 10**6).to_i
-    end
   end
 
   def twitter_conversations(options = {})

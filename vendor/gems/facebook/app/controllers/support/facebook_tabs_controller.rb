@@ -34,8 +34,8 @@ class Support::FacebookTabsController < SupportController
     end
 
     def map_facebook_page
-      facebook_page_mapping = Social::FacebookPageMapping.find(@page_info[:page_id])
-      @account_id = facebook_page_mapping.account_id if facebook_page_mapping
+      status, gateway_fb_accounts_count, gateway_fb_accounts = gateway_facebook_page_mapping_details(@feed.page_id)
+      @account_id = gateway_fb_accounts.first if status == 200 && gateway_fb_accounts_count > 0
     end
 
     def portal_for_page

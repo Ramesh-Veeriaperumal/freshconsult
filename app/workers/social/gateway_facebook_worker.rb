@@ -3,9 +3,17 @@ module Social
     include Sidekiq::Worker
     include Admin::Social::FacebookGatewayHelper
 
-    sidekiq_options queue: :gateway_facebook_page, retry: 5, backtrace: true, failures: :exhausted
+    sidekiq_options queue: :gateway_facebook_page, retry: 25, backtrace: true, failures: :exhausted
 
-    sidekiq_retry_in { 30 }
+    sidekiq_retry_in do |count|
+      reschedule_timespan = (count**4) + 5
+      reschedule_timespan > 4.hours ? 4.hours : reschedule_timespan
+    end
+
+    sidekiq_retries_exhausted do |message, error|
+      Rails.logger.error("Failed #{message['class']} with #{message['args']}: #{message['error_message']}")
+      SocialErrorsMailer.deliver_facebook_exception(error, args: message['args'], account_id: Account.current.id) unless Rails.env.test?
+    end
 
     RETRY_STATUSES = [500, 502, 504].freeze
     ACTION_METHOD_MAP = {
@@ -23,7 +31,7 @@ module Social
       def make_cud_gateway_facebook_request(args)
         case args['action']
         when 'create'
-          subscribe_realtime_with_gateway_validation(args['page_id'])
+          subscribe_realtime(args['page_id'])
           create_or_remove_gateway_facebook_record(args)
         when 'destroy'
           create_or_remove_gateway_facebook_record(args)
@@ -36,7 +44,7 @@ module Social
 
       def create_or_remove_gateway_facebook_record(args)
         page_id = args['page_id']
-        response = HttpRequestProxy.new.fetch_using_req_params(build_gateway_param_with_body(page_id), build_request_params(ACTION_METHOD_MAP[args['action']]), create_payload_option)
+        response = crud_gateway_request(page_id, ACTION_METHOD_MAP[args['action']])
         raise 'GatewayRequestError' if RETRY_STATUSES.include?(response[:status])
       rescue StandardError => e
         SocialErrorsMailer.deliver_facebook_exception(e, page_id: page_id, account_id: Account.current.id) unless Rails.env.test?
@@ -44,13 +52,7 @@ module Social
           facebookPage::#{page_id}, account::#{Account.current.id}, message::#{e.message}")
         NewRelic::Agent.notice_error(e, description: "An exception occured while performing gateway operation for #{args['action']} \n
           facebookPage::#{page_id}, account::#{Account.current.id}, message::#{e.message}}")
-      end
-
-      def subscribe_realtime_with_gateway_validation(page_id)
-        gateway_fb_accounts_count, = gateway_facebook_page_mapping_details(page_id)
-        return if gateway_fb_accounts_count > 0
-
-        subscribe_realtime(page_id)
+        raise e
       end
 
       def subscribe_realtime(page_id)

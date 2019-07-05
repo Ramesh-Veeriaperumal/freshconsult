@@ -8,8 +8,6 @@ class FacebookRealtimeTest < ActionView::TestCase
   include FacebookTestHelper
   include GroupsTestHelper
   include Facebook::Constants
-  include Redis::RedisKeys
-  include Redis::OthersRedis
 
   def teardown
     super
@@ -22,8 +20,8 @@ class FacebookRealtimeTest < ActionView::TestCase
     Facebook::Core::ReplyToComment.any_instance.unstub(:fetch_page_scope_id)
     Facebook::Core::Status.any_instance.unstub(:fetch_page_scope_id)
     Facebook::KoalaWrapper::DirectMessage.any_instance.unstub(:fetch_page_scope_id)
+    HttpRequestProxy.any_instance.unstub(:fetch_using_req_params)
     Account.unstub(:current)
-    remove_others_redis_key(FB_MAPPING_ENABLED)
   end
 
   def setup
@@ -34,8 +32,7 @@ class FacebookRealtimeTest < ActionView::TestCase
     Facebook::Core::ReplyToComment.any_instance.stubs(:fetch_page_scope_id).returns(nil)
     Facebook::Core::Status.any_instance.stubs(:fetch_page_scope_id).returns(nil)
     Facebook::KoalaWrapper::DirectMessage.any_instance.stubs(:fetch_page_scope_id).returns(nil)
-    HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(true)
-    set_others_redis_key_if_not_present(FB_MAPPING_ENABLED, true)
+    HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(status: 200, text: '{"pages": [{"id": 568, "freshdeskAccountId": "1", "facebookPageId": "532218423476440"}], "meta": {"count": 1}}')
     @account = Account.current
     @fb_page = create_test_facebook_page(@account)
     @fb_page.update_attributes(import_visitor_posts: true)

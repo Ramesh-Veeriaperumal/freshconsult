@@ -11,8 +11,6 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
   include GroupsTestHelper
   include FacebookTestHelper
   include Facebook::Constants
-  include Redis::RedisKeys
-  include Redis::OthersRedis
 
   def teardown
     Social::FacebookPage.any_instance.stubs(:unsubscribe_realtime).returns(true)
@@ -20,6 +18,7 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
     @account.facebook_pages.destroy_all
     @account.facebook_streams.destroy_all
     @account.tickets.where(source: Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook]).destroy_all
+    HttpRequestProxy.any_instance.unstub(:fetch_using_req_params)
     Account.unstub(:current)
     WebMock.disable_net_connect!
     super
@@ -29,7 +28,6 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
     Facebook::Core::Comment.any_instance.unstub(:fetch_page_scope_id)
     Facebook::Core::ReplyToComment.any_instance.unstub(:fetch_page_scope_id)
     Facebook::Core::Status.any_instance.unstub(:fetch_page_scope_id)
-    remove_others_redis_key(FB_MAPPING_ENABLED)
   end
 
   def setup
@@ -39,8 +37,7 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
     Facebook::Core::Comment.any_instance.stubs(:fetch_page_scope_id).returns(nil)
     Facebook::Core::ReplyToComment.any_instance.stubs(:fetch_page_scope_id).returns(nil)
     Facebook::Core::Status.any_instance.stubs(:fetch_page_scope_id).returns(nil)
-    set_others_redis_key_if_not_present(FB_MAPPING_ENABLED, true)
-    HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(true)
+    HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(status: 200, text: '{"pages": [{"id": 568, "freshdeskAccountId": "1", "facebookPageId": "532218423476440"}], "meta": {"count": 1}}')
     @account = Account.current || Account.first
     user = @account.nil? ? @account.users.first : create_test_account
     @fb_page = create_test_facebook_page(@account)
