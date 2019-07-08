@@ -1,17 +1,22 @@
-get:
+post:
   tags: [Solution Folder]
-  summary: List all folders
+  summary: Create a folder
   parameters:
-    - name: language
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/folder_input'
+    - name: category_id
       in: path
+      required: true
       type: integer
       format: int64
-      required: true
   responses:
     200:
       description: Success
       schema:
-        $ref: '#/definitions/solution_folder'
+        $ref: '#/definitions/folder_response'
     400:
       description: Bad Request Error
       schema:

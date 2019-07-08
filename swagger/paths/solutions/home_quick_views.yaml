@@ -6,7 +6,6 @@ get:
       in: query
       type: string
       description: Portal ID
-      required: true
     - name: language
       in: query
       type: string

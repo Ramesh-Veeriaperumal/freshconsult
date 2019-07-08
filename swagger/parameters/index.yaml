@@ -8,3 +8,9 @@ id:
   format: int64
   minimum: 1
   x-example: 10
+language:
+  name: language
+  in: path
+  type: string
+  description: Language for accounts with mutlilingual feature. Primary language will be considered when this is not specified.
+  required: true

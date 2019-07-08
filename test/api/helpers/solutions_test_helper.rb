@@ -8,6 +8,7 @@ module SolutionsTestHelper
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
     result[:visible_in_portals] = visible_in_portals_payload(category) if Account.current.has_multiple_portals? || @private_api
+    result[:language] = category.language_code if @private_api
     result
   end
 
@@ -30,7 +31,11 @@ module SolutionsTestHelper
   end
 
   def solution_folder_pattern_private(_expected_output = {}, _ignore_extra_keys = true, folder)
-    solution_folder_pattern(expected_output = {}, ignore_extra_keys = true, folder).merge!(article_order: folder.parent.article_order, position: folder.parent.position)
+    result = solution_folder_pattern({}, true, folder)
+    result[:article_order] = folder.parent.article_order
+    result[:position] = folder.parent.position
+    result[:language] = folder.language_code
+    result
   end
 
   def solution_article_pattern(expected_output = {}, _ignore_extra_keys = true, article)

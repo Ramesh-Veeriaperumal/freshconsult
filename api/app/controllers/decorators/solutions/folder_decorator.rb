@@ -1,6 +1,5 @@
 class Solutions::FolderDecorator < ApiDecorator
-  delegate :name, :description, :language_code, to: :record
-
+  delegate :name, :description, :language_code, :created_at, :updated_at, to: :record
   delegate :id, :position, :article_order, :solution_article_meta, :visibility, :customer_folders, :solution_category_meta_id, to: :parent
 
   def initialize(record, options = {})
@@ -14,14 +13,21 @@ class Solutions::FolderDecorator < ApiDecorator
       name: name,
       description: description,
       visibility: visibility,
+      category_id: solution_category_meta_id,
       created_at: created_at,
       updated_at: updated_at
     }
     response_hash[:company_ids] = company_ids if company_ids_visible?
-    response_hash[:category_id] = category_id if private_api?
-    response_hash[:position] = position if private_api?
-    response_hash[:article_order] = article_order if private_api?
+    if private_api?
+      response_hash[:position] = position
+      response_hash[:article_order] = article_order
+      response_hash[:language] = language_code
+    end
     response_hash
+  end
+
+  def index_hash
+    private_api? ? to_hash : to_hash.except(:category_id)
   end
 
   def company_ids_visible?
@@ -34,10 +40,6 @@ class Solutions::FolderDecorator < ApiDecorator
 
   def company_ids
     customer_folders.map(&:customer_id)
-  end
-
-  def category_id
-    solution_category_meta_id
   end
 
   def summary_hash

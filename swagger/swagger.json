@@ -11295,8 +11295,7 @@
             "name": "portal_id",
             "in": "query",
             "type": "string",
-            "description": "Portal ID",
-            "required": true
+            "description": "Portal ID"
           },
           {
             "name": "language",
@@ -11325,7 +11324,7 @@
         }
       }
     },
-    "/solution/categories": {
+    "/solution/categories/{language}": {
       "get": {
         "tags": [
           "Solution Category"
@@ -11337,6 +11336,9 @@
             "in": "query",
             "type": "integer",
             "description": "Categories to be fetched based on portal_id"
+          },
+          {
+            "$ref": "#/parameters/language"
           }
         ],
         "responses": {
@@ -11367,7 +11369,9 @@
             "description": "Access denied"
           }
         }
-      },
+      }
+    },
+    "/solution/categories": {
       "post": {
         "tags": [
           "Solution Category"
@@ -11402,7 +11406,7 @@
         }
       }
     },
-    "/solutions/categories/{id}": {
+    "/solutions/categories/{id}/{language}": {
       "get": {
         "tags": [
           "Solution Category"
@@ -11415,6 +11419,9 @@
             "type": "integer",
             "format": "int64",
             "required": true
+          },
+          {
+            "$ref": "#/parameters/language"
           }
         ],
         "responses": {
@@ -11445,6 +11452,9 @@
             "schema": {
               "$ref": "#/definitions/category_input"
             }
+          },
+          {
+            "$ref": "#/parameters/language"
           }
         ],
         "responses": {
@@ -11465,6 +11475,47 @@
           }
         }
       },
+      "post": {
+        "tags": [
+          "Solution Category"
+        ],
+        "summary": "Create a category translation",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/category_input"
+            }
+          },
+          {
+            "$ref": "#/parameters/language"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/category_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/solutions/categories/{id}": {
       "delete": {
         "tags": [
           "Solution Category"
@@ -11526,7 +11577,9 @@
             "description": "Access denied"
           }
         }
-      },
+      }
+    },
+    "/solutions/categories/{category_id}/folders/{language}": {
       "get": {
         "tags": [
           "Solution Folder"
@@ -11534,17 +11587,14 @@
         "summary": "List all folders in category",
         "parameters": [
           {
-            "name": "language_id",
-            "in": "query",
-            "type": "integer",
-            "format": "int64"
-          },
-          {
             "name": "category_id",
             "in": "path",
             "required": true,
             "type": "integer",
             "format": "int64"
+          },
+          {
+            "$ref": "#/parameters/language"
           }
         ],
         "responses": {
@@ -11582,21 +11632,25 @@
         "tags": [
           "Solution Folder"
         ],
-        "summary": "List all folders",
+        "summary": "List all solution folders",
         "parameters": [
           {
-            "name": "language",
-            "in": "path",
-            "type": "integer",
-            "format": "int64",
-            "required": true
+            "$ref": "#/parameters/language"
           }
         ],
         "responses": {
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/solution_folder"
+              "type": "object",
+              "properties": {
+                "folders": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/folder_response"
+                  }
+                }
+              }
             }
           },
           "400": {
@@ -11611,7 +11665,7 @@
         }
       }
     },
-    "/solutions/folders/{id}": {
+    "/solutions/folders/{id}/{language}": {
       "get": {
         "tags": [
           "Solution Folder"
@@ -11624,6 +11678,9 @@
             "type": "integer",
             "format": "int64",
             "required": true
+          },
+          {
+            "$ref": "#/parameters/language"
           }
         ],
         "responses": {
@@ -11654,6 +11711,9 @@
             "schema": {
               "$ref": "#/definitions/folder_input"
             }
+          },
+          {
+            "$ref": "#/parameters/language"
           }
         ],
         "responses": {
@@ -11674,6 +11734,47 @@
           }
         }
       },
+      "post": {
+        "tags": [
+          "Solution Folder"
+        ],
+        "summary": "Create a folder translation",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/folder_input"
+            }
+          },
+          {
+            "$ref": "#/parameters/language"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/folder_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/solutions/folders/{id}": {
       "delete": {
         "tags": [
           "Solution Folder"
@@ -23676,10 +23777,6 @@
         "description": {
           "type": "string"
         },
-        "portal_id": {
-          "type": "integer",
-          "description": "Portal to which the category to be updated belongs."
-        },
         "visible_in_portals": {
           "type": "array",
           "description": "Array of portal ids to be mapped to category. Allowed only if the account is configured with multiple portals.",
@@ -23777,6 +23874,9 @@
         "updated_at": {
           "type": "string",
           "format": "date-time"
+        },
+        "language": {
+          "type": "string"
         }
       }
     },
@@ -23873,6 +23973,9 @@
             6,
             7
           ]
+        },
+        "language": {
+          "type": "string"
         }
       }
     },
@@ -24135,6 +24238,13 @@
       "format": "int64",
       "minimum": 1,
       "x-example": 10
+    },
+    "language": {
+      "name": "language",
+      "in": "path",
+      "type": "string",
+      "description": "Language for accounts with mutlilingual feature. Primary language will be considered when this is not specified.",
+      "required": true
     }
   }
 }

@@ -24,6 +24,10 @@ module Ember
           @reorder_item
         end
 
+        def render_201_with_location(template_name: "api_solutions/categories/#{action_name}", location_url: 'api_solutions_categories_url', item_id: @item.id)
+          render template_name, location: safe_send(location_url, item_id), status: 201
+        end
+
         # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.
         wrap_parameters(*wrap_params)
     end

@@ -1,0 +1,28 @@
+get:
+  tags: [Solution Folder]
+  summary: List all folders in category
+  parameters:
+    - name: category_id
+      in: path
+      required: true
+      type: integer
+      format: int64
+    - $ref: '#/parameters/language'
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          folders:
+            type: array
+            items:
+              $ref: '#/definitions/folder_response'
+          meta:
+            $ref: '#/definitions/meta'  
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

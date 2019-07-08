@@ -63,5 +63,7 @@ module SolutionConstants
   UNTRANSLATED_ARTICLES_FIELDS = %w[portal_id language category folder status page per_page].freeze
   INSERT_SOLUTION_ACTIONS = %w[index article_content].freeze
 
+  ARTICLES_PRIVATE_CONTROLLER = 'ember/solutions/articles'.freeze
+
   SUMMARY_LIMIT = 3
 end
