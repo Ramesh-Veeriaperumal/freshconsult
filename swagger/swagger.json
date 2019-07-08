@@ -22442,6 +22442,9 @@
         "plan_cost": {
           "description": "Plan cost per agent per month",
           "type": "integer"
+        },
+        "tax_inclusive": {
+          "type": "boolean"
         }
       }
     },
