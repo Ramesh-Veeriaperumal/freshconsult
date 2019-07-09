@@ -361,11 +361,17 @@ class Ember::GroupsControllerTest < ActionController::TestCase
   end
 
   def test_get_field_agent_groups
+    Account.stubs(:current).returns(Account.first)
+    enabling_fsm_feature
+    create_field_group_type
     get :index, controller_params(version: 'private', group_type: GroupConstants::FIELD_GROUP_NAME)
     assert_response 200
   end
 
   def test_get_field_agent_groups_with_pagination
+    Account.stubs(:current).returns(Account.first)
+    enabling_fsm_feature
+    create_field_group_type
     get :index, controller_params(version: 'private', group_type: GroupConstants::FIELD_GROUP_NAME, page: 1, per_page: 5)
     assert_response 200
   end
