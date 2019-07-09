@@ -26,7 +26,7 @@ class MailboxValidatorTest < ActionView::TestCase
           'authentication' => 'plain',
           'user_name' => Faker::Internet.email,
           'password' => Faker::Lorem.word,
-          'folders_list' => {
+          'folder_list' => {
             "standard"=>["inbox"]
            },
           'application_id' => 1
@@ -219,5 +219,12 @@ class MailboxValidatorTest < ActionView::TestCase
     Net::IMAP.any_instance.unstub(:logout)
     Net::SMTP.any_instance.unstub(:enable_starttls)
     Net::SMTP.any_instance.unstub(:start)
+  end
+
+  def test_mailbox_configuration_sqs_push
+    construct_args
+    AwsWrapper::SqsV2.stubs(:send_message).returns(message_id: '1')
+  ensure
+    AwsWrapper::SqsV2.unstub(:send_message)
   end
 end
