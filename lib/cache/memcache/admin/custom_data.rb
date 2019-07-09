@@ -21,6 +21,13 @@ module Cache::Memcache::Admin::CustomData
     end
   end
 
+  def agents_details_pluck_from_cache
+    key = agent_details_pluck_memcache_key
+    fetch_from_cache(key) do
+      all_technicians.pluck_all('id', 'name', 'email', 'privileges')
+    end
+  end
+
   private
 
     def agent_users_memcache_key
@@ -29,5 +36,9 @@ module Cache::Memcache::Admin::CustomData
 
     def agent_groups_ids_only_memcache_key
       format(ACCOUNT_AGENT_GROUPS_ONLY_IDS, account_id: id)
+    end
+
+    def agent_details_pluck_memcache_key
+      format(ACCOUNT_AGENTS_DETAILS_PLUCK, account_id: id)
     end
 end

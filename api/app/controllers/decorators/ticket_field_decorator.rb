@@ -73,7 +73,13 @@ class TicketFieldDecorator < ApiDecorator
                  when 'default_ticket_type'
                    Account.current.ticket_types_from_cache.map(&:value)
                  when 'default_agent'
-                   Hash[Account.current.agents_details_from_cache.map { |c| [c.name, c.id] }]
+                   agent_data = Account.current.agents_details_pluck_from_cache.map do |c|
+                     [
+                       c[TicketFieldConstants::AGENT_DETAILS_PLUCK_MAP[:name]],
+                       c[TicketFieldConstants::AGENT_DETAILS_PLUCK_MAP[:id]]
+                     ]
+                   end
+                   Hash[agent_data]
                  when 'default_group'
                    Hash[Account.current.groups_from_cache.map { |c| [CGI.escapeHTML(c.name), c.id] }]
                  when 'default_product'

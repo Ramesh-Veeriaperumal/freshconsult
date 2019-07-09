@@ -12,6 +12,7 @@ module Cache::Memcache::User
 
   def clear_agent_details_cache
     delete_value_from_cache(format(AGENTS_USERS_VALUE, account_id: account_id))
+    delete_value_from_cache(format(ACCOUNT_AGENTS_DETAILS_PLUCK, account_id: self.account_id))
   end
 
   def clear_cache

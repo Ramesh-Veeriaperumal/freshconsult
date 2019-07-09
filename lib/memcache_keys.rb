@@ -262,6 +262,8 @@ module MemcacheKeys
 
   ACCOUNT_AGENT_GROUPS_ONLY_IDS = 'v1/AGENTS_GROUPS_IDS_ONLY:%{account_id}'.freeze
 
+  ACCOUNT_AGENTS_DETAILS_PLUCK = 'v1/ACCOUNT_AGENTS_DETAILS_PLUCK:%{account_id}'.freeze
+
   def fetch_from_cache(key, &block)
     @cached_values = {} unless @cached_values
     return @cached_values[key] if @cached_values.include? key
