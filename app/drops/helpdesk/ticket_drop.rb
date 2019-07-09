@@ -296,4 +296,6 @@ class Helpdesk::TicketDrop < BaseDrop
   def portal
     @source.portal
   end
+
+  alias_method :contact, :requester
 end
