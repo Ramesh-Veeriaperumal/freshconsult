@@ -10130,6 +10130,14 @@
           "group"
         ],
         "summary": "List all",
+        "parameters": [
+          {
+            "name": "group_type",
+            "in": "query",
+            "type": "string",
+            "description": "To load service groups and support agent groups separately"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success",
