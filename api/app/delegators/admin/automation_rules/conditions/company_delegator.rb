@@ -16,7 +16,7 @@ module Admin::AutomationRules::Conditions
         if COMPANY_FIELDS.include?(company[:field_name].to_sym)
           company_field_validation(company)
         else
-          custom_field = company_form_fields.find { |t| t.name == "cf_#{company[:field_name]}" }
+          custom_field = company_form_fields.find { |t| t.name == company[:field_name] }
           validate_case_sensitive(company, custom_field.dom_type, "company[:#{company[:field_name]}]") if company.has_key? :case_sensitive
           validate_customer_field(company, custom_field.dom_type.to_sym, 'company') if custom_field.present?
         end

@@ -20,7 +20,16 @@ module Admin::AutomationValidationHelper
         format_params[param[:field_name]] ||= []
         format_params[param[:field_name]] << param
       else
-        @invalid_attributes << param[:field_name]
+        next if param[:field_name].start_with?('cf_')
+
+        custom_field_name = 'cf_' + param[:field_name]
+        if valid_attributes.include?(custom_field_name.to_sym)
+          param[:field_name] = custom_field_name
+          format_params[param[:field_name]] ||= []
+          format_params[param[:field_name]] << param
+        else
+          @invalid_attributes << param[:field_name]
+        end
       end
     end
     format_params
