@@ -138,6 +138,9 @@ module Helpkit
     config.middleware.insert_before "Middleware::ApiThrottler",RateLimiting do |r|
       # during the ddos attack uncomment the below line
       # r.define_rule(:match => ".*", :type => :frequency, :metric => :rph, :limit => 200, :frequency_limit => 12, :per_ip => true ,:per_url => true )
+      (AppConfig[:premium_account_rate_limit] || {}).each do |account, rate_limiting_details|
+        r.define_rule( :match => rate_limiting_details[:regex], :type => :fixed, :metric => :rpm, :limit => rate_limiting_details[:limit],:per_ip => true ,:per_url => true, :include_host => true )
+      end
       r.define_rule( :match => "^/(mobihelp)/.*", :type => :fixed, :metric => :rph, :limit => 300,:per_ip => true ,:per_url => true )
       r.define_rule( :match => "^/(support\/mobihelp)/.*", :type => :fixed, :metric => :rph, :limit => 300,:per_ip => true ,:per_url => true )
       r.define_rule( :match => "^/(support(?!\/(theme)))/.*", :type => :fixed, :metric => :rpm, :limit => 30,:per_ip => true ,:per_url => true, :include_host => true )
