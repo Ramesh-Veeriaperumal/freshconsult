@@ -1,7 +1,8 @@
 module Email::PerformUtil
   include Helpdesk::Email::Constants
 
-  def fwd_wildcards_result(params, email_config, account)
+  def fwd_wildcards_result(params, email_config, account, to_email)
+    email_config = account.all_email_configs.find_by_to_email(to_email[:email]) if email_config.blank?
     fwd_wildcard_result = validate_fwd_and_wildcards(params, email_config, account)
     if fwd_wildcard_result.present? && (fwd_wildcard_result[:processed_status] == PROCESSED_EMAIL_STATUS[:wildcard_email] || fwd_wildcard_result[:processed_status] == PROCESSED_EMAIL_STATUS[:fd_fwd_email])
       { status: true, message: fwd_wildcard_result }

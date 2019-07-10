@@ -27,16 +27,9 @@ module Facebook::CentralMessageUtil
   end
 
   def build_payload(data)
-    if redis_key_exists?(FB_MAPPING_ENABLED)
-      begin
-        data['payload']['entry']['account_id'] = data['account_id'] if data['payload'].try(:[], 'entry').present? && data['account_id'].present?
-        data['payload'].to_json
-      rescue StandardError => e
-        Rails.logger.debug("parsing FB_MSG Exception :: #{e.inspect}")
-        data['payload'].to_json
-      end
-    else
-      data['payload'].to_json
-    end
+    data['payload']['entry']['account_id'] = data['account_id']
+    data['payload'].to_json
+  rescue StandardError => e
+    Rails.logger.debug("parsing FB_MSG Exception :: #{e.inspect}")
   end
 end

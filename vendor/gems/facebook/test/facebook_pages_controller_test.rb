@@ -12,4 +12,12 @@ class Admin::Social::FacebookPagesControllerTest < ActionController::TestCase
     put :enable_pages, enable: { pages: sample_fb_page.map(&:to_json) }
     assert_response 302
   end
+
+  def test_enable_pages_dummy_test
+    Facebook::Oauth::FbClient.any_instance.stubs(:authorize_url).returns(sample_callback_url)
+    Facebook::Oauth::FbClient.any_instance.stubs(:auth).returns(sample_fb_page)
+    HTTParty.stubs(:get).returns(sample_gateway_page_detail, true)
+    put :enable_pages, enable: { pages: sample_fb_page.map(&:to_json) }
+    assert_response 302
+  end
 end

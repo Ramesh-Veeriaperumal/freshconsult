@@ -17,7 +17,6 @@ GLOBAL_SQS_QUEUE_URLS = {
   :channel_framework_services     => 'channel_framework_services',
   :custom_mailbox_status          => 'custom_mailbox_status',
   :fb_message_realtime_queue      => 'sqs_facebook_messages',
-  :custom_mailbox_realtime_queue  => 'sqs_mailbox',
   :cti_call_queue                 => 'sqs_cti',
   :reports_service_export_queue   => 'sqs_reports_service_export',
   :helpdesk_reports_export_queue  => 'sqs_reports_helpkit_export',
@@ -26,6 +25,8 @@ GLOBAL_SQS_QUEUE_URLS = {
   :scheduled_ticket_export_config => 'sqs_scheduled_ticket_export',
   :fd_email_failure_reference     => 'sqs_email_failure_reference'
 }
+
+CROSS_ACCOUNT_SQS_DIRECT_URLS = [:custom_mailbox_realtime_queue]
 
 GLOBAL_SQS_QUEUE_URLS.each do |queue_name, variable_name|
   begin
@@ -66,5 +67,14 @@ SQS_V2_QUEUES.each do |queue_name|
     NewRelic::Agent.notice_error(e, {:description => "Error in fetching URL for SQS Queue #{SQS[queue_name]} - error #{e.message}"})
   end
 end unless Rails.env.development?
+
+CROSS_ACCOUNT_SQS_DIRECT_URLS.each do |queue_name|
+  if SQS[queue_name].present?
+    SQS_V2_QUEUE_URLS[queue_name.to_s] = SQS[queue_name]
+  else
+    puts "CROSS_ACCOUNT_SQS_DIRECT_URLS: yml value not found for #{queue_name}"
+  end
+end unless Rails.env.development?
+
 SQS_V2_QUEUE_URLS.freeze
 

@@ -120,6 +120,7 @@ class PartnerAdmin::AffiliatesController < ApplicationController
 
   def edit_affiliate
     affiliate = SubscriptionAffiliate.find_by_token(params["token"])
+    return render(nothing: true, status: :bad_request) unless validate_affiliate_params(params['affiliate'])
     result = affiliate.update_attributes(params["affiliate"])
     if result
       render_json_object('Affiliate successfully updated.')
@@ -325,4 +326,9 @@ class PartnerAdmin::AffiliatesController < ApplicationController
       }
     end 
 
+    def validate_affiliate_params(params)
+      params.permit(:id, :name, :rate, :token)
+    rescue ActionController::UnpermittedParameters => e
+      return false
+    end
 end

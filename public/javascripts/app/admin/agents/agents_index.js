@@ -44,7 +44,7 @@ window.App.Agents = window.App.Agents || {};
 			    	return "<b>"+ result.value + "</b><br><span class='falcon-select2-override select2_list_detail'>" + email + "</span>";
 			    },
 		      	formatSelection: function(result) {
-			    	pjaxify("/users/" + result.id);
+			    	window.location.href = "/users/" + result.id;
 			    },
 			    formatSelectionCssClass: function(result) {
 			    	return "hide";

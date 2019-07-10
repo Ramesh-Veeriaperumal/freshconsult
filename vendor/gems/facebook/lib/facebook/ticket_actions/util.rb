@@ -61,7 +61,7 @@ module Facebook
           end
         end
         user_id = user_mapping.try(:user_id)
-        user = Account.current.all_users.find(user_id) if user_id.present?
+        user = Account.current.all_users.find_by_id(user_id) if user_id.present?
         user
       end
 
@@ -130,23 +130,33 @@ module Facebook
             send_reply(fb_page, parent_post, @item, POST_TYPE[:comment])
           end          
         end
+
         if reply_sent == :fb_user_blocked
-            flash[:notice] = t(:'facebook.facebook_user_blocked')
+          flash[:notice] = t(:'facebook.facebook_user_blocked')
         elsif reply_sent == :failure
-            flash[:notice] = t(:'facebook.error_on_reply_fb')  
+          flash[:notice] = t(:'facebook.error_on_reply_fb')
         else
-            flash[:notice] = t(:'flash.tickets.reply.success') 
+          flash[:notice] = t(:'flash.tickets.reply.success')
         end
+      end  
+
+      def update_facebook_errors_in_schemaless_notes(error, note_id)        
+        schema_less_notes = Account.current.schema_less_notes.find_by_note_id(note_id)
+        schema_less_notes.note_properties[:errors] ||= {}
+        fb_errors = { facebook: { error_code: error[:code], error_message: error[:message] } }
+        schema_less_notes.note_properties[:errors].merge!(fb_errors)
+        schema_less_notes.save!
       end
- 
       
       #send reply to a ticket/note
       def send_reply(fan_page, parent, note, msg_type)
-        sandbox {
+        error_msg, return_value, error_code = sandbox do
           @fan_page  = fan_page
           rest       = Koala::Facebook::API.new(fan_page.page_token)
           msg_type == POST_TYPE[:message] ? send_dm(rest, parent, note, fan_page) : send_comment(rest, parent, note)
-        }
+        end
+        update_facebook_errors_in_schemaless_notes({ code: error_code, message: error_msg }, @item.id) if error_msg.present? || error_code.present?
+        return_value
       end
 
       #reply to a comment in fb

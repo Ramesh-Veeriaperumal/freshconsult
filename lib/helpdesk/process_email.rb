@@ -154,7 +154,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
         # check for wildcards and forward ticket create
         if account.launched?(:check_wc_fwd)
-          fw_result = fwd_wildcards_result(params, email_config, account)
+          fw_result = fwd_wildcards_result(params, email_config, account, to_email)
           return fw_result[:message] if fw_result[:status]
         end
 

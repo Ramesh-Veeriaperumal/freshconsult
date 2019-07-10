@@ -3,23 +3,28 @@ module Admin::Social::FacebookGatewayHelper
 
   def gateway_facebook_page_mapping_details(page_id)
     begin
-      response = HttpRequestProxy.new.fetch_using_req_params(build_gateway_param(page_id), build_request_params('get'), create_payload_option)
-      response_text = JSON.parse response[:text]
-      accounts_count = response_text.try(:[], 'meta').try(:[], 'count').to_i
-      accounts_detail = response_text.try(:[], 'pages') || []
-      accounts_detail = accounts_detail.map { |page| page[:id] }
-      Rails.logger.info("Recived response form Gateway for Facebook page::#{page_id}, linked accounts count::#{accounts_count}, \n
-        response status::#{response[:status]}")
-    rescue StandardError => e
       accounts_count = -1
       accounts_detail = []
+      response = HttpRequestProxy.new.fetch_using_req_params(build_gateway_param(page_id), build_request_params('get'), create_payload_option)
+      return [response[:status], accounts_count, accounts_detail] unless response[:status] == 200
+
+      response_text = JSON.parse response[:text]
+      accounts_count = response_text['meta']['count'].to_i
+      accounts_detail = response_text['pages'].map { |page| page[:id] }
+      Rails.logger.info("Recived response from Gateway for Facebook page::#{page_id}, linked accounts count::#{accounts_count}, \
+        response status::#{response[:status]}")
+    rescue StandardError => e
       SocialErrorsMailer.deliver_facebook_exception(e, page_id: page_id, account_id: Account.current.id) unless Rails.env.test?
-      Rails.logger.error("An exception happened while getting facebook accounts details from gateway: \n
+      Rails.logger.error("An exception happened while getting facebook accounts details from gateway: \
         facebookPage::#{page_id}, account::#{Account.current.id}, message::#{e.message}, backtrace::#{e.backtrace.join('\n')}")
-      NewRelic::Agent.notice_error(e, description: "An exception happened while getting facebook accounts details from gateway:, \n
+      NewRelic::Agent.notice_error(e, description: "An exception happened while getting facebook accounts details from gateway:, \
         facebookPage::#{page_id}, account::#{Account.current.id}, message::#{e.message}}")
     end
-    [accounts_count, accounts_detail]
+    [response.try(:[], :status), accounts_count, accounts_detail]
+  end
+
+  def crud_gateway_request(page_id, action)
+    HttpRequestProxy.new.fetch_using_req_params(build_gateway_param_with_body(page_id), build_request_params(action), create_payload_option)
   end
 
   def build_gateway_param(page_id)

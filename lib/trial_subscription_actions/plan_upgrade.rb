@@ -23,10 +23,6 @@ class TrialSubscriptionActions::PlanUpgrade < TrialSubscriptionActions::Base
       ADD_DATA_FEATURES
     end
 
-    def new_plan_has_livechat?
-      Subscription::FRESHCHAT_PLANS.include? trial_plan
-    end
-
     def handle_feature_drop_data
       # No features data are required to remove in trial upgrade
     end

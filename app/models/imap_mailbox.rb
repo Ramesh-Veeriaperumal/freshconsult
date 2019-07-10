@@ -31,7 +31,7 @@ class ImapMailbox < ActiveRecord::Base
         :server_port => port,
         :authentication => authentication,
         :delete_from_server => delete_from_server,
-        :folders_list => {"standard"=>["inbox"]},
+        :folder_list => {"standard"=>["inbox"]},
         :use_ssl => use_ssl,
         :to_email => email_config.to_email,
         :account_id => account_id,
