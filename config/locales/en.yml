@@ -12469,6 +12469,8 @@ en:
       outgoing_noanswer_title: "Unanswered call to %{customer}"
       incoming_noanswer_title: "Missed call from %{customer}"
       abandoned_title: "Abandoned call from %{customer}"
+      callback_noanswer_title: "Missed callback to %{customer}"
+      callback_abandoned_title: "Abandoned callback to %{customer}"
       default_title: "%{type} call with %{customer} on %{date} at %{time}"
 
       completed_description: "Conversation between %{customer} and %{agent}"
@@ -12479,6 +12481,8 @@ en:
       inprogress_description: "Conversation between %{customer} and %{agent}"
       onhold_description: "Conversation between %{customer} and %{agent}"
       default_description: "Conversation between %{customer} and %{agent}"
+      callback_noanswer_description: "Missed callback to %{customer}"
+      callback_abandoned_description: "Callback abandoned by %{customer}"
 
   tam_fields:
     health_score:

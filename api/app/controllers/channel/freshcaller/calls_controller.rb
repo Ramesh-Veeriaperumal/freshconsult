@@ -44,9 +44,9 @@ class Channel::Freshcaller::CallsController < ApiApplicationController
     end
 
     def handle_call_status_flows
-      create_or_update_ticket if incoming_missed_call? || abandoned?
+      create_or_update_ticket if (incoming_missed_call? || abandoned?) && !callback_parent?
       create_or_add_to_ticket if ongoing?
-      create_ticket_add_note if voicemail? || completed? || outgoing_missed_call?
+      create_ticket_add_note if (voicemail? || completed? || outgoing_missed_call?) && !callback_parent?
     end
 
     def create_or_update_ticket

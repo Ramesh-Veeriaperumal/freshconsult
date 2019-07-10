@@ -187,6 +187,60 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
   end
 
+  def test_update_with_callback_abandoned_scenario
+    set_auth_header
+    call_id = get_call_id
+    create_call(fc_call_id: call_id)
+    params = construct_params(convert_call_params(call_id, 'abandoned')).merge!(ancestry: get_call_id, callback: true)
+    put :update, construct_params(params)
+    result = parse_response(@response.body)
+    call = ::Freshcaller::Call.last
+    match_json(ticket_only_pattern(call))
+    assert_equal call.notable.description.present?, true
+    assert_equal call.notable.description_html.include?('Callback'), true
+    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+  end
+
+  def test_update_with_callback_voicemail_scenario
+    set_auth_header
+    call_id = get_call_id
+    create_call(fc_call_id: call_id)
+    params = construct_params(convert_call_params(call_id, 'voicemail')).merge!(ancestry: get_call_id, callback: true)
+    put :update, construct_params(params)
+    result = parse_response(@response.body)
+    call = ::Freshcaller::Call.last
+    match_json(ticket_with_note_pattern(call))
+    assert_equal call.notable.notable.description.present?, true
+    assert_equal call.notable.notable.description_html.include?('Voicemail'), true
+    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+  end
+
+  def test_update_with_callback_missed_scenario
+    set_auth_header
+    call_id = get_call_id
+    create_call(fc_call_id: call_id)
+    params = construct_params(convert_call_params(call_id, 'no-answer')).merge!(ancestry: get_call_id, callback: true)
+    put :update, construct_params(params)
+    result = parse_response(@response.body)
+    call = ::Freshcaller::Call.last
+    match_json(ticket_only_pattern(call))
+    assert_equal call.notable.description.present?, true
+    assert_equal call.notable.description_html.include?('Missed callback'), true
+    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+  end
+
+  def test_update_with_callback_parent_missed_scenario
+    set_auth_header
+    call_id = get_call_id
+    create_call(fc_call_id: call_id)
+    params = construct_params(convert_call_params(call_id, 'no-answer')).merge!(ancestry: nil, callback: true)
+    put :update, construct_params(params)
+    result = parse_response(@response.body)
+    call = ::Freshcaller::Call.last
+    match_json(create_pattern(call))
+    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+  end
+
   def test_update_with_convert_call_to_ticket_params
     ::Freshcaller::Call.destroy_all
     set_auth_header
