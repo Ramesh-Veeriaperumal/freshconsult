@@ -377,13 +377,11 @@ module Admin::AutomationDelegatorHelper
   end
 
   def contact_form_dropdown_choices(field_name)
-    contact_form.custom_contact_fields.select { |c| c.name == "cf_#{field_name}" }.map { |x|
-      x.choices.map { |t| t[:value] } }.first
+    contact_form.custom_contact_fields.select { |c| c.name == field_name }.map { |x| x.choices.map { |t| t[:value] } }.first
   end
 
   def company_form_dropdown_choices(field_name)
-    company_form.custom_company_fields.select { |c| c.name == "cf_#{field_name}" }.map { |x|
-      x.choices.map { |t| t[:value] } }.first
+    company_form.custom_company_fields.select { |c| c.name == field_name }.map { |x| x.choices.map { |t| t[:value] } }.first
   end
 
   private

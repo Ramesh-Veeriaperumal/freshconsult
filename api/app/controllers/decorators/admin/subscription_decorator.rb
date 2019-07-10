@@ -1,5 +1,8 @@
 class Admin::SubscriptionDecorator < ApiDecorator
+  include SubscriptionsHelper
+
   delegate :id, :state, :subscription_plan_id, :renewal_period, :agent_limit, :card_number, :card_expiration, :billing_address, to: :record
+  EVENT_TYPE = 'plan'.freeze
 
   def initialize(record, options)
     super(record)
@@ -43,9 +46,10 @@ class Admin::SubscriptionDecorator < ApiDecorator
       renewal_period: renewal_period,
       plan_id: subscription_plan_id,
       immediate_invoice: immediate_invoice_hash,
-      next_invoice: next_invoice_hash(next_billing_at)
+      next_invoice: next_invoice_hash(next_billing_at),
+      tax_inclusive: tax_inclusive?(record)
     }
-    plan_item = @future_subscription_estimate.estimate.line_items.detect { |item| item.entity_type == 'plan' }
+    plan_item = @future_subscription_estimate.estimate.line_items.detect { |item| item.entity_type == EVENT_TYPE }
     ret_hash[:plan_cost] = modified_amount(plan_item.unit_amount / renewal_period)
     available_credit = 0
     if @immediate_subscription_estimate['credit_note_estimates'].present?

@@ -12,6 +12,19 @@ class Solutions::CategoryDecorator < ApiDecorator
     @parent ||= record.parent
   end
 
+  def to_hash
+    response_hash = {
+      id: id,
+      name: name,
+      description: description,
+      created_at: created_at,
+      updated_at: updated_at
+    }
+    response_hash[:visible_in_portals] = visible_in_portals if portal_ids_visible?
+    response_hash[:language] = language_code if private_api?
+    response_hash
+  end
+
   def portal_ids_visible?
     @portal_ids_visible ||= Account.current.has_multiple_portals? || private_api? || channel_v2_api?
   end

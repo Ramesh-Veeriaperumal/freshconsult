@@ -1,0 +1,12 @@
+delete:
+  tags: [Solution Folder]
+  summary: Delete folder
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      required: true
+  responses:
+    204:
+      description: Success

@@ -107,7 +107,7 @@ module Admin::Automation::CustomFieldHelper
     custom_fields = []
     field_hash = []
     condition_field.each do |cf|
-      cf_name = name_without_cf(cf.name).to_sym
+      cf_name = cf.name.to_sym
       field_hash << CUSTOM_CONDITION_CONTACT_HASH[cf.field_type.to_sym].merge({ name: cf_name })
       custom_fields << cf_name
     end
@@ -119,17 +119,12 @@ module Admin::Automation::CustomFieldHelper
     custom_fields = []
     field_hash = []
     condition_field.each do |cf|
-      cf_name = name_without_cf(cf.name).to_sym
+      cf_name = cf.name.to_sym
       field_hash << CUSTOM_CONDITION_COMPANY_HASH[cf.field_type.to_sym].merge({ name: cf_name })
       custom_fields << cf_name
     end
     [custom_fields, field_hash]
   end
-
-  def name_without_cf(name)
-    name[3, name.length].to_sym
-  end
-
 
   def custom_ticket_fields
     @custom_ticket_fields ||= Account.current.ticket_fields_from_cache.select{ |tf| !tf.default }

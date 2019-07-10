@@ -315,6 +315,7 @@ api_error_messages:
   unsupported_language: "Language given in the request URL (%{language_code}) is not found. Allowed languages are %{list}"
   empty_supported_language: "No supported languages added in this account."
   invalid_twitter_handle: "Twitter handle doesn't exist"
+  reauthorization_required: "%{app_name} requires reauthorization"
   duplicate_name_in_automations: "A rule already exists with name - '%{name}'"
   case_sensitive_not_allowed: "'case_sensitive' not allowed in '%{name}'"
   # Solutions

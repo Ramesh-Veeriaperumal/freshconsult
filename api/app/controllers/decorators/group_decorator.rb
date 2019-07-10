@@ -67,7 +67,7 @@ class GroupDecorator < ApiDecorator
   end
 
   def agent_ids
-    (@agent_mapping_ids || (@agent_groups_ids && @agent_groups_ids[record.id]) || record.agent_groups.map(&:user_id) || []).compact.uniq
+    (@agent_mapping_ids || (@agent_groups_ids && @agent_groups_ids[record.id]) || record.agent_groups.pluck(:user_id) || []).compact.uniq
   end
 
   def business_hour_id

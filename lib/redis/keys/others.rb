@@ -218,9 +218,6 @@ module Redis::Keys::Others
   ANONYMOUS_ACCOUNT_SIGNUP_ENABLED = 'ANONYMOUS_ACCOUNT_SIGNUP_ENABLED'.freeze
   ONBOARDING_V2_ENABLED = 'ONBOARDING_V2_ENABLED'.freeze
 
-  # Facebook Mapping table deprecation
-  FB_MAPPING_ENABLED  = 'FB_MAPPING_ENABLED'.freeze
-
   # Proactive service
   CUSTOM_EMAIL_OUTREACH_LIMIT = "CUSTOM_EMAIL_OUTREACH_LIMIT".freeze
   #Customer segments max limit

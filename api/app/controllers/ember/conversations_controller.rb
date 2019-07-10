@@ -90,9 +90,10 @@ module Ember
       build_object
       assign_note_attributes
       @delegator_klass = 'FbReplyDelegator'
-      return unless validate_delegator(@item, note_id: @note_id)
+      fb_page = @ticket.fb_post.facebook_page
+      return unless validate_delegator(@item, note_id: @note_id, fb_page: fb_page)
       reply_sent = reply_to_fb_ticket(@delegator.note)
-      is_success = (reply_sent == :fb_user_blocked) || (reply_sent == :failure)  ? false : reply_sent
+      is_success = (reply_sent == :fb_user_blocked) || (reply_sent == :failure) ? false : reply_sent
       render_response(is_success)
     end
 

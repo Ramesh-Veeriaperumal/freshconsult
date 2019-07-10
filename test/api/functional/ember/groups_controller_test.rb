@@ -350,5 +350,35 @@ class Ember::GroupsControllerTest < ActionController::TestCase
     User.any_instance.stubs(:privilege?).with(:manage_availability).returns(false)
   end
 
+  def test_get_support_agent_groups
+    get :index, controller_params(version: 'private', group_type: GroupConstants::SUPPORT_GROUP_NAME)
+    assert_response 200
+  end
+
+  def test_get_support_agent_groups_with_pagination
+    get :index, controller_params(version: 'private', group_type: GroupConstants::SUPPORT_GROUP_NAME, page: 1, per_page: 5)
+    assert_response 200
+  end
+
+  def test_get_field_agent_groups
+    Account.stubs(:current).returns(Account.first)
+    enabling_fsm_feature
+    create_field_group_type
+    get :index, controller_params(version: 'private', group_type: GroupConstants::FIELD_GROUP_NAME)
+    assert_response 200
+  end
+
+  def test_get_field_agent_groups_with_pagination
+    Account.stubs(:current).returns(Account.first)
+    enabling_fsm_feature
+    create_field_group_type
+    get :index, controller_params(version: 'private', group_type: GroupConstants::FIELD_GROUP_NAME, page: 1, per_page: 5)
+    assert_response 200
+  end
+
+  def test_index_with_per_page_greater_than_limit
+    get :index, controller_params(version: 'private', per_page: ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page] + 4)
+    assert_response 400
+  end
 
 end

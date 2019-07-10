@@ -160,14 +160,14 @@ module HelpWidgetsTestHelper
     }
   end
 
-  def predictive_experiment_hash(widget_id, exp_id = 'test')
+  def predictive_experiment_hash(widget_id, exp_id = '4151515152505F435F415C51405F594C5C5A5F5F')
     {
       exp_id: exp_id,
       widget_ids: [widget_id]
     }
   end
 
-  def fm_widget_settings(domain, widget_id, exp_id = 'test')
+  def fm_widget_settings(domain, widget_id, exp_id = '4151515152505F435F415C51405F594C5C5A5F5F')
     {
       domain => predictive_experiment_hash(widget_id, exp_id)
     }

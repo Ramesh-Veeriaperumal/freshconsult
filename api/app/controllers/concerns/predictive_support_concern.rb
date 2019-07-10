@@ -25,125 +25,101 @@ module PredictiveSupportConcern
     end
 
     def update_freshmarketer_domain(enabled)
-      cname_domain_list = domain_list_from_param
-      db_domain_list = domain_list_from_db
-      cname_domain_list_sub = cname_domain_list.present? ? sub_domain_list(cname_domain_list) : []
-      domain_list_to_update = cname_domain_list_sub.presence || db_domain_list
-      domain_list_to_delete = enabled ? [] : db_domain_list
-
-      if db_domain_list.present? && cname_domain_list_sub.present?
-        domain_list_to_update = cname_domain_list_sub - db_domain_list unless predictive_enabled?
-        domain_list_to_delete = db_domain_list - cname_domain_list_sub
+      domain_list_to_update = begin
+        if predictive_enabled?
+          param_domain_list.blank? ? db_domain_list : param_domain_list
+        else
+          param_domain_list - db_domain_list
+        end
       end
+      domain_list_to_delete = begin
+        if enabled
+          param_domain_list.blank? ? [] : db_domain_list - param_domain_list
+        else
+          db_domain_list
+        end
+      end
+
       delete_or_update_experiment_list(domain_list_to_update, domain_list_to_delete)
     end
 
-    def domain_list_from_param
-      cname_params &&
-        cname_params[:settings] &&
-        cname_params[:settings][:predictive_support] &&
-        cname_params[:settings][:predictive_support][:domain_list]
+    def param_domain_list
+      @param_domain_list ||= begin
+        (cname_params &&
+          cname_params[:settings] &&
+          cname_params[:settings][:predictive_support] &&
+          cname_params[:settings][:predictive_support][:domain_list]) || []
+      end
     end
 
-    def domain_list_from_db
-      db_domain_exist? ? sub_domain_list(@item.settings[:predictive_support][:domain_list]) : []
-    end
-
-    def db_domain_exist?
-      @item.settings.key?(:predictive_support) &&
-        @item.settings[:predictive_support][:domain_list].present?
+    def db_domain_list
+      @db_domain_list ||= ((@item.settings[:predictive_support] && @item.settings[:predictive_support][:domain_list]) || [])
     end
 
     def delete_or_update_experiment_list(domain_list_to_update, domain_list_to_delete)
-      if domain_list_to_update.present?
-        return false unless update_experiment_hash(domain_list_to_update)
+      domain_list_to_update.each do |domain|
+        return false unless create_or_update_experiment(domain)
       end
-      if domain_list_to_delete.present?
-        return false unless delete_domain_list(domain_list_to_delete)
+      domain_list_to_delete.each do |domain|
+        return false unless delete_experiment(domain)
       end
       additional_settings.additional_settings[:widget_predictive_support] = experiment_hash
       additional_settings.save
     end
 
-    def update_experiment_hash(domain_list_to_update)
-      domain_list_to_update.each do |domain|
-        return false unless create_or_update_experiment(domain)
-      end
-    end
-
     def create_or_update_experiment(domain)
-      experiment = experiment_hash[domain]
-      if experiment
-        return false unless update_experiment(experiment)
-
-        experiment_hash[domain] = experiment
+      exp_id = experiment_hash[domain] && experiment_hash[domain][:exp_id]
+      
+      if exp_id
+        update_experiment(exp_id)
       else
-        exp_result = freshmarketer_client.create_experiment(domain)
-        return false unless exp_result.is_a?(::Hash) && exp_result[:status].presence
-
-        experiment_hash[domain] = predictive_experiment_hash(exp_result[:exp_id])
+        exp_id = freshmarketer_client.create_experiment(domain)
       end
+      return false if client_error?
+
+      experiment_hash[domain] = predictive_experiment_hash(domain, exp_id)
       true
     end
 
-    def update_experiment(experiment)
-      return false unless freshmarketer_client.enable_predictive_integration(experiment[:exp_id])
-
-      return false unless freshmarketer_client.enable_predictive_support(experiment[:exp_id])
-
-      experiment[:widget_ids] << @item.id unless experiment[:widget_ids].include?(@item.id)
-      true
+    def update_experiment(exp_id)
+      freshmarketer_client.enable_integration(exp_id) &&
+        freshmarketer_client.enable_predictive_support(exp_id)
     end
 
-    def delete_domain_list(domain_list_to_delete)
-      domain_list_to_delete.each do |domain|
-        experiment = experiment_hash[domain]
-        next if experiment.blank?
+    def delete_experiment(domain)
+      experiment = experiment_hash[domain]
+      return if experiment.blank?
 
-        experiment[:widget_ids].delete(@item.id)
-        next if experiment[:widget_ids].present?
+      experiment[:widget_ids].delete(@item.id)
+      return true if experiment[:widget_ids].present?
 
-        if additional_settings.freshmarketer_acc_id == experiment[:exp_id]
-          return false unless freshmarketer_client.disable_predictive_support
-        else
-          return false unless freshmarketer_client.disable_predictive_integration(experiment[:exp_id])
-        end
+      if additional_settings.freshmarketer_acc_id == experiment[:exp_id]
+        freshmarketer_client.disable_predictive_support
+      else
+        freshmarketer_client.disable_integration(experiment[:exp_id])
       end
-      true
-    end
-
-    def sub_domain(domain)
-      sub_dmn = domain.split('.')
-      return domain if sub_dmn.length <= 2
-
-      domain[sub_dmn[0].length + 1, domain.length]
-    end
-
-    def sub_domain_list(domain_list)
-      ret_list = []
-      domain_list.each do |domain|
-        sub_d = sub_domain(domain)
-        ret_list << sub_d unless ret_list.include?(sub_d)
-      end
-      ret_list
     end
 
     def downcase_domain_list
-      domain_list = domain_list_from_param
-      return if domain_list.blank?
+      return if param_domain_list.blank?
 
-      cname_params[:settings][:predictive_support][:domain_list] = domain_list.map!(&:downcase).uniq
+      cname_params[:settings][:predictive_support][:domain_list] = param_domain_list.map!(&:downcase).uniq
     end
 
-    def predictive_experiment_hash(exp_id)
+    def predictive_experiment_hash(domain, exp_id)
+      experiment = experiment_hash[domain]
       {
         exp_id: exp_id,
-        widget_ids: [@item.id]
+        widget_ids: ((experiment && experiment[:widget_ids] || []) << @item.id).uniq
       }
     end
 
     def freshmarketer_client
       @freshmarketer_client ||= ::Freshmarketer::Client.new
+    end
+
+    def client_error?
+      freshmarketer_client.response_code != :ok
     end
 
     def unlink_freshmarketer
@@ -156,7 +132,8 @@ module PredictiveSupportConcern
     end
 
     def predictive_support_toggled?
-      cname_params[:settings] &&
+      cname_params &&
+        cname_params[:settings] &&
         cname_params[:settings][:components] &&
         cname_params[:settings][:components].key?(:predictive_support)
     end

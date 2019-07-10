@@ -1,6 +1,27 @@
 module TestFileMethods
-
-  GLOBAL_TABLES = [ "affiliate_discount_mappings", "facebook_page_mappings", "affiliate_discounts", "shard_mappings","domain_mappings", "google_domains", "subscription_affiliates", "subscription_announcements", "delayed_jobs","features", "wf_filters", "global_blacklisted_ips", "accounts", "subscription_plans", "schema_migrations","subscription_currencies", "itil_asset_plans", "subscription_payments", "mailbox_jobs", "service_api_keys", "pod_shard_conditions","remote_integrations_mappings" ]
+  GLOBAL_TABLES = [
+    'affiliate_discount_mappings',
+    'affiliate_discounts',
+    'shard_mappings',
+    'domain_mappings',
+    'google_domains',
+    'subscription_affiliates',
+    'subscription_announcements',
+    'delayed_jobs',
+    'features',
+    'wf_filters',
+    'global_blacklisted_ips',
+    'accounts',
+    'subscription_plans',
+    'schema_migrations',
+    'subscription_currencies',
+    'itil_asset_plans',
+    'subscription_payments',
+    'mailbox_jobs',
+    'service_api_keys',
+    'pod_shard_conditions',
+    'remote_integrations_mappings'
+  ].freeze
 
   def set_autoincrement_ids
     shard_name = ActiveRecord::Base.current_shard_selection.shard.to_s

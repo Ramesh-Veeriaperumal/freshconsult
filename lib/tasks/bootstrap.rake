@@ -103,7 +103,11 @@ def set_auto_increment_id(shard_name,auto_increment)
 
 # include application tables in global_tables???? as application.account_id = 0 is a valid entry
 
-  global_tables = [ "affiliate_discount_mappings", "facebook_page_mappings", "affiliate_discounts", "shard_mappings","domain_mappings", "google_domains", "subscription_affiliates", "subscription_announcements", "delayed_jobs","features", "wf_filters", "global_blacklisted_ips", "accounts", "subscription_plans", "schema_migrations","subscription_currencies", "itil_asset_plans", "subscription_payments", "mailbox_jobs", "service_api_keys", "pod_shard_conditions","remote_integrations_mappings" ]
+  global_tables = ['affiliate_discount_mappings', 'affiliate_discounts', 'shard_mappings', 'domain_mappings',
+                   'google_domains', 'subscription_affiliates', 'subscription_announcements', 'delayed_jobs', 'features',
+                   'wf_filters', 'global_blacklisted_ips', 'accounts', 'subscription_plans', 'schema_migrations',
+                   'subscription_currencies', 'itil_asset_plans', 'subscription_payments', 'mailbox_jobs', 'service_api_keys',
+                   'pod_shard_conditions', 'remote_integrations_mappings']
   Sharding.run_on_shard(shard_name) do
     auto_increment_id = AutoIncrementId[shard_name].to_i
     (ActiveRecord::Base.connection.tables - global_tables).each do |table_name|

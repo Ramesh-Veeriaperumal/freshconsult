@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20190412095235) do
+ActiveRecord::Schema.define(:version => 20190627065945) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1391,10 +1391,6 @@ ActiveRecord::Schema.define(:version => 20190412095235) do
   end
 
   add_index "es_enabled_accounts", ["account_id"], :name => "index_es_enabled_accounts_on_account_id"
-
-  create_table "facebook_page_mappings", :primary_key => "facebook_page_id", :force => true do |t|
-    t.integer "account_id", :limit => 8, :null => false
-  end
 
   create_table "failed_helpkit_feeds", :force => true do |t|
     t.integer  "account_id",  :limit => 8,  :null => false

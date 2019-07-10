@@ -8,7 +8,7 @@ module SolutionConcern
       permitted_languages = Account.current.supported_languages
       permitted_languages += [Account.current.language] unless create?
       invalid_language = true
-      if !SolutionConstants::INSERT_SOLUTION_ACTIONS.include?(params[:action]) && !Account.current.multilingual?
+      if !insert_solution_action? && !Account.current.multilingual?
         render_request_error(:require_feature, 404, feature: 'MultilingualFeature')
       elsif destroy?
         log_and_render_404
@@ -56,5 +56,9 @@ module SolutionConcern
   def fetch_unassociated_categories(language_id)
     category_meta_ids = unassociated_categories_from_cache
     current_account.solution_categories.where(parent_id: category_meta_ids, language_id: language_id)
+  end
+
+  def insert_solution_action?
+    params[:controller] == SolutionConstants::ARTICLES_PRIVATE_CONTROLLER && SolutionConstants::INSERT_SOLUTION_ACTIONS.include?(params[:action])
   end
 end

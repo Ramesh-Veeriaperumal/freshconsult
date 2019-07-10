@@ -14,6 +14,7 @@ class AgentObserver < ActiveRecord::Observer
   
   def after_commit(agent)
     create_update_fc_agent(agent) if save_fc_agent?(agent)
+    handle_capping(agent) if agent.safe_send(:transaction_include_action?, :update)
     true
   end
 
@@ -22,7 +23,6 @@ class AgentObserver < ActiveRecord::Observer
   end
 
   def after_update(agent)
-    handle_capping(agent)
     sync_to_export_service(agent)
   end
 
@@ -50,7 +50,7 @@ class AgentObserver < ActiveRecord::Observer
     end
 
     def handle_capping(agent)
-      return unless agent.available_changed?
+      return unless agent.previous_changes.key?(:available)
       Groups::SyncAndAssignTickets.perform_async({ agent_id: agent.id })
     end
 

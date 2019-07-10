@@ -3,7 +3,6 @@ class ApiSolutions::CategoryValidation < ApiValidation
   attr_accessor :name, :description, :visible_in_portals, :portal_id
   validates :name, data_type: { rules: String, required: true }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :description, data_type: { rules: String, allow_nil: true }
-  validates :portal_id, data_type: { rules: Integer }, on: :update, if: :private_api?
 
   validates :visible_in_portals, custom_absence: { message: :multiple_portals_required }, unless: -> { Account.current.has_multiple_portals? }
   validates :visible_in_portals, data_type: { rules: Array }, array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true } }

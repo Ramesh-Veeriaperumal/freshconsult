@@ -6,6 +6,8 @@ properties:
     type: integer
   active:
     type: boolean
+  automation_type_id:
+    type: integer
   performer:
     type: object
     properties:

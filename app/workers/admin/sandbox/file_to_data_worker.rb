@@ -35,17 +35,19 @@ class Admin::Sandbox::FileToDataWorker < BaseWorker
   private
 
     def send_notification(committer)
-      data = {
-        notifier: 'notifier',
-        subject: I18n.t('sandbox.live'),
-        recipients: @account.account_managers.map(&:email).join(','),
-        additional_info: {
-          sandbox_url: Account.current.sandbox_domain,
-          account_name: @account.name,
-          admin_name: committer[:name]
+      @account.account_managers.each_slice(20) do |admins|
+        data = {
+          notifier: 'notifier',
+          subject: I18n.t('sandbox.live'),
+          recipients: admins.map(&:email).join(','),
+          additional_info: {
+            sandbox_url: Account.current.sandbox_domain,
+            account_name: @account.name,
+            admin_name: committer[:name]
+          }
         }
-      }
-      Admin::SandboxMailer.safe_send(:sandbox_mailer, @account, data)
+        Admin::SandboxMailer.safe_send(:sandbox_mailer, @account, data)
+      end
     end
 
     def destroy_tickets(sandbox_account)

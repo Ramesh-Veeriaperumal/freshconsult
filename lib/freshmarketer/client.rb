@@ -6,6 +6,8 @@ class Freshmarketer::Client
   def link_account(data, is_create = true)
     invoke_call do
       account_details = is_create ? create_account(data) : associate_account(data)
+      return if response_code != :ok
+
       acc_id = account_details['account_id']
       auth_token = account_details['authtoken']
       cdn_script = account_details['cdnscript'].html_safe
@@ -20,16 +22,24 @@ class Freshmarketer::Client
     clear_freshmarketer_hash
   end
 
-  def enable_integration
+  def enable_integration(experiment_id = freshmarketer_acc_id)
+    query_params = {
+      access_key: auth_token,
+      account_id: experiment_id
+    }
     invoke_call do
-      response = request(basic_query_params, ENABLE_INTEGRATION_URL, :post)
+      response = request(query_params, ENABLE_INTEGRATION_URL, :post)
       response['enableintegration']['result']
     end
   end
 
-  def disable_integration
+  def disable_integration(experiment_id = freshmarketer_acc_id)
+    query_params = {
+      access_key: auth_token,
+      account_id: experiment_id
+    }
     invoke_call do
-      response = request(basic_query_params, DISABLE_INTEGRATION_URL, :post)
+      response = request(query_params, DISABLE_INTEGRATION_URL, :post)
       response['disableintegration']['result'] ? '' : false
     end
   end
@@ -49,9 +59,13 @@ class Freshmarketer::Client
     end
   end
 
-  def experiment
+  def experiment(experiment_id = freshmarketer_acc_id)
+    query_params = {
+      access_key: auth_token,
+      account_id: experiment_id
+    }
     invoke_call do
-      response = request(basic_query_params, GET_EXPERIMENT_URL, :get)
+      response = request(query_params, GET_EXPERIMENT_URL, :get)
       response['expdetails']
     end
   end
@@ -100,32 +114,7 @@ class Freshmarketer::Client
     }
     invoke_call do
       response = request(query_param, CREATE_EXPERIMENT, :post, domain: domain)
-      {
-        exp_id: response['create_experiment']['result'],
-        status: true
-      }
-    end
-  end
-
-  def enable_predictive_integration(exp_id)
-    query_param = {
-      access_key: auth_token,
-      account_id: exp_id
-    }
-    invoke_call do
-      response = request(query_param, ENABLE_INTEGRATION_URL, :post)
-      response['status_code'] == 200
-    end
-  end
-
-  def disable_predictive_integration(exp_id)
-    query_param = {
-      access_key: auth_token,
-      account_id: exp_id
-    }
-    invoke_call do
-      response = request(query_param, DISABLE_INTEGRATION_URL, :post)
-      response['disableintegration']['result']
+      response['create_experiment']['result']
     end
   end
 
@@ -144,14 +133,6 @@ class Freshmarketer::Client
 
     def invoke_call
       @response_data = yield
-    rescue InternalServerErrorException
-      @response_code = :internal_server_error
-    rescue BadRequestException => e
-      @response_code = ERROR_CODE_MAPPING[e.message]
-    rescue ForbiddenRequestException => e
-      @response_code = ERROR_CODE_MAPPING[e.message]
-    rescue ResourceConflictException => e
-      @response_code = ERROR_CODE_MAPPING[e.message]
     end
 
     def request(params, path, request_type, payload = {})
@@ -198,15 +179,16 @@ class Freshmarketer::Client
         @response_code = :ok
       else
         Rails.logger.error "Freshmarketer API Error Response :: #{response}"
-        case response_msg['messagecode']
+        error_code = response_msg['messagecode']
+        case error_code
         when 'E403IT', 'E409IC', 'E403IS', 'E403SR'
-          raise ForbiddenRequestException, response_msg['messagecode']
+          @response_code = ERROR_CODE_MAPPING[error_code]
         when 'E400EA'
-          raise ResourceConflictException, response_msg['messagecode']
+          @response_code = ERROR_CODE_MAPPING[error_code]
         when 'E400IE', 'E400II', 'E400ID', 'E404IR', 'E409IU'
-          raise BadRequestException, response_msg['messagecode']
+          @response_code = ERROR_CODE_MAPPING[error_code]
         else
-          raise InternalServerErrorException, 'Something went wrong'
+          @response_code = :internal_server_error
         end
       end
       response_msg

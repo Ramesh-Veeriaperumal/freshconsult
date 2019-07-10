@@ -4,7 +4,7 @@ class Reports::CustomSurveyReportsController < ApplicationController
   include ApplicationHelper
   include HelpdeskReports::Helper::ControllerMethods
 
-  before_filter :check_custom_survey_feature, :set_report_type
+  before_filter :check_custom_survey_feature, :set_report_type, :scoped_survey
   before_filter :set_selected_tab, :report_filter_data_hash, :only => :index
   before_filter :save_report_max_limit?,                     :only   => [:save_reports_filter]
   before_filter :construct_report_filters,                   :only   => [:save_reports_filter,:update_reports_filter]
@@ -41,7 +41,7 @@ class Reports::CustomSurveyReportsController < ApplicationController
   end
 
   def remarks
-    remarks = survey.survey_results.remarks(default_params)
+    remarks = @scoped_survey_results.remarks(default_params)
     question_column_name = survey_question.column_name
     remarks = filter remarks, question_column_name
     remarks = remarks.paginate(:page => current_page, :per_page => page_limit)
@@ -95,6 +95,14 @@ class Reports::CustomSurveyReportsController < ApplicationController
   end
 
   private
+
+    def scoped_survey
+      if current_user.all_tickets_permission?
+        @scoped_survey_results = survey.survey_results
+      else
+        @scoped_survey_results = survey.survey_results.permissible_survey(current_user)
+      end
+    end
 
     def check_custom_survey_feature
       return if current_account.new_survey_enabled?
@@ -157,7 +165,7 @@ class Reports::CustomSurveyReportsController < ApplicationController
       survey_questions.each do|question|
         condition = default_params
         condition[:column_name] = question.column_name
-        results = survey.survey_results.aggregate(condition)
+        results = @scoped_survey_results.aggregate(condition)
         results = filter results
         results, unanswered = format_aggregate_report results
         question_wise_result = {
@@ -198,7 +206,12 @@ class Reports::CustomSurveyReportsController < ApplicationController
 
     def unanswered_handles
       date_range = {:start_date => start_date , :end_date => end_date}
-      handles = survey.survey_handles.unrated(date_range)
+      if current_user.all_tickets_permission?
+        handles = survey.survey_handles.unrated(date_range)
+      else
+        permissible_condition = CustomSurvey::SurveyResult.permissible_condition(current_user)
+        handles = survey.survey_handles.where(permissible_condition).unrated(date_range)
+      end
       handles = filter handles
       handles.count
     end
@@ -206,14 +219,14 @@ class Reports::CustomSurveyReportsController < ApplicationController
     def agent_wise_report_data
       condition = default_params
       condition[:column_name] = survey_question.column_name
-      results = survey.survey_results.agent_wise(condition)
+      results = @scoped_survey_results.agent_wise(condition)
       generate_report(results)
     end
 
     def group_wise_report_data
       condition = default_params
       condition[:column_name] = survey_question.column_name
-      results = survey.survey_results.group_wise(condition)
+      results = @scoped_survey_results.group_wise(condition)
       generate_report(results)
     end
 

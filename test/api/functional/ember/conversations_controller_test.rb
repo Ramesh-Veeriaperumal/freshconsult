@@ -802,6 +802,35 @@ module Ember
       ticket.update_attributes(spam: false)
     end
 
+    def test_facebook_reauth_required_error
+      ticket = create_ticket_from_fb_post(true)
+      fb_page = ticket.fb_post.facebook_page
+      fb_page.reauth_required = true
+      fb_page.save
+      fb_comment_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook']).first
+      put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
+      sample_put_comment = { 'id' => put_comment_id }
+      Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)
+      params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id }
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      Koala::Facebook::API.any_instance.unstub(:put_comment)
+      assert_response 400
+      match_json([bad_request_error_pattern('fb_page_id', :reauthorization_required, app_name: 'Facebook')])
+    ensure
+      fb_page.reauth_required = false
+      fb_page.save
+    end
+
+    def test_facebook_reply_without_facebook_page
+      ticket = create_ticket_from_fb_post(true, true)
+      fb_page = ticket.fb_post.facebook_page
+      fb_page.destroy
+      params_hash = { body: Faker::Lorem.paragraph }
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('fb_page_id', :invalid_facebook_id)])
+    end
+
     def test_tweet_dm_reply_with_attachment_ids
       attachment_ids = []
       file = fixture_file_upload('files/image4kb.png', 'image/png')

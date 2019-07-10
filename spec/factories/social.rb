@@ -12,10 +12,6 @@ if Rails.env.test?
       realtime_subscription true
     end
 
-    factory :facebook_mapping, :class => Social::FacebookPageMapping do
-      facebook_page_id "532218423476440"
-    end
-
     factory :twitter_handle, :class => Social::TwitterHandle do
       screen_name "TestingGnip"
       capture_dm_as_ticket true

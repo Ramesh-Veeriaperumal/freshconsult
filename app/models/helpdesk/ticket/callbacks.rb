@@ -685,7 +685,7 @@ private
     @model_changes.merge!(:round_robin_assignment => [nil, true]) if round_robin_assignment
     @model_changes.merge!(schema_less_ticket.changes) unless schema_less_ticket.nil?
     @model_changes.merge!(flexifield.before_save_changes) unless flexifield.nil?
-    if ticket_field_data.present?
+    if account.ticket_field_limit_increase_enabled? && ticket_field_data.present?
       changes = ticket_field_data.attribute_changes.reject { |k,v|
                   !TicketFieldData::NEW_DROPDOWN_COLUMN_NAMES_SET.include?(k.to_s) }
       @model_changes.merge!(changes)

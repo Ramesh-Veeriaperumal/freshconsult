@@ -234,6 +234,403 @@ module Ember
         assert old_id_order.slice(10, old_id_order.size) == new_id_order.slice(10, new_id_order.size)
       end
 
+      def test_index_with_incorrect_credentials
+        @controller.stubs(:api_current_user).raises(ActiveSupport::MessageVerifier::InvalidSignature)
+        get :index, controller_params(version: 'private')
+        assert_response 401
+        assert_equal request_error_pattern(:credentials_required).to_json, response.body
+      ensure
+        @controller.unstub(:api_current_user)
+      end
+
+      def test_index_without_view_solutions_privilege
+        User.any_instance.stubs(:privilege?).with(:view_solutions).returns(false)
+        get :index, controller_params(version: 'private')
+        assert_response 403
+        match_json(request_error_pattern(:access_denied))
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_index_without_access
+        user = add_new_user(@account, active: true)
+        login_as(user)
+        get :index, controller_params(version: 'private')
+        assert_response 403
+        match_json(request_error_pattern(:access_denied))
+        @admin = get_admin
+        login_as(@admin)
+      end
+
+      def test_index_with_language_without_multilingual_feature
+        allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
+        Account.any_instance.stubs(:features).returns(allowed_features)
+        get :index, controller_params(version: 'private', language: @account.language)
+        match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
+        assert_response 404
+      ensure
+        Account.any_instance.unstub(:features)
+      end
+
+      def test_index_with_invalid_language
+        get :index, controller_params(version: 'private', language: 'test')
+        assert_response 404
+        match_json(request_error_pattern(:language_not_allowed, code: 'test', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
+      end
+
+      def test_index_with_primary_language
+        get :index, controller_params(version: 'private', language: @account.language)
+        assert_response 200
+      end
+
+      def test_index_with_supported_language
+        languages = @account.supported_languages + ['primary']
+        language = @account.supported_languages.first
+        create_solution_folder(languages)
+        get :index, controller_params(version: 'private', language: language)
+        assert_response 200
+      end
+
+      def test_category_folders_with_incorrect_credentials
+        @controller.stubs(:api_current_user).raises(ActiveSupport::MessageVerifier::InvalidSignature)
+        get :category_folders, controller_params(version: 'private', id: 0)
+        assert_response 401
+        assert_equal request_error_pattern(:credentials_required).to_json, response.body
+      ensure
+        @controller.unstub(:api_current_user)
+      end
+
+      def test_category_folders_without_view_solutions_privilege
+        User.any_instance.stubs(:privilege?).with(:view_solutions).returns(false)
+        get :category_folders, controller_params(version: 'private', id: 0)
+        assert_response 403
+        match_json(request_error_pattern(:access_denied))
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_category_folders_without_access
+        user = add_new_user(@account, active: true)
+        login_as(user)
+        get :category_folders, controller_params(version: 'private', id: 0)
+        assert_response 403
+        match_json(request_error_pattern(:access_denied))
+        @admin = get_admin
+        login_as(@admin)
+      end
+
+      def test_category_folders_with_language_without_multilingual_feature
+        allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
+        Account.any_instance.stubs(:features).returns(allowed_features)
+        get :category_folders, controller_params(version: 'private', id: 0, language: @account.language)
+        match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
+        assert_response 404
+      ensure
+        Account.any_instance.unstub(:features)
+      end
+
+      def test_category_folders_with_invalid_language
+        get :category_folders, controller_params(version: 'private', id: 0, language: 'test')
+        assert_response 404
+        match_json(request_error_pattern(:language_not_allowed, code: 'test', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
+      end
+
+      def test_category_folders_with_primary_language
+        category = create_category(portal_id: Account.current.main_portal.id)
+        get :category_folders, controller_params(version: 'private', id: category.id, language: @account.language)
+        assert_response 200
+      end
+
+      def test_category_folders_with_supported_language
+        languages = @account.supported_languages + ['primary']
+        language = @account.supported_languages.first
+        category = create_category(portal_id: Account.current.main_portal.id, lang_codes: languages)
+        get :category_folders, controller_params(version: 'private', id: category.id, language: language)
+        assert_response 200
+      end
+
+      def test_show_with_incorrect_credentials
+        @controller.stubs(:api_current_user).raises(ActiveSupport::MessageVerifier::InvalidSignature)
+        get :show, controller_params(version: 'private', id: 1)
+        assert_response 401
+        assert_equal request_error_pattern(:credentials_required).to_json, response.body
+      ensure
+        @controller.unstub(:api_current_user)
+      end
+
+      def test_show_without_view_solutions_privilege
+        User.any_instance.stubs(:privilege?).with(:view_solutions).returns(false)
+        get :show, controller_params(version: 'private', id: 1)
+        assert_response 403
+        match_json(request_error_pattern(:access_denied))
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_show_without_access
+        user = add_new_user(@account, active: true)
+        login_as(user)
+        get :show, controller_params(version: 'private', id: 1)
+        assert_response 403
+        match_json(request_error_pattern(:access_denied))
+        @admin = get_admin
+        login_as(@admin)
+      end
+
+      def test_show_for_non_existant_folder
+        get :show, controller_params(version: 'private', id: 0)
+        assert_response 404
+      end
+
+      def test_show
+        folder = create_solution_folder
+        get :show, controller_params(version: 'private', id: folder.id)
+        assert_response 200
+        match_json(solution_folder_pattern_private(folder.primary_folder))
+      end
+
+      def test_show_with_language_without_multilingual_feature
+        allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
+        Account.any_instance.stubs(:features).returns(allowed_features)
+        get :show, controller_params(version: 'private', id: 0, language: @account.language)
+        match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
+        assert_response 404
+      ensure
+        Account.any_instance.unstub(:features)
+      end
+
+      def test_show_with_invalid_language
+        get :show, controller_params(version: 'private', id: 0, language: 'test')
+        assert_response 404
+        match_json(request_error_pattern(:language_not_allowed, code: 'test', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
+      end
+
+      def test_show_with_primary_language
+        folder_meta = create_solution_folder
+        get :show, controller_params(version: 'private', id: folder_meta.id, language: @account.language)
+        assert_response 200
+        match_json(solution_folder_pattern_private(folder_meta.primary_folder))
+      end
+
+      def test_show_with_supported_language
+        languages = @account.supported_languages + ['primary']
+        language = @account.supported_languages.first
+        folder_meta = create_solution_folder(languages)
+        folder = folder_meta.safe_send("#{language}_folder")
+        get :show, controller_params(version: 'private', id: folder_meta.id, language: language)
+        assert_response 200
+        match_json(solution_folder_pattern_private(folder))
+      end
+
+      def test_update_with_incorrect_credentials
+        @controller.stubs(:api_current_user).raises(ActiveSupport::MessageVerifier::InvalidSignature)
+        put :update, construct_params(version: 'private', id: 1)
+        assert_response 401
+        assert_equal request_error_pattern(:credentials_required).to_json, response.body
+      ensure
+        @controller.unstub(:api_current_user)
+      end
+
+      def test_update_without_manage_solutions_privilege
+        User.any_instance.stubs(:privilege?).with(:manage_solutions).returns(false)
+        put :update, construct_params(version: 'private', id: 1)
+        assert_response 403
+        match_json(request_error_pattern(:access_denied))
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_update_without_access
+        user = add_new_user(@account, active: true)
+        login_as(user)
+        put :update, construct_params(version: 'private', id: 1)
+        assert_response 403
+        match_json(request_error_pattern(:access_denied))
+        @admin = get_admin
+        login_as(@admin)
+      end
+
+      def test_update_for_non_existant_folder
+        put :update, construct_params(version: 'private', id: 0)
+        assert_response 404
+      end
+
+      def test_update_with_invalid_field
+        folder = create_solution_folder
+        put :update, construct_params(version: 'private', id: folder.id, test: 'test')
+        assert_response 400
+        match_json([bad_request_error_pattern('test', :invalid_field)])
+      end
+
+      def test_update
+        folder = create_solution_folder
+        updated_name = 'Updated ' + folder.primary_folder.name
+        put :update, construct_params(version: 'private', id: folder.id, name: updated_name)
+        assert_response 200
+        folder.reload
+        assert_equal updated_name, folder.primary_folder.name
+        match_json(solution_folder_pattern_private(folder.primary_folder))
+      end
+
+      def test_update_with_language_without_multilingual_feature
+        allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
+        Account.any_instance.stubs(:features).returns(allowed_features)
+        put :update, construct_params(version: 'private', id: 0, language: @account.language)
+        match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
+        assert_response 404
+      ensure
+        Account.any_instance.unstub(:features)
+      end
+
+      def test_update_with_invalid_language
+        put :update, construct_params(version: 'private', id: 0, language: 'test')
+        assert_response 404
+        match_json(request_error_pattern(:language_not_allowed, code: 'test', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
+      end
+
+      def test_update_with_primary_language
+        folder = create_solution_folder
+        updated_name = 'Updated ' + folder.primary_folder.name
+        put :update, construct_params(version: 'private', id: folder.id, name: updated_name, language: @account.language)
+        assert_response 200
+        folder.reload
+        assert_equal updated_name, folder.primary_folder.name
+        match_json(solution_folder_pattern_private(folder.primary_folder))
+      end
+
+      def test_update_with_supported_language
+        languages = @account.supported_languages + ['primary']
+        language = @account.supported_languages.first
+        folder_meta = create_solution_folder(languages)
+        folder = folder_meta.safe_send("#{language}_folder")
+        updated_name = 'Updated ' + folder.name
+        put :update, construct_params(version: 'private', id: folder_meta.id, name: updated_name, language: language)
+        assert_response 200
+        folder.reload
+        assert_equal updated_name, folder.name
+        match_json(solution_folder_pattern_private(folder))
+      end
+
+      def test_create_with_incorrect_credentials
+        @controller.stubs(:api_current_user).raises(ActiveSupport::MessageVerifier::InvalidSignature)
+        post :create, construct_params(version: 'private', id: 0)
+        assert_response 401
+        assert_equal request_error_pattern(:credentials_required).to_json, response.body
+      ensure
+        @controller.unstub(:api_current_user)
+      end
+
+      def test_create_without_manage_solutions_privilege
+        User.any_instance.stubs(:privilege?).with(:manage_solutions).returns(false)
+        post :create, construct_params(version: 'private', id: 0)
+        assert_response 403
+        match_json(request_error_pattern(:access_denied))
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_create_without_access
+        user = add_new_user(@account, active: true)
+        login_as(user)
+        post :create, construct_params(version: 'private', id: 0)
+        assert_response 403
+        match_json(request_error_pattern(:access_denied))
+        @admin = get_admin
+        login_as(@admin)
+      end
+
+      def test_create_with_invalid_field
+        category = create_category(portal_id: Account.current.main_portal.id)
+        post :create, construct_params({ version: 'private', id: category.id }, test: 'test')
+        assert_response 400
+        match_json([bad_request_error_pattern('test', :invalid_field)])
+      end
+
+      def test_create
+        category = create_category(portal_id: Account.current.main_portal.id)
+        post :create, construct_params({ version: 'private', id: category.id }, name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone])
+        assert_response 201
+        folder = @account.solution_folder_meta.last
+        match_json(solution_folder_pattern_private(folder.primary_folder))
+      end
+
+      def test_create_with_language_without_multilingual_feature
+        folder = create_solution_folder
+        Account.any_instance.stubs(:multilingual?).returns(false)
+        post :create, construct_params({ version: 'private', id: folder.id, language: @account.language }, name: Faker::Name.name, description: Faker::Lorem.paragraph)
+        match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
+        assert_response 404
+      ensure
+        Account.any_instance.unstub(:multilingual?)
+      end
+
+      def test_create_with_invalid_language
+        folder = create_solution_folder
+        post :create, construct_params({ version: 'private', id: folder.id, language: 'test' }, name: Faker::Name.name, description: Faker::Lorem.paragraph)
+        assert_response 404
+        match_json(request_error_pattern(:language_not_allowed, code: 'test', list: @account.supported_languages.sort.join(', ')))
+      end
+
+      def test_create_with_primary_language
+        folder = create_solution_folder
+        post :create, construct_params({ version: 'private', id: folder.id, language: @account.language }, name: Faker::Name.name, description: Faker::Lorem.paragraph)
+        assert_response 404
+        match_json(request_error_pattern(:language_not_allowed, code: @account.language, list: @account.supported_languages.sort.join(', ')))
+      end
+
+      def test_create_with_supported_language
+        languages = @account.supported_languages + ['primary']
+        language = @account.supported_languages.first
+        folder_meta = create_solution_folder
+        post :create, construct_params({ version: 'private', id: folder_meta.id, language: language }, name: Faker::Name.name, description: Faker::Lorem.paragraph)
+        assert_response 201
+        match_json(solution_folder_pattern_private(folder_meta.safe_send("#{language}_folder")))
+      end
+
+      def test_destroy_with_incorrect_credentials
+        @controller.stubs(:api_current_user).raises(ActiveSupport::MessageVerifier::InvalidSignature)
+        delete :destroy, controller_params(version: 'private', id: 0)
+        assert_response 401
+        assert_equal request_error_pattern(:credentials_required).to_json, response.body
+      ensure
+        @controller.unstub(:api_current_user)
+      end
+
+      def test_destroy_without_manage_solutions_privilege
+        User.any_instance.stubs(:privilege?).with(:manage_solutions).returns(false)
+        delete :destroy, controller_params(version: 'private', id: 0)
+        assert_response 403
+        match_json(request_error_pattern(:access_denied))
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_destroy_without_access
+        user = add_new_user(@account, active: true)
+        login_as(user)
+        delete :destroy, controller_params(version: 'private', id: 0)
+        assert_response 403
+        match_json(request_error_pattern(:access_denied))
+        @admin = get_admin
+        login_as(@admin)
+      end
+
+      def test_destroy_with_language
+        delete :destroy, controller_params(version: 'private', id: 0, language: @account.language)
+        assert_response 404
+      end
+
+      def test_destroy_for_non_existant_folder
+        put :update, controller_params(version: 'private', id: 0)
+        assert_response 404
+      end
+
+      def test_destroy
+        folder_meta = create_solution_folder
+        delete :destroy, controller_params(version: 'private', id: folder_meta.id)
+        assert_response 204
+      end
+
       private
 
         def populate_folders(category_meta)
@@ -267,6 +664,11 @@ module Ember
               }
             ]
           }
+        end
+
+        def create_solution_folder(lang_codes = nil)
+          category = create_category(portal_id: Account.current.main_portal.id, lang_codes: lang_codes)
+          create_folder(visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: category.id, lang_codes: lang_codes)
         end
     end
   end

@@ -358,7 +358,7 @@ class UserSessionsController < ApplicationController
       @current_user.deliver_admin_activation
       #SubscriptionNotifier.send_later(:deliver_welcome, current_account)
       flash[:notice] = t('signup_complete_activate_info')
-      if current_account.launched?(:onboarding_v2)
+      if current_account.launched?(:onboarding_v2) && !current_account.anonymous_account?
         redirect_to '/a/getstarted'
       else
         redirect_to '/'

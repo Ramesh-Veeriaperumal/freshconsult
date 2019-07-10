@@ -28,7 +28,7 @@ class HelpWidgetsController < ApiApplicationController
       unless toggle_predictive_support(cname_params[:settings][:components][:predictive_support])
         return render_request_error(:error_in_predictive_support, 400)
       end
-    elsif domain_list_from_param
+    elsif param_domain_list.present?
       update_freshmarketer_domain(true)
     end
     cname_params[:settings] = @item.settings.deep_merge(cname_params[:settings].symbolize_keys) if cname_params[:settings].present?

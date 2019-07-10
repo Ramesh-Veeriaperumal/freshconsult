@@ -43,8 +43,9 @@ module Ember
 
       def scoper
         return current_account.groups if create?                  
-        return accessible_groups if !api_current_user.privilege?(:admin_tasks)        
-        return current_account.groups_from_cache
+        return accessible_groups if !api_current_user.privilege?(:admin_tasks)
+        return current_account.groups.support_agent_groups if params[:group_type].nil? || (params[:group_type].present? && params[:group_type] == GroupConstants::SUPPORT_GROUP_NAME)
+        return current_account.groups.field_agent_groups if params[:group_type].present? && params[:group_type] == GroupConstants::FIELD_GROUP_NAME
       end
 
       def accessible_groups     
@@ -73,13 +74,13 @@ module Ember
       end    
 
       def load_objects(items = scoper)
-        items.sort_by { |x| x.name.downcase }
         @items_count = items.count if private_api?
-        @items = items
+        @items = paginate_items(items)
       end
 
       def render_success_response
         render 'show', status: 201 
-      end 
+      end
+
   end
 end

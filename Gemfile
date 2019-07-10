@@ -374,3 +374,5 @@ gem 'safe_yaml', "1.0.4"
 gem 'codecov', :require => false, :group => :test
 
 gem 'ejson', :require => false
+
+gem 'optar', git: 'git@github.com:freshdesk/optar.git', tag: 'v1.1.1'

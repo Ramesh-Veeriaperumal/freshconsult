@@ -33,16 +33,25 @@ class ImapMailboxObserver < ActiveRecord::Observer
   private
 
   def commit_on_create mailbox
-    $sqs_mailbox.send_message(mailbox.imap_params("create")) unless Rails.env.test?
+    unless Rails.env.test?
+      sqs_resp = AwsWrapper::SqsV2.send_message("custom_mailbox_realtime_queue", mailbox.imap_params("create")) 
+      Rails.logger.info "Mailbox Observer: commit_on_create: Sqs send message response: #{sqs_resp.inspect}"
+    end
   end
 
   def commit_on_update mailbox
-    $sqs_mailbox.send_message(mailbox.imap_params("update")) unless Rails.env.test?
+    unless Rails.env.test?
+      sqs_resp = AwsWrapper::SqsV2.send_message("custom_mailbox_realtime_queue", mailbox.imap_params("update")) 
+      Rails.logger.info "Mailbox Observer: commit_on_update: Sqs send message response: #{sqs_resp.inspect}"
+    end
   end
 
   def commit_on_destroy mailbox
-    params = {:mailbox_attributes => {:id => mailbox.id, :account_id => mailbox.account_id, :application_id => imap_application_id},:action => "delete"}
-    $sqs_mailbox.send_message(params.to_json) unless Rails.env.test?
+    unless Rails.env.test?
+      params = {:mailbox_attributes => {:id => mailbox.id, :account_id => mailbox.account_id, :application_id => imap_application_id}, :action => "delete"}
+      sqs_resp = AwsWrapper::SqsV2.send_message("custom_mailbox_realtime_queue", params.to_json) 
+      Rails.logger.info "Mailbox Observer: commit_on_destroy: Sqs send message response: #{sqs_resp.inspect}"
+    end
   end
 
   def check_error_and_send_mail mailbox

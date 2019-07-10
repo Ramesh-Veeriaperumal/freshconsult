@@ -1,0 +1,20 @@
+post:
+  tags: [Solution Category]
+  summary: Create a category
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/category_input'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/category_response'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

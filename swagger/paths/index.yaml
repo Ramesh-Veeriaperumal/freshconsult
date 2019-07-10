@@ -526,9 +526,9 @@
   $ref: ./email_notifications/show_and_update.yaml
 
 # Automation rules
-/automation_rules:
+/automations/{automation_type_id}/rules:
   $ref: ./automation_rules/list_and_create.yaml
-/automation_rules/{id}:
+/automations/{automation_type_id}/rules/{id}:
   $ref: ./automation_rules/crud.yaml
 #Groups Private API
 /groups:
@@ -617,16 +617,24 @@
   $ref: ./solutions/home_summary.yaml
 /solutions/home/quick_views:
   $ref: ./solutions/home_quick_views.yaml
+/solution/categories/{language}:
+  $ref: ./solutions/category/index.yaml
 /solution/categories:
-  $ref: ./solutions/category/list_and_create.yaml
+  $ref: ./solutions/category/create.yaml
+/solutions/categories/{id}/{language}:
+  $ref: ./solutions/category/translate_show_update.yaml
 /solutions/categories/{id}:
-  $ref: ./solutions/category/crud.yaml
+  $ref: ./solutions/category/delete.yaml
 /solutions/categories/{category_id}/folders:
-  $ref: ./solutions/folder/create_index.yaml
+  $ref: ./solutions/folder/create.yaml
+/solutions/categories/{category_id}/folders/{language}:
+  $ref: ./solutions/folder/category_folders.yaml
 /solutions/folders/{language}:
-  $ref: ./solutions/folder/list.yaml
+  $ref: ./solutions/folder/index.yaml
+/solutions/folders/{id}/{language}:
+  $ref: ./solutions/folder/translate_show_update.yaml
 /solutions/folders/{id}:
-  $ref: ./solutions/folder/read_update_delete.yaml
+  $ref: ./solutions/folder/delete.yaml
 /solutions/folders/{folder_id}/articles:
   $ref: ./solutions/article/list_and_create.yaml
 /solutions/articles/{id}:

@@ -1,1 +1,1 @@
-JSON.generate(@item.to_hash.merge!(category_id: @item.category_id))
+JSON.generate(@item.to_hash)

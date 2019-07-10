@@ -179,7 +179,8 @@ module LeaderboardTestHelper
       [
         {
           'name' => 'mvp', 'id' => 1, 'rank_holders' => group_agents_score.reverse.first(50).collect.with_index do |s, i|
-            { 'score' => s[1].to_f, 'id' => 'mvp_' + (i + 1).to_s, 'rank' => i + 1, 'user_id' => s[0], 'avatar' => nil }
+            user = User.find(s[0])
+            { 'score' => s[1].to_f, 'id' => 'mvp_' + (i + 1).to_s, 'rank' => i + 1, 'user_id' => s[0], 'avatar' => user.avatar ? AttachmentDecorator.new(user.avatar).to_hash : nil }
           end
         },
         { 'name' => 'love', 'id' => 2, 'rank_holders' => [] },
