@@ -9,7 +9,7 @@ class Agent < ActiveRecord::Base
     :whitelisted, :external_id, :preferences, :helpdesk_agent, :privileges, :extn, 
     :parent_id, :unique_external_id, :last_login_at, :current_login_at, :last_seen_at, 
     :blocked_at, :deleted_at]
-
+  AGENT_LOGGEDIN_ACTION = [:logged_in].freeze
   acts_as_api
 
   api_accessible :central_publish do |s|
@@ -39,6 +39,7 @@ class Agent < ActiveRecord::Base
   end
 
   def model_changes_for_central
+    return {} if login_logout_action?
     changes = @model_changes.merge(self.user_changes || {})
     changes.merge!({
       "single_access_token" => ["*", "*"]
@@ -55,6 +56,14 @@ class Agent < ActiveRecord::Base
       end
     end
     changes
+  end
+
+  def misc_changes_for_central
+    login_logout_action? ? @misc_changes : {}
+  end
+
+  def current_user_id_for_central
+    user_id if login_logout_action?
   end
 
   def relationship_with_account
@@ -77,5 +86,12 @@ class Agent < ActiveRecord::Base
       id: agent_type,
       name: AgentType.agent_type_name(agent_type)
     }
+  end
+
+  def login_logout_action?
+    unless @misc_changes.nil?
+      return @misc_changes.key?(AGENT_LOGGEDIN_ACTION[0])? true : false
+    end
+    false
   end
 end
