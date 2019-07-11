@@ -11,9 +11,11 @@ class Signup < ActivePresenter::Base
   
   before_validation :create_global_shard
 
+  before_save :set_signup_initiated
   after_save :make_user_current, :set_i18n_locale, :populate_seed_data
   after_save :create_freshid_org_and_account, if: :freshid_signup_allowed?
   after_save :create_freshid_v2_org_and_account, if: :freshid_v2_signup_allowed?
+  after_save :set_signup_completed
 
   MAX_ACCOUNTS_COUNT = 10
   #Using this as the version of Rack::Utils we are using doesn't have support for 429
@@ -202,6 +204,8 @@ class Signup < ActivePresenter::Base
       shard_mapping.save!
     end
 
+    # * * * POD Operation Methods Ends * * *
+
     def freshid_v1_signup?
       @freshid_v1_signup ||= (fresh_id_version == Freshid::V2::Constants::FRESHID_SIGNUP_VERSION_V1)
     end
@@ -213,5 +217,13 @@ class Signup < ActivePresenter::Base
     def set_freshid_signup_version
       account.fresh_id_version = fresh_id_version
     end
-    # * * * POD Operation Methods Ends * * *
+
+    def set_signup_initiated
+      account.signup_started
+    end
+
+    def set_signup_completed
+      account.signup_completed
+    end
+
 end
