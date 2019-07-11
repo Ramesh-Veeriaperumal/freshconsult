@@ -123,13 +123,6 @@ module ApiBotTestHelper
     Account.current.unstub(:bot_email_channel_enabled?)
   end
 
-  def enable_bot_agent_response
-    Account.current.stubs(:bot_agent_response_enabled?).returns(true)
-    yield
-  ensure
-    Account.current.unstub(:bot_agent_response_enabled?)
-  end
-
   def offboard_bot
     @bots = {}
     @bots[:onboarded] = false

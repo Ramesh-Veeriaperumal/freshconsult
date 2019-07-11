@@ -1392,11 +1392,11 @@ module Ember
       @bot = @account.main_portal.bot || create_test_email_bot({email_channel: true})
       @account.reload
       ticket = create_ticket({source: 1})
-      ::Bot::Emailbot::SendBotEmail.jobs.clear
+      ::Freddy::AgentSuggestArticles.jobs.clear
       args = {'ticket_id' => ticket.id, 'user_id' => ticket.requester_id, 'is_webhook' => ticket.freshdesk_webhook?, 'sla_args' => {'sla_on_background' => ticket.sla_on_background, 'sla_state_attributes' => ticket.sla_state_attributes, 'sla_calculation_time' => ticket.sla_calculation_time.to_i}}
       disptchr = Helpdesk::Dispatcher.new(args)
       disptchr.execute
-      assert_equal 1, ::Bot::Emailbot::SendBotEmail.jobs.size
+      assert_equal 1, ::Freddy::AgentSuggestArticles.jobs.size
       Bot.any_instance.unstub(:email_channel)
       Account.any_instance.unstub(:support_bot_configured?)
       Account.any_instance.unstub(:bot_email_channel_enabled?)
@@ -1405,53 +1405,87 @@ module Ember
     def test_create_from_email_without_bot_configuration
       Account.any_instance.stubs(:support_bot_configured?).returns(false)
       Account.any_instance.stubs(:bot_email_channel_enabled?).returns(true)
+      Account.any_instance.stubs(:agent_articles_suggest_enabled?).returns(false)
       ticket = create_ticket({source: 1})
-      ::Bot::Emailbot::SendBotEmail.jobs.clear
+      ::Freddy::AgentSuggestArticles.jobs.clear
       args = {'ticket_id' => ticket.id, 'user_id' => ticket.requester_id, 'is_webhook' => ticket.freshdesk_webhook?, 'sla_args' => {'sla_on_background' => ticket.sla_on_background, 'sla_state_attributes' => ticket.sla_state_attributes, 'sla_calculation_time' => ticket.sla_calculation_time.to_i}}
       disptchr = Helpdesk::Dispatcher.new(args)
       disptchr.execute
-      assert_equal 0, ::Bot::Emailbot::SendBotEmail.jobs.size
+      assert_equal 0, ::Freddy::AgentSuggestArticles.jobs.size
       Account.any_instance.unstub(:support_bot_configured?)
       Account.any_instance.unstub(:bot_email_channel_enabled?)
+      Account.any_instance.unstub(:agent_articles_suggest_enabled?)
     end
 
     def test_create_from_email_without_email_bot_channel
       Account.any_instance.stubs(:support_bot_configured?).returns(true)
       Account.any_instance.stubs(:bot_email_channel_enabled?).returns(false)
+      Account.any_instance.stubs(:agent_articles_suggest_enabled?).returns(false)
       ticket = create_ticket({source: 1})
-      ::Bot::Emailbot::SendBotEmail.jobs.clear
+      ::Freddy::AgentSuggestArticles.jobs.clear
       args = {'ticket_id' => ticket.id, 'user_id' => ticket.requester_id, 'is_webhook' => ticket.freshdesk_webhook?, 'sla_args' => {'sla_on_background' => ticket.sla_on_background, 'sla_state_attributes' => ticket.sla_state_attributes, 'sla_calculation_time' => ticket.sla_calculation_time.to_i}}
       disptchr = Helpdesk::Dispatcher.new(args)
       disptchr.execute
-      assert_equal 0, ::Bot::Emailbot::SendBotEmail.jobs.size
+      assert_equal 0, ::Freddy::AgentSuggestArticles.jobs.size
       Account.any_instance.unstub(:support_bot_configured?)
       Account.any_instance.unstub(:bot_email_channel_enabled?)
+      Account.any_instance.unstub(:agent_articles_suggest_enabled?)
     end
 
     def test_create_from_other_source_with_bot_configuration
       Account.any_instance.stubs(:support_bot_configured?).returns(true)
       Account.any_instance.stubs(:bot_email_channel_enabled?).returns(true)
+      Account.any_instance.stubs(:agent_articles_suggest_enabled?).returns(false)
       ticket = create_ticket
-      ::Bot::Emailbot::SendBotEmail.jobs.clear
+      ::Freddy::AgentSuggestArticles.jobs.clear
       args = {'ticket_id' => ticket.id, 'user_id' => ticket.requester_id, 'is_webhook' => ticket.freshdesk_webhook?, 'sla_args' => {'sla_on_background' => ticket.sla_on_background, 'sla_state_attributes' => ticket.sla_state_attributes, 'sla_calculation_time' => ticket.sla_calculation_time.to_i}}
       disptchr = Helpdesk::Dispatcher.new(args)
       disptchr.execute
-      assert_equal 0, ::Bot::Emailbot::SendBotEmail.jobs.size
+      assert_equal 0, ::Freddy::AgentSuggestArticles.jobs.size
       Account.any_instance.unstub(:support_bot_configured?)
       Account.any_instance.unstub(:bot_email_channel_enabled?)
+      Account.any_instance.unstub(:agent_articles_suggest_enabled?)
     end
 
     def test_spam_ticket_with_bot_configuration
       Account.any_instance.stubs(:support_bot_configured?).returns(true)
       Account.any_instance.stubs(:bot_email_channel_enabled?).returns(true)
       ticket = create_ticket({spam: true})
-      ::Bot::Emailbot::SendBotEmail.jobs.clear
+      ::Freddy::AgentSuggestArticles.jobs.clear
       args = {'ticket_id' => ticket.id, 'user_id' => ticket.requester_id, 'is_webhook' => ticket.freshdesk_webhook?, 'sla_args' => {'sla_on_background' => ticket.sla_on_background, 'sla_state_attributes' => ticket.sla_state_attributes, 'sla_calculation_time' => ticket.sla_calculation_time.to_i}}
       disptchr = Helpdesk::Dispatcher.new(args)
       disptchr.execute
-      assert_equal 0, ::Bot::Emailbot::SendBotEmail.jobs.size
+      assert_equal 0, ::Freddy::AgentSuggestArticles.jobs.size
       Account.any_instance.unstub(:support_bot_configured?)
       Account.any_instance.unstub(:bot_email_channel_enabled?)
+    end
+
+    def test_create_agent_suggest_articles
+      Account.any_instance.stubs(:support_bot_configured?).returns(false)
+      Account.any_instance.stubs(:agent_articles_suggest_enabled?).returns(true)
+      @bot = @account.main_portal.bot || create_test_email_bot(email_channel: true)
+      @account.reload
+      ticket = create_ticket(source: 1)
+      ::Freddy::AgentSuggestArticles.jobs.clear
+      args = { 'ticket_id' => ticket.id, 'user_id' => ticket.requester_id, 'is_webhook' => ticket.freshdesk_webhook?, 'sla_args' => { 'sla_on_background' => ticket.sla_on_background, 'sla_state_attributes' => ticket.sla_state_attributes, 'sla_calculation_time' => ticket.sla_calculation_time.to_i } }
+      disptchr = Helpdesk::Dispatcher.new(args)
+      disptchr.execute
+      assert_equal 1, ::Freddy::AgentSuggestArticles.jobs.size
+      Account.any_instance.unstub(:support_bot_configured?)
+      Account.any_instance.unstub(:agent_articles_suggest_enabled?)
+    end
+
+    def test_create_without_agent_suggest_articles
+      Account.any_instance.stubs(:support_bot_configured?).returns(false)
+      Account.any_instance.stubs(:agent_articles_suggest_enabled?).returns(false)
+      ticket = create_ticket(source: 1)
+      ::Freddy::AgentSuggestArticles.jobs.clear
+      args = { 'ticket_id' => ticket.id, 'user_id' => ticket.requester_id, 'is_webhook' => ticket.freshdesk_webhook?, 'sla_args' => { 'sla_on_background' => ticket.sla_on_background, 'sla_state_attributes' => ticket.sla_state_attributes, 'sla_calculation_time' => ticket.sla_calculation_time.to_i } }
+      disptchr = Helpdesk::Dispatcher.new(args)
+      disptchr.execute
+      assert_equal 0, ::Freddy::AgentSuggestArticles.jobs.size
+      Account.any_instance.unstub(:support_bot_configured?)
+      Account.any_instance.unstub(:agent_articles_suggest_enabled?)
     end
 
     def test_execute_scenario_without_params

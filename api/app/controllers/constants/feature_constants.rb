@@ -22,4 +22,5 @@ module FeatureConstants
   ARCHIVE_API = :archive_tickets_api
   AUTOFAQ = :autofaq
   HELP_WIDGET = :help_widget
+  AGENT_ARTICLES_SUGGEST = :agent_articles_suggest
 end

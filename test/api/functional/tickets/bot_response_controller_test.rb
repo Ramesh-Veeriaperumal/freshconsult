@@ -20,7 +20,7 @@ class Tickets::BotResponseControllerTest < ActionController::TestCase
 
   ###############BOT EMAIL CHANNEL################ 
   def test_bot_response_update
-    enable_bot_email_channel do
+    enable_agent_articles_suggest do
       params_hash = { articles: [{ id: @bot_responses.suggested_articles.keys[0].to_i, agent_feedback: false }] }
       put :update, construct_params(version: 'private', id: @ticket.display_id, bot_response: params_hash)
       assert_response 200
@@ -29,7 +29,7 @@ class Tickets::BotResponseControllerTest < ActionController::TestCase
   end
 
   def test_bot_response_update_empty
-    enable_bot_email_channel do
+    enable_agent_articles_suggest do
       params_hash = {}
       put :update, construct_params(version: 'private', id: @ticket.display_id, bot_response: params_hash)
       assert_response 400
@@ -38,7 +38,7 @@ class Tickets::BotResponseControllerTest < ActionController::TestCase
   end
 
   def test_bot_response_update_invalid_key
-    enable_bot_email_channel do
+    enable_agent_articles_suggest do
       params_hash = { article: [{ id: @bot_responses.suggested_articles.keys[0].to_i, agent_feedback: false }] }
       put :update, construct_params(version: 'private', id: @ticket.display_id, bot_response: params_hash)
       assert_response 400
@@ -47,7 +47,7 @@ class Tickets::BotResponseControllerTest < ActionController::TestCase
   end
 
   def test_bot_response_update_empty_value
-    enable_bot_email_channel do
+    enable_agent_articles_suggest do
       params_hash = { articles: [] }
       put :update, construct_params(version: 'private', id: @ticket.display_id, bot_response: params_hash)
       assert_response 400
@@ -56,7 +56,7 @@ class Tickets::BotResponseControllerTest < ActionController::TestCase
   end
 
   def test_bot_response_update_invalid_article_keys
-    enable_bot_email_channel do
+    enable_agent_articles_suggest do
       params_hash = { articles: [{ id: @bot_responses.suggested_articles.keys[0].to_i, agent_feedbacks: false }, 
         { ids: @bot_responses.suggested_articles.keys[1].to_i, agent_feedback: false }] }
       put :update, construct_params(version: 'private', id: @ticket.display_id, bot_response: params_hash)
@@ -69,7 +69,7 @@ class Tickets::BotResponseControllerTest < ActionController::TestCase
   end
 
   def test_bot_response_update_article_with_invalid_id_datatype
-    enable_bot_email_channel do
+    enable_agent_articles_suggest do
       params_hash = { articles: [{ id: @bot_responses.suggested_articles.keys[0].to_s, agent_feedback: false }] }
       put :update, construct_params(version: 'private', id: @ticket.display_id, bot_response: params_hash)
       assert_response 400
@@ -79,7 +79,7 @@ class Tickets::BotResponseControllerTest < ActionController::TestCase
 
 
   def test_bot_response_update_article_with_invalid_agent_feedback_datatype
-    enable_bot_email_channel do
+    enable_agent_articles_suggest do
       params_hash = { articles: [{ id: @bot_responses.suggested_articles.keys[0].to_i, agent_feedback: "hello" }] }
       put :update, construct_params(version: 'private', id: @ticket.display_id, bot_response: params_hash)
       assert_response 400
@@ -88,7 +88,7 @@ class Tickets::BotResponseControllerTest < ActionController::TestCase
   end
 
   def test_bot_response_update_article_with_agent_feedback_value_true
-    enable_bot_email_channel do
+    enable_agent_articles_suggest do
       params_hash = { articles: [{ id: @bot_responses.suggested_articles.keys[0].to_i, agent_feedback: true }] }
       put :update, construct_params(version: 'private', id: @ticket.display_id, bot_response: params_hash)
       assert_response 200
@@ -97,7 +97,7 @@ class Tickets::BotResponseControllerTest < ActionController::TestCase
   end
 
   def test_bot_response_update_article_with_customer_feedback_and_agent_feedback_value
-    enable_bot_email_channel do
+    enable_agent_articles_suggest do
       params_hash = { articles: [{ id: @bot_responses.suggested_articles.keys[0].to_i, agent_feedback: false }] }
       @bot_responses.assign_useful(@bot_responses.suggested_articles.keys[0].to_i, true)
       @bot_responses.save
@@ -108,7 +108,7 @@ class Tickets::BotResponseControllerTest < ActionController::TestCase
   end
 
   def test_bot_response_update_article_with_invalid_article_id
-    enable_bot_email_channel do
+    enable_agent_articles_suggest do
       params_hash = { articles: [{ id: Faker::Number.number(8).to_i, agent_feedback: true }] }
       put :update, construct_params(version: 'private', id: @ticket.display_id, bot_response: params_hash)
       assert_response 400
@@ -118,7 +118,7 @@ class Tickets::BotResponseControllerTest < ActionController::TestCase
   
   ###############BOT AGENT RESPONSE##############
   def test_bot_response_update_for_bot_agent_response_feature
-    enable_bot_agent_response do
+    enable_agent_articles_suggest do
       params_hash = { articles: [{ id: @bot_responses.suggested_articles.keys[0].to_i, agent_feedback: false }] }
       put :update, construct_params(version: 'private', id: @ticket.display_id, bot_response: params_hash)
       assert_response 200
@@ -127,7 +127,7 @@ class Tickets::BotResponseControllerTest < ActionController::TestCase
   end
 
   def test_for_bot_agent_response_feature_response_update_empty
-    enable_bot_agent_response do
+    enable_agent_articles_suggest do
       params_hash = {}
       put :update, construct_params(version: 'private', id: @ticket.display_id, bot_response: params_hash)
       assert_response 400
@@ -136,7 +136,7 @@ class Tickets::BotResponseControllerTest < ActionController::TestCase
   end
 
   def test_bot_response_update_invalid_key_for_bot_agent_response_feature
-    enable_bot_agent_response do
+    enable_agent_articles_suggest do
       params_hash = { article: [{ id: @bot_responses.suggested_articles.keys[0].to_i, agent_feedback: false }] }
       put :update, construct_params(version: 'private', id: @ticket.display_id, bot_response: params_hash)
       assert_response 400
@@ -145,7 +145,7 @@ class Tickets::BotResponseControllerTest < ActionController::TestCase
   end
 
   def test_bot_response_update_empty_value_for_bot_agent_response_feature
-    enable_bot_agent_response do
+    enable_agent_articles_suggest do
       params_hash = { articles: [] }
       put :update, construct_params(version: 'private', id: @ticket.display_id, bot_response: params_hash)
       assert_response 400
@@ -154,7 +154,7 @@ class Tickets::BotResponseControllerTest < ActionController::TestCase
   end
 
   def test_bot_response_update_invalid_article_keys_for_bot_agent_response_feature
-    enable_bot_agent_response do
+    enable_agent_articles_suggest do
       params_hash = { articles: [{ id: @bot_responses.suggested_articles.keys[0].to_i, agent_feedbacks: false }, 
         { ids: @bot_responses.suggested_articles.keys[1].to_i, agent_feedback: false }] }
       put :update, construct_params(version: 'private', id: @ticket.display_id, bot_response: params_hash)
@@ -167,7 +167,7 @@ class Tickets::BotResponseControllerTest < ActionController::TestCase
   end
 
   def test_bot_response_update_article_with_invalid_id_datatype_for_bot_agent_response_feature
-    enable_bot_agent_response do
+    enable_agent_articles_suggest do
       params_hash = { articles: [{ id: @bot_responses.suggested_articles.keys[0].to_s, agent_feedback: false }] }
       put :update, construct_params(version: 'private', id: @ticket.display_id, bot_response: params_hash)
       assert_response 400
@@ -176,7 +176,7 @@ class Tickets::BotResponseControllerTest < ActionController::TestCase
   end
 
   def test_bot_response_update_article_with_invalid_agent_feedback_datatype_for_bot_agent_response_feature
-    enable_bot_agent_response do
+    enable_agent_articles_suggest do
       params_hash = { articles: [{ id: @bot_responses.suggested_articles.keys[0].to_i, agent_feedback: "hello" }] }
       put :update, construct_params(version: 'private', id: @ticket.display_id, bot_response: params_hash)
       assert_response 400
@@ -185,7 +185,7 @@ class Tickets::BotResponseControllerTest < ActionController::TestCase
   end
 
   def test_bot_response_update_article_with_customer_feedback_and_agent_feedback_value_for_bot_agent_response_feature
-    enable_bot_agent_response do
+    enable_agent_articles_suggest do
       params_hash = { articles: [{ id: @bot_responses.suggested_articles.keys[0].to_i, agent_feedback: false }] }
       @bot_responses.assign_useful(@bot_responses.suggested_articles.keys[0].to_i, true)
       @bot_responses.save
@@ -196,7 +196,7 @@ class Tickets::BotResponseControllerTest < ActionController::TestCase
   end
 
   def test_bot_response_update_article_with_invalid_article_id_for_bot_agent_response_feature
-    enable_bot_agent_response do
+    enable_agent_articles_suggest do
       params_hash = { articles: [{ id: Faker::Number.number(8).to_i, agent_feedback: true }] }
       put :update, construct_params(version: 'private', id: @ticket.display_id, bot_response: params_hash)
       assert_response 400
@@ -207,13 +207,13 @@ class Tickets::BotResponseControllerTest < ActionController::TestCase
   def test_bot_update_without_feature_for_bot_email_channel_and_bot_agent_response
     params_hash = { articles: [{ id: @bot_responses.suggested_articles.keys[0].to_i, agent_feedback: false }] }
     put :update, construct_params(version: 'private', id: @ticket.display_id, bot_response: params_hash)
-    assert_response 200
+    assert_response 403
   end
   ###############SHOW BOT RESPONSE##############
 
   ###############BOT EMAIL CHANNEL################ 
   def test_bot_response_show
-    enable_bot_email_channel do
+    enable_agent_articles_suggest do
       get :show, construct_params(version: 'private', id: @ticket.display_id)
       assert_response 200
       match_json(bot_response_pattern(@bot_responses))
@@ -221,7 +221,7 @@ class Tickets::BotResponseControllerTest < ActionController::TestCase
   end
 
   def test_bot_response_show_with_empty
-    enable_bot_email_channel do
+    enable_agent_articles_suggest do
       @bot_responses.destroy
       get :show, construct_params(version: 'private', id: @ticket.display_id)
       assert_response 204
@@ -229,7 +229,7 @@ class Tickets::BotResponseControllerTest < ActionController::TestCase
   end
 
   def test_bot_response_show_with_invalid_ticket_id
-    enable_bot_email_channel do
+    enable_agent_articles_suggest do
       get :show, construct_params(version: 'private', id: 0)
       assert_response 404
     end
@@ -237,7 +237,7 @@ class Tickets::BotResponseControllerTest < ActionController::TestCase
 
   ###############BOT AGENT RESPONSE##############
   def test_bot_response_show_with_feature_bot_agent_response
-    enable_bot_agent_response do
+    enable_agent_articles_suggest do
       get :show, construct_params(version: 'private', id: @ticket.display_id)
       assert_response 200
       match_json(bot_response_pattern(@bot_responses))
@@ -245,7 +245,7 @@ class Tickets::BotResponseControllerTest < ActionController::TestCase
   end
 
   def test_bot_response_show_with_empty_for_feature_bot_agent_response
-    enable_bot_agent_response do
+    enable_agent_articles_suggest do
       @bot_responses.destroy
       get :show, construct_params(version: 'private', id: @ticket.display_id)
       assert_response 204
@@ -253,7 +253,7 @@ class Tickets::BotResponseControllerTest < ActionController::TestCase
   end
 
   def test_bot_response_show_with_invalid_ticket_id_for_feature_bot_agent_response
-    enable_bot_agent_response do
+    enable_agent_articles_suggest do
       get :show, construct_params(version: 'private', id: 0)
       assert_response 404
     end
@@ -261,6 +261,6 @@ class Tickets::BotResponseControllerTest < ActionController::TestCase
 
   def test_bot_response_show_without_feature
     get :show, construct_params(version: 'private', id: @ticket.display_id)
-    assert_response 200
+    assert_response 403
   end
 end

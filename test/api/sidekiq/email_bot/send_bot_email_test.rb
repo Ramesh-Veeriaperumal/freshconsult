@@ -59,30 +59,30 @@ class SendBotEmailTest < ActionView::TestCase
     delayed_job_size_before = Delayed::Job.count
     ticket = create_ticket
     fetch_bot_and_articles(Solution::Article::STATUS_KEYS_BY_TOKEN[:published], Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:bot])
-    stub_request(:post, %r{^https://freshiqnew.freshpo.com/api/v1/afr/smart_reply.*?$}).to_return(body: stub_response(true).to_json, status: 200)
-    ::Bot::Emailbot::SendBotEmail.new.perform(ticket_id: ticket.id)
+    stub_request(:post, %r{^#{FreddySkillsConfig[:agent_articles_suggest][:url]}.*?$}).to_return(body: stub_response(true).to_json, status: 200)
+    ::Freddy::AgentSuggestArticles.new.perform(ticket_id: ticket.id)
     delayed_job_size_after = Delayed::Job.count
     assert_equal delayed_job_size_before, delayed_job_size_after
   end
 
   def test_send_bot_email
     delayed_job_size_before = Delayed::Job.count
-    ::Bot::Emailbot::SendBotEmail.any_instance.stubs(:source_email?).returns(true)
+    ::Freddy::AgentSuggestArticles.any_instance.stubs(:source_email?).returns(true)
     ticket = create_ticket
     fetch_bot_and_articles
-    stub_request(:post, %r{^https://freshiqnew.freshpo.com/api/v1/afr/smart_reply.*?$}).to_return(body: stub_response(true).to_json, status: 200)
-    ::Bot::Emailbot::SendBotEmail.new.perform(ticket_id: ticket.id)
+    stub_request(:post, %r{^#{FreddySkillsConfig[:agent_articles_suggest][:url]}.*?$}).to_return(body: stub_response(true).to_json, status: 200)
+    ::Freddy::AgentSuggestArticles.new.perform(ticket_id: ticket.id)
     delayed_job_size_after = Delayed::Job.count
     assert_equal delayed_job_size_before + 1, delayed_job_size_after 
-    ::Bot::Emailbot::SendBotEmail.any_instance.unstub(:source_email?)
+    ::Freddy::AgentSuggestArticles.any_instance.unstub(:source_email?)
   end
 
   def test_send_bot_email_with_invalid_response
     delayed_job_size_before = Delayed::Job.count
     ticket = create_ticket
     fetch_bot_and_articles
-    stub_request(:post, %r{^https://freshiqnew.freshpo.com/api/v1/afr/smart_reply.*?$}).to_return(body: invalid_response.to_json, status: 200)
-    ::Bot::Emailbot::SendBotEmail.new.perform(ticket_id: ticket.id)
+    stub_request(:post, %r{^FreddySkillsConfig[:agent_articles_suggest][:url].*?$}).to_return(body: invalid_response.to_json, status: 200)
+    ::Freddy::AgentSuggestArticles.new.perform(ticket_id: ticket.id)
     delayed_job_size_after = Delayed::Job.count
     assert_equal delayed_job_size_before, delayed_job_size_after
   end
@@ -91,8 +91,8 @@ class SendBotEmailTest < ActionView::TestCase
     delayed_job_size_before = Delayed::Job.count
     ticket = create_ticket
     fetch_bot_and_articles
-    stub_request(:post, %r{^https://freshiqnew.freshpo.com/api/v1/afr/smart_reply.*?$}).to_return(body: stub_response(false).to_json, status: 200)
-    ::Bot::Emailbot::SendBotEmail.new.perform(ticket_id: ticket.id)
+    stub_request(:post, %r{^FreddySkillsConfig[:agent_articles_suggest][:url].*?$}).to_return(body: stub_response(false).to_json, status: 200)
+    ::Freddy::AgentSuggestArticles.new.perform(ticket_id: ticket.id)
     delayed_job_size_after = Delayed::Job.count
     assert_equal delayed_job_size_before, delayed_job_size_after
   end
@@ -101,8 +101,8 @@ class SendBotEmailTest < ActionView::TestCase
     delayed_job_size_before = Delayed::Job.count
     ticket = create_ticket
     fetch_bot_and_articles
-    stub_request(:post, %r{^https://freshiqnew.freshpo.com/api/v1/afr/smart_reply.*?$}).to_timeout
-    ::Bot::Emailbot::SendBotEmail.new.perform(ticket_id: ticket.id)
+    stub_request(:post, %r{^FreddySkillsConfig[:agent_articles_suggest][:url].*?$}).to_timeout
+    ::Freddy::AgentSuggestArticles.new.perform(ticket_id: ticket.id)
     delayed_job_size_after = Delayed::Job.count
     assert_equal delayed_job_size_before, delayed_job_size_after
   end

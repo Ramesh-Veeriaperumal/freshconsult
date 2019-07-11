@@ -9,6 +9,10 @@ defaults: &defaults
     timeout: 5
     expiry_in_days: 7
 
+  agent_articles_suggest:
+    url: "http://system42-serv.staging.freddyproject.com/api/v1/afr/smart_reply"
+    secret: '6A25665ECC147A296ECE41EEA68CE'
+
   system42:
     host: 'https://system42-serv-dev.staging.freddyproject.com'
     secret: 'd320b639-f0f2-465d-bc04-23be99d764cc'
