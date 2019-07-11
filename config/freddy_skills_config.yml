@@ -7,7 +7,7 @@ defaults: &defaults
   ticket_properties_suggester:
     url: "https://autodispatch-361773157.freshworksapi.com/"
     timeout: 5
-    expiry_in_days: 7  
+    expiry_in_days: 7
 
   system42:
     host: 'https://system42-serv-dev.staging.freddyproject.com'

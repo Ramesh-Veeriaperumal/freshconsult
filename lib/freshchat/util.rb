@@ -9,7 +9,7 @@ module Freshchat::Util
 
   def sync_freshchat(app_id)
     query = { appAlias: app_id }
-    response = HTTParty.post("#{Freshchat::Account::CONFIG[:signup][:host]}system42/enable", query: query, headers: headers(app_id))
+    response = HTTParty.post("#{Freshchat::Account::CONFIG[:signup][:host]}enable", query: query, headers: headers(app_id))
     Rails.logger.info "Response from sync_freshchat #{response}"
   end
 

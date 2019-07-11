@@ -78,10 +78,10 @@ module Admin::RolesHelper
 
          # *************************** Bots *******************************
 
-         { dom_type: "label", id: "bots", not_display: !current_account.support_bot_enabled?,
+         { dom_type: 'label', id: 'bots', not_display: (!current_account.support_bot_enabled? && !current_account.autofaq_enabled?),
            children: 
 
-              [{ dom_type: "check_box", id: "view_bots", not_display: !current_account.support_bot_enabled? }]
+              [{ dom_type: 'check_box', id: 'view_bots', not_display: (!current_account.support_bot_enabled? && !current_account.autofaq_enabled?) }]
 
          },
 
