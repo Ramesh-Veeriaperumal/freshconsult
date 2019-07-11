@@ -213,6 +213,27 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     login_as(currentuser)
   end
 
+  def test_central_publish_payload_login
+    CentralPublishWorker::UserWorker.jobs.clear
+    user = add_test_agent(@account, role: Role.find_by_name('Administrator').id)
+    login_as(user)
+    job = CentralPublishWorker::UserWorker.jobs.last
+    assert_equal 'agent_update', job['args'][0]
+    assert_equal({ 'logged_in' => [false, true] }, job['args'][1]['misc_changes'])
+    CentralPublishWorker::UserWorker.jobs.clear
+  end
+
+  def test_central_publish_payload_logout
+    CentralPublishWorker::UserWorker.jobs.clear
+    user = add_test_agent(@account, role: Role.find_by_name('Administrator').id)
+    login_as(user)
+    log_out
+    job = CentralPublishWorker::UserWorker.jobs.last
+    assert_equal 'agent_update', job['args'][0]
+    assert_equal({ 'logged_in' => [true, false] }, job['args'][1]['misc_changes'])
+    CentralPublishWorker::UserWorker.jobs.clear
+  end
+
   def test_update_freshchat_token
     user = get_or_create_agent
     token = Faker::Number.number(10)

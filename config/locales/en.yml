@@ -2739,6 +2739,8 @@ en:
         roles: "Roles"
         added: "Added"
         removed: "Removed"
+        logged_in: "Logged in"
+        logged_out: "Logged out"
       automation_rule:
         name: "Name"
         description: "Description"
