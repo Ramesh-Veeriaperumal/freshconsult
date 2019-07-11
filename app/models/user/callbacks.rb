@@ -8,7 +8,7 @@ class User < ActiveRecord::Base
   before_create :set_company_name, :unless => :helpdesk_agent?
   before_create :decode_name
   before_create :populate_privileges, :if => :helpdesk_agent?
-  before_create :create_freshid_user, if: :freshid_agent_not_signed_up_admin?
+  before_create :create_freshid_user, if: :freshid_agent_not_signup_in_progress?
 
   before_update :populate_privileges, :if => :roles_changed?
   before_update :destroy_user_roles, :delete_freshfone_user, :delete_user_authorizations, :if => :deleted?
@@ -55,7 +55,7 @@ class User < ActiveRecord::Base
   after_commit :deactivate_monitorship, on: :update, :if => :blocked_deleted?
   after_commit :sync_to_export_service, on: :update, :if => [:agent?, :time_zone_updated?]
 
-  after_commit :send_activation_mail_on_create, on: :create, if: :freshid_agent_not_signed_up_admin?
+  after_commit :send_activation_mail_on_create, on: :create, if: :freshid_agent_not_signup_in_progress?
   after_commit :enqueue_activation_email, on: :update, if: [:freshid_enabled_and_agent?, :converted_to_agent_or_email_updated?]
   after_commit :push_contact_deleted_info, on: :update, :if => :deleted?
   after_rollback :remove_freshid_user, on: :create, if: :freshid_enabled_and_agent?

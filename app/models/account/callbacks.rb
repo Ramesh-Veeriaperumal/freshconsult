@@ -60,6 +60,8 @@ class Account < ActiveRecord::Base
   after_commit :remove_organisation_account_mapping, on: :destroy, if: :freshid_org_v2_enabled?
 
   after_rollback :destroy_freshid_account_on_rollback, on: :create, if: -> { freshid_integration_signup_allowed? && !domain_already_exists? }
+  after_rollback :signup_completed, on: :create
+
   publishable on: [:create, :update]
 
   include MemcacheKeys
