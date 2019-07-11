@@ -41,7 +41,7 @@
 			<li><a href="#tickets"><%= t('admin.roles.scroll.tickets').html_safe%></a></li>
 			<li><a href="#solutions"><%= t('admin.roles.scroll.solutions').html_safe%></a></li>
 			<li><a href="#forums"><%= t('admin.roles.scroll.forums').html_safe%></a></li>
-      <% if current_account.support_bot_enabled? %>
+      <% if current_account.support_bot_enabled? || current_account.autofaq_enabled? %>
         <li><a href="#bots"><%= t('admin.roles.scroll.bots').html_safe%></a></li>
       <%end%>
 			<% if current_account.proactive_outreach_enabled? %>

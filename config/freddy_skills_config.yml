@@ -3,11 +3,11 @@ defaults: &defaults
     url: dummy
     timeout: 2 
     confidence_threshold: 80
-  
+
   ticket_properties_suggester:
     url: ""
     timeout: ""
-    expiry_in_days: ""  
+    expiry_in_days: ""
 
   system42:
     host: 'https://system42-serv-dev.staging.freddyproject.com'
