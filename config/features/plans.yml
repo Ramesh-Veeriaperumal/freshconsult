@@ -154,6 +154,8 @@
   :blossom_jan_19:
     :name: Blossom
     :features:
+      - :email_articles_suggest
+      - :agent_articles_suggest
       - :mailbox
       - :agent_scope
       - :sla_management_v2

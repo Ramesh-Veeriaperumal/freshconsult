@@ -19,6 +19,10 @@ defaults: &defaults
     host: 'http://flow-serv.staging.freddyproject.com'
     secret: 'FreshDeskDev'
     timeout: 3
+
+  agent_articles_suggest:
+    url: "https://faqsuggester.prod.freddyproject.com/api/v1/afr/smart_reply"
+    secret: ''
     
 development:
   <<: *defaults

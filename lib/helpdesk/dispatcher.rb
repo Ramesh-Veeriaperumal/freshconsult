@@ -57,7 +57,7 @@
         end
       }
       # To send bot response for tickets created via email
-      ::Bot::Emailbot::SendBotEmail.perform_async(ticket_id: @ticket.id) if source_email?
+      ::Freddy::AgentSuggestArticles.perform_async(ticket_id: @ticket.id) if source_email?
     rescue Exception => e
       Va::Logger::Automation.log_error(DISPATCHER_ERROR, e)
       NewRelic::Agent.notice_error(e)
@@ -74,7 +74,7 @@
         Rails.logger.info "Ticket #{@ticket.id} is either spammed or deleted before getting ML response"
         return false
       else
-        @ticket.source == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email] && @account.bot_email_channel_enabled? && @ticket.portal.bot.try(:email_channel) && @account.support_bot_configured?
+        (@account.support_bot_configured? && (@ticket.source == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email] && @account.bot_email_channel_enabled? && @ticket.portal.bot.try(:email_channel)) || (@account.bot_agent_response_enabled? && !@ticket.bot?)) || @account.agent_articles_suggest_enabled? || @account.email_articles_suggest_enabled?
       end
     end
 
