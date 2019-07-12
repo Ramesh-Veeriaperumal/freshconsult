@@ -66,10 +66,7 @@ class Sanitize
         'ins'        => {'cite' => ['http', 'https', :relative]},
         'q'          => {'cite' => ['http', 'https', :relative]},
         'source'     => {'src'	=> ['http', 'https']},
-      },
-      transformers: lambda do |env|
-        Sanitize::Config::CSSSanitizer.sanitize_styles(env[:node])
-      end
+      }
     }
   end
 end
