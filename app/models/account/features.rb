@@ -60,7 +60,6 @@ class Account < ActiveRecord::Base
     :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible, :ticket_properties_suggester, :ticket_properties_suggester_eligible,
     :autofaq, :proactive_spam_detection,
     :hide_first_response_due, :agent_articles_suggest, :email_articles_suggest
-    :autofaq, :proactive_spam_detection, :hide_first_response_due
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
