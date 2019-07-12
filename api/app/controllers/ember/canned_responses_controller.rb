@@ -6,7 +6,7 @@ module Ember
     decorate_views(decorate_objects: [:search])
 
     def search
-      @items = fetch_from_es('Admin::CannedResponses::Response', { load: ::Admin::CannedResponses::Response::INCLUDE_ASSOCIATIONS_BY_CLASS, size: 20 }, default_visiblity, 'raw_title', params[:folder_id]) 
+      @items = fetch_from_es('Admin::CannedResponses::Response', { load: ::Admin::CannedResponses::Response::INCLUDE_ASSOCIATIONS_BY_CLASS, size: 20 }, default_visiblity, nil, params[:folder_id])
       @items = accessible_elements(scoper, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', construct_query)) if @items.nil?
       @items.compact! if @items.present?
       render 'index'
