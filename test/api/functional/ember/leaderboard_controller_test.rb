@@ -220,10 +220,10 @@ module Ember
       redis_add_group_agents_score(score_stub_even, @group_even.id, previous_month)
 
       get :agents, controller_params(version: 'private', group_id: @group_odd.id, date_range: 'current_month')
-      responses = ActiveSupport::JSON.decode(response.body)
       assert_response 200
-      pattern = leaderboard_group_agents_pattern score_stub_odd
-      assert_equal(responses, pattern)
+      pattern = (leaderboard_group_agents_pattern score_stub_odd).to_json
+      responses = JSON.parse(response.body)
+      assert_equal(responses, JSON.parse(pattern))
 
       get :agents, controller_params(version: 'private', group_id: @group_even.id, date_range: 'last_month')
       responses = ActiveSupport::JSON.decode(response.body)

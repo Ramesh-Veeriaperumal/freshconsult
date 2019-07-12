@@ -12,7 +12,6 @@ module FacebookTestHelper
     dm = [
       {
         'id' => thread_id.to_s,
-        'updated_time' => Time.now.utc.to_s,
         'messages' => {
           'data' => [
             {
@@ -29,7 +28,6 @@ module FacebookTestHelper
       },
       {
         'id' => thread_id.to_s,
-        'updated_time' => Time.now.utc.to_s,
         'messages' => {
           'data' => [
             {
