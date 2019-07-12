@@ -89,7 +89,7 @@ class DetectUserLanguageTest < ActionView::TestCase
   def test_lang_detection_with_cld
     User.any_instance.stubs(:detect_language?).returns(true)
     @account.launch(:compact_lang_detection)
-    $redis_others.hset "CLD_FD_LANGUAGE_MAPPING", "en", "en"
+    set_others_redis_hash_set("CLD_FD_LANGUAGE_MAPPING", "en", "en")
     Users::DetectLanguage.new.perform(user_id: @user.id, text: 'test string - sample 2')
     @user.reload
     assert_equal @user.language, "en"
@@ -99,7 +99,7 @@ class DetectUserLanguageTest < ActionView::TestCase
   def test_lang_detection_with_cld_russian
     User.any_instance.stubs(:detect_language?).returns(true)
     @account.launch(:compact_lang_detection)
-    $redis_others.hset "CLD_FD_LANGUAGE_MAPPING", "ru", "ru-RU"
+    set_others_redis_hash_set("CLD_FD_LANGUAGE_MAPPING", "ru", "ru-RU")
     Users::DetectLanguage.new.perform(user_id: @user.id, text: 'всякий раз, когда есть большой текст, я не знаю, что печатать. Я просто набираю, что приходит на ум, чтобы дать вклад')
     @user.reload
     assert_equal @user.language, "ru-RU"
