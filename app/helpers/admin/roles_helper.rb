@@ -114,6 +114,12 @@ module Admin::RolesHelper
 
          },
 
+         # *************************** Field Service *******************************
+
+          { dom_type: 'label', id: 'fieldservice', not_display: !(current_account.field_service_management_enabled? && current_account.scheduling_fsm_dashboard_enabled?),
+           children:
+            [{ dom_type: 'check_box', id: 'schedule_fsm_dashboard', not_display: !current_account.field_service_management_enabled? }] },
+
          # *************************** Reports **************************
 
          { dom_type: 'label', id: 'reports', children:

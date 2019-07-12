@@ -549,6 +549,9 @@ en:
     drag_and_drop_field: Drag & Drop Field
     default_field_error: Default fields cannot be dropped into section
     encrypted_text: "Encrypted Field"
+  fsm_scheduling_dashboard:
+    name: Field service manager
+    description: Can perform all agent related activities, manage contacts and access the scheduling dashboard for service tasks
   ticket_fields:
     fields:
       fsm_fields_edit: This default field cannot be edited
@@ -2468,6 +2471,7 @@ en:
         forums: Forums
         bots: Bots
         outreaches: Outreaches
+        fieldservice: Field service
         customers: Customers
         reports: Reports
         administration: Administration
@@ -2523,6 +2527,8 @@ en:
         view_bots: View bots tab
         manage_bots: Manage Bots
         manage_proactive_outreaches: Manage proactive outreaches
+        fieldservice: Field service
+        schedule_fsm_dashboard: Access scheduling dashboard
         reports: Reports
         analytics: Analytics
         view_reports: View reports tab
