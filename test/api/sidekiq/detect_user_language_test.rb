@@ -100,7 +100,7 @@ class DetectUserLanguageTest < ActionView::TestCase
     User.any_instance.stubs(:detect_language?).returns(true)
     @account.launch(:compact_lang_detection)
     $redis_others.hset "CLD_FD_LANGUAGE_MAPPING", "ru", "ru-RU"
-    Users::DetectLanguage.new.perform(user_id: @user.id, text: 'кто этот человек')
+    Users::DetectLanguage.new.perform(user_id: @user.id, text: 'всякий раз, когда есть большой текст, я не знаю, что печатать. Я просто набираю, что приходит на ум, чтобы дать вклад')
     @user.reload
     assert_equal @user.language, "ru-RU"
     @account.rollback(:compact_lang_detection)
