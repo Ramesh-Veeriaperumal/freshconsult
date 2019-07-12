@@ -548,6 +548,9 @@ en:
       service_tasks_due_today: Service tasks due today
       unassigned_service_tasks: Unassigned service tasks
       overdue_service_tasks: Overdue service tasks
+  fsm_scheduling_dashboard:
+    name: Field service manager
+    description: Can perform all agent related activities, manage contacts and access the scheduling dashboard for service tasks
   ticket_fields:
     fields:
       fsm_fields_edit: This default field cannot be edited
@@ -2456,6 +2459,7 @@ en:
         forums: Forums
         bots: Bots
         outreaches: Outreaches
+        fieldservice: Field service
         customers: Customers
         reports: Reports
         administration: Administration
@@ -2511,6 +2515,8 @@ en:
         view_bots: View bots tab
         manage_bots: Manage Bots
         manage_proactive_outreaches: Manage proactive outreaches
+        fieldservice: Field service
+        schedule_fsm_dashboard: Access scheduling dashboard
         reports: Reports
         view_reports: View reports tab
         view_analytics: View analytics tab

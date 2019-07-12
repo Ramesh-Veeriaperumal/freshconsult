@@ -76,6 +76,7 @@ module Ember
         Account.current.ticket_fields.find_by_name(fsm_field).try(:destroy)
       end
       Account.current.picklist_values.find_by_value(SERVICE_TASK_TYPE).try(:destroy)
+      Role.find_by_name(FIELD_SERVICE_MANAGER_ROLE_NAME).try(:destroy)
     end
 
    def change_subscription_state(subscription_state)

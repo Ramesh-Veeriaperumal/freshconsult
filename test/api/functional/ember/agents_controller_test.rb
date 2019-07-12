@@ -271,6 +271,24 @@ class Ember::AgentsControllerTest < ActionController::TestCase
      match_json(request_error_pattern(:access_denied))
   end
 
+  def test_custom_field_service_manager_role
+    enable_adv_ticketing([:field_service_management]) do
+      begin
+        Account.any_instance.stubs(:scheduling_fsm_dashboard_enabled?).returns(true)
+        perform_fsm_operations
+        role = Role.find_by_name(FIELD_SERVICE_MANAGER_ROLE_NAME)
+        assert_not_nil role
+        assert role.privilege_list.include?(:schedule_fsm_dashboard)
+        agent = add_test_agent(@account, role: role.id)
+        assert agent.privilege?(:schedule_fsm_dashboard)
+      ensure
+        Account.any_instance.unstub(:scheduling_fsm_dashboard_enabled?)
+        role.try(:destroy)
+        agent.try(:destroy)
+      end
+    end
+  end
+
   def test_update_others_with_toggle_shortcuts_for_agent
     user = add_test_agent(@account, role: Role.find_by_name('Agent').id)
     remove_privilege(User.current, :manage_availability)
