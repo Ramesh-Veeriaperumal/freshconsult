@@ -17,10 +17,14 @@ module Facebook
         options[:since] = @fan_page.message_since if @fan_page.message_since != 0
         options[:request] = { timeout: 10, open_timeout: 10 }
         threads = @rest.get_connections('me', 'conversations', options)
-        threads.reject! do |thread|
-          (thread[MESSAGE_UPDATED_AT].present? && (Time.parse(thread[MESSAGE_UPDATED_AT]).to_i < @fan_page.message_since))
+        threads.each do |thread|
+          thread['messages']['data'].reject! do |message|
+            dm_created_time = message['created_time']
+            (Time.parse(dm_created_time).to_i <= @fan_page.message_since)
+          end
+          threads.delete(thread) if thread['messages']['data'].empty?
         end
-        updated_time = threads.collect { |f| f[MESSAGE_UPDATED_AT] }.compact.max
+        updated_time = threads.collect { |f| f["messages"]["data"][0]["created_time"] }.compact.max
         create_tickets(threads)
         @fan_page.update_attribute(:message_since, Time.parse(updated_time).to_i) if updated_time.present?
       end
