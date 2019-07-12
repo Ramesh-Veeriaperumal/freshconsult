@@ -7,7 +7,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
   include ProductsHelper
 
   ALL_FM_METHODS = [:create_experiment, :enable_predictive_support, :disable_predictive_support, :enable_integration,
-                    :disable_integration, :cdn_script]
+                    :disable_integration, :cdn_script, :create_account, :associate_account, :domains]
 
   def setup
     super
@@ -52,13 +52,6 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     get :show, controller_params(version: 'v2', id: help_widget.id)
     assert_response 200
     match_json(widget_show_pattern(help_widget))
-  end
-
-  def test_freshmarketer_info
-    AccountAdditionalSettings.any_instance.stubs(:freshmarketer_hash).returns(freshmarketer_hash)
-    get :freshmarketer_info, controller_params(version: 'v2')
-    assert_response 200
-    assert JSON.parse(@response.body)['freshmarketer_name'] == 'harlin-mani.fmstack2.com'
   end
 
   def test_show_with_invalid_help_widget_id
@@ -222,7 +215,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     assert widget.settings[:widget_flow] == request_params[:settings][:widget_flow]
   end
 
-  def test_update_with_solution_articles_contact_form_disabled
+  def test_update_with_solution_articles_enabled_contact_form_disabled
     widget = create_widget
     params_hash = widget_hash(widget)
     request_params = {
@@ -276,8 +269,231 @@ class HelpWidgetsControllerTest < ActionController::TestCase
 
   #--------------- Predictive Support Cases - START --------------------#
 
+  def test_update_with_fm_account_create
+    stub_freshmarketer_client
+    widget = create_widget
+    request_params = {
+      settings: {
+        components: {
+          predictive_support: true
+        },
+        predictive_support: {
+          domain_list: ['test.fresh.co']
+        }
+      },
+      freshmarketer: {
+        email: 'padmashri@fmstack.com',
+        type: 'create'
+      }
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    assert_response 200
+    widget.reload
+    id = JSON.parse(@response.body)['id']
+    match_json(widget_show_pattern(widget))
+    assert widget.settings[:components][:predictive_support] == true
+    fm_widget_hash = Account.current.account_additional_settings.widget_predictive_support_hash
+    assert fm_widget_hash['test.fresh.co'][:exp_id] == '4151515152505F435F415C51405F594C5C5A5F5F'
+    assert fm_widget_hash['test.fresh.co'][:widget_ids] == [widget.id]
+    unstub_freshmarketer_client
+  end
+
+  def test_update_with_fm_account_create_predictive_off
+    stub_freshmarketer_client
+    widget = create_widget
+    request_params = {
+      settings: {
+        components: {
+          predictive_support: false
+        },
+        predictive_support: {
+          domain_list: ['test.fresh.co']
+        }
+      },
+      freshmarketer: {
+        email: 'padmashri@fmstack.com',
+        type: 'create'
+      }
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    assert_response 400
+  end
+
+  def test_update_with_fm_account_create_mismatch
+    stub_freshmarketer_client
+    widget = create_widget
+    request_params = {
+      settings: {
+        components: {
+          predictive_support: true
+        },
+        predictive_support: {
+          domain_list: ['test.fresh.co']
+        }
+      },
+      freshmarketer: {
+        email: 'padmashri@fmstack.com',
+        type: 'link'
+      }
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    assert_response 400
+    unstub_freshmarketer_client
+  end
+
+  def test_update_with_fm_account_create_mismatch_predictive_disabled
+    stub_freshmarketer_client
+    widget = create_widget
+    request_params = {
+      settings: {
+        components: {
+          predictive_support: false
+        },
+        predictive_support: {
+          domain_list: ['test.com']
+        }
+      },
+      freshmarketer: {
+        email: 'padmashri@fmstack.com',
+        type: 'link'
+      }
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    assert_response 400
+    unstub_freshmarketer_client
+  end
+
+  def test_update_with_fm_account_create_conflict_error
+    stub_freshmarketer_client([:resource_conflict_error_response])
+    widget = create_widget
+    request_params = {
+      settings: {
+        components: {
+          predictive_support: true
+        },
+        predictive_support: {
+          domain_list: ['kalai.fresh.co']
+        }
+      },
+      freshmarketer: {
+        email: 'padmashri@fmstack.com',
+        type: 'create'
+      }
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    assert_response 409
+    unstub_freshmarketer_client
+  end
+
+  def test_update_with_fm_account_create_bad_request_error
+    stub_freshmarketer_client([:bad_request_error_response])
+    widget = create_widget
+    request_params = {
+      settings: {
+        components: {
+          predictive_support: true
+        },
+        predictive_support: {
+          domain_list: ['padhu.fresh.co']
+        }
+      },
+      freshmarketer: {
+        email: 'padmashri@fmstack.com',
+        type: 'create'
+      }
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    assert_response 400
+    unstub_freshmarketer_client
+  end
+
+  def test_update_with_fm_account_create_internal_server_error
+    stub_freshmarketer_client([:internal_server_error_response])
+    widget = create_widget
+    request_params = {
+      settings: {
+        components: {
+          predictive_support: true
+        },
+        predictive_support: {
+          domain_list: ['ranjani.fresh.co']
+        }
+      },
+      freshmarketer: {
+        email: 'padmashri@fmstack.com',
+        type: 'create'
+      }
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    assert_response 500
+    unstub_freshmarketer_client
+  end
+
+  def test_update_with_fm_account_link
+    stub_freshmarketer_client
+    widget = create_widget
+    request_params = {
+      settings: {
+        components: {
+          predictive_support: true
+        },
+        predictive_support: {
+          domain_list: ['test.fresh']
+        }
+      },
+      freshmarketer: {
+        domain: 'test1.fmstack.com',
+        type: 'associate'
+      }
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    assert_response 200
+    widget.reload
+    id = JSON.parse(@response.body)['id']
+    match_json(widget_show_pattern(widget))
+    assert widget.settings[:components][:predictive_support] == true
+    freshmarketer_hash = Account.current.account_additional_settings.additional_settings[:freshmarketer]
+    fm_widget_hash = Account.current.account_additional_settings.widget_predictive_support_hash
+    assert_nil freshmarketer_hash[:acc_id]
+    assert fm_widget_hash['test.fresh'][:exp_id] == '4151515152505F435F415C51405F594C5C5A5F5F'
+    assert fm_widget_hash['test.fresh'][:widget_ids] == [widget.id]
+    unstub_freshmarketer_client
+  end
+
+  def test_update_with_fm_account_link_with_support_domain
+    stub_freshmarketer_client
+    widget = create_widget
+    request_params = {
+      settings: {
+        components: {
+          predictive_support: true
+        },
+        predictive_support: {
+          domain_list: ['localhost.freshpo.com']
+        }
+      },
+      freshmarketer: {
+        domain: 'test2.fmstack.com',
+        type: 'associate'
+      }
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    assert_response 200
+    widget.reload
+    id = JSON.parse(@response.body)['id']
+    match_json(widget_show_pattern(widget))
+    assert widget.settings[:components][:predictive_support] == true
+    freshmarketer_hash = Account.current.account_additional_settings.additional_settings[:freshmarketer]
+    fm_widget_hash = Account.current.account_additional_settings.widget_predictive_support_hash
+    assert_present freshmarketer_hash[:acc_id]
+    assert fm_widget_hash['localhost.freshpo.com'][:exp_id] == '4151515152505F435F415C51405F594C5C5A5F5F'
+    assert fm_widget_hash['localhost.freshpo.com'][:widget_ids] == [widget.id]
+    unstub_freshmarketer_client
+  end
+
   def test_update_with_invalid_domain
     widget = create_widget
+    link_freshmarketer_account
     request_params = {
       settings: {
         components: {
@@ -294,6 +510,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_predictive_without_domain_list
+    link_freshmarketer_account
     widget = create_widget
     request_params = {
       settings: {
@@ -308,9 +525,11 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
     match_json(validation_error_pattern(bad_request_error_pattern(:domain_list, 'Please specify URLs to track for predictive support.', code: 'invalid_value')))
     assert_response 400
+    unlink_freshmarketer_account
   end
 
   def test_update_without_predictive_with_domain_list
+    link_freshmarketer_account
     widget = create_widget
     request_params = {
       settings: {
@@ -328,9 +547,11 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     assert widget.settings[:components][:predictive_support] == false
     assert widget.settings[:predictive_support] = predictive_support_hash
     widget.reload
+    unlink_freshmarketer_account
   end
 
   def test_update_domain_list_to_empty
+    link_freshmarketer_account
     widget = create_widget
     widget.settings[:components][:predictive_support] = true
     widget.settings[:predictive_support][:domain_list] = ['test.fresh.com']
@@ -345,9 +566,11 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
     match_json(validation_error_pattern(bad_request_error_pattern(:domain_list, 'Please specify URLs to track for predictive support.', code: 'invalid_value')))
     assert_response 400
+    unlink_freshmarketer_account
   end
 
   def test_update_with_more_than_three_domain
+    link_freshmarketer_account
     widget = create_widget
     request_params = {
       settings: {
@@ -362,6 +585,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
     match_json(validation_error_pattern(bad_request_error_pattern_with_nested_field(:settings, :domain_list, 'Has 4 values, it can have maximum of 3 values', code: 'invalid_value')))
     assert_response 400
+    unlink_freshmarketer_account
   end
 
   def test_update_components_with_predictive_support
@@ -670,17 +894,19 @@ class HelpWidgetsControllerTest < ActionController::TestCase
       }
     }
     put :update, construct_params(version: 'v2', id: widget2.id, help_widget: request_params)
-
-    assert_response 400
-    match_json(request_error_pattern(:error_in_predictive_support, 'error_in_predictive_support'))
+    assert_response 500
     unlink_freshmarketer_account
     unstub_freshmarketer_client
   end
 
   def test_update_predictive_support_with_fm_error_enable_predictive_integration
     link_freshmarketer_account
-    stub_freshmarketer_client([:create_experiment, :enable_predictive_support, :disable_predictive_support, :enable_integration_error,
-                    :disable_integration, :cdn_script])
+    stub_freshmarketer_client([:create_experiment,
+                               :enable_predictive_support,
+                               :disable_predictive_support,
+                               :enable_integration_error,
+                               :disable_integration,
+                               :cdn_script])
     widget1 = create_widget
     additional_settings = Account.current.account_additional_settings
     additional_settings.additional_settings[:widget_predictive_support] = fm_widget_settings('test.fresh.com', widget1.id)
@@ -700,8 +926,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
       }
     }
     put :update, construct_params(version: 'v2', id: widget2.id, help_widget: request_params)
-    assert_response 400
-    match_json(request_error_pattern(:error_in_predictive_support, 'error_in_predictive_support'))
+    assert_response 500
     unlink_freshmarketer_account
     unstub_freshmarketer_client
   end
@@ -723,8 +948,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
       }
     }
     put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
-    assert_response 400
-    match_json(request_error_pattern(:error_in_predictive_support, 'error_in_predictive_support'))
+    assert_response 500
     unlink_freshmarketer_account
     unstub_freshmarketer_client
   end
@@ -749,8 +973,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
       }
     }
     put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
-    assert_response 400
-    match_json(request_error_pattern(:error_in_predictive_support, 'error_in_predictive_support'))
+    assert_response 500
     unlink_freshmarketer_account
     unstub_freshmarketer_client
   end
@@ -778,8 +1001,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
       }
     }
     put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
-    assert_response 400
-    match_json(request_error_pattern(:error_in_predictive_support, 'error_in_predictive_support'))
+    assert_response 500
     unstub_freshmarketer_client
   end
 
@@ -862,6 +1084,17 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern(:length, 'Unexpected/invalid field in request', code: 'invalid_field')])
   end
 
+  def test_update_invalid_with_empty_settings_hash
+    widget = create_widget
+    widget_settings = widget.settings
+    request_params = {
+      settings: {}
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    assert_response 200
+    assert_equal widget_settings, widget.settings
+  end
+
   def test_update_appearance_all
     widget = create_widget
     request_params = {
@@ -896,6 +1129,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
   end
 
   def test_update_all_settings
+    link_freshmarketer_account
     widget = create_widget
     request_params = {
       name: 'My_First_Widget',
@@ -919,11 +1153,6 @@ class HelpWidgetsControllerTest < ActionController::TestCase
           gradient: 2,
           theme_color: '#0f45c1',
           button_color: '#cc30b0'
-        },
-        predictive_support: {
-          welcome_message: "Hi I'm Lisa",
-          message: 'what is the problem ?',
-          success_message: 'Thank you ji'
         }
       }
     }
@@ -950,9 +1179,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     assert widget.settings[:appearance][:gradient] == request_params[:settings][:appearance][:gradient]
     assert widget.settings[:appearance][:theme_color] == request_params[:settings][:appearance][:theme_color]
     assert widget.settings[:appearance][:button_color] == request_params[:settings][:appearance][:button_color]
-    assert widget.settings[:predictive_support][:welcome_message] == request_params[:settings][:predictive_support][:welcome_message]
-    assert widget.settings[:predictive_support][:message] == request_params[:settings][:predictive_support][:message]
-    assert widget.settings[:predictive_support][:success_message] == request_params[:settings][:predictive_support][:success_message]
+    unlink_freshmarketer_account
   end
 
   def test_widget_create_with_portal

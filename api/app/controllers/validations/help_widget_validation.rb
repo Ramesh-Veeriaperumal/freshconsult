@@ -1,16 +1,18 @@
 class HelpWidgetValidation < ApiValidation
-  attr_accessor :name, :product_id, :settings, :request_params, :id
+  attr_accessor :name, :product_id, :settings, :request_params, :id, :freshmarketer
   validates :name, data_type: { rules: String }, custom_length: { maximum: HelpWidgetConstants::TEXT_FIELDS_MAX_LENGTH }, allow_nil: true
   validates :product_id, data_type: { rules: Integer }, allow_nil: true
   validates :settings, data_type: { rules: Hash }, hash: { validatable_fields_hash: proc { |x| x.widget_settings_format } }, allow_nil: true, on: :update
   validates :settings, data_type: { rules: Hash }, hash: { validatable_fields_hash: proc { |x| x.components_format } }, presence: true, allow_nil: false, on: :create
-  validate :validate_settings, if: -> { request_params[:settings].present? && errors.blank? }
+  validates :freshmarketer, data_type: { rules: Hash }, hash: { validatable_fields_hash: proc { |x| x.freshmarketer_format } }, allow_nil: true, on: :update
+  validate :validate_settings, if: -> { @settings.present? && errors.blank? }
   validate :validate_create_attributes, if: -> { errors.blank? }, on: :create
-  validate :validate_update_attributes, if: -> { errors.blank? && request_params[:settings].present? }, on: :update
-  validate :validate_domain, if: -> { request_params[:settings].present? && request_params[:settings][:predictive_support].present? }, on: :update
+  validate :validate_update_attributes, if: -> { errors.blank? && @settings.present? }, on: :update
+  validate :validate_domain, if: -> { predictive_present? }, on: :update
 
   def initialize(request_params, item = nil, allow_string_param = false)
     super(request_params, item, allow_string_param)
+    @settings = request_params[:settings]
   end
 
   def components_format
@@ -264,7 +266,7 @@ class HelpWidgetValidation < ApiValidation
       domain_list: {
         data_type: {
           rules: Array,
-          allow_nil: false
+          allow_nil: true
         },
         custom_length: {
           maximum: HelpWidgetConstants::MAX_DOMAIN_ALLOWED,
@@ -301,23 +303,54 @@ class HelpWidgetValidation < ApiValidation
     }
   end
 
+  def freshmarketer_format
+    {
+      email: {
+        data_type: {
+          rules: String
+        },
+        custom_format: {
+          with: ApiConstants::EMAIL_REGEX
+        }
+      },
+      domain: {
+        data_type: {
+          rules: String
+        }
+      },
+      type: {
+        data_type: {
+          rules: String
+        },
+        custom_inclusion: {
+          in: HelpWidgetConstants::FRESHMARKETER_TYPE_MAPPING.keys
+        }
+      }
+    }
+  end
+
+  def predictive_present?
+    settings.present? &&
+      settings[:components] &&
+      settings[:components][:predictive_support]
+  end
+
   def validate_domain
-    domain_list = request_params[:settings][:predictive_support][:domain_list] || []
+    domain_list = settings[:predictive_support].present? && settings[:predictive_support][:domain_list] || []
     domain_list.each do |domain|
       return errors[:domain_list] << I18n.t('help_widget.invalid_domain') unless domain.match(HelpWidgetConstants::DOMAIN_VALADITION_REGEX)
     end
   end
 
   def validate_create_attributes
-    components_hash = request_params[:settings][:components]
+    components_hash = settings[:components]
     components_hash.each_key do |key|
       errors[:request_params] << I18n.t('help_widget.invalid_components', key: key) unless HelpWidgetConstants::COMPONENTS.include?(key.to_s)
     end
   end
 
   def validate_update_attributes
-    settings = request_params[:settings]
-    settings.except('message', 'button_text', 'widget_flow').each_key do |settings_key|
+    settings.except('message', 'button_text', 'widget_flow', 'freshmarketer').each_key do |settings_key|
       settings[settings_key].each_key do |key|
         errors[key] << I18n.t('help_widget.invalid_settings', key: key) unless "HelpWidgetConstants::#{settings_key.upcase}".constantize.include?(key.to_s)
       end
@@ -325,7 +358,7 @@ class HelpWidgetValidation < ApiValidation
   end
 
   def validate_settings
-    request_params[:settings].each_key do |key|
+    settings.except('freshmarketer').each_key do |key|
       errors[key] << I18n.t('help_widget.invalid_settings', key: key) unless HelpWidgetConstants::SETTINGS_FIELDS.include?(key.to_s)
     end
   end

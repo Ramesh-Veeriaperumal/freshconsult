@@ -285,6 +285,8 @@ Helpkit::Application.routes.draw do
         put :enable_integration
         put :disable_integration
         get :session_info
+        get :domains
+        put :enable_session_replay
       end
     end
 
@@ -312,11 +314,7 @@ Helpkit::Application.routes.draw do
       resources :ticket_fields, only: [:create]
     end
 
-    resources :help_widgets, controller: 'help_widgets' do
-      collection do
-        get :freshmarketer_info
-      end
-    end
+    resources :help_widgets, controller: 'help_widgets'
 
     post '/audit_log/export', to: 'audit_logs#export'
     get '/audit_log/export/:id', to: 'audit_logs#export_s3_url'

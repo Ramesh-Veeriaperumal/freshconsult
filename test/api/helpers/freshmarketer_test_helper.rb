@@ -1,10 +1,11 @@
 module FreshmarketerTestHelper
+
   def stub_create_account
     stubs.post('/ab/api/v1/createsraccount') do |env|
       [200, {}, {
         status_code: 200,
         createsraccount: {
-          account_id: '4759555256525C455C515442425C5F5D4C5E5C5F5F',
+          account_id: '475_955_525_652_5C4_55C_515_442_425_C5F_5D4_C5E_5C5_F5F',
           authtoken: '1taehlg306k6bl88vpq44500970cmuuufnrq86br',
           cdnscript: "<script src=\'//s3-us-west-2.amazonaws.com/zargetlab-js-bucket/48434356339/1300.js\'></script>",
           app_url: 'http://sr.pre-freshmarketer.io/ab/#/org/45701089031/project/914/experiment/1406/session/sessions',
@@ -20,13 +21,13 @@ module FreshmarketerTestHelper
       [200, {}, {
         status_code: 200,
         associatesraccount: {
-          account_id: '4759555256525C455C515442425C5F5D4C5E5C5F5F',
+          account_id: '475_955_525_652_5C4_55C_515_442_425_C5F_5D4_C5E_5C5_F5F',
           authtoken: '1taehlg306k6bl88vpq44500970cmuuufnrq86br',
           cdnscript: "<script src=\'//s3-us-west-2.amazonaws.com/zargetlab-js-bucket/48434356339/1300.js\'></script>",
           app_url: 'http://sr.pre-freshmarketer.io/ab/#/org/45701089031/project/914/experiment/1406/session/sessions',
           integrate_url: 'http://sr.pre-freshmarketer.io/ab/#/org/45701089031/project/914/settings/#/apikey'
         },
-        resource_name: 'createsraccount'
+        resource_name: 'associatesraccount'
       }.to_json]
     end
   end
@@ -100,6 +101,20 @@ module FreshmarketerTestHelper
     end
   end
 
+  def stub_domains
+    stubs.get('/ab/api/v1/integrate/admin/domains') do |env|
+      [200, {}, {
+        status: '200',
+        domains: ['test1.fmstack.com', 'test2.fmstack.com', 'test3.fmstack.com'],
+        resource_name: 'domains'
+      }.to_json]
+    end
+  end
+
+  def stub_enable_session_replay
+    stub_create_experiment
+  end
+
   def stub_experiment_details
     stubs.get('/ab/api/v1/sr/expdetails') do |env|
       [200, {}, {
@@ -162,8 +177,8 @@ module FreshmarketerTestHelper
 
   def stub_create_experiment_error
     stubs.post('/ab/api/v1/sr/create_experiment') do |env|
-      [500, {}, {
-        status_code: 500,
+      [400, {}, {
+        status_code: 400,
         create_experiment: {
           result: false
         },
@@ -174,8 +189,8 @@ module FreshmarketerTestHelper
 
   def stub_enable_predictive_support_error
     stubs.put('/ab/api/v1/sr/enablepredictivesupport') do |env|
-      [500, {}, {
-        status_code: 500,
+      [400, {}, {
+        status_code: 400,
         enablepredictivesupport: {
           result: false
         },
@@ -186,8 +201,8 @@ module FreshmarketerTestHelper
 
   def stub_disable_predictive_support_error
     stubs.put('/ab/api/v1/sr/disablepredictivesupport') do |env|
-      [500, {}, {
-        status_code: 500,
+      [400, {}, {
+        status_code: 400,
         disablepredictivesupport: {
           result: false
         },
@@ -198,8 +213,8 @@ module FreshmarketerTestHelper
 
   def stub_enable_integration_error
     stubs.post('/ab/api/v1/sr/enableintegration') do |env|
-      [500, {}, {
-        status_code: 500,
+      [400, {}, {
+        status_code: 400,
         enableintegration: {
           result: false
         },
@@ -210,8 +225,8 @@ module FreshmarketerTestHelper
 
   def stub_disable_integration_error
     stubs.post('/ab/api/v1/sr/disableintegration') do |env|
-      [500, {}, {
-        status_code: 500,
+      [400, {}, {
+        status_code: 400,
         resource_name: 'disableintegration',
         disableintegration: {
           result: false
@@ -242,12 +257,12 @@ module FreshmarketerTestHelper
     end
   end
 
-  def stub_bad_request_error_response
+  def stub_bad_request_error_response(invalid = nil)
     stubs.post('/ab/api/v1/createsraccount') do |env|
       [500, {}, {
         messagecode: 'E400IE',
         error: true,
-        message: 'invalid email',
+        message: invalid || 'invalid email',
         status: 400
       }.to_json]
     end
@@ -292,10 +307,19 @@ module FreshmarketerTestHelper
   end
 
   def linked_experiment_pattern(expected_output)
-    [{
-      linked: expected_output[:linked] || false,
-      experiment: expected_output[:linked] ? { name: String, url: String, status: String, cdn_script: String, app_url: String, integrate_url: String } : {}
-    }]
+    if expected_output[:linked]
+      [{
+        linked: true,
+        predictive: expected_output[:predictive] || false,
+        experiment: expected_output[:linked] ? { name: String, url: String, status: String, cdn_script: String, app_url: String, integrate_url: String } : {},
+        name: expected_output[:name] || nil
+      }]
+    else
+      [{
+        linked: false,
+        experiment: {}
+      }]
+    end
   end
 
   def session_pattern(session)
@@ -309,6 +333,12 @@ module FreshmarketerTestHelper
   def session_info_pattern
     {
       url: String
+    }
+  end
+
+  def get_domains_pattern
+    {
+      domains: Array
     }
   end
 end

@@ -1,0 +1,5 @@
+type: array
+description: Freshmarketer domains List
+items:
+  type: string
+  uniqueItems: true

@@ -89,6 +89,10 @@ class AccountAdditionalSettings < ActiveRecord::Base
     freshmarketer_hash.present? && freshmarketer_hash[:acc_id].present?
   end
 
+  def frustration_tracking_fm_linked?
+    freshmarketer_hash.present? && additional_settings[:widget_predictive_support].present?
+  end
+
   [:acc_id, :auth_token, :cdn_script, :app_url, :integrate_url].each do |item|
     define_method "freshmarketer_#{item}" do
       freshmarketer_hash[item] if freshmarketer_hash.present?

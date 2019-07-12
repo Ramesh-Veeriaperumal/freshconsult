@@ -31,8 +31,8 @@ module HelpWidgetsTestHelper
 
   def components_hash(options = {})
     {
-      contact_form: options[:contact_form] == false ? options[:contact_form] : true,
-      predictive_support: options[:predictive_support] == false ? options[:predictive_support] : true
+      contact_form: options.key?(:contact_form) ? options[:contact_form] : true,
+      solution_articles: options.key?(:solution_articles) ? options[:solution_articles] : false
     }
   end
 

@@ -8,6 +8,7 @@ module Freshmarketer
     GET_SESSIONS_URL = '/sr/sessions'.freeze
     GET_SESSION_URL = '/sr/session/%<session_id>s'.freeze
     GET_EXPERIMENT_URL = '/sr/expdetails'.freeze
+    GET_DOMAINS_URL = '/integrate/admin/domains'.freeze
     REMOVE_ACCOUNT_URL = '/sr/removeaccount'.freeze
     ENABLE_PREDICTIVE_SUPPORT_URL = '/sr/enablepredictivesupport'.freeze
     DISABLE_PREDICTIVE_SUPPORT_URL = '/sr/disablepredictivesupport'.freeze
@@ -25,5 +26,6 @@ module Freshmarketer
       'E409IU' => :invalid_user
     }.freeze
     SESSIONS_LIMIT = 10
+    LINK_ACCOUNT_TYPE = %w[create associate associate_using_domain].freeze
   end
 end

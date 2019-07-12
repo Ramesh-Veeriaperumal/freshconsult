@@ -3,12 +3,21 @@ class Freshmarketer::Client
 
   attr_accessor :response_code, :response_data
 
-  def link_account(data, is_create = true)
+  def link_account(data, type = :create, experiment_domain = nil)
     invoke_call do
-      account_details = is_create ? create_account(data) : associate_account(data)
+      account_details = case type
+                        when 'create'
+                          create_account(data, experiment_domain)
+                        when 'associate_using_domain'
+                          associate_using_domain(data, experiment_domain)
+                        when 'associate'
+                          associate_using_api_key(data)
+                        end
       return if response_code != :ok
 
-      acc_id = account_details['account_id']
+      # Here acc_id is experiment_id
+      skip_acc_id = experiment_domain.present? && experiment_domain != account_domain
+      acc_id = skip_acc_id ? nil : account_details['account_id']
       auth_token = account_details['authtoken']
       cdn_script = account_details['cdnscript'].html_safe
       app_url = account_details['app_url'].html_safe
@@ -79,8 +88,8 @@ class Freshmarketer::Client
 
   # create_account, associate_account & remove_account has to be accessed via wrapper method as it modifies DB
 
-  def create_account(email)
-    payload = { email_id: email, domain: account_domain }
+  def create_account(email, domain = account_domain)
+    payload = { email_id: email, domain: domain }
     response = request(account_setup_params, CREATE_ACCOUNT_URL, :post, payload)
     response['createsraccount']
   end
@@ -107,19 +116,49 @@ class Freshmarketer::Client
     end
   end
 
-  def create_experiment(domain)
+  def domains(email = User.current.email)
     query_param = {
-      access_key: auth_token,
-      enable_predictive_support: true
+      access_key: access_key,
+      email_id: email
     }
     invoke_call do
-      response = request(query_param, CREATE_EXPERIMENT, :post, domain: domain)
-      response['create_experiment']['result']
+      request(query_param, GET_DOMAINS_URL, :get)
     end
   end
 
-  def associate_account(token)
-    payload = { token: token, domain: account_domain }
+  def create_experiment(domain = account_domain, frustration_tracking = false)
+    query_param = {
+      access_key: auth_token,
+      enable_predictive_support: frustration_tracking
+    }
+    invoke_call do
+      request(query_param, CREATE_EXPERIMENT, :post, domain: domain)
+    end
+    return if response_code != :ok
+
+    experiment_id = response_data['create_experiment']['result']
+    update_experiment_id(experiment_id) if domain == account_domain
+    experiment_id
+  end
+
+  def associate_using_domain(current_domain, experiment_domain = nil)
+    payload = {
+      email_id: User.current.email,
+      account_domain: current_domain,
+      domain: experiment_domain
+    }
+    associate_account(payload)
+  end
+
+  def associate_using_api_key(api_key)
+    payload = {
+      token: api_key,
+      domain: account_domain
+    }
+    associate_account(payload)
+  end
+
+  def associate_account(payload)
     response = request(account_setup_params, ASSOCIATE_ACCOUNT_URL, :post, payload)
     response['associatesraccount']
   end
@@ -127,6 +166,11 @@ class Freshmarketer::Client
   def remove_account
     response = request(basic_query_params, REMOVE_ACCOUNT_URL, :post)
     response['Status']
+  end
+
+  def enable_session_replay
+    exp_id = create_experiment
+    update_experiment_id(exp_id) if exp_id
   end
 
   private
@@ -210,16 +254,24 @@ class Freshmarketer::Client
       FreshmarketerConfig['access_key']
     end
 
+    def account_additional_settings
+      @account_additional_settings ||= Account.current.account_additional_settings_from_cache
+    end
+
     def auth_token
-      Account.current.account_additional_settings.freshmarketer_auth_token
+      account_additional_settings.freshmarketer_auth_token
     end
 
     def freshmarketer_acc_id
-      Account.current.account_additional_settings.freshmarketer_acc_id
+      account_additional_settings.freshmarketer_acc_id
+    end
+
+    def update_experiment_id(exp_id)
+      account_additional_settings.additional_settings[:freshmarketer][:acc_id] = exp_id
+      account_additional_settings.save
     end
 
     def set_freshmarketer_hash(acc_id, auth_token, cdn_script, app_url, integrate_url)
-      account_additional_settings = Account.current.account_additional_settings
       freshmarketer_acct_info = { acc_id: acc_id, auth_token: auth_token, cdn_script: cdn_script, app_url: app_url, integrate_url: integrate_url }
       if account_additional_settings.present? && account_additional_settings.additional_settings.present?
         account_additional_settings.additional_settings[:freshmarketer] = freshmarketer_acct_info
@@ -247,9 +299,10 @@ class Freshmarketer::Client
 
     def unlink_freshmarketer_from_widget
       Account.current.help_widgets.active.each do |widget|
-        next unless widget.settings[:components][:predictive_support]
+        next unless widget.settings[:components] && widget.settings[:components].key?(:predictive_support)
 
-        widget.settings[:components][:predictive_support] = false
+        widget.settings[:components].delete(:predictive_support)
+        widget.settings[:predictive_support].delete(:domain_list)
         widget.settings.delete(:freshmarketer)
         widget.save
       end
