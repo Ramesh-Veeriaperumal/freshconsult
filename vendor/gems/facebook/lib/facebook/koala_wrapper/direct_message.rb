@@ -14,8 +14,7 @@ module Facebook
       def fetch_messages
         options = { fields: DM_FIELDS }
         options[:since] = @fan_page.message_since if @fan_page.message_since != 0
-        options[:request] = { timeout: 10, open_timeout: 10 }
-        threads = @rest.get_connections('me', 'conversations', options)
+        threads = @rest.get_connections('me', 'conversations', options, { request: { timeout: 10, open_timeout: 10 } })
         threads.reject! do |thread|
           (thread[MESSAGE_UPDATED_AT].present? && (Time.parse(thread[MESSAGE_UPDATED_AT]).to_i < @fan_page.message_since))
         end

@@ -162,7 +162,7 @@ module Facebook
       #reply to a comment in fb
       def send_comment(rest, parent, note)
         post_id    = parent.fb_post.original_post_id 
-        comment    = rest.put_comment(post_id, note.body)
+        comment    = rest.put_comment(post_id, note.body, STANDARD_TIMEOUT)
         comment_id = comment.is_a?(Hash) ? comment["id"] : comment
         post_type  = parent.fb_post.comment? ? POST_TYPE_CODE[:reply_to_comment] : POST_TYPE_CODE[:comment]
 
@@ -209,7 +209,7 @@ module Facebook
           end
         else
           #Non realtime messages
-          message    = rest.put_object(thread_identifier, 'messages', :message => note.body)
+          message = rest.put_object(thread_identifier, 'messages', { message: note.body }, STANDARD_TIMEOUT)
           message.symbolize_keys!
         end
 
