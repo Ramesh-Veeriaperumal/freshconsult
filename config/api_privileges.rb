@@ -162,6 +162,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/automation", only: [:index, :create, :show, :update, :destroy]
     resource :"admin/custom_translations/upload", only: [:upload]
     resource :"admin/custom_translations/download", only: [:primary, :secondary]
+    resource :"admin/custom_translation", only: [:download]
     resource :"settings/helpdesk", only: [:update]
     resource :"admin/account_feature", only: [:create, :destroy]
   end

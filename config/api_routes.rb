@@ -31,6 +31,8 @@ Helpkit::Application.routes.draw do
           post :upload, to: 'custom_translations/upload#upload'
         end
       end
+
+      get '/custom_translations', to: 'custom_translations#download'
     end
 
     resources :accounts, path: 'admin/accounts' do

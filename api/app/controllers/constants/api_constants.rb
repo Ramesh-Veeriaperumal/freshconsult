@@ -61,7 +61,8 @@ module ApiConstants
                        CannedResponseConstants::LOAD_OBJECT_EXCEPT +
                        AuditLogConstants::LOAD_OBJECT_EXCEPT +
                        Solutions::HomeConstants::LOAD_OBJECT_EXCEPT +
-                       Testing::FreshidApiConstants::LOAD_OBJECT_EXCEPT
+                       Testing::FreshidApiConstants::LOAD_OBJECT_EXCEPT +
+                       Admin::CustomTranslationsConstants::LOAD_OBJECT_EXCEPT
 
   SKIP_LOGS_FOR = {
     bootstrap: %w[me index account],
