@@ -43,7 +43,7 @@ class TicketsValidationHelper
     end
 
     def custom_nested_field_choices
-      Account.current.nested_fields_from_cache.collect { |x| [x.name, x.formatted_nested_choices] }.to_h
+      Account.current.custom_nested_field_choices_hash_from_cache
     end
 
     def custom_checkbox_names(ticket_fields)

@@ -246,6 +246,8 @@ module MemcacheKeys
   ACCOUNT_AGENT_GROUPS_ONLY_IDS = 'v1/AGENTS_GROUPS_IDS_ONLY:%{account_id}'.freeze
 
 
+  CUSTOM_NESTED_FIELD_CHOICES = 'v1/CUSTOM_NESTED_FIELD_CHOICES:%{account_id}'.freeze
+
   def fetch_from_cache(key, &block)
     @cached_values = {} unless @cached_values
     return @cached_values[key] if @cached_values[key]
