@@ -49,6 +49,7 @@ class AgentsController < ApplicationController
 
   def check_edit_privilege
     if freshid_enabled?
+      return true if @agent.user_changes.key?('email') && freshid_user_details(@agent.user.email).blank?
       AgentConstants::RESTRICTED_PARAMS.any? do |key|
         return false if @agent.user_changes.key?(key)
       end
@@ -58,7 +59,7 @@ class AgentsController < ApplicationController
 
   def search_in_freshworks
     email_changed = params[:new_email].present? && params[:new_email].casecmp(params[:old_email]) != 0
-    user = email_changed ? freshid_user_details : current_account.users.find_by_email(params[:old_email].to_s)
+    user = email_changed ? freshid_user_details(params[:new_email]) : current_account.users.find_by_email(params[:old_email].to_s)
     user_hash = user.present? ? (email_changed ? user_info_hash(User.new, user.as_json.symbolize_keys)[:user] : user_info_hash(user)[:user]) : nil
     render :json => { :user_info => user_hash }
   end
@@ -589,9 +590,8 @@ private
     end
   end
 
-  def freshid_user_details
-    current_account.freshid_org_v2_enabled? ? Freshid::V2::Models::User.find_by_email(params[:new_email].to_s) : 
-          Freshid::User.find_by_email(params[:new_email].to_s) 
+  def freshid_user_details(email)
+    current_account.freshid_org_v2_enabled? ? Freshid::V2::Models::User.find_by_email(email.to_s) : Freshid::User.find_by_email(email.to_s)
   end
 end
 
