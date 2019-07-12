@@ -3,7 +3,8 @@ module ChannelIntegrations::Utils
     include ChannelIntegrations::Constants
 
     def is_valid_request?(payload_type, payload)
-      payload && is_valid_payload_type?(payload_type) && check_stack_info?(payload) && payload[:context] && payload[:command_name]
+      payload && is_valid_payload_type?(payload_type) && check_stack_info?(payload) &&
+        payload[:context] && payload[:command_name] && valid_twitter_update?(payload)
     end
 
     def check_stack_info?(payload)
@@ -23,6 +24,12 @@ module ChannelIntegrations::Utils
       $redis_integrations.perform_redis_op('setex', dedup_redis_key, dedup_interval, true)
     rescue => e
       Rails.logger.error "Unable to set the redis keys for dedup logic, msg_id: #{msg_id}"
+    end
+
+    def valid_twitter_update?(payload)
+      return true if payload[:command_name] != Social::Twitter::Constants::STATUS_UPDATE_COMMAND_NAME
+
+      payload[:context][:tweet_type] != 'mention'
     end
   end
 end
