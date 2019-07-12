@@ -39,11 +39,11 @@ class Account < ActiveRecord::Base
     :automation_rule_execution_count, :disable_field_service_management, :disable_mint_analytics,
     :freshid_org_v2, :hide_agent_login, :addon_based_billing, :office365_adaptive_card,
     :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,
-    :recalculate_daypass, :sandbox_single_branch, :fb_page_api_improvement, :attachment_redirect_expiry, 
+    :recalculate_daypass, :sandbox_single_branch, :fb_page_api_improvement, :attachment_redirect_expiry,
     :solutions_agent_portal, :solutions_agent_metrics, :fuzzy_search, :delete_trash_daily,
     :prevent_fwd_email_ticket_create, :enable_wildcard_ticket_create, :check_wc_fwd, :requester_privilege,
     :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr,
-    :csat_email_scan_compatibility, :mint_portal_applicable, :twitter_microservice, :quoted_text_parsing_feature, :fsm_landing_page
+    :csat_email_scan_compatibility, :mint_portal_applicable, :twitter_microservice, :quoted_text_parsing_feature, :fsm_landing_page, :enable_customer_journey
   ].freeze
 
   DB_FEATURES = [
@@ -68,7 +68,7 @@ class Account < ActiveRecord::Base
     :sandbox, :session_replay, :segments, :freshconnect, :proactive_outreach,
     :audit_logs_central_publish, :audit_log_ui, :omni_channel_routing, :undo_send,
     :custom_encrypted_fields, :custom_translations, :parent_child_infra,
-    :canned_forms, :social_tab, :customize_table_view, :public_url_toggle,
+    :canned_forms, :customize_table_view, :public_url_toggle,
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
     :social_tab, :unresolved_tickets_widget_for_sprout, :scenario_automation,
     :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2, :cascade_dispatcher,
@@ -76,7 +76,7 @@ class Account < ActiveRecord::Base
     :freshreports_analytics, :disable_old_reports, :article_filters, :adv_article_bulk_actions,
     :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible, :autofaq, :proactive_spam_detection,
     :ticket_properties_suggester, :ticket_properties_suggester_eligible,
-    :hide_first_response_due, :agent_articles_suggest, :email_articles_suggest
+    :hide_first_response_due, :agent_articles_suggest, :email_articles_suggest, :customer_journey
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
@@ -92,10 +92,7 @@ class Account < ActiveRecord::Base
   PODS_FOR_BOT = ['poduseast1'].freeze
 
   PRICING_PLAN_MIGRATION_FEATURES_2019 = [
-    :social_tab, :customize_table_view, :public_url_toggle, :add_to_response,
-    :agent_scope, :performance_report, :custom_password_policy, :scenario_automation,
-    :sla_management_v2, :omni_channel, :personal_canned_response, :marketplace,
-    :fa_developer, :api_v2
+    :customer_journey
   ].to_set.freeze
 
   LP_FEATURES.each do |item|
@@ -422,17 +419,17 @@ class Account < ActiveRecord::Base
   # Need to cleanup bellow code snippet block with 2019 plan changes release
   # START
   def has_feature?(feature)
-    return super if launched?(:pricing_plan_change_2019)
+    return super if launched?(:enable_customer_journey)
     PRICING_PLAN_MIGRATION_FEATURES_2019.include?(feature) ? true : super
   end
 
   def features_list
-    return super if launched?(:pricing_plan_change_2019)
+    return super if launched?(:enable_customer_journey)
     (super + PRICING_PLAN_MIGRATION_FEATURES_2019.to_a).uniq
   end
 
   def has_features?(*features)
-    unless launched?(:pricing_plan_change_2019)
+    unless launched?(:enable_customer_journey)
       features.delete_if { |feature| PRICING_PLAN_MIGRATION_FEATURES_2019.include?(feature) }
     end
     super
