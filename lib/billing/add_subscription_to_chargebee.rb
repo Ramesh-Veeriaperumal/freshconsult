@@ -1,6 +1,7 @@
 class Billing::AddSubscriptionToChargebee
   include Sidekiq::Worker
   include Subscription::Currencies::Constants
+  include Redis::OthersRedis
   
   sidekiq_options :queue => :chargebee_add_subscription, :retry => 0, :failures => :exhausted
 
@@ -38,7 +39,7 @@ class Billing::AddSubscriptionToChargebee
     end
 
     def perform_fsm_subscriptions
-      return unless Account.current.admin_email.include?('+fsm')
+      return unless Account.current.admin_email.include?('+fsm') || redis_key_exists?(Redis::Keys::Others::FSM_GA_LAUNCHED)
 
       # We are not adding FSM addon during signup. Just calling the worker so that artifacts gets added.
       fsm_addon = Subscription::Addon.find_by_name(Subscription::Addon::FSM_ADDON)
