@@ -4,7 +4,7 @@ module ChannelIntegrations::Utils
 
     def is_valid_request?(payload_type, payload)
       payload && is_valid_payload_type?(payload_type) && check_stack_info?(payload) &&
-        payload[:context] && payload[:command_name] && valid_twitter_update?(payload)
+        payload[:context] && payload[:command_name] && valid_twitter_update?(payload) && !ignore_owner?(payload[:owner])
     end
 
     def check_stack_info?(payload)
@@ -24,6 +24,10 @@ module ChannelIntegrations::Utils
       $redis_integrations.perform_redis_op('setex', dedup_redis_key, dedup_interval, true)
     rescue => e
       Rails.logger.error "Unable to set the redis keys for dedup logic, msg_id: #{msg_id}"
+    end
+
+    def ignore_owner?(owner)
+      IGNORE_OWNER_LIST.include?(owner)
     end
 
     def valid_twitter_update?(payload)

@@ -5,7 +5,8 @@ module ChannelIntegrations::Constants
   # List of services under the Channel Framework.
   OWNERS_LIST = {
     microsoft_teams: 'MSTEAMS',
-    twitter: 'twitter'
+    twitter: 'twitter',
+    facebook: 'facebook'
   }.freeze
 
   # The owner name received from the Kafka and their corresponding service class names.
@@ -58,6 +59,10 @@ module ChannelIntegrations::Constants
   INCOMING_PAYLOAD_TYPES = [
     PAYLOAD_TYPES[:command_to_helpkit],
     PAYLOAD_TYPES[:reply_from_channel]
+  ].freeze
+
+  IGNORE_OWNER_LIST = [
+    OWNERS_LIST[:facebook]
   ].freeze
 
   COMMON_COMMANDS_MODULES_MAPPING = {
