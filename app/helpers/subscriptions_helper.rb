@@ -21,11 +21,11 @@ module SubscriptionsHelper
 
     "sprout jan 19" => [ "email_ticketing", "ticket_dispatch_automation" ,"knowledge_base", "basic_social", "freshcaller", "omni_channel_option"],
     "blossom jan 19" => [ "everything_in_sprout", "multiple_mailboxes", "app_gallery", "time_event_automation", "custom_domain", "helpdesk_report", "custom_ticket_fields_and_views", "agent_collision", "omni_channel_option"],
-    "garden jan 19" => [ "everything_in_blossom", "satisfaction_survey", "timesheets", "sla_reminders", "agent_performance_report", "ticket_templates", "m_k_base"],
+    "garden jan 19" => [ "everything_in_blossom", "satisfaction_survey", "timesheets", "sla_reminders", "agent_performance_report", "ticket_templates", "m_k_base", "customer_journey"],
     "estate jan 19" => [ "everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "auto_ticket_assignment", "enterprise_reports", "custom_dashboard", "custom_surveys", "fsm_option", "custom_translations"],
     "forest jan 19" => [ "everything_in_estate", "ip_whitelisting", "skill_based_assignment", "sandbox", "custom_data_center", "hippa_compliance", "extend_api", "omni_channel_option", "fsm_option"],
 
-    "garden omni jan 19" => [ "everything_in_blossom", "satisfaction_survey", "timesheets", "sla_reminders", "agent_performance_report", "ticket_templates", "m_k_base", "omni_channel_option"],
+    "garden omni jan 19" => [ "everything_in_blossom", "satisfaction_survey", "timesheets", "sla_reminders", "agent_performance_report", "ticket_templates", "m_k_base", "customer_journey", "omni_channel_option"],
     "estate omni jan 19" => [ "everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "auto_ticket_assignment", "enterprise_reports", "custom_dashboard", "custom_surveys", "omni_channel_option", "fsm_option"]
 
   }
@@ -67,12 +67,12 @@ module SubscriptionsHelper
       "agent_collision_desc"],
     "garden jan 19" => ["multilingual_kbase_desc", "dynamic_email_alert_desc", "ticket_templates_desc",
       "sla_reminders_desc", "forums_desc", "agent_performance_report_desc", "satisfaction_survey_desc",
-      "scheduled_reports_desc", "custom_surveys_desc", "custom_apps_desc", "timesheets_desc", "chat_faq", "chat_message", "ivr", "masking_recording"],
+      "scheduled_reports_desc", "custom_surveys_desc", "custom_apps_desc", "timesheets_desc", "chat_faq", "chat_message", "ivr", "masking_recording", "customer_journey_desc"],
     "estate jan 19" => ["multiple_products_desc", "multiple_sla_business_desc", "portal_customization_desc",
       "custom_ssl_desc", "auto_ticket_assignment_desc", "enterprise_reports_desc", "custom_dashboard_desc", "chatbots", "inapp_chat", "smart_calls", "barging_monitoring", "omni_analytics", "fsm_desc", "custom_translations"],
     "garden omni jan 19" => ["multilingual_kbase_desc", "dynamic_email_alert_desc",
       "sla_reminders_desc", "forums_desc", "agent_performance_report_desc",
-      "scheduled_reports_desc", "custom_surveys_desc", "custom_apps_desc", "timesheets_desc", "co_browsing"],
+      "scheduled_reports_desc", "custom_surveys_desc", "custom_apps_desc", "timesheets_desc", "co_browsing", "customer_journey_desc"],
     "estate omni jan 19" => ["multiple_products_desc", "multiple_sla_business_desc", "portal_customization_desc",
       "custom_ssl_desc", "auto_ticket_assignment_desc", "enterprise_reports_desc", "custom_dashboard_desc"],   
     "forest jan 19" => ["skill_based_assignment_desc", "sandbox_desc", "custom_data_center_desc", "whitelisted_ip_desc", "co_browsing", "multilingual_chat", "omni_routing"]
@@ -120,7 +120,7 @@ module SubscriptionsHelper
     "forest jan 17" => {:type_flag => 2, :features => []},
 
     "sprout jan 19" => {:type_flag => 0, :features => ["scenario_automations_desc", "custom_tabel_view_desc", "sla_desc", "business_hours_desc", "agent_scope_desc", "agent_group_pf_report"]},
-    "blossom jan 19" => {:type_flag => 0, :features => ["sla_reminders_desc", "agent_group_pf_report", "timesheets_desc", "canned_forms_desc", "custom_apps_desc", "customer_360_desc", "customer_journey_desc"]},
+    "blossom jan 19" => {:type_flag => 0, :features => ["sla_reminders_desc", "agent_group_pf_report", "timesheets_desc", "canned_forms_desc", "custom_apps_desc", "customer_360_desc"]},
     "garden jan 19" => {:type_flag => 0, :features => ["parent_child_desc"]},
     "estate jan 19" => {:type_flag => 2, :features => []},
     "garden omni jan 19" => {:type_flag => 0, :features => ["parent_child_desc"]},

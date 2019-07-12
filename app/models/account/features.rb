@@ -19,7 +19,7 @@ class Account < ActiveRecord::Base
     :skip_invoice_due_warning, :company_central_publish, :product_central_publish,
     :redis_picklist_id, :help_widget, :bot_email_channel, :bot_email_central_publish,
     :description_by_default, :ticket_fields_central_publish, :facebook_page_scope_migration,
-    :agent_group_central_publish, :custom_fields_search,:update_billing_info, :fluffy,
+    :agent_group_central_publish, :custom_fields_search, :update_billing_info, :fluffy,
     :allow_billing_info_update, :pricing_plan_change_2019, :tag_central_publish, :native_apps,
     :surveys_central_publish, :id_for_choices_write, :nested_field_revamp, :session_logs, :bypass_signup_captcha,
     :freshvisual_configs, :ticket_field_limit_increase, :join_ticket_field_data, :contact_company_split,
@@ -28,8 +28,8 @@ class Account < ActiveRecord::Base
     :addon_based_billing, :kbase_mint, :text_custom_fields_in_etl, :email_spoof_check,
     :disable_email_spoof_check, :onboarding_i18n, :webhook_blacklist_ip, :recalculate_daypass, :sandbox_single_branch,
     :fb_page_api_improvement, :attachment_redirect_expiry, :solutions_agent_portal, :solutions_agent_metrics, :fuzzy_search,
-    :delete_trash_daily, :ticket_type_filter_in_trends_widget, :automation_revamp, :prevent_fwd_email_ticket_create, 
-    :enable_wildcard_ticket_create, :check_wc_fwd, :requester_privilege, :sso_unique_session, :fsm_landing_page
+    :delete_trash_daily, :ticket_type_filter_in_trends_widget, :automation_revamp, :prevent_fwd_email_ticket_create,
+    :enable_wildcard_ticket_create, :check_wc_fwd, :requester_privilege, :sso_unique_session, :fsm_landing_page, :enable_customer_journey
   ].freeze
 
   DB_FEATURES = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone].freeze
@@ -51,7 +51,7 @@ class Account < ActiveRecord::Base
     :freshchat, :disable_old_ui, :contact_company_notes, :sandbox, :parent_child_infra,
     :session_replay, :segments, :freshconnect, :proactive_outreach, :audit_logs_central_publish,
     :audit_log_ui, :omni_channel_routing, :custom_encrypted_fields, :hipaa,
-    :canned_forms, :custom_translations, :social_tab,
+    :canned_forms, :custom_translations,
     :customize_table_view, :public_url_toggle, :add_to_response, :agent_scope,
     :performance_report, :custom_password_policy, :social_tab, :scenario_automation,
     :omni_channel, :ticket_volume_report, :sla_management_v2, :api_v2, :cascade_dispatcher,
@@ -59,7 +59,7 @@ class Account < ActiveRecord::Base
     :freshreports_analytics, :disable_old_reports, :article_filters, :adv_article_bulk_actions,
     :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible, :ticket_properties_suggester, :ticket_properties_suggester_eligible,
     :autofaq, :proactive_spam_detection,
-    :hide_first_response_due, :agent_articles_suggest, :email_articles_suggest
+    :hide_first_response_due, :agent_articles_suggest, :email_articles_suggest, :customer_journey
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
@@ -74,10 +74,7 @@ class Account < ActiveRecord::Base
 
   PODS_FOR_BOT = ['poduseast1'].freeze
 
-  PRICING_PLAN_MIGRATION_FEATURES_2019 = [:social_tab, :customize_table_view,
-    :public_url_toggle, :add_to_response, :agent_scope, :performance_report,
-    :custom_password_policy, :scenario_automation, :sla_management_v2, :omni_channel, :api_v2,
-    :personal_canned_response, :marketplace, :fa_developer].to_set.freeze
+  PRICING_PLAN_MIGRATION_FEATURES_2019 = [:customer_journey].to_set.freeze
 
   LP_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do
@@ -382,17 +379,17 @@ class Account < ActiveRecord::Base
   # Need to cleanup bellow code snippet with 2019 plan changes release
   # START
   def has_feature?(feature)
-    return super if launched?(:pricing_plan_change_2019)
+    return super if launched?(:enable_customer_journey)
     PRICING_PLAN_MIGRATION_FEATURES_2019.include?(feature) ? true : super
   end
 
   def features_list
-    return super if launched?(:pricing_plan_change_2019)
+    return super if launched?(:enable_customer_journey)
     (super + PRICING_PLAN_MIGRATION_FEATURES_2019.to_a).uniq
   end
 
   def has_features?(*features)
-    unless launched?(:pricing_plan_change_2019)
+    unless launched?(:enable_customer_journey)
       features.delete_if { |feature| PRICING_PLAN_MIGRATION_FEATURES_2019.include?(feature) }
     end
     super
