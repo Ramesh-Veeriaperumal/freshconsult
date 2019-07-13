@@ -17,7 +17,7 @@ module ContactSegmentsTestHelper
                                   deleted: options[:deleted] || 0,
                                   blocked: options[:blocked] || 0,
                                   company_ids: options[:company_ids] || [],
-                                  language: options[:blocked] || 'en',
+                                  language: options[:language] || 'en',
                                   active: options[:active] || false,
                                   tag_names: options[:tag_names] || "",
                                   created_at: options[:created_at] || Time.zone.now)
