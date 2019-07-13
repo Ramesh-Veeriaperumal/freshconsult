@@ -248,6 +248,7 @@
       - :analytics_tags_resource
       - :proactive_outreach
       - :adv_article_bulk_actions
+      - :customer_journey
     :inherits:
       - :blossom_jan_19
     :exclude: []

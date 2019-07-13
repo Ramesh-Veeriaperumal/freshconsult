@@ -1,15 +1,21 @@
 class HelpWidgetDelegator < BaseDelegator
   include ActiveRecord::Validations
 
+  attr_accessor :settings, :components, :predictive_support, :freshmarketer
+
   validate :validate_product, if: -> { @product_id }
-  validate :validate_widget_flow, if: -> { @options.present? && @options[:widget_flow].present? }
-  validate :validate_domain_list, if: -> { @options.present? && domain_list_or_predictive }
+  validate :validate_widget_flow, if: -> { @settings.present? && @settings[:widget_flow].present? }
+  validate :validate_domain_list, if: -> { @settings.present? && domain_list_or_predictive }
+  validate :validate_frustration_tracking, if: -> { errors.blank? && predictive_support_present? && @freshmarketer.blank? }, on: :update
+  validate :validate_freshmarketer, if: -> { errors.blank? && @freshmarketer.present? }, on: :update
 
   def initialize(record, options = {})
     @item = record
     @product_id = options[:product_id]
-    @options = nil
-    @options = options[:settings] if options[:settings].present?
+    @settings = options[:settings]
+    @components = options[:settings][:components] if settings
+    @predictive_support = options[:settings][:predictive_support] if settings
+    @freshmarketer = options[:freshmarketer]
   end
 
   def validate_product
@@ -31,42 +37,66 @@ class HelpWidgetDelegator < BaseDelegator
     end
   end
 
+  def validate_frustration_tracking
+    errors[:predictive_support_hash] << I18n.t('help_widget.invalid_components', key: 'predictive_support') unless freshmarketer_linked?
+  end
+
+  def validate_freshmarketer
+    validate_domain if freshmarketer[:type] == 'associate'
+    errors[:predictive_support] << I18n.t('help_widget.freshmarketer_sign_up_error') if components && !components[:predictive_support]
+  end
+
   private
 
     def contact_form_enabled
-      if @options[:components].present? && @options[:components].key?('contact_form')
-        @options[:components][:contact_form]
+      if components && components.key?('contact_form')
+        components[:contact_form]
       else
         @item.contact_form_enabled?
       end
     end
 
     def solution_articles_enabled
-      if @options[:components].present? && @options[:components].key?('solution_articles')
-        @options[:components][:solution_articles]
+      if components && components.key?('solution_articles')
+        components[:solution_articles]
       else
         @item.solution_articles_enabled?
       end
     end
 
     def predictive_support_enabled
-      if @options[:components].present? && @options[:components].key?(:predictive_support)
-        @options[:components][:predictive_support]
+      if components && components.key?(:predictive_support)
+        components[:predictive_support]
       else
         @item.predictive?
       end
     end
 
+    def validate_domain
+      freshmarketer_client = ::Freshmarketer::Client.new
+      valid_domains = freshmarketer_client.domains
+      errors[:freshmarketer_domain] << I18n.t('help_widget.invalid_components') if valid_domains['domains'].exclude?(freshmarketer[:domain])
+    end
+
     def domain_list_blank
-      if @options[:predictive_support].present? && @options[:predictive_support].key?(:domain_list)
-        @options[:predictive_support][:domain_list].blank?
+      if predictive_support && predictive_support.key?(:domain_list)
+        predictive_support[:domain_list].blank?
       else
         @item.settings[:predictive_support].blank? || @item.settings[:predictive_support][:domain_list].blank?
       end
     end
 
     def domain_list_or_predictive
-      (@options[:predictive_support].present? && @options[:predictive_support].key?(:domain_list)) ||
-        (@options[:components].present? && @options[:components].key?(:predictive_support))
+      (predictive_support && predictive_support.key?(:domain_list)) ||
+        (components && components.key?(:predictive_support))
+    end
+
+    def freshmarketer_linked?
+      account_additional_settings = Account.current.account_additional_settings
+      account_additional_settings && account_additional_settings.additional_settings[:freshmarketer].present?
+    end
+
+    def predictive_support_present?
+      settings && (predictive_support || (components && components.key?(:predictive_support)))
     end
 end

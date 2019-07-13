@@ -23,9 +23,20 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         create_field_agent_type
         create_field_group_type
         create_fsm_dashboard if Account.current.fsm_dashboard_enabled?
+        create_field_service_manager_role if Account.current.scheduling_fsm_dashboard_enabled?
         expire_cache
       rescue StandardError => e
         log_operation_failure('Enable', e)
+      end
+
+      def create_field_service_manager_role
+        return if Account.current.roles.map(&:name).include?(I18n.t('fsm_scheduling_dashboard.name'))
+
+        role_params = { name: I18n.t('fsm_scheduling_dashboard.name'),
+                        description: I18n.t('fsm_scheduling_dashboard.description'),
+                        privilege_list: FIELD_SERVICE_MANAGER_ROLE_PRIVILEGES }
+        role = Account.current.roles.build(role_params)
+        role.save
       end
 
       def log_operation_failure(operation, exception)

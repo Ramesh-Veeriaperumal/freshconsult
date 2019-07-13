@@ -22,4 +22,15 @@ class CustomSurvey::Survey < ActiveRecord::Base
     s.add :deleted
     s.add :good_to_bad
   end
+
+  api_accessible :custom_translation do |survey|
+    survey.add :title_text
+    survey.add :comments_text
+    survey.add :thanks_text
+    survey.add :feedback_response_text
+  end
+
+  def custom_translation_key
+    "survey_#{id}".to_sym
+  end
 end

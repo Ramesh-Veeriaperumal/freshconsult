@@ -9319,6 +9319,84 @@
         }
       }
     },
+    "/freshmarketer/domains": {
+      "get": {
+        "tags": [
+          "Freshmarketer domain list"
+        ],
+        "description": "Lists the freshmarketer domains of the current user if he has freshmarketer accounts",
+        "summary": "Instead of API key, this will list all the freshmarketer accounts domain of the current user email",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/freshmarketer_domains"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "409": {
+            "description": "Resource conflict Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/internal_server_error"
+            }
+          }
+        }
+      }
+    },
+    "/freshmarketer/enable_session_replay": {
+      "put": {
+        "tags": [
+          "Enable session replay"
+        ],
+        "summary": "Track session in  support portal",
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "409": {
+            "description": "Resource conflict Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/internal_server_error"
+            }
+          }
+        }
+      }
+    },
     "/subscription": {
       "get": {
         "tags": [
@@ -22233,6 +22311,12 @@
         "linked": {
           "type": "boolean"
         },
+        "predictive": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
         "experiment": {
           "type": "object",
           "properties": {
@@ -22265,6 +22349,14 @@
         "url": {
           "type": "string"
         }
+      }
+    },
+    "freshmarketer_domains": {
+      "type": "array",
+      "description": "Freshmarketer domains List",
+      "items": {
+        "type": "string",
+        "uniqueItems": true
       }
     },
     "subscription_response": {
@@ -22645,6 +22737,29 @@
                 }
               }
             },
+            "predictive_support": {
+              "type": "object",
+              "properties": {
+                "welcome_message": {
+                  "type": "string",
+                  "description": "Welcome Message that will appear in predictive support widget"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Message for the users that will appear in predictive support widget"
+                },
+                "success_message": {
+                  "type": "string",
+                  "description": "Success message shown after submitting predictive form"
+                },
+                "domain_list": {
+                  "type": "array",
+                  "description": "List of domains the freshmarketer should track",
+                  "minItems": 1,
+                  "maxItems": 3
+                }
+              }
+            },
             "widget_flow": {
               "type": "integer",
               "description": "1-Show contact options only after customers reads solution article 2-Show contact options upfront, along with solution articles"
@@ -22683,6 +22798,10 @@
                 "solution_articles": {
                   "type": "boolean",
                   "description": "Solution articles is On or Off On - true / Off - false"
+                },
+                "predictive_support": {
+                  "type": "boolean",
+                  "description": "Predictive Support is On or Off On - true / Off - false"
                 }
               }
             },
@@ -22750,6 +22869,29 @@
                 "button_color": {
                   "type": "string",
                   "description": "Color of the buttons in widget ( default color = 16193e )"
+                }
+              }
+            },
+            "predictive_support": {
+              "type": "object",
+              "properties": {
+                "welcome_message": {
+                  "type": "string",
+                  "description": "Welcome Message that will appear in predictive support widget"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Message for the users that will appear in predictive support widget"
+                },
+                "success_message": {
+                  "type": "string",
+                  "description": "Success message shown after submitting predictive form"
+                },
+                "domain_list": {
+                  "type": "array",
+                  "description": "List of domains the freshmarketer should track",
+                  "minItems": 1,
+                  "maxItems": 3
                 }
               }
             },
@@ -22803,6 +22945,10 @@
                 "solution_articles": {
                   "type": "boolean",
                   "description": "Solution articles is On or Off On - true / Off - false"
+                },
+                "predictive_support": {
+                  "type": "boolean",
+                  "description": "Predictive Support is On or Off On - true / Off - false"
                 }
               }
             },
@@ -22870,6 +23016,29 @@
                 "button_color": {
                   "type": "string",
                   "description": "Color of the buttons in widget ( default color = 16193e )"
+                }
+              }
+            },
+            "predictive_support": {
+              "type": "object",
+              "properties": {
+                "welcome_message": {
+                  "type": "string",
+                  "description": "Welcome Message that will appear in predictive support widget"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Message for the users that will appear in predictive support widget"
+                },
+                "success_message": {
+                  "type": "string",
+                  "description": "Success message shown after submitting predictive form"
+                },
+                "domain_list": {
+                  "type": "array",
+                  "description": "List of domains the freshmarketer should track",
+                  "minItems": 1,
+                  "maxItems": 3
                 }
               }
             },
@@ -22911,6 +23080,10 @@
                 "solution_articles": {
                   "type": "boolean",
                   "description": "Solution articles is On or Off On - true / Off - false"
+                },
+                "predictive_support": {
+                  "type": "boolean",
+                  "description": "Predictive Support can be enables if there is freshmarketer already integrated/ newly integrated"
                 }
               }
             },
@@ -22981,9 +23154,49 @@
                 }
               }
             },
+            "predictive_support": {
+              "type": "object",
+              "properties": {
+                "welcome_message": {
+                  "type": "string",
+                  "description": "Welcome Message that will appear in predictive support widget"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Message for the users that will appear in predictive support widget"
+                },
+                "success_message": {
+                  "type": "string",
+                  "description": "Success message shown after submitting predictive form"
+                },
+                "domain_list": {
+                  "type": "array",
+                  "description": "List of domains the freshmarketer should track",
+                  "minItems": 1,
+                  "maxItems": 3
+                }
+              }
+            },
             "widget_flow": {
               "type": "integer",
               "description": "1-Show contact options only after customers reads solution article 2-Show contact options upfront, along with solution articles"
+            }
+          }
+        },
+        "freshmarketer": {
+          "type": "object",
+          "properties": {
+            "domain": {
+              "type": "string",
+              "description": "contains the selected Freshmarketer domain to which freshdesk will be integrated"
+            },
+            "email": {
+              "type": "string",
+              "description": "contains email for which Freshmarketer account will be created and integrated"
+            },
+            "type": {
+              "type": "string",
+              "description": "There are 2 types. 1. Create(when new Freshmarketer account is created) 2. Link(if Freshmarketerdomain is chossen to integrate )"
             }
           }
         }
@@ -23019,6 +23232,10 @@
                 "solution_articles": {
                   "type": "boolean",
                   "description": "Solution articles is On or Off On - true / Off - false"
+                },
+                "predictive_support": {
+                  "type": "boolean",
+                  "description": "Predictive Support is On or Off On - true / Off - false"
                 }
               }
             },
@@ -23086,6 +23303,29 @@
                 "button_color": {
                   "type": "string",
                   "description": "Color of the buttons in widget ( default color = 16193e )"
+                }
+              }
+            },
+            "predictive_support": {
+              "type": "object",
+              "properties": {
+                "welcome_message": {
+                  "type": "string",
+                  "description": "Welcome Message that will appear in predictive support widget"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Message for the users that will appear in predictive support widget"
+                },
+                "success_message": {
+                  "type": "string",
+                  "description": "Success message shown after submitting predictive form"
+                },
+                "domain_list": {
+                  "type": "array",
+                  "description": "List of domains the freshmarketer should track",
+                  "minItems": 1,
+                  "maxItems": 3
                 }
               }
             },

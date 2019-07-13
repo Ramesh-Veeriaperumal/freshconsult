@@ -22,6 +22,9 @@ properties:
           solution_articles:
             type: boolean
             description: Solution articles is On or Off On - true / Off - false
+          predictive_support:
+            type: boolean
+            description: Predictive Support is On or Off On - true / Off - false
       contact_form:
         type: object
         properties:
@@ -70,7 +73,23 @@ properties:
           button_color:
             type: string
             description: Color of the buttons in widget ( default color = 16193e )
+      predictive_support:
+        type: object
+        properties:
+          welcome_message:
+            type: string
+            description: Welcome Message that will appear in predictive support widget
+          message:
+            type: string
+            description: Message for the users that will appear in predictive support widget
+          success_message:
+            type: string
+            description: Success message shown after submitting predictive form
+          domain_list:
+            type: array
+            description: List of domains the freshmarketer should track
+            minItems: 1
+            maxItems: 3
       widget_flow:
         type: integer
         description: 1-Show contact options only after customers reads solution article 2-Show contact options upfront, along with solution articles
-

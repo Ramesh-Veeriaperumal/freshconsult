@@ -2,10 +2,9 @@ class HelpWidgetsController < ApiApplicationController
   include HelperConcern
   include HelpWidgetConcern
   include HelpWidgetConstants
-  include PredictiveSupportConcern
+  include FrustrationTrackingConcern
 
   before_filter :check_feature
-  skip_before_filter :load_object, only: :freshmarketer_info
 
   decorate_views
 
@@ -19,31 +18,30 @@ class HelpWidgetsController < ApiApplicationController
   end
 
   def update
+    remove_predictive_cname_params unless preserve_predictive?
     delegator_hash = {
       product_id: cname_params[:product_id],
-      settings: cname_params[:settings]
+      settings: cname_params[:settings],
+      freshmarketer: cname_params[:freshmarketer]
     }
     (return unless validate_delegator(@item, delegator_hash))
+
     if predictive_support_toggled?
-      unless toggle_predictive_support(cname_params[:settings][:components][:predictive_support])
-        return render_request_error(:error_in_predictive_support, 400)
+      unless freshmarketer_signup && toggle_predictive_support
+        return render_client_error
       end
     elsif param_domain_list.present?
       update_freshmarketer_domain(true)
     end
-    cname_params[:settings] = @item.settings.deep_merge(cname_params[:settings].symbolize_keys) if cname_params[:settings].present?
+    cname_params[:settings] = @item.settings.deep_merge(cname_params[:settings].symbolize_keys || {}) unless cname_params[:settings].nil?
     @item.update_attributes(cname_params)
   end
 
   def destroy
     @item.active = false
-    toggle_predictive_support(false)
+    toggle_predictive_support(false) if @item.predictive?
     @item.save
     head 204
-  end
-
-  def freshmarketer_info
-    @info = freshmarketer_details
   end
 
   private
@@ -67,8 +65,8 @@ class HelpWidgetsController < ApiApplicationController
     end
 
     def validate_params
-      remove_predictive_cname_params if predictive_disabled?
       cname_params.permit(*HelpWidgetConstants::HELP_WIDGET_FIELDS)
+      cname_params[:freshmarketer].permit(*HelpWidgetConstants::FRESHMARKETER_FIELDS) if cname_params.key?('freshmarketer')
       widget = validation_klass.new(cname_params, @item, string_request_params?)
       render_custom_errors(widget, true) unless widget.valid?(action_name.to_sym)
     end
@@ -86,9 +84,7 @@ class HelpWidgetsController < ApiApplicationController
       params.permit(*ApiConstants::DEFAULT_PARAMS)
     end
 
-    def predictive_disabled?
-      predictive_support_toggled? &&
-        !cname_params[:settings][:components][:predictive_support]
+    def preserve_predictive?
+      predictive_support_toggled? ? settings[:components][:predictive_support] : @item.predictive?
     end
-
 end

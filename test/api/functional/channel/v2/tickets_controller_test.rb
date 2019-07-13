@@ -637,15 +637,15 @@ module Channel::V2
     def test_index_with_default_filter_order_by
       CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
-      Helpdesk::Ticket.update_all(created_at: 2.months.ago)
-      Helpdesk::Ticket.first(2).each do|x|
-        x.update_attributes(created_at: 1.months.ago,
-                            deleted: false, spam: false)
-      end
+      @account.tickets.update_all(created_at: 2.months.ago)
+      ticket = @account.tickets.first
+      ticket.update_attributes(created_at: 1.months.ago,
+                                                deleted: false, spam: false)
       get :index, controller_params(order_by: 'status')
+      available_ticket = @account.tickets.where("id = #{ticket.id} and deleted = false and spam = false").first
       assert_response 200
       response = parse_response @response.body
-      assert_equal 2, response.size
+      assert response.map { |res| res['ticket_id'] }.include?(available_ticket.id)
     ensure
       @channel_v2_api = false
       CustomRequestStore.store[:channel_api_request] = false

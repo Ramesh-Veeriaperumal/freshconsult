@@ -12,7 +12,7 @@ class HttpRequestWorkerTest < ActionView::TestCase
   end
 
   def teardown
-    Account.any_instance.unstub(:current)
+    Account.unstub(:current)
     super
   end
 

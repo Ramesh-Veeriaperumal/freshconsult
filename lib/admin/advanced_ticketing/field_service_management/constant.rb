@@ -58,6 +58,8 @@ module Admin::AdvancedTicketing::FieldServiceManagement
     SUPPORT_AGENT_TYPE = 1
     SUPPORT_GROUP_TYPE = 1
     SERVICE_TASK_SECTION = 'Service task section'.freeze
+    FIELD_SERVICE_MANAGER_ROLE_NAME = 'Field service manager'.freeze
+    FIELD_SERVICE_MANAGER_ROLE_PRIVILEGES = Helpdesk::Roles::AGENT + [:schedule_fsm_dashboard]
 
     SCORE_CARD = 'scorecard'.freeze
 

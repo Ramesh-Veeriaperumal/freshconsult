@@ -7,7 +7,7 @@ module ApiConstants
   }.freeze
   ORDER_TYPE = %w(asc desc).freeze
 
-  EMAIL_CONFIG_PER_PAGE = 500
+  EMAIL_CONFIG_PER_PAGE = 600
 
   # https://github.com/mislav/will_paginate/blob/master/lib/will_paginate/page_number.rb
   PAGE_MAX = WillPaginate::PageNumber::BIGINT
@@ -61,7 +61,8 @@ module ApiConstants
                        CannedResponseConstants::LOAD_OBJECT_EXCEPT +
                        AuditLogConstants::LOAD_OBJECT_EXCEPT +
                        Solutions::HomeConstants::LOAD_OBJECT_EXCEPT +
-                       Testing::FreshidApiConstants::LOAD_OBJECT_EXCEPT
+                       Testing::FreshidApiConstants::LOAD_OBJECT_EXCEPT +
+                       Admin::CustomTranslationsConstants::LOAD_OBJECT_EXCEPT
 
   SKIP_LOGS_FOR = {
     bootstrap: %w[me index account],

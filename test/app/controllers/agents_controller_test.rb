@@ -533,4 +533,56 @@ class AgentsControllerTest < ActionController::TestCase
     user.destroy
     log_out
   end
+
+  def test_update_email_freshid_agent
+    login_admin
+    @user = Account.current.account_managers.first.make_current
+    user = add_test_agent(@account)
+    role_id = Account.current.roles.find_by_name('Agent').id
+    Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    @controller.stubs(:freshid_user_details).returns(user)
+    User.any_instance.stubs(:email_id_changed?).returns(false)
+    put :update, id: user.agent.id, user: { 'email' => Faker::Internet.email }
+    assert_response 200
+  ensure
+    Account.any_instance.unstub(:freshid_enabled?)
+    User.any_instance.unstub(:email_id_changed?)
+    @controller.unstub(:freshid_user_details)
+    user.destroy
+    log_out
+  end
+
+  def test_update_unpermitted_fields_for_freshid_agent
+    login_admin
+    @user = Account.current.account_managers.first.make_current
+    user = add_test_agent(@account)
+    role_id = Account.current.roles.find_by_name('Agent').id
+    Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    @controller.stubs(:freshid_user_details).returns(user)
+    put :update, id: user.agent.id, user: { 'email' => Faker::Internet.email, 'name' => Faker::Name.name }
+    assert_response 403
+  ensure
+    Account.any_instance.unstub(:freshid_enabled?)
+    @controller.unstub(:freshid_user_details)
+    user.destroy
+    log_out
+  end
+
+  def test_update_for_non_freshid_agent
+    login_admin
+    @user = Account.current.account_managers.first.make_current
+    user = add_test_agent(@account)
+    role_id = Account.current.roles.find_by_name('Agent').id
+    Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    User.any_instance.stubs(:email_id_changed?).returns(false)
+    @controller.stubs(:freshid_user_details).returns(nil)
+    put :update, id: user.agent.id, user: { 'email' => Faker::Internet.email, 'name' => Faker::Name.name }
+    assert_response 200
+  ensure
+    Account.any_instance.unstub(:freshid_enabled?)
+    User.any_instance.unstub(:email_id_changed?)
+    @controller.unstub(:freshid_user_details)
+    user.destroy
+    log_out
+  end
 end

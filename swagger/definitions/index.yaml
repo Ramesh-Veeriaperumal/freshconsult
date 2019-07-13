@@ -604,6 +604,8 @@ freshmarketer_experiment:
   $ref: ./response/freshmarketer/index.yaml
 freshmarketer_session:
   $ref: ./response/freshmarketer/session.yaml
+freshmarketer_domains:
+  $ref: ./response/freshmarketer/domains.yaml
 
 #subscription
 subscription_response:

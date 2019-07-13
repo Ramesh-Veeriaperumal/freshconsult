@@ -664,7 +664,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_integrations/cti", :only => [:create, :index]
     resource :"email_preview"
     resource :"admin/freshchat", :only => [:index, :create, :update, :toggle, :signup]
-    resource :"admin/freshmarketer", only: %i[index link unlink enable_integration disable_integration]
+    resource :"admin/freshmarketer", only: %i[index link unlink enable_integration disable_integration enable_session_replay domains]
     resource :"admin/custom_translations/upload", :only => [:upload]
   end
 
