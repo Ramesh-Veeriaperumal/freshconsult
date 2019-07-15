@@ -7,7 +7,7 @@ module ApiConstants
   }.freeze
   ORDER_TYPE = %w(asc desc).freeze
 
-  EMAIL_CONFIG_PER_PAGE = 600
+  EMAIL_CONFIG_PER_PAGE = 1000
 
   # https://github.com/mislav/will_paginate/blob/master/lib/will_paginate/page_number.rb
   PAGE_MAX = WillPaginate::PageNumber::BIGINT
