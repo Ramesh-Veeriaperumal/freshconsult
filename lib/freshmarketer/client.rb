@@ -88,8 +88,8 @@ class Freshmarketer::Client
 
   # create_account, associate_account & remove_account has to be accessed via wrapper method as it modifies DB
 
-  def create_account(email, domain = nil)
-    payload = { email_id: email, domain: domain || account_domain }
+  def create_account(email, domain = account_domain)
+    payload = { email_id: email, domain: domain }
     response = request(account_setup_params, CREATE_ACCOUNT_URL, :post, payload)
     response['createsraccount']
   end
