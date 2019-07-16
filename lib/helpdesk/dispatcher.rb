@@ -68,7 +68,6 @@
       NewRelic::Agent.notice_error(e)
       raise e
     ensure
-      Va::Logger::Automation.log "********* END OF DISPATCHER *********"
       Va::Logger::Automation.unset_thread_variables
     end
 
