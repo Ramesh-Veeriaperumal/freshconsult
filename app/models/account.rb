@@ -142,6 +142,11 @@ class Account < ActiveRecord::Base
     # (ES_ENABLED && launched?(:es_v1_enabled))
   end
 
+  def toggle_skip_mandatory_option(boolean_value)
+    account_additional_settings.additional_settings[:skip_mandatory_checks] = boolean_value
+    account_additional_settings.save!
+  end
+
   def permissible_domains
     helpdesk_permissible_domains.pluck(:domain).join(",")
   end

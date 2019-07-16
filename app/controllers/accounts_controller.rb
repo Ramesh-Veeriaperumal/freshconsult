@@ -16,8 +16,7 @@ class AccountsController < ApplicationController
                                                                           :anonymous_signup]
 
   skip_before_filter :set_locale, except: [:cancel, :show, :edit, :manage_languages, :edit_domain, :anonymous_signup_complete]
-  skip_before_filter :set_time_zone, :set_current_account,
-    except: [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show, :manage_languages, :update_languages, :edit_domain, :validate_domain, :update_domain, :anonymous_signup_complete]
+  skip_before_filter :set_time_zone, :set_current_account, except: [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show, :manage_languages, :update_languages, :edit_domain, :validate_domain, :update_domain, :anonymous_signup_complete, :enable_skip_mandatory, :disable_skip_mandatory]
   skip_before_filter :check_account_state
   skip_before_filter :redirect_to_mobile_url
   skip_before_filter :check_day_pass_usage, 
@@ -233,6 +232,16 @@ class AccountsController < ApplicationController
     else
       render :action => 'new'#, :layout => 'public' # Uncomment if your "public" site has a different layout than the one used for logged-in users
     end
+  end
+
+  def enable_skip_mandatory
+    current_account.toggle_skip_mandatory_option(true) unless current_account.skip_mandatory_checks_enabled?
+    head :no_content
+  end
+
+  def disable_skip_mandatory
+    current_account.toggle_skip_mandatory_option(false) if current_account.skip_mandatory_checks_enabled?
+    head :no_content
   end
 
   def update
