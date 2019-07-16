@@ -98,6 +98,7 @@ defaults: &defaults
     - [pod_route_update]
     - [agent_destroy_cleanup]
     - [freshid_account_details_update]
+    - [email_service_account_details_destroy]
     - [delete_spam_tickets]
     - [suspended_accounts_deletion]
     - [helpdesk_ticket_body_queue]

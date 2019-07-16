@@ -33,6 +33,8 @@ class Account < ActiveRecord::Base
   after_destroy :destroy_freshid_account, if: :freshid_integration_enabled?
   after_destroy :remove_shard_mapping, :destroy_route_info
 
+  after_destroy :destroy_account_email_service
+
   after_commit :enable_elastic_search, on: :create
   after_commit :add_to_billing, on: :create, unless: :is_anonymous_account
   after_commit :clear_api_limit_cache, :update_redis_display_id, on: :update
@@ -156,7 +158,15 @@ class Account < ActiveRecord::Base
   end
 
   def parent_child_infra_features_present?
-    PARENT_CHILD_INFRA_FEATURES.any? { |f| self.safe_send("#{f}_enabled?")}
+    PARENT_CHILD_INFRA_FEATURES.any? { |f| self.safe_send("#{f}_enabled?")} 
+  end
+
+  def destroy_account_email_service
+    account_params = {
+      account_id: self.id.to_s,
+      account_domain: self.full_domain
+    }
+    Email::AccountDetailsDestroyWorker.perform_async(account_params)
   end
 
   # Need to revisit when we push all the events for an account
