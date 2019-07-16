@@ -139,6 +139,11 @@ class Account < ActiveRecord::Base
     # (ES_ENABLED && launched?(:es_v1_enabled))
   end
 
+  def toggle_skip_mandatory_option(boolean_value)
+    account_additional_settings.additional_settings[:skip_mandatory_checks] = boolean_value
+    account_additional_settings.save!
+  end
+
   def permissible_domains
     helpdesk_permissible_domains.pluck(:domain).join(",")
   end
@@ -183,6 +188,10 @@ class Account < ActiveRecord::Base
 
   def has_any_scheduled_ticket_export?
     auto_ticket_export_enabled? && scheduled_ticket_exports_from_cache.present?
+  end
+
+  def skip_mandatory_checks_enabled?
+    account_additional_settings.additional_settings.blank? ? false : account_additional_settings.additional_settings[:skip_mandatory_checks] == true
   end
 
   def fields_with_in_operators
