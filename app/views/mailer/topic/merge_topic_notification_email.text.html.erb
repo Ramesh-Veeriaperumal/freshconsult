@@ -5,19 +5,17 @@
 <div class="body">
 	<div class="forum_content">
 
-		Dear <%= @user.name %> <br><br>
+		<%= t("mailer_notifier.dear_user", user: @user.name) %> <br><br>
 
-		Your topic <%= link_to @source_topic.title, discussions_topic_url(@source_topic.id, :host => @host) %> 
-		 has been merged into <%= link_to @target_topic.title, discussions_topic_url(@target_topic.id, :host => @host) %> and you have been added as a follower.<br><br>
+		<%= t("mailer_notifier.topic_notifications.merged_and_added_follower_html", topic_url: discussions_topic_url(@source_topic.id, :host => @host), topic_name: @source_topic.title, target_topic_url: discussions_topic_url(@target_topic.id, :host => @host), target_topic_name: @target_topic.title).html_safe %><br><br>
 
-		Sincerely <br>
+		<%= t("mailer_notifier.sincerely") %> <br>
 		<%= @portal.name %>
 	</div>
 	<div class="footer">
-		<%= link_to "Reply", reply_discussions_topic_url(@target_topic.id, :host => @host, :anchor => 'reply-to-post'), :class => "reply" %>
+		<%= link_to t("mailer_notifier.topic_notifications.reply"), reply_discussions_topic_url(@target_topic.id, :host => @host, :anchor => 'reply-to-post'), :class => "reply" %>
 		<div class="footer-text">
-			<%= link_to "Turn Off", toggle_monitorship_url("topic", @target_topic.id, "unfollow", :host => @host) %>
-			 notifications for this topic
+			<%= t("mailer_notifier.topic_notifications.turn_off_new_topic_notifications_html", unfollow_url: toggle_monitorship_url("topic", @target_topic.id, "unfollow", :host => @host)).html_safe %>
 		</div>
 	</div>
 	<br />

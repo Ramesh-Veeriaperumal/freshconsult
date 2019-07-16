@@ -14,7 +14,7 @@ class TopicMailer < ActionMailer::Base
       headers = {
         :to        => emailcoll,
         :from      => sender,
-        :subject   => "[New Topic] #{topic.title} in #{topic.forum.name}",
+        :subject   => I18n.t("mailer_notifier_subject.new_forum_topic", title: topic.title, forum_name: topic.forum.name),
         :sent_on   => Time.now
       }
       inline_attachments = []
@@ -52,7 +52,7 @@ class TopicMailer < ActionMailer::Base
       headers = {
         :to => emailcoll,
         :from => sender,
-        :subject => "[Status Update] in #{topic.title}",
+        :subject => I18n.t("mailer_notifier_subject.topic_update", title: topic.title),
         :sent_on => Time.now
       }
       
@@ -89,7 +89,7 @@ class TopicMailer < ActionMailer::Base
       headers = {
         :to => monitor.user.email,
         :from => sender,
-        :subject => "[Topic Merged] to #{target_topic.title}",
+        :subject => I18n.t("mailer_notifier_subject.topic_merged", title: target_topic.title),
         :sent_on => Time.now
       }
 

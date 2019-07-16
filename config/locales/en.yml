@@ -12710,12 +12710,16 @@ en:
     thanks: "Thanks,"
     reports: reports
     rule: "Rule: "
+    note: "Note: "
+    freshdesk_support: 'Freshdesk Support'
     freshdesk_customer_support: 'Freshdesk Customer Support'
     freshdesk_team: 'Freshdesk Team'
     reports_team_freshdesk: 'Reports Team, Freshdesk'
     welcome_to_freshdesk: 'Welcome to Freshdesk!'
     moderator_approval: "Moderator approval"
     sincerely: "Sincerely,"
+    turn_off: Turn Off,
+    regards: "Regards,"
     security_notification:
       trusted_ip_enabled:
         one: 'IP whitelisting has been enabled on your account. Your portal will be accessible only in the IP range below:'
@@ -12796,6 +12800,25 @@ en:
       webhook_drop_limit: "A webhook that was scheduled 24 hours ago for execution has now been dropped since you consistently exceeded your API rate limits."
       webhook_drop_support: "If you wish to prevent this from happening again, mail us at support@freshdesk.com to raise your API limits. To learn more about how we support webhooks and why we drop them, click here https://support.freshdesk.com/support/solutions/articles/217264-webhooks-faq."
       webhook_drop_support_link: "If you wish to prevent this from happening again, mail us at support@freshdesk.com to raise your API limits. To learn more about how we support webhooks and why we drop them, <a href='https://support.freshdesk.com/support/solutions/articles/217264-webhooks-faq'>click here.</a>"
+    topic_notifications:
+      new_forum_topic: "New Topic in \"%{forum_name}\" %>"
+      new_forum_topic_html: <b>New Topic</b> in forum
+      author: "By: %{user_name}"
+      view_topic: View Topic
+      follow_topic: Follow Topic
+      reply: Reply
+      view_forum: View Forum
+      turn_off_forum_notifications: Turn off notifications for this forum
+      turn_off_topic_notifications: Turn off notifications for this topic
+      turn_off_new_topic_notifications: Turn off notifications for the new topic
+      turn_off_forum_notifications_html: "<a href='%{unfollow_url}'>Turn off</a> notifications for this forum"
+      turn_off_topic_notifications_html: "<a href='%{unfollow_url}'>Turn off</a> notifications for this topic"
+      turn_off_new_topic_notifications_html: "<a href='%{unfollow_url}'>Turn off</a> new topic notifications for this forum"
+      status_update: Status update in topic
+      current_stamp: "The %{forum_type} has been marked as %{stamp}."
+      current_stamp_html: "The %{forum_type} has been marked as <strong>%{stamp}</strong>."
+      merged_and_added_follower: "Your topic %{topic_url} has been merged into %{target_topic_url} and you have been added as a follower."
+      merged_and_added_follower_html: "Your topic <a href='%{topic_url}'>%{topic_name}</a> has been merged into <a href='%{target_topic_url}'>%{target_topic_name}</a> and you have been added as a follower."
   mailer_notifier_subject:
     agent_email_changed: '%{portal_name}: Agent email address changed'
     agent_details_updated: Your %{changed_attributes} in %{account_name} has been updated
@@ -12825,6 +12848,13 @@ en:
     customer_import_stopped: "%{import_type} import for %{account_full_domain} stopped"
     outreach_customer_import: "Outreach in progress"
     outreach_customer_import_failure: "Outreach: some contacts weren't imported"
+    new_forum_topic: "[New Topic] %{title} in %{forum_name}"
+    topic_update: "[Status Update] in %{title}"
+    topic_merged: "[Topic Merged] to %{title}"
+    account_data_export: "Data Export for %{account}"
+    no_tickets_to_export: "No tickets in range - %{domain}"
+    agent_export: Agents List Export
+    audit_log_export: Audit Log Export
   sandbox:
     live: Sandbox is live
     sync_complete: Sandbox sync complete!

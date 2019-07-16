@@ -21,7 +21,7 @@ module Community::TopicsMerge
   def self.notify(source, target, user)
     source.monitorships.active_monitors.all(:include => :portal).each do |monitor|
       next if monitor.user.email.blank? or (user.id == monitor.user_id)
-      TopicMailer.deliver_topic_merge_email(monitor, target, source, *monitor.sender_and_host)
+      TopicMailer.send_email(:deliver_topic_merge_email, monitor.user, monitor, target, source, *monitor.sender_and_host)
     end
   end
 
