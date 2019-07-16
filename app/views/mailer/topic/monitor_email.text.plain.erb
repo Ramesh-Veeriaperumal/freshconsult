@@ -1,23 +1,23 @@
-New Topic in "<%= @topic.forum.name %>"
+<%= t("mailer_notifier.topic_notifications.new_forum_topic", forum_name: @topic.forum.name) %>
 
 <%= "_" * 100 %>
  
 <%= @topic.title %>
-By: <%= @user.name %> 
+<%= t("mailer_notifier.topic_notifications.author", user_name: @user.name) %> 
 
 <%= @topic.posts.first.body %>
 
 <%= "_" * 100 %>
 
-View Topic
+<%= t("mailer_notifier.topic_notifications.view_topic") %> 
 <%= discussions_topic_url(@topic.id, :host => @host) %>
 
-Reply
+<%= t("mailer_notifier.topic_notifications.reply") %>
 <%= reply_discussions_topic_url(@topic.id, :host => @host, :anchor => 'reply-to-post') %>
 
-View Forum
+<%= t("mailer_notifier.topic_notifications.view_forum") %>
 <%= discussions_forum_url(@topic.forum.id, :host => @host) %>
 
-Turn off notifications for this forum
+<%= t("mailer_notifier.topic_notifications.turn_off_forum_notifications") %>
 <%= toggle_monitorship_url("forum", @topic.forum.id, "unfollow", :host => @host) %>
  

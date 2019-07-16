@@ -1,14 +1,14 @@
-Hey <%= @user.name %>
+<%= t("mailer_notifier.hey_user", user_name: @user.name) %>
 
-Your topic <%= discussions_topic_url(@source_topic.id, :host => @host) %> has been merged into <%= discussions_topic_url(@target_topic.id, :host => @host) %> and you have been added as a follower.
+<%= t("mailer_notifier.topic_notifications.merged_and_added_follower", topic_url: discussions_topic_url(@source_topic.id, :host => @host), target_topic_url: discussions_topic_url(@target_topic.id, :host => @host)) %>
 
-Sincerely
+<%= t("mailer_notifier.sincerely") %>
 <%= @portal.name %>
 
 <%= "_" * 100 %>
 
-Reply
+<%= t("mailer_notifier.topic_notifications.reply") %>
 <%= reply_discussions_topic_url(@target_topic.id, :host => @host, :anchor => 'reply-to-post') %>
 
-Turn off notifications for the new topic
+<%= t("mailer_notifier.topic_notifications.turn_off_new_topic_notifications") %>
 <%= toggle_monitorship_url("topic", @target_topic.id, "unfollow", :host => @host) %>
