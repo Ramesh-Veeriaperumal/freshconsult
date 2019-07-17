@@ -642,6 +642,12 @@ module Cache::Memcache::Account
     MemcacheKeys.delete_from_cache(unassociated_categories_memcache_key)
   end
 
+  def custom_nested_field_choices_hash_from_cache
+    fetch_from_cache(custom_nested_field_choices_hash_key(id)) do
+      nested_fields_from_cache.collect { |x| [x.name, x.formatted_nested_choices] }.to_h
+    end
+  end
+
   private
     def permissible_domains_memcache_key id = self.id
       HELPDESK_PERMISSIBLE_DOMAINS % { :account_id => id }
@@ -725,5 +731,9 @@ module Cache::Memcache::Account
 
     def ticket_fields_name_type_mapping_key(account_id)
       format(ACCOUNT_TICKET_FIELDS_NAME_TYPE_MAPPING, account_id: account_id)
+    end
+
+    def custom_nested_field_choices_hash_key(account_id)
+      format(CUSTOM_NESTED_FIELD_CHOICES, account_id: account_id)
     end
 end

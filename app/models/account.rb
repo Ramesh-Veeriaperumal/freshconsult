@@ -669,6 +669,22 @@ class Account < ActiveRecord::Base
     "new_signup_free" == self.signup_method.to_s
   end
 
+  def signup_in_process_key
+    format(ACCOUNT_SIGNUP_IN_PROGRESS, domain: full_domain)
+  end
+
+  def signup_in_progress?
+    redis_key_exists?(signup_in_process_key)
+  end
+
+  def signup_completed
+    remove_others_redis_key(signup_in_process_key)
+  end
+
+  def signup_started
+    set_others_redis_key(signup_in_process_key, true, 60.seconds)
+  end
+
   def active_suspended?
     @active_suspended ||= begin
       key = ACTIVE_SUSPENDED % {:account_id => self.id}

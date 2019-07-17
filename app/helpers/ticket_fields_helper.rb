@@ -56,15 +56,19 @@ module TicketFieldsHelper
     end
 
     def generate_section_fields(section)
-      section.section_fields.map do |field|
+      section_fields = section.section_fields
+      section_fields.map do |field|
         {
-          :id => field.id,
-          :position => field.position,
-          :ticket_field_id => field.ticket_field_id,
-          :parent_ticket_field_id => field.parent_ticket_field_id,
-          :is_encrypted => field.ticket_field.encrypted_field?
+          id: field.id,
+          position: field.position,
+          ticket_field_id: field.ticket_field_id,
+          parent_ticket_field_id: field.parent_ticket_field_id,
+          is_encrypted: field.ticket_field.encrypted_field?
         }
       end
+    rescue StandardError => e
+      Rails.logger.error "Ticket field is missing for section which contains ticket fields = #{section.section_fields.map(&:ticket_field_id).inspect}, Exception=#{e}"
+      []
     end
 
     def generate_section_picklist_mappings(section)

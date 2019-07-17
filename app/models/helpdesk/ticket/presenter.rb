@@ -197,8 +197,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def group_users
     return [] unless group
-    agents_group = Account.current.agent_groups_from_cache.select { |x| x.group_id == group.id }
-    agents_group.collect { |user| { "id" => user.id } }
+    group_users = Account.current.agent_groups_hash_from_cache[group.id]
+    (group_users && group_users.collect { |user_id| { "id" => user_id } }) || []
   end
 
   # *****************************************************************

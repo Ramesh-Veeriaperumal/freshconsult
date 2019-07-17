@@ -4542,6 +4542,7 @@ ActiveRecord::Schema.define(:version => 20190628073857) do
     t.text     "query",                                           :null => false
     t.text     "external_info",                                   :null => false
     t.integer  "state",                            :default => 1
+    t.string   'bot_type', limit: 50, null: true
     t.text     "suggested_articles"
     t.datetime "created_at",                                      :null => false
     t.datetime "updated_at",                                      :null => false
@@ -4549,7 +4550,8 @@ ActiveRecord::Schema.define(:version => 20190628073857) do
 
   add_index "bot_feedbacks", ["account_id", "bot_id", "received_at"], :name => "index_bot_feedbacks_on_account_id_bot_id_received_at"
   add_index "bot_feedbacks", ["account_id", "query_id"], :name => "index_bot_feedbacks_on_query_id", :unique => true
-
+  add_index 'bot_feedbacks', ['account_id', 'bot_id', 'bot_type'], name: 'index_bot_feedbacks_on_account_id_bot_id_bot_type'
+  
   create_table "bot_feedback_mappings", :force => true do |t|
     t.integer  "account_id",  :limit => 8, :null => false
     t.integer  "feedback_id", :limit => 8, :null => false
@@ -4566,12 +4568,14 @@ ActiveRecord::Schema.define(:version => 20190628073857) do
     t.integer   'bot_id',              limit: 8,    null: false
     t.string    'token',               limit: 255,  null: false
     t.text      'suggested_articles'
+    t.string   'bot_type', limit: 50, null: true
     t.string    'query_id',                         null: false
     t.timestamps
   end
 
   add_index 'bot_responses', ['account_id', 'token'], name: 'index_bot_responses_on_account_id_token'
   add_index 'bot_responses', ['account_id', 'ticket_id'], name: 'index_bot_responses_on_account_id_ticket_id'
+  add_index 'bot_responses', ['account_id', 'bot_id', 'bot_type'], name: 'index_bot_responses_on_account_id_bot_id_bot_type'
 
   create_table 'canned_form_handles', force: true do |t|
     t.integer  'ticket_id', limit: 8, null: false

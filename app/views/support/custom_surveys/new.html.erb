@@ -82,9 +82,17 @@
 						placeholder= "<%= @survey_handle.survey.comments_text %>" ></textarea>
 				<% end %>
 				<% if csat_email_scan_compatibile || (!@survey_handle.survey.feedback_questions.blank? || @survey_handle.survey.can_comment?) %>
-					<%= f.submit t('support.surveys.new.submit'), :class => "btn btn-primary btn-comment" %>
+					<%= f.submit t('support.surveys.new.submit'),:id => "submit_survey", :class => "btn btn-primary btn-comment" %>
 				<% end %>
 			</div>
 		<%end%>
 	</div>
 </body>
+<script>
+	jQuery(document).ready(function(){
+		jQuery("#survey_form").on("submit", function(){
+			jQuery("#submit_survey").prop("disabled",true);
+			jQuery("#submit_survey").addClass("survey-button-disable");
+		})
+	})
+</script>

@@ -18,4 +18,5 @@ module RabbitMq::Keys
   FORUM_SUBSCRIBERS            =  ["activities"]
   TIME_SHEET_SUBSCRIBERS       =  ["activities"]
   CTI_CALL_SUBSCRIBERS         =  ["cti"]
+  AGENT_SUBSCRIBERS            =  []
 end

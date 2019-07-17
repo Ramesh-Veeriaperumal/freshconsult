@@ -9,7 +9,7 @@ class Bot::Response < ActiveRecord::Base
 
   belongs_to :account
   belongs_to :ticket, class_name: 'Helpdesk::Ticket'
-  belongs_to :bot, class_name: 'Bot'
+  belongs_to :bot, polymorphic: true
 
   validates :ticket_id, uniqueness: true
   validates :query_id, uniqueness: true

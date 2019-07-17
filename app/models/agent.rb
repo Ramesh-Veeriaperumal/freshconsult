@@ -2,6 +2,7 @@ class Agent < ActiveRecord::Base
   self.primary_key = :id
   self.table_name = :agents
 
+  include Publish
   include Cache::Memcache::Agent
   include Agents::Preferences
   include Social::Ext::AgentMethods
@@ -11,6 +12,7 @@ class Agent < ActiveRecord::Base
   include Redis::RedisKeys
   include Redis::OthersRedis
   include DataVersioning::Model
+  include RabbitMq::Publisher
 
   VERSION_MEMBER_KEY = 'AGENTS_GROUPS_LIST'.freeze
 
@@ -44,7 +46,7 @@ class Agent < ActiveRecord::Base
   attr_accessible :signature_html, :user_id, :ticket_permission, :occasional, :available, :shortcuts_enabled,
     :scoreboard_level_id, :user_attributes, :group_ids, :freshchat_token, :agent_type
 
-  attr_accessor :agent_role_ids, :freshcaller_enabled, :user_changes, :group_changes, :ocr_update
+  attr_accessor :agent_role_ids, :freshcaller_enabled, :user_changes, :group_changes, :ocr_update, :misc_changes
 
   scope :with_conditions ,lambda {|conditions| { :conditions => conditions} }
   scope :full_time_support_agents, :conditions => { :occasional => false, :agent_type => SUPPORT_AGENT_TYPE, 'users.deleted' => false}

@@ -320,6 +320,7 @@ class AccountsController < ApplicationController
       flash[:notice] = 'Please provide valid login details!!'
       redirect_to login_url
     elsif current_user.active_freshid_agent?
+      cookies[:return_to] = '/a/getstarted'
       current_user.reset_persistence_token!
       redirect_to support_login_url(params: { new_account_signup: true, signup_email: current_user.email })
     else

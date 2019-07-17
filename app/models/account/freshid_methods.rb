@@ -136,7 +136,7 @@ class Account < ActiveRecord::Base
   def create_all_users_in_freshid
     self.all_technicians.find_each do |user|
       begin
-        user.create_freshid_user! if user.freshid_authorization.blank?
+        user.create_freshid_user!
       rescue Exception => e
         Rails.logger.error("FRESHID error in creating user email:#{user.email}, user_id:#{user.id}, account:#{self.id}, e=#{e.inspect}, backtrace=#{e.backtrace}")
       end

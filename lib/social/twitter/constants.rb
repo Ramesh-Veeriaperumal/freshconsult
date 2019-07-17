@@ -71,4 +71,6 @@ module Social::Twitter::Constants
   IRIS_NOTIFICATION_TYPE = 'twitter_reply_failure'.freeze
 
   MONITOR_APP_PERMISSION = 'monitor_app_permission'.freeze
+
+  STATUS_UPDATE_COMMAND_NAME = 'update_twitter_message'.freeze
 end

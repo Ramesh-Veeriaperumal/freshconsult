@@ -7,6 +7,7 @@ module Facebook
     
       include Facebook::Constants
       include Facebook::Exception::Handler
+      include Facebook::TicketActions::CentralUtil
               
       def helpdesk_item(feed_id)
         fd_post_obj(feed_id).try(:postable)
@@ -154,6 +155,19 @@ module Facebook
           @fan_page  = fan_page
           rest       = Koala::Facebook::API.new(fan_page.page_token)
           msg_type == POST_TYPE[:message] ? send_dm(rest, parent, note, fan_page) : send_comment(rest, parent, note)
+        end
+        begin
+          if msg_type.include?('comment') || msg_type.include?('message')
+            post_success_or_failure_command(error_code: error_code,
+                                            error_msg: error_msg,
+                                            note_id: @item.id,
+                                            note_created_at: @item.created_at,
+                                            msg_type: msg_type,
+                                            fb_page_id: fan_page.id,
+                                            fb_post_id: @item.fb_post.try(:post_id))
+          end
+        rescue StandardError => error
+          ::Rails.logger.error "Error while posting command to central for facebook reply :: #{error.message}"
         end
         update_facebook_errors_in_schemaless_notes({ code: error_code, message: error_msg }, @item.id) if error_msg.present? || error_code.present?
         return_value

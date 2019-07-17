@@ -109,35 +109,38 @@ class Social::Gnip::TwitterFeed
 
   private
 
-  def process_post(args)
-    select_shard_and_account(args[:account_id]) do |account|
-      notable = nil
-      tweet_requeued = false
-    
-      convert_args = apply_ticket_rules(account, args)
-      if self_tweeted?
+    def process_post(args)
+      select_shard_and_account(args[:account_id]) do |account|
+        notable = nil
+        tweet_requeued = false
+
+        convert_args = apply_ticket_rules(account, args)
+        if self_tweeted?
+          Rails.logger.debug "Tweet id : #{@tweet_id} : Resetting current user : #{User.current.try(:id)}"
+          User.reset_current_user
+          Account.reset_current_account
+          return
+        end
+        if convert_args[:convert]
+          process_tweet_to_ticket(account, args, convert_args)
+        else
+          smart_convert_args = smart_filter_convert_details(account, args)
+          if smart_convert_args[:check_smart_filter]
+            Social::Gnip::SmartFilterTweetToTicketWorker.perform_async(tweet: @tweet_json, data: args)
+          elsif smart_convert_args[:use_smart_filter_param]
+            process_tweet_to_ticket(account, args, smart_convert_args)
+          else
+            process_tweet_to_ticket(account, args, convert_args)
+          end
+        end
         Rails.logger.debug "Tweet id : #{@tweet_id} : Resetting current user : #{User.current.try(:id)}"
         User.reset_current_user
         Account.reset_current_account
-        return
       end
-      unless convert_args[:convert]
-        smart_convert_args = smart_filter_convert_details(account,args)
-        if smart_convert_args[:check_smart_filter]
-          Social::Gnip::SmartFilterTweetToTicketWorker.perform_async({:tweet => @tweet_json, :data => args}) 
-        elsif smart_convert_args[:use_smart_filter_param]
-          process_tweet_to_ticket(account, args, smart_convert_args)
-        else
-          process_tweet_to_ticket(account, args, convert_args)
-        end
-      else 
-        process_tweet_to_ticket(account, args, convert_args)
-      end
-      Rails.logger.debug "Tweet id : #{@tweet_id} : Resetting current user : #{User.current.try(:id)}"
-      User.reset_current_user
-      Account.reset_current_account
+    rescue Exception => e
+      Rails.logger.info "Error processing tweet: #{e}, account_id: #{args[:account_id]}, stream_id: #{args[:stream_id]}"
+      raise e if Rails.env.production?
     end
-  end
 
 
   def reply?
