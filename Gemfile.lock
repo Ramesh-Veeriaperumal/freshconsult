@@ -199,10 +199,11 @@ GIT
   specs:
     central-publisher (2.0.4)
       active_record_shards (>= 3.2.0)
+
       faraday (= 0.9)
       faraday_middleware (~> 0.10.0)
-      newrelic_rpm (>= 5.5.0)
-      rails (>= 3.2.22.3)
+      newrelic_rpm (~> 5.5.0)
+      rails (~> 3.2.22.3)
       redis (= 3.3.1)
       sidekiq (>= 3.5.4)
       uuidtools
@@ -299,13 +300,6 @@ GIT
       grpc (~> 1.17.0)
       opentracing (>= 0.4.1)
       rest-client
-
-GIT
-  remote: git@github.com:freshdesk/prometheus_exporter.git
-  revision: de9d9ed0a5b8ef890d49f245b9401896bab76a1d
-  tag: v1.0.2
-  specs:
-    prometheus_exporter (1.0.2)
 
 GIT
   remote: git@github.com:freshdesk/retire.git
@@ -1612,7 +1606,6 @@ DEPENDENCIES
   pg
   postoffice!
   premailer (~> 1.8.0)
-  prometheus_exporter!
   pronto
   pronto-brakeman
   pronto-rails_best_practices

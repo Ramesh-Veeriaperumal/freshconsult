@@ -264,7 +264,6 @@
       - :custom_survey
       - :smart_filter
       - :support_bot
-      - :autofaq
       - :parent_child_tickets_toggle
       - :multi_product
       - :multiple_business_hours
