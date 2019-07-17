@@ -5,7 +5,7 @@
 
 <div class="body">
 	<div class="mail_content">
-		<b>New Topic</b> in forum <%= link_to @topic.forum.name, 
+		<%= t("mailer_notifier.topic_notifications.new_forum_topic_html") %> <%= link_to @topic.forum.name, 
 		discussions_forum_url(@topic.forum.id, :host => @host) %>
 	</div>
 	<div class="forum_content">
@@ -24,11 +24,10 @@
 		<br />
 	</div>
 	<div class="footer">
-		<%= link_to "Reply", reply_discussions_topic_url(@topic.id, :host => @host, :anchor => 'reply-to-post'), :class => "reply" %>
-		<%= link_to "Follow Topic", toggle_monitorship_url("topic", @topic.id, "follow", :host => @host), :class =>"follow_topic" %>
+		<%= link_to t("mailer_notifier.topic_notifications.reply"), reply_discussions_topic_url(@topic.id, :host => @host, :anchor => 'reply-to-post'), :class => "reply" %>
+		<%= link_to t("mailer_notifier.topic_notifications.follow_topic"), toggle_monitorship_url("topic", @topic.id, "follow", :host => @host), :class =>"follow_topic" %>
 		<div class="footer-text">
-			<%= link_to "Turn Off", toggle_monitorship_url("forum", @topic.forum.id, "unfollow", :host => @host) %>
-			New Topic notifications for this forum
+			<%= t("mailer_notifier.topic_notifications.turn_off_forum_notifications_html", unfollow_url: toggle_monitorship_url("forum", @topic.forum.id, "unfollow", :host => @host)).html_safe %>
 		</div>
 	</div>
 	<br />

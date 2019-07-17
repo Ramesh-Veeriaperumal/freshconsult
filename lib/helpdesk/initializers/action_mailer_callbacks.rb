@@ -13,6 +13,18 @@ module ActionMailerCallbacks
   include EmailHelper
   include Email::EmailService::IpPoolHelper
 
+    def send_email(notification_type, user, *args)
+      I18n.with_locale(user_locale(user)) { 
+        send(notification_type, *args) 
+      }
+    rescue => e
+      Rails.logger.error "Error while sending mail: #{notification_type}\n#{e.message}\n#{e.backtrace.to_a.join("\n")}"
+    end
+
+    def user_locale(user)
+      (user && user.language) ? user.language : (Portal.current ? Portal.current.language : (Account.current ? Account.current.language : I18n.default_locale))
+    end
+
     def set_smtp_settings(mail)
       account_id_field = mail.header["X-FD-Account-Id"]
       ticket_id_field = mail.header["X-FD-Ticket-Id"]

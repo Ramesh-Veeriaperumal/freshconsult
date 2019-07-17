@@ -5,20 +5,19 @@
 
 <div class="body">
 	<div class="mail_content">
-		Status update in topic
+		<%= t("mailer_notifier.topic_notifications.status_update") %> 
 	</div>
 	<div class="forum_content">
 
 		<%= link_to @topic.title, discussions_topic_url(@topic.id, :host => @host), :class => "topic_title" %><br><br>
 		
-		The <%= @forum_type.downcase.singularize %> has been marked as <strong><%= @current_stamp %></strong>.
+		<%= t("mailer_notifier.topic_notifications.current_stamp_html", forum_type: @forum_type.downcase.singularize, stamp: @current_stamp) %> 
 		<br />
 	</div>
 	<div class="footer">
-		<%= link_to "Reply", reply_support_discussions_topic_url(@topic.id, :host => @host, :anchor => 'reply-to-post'), :class => "reply" %>
+		<%= link_to t("mailer_notifier.topic_notifications.reply"), reply_support_discussions_topic_url(@topic.id, :host => @host, :anchor => 'reply-to-post'), :class => "reply" %>
 		<div class="footer-text">
-			<%= link_to "Turn Off", toggle_monitorship_url("topic", @topic.id, "unfollow", :host => @host) %>
-			 notifications for this topic
+			<%= t("mailer_notifier.topic_notifications.turn_off_topic_notifications_html", unfollow_url: toggle_monitorship_url("topic", @topic.id, "unfollow", :host => @host)).html_safe %>
 		</div>
 	</div>
 	<br />

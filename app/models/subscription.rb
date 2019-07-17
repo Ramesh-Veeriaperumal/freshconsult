@@ -65,7 +65,7 @@ class Subscription < ActiveRecord::Base
 
   NO_PRORATION_PERIOD_CYCLES = [SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:monthly]].freeze
 
-  concerned_with :presenter
+  concerned_with :presenter, :callbacks
 
   publishable on: [:update]
   
