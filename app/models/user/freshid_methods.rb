@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
   end
 
   def create_freshid_user
-    return if freshid_disabled_or_customer?
+    return if freshid_disabled_or_customer? || (freshid_authorization.present? && authorizations.exists?(freshid_authorization.id))
     self.name = name_from_email if !self.name.present?
     Rails.logger.info "FRESHID Creating user :: a=#{self.account_id}, u=#{self.id}, email=#{self.email}"
     freshid_user = freshid_user_class.create(freshid_attributes)
@@ -14,6 +14,7 @@ class User < ActiveRecord::Base
   end
 
   def create_freshid_user!
+    return if freshid_disabled_or_customer? || (freshid_authorization.present? && authorizations.exists?(freshid_authorization.id))
     create_freshid_user
     save!
     enqueue_activation_email unless Account.current.try(:sandbox?)
@@ -129,12 +130,8 @@ class User < ActiveRecord::Base
       !freshid_enabled_and_agent?
     end
 
-    def freshid_agent_not_signed_up_admin?
-      freshid_enabled_and_agent? && !signed_up_admin?
-    end
-
-    def signed_up_admin?
-      account.admin_email == email
+    def freshid_agent_not_signup_in_progress?
+      freshid_enabled_and_agent? && !account.signup_in_progress?
     end
 
     def email_allowed_in_freshid?

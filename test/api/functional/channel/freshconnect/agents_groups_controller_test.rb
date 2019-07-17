@@ -13,6 +13,6 @@ class Channel::Freshconnect::AgentsGroupsControllerTest < ActionController::Test
     set_jwt_auth_header('freshconnect')
     get :index, controller_params(version: 'channel')
     assert_response 200
-    match_json(agent_group_pattern(Account.current))
+    match_json(agent_group_pattern_for_channels(Account.current))
   end
 end

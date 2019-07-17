@@ -6,10 +6,18 @@ module AgentLoggerHelper
   end
 
   def agent_login
+    if @record.present? && @record.helpdesk_agent?
+      @misc_changes = { "logged_in": [false, true] }
+      @record.agent.manual_publish(nil, [:update, { misc_changes: @misc_changes }])
+    end
     log_agent_info(@record)
   end
 
   def agent_logout
+    if @record.present? && @record.helpdesk_agent?
+      @misc_changes = { "logged_in": [true, false] }
+      @record.agent.manual_publish(nil, [:update, { misc_changes: @misc_changes }])
+    end
     log_agent_info(@record,destroy = true)
   end
 

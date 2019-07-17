@@ -180,7 +180,8 @@ module LeaderboardTestHelper
         {
           'name' => 'mvp', 'id' => 1, 'rank_holders' => group_agents_score.reverse.first(50).collect.with_index do |s, i|
             user = User.find(s[0])
-            { 'score' => s[1].to_f, 'id' => 'mvp_' + (i + 1).to_s, 'rank' => i + 1, 'user_id' => s[0], 'avatar' => user.avatar ? AttachmentDecorator.new(user.avatar).to_hash : nil }
+            avatar_hash = user.avatar ? AttachmentDecorator.new(user.avatar).to_hash : nil
+            { 'score' => s[1].to_f, 'id' => 'mvp_' + (i + 1).to_s, 'rank' => i + 1, 'user_id' => s[0], 'avatar' => avatar_hash }
           end
         },
         { 'name' => 'love', 'id' => 2, 'rank_holders' => [] },

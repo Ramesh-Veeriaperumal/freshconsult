@@ -2,8 +2,16 @@ require_relative '../unit_test_helper'
 
 class HelpWidgetsValidationTest < ActionView::TestCase
 
+  def setup
+    super
+    before_all
+  end
+
+  def before_all
+    @account = Account.stubs(:current).returns(Account.new)
+  end
+
   def test_create_invalid_without_settings
-    Account.stubs(:current).returns(Account.new)
     request_params = {
       'product_id' => 1,
       'name' => 'Create_Widget'
@@ -15,7 +23,6 @@ class HelpWidgetsValidationTest < ActionView::TestCase
   end
 
   def test_create_invalid_with_false_settings_hash
-    Account.stubs(:current).returns(Account.new)
     request_params = {
       product_id: 5,
       name: 'Ram',
@@ -30,7 +37,6 @@ class HelpWidgetsValidationTest < ActionView::TestCase
   end
 
   def test_create_invalid_with_false_settings_type
-    Account.stubs(:current).returns(Account.new)
     request_params = {
       product_id: 5,
       name: 'Harry',
@@ -43,7 +49,6 @@ class HelpWidgetsValidationTest < ActionView::TestCase
   end
 
   def test_create_valid_with_expected_parameters
-    Account.stubs(:current).returns(Account.new)
     request_params = {
       product_id: nil,
       name: 'Harry',
@@ -58,7 +63,6 @@ class HelpWidgetsValidationTest < ActionView::TestCase
   end
 
   def test_update_invalid_with_invalid_appearance_hash
-    Account.stubs(:current).returns(Account.new)
     request_params = {
       id: 1,
       settings: {
@@ -74,7 +78,6 @@ class HelpWidgetsValidationTest < ActionView::TestCase
   end
 
   def test_update_invalid_with_invalid_contact_form_hash
-    Account.stubs(:current).returns(Account.new)
     request_params = ActionController::Parameters.new ({
       'id' => 1,
       'settings' => {
@@ -90,7 +93,6 @@ class HelpWidgetsValidationTest < ActionView::TestCase
   end
 
   def test_update_valid_with_valid_hashes
-    Account.stubs(:current).returns(Account.new)
     request_params = ActionController::Parameters.new ({
       'id' => 1,
       'settings' => {
@@ -104,7 +106,6 @@ class HelpWidgetsValidationTest < ActionView::TestCase
   end
 
   def test_update_valid_with_solution_articles
-    Account.stubs(:current).returns(Account.new)
     request_params = ActionController::Parameters.new ({
       'id' => 1,
       'settings' => {
@@ -118,7 +119,6 @@ class HelpWidgetsValidationTest < ActionView::TestCase
   end
 
   def test_update_valid_with_solution_articles_widget_flow
-    Account.stubs(:current).returns(Account.new)
     request_params = ActionController::Parameters.new ({
       'id' => 1,
       'settings' => {
@@ -130,7 +130,6 @@ class HelpWidgetsValidationTest < ActionView::TestCase
   end
 
   def test_update_valid_with_solution_articles_widget_flow_invalid
-    Account.stubs(:current).returns(Account.new)
     request_params = ActionController::Parameters.new ({
       'id' => 1,
       'settings' => {
@@ -142,7 +141,6 @@ class HelpWidgetsValidationTest < ActionView::TestCase
   end
 
   def test_update_invalid_with_invalid_color_code
-    Account.stubs(:current).returns(Account.new)
     request_params = ActionController::Parameters.new ({
       'id' => 1,
       'settings' => {
@@ -158,7 +156,6 @@ class HelpWidgetsValidationTest < ActionView::TestCase
   end
 
   def test_update_components_with_predictive_support
-    Account.stubs(:current).returns(Account.new)
     request_params = ActionController::Parameters.new ({
       'id' => 1,
       'settings' => {
@@ -172,7 +169,6 @@ class HelpWidgetsValidationTest < ActionView::TestCase
   end
 
   def test_update_valid_with_valid_appearance_settings
-    Account.stubs(:current).returns(Account.new)
     request_params = ActionController::Parameters.new ({
       'id' => 1,
       'settings' => {
@@ -188,7 +184,6 @@ class HelpWidgetsValidationTest < ActionView::TestCase
   end
 
   def test_update_valid_predictive_support_hash
-    Account.stubs(:current).returns(Account.new)
     request_params = ActionController::Parameters.new ({
       'id' => 1,
       'settings' => {
@@ -206,7 +201,6 @@ class HelpWidgetsValidationTest < ActionView::TestCase
   end
 
   def test_update_invalid_predictive_support_hash
-    Account.stubs(:current).returns(Account.new)
     request_params = ActionController::Parameters.new ({
       'id' => 1,
       'settings' => {
@@ -221,8 +215,76 @@ class HelpWidgetsValidationTest < ActionView::TestCase
     refute helpwidgetsvalidation.valid?(:update)
   end
 
+  def test_update_predictive_support_with_fm_account_creation
+    request_params = ActionController::Parameters.new ({
+      'id' => 1,
+      'settings' => {
+        'components' => {
+          'predictive_support' => true
+        },
+        'predictive_support' => {
+          'domain_list' => ['test.com'],
+          'welcome_message' => 'hi',
+          'success_message' => 'Succcess',
+          'message' => 'hello'
+        }
+      },
+      'freshmarketer' => {
+        email: 'padmashri@fmstack.com',
+        type: 'create'
+      }
+    })
+    helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
+    assert helpwidgetsvalidation.valid?(:update)
+  end
+
+  def test_update_predictive_support_with_fm_account_association
+    request_params = ActionController::Parameters.new ({
+      'id' => 1,
+      'settings' => {
+        'components' => {
+          'predictive_support' => true
+        },
+        'predictive_support' => {
+          'domain_list' => ['test.com'],
+          'welcome_message' => 'hi',
+          'success_message' => 'Succcess',
+          'message' => 'hello'
+        }
+      },
+      'freshmarketer' => {
+        domain: 'padmashri.fmstack.com',
+        type: 'associate'
+      }
+    })
+    helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
+    assert helpwidgetsvalidation.valid?(:update)
+  end
+
+  def test_update__with_fm_account_creation_wrong_type
+    request_params = ActionController::Parameters.new ({
+      'id' => 1,
+      'settings' => {
+        'components' => {
+          'predictive_support' => true
+        },
+        'predictive_support' => {
+          'domain_list' => ['test.com'],
+          'welcome_message' => 'hi',
+          'success_message' => 'Succcess',
+          'message' => 'hello'
+        }
+      },
+      'freshmarketer' => {
+        domain: 'padmashri@fmstack.com',
+        type: 'serve'
+      }
+    })
+    helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
+    refute helpwidgetsvalidation.valid?(:update)
+  end
+
   def test_update_empty_text_fields_predictive_support_hash
-    Account.stubs(:current).returns(Account.new)
     request_params = ActionController::Parameters.new ({
       'id' => 1,
       'settings' => {
@@ -236,19 +298,5 @@ class HelpWidgetsValidationTest < ActionView::TestCase
     })
     helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
     assert helpwidgetsvalidation.valid?(:update)
-  end
-
-  def test_update_domain_array_nil_predictive_support_hash
-    Account.stubs(:current).returns(Account.new)
-    request_params = ActionController::Parameters.new ({
-      'id' => 1,
-      'settings' => {
-        'predictive_support' => {
-          'domain_list' => nil
-        }
-      }
-    })
-    helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
-    refute helpwidgetsvalidation.valid?(:update)
   end
 end

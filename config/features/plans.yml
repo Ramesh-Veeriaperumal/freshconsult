@@ -154,6 +154,8 @@
   :blossom_jan_19:
     :name: Blossom
     :features:
+      - :agent_articles_suggest
+      - :email_articles_suggest
       - :mailbox
       - :agent_scope
       - :sla_management_v2
@@ -246,6 +248,7 @@
       - :analytics_tags_resource
       - :proactive_outreach
       - :adv_article_bulk_actions
+      - :customer_journey
     :inherits:
       - :blossom_jan_19
     :exclude: []

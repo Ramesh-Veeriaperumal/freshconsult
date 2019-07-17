@@ -56,6 +56,7 @@ module BotResponseTestHelper
     params = {
       ticket_id: ticket_id,
       bot_id: bot_id,
+      bot_type: 'Bot',
       query_id: query_id,
       suggested_articles: suggested_articles
     }
@@ -163,11 +164,11 @@ module BotResponseTestHelper
     Account.current.unstub(:all_launched_features)
   end
 
-  def enable_bot_agent_response
-    Account.current.stubs(:bot_agent_response_enabled?).returns(true)
+  def enable_agent_articles_suggest
+    Account.current.add_feature(:agent_articles_suggest)
     yield
   ensure
-    Account.current.unstub(:bot_agent_response_enabled?)
+    Account.current.revoke_feature(:agent_articles_suggest)
   end
 
   def create_bot_response(ticket_id = nil, bot_id = nil)
@@ -175,6 +176,7 @@ module BotResponseTestHelper
     bot_id = bot_id || Bot.first.try(:id)
     Account.current.bot_responses.create(ticket_id: ticket_id, 
       bot_id: bot_id,
+      bot_type: 'Bot',
       query_id: UUIDTools::UUID.timestamp_create.hexdigest, 
       suggested_articles: suggested_articles_pattern)
   end

@@ -151,6 +151,7 @@ module Ember
         @quoted_text = quoted_text(@item || @ticket, forward_template?)
         fetch_to_cc_bcc_emails
       end
+      Rails.logger.info "cc_emails: #{@cc_emails.inspect}" if @cc_emails.present?
       @cc_emails.clear if forward_template?
       fetch_attachments
       render action: :template

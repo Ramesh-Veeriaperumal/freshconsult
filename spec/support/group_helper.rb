@@ -1,4 +1,8 @@
+['shared_ownership_test_helper.rb'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
+
 module GroupHelper
+    include ::SharedOwnershipTestHelper
+
 	def create_group(account, options= {},group_type= 1)
     group = account.groups.find_by_name(options[:name])
     return group if group
@@ -15,14 +19,18 @@ module GroupHelper
 
   def create_group_with_agents(account, options= {},group_type= 1)
     group = account.groups.find_by_name(options[:name])
-    return group if group
-    name = options[:name] || Faker::Name.name
-    group = FactoryGirl.build(:group,:name=> name)
-    group.group_type = group_type
-    group.account_id = account.id
-    group.ticket_assign_type = options[:ticket_assign_type] if options[:ticket_assign_type]
-    options[:agent_list].each { |agent| group.agent_groups.build(:user_id =>agent) } unless options[:agent_list].blank?
-    group.save!
+    return group if group && group.agents.present?
+    unless group
+        name = options[:name] || Faker::Name.name
+        group = FactoryGirl.build(:group,:name=> name)
+        group.group_type = group_type
+        group.account_id = account.id
+        group.ticket_assign_type = options[:ticket_assign_type] if options[:ticket_assign_type]
+        options[:agent_list].each { |agent| group.agent_groups.build(:user_id =>agent) } unless options[:agent_list].blank?
+        group.save!
+    else
+        add_agent_to_group(group_id = group.id, ticket_permission = 3, role_id = @account.roles.first.id)
+    end
     group
   end
 

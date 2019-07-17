@@ -2,6 +2,10 @@ type: object
 properties:
   linked:
     type: boolean
+  predictive:
+    type: boolean
+  name:
+    type: string
   experiment:
     type: object
     properties:

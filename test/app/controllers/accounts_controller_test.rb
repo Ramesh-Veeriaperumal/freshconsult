@@ -31,7 +31,7 @@ class AccountsControllerTest < ActionController::TestCase
   end
 
   def current_account
-    Account.first
+    Account.first || create_test_account
   end
 
   def test_new_signup
@@ -226,7 +226,7 @@ class AccountsControllerTest < ActionController::TestCase
   end
 
   def test_signup_domain_validation
-    get :signup_validate_domain, domain: Faker::Lorem.word, format: 'json'
+    get :signup_validate_domain, domain: Faker::Internet.domain_word, format: 'json'
     assert_response 200
   end
 
@@ -312,7 +312,7 @@ class AccountsControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:kill_account_activation_email_job).returns(true)
     User.any_instance.stubs(:reset_perishable_token!).returns(true)
     Sidekiq::ScheduledSet.any_instance.stubs(:find_job).returns([Faker::Lorem.word])
-    get :update_domain, company_domain: Faker::Lorem.word, format: 'json'
+    get :update_domain, company_domain: Faker::Internet.domain_word, format: 'json'
     assert_response 200
   ensure
     ActionView::Renderer.any_instance.unstub(:render)

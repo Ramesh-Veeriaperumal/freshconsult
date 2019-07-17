@@ -1,5 +1,7 @@
 module Facebook
   module Constants
+    STANDARD_TIMEOUT = { request: { timeout: 5, open_timeout: 5 } }
+
     ITEM_LIST         = ['status', 'post', 'comment', 'reply_to_comment', 'photo', 'video', 'share', 'link'].freeze
 
     AUXILLARY_LIST    = ['like'].freeze

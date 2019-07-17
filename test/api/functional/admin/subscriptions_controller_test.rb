@@ -71,22 +71,24 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
 
   def test_update_subscription
     create_new_account("test123", "test123@freshdesk.com")
+    @account.launch(:enable_customer_journey)
     update_currency
     agent = @account.users.where(helpdesk_agent: true).first
     User.stubs(:current).returns(agent)
     @controller.stubs(:api_current_user).returns(User.current)
     @controller.api_current_user.stubs(:privilege?).returns(true)
-    updated_features_list = [ :forums, :multi_language, :css_customization, :dynamic_content,
-                             :ticket_templates, :custom_survey, :parent_child_tickets_toggle,
-                             :link_tickets_toggle, :support_bot ]
+    updated_features_list = [:split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management, :assume_identity, :rebranding, :custom_apps, :custom_ticket_fields, :custom_company_fields, :custom_contact_fields, :occasional_agent, :allow_auto_suggest_solutions, :basic_twitter, :basic_facebook, :gamification, :auto_refresh, :advanced_twitter, :advanced_facebook, :surveys, :scoreboard, :timesheets, :custom_domain, :multiple_emails, :advanced_reporting, :default_survey, :forums, :css_customization, :sitemap, :multi_language, :dynamic_content, :requester_widget, :ticket_templates, :collision, :mailbox, :branding, :basic_dkim, :link_tickets_toggle, :proactive_outreach, :advanced_search, :system_observer_events, :collaboration, :user_notifications, :quick_reply, :image_annotation, :tam_default_fields, :todos_reminder_scheduler, :google_signin, :twitter_signin, :facebook_signin, :signup_link, :freshchat, :session_replay, :freshconnect, :captcha, :moderate_posts_with_links, :redis_display_id, :survey_links, :anonymous_tickets, :open_solutions, :auto_suggest_solutions, :reply_to_based_tickets, :marketplace, :fa_developer, :contact_company_notes, :reverse_notes, :disable_old_ui, :es_v2_writes, :canned_forms, :agent_scope, :social_tab, :public_url_toggle, :add_to_response, :customize_table_view, :custom_password_policy, :performance_report, :sla_management_v2, :scenario_automation, :ticket_volume_report, :omni_channel, :personal_canned_response, :proactive_spam_detection, :api_v2, :analytics_landing_search, :analytics_landing_navigation, :analytics_report_clone, :analytics_report_filter, :analytics_report_schedule, :analytics_report_export, :analytics_report_presentation_mode, :analytics_report_delete, :analytics_report_save, :analytics_widget_schedule, :analytics_widget_export, :analytics_widget_save, :analytics_widget_change_chart, :analytics_widget_show_tabular_data, :analytics_widget_edit_tabular_data, :analytics_widget_delete, :analytics_agent_performance, :analytics_group_performance, :analytics_helpdesk_in_depth_report, :analytics_ticket_volume_trend, :analytics_time_sheet_summary_report, :analytics_satisfaction_survey_report, :analytics_linked_tracker_ticket, :analytics_child_parent_ticket, :analytics_tags_reports, :analytics_tickets_resource, :analytics_timesheet_resource, :analytics_tags_resource, :article_filters, :adv_article_bulk_actions, :auto_article_order, :social_revamp, :spam_dynamo, :activity_revamp, :customer_journey]
     result = ChargeBee::Result.new(stub_update_params)
     ChargeBee::Subscription.stubs(:update).returns(result)
     @account.subscription.state = 'active'
     @account.subscription.card_number = '12345432'
+    # Testing upgrade from sprout/blossom to garden enables customer_journey feature
+    assert !@account.features_list.include?(:customer_journey)
     put :update, construct_params({ version: 'private', plan_id: SubscriptionPlan.cached_current_plans.map(&:id).third, agent_seats: 1 }, {})
+    @account.reload
     assert_response 200
     assert_equal JSON.parse(response.body)['plan_id'], SubscriptionPlan.cached_current_plans.map(&:id).third
-    assert_equal (updated_features_list - @account.features_list).empty?, true
+    assert (updated_features_list - @account.features_list).empty?
     put :update, construct_params({ version: 'private', renewal_period: 6 }, {})
     assert_response 200
     #moving to sprout and checking all the validations

@@ -30,6 +30,11 @@ class TrialFacebookWorkerTest < ActionView::TestCase
     @account = Account.current
     @fb_page = create_test_facebook_page(@account)
     @user_id = rand(10**10)
+    before_all
+  end
+
+  def before_all
+    @fb_page.update_attribute(:message_since, Time.parse((Time.now - 0.5.hour).utc.to_s).to_i)
   end
 
   def test_record_not_found_exception
@@ -177,7 +182,7 @@ class TrialFacebookWorkerTest < ActionView::TestCase
     Timecop.travel(1.second)
     create_facebook_dm_as_ticket(@fb_page, thread_id, @user_id)
     next_msg_id = rand(10**10)
-    time = Time.now.utc
+    time = (Time.now + 1.hour).utc
     next_msgs = sample_dms(thread_id, @user_id, next_msg_id, time)
     Koala::Facebook::API.any_instance.stubs(:get_connections).returns(next_msgs)
     Social::TrialFacebookWorker.new.perform('account_id' => @account.id)

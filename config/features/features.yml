@@ -199,7 +199,7 @@
       :social_tab: 194
       :public_url_toggle: 195
       :add_to_response: 196
-      :seafarers_5: 197
+      :customer_journey: 197
       :customize_table_view: 198
       :custom_password_policy: 199
       :seafarers_8: 200
@@ -365,8 +365,8 @@
       :autofaq: 360
       :ticket_properties_suggester_eligible: 361
       :ticket_properties_suggester: 362
-      :freddy_6: 363
-      :freddy_7: 364
+      :agent_articles_suggest: 363
+      :email_articles_suggest: 364
       :freddy_8: 365
       :freddy_9: 366
       :freddy_10: 367

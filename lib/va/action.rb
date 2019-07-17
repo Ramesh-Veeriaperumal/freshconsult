@@ -61,6 +61,7 @@ class Va::Action
         record_action(act_on)
         return
       else
+        @action_key = @action_key.try(:to_s) if @action_key.is_a?(Symbol)
         clazz = @action_key.constantize
         obj = clazz.new
         if obj.respond_to?(value)

@@ -76,6 +76,7 @@ module Ember
         Account.current.ticket_fields.find_by_name(fsm_field).try(:destroy)
       end
       Account.current.picklist_values.find_by_value(SERVICE_TASK_TYPE).try(:destroy)
+      Role.find_by_name(FIELD_SERVICE_MANAGER_ROLE_NAME).try(:destroy)
     end
 
    def change_subscription_state(subscription_state)
@@ -1325,12 +1326,10 @@ module Ember
     def test_execute_scenario_to_respond_403
       scn_auto = @account.scn_automations.first || create_scn_automation_rule(scenario_automation_params)
       ticket = @account.tickets.first || create_ticket(ticket_params_hash)
-      @account.launch(:pricing_plan_change_2019)
       @account.revoke_feature :scenario_automation
       @account.features.scenario_automations.destroy if @account.features.scenario_automations?
       put :execute_scenario, construct_params({ version: 'private', id: ticket.display_id }, scenario_id: scn_auto.id)
       assert_response 403
-      @account.rollback(:pricing_plan_change_2019)
     end
 
     def test_create_with_section_fields_with_type_as_parent
@@ -1392,11 +1391,11 @@ module Ember
       @bot = @account.main_portal.bot || create_test_email_bot({email_channel: true})
       @account.reload
       ticket = create_ticket({source: 1})
-      ::Bot::Emailbot::SendBotEmail.jobs.clear
+      ::Freddy::AgentSuggestArticles.jobs.clear
       args = {'ticket_id' => ticket.id, 'user_id' => ticket.requester_id, 'is_webhook' => ticket.freshdesk_webhook?, 'sla_args' => {'sla_on_background' => ticket.sla_on_background, 'sla_state_attributes' => ticket.sla_state_attributes, 'sla_calculation_time' => ticket.sla_calculation_time.to_i}}
       disptchr = Helpdesk::Dispatcher.new(args)
       disptchr.execute
-      assert_equal 1, ::Bot::Emailbot::SendBotEmail.jobs.size
+      assert_equal 1, ::Freddy::AgentSuggestArticles.jobs.size
       Bot.any_instance.unstub(:email_channel)
       Account.any_instance.unstub(:support_bot_configured?)
       Account.any_instance.unstub(:bot_email_channel_enabled?)
@@ -1405,71 +1404,112 @@ module Ember
     def test_create_from_email_without_bot_configuration
       Account.any_instance.stubs(:support_bot_configured?).returns(false)
       Account.any_instance.stubs(:bot_email_channel_enabled?).returns(true)
+      Account.any_instance.stubs(:agent_articles_suggest_enabled?).returns(false)
       ticket = create_ticket({source: 1})
-      ::Bot::Emailbot::SendBotEmail.jobs.clear
+      ::Freddy::AgentSuggestArticles.jobs.clear
       args = {'ticket_id' => ticket.id, 'user_id' => ticket.requester_id, 'is_webhook' => ticket.freshdesk_webhook?, 'sla_args' => {'sla_on_background' => ticket.sla_on_background, 'sla_state_attributes' => ticket.sla_state_attributes, 'sla_calculation_time' => ticket.sla_calculation_time.to_i}}
       disptchr = Helpdesk::Dispatcher.new(args)
       disptchr.execute
-      assert_equal 0, ::Bot::Emailbot::SendBotEmail.jobs.size
+      assert_equal 0, ::Freddy::AgentSuggestArticles.jobs.size
       Account.any_instance.unstub(:support_bot_configured?)
       Account.any_instance.unstub(:bot_email_channel_enabled?)
+      Account.any_instance.unstub(:agent_articles_suggest_enabled?)
     end
 
     def test_create_from_email_without_email_bot_channel
       Account.any_instance.stubs(:support_bot_configured?).returns(true)
       Account.any_instance.stubs(:bot_email_channel_enabled?).returns(false)
+      Account.any_instance.stubs(:agent_articles_suggest_enabled?).returns(false)
       ticket = create_ticket({source: 1})
-      ::Bot::Emailbot::SendBotEmail.jobs.clear
+      ::Freddy::AgentSuggestArticles.jobs.clear
       args = {'ticket_id' => ticket.id, 'user_id' => ticket.requester_id, 'is_webhook' => ticket.freshdesk_webhook?, 'sla_args' => {'sla_on_background' => ticket.sla_on_background, 'sla_state_attributes' => ticket.sla_state_attributes, 'sla_calculation_time' => ticket.sla_calculation_time.to_i}}
       disptchr = Helpdesk::Dispatcher.new(args)
       disptchr.execute
-      assert_equal 0, ::Bot::Emailbot::SendBotEmail.jobs.size
+      assert_equal 0, ::Freddy::AgentSuggestArticles.jobs.size
       Account.any_instance.unstub(:support_bot_configured?)
       Account.any_instance.unstub(:bot_email_channel_enabled?)
+      Account.any_instance.unstub(:agent_articles_suggest_enabled?)
     end
 
     def test_create_from_other_source_with_bot_configuration
       Account.any_instance.stubs(:support_bot_configured?).returns(true)
       Account.any_instance.stubs(:bot_email_channel_enabled?).returns(true)
+      Account.any_instance.stubs(:agent_articles_suggest_enabled?).returns(false)
       ticket = create_ticket
-      ::Bot::Emailbot::SendBotEmail.jobs.clear
+      ::Freddy::AgentSuggestArticles.jobs.clear
       args = {'ticket_id' => ticket.id, 'user_id' => ticket.requester_id, 'is_webhook' => ticket.freshdesk_webhook?, 'sla_args' => {'sla_on_background' => ticket.sla_on_background, 'sla_state_attributes' => ticket.sla_state_attributes, 'sla_calculation_time' => ticket.sla_calculation_time.to_i}}
       disptchr = Helpdesk::Dispatcher.new(args)
       disptchr.execute
-      assert_equal 0, ::Bot::Emailbot::SendBotEmail.jobs.size
+      assert_equal 0, ::Freddy::AgentSuggestArticles.jobs.size
       Account.any_instance.unstub(:support_bot_configured?)
       Account.any_instance.unstub(:bot_email_channel_enabled?)
+      Account.any_instance.unstub(:agent_articles_suggest_enabled?)
     end
 
     def test_spam_ticket_with_bot_configuration
       Account.any_instance.stubs(:support_bot_configured?).returns(true)
       Account.any_instance.stubs(:bot_email_channel_enabled?).returns(true)
       ticket = create_ticket({spam: true})
-      ::Bot::Emailbot::SendBotEmail.jobs.clear
+      ::Freddy::AgentSuggestArticles.jobs.clear
       args = {'ticket_id' => ticket.id, 'user_id' => ticket.requester_id, 'is_webhook' => ticket.freshdesk_webhook?, 'sla_args' => {'sla_on_background' => ticket.sla_on_background, 'sla_state_attributes' => ticket.sla_state_attributes, 'sla_calculation_time' => ticket.sla_calculation_time.to_i}}
       disptchr = Helpdesk::Dispatcher.new(args)
       disptchr.execute
-      assert_equal 0, ::Bot::Emailbot::SendBotEmail.jobs.size
+      assert_equal 0, ::Freddy::AgentSuggestArticles.jobs.size
       Account.any_instance.unstub(:support_bot_configured?)
       Account.any_instance.unstub(:bot_email_channel_enabled?)
     end
 
+    def test_create_agent_suggest_articles
+      Account.any_instance.stubs(:support_bot_configured?).returns(false)
+      Account.any_instance.stubs(:agent_articles_suggest_enabled?).returns(true)
+      @bot = @account.main_portal.bot || create_test_email_bot(email_channel: true)
+      @account.reload
+      ticket = create_ticket(source: 1)
+      ::Freddy::AgentSuggestArticles.jobs.clear
+      args = { 'ticket_id' => ticket.id, 'user_id' => ticket.requester_id, 'is_webhook' => ticket.freshdesk_webhook?, 'sla_args' => { 'sla_on_background' => ticket.sla_on_background, 'sla_state_attributes' => ticket.sla_state_attributes, 'sla_calculation_time' => ticket.sla_calculation_time.to_i } }
+      disptchr = Helpdesk::Dispatcher.new(args)
+      disptchr.execute
+      assert_equal 1, ::Freddy::AgentSuggestArticles.jobs.size
+      Account.any_instance.unstub(:support_bot_configured?)
+      Account.any_instance.unstub(:agent_articles_suggest_enabled?)
+    end
+
+    def test_create_without_agent_suggest_articles
+      Account.any_instance.stubs(:support_bot_configured?).returns(false)
+      Account.any_instance.stubs(:agent_articles_suggest_enabled?).returns(false)
+      ticket = create_ticket(source: 1)
+      ::Freddy::AgentSuggestArticles.jobs.clear
+      args = { 'ticket_id' => ticket.id, 'user_id' => ticket.requester_id, 'is_webhook' => ticket.freshdesk_webhook?, 'sla_args' => { 'sla_on_background' => ticket.sla_on_background, 'sla_state_attributes' => ticket.sla_state_attributes, 'sla_calculation_time' => ticket.sla_calculation_time.to_i } }
+      disptchr = Helpdesk::Dispatcher.new(args)
+      disptchr.execute
+      assert_equal 0, ::Freddy::AgentSuggestArticles.jobs.size
+      Account.any_instance.unstub(:support_bot_configured?)
+      Account.any_instance.unstub(:agent_articles_suggest_enabled?)
+    end
+
     def test_execute_scenario_without_params
+      @account.add_feature(:scenario_automation)
       scenario_id = create_scn_automation_rule(scenario_automation_params).id
       ticket_id = create_ticket(ticket_params_hash).display_id
       put :execute_scenario, construct_params({ version: 'private', id: ticket_id }, {})
       assert_response 400
       match_json([bad_request_error_pattern('scenario_id', :missing_field)])
+    ensure
+      @account.revoke_feature(:scenario_automation)
     end
 
     def test_execute_scenario_with_invalid_ticket_id
+      @account.add_feature(:scenario_automation)
       scenario_id = create_scn_automation_rule(scenario_automation_params).id
       ticket_id = create_ticket(ticket_params_hash).display_id + 20
       put :execute_scenario, construct_params({ version: 'private', id: ticket_id }, scenario_id: scenario_id)
       assert_response 404
+    ensure
+      @account.revoke_feature(:scenario_automation)
     end
 
     def test_execute_scenario_with_invalid_ticket_type
+      @account.add_feature(:scenario_automation)
       Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
       scenario_id = create_scn_automation_rule(scenario_automation_params).id
       ticket_id = create_ticket(ticket_params_hash).display_id
@@ -1478,20 +1518,25 @@ module Ember
       assert_response 400
       match_json([bad_request_error_pattern('id', :fsm_ticket_scenario_failure)])
     ensure
+      @account.revoke_feature(:scenario_automation)
       Helpdesk::Ticket.any_instance.unstub(:service_task?)
       Account.any_instance.unstub(:field_service_management_enabled?)
     end
 
     def test_execute_scenario_without_ticket_access
+      @account.add_feature(:scenario_automation)
       scenario_id = create_scn_automation_rule(scenario_automation_params).id
       ticket_id = create_ticket(ticket_params_hash).display_id
       User.any_instance.stubs(:has_ticket_permission?).returns(false)
       put :execute_scenario, construct_params({ version: 'private', id: ticket_id }, scenario_id: scenario_id)
       User.any_instance.unstub(:has_ticket_permission?)
       assert_response 403
+    ensure
+      @account.revoke_feature(:scenario_automation)
     end
 
     def test_execute_scenario_without_scenario_access
+      @account.add_feature(:scenario_automation)
       scenario_id = create_scn_automation_rule(scenario_automation_params).id
       ticket_id = create_ticket(ticket_params_hash).display_id
       ScenarioAutomation.any_instance.stubs(:check_user_privilege).returns(false)
@@ -1499,9 +1544,12 @@ module Ember
       ScenarioAutomation.any_instance.unstub(:check_user_privilege)
       assert_response 400
       match_json([bad_request_error_pattern('scenario_id', :inaccessible_value, resource: :scenario, attribute: :scenario_id)])
+    ensure
+      @account.revoke_feature(:scenario_automation)
     end
 
     def test_execute_scenario_failure_with_closure_action
+      @account.add_feature(:scenario_automation)
       scenario = create_scn_automation_rule(scenario_automation_params.merge(close_action_params))
       Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: true)
       ticket_field1 = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
@@ -1514,11 +1562,13 @@ module Ember
                   bad_request_error_pattern(custom_field_error_label(ticket_field1.label), :datatype_mismatch, expected_data_type: :String, given_data_type: 'Null', prepend_msg: :input_received),
                   bad_request_error_pattern(custom_field_error_label(ticket_field2.label), :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
     ensure
+      @account.revoke_feature(:scenario_automation)
       Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: false)
       [ticket_field1, ticket_field2].map { |x| x.update_attribute(:required_for_closure, false) }
     end
 
     def test_execute_scenario_for_nested_dropdown_with_closure_action_without_dropdown_value_present
+      @account.add_feature(:scenario_automation)
       scenario = create_scn_automation_rule(scenario_automation_params.merge(close_action_params))
       ticket_field1 = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
       ticket_field2 = @@ticket_fields.detect { |c| c.name == "test_custom_country_#{@account.id}" }
@@ -1527,10 +1577,12 @@ module Ember
       put :execute_scenario, construct_params({ version: 'private', id: t.display_id }, scenario_id: scenario.id)
       assert_response 400
     ensure
+      @account.revoke_feature(:scenario_automation)
       [ticket_field1, ticket_field2].map { |x| x.update_attribute(:required_for_closure, false) }
     end
 
     def test_execute_scenario_success_with_closure_action
+      @account.add_feature(:scenario_automation)
       scenario = create_scn_automation_rule(scenario_automation_params.merge(close_action_params))
       Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: true)
       ticket_field1 = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
@@ -1549,11 +1601,13 @@ module Ember
       end
       assert_json_match response.api_meta[:activities], scenario_activities
     ensure
+      @account.revoke_feature(:scenario_automation)
       Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: false)
       [ticket_field1, ticket_field2].map { |x| x.update_attribute(:required_for_closure, false) }
     end
 
     def test_execute_scenario_with_closure_of_parent_ticket_failure
+      @account.add_feature(:scenario_automation)
       scenario = create_scn_automation_rule(scenario_automation_params.merge(close_action_params))
       parent_ticket = create_ticket
       child_ticket = create_ticket
@@ -1564,12 +1618,14 @@ module Ember
       assert_response 400
       match_json([bad_request_error_pattern('status', :unresolved_child)])
     ensure
+      @account.revoke_feature(:scenario_automation)
       Helpdesk::Ticket.any_instance.unstub(:child_ticket?)
       Helpdesk::Ticket.any_instance.unstub(:associates)
       Helpdesk::Ticket.any_instance.unstub(:association_type)
     end
 
     def test_execute_scenario_with_closure_of_parent_ticket_success
+      @account.add_feature(:scenario_automation)
       scenario = create_scn_automation_rule(scenario_automation_params.merge(close_action_params))
       parent_ticket = create_ticket
       child_ticket = create_ticket(status: 5)
@@ -1588,12 +1644,14 @@ module Ember
       end
       assert_json_match response.api_meta[:activities], scenario_activities
     ensure
+      @account.revoke_feature(:scenario_automation)
       Helpdesk::Ticket.any_instance.unstub(:child_ticket?)
       Helpdesk::Ticket.any_instance.unstub(:associates)
       Helpdesk::Ticket.any_instance.unstub(:association_type)
     end
 
     def test_execute_scenario
+      @account.add_feature(:scenario_automation)
       scenario = create_scn_automation_rule(scenario_automation_params.merge({action_data: [{:name=>"ticket_type", :value=>"Question"},
                                                                                             {:name=>"add_comment", :comment=>"hey test1"},
                                                                                             {:name=>"add_tag", :value=>"hey,tag1,tag2"},
@@ -1610,6 +1668,8 @@ module Ember
         end
       end
       assert_json_match response.api_meta[:activities], scenario_activities
+    ensure
+      @account.revoke_feature(:scenario_automation)
     end
 
     # tests for latest note

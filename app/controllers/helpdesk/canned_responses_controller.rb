@@ -61,7 +61,7 @@ class Helpdesk::CannedResponsesController < ApplicationController
 
   def search
     @ticket = current_account.tickets.find(params[:ticket].to_i) unless params[:ticket].blank?
-    @ca_responses = fetch_from_es("Admin::CannedResponses::Response", {:load => Admin::CannedResponses::Response::INCLUDE_ASSOCIATIONS_BY_CLASS, :size => 20}, default_visiblity,"raw_title")
+    @ca_responses = fetch_from_es("Admin::CannedResponses::Response", {:load => Admin::CannedResponses::Response::INCLUDE_ASSOCIATIONS_BY_CLASS, :size => 20}, default_visiblity)
     @ca_responses = accessible_elements(scoper, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', ["`admin_canned_responses`.title like ?","%#{params[:search_string]}%"])) if @ca_responses.nil?
     @ca_responses.blank? ? @ca_responses : @ca_responses.compact!
     respond_to do |format|

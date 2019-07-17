@@ -157,11 +157,12 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/freddy"
     resource :"ember/flow"
     resource :'ember/admin/advanced_ticketing', only: [:create, :destroy, :insights]
-    resource :help_widget, only: [:index, :create, :show, :update, :destroy, :freshmarketer_info]
+    resource :help_widget, only: [:index, :create, :show, :update, :destroy]
     resource :"admin/trial_subscription", only: [:usage_metrics]
     resource :"admin/automation", only: [:index, :create, :show, :update, :destroy]
     resource :"admin/custom_translations/upload", only: [:upload]
     resource :"admin/custom_translations/download", only: [:primary, :secondary]
+    resource :"admin/custom_translation", only: [:download]
     resource :"settings/helpdesk", only: [:update]
     resource :"admin/account_feature", only: [:create, :destroy]
   end
@@ -209,6 +210,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :'ember/solutions/folder', only: %i[create update destroy bulk_update reorder]
     resource :'ember/solutions/category', only: %i[create update destroy reorder]
     resource :'ember/company', only: %i[index]
+    resource :'ember/freddy'
   end
 
   publish_solution do
@@ -239,6 +241,7 @@ Authority::Authorization::PrivilegeList.build do
   view_bots do
     resource :"ember/admin/bot_feedback", only: %i[index bulk_delete bulk_map_article create_article chat_history]
     resource :"ember/admin/bot", only: %i[index show]
+    resource :'ember/freddy'
   end
 
   manage_dashboard do

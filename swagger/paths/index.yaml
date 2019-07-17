@@ -494,6 +494,10 @@
   $ref: ./freshmarketer/enable_integration.yaml
 /freshmarketer/disable_integration:
   $ref: ./freshmarketer/disable_integration.yaml
+/freshmarketer/domains:
+  $ref: ./freshmarketer/domains.yaml
+/freshmarketer/enable_session_replay:
+  $ref: ./freshmarketer/enable_session_replay.yaml
 
 /subscription:
   $ref: ./subscription/show_and_update.yaml

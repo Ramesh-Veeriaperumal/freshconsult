@@ -1,5 +1,5 @@
 class Bot::Feedback < ActiveRecord::Base
-  belongs_to :bot, class_name: 'Bot'
+  belongs_to :bot, polymorphic: true
   belongs_to_account
   has_one :feedback_mapping, class_name: 'Bot::FeedbackMapping', dependent: :destroy
   has_one :bot_ticket, class_name: 'Bot::Ticket', primary_key: :query_id, foreign_key: :query_id

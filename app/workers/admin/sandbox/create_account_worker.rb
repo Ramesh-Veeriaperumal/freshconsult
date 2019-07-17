@@ -5,6 +5,7 @@ class Admin::Sandbox::CreateAccountWorker < BaseWorker
 
   RANDOM_NUMBER_RANGE = 10**5
   BASE_DOMAIN         = AppConfig['base_domain'][Rails.env]
+  FRESHID_FEATURES = %i[freshid freshid_org_v2].freeze
   FEATURE_TYPES       = %w[launch features_list].freeze
 
   def perform(args)
@@ -57,9 +58,8 @@ class Admin::Sandbox::CreateAccountWorker < BaseWorker
       sandbox_account_features = sandbox_account.safe_send(feature_type)
       features_to_rollback = sandbox_account_features - main_account_features
       action = feature_type == 'launch' ? 'rollback' : 'revoke_feature'
-      features_to_rollback.each do |feature|
-        sandbox_account.safe_send(action, feature)
-      end
+      sandbox_account.destroy_freshid_account if (features_to_rollback & FRESHID_FEATURES).present?
+      features_to_rollback.each { |feature| sandbox_account.safe_send(action, feature) }
     end
 
     def signup_account
@@ -67,7 +67,7 @@ class Admin::Sandbox::CreateAccountWorker < BaseWorker
         account_name: 'Sandbox-' + @account.name,
         account_domain: sandbox_url,
         locale: @account.language,
-        user_name: @user.name,
+        user_name: @user.name.tr('^a-zA-Z0-9', ' '),
         user_email: @user.email,
         user_helpdesk_agent: true,
         account_account_type: Account::ACCOUNT_TYPES[:sandbox],

@@ -12,6 +12,10 @@ module Cache
       fetch_lcached('smembers', key, expiry) || []
     end
 
+    def fetch_lcached_hash(key, expiry)
+      fetch_lcached('hgetall', key, expiry) || []
+    end
+
     def clear_lcached(key)
       l_key = lookup_key(key)
       Rails.cache.delete(l_key)

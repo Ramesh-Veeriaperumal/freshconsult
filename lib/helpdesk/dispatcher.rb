@@ -60,7 +60,7 @@
         end
       }
       # To send bot response for tickets created via email
-      ::Bot::Emailbot::SendBotEmail.perform_async(ticket_id: @ticket.id) if source_email?
+      ::Freddy::AgentSuggestArticles.perform_async(ticket_id: @ticket.id) if source_email?
       dispatcher_set_priority = Thread.current[:dispatcher_set_priority].present? ? true : false
       ::Freddy::TicketPropertiesSuggesterWorker.perform_async(ticket_id: @ticket.id, action: 'predict', dispatcher_set_priority: dispatcher_set_priority) if trigger_ticket_properties_suggester?
     rescue Exception => e
@@ -79,7 +79,7 @@
         Rails.logger.info "Ticket #{@ticket.id} is either spammed or deleted before getting ML response"
         return false
       else
-        ((@ticket.source == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email] && @account.bot_email_channel_enabled? && @ticket.portal.bot.try(:email_channel)) || (@account.bot_agent_response_enabled? && !@ticket.bot?)) && @account.support_bot_configured?
+        (@account.support_bot_configured? && (@ticket.source == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email] && @account.bot_email_channel_enabled? && @ticket.portal.bot.try(:email_channel)) || (@account.bot_agent_response_enabled? && !@ticket.bot?)) || @account.agent_articles_suggest_enabled? || @account.email_articles_suggest_enabled?
       end
     end
 

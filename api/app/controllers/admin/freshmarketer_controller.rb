@@ -1,18 +1,28 @@
 module Admin
   class FreshmarketerController < ApiApplicationController
+    include FreshmarketerConcern
     COLLECTION_RESPONSE_FOR = [].freeze
     def index
-      linked = current_account.account_additional_settings.freshmarketer_linked?
-      if linked
-        freshmarketer_client.experiment
-        return render_client_error if client_error?
+      if session_replay_linked? || frustration_tracking_linked?
+        if session_replay_linked?
+          freshmarketer_client.experiment
+          experiment_hash = experiment_details
+          return render_client_error if client_error?
+        end
+        @index_data = {
+          linked: true,
+          predictive: frustration_tracking_linked?,
+          experiment: experiment_hash,
+          name: account_additional_settings.freshmarketer_name
+        }
+      else
+        @index_data = { linked: false, experiment: {} }
       end
-      @index_data = { linked: linked, experiment: linked ? experiment_details : {} }
     end
 
     def link
       return unless validate_request(cname_params)
-      freshmarketer_client.link_account(cname_params[:value], (cname_params[:type] == 'create'))
+      freshmarketer_client.link_account(cname_params[:value], cname_params[:type])
       return render_client_error if client_error?
       head 204
     end
@@ -22,9 +32,17 @@ module Admin
       head 204
     end
 
+    def enable_session_replay
+      freshmarketer_client.enable_session_replay
+      return render_client_error if client_error?
+
+      head 204
+    end
+
     def enable_integration
       freshmarketer_client.enable_integration
       return render_client_error if client_error?
+
       head 204
     end
 
@@ -51,6 +69,13 @@ module Admin
       response.api_root_key = :session
     end
 
+    def domains
+      freshmarketer_client.domains
+      return render_client_error if client_error?
+
+      @domains = { domains: freshmarketer_client.response_data['domains'] }
+    end
+
     private
 
       def load_ticket
@@ -65,25 +90,12 @@ module Admin
         params.permit(*fields)
       end
 
-      def freshmarketer_client
-        @freshmarketer_client ||= ::Freshmarketer::Client.new
+      def session_replay_linked?
+        @session_replay_linked ||= current_account.account_additional_settings.freshmarketer_linked?
       end
 
-      def client_error?
-        freshmarketer_client.response_code != :ok
-      end
-
-      def render_client_error
-        case freshmarketer_client.response_code
-        when :duplicate_email_id
-          render_request_error(:fm_duplicate_email, 409)
-        when :invalid_credentials, :invalid_access_key, :invalid_scope, :scope_restricted
-          render_request_error(:fm_invalid_token, 403)
-        when :invalid_domain_name, :invalid_email_id, :invalid_account_id, :invalid_request, :invalid_user
-          render_request_error(:fm_invalid_request, 400)
-        else
-          render_base_error(:internal_error, 500)
-        end
+      def frustration_tracking_linked?
+        @frustration_tracking_linked ||= current_account.account_additional_settings.frustration_tracking_fm_linked?
       end
 
       def experiment_details

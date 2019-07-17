@@ -548,6 +548,9 @@ en:
       service_tasks_due_today: Service tasks due today
       unassigned_service_tasks: Unassigned service tasks
       overdue_service_tasks: Overdue service tasks
+  fsm_scheduling_dashboard:
+    name: Field service manager
+    description: Can perform all agent related activities, manage contacts and access the scheduling dashboard for service tasks
   ticket_fields:
     fields:
       fsm_fields_edit: This default field cannot be edited
@@ -2456,6 +2459,7 @@ en:
         forums: Forums
         bots: Bots
         outreaches: Outreaches
+        fieldservice: Field service
         customers: Customers
         reports: Reports
         administration: Administration
@@ -2511,6 +2515,8 @@ en:
         view_bots: View bots tab
         manage_bots: Manage Bots
         manage_proactive_outreaches: Manage proactive outreaches
+        fieldservice: Field service
+        schedule_fsm_dashboard: Access scheduling dashboard
         reports: Reports
         view_reports: View reports tab
         view_analytics: View analytics tab
@@ -2739,6 +2745,8 @@ en:
         roles: "Roles"
         added: "Added"
         removed: "Removed"
+        logged_in: "Logged in"
+        logged_out: "Logged out"
       automation_rule:
         name: "Name"
         description: "Description"
@@ -5879,6 +5887,7 @@ en:
     app_gallery_desc: "Marketplace"
     multiple_mailboxes_desc: "Multiple mailbox"
     custom_translations: "Multilingual Ticket Forms"
+    customer_journey: "Customer journey"
   zendesk_account: "Zendesk Account Details"
   zendesk_import_files: "Select what to import?"
   file_url: Full XML Export URL
@@ -12469,6 +12478,8 @@ en:
       outgoing_noanswer_title: "Unanswered call to %{customer}"
       incoming_noanswer_title: "Missed call from %{customer}"
       abandoned_title: "Abandoned call from %{customer}"
+      callback_noanswer_title: "Missed callback to %{customer}"
+      callback_abandoned_title: "Abandoned callback to %{customer}"
       default_title: "%{type} call with %{customer} on %{date} at %{time}"
 
       completed_description: "Conversation between %{customer} and %{agent}"
@@ -12479,6 +12490,8 @@ en:
       inprogress_description: "Conversation between %{customer} and %{agent}"
       onhold_description: "Conversation between %{customer} and %{agent}"
       default_description: "Conversation between %{customer} and %{agent}"
+      callback_noanswer_description: "Missed callback to %{customer}"
+      callback_abandoned_description: "Callback abandoned by %{customer}"
 
   tam_fields:
     health_score:
@@ -13339,8 +13352,9 @@ Saul's support"
     form_button_text: "Send"
     form_submit_message: "Thank you for your feedback."
     button_text: "Help"
-    untitled_widget: "Untitled widget %{count}"
+    untitled_widget: "Unnamed widget %{count}"
     invalid_components: "Invalid components hash with %{key}"
+    freshmarketer_sign_up_error: "Sorry, frustration tracking has to be On when integrating with Freshmarketer"
     invalid_settings: "Invalid settings hash with %{key}"
     welcome_message: "Can we help?"
     predictive_message: "We noticed you’re stuck. Tell us what you were trying to accomplish, and our support team will reach out to you as soon as possible."

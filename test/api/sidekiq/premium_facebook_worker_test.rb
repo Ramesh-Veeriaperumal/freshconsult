@@ -35,6 +35,11 @@ class PremiumFacebookWorkerTest < ActionView::TestCase
     @account = Account.current
     @fb_page = create_test_facebook_page(@account)
     @user_id = rand(10**10)
+    before_all
+  end
+
+  def before_all
+    @fb_page.update_attribute(:message_since, Time.parse((Time.now - 0.5.hour).utc.to_s).to_i)
   end
 
   def test_record_not_found_exception
@@ -68,6 +73,7 @@ class PremiumFacebookWorkerTest < ActionView::TestCase
     ticket = @account.facebook_posts.find_by_post_id(dm_msg_id).postable
     assert_equal ticket.is_a?(Helpdesk::Ticket), true
     assert_equal verify_ticket_properties(ticket, direct_message_data), true
+    assert_equal Time.at(@account.facebook_pages.first.message_since).utc.to_s, (time + 1.hour).to_s
     assert_equal semaphore_exists?(semaphore_key), false
   ensure
     del_semaphore(semaphore_key)
@@ -143,7 +149,7 @@ class PremiumFacebookWorkerTest < ActionView::TestCase
     Timecop.travel(1.seconds)
     create_facebook_dm_as_ticket(@fb_page, thread_id, @user_id)
     next_msg_id = rand(10**10)
-    time = Time.now.utc
+    time = (Time.now + 1.hour).utc
     next_msgs = sample_dms(thread_id, @user_id, next_msg_id, time)
     Koala::Facebook::API.any_instance.stubs(:get_connections).returns(next_msgs)
     Social::PremiumFacebookWorker.new.perform('account_id' => @account.id)

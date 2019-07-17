@@ -3,7 +3,7 @@ module AuditLog::AgentHelper
   include AuditLog::Translators::Agent
 
   ALLOWED_MODEL_CHANGES = [:email, :roles, :single_access_token, :ticket_permission,
-                           :available, :occasional].freeze
+                           :available, :occasional, :logged_in, :logged_out].freeze
 
   def agent_changes(_model_data, changes)
     response = []

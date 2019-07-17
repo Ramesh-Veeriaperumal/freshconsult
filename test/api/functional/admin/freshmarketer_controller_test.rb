@@ -22,10 +22,29 @@ module Admin
       unstub_connection
     end
 
-    def test_link_to_existing_account
+    def test_link_to_new_account_predictive
+      stub_create_account
+      stub_connection
+      account_additional_settings = ::Account.current.account_additional_settings
+      account_additional_settings.additional_settings ||= {}
+      account_additional_settings.additional_settings.delete(:freshmarketer)
+      account_additional_settings.save
+      put :link, construct_params({ version: 'private' }, link_account_params)
+      assert_response 204
+    end
+
+    def test_link_to_existing_account_api_key
       stub_associate_account
       stub_connection
-      params_hash = { value: '8236WJDH7H3UFH3483902S' }
+      params_hash = { value: '8236WJDH7H3UFH3483902S', type: 'associate' }
+      put :link, construct_params({ version: 'private' }, params_hash)
+      assert_response 204
+    end
+
+    def test_link_to_existing_account_domain_predictive
+      stub_associate_account
+      stub_connection
+      params_hash = { value: 'xyz.abc.freshmarketer.com', type: 'associate' }
       put :link, construct_params({ version: 'private' }, params_hash)
       assert_response 204
     ensure
@@ -85,7 +104,7 @@ module Admin
       account_additional_settings.save
       get :index, controller_params(version: 'private')
       assert_response 200
-      match_json(linked_experiment_pattern(linked: true))
+      match_json(linked_experiment_pattern(linked: true, name: 'freshmarketer.io'))
     ensure
       unstub_connection
     end
@@ -122,6 +141,21 @@ module Admin
       match_json(session_info_pattern)
     ensure
       unstub_connection
+    end
+
+    def test_get_domains
+      stub_domains
+      stub_connection
+      get :domains, controller_params(version: 'private', email_id: 'test@gmail.com')
+      assert_response 200
+      match_json(get_domains_pattern)
+    end
+
+    def test_enable_support_portal
+      stub_enable_session_replay
+      stub_connection
+      put :enable_session_replay, controller_params(version: 'private')
+      assert_response 204
     end
 
     def test_bad_request_error

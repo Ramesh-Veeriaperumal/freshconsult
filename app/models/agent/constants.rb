@@ -17,6 +17,11 @@ class Agent < ActiveRecord::Base
     [ :group_tickets,  2, I18n.t("agent.group_access")], 
     [ :assigned_tickets, 3, I18n.t("agent.individual")]
   ]
+
+  AGENT_LOGIN_LOGOUT_ACTIONS = [
+    [true, :logged_in],
+    [true, :logged_out]
+  ].freeze
  
   PERMISSION_TOKENS_BY_KEY = Hash[*TICKET_PERMISSION.map { |i| [i[1], i[0]] }.flatten]
   PERMISSION_KEYS_BY_TOKEN = Hash[*TICKET_PERMISSION.map { |i| [i[0], i[1]] }.flatten]

@@ -1,6 +1,7 @@
 class Users::DetectLanguage < BaseWorker
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include Cache::LocalCache
 
   sidekiq_options queue: :detect_user_language,
                   retry: 0,
@@ -31,12 +32,11 @@ class Users::DetectLanguage < BaseWorker
   private
 
     def detect_lang_from_cld
-      if en_via_cld?
-        Rails.logger.debug "successfully detected en via cld text:: #{@text}, account_id:: #{Account.current.id}"
-        @user.language = "en"
+      if lang_via_cld
+        assign_user_language
         @user.save!
       else
-        Rails.logger.debug "cld non english text:: #{@text}, account_id:: #{Account.current.id}"
+        Rails.logger.debug "unable to get via cld text:: #{@text}, account_id:: #{Account.current.id}"
         detect_lang_from_google
       end
     end
@@ -55,17 +55,22 @@ class Users::DetectLanguage < BaseWorker
     end
 
     def assign_user_language
-      Rails.logger.info "User language from cache -text #{@text} -language #{@language} -acc #{Account.current.id} -usr #{@user.email}"
+      Rails.logger.info "User language -text #{@text} -language #{@language} -acc #{Account.current.id} -usr #{@user.email}"
       @user.language = (I18n.available_locales_with_name.map{
         |lang,sym| sym.to_s }.include? @language) ? @language : @user.account.language
     end
 
-    def en_via_cld?
+    def lang_via_cld
       detected_language = CLD.detect_language(@text)
       Rails.logger.info "Detected language:: #{detected_language.inspect}, text:: #{@text}"
-      detected_language[:reliable] && (detected_language[:code] == "en")
+      detected_language[:reliable] && lang_exists_in_redis?(detected_language[:code])
     rescue Exception => e
       Rails.logger.debug "Exception in CLD detection:: #{e.message}"
       false
+    end
+
+    def lang_exists_in_redis?(lang_code)
+      lang_hash = fetch_lcached_hash(CLD_FD_LANGUAGE_MAPPING, 7.days)
+      @language = lang_hash.present? ? lang_hash[lang_code] : nil
     end
 end

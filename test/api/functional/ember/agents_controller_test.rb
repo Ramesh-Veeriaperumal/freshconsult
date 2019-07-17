@@ -213,6 +213,27 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     login_as(currentuser)
   end
 
+  def test_central_publish_payload_login
+    CentralPublishWorker::UserWorker.jobs.clear
+    user = add_test_agent(@account, role: Role.find_by_name('Administrator').id)
+    login_as(user)
+    job = CentralPublishWorker::UserWorker.jobs.last
+    assert_equal 'agent_update', job['args'][0]
+    assert_equal({ 'logged_in' => [false, true] }, job['args'][1]['misc_changes'])
+    CentralPublishWorker::UserWorker.jobs.clear
+  end
+
+  def test_central_publish_payload_logout
+    CentralPublishWorker::UserWorker.jobs.clear
+    user = add_test_agent(@account, role: Role.find_by_name('Administrator').id)
+    login_as(user)
+    log_out
+    job = CentralPublishWorker::UserWorker.jobs.last
+    assert_equal 'agent_update', job['args'][0]
+    assert_equal({ 'logged_in' => [true, false] }, job['args'][1]['misc_changes'])
+    CentralPublishWorker::UserWorker.jobs.clear
+  end
+
   def test_update_freshchat_token
     user = get_or_create_agent
     token = Faker::Number.number(10)
@@ -248,6 +269,24 @@ class Ember::AgentsControllerTest < ActionController::TestCase
      post :complete_gdpr_acceptance, construct_params(version: 'private')
      assert_response 403
      match_json(request_error_pattern(:access_denied))
+  end
+
+  def test_custom_field_service_manager_role
+    enable_adv_ticketing([:field_service_management]) do
+      begin
+        Account.any_instance.stubs(:scheduling_fsm_dashboard_enabled?).returns(true)
+        perform_fsm_operations
+        role = Role.find_by_name(FIELD_SERVICE_MANAGER_ROLE_NAME)
+        assert_not_nil role
+        assert role.privilege_list.include?(:schedule_fsm_dashboard)
+        agent = add_test_agent(@account, role: role.id)
+        assert agent.privilege?(:schedule_fsm_dashboard)
+      ensure
+        Account.any_instance.unstub(:scheduling_fsm_dashboard_enabled?)
+        role.try(:destroy)
+        agent.try(:destroy)
+      end
+    end
   end
 
   def test_update_others_with_toggle_shortcuts_for_agent

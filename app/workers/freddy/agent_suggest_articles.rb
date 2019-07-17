@@ -1,42 +1,54 @@
-module Bot::Emailbot
-  class SendBotEmail < BaseWorker
-    sidekiq_options queue: :bot_email_reply, retry: 0,  failures: :exhausted
+module Freddy
+  class AgentSuggestArticles < BaseWorker
+    include Redis::IntegrationsRedis
+    sidekiq_options queue: :bot_email_reply, retry: 0, failures: :exhausted
+    SERVICE = 'freshdesk'.freeze
+    FREDDY_BOT = 'Freddy::Bot'.freeze
+    FRANK_BOT = 'Bot'.freeze
 
     def perform(args)
       args = args.deep_symbolize_keys
-      @ticket = account.tickets.where(id: args[:ticket_id]).first 
+      @ticket = account.tickets.where(id: args[:ticket_id]).first
       ml_response = fetch_ml_response
+      Rails.logger.debug ml_response.inspect.to_s
       if ml_response['data'].empty?
-        Rails.logger.info "No solution articles from ML for ticket #{@ticket.id}" 
+        Rails.logger.info "No solution articles from ML for ticket #{@ticket.id}"
         return
       end
       solution_ids = ml_response['data'].collect { |response| response['id'] }
       @meta_articles = account.solution_article_meta.where('`solution_article_meta`.`id` IN (?)', solution_ids).preload(:primary_article)
       if @meta_articles.any?
-        create_bot_response
+        if ml_response['cortex_id'].present?
+          bot_id = ml_response['cortex_id']
+          bot_type = FREDDY_BOT
+        else
+          bot_id = @ticket.portal.bot.id
+          bot_type = FRANK_BOT
+        end
+        create_bot_response(bot_id, bot_type)
         send_email_notification if source_email?
       else
         Rails.logger.info "No articles found for solution ids from ML for the ticket #{@ticket.id}"
       end
     rescue Exception => e
       Rails.logger.error "Error sending Freddy email response::Exception:: #{e.message} for Account #{account.id}"
-      NewRelic::Agent.notice_error(e, description: "Error sending Freddy email response::Exception:: #{e.message} for Account #{account.id}" )
+      NewRelic::Agent.notice_error(e, description: "Error sending Freddy email response::Exception:: #{e.message} for Account #{account.id}")
     end
 
     private
 
       def source_email?
-        @ticket.source == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email] && account.bot_email_channel_enabled? && @ticket.portal.bot.try(:email_channel)
+        @ticket.source == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email] && (account.bot_email_channel_enabled? || account.email_articles_suggest_enabled?)
       end
 
       def fetch_ml_response
         response = RestClient::Request.execute(
           method: :post,
-          url: "#{BOT_CONFIG[:email_bot_domain]}#{BOT_CONFIG[:email_bot_path]}",
+          url: FreddySkillsConfig[:agent_articles_suggest][:url],
           payload: ml_request_body,
           headers: {
             'Content-Type' => 'application/json',
-            'Authorization' => BOT_CONFIG[:ml_authorization_key]
+            'Authorization' => "Bearer #{jwt_token}"
           }
         )
         JSON.parse(response)['result']
@@ -57,21 +69,34 @@ module Bot::Emailbot
         }.to_json
       end
 
-      def create_bot_response
+      def jwt_token
+        JWT.encode payload, FreddySkillsConfig[:agent_articles_suggest][:secret], 'HS256', { 'alg': 'HS256', 'typ': 'JWT' }
+      end
+
+      def payload
+        {}.tap do |claims|
+          claims[:aud] = account.id.to_s
+          claims[:exp] = Time.now.to_i + 10.minutes
+          claims[:iat] = Time.now.to_i
+          claims[:iss] = SERVICE
+        end
+      end
+
+      def create_bot_response(bot_id, bot_type)
         suggested_hash = {}
         @meta_articles.each do |meta_article|
           suggested_hash[meta_article.id] = { title: meta_article.title, opened: false, folder_title: meta_article.solution_folder_meta.name }
         end
-        account.bot_responses.create(ticket_id: @ticket.id, bot_id: @ticket.portal.bot.id, query_id: @query_id, suggested_articles: suggested_hash)
+        account.bot_responses.create(ticket_id: @ticket.id, bot_id: bot_id, bot_type: bot_type, query_id: @query_id, suggested_articles: suggested_hash)
       end
 
       def send_email_notification
-        Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::BOT_RESPONSE_TEMPLATE, @ticket, nil, { freddy_suggestions: freddy_suggestions })
-        #skipping send to cc here.Email Notification only for the requester.
+        Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::BOT_RESPONSE_TEMPLATE, @ticket, nil, freddy_suggestions: freddy_suggestions)
+        # skipping send to cc here.Email Notification only for the requester.
       end
 
       def freddy_suggestions
-        string = ""
+        string = ''
         @meta_articles = @meta_articles.visible_to_all
         @meta_articles.each do |article|
           article_url = Rails.application.routes.url_helpers.support_solutions_article_url(article, host: article.account.host)

@@ -206,7 +206,7 @@ module SocialTicketsCreationHelper
       name:       details[:name],
       twitter_id: details[:screen_name]
     )
-    user.save
+    user.save_without_session_maintenance
     user
   end
 

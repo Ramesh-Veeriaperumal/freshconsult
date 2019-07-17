@@ -201,6 +201,17 @@ module BootstrapTestHelper
     pattern
   end
 
+  def agent_group_pattern_for_channels(account)
+    pattern = {'agents' => [], 'groups' => []}
+    account.agents.each do |agent|
+      pattern['agents'] << agent_simple_pattern(agent)
+    end
+    account.groups.each do |group|
+      pattern['groups'] << group_simple_pattern(group)
+    end
+    pattern
+  end
+
   def socket_auth_params(connection, agent)
     aes = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
     aes.encrypt

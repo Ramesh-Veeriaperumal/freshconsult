@@ -13,6 +13,10 @@ class Tickets::BotResponseController < ApiApplicationController
       current_account.tickets
     end
 
+    def feature_name
+      FeatureConstants::AGENT_ARTICLES_SUGGEST
+    end
+
     def before_load_object
       @ticket = scoper.find_by_display_id(params[:id])
       @ticket.present? ? verify_ticket_permission(api_current_user, @ticket) : log_and_render_404
