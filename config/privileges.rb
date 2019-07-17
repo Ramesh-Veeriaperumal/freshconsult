@@ -611,7 +611,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/gamification"
     resource :"admin/quest"
     resource :"helpdesk/sla_policy"
-    resource :account, only: [:update, :edit, :delete_logo, :delete_favicon, :manage_languages, :update_languages, :enable_skip_mandatory, :disable_skip_mandatory]
+    resource :account, :only => [:update, :edit, :delete_logo, :delete_favicon, :manage_languages, :update_languages]
     resource :"admin/template"
     resource :"admin/page"
     resource :"support/preview"

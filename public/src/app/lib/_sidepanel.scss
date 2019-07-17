@@ -117,29 +117,6 @@
 		font-weight: normal;
 	}
 }
-
-.config-wrapper {
-  background-color: $bg_gray_100;
-  @include border-radius(4px);
-  padding: 12px 14px;
-  margin-bottom: 15px;
-  border: 1px solid #EBEFF3;
-
-  .config-block {
-    display: flex;
-    align-items: center;
-    @include justify-content(space-between);
-
-    h3 {
-      flex-basis: 80%;
-      margin-bottom: 0;
-    }
-  }
-  p {
-    margin: 10px 0 4px;
-  }
-}
-
 // --------------------------------------------------------------------------------------------
 //										Free Trial Notification
 // --------------------------------------------------------------------------------------------
