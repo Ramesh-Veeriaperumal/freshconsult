@@ -40,7 +40,7 @@ class Channel::Freddy::BotsControllerTest < ActionController::TestCase
     enable_autofaq do
       set_jwt_auth_header(FREDDY)
       freshchat_account = Freshchat::Account.create(app_id: '', portal_widget_enabled: false, token: '', enabled: true)
-      stub_request(:post, %r{^#{Freshchat::Account::CONFIG[:signup][:host]}.*?$}).to_return(body: freshchat_response, status: 200)
+      stub_request(:put, %r{^#{Freshchat::Account::CONFIG[:signup][:host]}.*?$}).to_return(body: freshchat_response, status: 200)
       post :create, controller_params({ version: 'private' }.merge(wrap_cname(Portal.first.id)), false)
       assert_response 200
       freshchat_account.destroy
@@ -51,7 +51,7 @@ class Channel::Freddy::BotsControllerTest < ActionController::TestCase
     enable_autofaq do
       set_jwt_auth_header(FREDDY)
       freshchat_account = Freshchat::Account.create(app_id: '', portal_widget_enabled: false, token: '', enabled: false)
-      stub_request(:post, %r{^#{Freshchat::Account::CONFIG[:signup][:host]}.*?$}).to_return(body: freshchat_response, status: 200)
+      stub_request(:put, %r{^#{Freshchat::Account::CONFIG[:signup][:host]}.*?$}).to_return(body: freshchat_response, status: 200)
       post :create, controller_params({ version: 'private' }.merge(wrap_cname(Portal.first.id)), false)
       assert_response 200
       freshchat_account.destroy
