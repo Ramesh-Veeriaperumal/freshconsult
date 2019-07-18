@@ -4,7 +4,8 @@
       <hr style="height:0;border:0;margin-top:20px;border-top:1px solid #ccc;">
     <% end %>
     <span style="font-family: Arial, sans-serif; color: #333;font-weight:bold;">
-      <%= simple_format(survey_handle.survey.default_question.label) %>
+      <% question_label = translation_record.present? ? translation_record.translations.fetch(:default_question, {})[:question] || survey_handle.survey.default_question.label : survey_handle.survey.default_question.label %>
+      <%= simple_format(question_label) %>
     </span>
     <table  cellspacing="0" cellpadding="0" style="table-layout:fixed; margin-top:10px; <%= 'margin-left: auto; margin-right: auto;' if rating %>">
     <tr>
@@ -25,11 +26,11 @@
         <% if rating %>
           <% choice_font_color = rating == choice_face_value ? 'black' : 'grey' %>
           <td class="survey_option <%= rating == choice_face_value ? 'selected' : 'unselected' %>" style="width: 14.28%;  border-right: 2px #fff solid; text-align:center; padding: 16px 0px; background-color:<%= rating == choice_face_value ? choice_bg_color : 'lightgrey' %>;" data-bg-color=<%= choice_bg_color %> data-choice=<%= choice_face_value %>>
-            <a href="<%=custom_survey_url(survey_handle, choice_face_value)%>" style="margin:0; padding:5px; text-decoration:none; display:block; color:<%= choice_font_color %>;"><%= option["survey_question_choice"]["value"] %></a>
+            <a href="<%= translation_record.present? ? custom_survey_url(survey_handle, choice_face_value, language) : custom_survey_url(survey_handle, choice_face_value) %>" style="margin:0; padding:5px; text-decoration:none; display:block; color:<%= choice_font_color %>;"><%= translation_record.present? ? translation_record.translations.fetch(:default_question, {})[:choices][choice_face_value] || option["survey_question_choice"]["value"] : option["survey_question_choice"]["value"] %></a>
           </td>
         <% else %>
           <td style="width: 14.28%;  border-right: 2px #fff solid; text-align:center; padding: 16px 0px; background-color:<%= choice_bg_color %>;">
-            <a href="<%=custom_survey_url(survey_handle, choice_face_value)%>" style="margin:0; padding:5px; text-decoration:none; display:block;"><%= option["survey_question_choice"]["value"] %></a>
+            <a href="<%= translation_record.present? ? custom_survey_url(survey_handle, choice_face_value, language) : custom_survey_url(survey_handle, choice_face_value) %>" style="margin:0; padding:5px; text-decoration:none; display:block;"><%= translation_record.present? ? translation_record.translations[:default_question][:choices][choice_face_value] || option["survey_question_choice"]["value"] : option["survey_question_choice"]["value"] %></a>
           </td>
         <% end %>
       <% end %>

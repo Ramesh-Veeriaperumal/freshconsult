@@ -4,7 +4,7 @@ class Survey < ActiveRecord::Base
   include Reports::ActivityReport
   include Surveys::PresenterHelper
   include DataVersioning::Model
-  
+
   VERSION_MEMBER_KEY = 'SURVEY_LIST'.freeze
   ANY_EMAIL_RESPONSE = 1
   RESOLVED_NOTIFICATION = 2
@@ -92,5 +92,4 @@ class Survey < ActiveRecord::Base
            self.neutral_text.downcase
         end
   end
-
 end
