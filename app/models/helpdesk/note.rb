@@ -26,7 +26,7 @@ class Helpdesk::Note < ActiveRecord::Base
   
   attr_accessor :nscname, :disable_observer, :send_survey, :include_surveymonkey_link, :quoted_text, 
                 :skip_notification, :changes_for_observer, :disable_observer_rule, :post_to_forum_topic,
-                :model_changes
+                :model_changes, :import_note
 
   attr_protected :attachments, :notable_id
 
