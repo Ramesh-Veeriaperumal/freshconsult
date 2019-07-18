@@ -204,10 +204,10 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/central-publisher.git
-  revision: 3b8d2e7ae7a9b1af39b4bb9ad3305dd50a8494ff
-  tag: v2.0.3
+  revision: 8d7ac73faf30915d86954f04ecfc696b345203ac
+  tag: v2.0.4
   specs:
-    central-publisher (2.0.3)
+    central-publisher (2.0.4)
       active_record_shards (>= 3.2.0)
       faraday (= 0.9)
       faraday_middleware (~> 0.10.0)
