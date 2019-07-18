@@ -4,7 +4,7 @@
 <%if Account.current.new_survey_enabled?%>
 	<%=render :partial => "custom_survey", :locals => {:ticket => @ticket, :survey_handle => @survey_handle,
 				:surveymonkey_survey => @surveymonkey_survey, :in_placeholder => false,
-				:survey_feedback_preview => false } %>
+				:survey_feedback_preview => false, translation_record: @translated_survey, language: @survey_language } %>
 <%else%>
 	<%=render :partial => "satisfaction_survey", :locals => {:ticket => @ticket, :survey_handle => @survey_handle,
 				:surveymonkey_survey => @surveymonkey_survey, :in_placeholder => false,

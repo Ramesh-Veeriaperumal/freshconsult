@@ -92,5 +92,4 @@ class Survey < ActiveRecord::Base
            self.neutral_text.downcase
         end
   end
-
 end
