@@ -719,8 +719,6 @@ Helpkit::Application.routes.draw do
   match '/disable_falcon' => 'users#disable_falcon', :as => :disable_falcon, via: :post
   match '/enable_undo_send' => 'users#enable_undo_send', :as => :enable_undo_send, via: :post
   match '/disable_undo_send' => 'users#disable_undo_send', :as => :disable_undo_send, via: :post
-  match '/enable_skip_mandatory' => 'accounts#enable_skip_mandatory', :as => :enable_skip_mandatory, via: :post
-  match '/disable_skip_mandatory' => 'accounts#disable_skip_mandatory', :as => :disable_skip_mandatory, via: :post
   match '/register/:activation_code' => 'activations#new', :as => :register
   match 'register_new_email/:activation_code' => 'activations#new_email', :as => :register_new_email
   match '/activate/:perishable_token' => 'activations#create', :as => :activate
