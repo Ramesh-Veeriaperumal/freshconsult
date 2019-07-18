@@ -51,8 +51,6 @@ include Email::EmailService::IpPoolHelper
     type = (params["X-FD-Type"].present?) ? params["X-FD-Type"] : "empty"
     notification_type = is_num?(type) ? type : get_notification_type_id(type) 
     category_id = get_notification_category_id(params, notification_type) 
-    spam = check_spam_category(params, notification_type, account_id)
-    category_id = spam unless spam.nil?
     if category_id.blank?
         mailgun_traffic = get_mailgun_percentage
         if mailgun_traffic > 0 && Random::DEFAULT.rand(100) < mailgun_traffic
@@ -123,17 +121,6 @@ include Email::EmailService::IpPoolHelper
                       "shard_info" => "#{shard_info}"
                     }
     return result_hash
-  end
-
-  def check_spam_category(mail, notification_type, account_id)
-    category = nil
-    notification_type = notification_type.to_i
-    if (account_created_recently? && recent_account_spam_filtered_notifications.include?(notification_type)) || spam_filtered_notifications.include?(notification_type)
-      response = FdSpamDetectionService::Service.new(account_id, mail.to_s).check_spam
-      category = Helpdesk::Email::OutgoingCategory::CATEGORY_BY_TYPE[:spam] if response.spam?
-      Rails.logger.info "Spam check response for outgoing email: #{response.spam?}"
-    end
-    return category
   end
 
   def is_num?(str)

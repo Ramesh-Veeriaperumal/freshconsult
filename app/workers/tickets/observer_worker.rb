@@ -71,7 +71,6 @@ module Tickets
         NewRelic::Agent.notice_error(e, {:custom_params => {:args => args }})
         raise e
       ensure
-        Va::Logger::Automation.log "********* END OF OBSERVER *********"
         Va::Logger::Automation.unset_thread_variables
         if Account.current.skill_based_round_robin_enabled?
           if evaluate_on.present? && args[:enqueued_class] == 'Helpdesk::Ticket'

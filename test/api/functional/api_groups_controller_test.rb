@@ -25,7 +25,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
     enabling_fsm_feature_and_lp
     create_field_group_type
     create_field_agent_type
-    group = create_group(@account, { name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph }, group_type = 2)
+    group = create_group(@account, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, group_type: GroupType.group_type_id(GroupConstants::FIELD_GROUP_NAME))
     put :update, construct_params({ id: group.id }, escalate_to: 1, unassigned_for: '30m', auto_ticket_assign: true)
     assert_response 400
     res = JSON.parse response.body
@@ -196,7 +196,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   def test_index_for_validate_filter_params_valid
     create_field_group_type
     3.times do
-      create_group(@account,{},2)
+      create_group(@account, group_type: GroupType.group_type_id(GroupConstants::FIELD_GROUP_NAME))
     end
     group_count = @account.groups.where(group_type: GroupType.group_type_id(GroupConstants::SUPPORT_GROUP_NAME)).count
     get :index, controller_params(group_type: @account.group_types.first.name)
@@ -317,7 +317,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
     enabling_fsm_feature_and_lp
     create_field_group_type
     create_field_agent_type
-    group = create_group(@account, { name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph }, GroupType.group_type_id(FIELD_GROUP_NAME))
+    group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph, group_type: GroupType.group_type_id(FIELD_GROUP_NAME))
     agent = add_test_agent(Account.current, role: Role.find_by_name('Agent').id, agent_type: AgentType.agent_type_id(Agent::FIELD_AGENT), ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
     put :update, construct_params({ id: group.id }, agent_ids: [agent.id])
     assert_response 200
@@ -335,7 +335,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
     enabling_fsm_feature_and_lp
     create_field_group_type
     agent = add_test_agent(Account.current, role: Role.find_by_name('Agent').id, agent_type: AgentType.agent_type_id(Agent::SUPPORT_AGENT), ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
-    group = create_group(@account, { name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph }, group_type: GroupType.group_type_id(FIELD_GROUP_NAME))
+    group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph, group_type: GroupType.group_type_id(FIELD_GROUP_NAME))
     put :update, construct_params({ id: group.id }, agent_ids: [agent.id])
     assert_response 200
     match_json(group_pattern(Group.last))

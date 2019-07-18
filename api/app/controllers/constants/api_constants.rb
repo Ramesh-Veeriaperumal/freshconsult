@@ -7,7 +7,7 @@ module ApiConstants
   }.freeze
   ORDER_TYPE = %w(asc desc).freeze
 
-  EMAIL_CONFIG_PER_PAGE = 600
+  EMAIL_CONFIG_PER_PAGE = 1000
 
   # https://github.com/mislav/will_paginate/blob/master/lib/will_paginate/page_number.rb
   PAGE_MAX = WillPaginate::PageNumber::BIGINT
@@ -69,11 +69,18 @@ module ApiConstants
     ticket_fields: %w[index],
     agents_groups: %w[index],
     setting: %w[index desktop_notification],
-    draft: %w[show_draft],
+    draft: %w[show_draft save_draft],
     installed_applications: %w[index],
     subscription: %w[watchers],
     marketplace_app: %w[index],
-    dashboard: %w[unresolved_tickets_data ticket_trends ticket_metrics survey_info scorecard]
+    dashboard: %w[unresolved_tickets_data ticket_trends ticket_metrics survey_info scorecard show],
+    ticket: %w[latest_note],
+    contact_field: %w[index],
+    company_field: %w[index],
+    livechat_setting: %w[index],
+    time_entry: %w[ticket_time_entries],
+    contact: %w[activities],
+    company: %w[activities]
   }.freeze
 
   NO_CONTENT_TYPE_REQUIRED = ApiTicketConstants::NO_CONTENT_TYPE_REQUIRED +

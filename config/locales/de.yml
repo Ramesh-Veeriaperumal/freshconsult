@@ -17687,6 +17687,7 @@ de:
     webhook_dropped: Webhook wurde gelöscht
     customer_import: '%{import_type} import für %{account_full_domain}'
     customer_import_stopped: '%{import_type} import für %{account_full_domain} gestoppt'
+    topic_update: "[Status Update] in %{title} <Translation not given>"
   sandbox:
     live: Sandbox ist aktiv
     sync_complete: Synchronisierung der Sandbox abgeschlossen!

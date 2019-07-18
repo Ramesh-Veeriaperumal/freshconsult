@@ -406,9 +406,9 @@ class ApiAgentsControllerTest < ActionController::TestCase
 
   def test_update_support_agent_with_field_type_group
     Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
-    group_type = GroupType.create(:name => 'field_agent_group', :account_id => @account.id, :group_type_id => 2)
-    agent = add_test_agent(@account, { role: Role.find_by_name('Agent').id })
-    group = create_group(@account, {}, group_type.group_type_id)
+    group_type = GroupType.create(name: 'field_agent_group', account_id: @account.id, group_type_id: 2)
+    agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    group = create_group(@account, group_type: group_type.group_type_id)
     params = { group_ids: [group.id] }
     Account.stubs(:current).returns(Account.first)
     put :update, construct_params({ id: agent.id }, params)
@@ -421,7 +421,6 @@ class ApiAgentsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:field_service_management_enabled?)
     Account.unstub(:current)
   end
-
 
   def test_update_agent_with_array_fields_invalid_model
     agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)

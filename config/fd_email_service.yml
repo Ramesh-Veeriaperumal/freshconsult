@@ -11,6 +11,7 @@ defaults: &defaults
   incoming_email_api_key1: "sESov8gFIU03kFEUAZS7ikilAU5Ip2"
   incoming_email_api_key2: "e7d6Gee5HkF6VjD7kIhpu7QmNkDeC6"
   antivirus_urlpath: "/api/v1/antivirus/scan"
+  account_destroy_urlpath: "/api/v1/account/delete"
   ip_pool_names :
     - freshworks_email_high
     - freshworks_email_low
