@@ -287,7 +287,7 @@ class Account < ActiveRecord::Base
       undo_send: false, timeline: false, twitter_microservice: true, twitter_handle_publisher: true,
       old_link_back_url_validation: false, shopify_actions: true, stop_contacts_count_query: false,
       twitter_dm_outgoing_attachment: false, twitter_mention_outgoing_attachment: false,
-      product_central_publish: false, field_service_management_lp: false, fsm_dashboard: false, help_widget: false, disable_field_service_management: false,
+      product_central_publish: false, field_service_management_lp: true, fsm_dashboard: false, help_widget: false, disable_field_service_management: false,
       bot_email_channel: false, bot_email_central_publish: false, company_central_publish: false,
       sso_login_expiry_limitation: false, csat_email_scan_compatibility: false,
       email_deprecated_style_parsing: false, saml_ecrypted_assertion: false,
@@ -301,7 +301,7 @@ class Account < ActiveRecord::Base
       freshid_org_v2: false, hide_agent_login: false, addon_based_billing: false, office365_adaptive_card: false,
       text_custom_fields_in_etl: false, email_spoof_check: false, disable_email_spoof_check: false,
       recalculate_daypass: false, sandbox_single_branch: false, prevent_fwd_email_ticket_create: false, enable_wildcard_ticket_create: false,
-      check_wc_fwd: true, attachment_redirect_expiry: false, solutions_agent_portal: false, solutions_agent_metrics: false, requester_privilege: false, allow_huge_ccs: false, fsm_landing_page: false
+      check_wc_fwd: true, attachment_redirect_expiry: false, solutions_agent_portal: false, solutions_agent_metrics: false, requester_privilege: false, allow_huge_ccs: false, fsm_landing_page: true
     }, :merge
   )
 
