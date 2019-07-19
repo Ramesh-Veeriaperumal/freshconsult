@@ -301,7 +301,7 @@ class Account < ActiveRecord::Base
       freshid_org_v2: false, hide_agent_login: false, addon_based_billing: false, office365_adaptive_card: false,
       text_custom_fields_in_etl: false, email_spoof_check: false, disable_email_spoof_check: false,
       recalculate_daypass: false, sandbox_single_branch: false, prevent_fwd_email_ticket_create: false, enable_wildcard_ticket_create: false,
-      check_wc_fwd: true, attachment_redirect_expiry: false, solutions_agent_portal: false, solutions_agent_metrics: false, requester_privilege: false, allow_huge_ccs: false, fsm_landing_page: true
+      check_wc_fwd: false, attachment_redirect_expiry: false, solutions_agent_portal: false, solutions_agent_metrics: false, requester_privilege: false, allow_huge_ccs: false, fsm_landing_page: true
     }, :merge
   )
 
