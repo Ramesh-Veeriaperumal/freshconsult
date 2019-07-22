@@ -1,9 +1,10 @@
 class InstalledApplicationValidation < FilterValidation
   include InstalledApplicationConstants
   
-  attr_accessor :name, :event, :payload
+  attr_accessor :name, :event, :payload, :configs
 
   validates :name, data_type: { rules: String, allow_nil: false }
+  validates :name, required: true, on: :create
   validates :event, custom_inclusion: { 
       in: EVENTS, required: true 
     }, if: :fetch?
@@ -13,6 +14,8 @@ class InstalledApplicationValidation < FilterValidation
     }, hash: {
       validatable_fields_hash: proc { |x| x.construct_hash_field_validations }
     }, if: :payload_required?
+  validates :configs, required: true, data_type: { rules: Hash, allow_nil: false }, on: :create
+  validate :validate_configs, on: :create
   validate :validate_freshsales_only_events, if: -> { FRESHSALES_ONLY_EVENTS.include?(event) }
 
   def initialize(request_params, item, allow_string_param = false)
@@ -29,6 +32,12 @@ class InstalledApplicationValidation < FilterValidation
       hash[:ticket_id] = { data_type: { rules: Integer, required: true } }
     end
     hash
+  end
+
+  def validate_configs
+    if name == 'freshsales' && configs.present? && configs.is_a?(Hash)
+      return errors[(INSTALL_CONFIGS_KEYS - configs.keys).join(',').to_sym] << :missing_field unless configs.keys.to_set == INSTALL_CONFIGS_KEYS.to_set
+    end
   end
 
   def validate_freshsales_only_events
