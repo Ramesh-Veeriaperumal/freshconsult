@@ -3,34 +3,34 @@
 
 class BusinessCalendar < ActiveRecord::Base
   include BusinessCalenderConstants
-  
+
   self.primary_key = :id
-  
+
   include MemcacheKeys
   serialize :business_time_data
   serialize :holiday_data
-  
+
   after_find :set_business_time_data
   after_create :set_business_time_data
-  
+
   #business_time_data has working days and working hours inside.
   #for now, a sporadically structured hash is used.
   #can revisit this data model later...
   belongs_to_account
   before_create :set_default_version, :valid_working_hours?
-  after_commit ->(obj) { 
+  after_commit ->(obj) {
       obj.clear_cache
       update_livechat_bc_data
     }, on: :update
 
   # ##### Added to mirror db changes in helpkit to freshchat db
-  after_commit ->(obj) { 
-      obj.clear_cache 
+  after_commit ->(obj) {
+      obj.clear_cache
       remove_livechat_bc_data
     }, on: :destroy
   ####
-  
-  attr_accessible :holiday_data,:business_time_data,:version,:is_default,:name,:description,:time_zone
+
+  attr_accessible :holiday_data, :business_time_data, :version, :is_default, :name, :description, :time_zone
   validates_presence_of :time_zone, :name
 
   concerned_with :presenter
@@ -44,7 +44,7 @@ class BusinessCalendar < ActiveRecord::Base
     tz = "Kyiv" if tz.eql?("Kyev")
     tz
   end
-  
+
   # setting correct timezone and business_calendar based on the context of the ticket getting updated
   def self.execute(groupable, options = {})
     begin
@@ -75,7 +75,7 @@ class BusinessCalendar < ActiveRecord::Base
     Rails.logger.error "Business Hours : #{id} : #{account_id}  : Error while trying to fetch start of work: #{e.inspect} #{e.backtrace.join("\n\t")}"
     '12:00 am'
   end
-  
+
   def end_of_workday day
     business_hour_data[:working_hours][day][:end_of_workday]
   rescue StandardError => e
@@ -83,15 +83,25 @@ class BusinessCalendar < ActiveRecord::Base
     '12:00 am'
   end
 
+  def end_of_day_in_date_time(day, time)
+    @end_of_workday_date_time ||= Utils::SimpleLRUHash.new(365)
+    @end_of_workday_date_time["#{day.day}-#{day.mon}-#{day.year}"] ||= formatted_date(day, time)
+  end
+
+  def beginning_of_day_in_date_time(day, time)
+    @beginning_of_workday_date_time ||= Utils::SimpleLRUHash.new(365)
+    @beginning_of_workday_date_time["#{day.day}-#{day.mon}-#{day.year}"] ||= formatted_date(day, time)
+  end
+
   def weekdays
     business_hour_data[:weekdays]
   end
-  
+
   def fullweek
     business_hour_data[:fullweek]
   end
-  
-  def holidays    
+
+  def holidays
     return [] if holiday_data.nil?
     calendar_holidays =[]
     holiday_data.each do |holiday|
@@ -105,14 +115,14 @@ class BusinessCalendar < ActiveRecord::Base
     calendar_holidays
   end
 
-  def working_hours 
+  def working_hours
     business_hour_data[:working_hours]
   end
-  
+
   def self.config
     if multiple_business_hours_enabled?
       @business_hour_caller.business_calendar
-    elsif Account.current 
+    elsif Account.current
       Account.current.default_calendar_from_cache
     else
       BusinessTime::Config
@@ -141,15 +151,27 @@ class BusinessCalendar < ActiveRecord::Base
   end
 
   def set_business_time_data
-    if (version == 1) 
-      self.business_time_data = upgraded_business_time_data 
+    if version == 1
+      self.business_time_data = upgraded_business_time_data
       self.save
     end
     self
   end
-  #migrtation code ends..
 
-  private 
+  def weekday_set
+    @weekday_set ||= weekdays.to_set.freeze
+  end
+
+  def holiday_set
+    @holiday_set ||= holidays.collect { |holiday| "#{holiday.day} #{holiday.mon}" }.to_set.freeze
+  end
+
+  private
+
+    def formatted_date(day, time)
+      format = "%B %d %Y #{time}"
+      Time.zone ? Time.zone.parse(day.strftime(format)) : Time.parse(day.strftime(format))
+    end
 
     def valid_working_hours?
       if (version != 1) && !weekdays.blank?
@@ -169,7 +191,7 @@ class BusinessCalendar < ActiveRecord::Base
     def self.multiple_business_hours_enabled?
       @business_hour_caller = Thread.current[TicketConstants::BUSINESS_HOUR_CALLER_THREAD]
       Account.current.multiple_business_hours_enabled? &&
-       @business_hour_caller && 
+       @business_hour_caller &&
        @business_hour_caller.business_calendar
     end
 
