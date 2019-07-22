@@ -8,8 +8,6 @@ module Helpdesk
       def setup
         Account.stubs(:current).returns(Account.first)
         Account.stubs(:find_by_full_domain).returns(Account.first)
-        Account.current.launch(:enable_wildcard_ticket_create)
-        Account.current.launch(:check_wc_fwd)
         @custom_config = Account.current.email_configs.create!(reply_email: 'test@custom.com', to_email: "customcomtest@#{Account.current.full_domain}")
         shard = ShardMapping.first
         shard.status = 200 unless shard.status == 200
@@ -20,8 +18,6 @@ module Helpdesk
 
       def teardown
         super
-        Account.current.rollback(:enable_wildcard_ticket_create)
-        Account.current.rollback(:check_wc_fwd)
         Account.unstub(:current)
         Account.unstub(:find_by_full_domain)
         @custom_config.destroy
@@ -976,99 +972,74 @@ module Helpdesk
         assert_equal 'success', success_response[:processed_status]
       end
 
-      def test_failure_of_incoming_email_to_the_forward_address
-        Account.current.launch(:prevent_fwd_email_ticket_create)
+      def test_failure_email_with_wildcards_no_config
+        Account.current.launch(:prevent_wc_ticket_create)
         ShardMapping.stubs(:fetch_by_domain).returns(ShardMapping.first)
-        Account.any_instance.stubs(:email_configs).returns(@custom_config)
-        EmailConfig.any_instance.stubs(:find_by_to_email).returns(@custom_config)
-        params = default_params(Faker::Lorem.characters(50), 'Test Subject')
-        params[:to] = "customcomtest@#{Account.current.full_domain}"
-        parsed_to_email = { name: 'test', email: @custom_config.to_email, domain: 'custom.com' }
-        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
-        failed_response = incoming_email_handler.perform(parsed_to_email)
-        assert_equal 'Email sent to freshdesk mail box directly ', failed_response[:processed_status]
-      ensure
-        Account.current.rollback(:prevent_fwd_email_ticket_create)
-        ShardMapping.unstub(:fetch_by_domain)
-        Account.any_instance.unstub(:email_configs)
-        EmailConfig.any_instance.unstub(:find_by_to_email)
-      end
-
-      def test_failure_email_to_the_forward_address_wildcards_not_allowed
-        Account.current.launch(:prevent_fwd_email_ticket_create)
-        Account.current.rollback(:enable_wildcard_ticket_create)
-        ShardMapping.stubs(:fetch_by_domain).returns(ShardMapping.first)
-        Account.any_instance.stubs(:email_configs).returns(@custom_config)
-        EmailConfig.any_instance.stubs(:find_by_to_email).returns(@custom_config)
-        params = default_params(Faker::Lorem.characters(50), 'Test Subject')
-        params[:to] = "customcomtest@#{Account.current.full_domain}"
-        parsed_to_email = { name: 'test', email: @custom_config.to_email, domain: 'custom.com' }
-        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
-        failed_response = incoming_email_handler.perform(parsed_to_email)
-        assert_equal 'Email sent to freshdesk mail box directly ', failed_response[:processed_status]
-      ensure
-        Account.current.rollback(:prevent_fwd_email_ticket_create)
-        ShardMapping.unstub(:fetch_by_domain)
-        Account.any_instance.unstub(:email_configs)
-        EmailConfig.any_instance.unstub(:find_by_to_email)
-      end
-
-      def test_failure_email_with_wildcards
-        Account.current.rollback(:enable_wildcard_ticket_create)
-        ShardMapping.stubs(:fetch_by_domain).returns(ShardMapping.first)
-        Account.any_instance.stubs(:email_configs).returns(@custom_config)
-        EmailConfig.any_instance.stubs(:find_by_to_email).returns(@custom_config)
         params = default_params(Faker::Lorem.characters(50), 'Test Subject')
         params[:to] = "test+1223@#{Account.current.full_domain}"
-        parsed_to_email = { name: 'test', email: @custom_config.to_email, domain: 'custom.com' }
+        parsed_to_email = { name: 'test', email: "test+1223@#{Account.current.full_domain}", domain: Account.current.full_domain }
         incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
         failed_response = incoming_email_handler.perform(parsed_to_email)
-        assert_equal 'Email address does not match the configured emails ', failed_response[:processed_status]
+        assert_equal 'Wildcard Email ', failed_response[:processed_status]
       ensure
         ShardMapping.unstub(:fetch_by_domain)
         Account.any_instance.unstub(:email_configs)
         EmailConfig.any_instance.unstub(:find_by_to_email)
+        Account.current.rollback(:prevent_wc_ticket_create)
       end
 
-      def test_success_email_to_the_fd_forward_address
-        Account.current.launch(:prevent_fwd_email_ticket_create)
+      def test_success_email_to_the_wild_cards
         ShardMapping.stubs(:fetch_by_domain).returns(ShardMapping.first)
-        config = Account.current.email_configs.first
-        Account.any_instance.stubs(:email_configs).returns(config)
-        EmailConfig.any_instance.stubs(:find_by_to_email).returns(config)
         Helpdesk::Email::IncomingEmailHandler.any_instance.stubs(:add_to_or_create_ticket).returns(true)
         params = default_params(Faker::Lorem.characters(50), 'Test Subject')
-        params[:to] = "test <test@gmail.com>, support@#{Account.current.full_domain}"
-        parsed_to_email = { name: Account.current.name, email: config.to_email, domain: Account.current.full_domain }
+        params[:to] = "test+1223@#{Account.current.full_domain}"
+        parsed_to_email = { name: 'test', email: "test+1223@#{Account.current.full_domain}", domain: Account.current.full_domain }
         incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
         assert_equal incoming_email_handler.perform(parsed_to_email), true
       ensure
-        Account.current.rollback(:prevent_fwd_email_ticket_create)
         ShardMapping.unstub(:fetch_by_domain)
         Account.any_instance.unstub(:email_configs)
         EmailConfig.any_instance.unstub(:find_by_to_email)
         Helpdesk::Email::IncomingEmailHandler.any_instance.unstub(:add_to_or_create_ticket)
       end
 
-      def test_success_email_cc_to_the_fd_forward_address
-        Account.current.launch(:prevent_fwd_email_ticket_create)
+      def test_success_email_to_the_wild_cards_using_allow_check
+        Account.current.launch(:prevent_wc_ticket_create)
+        Account.current.launch(:allow_wildcard_ticket_create)
         ShardMapping.stubs(:fetch_by_domain).returns(ShardMapping.first)
-        config = Account.current.email_configs.first
-        Account.any_instance.stubs(:email_configs).returns(config)
-        EmailConfig.any_instance.stubs(:find_by_to_email).returns(config)
         Helpdesk::Email::IncomingEmailHandler.any_instance.stubs(:add_to_or_create_ticket).returns(true)
         params = default_params(Faker::Lorem.characters(50), 'Test Subject')
-        params[:to] = 'test <test@gmail.com>'
-        params[:cc] = "support@#{Account.current.full_domain}"
-        parsed_to_email = { name: Account.current.name, email: config.to_email, domain: Account.current.full_domain }
+        params[:to] = "test+1223@#{Account.current.full_domain}"
+        parsed_to_email = { name: 'test', email: "test+1223@#{Account.current.full_domain}", domain: Account.current.full_domain }
         incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
         assert_equal incoming_email_handler.perform(parsed_to_email), true
       ensure
-        Account.current.rollback(:prevent_fwd_email_ticket_create)
         ShardMapping.unstub(:fetch_by_domain)
         Account.any_instance.unstub(:email_configs)
         EmailConfig.any_instance.unstub(:find_by_to_email)
         Helpdesk::Email::IncomingEmailHandler.any_instance.unstub(:add_to_or_create_ticket)
+        Account.current.rollback(:prevent_wc_ticket_create)
+        Account.current.rollback(:allow_wildcard_ticket_create)
+      end
+
+      def test_success_email_to_the_default_support_mailbox
+        Account.current.launch(:prevent_wc_ticket_create)
+        config = Account.current.email_configs.first
+        ShardMapping.stubs(:fetch_by_domain).returns(ShardMapping.first)
+        Account.any_instance.stubs(:email_configs).returns(config)
+        EmailConfig.any_instance.stubs(:find_by_to_email).returns(config)
+        Helpdesk::Email::IncomingEmailHandler.any_instance.stubs(:add_to_or_create_ticket).returns(true)
+        params = default_params(Faker::Lorem.characters(50), 'Test Subject')
+        params[:to] = config.reply_email
+        parsed_to_email = { name: 'test', email: config.to_email, domain: Account.current.full_domain }
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
+        assert_equal incoming_email_handler.perform(parsed_to_email), true
+      ensure
+        ShardMapping.unstub(:fetch_by_domain)
+        Account.any_instance.unstub(:email_configs)
+        EmailConfig.any_instance.unstub(:find_by_to_email)
+        Helpdesk::Email::IncomingEmailHandler.any_instance.unstub(:add_to_or_create_ticket)
+        Account.current.rollback(:prevent_wc_ticket_create)
       end
     end
   end

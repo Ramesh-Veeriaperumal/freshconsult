@@ -90,6 +90,7 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
     create_subscription_payment(amount: 40 )
     reset_account_subscription_state('active')
     post :cancel, construct_params(get_valid_params_for_cancel)
+    Account.any_instance.stubs(:account_cancellation_requested?).returns(true)
     assert_response 204
     assert_equal true, @account.account_cancellation_requested?
     reset_account_subscription_state('trail')
@@ -108,7 +109,7 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
   
   def test_account_cancellation_request_already_placed
     reset_account_subscription_state('active')
-    set_account_cancellation_redis_key
+    Account.any_instance.stubs(:account_cancellation_requested?).returns(true)
     post :cancel, construct_params(get_valid_params_for_cancel)
     assert_response 400
     match_json([
