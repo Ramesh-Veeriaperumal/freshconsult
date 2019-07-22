@@ -82,7 +82,7 @@ class Auth::GoogleLoginAuthenticator < Auth::Authenticator
       url_options_with_protocol = { host: account.host, protocol: account.url_protocol }
       authorize_callback_url = Rails.application.routes.url_helpers.freshid_authorize_callback_url(url_options_with_protocol)
       logout_url = Rails.application.routes.url_helpers.freshid_logout_url(url_options_with_protocol)
-      @result.redirect_url = Freshid::Config.login_url(authorize_callback_url, logout_url)
+      @result.redirect_url = account.freshid_org_v2_enabled? ? Freshid::V2::UrlGenerator.login_url(authorize_callback_url) : Freshid::Config.login_url(authorize_callback_url, logout_url)
       @result
     end
 

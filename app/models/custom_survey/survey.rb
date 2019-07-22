@@ -6,6 +6,7 @@ class CustomSurvey::Survey < ActiveRecord::Base
   include Surveys::PresenterHelper
   include Cache::Memcache::Survey
   include DataVersioning::Model
+  include CustomTranslations::Associations
 
   VERSION_MEMBER_KEY = 'SURVEY_LIST'.freeze
   
@@ -100,10 +101,14 @@ class CustomSurvey::Survey < ActiveRecord::Base
 
   def self.satisfaction_survey_html(ticket)
     survey_handle = CustomSurvey::SurveyHandle.create_handle_for_place_holder(ticket)
+    survey_language = Language.find_by_code(ticket.requester_language)
+    translated_survey = survey_handle.survey.translation_record(survey_language) if survey_handle && survey_language.present?
     CustomSurveyHelper.render_content_for_placeholder({ 
-      :ticket => ticket, 
-      :survey_handle => survey_handle, 
-      :surveymonkey_survey => nil
+      ticket: ticket,
+      survey_handle: survey_handle,
+      surveymonkey_survey: nil,
+      language: survey_language,
+      translation_record: translated_survey
     })
   end
 
@@ -132,4 +137,9 @@ class CustomSurvey::Survey < ActiveRecord::Base
     as_json(options)['survey']
   end
 
+  private
+
+    def custom_translations_feature_check(language)
+      Account.current.csat_translations_enabled? && Account.current.all_portal_languages.include?(language.code)
+    end
 end

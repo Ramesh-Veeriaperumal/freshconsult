@@ -1,6 +1,6 @@
 <% require 'sanitize' %>
 <% if survey_handle && (survey_handle.preview? || ticket.requester.customer?) %>
-  <%= render partial: 'layouts/shared/survey', locals: { survey_handle: survey_handle, rating: nil } %>
+  <%= render partial: 'layouts/shared/survey', locals: { survey_handle: survey_handle, rating: nil, translation_record: translation_record, language: language } %>
 <% end %>
 <% if surveymonkey_survey %>
   <p>

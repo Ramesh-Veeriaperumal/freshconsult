@@ -639,8 +639,11 @@ module Helpdesk
 					# FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
 					NewRelic::Agent.notice_error(e)
 				end
-				message_id_list.each do |msg_key|
-					store_ticket_threading_info(account, msg_key, ticket)
+				
+				if(!(ticket.spam == true && ticket.skip_notification == true))
+					message_id_list.each do |msg_key|
+						store_ticket_threading_info(account, msg_key, ticket)
+					end
 				end
 				# ticket
 				return processed_email_data(PROCESSED_EMAIL_STATUS[:success], account.id, ticket)

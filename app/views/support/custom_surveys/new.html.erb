@@ -51,9 +51,9 @@
 			<div class="highlighter">
 				<% if csat_email_scan_compatibile %>
 					<h2></h2>
-					<%= render partial: 'layouts/shared/survey', locals: { survey_handle: @survey_handle, rating: @rating } %>
+					<%= render partial: 'layouts/shared/survey', locals: { survey_handle: @survey_handle, rating: @rating, translation_record: @translation_record, language: @language} %>
 				<% else %>
-					<h2><%=@survey_handle.survey.thanks_text%></h2>
+					<h2><%= @translation_record.present? ? @translation_record.translations[:thanks_text] || @survey_handle.survey.thanks_text : @survey_handle.survey.thanks_text%></h2>
 				<% end %>
 				<div class="survey-overlay center" style="display:none;"></div>
 				<div class="loading">
@@ -79,7 +79,7 @@
 				<%end%>
 				<%if @survey_handle.survey.can_comment? %>
 					<textarea autocomplete="off" class="input-comment required" id="survey_feedback" name="feedback" rel="ghostwriter" type="text" width="100%"
-						placeholder= "<%= @survey_handle.survey.comments_text %>" ></textarea>
+						placeholder= "<%= @translation_record.present? ? @translation_record.translations[:comments_text] || @survey_handle.survey.comments_text : @survey_handle.survey.comments_text %>" ></textarea>
 				<% end %>
 				<% if csat_email_scan_compatibile || (!@survey_handle.survey.feedback_questions.blank? || @survey_handle.survey.can_comment?) %>
 					<%= f.submit t('support.surveys.new.submit'),:id => "submit_survey", :class => "btn btn-primary btn-comment" %>

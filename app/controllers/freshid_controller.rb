@@ -90,7 +90,7 @@ class FreshidController < ApplicationController
     
     def authorize_callback_v2_helper
       org_domain = current_account.organisation_domain
-      response = Freshid::V2::LoginUtil.fetch_user_by_code_freshid(org_domain, params[:code], freshid_authorize_callback_url, current_account)
+      response = Freshid::V2::LoginUtil.fetch_user_by_code(org_domain, params[:code], freshid_authorize_callback_url, current_account)
       user = response.present? ? response[:user] : nil
       Rails.logger.info "FRESHID V2 authorize_callback :: user_present=#{user.present?} , user=#{user.try(:id)}, valid_user=#{user.try(:valid_user?)}, organisation domain:#{org_domain}"
       freshid_auth_failure_redirect_back and return if user.nil? && authorize_via_freshdesk_login?

@@ -30,7 +30,7 @@ class Account < ActiveRecord::Base
     :fb_page_api_improvement, :attachment_redirect_expiry, :solutions_agent_portal, :solutions_agent_metrics, :fuzzy_search,
     :delete_trash_daily, :ticket_type_filter_in_trends_widget, :automation_revamp, :prevent_fwd_email_ticket_create, 
     :enable_wildcard_ticket_create, :check_wc_fwd, :requester_privilege, :sso_unique_session, :fsm_landing_page,
-    :scheduling_fsm_dashboard, :enable_customer_journey
+    :scheduling_fsm_dashboard, :enable_customer_journey, :csat_translations
   ].freeze
 
   DB_FEATURES = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone].freeze
@@ -248,6 +248,10 @@ class Account < ActiveRecord::Base
 
   def hide_agent_metrics_feature?
     features?(:euc_hide_agent_metrics)
+  end
+
+  def csat_translations_enabled?
+    launched?(:csat_translations) && custom_translations_enabled?
   end
 
   # TODO: Remove new_pricing_launched?() after 2019 pricing plan launch

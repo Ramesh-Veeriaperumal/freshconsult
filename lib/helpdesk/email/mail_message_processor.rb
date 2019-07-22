@@ -7,6 +7,7 @@ module Helpdesk
 			include EnvelopeParser
 			include Helpdesk::Email::MessageProcessingUtil
 			include EmailCustomLogger
+			include EmailHelper
 
 			attr_accessor :raw_eml, :metadata, :ticket_params
 
@@ -56,9 +57,13 @@ module Helpdesk
 					self.ticket_params = params.merge({ :spam_info => spam_data ,:request_url => "Mimecontroller"})
 					ticket_data = create_ticket_or_note
 					Rails.logger.info "ticket_data : #{ticket_data.inspect}"
-					set_processing_state(EMAIL_PROCESSING_STATE[:finished], Time.now.utc, message[:uid])
+					set_processing_state(EMAIL_PROCESSING_STATE[:finished], Time.now.utc, message[:uid], custome_bot_attack?(spam_data))
 					archive_message(ticket_data)
 				end
+			end
+
+			def custome_bot_attack?(spam_data)
+				(!spam_data['rules'].nil? && (spam_data['rules'] & custom_bot_attack_rules).size != 0)
 			end
 
 			def get_ticket_params
