@@ -855,6 +855,10 @@ class Account < ActiveRecord::Base
     get_members_from_redis_set(automation_rules_with_thank_you_configured).present?
   end
 
+  def time_sheets_with_join
+    time_sheets.joins('AND helpdesk_time_sheets.account_id = helpdesk_tickets.account_id').readonly(false)
+  end
+
   protected
 
     def external_url_is_valid?(url)
