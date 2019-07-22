@@ -286,7 +286,7 @@
 
 # Installed Applications
 /installed_applications:
-  $ref: ./installed_applications/list.yaml
+  $ref: ./installed_applications/list_and_install.yaml
 /installed_applications/{id}:
   $ref: ./installed_applications/crud.yaml
 /installed_applications/fetch:

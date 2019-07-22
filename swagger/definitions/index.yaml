@@ -245,6 +245,8 @@ installed_applications:
   $ref: ./resource/installed_applications.yaml
 installed_application_fetch:
   $ref: ./request/installed_applications/fetch.yaml
+installed_application_install:
+  $ref: ./request/installed_applications/install.yaml
 integrated_users:
   $ref: ./resource/integrated_users.yaml
 integrated_resources:

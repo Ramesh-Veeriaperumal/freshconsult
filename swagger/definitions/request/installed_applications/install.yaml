@@ -1,0 +1,12 @@
+type: object
+required:
+  - name
+properties:
+  name:
+    description: Must be 'freshsales'. More integrations will be added later.
+    type: string
+  configs:
+    description: This is a JSON value. The allowed attributes of this depends on the integration.
+    type: object
+    additionalProperties:
+      type: string

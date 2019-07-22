@@ -1,0 +1,20 @@
+post:
+  tags: [Integrations]
+  summary: Install
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/installed_application_install'
+  responses:
+    201:
+      description: Success
+      schema:
+        $ref: '#/definitions/installed_applications'
+    403:
+      description: Access denied
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
