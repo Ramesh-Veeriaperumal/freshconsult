@@ -294,8 +294,8 @@ class Account < ActiveRecord::Base
       nested_field_revamp: true, freshvisual_configs: false, freshid_org_v2: false, hide_agent_login: false, addon_based_billing: false,
       kbase_mint: false, text_custom_fields_in_etl: false, recalculate_daypass: false,  email_spoof_check: false,
       disable_email_spoof_check: false, attachment_redirect_expiry: false, solutions_agent_portal: false, solutions_agent_metrics: false,
-      sandbox_single_branch: false, ticket_type_filter_in_trends_widget: true, prevent_fwd_email_ticket_create: false, enable_wildcard_ticket_create: false,
-      check_wc_fwd: false, requester_privilege: false, fsm_landing_page: true, scheduling_fsm_dashboard: false
+      sandbox_single_branch: false, ticket_type_filter_in_trends_widget: true, prevent_wc_ticket_create: true, allow_wildcard_ticket_create: false,
+      requester_privilege: false, fsm_landing_page: true, scheduling_fsm_dashboard: false
     }, :merge
   )
 
