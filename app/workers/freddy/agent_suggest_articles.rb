@@ -16,7 +16,7 @@ module Freddy
         return
       end
       solution_ids = ml_response['data'].collect { |response| response['id'] }
-      @meta_articles = account.solution_article_meta.where('`solution_article_meta`.`id` IN (?)', solution_ids).preload(:primary_article)
+      @meta_articles = account.solution_article_meta.where('`solution_article_meta`.`id` IN (?)', solution_ids).preload(:primary_article).order("field(`solution_article_meta`.`id`, #{solution_ids.join ','})")
       if @meta_articles.any?
         if ml_response['cortex_id'].present?
           bot_id = ml_response['cortex_id']
