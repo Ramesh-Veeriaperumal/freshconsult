@@ -358,7 +358,7 @@ gem 'rbtrace', :require => false
 gem 'gon', '6.1.0'
 
 # dkim to check dns records
-gem 'dnsruby'
+gem 'dnsruby', '1.60.2'
 
 gem 'rugged'
 
