@@ -564,6 +564,20 @@ module ApiSolutions
       User.any_instance.unstub(:privilege?)
     end
 
+    def test_update_translated_article_as_draft
+      languages = @account.supported_languages + ['primary']
+      language = @account.supported_languages.first
+      article_meta = create_article(article_params(lang_codes: languages))
+      translated_article = article_meta.safe_send("#{language}_article")
+      paragraph = Faker::Lorem.paragraph
+      params_hash = { title: 'new title', description: paragraph, status: 1 }
+      put :update, construct_params({ id: translated_article.parent_id, language: language }, params_hash)
+      assert_response 200
+      draft = translated_article.reload.draft
+      assert draft.present?
+      match_json(solution_article_draft_pattern(translated_article, translated_article.draft))
+    end
+
     def test_folder_index
       sample_folder = get_folder_meta
       get :folder_articles, controller_params(id: sample_folder.id)

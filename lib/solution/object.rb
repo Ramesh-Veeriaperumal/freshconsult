@@ -116,11 +116,12 @@ class Solution::Object
 	
 	def params_for(lang)
 		return filter(@params["#{lang}_#{short_name}"]) unless lang == 'primary'
-		filter(@params["primary_#{short_name}"]) || @params.reject { |k,v| META_ATTRIBUTES[obj].include?(k.to_sym) }
+		filter(@params["primary_#{short_name}"]).presence || @params.reject { |k, v| META_ATTRIBUTES[obj].include?(k.to_sym) }
 	end
 
 	def filter p
-    return unless p.present?
+   return {} if p.blank?
+
 		p.reject{|k,v| ASSOCIATIONS.include?(k.to_sym) || META_ATTRIBUTES[obj].include?(k.to_sym) }
 	end
 
