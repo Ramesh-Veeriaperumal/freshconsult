@@ -5,42 +5,41 @@ class Time
     # Note: It pretends that this day is a workday whether or not it really is a
     # workday.
 
-    def self.end_of_workday(day,business_calendar_config = nil)
-      business_calendar_config ||= BusinessCalendar.config
-      time = workday?(day,business_calendar_config) ? business_calendar_config.end_of_workday(day.wday) : "0:00:00"
-      time_with_format(time, day)
-    end
+  def self.end_of_workday(day, business_calendar_config = nil)
+    business_calendar_config ||= BusinessCalendar.config
+    time = workday?(day, business_calendar_config) ? business_calendar_config.end_of_workday(day.wday) : '0:00:00'
+    business_calendar_config.beginning_of_day_in_date_time(day, time)
+  end
 
-    # Gives the time at the beginning of the workday, assuming that this time
-    # falls on a workday.
-    # Note: It pretends that this day is a workday whether or not it really is a
-    # workday.
-    def self.beginning_of_workday(day,business_calendar_config = nil)
-      business_calendar_config ||= BusinessCalendar.config
-      time = workday?(day,business_calendar_config) ? business_calendar_config.beginning_of_workday(day.wday) : "0:00:00"
-      time_with_format(time, day)
-    end
+  # Gives the time at the beginning of the workday, assuming that this time
+  # falls on a workday.
+  # Note: It pretends that this day is a workday whether or not it really is a
+  # workday.
+  def self.beginning_of_workday(day, business_calendar_config = nil)
+    business_calendar_config ||= BusinessCalendar.config
+    time = workday?(day, business_calendar_config) ? business_calendar_config.beginning_of_workday(day.wday) : '0:00:00'
+    business_calendar_config.end_of_day_in_date_time(day, time)
+  end
 
-    # True if this time is on a workday (between 00:00:00 and 23:59:59), even if
-    # this time falls outside of normal business hours.
-    def self.workday?(day,business_calendar_config = nil)
-      business_calendar_config ||= BusinessCalendar.config
-      Time.weekday?(day,business_calendar_config) &&
-          !business_calendar_config.holidays.any?{|h| h.strftime("%d %m") == day.to_date.strftime("%d %m") }
-    end
+  # True if this time is on a workday (between 00:00:00 and 23:59:59), even if
+  # this time falls outside of normal business hours.
+  def self.workday?(day, business_calendar_config = nil)
+    business_calendar_config ||= BusinessCalendar.config
+    weekday?(day, business_calendar_config) && !holiday?(day, business_calendar_config)
+  end
 
-    def self.holiday?(day, business_calendar_config = nil)
-      business_calendar_config ||= BusinessCalendar.config
-      business_calendar_config.holidays.any?{|h| h.strftime("%d %m") == day.to_date.strftime("%d %m") }
-    end
+  def self.holiday?(day, business_calendar_config = nil)
+    business_calendar_config ||= BusinessCalendar.config
+    business_calendar_config.holiday_set.include?("#{day.day} #{day.mon}")
+  end
 
-    # True if this time falls on a weekday.
-    def self.weekday?(day,business_calendar_config = nil)
-      # TODO AS: Internationalize this!
-      #[1,2,3,4,5].include? day.wday
-      business_calendar_config ||= BusinessCalendar.config
-      business_calendar_config.weekdays.include? day.wday
-    end
+  # True if this time falls on a weekday.
+  def self.weekday?(day, business_calendar_config = nil)
+    # TODO: AS: Internationalize this!
+    # [1,2,3,4,5].include? day.wday
+    business_calendar_config ||= BusinessCalendar.config
+    business_calendar_config.weekday_set.include? day.wday
+  end
 
     def self.before_business_hours?(time,business_calendar_config = nil)
       time < beginning_of_workday(time,business_calendar_config)
@@ -87,14 +86,6 @@ class Time
 
       previous_business_time
     end
-
-    private
-
-     def self.time_with_format(time, day)
-      format = "%B %d %Y #{time}"
-        Time.zone ? Time.zone.parse(day.strftime(format)) :
-          Time.parse(day.strftime(format))
-     end
 end
 
 class Time
