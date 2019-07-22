@@ -257,6 +257,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
       if params[:ticket].account.new_survey_enabled?
         @survey_handle = CustomSurvey::SurveyHandle.create_handle_for_notification(params[:ticket], params[:notification_type], params[:survey_id])
+        @survey_language = Language.find_by_code(params[:ticket].requester_language)
+        @translated_survey = @survey_handle.survey.translation_record(@survey_language) if @survey_handle && @survey_language.present?
       else
         @survey_handle = SurveyHandle.create_handle_for_notification(params[:ticket], params[:notification_type])
       end
@@ -359,7 +361,9 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
       unless ticket.parent_ticket.present?
         if ticket.account.new_survey_enabled?
-           @survey_handle = CustomSurvey::SurveyHandle.create_handle(ticket, note, options[:send_survey])
+          @survey_handle = CustomSurvey::SurveyHandle.create_handle(ticket, note, options[:send_survey])
+          @survey_language = Language.find_by_code(ticket.requester_language)
+          @translated_survey = @survey_handle.survey.translation_record(@survey_language) if @survey_handle && @survey_language.present?
         else
            @survey_handle = SurveyHandle.create_handle(ticket, note, options[:send_survey])
         end

@@ -31,7 +31,7 @@ else
   end
   # for git version and bucket existence condition
   Dir.chdir node[:newdir].to_s
-  git_version_command = "git log origin/#{node[:rails3][:revision]} --pretty=format:%H --max-count=1 --branches=HEAD -- ./public/"
+  git_version_command = 'git log --pretty=format:%H --max-count=1 --branches=HEAD -- ./public/'
   file_name = node.override[:git_version] = `#{git_version_command}` + '.zip'
   node.override[:path] = node[:path].to_s + file_name.to_s
   Chef::Log.info "value of git version is #{node[:git_version]} and test value is #{node[:bucket_exist]} and bucket name is #{bucket_name}"

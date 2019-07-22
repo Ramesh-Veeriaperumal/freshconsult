@@ -9,7 +9,7 @@ module Freshchat::Util
 
   def sync_freshchat(app_id)
     query = { appAlias: app_id }
-    response = HTTParty.post("#{Freshchat::Account::CONFIG[:signup][:host]}enable", query: query, headers: headers(app_id))
+    response = HTTParty.put("#{Freshchat::Account::CONFIG[:signup][:host]}enable", query: query, body: sync_freshchat_body.to_json, headers: headers(app_id))
     Rails.logger.info "Response from sync_freshchat #{response}"
   end
 
@@ -24,6 +24,14 @@ module Freshchat::Util
           account: current_account.full_domain,
           token: current_user.single_access_token
         }
+      }
+    end
+
+    def sync_freshchat_body
+      current_user = current_account.roles.account_admin.first.users.first
+      {
+        account: current_account.full_domain,
+        token: current_user.single_access_token
       }
     end
 

@@ -2,6 +2,7 @@ class Support::CustomSurveysController < SupportController #for Portal Customiza
 
   skip_before_filter :check_privilege
   before_filter :load_handle, :only => [:new_via_handle, :hit]
+  before_filter :load_translation, only: [:new_via_handle]
   before_filter :backward_compatibility_check, :only => [:hit]
   before_filter :load_ticket,         :only => :new_via_portal
   before_filter :load_survey_result,  :only => :create
@@ -55,7 +56,10 @@ class Support::CustomSurveysController < SupportController #for Portal Customiza
 
   def create
     @survey_result.update_result_and_feedback(params)
-    render :json => {thanks_message: @survey_result.survey.feedback_response_text}
+    language = Language.find_by_code(@survey_result.try(:surveyable).try(:requester_language))
+    translation_record = @survey_result.survey.translation_record(language) if language.present?
+    thanks_message = translation_record.translations[:feedback_response_text] if translation_record.present?
+    render json: { thanks_message: thanks_message || @survey_result.survey.feedback_response_text }
   end
 
   protected
@@ -76,6 +80,11 @@ class Support::CustomSurveysController < SupportController #for Portal Customiza
         send_handle_error
         @survey_handle.destroy if @survey_handle.present? && !@survey_handle.survey.deleted?
       end
+    end
+
+    def load_translation
+      @language = Language.find_by_code(@survey_handle.try(:surveyable).try(:requester_language))
+      @translation_record = @survey_handle.survey.translation_record(@language) if @survey_handle && @language.present?
     end
     
     def load_survey_result

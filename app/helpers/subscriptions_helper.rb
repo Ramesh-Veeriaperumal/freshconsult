@@ -275,7 +275,8 @@ module SubscriptionsHelper
   end
 
   def fsm_supported_plan?(plan)
-    current_account.fsm_addon_billing_enabled? && PLANS_FEATURES["#{plan.name.downcase}"].include?('fsm_option') 
+    features = PLANS_FEATURES["#{plan.name.downcase}"]
+    current_account.fsm_addon_billing_enabled? && (features || []).include?('fsm_option') 
   end
 
   def previous_plan?(plan)
