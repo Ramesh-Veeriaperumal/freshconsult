@@ -30,7 +30,7 @@ module Freshid
         return if freshid_integration_enabled
         Rails.logger.info "FRESHID Enabling and Migrating Agents :: a=#{@account.try(:id)}, d=#{@account.try(:full_domain)}"
         account_admin = @account.all_technicians.find_by_email(@account.admin_email) || @account.account_managers.first
-        @account.launch_freshid_with_omnibar
+        @account.launch_freshid_with_omnibar(false)
         perform_migration_changes
         @account.create_freshid_org_and_account(nil, nil, account_admin)
         @account.all_technicians.where("id != #{account_admin.id}").find_each { |user| migrate_user_to_freshid(user) if user.freshid_authorization.blank? }

@@ -110,6 +110,7 @@ module BootstrapTestHelper
     pattern[:freshchat] = freshchat_hash if account.freshchat_enabled?
     pattern[:account_cancellation_requested] =  account.account_cancellation_requested?
     pattern[:organisation_domain] = account.organisation_from_cache.try(:alternate_domain) || account.organisation_from_cache.try(:domain)
+    pattern[:freshdesk_sso_enabled] = account.freshdesk_sso_enabled?
     pattern.merge!(sandbox_info(account))
     first_invoice = account.subscription.subscription_invoices.first
     pattern[:subscription] = {
