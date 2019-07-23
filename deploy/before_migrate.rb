@@ -97,7 +97,6 @@ run "ln -nfs #{shared_path}/config/email_bot_ml_feedback_config.yml #{node[:rel_
 run "ln -nfs #{shared_path}/config/datadog.yml #{node[:rel_path]}/config/datadog.yml"
 run "ln -nfs #{shared_path}/config/freshvisuals.yml #{node[:rel_path]}/config/helpdesk_reports/freshvisuals.yml"
 run "ln -nfs #{shared_path}/config/freno.yml #{node[:rel_path]}/config/freno.yml"
-run "ln -nfs #{shared_path}/config/automation_rule_redis.yml #{node[:rel_path]}/config/automation_rule_redis.yml"
 run "ln -nfs #{shared_path}/config/freddy_skills_config.yml #{node[:rel_path]}/config/freddy_skills_config.yml"
 run "ln -nfs #{shared_path}/config/facebook_gateway.yml #{node[:rel_path]}/config/facebook_gateway.yml"
 
