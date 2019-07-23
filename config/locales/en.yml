@@ -2767,6 +2767,10 @@ en:
         events: "Events"
         conditions: "Conditions"
         custom_field_name: 'Set %{field_name} as'
+        operator_all: "AND"
+        operator_any: "OR"
+        match_type_any: "Match ANY of the above"
+        match_type_all: "Match ALL of the above"
     automation_summary:
       '1': 'Selected'
       '0': 'Not Selected'

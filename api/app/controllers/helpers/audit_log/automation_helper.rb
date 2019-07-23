@@ -2,8 +2,9 @@ module AuditLog::AutomationHelper
   include AuditLog::AuditLogHelper
   include AuditLog::Translators::AutomationRule
 
-  ALLOWED_MODEL_CHANGES = [:name, :description, :match_type, :active, :position,
-                           :filter_data, :action_data, :condition_data].freeze
+  ALLOWED_MODEL_CHANGES = [:name, :description, :active, :position, :action_data].freeze
+
+  CONDITION_SET_COUNT = 2
 
   def automation_rule_changes(_model_data, changes)
     response = []
@@ -11,7 +12,8 @@ module AuditLog::AutomationHelper
     changes = readable_rule_changes(changes)
     model_name = :automation_rule
     changes.each_pair do |key, value|
-      next unless ALLOWED_MODEL_CHANGES.include?(key)
+      next unless (ALLOWED_MODEL_CHANGES + filter_data).include?(key)
+
       trans_key = translated_key(key, model_name)
       response << case key
                   when :filter_data
@@ -46,6 +48,10 @@ module AuditLog::AutomationHelper
 
   private
 
+  def filter_data
+    automation_revamp_enabled? && !supervisor_rule? ? %i[condition_data] : %i[match_type filter_data]
+  end
+
   def condition_data_changes(value)
     if observer_rule?
       changes = []
@@ -54,106 +60,95 @@ module AuditLog::AutomationHelper
         trans_k = translated_key(key, model_name)
         changes << case key
                    when :performer
-                    result = filter_action_changes(trans_k, [[value[0][key]].flatten, [value[1][key]].flatten])
-                    result.present? ? result : []
+                     filter_action_changes(trans_k, [[value[0][key]].flatten, [value[1][key]].flatten])
                    when :events
-                    result = filter_action_changes(trans_k, [[value[0][key]].flatten, [value[1][key]].flatten])
-                    next unless result.present?
-                    result
+                     filter_action_changes(trans_k, [[value[0][key]].flatten, [value[1][key]].flatten])
                    when :conditions
-                    filter_condition_data_changes(value[0][key], value[1][key])
+                     filter_condition_changes(value[0][key], value[1][key])
                    end
       end
       changes
     else
-      filter_condition_data_changes(value[0], value[1])
+      filter_condition_changes(value[0], value[1])
     end
   end
 
-  def filter_condition_data_changes(old_condition, new_condition)
+  def filter_condition_changes(old_condition, new_condition)
     result = []
-    was_single_set = old_condition.first[1][0].key?(:evaluate_on)
-    is_single_set = new_condition.first[1][0].key?(:evaluate_on)
-    case condition_set_case_mapping(is_single_set, was_single_set)
-    when :single_sets
-      result << fetch_condition_changes([old_condition.values.flatten, new_condition.values.flatten],
-                                        [old_condition.keys.first, new_condition.keys.first], 0)
-    when :set_added
-      operator_changes = toggle_operator(["", new_condition.keys.first])
-      result << operator_changes if operator_changes.present?
-      result << condition_sets_updated(old_condition, new_condition, true)
-    when :set_removed
-      operator_changes = toggle_operator([old_condition.keys.first, ""])
-      result << operator_changes if operator_changes.present?
-      result << condition_sets_updated(old_condition, new_condition)
+    operator_changes = filter_operator_changes(old_condition, new_condition)
+    result << operator_changes if operator_changes.present?
+    old_match_types, new_match_types = [fetch_match_types(old_condition), fetch_match_types(new_condition)]
+    match_type_changes = filter_match_type_changes(old_match_types, new_match_types)
+    result << match_type_changes if match_type_changes.present?
+    old_conditions, new_conditions = [fetch_conditions(old_condition), fetch_conditions(new_condition)]
+    condition_changes = filter_condition_set_changes(old_conditions, new_conditions)
+    result << condition_changes if condition_changes.present?
+    result
+  end
+
+  def filter_operator_changes(old_condition, new_condition)
+    old_operator = if condition_present?(old_condition)
+                     single_set?(old_condition) ? '' : old_condition.first[0]
+                   else
+                     ''
+                   end
+    new_operator = if condition_present?(new_condition)
+                     single_set?(new_condition) ? '' : new_condition.first[0]
+                   else
+                     ''
+                   end
+    toggle_operator([old_operator, new_operator])
+  end
+
+  def fetch_match_types(conditions)
+    return '' unless condition_present?(conditions)
+
+    if single_set?(conditions)
+      [translate_match_type(conditions.first[0])]
     else
-      operator_changes = toggle_operator([old_condition.keys.first, new_condition.keys.first])
-      result << operator_changes if operator_changes.present?
-      result << filter_condition_sets(old_condition, new_condition)
+      conditions.first[1].map(&:keys).flatten.map { |match_type| translate_match_type(match_type) }
+    end
+  end
+
+  def filter_match_type_changes(old_match_types, new_match_types)
+    result = []
+    CONDITION_SET_COUNT.times do |set|
+      old_match_type = old_match_types[set] || ''
+      new_match_type = new_match_types[set] || ''
+      match_type_key = translated_key("match_type_#{set + 1}".to_sym, :automation_rule)
+      result << description_properties(match_type_key, [old_match_type, new_match_type],
+                                       type: :default) if old_match_type != new_match_type
     end
     result
   end
 
-  def filter_condition_sets(old_condition, new_condition)
+  def fetch_conditions(conditions)
+    return [] unless condition_present?(conditions)
+
+    if single_set?(conditions)
+      [conditions.first[1]]
+    else
+      condition_sets = conditions.first[1].map(&:values)
+      [condition_sets[0].flatten, condition_sets[1].flatten]
+    end
+  end
+
+  def filter_condition_set_changes(old_conditions, new_conditions)
     result = []
-    2.times do |set|
-      changes = fetch_condition_changes([old_condition.first[1][set].first[1],
-                                         new_condition.first[1][set].first[1]],
-                                        [old_condition.first[1][set].first[0],
-                                         new_condition.first[1][set].first[0]], set)
+    CONDITION_SET_COUNT.times do |set|
+      old_condition = old_conditions[set] || []
+      new_condition = new_conditions[set] || []
+      condition_key = translated_key("condition_set_#{set + 1}".to_sym, :automation_rule)
+      changes = filter_action_changes(condition_key, [old_condition, new_condition])
       result << changes if changes.present?
     end
-    result
-  end
-
-  def condition_sets_updated(old_condition, new_condition, added = false)
-    # Example:
-    # old_condition = {:any=>[{:evaluate_on=>"ticket", :name=>"Agent", :operator=>"in", :value=>"None"}]}
-    # new_condition = {:any=>[{:all=>[{:evaluate_on=>"ticket", :name=>"Priority", :operator=>"in", :value=>""}]},
-    #                  {:all=>[{:evaluate_on=>"ticket", :name=>"Subject or Description", :operator=>"is", :value=>"test"}]}]}
-    # Or vice-versa depending on 'added'
-
-    result = []
-    updated_set = added ? old_condition.first[1] : new_condition.first[1]
-    updated_match_type = added ? old_condition.first[0] : new_condition.first[0]
-    2.times do |set|
-      if added
-        match_type = new_condition.first[1][set].first[0]
-        conditions = [updated_set, new_condition.first[1][set].first[1]]
-        match_types = [updated_match_type, match_type]
-      else
-        match_type = old_condition.first[1][set].first[0]
-        conditions = [old_condition.first[1][set].first[1], updated_set]
-        match_types = [match_type, updated_match_type]
-      end
-      changes = fetch_condition_changes(conditions, match_types, set)
-      result << changes if changes.present?
-      updated_set = []
-      updated_match_type = ""
-    end
-    result
-  end
-
-  def fetch_condition_changes(conditions, match_type, set)
-    result = []
-    condition_key = translated_key("condition_set_#{set+1}".to_sym,:automation_rule)
-    match_type_key = translated_key("match_type_#{set+1}".to_sym, :automation_rule)
-    changes = filter_action_changes(condition_key, [conditions[0], conditions[1]])
-    result << changes if changes.present?
-    result << description_properties(match_type_key, [match_type[0], match_type[1]],
-                                     { type: :default }) if match_type[0] != match_type[1]
     result
   end
 
   def toggle_operator(values)
     trans_key = translated_key(:operator, :automation_rule)
-    values[0] != values[1] ? description_properties(trans_key, [translate_operator(values[0]),
-                                                                translate_operator(values[1])], type: :default) : nil
-  end
-
-  def translate_operator(value)
-    return value if value.blank?
-    value == :any ? 'or' : 'and'
+    values[0] != values[1] ? description_properties(trans_key, [translate_conditions_operator(values[0]),
+                                                                translate_conditions_operator(values[1])], type: :default) : nil
   end
 
   def toggle_status(value)
