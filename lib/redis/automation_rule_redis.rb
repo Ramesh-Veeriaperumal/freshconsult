@@ -16,22 +16,6 @@ module Redis::AutomationRuleRedis
     get_multi_redis_key_in_hash(account_automation_key(options), rule_ids.map { |id| automation_rule_id(id) })
   end
 
-  def automation_rules_with_thank_you_configured
-    format(AUTOMATION_RULES_WITH_THANK_YOU_CONFIGURED, { account_id: Account.current.id })
-  end
-
-  def add_element_to_redis_set(redis_key, element)
-    $redis_automation_rule.perform_redis_op('sadd', redis_key, element)
-  end
-
-  def remove_element_from_redis_set(redis_key, element)
-    $redis_automation_rule.perform_redis_op('srem', redis_key, element)
-  end
-
-  def get_members_from_redis_set(redis_key)
-    $redis_automation_rule.perform_redis_op('smembers', redis_key)
-  end
-
   private
 
     def account_automation_key(options = {})
