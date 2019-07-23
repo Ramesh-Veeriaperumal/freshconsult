@@ -32,19 +32,19 @@ module Sync::Transformer::VaRule
   end
 
   def transform_va_rule_condition_data(data, mapping_table = {})
-    return data unless data
+    return data if data.blank? # supervisor case
 
-    va_conditions = data.key?(:events) ? data[:conditions] || [] : data
+    va_conditions = data.key?(:events) ? data[:conditions] : data
+    transform_performer_and_events(data, mapping_table) if data[:performer].present?
+    return data if va_conditions.blank? || va_conditions.first[1].blank? # conditions(new)
+
     if va_conditions.first[1][0].key?(:evaluate_on)
       transform_condition_data_conditions(va_conditions.first[1], mapping_table)
     else
       va_conditions.first[1].each do |set|
-        set.each do |i|
-          transform_condition_data_conditions(i[1], mapping_table)
-        end
+        set.each { |i| transform_condition_data_conditions(i[1], mapping_table) }
       end
     end
-    transform_performer_and_events(data, mapping_table) if data[:performer].present?
     data
   end
 

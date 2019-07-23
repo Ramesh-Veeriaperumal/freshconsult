@@ -34,6 +34,7 @@ class AccountDecorator < ApiDecorator
     ret_hash[:account_cancellation_requested] = record.account_cancellation_requested?
     ret_hash[:anonymous_account] = true if record.anonymous_account?
     ret_hash[:organisation_domain] = organisation_domain
+    ret_hash[:freshdesk_sso_enabled] = record.freshdesk_sso_enabled?
     ret_hash
   end
 
