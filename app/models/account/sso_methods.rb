@@ -8,6 +8,10 @@ class Account < ActiveRecord::Base
     HashWithIndifferentAccess.new({:login_url => "",:logout_url => "", :sso_type => ""})
   end
 
+  def freshdesk_sso_enabled?
+    sso_enabled && SsoUtil::FRESHDESK_SSO_TYPES.value?(sso_options[:sso_type])
+  end
+
   def oauth2_sso_enabled?
     self.sso_options.present? && self.sso_options[:sso_type] == SsoUtil::SSO_TYPES[:oauth2]
   end
