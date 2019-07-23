@@ -6,7 +6,7 @@ class Account < ActiveRecord::Base
 
   def launch_freshid_with_omnibar(freshid_org_v2_signup = nil)
     unless self.freshid_integration_enabled?
-      freshid_org_v2_signup = self.freshid_v2_signup_allowed? unless freshid_org_v2_signup.present?
+      freshid_org_v2_signup = self.freshid_v2_signup_allowed? if freshid_org_v2_signup.nil?
       freshid_org_v2_signup ? launch(:freshid_org_v2) : launch(:freshid)
     end
     launch(:freshworks_omnibar) if omnibar_signup_allowed?
