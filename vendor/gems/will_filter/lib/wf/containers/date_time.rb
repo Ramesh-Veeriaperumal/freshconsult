@@ -56,9 +56,9 @@ module Wf
         elsif value == date_time_filter_options_hash[:week]
           get_sql_condition(::Time.now.in_time_zone(agent_time_zone).beginning_of_week, ::Time.now.in_time_zone(agent_time_zone).end_of_week)
         elsif value == date_time_filter_options_hash[:last_week]
-          get_sql_condition(::Time.now.in_time_zone(agent_time_zone).beginning_of_day.ago(7.days), ::Time.now.in_time_zone(agent_time_zone).beginning_of_day)
+          get_sql_condition(::Time.now.in_time_zone(agent_time_zone).prev_week.beginning_of_week, ::Time.now.in_time_zone(agent_time_zone).prev_week.end_of_week)
         elsif value == date_time_filter_options_hash[:next_week]
-          get_sql_condition(::Time.now.in_time_zone(agent_time_zone).tomorrow.beginning_of_day, ::Time.now.in_time_zone(agent_time_zone).tomorrow.advance(days: 7).end_of_day)
+          get_sql_condition(::Time.now.in_time_zone(agent_time_zone).next_week.beginning_of_week, ::Time.now.in_time_zone(agent_time_zone).next_week.end_of_week)
         elsif value == date_time_filter_options_hash[:in_the_past]
           return [" #{condition.full_key} <= '#{::Time.now.in_time_zone(agent_time_zone)}' "]
         elsif value == date_time_filter_options_hash[:none]
