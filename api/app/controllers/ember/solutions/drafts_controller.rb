@@ -64,7 +64,7 @@ module Ember
         end
 
         def before_load_object
-          validate_language
+          validate_language(true)
         end
 
         def load_object

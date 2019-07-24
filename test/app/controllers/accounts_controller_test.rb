@@ -203,7 +203,7 @@ class AccountsControllerTest < ActionController::TestCase
 
   def test_signup_with_reserved_keyword_in_email_domain
     Freemail.stubs(:free?).returns(false)
-    user_email = "#{Faker::Lorem.word}@#{Account::RESERVED_DOMAINS.sample}.com"
+    user_email = "#{Faker::Lorem.word}#{rand(1_000)}@#{Account::RESERVED_DOMAINS.sample}.com"
     params = account_params_without_domain(user_email)
     get :new_signup_free, params
     subdomain = user_email.split('@')[1].split('.')[0]

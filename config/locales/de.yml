@@ -17638,7 +17638,7 @@ de:
         Bitte prüfen Sie die Regel und konfigurieren Sie sie neu, um einen
         Kommunikationsverlust zu vermeiden.
       webhook_failed: >-
-        "Die Ausführung der Regel für %{automation_type}, die Sie für das Senden
+        Die Ausführung der Regel für %{automation_type}, die Sie für das Senden
         von API-Anfragen an %{webhook_url} konfiguriert haben, ist nach mehreren
         Neuversuchen fehlgeschlagen.
       webhook_drop_limit: >-

@@ -386,17 +386,21 @@ Helpkit::Application.routes.draw do
             post '(/:language)', to: :create, constraints: { language: Regexp.union(Language.all_codes) }
             put '(/:language)', to: :update, constraints: { language: Regexp.union(Language.all_codes) }
           end
+
+          resource :drafts, controller: 'ember/solutions/drafts' do
+            member do
+              delete :destroy, path: '(/:language)', constraints: { language: Regexp.union(Language.all_codes) }
+              put :update, path: '(/:language)', constraints: { language: Regexp.union(Language.all_codes) }
+              put :autosave, path: '(/:language)/autosave', constraints: { language: Regexp.union(Language.all_codes) }
+              delete :delete_attachment, path: '(/:language)/:attachment_type/:attachment_id', constraints: { language: Regexp.union(Language.all_codes) }
+            end
+          end
         end
 
         resources :drafts, controller: 'ember/solutions/drafts' do
           collection do
             get :index, path: '(:language)', constraints: { language: Regexp.union(Language.all_codes) }
           end
-        end
-
-        resource :draft, path: 'articles/:article_id/draft', controller: 'ember/solutions/drafts', only: [:destroy, :update] do
-          put :autosave
-          delete :delete_attachment, path: ':attachment_type/:attachment_id'
         end
       end
     end

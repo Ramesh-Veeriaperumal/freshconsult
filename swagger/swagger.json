@@ -12377,13 +12377,16 @@
         }
       }
     },
-    "/solutions/articles/{article_id}/draft/autosave": {
+    "/solutions/articles/{article_id}/draft/{language}/autosave": {
       "put": {
         "tags": [
           "drafts"
         ],
         "summary": "Create or update draft content on autosave",
         "parameters": [
+          {
+            "$ref": "#/parameters/language"
+          },
           {
             "name": "article_id",
             "in": "path",
@@ -12419,13 +12422,16 @@
         }
       }
     },
-    "/solutions/articles/{article_id}/draft": {
+    "/solutions/articles/{article_id}/draft/{language}": {
       "put": {
         "tags": [
           "drafts"
         ],
         "summary": "Cancel the autosave session changes",
         "parameters": [
+          {
+            "$ref": "#/parameters/language"
+          },
           {
             "name": "article_id",
             "in": "path",
@@ -12467,6 +12473,9 @@
         "summary": "Delete the draft for a solution article",
         "parameters": [
           {
+            "$ref": "#/parameters/language"
+          },
+          {
             "name": "article_id",
             "in": "path",
             "type": "integer",
@@ -12484,13 +12493,16 @@
         }
       }
     },
-    "/solutions/articles/{article_id}/draft/{attachment_type}/{attachment_id}": {
+    "/solutions/articles/{article_id}/draft/{language}/{attachment_type}/{attachment_id}": {
       "delete": {
         "tags": [
           "drafts"
         ],
         "summary": "Delete the attachments from draft which are present in article",
         "parameters": [
+          {
+            "$ref": "#/parameters/language"
+          },
           {
             "name": "article_id",
             "in": "path",

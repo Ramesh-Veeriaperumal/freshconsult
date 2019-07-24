@@ -3,14 +3,14 @@ module SolutionConcern
 
   include Cache::Memcache::Account
 
-  def validate_language
+  def validate_language(allow_destory = false)
     if params.key?(:language)
       permitted_languages = Account.current.supported_languages
       permitted_languages += [Account.current.language] unless create?
       invalid_language = true
       if !insert_solution_action? && !Account.current.multilingual?
         render_request_error(:require_feature, 404, feature: 'MultilingualFeature')
-      elsif destroy?
+      elsif destroy? && !allow_destory
         log_and_render_404
       elsif permitted_languages.exclude?(params[:language])
         render_request_error(:language_not_allowed, 404, code: params[:language], list: permitted_languages.sort.join(', '))
