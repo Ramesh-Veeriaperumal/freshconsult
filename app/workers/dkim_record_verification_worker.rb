@@ -21,7 +21,6 @@ class DkimRecordVerificationWorker
 
   def perform(args)
     args.symbolize_keys!
-    Rails.logger.debug("In Verification worker :: #{args.inspect} #{'*'*100}")
     return if args[:account_id].blank? or args[:record_id].blank?
     execute_on_master(args[:account_id], args[:record_id]){
       return remove_others_redis_key(dkim_verify_key(@domain_category)) if @domain_category.dkim_records.count.zero?

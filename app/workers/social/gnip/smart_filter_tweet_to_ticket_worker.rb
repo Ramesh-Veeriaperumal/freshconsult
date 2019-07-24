@@ -13,7 +13,7 @@ class Social::Gnip::SmartFilterTweetToTicketWorker < BaseWorker
         gnip_msg.check_smart_filter(Account.current, args[:data])
       rescue Exception => e
         Rails.logger.debug "Exception in processing tweet using Smart filter"
-        Rails.logger.debug "#{e.class} #{e.message} #{e.backtrace}"
+        Rails.logger.debug "#{e.message} #{e.backtrace[0..10]}"
         Rails.logger.debug args[:tweet].inspect
         NewRelic::Agent.notice_error(e, 
           { :custom_params => { :description => "JSON Parse error in gnip feed using Smart filter",

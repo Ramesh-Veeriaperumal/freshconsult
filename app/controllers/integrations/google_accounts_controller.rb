@@ -42,7 +42,6 @@ class Integrations::GoogleAccountsController < Admin::AdminController
   end
 
   def update
-    Rails.logger.debug "Integrations::GoogleAccountController.update #{params.inspect}"
     begin
       params[:enable_integration] = "true"
       goog_acc = handle_contacts_import(params, nil, use_oauth2=true)
@@ -62,7 +61,6 @@ class Integrations::GoogleAccountsController < Admin::AdminController
   end
 
   def delete
-    Rails.logger.debug "Integrations::GoogleAccountsController.delete #{params.inspect}"
     begin
       remove_installed_app_config(params[:id].to_i)
       Integrations::GoogleAccount.destroy_all ["id=? and account_id=?", params[:id].to_i, current_account.id]
