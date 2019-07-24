@@ -1,7 +1,7 @@
 class Account < ActiveRecord::Base
 
   self.primary_key = :id
-
+  
   include Mobile::Actions::Account
   include Social::Ext::AccountMethods
   include Cache::Memcache::Account
@@ -11,7 +11,6 @@ class Account < ActiveRecord::Base
   include Redis::DisplayIdRedis
   include Redis::OthersRedis
   include Redis::PortalRedis
-  include Redis::AutomationRuleRedis
   include AccountConstants
   include Helpdesk::SharedOwnershipMigrationMethods
   include Onboarding::OnboardingRedisMethods
@@ -23,19 +22,19 @@ class Account < ActiveRecord::Base
   include Cache::Memcache::Admin::CustomData
 
   has_many_attachments
-
+  
   serialize :sso_options, Hash
 
   pod_filter "id"
-
+  
   is_a_launch_target
-
+  
   concerned_with :associations, :constants, :validations, :callbacks, :features, :solution_associations, :multilingual, :sso_methods, :presenter, :subscription_methods, :freshid_methods
 
   include CustomerDeprecationMethods
-
+  
   xss_sanitize  :only => [:name,:helpdesk_name], :plain_sanitizer => [:name,:helpdesk_name]
-
+  
   attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,
                   :logo_attributes,:fav_icon_attributes,:ticket_display_id,:google_domain ,
                   :language, :ssl_enabled, :whitelisted_ip_attributes, :account_additional_settings_attributes,
@@ -49,23 +48,23 @@ class Account < ActiveRecord::Base
   include Account::BackgroundFixtures
 
   scope :active_accounts,
-              :conditions => [" subscriptions.state != 'suspended' "],
+              :conditions => [" subscriptions.state != 'suspended' "], 
               :joins => [:subscription]
 
   scope :trial_accounts,
-              :conditions => [" subscriptions.state = 'trial' "],
+              :conditions => [" subscriptions.state = 'trial' "], 
               :joins => [:subscription]
 
   scope :free_accounts,
-              :conditions => [" subscriptions.state IN ('free','active') and subscriptions.amount = 0 "],
+              :conditions => [" subscriptions.state IN ('free','active') and subscriptions.amount = 0 "], 
               :joins => [:subscription]
 
   scope :paid_accounts,
-              :conditions => [" subscriptions.state = 'active' and subscriptions.amount > 0 "],
+              :conditions => [" subscriptions.state = 'active' and subscriptions.amount > 0 "], 
               :joins => [:subscription]
 
   scope :premium_accounts, {:conditions => {:premium => true}}
-
+              
   scope :non_premium_accounts, {:conditions => {:premium => false}}
   # Alias so that any dynamic reference to full_time_agents won't fail.
   alias :full_time_agents :full_time_support_agents
@@ -74,7 +73,7 @@ class Account < ActiveRecord::Base
     'agent_limit' => Proc.new { |a| a.full_time_support_agents.count },
     'field_agent_limit' => Proc.new { |a| a.field_agents_count }
   }
-
+  
   Limits.each do |name, meth|
     define_method("reached_#{name}?") do
       return false unless self.subscription
@@ -87,7 +86,7 @@ class Account < ActiveRecord::Base
     PLANS_AND_FEATURES.each_pair do |k, v|
       feature k, :requires => ( v[:inherits] || [] )
       v[:features].each { |f_n| feature f_n, :requires => [] } unless v[:features].nil?
-      (SELECTABLE_FEATURES.keys + TEMPORARY_FEATURES.keys +
+      (SELECTABLE_FEATURES.keys + TEMPORARY_FEATURES.keys + 
         ADMIN_CUSTOMER_PORTAL_FEATURES.keys).each { |f_n| feature f_n }
     end
   end
@@ -135,7 +134,7 @@ class Account < ActiveRecord::Base
       ticket_fields_from_cache.select{|x| x.default == false && (x.field_type == 'nested_field' || x.field_type == 'custom_dropdown')}
     end
   end
-
+  
   # Feature check to prevent data from being sent to v1 conditionally
   # V1 has been completely removed in production
   def esv1_enabled?
@@ -172,7 +171,7 @@ class Account < ActiveRecord::Base
   def freshfone_active?
     features?(:freshfone) && freshfone_numbers.present? && !falcon_ui_enabled?(User.current)
   end
-
+  
   def es_multilang_soln?
     features_included?(:es_multilang_solutions) || launched?(:es_multilang_solutions)
   end
@@ -268,7 +267,7 @@ class Account < ActiveRecord::Base
 
     protected :fetch_all_active_accounts
   end
-
+  
   def installed_apps_hash
     installed_apps = self.installed_applications.includes(:application).all
     installed_apps.inject({}) do |result,installed_app|
@@ -276,9 +275,9 @@ class Account < ActiveRecord::Base
      result
    end
   end
-
+  
   def can_add_agents?(agent_count)
-    subscription.agent_limit.nil? or
+    subscription.agent_limit.nil? or 
       (subscription.agent_limit >= (agent_count + full_time_support_agents.count))
   end
 
@@ -287,7 +286,7 @@ class Account < ActiveRecord::Base
 
     agents_from_cache.find_all { |a| a.agent_type == 1 && a.occasional == false && a.user.deleted == false }.count >= agent_limit
   end
-
+  
   def get_max_display_id
     ticket_dis_id = self.ticket_display_id
     max_dis_id = self.tickets.maximum('display_id')
@@ -299,18 +298,18 @@ class Account < ActiveRecord::Base
 
   def max_display_id
     return get_max_display_id unless self.features?(:redis_display_id)
-
+    
     key = TICKET_DISPLAY_ID % { :account_id => self.id }
     get_display_id_redis_key(key).to_i
   end
 
-
+  
   def account_managers
     technicians.select do |user|
       user.privilege?(:manage_account)
     end
   end
-
+  
   def needs_payment_info?
     if new_record?
       AppConfig['require_payment_info_for_trials'] && @plan && @plan.amount.to_f + @plan.setup_amount.to_f > 0
@@ -318,13 +317,13 @@ class Account < ActiveRecord::Base
       self.subscription.needs_payment_info?
     end
   end
-
+  
   # Does the account qualify for a particular subscription plan
   # based on the plan's limits
   def qualifies_for?(plan)
     Subscription::Limits.keys.collect {|rule| rule.call(self, plan) }.all?
   end
-
+  
   def active?
     self.subscription && !self.subscription.suspended?
   end
@@ -353,16 +352,16 @@ class Account < ActiveRecord::Base
   def plan_name
     subscription.subscription_plan.canon_name
   end
-
+  
   def domain
     @domain ||= self.full_domain.blank? ? '' : self.full_domain.split('.').first
   end
-
+  
   def domain=(domain)
     @domain = domain
     self.full_domain = "#{domain}.#{AppConfig['base_domain'][Rails.env]}"
   end
-
+  
   def default_friendly_email
     primary_email_config.active? ? primary_email_config.friendly_email : "support@#{full_domain}"
   end
@@ -372,24 +371,24 @@ class Account < ActiveRecord::Base
   end
 
   def default_friendly_email_personalize(user_name)
-    primary_email_config.active? ?
+    primary_email_config.active? ? 
       primary_email_config.friendly_email_personalize(user_name) :
       "#{primary_email_config.safe_send(:format_name, user_name)} <support@#{full_domain}>"
   end
-
+  
   def default_email
     primary_email_config.reply_email
   end
-
+  
   def to_s
     name.blank? ? full_domain : "#{name} (#{full_domain})"
   end
-
+  
   #Will be used as :host in emails
   def host
     main_portal_from_cache.portal_url.blank? ? full_domain : main_portal_from_cache.portal_url
   end
-
+  
   def full_url
     "#{url_protocol}://#{host}"
   end
@@ -397,44 +396,44 @@ class Account < ActiveRecord::Base
   def url_protocol
     self.ssl_enabled? ? 'https' : 'http'
   end
-
+  
   #Helpdesk hack starts here
   def reply_emails
     to_ret = (email_configs.collect { |ec| [ec.id, ec.friendly_email] }).sort
-    to_ret.empty? ? [[ nil, "support@#{full_domain}" ]] : to_ret #to_email case will come, when none of the emails are active..
+    to_ret.empty? ? [[ nil, "support@#{full_domain}" ]] : to_ret #to_email case will come, when none of the emails are active.. 
   end
   #HD hack ends..
 
   #Helpdesk hack starts here
   def reply_personalize_emails(user_name)
     to_ret = (email_configs.collect { |ec| [ec.id, ec.friendly_email_personalize(user_name)] }).sort
-    to_ret.empty? ? [[ nil, "support@#{full_domain}" ]] : to_ret #to_email case will come, when none of the emails are active..
+    to_ret.empty? ? [[ nil, "support@#{full_domain}" ]] : to_ret #to_email case will come, when none of the emails are active.. 
   end
   #HD hack ends..
-
+  
   def support_emails
     to_ret = email_configs.collect { |ec| ec.reply_email }
-    to_ret.empty? ? [ "support@#{full_domain}" ] : to_ret #to_email case will come, when none of the emails are active..
+    to_ret.empty? ? [ "support@#{full_domain}" ] : to_ret #to_email case will come, when none of the emails are active.. 
   end
 
   def parsed_support_emails
     to_ret = email_configs.collect { |ec| trim_trailing_characters(parse_email_text(ec.reply_email)[:email]) }
-    to_ret.empty? ? [ "support@#{full_domain}" ] : to_ret #to_email case will come, when none of the emails are active..
+    to_ret.empty? ? [ "support@#{full_domain}" ] : to_ret #to_email case will come, when none of the emails are active.. 
   end
 
   def support_emails_in_downcase
     to_ret = email_configs.collect(&:reply_email_in_downcase)
-    to_ret.empty? ? [ "support@#{full_domain}" ] : to_ret
+    to_ret.empty? ? [ "support@#{full_domain}" ] : to_ret 
   end
 
   def portal_name #by Shan temp.
     main_portal.name
   end
-
+  
    def language
     main_portal.language
    end
-
+  
   #Sentient things start here, can move to lib some time later - Shan
   def make_current
     Thread.current[:account] = self
@@ -449,12 +448,12 @@ class Account < ActiveRecord::Base
       p_features[:features].each { |f_n| features.safe_send(f_n).create } unless p_features[:features].nil?
     end
   end
-
+  
   def remove_features_of(s_plan)
     p_features = PLANS_AND_FEATURES[s_plan]
     unless p_features.nil?
       p_features[:inherits].each { |p_n| remove_features_of(p_n) } unless p_features[:inherits].nil?
-
+      
       p_features[:features].each { |f_n| features.safe_send(f_n).delete } unless p_features[:features].nil?
     end
   end
@@ -466,11 +465,11 @@ class Account < ActiveRecord::Base
   def remove_feature(feature)
     features.safe_send(feature).destroy
   end
-
+  
   def ticket_type_values
     ticket_fields_without_choices.type_field.first.level1_picklist_values
   end
-
+  
   def ticket_status_values
     ticket_statuses.visible
   end
@@ -483,16 +482,16 @@ class Account < ActiveRecord::Base
     @multiple_portals = portals.count > 1 if @multiple_portals.nil?
     @multiple_portals
   end
-
+  
   def kbase_email
     "kbase@#{full_domain}"
   end
-
+  
   def has_credit_card?
     !subscription.card_number.nil?
   end
 
-  #Totally removed
+  #Totally removed 
   def google_account?
     !google_domain.blank?
   end
@@ -500,7 +499,7 @@ class Account < ActiveRecord::Base
   def date_type(format)
     DATEFORMATS_TYPES[DATEFORMATS[self.account_additional_settings.date_format]][format]
   end
-
+  
   def default_form
     ticket_field_def
   end
@@ -565,7 +564,7 @@ class Account < ActiveRecord::Base
     self.features?(:facebook) || (self.basic_facebook_enabled? &&
       self.facebook_pages.count == 0)
   end
-
+  
   def advanced_twitter?
     features? :twitter
   end
@@ -591,7 +590,7 @@ class Account < ActiveRecord::Base
         signup_params_json = get_others_redis_key(key)
         return 0 unless signup_params_json
         signup_params = JSON.parse(signup_params_json)
-        signup_params["api_response"]["status"]
+        signup_params["api_response"]["status"]   
       rescue Exception => e
         Rails.logger.debug "Exception caught #{e}"
         0
@@ -632,7 +631,7 @@ class Account < ActiveRecord::Base
 
   def schedule_account_activation_email(admin_user_id)
     # Storing job id in redis key which will be used update_domain to delete job,
-    # when user completes the signup.
+    # when user completes the signup. 
     set_others_redis_key(account_activation_job_status_key,
       SendSignupActivationMail.perform_in(10.minutes.from_now,{ :user_id => admin_user_id, :account_id => self.id }))
   end
@@ -664,7 +663,7 @@ class Account < ActiveRecord::Base
   # update domain name at Portal, Forum & Activities and support email
 
   def update_default_domain_and_email_config(new_domain_name, support_email_name = "support")
-    self.transaction do
+    self.transaction do 
       update_account_and_main_portal_domain(new_domain_name)
       update_default_forum_category_name(new_domain_name)
       update_primary_email_config(support_email_name)
@@ -739,11 +738,11 @@ class Account < ActiveRecord::Base
   def account_cancel_requested?
     redis_key_exists?(account_cancel_request_job_key)
   end
-
+  
   def account_cancellation_requested?
     redis_key_exists?(account_cancellation_request_job_key)
   end
-
+  
   def account_cancellation_request_job_key
     ACCOUNT_CANCELLATION_REQUEST_JOB_ID % {:account_id => self.id}
   end
@@ -793,7 +792,7 @@ class Account < ActiveRecord::Base
     if agent_types.length == 0
       AgentType.create_support_agent_type(self)
       return self.agent_types.all
-    end
+    end    
     agent_types
   end
 
@@ -802,7 +801,7 @@ class Account < ActiveRecord::Base
     if group_types.length == 0
       GroupType.populate_default_group_types(self)
       return self.group_types.all
-    end
+    end    
     group_types
   end
 
@@ -909,23 +908,19 @@ class Account < ActiveRecord::Base
     Rails.logger.info ":::::: Sitemap is deleted (redis, cache & S3) for account #{id} ::::::"
   end
 
-  def thank_you_configured_in_automation_rules?
-    get_members_from_redis_set(automation_rules_with_thank_you_configured).present?
-  end
-
   protected
-
-    def external_url_is_valid?(url)
-      uri = URI.parse(url)
-      response = Net::HTTP.start(uri.host, uri.port) {|http| http.head(uri.path)}
-      response.is_a?(Net::HTTPSuccess) || response.is_a?(Net::HTTPRedirection)
+  
+    def external_url_is_valid?(url) 
+      uri = URI.parse(url) 
+      response = Net::HTTP.start(uri.host, uri.port) {|http| http.head(uri.path)} 
+      response.is_a?(Net::HTTPSuccess) || response.is_a?(Net::HTTPRedirection) 
     rescue  ArgumentError
       false
     rescue Errno::ECONNREFUSED
       false
     rescue Errno::ETIMEDOUT
       false
-    end
+    end 
 
     def generate_secret_token
       Digest::MD5.hexdigest(Helpdesk::SHARED_SECRET + self.full_domain + Time.now.to_f.to_s).downcase
@@ -948,7 +943,7 @@ class Account < ActiveRecord::Base
         }
       }) if self.email_signup?
     end
-
+    
     def update_default_forum_category_name(new_domain_name)
       forum_category = forum_categories.first
       forum_category.name = "#{new_domain_name} Forums"
@@ -985,5 +980,5 @@ class Account < ActiveRecord::Base
                                       expires: FILE_DOWNLOAD_URL_EXPIRY_TIME,
                                       secure: true)
       end
-    end     
+    end
 end

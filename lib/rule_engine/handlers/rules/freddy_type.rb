@@ -33,7 +33,6 @@ module RuleEngine
         def evaluate_condition(evaluate_on)
           note = evaluate_on.thank_you_note
           response = note.schema_less_note.thank_you_note if note.schema_less_note.thank_you_note.present?
-          Rails.logger.info "thank_you condition eval response - nil A - #{Account.current.id}" if response.blank?
           evaluate(response)
         end
     end

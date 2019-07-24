@@ -73,43 +73,6 @@ class DetectThankYouNoteWorkerTest < ActionView::TestCase
     HTTParty.unstub(:post)
   end
 
-  def test_thank_you_note_worker_for_note_created_earlier
-    WebMock.allow_net_connect!
-    @ticket = create_ticket
-    note = create_note(note_params.merge!(created_at: 2.hours.ago))
-    user = add_new_user(@account)
-    note.user_id = user.id
-    note.save!
-    args = { ticket_id: @ticket.id, note_id: note.id }
-    response_stub = ResponseStub.new({ 'reopen' => 0, 'confidence' => 99.77472623583164 }.to_json, 200)
-    HTTParty.stubs(:post).returns(response_stub)
-    ::Freddy::DetectThankYouNoteWorker.new.perform(args) if detect_thank_you_note?(note) && recently_created_note?(note)
-    assert_equal 0, ::Freddy::DetectThankYouNoteWorker.jobs.size
-    WebMock.disable_net_connect!
-  ensure
-    Account.unstub(:current)
-    HTTParty.unstub(:post)
-  end
-
-  def test_thank_you_note_worker_for_note_empty_body
-    WebMock.allow_net_connect!
-    @ticket = create_ticket
-    note_params[:body] = ''
-    note = create_note(note_params)
-    user = add_new_user(@account)
-    note.user_id = user.id
-    note.save!
-    args = { ticket_id: @ticket.id, note_id: note.id }
-    response_stub = ResponseStub.new({ 'reopen' => 0, 'confidence' => 99.77472623583164 }.to_json, 200)
-    HTTParty.stubs(:post).returns(response_stub)
-    ::Freddy::DetectThankYouNoteWorker.new.perform(args) if detect_thank_you_note?(note) && recently_created_note?(note)
-    assert_equal 0, ::Freddy::DetectThankYouNoteWorker.jobs.size
-    WebMock.disable_net_connect!
-  ensure
-    Account.unstub(:current)
-    HTTParty.unstub(:post)
-  end
-
   private
 
     def create_ticket
@@ -137,11 +100,7 @@ class DetectThankYouNoteWorkerTest < ActionView::TestCase
       }
     end
 
-    def detect_thank_you_note?(note)
-      !BLACKLISTED_THANK_YOU_DETECTOR_NOTE_SOURCES.include?(note.source) && note.user.customer?
-    end
-
-    def recently_created_note?(note)
-      Time.now - note.created_at < 1.hour
+    def detect_thank_you_note?(note)      
+      !BLACKLISTED_THANK_YOU_DETECTOR_NOTE_SOURCES.include?(note.source) && note.user.customer?      
     end
 end
