@@ -1,3 +1,39 @@
+<div class="config-wrapper">
+  <div class="config-block">
+  <h3 class="lead"><%= t('ticket_field.helpcard.skip_mandatory_field.title') %></h3>
+  <% if current_user.privilege?(:admin_tasks) %>
+    <input rel="toggle" type="checkbox" id="skip_mandatory" name="skip_mandatory_toggle" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>"
+    <% if current_account.account_additional_settings.additional_settings[:skip_mandatory_checks]%> checked="true" <%end%> />
+    <script type="text/javascript">
+      function update_preferences(status_url, reqType, dataObject, callback){
+          jQuery.ajax({
+              url: status_url,
+              data: dataObject,
+              dataType: 'application/json',
+              type: reqType,
+              success:function(data) {
+                  if(typeof(callback) === 'function') {
+                      callback();
+                  }
+              }
+          });
+      }
+
+      jQuery("#skip_mandatory").on('change', function() {
+        if (this.checked) {
+          update_preferences("<%= enable_skip_mandatory_path%>", "post", {});
+        }
+        else {
+          update_preferences("<%= disable_skip_mandatory_path%>", "post", {});
+        }
+      });
+
+    </script>
+  <% end %>
+  </div>
+  <p><%= t('ticket_field.helpcard.skip_mandatory_field.desc') %></p>
+</div>
+
  <h3 class="lead"><%=t('ticket_field.helpcard.title1')%></h3>
  <p><%= t('ticket_field.helpcard.info_1') %></p> 
  <h3 class="lead"><%=t('ticket_field.helpcard.title2')%></h3>
