@@ -124,7 +124,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def source_additional_info_hash
     source_info = {}
-    source_info[:twitter] = tweet_info_hash if tweet.present?
+    source_info = social_source_additional_info(source_info)
+    source_info[:email] = email_source_info(schema_less_ticket.header_info) if email_ticket?
     source_info.presence
   end
 
