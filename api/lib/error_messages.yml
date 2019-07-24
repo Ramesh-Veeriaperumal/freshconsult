@@ -53,6 +53,7 @@ api_error_messages:
   upload_jpg_or_png_file: "Invalid file type(%{current_extension}). Please upload a jpg or png file"
   cannot_deactivate: "Active field can only be set to true"
   cant_add_primary_email: "Cannot add %{email} to other_emails since it is the primary email"
+  cannot_delete_primary_email: "Cannot delete a primary email"
   invalid_encoding: "Url query string received is %{invalid_query_string}. It should be properly encoded."
   missing_field: "Mandatory attribute missing"
   access_denied: "You are not authorized to perform this action."
