@@ -28,8 +28,8 @@ class Account < ActiveRecord::Base
     :addon_based_billing, :kbase_mint, :text_custom_fields_in_etl, :email_spoof_check,
     :disable_email_spoof_check, :onboarding_i18n, :webhook_blacklist_ip, :recalculate_daypass, :sandbox_single_branch,
     :fb_page_api_improvement, :attachment_redirect_expiry, :solutions_agent_portal, :solutions_agent_metrics, :fuzzy_search,
-    :delete_trash_daily, :ticket_type_filter_in_trends_widget, :automation_revamp, :prevent_fwd_email_ticket_create, 
-    :enable_wildcard_ticket_create, :check_wc_fwd, :requester_privilege, :sso_unique_session, :fsm_landing_page,
+    :delete_trash_daily, :ticket_type_filter_in_trends_widget, :automation_revamp, :prevent_wc_ticket_create, 
+    :allow_wildcard_ticket_create, :requester_privilege, :sso_unique_session, :fsm_landing_page,
     :scheduling_fsm_dashboard, :enable_customer_journey, :csat_translations
   ].freeze
 

@@ -2736,6 +2736,8 @@ ActiveRecord::Schema.define(:version => 20190628073857) do
   add_index "helpdesk_time_sheets", ["account_id"], :name => "index_time_sheets_on_account_id_and_ticket_id"
   add_index "helpdesk_time_sheets", ["user_id"], :name => "index_time_sheets_on_user_id"
   add_index "helpdesk_time_sheets", ["workable_type", "workable_id"], :name => "index_helpdesk_sheets_on_workable"
+  add_index 'helpdesk_time_sheets', ['account_id', 'executed_at'], :name => 'index_helpdesk_time_sheets_on_account_id_executed_at'
+  add_index 'helpdesk_time_sheets', ['account_id', 'user_id', 'executed_at'], :name => 'index_helpdesk_time_sheets_on_account_id_user_id_executed_at'
 
   create_table "imap_mailboxes", :force => true do |t|
     t.integer  "email_config_id",    :limit => 8

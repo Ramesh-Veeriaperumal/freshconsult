@@ -1,6 +1,7 @@
 # encoding: utf-8
 module SsoUtil
   SSO_TYPES = { saml: 'saml', simple_sso: 'simple', oauth2: 'oauth2', freshid_saml: 'freshid_saml'}.freeze
+  FRESHDESK_SSO_TYPES = SSO_TYPES.slice(:saml, :simple_sso).freeze
   SAML_NAME_ID_FORMAT = 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress'.freeze
   SAML_NAME_ID_UNSPECIFIED = 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified'.freeze
   SSO_ALLOWED_IN_SECS = 1800
