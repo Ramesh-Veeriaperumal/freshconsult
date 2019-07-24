@@ -1,7 +1,7 @@
 class Solutions::ArticleDecorator < ApiDecorator
   delegate :title, :description, :desc_un_html, :user_id, :status, :seo_data, :language_id,
            :parent, :parent_id, :draft, :attachments, :cloud_files, :article_ticket, :modified_at,
-           :modified_by, :id, :to_param, :tags, :voters, :thumbs_up, :thumbs_down, :hits, :tickets, to: :record
+           :modified_by, :id, :to_param, :tags, :voters, :thumbs_up, :thumbs_down, :hits, :tickets, :outdated, to: :record
 
   SEARCH_CONTEXTS_WITHOUT_DESCRIPTION = [:agent_insert_solution, :filtered_solution_search].freeze
 
@@ -64,6 +64,7 @@ class Solutions::ArticleDecorator < ApiDecorator
       ret_hash[:draft_present] = @draft.present?
       ret_hash.merge!(draft_private_hash) if @draft.present?
       ret_hash.merge!(last_modified(ret_hash)) if @is_list_page
+      ret_hash[:outdated] = outdated if Account.current.multilingual?
     end
     ret_hash
   end

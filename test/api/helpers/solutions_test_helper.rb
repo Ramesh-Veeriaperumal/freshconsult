@@ -147,6 +147,7 @@ module SolutionsTestHelper
     ret_hash[:path] = expected_output[:path] || article.to_param
     ret_hash[:modified_at] = %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     ret_hash[:modified_by] = article.modified_by
+    ret_hash[:outdated] = article.outdated if @account.multilingual?
     ret_hash[:visibility] = { user.id => article.parent.visible?(user) || false } if user
     ret_hash[:folder_visibility] = article.solution_folder_meta.visibility
     ret_hash[:language_id] = article.language_id

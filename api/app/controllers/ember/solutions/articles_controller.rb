@@ -16,7 +16,7 @@ module Ember
       before_filter :filter_ids, only: [:index]
       before_filter :modify_and_cleanup_language_param, only: [:article_content]
       before_filter :validate_language, only: [:filter, :bulk_update, :untranslated_articles, :article_content, :index]
-      before_filter :check_filter_feature, only: [:filter]
+      before_filter :check_filter_feature, :modify_and_cleanup_status_param, only: [:filter]
       before_filter :validate_filter, only: [:article_content, :filter, :untranslated_articles]
       before_filter :sanitize_filter_data, :reconstruct_params, only: [:filter, :untranslated_articles]
       before_filter :validate_bulk_update_article_params, only: [:bulk_update]
@@ -26,6 +26,7 @@ module Ember
       decorate_views(decorate_object: [:article_content, :votes])
 
       MAX_IDS_COUNT = 10
+      OUTDATED = 'outdated'.freeze
 
       def index
         @user = User.find_by_id(params[:user_id]) if params[:user_id].present?
@@ -138,6 +139,14 @@ module Ember
           sanitize_hash_values filter_data
         end
 
+        def sanitize_hash_values(filter_data)
+          filter_data.each do |key, value|
+            next if [true, false].include?(value)
+
+            filter_data[key] = sanitize_value(value)
+          end
+        end
+
         def properties_and_term_filters
           @items=@items.all # to avoid n+1 queries
           filtered_articles = if params[:term].present?
@@ -212,6 +221,13 @@ module Ember
           log_and_render_404 && return unless language
           params[:language] = language.code
           params.delete(:language_id)
+        end
+
+        def modify_and_cleanup_status_param
+          return true unless params[:status] == OUTDATED
+
+          params[:outdated] = true
+          params.delete(:status)
         end
 
         # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.

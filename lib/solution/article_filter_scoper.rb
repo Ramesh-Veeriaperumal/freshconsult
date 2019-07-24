@@ -17,6 +17,10 @@ module Solution::ArticleFilterScoper
       end
     }
 
+    scope :by_outdated, lambda { |value|
+      where(outdated: value)
+    }
+
     scope :by_category, lambda { |category_ids|
       {
         :joins => %(AND solution_articles.account_id = solution_article_meta.account_id

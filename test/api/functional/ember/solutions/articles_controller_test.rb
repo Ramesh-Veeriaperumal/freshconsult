@@ -1701,6 +1701,21 @@ module Ember
         Account.any_instance.unstub(:all_portal_language_objects)
       end
 
+      def test_article_filters_by_status_outdated_with_sec_lang
+        languages = @account.supported_languages + ['primary']
+        language  = @account.supported_languages.first
+        article_meta = create_article(folder_meta_id: @@folder_meta.id, lang_codes: languages)
+        article = article_meta.safe_send("#{language}_article")
+        article.outdated = true
+        article.save
+        Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code(language)])
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, language: language, status: 'outdated' }, false)
+        assert_response 200
+        pattern = [private_api_solution_article_pattern(article, { action: :filter }, true, nil)]
+        match_json(pattern)
+        Account.any_instance.unstub(:all_portal_language_objects)
+      end
+
       def test_article_filters_by_author_lastmodified_with_sec_lang
         languages = @account.supported_languages + ['primary']
         language  = @account.supported_languages.first

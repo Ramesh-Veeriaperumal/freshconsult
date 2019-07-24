@@ -26,7 +26,7 @@ module SolutionConstants
   CREATE_ARTICLE_FIELDS = { all: ARTICLE_FIELDS }.freeze
   UPDATE_ARTICLE_FIELDS = { all: ARTICLE_FIELDS | ['outdated'], admin_tasks: ['agent_id'] }.freeze
 
-  FILTER_ATTRIBUTES = %w[author status created_at last_modified tags category folder].freeze
+  FILTER_ATTRIBUTES = %w[author status outdated created_at last_modified tags category folder].freeze
   FILTER_FIELDS = %w[portal_id language term page per_page].freeze | FILTER_ATTRIBUTES
   ADVANCED_FILTER_FIELDS = %w[created_at last_modified tags category folder].freeze
 
