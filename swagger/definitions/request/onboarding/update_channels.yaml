@@ -1,13 +1,6 @@
 type: object
 description: Channels Array
 properties:
-  channels:
-    type: array
-    items:
-      type: string
-      enum:
-        -
-          - phone
-          - forums
-          - live_chat
-          - social
+  channel:
+    type: string
+    description: 'Channel type to be enabled'

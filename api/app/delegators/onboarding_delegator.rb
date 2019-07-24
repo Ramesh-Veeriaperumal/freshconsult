@@ -1,11 +1,16 @@
 class OnboardingDelegator < BaseDelegator
+  include OnboardingConstants
+
   validate :validate_domain_name, if: -> { @domain }
   validate :validate_trial_account, :validate_email_limit_for_account, on: :anonymous_to_trial
+  validate :validate_freshchat_account_availability, on: :update_channel_config, if: -> { @channel == FRESHCHAT }
+  validate :validate_freshcaller_account_availability, on: :update_channel_config, if: -> { @channel == FRESHCALLER }
 
   def initialize(record, options = {})
     super(record, options)
     @domain = options[:new_domain]
     @email = options[:email]
+    @channel = options[:channel]
   end
 
   def validate_domain_name
@@ -21,6 +26,20 @@ class OnboardingDelegator < BaseDelegator
     if accounts_count >= Signup::MAX_ACCOUNTS_COUNT
       errors[:anonymous_to_trial] << :email_limit_reached
       error_options[:anonymous_to_trial] = { limit: Signup::MAX_ACCOUNTS_COUNT }
+    end
+  end
+
+  def validate_freshchat_account_availability
+    if Account.current.freshchat_account.present?
+      errors[:channel] << :channel_already_present
+      error_options[:channel] = { channel_name: 'Freshchat' }
+    end
+  end
+
+  def validate_freshcaller_account_availability
+    if Account.current.freshcaller_account.present?
+      errors[:channel] << :channel_already_present
+      error_options[:channel] = { channel_name: 'Freshcaller' }
     end
   end
 end

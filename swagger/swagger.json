@@ -6792,6 +6792,12 @@
             "schema": {
               "$ref": "#/definitions/bad_request_error"
             }
+          },
+          "409": {
+            "description": "Resource conflict Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
           }
         }
       }
@@ -15250,19 +15256,9 @@
       "type": "object",
       "description": "Channels Array",
       "properties": {
-        "channels": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "enum": [
-              [
-                "phone",
-                "forums",
-                "live_chat",
-                "social"
-              ]
-            ]
-          }
+        "channel": {
+          "type": "string",
+          "description": "Channel type to be enabled"
         }
       }
     },

@@ -2,11 +2,12 @@ module Ember
   module Admin
     class OnboardingController < ApiApplicationController
       include HelperConcern
+      include ::Freshcaller::Util
+      include ::Freshchat::Util
       include ::Onboarding::OnboardingHelperMethods
 
       before_filter :validate_body_params, only: [:update_activation_email, :update_channel_config, :test_email_forwarding, :anonymous_to_trial]
       before_filter :set_user_email_config, only: [:update_activation_email]
-      before_filter :check_onboarding_finished, only: [:update_channel_config]
       before_filter :check_forward_verification_email_ticket, only: [:forward_email_confirmation]
       before_filter :construct_domain_name, only: [:customize_domain, :validate_domain_name]
       after_filter :unmark_support_email, only: [:customize_domain]
@@ -26,9 +27,12 @@ module Ember
       end
 
       def update_channel_config
-        apply_account_channel_config
-        disable_disablable_channels
-        complete_admin_onboarding
+        return unless validate_delegator(nil, cname_params)
+
+        channel = params[cname][:channel]
+        @channel_update_response = safe_send("enable_#{channel}_channel_feature")
+        return render_response_error if render_error?
+
         head 204
       end
 
@@ -93,24 +97,63 @@ module Ember
 
       private
 
-        def check_onboarding_finished
-          head 404 unless current_account.onboarding_pending?
+        def enable_forums_channel_feature
+          current_account.enable_forums_channel
         end
 
-        def apply_account_channel_config
-          channels_config = params[cname][:channels]
+        def enable_social_channel_feature
+          current_account.enable_social_channel
+        end
 
-          channels_config.each do |channel|
-            current_account.safe_send("enable_#{channel}_channel")
+        def enable_freshchat_channel_feature
+          enable_freshchat_feature
+        end
+
+        def enable_phone_channel_feature
+          enable_freshcaller_feature
+        end
+
+        def render_error?
+          if OnboardingConstants::ACCOUNT_CREATION_CHANNELS.include?(params[cname][:channel])
+            case params[cname][:channel].to_sym
+            when :freshchat
+              @channel_update_response.code != 200 || @channel_update_response.try(:[], 'errorCode').present?
+            when :phone
+              @channel_update_response.code != 200 || @channel_update_response['errors'].present?
+            end
           end
         end
 
-        def disable_disablable_channels
-          unselected_channels = (OnboardingConstants::CHANNELS - params[cname][:channels])
-          disableable_channels = (unselected_channels & OnboardingConstants::DISABLEABLE_CHANNELS)
-          disableable_channels.each do |channel|
-            current_account.safe_send("disable_#{channel}_channel")
+        def render_response_error
+          case params[cname][:channel].to_sym
+          when :freshchat
+            render_request_error(freshchat_error_code(@channel_update_response['errorCode']), 409)
+          when :phone
+            render_request_error(freshcaller_error_code(@channel_update_response['errors']), 409)
           end
+        end
+
+        def freshchat_error_code(error)
+          error_code = :fchat_link_error
+          return error_code if error.blank?
+          case error
+          when OnboardingConstants::FRESHCHAT_ALREADY_LOGIN
+            error_code = :fchat_account_logged_in
+          when OnboardingConstants::FRESHCHAT_ACCOUNT_PRESENT
+            error_code = :fchat_account_already_presennt
+          end
+          error_code
+        end
+
+        def freshcaller_error_code(error)
+          error_code = :fcaller_link_error
+          return error_code if error.blank?
+          if error['spam_email']
+            error_code = :fcaller_spam_email
+          elsif error['domain_taken']
+            error_code = :fcaller_domain_taken
+          end
+          error_code
         end
 
         def constants_class

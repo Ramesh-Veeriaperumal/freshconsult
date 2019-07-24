@@ -2,6 +2,7 @@ class Ember::TrialWidgetController < ApiApplicationController
   include Helpdesk::DashboardHelper
   include ActionView::Helpers::TextHelper
   include HelperConcern
+  include Onboarding::OnboardingHelperMethods
 
   skip_before_filter :load_object
 
@@ -25,6 +26,7 @@ class Ember::TrialWidgetController < ApiApplicationController
     step_name = params[cname][:step]
     if current_account.respond_to?("#{step_name}_setup?") && !current_account.send("#{step_name}_setup?")
       current_account.try("mark_#{step_name}_setup_and_save")
+      complete_admin_onboarding if step_name == TrialWidgetConstants::SUPPORT_CHANNEL_STEP
     end
     head 204
   end

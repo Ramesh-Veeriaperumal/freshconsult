@@ -85,7 +85,8 @@ class AccountDecorator < ApiDecorator
         include_survey_manually: include_survey_manually?,
         show_on_boarding: record.account_onboarding_pending?,
         announcement_bucket: acct_additional_settings.additional_settings[:announcement_bucket].to_s,
-        freshmarketer_linked: acct_additional_settings.freshmarketer_linked?
+        freshmarketer_linked: acct_additional_settings.freshmarketer_linked?,
+        freshcaller_linked: record.freshcaller_account.present?
       }
     end
 
