@@ -68,7 +68,11 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def requester_twitter_id
-    user.present? ? user.twitter_id : nil
+    user.try(:twitter_id)
+  end
+
+  def requester_fb_id
+    user.try(:fb_profile_id)
   end
 
   def source_additional_info_hash

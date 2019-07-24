@@ -174,21 +174,36 @@ module TicketsTestHelper
   def source_additional_info_hash(ticket)
     source_info = {}
     source_info[:email] = email_source_info(ticket.schema_less_ticket.header_info) if email_ticket?(ticket.source)
-    tweet = ticket.tweet
+    tweet = ticket.try(:tweet)
+    fb_post = ticket.try(:fb_post)
 
-    if tweet.present?
+    if tweet && ticket.source == TicketConstants::SOURCE_KEYS_BY_NAME['twitter_source']
       twitter_handle = tweet.twitter_handle
-      source_info[:twitter] = {
-        tweet_id: tweet.tweet_id.to_s,
-        type: tweet.tweet_type,
-        support_handle_id: twitter_handle.present? ? twitter_handle.twitter_user_id.to_s : nil,
-        support_screen_name:  twitter_handle.present? ? twitter_handle.screen_name : nil,
-        requester_screen_name: ticket.requester.twitter_id,
-        twitter_handle_id: twitter_handle.present? ? twitter_handle.id : nil,
-        stream_id: tweet.stream_id
+      source_info = {
+        twitter: {
+          tweet_id: tweet.tweet_id.to_s,
+          type: tweet.tweet_type,
+          support_handle_id: twitter_handle.try(:twitter_user_id).try(:to_s),
+          support_screen_name:  twitter_handle.try(:screen_name),
+          requester_screen_name: ticket.requester.twitter_id,
+          twitter_handle_id: twitter_handle.try(:id),
+          stream_id: tweet.stream_id
+        }
+      }
+    elsif fb_post
+      fb_page = fb_post.facebook_page
+      source_info = {
+        facebook: {
+          support_fb_page_id: fb_page.try(:page_id).try(:to_s),
+          support_fb_page_name: fb_page.try(:page_name),
+          fb_page_db_id: fb_page.try(:id).try(:to_s),
+          requester_profile_id: ticket.requester.fb_profile_id,
+          type: fb_post.msg_type,
+          fb_item_id: fb_post.post_id.to_s
+        }
       }
     end
-    source_info.presence
+    return source_info.presence
   end
 
   def email_ticket?(source)

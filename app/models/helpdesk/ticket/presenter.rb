@@ -147,8 +147,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     }
   end
 
-  def requester_twitter_id
-    requester.present? ? requester.twitter_id : nil
+  def requester_fb_id
+    requester.try(:fb_profile_id)
   end
 
   def association_hash
@@ -165,7 +165,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def requester_twitter_id
-    requester.present? ? requester.twitter_id : nil
+    requester.try(:twitter_id)
   end
 
   def central_custom_fields_hash

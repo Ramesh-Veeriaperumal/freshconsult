@@ -137,31 +137,38 @@ class NoteTest < ActiveSupport::TestCase
     assoc_payload.must_match_json_expression(central_assoc_note_pattern(note))
   end
 
+  def test_central_publish_payload_with_source_additional_info_facebook
+    ticket = create_fb_ticket
+    note = create_note(source: 7, ticket_id: ticket.id, user_id: ticket.requester_id, private: false, body: Faker::Lorem.paragraph)
+    payload = note.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_note_pattern(note))
+  end
+
+  def test_source_additional_info_fb_page_destroy_note_update
+    ticket = create_fb_ticket
+    note = create_note(source: 7, ticket_id: ticket.id, user_id: ticket.requester_id, private: false, body: Faker::Lorem.paragraph)
+    ticket.fb_post.facebook_page.delete
+    note.update_attributes(body: Faker::Lorem.paragraph)
+    payload = note.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_note_pattern(note))
+  end
+
   def test_central_publish_payload_with_source_additional_info_twitter
-    twitter_handle = get_twitter_handle
-    stream_id = get_twitter_stream_id
-    twitter_params = { twitter: { tweet_id: 12_345, tweet_type: 'DM',
-                                  twitter_handle_id: twitter_handle.id,
-                                  stream_id: stream_id } }
-    note = create_note(note_params_hash.merge(source_additional_info: twitter_params))
+    ticket = create_twitter_ticket
+    note = create_note(source: 5, ticket_id: ticket.id, user_id: ticket.requester_id, private: false, body: Faker::Lorem.paragraph)
+    ticket.tweet.twitter_handle.delete
+    note.update_attributes(body: Faker::Lorem.paragraph)
     payload = note.central_publish_payload.to_json
     payload.must_match_json_expression(central_publish_note_pattern(note))
   end
 
   def test_source_additional_info_twitter_handle_destroy_note_update
-    Account.any_instance.stubs(:twitter_handle_publisher_enabled?).returns(false)
-    handle = create_twitter_handle
-    stream_id = create_twitter_stream(handle.id).id
-    twitter_params = { twitter: { tweet_id: 12_346, tweet_type: 'DM',
-                                  twitter_handle_id: handle.id,
-                                  stream_id: stream_id } }
-    note = create_note(note_params_hash.merge(source_additional_info: twitter_params))
-    handle.delete
-    note.update_attributes(body: "Update note body")
+    ticket = create_twitter_ticket(tweet_type: 'dm')
+    note = create_note(source: 5, ticket_id: ticket.id, user_id: ticket.requester_id, private: false, body: Faker::Lorem.paragraph)
+    ticket.tweet.twitter_handle.delete
+    note.update_attributes(body: Faker::Lorem.paragraph)
     payload = note.central_publish_payload.to_json
     payload.must_match_json_expression(central_publish_note_pattern(note))
-  ensure
-    Account.any_instance.unstub(:twitter_handle_publisher_enabled?)
   end
 
   def test_central_publish_payload_with_source_additional_info_email
