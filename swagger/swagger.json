@@ -11982,7 +11982,7 @@
         "tags": [
           "Solution Article"
         ],
-        "summary": "Create a article",
+        "summary": "Create article",
         "parameters": [
           {
             "name": "data",
@@ -12787,7 +12787,7 @@
         "tags": [
           "Solution Article"
         ],
-        "summary": "Reorder a article",
+        "summary": "Reorder an article",
         "parameters": [
           {
             "$ref": "#/parameters/id"
@@ -17100,6 +17100,56 @@
               "type": "array",
               "items": {
                 "$ref": "#/definitions/attachment"
+              }
+            },
+            "translation_summary": {
+              "type": "object",
+              "description": "Provides status of all translations available to an article",
+              "properties": {
+                "en": {
+                  "type": "object",
+                  "description": "English translation info",
+                  "properties": {
+                    "available": {
+                      "type": "boolean",
+                      "description": "Is translation available in english?"
+                    },
+                    "draft_present": {
+                      "type": "boolean",
+                      "description": "Is draft present for english translation of the article?"
+                    },
+                    "outdated": {
+                      "type": "boolean",
+                      "description": "Is article outdated?"
+                    },
+                    "published": {
+                      "type": "boolean",
+                      "description": "Is article is published?"
+                    }
+                  }
+                },
+                "fr": {
+                  "type": "object",
+                  "description": "French translation info",
+                  "properties": {
+                    "available": {
+                      "type": "boolean",
+                      "description": "Is translation available in french?"
+                    },
+                    "draft_present": {
+                      "type": "boolean",
+                      "description": "Is draft present for french translation of the article?"
+                    },
+                    "outdated": {
+                      "type": "boolean",
+                      "description": "Is article outdated?"
+                    },
+                    "published": {
+                      "type": "boolean",
+                      "description": "Is article is published?"
+                    }
+                  }
+                }
               }
             },
             "cloud_files": {

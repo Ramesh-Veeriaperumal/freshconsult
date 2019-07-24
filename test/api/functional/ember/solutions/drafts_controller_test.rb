@@ -86,13 +86,20 @@ module Ember
       def test_index_with_language
         languages = @account.supported_languages + ['primary']
         language = @account.supported_languages.first
+
+        # binarize sync won't work if multilingual is not enabled. Cleaning up data for now. We have an FR issue for the same
+        get_my_drafts(Language.find_by_code(language).id).each do |draft|
+          draft.discarding = true
+          draft.destroy
+        end
+
         article = create_article(article_params(lang_codes: languages, status: 1))
         get :index, controller_params(version: 'private', portal_id: @account.main_portal.id, language: language)
         assert_response 200
         drafts = get_my_drafts(Language.find_by_code(language).id)
         assert_equal response.api_meta[:count], drafts.size
         pattern = drafts.first(3).map { |draft| private_api_solution_article_pattern(draft.article, { exclude_description: true, exclude_attachments: true, exclude_tags: true }, true, nil) }
-        match_json(pattern)
+        match_json(pattern.ordered!)
       end
 
       def test_index_invalid_language
@@ -461,7 +468,7 @@ module Ember
         end
 
         def get_my_drafts(language = 6)
-          @account.solution_drafts.where(user_id: User.current.id).joins(:article, category_meta: :portal_solution_categories).where('portal_solution_categories.portal_id = ? AND solution_articles.language_id = ?', @account.main_portal.id, language)
+          @account.solution_drafts.my_drafts(@account.main_portal.id, language)
         end
 
         def autosave_params

@@ -1,6 +1,6 @@
 module EmailConfigsHelper
   def create_email_config(options = {})
-    email = options[:email] || "#{Faker::Internet.domain_word}#{rand(0..9999)}@#{@account.full_domain}" 
+    email = options[:email] || "#{Faker::Internet.domain_word}#{rand(0..1_000_000)}@#{@account.full_domain}" 
     name = options[:name] || Faker::Name.name
     test_email_config = FactoryGirl.build(:email_config, to_email: email, reply_email: email,
                                                          primary_role: options[:primary_role] || 'true', name: name,

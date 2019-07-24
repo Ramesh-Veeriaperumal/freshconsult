@@ -706,9 +706,7 @@ class AccountsControllerTest < ActionController::TestCase
     ThirdCRM.any_instance.expects(:update_lead).once
     AdminEmail::AssociatedAccounts.stubs(:find).returns([Account.first, Account.last])
     Account.any_instance.stubs(:admin_email).returns(Faker::Internet.email)
-    create_sample_account(Faker::Lorem.word, Faker::Internet.email)
-    create_sample_account(Faker::Lorem.word, Faker::Internet.email)
-    account_id = @account.id
+    create_sample_account("#{Faker::Lorem.word}#{rand(1_000_000)}", Faker::Internet.email)
     Account.stubs(:current).returns(@account.reload)
     args = { account_id: @account.id }
     Sidekiq::Testing.inline! do

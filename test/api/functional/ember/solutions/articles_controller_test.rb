@@ -166,8 +166,8 @@ module Ember
         get :index, controller_params(version: 'private', ids: article_ids.join(','), language: 'en')
         articles = @account.solution_articles.where(parent_id: article_ids, language_id: 6).first(10)
         assert_response 200
-        pattern = articles.map { |article| private_api_solution_article_pattern(article, exclude_draft: true) }
-        match_json(pattern)
+        pattern = articles.map { |article| private_api_solution_article_index_pattern(article, exclude_draft: true) }
+        match_json(pattern.ordered!)
       end
 
       def test_index_with_language_id
@@ -176,8 +176,8 @@ module Ember
         get :index, controller_params(version: 'private', ids: article_ids.join(','), language_id: language_id)
         articles = @account.solution_articles.where(parent_id: article_ids, language_id: language_id).first(10)
         assert_response 200
-        pattern = articles.map { |article| private_api_solution_article_pattern(article, exclude_draft: true) }
-        match_json(pattern)
+        pattern = articles.map { |article| private_api_solution_article_index_pattern(article, exclude_draft: true) }
+        match_json(pattern.ordered!)
       end
 
       def test_index_with_invalid_language_id
@@ -193,8 +193,8 @@ module Ember
         get :index, controller_params(version: 'private', ids: article_ids, language: 'en')
         articles = @account.solution_articles.where(parent_id: article_ids, language_id: 6).first(10)
         assert_response 200
-        pattern = articles.map { |article| private_api_solution_article_pattern(article, exclude_draft: true) }
-        match_json(pattern)
+        pattern = articles.map { |article| private_api_solution_article_index_pattern(article, exclude_draft: true) }
+        match_json(pattern.ordered!)
       end
 
       def test_index_with_valid_ids_and_different_language
@@ -204,8 +204,8 @@ module Ember
         get :index, controller_params(version: 'private', ids: article_ids, language: 'es')
         articles = @account.solution_articles.where(parent_id: article_ids, language_id: 8).first(10)
         assert_response 200
-        pattern = articles.map { |article| private_api_solution_article_pattern(article, exclude_draft: true) }
-        match_json(pattern)
+        pattern = articles.map { |article| private_api_solution_article_index_pattern(article, exclude_draft: true) }
+        match_json(pattern.ordered!)
         Account.any_instance.unstub(:all_portal_language_objects)
       end
 
@@ -232,8 +232,8 @@ module Ember
         get :index, controller_params(version: 'private', ids: article_ids.join(','), user_id: @agent.id, language: 'en')
         articles = @account.solution_articles.where(parent_id: article_ids, language_id: 6).first(10)
         assert_response 200
-        pattern = articles.map { |article| private_api_solution_article_pattern(article, { exclude_draft: true }, true, @agent) }
-        match_json(pattern)
+        pattern = articles.map { |article| private_api_solution_article_index_pattern(article, { exclude_draft: true }, true, @agent) }
+        match_json(pattern.ordered!)
       end
 
       def test_index_with_both_draft_and_article
@@ -241,7 +241,7 @@ module Ember
         get :index, controller_params(version: 'private', ids: draft.article.parent_id, language: 'en')
         response_body = JSON.parse(response.body).last
         assert_response 200
-        response_body.must_match_json_expression private_api_solution_article_pattern(draft.article, exclude_draft: true)
+        response_body.must_match_json_expression private_api_solution_article_index_pattern(draft.article, exclude_draft: true)
       end
 
       def test_article_content_with_invalid_id

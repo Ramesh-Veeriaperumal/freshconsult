@@ -64,9 +64,16 @@ class Solutions::ArticleDecorator < ApiDecorator
       ret_hash[:draft_present] = @draft.present?
       ret_hash.merge!(draft_private_hash) if @draft.present?
       ret_hash.merge!(last_modified(ret_hash)) if @is_list_page
-      ret_hash[:outdated] = outdated if Account.current.multilingual?
+      if Account.current.multilingual?
+        ret_hash[:translation_summary] = translation_summary_hash
+        ret_hash[:outdated] = outdated
+      end
     end
     ret_hash
+  end
+
+  def to_index_hash
+    to_hash.except!(:draft_present, :translation_summary)
   end
 
   def draft_info(item)
@@ -112,6 +119,14 @@ class Solutions::ArticleDecorator < ApiDecorator
       category: Solutions::CategoryDecorator.new(record.solution_folder_meta.solution_category_meta, language_code: @lang_code).untranslated_filter_hash,
       folder: Solutions::FolderDecorator.new(record.solution_folder_meta, language_code: @lang_code).untranslated_filter_hash
     }
+  end
+
+  def translation_summary_hash
+    result = {}
+    Account.current.all_language_objects.each do |language|
+      result[language.code] = translation_info(language)
+    end
+    result
   end
 
   private
@@ -226,5 +241,29 @@ class Solutions::ArticleDecorator < ApiDecorator
         last_modifier: resp_hash[:draft_modified_by] || resp_hash[:modified_by],
         last_modified_at: resp_hash[:draft_modified_at] || resp_hash[:modified_at]
       }
+    end
+
+    def published?
+      status == Solution::Constants::STATUS_KEYS_BY_TOKEN[:published]
+    end
+
+    def translation_info(language)
+      language_key = language.to_key
+      # binarize sync happens on another object reference rather than record.parent, thus the value won't be updated here for current language article.
+      if language.id == language_id
+        {
+          available: true,
+          draft_present: @draft.present?,
+          outdated: outdated,
+          published: published?
+        }
+      else
+        {
+          available: parent.safe_send("#{language_key}_available?"),
+          draft_present: parent.safe_send("#{language_key}_draft_present?"),
+          outdated: parent.safe_send("#{language_key}_outdated?"),
+          published: parent.safe_send("#{language_key}_published?")
+        }
+      end
     end
 end

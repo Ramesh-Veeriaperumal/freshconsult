@@ -156,7 +156,12 @@ module SolutionsTestHelper
       ret_hash[:last_modifier] = ret_hash[:draft_modified_by] || ret_hash[:modified_by]
       ret_hash[:last_modified_at] = ret_hash[:draft_modified_at] || ret_hash[:modified_at]
     end
+    ret_hash[:translation_summary] = translation_summary_pattern(article.parent) if @account.multilingual?
     ret_hash
+  end
+
+  def private_api_solution_article_index_pattern(article, expected_output = {}, ignore_extra_keys = true, user = nil)
+    private_api_solution_article_pattern(article, expected_output, ignore_extra_keys, user).except!(:draft_present, :translation_summary)
   end
 
   def article_content_pattern(article, expected_output = {})
@@ -411,6 +416,21 @@ module SolutionsTestHelper
       helpful: vote_info(article, :thumbs_up),
       not_helpful: vote_info(article, :thumbs_down)
     }.to_json
+  end
+
+  def translation_summary_pattern(article_meta)
+    article_meta.reload
+    result = {}
+    @account.all_language_objects.each do |language|
+      language_key = language.to_key
+      result[language.code] = {
+        available: article_meta.safe_send("#{language_key}_available?"),
+        draft_present: article_meta.safe_send("#{language_key}_draft_present?"),
+        outdated: article_meta.safe_send("#{language_key}_outdated?"),
+        published: article_meta.safe_send("#{language_key}_published?")
+      }
+    end
+    result
   end
 
   def vote_info(article, vote_type)

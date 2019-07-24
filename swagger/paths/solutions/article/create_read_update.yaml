@@ -56,7 +56,7 @@ put:
       in: body
       required: true
       schema:
-       $ref: '#/definitions/article_update'
+        $ref: '#/definitions/article_update'
   responses:
     200:
       description: Success

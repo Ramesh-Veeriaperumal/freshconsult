@@ -174,7 +174,7 @@ module SolutionsArticlesCommonTests
     tags = Faker::Lorem.words(3).uniq
     tags = tags.map do |tag|
       # Timestamp added to make sure tag names are new
-      tag = "#{tag}#{Time.now.to_i}"
+      tag = "#{tag}#{Time.now.to_i}#{rand(1_000_000)}"
       assert_equal @account.tags.map(&:name).include?(tag), false
       tag
     end
