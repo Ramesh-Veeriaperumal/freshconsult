@@ -687,7 +687,7 @@ class AccountsControllerTest < ActionController::TestCase
     ThirdCRM.any_instance.expects(:delete_lead_from_autopilot).once
     ThirdCRM.any_instance.stubs(:associated_accounts).returns('1')
     Account.any_instance.stubs(:admin_email).returns(Faker::Internet.email)
-    create_sample_account(Faker::Lorem.word, Faker::Internet.email)
+    create_sample_account("#{Faker::Lorem.word}#{rand(1_000_000)}", Faker::Internet.email)
     account_id = @account.id
     Account.stubs(:current).returns(@account.reload)
     args = { account_id: @account.id }

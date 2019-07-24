@@ -335,6 +335,7 @@ api_error_messages:
   invalid_draft_author: "Draft author is invalid or doesn't have necessary privilege"
   content_changed: "Content has been changed elsewhere"
   cannot_create_new_tag: "cannot_create_new_tag: %{tags}"
+  cannot_mark_primary_as_uptodate: "Cannot mark primary article as uptodate"
   invalid_ebay_ticket_source: "Invalid ticket source"
   webhook_auth_header_error: "Both username and api_key should not be present"
 

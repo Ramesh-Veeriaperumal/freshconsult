@@ -141,6 +141,7 @@ module ApiSolutions
         delegator_params[:folder_name] = params[cname]['folder_name'] if params[cname].key?('folder_name')
         delegator_params[:category_name] = params[cname]['category_name'] if params[cname].key?('category_name')
         delegator_params[:user_id] = @article_params[language_scoper][:user_id] if @article_params[language_scoper] && @article_params[language_scoper][:user_id]
+        delegator_params[:outdated] = @article_params[language_scoper][:outdated] if @article_params[language_scoper]
         delegator_params = add_attachment_params(delegator_params) if private_api?
         delegator_params
       end

@@ -15,16 +15,16 @@ module SolutionConstants
 
   ARTICLE_SEO_DATA_FIELDS = %w[meta_title meta_description meta_keywords].freeze
   ARTICLE_LANGUAGE_FIELDS = %w[title description status
-                               seo_data attachments attachments_list cloud_file_attachments tags unlock].map(&:to_sym).freeze
+                               seo_data attachments attachments_list cloud_file_attachments tags unlock outdated].map(&:to_sym).freeze
 
   ARTICLE_ARRAY_FIELDS = %w[tags attachments attachments_list cloud_file_attachments].freeze
   ARTICLE_FIELDS = %w[category_name folder_name description
                       title status seo_data type folder_id unlock].freeze | ARTICLE_ARRAY_FIELDS |
                    ['seo_data' => ARTICLE_SEO_DATA_FIELDS]
-  ARTICLE_PROPERTY_FIELDS = %w[tags seo_data user_id folder_id type].freeze
+  ARTICLE_PROPERTY_FIELDS = %w[tags seo_data user_id folder_id type outdated].freeze
 
   CREATE_ARTICLE_FIELDS = { all: ARTICLE_FIELDS }.freeze
-  UPDATE_ARTICLE_FIELDS = { all: ARTICLE_FIELDS, admin_tasks: ['agent_id'] }.freeze
+  UPDATE_ARTICLE_FIELDS = { all: ARTICLE_FIELDS | ['outdated'], admin_tasks: ['agent_id'] }.freeze
 
   FILTER_ATTRIBUTES = %w[author status created_at last_modified tags category folder].freeze
   FILTER_FIELDS = %w[portal_id language term page per_page].freeze | FILTER_ATTRIBUTES

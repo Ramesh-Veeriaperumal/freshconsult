@@ -1784,6 +1784,42 @@ module Ember
         match_json(pattern)
       end
 
+      def test_update_mark_as_outdated
+        languages = @account.supported_languages + ['primary']
+        language = @account.supported_languages.first
+        article_meta = create_article(article_params(lang_codes: languages))
+        params_hash = { outdated: true, status: 2 }
+        put :update, construct_params({ version: 'private', id: article_meta.parent_id, language: @account.language }, params_hash)
+        assert_response 200
+        assert article_meta.reload.children.select { |article| !article.is_primary? && !article.outdated }.empty?
+      end
+
+      def test_update_mark_as_uptodate
+        languages = @account.supported_languages + ['primary']
+        language = @account.supported_languages.first
+        article_meta = create_article(article_params(lang_codes: languages))
+        article = article_meta.safe_send("#{language}_article")
+        article.outdated = true
+        article.save
+        params_hash = { outdated: false, status: 2 }
+        put :update, construct_params({ version: 'private', id: article_meta.parent_id, language: language }, params_hash)
+        assert_response 200
+        assert !article_meta.reload.safe_send("#{language}_article").outdated
+      end
+
+      def test_update_mark_as_uptodate_for_primary_article
+        languages = @account.supported_languages + ['primary']
+        language = @account.supported_languages.first
+        article_meta = create_article(article_params(lang_codes: languages))
+        article = article_meta.safe_send("#{language}_article")
+        article.outdated = true
+        article.save
+        params_hash = { outdated: false, status: 2 }
+        put :update, construct_params({ version: 'private', id: article_meta.parent_id, language: @account.language }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern('outdated', :cannot_mark_primary_as_uptodate, code: :invalid_value)])
+      end
+
       private
         def version
           'private'
