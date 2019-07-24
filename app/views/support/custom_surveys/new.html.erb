@@ -66,10 +66,10 @@
 						<% @survey_handle.survey.feedback_questions.each_with_index do |question,qindex| %>
 							<div class="survey-question">
 								<span class="pull-left"><%= qindex+1 %>.</span>
-								<div class = "ques-desc"><%=question.label%></div>
+								<div class = "ques-desc"><%= @translation_record.present? ? @translation_record.translations.fetch(:additional_questions, {})["question_#{question.id}".to_sym] || question.label : question.label %></div>
 								<div class="ques-ans">
 									<% question.choices.each_with_index do |option, index| %>
-										<span class="survey-rating none question-rating-<%=qindex%>" id="rating_<%=index%>" data-class="<%=CustomSurvey::Survey::CUSTOMER_RATINGS_STYLE[option[:face_value]]%>" data-id="<%=option[:face_value]%>" data-question-id="<%=qindex%>" data-name="<%=option[:name]%>" onmouseover="javascript:SurveyRating.hover(this);" onmouseout="javascript:SurveyRating.resetLabel(this);" onclick="javascript:SurveyRating.input(this);"></span>
+										<span class="survey-rating none question-rating-<%=qindex%>" id="rating_<%=index%>" data-class="<%=CustomSurvey::Survey::CUSTOMER_RATINGS_STYLE[option[:face_value]]%>" data-id="<%=option[:face_value]%>" data-question-id="<%=qindex%>" data-name="<%=@translation_record.present? ? @translation_record.translations.fetch(:additional_questions, {}).fetch(:choices, {})[option[:face_value]] || option[:name] : option[:name]%>" onmouseover="javascript:SurveyRating.hover(this);" onmouseout="javascript:SurveyRating.resetLabel(this);" onclick="javascript:SurveyRating.input(this);"></span>
 									<%end%>
 									<label id="rating-label-<%=qindex%>" class="muted rating-label" data-selected-value="&nbsp;" data-selected-id="none" data-custom-field="<%=question.name%>">&nbsp;</label>
 								</div>

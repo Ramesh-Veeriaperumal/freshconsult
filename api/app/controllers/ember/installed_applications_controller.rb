@@ -7,7 +7,8 @@ module Ember
 
     decorate_views
 
-    before_filter :load_service_object, only: [:fetch]
+    before_filter :load_service_object, only: [:fetch, :create]
+    before_filter -> { validate_delegator(nil, cname_params) }, only: [:create]
 
     def fetch
       return unless validate_body_params(@item)
@@ -27,6 +28,14 @@ module Ember
       render_base_error(:bad_gateway, 502)
     end
 
+    def create
+      return unless validate_body_params
+
+      config_params = @service_class.construct_default_integration_params(cname_params[:configs])
+      @item = Integrations::Application.install_or_update(cname_params[:name], current_account.id, config_params)
+      @item ? render(action: :show) : render_custom_errors
+    end
+
     private
 
       def scoper
@@ -37,6 +46,10 @@ module Ember
         @items = params[:name] ? scoper.where(*filter_conditions) : items
       end
 
+      def feature_name
+        MARKETPLACE if action == :create
+      end
+
       def filter_conditions
         app_names = params[:name].split(',')
         ['applications.name in (?)', app_names]
@@ -44,6 +57,10 @@ module Ember
 
       def validate_filter_params
         validate_query_params
+      end
+
+      def validate_params
+        validate_body_params
       end
 
       def constants_class
@@ -112,7 +129,8 @@ module Ember
       end
 
       def load_service_object
-        service_name = APP_NAME_TO_SERVICE_MAP[@item.application.name.to_sym]
+        service = action == :create ? cname_params[:name].to_sym : @item.application.name.to_sym
+        service_name = APP_NAME_TO_SERVICE_MAP[service]
         return render_request_error(:invalid_action, 403) unless service_name
         @service_class = ::IntegrationServices::
                             Service.get_service_class(service_name)

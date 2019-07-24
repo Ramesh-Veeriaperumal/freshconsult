@@ -20,7 +20,7 @@ module ProductsHelper
 			test_portal = FactoryGirl.build(:portal, 
 												:name=> option[:portal_name] || Faker::Name.name, 
 												:portal_url => option[:portal_url], 
-												:language=>"en",
+												:language => option[:language] || 'en',
 												:product_id => test_product.id, 
 												:forum_category_ids => (option[:forum_category_ids] || [""]),
 												:solution_category_metum_ids => [""],

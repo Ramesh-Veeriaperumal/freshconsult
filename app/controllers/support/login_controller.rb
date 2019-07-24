@@ -14,16 +14,16 @@ class Support::LoginController < SupportController
   after_filter :set_domain_cookie, :only => :create
   skip_after_filter :set_last_active_time
   before_filter :set_custom_flash_message
+
+  before_filter :redirect_to_freshdesk_sso_login, only: :new, if: :freshdesk_sso_enabled?
+  before_filter :authenticate_with_freshid, only: :new, if: :freshid_integration_enabled_and_not_logged_in?
+
   before_filter :only => :create do |c|
     redirect_to_freshid_login if params[:user_session].try(:[], :email) && freshid_agent?(params[:user_session][:email])
   end
-  before_filter :authenticate_with_freshid, only: :new, if: :freshid_integration_enabled_and_not_logged_in?
-
 
   def new
-    if current_account.sso_enabled? && !current_account.freshid_sso_enabled? && check_request_referrer
-      sso_login_page_redirect #TODO : change this to allow different sign on for customer and agent
-    elsif params[:new_account_signup] || params[:active_freshid_agent]
+    if params[:new_account_signup] || params[:active_freshid_agent]
       redirect_to_freshid_login(login_hint: params[:signup_email], login_message: t('support.login.freshid_login_message'))
     else
       @user_session = current_account.user_sessions.new
@@ -156,5 +156,12 @@ class Support::LoginController < SupportController
       end
     end
 
+    def redirect_to_freshdesk_sso_login
+      sso_login_page_redirect
+    end
+
+    def freshdesk_sso_enabled?
+      current_account.sso_enabled? && !current_account.freshid_sso_enabled? && check_request_referrer
+    end
 end
 

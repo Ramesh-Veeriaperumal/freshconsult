@@ -353,3 +353,4 @@ api_error_messages:
   cannot_estimate_free_plan: "Cannot estimate free plan"
   invalid_object_id: "Invalid id for %{object}"
   missing_param: 'Missing field'
+  already_installed: "App is already installed"

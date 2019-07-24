@@ -32,7 +32,7 @@ class UserSessionsController < ApplicationController
     # Login normal supersets all login access (can be used by agents)
     if request.path == "/login/normal"
       @user_session = current_account.user_sessions.new
-    elsif current_account.sso_enabled? && !current_account.freshid_sso_enabled?
+    elsif current_account.freshdesk_sso_enabled?
       sso_login_page_redirect
     else
       #Redirect to portal login by default
@@ -267,7 +267,7 @@ class UserSessionsController < ApplicationController
       
     end
   end
-  
+
   def destroy
     logout_user
     return if current_account.sso_enabled? and current_account.sso_logout_url.present? and !is_native_mobile?
@@ -336,7 +336,7 @@ class UserSessionsController < ApplicationController
 
     if current_account.sso_enabled? && current_account.sso_logout_url.present? && !is_native_mobile? && allow_sso_redirection
       sso_redirect_url = generate_sso_url(current_account.sso_logout_url)
-      redirect_to sso_redirect_url and return
+      redirect_to sso_coexists_logout(sso_redirect_url) and return
     end
   end
 
@@ -557,4 +557,11 @@ class UserSessionsController < ApplicationController
       end
     end
 
+    def sso_coexists_logout(sso_redirect_url)
+      if current_account.freshid_org_v2_enabled? && current_user.present? && freshid_agent?(current_user.email)
+        return Freshid::V2::UrlGenerator.freshid_logout(sso_redirect_url)
+      else
+        sso_redirect_url
+      end
+    end
 end

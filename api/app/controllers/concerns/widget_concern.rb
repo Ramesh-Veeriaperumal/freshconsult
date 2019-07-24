@@ -15,7 +15,6 @@ module WidgetConcern
   def set_widget_portal_as_current
     # set current portal if widget is associated to product
     @current_portal = current_account.portals.find_by_product_id(@help_widget.product_id) || @current_portal
-    @current_portal.make_current
   end
 
   def check_feature
@@ -35,13 +34,13 @@ module WidgetConcern
   end
 
   def set_current_language
-    if params[:url_locale].present? && current_account.multilingual?
+    if current_account.multilingual?
       Language.set_current(
         request_language: http_accept_language.language_region_compatible_from(I18n.available_locales),
-        url_locale: params[:url_locale]
+        url_locale: params[:language]
       )
     end
-    Language.fetch_from_portal({}).make_current unless Language.current?
+    Language.fetch_from_primary({}).make_current unless Language.current?
   end
 
   def launch_party_name

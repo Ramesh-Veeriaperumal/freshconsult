@@ -97,7 +97,7 @@ module Admin::Automation::ActionHelper
     case type.to_sym
       when :JSON
         unexpected_parameter(:"#{field_name}[:content_layout]") unless layout != 1 || layout != 2
-        invalid_data_type(:"#{field_name}[:content]", type.to_sym, :invalid) unless content.is_a?(Hash)
+        invalid_data_type(:"#{field_name}[:content]", type.to_sym, :invalid) if !content.is_a?(Hash) && layout == 1
       when :XML
         unexpected_parameter(:"#{field_name}[:content_layout]") unless layout != 2
         invalid_data_type(:"#{field_name}[:content]", type.to_sym, :invalid) unless content.is_a?(String)

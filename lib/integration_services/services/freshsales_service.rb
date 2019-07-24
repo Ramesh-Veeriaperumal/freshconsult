@@ -1,5 +1,11 @@
 module IntegrationServices::Services
   class FreshsalesService < IntegrationServices::Service
+    include InstalledApplicationConstants
+    
+    INSTALL_DEFAULT_FIELD_HASH = { 'contact_fields' => 'display_name', 'account_fields' => 'name',
+                                 'lead_fields' => 'display_name', 'contact_labels' => 'Full name',
+                                 'account_labels' => 'Name', 'lead_labels' => 'Full name',
+                                 'deal_view' => '0' }
 
     def instance_url
       self.configs['domain']
@@ -11,6 +17,10 @@ module IntegrationServices::Services
 
     def receive_account_fields
       account_resource.get_fields
+    end
+
+    def self.construct_default_integration_params(params)
+      INSTALL_DEFAULT_FIELD_HASH.merge!({ 'domain' => INSTALLATION_DOMAIN % { domain_url: params['domain'] }, 'auth_token' => params['auth_token'], 'ghostvalue' => params['ghostvalue'] })
     end
 
     def receive_lead_fields

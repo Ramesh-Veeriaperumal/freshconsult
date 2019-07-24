@@ -602,7 +602,7 @@ Helpkit::Application.routes.draw do
     end
 
     resources :todos, controller: 'ember/todos', except: [:new, :edit, :show]
-    resources :installed_applications, controller: 'ember/installed_applications', only: [:index, :show] do
+    resources :installed_applications, controller: 'ember/installed_applications', only: [:index, :show, :create] do
       member do
         post :fetch
       end

@@ -107,6 +107,14 @@ class SendBotEmailTest < ActionView::TestCase
     assert_equal delayed_job_size_before, delayed_job_size_after
   end
 
+  def test_agent_assist_article_orderby_score
+    ticket = create_ticket
+    fetch_bot_and_articles
+    stub_request(:post, %r{^#{FreddySkillsConfig[:agent_articles_suggest][:url]}.*?$}).to_return(body: stub_response(true).to_json, status: 200)
+    ::Freddy::AgentSuggestArticles.new.perform(ticket_id: ticket.id)
+    assert_equal @articles.first.id, Bot::Response.find_by_ticket_id(ticket.id).suggested_articles.keys.last
+  end
+
   def test_notify_by_email
     ticket = create_ticket
     mail_message = Helpdesk::TicketNotifier.notify_by_email(EmailNotification::BOT_RESPONSE_TEMPLATE, ticket, nil, {freddy_suggestions: "test"})
@@ -132,7 +140,7 @@ class SendBotEmailTest < ActionView::TestCase
         @articles.each do |article|
           hash = 
           {
-                    "score": 1.0000000000000004,
+                    "score": article.id,
                     "detail_html": "You can associate 300 tickets to a single Tracker.",
                     "title": "#{article.title}",
                     "url": nil,
@@ -160,7 +168,7 @@ class SendBotEmailTest < ActionView::TestCase
         "result": 
           {
             "msg": "Call Successful",
-            "data": data_hash(empty_response),
+            "data": data_hash(empty_response).reverse!,
             "show_result": empty_response,
             "pos_model_score": 0.47530055433187057,
             "success": empty_response

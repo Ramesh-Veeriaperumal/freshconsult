@@ -84,7 +84,7 @@ class TimeEntriesController < ApiApplicationController
     end
 
     def scoper
-      current_account.time_sheets
+      current_account.time_sheets_with_join
     end
 
     def time_entry_filter
@@ -176,7 +176,7 @@ class TimeEntriesController < ApiApplicationController
     end
 
     def update_running_timer(user_id)
-      @time_cleared = current_account.time_sheets.where(user_id: user_id, timer_running: true)
+      @time_cleared = current_account.time_sheets_with_join.where(user_id: user_id, timer_running: true)
       @time_cleared.each { |tc| tc.update_attributes(timer_running: false, time_spent: tc.calculate_time_spent) }
     end
 end

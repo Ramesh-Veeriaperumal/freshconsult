@@ -5624,6 +5624,39 @@
             "description": "No Installed Apps"
           }
         }
+      },
+      "post": {
+        "tags": [
+          "Integrations"
+        ],
+        "summary": "Install",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/installed_application_install"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/installed_applications"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
       }
     },
     "/installed_applications/{id}": {
@@ -16809,6 +16842,25 @@
             "value": {
               "type": "object"
             }
+          }
+        }
+      }
+    },
+    "installed_application_install": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "description": "Must be 'freshsales'. More integrations will be added later.",
+          "type": "string"
+        },
+        "configs": {
+          "description": "This is a JSON value. The allowed attributes of this depends on the integration.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
           }
         }
       }

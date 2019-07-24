@@ -101,4 +101,33 @@ class InstalledApplicationValidationTest < ActionView::TestCase
     assert_equal({ event: {}, payload: { expected_data_type: Integer, 
       code: :missing_field, nested_field: :ticket_id}},installed_app.error_options)
   end
+
+  def test_install_apps_without_config
+    installed_app = InstalledApplicationValidation.new({ 'name' => 'freshsales' }, nil)
+    refute installed_app.valid?(:create)
+    error_messages = installed_app.errors.full_messages
+    assert error_messages.include? 'Configs missing_field'
+    assert_equal({ name: {}, configs: { code: :missing_field } }, installed_app.error_options)
+  end
+
+  def test_install_apps_without_domain
+    installed_app = InstalledApplicationValidation.new({ 'name' => 'freshsales', 'configs' => { 'ghostvalue' => '.freshsales.io', 'auth_token' => 'v_GNcz8s2BmhzOVsp4Oe_w' } }, nil)
+    refute installed_app.valid?(:create)
+    error_messages = installed_app.errors.full_messages
+    assert error_messages.include? 'Domain missing_field'
+  end
+
+  def test_install_apps_without_ghostvalue
+    installed_app = InstalledApplicationValidation.new({ 'name' => 'freshsales', 'configs' => { 'domain' => 'ramkumar', 'auth_token' => 'v_GNcz8s2BmhzOVsp4Oe_w' } }, nil)
+    refute installed_app.valid?(:create)
+    error_messages = installed_app.errors.full_messages
+    assert error_messages.include? 'Ghostvalue missing_field'
+  end
+
+  def test_install_apps_without_authtoken
+    installed_app = InstalledApplicationValidation.new({ 'name' => 'freshsales', 'configs' => { 'domain' => 'ramkumar', 'ghostvalue' => '.freshsales.io' } }, nil)
+    refute installed_app.valid?(:create)
+    error_messages = installed_app.errors.full_messages
+    assert error_messages.include? 'Auth token missing_field'
+  end
 end

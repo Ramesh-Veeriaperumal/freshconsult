@@ -9,9 +9,10 @@ class HelpWidget < ActiveRecord::Base
     t.add :name
     t.add :settings
     t.add :active
+    t.add :created_at
     t.add :updated_at
     t.add :account_url
-    t.add :language
+    t.add :languages
     t.add :date_format
   end
 
@@ -19,14 +20,15 @@ class HelpWidget < ActiveRecord::Base
     "https://#{Account.current.full_domain}"
   end
 
-  def language
-    product = Account.current.products_from_cache.detect { |p| product_id == p.id } if product_id
-    portal = product && product.portal.present? ? product.portal : Account.current.main_portal_from_cache
-    portal.language
+  def languages
+    {
+      primary: Account.current.main_portal_from_cache.language,
+      supported: Account.current.all_portal_languages
+    }
   end
 
   def date_format
-    Account.current.account_additional_settings.date_format
+    Account.current.account_additional_settings_from_cache.date_format
   end
   
 end

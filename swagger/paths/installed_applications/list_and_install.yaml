@@ -1,0 +1,41 @@
+get:
+  tags: [Integrations]
+  summary: List all
+  description: List all enabled apps
+  parameters:
+    - name: name
+      in: query
+      type: string
+      description: App Name
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          installed_applications:
+            type: array
+            items:
+              $ref: '#/definitions/installed_applications'
+    404:
+      description: No Installed Apps
+post:
+  tags: [Integrations]
+  summary: Install
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/installed_application_install'
+  responses:
+    201:
+      description: Success
+      schema:
+        $ref: '#/definitions/installed_applications'
+    403:
+      description: Access denied
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

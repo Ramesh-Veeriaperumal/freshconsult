@@ -427,6 +427,30 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     assert_response 200
   end
 
+  def test_already_installed_app
+    freshsales_application_id = Integrations::Application.where(name: 'freshsales').first.id
+    post :create, construct_params(version: 'private', name: 'freshsales', configs: { domain: 'ramkumar', auth_token: 'v_GNcz8s2BmhzOVsp4Oe_w', ghostvalue: '.freshsales.io' })
+    match_json([bad_request_error_pattern('name', :already_installed, code: :already_installed, description: 'App is already installed')])
+    assert_response 400
+  end
+
+  def test_install_new_app
+    freshsales_application_id = Integrations::Application.where(name: 'freshsales').first.id
+    Account.current.installed_applications.where(application_id: freshsales_application_id).first.delete
+    post :create, construct_params(version: 'private', name: 'freshsales', configs: { domain: 'ramkumar', auth_token: 'v_GNcz8s2BmhzOVsp4Oe_w', ghostvalue: '.freshsales.io' })
+    assert_equal freshsales_application_id, JSON.parse(response.body)['application_id']
+    assert_response 200
+  end
+
+  def test_install_new_app_in_sprout_plan
+    Account.current.revoke_feature(:marketplace)
+    freshsales_application_id = Integrations::Application.where(name: 'freshsales').first.id
+    Account.current.installed_applications.where(application_id: freshsales_application_id).first.delete
+    post :create, construct_params(version: 'private', name: 'freshsales', configs: { domain: 'ramkumar', auth_token: 'v_GNcz8s2BmhzOVsp4Oe_w', ghostvalue: '.freshsales.io' })
+    assert_equal JSON.parse(response.body)['message'], 'The Marketplace feature(s) is/are not supported in your plan. Please upgrade your account to use it.'
+    assert_response 403
+  end
+
   def lineitem_refund_calculate_hash
     {
       refund: {

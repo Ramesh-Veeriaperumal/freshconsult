@@ -151,7 +151,7 @@ module TicketsTestHelper
       tags: Array,
       import_id: ticket.import_id,
       attachment_ids: ticket.attachments.map(&:id),
-      first_response_agent_id: ticket.first_response_agent_id,
+      first_response_agent_id: ticket.reports_hash['first_response_agent_id'],
       first_response_group_id: ticket.reports_hash['first_response_group_id'],
       first_assign_agent_id: ticket.reports_hash['first_assign_agent_id'],
       first_assign_group_id: ticket.reports_hash['first_assign_group_id'],

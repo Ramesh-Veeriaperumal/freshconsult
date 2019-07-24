@@ -185,6 +185,14 @@ def execute_test_cases(category) {
 
 }
 
+//Copy build logs to vm
+def s3_copy(category) {
+    sh """#!/bin/bash
+    mkdir -p /home/jenkins/workspace/$jobName/s3/$category/
+    yes | cp -rf /home/jenkins/helpkit/log/* /home/jenkins/workspace/$jobName/s3/$category/
+    """
+}
+
 //Publish Reports
 def publish_report(category) {
 
@@ -259,6 +267,12 @@ def distributed_run(category) {
 						    		}
 						         }
 
+                           //Copy build logs to vm
+                                 if(category != 'pronto') { 
+                                        s3_copy(category)
+                                        echo "copied s3 files $category to host vm"
+                                    }
+
                         
 							
 				             
@@ -271,11 +285,16 @@ def distributed_run(category) {
  //Machine label where this jobs needs to run
  node("spot_backend") {
      
+     //Adding timout to the jenkinsfile
+     timeout(time: 60, unit: 'MINUTES') {
+
      //Creating Sub directory
      sh "sudo rm -rf /home/jenkins/workspace/$jobName/tmp"
      sh "sudo rm -rf /home/jenkins/workspace/$jobName/test"
+     sh "sudo rm -rf /home/jenkins/workspace/$jobName/s3"
      sh "mkdir -p /home/jenkins/workspace/$jobName/tmp/"
      sh "mkdir -p /home/jenkins/workspace/$jobName/test/reports/"
+     sh "mkdir -p /home/jenkins/workspace/$jobName/s3/"
       
     //Encryption check starts here
     if(jobName.contains("pullrequest")) {
@@ -295,6 +314,15 @@ def distributed_run(category) {
     //Extracting xml file
     junit  testResults: "test/reports/*.xml"
 
+    //Pushing logs to s3
+    sh """#!/bin/bash
+    apt-get install zip -y
+    cd /home/jenkins/workspace/$jobName/
+    tar -zcvf $jobName-$build-logs.tar.gz s3
+    aws s3 cp $jobName-$build-logs.tar.gz s3://jenkins-build-log-store/fdesk/$jobName-$build-logs.tar.gz --storage-class STANDARD_IA
+    echo "https://jenkins-build-log-store.s3.amazonaws.com/fdesk/$jobName-$build-logs.tar.gz"
+    """
+
     if(currentBuild.result == "UNSTABLE") {
         send_email();  
     }
@@ -302,5 +330,6 @@ def distributed_run(category) {
     if (failing_category) {
       echo "***Issue with test execution. A process in " + failing_category + " test suite failed. Please check !***"
     }
+   }
  }
  

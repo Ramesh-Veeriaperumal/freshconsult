@@ -6,7 +6,7 @@ module AuditLog::Translators::AutomationRule
         next if !automation_revamp_enabled? || supervisor_rule?
 
         if dispatcher_rule?
-          translate_condition_data(model_changes[attribute])
+          translate_condition_changes(model_changes[attribute])
         elsif observer_rule?
           translate_observer_events(model_changes[attribute])
         end
@@ -48,29 +48,50 @@ module AuditLog::Translators::AutomationRule
         end
       when :conditions
         is_filter ? translate_filter_action([model_changes[0][key], model_changes[1][key]], :conditions) :
-            translate_condition_data([model_changes[0][key], model_changes[1][key]])
+            translate_condition_changes([model_changes[0][key], model_changes[1][key]])
       end
     end
   end
 
-  def translate_condition_data(changes)
-    # translate the condition array e.g. changes = [{"field_name": "status", "value": 2}]
-    was_single_set = changes[0].values.flatten.first.key?(:evaluate_on)
-    is_single_set = changes[1].values.flatten.first.key?(:evaluate_on)
-    case condition_set_case_mapping(is_single_set, was_single_set)
-    when :single_sets
-      translate_filter_action([changes[0].first[1], changes[1].first[1]], :conditions)
-    when :set_added
-      old = changes[0].first[1]
-      translate_filter_action([old, changes[1].first[1][0].first[1]], :conditions)
-      translate_filter_action([[], changes[1].first[1][1].first[1]], :conditions)
-    when :set_removed
-      translate_filter_action([changes[0].first[1][0].first[1], changes[1].first[1]], :conditions)
-      translate_filter_action([changes[0].first[1][1].first[1], []], :conditions)
-    else
-      translate_filter_action([changes[0].first[1][0].first[1], changes[1].first[1][0].first[1]],:conditions)
-      translate_filter_action([changes[0].first[1][1].first[1], changes[1].first[1][1].first[1]], :conditions)
+  def translate_condition_changes(changes)
+    old_conditions = fetch_conditions(changes[0])
+    new_conditions = fetch_conditions(changes[1])
+    2.times do |set|
+      old_condition = old_conditions[set] || []
+      new_condition = new_conditions[set] || []
+      translate_filter_action([old_condition, new_condition], :conditions)
     end
+  end
+
+  def fetch_conditions(conditions)
+    return [] unless condition_present?(conditions)
+
+    if single_set?(conditions)
+      [conditions.first[1]]
+    else
+      condition_sets = conditions.first[1].map(&:values)
+      [condition_sets[0].flatten, condition_sets[1].flatten]
+    end
+  end
+
+  def condition_present?(conditions)
+    conditions.first[1].first.present?
+  end
+
+  def single_set?(conditions)
+    conditions.first[1].first.key?(:evaluate_on)
+  end
+
+  def translate_conditions_operator(value)
+    return value if value.blank?
+
+    I18n.t("admin.audit_log.automation_rule.operator_#{value}")
+  end
+
+  def translate_match_type(value)
+    return value if value.blank?
+
+    I18n.t("admin.audit_log.automation_rule.match_type_#{value}")
   end
 
   def translate_filter_action(model_changes, type)
@@ -264,18 +285,6 @@ module AuditLog::Translators::AutomationRule
     values = action.reject {|field| keys.include? field.to_sym}
     action.select! {|field| keys.include? field.to_sym}
     action.merge!(value: values)
-  end
-
-  def condition_set_case_mapping(is_single, was_single)
-    if is_single && was_single
-      :single_sets
-    elsif was_single && !is_single
-      :set_added
-    elsif !was_single && is_single
-      :set_removed
-    else
-      :double_sets
-    end
   end
 
   def set_rule_type(rule_type)
