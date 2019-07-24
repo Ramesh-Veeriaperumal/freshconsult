@@ -2,6 +2,7 @@
 
 module TicketsTestHelper
   include CoreTicketFieldsTestHelper
+  include TicketsNotesHelper
 
   MAX_DESC_LIMIT = 10000
 
@@ -171,12 +172,13 @@ module TicketsTestHelper
   end
 
   def source_additional_info_hash(ticket)
+    source_info = {}
+    source_info[:email] = email_source_info(ticket.schema_less_ticket.header_info) if email_ticket?(ticket.source)
     tweet = ticket.tweet
-    return if tweet.blank?
 
-    twitter_handle = tweet.twitter_handle
-    {
-      twitter: {
+    if tweet.present?
+      twitter_handle = tweet.twitter_handle
+      source_info[:twitter] = {
         tweet_id: tweet.tweet_id.to_s,
         type: tweet.tweet_type,
         support_handle_id: twitter_handle.present? ? twitter_handle.twitter_user_id.to_s : nil,
@@ -185,7 +187,13 @@ module TicketsTestHelper
         twitter_handle_id: twitter_handle.present? ? twitter_handle.id : nil,
         stream_id: tweet.stream_id
       }
-    }
+    end
+    source_info.presence
+  end
+
+  def email_ticket?(source)
+    [Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email],
+     Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:chat]].include?(source)
   end
 
   def cp_assoc_ticket_pattern(expected_output = {}, ticket)

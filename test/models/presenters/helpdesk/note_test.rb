@@ -163,4 +163,27 @@ class NoteTest < ActiveSupport::TestCase
   ensure
     Account.any_instance.unstub(:twitter_handle_publisher_enabled?)
   end
+
+  def test_central_publish_payload_with_source_additional_info_email
+    note = create_note(note_params_hash)
+    note.schema_less_note.note_properties = {}
+    note.schema_less_note.note_properties[:received_at] = Time.now.utc.iso8601
+    payload = note.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_note_pattern(note))
+  end
+
+  def test_central_publish_payload_with_source_additional_info_email_nil
+    note = create_note(note_params_hash)
+    note.schema_less_note.note_properties = {}
+    note.schema_less_note.note_properties[:received_at] = nil
+    payload = note.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_note_pattern(note))
+  end
+
+  def test_central_publish_payload_with_source_additional_info_email_no_header_hash
+    note = create_note(note_params_hash)
+    note.schema_less_note.note_properties = nil
+    payload = note.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_note_pattern(note))
+  end
 end

@@ -243,4 +243,20 @@ class TicketTest < ActiveSupport::TestCase
   ensure
     Account.any_instance.unstub(:twitter_handle_publisher_enabled?)
   end
+
+  def test_source_additional_info_email_received_at
+    t = create_ticket(ticket_params_hash.merge(source: 1))
+    t.update_attributes(status: 5)
+    t.schema_less_ticket.header_info[:received_at] = Time.now.utc.iso8601
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+  end
+
+  def test_source_additional_info_email_received_at_no_value
+    t = create_ticket(ticket_params_hash.merge(source: 1))
+    t.update_attributes(status: 5)
+    t.schema_less_ticket.header_info[:received_at] = nil
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+  end
 end

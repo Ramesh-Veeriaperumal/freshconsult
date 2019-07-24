@@ -160,16 +160,16 @@ module Facebook
           if msg_type.include?('comment') || msg_type.include?('message')
             post_success_or_failure_command(error_code: error_code,
                                             error_msg: error_msg,
-                                            note_id: @item.id,
-                                            note_created_at: @item.created_at,
+                                            note_id: note.id,
+                                            note_created_at: note.created_at,
                                             msg_type: msg_type,
                                             fb_page_id: fan_page.id,
-                                            fb_post_id: @item.fb_post.try(:post_id))
+                                            fb_post_id: note.fb_post.try(:post_id))
           end
         rescue StandardError => error
           ::Rails.logger.error "Error while posting command to central for facebook reply :: #{error.message}"
         end
-        update_facebook_errors_in_schemaless_notes({ code: error_code, message: error_msg }, @item.id) if error_msg.present? || error_code.present?
+        update_facebook_errors_in_schemaless_notes({ code: error_code, message: error_msg }, note.id) if error_msg.present? || error_code.present?
         return_value
       end
 

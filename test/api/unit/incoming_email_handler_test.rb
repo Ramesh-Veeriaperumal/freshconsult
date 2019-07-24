@@ -1041,6 +1041,34 @@ module Helpdesk
         Helpdesk::Email::IncomingEmailHandler.any_instance.unstub(:add_to_or_create_ticket)
         Account.current.rollback(:prevent_wc_ticket_create)
       end
+
+      def test_email_perform_save_incoming_time
+        id = Faker::Lorem.characters(50)
+        subject = 'Test Subject'
+        params = default_params(id, subject)
+        params[:x_received_at] = Time.now.utc.iso8601
+        ShardMapping.stubs(:fetch_by_domain).returns(ShardMapping.first)
+        Helpdesk::Email::SpamDetector.any_instance.stubs(:check_spam).returns(spam: nil)
+        params[:attachments] = 0
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
+        success_response = incoming_email_handler.perform(domain: 'localhost.freshpo.com',
+                                                          email: 'support@localhost.freshpo.com')
+        assert_equal success_response[:processed_status], 'success'
+      end
+
+      def test_email_perform_save_incoming_time_internal_date
+        id = Faker::Lorem.characters(50)
+        subject = 'Test Subject'
+        params = default_params(id, subject)
+        params[:internal_date] = Time.zone.now.to_s
+        ShardMapping.stubs(:fetch_by_domain).returns(ShardMapping.first)
+        Helpdesk::Email::SpamDetector.any_instance.stubs(:check_spam).returns(spam: nil)
+        params[:attachments] = 0
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
+        success_response = incoming_email_handler.perform(domain: 'localhost.freshpo.com',
+                                                          email: 'support@localhost.freshpo.com')
+        assert_equal success_response[:processed_status], 'success'
+      end
     end
   end
 end

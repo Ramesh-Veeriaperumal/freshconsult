@@ -1,8 +1,7 @@
 module TicketsNotesHelper
-  def source_additional_info_hash
-    source_info = {}
+  def social_source_additional_info(source_info)
     source_info[:twitter] = tweet_info_hash if tweet.present?
-    source_info.presence
+    source_info
   end
 
   def tweet_info_hash
@@ -30,5 +29,21 @@ module TicketsNotesHelper
         'twitter_handle_id': nil
       }
     end
+  end
+
+  def email_source_info(header_info)
+    received_at = header_info[:received_at] if header_info.present?
+    {
+      'received_at': received_at
+    }
+  end
+
+  def email_note?
+    [Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
+     Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']].include?(source)
+  end
+
+  def email_ticket?
+    email?
   end
 end
