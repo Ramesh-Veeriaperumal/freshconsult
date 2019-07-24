@@ -12,5 +12,5 @@ language:
   name: language
   in: path
   type: string
-  description: Language for accounts with mutlilingual feature. Primary language will be considered when this is not specified.
+  description: Specifies language code of the article (Multilingual feature must be enabled for the account to provide a value.if value is not given, primary language will be considered)
   required: true

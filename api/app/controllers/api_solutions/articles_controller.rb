@@ -51,8 +51,10 @@ module ApiSolutions
     def folder_articles
       if validate_language
         if load_folder
-          load_objects
+          load_folder_articles
           if private_api?
+            # removing description, attachments, tags for article list api in two pane to improve performance
+            @exclude = [:description, :attachments, :tags]
             response.api_root_key = :articles
             response.api_meta = { count: @items_count, next_page: @more_items }
           end
@@ -91,8 +93,8 @@ module ApiSolutions
         validate_delegator(@item, delegator_params)
       end
 
-      def load_objects
-        super(@folder.solution_articles.where(language_id: @lang_id).reorder(Solution::Constants::ARTICLE_ORDER_COLUMN_BY_TYPE[@folder.article_order]).preload(
+      def load_folder_articles
+        items = @folder.solution_articles.where(language_id: @lang_id).reorder(Solution::Constants::ARTICLE_ORDER_COLUMN_BY_TYPE[@folder.article_order]).preload(
           {
             solution_article_meta: [
               :solution_folder_meta,
@@ -100,7 +102,9 @@ module ApiSolutions
             ]
           },
           :article_body, :tags, :attachments, { cloud_files: :application }, :draft, draft: [:draft_body, :attachments, :cloud_files]
-        ))
+        )
+        @items_count = items.count if private_api?
+        @items = paginate_items(items)
       end
 
       def remove_lang_scoper_params

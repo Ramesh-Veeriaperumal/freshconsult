@@ -355,7 +355,11 @@ Helpkit::Application.routes.draw do
 
         resources :folders, controller: 'ember/solutions/folders', only: [:destroy], constraints: { id: /\d+/ } do
           member do
-            resources :articles, controller: 'ember/solutions/articles', only: [:create]
+            resources :articles, controller: 'ember/solutions/articles', only: [:create] do
+              collection do
+                get '(/:language)', to: :folder_articles
+              end
+            end
             put :reorder
             get :show, path: '(:language)', constraints: { language: Regexp.union(Language.all_codes) }
             post :create, path: ':language', constraints: { language: Regexp.union(Language.all_codes) }
@@ -375,11 +379,12 @@ Helpkit::Application.routes.draw do
           end
 
           member do
-            put :update, path: '(:language)', constraints: { language: Regexp.union(Language.all_codes) }
             get :article_content
             put :reset_ratings, path: '(:language)/reset_ratings', constraints: { language: Regexp.union(Language.all_codes) }
             get :votes, path: '(:language)/votes', constraints: { language: Regexp.union(Language.all_codes) }
             put :reorder
+            post '(/:language)', to: :create, constraints: { language: Regexp.union(Language.all_codes) }
+            put '(/:language)', to: :update, constraints: { language: Regexp.union(Language.all_codes) }
           end
         end
 

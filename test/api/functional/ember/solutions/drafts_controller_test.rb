@@ -49,7 +49,7 @@ module Ember
         assert_response 200
         drafts = get_my_drafts
         assert_equal response.api_meta[:count], drafts.size
-        pattern = drafts.first(3).map { |draft| private_api_solution_article_pattern(draft.article, {}, true, nil, draft) }
+        pattern = drafts.first(3).map { |draft| private_api_solution_article_pattern(draft.article, exclude_description: true, exclude_attachments: true, exclude_tags: true) }
         match_json(pattern)
       end
 
@@ -87,7 +87,7 @@ module Ember
         assert_response 200
         drafts = get_my_drafts(Language.find_by_code(language).id)
         assert_equal response.api_meta[:count], drafts.size
-        pattern = drafts.first(3).map { |draft| private_api_solution_article_pattern(draft.article, {}, true, nil, draft) }
+        pattern = drafts.first(3).map { |draft| private_api_solution_article_pattern(draft.article, { exclude_description: true, exclude_attachments: true, exclude_tags: true }, true, nil) }
         match_json(pattern)
       end
 
@@ -204,7 +204,7 @@ module Ember
         article_with_draft
         put :update, construct_params({ version: 'private', article_id: @article.parent_id }, update_params)
         assert_response 200
-        match_json(private_api_solution_article_pattern(@article, {}, true, nil, @draft.reload))
+        match_json(private_api_solution_article_pattern(@article.reload))
       end
 
       def test_update_without_privilege

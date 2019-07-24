@@ -48,11 +48,13 @@ module SolutionsTestHelper
       type: expected_output[:type] || article.parent.reload.art_type,
       feedback_count: expected_output[:feedback_count] || article.tickets.unresolved.reject(&:spam_or_deleted?).count,
       status: expected_output[:status] || article.status,
-      tags: expected_tags || article.tags.map(&:name),
       seo_data: expected_output[:seo_data] || article.seo_data,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
+
+    resp[:tags] = (expected_tags || article.tags.map(&:name)) unless expected_output[:exclude_tags]
+
     cat_folder = if article.parent.reload.solution_category_meta.is_default
                    { source: 'kbase_email' }
                  else
@@ -72,9 +74,14 @@ module SolutionsTestHelper
     end
 
     unless expected_output[:action] == :filter
-      resp.merge!(description: expected_output[:description] || article.description,
-                  description_text: expected_output[:description_text] || article.desc_un_html,
-                  attachments: Array, cloud_files: Array)
+      unless expected_output[:exclude_description]
+        resp[:description] = expected_output[:description] || article.description
+        resp[:description_text] = expected_output[:description_text] || article.desc_un_html
+      end
+      unless expected_output[:exclude_attachments]
+        resp[:attachments] = Array
+        resp[:cloud_files] = Array
+      end
     end
     resp
   end
@@ -91,11 +98,12 @@ module SolutionsTestHelper
       feedback_count: expected_output[:feedback_count] || article.tickets.unresolved.reject(&:spam_or_deleted?).count,
       hits: expected_output[:hits] || article.solution_article_meta.hits,
       status: expected_output[:status] || article.status,
-      tags: expected_tags || article.tags.map(&:name),
       seo_data: expected_output[:seo_data] || article.seo_data,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
+
+    resp[:tags] = (expected_tags || article.tags.map(&:name)) unless expected_output[:exclude_tags]
 
     cat_folder = if article.parent.reload.solution_category_meta.is_default
                    { source: 'kbase_email' }
@@ -106,9 +114,14 @@ module SolutionsTestHelper
     resp.merge!(cat_folder)
 
     unless expected_output[:action] == :filter
-      resp.merge!(description: expected_output[:description] || draft.description,
-                  description_text: expected_output[:description_text] || Helpdesk::HTMLSanitizer.plain(draft.draft_body.description),
-                  attachments: Array, cloud_files: Array)
+      unless expected_output[:exclude_description]
+        resp[:description] = expected_output[:description] || draft.description
+        resp[:description_text] = expected_output[:description_text] || Helpdesk::HTMLSanitizer.plain(draft.draft_body.description)
+      end
+      unless expected_output[:exclude_attachments]
+        resp[:attachments] = Array
+        resp[:cloud_files] = Array
+      end
     end
     resp
   end
@@ -117,7 +130,8 @@ module SolutionsTestHelper
     solution_article_pattern(expected_output = {}, ignore_extra_keys = true, article)
   end
 
-  def private_api_solution_article_pattern(article, expected_output = {}, ignore_extra_keys = true, user = nil, draft = nil)
+  def private_api_solution_article_pattern(article, expected_output = {}, ignore_extra_keys = true, user = nil)
+    draft = expected_output[:exclude_draft] ? nil : article.draft
     ret_hash = if draft
                  solution_article_draft_pattern(expected_output, ignore_extra_keys, article, draft)
                else
@@ -136,6 +150,7 @@ module SolutionsTestHelper
     ret_hash[:visibility] = { user.id => article.parent.visible?(user) || false } if user
     ret_hash[:folder_visibility] = article.solution_folder_meta.visibility
     ret_hash[:language_id] = article.language_id
+    ret_hash[:language] = article.language_code
     if expected_output[:action] == :filter
       ret_hash[:last_modifier] = ret_hash[:draft_modified_by] || ret_hash[:modified_by]
       ret_hash[:last_modified_at] = ret_hash[:draft_modified_at] || ret_hash[:modified_at]
@@ -149,6 +164,7 @@ module SolutionsTestHelper
       description: expected_output[:description] || article.description,
       description_text: expected_output[:description_text] || article.desc_un_html,
       language_id: expected_output[:language_id] || article.language_id,
+      language: Language.find(expected_output[:language_id] || article.language_id).code,
       attachments: Array
     }
   end
@@ -225,50 +241,50 @@ module SolutionsTestHelper
     Account.current.features.enable_multilingual.destroy
   end
 
-  def summary_preload_options(language_code)
-    [solution_category_meta: [:portal_solution_categories, solution_folder_meta: [:"#{language_code}_folder", { solution_article_meta: :"#{language_code}_article" }]]]
+  def summary_preload_options(language)
+    [solution_category_meta: [:portal_solution_categories, solution_folder_meta: [:"#{language.to_key}_folder", { solution_article_meta: :"#{language.to_key}_article" }]]]
   end
 
   def summary_pattern(portal_id, language)
     portal = Account.current.portals.where(id: portal_id).first
-    portal.solution_categories.joins(:solution_category_meta).where('solution_category_meta.is_default = ? AND language_id = ?', false, language.id).preload(summary_preload_options(language.code)).map { |category| category_summary_pattern(category, portal_id, language.code) }
+    portal.solution_categories.joins(:solution_category_meta).where('solution_category_meta.is_default = ? AND language_id = ?', false, language.id).preload(summary_preload_options(language)).map { |category| category_summary_pattern(category, portal_id, language) }
   end
 
-  def category_summary_pattern(category, portal_id, language_code)
+  def category_summary_pattern(category, portal_id, language)
     {
       id: category.parent_id,
       name: category.name,
       language: category.language_code,
-      folders_count: folders_count(category, language_code),
+      folders_count: folders_count(category, language),
       position: category.parent.portal_solution_categories.select { |portal_solution_category| portal_solution_category.portal_id == portal_id }.first.position,
-      folders: current_language_folders(category, language_code).first(::SolutionConstants::SUMMARY_LIMIT).map { |folder| folder_summary_pattern(folder, language_code) }
+      folders: current_language_folders(category, language).first(::SolutionConstants::SUMMARY_LIMIT).map { |folder| folder_summary_pattern(folder, language) }
     }
   end
 
-  def current_language_folders(category, language_code)
-    category.solution_folder_meta.map { |folder_meta| folder_meta.safe_send("#{language_code}_folder") }.compact
+  def current_language_folders(category, language)
+    category.solution_folder_meta.map { |folder_meta| folder_meta.safe_send("#{language.to_key}_folder") }.compact
   end
 
-  def folders_count(category, language_code)
-    current_language_folders(category, language_code).length
+  def folders_count(category, language)
+    current_language_folders(category, language).length
   end
 
-  def folder_summary_pattern(folder, language_code)
+  def folder_summary_pattern(folder, language)
     {
       id: folder.parent_id,
       name: folder.name,
       language: folder.language_code,
-      articles_count: articles_count(folder, language_code),
+      articles_count: articles_count(folder, language),
       position: folder.parent.position
     }
   end
 
-  def current_language_articles(folder, language_code)
-    folder.solution_article_meta.map { |article_meta| article_meta.safe_send("#{language_code}_article") }.compact
+  def current_language_articles(folder, language)
+    folder.solution_article_meta.map { |article_meta| article_meta.safe_send("#{language.to_key}_article") }.compact
   end
 
-  def articles_count(folder, language_code)
-    current_language_articles(folder, language_code).length
+  def articles_count(folder, language)
+    current_language_articles(folder, language).length
   end
 
   def visible_in_portals_payload(category)

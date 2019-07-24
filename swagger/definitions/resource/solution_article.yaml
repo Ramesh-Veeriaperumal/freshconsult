@@ -65,3 +65,23 @@ allOf:
       modified_by:
         type: integer
         format: int64
+      feedback_count:
+        type: integer
+        format: int64
+      draft_locked:
+        type: boolean
+      draft_present:
+        type: boolean
+      draft_modified_by:
+        type: string
+        format: date-time
+      draft_modified_at:
+        type: string
+        format: date-time
+      draft_updated_at:
+        type: string
+        format: date-time
+      tags:
+        type: array
+        items: 
+          type: string      

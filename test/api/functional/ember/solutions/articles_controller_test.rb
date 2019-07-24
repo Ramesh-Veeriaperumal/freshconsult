@@ -15,6 +15,8 @@ module Ember
       include SolutionsHelper
       include SolutionBuilderHelper
       include TagUseTestHelper
+      include SolutionsArticlesTestHelper
+      include SolutionsArticlesCommonTests
 
       def setup
         super
@@ -107,11 +109,11 @@ module Ember
         temp_article.user_id = @account.agents.first.id
         temp_article.save
 
-        create_draft
+        create_draft(article: @article)
 
         @category = Solution::Category.new
         @category.name = "es category #{Time.now}"
-        @category.description = "es cat description"
+        @category.description = 'es cat description'
         @category.language_id = Language.find_by_code('es').id
         @category.parent_id = @@category_meta.id
         @category.account = @account
@@ -143,30 +145,6 @@ module Ember
         { article: params }
       end
 
-      def get_article
-        @account.solution_category_meta.where(is_default: false).collect(&:solution_folder_meta).flatten.map { |x| x unless x.is_default }.collect(&:solution_article_meta).flatten.collect(&:children).flatten.first
-      end
-
-      def get_article_without_draft
-        article = @account.solution_category_meta.where(is_default: false).collect(&:solution_folder_meta).flatten.map { |x| x unless x.is_default }.collect(&:solution_article_meta).flatten.collect(&:children).flatten.first
-        article.draft.publish! if article.draft.present?
-        article.reload
-      end
-
-      def get_article_with_draft
-        article = @account.solution_category_meta.where(is_default: false).collect(&:solution_folder_meta).flatten.map { |x| x unless x.is_default }.collect(&:solution_article_meta).flatten.collect(&:children).flatten.first
-        if article.draft.blank?
-          draft = article.build_draft_from_article
-          draft.title = 'Sample'
-          draft.save
-        end
-        article.reload
-      end
-
-      def get_folder_meta
-        @account.solution_category_meta.where(is_default: false).collect(&:solution_folder_meta).flatten.map { |x| x unless x.is_default }.first
-      end
-
       def test_index_with_no_params
         article_ids = []
         article_ids = @account.solution_articles.limit(10).collect(&:parent_id)
@@ -188,7 +166,7 @@ module Ember
         get :index, controller_params(version: 'private', ids: article_ids.join(','), language: 'en')
         articles = @account.solution_articles.where(parent_id: article_ids, language_id: 6).first(10)
         assert_response 200
-        pattern = articles.map { |article| private_api_solution_article_pattern(article) }
+        pattern = articles.map { |article| private_api_solution_article_pattern(article, exclude_draft: true) }
         match_json(pattern)
       end
 
@@ -198,7 +176,7 @@ module Ember
         get :index, controller_params(version: 'private', ids: article_ids.join(','), language_id: language_id)
         articles = @account.solution_articles.where(parent_id: article_ids, language_id: language_id).first(10)
         assert_response 200
-        pattern = articles.map { |article| private_api_solution_article_pattern(article) }
+        pattern = articles.map { |article| private_api_solution_article_pattern(article, exclude_draft: true) }
         match_json(pattern)
       end
 
@@ -215,7 +193,7 @@ module Ember
         get :index, controller_params(version: 'private', ids: article_ids, language: 'en')
         articles = @account.solution_articles.where(parent_id: article_ids, language_id: 6).first(10)
         assert_response 200
-        pattern = articles.map { |article| private_api_solution_article_pattern(article) }
+        pattern = articles.map { |article| private_api_solution_article_pattern(article, exclude_draft: true) }
         match_json(pattern)
       end
 
@@ -226,7 +204,7 @@ module Ember
         get :index, controller_params(version: 'private', ids: article_ids, language: 'es')
         articles = @account.solution_articles.where(parent_id: article_ids, language_id: 8).first(10)
         assert_response 200
-        pattern = articles.map { |article| private_api_solution_article_pattern(article) }
+        pattern = articles.map { |article| private_api_solution_article_pattern(article, exclude_draft: true) }
         match_json(pattern)
         Account.any_instance.unstub(:all_portal_language_objects)
       end
@@ -254,7 +232,7 @@ module Ember
         get :index, controller_params(version: 'private', ids: article_ids.join(','), user_id: @agent.id, language: 'en')
         articles = @account.solution_articles.where(parent_id: article_ids, language_id: 6).first(10)
         assert_response 200
-        pattern = articles.map { |article| private_api_solution_article_pattern(article, {}, true, @agent) }
+        pattern = articles.map { |article| private_api_solution_article_pattern(article, { exclude_draft: true }, true, @agent) }
         match_json(pattern)
       end
 
@@ -263,7 +241,7 @@ module Ember
         get :index, controller_params(version: 'private', ids: draft.article.parent_id, language: 'en')
         response_body = JSON.parse(response.body).last
         assert_response 200
-        response_body.must_match_json_expression private_api_solution_article_pattern(draft.article)
+        response_body.must_match_json_expression private_api_solution_article_pattern(draft.article, exclude_draft: true)
       end
 
       def test_article_content_with_invalid_id
@@ -331,7 +309,7 @@ module Ember
         assert_response 200
         match_json(article_content_pattern(draft.article))
       end
-      
+
       def test_show_article_without_feature
         article = @account.solution_articles.last
         get :show, controller_params(version: 'private', id: article.parent_id)
@@ -349,7 +327,7 @@ module Ember
       def test_show_draft_article
         sample_article = get_article_with_draft
         get :show, controller_params(version: 'private', id: sample_article.parent_id)
-        match_json(private_api_solution_article_pattern(sample_article, {}, true, nil, sample_article.draft))
+        match_json(private_api_solution_article_pattern(sample_article))
         assert_response 200
       end
 
@@ -365,7 +343,7 @@ module Ember
         post :create, construct_params({ version: 'private', id: folder_meta.id }, title: title, description: paragraph, status: 1)
         assert_response 201
         assert Solution::Article.last.draft
-        match_json(private_api_solution_article_pattern(Solution::Article.last, {}, true, nil, Solution::Article.last.draft))
+        match_json(private_api_solution_article_pattern(Solution::Article.last))
       end
 
       def test_create_and_publish_article
@@ -392,7 +370,7 @@ module Ember
         title = Faker::Name.name
         seo_title = Faker::Name.name
         paragraph = Faker::Lorem.paragraph
-        post :create, construct_params({ version: 'private', id: folder_meta.id }, title: title, description: paragraph, status: 2, seo_data: { meta_title: seo_title, meta_keywords: ['tag3','tag4','tag4'] })
+        post :create, construct_params({ version: 'private', id: folder_meta.id }, title: title, description: paragraph, status: 2, seo_data: { meta_title: seo_title, meta_keywords: ['tag3', 'tag4', 'tag4'] })
         assert_response 201
         match_json(private_api_solution_article_pattern(Solution::Article.last))
       end
@@ -598,7 +576,7 @@ module Ember
         assert sample_article.reload.draft
         assert sample_article.reload.draft.reload.title == 'new draft title'
         assert sample_article.reload.draft.reload.status == 1
-        match_json(private_api_solution_article_pattern(sample_article.reload, {}, true, nil, sample_article.reload.draft))
+        match_json(private_api_solution_article_pattern(sample_article.reload))
       end
 
       def test_update_article_and_publish
@@ -696,24 +674,6 @@ module Ember
         match_json(private_api_solution_article_pattern(sample_article.reload))
       end
 
-      def test_update_article_with_new_tags_without_priviledge
-        sample_article = get_article
-        initial_tag_count = sample_article.tags.count
-        tags = Faker::Lorem.words(3).uniq
-        tags = tags.map do |tag|
-          tag = "#{tag}_#{Time.now.to_i}"
-          assert_equal @account.tags.map(&:name).include?(tag), false
-          tag
-        end
-        remove_privilege(User.current, :create_tags)
-        User.current.reload
-        put :update, construct_params({ version: 'private', id: sample_article.parent_id }, status: 1, tags: tags)
-        assert_response 400
-        match_json([bad_request_error_pattern(:tags, :cannot_create_new_tag, tags: tags.first)])
-        assert_equal sample_article.reload.tags.count, initial_tag_count
-        add_privilege(User.current, :create_tags)
-      end
-
       def test_update_article_with_existing_tags_without_priviledge
         sample_article = get_article
         initial_tag_count = sample_article.tags.count
@@ -751,7 +711,7 @@ module Ember
         put :update, construct_params({ version: 'private', id: sample_article.parent_id }, status: 1, attachments_list: attachment_ids)
         assert_response 200
         sample_article.reload
-        match_json(private_api_solution_article_pattern(sample_article, {}, true, nil, sample_article.draft))
+        match_json(private_api_solution_article_pattern(sample_article))
         assert sample_article.draft.attachments.count == att_count + 2
       end
 
@@ -775,7 +735,7 @@ module Ember
         put :update, construct_params({ version: 'private', id: sample_article.parent_id }, status: 1, cloud_file_attachments: cloud_file_params)
         assert_response 200
         sample_article.reload
-        match_json(private_api_solution_article_pattern(sample_article, {}, true, nil, sample_article.draft))
+        match_json(private_api_solution_article_pattern(sample_article))
         assert sample_article.draft.cloud_files.count == att_count + 1
       end
 
@@ -1335,7 +1295,7 @@ module Ember
       end
 
       def test_article_filters_without_mandatory_fields
-        get :filter, controller_params(version: 'private', :author=>"1")
+        get :filter, controller_params(version: 'private', author: '1')
         assert_response 400
         match_json([bad_request_error_pattern('portal_id', 'Mandatory attribute missing', code: :missing_field)])
       end
@@ -1359,18 +1319,17 @@ module Ember
       end
 
       def test_article_filters_with_invalid_fields
-        get :filter, controller_params(version: 'private', :portal_id=>@portal_id, :by_status=>"1")
+        get :filter, controller_params(version: 'private', portal_id: @portal_id, by_status: '1')
         assert_response 400
         match_json([bad_request_error_pattern('by_status', :invalid_field)])
       end
 
       def test_article_filters
-        article_ids = []
         article_ids = @account.solution_articles.where(language_id: 6).collect(&:parent_id)
         get :filter, controller_params(version: 'private', portal_id: @portal_id, language: 'en')
         articles = @account.solution_articles.where(parent_id: article_ids, language_id: 6).first(10)
         assert_response 200
-        pattern = articles.map { |article| private_api_solution_article_pattern(article, {action: :filter}, true, nil, article.draft) }
+        pattern = articles.map { |article| private_api_solution_article_pattern(article, action: :filter) }
         match_json(pattern)
       end
 
@@ -1382,27 +1341,27 @@ module Ember
 
       def test_article_filters_all_attributes
         author_id = @account.agents.first.id
-        article_meta = create_article({:user_id=>author_id, :folder_meta_id=>@@folder_meta.id})
+        article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id)
         article = article_meta.solution_articles.first
         tag = Faker::Lorem.characters(7)
-        create_tag_use(@account, {:taggable_type=>"Solution::Article", :taggable_id=>article.id, :name=>tag, 
-          :allow_skip => true})
-        get :filter, controller_params({version: 'private', :portal_id=>"#{@portal_id}", :status=>"2", 
-              :author=> "#{author_id}", :category => ["#{@@category_meta.id}"], :folder => ["#{@@folder_meta.id}"], 
-              :created_at => {:start=>"20190101",:end=>"21190101"}, :last_modified => {:start=>"20190101",:end=>"21190101"}, :tags => [tag]},false)
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
+                                 allow_skip: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '2',
+                                         author: author_id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
+                                         created_at: { start: '20190101', end: '21190101' }, last_modified: { start: '20190101', end: '21190101' }, tags: [tag] }, false)
         article.reload
         assert_response 200
-        pattern = private_api_solution_article_pattern(article, {action: :filter}, true, nil, article.draft)
+        pattern = private_api_solution_article_pattern(article, action: :filter)
         match_json([pattern])
       end
 
       def test_article_filters_with_no_results
         author_id = @account.agents.first.id
-        article_meta = create_article({:user_id=>author_id, :folder_meta_id=>@@folder_meta.id})
+        article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id)
         article = article_meta.solution_articles.first
-        get :filter, controller_params({version: 'private', :portal_id=>"#{@portal_id}", :status=>"2", 
-              :author=> "#{author_id}", :category => ["#{@@category_meta.id}"], :folder => ["#{@@folder_meta.id}"], 
-              :created_at => {:start=>"20190101",:end=>"21190101"}, :last_modified => {:start=>"20190101",:end=>"21190101"}, :tags => ["sample"]},false)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '2',
+                                         author: author_id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
+                                         created_at: { start: '20190101', end: '21190101' }, last_modified: { start: '20190101', end: '21190101' }, tags: ['sample'] }, false)
         article.reload
         assert_response 200
         match_json([])
@@ -1410,57 +1369,57 @@ module Ember
 
       def test_article_filters_with_drafts
         author_id = @account.agents.first.id
-        article_meta = create_article({:user_id=>author_id, :folder_meta_id=>@@folder_meta.id})
+        article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id)
         article = article_meta.solution_articles.first
         new_user = add_test_agent
-        create_draft({:article=>article, :user_id => new_user.id, :keep_previous_author => true})
+        create_draft(article: article, user_id: new_user.id, keep_previous_author: true)
         tag = Faker::Lorem.characters(7)
-        create_tag_use(@account, {:taggable_type=>"Solution::Article", :taggable_id=>article.id, :name=>tag, 
-          :allow_skip => true})
-        get :filter, controller_params({version: 'private', :portal_id=>"#{@portal_id}", :status=>"1", 
-              :author=> "#{new_user.id}", :category => ["#{@@category_meta.id}"], :folder => ["#{@@folder_meta.id}"], 
-              :created_at => {:start=>"20190101",:end=>"21190101"}, :last_modified => {:start=>"20190101",:end=>"21190101"}, :tags => [tag]},false)
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
+                                 allow_skip: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '1',
+                                         author: new_user.id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
+                                         created_at: { start: '20190101', end: '21190101' }, last_modified: { start: '20190101', end: '21190101' }, tags: [tag] }, false)
         article.reload
         assert_response 200
-        pattern = private_api_solution_article_pattern(article, {action: :filter}, true, nil, article.draft)
+        pattern = private_api_solution_article_pattern(article, action: :filter)
         match_json([pattern])
       end
 
       def test_article_filters_published_with_drafts
         author_id = @account.agents.first.id
-        article_meta = create_article({:user_id=>author_id, :folder_meta_id=>@@folder_meta.id})
+        article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id)
         article = article_meta.solution_articles.first
         new_user = add_test_agent
-        create_draft({:article=>article, :user_id => new_user.id, :keep_previous_author => true})
+        create_draft(article: article, user_id: new_user.id, keep_previous_author: true)
         tag = Faker::Lorem.characters(7)
-        create_tag_use(@account, {:taggable_type=>"Solution::Article", :taggable_id=>article.id, :name=>tag, 
-          :allow_skip => true})
-        get :filter, controller_params({version: 'private', :portal_id=>"#{@portal_id}", :status=>"2", 
-              :author=> "#{new_user.id}", :category => ["#{@@category_meta.id}"], :folder => ["#{@@folder_meta.id}"],
-              :created_at => {:start=>"20190101",:end=>"21190101"}, :last_modified => {:start=>"20190101",:end=>"21190101"}, :tags => [tag]},false)
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
+                                 allow_skip: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '2',
+                                         author: new_user.id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
+                                         created_at: { start: '20190101', end: '21190101' }, last_modified: { start: '20190101', end: '21190101' }, tags: [tag] }, false)
         article.reload
         assert_response 200
-        pattern = private_api_solution_article_pattern(article, {action: :filter}, true, nil, article.draft)
+        pattern = private_api_solution_article_pattern(article, action: :filter)
         match_json([pattern])
       end
 
       def test_article_filters_unpublished_diff_user
         author_id = add_test_agent.id
-        article_meta = create_article({:user_id=>author_id, :folder_meta_id=>@@folder_meta.id, :status=>"1"})
+        article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id, status: '1')
         article = article_meta.solution_articles.first
         tag = Faker::Lorem.characters(7)
-        create_tag_use(@account, {:taggable_type=>"Solution::Article", :taggable_id=>article.id, :name=>tag, 
-          :allow_skip => true})
-        get :filter, controller_params({version: 'private', :portal_id=>"#{@portal_id}", :status=>"1", 
-              :author=> "#{author_id}", :category => ["#{@@category_meta.id}"], :folder => ["#{@@folder_meta.id}"], 
-              :created_at => {:start=>"20190101",:end=>"21190101"}, :last_modified => {:start=>"20190101",:end=>"21190101"}, :tags => [tag]},false)
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
+                                 allow_skip: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '1',
+                                         author: author_id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
+                                         created_at: { start: '20190101', end: '21190101' }, last_modified: { start: '20190101', end: '21190101' }, tags: [tag] }, false)
         assert_response 200
         match_json([])
       end
 
       def test_article_filters_unpublished
         author_id = @account.agents.first.id
-        article_meta = create_article({:user_id=>author_id, :folder_meta_id=>@@folder_meta.id, :status=>"1"})
+        article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id, status: '1')
         article = article_meta.solution_articles.first
         new_user = add_test_agent
         draft = article.draft
@@ -1468,151 +1427,151 @@ module Ember
         draft.keep_previous_author = true
         draft.save
         tag = Faker::Lorem.characters(7)
-        create_tag_use(@account, {:taggable_type=>"Solution::Article", :taggable_id=>article.id, :name=>tag, 
-          :allow_skip => true})
-        get :filter, controller_params({version: 'private', :portal_id=>"#{@portal_id}", :status=>"1", 
-              :author=> "#{new_user.id}", :category => ["#{@@category_meta.id}"], :folder => ["#{@@folder_meta.id}"],
-              :created_at => {:start=>"20190101",:end=>"21190101"}, :last_modified => {:start=>"20190101",:end=>"21190101"}, :tags => [tag]},false)
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
+                                 allow_skip: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '1',
+                                         author: new_user.id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
+                                         created_at: { start: '20190101', end: '21190101' }, last_modified: { start: '20190101', end: '21190101' }, tags: [tag] }, false)
         article.reload
         assert_response 200
-        pattern = private_api_solution_article_pattern(article, {action: :filter}, true, nil, article.draft)
+        pattern = private_api_solution_article_pattern(article, action: :filter)
         match_json([pattern])
       end
 
       def test_article_filters_modifier
         author_id = @account.agents.first.id
-        article_meta = create_article({:user_id=>author_id, :folder_meta_id=>@@folder_meta.id})
+        article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id)
         article = article_meta.solution_articles.first
         new_user = add_test_agent
         article.modified_by = new_user.id
         article.save
-        get :filter, controller_params({version: 'private', :portal_id=>"#{@portal_id}", :status=>"2", 
-              :author=> "#{new_user.id}", :category => ["#{@@category_meta.id}"], :folder => ["#{@@folder_meta.id}"], :last_modified => {:start=>"20190101",:end=>"21190101"}},false)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '2',
+                                         author: new_user.id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s], last_modified: { start: '20190101', end: '21190101' } }, false)
         article.reload
         assert_response 200
-        pattern = private_api_solution_article_pattern(article, {action: :filter}, true, nil, article.draft)
+        pattern = private_api_solution_article_pattern(article, action: :filter)
         match_json([pattern])
       end
 
       def test_article_filters_invalid_modifier
-        get :filter, controller_params({version: 'private', :portal_id=>"#{@portal_id}", 
-            :author=> Faker::Lorem.characters(4)},false)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s,
+                                         author: Faker::Lorem.characters(4) }, false)
         assert_response 400
       end
 
       def test_article_filters_with_search_term
         article_title = Faker::Lorem.characters(10)
-        article = create_article(article_params({title: article_title})).primary_article
+        article = create_article(article_params(title: article_title)).primary_article
         stub_private_search_response([article]) do
-          get :filter, controller_params(version: 'private', :portal_id=>@portal_id, term: article_title)
+          get :filter, controller_params(version: 'private', portal_id: @portal_id, term: article_title)
         end
         article.reload
         assert_response 200
-        pattern = private_api_solution_article_pattern(article, {action: :filter}, true, nil, article.draft)
+        pattern = private_api_solution_article_pattern(article, action: :filter)
         match_json([pattern])
       end
 
       def test_article_filters_with_default_article
-        default_category = @account.solution_category_meta.where(:is_default => true).first
+        default_category = @account.solution_category_meta.where(is_default: true).first
         default_folder = default_category.solution_folder_meta.first
-        article_meta = create_article({:folder_meta_id=>default_folder.id, :status=>"1"})
+        article_meta = create_article(folder_meta_id: default_folder.id, status: '1')
         article = article_meta.solution_articles.first
-        create_draft({:article=>article, :keep_previous_author => true})
-        get :filter, controller_params({version: 'private', :portal_id=>"#{@portal_id}", :status=>"1", 
-                      :category => ["#{default_category.id}"]},false)
+        create_draft(article: article, keep_previous_author: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '1',
+                                         category: [default_category.id.to_s] }, false)
         article.reload
         assert_response 200
-        pattern = private_api_solution_article_pattern(article, {action: :filter}, true, nil, article.draft)
+        pattern = private_api_solution_article_pattern(article, action: :filter)
         match_json([pattern])
       end
 
       def test_article_filters_by_folder
         article_meta = @account.solution_article_meta.where(solution_folder_meta_id: @@folder_meta.id)
         if article_meta.blank?
-          article_meta = create_article({:folder_meta_id=>@@folder_meta.id})
+          article_meta = create_article(folder_meta_id: @@folder_meta.id)
           articles = article_meta.solution_articles.first
         else
           articles = article_meta.map(&:primary_article).flatten
         end
-        get :filter, controller_params({version: 'private', :portal_id=>"#{@portal_id}", :folder => ["#{@@folder_meta.id}"]},false)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, folder: [@@folder_meta.id.to_s] }, false)
         assert_response 200
-        pattern = articles.map { |article| private_api_solution_article_pattern(article, {action: :filter}, true, nil, article.draft) }
+        pattern = articles.map { |article| private_api_solution_article_pattern(article, action: :filter) }
         match_json(pattern)
       end
 
       def test_article_filters_by_category_folder
         article_meta = @account.solution_article_meta.where(solution_folder_meta_id: @@folder_meta.id)
         if article_meta.blank?
-          article_meta = create_article({:folder_meta_id=>@@folder_meta.id})
+          article_meta = create_article(folder_meta_id: @@folder_meta.id)
           articles = article_meta.solution_articles.first
         else
           articles = article_meta.map(&:primary_article).flatten
         end
-        get :filter, controller_params({version: 'private', :portal_id=>"#{@portal_id}", :category => ["#{@@category_meta.id}"], :folder => ["#{@@folder_meta.id}"]},false)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s] }, false)
         assert_response 200
-        pattern = articles.map { |article| private_api_solution_article_pattern(article, {action: :filter}, true, nil, article.draft) }
+        pattern = articles.map { |article| private_api_solution_article_pattern(article, action: :filter) }
         match_json(pattern)
       end
 
       def test_article_filters_by_category_folder_mismatched
-        article_meta = create_article({:folder_meta_id=>@@folder_meta.id})
+        article_meta = create_article(folder_meta_id: @@folder_meta.id)
         article = article_meta.solution_articles.first
-        get :filter, controller_params({version: 'private', :portal_id=>"#{@portal_id}", :category => ["#{@@category_meta.id}"], 
-          :folder => ["10101010100000"]},false)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, category: [@@category_meta.id.to_s],
+                                         folder: ['10101010100000'] }, false)
         assert_response 200
         match_json([])
       end
 
       def test_article_filters_by_tags
         author_id = @account.agents.first.id
-        article_meta = create_article({:user_id=>author_id, :folder_meta_id=>@@folder_meta.id})
+        article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id)
         article = article_meta.solution_articles.first
         tag = Faker::Lorem.characters(7)
-        create_tag_use(@account, {:taggable_type=>"Solution::Article", :taggable_id=>article.id, :name=>tag, 
-          :allow_skip => true})
-        get :filter, controller_params({version: 'private', :portal_id=>"#{@portal_id}", :tags => [tag]},false)
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
+                                 allow_skip: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, tags: [tag] }, false)
         article.reload
         assert_response 200
-        pattern = private_api_solution_article_pattern(article, {action: :filter}, true, nil, article.draft)
+        pattern = private_api_solution_article_pattern(article, action: :filter)
         match_json([pattern])
       end
 
       def test_article_filters_by_status
-        articles = @account.solution_articles.where(status: "2", language_id: 6)
+        articles = @account.solution_articles.where(status: '2', language_id: 6)
         if articles.blank?
-          article_meta = create_article({:folder_meta_id=>@@folder_meta.id})
+          article_meta = create_article(folder_meta_id: @@folder_meta.id)
           articles = article_meta.solution_articles
         end
-        get :filter, controller_params({version: 'private', :portal_id=>"#{@portal_id}", :status=>"2"},false)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '2' }, false)
         assert_response 200
-        pattern = articles.map { |article| private_api_solution_article_pattern(article, {action: :filter}, true, nil, article.draft) }
+        pattern = articles.map { |article| private_api_solution_article_pattern(article, action: :filter) }
         match_json(pattern)
       end
 
       def test_article_filters_by_author_lastmodified
         author_id = add_test_agent.id
-        article_meta = create_article({:user_id=>author_id, :folder_meta_id=>@@folder_meta.id})
+        article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id)
         article = article_meta.solution_articles.first
-        get :filter, controller_params({version: 'private', :portal_id=>"#{@portal_id}", 
-              :author=> "#{author_id}", :last_modified => {:start=>"20190101",:end=>"21190101"}},false)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s,
+                                         author: author_id.to_s, last_modified: { start: '20190101', end: '21190101' } }, false)
         article.reload
         assert_response 200
-        pattern = private_api_solution_article_pattern(article, {action: :filter}, true, nil, article.draft)
+        pattern = private_api_solution_article_pattern(article, action: :filter)
         match_json([pattern])
       end
 
       def test_article_filters_by_author_createdat_mismatched
         author_id = add_test_agent.id
-        article_meta = create_article({:user_id=>author_id, :folder_meta_id=>@@folder_meta.id})
+        article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id)
         article = article_meta.solution_articles.first
         start_date = Time.now + 10.days
         end_date = Time.now + 20.days
-        get :filter, controller_params({version: 'private', :portal_id=>"#{@portal_id}", 
-              :author=> "#{author_id}", :created_at => {:start=>"#{start_date}",:end=>"#{end_date}"}},false)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s,
+                                         author: author_id.to_s, created_at: { start: start_date.to_s, end: end_date.to_s } }, false)
         assert_response 200
         match_json([])
       end
-      
+
       def test_reorder_without_position
         folder = @account.solution_folder_meta.where(is_default: false).first
         populate_articles(folder)
@@ -1632,7 +1591,7 @@ module Ember
         assert old_id_order[0] == new_id_order[9]
         assert old_id_order.slice(10, old_id_order.size) == new_id_order.slice(10, new_id_order.size)
       end
-      
+
       def test_reorder_without_privilege
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
         folder = @account.solution_folder_meta.where(is_default: false).first
@@ -1664,7 +1623,7 @@ module Ember
         Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code(language)])
         get :filter, controller_params(version: 'private', portal_id: @portal_id, language: language)
         assert_response 200
-        pattern = articles.map { |article| private_api_solution_article_pattern(article, { action: :filter }, true, nil, article.draft) }
+        pattern = articles.map { |article| private_api_solution_article_pattern(article, { action: :filter }, true, nil) }
         match_json(pattern)
         Account.any_instance.unstub(:all_portal_language_objects)
       end
@@ -1683,7 +1642,7 @@ module Ember
               created_at: { start: "20190101", end: "21190101" }, last_modified: { start: "20190101", end: "21190101" }, tags: [tag] }, false)
         article.reload
         assert_response 200
-        pattern = private_api_solution_article_pattern(article, { action: :filter }, true, nil, article.draft)
+        pattern = private_api_solution_article_pattern(article, { action: :filter }, true, nil)
         match_json([pattern])
         Account.any_instance.unstub(:all_portal_language_objects)
       end
@@ -1710,7 +1669,7 @@ module Ember
         get :filter, controller_params({ version: 'private', portal_id: "#{@portal_id}", language: language, category: ["#{@@category_meta.id}"], folder: ["#{@@folder_meta.id}"], author: "#{author_id}"}, false)
         article.reload
         assert_response 200
-        pattern = private_api_solution_article_pattern(article, { action: :filter }, true, nil, article.draft)
+        pattern = private_api_solution_article_pattern(article, { action: :filter }, true, nil)
         match_json([pattern])
         Account.any_instance.unstub(:all_portal_language_objects)
       end
@@ -1737,7 +1696,7 @@ module Ember
         Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code(language)])
         get :filter, controller_params({ version: 'private', portal_id: "#{@portal_id}", language: language, status: "2" }, false)
         assert_response 200
-        pattern = articles.map { |article| private_api_solution_article_pattern(article, { action: :filter }, true, nil, article.draft) }
+        pattern = articles.map { |article| private_api_solution_article_pattern(article, { action: :filter }, true, nil) }
         match_json(pattern)
         Account.any_instance.unstub(:all_portal_language_objects)
       end
@@ -1752,7 +1711,7 @@ module Ember
         get :filter, controller_params({ version: 'private', portal_id: "#{@portal_id}", language: language, author: "#{author_id}", last_modified: { start: "20190101", end: "21190101" }}, false)
         article.reload
         assert_response 200
-        pattern = private_api_solution_article_pattern(article, {action: :filter}, true, nil, article.draft)
+        pattern = private_api_solution_article_pattern(article, { action: :filter }, true, nil)
         match_json([pattern])
         Account.any_instance.unstub(:all_portal_language_objects)
       end
@@ -1826,6 +1785,21 @@ module Ember
       end
 
       private
+        def version
+          'private'
+        end
+
+        def article_pattern(article, expected_output = {}, user = nil)
+          private_api_solution_article_pattern(article, expected_output, true, user)
+        end
+
+        def article_draft_pattern(article, _draft)
+          private_api_solution_article_pattern(article)
+        end
+
+        def article_pattern_index(article)
+          private_api_solution_article_pattern(article, exclude_description: true, exclude_attachments: true, exclude_tags: true)
+        end
 
         def get_valid_not_supported_language
           languages = @account.supported_languages + [@account.language]
@@ -1869,25 +1843,6 @@ module Ember
             folder_id: create_folder({ visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: category.id }.merge(lang_hash)).id,
             status: options[:status] || Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
           }.merge(lang_hash)
-        end
-
-        def create_draft options = {}
-          @draft = Solution::Draft.new
-          @draft.account = @account
-          @draft.article = options[:article] || @@article
-          @draft.title = 'Sample'
-          @draft.category_meta = @@folder_meta.solution_category_meta
-          @draft.status = 1
-          @draft.keep_previous_author = true if options[:keep_previous_author]
-          @draft.user_id = options[:user_id] if options[:user_id]
-          @draft.description = '<b>aaa</b>'
-          @draft.save
-
-          @draft_body = Solution::DraftBody.new
-          @draft_body.draft = @draft
-          @draft_body.description = '<b>aaa</b>'
-          @draft_body.account = @account
-          @draft_body.save
         end
 
         def untranslated_language_articles

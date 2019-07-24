@@ -125,10 +125,9 @@ module Ember
           return unless validate_query_params
         end
 
-        def validate_filter_params
+        def validate_filter_params(addtional_fields = [])
           return unless modify_and_cleanup_language_param
-
-          params.permit(*SolutionConstants::RECENT_ARTICLES_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
+          params.permit(*SolutionConstants::RECENT_ARTICLES_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS, *addtional_fields)
           @article_filter = SolutionArticleFilterValidation.new(params)
           render_errors(@article_filter.errors, @article_filter.error_options) unless @article_filter.valid?
         end

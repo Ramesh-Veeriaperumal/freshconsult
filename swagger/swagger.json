@@ -12013,41 +12013,23 @@
         }
       }
     },
-    "/solutions/articles/{id}": {
-      "get": {
+    "/solutions/articles/{id}/{language}": {
+      "post": {
         "tags": [
           "Solution Article"
         ],
-        "summary": "Show article",
+        "summary": "Create a translated solution article",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "type": "integer",
             "format": "int64",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/solution_article"
-            }
+            "required": true,
+            "description": "Id of the article"
           },
-          "403": {
-            "description": "Access denied"
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Solution Article"
-        ],
-        "summary": "Update article",
-        "parameters": [
           {
-            "$ref": "#/parameters/id"
+            "$ref": "#/parameters/language"
           },
           {
             "name": "data",
@@ -12076,6 +12058,77 @@
           }
         }
       },
+      "get": {
+        "tags": [
+          "Solution Article"
+        ],
+        "summary": "Show article",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true,
+            "description": "Id of the article"
+          },
+          {
+            "$ref": "#/parameters/language"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/solution_article"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Solution Article"
+        ],
+        "summary": "Update article",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "$ref": "#/parameters/language"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/article_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/solution_article"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/solutions/articles/{id}": {
       "delete": {
         "tags": [
           "Solution Article"
@@ -12102,7 +12155,7 @@
         "tags": [
           "Solution Article"
         ],
-        "summary": "List article content for an article",
+        "summary": "Show article content for an article",
         "parameters": [
           {
             "$ref": "#/parameters/id"
@@ -12128,7 +12181,7 @@
         }
       }
     },
-    "/solutions/articles/{id}/reset_ratings": {
+    "/solutions/articles/{id}/{language}/reset_ratings": {
       "put": {
         "tags": [
           "Solution Article"
@@ -12141,6 +12194,9 @@
             "type": "integer",
             "description": "ID of the article",
             "required": true
+          },
+          {
+            "$ref": "#/parameters/language"
           }
         ],
         "responses": {
@@ -12162,7 +12218,7 @@
         }
       }
     },
-    "/solutions/articles/{id}/votes": {
+    "/solutions/articles/{id}/{language}/votes": {
       "get": {
         "tags": [
           "Solution Article"
@@ -12176,6 +12232,9 @@
             "format": "int64",
             "description": "ID of the article",
             "required": true
+          },
+          {
+            "$ref": "#/parameters/language"
           }
         ],
         "responses": {
@@ -17048,6 +17107,34 @@
             "modified_by": {
               "type": "integer",
               "format": "int64"
+            },
+            "feedback_count": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "draft_locked": {
+              "type": "boolean"
+            },
+            "draft_present": {
+              "type": "boolean"
+            },
+            "draft_modified_by": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "draft_modified_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "draft_updated_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           }
         }
@@ -24546,7 +24633,7 @@
       "name": "language",
       "in": "path",
       "type": "string",
-      "description": "Language for accounts with mutlilingual feature. Primary language will be considered when this is not specified.",
+      "description": "Specifies language code of the article (Multilingual feature must be enabled for the account to provide a value.if value is not given, primary language will be considered)",
       "required": true
     }
   }

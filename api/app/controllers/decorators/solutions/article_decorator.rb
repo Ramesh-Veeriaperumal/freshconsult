@@ -13,6 +13,11 @@ class Solutions::ArticleDecorator < ApiDecorator
     @draft = options[:draft]
     @language_metric = options[:language_metric]
     @lang_code = options[:language_code]
+    if options[:exclude].present?
+      @exclude_description = options[:exclude].include?(:description)
+      @exclude_attachments = options[:exclude].include?(:attachments)
+      @exclude_tags = options[:exclude].include?(:tags)
+    end
   end
 
   def fetch_tags
@@ -45,11 +50,11 @@ class Solutions::ArticleDecorator < ApiDecorator
   end
 
   def to_hash
-    ret_hash = article_info.merge(
-      tags: fetch_tags,
-      seo_data: seo_data
-    )
-    unless @is_list_page
+    ret_hash = article_info
+    ret_hash[:seo_data] = seo_data
+    ret_hash[:tags] = fetch_tags unless @exclude_tags
+
+    unless @is_list_page || @exclude_attachments
       ret_hash[:attachments] = attachments_hash
       ret_hash[:cloud_files] = cloud_files_hash
     end
@@ -68,7 +73,7 @@ class Solutions::ArticleDecorator < ApiDecorator
       title: item.title,
       updated_at: item.updated_at.try(:utc)
     }
-    ret_hash.merge!(description_hash(item)) unless @is_list_page || (@search_context && SEARCH_CONTEXTS_WITHOUT_DESCRIPTION.include?(@search_context))
+    ret_hash.merge!(description_hash(item)) unless @exclude_description || @is_list_page || (@search_context && SEARCH_CONTEXTS_WITHOUT_DESCRIPTION.include?(@search_context))
     ret_hash
   end
 
@@ -83,6 +88,7 @@ class Solutions::ArticleDecorator < ApiDecorator
     ret_hash = {
       id: parent_id,
       language_id: language_id,
+      language: language_code,
       attachments: attachments_hash
     }
     ret_hash.merge!(description_hash(record_or_draft))
@@ -110,15 +116,24 @@ class Solutions::ArticleDecorator < ApiDecorator
   private
 
     def folder_name
-      record.solution_folder_meta.safe_send("#{language_short_code}_folder").name
+      record.solution_folder_meta.safe_send("#{language_key}_folder").name
     end
 
     def category_name
-      record.solution_folder_meta.solution_category_meta.safe_send("#{language_short_code}_category").name
+      record.solution_folder_meta.solution_category_meta.safe_send("#{language_key}_category").name
     end
 
-    def language_short_code
-      Language.find(language_id).to_key
+    def language_object
+      @language_object ||= Language.find(language_id)
+    end
+
+    # NOTE: Language code and key is different for zh-TW
+    def language_key
+      language_object.to_key
+    end
+
+    def language_code
+      language_object.code
     end
 
     def attachments_hash
@@ -146,7 +161,8 @@ class Solutions::ArticleDecorator < ApiDecorator
         path: record.to_param,
         modified_at: modified_at.try(:utc),
         modified_by: modified_by,
-        language_id: language_id
+        language_id: language_id,
+        language: language_code
       }
       ret_hash.merge!(visibility_hash)
       ret_hash

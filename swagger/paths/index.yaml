@@ -641,13 +641,15 @@
   $ref: ./solutions/folder/delete.yaml
 /solutions/folders/{folder_id}/articles:
   $ref: ./solutions/article/list_and_create.yaml
+/solutions/articles/{id}/{language}:
+  $ref: ./solutions/article/create_read_update.yaml
 /solutions/articles/{id}:
-  $ref: ./solutions/article/crud.yaml
+  $ref: ./solutions/article/delete.yaml
 /solutions/articles/{id}/article_content:
   $ref: ./solutions/article/content.yaml
-/solutions/articles/{id}/reset_ratings:
+/solutions/articles/{id}/{language}/reset_ratings:
   $ref: ./solutions/reset_ratings.yaml
-/solutions/articles/{id}/votes:
+/solutions/articles/{id}/{language}/votes:
   $ref: ./solutions/article/votes.yaml
 /solutions/folders/bulk_update:
   $ref: ./solutions/folder/bulk_update.yaml
