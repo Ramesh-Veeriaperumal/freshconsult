@@ -185,6 +185,10 @@ class Account < ActiveRecord::Base
     auto_ticket_export_enabled? && scheduled_ticket_exports_from_cache.present?
   end
 
+  def skip_mandatory_checks_enabled?
+    account_additional_settings.additional_settings.blank? ? false : account_additional_settings.additional_settings[:skip_mandatory_checks] == true
+  end
+
   def fields_with_in_operators
     custom_dropdown = "custom_dropdown"
     default_in_op_fields = Hash.new
