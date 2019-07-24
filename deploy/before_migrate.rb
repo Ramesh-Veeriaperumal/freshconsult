@@ -1,5 +1,5 @@
-shared_path = node[:opsworks] ? "/data/helpkit/shared" : config.shared_path
-node.override[:rel_path] = node[:opsworks] ? "#{release_path}" : "#{config.release_path}"
+shared_path = node[:opsworks] ? '/data/helpkit/shared' : config.shared_path
+node.override[:rel_path] = node[:opsworks] ? release_path.to_s : config.release_path.to_s
 puts ":::::::::::release path is ::: #{node[:rel_path]}"
 puts ":::::::shared path is #{shared_path}"
 run "ln -nfs #{shared_path}/config/announcements.yml  #{node[:rel_path]}/config/announcements.yml"
@@ -104,19 +104,20 @@ run "ln -nfs #{shared_path}/config/freno.yml #{node[:rel_path]}/config/freno.yml
 run "ln -nfs #{shared_path}/config/automation_rule_redis.yml #{node[:rel_path]}/config/automation_rule_redis.yml"
 run "ln -nfs #{shared_path}/config/freddy_skills_config.yml #{node[:rel_path]}/config/freddy_skills_config.yml"
 run "ln -nfs #{shared_path}/config/facebook_gateway.yml #{node[:rel_path]}/config/facebook_gateway.yml"
+run "ln -nfs #{shared_path}/config/cron_hooks.yml #{node[:rel_path]}/config/cron_hooks.yml"
 
-#supreme-code-console
+# supreme-code-console
 run "ln -nfs #{shared_path}/config/api_config_internal_tools.yml #{node[:rel_path]}/config/api_config_internal_tools.yml"
 run "ln -nfs #{shared_path}/config/sandbox.yml  #{node[:rel_path]}/config/sandbox.yml"
 
-#search V2
+# search V2
 run "ln -nfs #{shared_path}/config/search/boost_values.yml #{node[:rel_path]}/config/search/boost_values.yml"
 run "ln -nfs #{shared_path}/config/search/supported_types.yml #{node[:rel_path]}/config/search/supported_types.yml"
 run "ln -nfs #{shared_path}/config/search/esv2_config.yml #{node[:rel_path]}/config/search/esv2_config.yml"
 run "ln -nfs #{shared_path}/config/search/etl_queue.yml #{node[:rel_path]}/config/search/etl_queue.yml"
 run "ln -nfs #{shared_path}/config/search/dynamo_tables.yml #{node[:rel_path]}/config/search/dynamo_tables.yml"
 
-#Cert Files
+# Cert Files
 run "ln -nfs #{shared_path}/config/cert/freshid.pem #{node[:rel_path]}/config/cert/freshid.pem"
 run "ln -nfs #{shared_path}/config/cert/saml.pem #{node[:rel_path]}/config/cert/saml.pem"
 
@@ -127,4 +128,4 @@ run "ln -nfs #{shared_path}/config/cert/integrations/xero/privatekey.pem #{node[
 run "ln -nfs #{shared_path}/config/cert/integrations/xero/publickey.cer #{node[:rel_path]}/config/cert/integrations/xero/publickey.cer"
 
 # for copying previous files
-run "rsync --ignore-existing -razv /data/helpkit/current/public/assets #{node[:rel_path]}/public" if ::File.directory?("/data/helpkit/current") && ::File.directory?("/data/helpkit/current/public/assets")
+run "rsync --ignore-existing -razv /data/helpkit/current/public/assets #{node[:rel_path]}/public" if ::File.directory?('/data/helpkit/current') && ::File.directory?('/data/helpkit/current/public/assets')
