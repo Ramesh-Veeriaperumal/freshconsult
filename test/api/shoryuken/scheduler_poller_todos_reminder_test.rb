@@ -15,7 +15,7 @@ class SchedulerPollerTodosReminderTest < ActionView::TestCase
     Account.stubs(:current).returns(Account.first)
     @account = Account.current
     @user = create_test_account
-    Account.any_instance.stubs(:todos_reminder_scheduler_enabled?).returns(true)
+    Account.current.launch(:todos_reminder_scheduler)
     @ticket = create_test_ticket(email: 'sample@freshdesk.com')
     @reminder = get_new_reminder('test delete', @ticket.id, nil, nil, @user.id, 1.day.from_now.iso8601)
     args = { 'account_id' => @account.id, 'reminder_id' => @reminder.id,

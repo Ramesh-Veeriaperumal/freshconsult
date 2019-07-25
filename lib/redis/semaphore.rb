@@ -3,8 +3,8 @@ module Redis::Semaphore
     $semaphore.perform_redis_op('get', key)
   end
 
-  def set_semaphore(key, value = 1, expiry = nil)
-    expiry ? $semaphore.perform_redis_op('setex', key, expiry, value) : $semaphore.perform_redis_op('set', key, value)
+  def set_semaphore(key, value = 1)
+    $semaphore.perform_redis_op('set', key, value)
   end
 
   def set_semaphore_with_expiry(key, value, options)

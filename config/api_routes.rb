@@ -261,7 +261,7 @@ Helpkit::Application.routes.draw do
     end
     resources :sla_policies, controller: 'api_sla_policies', only: [:index, :update, :create]
 
-    resources :archived_tickets, path: 'tickets/archived', controller: 'archive/tickets', only: [:show, :destroy] do
+    resources :archived_tickets ,  path: 'tickets/archived', controller: 'archive/tickets', only: [:show, :destroy] do
       member do
         get :conversations, to: 'archive/conversations#ticket_conversations'
       end
@@ -477,9 +477,9 @@ Helpkit::Application.routes.draw do
     post '/account/export', to: 'admin/api_data_exports#account_export'
 
     resource :accounts, controller: 'admin/api_accounts' do
-      collection do
-        post :cancel
-      end
+          collection do
+            post :cancel
+          end
     end
 
     resources :topics, controller: 'ember/discussions/topics', only: [:show] do
@@ -520,7 +520,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :advanced_ticketing, controller: 'ember/admin/advanced_ticketing', only: [:create, :destroy] do
+    resources :advanced_ticketing, controller: 'ember/admin/advanced_ticketing', only: [ :create, :destroy ] do
       collection do
         get :insights
       end
@@ -832,7 +832,7 @@ Helpkit::Application.routes.draw do
         post :notes, to: 'pipe/conversations#create'
       end
     end
-    get '/account/:account_id/info' => 'pipe/account_info#index', constraints: { account_id: /\d+/ }
+    get "/account/:account_id/info" => 'pipe/account_info#index', constraints: { account_id: /\d+/ }
     namespace :settings do
       resources :helpdesk, controller: 'pipe/helpdesk', only: [:index] do
         collection do
@@ -935,7 +935,7 @@ Helpkit::Application.routes.draw do
     get 'accounts/linked_accounts', to: 'channel/omni_channel_routing/linked_accounts#index'
     get 'agents/:id/task_load', to: 'channel/omni_channel_routing/agents#task_load'
     get 'groups/:id/unassigned_tasks', to: 'channel/omni_channel_routing/groups#unassigned_tasks'
-    put 'tickets/:id', to: 'channel/omni_channel_routing/tickets#assign'
+    put 'tickets/:id' , to: 'channel/omni_channel_routing/tickets#assign'
     put 'accounts/linked_accounts', to: 'channel/omni_channel_routing/linked_accounts#update'
   end
 
@@ -968,10 +968,6 @@ Helpkit::Application.routes.draw do
     end
   end
 
-  cron_routes = proc do
-    post 'trigger/:task_name', to: 'cron_webhook/web_hooks#trigger'
-  end
-
   scope '/api', defaults: { version: 'v2', format: 'json' }, constraints: { format: /(json|$^)/ } do
     scope '/v2', &api_routes # "/api/v2/.."
     scope '/_', defaults: { version: 'private', format: 'json' }, constraints: { format: /(json|$^)/ } do
@@ -993,9 +989,6 @@ Helpkit::Application.routes.draw do
     end
     scope '/widget', defaults: { version: 'widget', format: 'json' }, constraints: { format: /(json|$^)/ } do
       scope '', &widget_routes # "/api/widget/.."
-    end
-    scope '/cron', defaults: { version: 'cron', format: 'json' }, constraints: { format: /(json|$^)/ } do
-      scope '', &cron_routes # "/api/cron/.."
     end
     constraints ApiConstraints.new(version: 2), &api_routes # "/api/.." with Accept Header
     scope '', &api_routes

@@ -18,11 +18,11 @@ module Middleware
           msg['queue'] = queue_from_classification(msg['queue'])
           msg['original_queue'] = original_queue
           msg['message_uuid'] = Thread.current[:message_uuid]
-          unless @ignore.include?(worker.to_s) || worker.to_s.start_with?('CronWebhooks::')
+          if !@ignore.include?(worker.to_s)
             if msg['account_id'] && Account.current.try(:id) && msg['account_id'] != Account.current.id
-              Rails.logger.debug "Account ID mismatch #{Account.current.id} #{msg.inspect}"
-              NewRelic::Agent.notice_error(::AccountMismatch, description: "Account ID mismatch, Account.current.id :: #{Account.current.id} msg[account_id] :: #{msg['account_id']} ", job_id: Thread.current[:message_uuid], params: msg)
-              raise ::AccountMismatch
+                Rails.logger.debug "Account ID mismatch #{Account.current.id} #{msg.inspect}"
+                NewRelic::Agent.notice_error(::AccountMismatch, {:description => "Account ID mismatch, Account.current.id :: #{Account.current.id} msg[account_id] :: #{msg['account_id']} ", :job_id => Thread.current[:message_uuid], :params => msg})
+                raise ::AccountMismatch
             end
             msg['account_id'] ||= ::Account.current.id
           end
