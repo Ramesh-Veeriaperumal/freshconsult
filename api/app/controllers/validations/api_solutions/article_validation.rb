@@ -2,7 +2,7 @@ class ApiSolutions::ArticleValidation < ApiValidation
   CHECK_PARAMS_SET_FIELDS = %w[type folder_name category_name].freeze
   attr_accessor :title, :description, :agent_id, :status, :type, :tags,
                 :seo_data, :meta_title, :meta_keywords, :meta_description,
-                :folder_name, :category_name, :attachments, :attachments_list, :cloud_file_attachments, :folder_id, :unlock, :item, :attachable
+                :folder_name, :category_name, :attachments, :attachments_list, :cloud_file_attachments, :folder_id, :unlock, :item, :attachable, :outdated
 
   validates :title, required: true, on: :create
   validates :title, data_type: { rules: String }, custom_length: { maximum: SolutionConstants::TITLE_MAX_LENGTH, minimum: SolutionConstants::TITLE_MIN_LENGTH, message: :too_long_too_short }
@@ -54,6 +54,8 @@ class ApiSolutions::ArticleValidation < ApiValidation
   validates :cloud_file_attachments, array: { data_type: { rules: Hash, allow_nil: false } }
   validate :validate_cloud_files, if: -> { cloud_file_attachments.present? && errors[:cloud_file_attachments].blank? }
   validates :folder_id, data_type: { rules: Integer, allow_nil: false }
+  validates :outdated,  data_type: { rules: 'Boolean' }
+
 
   def initialize(request_params, article, attachable, lang_id, allow_string_param = false)
     super(request_params, article, allow_string_param)
@@ -63,6 +65,7 @@ class ApiSolutions::ArticleValidation < ApiValidation
     @cloud_file_attachments = request_params[:cloud_file_attachments] if request_params[:cloud_file_attachments]
     @folder_id = request_params[:folder_id] if request_params[:folder_id]
     @unlock = request_params[:unlock] if request_params[:unlock]
+    @outdated = request_params[:outdated] if request_params[:outdated]
 
     if request_params[:seo_data].is_a?(Hash)
       seo_data = request_params[:seo_data]

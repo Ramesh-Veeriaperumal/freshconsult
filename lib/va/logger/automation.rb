@@ -52,7 +52,7 @@ class Va::Logger::Automation
     end
 
     def log_error error, exception, args=nil
-      log("error_message=#{error}, info=#{args.inspect}, exception=#{exception.try(:message)}, backtrace=#{exception.try(:backtrace)}", true)
+      log("error_message=#{error}, info=#{args.inspect}, exception=#{exception.try(:message)}, backtrace=#{exception.try(:backtrace).to_a[0..10]}", true)
     end
 
     def unset_execution_and_time

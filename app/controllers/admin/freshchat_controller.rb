@@ -1,4 +1,5 @@
 class Admin::FreshchatController < Admin::AdminController
+  include Freshchat::Util
 
   before_filter :load_item, :load_profile
   before_filter :load_plan, only: [:index]
@@ -9,17 +10,13 @@ class Admin::FreshchatController < Admin::AdminController
   end
 
   def signup
-    plan_enum = Subscription::FRESHCHAT_PLAN_MAPPING[current_account.plan_name]
-    path = "#{Freshchat::Account::CONFIG[:agentWidgetHostUrl]}/app/v1/signup/unity_signup?email=#{CGI.escape(current_user.email)}"
-    path << "&plan=#{plan_enum}" if plan_enum.present?
-    path << '&first_referrer=Freshdesk omnichannel'
-    request = HTTParty::Request.new(Net::HTTP::Post, URI.encode_www_form(path))
-    freshchat_response = request.perform
+    freshchat_response = signup_freshchat_account
     Rails.logger.info "Freshchat Response :: #{freshchat_response.body} #{freshchat_response.code} #{freshchat_response.message} #{freshchat_response.headers.inspect}"
     if freshchat_response.code == 200
-      return render_error(freshchat_response) if freshchat_response.try(:[], "errorCode").present?
-      freshchat_app_id = freshchat_response["userInfoList"][0]["appId"]
-      freshchat_app_key = freshchat_response["userInfoList"][0]["appKey"]
+      return render_error(freshchat_response) if freshchat_response.try(:[], 'errorCode').present?
+
+      freshchat_app_id = freshchat_response['userInfoList'][0]['appId']
+      freshchat_app_key = freshchat_response['userInfoList'][0]['appKey']
       if freshchat_response.present? && freshchat_app_id.present? && freshchat_app_key.present?
         Freshchat::Account.create(app_id: freshchat_app_id, portal_widget_enabled: false, token: freshchat_app_key, enabled: true)
         redirect_to :action => 'index'

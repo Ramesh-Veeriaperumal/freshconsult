@@ -1,7 +1,5 @@
 module Account::ChannelUtils
 
-  include Livechat::Enabler
-
   def toggle_forums_channel(toggle_value = true)
     if toggle_value
       features.forums.save
@@ -22,6 +20,10 @@ module Account::ChannelUtils
     toggle_additional_settings_for_channel('phone', toggle_value)
   end
 
+  def toggle_chat_channel(toggle_value = true)
+    toggle_additional_settings_for_channel('freshchat', toggle_value)
+  end
+
   def toggle_additional_settings_for_channel(channel, toggle_value)
     additional_settings = account_additional_settings.additional_settings || {}
     additional_settings["enable_#{channel}".to_sym] = toggle_value
@@ -33,28 +35,8 @@ module Account::ChannelUtils
     toggle_forums_channel
   end
 
-  def disable_forums_channel
-    toggle_forums_channel(false)
-  end
-
   def enable_social_channel
     toggle_social_channel
-  end
-
-  def disable_social_channel
-    toggle_social_channel(false)
-  end
-
-  def enable_phone_channel
-    toggle_phone_channel
-  end
-
-  def disable_phone_channel
-    toggle_phone_channel(false)
-  end
-
-  def enable_live_chat_channel
-    enable_livechat_feature
   end
 
   def phone_channel_enabled?

@@ -216,6 +216,16 @@ class Solution::Article < ActiveRecord::Base
     @article_changes ||= self.changes.clone
   end
 
+  def outdated=(value)
+    if is_primary?
+      parent.children.each do |article|
+        article.outdated = value unless article.is_primary? || article.outdated == value
+      end
+    else
+      super(value) unless outdated == value
+    end
+  end
+
   def meta_class
     "Solution::ArticleMeta".constantize
   end

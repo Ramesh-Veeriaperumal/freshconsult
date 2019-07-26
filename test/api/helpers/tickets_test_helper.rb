@@ -95,7 +95,7 @@ module ApiTicketsTestHelper
        params[:custom_field]["test_custom_country_#{@account.id}"]  = country
        params[:custom_field]["test_custom_state_#{@account.id}"]    = state
        params[:custom_field]["test_custom_city_#{@account.id}"]     = city
-       params[:tag_names] = [TAG_NAMES.sample(rand(1..3)).join(',')].sample
+       params[:tag_names] = [TAG_NAMES.sample(rand(1..6)).uniq.join(',')].sample
        params[:responder_id] = [@account.agents.sample.id, nil].sample
        ticket = create_ticket(params)
        ticket.product = [@account.products.sample, nil].sample

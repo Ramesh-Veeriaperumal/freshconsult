@@ -1,6 +1,6 @@
 put:
   tags: [Solution Article]
-  summary: Reorder a article
+  summary: Reorder an article
   parameters:
     - $ref: '#/parameters/id'
     - name: position

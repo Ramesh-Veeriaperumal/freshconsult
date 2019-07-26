@@ -14,7 +14,6 @@ module Freshfone
       Rails.logger.info "Freshfone notification worker"
       Rails.logger.info "JID #{jid} - TID #{Thread.current.object_id.to_s(36)}"
       Rails.logger.info "Start time :: #{Time.now.strftime('%H:%M:%S.%L')}"
-      Rails.logger.info "#{params.inspect}"
 
       begin
         self.current_account = ::Account.current

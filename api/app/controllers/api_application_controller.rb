@@ -154,7 +154,6 @@ class ApiApplicationController < MetalApiController
 
   def route_not_found
     path = env['PATH_INFO']
-    Rails.logger.error("API 404 Error. Path: #{path} Params: #{params.inspect}")
     allows = ActionDispatch::Routing::HTTP_METHODS.select do |verb|
       match = Rails.application.routes.recognize_path(path, method: verb)
       match[:action] != 'route_not_found'
@@ -219,13 +218,11 @@ class ApiApplicationController < MetalApiController
     def render_500(e)
       raise e if Rails.env.development? || Rails.env.test?
       notify_new_relic_agent(e, description: 'Error occured while processing api request')
-      Rails.logger.error("API 500 error: #{params.inspect} \n#{e.message}\n#{e.backtrace.to_a.join("\n")}")
       render_base_error(:internal_error, 500)
     end
 
     def duplicate_value_error(e)
       notify_new_relic_agent(e, description: 'Duplicate Record Error.')
-      Rails.logger.error("Duplicate Entry Error: #{params.inspect} \n#{e.original_exception} \n#{e.message}\n#{e.backtrace.to_a.join("\n")}")
       render_request_error(:duplicate_value, 409)
     end
 

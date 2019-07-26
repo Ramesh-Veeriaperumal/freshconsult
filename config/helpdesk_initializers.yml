@@ -129,3 +129,4 @@ helpdesk:
     - saml_config
     - datadog
     - freshvisuals
+    - cron_hooks

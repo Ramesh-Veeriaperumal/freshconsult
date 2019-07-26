@@ -9,6 +9,7 @@ module Solution::ArticleFilters
     has_scope :by_created_at, type: :hash, using: [:start, :end]
     has_scope :by_last_modified, type: :hash, using: [:by_last_modified_at, :by_author]
     has_scope :by_tags, type: :array
+    has_scope :by_outdated, type: :boolean, allow_blank: true
 
     def search_articles
       @klasses        = ['Solution::Article']

@@ -44,7 +44,7 @@ module GroupHelper
   end
 
   def create_group_private_api(account, options = {})
-    name = Faker::Name.name
+    name = "#{Faker::Name.name}#{rand(1_000_000)}"
     group = FactoryGirl.build(:group, name: name)
     group.account_id = account.id
     group.description = Faker::Lorem.paragraph

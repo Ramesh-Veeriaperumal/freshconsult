@@ -75,7 +75,7 @@ module Admin
             log_format = logging_format(account, ticket_ids, rule, rule_total_time, conditions, negate_conditions, joins)
             custom_logger.info "#{log_format}" unless custom_logger.nil?
             log_info(account.id, rule.id) {
-              Va::Logger::Automation.log("conditions=#{conditions.inspect},
+              Va::Logger::Automation.log("conditions=#{conditions.inspect}, \
               negate_conditons=#{negate_conditions.inspect}, joins=#{joins.inspect}, tickets=#{ticket_ids.inspect}", true)
               Va::Logger::Automation.log_execution_and_time(rule_total_time, ticket_ids.size, rule_type, rule_start_time, rule_end_time)
             }

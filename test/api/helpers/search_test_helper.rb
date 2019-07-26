@@ -132,6 +132,7 @@ module SearchTestHelper
       modified_at: article.modified_at.try(:utc),
       modified_by: article.modified_by,
       language_id: article.language_id,
+      language: article.language_code
     }
     article_pattern.merge!(search_article_content_pattern(article.draft || article, context))
     article_pattern.merge!(parents_info(article))

@@ -1,0 +1,70 @@
+post:
+  tags: [Solution Article]
+  summary: Create a translated solution article
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      required: true
+      description: Id of the article
+    - $ref: '#/parameters/language'
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/article_input'
+    
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/solution_article'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+
+get:
+  tags: [Solution Article]
+  summary: Show article
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      required: true
+      description: Id of the article
+    - $ref: '#/parameters/language'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/solution_article'
+    403:
+      description: Access denied
+
+put:
+  tags: [Solution Article]
+  summary: Update article
+  parameters:
+    - $ref: '#/parameters/id'
+    - $ref: '#/parameters/language'
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/article_update'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/solution_article'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

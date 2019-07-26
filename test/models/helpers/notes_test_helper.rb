@@ -83,12 +83,13 @@ module NotesTestHelper
   end
 
   def source_additional_info_hash(note)
+    source_info = {}
+    source_info[:email] = email_source_info(note.schema_less_note.note_properties) if email_note?(note.source)
     tweet = note.tweet
-    return if tweet.blank?
 
-    twitter_handle = tweet.twitter_handle
-    {
-      twitter: {
+    if tweet.present?
+      twitter_handle = tweet.twitter_handle
+      source_info[:twitter] = {
         tweet_id: tweet.tweet_id.to_s,
         type: tweet.tweet_type,
         support_handle_id: twitter_handle.present? ? twitter_handle.twitter_user_id.to_s : nil,
@@ -97,7 +98,13 @@ module NotesTestHelper
         twitter_handle_id: twitter_handle.present? ? twitter_handle.id : nil,
         stream_id: tweet.stream_id
       }
-    }
+    end
+    source_info.presence
+  end
+
+  def email_note?(source)
+    [Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
+     Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']].include?(source)
   end
 
   # def freshcaller_call_hash(note)

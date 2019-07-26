@@ -37,7 +37,7 @@ get:
 
 post:
   tags: [Solution Article]
-  summary: Create a article
+  summary: Create article
   parameters:
     - name: data
       in: body

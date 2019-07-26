@@ -10,7 +10,6 @@ class Helpdesk::TicketFields::UpdateTicketFilter < BaseWorker
     conditions  = args[:conditions]
     field_id = args[:field_id]
 
-    Rails.logger.info("In UpdateTicketFilter worker :: Args :: #{args.inspect}")
     account.ticket_filters.each do |filter|
       updated = false
       conditions.each { |condition|

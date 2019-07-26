@@ -1,7 +1,7 @@
 class Solutions::ArticleDecorator < ApiDecorator
   delegate :title, :description, :desc_un_html, :user_id, :status, :seo_data, :language_id,
            :parent, :parent_id, :draft, :attachments, :cloud_files, :article_ticket, :modified_at,
-           :modified_by, :id, :to_param, :tags, :voters, :thumbs_up, :thumbs_down, :hits, :tickets, to: :record
+           :modified_by, :id, :to_param, :tags, :voters, :thumbs_up, :thumbs_down, :hits, :tickets, :outdated, to: :record
 
   SEARCH_CONTEXTS_WITHOUT_DESCRIPTION = [:agent_insert_solution, :filtered_solution_search].freeze
 
@@ -13,6 +13,11 @@ class Solutions::ArticleDecorator < ApiDecorator
     @draft = options[:draft]
     @language_metric = options[:language_metric]
     @lang_code = options[:language_code]
+    if options[:exclude].present?
+      @exclude_description = options[:exclude].include?(:description)
+      @exclude_attachments = options[:exclude].include?(:attachments)
+      @exclude_tags = options[:exclude].include?(:tags)
+    end
   end
 
   def fetch_tags
@@ -45,11 +50,11 @@ class Solutions::ArticleDecorator < ApiDecorator
   end
 
   def to_hash
-    ret_hash = article_info.merge(
-      tags: fetch_tags,
-      seo_data: seo_data
-    )
-    unless @is_list_page
+    ret_hash = article_info
+    ret_hash[:seo_data] = seo_data
+    ret_hash[:tags] = fetch_tags unless @exclude_tags
+
+    unless @is_list_page || @exclude_attachments
       ret_hash[:attachments] = attachments_hash
       ret_hash[:cloud_files] = cloud_files_hash
     end
@@ -59,8 +64,16 @@ class Solutions::ArticleDecorator < ApiDecorator
       ret_hash[:draft_present] = @draft.present?
       ret_hash.merge!(draft_private_hash) if @draft.present?
       ret_hash.merge!(last_modified(ret_hash)) if @is_list_page
+      if Account.current.multilingual?
+        ret_hash[:translation_summary] = translation_summary_hash
+        ret_hash[:outdated] = outdated
+      end
     end
     ret_hash
+  end
+
+  def to_index_hash
+    to_hash.except!(:draft_present, :translation_summary)
   end
 
   def draft_info(item)
@@ -68,7 +81,7 @@ class Solutions::ArticleDecorator < ApiDecorator
       title: item.title,
       updated_at: item.updated_at.try(:utc)
     }
-    ret_hash.merge!(description_hash(item)) unless @is_list_page || (@search_context && SEARCH_CONTEXTS_WITHOUT_DESCRIPTION.include?(@search_context))
+    ret_hash.merge!(description_hash(item)) unless @exclude_description || @is_list_page || (@search_context && SEARCH_CONTEXTS_WITHOUT_DESCRIPTION.include?(@search_context))
     ret_hash
   end
 
@@ -83,6 +96,7 @@ class Solutions::ArticleDecorator < ApiDecorator
     ret_hash = {
       id: parent_id,
       language_id: language_id,
+      language: language_code,
       attachments: attachments_hash
     }
     ret_hash.merge!(description_hash(record_or_draft))
@@ -107,18 +121,35 @@ class Solutions::ArticleDecorator < ApiDecorator
     }
   end
 
+  def translation_summary_hash
+    result = {}
+    Account.current.all_language_objects.each do |language|
+      result[language.code] = translation_info(language)
+    end
+    result
+  end
+
   private
 
     def folder_name
-      record.solution_folder_meta.safe_send("#{language_short_code}_folder").name
+      record.solution_folder_meta.safe_send("#{language_key}_folder").name
     end
 
     def category_name
-      record.solution_folder_meta.solution_category_meta.safe_send("#{language_short_code}_category").name
+      record.solution_folder_meta.solution_category_meta.safe_send("#{language_key}_category").name
     end
 
-    def language_short_code
-      Language.find(language_id).to_key
+    def language_object
+      @language_object ||= Language.find(language_id)
+    end
+
+    # NOTE: Language code and key is different for zh-TW
+    def language_key
+      language_object.to_key
+    end
+
+    def language_code
+      language_object.code
     end
 
     def attachments_hash
@@ -146,7 +177,8 @@ class Solutions::ArticleDecorator < ApiDecorator
         path: record.to_param,
         modified_at: modified_at.try(:utc),
         modified_by: modified_by,
-        language_id: language_id
+        language_id: language_id,
+        language: language_code
       }
       ret_hash.merge!(visibility_hash)
       ret_hash
@@ -209,5 +241,29 @@ class Solutions::ArticleDecorator < ApiDecorator
         last_modifier: resp_hash[:draft_modified_by] || resp_hash[:modified_by],
         last_modified_at: resp_hash[:draft_modified_at] || resp_hash[:modified_at]
       }
+    end
+
+    def published?
+      status == Solution::Constants::STATUS_KEYS_BY_TOKEN[:published]
+    end
+
+    def translation_info(language)
+      language_key = language.to_key
+      # binarize sync happens on another object reference rather than record.parent, thus the value won't be updated here for current language article.
+      if language.id == language_id
+        {
+          available: true,
+          draft_present: @draft.present?,
+          outdated: outdated,
+          published: published?
+        }
+      else
+        {
+          available: parent.safe_send("#{language_key}_available?"),
+          draft_present: parent.safe_send("#{language_key}_draft_present?"),
+          outdated: parent.safe_send("#{language_key}_outdated?"),
+          published: parent.safe_send("#{language_key}_published?")
+        }
+      end
     end
 end

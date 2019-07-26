@@ -20,6 +20,11 @@ class AccountAdditionalSettings < ActiveRecord::Base
   validate :validate_supported_languages
   validate :validate_portal_languages, :if => :multilingual?
 
+  def toggle_skip_mandatory_option(boolean_value)
+    additional_settings[:skip_mandatory_checks] = boolean_value
+    save!
+  end
+
   def handle_email_notification_outdate
     if supported_languages_changed?
     	removed = supported_languages_was - supported_languages

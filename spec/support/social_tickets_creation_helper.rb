@@ -110,7 +110,7 @@ module SocialTicketsCreationHelper
   end
 
   def create_twitter_ticket(options = {})
-    options[:tweet] ||= new_tweet(stream_id: options[:stream_id])
+    options[:tweet] ||= new_tweet(stream_id: options[:stream_id], tweet_type: options[:tweet_type])
     requester = options[:requester] || create_tweet_user(options[:tweet][:user])
     options[:twitter_handle] ||= get_twitter_handle
     twitter_ticket = Account.current.tickets.build(
@@ -235,6 +235,12 @@ module SocialTicketsCreationHelper
   end
 
   def create_fb_ticket(options = {})
+    if options.empty?
+      options[:fb_page] = Account.current.facebook_pages.first || create_fb_page(true)
+      options[:post] = fb_post_params
+      options[:group_id] = Account.current.groups.first.id
+
+    end
     requester = create_fb_user(options[:post][:from])
     fb_ticket = Account.current.tickets.build(
       subject:    "FB - #{options[:post][:message].truncate(100)}",
@@ -242,6 +248,7 @@ module SocialTicketsCreationHelper
       product_id: options[:fb_page].product_id,
       group_id:   options[:group_id],
       source:     Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook],
+      cc_email: Helpdesk::Ticket.default_cc_hash,
       created_at: Time.zone.now, # Time.zone.parse(options[:post][:created_time]),
       fb_post_attributes: get_fb_post_attributes(options),
       ticket_body_attributes: {

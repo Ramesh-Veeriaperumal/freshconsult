@@ -399,6 +399,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     source == SOURCE_KEYS_BY_TOKEN[:twitter] and (tweet) and (tweet.twitter_handle)
   end
 
+  def email?
+    source == SOURCE_KEYS_BY_TOKEN[:email]
+  end
+
   def show_facebook_reply?
     facebook? && !thread_key_nil?
   end
@@ -1413,6 +1417,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
  
   def thank_you_note
     @thank_you_note ||= evaluate_on.notes.find_by_id(thank_you_note_id)
+  end
+
+  def update_email_received_at(received_at)
+    return if received_at.blank?
+
+    schema_less_ticket.header_info[:received_at] = received_at
   end
 
   def requester_language

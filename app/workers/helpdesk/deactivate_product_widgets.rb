@@ -9,7 +9,6 @@ class Helpdesk::DeactivateProductWidgets < BaseWorker
 
     # Fetching trend card widgets where product filter is used
     product_widgets_dashboards = acc.dashboards.joins(:widgets).where('widget_type IN (5)').includes(:widgets)
-    Rails.logger.info("Updating Custom dashboard widgets for :: #{acc.id} :: #{args[:product_id]}")
     product_widgets_dashboards.each do |dashboard|
       update_product_widgets(dashboard, args[:product_id])
     end

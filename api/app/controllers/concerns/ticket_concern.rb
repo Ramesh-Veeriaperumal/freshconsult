@@ -5,7 +5,7 @@ module TicketConcern
     return true if app_current?
     # Should not allow to update/show/restore/add(or)edit(or)delete(or)show conversations or time_entries to a ticket if ticket is deleted forever or user doesn't have permission
     if (!user.has_ticket_permission?(ticket) && !allow_without_ticket_permission?) || ticket.schema_less_ticket.try(:trashed)
-      Rails.logger.error "Params: #{params.inspect} User: #{user.id}, #{user.email} doesn't have permission to ticket display_id: #{ticket.display_id}"
+      Rails.logger.error "User: #{user.id}, #{user.email} doesn't have permission to ticket display_id: #{ticket.display_id}"
       render_request_error :access_denied, 403
       return false
     end

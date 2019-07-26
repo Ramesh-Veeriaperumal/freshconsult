@@ -7,13 +7,13 @@ SEARCH_TESTS = Dir.glob('test/api/**/api_search/**/*_test.rb')
 API_APP_CONTROLLER_TESTS = Dir.glob('test/api/app/controllers/**/*_test.rb')
 FRESHCALLER_CHANNEL_TESTS = Dir.glob('test/api/functional/channel/freshcaller/**/*_test.rb')
 INTEGRATION_TESTS = [
-    'test/api/integration/flows/private_api_flows_test.rb',
-    'test/api/integration/flows/company_fields_flows_test.rb',
-    'test/api/integration/flows/contact_fields_flows_test.rb',
-    'test/api/integration/flows/ticket_fields_flows_test.rb',
-    'test/api/integration/flows/surveys_flows_test.rb',
-    'test/api/integration/flows/sla_flow_test.rb'
-]
+  'test/api/integration/flows/private_api_flows_test.rb',
+  'test/api/integration/flows/company_fields_flows_test.rb',
+  'test/api/integration/flows/contact_fields_flows_test.rb',
+  'test/api/integration/flows/ticket_fields_flows_test.rb',
+  'test/api/integration/flows/surveys_flows_test.rb',
+  'test/api/integration/flows/sla_flow_test.rb'
+].freeze
 PRESENTER_TESTS = [
   'test/models/presenters/bot/response_test.rb',
   'test/models/presenters/account_test.rb',
@@ -37,22 +37,23 @@ PRESENTER_TESTS = [
   'test/models/presenters/helpdesk/company_field_test.rb',
   'test/models/presenters/helpdesk/company_field_choice_test.rb'
 
-]
+].freeze
 SIDEKIQ_TESTS = Dir.glob('test/api/sidekiq/**/*_test.rb')
 SKIP_FILES_SIDEKIQ = Dir.glob('test/api/sidekiq/sandbox/*_test.rb') + Dir.glob('test/api/sidekiq/admin/sla/*_test.rb') + Dir.glob('test/api/sidekiq/community/clear_site_map_test.rb')
 SHORYUKEN_TESTS = Dir.glob('test/api/shoryuken/*_test.rb')
 SKIP_FILES_FALCON = [
   'test/api/unit/api_throttler_test.rb',
   'test/api/unit/api_solutions/article_validation_test.rb'
-]
-SKIP_FILES_PUBLIC = ['test/api/functional/shared_ownership_ticket_test.rb']
+].freeze
+SKIP_FILES_PUBLIC = ['test/api/functional/shared_ownership_ticket_test.rb'].freeze
 
 SUCCESSFUL_SEARCH_TESTS = [
-	"test/api/functional/api_search/contacts_controller_test.rb",
-	"test/api/functional/api_search/companies_controller_test.rb",
-  "test/api/functional/api_search/tickets_controller_test.rb",
-  "test/api/functional/api_search/autocomplete_controller_test.rb"
-]
+  'test/api/functional/api_search/contacts_controller_test.rb',
+  'test/api/functional/api_search/companies_controller_test.rb',
+  'test/api/functional/api_search/tickets_controller_test.rb',
+  'test/api/functional/api_search/autocomplete_controller_test.rb',
+  'test/api/functional/api_search/solutions_controller_test.rb'
+].freeze
 
 LIB_TESTS = Dir.glob('test/lib/unit/*_test.rb') + Dir.glob('test/lib/*_test.rb') + Dir.glob('test/lib/helpdesk/**/*_test.rb') + Dir.glob('test/lib/integration_services/**/*_test.rb') + Dir.glob('test/lib/saas/*_test.rb') + Dir.glob('test/lib/spam/*_test.rb') + Dir.glob('test/lib/integrations/**/*_test.rb') + Dir.glob('test/lib/crm/**/*_test.rb') + Dir.glob('test/lib/marketplace/*_test.rb') + Dir.glob('test/lib/reports/*_test.rb') + Dir.glob('test/lib/dashboard/*_test.rb') + Dir.glob('test/lib/email/*_test.rb') + Dir.glob('test/lib/facebook/**/*_test.rb')
 

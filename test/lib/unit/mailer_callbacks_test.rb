@@ -81,7 +81,7 @@ class MailerCallbacksTest < ActiveSupport::TestCase
     monitor = topic.monitorships.first
 
     I18n.locale = 'en'
-    Account.current.stubs(:language).returns('en')
+    Account.any_instance.stubs(:language).returns('en')
     assert_equal nil, recipient.language
     mail_message = TopicMailer.send_email(:stamp_change_email, recipient, recipient.email, topic, topic.user, topic.stamp, topic.type_name, monitor.portal, *monitor.sender_and_host)
     assert_equal recipient.email, mail_message.to.first
@@ -91,7 +91,7 @@ class MailerCallbacksTest < ActiveSupport::TestCase
 
 
     I18n.locale = 'de'
-    Account.current.stubs(:language).returns('de')
+    Account.any_instance.stubs(:language).returns('de')
     assert_equal nil, recipient.language
     mail_message = TopicMailer.send_email(:stamp_change_email, recipient, recipient.email, topic, topic.user, topic.stamp, topic.type_name, monitor.portal, *monitor.sender_and_host)
     assert_equal recipient.email, mail_message.to.first
@@ -100,7 +100,7 @@ class MailerCallbacksTest < ActiveSupport::TestCase
     assert_equal :de, I18n.locale
   ensure
     recipient.unstub(:language)
-    Account.current.unstub(:language)
+    Account.any_instance.unstub(:language)
     I18n.locale = 'en'
   end
 

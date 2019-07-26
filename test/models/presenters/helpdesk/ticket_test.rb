@@ -232,6 +232,22 @@ class TicketTest < ActiveSupport::TestCase
     payload.must_match_json_expression(cp_ticket_pattern(t))
   end
 
+  def test_central_publish_payload_with_source_additional_info_facebook
+    t = create_fb_ticket
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+  end
+
+  def test_source_additional_info_fb_with_page_destroy_ticket_update
+    ticket = create_fb_ticket
+    Social::FbPost.any_instance.stubs(:facebook_page).returns(nil)
+    ticket.update_attributes(status: 5)
+    payload = ticket.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(ticket))
+  ensure
+    Social::FbPost.any_instance.unstub(:facebook_page)
+  end
+
   def test_source_additional_info_twitter_with_handle_destroy_ticket_update
     Account.any_instance.stubs(:twitter_handle_publisher_enabled?).returns(false)
     handle = create_twitter_handle
@@ -242,5 +258,21 @@ class TicketTest < ActiveSupport::TestCase
     payload.must_match_json_expression(cp_ticket_pattern(t))
   ensure
     Account.any_instance.unstub(:twitter_handle_publisher_enabled?)
+  end
+
+  def test_source_additional_info_email_received_at
+    t = create_ticket(ticket_params_hash.merge(source: 1))
+    t.update_attributes(status: 5)
+    t.schema_less_ticket.header_info[:received_at] = Time.now.utc.iso8601
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+  end
+
+  def test_source_additional_info_email_received_at_no_value
+    t = create_ticket(ticket_params_hash.merge(source: 1))
+    t.update_attributes(status: 5)
+    t.schema_less_ticket.header_info[:received_at] = nil
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
   end
 end

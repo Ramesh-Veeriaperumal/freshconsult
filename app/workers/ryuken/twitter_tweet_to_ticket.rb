@@ -13,7 +13,7 @@ class Ryuken::TwitterTweetToTicket
       time_taken = Benchmark.realtime { gnip_msg.process }
       Rails.logger.info "social::twitter processing tweet finished, time taken : #{time_taken}"
     rescue Exception => error
-      Rails.logger.error "Exception in processing tweet #{error.class} #{error.message} #{error.backtrace} #{tweet}"
+      Rails.logger.error "Exception in processing tweet #{error.message} #{error.backtrace[0..10]} #{tweet}"
       NewRelic::Agent.notice_error(error,
                                    custom_params: {
                                      description: 'Error in processing Gnip Feed',

@@ -2,6 +2,7 @@ put:
   tags: [drafts]
   summary: Create or update draft content on autosave
   parameters:
+    - $ref: '#/parameters/language'
     - name: article_id
       in: path
       type: integer

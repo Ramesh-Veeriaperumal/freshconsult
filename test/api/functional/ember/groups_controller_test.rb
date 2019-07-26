@@ -337,12 +337,13 @@ class Ember::GroupsControllerTest < ActionController::TestCase
     Account.current.groups.delete_all
     3.times do
       create_group_private_api(@account, agent_ids:[User.first.id])
-    end   
-    pattern = [] 
-    get :index, controller_params(version: 'private')
+    end
+    pattern = []
     User.current.groups.order(:name).all.each do |group|
       pattern << private_group_pattern_index(group)
-    end   
+    end
+    get :index, controller_params(version: 'private')
+  
     assert_response 200
     match_json(pattern.ordered!)
   ensure

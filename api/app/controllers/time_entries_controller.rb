@@ -77,7 +77,7 @@ class TimeEntriesController < ApiApplicationController
       @ticket = @item.workable
       spam_or_deleted_ticket = @ticket.deleted || @ticket.spam
       if spam_or_deleted_ticket
-        Rails.logger.error "Can't load spam/deleted ticket. Params: #{params.inspect} Id: #{params[:id]} Ticket display_id: #{@ticket.try(:display_id)} spam_or_deleted_ticket: #{spam_or_deleted_ticket}}"
+        Rails.logger.error "Can't load spam/deleted ticket. Id: #{params[:id]} Ticket display_id: #{@ticket.try(:display_id)} spam_or_deleted_ticket: #{spam_or_deleted_ticket}}"
         head 404
       end
       !spam_or_deleted_ticket

@@ -2,6 +2,7 @@ delete:
   tags: [drafts]
   summary: Delete the attachments from draft which are present in article
   parameters:
+    - $ref: '#/parameters/language'
     - name: article_id
       in: path
       type: integer

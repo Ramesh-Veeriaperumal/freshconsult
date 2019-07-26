@@ -250,4 +250,9 @@ module EmailHelper
     return $custom_bot_attack_rules
   end
 
+  def parse_internal_date(internal_date)
+    Time.parse(internal_date).getutc.iso8601
+  rescue StandardError => err
+    ::Rails.logger.error("Exception parsing internal date :: #{err.message}")
+  end
 end

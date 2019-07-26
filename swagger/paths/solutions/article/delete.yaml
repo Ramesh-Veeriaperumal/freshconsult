@@ -1,0 +1,12 @@
+delete:
+  tags: [Solution Article]
+  summary: Delete article
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      required: true
+  responses:
+    204:
+      description: Success
