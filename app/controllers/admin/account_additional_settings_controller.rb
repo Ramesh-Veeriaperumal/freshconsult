@@ -17,6 +17,16 @@ class Admin::AccountAdditionalSettingsController < Admin::AdminController
     render :partial => "bcc_email"
   end
 
+  def enable_skip_mandatory
+    current_account.account_additional_settings.toggle_skip_mandatory_option(true) unless current_account.skip_mandatory_checks_enabled?
+    head :no_content
+  end
+
+  def disable_skip_mandatory
+    current_account.account_additional_settings.toggle_skip_mandatory_option(false) if current_account.skip_mandatory_checks_enabled?
+    head :no_content
+  end
+
   def update_font
     unless params["font-family"].blank?
       @account_additional_settings = current_account.account_additional_settings

@@ -16,9 +16,9 @@ class AccountsController < ApplicationController
                                                                           :create, :rebrand, :dashboard, :rabbitmq_exchange_info, :edit_domain,
                                                                           :anonymous_signup]
 
-  skip_before_filter :set_locale, :except => [:cancel, :show, :edit, :manage_languages, :edit_domain, :anonymous_signup_complete]
+  skip_before_filter :set_locale, except: [:cancel, :show, :edit, :manage_languages, :edit_domain, :anonymous_signup_complete]
   skip_before_filter :set_time_zone, :set_current_account,
-    :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show, :manage_languages, :update_languages, :edit_domain, :validate_domain, :update_domain, :anonymous_signup_complete]
+    except: [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show, :manage_languages, :update_languages, :edit_domain, :validate_domain, :update_domain, :anonymous_signup_complete]
   skip_before_filter :check_account_state
   skip_before_filter :redirect_to_mobile_url
   skip_before_filter :check_day_pass_usage, 

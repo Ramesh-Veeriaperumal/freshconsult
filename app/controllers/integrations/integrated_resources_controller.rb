@@ -7,7 +7,6 @@ class Integrations::IntegratedResourcesController < ApplicationController
   end
 
   def create
-    Rails.logger.debug "Creating new integrated resource "+params.inspect
     begin
       newIntegratedResource = Integrations::IntegratedResource.createResource(params)
       if newIntegratedResource.blank?
@@ -22,7 +21,6 @@ class Integrations::IntegratedResourcesController < ApplicationController
   end
 
   def update #possible dead code
-    Rails.logger.debug "Editing integrated resource "+params.inspect
     begin
       newIntegratedResource = Integrations::IntegratedResource.updateResource(params)
       if newIntegratedResource.blank?
@@ -37,7 +35,6 @@ class Integrations::IntegratedResourcesController < ApplicationController
   end
 
   def delete
-    Rails.logger.debug "Deleting integrated resource "+params.inspect
     begin
       status = Integrations::IntegratedResource.deleteResource(params)
       if status

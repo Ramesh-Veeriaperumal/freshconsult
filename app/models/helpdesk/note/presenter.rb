@@ -57,7 +57,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def source_hash
-    { 
+    {
       id: source,
       name: SOURCE_NAMES_BY_KEY[source]
     }
@@ -68,7 +68,18 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def requester_twitter_id
-    user.present? ? user.twitter_id : nil
+    user.try(:twitter_id)
+  end
+
+  def requester_fb_id
+    user.try(:fb_profile_id)
+  end
+
+  def source_additional_info_hash
+    source_info = {}
+    source_info = social_source_additional_info(source_info)
+    source_info[:email] = email_source_info(schema_less_note.note_properties) if email_note?
+    source_info.presence
   end
 
   # associations

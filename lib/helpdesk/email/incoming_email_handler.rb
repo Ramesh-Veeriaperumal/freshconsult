@@ -577,6 +577,7 @@ module Helpdesk
 				ticket.sender_email = e_email[:email] || from_email[:email]
 				ticket = check_for_chat_scources(ticket,from_email)
 				ticket = check_and_mark_as_spam(ticket) #deleted user
+				ticket.update_email_received_at(params[:x_received_at] || parse_internal_date(params[:internal_date]))
 				check_for_auto_responders(ticket)
 				check_support_emails_from(account, ticket, user, from_email)
 				# Email commands edit the ticket properties here
@@ -947,7 +948,7 @@ module Helpdesk
 				note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] if (from_fwd_recipients or ticket.agent_performed?(user) or rsvp_to_fwd?(ticket, from_email, user))
 
 				note.schema_less_note.category = ::Helpdesk::Note::CATEGORIES[:third_party_response] if rsvp_to_fwd?(ticket, from_email, user)
-
+				note.update_email_received_at(params[:x_received_at] || parse_internal_date(params[:internal_date]))
 				check_for_auto_responders(note)
 				check_support_emails_from(ticket.account, note, user, from_email)
 

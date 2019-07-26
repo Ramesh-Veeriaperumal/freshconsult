@@ -117,6 +117,6 @@ module Social::Twitter::Util
       'stream_id': tweet.stream_id,
       'requester_screen_name': note.requester_twitter_id
     }
-    twt_hash.merge(note.twt_handle_info(tweet))
+    twt_hash.merge(note.twt_handle_info)
   end
 end
