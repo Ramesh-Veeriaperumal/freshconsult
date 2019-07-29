@@ -1,6 +1,6 @@
 class Middleware::RequestInitializer
   include Middleware::RequestVerifier
-  REQUEST_TYPES = ['pipe', 'private', 'freshid', 'channel', 'channel_v1', 'widget', 'cron'].freeze
+  REQUEST_TYPES = ['pipe', 'private', 'freshid', 'channel', 'channel_v1', 'widget'].freeze
 
   def initialize(app)
     @app = app

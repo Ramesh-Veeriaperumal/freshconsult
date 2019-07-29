@@ -19,9 +19,7 @@ module Middleware
           end
 
           Rails.logger.tagged(log_tags) do
-            if @ignore.include?(worker_instance.class.name) || worker_instance.to_s.start_with?('CronWebhooks::')
-              yield
-            else
+            if !@ignore.include?(worker_instance.class.name)
               ::Account.reset_current_account
               account_id = body['account_id']
               Sharding.select_shard_of(account_id) do
@@ -29,6 +27,8 @@ module Middleware
                 account.make_current
                 time_spent = Benchmark.realtime { yield }
               end
+            else
+              yield
             end
           end
         rescue DomainNotReady => e

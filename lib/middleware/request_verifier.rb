@@ -1,4 +1,5 @@
 module Middleware::RequestVerifier
+
   API_PATH = '/api/'.freeze
   PIPE_PATH = '/api/pipe/'.freeze
   FRESHID_PATH = '/api/freshid/'.freeze
@@ -7,7 +8,6 @@ module Middleware::RequestVerifier
   PRIVATE_API_PATH = '/api/_/'.freeze
   API_V2_PATH = '/api/v2/'.freeze
   WIDGET_PATH = '/api/widget/'.freeze
-  CRON_PATH = '/api/cron/'.freeze
 
   def api_request?(resource = nil)
     verify_path?(resource, API_PATH)
@@ -41,13 +41,10 @@ module Middleware::RequestVerifier
     verify_path?(resource, WIDGET_PATH)
   end
 
-  def cron_api_request?(env = nil)
-    verify_path?(env['PATH_INFO'], CRON_PATH)
-  end
-
   private
 
     def verify_path?(resource, path)
       resource.starts_with?(path)
     end
+
 end
