@@ -136,5 +136,11 @@ if Rails.env.test?
     
     factory :subscription_payment, :class => SubscriptionPayment do |s|
     end
+
+    factory :report_filters, :class => Helpdesk::ReportFilter do |t|
+    end
+
+    factory :scheduled_tasks, :class => Helpdesk::ScheduledTask do |t|
+    end
   end
 end

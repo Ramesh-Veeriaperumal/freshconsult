@@ -35,7 +35,7 @@ module HelpdeskReports
         options.merge!(extra_options) if extra_options
         
         if file_path.blank?
-          @scheduled_report ? ScheduledTaskMailer.report_no_data_email(options, @scheduled_report) 
+          @scheduled_report ? ScheduledTaskMailer.report_no_data_email(options, @scheduled_report)
                               : ReportExportMailer.no_report_data(options)
         elsif @attachment_via_s3 && @scheduled_report #scheduled report to be sent as email-attachment only(temporary)
           ReportExportMailer.exceeds_file_size_limit(options)  

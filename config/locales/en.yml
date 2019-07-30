@@ -12724,6 +12724,8 @@ en:
     sincerely: "Sincerely,"
     turn_off: Turn Off,
     regards: "Regards,"
+    freshdesk_support_team: "Freshdesk Support Team"
+    note_for_recipients: "Note: This email is also sent to - %{to_emails}."
     security_notification:
       trusted_ip_enabled:
         one: 'IP whitelisting has been enabled on your account. Your portal will be accessible only in the IP range below:'
@@ -12804,6 +12806,19 @@ en:
       webhook_drop_limit: "A webhook that was scheduled 24 hours ago for execution has now been dropped since you consistently exceeded your API rate limits."
       webhook_drop_support: "If you wish to prevent this from happening again, mail us at support@freshdesk.com to raise your API limits. To learn more about how we support webhooks and why we drop them, click here https://support.freshdesk.com/support/solutions/articles/217264-webhooks-faq."
       webhook_drop_support_link: "If you wish to prevent this from happening again, mail us at support@freshdesk.com to raise your API limits. To learn more about how we support webhooks and why we drop them, <a href='https://support.freshdesk.com/support/solutions/articles/217264-webhooks-faq'>click here.</a>"
+    scheduled_task_notifications:
+      no_data: "Seems like there is no data to display for scheduled report that you created for "
+      blocked_users:
+        report_not_sent_html: "The scheduled report that you created for <b>%{scheduled_task_name}</b> was not sent to the following email address(es):"
+        report_not_sent: "The scheduled report that you created for %{scheduled_task_name} was not sent to the following email address(es):"
+        reason_title: "This could be because of one of the following reasons:"
+        first_reason: "The contact associated with the email was deleted"
+        second_reason: "The email address was deleted"
+        update_email: "You can update the email address(es) by clicking on the below link:"
+      downgraded_users:
+        report_being_sent_html: "The scheduled report that you created for <b>%{scheduled_task_name}</b> is still being sent to the below agents who were deleted/ downgraded to contact recently: "
+        report_being_sent: "The scheduled report that you created for %{scheduled_task_name} is still being sent to the below agents who were deleted/ downgraded to contact recently: "
+        update_configuration: "Please update the configuration if you wish to stop sending this report to the above emails in the future."
     topic_notifications:
       new_forum_topic: "New Topic in \"%{forum_name}\" %>"
       new_forum_topic_html: <b>New Topic</b> in forum
