@@ -14,6 +14,13 @@ class CustomTranslation < ActiveRecord::Base
 
   scope :only_ticket_fields, { :conditions => ['translatable_type = ?', 'Helpdesk::TicketField'] }
 
+  SURVEY_STATUS = {
+    untranslated: 0,
+    translated: 1,
+    outdated: 2,
+    incomplete: 3
+  }.freeze
+
   VERSION_MEMBER_KEYS = {
     'Helpdesk::TicketField' => "#{Helpdesk::TicketField::VERSION_MEMBER_KEY}:TRANSLATION:%{language_code}"
   }.freeze
