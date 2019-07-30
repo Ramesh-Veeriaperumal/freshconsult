@@ -6,7 +6,7 @@ class ScheduledTaskMailer < ActionMailer::Base
       required_params task
       configure_email_config Account.current.primary_email_config if Account.current.primary_email_config.active?
       add_log_info 'expired_task'
-      headers = mail_headers(nil, task.account_id, "Expired Task")
+      headers = mail_headers(task.account_id, "Expired Task", @to_emails, nil)
 
       mail(headers) do |part|
         part.text { render "expired_task.plain" }
@@ -17,11 +17,11 @@ class ScheduledTaskMailer < ActionMailer::Base
     end
   end
 
-  def notify_blocked_or_deleted task, options
+  def notify_blocked_or_deleted(task, options)
     begin
       @to_emails = task.user.email
       configure_email_config Account.current.primary_email_config if Account.current.primary_email_config.active?
-      headers = mail_headers({subject: "[Important] Scheduled Report - Recipient Update Required"}, task.account_id, "Notify Blocked or Deleted")
+      headers = mail_headers(task.account_id, 'Notify Blocked or Deleted', @to_emails, subject: I18n.t('mailer_notifier_subject.scheduled_report_update'))
 
       @task = task
       @user = task.user
@@ -30,19 +30,19 @@ class ScheduledTaskMailer < ActionMailer::Base
       add_log_info 'notify_blocked_or_deleted'
 
       mail(headers) do |part|
-        part.text { render "blocked_user_or_email.plain" }
-        part.html { render "blocked_user_or_email.html" }
+        part.text { render 'blocked_user_or_email.plain' }
+        part.html { render 'blocked_user_or_email.html' }
       end.deliver
     ensure
       remove_email_config
     end
   end
 
-  def notify_downgraded_user task, options
+  def notify_downgraded_user(task, options)
     begin
       @to_emails = task.user.email
       configure_email_config Account.current.primary_email_config if Account.current.primary_email_config.active?
-      headers = mail_headers({subject: "[Important] Scheduled Report - Recipient Update Required"}, task.account_id, "Notify Downgraded User")
+      headers = mail_headers(task.account_id, 'Notify Downgraded User', @to_emails, subject: I18n.t('mailer_notifier_subject.scheduled_report_update'))
 
       @task = task
       @user = task.user
@@ -51,8 +51,8 @@ class ScheduledTaskMailer < ActionMailer::Base
       add_log_info 'notify_downgraded_user'
 
       mail(headers) do |part|
-        part.text { render "notify_downgraded_user.plain" }
-        part.html { render "notify_downgraded_user.html" }
+        part.text { render 'notify_downgraded_user.plain' }
+        part.html { render 'notify_downgraded_user.html' }
       end.deliver
     ensure
       remove_email_config
@@ -65,7 +65,7 @@ class ScheduledTaskMailer < ActionMailer::Base
     if @to_emails.present?
       begin
         configure_email_config Account.current.primary_email_config if Account.current.primary_email_config.active?
-        headers = mail_headers(nil, task.account_id, "Email Scheduled Report")
+        headers = mail_headers(task.account_id, "Email Scheduled Report", @to_emails, nil)
 
         if options[:file_path].present?
           attachment_name = get_attachment_file_name(options[:file_path])
@@ -87,21 +87,27 @@ class ScheduledTaskMailer < ActionMailer::Base
 
   end
 
-  def report_no_data_email options, task
+  def report_no_data_email(options, task)
     begin
       required_params task
       configure_email_config Account.current.primary_email_config if Account.current.primary_email_config.active?
-      headers = mail_headers(nil, task.account_id, "Report No Data Email")
 
       add_log_info 'report_no_data_email'
-
-      mail(headers) do |part|
-        part.text { render "report_no_data_email.plain" }
-        part.html { render "report_no_data_email.html" }
-      end.deliver
+      self.class.send_email_to_group(:report_no_data_email_message, @to_emails, task: @task, portal_name: @portal_name, config: @config)
     ensure
       remove_email_config
     end
+  end
+
+  def report_no_data_email_message(emails, options)
+    @other_emails = emails[:other]
+    @options = options
+    @config = options[:config]
+    headers = mail_headers(options[:task].account_id, 'Report No Data Email', emails[:group], nil)
+    mail(headers) do |part|
+      part.text { render 'report_no_data_email.plain' }
+      part.html { render 'report_no_data_email.html' }
+    end.deliver
   end
 
   def required_params task
@@ -113,10 +119,10 @@ class ScheduledTaskMailer < ActionMailer::Base
 
   private
 
-  def mail_headers(options = {}, account_id, n_type)
+  def mail_headers(account_id, n_type, to_emails, options = {})
     headers = {
       :subject     => (!options.nil? && !options[:subject].nil?) ? options[:subject] : mail_subject,
-      :to          => @to_emails,
+      :to          => to_emails,
       :from        => Account.current.default_friendly_email,
       :bcc         => AppConfig['reports_email'],
       "Reply-to"   => "",
@@ -137,15 +143,14 @@ class ScheduledTaskMailer < ActionMailer::Base
     emails = check_user_and_email_status(emails_and_users, agent_status)
 
     if @task.schedulable.respond_to?(:report_type)
-      ScheduledTaskMailer.notify_blocked_or_deleted(@task, emails) if(emails[:blocked_emails].present?)
-      ScheduledTaskMailer.notify_downgraded_user(@task, emails) if(emails[:agent_downgraded].present?)
+      self.class.send_email(:notify_blocked_or_deleted, @task.user, @task, emails) if emails[:blocked_emails].present?
+      self.class.send_email(:notify_downgraded_user, @task.user, @task, emails) if emails[:agent_downgraded].present?
     end
-
     emails[:to_emails]
   end
 
   def check_user_and_email_status(emails_and_users, agent_status)
-    result = {to_emails: [], blocked_emails: [], agent_downgraded: []}
+    result = { to_emails: [], blocked_emails: [], agent_downgraded: [] }
     users = pre_load_user_with_emails(emails_and_users.values.uniq)
 
     emails_and_users.each do |email, user_id|
@@ -167,8 +172,8 @@ class ScheduledTaskMailer < ActionMailer::Base
     Sharding.select_shard_of(Account.current.id) do
       Sharding.run_on_slave do
         Account.current.all_users.find_all_by_id(ids,
-                                                 :select => "id, email, blocked, deleted, helpdesk_agent",
-                                                 :include => :user_emails).collect{|u| [u.id, u]}.to_h
+                                                 select: 'id, email, blocked, deleted, helpdesk_agent',
+                                                 include: :user_emails).collect { |u| [u.id, u] }.to_h
       end
     end
   end

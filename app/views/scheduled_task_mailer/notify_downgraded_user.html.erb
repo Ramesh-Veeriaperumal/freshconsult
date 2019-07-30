@@ -1,6 +1,6 @@
-Hi <%= @user.name %>,
+<%= t("mailer_notifier.hi_user", user_name: @user.name) %>
 <br/>
-The scheduled report that you created for <b><%=@task.schedulable.filter_name%></b> is still being sent to the below agents who were deleted/ downgraded to contact recently: 
+<%= t("mailer_notifier.scheduled_task_notifications.downgraded_users.report_being_sent_html", scheduled_task_name: @task.schedulable.filter_name).html_safe %>
 <br/>
 <ol>
   <%@options[:agent_downgraded].each do |user|%>
@@ -9,9 +9,9 @@ The scheduled report that you created for <b><%=@task.schedulable.filter_name%><
 </ol>
 <br/>
 
-Please update the configuration if you wish to stop sending this report to the above emails in the future.<br/>
+<%= t("mailer_notifier.scheduled_task_notifications.downgraded_users.update_configuration") %><br/>
 <%= "#{@user.account.host}/reports/#{HelpdeskReports::Constants::Common::REPORT_ENUM_TO_TYPE[@task.schedulable.report_type]}"%>
 <br/>
 <br/>
-Regards,<br/>
-Freshdesk Support Team
+<%= t("mailer_notifier.regards") %><br/>
+<%= t("mailer_notifier.freshdesk_support_team") %> 
