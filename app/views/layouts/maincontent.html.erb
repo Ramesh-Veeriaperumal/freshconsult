@@ -34,7 +34,7 @@
 				<% end %> 
 				<% if content_for?(:helpcard) %>
 					<div class="sidebar sidebar-help" id="Sidebar" <% if(selected_tab == "admin") %> rel="sticky" <% end %> >
-						<div class="sidepanel">
+						<div class="sidepanel<% if(selected_tab == "survey") %> no-padding-sidebar<% end %>">
 							<i class="common-icon-help"></i>
 							<%= yield :helpcard %> 
 						</div>

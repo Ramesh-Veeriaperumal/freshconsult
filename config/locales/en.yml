@@ -2915,6 +2915,19 @@ en:
       created_during: "Created"
       before: 'Before'
       after: 'After'
+    custom_translation:
+      status_translated: Translated
+      status_untranslated: Not available
+      status_outdated: Outdated
+      status_incomplete: Outdated 
+      surveys:
+        translation: TRANSLATION
+        visible_on_portal: Languages visible on portal
+        visible_on_portal_helptext: These languages can be viewed on your portal
+        show_info: Save the survey to start translating
+        hidden_languages: Hidden Languages
+        hidden_languages_helptext: These languages can be viewed on your portal only if you make them visible in your Admin Settings.
+        helptext_content: Can’t find the language of your choice or is it hidden? Add languages or make them visible in Admin > Helpdesk >
   ends_with: Ends with
   last_name: Last Name
   forum:
