@@ -1,10 +1,10 @@
 module Solution::PathHelper
 
-	def multilingual_article_path(article, options={})
-		current_account.multilingual? ?
-		solution_article_version_path(article, options.slice(:anchor).merge({:language => article.language.code})) :
-		solution_article_path(article, options.slice(:anchor))
-	end
+  def multilingual_article_path(article, options={})
+    current_account.multilingual? ?
+    solution_article_version_path(article, options.slice(:anchor).merge({:language => article.language.code})) :
+    solution_article_path(article, options.slice(:anchor))
+  end
 
   def agent_actions_path(solution_object = nil, options = {})
     kbase_mint? ? mint_solutions_path(solution_object, options[:anchor] == 'edit') : old_solutions_path(solution_object, options)

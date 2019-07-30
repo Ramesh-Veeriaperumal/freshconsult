@@ -1,5 +1,4 @@
 class Freddy::Bot < ActiveRecord::Base
-
   include Redis::OthersRedis
   include Redis::RedisKeys
 

@@ -48,8 +48,8 @@ class Helpdesk::InlineAttachmentsController < ApplicationController
 
     def payload
       @payload ||= JSON.parse(JWT.base64url_decode(params[:token].split('.')[1]),{:symbolize_names => true})
-    rescue => e
-      Rails.logger.info("Error in parsing token")
+    rescue StandardError => e
+      Rails.logger.info("Error in parsing token :: #{e.message}")
       nil
     end
 
@@ -61,13 +61,14 @@ class Helpdesk::InlineAttachmentsController < ApplicationController
       return unless payload
       return payload[:domain] if ShardMapping.fetch_by_domain(payload[:domain]).present?
       return unless image_account_id
+
       Sharding.select_shard_of(image_account_id) do
         Sharding.run_on_slave do
           return Account.find(image_account_id).try(:full_domain)
         end
       end
-    rescue => e
-      Rails.logger.info("Inline Image Account not found")
+    rescue StandardError => e
+      Rails.logger.info("Inline Image Account not found :: #{e.message}")
     end
 
     def image_host

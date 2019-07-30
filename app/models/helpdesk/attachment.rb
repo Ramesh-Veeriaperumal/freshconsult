@@ -139,7 +139,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
     rescue JWT::ImmatureSignature, JWT::ExpiredSignature, JWT::DecodeError, JWT::VerificationError => e
       Rails.logger.error('JWT decode error')
       Rails.logger.error(e)
-      return nil
+      nil
     end
 
   end

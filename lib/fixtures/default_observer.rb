@@ -14,7 +14,7 @@ module Fixtures
         ]
       }
       
-      condition_data_hash = { 
+      condition_data_hash = {
         events: [
           { name: 'reply_sent' },
           { value: 'public', name: 'note_type' }

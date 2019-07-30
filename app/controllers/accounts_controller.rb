@@ -115,10 +115,10 @@ class AccountsController < ApplicationController
       mark_account_as_anonymous
       finish_signup
       render json: { success: true,
-                     url: signup_complete_url(token: @signup.user.perishable_token, host: @signup.account.full_domain),
-                     account_id: @signup.account.id },
-                     :callback => params[:callback],
-                     :content_type=> 'application/javascript'
+        url: signup_complete_url(token: @signup.user.perishable_token, host: @signup.account.full_domain),
+        account_id: @signup.account.id },
+        callback: params[:callback],
+        content_type: 'application/javascript'
     else
       respond_to do |format|
         format.json render json: { success: false, errors: @signup.all_errors }, callback: params[:callback]

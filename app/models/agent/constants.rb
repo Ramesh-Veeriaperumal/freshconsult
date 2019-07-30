@@ -22,7 +22,7 @@ class Agent < ActiveRecord::Base
     [true, :logged_in],
     [true, :logged_out]
   ].freeze
- 
+
   AGENT_LOGIN_LOGOUT_ACTIONS = [
     [true, :logged_in],
     [true, :logged_out]

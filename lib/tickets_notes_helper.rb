@@ -1,7 +1,5 @@
 module TicketsNotesHelper
-
   def social_source_additional_info(source_info)
-    source_info = {}
     source_info[:twitter] = tweet_info_hash if tweet.present?
     source_info[:facebook] = fb_feeds_info_hash if fb_post.present?
     source_info

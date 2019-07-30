@@ -36,15 +36,15 @@ class SpamWatcherRedisMethods
       subject = subject.blank? ? "New Spam Watcher Abnormal load #{table_name} : Spam Count #{hit_count}" : "#{subject} Abnormal load #{table_name} : Spam Count #{hit_count}"
       FreshdeskErrorsMailer.deliver_spam_watcher(
         {
-          :subject          => subject,
-          :additional_info  => {
-            :operation  => operation,
-            :full_domain  => account.full_domain,
-            :account_id  => account.id,
-            :user_id => user.id,
-            :admin_url => spam_url(account,user,table_name),
-            :signature => "Spam Watcher",
-            :deleted_flag => deleted_flag
+          subject: subject,
+          additional_info: {
+            operation: operation,
+            full_domain: account.full_domain,
+            account_id: account.id,
+            user_id: user.id,
+            admin_url: spam_url(account,user,table_name),
+            signature: 'Spam Watcher',
+            deleted_flag: deleted_flag
           }
         }
       )
