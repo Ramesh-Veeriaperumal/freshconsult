@@ -12640,6 +12640,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       webhook_drop_limit: "A webhook that was scheduled 24 hours ago for execution has now been dropped since you consistently exceeded your API rate limits."
       webhook_drop_support: "If you wish to prevent this from happening again, mail us at support@freshdesk.com to raise your API limits. To learn more about how we support webhooks and why we drop them, click here https://support.freshdesk.com/support/solutions/articles/217264-webhooks-faq."
       webhook_drop_support_link: "If you wish to prevent this from happening again, mail us at support@freshdesk.com to raise your API limits. To learn more about how we support webhooks and why we drop them, <a href='https://support.freshdesk.com/support/solutions/articles/217264-webhooks-faq'>click here.</a>"
+      notify_dkim_activation: DKIM signatures are now activated for emails sent from %{email_domain}.
+      notify_dkim_failure: DKIM verification failed for domain %{email_domain}.
     scheduled_task_notifications:
       no_data: "Seems like there is no data to display for scheduled report that you created for "
       blocked_users:
@@ -12706,6 +12708,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     no_tickets_to_export: "No tickets in range - %{domain}"
     agent_export: Agents List Export
     audit_log_export: Audit Log Export
+    notify_dkim_activation: "DKIM signatures activation email"
   sandbox:
     live: Sandbox is live
     sync_complete: Sandbox sync complete!

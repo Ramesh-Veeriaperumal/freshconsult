@@ -7,7 +7,7 @@ class Dkim::UserNotification
     execute_on_master(args[:account_id], args[:record_id]){   
       if redis_key_exists?(dkim_verify_key(@domain_category))
         remove_others_redis_key(dkim_verify_key(@domain_category))
-        UserNotifier.notify_dkim_failure(Account.current, @domain_category.attributes)
+        UserNotifier.send_email(:notify_dkim_failure, Account.current.admin_email, Account.current, @domain_category.attributes)
         @domain_category.status = OutgoingEmailDomainCategory::STATUS['delete']
         @domain_category.save
         DkimRecordDeletionWorker.perform_async({:domain_id => @domain_category.id, :account_id => Account.current.id})
