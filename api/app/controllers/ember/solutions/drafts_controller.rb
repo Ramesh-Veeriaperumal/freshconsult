@@ -15,6 +15,8 @@ module Ember
 
       def index
         drafts = current_account.solution_drafts.my_drafts(params[:portal_id], @lang_id).preload(preload_options)
+        # removing description, attachments, tags for article list api in two pane to improve performance
+        @exclude = [:description, :attachments, :tags]
         @items = drafts.first(ApiSolutions::DraftConstants::RECENT_DRAFTS_LIMIT)
         response.api_meta = { count: drafts.count }
       end
@@ -62,7 +64,7 @@ module Ember
         end
 
         def before_load_object
-          validate_language
+          validate_language(true)
         end
 
         def load_object

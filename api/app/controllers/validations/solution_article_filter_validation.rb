@@ -1,6 +1,6 @@
 class SolutionArticleFilterValidation < FilterValidation
   attr_accessor :user_id, :language, :portal_id, :author, :status, :created_at, :last_modified,
-                :category, :folder, :tags, :term
+                :category, :folder, :tags, :term, :outdated
 
   validates :user_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param }
   validates :language, required: true, if: :insert_solution_actions?
@@ -10,6 +10,7 @@ class SolutionArticleFilterValidation < FilterValidation
   validates :term, data_type: { rules: String }, on: :filter
   validates :author, custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param }, on: :filter
   validates :status, custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param }, if: :filter_actions
+  validates :outdated, data_type: { rules: 'Boolean' }
   validates :created_at, :last_modified, data_type: { rules: Hash },
                                          hash: { validatable_fields_hash: proc { |x| x.date_fields_validation } }, on: :filter
   validates :category, :folder, data_type: { rules: Array }, array: { data_type: { rules: String, allow_nil: false },

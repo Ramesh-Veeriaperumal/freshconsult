@@ -58,7 +58,7 @@ module AccountTestHelper
       user_helpdesk_agent: true,
       new_plan_test: true
     )
-    signup.save
+    signup.save!
     PopulateGlobalBlacklistIpsTable.create_default_record
     @account = signup.account.make_current
     update_currency

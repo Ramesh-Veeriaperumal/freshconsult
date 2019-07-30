@@ -1,0 +1,6 @@
+type: object
+allOf:
+  - $ref: ./article_input.yaml
+  - properties:
+      outdated:
+        type: boolean

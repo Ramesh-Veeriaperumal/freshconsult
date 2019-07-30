@@ -14,3 +14,7 @@ post:
       description: Bad request error
       schema:
         $ref: '#/definitions/bad_request_error'
+    409:
+      description: Resource conflict Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

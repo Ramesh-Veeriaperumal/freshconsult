@@ -7,7 +7,7 @@ class Admin::CustomTranslationsController < ApiApplicationController
 
   def download
     @language = Account.current.language
-    translation = { @language.to_sym => { custom_translations: fetch_translation } }
+    translation = { @language => { 'custom_translations' => fetch_translation } }
     respond_with_yaml(translation)
   end
 
@@ -17,9 +17,9 @@ class Admin::CustomTranslationsController < ApiApplicationController
       data = {}
       @objects.each do |object|
         items = params['object_id'].blank? ? scoper(object) : scoper(object).where(id: params['object_id'])
-        data[object.to_sym] = {}
+        data[object] = {}
         items.each do |item|
-          data[object.to_sym][item.custom_translation_key] = item.as_api_response(download_type)
+          data[object][item.custom_translation_key] = item.as_api_response(download_type).stringify_keys
         end
       end
       data

@@ -33,7 +33,7 @@ class Dashboard::SearchServiceTrendCount < Dashboards
       end
     end
   rescue => e
-    Rails.logger.error("SearchServiceCountCluster :: Error :: Reason:#{e.inspect} ::  Backtrace:#{e.backtrace}")
+    Rails.logger.error("SearchServiceCountCluster Error :: #{e.inspect} :: #{e.backtrace[0..15]}")
     NewRelic::Agent.notice_error(e)
   end
 

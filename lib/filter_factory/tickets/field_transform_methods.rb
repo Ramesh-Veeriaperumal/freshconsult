@@ -282,7 +282,7 @@ module FilterFactory::Tickets
       end
 
       def fsm_last_week_condition
-        fetch_date_range(Time.zone.now.beginning_of_day.ago(7.days).utc.iso8601, Time.zone.now.beginning_of_day.utc.iso8601)
+        fetch_date_range(Time.zone.now.prev_week.beginning_of_week.utc.iso8601, Time.zone.now.prev_week.end_of_week.utc.iso8601)
       end
 
       def fsm_week_condition
@@ -290,7 +290,7 @@ module FilterFactory::Tickets
       end
 
       def fsm_next_week_condition
-        fetch_date_range(Time.zone.now.tomorrow.beginning_of_day.utc.iso8601, Time.zone.now.tomorrow.advance(days: 7).end_of_day.utc.iso8601)
+        fetch_date_range(Time.zone.now.next_week.beginning_of_week.utc.iso8601, Time.zone.now.next_week.end_of_week.utc.iso8601)
       end
 
       def fsm_in_the_past_condition

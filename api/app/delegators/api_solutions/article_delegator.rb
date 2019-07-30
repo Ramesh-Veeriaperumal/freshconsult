@@ -6,6 +6,7 @@ module ApiSolutions
     attr_accessor :folder_name, :category_name, :portal_id
 
     validate :can_change_author?, on: :update, if: -> { @agent_id }
+    validate :valid_outdated?, on: :update, if: -> { !@outdated.nil? }
     validate :agent_exists?, if: -> { @agent_id && errors[:agent_id].blank? }
     validates :folder_name, custom_absence: { message: :translation_available_already }, if: -> { create_or_update? && secondary_language? && folder_exists? }
     validates :category_name, custom_absence: { message: :translation_available_already }, if: -> { create_or_update? && secondary_language? && category_exists? }
@@ -32,6 +33,7 @@ module ApiSolutions
       @attachments_list = params[:attachments_list]
       @cloud_files = params[:cloud_file_attachments]
       @folder_id = params[:folder_id]
+      @outdated = params[:outdated]
       super(params)
       check_params_set(params.slice(:folder_name, :category_name))
     end
@@ -68,6 +70,10 @@ module ApiSolutions
 
     def filters?
       FILTER_ACTIONS.include?(validation_context)
+    end
+
+    def valid_outdated?
+      errors[:outdated] << :cannot_mark_primary_as_uptodate if !@outdated && @item.is_primary?
     end
 
     def create_tag_permission

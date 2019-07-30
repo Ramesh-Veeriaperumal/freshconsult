@@ -8,6 +8,7 @@ get:
       format: int64
       description: ID of the article
       required: true
+    - $ref: '#/parameters/language'
   responses: 
     200: 
       description: Success

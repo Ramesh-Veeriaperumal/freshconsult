@@ -321,6 +321,32 @@ module Ember
       Account.current.rollback(:count_service_es_reads)
     end
 
+    def test_widget_data_preview_for_scorecard_with_next_week_custom_filter
+      Account.current.launch(:count_service_es_reads)
+      filter_hash = { data_hash: [{ 'condition' => 'flexifields.ff_date01', 'operator' => 'is', 'ff_name' => 'cf_fsm_appointment_start_time', 'value' => 'next_week' }] }
+      ticket_filter = create_filter(nil, filter_hash)
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new('records' => { 'results' => { ticket_filter.id.to_s => { 'total' => 77 } } }))
+      get :widget_data_preview, controller_params(version: 'private', type: 'scorecard', ticket_filter_id: ticket_filter.id)
+      assert_response 200
+      match_json('count' => 77)
+    ensure
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+    end
+
+    def test_widget_data_preview_for_scorecard_with_last_week_custom_filter
+      Account.current.launch(:count_service_es_reads)
+      filter_hash = { data_hash: [{ 'condition' => 'flexifields.ff_date01', 'operator' => 'is', 'ff_name' => 'cf_fsm_appointment_start_time', 'value' => 'last_week' }] }
+      ticket_filter = create_filter(nil, filter_hash)
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new('records' => { 'results' => { ticket_filter.id.to_s => { 'total' => 77 } } }))
+      get :widget_data_preview, controller_params(version: 'private', type: 'scorecard', ticket_filter_id: ticket_filter.id)
+      assert_response 200
+      match_json('count' => 77)
+    ensure
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+    end
+
     # Bar chart preview tests
 
     def test_widget_data_preview_for_bar_chart_with_invalid_filter

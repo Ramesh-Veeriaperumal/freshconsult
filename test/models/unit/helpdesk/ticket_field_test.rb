@@ -114,7 +114,11 @@ class TicketFieldTest < ActiveSupport::TestCase
     assert_equal(sorted_expected_output, html_unescaped_choices)
 
     company_field = Account.current.ticket_fields.find_by_field_type('default_company')
-    expected_output = [[company.name, company.id]]
+    expected_output = ticket.requester.companies.sorted.collect { |c| [c.name, c.id] }
+    if ticket.company_id && !ticket.requester.company_ids.include?(ticket.company_id)
+      old_company = Account.current.companies.find_by_id(ticket.company_id)
+      expected_output.push([old_company.name, old_company.id]) if old_company.present?
+    end
     html_unescaped_choices = company_field.html_unescaped_choices(ticket)
     assert_equal(expected_output, html_unescaped_choices)
 

@@ -104,7 +104,6 @@ module Dashboard::LeaderboardMethods
   end
 
   def generate_leaderboard(group_id = nil)
-    Rails.logger.debug("In generate_leaderboard #{group_id} #{params.inspect} #{current_user.id} ")
     initialize_leaderboard(group_id)
     custom_range_selected = params[:date_range] == 'select_range' && params[:date_range_selected].present?
     custom_range_selected ? date_range_leaderboard : monthly_leaderboard

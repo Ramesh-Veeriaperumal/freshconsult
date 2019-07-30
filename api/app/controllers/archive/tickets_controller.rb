@@ -106,7 +106,7 @@ class Archive::TicketsController < ::ApiApplicationController
 
     def verify_ticket_permission(user = api_current_user, ticket = @item)
       unless user.has_ticket_permission?(ticket) && destroy_privilege?(user)
-        Rails.logger.error "Params: #{params.inspect} User: #{user.id}, #{user.email} doesn't have permission to ticket display_id: #{ticket.display_id}"
+        Rails.logger.error "User: #{user.id}, #{user.email} doesn't have permission to ticket display_id: #{ticket.display_id}"
         render_request_error :access_denied, 403
         return false
       end

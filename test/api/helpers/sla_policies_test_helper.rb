@@ -49,7 +49,7 @@ module SlaPoliciesTestHelper
     group = create_group(@account)
     product = create_product
     ticket_type = "Question"
-    sla_policy = FactoryGirl.build(:sla_policies, name: Faker::Lorem.word, description: Faker::Lorem.paragraph, active: true, account_id: @account.id,
+    sla_policy = FactoryGirl.build(:sla_policies, name: "#{Faker::Lorem.word}#{rand(1_000_000)}", description: Faker::Lorem.paragraph, active: true, account_id: @account.id,
 
                                                   conditions: { group_id: ["#{group.id}"], company_id: ["#{company.id}"], product_id: ["#{product.id}"], source: ['2'] }
                                                   )

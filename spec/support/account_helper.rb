@@ -41,10 +41,11 @@ module AccountHelper
       :user_email => user_email,
       :user_helpdesk_agent => true
     )
-    signup.save
+    signup.save!
     
     PopulateGlobalBlacklistIpsTable.create_default_record
     @acc = signup.account
+    @account = @acc
     @acc.make_current
     @acc.reload
     create_dummy_customer

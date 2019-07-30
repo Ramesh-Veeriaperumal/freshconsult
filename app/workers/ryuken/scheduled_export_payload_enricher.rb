@@ -8,16 +8,16 @@ class Ryuken::ScheduledExportPayloadEnricher
   def perform(sqs_msg, args)
     Sharding.run_on_slave do
       set_timezone_utc {
-        Rails.logger.info("Inside Enricher :: #{args.inspect}")
+        Rails.logger.info("Inside Enricher :: #{args.inspect}") if Account.current.launched?(:disable_supress_logs)
         export_fields_data  = Export::EnricherHelper.export_fields_data_from_cache
         payload_enricher    = Export::EnricherHelper.create_payload_enricher(args, export_fields_data)
         if payload_enricher.latest_ticket_change?
           enriched_data       = payload_enricher.enrich
           AwsWrapper::SqsV2.send_message(SQS[payload_enricher.queue_name], enriched_data.to_json)
-          Rails.logger.info("After Enricher :: #{enriched_data.inspect}")
+          Rails.logger.info("After Enricher :: #{enriched_data.inspect}") if Account.current.launched?(:disable_supress_logs)
           sqs_msg.delete
         else
-          Rails.logger.info("Requeued to enricher :: #{args.inspect}")
+          Rails.logger.info("Requeued to enricher :: #{args.inspect}") if Account.current.launched?(:disable_supress_logs)
         end
       }
     end

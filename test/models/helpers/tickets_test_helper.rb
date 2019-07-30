@@ -2,6 +2,7 @@
 
 module TicketsTestHelper
   include CoreTicketFieldsTestHelper
+  include TicketsNotesHelper
 
   MAX_DESC_LIMIT = 10000
 
@@ -171,21 +172,43 @@ module TicketsTestHelper
   end
 
   def source_additional_info_hash(ticket)
-    tweet = ticket.tweet
-    return if tweet.blank?
+    source_info = {}
+    source_info[:email] = email_source_info(ticket.schema_less_ticket.header_info) if email_ticket?(ticket.source)
+    tweet = ticket.try(:tweet)
+    fb_post = ticket.try(:fb_post)
 
-    twitter_handle = tweet.twitter_handle
-    {
-      twitter: {
-        tweet_id: tweet.tweet_id.to_s,
-        type: tweet.tweet_type,
-        support_handle_id: twitter_handle.present? ? twitter_handle.twitter_user_id.to_s : nil,
-        support_screen_name:  twitter_handle.present? ? twitter_handle.screen_name : nil,
-        requester_screen_name: ticket.requester.twitter_id,
-        twitter_handle_id: twitter_handle.present? ? twitter_handle.id : nil,
-        stream_id: tweet.stream_id
+    if tweet && ticket.source == TicketConstants::SOURCE_KEYS_BY_NAME['twitter_source']
+      twitter_handle = tweet.twitter_handle
+      source_info = {
+        twitter: {
+          tweet_id: tweet.tweet_id.to_s,
+          type: tweet.tweet_type,
+          support_handle_id: twitter_handle.try(:twitter_user_id).try(:to_s),
+          support_screen_name:  twitter_handle.try(:screen_name),
+          requester_screen_name: ticket.requester.twitter_id,
+          twitter_handle_id: twitter_handle.try(:id),
+          stream_id: tweet.stream_id
+        }
       }
-    }
+    elsif fb_post
+      fb_page = fb_post.facebook_page
+      source_info = {
+        facebook: {
+          support_fb_page_id: fb_page.try(:page_id).try(:to_s),
+          support_fb_page_name: fb_page.try(:page_name),
+          fb_page_db_id: fb_page.try(:id).try(:to_s),
+          requester_profile_id: ticket.requester.fb_profile_id,
+          type: fb_post.msg_type,
+          fb_item_id: fb_post.post_id.to_s
+        }
+      }
+    end
+    return source_info.presence
+  end
+
+  def email_ticket?(source)
+    [Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email],
+     Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:chat]].include?(source)
   end
 
   def cp_assoc_ticket_pattern(expected_output = {}, ticket)

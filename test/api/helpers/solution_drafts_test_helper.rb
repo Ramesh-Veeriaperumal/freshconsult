@@ -1,8 +1,8 @@
 module SolutionDraftsTestHelper
-
-  def article_with_draft
-    article_meta = create_article(article_params)
-    @article = article_meta.primary_article
+  def article_with_draft(language = 'primary')
+    languages = @account.supported_languages_objects.map(&:to_key) + ['primary']
+    article_meta = create_article(article_params.merge(lang_codes: languages))
+    @article = article_meta.safe_send("#{language}_article")
     @draft = @article.build_draft_from_article
     @draft.save!
   end
@@ -18,5 +18,4 @@ module SolutionDraftsTestHelper
       timestamp: draft.updation_timestamp
     }
   end
-
 end

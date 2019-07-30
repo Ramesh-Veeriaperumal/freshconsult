@@ -23,8 +23,9 @@ module Ember
         subscription = @account.subscription
         subscription.state = 'active'
         subscription.save
+
         additional = @account.account_additional_settings
-        additional.supported_languages = ['es', 'ru-RU']
+        additional.supported_languages = ['es','ru-RU']
         additional.save
         @account.features.enable_multilingual.create
         @account.reload
@@ -34,9 +35,12 @@ module Ember
 
       def setup_articles
         4.times do
-          article_meta = create_article(article_params)
-          draft = article_meta.primary_article.build_draft_from_article
-          draft.save
+          languages = @account.supported_languages_objects.map(&:to_key) + ['primary']
+          article_meta = create_article(article_params.merge(lang_codes: languages))
+          languages.each do |language|
+            draft = article_meta.safe_send("#{language}_article").build_draft_from_article
+            draft.save
+          end
         end
       end
 
@@ -49,7 +53,7 @@ module Ember
         assert_response 200
         drafts = get_my_drafts
         assert_equal response.api_meta[:count], drafts.size
-        pattern = drafts.first(3).map { |draft| private_api_solution_article_pattern(draft.article, {}, true, nil, draft) }
+        pattern = drafts.first(3).map { |draft| private_api_solution_article_pattern(draft.article, exclude_description: true, exclude_attachments: true, exclude_tags: true) }
         match_json(pattern)
       end
 
@@ -82,13 +86,20 @@ module Ember
       def test_index_with_language
         languages = @account.supported_languages + ['primary']
         language = @account.supported_languages.first
+
+        # binarize sync won't work if multilingual is not enabled. Cleaning up data for now. We have an FR issue for the same
+        get_my_drafts(Language.find_by_code(language).id).each do |draft|
+          draft.discarding = true
+          draft.destroy
+        end
+
         article = create_article(article_params(lang_codes: languages, status: 1))
         get :index, controller_params(version: 'private', portal_id: @account.main_portal.id, language: language)
         assert_response 200
         drafts = get_my_drafts(Language.find_by_code(language).id)
         assert_equal response.api_meta[:count], drafts.size
-        pattern = drafts.first(3).map { |draft| private_api_solution_article_pattern(draft.article, {}, true, nil, draft) }
-        match_json(pattern)
+        pattern = drafts.first(3).map { |draft| private_api_solution_article_pattern(draft.article, { exclude_description: true, exclude_attachments: true, exclude_tags: true }, true, nil) }
+        match_json(pattern.ordered!)
       end
 
       def test_index_invalid_language
@@ -164,11 +175,89 @@ module Ember
         match_json(request_error_pattern_with_info(:content_changed, {}, user_id: @draft.user_id))
       end
 
+      def test_autosave_with_primary_language
+        article_with_draft
+        put :autosave, construct_params({ version: 'private', article_id: @article.parent_id, language: @account.language }, autosave_params)
+        assert_response 200
+        match_json(autosave_pattern(@draft.reload))
+        assert_equal @draft.title, @title
+        assert_equal @draft.description, @description
+      end
+
+      def test_autosave_with_secondary_language
+        language = @account.supported_languages.first
+        article_with_draft(language)
+        put :autosave, construct_params({ version: 'private', article_id: @article.parent_id, language: language }, autosave_params)
+        assert_response 200
+        match_json(autosave_pattern(@draft.reload))
+        assert_equal @draft.title, @title
+        assert_equal @draft.description, @description
+      end
+
+      def test_autosave_with_invalid_language
+        language = @account.supported_languages.first
+        article_with_draft(language)
+        put :autosave, construct_params({ version: 'private', article_id: @article.parent_id, language: 'test' }, autosave_params)
+        assert_response 404
+        match_json(request_error_pattern(:language_not_allowed, code: 'test', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
+      end
+
+      def test_autosave_without_multilingual
+        allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
+        Account.any_instance.stubs(:features).returns(allowed_features)
+        language = @account.supported_languages.first
+        article_with_draft(language)
+        put :autosave, construct_params({ version: 'private', article_id: @article.parent_id, language: language }, autosave_params)
+        match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
+        assert_response 404
+      ensure
+        Account.any_instance.unstub(:features)
+      end
+
       def test_destroy
         article_with_draft
+        assert @article.draft.present?
         delete :destroy, controller_params(version: 'private', article_id: @article.parent_id)
         assert_response 204
-        assert_nil @article.draft
+        assert_nil @article.reload.draft
+      end
+
+      def test_destroy_with_primary_language
+        article_with_draft
+        assert @article.draft.present?
+        delete :destroy, controller_params(version: 'private', article_id: @article.parent_id, language: @account.language)
+        assert_response 204
+        assert_nil @article.reload.draft
+      end
+
+      def test_destory_with_secondary_language
+        language = @account.supported_languages.first
+        article_with_draft(language)
+        assert @article.draft.present?
+        delete :destroy, controller_params(version: 'private', article_id: @article.parent_id, language: language)
+        assert_response 204
+        assert_nil @article.reload.draft
+      end
+
+      def test_destroy_with_invalid_language
+        language = @account.supported_languages.first
+        article_with_draft(language)
+        assert @article.draft.present?
+        delete :destroy, controller_params(version: 'private', article_id: @article.parent_id, language: 'test')
+        assert_response 404
+        match_json(request_error_pattern(:language_not_allowed, code: 'test', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
+      end
+
+      def test_destroy_without_multilingual
+        allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
+        Account.any_instance.stubs(:features).returns(allowed_features)
+        language = @account.supported_languages.first
+        article_with_draft(language)
+        delete :destroy, controller_params(version: 'private', article_id: @article.parent_id, language: language)
+        match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
+        assert_response 404
+      ensure
+        Account.any_instance.unstub(:features)
       end
 
       def test_destroy_without_privilege
@@ -204,7 +293,42 @@ module Ember
         article_with_draft
         put :update, construct_params({ version: 'private', article_id: @article.parent_id }, update_params)
         assert_response 200
-        match_json(private_api_solution_article_pattern(@article, {}, true, nil, @draft.reload))
+        match_json(private_api_solution_article_pattern(@article.reload))
+      end
+
+      def test_update_with_primary_language
+        article_with_draft
+        put :update, construct_params({ version: 'private', article_id: @article.parent_id, language: @account.language }, update_params)
+        assert_response 200
+        match_json(private_api_solution_article_pattern(@article, {}, true, nil))
+      end
+
+      def test_update_with_secondary_language
+        language = @account.supported_languages.first
+        article_with_draft(language)
+        put :update, construct_params({ version: 'private', article_id: @article.parent_id, language: language }, update_params)
+        assert_response 200
+        match_json(private_api_solution_article_pattern(@article, {}, true, nil))
+      end
+
+      def test_update_with_invalid_language
+        language = @account.supported_languages.first
+        article_with_draft(language)
+        put :update, construct_params({ version: 'private', article_id: @article.parent_id, language: 'test' }, update_params)
+        assert_response 404
+        match_json(request_error_pattern(:language_not_allowed, code: 'test', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
+      end
+
+      def test_update_without_multilingual
+        allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
+        Account.any_instance.stubs(:features).returns(allowed_features)
+        language = @account.supported_languages.first
+        article_with_draft(language)
+        put :update, construct_params({ version: 'private', article_id: @article.parent_id, language: language }, update_params)
+        match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
+        assert_response 404
+      ensure
+        Account.any_instance.unstub(:features)
       end
 
       def test_update_without_privilege
@@ -271,6 +395,36 @@ module Ember
         assert_equal @article.draft.meta[:deleted_attachments][:attachments].size, 1
       end
 
+      def test_delete_attachment_of_primary_article_draft
+        article_with_draft
+        attachment_id = create_attachment(attachable_type: 'Solution::Article', attachable_id: @article.id).id
+        delete :delete_attachment, controller_params(version: 'private', article_id: @article.parent_id, attachment_type: 'attachment', attachment_id: attachment_id, language: @account.language)
+        assert_response 204
+        assert_equal @article.draft.meta[:deleted_attachments][:attachments].size, 1
+      end
+
+      def test_delete_attachment_of_secondary_article_draft
+        language = @account.supported_languages.first
+        article_with_draft(language)
+        attachment_id = create_attachment(attachable_type: 'Solution::Article', attachable_id: @article.id).id
+        delete :delete_attachment, controller_params(version: 'private', article_id: @article.parent_id, attachment_type: 'attachment', attachment_id: attachment_id, language: language)
+        assert_response 204
+        assert_equal @article.draft.meta[:deleted_attachments][:attachments].size, 1
+      end
+
+      def test_delete_attachment_without_multilingual
+        allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
+        Account.any_instance.stubs(:features).returns(allowed_features)
+        language = @account.supported_languages.first
+        article_with_draft(language)
+        attachment_id = create_attachment(attachable_type: 'Solution::Article', attachable_id: @article.id).id
+        delete :delete_attachment, controller_params(version: 'private', article_id: @article.parent_id, attachment_type: 'attachment', attachment_id: attachment_id, language: language)
+        assert_response 404
+        match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
+      ensure
+        Account.any_instance.unstub(:features)
+      end
+
       def test_delete_attachment_without_privilege
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
         delete :delete_attachment, controller_params(version: 'private', article_id: 1, attachment_type: 'attachment', attachment_id: 1)
@@ -314,7 +468,7 @@ module Ember
         end
 
         def get_my_drafts(language = 6)
-          @account.solution_drafts.where(user_id: User.current.id).joins(:article, category_meta: :portal_solution_categories).where('portal_solution_categories.portal_id = ? AND solution_articles.language_id = ?', @account.main_portal.id, language)
+          @account.solution_drafts.my_drafts(@account.main_portal.id, language)
         end
 
         def autosave_params

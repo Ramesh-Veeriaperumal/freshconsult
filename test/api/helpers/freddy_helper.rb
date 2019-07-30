@@ -51,7 +51,7 @@ module FreddyHelper
 
   def freshchat_response
     {
-      'app_alias': '061ae53e-e0b0-4c4c-8bd9-aaadae1d1007',
+      'app_id': '061ae53e-e0b0-4c4c-8bd9-aaadae1d1007',
       'widget_token': '0c046241-743f-4859-bd62-4de2fed42134'
     }.to_json
   end

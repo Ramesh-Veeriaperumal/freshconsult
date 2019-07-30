@@ -2,6 +2,8 @@ require_relative '../../../test_helper'
 require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
 require Rails.root.join('test', 'core', 'helpers', 'users_test_helper.rb')
 require Rails.root.join('spec', 'support', 'email_helper.rb')
+require Rails.root.join('test', 'api', 'helpers', 'freshcaller_test_helper.rb')
+require Rails.root.join('test', 'models', 'helpers', 'freshchat_account_test_helper.rb')
 
 class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
   include AccountTestHelper
@@ -9,6 +11,8 @@ class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
   include OnboardingTestHelper
   include TicketHelper
   include EmailHelper
+  include Freshcaller::TestHelper
+  include FreshchatAccountTestHelper
   include Redis::RedisKeys
   include Redis::OthersRedis
 
@@ -27,7 +31,7 @@ class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
   end
 
   def channels_params
-    @channels ||= %w[phone forums social]
+    @channels_params ||= %w[forums social]
   end
 
   def unset_anonymous_flag
@@ -35,30 +39,153 @@ class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
     @account.account_additional_settings.save
   end
 
-  def test_channel_update_with_valid_channels
+  def test_channel_update_with_valid_channel
     @account.set_account_onboarding_pending
-    post :update_channel_config, construct_params(version: 'private', channels: channels_params)
+    post :update_channel_config, construct_params(version: 'private', channel: 'forums')
     assert_response 204
     assert_channel_selection(channels_params)
   end
 
-  def test_channel_update_with_invalid_channels
-    channels_params << 'emai'
-    post :update_channel_config, construct_params(version: 'private', channels: channels_params)
+  def test_channel_update_with_invalid_channel
+    post :update_channel_config, construct_params(version: 'private', channel: 'em')
     assert_response 400
+    match_json([bad_request_error_pattern('channel', :not_included, list: 'phone,freshchat,social,forums')])
   end
 
-  def test_disable_disablable_channels
-    @account.set_account_onboarding_pending
-    post :update_channel_config, construct_params(version: 'private', channels: %w[phone forums])
+  def test_channel_update_with_invalid_type_channel
+    post :update_channel_config, construct_params(version: 'private', channel: ['email'])
+    assert_response 400
+    match_json([bad_request_error_pattern('channel', :datatype_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: Array)])
+  end
+
+  def test_channel_update_with_invalid_field_in_request
+    post :update_channel_config, construct_params(version: 'private', test: 'forums')
+    assert_response 400
+    match_json([bad_request_error_pattern('test', :invalid_field)])
+  end
+
+  def test_channel_update_without_mandatory_params
+    post :update_channel_config, construct_params(version: 'private')
+    assert_response 400
+    match_json([bad_request_error_pattern('channel', :missing_field)])
+  end
+
+  def test_phone_channel_update_when_freshcaller_already_linked
+    create_freshcaller_account
+    post :update_channel_config, construct_params(version: 'private', channel: 'phone')
+    assert_response 400
+    match_json([bad_request_error_pattern('channel', :channel_already_present, channel_name: 'Freshcaller', code: :invalid_value)])
+  ensure
+    @account.freshcaller_account.destroy
+    @account.reload
+  end
+
+  def test_chat_channel_update_when_freshchat_already_linked
+    create_freshchat_account @account
+    post :update_channel_config, construct_params(version: 'private', channel: 'freshchat')
+    assert_response 400
+    match_json([bad_request_error_pattern('channel', :channel_already_present, channel_name: 'Freshchat', code: :invalid_value)])
+  ensure
+    @account.freshchat_account.destroy
+    @account.reload
+  end
+
+  def test_phone_channel_update_errors_when_domain_taken
+    response_stub = { 'errors' => { 'domain_taken' => true } }
+    response_stub.stubs(:body).returns(Faker::Lorem.word)
+    response_stub.stubs(:code).returns(200)
+    response_stub.stubs(:message).returns(Faker::Lorem.word)
+    response_stub.stubs(:headers).returns(word: Faker::Lorem.word)
+    HTTParty::Request.any_instance.stubs(:perform).returns(response_stub)
+    post :update_channel_config, construct_params(version: 'private', channel: 'phone')
+    assert_response 409
+    match_json(request_error_pattern(code: 'fcaller_domain_taken', message: 'A freshcaller account is already availabe for your domain. Please link it from admin tab.'))
+  ensure
+    HTTParty::Request.any_instance.unstub(:perform)
+  end
+
+  def test_phone_channel_update_errors_when_spam_email
+    response_stub = { 'errors' => { 'spam_email' => true } }
+    response_stub.stubs(:body).returns(Faker::Lorem.word)
+    response_stub.stubs(:code).returns(200)
+    response_stub.stubs(:message).returns(Faker::Lorem.word)
+    response_stub.stubs(:headers).returns(word: Faker::Lorem.word)
+    HTTParty::Request.any_instance.stubs(:perform).returns(response_stub)
+    post :update_channel_config, construct_params(version: 'private', channel: 'phone')
+    assert_response 409
+    match_json(request_error_pattern(code: 'fcaller_spam_email', message: 'The email is considered as spam. Please check it.'))
+  ensure
+    HTTParty::Request.any_instance.unstub(:perform)
+  end
+
+  def test_phone_channel_update_errors
+    response_stub = { 'errors' => { 'email_taken' => true } }
+    response_stub.stubs(:body).returns(Faker::Lorem.word)
+    response_stub.stubs(:code).returns(200)
+    response_stub.stubs(:message).returns(Faker::Lorem.word)
+    response_stub.stubs(:headers).returns(word: Faker::Lorem.word)
+    HTTParty::Request.any_instance.stubs(:perform).returns(response_stub)
+    post :update_channel_config, construct_params(version: 'private', channel: 'phone')
+    assert_response 409
+    match_json(request_error_pattern(code: 'fcaller_link_error', message: 'There was an issue in creating your freshcaller account. Please contact support.'))
+  ensure
+    HTTParty::Request.any_instance.unstub(:perform)
+  end
+
+  def test_phone_channel_update_succeeds
+    response_stub = { 'freshcaller_account_id' => Faker::Number.number(5), 'freshcaller_account_domain' => Faker::Lorem.words(5), 'user' => { 'id' => Faker::Number.number(5) } }
+    response_stub.stubs(:body).returns(Faker::Lorem.word)
+    response_stub.stubs(:code).returns(200)
+    response_stub.stubs(:message).returns(Faker::Lorem.word)
+    response_stub.stubs(:headers).returns(word: Faker::Lorem.word)
+    HTTParty::Request.any_instance.stubs(:perform).returns(response_stub)
+    post :update_channel_config, construct_params(version: 'private', channel: 'phone')
     assert_response 204
+  ensure
+    HTTParty::Request.any_instance.unstub(:post)
   end
 
-  def test_channel_update_after_onboarding_complete
-    Account.current.complete_account_onboarding
-    post :update_channel_config, construct_params(version: 'private', channels: channels_params)
-    assert_response 404
-    Account.current.set_account_onboarding_pending
+  def test_freshchat_channel_update_errors_when_email_already_present
+    response_stub = { 'errorCode' => 'ERR_LOGIN_TO_SIGNUP' }
+    response_stub.stubs(:code).returns(200)
+    HTTParty::Request.any_instance.stubs(:perform).returns(response_stub)
+    post :update_channel_config, construct_params(version: 'private', channel: 'freshchat')
+    assert_response 409
+    match_json(request_error_pattern(code: 'fchat_account_already_presennt', message: 'A freshchat account is already registered with your email. Please link it from admin tab.'))
+  ensure
+    HTTParty::Request.any_instance.unstub(:perform)
+  end
+
+  def test_freshchat_channel_update_errors_when_user_already_logged
+    response_stub = { 'errorCode' => 'ERR_ALREADY_LOGGED_IN' }
+    response_stub.stubs(:code).returns(200)
+    HTTParty::Request.any_instance.stubs(:perform).returns(response_stub)
+    post :update_channel_config, construct_params(version: 'private', channel: 'freshchat')
+    assert_response 409
+    match_json(request_error_pattern(code: 'fchat_account_logged_in', message: 'You are already logged in to freshchat. Please logout and try again.'))
+  ensure
+    HTTParty::Request.any_instance.unstub(:perform)
+  end
+
+  def test_freshchat_channel_update_errors
+    response_stub = { 'errorCode' => 'SOMETHING_WENT_WRONG' }
+    response_stub.stubs(:code).returns(200)
+    HTTParty::Request.any_instance.stubs(:perform).returns(response_stub)
+    post :update_channel_config, construct_params(version: 'private', channel: 'freshchat')
+    assert_response 409
+    match_json(request_error_pattern(code: 'fchat_link_error', message: 'There was an issue in creating your freshchat account. Please contact support.'))
+  ensure
+    HTTParty::Request.any_instance.unstub(:perform)
+  end
+
+  def test_freshchat_channel_update_succeeds
+    response_stub = { 'userInfoList' => [{ 'app_id' => Faker::Lorem.word, 'appKey' => Faker::Lorem.word }] }
+    response_stub.stubs(:code).returns(200)
+    HTTParty::Request.any_instance.stubs(:perform).returns(response_stub)
+    post :update_channel_config, construct_params(version: 'private', channel: 'freshchat')
+    assert_response 204
+  ensure
+    HTTParty::Request.any_instance.unstub(:perform)
   end
 
   def test_update_activation_email_with_valid_email

@@ -37,7 +37,7 @@ class Ember::TrialWidgetControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:forums_setup?).returns(false)
     get :index, controller_params({ version: 'private' }, false)
     assert_response 200
-    assert_equal parse_response(response.body)["tasks"].include?({"name"=>"forums", "isComplete"=>false}), true
+    assert_equal parse_response(response.body)['tasks'].include?('name' => 'forums', 'isComplete' => false), true
     match_json(old_trial_widget_index_pattern)
     Account.any_instance.unstub(:forums_setup?)
     Account.any_instance.unstub(:forums_eligible?)
@@ -48,7 +48,7 @@ class Ember::TrialWidgetControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:email_notification_setup?).returns(true)
     get :index, controller_params({ version: 'private' }, false)
     assert_response 200
-    assert_equal parse_response(response.body)["tasks"].include?({"name"=>"email_notification", "isComplete"=>true}), true
+    assert_equal parse_response(response.body)['tasks'].include?('name' => 'email_notification', 'isComplete' => true), true
     match_json(old_trial_widget_index_pattern)
     Account.any_instance.unstub(:email_notification_setup?)
     Account.any_instance.unstub(:email_notification_eligible?)
@@ -91,7 +91,7 @@ class Ember::TrialWidgetControllerTest < ActionController::TestCase
 
   def test_complete_step_with_wrong_step_name
     step = Faker::Name.name.downcase
-    post :complete_step, construct_params({ step: step, version: 'private' })
+    post :complete_step, construct_params(step: step, version: 'private')
     assert_response 400
   end
 
@@ -99,7 +99,14 @@ class Ember::TrialWidgetControllerTest < ActionController::TestCase
     count = 0
     n_steps = Account::SETUP_KEYS.count
     step = Account::SETUP_KEYS[Random.rand(n_steps)]
-    post :complete_step, construct_params({ step: step, version: 'private' })
+    post :complete_step, construct_params(step: step, version: 'private')
     assert_response 204
+  end
+
+  def test_complete_support_channel_step_completes_admin_onboarding
+    Account.current.launch(:onboarding_v2)
+    post :complete_step, construct_params(step: 'support_channel', version: 'private')
+    assert_response 204
+    refute Account.current.account_onboarding_pending?
   end
 end

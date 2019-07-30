@@ -53,6 +53,7 @@ api_error_messages:
   upload_jpg_or_png_file: "Invalid file type(%{current_extension}). Please upload a jpg or png file"
   cannot_deactivate: "Active field can only be set to true"
   cant_add_primary_email: "Cannot add %{email} to other_emails since it is the primary email"
+  cannot_delete_primary_email: "Cannot delete a primary email"
   invalid_encoding: "Url query string received is %{invalid_query_string}. It should be properly encoded."
   missing_field: "Mandatory attribute missing"
   access_denied: "You are not authorized to perform this action."
@@ -309,7 +310,7 @@ api_error_messages:
   fsm_ticket_scenario_failure: "Cannot run scenarios on a ticket of type service task"
   invalid_upload_file_type: "Invalid file type(%{current_extension}). Please upload yml/yaml file."
   mismatch_language: "Language code in file and url do not match."
-  primary_lang_translations_not_allowed: "Translations for primary language not allowed." 
+  primary_lang_translations_not_allowed: "Translations for primary language not allowed."
   no_file_uploaded: "No file uploaded!"
   invalid_yml_file: "Upload a valid yml/yaml file."
   unsupported_language: "Language given in the request URL (%{language_code}) is not found. Allowed languages are %{list}"
@@ -335,6 +336,7 @@ api_error_messages:
   invalid_draft_author: "Draft author is invalid or doesn't have necessary privilege"
   content_changed: "Content has been changed elsewhere"
   cannot_create_new_tag: "cannot_create_new_tag: %{tags}"
+  cannot_mark_primary_as_uptodate: "Cannot mark primary article as uptodate"
   invalid_ebay_ticket_source: "Invalid ticket source"
   webhook_auth_header_error: "Both username and api_key should not be present"
 
@@ -354,3 +356,10 @@ api_error_messages:
   invalid_object_id: "Invalid id for %{object}"
   missing_param: 'Missing field'
   already_installed: "App is already installed"
+  channel_already_present: "%{channel_name} is already linked to your account"
+  fchat_link_error: 'There was an issue in creating your freshchat account. Please contact support.'
+  fchat_account_logged_in: 'You are already logged in to freshchat. Please logout and try again.'
+  fchat_account_already_presennt: 'A freshchat account is already registered with your email. Please link it from admin tab.'
+  fcaller_link_error: 'There was an issue in creating your freshcaller account. Please contact support.'
+  fcaller_domain_taken: 'A freshcaller account is already availabe for your domain. Please link it from admin tab.'
+  fcaller_spam_email: 'The email is considered as spam. Please check it.'

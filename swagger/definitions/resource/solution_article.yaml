@@ -55,6 +55,42 @@ allOf:
         type: array
         items:
           $ref: '#/definitions/attachment'
+      translation_summary:
+        type: object
+        description: Provides status of all translations available to an article
+        properties:
+          en:
+            type: object
+            description: English translation info
+            properties:
+              available:
+                type: boolean
+                description: Is translation available in english?
+              draft_present:
+                type: boolean
+                description: Is draft present for english translation of the article?
+              outdated:
+                type: boolean
+                description: Is article outdated?
+              published:
+                type: boolean
+                description: Is article is published?
+          fr:
+            type: object
+            description: French translation info
+            properties:
+              available:
+                type: boolean
+                description: Is translation available in french?
+              draft_present:
+                type: boolean
+                description: Is draft present for french translation of the article?
+              outdated:
+                type: boolean
+                description: Is article outdated?
+              published:
+                type: boolean
+                description: Is article is published?
       cloud_files:
         type: array
         items:
@@ -65,3 +101,23 @@ allOf:
       modified_by:
         type: integer
         format: int64
+      feedback_count:
+        type: integer
+        format: int64
+      draft_locked:
+        type: boolean
+      draft_present:
+        type: boolean
+      draft_modified_by:
+        type: string
+        format: date-time
+      draft_modified_at:
+        type: string
+        format: date-time
+      draft_updated_at:
+        type: string
+        format: date-time
+      tags:
+        type: array
+        items: 
+          type: string      

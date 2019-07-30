@@ -309,6 +309,9 @@ Helpkit::Application.routes.draw do
         end
       end
     end
+    scope '/email' do
+      resources :mailboxes, controller: 'email/mailboxes', only: [:destroy]
+    end
 
     resources :email_notifications, controller: 'admin/api_email_notifications', only: [:show, :update]
 
@@ -355,7 +358,11 @@ Helpkit::Application.routes.draw do
 
         resources :folders, controller: 'ember/solutions/folders', only: [:destroy], constraints: { id: /\d+/ } do
           member do
-            resources :articles, controller: 'ember/solutions/articles', only: [:create]
+            resources :articles, controller: 'ember/solutions/articles', only: [:create] do
+              collection do
+                get '(/:language)', to: :folder_articles
+              end
+            end
             put :reorder
             get :show, path: '(:language)', constraints: { language: Regexp.union(Language.all_codes) }
             post :create, path: ':language', constraints: { language: Regexp.union(Language.all_codes) }
@@ -375,11 +382,21 @@ Helpkit::Application.routes.draw do
           end
 
           member do
-            put :update, path: '(:language)', constraints: { language: Regexp.union(Language.all_codes) }
             get :article_content
             put :reset_ratings, path: '(:language)/reset_ratings', constraints: { language: Regexp.union(Language.all_codes) }
             get :votes, path: '(:language)/votes', constraints: { language: Regexp.union(Language.all_codes) }
             put :reorder
+            post '(/:language)', to: :create, constraints: { language: Regexp.union(Language.all_codes) }
+            put '(/:language)', to: :update, constraints: { language: Regexp.union(Language.all_codes) }
+          end
+
+          resource :drafts, controller: 'ember/solutions/drafts' do
+            member do
+              delete :destroy, path: '(/:language)', constraints: { language: Regexp.union(Language.all_codes) }
+              put :update, path: '(/:language)', constraints: { language: Regexp.union(Language.all_codes) }
+              put :autosave, path: '(/:language)/autosave', constraints: { language: Regexp.union(Language.all_codes) }
+              delete :delete_attachment, path: '(/:language)/:attachment_type/:attachment_id', constraints: { language: Regexp.union(Language.all_codes) }
+            end
           end
         end
 
@@ -387,11 +404,6 @@ Helpkit::Application.routes.draw do
           collection do
             get :index, path: '(:language)', constraints: { language: Regexp.union(Language.all_codes) }
           end
-        end
-
-        resource :draft, path: 'articles/:article_id/draft', controller: 'ember/solutions/drafts', only: [:destroy, :update] do
-          put :autosave
-          delete :delete_attachment, path: ':attachment_type/:attachment_id'
         end
       end
     end

@@ -2,6 +2,7 @@ put:
   tags: [drafts]
   summary: Cancel the autosave session changes
   parameters:
+    - $ref: '#/parameters/language'
     - name: article_id
       in: path
       type: integer
@@ -28,6 +29,7 @@ delete:
   tags: [drafts]
   summary: Delete the draft for a solution article
   parameters:
+    - $ref: '#/parameters/language'
     - name: article_id
       in: path
       type: integer

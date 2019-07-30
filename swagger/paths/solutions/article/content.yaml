@@ -1,6 +1,6 @@
 get:
   tags: [Solution Article]
-  summary: List article content for an article
+  summary: Show article content for an article
   parameters:
     - $ref: '#/parameters/id'
     - name: language

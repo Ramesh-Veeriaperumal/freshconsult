@@ -105,7 +105,7 @@ class ProfilesControllerTest < ActionController::TestCase
     put :notification_read
     assert_response 200
     timestamp = user.agent.notification_timestamp
-    assert_equal timestamp.day, Time.zone.now.day
+    assert_equal timestamp.day, Time.new.utc.day
   end
 
   def test_onboarding_complete

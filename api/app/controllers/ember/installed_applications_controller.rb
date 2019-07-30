@@ -22,9 +22,7 @@ module Ember
     rescue TimeoutError => error
       render_base_error(:integration_timeout, 504)
     rescue StandardError => error
-      Rails.logger.error "Exception while fetching data from integrated \
-      application, message: #{error.message}, exception: #{error.inspect} \
-      trace: #{error.backtrace}"
+      Rails.logger.error "Exception occured :: #{error.message}, trace: #{error.backtrace[0..10]}"
       render_base_error(:bad_gateway, 502)
     end
 

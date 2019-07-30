@@ -203,7 +203,7 @@ class AccountsControllerTest < ActionController::TestCase
 
   def test_signup_with_reserved_keyword_in_email_domain
     Freemail.stubs(:free?).returns(false)
-    user_email = "#{Faker::Lorem.word}@#{Account::RESERVED_DOMAINS.sample}.com"
+    user_email = "#{Faker::Lorem.word}#{rand(1_000)}@#{Account::RESERVED_DOMAINS.sample}.com"
     params = account_params_without_domain(user_email)
     get :new_signup_free, params
     subdomain = user_email.split('@')[1].split('.')[0]
@@ -687,7 +687,7 @@ class AccountsControllerTest < ActionController::TestCase
     ThirdCRM.any_instance.expects(:delete_lead_from_autopilot).once
     ThirdCRM.any_instance.stubs(:associated_accounts).returns('1')
     Account.any_instance.stubs(:admin_email).returns(Faker::Internet.email)
-    create_sample_account(Faker::Lorem.word, Faker::Internet.email)
+    create_sample_account("#{Faker::Lorem.word}#{rand(1_000_000)}", Faker::Internet.email)
     account_id = @account.id
     Account.stubs(:current).returns(@account.reload)
     args = { account_id: @account.id }
@@ -706,9 +706,7 @@ class AccountsControllerTest < ActionController::TestCase
     ThirdCRM.any_instance.expects(:update_lead).once
     AdminEmail::AssociatedAccounts.stubs(:find).returns([Account.first, Account.last])
     Account.any_instance.stubs(:admin_email).returns(Faker::Internet.email)
-    create_sample_account(Faker::Lorem.word, Faker::Internet.email)
-    create_sample_account(Faker::Lorem.word, Faker::Internet.email)
-    account_id = @account.id
+    create_sample_account("#{Faker::Lorem.word}#{rand(1_000_000)}", Faker::Internet.email)
     Account.stubs(:current).returns(@account.reload)
     args = { account_id: @account.id }
     Sidekiq::Testing.inline! do

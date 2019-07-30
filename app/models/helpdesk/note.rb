@@ -442,6 +442,13 @@ class Helpdesk::Note < ActiveRecord::Base
     super(attachment_ids)
   end
 
+  def update_email_received_at(received_at)
+    return if received_at.blank?
+
+    schema_less_note.note_properties = {} if schema_less_note.note_properties.nil?
+    schema_less_note.note_properties[:received_at] = received_at
+  end
+
   protected
 
     def send_reply_email

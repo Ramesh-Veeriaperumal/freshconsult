@@ -96,7 +96,8 @@ module BootstrapTestHelper
         include_survey_manually: wildcard_matcher,
         show_on_boarding: account.account_onboarding_pending?,
         announcement_bucket: account.account_additional_settings.additional_settings[:announcement_bucket].to_s,
-        freshmarketer_linked: account.account_additional_settings.freshmarketer_linked?
+        freshmarketer_linked: account.account_additional_settings.freshmarketer_linked?,
+        freshcaller_linked: account.freshcaller_account.present?
       },
       verified: account.verified?,
       created_at: account.created_at.try(:utc),

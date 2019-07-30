@@ -59,7 +59,8 @@ module Channel
               account_id: @item.account_id,
               portal_id: @item.portal_id,
               widget_config: @item.widget_config,
-              app_id: freshchat_account.app_id
+              app_id: freshchat_account.app_id,
+              widget_token: freshchat_account.token
             }
           }
         end

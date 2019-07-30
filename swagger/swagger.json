@@ -6792,6 +6792,12 @@
             "schema": {
               "$ref": "#/definitions/bad_request_error"
             }
+          },
+          "409": {
+            "description": "Resource conflict Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
           }
         }
       }
@@ -11976,7 +11982,7 @@
         "tags": [
           "Solution Article"
         ],
-        "summary": "Create a article",
+        "summary": "Create article",
         "parameters": [
           {
             "name": "data",
@@ -12013,41 +12019,23 @@
         }
       }
     },
-    "/solutions/articles/{id}": {
-      "get": {
+    "/solutions/articles/{id}/{language}": {
+      "post": {
         "tags": [
           "Solution Article"
         ],
-        "summary": "Show article",
+        "summary": "Create a translated solution article",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "type": "integer",
             "format": "int64",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/solution_article"
-            }
+            "required": true,
+            "description": "Id of the article"
           },
-          "403": {
-            "description": "Access denied"
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Solution Article"
-        ],
-        "summary": "Update article",
-        "parameters": [
           {
-            "$ref": "#/parameters/id"
+            "$ref": "#/parameters/language"
           },
           {
             "name": "data",
@@ -12076,6 +12064,77 @@
           }
         }
       },
+      "get": {
+        "tags": [
+          "Solution Article"
+        ],
+        "summary": "Show article",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true,
+            "description": "Id of the article"
+          },
+          {
+            "$ref": "#/parameters/language"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/solution_article"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Solution Article"
+        ],
+        "summary": "Update article",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "$ref": "#/parameters/language"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/article_update"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/solution_article"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/solutions/articles/{id}": {
       "delete": {
         "tags": [
           "Solution Article"
@@ -12102,7 +12161,7 @@
         "tags": [
           "Solution Article"
         ],
-        "summary": "List article content for an article",
+        "summary": "Show article content for an article",
         "parameters": [
           {
             "$ref": "#/parameters/id"
@@ -12128,7 +12187,7 @@
         }
       }
     },
-    "/solutions/articles/{id}/reset_ratings": {
+    "/solutions/articles/{id}/{language}/reset_ratings": {
       "put": {
         "tags": [
           "Solution Article"
@@ -12141,6 +12200,9 @@
             "type": "integer",
             "description": "ID of the article",
             "required": true
+          },
+          {
+            "$ref": "#/parameters/language"
           }
         ],
         "responses": {
@@ -12162,7 +12224,7 @@
         }
       }
     },
-    "/solutions/articles/{id}/votes": {
+    "/solutions/articles/{id}/{language}/votes": {
       "get": {
         "tags": [
           "Solution Article"
@@ -12176,6 +12238,9 @@
             "format": "int64",
             "description": "ID of the article",
             "required": true
+          },
+          {
+            "$ref": "#/parameters/language"
           }
         ],
         "responses": {
@@ -12318,13 +12383,16 @@
         }
       }
     },
-    "/solutions/articles/{article_id}/draft/autosave": {
+    "/solutions/articles/{article_id}/draft/{language}/autosave": {
       "put": {
         "tags": [
           "drafts"
         ],
         "summary": "Create or update draft content on autosave",
         "parameters": [
+          {
+            "$ref": "#/parameters/language"
+          },
           {
             "name": "article_id",
             "in": "path",
@@ -12360,13 +12428,16 @@
         }
       }
     },
-    "/solutions/articles/{article_id}/draft": {
+    "/solutions/articles/{article_id}/draft/{language}": {
       "put": {
         "tags": [
           "drafts"
         ],
         "summary": "Cancel the autosave session changes",
         "parameters": [
+          {
+            "$ref": "#/parameters/language"
+          },
           {
             "name": "article_id",
             "in": "path",
@@ -12408,6 +12479,9 @@
         "summary": "Delete the draft for a solution article",
         "parameters": [
           {
+            "$ref": "#/parameters/language"
+          },
+          {
             "name": "article_id",
             "in": "path",
             "type": "integer",
@@ -12425,13 +12499,16 @@
         }
       }
     },
-    "/solutions/articles/{article_id}/draft/{attachment_type}/{attachment_id}": {
+    "/solutions/articles/{article_id}/draft/{language}/{attachment_type}/{attachment_id}": {
       "delete": {
         "tags": [
           "drafts"
         ],
         "summary": "Delete the attachments from draft which are present in article",
         "parameters": [
+          {
+            "$ref": "#/parameters/language"
+          },
           {
             "name": "article_id",
             "in": "path",
@@ -12710,7 +12787,7 @@
         "tags": [
           "Solution Article"
         ],
-        "summary": "Reorder a article",
+        "summary": "Reorder an article",
         "parameters": [
           {
             "$ref": "#/parameters/id"
@@ -15179,19 +15256,9 @@
       "type": "object",
       "description": "Channels Array",
       "properties": {
-        "channels": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "enum": [
-              [
-                "phone",
-                "forums",
-                "live_chat",
-                "social"
-              ]
-            ]
-          }
+        "channel": {
+          "type": "string",
+          "description": "Channel type to be enabled"
         }
       }
     },
@@ -17035,6 +17102,56 @@
                 "$ref": "#/definitions/attachment"
               }
             },
+            "translation_summary": {
+              "type": "object",
+              "description": "Provides status of all translations available to an article",
+              "properties": {
+                "en": {
+                  "type": "object",
+                  "description": "English translation info",
+                  "properties": {
+                    "available": {
+                      "type": "boolean",
+                      "description": "Is translation available in english?"
+                    },
+                    "draft_present": {
+                      "type": "boolean",
+                      "description": "Is draft present for english translation of the article?"
+                    },
+                    "outdated": {
+                      "type": "boolean",
+                      "description": "Is article outdated?"
+                    },
+                    "published": {
+                      "type": "boolean",
+                      "description": "Is article is published?"
+                    }
+                  }
+                },
+                "fr": {
+                  "type": "object",
+                  "description": "French translation info",
+                  "properties": {
+                    "available": {
+                      "type": "boolean",
+                      "description": "Is translation available in french?"
+                    },
+                    "draft_present": {
+                      "type": "boolean",
+                      "description": "Is draft present for french translation of the article?"
+                    },
+                    "outdated": {
+                      "type": "boolean",
+                      "description": "Is article outdated?"
+                    },
+                    "published": {
+                      "type": "boolean",
+                      "description": "Is article is published?"
+                    }
+                  }
+                }
+              }
+            },
             "cloud_files": {
               "type": "array",
               "items": {
@@ -17048,6 +17165,34 @@
             "modified_by": {
               "type": "integer",
               "format": "int64"
+            },
+            "feedback_count": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "draft_locked": {
+              "type": "boolean"
+            },
+            "draft_present": {
+              "type": "boolean"
+            },
+            "draft_modified_by": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "draft_modified_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "draft_updated_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           }
         }
@@ -24142,6 +24287,71 @@
         }
       }
     },
+    "article_update": {
+      "type": "object",
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "type": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "status": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "seo_data": {
+              "type": "object",
+              "properties": {
+                "meta_title": {
+                  "type": "string"
+                },
+                "meta_description": {
+                  "type": "string"
+                },
+                "meta_keywords": {
+                  "type": "string"
+                }
+              }
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "byte"
+              }
+            },
+            "attachments_list": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "byte"
+              }
+            },
+            "cloud_file_attachments": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/cloud_file_input"
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "outdated": {
+              "type": "boolean"
+            }
+          }
+        }
+      ]
+    },
     "category_response": {
       "type": "object",
       "properties": {
@@ -24546,7 +24756,7 @@
       "name": "language",
       "in": "path",
       "type": "string",
-      "description": "Language for accounts with mutlilingual feature. Primary language will be considered when this is not specified.",
+      "description": "Specifies language code of the article (Multilingual feature must be enabled for the account to provide a value.if value is not given, primary language will be considered)",
       "required": true
     }
   }
