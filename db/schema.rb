@@ -3379,7 +3379,7 @@ ActiveRecord::Schema.define(:version => 20190628073857) do
 
   add_index "social_fb_posts", ["account_id", "postable_id", "postable_type"], :name => "index_social_fb_posts_account_id_postable_id_postable_type", :length => {"account_id"=>nil, "postable_id"=>nil, "postable_type"=>15}
   add_index "social_fb_posts", ["account_id", "ancestry"], :name => "account_ancestry_index", :length => {"account_id"=>nil, "ancestry"=>30}
-  add_index "social_fb_posts", ["account_id", "post_id"], :name => "index_social_fb_posts_on_post_id", :length => {"account_id"=>nil, "post_id"=>30}
+  add_index "social_fb_posts", ["account_id", "post_id"], :name => "unique_index_social_fb_posts_on_post_id", unique: true
   add_index "social_fb_posts", ["account_id", "thread_id", "postable_type"], :name => "account_thread_postable_type", :length => {"account_id"=>nil, "thread_id"=>30, "postable_type"=>30}
   add_index 'social_fb_posts', ['account_id', 'thread_key', 'postable_type', 'facebook_page_id'], name: 'index_on_thread_key'
 
