@@ -15,7 +15,7 @@ module Facebook
         options = { fields: DM_FIELDS }
         options[:since] = @fan_page.message_since if @fan_page.message_since != 0
         options[:request] = { timeout: 10, open_timeout: 10 }
-        threads = @rest.get_connections('me', 'conversations', options)
+        threads = @rest.get_connections('me', 'conversations', options, { request: { timeout: 10, open_timeout: 10 } })
         threads.each do |thread|
           thread['messages']['data'].reject! do |message|
             dm_created_time = message['created_time']
