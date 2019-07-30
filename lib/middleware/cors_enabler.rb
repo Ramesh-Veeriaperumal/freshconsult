@@ -38,6 +38,7 @@ class Middleware::CorsEnabler < Rack::Cors
           origins "*"
           resource '/accounts/new_signup_free',:headers => :any, :methods => [:get, :post]
           resource '/accounts/email_signup',:headers => :any, :methods => [:post]
+          resource '/accounts/anonymous_signup',:headers => :any, :methods => [:post]
           resource '/accounts/signup_validate_domain',:headers => :any, :methods => [:get]
           resource '/search_user_domain', :headers => :any, :methods => [:get]
         end 
@@ -72,7 +73,7 @@ class Middleware::CorsEnabler < Rack::Cors
   end
 
   def signup_url?(env)
-    ['/accounts/new_signup_free', '/accounts/email_signup', 'accounts/signup_validate_domain', '/search_user_domain'].include?(env['PATH_INFO'])
+    ['/accounts/new_signup_free', '/accounts/email_signup', '/accounts/anonymous_signup', 'accounts/signup_validate_domain', '/search_user_domain'].include?(env['PATH_INFO'])
   end
 
   def signup_domain?(env)

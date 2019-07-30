@@ -688,6 +688,9 @@ nl:
           We zullen er alles aan doen u de volgende keer een betere service te
           geven.
         additional_info: U kunt ook uw ervaringen over uw samenwerking met ons delen.
+    canned_form:
+      next: Volgende
+      form_submit: Versturen
   gamification:
     levels:
       beginner: Beginner
@@ -1573,7 +1576,7 @@ nl:
             eBay-account binnenkomen vanuit uw helpdesk beheren. Na het
             instellen worden alle vragen van klanten van eBay automatisch
             omgezet in tickets. U kunt de vragen ook rechtstreeks beantwoorden
-            vanuit Freshdesk.
+            vanuit Freshdesk. 
       index:
         title: Ecommerce-accounts
         renew: Token vernieuwen
@@ -2429,7 +2432,7 @@ nl:
         Stel de teamlead op de hoogte wanneer een klant een lage
         tevredenheidsclassificatie op een ticket geeft
       new_anyone: Agent of Aanvrager
-      new_performed_by: Indien een actie wordt uigevoerd door...
+      new_performed_by: Indien een actie wordt uitgevoerd door...
       anyone: Iedereen
       new_events: heeft betrekking op <b>elk</b> van deze gebeurtenissen
       system: Systeem
@@ -2540,7 +2543,7 @@ nl:
           en vanuit Freshdesk worden overgebracht.
         customer_portal_ssl_warning: >-
           Omdat voor uw account een aangepaste helpdesk-URL is geconfigureerd,
-          wordt u doorgestuurd naar
+          wordt u doorgestuurd naar 
         multiple_product_ssl_warning: >-
           SSL is niet van toepassing als er meerdere producten zijn
           geconfigureerd.
@@ -2572,7 +2575,7 @@ nl:
         ssl_info_new: >-
           Als u aangepaste SSL wilt instellen, moet u uw domein configureren met
           een uniek DNS-record dat door Freshdesk wordt geleverd. <br />
-          Hieronder kunt u uw helpdesk-URL invoeren en uw aanvraag versturen.
+          Hieronder kunt u uw helpdesk-URL invoeren en uw aanvraag versturen. 
           De certificering neemt doorgaans vijftien tot twintig werkdagen in
           beslag. <br /> <br />
         helpdesk_url: Helpdesk-URL
@@ -3775,7 +3778,7 @@ nl:
       Voer de autorisatie opnieuw uit en schakel de app in. </a>
   import_user_notification: >-
     Voor de geïmporteerde contactpersonen kunt u de activerings-e-mail voor
-    gebruikers vanaf de tab Klanten versturen.
+    gebruikers vanaf de tab Klanten versturen. 
   what_is_cvv: Wat is CVV?
   pro_details: >-
     Alles in het abonnement Basis, plus scenarioautomatisering, klantspecifieke
@@ -5565,7 +5568,8 @@ nl:
   right: Rechts
   footer:
     helpdesk_software: Helpdesksoftware
-    helpdesk_software_link: "https://freshdesk.com/nl/?utm_source=portal&utm_medium=reflink&utm_campaign=portal_reflink"
+    helpdesk_software_link: >-
+      https://freshdesk.com/nl/?utm_source=portal&utm_medium=reflink&utm_campaign=portal_reflink
     by_freshdesk: van Freshdesk
     submit_feedback: Feedback versturen
     footer_feedback_subject_placeholder: Laat ons weten hoe we Freshdesk kunnen verbeteren.
@@ -5939,7 +5943,7 @@ nl:
     currency-note: 'Al uw toekomstige betalingen zullen worden uitgevoerd in '
     free_plan_currency_note: >-
       Wanneer u een upgrade uitvoert of medewerkers toevoegt, zal uw betaling
-      worden uitgevoerd in
+      worden uitgevoerd in 
     invoice_title: 'Lijst met facturen voor alle onlinebetalingen '
     no_invoice: Geen facturen aanwezig
     sub_total: Subtotaal
@@ -5984,7 +5988,7 @@ nl:
         uitschakelt in de browser.
       privacy_policy: Privacybeleid
     no_topics_in_this_view: ~ Geen onderwerpen in deze weergave ~
-    reported: gemeld
+    reported: 'heeft dit verstuurd,'
     said: zei
     solutions_home: Startpagina oplossing
     print_title: Dit artikel afdrukken
@@ -6057,6 +6061,7 @@ nl:
         Het lijkt erop dat uw account nog niet is geverifieerd. Activeer het
         alstublieft om een artikel te publiceren (u kunt uw concepten tot die
         tijd opslaan).
+      created_by: 'Gemaakt door:'
     folder:
       filler_text: 'Houd deze ruimte in de gaten voor artikelen over %{folder_name}'
     topic:
@@ -6140,8 +6145,8 @@ nl:
       howto_unlike_button: Ik heb deze vraag niet
       announce_users_voted_title: Personen die dit leuk vinden
       ideas_users_voted_title: Personen die dit idee leuk vinden
-      problem_users_voted_title: Personen met dit probleem
-      howto_users_voted_title: Personen met deze vraag
+      problem_users_voted_title: Personen die dit probleem hebben
+      howto_users_voted_title: Personen die deze vraag hebben
     post_vote:
       upvoted: U hebt het item omhoog gestemd
       upvote: Omhoog stemmen
@@ -6546,7 +6551,7 @@ nl:
       <b>gepubliceerd</b>.
     info16: >-
       <b>Gepubliceerde</b> artikelen zijn zichtbaar in het selfserviceportaal en
-      worden ook in de zoekresultaten weergegeven.
+      worden ook in de zoekresultaten weergegeven. 
     info17: >-
       <b>Concept</b>artikelen zijn alleen zichtbaar voor medewerkers en worden
       alleen in de zoekresultaten voor medewerkers weergegeven.
@@ -6872,7 +6877,7 @@ nl:
     user_not_available: Nieuwe tickets worden niet <br>automatisch aan u toegewezen.
     toggle_shortcuts: Sneltoetsen
     goto_customer_portal: Naar klantportaal
-    goto_agent_portal: Medewerkersportaal
+    goto_agent_portal: Agent Portaal
     shortcuts_info: >-
       Druk op <span class='color-orange'>?</span> om de <a id='shortcuts_info'
       href='#'>toetsenbordtips weer te geven.</a>
@@ -7017,7 +7022,7 @@ nl:
           meerdere ondersteunde talen hebt ingesteld, kunt u voor elke taal een
           specifieke melding maken. Met het pictogram <i
           class="common-icon-outdated"></i> wordt aangegeven dat de vertalingen
-          van de melding in andere talen mogelijk zijn verouderd.
+          van de melding in andere talen mogelijk zijn verouderd. 
       agent_template_3:
         topic: Ticket toegewezen aan een medewerker
         info1: >-
@@ -7028,7 +7033,7 @@ nl:
           talen hebt ingesteld, kunt u voor elke taal een specifieke melding
           maken. Met het pictogram <i class="common-icon-outdated"></i> wordt
           aangegeven dat de vertalingen van de melding in andere talen mogelijk
-          zijn verouderd.
+          zijn verouderd. 
       agent_template_11:
         topic: Ticket niet toegewezen in groep
         info1: >-
@@ -7247,7 +7252,15 @@ nl:
   activate_and_log_in: Activeren en aanmelden
   password: Wachtwoord
   enter_payment: Doorgaan naar betaling
-  downgrade_confirm: "<span class=\"label label-important\">Belangrijk:</span>  u wilt het abonnement <b>%{from}</b> downgraden naar het abonnement <b>%{to}</b> . Alle gegevens en configuraties die bij de functies in het abonnement %{from} horen, zullen definitief worden verwijderd.<br /><br /> Als u een volledig overzicht wilt bekijken met de abonnementen en functies, gaat u naar <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Abonnementen en prijzen</a>. <br />Weet u niet zeker wat te doen? <a href = \"mailto:support@freshdesk.com\" >Laat ons u dan helpen bij uw beslissing.</a>"
+  downgrade_confirm: >-
+    <span class="label label-important">Belangrijk:</span>  u wilt het
+    abonnement <b>%{from}</b> downgraden naar het abonnement <b>%{to}</b> . Alle
+    gegevens en configuraties die bij de functies in het abonnement %{from}
+    horen, zullen definitief worden verwijderd.<br /><br /> Als u een volledig
+    overzicht wilt bekijken met de abonnementen en functies, gaat u naar <a
+    target="_blank" href="http://freshdesk.com/pricing">Abonnementen en
+    prijzen</a>. <br />Weet u niet zeker wat te doen? <a href =
+    "mailto:support@freshdesk.com" >Laat ons u dan helpen bij uw beslissing.</a>
   downgrade_confirm_v2: >-
     U wilt downgraden van het abonnement <b>%{current_plan}</b> naar het
     abonnement <b>%{new_plan}</b>.
@@ -8528,9 +8541,9 @@ nl:
       overlay_note_time: ' heeft een opmerking toegevoegd, %{time_in_words} geleden'
       friendly_status:
         customer_responded: Klant heeft geantwoord
-        overdue: Achterstallig
+        overdue: Vervallen
         new: Nieuw
-        elapsed: Antwoordtijd
+        elapsed: Vervaltijd
         resolved: Opgelost
         customer_responded_overdue: Klant heeft geantwoord
       tabular_view:
@@ -8680,13 +8693,13 @@ nl:
         open: Openstaande tickets
         closed: Gesloten tickets
         deleted: Prullenbak
-        overdue: Achterstallige tickets
-        due_today: Tickets die vandaag vervallen
+        overdue: Vervallen tickets
+        due_today: Tickets Die Vandaag Vervallen
         resolved: Opgeloste tickets
         unresolved: Alle niet-opgeloste tickets
-        my_overdue: Mijn achterstallige tickets
+        my_overdue: Mijn Vervallen Tickets
         tags: Tags op ticket
-        my_due_today: Mijn tickets die vandaag vervallen
+        my_due_today: Mijn tickets Die Vandaag Vervallen
         my_all: Al mijn tickets
         my_on_hold: Mijn wachtende tickets
         select: Weergave selecteren...
@@ -10413,7 +10426,7 @@ nl:
         beschikbaar gesteld voor uw medewerkers.<br><br>U kunt contactpersonen
         uit Batchbook opzoeken op basis van hun e-mailadres. Als er meerdere
         contactpersonen met hetzelfde e-mailadres zijn, worden alle
-        contactpersonen als een lijst weergegeven.</p><br/>
+        contactpersonen als een lijst weergegeven.</p><br/> 
       desc: >-
         U kunt de contactpersoonsgegevens uit uw Batchbook-account importeren in
         Freshdesk.
@@ -10790,7 +10803,7 @@ nl:
         logmein_company_info: >-
           Als u uw bedrijfs-ID wilt ophalen, gaat u naar Admin Center
           (Beheercentrum) -> Technician Group (Groep technicus) -> Global
-          Settings (Algemene instellingen) -> ASP.Net C# (servervoorbeeld).
+          Settings (Algemene instellingen) -> ASP.Net C# (servervoorbeeld). 
         logmein_sso_pwd_info: >-
           Als u uw SSO-wachtwoord wilt instellen, gaat u naar Admin Center
           (Beheercentrum)->  Technician Group (Groep technicus) -> Global
@@ -10801,7 +10814,7 @@ nl:
       desc: >-
         U kunt MailChimp toevoegen aan Freshdesk en uw abonnementen beheren,
         klantenlijsten exporteren en de vereiste gegevens over de bijbehorende
-        activiteiten ophalen uit uw helpdesk.
+        activiteiten ophalen uit uw helpdesk.  
       helptext: <h4>Help bij de integratie van MailChimp</h4>
     constantcontact:
       label: Constant Contact
@@ -10815,7 +10828,7 @@ nl:
       desc: >-
         U kunt uw abonnementen van uw Campaign Monitor-account in Freshdesk
         beheren en opzoeken, en inzicht krijgen in de gebruiksstatistieken van
-        klanten.
+        klanten. 
       helptext: >-
         <h4>Hulp bij integratie van Campaign Monitor</h4><br/>Om Campaign
         Monitor te integreren heeft u uw API-sleutel en ClientID nodig van
@@ -10830,7 +10843,7 @@ nl:
         api_key_info: API-sleutel ophalen via de accountinstellingen
         client_id: Client-id
         client_id_info: >-
-          Als u het client-id wilt ophalen, gaat u naar
+          Als u het client-id wilt ophalen, gaat u naar 
           http://www.campaignmonitor.com/api/getting-started/#clientid.
     icontact:
       label: iContact
@@ -10846,7 +10859,7 @@ nl:
         api_url_info: >-
           Als u uw API-URL wilt ophalen, gaat u naar
           https://app.icontact.com/icp/core/externallogin en kopieert u de
-          API-URL uit het gedeelte met accountgegevens.
+          API-URL uit het gedeelte met accountgegevens. 
     dropbox:
       label: DropBox
       desc: U kunt uw gegevens en bestanden van DropBox bijvoegen en delen.
@@ -10974,7 +10987,7 @@ nl:
       freshdesk_api_key: Freshdesk-API-sleutel
       api_key_available: >-
         U vindt de API-sleutel in de profielinstellingen in uw
-        Freshdesk-account.
+        Freshdesk-account. 
       new_to_freshdesk: 'Nieuw bij Freshdesk? '
     hootsuite:
       auth_error: >-
@@ -12126,7 +12139,7 @@ nl:
     classic: Klassiek
     confirm: >-
       Weet u zeker dat u het nieuwe uiterlijk wilt toepassen? Al uw
-      CSS-aanpassingen\ \ gaan verloren.
+      CSS-aanpassingen\ \ gaan verloren. 
 
 
       Tip: maak een kopie van de CSS-aanpassingen die u momenteel hebt\ \ en
@@ -14771,13 +14784,13 @@ nl:
         meerdere categorieën voor producten of teams maken. Zo zorgt u voor
         relevante gesprekken voor alle secties op het hoogste niveau. Als
         beheerder hebt u bovendien nog steeds de mogelijkheid alles op één plek
-        te beheren.
+        te beheren. 
       para3: >-
         Als u meerdere productportalen in uw Freshdesk-account hebt
         geconfigureerd, kunt de gewenste categorie aan dat product koppelen. Op
         deze manier kunnen gebruikers die categorie zien, alsmede de
         bijbehorende forums en alle onderwerpen in zowel uw hoofdportaal als in
-        het productportaal.
+        het productportaal. 
       para4: Meer informatie over meerdere producten in Freshdesk.
     shared:
       topic:

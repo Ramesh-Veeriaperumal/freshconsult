@@ -23,6 +23,10 @@ class Agent < ActiveRecord::Base
     [true, :logged_out]
   ].freeze
  
+  AGENT_LOGIN_LOGOUT_ACTIONS = [
+    [true, :logged_in],
+    [true, :logged_out]
+  ].freeze 
   PERMISSION_TOKENS_BY_KEY = Hash[*TICKET_PERMISSION.map { |i| [i[1], i[0]] }.flatten]
   PERMISSION_KEYS_BY_TOKEN = Hash[*TICKET_PERMISSION.map { |i| [i[0], i[1]] }.flatten]
   PERMISSION_KEYS_OPTIONS = Hash[*TICKET_PERMISSION.map { |i| [i[1], i[2]] }.flatten]

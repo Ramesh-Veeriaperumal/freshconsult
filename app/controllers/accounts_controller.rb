@@ -114,14 +114,11 @@ class AccountsController < ApplicationController
     if @signup.save
       mark_account_as_anonymous
       finish_signup
-      respond_to do |format|
-        format.json do
-          render json: { success: true,
-                         url: signup_complete_url(token: @signup.user.perishable_token, host: @signup.account.full_domain),
-                         callback: params[:callback],
-                         account_id: @signup.account.id }
-        end
-      end
+      render json: { success: true,
+                     url: signup_complete_url(token: @signup.user.perishable_token, host: @signup.account.full_domain),
+                     account_id: @signup.account.id },
+                     :callback => params[:callback],
+                     :content_type=> 'application/javascript'
     else
       respond_to do |format|
         format.json render json: { success: false, errors: @signup.all_errors }, callback: params[:callback]
@@ -322,6 +319,7 @@ class AccountsController < ApplicationController
       flash[:notice] = 'Please provide valid login details!!'
       redirect_to login_url
     elsif current_user.active_freshid_agent?
+      cookies[:return_to] = '/a/getstarted'
       current_user.reset_persistence_token!
       redirect_to support_login_url(params: { new_account_signup: true, signup_email: current_user.email })
     else
@@ -644,12 +642,8 @@ class AccountsController < ApplicationController
 
     def anonymous_signup_enabled?
       unless redis_key_exists?(ANONYMOUS_ACCOUNT_SIGNUP_ENABLED)
-        respond_to do |format|
-          format.json do
-            render(json: { error: :access_denied }, status: 403)
-            return
-          end
-        end
+        render(json: { error: :access_denied }, status: 403)
+        return
       end
     end
 

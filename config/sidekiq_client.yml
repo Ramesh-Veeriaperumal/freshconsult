@@ -334,6 +334,7 @@ defaults: &defaults
     - [update_sandbox_subscription]
     - [thank_you_note]
     - [gateway_facebook_page]
+    - [ticket_properties_suggester]
 
 development:
   <<: *defaults

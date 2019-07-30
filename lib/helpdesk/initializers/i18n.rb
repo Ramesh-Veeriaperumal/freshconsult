@@ -2,7 +2,7 @@ module I18n
     #the below languages have dummy locale files in config
     #paperclip gem introduces these locales causing the order of available locales to be messed up. 
     #This is a hack - Rex
-    IGNORE_LANGUAGES = [:"zh-HK", :ja].freeze 
+    IGNORE_LANGUAGES = [:"zh-HK", :ja, :ru, :no].freeze
 
     def self.name_for_locale(locale)
         begin

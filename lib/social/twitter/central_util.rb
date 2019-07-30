@@ -32,4 +32,8 @@ module Social::Twitter::CentralUtil
       twitter_handle_id: twitter_handle_id
     }
   end
+
+  def generate_msg_id(payload)
+    Digest::MD5.hexdigest(payload.to_s)
+  end
 end

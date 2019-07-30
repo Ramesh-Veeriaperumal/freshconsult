@@ -1,4 +1,6 @@
 class Support::Solutions::FoldersController < SupportController
+  include Solution::PathHelper
+
 	before_filter :scoper, :check_folder_permission
 	before_filter :check_version_availability, :only => [:show]
 	before_filter :render_404, :unless => :folder_visible?, :only => :show
@@ -9,7 +11,7 @@ class Support::Solutions::FoldersController < SupportController
 		respond_to do |format|
 			format.html {
         (render_404 and return) if @folder.is_default?        
-				load_agent_actions(solution_folder_path(@folder), :view_solutions)
+				load_agent_actions(agent_actions_path(@folder), :view_solutions)
 				load_page_meta
 				set_portal_page :article_list
 			}

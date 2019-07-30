@@ -25,6 +25,7 @@ var ManageAgents = ManageAgents || (function($){
 			_showModal(data.roleid, data.title, data.agentcount, data.isaccadmin);
 			$('.select2-input').focus();
 			jQuery('.modal-body').css("max-height", "none");
+			elasticSearchAgents();
 		});
 	}
 
@@ -55,7 +56,6 @@ var ManageAgents = ManageAgents || (function($){
 					var agentData = JST["app/admin/roles/templates/user_list"]({
 						data: constructedData
 					});
-					_populateSelect2(constructedData.select2data);
 					jQuery("#manage-agents .agent-list-wrapper").html(agentData);
 					jQuery("#manage-agents .agent-list-wrapper").removeClass('sloading');
 					Select2Handler.updateCount( constructedData.user.length );
@@ -66,7 +66,6 @@ var ManageAgents = ManageAgents || (function($){
 				var noAgentTemplate = "<div class='no-agent-info'>"+I18n.t('admin.roles.no_agent_added')+"</div>";
 				jQuery(".agent-list-wrapper").html(noAgentTemplate);
 				var constructedData = _constructNewRoleData()
-				_populateSelect2(constructedData.select2data);
 				Select2Handler.updateCount( SubmitHandler.data.user.length );
 			}else{
 				_getDataFromStore();
@@ -80,7 +79,6 @@ var ManageAgents = ManageAgents || (function($){
 		var localAgent = JST["app/admin/roles/templates/user_list"]({
 			data: SubmitHandler.data
 		});
-		_populateSelect2(SubmitHandler.data.select2);
 		jQuery("#manage-agents .agent-list-wrapper").html(localAgent);
 		Select2Handler.updateCount( SubmitHandler.data.user.length );
 	}
@@ -112,15 +110,46 @@ var ManageAgents = ManageAgents || (function($){
 		}
 	}
 
-	function _populateSelect2(data){
-		var options = [];
-		data.each(function(data, index){
-			if(!data.is_account_admin && (data.id !== DataStore.get('current_user').currentData.user.id)){
-				options.push(jQuery('<option>').text(data.name).val(data.id));
+	function elasticSearchAgents(){
+		$('#manage-agents input.addAgentHiddenInput').select2('destroy');
+		$('#manage-agents .addAgentHiddenInput').select2({
+			minimumInputLength: 2,
+			multiple: true,
+			placeholder: I18n.t('common_js_translations.skills.add_agent'),
+			allowClear: true,
+			ajax: {
+				url: '/search/autocomplete/agents',
+				dataType: 'json',
+				delay: 250,
+				data: function(term, page) {
+					return {
+						q: term
+					};
+				},
+				results: function(data, params) {
+					var filteredData = {
+						results: []
+					}
+					var selectedAgents = Select2Handler.agent.added_agent.concat(SubmitHandler.data.user).filter(function(agent, index){
+						return Select2Handler.agent.removed_agent.indexOf(agent) == -1;
+					});
+					var currentUserId = DataStore.get('current_user').currentData.user.id;
+					var accountAdmins = DataStore.get('agent').all().filter(function(agent){ return agent.is_account_admin }).pluck('id').map(function(id){ return String(id); });
+					var filteredAgents = selectedAgents.concat(accountAdmins, [String(currentUserId)]);
+					$.each(data.results, function(index, item) {
+						if ( filteredAgents.indexOf(String(item.user_id)) == -1 ) {
+							filteredData.results.push({
+								id: item.user_id,
+								text: item.value,
+								profile_img: item.profile_img
+							});
+						}
+					});
+					return filteredData;
+				},
+				cache: true
 			}
-			
 		});
-		jQuery('#manage-agents [data-action="add-agent"]').select2('destroy').html("").html(options).select2();
 	}
 
 	function _appendContent(name, agentcount, cb){

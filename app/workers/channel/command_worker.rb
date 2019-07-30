@@ -4,6 +4,7 @@ class Channel::CommandWorker < BaseWorker
 
   sidekiq_options queue: :channel_framework_command,
                   retry: 0,
+                  backtrace: true,
                   failures: :exhausted
 
   def perform(args, msg_id = nil)
@@ -15,7 +16,7 @@ class Channel::CommandWorker < BaseWorker
 
     def get_payload(args)
       args[:payload_type] = args.delete(:override_payload_type) ||
-                            ChannelIntegrations::Constants::PAYLOAD_TYPES[:command_to_channel]
+        ChannelIntegrations::Constants::PAYLOAD_TYPES[:command_to_channel]
       args[:account_id] = Account.current.id.to_s
       args.to_json
     end

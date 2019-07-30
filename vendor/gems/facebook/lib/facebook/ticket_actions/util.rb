@@ -139,7 +139,7 @@ module Facebook
         else
           flash[:notice] = t(:'flash.tickets.reply.success')
         end
-      end 
+      end
 
       def update_facebook_errors_in_schemaless_notes(error, note_id)
         schema_less_notes = Account.current.schema_less_notes.find_by_note_id(note_id)

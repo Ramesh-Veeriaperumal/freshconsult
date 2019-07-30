@@ -10,11 +10,12 @@ module Freddy
       @ticket = account.tickets.find_by_id(args[:ticket_id])
       url = FreddySkillsConfig[:ticket_properties_suggester][:url] + args[:action]
       api_options = {}
+      method_options = {}
       api_options[:header] = { 'Content-Type' => 'application/json' }
       api_options[:body] = { product_name: PRODUCT,
                              account_id: account.id.to_s,
                              ticket_id: @ticket.id.to_s }
-      api_options[:timeout] = FreddySkillsConfig[:ticket_properties_suggester][:timeout]       
+      api_options[:timeout] = FreddySkillsConfig[:ticket_properties_suggester][:timeout]
       method_options = args.slice(:dispatcher_set_priority, :model_changes)
       safe_send(args[:action], url, api_options, method_options)
     rescue StandardError => e

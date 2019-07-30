@@ -112,6 +112,6 @@ class EmailServiceController < Fdadmin::MetalApiController
       end
     end
   rescue => e
-    Rails.logger.info "Error in check_user_status: #{e.message} - #{e.backtrace}"
+    Rails.logger.info "Error in check_user_status: #{e.message} - #{e.backtrace[0..10]}"
   end
 end

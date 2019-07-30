@@ -15,15 +15,16 @@ class Helpdesk::InlineAttachmentsController < ApplicationController
   
   def one_hop_url
     decoded_hash = Helpdesk::Attachment.decode_token(params[:token])
+    unless decoded_hash
+      render nothing: true, status: 400
+      return
+    end
     attachment = current_account.attachments.where(:id => decoded_hash[:id]).first
     if attachment.present?
       redirect_to attachment.authenticated_s3_get_url(expires: attachment.expiry)
     else
       render_404
     end
-  rescue => e
-    Rails.logger.info e
-    render :nothing => true, :status => 500
   end
 
   private
@@ -47,6 +48,9 @@ class Helpdesk::InlineAttachmentsController < ApplicationController
 
     def payload
       @payload ||= JSON.parse(JWT.base64url_decode(params[:token].split('.')[1]),{:symbolize_names => true})
+    rescue => e
+      Rails.logger.info("Error in parsing token")
+      nil
     end
 
     def image_account_id
@@ -54,18 +58,16 @@ class Helpdesk::InlineAttachmentsController < ApplicationController
     end
 
     def image_domain
+      return unless payload
       return payload[:domain] if ShardMapping.fetch_by_domain(payload[:domain]).present?
-      render_404 and return unless image_account_id
-      begin
-        Sharding.select_shard_of(image_account_id) do
-          Sharding.run_on_slave do
-            return Account.find(image_account_id).full_domain
-          end
+      return unless image_account_id
+      Sharding.select_shard_of(image_account_id) do
+        Sharding.run_on_slave do
+          return Account.find(image_account_id).try(:full_domain)
         end
-      rescue => e
-        Rails.logger.info("Inline Image Account not found")
-        render_404 and return
       end
+    rescue => e
+      Rails.logger.info("Inline Image Account not found")
     end
 
     def image_host

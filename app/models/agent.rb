@@ -45,12 +45,12 @@ class Agent < ActiveRecord::Base
 
   attr_accessible :signature_html, :user_id, :ticket_permission, :occasional, :available, :shortcuts_enabled,
     :scoreboard_level_id, :user_attributes, :group_ids, :freshchat_token, :agent_type
-    
+
   attr_accessor :agent_role_ids, :freshcaller_enabled, :user_changes, :group_changes, :ocr_update, :misc_changes
 
   scope :with_conditions ,lambda {|conditions| { :conditions => conditions} }
   scope :full_time_support_agents, :conditions => { :occasional => false, :agent_type => SUPPORT_AGENT_TYPE, 'users.deleted' => false}
-  scope :occasional_agents, :conditions => { :occasional => true, 'users.deleted' => false }
+  scope :occasional_agents, :conditions => { :occasional => true, 'users.deleted' => false}
   scope :list , lambda {{ :include => :user , :order => :name }}  
 
   xss_sanitize :only => [:signature_html],  :html_sanitize => [:signature_html]
@@ -67,22 +67,18 @@ class Agent < ActiveRecord::Base
     self.ticket_permission = PERMISSION_KEYS_BY_TOKEN[:all_tickets]
   end
 
-  def ticket_permission_token
-    PERMISSION_TOKENS_BY_KEY[self.ticket_permission]
-  end
-
   def signature_htm
     self.signature_html
   end
 
   def change_points score
-    # Assign points to agent if no point have been given before
-    # Else increment the existing points total by the given amount
-    if self.points.nil?
-      Agent.where(:id => self.id).update_all("points = #{score}")
-    else
-      Agent.where(:id => self.id).update_all("points = points + #{score}")
-    end
+  	# Assign points to agent if no point have been given before
+  	# Else increment the existing points total by the given amount
+  	if self.points.nil?
+  		Agent.where(:id => self.id).update_all("points = #{score.to_i}")
+  	else
+  		Agent.where(:id => self.id).update_all("points = points + #{score.to_i}")
+  	end
   end
 
   #for user_emails
@@ -284,10 +280,6 @@ class Agent < ActiveRecord::Base
     self.agent_groups_attributes = agent_groups_array if agent_groups_array.present?
   end
 
-  def field_agent?
-    self.agent_type == AgentType.agent_type_id(Agent::FIELD_AGENT)
-  end
-  
   def fetch_valid_groups
     agent_type_name = AgentType.agent_type_name(self.agent_type)
     group_type_name = Agent::AGENT_GROUP_TYPE_MAPPING[agent_type_name]
@@ -297,6 +289,10 @@ class Agent < ActiveRecord::Base
 
   def support_agent?
     agent_type == Admin::AdvancedTicketing::FieldServiceManagement::Constant::SUPPORT_AGENT_TYPE
+  end
+
+  def field_agent?
+    self.agent_type == AgentType.agent_type_id(Agent::FIELD_AGENT)
   end
 
   protected
@@ -311,14 +307,6 @@ class Agent < ActiveRecord::Base
            :scope => SCOPE_TOKENS_BY_KEY[self.ticket_permission]}
       LivechatWorker.perform_async({:worker_method =>"create_agent",
                                         :siteId => site_id, :agent_data => [c].to_json})
-    end
-  end
-
-  #Will be only called during disabling FSM via API(automations). Customers can not disable FSM from UI
-  def self.destroy_agents(account, type) 
-    agents = account.agents.where(agent_type: type).includes(:user).all
-    agents.each do |agent|
-      agent.user.make_customer
     end
   end
 

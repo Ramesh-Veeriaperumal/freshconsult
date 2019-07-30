@@ -22,13 +22,7 @@ end
                 <% if current_user.privilege?(:manage_account) || current_user.privilege?(:manage_skills) %>
                   <span class="rounded-add-icon add-agent-icon"></span>
                 <% end %>
-                <% if type == 'roles' %>
-                  <select data-action="add-agent" multiple="true"
-                  class="add-agent-class agent-select-list" placeholder="<%= t('admin.roles.add_agent_label') %>">
-                  </select>
-                <% else %>
-                  <input style="width:100%" type="hidden" class="addAgentHiddenInput">
-                <% end %>
+                <input style="width:100%" type="hidden" class="addAgentHiddenInput">
         </div>
     </div>
     <div class="button-container">

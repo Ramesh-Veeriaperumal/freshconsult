@@ -56,8 +56,6 @@ Helpkit::Application.routes.draw do
   # Note: This route will make all actions in every controller accessible via GET requests.
   # match ':controller(/:action(/:id))(.:format)'
 
-  match '/health_checkup' => 'health_checkup#app_health_check',via: :get
-
   constraints(lambda {|req| req.subdomain == AppConfig['admin_subdomain'] }) do
 
     namespace :subscription_admin, :as => 'admin' do
@@ -420,7 +418,6 @@ Helpkit::Application.routes.draw do
   match '/zendesk/import' => 'admin/zen_import#index', :as => :zendesk_import
   match '/twitter/authdone' => 'social/twitter_handles#authdone', :as => :tauth
   match '/download_file/:source/:token' => 'admin/data_export#download', :as => :download_file
-
   namespace :freshfone do
     resources :ivrs do
       member do
@@ -723,6 +720,8 @@ Helpkit::Application.routes.draw do
   match '/enable_undo_send' => 'users#enable_undo_send', :as => :enable_undo_send, via: :post
   match '/disable_undo_send' => 'users#disable_undo_send', :as => :disable_undo_send, via: :post
   match '/set_notes_order' => 'users#set_conversation_preference', :as => :set_notes_order, via: :put
+  match '/enable_skip_mandatory' => 'admin/account_additional_settings#enable_skip_mandatory', :as => :enable_skip_mandatory, via: :post
+  match '/disable_skip_mandatory' => 'admin/account_additional_settings#disable_skip_mandatory', :as => :disable_skip_mandatory, via: :post
   match '/register/:activation_code' => 'activations#new', :as => :register
   match 'register_new_email/:activation_code' => 'activations#new_email', :as => :register_new_email
   match '/activate/:perishable_token' => 'activations#create', :as => :activate
@@ -1119,10 +1118,6 @@ Helpkit::Application.routes.draw do
 
   match '/http_request_proxy/fetch',
       :controller => 'http_request_proxy', :action => 'fetch', :as => :http_proxy
-  match '/freshcaller_proxy',
-       :controller => 'freshcaller_proxy', :action => 'fetch', :as => :freshcaller_proxy, :via => :post
-  match '/freshcaller_proxy/recording_url',
-       :controller => 'freshcaller_proxy', :action => 'recording_url', :as => :freshcaller_proxy, :via => :get
   match '/mkp/data-pipe.:format', :controller => 'integrations/data_pipe', :action => 'router', :method => :post, :as => :data_pipe
 
   constraints RouteConstraints::Freshcaller.new do
@@ -2070,7 +2065,6 @@ Helpkit::Application.routes.draw do
       resources :conversations do
         collection do
           post :reply
-          put :undo_send
           post :forward
           post :note
           post :twitter
@@ -2324,7 +2318,6 @@ Helpkit::Application.routes.draw do
         delete :delete_multiple
       end
     end
-
     match '/ticket_templates/tab/:current_tab'    => 'ticket_templates#index',     :as => :my_ticket_templates
     match '/parent_template/:p_id/child/new'      => 'ticket_templates#new_child', :as => :new_child_template
     match '/parent_template/:p_id/child/:id/edit' => 'ticket_templates#edit_child',:as => :edit_child_template
@@ -3038,8 +3031,6 @@ Helpkit::Application.routes.draw do
           put :unblock_outgoing_email
           post :extend_trial
           put :change_primary_language
-          get :clone_account
-          post :clone_account
           post :trigger_action
           get :clone_account
           post :clone_account
@@ -3274,10 +3265,6 @@ Helpkit::Application.routes.draw do
       put  :trigger
       get  :export
     end
-    #member do
-    #  #TODO - make this a match route below like for shortcodes
-    #  put :update_availability
-    #end
   end
   match '/livechat/visitor/:type', :controller => 'chats', :action => 'visitor', :method => :get
   match '/livechat/downloadexport/:token', :controller => 'chats', :action => 'download_export', :method => :get
@@ -3288,7 +3275,6 @@ Helpkit::Application.routes.draw do
   put '/livechat/shortcodes/:id', :controller => 'chats', :action => 'update_shortcode', :method => :put
   put '/livechat/agent/:id/update_availability', :controller => 'chats', :action => 'update_availability', :method => :put
   match '/livechat/*letter', :controller => 'chats', :action => 'index', :method => :get
-
 
   use_doorkeeper do
     skip_controllers :oauth_applications, :authorized_applications

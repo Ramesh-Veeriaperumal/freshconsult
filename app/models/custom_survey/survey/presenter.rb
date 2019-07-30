@@ -28,9 +28,36 @@ class CustomSurvey::Survey < ActiveRecord::Base
     survey.add :comments_text
     survey.add :thanks_text
     survey.add :feedback_response_text
+    survey.add proc { |sur| sur.fetch_default_questions_and_choices }, as: :default_question
+    survey.add proc { |sur| sur.fetch_additional_questions_and_choices }, as: :additional_questions
   end
 
   def custom_translation_key
     "survey_#{id}".to_sym
+  end
+
+  def fetch_default_questions_and_choices
+    default_question = {}
+    question = fetched_survey_questions.find(&:default)
+    default_question[:question] = question.label
+    default_question[:choices] = question.choices.map { |choice| [choice[:face_value], choice[:value]] }.to_h
+    default_question
+  end
+
+  def fetch_additional_questions_and_choices
+    additional_questions = {}
+    questions = fetched_survey_questions.reject(&:default)
+    return nil if questions.blank?
+
+    questions.each do |question|
+      additional_questions["question_#{question.id}".to_sym] = question.label
+    end
+    additional_questions[:choices] = questions.first.choices.map { |choice| [choice[:face_value], choice[:value]] }.to_h
+    additional_questions
+  end
+
+  # memoizing to avoid repeat db calls
+  def fetched_survey_questions
+    @fetched_survey_questions ||= survey_questions
   end
 end

@@ -386,17 +386,19 @@ var TemplateDockManager = Class.create({
       if (this.appInstance) {
         return this.appInstance.trigger({ type: 'custom_iparam.submit' });
       }
-      return Promise.resolve({ configs: '' });
+      return RSVP.Promise.resolve({ configs: '' });
     }
-    var that = this;
+
+    var isEmpty = function isEmpty(index, value) {
+      return jQuery.trim(jQuery(value).val()).length == 0;
+    }
     // validation for V1 apps
-    jQuery(".installer-form input.fa-textip.required").each(function(index, value) {
-      if (jQuery.trim(jQuery(value).val()).length == 0) {
-        // Display V1 form validation error
-        that.displayError(that.customMessages.field_blank);
-        return Promise.reject();
-      }
-    });
+    var invalidElements = jQuery(".installer-form input.fa-textip.required").filter(isEmpty);
+    if (invalidElements.length > 0) {
+      // Display V1 form validation error
+      this.displayError(this.customMessages.field_blank);
+      return RSVP.Promise.reject();
+    }
 
     // validation succeeds - return installation parameters.
     var configs = {};
@@ -404,7 +406,7 @@ var TemplateDockManager = Class.create({
               .map(function(e) { var x = e.split("="); if(x[0] != 'authenticity_token' && x[0] != "" && x[0]!= null) { 
                 configs[x[0]] = decodeURIComponent(x[1]); 
               }});
-    return Promise.resolve({configs: configs,
+    return RSVP.Promise.resolve({configs: configs,
                             authenticity_token: jQuery("#install-form input[name='authenticity_token']").val()});
   },
 
@@ -449,7 +451,7 @@ var TemplateDockManager = Class.create({
 
     this.getIparams().then(function(configs) {
       that.submitIparams(el, configs)
-    }, function(e) {
+    }).catch(function(e) {
       if (e.hasOwnProperty('isValid') || !e.isValid) {
         return that.displayError(that.customMessages.validation_failed);
       }

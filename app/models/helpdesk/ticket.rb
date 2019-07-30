@@ -48,10 +48,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   concerned_with :associations, :validations, :presenter, :callbacks, :riak, :s3, :mysql,
                  :attributes, :rabbitmq, :permissions, :esv2_methods, :count_es_methods,
                  :round_robin_methods, :association_methods, :skill_based_round_robin,
-                 :sla_calculation_methods, :kairos_methods
+                 :sla_calculation_methods
 
   text_datastore_callbacks :class => "ticket"
-  spam_watcher_callbacks :user_column => "requester_id", :import_column => "import_id"
+  spam_watcher_callbacks :user_column => "requester_id"
   #zero_downtime_migration_methods :methods => {:remove_columns => [ "description", "description_html"] }
 
   #by Shan temp
@@ -63,9 +63,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :sbrr_turned_on, :status_sla_toggled_to, :replicated_state, :skip_sbrr_assigner, :bg_jobs_inline,
     :sbrr_ticket_dequeued, :sbrr_user_score_incremented, :sbrr_fresh_ticket, :skip_sbrr, :model_changes,
     :schedule_observer, :required_fields_on_closure, :observer_args, :skip_sbrr_save, 
-    :sbrr_state_attributes, :escape_liquid_attributes, :update_sla, :sla_on_background, 
-    :sla_calculation_time, :disable_sla_calculation, :import_ticket, :ocr_update, :skip_ocr_sync,
-    :custom_fields_hash, :thank_you_note_id
+    :sbrr_state_attributes, :escape_liquid_attributes, :update_sla, :sla_on_background,
+    :sla_calculation_time, :import_ticket, :ocr_update, :skip_ocr_sync, :custom_fields_hash, :thank_you_note_id
+
     # :skip_sbrr_assigner and :skip_sbrr_save can be combined together if needed.
     # Added :system_changes, :activity_type, :misc_changes for activity_revamp -
     # - will be clearing these after activity publish.
@@ -78,7 +78,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   alias_attribute :company_id, :owner_id
   alias_attribute :skill_id, :sl_skill_id
-  alias_attribute :created_during, :created_at # to support the created_at for dispatcher rule
 
   scope :created_at_inside, lambda { |start, stop|
           { :conditions => [" helpdesk_tickets.created_at >= ? and helpdesk_tickets.created_at <= ?", start, stop] }
@@ -98,11 +97,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   scope :all_company_tickets,lambda { |company_id| {
         :conditions => ["owner_id = ?",company_id]
   }
-  }
-
-  scope :all_user_tickets, lambda { |user_id| { 
-    :conditions => [ "requester_id=? ", user_id ]
-    }
   }
 
   scope :contractor_tickets, lambda { |user_id, company_ids, operator|
@@ -157,10 +151,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     [ "requester_id=? ",
       user.id ], :order => 'helpdesk_tickets.created_at DESC' } }
 
-  scope :requester_latest_tickets, lambda { |user, duration| { :conditions =>
-     [ "requester_id=? and helpdesk_tickets.created_at > ?",
-       user.id, duration ], :order => 'helpdesk_tickets.created_at DESC' } }
-
   scope :requester_completed, lambda { |user| { :conditions =>
     [ "requester_id=? and status in (#{RESOLVED}, #{CLOSED})",
       user.id ] } }
@@ -193,9 +183,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :limit => 1000
     }
   }
+
   scope :all_article_tickets,
-          :joins => [:article_ticket],
-          :order => "`article_tickets`.`id` DESC"
+    :joins => %(INNER JOIN article_tickets ON article_tickets.ticketable_id = helpdesk_tickets.id and 
+        article_tickets.ticketable_type = 'Helpdesk::Ticket' and 
+        article_tickets.account_id = helpdesk_tickets.account_id),
+    :order => "`article_tickets`.`id` DESC"
 
   # The below scope "for_user_articles" HAS to be used along with "all_article_tickets"
   # Otherwise, the condition and hence the query would fail.
@@ -350,13 +343,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def subsidiary_tkts_count
-   if prime_ticket?
-     (count = schema_less_ticket.subsidiary_tkts_count) ? count : associated_tickets_count
-   end
+    if prime_ticket?
+      (count = schema_less_ticket.subsidiary_tkts_count) ? count : associated_tickets_count
+    end
   end
 
   def properties_updated?
-    changed? || schema_less_ticket_updated? || custom_fields_updated? || tags_updated
+    self.changed? || self.schema_less_ticket_updated? || self.custom_fields_updated?
   end
 
   def skill_name
@@ -399,6 +392,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     source == SOURCE_KEYS_BY_TOKEN[:twitter] and (tweet) and (tweet.twitter_handle)
   end
 
+  def email?
+    source == SOURCE_KEYS_BY_TOKEN[:email]
+  end
+
   def show_facebook_reply?
     facebook? && !thread_key_nil?
   end
@@ -423,11 +420,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def is_facebook
     source == SOURCE_KEYS_BY_TOKEN[:facebook] ? (fb_post and fb_post.facebook_page) : nil
   end
-
-  def bot?
-    source == SOURCE_KEYS_BY_TOKEN[:bot]
-  end
-  alias :is_bot :bot?
 
   def fb_replies_allowed?
     facebook? and !fb_post.reply_to_comment? and !thread_key_nil?
@@ -472,25 +464,23 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.canned_form_handles.where(canned_form_id: cf_obj.id).last
   end
 
-  # Create/Fetch canned form handle 
-
+   # Create/Fetch canned form handle 
   def create_or_fetch_canned_form(cf_obj)
     Sharding.run_on_master do 
       latest_cf_handle = fetch_latest_cf_handle(cf_obj)
-      
+
       # If there is any unused CF handle url, use it. Otherwise, create a new one.
       if latest_cf_handle.nil? || latest_cf_handle.response_note_id
-        handle = cf_obj.canned_form_handles.build(ticket_id: self.id)
-
-        unless handle.save
-          Rails.logger.info "Error While saving canned form handle - #{handle.errors}"
-          return nil 
-        else
-          return handle
-        end
+          handle = cf_obj.canned_form_handles.build(ticket_id: self.id)
+          unless handle.save
+            Rails.logger.info "Error While saving canned form handle - #{handle.errors}"
+            return nil 
+          else
+            return handle
+          end
       end
 
-        return latest_cf_handle
+      return latest_cf_handle
     end
   end
 
@@ -660,17 +650,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def included_in_fwd_emails?(from_email)
-    (cc_email_hash) and  (cc_email_hash[:fwd_emails].any? {|email| email.downcase.include?(from_email.downcase) })
+    (cc_email_hash) and  (cc_email_hash[:fwd_emails].any? {|email| ((parse_email email)[:email]).downcase.eql?(from_email.downcase) })
   end
 
   def included_in_cc?(from_email)
-    (cc_email_hash) and  ((cc_email_hash[:cc_emails].any? {|email| email.include?(from_email.downcase) }) or
-                     (cc_email_hash[:fwd_emails].any? {|email| email.include?(from_email.downcase) }) or
+    (cc_email_hash) and  ((cc_email_hash[:cc_emails].any? {|email| ((parse_email email)[:email]).downcase.eql?(from_email.downcase) }) or
+                     included_in_fwd_emails?(from_email) or
                      included_in_to_emails?(from_email))
   end
 
   def included_in_to_emails?(from_email)
-    (self.to_emails || []).select{|email_id| email_id.downcase.include?(from_email.downcase) }.present?
+    (self.to_emails || []).select{|email_id| ((parse_email email_id)[:email]).downcase.eql?(from_email.downcase) }.present?
   end
 
   def ticket_id_delimiter
@@ -764,7 +754,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def last_interaction
-    notes.visible.newest_first.exclude_source(["feedback","meta","forward_email","summary"]).first.try(:body).to_s
+    notes.visible.newest_first.exclude_source(["feedback","meta","forward_email"]).first.try(:body).to_s
   end
 
   #To use liquid template...
@@ -1086,14 +1076,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     @custom_field ||= retrieve_ff_values_via_mapping
   end
 
-  def custom_field_by_column_name
-    @custom_field_by_column_name ||= begin
-      custom_field.each_with_object({}) do |field, mapping|
-        mapping[custom_field_column_name_mappings[field.first].to_s] = field.last
-      end
-    end
-  end
-
   def custom_field= custom_field_hash
     self.custom_fields_hash = custom_field_hash
     @custom_field = new_record? ? custom_field_hash : nil
@@ -1114,15 +1096,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     @custom_field_mapping ||= begin
       self.account.ticket_fields.custom_fields.inject({}) { |a, f|
         a[f.name] = f.field_type
-        a
-      }
-    end
-  end
-
-  def custom_field_column_name_mappings
-    @custom_field_column_name_mappings ||= begin
-      self.account.ticket_fields_with_nested_fields.custom_fields.each_with_object({}) { |f, a|
-        a[f.name] = f.column_name.to_sym
         a
       }
     end
@@ -1304,10 +1277,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     @va_rules_after_save_actions ||= []
   end
 
-  def draft
-    @draft ||= TicketDraft.new(id)
-  end
-
   def skill_id_column
     :sl_skill_id
   end
@@ -1362,10 +1331,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     valid_internal_group? && (internal_group.try(:agent_ids) || []).include?(ia_id)
   end
 
-  def mint_url
-    "#{url_protocol}://#{portal_host}/a/tickets/#{display_id}"
-  end
-
   # overridden default setter method to take care of existing inline attachments
   def inline_attachment_ids=(attachment_ids)
     attachment_ids ||= []
@@ -1386,33 +1351,38 @@ class Helpdesk::Ticket < ActiveRecord::Base
     service_task?
   end
 
-  def has_active_forum_topic? # rubocop:disable PredicateName
+  def has_active_forum_topic?
     ticket_topic && ticket_topic.topic && !ticket_topic.topic.locked?
   end
 
   def add_forum_post(ticket_note)
-    has_active_forum_topic? && ticket_topic.topic.create_post_from_ticket_note(ticket_note)
+    if has_active_forum_topic?
+      return ticket_topic.topic.create_post_from_ticket_note(ticket_note)
+    end
+    return false
   end
 
   def rr_active
-    !deleted && !spam && !ticket_status.stop_sla_timer
+     !deleted && !spam && !ticket_status.stop_sla_timer
   end
   alias_method :rr_active?, :rr_active
-
-  def round_robin_attributes
-    { active: rr_active, agent_id: responder_id.to_s.presence, group_id: group_id.to_s.presence }
-  end
-
-  def eligible_for_ocr?
-    account.omni_channel_routing_enabled? && rr_active?
-  end
-
-  def eligible_for_ocr?
-    account.omni_channel_routing_enabled? && rr_active?
-  end
  
+  def round_robin_attributes
+     { active: rr_active, agent_id: responder_id.to_s.presence, group_id: group_id.to_s.presence }
+  end
+
+  def eligible_for_ocr?
+    account.omni_channel_routing_enabled? && rr_active?
+  end
+  
   def thank_you_note
     @thank_you_note ||= evaluate_on.notes.find_by_id(thank_you_note_id)
+  end
+
+  def update_email_received_at(received_at)
+    return if received_at.blank?
+
+    schema_less_ticket.header_info[:received_at] = received_at
   end
 
   def requester_language
@@ -1435,7 +1405,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     def note_preload_options
       options = [:attachments, :note_old_body, :schema_less_note, :notable, :attachments_sharable, {:user => :avatar}, :cloud_files]
       options << :freshfone_call if Account.current.features?(:freshfone)
-      options << :freshcaller_call if Account.current.has_feature?(:freshcaller)
       options << (Account.current.new_survey_enabled? ? {:custom_survey_remark =>
                     {:survey_result => [:survey_result_data, :agent, {:survey => :survey_questions}]}} : :survey_remark)
       options << :fb_post if facebook?

@@ -64,10 +64,15 @@ module Helpdesk::Email::MessageProcessingUtil
         end
 	end
 
-	def set_processing_state(state, created_time, uid)
+	def set_processing_state(state, created_time, uid, custom_bot_attack=false)
 		message_status_key = MESSAGE_PROCESS_STATE % { :uid => uid }
 		value = "#{state.to_s}:#{created_time.to_s}"
-		old_state = get_set_others_redis_key(message_status_key, value, 4.days.seconds)
+		if(!custom_bot_attack)
+			old_state = get_set_others_redis_key(message_status_key, value, 4.days.seconds)
+		else
+			old_state = get_set_others_redis_key(message_status_key, value, 1.days.seconds)
+		end
+
 		if old_state.present?
 			state, created_time = old_state.split(":",2)
 			return safe_to_process?(state, created_time)

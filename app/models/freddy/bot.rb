@@ -1,4 +1,8 @@
 class Freddy::Bot < ActiveRecord::Base
+
+  include Redis::OthersRedis
+  include Redis::RedisKeys
+
   self.primary_key = :id
   self.table_name = 'freddy_bots'
 

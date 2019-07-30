@@ -62,6 +62,9 @@ body {
   font-weight: 500;
   width:70%
 }
+.survey-button-disable{
+    pointer-events: none;
+  }
 .survey_question_wrapper{ 
   border:1px solid #dbdbdb;
   background-color: #fff;
