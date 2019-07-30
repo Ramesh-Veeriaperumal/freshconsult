@@ -12,8 +12,8 @@ class Groups::RoundRobinCapping < BaseWorker
     Sharding.run_on_slave do 
       group = Account.current.groups.find_by_id(args[:group_id])
       if args[:reset_capping]
-        group.shutdown_capping(group.agents.pluck(:user_id))
-        init_capping(group)
+        group.shutdown_capping(group.agents.pluck(:user_id), true)
+        init_capping(group, true)
       else
         @model_changes = args[:model_changes]
         @capping_limit_change = args[:model_changes][:capping_limit]
@@ -32,7 +32,7 @@ class Groups::RoundRobinCapping < BaseWorker
     end
   end
 
-  def init_capping group
+  def init_capping(group, reset_capping = false)
     user_ids = group.agent_groups.available_agents.pluck(:user_id)
     if user_ids.present?
       key = group.round_robin_capping_key
@@ -45,12 +45,16 @@ class Groups::RoundRobinCapping < BaseWorker
       end
 
       capping_reached = false
-      latest_ticket = group.tickets.visible.unassigned.sla_on_tickets(status_ids).last
-      last_ticket_id = latest_ticket.id if latest_ticket.present?
-      if last_ticket_id
-        group.tickets.visible.unassigned.sla_on_tickets(status_ids).where("id <= '#{last_ticket_id}'").find_each do |ticket|
-          capping_reached = assign_ticket(group, ticket, key)
-          break if capping_reached
+      if reset_capping
+        assign_tickets_from_unassigned_list(group)
+      else
+        latest_ticket = group.tickets.visible.unassigned.sla_on_tickets(status_ids).last
+        last_ticket_id = latest_ticket.id if latest_ticket.present?
+        if last_ticket_id
+          group.tickets.visible.unassigned.sla_on_tickets(status_ids).where("id <= '#{last_ticket_id}'").find_each do |ticket|
+            capping_reached = assign_ticket(group, ticket, key)
+            break if capping_reached
+          end
         end
       end
 
@@ -76,7 +80,18 @@ class Groups::RoundRobinCapping < BaseWorker
   
   def rebalance_capping group
     del_round_robin_redis(group.round_robin_capping_permit_key)
-    
+    assign_tickets_from_unassigned_list(group)
+    set_round_robin_redis(group.round_robin_capping_permit_key, 1)
+
+    if capping_reached
+      ticket_ids = smembers_round_robin_redis(group.rr_temp_tickets_queue_key).map(&:to_i)
+      group.rpush_to_rr_capping_queue(ticket_ids.reverse) if ticket_ids.present?
+    else
+      handle_temp_tickets(group, key)
+    end
+  end
+
+  def assign_tickets_from_unassigned_list(group)
     key = group.round_robin_capping_key
     capping_reached = false
     loop do
@@ -88,15 +103,6 @@ class Groups::RoundRobinCapping < BaseWorker
         group.lpush_to_rr_capping_queue(ticket_id)
         break
       end
-    end
-
-    set_round_robin_redis(group.round_robin_capping_permit_key, 1)
-
-    if capping_reached
-      ticket_ids = smembers_round_robin_redis(group.rr_temp_tickets_queue_key).map(&:to_i)
-      group.rpush_to_rr_capping_queue(ticket_ids.reverse) if ticket_ids.present?
-    else
-      handle_temp_tickets(group, key)
     end
   end
 
