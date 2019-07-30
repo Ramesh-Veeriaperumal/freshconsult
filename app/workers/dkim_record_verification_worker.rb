@@ -35,7 +35,7 @@ class DkimRecordVerificationWorker
       if redis_key_exists?(dkim_verify_key(@domain_category))
         remove_others_redis_key(dkim_verify_key(@domain_category))
         if @domain_category.status == OutgoingEmailDomainCategory::STATUS['active']
-          UserNotifier.notify_dkim_activation(Account.current, @domain_category.attributes)
+          UserNotifier.send_email(:notify_dkim_activation, Account.current.admin_email, Account.current, @domain_category.attributes)
         end
       end
     end
