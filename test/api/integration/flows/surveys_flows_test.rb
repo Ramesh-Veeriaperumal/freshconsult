@@ -12,7 +12,12 @@ class SurveysFlowsTest < ActionDispatch::IntegrationTest
     before_all
   end
 
+  def teardown
+    Account.any_instance.unstub(:enabled_features_list)
+  end
+
   def before_all
+    Account.any_instance.stubs(:enabled_features_list).returns([:surveys])
     return if @@before_all
     @@before_all = true
     @account.add_feature(:falcon)

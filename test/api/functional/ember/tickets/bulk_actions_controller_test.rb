@@ -446,6 +446,7 @@ module Ember
         incorrect_values = { priority: 90, status: statuses.last + 1, type: 'jksadjxyz' }
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.merge(incorrect_values) }
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
+
         type_field_names = @account.ticket_fields.where(field_type: 'default_ticket_type').first.picklist_values.map(&:value).join(',')
         match_json([bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
                     bad_request_error_pattern('status', :not_included, list: statuses.join(',')),
