@@ -78,11 +78,6 @@ Helpkit::Application.configure do
       end
     end
   end
-
-  # Metal changes has to be included irrespective of whether the layer is API or not.
-  # This is required as in some cases, API and web requests can be served from the same box.
-  ActionController::Metal.send(:include, AbstractController::Callbacks)
-  ActionController::Metal.send(:include, Authlogic::ControllerAdapters::RailsAdapter::RailsImplementation)
 end
 
 module ActionDispatch
