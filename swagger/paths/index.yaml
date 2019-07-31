@@ -681,3 +681,8 @@
 
 /feature/{name}:
   $ref: ./accounts/feature.yaml
+
+/email/mailboxes:
+  $ref: ./email/mailboxes/list_and_create.yaml
+/email/mailboxes/{id}:
+  $ref: ./email/mailboxes/crud.yaml
