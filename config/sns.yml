@@ -9,6 +9,7 @@ development:
   freshid_notification_topic: freshid_notification_dev
   sandbox_notification_topic: sandbox_notification_dev
   field_service_management: field_service_management
+  fluffy_notification_topic: fluffy_notification_dev
 staging:
   social_notification_topic: social_notification_staging
   reports_notification_topic: reports_notification_staging
@@ -20,6 +21,7 @@ staging:
   freshid_notification_topic: freshid_notification_staging
   sandbox_notification_topic: sandbox_notification_staging
   field_service_management: field_service_management
+  fluffy_notification_topic: fluffy_notification_staging
 production:
   social_notification_topic: social_notification_production
   reports_notification_topic: reports_notification_production
@@ -31,6 +33,7 @@ production:
   freshid_notification_topic: freshid_notification_production
   sandbox_notification_topic: sandbox_notification_production
   field_service_management: field_service_management
+  fluffy_notification_topic: fluffy_notification_production
 test:
   social_notification_topic: social_notification_test
   reports_notification_topic: reports_notification_test
@@ -42,3 +45,4 @@ test:
   freshid_notification_topic: freshid_notification_test
   sandbox_notification_topic: sandbox_notification_test
   field_service_management: field_service_management
+  fluffy_notification_topic: fluffy_notification_test

@@ -110,7 +110,7 @@ class Social::FacebookPage < ActiveRecord::Base
   end
 
   def enabled? feature_name
-    get_multiple_redis_keys(everyone_key(feature_name), page_key(feature_name)).any? { |value| value.to_s == "true" }
+    get_multiple_others_redis_keys(everyone_key(feature_name), page_key(feature_name)).any? { |value| value.to_s == "true" }
   end
 
 end

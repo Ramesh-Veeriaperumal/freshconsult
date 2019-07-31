@@ -28,8 +28,25 @@ module Redis::RateLimitRedis
     handle_exception { $rate_limit.perform_redis_op("get", key) }
   end
 
-  def get_multiple_redis_keys(*keys)
+  def get_multiple_rate_limit_redis_keys(*keys)
     handle_exception { $rate_limit.perform_redis_op("mget", *keys) }
+  end
+
+  def get_api_limit_from_redis(account_id, plan_id)
+    api_limits = get_multiple_rate_limit_redis_keys(account_api_limit_key(account_id), plan_api_limit_key(plan_id), default_api_limit_key) || []
+    (api_limits[0] || api_limits[1] || api_limits[2] || Middleware::FdApiThrottler::API_LIMIT).to_i
+  end
+
+  def account_api_limit_key(account_id)
+    format(ACCOUNT_API_LIMIT, account_id: account_id)
+  end
+
+  def plan_api_limit_key(plan_id)
+    format(PLAN_API_LIMIT, plan_id: plan_id)
+  end
+
+  def default_api_limit_key
+    DEFAULT_API_LIMIT
   end
 
   def handle_exception

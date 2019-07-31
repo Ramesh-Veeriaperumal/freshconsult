@@ -9,8 +9,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   before_filter :check_domain_exists, :only => :change_url , :if => :non_global_pods?
   around_filter :select_slave_shard , :only => [:api_jwt_auth_feature,:sha1_enabled_feature,:select_all_feature,:show, :features, :agents, :tickets, :portal, :user_info,:check_contact_import,:latest_solution_articles]
-  around_filter :select_master_shard , :only => [:extend_higher_plan_trial, :change_trial_plan, :collab_feature,:add_day_passes,:migrate_to_freshconnect, :add_feature, :change_url, :single_sign_on, :remove_feature,:change_account_name, :change_api_limit, :reset_login_count,:contact_import_destroy, :change_currency, :extend_trial, :reactivate_account, :suspend_account, :change_webhook_limit, :change_primary_language, :trigger_action, :clone_account]
-  before_filter :validate_params, :only => [ :change_api_limit, :change_webhook_limit ]
+  around_filter :select_master_shard , :only => [:extend_higher_plan_trial, :change_trial_plan, :collab_feature,:add_day_passes,:migrate_to_freshconnect, :add_feature, :change_url, :single_sign_on, :remove_feature,:change_account_name, :change_api_limit, :reset_login_count,:contact_import_destroy, :change_currency, :extend_trial, :reactivate_account, :suspend_account, :change_webhook_limit, :change_primary_language, :trigger_action, :clone_account, :enable_fluffy, :change_fluffy_limit]
+  before_filter :validate_params, :only => [ :change_api_limit, :change_webhook_limit, :change_fluffy_limit ]
   before_filter :load_account, :only => [:user_info, :reset_login_count,
     :migrate_to_freshconnect, :extend_higher_plan_trial, :change_trial_plan]
   before_filter :load_user_record, :only => [:user_info, :reset_login_count]
@@ -29,7 +29,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:account_info] = fetch_account_info(account)
     account_summary[:reputation] = account.reputation
     account_summary[:passes] = account.day_pass_config.available_passes
-    account_summary[:contact_details] = { email: account.admin_email , phone: account.admin_phone }
+    account_summary[:contact_details] = {email: account.admin_email, phone: account.admin_phone}
     account_summary[:currency_details] = fetch_currency_details(account)
     account_summary[:subscription] = fetch_subscription_account_details(account)
     account_summary[:subscription_payments] = account.subscription_payments.sum(:amount)
@@ -47,6 +47,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:falcon_enabled] = account.has_feature?(:falcon)
     account_summary[:account_cancellation_requested] = account.account_cancellation_requested?
     account_summary[:clone_status] = account.account_additional_settings.clone_status
+    account_summary[:fluffy_info] = fetch_fluffy_details(account)
     account_summary[:trial_subscription] = trial_subscription_hash(account.trial_subscriptions.last)
     respond_to do |format|
       format.json do
@@ -60,7 +61,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account = Account.find_by_id(params[:account_id])
     account.make_current
     account.solution_articles.preload(:article_body).order("created_at DESC").limit(5).each do |article|
-      article_hash[article.id] = [article.title, article.article_body.description,article.created_at]
+      article_hash[article.id] = [article.title, article.article_body.description, article.created_at]
     end
     render :json => article_hash
   end
@@ -69,7 +70,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     feature_info = {}
     account = Account.find(params[:account_id]).make_current
     feature_info[:social] = fetch_social_info(account)
-    feature_info[:chat] = { :enabled => account.features?(:chat) , :active => (account.chat_setting.active && account.chat_setting.site_id?) }
+    feature_info[:chat] = {:enabled => account.features?(:chat), :active => (account.chat_setting.active && account.chat_setting.site_id?)}
     feature_info[:mailbox] = account.features?(:mailbox)
     feature_info[:freshfone] = account.features?(:freshfone)
     feature_info[:domain_restricted_access] = account.features?(:domain_restricted_access)
@@ -208,8 +209,26 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   end
 
   def change_v2_api_limit
-    $rate_limit.perform_redis_op("set", Redis::RedisKeys::ACCOUNT_API_LIMIT % {account_id: params[:account_id]},params[:new_limit])
+    $rate_limit.perform_redis_op("set", Redis::RedisKeys::ACCOUNT_API_LIMIT % {account_id: params[:account_id]}, params[:new_limit])
     render :json => {:status => "success"}
+  end
+
+  def change_fluffy_limit
+    begin
+      result = {}
+      account = Account.find_by_id(params[:account_id]).make_current
+      account.update_fluffy_account(params[:new_limit].to_i)
+      result[:status] = "success"
+    rescue => e
+      result[:status] = "error"
+    ensure
+      Account.reset_current_account
+    end
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end
   end
 
   def change_webhook_limit
@@ -253,7 +272,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   def remove_feature
     @account = Account.find(params[:account_id]).make_current
-    result = {:account_id => @account.id , :account_name => @account.name }
+    result = {:account_id => @account.id, :account_name => @account.name}
     begin
       render :json => {:status => "notice"}.to_json and return unless disableable?(@feature_name)
       disable_feature(@feature_name)
@@ -270,7 +289,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   def change_currency
     account = Account.find_by_id(params[:account_id]).make_current
-    result = {:account_id => account.id , :account_name => account.name }
+    result = {:account_id => account.id, :account_name => account.name}
     begin
       if validate_new_currency
         result[:status] = (switch_currency ? "success" : "notice")
@@ -288,14 +307,37 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     end
   end
 
+  def enable_fluffy
+    begin
+      account = Account.find_by_id(params[:account_id]).make_current
+      result = {:account_id => account.id, :account_name => account.name}
+      if account.launched?(:fluffy)
+        result[:status] = "notice"
+      else
+        account.enable_fluffy
+        result[:status] = "success"
+      end
+    rescue => e
+      result[:status] = "error"
+    ensure
+      Account.reset_current_account
+    end
+
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end
+  end
+
   def extend_trial
     account = Account.find_by_id(params[:account_id]).make_current
-    result = {:account_id => account.id , :account_name => account.name }
+    result = {:account_id => account.id, :account_name => account.name}
     days_count = if account.admin_email.ends_with?("freshdesk.com") || account.admin_email.ends_with?("freshworks.com")
-      account.tickets.count < 500 ? 150 : 90
-    else
-      account.tickets.count < 1000 ? 30 : 10
-    end
+                   account.tickets.count < 500 ? 150 : 90
+                 else
+                   account.tickets.count < 1000 ? 30 : 10
+                 end
     result[:status] = (do_trial_extend(days_count.days) ? "success" : "notice")
     Account.reset_current_account
     respond_to do |format|
@@ -321,7 +363,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   def trigger_action
     account = Account.find_by_id(params[:account_id]).make_current
-    result = {:account_id => account.id , :account_name => account.name }
+    result = {:account_id => account.id, :account_name => account.name}
     if respond_to?("trigger_#{params[:action_type]}_action")
       safe_send("trigger_#{params[:action_type]}_action")
       result[:status] = 'success'
@@ -373,7 +415,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     old_url = params[:domain_name]
     new_url = params[:new_url]
     new_account = DomainMapping.find_by_domain(new_url)
-    render :json => { status: "notice"} and return unless new_account.nil?
+    render :json => {status: "notice"} and return unless new_account.nil?
     begin
       current_account = Account.find_by_full_domain(params[:domain_name])
       current_account.make_current
@@ -482,7 +524,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   def change_account_name
     account = Account.find(params[:account_id]).make_current
-    result = { :account_id => account.id , :account_name => account.name }
+    result = {:account_id => account.id, :account_name => account.name}
     account.name = params[:account_name]
     account.helpdesk_name = params[:account_name]
     if account.save
@@ -554,7 +596,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       result[:account_name] = account.name
       account.make_current
       sub = account.subscription
-      sub.state="trial"
+      sub.state = "trial"
       result[:status] = "success" if sub.save
       remove_spam_blacklist account
       subject = "Account unblocked - Account-id: #{account.id}"
@@ -622,11 +664,11 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   def single_sign_on
     account_id = params[:account_id]
     account = Account.find(account_id)
-      respond_to do |format|
-        format.json do
-          render :json => {:url => generate_sso_url(account) , :status => "success" , :account_id => account.id , :account_name => account.name}
-        end
+    respond_to do |format|
+      format.json do
+        render :json => {:url => generate_sso_url(account), :status => "success", :account_id => account.id, :account_name => account.name}
       end
+    end
   end
 
   def check_domain_exists
@@ -636,7 +678,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       :target_method => :check_domain_availability
     }
     response = Fdadmin::APICalls.connect_main_pod(request_parameters)
-    render :json => { status: "notice"} and return if response["account_id"]
+    render :json => {status: "notice"} and return if response["account_id"]
   end
 
   def user_info
@@ -656,19 +698,19 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     respond_to do |format|
       format.json do
         render :json => result
-        end
       end
+    end
   end
 
   def reset_login_count
     result = {}
     @user.failed_login_count = 0
     if @user.save
-    result[:status] = "success"
-    result[:failed_login_count] = @user.failed_login_count
-    respond_to do |format|
-      format.json do
-        render :json => result
+      result[:status] = "success"
+      result[:failed_login_count] = @user.failed_login_count
+      respond_to do |format|
+        format.json do
+          render :json => result
         end
       end
     end
@@ -705,7 +747,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     ensure
       Account.reset_current_account
     end
-    render :json => {:status => result[:status] }
+    render :json => {:status => result[:status]}
   end
 
   def check_domain
@@ -718,7 +760,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     @account = Account.find(params[:account_id])
     @account.make_current
     language = Language.find_by_code(params[:language])
-    result = { account_id: @account.id, account_name: @account.name }
+    result = {account_id: @account.id, account_name: @account.name}
     begin
       if language && @account.language == language.code
         result[:status] = 'notice'
@@ -746,7 +788,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       clone_status = account.account_additional_settings.clone_status
       if clone_account_id && !clone_status
         account.account_additional_settings.create_clone_job(clone_account_id, params[:email])
-        Admin::CloneWorker.perform_async({ account_id: account_id, clone_account_id: clone_account_id })
+        Admin::CloneWorker.perform_async({account_id: account_id, clone_account_id: clone_account_id})
         result[:status] = 'notice'
       else
         result[:status] = clone_status
@@ -809,19 +851,19 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
         url: "#{CollabConfig['freshconnect_url']}/migrate/account",
         payload: freshconnect_payload(fc_enabled, account),
         headers: {
-          'Content-Type' => 'application/json',
-          'ProductName' => 'freshdesk',
-          'Authorization' => collab_request_token
+            'Content-Type' => 'application/json',
+            'ProductName' => 'freshdesk',
+            'Authorization' => collab_request_token
         }
       )
     end
 
     def collab_request_token
       @request_token ||= JWT.encode(
-        {
-          ProductAccountId: '',
-          IsServer: '1'
-        }, CollabConfig['secret_key']
+          {
+              ProductAccountId: '',
+              IsServer: '1'
+          }, CollabConfig['secret_key']
       )
     end
 
@@ -829,8 +871,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       render :json => {:status => "error"} and return unless /^[0-9]/.match(params[:new_limit])
     end
 
-    def get_api_redis_key(account_id,plan_id)
-      keys = Redis::RedisKeys::ACCOUNT_API_LIMIT % { account_id: account_id }, Redis::RedisKeys::PLAN_API_LIMIT % { plan_id: plan_id }, Redis::RedisKeys::DEFAULT_API_LIMIT
+    def get_api_redis_key(account_id, plan_id)
+      keys = Redis::RedisKeys::ACCOUNT_API_LIMIT % {account_id: account_id}, Redis::RedisKeys::PLAN_API_LIMIT % {plan_id: plan_id}, Redis::RedisKeys::DEFAULT_API_LIMIT
       api_limit = $rate_limit.perform_redis_op("mget", *keys).compact.first || Middleware::FdApiThrottler::API_LIMIT
     end
 
@@ -838,15 +880,15 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       manager = account.account_managers.last
       time_stamp = Time.now.getutc.to_i.to_s
       sso_hash = OpenSSL::HMAC.hexdigest(
-        OpenSSL::Digest.new('MD5'),
-        account.shared_secret,
-        manager.name+account.shared_secret+manager.email+time_stamp)
+          OpenSSL::Digest.new('MD5'),
+          account.shared_secret,
+          manager.name + account.shared_secret + manager.email + time_stamp)
       "https://#{account.full_domain}/login/sso?name=#{manager.name}&email=#{manager.email}&hash=#{sso_hash}&timestamp=#{time_stamp}"
     end
 
     def load_account
       Account.reset_current_account
-      account  = Account.find params[:account_id]
+      account = Account.find params[:account_id]
       account.make_current
     end
 
@@ -863,18 +905,17 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
           end
         end
       end
-
     end
 
     def get_freshfone_details(account)
       return get_account_details(account
-        ) if freshfone_details_preconditions?(account)
-      { disabled: true }
+      ) if freshfone_details_preconditions?(account)
+      {disabled: true}
     end
 
     def freshfone_details_preconditions?(account)
       account.freshfone_account.present? || account.features?(:freshfone) ||
-        freshfone_activation_requested?(account)
+          freshfone_activation_requested?(account)
     end
 
     def spam_blacklisted? account
@@ -882,7 +923,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     end
 
     def outgoing_blocked?(account_id)
-      ismember?(SPAM_EMAIL_ACCOUNTS,account_id)
+      ismember?(SPAM_EMAIL_ACCOUNTS, account_id)
     end
 
     def remove_spam_blacklist account
@@ -897,7 +938,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       key = ACCOUNT_SIGN_UP_PARAMS % {:account_id => account_id}
       json_response = get_others_redis_key(key)
       if json_response.present?
-         parsed_response = JSON.parse(json_response)
+        parsed_response = JSON.parse(json_response)
       end
       parsed_response = {"api_response" => {}} unless parsed_response && parsed_response["api_response"]
       parsed_response
@@ -905,7 +946,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
     def save_account_sign_up_params account_id, args = {}
       key = ACCOUNT_SIGN_UP_PARAMS % {:account_id => account_id}
-      set_others_redis_key(key,args.to_json,3888000)
+      set_others_redis_key(key, args.to_json, 3888000)
     end
 
     def change_account_state(state)
@@ -938,7 +979,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     def update_chargebee_subscription(state)
       chargebee_action_name = ((state == Subscription::ACTIVE) ? 'reactivate_subscription' : 'cancel_subscription')
       billing_data = Billing::ChargebeeWrapper.new.safe_send(chargebee_action_name, Account.current.id)
-      chargebee_state =  ((state == Subscription::ACTIVE) ? 'active' : 'cancelled')
+      chargebee_state = ((state == Subscription::ACTIVE) ? 'active' : 'cancelled')
       billing_data.subscription.status == chargebee_state
     end
 
