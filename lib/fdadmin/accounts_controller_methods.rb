@@ -166,6 +166,10 @@ module Fdadmin::AccountsControllerMethods
 		end
 	end
 
+  def fetch_fluffy_details(account)
+    { enabled: account.fluffy_enabled? }
+  end
+
   def trigger_enable_old_ui_action
     ::InternalService::FreshopsOperations.perform_async(params)
   end
