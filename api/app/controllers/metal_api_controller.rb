@@ -19,7 +19,6 @@ class MetalApiController < ActionController::Metal
   include ActionController::HttpAuthentication::Basic::ControllerMethods
   include ActionController::HttpAuthentication::Token::ControllerMethods
   include AbstractController::Callbacks # before filters
-  include Authlogic::ControllerAdapters::RailsAdapter::RailsImplementation # Should be after Callback, moved from API initializer.
   include ActionController::Rescue
   include ActionController::ParamsWrapper
   include ActionController::Instrumentation # need this for active support instrumentation.
