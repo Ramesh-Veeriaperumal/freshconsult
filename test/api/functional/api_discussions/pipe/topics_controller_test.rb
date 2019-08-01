@@ -26,6 +26,11 @@ module ApiDiscussions
       params_hash
     end
 
+    def setup
+      super
+      @account.add_feature(:forums)
+    end
+
     def test_create_with_created_at_updated_at_user_id
       created_at = updated_at = Time.now
       params_hash = create_topic_params_hash.merge('created_at' => created_at,

@@ -23,6 +23,11 @@ module ApiDiscussions
       { topic: params }
     end
 
+    def setup
+      super
+      @account.add_feature(:forums)
+    end
+
     def test_create
       post :create, construct_params({ id: forum_obj.id },
                                      title: 'test title', message: 'test content')

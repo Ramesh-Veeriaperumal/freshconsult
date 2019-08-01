@@ -18,6 +18,7 @@ module Ember
         super
         before_all
         @account.make_current
+        @account.features.enable_multilingual.create
         @account.enable_ticket_archiving(ARCHIVE_DAYS)
         Sidekiq::Worker.clear_all
         @account.features.send(:archive_tickets).create
@@ -32,7 +33,6 @@ module Ember
         additional = @account.account_additional_settings
         additional.supported_languages = ['es', 'ru-RU']
         additional.save
-        @account.features.enable_multilingual.create
         subscription = @account.subscription
         subscription.state = 'active'
         subscription.save
@@ -94,7 +94,6 @@ module Ember
       end
 
       def test_summary_with_language_without_multilingual_feature
-        allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
         Account.any_instance.stubs(:multilingual?).returns(false)
         portal_id = Account.current.main_portal.id
         get :summary, controller_params(version: 'private', portal_id: portal_id, language: @account.language)

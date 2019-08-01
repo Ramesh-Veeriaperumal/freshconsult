@@ -20,6 +20,7 @@ class Account < ActiveRecord::Base
   include Account::ChannelUtils
   include ParserUtil
   include InlineImagesUtil
+  include Account::ProxyFeature
   include Cache::Memcache::Admin::CustomData
 
   has_many_attachments
@@ -69,7 +70,10 @@ class Account < ActiveRecord::Base
   scope :non_premium_accounts, {:conditions => {:premium => false}}
   # Alias so that any dynamic reference to full_time_agents won't fail.
   alias :full_time_agents :full_time_support_agents
-  
+
+  proxy_features(SELECTABLE_FEATURES.keys + TEMPORARY_FEATURES.keys + ADMIN_CUSTOMER_PORTAL_FEATURES.keys +
+                 PLANS_AND_FEATURES.collect { |key, value| value[:features] }.flatten!.uniq!)
+
   Limits = {
     'agent_limit' => Proc.new { |a| a.full_time_support_agents.count },
     'field_agent_limit' => Proc.new { |a| a.field_agents_count }
@@ -80,15 +84,6 @@ class Account < ActiveRecord::Base
       return false unless self.subscription
 
       self.subscription.safe_send(name) && self.subscription.safe_send(name) <= meth.call(self)
-    end
-  end
-
-  has_features do
-    PLANS_AND_FEATURES.each_pair do |k, v|
-      feature k, :requires => ( v[:inherits] || [] )
-      v[:features].each { |f_n| feature f_n, :requires => [] } unless v[:features].nil?
-      (SELECTABLE_FEATURES.keys + TEMPORARY_FEATURES.keys + 
-        ADMIN_CUSTOMER_PORTAL_FEATURES.keys).each { |f_n| feature f_n }
     end
   end
 
@@ -901,6 +896,16 @@ class Account < ActiveRecord::Base
     set_display_id_redis_key(key, computed_id)
   end
 
+  def update_attributes(params)
+    update_features params.delete(:features)
+    super(params)
+  end
+
+  def update_attributes!(params)
+    update_features params.delete(:features)
+    super(params)
+  end
+
   def delete_sitemap
     key = format(SITEMAP_OUTDATED, account_id: id)
     remove_portal_redis_key(key)
@@ -936,6 +941,14 @@ class Account < ActiveRecord::Base
     end
 
   private
+
+    def update_features(features)
+      if features.present?
+        features.each do |name, value|
+          AccountsHelper.value_to_boolean(value) ? set_feature(name.to_sym) : reset_feature(name.to_sym)
+        end
+      end
+    end
 
     def update_account_and_main_portal_domain new_domain_name
       self.domain = new_domain_name

@@ -194,6 +194,7 @@ class AccountsControllerTest < ActionController::TestCase
     get :new_signup_free, params
     subdomain = user_email.split('@')[0]
     full_domain = Regexp.new("#{subdomain}(#{DomainGenerator::DOMAIN_SUGGESTIONS.join('|')}).freshpo.com")
+    p "Signup response body: #{@response.inspect}"
     response_url = parse_response(@response.body)['url'].split('/')[2]
     assert_match(full_domain, response_url)
     assert_response 200
@@ -421,8 +422,6 @@ class AccountsControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:twitter_signin_enabled?).returns(true)
     Account.any_instance.stubs(:restricted_helpdesk?).returns(false)
     Account.any_instance.stubs(:custom_domain_enabled?).returns(false)
-    RestrictedHelpdeskFeature.any_instance.stubs(:safe_send).returns(true)
-    TwitterSigninFeature.any_instance.stubs(:destroy).returns(true)
     account_name = Faker::Lorem.word
     domain_name = Faker::Lorem.word
     user_email = Faker::Internet.email
@@ -437,8 +436,6 @@ class AccountsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:twitter_signin_enabled?)
     Account.any_instance.unstub(:restricted_helpdesk?)
     Account.any_instance.unstub(:custom_domain_enabled?)
-    RestrictedHelpdeskFeature.any_instance.unstub(:safe_send)
-    TwitterSigninFeature.any_instance.unstub(:destroy)
   end
 
   def test_update_with_save_failure
@@ -497,7 +494,6 @@ class AccountsControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:save).returns(true)
     Account.any_instance.stubs(:features_included?).returns(false)
     Account.any_instance.stubs(:supported_languages).returns(['en', 'ca', 'et'])
-    EnableMultilingualFeature.any_instance.stubs(:create).returns(true)
     put :update_languages, id: Account.first.id, account: { account_additional_settings_attributes: { supported_languages: ['ar', 'ca', 'et'] }, main_portal_attributes: {} }
     assert_response 302
     assert_includes response.redirect_url, edit_account_path
@@ -505,7 +501,6 @@ class AccountsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:save)
     Account.any_instance.unstub(:features_included?)
     Account.any_instance.unstub(:supported_languages)
-    EnableMultilingualFeature.any_instance.unstub(:create)
   end
 
   def test_update_languages_redirects_when_mail_portal_language_present

@@ -75,6 +75,11 @@ module ApiDiscussions
       end
     end
 
+    def setup
+      super
+      @account.add_feature(:forums)
+    end
+
     def test_create_length_invalid
       params_hash = { name: Faker::Lorem.characters(300) }
       post :create, construct_params({}, params_hash)

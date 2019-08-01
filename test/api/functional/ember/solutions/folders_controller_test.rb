@@ -13,6 +13,7 @@ module Ember
         super
         initial_setup
         @account.reload
+        @account.features.enable_multilingual.create
       end
 
       @@initial_setup_run = false
@@ -22,7 +23,6 @@ module Ember
         additional = @account.account_additional_settings
         additional.supported_languages = ['es', 'ru-RU']
         additional.save
-        @account.features.enable_multilingual.create
         @account.add_feature(:auto_article_order)
         @@initial_setup_run = true
       end
@@ -263,13 +263,10 @@ module Ember
       end
 
       def test_index_with_language_without_multilingual_feature
-        allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
-        Account.any_instance.stubs(:features).returns(allowed_features)
+        @account.features.enable_multilingual.destroy
         get :index, controller_params(version: 'private', language: @account.language)
         match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
         assert_response 404
-      ensure
-        Account.any_instance.unstub(:features)
       end
 
       def test_index_with_invalid_language
@@ -320,13 +317,10 @@ module Ember
       end
 
       def test_category_folders_with_language_without_multilingual_feature
-        allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
-        Account.any_instance.stubs(:features).returns(allowed_features)
+        @account.features.enable_multilingual.destroy
         get :category_folders, controller_params(version: 'private', id: 0, language: @account.language)
         match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
         assert_response 404
-      ensure
-        Account.any_instance.unstub(:features)
       end
 
       def test_category_folders_with_invalid_language
@@ -390,13 +384,10 @@ module Ember
       end
 
       def test_show_with_language_without_multilingual_feature
-        allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
-        Account.any_instance.stubs(:features).returns(allowed_features)
+        @account.features.enable_multilingual.destroy
         get :show, controller_params(version: 'private', id: 0, language: @account.language)
         match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
         assert_response 404
-      ensure
-        Account.any_instance.unstub(:features)
       end
 
       def test_show_with_invalid_language
@@ -473,13 +464,10 @@ module Ember
       end
 
       def test_update_with_language_without_multilingual_feature
-        allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
-        Account.any_instance.stubs(:features).returns(allowed_features)
+        @account.features.enable_multilingual.destroy
         put :update, construct_params(version: 'private', id: 0, language: @account.language)
         match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
         assert_response 404
-      ensure
-        Account.any_instance.unstub(:features)
       end
 
       def test_update_with_invalid_language

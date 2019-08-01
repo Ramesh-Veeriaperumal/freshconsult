@@ -2125,9 +2125,6 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_contact_with_other_companies_without_multiple_user_companies_feature
-    allowed_features = Account.first.features.where(
-      ' type not in (?) ',['MultipleUserCompaniesFeature']
-      )
     Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(false)
     sample_user = get_user_with_default_company
     other_companies = [{company_id: Company.last.id, view_all_tickets: true}]
@@ -2147,9 +2144,6 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_create_contact_with_other_companies_without_multiple_user_companies_feature
-    allowed_features = Account.first.features.where(
-      ' type not in (?) ',['MultipleUserCompaniesFeature']
-    )
     Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(false)
     post :create, construct_params({},  name: Faker::Lorem.characters(10),
                                         email: Faker::Internet.email,
