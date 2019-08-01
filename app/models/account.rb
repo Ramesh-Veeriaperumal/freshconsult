@@ -22,6 +22,7 @@ class Account < ActiveRecord::Base
   include InlineImagesUtil
   include Account::ProxyFeature
   include Cache::Memcache::Admin::CustomData
+  include Account::SidekiqControl::RouteDrop
 
   has_many_attachments
   

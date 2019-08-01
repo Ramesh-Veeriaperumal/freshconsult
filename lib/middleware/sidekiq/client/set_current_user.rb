@@ -2,7 +2,7 @@ module Middleware
   module Sidekiq
     module Client
       class SetCurrentUser
-  
+
         INCLUDE = []
 
         def initialize(options = {})
@@ -10,8 +10,8 @@ module Middleware
         end
 
         def call(worker, msg, queue,redis_pool)
-          if @included.include?(worker.to_s)
-            msg['current_user_id'] = ::User.current.id if ::User.current
+          if @included.include?(worker.to_s) && !msg['reroute'] && ::User.current.present?
+            msg['current_user_id'] = ::User.current.id
           end
           yield
           # rescue Exception => e
