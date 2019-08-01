@@ -1,4 +1,5 @@
 module Fdadmin::AccountsControllerMethods
+
 	include Redis::RedisKeys
 	include Redis::IntegrationsRedis
 
@@ -166,6 +167,10 @@ module Fdadmin::AccountsControllerMethods
 		end
 	end
 
+  def fetch_fluffy_details(account)
+    { enabled: account.fluffy_enabled? }
+  end
+
   def trigger_enable_old_ui_action
     ::InternalService::FreshopsOperations.perform_async(params)
   end
@@ -173,10 +178,11 @@ module Fdadmin::AccountsControllerMethods
   def trigger_daypass_export_action
   	::InternalService::FreshopsOperations.perform_async(params)
   end
-	
-	def trigger_stop_account_cancellation_action
-		account = Account.find(params[:account_id])
-		account.make_current
-		account.kill_account_cancellation_request_job
-	end
+
+  def trigger_stop_account_cancellation_action
+    account = Account.find(params[:account_id])
+    account.make_current
+    account.kill_account_cancellation_request_job
+  end
+
 end

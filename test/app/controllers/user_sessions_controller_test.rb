@@ -817,7 +817,7 @@ class UserSessionsControllerTest < ActionController::TestCase
         'user_companies' => [Faker::Name.name, Faker::Name.name]
       }
     }
-    token = JWT.encode jwt_hash, current_account.shared_secret, 'HS512'
+    token = JWT.encode jwt_hash, 'wrong_secret', 'HS512'
     Account.any_instance.stubs(:allow_sso_login?).returns(true)
     get :jwt_sso_login, jwt_token: token, redirect_to: '/helpdesk'
     assert_response 302

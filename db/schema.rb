@@ -1116,6 +1116,7 @@ ActiveRecord::Schema.define(version: 20190628073857) do
     t.integer  "account_id",        :limit => 8, :null => false
     t.datetime "created_at",                     :null => false
     t.datetime "updated_at",                     :null => false
+    t.integer 'status'
   end
 
   add_index "custom_translations", ["account_id", "translatable_type", "language_id", "translatable_id"], :name => "ct_acc_id_translatable_type_lang_id_translatable_id", :unique => true

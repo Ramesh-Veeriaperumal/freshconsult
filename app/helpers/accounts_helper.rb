@@ -49,4 +49,15 @@ module AccountsHelper
                                             fs_cookie: signup_params[:fs_cookie])
     end
   end
+
+  def manage_language_url
+    current_account.falcon_ui_enabled?(current_user) ? '/a/admin/account/languages' : '/admin/manage_languages'
+  end
+
+  def translation_download_url(object_type, object_id = nil, language_code = nil)
+    query_param = { object_type: object_type }
+    query_param[:object_id] = object_id if object_id.present?
+    query_param[:language_code] = language_code if language_code.present?
+    "/api/_/admin/custom_translations?#{query_param.to_query}"
+  end
 end

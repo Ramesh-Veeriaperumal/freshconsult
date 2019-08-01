@@ -177,6 +177,16 @@ GIT
       mimemagic (>= 0.2, < 4.0.0)
 
 GIT
+  remote: git@github.com:freshdesk/api-gateway.git
+  revision: 721b1a47e63407e6bbc74645f257fa1784193d3f
+  tag: v0.0.2
+  glob: clients/fluffy_ruby/src/fluffy.gemspec
+  specs:
+    fluffy (0.0.2)
+      json (>= 1.8.0, <= 2.2)
+      typhoeus (>= 0.7.3, <= 1.1)
+
+GIT
   remote: git@github.com:freshdesk/batch_api.git
   revision: e0e6711b6b2b66731f1106f2683f66904df21117
   branch: fd-batch-api
@@ -1562,6 +1572,7 @@ DEPENDENCIES
   fd_rate_limiter!
   fd_spam_detection_service!
   features!
+  fluffy!
   fontcustom (= 1.3.3)
   forgery (= 0.5.0)
   formserv-gem (= 0.9.0)!

@@ -1,0 +1,61 @@
+type: object
+properties:
+  name:
+    type: string
+  support_email:
+    type: string
+  group_id:
+    type: number
+  product_id:
+    type: number
+  default_reply_email:
+    type: boolean
+  active:
+    type: boolean
+  mailbox_type:
+    type: string
+    description: Possible values are freshdesk_mailbox, custom_mailbox.
+  freshdesk_mailbox:
+    type: object
+    properties:
+      forward_email:
+        type: string
+  custom_mailbox:
+    type: object
+    properties:
+      access_type:
+        type: string
+        enum:
+          - incoming
+          - outgoing
+          - both
+      incoming:
+        type: object
+        properties:
+          mail_server:
+            type: string
+          port:
+            type: number
+          use_ssl:
+            type: boolean
+          delete_from_server:
+            type: boolean
+          authentication:
+            type: string
+            description: Possible values are plain, login, cram_md5.
+          user_name:
+            type: string
+      outgoing:
+        type: object
+        properties:
+          mail_server:
+            type: string
+          port:
+            type: number
+          use_ssl:
+            type: boolean
+          authentication:
+            type: string
+            description: Possible values are plain, login.
+          user_name:
+            type: string

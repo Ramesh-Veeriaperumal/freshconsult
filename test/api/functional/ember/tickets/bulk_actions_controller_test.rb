@@ -1,5 +1,6 @@
 require_relative '../../../test_helper'
 ['canned_responses_helper.rb', 'group_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+['account_test_helper.rb'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 module Ember
   module Tickets
     class BulkActionsControllerTest < ActionController::TestCase
@@ -12,6 +13,7 @@ module Ember
       include CannedResponsesTestHelper
       include AwsTestHelper
       include CustomFieldsTestHelper
+      include AccountTestHelper
 
       CUSTOM_FIELDS             = %w(number checkbox decimal text paragraph dropdown country state city date).freeze
       BULK_CREATE_TICKET_COUNT  = 2
@@ -445,14 +447,12 @@ module Ember
         statuses = Helpdesk::TicketStatus.status_objects_from_cache(@account).map(&:status_id)
         incorrect_values = { priority: 90, status: statuses.last + 1, type: 'jksadjxyz' }
         params_hash = { ids: ticket_ids, properties: update_ticket_params_hash.merge(incorrect_values) }
-        type_field_names = @account.ticket_fields.where(field_type: 'default_ticket_type').all.first.picklist_values.map(&:value).join(',')
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
-        ticket_type_list = 'Question,Incident,Problem,Feature Request,Refund'
-        service_task = ::Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE
-        ticket_type_list << ",#{service_task}" if Account.current.picklist_values.map(&:value).include?(service_task)
+
+        type_field_names = @account.ticket_fields.where(field_type: 'default_ticket_type').first.picklist_values.map(&:value).join(',')
         match_json([bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
                     bad_request_error_pattern('status', :not_included, list: statuses.join(',')),
-                    bad_request_error_pattern('type', :not_included, list: ticket_type_list)])
+                    bad_request_error_pattern('type', :not_included, list: type_field_names)])
         assert_response 400
       end
 
@@ -536,6 +536,27 @@ module Ember
         assert_response 202
       ensure
         ticket_field.update_attribute(:required_for_closure, false)
+      end
+
+      def test_bulk_update_fsm_tickets_with_required_for_closure_outside_section
+        setup_field_service_management_feature do
+          begin
+            ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
+            ticket_field.update_attribute(:required_for_closure, true)
+            fsm_ticket = create_service_task_ticket
+            assert_not_nil fsm_ticket
+            properties_hash = { status: 5, skip_close_notification: false }
+            params_hash = { ids: [fsm_ticket.id], properties: properties_hash }
+            Sidekiq::Testing.inline! do
+              post :bulk_update, construct_params({ version: 'private' }, params_hash)
+            end
+            assert_response 202
+            match_json(partial_success_response_pattern([fsm_ticket.id], {}))
+          ensure
+            ticket_field.update_attribute(:required_for_closure, false)
+            fsm_ticket.try(:destroy)
+          end
+        end
       end
 
       def test_bulk_reply_without_body

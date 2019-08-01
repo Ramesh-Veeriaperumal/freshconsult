@@ -1,0 +1,3 @@
+<% if @other_emails.present? %>
+  <%= t("mailer_notifier.note_for_recipients", to_emails: @other_emails.join(', ')) %>
+<% end %>

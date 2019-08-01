@@ -5,7 +5,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
   include Redis::RateLimitRedis
 
   FRESHDESK_DOMAIN = 'freshdesk'.freeze
-  SKIPPED_SUBDOMAINS =  %w(admin billing signup freshsignup email login emailparser mailboxparser freshops) + FreshopsSubdomains + PartnerSubdomains
+  SKIPPED_SUBDOMAINS =  %w[admin billing signup freshsignup email login emailparser mailboxparser freshops] + FreshopsSubdomains + PartnerSubdomains + CRON_HOOK_SUBDOMAIN.to_a
   THROTTLE_PERIOD    =  1.hour
   API_LIMIT = 3000
   DEFAULT_USED_LIMIT = 1
@@ -22,15 +22,15 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
   end
 
   # Should resolve to true for public APIs
-  def correct_namespace?(path_info)
+  def correct_namespace?(_path_info)
     CustomRequestStore.read(:api_v2_request) ||
       CustomRequestStore.read(:pipe_api_request)
   end
 
   def call(env)
-    @request      = Rack::Request.new(env)
+    @request = Rack::Request.new(env)
 
-    unless correct_namespace?(@request.env["PATH_INFO"])
+    unless correct_namespace?(@request.env['PATH_INFO'])
       call_next
       return [@status, @headers, @response]
     end
@@ -45,7 +45,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     #   be set by Fluffy or HAProxy. User set headers has to be unset. Evaded the feature checks as well
     #   Shard and account info will still be fetched for domain validation, and memoized for rest of the request
     elsif skip_on_header
-      Rails.logger.debug "Skipping on header"
+      Rails.logger.debug 'Skipping on header'
       call_next
     elsif throttle?
       throttle_and_proceed
@@ -125,7 +125,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
 
     def throttle?
       if is_fluffy_enabled?
-        return false
+        false
       else
         !skipped_domain? && account_id
       end
@@ -160,7 +160,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     end
 
     def account_api_limit_key
-      ACCOUNT_API_LIMIT % { account_id: account_id }
+      format(ACCOUNT_API_LIMIT, account_id: account_id)
     end
 
     def default_api_limit_key
@@ -169,7 +169,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
 
     def api_limit
       @api_limit ||= begin
-        api_limits = get_multiple_redis_keys(account_api_limit_key, plan_api_limit_key, default_api_limit_key) || []
+        api_limits = get_multiple_rate_limit_redis_keys(account_api_limit_key, plan_api_limit_key, default_api_limit_key) || []
         (api_limits[0] || api_limits[1] || api_limits[2] || API_LIMIT).to_i
       end
     end
@@ -194,7 +194,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     end
 
     def key
-      API_THROTTLER_V2 % { account_id: account_id }
+      format(API_THROTTLER_V2, account_id: account_id)
     end
 
     def used_limit

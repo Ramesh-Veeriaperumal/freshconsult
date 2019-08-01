@@ -4,17 +4,6 @@ class SsoUtilTestController < ApplicationController
   include SsoUtil
   include ActionController::Renderers::All
 
-  def sso_data
-    {
-      email: User.last.email,
-      name: User.last.name,
-      phone: User.last.phone,
-      company: nil,
-      title: nil,
-      external_id: nil
-    }
-  end
-
   def sso_login_page
     sso_login_page_redirect
     head 200
@@ -25,7 +14,7 @@ class SsoUtilTestController < ApplicationController
     head 200
   end
 
-  def sso_response_handling
+  def sso_response_handling(sso_data)
     handle_sso_response(sso_data, nil)
     head 200
   end
@@ -82,8 +71,14 @@ class SsoUtilTestControllerTest < ActionController::TestCase
     @controller.response = response
     Account.any_instance.stubs(:sso_enabled?).returns(true)
     UserSession.any_instance.stubs(:save).returns(true)
+    @controller.stubs(:create_user).returns(
+      User.new(name: sso_data[:name],
+        email: sso_data[:email],
+        phone: sso_data[:phone],
+        helpdesk_agent: false,
+        language: 'en'))
     @controller.stubs(:action_name).returns('sso_response_handling')
-    actual = @controller.send(:sso_response_handling)
+    actual = @controller.send(:sso_response_handling, sso_data)
     assert_response 200
   end
 
@@ -92,8 +87,14 @@ class SsoUtilTestControllerTest < ActionController::TestCase
     @controller.response = response
     Account.any_instance.stubs(:sso_enabled?).returns(true)
     UserSession.any_instance.stubs(:save).returns(false)
+    @controller.stubs(:create_user).returns(
+      User.new(name: sso_data[:name],
+        email: sso_data[:email],
+        phone: sso_data[:phone],
+        helpdesk_agent: false,
+        language: 'en'))
     @controller.stubs(:action_name).returns('sso_response_handling')
-    actual = @controller.send(:sso_response_handling)
+    actual = @controller.send(:sso_response_handling, sso_data)
     assert_response 200
   end
 
@@ -172,4 +173,17 @@ class SsoUtilTestControllerTest < ActionController::TestCase
   rescue SsoFieldValidationError => e
     assert_equal validation_response, nil
   end
+
+  private
+
+    def sso_data
+      {
+        email: User.last.email,
+        name: User.last.name,
+        phone: User.last.phone,
+        company: nil,
+        title: nil,
+        external_id: nil
+      }
+    end
 end

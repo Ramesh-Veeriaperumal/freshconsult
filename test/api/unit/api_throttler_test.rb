@@ -41,4 +41,17 @@ class ApiThrottlerTest < ActionView::TestCase
     assert_equal 200, status
     assert_not_nil response
   end
+
+  def test_api_throttler_with_fluffy_enabled_and_throttled
+    test_app = ->(env) { [200, { 'HTTP_HOST' => 'localhost' }, ['OK']] }
+    api_throttler = Middleware::ApiThrottler.new(test_app)
+    api_throttler.stubs(:is_fluffy_enabled?).returns(true)
+    api_throttler.instance_variable_set('@api_limit', 0)
+    status, headers, response = api_throttler.call env_for('http://localhost.freshpo.com/discussions/categories', 'REQUEST_URI' => 'http://localhost.freshpo.com/discussions/categories',
+                                                                                                                  'HTTP_USER_AGENT' => 'curl/7.43.0', 'HTTP_HOST' => 'localhost.freshpo.com', 'CONTENT_TYPE' => 'application/json')
+    assert_equal 200, status
+    assert_not_nil response
+  ensure
+    api_throttler.unstub(:is_fluffy_enabled?)
+  end
 end
