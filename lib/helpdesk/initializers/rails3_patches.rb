@@ -230,6 +230,10 @@ ActiveRecord::Base.send(:include, Foo::CommittedWithExceptions)
 # for rails 3 rendering a hidden input tag with nil value to update the attr, if no input is given
 module ActionView
   module Helpers
+    def feature_check_box(model_name, method, options = {}, checked_value = "1", unchecked_value = "0")
+      check_box(model_name, "features_#{method}", options, checked_value, unchecked_value)
+    end
+
     module FormHelper
       def check_box(object_name, method, options = {}, checked_value = "1", unchecked_value = "0")
         InstanceTag.new(object_name, method, self, 
@@ -256,6 +260,16 @@ module ActionView
         value, options = nil, value if value.is_a?(Hash)
         value ||= submit_default_value
         @template.submit_tag(value, options.reverse_merge(:id => "#{object_name}_submit"))
+      end
+
+      def feature_check_box(method, options = {}, checked_value = "1", unchecked_value = "0")
+        model_name = @object_name
+        account = @template.instance_variable_get("@#{model_name}")
+        throw "feature_check_box only work on models with features" unless account.respond_to?(:features)
+        options[:checked] = account.features.safe_send("#{method}?") if options[:checked].nil?
+        options[:id] ||= "#{model_name}_features_#{method}"
+        options[:name] = "#{model_name}[features][#{method}]"
+        @template.feature_check_box(@object_name, method, objectify_options(options), checked_value, unchecked_value)
       end
     end
   end

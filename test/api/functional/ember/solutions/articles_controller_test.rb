@@ -20,6 +20,7 @@ module Ember
 
       def setup
         super
+        @account.features.enable_multilingual.create
         initial_setup
         @account.reload
       end
@@ -37,11 +38,11 @@ module Ember
         additional = @account.account_additional_settings
         additional.supported_languages = ['es', 'ru-RU'] # dont remove it.
         additional.save
-        @account.features.enable_multilingual.create
         subscription = @account.subscription
         subscription.state = 'active'
         subscription.save
 
+        @account.features.marketplace.destroy
         @account.add_feature(:article_filters)
         @account.add_feature(:adv_article_bulk_actions)
 
@@ -1062,13 +1063,10 @@ module Ember
       end
 
       def test_update_article_unpublish_with_language_without_multilingual_feature
-        allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
-        Account.any_instance.stubs(:features).returns(allowed_features)
+        @account.features.enable_multilingual.destroy
         put :update, construct_params(version: 'private', id: 0, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], language: @account.language)
         match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
         assert_response 404
-      ensure
-        Account.any_instance.unstub(:features)
       end
 
       def test_update_article_unpublish_with_invalid_language
@@ -1152,13 +1150,10 @@ module Ember
       end
 
       def test_reset_ratings_with_language_without_multilingual_feature
-        allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
-        Account.any_instance.stubs(:features).returns(allowed_features)
+        @account.features.enable_multilingual.destroy
         put :reset_ratings, construct_params(version: 'private', id: 0, language: @account.language)
         match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
         assert_response 404
-      ensure
-        Account.any_instance.unstub(:features)
       end
 
       def test_reset_ratings_with_invalid_language
@@ -1240,13 +1235,10 @@ module Ember
       end
 
       def test_votes_with_language_without_multilingual_feature
-        allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
-        Account.any_instance.stubs(:features).returns(allowed_features)
+        @account.features.enable_multilingual.destroy
         get :votes, controller_params(version: 'private', id: 0, language: @account.language)
         match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
         assert_response 404
-      ensure
-        Account.any_instance.unstub(:features)
       end
 
       def test_votes_with_invalid_language
@@ -1760,13 +1752,10 @@ module Ember
       end
 
       def test_untranslated_articles_without_multilingual_feature
-        allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
-        Account.any_instance.stubs(:features).returns(allowed_features)
+        @account.features.enable_multilingual.destroy
         get :untranslated_articles, controller_params(version: 'private', language: 'es', portal_id: @account.main_portal.id)
         match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
         assert_response 404
-      ensure
-        Account.any_instance.unstub(:features)
       end
 
       def test_untranslated_articles_with_invalid_language

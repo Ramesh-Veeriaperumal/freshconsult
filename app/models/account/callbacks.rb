@@ -117,7 +117,6 @@ class Account < ActiveRecord::Base
   end
 
   def populate_features
-    add_features_of self.plan_name
     SELECTABLE_FEATURES.each { |key,value| features.safe_send(key).create  if value}
     TEMPORARY_FEATURES.each { |key,value| features.safe_send(key).create  if value}
     ADMIN_CUSTOMER_PORTAL_FEATURES.each { |key,value| features.safe_send(key).create  if value}

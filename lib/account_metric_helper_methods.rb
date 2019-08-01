@@ -7,7 +7,7 @@ module AccountMetricHelperMethods
                       Subscription::Addon, Subscription::Currency, Subscription::PlanAddon,
                       SubscriptionAffiliate, SubscriptionAnnouncement, SubscriptionPlan,
                       Freshfone::Address, GoogleDomain, Helpdesk::UserAccess, Helpdesk::GroupAccess,
-                      DeletedCustomers, Wf::Filter, Features::Feature, Integrations::GoogleAccount].freeze
+                      DeletedCustomers, Wf::Filter, Integrations::GoogleAccount].freeze
 
   MODEL_META = [
     'facebook_tickets',

@@ -47,6 +47,7 @@ module Ember
       @account.sections.map(&:destroy)
       destroy_all_fsm_fields_and_service_task_type
       tickets_controller_before_all(@@before_all_run)
+      @account.add_feature :scenario_automation
       @@before_all_run=true unless @@before_all_run
     end
 

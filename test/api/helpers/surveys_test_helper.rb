@@ -184,7 +184,7 @@ end
   end
 
   def delete_survey_link_feature
-    @account.features.delete @account.features.survey_links
+    @account.features.survey_links.delete
   end
 
   def create_survey_link_feature

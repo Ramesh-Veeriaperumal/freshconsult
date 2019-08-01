@@ -24,6 +24,11 @@ module ApiDiscussions
       User.where('id != ? and helpdesk_agent = ?', @agent.id, true).first || add_test_agent
     end
 
+    def setup
+      super
+      @account.add_feature(:forums)
+    end
+
     def test_privilege_for_update
       comment = quick_create_post
       comment.update_column(:user_id, @agent.id)

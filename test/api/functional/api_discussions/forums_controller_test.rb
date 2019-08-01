@@ -20,6 +20,11 @@ module ApiDiscussions
       { forum: params }
     end
 
+    def setup
+      super
+      @account.add_feature(:forums)
+    end
+
     def test_destroy
       fc = fc_obj
       forum = create_test_forum(fc)
