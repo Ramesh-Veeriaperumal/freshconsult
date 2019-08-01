@@ -76,12 +76,8 @@ class SAAS::SubscriptionEventActions
         next if plan_features.include?(addon) # Don't remove features which are all related to current plan
 
         begin
-          if reset_in_db?(addon)
-            Rails.logger.debug "ADDON::REMOVED as db feature, #{addon}"
-            account.remove_feature(feature)
-          else
-            account.revoke_feature(addon)
-          end
+          Rails.logger.debug "ADDON::REMOVED with feature, #{addon}"
+          account.revoke_feature(addon)
         rescue StandardError => e
           Rails.logger.error("Exception while revoking addon feature addon: \
             #{addon}, error: #{e.backtrace}")
@@ -90,12 +86,8 @@ class SAAS::SubscriptionEventActions
       #to add new addons thats coming in to get added
       to_be_added.each do |addon|
         begin
-          if reset_in_db?(addon)
-            Rails.logger.debug "ADDON::ADDED as db feature, #{addon}"
-            account.add_features(addon)
-          else
-            account.add_feature(addon)
-          end
+          Rails.logger.debug "ADDON::ADDED with feature, #{addon}"
+          account.add_feature(addon)
         rescue StandardError => e
           Rails.logger.error "Exception while revoking addon feature acc_id: \
             #{account.id} addon: #{addon}, error: #{e.backtrace}"
@@ -122,10 +114,6 @@ class SAAS::SubscriptionEventActions
     def remove_old_plan_db_features
       account.remove_features_of(old_plan.subscription_plan.canon_name)
       account.clear_feature_from_cache
-    end
-
-    def reset_in_db?(feature)
-      SELECTABLE_DB_FEATURES.include?(feature) && !account.launched?(:db_to_bitmap_features_migration_phase2)
     end
 
     def reset_plan_features

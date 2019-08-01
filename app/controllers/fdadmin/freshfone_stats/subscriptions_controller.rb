@@ -11,7 +11,7 @@ module Fdadmin
         begin
           result[:details] = [fd_account_details, number_details, calls_usage,
             call_and_numbers_usage, ff_credit_purchase, ff_trial_start_date,
-            addon_enable_date, ff_trial_end_date, ff_active, onboarding_info].inject(&:merge)
+            nil, ff_trial_end_date, ff_active, onboarding_info].inject(&:merge)
           result[:status] = 'success'
         rescue => e
           Rails.logger.error "Exception while fetching freshfone account details
@@ -91,7 +91,7 @@ module Fdadmin
                   get_calls_and_numbers_usage(ff_subscription),
                   ff_payment.present? ? ff_payment.created_at.utc.
                     strftime('%-d %b %Y') : nil,
-                  get_addon_enabled_date(account),
+                  nil,
                   get_subscription_expiry_date(ff_subscription) ].flatten
               rescue => e
                 Rails.logger.error "Exception Message :: #{e.message}\n
@@ -155,10 +155,6 @@ module Fdadmin
           { ff_credit_purchase_date: credit_purchase_date }
         end
 
-        def addon_enable_date
-          { ff_addon_enable_date: get_addon_enabled_date(@account) }
-        end
-
         def ff_trial_start_date
           return {} unless subscription_present?
           number = get_first_number
@@ -217,15 +213,6 @@ module Fdadmin
               ::Account.reset_current_account
             end
           end
-        end
-
-        def get_addon_enabled_date(account)
-          addon = account.subscription.addons.where(
-            name: "Call Center Advanced").first
-          addon_mapping = account.subscription.subscription_addon_mappings.
-            where(subscription_addon_id: addon.id) if addon
-          account.features.where(type: "FreshfoneCallMetricsFeature").first.
-            created_at.utc.strftime('%-d %b %Y') if addon_mapping
         end
 
         def get_calls_and_numbers_usage(ff_subscription)
