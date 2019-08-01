@@ -335,7 +335,7 @@ class Helpdesk::Note < ActiveRecord::Base
       notable.subscriptions.each do |subscription|
         if subscription.user_id != user_id
           Helpdesk::WatcherNotifier.send_later(:deliver_notify_on_reply,
-                                                notable, subscription, self)
+                                                notable, subscription, self, locale_object: subscription.user)
         end
       end
     end
@@ -485,4 +485,3 @@ class Helpdesk::Note < ActiveRecord::Base
       ::Freddy::DetectThankYouNoteWorker.perform_async(ticket_id: notable.id, note_id: id)
     end
 end
-

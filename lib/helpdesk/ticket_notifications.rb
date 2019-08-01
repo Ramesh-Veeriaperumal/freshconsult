@@ -51,7 +51,7 @@ module Helpdesk::TicketNotifications
     self.subscriptions.each do |subscription|
       if subscription.user.id != User.current.try(:id) 
         Helpdesk::WatcherNotifier.send_later(:deliver_notify_on_status_change, self,
-                                              subscription, status, User.current.nil? ? "An automation rule" : "#{User.current.name}")
+                                              subscription, status, User.current.nil? ? "An automation rule" : "#{User.current.name}", locale_object: subscription.user)
       end
     end
   end
