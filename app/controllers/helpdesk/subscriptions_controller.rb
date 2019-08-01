@@ -28,7 +28,7 @@ class Helpdesk::SubscriptionsController < ApplicationController
           Helpdesk::WatcherNotifier.send_later(:deliver_notify_new_watcher,
                                                @ticket, 
                                                subscription, 
-                                               "#{current_user.name}")
+                                               "#{current_user.name}", locale_object: subscription.user)
         end
 	    respond_to do |format|
     	    format.html{render :partial => "helpdesk/subscriptions/ticket_watcher_list"}

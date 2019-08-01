@@ -72,11 +72,9 @@ class SsoUtilTestControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:sso_enabled?).returns(true)
     UserSession.any_instance.stubs(:save).returns(true)
     @controller.stubs(:create_user).returns(
-      User.new(name: sso_data[:name],
-        email: sso_data[:email],
-        phone: sso_data[:phone],
-        helpdesk_agent: false,
-        language: 'en'))
+      User.new(name: sso_data[:name], email: sso_data[:email],
+               phone: sso_data[:phone], helpdesk_agent: false, language: 'en')
+    )
     @controller.stubs(:action_name).returns('sso_response_handling')
     actual = @controller.send(:sso_response_handling, sso_data)
     assert_response 200
@@ -88,11 +86,9 @@ class SsoUtilTestControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:sso_enabled?).returns(true)
     UserSession.any_instance.stubs(:save).returns(false)
     @controller.stubs(:create_user).returns(
-      User.new(name: sso_data[:name],
-        email: sso_data[:email],
-        phone: sso_data[:phone],
-        helpdesk_agent: false,
-        language: 'en'))
+      User.new(name: sso_data[:name], email: sso_data[:email],
+               phone: sso_data[:phone], helpdesk_agent: false, language: 'en')
+    )
     @controller.stubs(:action_name).returns('sso_response_handling')
     actual = @controller.send(:sso_response_handling, sso_data)
     assert_response 200

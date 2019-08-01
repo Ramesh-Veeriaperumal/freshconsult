@@ -83,11 +83,11 @@ class  Helpdesk::WatcherNotifier < ActionMailer::Base
 
   private
     def ticket_monitor_subject(ticket)
-      "New Activity #{ticket.encode_display_id} #{ticket.subject} "
+      I18n.t('mailer_notifier_subject.notify_on_reply', display_id: ticket.encode_display_id, subject: ticket.subject)
     end
 
     def new_watcher_subject(ticket, agent_name)
-      " Added as Watcher #{ticket.encode_display_id} #{ticket.subject} "
+      I18n.t('mailer_notifier_subject.notify_new_watcher', display_id: ticket.encode_display_id, subject: ticket.subject)
     end
 
   # TODO-RAILS3 Can be removed oncewe fully migrate to rails3
