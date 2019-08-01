@@ -21,6 +21,7 @@ $sidekiq_redis_timeout = sidekiq_config[:timeout]
 Sidekiq.configure_client do |config|
   config.redis = ConnectionPool.new(size: $sidekiq_client_redis_pool_size, timeout: $sidekiq_redis_timeout, &$sidekiq_datastore)
   config.client_middleware do |chain|
+    chain.add Middleware::Sidekiq::Client::RouteORDrop
     chain.add Middleware::Sidekiq::Client::BelongsToAccount, :ignore => [
       "FreshopsToolsWorker",
       "Social::TwitterReplyStreamWorker",
@@ -116,6 +117,7 @@ Sidekiq.configure_server do |config|
   AWS.eager_autoload!
   config.server_middleware do |chain|
     chain.add Middleware::Sidekiq::Server::UnsetThread
+    chain.add Middleware::Sidekiq::Server::RouteORDrop
     chain.add Middleware::Sidekiq::Server::BelongsToAccount, :ignore => [
       "FreshopsToolsWorker",
       "Social::TwitterReplyStreamWorker",
@@ -199,6 +201,7 @@ Sidekiq.configure_server do |config|
     chain.add Middleware::Sidekiq::Server::Throttler, :required_classes => ["WebhookV1Worker"]
   end
   config.client_middleware do |chain|
+    chain.add Middleware::Sidekiq::Client::RouteORDrop
     chain.add Middleware::Sidekiq::Client::BelongsToAccount, :ignore => [
       "FreshopsToolsWorker",
       "Social::TwitterReplyStreamWorker",

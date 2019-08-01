@@ -20,6 +20,7 @@ class Account < ActiveRecord::Base
   include Account::ChannelUtils
   include ParserUtil
   include InlineImagesUtil
+  include Account::SidekiqControl::RouteDrop
   include Account::ProxyFeature
 
   has_many_attachments

@@ -15,8 +15,9 @@ module Redis::RedisKeys
   include Redis::Keys::SpamWatcher
   include Redis::Keys::Tickets
   include Redis::Keys::Semaphore
+  include Redis::Keys::SidekiqBgOptions
+  # Please do not any new key in this file.
 
-  # Please do not any new key in this file. 
   # Please add new key in respective file based on its redis host.
 
   #Timestamp key for Redis AOF reference.
