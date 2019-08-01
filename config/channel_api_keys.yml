@@ -31,6 +31,9 @@ defaults: &defaults
     auth_type: jwt
     jwt_secret: W1NtUgXBScTyild7gx4rBEpG_r_oWcK4XkC3N0xG40U=
     jwt_default_expiry: "30"
+  sherlock:
+    auth_type: jwt
+    jwt_secret: b202ec2b19b12bde6d665e87962fc
 development:
   <<: *defaults
 

@@ -65,7 +65,7 @@ module Social
 
     def error_payload
       {
-        status: '500',
+        status_code: '500',
         message: 'error in twitter',
         code: '500',
         tweet_type: 'mention',
@@ -77,7 +77,7 @@ module Social
 
     def success_payload
       {
-        status: 200,
+        status_code: 200,
         tweet_id: 4321,
         tweet_type: 'mention',
         stream_id: nil,
@@ -88,7 +88,7 @@ module Social
 
     def match_error_response_payload(sidekiq_job)
       error_payload == {
-        status: sidekiq_job['data']['status'],
+        status_code: sidekiq_job['data']['status_code'],
         message: sidekiq_job['data']['message'],
         code: sidekiq_job['data']['code'],
         tweet_type: sidekiq_job['context']['tweet_type'],
@@ -100,7 +100,7 @@ module Social
 
     def match_success_response_payload(sidekiq_job)
       success_payload == {
-        status: sidekiq_job['data']['status'],
+        status_code: sidekiq_job['data']['status_code'],
         tweet_id: sidekiq_job['data']['tweet_id'],
         tweet_type: sidekiq_job['context']['tweet_type'],
         stream_id: sidekiq_job['context']['stream_id'],

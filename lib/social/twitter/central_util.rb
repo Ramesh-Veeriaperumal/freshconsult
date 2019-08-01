@@ -8,7 +8,7 @@ module Social::Twitter::CentralUtil
                        construct_error_command_data(error_message, error_code)
                      else
                        {
-                         status: 200,
+                         status_code: 200,
                          tweet_id: reply_twt
                        }
                      end
@@ -18,7 +18,7 @@ module Social::Twitter::CentralUtil
 
   def construct_error_command_data(error_message, error_code)
     {
-      status: error_code || 0,
+      status_code: error_code || 0,
       message: error_message,
       code: error_code || 0
     }
