@@ -14,7 +14,7 @@ class Account < ActiveRecord::Base
     :allow_huge_ccs, :euc_migrated_twitter, :new_ticket_recieved_metric, :mint_portal_applicable,
     :twitter_microservice, :twitter_handle_publisher, :count_service_es_writes,
     :count_service_es_reads, :quoted_text_parsing_feature, :shopify_actions,
-    :count_service_es_writes, :old_link_back_url_validation,
+    :count_service_es_writes, :old_link_back_url_validation, :field_agent_availability,
     :installed_app_publish, :denormalized_select_for_update, :disable_banners,
     :skip_invoice_due_warning, :company_central_publish, :product_central_publish,
     :redis_picklist_id, :help_widget, :bot_email_channel, :bot_email_central_publish,
