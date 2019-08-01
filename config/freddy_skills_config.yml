@@ -16,9 +16,11 @@ defaults: &defaults
     internal: '38e8cbde-83a6-4bba-a5db-12ea4fd3b2f3'
 
   flowserv:
-    host: 'http://flow-serv.staging.freddyproject.com'
+    host: 'https://api.intfreshbots.com/rest/api/v2/'
     secret: 'FreshDeskDev'
     timeout: 3
+    service: 'bot-admin'
+    product_id: '076f18fe945962782e9890b3125bc03e5604c46f'
 
   agent_articles_suggest:
     url: "https://faqsuggester.prod.freddyproject.com/api/v1/afr/smart_reply"

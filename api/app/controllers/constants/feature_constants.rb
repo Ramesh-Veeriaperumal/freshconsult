@@ -7,5 +7,6 @@ module FeatureConstants
   SATISFACTION_RATINGS = [:surveys]
   SATISFACTION_RATINGS_WITH_LINK =  SATISFACTION_RATINGS | [:survey_links]
   AUTOFAQ = :autofaq
+  BOTFLOW = :botflow
   AGENT_ARTICLES_SUGGEST = :agent_articles_suggest
 end
