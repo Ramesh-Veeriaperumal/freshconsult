@@ -1,7 +1,7 @@
-module Helpdesk 
+module Helpdesk
   module Email
     class MailMessageProcessor
-      extend ::NewRelic::Agent::MethodTracer 
+      extend ::NewRelic::Agent::MethodTracer
       include Redis::OthersRedis
       include Redis::RedisKeys
       include EnvelopeParser
@@ -30,7 +30,7 @@ module Helpdesk
         cleanup
       end
 
-      #can be made private
+      # can be made private
       def process_message_by_state(state, created_time)
         if safe_to_process?(state, created_time)
           fetch_email
@@ -54,7 +54,7 @@ module Helpdesk
           params[:envelope] =  metadata[:envelope]
           params[:verification_key] = metadata[:verification_key] if metadata[:verification_key].present?
           spam_data = check_for_spam(params)
-          self.ticket_params = params.merge({ :spam_info => spam_data ,:request_url => 'Mimecontroller'})
+          self.ticket_params = params.merge(spam_info: spam_data, request_url: 'Mimecontroller')
           ticket_data = create_ticket_or_note
           Rails.logger.info "ticket_data : #{ticket_data.inspect}"
           set_processing_state(EMAIL_PROCESSING_STATE[:finished], Time.now.utc, message[:uid], custome_bot_attack?(spam_data))
@@ -88,20 +88,19 @@ module Helpdesk
 
       def get_db_type
         if message[:is_failed_retry]
-          return DBTYPE[:failed]
+          DBTYPE[:failed]
         else
-          return DBTYPE[:primary]
+          DBTYPE[:primary]
         end
       end
 
       def archive_message(ticket_data)
-
         Rails.logger.info 'Archiving the Email'
         email_content = StringIO.new(raw_eml)
-        
+
         archive_db = Helpdesk::DBStore::MailDBStoreFactory.getDBStoreObject(DBTYPE[:archive])
 
-        metadata_attributes =  get_archive_attributes(ticket_data)
+        metadata_attributes = get_archive_attributes(ticket_data)
         key_path = archive_db.save(email_content, metadata_attributes)
         store_archive_ticket_path(ticket_data, key_path) if key_path.present?
 
@@ -111,6 +110,7 @@ module Helpdesk
 
       def store_archive_ticket_path(ticket_data, path)
         return if ticket_data[:processed_status] != PROCESSED_EMAIL_STATUS[:success]
+
         Rails.logger.info 'Storing archive path in dynamodb'
         dynamo_obj = Helpdesk::Email::ArchiveDatastore.new
         dynamo_obj['account_id'] = ticket_data[:account_id]
@@ -120,7 +120,7 @@ module Helpdesk
           dynamo_obj['unique_index'] = ticket_data[:type] + '_' + ticket_data[:note_id].to_s
           dynamo_obj['ticket_id'] = ticket_data[:ticket_id]
           dynamo_obj['note_id'] = ticket_data[:note_id]
-        elsif ticket_data[:article_id] != "-1"
+        elsif ticket_data[:article_id] != '-1'
           dynamo_obj['unique_index'] = ticket_data[:type] + '_' + ticket_data[:article_id].to_s
           dynamo_obj['article_id'] = ticket_data[:article_id]
         else
@@ -147,7 +147,7 @@ module Helpdesk
 
       def check_for_spam(params)
         begin
-          Helpdesk::Email::SpamDetector.new.check_spam(params, metadata[:envelope])         
+          Helpdesk::Email::SpamDetector.new.check_spam(params, metadata[:envelope])
         rescue Exception => e
           Rails.logger.info "Error during spam_check in mail_mesage_processor. #{e.message} - #{e.backtrace}"
           NewRelic::Agent.notice_error(e)
@@ -160,21 +160,21 @@ module Helpdesk
 
       private
 
-      def get_archive_attributes(ticket_data) #check processed time
-        metadata_attributes = metadata
-        metadata_attributes.merge!(Hash[ticket_data.map{ |k, v| [k, v.to_s] }])
-        metadata_attributes.merge!(:processed_host => "#{Socket.gethostname}")
-        return metadata_attributes.with_indifferent_access
-      end
+        def get_archive_attributes(ticket_data) # check processed time
+          metadata_attributes = metadata
+          metadata_attributes.merge!(Hash[ticket_data.map { |k, v| [k, v.to_s] }])
+          metadata_attributes.merge!(processed_host: Socket.gethostname.to_s)
+          metadata_attributes.with_indifferent_access
+        end
 
-      def cleanup
-        self.raw_eml = nil
-        self.metadata = nil
-        self.ticket_params = nil
-      end
+        def cleanup
+          self.raw_eml = nil
+          self.metadata = nil
+          self.ticket_params = nil
+        end
 
       add_method_tracer :check_for_spam, 'Custom/MimeController/spam_check'
-      
+
     end
   end
 end
