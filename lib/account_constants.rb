@@ -97,6 +97,8 @@ module AccountConstants
   ANONYMOUS_EMAIL = 'freshdeskdemo'.freeze
   ANONYMOUS_ACCOUNT_NAME = 'Example'.freeze
 
+  WIDGET_COUNT_FOR_PLAN = { sprout: 1, non_sprout: 5 }.freeze
+
   def attachment_limit
     @attachment_limit ||= Account.current.outgoing_attachment_limit_25_enabled? ? 25 : ATTACHMENT_LIMIT
   end
