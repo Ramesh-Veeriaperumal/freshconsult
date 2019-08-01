@@ -213,7 +213,7 @@ class MailboxValidatorTest < ActionView::TestCase
     Net::SMTP.any_instance.stubs(:start).raises(StandardError)
     validate_mailbox_details
     assert_equal @response['success'], false
-    assert_equal @response['msg'], 'Error while verifying the mailbox smtp details - Exception'
+    assert_equal @response['msg'], 'Error while verifying the mailbox smtp details - StandardError'
   ensure
     Net::IMAP.any_instance.unstub(:login)
     Net::IMAP.any_instance.unstub(:logout)
