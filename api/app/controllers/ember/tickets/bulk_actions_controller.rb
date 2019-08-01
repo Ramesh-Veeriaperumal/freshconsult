@@ -108,7 +108,11 @@ module Ember
           @item = item
           assign_attributes_for_update
           delegator_hash = { ticket_fields: @ticket_fields, custom_fields: @custom_fields, statuses: @params_hash[:statuses], request_params: @params_hash[:properties].keys }
-          @ticket_validation = TicketBulkUpdateDelegator.new(@item, delegator_hash)
+          @ticket_validation = if @item && @item.ticket_type == ::Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE
+                                 FsmTicketBulkUpdateDelegator.new(@item, delegator_hash)
+                               else
+                                 TicketBulkUpdateDelegator.new(@item, delegator_hash)
+                               end
           @ticket_validation.valid?
         end
 

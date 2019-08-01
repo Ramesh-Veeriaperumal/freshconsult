@@ -197,6 +197,7 @@ module SsoUtil
     if valid_response
       user_email_id = response.name_id
       attribs = response.attributes
+      Rails.logger.info "SAML response attributes = #{attribs.inspect}"
       user_name = attribs[:username] # default user name is actually just the part before @ in the email
 
       first_name = get_first_match(attribs, FIRST_NAME_STRS)

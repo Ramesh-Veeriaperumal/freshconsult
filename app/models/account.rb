@@ -6,6 +6,7 @@ class Account < ActiveRecord::Base
   include Social::Ext::AccountMethods
   include Cache::Memcache::Account
   include Redis::RedisKeys
+  include Redis::RateLimitRedis
   include Redis::TicketsRedis
   include Redis::OthersRedis
   include Redis::DisplayIdRedis
@@ -28,8 +29,8 @@ class Account < ActiveRecord::Base
   pod_filter "id"
   
   is_a_launch_target
-  
-  concerned_with :associations, :constants, :validations, :callbacks, :features, :solution_associations, :multilingual, :sso_methods, :presenter, :subscription_methods, :freshid_methods
+
+  concerned_with :associations, :constants, :validations, :callbacks, :features, :solution_associations, :multilingual, :sso_methods, :presenter, :subscription_methods, :freshid_methods, :fluffy_methods
 
   include CustomerDeprecationMethods
   

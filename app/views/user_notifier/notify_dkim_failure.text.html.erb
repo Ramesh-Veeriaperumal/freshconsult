@@ -1,6 +1,6 @@
-Hi <%= @admin_name%>,<br/><br/>
+<%= t("mailer_notifier.hi_user", user_name: @admin_name) %><br/><br/>
 
-DKIM verification failed for domain <%= @dkim_details['email_domain']%>.<br/>
+<%= t("mailer_notifier.user_notifications.notify_dkim_failure", email_domain: @dkim_details['email_domain']) %><br/><br/>
 
-Sincerely,<br/>
-Freshdesk Team
+<%= t("mailer_notifier.sincerely") %><br/>
+<%= t("mailer_notifier.freshdesk_team") %>

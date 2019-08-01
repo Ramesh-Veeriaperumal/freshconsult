@@ -2135,3 +2135,166 @@ div[class$="-toggle"]{
   @include margin-right(8px);
   line-height: 24px;
 }
+
+.translation-header {
+  padding: 24px 0 0 12px;
+  font-size: 16px;
+}
+
+.text-content {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 20px;
+  display: inline-block;
+}
+
+.secondary-portal-header {
+  padding: 18px 0 12px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  display: inline-block;
+}
+
+.secondary-supported-header {
+  padding: 12px 0 12px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+}
+
+.secondary-text-content {
+  display: inline-block;
+  height: 20px;
+  width: 189px;
+  color: #475867;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+}
+
+.language-item-container {
+  margin: 0 12px 16px 4px;  
+  padding: 6px 0 6px 12px;
+  color: #12344D;
+  &:hover {
+    background: $btn-lg-disabled-border;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+}
+
+.disable-language-item {
+  color: #92A2B1;
+}
+
+.primary-language-item {
+  color: #92A2B1;
+  font-weight: 600;
+  padding: 0px 0 8px 12px;
+}
+
+.multilingual-icon {
+  width: 16px;
+  height: 15px;
+  display: inline-block;
+}
+
+.visible-icon {
+  height: 9px;
+  width: 14px;
+  display: inline-block;
+  position: relative;
+  top: 2px;
+}
+
+.hidden-icon {
+  height: 15px;
+  width: 15px;
+  display: inline-block;
+  position: relative;
+  top: 2px;
+}
+
+.show-info {
+  height: 20px;
+  width: fit-content;
+  color: $app-btn-text-light;
+  font-size: 12px;
+  line-height: 20px;
+  position: absolute;
+  border-radius: 4px;
+  padding: 2px 6px;
+  right: 60px;
+  background: $app-primary-btn;
+}
+
+.disable-container {
+  cursor: pointer;
+}
+
+.secondary-help-text {
+  padding: 4px 0 6px 0;
+  color: #475867;
+  font-weight: normal;
+	font-size: 12px;
+	line-height: 20px;
+}
+
+.action-items-container {
+  width: 22%;
+  float: right;
+  .action-items {
+    width: 13px;
+    height: 13px;
+    display: inline-block;
+    cursor: pointer;
+  }
+  .download-survey, .edit-survey {
+    padding: 0 20px 0 0;
+  }
+  .preview-survey {
+    padding: 0 5px 0 0;
+  }
+  .untranslated {
+    opacity: 0.3;
+  }
+}
+
+.survey-status-label {
+	box-sizing: border-box;
+  border-radius: 4px;
+  width: fit-content;
+  font-size: 12px;
+  margin-top: 3px;
+  font-weight: 600;
+  padding: 5px 8px;
+}
+
+.survey-untranslated {
+  background-color: #FFECF0;
+  border: 1px solid #FFD0D6;
+  color: #C82124;
+}
+
+.survey-translated {
+  border: 1px solid #B4E5D9;
+  background-color: #E0F5F0;
+  color: #007958;
+}
+
+.survey-outdated, .survey-incomplete {
+  border: 1px solid #FDDBB5;
+  background-color: #FEF1E1;
+  color: #C13E1B;
+}
+
+.helptext-manage-language {
+  padding: 0 20px 0 12px;
+  color: #475867;
+  font-size: 14px;
+}
+
+.no-padding-sidebar {
+  padding: 0;
+}

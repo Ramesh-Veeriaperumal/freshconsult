@@ -1,11 +1,17 @@
 class FsmTicketValidation < TicketValidation
-  def custom_fields_to_validate
-    # Restricting the custom fields to validate to FSM section fields alone when the ticket type is service task
-    fsm_section = Account.current.sections.preload(:section_fields).find_by_label(Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_SECTION)
-    return [] if fsm_section.blank?
+  attr_accessor :ticket_fields
+  include Admin::AdvancedTicketing::FieldServiceManagement::Util
 
-    fsm_field_ids = fsm_section.section_fields.map(&:ticket_field_id)
-    fsm_fields_to_validate = TicketsValidationHelper.custom_non_dropdown_fields(self).select { |x| fsm_field_ids.include?(x.id)}
+  def custom_fields_to_validate
+    fsm_fields_to_validate = fsm_custom_fields_to_validate
     create_or_update? ? fsm_fields_to_validate : fsm_fields_to_validate.select { |x| validate_field?(x) }
+  end
+
+  def required_for_closure_default_fields
+    ticket_fields.select { |x| x.default && x.name != 'product' && (x.required_for_closure && closure_status?) }
+  end
+
+  def required_for_submit_or_closure_default_fields
+    ticket_fields.select { |x| x.default && x.name != 'product' && (x.required || (x.required_for_closure && closure_status?)) }
   end
 end

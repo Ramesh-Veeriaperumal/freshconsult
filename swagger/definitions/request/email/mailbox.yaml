@@ -1,0 +1,78 @@
+type: object
+properties:
+  name:
+    type: string
+  support_email:
+    type: string
+  group_id:
+    type: number
+  product_id:
+    type: number
+  default_reply_email:
+    type: boolean
+  active:
+    type: boolean
+  mailbox_type:
+    type: string
+    description: Possible values are freshdesk_mailbox, custom_mailbox. If set to custom_mailbox, custom_mailbox property has to be specified.
+  custom_mailbox:
+    type: object
+    properties:
+      access_type:
+        type: string
+        enum:
+          - incoming
+          - outgoing
+          - both
+        description: If access_type is both, then include both incoming and outgoing.
+      incoming:
+        type: object
+        properties:
+          mail_server:
+            type: string
+          port:
+            type: number
+          use_ssl:
+            type: boolean
+          delete_from_server:
+            type: boolean
+          authentication:
+            type: string
+            description: Possible values are plain, login, cram_md5
+          user_name:
+            type: string
+          password:
+            type: string
+        required:
+          - mail_server
+          - port
+          - authentication
+          - user_name
+          - password
+      outgoing:
+        type: object
+        properties:
+          mail_server:
+            type: string
+          port:
+            type: number
+          use_ssl:
+            type: boolean
+          authentication:
+            type: string
+            description: Possible values are plain, login
+          user_name:
+            type: string
+          password:
+            type: string
+        required:
+          - mail_server
+          - port
+          - authentication
+          - user_name
+          - password
+    required:
+      - access_type
+required:
+  - support_email
+  - mailbox_type

@@ -1,0 +1,62 @@
+get:
+  tags: [email mailboxes]
+  summary: List all
+  parameters:
+    - name: product_id
+      in: query
+      type: integer
+    - name: group_id
+      in: query
+      type: integer
+    - name: reply_email
+      in: query
+      type: string
+    - name: to_email
+      in: query
+      type: string
+    - name: active
+      in: query
+      type: boolean
+    - name: order_by
+      in: query
+      type: string
+      description: Possible values are group_id, product_id.
+    - name: order_type
+      in: query
+      type: string
+      enum: ["asc", "desc"]
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          mailboxes:
+            type: array
+            items:
+              $ref: '#/definitions/email_mailbox_response'
+          meta:
+            $ref: '#/definitions/meta'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+
+post:
+  tags: [email mailboxes]
+  description: Create mailbox
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/email_mailbox_input'
+  responses:
+    201:
+      description: Success
+      schema:
+        $ref: '#/definitions/email_mailbox_response'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

@@ -1,6 +1,7 @@
 Helpkit::Application.configure do
   config.middleware.insert_before ActionDispatch::ParamsParser, 'Middleware::ApiRequestInterceptor'
   # API layer uses new verison API throttler
+  config.middleware.insert_before 'Middleware::ApiRequestInterceptor', 'Middleware::ApiCronAuthenticator'
   config.middleware.insert_before 'Middleware::ApiRequestInterceptor', 'Middleware::ApiPipeAuthenticator'
   config.middleware.insert_before 'Middleware::ApiRequestInterceptor', 'Middleware::PrivateApiThrottler', max: 1000
   config.middleware.insert_before 'Middleware::ApiRequestInterceptor', 'Middleware::FdApiThrottler', max: 1000
@@ -19,9 +20,9 @@ Helpkit::Application.configure do
     batch_config.limit = 20 # how many operations max per request, default 50
 
     # default middleware stack run for each batch request
-    batch_config.batch_middleware = Proc.new { use Middleware::BatchApiRateLimiter }
+    batch_config.batch_middleware = proc { use Middleware::BatchApiRateLimiter }
     # default middleware stack run for each individual operation
-    batch_config.operation_middleware = Proc.new {
+    batch_config.operation_middleware = proc {
       use BatchApi::InternalMiddleware::DecodeJsonBody
       use BatchApi::InternalMiddleware::DependencyResolver
       use Middleware::BatchApiRequestIdInjector
@@ -70,11 +71,11 @@ Helpkit::Application.configure do
     Parameters.class_eval do
       private
 
-      # Adding array/hash also in permitted scalar to allow the key with complex values to be passed through strong params.
-      # for ex: user_id:[] used to fail at strong params as [] is not a permitted scalar value.
-      # Now user_id:[] will pass through strong params and corresponding data_type validation will occur in controller.
+        # Adding array/hash also in permitted scalar to allow the key with complex values to be passed through strong params.
+        # for ex: user_id:[] used to fail at strong params as [] is not a permitted scalar value.
+        # Now user_id:[] will pass through strong params and corresponding data_type validation will occur in controller.
         def permitted_scalar?(value)
-        (Parameters::PERMITTED_SCALAR_TYPES | [Array, Hash]).any? { |type| value.is_a?(type) }
+          (Parameters::PERMITTED_SCALAR_TYPES | [Array, Hash]).any? { |type| value.is_a?(type) }
       end
     end
   end

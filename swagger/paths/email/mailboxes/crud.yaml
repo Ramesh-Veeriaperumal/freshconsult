@@ -1,0 +1,46 @@
+get:
+  tags: ['email mailboxes']
+  summary: Show mailbox
+  parameters:
+    - $ref: '#/parameters/id'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/email_mailbox_response'
+    404:
+      description: Mailbox not found
+
+delete:
+  tags: ['email mailboxes']
+  summary: Delete mailbox
+  description: Destroys the mailbox, will not be able to restore
+  parameters:
+    - $ref: '#/parameters/id'
+  responses:
+    204:
+      description: Success
+    404:
+      description: Mailbox not found
+
+put:
+  tags: ['email mailboxes']
+  summary: Update mailbox
+  parameters:
+    - $ref: '#/parameters/id'
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/email_mailbox_input'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/email_mailbox_response'
+    404:
+      description: Mailbox not found
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
