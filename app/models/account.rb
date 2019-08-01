@@ -916,12 +916,24 @@ class Account < ActiveRecord::Base
     Rails.logger.info ":::::: Sitemap is deleted (redis, cache & S3) for account #{id} ::::::"
   end
 
-  def thank_you_configured_in_automation_rules?
-    get_members_from_automation_redis_set(automation_rules_with_thank_you_configured).present?
-  end
-
   def time_sheets_with_join
     time_sheets.joins('AND helpdesk_time_sheets.account_id = helpdesk_tickets.account_id').readonly(false)
+  end
+
+  def thank_you_configured_rule_ids
+    get_members_from_automation_redis_set(automation_rules_with_thank_you_configured)
+  end
+
+  def thank_you_configured_in_automation_rules?
+    thank_you_configured_rule_ids.present?
+  end
+
+  def configure_thank_you_redis_key
+    all_observer_rules.each(&:perform_thank_you_redis_op)
+  end
+
+  def remove_thank_you_redis_key
+    delete_automation_redis_key(automation_rules_with_thank_you_configured)
   end
 
   protected

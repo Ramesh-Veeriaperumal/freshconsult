@@ -1,0 +1,11 @@
+type: object
+properties:
+  freddy_skills:
+    type: array
+    items:
+      type: object
+      properties:
+        name:
+          type: string
+        enabled:
+          type: boolean

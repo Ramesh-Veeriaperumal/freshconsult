@@ -8,6 +8,7 @@ module Redis::AutomationRuleRedis
 
   def set_expiry_of_account_rule(expiry_time = 86400) # 1 day
     return false if get_expiry_of_automation_hash(account_automation_key) >= 0
+
     set_expiry_of_automation_hash(account_automation_key, expiry_time)
   end
 
@@ -29,6 +30,12 @@ module Redis::AutomationRuleRedis
 
   def get_members_from_automation_redis_set(redis_key)
     $redis_automation_rule.perform_redis_op('smembers', redis_key)
+  end
+
+  def delete_automation_redis_key(redis_key)
+    newrelic_begin_rescue do
+      $redis_automation_rule.perform_redis_op('del', redis_key)
+    end
   end
 
   private

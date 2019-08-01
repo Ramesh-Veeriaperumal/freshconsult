@@ -609,7 +609,7 @@
 /admin/custom_translations/primary:
   $ref: ./admin/custom_translations/primary.yaml
 /admin/custom_translations/{id}:
-  $ref: ./admin/custom_translations/secondary.yaml 
+  $ref: ./admin/custom_translations/secondary.yaml
 /admin/accounts/languages:
   $ref: ./admin/accounts/languages.yaml
 
@@ -686,3 +686,8 @@
   $ref: ./email/mailboxes/list_and_create.yaml
 /email/mailboxes/{id}:
   $ref: ./email/mailboxes/crud.yaml
+
+/admin/freddy_skills:
+  $ref: ./admin/freddy_skills/index.yaml
+/admin/freddy_skills/:name:
+  $ref: ./admin/freddy_skills/show_and_update.yaml

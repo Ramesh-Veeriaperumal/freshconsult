@@ -822,6 +822,10 @@ Helpkit::Application.routes.draw do
     scope '/automations/:rule_type' do
       resources :rules, controller: 'admin/automations', only: [:index, :create, :update, :destroy, :show]
     end
+
+    get '/admin/freddy_skills', to: 'ember/admin/freddy_skills#index'
+    get '/admin/freddy_skills/:name', to: 'ember/admin/freddy_skills#show'
+    put '/admin/freddy_skills/:name', to: 'ember/admin/freddy_skills#update'
   end
 
   pipe_routes = proc do

@@ -166,6 +166,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/custom_translation", only: [:download]
     resource :"settings/helpdesk", only: [:update]
     resource :"admin/account_feature", only: [:create, :destroy]
+    resource :"ember/admin/freddy_skill", only: [:index, :show, :update]
   end
 
   edit_ticket_properties do

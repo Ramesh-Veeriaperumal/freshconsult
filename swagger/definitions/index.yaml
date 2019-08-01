@@ -761,3 +761,9 @@ support_tickets:
 # Account features
 account_feature_enable_disable:
   $ref: './request/accounts/feature.yaml'
+
+# Freddy Skills
+freddy_skills_index:
+  $ref: './response/admin/freddy_skills/index.yaml'
+freddy_skills_show_and_update:
+  $ref: './response/admin/freddy_skills/show_and_update.yaml'

@@ -290,7 +290,7 @@ class VaRule < ActiveRecord::Base
       evaluate_on.system_changes = base_hash
     end
   end
-  
+
   def add_thank_you_note_to_system_changes(evaluate_on)
     result_hash = Thread.current[:thank_you_note]
     evaluate_on.system_changes[self.id.to_s][:thank_you_note] = [result_hash[:result]] if result_hash[:rule_id] == self.id
@@ -500,6 +500,23 @@ class VaRule < ActiveRecord::Base
     @response_time ||= {}
   end
 
+  def perform_thank_you_redis_op
+    return unless account.detect_thank_you_note_enabled?
+
+    thank_you_condition_exists = false
+    rule_conditions.each do |condition_set|
+      break if thank_you_condition_exists
+
+      linear_conditions = condition_set[:all].presence || condition_set[:any].presence || condition_set
+      thank_you_condition_exists = parse_linear_conditions(linear_conditions)
+    end
+    if thank_you_condition_exists
+      add_element_to_automation_redis_set(automation_rules_with_thank_you_configured, id)
+    else
+      remove_element_from_automation_redis_set(automation_rules_with_thank_you_configured, id)
+    end
+  end
+
   private
 
     def benchmark
@@ -613,22 +630,6 @@ class VaRule < ActiveRecord::Base
                   position_lower_index, position_upper_index, id).update_all("position = position #{reorder_by} 1")
     end
 
-    def perform_thank_you_redis_op
-      return unless account.detect_thank_you_note_enabled?
-      thank_you_condition_exists = false
-      rule_conditions.each do |condition_set|
-        break if thank_you_condition_exists
-
-        linear_conditions = condition_set[:all].presence || condition_set[:any].presence || condition_set
-        thank_you_condition_exists = parse_linear_conditions(linear_conditions)
-      end
-      if thank_you_condition_exists 
-        add_element_to_automation_redis_set(automation_rules_with_thank_you_configured, id)
-      else
-        remove_element_from_automation_redis_set(automation_rules_with_thank_you_configured, id)
-      end
-    end
-
     def parse_linear_conditions(linear_conditions)
       if linear_conditions.is_a?(Array)
         linear_conditions.select { |condition| thank_you_condition?(condition) }.present?
@@ -639,11 +640,11 @@ class VaRule < ActiveRecord::Base
 
     def thank_you_condition?(condition)
       condition[:evaluate_on] == :ticket && condition[:name] == 'freddy_suggestion' && condition[:value] == 'thank_you_note'
-    end  
-    
+    end
+
     def delete_rule_from_redis_set
       return unless account.detect_thank_you_note_enabled?
-      remove_element_from_automation_redis_set(automation_rules_with_thank_you_configured, id)
-      
+
+      remove_element_from_redis_automation_set(automation_rules_with_thank_you_configured, id)
     end
 end
