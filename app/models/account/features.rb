@@ -1,7 +1,7 @@
 class Account < ActiveRecord::Base
 
   LP_FEATURES = [
-    :select_all, :round_robin_capping, :suggest_tickets,
+    :select_all, :round_robin_capping, :suggest_tickets, :field_agent_availability,
     :customer_sentiment_ui, :dkim, :scheduled_ticket_export,
     :ticket_contact_export, :email_failures, :disable_emails,
     :falcon_portal_theme, :freshid, :freshchat_integration, :allow_huge_ccs,

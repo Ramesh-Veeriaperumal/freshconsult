@@ -16,6 +16,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
     private
 
       def perform_fsm_operations
+        update_field_agent_limit_for_active_account
         create_service_task_field_type
         fsm_fields_to_be_created = fetch_fsm_fields_to_be_created
         reserve_fsm_custom_fields(fsm_fields_to_be_created)
@@ -27,6 +28,16 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         expire_cache
       rescue StandardError => e
         log_operation_failure('Enable', e)
+      end
+
+      def update_field_agent_limit_for_active_account
+        subscription = Account.current.subscription
+        return unless subscription.active?
+
+        if subscription.field_agent_limit.nil?
+          subscription.field_agent_limit=0
+          subscription.save
+        end
       end
 
       def create_field_service_manager_role
@@ -44,7 +55,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         error_msg = "#{msg}, account id: #{Account.current.id}, message: #{exception.message}"
         Rails.logger.error error_msg
         NewRelic::Agent.notice_error(exception, description: error_msg)
-        msg_param = { account_id: Account.current.id, message: exception.message }
+        msg_param = { account_id: Account.current.id, request_id: Thread.current[:message_uuid], message: exception.message }
         notify_fsm_dev(msg, msg_param)
       end
 
