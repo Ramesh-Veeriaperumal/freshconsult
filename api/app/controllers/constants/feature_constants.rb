@@ -21,6 +21,7 @@ module FeatureConstants
   AUTOMATION_REVAMP = :automation_revamp.freeze
   ARCHIVE_API = :archive_tickets_api
   AUTOFAQ = :autofaq
+  BOTFLOW = :botflow
   HELP_WIDGET = :help_widget
   AGENT_ARTICLES_SUGGEST = :agent_articles_suggest
 end
