@@ -1,4 +1,6 @@
 class Social::FacebookPage < ActiveRecord::Base
+  publishable on: [:create, :update, :destroy]
+  
   include Social::Util
   include Facebook::Constants
   include Facebook::RedisMethods
