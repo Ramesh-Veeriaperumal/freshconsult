@@ -382,7 +382,8 @@ module Ember
         article_with_draft
         attachment_id = create_attachment(attachable_type: 'Solution::Article', attachable_id: @article.id).id
         delete :delete_attachment, controller_params(version: 'private', article_id: @article.parent_id, attachment_type: 'attachment', attachment_id: attachment_id)
-        assert_response 204
+        assert_response 200
+        match_json(autosave_pattern(@draft.reload))
         assert_equal @article.draft.meta[:deleted_attachments][:attachments].size, 1
       end
 
@@ -390,7 +391,8 @@ module Ember
         article_with_draft
         attachment_id = create_attachment(attachable_type: 'Solution::Article', attachable_id: @article.id).id
         delete :delete_attachment, controller_params(version: 'private', article_id: @article.parent_id, attachment_type: 'attachment', attachment_id: attachment_id, language: @account.language)
-        assert_response 204
+        assert_response 200
+        match_json(autosave_pattern(@draft.reload))
         assert_equal @article.draft.meta[:deleted_attachments][:attachments].size, 1
       end
 
@@ -399,7 +401,8 @@ module Ember
         article_with_draft(language)
         attachment_id = create_attachment(attachable_type: 'Solution::Article', attachable_id: @article.id).id
         delete :delete_attachment, controller_params(version: 'private', article_id: @article.parent_id, attachment_type: 'attachment', attachment_id: attachment_id, language: language)
-        assert_response 204
+        assert_response 200
+        match_json(autosave_pattern(@draft.reload))
         assert_equal @article.draft.meta[:deleted_attachments][:attachments].size, 1
       end
 
@@ -425,7 +428,8 @@ module Ember
         article_with_draft
         attachment_id = create_cloud_file_attachment(droppable_type: 'Solution::Article', droppable_id: @article.id).id
         delete :delete_attachment, controller_params(version: 'private', article_id: @article.parent_id, attachment_type: 'cloud_file', attachment_id: attachment_id)
-        assert_response 204
+        assert_response 200
+        match_json(autosave_pattern(@draft.reload))
         assert_equal @article.draft.meta[:deleted_attachments][:cloud_files].size, 1
       end
 
