@@ -7,6 +7,7 @@ display_id_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_displ
 round_robin_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_round_robin.yml'))[Rails.env]
 redis_session_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_session.yml'))[Rails.env]
 mobile_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_mobile.yml'))[Rails.env]
+automation_rule_config = YAML::load_file(File.join(Rails.root, 'config', 'automation_rule_redis.yml'))[Rails.env]
 #$redis = Redis.new(:host => config["host"], :port => config["port"])
 
 #$redis_secondary = Redis.new(:host => config["host"], :port => config["port"])
@@ -29,7 +30,7 @@ $redis_round_robin = Redis.new(:host => round_robin_config["host"], :port => rou
 $redis_session = Redis.new(:host => redis_session_config["host"], :port => redis_session_config["port"],:timeout => redis_session_config["timeout"], :tcp_keepalive => redis_session_config["keepalive"])
 $redis_mobile = Redis.new(:host => mobile_config["host"], :port => mobile_config["port"], :timeout => mobile_config["timeout"], :tcp_keepalive => mobile_config["keepalive"])
 $semaphore = Redis.new(:host => config["host"], :port => config["port"], :timeout => config["timeout"], :tcp_keepalive => config["keepalive"])
-
+$redis_automation_rule = Redis.new(host:  automation_rule_config['host'], port: automation_rule_config['port'], timeout: automation_rule_config["timeout"], tcp_keepalive: automation_rule_config["keepalive"])
 # Include connection objects to new redis instances here. This is used for redis_maintenance.rake.
 # There are 3 DBs per region, having one connection object per DB below.
 REDIS_UNIQUE_CONNECTION_OBJECTS = [$redis_tickets, $rate_limit]

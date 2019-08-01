@@ -477,7 +477,17 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def detect_thank_you_note?
-      account.detect_thank_you_note_enabled? && !BLACKLISTED_THANK_YOU_DETECTOR_NOTE_SOURCES.include?(source) && user.customer?
+      account.detect_thank_you_note_enabled? && !BLACKLISTED_THANK_YOU_DETECTOR_NOTE_SOURCES.include?(source) &&
+      user.customer? && sla_timer_off_status? && !import_note && recently_created_note? &&
+      body.present? && account.thank_you_configured_in_automation_rules?
+    end
+
+    def sla_timer_off_status?
+      Helpdesk::TicketStatus.onhold_and_closed_statuses(account).include? notable.status
+    end
+
+    def recently_created_note?
+      Time.zone.now - created_at < 1.hour
     end
 
     def trigger_detect_thank_you_note_worker

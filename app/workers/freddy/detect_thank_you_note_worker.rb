@@ -3,6 +3,7 @@ module Freddy
     sidekiq_options queue: :thank_you_note, retry: 5, backtrace: true
 
     SUCCESS = 200
+    ACTION = 'ticket_reopen'.freeze
 
     def perform(args)
       args.symbolize_keys!
@@ -16,6 +17,7 @@ module Freddy
       options[:body] = { text: note.try(:body) }.to_json
       options[:timeout] = FreddySkillsConfig[:detect_thank_you_note][:timeout]
       url = FreddySkillsConfig[:detect_thank_you_note][:url]
+      url = url.ends_with?('ticket_reopen') ? url : url + ACTION
       http_response = {}
       time_taken = Benchmark.realtime { http_response = HTTParty.post(url, options) }
       Rails.logger.info "Time Taken for thank_you_ml - #{account.id} T - #{ticket_id} time - #{time_taken}"
