@@ -448,8 +448,5 @@ class Account < ActiveRecord::Base
     detect_thank_you_note_eligible_enabled? && has_feature?(:detect_thank_you_note)
   end
 
-  def detect_thank_you_note_enabled?
-    detect_thank_you_note_eligible_enabled? && has_feature?(:detect_thank_you_note)
-  end
   # STOP
 end
