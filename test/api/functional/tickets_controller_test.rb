@@ -3502,6 +3502,8 @@ class TicketsControllerTest < ActionController::TestCase
     get :show, controller_params(id: 999)
     assert_response :missing
     assert_equal ' ', @response.body
+    assert_equal response.status, 404
+    assert_includes response.headers['Content-Type'], 'application/json'
   end
 
   def test_show_without_permission
