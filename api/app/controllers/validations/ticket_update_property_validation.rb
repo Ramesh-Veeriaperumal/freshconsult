@@ -1,4 +1,6 @@
 class TicketUpdatePropertyValidation < ApiValidation
+  include Admin::AdvancedTicketing::FieldServiceManagement::Util
+
   MANDATORY_FIELD_ARRAY = [:due_by, :agent, :group, :status].freeze
   MANDATORY_FIELD_STRING = MANDATORY_FIELD_ARRAY.join(', ').freeze
   CHECK_PARAMS_SET_FIELDS = %w(due_by skip_close_notification).freeze
@@ -91,17 +93,7 @@ class TicketUpdatePropertyValidation < ApiValidation
   end
 
   def custom_fields_to_validate
-    if (@item && @item.ticket_type == Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE)
-      # validate only the field in FSM section if it is a service task.
-      fsm_section = Account.current.sections.preload(:section_fields).find_by_label(Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_SECTION)
-      return [] if fsm_section.blank?
-
-      fsm_field_ids = fsm_section.section_fields.map(&:ticket_field_id)
-      fsm_fields_to_validate = TicketsValidationHelper.custom_non_dropdown_fields(self).select { |x| fsm_field_ids.include?(x.id)}
-      fsm_fields_to_validate.select { |x| x.required_for_closure && request_params.key?(:status) && closure_status? }
-    else
-      TicketsValidationHelper.custom_non_dropdown_fields(self).select { |x| x.required_for_closure && request_params.key?(:status) && closure_status? }
-    end
+    TicketsValidationHelper.custom_non_dropdown_fields(self).select { |x| x.required_for_closure && request_params.key?(:status) && closure_status? }
   end
 
   def validate_field?(x)

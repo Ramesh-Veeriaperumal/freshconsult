@@ -329,5 +329,14 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         end_time = Account.current.custom_date_time_fields_from_cache.find { |x| x.name == TicketFilterConstants::FSM_APPOINTMENT_END_TIME + "_#{Account.current.id}" }
         end_time.column_name
       end
+
+      def fsm_custom_fields_to_validate
+        fsm_section = Account.current.sections.preload(:section_fields).find_by_label(SERVICE_TASK_SECTION)
+        return [] if fsm_section.blank?
+
+        fsm_field_ids = fsm_section.section_fields.map(&:ticket_field_id)
+        fsm_fields_to_validate = TicketsValidationHelper.custom_non_dropdown_fields(self).select { |x| fsm_field_ids.include?(x.id) }
+        fsm_fields_to_validate
+      end
   end
 end
