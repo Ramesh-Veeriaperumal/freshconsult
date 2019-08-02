@@ -583,7 +583,6 @@ Helpkit::Application.routes.draw do
         put :link, to: 'ember/tickets/associates#link'
         put :unlink, to: 'ember/tickets/associates#unlink'
         get :associated_tickets, to: 'ember/tickets/associates#associated_tickets'
-        get :associated_tickets_count, to: 'ember/tickets/associates#associated_tickets_count'
         put :create_child_with_template
         put :requester, to: 'ember/tickets/requester#update'
         post :parse_template, to: 'ember/tickets#parse_template'

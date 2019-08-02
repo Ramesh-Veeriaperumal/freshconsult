@@ -395,8 +395,6 @@ prime_association:
   $ref: ./response/tickets/prime_association.yaml
 associated_tickets:
   $ref: ./response/tickets/associated_ticket.yaml
-associated_tickets_count:
-  $ref: ./response/tickets/associated_tickets_count.yaml
 company_with_associations:
   $ref: './response/companies/list.yaml'
 contact_activity:

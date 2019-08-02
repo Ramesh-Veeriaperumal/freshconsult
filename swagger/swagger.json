@@ -885,6 +885,24 @@
             "in": "query",
             "type": "string",
             "description": "ticket_type of the ticket to be filtered with"
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "type": "string",
+            "description": "properties needs to be included in the response",
+            "enum": [
+              "count"
+            ]
+          },
+          {
+            "name": "only",
+            "in": "query",
+            "type": "string",
+            "description": "only a specified property required in the response",
+            "enum": [
+              "count"
+            ]
           }
         ],
         "responses": {
@@ -892,43 +910,6 @@
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/associated_tickets"
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          },
-          "404": {
-            "description": "Ticket not found"
-          }
-        }
-      }
-    },
-    "/tickets/{id}/associated_tickets_count": {
-      "get": {
-        "tags": [
-          "ticket"
-        ],
-        "summary": "Associated Tickets Count",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "type": "number",
-            "description": "Display ID of Tracker/Parent ticket",
-            "required": true
-          },
-          {
-            "name": "type",
-            "in": "query",
-            "type": "string",
-            "description": "ticket_type of the ticket to be filtered with"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/associated_tickets_count"
             }
           },
           "403": {
@@ -19566,14 +19547,6 @@
         "updated_at": {
           "type": "string",
           "format": "date-time"
-        }
-      }
-    },
-    "associated_tickets_count": {
-      "type": "object",
-      "properties": {
-        "count": {
-          "type": "integer"
         }
       }
     },
