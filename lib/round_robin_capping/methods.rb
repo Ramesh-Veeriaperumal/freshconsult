@@ -13,6 +13,13 @@ module RoundRobinCapping::Methods
     ROUND_ROBIN_DEFAULT_SCORE*(tickets_count) + timestamp
   end
 
+  def count_mismatch?(ticket_count, db_count, operation)
+    (ticket_count < 0) ||
+      (ticket_count.zero? && (operation == 'decr')) ||
+      ((db_count + 1 != ticket_count) && (operation == 'decr')) ||
+      ((db_count - 1 != ticket_count) && (operation == 'incr'))
+  end
+
   def agents_ticket_count score
     (score/ROUND_ROBIN_DEFAULT_SCORE).to_i
   end

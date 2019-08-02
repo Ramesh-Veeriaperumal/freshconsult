@@ -14,7 +14,7 @@ class Middleware::ChannelApiThrottler < Middleware::FdApiThrottler
 
   def api_limit
     @api_limit ||= begin
-      api_limits = get_multiple_redis_keys(account_api_limit_key, default_api_limit_key) || []
+      api_limits = get_multiple_rate_limit_redis_keys(account_api_limit_key, default_api_limit_key) || []
       (api_limits[0] || api_limits[1] || API_LIMIT).to_i
     end
    end
@@ -31,7 +31,7 @@ class Middleware::ChannelApiThrottler < Middleware::FdApiThrottler
     DEFAULT_CHANNEL_API_LIMIT
   end
 
-  def throttled_in_fluffy?
+  def is_fluffy_enabled?
     @request.env['HTTP_X_FW_RATELIMITING_MANAGED'] == "true"
   end
 end

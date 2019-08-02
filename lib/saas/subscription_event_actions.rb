@@ -60,6 +60,7 @@ class SAAS::SubscriptionEventActions
       handle_collab_feature
       disable_chat_routing unless account.has_feature?(:chat_routing)
       handle_daypass if recalculate_daypass_enabled?
+      change_api_limit if account.fluffy_enabled?
     end
 
     if add_ons_changed?
@@ -263,5 +264,9 @@ class SAAS::SubscriptionEventActions
 
     def recalculate_daypass_enabled?
       Account.current.recalculate_daypass_enabled?
+    end
+
+    def change_api_limit
+      account.update_fluffy_account
     end
 end

@@ -83,6 +83,9 @@
 	<% end %>
 </div>
 <% content_for :helpcard do %>
+	<% if @account.csat_translations_enabled? %>
+		<%= render 'languages', {language_translations: language_translations} %>
+	<% else %>
 	<div class="helpcard">
 		<% if !@account.default_survey_enabled? %> 
 			<%= t('admin.surveys.custom_helptext_v2').html_safe %>
@@ -90,7 +93,9 @@
 			<p>	<%= t('admin.surveys.helptext_v2').html_safe %> </p>
 		<% end %>
 	</div>
-<%end%>	
+	<% end %>
+<% end %>
+
 <% content_for :dialogs do %>
 	<div id="SurveyConfirmContainer"></div>
 <%end%>
@@ -99,7 +104,7 @@
  jQuery(document).ready(function(){
  	SurveyAdmin.fullSurvey = <%= !@account.default_survey_enabled? %>;
  	SurveyAdmin.hasLayoutCustomization = <%= @account.layout_customization_enabled? %>;
- 	SurveyAdmin.surveyChoiceGoodToBad = <%= @layout_params[:order] %>;
+	SurveyAdmin.surveyChoiceGoodToBad = <%= @layout_params[:order] %>;
  });
 
 </script>

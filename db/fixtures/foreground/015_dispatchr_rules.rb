@@ -3,7 +3,7 @@ account = Account.current
 VaRule.seed(:account_id, :name, :rule_type) do |s|
   s.account_id = account.id
   s.rule_type = VAConfig::BUSINESS_RULE
-  s.name = "Send refunds and returns to Billing - Sample Dispatch'r rule"
+  s.name = 'Send refunds and returns to Billing - Sample Dispatcher rule'
   s.match_type = "any"
   s.filter_data = [
       {:evaluate_on => "ticket", :name => "subject_or_description", :operator => "contains", :value => "return" },

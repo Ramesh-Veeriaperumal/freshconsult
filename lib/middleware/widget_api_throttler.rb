@@ -14,7 +14,7 @@ class Middleware::WidgetApiThrottler < Middleware::FdApiThrottler
 
   def api_limit
     @api_limit ||= begin
-      api_limits = get_multiple_redis_keys(account_api_limit_key, default_api_limit_key) || []
+      api_limits = get_multiple_rate_limit_redis_keys(account_api_limit_key, default_api_limit_key) || []
       (api_limits[0] || api_limits[1] || API_LIMIT).to_i
     end
   end

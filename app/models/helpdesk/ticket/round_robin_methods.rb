@@ -155,13 +155,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.activity_type = activity_type
   end
 
-  def count_mismatch?(ticket_count, db_count, operation)
-    (ticket_count < 0) ||
-      (ticket_count.zero? && (operation == 'decr')) ||
-      ((db_count + 1 != ticket_count) && (operation == 'decr')) ||
-      ((db_count - 1 != ticket_count) && (operation == 'incr'))
-  end
-
   def change_agents_ticket_count group, user_id, operation
     if user_id.nil? or group.nil?
       group.lrem_from_rr_capping_queue(self.display_id) if group.present? && operation=="decr"
@@ -179,10 +172,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
       ticket_count_in_redis = get_round_robin_redis(group.round_robin_agent_capping_key(user_id)).to_i
       status_ids = Helpdesk::TicketStatus.sla_timer_on_status_ids(account)
       db_count = group.tickets.visible.where('responder_id = ? and status in (?)', user_id, status_ids).count
-      if account.retrigger_lbrr_enabled? &&
+      if account.retrigger_lbrr_enabled? && exists_round_robin_redis(group.round_robin_capping_permit_key) &&
          (count_mismatch?(ticket_count, db_count, operation) ||
           count_mismatch?(ticket_count_in_redis, db_count, operation))
         Rails.logger.debug "RR count mismatch: #{ticket_count} #{db_count} #{operation}"
+        group.rpush_to_rr_capping_queue(display_id)
         Groups::RoundRobinCapping.perform_async(group_id: group.id, reset_capping: true)
         return
       end

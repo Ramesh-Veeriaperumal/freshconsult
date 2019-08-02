@@ -226,9 +226,15 @@ class Va::Action
     return if act_on.spam?
     if act_on.requester_has_email? && !(act_on.ecommerce? || act_on.requester.ebay_user?)
       act_on.account.make_current
-      Helpdesk::TicketNotifier.send_later(:email_to_requester, act_on, 
-      substitute_placeholders_for_requester(act_on, :email_body),
-                    substitute_placeholders_for_requester(act_on, :email_subject))
+      if self.va_rule.automation_rule?
+        Helpdesk::TicketNotifier.send_later(:email_to_requester, act_on, 
+        substitute_placeholders_for_requester(act_on, :email_body),
+                      substitute_placeholders_for_requester(act_on, :email_subject))
+      else
+      Helpdesk::TicketNotifier.email_to_requester(act_on, 
+        substitute_placeholders_for_requester(act_on, :email_body),
+                      substitute_placeholders_for_requester(act_on, :email_subject)) 
+      end
       record_action(act_on)
     end
   end
@@ -342,9 +348,15 @@ class Va::Action
 
     def send_internal_email act_on, receipients
       act_on.account.make_current
-      Helpdesk::TicketNotifier.send_later(:internal_email, act_on,
+      if self.va_rule.automation_rule?
+        Helpdesk::TicketNotifier.send_later(:internal_email, act_on, 
         receipients, substitute_placeholders(act_on, :email_body),
-        substitute_placeholders(act_on, :email_subject))
+          substitute_placeholders(act_on, :email_subject))
+       else
+         Helpdesk::TicketNotifier.internal_email(act_on, 
+         receipients, substitute_placeholders(act_on, :email_body),
+           substitute_placeholders(act_on, :email_subject)) 
+       end
      end
 
     def substitute_placeholders_for_requester act_on, content_key

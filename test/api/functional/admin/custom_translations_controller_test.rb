@@ -24,18 +24,36 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     end
   end
 
+  def assert_survey(survey, response_hash)
+    assert_equal response_hash['title_text'], survey.title_text
+    assert_equal response_hash['comments_text'], survey.comments_text
+    assert_equal response_hash['thanks_text'], survey.thanks_text
+    assert_equal response_hash['feedback_response_text'], survey.feedback_response_text
+    # Default question and choices
+    default_question = survey.default_question
+    assert_equal response_hash['default_question']['question'], default_question.label
+    default_question.choices.each do |choice|
+      assert_equal response_hash['default_question']['choices'][choice[:face_value]], choice[:value]
+    end
+    # Additional questions and choices
+    additional_questions = survey.survey_questions.reject(&:default)
+    additional_questions.each do |question|
+      assert_equal response_hash['additional_questions']["question_#{question.id}"], question.label
+    end
+    additional_questions.first.choices.each do |choice|
+      assert_equal response_hash['additional_questions']['choices'][choice[:face_value]], choice[:value]
+    end
+  end
+
   def test_primary_download_for_surveys_with_id
     stub_for_custom_translations
     create_survey(1, true)
     survey = Account.current.custom_surveys.last
     create_survey_questions(survey)
-    language = Account.current.language.to_sym
+    language = Account.current.language
     get :download, controller_params('object_type' => 'surveys', 'object_id' => survey.id)
-    response_hash = YAML.safe_load(response.body)[language][:custom_translations][:surveys]["survey_#{survey.id}".to_sym]
-    assert_equal response_hash[:title_text], survey.title_text
-    assert_equal response_hash[:comments_text], survey.comments_text
-    assert_equal response_hash[:thanks_text], survey.thanks_text
-    assert_equal response_hash[:feedback_response_text], survey.feedback_response_text
+    response_hash = YAML.safe_load(response.body)[language]['custom_translations']['surveys']["survey_#{survey.id}"]
+    assert_survey(survey, response_hash)
     survey.destroy
     unstub_for_custom_translations
   end

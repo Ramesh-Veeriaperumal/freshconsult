@@ -12,6 +12,13 @@ class CustomTranslation < ActiveRecord::Base
   clear_memcache [TICKET_FIELDS_FULL]
   after_commit :clear_fragment_caches
 
+  SURVEY_STATUS = {
+    untranslated: 0,
+    translated: 1,
+    outdated: 2,
+    incomplete: 3
+  }.freeze
+
   VERSION_MEMBER_KEYS = {
     'Helpdesk::TicketField' => "#{Helpdesk::TicketField::VERSION_MEMBER_KEY}:TRANSLATION:%{language_code}"
   }.freeze

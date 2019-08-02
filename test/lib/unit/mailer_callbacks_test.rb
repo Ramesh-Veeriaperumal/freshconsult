@@ -126,4 +126,33 @@ class MailerCallbacksTest < ActiveSupport::TestCase
     Account.current.unstub(:language)
     I18n.locale = 'en'
   end
+
+  def test_send_email_to_group
+    Account.current.stubs(:language).returns('de')
+    recipient1 = add_agent(@account)
+    recipient2 = 'test@email.random'
+    to_emails = [recipient1.email, recipient2]
+    mail_message = ScheduledTaskMailer.send_email_to_group(:report_no_data_email_message, to_emails)
+    assert_equal mail_message['de'].first, recipient2
+    assert_equal mail_message['en'].first, recipient1.email
+  ensure
+    Account.current.unstub(:language)
+    recipient1.destroy
+  end
+
+  def test_send_email_to_group_with_empty_emails
+    Account.current.stubs(:language).returns('de')
+    to_emails = []
+    mail_message = ScheduledTaskMailer.send_email_to_group(:report_no_data_email_message, to_emails)
+    assert_equal mail_message['de'].first, nil
+  ensure
+    Account.current.unstub(:language)
+  end
+
+  def test_send_email_with_input
+    I18n.locale = 'de'
+    mail_message = UserNotifier.send_email(:notify_dkim_activation, @account.admin_email, @account, 'email_domain' => 'testdomain.com')
+    assert_equal mail_message.to.first, @account.admin_email
+    assert_equal :de, I18n.locale
+  end
 end

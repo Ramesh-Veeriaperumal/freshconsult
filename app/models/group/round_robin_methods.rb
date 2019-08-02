@@ -51,13 +51,22 @@ class Group < ActiveRecord::Base
     if exists_round_robin_redis(round_robin_capping_permit_key)
       MAX_CAPPING_RETRY.times do
         user_id, old_score = pick_next_agent(ticket_id)
-        if user_id.present?  
+        if user_id.present?
+          ticket_count_in_redis = get_round_robin_redis(round_robin_agent_capping_key(user_id)).to_i
+          status_ids = Helpdesk::TicketStatus.sla_timer_on_status_ids(account)
+          db_count = tickets.visible.where('responder_id = ? and status in (?)', user_id, status_ids).count
+          if account.retrigger_lbrr_enabled? && exists_round_robin_redis(round_robin_capping_permit_key) &&
+             (count_mismatch?(old_score, db_count + 1, 'incr') ||
+              count_mismatch?(ticket_count_in_redis, db_count + 1, 'incr'))
+            Rails.logger.debug "RR count mismatch: #{old_score} #{db_count} next_agent_with_capping"
+            rpush_to_rr_capping_queue(ticket_id)
+            Groups::RoundRobinCapping.perform_async(group_id: id, reset_capping: true)
+            return
+          end
           new_score = generate_new_score(old_score + 1)
           result    = update_agent_capping_with_lock(user_id, new_score)
 
           if result.is_a?(Array) && result[1].present?
-            status_ids   = Helpdesk::TicketStatus::sla_timer_on_status_ids(account)
-            db_count = tickets.visible.where("responder_id = ? and status in (?)", user_id, status_ids).count
             Rails.logger.debug "RR SUCCESS RR assignment for ticket : #{ticket_id} - 
             #{user_id}, #{self.id}, #{status_ids.inspect}, #{new_score}, #{db_count}, #{result.inspect}".squish
             return account.agents.find_by_user_id(user_id)
@@ -202,15 +211,16 @@ class Group < ActiveRecord::Base
     @model_changes[:ticket_assign_type] && @model_changes[:ticket_assign_type].last == TICKET_ASSIGN_TYPE[:round_robin]
   end
 
-  def shutdown_capping user_ids
+  def shutdown_capping(user_ids, reset_capping = false)
     user_ids.each do |id|
       key = round_robin_agent_capping_key(id)
       del_round_robin_redis(key)
     end
-    [round_robin_capping_key, round_robin_tickets_key, round_robin_capping_permit_key, 
+    [round_robin_capping_key, round_robin_capping_permit_key,
      rr_temp_tickets_queue_key, rr_tickets_default_zset_key].each do |key|
       del_round_robin_redis(key)
     end
+    del_round_robin_redis(round_robin_tickets_key) unless reset_capping
   end
 
   def round_robin_capping_changed?

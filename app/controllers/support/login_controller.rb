@@ -164,4 +164,3 @@ class Support::LoginController < SupportController
       current_account.sso_enabled? && !current_account.freshid_sso_enabled? && check_request_referrer
     end
 end
-
