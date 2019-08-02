@@ -135,7 +135,7 @@ module Redis::OthersRedis
     newrelic_begin_rescue { $redis_others.perform_redis_op("zremrangebyrank", key, start, stop) }  	
   end
 
-  def get_multiple_redis_keys(*keys)
+  def get_multiple_others_redis_keys(*keys)
     newrelic_begin_rescue { $redis_others.perform_redis_op("mget", *keys) }
   end
 

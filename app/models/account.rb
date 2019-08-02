@@ -7,6 +7,7 @@ class Account < ActiveRecord::Base
   include Cache::Memcache::Account
   include Cache::Memcache::Admin::CustomData
   include Redis::RedisKeys
+  include Redis::RateLimitRedis
   include Redis::TicketsRedis
   include Redis::OthersRedis
   include Redis::DisplayIdRedis
@@ -16,6 +17,7 @@ class Account < ActiveRecord::Base
   include Onboarding::OnboardingRedisMethods
   include FreshdeskFeatures::Feature
   include Helpdesk::SharedOwnershipMigrationMethods
+  include Account::ChannelUtils
   include ParserUtil
   include InlineImagesUtil
 
@@ -27,7 +29,7 @@ class Account < ActiveRecord::Base
   
   is_a_launch_target
   
-  concerned_with :associations, :constants, :validations, :callbacks, :features, :solution_associations, :multilingual, :sso_methods, :presenter, :subscription_methods, :freshid_methods
+  concerned_with :associations, :constants, :validations, :callbacks, :features, :solution_associations, :multilingual, :sso_methods, :presenter, :subscription_methods, :freshid_methods, :fluffy_methods
 
   include CustomerDeprecationMethods
   

@@ -5,4 +5,23 @@ module Admin::CustomSurveysHelper
     support_customer_custom_survey_url(survey_handle.id_token, CustomSurvey::Survey::CUSTOMER_RATINGS[rating],
                                        protocol: Account.current.url_protocol, host: host)
   end
+
+  def languages_status(languages)
+    language_items = []
+    languages.each do |language|
+      status_key = @survey && @survey_statuses[language.id] ? @survey_statuses[language.id] : CustomTranslation::SURVEY_STATUS[:untranslated]
+      language_items.push(language.as_json.merge!('status' => status_key))
+    end
+    language_items
+  end
+
+  def portal_languages_status
+    languages = Account.current.portal_languages_objects
+    languages_status languages
+  end
+
+  def hidden_languages_status
+    languages = Account.current.supported_languages_objects - Account.current.portal_languages_objects
+    languages_status languages
+  end
 end

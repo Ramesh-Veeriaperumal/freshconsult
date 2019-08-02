@@ -1,11 +1,17 @@
 class Admin::CustomSurveysController < Admin::AdminController
 
+  helper AccountsHelper
+  include Admin::CustomSurveysHelper
+
   before_filter { |c| current_account.new_survey_enabled? }
   before_filter :redirect_to_default_survey,          :if   => :default_survey_feature_enabled?
   before_filter :escape_html_entities_in_json
   before_filter :check_survey_limit,                  :only => [:new,    :create]
   before_filter :validate_question_limit,       :only => [:create, :update]
   before_filter :load_survey,                         :only => [:edit,   :update, :destroy, :activate, :deactivate, :test_survey]
+  before_filter :load_survey_statuses, only: [:edit], if: :multilingual_csat_enabled?
+  before_filter :survey_translation_data, only: [:new, :edit], if: :multilingual_csat_enabled?
+  before_filter :set_selected_tab, only: [:new, :edit], if: :multilingual_csat_enabled?
   inherits_custom_fields_controller
 
   def index
@@ -113,6 +119,21 @@ class Admin::CustomSurveysController < Admin::AdminController
       @survey_data ||= JSON.parse(params[:survey]).symbolize_keys
     end
 
+    def survey_translation_data
+      @language_translations = {
+        portal_languages: portal_languages_status,
+        hidden_languages: hidden_languages_status
+      }
+    end
+
+    def set_selected_tab
+      @selected_tab = 'survey'
+    end
+
+    def load_survey_statuses
+      @survey_statuses = @survey.custom_translations.select([:status, :language_id]).map { |a| [a.language_id, a.status] }.to_h
+    end
+
     def survey_questions_data
       @survey_questions_data ||= JSON.parse(params[:jsonData])
     end
@@ -124,6 +145,10 @@ class Admin::CustomSurveysController < Admin::AdminController
 
     def default_survey_feature_enabled?
       current_account.default_survey_enabled?
+    end
+
+    def multilingual_csat_enabled?
+      current_account.csat_translations_enabled?
     end
 
     def load_survey

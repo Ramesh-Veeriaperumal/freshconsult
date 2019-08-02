@@ -106,7 +106,7 @@ class UserNotifier < ActionMailer::Base
     Time.zone = account.time_zone
     @admin_name = "#{account.admin_first_name} #{account.admin_last_name}"
     headers = {
-      :subject         => "DKIM signatures activation email",
+      :subject         => I18n.t('mailer_notifier_subject.notify_dkim_activation'),
       :to              => account.admin_email,
       :from            => AppConfig['from_email'],
       :sent_on         => Time.now,
@@ -125,7 +125,7 @@ class UserNotifier < ActionMailer::Base
     Time.zone = account.time_zone
     @admin_name = "#{account.admin_first_name} #{account.admin_last_name}"
     headers = {
-      :subject         => "DKIM signatures activation email",
+      :subject         => I18n.t('mailer_notifier_subject.notify_dkim_activation'),
       :to              => account.admin_email,
       :from            => AppConfig['from_email'],
       :sent_on         => Time.now,

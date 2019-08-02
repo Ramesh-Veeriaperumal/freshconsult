@@ -1,8 +1,9 @@
-Hi,
+<%= t("mailer_notifier.hi") %>
 
 
-Seems like there is no data to display for scheduled report that you created for <%=@task.schedulable.filter_name%>
+<%= t("mailer_notifier.scheduled_task_notifications.no_data") %><%=@options[:task].schedulable.filter_name%>
 
 
-Regards,
-<%= @portal_name %> Support
+<%= t("mailer_notifier.regards") %>
+<%= t("mailer_notifier.portal_support", portal_name: @options[:portal_name]) %>
+<%= render partial: "helpdesk/shared/other_recipients_note.plain.erb" %>

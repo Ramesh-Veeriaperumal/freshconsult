@@ -3006,6 +3006,7 @@ Helpkit::Application.routes.draw do
           post :migrate_to_freshconnect
           put :change_api_limit
           put :change_v2_api_limit
+          put :change_fluffy_limit
           put :change_webhook_limit
           put :add_feature
           put :change_url
@@ -3035,6 +3036,8 @@ Helpkit::Application.routes.draw do
           get :clone_account
           post :clone_account
           post :enable_freshid
+          put :enable_fluffy
+          put :change_fluffy_plan
           post :extend_higher_plan_trial
           post :change_trial_plan
         end

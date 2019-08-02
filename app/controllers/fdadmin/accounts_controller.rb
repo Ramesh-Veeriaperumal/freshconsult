@@ -9,8 +9,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   before_filter :check_domain_exists, :only => :change_url , :if => :non_global_pods?
   around_filter :select_slave_shard , :only => [:api_jwt_auth_feature,:sha1_enabled_feature,:select_all_feature,:show, :features, :agents, :tickets, :portal, :user_info,:check_contact_import,:latest_solution_articles]
-  around_filter :select_master_shard , :only => [:extend_higher_plan_trial, :change_trial_plan, :collab_feature,:add_day_passes,:migrate_to_freshconnect, :add_feature, :change_url, :single_sign_on, :remove_feature,:change_account_name, :change_api_limit, :reset_login_count,:contact_import_destroy, :change_currency, :extend_trial, :reactivate_account, :suspend_account, :change_webhook_limit, :change_primary_language, :trigger_action, :clone_account]
-  before_filter :validate_params, :only => [ :change_api_limit, :change_webhook_limit ]
+  around_filter :select_master_shard , :only => [:extend_higher_plan_trial, :change_trial_plan, :collab_feature,:add_day_passes,:migrate_to_freshconnect, :add_feature, :change_url, :single_sign_on, :remove_feature,:change_account_name, :change_api_limit, :reset_login_count,:contact_import_destroy, :change_currency, :extend_trial, :reactivate_account, :suspend_account, :change_webhook_limit, :change_primary_language, :trigger_action, :clone_account, :enable_fluffy, :change_fluffy_limit]
+  before_filter :validate_params, :only => [:change_api_limit, :change_webhook_limit, :change_fluffy_limit]
   before_filter :load_account, :only => [:user_info, :reset_login_count,
     :migrate_to_freshconnect, :extend_higher_plan_trial, :change_trial_plan]
   before_filter :load_user_record, :only => [:user_info, :reset_login_count]
@@ -47,6 +47,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:falcon_enabled] = account.has_feature?(:falcon)
     account_summary[:account_cancellation_requested] = account.account_cancellation_requested?
     account_summary[:clone_status] = account.account_additional_settings.clone_status
+    account_summary[:fluffy_info] = fetch_fluffy_details(account)
     account_summary[:trial_subscription] = trial_subscription_hash(account.trial_subscriptions.last)
     respond_to do |format|
       format.json do
@@ -212,6 +213,24 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     render :json => {:status => "success"}
   end
 
+  def change_fluffy_limit
+    begin
+      result = {}
+      account = Account.find_by_id(params[:account_id]).make_current
+      account.update_fluffy_account(params[:new_limit].to_i)
+      result[:status] = "success"
+    rescue => e
+      result[:status] = "error"
+    ensure
+      Account.reset_current_account
+    end
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end
+  end
+
   def change_webhook_limit
     result = {}
     account = Account.find_by_id(params[:account_id])
@@ -286,6 +305,29 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
         render :json => result
       end
     end 
+  end
+
+  def enable_fluffy
+    begin
+      account = Account.find_by_id(params[:account_id]).make_current
+      result = {:account_id => account.id, :account_name => account.name}
+      if account.launched?(:fluffy)
+        result[:status] = "notice"
+      else
+        account.enable_fluffy
+        result[:status] = "success"
+      end
+    rescue => e
+      result[:status] = "error"
+    ensure
+      Account.reset_current_account
+    end
+
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end
   end
 
   def extend_trial

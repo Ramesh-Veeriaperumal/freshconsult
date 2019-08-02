@@ -126,7 +126,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     end
 
     def api_limit
-      api_limits = get_multiple_redis_keys(account_api_limit_key, plan_api_limit_key, default_api_limit_key) || []
+      api_limits = get_multiple_rate_limit_redis_keys(account_api_limit_key, plan_api_limit_key, default_api_limit_key) || []
       (api_limits[0] || api_limits[1] || api_limits[2] || API_LIMIT).to_i
     end
 

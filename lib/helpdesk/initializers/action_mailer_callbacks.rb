@@ -13,12 +13,41 @@ module ActionMailerCallbacks
   include EmailHelper
   include Email::EmailService::IpPoolHelper
 
-    def send_email(notification_type, user, *args)
-      I18n.with_locale(user_locale(user)) { 
-        send(notification_type, *args) 
-      }
+    def send_email(notification_type, recipient, *args)
+      language = mailer_language(recipient)
+      send_email_with_lang(notification_type, language, *args)
+    end
+
+    def send_email_with_lang(notification_type, language, *args)
+      I18n.with_locale(language) { send(notification_type, *args) }
     rescue => e
       Rails.logger.error "Error while sending mail: #{notification_type}\n#{e.message}\n#{e.backtrace.to_a.join("\n")}"
+    end
+
+    def send_email_to_group(notification_type, all_emails, *args)
+      emails_by_locale(all_emails).each do |language, group_emails|
+        next if group_emails.empty?
+        email_hash = { group: group_emails, other: all_emails - group_emails }
+        send_email_with_lang(notification_type, language, email_hash, *args)
+      end
+    end
+
+    def emails_by_locale(emails)
+      email_groups_by_locale = Hash.new { |h, k| h[k] = [] }
+      users = Account.current.users.where(email: emails)
+      user_emails = users.map(&:email)
+      users.each { |user| email_groups_by_locale[user_locale(user)].push(user.email) }
+      default_locale = user_locale(nil)
+      email_groups_by_locale[default_locale].push(*(emails - user_emails)) # send email in account's language
+      email_groups_by_locale
+    end
+
+    def mailer_language(param)
+      if param.is_a?(User) || param.nil?
+        return user_locale(param)
+      end
+      user = Account.current.users.find_by_email(param) if valid_email?(param)
+      user_locale(user)
     end
 
     def user_locale(user)
@@ -48,7 +77,7 @@ module ActionMailerCallbacks
         from_email = parse_email(from_email)[:email]
       else
         from_email = ""
-      end 
+      end
       category_id = nil
       email_config = Thread.current[:email_config]
       ip_pool = nil

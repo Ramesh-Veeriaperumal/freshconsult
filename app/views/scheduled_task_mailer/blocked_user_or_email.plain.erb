@@ -1,18 +1,18 @@
-Hi <%= @user.name %>,
+<%= t("mailer_notifier.hi_user", user_name: @user.name) %>
 
-The scheduled report that you created for <%=@task.schedulable.filter_name%> was not sent to the following email address(es):
+<%= t("mailer_notifier.scheduled_task_notifications.blocked_users.report_not_sent", scheduled_task_name: @task.schedulable.filter_name) %>
 
   <%@options[:blocked_emails].each do |email|%>
     <%= email %>
   <%end%>
 
-This could be because of one of the following reasons:
-	1.The contact associated with the email was deleted
-  	2.The email address was deleted
+<%= t("mailer_notifier.scheduled_task_notifications.blocked_users.reason_title") %>
+	1.<%= t("mailer_notifier.scheduled_task_notifications.blocked_users.first_reason") %>
+  	2.<%= t("mailer_notifier.scheduled_task_notifications.blocked_users.second_reason") %>
 
-You can update the email address(es) by clicking on the below link:
+<%= t("mailer_notifier.scheduled_task_notifications.blocked_users.update_email") %>
 <%= "#{@user.account.full_url}/reports/#{HelpdeskReports::Constants::Common::REPORT_ENUM_TO_TYPE[@task.schedulable.report_type]}"%>
 
 
-Regards,
-Freshdesk Support Team
+<%= t("mailer_notifier.regards") %>
+<%= t("mailer_notifier.freshdesk_support_team") %>
