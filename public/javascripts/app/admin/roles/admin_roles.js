@@ -188,11 +188,11 @@ var Select2Handler = Select2Handler || (function(){
 	// PRIVATE
 
 	function _bindEvents(){
-		jQuery(document).on('change', '[data-action="add-agent"]', function(){
+		jQuery(document).on('change', '.addAgentHiddenInput', function(){
 			var _id = jQuery(this).val();
 			if(_id){
-				jQuery('#manage-agents select.agent-select-list').val('');
-				_addAgent(_id[0]);
+				jQuery('#manage-agents input.addAgentHiddenInput').select2('val', '');
+				_addAgent(_id);
 			}
 			_enableButton();
 		var HEIGHT_OF_EACH_ROW = 52;
@@ -211,8 +211,6 @@ var Select2Handler = Select2Handler || (function(){
 	function _addAgent(id){
 		var profileImage = ProfileImage.imageById(parseInt(id)).profile_img;
 			name = DataStore.get('agent').findById(parseInt(id, 10)).name;
-		jQuery('#manage-agents div.agent-select-list .select2-search-choice').remove();
-		jQuery("#manage-agents .agent-select-list option[value='"+id+"']").remove();
 		var defaultAdded = _isModifiedNow(id, 'removed');
 		_constructTemplate({profileImage: profileImage, name: name, id: id});
 		if(!defaultAdded){
