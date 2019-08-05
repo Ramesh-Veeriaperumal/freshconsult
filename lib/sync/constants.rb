@@ -12,7 +12,6 @@ module Sync::Constants
     # ["account_configuration", []],
     ["agent_password_policy",        []],
     ["contact_password_policy",      []],
-    ["features",                     []],
     ["all_va_rules",                 []],
     ["all_supervisor_rules",         []],
     ["all_observer_rules",           []],

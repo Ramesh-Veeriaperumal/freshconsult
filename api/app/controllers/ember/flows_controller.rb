@@ -5,7 +5,7 @@ module Ember
 
     def execute
       append_url = request.url.split('botflow/').last
-      url = "#{FLOWSERV_HOST}/api/v1/#{append_url}"
+      url = "#{FreddySkillsConfig[:flowserv][:host]}#{append_url}"
       result_string = request.url.split('/').last
       if ['productActions', 'productIntegrations'].include?(result_string)
         result_hash = { result_string => [] }
@@ -20,7 +20,7 @@ module Ember
     private
 
       def feature_name
-        FeatureConstants::AUTOFAQ
+        FeatureConstants::BOTFLOW
       end
   end
 end

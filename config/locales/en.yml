@@ -12890,6 +12890,8 @@ en:
     agent_export: Agents List Export
     audit_log_export: Audit Log Export
     notify_dkim_activation: "DKIM signatures activation email"
+    notify_new_watcher: 'Added as Watcher %{display_id} %{subject}'
+    notify_on_reply: 'New Activity %{display_id} %{subject}'
   sandbox:
     live: Sandbox is live
     sync_complete: Sandbox sync complete!

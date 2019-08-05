@@ -113,7 +113,7 @@ module Tickets
           Helpdesk::WatcherNotifier.send_later(:deliver_notify_new_watcher,
                                                ticket,
                                                subscription,
-                                               api_current_user.name)
+                                               api_current_user.name, locale_object: subscription.user)
         end
         true
       end

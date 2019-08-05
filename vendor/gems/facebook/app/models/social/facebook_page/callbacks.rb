@@ -14,6 +14,7 @@ class Social::FacebookPage < ActiveRecord::Base
   include Admin::Social::FacebookGatewayHelper
 
   before_destroy :unregister_stream_subscription
+  before_save :create_model_changes, on: :update
 
   after_commit :subscribe_realtime, :send_mixpanel_event, on: :create
   after_commit :build_default_streams,  on: :create,  :if => :facebook_revamp_enabled?
@@ -126,6 +127,11 @@ class Social::FacebookPage < ActiveRecord::Base
 
   def save_deleted_page_info
     @deleted_model_info = as_api_response(:central_publish)
+  end
+
+  def create_model_changes
+    @model_changes = self.changes.to_hash
+    @model_changes.symbolize_keys!
   end
 
 end

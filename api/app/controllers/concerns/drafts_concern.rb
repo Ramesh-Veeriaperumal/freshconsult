@@ -3,6 +3,7 @@ module DraftsConcern
 
   def pseudo_delete_article_attachment
     deleted = { @assoc.pluralize.to_sym => [@attachment.id] }
+    @draft.lock_for_editing
     @draft.meta[:deleted_attachments] ||= {}
     @draft.meta[:deleted_attachments].merge!(deleted) { |key, oldval, newval| oldval | newval }
     @draft.save

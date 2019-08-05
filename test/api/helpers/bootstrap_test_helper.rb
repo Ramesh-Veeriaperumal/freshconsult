@@ -71,6 +71,7 @@ module BootstrapTestHelper
 
   def freshchat_hash
     {
+      widget_host: Freshchat::Account::CONFIG[:visitorWidgetHostUrl],
       preferences: Account.current.freshchat_account.try(:preferences),
       enabled: Account.current.freshchat_account.try(:enabled),
       app_id: Account.current.freshchat_account.try(:app_id)

@@ -1,0 +1,1 @@
+JSON.generate(timestamp: @draft.updation_timestamp)

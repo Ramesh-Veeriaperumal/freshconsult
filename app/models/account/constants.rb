@@ -291,7 +291,7 @@ class Account < ActiveRecord::Base
       bot_email_channel: false, bot_email_central_publish: false, company_central_publish: false,
       sso_login_expiry_limitation: false, csat_email_scan_compatibility: false,
       email_deprecated_style_parsing: false, saml_ecrypted_assertion: false,
-      quoted_text_parsing_feature: false, description_by_default: false,
+      quoted_text_parsing_feature: false, description_by_default: false, field_agent_availability: false,
       ticket_fields_central_publish: false, skip_invoice_due_warning: false,
       facebook_page_scope_migration: false, agent_group_central_publish: false, custom_fields_search: true,
       update_billing_info: false, allow_billing_info_update: false, tag_central_publish: false,

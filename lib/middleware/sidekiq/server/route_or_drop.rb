@@ -50,7 +50,7 @@ module Middleware
             account_route_or_drop = nil
             all_route_or_drop     = nil
             begin
-              account_route_or_drop, all_route_or_drop = get_multiple_redis_keys(account_worker_key(account_id, worker_name),
+              account_route_or_drop, all_route_or_drop = get_multiple_others_redis_keys(account_worker_key(account_id, worker_name),
                                                                                  account_worker_key('all', worker_name)) || []
             rescue StandardError => exception
               Rails.logger.error "Error while fetching drop or reroute: #{worker_name}, account_id: #{account_id}, payload: #{payload}"

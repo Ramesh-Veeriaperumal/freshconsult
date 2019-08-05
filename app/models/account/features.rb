@@ -1,7 +1,7 @@
 class Account < ActiveRecord::Base
 
   LP_FEATURES = [
-    :select_all, :round_robin_capping, :suggest_tickets,
+    :select_all, :round_robin_capping, :suggest_tickets, :field_agent_availability,
     :customer_sentiment_ui, :dkim, :scheduled_ticket_export,
     :ticket_contact_export, :email_failures, :disable_emails,
     :falcon_portal_theme, :freshid, :freshchat_integration, :allow_huge_ccs,
@@ -75,7 +75,7 @@ class Account < ActiveRecord::Base
     :freshreports_analytics, :disable_old_reports, :article_filters, :adv_article_bulk_actions,
     :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible, :autofaq, :proactive_spam_detection,
     :ticket_properties_suggester, :ticket_properties_suggester_eligible,
-    :hide_first_response_due, :agent_articles_suggest, :email_articles_suggest, :customer_journey
+    :hide_first_response_due, :agent_articles_suggest, :email_articles_suggest, :customer_journey, :botflow
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 

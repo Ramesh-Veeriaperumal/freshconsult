@@ -7,7 +7,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
   include ProductsHelper
 
   ALL_FM_METHODS = [:create_experiment, :enable_predictive_support, :disable_predictive_support, :enable_integration,
-                    :disable_integration, :cdn_script, :create_account, :associate_account, :domains]
+                    :disable_integration, :cdn_script, :create_account, :associate_account, :domains].freeze
 
   def setup
     super
@@ -30,6 +30,17 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     unstub_connection
   end
 
+  def set_widget_count
+    additional_settings = Account.current.account_additional_settings
+    additional_settings.additional_settings[:widget_count] = 7
+    additional_settings.save
+  end
+
+  def reset_widget_count
+    additional_settings = Account.current.account_additional_settings
+    additional_settings.additional_settings.delete(:widget_count)
+  end
+
   def test_index
     create_widget
     get :index, controller_params(version: 'v2')
@@ -39,6 +50,62 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     end
     assert_response 200
     match_json(pattern)
+  end
+
+  def test_index_with_count
+    set_widget_count
+    create_widget
+    get :index, controller_params(version: 'v2')
+    pattern = []
+    Account.current.help_widgets.active.all.each do |help_widget|
+      pattern << widget_list_pattern(help_widget)
+    end
+    assert_response 200
+    assert_equal response.api_meta[:limit], 7
+    match_json(pattern)
+    reset_widget_count
+  end
+
+  def test_index_with_count_without_widget
+    set_widget_count
+    Account.current.help_widgets.destroy_all
+    get :index, controller_params(version: 'v2')
+    pattern = []
+    Account.current.help_widgets.active.all.each do |help_widget|
+      pattern << widget_list_pattern(help_widget)
+    end
+    assert_response 200
+    assert_equal response.api_meta[:limit], 7
+    match_json(pattern)
+    reset_widget_count
+  end
+
+  def test_index_sprout
+    Subscription.any_instance.stubs(:sprout?).returns(true)
+    create_widget
+    get :index, controller_params(version: 'v2')
+    pattern = []
+    Account.current.help_widgets.active.all.each do |help_widget|
+      pattern << widget_list_pattern(help_widget)
+    end
+    assert_response 200
+    assert_equal response.api_meta[:limit], 1
+    match_json(pattern)
+    Subscription.any_instance.unstub(:sprout?)
+  end
+
+  def test_index_non_sprout
+    Subscription.any_instance.stubs(:sprout?).returns(false)
+    create_widget
+    get :index, controller_params(version: 'v2')
+    pattern = []
+    Account.current.help_widgets.active.all.each do |help_widget|
+      pattern << widget_list_pattern(help_widget)
+    end
+    assert_response 200
+    assert_equal response.api_meta[:limit], 5
+    match_json(pattern)
+    Subscription.any_instance.unstub(:sprout?)
   end
 
   def test_index_with_invalid_field
@@ -79,7 +146,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     help_widget = create_widget
     @account.rollback(:help_widget)
     get :show, controller_params(version: 'v2', id: help_widget.id)
-    assert_response 404
+    assert_response 403
     @account.launch(:help_widget)
   end
 
@@ -1183,6 +1250,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
   end
 
   def test_widget_create_with_portal
+    Account.current.help_widgets.destroy_all
     constant_widget_settings_hash = HelpWidget::DEFAULT_SETTINGS.dup
     product1 = create_product(portal_url: 'sample.freshpo.com')
     portal = Account.current.portals.find_by_product_id(product1.id)
@@ -1205,6 +1273,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
   end
 
   def test_widget_create_without_portal
+    Account.current.help_widgets.destroy_all
     constant_widget_hash = HelpWidget::DEFAULT_SETTINGS.dup
     product2 = create_product
     request_params = {
@@ -1226,6 +1295,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
   end
 
   def test_create_with_product_associated
+    Account.current.help_widgets.destroy_all
     product = create_product(portal_url: Faker::Avatar.image)
     request_params = {
       product_id: product.id,
@@ -1242,6 +1312,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
   end
 
   def test_create_with_name
+    Account.current.help_widgets.destroy_all
     request_params = {
       product_id: nil,
       name: 'Best_Widget',
@@ -1257,7 +1328,44 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     match_json(widget_show_pattern(Account.current.help_widgets.find_by_id(id)))
   end
 
+  def test_create_with_widget_count
+    Account.current.help_widgets.destroy_all
+    request_params = {
+      product_id: nil,
+      name: 'Widget Count',
+      settings: {
+        components: {
+          contact_form: true
+        }
+      }
+    }
+    post :create, construct_params(version: 'v2', help_widget: request_params)
+    assert_response 201
+    id = JSON.parse(@response.body)['id']
+    match_json(widget_show_pattern(Account.current.help_widgets.find_by_id(id)))
+  end
+
+  def test_create_without_count_availability
+    Subscription.any_instance.stubs(:sprout?).returns(true)
+    Account.current.help_widgets.destroy_all
+    create_widget
+    request_params = {
+      product_id: nil,
+      name: 'Widget Count',
+      settings: {
+        components: {
+          contact_form: true
+        }
+      }
+    }
+    post :create, construct_params(version: 'v2', help_widget: request_params)
+    assert_response 400
+    match_json(request_error_pattern(:widget_limit_exceeded, widget_count: 1))
+    Subscription.any_instance.unstub(:sprout?)
+  end
+
   def test_create_with_invalid_fields
+    Account.current.help_widgets.destroy_all
     request_params = {
       product_id: nil,
       settings: {
@@ -1273,6 +1381,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
   end
 
   def test_create_with_invalid_component_fields
+    Account.current.help_widgets.destroy_all
     request_params = {
       product_id: nil,
       settings: {
@@ -1288,6 +1397,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
   end
 
   def test_create_with_invalid_product_associated
+    Account.current.help_widgets.destroy_all
     request_params = {
       product_id: 100,
       settings: {
@@ -1302,6 +1412,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
   end
 
   def test_config_upload_for_create
+    Account.current.help_widgets.destroy_all
     request_params = {
       product_id: nil,
       name: 'Best_Widget',
@@ -1333,6 +1444,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
   end
 
   def test_config_upload_failure_for_create
+    Account.current.help_widgets.destroy_all
     AwsWrapper::S3Object.stubs(:store).raises(RuntimeError)
     request_params = {
       product_id: nil,

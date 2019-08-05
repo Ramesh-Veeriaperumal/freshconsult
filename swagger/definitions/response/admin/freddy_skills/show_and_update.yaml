@@ -1,0 +1,9 @@
+type: object
+properties:
+  freddy_skill:
+    type: object
+    properties:
+      name:
+        type: string
+      enabled:
+        type: boolean

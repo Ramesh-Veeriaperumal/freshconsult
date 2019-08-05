@@ -11,6 +11,16 @@ get:
       in: query
       type: string
       description: ticket_type of the ticket to be filtered with
+    - name: include
+      in: query
+      type: string
+      description: properties needs to be included in the response
+      enum: ["count"]
+    - name: only
+      in: query
+      type: string
+      description: only a specified property required in the response
+      enum: ["count"]
   responses:
     200:
       description: Success

@@ -37,20 +37,29 @@ module Freddy
         portal_id = Portal.current.id.to_s || Account.current.main_portal.id.to_s
         query = { user_id: User.current.id, account_id: current_account.id.to_s, product: SERVICE, group_id: portal_id, domain: current_account.full_domain }
         {
-          headers: headers(content_type, secret),
+          headers: safe_send("#{action}_headers", content_type, secret),
           query: query,
           body: body,
           timeout: FreddySkillsConfig[action][:timeout]
         }
       end
 
-      def headers(content_type, secret)
-        jwt_token = construct_jwt_token(payload, secret)
-        {
-          'Authorization' => "Bearer #{jwt_token}",
-          'Content-Type' => content_type,
-          'X-Request-ID' => Thread.current[:message_uuid].to_s
-        }
+      def system42_headers(content_type, secret)
+          jwt_token = construct_jwt_token(payload, secret)
+          {
+            'Authorization' => "Bearer #{jwt_token}",
+            'Content-Type' => content_type,
+            'X-Request-ID' => Thread.current[:message_uuid].to_s
+          }
+      end
+
+      def flowserv_headers(content_type, secret)
+          {
+            'external-client-id' => Account.current.id.to_s,
+            'fbots-service' => FreddySkillsConfig[:flowserv][:service],
+            'product-id' => FreddySkillsConfig[:flowserv][:product_id],
+            'Content-Type' => content_type
+          }
       end
 
       def construct_jwt_token(payload, secret)

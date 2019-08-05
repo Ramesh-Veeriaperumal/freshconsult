@@ -39,7 +39,7 @@ module Ember
 
       def delete_attachment
         @draft = @article.create_draft_from_article unless @draft
-        pseudo_delete_article_attachment ? (head 204) : render_errors(@draft.errors)
+        render_errors(@draft.errors) unless pseudo_delete_article_attachment
       end
 
       private

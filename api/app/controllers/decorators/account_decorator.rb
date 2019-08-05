@@ -99,6 +99,7 @@ class AccountDecorator < ApiDecorator
 
     def freshchat_options_hash
       {
+        widget_host: Freshchat::Account::CONFIG[:visitorWidgetHostUrl],
         preferences: record.freshchat_account.try(:preferences),
         enabled: record.freshchat_account.try(:enabled),
         app_id: record.freshchat_account.try(:app_id)

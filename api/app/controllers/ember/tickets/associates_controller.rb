@@ -7,14 +7,15 @@ module Ember
 
       before_filter :ticket_permission?
       before_filter :load_object
-      before_filter :validate_filter_params, only: [:associated_tickets, :associated_tickets_count]
-      before_filter :feature_enabled?, only: [:prime_association, :associated_tickets, :associated_tickets_count]
+      before_filter :validate_filter_params, only: [:associated_tickets]
+      before_filter :feature_enabled?, only: [:prime_association, :associated_tickets]
 
       TICKET_ASSOCIATE_CONSTANTS_CLASS = :TicketAssociateConstants.to_s.freeze
 
       def associated_tickets
         return log_and_render_404 unless @item.tracker_ticket? || @item.assoc_parent_ticket?
-        load_associations(params['type'])
+        load_associations(params['type']) unless only_count?
+        response.api_meta = { count: load_associates_count(params['type']) } if include_count? || only_count?
       end
 
       def prime_association
@@ -24,13 +25,6 @@ module Ember
         @permission = current_user.has_ticket_permission?(@prime_association)
         @item = TicketDecorator.new(@prime_association, permission: @permission,
                                                         last_broadcast_message: @last_broadcast_message)
-      end
-
-      def associated_tickets_count
-        return log_and_render_404 unless @item.assoc_parent_ticket? || @item.tracker_ticket?
-        return head 400 if @item.tracker_ticket? && params['type'] # Don't support tracker filter with type as the count may be huge.
-
-        load_associates_count(params['type'])
       end
 
       private
@@ -59,17 +53,23 @@ module Ember
 
         def load_associates_count type=nil
           associates = @item.associates
-          count = type.present? ? current_account.tickets.where({ticket_type: type, display_id: associates}).size : associates.size
-          @associated_tickets_by_count = { count: count }
+          type.present? ? current_account.tickets.where(ticket_type: type, display_id: associates).size : associates.size
         end
 
         def validate_filter_params
           params.delete("associate") if Rails.env.test?
           params.permit(*ApiTicketConstants::ASSOCIATED_TICKETS_FILTER, *ApiConstants::DEFAULT_INDEX_FIELDS)
-          @ticket_filter = TicketFilterValidation.new(params, nil, string_request_params?)
+          @ticket_filter = AssociatedTicketFilterValidation.new(params, nil, string_request_params?)
           render_errors(@ticket_filter.errors, @ticket_filter.error_options) unless @ticket_filter.valid?
         end
 
+        def only_count?
+          params['only'] == 'count'
+        end
+
+        def include_count?
+          params['include'] && params['include'].include?('count')
+        end
     end
   end
 end

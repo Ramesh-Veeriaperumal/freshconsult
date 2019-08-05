@@ -20,6 +20,11 @@ class ContactsSyncTest < ActionView::TestCase
     @account = Account.current
     @user = @account.nil? ? create_test_account : add_new_user(@account)
     @user.make_current
+    @account.revoke_feature :marketplace
+  end
+
+  def teardown
+    @account.add_feature :marketplace
   end
 
   def test_contacts_sync_trial
