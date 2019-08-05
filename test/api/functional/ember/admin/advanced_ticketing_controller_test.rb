@@ -101,7 +101,6 @@ module Ember
           begin
             old_ticket_filter_count = Account.current.ticket_filters.count
             Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
-            Account.any_instance.stubs(:fsm_dashboard_enabled?).returns(true)
             fields_count_before_installation = Account.current.ticket_fields.size
             total_fsm_fields_count = CUSTOM_FIELDS_TO_RESERVE.size
             Account.current.subscription.update_attributes(additional_info: { field_agent_limit: 10 })
@@ -193,7 +192,6 @@ module Ember
               User.stubs(:current).returns(User.first)
               User.any_instance.stubs(:privilege?).with(:manage_account).returns(true)
               User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
-              Account.any_instance.stubs(:disable_field_service_management_enabled?).returns(true)
               fields_count_after_installation = Account.current.ticket_fields.size
               total_fsm_fields_count = CUSTOM_FIELDS_TO_RESERVE.size
               Account.current.subscription.update_attributes(additional_info: { field_agent_limit: 10 })
@@ -209,30 +207,6 @@ module Ember
           ensure
             User.any_instance.unstub(:privilege?)
             User.unstub(:current)
-            Account.any_instance.unstub(:disable_field_service_management_enabled?)
-          end
-        end
-      end
-
-      def test_destroy_fsm_without_lp
-        enable_fsm do
-          begin
-            Sidekiq::Testing.inline! do
-              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
-              assert_response 204
-              assert Account.current.field_service_management_enabled?
-              User.stubs(:current).returns(User.first)
-              Account.any_instance.stubs(:disable_field_service_management_enabled?).returns(false)
-              User.any_instance.stubs(:privilege?).with(:manage_account).returns(true)
-              User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
-              delete :destroy, controller_params(version: 'private', id: 'field_service_management')
-              assert_response 403
-              match_json(request_error_pattern(:access_denied))
-            end
-          ensure
-            User.any_instance.unstub(:privilege?)
-            User.unstub(:current)
-            Account.any_instance.unstub(:disable_field_service_management_enabled?)
           end
         end
       end
@@ -371,20 +345,6 @@ module Ember
 
           assert_response 400
           match_json([bad_request_error_pattern('name', :fsm_only_on_mint_ui, code: :invalid_value, feature: :field_service_management)])
-        end
-      end
-
-      def test_create_fsm_with_launch_party_disabled
-        enable_fsm do
-          Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
-          Account.current.rollback(:field_service_management_lp)
-          post :create, construct_params({version: 'private'}, {name: 'field_service_management'})
-
-          assert_response 400
-          match_json([bad_request_error_pattern('name', :fsm_launch_party_not_enabled, code: :invalid_value, feature: :field_service_management)])
-
-          Account.current.launch(:field_service_management_lp)
-          Account.any_instance.unstub(:disable_old_ui_enabled?)
         end
       end
 

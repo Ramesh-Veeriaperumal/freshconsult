@@ -41,7 +41,6 @@ class AdvancedTicketingDelegator < BaseDelegator
 
     # Plan based validation was done in validate_params.
     errors[:name] << :fsm_only_on_mint_ui unless Account.current.has_feature?(:disable_old_ui)
-    errors[:name] << :fsm_launch_party_not_enabled unless Account.current.launched?(:field_service_management_lp)
     errors[:name] << :feature_exists if Account.current.has_feature?(:field_service_management)
     errors[:name] << :fsm_custom_fields_not_available unless custom_fields_available?
     errors[:name] << :fsm_dynamic_sections_absence unless Account.current.multi_dynamic_sections_enabled?

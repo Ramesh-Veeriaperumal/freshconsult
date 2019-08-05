@@ -12,10 +12,8 @@ module AdvancedTicketingTestHelper
   end
 
   def enable_fsm
-    Account.current.launch(:field_service_management_lp)
     Account.current.set_feature(:disable_old_ui)
     Account.current.set_feature(:field_service_management_toggle) unless Account.current.has_feature?(:field_service_management_toggle)
-    Account.current.launch(:disable_field_service_management)
     Account.current.launch(:fsm_dashboard)
     yield
   ensure

@@ -287,7 +287,7 @@ class Account < ActiveRecord::Base
       undo_send: false, timeline: false, twitter_microservice: true, twitter_handle_publisher: true,
       old_link_back_url_validation: false, shopify_actions: true, stop_contacts_count_query: false,
       twitter_dm_outgoing_attachment: false, twitter_mention_outgoing_attachment: false,
-      product_central_publish: false, field_service_management_lp: true, fsm_dashboard: false, help_widget: false, disable_field_service_management: false,
+      product_central_publish: false, help_widget: false,
       bot_email_channel: false, bot_email_central_publish: false, company_central_publish: false,
       sso_login_expiry_limitation: false, csat_email_scan_compatibility: false,
       email_deprecated_style_parsing: false, saml_ecrypted_assertion: false,
@@ -297,12 +297,12 @@ class Account < ActiveRecord::Base
       update_billing_info: false, allow_billing_info_update: false, tag_central_publish: false,
       archive_tickets_api: false, redis_picklist_id: true, bot_agent_response: false, fluffy: false,
       nested_field_revamp: true, service_worker: false, kbase_mint: false, freshvisual_configs: false,
-      ticket_type_filter_in_trends_widget: true, scheduling_fsm_dashboard: false,
-      freshid_org_v2: false, hide_agent_login: false, addon_based_billing: false, office365_adaptive_card: false,
+      scheduling_fsm_dashboard: false,
+      freshid_org_v2: false, hide_agent_login: false, office365_adaptive_card: false,
       text_custom_fields_in_etl: false, email_spoof_check: false, disable_email_spoof_check: false,
       recalculate_daypass: false, sandbox_single_branch: false, prevent_wc_ticket_create: true, allow_wildcard_ticket_create: false,
       attachment_redirect_expiry: false, solutions_agent_portal: false, solutions_agent_metrics: false,
-      requester_privilege: false, allow_huge_ccs: false, fsm_landing_page: true, sso_unique_session: false, supervisor_custom_status: false
+      requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false, supervisor_custom_status: false
     }, :merge
   )
 

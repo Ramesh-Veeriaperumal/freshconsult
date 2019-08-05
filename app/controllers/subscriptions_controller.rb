@@ -11,7 +11,7 @@ class SubscriptionsController < ApplicationController
   before_filter :admin_selected_tab
   before_filter :load_objects, :load_subscription_plan, :cache_objects
   before_filter :load_coupon, :only => [ :calculate_amount, :plan ]
-  before_filter :modify_addons_temporarily, :only => [ :calculate_amount, :plan ], :if => :addon_based_features_enabled?
+  before_filter :modify_addons_temporarily, only: [:calculate_amount, :plan]
   before_filter :load_billing, :validate_subscription, :only => :billing
   before_filter :load_freshfone_credits, :only => [:show]
   before_filter :valid_currency?, :only => :plan
@@ -143,7 +143,7 @@ class SubscriptionsController < ApplicationController
       plans << scoper.subscription_plan if scoper.subscription_plan.classic?
 
       @subscription = scoper
-      @addons = addon_based_features_enabled? ? scoper.addons.dup : scoper.addons
+      @addons = scoper.addons.dup
       @plans = plans.uniq
       @currency = scoper.currency_name
     end
@@ -210,7 +210,7 @@ class SubscriptionsController < ApplicationController
         SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual]
       scoper.plan = @subscription_plan
       scoper.agent_limit = params[:agent_limit]
-      populate_addon_based_limits if addon_based_features_enabled?
+      populate_addon_based_limits
       scoper.free_agents = @subscription_plan.free_agents
       @addons = scoper.applicable_addons(@addons, @subscription_plan)
     end
@@ -246,7 +246,7 @@ class SubscriptionsController < ApplicationController
 
     #Error Check
     def check_for_subscription_errors
-      if agent_type = scoper.chk_change_agents || (addon_based_features_enabled? && scoper.chk_change_field_agents)
+      if agent_type = (scoper.chk_change_agents || scoper.chk_change_field_agents)
         Rails.logger.debug "Subscription Error::::::: #{agent_type} Limit exceeded, account id: #{current_account.id}"
 
         agent_count, error_class = if agent_type == Agent::SUPPORT_AGENT
@@ -363,13 +363,13 @@ class SubscriptionsController < ApplicationController
     #No proration(credit) in monthly downgrades
     def prorate?
       coupon = coupon_applicable? ? @coupon : nil
-      addons = addon_based_features_enabled? ? @addons : scoper.addons
+      addons = @addons
       !(@cached_subscription.active? and (scoper.total_amount(addons, coupon) < @cached_subscription.amount) and
         Subscription::NO_PRORATION_PERIOD_CYCLES.include?(@cached_subscription.renewal_period))
     end
 
     def update_features
-      perform_ui_based_addon_operations if addon_based_features_enabled?
+      perform_ui_based_addon_operations
       return unless plan_changed?
 
       SAAS::SubscriptionEventActions.new(scoper.account, @cached_subscription, @cached_addons, features_to_skip).change_plan
@@ -476,9 +476,5 @@ class SubscriptionsController < ApplicationController
         flash[:error] = t("subscription.error.invalid_currency")
         redirect_to subscription_url
       end
-    end
-
-    def addon_based_features_enabled?
-      current_account.fsm_addon_billing_enabled?
     end
 end

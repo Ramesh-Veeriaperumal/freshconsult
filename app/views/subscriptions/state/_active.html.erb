@@ -143,7 +143,7 @@
   <% if current_account.new_2019_pricing_enabled? %>
   <div class="features">
     <%= render :partial => "/subscriptions/features/toggle-box/ocr_toggle", :locals => { :plan => plan }%>
-    <% if current_account.fsm_addon_billing_enabled? %>
+    <% if current_account.disable_old_ui_enabled? %>
       <span class="vr-line"></span>
       <%= render :partial => "/subscriptions/features/toggle-box/fsm_toggle", :locals => { :current_account => current_account }%>
     <% end %>

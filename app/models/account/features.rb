@@ -25,7 +25,7 @@ class Account < ActiveRecord::Base
     :bot_email_channel, :bot_email_central_publish, :description_by_default,
     :bot_chat_history, :new_es_api, :filter_factory, :ticket_fields_central_publish,
     :shopify_actions, :skip_invoice_due_warning, :automation_revamp,
-    :scheduled_export_fix, :compact_lang_detection, :ticket_type_filter_in_trends_widget,
+    :scheduled_export_fix, :compact_lang_detection,
     :facebook_page_scope_migration, :agent_group_central_publish, :custom_fields_search,
     :update_billing_info, :allow_billing_info_update, :tag_central_publish,
     :native_apps, :archive_tickets_api, :bot_agent_response,
@@ -33,15 +33,15 @@ class Account < ActiveRecord::Base
     :id_for_choices_write, :fluffy, :session_logs, :nested_field_revamp, :service_worker, :kbase_mint,
     :freshvisual_configs, :ticket_field_limit_increase, :join_ticket_field_data, :bypass_signup_captcha,
     :contact_field_central_publish, :company_field_central_publish, :contact_company_split,
-    :simple_outreach, :disable_simple_outreach, :fsm_dashboard, :supervisor_text_field,
-    :automation_rule_execution_count, :disable_field_service_management, :disable_mint_analytics,
-    :freshid_org_v2, :hide_agent_login, :addon_based_billing, :office365_adaptive_card,
+    :simple_outreach, :disable_simple_outreach, :supervisor_text_field,
+    :automation_rule_execution_count, :disable_mint_analytics,
+    :freshid_org_v2, :hide_agent_login, :office365_adaptive_card,
     :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,
     :recalculate_daypass, :sandbox_single_branch, :fb_page_api_improvement, :attachment_redirect_expiry,
     :solutions_agent_portal, :solutions_agent_metrics, :fuzzy_search, :delete_trash_daily,
     :prevent_wc_ticket_create, :allow_wildcard_ticket_create, :requester_privilege,
     :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr,
-    :csat_email_scan_compatibility, :mint_portal_applicable, :twitter_microservice, :quoted_text_parsing_feature, :fsm_landing_page, :enable_customer_journey,
+    :csat_email_scan_compatibility, :mint_portal_applicable, :twitter_microservice, :quoted_text_parsing_feature, :enable_customer_journey,
     :csat_translations, :email_mailbox, :supervisor_custom_status
   ].freeze
 
@@ -328,10 +328,6 @@ class Account < ActiveRecord::Base
   def falcon_ui_enabled?(current_user = :no_user)
     valid_user = (current_user == :no_user ? true : (current_user && current_user.is_falcon_pref?))
     valid_user && (falcon_enabled? || check_admin_mint? || disable_old_ui_enabled?)
-  end
-
-  def fsm_addon_billing_enabled?
-    @fsm_addon_billing ||= disable_old_ui_enabled? && addon_based_billing_enabled?
   end
 
   def check_admin_mint?

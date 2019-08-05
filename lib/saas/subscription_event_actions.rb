@@ -66,7 +66,7 @@ class SAAS::SubscriptionEventActions
     if add_ons_changed?
       to_be_added = account_add_ons - existing_add_ons
       to_be_removed = existing_add_ons - account_add_ons
-      if account.fsm_addon_billing_enabled? && skipped_features.present?
+      if skipped_features.present?
         to_be_added.reject! { |feature| skipped_features.include?(feature) }
         to_be_removed.reject! { |feature| skipped_features.include?(feature) }
       end
