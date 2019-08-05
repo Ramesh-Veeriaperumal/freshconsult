@@ -40,6 +40,7 @@ fields:
         first_response_time: date_time
         frDueBy: date_time
         due_by: date_time
+        hours_since_waiting_on_custom_status: date_time_status
 
         inbound_count: numeric
         outbound_count: numeric

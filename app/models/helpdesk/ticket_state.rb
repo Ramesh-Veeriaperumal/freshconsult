@@ -14,6 +14,7 @@ class Helpdesk::TicketState <  ActiveRecord::Base
                                  'requester_responded_at', 'status_updated_at' ]
 
   alias_attribute :on_state_time, :ts_int1
+  alias_attribute :custom_status_updated_at, :ts_datetime1
 
   belongs_to_account
   belongs_to :tickets , :class_name =>'Helpdesk::Ticket',:foreign_key =>'ticket_id'
@@ -69,6 +70,10 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     else
       requester_responded_at.present?
     end
+  end
+
+  def set_custom_status_updated_at(time=Time.zone.now)
+    self.custom_status_updated_at = time
   end
 
   def consecutive_customer_response?

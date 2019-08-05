@@ -157,4 +157,11 @@ module Admin::Automation::ConstructResponseData
   def custom_ticket_fields_from_cache
     @custom_tf_from_cache ||= current_account.ticket_fields_from_cache
   end
+
+  def time_and_status_based_condition(condition)
+    value = condition[:name]
+    condition[:name] = TIME_AND_STATUS_BASED_FILTER[0]
+    condition[:custom_status_id] = value.split('_').last.to_i
+    condition
+  end
 end

@@ -154,7 +154,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     ticket_states.set_resolved_at_state if ((status == RESOLVED) and ticket_states.resolved_at.nil?)
     ticket_states.set_closed_at_state if (status == CLOSED)
-
+    ticket_states.set_custom_status_updated_at unless ticket_status.is_default?
     ticket_states.status_updated_at    = created_at || time_zone_now
     ticket_states.sla_timer_stopped_at = time_zone_now if (ticket_status.stop_sla_timer?)
     #Setting inbound as 0 and outbound as 1 for outbound emails as its agent initiated
@@ -229,7 +229,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ticket_states.status_updated_at = time_zone_now
 
     ticket_states.pending_since = (status == PENDING) ? time_zone_now : nil
-
+    ticket_states.set_custom_status_updated_at  unless ticket_status.is_default?
     ticket_states.set_resolved_at_state if (status == RESOLVED)
     ticket_states.set_closed_at_state if closed?
 

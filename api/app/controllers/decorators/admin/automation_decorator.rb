@@ -145,6 +145,7 @@ class Admin::AutomationDecorator < ApiDecorator
       condition_hash = { match_type: match_type }
       condition_set.each do |condition|
         condition.deep_symbolize_keys
+        condition = time_and_status_based_condition(condition) if condition[:name].to_s.include? TIME_AND_STATUS_BASED_FILTER[0]
         evaluate_on_type = condition[:evaluate_on] || DEFAULT_EVALUATE_ON
         evaluate_on = EVALUATE_ON_MAPPING_INVERT[evaluate_on_type.to_sym] || evaluate_on_type.to_sym
         condition_hash[evaluate_on] ||= []

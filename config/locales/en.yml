@@ -2776,6 +2776,7 @@ en:
       '0': 'Not Selected'
       account_tier: "Account tier"
       action: "%{field_name}"
+      hours_since: "hours since"
       action_priority: 'Set Priority as'
       action_ticket_type: 'Set Type as'
       action_status: 'Set Status as'

@@ -50,6 +50,7 @@ module Admin::AutomationHelper
           condition.permit(*CONDITION_SET_REQUEST_VALUES) if condition.is_a?(Hash)
           condition = convert_tag_fields(condition) if condition[:field_name] == TAG_NAMES && key == :ticket
           condition[:field_name] = 'ticlet_cc' if condition[:field_name] == 'ticket_cc' && key == :ticket
+          condition[:field_name] = condition[:field_name].to_s + '_' + condition[:custom_status_id].to_s if condition[:field_name].to_s == TIME_AND_STATUS_BASED_FILTER[0] && key == :ticket
           add_case_sensitive_key(condition) if condition.present?
         end
       end
@@ -266,7 +267,7 @@ module Admin::AutomationHelper
         value = field.column_name if field.present?
       end
       if key == :name
-        value = "#{value}_#{Account.current.id}" if !DEFAULT_FIELDS.include?(value.to_sym) && is_ticket && !is_event
+        value = "#{value}_#{Account.current.id}" if !DEFAULT_FIELDS.include?(value.to_sym) && is_ticket && !is_event && (!value.to_s.include? TIME_AND_STATUS_BASED_FILTER[0])
         value = "cf_#{value}" if !is_ticket && !COMPANY_FIELDS.include?(value.to_sym) && !CONDITION_CONTACT_FIELDS.include?(value.to_sym)
         value = SUPERVISOR_FIELD_MAPPING[value.to_sym] if @item.supervisor_rule? && SUPERVISOR_FIELD_MAPPING.key?(value.to_sym)
         name_changed = DISPLAY_FIELD_NAME_CHANGE[value.to_sym]

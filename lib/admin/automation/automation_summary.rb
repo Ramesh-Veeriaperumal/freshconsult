@@ -1,5 +1,6 @@
 module Admin::Automation::AutomationSummary
   include Admin::AutomationConstants
+  include Admin::Automation::CustomStatusHelper
   attr_accessor :record
 
   def generate_summary(record, add_html_tag = false)
@@ -106,6 +107,7 @@ module Admin::Automation::AutomationSummary
     def condition_sentence_generate(data)
       is_supervisor = record.supervisor_rule?
       field_name =  is_supervisor && TIME_BASE_DUPLICATE.include?(field_name) ? :"#{field_name}_since" : data[:name].to_sym
+      field_name = TIME_AND_STATUS_BASED_FILTER[0] if data[:name].to_s.include? TIME_AND_STATUS_BASED_FILTER[0]
       array = []
       array << generate_key(data[:name], data[:evaluate_on] || 'ticket')
       field = ticket_fields.find { |tf| tf.name == data[:name] }
@@ -211,6 +213,8 @@ module Admin::Automation::AutomationSummary
                 I18n.t("admin.automation_summary.action_#{field_name}")
               elsif SUMMARY_DEFAULT_FIELDS.include?(field_name.to_sym)
                 I18n.t("admin.automation_summary.#{field_name}")
+              elsif field_name.to_s.include? TIME_AND_STATUS_BASED_FILTER[0].to_s
+                supervisor_custom_status_name(field_name)
               else
                 get_name("custom_#{evaluate_on}_fields", field_name, separator)
               end
