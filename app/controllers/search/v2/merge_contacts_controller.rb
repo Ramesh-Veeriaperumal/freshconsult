@@ -62,7 +62,7 @@ class Search::V2::MergeContactsController < ApplicationController
     #
     def esv2_contact_merge_models
       @@esv2_contact_merge_models ||= {
-        'user' => { model: 'User', associations: [{ :account => :features }, :company, :user_emails] }
+        'user' => { model: 'User', associations: [:company, :user_emails] }
       }
     end
 end
