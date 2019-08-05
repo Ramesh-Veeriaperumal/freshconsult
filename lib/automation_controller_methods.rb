@@ -208,7 +208,7 @@ module AutomationControllerMethods
 
   def agents_list
     # removing field service agents from list of agents
-    @agents_list ||= current_account.users.technicians.collect { |au| [au.id, CGI.escapeHTML(au.name)] if au.agent && au.agent.support_agent? }.compact
+    @agents_list ||= current_account.users.includes(:agent).technicians.collect { |au| [au.id, CGI.escapeHTML(au.name)] if au.agent && au.agent.support_agent? }.compact
   end
 
   def none_option

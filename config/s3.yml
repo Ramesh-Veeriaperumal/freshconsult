@@ -1,6 +1,6 @@
 common: &common
-  access_key_id: dummy
-  secret_access_key: dummy
+  access_key_id: AKIAILZZJD6Q3WAFMCHA
+  secret_access_key: T8LomtbPUYQpVzcyDmcqkuHuScadfmeHh5t1Jv9Y
   AWS_CALLING_FORMAT: SUBDOMAIN
   s3_host_name: localhost:4572
   region: 'us-east-1'

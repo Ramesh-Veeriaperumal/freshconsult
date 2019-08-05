@@ -1,4 +1,4 @@
-SH_ENABLED = !(Rails.env.development? or Rails.env.test?) #=> To prevent error without setup
+SH_ENABLED = false #!(Rails.env.development? or Rails.env.test?) #=> To prevent error without setup
 puts "Shoryuken is #{SH_ENABLED ? 'enabled' : 'not enabled'}" 
 
 if SH_ENABLED

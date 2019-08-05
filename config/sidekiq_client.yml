@@ -5,6 +5,7 @@ defaults: &defaults
   :redis_pool_size: 5
   :logfile: ./log/sidekiq.log
   :timeout: 30
+  :max_dead_jobs: 50000
   :queues:
     - [account_creation_fixtures]
     - [select_all_tickets]

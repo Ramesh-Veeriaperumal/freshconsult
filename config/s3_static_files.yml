@@ -1,6 +1,6 @@
 defaults: &defaults
-  access_key_id: dummy
-  secret_access_key: dummy
+  access_key_id: AKIAILZZJD6Q3WAFMCHA
+  secret_access_key: T8LomtbPUYQpVzcyDmcqkuHuScadfmeHh5t1Jv9Y
 
 development:
   <<: *defaults
