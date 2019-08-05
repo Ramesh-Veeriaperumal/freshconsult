@@ -33,7 +33,7 @@ class CustomSurvey::Survey < ActiveRecord::Base
   end
 
   def custom_translation_key
-    "survey_#{id}".to_sym
+    "survey_#{id}"
   end
 
   def fetch_default_questions_and_choices
