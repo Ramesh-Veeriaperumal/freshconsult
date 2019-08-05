@@ -24,8 +24,6 @@ module Middleware
               end
               msg['account_id'] ||= ::Account.current.id
             end
-            msg['account_id'] ||= ::Account.current.id
-            msg['message_uuid'] = Thread.current[:message_uuid]
           end
           yield
           # rescue Exception => e
