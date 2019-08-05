@@ -1,8 +1,7 @@
 aws:
-  access_key_id: AKIAJWYWMUTSRW6US6BA
-  secret_access_key: UbJXxByprxBs30CnjpTGmnaGlQ0qYXu2sjMLFjll
+  access_key_id: dummy
+  secret_access_key: dummy
   region: us-east-1
-  sqs_endpoint: http://sqs.us-east-1.amazonaws.com
   receive_message: # See http://docs.aws.amazon.com/sdkforruby/api/Aws/SQS/Client.html#receive_message-instance_method
     attribute_names:
       - ApproximateReceiveCount

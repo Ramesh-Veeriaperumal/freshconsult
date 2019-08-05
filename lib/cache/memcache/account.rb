@@ -164,19 +164,6 @@ module Cache::Memcache::Account
     end
   end
 
-  def groups_from_cache_v2
-    @groups_from_cache ||= begin
-      key = ACCOUNT_GROUPS_HASH % { :account_id => self.id }
-      MemcacheKeys.fetch(key) {
-        groups_hash = Hash.new
-        self.groups.includes(:business_calendar).all.each do |g|
-          groups_hash[g.id] = g.to_memcache
-        end
-        groups_hash
-       }
-    end
-  end
-
   def group_types_from_cache
     key = group_types_memcache_key
     fetch_from_cache(key) { self.get_or_create_group_types }

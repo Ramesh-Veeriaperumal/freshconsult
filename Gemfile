@@ -47,7 +47,7 @@ gem 'batch_api', :git => 'git@github.com:freshdesk/batch_api.git', :branch => 'f
 #for ruby ~> 2.1.0 upgrade
 gem 'iconv', '~> 1.0.4'
 gem 'thrift', '~> 0.9.2.0'
-#gem 'charlock_holmes', "0.7.3"
+gem 'charlock_holmes', "0.7.3"
 gem "tnef", "1.0.2"
 gem "central-publisher", :git => 'git@github.com:freshdesk/central-publisher.git', :tag => 'v2.0.4'
 
@@ -170,8 +170,7 @@ gem 'encryptor', '1.1.3'
 gem "dalli", :git => "git://github.com/freshdesk/dalli.git", :branch => "fd_master"
 #gem 'memcache-client', '1.8.5', :git => "git://github.com/mperham/memcache-client.git"
 gem "deadlock_retry", :git => "git://github.com/freshdesk/deadlock_retry.git"
-# gem "lhm", :git => "git://github.com/freshdesk/large-hadron-migrator.git"
-gem "lhm", :path => "/Users/admin/Documents/code/large-hadron-migrator"
+gem "lhm", :git => "git://github.com/freshdesk/large-hadron-migrator.git"
 gem "rinku", :git => "git://github.com/freshdesk/rinku.git"
 
 gem "namae", '0.8.4'
@@ -231,9 +230,9 @@ gem "jwt", "1.5.4"
 gem "jwe", "0.3.0", :git => 'git@github.com:freshdesk/ruby-jwe.git'
 gem "jose", "1.1.2"
 
-#group :production, :test, :staging do
+group :production, :test, :staging do
   gem "tire", :git => "git@github.com:freshdesk/retire.git"
-#end
+end
 
 gem "recaptcha", "4.4.1", require: "recaptcha/rails"
 

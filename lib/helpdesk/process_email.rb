@@ -1,5 +1,5 @@
 # encoding: utf-8
-#require 'charlock_holmes'
+require 'charlock_holmes'
 class Helpdesk::ProcessEmail < Struct.new(:params)
  
   include EmailCommands

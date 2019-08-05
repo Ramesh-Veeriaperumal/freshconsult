@@ -1,13 +1,12 @@
 module Va::Webhook::Constants
 
 	XML = 1
-	#spent 2 hours debugging why JSON.parse dint work, found here that we have named it as constant :)
-	JAVASCRIPT_OBJECT_NOTATION = J_S_O_N = 2
+	JAVASCRIPT_OBJECT_NOTATION = JSON = 2
 	URL_ENCODED = 3
 
 	CONTENT_TYPE = { 	
 										XML =>'text/xml', 
-										J_S_O_N => 'application/json' ,
+										JSON => 'application/json' ,
 										URL_ENCODED => 'application/x-www-form-urlencoded'
 									}
 
