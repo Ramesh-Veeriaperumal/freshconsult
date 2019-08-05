@@ -53,7 +53,7 @@ api_error_messages:
   upload_jpg_or_png_file: "Invalid file type(%{current_extension}). Please upload a jpg or png file"
   cannot_deactivate: "Active field can only be set to true"
   cant_add_primary_email: "Cannot add %{email} to other_emails since it is the primary email"
-  cannot_delete_primary_email: "Cannot delete a primary email"
+  cannot_delete_default_reply_email: "Cannot delete default reply email"
   invalid_encoding: "Url query string received is %{invalid_query_string}. It should be properly encoded."
   missing_field: "Mandatory attribute missing"
   access_denied: "You are not authorized to perform this action."
@@ -364,3 +364,11 @@ api_error_messages:
   fcaller_link_error: 'There was an issue in creating your freshcaller account. Please contact support.'
   fcaller_domain_taken: 'A freshcaller account is already availabe for your domain. Please link it from admin tab.'
   fcaller_spam_email: 'The email is considered as spam. Please check it.'
+  
+  imap_idle_not_supported: 'Specified IMAP mail server is not supported. Please use a different one'
+  imap_connection_error: 'Could not connect to the imap server. Please verify server name, port and credentials'
+  imap_error: 'Error while verifying the mailbox imap details. Please verify server name, port and credentials'
+  smtp_timed_out: 'Timed out while authenticating the smtp server. Please verify server name, port and credentials'
+  smtp_socket_error: 'Could not connect to the smtp server. Please verify server name, port and credentials'
+  smtp_invalid_credentials: 'Error while authenticating the smtp server. Please make sure your user name and password are correct'
+  smtp_error: "Error while verifying the mailbox smtp details - %{error}"

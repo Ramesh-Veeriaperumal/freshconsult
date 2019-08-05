@@ -65,7 +65,7 @@ Authority::Authorization::PrivilegeList.build do
   manage_email_settings do
     resource :"ember/admin/onboarding", only: %i[forward_email_confirmation test_email_forwarding]
     resource :"admin/api_email_notification"
-    resource :"email/mailbox", only: %i[destroy]
+    resource :"email/mailbox", only: %i[create show destroy]
   end
 
   reply_ticket do
