@@ -1,6 +1,6 @@
 class Search::AutocompleteController < ApplicationController
 
-  USER_ASSOCIATIONS = { User => { :include => [{ :account => :features }, :user_emails] }}
+  USER_ASSOCIATIONS = { User => { :include => [:user_emails] }}
 
   skip_before_filter :check_privilege, :only => [:company_users]
 
