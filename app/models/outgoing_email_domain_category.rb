@@ -31,6 +31,7 @@ class OutgoingEmailDomainCategory < ActiveRecord::Base
   scope :active, :conditions => ["status != ?", STATUS['delete']]
   scope :dkim_configured_domains, :conditions => ["status in (?)", [STATUS['active'], STATUS['unverified']]]
   scope :dkim_activated_domains, :conditions => ["status = ?", STATUS['active']]
+  scope :verified_email_configs_domain, conditions: ['email_configs.active', true], joins: [:email_configs]
 
 
   INVALID_DOMAINS = ["freshdesk.com", "freshdesk-dev.com", "freshpo.com"]
