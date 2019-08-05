@@ -42,7 +42,7 @@ class SpamWatcherRedisMethods
             full_domain: account.full_domain,
             account_id: account.id,
             user_id: user.id,
-            admin_url: spam_url(account,user,table_name),
+            admin_url: spam_url(account, user, table_name),
             signature: 'Spam Watcher',
             deleted_flag: deleted_flag
           }

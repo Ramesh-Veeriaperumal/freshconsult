@@ -174,7 +174,6 @@ module Helpdesk
         end
 
       add_method_tracer :check_for_spam, 'Custom/MimeController/spam_check'
-
     end
   end
 end

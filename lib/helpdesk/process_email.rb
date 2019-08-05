@@ -607,7 +607,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         NewRelic::Agent.notice_error(e)
       end
 
-      if (!(ticket.spam == true && ticket.skip_notification == true))
+      if !(ticket.spam == true && ticket.skip_notification == true)
         message_id_list.each do |msg_key|
           store_ticket_threading_info(account, msg_key, ticket)
         end
@@ -1230,7 +1230,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
   def update_spam_data(ticket)
     if params[:spam_info].present?
-      if (!params[:spam_info]['rules'].nil? && (params[:spam_info]['rules'] & custom_bot_attack_rules).size != 0)
+      if !params[:spam_info]['rules'].nil? && (params[:spam_info]['rules'] & custom_bot_attack_rules).size != 0
         ticket.skip_notification = true
         ticket.spam = true
         Rails.logger.info 'Skip notification set and ticket marked as spam due to CUSTOM_BOT_ATTACK'
