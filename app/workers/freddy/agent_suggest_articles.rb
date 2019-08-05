@@ -60,6 +60,7 @@ module Freddy
           size: 3,
           account_id: account.id.to_s,
           portal_id: @ticket.portal.id.to_s,
+          ticket_id: @ticket.id.to_s,
           product_name: 'Freshdesk',
           feature_name: 'emailbot',
           subject: @ticket.subject,
