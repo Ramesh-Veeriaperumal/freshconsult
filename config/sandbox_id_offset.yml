@@ -98,6 +98,7 @@ staging:
     sk_shard_1: 10000000000000
     sea_shard_1: 10000000000000
     spirit_shard_1: 10000000000000
+    eptstack_shard_1: 10000000000000
 
 production:
   <<: *defaults
