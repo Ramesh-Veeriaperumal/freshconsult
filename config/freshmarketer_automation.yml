@@ -40,13 +40,13 @@ freshmarketer:
       date--Renewal--Date: "cf_fdeskrenewaldate"
   staging: 
     <<: *common
-    access_key: "6ujjo26v5soc1er688hj2v6rh7vgfs02tr7h96t5"
+    access_key: "i141ie6mbs865gne8g9h66u0ocr6v5mi0g9o3gla"
     list_id: "1271"
   development: 
     <<: *common
-    access_key: "6ujjo26v5soc1er688hj2v6rh7vgfs02tr7h96t5"
+    access_key: "i141ie6mbs865gne8g9h66u0ocr6v5mi0g9o3gla"
     list_id: "1271"
   test: 
     <<: *common
-    access_key: "6ujjo26v5soc1er688hj2v6rh7vgfs02tr7h96t5"
+    access_key: "i141ie6mbs865gne8g9h66u0ocr6v5mi0g9o3gla"
     list_id: "1271"
