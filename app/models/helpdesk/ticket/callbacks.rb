@@ -87,6 +87,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :spam_feedback_to_smart_filter, :on => :update, :if => :twitter_ticket_spammed?
   after_commit :tag_update_central_publish, :on => :update, :if => :tags_updated?
   after_commit :trigger_ticket_properties_suggester_feedback, on: :update, if: :ticket_properties_suggester_feedback_required?
+  after_commit :trigger_detect_thank_you_note_feedback, on: :update, if: :detect_thank_you_note_feedback_required?
 
 
 
@@ -606,6 +607,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
 
+  def trigger_detect_thank_you_note_feedback
+    Rails.logger.info "Enqueueing DetectThankYouNoteFeedbackWorker T :: #{id}"
+    ::Freddy::DetectThankYouNoteFeedbackWorker.perform_async(ticket_id: id)
+  end
+
 private
 
   def tags_updated?
@@ -1026,5 +1032,19 @@ private
   def all_predicted_fields_updated?
     suggested_fields = schema_less_ticket.ticket_properties_suggester_hash[:suggested_fields]
     suggested_fields.present? && suggested_fields.all? { |k,v| v[:updated] }
-  end  
+  end
+
+  def detect_thank_you_note_feedback_required?
+    Account.current.detect_thank_you_note_enabled? && performed_by_agent? && @model_changes[:status].present? && ticket_reopened? &&
+      freddy_closed_the_ticket?
+  end
+
+  def freddy_closed_the_ticket?
+    thank_you_notes = schema_less_ticket.try(:thank_you_notes)
+    thank_you_notes.present? && thank_you_notes.last[:response][:reopen].zero?
+  end
+
+  def ticket_reopened?
+    @model_changes[:status].last == OPEN
+  end
 end
