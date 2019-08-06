@@ -3,13 +3,14 @@ class VaRule < ActiveRecord::Base
   self.primary_key = :id
   include Cache::Memcache::VARule
   include Va::Constants
+  include Redis::AutomationRuleRedis
 
   TICKET_CREATED_EVENT = { :ticket_action => :created }
   CASCADE_DISPATCHER_DATA  = [
     [ :first, "dispatch.no_cascade",    0 ],
-    [ :all,   "dispatch.cascade",        1 ] 
+    [ :all,   "dispatch.cascade",        1 ]
   ]
-  
+
 
   xss_sanitize  :only => [:name, :description], :plain_sanitizer => [:name, :description]
 
@@ -20,7 +21,7 @@ class VaRule < ActiveRecord::Base
   concerned_with :presenter
 
   publishable on: [:create, :update, :destroy]
-  
+
   validates_presence_of :name, :rule_type
   validates_uniqueness_of :name, :scope => [:account_id, :rule_type] , :unless => :automation_rule?
   validate :has_events?, :has_conditions?, :has_actions?, :has_safe_conditions?, :has_valid_action_data?
@@ -33,6 +34,8 @@ class VaRule < ActiveRecord::Base
   after_commit :clear_api_webhook_rules_from_cache, :if => :api_webhook_rule?
   after_commit :clear_installed_app_business_rules_from_cache, :if => :installed_app_business_rule?
   after_commit :log_rule_change, if: :automated_rule?
+  after_commit :perform_thank_you_redis_op, if: :observer_rule?
+  after_commit :delete_rule_from_redis_set, on: :destroy, if: :observer_rule?
 
   attr_writer :conditions, :actions, :events, :performer
   attr_accessor :triggered_event, :response_time
@@ -40,7 +43,7 @@ class VaRule < ActiveRecord::Base
   attr_accessible :name, :description, :match_type, :active, :filter_data, :action_data, :rule_type, :position
 
   belongs_to_account
-  
+
   has_one :app_business_rule, :class_name=>'Integrations::AppBusinessRule', :dependent => :destroy
   has_one :installed_application, :class_name => 'Integrations::InstalledApplication', through: :app_business_rule
   scope :active, :conditions => { :active => true }
@@ -79,7 +82,7 @@ class VaRule < ActiveRecord::Base
   def actions
     @actions ||= action_data.collect{ |act_hash| deserialize_action act_hash }
   end
-  
+
   def deserialize_action(act_hash)
     act_hash.symbolize_keys!
     Va::Action.new(act_hash, self)
@@ -104,7 +107,7 @@ class VaRule < ActiveRecord::Base
     end
     return false
   end
-  
+
   def pass_through(evaluate_on, actions=nil, doer=nil)
     is_a_match = false
     benchmark { is_a_match = matches(evaluate_on, actions) }
@@ -112,7 +115,7 @@ class VaRule < ActiveRecord::Base
     trigger_actions(evaluate_on, doer) if is_a_match
     is_a_match ? evaluate_on : nil
   end
-  
+
   def matches(evaluate_on, actions=nil)
     return true if conditions.empty?
     Va::Logger::Automation.log "match_type=#{match_type}"
@@ -149,7 +152,7 @@ class VaRule < ActiveRecord::Base
       evaluate_on # for backward compatibility
     end
   end
-  
+
   def trigger_actions(evaluate_on, doer=nil)
     Va::RuleActivityLogger.initialize_activities if automation_rule?
     return false unless check_user_privilege
@@ -171,7 +174,7 @@ class VaRule < ActiveRecord::Base
       evaluate_on.system_changes = base_hash
     end
   end
-  
+
   def add_thank_you_note_to_system_changes(evaluate_on)
     result_hash = Thread.current[:thank_you_note]
     evaluate_on.system_changes[self.id.to_s][:thank_you_note] = [result_hash[:result]] if result_hash[:rule_id] == self.id
@@ -182,12 +185,12 @@ class VaRule < ActiveRecord::Base
     Va::RuleActivityLogger.initialize_activities
     actions.each { |a| a.record_action_for_bulk(doer) }
   end
-  
+
   def filter_query
     query_strings = []
     params = []
     c_operator = (match_type.to_sym == :any ) ? ' or ' : ' and '
-    
+
     conditions.each do |c|
       c_query = c.filter_query
       unless c_query.blank?
@@ -211,7 +214,7 @@ class VaRule < ActiveRecord::Base
     end
     query_strings.empty? ? [] : ([ query_strings.join(c_operator) ] + params)
   end
-  
+
   def get_joins(conditions)
     all_joins = [""]
     JOINS_HASH.each do |table,join|
@@ -226,7 +229,7 @@ class VaRule < ActiveRecord::Base
 
     action_data.each do |action_data|
       action_data.symbolize_keys!
-      if action_data[:name] == 'trigger_webhook' 
+      if action_data[:name] == 'trigger_webhook'
         action_data[:password] = '' and return
       end
     end
@@ -237,12 +240,12 @@ class VaRule < ActiveRecord::Base
     from_action_data, to_action_data = action_data_change
     webhook_action = nil
 
-    
+
     to_action_data.each do |action_data|
       action_data.symbolize_keys!
       if action_data[:name] == 'trigger_webhook'
         return if action_data[:need_authentication].blank? || action_data[:api_key].present?
-        if action_data[:password].blank? 
+        if action_data[:password].blank?
           webhook_action = action_data
         else
           action_data[:password] = encrypt(action_data[:password])
@@ -317,7 +320,7 @@ class VaRule < ActiveRecord::Base
   def self.cascade_dispatcher_option
     CASCADE_DISPATCHER_DATA.map { |i| [I18n.t(i[1]), i[2]] }
   end
-  
+
   # Used for sending webhook failure notifications
   def rule_type_desc
     if dispatchr_rule?
@@ -331,12 +334,12 @@ class VaRule < ActiveRecord::Base
 
   def rule_path
     if observer_rule?
-      Rails.application.routes.url_helpers.edit_admin_observer_rule_url(self.id, 
-                                                        host: Account.current.host, 
+      Rails.application.routes.url_helpers.edit_admin_observer_rule_url(self.id,
+                                                        host: Account.current.host,
                                                         protocol: Account.current.url_protocol)
     elsif dispatchr_rule?
-      Rails.application.routes.url_helpers.edit_admin_va_rule_url(self.id, 
-                                                        host: Account.current.host, 
+      Rails.application.routes.url_helpers.edit_admin_va_rule_url(self.id,
+                                                        host: Account.current.host,
                                                         protocol: Account.current.url_protocol)
     else
       I18n.t('not_available')
@@ -345,7 +348,7 @@ class VaRule < ActiveRecord::Base
 
   def check_user_privilege
     return true unless automation_rule?
-    
+
     actions.each do |action|
       if Va::Action::ACTION_PRIVILEGE.key?(action.action_key.to_sym)
         return false unless
@@ -389,12 +392,12 @@ class VaRule < ActiveRecord::Base
       return unless observer_rule? || api_webhook_rule?
       errors.add(:base,I18n.t("errors.events_empty")) if(filter_data[:events].blank?)
     end
-    
+
     def has_conditions?
       return unless supervisor_rule?
       errors.add(:base,I18n.t("errors.conditions_empty")) if(filter_data.blank?)
     end
-    
+
     def has_actions?
       errors.add(:base,I18n.t("errors.actions_empty")) if(action_data.blank?)
     end
@@ -402,27 +405,27 @@ class VaRule < ActiveRecord::Base
     def encrypt data
       public_key = OpenSSL::PKey::RSA.new(File.read("config/cert/public.pem"))
       Base64.encode64(public_key.public_encrypt(data))
-    end  
+    end
 
     def negatable_conditions(negatable_columns = [])
       conditions = []
       actions.map do |act|
         if negatable_columns.include? act.action_key
-          conditions << (Va::Condition.new({ 
-            :name => act.action_key, 
-            :value => act.value, 
+          conditions << (Va::Condition.new({
+            :name => act.action_key,
+            :value => act.value,
             :operator => VAConfig::NEGATE_OPERATOR
           }, account))
         elsif ( act.action_key.eql?("set_nested_fields") && negatable_columns.include?(act.act_hash[:category_name]) )
-          conditions << (Va::Condition.new({ 
-            :name => act.act_hash[:category_name], 
-            :value => act.value, 
+          conditions << (Va::Condition.new({
+            :name => act.act_hash[:category_name],
+            :value => act.value,
             :operator => VAConfig::NEGATE_OPERATOR
           }, account))
           act.act_hash[:nested_rules].each do |field|
-            conditions << (Va::Condition.new({ 
-              :name => field[:name], 
-              :value => field[:value], 
+            conditions << (Va::Condition.new({
+              :name => field[:name],
+              :value => field[:value],
               :operator => VAConfig::NEGATE_OPERATOR
             }, account))
           end
@@ -459,5 +462,37 @@ class VaRule < ActiveRecord::Base
       if self.action_data.to_yaml.length >= MAX_ACTION_DATA_LIMIT
         errors.add(:base,I18n.t("admin.va_rules.webhook.action_data_limit_exceed"))
       end
+    end
+
+    def perform_thank_you_redis_op
+      return unless account.detect_thank_you_note_enabled?
+      thank_you_condition_exists = false
+      rule_conditions.each do |condition_set|
+        break if thank_you_condition_exists
+        linear_conditions = condition_set[:all].presence || condition_set[:any].presence || condition_set
+        thank_you_condition_exists = parse_linear_conditions(linear_conditions)
+      end
+      if thank_you_condition_exists 
+        add_element_to_automation_redis_set(automation_rules_with_thank_you_configured, id)
+      else
+        remove_element_from_automation_redis_set(automation_rules_with_thank_you_configured, id)
+      end
+    end
+
+    def parse_linear_conditions(linear_conditions)
+      if linear_conditions.is_a?(Array)
+        linear_conditions.select { |condition| thank_you_condition?(condition) }.present?
+      else
+        thank_you_condition?(linear_conditions)
+      end
+    end
+
+    def thank_you_condition?(condition)
+      condition[:evaluate_on] == :ticket && condition[:name] == 'freddy_suggestion' && condition[:value] == 'thank_you_note'
+    end  
+    
+    def delete_rule_from_redis_set
+      return unless account.detect_thank_you_note_enabled?
+      remove_element_from_automation_redis_set(automation_rules_with_thank_you_configured, id)
     end
 end

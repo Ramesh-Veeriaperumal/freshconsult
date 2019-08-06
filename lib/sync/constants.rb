@@ -11,7 +11,6 @@ module Sync::Constants
     # ["account_configuration", []],
     ["agent_password_policy",        []],
     ["contact_password_policy",      []],
-    ["features",                     []],
     ["all_va_rules",                 []],
     ["all_supervisor_rules",         []],
     ["all_observer_rules",           []],
@@ -67,7 +66,6 @@ module Sync::Constants
   }
 
   MODEL_MEMCACHE_KEYS = {
-    "Features::Feature"         => ["clear_features_from_cache"],
     "HelpdeskPermissibleDomain" => ["clear_helpdesk_permissible_domains_from_cache"],
     "Product"                   => ["clear_fragment_caches", "clear_cache"]
   }

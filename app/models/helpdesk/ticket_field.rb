@@ -129,7 +129,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
         {:condition_key => TicketConstants::ANY_AGENT_ID,       :replace_key => "responder_id"}
       ]
     else
-      [{:condition_key => "flexifields.#{flexifield_def_entry.flexifield_name}"}]
+      [{condition_key: "flexifields.#{self.column_name}"}]
     end
     Helpdesk::TicketFields::UpdateTicketFilter.perform_async({ field_id: self.id, :conditions => conditions })
   end

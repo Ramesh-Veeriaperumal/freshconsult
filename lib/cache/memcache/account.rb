@@ -206,11 +206,7 @@ module Cache::Memcache::Account
   end
 
   def features_included?(*feature_names)
-    if self.launched?(:db_to_bitmap_features_migration)
-      self.features? *feature_names.map(&:to_sym)
-    else
-      feature_names.all? { |feature_name| feature_from_cache.include?(feature_name.to_sym) }
-    end
+    self.features? *feature_names.map(&:to_sym)
   end
 
   def companies_from_cache

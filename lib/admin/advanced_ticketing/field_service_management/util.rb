@@ -15,6 +15,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
     private
 
       def perform_fsm_operations
+        update_field_agent_limit_for_active_account
         create_service_task_field_type
         fsm_fields_to_be_created = fetch_fsm_fields_to_be_created
         reserve_fsm_custom_fields(fsm_fields_to_be_created)
@@ -24,9 +25,17 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         create_field_service_manager_role if Account.current.scheduling_fsm_dashboard_enabled?
         expire_cache
       rescue StandardError => e
-        cleanup_fsm
-        Rails.logger.error "error in performing fsm operations, account id: #{Account.current.id}, message: #{e.message}"
-        NewRelic::Agent.notice_error(e, description: "error in performing fsm operations, account id: #{Account.current.id}, message: #{e.message}")
+        log_operation_failure('Enable', e)
+      end
+
+      def update_field_agent_limit_for_active_account
+        subscription = Account.current.subscription
+        return unless subscription.active?
+
+         if subscription.field_agent_limit.nil?
+          subscription.field_agent_limit=0
+          subscription.save
+        end
       end
 
       def create_field_service_manager_role
@@ -37,6 +46,15 @@ module Admin::AdvancedTicketing::FieldServiceManagement
                         privilege_list: FIELD_SERVICE_MANAGER_ROLE_PRIVILEGES }
         role = Account.current.roles.build(role_params)
         role.save
+      end
+
+      def log_operation_failure(operation, exception)
+        msg = "#{operation} FSM feature failed"
+        error_msg = "#{msg}, account id: #{Account.current.id}, message: #{exception.message}"
+        Rails.logger.error error_msg
+        NewRelic::Agent.notice_error(exception, description: error_msg)
+        msg_param = { account_id: Account.current.id, request_id: Thread.current[:message_uuid], message: exception.message }
+        notify_fsm_dev(msg, msg_param)
       end
 
       def feature_fsm?
@@ -158,6 +176,8 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         remove_fsm_addon_and_reset_agent_limit
         destroy_field_agent
         destroy_field_group
+      rescue StandardError => e
+        log_operation_failure('Disable', e)
       end
 
       def destroy_field_agent

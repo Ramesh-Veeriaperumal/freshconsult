@@ -68,8 +68,7 @@ class ContactMergeController < ApplicationController
   private
 
     def search_users
-      options = { :load => { User => { :include => [{ :account => :features}, 
-                                                    :user_emails, :company, :avatar] }}, :size => 100 }
+      options = { :load => { User => { :include => [:user_emails, :company, :avatar] }}, :size => 100 }
       Search::EsIndexDefinition.es_cluster(current_account.id)
       items = Tire.search Search::EsIndexDefinition.searchable_aliases([User], current_account.id),options do |tire_search|
          tire_search.query do |q|

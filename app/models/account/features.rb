@@ -9,18 +9,18 @@ class Account < ActiveRecord::Base
     :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :undo_send,
     :imap_error_status_check, :va_any_field_without_none, :encode_emoji, :auto_complete_off,
     :csat_email_scan_compatibility, :dependent_field_validation, :post_central_publish,
-    :encode_emoji_subject, :note_central_publish, :db_to_bitmap_features_migration_phase2,
-    :time_sheets_central_publish, :incoming_attachment_limit_25, :fetch_ticket_from_ref_first,
+    :encode_emoji_subject, :note_central_publish, :time_sheets_central_publish,
+    :incoming_attachment_limit_25, :fetch_ticket_from_ref_first,
     :allow_huge_ccs, :euc_migrated_twitter, :new_ticket_recieved_metric, :mint_portal_applicable,
     :twitter_microservice, :twitter_handle_publisher, :count_service_es_writes,
     :count_service_es_reads, :quoted_text_parsing_feature, :shopify_actions,
-    :count_service_es_writes, :old_link_back_url_validation, :db_to_bitmap_features_migration,
+    :count_service_es_writes, :old_link_back_url_validation, :field_agent_availability,
     :installed_app_publish, :denormalized_select_for_update, :disable_banners,
     :skip_invoice_due_warning, :company_central_publish, :product_central_publish,
     :redis_picklist_id, :help_widget, :bot_email_channel, :bot_email_central_publish,
     :description_by_default, :ticket_fields_central_publish, :facebook_page_scope_migration,
     :agent_group_central_publish, :custom_fields_search, :update_billing_info, :fluffy,
-    :allow_billing_info_update, :pricing_plan_change_2019, :tag_central_publish, :native_apps,
+    :allow_billing_info_update, :tag_central_publish, :native_apps,
     :surveys_central_publish, :id_for_choices_write, :nested_field_revamp, :session_logs, :bypass_signup_captcha,
     :freshvisual_configs, :ticket_field_limit_increase, :join_ticket_field_data, :contact_company_split,
     :contact_field_central_publish, :company_field_central_publish, :simple_outreach, :disable_simple_outreach,
@@ -60,7 +60,7 @@ class Account < ActiveRecord::Base
     :freshreports_analytics, :disable_old_reports, :article_filters, :adv_article_bulk_actions,
     :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible, :ticket_properties_suggester, :ticket_properties_suggester_eligible,
     :autofaq, :proactive_spam_detection,
-    :hide_first_response_due, :agent_articles_suggest, :email_articles_suggest, :customer_journey
+    :hide_first_response_due, :agent_articles_suggest, :email_articles_suggest, :customer_journey, :botflow
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
@@ -109,25 +109,10 @@ class Account < ActiveRecord::Base
 
   def features?(*feature_names)
     feature_names = feature_names.to_set
-    if launched? :db_to_bitmap_features_migration_phase2
-      features_migrated_to_bmp = Account.handle_feature_name_change(feature_names &
-        DB_TO_BITMAP_MIGRATION_P2_FEATURES_LIST)
-      features_migrated_to_lp = feature_names & DB_TO_LP_MIGRATION_P2_FEATURES_LIST
-      features_not_migrated = feature_names -
-                              DB_TO_BITMAP_MIGRATION_P2_FEATURES_LIST -
-                              DB_TO_LP_MIGRATION_P2_FEATURES_LIST
-      has_features?(*features_migrated_to_bmp) &&
-        launched?(*features_migrated_to_lp) &&
-        super(*features_not_migrated)
-    elsif launched? :db_to_bitmap_features_migration # phase 1
-      features_migrated_to_bmp = Account.handle_feature_name_change(feature_names &
-        DB_TO_BITMAP_MIGRATION_FEATURES_LIST)
-      features_not_migrated = feature_names - DB_TO_BITMAP_MIGRATION_FEATURES_LIST
-      has_features?(*features_migrated_to_bmp) &&
-        super(*features_not_migrated)
-    else
-      super(*feature_names)
-    end
+    features_migrated_to_bmp = Account.handle_feature_name_change(feature_names &
+      DB_TO_BITMAP_MIGRATION_P2_FEATURES_LIST)
+    features_migrated_to_lp = feature_names & DB_TO_LP_MIGRATION_P2_FEATURES_LIST
+    has_features?(*features_migrated_to_bmp) && launched?(*features_migrated_to_lp)
   end
 
   def self.handle_feature_name_change(feature_names)
@@ -417,5 +402,20 @@ class Account < ActiveRecord::Base
   def detect_thank_you_note_enabled?
     detect_thank_you_note_eligible_enabled? && has_feature?(:detect_thank_you_note)
   end
-  # STOP
+
+  def bitmap_feature_name(fname)
+    FEATURE_NAME_CHANGES[fname] || fname
+  end
+
+  def db_to_lp?(fname)
+    DB_TO_LP_MIGRATION_P2_FEATURES_LIST.include? fname
+  end
+
+  def launched_db_feature
+    DB_TO_LP_MIGRATION_P2_FEATURES_LIST.select { |f| launched?(f) }
+  end
+
+  def features
+    Account::ProxyFeature::ProxyFeatureAssociation.new(self)
+  end
 end
