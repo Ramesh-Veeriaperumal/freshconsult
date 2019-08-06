@@ -92,7 +92,7 @@ class SubscriptionNotifier < ActionMailer::Base
     @headers = {
       :from    => AppConfig['from_email'],
       :to      => account.admin_email,
-      :subject => "Freshdesk :: Spam watcher",
+      :subject => I18n.t('mailer_notifier_subject.spam_watcher'),
       :sent_on => Time.now
     }
     @headers.merge!(make_header(nil, nil, account.id, "Admin Spam Watcher"))
@@ -108,27 +108,13 @@ class SubscriptionNotifier < ActionMailer::Base
     @headers = {
       :from        =>  AppConfig['from_email'],
       :to          =>  account.admin_email,
-      :subject     =>  "Freshdesk :: Spam watcher",
+      :subject     =>  I18n.t('mailer_notifier_subject.spam_watcher'),
       :sent_on     =>  Time.now
     }
     @headers.merge!(make_header(nil, nil, account.id, "Admin Spam Watcher Blocked"))
     @account = account
     mail(@headers) do |part|
       part.html { render "admin_spam_watcher_blocked", :formats => [:html] }
-    end.deliver
-  end
-
-  def admin_spam_watcher_blocked(account)
-    @headers = {
-      :from        =>  AppConfig['from_email'],
-      :to          =>  account.admin_email,
-      :subject     =>  "Freshdesk :: Spam watcher",
-      :sent_on     =>  Time.now
-    }
-    @headers.merge!(make_header(nil, nil, account.id, "Admin Spam Watcher Blocked"))
-    @account = account
-    mail(@headers) do |part|
-      part.html { render "admin_spam_watcher_blocked.html"}
     end.deliver
   end
 
@@ -169,13 +155,14 @@ class SubscriptionNotifier < ActionMailer::Base
   end
 
   def admin_account_cancelled(account_admins_email_list)
-    setup_email(account_admins_email_list,
-                t('account_cancelled.email.subject',{:account_full_domain => Account.current.full_domain}),
+    setup_email(account_admins_email_list[:group],
+                I18n.t('mailer_notifier_subject.account_cancelled', account_domain: Account.current.full_domain),
                 AppConfig['from_email'],
                 Account.current.id,
-                t('account_cancelled.email.header'))
+                'Account Cancelled')
     @account = Account.current
     @support_email = AppConfig['from_email']
+    @other_emails = account_admins_email_list[:other]
     mail(@headers) do |part|
       part.html { render "admin_account_cancelled", :formats => [:html]}
     end.deliver
