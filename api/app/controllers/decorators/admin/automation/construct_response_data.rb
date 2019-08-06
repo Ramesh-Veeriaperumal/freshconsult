@@ -92,7 +92,7 @@ module Admin::Automation::ConstructResponseData
 
   def transform_value(data)
     data.symbolize_keys!
-    name = data[:field_name].to_sym
+    name = data[:field_name].try(:to_sym)
     all_fields = custom_number_fields + custom_decimal_fields + DEFAULT_FIELD_VALUE_CONVERTER + custom_checkbox_fields
     return unless all_fields.include?(name)
     change_value(name, data)
