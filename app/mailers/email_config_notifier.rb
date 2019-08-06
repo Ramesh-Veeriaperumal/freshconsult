@@ -6,7 +6,7 @@ class EmailConfigNotifier < ActionMailer::Base
 
   def activation_instructions(email_config)
     headers = {
-      :subject => "#{email_config.account.portal_name} email activation instructions",
+      :subject => I18n.t('mailer_notifier_subject.activation_instructions', portal_name: email_config.account.portal_name),
       :from    => email_config.random_noreply_email,
       :to      => email_config.reply_email,
       :sent_on => Time.now,
@@ -26,7 +26,7 @@ class EmailConfigNotifier < ActionMailer::Base
   
   def test_email(email_config)
     headers = {
-      :subject => "Woohoo.. Your Freshdesk Test Mail",
+      :subject => I18n.t('mailer_notifier_subject.test_email'),
       :from    => "#{AppConfig['app_name']} Test <#{Helpdesk::EMAIL[:default_requester_email]}>",
       :to      => email_config.reply_email,
       :sent_on => Time.now,
