@@ -12932,6 +12932,16 @@ en:
       current_stamp_html: "The %{forum_type} has been marked as <strong>%{stamp}</strong>."
       merged_and_added_follower: "Your topic %{topic_url} has been merged into %{target_topic_url} and you have been added as a follower."
       merged_and_added_follower_html: "Your topic <a href='%{topic_url}'>%{topic_name}</a> has been merged into <a href='%{target_topic_url}'>%{target_topic_name}</a> and you have been added as a follower."
+    subscriptions:
+      admin_spam_watcher:
+        unblock_message: "Below listed users are blocked by our spam watcher. If you feel they are genuine users, you can send an email to %{support_email} with the following details."
+        account_url: "Account url: %{account_url}"
+        username: "Username: %{user_details}"
+        whitelist_message: "Below listed users are blocked by our spam watcher.If you feel they are genuine users, you can whitelist them by clicking the links."
+        unblock: "<a href='%{unblock_link}'>unblock</a>"
+      admin_spam_watcher_blocked: "Your Account has been blocked due to high volume of traffic. If you feel your requests are genuine, please send an email to %{support_email} with your account details."
+      account_cancel: "<div>This email is a confirmation that your Freshdesk account has been cancelled. We’re sorry to see you go.</div><br/>
+           <div>If you have feedback on how we can provide a better experience, please write to us at %{support_email}. We’d love to hear from you. </div>"
   mailer_notifier_subject:
     agent_email_changed: '%{portal_name}: Agent email address changed'
     agent_details_updated: Your %{changed_attributes} in %{account_name} has been updated
@@ -12968,6 +12978,8 @@ en:
     no_tickets_to_export: "No tickets in range - %{domain}"
     agent_export: Agents List Export
     audit_log_export: Audit Log Export
+    spam_watcher: "Freshdesk :: Spam watcher"
+    account_cancelled: "%{account_domain} has been cancelled"
     notify_dkim_activation: "DKIM signatures activation email"
     notify_new_watcher: 'Added as Watcher %{display_id} %{subject}'
     notify_on_reply: 'New Activity %{display_id} %{subject}'
