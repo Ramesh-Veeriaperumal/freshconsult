@@ -66,7 +66,7 @@ module Dashboard::Custom::TrendCardMethods
       filter_params = []
       filter_params << construct_redshift_group_filter(options[:group_ids])
       filter_params << construct_redshift_product_filter(options[:product_id])
-      filter_params << construct_redshift_ticket_type_filter(options[:ticket_type]) if Account.current.ticket_type_filter_in_trends_widget_enabled?
+      filter_params << construct_redshift_ticket_type_filter(options[:ticket_type])
       filter_params.compact
     end
 

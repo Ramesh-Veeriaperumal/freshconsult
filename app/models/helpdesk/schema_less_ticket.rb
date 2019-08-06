@@ -258,11 +258,11 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
     end
     _changes.each do |_attribute, change|
       if schema_less_ticket_replica.respond_to? _attribute
-        schema_less_ticket_replica.safe_send("#{_attribute}=", change.safe_send(index)) 
+        schema_less_ticket_replica.safe_send("#{_attribute}=", change.safe_send(index))
       end
     end
 
-    schema_less_ticket_replica  	
+    schema_less_ticket_replica
   end
 
   # count from DB(Related/Child tickets count)
@@ -282,10 +282,17 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
     additional_info[:ticket_properties_suggester_hash] = value
   end
 
+  def thank_you_notes
+    additional_info[:thank_you_notes]
+  end
+
+  def thank_you_notes=(value)
+    additional_info[:thank_you_notes] = value
+  end
+
   private
 
   def email_failures
     additional_info
   end
-  
 end

@@ -110,15 +110,16 @@ class Admin::AutomationDecorator < ApiDecorator
     def actions_hash
       return {} if record.action_data.nil?
       record.action_data.map do |action|
+        action_name = action[:name].try(:to_sym)
         if action.key?(:nested_rules)
           construct_action_nested_fields(action)
-        elsif action[:name].to_sym == :trigger_webhook
+        elsif action_name == :trigger_webhook
           construct_webhook(action)
-        elsif INTEGRATION_API_NAME_MAPPING.key?(action[:name].to_sym)
+        elsif INTEGRATION_API_NAME_MAPPING.key?(action_name)
           construct_marketplace_app(action)
         else
           action_data = ACTION_FIELDS.inject({}) do |hash, key|
-            action[:value] = action[:value].split(',').flatten if action[:name].to_sym == :add_tag
+            action[:value] = action[:value].split(',').flatten if action_name == :add_tag
             hash.merge!(construct_data(key.to_sym, action[key], action.key?(key)))
           end
           transform_value(action_data)
@@ -145,6 +146,7 @@ class Admin::AutomationDecorator < ApiDecorator
       condition_hash = { match_type: match_type }
       condition_set.each do |condition|
         condition.deep_symbolize_keys
+        condition = time_and_status_based_condition(condition) if condition[:name].to_s.include? TIME_AND_STATUS_BASED_FILTER[0]
         evaluate_on_type = condition[:evaluate_on] || DEFAULT_EVALUATE_ON
         evaluate_on = EVALUATE_ON_MAPPING_INVERT[evaluate_on_type.to_sym] || evaluate_on_type.to_sym
         condition_hash[evaluate_on] ||= []
@@ -176,15 +178,17 @@ class Admin::AutomationDecorator < ApiDecorator
               nested_field_names.present? && nested_field_names.include?(key)
       value = MASKED_FIELDS[key] if MASKED_FIELDS.key? key
       if key == :field_name
-        value = FIELD_VALUE_CHANGE_MAPPING[value.to_sym] if FIELD_VALUE_CHANGE_MAPPING.include?(value.to_sym)
-        value = TicketDecorator.display_name(value.to_s) if value.to_s.ends_with?("_#{current_account.id}")
-        value = SUPERVISOR_FIELD_VIEW_MAPPING[value.to_sym].to_s if record.supervisor_rule? && SUPERVISOR_FIELD_VIEW_MAPPING.key?(value.to_sym)
-        value = CustomFieldDecorator.display_name(value) if (evaluate_on == :contact || evaluate_on == :company) &&
-                                                            !COMPANY_FIELDS.include?(value.to_sym) &&
-                                                            !CONDITION_CONTACT_FIELDS.include?(value.to_sym)
-        if is_event && value.present? && TRANSFORMABLE_EVENT_FIELDS.include?(key.to_sym) && !DEFAULT_EVENT_TICKET_FIELDS.include?(value.to_sym)
-          field = custom_ticket_fields_from_cache.find { |tf| tf.column_name == value }
-          value = TicketDecorator.display_name(field.name) if field.present?
+        if value.present?
+          value = FIELD_VALUE_CHANGE_MAPPING[value.to_sym] if FIELD_VALUE_CHANGE_MAPPING.include?(value.to_sym)
+          value = TicketDecorator.display_name(value.to_s) if value.to_s.ends_with?("_#{current_account.id}")
+          value = SUPERVISOR_FIELD_VIEW_MAPPING[value.to_sym].to_s if record.supervisor_rule? && SUPERVISOR_FIELD_VIEW_MAPPING.key?(value.to_sym)
+          value = CustomFieldDecorator.display_name(value) if [:contact, :company].include?(evaluate_on) &&
+                                                              !COMPANY_FIELDS.include?(value.to_sym) &&
+                                                              !CONDITION_CONTACT_FIELDS.include?(value.to_sym)
+          if is_event && value.present? && TRANSFORMABLE_EVENT_FIELDS.include?(key.to_sym) && !DEFAULT_EVENT_TICKET_FIELDS.include?(value.to_sym)
+            field = custom_ticket_fields_from_cache.find { |tf| tf.column_name == value }
+            value = TicketDecorator.display_name(field.name) if field.present?
+          end
         end
       end
       if key == :value

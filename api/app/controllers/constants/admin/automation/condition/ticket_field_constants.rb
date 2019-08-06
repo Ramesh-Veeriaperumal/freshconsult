@@ -47,6 +47,8 @@ module Admin::Automation::Condition::TicketFieldConstants
     # we need to remoeve allow_any_type: true to all the places
     { name: :hours_since_created, field_type: :hours, data_type: :Integer,
       invalid_rule_types: [1, 4], allow_any_type: true }.freeze,
+    { name: :hours_since_waiting_on_custom_status, field_type: :date_time_status, data_type: :Integer,
+      invalid_rule_types: [1, 4], allow_any_type: true }.freeze,
     { name: :pending_since, field_type: :hours, data_type: :Integer,
       invalid_rule_types: [1, 4], allow_any_type: true }.freeze,
     { name: :resolved_at, field_type: :hours, data_type: :Integer,

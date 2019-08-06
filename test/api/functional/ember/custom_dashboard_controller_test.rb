@@ -586,27 +586,21 @@ module Ember
     end
 
     def test_widget_data_preview_for_ticket_trend_card_with_invalid_ticket_type
-      Account.any_instance.stubs(:ticket_type_filter_in_trends_widget_enabled?).returns(true)
       get :widget_data_preview, controller_params(version: 'private', type: 'ticket_trend_card', metric: 3, date_range: 3, ticket_type: '55555')
       assert_response 400, response.body
-    ensure
-      Account.any_instance.unstub(:ticket_type_filter_in_trends_widget_enabled?)
     end
 
     def test_widget_data_preview_for_ticket_trend_card_with_ticket_type
-      Account.any_instance.stubs(:ticket_type_filter_in_trends_widget_enabled?).returns(true)
       stub_data = trend_card_reports_response_stub
       ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
       get :widget_data_preview, controller_params(version: 'private', type: 'ticket_trend_card', metric: 3, date_range: 3, ticket_type: ticket_type_picklist_value('Incident'))
       assert_response 200, response.body
       match_json(trend_card_preview_response_pattern(stub_data))
     ensure
-      Account.any_instance.unstub(:ticket_type_filter_in_trends_widget_enabled?)
       ::Dashboard::RedshiftRequester.any_instance.unstub(:fetch_records)
     end
 
     def test_create_dashboard_with_time_trends_widget_and_ticket_type
-      Account.any_instance.stubs(:ticket_type_filter_in_trends_widget_enabled?).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(5, widget_config_data(ticket_type: ticket_type_picklist_value('Question')))
@@ -616,12 +610,10 @@ module Ember
       assert_response 201
       match_dashboard_response(response_hash, dashboard_object.get_dashboard_payload)
     ensure
-      Account.any_instance.unstub(:ticket_type_filter_in_trends_widget_enabled?)
       User.any_instance.unstub(:privilege?)
     end
 
     def test_create_dashboard_with_time_trends_widget_and_invalid_ticket_type
-      Account.any_instance.stubs(:ticket_type_filter_in_trends_widget_enabled?).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(5, widget_config_data(ticket_type: '55555'))
@@ -629,12 +621,10 @@ module Ember
       response_hash = JSON.parse(response.body).deep_symbolize_keys
       assert_response 400, response_hash
     ensure
-      Account.any_instance.unstub(:ticket_type_filter_in_trends_widget_enabled?)
       User.any_instance.unstub(:privilege?)
     end
 
     def test_create_dashboard_with_time_trends_widget_and_all_ticket_type
-      Account.any_instance.stubs(:ticket_type_filter_in_trends_widget_enabled?).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(5, widget_config_data(ticket_type: '0'))
@@ -644,23 +634,6 @@ module Ember
       assert_response 201, response_hash
       match_dashboard_response(response_hash, dashboard_object.get_dashboard_payload)
     ensure
-      Account.any_instance.unstub(:ticket_type_filter_in_trends_widget_enabled?)
-      User.any_instance.unstub(:privilege?)
-    end
-
-    def test_create_dashboard_with_time_trends_widget_and_ticket_type_with_lp_disabled
-      Account.any_instance.stubs(:ticket_type_filter_in_trends_widget_enabled?).returns(false)
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
-      dashboard_object = DashboardObject.new(0)
-      dashboard_object.add_widget(5, widget_config_data(ticket_type: '0'))
-      update_dashboard_list(dashboard_object)
-      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
-      response_hash = JSON.parse(response.body).deep_symbolize_keys
-      assert_response 201, response_hash
-      widget = Account.current.dashboards.find(response_hash[:id]).widgets
-      assert_equal nil, widget[0][:config_data][:ticket_type]
-    ensure
-      Account.any_instance.unstub(:ticket_type_filter_in_trends_widget_enabled?)
       User.any_instance.unstub(:privilege?)
     end
 

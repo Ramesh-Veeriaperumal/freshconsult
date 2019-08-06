@@ -111,7 +111,7 @@ class Search::V2::AutocompleteController < ApplicationController
     #
     def esv2_autocomplete_models
       @@esv2_agent_autocomplete ||= {
-        'user'    => { model: 'User',           associations: [{ :account => :features }, :user_emails] },
+        'user'    => { model: 'User',           associations: [:user_emails] },
         'company' => { model: 'Company',        associations: [] },
         'tag'     => { model: 'Helpdesk::Tag',  associations: [] }
       }

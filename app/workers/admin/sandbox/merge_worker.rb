@@ -44,7 +44,7 @@ class Admin::Sandbox::MergeWorker < BaseWorker
           meta: template_data['meta']
         }
       }
-      Admin::SandboxMailer.safe_send(:sandbox_mailer, @account, data)
+      Admin::SandboxMailer.send_email_to_group(:sandbox_mailer, data[:recipients], @account, data)
     end
 
     def post_merge_activities

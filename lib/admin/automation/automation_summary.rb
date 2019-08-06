@@ -1,5 +1,6 @@
 module Admin::Automation::AutomationSummary
   include Admin::AutomationConstants
+  include Admin::Automation::CustomStatusHelper
   attr_accessor :record
 
   def generate_summary(record, add_html_tag = false)
@@ -32,11 +33,12 @@ module Admin::Automation::AutomationSummary
       record.rule_events.map do |event|
         event.rule.deep_symbolize_keys
         sentence << I18n.t('admin.automation_summary.condition_any') if sentence.present?
-        sentence << if event.rule.key?(:nested_rule)
-                      event_nested_sentence_generate(event.rule)
-                    else
-                      event_sentence_generate(event.rule)
-                    end
+        generated_sentence = if event.rule.key?(:nested_rule)
+                               event_nested_sentence_generate(event.rule)
+                             else
+                               event_sentence_generate(event.rule)
+                             end
+        sentence << generated_sentence if generated_sentence.present?
       end
       sentence
     end
@@ -66,16 +68,19 @@ module Admin::Automation::AutomationSummary
       record.action_data.map do |action|
         action.deep_symbolize_keys
         sentence << I18n.t('admin.automation_summary.condition_all') if sentence.present?
-        sentence << if action.key?(:nested_rules)
-                      nested_fields_sentence_generate(action, :action, :category_name)
-                    else
-                      action_sentence_generate(action)
-                    end
+        generated_sentence = if action.key?(:nested_rules)
+                               nested_fields_sentence_generate(action, :action, :category_name)
+                             else
+                               action_sentence_generate(action)
+                             end
+        sentence << generated_sentence if generated_sentence.present?
       end
       sentence
     end
 
     def event_sentence_generate(data)
+      return if data[:name].nil?
+
       name = data[:name].to_sym == :note_type ? :note_added : :event
       if data.key?(:value)
         name = :"#{name}_value"
@@ -94,18 +99,22 @@ module Admin::Automation::AutomationSummary
       condition_set.each do |condition|
         condition.deep_symbolize_keys
         sentence << I18n.t("admin.automation_summary.#{operator}") if sentence.present?
-        sentence << if condition.key?(:nested_rules)
-                      nested_fields_sentence_generate(condition, :condition)
-                    else
-                      condition_sentence_generate(condition)
-                    end
+        generated_sentence = if condition.key?(:nested_rules)
+                               nested_fields_sentence_generate(condition, :condition)
+                             else
+                               condition_sentence_generate(condition)
+                             end
+        sentence << generated_sentence if generated_sentence.present?
       end
       sentence
     end
 
     def condition_sentence_generate(data)
+      return if data[:name].nil?
+
       is_supervisor = record.supervisor_rule?
       field_name =  is_supervisor && TIME_BASE_DUPLICATE.include?(field_name) ? :"#{field_name}_since" : data[:name].to_sym
+      field_name = TIME_AND_STATUS_BASED_FILTER[0] if data[:name].to_s.include? TIME_AND_STATUS_BASED_FILTER[0]
       array = []
       array << generate_key(data[:name], data[:evaluate_on] || 'ticket')
       field = ticket_fields.find { |tf| tf.name == data[:name] }
@@ -125,8 +134,10 @@ module Admin::Automation::AutomationSummary
     end
 
     def action_sentence_generate(data)
-      field_name = data[:name].to_sym
+      field_name = data[:name].try(:to_sym)
       translated_key = :action
+      return if field_name.nil?
+
       values = nil
       case true
       when data.key?(:value)
@@ -207,10 +218,12 @@ module Admin::Automation::AutomationSummary
     end
 
     def generate_key(field_name, evaluate_on = 'ticket', separator = ', ', type = nil)
-      value = if type == :action && ACTION_FIELDS_SUMMARY.include?(field_name.to_sym)
+      value = if type == :action && ACTION_FIELDS_SUMMARY.include?(field_name.try(:to_sym))
                 I18n.t("admin.automation_summary.action_#{field_name}")
-              elsif SUMMARY_DEFAULT_FIELDS.include?(field_name.to_sym)
+              elsif SUMMARY_DEFAULT_FIELDS.include?(field_name.try(:to_sym))
                 I18n.t("admin.automation_summary.#{field_name}")
+              elsif field_name.to_s.include? TIME_AND_STATUS_BASED_FILTER[0].to_s
+                supervisor_custom_status_name(field_name)
               else
                 get_name("custom_#{evaluate_on}_fields", field_name, separator)
               end

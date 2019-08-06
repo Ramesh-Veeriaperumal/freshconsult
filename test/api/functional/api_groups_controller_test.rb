@@ -10,19 +10,17 @@ class ApiGroupsControllerTest < ActionController::TestCase
     { api_group: params }
   end
 
-  def enabling_fsm_feature_and_lp
+  def enabling_fsm_feature
     Account.current.add_feature(:field_service_management)
-    Account.current.launch(:field_service_management_lp)
   end
 
-  def revoke_fsm_feature_and_rollback_lp
+  def revoke_fsm_feature
     Account.current.revoke_feature(:field_service_management)
-    Account.current.rollback(:field_service_management_lp)
   end
 
   def test_update_ticket_assign_type_for_field_group
     Account.stubs(:current).returns(Account.first)
-    enabling_fsm_feature_and_lp
+    enabling_fsm_feature
     create_field_group_type
     create_field_agent_type
     group = create_group(@account, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, group_type: GroupType.group_type_id(GroupConstants::FIELD_GROUP_NAME))
@@ -33,13 +31,13 @@ class ApiGroupsControllerTest < ActionController::TestCase
   ensure
     destroy_field_group
     destroy_field_agent
-    revoke_fsm_feature_and_rollback_lp
+    revoke_fsm_feature
     Account.unstub(:current)
   end
 
   def test_create_field_group_with_ticket_assign_type
     Account.stubs(:current).returns(Account.first)
-    enabling_fsm_feature_and_lp
+    enabling_fsm_feature
     create_field_group_type
     create_field_agent_type
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, auto_ticket_assign: true, group_type: FIELD_GROUP_NAME)
@@ -49,7 +47,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   ensure
     destroy_field_group
     destroy_field_agent
-    revoke_fsm_feature_and_rollback_lp
+    revoke_fsm_feature
     Account.unstub(:current)
   end
 
@@ -135,7 +133,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
 
   def test_create_field_group_with_field_agent
     Account.stubs(:current).returns(Account.first)
-    enabling_fsm_feature_and_lp
+    enabling_fsm_feature
     create_field_group_type
     create_field_agent_type
     agent = add_test_agent(Account.current, role: Role.find_by_name('Agent').id, agent_type: AgentType.agent_type_id(Agent::FIELD_AGENT), ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
@@ -145,13 +143,13 @@ class ApiGroupsControllerTest < ActionController::TestCase
   ensure
     destroy_field_group
     destroy_field_agent
-    revoke_fsm_feature_and_rollback_lp
+    revoke_fsm_feature
     Account.unstub(:current)
   end
 
   def test_create_field_group_with_support_agent
     Account.stubs(:current).returns(Account.first)
-    enabling_fsm_feature_and_lp
+    enabling_fsm_feature
     create_field_group_type
     agent = add_test_agent(Account.current, role: Role.find_by_name('Agent').id, agent_type: AgentType.agent_type_id(Agent::SUPPORT_AGENT), ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, unassigned_for: '30m', group_type: FIELD_GROUP_NAME, agent_ids: [agent.id])
@@ -160,13 +158,13 @@ class ApiGroupsControllerTest < ActionController::TestCase
   ensure
     destroy_field_group
     destroy_field_agent
-    revoke_fsm_feature_and_rollback_lp
+    revoke_fsm_feature
     Account.unstub(:current)
   end
 
   def test_create_support_group_with_field_agent
     Account.stubs(:current).returns(Account.first)
-    enabling_fsm_feature_and_lp
+    enabling_fsm_feature
     create_field_agent_type
     agent = add_test_agent(Account.current, role: Role.find_by_name('Agent').id, agent_type: AgentType.agent_type_id(Agent::FIELD_AGENT), ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, auto_ticket_assign: true, group_type: SUPPORT_GROUP_NAME, agent_ids: [agent.id])
@@ -175,7 +173,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   ensure
     agent.destroy
     destroy_field_agent
-    revoke_fsm_feature_and_rollback_lp
+    revoke_fsm_feature
     Account.unstub(:current)
   end
 
@@ -314,7 +312,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
 
   def test_update_field_group_with_field_agent
     Account.stubs(:current).returns(Account.first)
-    enabling_fsm_feature_and_lp
+    enabling_fsm_feature
     create_field_group_type
     create_field_agent_type
     group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph, group_type: GroupType.group_type_id(FIELD_GROUP_NAME))
@@ -326,13 +324,13 @@ class ApiGroupsControllerTest < ActionController::TestCase
     agent.destroy
     destroy_field_group
     destroy_field_agent
-    revoke_fsm_feature_and_rollback_lp
+    revoke_fsm_feature
     Account.unstub(:current)
   end
 
   def test_update_field_group_with_support_agent
     Account.stubs(:current).returns(Account.first)
-    enabling_fsm_feature_and_lp
+    enabling_fsm_feature
     create_field_group_type
     agent = add_test_agent(Account.current, role: Role.find_by_name('Agent').id, agent_type: AgentType.agent_type_id(Agent::SUPPORT_AGENT), ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
     group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph, group_type: GroupType.group_type_id(FIELD_GROUP_NAME))
@@ -343,13 +341,13 @@ class ApiGroupsControllerTest < ActionController::TestCase
     agent.destroy
     destroy_field_group
     destroy_field_agent
-    revoke_fsm_feature_and_rollback_lp
+    revoke_fsm_feature
     Account.unstub(:current)
   end
 
   def test_update_support_group_with_field_agent
     Account.stubs(:current).returns(Account.first)
-    enabling_fsm_feature_and_lp
+    enabling_fsm_feature
     create_field_agent_type
     group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
     agent = add_test_agent(Account.current, role: Role.find_by_name('Agent').id, agent_type: AgentType.agent_type_id(Agent::FIELD_AGENT), ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
@@ -359,7 +357,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   ensure
     agent.destroy
     destroy_field_agent
-    revoke_fsm_feature_and_rollback_lp
+    revoke_fsm_feature
     Account.unstub(:current)
   end
 

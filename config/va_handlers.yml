@@ -14,6 +14,7 @@ va_handlers:
         object_id_array: Va::Handlers::ObjectIdArray
         nested_field: Va::Handlers::NestedField
         allow_all: Va::Handlers::AllowAll
+        date_time_status: Va::Handlers::DateTimeStatus
     event:
         default: Va::EventHandlers::Update
         fallback: Va::EventHandlers::Fallback

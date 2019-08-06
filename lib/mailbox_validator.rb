@@ -28,6 +28,66 @@ module MailboxValidator
       { success: verified, msg: msg }
     end
 
+    def verify_imap_mailbox(args)
+      verified = false
+      msg = ""
+      begin
+        imap = Net::IMAP.new(args[:server_name], args[:port].to_s, args[:use_ssl])
+
+        if 'plain'.casecmp(args[:authentication]).zero?
+          imap.login(args[:user_name], args[:password])
+        else
+          imap.authenticate(args[:authentication], args[:user_name], args[:password]) 
+        end
+
+        raise IdleNotSupportedError, "Mailbox server does not support IDLE" unless imap.capability.include?("IDLE")
+
+        imap.logout()
+        verified = true
+      rescue IdleNotSupportedError => error
+        msg = :imap_idle_not_supported
+        Rails.logger.debug "error while verifying the imap details : #{error}"
+      rescue SocketError => error
+        msg = :imap_connection_error
+        Rails.logger.debug "error while verifying the imap details : #{error}"
+      rescue Exception => error
+        msg = :imap_error
+        Rails.logger.debug "error while verifying the imap details : #{error}"      
+      end
+      { success: verified, msg: msg }    
+    end
+
+    def verify_smtp_mailbox(args)
+      verified = false
+      msg = ''
+      options = ''
+      begin
+        smtp = Net::SMTP.new(args[:server_name], args[:port].to_s)
+        if args[:port].to_i == 465
+          smtp.enable_ssl
+        elsif args[:port].to_i == 587
+          smtp.enable_starttls
+        end
+        smtp.start(args[:server_name], args[:user_name], args[:password], args[:authentication]) do |smtp|         
+        end
+        verified = true
+      rescue Timeout::Error => error
+        msg = :smtp_timed_out
+        Rails.logger.debug "error while verifying the smtp details : #{error}"
+      rescue SocketError => error
+        msg = :smtp_socket_error
+        Rails.logger.debug "error while verifying the smtp details : #{error}"
+      rescue Net::SMTPAuthenticationError => error
+        msg = :smtp_invalid_credentials
+        Rails.logger.debug "error while verifying the smtp details : #{error}"
+      rescue Exception => error
+        msg = :smtp_error
+        options = { :error => error.message }
+        Rails.logger.debug "error while verifying the smtp details : #{error}"
+      end
+      { success: verified, msg: msg, options: options }
+    end
+
     def verify_imap_details?
       args            = params[:email_config][:imap_mailbox_attributes]
       filtered_params = args.except(:password)

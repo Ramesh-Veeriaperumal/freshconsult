@@ -153,8 +153,24 @@ module Admin::AutomationDelegatorHelper
       tag_validation(name, output)
     elsif BUSINESS_HOURS_FIELDS.include?(name.to_sym)
       validate_business_calendar(name, data)
+    elsif TIME_AND_STATUS_BASED_FILTER.include?(name.to_s)
+      validate_time_status(name.to_sym, data)
     else
       validate_field_values(name, output, default_fields[name.to_sym] + [*ANY_NONE[:NONE]])
+    end
+  end
+
+  def validate_time_status(field_name, data)
+    if data.present? && (field_name.to_s.eql? TIME_AND_STATUS_BASED_FILTER[0])
+      if data['custom_status_id'].present?
+        is_valid_status = Helpdesk::TicketStatus.status_objects_from_cache(current_account).select { |status| status.status_id == data['custom_status_id'] && !status.is_default }.present?
+        invalid_value('custom_status_id', data['custom_status_id']) unless is_valid_status
+        invalid_data_type('conditions[:condition_set_1][:ticket][:hours_since_waiting_on_custom_status][:value]', ['Number'],data['value'].class) unless data['value'].is_a?(Numeric)
+      else
+        missing_field_error('conditions[:condition_set_1][:ticket][:hours_since_waiting_on_custom_status]', ['custom_status_id'])
+      end
+    else
+      missing_field_error('conditions[ticket]', ['hours_since_waiting_on_custom_status'])
     end
   end
 

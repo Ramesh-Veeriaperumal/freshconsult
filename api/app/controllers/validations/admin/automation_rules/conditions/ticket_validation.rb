@@ -9,12 +9,12 @@ module Admin::AutomationRules::Conditions
 
     attr_accessor(*DEFAULT_ATTRIBUTES)
     attr_accessor :invalid_attributes, :type_name, :rule_type, :field_position, :conditions, :custom_field_hash,
-                  :validator_type
+                  :validator_type, :custom_status_id
 
     validate :shared_ownership_feature, if: -> { internal_agent_id.present? || internal_group_id.present? }
     validate :multi_product_feature, if: -> { product_id.present? }
     validate :supervisor_text_field?, if: -> { contact_name.present? || company_name.present? || ((from_email.present? || to_email.present?) && supervisor_rule?) }
-
+    validate :invalid_field_custom_status_id?
     validate :ticket_conditions_attribute_type
 
     validate :detect_thank_you_note_feature, if: -> { freddy_suggestion.present? }, on: :create
@@ -32,6 +32,15 @@ module Admin::AutomationRules::Conditions
 
     def ticket_conditions_attribute_type
       attribute_type(CONDITION_TICKET_FIELDS_HASH + custom_field_hash)
+    end
+
+    def invalid_field_custom_status_id?
+      index = 0
+      @conditions.each do |condition|
+        index += 1
+        errors[construct_key(:"[#{index}]")] << 'supervisor_custom_status_condition feature is not_enabled' if condition['field_name'] == TIME_AND_STATUS_BASED_FILTER[0] && !(Account.current.launched? :supervisor_custom_status)
+        errors[construct_key(:"[#{index}][custom_status_id]")] << :invalid_field if condition['custom_status_id'].present? && condition['field_name'] != TIME_AND_STATUS_BASED_FILTER[0]
+      end
     end
 
     def thank_you_note_condition_validation

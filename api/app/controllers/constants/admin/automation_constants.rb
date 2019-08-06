@@ -57,8 +57,6 @@ module Admin::AutomationConstants
 
   DEFAULT_TEXT_FIELDS = %i[subject description subject_or_description].freeze
 
-  CUSTOM_TEXT_FIELD_TYPES = %i[custom_text custom_paragraph].freeze
-
   LANGUAGE_HASH = I18n.available_locales_with_name.each_with_object({}) do |arr, hash|
     hash[arr.last.to_s] = arr.first
   end.freeze
@@ -118,7 +116,7 @@ module Admin::AutomationConstants
 
   CONDITON_SET_NESTED_FIELDS = %i[nested_fields nested_rules].freeze
 
-  CONDITION_SET_COMMON_FIELDS = %i[operator value rule_type case_sensitive business_hours_id].freeze + CONDITON_SET_NESTED_FIELDS
+  CONDITION_SET_COMMON_FIELDS = %i[operator value rule_type case_sensitive business_hours_id custom_status_id].freeze + CONDITON_SET_NESTED_FIELDS
 
   ACTION_COMMON_FIELDS = %i[value email_to email_subject email_body request_type
                             url need_authentication username password api_key
@@ -222,8 +220,8 @@ module Admin::AutomationConstants
   # Supervisor only
   TIME_BASED_FILTERS = %i[hours_since_created pending_since resolved_at closed_at opened_at
                           first_assigned_at assigned_at requester_responded_at
-                          agent_responded_at frDueBy due_by].freeze
-
+                          agent_responded_at frDueBy due_by hours_since_waiting_on_custom_status].freeze
+  TIME_AND_STATUS_BASED_FILTER = ['hours_since_waiting_on_custom_status'].freeze
   # Supervisor + Observer
   TICKET_STATE_FILTERS = %i[inbound_count outbound_count].freeze
 
@@ -301,7 +299,7 @@ module Admin::AutomationConstants
 
   SUPERVISOR_IGNORE_CONDITION_PARAMS = %i[contact company].freeze
 
-  CONDITION_SET_REQUEST_VALUES = %i[field_name operator value nested_fields case_sensitive business_hours_id].freeze
+  CONDITION_SET_REQUEST_VALUES = %i[field_name operator value nested_fields case_sensitive business_hours_id custom_status_id].freeze
 
   MARKETPLACE_INTEGRATION_PARAMS = %i[push_to slack_text office365_text].freeze
 
@@ -313,12 +311,12 @@ module Admin::AutomationConstants
   DEFAULT_FIELDS_DELEGATORS = ((%i[priority ticket_type add_watcher status source product_id responder_id group_id
                                    add_tag created_at updated_at note_type ticket_action time_sheet_action
                                    customer_feedback ticket_cc ticlet_cc tag_names tag_ids internal_agent_id
-                                   add_note internal_group_id freddy_suggestion]) + SEND_EMAIL_ACTION_FIELDS).freeze
+                                   add_note internal_group_id freddy_suggestion hours_since_waiting_on_custom_status]) + SEND_EMAIL_ACTION_FIELDS).freeze
 
   DELEGATOR_IGNORE_FIELDS = (%i[subject subject_or_description reply_sent trigger_webhook from_email to_email
                                 mail_del_failed_requester mail_del_failed_others add_a_cc add_comment delete_ticket
                                 mark_as_spam skip_notification due_by from_email to_email ticket_cc last_interaction
-                                inbound_count outbound_count description forward_ticket ticlet_cc] + TIME_BASED_FILTERS +
+                                inbound_count outbound_count description forward_ticket ticlet_cc] + (TIME_BASED_FILTERS - %i[hours_since_waiting_on_custom_status]) +
                                 SUPERVISOR_CONDITION_TICKET_FIELDS).uniq.freeze
 
   DEFAULT_FIELDS = (DEFAULT_FIELDS_DELEGATORS + DELEGATOR_IGNORE_FIELDS).freeze

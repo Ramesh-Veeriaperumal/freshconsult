@@ -94,6 +94,7 @@ module AutomationTestHelper
       condition_hash[evaluate_on_type.to_sym] ||= []
       condition_data[:field_name] = condition[:name] unless condition[:name].nil?
       condition_data[:operator] = condition[:operator] unless condition[:operator].nil?
+      condition_data[:custom_status_id] = condition[:custom_status_id] unless condition[:custom_status_id].nil?
       condition_data[:value] = condition[:value] unless condition[:value].nil?
       condition_data[:case_sensitive] = condition[:case_sensitive] unless condition[:case_sensitive].nil?
       condition_data[:case_sensitive] = false if DEFAULT_TEXT_FIELDS.include?(condition[:name].to_sym) &&
@@ -151,6 +152,12 @@ module AutomationTestHelper
       "actions":[{"field_name":"group_id","value":1}]}')
     observer_payload['name'] = Faker::Lorem.characters(20)
     observer_payload
+  end
+
+  def sample_supervisor_json_without_conditions
+    supervisor_payload = JSON.parse('{"active": true,"actions":[{"field_name":"priority","value":4}]}')
+    supervisor_payload['name'] = Faker::Lorem.characters(20)
+    supervisor_payload
   end
 
   def sample_json_for_dispatcher

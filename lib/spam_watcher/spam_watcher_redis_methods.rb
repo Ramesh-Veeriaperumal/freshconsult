@@ -51,7 +51,7 @@ class SpamWatcherRedisMethods
     end
 
     def spam_blocked_alert(account)
-      SubscriptionNotifier.deliver_admin_spam_watcher_blocked(account)
+      SubscriptionNotifier.send_email(:deliver_admin_spam_watcher_blocked, account.admin_email, account)
       FreshdeskErrorsMailer.deliver_spam_blocked_alert(
         {
           :subject          => "Blocked Account with id #{account.id} Due to heavy creation of solution articles",
@@ -192,7 +192,7 @@ class SpamWatcherRedisMethods
     end
 
     def incoming_email_spam_block_alert(account)
-      SubscriptionNotifier.deliver_admin_spam_watcher_blocked(account)
+      SubscriptionNotifier.send_email(:deliver_admin_spam_watcher_blocked, account.admin_email, account)
       FreshdeskErrorsMailer.deliver_spam_blocked_alert(
         {
           :subject          => "Blocked Account with id #{account.id} Due to spike in incoming email immediately after signup",
