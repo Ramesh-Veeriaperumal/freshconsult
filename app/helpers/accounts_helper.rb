@@ -1,6 +1,7 @@
 module AccountsHelper 
 	LANGUAGES_LIMIT = 3
-  
+  TRUE_VALUES = [true, 1, '1', 'true', 'TRUE', 'on', 'ON'].to_set
+
 	def breadcrumbs
 		_output = []
 		_output << pjax_link_to(t('helpdesk_title'), edit_account_path)
@@ -47,6 +48,14 @@ module AccountsHelper
       CRMApp::Freshsales::Signup.perform_at(5.minutes.from_now,
                                             account_id: account_id,
                                             fs_cookie: signup_params[:fs_cookie])
+    end
+  end
+  
+  def self.value_to_boolean(value)
+    if value.is_a?(String) && value.empty?
+      nil
+    else
+      TRUE_VALUES.include?(value)
     end
   end
 

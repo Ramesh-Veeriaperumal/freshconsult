@@ -12,7 +12,6 @@ module Sync::Constants
     # ["account_configuration", []],
     ["agent_password_policy",        []],
     ["contact_password_policy",      []],
-    ["features",                     []],
     ["all_va_rules",                 []],
     ["all_supervisor_rules",         []],
     ["all_observer_rules",           []],
@@ -52,8 +51,8 @@ module Sync::Constants
   MODEL_INSERT_ORDER = MODEL_DEPENDENCIES.keys
 
   account_association = [["Account"], "account_id"]
-  # Adding account association to all the models apart from features model.
-  (MODEL_DEPENDENCIES.keys - ['Features::Feature']).each do |model|
+  # Adding account association to all the models.
+  MODEL_DEPENDENCIES.keys.each do |model|
     MODEL_DEPENDENCIES[model] << account_association
   end
 
@@ -88,7 +87,6 @@ module Sync::Constants
   }
 
   MODEL_MEMCACHE_KEYS = {
-    'Features::Feature'         => ['clear_features_from_cache'],
     'HelpdeskPermissibleDomain' => ['clear_helpdesk_permissible_domains_from_cache'],
     'Product'                   => ['clear_fragment_caches', 'clear_cache'],
     'Admin::Skill'              => ['clear_skills_cache']

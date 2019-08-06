@@ -193,6 +193,11 @@ class AccountAdditionalSettings < ActiveRecord::Base
     self.save
   end
 
+  def widget_count
+    key = Account.current.subscription.sprout_plan? ? :sprout : :non_sprout
+    additional_settings[:widget_count] || AccountConstants::WIDGET_COUNT_FOR_PLAN[key]
+  end
+
   private
 
   def clear_cache

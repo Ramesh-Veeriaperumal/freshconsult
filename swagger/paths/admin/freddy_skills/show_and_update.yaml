@@ -1,0 +1,11 @@
+get:
+  tags: [FreddySkill]
+  summary: List of eligible freddy skills
+  responses:
+    200:
+      description: Success
+      schema: '#/definitions/freddy_skills_show_and_update'
+    403:
+      description: Access denied
+    404:
+      description: Skill not found or not eligible

@@ -885,6 +885,24 @@
             "in": "query",
             "type": "string",
             "description": "ticket_type of the ticket to be filtered with"
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "type": "string",
+            "description": "properties needs to be included in the response",
+            "enum": [
+              "count"
+            ]
+          },
+          {
+            "name": "only",
+            "in": "query",
+            "type": "string",
+            "description": "only a specified property required in the response",
+            "enum": [
+              "count"
+            ]
           }
         ],
         "responses": {
@@ -892,43 +910,6 @@
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/associated_tickets"
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          },
-          "404": {
-            "description": "Ticket not found"
-          }
-        }
-      }
-    },
-    "/tickets/{id}/associated_tickets_count": {
-      "get": {
-        "tags": [
-          "ticket"
-        ],
-        "summary": "Associated Tickets Count",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "type": "number",
-            "description": "Display ID of Tracker/Parent ticket",
-            "required": true
-          },
-          {
-            "name": "type",
-            "in": "query",
-            "type": "string",
-            "description": "ticket_type of the ticket to be filtered with"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/associated_tickets_count"
             }
           },
           "403": {
@@ -12912,6 +12893,191 @@
           }
         }
       }
+    },
+    "/email/mailboxes": {
+      "get": {
+        "tags": [
+          "email mailboxes"
+        ],
+        "summary": "List all",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "group_id",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "reply_email",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "to_email",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "active",
+            "in": "query",
+            "type": "boolean"
+          },
+          {
+            "name": "order_by",
+            "in": "query",
+            "type": "string",
+            "description": "Possible values are group_id, product_id."
+          },
+          {
+            "name": "order_type",
+            "in": "query",
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mailboxes": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/email_mailbox_response"
+                  }
+                },
+                "meta": {
+                  "$ref": "#/definitions/meta"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "email mailboxes"
+        ],
+        "description": "Create mailbox",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/email_mailbox_input"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/email_mailbox_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/email/mailboxes/{id}": {
+      "get": {
+        "tags": [
+          "email mailboxes"
+        ],
+        "summary": "Show mailbox",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/email_mailbox_response"
+            }
+          },
+          "404": {
+            "description": "Mailbox not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "email mailboxes"
+        ],
+        "summary": "Delete mailbox",
+        "description": "Destroys the mailbox, will not be able to restore",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "Mailbox not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "email mailboxes"
+        ],
+        "summary": "Update mailbox",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/email_mailbox_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/email_mailbox_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "Mailbox not found"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -15609,6 +15775,119 @@
         "from",
         "to",
         "recieve_via"
+      ]
+    },
+    "email_mailbox_input": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "support_email": {
+          "type": "string"
+        },
+        "group_id": {
+          "type": "number"
+        },
+        "product_id": {
+          "type": "number"
+        },
+        "default_reply_email": {
+          "type": "boolean"
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "mailbox_type": {
+          "type": "string",
+          "description": "Possible values are freshdesk_mailbox, custom_mailbox. If set to custom_mailbox, custom_mailbox property has to be specified."
+        },
+        "custom_mailbox": {
+          "type": "object",
+          "properties": {
+            "access_type": {
+              "type": "string",
+              "enum": [
+                "incoming",
+                "outgoing",
+                "both"
+              ],
+              "description": "If access_type is both, then include both incoming and outgoing."
+            },
+            "incoming": {
+              "type": "object",
+              "properties": {
+                "mail_server": {
+                  "type": "string"
+                },
+                "port": {
+                  "type": "number"
+                },
+                "use_ssl": {
+                  "type": "boolean"
+                },
+                "delete_from_server": {
+                  "type": "boolean"
+                },
+                "authentication": {
+                  "type": "string",
+                  "description": "Possible values are plain, login, cram_md5"
+                },
+                "user_name": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "mail_server",
+                "port",
+                "authentication",
+                "user_name",
+                "password"
+              ]
+            },
+            "outgoing": {
+              "type": "object",
+              "properties": {
+                "mail_server": {
+                  "type": "string"
+                },
+                "port": {
+                  "type": "number"
+                },
+                "use_ssl": {
+                  "type": "boolean"
+                },
+                "authentication": {
+                  "type": "string",
+                  "description": "Possible values are plain, login"
+                },
+                "user_name": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "mail_server",
+                "port",
+                "authentication",
+                "user_name",
+                "password"
+              ]
+            }
+          },
+          "required": [
+            "access_type"
+          ]
+        }
+      },
+      "required": [
+        "support_email",
+        "mailbox_type"
       ]
     },
     "conversation_template": {
@@ -18687,6 +18966,99 @@
         }
       }
     },
+    "email_mailbox": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "support_email": {
+          "type": "string"
+        },
+        "group_id": {
+          "type": "number"
+        },
+        "product_id": {
+          "type": "number"
+        },
+        "default_reply_email": {
+          "type": "boolean"
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "mailbox_type": {
+          "type": "string",
+          "description": "Possible values are freshdesk_mailbox, custom_mailbox."
+        },
+        "freshdesk_mailbox": {
+          "type": "object",
+          "properties": {
+            "forward_email": {
+              "type": "string"
+            }
+          }
+        },
+        "custom_mailbox": {
+          "type": "object",
+          "properties": {
+            "access_type": {
+              "type": "string",
+              "enum": [
+                "incoming",
+                "outgoing",
+                "both"
+              ]
+            },
+            "incoming": {
+              "type": "object",
+              "properties": {
+                "mail_server": {
+                  "type": "string"
+                },
+                "port": {
+                  "type": "number"
+                },
+                "use_ssl": {
+                  "type": "boolean"
+                },
+                "delete_from_server": {
+                  "type": "boolean"
+                },
+                "authentication": {
+                  "type": "string",
+                  "description": "Possible values are plain, login, cram_md5."
+                },
+                "user_name": {
+                  "type": "string"
+                }
+              }
+            },
+            "outgoing": {
+              "type": "object",
+              "properties": {
+                "mail_server": {
+                  "type": "string"
+                },
+                "port": {
+                  "type": "number"
+                },
+                "use_ssl": {
+                  "type": "boolean"
+                },
+                "authentication": {
+                  "type": "string",
+                  "description": "Possible values are plain, login."
+                },
+                "user_name": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "meta": {
       "type": "object",
       "title": "meta",
@@ -19175,14 +19547,6 @@
         "updated_at": {
           "type": "string",
           "format": "date-time"
-        }
-      }
-    },
-    "associated_tickets_count": {
-      "type": "object",
-      "properties": {
-        "count": {
-          "type": "integer"
         }
       }
     },
@@ -21085,6 +21449,17 @@
       "allOf": [
         {
           "$ref": "#/definitions/simple_outreach"
+        },
+        {
+          "$ref": "#/definitions/extension_generic"
+        }
+      ]
+    },
+    "email_mailbox_response": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/email_mailbox"
         },
         {
           "$ref": "#/definitions/extension_generic"

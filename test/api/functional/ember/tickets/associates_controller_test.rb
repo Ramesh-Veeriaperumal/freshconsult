@@ -322,94 +322,130 @@ module Ember
         end
       end
 
-      def test_association_count_with_service_task
+      def test_fsm_associations_with_include_count
         enable_adv_ticketing([:field_service_management]) do
           enable_fsm do
             begin
-              Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
               perform_fsm_operations
+              Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
               child_ticket_ids = create_advanced_tickets
               Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
               Helpdesk::Ticket.any_instance.stubs(:associates).returns(child_ticket_ids)
-              get :associated_tickets_count, construct_params({ version: 'private', id: @parent_ticket.display_id, type: 'Service Task' }, false)
+              get :associated_tickets, construct_params({ version: 'private', id: @parent_ticket.display_id, include: 'count' }, false)
               assert_response 200
+              match_json(associations_pattern(@parent_ticket))
+            ensure
               Helpdesk::Ticket.any_instance.unstub(:associates=)
               Helpdesk::Ticket.any_instance.unstub(:associates)
-              match_json('count' => 1)
-            ensure
               Account.any_instance.unstub(:disable_old_ui_enabled?)
             end
           end
         end
       end
 
-      def test_association_count_filter_with_multiple_child
+      def test_fsm_associations_with_include_invalid_value
         enable_adv_ticketing([:field_service_management]) do
           enable_fsm do
             begin
-              Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
               perform_fsm_operations
-              child_ticket_ids = create_advanced_tickets(fsm: 3)
+              Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
+              child_ticket_ids = create_advanced_tickets
               Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
               Helpdesk::Ticket.any_instance.stubs(:associates).returns(child_ticket_ids)
-              get :associated_tickets_count, construct_params({ version: 'private', id: @parent_ticket.display_id, type: 'Service Task' }, false)
-              assert_response 200
+              get :associated_tickets, construct_params({ version: 'private', id: @parent_ticket.display_id, include: Faker::Lorem.characters(5) }, false)
+              assert_response 400
+            ensure
               Helpdesk::Ticket.any_instance.unstub(:associates=)
               Helpdesk::Ticket.any_instance.unstub(:associates)
-              match_json('count' => 3)
-            ensure
               Account.any_instance.unstub(:disable_old_ui_enabled?)
             end
           end
         end
       end
 
-      def test_association_count_without_filter
-        enable_adv_ticketing([:field_service_management]) do
-          enable_fsm do
-            begin
-              Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
-              perform_fsm_operations
-              child_ticket_ids = create_advanced_tickets(fsm: 1, pc: 1)
-              Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
-              Helpdesk::Ticket.any_instance.stubs(:associates).returns(child_ticket_ids)
-              get :associated_tickets_count, construct_params({ version: 'private', id: @parent_ticket.display_id }, false)
-              assert_response 200
-              Helpdesk::Ticket.any_instance.unstub(:associates=)
-              Helpdesk::Ticket.any_instance.unstub(:associates)
-              match_json('count' => 2)
-            ensure
-              Account.any_instance.unstub(:disable_old_ui_enabled?)
-            end
+      def test_parent_child_associations_with_include_count
+        enable_adv_ticketing([:parent_child_tickets]) do
+          begin
+            child_ticket_ids = create_advanced_tickets(pc: 1)
+            Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
+            Helpdesk::Ticket.any_instance.stubs(:associates).returns(child_ticket_ids)
+            get :associated_tickets, construct_params({ version: 'private', id: @parent_ticket.display_id, include: 'count' }, false)
+            assert_response 200
+            match_json(associations_pattern(@parent_ticket))
+          ensure
+            Helpdesk::Ticket.any_instance.unstub(:associates=)
+            Helpdesk::Ticket.any_instance.unstub(:associates)
           end
         end
       end
 
-      def test_association_count_without_the_ticket
-        enable_adv_ticketing([:field_service_management]) do
-          enable_fsm do
-            begin
-              Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
-              perform_fsm_operations
-              ticket = create_ticket
-              get :associated_tickets_count, construct_params({ version: 'private', id: ticket.display_id }, false)
-              assert_response 404
-            ensure
-              Account.any_instance.unstub(:disable_old_ui_enabled?)
-            end
-          end
-        end
-      end
-
-      def test_link_tickets_association_count
+      def test_link_tickets_associations_with_include_count
         enable_adv_ticketing([:link_tickets]) do
           create_linked_tickets
-          Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
-          Helpdesk::Ticket.any_instance.stubs(:associates).returns([])
-          get :associated_tickets_count, construct_params({ version: 'private', id: @tracker_id, type: 'Question' }, false)
-          assert_response 400
+          get :associated_tickets, construct_params({ version: 'private', id: @tracker_id, include: 'count' }, false)
+          assert_response 200
+          tracker_ticket = Helpdesk::Ticket.where(display_id: @tracker_id).first
+          match_json(associations_pattern(tracker_ticket))
         end
       end
+
+      def test_fsm_associations_with_only_count
+        enable_adv_ticketing([:field_service_management]) do
+          enable_fsm do
+            begin
+              perform_fsm_operations
+              Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
+              child_ticket_ids = create_advanced_tickets
+              Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
+              Helpdesk::Ticket.any_instance.stubs(:associates).returns(child_ticket_ids)
+              get :associated_tickets, construct_params({ version: 'private', id: @parent_ticket.display_id, only: 'count' }, false)
+              assert_response 200
+              match_json([])
+            ensure
+              Helpdesk::Ticket.any_instance.unstub(:associates=)
+              Helpdesk::Ticket.any_instance.unstub(:associates)
+              Account.any_instance.unstub(:disable_old_ui_enabled?)
+            end
+          end
+        end
+      end
+
+      def test_fsm_associations_with_only_invalid_value
+        enable_adv_ticketing([:field_service_management]) do
+          enable_fsm do
+            begin
+              perform_fsm_operations
+              Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
+              child_ticket_ids = create_advanced_tickets
+              Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
+              Helpdesk::Ticket.any_instance.stubs(:associates).returns(child_ticket_ids)
+              get :associated_tickets, construct_params({ version: 'private', id: @parent_ticket.display_id, only: Faker::Lorem.characters(5) }, false)
+              assert_response 400
+            ensure
+              Helpdesk::Ticket.any_instance.unstub(:associates=)
+              Helpdesk::Ticket.any_instance.unstub(:associates)
+              Account.any_instance.unstub(:disable_old_ui_enabled?)
+            end
+          end
+        end
+      end
+
+      def test_parent_child_associations_with_only_count
+        enable_adv_ticketing([:parent_child_tickets]) do
+          begin
+            child_ticket_ids = create_advanced_tickets(pc: 1)
+            Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
+            Helpdesk::Ticket.any_instance.stubs(:associates).returns(child_ticket_ids)
+            get :associated_tickets, construct_params({ version: 'private', id: @parent_ticket.display_id, only: 'count' }, false)
+            assert_response 200
+            match_json([])
+          ensure
+            Helpdesk::Ticket.any_instance.unstub(:associates=)
+            Helpdesk::Ticket.any_instance.unstub(:associates)
+          end
+        end
+      end
+
     end
   end
 end

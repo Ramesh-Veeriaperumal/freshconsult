@@ -35,13 +35,13 @@ module Ember
 
         def esv2_contact_merge_models
           @@esv2_contact_merge_models ||= {
-            'user' => { model: 'User', associations: [{ account: :features }, :company, :user_emails] }
+            'user' => { model: 'User', associations: [:company, :user_emails] }
           }
         end
 
         def esv2_contact_search_models
           @@esv2_contact_search_models ||= {
-            'user' => { model: 'User', associations: [{ account: :features }, :company, :user_emails] }
+            'user' => { model: 'User', associations: [:company, :user_emails] }
           }
         end
 

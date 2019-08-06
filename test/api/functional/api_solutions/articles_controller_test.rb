@@ -13,6 +13,7 @@ module ApiSolutions
 
     def setup
       super
+      @account.features.enable_multilingual.create
       initial_setup
       @account.reload
     end
@@ -30,7 +31,6 @@ module ApiSolutions
       additional = @account.account_additional_settings
       additional.supported_languages = ['es', 'ru-RU']
       additional.save
-      @account.features.enable_multilingual.create
       subscription = @account.subscription
       subscription.state = 'active'
       subscription.save

@@ -9,6 +9,7 @@ module ApiSolutions
 
     def setup
       super
+      @account.features.enable_multilingual.create
       initial_setup
     end
 
@@ -23,7 +24,6 @@ module ApiSolutions
       p.name = "Sample Portal"
       p.account_id  = @account.id
       p.save
-      @account.features.enable_multilingual.create
       @account.reload
       @@initial_setup_run = true
     end
@@ -80,14 +80,11 @@ module ApiSolutions
 
     # Feature Check
     def test_show_category_with_language_query_param_without_multilingual_feature
-      allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
-      Account.any_instance.stubs(:features).returns(allowed_features)
+      @account.features.enable_multilingual.destroy
       sample_category = get_category
       get :show, controller_params({id: sample_category.parent_id, language: @account.language })
       match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
       assert_response 404
-    ensure
-      Account.any_instance.unstub(:features)
     end
 
     # Create Category

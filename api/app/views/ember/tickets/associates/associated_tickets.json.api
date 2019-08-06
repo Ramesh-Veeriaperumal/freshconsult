@@ -1,3 +1,8 @@
-JSON.generate(@associated_tickets.map do |item|
-	TicketDecorator.new(item, {permissibles: @permissibles}).to_associations_hash
-end)
+sample_hash = if @associated_tickets
+                @associated_tickets.map do |item|
+                  TicketDecorator.new(item, {permissibles: @permissibles}).to_associations_hash
+                end
+              else
+                []
+              end
+JSON.generate(sample_hash)

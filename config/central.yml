@@ -10,6 +10,10 @@ development:
       label: "key1"
       key: "bf3c199c2470cb477d907b1e0917c17b"
       iv: "1324659871023654"
+    facebook:
+      label: "facebook"
+      key: "bf3c1dscsd99c2470cb477d907b1e0917c17b"
+      iv: "13246598342571023654"
 test:
   api_endpoint: https://central-staging.freshworksapi.com/collector
   service_token: dummy
@@ -22,6 +26,10 @@ test:
       label: "key1"
       key: "bf3c199c2470cb477d907b1e0917c17b"
       iv: "1324659871023654"
+    facebook:
+      label: "facebook"
+      key: "bf3c1dscsd99c2470cb477d907b1e0917c17b"
+      iv: "13246598342571023654"
 staging:
   api_endpoint: https://central-staging.freshworksapi.com/collector
   service_token: dummy
@@ -34,6 +42,10 @@ staging:
       label: dummy
       key: dummy
       iv: dummy
+    facebook:
+      label: dummy
+      key: dummy
+      iv: dummy
 production:
   api_endpoint: https://central-production.freshworksapi.com/collector
   service_token: dummy
@@ -43,6 +55,10 @@ production:
       key: dummy
       iv: dummy
     installed_application:
+      label: dummy
+      key: dummy
+      iv: dummy
+    facebook:
       label: dummy
       key: dummy
       iv: dummy

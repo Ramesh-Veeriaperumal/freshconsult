@@ -3,7 +3,7 @@ module ApiSearch::AutocompleteConstants
   COMPANIES_FIELDS = %w[name].freeze
   VALIDATION_CLASS = 'ApiSearch::AutocompleteValidation'.freeze
   AUTOCOMPLETE_MODELS = {
-    'user'    => { model: 'User',           associations: [{ account: :features }, :user_emails] },
+    'user'    => { model: 'User',           associations: [:user_emails] },
     'company' => { model: 'Company',        associations: [] },
     'tag'     => { model: 'Helpdesk::Tag',  associations: [] }
   }.freeze

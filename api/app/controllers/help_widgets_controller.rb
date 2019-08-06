@@ -4,12 +4,16 @@ class HelpWidgetsController < ApiApplicationController
   include HelpWidgetConstants
   include FrustrationTrackingConcern
 
-  before_filter :check_feature
-
   decorate_views
+
+  def index
+    super
+    response.api_meta = { limit: current_account.account_additional_settings_from_cache.widget_count }
+  end
 
   def create
     return unless validate_delegator(@item, product_id: cname_params[:product_id])
+
     if @item.save!
       render_201_with_location(item_id: @item.id)
     else
@@ -65,14 +69,11 @@ class HelpWidgetsController < ApiApplicationController
     end
 
     def validate_params
+      validate_widget_count if create?
       cname_params.permit(*HelpWidgetConstants::HELP_WIDGET_FIELDS)
       cname_params[:freshmarketer].permit(*HelpWidgetConstants::FRESHMARKETER_FIELDS) if cname_params.key?('freshmarketer')
       widget = validation_klass.new(cname_params, @item, string_request_params?)
       render_custom_errors(widget, true) unless widget.valid?(action_name.to_sym)
-    end
-
-    def check_feature
-      log_and_render_404 unless current_account.help_widget_enabled?
     end
 
     def widget_name
@@ -86,5 +87,14 @@ class HelpWidgetsController < ApiApplicationController
 
     def preserve_predictive?
       predictive_support_toggled? ? settings[:components][:predictive_support] : @item.predictive?
+    end
+
+    def validate_widget_count
+      widget_count = Account.current.account_additional_settings_from_cache.widget_count
+      render_request_error(:widget_limit_exceeded, 400, widget_count: widget_count) if Account.current.help_widgets.active.count >= widget_count
+    end
+
+    def launch_party_name
+      FeatureConstants::HELP_WIDGET
     end
 end

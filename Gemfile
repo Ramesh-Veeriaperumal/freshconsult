@@ -247,7 +247,6 @@ gem "ar_shards", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/ar_shard
 gem "text_data_store", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/text_data_store"
 gem "xss", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/xss"
 gem "has_no_table", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/has_no_table"
-gem "features", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/zendesk-features-1.0.2"
 gem "log_filter", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/log_filter"
 gem "gnip", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/gnip"
 gem "dev_notification", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/dev_notification"

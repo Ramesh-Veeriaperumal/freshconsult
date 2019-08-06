@@ -4,6 +4,8 @@ require 'new_relic/agent/instrumentation/rails3/action_controller'
 class MetalApiController < ActionController::Metal
   # Modules to be included for metal controller to work for our APP
   # Do not change the order of modules included
+  include AbstractController::Callbacks # Before callbacks should also be executed as early as possible, so also include them at the bottom
+  include Authlogic::ControllerAdapters::RailsAdapter::RailsImplementation # Should be after Callback, moved from API initializer.
   include ActionController::Head # needed when calling head
   include ActionController::Helpers # needed for calling methods which are defined as helper methods.
   include ActionController::Redirecting

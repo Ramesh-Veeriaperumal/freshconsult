@@ -7,7 +7,7 @@ class Bot::FeedbackMapping < ActiveRecord::Base
     b.add :article_id
     b.add proc { |x| x.feedback.query_id }, as: :question_id
     b.add proc { |x| x.feedback.query }, as: :question
-    b.add proc { |x| x.bot.external_id }, as: :bot_external_id
+    b.add proc { |x| x.feedback.bot.external_id }, as: :bot_external_id
   end
 
   def relationship_with_account

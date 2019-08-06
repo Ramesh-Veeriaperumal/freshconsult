@@ -16,6 +16,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
     private
 
       def perform_fsm_operations
+        update_field_agent_limit_for_active_account
         create_service_task_field_type
         fsm_fields_to_be_created = fetch_fsm_fields_to_be_created
         reserve_fsm_custom_fields(fsm_fields_to_be_created)
@@ -27,6 +28,16 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         expire_cache
       rescue StandardError => e
         log_operation_failure('Enable', e)
+      end
+
+      def update_field_agent_limit_for_active_account
+        subscription = Account.current.subscription
+        return unless subscription.active?
+
+        if subscription.field_agent_limit.nil?
+          subscription.field_agent_limit=0
+          subscription.save
+        end
       end
 
       def create_field_service_manager_role
@@ -44,7 +55,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         error_msg = "#{msg}, account id: #{Account.current.id}, message: #{exception.message}"
         Rails.logger.error error_msg
         NewRelic::Agent.notice_error(exception, description: error_msg)
-        msg_param = { account_id: Account.current.id, message: exception.message }
+        msg_param = { account_id: Account.current.id, request_id: Thread.current[:message_uuid], message: exception.message }
         notify_fsm_dev(msg, msg_param)
       end
 
@@ -328,6 +339,15 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       def fsm_appointment_end_time_ff_column_name
         end_time = Account.current.custom_date_time_fields_from_cache.find { |x| x.name == TicketFilterConstants::FSM_APPOINTMENT_END_TIME + "_#{Account.current.id}" }
         end_time.column_name
+      end
+
+      def fsm_custom_fields_to_validate
+        fsm_section = Account.current.sections.preload(:section_fields).find_by_label(SERVICE_TASK_SECTION)
+        return [] if fsm_section.blank?
+
+        fsm_field_ids = fsm_section.section_fields.map(&:ticket_field_id)
+        fsm_fields_to_validate = TicketsValidationHelper.custom_non_dropdown_fields(self).select { |x| fsm_field_ids.include?(x.id) }
+        fsm_fields_to_validate
       end
   end
 end

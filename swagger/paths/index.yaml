@@ -40,8 +40,6 @@
   $ref: ./tickets/prime_association.yaml
 /tickets/{id}/associated_tickets:
   $ref: ./tickets/associated_ticket.yaml
-/tickets/{id}/associated_tickets_count:
-  $ref: ./tickets/associated_tickets_count.yaml
 /tickets/{id}/split_note:
   $ref: ./tickets/split_note.yaml
 /tickets/{id}/draft:
@@ -609,7 +607,7 @@
 /admin/custom_translations/primary:
   $ref: ./admin/custom_translations/primary.yaml
 /admin/custom_translations/{id}:
-  $ref: ./admin/custom_translations/secondary.yaml 
+  $ref: ./admin/custom_translations/secondary.yaml
 /admin/accounts/languages:
   $ref: ./admin/accounts/languages.yaml
 
@@ -681,3 +679,13 @@
 
 /feature/{name}:
   $ref: ./accounts/feature.yaml
+
+/email/mailboxes:
+  $ref: ./email/mailboxes/list_and_create.yaml
+/email/mailboxes/{id}:
+  $ref: ./email/mailboxes/crud.yaml
+
+/admin/freddy_skills:
+  $ref: ./admin/freddy_skills/index.yaml
+/admin/freddy_skills/:name:
+  $ref: ./admin/freddy_skills/show_and_update.yaml

@@ -227,7 +227,11 @@ module Ember
       def validate_update_property_params
         fetch_ticket_fields_mapping
         params_hash = cname_params.merge(statuses: @statuses, ticket_fields: @ticket_fields)
-        @validation_klass = 'TicketUpdatePropertyValidation'
+        @validation_klass = if @item && @item.ticket_type == ::Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE
+                              'FsmTicketUpdatePropertyValidation'
+                            else
+                              'TicketUpdatePropertyValidation'
+                            end
         validate_body_params(@item, params_hash)
       end
 

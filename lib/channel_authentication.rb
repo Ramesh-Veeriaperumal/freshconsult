@@ -6,10 +6,11 @@ module ChannelAuthentication
     zapier: 'zapier'.freeze,
     proactive: 'proactive'.freeze,
     ocr: 'ocr_channel'.freeze,
-    freshmover: 'freshmover'.freeze
+    freshmover: 'freshmover'.freeze,
+    sherlock: 'sherlock'.freeze
   }.freeze
 
-  def channel_client_authentication    
+  def channel_client_authentication
     auth_token = header_token
     if auth_token
       config = auth_token[:config]

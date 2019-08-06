@@ -1,6 +1,5 @@
 MODEL_DEPENDENCIES:
   PasswordPolicy: []
-  Features::Feature: []
   FlexifieldDef: []
   FlexifieldDefEntry:
   - - - FlexifieldDef

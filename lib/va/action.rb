@@ -177,7 +177,7 @@ class Va::Action
           Helpdesk::WatcherNotifier.send_later(:deliver_notify_new_watcher, 
                                                 act_on, 
                                                 subscription, 
-                                                "automations rule")
+                                                "automations rule", locale_object: subscription.user)
         end
       end
       record_action(act_on, watchers) if watchers.present?

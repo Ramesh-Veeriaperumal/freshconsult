@@ -3,11 +3,11 @@ require 'webmock/minitest'
 module Ember
   class FlowsControllerTest < ActionController::TestCase
     def enabling_autofaq_feature
-      @account.add_feature(:autofaq)
+      @account.add_feature(:botflow)
     end
 
     def disabling_autofaq_feature
-      @account.revoke_feature(:autofaq)
+      @account.revoke_feature(:botflow)
     end
 
     def test_success_response

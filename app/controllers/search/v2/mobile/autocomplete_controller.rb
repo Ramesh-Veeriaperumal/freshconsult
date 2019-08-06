@@ -31,7 +31,7 @@ class Search::V2::Mobile::AutocompleteController < Search::V2::AutocompleteContr
     #
     def esv2_autocomplete_models
       @@esv2_mobile_autocomplete ||= {
-        'user'    => { model: 'User',           associations: [{ :account => :features }, :user_emails] },
+        'user'    => { model: 'User',           associations: [:user_emails] },
         'company' => { model: 'Company',        associations: [] },
         'tag'     => { model: 'Helpdesk::Tag',  associations: [] }
       }

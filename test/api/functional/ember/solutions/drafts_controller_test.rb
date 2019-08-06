@@ -13,6 +13,7 @@ module Ember
       def setup
         super
         before_all
+        @account.features.enable_multilingual.create
       end
 
       @@before_all_run = false
@@ -27,7 +28,6 @@ module Ember
         additional = @account.account_additional_settings
         additional.supported_languages = ['es','ru-RU']
         additional.save
-        @account.features.enable_multilingual.create
         @account.reload
         setup_articles
         @@before_all_run = true
@@ -203,15 +203,12 @@ module Ember
       end
 
       def test_autosave_without_multilingual
-        allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
-        Account.any_instance.stubs(:features).returns(allowed_features)
+        @account.features.enable_multilingual.destroy
         language = @account.supported_languages.first
         article_with_draft(language)
         put :autosave, construct_params({ version: 'private', article_id: @article.parent_id, language: language }, autosave_params)
         match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
         assert_response 404
-      ensure
-        Account.any_instance.unstub(:features)
       end
 
       def test_destroy
@@ -249,15 +246,12 @@ module Ember
       end
 
       def test_destroy_without_multilingual
-        allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
-        Account.any_instance.stubs(:features).returns(allowed_features)
+        @account.features.enable_multilingual.destroy
         language = @account.supported_languages.first
         article_with_draft(language)
         delete :destroy, controller_params(version: 'private', article_id: @article.parent_id, language: language)
         match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
         assert_response 404
-      ensure
-        Account.any_instance.unstub(:features)
       end
 
       def test_destroy_without_privilege
@@ -320,15 +314,12 @@ module Ember
       end
 
       def test_update_without_multilingual
-        allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
-        Account.any_instance.stubs(:features).returns(allowed_features)
+        @account.features.enable_multilingual.destroy
         language = @account.supported_languages.first
         article_with_draft(language)
         put :update, construct_params({ version: 'private', article_id: @article.parent_id, language: language }, update_params)
         match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
         assert_response 404
-      ensure
-        Account.any_instance.unstub(:features)
       end
 
       def test_update_without_privilege
@@ -391,7 +382,8 @@ module Ember
         article_with_draft
         attachment_id = create_attachment(attachable_type: 'Solution::Article', attachable_id: @article.id).id
         delete :delete_attachment, controller_params(version: 'private', article_id: @article.parent_id, attachment_type: 'attachment', attachment_id: attachment_id)
-        assert_response 204
+        assert_response 200
+        match_json(autosave_pattern(@draft.reload))
         assert_equal @article.draft.meta[:deleted_attachments][:attachments].size, 1
       end
 
@@ -399,7 +391,8 @@ module Ember
         article_with_draft
         attachment_id = create_attachment(attachable_type: 'Solution::Article', attachable_id: @article.id).id
         delete :delete_attachment, controller_params(version: 'private', article_id: @article.parent_id, attachment_type: 'attachment', attachment_id: attachment_id, language: @account.language)
-        assert_response 204
+        assert_response 200
+        match_json(autosave_pattern(@draft.reload))
         assert_equal @article.draft.meta[:deleted_attachments][:attachments].size, 1
       end
 
@@ -408,21 +401,19 @@ module Ember
         article_with_draft(language)
         attachment_id = create_attachment(attachable_type: 'Solution::Article', attachable_id: @article.id).id
         delete :delete_attachment, controller_params(version: 'private', article_id: @article.parent_id, attachment_type: 'attachment', attachment_id: attachment_id, language: language)
-        assert_response 204
+        assert_response 200
+        match_json(autosave_pattern(@draft.reload))
         assert_equal @article.draft.meta[:deleted_attachments][:attachments].size, 1
       end
 
       def test_delete_attachment_without_multilingual
-        allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
-        Account.any_instance.stubs(:features).returns(allowed_features)
+        @account.features.enable_multilingual.destroy
         language = @account.supported_languages.first
         article_with_draft(language)
         attachment_id = create_attachment(attachable_type: 'Solution::Article', attachable_id: @article.id).id
         delete :delete_attachment, controller_params(version: 'private', article_id: @article.parent_id, attachment_type: 'attachment', attachment_id: attachment_id, language: language)
         assert_response 404
         match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
-      ensure
-        Account.any_instance.unstub(:features)
       end
 
       def test_delete_attachment_without_privilege
@@ -437,7 +428,8 @@ module Ember
         article_with_draft
         attachment_id = create_cloud_file_attachment(droppable_type: 'Solution::Article', droppable_id: @article.id).id
         delete :delete_attachment, controller_params(version: 'private', article_id: @article.parent_id, attachment_type: 'cloud_file', attachment_id: attachment_id)
-        assert_response 204
+        assert_response 200
+        match_json(autosave_pattern(@draft.reload))
         assert_equal @article.draft.meta[:deleted_attachments][:cloud_files].size, 1
       end
 

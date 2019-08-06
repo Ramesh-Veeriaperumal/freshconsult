@@ -3,6 +3,11 @@
 module SolutionsArticlesCommonTests
   include AttachmentsTestHelper
 
+  def setup
+    super
+    @account.features.enable_multilingual.create
+  end
+
   # Common test cases for public api and private API
   def test_show_article
     sample_article = get_article
@@ -78,14 +83,11 @@ module SolutionsArticlesCommonTests
 
   # Feature Check
   def test_show_article_with_language_and_without_multilingual_feature
-    allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
-    Account.any_instance.stubs(:features).returns(allowed_features)
+    @account.features.enable_multilingual.destroy
     sample_article = get_article
     get :show, controller_params(version: version, id: sample_article.parent_id, language: @account.language)
     match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
     assert_response 404
-  ensure
-    Account.any_instance.unstub(:features)
   end
 
   def test_create_article
@@ -796,13 +798,10 @@ module SolutionsArticlesCommonTests
   end
 
   def test_update_article_unpublish_with_language_without_multilingual_feature
-    allowed_features = Account.first.features.where(' type not in (?) ', ['EnableMultilingualFeature'])
-    Account.any_instance.stubs(:features).returns(allowed_features)
+    @account.features.enable_multilingual.destroy
     put :update, construct_params(version: version, id: 0, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], language: @account.language)
     match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
     assert_response 404
-  ensure
-    Account.any_instance.unstub(:features)
   end
 
   def test_update_article_unpublish_with_invalid_language
