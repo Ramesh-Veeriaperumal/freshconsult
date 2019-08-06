@@ -51,7 +51,7 @@ module Ember
 
       def test_email_forwarding
         if first_attempt?
-          EmailConfigNotifier.test_email(current_email_config, params[:send_to])
+          EmailConfigNotifier.send_email(:test_email, nil, current_email_config, params[:send_to])
           head 204
         elsif forwarding_success?
           @test_email_forwarding = { ticket_display_id: @forward_test_ticket.display_id }

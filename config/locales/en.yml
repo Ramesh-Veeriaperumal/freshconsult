@@ -12869,14 +12869,6 @@ en:
       token_update: Please revoke the token and update the account inorder to be active.
       view_account: View account
       contact_us: 'For any help, contact us at support@freshdesk.com.'
-    email_config_notification:
-      email_added: 'This email has been added as your support email address in %{app_name}. Click the URL below to activate your support email.'
-      paste_url_browser: If the above URL does not work, try copying and pasting it into your browser. If you continue to have problems, please feel free to contact us.
-      test_email: You've received the test mail you just sent out from Freshdesk account.
-      check_ticket_tab: 'If everything worked fine, you should now see this mail converted to a new ticket. Hop over to your Freshdesk helpdesk portal and look under the "Tickets" tab.'
-      ticket_convert: "Got it? Great! Now everytime your customers send you an email here, you'll have it appear as a ticket in Freshdesk automatically!"
-      check_configuration: 'If your helpdesk did not show you a new ticket, first make sure that you have configured all your emails in this id to get forwarded to your Freshdesk support id ( "%{to_email}" ).'
-      support_link: "You can learn how to do this <a href='https://support.freshdesk.com/support/solutions/articles/37541-converting-your-support-email-into-freshdesk-tickets' target='_blank'>here</a>. Still having problems? Get in touch with us at support@freshdesk.com and we'll help you set this up."
     click_to_activate: Click here to activate your Freshdesk account
     topics_awaiting_approval: There are topics waiting for your approval. Please take a look at them.
     report_notifications:
@@ -12960,7 +12952,7 @@ en:
     agent_export: 'Agents list export'
     ecommerce_token: 'Ecommerce account %{ecom_name} token expiration'
     test_email: "Woohoo.. Your Freshdesk test email"
-    email_activation: "%{portal_name} email activation instructions"
+    activation_instructions: "%{portal_name} email activation instructions"
     scheduled_report_update: "[Important] Scheduled report - Recipient update required"
     report_type_sub: "%{report_name} report for %{date_range}"
     ticket_export: 'Ticket export | '
@@ -13013,6 +13005,23 @@ en:
     sandbox_notification_for_rules: Did you know you could use <a href="/a/admin/sandbox" class="group_item_link" target="_top">Sandbox</a> to test automations before directly changing them here?
     sandbox_notification_for_ticketfields: Did you know you could use <a href="/a/admin/sandbox" class="group_item_link" target="_top">Sandbox</a> to add, edit or delete ticket fields before directly changing them here?
     sandbox_notification_for_agents: Any new agents added, or any updates made to agent profiles here will not get synced with your Freshdesk account.
+  email_config_notifier:
+    activation_instructions:
+      body: 'This email has been added as your support email address in %{app_name}. Click the URL below to activate your support email
+      <br><br>
+      %{activation_url}
+      <br><br>
+      If the above URL does not work, try copying and pasting it into your browser. If you continue to have problems, please feel free to contact us.'
+    test_email:
+      body: 'You’ve received the test mail you just sent out from Freshdesk account.
+      <br><br>
+      If everything worked fine, you should now see this mail converted to a new ticket. Hop over to your Freshdesk helpdesk portal and look under the "Ticket" tab.
+      <br><br>
+      Got it? Great! Now everytime your customers send you an email here, you’ll have it appear as a ticket in Freshdesk automatically!
+      <br><br>
+      If your helpdesk did not show you a new ticket, first make sure that you have configured all your emails in this id to get forwarded to your Freshdesk support id ( "%{to_email}" ).
+      You can learn how to do this <a href=%{support_url} target=_blank >here</a>. Still having problems? Get in touch with us at support@freshdesk.com and we’ll help you set this up.'
+      support_url: 'https://support.freshdesk.com/support/solutions/articles/37541-converting-your-support-email-into-freshdesk-tickets'
   customize_domain:
     email:
       subject: "%{account_name}: Here's your new helpdesk URL"
