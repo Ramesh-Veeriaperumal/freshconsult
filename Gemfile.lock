@@ -53,6 +53,15 @@ GIT
     lhm (1.2.0)
 
 GIT
+  remote: git://github.com/freshdesk/omniauth-salesforce.git
+  revision: b157ab528a6a079c11168671988ac1c2d175c0f5
+  branch: master
+  specs:
+    omniauth-salesforce (1.0.3)
+      omniauth (~> 1.0)
+      omniauth-oauth2 (~> 1.0)
+
+GIT
   remote: git://github.com/freshdesk/rack-ssl
   revision: 5e371bb43ba18d4680f7993a24316919fea48474
   branch: ssl
@@ -142,15 +151,6 @@ GIT
   revision: a2cd95c3e3c1a4f7a9566efdab5ce59c886cb05f
   specs:
     prototype_legacy_helper (0.0.0)
-
-GIT
-  remote: git://github.com/sathishfreshdesk/omniauth-salesforce.git
-  revision: 2df5f2968cff74da5ff7818de4273e0ce96d991b
-  branch: master
-  specs:
-    omniauth-salesforce (1.0.3)
-      omniauth (~> 1.0)
-      omniauth-oauth2 (~> 1.0)
 
 GIT
   remote: git://github.com/stefanpenner/country_select
