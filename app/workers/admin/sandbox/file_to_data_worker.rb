@@ -46,7 +46,7 @@ class Admin::Sandbox::FileToDataWorker < BaseWorker
             admin_name: committer[:name]
           }
         }
-        Admin::SandboxMailer.send_email_to_group(:sandbox_mailer, data[:recipients], @account, data)
+        Admin::SandboxMailer.safe_send(:sandbox_mailer, @account, data)
       end
     end
 
