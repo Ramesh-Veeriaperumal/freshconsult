@@ -1,6 +1,5 @@
-<%= t("mailer_notifier.hi_user", user_name: @admin_name) %>
+<%= render layout: 'shared/email_header_footer.plain.erb', locals: { user_name: @admin_name, sent_by: :freshdesk_team } do %>
 
 <%= t("mailer_notifier.user_notifications.notify_dkim_activation", email_domain: @dkim_details['email_domain']) %>
 
-<%= t("mailer_notifier.sincerely") %>
-<%= t("mailer_notifier.freshdesk_team") %>
+<% end %>

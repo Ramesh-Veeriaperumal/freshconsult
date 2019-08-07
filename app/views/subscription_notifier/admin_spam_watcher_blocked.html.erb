@@ -1,8 +1,7 @@
 <div>
-  <%= t('mailer_notifier.hi_user', user_name: @account.admin_first_name) %> <br><br>
+  <%= render layout: 'shared/email_header_footer.html.erb', locals: { user_name: @account.admin_first_name, sent_by: :freshdesk_support } do %>
     <div><%= t('mailer_notifier.subscriptions.admin_spam_watcher_blocked', support_email: "support@freshdesk.com") %></div>
     <br><br>
-  <div><%= t('mailer_notifier.regards') %></div><br>
-  <div><%= t('mailer_notifier.freshdesk_support') %>&nbsp;</div>
+  <% end %>
   <div><br></div>
 </div>

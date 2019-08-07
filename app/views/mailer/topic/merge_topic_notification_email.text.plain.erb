@@ -1,9 +1,8 @@
-<%= t("mailer_notifier.hey_user", user_name: @user.name) %>
+<%= render layout: 'shared/email_header_footer.plain.erb', locals: { user_name: @user.name, sent_by: @portal.name } do %>
 
 <%= t("mailer_notifier.topic_notifications.merged_and_added_follower", topic_url: discussions_topic_url(@source_topic.id, :host => @host), target_topic_url: discussions_topic_url(@target_topic.id, :host => @host)) %>
 
-<%= t("mailer_notifier.sincerely") %>
-<%= @portal.name %>
+<% end %>
 
 <%= "_" * 100 %>
 

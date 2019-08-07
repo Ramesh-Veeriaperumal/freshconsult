@@ -1,12 +1,6 @@
 <div>
-  <div>
-    <%= t('mailer_notifier.hi_user', user_name: @account.admin_first_name) %>
-  </div><br/>
+  <%= render layout: 'shared/email_header_footer.html.erb', locals: { user_name: @account.admin_first_name, sent_by: :freshdesk_team, other_recipients_note: true } do %>
     <%= t('mailer_notifier.subscriptions.account_cancel', support_email: @support_email).html_safe %>
   <br/>
-  <div>
-    <div><%= t('mailer_notifier.regards') %></div>
-    <%= t('mailer_notifier.freshdesk_team') %>
-  </div>
-  <%= render partial: "helpdesk/shared/other_recipients_note.html.erb" %>
+  <% end %>
 </div>

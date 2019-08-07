@@ -1,11 +1,6 @@
-<%= t("mailer_notifier.hi") %>
-<br/>
-<br/>
-<i><%= t("mailer_notifier.scheduled_task_notifications.no_data") %> <b><%=@task.schedulable.filter_name%></b></i>.
+<%= render layout: 'shared/email_header_footer.html.erb', locals: { sent_by: :portal_support, portal_name: @options[:portal_name], other_recipients_note: true } do %>
+<i><%= t("mailer_notifier.scheduled_task_notifications.no_data") %><b><%=@options[:task].schedulable.filter_name%></b></i>.
 <br/>
 <br/>
 
-<%= t("mailer_notifier.regards") %>
-<br/>
-<%= t("mailer_notifier.portal_support", portal_name: @options[:portal_name]) %>
-<%= render partial: "helpdesk/shared/other_recipients_note.html.erb" %>
+<% end %>

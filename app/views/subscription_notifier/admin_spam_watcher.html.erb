@@ -1,5 +1,5 @@
 <div>
-  <%= t('mailer_notifier.hi_user', user_name: @account.admin_first_name) %><div><br></div>
+  <%= render layout: 'shared/email_header_footer.html.erb', locals: { user_name: @account.admin_first_name, sent_by: :freshdesk_support } do %>
   <%if @spam_watcher_redis%>
     <div><%= t('mailer_notifier.subscriptions.admin_spam_watcher.unblock_message', support_email: 'support@freshdesk.com') %></div>
     <div><br></div>
@@ -26,8 +26,6 @@
   <%end%>
   <%end%>
   <div><br></div>
-  <div><%= t('mailer_notifier.regards') %></div>
-  <div><br></div>
-  <div><%= t('mailer_notifier.freshdesk_support') %>&nbsp;</div>
+  <% end %>
   <div><br></div>
 </div>
