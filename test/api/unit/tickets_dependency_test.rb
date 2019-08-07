@@ -3,7 +3,7 @@ require_relative '../unit_test_helper'
 class TicketsDependencyTest < ActionView::TestCase
   def test_before_filters_web_tickets_controller
     expected_filters = [
-      :determine_pod, :activate_authlogic, :clean_temp_files, :select_shard, :unset_thread_variables,
+      :determine_pod, :supress_logs, :activate_authlogic, :clean_temp_files, :select_shard, :unset_thread_variables,
       :unset_current_account, :unset_current_portal, :unset_shard_for_payload,
       :set_current_account, :set_current_ip, :reset_language, :set_shard_for_payload, :set_default_locale,
       :set_locale, :set_msg_id, :set_ui_preference, :ensure_proper_protocol, :check_privilege, :freshdesk_form_builder,
