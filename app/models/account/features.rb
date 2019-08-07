@@ -42,7 +42,7 @@ class Account < ActiveRecord::Base
     :prevent_wc_ticket_create, :allow_wildcard_ticket_create, :requester_privilege,
     :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr,
     :csat_email_scan_compatibility, :mint_portal_applicable, :twitter_microservice, :quoted_text_parsing_feature, :enable_customer_journey,
-    :csat_translations, :email_mailbox, :supervisor_custom_status, :sandbox_temporary_offset
+    :csat_translations, :email_mailbox, :supervisor_custom_status, :sandbox_temporary_offset, :downgrade_policy
   ].freeze
 
   DB_FEATURES = [

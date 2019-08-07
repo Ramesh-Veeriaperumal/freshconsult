@@ -75,4 +75,12 @@ module Billing::BillingHelper
         subscription.reset_field_agent_limit
       end
     end
+
+    def has_pending_downgrade_request?(account)
+      account.launched?(:downgrade_policy) && account.subscription.subscription_request.present?
+    end
+
+    def has_scheduled_changes?(content)
+      content[:subscription][:has_scheduled_changes]
+    end
 end

@@ -8,6 +8,8 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
   prepend_around_filter :select_shard
   skip_before_filter :set_time_zone
 
+  DEFAULT_AGENT_LIMIT = 50000
+
   # Authentication, SSL and Events to be tracked or not. This must be the last prepend_before_filter
   # for this controller 
   prepend_before_filter :event_monitored
@@ -107,7 +109,7 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
     def subscription_info(subscription, customer)
       {
         :renewal_period => billing_period(subscription.plan_id),
-        :agent_limit => subscription.plan_quantity,
+        :agent_limit => Subscription::NEW_SPROUT.include?(subscription_plan(subscription.plan_id).name) ? DEFAULT_AGENT_LIMIT : subscription.plan_quantity,
         :state => subscription_state(subscription, customer),
         :next_renewal_at => next_billing(subscription)
       }
@@ -144,10 +146,11 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
 
     #Events
     def subscription_changed(content)
-      plan = subscription_plan(@billing_data.subscription.plan_id)      
+      plan = subscription_plan(@billing_data.subscription.plan_id)
       @old_subscription = @account.subscription.dup
       @existing_addons = @account.addons.dup
 
+      @account.subscription.subscription_request.destroy if has_pending_downgrade_request?(@account) && !has_scheduled_changes?(content)
       @account.subscription.update_attributes(@subscription_data.merge(plan_info(plan)))
       update_addons(@account.subscription, @billing_data.subscription)
 
