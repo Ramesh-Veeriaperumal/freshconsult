@@ -708,6 +708,7 @@ en:
   change_equal_plan_title: "Are you sure you want to move to the new %{to_plan} plan?"
   downgrade_plan_title: "Are you sure you want to downgrade?"
   activate_free_plan: Activate Free Plan
+  request_change: Request change
   create: Create
   feedbackwidget_custom_image_info: if you are using a custom image the color and text will be ignored.
   account_admin_updated: Account admin has been updated!

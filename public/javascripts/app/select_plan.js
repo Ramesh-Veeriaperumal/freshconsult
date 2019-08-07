@@ -17,14 +17,33 @@ window.App = window.App || {};
     original_data : null,
     current_active_plan_flag : false,
     billing_cycle : null,
+    initial_billing_cycle : null,
     subscribed_plan_id : null,
+    current_agent_limit: null,
     omni_disabled: null,
+    request_change: false,
+    agent_reduced: false,
+    field_agent_reduced: false,
+    billing_cycle_downgraded: false,
+    downgrade_launched: false,
+    fsm_disabled: false,
+    current_plan_name: null,
+    fsm_active: false,
+    subscription_state: null,
+    selected_plan_id: null,
     addons: {},
     fsm_addon_key: 'field_service_management',
-    initialize: function (currency, billing_cycle, subscribed_plan_id) {
+    initialize: function (currency, billing_cycle, subscribed_plan_id, agent_limit, field_agent_limit, downgrade_launched, current_plan_name, fsm_active, state) {
       this.currency = currency;
       this.billing_cycle = billing_cycle;
+      this.initial_billing_cycle = billing_cycle,
       this.subscribed_plan_id = subscribed_plan_id;
+      this.current_agent_limit = parseInt(agent_limit);
+      this.downgrade_launched = downgrade_launched;
+      this.field_agents_count = parseInt(field_agent_limit);
+      this.current_plan_name = current_plan_name;
+      this.fsm_active = fsm_active;
+      this.subscription_state = state;
       this.bindEvents()
     },
     namespace: function(){
@@ -88,6 +107,7 @@ window.App = window.App || {};
       this.choosePlan(this.clone_button);
     },
     agentChange: function (ev, agent) {
+      this.agent_reduced = this.downgrade_launched ? this.current_agent_limit > agent.value : false;
       var non_omni_plan_id = this.nonOmniId(agent);
       var parent_plan_element = this.parentPlanItem(agent);
       if(this.IsNumeric(agent.value) && agent.value != 0){
@@ -100,11 +120,14 @@ window.App = window.App || {};
       }
     },
     fieldAgentChange: function (agent) {
+      this.field_agent_reduced = this.downgrade_launched ? parseInt(this.field_agents_count) > agent.value : false;
+      var non_omni_plan_id = this.nonOmniId(agent);
+      var parent_plan_element = this.parentPlanItem(agent);      
       if(this.IsNumeric(agent.value)) {
         var agents = Math.abs(agent.value);
         $(".billing-submit").attr("disabled", "true");
         this.addons['field_service_management']['value'] = agents;
-        this.calculateCost();
+        this.callCalculateCost(non_omni_plan_id, parent_plan_element);
       } else {
         agent.value = this.field_agents_count;
       }
@@ -119,6 +142,8 @@ window.App = window.App || {};
     billingCycleChange: function (billing_period) {
       var non_omni_plan_id = this.nonOmniId(billing_period);
       var parent_plan_element = this.parentPlanItem(billing_period);
+
+      this.billing_cycle_downgraded = this.downgrade_launched ? this.initial_billing_cycle > billing_period.value : false;
       this.billing_cycle = billing_period.value;
       $(".billing-submit").attr("disabled", "true");
       this.callCalculateCost(non_omni_plan_id, parent_plan_element);
@@ -130,9 +155,9 @@ window.App = window.App || {};
       var non_omni_plan = null;
       var non_omni_plan_id = null;
       var parent_plan_element = this.parentPlanItem(selectedItem);
-      var toggle_button = this.selected_plan ? '.omni-toggle-holder .toggle-button' : '.omni-billing-edit .toggle-button'
+      var toggle_button = this.selected_plan.hasClass('pricelist') ? '.omni-toggle-holder .toggle-button' : '.omni-billing-edit .toggle-button'
       if(jQuery(parent_plan_element).find(toggle_button).hasClass("active")) {
-       non_omni_plan = jQuery(parent_plan_element).prev().attr("data-omni-plan-id").replace(/_/,"_omni_");
+       non_omni_plan =  jQuery(parent_plan_element).prev().attr("data-omni-plan-id").indexOf("omni") > 0 ? jQuery(parent_plan_element).prev().attr("data-omni-plan-id") : jQuery(parent_plan_element).prev().attr("data-omni-plan-id").replace(/_/,"_omni_");
        return jQuery(jQuery("[data-omni-plan-id='"+non_omni_plan+"']")[0]).attr("data-plan-id");
       } else {
        non_omni_plan = jQuery(parent_plan_element).prev().attr("data-omni-plan-id").replace("_omni_","_");
@@ -188,25 +213,39 @@ window.App = window.App || {};
       }
     },
     toggleFSMAddon: function(toggler, editBilling, triggerType) {
+
       var parent_plan = this.selected_plan;
+      var non_omni_plan_id = this.nonOmniId(toggler);
+      var parent_plan_element = this.parentPlanItem(toggler);
       if(editBilling || (parent_plan.hasClass('active') && !parent_plan.hasClass('hide'))) {
         if($(toggler).hasClass("active")) {
+          this.fsm_disabled = false;
           if(triggerType != 'reset') {
             $(".billing-submit").attr("disabled", "true");
             this.addAddon(this.fsm_addon_key, $("#field-agents-text-box").val());
-            this.calculateCost();
+            this.calculateCost(non_omni_plan_id, parent_plan_element);
           }
         } else {
-          var fsmWarning = editBilling ? $("#warning-btn-fsm-billing-edit") : $("#warning-btn-fsm-billing-change"); 
-          fsmWarning.length ? fsmWarning.trigger("click") : this.checkAndRemoveFSM('submit');
+          this.fsm_disabled = (this.downgrade_launched && this.fsm_active);
+          var fsmWarning = editBilling ? $("#warning-btn-fsm-billing-edit") : $("#warning-btn-fsm-billing-change");
+          var isEditBilling = jQuery(parent_plan_element).hasClass('calculate-container');
+          fsmWarning.length ? this.triggerFsmWarning(fsmWarning, non_omni_plan_id) : this.checkAndRemoveFSM('submit', isEditBilling, non_omni_plan_id);
         }
       }
     },
-    checkAndRemoveFSM: function(action, editBilling) {
+
+    triggerFsmWarning: function(fsmWarning, non_omni_plan_id) {
+      this.selected_plan_id = non_omni_plan_id || null;
+      fsmWarning.trigger("click")
+    },
+
+    checkAndRemoveFSM: function(action, editBilling, nonOmniId) {
+
       if(action === 'submit') {
+        this.fsm_disabled = this.downgrade_launched && this.fsm_active;
         $(".billing-submit").attr("disabled", "true");
         this.removeAddon(this.fsm_addon_key);
-        this.calculateCost();
+        this.selected_plan_id ? this.calculateCost(this.selected_plan_id) : this.calculateCost();
       } else if(action === 'cancel') {
         var toggler = editBilling ? $(".fsm-billing-edit .toggle-button") : this.selected_plan.find('.fsm-toggle-holder .toggle-button');
         toggler.trigger("click", "reset");
@@ -236,6 +275,7 @@ window.App = window.App || {};
       this.omni_disabled = null;
     },
     choosePlan: function (button) {
+      this.fsm_disabled = false;
       var btn = $(button),
       current_plan = btn.data("plan"),
       plan_cost = btn.data("planCost"),
@@ -306,14 +346,27 @@ window.App = window.App || {};
         this.calculate_request.abort();
 
       var plan_id = planID || this.currentPlanId();
+
+      var omni_downgraded = (this.omni_disabled && (this.current_plan_name.indexOf('omni') > 0));
+
+      var fsm_removed = (this.fsm_active && this.fsm_disabled)
+
+      var request_change = ((this.subscription_state === 'active') && (this.current_plan_name.indexOf('sprout') < 0)) ? (this.downgrade_launched ? (omni_downgraded || this.agent_reduced || this.field_agent_reduced || fsm_removed || this.billing_cycle_downgraded) : false) : false;
+
       this.calculate_request = $.post( "/subscription/calculate_amount",
-        { "billing_cycle": this.billing_cycle, "agent_limit" : this.agents,
+        { "billing_cycle": this.billing_cycle,
+          "agent_limit" : this.agents,
           "addons" : this.addons,
-          "plan_id" : plan_id, "currency" : this.currency },
+          "plan_id" : plan_id,
+          "currency" : this.currency,
+          "request_change": request_change
+        },
         function(data){
           var billing_template = $("#billing-template");
-          var billing_actions = $(".billing-actions")
-;         $(".billing-submit").removeAttr("disabled");
+          var billing_actions = $(".billing-actions");
+          var billing_toggle = $(".omni-billing-edit .toggle-button");
+
+          $(".billing-submit").removeAttr("disabled");
           billing_template.removeClass("sloading inner-form-hide").html(data);
           $("#plan_id").val(plan_id);
           if($this.current_active_plan_flag) {
@@ -321,7 +374,8 @@ window.App = window.App || {};
               $(".features-billing-edit").removeClass('hide');
             }
             billing_template.find(".billing-cancel").show();
-            billing_template.find(".billing-submit").val(I18n.t('common_js_translations.update_plan')).addClass('btn-primary');
+            var submitText = request_change ? I18n.t('common_js_translations.request_change') : I18n.t('common_js_translations.update_plan');
+            billing_template.find(".billing-submit").val(submitText).addClass('btn-primary');
 
             if($this.omni_disabled) {
               billing_actions.find(".submit-confirm").show();
@@ -335,6 +389,10 @@ window.App = window.App || {};
             $('#edit-billing-fsm-toggle').is(':checked') ? $this.enableFSMandShowFieldAgents() : $this.disableFSMandHideFieldAgents();
           } 
           else {
+            if(request_change) {
+              billing_template.find(".billing-submit").val(I18n.t('common_js_translations.request_change'));
+            }
+            
             billing_template.find(".billing-cancel").hide();
             billing_template.find(".billing-submit").removeClass('btn-primary');
             var curren_plan_id = $this.selected_plan.attr("id");

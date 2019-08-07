@@ -76,10 +76,11 @@
                       :plan_name_id => plan_name_id }%>
                   </div>
                   <% subscribe_direct_flag =  (current_account.full_time_support_agents.count) <= plan.free_agents %>
+                  <% request_change = (@subscription.state == 'active' && current_account.launched?(:downgrade_policy)) ? 'request_change' : 'activate_free_plan'%>
                   <% if is_new_sprout %>
 
                     <%= plan_button(plan, t('choose_plan'), "btn btn-flat", subscribe_direct_flag, true, equal_plan_check ? t('change_equal_plan_title', :to_plan => plan.display_name): t(subscription.trial? ? 'change_plan_title' : 'downgrade_plan_title'),
-                        t('activate_free_plan', :name => plan.display_name), t('cancel') ) %>
+                        t(request_change, :name => plan.display_name), t('cancel') ) %>
 
                     <div id="confirm-message-<%= plan.id %>" class="plan-confirm-message hide">
                       <%= render :partial => "submit_plan",
@@ -250,7 +251,6 @@
 <script type="text/javascript">
   
   if(App.SelectPlan != undefined){ App.SelectPlan.destroy() }
-   App.SelectPlan.initialize("<%= @subscription.currency_name %>",<%= @subscription.renewal_period %>,
-    "<%= current_account.subscription.subscription_plan.id %>");
+  App.SelectPlan.initialize("<%= @subscription.currency_name %>",<%= @subscription.renewal_period %>,"<%= @subscription.subscription_plan.id %>","<%= @subscription.agent_limit %>",<%= @subscription.field_agent_limit || 0 %>, <%= current_account.launched?(:downgrade_policy) %>,"<%= current_account.plan_name %>",<%= current_account.field_service_management_enabled? %>,"<%= @subscription.state %>");
 
 </script>
