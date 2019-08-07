@@ -1,10 +1,6 @@
-Hi <%=@user.name%>,
-<br/>
-<br/>
+<%= render layout: 'shared/email_header_footer.html.erb', locals: { user_name: @user.name, sent_by: :portal_support, portal_name: @portal_name } do %>
 Your scheduled task <b><%=@task.schedulable.filter_name %></b> has expired.
 
 <br/>
 <br/>
-Regards,
-<br/>
-<%= @portal_name %> Support
+<% end %>
