@@ -13,7 +13,7 @@ response_hash.merge!(company: company_hash) if company_hash
 response_hash.merge!(attachments: @item.attachments_hash)
 response_hash.merge!(cloud_files: @item.cloud_files_hash)
 response_hash.merge!(meta: @item.meta)
-response_hash.merge!(collaboration: @item.collaboration_hash) if Account.current.collaboration_enabled? || (Account.current.freshconnect_enabled? && Account.current.freshid_integration_enabled? && User.current.freshid_authorization)
+response_hash.merge!(collaboration: @item.collaboration_hash) if Account.current.collaboration_enabled? || (Account.current.freshconnect_enabled? && Account.current.freshid_integration_enabled? && (@item.app_current? || User.current.freshid_authorization))
 response_hash[:sla_policy] = sla_policy_hash if sla_policy_hash
 response_hash.merge!(sender_email: @item.sender_email) if @item.sender_email
 response_hash.merge!(archive_ticket: archive_hash) if archive_hash
