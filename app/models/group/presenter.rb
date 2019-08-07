@@ -19,8 +19,11 @@ class Group < ActiveRecord::Base
     g.add :business_calendar_id
     g.add :toggle_availability
     g.add :capping_limit
-    g.add proc { |x| x.agents.map { |ag| { 
-      name: ag.name, id: ag.id, email: ag.email }}}, as: :agents
+    g.add proc { |x|
+      x.agents.pluck_all(:id, :name, :email).map do |ag|
+        { name: ag[1], id: ag[0], email: ag[2] }
+      end
+    }, as: :agents
   end
 
   api_accessible :dashboard_group_central_publish do |g|
