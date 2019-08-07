@@ -7,7 +7,6 @@
       - :basic_dkim
       - :freshchat
       - :freshconnect
-      - :collaboration
       - :social_tab
       - :omni_channel
       - :customize_table_view
@@ -140,7 +139,6 @@
       - :basic_dkim
       - :freshchat
       - :freshconnect
-      - :collaboration
       - :auto_refresh
       - :ticket_volume_report
       - :analytics_landing_search
