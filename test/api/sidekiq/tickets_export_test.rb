@@ -74,6 +74,7 @@ class TicketsExportTest < ActionView::TestCase
     Export::Util.stubs(:build_attachment).returns(true)
     Tickets::Export::TicketsExport.new.perform(args)
     data_export = @account.data_exports.last
+    p data_export.inspect
     assert_equal data_export.status, DataExport::EXPORT_STATUS[:completed]
     assert_equal data_export.source, DataExport::EXPORT_TYPE[:ticket]
     assert_equal data_export.last_error, nil
