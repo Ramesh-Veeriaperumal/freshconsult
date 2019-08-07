@@ -114,6 +114,7 @@ class Account < ActiveRecord::Base
     TEMPORARY_FEATURES.each { |key,value| features.safe_send(key).create  if value}
     ADMIN_CUSTOMER_PORTAL_FEATURES.each { |key,value| features.safe_send(key).create  if value}
     LAUNCHPARTY_FEATURES.select{|k,v| v}.each_key {|feature| self.launch(feature)}
+    CONDITION_BASED_LAUNCHPARTY_FEATURES.each { |feature, lam| self.launch(feature) if lam.call(self) }
     # Temp for falcon signup
     # Enable customer portal by default
     if falcon_ui_applicable?
@@ -186,7 +187,7 @@ class Account < ActiveRecord::Base
       group.turn_off_automatic_ticket_assignment
     end
   end
-
+  
   protected
 
     def set_default_values

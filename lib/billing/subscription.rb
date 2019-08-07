@@ -50,11 +50,12 @@ class Billing::Subscription < Billing::ChargebeeWrapper
     super(data)
   end
 
-  def update_subscription(subscription, prorate, addons)
+  def update_subscription(subscription, prorate, addons, coupon = nil, downgrade = false)
     data = (subscription_data(subscription)).merge({ :prorate => prorate })
     merge_trial_end(data, subscription)
     merge_addon_data(data, subscription, addons)
     data.merge!(:replace_addon_list => true)
+    data.merge!(:coupon => coupon, :end_of_term => true) if downgrade
 
     super(subscription.account_id, data)
   end
@@ -70,7 +71,7 @@ class Billing::Subscription < Billing::ChargebeeWrapper
     merge_addon_data(data, subscription, addons)
     attributes = cancelled_subscription?(subscription.account_id) ? { :subscription => data } : 
                                 { :subscription => data, :end_of_term => true }
-    attributes.merge!(:replace_addon_list => true)
+    attributes.merge!(:replace_addon_list => true, :billing_cycles => 1)
     
     update_subscription_estimate(attributes)
   end
