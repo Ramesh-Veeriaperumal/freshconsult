@@ -289,8 +289,12 @@ module Cache::Memcache::Account
   end
 
   def ticket_fields_from_cache
-    key = format(ACCOUNT_TICKET_FIELDS, account_id: self.id)
-    fetch_from_cache(key) { ticket_fields_with_nested_fields.all }
+    @ticket_fields_from_cache ||= begin
+      key = format(ACCOUNT_TICKET_FIELDS, account_id: id)
+      MemcacheKeys.fetch(key) do
+        ticket_fields_with_nested_fields.all
+      end
+    end
   end
 
   def nested_ticket_fields_from_cache
@@ -304,6 +308,20 @@ module Cache::Memcache::Account
     key = ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING % { account_id: self.id }
     MemcacheKeys.fetch(key) do
       section_fields_with_field_values_mapping.all
+    end
+  end
+
+  # Ex:  {11=>{"ticket_type"=>["Incident", "Lead", "Question"]}, 12=>{"ticket_type"=>["Question"]}, 31=>{"ticket_type"=>["Question"]}}
+  def section_field_parent_field_mapping_from_cache
+    @section_field_parent_field_mapping_from_cache ||= begin
+      key = format(ACCOUNT_SECTION_FIELD_PARENT_FIELD_MAPPING, account_id: id)
+      MemcacheKeys.fetch(key) do
+        parent_field_value_mapping.each_with_object({}) do |(k, v), inverse|
+          v.each do |e|
+            inverse[e] = (inverse[e] || {}).merge(k) { |i, o, n| o + n }
+          end
+        end
+      end
     end
   end
 
@@ -729,6 +747,17 @@ module Cache::Memcache::Account
       format(ACCOUNT_TICKET_FIELDS_NAME_TYPE_MAPPING, account_id: account_id)
     end
 
+    # Ex: [[{"ticket_type"=>["Question", "Feature Request"]}, [11, 12, 13]], [{"ticket_type"=>["Problem"]}, [11]]]
+    def parent_field_value_mapping
+      sections_fields_group_by_parent_field_value_mapping.map { |parent_grouping, fields| [parent_grouping, fields.map(&:ticket_field_id)] }
+    end
+
+    def sections_fields_group_by_parent_field_value_mapping
+      section_fields_with_field_values_mapping.group_by do |x|
+        { x.parent_ticket_field.name => x.section.section_picklist_mappings.map { |y| y.picklist_value.value } }
+      end
+    end
+ 
     def custom_nested_field_choices_hash_key(account_id)
       format(CUSTOM_NESTED_FIELD_CHOICES, account_id: account_id)
     end
