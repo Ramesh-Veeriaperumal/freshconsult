@@ -9,6 +9,15 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     { mailbox: params }
   end
 
+  def setup
+    super
+    Account.any_instance.stubs(:multiple_emails_enabled?).returns(true)
+  end
+
+  def teardown
+    Account.any_instance.unstub(:multiple_emails_enabled?)
+  end
+
   def create_mailbox_params_hash
     {
       support_email: Faker::Internet.email,
