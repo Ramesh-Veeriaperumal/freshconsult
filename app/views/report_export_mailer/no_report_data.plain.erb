@@ -1,4 +1,4 @@
-Hi <%=@user.name%>,
+<%= render layout: 'shared/email_header_footer.plain.erb', locals: { user_name: @user.name, sent_by: :portal_support, portal_name: @portal_name } do %>
 
 
 Seems like there is no data to display for date range <%=@date_range%> with applied filters.
@@ -12,6 +12,4 @@ Seems like there is no data to display for date range <%=@date_range%> with appl
 
 <%end%>
 
-Regards,
-
-<%= @portal_name %> Support
+<% end %>

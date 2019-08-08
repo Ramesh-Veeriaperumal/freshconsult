@@ -191,7 +191,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     set_auth_header
     call_id = get_call_id
     create_call(fc_call_id: call_id)
-    params = construct_params(convert_call_params(call_id, 'abandoned')).merge!(ancestry: get_call_id, callback: true)
+    params = construct_params(convert_call_params(call_id, 'abandoned')).merge!(ancestry: get_call_id, callback: true, call_type: 'outgoing')
     put :update, construct_params(params)
     result = parse_response(@response.body)
     call = ::Freshcaller::Call.last
@@ -205,7 +205,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     set_auth_header
     call_id = get_call_id
     create_call(fc_call_id: call_id)
-    params = construct_params(convert_call_params(call_id, 'voicemail')).merge!(ancestry: get_call_id, callback: true)
+    params = construct_params(convert_call_params(call_id, 'voicemail')).merge!(ancestry: get_call_id, callback: true, call_type: 'outgoing')
     put :update, construct_params(params)
     result = parse_response(@response.body)
     call = ::Freshcaller::Call.last
@@ -219,13 +219,30 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     set_auth_header
     call_id = get_call_id
     create_call(fc_call_id: call_id)
-    params = construct_params(convert_call_params(call_id, 'no-answer')).merge!(ancestry: get_call_id, callback: true)
+    params = construct_params(convert_call_params(call_id, 'no-answer')).merge!(ancestry: get_call_id, callback: true, call_type: 'outgoing')
     put :update, construct_params(params)
     result = parse_response(@response.body)
     call = ::Freshcaller::Call.last
-    match_json(ticket_only_pattern(call))
-    assert_equal call.notable.description.present?, true
-    assert_equal call.notable.description_html.include?('Missed callback'), true
+    match_json(ticket_with_note_pattern(call))
+    assert_equal call.notable.notable.subject.include?('Missed callback'), true
+    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+  end
+
+  def test_update_with_callback_child_completed_scenario
+    ::Freshcaller::Call.destroy_all
+    set_auth_header
+    call_id = get_call_id
+    user = @account.technicians.first
+    create_call(fc_call_id: call_id, account_id: @account.id)
+    params = convert_call_params(call_id, 'completed').merge(ancestry: get_call_id, callback: true, call_type: 'outgoing')
+    put :update, construct_params(params)
+    call = ::Freshcaller::Call.where(fc_call_id: call_id).all.first
+    call_notable = call.notable.notable
+    assert_equal call_notable.description.present?, true
+    assert_equal call_notable.description_html.include?('Conversation between'), true
+    assert_equal call_notable.subject.include?('Outgoing call'), true
+    assert_equal Helpdesk::Ticket.default_cc_hash, call_notable.cc_email
+    match_json(ticket_with_note_pattern(call))
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
   end
 

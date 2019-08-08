@@ -369,7 +369,7 @@ module Admin::AutomationConstants
     status: :Integer, priority: :Integer, source: :Integer, responder_id: :Integer, group_id: :Integer,
     internal_group_id: :Integer, internal_agent_id: :Integer, add_watcher: :Integer, product_id: :Integer,
     inbound_count: :Integer, outbound_count: :Integer, customer_feedback: :Integer,
-    send_email_to_group: :Integer, send_email_to_agent: :Integer
+    send_email_to_group: :Integer, send_email_to_agent: :Integer, segments: :Integer
   }.merge(TIME_BASED_FILTERS.each_with_object({}) do |field, data|
     data[field] = :Integer
   end).freeze

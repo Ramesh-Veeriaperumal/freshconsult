@@ -3768,6 +3768,35 @@ module Ember
       Account.current.add_feature(:collaboration)
     end
 
+    def test_show_collab_hash_without_logged_in_user
+      user = User.current
+      current_header = request.env['HTTP_AUTHORIZATION']
+      UserSession.any_instance.unstub(:cookie_credentials)
+      log_out
+      product_account_id = Random.rand(11).to_s
+      domain = [Faker::Lorem.characters(10), 'freshconnect', 'com'].join('.')
+      fc_account = ::Freshconnect::Account.new(
+        account_id: Account.current.id,
+        product_account_id: product_account_id,
+        enabled: true,
+        freshconnect_domain: domain
+      )
+      fc_account.save!
+      token = generate_app_jwt_token(fc_account.product_account_id, Time.now.to_i, Time.now.to_i, 'freshconnect')
+      auth = ['JWTAuth token=', token].join(' ')
+      request.env['X-App-Header'] = auth
+      ticket = create_ticket
+      get :show, controller_params(version: 'private', id: ticket.display_id)
+      assert_response 200
+      match_json(ticket_show_pattern(ticket))
+    ensure
+      request.env['HTTP_AUTHORIZATION'] = current_header
+      request.env.delete('X-App-Header')
+      UserSession.any_instance.stubs(:cookie_credentials).returns([user.persistence_token, user.id])
+      login_as(user)
+      user.make_current
+    end
+
     def test_suppression_list_alert
       ticket = create_ticket
       drop_email = Faker::Internet.email

@@ -51,11 +51,12 @@ class Sync::FileToData::Transformer
     @master_account_id        = master_account_id
     @account                  = account
     @resync                   = resync
-    @clone                = clone
+    @clone                    = clone
     @mapping_table            = {}
     production_account_id     = resync ? account.id : master_account_id
     production_account_shard  = ShardMapping.fetch_by_account_id(production_account_id)
-    @offset_value             = Integer(SANDBOX_ID_OFFSET[production_account_shard.shard_name])
+    shard_name                = temporary_offset_enabled? ? 'default' : production_account_shard.shard_name
+    @offset_value             = Integer(SANDBOX_ID_OFFSET[shard_name] || SANDBOX_ID_OFFSET['default'])
     load_resync_dependent_vars if resync
   end
 
@@ -165,5 +166,9 @@ class Sync::FileToData::Transformer
       @max_ticket_status_id = fetch_max_ticket_status_id
       @max_picklist_id = fetch_max_picklist_id
       find_available_ticket_field_columns
+    end
+
+    def temporary_offset_enabled?
+      account.sandbox_temporary_offset_enabled? || LaunchParty.new.launched?(account: master_account_id, feature: :sandbox_temporary_offset)
     end
 end

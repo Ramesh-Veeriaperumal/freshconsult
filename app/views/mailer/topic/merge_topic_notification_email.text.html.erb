@@ -5,12 +5,11 @@
 <div class="body">
 	<div class="forum_content">
 
-		<%= t("mailer_notifier.dear_user", user: @user.name) %> <br><br>
+		<%= render layout: 'shared/email_header_footer.html.erb', locals: { user_name: @user.name, sent_by: @portal.name } do %>
 
 		<%= t("mailer_notifier.topic_notifications.merged_and_added_follower_html", topic_url: discussions_topic_url(@source_topic.id, :host => @host), topic_name: @source_topic.title, target_topic_url: discussions_topic_url(@target_topic.id, :host => @host), target_topic_name: @target_topic.title).html_safe %><br><br>
 
-		<%= t("mailer_notifier.sincerely") %> <br>
-		<%= @portal.name %>
+		<% end %>
 	</div>
 	<div class="footer">
 		<%= link_to t("mailer_notifier.topic_notifications.reply"), reply_discussions_topic_url(@target_topic.id, :host => @host, :anchor => 'reply-to-post'), :class => "reply" %>

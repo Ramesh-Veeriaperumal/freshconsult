@@ -302,7 +302,8 @@ class Account < ActiveRecord::Base
       text_custom_fields_in_etl: false, email_spoof_check: false, disable_email_spoof_check: false,
       recalculate_daypass: false, sandbox_single_branch: false, prevent_wc_ticket_create: true, allow_wildcard_ticket_create: false,
       attachment_redirect_expiry: false, solutions_agent_portal: false, solutions_agent_metrics: false,
-      requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false, supervisor_custom_status: false
+      requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false, supervisor_custom_status: false,
+      sandbox_temporary_offset: false, downgrade_policy: false
     }, :merge
   )
 
@@ -317,4 +318,7 @@ class Account < ActiveRecord::Base
   PARENT_CHILD_INFRA_FEATURES = [:parent_child_tickets, :field_service_management]
   CONTACT_DATA = [:first_name, :last_name, :email, :phone].freeze
   FILE_DOWNLOAD_URL_EXPIRY_TIME = 60.to_i.seconds
+  CONDITION_BASED_LAUNCHPARTY_FEATURES = {
+    downgrade_policy: lambda { |account| account.redis_key_exists?(Redis::Keys::Others::SUBSCRIPTION_REQUESTS_ENABLED) }
+  }.freeze
 end

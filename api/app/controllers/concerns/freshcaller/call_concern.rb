@@ -88,6 +88,10 @@ module Freshcaller::CallConcern
     ['in-progress', 'on-hold', 'default'].include?(@options[:call_status])
   end
 
+  def missed_callback?
+    callback? && (missed_call? || abandoned?)
+  end
+
   def callback_parent?
     @options[:ancestry].blank? && callback?
   end
@@ -98,7 +102,7 @@ module Freshcaller::CallConcern
 
   def generate_title
     call_date = DateTime.parse(@options[:call_created_at]).in_time_zone(current_account.time_zone)
-    return I18n.t("call.ticket.callback_#{call_status_string}_title", customer: customer_title) if callback? && !voicemail?
+    return I18n.t("call.ticket.callback_#{call_status_string}_title", customer: customer_title) if missed_callback?
     return I18n.t("call.ticket.#{call_status_string}_title", customer: customer_title) if abandoned?
     return I18n.t("call.ticket.#{@options[:call_type]}_#{call_status_string}_title", customer: customer_title) if missed_call?
     return I18n.t("call.ticket.#{call_status_string}_title", customer: customer_title) if voicemail?
@@ -127,7 +131,7 @@ module Freshcaller::CallConcern
   end
 
   def generate_description
-    return I18n.t("call.ticket.callback_#{call_status_string}_description", customer: customer_details) if callback? && !voicemail?
+    return I18n.t("call.ticket.callback_#{call_status_string}_description", customer: customer_details) if missed_callback?
     return I18n.t("call.ticket.#{call_status_string}_description", customer: customer_details, agent: agent_details) if abandoned?
     return I18n.t("call.ticket.#{@options[:call_type]}_#{call_status_string}_description", customer: customer_details, agent: agent_details) if missed_call?
     I18n.t("call.ticket.#{call_status_string}_description", customer: customer_details, agent: agent_details)

@@ -973,7 +973,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def supress_logs(temporary_level = Logger::ERROR)
-      if Account.current.launched?(:disable_supress_logs)
+      if current_account.launched?(:disable_supress_logs)
         yield
       else
         begin
