@@ -120,6 +120,19 @@ module SsoUtil
     user
   end
 
+  def create_user(email, account,identity_url=nil,options={})
+    @contact = account.users.new
+    @contact.name = options[:name] unless options[:name].blank?
+    @contact.phone = options[:phone] unless options[:phone].blank?
+    @contact.company_name = options[:company] if options[:company].present?
+    @contact.unique_external_id = options[:external_id] if options[:external_id].present?
+    @contact.job_title = options[:title] if options[:title].present?
+    @contact.email = email
+    @contact.helpdesk_agent = false
+    @contact.language = current_portal.language
+    return @contact
+  end
+
   def handle_sso_response(sso_data, relay_state_url)
     user_email_id = sso_data[:email]
     user_name = sso_data[:name]
