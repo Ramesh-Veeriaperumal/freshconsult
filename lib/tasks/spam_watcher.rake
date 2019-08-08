@@ -101,7 +101,7 @@ def check_for_spam(table,column_name, id_limit, threshold,shard_name)
         unless deleted_users.empty?
           puts "deleted_users 2::::::::->#{deleted_users.inspect}"
           deleted_users = account.all_users.find(deleted_users)
-          SubscriptionNotifier.deliver_admin_spam_watcher(account, deleted_users)
+          SubscriptionNotifier.send_email(:deliver_admin_spam_watcher, account.admin_email, account, deleted_users)
         end
       end
     end

@@ -268,6 +268,14 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
     additional_info[:ticket_properties_suggester_hash] = value
   end
 
+  def thank_you_notes
+    additional_info[:thank_you_notes]
+  end
+
+  def thank_you_notes=(value)
+    additional_info[:thank_you_notes] = value
+  end
+
   private
 
   def email_failures

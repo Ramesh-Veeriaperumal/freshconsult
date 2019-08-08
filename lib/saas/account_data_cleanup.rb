@@ -335,7 +335,6 @@ class SAAS::AccountDataCleanup
   def handle_field_service_management_add_data
     Rails.logger.info "Adding FSM for account #{account.id}"
     account.add_feature(:field_service_management)
-    account.launch(:field_service_management_lp)
     perform_fsm_operations
   end
 

@@ -24,13 +24,13 @@ class Account < ActiveRecord::Base
     :surveys_central_publish, :id_for_choices_write, :nested_field_revamp, :session_logs, :bypass_signup_captcha,
     :freshvisual_configs, :ticket_field_limit_increase, :join_ticket_field_data, :contact_company_split,
     :contact_field_central_publish, :company_field_central_publish, :simple_outreach, :disable_simple_outreach,
-    :disable_field_service_management, :disable_mint_analytics, :freshid_org_v2, :hide_agent_login,
-    :addon_based_billing, :kbase_mint, :text_custom_fields_in_etl, :email_spoof_check,
+    :disable_mint_analytics, :freshid_org_v2, :hide_agent_login,
+    :kbase_mint, :text_custom_fields_in_etl, :email_spoof_check,
     :disable_email_spoof_check, :onboarding_i18n, :webhook_blacklist_ip, :recalculate_daypass, :sandbox_single_branch,
     :fb_page_api_improvement, :attachment_redirect_expiry, :solutions_agent_portal, :solutions_agent_metrics, :fuzzy_search,
-    :delete_trash_daily, :ticket_type_filter_in_trends_widget, :automation_revamp, :prevent_wc_ticket_create, 
-    :allow_wildcard_ticket_create, :requester_privilege, :sso_unique_session, :fsm_landing_page,
-    :scheduling_fsm_dashboard, :enable_customer_journey, :csat_translations
+    :delete_trash_daily, :automation_revamp, :prevent_wc_ticket_create, 
+    :allow_wildcard_ticket_create, :requester_privilege, :sso_unique_session,
+    :scheduling_fsm_dashboard, :enable_customer_journey, :csat_translations, :supervisor_custom_status
   ].freeze
 
   DB_FEATURES = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone].freeze
@@ -300,10 +300,6 @@ class Account < ActiveRecord::Base
   def falcon_ui_enabled?(current_user = :no_user)
     valid_user = (current_user == :no_user ? true : (current_user && current_user.is_falcon_pref?))
     valid_user && (falcon_enabled? || check_admin_mint? || disable_old_ui_enabled?)
-  end
-
-  def fsm_addon_billing_enabled?
-    @fsm_addon_billing ||= disable_old_ui_enabled? && addon_based_billing_enabled?
   end
 
   def check_admin_mint?
