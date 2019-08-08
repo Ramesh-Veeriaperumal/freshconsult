@@ -185,6 +185,7 @@ en:
   or: or
   go_to_new_ui: "Switch to the Mint experience"
   enable: "Enable"
+  enter: "Enter"
   email_failure:
     dropped:
       summary_error_text: "Message dropped - Invalid or problematic address"
@@ -356,6 +357,14 @@ en:
   hard_pressed_for_time: Hard pressed for time? Get advice, tips and best practices from a Freshdesk expert.
   facebook_reauth: "Your Facebook channel is inaccessible. It looks like your username, password, or permission has been changed recently."
   custom_mailbox_error: "Something went wrong. We are unable to fetch emails from your custom mailbox."
+  old_ui_deprecation: "You're currently using the old version of Freshdesk which will be deprecated by the 31st of March 2019."
+  old_ui_migraton: "Click here to switch to Mint."
+  live_chat_phone_deprecation: "The live chat and phone channel features in your account will be deprecated by the 30th of November 2018."
+  live_chat_phone_migration: "Migrate to Freshchat and Freshcaller."
+  live_chat_deprecation: "The live chat feature in your account will be deprecated by the 30th of November 2018."
+  live_chat_migration: "Click here to migrate to Freshchat."
+  freshfone_deprecation: "The phone channel feature in your account will be deprecated by the 30th of November 2018."
+  freshfone_migration: "Click here to migrate to Freshcaller."
   custom_mailbox_admin_email_notifications:
     subject: "System notification: Custom email server is unable to fetch emails"
     welcome_message: "Dear Admin"
@@ -421,6 +430,8 @@ en:
   working: Working
   undo_toggle: "Undo send"
   undo_toggle_tip: "Please refresh the page for this setting to take effect"
+  undo_toggle_error: "Sorry, something went wrong!"
+  undo_toggle_success: "Please refresh for this setting to take effect."
   undo_send_solution_error: "Ticket %{ticket_display_id} subject is too short to be an article title"
   attach: Attach
   attachment: Attachment
@@ -646,6 +657,10 @@ en:
       nested_unique_names: Agent label should not be same as other two levels
       nested_3rd_level: Label required for 3rd level items
       field_has_section: Field has section
+      values_for: Values for Level
+      note: "Note: "
+      nested_note_content: " Actual deletion of items will happen only on save "
+      nested_field_validation: "Some fields don’t have any value. Please enter value to continue"
     section:
       fsm_section_delete: This default section cannot be deleted
       remove_type: Section is associated with this type
@@ -807,7 +822,14 @@ en:
       welcome_text: Providing these details will help us resolve your question faster
       thankyou_text: Thank you for the feedback!
       ticket_subject: <TICKET_SUBJECT>
+      ticket_subject_and_created_at: <TICKET_SUBJECT>,<TICKET_CREATED_AT>
       no_info: No information was provided
+      okay: Okay
+      next: Next
+      form_submit: Submit
+      thank_you_text: Thank you
+      hey: Hey
+      move_to_form_field: or press enter
   gamification:
     levels:
       beginner: Beginner
@@ -2164,6 +2186,8 @@ en:
       webhook:
         custom_headers_limit_error: "You cannot set more than %{limit} custom headers"
         custom_headers_pair_mismatch: "Kindly ensure that all headers have values"
+        action_data_limit_exceed: "You are not allowed to save more than 63K characters in action data"
+        invalid_url: "The Domin you have entered in Trigger Webhook is blocked. Please enter another domain."
       index:
         human_name: Dispatch’r Rule
       remember_to_save: 'After updating, please remember to save it.'
@@ -2518,6 +2542,7 @@ en:
         fieldservice: Field service
         schedule_fsm_dashboard: Access scheduling dashboard
         reports: Reports
+        analytics: Analytics
         view_reports: View reports tab
         view_analytics: View analytics tab
         admin: Admin
@@ -2528,6 +2553,8 @@ en:
         manage_canned_responses: Manage canned responses
         manage_dispatch_rules: Manage Dispatch'r and Observer rules
         manage_supervisor_rules: Manage Supervisor rules
+        manage_ticket_create_update_rules: Manage automation rules that run on ticket creation and ticket updates
+        manage_time_tiggers_rules: Manage automation rules that run on time triggers
         manage_scenario_automation_rules: Manage Scenario automation rules
         manage_email_settings: Manage Email Commands
         manage_ticket_list_views: Manage ticket list views
@@ -2554,6 +2581,8 @@ en:
         helpdesk-settings: Helpdesk
         account-settings: Account Settings
         helpdesk-productivity: Helpdesk Productivity
+        canned-response: Canned Response
+        multi-product: Multi-Product
         import: Import data from Zendesk
         agent: Agents
         feedback: Feedback widget
@@ -2640,6 +2669,7 @@ en:
         suggestion_solutions: "Suggest Solutions"
         daypass_agent: "Daypass agent"
         occasional_agent: "Occasional Agent"
+        field_agent: Field Agent
         add_new_agent: "Add new agent"
         add_new_group: "Add new group"
         automatic_ticket_assignment: "Automatic ticket assignment"
@@ -2659,6 +2689,7 @@ en:
         operating_hours: "Operating hours"
         set_holiday_list: "Set Holiday List"
         business_hours_multiple_locations: "Business hours for multiple locations"
+        multiple_business_hours: "Multiple Business Hours"
         multiple_products: "Multiple Products"
         multi_brand: "Multi brand"
         ticket_creation_rules: "Ticket creation rules"
@@ -2776,6 +2807,7 @@ en:
       '0': 'Not Selected'
       account_tier: "Account tier"
       action: "%{field_name}"
+      hours_since: "hours since"
       action_priority: 'Set Priority as'
       action_ticket_type: 'Set Type as'
       action_status: 'Set Status as'
@@ -3316,6 +3348,7 @@ en:
       sso:
         expected_params: "One or more of the expected parameters name, email, and hash are missing."
         invalid_time_entry: "Invalid time entry"
+        url_limitation_error: "Session expired. Please login again."
       jwt_sso:
         expected_time_params: "Issued at time(iat) and Expire at time(iat) are missing"
         exceeded_max_expire_time: "Max expiry time of 30 minutes is allowed"
@@ -3389,6 +3422,14 @@ en:
   assigned_to: Assigned to
   change: Change
   back_plans_billing: Back to Plans &amp; Billing
+  omni_channel: Omni-channel
+  omni_warning: All omni-channel settings will be removed permanently expect the ability to convert chats and calls to tickets
+  omni_channel_content: Best-in-class ticketing, phone and chat features in one plan
+  fsm_title: Field service management
+  fsm_content: Connect and collaborate with your field workforce to deliver productive and exceptional customer service on site. Available from
+  fsm_content_highlight: Estate + Forest
+  fsm_warning_title: Are you sure you want to disable Field service management?
+  fsm_warning_content: Disabling Field service management will delete all field technicians and service groups from your account. Are you sure you want to proceed?
   choose_different_plan: Choose a different plan
   downgrade_plan: "Note: If you downgrade a plan, you might lose some of the existing features"
   downgrade_plan_v2: "Note: If you downgrade your plan, you might lose some features!"
@@ -4931,6 +4972,7 @@ en:
     full_time: Full time
     occasional: Occasional
     field_agent: Field technician
+    field_agents: Field technicians
     day_pass_expired: Your day pass has expired, please login to acquire a new day pass.
     insufficient_day_pass: Unable to allocate a day pass for you, please contact your administrator.
     password_reset_message: "Do you want to reset %{requester}'s password?"
@@ -4946,7 +4988,7 @@ en:
   right: Right
   footer:
     helpdesk_software: Help Desk Software
-    helpdesk_software_link: "http://www.freshdesk.com"
+    helpdesk_software_link: "https://freshdesk.com/?utm_source=portal&utm_medium=reflink&utm_campaign=portal_reflink"
     by_freshdesk: by Freshdesk
     submit_feedback: Submit Feedback
     footer_feedback_subject_placeholder: Tell us how we can make Freshdesk better
@@ -5757,6 +5799,7 @@ en:
   errors_in_payment_info: "Errors encountered with your payment information:"
   attach_files: Attach files
   plan_amount: per agent/month
+  billed_annually: per agent/month billed annually
   free_plan_agents_v2: Unlimited agents
   free_plan_agents: for %{free_agents} agents
   current_plan_details: "%{plan_name}"
@@ -5765,6 +5808,8 @@ en:
   add_more_free: "Adding more than %{free_agents} agents?"
   add_more_agents: "Add more agents at %{amount} per agent/month"
   zendesk_backup: Backup file
+  per_agent_per_month: "/agent/month"
+  per_field_agent_per_month: "/field technician/month"
   twoday: 2 Days
   profile:
     change_password: Change Password
@@ -5817,6 +5862,7 @@ en:
     app_gallery: "Access to Marketplace"
     basic_phone: "Basic phone channels"
     basic_social: "Basic social channels"
+    basic_phone: "Basic phone"
     freshcaller: "Freshcaller integration"
     time_event_automation: "Time/event based automations"
     custom_ticket_fields_and_views: "Custom ticket fields/views"
@@ -5850,6 +5896,8 @@ en:
     custom_data_center: "Data centre location"
     whitelisted_ip_desc: "Whitelisted IP addresses"
     scenario_automations_desc: "Scenario automations"
+    parent_child_desc: "Parent child ticketing"
+    fsm_desc: "Field service management"
     custom_tabel_view_desc: "Custom table view"
     skill_based_assignment_desc: "Skill based assignment"
     custom_mailbox_desc: "Custom email servers"
@@ -5879,11 +5927,30 @@ en:
     freshchat: "Freshchat integration"
     bot: "Bot"
     custom_dashboard: "Manage team dashboards"
+    sprout_omni: "Convert chats and calls to tickets in Freshdesk"
+    blossom_omni: "Manage chats and calls within Freshdesk"
+    chat_faq: " Chat widget with FAQs"
+    chat_message: "Triggered chat messages"
+    ivr: "IVR"
+    masking_recording: "Call masking & recording"
+    chatbots: "Chatbots"
+    inapp_chat: "In-app chat campaigns"
+    smart_calls: "Smart call escalations"
+    barging_monitoring: "Call barging & monitoring"
+    omni_analytics: "Omnichannel Analytics"
+    co_browsing: "Co-browsing"
+    multilingual_chat: "Multilingual chat support"
+    holiday_routing: "Holiday routing for phone calls"
+    voice_ivr: "Voice IVR"
+    omni_routing: "Omnichannel Routing"
+    hippa_compliance: "HIPAA Compliance"
+    extend_api: "Extendable API rate limit"
     phone_calls_chat: " Phone calls & Live chat channels"
     omni_widget: "Omnichannel widgets"
     livechat: "Livechat widget with embedded FAQs & multiple channels (200k MUV)"
     omni_channel_option: "omni channel option"
     custom_data_center_desc: "Custom data center"
+    sandbox: "Sandbox"
     sandbox_desc: "Sandbox"
     custom_dashboard_desc: "Custom dashboard"
     auto_ticket_assignment_desc: "Round robin"
@@ -6241,7 +6308,7 @@ en:
     reply_to_tickets: Use "Reply-to" email address to create requester contacts
     reply_to_tickets_info: "Note: If disabled, requester will be created using 'From' address in email."
     disable_agent_forward: "For forwarded emails, use original sender as requester"
-    disable_agent_forward_info: "When an agent forwards an email from his mailbox to the helpdesk, create the ticket under the original sender. If disabled, the requester is the agent."
+    disable_agent_forward_info: "When an agent forwards an email from their mailbox to the helpdesk, create the ticket under the original sender. If disabled, the requester is the agent."
     primary_email_delete_alert: "Can't delete primary email"
     using_custom_mailbox: "Using custom mail server"
     enable_compose: "Allow agents to initiate conversation with customers?"
@@ -8305,6 +8372,8 @@ en:
       app_setup_error: "There was an error during installation."
       auth_error: "Error while authorizing the app"
     update_action:
+      success: "App updated successfully."
+    save_action:
       success: "App updated successfully."
     tooltip:
       suspended: Not Available
@@ -12233,17 +12302,23 @@ en:
   trial_plan_downgrade: "Important: You are currently downgrading from %{plan_from} plan to %{plan_to} plan"
   discounted_sum: "After Discount"
   selecting_plan: "Selecting..."
+  choose_annual: "Choose annual to"
+  save_20_percent: "save 20%"
+  you_save: "You save"
   proceed_billing_info: "Yes, Proceed to Billing"
   buy_plan: "Buy this Plan"
   classic_label: "Classic"
   agent_seats: "%{no_of_agents} agent seats"
+  field_agent_seats: "%{no_of_field_agents} field technician seats"
   free_plan: "Free Plan"
   view_invoices: "View Invoices: "
   subscribed_billing: "%{billing_cycle} billing"
   next_renewal: "Next renewal in %{renewal_period}"
   suspended_since: "Suspended since %{days}"
   plan: "Plan"
-  edit_plan: "Edit Plan"
+  omni_enabled: "Omni channel - included"
+  omni_disabled: "Omni channel - not included"
+  edit_plan: "Edit billing"
   please_wait: Please Wait...
   account_created: "Account created %{total_time} ago on %{date}"
   not_available: "N/A"
@@ -12710,6 +12785,10 @@ en:
           point1: 'Assign conversations to a group or team member'
           point2: 'Know who your customers are - their profile, navigation path, and previous ticket details to reply with context.'
           point3: 'Resolve conversations and choose between converting them to a new ticket or appending to an existing one.'
+      error:
+        already_present: 'Account already registered with your email in Freshchat'
+        already_logged_in: 'Already logged in to Freshchat'
+        unable_to_reach_freshchat: 'Unable to talk to Freshchat servers please contact support '
 
   mailer_notifier:
     hi: 'Hi,'
@@ -12853,6 +12932,16 @@ en:
       current_stamp_html: "The %{forum_type} has been marked as <strong>%{stamp}</strong>."
       merged_and_added_follower: "Your topic %{topic_url} has been merged into %{target_topic_url} and you have been added as a follower."
       merged_and_added_follower_html: "Your topic <a href='%{topic_url}'>%{topic_name}</a> has been merged into <a href='%{target_topic_url}'>%{target_topic_name}</a> and you have been added as a follower."
+    subscriptions:
+      admin_spam_watcher:
+        unblock_message: "Below listed users are blocked by our spam watcher. If you feel they are genuine users, you can send an email to %{support_email} with the following details."
+        account_url: "Account url: %{account_url}"
+        username: "Username: %{user_details}"
+        whitelist_message: "Below listed users are blocked by our spam watcher.If you feel they are genuine users, you can whitelist them by clicking the links."
+        unblock: "<a href='%{unblock_link}'>unblock</a>"
+      admin_spam_watcher_blocked: "Your Account has been blocked due to high volume of traffic. If you feel your requests are genuine, please send an email to %{support_email} with your account details."
+      account_cancel: "<div>This email is a confirmation that your Freshdesk account has been cancelled. We’re sorry to see you go.</div><br/>
+           <div>If you have feedback on how we can provide a better experience, please write to us at %{support_email}. We’d love to hear from you. </div>"
   mailer_notifier_subject:
     agent_email_changed: '%{portal_name}: Agent email address changed'
     agent_details_updated: Your %{changed_attributes} in %{account_name} has been updated
@@ -12889,6 +12978,8 @@ en:
     no_tickets_to_export: "No tickets in range - %{domain}"
     agent_export: Agents List Export
     audit_log_export: Audit Log Export
+    spam_watcher: "Freshdesk :: Spam watcher"
+    account_cancelled: "%{account_domain} has been cancelled"
     notify_dkim_activation: "DKIM signatures activation email"
     notify_new_watcher: 'Added as Watcher %{display_id} %{subject}'
     notify_on_reply: 'New Activity %{display_id} %{subject}'

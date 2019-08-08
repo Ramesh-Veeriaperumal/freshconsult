@@ -352,7 +352,7 @@ class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
 
   def test_customize_domain_success
     @account.make_current
-    new_domain = Faker::Lorem.word
+    new_domain = Faker::Internet.domain_word
     put :customize_domain, construct_params(version: 'private', subdomain: new_domain)
     assert_response 200
     assert_equal @account.domain, new_domain

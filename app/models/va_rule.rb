@@ -154,7 +154,7 @@ class VaRule < ActiveRecord::Base
   end
 
   def fetch_field_type(condition)
-    case condition[:evaluate_on]
+    case condition[:evaluate_on].try(:to_sym)
     when :requester
       contact_field = account.contact_form.custom_contact_fields.detect{ |cnf| cnf.name == condition[:name] }
       contact_field.present? ? contact_field.field_type.to_sym : :default

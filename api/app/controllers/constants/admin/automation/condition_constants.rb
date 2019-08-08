@@ -22,6 +22,7 @@ module Admin::Automation::ConditionConstants
     greater: %i[greater_than],
     object_id: %i[in not_in],
     date_time: %i[during greater_than less_than],
+    date_time_status: %i[during is greater_than less_than],
     date: %i[is is_not greater_than less_than],
     tags: %i[in not_in and],
     url: %i[is is_not contains does_not_contain starts_with ends_with is_any_of is_none_of],

@@ -78,10 +78,20 @@ module VAConfig
     end
 
     def self.fetch_ticket_field field, account
+      return :hours_since_waiting_on_custom_status if since_custom_status? field, account
+
       ff = account.flexifields_with_ticket_fields_from_cache.detect{ |ff| 
           ff.flexifield_name == field || ff.flexifield_alias == field }
       ticket_field = ff.present? ? ff.ticket_field : nil
       ticket_field.present? && ticket_field.parent_id.nil? ? ticket_field.field_type.to_sym : :default
+    end
+
+    def self.since_custom_status? (field, account)
+      return false unless field.to_s.include? Admin::AutomationConstants::TIME_AND_STATUS_BASED_FILTER[0]
+
+      status_id = field.split('_').last
+      status_index = field.index(status_id)
+      field[0, status_index] == Admin::AutomationConstants::TIME_AND_STATUS_BASED_FILTER[0] + '_'
     end
 end
 

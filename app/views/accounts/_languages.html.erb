@@ -29,10 +29,10 @@
 					<% end %>
 				</div>
 			</div>
-			<% if @account.launched?(:falcon_enable_multilingual) %>
+			<% if current_user.is_falcon_pref? %>
 				<div class="falcon-manage-link">
-						<%= link_to t("accounts.multilingual_support.manage_languages"), '/a/admin/manage-language',
-						:class => "btn btn-bold", :id => 'manage-language-button', :target => "_top" %>
+					<%= link_to t("accounts.multilingual_support.manage_languages"), '/a/admin/account/languages',
+					:class => "btn btn-bold", :id => 'manage-language-button', :target => "_top" %>
 				</div>
 			<% else %>
 			    <div class="span3 manage-link">
@@ -43,9 +43,9 @@
 			<div class="mt5">
 				<%= @account.language_object.name %>
 				<% if @account.multilingual_available? && !@account.supported_languages.present? %>
-					<% if @account.launched?(:falcon_enable_multilingual) %>
+					<% if current_user.is_falcon_pref?  %>
 						<div class="controls">
-							<%= link_to t("accounts.multilingual_support.manage_languages"), '/a/admin/manage-language',
+							<%= link_to t("accounts.multilingual_support.manage_languages"), '/a/admin/account/languages',
 							:class => "btn btn-bold", :id => 'manage-language-button', :target => "_top" %>
 						</div>
 					<% else %>
@@ -75,9 +75,9 @@
 				<% end %>
 			</div>
 			<% if @account.multilingual_available? %>
-				<% if @account.launched?(:falcon_enable_multilingual) %>
+				<% if current_user.is_falcon_pref? %>
 					<div class="falcon-manage-link">
-							<%= link_to t("accounts.multilingual_support.manage_languages"), '/a/admin/manage-language',
+						<%= link_to t("accounts.multilingual_support.manage_languages"), '/a/admin/account/languages',
 							:class => "btn btn-bold", :id => 'manage-language-button', :target => "_top" %>
 					</div>
 				<% else %>

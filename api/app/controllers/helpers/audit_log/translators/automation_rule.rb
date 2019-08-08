@@ -130,6 +130,8 @@ module AuditLog::Translators::AutomationRule
 
   def translate_name(action, readable, type)
     return action[:name] = readable[0] if readable.present?
+    return action[:name] = supervisor_custom_status_name(action[:name].to_s) if action[:name].present? && (action[:name].to_s.include? Admin::AutomationConstants::TIME_AND_STATUS_BASED_FILTER[0])
+
     name = action[:category_name] || action[:name]
     field_name, field_type = custom_field_name(name, action[:evaluate_on])
     action[:name] = customize_field_name(field_name, type) if field_name.present?

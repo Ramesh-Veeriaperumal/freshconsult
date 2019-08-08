@@ -31,7 +31,9 @@ class Subscription < ActiveRecord::Base
                      SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17],
                      SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_17],
                      SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_jan_19],
+                     SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_omni_jan_19],
                      SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_19],
+                     SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_omni_jan_19],
                      SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_19]].freeze
 
   AUTOPILOT_FILEDS = ["state", "next_renewal_at", "renewal_period", "amount", "subscription_plan_id", "agent_limit"]
@@ -607,7 +609,7 @@ class Subscription < ActiveRecord::Base
     
     def validate_on_update
       chk_change_agents unless trial?
-      chk_change_field_agents if account.addon_based_billing_enabled? && account.field_service_management_enabled?
+      chk_change_field_agents if account.field_service_management_enabled?
     end
 
     def finished_trial?

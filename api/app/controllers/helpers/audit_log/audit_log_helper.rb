@@ -1,4 +1,5 @@
 module AuditLog::AuditLogHelper
+  include Admin::Automation::CustomStatusHelper
   private
     # options can have the likes of type (ex. :default, :currency), and any other custom value
     def description_properties(*params)

@@ -48,6 +48,7 @@ class Va::Condition
   def db_column
     return QUERY_COLUMNS[key] if QUERY_COLUMNS.key? key
 
+    return ["helpdesk_ticket_states.ts_datetime1","helpdesk_tickets.status"] if key.include? 'hours_since_waiting_on_custom_status'
     #method_defined? doesn't work..
     return "helpdesk_schema_less_tickets.#{dispatcher_key}" if Helpdesk::SchemaLessTicket.column_names.include? dispatcher_key
     return "helpdesk_tickets.#{key}" if Helpdesk::Ticket.column_names.include? key

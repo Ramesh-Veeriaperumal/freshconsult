@@ -20,7 +20,8 @@ module Va
       :object_id   => [ "in", "not_in"],
       :date_time   => [ "during" ],
       :date        => [ "is" , "is_not", "greater_than", "less_than" ],
-      :object_id_array  => [ "in", "and", "not_in" ]
+      object_id_array: ['in', 'and', 'not_in'],
+      data_time_status: ['during']
     }
 
     CF_OPERATOR_TYPES = {

@@ -258,7 +258,7 @@ module DashboardConcern
   def parse_scorecard_hash(response, trends)
     result = {}
     trends.each do |trend|
-      result[trend.to_s] = response["results"][trend.to_s].present? ? response["results"][trend.to_s]["total"] : 0
+      result[trend.to_s] = response.present? && response['results'].present? && response['results'][trend.to_s].present? ? response['results'][trend.to_s]['total'] : 0
     end
     result
   end

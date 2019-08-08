@@ -1,6 +1,8 @@
 config = YAML::load_file(File.join(Rails.root, 'config', 'sidekiq.yml'))[Rails.env]
 sidekiq_config = YAML::load_file(File.join(Rails.root, 'config', 'sidekiq_client.yml'))[Rails.env]
 
+MAX_DEAD_SET_SIZE = 50_000
+
 SIDEKIQ_CLASSIFICATION = YAML::load_file(File.join(Rails.root, 'config', 'sidekiq_classification.yml'))
 
 SIDEKIQ_CLASSIFICATION_MAPPING = SIDEKIQ_CLASSIFICATION[:classification].inject({}) do |t_h, queue|
@@ -19,6 +21,7 @@ $sidekiq_redis_timeout = sidekiq_config[:timeout]
 
 poll_interval = config['scheduled_poll_interval']
 Sidekiq.default_worker_options = { backtrace: 10 }
+Sidekiq.options[:dead_max_jobs] = config['dead_max_jobs'] || MAX_DEAD_SET_SIZE
 Sidekiq.configure_client do |config|
   config.redis = ConnectionPool.new(size: $sidekiq_client_redis_pool_size, timeout: $sidekiq_redis_timeout, &$sidekiq_datastore)
   config.client_middleware do |chain|

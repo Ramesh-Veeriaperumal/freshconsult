@@ -23,7 +23,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         create_section(fsm_fields_to_be_created)
         create_field_agent_type
         create_field_group_type
-        create_fsm_dashboard if Account.current.fsm_dashboard_enabled?
+        create_fsm_dashboard
         create_field_service_manager_role if Account.current.scheduling_fsm_dashboard_enabled?
         expire_cache
       rescue StandardError => e

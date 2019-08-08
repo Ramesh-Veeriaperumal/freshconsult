@@ -1,33 +1,33 @@
 <div>
-	Hi <%= @account.admin_first_name %>,<div><br></div>
-	<%if @spam_watcher_redis%>
-		<div>Below listed users are blocked by our spam watcher. If you feel they are genuine users, you can send an email to support@freshdesk.com with the following details.</div>
-		<div><br></div>
-		<% @deleted_users.each do |user| %>
-			<div> 
-				Account url: <%= @account.host%>
-			<br/>
-				Username: <%= user.name_details%>
-			</div>
-		<%end%>
-	<%else%>
-	<div>Below listed users are blocked by our spam watcher.If you feel they are genuine users, you can whitelist them by clicking the links.</div>
-	<div><br></div>
-	<% @deleted_users.each do |user| %>
-		<div> 
-			<b>
-				<%=link_to user.name_details, "#{@account.url_protocol}://#{@account.host}/contacts/#{user.id}" %>
-			</b>
-			&nbsp;
-			<b>
-				<%=link_to "unblock", "#{@account.url_protocol}://#{@account.host}/contacts/#{user.id}/unblock" %>
-			</b>
-		</div>
-	<%end%>
-	<%end%>
-	<div><br></div>
-	<div>Regards</div>
-	<div><br></div>
-	<div>Freshdesk Support&nbsp;</div>
-	<div><br></div>
+  <%= t('mailer_notifier.hi_user', user_name: @account.admin_first_name) %><div><br></div>
+  <%if @spam_watcher_redis%>
+    <div><%= t('mailer_notifier.subscriptions.admin_spam_watcher.unblock_message', support_email: 'support@freshdesk.com') %></div>
+    <div><br></div>
+    <% @deleted_users.each do |user| %>
+      <div>
+        <%= t('mailer_notifier.subscriptions.admin_spam_watcher.account_url', account_url: @account.host) %>
+      <br/>
+        <%= t('mailer_notifier.subscriptions.admin_spam_watcher.username', user_details: user.name_details) %>
+      </div>
+    <%end%>
+  <%else%>
+  <div><%= t('mailer_notifier.subscriptions.admin_spam_watcher.whitelist_message') %></div>
+  <div><br></div>
+  <% @deleted_users.each do |user| %>
+    <div> 
+      <b>
+        <%=link_to user.name_details, "#{@account.url_protocol}://#{@account.host}/contacts/#{user.id}" %>
+      </b>
+      &nbsp;
+      <b>
+        <%= t('mailer_notifier.subscriptions.admin_spam_watcher.unblock', unblock_link: "#{@account.url_protocol}://#{@account.host}/contacts/#{user.id}/unblock").html_safe %>
+      </b>
+    </div>
+  <%end%>
+  <%end%>
+  <div><br></div>
+  <div><%= t('mailer_notifier.regards') %></div>
+  <div><br></div>
+  <div><%= t('mailer_notifier.freshdesk_support') %>&nbsp;</div>
+  <div><br></div>
 </div>

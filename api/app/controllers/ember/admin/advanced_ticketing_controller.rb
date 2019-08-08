@@ -86,9 +86,7 @@ module Ember
       end
 
       def check_privilege_for_fsm_disable
-        unless Account.current.disable_field_service_management_enabled? && User.current.privilege?(:manage_account)
-          render_request_error :access_denied, 403
-        end
+        render_request_error :access_denied, 403 unless User.current.privilege?(:manage_account)
       end
     end
   end
