@@ -8760,6 +8760,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         connect: "Connect another store"
         confirm_remove_store: "Are you sure you want to disconnect this store?"
         helpkit_cannot_edit: "If you'd like to disconnect your existing store, please uninstall and install the Shopify app from the marketplace. If you'd like to manage multiple stores, please switch to the Mint experience."
+        perform_shopify_actions: "Perform cancellation and refund from freshdesk"
       errors:
         cannot_refund_full_order: "Cannot refund order. It's already been cancelled, partially fulfilled or partially refunded"
         cannot_refund_line_item: "Cannot refund this item. It's already refunded"
