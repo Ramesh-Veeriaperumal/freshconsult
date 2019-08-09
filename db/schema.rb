@@ -4636,7 +4636,7 @@ ActiveRecord::Schema.define(version: 20190628073857) do
 
   add_index "bot_feedback_mappings", ["account_id", "feedback_id"], :name => "index_bot_feedback_mappings_on_feedback_id"
 
-  create_table "bot_responses", force: true do |t|
+  create_table 'bot_responses', force: true do |t|
     t.integer  "account_id",         :limit => 8, :null => false
     t.integer  "ticket_id",          :limit => 8, :null => false
     t.integer  "bot_id",             :limit => 8, :null => false
