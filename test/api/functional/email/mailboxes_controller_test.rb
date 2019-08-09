@@ -5,6 +5,17 @@ class Email::MailboxesControllerTest < ActionController::TestCase
   include GroupsTestHelper
   include ProductsHelper
 
+  def setup
+    super
+    Account.any_instance.stubs(:multiple_emails_enabled?).returns(true)
+    User.any_instance.stubs(:has_privilege?).with(:manage_email_settings).returns(true)
+  end
+
+  def teardown
+    Account.any_instance.unstub(:multiple_emails_enabled?)
+    User.any_instance.unstub(:has_privilege?)
+  end
+
   def wrap_cname(params)
     { mailbox: params }
   end
@@ -35,13 +46,20 @@ class Email::MailboxesControllerTest < ActionController::TestCase
   end
 
   # test create success
+  # test_create_without_feature
   # test create without support mail
   # test create without mailbox_type
-  # test create without name
+  # test_create_with_name
+  # test_create_with_invalid_name_length
   # test create with group_id
   # test create with product_id
+  # test_create_with_product_id_without_feature
+  # test_create_with_invalid_product_id
   # test create with default_reply_email
-  # test create success with custom_mailbox
+  # test_create_with_incoming_custom_mailbox
+  # test_create_with_outgoing_custom_mailbox
+  # test_create_with_both_custom_mailbox
+  # test_create_with_invalid_incoming_custom_mailbox
   # test create invalid custommailbox with freshdeskmailbox params
 
   def test_create_success
@@ -160,7 +178,7 @@ class Email::MailboxesControllerTest < ActionController::TestCase
   end
 
   def test_create_with_incoming_custom_mailbox
-    Account.any_instance.stubs(:has_features?).returns(true)
+    Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
     Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: true, msg: '')
     params_hash = create_mailbox_params_hash.merge(create_custom_mailbox_hash).merge(mailbox_type: CUSTOM_MAILBOX)
     post :create, construct_params({}, params_hash)
@@ -171,7 +189,7 @@ class Email::MailboxesControllerTest < ActionController::TestCase
   end
 
   def test_create_with_outgoing_custom_mailbox
-    Account.any_instance.stubs(:has_features?).returns(true)
+    Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
     Email::MailboxDelegator.any_instance.stubs(:verify_smtp_mailbox).returns(success: true, msg: '')
     options = { access_type: 'outgoing' }
     params_hash = create_mailbox_params_hash.merge(create_custom_mailbox_hash(options)).merge(mailbox_type: CUSTOM_MAILBOX)
@@ -183,7 +201,7 @@ class Email::MailboxesControllerTest < ActionController::TestCase
   end
 
   def test_create_with_both_custom_mailbox
-    Account.any_instance.stubs(:has_features?).returns(true)
+    Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
     Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: true, msg: '')
     Email::MailboxDelegator.any_instance.stubs(:verify_smtp_mailbox).returns(success: true, msg: '')
     options = { access_type: 'both' }
@@ -197,7 +215,7 @@ class Email::MailboxesControllerTest < ActionController::TestCase
   end
 
   def test_create_with_invalid_incoming_custom_mailbox
-    Account.any_instance.stubs(:has_features?).returns(true)
+    Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
     Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: false, msg: 'Error while verifying the mailbox imap details. Please verify server name, port and credentials')
     params_hash = create_mailbox_params_hash.merge(create_custom_mailbox_hash).merge(mailbox_type: CUSTOM_MAILBOX)
     post :create, construct_params({}, params_hash)

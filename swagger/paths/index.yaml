@@ -684,6 +684,11 @@
   $ref: ./email/mailboxes/list_and_create.yaml
 /email/mailboxes/{id}:
   $ref: ./email/mailboxes/crud.yaml
+/email/settings:
+  $ref: ./email/settings.yaml
+#notfication
+/notifications/email/bcc:
+  $ref: ./notifications/email/bcc.yaml
 
 /admin/freddy_skills:
   $ref: ./admin/freddy_skills/index.yaml
