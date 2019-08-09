@@ -57,7 +57,8 @@ module NotesTestHelper
       user_id: note.user_id,
       notable_id: note.notable.display_id,
       notable_type: note.notable_type,
-      source_additional_info: source_additional_info_hash(note)
+      source_additional_info: source_additional_info_hash(note),
+      kind: note.kind
     }
     ret_hash["feedback_id"] = note.survey_result_assoc.id if note.feedback?
     # ASSOCIATION_REFS_BASED_ON_TYPE.each do |ref|
@@ -67,6 +68,10 @@ module NotesTestHelper
     # ret_hash["freshfone_call_id"] = note.freshfone_call.id if note.freshfone_call.present?
     # ret_hash["freshcall_call_id"] = note.freshcaller_call.id if note.freshcaller_call.present?
     ret_hash
+  end
+
+  def event_info(event)
+    { pod: ChannelFrameworkConfig['pod'] }
   end
 
   def central_assoc_note_pattern(expected_output = {}, note)

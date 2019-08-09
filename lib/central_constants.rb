@@ -4,8 +4,8 @@ module CentralConstants
   # In case of any breaking changes, bump the majore version, update from 0.0 to 1.0
   MODEL_PAYLOAD_VERSION = {
     'Account' => '1.1',
-    'Helpdesk::Ticket' => '2.2',
-    'Helpdesk::Note' => '0.2',
+    'Helpdesk::Ticket' => '2.3',
+    'Helpdesk::Note' => '0.3',
     'Solution::Category' => '0.0',
     'Solution::Folder' => '0.0',
     'Solution::Article' => '0.0',
@@ -13,7 +13,7 @@ module CentralConstants
     'User' => '0.1',
     'Company' => '1.1',
     'Subscription' => '1.0',
-    'Agent' => '2.0',
+    'Agent' => '2.1',
     'VaRule' => '0.1',
     'Group' => '3.0',
     'Post' => '0.0',

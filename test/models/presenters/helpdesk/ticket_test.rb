@@ -61,6 +61,24 @@ class TicketTest < ActiveSupport::TestCase
     assoc_payload.must_match_json_expression(cp_assoc_ticket_pattern(t))
   end
 
+  def test_central_publish_payload_event_info
+    custom_fields_hash = { "test_custom_dropdown_#{@account.id}" => DROPDOWN_CHOICES.sample, "test_custom_text_#{@account.id}" => 'Sample Text' }
+    t = create_ticket(ticket_params_hash.merge(custom_field: custom_fields_hash))
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    event_info = t.event_info(:create)
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t))
+  end
+
+  def test_central_publish_payload_event_info_on_split_ticket
+    custom_fields_hash = { "test_custom_dropdown_#{@account.id}" => DROPDOWN_CHOICES.sample, "test_custom_text_#{@account.id}" => 'Sample Text' }
+    t = create_ticket(ticket_params_hash.merge(custom_field: custom_fields_hash))
+    t.activity_type = { type: Helpdesk::Ticket::SPLIT_TICKET_ACTIVITY, soure_ticket_id: [1]}
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    event_info = t.event_info(:create)
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t))
+  end
   def test_central_publish_payload_without_custom_fields
     @account.ticket_fields.custom_fields.each(&:destroy)
     @account.reload

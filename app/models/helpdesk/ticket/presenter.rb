@@ -14,7 +14,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   WATCHER_KEYS = [:add_watcher, :remove_watcher].freeze
   SYSTEM_ACTIONS = [:add_comment, :add_a_cc, :email_to_requester, :email_to_group, :email_to_agent, :add_note, :forward_ticket].freeze
   DONT_CARE_VALUE = '*'.freeze
-
+  SPLIT_TICKET_ACTIVITY = 'ticket_split_target'.freeze
   acts_as_api
 
   api_accessible :central_publish do |t|
@@ -341,9 +341,21 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def event_info(event_name)
-    return { pod: ChannelFrameworkConfig['pod'] } if event_name == :destroy
     lifecycle_hash = event_name == :create && resolved_at ? default_lifecycle_properties : @ticket_lifecycle || {}
-    { action_in_bhrs: action_in_bhrs? }.merge(lifecycle_hash)
+    activity_type_hash = activity_type && activity_type[:type] == SPLIT_TICKET_ACTIVITY ? split_ticket_hash(activity_type) : {}
+    {
+      action_in_bhrs: action_in_bhrs?,
+      pod: ChannelFrameworkConfig['pod']
+    }.merge(lifecycle_hash).merge(activity_type_hash)
+  end
+
+  def split_ticket_hash(activity_type)
+    {
+      activity_type: {
+        type: SPLIT_TICKET_ACTIVITY,
+        source_ticket_id: activity_type[:source_ticket_id]
+      }
+    }
   end
 
   def default_lifecycle_properties
