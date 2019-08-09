@@ -125,6 +125,9 @@
 		<% current_subscription = Subscription.find(current_account.subscription.id) %>
 		<% downgrade_confirm = ( (@subscription.subscription_plan_id < current_subscription.subscription_plan_id) or (current_subscription.classic? and @subscription.sprout?) ) ? true : false %>
 		<% submit_text = @subscription.state == 'trial' ? t('enter_payment') : @subscription.non_free_agents <= @subscription.free_agents ? t('activate_free_plan') : t('make_payment') %>
+		<% if current_account.launched?(:downgrade_policy) && @subscription.state == 'active' && ((SubscriptionPlan::SUBSCRIPTION_PLAN_NAMES_BY_RANKING[@subscription.subscription_plan.name] < SubscriptionPlan::SUBSCRIPTION_PLAN_NAMES_BY_RANKING[current_subscription.subscription_plan.name]) || (current_subscription.subscription_plan.omni_plan? && @subscription.subscription_plan.basic_variant?)) %>
+			<% submit_text = t('request_change')%>
+		<% end %>
 		<input type="submit" class="btn btn-flat billing-cancel" value="<%= t('cancel') %>" />
 		<a id="show-confirmation-box" href="#omni-disable-confirmation" class="btn submit-confirm hide btn-primary" rel="freshdialog"
 			data-width="450"
