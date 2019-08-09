@@ -4,3 +4,5 @@
 <%= t("mailer_notifier.freshdesk_customer_support") %><br><br>
 
 <%= t("mailer_notifier.security_notification.configure_change_html", security_url: "#{@model.account.full_url}/admin/security").html_safe %><br>
+
+<%= render partial: "helpdesk/shared/other_recipients_note.html.erb" %>
