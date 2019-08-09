@@ -148,19 +148,25 @@ class SecurityEmailNotification < ActionMailer::Base
   end
 
   def admin_alert_mail(model, subject, body_message_file, changed_attributes, doer)
+    emails = Account.current.notification_emails
+    SecurityEmailNotification.send_email_to_group(:admin_alert_mail_message, emails, model, subject, body_message_file, changed_attributes, doer) if emails.present?
+  end
+
+  def admin_alert_mail_message(to_emails, model, subject, body_message_file, changed_attributes, doer)
     @account = Account.current
     Time.zone = @account.time_zone
     headers = construct_headers({
-      to: Account.current.notification_emails, 
+      to: to_emails[:group],
       from: AppConfig['from_email'],
       subject: subject.is_a?(Hash) ? I18n.t(subject[:key], subject[:locals]) : subject,
-      sent_on: Time.now 
-    }, @account.id, "Admin Alert Email")
+      sent_on: Time.now
+    }, @account.id, 'Admin Alert Email')
 
     @changes = changed_attributes
     @time = Time.zone.now.strftime('%B %e at %l:%M %p %Z')
     @model = model
     @doer = doer
+    @other_emails = to_emails[:other]
 
     mail(headers) do | part|
       part.text { render "#{body_message_file}.text.plain.erb" }

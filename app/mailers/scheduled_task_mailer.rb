@@ -93,7 +93,7 @@ class ScheduledTaskMailer < ActionMailer::Base
       configure_email_config Account.current.primary_email_config if Account.current.primary_email_config.active?
 
       add_log_info 'report_no_data_email'
-      self.class.send_email_to_group(:report_no_data_email_message, @to_emails, task: @task, portal_name: @portal_name, config: @config)
+      self.class.send_email_to_group(:report_no_data_email_message, @to_emails, task: @task, portal_name: options[:portal_name], config: @config)
     ensure
       remove_email_config
     end
