@@ -71,6 +71,8 @@ class Account < ActiveRecord::Base
   scope :premium_accounts, {:conditions => {:premium => true}}
 
   scope :non_premium_accounts, {:conditions => {:premium => false}}
+
+  scope :non_premium_accounts, {:conditions => {:premium => false}}
   # Alias so that any dynamic reference to full_time_agents won't fail.
   alias :full_time_agents :full_time_support_agents
 

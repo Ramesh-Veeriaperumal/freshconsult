@@ -50,7 +50,7 @@ module AccountsHelper
                                             fs_cookie: signup_params[:fs_cookie])
     end
   end
-  
+
   def self.value_to_boolean(value)
     if value.is_a?(String) && value.empty?
       nil

@@ -4,7 +4,7 @@ defaults: &defaults
     timeout: 2
     confidence_threshold: 80    
     feedback_timeout: 5
-  
+
   ticket_properties_suggester:
     url: "https://autodispatch-361773157.freshworksapi.com/"
     timeout: 5
@@ -26,6 +26,8 @@ defaults: &defaults
     service: 'bot-admin'
     product_id: '076f18fe945962782e9890b3125bc03e5604c46f'
     timeout: 3
+    service: 'bot-admin'
+    product_id: '076f18fe945962782e9890b3125bc03e5604c46f'
 
 development:
   <<: *defaults

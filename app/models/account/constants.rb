@@ -271,7 +271,7 @@ class Account < ActiveRecord::Base
       user_notifications: false, freshplug_enabled: false, dkim: false,
       sha1_enabled: false, disable_archive: false, sha256_enabled: false,
       auto_ticket_export: false, select_all: false, facebook_realtime: false,
-      :"Freshfone Call Tracker" => false, ticket_contact_export: false,
+      :"Freshfone Call Tracker" => false, ticket_contact_export: false, field_agent_availability: false,
       custom_apps: false, timesheet: false, api_jwt_auth: false, disable_emails: false,
       skip_portal_cname_chk: false, falcon_signup: false, falcon_portal_theme: false,
       image_annotation: false, email_actions: false, ner: false, disable_freshchat: false,

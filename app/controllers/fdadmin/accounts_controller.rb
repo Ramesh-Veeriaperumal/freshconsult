@@ -330,6 +330,29 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     end
   end
 
+  def enable_fluffy
+    begin
+      account = Account.find_by_id(params[:account_id]).make_current
+      result = {:account_id => account.id, :account_name => account.name}
+      if account.launched?(:fluffy)
+        result[:status] = "notice"
+      else
+        account.enable_fluffy
+        result[:status] = "success"
+      end
+    rescue => e
+      result[:status] = "error"
+    ensure
+      Account.reset_current_account
+    end
+
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end
+  end
+
   def extend_trial
     account = Account.find_by_id(params[:account_id]).make_current
     result = {:account_id => account.id, :account_name => account.name}
