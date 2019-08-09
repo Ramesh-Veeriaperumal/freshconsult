@@ -1,0 +1,1 @@
+JSON.generate(@proxy_response) if @proxy_response.present?

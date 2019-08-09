@@ -6,7 +6,7 @@ module Ember
 
     def execute
       append_url = request.url.split('autofaq/').last
-      url = "#{SYSTEM42_HOST}/api/v1/#{append_url}"
+      url = "#{FreddySkillsConfig[:system42][:host]}#{SYSTEM42_NAMESPACE}#{append_url}"
       perform(url, :system42)
       render status: @proxy_response.code, json: @parsed_response.to_json
     end

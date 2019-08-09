@@ -442,10 +442,12 @@ Helpkit::Application.routes.draw do
 
     resources :botflow, controller: 'ember/flows' do
       collection do
-        get '*all', to: 'ember/flows#execute'
-        put '*all', to: 'ember/flows#execute'
-        post '*all', to: 'ember/flows#execute'
-        delete '*all', to: 'ember/flows#execute'
+        match '/actions' => 'ember/flows#system42_proxy'
+        match '/resources/*others' => 'ember/flows#system42_proxy'
+        get '*all', to: 'ember/flows#freshbot_proxy'
+        put '*all', to: 'ember/flows#freshbot_proxy'
+        post '*all', to: 'ember/flows#freshbot_proxy'
+        delete '*all', to: 'ember/flows#freshbot_proxy'
       end
     end
 
