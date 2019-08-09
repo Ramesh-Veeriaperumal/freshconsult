@@ -356,27 +356,28 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
   end
 
   def test_shopify_refund_full_order
-    Account.current.launch(:shopify_actions)
-    app_id = get_installed_app('shopify').id
+    installed_app = get_installed_app('shopify')
+    installed_app.configs[:inputs]['disable_shopify_actions'] = false
+    installed_app.save
     order_id = 1025918795834
     line_item_id = nil
-    url = "https://fd-integration-private.myshopify.com"
+    url = 'https://fd-integration-private.myshopify.com'
     order_json = fetch_order.to_json
     calculate_json = fetch_refund_calculate.to_json
     response = fetch_refund_response.to_json
-    
+
     order_mock = get_response_mock(order_json, 200)
     calculate_mock = get_response_mock(calculate_json, 200)
     response_mock = get_response_mock(response, 201)
 
     calculate_url = "#{url}/admin/orders/#{order_id}/refunds/calculate.json"
     refund_url = "#{url}/admin/orders/#{order_id}/refunds.json"
-    
+
     IntegrationServices::Services::Shopify::ShopifyOrderResource.any_instance.stubs(:http_get).returns(order_mock)
     IntegrationServices::Services::Shopify::ShopifyRefundResource.any_instance.stubs(:http_post).with(calculate_url, full_refund_calculate_hash.to_json).returns(calculate_mock)
     IntegrationServices::Services::Shopify::ShopifyRefundResource.any_instance.stubs(:http_post).with(refund_url, full_refund_hash.to_json).returns(response_mock)
 
-    param = construct_params({ version: 'private', id: app_id, event: 'refund_full_order', payload: { orderId: order_id, lineItemId: line_item_id, store: "fd-integration-private.myshopify.com"}})
+    param = construct_params(version: 'private', id: installed_app.id, event: 'refund_full_order', payload: { orderId: order_id, lineItemId: line_item_id, store: 'fd-integration-private.myshopify.com' })
     post :fetch, param
     assert_response 200
     match_json JSON.parse(response)
@@ -385,15 +386,16 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
   end
 
   def test_shopify_refund_line_item
-    Account.current.launch(:shopify_actions)
-    app_id = get_installed_app('shopify').id
+    installed_app = get_installed_app('shopify')
+    installed_app.configs[:inputs]['disable_shopify_actions'] = false
+    installed_app.save
     order_id = 1025918795834
     line_item_id = 2382039318586
-    url = "https://fd-integration-private.myshopify.com"
+    url = 'https://fd-integration-private.myshopify.com'
     order_json = fetch_order.to_json
     calculate_json = fetch_refund_calculate.to_json
     response = fetch_refund_response.to_json
-    
+
     order_mock = get_response_mock(order_json, 200)
     calculate_mock = get_response_mock(calculate_json, 200)
     response_mock = get_response_mock(response, 201)
@@ -405,7 +407,7 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     IntegrationServices::Services::Shopify::ShopifyRefundResource.any_instance.stubs(:http_post).with(calculate_url, lineitem_refund_calculate_hash.to_json).returns(calculate_mock)
     IntegrationServices::Services::Shopify::ShopifyRefundResource.any_instance.stubs(:http_post).with(refund_url, lineitem_refund_hash.to_json).returns(response_mock)
 
-    param = construct_params({ version: 'private', id: app_id, event: 'refund_line_item', payload: { orderId: order_id, lineItemId: line_item_id, store: "fd-integration-private.myshopify.com"}})
+    param = construct_params(version: 'private', id: installed_app.id, event: 'refund_line_item', payload: { orderId: order_id, lineItemId: line_item_id, store: 'fd-integration-private.myshopify.com' })
     post :fetch, param
     assert_response 200
     match_json JSON.parse(response)
@@ -414,17 +416,45 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
   end
 
   def test_shopfiy_fetch_orders
-    Account.current.launch(:shopify_actions)
     order_json = fetch_order.to_json
-    app_id = get_installed_app('shopify').id
+    installed_app = get_installed_app('shopify')
+    installed_app.configs[:inputs]['disable_shopify_actions'] = false
+    installed_app.save
     order_mock = get_response_mock(order_json, 200)
     IntegrationServices::Services::Shopify::ShopifyCustomerResource.any_instance.stubs(:http_get).returns(order_mock)
     IntegrationServices::Services::Shopify::ShopifyOrderResource.any_instance.stubs(:http_get).returns(order_mock)
-    param = construct_params({ version: 'private', id: app_id, event: 'fetch_orders', payload: { email: 'test120181211142937@yopmail.com'}})
+    param = construct_params(version: 'private', id: installed_app.id, event: 'fetch_orders', payload: { email: 'test120181211142937@yopmail.com' })
     post :fetch, param
     IntegrationServices::Services::Shopify::ShopifyOrderResource.any_instance.unstub
     IntegrationServices::Services::Shopify::ShopifyCustomerResource.any_instance.unstub
     assert_response 200
+  end
+
+  def test_shopify_cancel_order_errors_on_shopify_action_disabled
+    installed_app = get_installed_app('shopify')
+    installed_app.configs[:inputs]['disable_shopify_actions'] = true
+    installed_app.save
+    param = construct_params(version: 'private', id: installed_app.id, event: 'cancel_order', payload: { email: 'test120181211142937@yopmail.com' })
+    post :fetch, param
+    assert_response 403
+  end
+
+  def test_shopify_refund_full_order_errors_on_shopify_action_disabled
+    installed_app = get_installed_app('shopify')
+    installed_app.configs[:inputs]['disable_shopify_actions'] = true
+    installed_app.save
+    param = construct_params(version: 'private', id: installed_app.id, event: 'refund_full_order', payload: { email: 'test120181211142937@yopmail.com' })
+    post :fetch, param
+    assert_response 403
+  end
+
+  def test_shopify_refund_line_item_errors_on_shopify_action_disabled
+    installed_app = get_installed_app('shopify')
+    installed_app.configs[:inputs]['disable_shopify_actions'] = true
+    installed_app.save
+    param = construct_params(version: 'private', id: installed_app.id, event: 'refund_line_item', payload: { email: 'test120181211142937@yopmail.com' })
+    post :fetch, param
+    assert_response 403
   end
 
   def test_already_installed_app

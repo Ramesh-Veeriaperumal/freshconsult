@@ -38,6 +38,7 @@ class Integrations::Marketplace::ShopifyController < Integrations::Marketplace::
       @installed_application.configs[:inputs]["webhook_verifier"] = webhook_verifier
       if @installed_application.save!
         flash[:notice] = t(:'flash.application.install.success')
+        return redirect_to edit_integrations_installed_application_path(@installed_application)
       else
         flash[:error] = t(:'flash.application.install.error')
       end
@@ -49,8 +50,15 @@ class Integrations::Marketplace::ShopifyController < Integrations::Marketplace::
   end
 
   def edit
-    installed_app = current_account.installed_applications.with_name(Integrations::Constants::APP_NAMES[:shopify]).first
-    redirect_to edit_integrations_installed_application_path(installed_app)
+    @installed_application = current_account.installed_applications.with_name(Integrations::Constants::APP_NAMES[:shopify]).first
+    redirect_to edit_integrations_installed_application_path(@installed_application)
+  end
+
+  def update
+    installed_application = current_account.installed_applications.with_name(Integrations::Constants::APP_NAMES[:shopify]).first
+    installed_application.configs[:inputs]['disable_shopify_actions'] = params[:configs][:inputs][:disable_shopify_actions] != 'true'
+    installed_application.save
+    redirect_to integrations_applications_path
   end
 
   def signup
