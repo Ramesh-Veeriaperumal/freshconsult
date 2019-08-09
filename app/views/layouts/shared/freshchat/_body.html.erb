@@ -4,20 +4,20 @@
       window.fcWidget.init({
         token: "<%=current_account.freshchat_account.token%>",
         host: "<%= Freshchat::Account::CONFIG[:visitorWidgetHostUrl] %>",
-        <% if current_account.autofaq_enabled? && current_portal.freddy_bot.present? %>
+        <%if current_account.autofaq_enabled? && current_portal.freddy_bot.present? && current_portal.freddy_bot.status %>
           meta: {
             "fw_product": "freshdesk",
             "fw_product_acc_id": "<%= current_account.id %>",
             "fw_group_id": "<%= current_portal.id %>"
           },
-          config: <%= raw current_portal.freddy_bot.widget_config.to_json %>
+          config: <%= raw current_portal.freddy_bot.widget_config.to_json %>,
         <%end%>
-      });
-      <% unless current_user.nil? %>
-        window.fcWidget.setExternalId('<%= current_user.email %>');
-        window.fcWidget.user.setFirstName('<%= current_user.name %>');
-        window.fcWidget.user.setEmail('<%= current_user.email %>');
-      <%end%>
+        <% unless current_user.nil? %>
+          externalId: '<%= current_user.email %>',
+          firstName: '<%= current_user.name %>',
+          email: '<%= current_user.email %>'
+        <%end%>
+      });    
     });
   <% end %>
 <% end %>

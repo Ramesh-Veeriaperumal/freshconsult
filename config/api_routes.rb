@@ -430,6 +430,7 @@ Helpkit::Application.routes.draw do
 
     resources :autofaq, controller: 'ember/freddy' do
       collection do
+        match '/bots/bulk_create' => 'ember/freddy#bulk_create_bot', via: :post
         get '*all', to: 'ember/freddy#execute'
         put '*all', to: 'ember/freddy#execute'
         post '*all', to: 'ember/freddy#execute'

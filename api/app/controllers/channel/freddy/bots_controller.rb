@@ -10,16 +10,13 @@ module Channel
 
       def create
         @item.save
-        if freshchat_enabled?
-          freshchat_account = current_account.freshchat_account
-          sync_freshchat(freshchat_account.app_id)
-        elsif current_account.freshchat_account
+        if current_account.freshchat_account
           freshchat_account = current_account.freshchat_account
           freshchat_account.enabled = true
           freshchat_account.save
           sync_freshchat(freshchat_account.app_id)
         else
-          freshchat_account = signup
+          freshchat_account = freshchat_signup
         end
         increment_portal_version
         @response_hash = bot_response(freshchat_account)
@@ -27,8 +24,9 @@ module Channel
 
       def update
         data = params['bot']
-        @item.update_attributes(widget_config: data['widget_config'], name: data['name'], status: true)
+        @item.update_attributes(widget_config: data['widget_config'], name: data['name'], status: data['status'] == 'ENABLE')
         freshchat_account = current_account.freshchat_account
+        freshchat_account.update_attributes(portal_widget_enabled: 'true', enabled: true) if data['status'] == 'ENABLE'
         increment_portal_version
         @response_hash = bot_response(freshchat_account)
       end
