@@ -312,6 +312,8 @@ Helpkit::Application.routes.draw do
     
     scope '/email' do
       resources :mailboxes, controller: 'email/mailboxes', only: [:create, :show, :destroy]
+      get '/settings', to: 'email/settings#show'
+      put '/settings', to: 'email/settings#update'
     end
 
     resources :email_notifications, controller: 'admin/api_email_notifications', only: [:show, :update]
