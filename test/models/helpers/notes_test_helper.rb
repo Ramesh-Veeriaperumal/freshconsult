@@ -4,6 +4,7 @@
 
 module NotesTestHelper
   include NoteTestHelper
+  include Facebook::TicketActions::Util
   # include FreshcallerCallTestHelper
   # include TwitterTestHelper
   # include FacebookTestHelper
@@ -104,12 +105,42 @@ module NotesTestHelper
         stream_id: tweet.stream_id
       }
     end
+
+    if note.facebook_source?
+      fb_post = note.fb_post
+      fb_page = (fb_post.present? ? fb_post.facebook_page : note.notable.fb_post.try(:facebook_page))
+
+      source_info[:facebook] = basic_details(fb_post, note).merge(fb_page_details(fb_page, note))
+
+    end
     source_info.presence
   end
 
   def email_note?(source)
     [Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
      Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']].include?(source)
+  end
+
+  def fb_page_details(fb_page, note)
+    {
+      support_fb_page_id: fb_page.try(:page_id).try(:to_s),
+      support_fb_page_name: fb_page.try(:page_name),
+      fb_page_db_id: fb_page.try(:id).try(:to_s),
+      fb_handler_id: fetch_handler_id(fb_page, note)
+    }
+  end
+
+  def basic_details(fb_post, note)
+    {
+      fb_item_id: fb_post.try(:post_id).to_s,
+      type: fb_post.try(:msg_type),
+      requester_profile_id: note.requester_fb_id.to_s
+    }
+  end
+
+  def fetch_handler_id(fb_page, note)
+    return nil if fb_page.nil?
+    note.notable.is_fb_message? ? get_thread_key(fb_page, note.notable.fb_post) : note.notable.fb_post.original_post_id
   end
 
   # def freshcaller_call_hash(note)
