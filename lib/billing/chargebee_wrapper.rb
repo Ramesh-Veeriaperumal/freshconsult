@@ -146,6 +146,7 @@ class Billing::ChargebeeWrapper
     def estimate_params(subscription, addon_data)
       subscription_plan = "#{subscription.subscription_plan.canon_name}_#{Billing::Subscription::BILLING_PERIOD[subscription.renewal_period]}"
       {
+        'billing_cycles' => 1,
         'subscription[id]' => subscription.account_id,
         'subscription[plan_id]' => subscription_plan,
         'subscription[plan_quantity]' => subscription.agent_limit,

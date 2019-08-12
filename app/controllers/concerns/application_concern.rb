@@ -122,7 +122,7 @@ module Concerns::ApplicationConcern
   def can_supress_logs?
     return false unless Rails.env.production?
 
-    ApiConstants::SKIP_LOGS_FOR.key?(cname.to_sym) &&
-      ApiConstants::SKIP_LOGS_FOR[cname.to_sym].include?(action_name)
+    LoggerConstants::SKIP_LOGS_FOR.key?(nscname.to_sym) &&
+      LoggerConstants::SKIP_LOGS_FOR[nscname.to_sym].include?(action_name)
   end
 end

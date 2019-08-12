@@ -4227,6 +4227,19 @@ ActiveRecord::Schema.define(:version => 20190627065945) do
   add_index "trial_account_jobs", ["pod_info"], :name => "index_trial_accout_jobs_on_pod_info"
   add_index "trial_account_jobs", ["account_id"], :name => "index_trial_account_jobs_on_account_id"
 
+  create_table 'subscription_requests', :force => true do |t|
+    t.integer 'plan_id', :limit => 8
+    t.integer 'agent_limit'
+    t.integer 'renewal_period'
+    t.integer  'account_id',      :limit => 8
+    t.integer  'subscription_id', :limit => 8
+    t.integer 'fsm_field_agents'
+    t.datetime 'created_at',                  :null => false
+    t.datetime 'updated_at',                  :null => false
+  end
+
+  add_index 'subscription_requests', ['account_id', 'subscription_id'], :name => 'index_subscription_requests_on_account_id_subscription_id'
+
   create_table "trial_subscriptions", :force => true do |t|
     t.datetime "ends_at"
     t.string   "from_plan"

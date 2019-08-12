@@ -34,36 +34,41 @@ class SubscriptionPlan < ActiveRecord::Base
 
   after_commit :clear_cache
 
-  SUBSCRIPTION_PLANS = { basic: 'Basic',
-                         pro: 'Pro',
-                         premium: 'Premium',
-                         free: 'Free',
-                         sprout_classic: 'Sprout Classic',
-                         blossom_classic: 'Blossom Classic',
-                         garden_classic: 'Garden Classic',
-                         estate_classic: 'Estate Classic',
-                         sprout: 'Sprout',
-                         blossom: 'Blossom',
-                         garden: 'Garden',
-                         estate: 'Estate',
-                         forest: 'Forest',
-                         sprout_jan_17: 'Sprout Jan 17',
-                         blossom_jan_17: 'Blossom Jan 17',
-                         garden_jan_17: 'Garden Jan 17',
-                         estate_jan_17: 'Estate Jan 17',
-                         forest_jan_17: 'Forest Jan 17',
-                         sprout_jan_19: 'Sprout Jan 19',
-                         blossom_jan_19: 'Blossom Jan 19',
-                         garden_jan_19: 'Garden Jan 19',
-                         garden_omni_jan_19: 'Garden Omni Jan 19',
-                         estate_jan_19: 'Estate Jan 19',
-                         estate_omni_jan_19: 'Estate Omni Jan 19',
-                         forest_jan_19: 'Forest Jan 19' }.freeze
-  
-  BILLING_CYCLE = [[:monthly, 'Monthly', 1],
+  SUBSCRIPTION_PLANS_RANKING_MAPPING = [
+    [ :free, 'Free', 1 ],
+    [ :basic , 'Basic', 2 ],
+    [ :pro, 'Pro', 3 ], 
+    [ :premium, 'Premium', 4 ],
+    [ :sprout_classic, 'Sprout Classic', 1 ],
+    [ :blossom_classic, 'Blossom Classic', 2 ],
+    [ :garden_classic, 'Garden Classic', 3 ],
+    [ :estate_classic, 'Estate Classic', 4 ],
+    [ :sprout, 'Sprout', 1 ],
+    [ :blossom, 'Blossom', 2 ],
+    [ :garden, 'Garden', 3 ],
+    [ :estate, 'Estate', 4 ],
+    [ :forest, 'Forest', 5 ],
+    [ :sprout_jan_17, 'Sprout Jan 17', 1 ],
+    [ :blossom_jan_17, 'Blossom Jan 17', 2 ],
+    [ :garden_jan_17, 'Garden Jan 17', 3 ],
+    [ :estate_jan_17, 'Estate Jan 17', 4 ],
+    [ :forest_jan_17, 'Forest Jan 17', 5 ],
+    [ :sprout_jan_19, 'Sprout Jan 19', 1 ],
+    [ :blossom_jan_19, 'Blossom Jan 19', 2 ],
+    [ :garden_jan_19, 'Garden Jan 19', 3 ],
+    [ :garden_omni_jan_19, 'Garden Omni Jan 19', 4 ],
+    [ :estate_jan_19, 'Estate Jan 19', 5 ],
+    [ :estate_omni_jan_19, 'Estate Omni Jan 19', 6 ],
+    [ :forest_jan_19, 'Forest Jan 19', 7 ]
+  ]
+
+  SUBSCRIPTION_PLANS = Hash[*SUBSCRIPTION_PLANS_RANKING_MAPPING.map{ |i| [i[0], i[1]] }.flatten]
+  SUBSCRIPTION_PLAN_NAMES_BY_RANKING = Hash[*SUBSCRIPTION_PLANS_RANKING_MAPPING.map{ |i| [i[1], i[2]] }.flatten] 
+ BILLING_CYCLE = [[:monthly, 'Monthly', 1],
                    [:quarterly, 'Quarterly', 3],
                    [:six_month, 'Half Yearly', 6],
-                   [:annual, 'Annual', 12]].freeze
+                   [:annual, 'Annual', 12]
+                 ]
 
   BILLING_CYCLE_OPTIONS = BILLING_CYCLE.map { |i| [i[1], i[2]] }
   BILLING_CYCLE_NAMES_BY_KEY = Hash[*BILLING_CYCLE.map { |i| [i[2], i[1]] }.flatten]

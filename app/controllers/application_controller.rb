@@ -10,6 +10,8 @@ class ApplicationController < ActionController::Base
   around_filter :select_shard
   
   prepend_before_filter :determine_pod
+  around_filter :supress_logs, if: :can_supress_logs?
+
   before_filter :unset_current_account, :unset_current_portal, :unset_shard_for_payload, :unset_thread_variables, :set_current_account, :reset_language
   before_filter :set_shard_for_payload
   before_filter :set_default_locale, :set_locale, :set_msg_id, :set_current_ip
@@ -393,6 +395,25 @@ class ApplicationController < ActionController::Base
 
     def remove_session_data
       session[:helpdesk_history] = nil if session && session[:helpdesk_history]
+    end
+
+    # namespaced controller name
+    def nscname
+      controller_path.tr('/', '_').singularize
+    end
+
+    def supress_logs(temporary_level = Logger::ERROR)
+      if current_account.launched?(:disable_supress_logs)
+        yield
+      else
+        begin
+          old_level = ActiveRecord::Base.logger.level
+          ActiveRecord::Base.logger.level = temporary_level
+          yield
+        ensure
+          ActiveRecord::Base.logger.level = old_level
+        end
+      end
     end
 end
 

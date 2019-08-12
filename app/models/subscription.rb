@@ -71,6 +71,7 @@ class Subscription < ActiveRecord::Base
   
   belongs_to :account
   belongs_to :subscription_plan
+  has_one :subscription_request
   has_many :subscription_payments
   belongs_to :affiliate, :class_name => 'SubscriptionAffiliate', :foreign_key => 'subscription_affiliate_id'
   has_one :billing_address,:class_name => 'Address',:as => :addressable,:dependent => :destroy

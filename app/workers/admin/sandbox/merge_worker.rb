@@ -32,19 +32,21 @@ class Admin::Sandbox::MergeWorker < BaseWorker
 
     def send_notification(committer)
       template_data = JSON.parse(AwsWrapper::S3Object.read("sandbox/#{@account.id}/#{@sandbox_account_id}_diff_template.json", S3_CONFIG[:bucket]))
-      data = {
-        notifier: 'merge_notifier',
-        subject: I18n.t('sandbox.sync_complete'),
-        recipients: @account.account_managers.map(&:email).join(','),
-        additional_info: {
-          sandbox_url: Account.current.sandbox_domain,
-          account_name: @account.name,
-          admin_name: committer[:name],
-          email_data: parse_email_template_data(template_data['diff'], @account.sandbox_job.additional_data[:failed_records]),
-          meta: template_data['meta']
+      @account.account_managers.each_slice(20) do |admins|
+        data = {
+          notifier: 'merge_notifier',
+          subject: I18n.t('sandbox.sync_complete'),
+          recipients: admins.map(&:email).join(','),
+          additional_info: {
+            sandbox_url: Account.current.sandbox_domain,
+            account_name: @account.name,
+            admin_name: committer[:name],
+            email_data: parse_email_template_data(template_data['diff'], @account.sandbox_job.additional_data[:failed_records]),
+            meta: template_data['meta']
+          }
         }
-      }
-      Admin::SandboxMailer.safe_send(:sandbox_mailer, @account, data)
+        Admin::SandboxMailer.safe_send(:sandbox_mailer, @account, data)
+      end
     end
 
     def post_merge_activities
@@ -73,5 +75,6 @@ class Admin::Sandbox::MergeWorker < BaseWorker
       account_additional_settings = @account.account_additional_settings
       account_additional_settings.supported_languages = addition_settings[:supported_languages]
       @account.account_additional_settings.save
+      LaunchParty.new.rollback(account: @account.id, feature: :sandbox_temporary_offset)
     end
 end

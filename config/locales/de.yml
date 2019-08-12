@@ -17678,7 +17678,7 @@ de:
     agent_export: Export der Bearbeiterliste
     ecommerce_token: 'Token des E-Commerce-Kontos %{ecom_name} abgelaufen'
     test_email: Hurra... Ihre Test-E-Mail von Freshdesk
-    email_activation: 'Anweisungen zur Aktivierung von E-Mails von %{portal_name}'
+    activation_instructions: 'Anweisungen zur Aktivierung von E-Mails von %{portal_name}'
     scheduled_report_update: '[Important] Geplanter Bericht - Empfängeraktualisierung erforderlich'
     report_type_sub: 'Bericht %{report_name} für %{date_range}'
     ticket_export: 'Ticketexport | '

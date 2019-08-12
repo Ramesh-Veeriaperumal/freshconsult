@@ -1,5 +1,4 @@
-<%= t("mailer_notifier.hi_user", user_name: @user.name) %>
-<br/>
+<%= render layout: 'shared/email_header_footer.html.erb', locals: { user_name: @user.name, sent_by: :freshdesk_support_team } do %>
 <%= t("mailer_notifier.scheduled_task_notifications.downgraded_users.report_being_sent_html", scheduled_task_name: @task.schedulable.filter_name).html_safe %>
 <br/>
 <ol>
@@ -13,5 +12,4 @@
 <%= "#{@user.account.host}/reports/#{HelpdeskReports::Constants::Common::REPORT_ENUM_TO_TYPE[@task.schedulable.report_type]}"%>
 <br/>
 <br/>
-<%= t("mailer_notifier.regards") %><br/>
-<%= t("mailer_notifier.freshdesk_support_team") %>
+<% end %>
