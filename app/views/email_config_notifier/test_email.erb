@@ -1,15 +1,8 @@
 <p style="line-height:20px;font-size:13px;">
-Cool!<br><br>
-
-You've received the test mail you just sent out from Freshdesk account.<br><br>
-
-If everything worked fine, you should now see this mail converted to a new ticket. Hop over to your Freshdesk helpdesk portal and look under the "Tickets" tab.<br><br>
-
-Got it? Great! Now everytime your customers send you an email here, you'll have it appear as a ticket in Freshdesk automatically!<br><br>
-
-If your helpdesk did not show you a new ticket, first make sure that you have configured all your emails in this id to get forwarded to your Freshdesk support id ( "<%=@email_config[:to_email]%>" ).
-You can learn how to do this <a href="https://support.freshdesk.com/support/solutions/articles/37541-converting-your-support-email-into-freshdesk-tickets" target="_blank">here</a>. Still having problems? Get in touch with us at support@freshdesk.com and we'll help you set this up.<br><br>
-
-Thanks,<br>
-Freshdesk Team
+    <%= t("mailer_notifier.cool")%>
+    <br><br>
+    <%= t("email_config_notifier.test_email.body",to_email: @email_config[:to_email], support_url: t("email_config_notifier.test_email.support_url")).html_safe%>
+    <br><br>
+    <%= t("mailer_notifier.thanks")%>,<br>
+    <%= t("mailer_notifier.freshdesk_team")%>
 </p>

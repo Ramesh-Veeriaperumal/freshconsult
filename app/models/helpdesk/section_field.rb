@@ -2,7 +2,7 @@ class Helpdesk::SectionField < ActiveRecord::Base
 
   include Helpdesk::Ticketfields::Publisher
 
-  clear_memcache [ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING,TICKET_FIELDS_FULL]
+  clear_memcache [ACCOUNT_SECTION_FIELD_PARENT_FIELD_MAPPING, ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING, TICKET_FIELDS_FULL]
 
   self.primary_key = :id
   self.table_name = "helpdesk_section_fields"

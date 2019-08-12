@@ -177,7 +177,6 @@
 
   if(App.SelectPlan != undefined){ App.SelectPlan.destroy() } 
 
-   App.SelectPlan.initialize("<%= @subscription.currency_name %>",<%= select_billing_option %>,
-    "<%= current_account.subscription.subscription_plan.id %>");
+   App.SelectPlan.initialize("<%= @subscription.currency_name %>",<%= select_billing_option %>,"<%= current_account.subscription.subscription_plan.id %>","<%= @subscription.agent_limit %>");
 
 </script>

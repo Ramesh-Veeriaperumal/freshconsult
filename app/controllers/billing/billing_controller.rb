@@ -5,6 +5,8 @@ class Billing::BillingController < ApplicationController
   include Billing::Constants
   include Billing::BillingHelper
 
+  DEFAULT_AGENT_LIMIT = 50000
+
   skip_before_filter :check_privilege, :verify_authenticity_token,
                       :set_current_account, :set_time_zone, :set_locale, 
                       :check_account_state, :ensure_proper_protocol, :ensure_proper_sts_header,
@@ -113,7 +115,7 @@ class Billing::BillingController < ApplicationController
     def subscription_info(subscription, customer)
       {
         :renewal_period => billing_period(subscription.plan_id),
-        :agent_limit => subscription.plan_quantity,
+        :agent_limit => Subscription::NEW_SPROUT.include?(subscription_plan(subscription.plan_id).name) ? DEFAULT_AGENT_LIMIT : subscription.plan_quantity,
         :state => subscription_state(subscription, customer),
         :next_renewal_at => next_billing(subscription)
       }
@@ -150,10 +152,11 @@ class Billing::BillingController < ApplicationController
 
     #Events
     def subscription_changed(content)
-      plan = subscription_plan(@billing_data.subscription.plan_id)      
+      plan = subscription_plan(@billing_data.subscription.plan_id)
       @old_subscription = @account.subscription.dup
       @existing_addons = @account.addons.dup
-      
+
+      @account.subscription.subscription_request.destroy if has_pending_downgrade_request?(@account) && !has_scheduled_changes?(content)
       @account.subscription.update_attributes(@subscription_data.merge(plan_info(plan)))
       update_addons(@account.subscription, @billing_data.subscription)
 

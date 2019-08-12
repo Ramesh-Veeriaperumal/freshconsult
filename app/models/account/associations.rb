@@ -45,6 +45,7 @@ class Account < ActiveRecord::Base
   accepts_nested_attributes_for :agent_password_policy
 
   has_one  :subscription_plan, :through => :subscription
+  has_one :subscription_request, :through => :subscription
 
   has_one :conversion_metric
 

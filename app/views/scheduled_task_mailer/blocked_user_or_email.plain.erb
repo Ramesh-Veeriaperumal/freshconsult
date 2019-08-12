@@ -1,4 +1,4 @@
-<%= t("mailer_notifier.hi_user", user_name: @user.name) %>
+<%= render layout: 'shared/email_header_footer.plain.erb', locals: { user_name: @user.name, sent_by: :freshdesk_support_team } do %>
 
 <%= t("mailer_notifier.scheduled_task_notifications.blocked_users.report_not_sent", scheduled_task_name: @task.schedulable.filter_name) %>
 
@@ -14,5 +14,4 @@
 <%= "#{@user.account.full_url}/reports/#{HelpdeskReports::Constants::Common::REPORT_ENUM_TO_TYPE[@task.schedulable.report_type]}"%>
 
 
-<%= t("mailer_notifier.regards") %>
-<%= t("mailer_notifier.freshdesk_support_team") %>
+<% end %>

@@ -1,0 +1,5 @@
+<%= defined?(user_name) ? t("mailer_notifier.hi_user", user_name: user_name) : t("mailer_notifier.hi") %>
+<%= yield %>
+<%= t("mailer_notifier.regards") %><br/>
+<%= sent_by.is_a?(Symbol) ? (defined?(portal_name) ? t("mailer_notifier.#{sent_by.to_s}", portal_name: portal_name) : t("mailer_notifier.#{sent_by.to_s}")) : sent_by %>
+<%= render partial: "helpdesk/shared/other_recipients_note.plain.erb" if defined?(other_recipients_note) && other_recipients_note %>
