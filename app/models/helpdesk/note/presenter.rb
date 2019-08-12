@@ -1,6 +1,8 @@
 class Helpdesk::Note < ActiveRecord::Base
   include RepresentationHelper
   include TicketsNotesHelper
+  include Facebook::TicketActions::Util
+  
   DATETIME_FIELDS = ["last_modified_timestamp", "created_at", "updated_at"]
   BODY_HASH_FIELDS = ["body", "body_html", "full_text", "full_text_html"]
   EMAIL_FIELDS = ["from_email", "to_emails", "cc_emails", "bcc_emails"]

@@ -27,8 +27,8 @@ module TicketsNotesHelper
 
   def fb_feeds_info_hash
     fb_feed_hash = {
-      fb_item_id: fb_post.post_id.to_s,
-      type: fb_post.msg_type,
+      fb_item_id: fb_post.try(:post_id).to_s,
+      type: fb_post.try(:msg_type),
       requester_profile_id: requester_fb_id.to_s
     }
     fb_feed_hash.merge(fb_page_info)
@@ -36,11 +36,13 @@ module TicketsNotesHelper
 
   def fb_page_info
     fb_page = fb_post.facebook_page
-    {
-      support_fb_page_id: fb_page.try(:page_id).try(:to_s),
-      support_fb_page_name: fb_page.try(:page_name),
-      fb_page_db_id: fb_page.try(:id).try(:to_s)
-    }
+
+    result = {
+                support_fb_page_id: fb_page.try(:page_id).try(:to_s),
+                support_fb_page_name: fb_page.try(:page_name),
+                fb_page_db_id: fb_page.try(:id).try(:to_s),
+              }
+    self.is_a?(Helpdesk::Note) ? result.merge(handler_info(fb_page)) : result
   end
 
   def email_source_info(header_info)
@@ -57,5 +59,18 @@ module TicketsNotesHelper
 
   def email_ticket?
     email?
+  end
+
+  def handler_info(fb_page)
+    handler_key = if fb_page.nil?
+                    nil
+                  elsif fb_post.message?
+                    get_thread_key(fb_page, fb_post)
+                  else
+                    fb_post.original_post_id
+                  end
+    {
+      fb_handler_id: handler_key
+    }
   end
 end
