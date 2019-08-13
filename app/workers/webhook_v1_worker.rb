@@ -76,10 +76,10 @@ class WebhookV1Worker < ::BaseWorker
           email_list =  Account.current.account_managers.map { |admin|
             admin.email
           }.join(",")
-          UserNotifier.send_later(
+          UserNotifier.send_email_to_group(
             :notify_webhook_failure,
-            current_account,
-            email_list, 
+            email_list.split(','),
+            current_account, 
             rule_details(executing_rule), 
             args[:params]["domain"]
           )
