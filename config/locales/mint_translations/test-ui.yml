@@ -1,6 +1,15 @@
 test-ui:
+  export_data:
+    audit_log_export:
+      subject: "$Audit Log Export for %{domain}$"
+      body: "$You can download the file from <a href=%{url}>here</a>.If the link does not work, copy and paste the URL below in your browser's address bar:$"
+      note: "$This link will expire in 15 days.$"
+    no_logs_mail:
+      body: "$There is no logs for given request. Please try with different timeline or filter$"
+    failure_message: "$An error occurred while exporting data. Please try again or contact Freshdesk support.$"
   mailer_notifier:
     hi: '$Hi,$'
+    hi_user: '$Hi %{user_name},$'
     role:
       one: '$role$'
       other: '$roles$'
@@ -107,6 +116,7 @@ test-ui:
       unauthorized_change_info: '$If this change was made without your authorization, send us a reply.$'
       configure_change: '$You can configure this notification settings under Admin -> Security.$'
       configure_change_html: '$You can configure this notification settings by <a href="%{security_url}"> clicking here </a> or going to Admin -> Security in your account$'
+    export_success_download: "$The %{export_type} export you had requested is complete. You can download the file from <a href='%{url}'>here</a>. If the link does not work, copy and paste the URL below in your browser's address bar:$"
   mailer_notifier_subject:
     discard_email: "$[Draft Discarded] %{draft_title}$"
     token_expiry: '$Ecommerce account %{ecom_name} token expiration$'
@@ -114,8 +124,8 @@ test-ui:
     topic_update: "$[Status Update] in %{title}$"
     topic_merged: "$[Topic Merged] to %{title}$"
     account_data_export: "$Data Export for %{account}$"
+    agent_export: '$Agents list export$'
     no_tickets_to_export: "$No tickets in range - %{domain}$"
-    agent_export: $Agents List Export$
     audit_log_export: $Audit Log Export$
     spam_watcher: "$Freshdesk :: Spam watcher$"
     account_cancelled: "$%{account_domain} has been cancelled$"

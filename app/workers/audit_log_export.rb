@@ -27,7 +27,7 @@ class AuditLogExport < BaseWorker
       end
     elsif (AuditLogConstants::FAILURE_STATUSES.include? response[:status]) || args[:time] > 20
       @data_export.failure!(e.message + "\n" + e.backtrace.join("\n"))
-      DataExportMailer.audit_log_export_failure(audit_log_failure_params)
+      DataExportMailer.send_email(:audit_log_export_failure, audit_log_failure_params[:user], audit_log_failure_params)
     end
     temp_file = set_temp_file
     csv_file = File.join(FileUtils.mkdir_p(AuditLogConstants::CSV_FILE), %(#{temp_file}.csv))
@@ -35,7 +35,7 @@ class AuditLogExport < BaseWorker
     @data_export.save_hash!(args[:export_job_id])
     if res == 0
       @data_export.no_logs!
-      DataExportMailer.no_logs(audit_log_failure_params) if args[:receive_via] == AuditLogConstants::RECEIVE_VIA[0]
+      DataExportMailer.send_email(:no_logs, audit_log_failure_params[:user], audit_log_failure_params) if args[:receive_via] == AuditLogConstants::RECEIVE_VIA[0]
     else
       write_to_s3(csv_file, args[:receive_via], args[:export_job_id])
     end
@@ -114,29 +114,24 @@ class AuditLogExport < BaseWorker
     url = Rails.application.routes.url_helpers.download_file_url(@data_export.source, hash_file_name,
                                                                  host: Account.current.host,
                                                                  protocol: 'https')
-    DataExportMailer.audit_log_export(audit_log_email_params(url)) if receive_via == AuditLogConstants::RECEIVE_VIA[0]
+    DataExportMailer.send_email(:audit_log_export, audit_log_email_params(url)[:user], audit_log_email_params(url)) if receive_via == AuditLogConstants::RECEIVE_VIA[0]
   end
 
   def audit_log_email_params(url)
-    domain = Account.current.full_domain
-    user = User.current
-    options = {
-      user: user,
-      domain: domain,
+    @audit_log_email_params ||= {
+      user: User.current,
+      domain: Account.current.full_domain,
       url: url,
-      email: user.email,
+      email: User.current.try(:email),
       type: 'audit_log'
     }
-    options
   end
 
   def audit_log_failure_params
-    domain = Account.current.full_domain
-    user = User.current
-    {
-      user: user,
-      domain: domain,
-      email: user.email,
+    @audit_log_failure_params ||= {
+      user: User.current,
+      domain: Account.current.full_domain,
+      email: User.current.try(:email),
       type: 'audit_log'
     }
   end
