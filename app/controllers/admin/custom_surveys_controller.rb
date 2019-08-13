@@ -5,7 +5,7 @@ class Admin::CustomSurveysController < Admin::AdminController
 
   before_filter { |c| current_account.new_survey_enabled? }
   before_filter :redirect_to_default_survey,          :if   => :default_survey_feature_enabled?
-  before_filter :escape_html_entities_in_json
+  around_filter :escape_html_entities_in_json
   before_filter :check_survey_limit,                  :only => [:new,    :create]
   before_filter :validate_question_limit,       :only => [:create, :update]
   before_filter :load_survey,                         :only => [:edit,   :update, :destroy, :activate, :deactivate, :test_survey]
@@ -196,10 +196,5 @@ class Admin::CustomSurveysController < Admin::AdminController
 
     def index_scoper
       @index_scoper || @survey.survey_questions.all
-    end  
-
-    def escape_html_entities_in_json
-      ActiveSupport::JSON::Encoding.escape_html_entities_in_json = true
     end
-
 end

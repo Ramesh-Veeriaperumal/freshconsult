@@ -410,5 +410,14 @@ class ApplicationController < ActionController::Base
         end
       end
     end
+
+    # For handling json escape inside hash data
+    def escape_html_entities_in_json(config_val = true)
+      curr_value = ActiveSupport::JSON::Encoding.escape_html_entities_in_json
+      ActiveSupport::JSON::Encoding.escape_html_entities_in_json = config_val
+      yield
+    ensure
+      ActiveSupport::JSON::Encoding.escape_html_entities_in_json = curr_value
+    end
 end
 
