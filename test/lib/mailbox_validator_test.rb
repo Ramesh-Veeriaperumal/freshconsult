@@ -157,7 +157,7 @@ class MailboxValidatorTest < ActionView::TestCase
   def test_mailbox_validation_errors_out_on_imap_exceptions
     construct_args
     @response = nil
-    Net::IMAP.any_instance.stubs(:login).raises(Exception)
+    Net::IMAP.any_instance.stubs(:login).raises(StandardError)
     Net::SMTP.any_instance.stubs(:enable_starttls).returns(true)
     Net::SMTP.any_instance.stubs(:start).returns(true)
     validate_mailbox_details
@@ -210,10 +210,10 @@ class MailboxValidatorTest < ActionView::TestCase
     Net::IMAP.any_instance.stubs(:login).returns(true)
     Net::IMAP.any_instance.stubs(:logout).returns(true)
     Net::SMTP.any_instance.stubs(:enable_starttls).returns(true)
-    Net::SMTP.any_instance.stubs(:start).raises(Exception)
+    Net::SMTP.any_instance.stubs(:start).raises(StandardError)
     validate_mailbox_details
     assert_equal @response['success'], false
-    assert_equal @response['msg'], 'Error while verifying the mailbox smtp details - Exception'
+    assert_equal @response['msg'], 'Error while verifying the mailbox smtp details - StandardError'
   ensure
     Net::IMAP.any_instance.unstub(:login)
     Net::IMAP.any_instance.unstub(:logout)

@@ -14,6 +14,15 @@ module Fixtures
         ]
       }
       
+      condition_data_hash = {
+        events: [
+          { name: 'reply_sent' },
+          { value: 'public', name: 'note_type' }
+        ],
+        performer: { type: Va::Performer::AGENT },
+        conditions: { any: [{ evaluate_on: 'ticket', value: [''],
+                              operator: 'in', name: 'responder_id' }] } }
+
       condition_data_hash = { 
         events: [
           { name: 'reply_sent' },

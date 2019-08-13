@@ -5,7 +5,7 @@ module Utils
 
     def accessing_requester_info?
       return false unless @email_notification.try(:visible_to_requester?)
-      
+
       if params[:email_notification]
         (params[:email_notification].keys & REQUESTER_KEYS).present?
       elsif params[:type]

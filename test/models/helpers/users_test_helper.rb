@@ -58,25 +58,31 @@ module ModelsUsersTestHelper
   end
 
   def add_new_user(account, options={})
-    if options[:email]
-      user = User.find_by_email(options[:email])
-      return user if user
+    begin
+      if options[:email]
+        user = User.find_by_email(options[:email])
+        return user if user
+      end
+      new_user = FactoryGirl.build(:user,
+                                    account: account,
+                                    name: options[:name] || Faker::Name.name,
+                                    email: options[:email] || Faker::Internet.email,
+                                    time_zone: options[:time_zone] || 'Chennai',
+                                    delta: 1,
+                                    deleted: options[:deleted] || 0,
+                                    blocked: options[:blocked] || 0,
+                                    company_id: options[:customer_id] || nil,
+                                    language: 'en',
+                                    active: options[:active] || false,
+                                    tags: build_tags(options[:tags]))
+      new_user.custom_field = options[:custom_fields] if options.key?(:custom_fields)
+      new_user.save_without_session_maintenance
+      new_user.reload
+    rescue ActiveRecord::RecordNotFound
+      p "ActiveRecord::RecordNotFound on new_user.reload"
+      p new_user.inspect
+      new_user
     end
-    new_user = FactoryGirl.build(:user,
-                                  account: account,
-                                  name: options[:name] || Faker::Name.name,
-                                  email: options[:email] || Faker::Internet.email,
-                                  time_zone: options[:time_zone] || 'Chennai',
-                                  delta: 1,
-                                  deleted: options[:deleted] || 0,
-                                  blocked: options[:blocked] || 0,
-                                  company_id: options[:customer_id] || nil,
-                                  language: 'en',
-                                  active: options[:active] || false,
-                                  tags: build_tags(options[:tags]))
-    new_user.custom_field = options[:custom_fields] if options.key?(:custom_fields)
-    new_user.save_without_session_maintenance
-    new_user.reload
   end
 
   def update_user

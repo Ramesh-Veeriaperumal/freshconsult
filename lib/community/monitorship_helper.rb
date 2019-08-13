@@ -76,14 +76,19 @@ module Community::MonitorshipHelper
   end
   
   def unsubscribed_agent_list(object)
+    final_agent_list = []
     agents = object.unsubscribed_agents
-    if agents.map(&:user_id).include? User.current.id
-      agents.insert(0, agents.delete_at(agents.index{ |agent| agent.user_id==User.current.id }))
+    current_user_present = false
+    agents.each do |agent|
+      next unless agent.privilege?(:view_forums)
+      if agent.id == User.current.id
+        current_user_present = true
+        next
+      end
+      final_agent_list << [agent.id, agent.name]
     end
-    agents.reject!{ |agent| !agent.user.privilege?(:view_forums)}
-    agents.collect do |agent|
-      [agent.user_id, (agent.user_id == User.current.id) ? t("monitorships.me") + " (#{agent.user.name})" : agent.user.name]
-    end
+    final_agent_list.insert(0, [User.current.id, t('monitorships.me') + " (#{User.current.name})"]) if current_user_present
+    final_agent_list
   end
 
   def followers_count forum

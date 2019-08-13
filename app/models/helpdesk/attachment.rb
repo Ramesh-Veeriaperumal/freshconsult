@@ -136,6 +136,10 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
     def decode_token token, account = Account.current
       JWT.decode(token, account.attachment_secret).first.with_indifferent_access
+    rescue JWT::ImmatureSignature, JWT::ExpiredSignature, JWT::DecodeError, JWT::VerificationError => e
+      Rails.logger.error('JWT decode error')
+      Rails.logger.error(e)
+      nil
     end
 
   end

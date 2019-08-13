@@ -139,6 +139,15 @@ class Portal < ActiveRecord::Base
     filter_fields account.ticket_fields_including_nested_fields.safe_send(additional_scope), ticket_field_conditions
   end
 
+  def all_ticket_fields(additional_scope = :all)
+    all_fields = []
+    account.ticket_fields_including_nested_fields.safe_send(additional_scope).each do |field|
+      all_fields << field
+      all_fields << field.nested_ticket_fields if field.parent_nested_field?
+    end
+    filter_fields all_fields.flatten.uniq, ticket_field_conditions
+  end
+
   # include_translation is used for whether we need to preload custom_translations or not
   def customer_editable_ticket_fields(include_translation = false)
     filter_fields account.ticket_fields_including_nested_fields.customer_editable.preload(preload_translations(include_translation)), ticket_field_conditions

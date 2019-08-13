@@ -234,6 +234,7 @@
     - ticket_properties_suggester
     - sandbox_cleanup
     - update_sandbox_subscription
+    - ticket_properties_suggester
   :free:
     - free_sla
     - free_supervisor

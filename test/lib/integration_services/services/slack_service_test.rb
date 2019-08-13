@@ -17,6 +17,7 @@ class SlackServiceTest < ActionView::TestCase
     IntegrationServices::Services::Slack::ChannelResource.any_instance.stubs(:list).returns(%w[first second])
     channel = ::IntegrationServices::Services::SlackService.new(app, { type: 'test' }, {}).receive_channels
     assert_equal false, channel[:error]
+    IntegrationServices::Services::Slack::ChannelResource.any_instance.unstub(:list)
   end
 
   def test_receive_channels_error
@@ -24,6 +25,7 @@ class SlackServiceTest < ActionView::TestCase
     IntegrationServices::Services::Slack::ChannelResource.any_instance.stubs(:list).raises(StandardError.new('exception'))
     channel = ::IntegrationServices::Services::SlackService.new(app, { type: 'test' }, {}).receive_channels
     assert_equal true, channel[:error]
+    IntegrationServices::Services::Slack::ChannelResource.any_instance.unstub(:list)
   end
 
   def test_receive_groups_success
@@ -31,6 +33,7 @@ class SlackServiceTest < ActionView::TestCase
     IntegrationServices::Services::Slack::GroupResource.any_instance.stubs(:list).returns(%w[first second])
     group = ::IntegrationServices::Services::SlackService.new(app, { type: 'test' }, {}).receive_groups
     assert_equal false, group[:error]
+    IntegrationServices::Services::Slack::GroupResource.any_instance.unstub(:list)
   end
 
   def test_receive_groups_error
@@ -38,6 +41,7 @@ class SlackServiceTest < ActionView::TestCase
     IntegrationServices::Services::Slack::GroupResource.any_instance.stubs(:list).raises(StandardError.new('exception'))
     group = ::IntegrationServices::Services::SlackService.new(app, { type: 'test' }, {}).receive_groups
     assert_equal true, group[:error]
+    IntegrationServices::Services::Slack::GroupResource.any_instance.unstub(:list)
   end
 
   def test_receive_slash_command
@@ -53,6 +57,12 @@ class SlackServiceTest < ActionView::TestCase
     slash = ::IntegrationServices::Services::SlackService.new(app, { act_hash: { user_slack_token: 'slack123', event_type: 'create_ticket', user_id: 1 } },
                                                               {}).receive_slash_command
     assert_equal true, slash[:post_notice]
+    IntegrationServices::Services::Slack::AuthResource.any_instance.unstub(:test)
+    IntegrationServices::Services::Slack::Processor::TicketProcessor.any_instance.unstub(:create_ticket)
+    Integrations::UserCredential.any_instance.unstub(:save!)
+    IntegrationServices::Services::Slack::ChatResource.any_instance.unstub(:post_message)
+    IntegrationServices::Services::Slack::ImResource.any_instance.unstub(:history)
+    IntegrationServices::Services::Slack::UserResource.any_instance.unstub(:list)
   end
 
   def test_receive_slash_command_nil
@@ -67,6 +77,7 @@ class SlackServiceTest < ActionView::TestCase
     IntegrationServices::Services::Slack::ImResource.any_instance.stubs(:history).raises(StandardError.new('exception'))
     history = ::IntegrationServices::Services::SlackService.new(app, { type: 'test' }, {}).receive_history('token')
     assert_equal true, history[:error]
+    IntegrationServices::Services::Slack::ImResource.any_instance.unstub(:history)
   end
 
   def test_receive_push_to_slack
@@ -81,6 +92,11 @@ class SlackServiceTest < ActionView::TestCase
     pushed_msg = ::IntegrationServices::Services::SlackService.new(app, { act_hash: { push_to: 'dm_agent' }, act_on_object: Account.first.tickets.first },
                                                                    {}).receive_push_to_slack
     assert_equal true, pushed_msg[:post_notice]
+    Integrations::InstalledApplication.any_instance.unstub(:configs)
+    IntegrationServices::Services::Slack::UserResource.any_instance.unstub(:list)
+    IntegrationServices::Services::Slack::ImResource.any_instance.unstub(:open)
+    IntegrationServices::Services::Slack::ChatResource.any_instance.unstub(:post_message)
+    Helpdesk::Ticket.any_instance.unstub(:responder)
   end
 
   def test_receive_push_to_slack_pvt_channels
@@ -95,6 +111,11 @@ class SlackServiceTest < ActionView::TestCase
     pushed_msg = ::IntegrationServices::Services::SlackService.new(app, { act_hash: { push_to: 'channel1' }, act_on_object: Account.first.tickets.first },
                                                                    {}).receive_push_to_slack
     assert_equal true, pushed_msg[:post_notice]
+    Integrations::InstalledApplication.any_instance.unstub(:configs)
+    IntegrationServices::Services::Slack::UserResource.any_instance.unstub(:list)
+    IntegrationServices::Services::Slack::ImResource.any_instance.unstub(:open)
+    IntegrationServices::Services::Slack::ChatResource.any_instance.unstub(:post_message)
+    Helpdesk::Ticket.any_instance.unstub(:responder)
   end
 
   def test_receive_slash_command_v3_nil
@@ -118,6 +139,13 @@ class SlackServiceTest < ActionView::TestCase
     slash = ::IntegrationServices::Services::SlackService.new(app, { act_hash: { user_id: 1, channel_id: 1 } },
                                                               {}).receive_slash_command_v3
     assert_equal true, slash
+    Integrations::InstalledApplication.any_instance.unstub(:user_credentials)
+    Integrations::InstalledApplication.any_instance.unstub(:find_by_remote_user_id)
+    IntegrationServices::Services::Slack::ImResource.any_instance.unstub(:list)
+    IntegrationServices::Services::Slack::UserResource.any_instance.unstub(:list)
+    IntegrationServices::Services::SlackService.any_instance.unstub(:create_ticket)
+    Integrations::InstalledApplication.any_instance.unstub(:auth_info)
+    Integrations::InstalledApplication.any_instance.unstub(:user)
   end
 
   def test_receive_open_err
@@ -125,6 +153,7 @@ class SlackServiceTest < ActionView::TestCase
     IntegrationServices::Services::Slack::ImResource.any_instance.stubs(:open).raises(StandardError.new('exception'))
     open = ::IntegrationServices::Services::SlackService.new(app, { type: 'test' }, {}).receive_open(1)
     assert_equal true, open[:error]
+    IntegrationServices::Services::Slack::ImResource.any_instance.unstub(:open)
   end
 
   def test_receive_auth_info_err
@@ -132,6 +161,7 @@ class SlackServiceTest < ActionView::TestCase
     IntegrationServices::Services::Slack::AuthResource.any_instance.stubs(:test).raises(StandardError.new('exception'))
     auth = ::IntegrationServices::Services::SlackService.new(app, { type: 'test' }, {}).receive_auth_info
     assert_equal true, auth[:error]
+    IntegrationServices::Services::Slack::AuthResource.any_instance.unstub(:test)
   end
 
   def test_receive_users_list_err
@@ -139,6 +169,7 @@ class SlackServiceTest < ActionView::TestCase
     IntegrationServices::Services::Slack::UserResource.any_instance.stubs(:list).raises(StandardError.new('exception'))
     list = ::IntegrationServices::Services::SlackService.new(app, { type: 'test' }, {}).receive_users_list
     assert_equal true, list[:error]
+    IntegrationServices::Services::Slack::UserResource.any_instance.unstub(:list)
   end
 
   def test_receive_post_message_err
@@ -146,6 +177,7 @@ class SlackServiceTest < ActionView::TestCase
     IntegrationServices::Services::Slack::ChatResource.any_instance.stubs(:post_message).raises(StandardError.new('exception'))
     post = ::IntegrationServices::Services::SlackService.new(app, { type: 'test' }, {}).receive_post_message('bh')
     assert_equal true, post[:error]
+    IntegrationServices::Services::Slack::ChatResource.any_instance.unstub(:post_message)
   end
 
   def test_receive_im_user_err
@@ -153,6 +185,7 @@ class SlackServiceTest < ActionView::TestCase
     IntegrationServices::Services::Slack::ImResource.any_instance.stubs(:list).raises(StandardError.new('exception'))
     usr = ::IntegrationServices::Services::SlackService.new(app, { type: 'test' }, {}).receive_im_user('token', 1)
     assert_equal true, usr[:error]
+    IntegrationServices::Services::Slack::ImResource.any_instance.unstub(:list)
   end
 
   def test_receive_add_slack
@@ -161,6 +194,8 @@ class SlackServiceTest < ActionView::TestCase
     app = Integrations::InstalledApplication.new
     add_slack = ::IntegrationServices::Services::SlackService.new(app, { type: 'test' }, {}).receive_add_slack
     assert_equal true, add_slack
+    Integrations::SlackRemoteUser.unstub(:where)
+    Integrations::SlackRemoteUser.unstub(:create!)
   end
 
   def test_receive_remove_slack
@@ -169,6 +204,8 @@ class SlackServiceTest < ActionView::TestCase
     app = Integrations::InstalledApplication.new
     remove_slack = ::IntegrationServices::Services::SlackService.new(app, { type: 'test' }, {}).receive_remove_slack
     assert_equal nil, remove_slack
+    Integrations::SlackRemoteUser.unstub(:where)
+    Integrations::SlackRemoteUser.unstub(:destroy)
   end
 
   def test_receive_slash_command_creating_user
@@ -185,5 +222,12 @@ class SlackServiceTest < ActionView::TestCase
     slash = ::IntegrationServices::Services::SlackService.new(app, { act_hash: { user_slack_token: 'slack123', event_type: 'create_ticket', user_id: 1 } },
                                                               {}).receive_slash_command
     assert_equal true, slash[:post_notice]
+    IntegrationServices::Services::Slack::AuthResource.any_instance.unstub(:test)
+    User.any_instance.unstub(:signup!)
+    IntegrationServices::Services::Slack::Processor::TicketProcessor.any_instance.unstub(:create_ticket)
+    Integrations::UserCredential.any_instance.unstub(:save!)
+    IntegrationServices::Services::Slack::ChatResource.any_instance.unstub(:post_message)
+    IntegrationServices::Services::Slack::ImResource.any_instance.unstub(:history)
+    IntegrationServices::Services::Slack::UserResource.any_instance.unstub(:list)
   end
 end

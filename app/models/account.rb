@@ -5,6 +5,7 @@ class Account < ActiveRecord::Base
   include Mobile::Actions::Account
   include Social::Ext::AccountMethods
   include Cache::Memcache::Account
+  include Cache::Memcache::Admin::CustomData
   include Redis::RedisKeys
   include Redis::RateLimitRedis
   include Redis::TicketsRedis

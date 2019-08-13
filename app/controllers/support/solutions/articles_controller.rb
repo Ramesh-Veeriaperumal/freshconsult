@@ -140,12 +140,8 @@ class Support::Solutions::ArticlesController < SupportController
     
     def load_agent_actions      
       @agent_actions = []
-      @agent_actions <<   { :url => multilingual_article_path(@article, :anchor => "edit"),
-                            :label => t('portal.preview.edit_article'),
-                            :icon => "edit" } if privilege?(:manage_solutions)
-      @agent_actions <<   { :url => multilingual_article_path(@article),
-                            :label => t('portal.preview.view_on_helpdesk'),
-                            :icon => "preview" } if privilege?(:view_solutions)
+      @agent_actions << { url: agent_actions_path(@article, anchor: 'edit'), label: t('portal.preview.edit_article'), icon: 'edit' } if privilege?(:manage_solutions)
+      @agent_actions << { url: agent_actions_path(@article), label: t('portal.preview.view_on_helpdesk'), icon: 'preview' } if privilege?(:view_solutions)
       @agent_actions
     end
     

@@ -1,0 +1,4 @@
+#Place holder file to prevent issue caused by paperclip including this locale automatically
+'no':
+  meta:
+    language_name: 'Norwegian - Test' 

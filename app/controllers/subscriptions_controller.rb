@@ -204,8 +204,7 @@ class SubscriptionsController < ApplicationController
 
     #building objects
     def build_subscription
-      scoper.billing_cycle = params[:billing_cycle].present? ? params[:billing_cycle].to_i :
-        SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual]
+      scoper.billing_cycle = params[:billing_cycle].present? ? params[:billing_cycle].to_i : SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual]
       scoper.plan = @subscription_plan
       scoper.agent_limit = params[:agent_limit]
       populate_addon_based_limits

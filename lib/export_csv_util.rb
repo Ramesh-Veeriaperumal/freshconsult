@@ -191,7 +191,7 @@ module ExportCsvUtil
   def delete_invisible_fields(header_hash,is_portal)
     headers = header_hash.keys
     if is_portal
-      vfs = visible_fields
+      vfs = visible_fields_including_nested
       headers.delete_if{|header_key|
         field_name = Helpdesk::TicketModelExtension.field_name header_key
         true unless vfs.include?(field_name)

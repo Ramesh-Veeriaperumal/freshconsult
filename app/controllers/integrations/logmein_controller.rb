@@ -9,7 +9,7 @@ class Integrations::LogmeinController < ApplicationController
   skip_before_filter :check_privilege, :verify_authenticity_token
 
   def rescue_session
-    tracking = params['Tracking0'] || params["session"]["tracking0"] 
+    tracking = params['Tracking0'] || (params['session'] || {})['tracking0']
     unless tracking.blank?
       chat_params = params['Tracking0'] ? process_old_params(params) : params["session"]
       redis_val = tracking.split(":")

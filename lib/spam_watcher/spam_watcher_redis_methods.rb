@@ -33,18 +33,18 @@ class SpamWatcherRedisMethods
 
     def spam_alert(account,user,table_name,operation,subject,deleted_flag)
       hit_count = current_hit_count account, user, table_name
-      subject = "#{subject} : Spam Count #{hit_count}"
+      subject = subject.blank? ? "New Spam Watcher Abnormal load #{table_name} : Spam Count #{hit_count}" : "#{subject} Abnormal load #{table_name} : Spam Count #{hit_count}"
       FreshdeskErrorsMailer.deliver_spam_watcher(
         {
-          :subject          => subject.present? ? subject : "New Spam Watcher Abnormal load #{table_name} : Spam Count #{hit_count}",
-          :additional_info  => {
-            :operation  => operation,
-            :full_domain  => account.full_domain,
-            :account_id  => account.id,
-            :user_id => user.id,
-            :admin_url => spam_url(account,user,table_name),
-            :signature => "Spam Watcher",
-            :deleted_flag => deleted_flag
+          subject: subject,
+          additional_info: {
+            operation: operation,
+            full_domain: account.full_domain,
+            account_id: account.id,
+            user_id: user.id,
+            admin_url: spam_url(account, user, table_name),
+            signature: 'Spam Watcher',
+            deleted_flag: deleted_flag
           }
         }
       )
@@ -130,7 +130,7 @@ class SpamWatcherRedisMethods
     def current_hit_count account, user, table_name
       account_id = account.nil? ? "" : account.id.to_s
       user_id =  user.nil? ? "" : user.id.to_i
-      final_key = "#{table_name}:#{account_id}:#{user_id}"
+      final_key = "sw_#{table_name}:#{account_id}:#{user_id}"
       $spam_watcher.perform_redis_op("llen",final_key)
     end
 

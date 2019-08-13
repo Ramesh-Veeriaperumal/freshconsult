@@ -6,7 +6,7 @@ module Freddy
     PRODUCT = 'freshdesk'.freeze
     ACTION = 'ticket_reopen_feedback'.freeze
 
-    def perform(args)      
+    def perform(args)
       args.symbolize_keys!
       account = Account.current
       ticket_id = args[:ticket_id]
@@ -33,10 +33,10 @@ module Freddy
          body: body.to_json,
          timeout: FreddySkillsConfig[:detect_thank_you_note][:feedback_timeout]
         }
-      end      
+      end
 
       def body
-        param_options = { ticket_status: @ticket.status_name }      
+        param_options = { ticket_status: @ticket.status_name }
         recent_note = @thank_you_notes.last
         { confidence: recent_note[:response][:confidence],
           feedback: 0,

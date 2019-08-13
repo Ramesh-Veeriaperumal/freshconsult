@@ -1,10 +1,14 @@
+# This controller is used for segment integration. Segment is a data-hub for different integrations. Our Freshdesk would be one such integration in segment.
+# Now when someother integration creates or updates user details and when the customer wants the same to be in updated in freshdesk database as well,
+# then segemnt would hit this controller via api to create or update user details
+
 class Segment::IdentifyController < ApplicationController
  
    include UserHelperMethods
    include APIHelperMethods
 
-   before_filter :check_demo_site, :strip_params, :format_params, :clean_params, :contact_exists, :set_validatable_custom_fields, :only => [:create]
- 
+   before_filter :check_demo_site, :strip_params, :format_params, :clean_params, :contact_exists, :set_contact_validatable_custom_fields, only: [:create]
+
    def create
       if @user.new_record?
         create_user
@@ -59,5 +63,11 @@ class Segment::IdentifyController < ApplicationController
       params[:user][:address] = str
     end
    end
+
+  def set_contact_validatable_custom_fields
+    @user ||= current_account.users.new
+    # only contact would have custom fields
+    @user.validatable_custom_fields = { fields: current_account.contact_form.custom_contact_fields, error_label: :label } if @user.customer?
+  end
  
 end

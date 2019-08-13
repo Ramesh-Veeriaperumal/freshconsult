@@ -645,6 +645,6 @@ class VaRule < ActiveRecord::Base
     def delete_rule_from_redis_set
       return unless account.detect_thank_you_note_enabled?
 
-      remove_element_from_redis_automation_set(automation_rules_with_thank_you_configured, id)
+      remove_element_from_automation_redis_set(automation_rules_with_thank_you_configured, id)
     end
 end

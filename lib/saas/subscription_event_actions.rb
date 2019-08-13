@@ -114,6 +114,7 @@ class SAAS::SubscriptionEventActions
 
     def remove_old_plan_db_features
       account.remove_features_of(old_plan.subscription_plan.canon_name)
+      account.clear_feature_from_cache
     end
 
     def reset_plan_features
