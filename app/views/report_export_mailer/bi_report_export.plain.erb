@@ -1,34 +1,32 @@
-Hi <%=@user.name%>,
+<%= render layout: 'shared/email_header_footer.plain.erb', locals: { user_name: @user.name, sent_by: :portal_support, portal_name: @portal_name } do %>
 
 
 <% if @export_url.present? %>
-  The <%= @report_label %> report<%= " #{@ticket_export} " %>export you had requested is complete. You can download the file from <%= @export_url %> (It will expire in 45 days).
+  <%= t('mailer_notifier.report_export_mailer.bi_report_export.report_complete',report_label: @report_label,ticket_export: "#{@ticket_export} ")%> <%= t('mailer_notifier.report_export_mailer.bi_report_export.report_download_plain',export_url: @export_url)%>
 
     <%=  @export_url %>
 
 <% else %>
-  The <%= @report_label %> report<%= " #{@ticket_export} " %>export you had requested is complete. Please find the file attached with this mail.
+  <%= t('mailer_notifier.report_export_mailer.bi_report_export.report_complete',report_label: @report_label,ticket_export: "#{@ticket_export} ")%> <%= t('mailer_notifier.report_export_mailer.bi_report_export.file_attached')%>
 <% end %>
 
 
 <% if @selected_metric %>
-For metric: <%= @selected_metric.html_safe %>
+<%= t('mailer_notifier.report_export_mailer.bi_report_export.for_metric')%> <%= @selected_metric.html_safe %>
 <% end %>
 
 <% if @filter_name %>
-Report Name: <%= @filter_name.html_safe %>
+<%= t('mailer_notifier.report_export_mailer.bi_report_export.report_name')%> <%= @filter_name.html_safe %>
 <% end %> 
 
 <% if @filter_to_display %>
-  Filters applied:
+  <%= t('mailer_notifier.report_export_mailer.common.filters_applied')%>
 
-    Date Range : <%=@date_range%>
+    <%= t('mailer_notifier.report_export_mailer.common.date_range_title')%> <%=@date_range%>
     <% @filters.each do |f| %>
       <%=f["name"]%> : <%= f["value"] %>
     <%end%>
 <%end%>
 
 
-Regards,
-
-<%= @portal_name %> Support
+<% end %>

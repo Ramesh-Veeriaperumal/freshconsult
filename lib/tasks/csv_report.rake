@@ -234,7 +234,7 @@ namespace :csv_report do
                 email_subject: email_subject,
                 task_start_time: @task_start_time.in_time_zone('Chennai'),
                 description: @description }
-    ReportExportMailer.report_export_task(options)
+    ReportExportMailer.send_email_to_group(:report_export_task, @email_ids, options)
     Rails.logger.info "CSV EXPORT task id : #{@task_id}  ; ENDS AT : #{Time.now.utc}"
   end
 

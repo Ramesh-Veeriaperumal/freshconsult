@@ -1,21 +1,16 @@
-Hi <%=@user.name%>,
-<br/>
-<br/>
-Sorry your pdf File size > 10MB. 
-<br/>
-Scheduled report name : <%= @filter_name %>
-<br/>		
-Filters applied:
+<%= render layout: 'shared/email_header_footer.html.erb', locals: { user_name: @user.name, sent_by: :portal_support, portal_name: @portal_name } do %>
+<%= t('mailer_notifier.report_export_mailer.exceeds_file_size_limit.file_size_error')%>
+<br/><br/>
+<%= t('mailer_notifier.report_export_mailer.exceeds_file_size_limit.report_name')%> <%= @filter_name %>
+<br/>	<br/>
+<%= t('mailer_notifier.report_export_mailer.common.filters_applied')%>
 <br/>
 <table border="1" width="100%">
-    <tr><td>Date Range</td><td><%=@date_range%></td></tr>
+    <tr><td><%= t('mailer_notifier.report_export_mailer.common.date_range')%></td><td><%=@date_range%></td></tr>
     <% @filters.each do |f| %>
       <tr><td><%=f["name"]%></td><td><%= f["value"] %></td></tr>
     <%end%>
 </table>
 <br/>
 <br/>
-
-Regards,
-<br/>
-<%= @user.account.helpdesk_name %> Support 
+<% end %>

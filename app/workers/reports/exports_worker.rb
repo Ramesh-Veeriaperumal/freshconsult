@@ -153,7 +153,7 @@ module Reports
       task = Helpdesk::ScheduledTask.find_by_id(extra_options[:scheduled_task_id]) if extra_options[:scheduled_task_id]
       if file_path.blank?
         task ? ScheduledTaskMailer.report_no_data_email(options, task)
-                            : ReportExportMailer.no_report_data(options)
+                            : ReportExportMailer.send_email(:no_report_data, User.current, options)
       else
         if @attachment_via_s3
           file_name = file_path.split("/").last
@@ -162,7 +162,7 @@ module Reports
           options.merge!(file_path: file_path) # Attach file in mail itself
         end
         task ? ScheduledTaskMailer.email_scheduled_report(options, task)
-                            : ReportExportMailer.bi_report_export(options)
+                            : ReportExportMailer.send_email(:bi_report_export, User.current, options)
       end
     ensure
       FileUtils.rm_f(file_path) if file_path
