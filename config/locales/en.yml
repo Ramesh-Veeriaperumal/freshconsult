@@ -186,6 +186,8 @@ en:
   go_to_new_ui: "Switch to the Mint experience"
   enable: "Enable"
   enter: "Enter"
+  copied_link: "copied"
+  copy_link: "copy link"
   email_failure:
     dropped:
       summary_error_text: "Message dropped - Invalid or problematic address"
