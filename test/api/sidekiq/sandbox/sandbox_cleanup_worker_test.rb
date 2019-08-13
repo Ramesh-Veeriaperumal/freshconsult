@@ -21,7 +21,6 @@ class CleanupWorkerTest < ActionView::TestCase
   def test_cleanup_sandbox
     @production_account = AccountHelper.create_test_account
     @production_account.make_current
-    @production_account.launch :sandbox_single_branch
     master_account_id = @production_account.id
     create_branch(master_account_id)
     sandbox_account_id = 9999
@@ -29,7 +28,6 @@ class CleanupWorkerTest < ActionView::TestCase
     Admin::Sandbox::CleanupWorker.new.perform(master_account_id: master_account_id, sandbox_account_id: sandbox_account_id)
     assert_equal branch_exists?(master_account_id), false
     assert_equal branch_exists?(sandbox_account_id), false
-    @production_account.rollback :sandbox_single_branch
   rescue StandardError => e
     { 'error' => e }
   end

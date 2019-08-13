@@ -37,7 +37,7 @@ class Account < ActiveRecord::Base
     :automation_rule_execution_count, :disable_mint_analytics,
     :freshid_org_v2, :hide_agent_login, :office365_adaptive_card,
     :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,
-    :recalculate_daypass, :sandbox_single_branch, :fb_page_api_improvement, :attachment_redirect_expiry,
+    :recalculate_daypass, :fb_page_api_improvement, :attachment_redirect_expiry,
     :solutions_agent_portal, :solutions_agent_metrics, :fuzzy_search, :delete_trash_daily,
     :prevent_wc_ticket_create, :allow_wildcard_ticket_create, :requester_privilege,
     :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr,
