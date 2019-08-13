@@ -936,6 +936,10 @@ class Account < ActiveRecord::Base
     delete_automation_redis_key(automation_rules_with_thank_you_configured)
   end
 
+  def default_account_locale
+    Portal.current ? Portal.current.language : (Account.current ? Account.current.language : I18n.default_locale)
+  end
+
   protected
 
     def external_url_is_valid?(url)

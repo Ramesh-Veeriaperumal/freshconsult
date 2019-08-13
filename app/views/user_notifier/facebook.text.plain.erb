@@ -1,11 +1,10 @@
-Hi <%=@admin_name%>,
+<%= render layout: 'shared/email_header_footer.plain.erb', locals: { user_name: @admin_name, sent_by: :freshdesk_support } do %>
 
-The access token for your <%=@fb_page.page_name%> page has expired. This could be because
-1. One of the admin's changed their facebook password.
-2. One of the admin's has revoked some app permissions.
-3. It has been 60 days since the last time you authorized the app. 
+<%= t('mailer_notifier.user_notifications.facebook_access_token_expired', page_name: @fb_page.page_name) %>
+1. <%= t('mailer_notifier.user_notifications.facebook_info_1') %>
+2. <%= t('mailer_notifier.user_notifications.facebook_info_2') %>
+3. <%= t('mailer_notifier.user_notifications.facebook_info_3') %>
 
-Please click on this link  <%=@facebook_url%> to reauthorize your facebook page and continue receiving facebook posts as tickets.
+<%= t('mailer_notifier.user_notifications.facebook_reauth_link_plain', facebook_url: @facebook_url) %>
 
-Regards,
-Freshdesk Support
+<% end %>
