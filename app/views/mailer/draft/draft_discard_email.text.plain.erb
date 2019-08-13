@@ -1,8 +1,8 @@
-Your draft of the article "<%= @draft[:title] %>" was discarded by <%= @user.name %> on <%= Time.zone.now.strftime("%a, %d %b %Y at %H:%M %p") %> .
+<%= t("mailer_notifier.draft_mailer.discard_email.discard_msg_plain", title: @draft[:title], user: @user.name, time: Time.zone.now.strftime("%a, %d %b %Y at %H:%M %p"))%>
 
 <%= "_" * 100 %>
 
-<%= @draft[:title] %> by <%=  @current_author.name %>
+<%= t("mailer_notifier.draft_mailer.discard_email.draft_by_plain", title: @draft[:title], author: @current_author.name)%>
 
 <%= "_" * 100 %>
 
@@ -10,6 +10,5 @@ Your draft of the article "<%= @draft[:title] %>" was discarded by <%= @user.nam
 
 <%= "_" * 100 %>
 
-View Article
+<%= t("mailer_notifier.draft_mailer.discard_email.view_article")%>
 <%= solution_article_url(@article, :host => @host) %>
-

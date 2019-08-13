@@ -6,6 +6,36 @@ test-ui:
     regards: "$Regards,$"
     freshdesk_support_team: "$Freshdesk Support Team$"
     note_for_recipients: "$Note: This email is also sent to - %{to_emails}.$"
+    email_config_notifier:
+      activation_instructions:
+        body: '$This email has been added as your support email address in %{app_name}. Click the URL below to activate your support email
+        <br><br>
+        %{activation_url}
+        <br><br>
+        If the above URL does not work, try copying and pasting it into your browser. If you continue to have problems, please feel free to contact us.$'
+      test_email:
+        body: '$You’ve received the test mail you just sent out from Freshdesk account.
+        <br><br>
+        If everything worked fine, you should now see this mail converted to a new ticket. Hop over to your Freshdesk helpdesk portal and look under the "Ticket" tab.
+        <br><br>
+        Got it? Great! Now everytime your customers send you an email here, you’ll have it appear as a ticket in Freshdesk automatically!
+        <br><br>
+        If your helpdesk did not show you a new ticket, first make sure that you have configured all your emails in this id to get forwarded to your Freshdesk support id ( "%{to_email}" ).
+        You can learn how to do this <a href=%{support_url} target=_blank >here</a>. Still having problems? Get in touch with us at support@freshdesk.com and we’ll help you set this up.$'
+        support_url: '$https://support.freshdesk.com/support/solutions/articles/37541-converting-your-support-email-into-freshdesk-tickets$'
+    draft_mailer:
+      discard_email:
+        discard_msg_html: "$The draft version of the article %{article_url} was discarded by %{user} on %{time}$"
+        discard_msg_plain: '$Your draft of the article "%{title}" was discarded by %{user} on %{time} .$'
+        view_article: '$View Article$'
+        draft_by_html: '$<h3> %{title} <h5> by %{author} <h5> </h3>$'
+        draft_by_plain: '$%{title} by %{author}$'
+    ecommerce_notifier:
+      token_expiry:
+        token_expiry_msg: '$We want to let you know that your auth token for Ecommerce account %{account_name} will expire in %{expiry_date}.$'
+        token_update: $Please revoke the token and update the account inorder to be active.$
+        view_account: $View account$
+        contact_us: '$If you have queries of any kind, please do not hesitate to contact us: support@freshdesk.com$'
     user_notifications:
       notify_dkim_activation: $DKIM signatures are now activated for emails sent from %{email_domain}.$
       notify_dkim_failure: $DKIM verification failed for domain %{email_domain}.$
@@ -52,6 +82,8 @@ test-ui:
       account_cancel: "<div>$This email is a confirmation that your Freshdesk account has been cancelled. We’re sorry to see you go.</div><br/>
            <div>If you have feedback on how we can provide a better experience, please write to us at %{support_email}. We’d love to hear from you. $</div>"
   mailer_notifier_subject:
+    discard_email: "$[Draft Discarded] %{draft_title}$"
+    token_expiry: '$Ecommerce account %{ecom_name} token expiration$'
     new_forum_topic: "$[New Topic] %{title} in %{forum_name}$"
     topic_update: "$[Status Update] in %{title}$"
     topic_merged: "$[Topic Merged] to %{title}$"
@@ -65,20 +97,3 @@ test-ui:
     notify_new_watcher: '$Added as Watcher %{display_id} %{subject}$'
     notify_on_reply: '$New Activity %{display_id} %{subject}$'
     activation_instructions: "$%{portal_name} email activation instructions$"
-  email_config_notifier:
-    activation_instructions:
-      body: '$This email has been added as your support email address in %{app_name}. Click the URL below to activate your support email
-      <br><br>
-      %{activation_url}
-      <br><br>
-      If the above URL does not work, try copying and pasting it into your browser. If you continue to have problems, please feel free to contact us.$'
-    test_email:
-      body: '$You’ve received the test mail you just sent out from Freshdesk account.
-      <br><br>
-      If everything worked fine, you should now see this mail converted to a new ticket. Hop over to your Freshdesk helpdesk portal and look under the "Ticket" tab.
-      <br><br>
-      Got it? Great! Now everytime your customers send you an email here, you’ll have it appear as a ticket in Freshdesk automatically!
-      <br><br>
-      If your helpdesk did not show you a new ticket, first make sure that you have configured all your emails in this id to get forwarded to your Freshdesk support id ( "%{to_email}" ).
-      You can learn how to do this <a href=%{support_url} target=_blank >here</a>. Still having problems? Get in touch with us at support@freshdesk.com and we’ll help you set this up.$'
-      support_url: 'https://support.freshdesk.com/support/solutions/articles/37541-converting-your-support-email-into-freshdesk-tickets'

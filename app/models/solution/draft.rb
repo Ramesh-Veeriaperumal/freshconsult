@@ -140,7 +140,7 @@ class Solution::Draft < ActiveRecord::Base
     DraftMailer.send_later(
       :discard_notification, 
       { :description => self.description, :title => self.title}, 
-      self.article, self.user, User.current, portal
+      self.article, self.user, User.current, portal, locale_object: self.user
     )
 
   end

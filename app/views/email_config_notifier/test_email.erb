@@ -1,8 +1,8 @@
 <p style="line-height:20px;font-size:13px;">
     <%= t("mailer_notifier.cool")%>
     <br><br>
-    <%= t("email_config_notifier.test_email.body",to_email: @email_config[:to_email], support_url: t("email_config_notifier.test_email.support_url")).html_safe%>
+    <%= t("mailer_notifier.email_config_notifier.test_email.body",to_email: @email_config[:to_email], support_url: t("mailer_notifier.email_config_notifier.test_email.support_url")).html_safe%>
     <br><br>
-    <%= t("mailer_notifier.thanks")%>,<br>
+    <%= t("mailer_notifier.thanks")%><br>
     <%= t("mailer_notifier.freshdesk_team")%>
 </p>
