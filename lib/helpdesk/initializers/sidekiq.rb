@@ -116,7 +116,8 @@ Sidekiq.configure_client do |config|
       "Admin::Sandbox::DiffWorker",
       'Admin::Sandbox::MergeWorker',
       'Tickets::UndoSendWorker',
-      'Freshid::V2::ProcessEvents'
+      'Freshid::V2::ProcessEvents',
+      "Roles::UpdateAgentsRoles"
     ]
   end
 end
@@ -233,7 +234,8 @@ Sidekiq.configure_server do |config|
       "Admin::Sandbox::FileToDataWorker",
       "Admin::Sandbox::DiffWorker",
       "Admin::Sandbox::MergeWorker",
-      'Tickets::UndoSendWorker'
+      'Tickets::UndoSendWorker',
+      "Roles::UpdateAgentsRoles"
     ]
 
     chain.add Middleware::Sidekiq::Server::JobDetailsLogger
@@ -328,7 +330,8 @@ Sidekiq.configure_server do |config|
       "Admin::Sandbox::FileToDataWorker",
       "Admin::Sandbox::DiffWorker",
       "Admin::Sandbox::MergeWorker",
-      'Tickets::UndoSendWorker'
+      'Tickets::UndoSendWorker',
+      "Roles::UpdateAgentsRoles"
     ]
   end
 end

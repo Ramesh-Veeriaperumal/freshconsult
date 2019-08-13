@@ -18,32 +18,34 @@ class EmailConfigNotifierTest < ActionMailer::TestCase
     super
   end
 
-  # this test case is commented since we are getting no route found for register_email error while generating activation url
-  # def test_translation_for_activation_instructions
-  #   en_subject = I18n.t('mailer_notifier_subject.activation_instructions')
-  #   en_body    = I18n.t('email_config_notifier.activation_instructions.body')
-  #   subject_bk = I18n.t('mailer_notifier_subject.activation_instructions', locale: :fr)
-  #   body_bk    = I18n.t('email_config_notifier.activation_instructions.body', locale: :fr)
-  #   I18n.backend.store_translations('fr', mailer_notifier_subject: { activation_instructions: "$0$#{en_subject}" })
-  #   I18n.backend.store_translations('fr', email_config_notifier: { activation_instructions: { body: "$0$#{en_body}" } })
-  #   I18n.locale = 'en'
-  #   email = EmailConfigNotifier.send_email(:activation_instructions, nil, Account.current.primary_email_config)
-  #   assert_equal true, email.subject.include?('$0$')
-  #   assert_equal true, email.subject.include?(Account.current.primary_email_config.account.portal_name)
-  #   assert_equal true, email.body.encoded.include?('$0$')
-  #   assert_equal true, email.body.encoded.include?(AppConfig['app_name'])
-  #   assert_equal true, I18n.locale.to_s.eql?('en')
-  #   I18n.backend.store_translations('fr', mailer_notifier_subject: { activation_instructions: subject_bk })
-  #   I18n.backend.store_translations('fr', email_config_notifier: { activation_instructions: { body: body_bk } })
-  # end
+  def test_translation_for_activation_instructions
+    en_subject = I18n.t('mailer_notifier_subject.activation_instructions')
+    en_body    = I18n.t('mailer_notifier.email_config_notifier.activation_instructions.body')
+    subject_bk = I18n.t('mailer_notifier_subject.activation_instructions', locale: :fr)
+    body_bk    = I18n.t('mailer_notifier.email_config_notifier.activation_instructions.body', locale: :fr)
+    I18n.backend.store_translations('fr', mailer_notifier_subject: { activation_instructions: "$0$#{en_subject}" })
+    I18n.backend.store_translations('fr', mailer_notifier: { email_config_notifier: { activation_instructions: { body: "$0$#{en_body}" } } })
+    I18n.locale = 'en'
+    email_config = Account.current.primary_email_config
+    email_config.stubs(:activator_token).returns('abcxyz')
+    email = EmailConfigNotifier.send_email(:activation_instructions, nil, email_config)
+    assert_equal true, email.subject.include?('$0$')
+    assert_equal true, email.subject.include?(email_config.account.portal_name)
+    assert_equal true, email.body.encoded.include?('$0$')
+    assert_equal true, email.body.encoded.include?(AppConfig['app_name'])
+    assert_equal true, I18n.locale.to_s.eql?('en')
+    email_config.unstub(:activator_token)
+    I18n.backend.store_translations('fr', mailer_notifier_subject: { activation_instructions: subject_bk })
+    I18n.backend.store_translations('fr', mailer_notifier: { email_config_notifier: { activation_instructions: { body: body_bk } } })
+  end
 
   def test_translation_for_test_email
     en_subject = I18n.t('mailer_notifier_subject.test_email')
-    en_body    = I18n.t('email_config_notifier.test_email.body')
+    en_body    = I18n.t('mailer_notifier.email_config_notifier.test_email.body')
     subject_bk = I18n.t('mailer_notifier_subject.test_email', locale: :fr)
-    body_bk    = I18n.t('email_config_notifier.test_email.body', locale: :fr)
+    body_bk    = I18n.t('mailer_notifier.email_config_notifier.test_email.body', locale: :fr)
     I18n.backend.store_translations('fr', mailer_notifier_subject: { test_email: "$0$#{en_subject}" })
-    I18n.backend.store_translations('fr', email_config_notifier: { test_email: { body: "$0$#{en_body}" } })
+    I18n.backend.store_translations('fr', mailer_notifier: { email_config_notifier: { test_email: { body: "$0$#{en_body}" } } })
     I18n.locale = 'en'
     Account.current.primary_email_config[:to_email] = 'test123@freshdesk.com'
     email_config = EmailConfig.new
@@ -57,6 +59,6 @@ class EmailConfigNotifierTest < ActionMailer::TestCase
     assert_equal true, email.body.encoded.include?(email_config[:to_email])
     assert_equal true, I18n.locale.to_s.eql?('en')
     I18n.backend.store_translations('fr', mailer_notifier_subject: { test_email: subject_bk })
-    I18n.backend.store_translations('fr', email_config_notifier: { test_email: { body: body_bk } })
+    I18n.backend.store_translations('fr', mailer_notifier: { email_config_notifier: { test_email: { body: body_bk } } })
   end
 end

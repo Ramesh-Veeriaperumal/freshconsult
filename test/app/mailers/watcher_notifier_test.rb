@@ -16,17 +16,11 @@ class WatcherNotifierTest < ActionMailer::TestCase
     create_test_account if @account.nil?
     Account.any_instance.stubs(:multi_language_enabled?).returns(true)
     Account.any_instance.stubs(:language).returns('fr')
-    @agent = add_test_agent(@account, role: 4, active: 1, email: 'testxyz@yopmail.com')
-    @ticket = create_ticket(email: 'sample@freshdesk.com', responder_id: @agent.id)
-    @subscription = @ticket.subscriptions.build(user_id: @agent.id)
-    @subscription.user.language = 'fr'
   end
 
   def teardown
     Account.any_instance.unstub(:language)
     Account.any_instance.unstub(:multi_language_enabled?)
-    @ticket.destroy if @ticket
-    @agent.destroy if @agent
     super
   end
 
@@ -38,13 +32,20 @@ class WatcherNotifierTest < ActionMailer::TestCase
     I18n.backend.store_translations('fr', mailer_notifier_subject: { notify_new_watcher: "$0$#{en_subject}" })
     I18n.backend.store_translations('fr', helpdesk: { tickets: { add_watcher: { mail: { hi: "$0$#{en_body}" } } } })
     I18n.locale = 'en'
-    email = Helpdesk::WatcherNotifier.send_email(:notify_new_watcher, @subscription.user, @ticket, @subscription, 'Test_name')
+    agent = add_test_agent(@account)
+    ticket = create_ticket(responder_id: agent.id)
+    subscription = ticket.subscriptions.build(user_id: agent.id)
+    subscription.user.language = 'fr'
+    email = Helpdesk::WatcherNotifier.send_email(:notify_new_watcher, subscription.user, ticket, subscription, 'Test_name')
     assert_equal true, email.subject.include?('$0$')
-    assert_equal true, email.subject.include?(@ticket.subject)
+    assert_equal true, email.subject.include?(ticket.subject)
     assert_equal true, email.body.encoded.include?('$0$')
     assert_equal true, I18n.locale.to_s.eql?('en')
     I18n.backend.store_translations('fr', mailer_notifier_subject: { notify_new_watcher: subject_bk })
     I18n.backend.store_translations('fr', helpdesk: { tickets: { add_watcher: { mail: { hi: body_bk } } } })
+  ensure
+    ticket.destroy if ticket
+    agent.destroy if agent
   end
 
   def test_translation_for_notify_on_reply
@@ -55,14 +56,22 @@ class WatcherNotifierTest < ActionMailer::TestCase
     I18n.backend.store_translations('fr', mailer_notifier_subject: { notify_on_reply: "$0$#{en_subject}" })
     I18n.backend.store_translations('fr', helpdesk: { tickets: { add_watcher: { mail: { hi: "$0$#{en_body}" } } } })
     I18n.locale = 'en'
-    note = create_note(ticket_id: @ticket.id)
-    email = Helpdesk::WatcherNotifier.send_email(:notify_on_reply, @subscription.user, @ticket, @subscription, note)
+    agent = add_test_agent(@account)
+    ticket = create_ticket(responder_id: agent.id)
+    note = create_note(ticket_id: ticket.id, user_id: agent.id)
+    subscription = ticket.subscriptions.build(user_id: agent.id)
+    subscription.user.language = 'fr'
+
+    email = Helpdesk::WatcherNotifier.send_email(:notify_on_reply, subscription.user, ticket, subscription, note)
     assert_equal true, email.subject.include?('$0$')
-    assert_equal true, email.subject.include?(@ticket.subject)
+    assert_equal true, email.subject.include?(ticket.subject)
     assert_equal true, email.body.encoded.include?('$0$')
     assert_equal true, I18n.locale.to_s.eql?('en')
     I18n.backend.store_translations('fr', mailer_notifier_subject: { notify_on_reply: subject_bk })
     I18n.backend.store_translations('fr', helpdesk: { tickets: { add_watcher: { mail: { hi: body_bk } } } })
+  ensure
+    ticket.destroy if ticket
+    agent.destroy if agent
   end
 
   def test_translation_for_notify_on_status_change
@@ -73,20 +82,34 @@ class WatcherNotifierTest < ActionMailer::TestCase
     I18n.backend.store_translations('fr', mailer_notifier_subject: { notify_on_reply: "$0$#{en_subject}" })
     I18n.backend.store_translations('fr', helpdesk: { tickets: { add_watcher: { mail: { hi: "$0$#{en_body}" } } } })
     I18n.locale = 'en'
-    email = Helpdesk::WatcherNotifier.send_email(:notify_on_status_change, @subscription.user, @ticket, @subscription, 'OPEN', 'Test_name')
+    agent = add_test_agent(@account)
+    ticket = create_ticket(responder_id: agent.id)
+    subscription = ticket.subscriptions.build(user_id: agent.id)
+    subscription.user.language = 'fr'
+    email = Helpdesk::WatcherNotifier.send_email(:notify_on_status_change, subscription.user, ticket, subscription, 'OPEN', 'Test_name')
     assert_equal true, email.subject.include?('$0$')
-    assert_equal true, email.subject.include?(@ticket.subject)
+    assert_equal true, email.subject.include?(ticket.subject)
     assert_equal true, email.body.encoded.include?('$0$')
     assert_equal true, I18n.locale.to_s.eql?('en')
     I18n.backend.store_translations('fr', mailer_notifier_subject: { notify_on_reply: subject_bk })
     I18n.backend.store_translations('fr', helpdesk: { tickets: { add_watcher: { mail: { hi: body_bk } } } })
+  ensure
+    ticket.destroy if ticket
+    agent.destroy if agent
   end
 
   def test_notify_on_status_change_delayed
-    Helpdesk::WatcherNotifier.send_later(:notify_on_status_change, @ticket, @subscription, 'OPEN', 'Test_name', locale_object: @subscription.user)
+    agent = add_test_agent(@account)
+    ticket = create_ticket(responder_id: agent.id)
+    subscription = ticket.subscriptions.build(user_id: agent.id)
+    subscription.user.language = 'fr'
+    Helpdesk::WatcherNotifier.send_later(:notify_on_status_change, ticket, subscription, 'OPEN', 'Test_name', locale_object: subscription.user)
     assert Delayed::Job.last.handler.include?('method: :notify_on_status_change')
     assert Delayed::Job.last.handler.include?('Test_name')
     assert Delayed::Job.last.handler.include?('locale_object:')
     assert Delayed::Job.last.handler.include?('language: fr')
+  ensure
+    ticket.destroy if ticket
+    agent.destroy if agent
   end
 end

@@ -334,6 +334,7 @@ defaults: &defaults
     - [update_sandbox_subscription]
     - [thank_you_note]
     - [gateway_facebook_page]
+    - [update_agents_roles]
     - [cron_webhook]
     - [cron_contacts_sync]
     - [cron_google_contacts_sync]
