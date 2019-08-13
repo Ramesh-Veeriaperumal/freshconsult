@@ -1,10 +1,9 @@
-<p>Hi <%=@content[:admin_name]%></p>
+<%= render layout: 'shared/email_header_footer.html.erb', locals: { user_name: @content[:admin_name], sent_by: :freshdesk_team } do %>
 
-<p>We regret to inform you that the most recent charge attempt on your card <%=@content[:card_details]%> failed. We tried charging your card as the number of available day passes in your account (<%=@content[:domain]%>) is currently <%=@content[:available_passes]%>.</p>
+<p><%= t('mailer_notifier.user_notifications.transaction_failure_message', card_details: @content[:card_details], domain: @content[:domain], available_passes: @content[:available_passes]) %></p>
 
-<p>Please update your billing information so that you always have day passes readily available for use.</p>
+<p><%= t('mailer_notifier.user_notifications.update_billing_info') %></p>
 
-<p>You can reply to this email if you have any questions.</p>
+<p><%= t('mailer_notifier.user_notifications.reply_to_email_for_queries') %></p>
 
-<p>Thanks <br>
-Freshdesk Team</p>
+<% end %>

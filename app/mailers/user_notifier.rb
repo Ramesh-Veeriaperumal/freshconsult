@@ -268,12 +268,12 @@ class UserNotifier < ActionMailer::Base
       part.html { render "facebook.text.html" }
     end.deliver
   end
-
-  def notify_webhook_failure(account, to_email, triggering_rule, url)
+  
+  def notify_webhook_failure(email_hash, account, triggering_rule, url)
     Time.zone = account.time_zone
     headers = {
-      :subject       => "Please recheck the webhook settings in your account",
-      :to            => to_email,
+      :subject       => I18n.t('mailer_notifier_subject.notify_webhook_failure'),
+      :to            => email_hash[:group],
       :from          => AppConfig['from_email'],
       :sent_on       => Time.now,
       "Reply-to" => "",
@@ -281,6 +281,7 @@ class UserNotifier < ActionMailer::Base
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     
+    @other_emails = email_hash[:other]
     headers.merge!(make_header(nil, nil, account.id, "Notify Webhook Failure"))
     @automation_type = triggering_rule[:type].to_s
     @automation_name = triggering_rule[:name].to_s
@@ -293,11 +294,11 @@ class UserNotifier < ActionMailer::Base
     end.deliver
   end
 
-  def notify_webhook_drop(account, to_email)
+  def notify_webhook_drop(email_hash, account)
     Time.zone = account.time_zone
     headers = {
-      :subject       => "Webhook dropped",
-      :to            => to_email,
+      :subject       => I18n.t('mailer_notifier_subject.notify_webhook_drop'),
+      :to            => email_hash[:group],
       :from          => AppConfig['from_email'],
       :sent_on       => Time.now,
       "Reply-to" => "",
@@ -305,7 +306,9 @@ class UserNotifier < ActionMailer::Base
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
 
+    @other_emails = email_hash[:other]
     headers.merge!(make_header(nil, nil, account.id, "Notify Webhook Drop"))
+    @solution_article_link = 'https://support.freshdesk.com/support/solutions/articles/217264-webhooks-faq'
     mail(headers) do |part|
       part.text { render "webhook_drop.text.plain" }
       part.html { render "webhook_drop.text.html" }
@@ -314,7 +317,7 @@ class UserNotifier < ActionMailer::Base
 
   def helpdesk_url_reminder(email_id, helpdesk_urls)
     headers = {
-      :subject    => "Your Freshdesk Portal Information",
+      :subject    => I18n.t('mailer_notifier_subject.helpdesk_url_reminder'),
       :to         => email_id,
       :from       => AppConfig['from_email'],
       :sent_on    => Time.now
@@ -350,7 +353,7 @@ class UserNotifier < ActionMailer::Base
 
   def failure_transaction_notifier(email_id, content = "")
     headers = {
-      :subject    => "Payment failed for auto recharge of day passes",
+      :subject    => I18n.t('mailer_notifier_subject.failure_transaction_notifier'),
       :to         => email_id,
       :from       => AppConfig["billing_email"],
       :sent_on    => Time.now

@@ -1,10 +1,9 @@
-Hi,
+<%= render layout: 'shared/email_header_footer.plain.erb', locals: { sent_by: :freshdesk_support, other_recipients_note: true } do %>
 
-The <%= @automation_type %> rule you configured to send API request to <%= @webhook_url %> has failed after several retries.
+<%= t('mailer_notifier.user_notifications.webhook_failed_message', automation_type: @automation_type, webhook_url: @webhook_url) %>
 
-Please check and reconfigure the rule to avoid any loss of communication.
+<%= t('mailer_notifier.user_notifications.webhook_reconfigure_rule') %>
 
-Rule: <%= @automation_name %> (<%= @automation_link %>)
+<%= t('mailer_notifier.user_notifications.webhook_rule_details', automation_name: @automation_name, automation_link: @automation_link) %>
 
-Regards,
-Freshdesk Support
+<% end %>

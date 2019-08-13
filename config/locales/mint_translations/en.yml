@@ -58,6 +58,16 @@ en:
       facebook_info_3: "It has been 60 days since the last time you authorized the app."
       facebook_reauth_link_html: "Please click on this <a href='%{facebook_url}'>link</a> to reauthorize your facebook page and continue receiving facebook posts as tickets."
       facebook_reauth_link_plain: "Please click on this link %{facebook_url} to reauthorize your facebook page and continue receiving facebook posts as tickets."
+      update_billing_info: 'Please update your billing information so that you always have day passes readily available for use.'
+      reply_to_email_for_queries: 'You can reply to this email if you have any questions.'
+      locate_accounts_request_html: '<p>We just received a request to locate any Freshdesk accounts associated with this email address.</p><p>Here is a list of accounts where you are an agent. You can click on any of the links below to access your support portal</p>'
+      click_on_forgot_password: 'In case you have forgotten the login credentials for your account, you can click on the forgot password link to reset your password.'
+      webhook_failed_message: "The %{automation_type} rule you configured to send API request to %{webhook_url} has failed after several retries."
+      webhook_reconfigure_rule: 'Please check and reconfigure the rule to avoid any loss of communication.'
+      webhook_rule_details: "Rule: %{automation_name} (%{automation_link})"
+      webhook_rate_limit_exceeded: 'A webhook that was scheduled 24 hours ago for execution has now been dropped since you consistently exceeded your API rate limits.'
+      webhook_raise_limit_html: If you wish to prevent this from happening again, mail us at support@freshdesk.com to raise your API limits. To learn more about how we support webhooks and why we drop them, <a href=%{solution_article_link}>click here.</a>
+      webhook_raise_limit_plain: If you wish to prevent this from happening again, mail us at support@freshdesk.com to raise your API limits. To learn more about how we support webhooks and why we drop them, click here %{solution_article_link}.
     scheduled_task_notifications:
       no_data: "Seems like there is no data to display for scheduled report that you created for "
       blocked_users:
@@ -118,3 +128,7 @@ en:
     admin_activation: "Activate your %{app_name} account"
     custom_ssl_activation: "Custom SSL Activated"
     notify_facebook_reauth: "Need Attention, Facebook app should be reauthorized"
+    failure_transaction_notifier: 'Payment failed for auto recharge of day passes'
+    helpdesk_url_reminder: 'Your Freshdesk Portal Information'
+    notify_webhook_failure: 'Please recheck the webhook settings in your account'
+    notify_webhook_drop: 'Webhook dropped'
