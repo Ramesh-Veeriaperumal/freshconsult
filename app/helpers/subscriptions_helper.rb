@@ -319,5 +319,9 @@ module SubscriptionsHelper
   def tax_inclusive?(subscription)
     subscription.additional_info[:amount_with_tax].present? && subscription.additional_info[:amount_with_tax] != subscription.amount ? true : false
   end
+
+  def show_billing_info
+    !@offline_subscription && !@reseller_paid_account
+  end
  end
  
