@@ -1,11 +1,11 @@
-CSV report requested at : <%= @task_start_time %>
+<%= render layout: 'shared/email_header_footer.html.erb', locals: { sent_by: :reports_team_freshdesk, other_recipients_note: true } do %>
+<%= t('mailer_notifier.report_export_mailer.report_export_task.cvs_report_request')%> <%= @task_start_time %>
+<br/><br/>
+<%= t('mailer_notifier.report_export_mailer.common.date_range_title')%> <%= @date_range%>
+<br/><br/>
+<%= "#{t('mailer_notifier.report_export_mailer.report_export_task.description')} #{@description}" if @description %>
+<br/><br/>
+<%= "#{t('mailer_notifier.report_export_mailer.report_export_task.no_of_invalid')} #{@invalid_count}" if @invalid_count>0 %> 
 <br/>
-Date range : <%= @date_range%>
 <br/>
-<%= "Description : #{@description}" if @description %>
-<br/>
-<%= "No. of invalid accounts : #{@invalid_count}" if @invalid_count>0 %> 
-<br/>
-<br/>
-Regards,<br/>
-Reports Team, Freshdesk
+<% end %>

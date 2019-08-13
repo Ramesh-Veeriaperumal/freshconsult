@@ -1,16 +1,14 @@
-Hi <%=@user.name%>,
+<%= render layout: 'shared/email_header_footer.plain.erb', locals: { user_name: @user.name, sent_by: :portal_support, portal_name: @portal_name } do %>
 
-			Sorry your pdf File size > 10MB. 
+			<%= t('mailer_notifier.report_export_mailer.exceeds_file_size_limit.file_size_error')%> 
 
-			Scheduled report name : <%= @filter_name %>
+			<%= t('mailer_notifier.report_export_mailer.exceeds_file_size_limit.report_name')%> <%= @filter_name %>
 			
-			Filters applied:
-	  		Date Range : <%=@date_range%>
+			<%= t('mailer_notifier.report_export_mailer.common.filters_applied')%>
+	  		<%= t('mailer_notifier.report_export_mailer.common.date_range_title')%> <%=@date_range%>
 	 		  <% @filters.each do |f| %>
 	   			 <%=f["name"]%> : <%= f["value"] %>
 	 			<%end%>
 
 
-Regards,
-
-<%= @portal_name %> Support 
+<% end %>

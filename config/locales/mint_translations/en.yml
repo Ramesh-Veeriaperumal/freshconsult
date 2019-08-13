@@ -36,6 +36,29 @@ en:
         token_update: Please revoke the token and update the account inorder to be active.
         view_account: View account
         contact_us: 'If you have queries of any kind, please do not hesitate to contact us: support@freshdesk.com'
+    report_export_mailer:
+      common:
+        filters_applied: 'Filters applied:'
+        date_range: 'Date Range'
+        date_range_title: 'Date Range:'
+      bi_report_export:
+        report_download_html: 'You can download the file from <a href=%{export_url}>here</a> (It will expire in 45 days).'
+        report_download_plain: 'You can download the file from %{export_url} (It will expire in 45 days).'
+        report_complete: 'The %{report_label} report %{ticket_export} export you had requested is complete.'
+        paste_url: "If the link does not work, copy and paste the URL below in your browser's address bar:"
+        file_attached: 'Please find the file attached with this mail.'
+        for_metric: 'For metric:'
+        report_name: 'Report Name:'
+        ticket: 'ticket'
+      no_report_data:
+        main_msg: 'Seems like there is no data to display for date range %{date_range} with applied filters.'
+      exceeds_file_size_limit:
+        file_size_error: 'Sorry your pdf File size > 10MB.'
+        report_name: 'Scheduled report name:'
+      report_export_task:
+        cvs_report_request: 'CSV report requested at:'
+        no_of_invalid: 'No. of invalid accounts:'
+        description: 'Description:'
     user_notifications:
       notify_dkim_activation: DKIM signatures are now activated for emails sent from %{email_domain}.
       notify_dkim_failure: DKIM verification failed for domain %{email_domain}.
