@@ -561,6 +561,10 @@ class Subscription < ActiveRecord::Base
     subscription_estimate(addons, applicable_coupon)
   end
 
+  def reseller_paid_account?
+    account.reseller_paid_account?
+  end
+
   protected
   
     def set_renewal_at

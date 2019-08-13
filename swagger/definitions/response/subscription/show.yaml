@@ -18,6 +18,8 @@ properties:
     type: string
   name_on_card:
     type: string
+  reseller_paid_account:
+    type: boolean
   created_at:
     type: string
     format: date-time

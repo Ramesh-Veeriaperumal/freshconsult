@@ -22,6 +22,7 @@ class Admin::SubscriptionDecorator < ApiDecorator
       card_number: card_number,
       card_expiration: card_expiration,
       name_on_card: (billing_address.name_on_card if billing_address.present?),
+      reseller_paid_account: record.reseller_paid_account?,
       updated_at: updated_at,
       created_at: created_at,
       currency: currency_info,

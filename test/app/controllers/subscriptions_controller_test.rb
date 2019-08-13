@@ -315,6 +315,18 @@ class SubscriptionsControllerTest < ActionController::TestCase
     @account.destroy
   end
 
+  def test_show_for_online_payments
+    Account.stubs(:current).returns(Account.first)
+    Subscription.any_instance.stubs(:active?).returns(true)
+    Subscription.any_instance.stubs(:offline_subscription?).returns(true)
+    get :show
+    assert_response 200
+  ensure
+    Account.unstub(:current)
+    Subscription.any_instance.unstub(:active?)
+    Subscription.any_instance.unstub(:offline_subscription?)
+  end
+
   private
 
     def params_hash

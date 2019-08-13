@@ -75,6 +75,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     update_currency
     agent = @account.users.where(helpdesk_agent: true).first
     User.stubs(:current).returns(agent)
+    Account.any_instance.stubs(:reseller_paid_account?).returns(false)
     @controller.stubs(:api_current_user).returns(User.current)
     @controller.api_current_user.stubs(:privilege?).returns(true)
     result = ChargeBee::Result.new(stub_update_params)
@@ -427,6 +428,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
         'card_number': subscription.card_number,
         'card_expiration': subscription.card_expiration,
         'name_on_card': (subscription.billing_address.name_on_card if subscription.billing_address.present?),
+        'reseller_paid_account': subscription.reseller_paid_account?,
         'updated_at': %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
         'created_at': %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
         'currency': subscription.currency.name,

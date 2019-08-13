@@ -471,5 +471,9 @@ class AccountTest < ActionView::TestCase
     assert_equal response.status, 200
   end
 
+  def test_reseller_paid_account?
+    Account.current.reseller_paid_account?
+    assert_equal response.status, 200
+  end
 
 end

@@ -95,7 +95,8 @@ class SubscriptionsController < ApplicationController
   def show
     @selected_plan = params['plan']
     @offline_subscription = scoper.offline_subscription?
-    @invoice = scoper.subscription_invoices.last unless @offline_subscription or scoper.affiliate.present?
+    @reseller_paid_account = scoper.reseller_paid_account?
+    @invoice = scoper.subscription_invoices.last unless @offline_subscription || scoper.affiliate.present? || @reseller_paid_account
   end
 
   def request_trial_extension
