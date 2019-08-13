@@ -101,7 +101,8 @@ Sidekiq.configure_client do |config|
       "ProductFeedbackWorker",
       "Freshid::ProcessEvents",
       "Community::MergeTopicsWorker",
-      'Freshid::V2::ProcessEvents'
+      'Freshid::V2::ProcessEvents',
+      'Roles::UpdateAgentsRoles'
     ]
   end
 end
@@ -194,7 +195,8 @@ Sidekiq.configure_server do |config|
       "ExportAgents",
       "CollabNotificationWorker",
       "ProductFeedbackWorker",
-      "Community::MergeTopicsWorker"
+      "Community::MergeTopicsWorker",
+      'Roles::UpdateAgentsRoles'
     ]
 
     chain.add Middleware::Sidekiq::Server::JobDetailsLogger
@@ -277,7 +279,8 @@ Sidekiq.configure_server do |config|
       "ExportAgents",
       "CollabNotificationWorker",
       "ProductFeedbackWorker",
-      "Community::MergeTopicsWorker"
+      "Community::MergeTopicsWorker",
+      'Roles::UpdateAgentsRoles'
     ]
   end
 end

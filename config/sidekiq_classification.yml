@@ -114,6 +114,7 @@
     - send_domain_changed_mail
     - primary_language_change
     - freshops_service
+    - update_agents_roles
   :maintainence:
     - select_all_tickets
     - select_all_batcher
