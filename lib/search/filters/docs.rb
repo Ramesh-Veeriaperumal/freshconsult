@@ -45,6 +45,7 @@ class Search::Filters::Docs
   def bulk_count(aggs = false)
     response = bulk_es_request('_msearch', { search_type: 'count'})
     parsed_response = JSON.parse(response)['responses']
+    Rails.logger.info "ES PARSSED Response :: aggs -> #{aggs}, Response:: #{parsed_response}"
     Rails.logger.info "ES count response:: Account -> #{Account.current.id}, Queries: #{parsed_response.length}, Took:: #{parsed_response.map { |r| r['took'] }.join(',')}"
     count_response(parsed_response, aggs)
   end
@@ -141,6 +142,7 @@ class Search::Filters::Docs
     def bulk_es_request(end_point, query_params, timeout = DEFAULT_TIMEOUT)
       full_path = request_path(end_point, query_params)
       error_handle do
+        Rails.logger.info("#Request Params => #{@params}")
         request = Typhoeus::Request.new(full_path,
                                           method: :get,
                                           body: @params,
@@ -149,6 +151,7 @@ class Search::Filters::Docs
         Rails.logger.debug("#Request => #{request.original_options}")
         response = request.run
         Rails.logger.debug("# => #{response.code} #{response.class.to_s.gsub(/^Net::HTTP/, '')} | #{response.headers} \n")
+        Rails.logger.info("#Request Response Body => #{response.response_body}")
         response.response_body
       end
     end
