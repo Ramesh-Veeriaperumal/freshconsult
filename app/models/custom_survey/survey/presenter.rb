@@ -32,12 +32,19 @@ class CustomSurvey::Survey < ActiveRecord::Base
     survey.add proc { |sur| sur.fetch_additional_questions_and_choices }, as: :additional_questions
   end
 
+  api_accessible :custom_translation_secondary do |survey|
+    survey.add ->(model, options) { model.translation(options[:lang])['title_text'] || '' }, as: :title_text
+    survey.add ->(model, options) { model.translation(options[:lang])['comments_text'] || '' }, as: :comments_text
+    survey.add ->(model, options) { model.translation(options[:lang])['thanks_text'] || '' }, as: :thanks_text
+    survey.add ->(model, options) { model.translation(options[:lang])['feedback_response_text'] || '' }, as: :feedback_response_text
+  end
+
   def fetch_default_questions_and_choices
     default_question = {}
     question = fetched_survey_questions.find(&:default)
-    default_question[:question] = question.label
-    default_question[:choices] = question.choices.map { |choice| [choice[:face_value], choice[:value]] }.to_h
-    default_question.stringify_keys
+    default_question['question'] = question.label
+    default_question['choices'] = question.choices.map { |choice| [choice[:face_value], choice[:value]] }.to_h
+    default_question
   end
 
   def fetch_additional_questions_and_choices
@@ -46,15 +53,18 @@ class CustomSurvey::Survey < ActiveRecord::Base
     return nil if questions.blank?
 
     questions.each do |question|
-      additional_questions["question_#{question.id}".to_sym] = question.label
+      additional_questions["question_#{question.id}"] = question.label
     end
-    additional_questions[:choices] = questions.first.choices.map { |choice| [choice[:face_value], choice[:value]] }.to_h
-    additional_questions.stringify_keys
+    additional_questions['choices'] = questions.first.choices.map { |choice| [choice[:face_value], choice[:value]] }.to_h
+    additional_questions
   end
 
-  # memoizing to avoid repeat db calls
   def fetched_survey_questions
     @fetched_survey_questions ||= survey_questions.preload(:custom_field_choices_asc, :custom_field_choices_desc, :survey)
+  end
+
+  def translation(lang)
+    @translation ||= (safe_send("#{lang.underscore}_translation").try(:translations) || {})
   end
 
   def custom_translation_key

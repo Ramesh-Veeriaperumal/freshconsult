@@ -11,7 +11,7 @@ module CustomTranslations::Associations
     end
 
     def translation_record(language = current_language)
-      @translation_record ||= custom_translations_feature_check(language) ? safe_send("#{language.to_key}_translation") : nil
+      @translation_record ||= custom_translations_feature_check(language) ? safe_send("#{language.to_key}_translation").with_indifferent_access : nil
     end
 
     private

@@ -5,15 +5,24 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
   MODULES = ['surveys'].freeze
 
   def stub_for_custom_translations
+    supported_languages = ['de', 'fr', 'ko']
+    all_languages = ['en', 'de', 'fr', 'ko']
+    @language = supported_languages.sample
     Account.current.add_feature(:custom_translations)
     Account.current.launch :csat_translations
     Account.current.launch :redis_picklist_id
+    Account.any_instance.stubs(:supported_languages).returns(supported_languages)
+    Account.any_instance.stubs(:language).returns('en')
+    Account.any_instance.stubs(:all_languages).returns(all_languages)
   end
 
   def unstub_for_custom_translations
     Account.current.revoke_feature(:custom_translations)
     Account.current.rollback :csat_translations
     Account.current.rollback :redis_picklist_id
+    Account.any_instance.unstub(:supported_languages)
+    Account.any_instance.unstub(:language)
+    Account.any_instance.unstub(:all_languages)
   end
 
   def create_survey_questions(survey)
@@ -22,6 +31,26 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
       sq.column_name = "cf_int0#{x + 2}"
       sq.save
     end
+  end
+
+  def generate_content(survey)
+    payload = { @language => { 'custom_translations' => { 'surveys' => {} } } }
+    default_question = { 'question' => Faker::Lorem.sentence(1) }
+    additional_question = Hash[survey.survey_questions.where(default: false).map { |x| ["question_#{x.id}", Faker::Lorem.sentence(1)] }]
+    default_question_choices = { 'choices' => Hash[survey.survey_questions.where(default: true).first.choices.map { |x| [x[:face_value], Faker::Lorem.sentence(1)] }] }
+    additional_question_choices = !additional_question.empty? ? { 'choices' => Hash[survey.survey_questions.where(default: false).first.choices.map { |x| [x[:face_value], Faker::Lorem.sentence(1)] }] } : {}
+    default_question_set = default_question.merge(default_question_choices)
+    additional_question_set = additional_question.merge(additional_question_choices)
+    survey_content = {
+      "survey_#{survey.id}" => {
+        'title_text' => Faker::Lorem.sentence(1),
+        'comments_text' => Faker::Lorem.sentence(1),
+        'thanks_text' => Faker::Lorem.sentence(1),
+        'feedback_response_text' => Faker::Lorem.sentence(1)
+      }.merge('default_question' => default_question_set).merge('additional_questions' => additional_question_set)
+    }
+    payload[@language]['custom_translations']['surveys'] = payload[@language]['custom_translations']['surveys'].merge(survey_content)
+    payload
   end
 
   def assert_survey(survey, response_hash)
@@ -91,5 +120,50 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('object_type', :missing_param, code: :missing_field)])
     survey.destroy
     unstub_for_custom_translations
+  end
+
+  def test_secondary_download_for_surveys_with_id
+    stub_for_custom_translations
+    create_survey(1, true)
+    survey = Account.current.custom_surveys.last
+    language_code = Account.current.supported_languages.sample
+    translation = generate_content(survey)
+    survey.safe_send("build_#{@language}_translation", translations: translation[@language]['custom_translations']['surveys']["survey_#{survey.id}"]).save!
+    get :download, controller_params('object_type' => 'surveys', 'object_id' => survey.id, 'language_code' => @language)
+    response_hash = YAML.safe_load(response.body)[@language]['custom_translations']['surveys']["survey_#{survey.id}"]
+    survey_translation = survey.safe_send("#{@language}_translation").try(:translations) || {}
+    assert_equal response_hash['title_text'], survey_translation['title_text']
+    assert_equal response_hash['comments_text'], survey_translation['comments_text']
+    assert_equal response_hash['thanks_text'], survey_translation['thanks_text']
+    assert_equal response_hash['feedback_response_text'], survey_translation['feedback_response_text']
+    survey.destroy
+    unstub_for_custom_translations
+  end
+
+  def test_secondary_download_with_invalid_language_code
+    stub_for_custom_translations
+    create_survey(1, true)
+    survey = Account.current.custom_surveys.last
+    language_code = 'it'
+    translation = generate_content(survey)
+    get :download, controller_params('object_type' => 'surveys', 'object_id' => survey.id, 'language_code' => language_code)
+    match_json([bad_request_error_pattern('language_code', :not_included, list: Account.current.all_languages.join(','))])
+    unstub_for_custom_translations
+  end
+
+  def test_secondary_download_with_no_translations_given
+    stub_for_custom_translations
+    create_survey(1, true)
+    survey = Account.current.custom_surveys.last
+    language_code = Account.current.supported_languages.sample
+    translation = generate_content(survey)
+    get :download, controller_params('object_type' => 'surveys', 'object_id' => survey.id, 'language_code' => @language)
+    response_hash = YAML.safe_load(response.body)[@language]['custom_translations']['surveys']["survey_#{survey.id}"]
+    survey_translation = survey.safe_send("#{@language.underscore}_translation").try(:translations) || {}
+    assert_equal response_hash['title_text'], ''
+    assert_equal response_hash['comments_text'], ''
+    assert_equal response_hash['thanks_text'], ''
+    assert_equal response_hash['feedback_response_text'], ''
+    survey.destroy
   end
 end

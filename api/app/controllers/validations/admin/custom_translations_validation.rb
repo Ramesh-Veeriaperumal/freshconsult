@@ -1,8 +1,9 @@
 class Admin::CustomTranslationsValidation < ApiValidation
-  attr_accessor :object_type, :object_id
+  attr_accessor :object_type, :object_id, :language_code
 
   validates :object_type, custom_inclusion: { in: Admin::CustomTranslationsConstants::MODULE_MODEL_MAPPINGS.keys, allow_nil: true }, on: :download
   validates :object_id, custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, allow_nil: true }
+  validates :language_code, custom_inclusion: { in: proc { |x| Account.current.all_languages }, allow_nil: true }, on: :download
   validate :validate_object_id, if: -> { errors[:object_type].blank? & object_id.present? }
 
   def validate_object_id

@@ -6,7 +6,6 @@ class Admin::CustomTranslationsController < ApiApplicationController
   before_filter :set_scope, only: [:download]
 
   def download
-    @language = Account.current.language
     translation = { @language => { 'custom_translations' => fetch_translation } }
     respond_with_yaml(translation)
   end
@@ -17,9 +16,10 @@ class Admin::CustomTranslationsController < ApiApplicationController
       data = {}
       @objects.each do |object|
         items = params['object_id'].blank? ? scoper(object) : scoper(object).where(id: params['object_id'])
+        items = items.preload("#{@language.underscore}_translation".to_sym) if download_type == :custom_translation_secondary
         data[object] = {}
         items.each do |item|
-          data[object][item.custom_translation_key] = item.as_api_response(download_type).stringify_keys
+          data[object][item.custom_translation_key] = item.as_api_response(download_type, lang: @language).stringify_keys
         end
       end
       data
@@ -31,7 +31,7 @@ class Admin::CustomTranslationsController < ApiApplicationController
     end
 
     def download_type
-      :custom_translation
+      @language == Account.current.language ? :custom_translation : :custom_translation_secondary
     end
 
     def constants_class
@@ -41,10 +41,12 @@ class Admin::CustomTranslationsController < ApiApplicationController
     def scoper(object)
       object_mapping = Admin::CustomTranslationsConstants::MODULE_MODEL_MAPPINGS[object]
       items = Account.current.safe_send(object_mapping[:model])
-      items.where(object_mapping[:conditions]) if object_mapping[:conditions].present?
+      items = items.where(object_mapping[:conditions]) if object_mapping[:conditions].present?
+      items
     end
 
     def set_scope
+      @language = params['language_code'] || Account.current.language
       @objects = params['object_type'].present? ? [params['object_type']] : Admin::CustomTranslationsConstants::MODULE_MODEL_MAPPINGS.keys
     end
 

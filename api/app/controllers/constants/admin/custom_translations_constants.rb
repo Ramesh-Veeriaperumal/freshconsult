@@ -4,6 +4,6 @@ module Admin::CustomTranslationsConstants
   }.freeze
 
   VALIDATION_CLASS = 'Admin::CustomTranslationsValidation'.freeze
-  DOWNLOAD_FIELDS = ['object_type', 'object_id'].freeze
+  DOWNLOAD_FIELDS = ['object_type', 'object_id', 'language_code'].freeze
   LOAD_OBJECT_EXCEPT = ['download'].freeze
 end
