@@ -478,7 +478,9 @@ module Ember
       create_parent_child_tickets
       child_attachment_ids << create_attachment(attachable_type: 'Helpdesk::Ticket', attachable_id: @child_ticket.id).id
       params_hash = reply_note_params_hash.merge(attachment_ids: child_attachment_ids, user_id: @agent.id)
-      post :reply, construct_params({ version: 'private', id: @parent_ticket.display_id }, params_hash)
+      stub_attachment_to_io do
+        post :reply, construct_params({ version: 'private', id: @parent_ticket.display_id }, params_hash)
+      end
       assert_response 201
       match_json(private_note_pattern(params_hash, @account.notes.last))
       match_json(private_note_pattern({}, @account.notes.last))
