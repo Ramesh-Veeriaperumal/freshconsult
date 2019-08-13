@@ -69,8 +69,27 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     additional_questions.each do |question|
       assert_equal response_hash['additional_questions']["question_#{question.id}"], question.label
     end
-    additional_questions.first.choices.each do |choice|
+    (additional_questions.first.try(:choices) || []).each do |choice|
       assert_equal response_hash['additional_questions']['choices'][choice[:face_value]], choice[:value]
+    end
+  end
+
+  def assert_response_secondary_download(survey_hash, response_hash)
+    assert_equal response_hash['title_text'], survey_hash['title_text'] || ''
+    assert_equal response_hash['comments_text'], survey_hash['comments_text'] || ''
+    assert_equal response_hash['thanks_text'], survey_hash['thanks_text'] || ''
+    assert_equal response_hash['feedback_response_text'], survey_hash['feedback_response_text'] || ''
+    assert_equal response_hash['default_question']['question'], survey_hash['default_question']['question'] || ''
+    # Default question and choices
+    response_hash['default_question']['choices'].each_key do |key|
+      assert_equal response_hash['default_question']['choices'][key], survey_hash['default_question']['choices'][key] || ''
+    end
+    # Additional questions and choices
+    ((response_hash['additional_questions'] || {}).keys - ['choices']).each do |question|
+      assert_equal response_hash['additional_questions'][question], survey_hash['additional_questions'][question] || ''
+    end
+    ((response_hash['additional_question'] || {})['choices'] || {}).each_key do |key|
+      assert_equal response_hash['additional_question']['choices'][key], survey_hash['additional_question']['choices'][key] || ''
     end
   end
 
@@ -84,6 +103,25 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     response_hash = YAML.safe_load(response.body)[language]['custom_translations']['surveys']["survey_#{survey.id}"]
     assert_survey(survey, response_hash)
     survey.destroy
+    unstub_for_custom_translations
+  end
+
+  def test_primary_download_for_all_surveys
+    stub_for_custom_translations
+    surveys = []
+    3.times do
+      create_survey(1, true)
+      surveys << s = Account.current.custom_surveys.last
+      create_survey_questions(s)
+    end
+    language = Account.current.language
+    get :download, controller_params('object_type' => 'surveys')
+    response_hash = YAML.safe_load(response.body)[language]['custom_translations']['surveys']
+    assert_equal response_hash.keys.count, Account.current.custom_surveys.count
+    Account.current.custom_surveys.each do |survey|
+      assert_survey(survey, response_hash["survey_#{survey.id}"])
+      survey.destroy unless survey.default?
+    end
     unstub_for_custom_translations
   end
 
@@ -126,17 +164,14 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     stub_for_custom_translations
     create_survey(1, true)
     survey = Account.current.custom_surveys.last
+    create_survey_questions(survey)
     language_code = Account.current.supported_languages.sample
     translation = generate_content(survey)
     survey.safe_send("build_#{@language}_translation", translations: translation[@language]['custom_translations']['surveys']["survey_#{survey.id}"]).save!
     get :download, controller_params('object_type' => 'surveys', 'object_id' => survey.id, 'language_code' => @language)
     response_hash = YAML.safe_load(response.body)[@language]['custom_translations']['surveys']["survey_#{survey.id}"]
     survey_translation = survey.safe_send("#{@language}_translation").try(:translations) || {}
-    assert_equal response_hash['title_text'], survey_translation['title_text']
-    assert_equal response_hash['comments_text'], survey_translation['comments_text']
-    assert_equal response_hash['thanks_text'], survey_translation['thanks_text']
-    assert_equal response_hash['feedback_response_text'], survey_translation['feedback_response_text']
-    survey.destroy
+    assert_response_secondary_download(survey_translation, response_hash)
     unstub_for_custom_translations
   end
 
@@ -165,5 +200,26 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     assert_equal response_hash['thanks_text'], ''
     assert_equal response_hash['feedback_response_text'], ''
     survey.destroy
+    unstub_for_custom_translations
+  end
+
+  def test_secodary_download_for_all_surveys
+    stub_for_custom_translations
+    surveys = []
+    3.times do
+      create_survey(1, true)
+      surveys << s = Account.current.custom_surveys.last
+      create_survey_questions(s)
+      s.safe_send("build_#{@language}_translation", translations: generate_content(s)[@language]['custom_translations']['surveys']["survey_#{s.id}"]).save!
+    end
+    get :download, controller_params('object_type' => 'surveys', 'language_code' => @language)
+    response_hash = YAML.safe_load(response.body)[@language]['custom_translations']['surveys']
+    assert_equal response_hash.keys.count, Account.current.custom_surveys.count
+    surveys.each do |survey|
+      survey_translation = survey.safe_send("#{@language.underscore}_translation").try(:translations) || {}
+      assert_response_secondary_download(survey_translation, response_hash["survey_#{survey.id}"])
+      survey.destroy
+    end
+    unstub_for_custom_translations
   end
 end
