@@ -39,6 +39,25 @@ en:
     user_notifications:
       notify_dkim_activation: DKIM signatures are now activated for emails sent from %{email_domain}.
       notify_dkim_failure: DKIM verification failed for domain %{email_domain}.
+      activate_account: "Activate your Freshdesk account"
+      activation_message: "Thank you for signing up for Freshdesk. We look forward to seeing you support your customers. Click on the button below to activate your account and get started."
+      activate_button: "Activate Account"
+      freshdesk_url: "Your Freshdesk URL:"
+      get_in_touch: "Got Questions? Get in touch with us"
+      support_email: "Email: %{support_email}"
+      support_call: "Call: %{support_number}"
+      ssl_certificate_approved: "Your request for a custom SSL certificate has been approved."
+      ssl_steps_introduction: "We have already turned on Custom SSL in your portal, under Admin->Security. In order for it to work, please follow the steps below to update your CNAME records."
+      ssl_step_1: "1. Login to DNS Control Panel for the custom domain - %{portal_url}. "
+      ssl_step_2: "2. Create a CNAME record under %{portal_url} and point it to %{elb_name}."
+      ssl_step_3: "3. Wait for a few hours for the changes to take effect."
+      ssl_once_ready: "Once ready, your support portal at %{portal_url} will be secure thanks to the new SSL certificate."
+      facebook_access_token_expired: "The access token for your %{page_name} page has expired. This could be because"
+      facebook_info_1: "One of the admin's changed their facebook password."
+      facebook_info_2: "One of the admin's has revoked some app permissions."
+      facebook_info_3: "It has been 60 days since the last time you authorized the app."
+      facebook_reauth_link_html: "Please click on this <a href='%{facebook_url}'>link</a> to reauthorize your facebook page and continue receiving facebook posts as tickets."
+      facebook_reauth_link_plain: "Please click on this link %{facebook_url} to reauthorize your facebook page and continue receiving facebook posts as tickets."
     scheduled_task_notifications:
       no_data: "Seems like there is no data to display for scheduled report that you created for "
       blocked_users:
@@ -96,6 +115,9 @@ en:
     notify_new_watcher: 'Added as Watcher %{display_id} %{subject}'
     notify_on_reply: 'New Activity %{display_id} %{subject}'
     activation_instructions: "%{portal_name} email activation instructions"
+    admin_activation: "Activate your %{app_name} account"
+    custom_ssl_activation: "Custom SSL Activated"
+    notify_facebook_reauth: "Need Attention, Facebook app should be reauthorized"
   email_config_notifier:
     activation_instructions:
       body: 'This email has been added as your support email address in %{app_name}. Click the URL below to activate your support email

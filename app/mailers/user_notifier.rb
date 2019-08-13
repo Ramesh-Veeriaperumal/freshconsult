@@ -51,10 +51,10 @@ class UserNotifier < ActionMailer::Base
     address.display_name = AppConfig['app_name'].dup
 
     headers = {
-      :from           => address.format,
-      :to             => admin.email,
-      :subject        => "Activate your #{AppConfig['app_name']} account",
-      :sent_on        => Time.now
+      from: address.format,
+      to: admin.email,
+      subject: I18n.t('mailer_notifier_subject.admin_activation', app_name: AppConfig['app_name']),
+      sent_on: Time.now
     }
    headers.merge!(make_header(nil, nil, admin.account.id, "Admin Activation"))
    @admin          = admin
@@ -84,10 +84,10 @@ class UserNotifier < ActionMailer::Base
 
   def custom_ssl_activation(account, portal_url, elb_name)
     headers = {
-      :from       => AppConfig['from_email'],
-      :to         => account.admin_email,
-      :subject    => "Custom SSL Activated",
-      :sent_on    => Time.now
+      from: AppConfig['from_email'],
+      to: account.admin_email,
+      subject: I18n.t('mailer_notifier_subject.custom_ssl_activation'),
+      sent_on: Time.now
     }
 
     headers.merge!(make_header(nil, nil, account.id, "Custom SSL Activation"))
@@ -251,10 +251,10 @@ class UserNotifier < ActionMailer::Base
   def notify_facebook_reauth(facebook_page)
     account          = Account.current
     headers = {
-      :subject       => "Need Attention, Facebook app should be reauthorized",
-      :to            => account.admin_email,
-      :from          => AppConfig['from_email'],
-      :sent_on       => Time.now
+      subject: I18n.t('mailer_notifier_subject.notify_facebook_reauth'),
+      to: account.admin_email,
+      from: AppConfig['from_email'],
+      sent_on: Time.now
     }
     headers.merge!(make_header(nil, nil, account.id, "Notify Facebook Reauth"))
     @facebook_url    = social_facebook_index_url(:host => account.host)
@@ -265,7 +265,7 @@ class UserNotifier < ActionMailer::Base
       part.html { render "facebook.text.html" }
     end.deliver
   end
-  
+
   def notify_webhook_failure(account, to_email, triggering_rule, url)
     Time.zone = account.time_zone
     headers = {

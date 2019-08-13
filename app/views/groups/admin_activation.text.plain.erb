@@ -1,11 +1,9 @@
-Hi <%= @admin.name %>,
+<%= render layout: 'shared/email_header_footer.plain.erb', locals: { user_name: @admin.name, sent_by: :freshdesk_support } do %>
 
-Welcome to Freshdesk!
+<%= t('mailer_notifier.welcome_to_freshdesk') %>
 	
-Click here to activate your Freshdesk account <%= link_to "#{@activation_url}", "#{@activation_url}" %>
+<%= t('mailer_notifier.click_to_activate') %> <%= link_to "#{@activation_url}", "#{@activation_url}" %>
 	
-Regards
-	
-Freshdesk Support&nbsp;
+<% end %>
 	
 
