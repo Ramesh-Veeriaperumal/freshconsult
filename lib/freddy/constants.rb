@@ -9,5 +9,9 @@ module Freddy
     NO_CONTENT_TYPE_REQUIRED = [:execute].freeze
 
     UPLOAD_FILE = 'uploadFile'.freeze
+
+    SYSTEM42_NAMESPACE = '/api/v1/'.freeze
+
+    BOTFLOW_URL = 'botflow/'.freeze
   end
 end

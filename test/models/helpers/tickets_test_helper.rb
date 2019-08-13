@@ -3,6 +3,7 @@
 module TicketsTestHelper
   include CoreTicketFieldsTestHelper
   include TicketsNotesHelper
+  include BusinessHoursCalculation
 
   MAX_DESC_LIMIT = 10000
 
@@ -82,6 +83,31 @@ module TicketsTestHelper
     test_ticket.group_id = group ? group.id : nil
     test_ticket.save_ticket
     test_ticket
+  end
+
+  def cp_ticket_event_info_pattern(ticket)
+    # TODO: Testing lifecycle_hash.
+    lifecycle_hash = {}
+    activity_type_hash = ticket.activity_type && ticket.activity_type[:type] == Helpdesk::Ticket::SPLIT_TICKET_ACTIVITY ? split_ticket_hash(ticket.activity_type) : {}
+    {
+      action_in_bhrs: action_in_bhrs?(ticket),
+      pod: ChannelFrameworkConfig['pod']
+    }.merge(lifecycle_hash).merge(activity_type_hash)
+  end
+
+  def split_ticket_hash(activity_type)
+    {
+      activity_type: {
+        type: Helpdesk::Ticket::SPLIT_TICKET_ACTIVITY,
+        source_ticket_id: activity_type[:source_ticket_id]
+      }
+    }
+  end
+
+  def action_in_bhrs?(ticket)
+    BusinessCalendar.execute(ticket) do
+      action_occured_in_bhrs?(Time.zone.now, ticket.group)
+    end
   end
 
   def cp_ticket_pattern(expected_output = {}, ticket)

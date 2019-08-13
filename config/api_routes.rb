@@ -312,6 +312,8 @@ Helpkit::Application.routes.draw do
     
     scope '/email' do
       resources :mailboxes, controller: 'email/mailboxes', only: [:create, :show, :destroy]
+      get '/settings', to: 'email/settings#show'
+      put '/settings', to: 'email/settings#update'
     end
 
     resources :email_notifications, controller: 'admin/api_email_notifications', only: [:show, :update]
@@ -430,6 +432,7 @@ Helpkit::Application.routes.draw do
 
     resources :autofaq, controller: 'ember/freddy' do
       collection do
+        match '/bots/bulk_create' => 'ember/freddy#bulk_create_bot', via: :post
         get '*all', to: 'ember/freddy#execute'
         put '*all', to: 'ember/freddy#execute'
         post '*all', to: 'ember/freddy#execute'
@@ -439,10 +442,12 @@ Helpkit::Application.routes.draw do
 
     resources :botflow, controller: 'ember/flows' do
       collection do
-        get '*all', to: 'ember/flows#execute'
-        put '*all', to: 'ember/flows#execute'
-        post '*all', to: 'ember/flows#execute'
-        delete '*all', to: 'ember/flows#execute'
+        match '/actions' => 'ember/flows#system42_proxy'
+        match '/resources/*others' => 'ember/flows#system42_proxy'
+        get '*all', to: 'ember/flows#freshbot_proxy'
+        put '*all', to: 'ember/flows#freshbot_proxy'
+        post '*all', to: 'ember/flows#freshbot_proxy'
+        delete '*all', to: 'ember/flows#freshbot_proxy'
       end
     end
 

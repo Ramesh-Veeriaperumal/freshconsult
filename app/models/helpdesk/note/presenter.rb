@@ -1,6 +1,8 @@
 class Helpdesk::Note < ActiveRecord::Base
   include RepresentationHelper
   include TicketsNotesHelper
+  include Facebook::TicketActions::Util
+
   DATETIME_FIELDS = ["last_modified_timestamp", "created_at", "updated_at"]
   BODY_HASH_FIELDS = ["body", "body_html", "full_text", "full_text_html"]
   EMAIL_FIELDS = ["from_email", "to_emails", "cc_emails", "bcc_emails"]
@@ -47,6 +49,7 @@ class Helpdesk::Note < ActiveRecord::Base
     # end
     # t.add proc { |x| x.freshfone_call.id }, as: :freshfone_call_id, :if => proc { |x| x.freshfone_call.present?}
     # t.add proc { |x| x.freshcaller_call.id }, as: :freshcaller_call_id, :if => proc { |x| x.freshcaller_call.present?}
+    t.add :kind
   end
 
   def category_hash
@@ -170,5 +173,9 @@ class Helpdesk::Note < ActiveRecord::Base
   def content_changed?(field)
     @note_central_changes ||= [*note_old_body.previous_changes.keys, *(@model_changes || {}).keys.map(&:to_s)]
     @note_central_changes.include?(field)
+  end
+
+  def event_info(event)
+    { pod: ChannelFrameworkConfig['pod'] }
   end
 end

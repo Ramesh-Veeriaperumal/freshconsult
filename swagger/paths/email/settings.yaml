@@ -1,0 +1,27 @@
+put:
+  tags: ['email settings']
+  summary: Update email settings
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/email_settings'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/email_settings'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+
+get:
+  tags: ['email settings']
+  summary: Show email settings
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/email_settings'

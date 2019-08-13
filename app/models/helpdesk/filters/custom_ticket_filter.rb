@@ -666,7 +666,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       order_parts = order_columns.split('.')
       
       if sort_by_response? 
-        "if(helpdesk_ticket_states.#{order} IS NULL, helpdesk_tickets.created_at, helpdesk_ticket_states.#{order}) #{order_type}"
+        "helpdesk_ticket_states.#{order} #{order_type}, helpdesk_tickets.created_at asc"
       elsif sort_by_flexi_field?(order_columns)
         def_entry = Account.current.flexifields_with_ticket_fields_from_cache.find do |x|
           x.flexifield_alias == TicketFilterConstants::SORTABLE_CUSTOM_FIELDS[order_columns] + "_#{Account.current.id}"

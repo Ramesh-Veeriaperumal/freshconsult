@@ -50,6 +50,14 @@ class NoteTest < ActiveSupport::TestCase
     assoc_payload.must_match_json_expression(central_assoc_note_pattern(note))
   end
 
+  def test_central_publish_payload_event_info
+    note = create_note(note_params_hash)
+    payload = note.central_publish_payload.to_json
+    event_info = note.event_info(:create)
+    payload.must_match_json_expression(central_publish_note_pattern(note))
+    event_info.must_match_json_expression(event_info(:create))
+  end
+
   # def test_central_publish_payload_for_notes_having_freshcaller
   #   create_note_with_freshcaller
   #   note = create_note_with_freshcaller(note_params_hash)

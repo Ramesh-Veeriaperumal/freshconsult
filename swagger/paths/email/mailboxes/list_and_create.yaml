@@ -11,6 +11,7 @@ get:
     - name: reply_email
       in: query
       type: string
+      description: partial string can be given with * symbol at both ends to support contains search.
     - name: to_email
       in: query
       type: string

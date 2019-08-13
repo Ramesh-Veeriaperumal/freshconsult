@@ -24,7 +24,7 @@ module Helpdesk::AccessibleElements
 
   private
 
-  def accessible_records ops = {}, size = 400, sort = "raw_name"
+  def accessible_records ops = {}, size = 700, sort = "raw_name"
     sort = nil if ops[:id_data]
     db_limit = size
     enclose = {:load => ops[:model_hash][:name].constantize::INCLUDE_ASSOCIATIONS_BY_CLASS, :size => size}

@@ -1,0 +1,8 @@
+type: object
+properties:
+  emails:
+    type: array
+    items:
+      type: string
+required:
+  - emails

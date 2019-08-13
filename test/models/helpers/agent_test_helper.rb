@@ -35,6 +35,13 @@ module AgentTestHelper
     }.merge(user_fields_pattern(agent.user))
   end
 
+  def event_info_pattern()
+    {
+      ip_address: Thread.current[:current_ip],
+      pod: ChannelFrameworkConfig['pod']
+    }
+  end
+
   def ticket_permission_hash(agent)
     {
       id: agent.ticket_permission,
