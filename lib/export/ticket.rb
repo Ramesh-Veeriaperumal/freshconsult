@@ -275,10 +275,8 @@ class Export::Ticket < Struct.new(:export_params)
   end
 
   def send_no_ticket_email
-    DataExportMailer.no_tickets({
-                                          :user => User.current,
-                                          :domain => export_params[:portal_url]
-                                        })
+    email_params = { user: User.current, domain: export_params[:portal_url] }
+    DataExportMailer.send_email(:no_tickets, email_params[:user], email_params)
     @data_export.destroy
   end
 

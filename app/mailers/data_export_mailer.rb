@@ -7,8 +7,7 @@ class DataExportMailer < ActionMailer::Base
     headers = {
       :to    => options[:email],
       :from  => AppConfig['from_email'],
-      :bcc   => AppConfig['reports_email'],
-      :subject => "Data Export for #{options[:host]}",
+      :subject => I18n.t("mailer_notifier_subject.account_data_export", account: options[:host]),
       :sent_on => Time.now,
       "Reply-to" => ""
     }
@@ -82,10 +81,9 @@ class DataExportMailer < ActionMailer::Base
 
   def no_tickets(options={})
     headers = {
-      :subject  => "No tickets in range - #{options[:domain]}",
+      :subject  => I18n.t('mailer_notifier_subject.no_tickets_to_export', domain: options[:domain]),
       :to       => options[:user][:email],
       :from     => AppConfig['from_email'],
-      :bcc      => AppConfig['reports_email'],
       :sent_on  => Time.now,
       "Reply-to" => ""
     }
@@ -157,16 +155,16 @@ class DataExportMailer < ActionMailer::Base
 
   def agent_export options={}
     headers = {
-      :subject => "Agents List Export",
+      :subject => I18n.t('mailer_notifier_subject.agent_export'),
       :to      => options[:user].email,
       :from    => AppConfig['from_email'],
-      :bcc     => AppConfig['reports_email'],
       :sent_on   => Time.now
     }
 
     headers.merge!(make_header(nil, nil, options[:user].account_id, "Agent Export"))
     @user = options[:user]
     @url = options[:url]
+    @type = 'agents'
     mail(headers) do |part|
       part.html { render "agent_export", :formats => [:html] }
     end.deliver

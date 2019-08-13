@@ -98,7 +98,7 @@ module Export
       end
 
       def mail_to_user
-        DataExportMailer.deliver_agent_export({
+        DataExportMailer.send_email(:deliver_agent_export, User.current, {
           :user   => User.current,
           :domain => @portal_url,
           :url    => hash_url(@portal_url)

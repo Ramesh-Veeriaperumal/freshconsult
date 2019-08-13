@@ -1,12 +1,10 @@
-Hi <%=@user%>,
+<%= render layout: 'shared/email_header_footer.html.erb', locals: { user_name: @user.name, sent_by: :freshdesk_customer_support } do %>
 <br/>
 <br/>
-The agents export you had requested is complete. You can download the file from <a href=<%= @url %>>here</a>. If the link does not work, copy and paste the URL below in your browser's address bar:
+<%= t("mailer_notifier.export_success_download", export_type: @type, url: @url).html_safe %>
 <br/>
 <br/>
 <%=  @url %>
 <br/>
 <br/>
-Regards,
-<br/>
-Freshdesk Customer Support
+<% end %>

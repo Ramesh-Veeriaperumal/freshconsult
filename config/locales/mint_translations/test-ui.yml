@@ -89,7 +89,6 @@ test-ui:
     topic_merged: "$[Topic Merged] to %{title}$"
     account_data_export: "$Data Export for %{account}$"
     no_tickets_to_export: "$No tickets in range - %{domain}$"
-    agent_export: $Agents List Export$
     audit_log_export: $Audit Log Export$
     spam_watcher: "$Freshdesk :: Spam watcher$"
     account_cancelled: "$%{account_domain} has been cancelled$"
