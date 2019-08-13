@@ -1,10 +1,10 @@
 module Freddy
   class TicketPropertiesSuggesterWorker < BaseWorker
     sidekiq_options queue: :ticket_properties_suggester, retry: 5
-    include TicketPropertiesSuggester::Util   
+    include TicketPropertiesSuggester::Util
     PRODUCT = 'FRESHDESK'.freeze
 
-    def perform(args)         
+    def perform(args)
       args.symbolize_keys!
       account = Account.current
       @ticket = account.tickets.find_by_id(args[:ticket_id])
@@ -14,7 +14,7 @@ module Freddy
       api_options[:body] = { product_name: PRODUCT,
                              account_id: account.id.to_s,
                              ticket_id: @ticket.id.to_s }
-      api_options[:timeout] = FreddySkillsConfig[:ticket_properties_suggester][:timeout]       
+      api_options[:timeout] = FreddySkillsConfig[:ticket_properties_suggester][:timeout]
       method_options = args.slice(:dispatcher_set_priority, :model_changes)
       safe_send(args[:action], url, api_options, method_options)
     rescue StandardError => e
@@ -25,11 +25,11 @@ module Freddy
 
     private
 
-      def predict(url, api_options, method_options)                   
+      def predict(url, api_options, method_options)
         api_options[:body] = api_options[:body].merge!(subject: @ticket.subject, description: @ticket.description).to_json
         parsed_response = {}
         time_taken = Benchmark.realtime { parsed_response = execute_api_call(url, api_options) }
-        Rails.logger.info "Time Taken for prediction A - #{Account.current.id} T - #{@ticket.id} time - #{time_taken}"        
+        Rails.logger.info "Time Taken for prediction A - #{Account.current.id} T - #{@ticket.id} time - #{time_taken}"
         if parsed_response.present? && (parsed_response.is_a? Hash)
           suggested_fields = construct_suggested_fields(parsed_response, method_options)
           ticket_properties_suggester_hash = construct_ticket_properties_suggester_hash(suggested_fields)
@@ -37,12 +37,12 @@ module Freddy
         end
       end
 
-      def feedback(url, api_options, method_options = {})            
+      def feedback(url, api_options, method_options = {})
         updated_values = {}
         predicted_values = {}
         suggested_fields = @ticket.schema_less_ticket.ticket_properties_suggester_hash[:suggested_fields]
-        method_options[:model_changes].each do |ml_field, value|          
-          product_field = ML_FIELDS_TO_PRODUCT_FIELDS_MAP[ml_field.to_sym].to_sym
+        method_options[:model_changes].each do |ml_field, value|
+          product_field = ML_FIELDS_TO_PRODUCT_FIELDS_MAP[ml_field.to_sym].try(:to_sym)
           case ml_field
           when 'group_id'
             predicted_values[ml_field] = suggested_fields[product_field][:response].to_s
@@ -80,9 +80,9 @@ module Freddy
       def construct_ticket_properties_suggester_hash(suggested_fields)
         ticket_properties_suggester_hash = {}
         ticket_properties_suggester_hash[:suggested_fields] = suggested_fields
-        ticket_properties_suggester_hash[:expiry_time] = Time.now.to_i + FreddySkillsConfig[:ticket_properties_suggester][:expiry_in_days].days.to_i       
+        ticket_properties_suggester_hash[:expiry_time] = Time.now.to_i + FreddySkillsConfig[:ticket_properties_suggester][:expiry_in_days].days.to_i
         ticket_properties_suggester_hash = ticket_properties_suggester_hash.deep_symbolize_keys
-      end     
+      end
 
       def entity_exists?(product_field, value)
         case product_field
