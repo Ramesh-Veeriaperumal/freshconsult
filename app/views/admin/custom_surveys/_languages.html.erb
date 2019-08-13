@@ -2,7 +2,7 @@
 <div class="multilingual-container<%if !@survey%> disable-container<%end%>">
 	<div class='translation-header'>
 		<div class="multilingual-icon"><img src='/images/survey/multilingual-icon.svg'></div>
-		<div class='text-content'><%= t("admin.custom_translation.surveys.translation") %></div>
+		<div class='text-content'><%= t("admin.custom_translation.translation") %></div>
 	</div>
 	<div class='secondary-portal-header'>
 		<div class="visible-icon"><img src='/images/survey/visible.svg'></div>
@@ -11,10 +11,12 @@
 	</div>
 	<div class="language-list">
 		<div class="portal-language-list">
-			<div class="language-item-container <%if !@survey %> disable-language-item <%end%>"> <%= @account.language_object.name %> (Primary)
+			<div class="language-item-container <%if !@survey %> disable-language-item <%end%>"> <%= @account.language_object.name %> (<%= t("admin.custom_translation.primary") %>)
 				<%if @survey%>
 					<div class="action-items-container">
-						<div class="action-items download-survey"><a href="<%= translation_download_url('surveys', @survey.id) %>"><img src='/images/survey/download.svg'></a></div>
+						<div class="action-items edit-survey" name="<%=@account.language_object.name%>" code="<%=@account.language_object.code%>">
+							<img src='/images/survey/download.svg'></a>
+						</div>
 						<div class="action-items preview-survey"><a href="<%=@account.language_object.code%>/preview" target="_blank"><img src='/images/survey/preview.svg'></a></div>
 					</div>
 				<% end %>
@@ -24,7 +26,9 @@
 				<div class="language-item-container <%if !@survey %> disable-language-item <%end%>"> <%= language_item['name'] %>
 					<%if @survey%>
 						<div class="action-items-container">
-							<div class="action-items download-survey"><img src='/images/survey/edit.svg'></div>
+							<div class="action-items edit-survey" secondary="true" name="<%=language_item['name']%>" code="<%=language_item['code']%>">
+								<img src='/images/survey/edit.svg'>
+							</div>
 							<div class="action-items preview-survey <%= status %>"><a href="<%=language_item['code']%>/preview" target="_blank"><img src='/images/survey/preview.svg'></a></div>
 						</div>
 						<div class="survey-status-label survey-<%= status %>"><%= t("admin.custom_translation.status_#{status}") %></div>
@@ -47,7 +51,9 @@
 				<div class="language-item-container <%if !@survey %> disable-language-item <%end%> "> <%= language_item['name'] %>
 					<%if @survey%>
 						<div class="action-items-container">
-							<div class="action-items download-survey"><img src='/images/survey/edit.svg'></div>
+							<div class="action-items edit-survey" secondary="true" name="<%=language_item['name']%>" code="<%=language_item['code']%>">
+								<img src='/images/survey/edit.svg'>
+							</div>
 							<div class="action-items preview-survey <%= status %>"><a href="<%= language_item['code'] %>/preview" target="_blank"><img src='/images/survey/preview.svg'></a></div>
 						</div>
 						<div class="survey-status-label survey-<%= status %>"><%= t("admin.custom_translation.status_#{status}") %></div>
@@ -77,5 +83,22 @@
 		jQuery(".untranslated").on('click', function(event){
 			event.preventDefault();
 		});
+		jQuery(".edit-survey").on('click',function(event){
+			var isIe = document.documentMode || /Edge/.test(navigator.userAgent);
+			if(!isIe) {
+				event.preventDefault();
+			}
+			var languageObject = {
+				label: this.getAttribute('name'),
+				value: this.getAttribute('code')
+			}
+			var secondary= this.getAttribute('secondary')
+			var download_parameters = {
+				object_type: 'surveys',
+				language_code: this.getAttribute('code'),
+				<% if @survey.present? %> object_id: <%= @survey.id %>  <% end %>
+			}
+			window.App.Channel.port1.postMessage({action: "load-modal", path: "module-admin/manage-language/language-form", languageObject: languageObject, downloadParameters: download_parameters, secondary: secondary});
+		})
 	})
   <%end%>
