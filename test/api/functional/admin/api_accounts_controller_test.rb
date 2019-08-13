@@ -211,6 +211,20 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
     assert_equal JSON.parse(response.body)['unresolved_count'], 0
   end
 
+  def test_unresolved_tickets_count_with_random_email
+    fn = Faker::Name.first_name
+    ln = Faker::Name.last_name
+    User.any_instance.stubs(:email).returns("#{fn}+1+.#{ln}@freshdesk.com")
+    contacts_url = "#{PRODUCT_FEEDBACK_CONFIG['feedback_account']}/#{PRODUCT_FEEDBACK_CONFIG['contacts_path']}?email=#{fn}+1+.#{ln}@freshdesk.com"
+    stub_request(:get, contacts_url).with(
+                 headers: {  'Accept' => '*/*; q=0.5, application/xml',
+                             'Accept-Encoding' => 'gzip, deflate',
+                             'User-Agent' => 'Ruby' }
+               ).to_raise(StandardError)
+    get :support_tickets, controller_params(version: 'private')
+    assert_equal JSON.parse(response.body)['unresolved_count'], 0 
+  end
+
   private
   
     def fetch_unresolved_ticket_count
