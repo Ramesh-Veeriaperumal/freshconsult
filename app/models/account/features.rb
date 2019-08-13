@@ -26,7 +26,7 @@ class Account < ActiveRecord::Base
     :contact_field_central_publish, :company_field_central_publish, :simple_outreach, :disable_simple_outreach,
     :disable_mint_analytics, :freshid_org_v2, :hide_agent_login,
     :kbase_mint, :text_custom_fields_in_etl, :email_spoof_check,
-    :disable_email_spoof_check, :onboarding_i18n, :webhook_blacklist_ip, :recalculate_daypass, :sandbox_single_branch,
+    :disable_email_spoof_check, :onboarding_i18n, :webhook_blacklist_ip, :recalculate_daypass,
     :fb_page_api_improvement, :attachment_redirect_expiry, :solutions_agent_portal, :solutions_agent_metrics, :fuzzy_search,
     :delete_trash_daily, :automation_revamp, :prevent_wc_ticket_create, 
     :allow_wildcard_ticket_create, :requester_privilege, :sso_unique_session,
