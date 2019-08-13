@@ -5,7 +5,7 @@ class Helpdesk::ScenarioAutomationsController < ApplicationController
   helper Admin::VaRulesHelper
 
   before_filter { |c| c.requires_bitmap_feature :scenario_automation }
-  before_filter :escape_html_entities_in_json
+  around_filter :escape_html_entities_in_json
   before_filter :load_config, :only => [:new, :edit, :clone]
   before_filter :set_type,    :only => :new
   before_filter :validate_email_template, :only => [:create, :update]
