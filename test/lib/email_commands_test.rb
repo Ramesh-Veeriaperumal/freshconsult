@@ -11,6 +11,10 @@ class EmailCommandsTest < ActionView::TestCase
     Helpdesk::Ticket.first
   end
 
+  def fetch_dummy_agent(ticket)
+    ticket.account.agents.first
+  end
+
   def test_valid_ticket_source
     computed_source = source(@dummy_ticket, 'email', nil, nil)
     assert_equal @dummy_ticket.source, computed_source
@@ -70,9 +74,13 @@ class EmailCommandsTest < ActionView::TestCase
   end
 
   def test_valid_ticket_agent
-    dummy_user = @dummy_ticket.responder
-    computed_agent = agent(@dummy_ticket, 'me', dummy_user, nil)
-    assert_equal @dummy_ticket.responder, computed_agent
+    dummy_user = fetch_dummy_agent(@dummy_ticket).user
+    agent(@dummy_ticket, 'me', dummy_user, nil)
+    assert_equal @dummy_ticket.responder, dummy_user
+    agent(@dummy_ticket, dummy_user.email, nil, nil)
+    assert_equal @dummy_ticket.responder, dummy_user
+    agent(@dummy_ticket, 'none', nil, nil)
+    assert_equal @dummy_ticket.responder, nil
   end
 
   def test_invalid_ticket_agent
