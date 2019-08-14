@@ -114,7 +114,7 @@ class DataExportMailerTest < ActionMailer::TestCase
         }
     mail_message = DataExportMailer.send_email(:deliver_agent_export, recipient, email_params)
     assert_equal recipient.email, mail_message.to.first
-    assert_equal 'Agents list export', mail_message.subject
+    assert_equal 'Agents List Export', mail_message.subject
     email_body = mail_message.body.present? ? mail_message.body.decoded : nil
     if email_body.present?
       test_part = 'You can download the file from'

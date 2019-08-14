@@ -665,7 +665,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"email_preview"
     resource :"admin/freshchat", :only => [:index, :create, :update, :toggle, :signup]
     resource :"admin/freshmarketer", only: %i[index link unlink enable_integration disable_integration enable_session_replay domains]
-    resource :"admin/custom_translations/upload", :only => [:upload]
+    resource :"admin/custom_translations/upload", only: [:upload]
+    resource :"admin/custom_translation", only: [:upload]
   end
 
   manage_account do

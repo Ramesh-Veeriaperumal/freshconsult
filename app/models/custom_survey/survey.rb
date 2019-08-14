@@ -20,7 +20,6 @@ class CustomSurvey::Survey < ActiveRecord::Base
   publishable on: [:create, :update]
   xss_sanitize :only => [:link_text, :happy_text, :neutral_text , :unhappy_text , :title_text, :thanks_text , :feedback_response_text, :comments_text ], 
                :plain_sanitizer => [:link_text, :happy_text, :neutral_text , :unhappy_text ,:title_text, :thanks_text , :feedback_response_text, :comments_text ]
-
   def activate
     ActiveRecord::Base.transaction do
       Account.current.custom_surveys.deactivate_active_surveys  

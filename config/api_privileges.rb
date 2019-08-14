@@ -163,6 +163,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/trial_subscription", only: [:usage_metrics]
     resource :"admin/automation", only: [:index, :create, :show, :update, :destroy]
     resource :"admin/custom_translations/upload", only: [:upload]
+    resource :"admin/custom_translation", only: [:upload]
     resource :"admin/custom_translations/download", only: [:primary, :secondary]
     resource :"admin/custom_translation", only: [:download]
     resource :"settings/helpdesk", only: [:update]

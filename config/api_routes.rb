@@ -31,7 +31,7 @@ Helpkit::Application.routes.draw do
           post :upload, to: 'custom_translations/upload#upload'
         end
       end
-
+      put '/custom_translations', to: 'custom_translations#upload'
       get '/custom_translations', to: 'custom_translations#download'
     end
 
