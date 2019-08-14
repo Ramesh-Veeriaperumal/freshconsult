@@ -283,7 +283,7 @@ class Account < ActiveRecord::Base
       euc_migrated_twitter: false, new_onboarding: false, new_ticket_recieved_metric: false,
       es_msearch: true, canned_forms: false, attachment_virus_detection: false,
       undo_send: false, timeline: false, twitter_microservice: true, twitter_handle_publisher: true,
-      old_link_back_url_validation: false, shopify_actions: true, stop_contacts_count_query: false,
+      old_link_back_url_validation: false, stop_contacts_count_query: false,
       csat_email_scan_compatibility: false, sso_login_expiry_limitation: false,
       email_deprecated_style_parsing: false, bot_email_central_publish: false,
       saml_ecrypted_assertion: false, quoted_text_parsing_feature: false,

@@ -13,7 +13,7 @@ class Account < ActiveRecord::Base
     :incoming_attachment_limit_25, :fetch_ticket_from_ref_first,
     :allow_huge_ccs, :euc_migrated_twitter, :new_ticket_recieved_metric, :mint_portal_applicable,
     :twitter_microservice, :twitter_handle_publisher, :count_service_es_writes,
-    :count_service_es_reads, :quoted_text_parsing_feature, :shopify_actions,
+    :count_service_es_reads, :quoted_text_parsing_feature,
     :count_service_es_writes, :old_link_back_url_validation, :field_agent_availability,
     :installed_app_publish, :denormalized_select_for_update, :disable_banners,
     :skip_invoice_due_warning, :company_central_publish, :product_central_publish,

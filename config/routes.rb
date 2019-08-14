@@ -977,6 +977,7 @@ Helpkit::Application.routes.draw do
         get :edit
         post :receive_webhook
         delete :remove_store
+        post :update
       end
 
       namespace :google do
