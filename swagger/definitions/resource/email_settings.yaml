@@ -1,0 +1,16 @@
+type: object
+properties:
+  personalized_email_replies:
+    type: boolean
+    description: If yes, then agents will be allowed to choose their own name as the sender name in ticket replies and outbound emails. Sender email will still remain the support email address (like 'Agent Name <support@domain.freshdesk.com>').
+  create_requester_using_reply_to:
+    type: boolean
+    description: If disabled, requester will be created using 'From' address in email.
+  allow_agent_to_initiate_converstion:
+    type: boolean
+    description: If yes, agents will be able to send outbound emails to new or existing customers that will be converted into outbound tickets.
+  original_sender_as_requester_for_forward:
+    type: boolean
+    description: When an agent forwards an email from their mailbox to the helpdesk, create the ticket under the original sender. If disabled, the requester is the agent.
+
+

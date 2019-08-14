@@ -69,8 +69,8 @@ module Freddy
       def payload(account_id = Account.current.id)
         {}.tap do |claims|
           claims[:aud] = account_id.to_s
-          claims[:exp] = Time.now.to_i + 10.minutes
-          claims[:iat] = Time.now.to_i
+          claims[:exp] = Time.zone.now.to_i + 10.minutes
+          claims[:iat] = Time.zone.now.to_i
           claims[:iss] = SERVICE
         end
       end

@@ -16,6 +16,7 @@ defaults: &defaults
 
   system42:
     host: 'https://system42-serv-dev.staging.freddyproject.com'
+    onboard_url: 'https://system42-serv-dev.staging.freddyproject.com/api/v1/fd_private/sync_bots'
     secret: 'd320b639-f0f2-465d-bc04-23be99d764cc'
     timeout: 3
     internal: '38e8cbde-83a6-4bba-a5db-12ea4fd3b2f3'

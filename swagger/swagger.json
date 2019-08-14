@@ -12914,7 +12914,8 @@
           {
             "name": "reply_email",
             "in": "query",
-            "type": "string"
+            "type": "string",
+            "description": "partial string can be given with * symbol at both ends to support contains search."
           },
           {
             "name": "to_email",
@@ -13075,6 +13076,98 @@
           },
           "404": {
             "description": "Mailbox not found"
+          }
+        }
+      }
+    },
+    "/email/settings": {
+      "put": {
+        "tags": [
+          "email settings"
+        ],
+        "summary": "Update email settings",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/email_settings"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/email_settings"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "email settings"
+        ],
+        "summary": "Show email settings",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/email_settings"
+            }
+          }
+        }
+      }
+    },
+    "/notifications/email/bcc": {
+      "put": {
+        "tags": [
+          "email notification bcc"
+        ],
+        "summary": "Update email notification bcc",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/email_notification_bcc_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/email_notification_bcc"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "email notification bcc"
+        ],
+        "summary": "Show email notification bcc",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/email_notification_bcc"
+            }
           }
         }
       }
@@ -15889,6 +15982,9 @@
         "support_email",
         "mailbox_type"
       ]
+    },
+    "email_notification_bcc_input": {
+      "$ref": "#/definitions/email_notification_bcc"
     },
     "conversation_template": {
       "type": "object",
@@ -19058,6 +19154,41 @@
           }
         }
       }
+    },
+    "email_settings": {
+      "type": "object",
+      "properties": {
+        "personalized_email_replies": {
+          "type": "boolean",
+          "description": "If yes, then agents will be allowed to choose their own name as the sender name in ticket replies and outbound emails. Sender email will still remain the support email address (like 'Agent Name <support@domain.freshdesk.com>')."
+        },
+        "create_requester_using_reply_to": {
+          "type": "boolean",
+          "description": "If disabled, requester will be created using 'From' address in email."
+        },
+        "allow_agent_to_initiate_converstion": {
+          "type": "boolean",
+          "description": "If yes, agents will be able to send outbound emails to new or existing customers that will be converted into outbound tickets."
+        },
+        "original_sender_as_requester_for_forward": {
+          "type": "boolean",
+          "description": "When an agent forwards an email from their mailbox to the helpdesk, create the ticket under the original sender. If disabled, the requester is the agent."
+        }
+      }
+    },
+    "email_notification_bcc": {
+      "type": "object",
+      "properties": {
+        "emails": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "emails"
+      ]
     },
     "meta": {
       "type": "object",

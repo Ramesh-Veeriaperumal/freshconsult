@@ -95,9 +95,10 @@ module FilterFactory::Filter
       end
 
       def fetch_order
+        order = order_by.to_sym
         order_mappings = "FilterFactory::Filter::Mappings::#{scoper[:documents].upcase}_ORDER_BY_MAPPINGS".constantize
-        if order_mappings.key?(order_by.to_sym)
-          safe_send(order_mappings[order_by.to_sym], order_by, order_type)
+        if order_mappings.key?(order)
+          safe_send(order_mappings[order], order_by, order_type)
         else
           "#{order_by} #{order_type.upcase}"
         end

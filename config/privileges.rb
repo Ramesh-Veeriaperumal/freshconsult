@@ -597,7 +597,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/google_account"
     resource :"integrations/remote_configuration"
     resource :"integrations/dynamicscrm", :only => [:settings, :edit, :settings_update, :fields_update]
-    resource :"integrations/marketplace/shopify", :only => [:install, :create, :landing, :remove_store, :edit]
+    resource :"integrations/marketplace/shopify", :only => [:install, :create, :landing, :remove_store, :edit, :update]
     resource :"integrations/infusionsoft", :only => [:install, :edit, :fields_update]
     resource :"integrations/sugarcrm", :only => [:settings, :edit, :settings_update, :fields_update]
     resource :"integrations/magento", :only => [:new, :edit, :update]

@@ -15,7 +15,7 @@ module AgentHelper
                                     :active => options[:active], 
                                     :user_role => options[:role], 
                                     :delta => 1, 
-                                    :language => "en")  
+                                    :language => options[:language] || "en")  
     new_user.agent = new_agent
     new_user.roles = [account.roles.second]
     new_user.save_without_session_maintenance

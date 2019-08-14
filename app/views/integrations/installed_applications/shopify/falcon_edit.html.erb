@@ -5,40 +5,49 @@
     <%= t('integrations.shopify.edit.sidebar').html_safe %>
   </div>
 <% end %>
-
-<div class="list-page-body shp-wrapper">
-  <h3 class="lead"><%= t('integrations.shopify.edit.label') %></h3>
-  <div class="errorExplanation hide" id="errorExplanation">
-    
-  </div>
-  <ul class="ui-form row-fluid">
-    <li class="inline-field">
-      <div class="row-fluid">
-        <div class="span4">
-          <img alt="Shopify-admin-page" class="shp-logo" src="/assets/helpimages/integration-shopify.svg" width="52">
-        	<p class="shp-text-light"><%= t('integrations.shopify.edit.desc') %></p>
-        </div>
-        <div class="span8">
+<%= form_tag({:action=> :update, :controller => "integrations/marketplace/shopify"}) do %>
+  <div class="list-page-body shp-wrapper">
+    <h3 class="lead"><%= t('integrations.shopify.edit.label') %></h3>
+    <div class="errorExplanation hide" id="errorExplanation"></div>
+    <ul class="ui-form row-fluid">
+      <li class="inline-field shp-edit">
+        <div class="row-fluid">
+          <div class="span4">
+            <img alt="Shopify-admin-page" class="shp-logo" src="/assets/helpimages/integration-shopify.svg" width="52">
+          	<p class="shp-text-light"><%= t('integrations.shopify.edit.desc') %></p>
+          </div>
+          <div class="span8">
 	        	<% @stores.each_with_index do |store, index| %>
-	        	<div class="store-wrapper">
-							<div class="left-pane">
-								<div class="shp-title"><%= store[:shop_display_name] %></div>
-								<div class="shp-text-light"><%= store[:shop_name] %></div>
-              </div>
-              <% if (index != 0) %>
-							<div class="right-pane">
-								<div class="pull-right"><%= link_to t('integrations.shopify.edit.disconnect'), integrations_marketplace_shopify_remove_store_path(:shop_name => store[:shop_name]),
-                  :confirm => t('integrations.shopify.edit.confirm_remove_store'),
-                  :method => 'delete', :class => "btn btn-shopify" %>    
+  	        	<div class="store-wrapper">
+  							<div class="left-pane">
+  								<div class="shp-title"><%= store[:shop_display_name] %></div>
+  								<div class="shp-text-light"><%= store[:shop_name] %></div>
                 </div>
-              </div>
-              <% end %>
-						</div>
+                <% if (index != 0) %>
+  							<div class="right-pane">
+  								<div class="pull-right"><%= link_to t('integrations.shopify.edit.disconnect'), integrations_marketplace_shopify_remove_store_path(:shop_name => store[:shop_name]),
+                    :confirm => t('integrations.shopify.edit.confirm_remove_store'),
+                    :method => 'delete', :class => "btn btn-shopify" %>
+                  </div>
+                </div>
+                <% end %>
+  						</div>
 						<% end %>
-					<%= link_to t('integrations.shopify.edit.connect'), integrations_application_path(@installing_application, :page => 'add_store') %>
+            <div>
+					   <%= link_to t('integrations.shopify.edit.connect'), integrations_application_path(@installing_application, :page => 'add_store') %>
+            </div>
+            <div class="shp-action-toggle shp-text-light mt15">
+              <% disable_shopify_actions = @installed_application.present? ? @installed_application.configs[:inputs]['disable_shopify_actions'] : false %>
+              <%= check_box 'configs[inputs]', 'disable_shopify_actions', { rel: 'toggle', checked: !disable_shopify_actions }, true, false %>
+              <%=t('integrations.shopify.edit.perform_shopify_actions')%>
+            </div>
+          </div>
         </div>
-      </div>
-    </li>
-  </ul>
-  
-</div>
+      </li>
+    </ul>
+  </div>
+  <div class="button-container">
+    <%= link_to t('back'), {:controller => 'applications', :action => 'index'}, :class => "btn" %>
+    <%= submit_tag t('update'), :class => "btn btn-primary" %>
+  </div>
+<% end %>

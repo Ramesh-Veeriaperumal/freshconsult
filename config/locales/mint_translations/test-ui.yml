@@ -1,5 +1,11 @@
 test-ui:
   mailer_notifier:
+    hi: '$Hi,$'
+    role:
+      one: '$role$'
+      other: '$roles$'
+    thanks: "$Thanks,$"
+    freshdesk_customer_support: '$Freshdesk Customer Support$'
     note: "$Note: $"
     freshdesk_support: '$Freshdesk Support$'
     turn_off: $Turn Off,$
@@ -51,6 +57,26 @@ test-ui:
       admin_spam_watcher_blocked: "$Your Account has been blocked due to high volume of traffic. If you feel your requests are genuine, please send an email to %{support_email} with your account details.$"
       account_cancel: "<div>$This email is a confirmation that your Freshdesk account has been cancelled. We’re sorry to see you go.</div><br/>
            <div>If you have feedback on how we can provide a better experience, please write to us at %{support_email}. We’d love to hear from you. $</div>"
+    security_notification:
+      trusted_ip_enabled:
+        one: '$IP whitelisting has been enabled on your account. Your portal will be accessible only in the IP range below:$'
+        other: '$IP whitelisting has been enabled on your account. Your portal will be accessible only in the IP ranges below:$'
+      trusted_ip_modified:
+        one: '$The whitelisted IP addresses were modified on your account. Your portal will be accessible only in the IP range below:$'
+        other: '$The whitelisted IP addresses were modified on your account. Your portal will be accessible only in the IP ranges below:$'
+      trusted_ip_disabled: "$IP whitelisting has been disabled on your account.$"
+      trusted_ip_actor: '$These modifications were made by %{user_name} on %{time}.$'
+      trusted_ip_actor_change: '$This was done by %{user_name} on %{time}.$'
+      trusted_ip_create_time: '$This was done on %{time}.$'
+      agent_deleted: '$An agent, %{agent_name} was deleted by %{doer} in your account on %{time}.$'
+      deleted_agent_info: '$Note that %{agent_name} will still exist in your account as a contact.$'
+      current_agent_stats: '$You currently have %{full_time} full time agents and %{occasional} occasional agents in your Freshdesk account.$'
+      update_agent_billing: '$To reflect this change in your billing, please <a href="%{billing_url}">update</a> the agent information in the billing page.$'
+      update_agent_billing_plain: '$To reflect this change in your billing, please update the agent information in the billing page.$'
+      agent_added: '$A new %{agent_type} agent, %{agent_name} was added by %{doer} in your account on %{time} and has the %{agent_data_key} %{agent_data_value}.$'
+      unauthorized_change_info: '$If this change was made without your authorization, send us a reply.$'
+      configure_change: '$You can configure this notification settings under Admin -> Security.$'
+      configure_change_html: '$You can configure this notification settings by <a href="%{security_url}"> clicking here </a> or going to Admin -> Security in your account$'
   mailer_notifier_subject:
     new_forum_topic: "$[New Topic] %{title} in %{forum_name}$"
     topic_update: "$[Status Update] in %{title}$"

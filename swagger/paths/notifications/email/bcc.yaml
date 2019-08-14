@@ -1,0 +1,27 @@
+put:
+  tags: ['email notification bcc']
+  summary: Update email notification bcc
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/email_notification_bcc_input'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/email_notification_bcc'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+
+get:
+  tags: ['email notification bcc']
+  summary: Show email notification bcc
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/email_notification_bcc'

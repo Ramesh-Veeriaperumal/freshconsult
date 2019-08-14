@@ -13,25 +13,25 @@ module IntegrationServices::Services
       email = @payload[:email]
       customer_id = get_customer_id(email)
       recent_orders = get_recent_orders(customer_id)
-      {"orders" => recent_orders, "stores" => @stores}
+      { 'orders' => recent_orders, 'stores' => @stores }
     end
 
     def receive_cancel_order
-      raise_403 unless can_perform_action?
+      raise_403 if shopify_action_disabled?
       init
       order_id = @payload[:orderId]
       cancel_order(order_id)
     end
 
     def receive_refund_full_order
-      raise_403 unless can_perform_action?
+      raise_403 if shopify_action_disabled?
       init
       order_id = @payload[:orderId]
       refund = refund_full_order(order_id)
     end
 
     def receive_refund_line_item
-      raise_403 unless can_perform_action?
+      raise_403 if shopify_action_disabled?
       init
       order_id = @payload[:orderId]
       line_item_id = @payload[:lineItemId]
@@ -79,14 +79,14 @@ module IntegrationServices::Services
 
     def token(store)
       shop_name = store[:shop_name]
-      if @installed_app.configs[:inputs]["shop_name"] == shop_name
-        return @installed_app.configs[:inputs]["oauth_token"]
+      if @installed_app.configs[:inputs]['shop_name'] == shop_name
+        return @installed_app.configs[:inputs]['oauth_token']
       end
-      return @installed_app.configs[:inputs]["additional_stores"] && @installed_app.configs[:inputs]["additional_stores"][shop_name] && @installed_app.configs[:inputs]["additional_stores"][shop_name]["oauth_token"]
+      return @installed_app.configs[:inputs]['additional_stores'] && @installed_app.configs[:inputs]['additional_stores'][shop_name] && @installed_app.configs[:inputs]['additional_stores'][shop_name]['oauth_token']
     end
 
-    def can_perform_action?
-      Account.current.launched?(:shopify_actions)
+    def shopify_action_disabled?
+      @installed_app.configs[:inputs]['disable_shopify_actions']
     end
 
     def raise_403
