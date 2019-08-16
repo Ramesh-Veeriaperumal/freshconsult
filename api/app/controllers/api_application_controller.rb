@@ -973,16 +973,12 @@ class ApiApplicationController < MetalApiController
     end
 
     def supress_logs(temporary_level = Logger::ERROR)
-      if current_account.launched?(:disable_supress_logs)
+      begin
+        old_level = ActiveRecord::Base.logger.level
+        ActiveRecord::Base.logger.level = temporary_level
         yield
-      else
-        begin
-          old_level = ActiveRecord::Base.logger.level
-          ActiveRecord::Base.logger.level = temporary_level
-          yield
-        ensure
-          ActiveRecord::Base.logger.level = old_level
-        end
+      ensure
+        ActiveRecord::Base.logger.level = old_level
       end
     end
 end

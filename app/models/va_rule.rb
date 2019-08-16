@@ -179,7 +179,6 @@ class VaRule < ActiveRecord::Base
     Va::Logger::Automation.log("performer matched=#{performer_matched}")
     return unless performer_matched
     event_matched = event_matches? current_events, evaluate_on
-    Va::Logger::Automation.log("event matched=#{event_matched}")
     pass_through evaluate_on, nil, doer if event_matched
   end
 
@@ -197,14 +196,12 @@ class VaRule < ActiveRecord::Base
   def pass_through(evaluate_on, actions=nil, doer=nil)
     is_a_match = false
     benchmark { is_a_match = matches(evaluate_on, actions) }
-    Va::Logger::Automation.log("condition matched=#{is_a_match}")
     trigger_actions(evaluate_on, doer) if is_a_match
     is_a_match ? evaluate_on : nil
   end
 
   def matches(evaluate_on, actions=nil)
     return true if conditions.empty?
-    Va::Logger::Automation.log("match_type=#{match_type}")
     s_match = match_type.to_sym
     to_ret = false
     conditions.each do |c|

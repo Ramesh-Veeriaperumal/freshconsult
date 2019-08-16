@@ -37,7 +37,7 @@ module Tickets
                           vr.check_events(doer, evaluate_on, current_events)
               }
               rule_ids_with_exec_count[vr.id] = 1 if ticket.present?
-              Va::Logger::Automation.log_execution_and_time(time, (ticket.present? ? 1 : 0), rule_type)
+              Va::Logger::Automation.log_execution_and_time(time, (ticket.present? ? 1 : 0), rule_type, nil, nil, false)
               aggregated_response_time += vr.response_time[:matches] || 0
             ensure
               Thread.current[:thank_you_note] = nil
@@ -47,7 +47,7 @@ module Tickets
           end_time = Time.now.utc
           total_time = end_time - start_time
           Va::Logger::Automation.unset_rule_id
-          Va::Logger::Automation.log_execution_and_time(total_time, observer_rules.size, rule_type, start_time, end_time)
+          Va::Logger::Automation.log_execution_and_time(total_time, observer_rules.size, rule_type, start_time, end_time, false)
           ticket_changes = evaluate_on.merge_changes(current_events, 
                             evaluate_on.changes) if current_events.present?
           evaluate_on.round_robin_on_ticket_update(ticket_changes) if evaluate_on.rr_allowed_on_update?
