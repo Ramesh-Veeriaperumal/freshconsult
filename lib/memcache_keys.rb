@@ -232,7 +232,11 @@ module MemcacheKeys
   PICKLIST_IDS_BY_VALUE = 'v1/PICKLIST_VALUES_BY_VALUE:%{account_id}:%{column_name}'.freeze
 
   TICKET_FIELDS_FULL = 'v1/TICKET_FIELDS_FULL:%<account_id>s:%<language_code>s'.freeze
-  
+
+  CUSTOMER_EDITABLE_TICKET_FIELDS_FULL = 'CUSTOMER_EDITABLE_TICKET_FIELDS_FULL:%{account_id}:%{language_code}'.freeze
+
+  CUSTOMER_EDITABLE_TICKET_FIELDS_WITHOUT_PRODUCT = 'CUSTOMER_EDITABLE_TICKET_FIELDS_WITHOUT_PRODUCT:%{account_id}:%{language_code}'.freeze
+
   ACCOUNT_AGENT_TYPES = "v1/ACCOUNT_AGENT_TYPES:%{account_id}"
 
   HELP_WIDGETS = "v1/HELP_WIDGETS:%{account_id}:%{id}"

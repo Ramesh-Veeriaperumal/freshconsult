@@ -4,7 +4,9 @@ module MemcacheCleaner
   include MemcacheKeys
 
   MULTIPLE_KEY_CACHE_METHOD = {
-    TICKET_FIELDS_FULL => 'clear_ticket_field_response'
+    TICKET_FIELDS_FULL => 'clear_ticket_field_response',
+    CUSTOMER_EDITABLE_TICKET_FIELDS_FULL => 'clear_ticket_field_response',
+    CUSTOMER_EDITABLE_TICKET_FIELDS_WITHOUT_PRODUCT => 'clear_ticket_field_response'
   }.freeze
 
   included do

@@ -9,7 +9,7 @@ class Product < ActiveRecord::Base
   publishable on: [:create, :update, :destroy]
 
   before_destroy :remove_primary_email_config_role,:save_deleted_product_info
-  clear_memcache [TICKET_FIELDS_FULL]
+  clear_memcache [TICKET_FIELDS_FULL, CUSTOMER_EDITABLE_TICKET_FIELDS_FULL, CUSTOMER_EDITABLE_TICKET_FIELDS_WITHOUT_PRODUCT]
 
   validates_uniqueness_of :name , :case_sensitive => false, :scope => :account_id
   xss_sanitize :only => [:name, :description], :plain_sanitize => [:name, :description]

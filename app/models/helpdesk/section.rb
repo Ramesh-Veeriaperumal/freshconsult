@@ -2,7 +2,7 @@ class Helpdesk::Section < ActiveRecord::Base
 
   include Cache::Memcache::Helpdesk::Section
 
-  clear_memcache [TICKET_FIELDS_FULL]
+  clear_memcache [TICKET_FIELDS_FULL, CUSTOMER_EDITABLE_TICKET_FIELDS_FULL, CUSTOMER_EDITABLE_TICKET_FIELDS_WITHOUT_PRODUCT]
 
   self.primary_key = :id
   self.table_name = "helpdesk_sections"
