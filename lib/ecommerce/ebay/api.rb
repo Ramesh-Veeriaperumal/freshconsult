@@ -134,7 +134,7 @@ class Ecommerce::Ebay::Api
   def check_expiry
     if @ebay_account_id
       ebay_acc = fetch_ebay_account_id
-      EcommerceNotifier.token_expiry(ebay_acc.name, ebay_acc.account, ebay_acc.configs[:hard_expiration_time]) unless ebay_acc.reauth_required
+      EcommerceNotifier.send_email(:token_expiry, ebay_acc.account.admin_email, ebay_acc.name, ebay_acc.account, ebay_acc.configs[:hard_expiration_time]) unless ebay_acc.reauth_required
       ebay_acc.reauth_required = true
       ebay_acc.save
     end

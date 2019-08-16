@@ -18,7 +18,7 @@ class DraftMailer < ActionMailer::Base
       headers = {
         :to        => current_author.email,
         :from      => current_user.email,
-        :subject   => "[Draft Discarded] #{draft[:title]}",
+        :subject   => I18n.t("mailer_notifier_subject.discard_email", draft_title: draft[:title]),
         :sent_on   => Time.now
       }
 

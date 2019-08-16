@@ -5,7 +5,7 @@ class EcommerceNotifier < ActionMailer::Base
  
   def token_expiry(ecom_name, account, expiry_date)
     headers = {
-      :subject   => "Ecommerce account #{ecom_name} token expiration",
+      :subject   => I18n.t('mailer_notifier_subject.token_expiry',ecom_name: ecom_name),
       :from      => AppConfig['from_email'],
       :to        => account.admin_email,
       :sent_on   => Time.now,

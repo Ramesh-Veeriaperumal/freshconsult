@@ -54,8 +54,8 @@ module Delayed
     private
 
     def set_locale
-      I18n.locale = (locale_object && locale_object.language) ? locale_object.language :
-        (Portal.current ? Portal.current.language : (Account.current ? Account.current.language : I18n.default_locale))
+      self.locale_object = Account.current.users.find_by_email(locale_object) if !valid_locale_object? && valid_email?(locale_object)
+      I18n.locale = valid_locale_object? ? locale_object.language : Account.current.default_account_locale
     end
 
     def set_default_locale
@@ -84,6 +84,14 @@ module Delayed
 
     def class_to_string(obj)
       "CLASS:#{obj.name}"
+    end
+
+    def valid_locale_object?
+      locale_object.present? && locale_object.respond_to?(:language)
+    end
+
+    def valid_email?(email)
+      email =~ AccountConstants::EMAIL_REGEX
     end
   end
 end

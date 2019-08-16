@@ -1,15 +1,12 @@
 <div>
-  Hi,<div><br></div>
-  <div>We want to let you know that your auth token for Ecommerce account <%=@ecom_name%> will expire in <%=@expiry_date%>.</div>
+  <%= render layout: 'shared/email_header_footer.html.erb', locals: { sent_by: :freshdesk_support } do %>
+  <div><%= t("mailer_notifier.ecommerce_notifier.token_expiry.token_expiry_msg", account_name: @ecom_name, expiry_date: @expiry_date )%></div>
   <div><br></div>
-  <div>Please revoke the token and update the account inorder to be active. </div>
+  <div><%= t("mailer_notifier.ecommerce_notifier.token_expiry.token_update")%></div>
   <div><br></div>
-  <div><%= link_to "View account", "http://#{@account.full_domain}/admin/ecommerce/accounts" %></div>
+  <div><%= link_to t("mailer_notifier.ecommerce_notifier.token_expiry.view_account"), "http://#{@account.full_domain}/admin/ecommerce/accounts" %></div>
   <div><br></div>
-  <div>If you have queries of any kind, please do not hesitate to contact us: support@freshdesk.com</div>
+  <div><%= t("mailer_notifier.ecommerce_notifier.token_expiry.contact_us")%></div>
   <div><br></div>
-  <div>Regards</div>
-  <div><br></div>
-  <div>Freshdesk Support&nbsp;</div>
-  <div><br></div>
+  <% end %>
 </div>

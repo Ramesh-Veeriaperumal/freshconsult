@@ -1,6 +1,6 @@
 <div>
   <%= render layout: 'shared/email_header_footer.html.erb', locals: { sent_by: @email_config.account.portal_name } do %>
-  <%= t("email_config_notifier.activation_instructions.body",app_name: AppConfig['app_name'],activation_url: @activation_url).html_safe%>
+  <%= t("mailer_notifier.email_config_notifier.activation_instructions.body",app_name: AppConfig['app_name'],activation_url: @activation_url).html_safe%>
   <br><br>
   <% end %><br>
   <% if @activation_url && Account.current.launched?(:email_actions) %>

@@ -56,6 +56,8 @@ Helpkit::Application.routes.draw do
   # Note: This route will make all actions in every controller accessible via GET requests.
   # match ':controller(/:action(/:id))(.:format)'
 
+  match '/health_checkup' => 'health_checkup#app_health_check',via: :get
+
   constraints(lambda {|req| req.subdomain == AppConfig['admin_subdomain'] }) do
 
     namespace :subscription_admin, :as => 'admin' do
@@ -1119,6 +1121,10 @@ Helpkit::Application.routes.draw do
 
   match '/http_request_proxy/fetch',
       :controller => 'http_request_proxy', :action => 'fetch', :as => :http_proxy
+  match '/freshcaller_proxy',
+       :controller => 'freshcaller_proxy', :action => 'fetch', :as => :freshcaller_proxy, :via => :post 
+  match '/freshcaller_proxy/recording_url', 
+       :controller => 'freshcaller_proxy', :action => 'recording_url', :as => :freshcaller_proxy, :via => :get
   match '/mkp/data-pipe.:format', :controller => 'integrations/data_pipe', :action => 'router', :method => :post, :as => :data_pipe
 
   constraints RouteConstraints::Freshcaller.new do
@@ -2066,6 +2072,7 @@ Helpkit::Application.routes.draw do
       resources :conversations do
         collection do
           post :reply
+          put :undo_send
           post :forward
           post :note
           post :twitter
@@ -3033,6 +3040,8 @@ Helpkit::Application.routes.draw do
           put :unblock_outgoing_email
           post :extend_trial
           put :change_primary_language
+          get :clone_account  
+          post :clone_account
           post :trigger_action
           get :clone_account
           post :clone_account

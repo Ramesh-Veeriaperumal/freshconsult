@@ -6,9 +6,91 @@ en:
     regards: "Regards,"
     freshdesk_support_team: "Freshdesk Support Team"
     note_for_recipients: "Note: This email is also sent to - %{to_emails}."
+    email_config_notifier:
+      activation_instructions:
+        body: 'This email has been added as your support email address in %{app_name}. Click the URL below to activate your support email
+        <br><br>
+        %{activation_url}
+        <br><br>
+        If the above URL does not work, try copying and pasting it into your browser. If you continue to have problems, please feel free to contact us.'
+      test_email:
+        body: 'You’ve received the test mail you just sent out from Freshdesk account.
+        <br><br>
+        If everything worked fine, you should now see this mail converted to a new ticket. Hop over to your Freshdesk helpdesk portal and look under the "Ticket" tab.
+        <br><br>
+        Got it? Great! Now everytime your customers send you an email here, you’ll have it appear as a ticket in Freshdesk automatically!
+        <br><br>
+        If your helpdesk did not show you a new ticket, first make sure that you have configured all your emails in this id to get forwarded to your Freshdesk support id ( "%{to_email}" ).
+        You can learn how to do this <a href=%{support_url} target=_blank >here</a>. Still having problems? Get in touch with us at support@freshdesk.com and we’ll help you set this up.'
+        support_url: 'https://support.freshdesk.com/support/solutions/articles/37541-converting-your-support-email-into-freshdesk-tickets'
+    draft_mailer:
+      discard_email:
+        discard_msg_html: "The draft version of the article %{article_url} was discarded by %{user} on %{time}"
+        discard_msg_plain: 'Your draft of the article "%{title}" was discarded by %{user} on %{time} .'
+        view_article: 'View Article'
+        draft_by_html: '<h3> %{title} <h5> by %{author} <h5> </h3>'
+        draft_by_plain: '%{title} by %{author}'
+    ecommerce_notifier:
+      token_expiry:
+        token_expiry_msg: 'We want to let you know that your auth token for Ecommerce account %{account_name} will expire in %{expiry_date}.'
+        token_update: Please revoke the token and update the account inorder to be active.
+        view_account: View account
+        contact_us: 'If you have queries of any kind, please do not hesitate to contact us: support@freshdesk.com'
+    report_export_mailer:
+      common:
+        filters_applied: 'Filters applied:'
+        date_range: 'Date Range'
+        date_range_title: 'Date Range:'
+      bi_report_export:
+        report_download_html: 'You can download the file from <a href=%{export_url}>here</a> (It will expire in 45 days).'
+        report_download_plain: 'You can download the file from %{export_url} (It will expire in 45 days).'
+        report_complete: 'The %{report_label} report %{ticket_export}export you had requested is complete.'
+        paste_url: "If the link does not work, copy and paste the URL below in your browser's address bar:"
+        file_attached: 'Please find the file attached with this mail.'
+        for_metric: 'For metric:'
+        report_name: 'Report Name:'
+        ticket: 'ticket'
+      no_report_data:
+        main_msg: 'Seems like there is no data to display for date range %{date_range} with applied filters.'
+      exceeds_file_size_limit:
+        file_size_error: 'Sorry your pdf File size > 10MB.'
+        report_name: 'Scheduled report name:'
+      report_export_task:
+        cvs_report_request: 'CSV report requested at:'
+        no_of_invalid: 'No. of invalid accounts:'
+        description: 'Description:'
     user_notifications:
       notify_dkim_activation: DKIM signatures are now activated for emails sent from %{email_domain}.
       notify_dkim_failure: DKIM verification failed for domain %{email_domain}.
+      activate_account: "Activate your Freshdesk account"
+      activation_message: "Thank you for signing up for Freshdesk. We look forward to seeing you support your customers. Click on the button below to activate your account and get started."
+      activate_button: "Activate Account"
+      freshdesk_url: "Your Freshdesk URL:"
+      get_in_touch: "Got Questions? Get in touch with us"
+      support_email: "Email: %{support_email}"
+      support_call: "Call: %{support_number}"
+      ssl_certificate_approved: "Your request for a custom SSL certificate has been approved."
+      ssl_steps_introduction: "We have already turned on Custom SSL in your portal, under Admin->Security. In order for it to work, please follow the steps below to update your CNAME records."
+      ssl_step_1: "1. Login to DNS Control Panel for the custom domain - %{portal_url}. "
+      ssl_step_2: "2. Create a CNAME record under %{portal_url} and point it to %{elb_name}."
+      ssl_step_3: "3. Wait for a few hours for the changes to take effect."
+      ssl_once_ready: "Once ready, your support portal at %{portal_url} will be secure thanks to the new SSL certificate."
+      facebook_access_token_expired: "The access token for your %{page_name} page has expired. This could be because"
+      facebook_info_1: "One of the admin's changed their facebook password."
+      facebook_info_2: "One of the admin's has revoked some app permissions."
+      facebook_info_3: "It has been 60 days since the last time you authorized the app."
+      facebook_reauth_link_html: "Please click on this <a href='%{facebook_url}'>link</a> to reauthorize your facebook page and continue receiving facebook posts as tickets."
+      facebook_reauth_link_plain: "Please click on this link %{facebook_url} to reauthorize your facebook page and continue receiving facebook posts as tickets."
+      update_billing_info: 'Please update your billing information so that you always have day passes readily available for use.'
+      reply_to_email_for_queries: 'You can reply to this email if you have any questions.'
+      locate_accounts_request_html: '<p>We just received a request to locate any Freshdesk accounts associated with this email address.</p><p>Here is a list of accounts where you are an agent. You can click on any of the links below to access your support portal</p>'
+      click_on_forgot_password: 'In case you have forgotten the login credentials for your account, you can click on the forgot password link to reset your password.'
+      webhook_failed_message: "The %{automation_type} rule you configured to send API request to %{webhook_url} has failed after several retries."
+      webhook_reconfigure_rule: 'Please check and reconfigure the rule to avoid any loss of communication.'
+      webhook_rule_details: "Rule: %{automation_name} (%{automation_link})"
+      webhook_rate_limit_exceeded: 'A webhook that was scheduled 24 hours ago for execution has now been dropped since you consistently exceeded your API rate limits.'
+      webhook_raise_limit_html: If you wish to prevent this from happening again, mail us at support@freshdesk.com to raise your API limits. To learn more about how we support webhooks and why we drop them, <a href=%{solution_article_link}>click here.</a>
+      webhook_raise_limit_plain: If you wish to prevent this from happening again, mail us at support@freshdesk.com to raise your API limits. To learn more about how we support webhooks and why we drop them, click here %{solution_article_link}.
     scheduled_task_notifications:
       no_data: "Seems like there is no data to display for scheduled report that you created for "
       blocked_users:
@@ -52,12 +134,13 @@ en:
       account_cancel: "<div>This email is a confirmation that your Freshdesk account has been cancelled. We’re sorry to see you go.</div><br/>
            <div>If you have feedback on how we can provide a better experience, please write to us at %{support_email}. We’d love to hear from you. </div>"
   mailer_notifier_subject:
+    discard_email: "[Draft Discarded] %{draft_title}"
+    token_expiry: 'Ecommerce account %{ecom_name} token expiration'
     new_forum_topic: "[New Topic] %{title} in %{forum_name}"
     topic_update: "[Status Update] in %{title}"
     topic_merged: "[Topic Merged] to %{title}"
     account_data_export: "Data Export for %{account}"
     no_tickets_to_export: "No tickets in range - %{domain}"
-    agent_export: Agents List Export
     audit_log_export: Audit Log Export
     spam_watcher: "Freshdesk :: Spam watcher"
     account_cancelled: "%{account_domain} has been cancelled"
@@ -65,6 +148,13 @@ en:
     notify_new_watcher: 'Added as Watcher %{display_id} %{subject}'
     notify_on_reply: 'New Activity %{display_id} %{subject}'
     activation_instructions: "%{portal_name} email activation instructions"
+    admin_activation: "Activate your %{app_name} account"
+    custom_ssl_activation: "Custom SSL Activated"
+    notify_facebook_reauth: "Need Attention, Facebook app should be reauthorized"
+    failure_transaction_notifier: 'Payment failed for auto recharge of day passes'
+    helpdesk_url_reminder: 'Your Freshdesk Portal Information'
+    notify_webhook_failure: 'Please recheck the webhook settings in your account'
+    notify_webhook_drop: 'Webhook dropped'
   email_config_notifier:
     activation_instructions:
       body: 'This email has been added as your support email address in %{app_name}. Click the URL below to activate your support email

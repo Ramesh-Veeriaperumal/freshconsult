@@ -1,33 +1,31 @@
-Hi <%=@user.name%>,
-<br/>
-<br/>
+<%= render layout: 'shared/email_header_footer.html.erb', locals: { user_name: @user.name, sent_by: :portal_support, portal_name: @portal_name } do %>
 <% if @export_url.present? %>
-  The <%= @report_label %> report<%= " #{@ticket_export} " %>export you had requested is complete. You can download the file from <a href=<%= @export_url %>>here</a> (It will expire in 45 days). If the link does not work, copy and paste the URL below in your browser's address bar:
+  <%= t('mailer_notifier.report_export_mailer.bi_report_export.report_complete',report_label: @report_label,ticket_export: "#{@ticket_export} ")%> <%= t('mailer_notifier.report_export_mailer.bi_report_export.report_download_html',export_url: @export_url)%> <%= t('mailer_notifier.report_export_mailer.bi_report_export.paste_url')%>
   <br/><br/><%=  @export_url %><br/>
 <% else %>
-  The <%= @report_label %> report<%= " #{@ticket_export} " %>export you had requested is complete. Please find the file attached with this mail.
+  <%= t('mailer_notifier.report_export_mailer.bi_report_export.report_complete',report_label: @report_label,ticket_export: "#{@ticket_export} ")%> <%= t('mailer_notifier.report_export_mailer.bi_report_export.file_attached')%>
 <% end %>
 <br/>
 <br/>
 
 <% if @selected_metric %>
-For metric: <%= @selected_metric.html_safe %>
+<%= t('mailer_notifier.report_export_mailer.bi_report_export.for_metric')%> <%= @selected_metric.html_safe %>
 <br/>
 <br/>
 <% end %> 
 
 
 <% if @filter_name %>
-Report Name: <%= @filter_name.html_safe %>
+<%= t('mailer_notifier.report_export_mailer.bi_report_export.report_name')%> <%= @filter_name.html_safe %>
 <% end %> 
 
 <br/>
 <br/>
 
 <% if @filter_to_display %>
-  Filters applied:
+  <%= t('mailer_notifier.report_export_mailer.common.filters_applied')%>
   <table border="1" width="100%">
-    <tr><td>Date Range</td><td><%=@date_range%></td></tr>
+    <tr><td><%= t('mailer_notifier.report_export_mailer.common.date_range')%></td><td><%=@date_range%></td></tr>
     <% @filters.each do |f| %>
       <tr><td><%=f["name"]%></td><td><%= f["value"] %></td></tr>
     <%end%>
@@ -36,6 +34,4 @@ Report Name: <%= @filter_name.html_safe %>
 <br/>
 <%end%>
 
-Regards,
-<br/>
-<%= @portal_name %> Support
+<% end %>

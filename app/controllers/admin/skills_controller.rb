@@ -6,7 +6,7 @@ class Admin::SkillsController < Admin::AdminController
   before_filter { |c| c.requires_this_feature :skill_based_round_robin }
   before_filter :check_max_skills_limit,  :only => [:new, :create]
   before_filter :load_object,             :only => [:edit, :update, :destroy, :users]
-  before_filter :escape_html_entities_in_json
+  around_filter :escape_html_entities_in_json
   before_filter :load_config,             :only => [:new, :edit]
   before_filter :set_filter_data,         :only => [:create, :update]
   before_filter :validate_import ,        :only => [:process_csv]
@@ -277,10 +277,6 @@ class Admin::SkillsController < Admin::AdminController
 
     def multi_language_account?
       current_account.features?(:multi_language)
-    end
-
-    def escape_html_entities_in_json
-      ActiveSupport::JSON::Encoding.escape_html_entities_in_json = true
     end
 
     def validate_import

@@ -5,7 +5,7 @@ class Admin::VaRulesController < Admin::AdminController
   include Admin::Automation::WebhookValidations
 
   # skip_before_filter :check_automation_feature
-  before_filter :escape_html_entities_in_json
+  around_filter :escape_html_entities_in_json
   before_filter :load_config, :only => [:new, :edit, :clone_rule]
   before_filter :set_filter_data, :only => [ :create, :update ]
   before_filter :hide_password_in_webhook, :only => [:edit]

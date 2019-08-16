@@ -2723,9 +2723,10 @@ en:
       status_translated: Translated
       status_untranslated: Not available
       status_outdated: Outdated
-      status_incomplete: Outdated 
+      status_incomplete: Outdated
+      translation: TRANSLATION
+      primary: Primary
       surveys:
-        translation: TRANSLATION
         visible_on_portal: Languages visible on portal
         visible_on_portal_helptext: These languages can be viewed on your portal
         show_info: Save the survey to start translating

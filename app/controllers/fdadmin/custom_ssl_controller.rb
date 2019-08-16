@@ -39,9 +39,11 @@ class Fdadmin::CustomSslController < Fdadmin::DevopsMainController
 				result[:status] = "error"
 			end
 			remove_others_redis_key(ssl_key)
-			UserNotifier.send_later(:deliver_custom_ssl_activation, account, 
-																params[:portal_url], 
-																params[:elb_name])
+			UserNotifier.send_later(:deliver_custom_ssl_activation,
+                              account,
+                              params[:portal_url],
+                              params[:elb_name],
+                              locale_object: account.admin_email)
 			result[:account_id] = account.id
 			result[:account_name] = account.name
 		end

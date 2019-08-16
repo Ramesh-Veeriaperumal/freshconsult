@@ -20,7 +20,7 @@ class ReportExportMailer < ActionMailer::Base
       @date_range  = options[:date_range]
       @report_label = report_name(options[:report_type])
       @filter_name = options[:filter_name]
-      @ticket_export   = options[:ticket_export].present? ? "ticket" : ""
+      @ticket_export   = options[:ticket_export].present? ? I18n.t('mailer_notifier.report_export_mailer.bi_report_export.ticket') : ''
       @selected_metric = options[:selected_metric] if options[:selected_metric]
       @filter_to_display = filter_to_display?(options[:report_type], options[:ticket_export])
       @report_name = options[:filter_name] ? "#{@report_type} report - #{options[:filter_name]}" : "#{@report_type}"
@@ -83,10 +83,11 @@ class ReportExportMailer < ActionMailer::Base
     end
   end
 
-  def report_export_task options
+  def report_export_task(email_hash = {}, options = {})
     begin
+      @other_emails = email_hash[:other]
       configure_email_config Account.current.primary_email_config if Account.current.primary_email_config.active?
-      headers = mail_headers(options, "Report Export Task")
+      headers = mail_headers(options, 'Report Export Task', email_hash)
       @date_range = options[:date_range]
       @invalid_count = options[:invalid_count]
       @task_start_time = options[:task_start_time]
@@ -114,10 +115,10 @@ class ReportExportMailer < ActionMailer::Base
   end
 
   private
-  def mail_headers(options, n_type)
+  def mail_headers(options, n_type, email_hash = {})
     headers = {
       :subject     => mail_subject( options ),
-      :to             => options[:task_email_ids] || options[:user].email,
+      :to          => email_hash[:group] || options[:task_email_ids] || options[:user].email,
       :from        => Account.current.default_friendly_email,
       :bcc         => AppConfig['reports_email'],
       "Reply-to" => "",
@@ -129,8 +130,8 @@ class ReportExportMailer < ActionMailer::Base
   end
 
   def mail_subject options
-    sub = options[:email_subject] || "#{report_name(options[:report_type])} report for #{options[:date_range]}"
-    sub.prepend( "Ticket export | " ) if options[:ticket_export].present?
+    sub = options[:email_subject] || I18n.t('mailer_notifier_subject.report_type_sub', report_name: report_name(options[:report_type]), date_range: options[:date_range])
+    sub.prepend(I18n.t('mailer_notifier_subject.ticket_export')) if options[:ticket_export].present?
     sub
   end
 

@@ -10,12 +10,11 @@ module Sync
       @repo_path     =  repo_path
       @branch        =  branch
       @repo_client   =  Rugged::Repository.new("#{repo_path}/.git") if repo_path_exists?
-      @current_account = Account.current
     end
 
     def get_changes(target, source)
       run_git_command do
-        add_and_fetch_branch(source) if @current_account.sandbox_single_branch_enabled?
+        add_and_fetch_branch(source)
         execute_command "git checkout #{source}"
         execute_command "git checkout #{target}"
         execute_command "git merge -s resolve origin/#{source} --no-commit --no-ff"
@@ -134,78 +133,7 @@ module Sync
       end
     end
 
-    # XXX - Todo -- Not working for deleted files
-    # def commit_all_changed_files(message, author, email)
-    #   files = []
-    #   repo_client.status { |file, status_data| files << file}
-
-    #   index = repo_client.index
-    #   files.each do |file|
-    #     oid   = Rugged::Blob.from_workdir(repo_client, file)
-    #     index.add(:path => file, :oid => oid, :mode => 0100644)
-    #   end
-
-    #   options = {}
-    #   options[:tree] = index.write_tree(repo_client)
-
-    #   options[:author] = {
-    #     :email  => email,
-    #     :name   => author,
-    #     :time   => Time.now
-    #   }
-    #   options[:committer] = {
-    #     :email  => email,
-    #     :name   => author,
-    #     :time   => Time.now
-    #   }
-    #   options[:message]     =  message
-    #   options[:parents]     =  repo_client.empty? ? [] : [ repo_client.head.target ].compact
-    #   options[:update_ref]  =  'HEAD'
-
-    #   commit = Rugged::Commit.create(repo_client, options)
-    #   index.write()
-    # end
-
     def checkout_branch
-      if @current_account.sandbox_single_branch_enabled?
-        clone_repo_with_single_branch
-      else
-        clone_repo
-        fetch_and_switch
-      end
-    end
-
-    def fetch_and_switch
-      branch = repo_client.branches["origin/#{@branch}"]
-
-      # Create the branch
-      if branch.nil?
-        run_git_command do
-          execute_command 'git checkout master'
-          execute_command "git checkout -b #{@branch}"
-          execute_command "git push origin -u #{@branch}"
-        end
-      else
-        run_git_command do
-          execute_command "git checkout origin/#{@branch}"
-          execute_command "git checkout -b #{@branch}"
-        end
-      end
-    end
-
-    def clone_repo
-      @repo_client ||= Rugged::Repository.clone_at(@repo_url, @repo_path,
-                                                   transfer_progress: lambda { |total_objects, indexed_objects, received_objects, local_objects, total_deltas, indexed_deltas, received_bytes|
-                                                     print '.'
-                                                   },
-                                                   credentials: credentials)
-    end
-
-    def credentials
-      Rugged::Credentials::SshKey.new(privatekey: @private_key, publickey: @public_key, passphrase: '', username: @username)
-    end
-
-    def clone_repo_with_single_branch
       Rails.logger.info 'Starting single branch git clone...'
       FileUtils.remove_dir(@repo_path) if repo_path_exists?
       branch_name = branch_exists?(@branch) ? @branch : 'master'

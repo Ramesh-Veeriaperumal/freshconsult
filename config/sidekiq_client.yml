@@ -312,6 +312,7 @@ defaults: &defaults
     - [update_sandbox_subscription]
     - [gateway_facebook_page]
     - [ticket_properties_suggester]
+    - [update_agents_roles]
 
 development:
   <<: *defaults

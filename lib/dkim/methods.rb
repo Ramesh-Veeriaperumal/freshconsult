@@ -78,7 +78,7 @@ module Dkim::Methods
   end
 
   def scoper
-    current_account.outgoing_email_domain_categories.verified_email_configs_domain
+    current_account.outgoing_email_domain_categories.verified_email_configs_domain.uniq
   end
 
   def build_dkim_record(domain, sg_user = fetch_smtp_category)

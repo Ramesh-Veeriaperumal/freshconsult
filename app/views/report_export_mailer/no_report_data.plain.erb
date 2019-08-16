@@ -1,15 +1,14 @@
 <%= render layout: 'shared/email_header_footer.plain.erb', locals: { user_name: @user.name, sent_by: :portal_support, portal_name: @portal_name } do %>
 
 
-Seems like there is no data to display for date range <%=@date_range%> with applied filters.
+<%= t('mailer_notifier.report_export_mailer.no_report_data.main_msg',date_range: @date_range)%>
 
 <% if @filter_to_display  %>
-  Filters applied:
-    Date Range : <%=@date_range%>
+  <%= t('mailer_notifier.report_export_mailer.common.filters_applied')%>
+    <%= t('mailer_notifier.report_export_mailer.common.date_range_title')%> <%=@date_range%> <%=@date_range%>
     <% @filters.each do |f| %>
       <%=f["name"]%> : <%= f["value"] %>
     <%end%>
-
 <%end%>
 
 <% end %>
