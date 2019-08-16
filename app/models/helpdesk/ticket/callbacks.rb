@@ -178,7 +178,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     process_status_changes
     update_ticket_lifecycle
     ticket_states.save if ticket_states.changed?
-    schema_less_ticket.save
+    schema_less_ticket.save unless schema_less_ticket_changes
   end
 
   def save_sentiment
@@ -1046,5 +1046,9 @@ private
 
   def ticket_reopened?
     @model_changes[:status].last == OPEN
+  end
+
+  def schema_less_ticket_changes
+    schema_less_ticket.schema_less_was == schema_less_ticket.attributes
   end
 end
