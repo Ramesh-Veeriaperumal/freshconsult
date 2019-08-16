@@ -13,7 +13,7 @@ class Ecommerce::Ebay::Api
   def make_ebay_api_call(method_call, params=nil)
     ebay_sandbox {
       response = safe_send(method_call,params)
-      Rails.logger.debug "Api response for call #{method_call}, params - #{params} \n #{response} \n"
+      Rails.logger.debug "Api response for call #{method_call}, params - #{params} - #{response}"
       check_expiry if response[:hard_expiration_warning].present? 
       incr_counter if response[:ack] == EBAY_SUCCESS_MSG
       log_error(response) if response[:ack] == EBAY_ERROR_MSG
