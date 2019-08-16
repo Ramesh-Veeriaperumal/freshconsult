@@ -39,6 +39,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
                              "first_response_time", "requester_responded_at", "agent_responded_at", "group_escalated",
                              "inbound_count", "status_updated_at", "sla_timer_stopped_at", "outbound_count", "avg_response_time",
                              "first_resp_time_by_bhrs", "resolution_time_by_bhrs", "avg_response_time_by_bhrs", "resolution_time_updated_at", "on_state_time"]
+
+  TICKET_BLACKLISTED_ATTRIBUTES = ['override_exchange_model'].freeze
                             
   OBSERVER_ATTR = []
   self.table_name =  "helpdesk_tickets"
@@ -830,7 +832,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
     # .blank? will call respond_to?(:empty)
     return super(attribute, include_private) if [:to_a, :created_on, :updated_on, :empty?].include?(attribute)
     super(attribute, include_private) || SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=").chomp("?")) ||
-      ticket_states.respond_to?(attribute) || custom_field_aliases.include?(attribute.to_s.chomp("=").chomp("?"))
+      ticket_states_included?(attribute) || custom_field_aliases.include?(attribute.to_s.chomp('=').chomp('?'))
+  end
+
+  def ticket_states_included?(attribute)
+    # As we have already defined TICKET_STATE_ATTRIBUTES method individually,
+    # not sure removing respond_to would break elsewhere so Blacklisting attributes
+    (TICKET_BLACKLISTED_ATTRIBUTES.exclude?(attribute.to_s) && ticket_states.respond_to?(attribute))
   end
 
   def schema_less_attributes(attribute, args)
