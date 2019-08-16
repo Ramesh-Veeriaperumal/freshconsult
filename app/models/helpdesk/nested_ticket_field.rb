@@ -1,6 +1,6 @@
 class Helpdesk::NestedTicketField < ActiveRecord::Base
   
-  clear_memcache [TICKET_FIELDS_FULL]
+  clear_memcache [TICKET_FIELDS_FULL, CUSTOMER_EDITABLE_TICKET_FIELDS_FULL, CUSTOMER_EDITABLE_TICKET_FIELDS_WITHOUT_PRODUCT]
     
   attr_accessible :label, :label_in_portal, :description, :level, :type, :name
   self.primary_key = :id

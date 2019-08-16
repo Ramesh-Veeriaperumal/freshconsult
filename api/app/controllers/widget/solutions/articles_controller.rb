@@ -49,7 +49,7 @@ module Widget
           validate_widget
           return if @error.present?
 
-          set_widget_portal_as_current
+          fetch_portal
           return render_request_error(:solution_article_not_enabled, 400, id: @widget_id) unless solution_article_enabled
 
           set_current_language

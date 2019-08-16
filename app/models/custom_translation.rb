@@ -9,7 +9,7 @@ class CustomTranslation < ActiveRecord::Base
   belongs_to :translatable, polymorphic: true
   belongs_to_account
   attr_accessible :language_id, :translations, :translatable_id, :translatable_type
-  clear_memcache [TICKET_FIELDS_FULL]
+  clear_memcache [TICKET_FIELDS_FULL, CUSTOMER_EDITABLE_TICKET_FIELDS_FULL, CUSTOMER_EDITABLE_TICKET_FIELDS_WITHOUT_PRODUCT]
   after_commit :clear_fragment_caches
 
   SURVEY_STATUS = {

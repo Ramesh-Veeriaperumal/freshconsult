@@ -433,7 +433,8 @@ class Portal < ActiveRecord::Base
 
     def preload_translations(include_translation = false)
       @preload_translations ||= if Account.current.custom_translations_enabled? && include_translation
-                                  language = User.current ? User.current.language_object : Language.find_by_code(I18n.locale)
+                                  language = Language.current
+                                  language ||= User.current ? User.current.language_object : Language.find_by_code(I18n.locale)
                                   Account.current.supported_languages.include?(language.code) ? ["#{language.to_key}_translation".to_sym, { nested_ticket_fields: { ticket_field: ["#{language.to_key}_translation".to_sym] } }] : []
                                 else
                                   []

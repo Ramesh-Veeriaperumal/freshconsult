@@ -5,7 +5,7 @@ module Widget
     include AttachmentsValidationConcern
 
     skip_before_filter :check_privilege
-    before_filter :set_widget_portal_as_current
+    before_filter :fetch_portal
 
     decorate_views
 
