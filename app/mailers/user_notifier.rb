@@ -51,10 +51,10 @@ class UserNotifier < ActionMailer::Base
     address.display_name = AppConfig['app_name'].dup
 
     headers = {
-      :from           => address.format,
-      :to             => admin.email,
-      :subject        => "Activate your #{AppConfig['app_name']} account",
-      :sent_on        => Time.now
+      from: address.format,
+      to: admin.email,
+      subject: I18n.t('mailer_notifier_subject.admin_activation', app_name: AppConfig['app_name']),
+      sent_on: Time.now
     }
    headers.merge!(make_header(nil, nil, admin.account.id, "Admin Activation"))
    @admin          = admin
@@ -84,10 +84,10 @@ class UserNotifier < ActionMailer::Base
 
   def custom_ssl_activation(account, portal_url, elb_name)
     headers = {
-      :from       => AppConfig['from_email'],
-      :to         => account.admin_email,
-      :subject    => "Custom SSL Activated",
-      :sent_on    => Time.now
+      from: AppConfig['from_email'],
+      to: account.admin_email,
+      subject: I18n.t('mailer_notifier_subject.custom_ssl_activation'),
+      sent_on: Time.now
     }
 
     headers.merge!(make_header(nil, nil, account.id, "Custom SSL Activation"))
@@ -254,10 +254,10 @@ class UserNotifier < ActionMailer::Base
   def notify_facebook_reauth(facebook_page)
     account          = Account.current
     headers = {
-      :subject       => "Need Attention, Facebook app should be reauthorized",
-      :to            => account.admin_email,
-      :from          => AppConfig['from_email'],
-      :sent_on       => Time.now
+      subject: I18n.t('mailer_notifier_subject.notify_facebook_reauth'),
+      to: account.admin_email,
+      from: AppConfig['from_email'],
+      sent_on: Time.now
     }
     headers.merge!(make_header(nil, nil, account.id, "Notify Facebook Reauth"))
     @facebook_url    = social_facebook_index_url(:host => account.host)
@@ -269,11 +269,11 @@ class UserNotifier < ActionMailer::Base
     end.deliver
   end
   
-  def notify_webhook_failure(account, to_email, triggering_rule, url)
+  def notify_webhook_failure(email_hash, account, triggering_rule, url)
     Time.zone = account.time_zone
     headers = {
-      :subject       => "Please recheck the webhook settings in your account",
-      :to            => to_email,
+      :subject       => I18n.t('mailer_notifier_subject.notify_webhook_failure'),
+      :to            => email_hash[:group],
       :from          => AppConfig['from_email'],
       :sent_on       => Time.now,
       "Reply-to" => "",
@@ -281,6 +281,7 @@ class UserNotifier < ActionMailer::Base
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
     
+    @other_emails = email_hash[:other]
     headers.merge!(make_header(nil, nil, account.id, "Notify Webhook Failure"))
     @automation_type = triggering_rule[:type].to_s
     @automation_name = triggering_rule[:name].to_s
@@ -293,11 +294,11 @@ class UserNotifier < ActionMailer::Base
     end.deliver
   end
 
-  def notify_webhook_drop(account, to_email)
+  def notify_webhook_drop(email_hash, account)
     Time.zone = account.time_zone
     headers = {
-      :subject       => "Webhook dropped",
-      :to            => to_email,
+      :subject       => I18n.t('mailer_notifier_subject.notify_webhook_drop'),
+      :to            => email_hash[:group],
       :from          => AppConfig['from_email'],
       :sent_on       => Time.now,
       "Reply-to" => "",
@@ -305,7 +306,9 @@ class UserNotifier < ActionMailer::Base
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
 
+    @other_emails = email_hash[:other]
     headers.merge!(make_header(nil, nil, account.id, "Notify Webhook Drop"))
+    @solution_article_link = 'https://support.freshdesk.com/support/solutions/articles/217264-webhooks-faq'
     mail(headers) do |part|
       part.text { render "webhook_drop.text.plain" }
       part.html { render "webhook_drop.text.html" }
@@ -314,7 +317,7 @@ class UserNotifier < ActionMailer::Base
 
   def helpdesk_url_reminder(email_id, helpdesk_urls)
     headers = {
-      :subject    => "Your Freshdesk Portal Information",
+      :subject    => I18n.t('mailer_notifier_subject.helpdesk_url_reminder'),
       :to         => email_id,
       :from       => AppConfig['from_email'],
       :sent_on    => Time.now
@@ -350,7 +353,7 @@ class UserNotifier < ActionMailer::Base
 
   def failure_transaction_notifier(email_id, content = "")
     headers = {
-      :subject    => "Payment failed for auto recharge of day passes",
+      :subject    => I18n.t('mailer_notifier_subject.failure_transaction_notifier'),
       :to         => email_id,
       :from       => AppConfig["billing_email"],
       :sent_on    => Time.now

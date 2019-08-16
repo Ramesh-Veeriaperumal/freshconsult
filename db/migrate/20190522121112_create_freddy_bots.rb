@@ -2,7 +2,7 @@ class CreateFreddyBots < ActiveRecord::Migration
   shard :all
 
   def migrate(direction)
-    send(direction)
+    self.send(direction)
   end
 
   def up

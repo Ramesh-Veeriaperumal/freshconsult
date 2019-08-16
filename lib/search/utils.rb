@@ -141,7 +141,9 @@ class Search::Utils
     agent_insert_solution: 'agentInsertSolutionFuzzy',
     agent_spotlight_global: 'agentSpotlightGlobalFuzzy',
     agent_spotlight_suggest: 'agentSpotlightSuggestFuzzy',
-    filtered_solution_search: 'filteredSolutionSearchFuzzy'
+    filtered_solution_search: 'filteredSolutionSearchFuzzy',
+    portal_spotlight_global: 'portalSpotlightGlobalFuzzy',
+    portal_spotlight_solution: 'portalSpotlightSolutionFuzzy'
   }.freeze
 
   # _Note_: Parent ID to be used for routing.

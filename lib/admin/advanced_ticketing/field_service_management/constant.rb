@@ -57,6 +57,9 @@ module Admin::AdvancedTicketing::FieldServiceManagement
     FSM_FIELDS_PREFIX = 'cf_fsm_'.freeze
     SUPPORT_AGENT_TYPE = 1
     SUPPORT_GROUP_TYPE = 1
+
+    FSM_APPOINTMENT_START_TIME = 'cf_fsm_appointment_start_time'.freeze
+    FSM_APPOINTMENT_END_TIME = 'cf_fsm_appointment_end_time'.freeze
     SERVICE_TASK_SECTION = 'Service task section'.freeze
     FIELD_SERVICE_MANAGER_ROLE_NAME = 'Field service manager'.freeze
     FIELD_SERVICE_MANAGER_ROLE_PRIVILEGES = Helpdesk::Roles::AGENT + [:schedule_fsm_dashboard]

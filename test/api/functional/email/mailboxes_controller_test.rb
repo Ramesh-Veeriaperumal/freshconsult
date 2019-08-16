@@ -20,6 +20,15 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     { mailbox: params }
   end
 
+  def setup
+    super
+    Account.any_instance.stubs(:multiple_emails_enabled?).returns(true)
+  end
+
+  def teardown
+    Account.any_instance.unstub(:multiple_emails_enabled?)
+  end
+
   def create_mailbox_params_hash
     {
       support_email: Faker::Internet.email,
@@ -65,6 +74,7 @@ class Email::MailboxesControllerTest < ActionController::TestCase
   def test_create_success
     params_hash = create_mailbox_params_hash
     post :create, construct_params({}, params_hash)
+    p "response :: #{response.inspect}" # check random failure 403 repsonse
     assert_response 201
     match_json(mailbox_pattern({}, EmailConfig.last))
   end

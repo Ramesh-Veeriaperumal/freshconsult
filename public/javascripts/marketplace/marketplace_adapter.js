@@ -16,14 +16,14 @@ var MarketplaceAdapter = Class.create({
      *  meet the standard.
      */
     function wrappedAJAX(options) {
-      return new Promise(function(resolve, reject) {
+      return new RSVP.Promise(function(resolve, reject) {
         var request = jQuery.ajax(options);
         request.done(resolve);
         request.fail(reject);
       });
     }
     return {
-      Promise: window.Promise,
+      Promise: RSVP.Promise,
       ajax: wrappedAJAX,
       csrfToken: jQuery('meta[name=csrf-token]').attr('content'),
       page: 'custom_iparam',

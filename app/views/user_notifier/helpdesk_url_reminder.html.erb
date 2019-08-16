@@ -1,8 +1,7 @@
-<div>Hi,</div>
+<%= render layout: 'shared/email_header_footer.html.erb', locals: { sent_by: :freshdesk_team } do %>
 
 <div>
-	<p>We just received a request to locate any Freshdesk accounts associated with this email address.</p>
-	<p>Here is a list of accounts where you are an agent. You can click on any of the links below to access your support portal</p>
+	<%= t('mailer_notifier.user_notifications.locate_accounts_request_html') %>
 </div>
 
 <ul>
@@ -12,11 +11,8 @@
 </ul>
 
 <div>
-	<p>In case you have forgotten the login credentials for your account, you can click on the forgot password link to reset your password. </p>
+	<p><%= t('mailer_notifier.user_notifications.click_on_forgot_password') %></p>
 </div>
 
-<div>
-Regards,<br>
-Freshdesk Team
-</div>
+<% end %>
 

@@ -78,6 +78,7 @@ module EmailMailboxTestHelper
     email_config_params = {
       name: options[:name] || Faker::Name.name,
       reply_email: options[:support_email] || "#{Faker::Internet.email}",
+      to_email: options[:support_email] || "#{Faker::Internet.email}",
       primary_role: options[:default_reply_email] || false,
       active: options[:active] || true,
       group_id: options[:group_id],

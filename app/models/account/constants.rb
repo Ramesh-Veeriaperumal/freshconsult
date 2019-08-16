@@ -271,7 +271,7 @@ class Account < ActiveRecord::Base
       user_notifications: false, freshplug_enabled: false, dkim: false,
       sha1_enabled: false, disable_archive: false, sha256_enabled: false,
       auto_ticket_export: false, select_all: false, facebook_realtime: false,
-      :"Freshfone Call Tracker" => false, ticket_contact_export: false,
+      :"Freshfone Call Tracker" => false, ticket_contact_export: false, field_agent_availability: false,
       custom_apps: false, timesheet: false, api_jwt_auth: false, disable_emails: false,
       skip_portal_cname_chk: false, falcon_signup: false, falcon_portal_theme: false,
       image_annotation: false, email_actions: false, ner: false, disable_freshchat: false,
@@ -293,17 +293,17 @@ class Account < ActiveRecord::Base
       email_deprecated_style_parsing: false, saml_ecrypted_assertion: false,
       quoted_text_parsing_feature: false, description_by_default: false, field_agent_availability: false,
       ticket_fields_central_publish: false, skip_invoice_due_warning: false,
-      facebook_page_scope_migration: false, agent_group_central_publish: false, custom_fields_search: false,
+      facebook_page_scope_migration: false, agent_group_central_publish: false, custom_fields_search: true,
       update_billing_info: false, allow_billing_info_update: false, tag_central_publish: false,
       archive_tickets_api: false, redis_picklist_id: true, bot_agent_response: false, fluffy: false,
       nested_field_revamp: true, service_worker: false, kbase_mint: false, freshvisual_configs: false,
       scheduling_fsm_dashboard: false,
       freshid_org_v2: false, hide_agent_login: false, office365_adaptive_card: false,
       text_custom_fields_in_etl: false, email_spoof_check: false, disable_email_spoof_check: false,
-      recalculate_daypass: false, sandbox_single_branch: false, prevent_wc_ticket_create: true, allow_wildcard_ticket_create: false,
+      recalculate_daypass: false, prevent_wc_ticket_create: true, allow_wildcard_ticket_create: false,
       attachment_redirect_expiry: false, solutions_agent_portal: false, solutions_agent_metrics: false,
       requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false, supervisor_custom_status: false,
-      sandbox_temporary_offset: false, downgrade_policy: false
+      sandbox_temporary_offset: false, downgrade_policy: false, skip_posting_to_fb: false
     }, :merge
   )
 

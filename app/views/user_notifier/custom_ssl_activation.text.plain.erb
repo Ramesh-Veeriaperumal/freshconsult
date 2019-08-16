@@ -1,21 +1,20 @@
-	Hi <%= @admin_name %>,
+	<%= render layout: 'shared/email_header_footer.plain.erb', locals: { user_name: @admin_name, sent_by: :freshdesk_support } do %>
 
 
-	Your request for a custom SSL certificate has been approved.
+	<%= t('mailer_notifier.user_notifications.ssl_certificate_approved') %>
 
-	We have already turned on Custom SSL in your portal, under Admin->Security. In order for it to work, please follow the steps below to update your CNAME records.
+	<%= t('mailer_notifier.user_notifications.ssl_steps_introduction') %>
 
 
-	1. Login to DNS Control Panel for the custom domain - <%= @portal_url %>. 
+	<%= t('mailer_notifier.user_notifications.ssl_step_1', portal_url: @portal_url) %>
 
-	2. Create a CNAME record under <%= @portal_url %> and point it to <%= @elb_name %>.
+	<%= t('mailer_notifier.user_notifications.ssl_step_2', portal_url: @portal_url, elb_name: @elb_name) %>
 
-	3. Wait for a few hours for the changes to take effect.
+	<%= t('mailer_notifier.user_notifications.ssl_step_3') %>
 
 
 	
-	 Once ready, your support portal at <%= @portal_url %> will be secure thanks to the new SSL certificate. 
+	 <%= t('mailer_notifier.user_notifications.ssl_once_ready', portal_url: @portal_url) %>
 
 	 
-	Regards
-	Freshdesk Support
+	<% end %>

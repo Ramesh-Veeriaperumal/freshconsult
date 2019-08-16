@@ -214,7 +214,7 @@ module Fdadmin
             end
           end
         end
-        
+
         def get_calls_and_numbers_usage(ff_subscription)
           [ 
             ff_subscription.present? ? ff_subscription.

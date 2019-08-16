@@ -27,9 +27,7 @@ class SubscriptionPlan < ActiveRecord::Base
 
   # TODO: Remove force_2019_plan?() after 2019 plan launched
   # START
-  scope :plans_2019, conditions: { name: ['Sprout Jan 19', 'Blossom Jan 19',
-                                          'Garden Jan 19', 'Estate Jan 19',
-                                          'Forest Jan 19'] }
+  scope :plans_2019, conditions: { name: ['Sprout Jan 19', 'Blossom Jan 19', 'Garden Jan 19', 'Estate Jan 19','Garden Omni Jan 19', 'Estate Omni Jan 19', 'Forest Jan 19'] }, :order => 'amount asc'
   # END
 
   after_commit :clear_cache

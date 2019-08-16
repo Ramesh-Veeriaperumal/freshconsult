@@ -16,6 +16,7 @@ class FalconRedirection
                       /^\/helpdesk\/tickets\/archived\/(\d+)/ => '/a/tickets/:id',
                       /^\/helpdesk\/scenario_automations\/(\d+)\/edit/ => '/a/scenario_automations/:id/edit',
                       # /^\/helpdesk\/tickets\/(\d+)\/edit$/ => '/a/tickets/:id',
+                      /^\/solution\/articles\/(\d+)\/([a-z]*)/ => '/a/solutions/articles/:id/:language',
                       /^\/solution\/articles\/(\d+)/ => '/a/solutions/articles/:id',
                       /^\/discussions\/topics\/(\d+)/ => '/a/forums/topics/:id',
                       /^\/users\/(\d+)/ => '/a/contacts/:id',
@@ -31,7 +32,7 @@ class FalconRedirection
     }.freeze
 
     SOCIAL_STREAMS_PATH = ['admin/social/facebook_streams','admin/social/twitter_streams','integrations/slack_v2/add_slack_agent','integrations/slack_v2/new'].freeze
-    
+
     def falcon_redirect(options)
       @options = options
       prevent_redirect = options.key?(:prevent_redirect) ? options[:prevent_redirect] : prevent_redirection
@@ -43,7 +44,7 @@ class FalconRedirection
     end
 
     def prevent_redirection
-      # falcon_whitelisted_path? || 
+      # falcon_whitelisted_path? ||
       iframe_path? || @options[:is_ajax] || @options[:not_html] || non_falcon_referer?
     end
 
@@ -81,7 +82,10 @@ class FalconRedirection
     def check_member_paths(ref_path)
       DYNAMIC_PATHS.each do |k,v|
         if ref_path =~ k
-          return v.sub(':id',$1)
+          id, language = $1, $2
+          result_path = v.sub(':id', id)
+          result_path = result_path.sub(':language', language) if language
+          return result_path
         end
       end
       false

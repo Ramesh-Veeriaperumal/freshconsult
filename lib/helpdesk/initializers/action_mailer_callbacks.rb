@@ -51,7 +51,7 @@ module ActionMailerCallbacks
   end
 
   def user_locale(user)
-    (user && user.language) ? user.language : (Portal.current ? Portal.current.language : (Account.current ? Account.current.language : I18n.default_locale))
+    (user && user.language) ? user.language : Account.current.default_account_locale
   end
 
     def set_smtp_settings(mail)

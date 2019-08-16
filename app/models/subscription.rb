@@ -513,7 +513,7 @@ class Subscription < ActiveRecord::Base
   def amount_with_tax_safe_access
     self.additional_info[:amount_with_tax].presence || self.amount
   end
-  
+
   def reset_field_agent_limit
     return if self.additional_info.try(:[], :field_agent_limit).nil?
     self.additional_info = self.additional_info.except(:field_agent_limit)
@@ -559,6 +559,10 @@ class Subscription < ActiveRecord::Base
     self.addons = applicable_addons(present_subscription.addons, subscription_plan)
     applicable_coupon = verify_coupon(present_subscription.coupon)
     subscription_estimate(addons, applicable_coupon)
+  end
+
+  def reseller_paid_account?
+    account.reseller_paid_account?
   end
 
   protected

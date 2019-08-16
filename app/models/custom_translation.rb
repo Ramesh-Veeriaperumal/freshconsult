@@ -19,6 +19,13 @@ class CustomTranslation < ActiveRecord::Base
     incomplete: 3
   }.freeze
 
+  SURVEY_STATUS = {
+    untranslated: 0,
+    translated: 1,
+    outdated: 2,
+    incomplete: 3
+  }.freeze
+
   VERSION_MEMBER_KEYS = {
     'Helpdesk::TicketField' => "#{Helpdesk::TicketField::VERSION_MEMBER_KEY}:TRANSLATION:%{language_code}"
   }.freeze

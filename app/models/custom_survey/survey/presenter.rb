@@ -32,29 +32,49 @@ class CustomSurvey::Survey < ActiveRecord::Base
     survey.add proc { |sur| sur.fetch_additional_questions_and_choices }, as: :additional_questions
   end
 
-  def fetch_default_questions_and_choices
-    default_question = {}
-    question = fetched_survey_questions.find(&:default)
-    default_question[:question] = question.label
-    default_question[:choices] = question.choices.map { |choice| [choice[:face_value], choice[:value]] }.to_h
-    default_question.stringify_keys
+  api_accessible :custom_translation_secondary do |survey|
+    survey.add ->(model, options) { model.translation(options[:lang])['title_text'] || '' }, as: :title_text
+    survey.add ->(model, options) { model.translation(options[:lang])['comments_text'] || '' }, as: :comments_text
+    survey.add ->(model, options) { model.translation(options[:lang])['thanks_text'] || '' }, as: :thanks_text
+    survey.add ->(model, options) { model.translation(options[:lang])['feedback_response_text'] || '' }, as: :feedback_response_text
+    survey.add ->(model, options) { model.fetch_default_questions_and_choices(options[:lang]) }, as: :default_question
+    survey.add ->(model, options) { model.fetch_additional_questions_and_choices(options[:lang]) }, as: :additional_questions
   end
 
-  def fetch_additional_questions_and_choices
+  def fetch_default_questions_and_choices(lang = nil)
+    default_question = {}
+    question = fetch_survey_questions.find(&:default)
+    default_question['question'] = lang.blank? ? question.label : (translation(lang)['default_question'] || {})['question'] || ''
+    default_question['choices'] = fetch_choices_translation(question, lang, 'default_question')
+    default_question
+  end
+
+  def fetch_additional_questions_and_choices(lang = nil)
     additional_questions = {}
-    questions = fetched_survey_questions.reject(&:default)
+    questions = fetch_survey_questions.reject(&:default)
     return nil if questions.blank?
 
     questions.each do |question|
-      additional_questions["question_#{question.id}".to_sym] = question.label
+      additional_questions["question_#{question.id}"] = lang.blank? ? question.label : (translation(lang)['additional_questions'] || {})["question_#{question.id}"] || ''
     end
-    additional_questions[:choices] = questions.first.choices.map { |choice| [choice[:face_value], choice[:value]] }.to_h
-    additional_questions.stringify_keys
+    additional_questions['choices'] = fetch_choices_translation(questions.first, lang, 'additional_questions')
+    additional_questions
   end
 
-  # memoizing to avoid repeat db calls
-  def fetched_survey_questions
-    @fetched_survey_questions ||= survey_questions.preload(:custom_field_choices_asc, :custom_field_choices_desc, :survey)
+  def fetch_choices_translation(question, lang = nil, type = nil)
+    choice_translation = {}
+    question.choices.each do |choice|
+      choice_translation[choice[:face_value]] = lang.blank? ? choice[:value] : ((translation(lang)[type] || {})['choices'] || {})[choice[:face_value]] || ''
+    end
+    choice_translation
+  end
+
+  def fetch_survey_questions
+    @fetch_survey_questions ||= survey_questions.preload(:custom_field_choices_asc, :custom_field_choices_desc, :survey)
+  end
+
+  def translation(lang)
+    @translation ||= (safe_send("#{lang.underscore}_translation").try(:translations) || {})
   end
 
   def custom_translation_key

@@ -269,7 +269,7 @@ module Admin::AutomationHelper
       if key == :name
         value = "#{value}_#{Account.current.id}" if !DEFAULT_FIELDS.include?(value.to_sym) && is_ticket && !is_event && (!value.to_s.include? TIME_AND_STATUS_BASED_FILTER[0])
         value = "cf_#{value}" if !is_ticket && !COMPANY_FIELDS.include?(value.to_sym) && !CONDITION_CONTACT_FIELDS.include?(value.to_sym)
-        value = SUPERVISOR_FIELD_MAPPING[value.to_sym] if @item.supervisor_rule? && SUPERVISOR_FIELD_MAPPING.key?(value.to_sym)
+        value = SUPERVISOR_FIELD_MAPPING[value.to_sym].to_s if @item.supervisor_rule? && SUPERVISOR_FIELD_MAPPING.key?(value.to_sym)
         name_changed = DISPLAY_FIELD_NAME_CHANGE[value.to_sym]
         value = name_changed if name_changed.present? &&  !@item.supervisor_rule?
       end

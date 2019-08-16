@@ -18,7 +18,7 @@ module Facebook
                                   :reauth_required => true,
                                   :last_error      => error
           })
-          UserNotifier.send_later(:deliver_notify_facebook_reauth, @fan_page)
+          UserNotifier.send_later(:deliver_notify_facebook_reauth, @fan_page, locale_object: Account.current.admin_email)
           error_updated = true
         end
         error.merge!({

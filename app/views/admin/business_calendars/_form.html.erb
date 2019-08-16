@@ -131,7 +131,7 @@
 			<%= render :partial => "import_holiday"%>
 			<div class="holidaylist row-fluid">
 				<%= f.hidden_field :holiday_data, :id=>"holiday_data" %>
-				<ul class="unstyled hide" id="HolidayList"></ul>
+				<ul class="unstyled"  id="HolidayList"></ul>
 				<% content_for :pagefixed do %>
 					<%= javascript_tag do %>
 						<% (@business_calendar.holiday_data || []).each do |holiday| %>

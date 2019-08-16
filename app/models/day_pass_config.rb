@@ -77,7 +77,7 @@ class DayPassConfig < ActiveRecord::Base
     def update_failure_count
       failed_count = increment_others_redis(credit_card_failure_key(account))
       if failed_count == 1
-        UserNotifier.failure_transaction_notifier(account.admin_email, {:available_passes => available_passes, :domain => account.full_domain,
+        UserNotifier.send_email(:failure_transaction_notifier, account.admin_email, account.admin_email, {:available_passes => available_passes, :domain => account.full_domain,
          :admin_name => account.admin_first_name, :card_details => account.subscription.card_number})
         set_others_redis_expiry(credit_card_failure_key(account), 1.day)
       end

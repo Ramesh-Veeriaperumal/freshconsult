@@ -420,7 +420,6 @@ Helpkit::Application.routes.draw do
   match '/zendesk/import' => 'admin/zen_import#index', :as => :zendesk_import
   match '/twitter/authdone' => 'social/twitter_handles#authdone', :as => :tauth
   match '/download_file/:source/:token' => 'admin/data_export#download', :as => :download_file
-
   namespace :freshfone do
     resources :ivrs do
       member do
@@ -1123,8 +1122,8 @@ Helpkit::Application.routes.draw do
   match '/http_request_proxy/fetch',
       :controller => 'http_request_proxy', :action => 'fetch', :as => :http_proxy
   match '/freshcaller_proxy',
-       :controller => 'freshcaller_proxy', :action => 'fetch', :as => :freshcaller_proxy, :via => :post
-  match '/freshcaller_proxy/recording_url',
+       :controller => 'freshcaller_proxy', :action => 'fetch', :as => :freshcaller_proxy, :via => :post 
+  match '/freshcaller_proxy/recording_url', 
        :controller => 'freshcaller_proxy', :action => 'recording_url', :as => :freshcaller_proxy, :via => :get
   match '/mkp/data-pipe.:format', :controller => 'integrations/data_pipe', :action => 'router', :method => :post, :as => :data_pipe
 
@@ -2327,7 +2326,6 @@ Helpkit::Application.routes.draw do
         delete :delete_multiple
       end
     end
-
     match '/ticket_templates/tab/:current_tab'    => 'ticket_templates#index',     :as => :my_ticket_templates
     match '/parent_template/:p_id/child/new'      => 'ticket_templates#new_child', :as => :new_child_template
     match '/parent_template/:p_id/child/:id/edit' => 'ticket_templates#edit_child',:as => :edit_child_template
@@ -3042,13 +3040,13 @@ Helpkit::Application.routes.draw do
           put :unblock_outgoing_email
           post :extend_trial
           put :change_primary_language
-          get :clone_account
+          get :clone_account  
           post :clone_account
           post :trigger_action
           get :clone_account
           post :clone_account
           post :enable_freshid
-          post :enable_fluffy
+          put :enable_fluffy
           put :change_fluffy_plan
           post :extend_higher_plan_trial
           post :change_trial_plan
@@ -3280,10 +3278,6 @@ Helpkit::Application.routes.draw do
       put  :trigger
       get  :export
     end
-    #member do
-    #  #TODO - make this a match route below like for shortcodes
-    #  put :update_availability
-    #end
   end
   match '/livechat/visitor/:type', :controller => 'chats', :action => 'visitor', :method => :get
   match '/livechat/downloadexport/:token', :controller => 'chats', :action => 'download_export', :method => :get
@@ -3294,7 +3288,6 @@ Helpkit::Application.routes.draw do
   put '/livechat/shortcodes/:id', :controller => 'chats', :action => 'update_shortcode', :method => :put
   put '/livechat/agent/:id/update_availability', :controller => 'chats', :action => 'update_availability', :method => :put
   match '/livechat/*letter', :controller => 'chats', :action => 'index', :method => :get
-
 
   use_doorkeeper do
     skip_controllers :oauth_applications, :authorized_applications

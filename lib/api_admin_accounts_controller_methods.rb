@@ -4,8 +4,9 @@ module ApiAdminAccountsControllerMethods
   def fetch_unresolved_tickets(user_email)
     unresolved_tickets = []
     contacts_url = CONTACTS_URL % { user_email: user_email }
-    user_details = fetch_details_from_support(contacts_url).first
-    if user_details.present?
+    user_values = fetch_details_from_support(contacts_url)
+    if user_values.present?
+      user_details = user_values.first
       user_details.symbolize_keys!
       company_id = user_details[:company_id]
       unresolved_tickets = fetch_ticket_details(user_details, company_id)
@@ -31,6 +32,9 @@ module ApiAdminAccountsControllerMethods
 
   def fetch_details_from_support(support_url)
     JSON.parse(RestClient::Request.new(user: PRODUCT_FEEDBACK_CONFIG['api_key'], method: :get, url: support_url).execute)
+  rescue StandardError => e
+    Rails.logger.error("Error while hitting the url: #{support_url} :: #{e.message}")
+    return
   end
 
   def fetch_support_params

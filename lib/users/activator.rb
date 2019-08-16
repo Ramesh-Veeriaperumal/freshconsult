@@ -131,7 +131,7 @@ module Users
     end
   
     def deliver_admin_activation
-      UserNotifier.send_later(:deliver_admin_activation,self) unless Account.current.freshid_integration_enabled?
+      UserNotifier.send_later(:deliver_admin_activation, self, locale_object: self) unless Account.current.freshid_integration_enabled?
     end
 
     def restrict_domain

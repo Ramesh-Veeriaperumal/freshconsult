@@ -33,7 +33,7 @@ module Social
 
       def post_success_or_failure_command(error_message, reply_twt, error_code, stream_id, args)
         command_payload = construct_payload(error_message, reply_twt, error_code, stream_id, args)
-        msg_id = Social::Util.generate_msg_id(command_payload)
+        msg_id = generate_msg_id(command_payload)
         Rails.logger.info "Command from Twitter, Command: #{STATUS_UPDATE_COMMAND_NAME}, Msg_id: #{msg_id}"
         Channel::CommandWorker.perform_async({
                                                override_payload_type: ChannelIntegrations::Constants::PAYLOAD_TYPES[:command_to_helpkit],

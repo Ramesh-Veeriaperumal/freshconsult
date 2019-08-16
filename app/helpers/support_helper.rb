@@ -982,9 +982,13 @@ module SupportHelper
       if Account.current.agent_only_language?(Language.current)
         output << %( <div class="alert-assume-agent alert-solid"><span class="ficon-unverified"></span> )
         output << %( #{t('header.agent_only_language',:language => Language.current.name)} )
-        output << ' - ' + link_to(t('enable').upcase, '/admin/manage_languages', :class => "link") if current_user && current_user.privilege?(:admin_tasks)
+        output << ' - ' + link_to(t('enable').upcase, hidden_lang_alert_redirection_url, class: 'link') if current_user && current_user.privilege?(:admin_tasks)
         output << %( </div> )
       end
       output.join("").html_safe
+    end
+
+    def hidden_lang_alert_redirection_url
+      current_account.falcon_ui_enabled?(current_user) ? '/a/admin/account/languages' : '/admin/manage_languages'
     end
 end

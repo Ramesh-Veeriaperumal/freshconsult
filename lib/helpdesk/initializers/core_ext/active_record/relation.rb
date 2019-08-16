@@ -15,14 +15,21 @@ module ActiveRecord
       filter_conditions = conditions || frame_converse_conditions(updates_hash)
       rate_limit        = options.delete(:rate_limit) || {}
 
-      begin
-        record_ids = self.where(filter_conditions).limit(batch_size).pluck(:id)
-        if record_ids.present?
-          records = self.where(id: record_ids)
-          records.update_all_without_batching(updates_hash, options)
-          count += record_ids.count
+      Sharding.run_on_slave do
+        loop do
+          record_ids = where(filter_conditions).limit(batch_size).pluck(:id)
+
+          if record_ids.present?
+            records = where(id: record_ids)
+            records.update_all_without_batching(updates_hash, options)
+            count += record_ids.count
+          end
+
+          # Stop this batch if the current batch size wasn't big enough or
+          #   if the rate limit imposed, has been exceeded(throttled)
+          break unless batch_condition(record_ids.size, batch_size) && rate_limiting_condition(count, rate_limit[:batch_size])
         end
-      end while batch_condition(record_ids.size, batch_size) && rate_limiting_condition(count, rate_limit[:batch_size])
+      end
 
       if rate_limit.present?
         klass = rate_limit[:class_name].constantize
@@ -66,7 +73,9 @@ module ActiveRecord
     # performs update all with publish without batching of records
     def update_all_without_batching(updates_hash, options = {})
       publish_record_ids = self.update_all_record_ids
-      self.update_all(updates_hash)
+      Sharding.run_on_master do
+        self.update_all(updates_hash)
+      end
       UpdateAllPublisher.perform_async(klass_name: update_all_klass_name, ids: publish_record_ids, updates: updates_hash, options: options)
     end
 

@@ -192,6 +192,7 @@
     - freshid_retry_worker
     - archive_account_tickets_channel_queue
     - archive_tickets_channel_queue
+    - update_agents_roles
 
   :external:
     - thank_you_note
@@ -233,6 +234,7 @@
     - ticket_properties_suggester
     - sandbox_cleanup
     - update_sandbox_subscription
+    - ticket_properties_suggester
   :free:
     - free_sla
     - free_supervisor

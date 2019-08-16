@@ -53,9 +53,8 @@ module Middleware
             Sharding.select_shard_of(webhook_args['account_id']) do
               account = Account.find(webhook_args['account_id']).make_current
               email_list =  Account.current.account_managers.map { |admin| admin.email }.join(",")
-              UserNotifier.send_later(:notify_webhook_drop,
-                account,
-                email_list
+              UserNotifier.send_email_to_group(:notify_webhook_drop, email_list.split(','),
+                account
               )
             end
           end

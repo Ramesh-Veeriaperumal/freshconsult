@@ -119,8 +119,8 @@ module FilterFactory::Tickets
       def transform_fsm_appointment_times_condition(condition)
         value = condition['value']
         transformed_condition = if value.include? ' - '
-                                  from, to = value.split(' - ').map { |date| Time.zone.parse(date).utc.iso8601 }
-                                  fetch_date_range(from, to)
+                                  from, to = value.split(' - ')
+                                  fetch_date_range(Time.zone.parse(from).utc.iso8601, Time.zone.parse(to).end_of_day.utc.iso8601)
                                 else
                                   safe_send("fsm_#{value}_condition")
                                 end

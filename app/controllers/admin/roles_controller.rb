@@ -85,8 +85,11 @@ class Admin::RolesController < Admin::AdminController
   end
 
   def update_agents
-      update_role if role_privilege
-      render :json => {:status => true}
+    if role_privilege
+      args = { add_user_ids: params[:add_user_ids], delete_user_ids: params[:delete_user_ids], role_id: @role.id }
+      ::Roles::UpdateAgentsRoles.perform_async(args)
+    end
+    render :json => {:status => true}
   end
 
   private
@@ -96,7 +99,7 @@ class Admin::RolesController < Admin::AdminController
     end
 
     def update_role 
-      # To avoid account_admin's user_id inject.  
+      # To avoid account_admin's user_id inject.
       account_admin = current_account.technicians.find_by_email(current_account.admin_email)
       params_add_user_ids = params[:add_user_ids].split(',') if params[:add_user_ids]
       params_delete_user_ids = params[:delete_user_ids].split(',') if params[:delete_user_ids]

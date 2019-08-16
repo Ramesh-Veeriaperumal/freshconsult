@@ -6,18 +6,18 @@
 
   <!-- BODY -->
   <div style="max-width:95%;margin: 0 auto;">
-    <h3>Activate your Freshdesk account</h3>
-    <div style="max-width: 600px;text-align: center;margin: 0 auto;margin-bottom: 20px;"> Thank you for signing up for Freshdesk. We look forward to seeing you support your customers. Click on the button below to activate your account and get started. </div>
-    <%= link_to "Activate Account", "#{@activation_url}", { :style => "background-color:#208465;color:white;text-decoration: none;padding: 10px 30px;display: inline-block;border-radius: 5px;box-shadow: 0 4px 0px 0px #005539;"} %>
-    <div style="margin-top: 30px;font-weight: bold;">Your Freshdesk URL:</div>
+    <h3><%= t('mailer_notifier.user_notifications.activate_accounts') %></h3>
+    <div style="max-width: 600px;text-align: center;margin: 0 auto;margin-bottom: 20px;"> <%= t('mailer_notifier.user_notifications.activation_message') %></div>
+    <%= link_to t('mailer_notifier.user_notifications.activate_button'), "#{@activation_url}", { :style => "background-color:#208465;color:white;text-decoration: none;padding: 10px 30px;display: inline-block;border-radius: 5px;box-shadow: 0 4px 0px 0px #005539;"} %>
+    <div style="margin-top: 30px;font-weight: bold;"><%= t('mailer_notifier.user_notifications.freshdesk_url') %></div>
     <%= link_to "#{@account.full_domain}", "#{@account.full_domain}" %>
   </div>
 
   <!-- FOOTER -->
   <div style="font-size:13px;color:#aaa;margin-top:40px;padding-bottom:20px;">
-    <div>Got Questions? Get in touch with us</div>
-    <div>Email: support@freshdesk.com</div>
-    <div>Call: +1 (866) 832-3090</div>
+    <div><%= t('mailer_notifier.user_notifications.get_in_touch') %></div>
+    <div><%= t('mailer_notifier.user_notifications.support_email', support_email: 'support@freshdesk.com') %></div>
+    <div><%= t('mailer_notifier.user_notifications.support_call', support_number: '+1 (866) 832-3090') %></div>
     <div>Freshdesk, Inc. 1250 Bayhill Drive, Suite 315, San Bruno, CA 94066</div>
   </div>
 </div>

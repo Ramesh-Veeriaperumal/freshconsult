@@ -1,7 +1,5 @@
 <%= render layout: 'shared/email_header_footer.plain.erb', locals: { sent_by: :portal_support, portal_name: @options[:portal_name], other_recipients_note: true } do %>
 
-
 <%= t("mailer_notifier.scheduled_task_notifications.no_data") %><%=@options[:task].schedulable.filter_name%>
-
 
 <% end %>

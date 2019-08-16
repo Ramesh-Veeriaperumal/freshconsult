@@ -66,11 +66,10 @@ module Wf
         else
           condition_key = condition.full_key
           begin
-            start_date = value.split('-')[0].to_datetime.in_time_zone(agent_time_zone).strftime('%Y-%m-%d')
-            end_date = value.split('-')[1].to_datetime.in_time_zone(agent_time_zone).strftime('%Y-%m-%d')
-            if start_date.match(TicketFilterConstants::DATE_FIELD_REGEX) && end_date.match(TicketFilterConstants::DATE_FIELD_REGEX)
-              return [" (#{condition_key} >= ? and #{condition_key} <= ?) ", start_date, end_date]
-            end
+            start_date, end_date = value.split(' - ')
+            start_date = ::Time.zone.parse(start_date).to_s(:db)
+            end_date = ::Time.zone.parse(end_date).end_of_day.to_s(:db)
+            return [" (#{condition_key} >= ? and #{condition_key} <= ?) ", start_date, end_date]
           rescue StandardError => e
             Rails.logger.info "Will_filter date_time::: Invalid date time for #{condition.key}"
           end

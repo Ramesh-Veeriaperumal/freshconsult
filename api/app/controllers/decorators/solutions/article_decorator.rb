@@ -4,6 +4,7 @@ class Solutions::ArticleDecorator < ApiDecorator
            :modified_by, :id, :to_param, :tags, :voters, :thumbs_up, :thumbs_down, :hits, :tickets, :outdated, to: :record
 
   SEARCH_CONTEXTS_WITHOUT_DESCRIPTION = [:agent_insert_solution, :filtered_solution_search].freeze
+  SPOTLIGHT_SEARCH_CONTEXT = :agent_spotlight_solution
 
   def initialize(record, options = {})
     super(record)
@@ -43,10 +44,12 @@ class Solutions::ArticleDecorator < ApiDecorator
   end
 
   def to_search_hash
-    article_info.merge(
+    result = article_info.merge(
       category_name: category_name,
       folder_name: folder_name
     )
+    result[:portal_ids] = category_meta.portal_solution_categories.map(&:portal_id) if @search_context == SPOTLIGHT_SEARCH_CONTEXT
+    result
   end
 
   def to_hash
@@ -135,8 +138,12 @@ class Solutions::ArticleDecorator < ApiDecorator
       record.solution_folder_meta.safe_send("#{language_key}_folder").name
     end
 
+    def category_meta
+      parent.solution_category_meta
+    end
+
     def category_name
-      record.solution_folder_meta.solution_category_meta.safe_send("#{language_key}_category").name
+      category_meta.safe_send("#{language_key}_category").name
     end
 
     def language_object
@@ -198,11 +205,10 @@ class Solutions::ArticleDecorator < ApiDecorator
     end
 
     def category_and_folder
-      @category_meta = parent.solution_category_meta
-      if @category_meta.is_default
+      if category_meta.is_default
         { :source => ::SolutionConstants::KBASE_EMAIL_SOURCE }
       else
-        { category_id: @draft.try(:category_meta_id) || @category_meta.id,
+        { category_id: @draft.try(:category_meta_id) || category_meta.id,
           folder_id: parent.solution_folder_meta.id }
       end
     end

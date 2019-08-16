@@ -7,6 +7,7 @@ module SearchTestHelper
   include ContactFieldsHelper
 
   SEARCH_CONTEXTS_WITHOUT_DESCRIPTION = [:agent_insert_solution, :filtered_solution_search]
+  SPOTLIGHT_SEARCH_CONTEXT = :agent_spotlight_solution
 
   STATUSES = {
     resolved_at: [Helpdesk::Ticketfields::TicketStatus::RESOLVED, Helpdesk::Ticketfields::TicketStatus::CLOSED],
@@ -120,7 +121,7 @@ module SearchTestHelper
     sleep(10)
   end
 
-  def search_solution_article_pattern(article, context = 'spotlight')
+  def search_solution_article_pattern(article, context = SPOTLIGHT_SEARCH_CONTEXT)
     article_pattern = {
       id: article.parent_id,
       type: article.parent.art_type,
@@ -135,15 +136,18 @@ module SearchTestHelper
       language: article.language_code
     }
     article_pattern.merge!(search_article_content_pattern(article.draft || article, context))
-    article_pattern.merge!(parents_info(article))
+    article_pattern.merge!(parents_info(article, context))
     article_pattern
   end
 
-  def parents_info(article)
-    {
-      category_name: article.solution_folder_meta.solution_category_meta.safe_send("#{language_short_code(article)}_category").name,
+  def parents_info(article, context)
+    category_meta = article.solution_folder_meta.solution_category_meta
+    parents_info_pattern = {
+      category_name: category_meta.safe_send("#{language_short_code(article)}_category").name,
       folder_name: article.solution_folder_meta.safe_send("#{language_short_code(article)}_folder").name
     }
+    parents_info_pattern[:portal_ids] = category_meta.portal_solution_categories.map(&:portal_id) if context == SPOTLIGHT_SEARCH_CONTEXT
+    parents_info_pattern
   end
 
   def search_article_content_pattern(item, context)

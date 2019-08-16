@@ -5,6 +5,7 @@ class Account < ActiveRecord::Base
   include Mobile::Actions::Account
   include Social::Ext::AccountMethods
   include Cache::Memcache::Account
+  include Cache::Memcache::Admin::CustomData
   include Redis::RedisKeys
   include Redis::RateLimitRedis
   include Redis::TicketsRedis
@@ -920,6 +921,10 @@ class Account < ActiveRecord::Base
     time_sheets.joins('AND helpdesk_time_sheets.account_id = helpdesk_tickets.account_id').readonly(false)
   end
 
+  def reseller_paid_account?
+    account_additional_settings.additional_settings[:paid_by_reseller] || false
+  end
+
   def thank_you_configured_rule_ids
     get_members_from_automation_redis_set(automation_rules_with_thank_you_configured)
   end
@@ -934,6 +939,10 @@ class Account < ActiveRecord::Base
 
   def remove_thank_you_redis_key
     delete_automation_redis_key(automation_rules_with_thank_you_configured)
+  end
+
+  def default_account_locale
+    Portal.current ? Portal.current.language : (Account.current ? Account.current.language : I18n.default_locale)
   end
 
   protected

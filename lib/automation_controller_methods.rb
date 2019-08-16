@@ -184,11 +184,6 @@ module AutomationControllerMethods
     nestedfields
   end
 
-  # For handling json escape inside hash data
-  def escape_html_entities_in_json
-    ActiveSupport::JSON::Encoding.escape_html_entities_in_json = true
-  end
-
   def load_internal_group_agents
     internal_group_ids  = current_account.account_status_groups_from_cache.collect(&:group_id).uniq
     internal_agent_ids  = current_account.agent_groups.where(:group_id => internal_group_ids).pluck(:user_id).uniq
@@ -208,7 +203,7 @@ module AutomationControllerMethods
 
   def agents_list
     # removing field service agents from list of agents
-    @agents_list ||= current_account.users.technicians.collect { |au| [au.id, CGI.escapeHTML(au.name)] if au.agent && au.agent.support_agent? }.compact
+    @agents_list ||= current_account.users.includes(:agent).technicians.collect { |au| [au.id, CGI.escapeHTML(au.name)] if au.agent && au.agent.support_agent? }.compact
   end
 
   def none_option
