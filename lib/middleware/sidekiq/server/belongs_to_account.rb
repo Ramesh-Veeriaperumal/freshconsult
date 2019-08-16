@@ -39,6 +39,8 @@ module Middleware
             puts "Ignoring ShardNotFound, #{e.inspect}, #{msg['account_id']}"
         rescue AccountBlocked => e
             puts "Ignore AccountBlocked, #{e.inspect}"
+        rescue ActiveRecord::RecordNotFound => e
+          puts "Ignore ActiveRecord::RecordNotFound, #{e.inspect}, #{msg['account_id']}"
         rescue ActiveRecord::AdapterNotSpecified => e
           NewRelic::Agent.notice_error(e)
           # rescue Exception => e
