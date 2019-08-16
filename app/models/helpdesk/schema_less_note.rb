@@ -7,6 +7,9 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
 
   self.table_name =  "helpdesk_schema_less_notes"
   self.primary_key = :id
+
+  PRESENTER_FIELDS_MAPPING = { 'int_nc01' => 'category', 'int_nc02' => 'response_time_in_seconds', 'int_nc03' => 'response_time_by_bhrs',
+                               'long_nc01' => 'email_config_id', 'string_nc01' => 'subject' }.freeze
   
   alias_attribute :header_info, :text_nc01
   alias_attribute :category, :int_nc01
@@ -29,6 +32,10 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
 
   attr_protected :note_id, :account_id
   validate :cc_and_bcc_emails_count
+
+  before_save :construct_model_changes
+
+  publishable on: [:update], exchange_model: :note, exchange_action: :update
 
   def self.resp_time_column
     :int_nc02
@@ -107,6 +114,18 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
 
   def thank_you_note=(val)
     note_properties[:thank_you_note] = val
+  end
+
+  def override_exchange_model(_action)
+    changes = @schema_less_note_changes.slice(*PRESENTER_FIELDS_MAPPING.keys)
+    changes.keys.each do |key|
+      changes[PRESENTER_FIELDS_MAPPING[key]] = changes.delete key if PRESENTER_FIELDS_MAPPING.key?(key)
+    end
+    note.model_changes = changes if changes.present?
+  end
+
+  def construct_model_changes
+    @schema_less_note_changes = changes.clone
   end
 
   private
