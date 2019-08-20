@@ -90,8 +90,7 @@ class Account < ActiveRecord::Base
   end
 
   def send_account_cancelled_email
-    email_list = self.account_managers.map(&:email).join(',')
-    SubscriptionNotifier.send_email_to_group(:admin_account_cancelled, email_list) if Rails.env.production?
+    SubscriptionNotifier.send_email_to_group(:admin_account_cancelled, self.account_managers.map(&:email)) if Rails.env.production?
   end
   
   def perform_cancellation_for_paid_account
