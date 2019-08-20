@@ -5,7 +5,7 @@ class Social::TwitterStream < Social::Stream
   include Social::Constants
   include Social::Util
   before_create :set_default_values
-  publishable on: [:create, :update, :destroy], if: :dm_stream?
+  publishable on: [:create, :update, :destroy], if: :publish_stream?
   before_validation :valid_rule?, :if => :gnip_subscription?
   before_save :update_rule_value, :unless => :gnip_subscription?
   before_save :persist_previous_changes
@@ -36,6 +36,14 @@ class Social::TwitterStream < Social::Stream
   
   def gnip_subscription?
     self.data[:gnip] == true
+  end
+
+  def publish_stream?
+    dm_stream? || mention_rule_defined?
+  end
+
+  def mention_rule_defined?
+    default_stream? && Account.current.launched?(:mentions_to_tms)
   end
   
   def construct_unsubscribe_args(rule_value)
@@ -150,5 +158,6 @@ class Social::TwitterStream < Social::Stream
     def rule_snapshot_after_update
       @model_changes[:rules][1] = rules
     end
+
 
 end

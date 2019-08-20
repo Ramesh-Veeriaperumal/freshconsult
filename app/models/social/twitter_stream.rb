@@ -16,7 +16,8 @@ class Social::TwitterStream < Social::Stream
     :class_name  => 'Social::TicketRule',
     :foreign_key => :stream_id,
     :dependent   => :destroy,
-    :conditions  => {:rule_type => SMART_FILTER_RULE_TYPE }
+    conditions: { rule_type: SMART_FILTER_RULE_TYPE },
+    autosave: true
 
   has_many :keyword_rules,
     :class_name  => 'Social::TicketRule',
@@ -143,6 +144,10 @@ class Social::TwitterStream < Social::Stream
     self.data[:kind] == TWITTER_STREAM_TYPE[:custom]
   end
 
+  def dm_stream?
+    self.data[:kind] == TWITTER_STREAM_TYPE[:dm]
+  end
+
   def update_volume_in_redis
     hash_key = select_valid_date(Time.now)
     newrelic_begin_rescue do
@@ -225,6 +230,39 @@ class Social::TwitterStream < Social::Stream
     end
   end
 
+  def update_all_rules(params)
+    if params[:delete_all_rules] == true
+      @backup_model_changes = self.rules
+      ticket_rules.delete_all
+      reload
+    else
+      deleted_rule_ids = params[:deleted_rules] || []
+      deleted_rule_ids << params[:deleted_rules_smart_filter]
+      if deleted_rule_ids.present?
+        @backup_model_changes = rules
+        Social::TicketRule.delete_all ['id IN (?) AND account_id = ? AND stream_id =?', deleted_rule_ids, account.id, id]
+        reload
+      end
+      params[:rules].each do |keyword_filter_rule|
+        if keyword_filter_rule[:action] == 'create'
+          keyword_rules.new(keyword_filter_rule[:rule_params])
+        elsif keyword_filter_rule[:action] == 'update'
+          keyword_rules.detect { |rule| rule.id.to_s == keyword_filter_rule[:rule][:ticket_rule_id] }.attributes = keyword_filter_rule[:rule_params]
+        end
+      end
+      if params[:smart_rules].present?
+        if params[:smart_rules][:action] == 'create'
+          keyword_rules.new(params[:smart_rules][:rule_params])
+        elsif params[:smart_rules][:action] == 'update'
+          smart_filter_rule = self.smart_filter_rule
+          smart_filter_rule.attributes = params[:smart_rules][:rule_params]
+        end
+      end
+    end
+    self.attributes = params[:stream_update_params]
+    save    
+  end
+
   private
     def can_create_rule?
       can_create_mention_rule? or can_create_dm_rule?
@@ -236,10 +274,6 @@ class Social::TwitterStream < Social::Stream
 
     def can_create_dm_rule?
       self.twitter_handle and dm_stream?
-    end
-
-    def dm_stream?
-      self.data[:kind] == TWITTER_STREAM_TYPE[:dm]
     end
 
     def group(group_id)

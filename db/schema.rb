@@ -3463,6 +3463,7 @@ ActiveRecord::Schema.define(:version => 20190628073857) do
     t.text     "rule_value"
     t.text     "rule_tag"
     t.integer  "gnip_rule_state",                        :default => 0
+    t.boolean  "smart_filter_enabled"
   end
 
   add_index "social_twitter_handles", ["account_id", "twitter_user_id"], :name => "social_twitter_handle_product_id", :unique => true

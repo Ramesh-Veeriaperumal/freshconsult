@@ -135,4 +135,22 @@ class NoteTest < ActiveSupport::TestCase
     assoc_payload = note.associations_to_publish.to_json
     assoc_payload.must_match_json_expression(central_assoc_note_pattern(note))
   end
+
+  def test_note_central_payload_update_ticket_states_worker
+    note = create_note(note_params_hash)
+    input = {
+      id: note.id,
+      model_changes: nil,
+      freshdesk_webhook: false,
+      current_user_id: @agent.id
+    }
+    CentralPublishWorker::ActiveNoteWorker.jobs.clear
+    Tickets::UpdateTicketStatesWorker.new.perform(input)
+    assert_equal 1, CentralPublishWorker::ActiveNoteWorker.jobs.size
+    job = CentralPublishWorker::ActiveNoteWorker.jobs.last
+    schema_less_note = note.schema_less_note.reload
+    assert_equal 'note_update', job['args'][0]
+    assert_equal({ 'response_time_in_seconds' => [nil, schema_less_note.response_time_in_seconds],
+                   'response_time_by_bhrs' => [nil, schema_less_note.response_time_by_bhrs] }, job['args'][1]['model_changes'])
+  end
 end

@@ -30,14 +30,14 @@ module Tickets
             time = Benchmark.realtime {
               ticket = vr.check_events doer, evaluate_on, current_events
             }
-            Va::Logger::Automation.log_execution_and_time(time, (ticket.present? ? 1 : 0), rule_type)
+            Va::Logger::Automation.log_execution_and_time(time, (ticket.present? ? 1 : 0), rule_type, nil, nil, false)
             aggregated_response_time += vr.response_time[:matches] || 0
           end
           end_time = Time.now.utc
           total_time = end_time - start_time
           Va::Logger::Automation.unset_rule_id
-          Va::Logger::Automation.log_execution_and_time(total_time, observer_rules.size, rule_type, start_time, end_time)
-          ticket_changes = evaluate_on.merge_changes(current_events, 
+          Va::Logger::Automation.log_execution_and_time(total_time, observer_rules.size, rule_type, start_time, end_time, false)
+          ticket_changes = evaluate_on.merge_changes(current_events,  
                             evaluate_on.changes) if current_events.present?
           evaluate_on.round_robin_on_ticket_update(ticket_changes) if evaluate_on.rr_allowed_on_update?
           ticket_changes = evaluate_on.merge_changes(ticket_changes, evaluate_on.changes.slice(:responder_id)) 
@@ -60,7 +60,6 @@ module Tickets
         NewRelic::Agent.notice_error(e, {:custom_params => {:args => args }})
         raise e
       ensure
-        Va::Logger::Automation.log "********* END OF OBSERVER *********"
         Va::Logger::Automation.unset_thread_variables
         if Account.current.skill_based_round_robin_enabled?
           if args[:enqueued_class] == 'Helpdesk::Ticket'

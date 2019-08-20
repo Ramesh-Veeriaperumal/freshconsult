@@ -12,6 +12,11 @@ class Helpdesk::TicketState <  ActiveRecord::Base
   STATS_ATTRIBUTES = ['resolved_at','first_assigned_at','assigned_at','opened_at']
   TICKET_STATE_SEARCH_FIELDS = [ 'resolved_at', 'closed_at', 'agent_responded_at',
                                  'requester_responded_at', 'status_updated_at' ]
+  # Model changes for presenter includes only the listed fields
+  PRESENTER_FIELDS_MAPPING = { 'first_resp_time_by_bhrs': 'first_response_by_bhrs', 'resolution_time_by_bhrs': 'time_to_resolution_in_bhrs',
+                               'resolution_time_by_chrs': 'time_to_resolution_in_chrs', 'first_assigned_at': nil,
+                               'closed_at': nil, 'resolved_at': nil, 'first_response_time': nil,
+                               'inbound_count': nil }
 
   alias_attribute :on_state_time, :ts_int1
 
@@ -25,6 +30,8 @@ class Helpdesk::TicketState <  ActiveRecord::Base
   # after_commit :update_ticket_stats, on: :update, :if => :ent_reports_enabled?
   # after_commit :create_ticket_stats, on: :create, :if => :ent_reports_enabled?
   after_commit :update_search_index,  on: :update
+
+  publishable on: [:update], exchange_model: :tickets, exchange_action: :update
   
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
@@ -223,6 +230,14 @@ class Helpdesk::TicketState <  ActiveRecord::Base
       Rails.logger.error("Exception occurred while updating data into stats table ::: #{e.message}")
       NewRelic::Agent.notice_error(e)
     end
+  end
+
+  def override_exchange_model(_action)
+    changes = @ticket_state_changes.slice(*PRESENTER_FIELDS_MAPPING.keys)
+    changes.keys.each do |key|
+      changes[PRESENTER_FIELDS_MAPPING[key.to_sym]] = changes.delete key if PRESENTER_FIELDS_MAPPING[key.to_sym]
+    end
+    tickets.model_changes = changes if changes.present?
   end
 
 private

@@ -9,7 +9,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   include DataVersioning::Model
   include Helpdesk::Ticketfields::PublisherMethods
 
-  clear_memcache [TICKET_FIELDS_FULL]
+  clear_memcache [TICKET_FIELDS_FULL, CUSTOMER_EDITABLE_TICKET_FIELDS_FULL, CUSTOMER_EDITABLE_TICKET_FIELDS_WITHOUT_PRODUCT]
 
   self.table_name =  "helpdesk_ticket_fields"
   attr_accessible :name, :label, :label_in_portal, :description, :active, 

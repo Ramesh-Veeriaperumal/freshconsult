@@ -115,9 +115,12 @@ module Concerns::ApplicationConcern
   end
 
   def can_supress_logs?
-    return false unless Rails.env.production?
+    return false if !Rails.env.production? || current_account.launched?(:disable_supress_logs)
 
-    LoggerConstants::SKIP_LOGS_FOR.key?(nscname.to_sym) &&
-      LoggerConstants::SKIP_LOGS_FOR[nscname.to_sym].include?(action_name)
+    (LoggerConstants::SKIP_LOGS_FOR.key?(nscname.to_sym) &&
+      LoggerConstants::SKIP_LOGS_FOR[nscname.to_sym].include?(action_name)) ||
+        (LoggerConstants::SKIP_SIGNUP_LOGS_FOR.key?(nscname.to_sym) &&
+          LoggerConstants::SKIP_SIGNUP_LOGS_FOR[nscname.to_sym].include?(action_name) &&
+            !redis_key_exists?(ENABLE_SIGNUP_LOGS))
   end
 end
