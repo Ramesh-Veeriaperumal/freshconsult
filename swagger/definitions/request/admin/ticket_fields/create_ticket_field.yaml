@@ -1,0 +1,21 @@
+type: object
+properties:
+  dependent_fields:
+    type: array
+    items:
+      type: object
+      properties:
+        label:
+          type: string
+        label_in_portal:
+          type: string
+
+  section_mappings:
+    type: array
+    items:
+      type: object
+      properties:
+        section_id:
+          type: integer
+        position:
+          type: integer

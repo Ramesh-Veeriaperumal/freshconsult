@@ -1,21 +1,23 @@
 get:
   tags: [ticket fields]
-  description: List all ticket fields
+  description: List all ticket field's sections
   parameters:
-    - name: include
-      in: query
-      type: string
-      description: Comma-separated, possible values - sections
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      description: Ticket field ID
+      required: true
   responses:
     200:
       description: Success
       schema:
         type: object
         properties:
-          ticket_fields:
+          sections:
             type: array
             items:
-              $ref: '#/definitions/ticket_field_list_response'
+              $ref: '#/definitions/ticket_field_section_response'
           meta:
             $ref: '#/definitions/meta'
     403:
@@ -23,18 +25,24 @@ get:
 
 post:
   tags: [ticket fields]
-  description: Create a ticket field
+  description: Create a ticket field's section
   parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      description: Ticket field ID
+      required: true
     - name: data
       in: body
       required: true
       schema:
-        $ref: '#/definitions/create_ticket_field_request'
+        $ref: '#/definitions/ticket_field_section_request'
   responses:
     201:
       description: Success
       schema:
-        $ref: '#/definitions/ticket_field_response'
+        $ref: '#/definitions/ticket_field_section_response'
     400:
       description: Bad Request Error
       schema:
