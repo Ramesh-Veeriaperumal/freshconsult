@@ -12,8 +12,7 @@ module WidgetConcern
     render_request_error(:invalid_help_widget, 400, id: @widget_id) unless @help_widget
   end
 
-  def set_widget_portal_as_current
-    # set current portal if widget is associated to product
+  def fetch_portal
     @current_portal = current_account.portals.find_by_product_id(@help_widget.product_id) || @current_portal
   end
 

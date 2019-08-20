@@ -52,7 +52,7 @@ module Widget
       end
 
       def ticket_fields_scoper
-        set_widget_portal_as_current
+        fetch_portal
         ticket_fields_scoper = @current_portal.customer_editable_ticket_fields
         # additionally fetching sublevel nested fields because only parent level is saved with editable_in_portal in db
         ticket_fields_scoper << ticket_fields_scoper.map { |tf| Account.current.ticket_fields_from_cache.select { |tfc| tfc if tfc.parent_id == tf.id } if tf.field_type == 'nested_field' }.compact

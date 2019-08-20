@@ -242,6 +242,10 @@ module MemcacheKeys
 
   TICKET_FIELDS_FULL = 'v1/TICKET_FIELDS_FULL:%<account_id>s:%<language_code>s'.freeze
 
+  CUSTOMER_EDITABLE_TICKET_FIELDS_FULL = 'CUSTOMER_EDITABLE_TICKET_FIELDS_FULL:%{account_id}:%{language_code}'.freeze
+
+  CUSTOMER_EDITABLE_TICKET_FIELDS_WITHOUT_PRODUCT = 'CUSTOMER_EDITABLE_TICKET_FIELDS_WITHOUT_PRODUCT:%{account_id}:%{language_code}'.freeze
+
   CURRENCY_NAMES = 'CURRENCY_NAMES'.freeze
 
   INSTALLED_APPS_HASH = 'INSTALLED_APPS_HASH:%{account_id}'.freeze

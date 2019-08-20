@@ -14,9 +14,9 @@ class WebhookV1Worker < ::BaseWorker
   def perform(args)
     args.symbolize_keys!
     Va::Logger::Automation.set_thread_variables(args[:account_id], args[:ticket_id], nil, args[:rule_id])
-    Va::Logger::Automation.log("WEBHOOK: TRIGGERED, info=#{args.inspect}", true)
+    Va::Logger::Automation.log("WEBHOOK: TRIGGERED")
     if args[:webhook_validation_enabled] && !valid_webhook_url?(args[:params]["domain"])
-      Va::Logger::Automation.log("WEBHOOK: Validation Fails for URL = #{args[:params]['domain']}", true)
+      Va::Logger::Automation.log("WEBHOOK: Validation Fails for URL = #{args[:params]['domain']}")
       return 
     end
     @response = HttpRequestProxy.new.fetch_using_req_params(
@@ -39,7 +39,7 @@ class WebhookV1Worker < ::BaseWorker
         args[:webhook_retry_count] = webhook_retry_count
         self.class.perform_in(delay, args)
       else
-        Va::Logger::Automation.log "WEBHOOK: FAILED, response_status=#{response_status}, response_text=#{@response[:text]}, created_time=#{Time.at(args[:webhook_created_at]).utc}"
+        Va::Logger::Automation.log "WEBHOOK: FAILED, response_status=#{response_status}, response_text=#{@response[:text]}, info=#{args.inspect}"
         notify_failure(args)
       end
     end

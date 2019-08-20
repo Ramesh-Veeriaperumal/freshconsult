@@ -1,6 +1,6 @@
 class Admin::Skill < ActiveRecord::Base
 
-  clear_memcache [TICKET_FIELDS_FULL]
+  clear_memcache [TICKET_FIELDS_FULL, CUSTOMER_EDITABLE_TICKET_FIELDS_FULL, CUSTOMER_EDITABLE_TICKET_FIELDS_WITHOUT_PRODUCT]
 
   primary_key = :id
   

@@ -3,6 +3,8 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	include BusinessHoursCalculation
 	include Helpdesk::EmailFailureMethods
 
+  attr_reader :schema_less_was
+
 	COUNT_COLUMNS_FOR_REPORTS = ["agent_reassigned", "group_reassigned", "reopened", 
                                   "private_note", "public_note", "agent_reply", "customer_reply"]
 	
@@ -42,8 +44,6 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 
 	belongs_to :sla_policy, :class_name => "Helpdesk::SlaPolicy", :foreign_key => "long_tc01"
 	belongs_to :parent, :class_name => 'Helpdesk::Ticket', :foreign_key => 'long_tc02'
-
-
 	belongs_to_account
 
 	attr_protected :account_id
@@ -77,6 +77,12 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	serialize :text_tc02, Hash
 	serialize :text_tc03, Hash
   serialize :text_tc04, Hash
+
+  after_initialize :backup_change
+
+  publishable on: [:update], exchange_model: :ticket, exchange_action: :update
+
+  after_commit :backup_change # This neeeds to be at last
 
 	def self.trashed_column
 		:boolean_tc02
@@ -290,9 +296,31 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
     additional_info[:thank_you_notes] = value
   end
 
+  def override_exchange_model(_action)
+    changes = schema_less_changes
+    ticket.model_changes = changes if changes.present?
+  end
+
   private
 
   def email_failures
     additional_info
+  end
+
+  def schema_less_changes
+    presenter_attributes_was = schema_less_was['text_tc02']
+    presenter_attributes_is = attributes['text_tc02']
+    change_hash = {}
+    if presenter_attributes_was != presenter_attributes_is
+      new_hash = presenter_attributes_was.merge(presenter_attributes_is)
+      new_hash.keys.each do |key|
+        change_hash[key] = [presenter_attributes_was[key], presenter_attributes_is[key]] if presenter_attributes_was[key] != presenter_attributes_is[key]
+      end
+    end
+    change_hash
+  end
+
+  def backup_change
+    @schema_less_was = attributes.deep_dup
   end
 end

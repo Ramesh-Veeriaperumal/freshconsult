@@ -5,6 +5,7 @@ module SocialTicketsHelper
         screen_name 'TestingGnip'
         capture_dm_as_ticket true
         capture_mention_as_ticket false
+        smart_filter_enabled true
         search_keys []
         twitter_user_id { (Time.now.utc.to_f * 1_000_000).to_i }
       end

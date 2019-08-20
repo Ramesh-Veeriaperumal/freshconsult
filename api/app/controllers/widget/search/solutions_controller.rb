@@ -7,7 +7,7 @@ module Widget
 
       before_filter :check_open_solutions
       before_filter :validate_widget
-      before_filter :set_widget_portal_as_current
+      before_filter :fetch_portal
       before_filter :set_current_language
 
       def results

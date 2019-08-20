@@ -135,6 +135,7 @@ class TicketFieldDecorator < ApiDecorator
     response_hash[:choices] = default_group_choices if field_type == 'default_group' and default_group_choices.present?
     response_hash[:choices] = widget_default_status_choices if field_type == 'default_status' and widget_default_status_choices.present?
     response_hash[:choices] = ticket_field_choices_by_id if field_type != 'default_status' && ticket_field_choices_by_id.present?
+    response_hash[:nested_ticket_fields] = nested_fields_hash if field_type == 'nested_field'
     response_hash[:portal_cc] = portal_cc if default_requester?
     response_hash[:portal_cc_to] = portalcc_to if default_requester?
     response_hash
@@ -273,8 +274,9 @@ class TicketFieldDecorator < ApiDecorator
     # label as customer display name - hence seperate for widget
     def widget_default_status_choices
       Helpdesk::TicketStatus.statuses_list(Account.current).map do |status|
+        status_label = default_status?(status[:status_id]) ? status[:customer_display_name] : translated_status(status[:status_id], status[:customer_display_name])
         status.slice(:stop_sla_timer, :deleted, :group_ids).merge(
-          label: status[:customer_display_name],
+          label: status_label,
           value: status[:status_id],
           default: default_status?(status[:status_id]),
           choice_id: status[:status_id]
@@ -316,8 +318,8 @@ class TicketFieldDecorator < ApiDecorator
       label || i18n_label
     end
 
-    def current_user_supported_language
-      User.current.try(:supported_language)
+    def current_supported_language
+      User.current.try(:supported_language) || Language.current.try(:to_key)
     end
 
     def current_user
@@ -325,12 +327,12 @@ class TicketFieldDecorator < ApiDecorator
     end
 
     def translation_record
-      @translation_record ||= if Account.current.custom_translations_enabled? && current_user_supported_language && !TicketFieldConcern::NON_DB_FIELDS_IDS.include?(id)
+      @translation_record ||= if Account.current.custom_translations_enabled? && current_supported_language && !TicketFieldConcern::NON_DB_FIELDS_IDS.include?(id)
                                 case level
                                 when 2..3
-                                  record.ticket_field.safe_send("#{current_user_supported_language}_translation")
+                                  record.ticket_field.safe_send("#{current_supported_language}_translation")
                                 else
-                                  record.safe_send("#{current_user_supported_language}_translation")
+                                  record.safe_send("#{current_supported_language}_translation")
                                 end
                               end
     end

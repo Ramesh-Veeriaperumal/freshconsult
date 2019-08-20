@@ -44,6 +44,15 @@ module SocialTicketsCreationHelper
       import_company_posts false
       realtime_subscription true
     end
+
+    factory :seed_mention_twitter_stream, class: Social::TwitterStream do
+      name 'Social Stream'
+      type 'Social::TwitterStream'
+      includes ['Freshdesk']
+      excludes []
+      data HashWithIndifferentAccess.new(kind: 'Mention')
+      filter HashWithIndifferentAccess.new(exclude_twitter_handles: [])
+    end
   end
 
   def twitter_conversations(options = {})
@@ -105,6 +114,13 @@ module SocialTicketsCreationHelper
     stream = FactoryGirl.build(:seed_dm_twitter_stream)
     stream.account_id = Account.current.id
     stream.social_id = handle_id
+    stream.save
+    stream
+  end
+
+  def create_mention_stream(handle_id)
+    stream = FactoryGirl.build(:seed_mention_twitter_stream)
+    stream.account_id = Account.current.id
     stream.save
     stream
   end
