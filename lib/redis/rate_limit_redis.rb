@@ -37,6 +37,11 @@ module Redis::RateLimitRedis
     (api_limits[0] || api_limits[1] || api_limits[2] || Middleware::FdApiThrottler::API_LIMIT).to_i
   end
 
+  def get_api_min_limit_from_redis(plan_id)
+    api_min_limits = get_multiple_rate_limit_redis_keys(plan_api_min_limit_key(plan_id), DEFAULT_API_MIN_LIMIT) || []
+    (api_min_limits[0] || api_min_limits[1])
+  end
+
   def account_api_limit_key(account_id)
     format(ACCOUNT_API_LIMIT, account_id: account_id)
   end
@@ -47,6 +52,10 @@ module Redis::RateLimitRedis
 
   def default_api_limit_key
     DEFAULT_API_LIMIT
+  end
+
+  def plan_api_min_limit_key(plan_id)
+    format(PLAN_API_MIN_LIMIT, plan_id: plan_id)
   end
 
   def handle_exception

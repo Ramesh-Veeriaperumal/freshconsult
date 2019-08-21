@@ -29,7 +29,7 @@ class Account < ActiveRecord::Base
     :disable_email_spoof_check, :onboarding_i18n, :webhook_blacklist_ip, :recalculate_daypass,
     :fb_page_api_improvement, :attachment_redirect_expiry, :solutions_agent_portal, :solutions_agent_metrics, :fuzzy_search,
     :delete_trash_daily, :automation_revamp, :prevent_wc_ticket_create, 
-    :allow_wildcard_ticket_create, :requester_privilege, :sso_unique_session,
+    :allow_wildcard_ticket_create, :requester_privilege, :sso_unique_session, :fluffy_min_level,
     :scheduling_fsm_dashboard, :enable_customer_journey, :csat_translations, :supervisor_custom_status,
     :sandbox_temporary_offset, :downgrade_policy, :mentions_to_tms
   ].freeze
