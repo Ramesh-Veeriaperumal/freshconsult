@@ -71,6 +71,35 @@ window.App = window.App || {};
       $(document).on('click'+$this.namespace(),  '#warning-fsm-billing-edit-submit', function(){ $this.checkAndRemoveFSM('submit') })
       $(document).on('click'+$this.namespace(),  '#warning-fsm-billing-edit-cancel', function(){ $this.checkAndRemoveFSM('cancel', true) })
       $(document).on('click'+$this.namespace(),  '#warning-fsm-billing-edit .modal-header .close', function(){ $this.checkAndRemoveFSM('cancel', true) })
+      $(document).on('click'+$this.namespace(),  '.second-downgrade-modal-wrapper .btn-primary', function(e){ $this.secondTimeDowngrade(e) }) 
+      $(document).on('click'+$this.namespace(),  '.second-downgrade-modal', function(e){ $this.secondTimeDowngradeModal(e) }) 
+      $(document).on('click','.sprout-second-downgrade-modal', function(e){ $this.sproutDowngradeModal(e) }) 
+      $(document).on('click','#sprout-downgrade-submit', function(e){ $this.sproutDowngradeCompareModal(e) }) 
+      $(document).on('click','#downgrade-sprout-btn', function(e){ $this.sproutDowngradeFormSubmit(e) }) 
+
+    },
+    sproutDowngradeModal: function(e){ 
+      $($(e.currentTarget).attr('data-id')).appendTo('body').modal('show');
+    },
+    secondTimeDowngrade: function(e){
+      $('.'+e.currentTarget.id).find('#commit').attr('type','submit');
+      $('.second-downgrade-modal').css('display','none')
+      $('.'+e.currentTarget.id).find('#commit').trigger('click')
+    },
+    sproutDowngradeCompareModal: function(e) {
+      $('#sprout-downgrade-modal-show').find('.downgrade-non-sprout').css('display','none');
+      $('#sprout-downgrade-modal-show').find('.downgrade-sprout').css('display','block');
+      $(".latest-request #current-date").html(moment(new Date()).format('D MMM, YYYY'));
+      $("#sprout-downgrade-modal-show").appendTo('body').modal('show');
+    },
+    secondTimeDowngradeModal: function(e){
+      e.preventDefault();
+      $(".latest-request #current-date").html(moment(new Date()).format('D MMM, YYYY'));
+      $($(e.currentTarget).attr('data-id')).modal('show');
+      $('body').find('.modal-backdrop').addClass('downgrade-backdrop')
+    },
+    sproutDowngradeFormSubmit: function(){
+      $('.sprout-form-submit').find('form').submit();
     },
     billingCancel: function (ev) {
       ev.preventDefault();
@@ -376,7 +405,11 @@ window.App = window.App || {};
             billing_template.find(".billing-cancel").show();
             var submitText = request_change ? I18n.t('common_js_translations.request_change') : I18n.t('common_js_translations.update_plan');
             billing_template.find(".billing-submit").val(submitText).addClass('btn-primary');
-
+            billing_template.find(".billing-submit").html(submitText).addClass('btn-primary');
+            if(request_change){
+              $('.upgrade-same-plan').css('display','none');
+              $('.upgrade-same-plan-header').css('display','block');
+            }
             if($this.omni_disabled) {
               billing_actions.find(".submit-confirm").show();
               billing_actions.find("#commit").hide();
@@ -391,6 +424,9 @@ window.App = window.App || {};
           else {
             if(request_change) {
               billing_template.find(".billing-submit").val(I18n.t('common_js_translations.request_change'));
+              billing_template.find(".billing-submit").html(I18n.t('common_js_translations.request_change'));
+              $('.upgrade-same-plan').css('display','none');
+              $('.upgrade-same-plan-header').css('display','block');
             }
             
             billing_template.find(".billing-cancel").hide();

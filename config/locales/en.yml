@@ -4793,8 +4793,8 @@ en:
   send_email_to_agent: Send Email to Agent
   import_data: Date Imported
   downgrade:
-    billing_request_on: Billing changes requested on
-    billing_next_renewal: Effective on next renewal
+    billing_request_on: Subscription change requested on
+    billing_next_renewal: Effective from next renewal on
     plan: Plan
     agents: Agents
     Field_technicians: Field technicians
@@ -4803,6 +4803,12 @@ en:
     omnichannel: Omnichannel
     fsm: FSM
     to: to
+    confirm_btn: Confirm
+    header_txt: Do you want to replace the existing request with the latest one?
+    existing_request: Existing request
+    latest_request: Latest request
+    subscription_change: Subscription change
+    upgrade_info: Once you hit 'Confirm' your existing request will be deleted and your latest request will be updated instantly.
   contacts:
     confirm_delete: Are you sure you want to delete this user?
     deleted_user_info: "Note: All communication from the deleted users will be marked as SPAM."

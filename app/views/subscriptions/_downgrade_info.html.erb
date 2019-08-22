@@ -1,0 +1,112 @@
+
+<%
+  plan = @subscription.subscription_plan
+  is_new_sprout = new_sprout?(plan.name)
+  field_agent_limit = @subscription.field_agent_limit || 0
+  show_field_agent_info = fsm_supported_plan?(plan) && current_account.field_service_management_enabled? && field_agent_limit > 0
+   current_subscription = Subscription.find(current_account.subscription.id) 
+
+%>
+<% if current_account.launched?(:downgrade_policy) && @subscription.subscription_request.present? %>
+  <div>
+    <% requested_plan= SubscriptionPlan.find(@subscription.subscription_request.plan_id)
+       is_sprout  = new_sprout?(requested_plan.name)
+       fsm_field_agents = @subscription.subscription_request.fsm_field_agents?
+    %>
+    <div class="request-change-wrapper">
+        <div class="on-request">
+          <span class="on-request-date"><%=t("downgrade.billing_request_on")%></span> <%= formated_date(@subscription.subscription_request.created_at, {:format => :short_day_with_week, :include_weekday => false,:include_time => false, :include_year => true}) %>
+
+          <span class="next-renewal ml10 pl10"> <%=t("downgrade.billing_next_renewal")%> </span> <%= formated_date(@subscription.next_renewal_at, {:format => :short_day_with_week, :include_weekday => false,:include_time => false, :include_year => true}) %>
+        </div>
+        <div class="request-change-container">
+            <div class="request-change-items">
+              <div class="pb10"><%=t("downgrade.plan")%></div>
+              <% 
+                sub_plan_name = @subscription.subscription_plan.name
+                requested_plan_name = requested_plan.name
+              %>
+              <div><span class="plan-from"> <%= sub_plan_name %></span> <% if plan.omni_plan? || plan.free_omni_channel_plan? || show_field_agent_info 
+                  @omni_fsm_toggle_current_plan = []
+                  if plan.omni_plan? || plan.free_omni_channel_plan?
+                    @omni_fsm_toggle_current_plan << t("downgrade.omnichannel")
+                  end 
+                  if show_field_agent_info
+                    @omni_fsm_toggle_current_plan << t("downgrade.fsm")
+                  end
+                %>
+                <%= '('+ @omni_fsm_toggle_current_plan.join(' + ') + ')' %>       
+               <% end %>
+                <% if @subscription.subscription_request.plan_id? && (sub_plan_name != requested_plan_name) ||
+                  ((plan.omni_plan? || plan.free_omni_channel_plan?) != (requested_plan.omni_plan? || requested_plan.free_omni_channel_plan?) || (show_field_agent_info != fsm_field_agents) )
+                 %>
+                  <span class="plan-to">  <%=t("downgrade.to")%>
+                  <%= requested_plan_name %>
+                  </span>
+                  <% if requested_plan.omni_plan? || requested_plan.free_omni_channel_plan? || fsm_field_agents
+                        @omni_fsm_toggle = []
+                       if requested_plan.omni_plan? || requested_plan.free_omni_channel_plan?
+                            @omni_fsm_toggle << t("downgrade.omnichannel")
+                        end 
+                       if fsm_field_agents
+                           @omni_fsm_toggle << t("downgrade.fsm")
+                       end
+                  %>
+                  <%= '('+ @omni_fsm_toggle.join(' + ') + ')' %>
+                 <% end %>
+                <% end %>
+              </div>
+            </div>
+            <% if !is_sprout %>
+              <div class="request-change-items">
+                <div class="pb10"><%=t("downgrade.agents")%></div>
+                <div class="agents-count"><%= @subscription.agent_limit %>
+                 <% if @subscription.subscription_request.agent_limit? && @subscription.agent_limit !=@subscription.subscription_request.agent_limit %> 
+                  <%=t("downgrade.to")%>
+                  <%= @subscription.subscription_request.agent_limit %>
+                 <% end %> 
+                </div>
+              </div>
+            <% end %>
+            <% if !is_sprout && (fsm_field_agents || show_field_agent_info) %>
+              <div class="request-change-items">
+                <div class="pb10"><%=t("downgrade.Field_technicians")%></div>
+                <div class="agents-count">
+                  <% if @subscription.additional_info[:field_agent_limit].nil? %>
+                     <%= 0 %>
+                  <% else %>
+                     <%= @subscription.additional_info[:field_agent_limit] %>
+                  <% end %>
+                  <% if @subscription.additional_info[:field_agent_limit] != @subscription.subscription_request.fsm_field_agents %>
+
+                    <% if ((!fsm_field_agents  && @subscription.additional_info[:field_agent_limit]) || (fsm_field_agents && @subscription.additional_info[:field_agent_limit].nil?)) || fsm_field_agents %>
+                      <%=t("downgrade.to")%>
+                      <% if !fsm_field_agents %>
+                       <%= 0 %>
+                      <% else %>
+                        <%= @subscription.subscription_request.fsm_field_agents %>
+                      <% end %> 
+                    <% end %>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+            <% if !is_sprout %>
+            <%
+              subscription_plan = SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[@subscription.renewal_period]
+              requested_subscription_plan = SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[@subscription.subscription_request.renewal_period]
+            %>
+              <div class="request-change-items">
+                <div class="pb10"><%=t("downgrade.billing_cycle")%></div>
+                <div class="billing-cycle"><%= subscription_plan %>
+                <% if @subscription.subscription_request.renewal_period? && subscription_plan !=requested_subscription_plan  %>
+                    <%=t("downgrade.to")%>
+                    <%= requested_subscription_plan %> </div>
+                <% end %>
+              </div>
+            <% end %>
+        </div>
+    </div>
+    <div class="request-change-info"><img src="/assets/info-icon.svg" /></span><span class="m0 pl5"><%=t("downgrade.info")%></span></div>
+  </div>
+<% end %>
