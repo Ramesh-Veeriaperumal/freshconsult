@@ -316,6 +316,12 @@ Helpkit::Application.routes.draw do
       put '/settings', to: 'email/settings#update'
     end
 
+    scope '/notifications' do
+      scope '/email' do
+        resource :bcc, controller: 'notifications/email/bcc', only: [:update, :show]
+      end
+    end
+
     resources :email_notifications, controller: 'admin/api_email_notifications', only: [:show, :update]
 
     namespace :admin do

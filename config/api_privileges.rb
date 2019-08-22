@@ -67,6 +67,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/api_email_notification"
     resource :"email/setting", only: %i[show update]
     resource :"email/mailbox", only: %i[create show destroy]
+    resource :"notifications/email/bcc", only: %i[update show]
   end
 
   reply_ticket do
