@@ -11,7 +11,7 @@
     field_agent_limit = @subscription.field_agent_limit || 0
     show_field_agent_info = fsm_supported_plan?(plan) && current_account.field_service_management_enabled? && field_agent_limit > 0
   %>
-
+<%= render :partial => "downgrade_info" %>
 <div class="well-active well-active-new">
   <div class="current-plan" >
     <h1 class="plan-title <%= 'classic' if @subscription.classic?%>">

@@ -968,3 +968,137 @@ input[type=text].input-agent-count{
 // --------------------------------------------------------------------------------------------
 //					Admin Subscription Revamp end
 // --------------------------------------------------------------------------------------------
+
+// --------------------------------------------------------------------------------------------
+//								 downgrade request change start
+// --------------------------------------------------------------------------------------------
+	.downgrade-backdrop {
+		z-index: -1;
+	}
+   .request-change-wrapper {
+			border: 1px solid #DADFE3;
+			border-bottom: 0;
+			border-top-left-radius: 4px;
+			border-top-right-radius: 4px;
+
+ 			.on-request {
+				border-bottom: 1px solid #DADFE3;
+				padding: 15px 25px;
+				.on-request-date{
+					font-weight: bold;
+
+ 				}
+				.next-renewal  {
+					font-weight: bold;
+					border-left: 1px solid #000;
+				}
+			}
+
+ 			
+	 }
+	 .downgrade-submit-btn {
+	 	display: inline-block;
+	 }
+	 .request-change-container {
+				display: flex;
+				padding: 30px 25px;
+				.request-change-items {
+					padding-right: 50px;
+					.plan-from,.plan-to,.billing-cycle {
+						font-weight: bold;
+					}
+					.agents-count {
+						font-weight: bold;
+						color: #415D71;
+					}
+				}
+	}
+	.second-downgrade-modal-wrapper {
+		width: 65%;
+		left:42%;
+		.modal-header{
+			border:0 none;
+		}
+		.request-change-container {
+			border: 1px solid #DADFE3;
+
+		}
+		.downgrade-header {
+		    font-size: 16px;
+            font-weight: bold;
+		}
+		.existing-request,.latest-request {
+			font-size: 14px;
+			.content-text {
+              font-weight: bold;
+			}
+		}
+		.request-change-items {
+		 .plan-from,.plan-to,.billing-cycle {
+			 font-weight: normal
+			}	
+		}
+		.agents-count-text,.fsm-count-text {
+		  font-weight: normal;
+		  color:#333;
+		}
+		.required-mark{
+			display: none;
+		}
+		.same-request {
+			.plan-from,.plan-to,.billing-cycle,.agents-count-text,.fsm-count-text {
+				font-weight: bold;
+			}
+			.required-mark{
+				font-weight:bold;
+				display: inline-block;
+			}	
+		}
+		
+		.plan-name {
+			width: 50%;
+		}
+
+		.agents-count {
+			width: 10%;
+		}
+
+		.fsm-count {
+		 	width: 25%;
+		}
+
+		.billing-cycle-details {
+			width: 35%;
+		}
+		.upgrade-info-wrapper {
+			border: 1px solid #FDDBB5;
+			background-color: #FEF1E1;
+			border-radius: 4px;
+			padding: 15px 10px;
+			.upgrade_info {
+				border-left: 1px solid #FDDBB5;
+			}
+			.upgrade-info-icon {
+			 vertical-align: middle;
+			}
+		}
+	}
+ 	 .request-change-info {
+		 padding: 15px 25px;
+		 border: 1px solid #BBDCFE;
+		 margin: 0;
+		 background-color: #E5F2FD;
+		 border-bottom-right-radius: 4px;
+		 border-bottom-left-radius: 4px;
+		 margin-bottom: 50px;
+		 display: flex;
+	 }
+	 .downgrade-sprout{
+	 	display: none;
+	 }
+
+
+// --------------------------------------------------------------------------------------------
+//								 	downgrade request change end
+// --------------------------------------------------------------------------------------------
+

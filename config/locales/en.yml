@@ -720,6 +720,7 @@ en:
   change_equal_plan_title: "Are you sure you want to move to the new %{to_plan} plan?"
   downgrade_plan_title: "Are you sure you want to downgrade?"
   activate_free_plan: Activate Free Plan
+  request_change: Request change
   create: Create
   feedbackwidget_custom_image_info: if you are using a custom image the color and text will be ignored.
   account_admin_updated: Account admin has been updated!
@@ -5032,6 +5033,23 @@ en:
   set_password: Set your password
   send_email_to_agent: Send Email to Agent
   import_data: Date Imported
+  downgrade:
+    billing_request_on: Subscription change requested on
+    billing_next_renewal: Effective from next renewal on
+    plan: Plan
+    agents: Agents
+    Field_technicians: Field technicians
+    billing_cycle: Billing Cycle
+    info: You can still make changes to your current subscription from below. Any other change request will replace this existing one.
+    omnichannel: Omnichannel
+    fsm: FSM
+    to: to
+    confirm_btn: Confirm
+    header_txt: Do you want to replace the existing request with the latest one?
+    existing_request: Existing request
+    latest_request: Latest request
+    subscription_change: Subscription change
+    upgrade_info: Once you hit 'Confirm' your existing request will be deleted and your latest request will be updated instantly.
   contacts:
     confirm_delete: Are you sure you want to delete this user?
     deleted_user_info: "Note: All communication from the deleted users will be marked as SPAM."
