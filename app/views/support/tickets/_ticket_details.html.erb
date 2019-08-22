@@ -109,4 +109,20 @@
             .insertAfter(jQuery("#"+this.id).parent().parent());
       }
   }).trigger('change');
+
+  jQuery('#portal_ticket_form [type=submit]').click(function(event) {
+    var _form = jQuery('#portal_ticket_form');
+    var validForm = _form.valid();
+    _form.find('.datepicker_popover').each(function(index) {
+      validForm = jQuery(this).valid() && validForm;
+    });
+
+    <%# setting cancel class will prevent the form submitting via formvalidate plugin.cancelling form submit event doesnt work for this case. %>
+    if(validForm) {
+      jQuery(this).removeClass('cancel');
+    } else {
+      jQuery(this).addClass('cancel');
+      return false;
+    }
+  });
 <% end %>
