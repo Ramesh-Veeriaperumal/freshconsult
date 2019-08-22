@@ -32,7 +32,7 @@ class ChatSettingDecorator < ApiDecorator
           domain: record.full_domain,
           product_id: @portal.product ? @portal.product.id : "",
           chat_enabled: record.chat_setting.enabled,
-          widget_id: current_chat_widget.widget_id,
+          widget_id: current_chat_widget.try(:widget_id),
           chat_routing: record.has_feature?(:chat_routing),
           cobrowsing: record.has_feature?(:cobrowsing)
       }
