@@ -34,7 +34,7 @@ module Freshchat::Util
   private
 
     def save_freshchat_account(app_id, widget_token, portal_widget_enabled = false, enabled = true)
-      Freshchat::Account.create(app_id: app_id, portal_widget_enabled: portal_widget_enabled, token: widget_token, enabled: enabled)
+      current_account.create_freshchat_account(app_id: app_id, portal_widget_enabled: portal_widget_enabled, token: widget_token, enabled: enabled)
     end
 
     def freshchat_signup_body
