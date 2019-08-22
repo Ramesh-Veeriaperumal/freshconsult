@@ -418,6 +418,8 @@ contact_ticket_activity:
   $ref: './response/contacts/ticket.yaml'
 company_search:
   $ref: './response/search/company.yaml'
+automation_search:
+  $ref: './response/search/automation.yaml'
 
 twitter_handle:
   $ref: './resource/twitter_handle.yaml'

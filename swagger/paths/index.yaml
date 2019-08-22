@@ -321,6 +321,8 @@
   $ref: ./search/solutions.yaml
 /companies/autocomplete:
   $ref: ./search/companies.yaml
+/search/automations:
+  $ref: ./search/automations.yaml
 
 #Dashboard activities
 /dashboards/activities:

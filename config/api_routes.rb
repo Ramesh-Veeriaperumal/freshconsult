@@ -103,6 +103,7 @@ Helpkit::Application.routes.draw do
       resources :companies, only: [:index]
       post :solutions, to: 'solutions#results'
       get :solutions, to: 'solutions#results'
+      get :automations, to: 'automations#results'
     end
     get '/companies/autocomplete', to: 'api_search/autocomplete#companies'
 

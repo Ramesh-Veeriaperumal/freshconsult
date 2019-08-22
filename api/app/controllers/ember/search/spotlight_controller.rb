@@ -51,6 +51,12 @@ module Ember
           }
         end
 
+        def esv2_automation_search_models
+          @@esv2_automation_search_models ||= {
+            'varule' => { model: 'VaRule', associations: [] }
+          }
+        end
+
         def validate_results_param
           # define the specific validation in derived class.
         end

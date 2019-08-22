@@ -29,6 +29,10 @@ class Admin::AutomationDecorator < ApiDecorator
     response
   end
 
+  def to_search_hash
+    to_hash(true, true)
+  end
+
   private
 
     def visual_position

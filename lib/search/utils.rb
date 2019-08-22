@@ -131,7 +131,8 @@ class Search::Utils
     search_contact_api:               'searchContactApi',
     search_company_api:               'searchCompanyApi',
     filtered_solution_search:         'filteredSolutionSearch',
-    portal_company_users:             'portalCompanyUsers'
+    portal_company_users:             'portalCompanyUsers',
+    search_automation:                'searchAutomation'
   }
 
   FUZZY_TEXT = 'Fuzzy'

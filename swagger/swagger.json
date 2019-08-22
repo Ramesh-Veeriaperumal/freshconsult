@@ -6134,6 +6134,50 @@
         }
       }
     },
+    "/search/automations": {
+      "get": {
+        "tags": [
+          "search"
+        ],
+        "summary": "Search Automations",
+        "parameters": [
+          {
+            "name": "term",
+            "in": "query",
+            "type": "string",
+            "description": "search term for automations",
+            "required": true
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "type": "string",
+            "description": "search filter for automations",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/automation_search"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/companies/autocomplete": {
       "get": {
         "tags": [
@@ -20530,6 +20574,28 @@
               }
             }
           }
+        }
+      }
+    },
+    "automation_search": {
+      "type": "object",
+      "properties": {
+        "automations": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/automation_rule"
+            },
+            {
+              "$ref": "#/definitions/automation_rule_common"
+            },
+            {
+              "$ref": "#/definitions/extension_generic"
+            }
+          ]
+        },
+        "meta": {
+          "$ref": "#/definitions/meta"
         }
       }
     },

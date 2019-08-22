@@ -6,17 +6,19 @@ module SearchService
 
     def self.construct_payload(types, template_name, es_params, locale = DEFAULT_LOCALE)
       per_page = es_params[:size].to_i <= 0 ? Search::Utils::MAX_PER_PAGE : es_params[:size].to_i
-      {
+      payload = {
         search_term: es_params[:search_term].to_s,
         documents: types,
         context: template_name,
-        params: es_params.except(:search_term, :account_id, :size, :from, :sort_by, :sort_direction),
+        params: es_params.except(:search_term, :account_id, :size, :from, :sort_by, :sort_direction, :page, :query),
         language: locale,
         per_page: per_page,
-        page: (es_params[:from].to_i/per_page) + 1 ,
+        page: es_params.key?(:page) ? es_params[:page].to_i : (es_params[:from].to_i / per_page) + 1,
         sort_by: es_params[:sort_by],
-        sort_direction:  es_params[:sort_direction]
-      }.to_json
+        sort_direction: es_params[:sort_direction]
+      }
+      payload[:freshquery] = es_params[:query] if es_params.key?(:query)
+      payload.to_json
     end
 
     def self.construct_mq_payload(types, template_name, es_params, to_json = true)
