@@ -75,7 +75,7 @@ module Search::Filters::QueryHelper
       wf_conditions.each do |field|
         # Doing gsub as flexifields are flat now.
         cond_field = (COLUMN_MAPPING[field['condition']].presence || field['condition'].to_s).gsub('flexifields.','')
-        field_values = field['value'].is_a?(Array) ? field['value'] : field['value'].to_s.split(',')
+        field_values = field['value'].to_s.split(',')
 
         es_wrapper.push(handle_field(cond_field, field_values)) if cond_field.present?
       end
@@ -87,7 +87,7 @@ module Search::Filters::QueryHelper
       wf_conditions.each do |field|
         # Doing gsub as flexifields are flat now.
         cond_field = (COLUMN_MAPPING[field['condition']].presence || field['condition'].to_s).gsub('flexifields.','')
-        field_values = field['value'].is_a?(Array) ? field['value'] : field['value'].to_s.split(',')
+        field_values = field['value'].to_s.split(',')
 
         # Hack for any agent filter has unassigned and has value for any group filter
         # Need to do (Agent = Unassigned & Group = X) OR (I.Agent = Unassigned  & I.Group = X)
