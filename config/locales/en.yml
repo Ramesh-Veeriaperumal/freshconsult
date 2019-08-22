@@ -4903,7 +4903,7 @@ en:
     buy: Buy more
     available_seats: "%{count} seats available"
     available_seats_without_count: seats available
-    no_seats: No agent seats available
+    no_seats: No seats available
     export_title: "Export Agents to CSV"
     last_logged_in: Last logged in %{time} ago.
     last_logged: Last logged in
