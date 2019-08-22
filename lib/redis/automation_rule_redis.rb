@@ -7,7 +7,8 @@ module Redis::AutomationRuleRedis
   end
 
   def set_expiry_of_account_rule(expiry_time = 86400) # 1 day
-    return false if get_expiry_of_automation_hash(account_automation_key) >= 0
+    expiry_of_automation_hash = get_expiry_of_automation_hash(account_automation_key)
+    return false if expiry_of_automation_hash.present? && expiry_of_automation_hash >= 0
 
     set_expiry_of_automation_hash(account_automation_key, expiry_time)
   end
