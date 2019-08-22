@@ -288,11 +288,6 @@ module Ember
       match_db_and_es_query_responses(query_hash_params)
     end
 
-    def test_multiple_overdue_filter
-      query_hash_params = { '0' => query_hash_param('due_by', 'due_by_op', [1, 2]) }
-      match_db_and_es_query_responses(query_hash_params)
-    end
-
     def test_today_dueby_filter
       query_hash_params = { '0' => query_hash_param('due_by', 'due_by_op', [2]) }
       match_db_and_es_query_responses(query_hash_params)
@@ -431,11 +426,6 @@ module Ember
       match_db_and_es_query_responses(query_hash_params)
     end
 
-    def test_type_with_none_filter
-      query_hash_params = { '0' => query_hash_param('ticket_type', 'is_in', [-1, @account.ticket_type_values.sample.value]) }
-      match_db_and_es_query_responses(query_hash_params)
-    end
-
     def test_multiple_type_filter
       query_hash_params = { '0' => query_hash_param('ticket_type', 'is_in', @account.ticket_type_values.map(&:value).sample(rand(1..3))) }
       match_db_and_es_query_responses(query_hash_params)
@@ -496,21 +486,6 @@ module Ember
       match_db_and_es_query_responses(query_hash_params)
     end
 
-    def test_custom_dropdown_filters_with_comma_single
-      query_hash_params = { '0' => query_hash_param('test_custom_dropdown', 'is_in', ['Chennai, In'], 'custom_field') }
-      match_db_and_es_query_responses(query_hash_params)
-    end
-
-    def test_custom_dropdown_filters_with_comma_single_none
-      query_hash_params = { '0' => query_hash_param('test_custom_dropdown', 'is_in', ['Chennai, In', '-1'], 'custom_field') }
-      match_db_and_es_query_responses(query_hash_params)
-    end
-
-    def test_custom_dropdown_filters_with_comma_multiple
-      query_hash_params = { '0' => query_hash_param('test_custom_dropdown', 'is_in', ['Chennai, In', 'bangalore'], 'custom_field') }
-      match_db_and_es_query_responses(query_hash_params)
-    end
-
     def test_multiple_custom_filter
       query_hash_params = { '0' => query_hash_param('test_custom_dropdown', 'is_in', DROPDOWN_OPTIONS.sample(3), 'custom_field') }
       match_db_and_es_query_responses(query_hash_params)
@@ -518,11 +493,6 @@ module Ember
 
     def test_dependent_field_one_level
       query_hash_params = { '0' => query_hash_param('test_custom_country', 'is_in', [DEPENDENT_FIELD_VALUES.keys.sample.dup], 'custom_field') }
-      match_db_and_es_query_responses(query_hash_params)
-    end
-
-    def test_dependent_field_one_level_with_comma_choices
-      query_hash_params = { '0' => query_hash_param('test_custom_country', 'is_in', ['Chennai, In'], 'custom_field') }
       match_db_and_es_query_responses(query_hash_params)
     end
 

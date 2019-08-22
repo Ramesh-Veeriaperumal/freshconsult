@@ -7,7 +7,6 @@ module Search::Filters::EsQueryMethods
     'helpdesk_subscriptions.user_id'            =>  'watchers',
     'helpdesk_schema_less_tickets.product_id'   =>  'product_id'
   }.freeze
-  TEXT_DELIMITER = ','.freeze
 
   private
 
@@ -15,7 +14,7 @@ module Search::Filters::EsQueryMethods
     def construct_conditions(es_wrapper, wf_conditions)
       wf_conditions.each do |field|
         cond_field = (COLUMN_MAPPING[field['condition']].presence || field['condition'].to_s).gsub('flexifields.', '')
-        field_values = field['value'].is_a?(Array) ? field['value'] : field['value'].to_s.split(TEXT_DELIMITER)
+        field_values = field['value'].to_s.split(',')
         es_wrapper.push(handle_field(cond_field, field_values)) if cond_field.present?
       end
     end

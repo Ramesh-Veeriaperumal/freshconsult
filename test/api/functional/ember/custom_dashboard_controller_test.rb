@@ -308,18 +308,6 @@ module Ember
       match_json({ 'count' => 87 })
     end
 
-    def test_widget_data_preview_for_scorecard_with_custom_filter_with_comma_choices
-      choices = ['Chennai, IN', 'Bangalore']
-      @custom_field = create_custom_field_dropdown('test_custom_dropdown_scorecard_with_comma', choices)
-      ticket_filter = create_filter(@custom_field)
-      ::Dashboard::TrendCount.any_instance.stubs(:fetch_count).returns(:"#{ticket_filter.id}" => 87)
-      get :widget_data_preview, controller_params(version: 'private', type: 'scorecard', ticket_filter_id: ticket_filter.id)
-      assert_response 200
-      match_json('count' => 87)
-    ensure
-      @custom_field.destroy
-    end
-
     def test_widget_data_preview_for_scorecard_with_none_custom_filter
       Account.current.launch(:count_service_es_reads)
       none_hash = { data_hash: [{ 'condition' => 'flexifields.ff_date01', 'operator' => 'is', 'ff_name' => 'cf_fsm_appointment_start_time', 'value' => 'none' }] }
@@ -428,31 +416,6 @@ module Ember
       get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: ticket_filter.id, categorised_by: field.id, representation: NUMBER)
       assert_response 200
       match_json(bar_chart_preview_response_pattern(field.id))
-    end
-
-    def test_widget_data_preview_for_bar_chart_with_custom_filter_with_comma_choices
-      choices = ['Chennai, IN', 'Bangalore']
-      @custom_field = create_custom_field_dropdown('test_custom_dropdown_barchart_with_comma', choices)
-      field2 = Account.current.ticket_fields.find_by_field_type('default_group')
-      ticket_filter = create_filter(@custom_field)
-      ::Search::Dashboard::Custom::Count.any_instance.stubs(:fetch_count).returns(bar_chart_preview_es_response_stub(field2.id))
-      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: ticket_filter.id, categorised_by: field2.id, representation: NUMBER)
-      assert_response 200
-      match_json(bar_chart_preview_response_pattern(field2.id))
-    ensure
-      @custom_field.destroy
-    end
-
-    def test_widget_data_preview_for_bar_chart_with_custom_filter_categorized_by_field_with_comma_choices
-      choices = ['Chennai, IN', 'Bangalore']
-      field = create_custom_field_dropdown('test_custom_dropdown_barchart_with_comma', choices)
-      ticket_filter = create_filter
-      ::Search::Dashboard::Custom::Count.any_instance.stubs(:fetch_count).returns(bar_chart_preview_es_response_stub(field.id, field.choices))
-      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: ticket_filter.id, categorised_by: field.id, representation: NUMBER)
-      assert_response 200
-      match_json(bar_chart_preview_response_pattern(field.id, field.choices))
-    ensure
-      field.destroy
     end
 
     def test_widget_data_preview_for_bar_chart_with_default_filter
@@ -1323,20 +1286,6 @@ module Ember
       Account.current.rollback(:count_service_es_reads)
     end
 
-    def test_widget_data_preview_for_scorecard_with_custom_filter_with_comma_choices_from_search_service
-      choices = ['Chennai, IN', 'Bangalore']
-      @custom_field = create_custom_field_dropdown('test_custom_dropdown_scorecard_with_comma', choices)
-      ticket_filter = create_filter(@custom_field)
-      Account.current.launch(:count_service_es_reads)
-      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new('records' => { 'results' => { ticket_filter.id.to_s => { 'total' => 87 } } }))
-      get :widget_data_preview, controller_params(version: 'private', type: 'scorecard', ticket_filter_id: ticket_filter.id)
-      assert_response 200
-      match_json('count' => 87)
-    ensure
-      @custom_field.destroy
-      SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
-    end
 
     def test_widget_data_preview_for_bar_chart_with_custom_filter_from_search_service
       ticket_filter = create_filter
@@ -1370,7 +1319,7 @@ module Ember
       get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: NUMBER)
       assert_response 200
       match_json(bar_chart_preview_response_pattern(field.id))
-    ensure
+      ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
       Account.current.rollback(:count_service_es_reads)
     end
@@ -1408,37 +1357,6 @@ module Ember
       assert_response 200
       match_json(bar_chart_preview_response_percentage_pattern(field.id))
     ensure
-      SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
-    end
-
-    def test_widget_data_preview_for_bar_chart_with_custom_filter_with_comma_choices_search_service
-      Account.current.launch(:count_service_es_reads)
-      choices = ['Chennai, IN', 'Bangalore']
-      @custom_field = create_custom_field_dropdown('test_custom_dropdown_barchart_with_comma', choices)
-      field2 = Account.current.ticket_fields.find_by_field_type('default_status')
-      ticket_filter = create_filter(@custom_field)
-      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(bar_chart_preview_search_service_es_response_stub(field2.id))
-      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: ticket_filter.id, categorised_by: field2.id, representation: NUMBER)
-      assert_response 200
-      match_json(bar_chart_preview_response_pattern(field2.id))
-    ensure
-      @custom_field.destroy
-      SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
-    end
-
-    def test_widget_data_preview_for_bar_chart_with_custom_filter_categorized_by_field_with_comma_choices_search_service
-      choices = ['Chennai, IN', 'Bangalore']
-      field = create_custom_field_dropdown('test_custom_dropdown_barchart_with_comma', choices)
-      ticket_filter = create_filter
-      Account.current.launch(:count_service_es_reads)
-      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(bar_chart_preview_search_service_es_response_stub(field.id, ticket_filter.id, choices))
-      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: ticket_filter.id, categorised_by: field.id, representation: NUMBER)
-      assert_response 200
-      match_json(bar_chart_preview_response_pattern(field.id, choices))
-    ensure
-      field.destroy
       SearchService::Client.any_instance.unstub(:multi_aggregate)
       Account.current.rollback(:count_service_es_reads)
     end
