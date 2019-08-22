@@ -42,7 +42,7 @@
     	  <div class="pagination-right edit-container">
 					<% if current_account.falcon_ui_enabled?(current_user) && @article.published? %>
 						<button class="btn article-link-copy-btn" data-text-copied="<%= t('copied_link') %>">
-							<a href="<%= article_path(multilingual_article_path(@article, path_url_locale), @article.solution_folder_meta.solution_category_meta) %>" class="hidden" id="article-link-copy-btn"></a>
+							<a href="<%= portal_article_path(multilingual_article_path(@article, path_url_locale), @article.solution_folder_meta.solution_category_meta) %>" class="hidden" id="article-link-copy-btn"></a>
 							<span class="ficon-clone"></span>
 							<span class="content">	<%= t('copy_link') %></span>
 						</button>
