@@ -58,7 +58,7 @@ class Support::CustomSurveysController < SupportController #for Portal Customiza
     @survey_result.update_result_and_feedback(params)
     language = Language.find_by_code(@survey_result.try(:surveyable).try(:requester_language))
     translation_record = @survey_result.survey.translation_record(language) if language.present?
-    thanks_message = translation_record.translations[:feedback_response_text] if translation_record.present?
+    thanks_message = translation_record.translations['feedback_response_text'] if translation_record.present?
     render json: { thanks_message: thanks_message || @survey_result.survey.feedback_response_text }
   end
 
