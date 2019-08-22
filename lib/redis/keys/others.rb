@@ -196,6 +196,7 @@ module Redis::Keys::Others
 
   #Account cancellation related keys
   ACCOUNT_CANCELLATION_REQUEST_JOB_ID = "ACCOUNT_CANCELLATION_REQUEST_JOB_ID:%{account_id}".freeze
+  ACCOUNT_CANCELLATION_REQUEST_TIME = "ACCOUNT_CANCELLATION_REQUEST_TIME:%{account_id}".freeze
   CUSTOM_ENCRYPTED_FIELD_KEY               = "CF_ENC_ENCRYPTION_KEY:%{account_id}".freeze
 
   # FreshID Keys

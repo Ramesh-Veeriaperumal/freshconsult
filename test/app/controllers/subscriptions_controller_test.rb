@@ -68,7 +68,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     @controller.stubs(:load_coupon).returns(nil)
     @controller.stubs(:set_current_account).returns(@account)
     @controller.stubs(:request_host).returns('test1.freshpo.com')
-    
+
     post :plan, construct_params({}, { agent_limit: '12', plan_id: params_plan_id }.merge!(params_hash.except(:plan_id, :agent_limit)))
     @account.reload
     assert_equal @account.subscription.subscription_plan_id, current_plan_id
@@ -97,7 +97,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     @account.subscription.update_attributes(agent_limit: '1')
     @account.subscription.update_attributes(renewal_period: 1)
     @account.subscription.update_attributes(subscription_plan_id: current_plan_id)
-    
+
     @controller.stubs(:load_coupon).returns(nil)
     @controller.stubs(:set_current_account).returns(@account)
     @controller.stubs(:request_host).returns('test2.freshpo.com')
@@ -127,7 +127,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     Subscription.any_instance.stubs(:total_amount).returns(0)
     @account.subscription.update_attributes(agent_limit: '1')
     @account.subscription.update_attributes(renewal_period: SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual])
-    @account.subscription.update_attributes(subscription_plan_id: SubscriptionPlan.current.map(&:id).third)    
+    @account.subscription.update_attributes(subscription_plan_id: SubscriptionPlan.current.map(&:id).third)
     @controller.stubs(:load_coupon).returns(nil)
     @controller.stubs(:set_current_account).returns(@account)
     @controller.stubs(:request_host).returns('test3.freshpo.com')
@@ -189,7 +189,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     @controller.stubs(:load_coupon).returns(nil)
     @controller.stubs(:set_current_account).returns(@account)
     @controller.stubs(:request_host).returns('test5.freshpo.com')
-    
+
     post :plan, construct_params({}, params.merge!(params_hash.except(:agent_limit, :plan_id)))
     @account.reload
     assert_equal @account.subscription.agent_limit, 6
@@ -247,7 +247,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     @controller.stubs(:set_current_account).returns(@account)
     @controller.stubs(:request_host).returns('test7.freshpo.com')
 
-    post :plan, construct_params({}, params.merge!(params_hash.except(:agent_limit))) 
+    post :plan, construct_params({}, params.merge!(params_hash.except(:agent_limit)))
     @account.reload
     assert_equal @account.subscription.subscription_request.fsm_field_agents, nil
     assert_response 302
@@ -303,7 +303,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     @controller.stubs(:load_coupon).returns(nil)
     @controller.stubs(:set_current_account).returns(@account)
     @controller.stubs(:request_host).returns('test10.freshpo.com')
-    
+
     post :plan, construct_params({ plan_id: current_plan_id - 1 }.merge!(params_hash.except(:plan_id)))
     @account.reload
     assert_equal @account.subscription.subscription_request.nil?, true
@@ -325,6 +325,33 @@ class SubscriptionsControllerTest < ActionController::TestCase
     Account.unstub(:current)
     Subscription.any_instance.unstub(:active?)
     Subscription.any_instance.unstub(:offline_subscription?)
+  end
+
+  def test_cancel_account_cancellation_request
+    @account.launch(:downgrade_policy)
+    set_others_redis_key(@account.account_cancellation_request_time_key, Time.zone.now)
+    ChargeBee::Subscription.stubs(:remove_scheduled_cancellation).returns(true)
+    delete :cancel_request
+    assert_response 200
+    assert parse_response(response.body)['success']
+  ensure
+    @account.rollback(:downgrade_policy)
+    ChargeBee::Subscription.unstub(:remove_scheduled_cancellation)
+  end
+
+  def test_cancel_request_when_account_cancellation_not_requested
+    delete :cancel_request
+    assert_response 200
+    refute parse_response(response.body)['success']
+  end
+
+  def test_cancel_account_cancellation_request_errors_in_exception
+    @account.launch(:downgrade_policy)
+    set_others_redis_key(@account.account_cancellation_request_time_key, Time.zone.now)
+    ChargeBee::Subscription.stubs(:remove_scheduled_cancellation).raises(ChargeBee::InvalidRequestError)
+    delete :cancel_request
+    assert_response 200
+    refute parse_response(response.body)['success']
   end
 
   private

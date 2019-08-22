@@ -11,6 +11,7 @@ class AccountCleanup::DeleteAccount < BaseWorker
     account = Account.current
     return if account.active?
 
+    account.delete_account_cancellation_requested_time_key if account.launched?(:downgrade_policy)
     ::Admin::Sandbox::DeleteWorker.new.perform(event: SANDBOX_DELETE_EVENTS[:deactivate]) if account.production_with_sandbox?
     deleted_customer = DeletedCustomers.find_by_account_id(account.id)
 

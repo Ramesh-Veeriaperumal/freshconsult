@@ -424,6 +424,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
         'state': subscription.state,
         'plan_id': subscription.subscription_plan_id,
         'renewal_period': subscription.renewal_period,
+        'next_renewal_at': subscription.next_renewal_at,
         'agent_seats': subscription.agent_limit,
         'card_number': subscription.card_number,
         'card_expiration': subscription.card_expiration,

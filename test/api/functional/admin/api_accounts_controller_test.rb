@@ -6,7 +6,7 @@ Sidekiq::Testing.fake!
 class Admin::ApiAccountsControllerTest < ActionController::TestCase
   include ApiAccountHelper
   include Redis::OthersRedis
-  CHARGEBEE_SUBSCRIPTION_BASE_URL = "https://freshpo-test.chargebee.com/api/v1/subscriptions"
+  CHARGEBEE_SUBSCRIPTION_BASE_URL = 'https://freshpo-test.chargebee.com/api/v1/subscriptions'.freeze
   SUPPORT_CONTACTS_RESPONSE = [{ 'active' => true, 'address' => nil, 'company_id' => 854_881,
                                  'description' => nil, 'email' => 'sample@freshdesk.com', 'id' => 28_271_068,
                                  'job_title' => nil, 'language' => 'en', 'mobile' => nil, 'name' => 'Jeff Brown',
@@ -51,32 +51,34 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
   def teardown
     AwsWrapper::S3Object.unstub(:exists?)
   end
-  
+
   def get_valid_params_for_cancel
-    { cancellation_feedback: "Account Cancellation feedback",
-      additional_cancellation_feedback: "Additional Info from user"}
+    {
+      cancellation_feedback: 'Account Cancellation feedback',
+      additional_cancellation_feedback: 'Additional Info from user'
+    }
   end
-  
+
   def reset_account_subscription_state(state)
     subscription = @account.subscription
     subscription.update_column(:state, state)
     @account.reload
   end
-  
+
   def set_account_cancellation_redis_key
-    set_others_redis_key(@account.account_cancellation_request_job_key,100000) unless @account.nil?
+    set_others_redis_key(@account.account_cancellation_request_job_key, 100_000) unless @account.nil?
   end
-  
+
   def test_cancellation_feedback_presence
     post :cancel, construct_params({})
     assert_response 400
   end
-  
+
   def test_cancellation_feedback_data_type_mismatch
-    post :cancel, construct_params({cancellation_feedback: 1.to_i })
+    post :cancel, construct_params(cancellation_feedback: 1.to_i)
     assert_response 400
   end
-  
+
   def test_account_cancellation
     reset_account_subscription_state('trail')
     url = "#{CHARGEBEE_SUBSCRIPTION_BASE_URL}/#{@account.id}"
@@ -85,9 +87,9 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
     assert_response 204
     reset_account_subscription_state('trail')
   end
-  
+
   def test_account_cancellation_for_paid_accounts
-    create_subscription_payment(amount: 40 )
+    create_subscription_payment(amount: 40)
     reset_account_subscription_state('active')
     post :cancel, construct_params(get_valid_params_for_cancel)
     Account.any_instance.stubs(:account_cancellation_requested?).returns(true)
@@ -98,42 +100,47 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
     @account.subscription_payments.destroy_all
     @account.delete_account_cancellation_request_job_key
   end
-  
+
   def test_account_cancellation_state_validation_fail
     reset_account_subscription_state('suspended')
     post :cancel, construct_params(get_valid_params_for_cancel)
     assert_response 403
-    match_json({ 'code' => 'account_suspended', 'message' => 'Your account has been suspended.' })
+    match_json('code' => 'account_suspended', 'message' => 'Your account has been suspended.')
     reset_account_subscription_state('trail')
   end
-  
+
   def test_account_cancellation_request_already_placed
     reset_account_subscription_state('active')
     Account.any_instance.stubs(:account_cancellation_requested?).returns(true)
     post :cancel, construct_params(get_valid_params_for_cancel)
     assert_response 400
-    match_json([
-      {
-        code: 'invalid_value', 
-        field: 'account_cancel', 
-        message: 'Account Cancellation already requested.'
-      }
-    ])
+    match_json([{ code: 'invalid_value', field: 'account_cancel', message: 'Account Cancellation already requested.' }])
   ensure
     @account.delete_account_cancellation_request_job_key if @account
   end
 
+  def test_account_cancellation_with_downgrade_policy_enabled
+    reset_account_subscription_state('active')
+    @account.launch(:downgrade_policy)
+    subscription_response = chargebee_subscripiton_reponse
+    subscription_response[:subscription][:status] = 'active'
+    url = "#{CHARGEBEE_SUBSCRIPTION_BASE_URL}/#{@account.id}"
+    stub_request(:get, url).to_return(status: 200, body: subscription_response.to_json, headers: {})
+    ChargeBee::Subscription.stubs(:cancel).returns(true)
+    post :cancel, construct_params(get_valid_params_for_cancel)
+    assert_response 204
+    assert @account.account_cancellation_requested?
+  ensure
+    reset_account_subscription_state('trail')
+    @account.delete_account_cancellation_requested_time_key
+    ChargeBee::Subscription.unstub(:cancel)
+    @account.rollback(:downgrade_policy)
+  end
+
   def test_download_file_to_respond_type_invalid_value_error
-    get :download_file, controller_params(  version: 'private',
-                                            type: Faker::Lorem.characters(10))
+    get :download_file, controller_params(version: 'private', type: Faker::Lorem.characters(10))
     assert_response 400
-    match_json([
-      {
-        code: 'invalid_value',
-        field: 'type',
-        message: 'It should be one of these values: \'beacon\''
-      }
-    ])
+    match_json([{ code: 'invalid_value', field: 'type', message: 'It should be one of these values: \'beacon\'' }])
   end
 
   def test_download_file_to_respond_302_for_beacon_report
@@ -226,7 +233,7 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
   end
 
   private
-  
+
     def fetch_unresolved_ticket_count
       unresolved_ticket_count = 0
       SUPPORT_TICKETS_RESPONSE.each do |ticket|

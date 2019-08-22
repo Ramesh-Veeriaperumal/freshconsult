@@ -3975,6 +3975,10 @@ en:
       change_your_plan: Change your plan
       warning_message: "Once you cancel your account, your customers and agents will not have access to your support portal, and your account will be temporarily suspended. We will permanently delete your data after 14 days (on <strong>%{cancel_date}</strong>). <br><br> You can restore your account during the 14 day suspension window by emailing us at support@freshdesk.com"
       trial_warning_message: "Once you cancel your account, your customers and agents will not have access to your support portal. Be sure this is really what you want to do."
+      cancellation_requested_on: "Account cancellation requested on"
+      cancellation_effective_from: "Effective from"
+      cancellation_info: "You will have uninterrupted access to your freshdesk account till %{cancellation_effective_date}. Click on 'Cancel request' if you want to continue using Freshdesk even after your current billing period."
+      cancel_request: "Cancel Request"
       feedback:
         budget: I don’t have the budget anymore
         budget_followup: You can downgrade to a lower plan in Freshdesk without affecting your existing tickets. In fact, if the budget is really tight, you could move to the Sprout plan with 3 free agents for life. <a href="http://www.freshdesk.com/free-support-software">Learn more about the free plan</a>
