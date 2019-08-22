@@ -65,14 +65,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_save :set_parent_child_assn, :if => :child_ticket?
   after_save :check_child_tkt_status, :if => :child_ticket?
 
+  after_update :update_ticket_states
+
   after_commit :create_initial_activity, on: :create
   after_commit :trigger_dispatcher, on: :create, :unless => :skip_dispatcher?
   after_commit :update_capping_on_create, :update_count_for_skill, on: :create, if: -> { outbound_email? }
   after_commit :send_outbound_email, on: :create, if: -> { outbound_email? && import_ticket.blank? }
   after_commit :trigger_observer_events, on: :update, :if => :execute_observer?
   after_commit :enqueue_sla_calculation, :if => :enqueue_sla_calculation?
-  after_commit :update_ticket_states, :notify_on_update, :update_activity,
-               :stop_timesheet_timers, :fire_update_event, on: :update
+  after_commit :notify_on_update, :update_activity, :stop_timesheet_timers, :fire_update_event, on: :update
   #after_commit :regenerate_reports_data, on: :update, :if => :regenerate_data?
   after_commit :update_group_escalation, on: :create, :if => :model_changes?
   after_commit :publish_to_update_channel, on: :update, :if => :model_changes?
