@@ -4,7 +4,8 @@
   is_new_sprout = new_sprout?(plan.name)
   field_agent_limit = @subscription.field_agent_limit || 0
   show_field_agent_info = fsm_supported_plan?(plan) && current_account.field_service_management_enabled? && field_agent_limit > 0
-   current_subscription = Subscription.find(current_account.subscription.id) 
+  current_subscription = Subscription.find(current_account.subscription.id)
+  date_format_options = { format: :short_day_with_week, include_weekday: false, include_time: false, include_year: true }
 
 %>
 <% if current_account.launched?(:downgrade_policy) && @subscription.subscription_request.present? %>
@@ -22,20 +23,20 @@
         <div class="request-change-container">
             <div class="request-change-items">
               <div class="pb10"><%=t("downgrade.plan")%></div>
-              <% 
+              <%
                 sub_plan_name = @subscription.subscription_plan.name
                 requested_plan_name = requested_plan.name
               %>
-              <div><span class="plan-from"> <%= sub_plan_name %></span> <% if plan.omni_plan? || plan.free_omni_channel_plan? || show_field_agent_info 
+              <div><span class="plan-from"> <%= sub_plan_name %></span> <% if plan.omni_plan? || plan.free_omni_channel_plan? || show_field_agent_info
                   @omni_fsm_toggle_current_plan = []
                   if plan.omni_plan? || plan.free_omni_channel_plan?
                     @omni_fsm_toggle_current_plan << t("downgrade.omnichannel")
-                  end 
+                  end
                   if show_field_agent_info
                     @omni_fsm_toggle_current_plan << t("downgrade.fsm")
                   end
                 %>
-                <%= '('+ @omni_fsm_toggle_current_plan.join(' + ') + ')' %>       
+                <%= '('+ @omni_fsm_toggle_current_plan.join(' + ') + ')' %>
                <% end %>
                 <% if @subscription.subscription_request.plan_id? && (sub_plan_name != requested_plan_name) ||
                   ((plan.omni_plan? || plan.free_omni_channel_plan?) != (requested_plan.omni_plan? || requested_plan.free_omni_channel_plan?) || (show_field_agent_info != fsm_field_agents) )
@@ -47,7 +48,7 @@
                         @omni_fsm_toggle = []
                        if requested_plan.omni_plan? || requested_plan.free_omni_channel_plan?
                             @omni_fsm_toggle << t("downgrade.omnichannel")
-                        end 
+                        end
                        if fsm_field_agents
                            @omni_fsm_toggle << t("downgrade.fsm")
                        end
@@ -61,10 +62,10 @@
               <div class="request-change-items">
                 <div class="pb10"><%=t("downgrade.agents")%></div>
                 <div class="agents-count"><%= @subscription.agent_limit %>
-                 <% if @subscription.subscription_request.agent_limit? && @subscription.agent_limit !=@subscription.subscription_request.agent_limit %> 
+                 <% if @subscription.subscription_request.agent_limit? && @subscription.agent_limit !=@subscription.subscription_request.agent_limit %>
                   <%=t("downgrade.to")%>
                   <%= @subscription.subscription_request.agent_limit %>
-                 <% end %> 
+                 <% end %>
                 </div>
               </div>
             <% end %>
@@ -85,7 +86,7 @@
                        <%= 0 %>
                       <% else %>
                         <%= @subscription.subscription_request.fsm_field_agents %>
-                      <% end %> 
+                      <% end %>
                     <% end %>
                   <% end %>
                 </div>
@@ -108,5 +109,21 @@
         </div>
     </div>
     <div class="request-change-info"><img src="/assets/info-icon.svg" /></span><span class="m0 pl5"><%=t("downgrade.info")%></span></div>
+  </div>
+<% elsif current_account.launched?(:downgrade_policy) && current_account.account_cancellation_requested? && current_account.active? %>
+  <%
+    cancellation_requested_time = formated_date(Time.strptime(current_account.account_cancellation_requested_time.to_s, '%Q'), date_format_options)
+    cancellation_effective_date = formated_date(@subscription.next_renewal_at, date_format_options)
+  %>
+  <div id="cancellation-wrapper" class="request-change-wrapper">
+    <div class="on-request">
+      <span class="on-request-date"><%= t("accounts.cancel.cancellation_requested_on") %></span> <%= cancellation_requested_time %>
+      <span class="next-renewal ml10 pl10"><%= t("accounts.cancel.cancellation_effective_from") %></span> <%= cancellation_effective_date %>
+      <a class="cancel-request" data-cancel-type="cancellation"><%= t("accounts.cancel.cancel_request") %></a>
+    </div>
+    <div class="request-change-info">
+      <img src="/assets/info-icon.svg" />
+      <span class="m0 pl5"><%= t("accounts.cancel.cancellation_info", cancellation_effective_date: cancellation_effective_date) %></span>
+    </div>
   </div>
 <% end %>

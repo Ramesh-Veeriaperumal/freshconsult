@@ -3,7 +3,7 @@ module Billing::Constants
   INVOICE_EVENTS = ['invoice_generated', 'invoice_updated', 'invoice_deleted'].freeze
 
   EVENTS = [ "subscription_changed", "subscription_activated", "subscription_renewed",
-              "subscription_cancelled", "subscription_reactivated", "card_added",
+              "subscription_cancelled", "subscription_scheduled_cancellation_removed", "subscription_reactivated", "card_added",
               "card_updated", "payment_succeeded", "payment_refunded", "card_deleted",
               "customer_changed", "card_expiring"].freeze + INVOICE_EVENTS
 

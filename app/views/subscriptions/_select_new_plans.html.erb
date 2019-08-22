@@ -293,6 +293,6 @@
 <script type="text/javascript">
   
   if(App.SelectPlan != undefined){ App.SelectPlan.destroy() }
-  App.SelectPlan.initialize("<%= @subscription.currency_name %>",<%= @subscription.renewal_period %>,"<%= @subscription.subscription_plan.id %>","<%= @subscription.agent_limit %>",<%= @subscription.field_agent_limit || 0 %>, <%= current_account.launched?(:downgrade_policy) %>,"<%= current_account.plan_name %>",<%= current_account.field_service_management_enabled? %>,"<%= @subscription.state %>");
+  App.SelectPlan.initialize("<%= @subscription.currency_name %>",<%= @subscription.renewal_period %>,"<%= @subscription.subscription_plan.id %>","<%= @subscription.agent_limit %>",<%= @subscription.field_agent_limit || 0 %>, <%= current_account.launched?(:downgrade_policy) %>,"<%= current_account.plan_name %>",<%= current_account.field_service_management_enabled? %>,"<%= @subscription.state %>", <%= current_account.account_cancellation_requested? %>);
 
 </script>

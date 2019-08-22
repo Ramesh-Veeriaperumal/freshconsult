@@ -95,8 +95,12 @@ class Billing::Subscription < Billing::ChargebeeWrapper
     update_non_recurring_addon(freshfone_addon(account, quantity))    
   end  
 
-  def cancel_subscription(account)
-    cancelled_subscription?(account.id) ? true : super(account.id) 
+  def cancel_subscription(account, data = {})
+    cancelled_subscription?(account.id) ? true : super(account.id, data)
+  end
+
+  def remove_scheduled_cancellation(account)
+    ChargeBee::Subscription.remove_scheduled_cancellation(account.id)
   end
 
   def reactivate_subscription(subscription, data = {})

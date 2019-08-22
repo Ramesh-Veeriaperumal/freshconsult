@@ -48,7 +48,7 @@
 
 .omni-disabled, .omni-enabled {
 	margin-top: 10px;
-	position: relative; 
+	position: relative;
 }
 
 .choose-plan-container {
@@ -73,7 +73,7 @@
 
 .features {
   display: flex;
-	
+
   &__icon {
   	@include margin-right(12px);
   }
@@ -81,7 +81,7 @@
   &__wrapper {
   	display: flex;
  	-webkit-flex: 1; /* Safari 6.1+ */
-  	-ms-flex: 1; /* IE 10 */ 
+  	-ms-flex: 1; /* IE 10 */
   	flex: 1;
   	align-items: center;
   	padding: 20px;
@@ -352,7 +352,7 @@
 }
 
 dt.vertical-top {
-	padding-top: 5px;	
+	padding-top: 5px;
 }
 
 .save-info {
@@ -369,7 +369,7 @@ dt.vertical-top {
 	.billing-cost{
 		margin-top: 10px;
 		font-size: 13px;
-		
+
 		h2{
 			font-size: 15px;
 			vertical-align: top;
@@ -581,7 +581,7 @@ input[type=text].input-agent-count{
 			font-weight: 300;
 			font-size: 15px;
 			line-height: 1.8;
-			
+
 			span {
 				display: list-item;
 				margin-left: 20px;
@@ -874,7 +874,7 @@ input[type=text].input-agent-count{
 				}
 			}
 
- 			
+
 	 }
 	 .downgrade-submit-btn {
 	 	display: inline-block;
@@ -892,6 +892,12 @@ input[type=text].input-agent-count{
 						color: #415D71;
 					}
 				}
+	}
+	.cancel-request {
+		float: right;
+		font-weight: bold;
+		cursor: pointer;
+		text-decoration: none;
 	}
 	.second-downgrade-modal-wrapper {
 		width: 65%;
@@ -916,7 +922,7 @@ input[type=text].input-agent-count{
 		.request-change-items {
 		 .plan-from,.plan-to,.billing-cycle {
 			 font-weight: normal
-			}	
+			}
 		}
 		.agents-count-text,.fsm-count-text {
 		  font-weight: normal;
@@ -932,9 +938,9 @@ input[type=text].input-agent-count{
 			.required-mark{
 				font-weight:bold;
 				display: inline-block;
-			}	
+			}
 		}
-		
+
 		.plan-name {
 			width: 50%;
 		}
@@ -972,6 +978,50 @@ input[type=text].input-agent-count{
 		 border-bottom-left-radius: 4px;
 		 margin-bottom: 50px;
 		 display: flex;
+
+		 &.hide {
+		 	display: none !important;
+		 }
+	 }
+
+	 .request-change-status {
+	 	padding: 15px 25px;
+		margin: 0;
+		border-radius: 4px;
+		margin-bottom: 50px;
+		display: flex;
+
+		img{
+			margin-right: 5px;
+		    padding-right: 10px;
+		    border-right: 1px solid;
+			display: none;
+		}
+
+		&.success {
+			border: 1px solid #B4E5DA;
+			background-color: #E0F5F1;
+
+			.success-icon {
+				display: block;
+			}
+		}
+
+		&.failure {
+			border: 1px solid #FFD0D6;
+			background-color: #FFECF0;
+
+			.failure-icon {
+				display: block;
+			}
+		}
+
+		&.hide {
+			display: none !important;
+		}
+	 }
+	 .downgrade-sprout{
+	 	display: none;
 	 }
 	 .downgrade-sprout{
 	 	display: none;

@@ -720,22 +720,46 @@ class Account < ActiveRecord::Base
   end
 
   def account_cancellation_requested?
+    return redis_key_exists?(account_cancellation_request_time_key) if launched?(:downgrade_policy)
+
     redis_key_exists?(account_cancellation_request_job_key)
   end
 
   def account_cancellation_request_job_key
-    ACCOUNT_CANCELLATION_REQUEST_JOB_ID % {:account_id => self.id}
+    format(ACCOUNT_CANCELLATION_REQUEST_JOB_ID, account_id: id)
+  end
+
+  def account_cancellation_request_time_key
+    format(ACCOUNT_CANCELLATION_REQUEST_TIME, account_id: id)
+  end
+
+  def account_cancellation_requested_time
+    get_others_redis_key(account_cancellation_request_time_key)
   end
 
   def kill_account_cancellation_request_job
-    job_id= get_others_redis_key(account_cancellation_request_job_key)
+    job_id = get_others_redis_key(account_cancellation_request_job_key)
     job = Sidekiq::ScheduledSet.new.find_job(job_id)
     job.delete if job.present?
     delete_account_cancellation_request_job_key
   end
 
+  def kill_scheduled_account_cancellation
+    begin
+      Billing::Subscription.new.remove_scheduled_cancellation(self)
+      return delete_account_cancellation_requested_time_key
+    rescue => e
+      Rails.logger.error("Error while cancelling account cancellation request :: #{e.message}")
+    end
+    false
+  end
+
   def delete_account_cancellation_request_job_key
     remove_others_redis_key(account_cancellation_request_job_key)
+  end
+
+  def delete_account_cancellation_requested_time_key
+    remove_others_redis_key(account_cancellation_request_time_key)
   end
 
   def canned_responses_inline_images

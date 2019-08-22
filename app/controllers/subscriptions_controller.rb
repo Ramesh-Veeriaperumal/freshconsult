@@ -125,6 +125,13 @@ class SubscriptionsController < ApplicationController
     end
   end
 
+  def cancel_request
+    if current_account.account_cancellation_requested?
+      return render json: { success: true } if current_account.kill_scheduled_account_cancellation
+    end
+    render json: { success: false }
+  end
+
   private
     def admin_selected_tab
       @selected_tab = :admin
@@ -279,6 +286,7 @@ class SubscriptionsController < ApplicationController
         return false
       else
         scoper.subscription_request.destroy if scoper.subscription_request.present?
+        current_account.delete_account_cancellation_requested_time_key if scoper.suspended? && current_account.launched?(:downgrade_policy) && current_account.account_cancellation_requested?
         result = billing_subscription.update_subscription(scoper, prorate?, @addons)
         unless result.subscription.coupon == coupon
           billing_subscription.add_discount(scoper.account, coupon)
