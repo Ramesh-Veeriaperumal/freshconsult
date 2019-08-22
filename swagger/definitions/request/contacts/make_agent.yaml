@@ -20,3 +20,6 @@ properties:
     description: Role IDs associated with the agent. Atleast one role should be assoicated with the agent. Current logged in agent can't update his/her role_ids
     items:
       type: integer
+  type:
+    type: string
+    description: Type of the agent ('support_agent' -> Support Agent, 'field_agent' -> Field technician)

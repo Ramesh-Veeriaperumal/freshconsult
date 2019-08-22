@@ -40,7 +40,7 @@ class Agent < ActiveRecord::Base
   validate :validate_signature
   validate :check_agent_type_changed, on: :update
   validate :validate_field_agent_groups, if: :check_field_agent_groups?
-  validate :check_ticket_permission, if: -> { Account.current.field_service_management_enabled? }
+  validate :check_ticket_permission, :validate_field_agent_state, if: -> { account.field_service_management_enabled? }
   # validate :only_primary_email, :on => [:create, :update] moved to user.rb
 
   attr_accessible :signature_html, :user_id, :ticket_permission, :occasional, :available, :shortcuts_enabled,
@@ -428,10 +428,14 @@ class Agent < ActiveRecord::Base
 
   def check_ticket_permission
     if field_agent? && !ALLOWED_PERMISSION_FOR_FIELD_AGENT.include?(self.ticket_permission)
-      self.errors[:ticket_permission] << :field_agent_scope
+      self.errors[:ticket_permission] << ErrorConstants::ERROR_MESSAGES[:field_agent_scope]
       return false
     end
     true
+  end
+
+  def validate_field_agent_state
+    self.errors[:occasional] << ErrorConstants::ERROR_MESSAGES[:field_agent_state] if field_agent? && occasional?
   end
 
   def allow_ocr_sync?

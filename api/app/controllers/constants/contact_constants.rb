@@ -8,7 +8,7 @@ module ContactConstants
                       other_emails phone time_zone twitter_id unique_external_id).freeze |
                    ARRAY_FIELDS | HASH_FIELDS |
                    ['other_companies' => ALLOWED_OTHER_COMPANIES_FIELDS]
-  MAKE_AGENT_FIELDS = %w(occasional group_ids role_ids ticket_scope signature).freeze
+  MAKE_AGENT_FIELDS = %w[occasional group_ids role_ids ticket_scope signature type].freeze
   STATES = %w(verified unverified deleted blocked).freeze
   QUICK_CREATE_FIELDS = %w(name email phone company_name).freeze
 

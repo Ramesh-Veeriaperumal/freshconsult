@@ -104,6 +104,7 @@ class User < ActiveRecord::Base
   validate :max_user_companies, :if => :has_multiple_companies_feature?
   validate :unique_external_id_feature, :if => :unique_external_id_changed?
   validate :check_roles_for_field_agents, if: -> { Account.current.field_service_management_enabled? }, on: :update
+  validate :validate_agent, on: :update, :if => :agent?
 
   def save_tags
     @prev_tags = self.tags.map(&:name)
@@ -1044,8 +1045,10 @@ class User < ActiveRecord::Base
       agent = build_agent()
       agent.occasional = !!args[:occasional]
       agent.group_ids = args[:group_ids] if args.key?(:group_ids)
-      agent.ticket_permission = args[:ticket_permission] if args.key?(:ticket_permission)
+      agent.ticket_permission = fetch_agent_ticket_scope(args)
       agent.signature_html = args[:signature_html] if args.key?(:signature_html)
+      agent.agent_type = args[:type].present? ? AgentType.agent_type_id(args[:type]) : Agent::SUPPORT_AGENT_TYPE
+
 
       expiry_period = self.user_policy ? FDPasswordPolicy::Constants::GRACE_PERIOD : FDPasswordPolicy::Constants::NEVER.to_i.days
       self.set_password_expiry({:password_expiry_date =>
@@ -1054,6 +1057,11 @@ class User < ActiveRecord::Base
       self.active = self.primary_email.verified = false if freshid_integration_enabled_account?
       save ? true : (raise ActiveRecord::Rollback)
     end
+  end
+
+  def fetch_agent_ticket_scope(args)
+    default_ticket_permission = args[:type] == Agent::FIELD_AGENT ? Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] : Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets]
+    args[:ticket_permission] || default_ticket_permission
   end
 
   def update_search_index
@@ -1390,10 +1398,19 @@ class User < ActiveRecord::Base
     end
 
     def check_roles_for_field_agents
-      if self.agent.try(:field_agent?) && roles_changed?
+      if self.agent.try(:field_agent?) && (self.role_ids - account.roles.agent.map(&:id)).present?
         self.errors[:role_ids] << :field_agent_roles
         return false
       end
       true
+    end
+
+    def validate_agent
+      agent = self.agent
+      return if agent.valid?
+      agent.errors.messages.each do |attr, msg|
+        self.errors.add(attr, msg[0])
+      end
+      false
     end
 end

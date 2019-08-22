@@ -14262,6 +14262,10 @@
           "items": {
             "type": "integer"
           }
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of the agent ('support_agent' -> Support Agent, 'field_agent' -> Field technician)"
         }
       }
     },

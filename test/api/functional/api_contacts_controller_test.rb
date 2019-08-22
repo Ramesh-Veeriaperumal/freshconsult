@@ -1094,7 +1094,7 @@ class ApiContactsControllerTest < ActionController::TestCase
       sample_user = add_new_user(@account)
       role_ids = Role.limit(2).pluck(:id)
       group_ids = [create_group(@account).id]
-      params = { occasional: false, signature: Faker::Lorem.paragraph, ticket_scope: 2, role_ids: role_ids, group_ids: group_ids }
+      params = { occasional: false, signature: Faker::Lorem.paragraph, ticket_scope: 2, role_ids: role_ids, group_ids: group_ids, type: Agent::SUPPORT_AGENT }
       put :make_agent, construct_params({ id: sample_user.id }, params)
       assert_response 200
       assert sample_user.reload.helpdesk_agent == true
@@ -1264,6 +1264,113 @@ class ApiContactsControllerTest < ActionController::TestCase
       assert_response 409
       assert sample_user.helpdesk_agent == false
     end
+  end
+
+  def test_make_field_agent
+    Account.any_instance.stubs(:current).returns(@account)
+    @account.add_feature(:field_service_management)
+    field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
+
+    sample_user = add_new_user(@account)
+    put :make_agent, construct_params({ id: sample_user.id }, type: Agent::FIELD_AGENT)
+    assert_response 200
+    assert sample_user.reload.helpdesk_agent == true
+    agent = Agent.last
+    assert agent.user.id == sample_user.id
+    assert agent.agent_type == field_agent_type.agent_type_id
+    assert agent.occasional == false
+    assert agent.ticket_permission == 3
+  ensure
+    field_agent_type.destroy
+    sample_user.destroy
+    @account.revoke_feature(:field_service_management)
+    Account.unstub(:current)
+  end
+
+  def test_make_field_agent_as_an_occasional_agent
+    Account.any_instance.stubs(:current).returns(@account)
+    @account.add_feature(:field_service_management)
+    field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
+
+    sample_user = add_new_user(@account)
+    put :make_agent, construct_params({ id: sample_user.id }, type: Agent::FIELD_AGENT, occasional: true)
+    assert_response 400
+    match_json([bad_request_error_pattern('occasional', :field_agent_state)])
+  ensure
+    field_agent_type.destroy
+    sample_user.destroy
+    @account.revoke_feature(:field_service_management)
+    Account.unstub(:current)
+  end
+
+  def test_make_field_agent_with_support_group
+    Account.any_instance.stubs(:current).returns(@account)
+    @account.add_feature(:field_service_management)
+    field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
+
+    sample_user = add_new_user(@account)
+    sample_group = create_group(@account)
+    group_id = sample_group.id
+    put :make_agent, construct_params({ id: sample_user.id }, type: Agent::FIELD_AGENT, group_ids: [group_id])
+    assert_response 400
+    match_json([bad_request_error_pattern('group_ids', :should_not_be_support_group)])
+  ensure
+    field_agent_type.destroy
+    sample_group.destroy
+    sample_user.destroy
+    @account.revoke_feature(:field_service_management)
+    Account.unstub(:current)
+  end
+
+  def test_make_field_agent_with_admin_role
+    Account.any_instance.stubs(:current).returns(@account)
+    @account.add_feature(:field_service_management)
+    field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
+    sample_user = add_new_user(@account)
+    role_ids = Role.admin.pluck(:id)
+
+    put :make_agent, construct_params({ id: sample_user.id }, type: Agent::FIELD_AGENT, role_ids: role_ids)
+    assert_response 400
+    match_json([bad_request_error_pattern('role_ids', :field_agent_roles)])
+  ensure
+    field_agent_type.destroy
+    sample_user.destroy
+    @account.revoke_feature(:field_service_management)
+    Account.unstub(:current)
+  end
+
+  def test_make_field_agent_with_global_access
+    Account.any_instance.stubs(:current).returns(@account)
+    @account.add_feature(:field_service_management)
+    field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
+
+    sample_user = add_new_user(@account)
+    put :make_agent, construct_params({ id: sample_user.id }, type: Agent::FIELD_AGENT, ticket_scope: 1)
+    assert_response 400
+    match_json([bad_request_error_pattern('ticket_permission', :field_agent_scope)])
+  ensure
+    field_agent_type.destroy
+    sample_user.destroy
+    @account.revoke_feature(:field_service_management)
+    Account.unstub(:current)
+  end
+
+  def test_make_field_agent_with_field_agent_limit_reached
+    Account.any_instance.stubs(:current).returns(@account)
+    @account.add_feature(:field_service_management)
+    field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
+    Account.current.stubs(:reached_field_agent_limit?).returns(true)
+
+    sample_user = add_new_user(@account)
+    put :make_agent, construct_params({ id: sample_user.id }, type: Agent::FIELD_AGENT, ticket_scope: 1)
+    assert_response 400
+    match_json([bad_request_error_pattern('field_agent', :max_field_agents_reached)])
+  ensure
+    field_agent_type.destroy
+    sample_user.destroy
+    Account.current.unstub(:reached_field_agent_limit?)
+    @account.revoke_feature(:field_service_management)
+    Account.unstub(:current)
   end
 
   # Misc
