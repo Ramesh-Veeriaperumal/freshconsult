@@ -150,7 +150,13 @@ class VaRule < ActiveRecord::Base
   end
 
   def fetch_dispatcher_column(condition, name)
-    condition[:name] = Va::Condition::DISPATCHER_COLUMNS.key?(name) ? Va::Condition::DISPATCHER_COLUMNS[name] : name
+    condition[:name] = if Va::Condition::DISPATCHER_COLUMNS.key?(name)
+                         Va::Condition::DISPATCHER_COLUMNS[name]
+                       elsif !supervisor_rule? && Va::Condition::NEW_AUTOMATIONS_FIELD_CHANGE_MAPPING.key?(name.try(:to_sym))
+                         Va::Condition::NEW_AUTOMATIONS_FIELD_CHANGE_MAPPING[name.try(:to_sym)]
+                       else
+                         name
+                       end
   end
 
   def fetch_field_type(condition)

@@ -8,7 +8,7 @@ module Admin::Automation::Action::TicketFieldConstants
       invalid_rule_types: [] }.freeze,
     { name: :add_tag, field_type: :dropdown, data_type: :Array, multiple: true, value: String,
       invalid_rule_types: [] }.freeze,
-    { name: :add_a_cc, field_type: :text, data_type: :String, non_unique_field: true,
+    { name: :add_a_cc, field_type: :text, data_type: :String,
       invalid_rule_types: [3, 4] }.freeze,
     { name: :trigger_webhook, field_type: :webhook, data_type: :Integer,
       invalid_rule_types: [3] }.freeze,
