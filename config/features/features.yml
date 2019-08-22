@@ -370,6 +370,9 @@
       :botflow: 365
       :freddy_9: 366
       :freddy_10: 367
+      :help_widget: 368
+      :help_widget_appearance: 369
+      :help_widget_predictive: 370
 :selectable_features:
   :redis_display_id: true
   :branding: true
