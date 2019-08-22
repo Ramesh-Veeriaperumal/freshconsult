@@ -1,56 +1,48 @@
 include Redis::RedisWrapper
 
-config = YAML.load_file(Rails.root.join('config', 'redis.yml'))[Rails.env]
-routes_config = YAML.load_file(Rails.root.join('config', 'redis_routes.yml'))[Rails.env]
-rate_limit = YAML.load_file(Rails.root.join('config', 'rate_limit.yml'))[Rails.env]
-display_id_config = YAML.load_file(Rails.root.join('config', 'redis_display_id.yml'))[Rails.env]
-round_robin_config = YAML.load_file(Rails.root.join('config', 'redis_round_robin.yml'))[Rails.env]
-redis_session_config = YAML.load_file(Rails.root.join('config', 'redis_session.yml'))[Rails.env]
-sidekiq_config = YAML.load_file(Rails.root.join('config', 'sidekiq.yml'))[Rails.env]
-mobile_config = YAML.load_file(Rails.root.join('config', 'redis_mobile.yml'))[Rails.env]
-automation_rule_config = YAML.load_file(Rails.root.join('config', 'automation_rule_redis.yml'))[Rails.env]
-# $redis = Redis.new(:host => config["host"], :port => config["port"])
+CONFIG_KEYS = ['host', 'port', 'timeout', 'password'].freeze
+TEST_CONFIG_KEYS = ['host', 'port', 'timeout'].freeze
 
-# $redis_secondary = Redis.new(:host => config["host"], :port => config["port"])
-
-if Rails.env.test?
-  database = ENV['REDIS_DB_NUMBER'].to_i % 16 || 0
-  $redis_tickets = Redis.new(db: database, host: config['host'], port: config['port'], timeout: config['timeout'], tcp_keepalive: config['keepalive'])
-  $redis_reports = Redis.new(db: database, host: config['host'], port: config['port'], timeout: config['timeout'], tcp_keepalive: config['keepalive'])
-  $redis_integrations = Redis.new(db: database, host: config['host'], port: config['port'], timeout: config['timeout'], tcp_keepalive: config['keepalive'])
-  $redis_portal = Redis.new(db: database, host: config['host'], port: config['port'], timeout: config['timeout'], tcp_keepalive: config['keepalive'])
-  $redis_others = Redis.new(db: database, host: config['host'], port: config['port'], timeout: config['timeout'], tcp_keepalive: config['keepalive'])
-  $spam_watcher = Redis.new(db: database, host: rate_limit['host'], port: rate_limit['port'], timeout: rate_limit['timeout'], tcp_keepalive: rate_limit['keepalive'])
-  $rate_limit = Redis.new(db: database, host: rate_limit['host'], port: rate_limit['port'], timeout: rate_limit['timeout'], tcp_keepalive: rate_limit['keepalive']) # Used by fd_api_throttler.
-  $redis_routes = Redis.new(db: database, host: routes_config['host'], port: routes_config['port'], timeout: routes_config['timeout'], tcp_keepalive: routes_config['keepalive'])
-  $redis_display_id = Redis.new(db: database, host: display_id_config['host'], port: display_id_config['port'], timeout: display_id_config['timeout'], tcp_keepalive: display_id_config['keepalive'])
-  $redis_mkp = Redis.new(db: database, host: config['host'], port: config['port'], timeout: config['timeout'], tcp_keepalive: config['keepalive'])
-  $redis_round_robin = Redis.new(db: database, host: round_robin_config['host'], port: round_robin_config['port'], timeout: round_robin_config['timeout'], tcp_keepalive: round_robin_config['keepalive'])
-  $redis_session = Redis.new(db: database, host: redis_session_config['host'], port: redis_session_config['port'], timeout: redis_session_config['timeout'], tcp_keepalive: redis_session_config['keepalive'])
-  $sidekiq_conn = Redis.new(db: database, host: sidekiq_config['host'], port: sidekiq_config['port'], tcp_keepalive: sidekiq_config['keepalive'])
-  $redis_mobile = Redis.new(db: database, host: mobile_config['host'], port: mobile_config['port'], timeout: mobile_config['timeout'], tcp_keepalive: mobile_config['keepalive'])
-  $semaphore = Redis.new(db: database, host: config['host'], port: config['port'], timeout: config['timeout'], tcp_keepalive: config['keepalive'])
-  $redis_automation_rule = Redis.new(db: database, host: automation_rule_config['host'], port: automation_rule_config['port'], timeout: automation_rule_config['timeout'], tcp_keepalive: automation_rule_config['keepalive'])
-
-  p $redis_tickets.inspect
-else
-  $redis_tickets = Redis.new(host: config['host'], port: config['port'], timeout: config['timeout'], tcp_keepalive: config['keepalive'])
-  $redis_reports = Redis.new(host: config['host'], port: config['port'], timeout: config['timeout'], tcp_keepalive: config['keepalive'])
-  $redis_integrations = Redis.new(host: config['host'], port: config['port'], timeout: config['timeout'], tcp_keepalive: config['keepalive'])
-  $redis_portal = Redis.new(host: config['host'], port: config['port'], timeout: config['timeout'], tcp_keepalive: config['keepalive'])
-  $redis_others = Redis.new(host: config['host'], port: config['port'], timeout: config['timeout'], tcp_keepalive: config['keepalive'])
-  $spam_watcher = Redis.new(host: rate_limit['host'], port: rate_limit['port'], timeout: rate_limit['timeout'], tcp_keepalive: rate_limit['keepalive'])
-  $rate_limit = Redis.new(host: rate_limit['host'], port: rate_limit['port'], timeout: rate_limit['timeout'], tcp_keepalive: rate_limit['keepalive']) # Used by fd_api_throttler.
-  $redis_routes = Redis.new(host: routes_config['host'], port: routes_config['port'], timeout: routes_config['timeout'], tcp_keepalive: routes_config['keepalive'])
-  $redis_display_id = Redis.new(host: display_id_config['host'], port: display_id_config['port'], timeout: display_id_config['timeout'], tcp_keepalive: display_id_config['keepalive'])
-  $redis_mkp = Redis.new(host: config['host'], port: config['port'], timeout: config['timeout'], tcp_keepalive: config['keepalive'])
-  $redis_round_robin = Redis.new(host: round_robin_config['host'], port: round_robin_config['port'], timeout: round_robin_config['timeout'], tcp_keepalive: round_robin_config['keepalive'])
-  $redis_session = Redis.new(host: redis_session_config['host'], port: redis_session_config['port'], timeout: redis_session_config['timeout'], tcp_keepalive: redis_session_config['keepalive'])
-  $sidekiq_conn = Redis.new(host: sidekiq_config['host'], port: sidekiq_config['port'], tcp_keepalive: sidekiq_config['keepalive'])
-  $redis_mobile = Redis.new(host: mobile_config['host'], port: mobile_config['port'], timeout: mobile_config['timeout'], tcp_keepalive: mobile_config['keepalive'])
-  $semaphore = Redis.new(host: config['host'], port: config['port'], timeout: config['timeout'], tcp_keepalive: config['keepalive'])
-  $redis_automation_rule = Redis.new(host: automation_rule_config['host'], port: automation_rule_config['port'], timeout: automation_rule_config['timeout'], tcp_keepalive: automation_rule_config['keepalive'])
+def load_file(config_path)
+  YAML.load_file(Rails.root.join('config', config_path))[Rails.env]
 end
+
+def fetch_options(options)
+  redis_options = if Rails.env.test?
+                    @database ||= ENV['REDIS_DB_NUMBER'].to_i % 16 || 0
+                    options.slice(*TEST_CONFIG_KEYS).merge(db: @database, tcp_keepalive: options['keepalive'])
+                  else
+                    options.slice(*CONFIG_KEYS).merge(tcp_keepalive: options['keepalive'])
+                  end
+  HashWithIndifferentAccess.new(redis_options)
+end
+
+config = load_file('redis.yml')
+routes_config = load_file('redis_routes.yml')
+rate_limit = load_file('rate_limit.yml')
+display_id_config = load_file('redis_display_id.yml')
+round_robin_config = load_file('redis_round_robin.yml')
+redis_session_config = load_file('redis_session.yml')
+sidekiq_config = load_file('sidekiq.yml')
+mobile_config = load_file('redis_mobile.yml')
+automation_rule_config = load_file('automation_rule_redis.yml')
+
+$redis_tickets = Redis.new(fetch_options(config))
+$redis_reports = Redis.new(fetch_options(config))
+$redis_integrations = Redis.new(fetch_options(config))
+$redis_portal = Redis.new(fetch_options(config))
+$redis_others = Redis.new(fetch_options(config))
+$spam_watcher = Redis.new(fetch_options(rate_limit))
+$rate_limit = Redis.new(fetch_options(rate_limit)) # Used by fd_api_throttler.
+$redis_routes = Redis.new(fetch_options(routes_config))
+$redis_display_id = Redis.new(fetch_options(display_id_config))
+$redis_mkp = Redis.new(fetch_options(config))
+$redis_round_robin = Redis.new(fetch_options(round_robin_config))
+$redis_session = Redis.new(fetch_options(redis_session_config))
+$sidekiq_conn = Redis.new(fetch_options(sidekiq_config))
+$redis_mobile = Redis.new(fetch_options(mobile_config))
+$semaphore = Redis.new(fetch_options(config))
+$redis_automation_rule = Redis.new(fetch_options(automation_rule_config))
 
 # Include connection objects to new redis instances here. This is used for redis_maintenance.rake.
 # There are 3 DBs per region, having one connection object per DB below.

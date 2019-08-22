@@ -13,8 +13,9 @@ Dir[File.join(Rails.root, 'app', 'jobs', '*.rb')].each { |file| require file }
 config = YAML::load_file(File.join(Rails.root, 'config', 'redis.yml'))[Rails.env]
 
 if config
-  Resque.redis = Redis.new(:host => config["host"], :port => config["port"])
-  Resque.redis.namespace = config["namespace"]
+  options = HashWithIndifferentAccess.new(config.slice('host', 'port', 'password'))
+  Resque.redis = Redis.new(options)
+  Resque.redis.namespace = config['namespace']
 end
 
 Resque::Server.use Rack::Auth::Basic do |username, password|
@@ -34,8 +35,9 @@ Resque::Plugins::Status::Hash.expire_in = (7 * 24 * 60 * 60) # 1 week in seconds
 # http://ablogaboutcode.com/2012/03/08/reducing-metadata-queries-in-resque/
 Resque.before_first_fork do
   if defined?(Resque)
-    Resque.redis = Redis.new(:host => config["host"], :port => config["port"])
-    Resque.redis.namespace = config["namespace"]
+    options = HashWithIndifferentAccess.new(config.slice('host', 'port', 'password'))
+    Resque.redis = Redis.new(options)
+    Resque.redis.namespace = config['namespace']
   end
   Sharding.all_shards.each do |shard|  
     Sharding.run_on_shard(shard) do
