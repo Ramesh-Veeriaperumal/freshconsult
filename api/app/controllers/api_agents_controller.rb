@@ -19,7 +19,7 @@ class ApiAgentsController < ApiApplicationController
 
   def update
     assign_protected
-    return unless validate_delegator(params[cname].slice(:role_ids, :group_ids), agent_delegator_params)
+    return unless validate_delegator(@item, params[cname].slice(:role_ids, :group_ids, :available, :avatar_id))
 
     params[cname][:user_attributes].each do |k, v|
       @item.user.safe_send("#{k}=", v)

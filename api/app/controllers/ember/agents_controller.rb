@@ -76,8 +76,12 @@ module Ember
 
       def build_objects
         @items = []
+        @validation_failed_items = []
         agent_role_id = current_account.roles.agent.first.id
         params[cname][:agents].each do |agent_params|
+          delegator = agent_delegator_klass.new(nil, agent_params.slice(:role_ids, :group_ids, :available, :avatar_id))
+          push_create_multiple_errors(delegator, params) and next if delegator.invalid?
+
           user = current_account.users.build(agent_params)
           user.helpdesk_agent = true
           user.role_ids = [agent_role_id] unless agent_params[:role_ids]
@@ -85,8 +89,12 @@ module Ember
         end
       end
 
+      def push_create_multiple_errors(delegator, params)
+        @validation_failed_items << params
+        delegator.errors.messages.each_pair { |error, error_message| @errors << { error => error_message } }
+      end
+
       def validate_items_to_create
-        @validation_failed_items = []
         @items.each do |item|
           unless validate_item_delegator(item)
             @validation_failed_items << item
@@ -96,8 +104,12 @@ module Ember
       end
 
       def validate_item_delegator(item)
-        @agent_delegator = AgentDelegator.new(params[cname]['agents'].first.slice(:role_ids, :group_ids))
+        @agent_delegator = agent_delegator_klass.new(item, params[cname]['agents'].first.slice(:role_ids, :group_ids, :available, :avatar_id))
         @agent_delegator.valid?
+      end
+
+      def agent_delegator_klass
+        'AgentDelegator'.constantize
       end
 
       def delegation_error_hash(item)

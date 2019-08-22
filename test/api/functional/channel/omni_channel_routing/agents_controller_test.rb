@@ -89,6 +89,8 @@ class Channel::OmniChannelRouting::AgentsControllerTest < ActionController::Test
     @agent = add_agent_to_account(@account, active: 1, role: 4, available: false)
     OmniChannelRouting::AgentSync.jobs.clear
     append_header
+    @account.agent_groups.create(user_id: @agent.user_id, group_id: @account.groups.first.id)
+    @account.groups.first.update_column(:toggle_availability, true)
     params = { availability: true }
     put :update, construct_params({ version: 'channel/ocr', id: @agent.user_id }, params)
     assert_response 200
