@@ -66,7 +66,7 @@ class Sync::FileToData::PostMigration
       DELETE_AGENT_ASSOCIATIONS.each do |association, reference|
         next if deleted_associations[reference[0]].blank?
         Sync::FileToData::PostMigration::Delete.new({ association.to_s => reference }, deleted_associations).prune_deleted_rows(@root_path, account, 'agents')
-        sql = "DELETE from #{model_table_mapping[association]} where #{reference[1]} IN (#{deleted_associations[reference[0]]})"
+        sql = "DELETE from #{model_table_mapping[association]} where #{reference[1]} IN (#{deleted_associations[reference[0]].join(', ')})"
         ActiveRecord::Base.connection.execute(sql)
       end
     end
