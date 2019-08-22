@@ -39,6 +39,18 @@ module ApiSearch
       assert_equal request_error_pattern(:credentials_required).to_json, response.body
     end
 
+    def test_results_public_api
+      Solutions::ArticleDecorator.any_instance.stubs(:private_api?).returns(false)
+      article = create_article(article_params).primary_article
+      stub_private_search_response([article]) do
+        post :results, construct_params(term: article.title, limit: 3)
+      end
+      assert_response 200
+      match_json [public_search_solution_article_pattern(article)]
+    ensure
+      Solutions::ArticleDecorator.any_instance.unstub(:private_api?)
+    end
+
     def test_results_with_valid_params
       article = create_article(article_params).primary_article
       stub_private_search_response([article]) do
