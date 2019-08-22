@@ -1,6 +1,7 @@
 require_relative '../../test_helper'
 class Admin::CustomTranslationsControllerTest < ActionController::TestCase
   include SurveysTestHelper
+  include ActionView::Helpers::NumberHelper
 
   MODULES = ['surveys'].freeze
 
@@ -343,6 +344,21 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
       assert_response_secondary_download(survey_translation, response_hash["survey_#{survey.id}"])
       survey.destroy
     end
+    unstub_for_custom_translations
+  end
+
+  def test_survey_file_upload_limit
+    stub_for_custom_translations
+    create_survey(1, true)
+    survey = Account.current.custom_surveys.last
+    File.open('test/api/fixtures/files/translation_file.yaml', 'wb') do |f|
+      f.write(SecureRandom.random_bytes(110.kilobytes))
+    end
+    file = fixture_file_upload('files/translation_file.yaml', 'test/yaml', :binary)
+    @request.env['CONTENT_TYPE'] = 'multipart/form-data'
+    put :upload, construct_params({ object_type: 'surveys', object_id: survey.id }, translation_file: file, language_code: @language)
+    assert_response 400
+    match_json([bad_request_error_pattern('translation_file', :file_size_limit_error, file_size: number_to_human_size(100.kilobytes))])
     unstub_for_custom_translations
   end
 end

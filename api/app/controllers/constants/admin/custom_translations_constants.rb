@@ -1,6 +1,6 @@
 module Admin::CustomTranslationsConstants
   MODULE_MODEL_MAPPINGS = {
-    'surveys' => { model: 'custom_surveys', conditions: 'deleted = false', lookup_key: 'id' }
+    'surveys' => { model: 'custom_surveys', conditions: 'deleted = false', lookup_key: 'id', file_size_limit: 100.kilobyte }
   }.freeze
 
   VALIDATION_CLASS = 'Admin::CustomTranslationsValidation'.freeze

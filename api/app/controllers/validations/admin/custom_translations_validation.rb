@@ -1,4 +1,6 @@
 class Admin::CustomTranslationsValidation < ApiValidation
+  include ActionView::Helpers::NumberHelper
+
   attr_accessor :object_type, :object_id, :language_code, :translation_file
 
   validates :object_type, custom_inclusion: { in: Admin::CustomTranslationsConstants::MODULE_MODEL_MAPPINGS.keys.map(&:to_s), allow_nil: true }
@@ -6,9 +8,20 @@ class Admin::CustomTranslationsValidation < ApiValidation
   validates :language_code, custom_inclusion: { in: proc { |x| Account.current.all_languages }, allow_nil: true }, on: :download
   validate :validate_object_id, if: -> { errors[:object_type].blank? & object_id.present? }
   validate :validate_translation_file, on: :upload
+  validate :validate_file_size, if: -> { errors.blank? }, on: :upload
   validate :validate_language_code, if: -> { errors.blank? }, on: :upload
   validate :validate_for_supported_languages, if: -> { errors.blank? }, on: :upload
   validate :validate_yaml_code, if: -> { errors.blank? }, on: :upload
+
+  def validate_file_size
+    file_size_limit = Admin::CustomTranslationsConstants::MODULE_MODEL_MAPPINGS[object_type][:file_size_limit]
+    return if file_size_limit.nil?
+
+    if translation_file.size > file_size_limit
+      errors[:translation_file] << :file_size_limit_error
+      error_options[:translation_file] = { file_size: number_to_human_size(file_size_limit) }
+    end
+  end
 
   def validate_translation_file
     if translation_file.blank? || translation_file.class == String
