@@ -3,6 +3,7 @@ defaults: &defaults
   port: 6379
   timeout: 5
   keepalive: 10
+  password: ''
 
 development:
   <<: *defaults

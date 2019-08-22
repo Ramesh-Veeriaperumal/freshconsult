@@ -1,41 +1,49 @@
 include Redis::RedisWrapper
 
-config = YAML::load_file(File.join(Rails.root, 'config', 'redis.yml'))[Rails.env]
-routes_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_routes.yml'))[Rails.env]
-rate_limit = YAML.load_file(File.join(Rails.root, 'config', 'rate_limit.yml'))[Rails.env]
-display_id_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_display_id.yml'))[Rails.env]
-round_robin_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_round_robin.yml'))[Rails.env]
-redis_session_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_session.yml'))[Rails.env]
-mobile_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_mobile.yml'))[Rails.env]
-automation_rule_config = YAML::load_file(File.join(Rails.root, 'config', 'automation_rule_redis.yml'))[Rails.env]
-#$redis = Redis.new(:host => config["host"], :port => config["port"])
+REDIS_CONFIG_KEYS = ['host', 'port', 'timeout', 'password'].freeze
 
-#$redis_secondary = Redis.new(:host => config["host"], :port => config["port"])
+def load_file(config_path)
+  YAML.load_file(Rails.root.join('config', config_path))[Rails.env]
+end
 
-#For logging redis performance timings
+def fetch_options(options)
+  redis_options = options.slice(*REDIS_CONFIG_KEYS).merge(tcp_keepalive: options['keepalive'])
+  HashWithIndifferentAccess.new(redis_options)
+end
+
+config = load_file('redis.yml')
+routes_config = load_file('redis_routes.yml')
+rate_limit = load_file('rate_limit.yml')
+display_id_config = load_file('redis_display_id.yml')
+round_robin_config = load_file('redis_round_robin.yml')
+redis_session_config = load_file('redis_session.yml')
+mobile_config = load_file('redis_mobile.yml')
+automation_rule_config = load_file('automation_rule_redis.yml')
+
+# For logging redis performance timings
 TimeBandits.add ::TimeBandits::TimeConsumers::Redis
-ENV["TIME_BANDITS_VERBOSE"] = "true" if Rails.env.development? #logging is enabled and default for development env
+ENV['TIME_BANDITS_VERBOSE'] = 'true' if Rails.env.development? # logging is enabled and default for development env
 
-$redis_tickets = Redis.new(:host => config["host"], :port => config["port"], :timeout => config["timeout"], :tcp_keepalive => config["keepalive"])
-$redis_reports = Redis.new(:host => config["host"], :port => config["port"], :timeout => config["timeout"], :tcp_keepalive => config["keepalive"])
-$redis_integrations = Redis.new(:host => config["host"], :port => config["port"], :timeout => config["timeout"], :tcp_keepalive => config["keepalive"])
-$redis_portal = Redis.new(:host => config["host"], :port => config["port"], :timeout => config["timeout"], :tcp_keepalive => config["keepalive"])
-$redis_others = Redis.new(:host => config["host"], :port => config["port"], :timeout => config["timeout"], :tcp_keepalive => config["keepalive"])
-$spam_watcher = Redis.new(:host => rate_limit["host"], :port => rate_limit["port"], :timeout => rate_limit["timeout"], :tcp_keepalive => rate_limit["keepalive"])
-$rate_limit = Redis.new(:host => rate_limit["host"], :port => rate_limit["port"], :timeout => rate_limit["timeout"], :tcp_keepalive => rate_limit["keepalive"]) # Used by fd_api_throttler.
-$redis_routes = Redis.new(:host => routes_config["host"], :port => routes_config["port"], :timeout => routes_config["timeout"], :tcp_keepalive => routes_config["keepalive"])
-$redis_display_id = Redis.new(:host => display_id_config["host"], :port => display_id_config["port"], :timeout => display_id_config["timeout"], :tcp_keepalive => display_id_config["keepalive"])
-$redis_mkp = Redis.new(:host => config["host"], :port => config["port"], :timeout => config["timeout"], :tcp_keepalive => config["keepalive"])
-$redis_round_robin = Redis.new(:host => round_robin_config["host"], :port => round_robin_config["port"], :timeout => round_robin_config["timeout"], :tcp_keepalive => round_robin_config["keepalive"])
-$redis_session = Redis.new(:host => redis_session_config["host"], :port => redis_session_config["port"],:timeout => redis_session_config["timeout"], :tcp_keepalive => redis_session_config["keepalive"])
-$redis_mobile = Redis.new(:host => mobile_config["host"], :port => mobile_config["port"], :timeout => mobile_config["timeout"], :tcp_keepalive => mobile_config["keepalive"])
-$semaphore = Redis.new(:host => config["host"], :port => config["port"], :timeout => config["timeout"], :tcp_keepalive => config["keepalive"])
-$redis_automation_rule = Redis.new(host:  automation_rule_config['host'], port: automation_rule_config['port'], timeout: automation_rule_config["timeout"], tcp_keepalive: automation_rule_config["keepalive"])
+$redis_tickets = Redis.new(fetch_options(config))
+$redis_reports = Redis.new(fetch_options(config))
+$redis_integrations = Redis.new(fetch_options(config))
+$redis_portal = Redis.new(fetch_options(config))
+$redis_others = Redis.new(fetch_options(config))
+$spam_watcher = Redis.new(fetch_options(rate_limit))
+$rate_limit = Redis.new(fetch_options(rate_limit)) # Used by fd_api_throttler.
+$redis_routes = Redis.new(fetch_options(routes_config))
+$redis_display_id = Redis.new(fetch_options(display_id_config))
+$redis_mkp = Redis.new(fetch_options(config))
+$redis_round_robin = Redis.new(fetch_options(round_robin_config))
+$redis_session = Redis.new(fetch_options(redis_session_config))
+$redis_mobile = Redis.new(fetch_options(mobile_config))
+$semaphore = Redis.new(fetch_options(config))
+$redis_automation_rule = Redis.new(fetch_options(automation_rule_config))
+
 # Include connection objects to new redis instances here. This is used for redis_maintenance.rake.
 # There are 3 DBs per region, having one connection object per DB below.
 REDIS_UNIQUE_CONNECTION_OBJECTS = [$redis_tickets, $rate_limit]
 
-#Loading Redis Display Id's Lua script
 Redis::DisplayIdLua.load_display_id_lua_script_to_redis
 Redis::DisplayIdLua.load_picklist_id_lua_script
 
