@@ -18,7 +18,7 @@ class VaRule < ActiveRecord::Base
   serialize :action_data
   serialize :condition_data
 
-  concerned_with :presenter
+  concerned_with :presenter, :esv2_methods
 
   publishable on: [:create, :update, :destroy]
 
@@ -37,7 +37,8 @@ class VaRule < ActiveRecord::Base
   after_commit :perform_thank_you_redis_op, if: :observer_rule?
   after_commit :delete_rule_from_redis_set, on: :destroy, if: :observer_rule?
 
-  attr_writer :conditions, :actions, :events, :performer
+  attr_writer :conditions, :actions, :events, :performer, :rule_operator,
+              :rule_performer, :rule_events, :rule_conditions
   attr_accessor :triggered_event, :response_time
 
   attr_accessible :name, :description, :match_type, :active, :filter_data, :action_data, :rule_type, :position
@@ -52,6 +53,10 @@ class VaRule < ActiveRecord::Base
 
   acts_as_list :scope => 'account_id = #{account_id} AND #{connection.quote_column_name("rule_type")} = #{rule_type}'
 
+  alias_attribute :updated_by, :last_updated_by
+  # Included rabbitmq callbacks at the last
+  include RabbitMq::Publisher
+
   JOINS_HASH = {
     :helpdesk_schema_less_tickets => " inner join helpdesk_schema_less_tickets on helpdesk_tickets.id = helpdesk_schema_less_tickets.ticket_id "\
           "and helpdesk_tickets.account_id = helpdesk_schema_less_tickets.account_id ",
@@ -64,7 +69,7 @@ class VaRule < ActiveRecord::Base
   }
 
   def filter_data
-    (observer_rule? || api_webhook_rule?) ? read_attribute(:filter_data).symbolize_keys : read_attribute(:filter_data)
+    (self[:filter_data].present? && (observer_rule? || api_webhook_rule?)) ? read_attribute(:filter_data).symbolize_keys : read_attribute(:filter_data)
   end
 
   def performer
@@ -81,6 +86,89 @@ class VaRule < ActiveRecord::Base
 
   def actions
     @actions ||= action_data.collect{ |act_hash| deserialize_action act_hash }
+  end
+
+  def condition_data
+    return self[:filter_data] if supervisor_rule?
+    has_condition_data? && (observer_rule? || api_webhook_rule?) ?
+          self[:condition_data].symbolize_keys : self[:condition_data]
+  end
+
+  def has_condition_data?
+    supervisor_rule? ? self[:filter_data].present? : self[:condition_data].present?
+  end
+
+  def rule_operator
+     @rule_operator ||= self[:match_type].to_sym  if supervisor_rule?
+     @rule_operator ||= (observer_rule? ?
+                          condition_data[:conditions].keys.first.to_sym :
+                          condition_data.keys.first.to_sym) if has_condition_data?
+  end
+
+   def rule_performer
+     @rule_performer ||= Va::Performer.new(condition_data[:performer].symbolize_keys) if has_condition_data?
+   end
+
+   def rule_events
+     @rule_events ||= condition_data[:events].collect{ |e|
+      Va::Event.new(e.symbolize_keys, account) } if has_condition_data?
+   end
+
+  def rule_conditions(with_dispatcher_key = nil)
+    return unless has_condition_data?
+    conditions = []
+    if observer_rule? || dispatchr_rule?
+      modify_condition_sets(with_dispatcher_key)
+      conditions = condition_sets
+    elsif supervisor_rule?
+      conditions = condition_data
+    end
+    @rule_conditions ||= conditions
+  end
+
+  def modify_condition_sets(with_dispatcher_key = nil)
+    condition_sets.each do |set|
+      if set.is_a?(Hash) && (set.key?(:any) || set.key?(:all))
+        set.each_pair do |_, conditions|
+          conditions.each do |condition|
+            field_type(condition)
+            fetch_dispatcher_column(condition, condition[:name]) if with_dispatcher_key
+          end
+        end
+      else
+        field_type(set)
+        fetch_dispatcher_column(set, set[:name]) if with_dispatcher_key
+      end
+    end
+  end
+
+  def condition_sets
+    condition_sets = observer_rule? ? condition_data[:conditions] : condition_data
+    condition_sets.present? ? condition_sets.first[1] : {}
+  end
+
+  def field_type(condition)
+    condition[:field_type] = fetch_field_type(condition)
+  end
+
+  def fetch_dispatcher_column(condition, name)
+    condition[:name] = Va::Condition::DISPATCHER_COLUMNS.key?(name) ? Va::Condition::DISPATCHER_COLUMNS[name] : name
+  end
+
+  def fetch_field_type(condition)
+    case condition[:evaluate_on]
+    when :requester
+      contact_field = account.contact_form.custom_contact_fields.detect{ |cnf| cnf.name == condition[:name] }
+      contact_field.present? ? contact_field.field_type.to_sym : :default
+    when :company
+      company_field = account.company_form.custom_company_fields.detect{ |csf| csf.name == condition[:name] }
+      company_field.present? ? company_field.field_type.to_sym : :default
+    else
+      ff = account.flexifields_with_ticket_fields_from_cache.detect{ |ff|
+          ff.flexifield_name == condition[:name] || ff.flexifield_alias == condition[:name] }
+      ticket_field = ff.present? ? ff.ticket_field : nil
+      ticket_field.present? && ticket_field.parent_id.nil? ? ticket_field.field_type.to_sym : :default
+    end
   end
 
   def deserialize_action(act_hash)
@@ -387,16 +475,20 @@ class VaRule < ActiveRecord::Base
 
     def has_events?
       return unless observer_rule? || api_webhook_rule?
-      errors.add(:base,I18n.t("errors.events_empty")) if(filter_data[:events].blank?)
+      unless account.automation_revamp_enabled?
+        errors.add(:base,I18n.t("errors.events_empty")) if filter_data[:events].blank?
+      end
     end
 
     def has_conditions?
-      return unless supervisor_rule?
-      errors.add(:base,I18n.t("errors.conditions_empty")) if(filter_data.blank?)
+      return if automation_rule? || account_id == 0
+      errors.add(:base,I18n.t("errors.conditions_empty")) if
+        ((!account.automation_revamp_enabled? && filter_data.blank?) ||
+          (account.automation_revamp_enabled? && condition_data.blank?))
     end
 
     def has_actions?
-      errors.add(:base,I18n.t("errors.actions_empty")) if(action_data.blank?)
+      errors.add(:base,I18n.t("errors.actions_empty")) if (action_data.blank?)
     end
 
     def encrypt data
@@ -446,10 +538,12 @@ class VaRule < ActiveRecord::Base
 
     # To make sure that condition operators are not being tampered.
     def has_safe_conditions?
-      return true if filter_array.nil?
-      filter_array.each do |filter|
-        filter.symbolize_keys!
-        errors.add(:base,"Enter a valid condition") if filter[:operator].present? && va_operator_list[filter[:operator].to_sym].nil?
+      unless account.automation_revamp_enabled?
+        return true if filter_array.nil?
+        filter_array.each do |filter|
+          filter.symbolize_keys!
+          errors.add(:base,"Enter a valid condition") if filter[:operator].present? && va_operator_list[filter[:operator].to_sym].nil?
+        end
       end
     end
 
