@@ -49,6 +49,11 @@ module Channel
             account_id: @bot.account_id.to_s
           }
         end
+        
+        def scoper
+          current_account.bots
+        end
+
     end
   end
 end

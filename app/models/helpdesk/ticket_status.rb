@@ -50,9 +50,9 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
     user.try(:customer?) ? "customer_display_name" : "name"
   end
 
-  def self.translate_status_name(status, disp_col_name=nil)
+  def self.translate_status_name(status, disp_col_name=nil, translation_record=nil)
     st_name = disp_col_name.nil? ? status.safe_send(display_name) : status.safe_send(disp_col_name)
-    DEFAULT_STATUSES.keys.include?(status.status_id) && translatable?(st_name) ? I18n.t("#{st_name.gsub(" ","_").downcase}", :default => "#{st_name}") : st_name
+    DEFAULT_STATUSES.keys.include?(status.status_id) && translatable?(st_name) ? I18n.t("#{st_name.gsub(" ","_").downcase}", :default => "#{st_name}") : custom_status_label(st_name, status.status_id, translation_record)
   end
 
   def self.translatable?(st_name)
@@ -314,16 +314,13 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
     end
   end
 
+  def self.custom_status_label(name, status_id, translation_record=nil)
+    translation_record && translation_record.translations && translation_record.translations["choices"] ? translation_record.translations["choices"]["choice_#{status_id}"] || name : name
+  end
+
   def construct_model_changes
     @model_changes = self.changes.clone.to_hash
   end
-
-  private
-
-    def sync_task_changes_to_ocr(ticket, changes)
-      @ocr_enabled ||= account.omni_channel_routing_enabled?
-      ticket.sync_task_changes_to_ocr(changes) if @ocr_enabled
-    end
 
   class << self
     include Cache::Memcache::Helpdesk::TicketStatus

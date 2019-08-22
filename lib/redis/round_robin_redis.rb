@@ -13,7 +13,7 @@ module Redis::RoundRobinRedis
   end
 
   def del_round_robin_redis *key
-    $redis_round_robin.perform_redis_op("del", *key)
+    $redis_round_robin.perform_redis_op("del", *key) unless key.flatten.empty?
   end
 
   def incr_round_robin_redis key

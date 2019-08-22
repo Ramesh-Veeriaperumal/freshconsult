@@ -496,13 +496,11 @@ class CannedResponsesControllerTest < ActionController::TestCase
 
   def test_update_title
     ca_response1 = create_canned_response(@@ca_folder_all.id)
-    title = Faker::App.name
+    title = Faker::Lorem.characters(5)
     canned_response = {
       title: title
     }
-    p "agent: #{@agent.inspect} privilege?: #{@agent.privilege?(:manage_canned_responses)} :: ca_response: #{ca_response1.inspect}"
     put :update, construct_params(build_ca_param(canned_response)).merge(id: ca_response1.id)
-    p "canned_response :: #{canned_response.inspect} :: response.body ::#{response.body.inspect}"
     assert_response 200
     assert title == ActiveSupport::JSON.decode(response.body)['title']
     match_json(ca_response_show_pattern(ca_response1.id))

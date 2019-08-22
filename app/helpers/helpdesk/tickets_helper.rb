@@ -30,6 +30,12 @@ module Helpdesk::TicketsHelper
   # Methods: bind_last_reply, bind_last_conv, parsed_reply_template, quoted_text, user_details_template,
   # extract_quote_from_note - moved to Concerns::TicketsViewConcern
 
+  
+  def draft_key
+    HELPDESK_REPLY_DRAFTS % { :account_id => current_account.id, :user_id => current_user.id,
+      :ticket_id => @ticket.id}
+  end
+
   def ticket_sidebar
     tabs = [["TicketProperties", t('ticket.properties').html_safe,         "ticket"],
             ["RelatedSolutions", t('ticket.suggest_solutions').html_safe,  "related_solutions", privilege?(:view_solutions)],
@@ -250,14 +256,17 @@ module Helpdesk::TicketsHelper
   def reply_draft(item, signature)
     last_reply_info = @ticket.draft
     if last_reply_info.exists?
-      {"draft_text" => last_reply_info.body,
-       "draft_cc" =>  last_reply_info.cc_emails,
-       "draft_bcc" => last_reply_info.bcc_emails }
+      {
+        draft_text: last_reply_info.body,
+        draft_cc:  last_reply_info.cc_emails,
+        draft_bcc: last_reply_info.bcc_emails 
+      }
     else
-      {"draft_text" => last_reply_info["draft_data"],
-       "draft_cc" =>  last_reply_info["draft_cc"].split(";"),
-       "draft_bcc" => last_reply_info["draft_bcc"].split(";"),
-       "draft_inline_attachment_ids" => last_reply_info["draft_inline_attachment_ids"].to_s.split(",")}
+      {
+        draft_text: bind_last_conv(item, signature, false, false),
+        draft_cc: @to_cc_emails,
+        draft_bcc: bcc_drop_box_email 
+      }
     end
   end
 
