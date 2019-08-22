@@ -5054,4 +5054,14 @@ ActiveRecord::Schema.define(version: 20190628073857) do
 
   add_index 'freddy_bots', ['account_id', 'portal_id'],  name: 'index_bot_on_account_id_and_portal_id', unique: true
   add_index 'freddy_bots', ['account_id', 'cortex_id'],  name: 'index_bot_on_account_id_and_cortex_id', unique: true
+
+  create_table 'help_widget_solution_categories', force: true do |t|
+    t.integer 'help_widget_id',            limit: 8
+    t.integer 'account_id',           limit: 8
+    t.integer 'position'
+    t.integer 'solution_category_meta_id', limit: 8
+    t.timestamps
+  end
+
+  add_index 'help_widget_solution_categories', ['account_id', 'help_widget_id', 'solution_category_meta_id'], name: 'index_help_widget_solution_category_on_account_widget_id_meta_id'
 end
