@@ -39,7 +39,7 @@ module Wf
       
       def split_values
         cond_str = ""
-        cond_arr = values[0].split(TEXT_DELIMITER).collect! {|n| n}
+        cond_arr = values.join(TEXT_DELIMITER).split(TEXT_DELIMITER).collect! { |n| n }
         cond_arr.each do |val|
          cond_str <<  " (#{get_due_by_con(val)}) ||"
        end

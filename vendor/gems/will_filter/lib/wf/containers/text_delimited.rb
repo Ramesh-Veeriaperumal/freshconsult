@@ -40,7 +40,7 @@ module Wf
       end
 
       def split_values
-        value.split(TEXT_DELIMITER)
+        values
       end
       
       # -1 represents unassigned 

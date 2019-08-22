@@ -68,7 +68,7 @@
         condition   : element.getAttribute("condition"),
         operator    : element.getAttribute("operator"),
         ff_name     : element.getAttribute("ff_name"),
-        value       : value.toString()
+        value       : value
       }
     }
   }
@@ -230,8 +230,9 @@
             <% else %>
               <h4 class="title"><%= (c_hash[:f_type] == :default) ? t("filter_options.#{display_name}").html_safe.capitalize : display_name.html_safe %></h4>
             <% end %>
+            <% current_selected_values = @current_options[c_hash[:condition].to_s]%>
             <%= render :partial => "/helpdesk/tickets/containers/#{container}", :locals => { :container => container, :options => c_hash[:options], :name => c_hash[:name],
-             :selected_val => @current_options[c_hash[:condition].to_s].to_s.split(","),
+             :selected_val => current_selected_values.is_a?(Array) ? current_selected_values : current_selected_values.to_s.split(","),
              :field_id => c_hash[:field_id], :nested_fields => c_hash[:nested_fields], :current_options => @current_options, :c_hash => c_hash} %>
           <% end
           end

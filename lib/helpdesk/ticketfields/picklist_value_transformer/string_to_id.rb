@@ -1,4 +1,5 @@
 class Helpdesk::Ticketfields::PicklistValueTransformer::StringToId < Helpdesk::Ticketfields::PicklistValueTransformer::Base
+  TEXT_DELIMITER =','.freeze
   def transform(picklist_value, flexifield_name)
     return if picklist_value.blank?
 
@@ -36,7 +37,7 @@ class Helpdesk::Ticketfields::PicklistValueTransformer::StringToId < Helpdesk::T
       if @nested_field_helper.column_name_map.key(con_hash['ff_name'])
         con_hash['value'] = handle_nested_field(con_hash)
       else
-        con_hash['value'] = fetch_ids(con_hash['value'].split(','), con_hash['ff_name']).join(',')
+        con_hash['value'] = fetch_ids(get_values(con_hash['value']), con_hash['ff_name']).join(TEXT_DELIMITER)
       end
       con_hash['condition'].gsub!('flexifields.', 'ticket_field_data.')
     end
@@ -54,7 +55,7 @@ class Helpdesk::Ticketfields::PicklistValueTransformer::StringToId < Helpdesk::T
 
     def handle_nested_field(con_hash)
       field_parent_id = fetch_parent_id(con_hash)
-      result = fetch_ids([con_hash['value']], con_hash['ff_name'])
+      result = fetch_ids(get_values(con_hash["value"]), con_hash['ff_name'])
       if result.first.is_a?(Hash)
         result = result.first
         nested_level = @nested_column_key_pair[field_parent_id].index(con_hash['value'])
@@ -100,5 +101,9 @@ class Helpdesk::Ticketfields::PicklistValueTransformer::StringToId < Helpdesk::T
                       @ticket.custom_fields_hash[parent_field.name].try(:downcase)) ||
                      @ticket.safe_send(parent_field.name).downcase
       [parent_field, base_val && base_val[parent_value]]
+    end
+
+    def get_values(value)
+      value.is_a?(Array) ? value : value.to_s.split(TEXT_DELIMITER)
     end
 end
