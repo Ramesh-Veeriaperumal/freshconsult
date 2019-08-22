@@ -453,13 +453,21 @@ class VaRule < ActiveRecord::Base
 
   def rule_path
     if observer_rule?
-      Rails.application.routes.url_helpers.edit_admin_observer_rule_url(self.id,
+      if account.automation_revamp_enabled?
+        "#{Account.current.url_protocol}://#{Account.current.host}/a/admin/automations/ticket_updates/#{id}/edit"
+      else
+        Rails.application.routes.url_helpers.edit_admin_observer_rule_url(self.id,
                                                         host: Account.current.host,
                                                         protocol: Account.current.url_protocol)
+      end
     elsif dispatchr_rule?
-      Rails.application.routes.url_helpers.edit_admin_va_rule_url(self.id,
+      if account.automation_revamp_enabled?
+        "#{Account.current.url_protocol}://#{Account.current.host}/a/admin/automations/ticket_creation/#{id}/edit"
+      else
+        Rails.application.routes.url_helpers.edit_admin_va_rule_url(self.id,
                                                         host: Account.current.host,
                                                         protocol: Account.current.url_protocol)
+      end
     else
       I18n.t('not_available')
     end
