@@ -5,14 +5,14 @@ module QueryHashHelper
   SPAM_CONDITION = { 'condition' => 'spam', 'operator' => 'is', 'value' => false }
   DELETED_CONDITION = { 'condition' => 'deleted', 'operator' => 'is', 'value' => false }
 
-  def sample_filter_conditions(params={})
+  def sample_filter_conditions(params = {})
     {
       data_hash: [
-        { "condition"=>"responder_id", "operator"=>"is_in", "ff_name"=>"default", "value"=>"0,-1" },
-        { "condition"=>"due_by", "operator"=>"due_by_op", "ff_name"=>"default", "value"=>"1,2,3,4" },
-        { "condition"=>"group_id", "operator"=>"is_in", "ff_name"=>"default", "value"=>"0,3" },
-        { "condition"=>"status", "operator"=>"is_in", "ff_name"=>"default", "value"=>"2" },
-        { "condition"=>"created_at", "operator"=>"is_greater_than", "ff_name"=>"default", "value"=>"13 Sep 2016 - 23 Feb 2016" },
+        { 'condition' => 'responder_id', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => ['0', '-1'] },
+        { 'condition' => 'due_by', 'operator' => 'due_by_op', 'ff_name' => 'default', 'value' => ['1', '2', '3', '4'] },
+        { 'condition' => 'group_id', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => ['0', '3'] },
+        { 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => ['2'] },
+        { 'condition' => 'created_at', 'operator' => 'is_greater_than', 'ff_name' => 'default', 'value' => '13 Sep 2016 - 23 Feb 2016' }
       ],
       wf_model: "Helpdesk::Ticket",
       wf_order: "created_at",
@@ -26,7 +26,7 @@ module QueryHashHelper
     }.merge(params)
   end
 
-  def create_filter(custom_field = nil, additional_params={})
+  def create_filter(custom_field = nil, additional_params = {})
     wf_filter_params = sample_filter_conditions(additional_params)
     if custom_field
       condition = cf_query_hash(custom_field)
@@ -48,9 +48,9 @@ module QueryHashHelper
     }
   end
 
-  def cf_query_hash(custom_field = @custom_field)
+  def cf_query_hash(_custom_field = @custom_field)
     fde = @custom_field.flexifield_def_entry
-    cf_condition(fde.flexifield_alias, fde.flexifield_name, @custom_field.picklist_values.first.value)
+    cf_condition(fde.flexifield_alias, fde.flexifield_name, [@custom_field.picklist_values.first.value])
   end
 
   def not_contain_spam_deleted(query_hash)

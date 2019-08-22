@@ -108,7 +108,7 @@ Layout/EmptyLinesAroundModuleBody:
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Layout/IndentFirstArgument:
+Layout/FirstParameterIndentation:
   AutoCorrect: true
   Enabled: true
 
@@ -134,7 +134,7 @@ Style/IfUnlessModifier:
 # Offense count: 4
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Layout/IndentFirstHashElement:
+Layout/IndentHash:
   AutoCorrect: true
   Enabled: true
 
@@ -144,7 +144,7 @@ Layout/IndentFirstHashElement:
 Layout/IndentationConsistency:
   AutoCorrect: true
   Enabled: true
-  EnforcedStyle: indented_internal_methods
+  EnforcedStyle: rails
 
 # Offense count: 10
 # Cop supports --auto-correct.
@@ -295,6 +295,9 @@ Style/DoubleNegation:
   Enabled: false
   # Regarding use !! double bang to convert
 
+Style/RegexpLiteral:
+  Enabled: false
+
 Metrics/CyclomaticComplexity:
   Exclude:
    - test/**/*.rb
@@ -305,6 +308,12 @@ Metrics/PerceivedComplexity:
 
 Metrics/ModuleLength:
   Max: 150
+  # Test if this works pre-commit hooks
+
+Metrics/ClassLength:
+  Max: 150
+  Exclude:
+   - test/**/*.rb
   # Test if this works pre-commit hooks
 
 Lint/UselessAssignment:
@@ -325,6 +334,12 @@ Style/GlobalVars:
 
 Lint/EndAlignment:
   AutoCorrect: true
+
+Style/LambdaCall:
+  Enabled: false
+  Exclude:
+   - test/**/*.rb
+   - api/**/*.rb
 
 Lint/ParenthesesAsGroupedExpression:
   Exclude:

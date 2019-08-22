@@ -27,6 +27,7 @@ class Wf::Filter < ActiveRecord::Base
   self.primary_key = :id
   
   JOIN_NAME_INDICATOR = '>'
+  TEXT_DELIMITER = ','.freeze
 
   self.table_name =  :wf_filters
   serialize   :data
@@ -396,7 +397,7 @@ class Wf::Filter < ActiveRecord::Base
   end
   
   def add_condition_at(index, condition_key, operator_key, values = [])
-    values = [values] unless values.instance_of?(Array)
+    values = values.is_a?(String) ? values.split(TEXT_DELIMITER) : [values] unless values.instance_of?(Array)
     values = values.collect{|v| v.to_s}
 
     condition_key = condition_key.to_sym if condition_key.is_a?(String)

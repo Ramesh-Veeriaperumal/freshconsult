@@ -5,6 +5,7 @@ module Ember
     include QueryHashHelper
     include TicketFiltersHelper
     include GroupsTestHelper
+    include TicketFieldsTestHelper
 
     def wrap_cname(params)
       { ticket_filter: params }
@@ -42,6 +43,16 @@ module Ember
       get :show, construct_params({ version: 'private' }, false).merge(id: filter1.id)
       assert_response 200
       match_custom_json(response.body, ticket_filter_show_pattern(filter1))
+    end
+
+    def test_show_single_filter_with_new_format
+      @custom_field = create_custom_field_dropdown('test_show_single_filter', ['chennai, in'])
+      filter1 = create_filter(@custom_field)
+      get :show, construct_params({ version: 'private' }, false).merge(id: filter1.id)
+      assert_response 200
+      match_custom_json(response.body, ticket_filter_show_pattern(filter1))
+    ensure
+      @custom_field.destroy
     end
 
     def test_show_inaccessible_filter
@@ -198,6 +209,17 @@ module Ember
       new_name = "#{Faker::Name.name} - #{Time.zone.now}"
       filter_params[:name] = new_name
       post :update, construct_params({ version: 'private', id: filter1.id }, filter_params.merge(query_hash: []))
+      assert_response 200
+      filter = Helpdesk::Filters::CustomTicketFilter.find_by_name(new_name)
+      match_custom_json(response.body, ticket_filter_show_pattern(filter))
+    end
+
+    def test_update_with_valid_params_changes_old_format_new_format
+      filter1 = create_filter
+      filter_params = sample_filter_input_params
+      new_name = "#{Faker::Name.name} - #{Time.zone.now}"
+      filter_params[:name] = new_name
+      put :update, construct_params({ version: 'private', id: filter1.id }, filter_params)
       assert_response 200
       filter = Helpdesk::Filters::CustomTicketFilter.find_by_name(new_name)
       match_custom_json(response.body, ticket_filter_show_pattern(filter))

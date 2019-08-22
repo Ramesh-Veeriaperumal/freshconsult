@@ -22,18 +22,19 @@ module Search::Dashboard::QueryHelper
   SINGLE_QUOTE = '#&$!SinQuo'.freeze
   DOUBLE_QUOTE = '#&$!DouQuo'.freeze
   BACK_SLASH = '#&$!BacSla'.freeze
+  TEXT_DELIMITER = ','.freeze
 
   # WF Filter conditions is convert into FQL Format for search service
   def transform_fields(wf_conditions)
     conditions = []
     wf_conditions.each do |field|
       cond_field = (COLUMN_MAPPING[field['condition']].presence || field['condition'].to_s)
-      field_values = field['value'].to_s.split(',').map { |value| encode_value(value)} # Hack to handle special chars in query
+      field_values = field['value'].is_a?(Array) ? field['value'].map(&:to_s) : field['value'].to_s.split(TEXT_DELIMITER)
+      field_values = field_values.map { |value| encode_value(value) } # Hack to handle special chars in query
       if cond_field.include?('flexifields')
         conditions << transform_flexifield_filter(field['ff_name'].gsub("_#{Account.current.id}", ''), field_values)
-
       elsif cond_field.present?
-      	conditions << transform_field(cond_field, field_values) 
+        conditions << transform_field(cond_field, field_values)
       end
     end
     conditions << construct_query_for_restricted if @with_permissible and User.current.agent? and User.current.restricted?

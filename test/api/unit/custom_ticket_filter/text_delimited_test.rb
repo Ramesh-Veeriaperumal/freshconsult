@@ -18,7 +18,7 @@ class TextDelimitedTest < ActionView::TestCase
 		@filter = Helpdesk::Filters::CustomTicketFilter.new
 		@key =  "flexifields.ffs_01"
 		@operator = :is_in
-		@values =  ["a-1,-1"]
+    @values = ['a-1', '-1']
 		@container_for = :dropdown
 		condition = Wf::FilterCondition.new(@filter ,@key ,@operator ,@container_for, @values)
 		output = condition.container.sql_condition

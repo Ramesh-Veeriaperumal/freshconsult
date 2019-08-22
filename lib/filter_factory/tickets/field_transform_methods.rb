@@ -7,6 +7,8 @@ module FilterFactory::Tickets
       '4' => :due_in_eight
     }.freeze
 
+    TEXT_DELIMITER = ','.freeze
+
     FIELDS_WITH_CUSTOM_VALUES = [:responder_id, :internal_agent_id, :group_id, :internal_group_id,
                                  :status, :any_agent_id, :any_group_id].freeze
 
@@ -69,7 +71,7 @@ module FilterFactory::Tickets
       end
 
       def transform_status(condition)
-        values = condition['value'].to_s.split(',')
+        values = condition['value'].is_a?(Array) ? condition['value'] : condition['value'].to_s.split(TEXT_DELIMITER)
         values.delete('0')
         values += Helpdesk::TicketStatus.unresolved_statuses(Account.current)
         condition['value'] = values
@@ -88,14 +90,14 @@ module FilterFactory::Tickets
       end
 
       def transform_group_type(condition)
-        values = condition['value'].to_s.split(',')
+        values = condition['value'].is_a?(Array) ? condition['value'] : condition['value'].to_s.split(TEXT_DELIMITER)
         values.delete('0')
         values += fetch_user_group_ids
         condition['value'] = values
       end
 
       def transform_agent_type(condition)
-        values = condition['value'].to_s.split(',')
+        values = condition['value'].is_a?(Array) ? condition['value'] : condition['value'].to_s.split(TEXT_DELIMITER)
         values.delete('0')
         values << User.current.id.to_s
         condition['value'] = values
@@ -184,7 +186,7 @@ module FilterFactory::Tickets
 
       def fetch_due_by(condition)
         transformed_conditions = []
-        values = condition['value'].to_s.split(',')
+        values = condition['value'].is_a?(Array) ? condition['value'] : condition['value'].to_s.split(TEXT_DELIMITER)
         values.each do |value|
           cond = safe_send("#{DUE_BY_MAPPING[value.to_s]}_condition")
           transformed_conditions << cond.merge(condition: 'due_by', ff_name: 'default')
@@ -310,7 +312,7 @@ module FilterFactory::Tickets
       end
 
       def include_choice?(value, choice)
-        value.is_a?(Array) ? value.include?(choice) : value.to_s.split(',').include?(choice)
+        value.is_a?(Array) ? value.include?(choice) : value.to_s.split(TEXT_DELIMITER).include?(choice)
       end
 
       def fsm_appointment_filter?(condition)

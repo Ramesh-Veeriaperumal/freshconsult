@@ -50,7 +50,7 @@ class QueryHash
       val = query['value']
       return formatted_created_at(query) if date_time_field?(query)
       if format.eql?(:system)
-        val.is_a?(Array) ? val.join(',') : val
+        val
       else
         return val unless ARRAY_VALUED_OPERATORS.include?(query['operator'])
         val.is_a?(String) ? val.split(',') : (val.is_a?(Array) ? val : [val])
