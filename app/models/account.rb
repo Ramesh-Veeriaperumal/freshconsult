@@ -34,7 +34,9 @@ class Account < ActiveRecord::Base
 
   is_a_launch_target
 
-  concerned_with :associations, :constants, :validations, :callbacks, :features, :solution_associations, :multilingual, :sso_methods, :presenter, :subscription_methods, :freshid_methods, :fluffy_methods
+  concerned_with :associations, :constants, :validations, :callbacks, :features, :solution_associations,
+                 :multilingual, :sso_methods, :presenter, :subscription_methods, :freshid_methods,
+                 :fluffy_methods, :patches
 
   include CustomerDeprecationMethods
 

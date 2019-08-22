@@ -45,6 +45,9 @@ module Middleware
           NewRelic::Agent.notice_error(e)
           # rescue Exception => e
           #   NewRelic::Agent.notice_error(e)
+        rescue Account::RecordNotFound => e
+          NewRelic::Agent.notice_error(e)
+          Rails.logger.error "Account not found in shard :: #{e.message}"
         ensure
           Thread.current[:message_uuid] = nil
         end
