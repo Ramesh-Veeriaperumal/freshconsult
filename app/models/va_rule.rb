@@ -18,7 +18,7 @@ class VaRule < ActiveRecord::Base
   serialize :action_data
   serialize :condition_data
 
-  concerned_with :presenter
+  concerned_with :presenter, :esv2_methods
 
   publishable on: [:create, :update, :destroy]
 
@@ -54,6 +54,10 @@ class VaRule < ActiveRecord::Base
   scope :slack_destroy,:conditions => ["name in (?)",['slack_create', 'slack_update','slack_note']]
 
   acts_as_list :scope => 'account_id = #{account_id} AND #{connection.quote_column_name("rule_type")} = #{rule_type}'
+
+  alias_attribute :updated_by, :last_updated_by
+  # Included rabbitmq callbacks at the last
+  include RabbitMq::Publisher
 
   JOINS_HASH = {
     :helpdesk_schema_less_tickets => " inner join helpdesk_schema_less_tickets on helpdesk_tickets.id = helpdesk_schema_less_tickets.ticket_id "\
