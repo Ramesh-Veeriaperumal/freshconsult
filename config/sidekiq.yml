@@ -4,7 +4,6 @@ defaults: &defaults
   namespace: sidekiqbj
   keepalive: 10
   scheduled_poll_interval: 1
-  password: ''
   dead_max_jobs: 50000
 
 development:
