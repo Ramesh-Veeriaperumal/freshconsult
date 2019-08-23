@@ -223,9 +223,6 @@ module Redis::Keys::Others
   #Customer segments max limit
   SEGMENT_LIMIT = "SEGMENT_LIMIT:%{account_id}".freeze
 
-  # Enable this to generate signup logs
-  ENABLE_SIGNUP_LOGS = 'ENABLE_SIGNUP_LOGS'.freeze
-
   # Automation revamp - temporary
   ENABLE_AUTOMATION_REVAMP = 'ENABLE_AUTOMATION_REVAMP'.freeze
   ENABLE_THANK_YOU_DETECTOR = 'ENABLE_THANK_YOU_DETECTOR'.freeze

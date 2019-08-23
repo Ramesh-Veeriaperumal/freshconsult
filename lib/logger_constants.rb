@@ -35,8 +35,4 @@ module LoggerConstants
     support_ticket: %w[show new check_email index filter close export_csv],
     support_solutions_article: %w[show hit]
   }.freeze
-
-  SKIP_SIGNUP_LOGS_FOR = {
-    account: %w[new_signup_free anonymous_signup]
-  }
 end
