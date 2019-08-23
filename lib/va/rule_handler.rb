@@ -43,6 +43,7 @@ class Va::RuleHandler
                   actual_val = evaluate_on.safe_send(condition.dispatcher_key)
                   evaluate_rule(actual_val)
                 end
+      #Va::Logger::Automation.log "k=#{condition.dispatcher_key}, v=#{value.inspect}, o=#{condition.operator}, actual_val=#{actual_val.inspect}" unless matched
       matched
     end
   end
