@@ -241,6 +241,7 @@ class TicketValidation < ApiValidation
             } 
           }, unless: :unique_external_identifier_enabled?
 
+  validates :unique_external_id, data_type: { rules: String }, if: -> { unique_external_identifier_enabled? }
   validates :inline_attachment_ids, data_type: { rules: Array }
 
   def initialize(request_params, item, allow_string_param = false, additional_params = {})
