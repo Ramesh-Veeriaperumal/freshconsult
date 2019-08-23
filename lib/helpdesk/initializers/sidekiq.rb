@@ -10,7 +10,13 @@ SIDEKIQ_CLASSIFICATION_MAPPING = SIDEKIQ_CLASSIFICATION[:classification].inject(
   t_h
 end
 
-$sidekiq_datastore = proc { Redis::Namespace.new(config['namespace'], redis: Redis.new(host: config['host'], port: config['port'], tcp_keepalive: config['keepalive'])) }
+REDIS_CONFIG_KEYS = ['host', 'port', 'password'].freeze
+
+$sidekiq_datastore = proc {
+  Redis::Namespace.new(config['namespace'],
+                       redis: Redis.new(config.slice(*REDIS_CONFIG_KEYS).merge(tcp_keepalive: config['keepalive'])))
+}
+
 $sidekiq_redis_pool_size = sidekiq_config[:redis_pool_size] || sidekiq_config[:concurrency]
 # setting redis connection pool size of sidekiq client to (concurrency / 2) because of limitations from redis-labs
 $sidekiq_client_redis_pool_size = ($sidekiq_redis_pool_size / 2).to_i
