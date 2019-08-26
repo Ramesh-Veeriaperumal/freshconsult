@@ -790,6 +790,7 @@ en:
       feedback_already_done: "You have already given feedback for this response."
       handle_expired: "Your survey request link has been expired."
       survey_closed: "This survey is closed."
+      agent_feedback_error: Agents are not allowed to give feedback
       preview_feedback_error: The url entered is invalid.
       no_survey_result_error: Invalid parameters to create feedback.
       no_survey_active_error: Survey is not enabled to create feedback.
