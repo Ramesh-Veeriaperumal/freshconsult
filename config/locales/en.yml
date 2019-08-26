@@ -583,6 +583,7 @@ en:
     no_choice_message: "At least one valid choice has to be present"
     customer_label_missing: Customer label cannot not be empty
     encrypted_field_banner_text: "This is an encrypted field and will not appear in search results."
+    dropdown_duplicate_message: "Dropdown items has duplicate values."
     index:
       number: Number
       decimal: Decimal
