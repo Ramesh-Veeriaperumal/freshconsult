@@ -320,6 +320,13 @@ GIT
       rest-client
 
 GIT
+  remote: git@github.com:freshdesk/prometheus_exporter.git
+  revision: 7d7d80281eb3755460ee9d6396029f0acd438794
+  tag: v1.0.3
+  specs:
+    prometheus_exporter (1.0.3)
+
+GIT
   remote: git@github.com:freshdesk/retire.git
   revision: e8e30b1fa67ae0e3146f9809d3a8158f9c35980e
   specs:
@@ -1645,6 +1652,7 @@ DEPENDENCIES
   pg
   postoffice!
   premailer (~> 1.8.0)
+  prometheus_exporter!
   pronto
   pronto-brakeman
   pronto-rails_best_practices

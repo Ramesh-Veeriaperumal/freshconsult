@@ -130,4 +130,5 @@ helpdesk:
     - datadog
     - freshvisuals
     - cron_hooks
+    - prometheus
     - ruby_thread_config
