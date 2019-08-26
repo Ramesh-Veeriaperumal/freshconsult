@@ -165,7 +165,7 @@ class ApiContactsController < ApiApplicationController
       make_agent = MakeAgentValidation.new(params[cname], @item)
       if make_agent.valid?
         ParamsHelper.assign_and_clean_params({ ticket_scope: :ticket_permission, signature: :signature_html }, params[cname])
-        agent_delegator = AgentDelegator.new(nil, params[cname].slice(:role_ids, :group_ids))
+        agent_delegator = AgentDelegator.new(params[cname].slice(:role_ids, :group_ids))
         render_errors(agent_delegator.errors, agent_delegator.error_options) if agent_delegator.invalid?
       else
         render_errors(make_agent.errors, make_agent.error_options)
