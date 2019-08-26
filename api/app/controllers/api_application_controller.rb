@@ -958,6 +958,7 @@ class ApiApplicationController < MetalApiController
       yield
       end_token = session[:_csrf_token] if session
       Rails.logger.info "CSRF observed :: changed :: true :: #{start_token} :: #{end_token} :: Tab :: #{request.env['HTTP_X_CLIENT_INSTANCE_ID']}" if start_token != end_token
+      Rails.logger.info "Tab ID :: #{request.env['HTTP_X_CLIENT_INSTANCE_ID']} "
     end
 
     def remove_session_data
