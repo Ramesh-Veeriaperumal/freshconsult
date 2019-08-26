@@ -195,7 +195,7 @@ class Account < ActiveRecord::Base
   end
 
   def sso_enabled_freshid_account?
-    sso_enabled? && freshid_integration_enabled? && !freshid_sso_enabled?
+    sso_enabled? && sso_enabled_changed? && freshid_enabled? && freshdesk_sso_enabled?
   end
 
   def sso_disabled_not_freshid_account?

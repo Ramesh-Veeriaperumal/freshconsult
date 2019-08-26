@@ -43,7 +43,8 @@ module RabbitMq::Constants
     [  'caller',              CRUD_KEYS_BY_TOKEN[:all],                 'caller'          ],
     [  'account',             CRUD_KEYS_BY_TOKEN[:update_and_destroy],  'account'         ],
     [  'cti_call',            CRUD_KEYS_BY_TOKEN[:create],              'cti_call'        ],
-    [  'agent',               CRUD_KEYS_BY_TOKEN[:all],                 'agent'           ]
+    [  'agent',               CRUD_KEYS_BY_TOKEN[:all],                 'agent'           ],
+    [  'va_rule',             CRUD_KEYS_BY_TOKEN[:all],                 'va_rule'         ]
   ]
   
   # If the exchange mapping values ("ticket", "customer") is changed, please make sure that the changes
@@ -87,6 +88,7 @@ module RabbitMq::Constants
   RMQ_SEARCH_COMPANY_KEY        = "1"
   RMQ_SEARCH_USER_KEY           = "1"
   RMQ_SEARCH_CALLER_KEY         = "1"
+  RMQ_SEARCH_VA_RULE_KEY        = '1'.freeze
 
   # Manual publish keys - common for both activities and reports
   RMQ_GENERIC_TICKET_KEY      = "*.1.*.*.1.#"  # Position 0 -> auto_refresh, 2 -> reports 4 -> search 6-> es count 8-> activities

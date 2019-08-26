@@ -29,7 +29,7 @@ class Account < ActiveRecord::Base
     :disable_email_spoof_check, :onboarding_i18n, :webhook_blacklist_ip, :recalculate_daypass,
     :fb_page_api_improvement, :attachment_redirect_expiry, :solutions_agent_portal, :solutions_agent_metrics, :fuzzy_search,
     :delete_trash_daily, :automation_revamp, :prevent_wc_ticket_create, 
-    :allow_wildcard_ticket_create, :requester_privilege, :sso_unique_session,
+    :allow_wildcard_ticket_create, :requester_privilege, :sso_unique_session, :fluffy_min_level,
     :scheduling_fsm_dashboard, :enable_customer_journey, :csat_translations, :supervisor_custom_status,
     :sandbox_temporary_offset, :downgrade_policy, :mentions_to_tms
   ].freeze
@@ -61,7 +61,8 @@ class Account < ActiveRecord::Base
     :freshreports_analytics, :disable_old_reports, :article_filters, :adv_article_bulk_actions,
     :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible, :ticket_properties_suggester, :ticket_properties_suggester_eligible,
     :autofaq, :proactive_spam_detection,
-    :hide_first_response_due, :agent_articles_suggest, :email_articles_suggest, :customer_journey, :botflow
+    :hide_first_response_due, :agent_articles_suggest, :email_articles_suggest, :customer_journey, :botflow,
+    :help_widget, :help_widget_appearance, :help_widget_predictive
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
@@ -368,6 +369,10 @@ class Account < ActiveRecord::Base
   def has_feature?(feature)
     return super if launched?(:enable_customer_journey)
     PRICING_PLAN_MIGRATION_FEATURES_2019.include?(feature) ? true : super
+  end
+
+  def help_widget_enabled?
+    launched?(:help_widget)
   end
 
   def features_list

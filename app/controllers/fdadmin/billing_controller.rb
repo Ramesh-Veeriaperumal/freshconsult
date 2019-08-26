@@ -174,12 +174,18 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
     def subscription_cancelled(content)
       @account.subscription.update_attributes(:state => SUSPENDED)
       remove_others_redis_key(card_expiry_key)
+      @account.perform_paid_account_cancellation_actions if cancellation_requested?
     end
 
     def subscription_reactivated(content)
       deleted_customer = DeletedCustomers.find_by_account_id(@account.id)
       deleted_customer.reactivate if deleted_customer
+      @account.delete_account_cancellation_requested_time_key if cancellation_requested?
       @account.subscription.update_attributes(@subscription_data)
+    end
+
+    def subscription_scheduled_cancellation_removed(_content)
+      @account.delete_account_cancellation_requested_time_key
     end
 
     def card_added(content)
@@ -304,5 +310,9 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
     def auto_collection_off_trigger
       Subscription::UpdatePartnersSubscription.perform_async({ :account_id => @account.id, 
           :event_type => :auto_collection_off })
+    end
+
+    def cancellation_requested?
+      @account.launched?(:downgrade_policy) && @account.account_cancellation_requested?
     end
 end

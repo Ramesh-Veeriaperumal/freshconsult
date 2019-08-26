@@ -187,7 +187,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     end
 
     def throttled_in_fluffy?
-      Account.current && Account.current.fluffy_enabled? && @request.env['HTTP_X_FW_RATELIMITING_MANAGED'] == "true"
+      Account.current && Account.current.fluffy_integration_enabled? && @request.env['HTTP_X_FW_RATELIMITING_MANAGED'] == "true"
     end
 
 end

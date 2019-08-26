@@ -124,3 +124,4 @@ helpdesk:
     - saml_config
     - datadog
     - freshvisuals
+    - ruby_thread_config

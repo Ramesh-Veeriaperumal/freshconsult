@@ -5,7 +5,7 @@ window.App = window.App || {};
 
 (function ($) {
   "use strict";
-  
+
   App.SelectPlan = {
     calculate_request : null,
     clone_button : null,
@@ -33,7 +33,7 @@ window.App = window.App || {};
     selected_plan_id: null,
     addons: {},
     fsm_addon_key: 'field_service_management',
-    initialize: function (currency, billing_cycle, subscribed_plan_id, agent_limit, field_agent_limit, downgrade_launched, current_plan_name, fsm_active, state) {
+    initialize: function (currency, billing_cycle, subscribed_plan_id, agent_limit, field_agent_limit, downgrade_launched, current_plan_name, fsm_active, state, pending_cancellation_request) {
       this.currency = currency;
       this.billing_cycle = billing_cycle;
       this.initial_billing_cycle = billing_cycle,
@@ -44,6 +44,7 @@ window.App = window.App || {};
       this.current_plan_name = current_plan_name;
       this.fsm_active = fsm_active;
       this.subscription_state = state;
+      this.pending_cancellation_request = pending_cancellation_request
       this.bindEvents()
     },
     namespace: function(){
@@ -71,6 +72,73 @@ window.App = window.App || {};
       $(document).on('click'+$this.namespace(),  '#warning-fsm-billing-edit-submit', function(){ $this.checkAndRemoveFSM('submit') })
       $(document).on('click'+$this.namespace(),  '#warning-fsm-billing-edit-cancel', function(){ $this.checkAndRemoveFSM('cancel', true) })
       $(document).on('click'+$this.namespace(),  '#warning-fsm-billing-edit .modal-header .close', function(){ $this.checkAndRemoveFSM('cancel', true) })
+      $(document).on('click'+$this.namespace(),  '.second-downgrade-modal-wrapper .btn-primary', function(e){ $this.secondTimeDowngrade(e) })
+      $(document).on('click'+$this.namespace(),  '.second-downgrade-modal', function(e){ $this.secondTimeDowngradeModal(e) })
+      $(document).on('click','.sprout-second-downgrade-modal', function(e){ $this.sproutDowngradeModal(e) })
+      $(document).on('click','#sprout-downgrade-submit', function(e){ $this.sproutDowngradeCompareModal(e) })
+      $(document).on('click','#downgrade-sprout-btn', function(e){ $this.sproutDowngradeFormSubmit(e) })
+      $(document).on('click'+$this.namespace(),  '.cancel-request', function(ev){ $this.performCancelRequest(ev, this) })
+    },
+    performCancelRequest: function(ev, tag) {
+      $('#cancellation-wrapper').addClass('sloading inner-form-hide');
+      ev.preventDefault();
+      var self = this;
+      $.ajax({
+            url: "/subscription/cancel_request",
+            type: "DELETE",
+            success: function(status){
+              if(status.success) {
+                self.handleCancellationSuccess();
+              } else {
+                self.handleCancellationFailure();
+              }
+            },
+            error: function(data){
+              self.handleCancellationFailure();
+            }
+        });
+    },
+    handleCancellationSuccess: function() {
+      this.pending_cancellation_request = false;
+      $('#cancellation-wrapper').removeClass('sloading inner-form-hide');
+      $('.request-change-wrapper').addClass('hide');
+      $('.request-change-status').addClass('success').removeClass('hide');
+      $('#request-change-message').text(I18n.t('common_js_translations.cancel_request_success'));
+      $('.downgrade-plan-button, .free-plan-button').attr('rel', 'freshdialog');
+      setTimeout(function() {
+        $('.request-change-status').addClass('hide');
+      }, 5000);
+    },
+    handleCancellationFailure: function() {
+      $('#cancellation-wrapper').removeClass('sloading inner-form-hide');
+      $('.request-change-status').addClass('failure').removeClass('hide');
+      $('#request-change-message').text(I18n.t('common_js_translations.cancel_request_failure'));
+      setTimeout(function() {
+        $('.request-change-status').addClass('hide');
+      }, 5000);
+    },
+    sproutDowngradeModal: function(e){
+      $($(e.currentTarget).attr('data-id')).appendTo('body').modal('show');
+    },
+    secondTimeDowngrade: function(e){
+      $('.'+e.currentTarget.id).find('#commit').attr('type','submit');
+      $('.second-downgrade-modal').css('display','none')
+      $('.'+e.currentTarget.id).find('#commit').trigger('click')
+    },
+    sproutDowngradeCompareModal: function(e) {
+      $('#sprout-downgrade-modal-show').find('.downgrade-non-sprout').css('display','none');
+      $('#sprout-downgrade-modal-show').find('.downgrade-sprout').css('display','block');
+      $(".latest-request #current-date").html(moment(new Date()).format('D MMM, YYYY'));
+      $("#sprout-downgrade-modal-show").appendTo('body').modal('show');
+    },
+    secondTimeDowngradeModal: function(e){
+      e.preventDefault();
+      $(".latest-request #current-date").html(moment(new Date()).format('D MMM, YYYY'));
+      $($(e.currentTarget).attr('data-id')).modal('show');
+      $('body').find('.modal-backdrop').addClass('downgrade-backdrop')
+    },
+    sproutDowngradeFormSubmit: function(){
+      $('.sprout-form-submit').find('form').submit();
     },
     billingCancel: function (ev) {
       ev.preventDefault();
@@ -122,7 +190,7 @@ window.App = window.App || {};
     fieldAgentChange: function (agent) {
       this.field_agent_reduced = this.downgrade_launched ? parseInt(this.field_agents_count) > agent.value : false;
       var non_omni_plan_id = this.nonOmniId(agent);
-      var parent_plan_element = this.parentPlanItem(agent);      
+      var parent_plan_element = this.parentPlanItem(agent);
       if(this.IsNumeric(agent.value)) {
         var agents = Math.abs(agent.value);
         $(".billing-submit").attr("disabled", "true");
@@ -252,7 +320,7 @@ window.App = window.App || {};
       }
     },
     enableFSMandShowFieldAgents: function() {
-      var billing_template = $("#billing-template"); 
+      var billing_template = $("#billing-template");
       billing_template.find("#field_agents").removeClass('hide');
       billing_template.find("input[name='addons[field_service_management][enabled]']").val('true');
       billing_template.find("input[name='addons[field_service_management][value]']").val($("#field-agents-text-box").val());
@@ -289,7 +357,7 @@ window.App = window.App || {};
         this.selected_plan.removeClass('active');
       }
       else {
-        $('.pricelist.active').removeClass('active'); 
+        $('.pricelist.active').removeClass('active');
       }
       this.current_plan_id = btn.data("planId");
       if(!has_free_agents ){
@@ -301,7 +369,7 @@ window.App = window.App || {};
 
       if(has_free_agents && !this.current_active_plan_flag){
         if(btn.attr('class').indexOf("plan-button1") >= 0)
-          $('.active').removeClass("free-plan-options");  
+          $('.active').removeClass("free-plan-options");
         else
           $('.active').addClass("free-plan-options");
       }else{
@@ -315,7 +383,7 @@ window.App = window.App || {};
           var fsm_billing_toggle = $(parent).find(".toggle-fsm-billing");
           if($('#fsm-toggle').is(':checked') && fsm_billing_toggle.length) {
             fsm_billing_toggle.show();
-            this.addAddon(this.fsm_addon_key, fsm_addon_value) 
+            this.addAddon(this.fsm_addon_key, fsm_addon_value)
           } else {
             this.removeAddon(this.fsm_addon_key);
           }
@@ -323,7 +391,7 @@ window.App = window.App || {};
         billing_template.addClass("sloading inner-form-hide");
       }
       if(this.current_active_plan_flag){
-        
+
         this.original_data = $(".subscribed-plan-details").html();
         $(".subscribed-plan-details").html($("#billing-template").show());
         billing_template.find(".billing-cancel").show();
@@ -340,7 +408,7 @@ window.App = window.App || {};
       }
       this.calculateCost(null);
     },
-    calculateCost: function (planID) { 
+    calculateCost: function (planID) {
       var $this = this
       if(this.calculate_request)
         this.calculate_request.abort();
@@ -376,7 +444,11 @@ window.App = window.App || {};
             billing_template.find(".billing-cancel").show();
             var submitText = request_change ? I18n.t('common_js_translations.request_change') : I18n.t('common_js_translations.update_plan');
             billing_template.find(".billing-submit").val(submitText).addClass('btn-primary');
-
+            billing_template.find(".billing-submit").html(submitText).addClass('btn-primary');
+            if(request_change){
+              $('.upgrade-same-plan').css('display','none');
+              $('.upgrade-same-plan-header').css('display','block');
+            }
             if($this.omni_disabled) {
               billing_actions.find(".submit-confirm").show();
               billing_actions.find("#commit").hide();
@@ -387,21 +459,24 @@ window.App = window.App || {};
               this.omni_disabled = null;
             }
             $('#edit-billing-fsm-toggle').is(':checked') ? $this.enableFSMandShowFieldAgents() : $this.disableFSMandHideFieldAgents();
-          } 
+          }
           else {
             if(request_change) {
               billing_template.find(".billing-submit").val(I18n.t('common_js_translations.request_change'));
+              billing_template.find(".billing-submit").html(I18n.t('common_js_translations.request_change'));
+              $('.upgrade-same-plan').css('display','none');
+              $('.upgrade-same-plan-header').css('display','block');
             }
-            
+
             billing_template.find(".billing-cancel").hide();
             billing_template.find(".billing-submit").removeClass('btn-primary');
             var curren_plan_id = $this.selected_plan.attr("id");
             if(curren_plan_id) {
               var fsm_toggle = '#' + curren_plan_id + ' .toggle-fsm-billing';
-              $("#"+curren_plan_id + " .toggle-omni-billing").removeClass("hide");      
+              $("#"+curren_plan_id + " .toggle-omni-billing").removeClass("hide");
               $(fsm_toggle + ':visible').length && $(fsm_toggle + ' .toggle-button').hasClass('active') ?
                 $this.enableFSMandShowFieldAgents()
-                : $this.disableFSMandHideFieldAgents();       
+                : $this.disableFSMandHideFieldAgents();
             }
           }
           $this.perMonthCost();

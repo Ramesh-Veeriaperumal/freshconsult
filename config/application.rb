@@ -142,6 +142,7 @@ module Helpkit
       r.define_rule( :match => "^/(mobihelp)/.*", :type => :fixed, :metric => :rph, :limit => 300,:per_ip => true ,:per_url => true )
       r.define_rule( :match => "^/(support\/mobihelp)/.*", :type => :fixed, :metric => :rph, :limit => 300,:per_ip => true ,:per_url => true )
       r.define_rule(match: "^(/[a-z]{2}(-[A-Z]{2})?)?\/support\/tickets\/check_email", type: :fixed, metric: :rpm, limit: 10, per_ip: true, per_url: true, include_host: true)
+      r.define_rule(match: "^(/[a-z]{2}(-[A-Z]{2})?)?\/password_resets", type: :fixed, metric: :rpm, limit: 10, per_ip: true, per_url: true, include_host: true)
       r.define_rule(match: "^/(([a-z]{2}(-[A-Z]{2})?\/)?support(?!\/(theme)))/.*", type: :fixed, metric: :rpm, limit: 30, per_ip: true, per_url: true, include_host: true)
       r.define_rule( :match => "^/(accounts\/new_signup_free).*", :type => :fixed, :metric => :rpd, :limit => 5,:per_ip => true)
       r.define_rule( :match => "^/(accounts\/email_signup).*", :type => :fixed, :metric => :rpd, :limit => 5,:per_ip => true)
@@ -150,7 +151,9 @@ module Helpkit
       r.define_rule( :match => "^/(login\/sso).*", :type => :fixed, :metric => :rpm, :limit => 10,:per_ip => true)
       r.define_rule( :match => "^/integrations\/sugarcrm\/settings_update", :type => :fixed, :metric => :rph, :limit => 5,:per_ip => true)
       r.define_rule( :match => "^/export\/ticket_activities", :type => :fixed, :metric => :rph, :limit => 30, :per_url => true)
-      store = Redis.new(:host => RateLimitConfig["host"], :port => RateLimitConfig["port"],:timeout => 0.5)
+
+      redis_options = HashWithIndifferentAccess.new(RateLimitConfig.slice('host', 'port', 'password').merge('timeout' => 0.5))
+      store = Redis.new(redis_options)
       r.set_cache(store) if store.present?
     end
 

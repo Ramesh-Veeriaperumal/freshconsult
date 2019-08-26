@@ -119,7 +119,7 @@ class Integrations::JiraIssueController < ApplicationController
         integrated_resource = Integrations::IntegratedResource.find_by_local_integratable_id_and_local_integratable_type(@installed_app.local_integratable_id,"Helpdesk::ArchiveTicket")
         if integrated_resource
           archive_ticket = integrated_resource.local_integratable
-          if archive_ticket
+          if archive_ticket && allow_updates_from_jira?
             ticket = archive_ticket.ticket || create_ticket(archive_ticket)
             modify_integrated_resource(ticket,integrated_resource)
           end
@@ -154,5 +154,9 @@ class Integrations::JiraIssueController < ApplicationController
     ticket.build_archive_child(:archive_ticket_id => archive_ticket.id) if archive_ticket
     ticket.save_ticket
     ticket
+  end
+
+  def allow_updates_from_jira?
+    (@installed_app.configs_jira_comment_sync != 'none' && Integrations::JiraWebhook::ALLOWED_JIRA_EVENTS[1..2].include?(params['webhookEvent'])) || (@installed_app.configs_jira_status_sync != 'none' && Integrations::JiraWebhook::ALLOWED_JIRA_EVENTS[0] == params['webhookEvent'])
   end
 end

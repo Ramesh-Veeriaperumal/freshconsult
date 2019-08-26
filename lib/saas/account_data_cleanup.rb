@@ -327,6 +327,18 @@ class SAAS::AccountDataCleanup
     account.launch(:es_msearch)
   end
 
+  # def handle_api_v2_add_data
+  #   account.enable_fluffy_min_level
+  # end
+
+  def handle_api_v2_drop_data
+    if account.fluffy_enabled?
+      account.disable_fluffy 
+    elsif account.fluffy_min_level_enabled?
+      account.disable_fluffy_min_level
+    end
+  end
+
   def handle_hipaa_drop_data
     account.revoke_feature :custom_encrypted_fields
     account.remove_encrypted_fields
