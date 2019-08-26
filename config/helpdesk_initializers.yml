@@ -125,3 +125,4 @@ helpdesk:
     - datadog
     - freshvisuals
     - ruby_thread_config
+    - prometheus
