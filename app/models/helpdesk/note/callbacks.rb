@@ -190,7 +190,8 @@ class Helpdesk::Note < ActiveRecord::Base
           Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {}) unless notable.spam?
         end
 
-        integrations_private_note_notifications unless replied_by_customer?
+        # Jira notes notifier was sending emails for portal added notes with no notifying emails. Added a to emails check to prevent that.
+        integrations_private_note_notifications unless replied_by_customer? || to_emails.blank?
 
       else
         #notify the agents only for notes

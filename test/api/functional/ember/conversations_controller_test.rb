@@ -2241,6 +2241,16 @@ module Ember
       assert_response 400
     end
 
+    def test_email_notification_without_notifying_emails
+      current_account = Account.current
+      assigned_agent = add_test_agent(@account)
+      ticket = create_ticket(requester_id: current_account.id, responder_id: assigned_agent.id)
+      params_hash = create_note_params_hash.merge(private: true, notify_emails: [])
+      count_of_delayed_jobs_before = Delayed::Job.count
+      post :create, construct_params({ version: 'private', id: ticket.display_id, user_id: current_account.id }, params_hash)
+      assert_equal count_of_delayed_jobs_before + 1, Delayed::Job.count
+    end
+
     private
 
       def archive_note_payload(note, payload)
