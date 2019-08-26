@@ -189,6 +189,13 @@ module Channel
       assert_response 201
     end
 
+    def test_create_ticket_with_freshchat_jwt_header
+      params = ticket_params_hash
+      set_jwt_auth_header('freshchat')
+      post :create, construct_params({version: 'channel'}, params)
+      assert_response 201
+    end
+
     def test_create_with_custom_fields_required_invalid
       params = ticket_params_hash.merge(custom_fields: {})
       VALIDATABLE_CUSTOM_FIELDS.each do |custom_field|

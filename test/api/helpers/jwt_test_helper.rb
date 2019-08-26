@@ -5,8 +5,9 @@ module JwtTestHelper
   FREDDY = 'freddy'.freeze
   FRESHCONNECT = 'freshconnect'.freeze
   SHERLOCK = 'sherlock'.freeze
+  FRESHCHAT = 'freshchat'.freeze
   JWT_SECRET_SOURCES = [TWITTER, PROACTIVE, FRESHMOVER, FRESHCONNECT, SHERLOCK].freeze
-
+  JWT_ARRAY_SECRET_SOURCES = [FREDDY, FRESHCHAT].freeze
   def generate_jwt_token(user_id, account_id, jti, iat, algorithm = 'HS256')
     payload = {:jti => jti, :iat => iat,
                :user_id => user_id, :account_id => account_id}
@@ -15,7 +16,7 @@ module JwtTestHelper
   end
 
   def generate_custom_jwt_token(source_name)
-    return generate_freddy_jwt(source_name) if source_name == FREDDY
+    return generate_freddy_jwt(source_name) if JWT_ARRAY_SECRET_SOURCES.include?(source_name)
     return generate_jwt_for_jwt_secret_sources(source_name) if JWT_SECRET_SOURCES.include?(source_name)
 
     domain = @account.full_domain.split('.')[0]
