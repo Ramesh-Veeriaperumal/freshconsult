@@ -300,6 +300,17 @@ module Ember
       match_json({ 'count' => 55 })
     end
 
+    def test_widget_data_preview_for_scorecard_invalid_es_response
+      options = { time_range: 3 }
+      Account.current.launch(:es_msearch)
+      dashboard = create_dashboard_with_widgets(nil, 1, 0, [options])
+      ::Search::Filters::Docs.any_instance.stubs(:bulk_es_request).returns(JSON.generate({ 'responses' => [{'error':{'root_cause':'I dont know'}}, {'took':2,'timed_out':false,'_shards':{'total':1,'successful':1,'failed':0},'hits':{'total':1,'max_score':0.0,'hits':[]}}] }))
+      get :widgets_data, controller_params(version: 'private', type: 'scorecard', id: dashboard.id)
+      assert_response 400
+    ensure
+      Account.current.rollback(:es_msearch)
+    end
+
     def test_widget_data_preview_for_scorecard_with_custom_filter
       ticket_filter = create_filter
       ::Dashboard::TrendCount.any_instance.stubs(:fetch_count).returns({ :"#{ticket_filter.id}" => 87 })
