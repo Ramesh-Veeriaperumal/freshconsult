@@ -13,7 +13,7 @@ module AgentsHelper
   def check_agents_limit
     return content_tag(:div, fetch_upgrade_error_msg('support_agent'), :class => 'errorExplanation') if current_account.reached_agent_limit?
 
-    content_tag(:div, fetch_upgrade_error_msg('field_agent'), :class => 'errorExplanation') if current_account.reached_field_agent_limit?
+    content_tag(:div, fetch_upgrade_error_msg('field_agent'), class: 'errorExplanation') if current_account.field_service_management_enabled? && current_account.reached_field_agent_limit?
   end
     
   # 1. Agent should not be deleted
