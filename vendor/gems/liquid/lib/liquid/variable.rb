@@ -35,6 +35,9 @@ module Liquid
 
     def render(context)
       return '' if @name.nil?
+
+      return nil.to_json if context[@name].blank?
+
       @filters.inject(context[@name]) do |output, filter|
         filterargs = filter[1].to_a.collect do |a|
           context[a]
