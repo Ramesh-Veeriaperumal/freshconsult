@@ -364,3 +364,4 @@ gem "rubocop", "0.52.1"
 gem 'safe_yaml', "1.0.4"
 
 gem 'ejson', :require => false
+gem 'rack-protection', '1.5.5'
