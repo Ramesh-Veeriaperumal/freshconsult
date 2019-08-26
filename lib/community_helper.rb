@@ -6,7 +6,7 @@ module CommunityHelper
     is_falcon = current_account.falcon_ui_enabled?(current_user)
     return if category.present? && category.portal_ids.empty?
     %(<span class="tooltip pull-right portal-preview-icon #{is_falcon ? extraClass : ''}" data-placement="left" title="#{t('solution.view_on_portal')}">
-      #{link_to('<i class="ficon-open-in-portal fsize-21"></i>'.html_safe, article_path(relative_path, category), :target => "view-portal")}
+      #{link_to('<i class="ficon-open-in-portal fsize-21"></i>'.html_safe, portal_article_path(relative_path, category), target: 'view-portal')}
     </span>).html_safe
   end
 
@@ -19,7 +19,7 @@ module CommunityHelper
     path
   end
 
-   def article_path relative_path, category, draft_preview = false
+  def portal_article_path(relative_path, category, draft_preview = false)
     category_path = category_path_generator category
     relative_path = [category_path, relative_path, "#{'?different_portal=true' if draft_preview}"].join if category_path
     relative_path

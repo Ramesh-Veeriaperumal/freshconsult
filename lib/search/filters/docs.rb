@@ -45,6 +45,9 @@ class Search::Filters::Docs
   def bulk_count(aggs = false)
     response = bulk_es_request('_msearch', { search_type: 'count'})
     parsed_response = JSON.parse(response)['responses']
+    if parsed_response.present? && parsed_response[0].present? && parsed_response[0].key?('error')
+      raise SearchService::Errors::InvalidJsonException.new('Bad ES Request')
+    end
     Rails.logger.info "ES PARSSED Response :: aggs -> #{aggs}, Response:: #{parsed_response}"
     Rails.logger.info "ES count response:: Account -> #{Account.current.id}, Queries: #{parsed_response.length}, Took:: #{parsed_response.map { |r| r['took'] }.join(',')}"
     count_response(parsed_response, aggs)

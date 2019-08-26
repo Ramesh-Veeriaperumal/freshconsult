@@ -3,7 +3,11 @@
     <%= t('account_created', :total_time => distance_of_time_in_words(current_account.created_at, Time.now.to_s), :date => formated_date(current_account.created_at, {:format => :short_day_with_week, :include_year => true}) ) %>
   </label>
 </div>
-
+<div class="request-change-status hide">
+  <img class="success-icon" src="/assets/success-icon.svg" />
+  <img class="failure-icon" src="/assets/alert-icon.svg" />
+  <span id="request-change-message" class="m0 pl5"></span>
+</div>
   <%
     plan = @subscription.subscription_plan
     is_new_sprout = new_sprout?(plan.name)
@@ -11,7 +15,7 @@
     field_agent_limit = @subscription.field_agent_limit || 0
     show_field_agent_info = fsm_supported_plan?(plan) && current_account.field_service_management_enabled? && field_agent_limit > 0
   %>
-
+<%= render :partial => "downgrade_info" %>
 <div class="well-active well-active-new">
   <div class="current-plan" >
     <h1 class="plan-title <%= 'classic' if @subscription.classic?%>">

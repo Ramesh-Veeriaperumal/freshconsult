@@ -720,6 +720,7 @@ en:
   change_equal_plan_title: "Are you sure you want to move to the new %{to_plan} plan?"
   downgrade_plan_title: "Are you sure you want to downgrade?"
   activate_free_plan: Activate Free Plan
+  request_change: Request change
   create: Create
   feedbackwidget_custom_image_info: if you are using a custom image the color and text will be ignored.
   account_admin_updated: Account admin has been updated!
@@ -3974,6 +3975,10 @@ en:
       change_your_plan: Change your plan
       warning_message: "Once you cancel your account, your customers and agents will not have access to your support portal, and your account will be temporarily suspended. We will permanently delete your data after 14 days (on <strong>%{cancel_date}</strong>). <br><br> You can restore your account during the 14 day suspension window by emailing us at support@freshdesk.com"
       trial_warning_message: "Once you cancel your account, your customers and agents will not have access to your support portal. Be sure this is really what you want to do."
+      cancellation_requested_on: "Account cancellation requested on"
+      cancellation_effective_from: "Effective from"
+      cancellation_info: "You will have uninterrupted access to your freshdesk account till %{cancellation_effective_date}. Click on 'Cancel request' if you want to continue using Freshdesk even after your current billing period."
+      cancel_request: "Cancel Request"
       feedback:
         budget: I don’t have the budget anymore
         budget_followup: You can downgrade to a lower plan in Freshdesk without affecting your existing tickets. In fact, if the budget is really tight, you could move to the Sprout plan with 3 free agents for life. <a href="http://www.freshdesk.com/free-support-software">Learn more about the free plan</a>
@@ -4898,7 +4903,7 @@ en:
     buy: Buy more
     available_seats: "%{count} seats available"
     available_seats_without_count: seats available
-    no_seats: No agent seats available
+    no_seats: No seats available
     export_title: "Export Agents to CSV"
     last_logged_in: Last logged in %{time} ago.
     last_logged: Last logged in
@@ -5032,6 +5037,23 @@ en:
   set_password: Set your password
   send_email_to_agent: Send Email to Agent
   import_data: Date Imported
+  downgrade:
+    billing_request_on: Subscription change requested on
+    billing_next_renewal: Effective from next renewal on
+    plan: Plan
+    agents: Agents
+    Field_technicians: Field technicians
+    billing_cycle: Billing Cycle
+    info: You can still make changes to your current subscription from below. Any other change request will replace this existing one.
+    omnichannel: Omnichannel
+    fsm: FSM
+    to: to
+    confirm_btn: Confirm
+    header_txt: Do you want to replace the existing request with the latest one?
+    existing_request: Existing request
+    latest_request: Latest request
+    subscription_change: Subscription change
+    upgrade_info: Once you hit 'Confirm' your existing request will be deleted and your latest request will be updated instantly.
   contacts:
     confirm_delete: Are you sure you want to delete this user?
     deleted_user_info: "Note: All communication from the deleted users will be marked as SPAM."

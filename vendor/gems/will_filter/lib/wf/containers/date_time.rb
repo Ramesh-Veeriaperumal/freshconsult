@@ -45,22 +45,21 @@ module Wf
       end
 
       def fsm_appointment_date_filter_sql_condition
-        agent_time_zone = User.current.time_zone
         date_time_filter_options_hash = TicketFilterConstants::DATE_TIME_FILTER_DEFAULT_OPTIONS_HASH
         if value == date_time_filter_options_hash[:today]
-          get_sql_condition(::Time.now.in_time_zone(agent_time_zone).beginning_of_day, ::Time.now.in_time_zone(agent_time_zone).end_of_day)
+          get_sql_condition(::Time.zone.now.beginning_of_day.to_s(:db), ::Time.zone.now.end_of_day.to_s(:db))
         elsif value == date_time_filter_options_hash[:yesterday]
-          get_sql_condition(::Time.now.in_time_zone(agent_time_zone).yesterday.beginning_of_day, ::Time.now.in_time_zone(agent_time_zone).yesterday.end_of_day)
+          get_sql_condition(::Time.zone.now.yesterday.beginning_of_day.to_s(:db), ::Time.zone.now.yesterday.end_of_day.to_s(:db))
         elsif value == date_time_filter_options_hash[:tomorrow]
-          get_sql_condition(::Time.now.in_time_zone(agent_time_zone).tomorrow.beginning_of_day, ::Time.now.in_time_zone(agent_time_zone).tomorrow.end_of_day)
+          get_sql_condition(::Time.zone.now.tomorrow.beginning_of_day.to_s(:db), ::Time.zone.now.tomorrow.end_of_day.to_s(:db))
         elsif value == date_time_filter_options_hash[:week]
-          get_sql_condition(::Time.now.in_time_zone(agent_time_zone).beginning_of_week, ::Time.now.in_time_zone(agent_time_zone).end_of_week)
+          get_sql_condition(::Time.zone.now.beginning_of_week.to_s(:db), ::Time.zone.now.end_of_week.to_s(:db))
         elsif value == date_time_filter_options_hash[:last_week]
-          get_sql_condition(::Time.now.in_time_zone(agent_time_zone).prev_week.beginning_of_week, ::Time.now.in_time_zone(agent_time_zone).prev_week.end_of_week)
+          get_sql_condition(::Time.zone.now.prev_week.beginning_of_week.to_s(:db), ::Time.zone.now.prev_week.end_of_week.to_s(:db))
         elsif value == date_time_filter_options_hash[:next_week]
-          get_sql_condition(::Time.now.in_time_zone(agent_time_zone).next_week.beginning_of_week, ::Time.now.in_time_zone(agent_time_zone).next_week.end_of_week)
+          get_sql_condition(::Time.zone.now.next_week.beginning_of_week.to_s(:db), ::Time.zone.now.next_week.end_of_week.to_s(:db))
         elsif value == date_time_filter_options_hash[:in_the_past]
-          return [" #{condition.full_key} <= '#{::Time.now.in_time_zone(agent_time_zone)}' "]
+          return [" #{condition.full_key} <= '#{::Time.zone.now.to_s(:db)}' "]
         elsif value == date_time_filter_options_hash[:none]
           return [" #{condition.full_key} is null"]
         else

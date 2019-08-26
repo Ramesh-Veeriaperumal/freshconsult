@@ -1,0 +1,88 @@
+get:
+  tags: [ticket fields]
+  description: View a ticket field's section
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      description: Ticket field ID
+      required: true
+    - name: section_id
+      in: path
+      type: integer
+      format: int64
+      description: Section ID
+      required: true
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/ticket_field_section_response'
+    403:
+      description: Access denied
+    404:
+      description: Section not found
+
+put:
+  tags: [ticket fields]
+  description: Update a ticket field's section
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      description: Ticket field ID
+      required: true
+    - name: section_id
+      in: path
+      type: integer
+      format: int64
+      description: Section ID
+      required: true
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/ticket_field_section_request'
+  responses:
+    201:
+      description: Success
+      schema:
+        $ref: '#/definitions/ticket_field_section_response'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+    404:
+      description: Section not found
+
+delete:
+  tags: [ticket fields]
+  description: Delete a ticket field's section
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      description: Ticket field ID
+      required: true
+    - name: section_id
+      in: path
+      type: integer
+      format: int64
+      description: Section ID
+      required: true
+  responses:
+    204:
+      description: Success
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+    404:
+      description: Section not found

@@ -133,6 +133,28 @@ class Billing::BillingControllerTest < ActionController::TestCase
     unstub_subscription_settings
   end
 
+  def test_subscription_reactivated_event_with_pending_cancellation_request
+    stub_subscription_settings
+    user = add_new_user(current_account)
+    current_account.launch(:downgrade_policy)
+    set_others_redis_key(current_account.account_cancellation_request_time_key, (Time.now.to_f * 1000).to_i, nil)
+    post :trigger, event_type: 'subscription_reactivated', content: normal_event_content, format: 'json'
+    assert_response 200
+    refute current_account.account_cancellation_requested_time
+  ensure
+    unstub_subscription_settings
+    current_account.rollback(:downgrade_policy)
+  end
+
+  def test_subscription_scheduled_cancellation_removed_event
+    stub_subscription_settings
+    user = add_new_user(current_account)
+    post :trigger, event_type: 'subscription_scheduled_cancellation_removed', content: normal_event_content, format: 'json'
+    assert_response 200
+  ensure
+    unstub_subscription_settings
+  end
+
   def test_card_added_event
     stub_subscription_settings
     user = add_new_user(current_account)

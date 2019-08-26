@@ -1,0 +1,14 @@
+type: object
+properties:
+  id:
+    type: integer
+  label:
+    type: string
+  choice_ids:
+    type: array
+    items:
+      type: integer
+  ticket_field_ids:
+    type: array
+    items:
+      type: integer

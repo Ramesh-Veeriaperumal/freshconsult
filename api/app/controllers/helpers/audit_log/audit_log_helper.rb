@@ -183,7 +183,11 @@ module AuditLog::AuditLogHelper
             description_arr = description_array_extract(description_arr, changes, description)
           end
         elsif description[:type] == :default
-          description_arr.push("#{description[:field]}\n\tfrom #{description[:value][:from]} to #{description[:value][:to]}\n")
+          if description[:value].present?
+            description_arr.push("#{description[:field]}\n\tfrom #{description[:value][:from]} to #{description[:value][:to]}\n")
+          else
+            description_arr.push("#{description[:field]}\n")
+          end
         end
       end
       description_arr

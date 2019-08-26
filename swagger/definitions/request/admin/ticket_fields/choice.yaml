@@ -1,0 +1,20 @@
+type: object
+properties:
+  value:
+    type: string
+  position:
+    type: integer
+  parent_choice_id:
+    type: integer
+  label_for_customer:
+    type: string
+  stop_sla_timer:
+    type: boolean
+  default:
+    type: boolean
+  group_ids:
+    type: array
+    items:
+      type: integer
+required:
+  - value

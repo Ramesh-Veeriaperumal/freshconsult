@@ -36,8 +36,12 @@ class Sync::FileToData::PostMigration
     def update_self_associations
       self_associations.uniq.each do |self_association|
         condition = "#{self_association[1]} in (?)"
-        condition += " AND #{self_association[2]} = '#{self_association[0]}'" if self_association[2].present?
-        self_association[0].constantize.where([condition, mapping_table[self_association[0]][:id].keys]).find_in_batches do |collection|
+        collection_criteria = [condition, mapping_table[self_association[0]][:id].keys]
+        if self_association[2].present?
+          condition += " AND #{self_association[2]} = ?"
+          collection_criteria = [condition, mapping_table[self_association[0]][:id].keys, self_association[0]]
+        end
+        self_association[0].constantize.where(collection_criteria).find_in_batches do |collection|
           collection.each do |obj|
             new_value = mapping_table[self_association[0]][:id][obj.safe_send((self_association[1]).to_s)]
             obj.safe_send("#{self_association[1]}=", new_value)
@@ -62,7 +66,7 @@ class Sync::FileToData::PostMigration
       DELETE_AGENT_ASSOCIATIONS.each do |association, reference|
         next if deleted_associations[reference[0]].blank?
         Sync::FileToData::PostMigration::Delete.new({ association.to_s => reference }, deleted_associations).prune_deleted_rows(@root_path, account, 'agents')
-        sql = "DELETE from #{model_table_mapping[association]} where #{reference[1]} IN (#{deleted_associations[reference[0]]})"
+        sql = "DELETE from #{model_table_mapping[association]} where #{reference[1]} IN (#{deleted_associations[reference[0]].join(', ')})"
         ActiveRecord::Base.connection.execute(sql)
       end
     end

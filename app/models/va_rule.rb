@@ -18,7 +18,7 @@ class VaRule < ActiveRecord::Base
   serialize :action_data
   serialize :condition_data
 
-  concerned_with :presenter
+  concerned_with :presenter, :esv2_methods
 
   publishable on: [:create, :update, :destroy]
 
@@ -54,6 +54,10 @@ class VaRule < ActiveRecord::Base
   scope :slack_destroy,:conditions => ["name in (?)",['slack_create', 'slack_update','slack_note']]
 
   acts_as_list :scope => 'account_id = #{account_id} AND #{connection.quote_column_name("rule_type")} = #{rule_type}'
+
+  alias_attribute :updated_by, :last_updated_by
+  # Included rabbitmq callbacks at the last
+  include RabbitMq::Publisher
 
   JOINS_HASH = {
     :helpdesk_schema_less_tickets => " inner join helpdesk_schema_less_tickets on helpdesk_tickets.id = helpdesk_schema_less_tickets.ticket_id "\
@@ -150,7 +154,13 @@ class VaRule < ActiveRecord::Base
   end
 
   def fetch_dispatcher_column(condition, name)
-    condition[:name] = Va::Condition::DISPATCHER_COLUMNS.key?(name) ? Va::Condition::DISPATCHER_COLUMNS[name] : name
+    condition[:name] = if Va::Condition::DISPATCHER_COLUMNS.key?(name)
+                         Va::Condition::DISPATCHER_COLUMNS[name]
+                       elsif !supervisor_rule? && Va::Condition::NEW_AUTOMATIONS_FIELD_CHANGE_MAPPING.key?(name.try(:to_sym))
+                         Va::Condition::NEW_AUTOMATIONS_FIELD_CHANGE_MAPPING[name.try(:to_sym)]
+                       else
+                         name
+                       end
   end
 
   def fetch_field_type(condition)
@@ -179,6 +189,7 @@ class VaRule < ActiveRecord::Base
     Va::Logger::Automation.log("performer matched=#{performer_matched}")
     return unless performer_matched
     event_matched = event_matches? current_events, evaluate_on
+    Va::Logger::Automation.log("event matched=#{event_matched}")
     pass_through evaluate_on, nil, doer if event_matched
   end
 
@@ -196,12 +207,14 @@ class VaRule < ActiveRecord::Base
   def pass_through(evaluate_on, actions=nil, doer=nil)
     is_a_match = false
     benchmark { is_a_match = matches(evaluate_on, actions) }
+    Va::Logger::Automation.log("condition matched=#{is_a_match}")
     trigger_actions(evaluate_on, doer) if is_a_match
     is_a_match ? evaluate_on : nil
   end
 
   def matches(evaluate_on, actions=nil)
     return true if conditions.empty?
+    Va::Logger::Automation.log("match_type=#{match_type}")
     s_match = match_type.to_sym
     to_ret = false
     conditions.each do |c|
@@ -447,13 +460,21 @@ class VaRule < ActiveRecord::Base
 
   def rule_path
     if observer_rule?
-      Rails.application.routes.url_helpers.edit_admin_observer_rule_url(self.id,
+      if account.automation_revamp_enabled?
+        "#{Account.current.url_protocol}://#{Account.current.host}/a/admin/automations/ticket_updates/#{id}/edit"
+      else
+        Rails.application.routes.url_helpers.edit_admin_observer_rule_url(self.id,
                                                         host: Account.current.host,
                                                         protocol: Account.current.url_protocol)
+      end
     elsif dispatchr_rule?
-      Rails.application.routes.url_helpers.edit_admin_va_rule_url(self.id,
+      if account.automation_revamp_enabled?
+        "#{Account.current.url_protocol}://#{Account.current.host}/a/admin/automations/ticket_creation/#{id}/edit"
+      else
+        Rails.application.routes.url_helpers.edit_admin_va_rule_url(self.id,
                                                         host: Account.current.host,
                                                         protocol: Account.current.url_protocol)
+      end
     else
       I18n.t('not_available')
     end

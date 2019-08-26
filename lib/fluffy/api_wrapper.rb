@@ -2,7 +2,9 @@ class Fluffy::ApiWrapper
 
   attr_accessor :domain, :limit, :granularity, :path
 
-  GRANULARITY_OPTIONS = { hour: 'HOUR', minute: 'MINUTE' }
+  HOUR_GRANULARITY = :hour
+  MINUTE_GRANULARITY = :minute
+  GRANULARITY_OPTIONS = { hour: 'HOUR', minute: 'MINUTE' }.freeze
 
   def initialize(domain)
     @domain = domain

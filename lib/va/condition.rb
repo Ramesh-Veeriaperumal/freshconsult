@@ -22,6 +22,10 @@ class Va::Condition
   
   DEFAULT_EVALUATE_ON = "ticket"
 
+  NEW_AUTOMATIONS_FIELD_CHANGE_MAPPING = {
+    created_at: :created_during
+  }.freeze
+
   def initialize(rule, account)
     @key, @operator, @action_performed = rule[:name], rule[:operator], rule[:action_performed] #by Shan hack must spelling mistake in criteria
     @evaluate_on_type = rule[:evaluate_on] || DEFAULT_EVALUATE_ON

@@ -217,7 +217,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     begin
       result = {}
       account = Account.find_by_id(params[:account_id]).make_current
-      account.update_fluffy_account(params[:new_limit].to_i)
+      account.change_fluffy_api_limit(params[:new_limit].to_i)
       result[:status] = "success"
     rescue => e
       result[:status] = "error"

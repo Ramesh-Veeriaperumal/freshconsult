@@ -1,10 +1,9 @@
 class Account < ActiveRecord::Base
-
   include MixpanelWrapper
   include Redis::RedisKeys
   include Redis::OthersRedis
   WIN_BACK_PERIOD = 2.freeze
-  
+
   def customer_details
     {
       :full_domain => "#{self.name}(#{self.full_domain})",
@@ -24,7 +23,7 @@ class Account < ActiveRecord::Base
         :tickets_count => self.tickets.count,
         :user_count => self.contacts.count,
         :account_created_on => self.created_at
-      }  
+      }
     end
   end
 
@@ -72,8 +71,8 @@ class Account < ActiveRecord::Base
       create_deleted_customers_info
       send_account_cancelled_email
       clear_account_data
-    else 
-      Rails.logger.info "Account cancellation failed."
+    else
+      Rails.logger.info 'Account cancellation failed.'
     end
   end
 
@@ -81,42 +80,51 @@ class Account < ActiveRecord::Base
     create_deleted_customers_info
     clear_account_data
   end
-  
-  def schedule_account_cancellation_request(feedback)
+
+  def schedule_account_cancellation_request(feedback, end_of_term_cancellation = false)
     SubscriptionNotifier.account_cancellation_requested(feedback) if Rails.env.production?
-    job_id = AccountCancelWorker.perform_in(WIN_BACK_PERIOD.days.from_now,{:account_id => self.id})
-    set_others_redis_key(self.account_cancellation_request_job_key,job_id,864000)
-    renewal_extend if self.subscription.renewal_in_two_days?
+    if end_of_term_cancellation
+      Billing::Subscription.new.cancel_subscription(self, end_of_term: true)
+      set_others_redis_key(account_cancellation_request_time_key, (Time.now.to_f * 1000).to_i, nil)
+      subscription_request.destroy if subscription_request.present?
+    else
+      job_id = AccountCancelWorker.perform_in(WIN_BACK_PERIOD.days.from_now, account_id: id)
+      set_others_redis_key(account_cancellation_request_job_key, job_id, 864_000)
+      renewal_extend if subscription.renewal_in_two_days?
+    end
   end
 
   def send_account_cancelled_email
-    email_list = self.account_managers.map(&:email).join(',')
-    SubscriptionNotifier.send_email_to_group(:admin_account_cancelled, email_list) if Rails.env.production?
+    SubscriptionNotifier.send_email_to_group(:admin_account_cancelled, self.account_managers.map(&:email)) if Rails.env.production?
   end
-  
+
   def perform_cancellation_for_paid_account
     response = Billing::Subscription.new.cancel_subscription(self)
     if response
-      update_crm
-      create_deleted_customers_info
-      add_churn
-      send_account_cancelled_email
-      schedule_cleanup
-      self.delete_account_cancellation_request_job_key
-    else 
-      Rails.logger.info "Account cancellation failed."
+      perform_paid_account_cancellation_actions
+      delete_account_cancellation_request_job_key
+    else
+      Rails.logger.info 'Account cancellation failed.'
     end
   end
-  
+
   def send_account_deleted_email(feedback)
     SubscriptionNotifier.account_deleted(self,feedback) if Rails.env.production?
   end
-  
+
   def paid_account?
     self.subscription.active? or self.subscription_payments.present?
   end
 
   def destroy_all_slack_rule
     account_va_rules.slack_destroy.destroy_all
+  end
+
+  def perform_paid_account_cancellation_actions
+    update_crm
+    create_deleted_customers_info
+    add_churn
+    send_account_cancelled_email
+    schedule_cleanup
   end
 end

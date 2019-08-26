@@ -33,8 +33,8 @@ class Billing::ChargebeeWrapper
 		ChargeBee::Subscription.update(account_id, :trial_end => 0)
 	end
 
-	def cancel_subscription(account_id)
-		ChargeBee::Subscription.cancel(account_id)
+	def cancel_subscription(account_id, data = {})
+		ChargeBee::Subscription.cancel(account_id, data)
 	end
 
 	def reactivate_subscription(account_id, data = {})

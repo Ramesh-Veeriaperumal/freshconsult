@@ -196,6 +196,7 @@ module Redis::Keys::Others
 
   #Account cancellation related keys
   ACCOUNT_CANCELLATION_REQUEST_JOB_ID = "ACCOUNT_CANCELLATION_REQUEST_JOB_ID:%{account_id}".freeze
+  ACCOUNT_CANCELLATION_REQUEST_TIME = "ACCOUNT_CANCELLATION_REQUEST_TIME:%{account_id}".freeze
   CUSTOM_ENCRYPTED_FIELD_KEY               = "CF_ENC_ENCRYPTION_KEY:%{account_id}".freeze
 
   # FreshID Keys
@@ -224,8 +225,8 @@ module Redis::Keys::Others
   #Customer segments max limit
   SEGMENT_LIMIT = "SEGMENT_LIMIT:%{account_id}".freeze
 
-  # Enable this to generate signup logs
-  ENABLE_SIGNUP_LOGS = 'ENABLE_SIGNUP_LOGS'.freeze
+  # Enable logs for specific account when supressed
+  ENABLE_LOGS = 'ENABLE_LOGS:%{account_id}'.freeze
 
   BULK_OPERATIONS_RATE_LIMIT_BATCH_SIZE = 'BULK_OPERATIONS_RATE_LIMIT_BATCH_SIZE:%{class_name}'.freeze
   BULK_OPERATIONS_RATE_LIMIT_NEXT_RUN_AT = 'BULK_OPERATIONS_RATE_LIMIT_NEXT_RUN_AT:%{class_name}'.freeze

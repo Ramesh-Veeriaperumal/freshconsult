@@ -332,6 +332,18 @@ class SAAS::AccountDataCleanup
     account.launch(:es_msearch)
   end
 
+  # def handle_api_v2_add_data
+  #   account.enable_fluffy_min_level
+  # end
+
+  def handle_api_v2_drop_data
+    if account.fluffy_enabled?
+      account.disable_fluffy 
+    elsif account.fluffy_min_level_enabled?
+      account.disable_fluffy_min_level
+    end
+  end
+
   def handle_disable_old_ui_add_data
     Rails.logger.info("Adding disable old ui feature for account: #{account.id}, Disable Old Ui Enabled: #{account.disable_old_ui_enabled?}")
     ::AdvancedTicketingConstants::ADVANCED_TICKETING_APPS.each do |app_name|

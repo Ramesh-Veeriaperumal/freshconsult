@@ -327,6 +327,17 @@ class Helpdesk::TicketField < ActiveRecord::Base
     }
   end
 
+  def nested_field_choices_by_id(picklist_values = self.picklist_values)
+    picklist_values.collect do |c|
+      {
+        name: c.value,
+        value: c.value,
+        id: c.id,
+        choices: nested_field_choices_by_id(c.sub_picklist_values)
+      }
+    end
+  end
+
   def dropdown_choices_with_name
     level1_picklist_values.collect { |c| [c.value, c.value] }
   end
@@ -378,11 +389,13 @@ class Helpdesk::TicketField < ActiveRecord::Base
     };
   end
 
-  def html_unescaped_choices(ticket = nil)
+  def html_unescaped_choices(ticket = nil, include_translation = false)
     case field_type
       when "custom_dropdown" then
-        picklist_values.collect { |c| [CGI.unescapeHTML(c.value), c.value,
-                                  {"data-id" => c.id}] }
+        picklist_values.collect do |cd|
+          translated_picklist_value = include_translation ? translated_choice(cd) : cd.value
+          [CGI.unescapeHTML(translated_picklist_value), cd.value, {"data-id" => cd.id}]
+        end
       when "default_priority" then
         TicketConstants.priority_names
       when "default_source" then
@@ -391,7 +404,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
         Helpdesk::TicketStatus.statuses_from_cache(Account.current).collect{|c|  [CGI.unescapeHTML(c[0]),c[1]] }
       when "default_ticket_type" then
         ticket_types = Account.current.ticket_types_from_cache.select{ |type| type.value != Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE }
-        ticket_types.collect { |c| [CGI.unescapeHTML(c.value), c.value,
+        ticket_types.collect { |c| [CGI.unescapeHTML(include_translation ? translated_choice(c) : c.value), c.value,
                                {"data-id" => c.id}] }
       when "default_agent" then
         return group_agents(ticket)
@@ -406,7 +419,10 @@ class Helpdesk::TicketField < ActiveRecord::Base
       when "default_company" then
          requester_companies(ticket)
       when "nested_field" then
-        picklist_values.collect { |c| [CGI.unescapeHTML(c.value), c.value] }
+        picklist_values.collect do |c| 
+          translated_picklist_value = include_translation ? translated_choice(c) : c.value
+          [CGI.unescapeHTML(translated_picklist_value), c.value]
+        end
       else
         []
      end
@@ -430,11 +446,11 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   def visible_status_choices(disp_col_name=nil)
     disp_col_name = disp_col_name.nil? ? "customer_display_name" : "name"
-    self.ticket_statuses.visible.collect{|st| [Helpdesk::TicketStatus.translate_status_name(st, CGI.unescapeHTML(disp_col_name)), st.status_id]}
+    self.ticket_statuses.visible.collect{|st| [Helpdesk::TicketStatus.translate_status_name(st, CGI.unescapeHTML(disp_col_name), translation_record), st.status_id]}
   end
 
   def nested_levels
-    nested_ticket_fields.map{ |l| { :id => l.id, :label => l.label, :label_in_portal => l.label_in_portal, 
+    nested_ticket_fields.map{ |l| { :id => l.id, :label => l.label, :label_in_portal => l.translated_label_in_portal, 
       :name => l.name, :level => l.level, :field_type => "nested_child" } } if field_type == "nested_field"
   end
 
@@ -659,6 +675,24 @@ class Helpdesk::TicketField < ActiveRecord::Base
     choice_hash
   end
 
+  def translated_label_in_portal(record = self)
+    label = record.level.to_i > 1 ? "customer_label_#{record.level}" : 'customer_label'
+    translation_record.present? && translation_record.translations[label].present? ? translation_record.translations[label] : record.label_in_portal
+  end
+
+  def translated_choice(picklist_value)
+    translation_record.present? && translation_record.translations['choices'].present? ? translation_record.translations['choices']["choice_#{picklist_value.picklist_id}"] || picklist_value.value : picklist_value.value
+  end
+
+  def translated_nested_choices
+    self.picklist_values.collect { |c| 
+      #Level value is being sent as a parameter for ease of translation
+      [c.value, translated_choice(c), c.sub_picklist_values.collect { |sub_c|
+            [sub_c.value, translated_choice(sub_c), sub_c.sub_picklist_values.collect { |i_c| [i_c.value,translated_choice(i_c)] } ] }
+      ]
+    }
+  end
+
   def encrypted_field?
     field_type.to_sym == CUSTOM_FIELD_PROPS[:encrypted_text][:dom_type]
   end
@@ -716,9 +750,40 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
       if(["nested_field"].include?(self.field_type))
         clear_picklist_cache
-        run_through_picklists(@choices, picklist_values, self)
+        Account.current.nested_field_revamp_enabled? ? run_through_picklists_with_id(@choices, picklist_values, self) 
+          : run_through_picklists(@choices, picklist_values, self)
       elsif("default_status".eql?(self.field_type))
         @choices.each_with_index{|attr,position| update_ticket_status(attr,position)}
+      end
+    end
+
+    def run_through_picklists_with_id(choices, picklists, parent)
+      choices.each_with_index do |choice, index|
+        choice.symbolize_keys!
+        pl_id = choice[:id]
+        pl_value = choice[:value]
+        current_tree = picklists.find{ |p| p.id == pl_id}
+        if current_tree
+          current_tree.destroy and next if choice[:destroyed]
+          current_tree.position = index + 1
+          current_tree.value = pl_value
+          if choice[:choices].present?
+            run_through_picklists_with_id(choice[:choices], 
+                                  current_tree.sub_picklist_values, 
+                                  current_tree)
+          end
+        else
+          build_picklists_with_id(choice, parent, index)
+        end
+      end
+    end
+
+    def build_picklists_with_id(choice, parent_pl_value, position=0)
+      choice.except!(:id, :destroyed).merge(position: position+1)
+      if parent_pl_value.id == self.id
+        picklist_values.build(choice)
+      else
+        parent_pl_value.sub_picklist_values.build(choice)
       end
     end
 

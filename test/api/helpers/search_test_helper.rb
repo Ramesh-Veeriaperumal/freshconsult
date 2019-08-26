@@ -140,6 +140,10 @@ module SearchTestHelper
     article_pattern
   end
 
+  def public_search_solution_article_pattern(article, context = SPOTLIGHT_SEARCH_CONTEXT)
+    search_solution_article_pattern(article, context).except(:portal_ids)
+  end
+
   def parents_info(article, context)
     category_meta = article.solution_folder_meta.solution_category_meta
     parents_info_pattern = {

@@ -37,7 +37,11 @@ module Ember
     def index; end
 
     def widgets_data
-      safe_send(params['type']) if validate_type
+      begin    
+        safe_send(params['type']) if validate_type
+      rescue SearchService::Errors::InvalidJsonException
+        render_request_error :internal_error, 400 # Handling known 500 as 400.
+      end
     end
 
     def widget_data_preview

@@ -1,0 +1,20 @@
+type: object
+properties:
+  automations:
+    type: array
+    items:
+      type: object
+      properties:
+        automations:
+          type: array
+          items:
+            type: object
+            all_of:
+              - $ref: '#/definitions/automation_rule'
+              - $ref: '#/definitions/automation_rule_common'
+              - $ref: '#/definitions/extension_generic'
+        meta:
+          type: object
+          properties:
+            count:
+              type: integer

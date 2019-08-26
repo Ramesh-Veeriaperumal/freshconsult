@@ -48,7 +48,7 @@
 
 .omni-disabled, .omni-enabled {
 	margin-top: 10px;
-	position: relative; 
+	position: relative;
 }
 
 .choose-plan-container {
@@ -73,7 +73,7 @@
 
 .features {
   display: flex;
-	
+
   &__icon {
   	@include margin-right(12px);
   }
@@ -81,7 +81,7 @@
   &__wrapper {
   	display: flex;
  	-webkit-flex: 1; /* Safari 6.1+ */
-  	-ms-flex: 1; /* IE 10 */ 
+  	-ms-flex: 1; /* IE 10 */
   	flex: 1;
   	align-items: center;
   	padding: 20px;
@@ -352,7 +352,7 @@
 }
 
 dt.vertical-top {
-	padding-top: 5px;	
+	padding-top: 5px;
 }
 
 .save-info {
@@ -369,7 +369,7 @@ dt.vertical-top {
 	.billing-cost{
 		margin-top: 10px;
 		font-size: 13px;
-		
+
 		h2{
 			font-size: 15px;
 			vertical-align: top;
@@ -581,7 +581,7 @@ input[type=text].input-agent-count{
 			font-weight: 300;
 			font-size: 15px;
 			line-height: 1.8;
-			
+
 			span {
 				display: list-item;
 				margin-left: 20px;
@@ -967,4 +967,184 @@ input[type=text].input-agent-count{
 }
 // --------------------------------------------------------------------------------------------
 //					Admin Subscription Revamp end
+// --------------------------------------------------------------------------------------------
+
+// --------------------------------------------------------------------------------------------
+//								 downgrade request change start
+// --------------------------------------------------------------------------------------------
+	.downgrade-backdrop {
+		z-index: -1;
+	}
+   .request-change-wrapper {
+			border: 1px solid #DADFE3;
+			border-bottom: 0;
+			border-top-left-radius: 4px;
+			border-top-right-radius: 4px;
+
+ 			.on-request {
+				border-bottom: 1px solid #DADFE3;
+				padding: 15px 25px;
+				.on-request-date{
+					font-weight: bold;
+
+ 				}
+				.next-renewal  {
+					font-weight: bold;
+					border-left: 1px solid #000;
+				}
+			}
+
+
+	 }
+	 .downgrade-submit-btn {
+	 	display: inline-block;
+	 }
+	 .request-change-container {
+				display: flex;
+				padding: 30px 25px;
+				.request-change-items {
+					padding-right: 50px;
+					.plan-from,.plan-to,.billing-cycle {
+						font-weight: bold;
+					}
+					.agents-count {
+						font-weight: bold;
+						color: #415D71;
+					}
+				}
+	}
+	.cancel-request {
+		float: right;
+		font-weight: bold;
+		cursor: pointer;
+		text-decoration: none;
+	}
+	.second-downgrade-modal-wrapper {
+		width: 65%;
+		left:42%;
+		.modal-header{
+			border:0 none;
+		}
+		.request-change-container {
+			border: 1px solid #DADFE3;
+
+		}
+		.downgrade-header {
+		    font-size: 16px;
+            font-weight: bold;
+		}
+		.existing-request,.latest-request {
+			font-size: 14px;
+			.content-text {
+              font-weight: bold;
+			}
+		}
+		.request-change-items {
+		 .plan-from,.plan-to,.billing-cycle {
+			 font-weight: normal
+			}
+		}
+		.agents-count-text,.fsm-count-text {
+		  font-weight: normal;
+		  color:#333;
+		}
+		.required-mark{
+			display: none;
+		}
+		.same-request {
+			.plan-from,.plan-to,.billing-cycle,.agents-count-text,.fsm-count-text {
+				font-weight: bold;
+			}
+			.required-mark{
+				font-weight:bold;
+				display: inline-block;
+			}
+		}
+
+		.plan-name {
+			width: 50%;
+		}
+
+		.agents-count {
+			width: 10%;
+		}
+
+		.fsm-count {
+		 	width: 25%;
+		}
+
+		.billing-cycle-details {
+			width: 35%;
+		}
+		.upgrade-info-wrapper {
+			border: 1px solid #FDDBB5;
+			background-color: #FEF1E1;
+			border-radius: 4px;
+			padding: 15px 10px;
+			.upgrade_info {
+				border-left: 1px solid #FDDBB5;
+			}
+			.upgrade-info-icon {
+			 vertical-align: middle;
+			}
+		}
+	}
+ 	 .request-change-info {
+		 padding: 15px 25px;
+		 border: 1px solid #BBDCFE;
+		 margin: 0;
+		 background-color: #E5F2FD;
+		 border-bottom-right-radius: 4px;
+		 border-bottom-left-radius: 4px;
+		 margin-bottom: 50px;
+		 display: flex;
+
+		 &.hide {
+		 	display: none !important;
+		 }
+	 }
+
+	 .request-change-status {
+	 	padding: 15px 25px;
+		margin: 0;
+		border-radius: 4px;
+		margin-bottom: 50px;
+		display: flex;
+
+ 		img{
+			margin-right: 5px;
+		    padding-right: 10px;
+		    border-right: 1px solid;
+			display: none;
+		}
+
+ 		&.success {
+			border: 1px solid #B4E5DA;
+			background-color: #E0F5F1;
+
+ 			.success-icon {
+				display: block;
+			}
+		}
+
+ 		&.failure {
+			border: 1px solid #FFD0D6;
+			background-color: #FFECF0;
+
+ 			.failure-icon {
+				display: block;
+			}
+		}
+
+ 		&.hide {
+			display: none !important;
+		}
+	}
+	 .downgrade-sprout{
+	 	display: none;
+	 }
+
+
+// --------------------------------------------------------------------------------------------
+//								 	downgrade request change end
 // --------------------------------------------------------------------------------------------

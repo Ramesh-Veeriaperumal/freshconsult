@@ -418,6 +418,8 @@ contact_ticket_activity:
   $ref: './response/contacts/ticket.yaml'
 company_search:
   $ref: './response/search/company.yaml'
+automation_search:
+  $ref: './response/search/automation.yaml'
 
 twitter_handle:
   $ref: './resource/twitter_handle.yaml'
@@ -667,15 +669,48 @@ group_response:
   $ref: ./definitions/response/groups/private_group_response.yaml
 
 # Ticket Fields Public API
-ticket_field_request:
+ticket_field_list_response:
   allOf:
     - $ref: '#/definitions/ticket_field'
-    - $ref: ./request/ticket_fields/api_ticket_field_request.yaml
+    - $ref: ./response/admin/ticket_fields/api_ticket_field.yaml
+    - $ref: '#/definitions/extension_generic'
+create_ticket_field_request:
+  allOf:
+    - $ref: '#/definitions/ticket_field'
+    - $ref: ./request/admin/ticket_fields/create_ticket_field.yaml
+    - $ref: '#/definitions/ticket_field_create_choices_request'
+update_ticket_field_request:
+  allOf:
+    - $ref: '#/definitions/ticket_field'
+    - $ref: ./request/admin/ticket_fields/update_ticket_field.yaml
+    - $ref: '#/definitions/ticket_field_update_choices_request'
 ticket_field_response:
   allOf:
     - $ref: '#/definitions/ticket_field'
-    - $ref: ./response/ticket_fields/api_ticket_field_response.yaml
+    - $ref: ./response/admin/ticket_fields/api_ticket_field.yaml
+    - $ref: '#/definitions/ticket_field_choices_response'
     - $ref: '#/definitions/extension_generic'
+ticket_field_create_choices_request:
+  allOf:
+    - $ref: ./request/admin/ticket_fields/create_choices.yaml
+ticket_field_update_choices_request:
+  allOf:
+    - $ref: ./request/admin/ticket_fields/update_choices.yaml
+ticket_field_choices_response:
+  allOf:
+    - $ref: ./response/admin/ticket_fields/choices.yaml
+ticket_field_choice_request:
+  allOf:
+    - $ref: ./request/admin/ticket_fields/choice.yaml
+ticket_field_choice_response:
+  allOf:
+    - $ref: ./response/admin/ticket_fields/choice.yaml
+ticket_field_section_request:
+  allOf:
+    - $ref: ./request/admin/ticket_fields/sections.yaml
+ticket_field_section_response:
+  allOf:
+    - $ref: ./response/admin/ticket_fields/sections.yaml
 #Roles Private API
 role_response:
   $ref: ./definitions/response/roles/private_role_response.yaml

@@ -1,17 +1,16 @@
 module Admin
   class ApiAccountsController < ApiApplicationController
-    
     include HelperConcern
     include ApiAdminAccountsControllerMethods
-    
+
     before_filter :validate_params, :validate_delegator, only: [:cancel]
     before_filter :validate_query_params, only: [:download_file]
-    
+
     def cancel
-      feedback = {:title => params[cname][:cancellation_feedback],
-                  :additional_info => params[cname][:additional_cancellation_feedback]}
+      feedback = { title: params[cname][:cancellation_feedback], additional_info: params[cname][:additional_cancellation_feedback] }
+      end_of_term_cancellation = current_account.launched?(:downgrade_policy)
       if current_account.paid_account?
-        current_account.schedule_account_cancellation_request(feedback)
+        current_account.schedule_account_cancellation_request(feedback, end_of_term_cancellation)
       else
         current_account.perform_account_cancellation(feedback)
       end
@@ -35,22 +34,23 @@ module Admin
     end
 
     private
+
       def load_object
         @item = current_account
       end
-      
+
       def scoper
         current_account
       end
-      
+
       def validate_params
         validate_body_params
       end
-      
+
       def constants_class
         :AccountsConstants.to_s.freeze
       end
-      
+
       wrap_parameters(*wrap_params)
   end
 end

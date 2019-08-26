@@ -51,10 +51,10 @@ module Redis::TicketsRedis
 	def tickets_list_push(key,values,direction = 'right', expires = 3600)
 			command = direction == 'right' ? 'rpush' : 'lpush'
 			unless values.is_a?(Array)
-				$redis_tickets.perform_redis_op("send", command, key, values)
+				$redis_tickets.perform_redis_op(command, key, values)
 			else
 				values.each do |val|
-					$redis_tickets.perform_redis_op("send", command, key, val)
+					$redis_tickets.perform_redis_op(command, key, val)
 				end
 			end
 			$redis_tickets.perform_redis_op("expire", key, expires) if expires

@@ -28,7 +28,7 @@ class Helpdesk::MergeTicketsController < ApplicationController
 
 	def complete_merge
 		if @source_tickets.present? && @target_ticket.present?
-			merge_ticket = TicketMerge.new(@target_ticket, @source_tickets, params)
+			merge_ticket = TicketMerge.new(@target_ticket, @source_tickets, merge_params)
 			merge_ticket.perform
           	
           	respond_to do |format|
@@ -75,5 +75,16 @@ class Helpdesk::MergeTicketsController < ApplicationController
     def reply_cc_limit
     	return unless params[:add_recipients]
       @reply_cc_limit_exceeded = (get_emails_list.size + @target_reply_cc.size) >= MAX_EMAIL_COUNT
-    end
+		end
+
+	private
+		def merge_params
+			{
+				primary_id: params[:target][:ticket_id],
+				ticket_ids: params[:source_tickets],
+				note_in_primary: {body: params[:target][:note], private: params[:target][:is_private]},
+				note_in_secondary: {body: params[:source][:note], private: params[:source][:is_private]},
+				convert_recepients_to_cc: params[:add_recipients]
+			}
+		end
 end

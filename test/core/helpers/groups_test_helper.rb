@@ -2,7 +2,7 @@ module GroupsTestHelper
   def create_group(account, options = {})
     group = account.groups.find_by_name(options[:name])
     return group if group
-    name = options[:name] || Faker::Name.name
+    name = options[:name] || "#{Faker::Name.name}_#{Time.now.to_i}"
     group = FactoryGirl.build(:group,:name=> name)
     group.account_id = account.id
     group.group_type = options[:group_type] || GroupConstants::SUPPORT_GROUP_ID
@@ -15,7 +15,7 @@ module GroupsTestHelper
   def create_group_with_agents(account, options = {})
     group = account.groups.find_by_name(options[:name])
     return group if group
-    name = options[:name] || Faker::Name.name
+    name = options[:name] || "#{Faker::Name.name}_#{Time.now.to_i}"
     group = FactoryGirl.build(:group,:name=> name)
     group.account_id = account.id
     group.group_type = options[:group_type] || GroupConstants::SUPPORT_GROUP_ID

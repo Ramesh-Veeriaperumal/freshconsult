@@ -94,6 +94,7 @@
       evaluate_on = @ticket
       total_rules = 0 # used if cascade_dispatcher feature not present
       rule_ids_with_exec_count = {}
+      Va::Logger::Automation.log('Dispatcher execution starts', true)
       @account.va_rules.each do |vr|
         begin
           Va::Logger::Automation.set_rule_id(vr.id)
@@ -104,7 +105,7 @@
                             vr.pass_through(@ticket, nil, @user)
           }
           rule_ids_with_exec_count[vr.id] = 1 if evaluate_on.present?
-          Va::Logger::Automation.log_execution_and_time(time, (evaluate_on.present? ? 1 : 0), rule_type, nil, nil, false)
+          Va::Logger::Automation.log_execution_and_time(time, (evaluate_on.present? ? 1 : 0), rule_type)
         rescue Exception => e
           Va::Logger::Automation.log_error(DISPATCHER_ERROR, e)
         end
@@ -140,6 +141,6 @@
     def log_total_execution_info(total_tickets, rule_type, start_time, end_time)
       total_time = end_time - start_time
       Va::Logger::Automation.unset_rule_id
-      Va::Logger::Automation.log_execution_and_time(total_time, total_tickets, rule_type, start_time, end_time, false)
+      Va::Logger::Automation.log_execution_and_time(total_time, total_tickets, rule_type, start_time, end_time)
     end
   end

@@ -40,14 +40,14 @@ class Va::Logger::Automation
       Thread.current[:automation_log_vars][:rule_id] = nil
     end
 
-    def log_execution_and_time(time, executed, rule_type=nil, start_time=nil, end_time=nil, append_default_content = true)
+    def log_execution_and_time(time, executed, rule_type=nil, start_time=nil, end_time=nil)
       return if Thread.current[:automation_log_vars].blank?
       Thread.current[:automation_log_vars][:time] = time.round(5) if time
       Thread.current[:automation_log_vars][:executed] = executed if executed
       Thread.current[:automation_log_vars][:rule_type] = rule_type if rule_type
       Thread.current[:automation_log_vars][:start_time] = Time.at(start_time).utc if start_time
       Thread.current[:automation_log_vars][:end_time] = Time.at(end_time).utc if end_time
-      log(EXECUTION_COMPLETED, append_default_content)
+      log(EXECUTION_COMPLETED, true)
       unset_execution_and_time
     end
 

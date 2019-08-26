@@ -1,7 +1,7 @@
 class Admin::SubscriptionDecorator < ApiDecorator
   include SubscriptionsHelper
 
-  delegate :id, :state, :subscription_plan_id, :renewal_period, :agent_limit, :card_number, :card_expiration, :billing_address, to: :record
+  delegate :id, :state, :subscription_plan_id, :renewal_period, :next_renewal_at, :agent_limit, :card_number, :card_expiration, :billing_address, to: :record
   EVENT_TYPE = 'plan'.freeze
 
   def initialize(record, options)
@@ -18,6 +18,7 @@ class Admin::SubscriptionDecorator < ApiDecorator
       state: state,
       plan_id: subscription_plan_id,
       renewal_period: renewal_period,
+      next_renewal_at: next_renewal_at,
       agent_seats: agent_limit,
       card_number: card_number,
       card_expiration: card_expiration,

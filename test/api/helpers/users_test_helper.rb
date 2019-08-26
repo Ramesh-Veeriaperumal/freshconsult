@@ -110,7 +110,8 @@ module UsersTestHelper
       ticket_scope: expected_output[:ticket_scope] || agent.ticket_permission,
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       role_ids: expected_output[:role_ids] || agent_user.role_ids,
-      group_ids: expected_output[:group_ids] || agent.group_ids
+      group_ids: expected_output[:group_ids] || agent.group_ids,
+      type: expected_output[:type] || 'support_agent'
     }
     {
       active: agent_user.active,

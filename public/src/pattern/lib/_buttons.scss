@@ -67,6 +67,10 @@
   }
 
 }
+.downgrade-btn {
+    @extend .btn
+}
+
 .pull-right{
   .btn{
     @include margin-right(0px); 

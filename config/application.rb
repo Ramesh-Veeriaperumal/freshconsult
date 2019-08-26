@@ -151,7 +151,9 @@ module Helpkit
       r.define_rule( :match => "^/(login\/sso).*", :type => :fixed, :metric => :rpm, :limit => 10,:per_ip => true)
       r.define_rule( :match => "^/integrations\/sugarcrm\/settings_update", :type => :fixed, :metric => :rph, :limit => 5,:per_ip => true)
       r.define_rule( :match => "^/export\/ticket_activities", :type => :fixed, :metric => :rph, :limit => 30, :per_url => true)
-      store = Redis.new(:host => RateLimitConfig["host"], :port => RateLimitConfig["port"],:timeout => 0.5)
+
+      redis_options = HashWithIndifferentAccess.new(RateLimitConfig.slice('host', 'port', 'password').merge('timeout' => 0.5))
+      store = Redis.new(redis_options)
       r.set_cache(store) if store.present?
     end
 

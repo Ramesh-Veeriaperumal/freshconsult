@@ -302,6 +302,11 @@ module Ember
         def allow_bot_api?
           cname_params.keys.none? { |x| BotConstants::SKIP_BOT_API.include?(x) }
         end
+        
+        def scoper
+          current_account.bots
+        end
+
     end
   end
 end

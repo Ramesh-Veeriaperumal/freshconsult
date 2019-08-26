@@ -235,7 +235,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     end
 
     def is_fluffy_enabled?
-      Account.current && Account.current.fluffy_enabled? && check_fluffy_header
+      Account.current && Account.current.fluffy_integration_enabled? && check_fluffy_header
     end
 
     def skip_on_header

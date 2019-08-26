@@ -6134,6 +6134,50 @@
         }
       }
     },
+    "/search/automations": {
+      "get": {
+        "tags": [
+          "search"
+        ],
+        "summary": "Search Automations",
+        "parameters": [
+          {
+            "name": "term",
+            "in": "query",
+            "type": "string",
+            "description": "search term for automations",
+            "required": true
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "type": "string",
+            "description": "search filter for automations",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/automation_search"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/companies/autocomplete": {
       "get": {
         "tags": [
@@ -10398,6 +10442,42 @@
       }
     },
     "/admin/ticket_fields": {
+      "get": {
+        "tags": [
+          "ticket fields"
+        ],
+        "description": "List all ticket fields",
+        "parameters": [
+          {
+            "name": "include",
+            "in": "query",
+            "type": "string",
+            "description": "Comma-separated, possible values - sections"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ticket_fields": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/ticket_field_list_response"
+                  }
+                },
+                "meta": {
+                  "$ref": "#/definitions/meta"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
       "post": {
         "tags": [
           "ticket fields"
@@ -10409,7 +10489,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/ticket_field_request"
+              "$ref": "#/definitions/create_ticket_field_request"
             }
           }
         ],
@@ -10425,6 +10505,476 @@
             "schema": {
               "$ref": "#/definitions/bad_request_error"
             }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/admin/ticket_fields/{id}": {
+      "get": {
+        "tags": [
+          "ticket fields"
+        ],
+        "description": "View a ticket field",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "Ticket field ID",
+            "required": true
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "type": "string",
+            "description": "Comma-separated, possible values - sections"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ticket_field_response"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Ticket Field not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ticket fields"
+        ],
+        "description": "Update a ticket field",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "Ticket field ID",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/update_ticket_field_request"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ticket_field_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Ticket Field not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ticket fields"
+        ],
+        "description": "Delete a ticket field",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "Ticket field ID",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Ticket Field not found"
+          }
+        }
+      }
+    },
+    "/admin/ticket_fields/{id}/choices": {
+      "post": {
+        "tags": [
+          "ticket fields"
+        ],
+        "description": "Create a ticket field's choice",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "Ticket field ID",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ticket_field_choice_request"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ticket_field_choice_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/admin/ticket_fields/{id}/choices/{choice_id}": {
+      "put": {
+        "tags": [
+          "ticket fields"
+        ],
+        "description": "Update a ticket field's choice",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "Ticket field ID",
+            "required": true
+          },
+          {
+            "name": "choice_id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "Choice ID",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ticket_field_choice_request"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ticket_field_choice_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Choice not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ticket fields"
+        ],
+        "description": "Delete a ticket field's choice",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "Ticket field ID",
+            "required": true
+          },
+          {
+            "name": "choice_id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "Choice ID",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Choice not found"
+          }
+        }
+      }
+    },
+    "/admin/ticket_fields/{id}/sections": {
+      "get": {
+        "tags": [
+          "ticket fields"
+        ],
+        "description": "List all ticket field's sections",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "Ticket field ID",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "sections": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/ticket_field_section_response"
+                  }
+                },
+                "meta": {
+                  "$ref": "#/definitions/meta"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "ticket fields"
+        ],
+        "description": "Create a ticket field's section",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "Ticket field ID",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ticket_field_section_request"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ticket_field_section_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/admin/ticket_fields/{id}/sections/{section_id}": {
+      "get": {
+        "tags": [
+          "ticket fields"
+        ],
+        "description": "View a ticket field's section",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "Ticket field ID",
+            "required": true
+          },
+          {
+            "name": "section_id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "Section ID",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ticket_field_section_response"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Section not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ticket fields"
+        ],
+        "description": "Update a ticket field's section",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "Ticket field ID",
+            "required": true
+          },
+          {
+            "name": "section_id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "Section ID",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ticket_field_section_request"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ticket_field_section_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Section not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ticket fields"
+        ],
+        "description": "Delete a ticket field's section",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "Ticket field ID",
+            "required": true
+          },
+          {
+            "name": "section_id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "Section ID",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Section not found"
           }
         }
       }
@@ -13712,6 +14262,10 @@
           "items": {
             "type": "integer"
           }
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of the agent ('support_agent' -> Support Agent, 'field_agent' -> Field technician)"
         }
       }
     },
@@ -16830,9 +17384,6 @@
         "label_for_customers": {
           "type": "string"
         },
-        "description": {
-          "type": "string"
-        },
         "position": {
           "type": "integer"
         },
@@ -16865,8 +17416,19 @@
         },
         "displayed_to_customers": {
           "type": "boolean"
+        },
+        "portal_cc": {
+          "type": "boolean"
+        },
+        "portal_cc_to": {
+          "type": "string"
         }
-      }
+      },
+      "required": [
+        "label",
+        "label_for_customers",
+        "type"
+      ]
     },
     "ticket_filter": {
       "type": "object",
@@ -20019,6 +20581,28 @@
         }
       }
     },
+    "automation_search": {
+      "type": "object",
+      "properties": {
+        "automations": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/automation_rule"
+            },
+            {
+              "$ref": "#/definitions/automation_rule_common"
+            },
+            {
+              "$ref": "#/definitions/extension_generic"
+            }
+          ]
+        },
+        "meta": {
+          "$ref": "#/definitions/meta"
+        }
+      }
+    },
     "twitter_handle": {
       "type": "object",
       "properties": {
@@ -23079,6 +23663,9 @@
         "renewal_period": {
           "type": "integer"
         },
+        "next_renewal_at": {
+          "type": "date-time"
+        },
         "agent_seats": {
           "type": "integer"
         },
@@ -24049,69 +24636,7 @@
     "group_response": {
       "$ref": "./definitions/response/groups/private_group_response.yaml"
     },
-    "ticket_field_request": {
-      "allOf": [
-        {
-          "$ref": "#/definitions/ticket_field"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "choices": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "value": {
-                    "type": "string"
-                  },
-                  "choices": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "value": {
-                          "type": "string"
-                        },
-                        "choices": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "value": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            "nested_ticket_fields": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "label": {
-                    "type": "string"
-                  },
-                  "label_in_portal": {
-                    "type": "string"
-                  },
-                  "description": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        }
-      ]
-    },
-    "ticket_field_response": {
+    "ticket_field_list_response": {
       "allOf": [
         {
           "$ref": "#/definitions/ticket_field"
@@ -24128,58 +24653,7 @@
             "default": {
               "type": "boolean"
             },
-            "choices": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "integer"
-                  },
-                  "value": {
-                    "type": "string"
-                  },
-                  "position": {
-                    "type": "integer"
-                  },
-                  "choices": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "integer"
-                        },
-                        "value": {
-                          "type": "string"
-                        },
-                        "position": {
-                          "type": "integer"
-                        },
-                        "choices": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "integer"
-                              },
-                              "value": {
-                                "type": "string"
-                              },
-                              "position": {
-                                "type": "integer"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            "nested_ticket_fields": {
+            "dependent_fields": {
               "type": "array",
               "items": {
                 "type": "object",
@@ -24194,9 +24668,6 @@
                     "type": "string"
                   },
                   "label_in_portal": {
-                    "type": "string"
-                  },
-                  "description": {
                     "type": "string"
                   },
                   "level": {
@@ -24219,11 +24690,578 @@
                   }
                 }
               }
+            },
+            "section_mappings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "section_id": {
+                    "type": "integer"
+                  },
+                  "position": {
+                    "type": "integer"
+                  }
+                }
+              }
+            },
+            "has_section": {
+              "type": "boolean"
             }
           }
         },
         {
           "$ref": "#/definitions/extension_generic"
+        }
+      ]
+    },
+    "create_ticket_field_request": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ticket_field"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "dependent_fields": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": "string"
+                  },
+                  "label_in_portal": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "section_mappings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "section_id": {
+                    "type": "integer"
+                  },
+                  "position": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/ticket_field_create_choices_request"
+        }
+      ]
+    },
+    "update_ticket_field_request": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ticket_field"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "dependent_fields": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": "string"
+                  },
+                  "label_in_portal": {
+                    "type": "string"
+                  },
+                  "deleted": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "section_mappings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "section_id": {
+                    "type": "integer"
+                  },
+                  "position": {
+                    "type": "integer"
+                  },
+                  "deleted": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/ticket_field_update_choices_request"
+        }
+      ]
+    },
+    "ticket_field_response": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ticket_field"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "default": {
+              "type": "boolean"
+            },
+            "dependent_fields": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "label_in_portal": {
+                    "type": "string"
+                  },
+                  "level": {
+                    "type": "integer",
+                    "enum": [
+                      2,
+                      3
+                    ]
+                  },
+                  "ticket_field_id": {
+                    "type": "integer"
+                  },
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            },
+            "section_mappings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "section_id": {
+                    "type": "integer"
+                  },
+                  "position": {
+                    "type": "integer"
+                  }
+                }
+              }
+            },
+            "has_section": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/ticket_field_choices_response"
+        },
+        {
+          "$ref": "#/definitions/extension_generic"
+        }
+      ]
+    },
+    "ticket_field_create_choices_request": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "choices": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "string"
+                  },
+                  "position": {
+                    "type": "integer"
+                  },
+                  "parent_choice_id": {
+                    "type": "integer"
+                  },
+                  "label_for_customer": {
+                    "type": "string"
+                  },
+                  "stop_sla_timer": {
+                    "type": "boolean"
+                  },
+                  "default": {
+                    "type": "boolean"
+                  },
+                  "group_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    }
+                  },
+                  "choices": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "position": {
+                          "type": "integer"
+                        },
+                        "parent_choice_id": {
+                          "type": "integer"
+                        },
+                        "choices": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "value": {
+                                "type": "string"
+                              },
+                              "position": {
+                                "type": "integer"
+                              },
+                              "parent_choice_id": {
+                                "type": "integer"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "value"
+          ]
+        }
+      ]
+    },
+    "ticket_field_update_choices_request": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "choices": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "string"
+                  },
+                  "position": {
+                    "type": "integer"
+                  },
+                  "parent_choice_id": {
+                    "type": "integer"
+                  },
+                  "label_for_customer": {
+                    "type": "string"
+                  },
+                  "stop_sla_timer": {
+                    "type": "boolean"
+                  },
+                  "default": {
+                    "type": "boolean"
+                  },
+                  "group_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    }
+                  },
+                  "deleted": {
+                    "type": "boolean"
+                  },
+                  "choices": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "position": {
+                          "type": "integer"
+                        },
+                        "parent_choice_id": {
+                          "type": "integer"
+                        },
+                        "deleted": {
+                          "type": "boolean"
+                        },
+                        "choices": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "value": {
+                                "type": "string"
+                              },
+                              "position": {
+                                "type": "integer"
+                              },
+                              "parent_choice_id": {
+                                "type": "integer"
+                              },
+                              "deleted": {
+                                "type": "boolean"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "value"
+          ]
+        }
+      ]
+    },
+    "ticket_field_choices_response": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "choices": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "value": {
+                    "type": "string"
+                  },
+                  "position": {
+                    "type": "integer"
+                  },
+                  "parent_choice_id": {
+                    "type": "integer"
+                  },
+                  "label_for_customer": {
+                    "type": "string"
+                  },
+                  "stop_sla_timer": {
+                    "type": "boolean"
+                  },
+                  "default": {
+                    "type": "boolean"
+                  },
+                  "group_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    }
+                  },
+                  "choices": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "value": {
+                          "type": "string"
+                        },
+                        "position": {
+                          "type": "integer"
+                        },
+                        "parent_choice_id": {
+                          "type": "integer"
+                        },
+                        "choices": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "value": {
+                                "type": "string"
+                              },
+                              "position": {
+                                "type": "integer"
+                              },
+                              "parent_choice_id": {
+                                "type": "integer"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ticket_field_choice_request": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string"
+            },
+            "position": {
+              "type": "integer"
+            },
+            "parent_choice_id": {
+              "type": "integer"
+            },
+            "label_for_customer": {
+              "type": "string"
+            },
+            "stop_sla_timer": {
+              "type": "boolean"
+            },
+            "default": {
+              "type": "boolean"
+            },
+            "group_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          },
+          "required": [
+            "value"
+          ]
+        }
+      ]
+    },
+    "ticket_field_choice_response": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "value": {
+              "type": "string"
+            },
+            "position": {
+              "type": "integer"
+            },
+            "parent_choice_id": {
+              "type": "integer"
+            },
+            "label_for_customer": {
+              "type": "string"
+            },
+            "stop_sla_timer": {
+              "type": "boolean"
+            },
+            "default": {
+              "type": "boolean"
+            },
+            "group_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ticket_field_section_request": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "label": {
+              "type": "string"
+            },
+            "choice_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "ticket_field_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          },
+          "required": [
+            "label",
+            "choice_ids"
+          ]
+        }
+      ]
+    },
+    "ticket_field_section_response": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "label": {
+              "type": "string"
+            },
+            "choice_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "ticket_field_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          }
         }
       ]
     },

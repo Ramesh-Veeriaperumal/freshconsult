@@ -10,6 +10,8 @@ properties:
     format: int64
   renewal_period:
     type: integer
+  next_renewal_at:
+    type: date-time
   agent_seats:
     type: integer
   card_number:

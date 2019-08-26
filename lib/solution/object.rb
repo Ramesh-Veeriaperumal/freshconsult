@@ -129,7 +129,7 @@ class Solution::Object
 		attachment_builder(object, 
 						   (@params["#{lang}_#{short_name}"] || {})[:attachments],
 						   (@params["#{lang}_#{short_name}"] || {})[:cloud_file_attachments],
-						   (@params["#{lang}_#{short_name}"] || {})[:attachments_list])
+						   (@params["#{lang}_#{short_name}"] || {})[:attachments_list] || @args["attachments_list"])
 	end
 
 	def primary_version_check?

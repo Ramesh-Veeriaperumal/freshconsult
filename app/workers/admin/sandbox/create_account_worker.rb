@@ -89,9 +89,8 @@ class Admin::Sandbox::CreateAccountWorker < BaseWorker
         data = { trial_end: AccountConstants::SANDBOX_TRAIL_PERIOD.days.from_now.utc.to_i }
         result = Billing::ChargebeeWrapper.new.update_subscription(subscription.account_id, data)
         raise unless result.subscription.status.eql?('in_trial')
-        subscription.next_renewal_at = Time.at(result.subscription.trial_end).utc
-        subscription.state.downcase!
-        subscription.sneaky_save
+        subscription.update_column(:next_renewal_at, Time.at(result.subscription.trial_end).utc)
+        subscription.update_column(:state, subscription.state.downcase)
       end
     rescue StandardError => e
       Rails.logger.error "Error in extending sandbox trial period #{e.message} #{e.backtrace[0..10].inspect}"

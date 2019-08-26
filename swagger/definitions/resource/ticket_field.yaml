@@ -4,8 +4,6 @@ properties:
     type: string
   label_for_customers:
     type: string
-  description:
-    type: string
   position:
     type: integer
   'type':
@@ -22,3 +20,11 @@ properties:
     type: boolean
   displayed_to_customers:
     type: boolean
+  portal_cc:
+    type: boolean
+  portal_cc_to:
+    type: string
+required:
+- label
+- label_for_customers
+- 'type'

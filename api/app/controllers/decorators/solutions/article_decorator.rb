@@ -39,7 +39,7 @@ class Solutions::ArticleDecorator < ApiDecorator
     }
     ret_hash.merge!(category_and_folder)
     ret_hash.merge!(draft_info(record_or_draft))
-    ret_hash.merge!(private_hash) if private_api?
+    ret_hash.merge!(private_hash) if private_api? || @search_context
     ret_hash
   end
 
@@ -48,7 +48,7 @@ class Solutions::ArticleDecorator < ApiDecorator
       category_name: category_name,
       folder_name: folder_name
     )
-    result[:portal_ids] = category_meta.portal_solution_categories.map(&:portal_id) if @search_context == SPOTLIGHT_SEARCH_CONTEXT
+    result[:portal_ids] = category_meta.portal_solution_categories.map(&:portal_id) if private_api? && @search_context == SPOTLIGHT_SEARCH_CONTEXT
     result
   end
 

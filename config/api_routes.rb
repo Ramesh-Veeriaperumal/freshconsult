@@ -103,6 +103,7 @@ Helpkit::Application.routes.draw do
       resources :companies, only: [:index]
       post :solutions, to: 'solutions#results'
       get :solutions, to: 'solutions#results'
+      get :automations, to: 'automations#results'
     end
     get '/companies/autocomplete', to: 'api_search/autocomplete#companies'
 
@@ -314,6 +315,12 @@ Helpkit::Application.routes.draw do
       resources :mailboxes, controller: 'email/mailboxes', only: [:create, :show, :destroy]
       get '/settings', to: 'email/settings#show'
       put '/settings', to: 'email/settings#update'
+    end
+
+    scope '/notifications' do
+      scope '/email' do
+        resource :bcc, controller: 'notifications/email/bcc', only: [:update, :show]
+      end
     end
 
     resources :email_notifications, controller: 'admin/api_email_notifications', only: [:show, :update]

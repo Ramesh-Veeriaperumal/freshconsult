@@ -67,6 +67,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/api_email_notification"
     resource :"email/setting", only: %i[show update]
     resource :"email/mailbox", only: %i[create show destroy]
+    resource :"notifications/email/bcc", only: %i[update show]
   end
 
   reply_ticket do
@@ -168,6 +169,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/custom_translation", only: [:download]
     resource :"settings/helpdesk", only: [:update]
     resource :"admin/account_feature", only: [:create, :destroy]
+    resource :"api_search/automation", only: [:results]
     resource :"ember/admin/freddy_skill", only: [:index, :show, :update]
   end
 

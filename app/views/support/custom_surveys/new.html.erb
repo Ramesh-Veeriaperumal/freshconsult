@@ -53,7 +53,7 @@
 					<h2></h2>
 					<%= render partial: 'layouts/shared/survey', locals: { survey_handle: @survey_handle, rating: @rating, translation_record: @translation_record, language: @language} %>
 				<% else %>
-					<h2><%= @translation_record.present? ? @translation_record.translations[:thanks_text] || @survey_handle.survey.thanks_text : @survey_handle.survey.thanks_text%></h2>
+					<h2><%= @translation_record.present? ? @translation_record.translations['thanks_text'] || @survey_handle.survey.thanks_text : @survey_handle.survey.thanks_text%></h2>
 				<% end %>
 				<div class="survey-overlay center" style="display:none;"></div>
 				<div class="loading">
@@ -66,10 +66,10 @@
 						<% @survey_handle.survey.feedback_questions.each_with_index do |question,qindex| %>
 							<div class="survey-question">
 								<span class="pull-left"><%= qindex+1 %>.</span>
-								<div class = "ques-desc"><%= @translation_record.present? ? @translation_record.translations.fetch(:additional_questions, {})["question_#{question.id}".to_sym] || question.label : question.label %></div>
+								<div class = "ques-desc"><%= @translation_record.present? ? @translation_record.translations.fetch('additional_questions', {})["question_#{question.id}"] || question.label : question.label %></div>
 								<div class="ques-ans">
 									<% question.choices.each_with_index do |option, index| %>
-										<span class="survey-rating none question-rating-<%=qindex%>" id="rating_<%=index%>" data-class="<%=CustomSurvey::Survey::CUSTOMER_RATINGS_STYLE[option[:face_value]]%>" data-id="<%=option[:face_value]%>" data-question-id="<%=qindex%>" data-name="<%=@translation_record.present? ? @translation_record.translations.fetch(:additional_questions, {}).fetch(:choices, {})[option[:face_value]] || option[:name] : option[:name]%>" onmouseover="javascript:SurveyRating.hover(this);" onmouseout="javascript:SurveyRating.resetLabel(this);" onclick="javascript:SurveyRating.input(this);"></span>
+										<span class="survey-rating none question-rating-<%=qindex%>" id="rating_<%=index%>" data-class="<%=CustomSurvey::Survey::CUSTOMER_RATINGS_STYLE[option[:face_value]]%>" data-id="<%=option[:face_value]%>" data-question-id="<%=qindex%>" data-name="<%=@translation_record.present? ? @translation_record.translations.fetch('additional_questions', {}).fetch('choices', {})[option[:face_value]] || option[:name] : option[:name]%>" onmouseover="javascript:SurveyRating.hover(this);" onmouseout="javascript:SurveyRating.resetLabel(this);" onclick="javascript:SurveyRating.input(this);"></span>
 									<%end%>
 									<label id="rating-label-<%=qindex%>" class="muted rating-label" data-selected-value="&nbsp;" data-selected-id="none" data-custom-field="<%=question.name%>">&nbsp;</label>
 								</div>
@@ -79,7 +79,7 @@
 				<%end%>
 				<%if @survey_handle.survey.can_comment? %>
 					<textarea autocomplete="off" class="input-comment required" id="survey_feedback" name="feedback" rel="ghostwriter" type="text" width="100%"
-						placeholder= "<%= @translation_record.present? ? @translation_record.translations[:comments_text] || @survey_handle.survey.comments_text : @survey_handle.survey.comments_text %>" ></textarea>
+						placeholder= "<%= @translation_record.present? ? @translation_record.translations['comments_text'] || @survey_handle.survey.comments_text : @survey_handle.survey.comments_text %>" ></textarea>
 				<% end %>
 				<% if csat_email_scan_compatibile || (!@survey_handle.survey.feedback_questions.blank? || @survey_handle.survey.can_comment?) %>
 					<%= f.submit t('support.surveys.new.submit'),:id => "submit_survey", :class => "btn btn-primary btn-comment" %>

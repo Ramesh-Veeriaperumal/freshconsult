@@ -2,10 +2,11 @@ class Admin::SandboxMailer < ActionMailer::Base
   layout 'email_font'
   include Sync::Constants
 
-  def sandbox_mailer(account, options = {})
+  def sandbox_mailer(emails, account, options = {})
+    @other_emails = emails[:other]
     Time.zone = account.time_zone
     headers = {
-      :to => options[:recipients],
+      :to => emails[:group],
       :from => AppConfig['from_email'],
       :subject => options[:subject],
       :sent_on => Time.now,

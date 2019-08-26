@@ -19,4 +19,5 @@ module RabbitMq::Keys
   TIME_SHEET_SUBSCRIBERS       =  ["activities"]
   CTI_CALL_SUBSCRIBERS         =  ["cti"]
   AGENT_SUBSCRIBERS            =  []
+  VA_RULE_SUBSCRIBERS          =  ['search'].freeze
 end

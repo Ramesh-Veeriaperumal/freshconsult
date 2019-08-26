@@ -11,6 +11,7 @@ api_error_messages:
   array_invalid_format: "It should contain elements that are in the '%{accepted}' format"
   not_included: "It should be one of these values: '%{list}'"
   max_agents_reached: "You have reached the maximum number of agents %{max_count} your subscription allows. You need to delete an existing agent or contact your account administrator to purchase additional agents."
+  max_field_agents_reached: "You have reached the maximum number of field technicians your subscription allows. Please delete an existing field technician or contact your account administrator to purchase additional seats."
   special_chars_present: "It should not have strings containing the special characters: '%{chars}'"
   incompatible_field: "It cannot be set, as it is incompatible with the state of the resource."
   timer_running_true: "It cannot be set, if timer_running was true already"
@@ -254,6 +255,7 @@ api_error_messages:
   invalid_date_time_range: "Invalid date time range, end time should be greater or equal to the start time."
   field_agent_scope: "Field technician should have restricted or group scope"
   field_agent_roles: "Field technician should have agent role"
+  field_agent_state: "Field technician cannot be an occasional agent"
 
   source_update_not_permitted: "Source of tickets of sources %{sources} can not be updated."
   #help widget validation error messages
@@ -371,3 +373,4 @@ api_error_messages:
   smtp_socket_error: 'Could not connect to the smtp server. Please verify server name, port and credentials'
   smtp_invalid_credentials: 'Error while authenticating the smtp server. Please make sure your user name and password are correct'
   smtp_error: "Error while verifying the mailbox smtp details - %{error}"
+  file_size_limit_error: "File size cannot exceed %{file_size}."

@@ -15,10 +15,6 @@ module BotHelper
     FeatureConstants::BOT
   end
 
-  def scoper
-    current_account.bots
-  end
-
   def bot_info(bot)
     "Bot training status:: #{bot.training_status}, Bot Id : #{bot.id}, Account Id : #{current_account.id}, Portal Id : #{bot.portal_id}, External Id : #{bot.external_id}" if bot
   end

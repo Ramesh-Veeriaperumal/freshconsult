@@ -321,6 +321,8 @@
   $ref: ./search/solutions.yaml
 /companies/autocomplete:
   $ref: ./search/companies.yaml
+/search/automations:
+  $ref: ./search/automations.yaml
 
 #Dashboard activities
 /dashboards/activities:
@@ -541,6 +543,16 @@
 #Ticket Fields Public API
 /admin/ticket_fields:
   $ref: ./admin/ticket_fields/list_and_create.yaml
+/admin/ticket_fields/{id}:
+  $ref: ./admin/ticket_fields/crud.yaml
+/admin/ticket_fields/{id}/choices:
+  $ref: ./admin/ticket_fields/list_and_create_choices.yaml
+/admin/ticket_fields/{id}/choices/{choice_id}:
+  $ref: ./admin/ticket_fields/crud_choices.yaml
+/admin/ticket_fields/{id}/sections:
+  $ref: ./admin/ticket_fields/list_and_create_sections.yaml
+/admin/ticket_fields/{id}/sections/{section_id}:
+  $ref: ./admin/ticket_fields/crud_sections.yaml
 
 #Roles Private API
 /roles:
