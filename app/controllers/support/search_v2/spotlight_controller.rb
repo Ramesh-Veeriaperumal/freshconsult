@@ -84,7 +84,7 @@ class Support::SearchV2::SpotlightController < SupportController
           es_params[:article_status]            = SearchUtil::DEFAULT_SEARCH_VALUE.to_i
           es_params[:article_visibility]        = visibility_opts(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN)
           es_params[:article_company_id]        = current_user.company_ids if current_user
-          es_params[:article_category_id]       = current_portal.portal_solution_categories.map(&:solution_category_meta_id)
+          es_params[:article_category_id]       = soln_search_categories
         end
 
         if searchable_klasses.include?('Topic')
@@ -237,6 +237,12 @@ class Support::SearchV2::SpotlightController < SupportController
         'topic'         => { model: 'Topic',                    associations: [ :forum ] },
         'article'       => { model: 'Solution::Article',        associations: [:article_body, { :solution_folder_meta => :solution_category_meta } ] }
       }
+    end
+
+    def soln_search_categories
+      portal_category_meta_ids = current_portal.portal_solution_categories.map(&:solution_category_meta_id);
+      filtered_categories = params[:category_ids].split(",").map(&:to_i) & portal_category_meta_ids if params[:category_ids].present?
+      filtered_categories.presence || portal_category_meta_ids
     end
 
 end
