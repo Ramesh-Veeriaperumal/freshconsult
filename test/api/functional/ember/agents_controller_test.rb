@@ -31,16 +31,6 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     end
   end
 
-  def get_a_group(group_name, account, toggle_availability)
-    group = FactoryGirl.build(:group, name: group_name)
-    group.group_type = GroupConstants::SUPPORT_GROUP_ID
-    group.account_id = account.id
-    group.ticket_assign_type = 1
-    group.toggle_availability = toggle_availability
-    group.save!
-    group
-  end
-
   def test_multiple_agent_creation_with_valid_emails_and_no_role
     valid_emails = [Faker::Internet.email, Faker::Internet.email]
     invalid_emails = []
@@ -206,30 +196,10 @@ class Ember::AgentsControllerTest < ActionController::TestCase
   def test_update_with_availability
     user = get_or_create_agent
     add_privilege(User.current,:manage_availability)
-    Account.current.agent_groups.create(user_id: user.id, group_id: Account.current.groups.first.id)
-    Account.current.groups.update_all(toggle_availability: true)
-    user.reload
     params_hash = { ticket_assignment: { available: false } }
     put :update, construct_params({ version: 'private', id: user.id }, params_hash)
     assert_response 200
     match_json(private_api_agent_pattern(user.agent))
-  end
-
-  def test_update_with_availability_invalid
-    @account = Account.current
-    user = add_test_agent(@account, role: Role.find_by_name('Agent').id,
-                          ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
-    group = get_a_group('test_group', @account, 0)
-    add_privilege(user, :manage_availability)
-    group.agent_groups.build(user_id: user.id)
-    params_hash = { ticket_assignment: { available: [true, false].sample } }
-    put :update, construct_params({ version: 'private', id: user.id }, params_hash)
-    assert_response 400
-    assert response.body.include? 'Toggle availability not allowed'
-  ensure
-    user.destroy if user.present?
-    group.destroy if group.present?
-    @account = nil
   end
 
   def test_update_with_toggle_shortcuts_for_agent
