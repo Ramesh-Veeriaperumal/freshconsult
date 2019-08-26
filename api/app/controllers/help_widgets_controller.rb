@@ -4,6 +4,8 @@ class HelpWidgetsController < ApiApplicationController
   include HelpWidgetConstants
   include FrustrationTrackingConcern
 
+  before_filter :check_feature
+
   decorate_views
 
   def index
@@ -76,6 +78,10 @@ class HelpWidgetsController < ApiApplicationController
       render_custom_errors(widget, true) unless widget.valid?(action_name.to_sym)
     end
 
+    def check_feature
+      render_request_error(:require_feature, 403, feature: :help_widget) unless current_account.help_widget_enabled?
+    end
+
     def widget_name
       I18n.t('help_widget.untitled_widget',
              count: current_account.help_widgets.active.where(product_id: cname_params[:product_id]).count + 1)
@@ -92,9 +98,5 @@ class HelpWidgetsController < ApiApplicationController
     def validate_widget_count
       widget_count = Account.current.account_additional_settings_from_cache.widget_count
       render_request_error(:widget_limit_exceeded, 400, widget_count: widget_count) if Account.current.help_widgets.active.count >= widget_count
-    end
-
-    def launch_party_name
-      FeatureConstants::HELP_WIDGET
     end
 end

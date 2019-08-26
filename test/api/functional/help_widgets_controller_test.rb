@@ -1,10 +1,12 @@
 require_relative '../test_helper'
 require 'sidekiq/testing'
+require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
 
 class HelpWidgetsControllerTest < ActionController::TestCase
   include HelpWidgetsTestHelper
   include FreshmarketerTestHelper
   include ProductsHelper
+  include AccountTestHelper
 
   ALL_FM_METHODS = [:create_experiment, :enable_predictive_support, :disable_predictive_support, :enable_integration,
                     :disable_integration, :cdn_script, :create_account, :associate_account, :domains].freeze
@@ -39,6 +41,42 @@ class HelpWidgetsControllerTest < ActionController::TestCase
   def reset_widget_count
     additional_settings = Account.current.account_additional_settings
     additional_settings.additional_settings.delete(:widget_count)
+  end
+
+  def test_plan_based_widget_features_sprout
+    sub_plan = SubscriptionPlan.find_by_name(SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout_jan_17])
+    SubscriptionPlan.stubs(:find_by_name).returns(sub_plan)
+    create_sample_account('sprouttest', 'sprouttest@freshdesk.test')
+    assert @account.features?(:help_widget)
+    refute @account.features?(:help_widget_appearance)
+    refute @account.features?(:help_widget_predictive)
+  ensure
+    SubscriptionPlan.unstub(:find_by_name)
+    @account.destroy
+  end
+
+  def test_plan_based_widget_features_blossom
+    sub_plan = SubscriptionPlan.find_by_name(SubscriptionPlan::SUBSCRIPTION_PLANS[:blossom_jan_17])
+    SubscriptionPlan.stubs(:find_by_name).returns(sub_plan)
+    create_sample_account('blossomtest', 'blossomtest@freshdesk.test')
+    assert @account.features?(:help_widget)
+    assert @account.features?(:help_widget_appearance)
+    refute @account.features?(:help_widget_predictive)
+  ensure
+    SubscriptionPlan.unstub(:find_by_name)
+    @account.destroy
+  end
+
+  def test_plan_based_widget_features_garden
+    sub_plan = SubscriptionPlan.find_by_name(SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_jan_17])
+    SubscriptionPlan.stubs(:find_by_name).returns(sub_plan)
+    create_sample_account('gardentest', 'gardentest@freshdesk.test')
+    assert @account.features?(:help_widget)
+    assert @account.features?(:help_widget_appearance)
+    assert @account.features?(:help_widget_predictive)
+  ensure
+    SubscriptionPlan.unstub(:find_by_name)
+    @account.destroy
   end
 
   def test_index
@@ -142,12 +180,20 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     match_json(validation_error_pattern(bad_request_error_pattern(:test, 'Unexpected/invalid field in request', code: 'invalid_field')))
   end
 
-  def test_show_without_feature
+  def test_show_without_launch_party
     help_widget = create_widget
     @account.rollback(:help_widget)
     get :show, controller_params(version: 'v2', id: help_widget.id)
     assert_response 403
     @account.launch(:help_widget)
+  end
+
+  def test_show_without_feature
+    help_widget = create_widget
+    @account.remove_feature(:help_widget)
+    get :show, controller_params(version: 'v2', id: help_widget.id)
+    assert_response 403
+    @account.add_feature(:help_widget)
   end
 
   def test_show_with_incorrect_credentials
@@ -213,6 +259,46 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     match_json(widget_show_pattern(widget))
     assert widget.settings[:appearance][:theme_color] == request_params[:settings][:appearance].fetch('theme_color')
     assert widget.settings[:appearance][:button_color] == request_params[:settings][:appearance].fetch('button_color')
+  end
+
+  def test_update_appearance_without_feature
+    @account.remove_feature(:help_widget_appearance)
+    widget = create_widget
+    request_params = {
+      settings: {
+        appearance: {
+          'theme_color' => '#0f52d5',
+          'button_color' => '#16193e'
+        }
+      }
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    assert_response 400
+    match_json(validation_error_pattern(bad_request_error_pattern(:appearance, :require_feature, feature: :help_widget_appearance)))
+    @account.add_feature(:help_widget_appearance)
+  end
+
+  def test_update_predictive_without_feature
+    @account.remove_feature(:help_widget_predictive)
+    widget = create_widget
+    request_params = {
+      settings: {
+        components: {
+          predictive_support: true
+        },
+        predictive_support: {
+          domain_list: ['test.fresh.co']
+        }
+      },
+      freshmarketer: {
+        email: 'padmashri@fmstack.com',
+        type: 'create'
+      }
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    assert_response 400
+    match_json(validation_error_pattern(bad_request_error_pattern(:predictive_support, :require_feature, feature: :help_widget_predictive)))
+    @account.add_feature(:help_widget_predictive)
   end
 
   def test_update_invalid_with_wrong_appearance_format

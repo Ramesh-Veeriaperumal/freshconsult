@@ -66,17 +66,24 @@ module Widget
     end
 
     def test_index_without_help_widget_launch
-      Account.any_instance.stubs(:all_launched_features).returns([])
+      @account.rollback(:help_widget)
       get :index, controller_params
       assert_response 403
-      Account.any_instance.unstub(:all_launched_features)
+      @account.launch(:help_widget)
+    end
+
+    def test_index_without_help_widget_feature
+      @account.remove_feature(:help_widget)
+      get :index, controller_params
+      assert_response 403
+      @account.add_feature(:help_widget)
     end
 
     def test_index_without_anonymous_tickets
-      Account.any_instance.stubs(:features?).with(:anonymous_tickets).returns(false)
+      @account.remove_feature(:anonymous_tickets)
       get :index, controller_params
       assert_response 403
-      Account.any_instance.unstub(:features?)
+      @account.add_feature(:anonymous_tickets)
     end
 
     def test_index_with_choices

@@ -29,6 +29,9 @@ module Widget
       end
 
       def validate_params
+        check_feature
+        return if @error.present?
+
         cname_params.permit(*AttachmentConstants::WIDGET_ATTACHMENT_FIELDS)
         super
       end

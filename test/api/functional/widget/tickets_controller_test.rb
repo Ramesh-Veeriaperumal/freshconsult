@@ -81,11 +81,19 @@ module Widget
     end
 
     def test_create_without_help_widget_launch
-      Account.any_instance.stubs(:help_widget_enabled?).returns(false)
+      @account.rollback(:help_widget)
       params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }
       post :create, construct_params({ version: 'widget' }, params)
       assert_response 403
-      Account.any_instance.unstub(:help_widget_enabled?)
+      @account.launch(:help_widget)
+    end
+
+    def test_create_without_help_widget_feature
+      @account.remove_feature(:help_widget)
+      params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }
+      post :create, construct_params({ version: 'widget' }, params)
+      assert_response 403
+      @account.add_feature(:help_widget)
     end
 
     def test_create_with_attachment_ids

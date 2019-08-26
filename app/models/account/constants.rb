@@ -29,21 +29,22 @@ class Account < ActiveRecord::Base
       :inherits => [ :pro ] #To make the hierarchy easier
     },
 
-    :sprout => {
-      :features => [ :scenario_automations, :business_hours ]
+    sprout: {
+      features: [:scenario_automations, :business_hours, :help_widget]
     },
 
-    :blossom => {
-      :features => [ :gamification, :auto_refresh, :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets,
-        :custom_domain, :multiple_emails, :advanced_reporting, :default_survey, :sitemap, :requester_widget],
-      :inherits => [ :sprout ]
+    blossom: {
+      features: [:gamification, :auto_refresh, :twitter, :facebook, :forums, :surveys, :scoreboard, :timesheets,
+                 :custom_domain, :multiple_emails, :advanced_reporting, :default_survey, :sitemap, :requester_widget,
+                 :help_widget_appearance],
+      inherits: [:sprout]
     },
 
-    :garden => {
-      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language,
-        :css_customization, :advanced_reporting, :multiple_business_hours, :dynamic_content,
-        :ticket_templates, :custom_survey ],
-      :inherits => [ :blossom ]
+    garden: {
+      features: [:multi_product, :customer_slas, :multi_timezone, :multi_language,
+                 :css_customization, :advanced_reporting, :multiple_business_hours, :dynamic_content,
+                 :ticket_templates, :custom_survey, :help_widget_predictive],
+      inherits: [:blossom]
     },
 
     :estate => {
@@ -59,20 +60,20 @@ class Account < ActiveRecord::Base
       :inherits => [ :estate ]
     },
 
-    :sprout_classic => {
-      :features => [ :scenario_automations, :business_hours, :custom_domain, :multiple_emails ]
+    sprout_classic: {
+      features: [:scenario_automations, :business_hours, :custom_domain, :multiple_emails, :help_widget]
     },
 
-    :blossom_classic => {
-      :features => [ :gamification, :auto_refresh, :twitter, :facebook, :forums, :surveys,
-        :scoreboard, :timesheets, :advanced_reporting ],
-      :inherits => [ :sprout_classic ]
+    blossom_classic: {
+      features: [:gamification, :auto_refresh, :twitter, :facebook, :forums, :surveys,
+                 :scoreboard, :timesheets, :advanced_reporting, :help_widget_appearance],
+      inherits: [:sprout_classic]
     },
 
-    :garden_classic => {
-      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language,
-        :css_customization, :advanced_reporting, :dynamic_content, :ticket_templates ],
-      :inherits => [ :blossom_classic ]
+    garden_classic: {
+      features: [:multi_product, :customer_slas, :multi_timezone, :multi_language,
+                 :css_customization, :advanced_reporting, :dynamic_content, :ticket_templates, :help_widget_predictive],
+      inherits: [:blossom_classic]
     },
 
     :estate_classic => {
@@ -83,20 +84,21 @@ class Account < ActiveRecord::Base
       :inherits => [ :garden_classic ]
     },
 
-    :sprout_jan_17 => {
-      :features => [ :scenario_automations, :business_hours ]
+    sprout_jan_17: {
+      features: [:scenario_automations, :business_hours, :help_widget]
     },
 
-    :blossom_jan_17 => {
-      :features => [ :gamification, :auto_refresh, :twitter, :facebook, :surveys , :scoreboard, :timesheets,
-        :custom_domain, :multiple_emails, :advanced_reporting, :default_survey, :sitemap, :requester_widget ],
-      :inherits => [ :sprout_jan_17 ]
+    blossom_jan_17: {
+      features: [:gamification, :auto_refresh, :twitter, :facebook, :surveys, :scoreboard, :timesheets,
+                 :custom_domain, :multiple_emails, :advanced_reporting, :default_survey, :sitemap,
+                 :requester_widget, :help_widget_appearance],
+      inherits: [:sprout_jan_17]
     },
 
-    :garden_jan_17 => {
-      :features => [ :forums, :multi_language, :css_customization, :advanced_reporting, :dynamic_content,
-        :ticket_templates, :custom_survey ],
-      :inherits => [ :blossom_jan_17 ]
+    garden_jan_17: {
+      features: [:forums, :multi_language, :css_customization, :advanced_reporting, :dynamic_content,
+                 :ticket_templates, :custom_survey, :help_widget_predictive],
+      inherits: [:blossom_jan_17]
     },
 
     :estate_jan_17 => {

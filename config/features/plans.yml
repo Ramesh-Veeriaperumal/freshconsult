@@ -20,6 +20,7 @@
       - :sla_management_v2
       - :personal_canned_response
       - :api_v2
+      - :help_widget
     :inherits: []
     :exclude: []
   :blossom_jan_17:
@@ -66,6 +67,7 @@
       - :smart_filter
       - :session_replay
       - :canned_forms
+      - :help_widget_appearance
     :inherits:
       - :sprout_jan_17
     :exclude: []
@@ -81,6 +83,7 @@
       - :parent_child_tickets_toggle
       - :link_tickets_toggle
       - :support_bot
+      - :help_widget_predictive
     :inherits:
       - :blossom_jan_17
     :exclude: []
@@ -147,6 +150,7 @@
       - :analytics_report_filter
       - :analytics_ticket_volume_trend
       - :analytics_tickets_resource
+      - :help_widget
     :inherits: []
     :exclude: []
   :blossom_jan_19:
@@ -202,6 +206,7 @@
       - :reverse_notes
       - :article_filters
       - :auto_article_order
+      - :help_widget_appearance
     :inherits:
       - :sprout_jan_19
     :exclude: []
@@ -245,6 +250,7 @@
       - :proactive_outreach
       - :adv_article_bulk_actions
       - :customer_journey
+      - :help_widget_predictive
     :inherits:
       - :blossom_jan_19
     :exclude: []
