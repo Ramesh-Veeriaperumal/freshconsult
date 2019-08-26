@@ -4064,6 +4064,9 @@ li {
                     display: none;
                 }
             }
+            div[class$="freshdesk_satisfaction_survey"] {
+                display: none;
+            }
         }
         .overlapping {
             margin-top: -15px;
