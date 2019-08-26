@@ -196,7 +196,7 @@ class Solutions::ArticleDecorator < ApiDecorator
         draft_locked: @draft.locked?,
         draft_modified_by: @draft.user_id,
         draft_modified_at: @draft.modified_at.try(:utc),
-        draft_updated_at: @draft.updated_at.try(:utc)
+        draft_updated_at: @draft.draft_body.present? ? [@draft.updated_at, @draft.draft_body.updated_at].max.try(:utc) : @draft.updated_at.try(:utc)
       }
     end
 
