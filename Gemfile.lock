@@ -253,7 +253,8 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/formserv-gem.git
-  revision: 0fa2da0e9c9eaf06eb7f419dd2e6a46027f03f5f
+  revision: dd70b31890d564fc2c4988718351933bc4e32b7d
+  tag: v0.9.0
   specs:
     formserv-gem (0.9.0)
       faraday
@@ -637,7 +638,7 @@ GEM
     brakeman (3.3.0)
     buftok (0.2.0)
     builder (3.0.4)
-    bullet (5.1.1)
+    bullet (5.4.3)
       activesupport (>= 3.0.0)
       uniform_notifier (~> 1.10.0)
     bunny (1.7.0)
@@ -1526,7 +1527,7 @@ DEPENDENCIES
   bootsnap
   braintree (= 2.10.0)
   brakeman
-  bullet
+  bullet (= 5.4.3)
   bunny (= 1.7.0)
   business_time!
   carmen!
@@ -1620,7 +1621,7 @@ DEPENDENCIES
   lockfile (= 1.4.3)
   log_filter!
   mail (= 2.5.5)
-  marginalia
+  marginalia (= 1.5.0)
   marketo!
   meta_request
   minitest (= 4.7.5)
