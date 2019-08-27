@@ -129,7 +129,9 @@
                  choiceLabel.forEach(function(el) {
                 if(el.value){filterdChoice.push(trim(el.value));}
                  })
-             var uniqueChoice = [...new Set(filterdChoice)];
+             var uniqueChoice =  filterdChoice.filter(function(item, index){
+                                        return filterdChoice.indexOf(item) === index 
+                                    });
                 if(choiceLabel.length!==uniqueChoice.length){
                 	document.getElementById('modal_validation_message').style.display='block';
                 	return false;
