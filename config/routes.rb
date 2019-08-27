@@ -411,6 +411,7 @@ Helpkit::Application.routes.draw do
   match '/logout' => 'user_sessions#destroy', :as => :logout
   match '/login' => 'user_sessions#new', :as => :login
   match '/login/sso' => 'user_sessions#sso_login', :as => :sso_login
+  match '/mobile_freshid_logout' => 'user_sessions#mobile_freshid_logout', :as => :mobile_freshid_logout
   match '/login/sso_v2' => 'user_sessions#jwt_sso_login', :as => :jwt_sso_login
   match '/login/saml' => 'user_sessions#saml_login', :as => :saml_login
   match '/login/normal' => 'user_sessions#new', :as => :login_normal
@@ -755,6 +756,8 @@ Helpkit::Application.routes.draw do
       get :twitter
       get :portal_google_sso
       get :marketplace_google_sso
+      get :mobile_freshid_login
+      get :mobile_freshid_logout
       post :mobile_sso_login
     end
   end

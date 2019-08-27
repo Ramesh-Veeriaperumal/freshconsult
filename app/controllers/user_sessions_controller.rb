@@ -273,23 +273,16 @@ class UserSessionsController < ApplicationController
     return if current_account.sso_enabled? and current_account.sso_logout_url.present? and !is_native_mobile?
     if current_user.present? && freshid_agent?(current_user.email)
       Rails.logger.info "FRESHID destroy :: a=#{current_account.try(:id)}, u=#{current_user.try(:id)}"
-      redirect_to Freshid::V2::UrlGenerator.freshid_logout(support_home_url) and return if current_account.freshid_org_v2_enabled?
-      url = if agent_oauth2_enabled?
-        current_account.agent_oauth2_logout_redirect_url
-      elsif agent_freshid_saml_enabled?
-        current_account.agent_freshid_saml_logout_redirect_url
+      if current_account.freshid_org_v2_enabled?
+        redirect_url = params[:mobile_logout]? mobile_freshid_logout_url : support_home_url
+        redirect_to Freshid::V2::UrlGenerator.freshid_logout(redirect_url) and return
+      else
+        redirect_to freshid_logout(agent_redirect_url || support_home_url) and return
       end
-      url = url.presence || support_home_url
-      redirect_to freshid_logout(url) and return
     elsif current_user.present? && !current_user.agent? && customer_freshid_sso_enabled?
-      url = if customer_oauth2_enabled?
-        current_account.customer_oauth2_logout_redirect_url
-      elsif customer_freshid_saml_enabled?
-        current_account.customer_freshid_saml_logout_redirect_url
-      end
-      url = url.presence || support_home_url
-      redirect_to freshid_end_user_logout(url) and return
+      redirect_to freshid_end_user_logout(customer_redirect_url || support_home_url) and return
     end
+    redirect_to mobile_freshid_logout_url && return if current_account.freshid_org_v2_enabled? && params[:mobile_logout]
     respond_to do |format|
       format.html  {
         redirect_to root_url
@@ -299,6 +292,26 @@ class UserSessionsController < ApplicationController
       }
     end
   end
+
+  def agent_redirect_url
+    if agent_oauth2_enabled?
+      current_account.agent_oauth2_logout_redirect_url
+    elsif agent_freshid_saml_enabled?
+      current_account.agent_freshid_saml_logout_redirect_url
+    end
+  end
+
+  def customer_redirect_url
+    if customer_oauth2_enabled?
+      current_account.customer_oauth2_logout_redirect_url
+    elsif customer_freshid_saml_enabled?
+      current_account.customer_freshid_saml_logout_redirect_url
+    end
+  end
+
+  def mobile_freshid_logout
+    redirect_to Freshid::V2::UrlGenerator.mobile_logout_url(current_account.full_domain)
+  end    
 
   def freshid_user_authentication
     freshid_login = current_account.freshid_org_v2_enabled? ? Freshid::V2::Login.new(params[:user_session]) : Freshid::Login.new(params[:user_session])
