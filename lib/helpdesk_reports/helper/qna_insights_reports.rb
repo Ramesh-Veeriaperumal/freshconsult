@@ -98,7 +98,8 @@ module HelpdeskReports::Helper::QnaInsightsReports
     end
 
     def get_default_threshold_config
-      ReportsAppConfig::INSIGHTS_DEFAULTS[:insights_threshold_values][Account.current.subscription.subscription_plan.display_name.downcase.to_sym][get_insights_config_group]
+      report_plan = ReportsAppConfig::INSIGHTS_DEFAULTS[:insights_threshold_values][Account.current.subscription.subscription_plan.display_name.downcase.to_sym]
+      report_plan.present? ? report_plan[get_insights_config_group] : {}
     end
 
 end
