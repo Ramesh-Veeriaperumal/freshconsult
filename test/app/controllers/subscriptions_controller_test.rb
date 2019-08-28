@@ -327,13 +327,76 @@ class SubscriptionsControllerTest < ActionController::TestCase
     Subscription.any_instance.unstub(:offline_subscription?)
   end
 
+  def test_cancel_request_with_no_scheduled_requests
+    @account = Account.current
+    @account.subscription.subscription_request.destroy if @account.subscription.subscription_request.present?
+    chargebee_response = { 'subscription': { 'has_scheduled_changes': false } }
+    result = ChargeBee::Result.new(chargebee_response)
+    ChargeBee::Subscription.stubs(:remove_scheduled_changes).returns(result)
+    delete :cancel_request
+    assert_response 404
+  ensure
+    ChargeBee::Subscription.unstub(:remove_scheduled_changes)
+    @account.subscription.subscription_request.destroy if @account.subscription.subscription_request.present?
+  end
+
+  def test_cancel_request_when_chargebee_succeeds
+    @account = Account.current
+    create_subscription_request(@account)
+    chargebee_response = { 'subscription': { 'has_scheduled_changes': false } }
+    result = ChargeBee::Result.new(chargebee_response)
+    ChargeBee::Subscription.stubs(:remove_scheduled_changes).returns(result)
+    delete :cancel_request
+    assert_response 204
+  ensure
+    ChargeBee::Subscription.unstub(:remove_scheduled_changes)
+    @account.subscription.subscription_request.destroy if @account.subscription.subscription_request.present?
+  end
+
+  def test_cancel_request_when_chargebee_throws_exception
+    @account = Account.current
+    create_subscription_request(@account)
+    ChargeBee::Subscription.stubs(:remove_scheduled_changes).raises(ChargeBee::InvalidRequestError)
+    delete :cancel_request
+    assert_response 404
+  ensure
+    ChargeBee::Subscription.unstub(:remove_scheduled_changes)
+    @account.subscription.subscription_request.destroy if @account.subscription.subscription_request.present?
+  end
+
+  def test_cancel_request_when_destroy_fails
+    @account = Account.current
+    create_subscription_request(@account)
+    chargebee_response = { 'subscription': { 'has_scheduled_changes': false } }
+    result = ChargeBee::Result.new(chargebee_response)
+    ChargeBee::Subscription.stubs(:remove_scheduled_changes).returns(result)
+    SubscriptionRequest.any_instance.stubs(:destroy).returns(false)
+    delete :cancel_request
+    assert_response 404
+  ensure
+    ChargeBee::Subscription.unstub(:remove_scheduled_changes)
+    @account.subscription.subscription_request.destroy if @account.subscription.subscription_request.present?
+  end
+
+  def test_cancel_request_when_chargebee_fails
+    @account = Account.current
+    create_subscription_request(@account)
+    chargebee_response = { 'subscription': { 'has_scheduled_changes': true } }
+    result = ChargeBee::Result.new(chargebee_response)
+    ChargeBee::Subscription.stubs(:remove_scheduled_changes).returns(result)
+    delete :cancel_request
+    assert_response 404
+  ensure
+    ChargeBee::Subscription.unstub(:remove_scheduled_changes)
+    @account.subscription.subscription_request.destroy if @account.subscription.subscription_request.present?
+  end
+
   def test_cancel_account_cancellation_request
     @account.launch(:downgrade_policy)
     set_others_redis_key(@account.account_cancellation_request_time_key, Time.zone.now)
     ChargeBee::Subscription.stubs(:remove_scheduled_cancellation).returns(true)
     delete :cancel_request
-    assert_response 200
-    assert parse_response(response.body)['success']
+    assert_response 204
   ensure
     @account.rollback(:downgrade_policy)
     ChargeBee::Subscription.unstub(:remove_scheduled_cancellation)
@@ -341,8 +404,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
 
   def test_cancel_request_when_account_cancellation_not_requested
     delete :cancel_request
-    assert_response 200
-    refute parse_response(response.body)['success']
+    assert_response 404
   end
 
   def test_cancel_account_cancellation_request_errors_in_exception
@@ -350,8 +412,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     set_others_redis_key(@account.account_cancellation_request_time_key, Time.zone.now)
     ChargeBee::Subscription.stubs(:remove_scheduled_cancellation).raises(ChargeBee::InvalidRequestError)
     delete :cancel_request
-    assert_response 200
-    refute parse_response(response.body)['success']
+    assert_response 404
   end
 
   private
@@ -403,4 +464,17 @@ class SubscriptionsControllerTest < ActionController::TestCase
                     'masked_number': '************1111', 'customer_id': '1' }
       }
     end
+
+  def create_subscription_request(account)
+    if account.subscription.subscription_request.blank?
+      t = SubscriptionRequest.new(
+        account_id: account.id,
+        agent_limit: 1,
+        plan_id: SubscriptionPlan.current.map(&:id).third,
+        renewal_period: 1,
+        subscription_id: account.subscription.id
+      )
+      t.save!
+    end
+  end
 end
