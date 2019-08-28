@@ -12,6 +12,9 @@ module Admin::Automation::AutomationSummary
     AUTOMATION_FIELDS[VAConfig::RULES_BY_ID[record.rule_type]].inject({}) do |hash, key|
       hash.merge!(key.to_sym => safe_send(:"#{key}_summary"))
     end
+  rescue Exception => e
+    NewRelic::Agent.notice_error(e)
+    {}
   end
 
   private
@@ -271,6 +274,8 @@ module Admin::Automation::AutomationSummary
           record.dispatchr_rule? ? I18n.t("admin.automation_summary.ticket_creating_agent") :
                                    I18n.t("admin.automation_summary.event_agent")
         end
+      elsif field_name.to_sym == :customer_feedback
+        active_survey? ? get_name(field_name, value, separator) : ''
       else
         get_name(field_name, value, separator)
       end
@@ -278,7 +283,10 @@ module Admin::Automation::AutomationSummary
 
     def generate_case_sensitive(value)
       value = add_html_tag(value, 2)
-      "and Match Case is #{value}"
+      text_and = I18n.t('admin.automation_summary.condition_all')
+      text_match_case = I18n.t('admin.automation_summary.match_case')
+      text_is = I18n.t('admin.automation_summary.is')
+      "#{text_and.downcase} #{text_match_case} #{text_is} #{value}"
     end
 
     def generate_operator(t_value)
@@ -331,9 +339,15 @@ module Admin::Automation::AutomationSummary
     end
 
     def customer_feedback
+      return unless active_survey?
+
       @customer_feedback ||= record.account.active_custom_survey_choices.inject({}) do |hash, key|
         hash.merge!(key[:face_value].to_s => key[:value])
       end
+    end
+
+    def active_survey?
+      record.account.active_custom_survey_from_cache.present?
     end
 
     def segments
