@@ -130,7 +130,11 @@ class ApiAgentsController < ApiApplicationController
     def agents_filter(agents)
       @agent_filter.conditions.each do |key|
         clause = agents.api_filter(@agent_filter)[key.to_sym] || {}
-        agents = agents.where(clause[:conditions])
+        agents = if clause[:joins].present?
+                   agents.joins(clause[:joins]).where(clause[:conditions])
+                 else
+                   agents.where(clause[:conditions])
+                 end
       end
       agents
     end

@@ -381,7 +381,11 @@ class Agent < ActiveRecord::Base
 
       type: {
         conditions: { agent_type: AgentType.agent_type_id(agent_filter.type) }
-      } 
+      },
+      group_id: {
+        conditions: ['agent_groups.group_id = ? ', agent_filter.group_id],
+        joins: :agent_groups
+      }
     }
   end
 

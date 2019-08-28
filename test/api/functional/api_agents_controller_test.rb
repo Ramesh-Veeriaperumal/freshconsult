@@ -633,4 +633,19 @@ class ApiAgentsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:freshid_integration_enabled?)
     Account.any_instance.unstub(:allow_update_agent_enabled?)
   end
+
+  def test_filter_agent_list_by_group_id
+    agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    group = create_group_with_agents(@account, agent_list: [agent.id])
+    get :index, controller_params(group_id: group.id)
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal agent.id, response[0]['id']
+  end
+
+  def test_filter_agent_list_by_invalid_group_id
+    get :index, controller_params(group_id: '0')
+    assert_response 400
+    match_json([bad_request_error_pattern('group_id', :datatype_mismatch, expected_data_type: 'Positive Integer')])
+  end
 end
