@@ -2861,7 +2861,7 @@ en:
       during: "during"
       email: "Email"
       ends_with: "ends with"
-      ends_with_any_of: 'ends with any of' 
+      ends_with_any_of: 'ends with any of'
       event: "When %{field_name}"
       event_agent: "Event Performing Agent"
       event_from_to: "When %{field_name} is changed from %{field_from} to %{field_to}"
@@ -2955,7 +2955,7 @@ en:
       status_translated: Translated
       status_untranslated: Not available
       status_outdated: Outdated
-      status_incomplete: Outdated 
+      status_incomplete: Outdated
       surveys:
         translation: TRANSLATION
         visible_on_portal: Languages visible on portal
@@ -3167,7 +3167,7 @@ en:
       edit:
         not_allowed: You cannot edit this agent
         agent_type_change_not_allowed: You cannot change the agent type
-        not_allowed_to_edit_inaccessible_fields: Not allowed to edit Agent's profile information(name, phone, mobile and title) 
+        not_allowed_to_edit_inaccessible_fields: Not allowed to edit Agent's profile information(name, phone, mobile and title)
     roles:
       create:
         success: The role "%{name}" has been created
@@ -6366,6 +6366,7 @@ en:
       verify_fail: DNS settings can take upto 48 hours to propagate
       new_dkim: You haven't created a support email with a custom domain yet!
       limit_exceeded: You cannot configure more than two DKIM signatures on this plan.
+      already_verified: The domain is verified in another account.
   step2: Step 2
   import_users_contacts: Users &rarr; Contacts
   linkback_info: You can choose to Linkback to your own website when the customer clicks on the header logo
