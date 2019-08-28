@@ -6,8 +6,8 @@ module SubscriptionsHelper
     "sprout" => [ "email_ticketing", "feedback_widget" ,"knowledge_base", "automations", "phone_integration", "mobile_apps", "integrations", "freshchat" ],
     "blossom" => [ "everything_in_sprout", "multiple_mailboxes", "custom_domain", "social_support", "satisfaction_survey", "forums", "gamification" ],
     "garden" => [ "everything_in_blossom", "multiple_languages", "multiple_products", "multiple_timezones", "css_customization" ],
-    "estate" => [ "everything_in_garden", "agent_collision", "custom_roles", "custom_ssl", "enterprise_reports", "portal_customization" ],
-    "forest" => [ "everything_in_estate", "custom_mailbox", "ip_restriction" ],
+    "estate" => [ "everything_in_garden", "agent_collision", "custom_roles", "custom_ssl", "enterprise_reports", "portal_customization", "fsm_option" ],
+    "forest" => [ "everything_in_estate", "custom_mailbox", "ip_restriction", "fsm_option" ],
 
     "sprout jan 17" => [ "email_ticketing", "ticket_dispatch_automation" , "knowledge_base", "app_gallery", "basic_phone", "freshchat" ],
     "blossom jan 17" => [ "everything_in_sprout", "multiple_mailboxes", "time_event_automation", "sla_reminders", "custom_domain", "satisfaction_survey",
