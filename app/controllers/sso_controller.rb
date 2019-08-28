@@ -53,6 +53,20 @@ class SsoController < ApplicationController
     end
   end
 
+  def mobile_freshid_login
+    respond_to do |format|
+      format.json { head 200}
+      format.nmobile { render :json => { :success => true } }
+    end
+  end
+
+  def mobile_freshid_logout
+    respond_to do |format|
+      format.json { head 200}
+      format.nmobile { render :json => { :success => true } }
+    end
+  end
+
   def mobile_sso_login
     if params[:provider] == 'google'
       email_id = mobile_sso_google(params[:id_token], params[:platform])

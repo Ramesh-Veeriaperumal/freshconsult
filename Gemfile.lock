@@ -311,6 +311,13 @@ GIT
       rest-client
 
 GIT
+  remote: git@github.com:freshdesk/prometheus_exporter.git
+  revision: 7d7d80281eb3755460ee9d6396029f0acd438794
+  tag: v1.0.3
+  specs:
+    prometheus_exporter (1.0.3)
+
+GIT
   remote: git@github.com:freshdesk/retire.git
   revision: e8e30b1fa67ae0e3146f9809d3a8158f9c35980e
   specs:
@@ -1160,7 +1167,7 @@ GEM
     rack-cors (0.4.1)
     rack-mini-profiler (0.10.1)
       rack (>= 1.2.0)
-    rack-protection (1.5.4)
+    rack-protection (1.5.5)
       rack
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -1610,6 +1617,7 @@ DEPENDENCIES
   pg
   postoffice!
   premailer (~> 1.8.0)
+  prometheus_exporter!
   pronto
   pronto-brakeman
   pronto-rails_best_practices
@@ -1624,6 +1632,7 @@ DEPENDENCIES
   rack-cors (~> 0.4.1)
   rack-mini-profiler
   rack-openid!
+  rack-protection (= 1.5.5)
   rack-ssl!
   rack-test (~> 0.6.2)
   rack-throttle (~> 0.3.0)

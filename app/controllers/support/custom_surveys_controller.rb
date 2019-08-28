@@ -80,6 +80,9 @@ class Support::CustomSurveysController < SupportController #for Portal Customiza
         send_handle_error
         @survey_handle.destroy if @survey_handle.present? && !@survey_handle.survey.deleted?
       end
+      if current_user.present? && ((@survey_handle.surveyable.requester_id != current_user.id) && current_user.helpdesk_agent?)
+        send_error I18n.t('support.surveys.agent_feedback_error')
+      end
     end
 
     def load_translation

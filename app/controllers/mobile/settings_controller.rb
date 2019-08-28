@@ -30,8 +30,6 @@ class Mobile::SettingsController < ApplicationController
       sso_logout_url = ""
       full_domain = ""
       org_login_url = ""
-      redirect_url = ""
-      freshid_org_v2_enabled = false
       unless request.headers['Request-Id'].nil?
         request_data = JSON.parse(request.headers['Request-Id'])
         sha_generated = OpenSSL::HMAC.hexdigest('sha512',MobileConfig['secret_key'],request_data['times'])
@@ -44,16 +42,13 @@ class Mobile::SettingsController < ApplicationController
                 Sharding.run_on_slave do
                   account = Account.find(domain_mapping.account_id)
                   unless account.nil?
+                    account.make_current
                     full_domain = account.full_domain
                     sso_enabled = account.sso_enabled?
                     sso_logout_url = account.sso_logout_url
                     google_signin_enabled = account.features_included?(:google_signin)
                     facebook_signin_enabled = account.features_included?(:facebook_signin)
-                    if account.freshid_org_v2_enabled?
-                      freshid_org_v2_enabled = true
-                      org_login_url = freshid_login_url
-                      redirect_url = full_domain.present? ? full_domain+'sso/login' : ""
-                    end
+                    org_login_url = freshid_v2_mobile_authorize_url(account) if account.freshid_org_v2_enabled?
                   end
                 end
               end
@@ -64,11 +59,7 @@ class Mobile::SettingsController < ApplicationController
               full_domain = response['account_id']['full_domain']
               google_signin_enabled = response['account_id']['google_signin_enabled']
               facebook_signin_enabled = response['account_id']['facebook_signin_enabled']
-              if response['account_id']['freshid_org_v2_enabled'] == 'true'
-                freshid_org_v2_enabled = true
-                org_login_url = response['account_id']['org_login_url']
-                redirect_url = full_domain.present? ? full_domain+'sso/login' : ""
-              end
+              org_login_url = response['account_id']['org_login_url'] if response['account_id']['freshid_org_v2_enabled'] == 'true'
             end
           end
           result_code = MOBILE_API_RESULT_SUCCESS  #Success
@@ -82,10 +73,7 @@ class Mobile::SettingsController < ApplicationController
       sso_logout_url: sso_logout_url, sso_enabled: sso_enabled, full_domain: full_domain, result_code: result_code,
       google_signin_enabled: google_signin_enabled, facebook_signin_enabled: facebook_signin_enabled
     }
-    if freshid_org_v2_enabled
-      response[:org_login_url] = org_login_url
-      response[:redirect_url] = redirect_url
-    end
+    response[:org_login_url] = org_login_url if org_login_url.present?
     render :json => response
   end
 

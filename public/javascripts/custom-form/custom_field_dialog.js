@@ -29,7 +29,9 @@
 				if(nested_field_revamp_enabled && this.options.currentData.field_type === 'nested_field' && this.instance.validateNestedChoices()){
 					return false;
 				}
+               if(this.validateDuplicate()) {
 				$(this.options.customPropertiesDiv).submit();
+			}
 			}, this) );
 			$(document).on('keypress.custom-fields', this.options.customPropertiesDiv + " input", $.proxy(function(e) {
 				e.stopPropagation();
@@ -39,8 +41,10 @@
 					if(nested_field_revamp_enabled && this.options.currentData.field_type === 'nested_field' && this.instance.validateNestedChoices()){
 						return false;
 					}
+					if(this.validateDuplicate()){
 					$(this.options.customPropertiesDiv).submit();
 					$('.twipsy :visible').hide(); //tooltip fix
+                   }
 				}
 			}, this) );
 
@@ -115,6 +119,25 @@
 			return this.each(function() {
 				$(this).removeData('customFieldDialog');
 			});
+		},
+		validateDuplicate: function() {
+			if(this.setCurrentData().field_type === 'nested_field') {
+			   	return true;
+			  }
+			 var choiceLabel = this.setCurrentData().admin_choices;
+             var filterdChoice = [];
+                 choiceLabel.forEach(function(el) {
+                if(el.value){filterdChoice.push(trim(el.value));}
+                 })
+             var uniqueChoice =  filterdChoice.filter(function(item, index){
+                                        return filterdChoice.indexOf(item) === index 
+                                    });
+                if(choiceLabel.length!==uniqueChoice.length){
+                	document.getElementById('modal_validation_message').style.display='block';
+                	return false;
+                } else {
+                	return true;
+                }
 		}
   };
 })(window.jQuery);

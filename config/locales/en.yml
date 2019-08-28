@@ -583,6 +583,7 @@ en:
     no_choice_message: "At least one valid choice has to be present"
     customer_label_missing: Customer label cannot not be empty
     encrypted_field_banner_text: "This is an encrypted field and will not appear in search results."
+    dropdown_duplicate_message: "Dropdown items has duplicate values."
     index:
       number: Number
       decimal: Decimal
@@ -790,6 +791,7 @@ en:
       feedback_already_done: "You have already given feedback for this response."
       handle_expired: "Your survey request link has been expired."
       survey_closed: "This survey is closed."
+      agent_feedback_error: Agents are not allowed to give feedback
       preview_feedback_error: The url entered is invalid.
       no_survey_result_error: Invalid parameters to create feedback.
       no_survey_active_error: Survey is not enabled to create feedback.

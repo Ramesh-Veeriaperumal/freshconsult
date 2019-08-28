@@ -178,7 +178,7 @@ class Helpdesk::Note < ActiveRecord::Base
           Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {}) unless notable.spam?
         end
 
-        integrations_private_note_notifications unless replied_by_customer?
+        integrations_private_note_notifications unless replied_by_customer? || to_emails.blank?
 
       else
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)

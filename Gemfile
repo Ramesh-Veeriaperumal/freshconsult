@@ -132,7 +132,7 @@ gem "braintree","2.10.0"
 gem "lockfile","1.4.3"
 
 gem "newrelic_rpm","~> 5.5.0"
-# gem 'prometheus_exporter', :git => "git@github.com:freshdesk/prometheus_exporter.git", :tag => "v1.0.2"
+gem "prometheus_exporter", :git => "git@github.com:freshdesk/prometheus_exporter.git", :tag => "v1.0.3"
 gem "ddtrace"
 gem "dogstatsd-ruby"
 
@@ -209,7 +209,7 @@ gem 'freshdesk_features', :git => 'git@github.com:freshdesk/freshdesk-features.g
 gem 'launchparty', :git => 'git@github.com:freshdesk/launch-party.git', :tag => 'v0.2.1'
 gem 'binarize', "0.1.1", :git => 'git@github.com:freshdesk/binarize.git', :branch => 'not_a_model_column'
 gem 'rule_engine', git: 'git@github.com:freshdesk/rule_engine.git', tag: 'hv0.0.1'
-gem 'freshid', :git => 'git@github.com:freshdesk/freshid-ruby-client.git', :tag => 'v4.0.4'
+gem 'freshid', :git => 'git@github.com:freshdesk/freshid-ruby-client.git', :tag => 'v4.0.5'
 gem "freshid-sdk", :git => 'git@github.com:freshdesk/platforms-sdk-ruby.git', tag: '1.0.0', glob: 'gems/freshid-sdk/freshid-sdk.gemspec'
 gem "fluffy", git: 'git@github.com:freshdesk/api-gateway.git', tag: 'v0.0.2', glob: 'clients/fluffy_ruby/src/fluffy.gemspec'
 
@@ -364,3 +364,4 @@ gem "rubocop", "0.52.1"
 gem 'safe_yaml', "1.0.4"
 
 gem 'ejson', :require => false
+gem 'rack-protection', '1.5.5'
