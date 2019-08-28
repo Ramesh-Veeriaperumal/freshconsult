@@ -77,7 +77,7 @@ end
 #commenting it out as rack mini profiler strips out etag response headers. Using it for falcon apis.
 #gem "rack-mini-profiler", :group => [:development]
 gem "brakeman", :require => false, :group => [:development]
-gem "bullet", :group => [:development, :test, :staging]
+gem "bullet", "5.4.3", :group => [:development, :test, :staging]
 gem 'mail', '2.5.5'
 gem "i18n", "~> 0.6.0"
 gem "i18n-js", "3.0.0.rc11"
@@ -137,7 +137,7 @@ gem "lockfile","1.4.3"
 
 gem "newrelic_rpm","~> 5.5.0"
 
-# gem 'prometheus_exporter', :git => "git@github.com:freshdesk/prometheus_exporter.git", :tag => "v1.0.2"
+gem "prometheus_exporter", :git => "git@github.com:freshdesk/prometheus_exporter.git", :tag => "v1.0.3"
 gem "ddtrace"
 gem "dogstatsd-ruby"
 
@@ -214,8 +214,8 @@ gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 gem 'freshdesk_features', :git => 'git@github.com:freshdesk/freshdesk-features.git', :branch => "freshdesk", :require => true
 gem 'launchparty', :git => 'git@github.com:freshdesk/launch-party.git', :tag => 'v0.2.1'
 gem 'binarize', "0.1.1", :git => 'git@github.com:freshdesk/binarize.git', :branch => 'not_a_model_column'
-gem 'rule_engine', git: 'git@github.com:freshdesk/rule_engine.git', tag: 'hv0.0.10'
-gem 'freshid', :git => 'git@github.com:freshdesk/freshid-ruby-client.git', :tag => 'v4.0.4'
+gem 'rule_engine', git: 'git@github.com:freshdesk/rule_engine.git', tag: 'hv0.0.11'
+gem 'freshid', :git => 'git@github.com:freshdesk/freshid-ruby-client.git', :tag => 'v4.0.5'
 gem "freshid-sdk", :git => 'git@github.com:freshdesk/platforms-sdk-ruby.git', tag: '1.0.0', glob: 'gems/freshid-sdk/freshid-sdk.gemspec'
 gem "fluffy", git: 'git@github.com:freshdesk/api-gateway.git', tag: 'v0.0.2', glob: 'clients/fluffy_ruby/src/fluffy.gemspec'
 
@@ -236,7 +236,7 @@ end
 
 gem "recaptcha", "4.4.1", require: "recaptcha/rails"
 
-gem "marginalia"
+gem "marginalia", "1.5.0"
 
 gem "freshdesk_authority", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/freshdesk_authority-0.1"
 gem "delayed_job", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/delayed_job"
@@ -266,7 +266,7 @@ gem "rack-openid", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/rack-o
 gem "open_id_authentication", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/open_id_authentication"
 gem "ebayr", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/ebayr"
 gem 'fd_spam_detection_service', :path => "#{File.expand_path(__FILE__)}/../vendor/gems/fd_spam_detection_service"
-gem 'formserv-gem', '0.9.0', git: 'git@github.com:freshdesk/formserv-gem.git'
+gem 'formserv-gem', tag: 'v0.9.0', git: 'git@github.com:freshdesk/formserv-gem.git'
 
 
 group :development, :test do

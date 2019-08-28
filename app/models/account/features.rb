@@ -372,7 +372,7 @@ class Account < ActiveRecord::Base
   end
 
   def help_widget_enabled?
-    launched?(:help_widget)
+    launched?(:help_widget) && has_feature?(:help_widget)
   end
 
   # Checks if a bitmap feature has been added or removed

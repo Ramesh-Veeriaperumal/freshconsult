@@ -74,6 +74,7 @@ class Middleware::ApplicationLogger
       request = Rack::Request.new(env)
       payload[:domain] = request.env['HTTP_HOST'] || env['HTTP_HOST']
       payload[:ip] = request.env['CLIENT_IP'] || env['CLIENT_IP']
+      payload[:client_id] = request.env['HTTP_X_CLIENT_INSTANCE_ID'] || env['HTTP_X_CLIENT_INSTANCE_ID']
       payload[:url] = request.url
       payload[:server_ip] = @@server_ip || request.env['SERVER_ADDR'] || env['SERVER_ADDR']
       payload[:uuid] = message_uuid(request)

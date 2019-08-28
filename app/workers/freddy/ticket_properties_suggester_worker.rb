@@ -87,8 +87,8 @@ module Freddy
       def entity_exists?(product_field, value)
         case product_field
         when 'ticket_type'
-          ticket_type = Account.current.ticket_fields.find_by_name('ticket_type')
-          picklist_value = ticket_type.picklist_values.find_by_value(value) if ticket_type.present?
+          ticket_type = Account.current.ticket_fields_with_nested_fields.find_by_name('ticket_type')
+          picklist_value = ticket_type.level1_picklist_values.find_by_value(value) if ticket_type.present?
           picklist_value.present?
         when 'group'
           Account.current.groups.find_by_id(value.to_i).present?

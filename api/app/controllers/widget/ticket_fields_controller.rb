@@ -2,6 +2,7 @@ module Widget
   class TicketFieldsController < Ember::TicketFieldsController
     include WidgetConcern
     skip_before_filter :check_privilege
+    before_filter :check_feature
     before_filter :validate_widget
     before_filter :check_anonymous_tickets
     before_filter :fetch_portal

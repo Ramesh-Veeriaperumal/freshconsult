@@ -41,8 +41,4 @@ module WidgetConcern
     end
     Language.fetch_from_primary({}).make_current unless Language.current?
   end
-
-  def launch_party_name
-    FeatureConstants::HELP_WIDGET
-  end
 end

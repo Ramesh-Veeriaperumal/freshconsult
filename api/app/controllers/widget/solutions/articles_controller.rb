@@ -43,6 +43,9 @@ module Widget
         end
 
         def before_load_object
+          check_feature
+          return if @error.present?
+
           check_open_solutions
           return if @error.present?
 

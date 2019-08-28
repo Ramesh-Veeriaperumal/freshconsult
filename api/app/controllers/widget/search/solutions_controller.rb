@@ -5,6 +5,7 @@ module Widget
 
       skip_before_filter :check_privilege
 
+      before_filter :check_feature
       before_filter :check_open_solutions
       before_filter :validate_widget
       before_filter :fetch_portal

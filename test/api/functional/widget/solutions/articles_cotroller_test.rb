@@ -269,10 +269,10 @@ module Widget
       end
 
       def test_suggested_articles_without_open_solutions
-        Account.any_instance.stubs(:features?).with(:open_solutions).returns(false)
+        @account.remove_feature(:open_solutions)
         get :suggested_articles, controller_params
         assert_response 403
-        Account.any_instance.unstub(:features?)
+        @account.add_feature(:open_solutions)
         assert_nil Language.current
       end
 
@@ -286,18 +286,26 @@ module Widget
       end
 
       def test_show_without_open_solutions
-        Account.any_instance.stubs(:features?).with(:open_solutions).returns(false)
+        @account.remove_feature(:open_solutions)
         get :show, controller_params(id: @article.parent_id)
         assert_response 403
-        Account.any_instance.unstub(:features?)
+        @account.add_feature(:open_solutions)
         assert_nil Language.current
       end
 
-      def test_show_without_feature
-        Account.any_instance.stubs(:all_launched_features).returns([])
+      def test_show_without_help_widget_launch
+        @account.rollback(:help_widget)
         get :show, controller_params(id: @article.parent_id)
         assert_response 403
-        Account.any_instance.unstub(:all_launched_features)
+        @account.launch(:help_widget)
+        assert_nil Language.current
+      end
+
+      def test_show_without_help_widget_feature
+        @account.remove_feature(:help_widget)
+        get :show, controller_params(id: @article.parent_id)
+        assert_response 403
+        @account.add_feature(:help_widget)
         assert_nil Language.current
       end
 

@@ -422,7 +422,7 @@ class SubscriptionsController < ApplicationController
         action == SAAS::SubscriptionEventActions::ADD ? feature_list.each { |f| Account.current.add_feature(f) } : feature_list.each { |f| Account.current.revoke_feature(f) }
         # So, the features get updated in Saas::SubscriptionEventActions calls.
         Account.current.reload
-        NewPlanChangeWorker.perform_async(features: feature_list, action: action)
+        NewPlanChangeWorker.perform_async(features: feature_list, action: action) unless plan_changed?
       end
     end
 

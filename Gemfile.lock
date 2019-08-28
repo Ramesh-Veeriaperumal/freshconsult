@@ -253,7 +253,8 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/formserv-gem.git
-  revision: 0fa2da0e9c9eaf06eb7f419dd2e6a46027f03f5f
+  revision: dd70b31890d564fc2c4988718351933bc4e32b7d
+  tag: v0.9.0
   specs:
     formserv-gem (0.9.0)
       faraday
@@ -320,6 +321,13 @@ GIT
       rest-client
 
 GIT
+  remote: git@github.com:freshdesk/prometheus_exporter.git
+  revision: 7d7d80281eb3755460ee9d6396029f0acd438794
+  tag: v1.0.3
+  specs:
+    prometheus_exporter (1.0.3)
+
+GIT
   remote: git@github.com:freshdesk/retire.git
   revision: e8e30b1fa67ae0e3146f9809d3a8158f9c35980e
   specs:
@@ -340,8 +348,8 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/rule_engine.git
-  revision: dd5b6f45e07e9db66a6ba3e404e9de3665661d78
-  tag: hv0.0.10
+  revision: 59e802676ce3e1d63a7688e91e94980ff2aec833
+  tag: hv0.0.11
   specs:
     rule_engine (0.0.1)
 
@@ -630,7 +638,7 @@ GEM
     brakeman (3.3.0)
     buftok (0.2.0)
     builder (3.0.4)
-    bullet (5.1.1)
+    bullet (5.4.3)
       activesupport (>= 3.0.0)
       uniform_notifier (~> 1.10.0)
     bunny (1.7.0)
@@ -1519,7 +1527,7 @@ DEPENDENCIES
   bootsnap
   braintree (= 2.10.0)
   brakeman
-  bullet
+  bullet (= 5.4.3)
   bunny (= 1.7.0)
   business_time!
   carmen!
@@ -1613,7 +1621,7 @@ DEPENDENCIES
   lockfile (= 1.4.3)
   log_filter!
   mail (= 2.5.5)
-  marginalia
+  marginalia (= 1.5.0)
   marketo!
   meta_request
   minitest (= 4.7.5)
@@ -1645,6 +1653,7 @@ DEPENDENCIES
   pg
   postoffice!
   premailer (~> 1.8.0)
+  prometheus_exporter!
   pronto
   pronto-brakeman
   pronto-rails_best_practices

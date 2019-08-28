@@ -5187,6 +5187,26 @@ class TicketsControllerTest < ActionController::TestCase
     )
   end
 
+  def test_create_with_integer_unique_external_id_and_expect_validation_error
+    @account.add_feature :unique_contact_identifier
+    params = {
+        email: "bob1.tree@freshdesk.com",
+        name: "Native",
+        subject: Faker::Lorem.characters(100),
+        description: Faker::Lorem.paragraph,
+        unique_external_id: 1,
+        phone:"720 428-8050",
+        status: 2, priority: 2,
+    }
+    post :create, construct_params({}, params)
+    assert_response 400
+    results = parse_response(@response.body)
+    assert_equal results, {"description"=>"Validation failed", "errors"=> [{"field"=>"unique_external_id",
+                                                                            "message"=>"Value set is of type Integer.It should be a/an String",
+                                                                            "code"=>"datatype_mismatch"}]}
+    @account.revoke_feature :unique_contact_identifier
+  end
+
   def test_create_with_unique_external_id
     params = {
         subject: Faker::Lorem.characters(100),

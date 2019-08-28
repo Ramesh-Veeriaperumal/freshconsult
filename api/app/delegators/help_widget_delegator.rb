@@ -4,6 +4,8 @@ class HelpWidgetDelegator < BaseDelegator
   attr_accessor :settings, :components, :predictive_support, :freshmarketer
 
   validate :validate_product, if: -> { @product_id }
+  validate :check_appearance, if: -> { @settings.present? && @settings[:appearance].present? }
+  validate :check_predictive_support, if: -> { predictive_support_present? || @freshmarketer.present? }
   validate :validate_widget_flow, if: -> { @settings.present? && @settings[:widget_flow].present? }
   validate :validate_domain_list, if: -> { @settings.present? && domain_list_or_predictive }
   validate :validate_frustration_tracking, if: -> { errors.blank? && predictive_support_present? && @freshmarketer.blank? }, on: :update
@@ -16,6 +18,7 @@ class HelpWidgetDelegator < BaseDelegator
     @components = options[:settings][:components] if settings
     @predictive_support = options[:settings][:predictive_support] if settings
     @freshmarketer = options[:freshmarketer]
+    @error_options ||= {}
   end
 
   def validate_product
@@ -44,6 +47,14 @@ class HelpWidgetDelegator < BaseDelegator
   def validate_freshmarketer
     validate_domain if freshmarketer[:type] == 'associate'
     errors[:predictive_support] << I18n.t('help_widget.freshmarketer_sign_up_error') if components && !components[:predictive_support]
+  end
+
+  def check_appearance
+    required_feature_error(:appearance, :help_widget_appearance) unless Account.current.help_widget_appearance_enabled?
+  end
+
+  def check_predictive_support
+    required_feature_error(:predictive_support, :help_widget_predictive) unless Account.current.help_widget_predictive_enabled?
   end
 
   private
@@ -98,5 +109,10 @@ class HelpWidgetDelegator < BaseDelegator
 
     def predictive_support_present?
       settings && (predictive_support || (components && components.key?(:predictive_support)))
+    end
+
+    def required_feature_error(field, feature)
+      errors[field] << :require_feature
+      @error_options[:feature] = feature
     end
 end
