@@ -309,8 +309,8 @@ class ApiApplicationController < MetalApiController
     end
 
     # will take scoper as one argument.
-    def load_objects(items = scoper)
-      @items = paginate_items(items)
+    def load_objects(items = scoper, paginate = true)
+      @items = paginate ? paginate_items(items) : items
     end
 
     # will take items as one argument and is_array (whether scoper is a AR or array as another argument.)
