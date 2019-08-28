@@ -8,6 +8,18 @@
   <img class="failure-icon" src="/assets/alert-icon.svg" />
   <span id="request-change-message" class="m0 pl5"></span>
 </div>
+<div id="pending-cancellation-request-modal" class="modal fade pending-cancellation-request-modal hide" role="dialog" aria-hidden="true">
+  <div class="modal-header">
+    <h3 class="ellipsis modal-title"><%= t("subscription_change_confirm_header") %></h3>
+  </div>
+  <div class="modal-body">
+    <p><%= t("subscription_change_confirm_body").html_safe %></p>
+  </div>
+  <div class="modal-footer">
+    <button data-dismiss="modal" class="btn"><%= t("account.cancel") %></button>
+    <button data-submit="modal" class="btn btn-primary cancel-request"><%= t("proceed_btn") %></button>
+  </div>
+</div>
 <%
   plan = @subscription.subscription_plan
   is_new_sprout = new_sprout?(plan.name)

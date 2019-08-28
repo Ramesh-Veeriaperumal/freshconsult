@@ -1023,9 +1023,24 @@ input[type=text].input-agent-count{
 	 .downgrade-sprout{
 	 	display: none;
 	 }
-	 .downgrade-sprout{
-	 	display: none;
-	 }
+	 .pending-cancellation-request-modal {
+    	width: 470px;
+    	left: 55%;
+    	top: 55%;
+
+		.modal-header {
+			border: 0 none;
+		}
+
+ 		.modal-body {
+			margin: 0 !important;
+    		border: 0 !important;
+		}
+
+		.modal-footer {
+			background: none !important;
+		}
+	}
 
 
 // --------------------------------------------------------------------------------------------

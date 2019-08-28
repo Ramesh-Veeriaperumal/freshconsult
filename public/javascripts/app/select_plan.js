@@ -33,6 +33,7 @@ window.App = window.App || {};
     selected_plan_id: null,
     addons: {},
     fsm_addon_key: 'field_service_management',
+    suspended_key: 'suspended',
     initialize: function (currency, billing_cycle, subscribed_plan_id, agent_limit, field_agent_limit, downgrade_launched, current_plan_name, fsm_active, state, pending_cancellation_request) {
       this.currency = currency;
       this.billing_cycle = billing_cycle;
@@ -44,7 +45,10 @@ window.App = window.App || {};
       this.current_plan_name = current_plan_name;
       this.fsm_active = fsm_active;
       this.subscription_state = state;
-      this.pending_cancellation_request = pending_cancellation_request
+      this.pending_cancellation_request = pending_cancellation_request;
+      if(this.downgrade_launched && this.pending_cancellation_request && this.subscription_state !== this.suspended_key) {
+        $('.downgrade-plan-button, .free-plan-button').removeAttr('rel');
+      }
       this.bindEvents()
     },
     namespace: function(){
@@ -53,6 +57,7 @@ window.App = window.App || {};
     bindEvents: function(){
       var $this = this
       $(document).on('click'+$this.namespace(),  '.billing-cancel', function(ev){ $this.billingCancel(ev); })
+      $(document).on('click'+$this.namespace(),  '.plan-button, .plan-button1, .downgrade-plan-button, .free-plan-button', function(ev){ $this.checkCancellationPending(ev) })
       $(document).on('click'+$this.namespace(),  '.plan-button, .plan-button1', function(ev){ $this.bindPlanChange(ev, this) })
       $(document).on('click'+$this.namespace(),  '.suspended-plan-button', function(ev){ $this.bindSuspendedPlanChange(ev,this) })
       $(document).on('click'+$this.namespace(),  '.downgrade-plan-button', function(){ $this.cloneButton(this) })
@@ -81,6 +86,7 @@ window.App = window.App || {};
     },
     performCancelRequest: function(ev, tag) {
       $('#cancellation-wrapper').addClass('sloading inner-form-hide');
+      $('#pending-cancellation-request-modal').modal("hide");
       ev.preventDefault();
       var self = this;
       $.ajax({
@@ -116,6 +122,12 @@ window.App = window.App || {};
       setTimeout(function() {
         $('.request-change-status').addClass('hide');
       }, 5000);
+    },
+    checkCancellationPending: function(ev) {
+      if(this.downgrade_launched && this.pending_cancellation_request && this.subscription_state !== this.suspended_key) {
+        $('#pending-cancellation-request-modal').appendTo("body").modal('show');
+        ev.stopImmediatePropagation();
+      }
     },
     sproutDowngradeModal: function(e){
       $($(e.currentTarget).attr('data-id')).appendTo('body').modal('show');
