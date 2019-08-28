@@ -4,10 +4,11 @@ class Helpdesk::Note < ActiveRecord::Base
 
   # Any changes related to note or reply made in this file should be replicated in
   # send_and_set_helper if required
-  before_create :validate_schema_less_note, :update_observer_events
+  before_create :update_observer_events
   before_create :create_broadcast_message, :if => :broadcast_note?
   before_save :load_schema_less_note, :update_category, :load_note_body, :ticket_cc_email_backup
   before_save :update_note_changes
+  before_save :validate_schema_less_note
 
   before_destroy :save_deleted_note_info
 
