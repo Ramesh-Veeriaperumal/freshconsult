@@ -71,7 +71,7 @@ module Freddy
           product_field = ML_FIELDS_TO_PRODUCT_FIELDS_MAP[ml_field.to_sym]
           value['updated'] = @ticket.safe_send(product_field).present? ? true : false
           value['response'] = transform_value(product_field, value['response']) if entity_exists?(product_field, value['response'])
-          hash[product_field] = value
+          hash[product_field] = value if value['response'].present?
         end
         suggested_fields['priority']['updated'] = priority_updated?(method_options) if suggested_fields['priority'].present?
         suggested_fields = suggested_fields.deep_symbolize_keys
@@ -92,8 +92,10 @@ module Freddy
           picklist_value.present?
         when 'group'
           Account.current.groups.find_by_id(value.to_i).present?
+        when 'priority'
+          value.present?
         else
-          true
+          false
         end
       end
 

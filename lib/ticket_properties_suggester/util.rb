@@ -4,7 +4,7 @@ module TicketPropertiesSuggester::Util
   PRODUCT_FIELDS_TO_ML_FIELDS_MAP = ML_FIELDS_TO_PRODUCT_FIELDS_MAP.invert
 
   def trigger_ticket_properties_suggester?
-    ticket_properties_suggester_enabled? && (@ticket.group.nil? || @ticket.ticket_type.nil? || 
+    ticket_properties_suggester_enabled? && @ticket.visible? && !@ticket.import_ticket && (@ticket.group.nil? || @ticket.ticket_type.nil? ||
     ( @ticket.priority == TicketConstants::PRIORITY_KEYS_BY_TOKEN[:low] && !Thread.current[:dispatcher_set_priority]))
   end
 
