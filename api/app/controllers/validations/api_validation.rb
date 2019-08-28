@@ -14,12 +14,17 @@ class ApiValidation
   CREATE_AND_UPDATE_ACTIONS = %i[create update].freeze
 
   # Set instance variables of validation class from request params or items. so that manual assignment is not needed.
-  def initialize(request_params, item = nil, allow_string_param = false)
+  def initialize(request_params, item = nil, allow_string_param = false, model_decorator = nil)
     # Set instance variables of validation class from loaded item's attributes (incase of PUT/update request)
     @request_params = request_params
+
     if item
-      item.attributes.keys.each do |field, value|
-        safe_send("#{field}=", format_value(item.safe_send(field))) if respond_to?("#{field}=")
+      if model_decorator
+        assign_model_attributes(model_decorator.new(item).attribute_values)
+      else
+        item.attributes.keys.each do |field, value|
+          safe_send("#{field}=", format_value(item.safe_send(field))) if respond_to?("#{field}=")
+        end
       end
     end
 
@@ -83,6 +88,13 @@ class ApiValidation
         instance_variable_set("@#{key}", value)
       end
       set_instance_variables(value) if value.is_a?(Hash) && !(skip_hash_params_set || skip_hash_params_set_for_parameters.try(:include?, key))
+    end
+  end
+
+  def assign_model_attributes(attribute_hash)
+    attribute_hash.each_pair do |field, value|
+      safe_send("#{field}=", format_value(value)) if respond_to?("#{field}=")
+      assign_model_attributes(value) if value.is_a?(Hash) && !(skip_hash_params_set || skip_hash_params_set_for_parameters.try(:include?, field))
     end
   end
 
