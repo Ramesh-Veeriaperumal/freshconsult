@@ -123,10 +123,13 @@ module Admin::Automation::AutomationSummary
           array << generate_operator(DATE_FIELDS_OPERATOR_MAPPING[data[:operator].to_sym] || data[:operator]) :
           array << generate_operator(summary_operator || data[:operator]) if data[:operator].present?
       if data.key? :value
-        data[:value] = data[:value].is_a?(Array) ? data[:value].map { |val| CGI.escapeHTML(val) } :
-                           CGI.escapeHTML(data[:value]) if SUBJECT_DESCRIPTION_FIELDS.include?(data[:name]) ||
-            (field.present? && CUSTOM_TEXT_FIELD_TYPES.include?(field.field_type.to_sym))
-        array << generate_value(data[:name], data[:value], ' OR ')
+        value = if SUBJECT_DESCRIPTION_FIELDS.include?(data[:name]) || (field.present? &&
+                                                CUSTOM_TEXT_FIELD_TYPES.include?(field.field_type.to_sym))
+                  data[:value].is_a?(Array) ? data[:value].map { |val| CGI.escapeHTML(val) } : CGI.escapeHTML(data[:value])
+                else
+                  data[:value]
+                end
+        array << generate_value(data[:name], value, ' OR ')
       end
       array << generate_case_sensitive(data[:case_sensitive]) if data[:case_sensitive].present?
       sentence = array.join(' ')
