@@ -532,7 +532,7 @@
 
   $.validator.addMethod("two_decimal",function(value, element) {
 
-      return /^\d*(\.\d{0,2})?$/i.test(value);
+      return /^-?\d*(\.\d{0,2})?$/i.test(value);
   }, I18n.t('validation.decimal_digit_valid', { defaultValue: validationDefaults.decimal_digit_valid }));
   $.validator.addClassRules("decimal", { number: true , two_decimal: true});
 
