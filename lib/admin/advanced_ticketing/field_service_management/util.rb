@@ -16,6 +16,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
     private
 
       def perform_fsm_operations
+        Rails.logger.info "Started adding FSM artifacts for Account - #{Account.current.id}"
         update_field_agent_limit_for_active_account
         create_service_task_field_type
         fsm_fields_to_be_created = fetch_fsm_fields_to_be_created
@@ -26,6 +27,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         create_fsm_dashboard
         create_field_service_manager_role if Account.current.scheduling_fsm_dashboard_enabled?
         expire_cache
+        Rails.logger.info "Completed adding FSM artifacts for Account - #{Account.current.id}"
       rescue StandardError => e
         log_operation_failure('Enable', e)
       end
@@ -51,9 +53,9 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       end
 
       def log_operation_failure(operation, exception)
-        msg = "#{operation} FSM feature failed"
+        msg = "#{operation} FSM feature failed in #{Rails.env}"
         error_msg = "#{msg}, account id: #{Account.current.id}, message: #{exception.message}"
-        Rails.logger.error error_msg
+        Rails.logger.error "#{error_msg} backtrace: #{exception.backtrace.join("\n")}"
         NewRelic::Agent.notice_error(exception, description: error_msg)
         msg_param = { account_id: Account.current.id, request_id: Thread.current[:message_uuid], message: exception.message }
         notify_fsm_dev(msg, msg_param)
@@ -98,7 +100,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         ticket_field.name = field_name
         ticket_field.flexifield_def_entry = ff_def_entry
 
-        raise "Couldn't save ticket field" unless ticket_field.save
+        raise "Couldn't save ticket field #{field_name}" unless ticket_field.save
         ticket_field.insert_at(field_details[:position]) if field_details[:position].present?
       end
 
@@ -268,9 +270,11 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       end
 
       def cleanup_fsm
+        Rails.logger.info "Started disabling FSM feature for Account - #{Account.current.id}"
         remove_fsm_addon_and_reset_agent_limit
         destroy_field_agent
         destroy_field_group
+        Rails.logger.info "Completed disabling FSM feature for Account - #{Account.current.id}"
       rescue StandardError => e
         log_operation_failure('Disable', e)
       end
