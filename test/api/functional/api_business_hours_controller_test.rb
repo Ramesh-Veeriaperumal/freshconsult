@@ -61,7 +61,7 @@ class ApiBusinessHoursControllerTest < ActionController::TestCase
       create_business_calendar
     end
     per_page = Account.current.business_calendar.all.count - 1
-    get :index, controller_params(per_page: per_page)
+    get :index, controller_params(per_page: per_page, page: 1)
     assert_response 200
     assert JSON.parse(response.body).count == per_page
     assert_equal "<http://#{@request.host}/api/v2/business_hours?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
@@ -70,5 +70,24 @@ class ApiBusinessHoursControllerTest < ActionController::TestCase
     assert_response 200
     assert JSON.parse(response.body).count == 1
     assert_nil response.headers['Link']
+  end
+
+  def test_index_with_pagination
+    5.times do
+      create_business_calendar
+    end
+    per_page = 2
+    get :index, controller_params(per_page: per_page, page: 2)
+    assert JSON.parse(response.body).count == per_page
+    assert_response 200
+  end
+
+  def test_index_with_out_pagination
+    5.times do
+      create_business_calendar
+    end
+    get :index, controller_params
+    assert JSON.parse(response.body).count == Account.current.business_calendar.count
+    assert_response 200
   end
 end
