@@ -2734,7 +2734,7 @@ en:
         show_info: Save the survey to start translating
         hidden_languages: Hidden Languages
         hidden_languages_helptext: These languages can be viewed on your portal only if you make them visible in your Admin Settings.
-        helptext_content: Can’t find the language of your choice or is it hidden? Add languages or make them visible in Admin > Helpdesk >  
+        helptext_content: Can’t find the language of your choice or is it hidden? Add languages or make them visible in Admin > Helpdesk >
   ends_with: Ends with
   last_name: Last Name
   forum:
@@ -2938,7 +2938,7 @@ en:
       edit:
         not_allowed: You cannot edit this agent
         agent_type_change_not_allowed: You cannot change the agent type
-        not_allowed_to_edit_inaccessible_fields: Not allowed to edit Agent's profile information(name, phone, mobile and title) 
+        not_allowed_to_edit_inaccessible_fields: Not allowed to edit Agent's profile information(name, phone, mobile and title)
     roles:
       create:
         success: The role "%{name}" has been created
@@ -6123,6 +6123,7 @@ en:
       verify_fail: DNS settings can take upto 48 hours to propagate
       new_dkim: You haven't created a support email with a custom domain yet!
       limit_exceeded: You cannot configure more than two DKIM signatures on this plan.
+      already_verified: The domain is verified in another account.
   step2: Step 2
   import_users_contacts: Users &rarr; Contacts
   linkback_info: You can choose to Linkback to your own website when the customer clicks on the header logo

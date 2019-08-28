@@ -9,6 +9,7 @@ class Dkim::ValidateDkimRecord
   end
 
   def validate
+    raise Dkim::DomainAlreadyConfiguredError if sendgrid_verified_domain?(@domain_category.email_domain)
     return update_verified_time unless Dkim::DnsRecordValidator.new(domain_category).check_records
     set_first_verification_time
     statuses = sg_domain_ids.collect do |id|
@@ -37,22 +38,22 @@ class Dkim::ValidateDkimRecord
     end
 
     def set_last_verified
-      domain_category.last_verified_at = Time.now      
+      domain_category.last_verified_at = Time.now
     end
-    
+
     def update_dkim_records(response)
       domain_category.dkim_records.where(:sg_id => response['id']).each do |dkim_record|
         dkim_record.status = response['validation_results']["#{dkim_record.sg_type}"]['valid']
         dkim_record.save if dkim_record.changes.present?
       end
     end
-    
+
     def update_verified_time
       set_first_verification_time
       set_last_verified
       domain_category.save and domain_category
     end
-    
+
     def update_email_configs
       domain_category.email_configs.update_all(:category => domain_category.category)
     end
