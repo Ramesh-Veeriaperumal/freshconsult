@@ -121,7 +121,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
           active: true,
           required: options[:required] || false,
           required_for_closure: false,
-          visible_in_portal: true,
+          visible_in_portal: false,
           editable_in_portal: false,
           required_in_portal: false,
           flexifield_alias: options[:flexifield_alias]
