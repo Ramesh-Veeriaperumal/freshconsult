@@ -19,6 +19,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
   def before_all
     @account = Account.first.make_current
     @account.launch(:help_widget)
+    @account.add_feature(:multi_product)
   end
 
   def stub_freshmarketer_client(methods = ALL_FM_METHODS)
@@ -1335,9 +1336,29 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     unlink_freshmarketer_account
   end
 
-  def test_widget_create_with_portal
+  def test_widget_create_without_product
     Account.current.help_widgets.destroy_all
-    constant_widget_settings_hash = HelpWidget::DEFAULT_SETTINGS.dup
+    constant_widget_settings_hash = HelpWidget.default_settings
+    request_params = {
+      product_id: nil,
+      name: 'First new widget',
+      settings: {
+        components: {
+          contact_form: true
+        }
+      }
+    }
+    post :create, construct_params(version: 'v2', help_widget: request_params)
+    assert_response 201
+    id = JSON.parse(@response.body)['id']
+    match_json(widget_show_pattern(Account.current.help_widgets.find_by_id(id)))
+    assert Account.current.help_widgets.find_by_id(id).settings[:message] == "Welcome to Support"
+    assert constant_widget_settings_hash == HelpWidget.default_settings
+  end
+
+  def test_widget_create_product_with_portal
+    Account.current.help_widgets.destroy_all
+    constant_widget_settings_hash = HelpWidget.default_settings
     product1 = create_product(portal_url: 'sample.freshpo.com')
     portal = Account.current.portals.find_by_product_id(product1.id)
     request_params = {
@@ -1353,14 +1374,14 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     assert_response 201
     id = JSON.parse(@response.body)['id']
     match_json(widget_show_pattern(Account.current.help_widgets.find_by_id(id)))
-    assert Account.current.help_widgets.find_by_id(id).settings[:message] == "Welcome to #{portal.name} Support"
+    assert Account.current.help_widgets.find_by_id(id).settings[:message] == "Welcome to #{product1.name} Support"
     assert Account.current.help_widgets.find_by_id(id).settings[:appearance][:button_color] == portal.preferences[:tab_color]
-    assert constant_widget_settings_hash == HelpWidget::DEFAULT_SETTINGS
+    assert constant_widget_settings_hash == HelpWidget.default_settings
   end
 
-  def test_widget_create_without_portal
+  def test_widget_create_product_without_portal
     Account.current.help_widgets.destroy_all
-    constant_widget_hash = HelpWidget::DEFAULT_SETTINGS.dup
+    constant_widget_hash = HelpWidget.default_settings
     product2 = create_product
     request_params = {
       product_id: product2.id,
@@ -1375,9 +1396,70 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     assert_response 201
     id = JSON.parse(@response.body)['id']
     match_json(widget_show_pattern(Account.current.help_widgets.find_by_id(id)))
-    assert Account.current.help_widgets.find_by_id(id).settings[:message] == 'Welcome to Support'
+    assert Account.current.help_widgets.find_by_id(id).settings[:message] == "Welcome to #{product2.name} Support"
     assert Account.current.help_widgets.find_by_id(id).settings[:appearance][:button_color] == constant_widget_hash[:appearance][:button_color]
-    assert constant_widget_hash == HelpWidget::DEFAULT_SETTINGS
+    assert constant_widget_hash == HelpWidget.default_settings
+  end
+
+  def test_widget_create_default_language_check
+    Account.current.help_widgets.destroy_all
+    user = User.first.make_current
+    user.language = 'es'
+    user.save
+    request_params = {
+      name: 'First new widget',
+      settings: {
+        components: {
+          contact_form: true
+        }
+      }
+    }
+    post :create, construct_params(version: 'v2', help_widget: request_params)
+    assert_response 201
+    id = JSON.parse(@response.body)['id']
+    match_json(widget_show_pattern(Account.current.help_widgets.find_by_id(id)))
+    # assert Account.current.help_widgets.find_by_id(id).settings[:button_text] == 'Ayuda'
+    # assert Account.current.help_widgets.find_by_id(id).settings[:contact_form][:form_title] == 'Contactarte'
+    # assert Account.current.help_widgets.find_by_id(id).settings[:contact_form][:form_button_text] == 'Enviar'
+    # assert Account.current.help_widgets.find_by_id(id).settings[:contact_form][:form_submit_message] == 'Gracias por tus comentarios.'
+  end
+
+  def test_widget_create_predictive_language_check
+    Account.current.help_widgets.destroy_all
+    user = User.first.make_current
+    user.language = 'es'
+    user.save
+    request_params = {
+      settings: {
+        components: {
+          predictive_support: true
+        }
+      }
+    }
+    post :create, construct_params(version: 'v2', help_widget: request_params)
+    assert_response 201
+    id = JSON.parse(@response.body)['id']
+    match_json(widget_show_pattern(Account.current.help_widgets.find_by_id(id)))
+    # assert Account.current.help_widgets.find_by_id(id).settings[:predictive_support][:welcome_message] == '¿Podemos ayudar?'
+    # assert Account.current.help_widgets.find_by_id(id).settings[:predictive_support][:predictive_message] == 'Notamos que estás atrapado. Díganos qué estaba tratando de lograr y nuestro equipo de soporte se comunicará con usted lo antes posible.'
+    # assert Account.current.help_widgets.find_by_id(id).settings[:contact_form][:success_message] == 'Gracias. ¡Estaremos en contacto!'
+  end
+
+  def test_create_with_product_id_without_multi_product_feature
+    Account.current.revoke_feature(:multi_product)
+    Account.current.help_widgets.destroy_all
+    product = create_product(portal_url: Faker::Avatar.image)
+    request_params = {
+      product_id: product.id,
+      settings: {
+        components: {
+          contact_form: true
+        }
+      }
+    }
+    post :create, construct_params(version: 'v2', help_widget: request_params)
+    assert_response 201
+    Account.current.add_feature(:multi_product)
   end
 
   def test_create_with_product_associated

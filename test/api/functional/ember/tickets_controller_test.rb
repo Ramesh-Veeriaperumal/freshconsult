@@ -2211,6 +2211,7 @@ module Ember
       params.delete('fr_due_by')
       params.delete('due_by')
       @account.reload
+      Account.current.instance_variable_set('@ticket_fields_from_cache', nil)
       ticket = create_ticket(params)
       params_hash = update_ticket_params_hash.merge(type: 'Problem', status: 5)
       params_hash.delete(:fr_due_by)

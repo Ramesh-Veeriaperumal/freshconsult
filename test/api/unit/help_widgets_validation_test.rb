@@ -1,7 +1,6 @@
 require_relative '../unit_test_helper'
 
 class HelpWidgetsValidationTest < ActionView::TestCase
-
   def setup
     super
     before_all
@@ -19,7 +18,7 @@ class HelpWidgetsValidationTest < ActionView::TestCase
     helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
     refute helpwidgetsvalidation.valid?(:create)
     errors = helpwidgetsvalidation.errors.full_messages
-    assert errors.include?("Settings can't be blank")
+    assert errors.include?('Settings can\'t be blank')
   end
 
   def test_create_invalid_with_false_settings_hash
@@ -103,6 +102,39 @@ class HelpWidgetsValidationTest < ActionView::TestCase
     })
     helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
     assert helpwidgetsvalidation.valid?(:update)
+  end
+
+  def test_update_valid_with_valid_button_text
+    request_params = ActionController::Parameters.new ({
+      'id' => 1,
+      'settings' => {
+        'button_text' => 'Help'
+      }
+    })
+    helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
+    assert helpwidgetsvalidation.valid?(:update)
+  end
+
+  def test_update_valid_with_invalid_button_text
+    request_params = ActionController::Parameters.new ({
+      'id' => 1,
+      'settings' => {
+        'button_text' => 'Help me . Click me. I\'ll pop up'
+      }
+    })
+    helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
+    refute helpwidgetsvalidation.valid?(:update)
+  end
+
+  def test_update_valid_with_empty_button_text
+    request_params = ActionController::Parameters.new ({
+      'id' => 1,
+      'settings' => {
+        'button_text' => nil
+      }
+    })
+    helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
+    refute helpwidgetsvalidation.valid?(:update)
   end
 
   def test_update_valid_with_solution_articles

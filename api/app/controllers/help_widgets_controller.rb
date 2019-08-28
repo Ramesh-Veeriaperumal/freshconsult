@@ -1,6 +1,5 @@
 class HelpWidgetsController < ApiApplicationController
   include HelperConcern
-  include HelpWidgetConcern
   include HelpWidgetConstants
   include FrustrationTrackingConcern
 
@@ -60,6 +59,13 @@ class HelpWidgetsController < ApiApplicationController
       super
       @item.name = widget_name if cname_params[:name].blank?
       @item.settings = assign_default_settings(cname_params[:settings], cname_params[:product_id])
+    end
+
+    def assign_default_settings(settings_param, product_id)
+      current_product = Account.current.products_from_cache.find { |product| product.id == product_id }
+      settings = HelpWidget.default_settings(current_product)
+      settings[:components].merge!(settings_param[:components].symbolize_keys)
+      settings
     end
 
     def constants_class
