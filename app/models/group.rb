@@ -90,9 +90,9 @@ class Group < ActiveRecord::Base
         order: :name,
         conditions: ["ticket_assign_type IN (?)", OMNI_CHANNEL_ASSIGNMENT_TYPES]
   scope :support_agent_groups, :order => :name,
-        :conditions => "group_type = #{GROUP_TYPE[:support_agent_groups]}"
+        :conditions => ["group_type = ?", GROUP_TYPE[:support_agent_groups]]
   scope :field_agent_groups, :order => :name,
-        :conditions => "group_type = #{GROUP_TYPE[:field_agent_groups]}"
+        :conditions => ["group_type = ?", GROUP_TYPE[:field_agent_groups]]
 
   def self.has_different_business_hours?
     joins(:business_calendar).where(NON_DEFAULT_BUSINESS_HOURS).exists?
