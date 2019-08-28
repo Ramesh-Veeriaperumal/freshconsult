@@ -55,7 +55,7 @@
 	   if(App.namespace == "helpdesk/ticket_templates/edit" || App.namespace == "helpdesk/ticket_templates/edit_child") {
 	     template = true;
 	     nsc_param = "helpdesk_ticket";
-	      Helpdesk.MultipleFileUpload.renderExistingFiles(<%= item.all_attachments.to_json.html_safe%>,<%=item.cloud_files.to_json.html_safe %>,jQuery('.attachment-icon:visible').data('iconCount'),template,nsc_param);
+	      Helpdesk.MultipleFileUpload.renderExistingFiles(<%= item.all_attachments.to_json.html_safe%>,<%=item.cloud_files.to_json.html_safe %>,jQuery('.attachment-icon').data('iconCount'),template,nsc_param);
 	      jQuery('[name="[cloud_file_attachments][]"]').remove();
 	   }
 	     if(App.namespace == "helpdesk/tickets/edit") {
