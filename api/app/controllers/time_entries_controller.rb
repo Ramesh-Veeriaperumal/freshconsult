@@ -176,7 +176,7 @@ class TimeEntriesController < ApiApplicationController
     end
 
     def update_running_timer(user_id)
-      @time_cleared = scoper.where(user_id: user_id, timer_running: true)
+      @time_cleared = scoper.use_index('index_helpdesk_time_sheets_on_account_id_user_id_executed_at').where(user_id: user_id, timer_running: true)
       @time_cleared.each { |tc| tc.update_attributes(timer_running: false, time_spent: tc.calculate_time_spent) }
     end
 end

@@ -198,6 +198,10 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     query_hash
   end
 
+  def self.use_index(index)
+    from(sanitize_sql_array(["#{table_name} USE INDEX(#{index})"]))
+  end
+
   def hours
     seconds = time_spent.to_f
     sprintf( "%0.02f", seconds/3600)
