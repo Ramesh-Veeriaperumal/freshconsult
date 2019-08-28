@@ -750,6 +750,9 @@ pt-BR:
         additional_info: >-
           Você também pode compartilhar como foi sua experiência de trabalhar
           conosco.
+    canned_form:
+      next: Próximo
+      form_submit: Enviar
   gamification:
     levels:
       beginner: Iniciante
@@ -1762,7 +1765,7 @@ pt-BR:
             de clientes enviadas para sua conta do eBay. Depois que ele for
             configurado, todas as consultas dos seus clientes do eBay serão
             automaticamente convertidas em tickets. Você também pode
-            respondê-las diretamente no Freshdesk.
+            respondê-las diretamente no Freshdesk. 
       index:
         title: Contas de comércio eletrônico
         renew: Renovar token
@@ -2706,7 +2709,7 @@ pt-BR:
           "para" e "do" Freshdesk.
         customer_portal_ssl_warning: >-
           Como um URL do helpdesk personalizado está configurado em sua conta,
-          você será redirecionado para
+          você será redirecionado para 
         multiple_product_ssl_warning: O SSL não será aplicável se vários produtos estiverem configurados.
         enabled: Habilitado
         disabled: Desabilitado
@@ -3860,7 +3863,7 @@ pt-BR:
       contato com o suporte pelo e-mail support@freshdesk.com.
   import_user_notification: >-
     Você pode enviar o e-mail de ativação do usuário para os contatos importados
-    da guia Clientes
+    da guia Clientes 
   what_is_cvv: O que é cvv?
   pro_details: >-
     Todas as funcionalidades do plano &quot;Básico&quot; mais automação de
@@ -5928,7 +5931,8 @@ pt-BR:
   right: Direita
   footer:
     helpdesk_software: Software de helpdesk automatizado
-    helpdesk_software_link: "https://freshdesk.com/br/?utm_source=portal&utm_medium=reflink&utm_campaign=portal_reflink"
+    helpdesk_software_link: >-
+      https://freshdesk.com/br/?utm_source=portal&utm_medium=reflink&utm_campaign=portal_reflink
     by_freshdesk: do Freshdesk
     submit_feedback: Enviar feedback
     footer_feedback_subject_placeholder: Nos diga como podemos fazer o Freshdesk melhor
@@ -6333,7 +6337,7 @@ pt-BR:
         desabilitar todos eles por meio de seu navegador.
       privacy_policy: Política de privacidade
     no_topics_in_this_view: ~ Nenhum tópico nesta exibição ~
-    reported: informado
+    reported: informou
     said: disse
     solutions_home: Página inicial de soluções
     print_title: Imprimir este artigo
@@ -6389,7 +6393,7 @@ pt-BR:
     post_not_found: Parece que este post foi excluído
     showing_my_topics: Mostrando os tópicos que você segue
     community_forums: Fóruns da comunidade
-    knowledge_base: Base de dados de conhecimento
+    knowledge_base: Base de conhecimento
     showing_recent_updates: Mostrando atualizações mais recentes
     no_articles_info_1: 'Desculpe, ainda não publicamos nenhum artigo nesta seção. '
     no_articles_info_2: 'Verifique novamente mais tarde. '
@@ -6447,7 +6451,7 @@ pt-BR:
       sort_order:
         date: Antigos Primeiro
         recency: Recentes Primeiro
-        popularity: Popular
+        popularity: Populares
       sort_by_most_recent: Mais Recente
       sort_by_most_popular: Mais Popular
       sort_by_default: Padrão
@@ -6490,8 +6494,8 @@ pt-BR:
       problem_unlike_button: Eu não estou com esse problema!
       howto_unlike_button: Eu não fiz esta pergunta!
       announce_users_voted_title: Pessoas que gostaram disso
-      ideas_users_voted_title: Pessoas que gostaram desta ideia
-      problem_users_voted_title: Pessoas que estão com este problema
+      ideas_users_voted_title: Pessoas que gostaram dessa ideia
+      problem_users_voted_title: Pessoas com este problema
       howto_users_voted_title: Pessoas que fizeram esta pergunta
     post_vote:
       upvoted: Você curtiu
@@ -6901,7 +6905,7 @@ pt-BR:
       diretamente.
     info16: >-
       Um artigo <b>publicado</b> estará visível no portal de autoatendimento e
-      também será exibido exibido nos resultados de pesquisa.
+      também será exibido exibido nos resultados de pesquisa. 
     info17: >-
       O <b>rascunho</b> dos arquivos ficam visíveis somente aos analistas e
       serão exibidos apenas nos resultados de pesquisa dos analistas.
@@ -7380,7 +7384,7 @@ pt-BR:
           para o suporte em seu helpdesk, você poderá criar uma notificação
           dessa específica para cada idioma. O ícone <i
           class="common-icon-outdated"></i> indica que as traduções da
-          notificação em outros idiomas podem estar desatualizadas.
+          notificação em outros idiomas podem estar desatualizadas. 
       agent_template_3:
         topic: Ticket atribuído a um analista
         info1: >-
@@ -7390,7 +7394,7 @@ pt-BR:
           tenha configurado o suporte para vários idiomas em seu helpdesk, você
           pode criar essa notificação em todos os idiomas oferecidos. O ícone <i
           class="common-icon-outdated"></i> indica que as traduções da
-          notificação em outros idiomas podem estar desatualizadas.
+          notificação em outros idiomas podem estar desatualizadas. 
       agent_template_11:
         topic: Ticket não acompanhado em um Grupo
         info1: >-
@@ -7601,7 +7605,15 @@ pt-BR:
   activate_and_log_in_long: Ativar e fazer login
   password: Senha
   enter_payment: Continuar com o pagamento
-  downgrade_confirm: "<span class=\"label label-important\">Importante</span>  Você está fazendo downgrade do plano <b>%{from}</b> para o plano <b>%{to}</b> . Observe que todos os dados e configurações associados aos recursos disponíveis no plano %{from} serão perdidos permanentemente.<br /><br /> Para ver a lista completa dos planos e recursos, visite <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Planos e preços</a>. <br />Ainda não tem certeza? <a href = \"mailto:support@freshdesk.com\" >Deixe-nos ajudar você a decidir</a>"
+  downgrade_confirm: >-
+    <span class="label label-important">Importante</span>  Você está fazendo
+    downgrade do plano <b>%{from}</b> para o plano <b>%{to}</b> . Observe que
+    todos os dados e configurações associados aos recursos disponíveis no plano
+    %{from} serão perdidos permanentemente.<br /><br /> Para ver a lista
+    completa dos planos e recursos, visite <a target="_blank"
+    href="http://freshdesk.com/pricing">Planos e preços</a>. <br />Ainda não tem
+    certeza? <a href = "mailto:support@freshdesk.com" >Deixe-nos ajudar você a
+    decidir</a>
   downgrade_confirm_v2: >-
     Você está fazendo downgrade do plano <b>%{current_plan}</b> para o plano
     <b>%{new_plan}</b>.
@@ -9650,8 +9662,8 @@ pt-BR:
     export: Exportar
     thirt_days: Últimos 30 dias
     seven_days: Últimos 7 dias
-    twenty_four: De ontem
-    custom_filter: Definir data
+    twenty_four: Desde ontem
+    custom_filter: Configurar data
     no_fields_selected: Selecione pelo menos um dos campos abaixo para continuar.
     created_time: Hora da criação
     resolved_time: Hora da solução
@@ -11326,7 +11338,7 @@ pt-BR:
         e Celular do Batchbook e as disponibiliza para seus analistas.
         <br><br>Você pode procurar os contatos do Batchbook, pesquisando o
         endereço de e-mail. Se houver vários contatos com o mesmo endereço,
-        todos eles serão exibidos como uma lista.</p><br/>
+        todos eles serão exibidos como uma lista.</p><br/> 
       desc: Traga informações do contato de sua conta no Batchbook para o Freshdesk
       detect_error: Não foi possível identificar a versão do Batchbook. Verifique o domínio.
       form:
@@ -11818,7 +11830,7 @@ pt-BR:
         logmein_company_info: >-
           Para obter sua ID da empresa vá para Centro de administração -> Grupo
           de técnicos ->Configurações globais -> Exemplo de servidor do ASP.Net
-          C#
+          C# 
         logmein_sso_pwd_info: >-
           Para definir sua senha de Logon único, vá para Centro de administração
           -> Grupo de técnicos -> Configurações globais -> Logon único -> nova
@@ -11828,7 +11840,7 @@ pt-BR:
       desc: >-
         Adicione o MailChimp ao Freshdesk e inicie o gerenciamento de suas
         inscrições, exporte lista de clientes e obtenha as informações
-        necessárias sobre as atividades deles usando o helpdesk.
+        necessárias sobre as atividades deles usando o helpdesk.  
       helptext: <h4>Ajuda com a integração do MailChimp</h4>
     constantcontact:
       label: Constant Contact
@@ -11842,7 +11854,7 @@ pt-BR:
       desc: >-
         Consulte e gerencie assinaturas em sua conta do Campaign Monitor e traga
         as percepções sobre as estatísticas de uso dos clientes diretamente para
-        dentro do Freshdesk.
+        dentro do Freshdesk. 
       helptext: >-
         <h4>Ajuda para a Integração com o Campaign Monitor</h4><br/>Para
         integrar com o Campaign Monitor, você deve entrar sua Chave da API e o
@@ -11875,7 +11887,7 @@ pt-BR:
         api_url_info: >-
           Para obter sua URL da API, vá para
           https://app.icontact.com/icp/core/externallogin e copie a URL da API
-          na seção &quot;Informações da conta&quot;.
+          na seção &quot;Informações da conta&quot;. 
     dropbox:
       label: DropBox
       desc: Anexe e compartilhe seus dados/arquivos usando o DropBox.
@@ -12024,7 +12036,7 @@ pt-BR:
       freshdesk_api_key: Chave da API do Freshdesk
       api_key_available: >-
         A chave da API pode ser obtida em Configurações do perfil na sua conta
-        do Freshdesk
+        do Freshdesk 
       new_to_freshdesk: 'Novo no Freshdesk? '
     hootsuite:
       auth_error: >-
@@ -15747,13 +15759,13 @@ pt-BR:
         poderá criar várias categorias para produtos ou equipes. Isso ajudará
         você a direcionar conversas relevantes para todas as suas seções de
         nível superior e, como um administrador, você ainda pode gerenciar tudo
-        de um só lugar.
+        de um só lugar. 
       para3: >-
         Se você tiver portais com vários produtos configurados em sua conta do
         Freshdesk, poderá escolher ter uma de suas categorias vinculada a um
         produto. Depois que você fizer isso, os usuários poderão ver essa
         categoria, seus fóruns e todos os seus tópicos, tanto em seu portal
-        principal quanto no portal do produto.
+        principal quanto no portal do produto. 
       para4: Saiba mais sobre como ter vários produtos no Freshdesk.
     shared:
       topic:
