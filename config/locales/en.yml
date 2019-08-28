@@ -5038,6 +5038,9 @@ en:
   set_password: Set your password
   send_email_to_agent: Send Email to Agent
   import_data: Date Imported
+  subscription_change_confirm_para1: You're on the right path ;)
+  subscription_change_confirm_para2: You have an existing request to cancel your account. Click on 'Proceed' to delete this request and alter your subscription.
+  proceed_btn: Proceed
   downgrade:
     billing_request_on: Subscription change requested on
     billing_next_renewal: Effective from next renewal on

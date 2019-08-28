@@ -108,7 +108,7 @@
             <% end %>
         </div>
     </div>
-    <div class="request-change-info"><img src="/assets/info-icon.svg" /></span><span class="m0 pl5"><%=t("downgrade.info")%></span></div>
+    <div class="request-change-info"><img src="/assets/info-icon.svg" /><span class="m0 pl5"><%=t("downgrade.info")%></span></div>
   </div>
 <% elsif current_account.launched?(:downgrade_policy) && current_account.account_cancellation_requested? && current_account.active? %>
   <%
