@@ -402,6 +402,7 @@ class Helpdesk::Note < ActiveRecord::Base
         else
           notable.schema_less_ticket.safe_send("update_#{note_category}_count", action)
         end
+        Rails.logger.info "Helpdesk::Note::update_note_count_for_reports::#{Time.zone.now.to_f} and schema_less_ticket_object :: #{notable.schema_less_ticket.reports_hash.inspect}"
         notable.schema_less_ticket.save
       end
     end
