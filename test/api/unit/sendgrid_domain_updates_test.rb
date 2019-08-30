@@ -118,7 +118,7 @@ class SendGridDomainUpdatesTest < ActionView::TestCase
   end
 
   def test_delete_record
-    SendgridDomainUpdates.stubs(:send_request).returns(ResponseStub.new(204))
+    SendgridDomainUpdates.any_instance.stubs(:send_request).returns(ResponseStub.new(204))
     SendgridDomainUpdates.new.delete_record('domain', 1)
     assert_equal response.status, 200
   ensure
@@ -128,8 +128,8 @@ class SendGridDomainUpdatesTest < ActionView::TestCase
   def test_create_record
     status = ShardMapping.find_by_account_id(Account.current.id)[:status]
     Freemail.stubs(:free_or_disposable?).returns(true)
-    FreshdeskErrorsMailer.stubs(:error_email).returns(true)
-    SendgridDomainUpdates.stubs(:send_request).returns(ResponseStub.new(200))
+    FreshdeskErrorsMailer.any_instance.stubs(:error_email).returns(true)
+    SendgridDomainUpdates.any_instance.stubs(:send_request).returns(ResponseStub.new(200))
     SendgridDomainUpdates.new.create_record('domain', 1)
 
     SendgridDomainUpdates.any_instance.stubs(:get_account_signup_params).returns({ 'account_details' => 'details', 'api_response' => { 'RISK SCORE' => 4, 'status' => 4, 'REASON' => 'reason' }})

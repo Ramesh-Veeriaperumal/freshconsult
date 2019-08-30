@@ -104,7 +104,7 @@ module TwitterTestHelper
     channel_payload('helpkit_command', account, options, context, data)
   end
 
-  def sample_twitter_dm_acknowledgement(account, handle, stream, options = {})
+  def sample_twitter_reply_acknowledgement(account, handle, stream, options = {})
     context = get_command_context(handle, stream, options)
     context[:note_id] = options[:note_id]
 

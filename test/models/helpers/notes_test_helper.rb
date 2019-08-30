@@ -20,7 +20,7 @@ module NotesTestHelper
       :category => params[:category],
       :private => params[:private],
       :incoming => params[:incoming],
-      :notable_id => params[:ticket_id] || Helpdesk::Ticket.last.display_id,
+      :notable_id => params[:ticket_id] || Account.current.tickets.last.id
      }
   end
 
@@ -102,7 +102,8 @@ module NotesTestHelper
         support_screen_name:  twitter_handle.present? ? twitter_handle.screen_name : nil,
         requester_screen_name: tweet.tweetable.user.twitter_id,
         twitter_handle_id: twitter_handle.present? ? twitter_handle.id : nil,
-        stream_id: tweet.stream_id
+        stream_id: tweet.stream_id,
+        latest_tweet_id: latest_tweet_id(note)
       }
     end
 
@@ -178,5 +179,13 @@ module NotesTestHelper
       "group_id": survey_result_assoc.group_id,
       "survey_id": survey_result_assoc.survey_id
     }
+  end
+
+  def latest_tweet_id(note)
+    twitter_notes = note.notable.notes.latest_twitter_comment
+    if twitter_notes.present?
+      latest_note = twitter_notes.first
+      return latest_note.tweet.tweet_id if latest_note.tweet.present?
+    end
   end
 end

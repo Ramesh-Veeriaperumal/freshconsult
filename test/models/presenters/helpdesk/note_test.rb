@@ -37,7 +37,7 @@ class NoteTest < ActiveSupport::TestCase
   end
 
   def test_central_publish_with_launch_party_enabled
-  	CentralPublishWorker::ActiveNoteWorker.jobs.clear
+    CentralPublishWorker::ActiveNoteWorker.jobs.clear
     note = create_note(note_params_hash)
     assert_equal 1, CentralPublishWorker::ActiveNoteWorker.jobs.size
   end
