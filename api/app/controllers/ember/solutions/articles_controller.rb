@@ -36,13 +36,13 @@ module Ember
       def filter
         search_articles if params[:term].present?
         @portal_articles = scoper.portal_articles(params[:portal_id], [@lang_id]).preload(filter_preload_options)
-        @items = apply_scopes(@portal_articles,  @reorg_params)
+        @items = apply_article_scopes(@portal_articles)
         @items = properties_and_term_filters
         paginate_filter_items
       end
 
       def untranslated_articles
-        @items = apply_scopes(untranslated_language_articles, @reorg_params)
+        @items = apply_article_scopes(untranslated_language_articles)
         paginate_filter_items
       end
 
@@ -135,7 +135,7 @@ module Ember
 
         def sanitize_filter_data
           filter_fields = SolutionConstants::FILTER_FIELDS
-          filter_data   = params.select {|k,v| filter_fields.include? k}
+          filter_data   = params.select { |k, v| filter_fields.include? k }
           sanitize_hash_values filter_data
         end
 
@@ -148,13 +148,13 @@ module Ember
         end
 
         def properties_and_term_filters
-          @items=@items.all # to avoid n+1 queries
+          @items = @items.all # to avoid n+1 queries
           filtered_articles = if params[:term].present?
-            ids = @items.map(&:id) & @results.map(&:id)
-            @items.select{|item| ids.include?(item.id)}
-          else
-            @items
-          end
+                                ids = @items.map(&:id) & @results.map(&:id)
+                                @items.select { |item| ids.include?(item.id) }
+                              else
+                                @items
+                              end
           filtered_articles.uniq
         end
 

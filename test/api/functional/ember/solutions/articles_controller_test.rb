@@ -1317,9 +1317,8 @@ module Ember
       end
 
       def test_article_filters
-        article_ids = @account.solution_articles.where(language_id: 6).collect(&:parent_id)
         get :filter, controller_params(version: 'private', portal_id: @portal_id, language: 'en')
-        articles = @account.solution_articles.where(parent_id: article_ids, language_id: 6).first(10)
+        articles = get_portal_articles(@portal_id, [6]).first(30)
         assert_response 200
         pattern = articles.map { |article| private_api_solution_article_pattern(article, action: :filter) }
         match_json(pattern)
@@ -1479,12 +1478,8 @@ module Ember
 
       def test_article_filters_by_folder
         article_meta = @account.solution_article_meta.where(solution_folder_meta_id: @@folder_meta.id)
-        if article_meta.blank?
-          article_meta = create_article(folder_meta_id: @@folder_meta.id)
-          articles = article_meta.solution_articles.first
-        else
-          articles = article_meta.map(&:primary_article).flatten
-        end
+        article_meta = create_article(folder_meta_id: @@folder_meta.id) if article_meta.blank?
+        articles = get_portal_articles(@portal_id, [@account.language_object.id]).where(parent_id: article_meta.map(&:id)).first(30)
         get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, folder: [@@folder_meta.id.to_s] }, false)
         assert_response 200
         pattern = articles.map { |article| private_api_solution_article_pattern(article, action: :filter) }
@@ -1493,12 +1488,8 @@ module Ember
 
       def test_article_filters_by_category_folder
         article_meta = @account.solution_article_meta.where(solution_folder_meta_id: @@folder_meta.id)
-        if article_meta.blank?
-          article_meta = create_article(folder_meta_id: @@folder_meta.id)
-          articles = article_meta.solution_articles.first
-        else
-          articles = article_meta.map(&:primary_article).flatten
-        end
+        article_meta = create_article(folder_meta_id: @@folder_meta.id) if article_meta.blank?
+        articles = get_portal_articles(@portal_id, [@account.language_object.id]).where(parent_id: article_meta.map(&:id)).first(30)
         get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s] }, false)
         assert_response 200
         pattern = articles.map { |article| private_api_solution_article_pattern(article, action: :filter) }
@@ -1529,7 +1520,7 @@ module Ember
       end
 
       def test_article_filters_by_status
-        articles = @account.solution_articles.where(status: '2', language_id: 6)
+        articles = get_portal_articles(@portal_id, [6]).where(status: '2').first(30)
         if articles.blank?
           article_meta = create_article(folder_meta_id: @@folder_meta.id)
           articles = article_meta.solution_articles
@@ -1627,11 +1618,11 @@ module Ember
         article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id, lang_codes: languages)
         article = article_meta.safe_send("#{language}_article")
         tag = Faker::Lorem.characters(7)
-        create_tag_use(@account, taggable_type: "Solution::Article", taggable_id: article.id, name: tag, allow_skip: true)
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag, allow_skip: true)
         Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code(language)])
-        get :filter, controller_params({ version: 'private', portal_id: "#{@portal_id}", language: language, status: "2", 
-              author: "#{author_id}", category: ["#{@@category_meta.id}"], folder: ["#{@@folder_meta.id}"], 
-              created_at: { start: "20190101", end: "21190101" }, last_modified: { start: "20190101", end: "21190101" }, tags: [tag] }, false)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, language: language, status: '2',
+                                         author: author_id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
+                                         created_at: { start: '20190101', end: '21190101' }, last_modified: { start: '20190101', end: '21190101' }, tags: [tag] }, false)
         article.reload
         assert_response 200
         pattern = private_api_solution_article_pattern(article, { action: :filter }, true, nil)
@@ -1643,9 +1634,9 @@ module Ember
         author_id = add_test_agent.id
         languages = @account.supported_languages + ['primary']
         language = @account.supported_languages.first
-        article_meta = create_article({user_id: author_id, folder_meta_id: @@folder_meta.id, lang_codes: languages})
+        article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id, lang_codes: languages)
         Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code('ru-RU')])
-        get :filter, controller_params({ version: 'private', portal_id: "#{@portal_id}", language: 'ru-RU', author: "#{author_id}" }, false)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, language: 'ru-RU', author: author_id.to_s }, false)
         assert_response 200
         match_json([])
         Account.any_instance.unstub(:all_portal_language_objects)
@@ -1658,7 +1649,7 @@ module Ember
         article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id, lang_codes: languages)
         article = article_meta.safe_send("#{language}_article")
         Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code(language)])
-        get :filter, controller_params({ version: 'private', portal_id: "#{@portal_id}", language: language, category: ["#{@@category_meta.id}"], folder: ["#{@@folder_meta.id}"], author: "#{author_id}"}, false)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, language: language, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s], author: author_id.to_s }, false)
         article.reload
         assert_response 200
         pattern = private_api_solution_article_pattern(article, { action: :filter }, true, nil)
@@ -1669,9 +1660,9 @@ module Ember
       def test_article_filters_by_category_folder_mismatched_with_sec_lang
         languages = @account.supported_languages + ['primary']
         language  = @account.supported_languages.first
-        article_meta = create_article({folder_meta_id: @@folder_meta.id, lang_codes: languages})
+        article_meta = create_article(folder_meta_id: @@folder_meta.id, lang_codes: languages)
         Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code(language)])
-        get :filter, controller_params({ version: 'private', portal_id: "#{@portal_id}", language: language, category: ["10101010100000"], folder: ["#{@@folder_meta.id}"] }, false)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, language: language, category: ['10101010100000'], folder: [@@folder_meta.id.to_s] }, false)
         assert_response 200
         match_json([])
         Account.any_instance.unstub(:all_portal_language_objects)
@@ -1680,13 +1671,13 @@ module Ember
       def test_article_filters_by_status_with_sec_lang
         languages = @account.supported_languages + ['primary']
         language  = @account.supported_languages.first
-        articles = @account.solution_articles.where(status: "2", language_id: 8)
+        articles = @account.solution_articles.where(status: '2', language_id: 8)
         if articles.blank?
-           article_meta = create_article({ folder_meta_id: @@folder_meta.id, lang_codes: languages })
-           articles = [article_meta.safe_send("#{language}_article")]
+          article_meta = create_article(folder_meta_id: @@folder_meta.id, lang_codes: languages)
+          articles = [article_meta.safe_send("#{language}_article")]
         end
         Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code(language)])
-        get :filter, controller_params({ version: 'private', portal_id: "#{@portal_id}", language: language, status: "2" }, false)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, language: language, status: '2' }, false)
         assert_response 200
         pattern = articles.map { |article| private_api_solution_article_pattern(article, { action: :filter }, true, nil) }
         match_json(pattern)
@@ -1712,10 +1703,10 @@ module Ember
         languages = @account.supported_languages + ['primary']
         language  = @account.supported_languages.first
         author_id = add_test_agent.id
-        article_meta = create_article({:user_id=>author_id, :folder_meta_id=>@@folder_meta.id, lang_codes: languages})
+        article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id, lang_codes: languages)
         article = article_meta.safe_send("#{language}_article")
         Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code(language)])
-        get :filter, controller_params({ version: 'private', portal_id: "#{@portal_id}", language: language, author: "#{author_id}", last_modified: { start: "20190101", end: "21190101" }}, false)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, language: language, author: author_id.to_s, last_modified: { start: '20190101', end: '21190101' } }, false)
         article.reload
         assert_response 200
         pattern = private_api_solution_article_pattern(article, { action: :filter }, true, nil)
@@ -1727,13 +1718,13 @@ module Ember
         languages = @account.supported_languages + ['primary']
         language  = @account.supported_languages.first
         author_id = add_test_agent.id
-        article_meta = create_article({:user_id=>author_id, :folder_meta_id=>@@folder_meta.id, lang_codes: languages})
+        article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id, lang_codes: languages)
         articles = article_meta.safe_send("#{language}_article")
         start_date = Time.now + 10.days
         end_date = Time.now + 20.days
         Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code(language)])
-        get :filter, controller_params({version: 'private', :portal_id=>"#{@portal_id}", language: language, 
-              :author=> "#{author_id}", :created_at => {:start=>"#{start_date}",:end=>"#{end_date}"}},false)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, language: language,
+                                         author: author_id.to_s, created_at: { start: start_date.to_s, end: end_date.to_s } }, false)
         assert_response 200
         match_json([])
         Account.any_instance.unstub(:all_portal_language_objects)
@@ -1841,6 +1832,10 @@ module Ember
           private_api_solution_article_pattern(article, exclude_description: true, exclude_attachments: true, exclude_tags: true)
         end
 
+        def get_portal_articles(portal_id, language_ids)
+          Solution::Article.portal_articles(portal_id, language_ids).joins('LEFT JOIN solution_drafts as drafts ON drafts.article_id = solution_articles.id').order('IFNULL(drafts.modified_at, solution_articles.modified_at) desc')
+        end
+
         def get_valid_not_supported_language
           languages = @account.supported_languages + [@account.language]
           Language.all.map(&:code).find { |language| !languages.include?(language) }
@@ -1887,7 +1882,7 @@ module Ember
 
         def untranslated_language_articles
           translated_ids = @account.solution_articles.portal_articles(@portal_id, @language.id).pluck(:parent_id)
-          Solution::Article.portal_articles(@portal_id, @account.language_object.id).where('parent_id NOT IN (?)', (translated_ids.presence || ''))
+          get_portal_articles(@portal_id, [@account.language_object.id]).where('parent_id NOT IN (?)', (translated_ids.presence || ''))
         end
     end
   end

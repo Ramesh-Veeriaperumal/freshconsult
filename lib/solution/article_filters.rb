@@ -3,11 +3,12 @@ module Solution::ArticleFilters
   include ::Search::V2::AbstractController
 
   included do
-    has_scope :by_status, type: :hash, using: [:status_data]
+    has_scope :by_status
     has_scope :by_category, type: :array
     has_scope :by_folder, type: :array
     has_scope :by_created_at, type: :hash, using: [:start, :end]
-    has_scope :by_last_modified, type: :hash, using: [:by_last_modified_at, :by_author]
+    has_scope :by_author, type: :hash, using: [:author, :only_draft]
+    has_scope :by_last_modified, type: :hash, using: [:start, :end, :only_draft]
     has_scope :by_tags, type: :array
     has_scope :by_outdated, type: :boolean, allow_blank: true
 
@@ -21,18 +22,26 @@ module Solution::ArticleFilters
       @results        = esv2_query_results(esv2_agent_article_model)
     end
 
+    def apply_article_scopes(article_scoper)
+      if is_draft?
+        @join_type = 'INNER'
+        @order_by = 'solution_drafts.modified_at desc'
+      else
+        @join_type = 'LEFT'
+        @order_by = 'IFNULL(solution_drafts.modified_at, solution_articles.modified_at) desc'
+      end
+      join_sql = format(%(%{join_type} JOIN solution_drafts ON solution_drafts.article_id = solution_articles.id AND solution_drafts.account_id = %{account_id}), account_id: Account.current.id, join_type: @join_type)
+      apply_scopes(article_scoper, @reorg_params).joins(join_sql).order(@order_by)
+    end
+
     private
 
       def reconstruct_params
         author        = params[:author]
         last_modified = params[:last_modified]
-        status        = params[:status]
         reorg_params
-        if status
-          @reorg_params[:by_status] = { :status_data => {:status => params[:status]} }
-          reassign_data(@reorg_params[:by_status][:status_data]) if is_draft?
-        end
-        @reorg_params[:by_last_modified] = reassign_data if !is_draft? and (author || last_modified)
+        @reorg_params[:by_last_modified][:only_draft] = is_draft? if last_modified
+        @reorg_params[:by_author] = { author: author, only_draft: is_draft? } if author
         @reorg_params
       end
 
@@ -46,20 +55,8 @@ module Solution::ArticleFilters
         @reorg_params
       end
 
-      def reassign_data data = {}
-        data[:by_author]           = params[:author] if params[:author]
-        data[:by_last_modified_at] = params[:last_modified] if params[:last_modified]
-        ignore_params
-        data
-      end
-
       def is_draft?
-        params[:status].to_i == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
-      end
-
-      def ignore_params
-        ignore_params = is_draft? ? [:by_author, :by_last_modified] : [:by_author]
-        ignore_params.each { |param| @reorg_params.delete(param) }
+        params[:status].present? && params[:status].to_i == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
       end
 
       def esv2_agent_article_model
