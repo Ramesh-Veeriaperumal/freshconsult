@@ -6,6 +6,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
   include HelpWidgetsTestHelper
   include FreshmarketerTestHelper
   include ProductsHelper
+  include CoreSolutionsTestHelper
   include AccountTestHelper
 
   ALL_FM_METHODS = [:create_experiment, :enable_predictive_support, :disable_predictive_support, :enable_integration,
@@ -314,7 +315,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     }
     put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
     assert_response 400
-    match_json([bad_request_error_pattern_with_nested_field('settings', 'theme_color', 'It should be in the \'accepted #{attribute}\' format', {code:"invalid_value"})])
+    match_json([bad_request_error_pattern_with_nested_field('settings', 'theme_color', 'It should be in the \'accepted #{attribute}\' format', code: 'invalid_value')])
   end
 
   def test_update_contact_form
@@ -1028,7 +1029,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
   def test_update_predictive_support_with_fm_error_enable_predictive_support
     link_freshmarketer_account
     stub_freshmarketer_client([:create_experiment, :enable_predictive_support_error, :disable_predictive_support, :enable_integration,
-                    :disable_integration, :cdn_script])
+                               :disable_integration, :cdn_script])
     widget1 = create_widget
     additional_settings = Account.current.account_additional_settings
     additional_settings.additional_settings[:widget_predictive_support] = fm_widget_settings('test.fresh.com', widget1.id)
@@ -1088,7 +1089,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
   def test_update_predictive_support_with_fm_error_create_experiment
     link_freshmarketer_account
     stub_freshmarketer_client(([:create_experiment_error, :enable_predictive_support, :disable_predictive_support, :enable_integration,
-                    :disable_integration, :cdn_script]))
+                                :disable_integration, :cdn_script]))
     stub_create_experiment_error
     widget = create_widget
     request_params = {
@@ -1111,7 +1112,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     widget = create_widget
     link_freshmarketer_account
     stub_freshmarketer_client([:create_experiment, :enable_predictive_support, :disable_predictive_support, :enable_integration,
-                    :disable_integration_error, :cdn_script])
+                               :disable_integration_error, :cdn_script])
     stub_disable_integration_error
     additional_settings = Account.current.account_additional_settings
     additional_settings.additional_settings[:widget_predictive_support] = fm_widget_settings('test.fresh.com', widget.id)
@@ -1135,7 +1136,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
   def test_update_predictive_support_with_fm_error_disable_predictive_support
     link_freshmarketer_account
     stub_freshmarketer_client([:create_experiment, :enable_predictive_support, :disable_predictive_support_error, :enable_integration,
-                    :disable_integration, :cdn_script])
+                               :disable_integration, :cdn_script])
     save_freshmarketer_hash(
       account_id: '4151515152505F435F415C51405F594C5C5A5F5F',
       authtoken: '1taehlg306k6bl88vpq44500970cmuuufnrq86br',
@@ -1338,7 +1339,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
 
   def test_widget_create_without_product
     Account.current.help_widgets.destroy_all
-    constant_widget_settings_hash = HelpWidget.default_settings
+    constant_widget_settings_hash = HelpWidget.default_settings(nil, nil)
     request_params = {
       product_id: nil,
       name: 'First new widget',
@@ -1352,13 +1353,13 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     assert_response 201
     id = JSON.parse(@response.body)['id']
     match_json(widget_show_pattern(Account.current.help_widgets.find_by_id(id)))
-    assert Account.current.help_widgets.find_by_id(id).settings[:message] == "Welcome to Support"
-    assert constant_widget_settings_hash == HelpWidget.default_settings
+    assert_equal Account.current.help_widgets.find_by_id(id).settings[:message], 'Welcome to Support'
+    assert_equal constant_widget_settings_hash, HelpWidget.default_settings(nil, nil)
   end
 
   def test_widget_create_product_with_portal
     Account.current.help_widgets.destroy_all
-    constant_widget_settings_hash = HelpWidget.default_settings
+    constant_widget_settings_hash = HelpWidget.default_settings(nil, nil)
     product1 = create_product(portal_url: 'sample.freshpo.com')
     portal = Account.current.portals.find_by_product_id(product1.id)
     request_params = {
@@ -1376,12 +1377,12 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     match_json(widget_show_pattern(Account.current.help_widgets.find_by_id(id)))
     assert Account.current.help_widgets.find_by_id(id).settings[:message] == "Welcome to #{product1.name} Support"
     assert Account.current.help_widgets.find_by_id(id).settings[:appearance][:button_color] == portal.preferences[:tab_color]
-    assert constant_widget_settings_hash == HelpWidget.default_settings
+    assert constant_widget_settings_hash == HelpWidget.default_settings(nil, nil)
   end
 
   def test_widget_create_product_without_portal
     Account.current.help_widgets.destroy_all
-    constant_widget_hash = HelpWidget.default_settings
+    constant_widget_hash = HelpWidget.default_settings(nil, nil)
     product2 = create_product
     request_params = {
       product_id: product2.id,
@@ -1397,8 +1398,8 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     id = JSON.parse(@response.body)['id']
     match_json(widget_show_pattern(Account.current.help_widgets.find_by_id(id)))
     assert Account.current.help_widgets.find_by_id(id).settings[:message] == "Welcome to #{product2.name} Support"
-    assert Account.current.help_widgets.find_by_id(id).settings[:appearance][:button_color] == constant_widget_hash[:appearance][:button_color]
-    assert constant_widget_hash == HelpWidget.default_settings
+    assert Account.current.help_widgets.find_by_id(id).settings[:appearance][:button_color] == Account.current.main_portal.try(:preferences).try(:[], :tab_color)
+    assert constant_widget_hash == HelpWidget.default_settings(nil, nil)
   end
 
   def test_widget_create_default_language_check
@@ -1458,7 +1459,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
       }
     }
     post :create, construct_params(version: 'v2', help_widget: request_params)
-    assert_response 201
+    assert_response 400
     Account.current.add_feature(:multi_product)
   end
 
@@ -1477,6 +1478,103 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     assert_response 201
     id = JSON.parse(@response.body)['id']
     match_json(widget_show_pattern(Account.current.help_widgets.find_by_id(id)))
+  end
+
+  def test_widget_create_with_product_widget_solution_categories_present
+    Account.current.help_widgets.destroy_all
+    Account.current.launch(:help_widget_solution_categories)
+    product1 = create_product(portal_url: 'sam1.freshpo.com')
+    portal = product1.portal
+    category = create_category(name: "#{Faker::Lorem.sentence(2)} .ok", description: "#{Faker::Lorem.sentence(3)}ok", is_default: false, portal_ids: [portal.id])
+    request_params = {
+      product_id: product1.id,
+      name: 'First new widget',
+      settings: {
+        components: {
+          contact_form: true
+        }
+      }
+    }
+    post :create, construct_params(version: 'v2', help_widget: request_params)
+    assert_response 201
+    id = JSON.parse(@response.body)['id']
+    widget_category_meta_ids = Account.current.help_widgets.find(id).help_widget_solution_categories.pluck(:solution_category_meta_id)
+    portal_category_meta_ids = portal.solution_category_meta.customer_categories.pluck(:id)
+    assert_equal widget_category_meta_ids, portal_category_meta_ids
+    assert_include widget_category_meta_ids, category.id
+  ensure
+    Account.current.rollback(:help_widget_solution_categories)
+  end
+
+  def test_widget_create_with_product_without_portal_solution_categories
+    Account.current.help_widgets.destroy_all
+    Account.current.launch(:help_widget_solution_categories)
+    product1 = create_product
+    portal = Account.current.main_portal
+    category = create_category(name: "#{Faker::Lorem.sentence(2)} .ok", description: "#{Faker::Lorem.sentence(3)}ok", is_default: false, portal_ids: [portal.id])
+    request_params = {
+      product_id: product1.id,
+      name: 'First new widget',
+      settings: {
+        components: {
+          contact_form: true
+        }
+      }
+    }
+    post :create, construct_params(version: 'v2', help_widget: request_params)
+    assert_response 201
+    id = JSON.parse(@response.body)['id']
+    widget_category_meta_ids = Account.current.help_widgets.find(id).help_widget_solution_categories.pluck(:solution_category_meta_id)
+    portal_category_meta_ids = portal.solution_category_meta.customer_categories.pluck(:id)
+    assert_equal widget_category_meta_ids, portal_category_meta_ids
+    assert_include widget_category_meta_ids, category.id
+  ensure
+    Account.current.rollback(:help_widget_solution_categories)
+  end
+
+  def test_widget_create_with_no_product_widget_solution_categories_present
+    Account.current.help_widgets.destroy_all
+    Account.current.launch(:help_widget_solution_categories)
+    portal = Account.current.main_portal
+    category = create_category(name: "#{Faker::Lorem.sentence(1)} .main", description: "#{Faker::Lorem.sentence(3)}.main", is_default: false, portal_ids: [portal.id])
+    request_params = {
+      name: 'First new widget',
+      settings: {
+        components: {
+          contact_form: true
+        }
+      }
+    }
+    post :create, construct_params(version: 'v2', help_widget: request_params)
+    assert_response 201
+    id = JSON.parse(@response.body)['id']
+    widget_category_meta_ids = Account.current.help_widgets.find(id).help_widget_solution_categories.pluck(:solution_category_meta_id)
+    portal_category_meta_ids = portal.solution_category_meta.customer_categories.pluck(:id)
+    assert_equal widget_category_meta_ids, portal_category_meta_ids
+    assert_include widget_category_meta_ids, category.id
+  ensure
+    Account.current.rollback(:help_widget_solution_categories)
+  end
+
+  def test_widget_create_without_help_widget_solution_categories_feature
+    Account.current.help_widgets.destroy_all
+    product1 = create_product(portal_url: 'sam2.freshpo.com')
+    portal = Account.current.portals.find_by_product_id(product1.id)
+    category = create_category(portal_id: portal.id)
+    request_params = {
+      product_id: product1.id,
+      name: 'First new widget',
+      settings: {
+        components: {
+          contact_form: true
+        }
+      }
+    }
+    post :create, construct_params(version: 'v2', help_widget: request_params)
+    assert_response 201
+    id = JSON.parse(@response.body)['id']
+    current_widget_solution_categories = Account.current.help_widgets.find(id).help_widget_solution_categories
+    assert_equal current_widget_solution_categories.count, 0
   end
 
   def test_create_with_name
@@ -1629,7 +1727,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     assert_response 201
     id = JSON.parse(@response.body)['id']
     match_json(widget_show_pattern(Account.current.help_widgets.find_by_id(id)))
-    file_path = HelpWidget::FILE_PATH % { :widget_id => id }
+    file_path = format(HelpWidget::FILE_PATH, widget_id: id)
     bucket = S3_CONFIG[:bucket]
     assert AwsWrapper::S3Object.exists?(file_path, bucket)
     AwsWrapper::S3Object.unstub(:store)

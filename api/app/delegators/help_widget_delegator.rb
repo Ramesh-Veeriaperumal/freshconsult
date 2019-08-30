@@ -3,7 +3,7 @@ class HelpWidgetDelegator < BaseDelegator
 
   attr_accessor :settings, :components, :predictive_support, :freshmarketer
 
-  validate :validate_product, if: -> { @product_id }
+  validate :validate_product, :check_multi_product_feature, if: -> { @product_id }
   validate :check_appearance, if: -> { @settings.present? && @settings[:appearance].present? }
   validate :check_predictive_support, if: -> { predictive_support_present? || @freshmarketer.present? }
   validate :validate_widget_flow, if: -> { @settings.present? && @settings[:widget_flow].present? }
@@ -58,6 +58,10 @@ class HelpWidgetDelegator < BaseDelegator
   end
 
   private
+
+    def check_multi_product_feature
+      required_feature_error('product_id', :multi_product) unless Account.current.multi_product_enabled?
+    end
 
     def contact_form_enabled
       if components && components.key?('contact_form')
