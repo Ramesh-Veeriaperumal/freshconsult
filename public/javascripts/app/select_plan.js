@@ -33,6 +33,8 @@ window.App = window.App || {};
     selected_plan_id: null,
     addons: {},
     fsm_addon_key: 'field_service_management',
+    subscription_cancel: 'subscription-cancellation',
+    suspended_key: 'suspended',
     initialize: function (currency, billing_cycle, subscribed_plan_id, agent_limit, field_agent_limit, downgrade_launched, current_plan_name, fsm_active, state, pending_cancellation_request) {
       this.currency = currency;
       this.billing_cycle = billing_cycle;
@@ -44,7 +46,10 @@ window.App = window.App || {};
       this.current_plan_name = current_plan_name;
       this.fsm_active = fsm_active;
       this.subscription_state = state;
-      this.pending_cancellation_request = pending_cancellation_request
+      this.pending_cancellation_request = pending_cancellation_request;
+      if(this.downgrade_launched && this.pending_cancellation_request && this.subscription_state !== this.suspended_key) {
+        $('.downgrade-plan-button, .free-plan-button').removeAttr('rel');
+      }
       this.bindEvents()
     },
     namespace: function(){
@@ -53,6 +58,7 @@ window.App = window.App || {};
     bindEvents: function(){
       var $this = this
       $(document).on('click'+$this.namespace(),  '.billing-cancel', function(ev){ $this.billingCancel(ev); })
+      $(document).on('click'+$this.namespace(),  '.plan-button, .plan-button1, .downgrade-plan-button, .free-plan-button', function(ev){ $this.checkCancellationPending(ev) })
       $(document).on('click'+$this.namespace(),  '.plan-button, .plan-button1', function(ev){ $this.bindPlanChange(ev, this) })
       $(document).on('click'+$this.namespace(),  '.suspended-plan-button', function(ev){ $this.bindSuspendedPlanChange(ev,this) })
       $(document).on('click'+$this.namespace(),  '.downgrade-plan-button', function(){ $this.cloneButton(this) })
@@ -81,41 +87,51 @@ window.App = window.App || {};
     },
     performCancelRequest: function(ev, tag) {
       $('#cancellation-wrapper').addClass('sloading inner-form-hide');
+      $('#pending-cancellation-request-modal').modal("hide");
       ev.preventDefault();
       var self = this;
+      var cancel_type = $('#cancellation-button').attr('data-cancel-type');
+      $('#cancellation-button').addClass('disabled');
       $.ajax({
             url: "/subscription/cancel_request",
             type: "DELETE",
+            async :true,
             success: function(status){
-              if(status.success) {
-                self.handleCancellationSuccess();
-              } else {
-                self.handleCancellationFailure();
-              }
+              self.handleCancellationSuccess(cancel_type);
             },
             error: function(data){
-              self.handleCancellationFailure();
+              self.handleCancellationFailure(cancel_type);
             }
         });
     },
-    handleCancellationSuccess: function() {
+    handleCancellationSuccess: function(cancel_type) {
       this.pending_cancellation_request = false;
+      var message = cancel_type === this.subscription_cancel ? 'common_js_translations.subscription_cancel_request_success' : 'common_js_translations.cancel_request_success'
       $('#cancellation-wrapper').removeClass('sloading inner-form-hide');
       $('.request-change-wrapper').addClass('hide');
+      $('.request-change-info').addClass('hide');
       $('.request-change-status').addClass('success').removeClass('hide');
-      $('#request-change-message').text(I18n.t('common_js_translations.cancel_request_success'));
+      $('#request-change-message').text(I18n.t(message));
       $('.downgrade-plan-button, .free-plan-button').attr('rel', 'freshdialog');
       setTimeout(function() {
         $('.request-change-status').addClass('hide');
       }, 5000);
     },
-    handleCancellationFailure: function() {
+    handleCancellationFailure: function(cancel_type) {
+      var message = cancel_type === this.subscription_cancel ? 'common_js_translations.subscription_cancel_request_failure' : 'common_js_translations.cancel_request_failure'
+      $('#cancellation-button').removeClass('disabled');
       $('#cancellation-wrapper').removeClass('sloading inner-form-hide');
       $('.request-change-status').addClass('failure').removeClass('hide');
-      $('#request-change-message').text(I18n.t('common_js_translations.cancel_request_failure'));
+      $('#request-change-message').text(I18n.t(message));
       setTimeout(function() {
         $('.request-change-status').addClass('hide');
       }, 5000);
+    },
+    checkCancellationPending: function(ev) {
+      if(this.downgrade_launched && this.pending_cancellation_request && this.subscription_state !== this.suspended_key) {
+        $('#pending-cancellation-request-modal').appendTo("body").modal('show');
+        ev.stopImmediatePropagation();
+      }
     },
     sproutDowngradeModal: function(e){
       $($(e.currentTarget).attr('data-id')).appendTo('body').modal('show');

@@ -91,8 +91,8 @@ da:
     reply: Svar
     new: Ny Kontakt
     send_activation: Send aktiveringse-mail
-    add_new_requester: Tilføj ny Rekvient
-    new_topic: Nytt emne
+    add_new_requester: Tilføj ny anmoder
+    new_topic: Nyt emne
     status_title:
       verified: Aktive kontakter
       unverified: Kontakter med ubekræftede emails
@@ -321,7 +321,7 @@ da:
       search: Søg
     goto_tab:
       social: Sosialt
-      tickets: Saker
+      tickets: Supportsager
       dashboard: Instrumentbord
       forums: Forummer
       customers: Kunder
@@ -398,7 +398,7 @@ da:
       remember: Husk mig på denne computer
       sign_in_using: Log ind
       help: Hjælp
-      login: Log ind
+      login: Log på
   enter_payment_details_to_add: Indtast betalingsdetaljer for at tilføje flere agenter
   current_plan: Nuværende Plan
   settings: indstillinger
@@ -609,16 +609,15 @@ da:
     from: 'Fra:'
     view_ticket: Vis sak
     close_btn_title: Luk denne supportsag
+    submit_ticket_title: Opret supportsag
   trial_plan_name: 'Nedgradere prøveversjonen til %{name}'
   user:
     phone_no: Telefon
     remove_profile_image_confirm: Er du sikker på du ønsker at slette dette profilbilled?
     full_name: Fulde navn
-    change_photo: Skift billed
+    change_photo: Skift billede
     phone_number: Telefon
-    info1: >-
-      Et profilbillede af personen; det er bedst, hvis billedet har samme længde
-      og højde
+    info1: 'Profilbillede - det er bedst, hvis billedet har samme højde og brede'
     choose_another_photo: Vælg et andet billed
     profile_picture: Profilbilled
     remove_photo: Slet billed
@@ -1497,7 +1496,7 @@ da:
         customers: Kunder
         reports: Rapporter
         solutions: Løsninger
-        tickets: Saker
+        tickets: Supportsager
         forums: Fora
         scroll_to: Skroll til
       agents_label: Agenter
@@ -1571,7 +1570,7 @@ da:
           title: Rediger Mobihelp-app
         new:
           title: Ny Mobihelp-app
-  posted_by: Skrevet af
+  posted_by: Oprettet af
   validation:
     required: Dette feltet kreves
   merge_contacts:
@@ -1589,7 +1588,7 @@ da:
       title: Din API Nøgle
     change_password: Skift kodeord
     edit: Rediger profil
-    manage: Se på/endre din profil
+    manage: Ret brugerprofil
     confirm_password: Bekræft kodeord
     current_password: Nuværende kodeord
   classic_label: Klassisk
@@ -1666,7 +1665,7 @@ da:
         all: Alle supportsager
         my_all: Alle mine supportsager
         overdue: Forfaldne Billetter
-        no_tickets: Du har ikke nogen billetter i den aktuelle visning
+        no_tickets: Der er ingen supportsager i den aktuelle visning
         open: Åbne supportsager
         all_tickets: Alle supportsager
         due_today: Billetter der Forfalder i dag
@@ -1716,7 +1715,7 @@ da:
   agents: Agenter
   google_signup:
     associate_google:
-      login: Log ind
+      login: Log på
       email_address: E-postadresse
       login_your_helpdesk: Logg inn på din kundestøtte
       link_your_helpdesk: Koble din kundestøtte
@@ -2109,7 +2108,7 @@ da:
     login:
       form:
         remember: Husk mig på denne computer
-        login: Log ind
+        login: Log på
         forgot: Glemt dit password?
         password: Adgangskode
   import: Importer
@@ -2203,7 +2202,7 @@ da:
           reply: svarte på et emne
           new_topic: opprettet et emne
         tags:
-          new_topic: Nytt emne
+          new_topic: Nyt emne
           reply: Svar
       post:
         approve_tooltip: Godkjenn og publiser
@@ -2214,7 +2213,7 @@ da:
           title: Svar
           posted: svarte på
         new_topic:
-          title: Nytt emne
+          title: Nyt emne
           posted: postet et nytt emne
         approve: Godkjenn og publiser
       index:
@@ -2292,7 +2291,7 @@ da:
       spam:
         new_topic:
           posted: postet et nytt emne
-          title: Nytt emne
+          title: Nyt emne
         reply:
           posted: svarte på
           title: Svar
@@ -2492,7 +2491,7 @@ da:
     details: 'Startet klokken: %{time} av %{user}'
     organization: Organisasjoner
     autorefresh: Status vil oppdateres automatisk hvert minutt
-    ticket: Saker
+    ticket: Supportsager
   box_attach_from: Legg ved fra <b>Box</b>
   fav_delete_msg: Er du sikker på at du vil slette dette fav ikon?
   reset_my_password: Nulstil mit kodeord
@@ -2549,7 +2548,7 @@ da:
   feedbackwidget_image_button: URL-adresse for bilde
   chatwidget_title: Chat indstillinger
   register: Registrer
-  signup: opret
+  signup: <b>Ny bruger</b>
   multifile_attachments:
     remove: Fjern
     label: Vedhæft filer
@@ -2618,7 +2617,7 @@ da:
       search: Søge resultater
       user_signup: Ny bruker registrering
     groups:
-      tickets: Saker
+      tickets: Supportsager
       general: Generelle sider
       solutions: Løsninger
       discussions: Diskusjoner
@@ -2754,20 +2753,21 @@ da:
   portal:
     cookie:
       privacy_policy: Retningslinjer for personvern
+      cookie_policy: Cookiepolitik
     reported: rapporterede
     said: sagde
-    login: Log ind
+    login: Log på
     agent_login_info: Er du en agent?
     agent_signin: Log ind her
     search:
       filters:
         all: Alle
         solutions: Løsninger
-        tickets: Saker
+        tickets: Supportsager
       placeholder: Søg med enkeltord eller spørgsmål
     my_topics: Mine emner
-    community_forums: Samfunnsfora
-    knowledge_base: Kunnskapsdatabase
+    community_forums: Fællesfora
+    knowledge_base: Vidensbank
     article:
       created_by: 'Opprettet av:'
     topic:
@@ -2778,6 +2778,8 @@ da:
       best_answer: Bedste svar
       matching_results: Samsvarende emner funnet
       sort_by_default: Standard
+      topic_brief: 'Oprettet af <b>%{user_name}</b>, %{created_on}'
+      fb_reply_info: "<a href='%{reply_url}'> Sidste svar </a> af %{user_name}<br>%{created_on}"
     topic_vote:
       user_upvote_list_title: Personer som stemte opp
       announce_button: Liker du dette?
@@ -2803,6 +2805,12 @@ da:
         om denne saken blir sendt.
       reopen_reply: Svar
       related_articles: Relaterede artikler...
+    new_support_ticket: Ny supportsag
+    login_portal: Log på supportportalen
+    login_details: Indtast nedenfor
+    agent_login_details: Indtast nedenfor
+    login_options: …eller log på med
+    user_signup_portal: 'Opret en bruge '
   title: Titel
   free_plan_agents_v2: Ubegrænset antal agenter
   freshfone:
@@ -3408,7 +3416,7 @@ da:
         wrong_call: Du forsøker å fjerne en tweet som ikke har blitt lagt til som favoritt
         flash_card_text: Forstå sosialkategorien
         add_search_keywords: Skriv noe du vil søke etter
-        tickets: Saker
+        tickets: Supportsager
         no_retweets: Ingen retweets
       other_interactions: Andre samhandlinger
       social_accounts: Sosiale profiler
@@ -3505,6 +3513,13 @@ da:
     recent: Seneste
     overview: Oversigt
     popular: Populært
+    planned: Planlagte
+    implemented: Implementerte
+    nottaken: Ikke tatt i mot
+    deferred: Utsatte
+    inprogress: Pågående
+    solved: Løste
+    unsolved: Uløste
   downgrade_loss_message: >-
     <span class="label label-important">Vigtigt</span> Du vil miste data og
     konfigurationer for følgende funktioner permanent:
@@ -3533,7 +3548,7 @@ da:
     time_event_automation: Tids-/hændelsesbaserede automationer
     email_ticketing: Saker på e-post
     scheduled_reports: Planlagte rapporter
-    knowledge_base: Kunnskapsdatabase
+    knowledge_base: Vidensbank
     phone_integration: Telefonintegrering
     custom_fields_desc: Brugerdefineret billet og kontaktfelter
     agent_collision: Agent Collision
@@ -3555,7 +3570,7 @@ da:
     multiple_products: Støtte for flere produkter
     multilingual_kbase_desc: Artikler i vidensbase på flere forskellige sprog
     basic_phone: Almindelig telefon og sociale kanaler
-    forums: Samfunnsfora
+    forums: Fællesfora
     whitelisted_ip_desc: Positivliste over IP-adresser
     portal_customization_desc: Tilpasninger af kundeportal
     dynamic_email_alert: Dynamiske e-mail-notifikationer
@@ -3887,7 +3902,7 @@ da:
           Du må være en kontoadministrator for å kunne koble din freshdesk-konto
           til Google-innlogging
         your_helpdesk: Din kundestøtte
-        login: Log ind
+        login: Log på
       associate_account:
         phone_no: Telefonnummer
         user_name: Navn
@@ -4616,7 +4631,14 @@ da:
     tabs:
       solutions: Løsninger
       forums: Fora
-      tickets: Saker
+      tickets: Supportsager
+      home: Hjem
+    welcome: Velkommen
+    edit_profile: Ret brugerprofil
+    help_center: Hvordan kan vi hjælpe?
+    new_support_ticket: Ny supportsag
+    check_ticket_status: Status på supportsag
+    submit_a_ticket: Opret supportsag
   left: Tilbage
   description: Beskrivelse
   solution:
@@ -4737,3 +4759,10 @@ da:
     add_forum: Legg til forum
   and_more_plan_downgrade: Og mere...
   change_my_plan: Vælg denne plan...
+  portal_meta:
+    titles:
+      submit_ticket: Opret supportsag
+  signup_up_with_us: Opret bruger
+  signup_help_information: >-
+    Når du er oprettet som bruger, kan du selv oprette supportsager og følge
+    status på dine supportsager

@@ -170,6 +170,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     assign_sender_email
 
     # save only if there are any changes. unnecessary transaction is avoided.
+    Rails.logger.info "Helpdesk::Ticket::update_sender_email::#{Time.zone.now.to_f} and schema_less_ticket_object :: #{schema_less_ticket.reports_hash.inspect}"
     schema_less_ticket.save if schema_less_ticket.changed?
   end
 
@@ -178,6 +179,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     process_status_changes
     update_ticket_lifecycle
     ticket_states.save if ticket_states.changed?
+    Rails.logger.info "Helpdesk::Ticket::update_ticket_states::#{Time.zone.now.to_f} and schema_less_ticket_object :: #{schema_less_ticket.reports_hash.inspect}"
     schema_less_ticket.save unless schema_less_ticket_changes
   end
 
@@ -186,6 +188,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
      if User.current.nil? || User.current.language.nil? || User.current.language = "en"
        if [SOURCE_KEYS_BY_TOKEN[:chat],SOURCE_KEYS_BY_TOKEN[:phone]].include?(self.source)
          schema_less_ticket.sentiment = 0
+         Rails.logger.info "Helpdesk::Ticket::save_sentiment::#{Time.zone.now.to_f} and schema_less_ticket_object :: #{schema_less_ticket.reports_hash.inspect}"
          schema_less_ticket.save
        else
           ::Tickets::UpdateSentimentWorker.perform_async( { :id => id } )
@@ -602,6 +605,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     if trigger_feedback       
       ticket_properties_suggester_hash[:suggested_fields] = suggested_fields
       schema_less_ticket.ticket_properties_suggester_hash = ticket_properties_suggester_hash
+      Rails.logger.info "Helpdesk::Ticket::trigger_ticket_properties_suggester_feedback::#{Time.zone.now.to_f} and schema_less_ticket_object :: #{schema_less_ticket.reports_hash.inspect}"
       schema_less_ticket.save!
       ::Freddy::TicketPropertiesSuggesterWorker.perform_async(ticket_id: id, action: 'feedback', model_changes: model_changes)
     end
@@ -816,6 +820,7 @@ private
         self.email_config = nil
       end
     end
+    Rails.logger.info "Helpdesk::Ticket::assign_email_config::#{Time.zone.now.to_f} and schema_less_ticket_object :: #{schema_less_ticket.reports_hash.inspect}"
     schema_less_ticket.save unless schema_less_ticket.changed.empty?
   end
 

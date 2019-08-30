@@ -11,6 +11,7 @@ class Dkim::ConfigureDkimRecord
   end
 
   def build_records
+    raise Dkim::DomainAlreadyConfiguredError if sendgrid_verified_domain?(@domain_category.email_domain)
     Rails.logger.debug("fetch_smtp_category :: #{fetch_smtp_category} for Domain :: #{domain_category.email_domain}")
     domain_category.category = fetch_smtp_category # to build proper dns records
     add_whitelabel_to_domain

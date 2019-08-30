@@ -14,11 +14,12 @@
        is_sprout  = new_sprout?(requested_plan.name)
        fsm_field_agents = @subscription.subscription_request.fsm_field_agents?
     %>
-    <div class="request-change-wrapper">
+    <div class="request-change-wrapper" id="cancellation-wrapper">
         <div class="on-request">
           <span class="on-request-date"><%=t("downgrade.billing_request_on")%></span> <%= formated_date(@subscription.subscription_request.created_at, {:format => :short_day_with_week, :include_weekday => false,:include_time => false, :include_year => true}) %>
 
           <span class="next-renewal ml10 pl10"> <%=t("downgrade.billing_next_renewal")%> </span> <%= formated_date(@subscription.next_renewal_at, {:format => :short_day_with_week, :include_weekday => false,:include_time => false, :include_year => true}) %>
+          <a class="cancel-request" id="cancellation-button" data-cancel-type="subscription-cancellation"><%= t("accounts.cancel.cancel_request") %></a>
         </div>
         <div class="request-change-container">
             <div class="request-change-items">
@@ -108,7 +109,7 @@
             <% end %>
         </div>
     </div>
-    <div class="request-change-info"><img src="/assets/info-icon.svg" /></span><span class="m0 pl5"><%=t("downgrade.info")%></span></div>
+    <div class="request-change-info"><img src="/assets/info-icon.svg" /><span class="m0 pl5"><%=t("downgrade.info")%></span></div>
   </div>
 <% elsif current_account.launched?(:downgrade_policy) && current_account.account_cancellation_requested? && current_account.active? %>
   <%
@@ -119,7 +120,7 @@
     <div class="on-request">
       <span class="on-request-date"><%= t("accounts.cancel.cancellation_requested_on") %></span> <%= cancellation_requested_time %>
       <span class="next-renewal ml10 pl10"><%= t("accounts.cancel.cancellation_effective_from") %></span> <%= cancellation_effective_date %>
-      <a class="cancel-request" data-cancel-type="cancellation"><%= t("accounts.cancel.cancel_request") %></a>
+      <a class="cancel-request" id="cancellation-button" data-cancel-type="account-cancellation"><%= t("accounts.cancel.cancel_request") %></a>
     </div>
     <div class="request-change-info">
       <img src="/assets/info-icon.svg" />

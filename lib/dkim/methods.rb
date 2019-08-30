@@ -13,7 +13,7 @@ module Dkim::Methods
     route53.change_resource_record_sets({
         :hosted_zone_id => DNS_CONFIG["hosted_zone"],
         :change_batch => {:changes => [build_record_attributes(action, record_type, record_name, record_value)]}
-    }) 
+    })
   end
 
   def new_record?(domainkey, record_type)
@@ -29,7 +29,7 @@ module Dkim::Methods
   end
 
   def build_record_attributes(action, record_type, record_name, record_value)
-    { 
+    {
       :action => action,
       :resource_record_set => {
         :name => record_name,
@@ -49,7 +49,7 @@ module Dkim::Methods
   rescue RestClient::RequestFailed, RestClient::ResourceNotFound => e
     [e.response.code.to_i, e.response]
   end
-  
+
   def filter_dkim_records
     records = domain_category.dkim_records.filter_records
     result = records.each_with_object({}) do |dkim_record, result|
@@ -59,7 +59,7 @@ module Dkim::Methods
     FILTERED_DKIM_RECORDS.merge!(result)
     Rails.logger.debug "FILTERED_DKIM_RECORDS :: #{FILTERED_DKIM_RECORDS.inspect}"
   end
-  
+
   def create_dkim_records(response, req_records, category = 5) # default category 5
     req_records.each do |rec|
       Rails.logger.debug "response :: #{response.inspect} rec -> #{rec}_records"
@@ -90,7 +90,7 @@ module Dkim::Methods
       "default"=> false,
       "automatic_security"=> false,
       "custom_dkim_selector"=> DKIM_SELECTOR[:mrecord]
-    }.to_json 
+    }.to_json
   end
 
   def build_dkim_record_1(domain)
@@ -108,11 +108,11 @@ module Dkim::Methods
   def fetch_sendgrid_username(category_id)
     Helpdesk::EMAIL["category-#{category_id}".to_sym][Rails.env.to_sym][:user_name]
   end
-  
+
   def dkim_verify_key(domain_category)
     DKIM_VERIFICATION_KEY % { :account_id => Account.current.id, :email_domain_id => domain_category.id }
   end
-  
+
   def fetch_smtp_category
     category = (previous_category or premium_category or other_category or 'default')
     OutgoingEmailDomainCategory::SMTP_CATEGORIES[category]
@@ -130,15 +130,15 @@ module Dkim::Methods
   def previous_category
     prev_cat = scoper.dkim_activated_domains.first.try(:category) # already activated domains
     return retrieve_category_name(prev_cat) if prev_cat.present?
-    
+
     prev_email_domain = scoper.dkim_configured_domains.first  # configured domains list
     return nil if prev_email_domain.blank? # first dkim configure
-    
+
     custom_dkim_records = prev_email_domain.dkim_records.custom_records #using custom_records category id
     return retrieve_category_name(custom_dkim_records.pluck(:sg_category_id).first) if custom_dkim_records
-    
+
   end
-  
+
   def retrieve_category_name(cat_id)
     Rails.logger.debug("previous_category :: #{cat_id}")
     OutgoingEmailDomainCategory::SMTP_CATEGORIES.key(cat_id)
@@ -158,8 +158,8 @@ module Dkim::Methods
   end
 
   def configure_with_retry_timeout
-    Timeout.timeout(DKIM_CONFIGURE_TIMEOUT) do 
-      with_retries(:limit => DKIM_CONFIGURE_RETRIES){ configure } 
+    Timeout.timeout(DKIM_CONFIGURE_TIMEOUT) do
+      with_retries(:limit => DKIM_CONFIGURE_RETRIES){ configure }
     end
   end
 
@@ -171,4 +171,13 @@ module Dkim::Methods
     end
   end
 
+  def sendgrid_verified_domain?(domain)
+    subusers = SUB_USERS.keys
+    response = make_api(SG_URLS[:get_domain][:request], SG_URLS[:get_domain][:url]%{:domain => domain})
+    Rails.logger.info("Fetched DKIM records on in verify_email_domain ::: #{response.inspect}")
+    domain_records = JSON.parse(response[1]) if response[0] == SENDGRID_RESPONSE_CODE[:success]
+    record_1 = domain_records.select { |record| record['username'] == subusers[0] }[0]
+    record_2 = domain_records.select { |record| record['username'] == subusers[1] }[0]
+    record_1.try(:[], 'valid') || record_2.try(:[], 'valid')
+  end
 end

@@ -529,15 +529,15 @@ sv-SE:
     overview: Översikt
     recent: Senaste
     popular: Populärt
-    planned: Planerad
-    implemented: Implementerad
-    nottaken: Ej tagen
+    planned: Planerade
+    implemented: Implementerade
+    nottaken: Inte taget
     deferred: Uppskjuten
     inprogress: Pågående
     answered: Besvarad
-    unanswered: Ej besvarad
+    unanswered: Obesvarad
     solved: Löst
-    unsolved: Ej löst
+    unsolved: Olöst
   payment_info: Betalningsinformation
   billing_address: Faktureringsadress
   support:
@@ -614,6 +614,9 @@ sv-SE:
         neutral_info: Vi önskar att du vore lite nöjdare.
         unhappy_info: Vi kommer se till att vara extra noggranna nästa gång.
         additional_info: Dela dina åsikter om hur det har varit att arbeta med oss.
+    canned_form:
+      next: Nästa
+      form_submit: Skicka in
   gamification:
     levels:
       beginner: Nybörjare
@@ -2819,7 +2822,7 @@ sv-SE:
             Med Freshdesk kan du hantera de kundfrågor som kommer till ditt
             eBay-konto via din supportavdelning. När du har ställt in det ändras
             alla kundfrågor från eBay automatiskt till ärenden. Du kan också
-            svara på dem direkt i Freshdesk.
+            svara på dem direkt i Freshdesk. 
       new:
         site_helptext: välj en eBay-plats där du vill sälja dina produkter
         account_name: Kontonamn
@@ -4948,7 +4951,8 @@ sv-SE:
   right: Höger
   footer:
     helpdesk_software: Programvara för hjälpcenter
-    helpdesk_software_link: "https://freshdesk.com/se/?utm_source=portal&utm_medium=reflink&utm_campaign=portal_reflink"
+    helpdesk_software_link: >-
+      https://freshdesk.com/se/?utm_source=portal&utm_medium=reflink&utm_campaign=portal_reflink
     by_freshdesk: av Freshdesk
     submit_feedback: Skicka in feedback
     browse_community: Bläddra bland användargrupper
@@ -5343,7 +5347,7 @@ sv-SE:
     topic_not_found: Det verkar som om ämnet har raderats
     post_not_found: Det verkar som om den här publiceringen har raderats
     showing_my_topics: Visar ämnen som du för närvarande följer
-    community_forums: Forum för användargrupper
+    community_forums: Gemenskapsforum
     knowledge_base: Kunskapsdatabas
     showing_recent_updates: Visar de senaste uppdateringarna
     no_articles_info_1: Vi har inte publicerat några artiklar i den här sektionen.
@@ -5359,6 +5363,7 @@ sv-SE:
         Det verkar som att ditt konto inte har verifierats ännu. Vänligen
         aktivera det för att publicera en artikel (du kan spara dina utkast fram
         till dess).
+      created_by: 'Skapat av:'
     folder:
       filler_text: 'Bevaka den här sidan för artiklar som handlar om %{folder_name}'
     topic:
@@ -5398,7 +5403,7 @@ sv-SE:
       sort_order:
         date: Äldsta först
         recency: Nyaste först
-        popularity: Populär
+        popularity: Populärt
       sort_by_most_recent: Senaste
       sort_by_most_popular: Populärast
       sort_by_default: Standard
@@ -5467,6 +5472,7 @@ sv-SE:
       add_people_title: Lägg till personer till konversationen
       reopen_reply: Svara
       related_articles: Relaterade artiklar ...
+      comments: Kommentarer
     customer_login_info: Är du en kund?
     agent_signin: Logga in här
     agent_login_info: Är du en agent?
@@ -5735,7 +5741,7 @@ sv-SE:
       en gång.
     info16: >-
       <b>Publicerade</b> artiklar visas i självbetjäningsportalen och i
-      sökresultat.
+      sökresultat. 
     info17: >-
       Artiklar som är <b>utkast</b> visas endast för representanterna och i
       representanternas sökresultat.
@@ -5823,17 +5829,17 @@ sv-SE:
 
 
       Importera %{type} från CSV
+               
+
+       
+       
 
 
 
-
-
-
-
-
-
-      \ \
-
+        
+       
+      \ \ 
+       
     sample_data: Provdata
     contact_import_data_info: >-
       Se till att din CSV-fil är i UTF-8-format och att första raden innehåller
@@ -6058,6 +6064,7 @@ sv-SE:
       home: Hem
       company_tickets: Företagsärenden
       social: sociala medier
+    goto_agent_portal: Agentportal
   agent_adds_comment: Representant lägger till kommentar till ärendet
   portal_customizer_anon_tickets: Vem som helst kan skicka in ett ärende
   portal_customizer_option_tickets: Användare kan skicka in ärenden utan att logga in
@@ -6163,7 +6170,7 @@ sv-SE:
           kontrollera ärendet.<br /><br />Om du har ställt in stöd för flera
           språk i din helpdesk kan du skapa ett aktiveringsmeddelande för varje
           språk. Ikonen <i class="common-icon-outdated"></i> visar att
-          meddelandeöversättningarna för andra språk kan vara föråldrade.
+          meddelandeöversättningarna för andra språk kan vara föråldrade. 
       agent_template_3:
         topic: Ärende tilldelat till representant
         info1: >-
@@ -6173,7 +6180,7 @@ sv-SE:
           ärendet.<br/><br/>Om du har ställt in stöd för flera språk i din
           helpdesk kan du skapa ett aktiveringsmeddelande för varje språk.
           Ikonen <i class="common-icon-outdated"></i> visar att
-          meddelandeöversättningarna för andra språk kan vara föråldrade.
+          meddelandeöversättningarna för andra språk kan vara föråldrade. 
       agent_template_11:
         topic: Ärendet är oövervakat i en grupp
         info1: >-
@@ -9239,7 +9246,7 @@ sv-SE:
       freshdesk_api_key: API-nyckel för Freshdesk
       api_key_available: >-
         Du hittar din API-nyckel under profilinställningar i ditt
-        Freshdesk-konto
+        Freshdesk-konto 
       new_to_freshdesk: 'Nykomling till Freshdesk? '
     ilos:
       portal_forum:
@@ -11518,9 +11525,7 @@ sv-SE:
           e-post
         learn_more: Läs mer
         pricing: Se alla samtalskostnader och länder som stöds
-        request_subject: |-
-          Telefonärende - %{account_name}
-
+        request_subject: 'Telefonärende - %{account_name}'
         email_message: Freshfone-funktion krävs
         success: Vi återkommer till dig inom två vardagar.
         error_message: Tyvärr kan din förfrågan inte göras nu. Försök igen senare.
@@ -12087,12 +12092,12 @@ sv-SE:
         Om du exempelvis har en supportportal för ditt varumärke kan du skapa
         flera kategorier för produkter eller team. Detta hjälper dig att driva
         på relevanta konversationer till alla dina topnivåavdelningar och som
-        administratör kan du ändå hantera allt på ett ställe.
+        administratör kan du ändå hantera allt på ett ställe. 
       para3: >-
         Om du har flera produktportaler konfigurerade i ditt Freshdesk-konto kan
         du välja att länka en av dina kategorier till den produkten. När du gör
         det kan användare se kategorin, dess forum och alla dess ämnen både på
-        din huvudportal och din produktportal.
+        din huvudportal och din produktportal. 
       para4: Läs mer om att hantera flera produkter i Freshdesk.
     shared:
       topic:

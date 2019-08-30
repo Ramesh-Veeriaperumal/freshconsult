@@ -126,10 +126,14 @@ class SubscriptionsController < ApplicationController
   end
 
   def cancel_request
-    if current_account.account_cancellation_requested?
-      return render json: { success: true } if current_account.kill_scheduled_account_cancellation
+    status = :not_found
+    if scoper.subscription_request.present?
+      result = billing_subscription.remove_scheduled_changes(current_account.id)
+      status = :no_content if result.present? && result.subscription.present? && !result.subscription.has_scheduled_changes && scoper.subscription_request.destroy
+    elsif current_account.launched?(:downgrade_policy) && current_account.account_cancellation_requested?
+      status = :no_content if current_account.kill_scheduled_account_cancellation
     end
-    render json: { success: false }
+    head status
   end
 
   private
