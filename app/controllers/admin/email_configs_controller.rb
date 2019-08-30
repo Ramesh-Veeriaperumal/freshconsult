@@ -35,12 +35,12 @@ class Admin::EmailConfigsController < Admin::AdminController
     @imap_mailbox = @email_config.build_imap_mailbox
     @smtp_mailbox = @email_config.build_smtp_mailbox
     @products = current_account.products
-    @groups = current_account.groups
+    @groups = current_account.groups.support_agent_groups
   end
 
   def edit
     @products = current_account.products
-    @groups = current_account.groups
+    @groups = current_account.groups.support_agent_groups
     @imap_mailbox = (@email_config.imap_mailbox || @email_config.build_imap_mailbox)
     @smtp_mailbox = (@email_config.smtp_mailbox || @email_config.build_smtp_mailbox)
   end
