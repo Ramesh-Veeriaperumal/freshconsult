@@ -299,6 +299,15 @@ GIT
       redis-namespace (>= 1)
 
 GIT
+  remote: git@github.com:freshdesk/optar.git
+  revision: 871c298671855ddaf60fcdc39d821b33ce3e5255
+  tag: v1.1.1
+  specs:
+    optar (1.1.1)
+      activerecord (>= 3.2)
+      mysql2 (>= 0.3)
+
+GIT
   remote: git@github.com:freshdesk/platforms-sdk-ruby.git
   revision: 476f120301970c75936f15dc8dff9475eebe0703
   tag: 1.0.0
@@ -1612,6 +1621,7 @@ DEPENDENCIES
   omniauth-quickbooks (= 0.0.2)
   omniauth-salesforce!
   open_id_authentication!
+  optar!
   paperclip (~> 4.2.2)
   paperclip_ext!
   pg

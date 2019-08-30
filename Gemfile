@@ -364,4 +364,5 @@ gem "rubocop", "0.52.1"
 gem 'safe_yaml', "1.0.4"
 
 gem 'ejson', :require => false
+gem 'optar', git: 'git@github.com:freshdesk/optar.git', tag: 'v1.1.1'
 gem 'rack-protection', '1.5.5'

@@ -305,13 +305,7 @@ class Forum < ActiveRecord::Base
 
   def unsubscribed_agents
     user_ids = monitors.map(&:id)
-    Sharding.run_on_slave do
-      if user_ids.present?
-        return account.technicians.where('id NOT IN (?)', user_ids).select('id,name,privileges')
-      else
-        return account.technicians.select('id,name,privileges')
-      end
-    end
+    Sharding.run_on_slave { account.agents_hash_from_cache.except(*user_ids) }
   end
 
   def clear_moderation_records

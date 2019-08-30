@@ -127,6 +127,19 @@ module Cache::Memcache::Account
     fetch_from_cache(key) { self.agents.find(:all, include: [:user, :agent_groups]) }
   end
 
+  def agents_hash_from_cache
+    @agent_hash_from_cache ||= begin
+      key = agent_hash_memcache_key
+      MemcacheKeys.fetch(key) do
+        agents_hash = Hash.new
+        Account.current.technicians.pluck_all('id', 'name', 'privileges', 'email').each do |agent|
+          agents_hash[agent[0]] = [agent[1], agent[2], agent[3]]
+        end
+        agents_hash
+      end
+    end
+  end
+
   def roles_from_cache
     @roles_from_cache ||= begin
       key = roles_cache_key
@@ -677,6 +690,10 @@ module Cache::Memcache::Account
 
     def agents_memcache_key
       ACCOUNT_AGENTS % { :account_id => self.id }
+    end
+
+    def agent_hash_memcache_key
+      format(ACCOUNT_AGENTS_HASH, account_id: id)
     end
 
     def roles_cache_key
