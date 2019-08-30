@@ -53,10 +53,11 @@ class HelpWidgetValidation < ApiValidation
       },
       button_text: {
         data_type: {
-          rules: String
+          rules: String,
+          allow_blank: false
         },
         custom_length: {
-          maximum: HelpWidgetConstants::BUTTON_TEXT_LENGTH
+          maximum: HelpWidgetConstants::LAUNCHER_TEXT_LENGTH
         }
       },
       components: {
@@ -96,7 +97,7 @@ class HelpWidgetValidation < ApiValidation
           rules: Integer
         },
         custom_inclusion: {
-          in: HelpWidgetConstants::WIDGET_FLOW_TYPES.values
+          in: HelpWidget::WIDGET_FLOW_TYPES.values
         }
       }
     }
@@ -125,7 +126,7 @@ class HelpWidgetValidation < ApiValidation
           allow_nil: false
         },
         custom_inclusion: {
-          in: HelpWidgetConstants::FORM_TYPES.values
+          in: HelpWidget::FORM_TYPES.values
         }
       },
       form_title: {
@@ -182,7 +183,7 @@ class HelpWidgetValidation < ApiValidation
           allow_nil: true
         },
         custom_inclusion: {
-          in: HelpWidgetConstants::POSITION_TYPES.values
+          in: HelpWidget::POSITION_TYPES.values
         },
         custom_numericality: { only_integer: true, greater_than: 0 }
       },
@@ -212,7 +213,7 @@ class HelpWidgetValidation < ApiValidation
           rules: Integer
         },
         custom_inclusion: {
-          in: HelpWidgetConstants::COLOR_SCHEMA_TYPES.values
+          in: HelpWidget::COLOR_SCHEMA_TYPES.values
         },
         custom_numericality: { only_integer: true, greater_than: 0 }
       },
@@ -222,7 +223,7 @@ class HelpWidgetValidation < ApiValidation
         },
         custom_numericality: { only_integer: true, greater_than: 0 },
         custom_inclusion: {
-          in: HelpWidgetConstants::GRADIENT_TYPES.values
+          in: HelpWidget::GRADIENT_TYPES.values
         }
       },
       pattern: {
@@ -231,7 +232,7 @@ class HelpWidgetValidation < ApiValidation
         },
         custom_numericality: { only_integer: true, greater_than: 0 },
         custom_inclusion: {
-          in: HelpWidgetConstants::PATTERN_TYPES.values
+          in: HelpWidget::PATTERN_TYPES.values
         }
       },
       theme_color: {

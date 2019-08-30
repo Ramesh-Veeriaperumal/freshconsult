@@ -11,6 +11,7 @@ class Dkim::ConfigureDkimRecord
   end
 
   def build_records
+    raise Dkim::DomainAlreadyConfiguredError if sendgrid_verified_domain?(@domain_category.email_domain)
     Rails.logger.debug("fetch_smtp_category :: #{fetch_smtp_category} for Domain :: #{domain_category.email_domain}")
     domain_category.category = fetch_smtp_category # to build proper dns records
     add_whitelabel_to_domain
@@ -41,7 +42,7 @@ class Dkim::ConfigureDkimRecord
       if response_codes.uniq.count == 1 && response_codes.first == SENDGRID_RESPONSE_CODE[:created]
         record_1 = response_1[1]
         record_2 = response_2[1]
-      else 
+      else
         domain_category.dkim_records.destroy_all if domain_category.dkim_records.present?
         subusers = SUB_USERS.keys
         response = make_api(SG_URLS[:get_domain][:request], SG_URLS[:get_domain][:url]%{:domain => domain_category.email_domain})
@@ -66,7 +67,7 @@ class Dkim::ConfigureDkimRecord
         elsif content[5] # account specific records
           handle_dns_action("UPSERT", content[1], eval(content[2]), eval(content[3]))
         end
-        
+
         if content[4] # if customer record
           dkim_record = domain_category.dkim_records.where(:sg_type => content[6], :customer_record => true).first
           Rails.logger.debug "dkim_record ::: #{dkim_record.inspect}"

@@ -7,7 +7,7 @@ defaults: &defaults
 
   ticket_properties_suggester:
     url: "https://autodispatch-361773157.freshworksapi.com/"
-    timeout: 5
+    timeout: 15
     expiry_in_days: 7
 
   agent_articles_suggest:
@@ -27,8 +27,6 @@ defaults: &defaults
     service: 'bot-admin'
     product_id: '076f18fe945962782e9890b3125bc03e5604c46f'
     timeout: 3
-    service: 'bot-admin'
-    product_id: '076f18fe945962782e9890b3125bc03e5604c46f'
 
 development:
   <<: *defaults

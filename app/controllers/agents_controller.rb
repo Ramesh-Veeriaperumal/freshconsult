@@ -48,7 +48,7 @@ class AgentsController < ApplicationController
   end
 
   def check_edit_privilege
-    if freshid_enabled?
+    if freshid_integration_enabled? && !current_account.allow_update_agent_enabled?
       return true if @agent.user_changes.key?('email') && freshid_user_details(@agent.user.email).blank?
 
       AgentConstants::RESTRICTED_PARAMS.any? do |key|

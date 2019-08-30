@@ -136,8 +136,7 @@ class SAAS::SubscriptionEventActions
     end
 
     def plan_features
-      @plan_features ||= ::PLANS[:subscription_plans][
-        new_plan.subscription_plan.canon_name.to_sym][:features].dup
+      @plan_features ||= (::PLANS[:subscription_plans][new_plan.subscription_plan.canon_name.to_sym] && ::PLANS[:subscription_plans][new_plan.subscription_plan.canon_name.to_sym][:features].dup) || []
     end
 
     def features_list_to_drop_data

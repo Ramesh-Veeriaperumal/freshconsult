@@ -268,7 +268,7 @@ class UserNotifier < ActionMailer::Base
       part.html { render "facebook.text.html" }
     end.deliver
   end
-  
+
   def notify_webhook_failure(email_hash, account, triggering_rule, url)
     Time.zone = account.time_zone
     headers = {

@@ -525,11 +525,29 @@ class AgentsControllerTest < ActionController::TestCase
     @user = Account.current.account_managers.first.make_current
     user = add_test_agent(@account)
     role_id = Account.current.roles.find_by_name('Agent').id
-    Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(true)
+    Account.any_instance.stubs(:allow_update_agent_enabled?).returns(false)
     put :update, id: user.agent.id, user: { 'name' => Faker::Name.name }
     assert_response 403
   ensure
-    Account.any_instance.unstub(:freshid_enabled?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    Account.any_instance.unstub(:allow_update_agent_enabled?)
+    user.destroy
+    log_out
+  end
+
+  def test_allow_profile_info_update
+    login_admin
+    @user = Account.current.account_managers.first.make_current
+    user = add_test_agent(@account)
+    role_id = Account.current.roles.find_by_name('Agent').id
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(true)
+    Account.any_instance.stubs(:allow_update_agent_enabled?).returns(true)
+    put :update, id: user.agent.id, user: { 'name' => Faker::Name.name }
+    assert_response 200
+  ensure
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    Account.any_instance.unstub(:allow_update_agent_enabled?)
     user.destroy
     log_out
   end

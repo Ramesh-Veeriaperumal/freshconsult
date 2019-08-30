@@ -38,7 +38,7 @@ module Admin::AutomationValidationHelper
   def create_attr_accessor_for_cf(cf_names)
     cf_names ||= []
     cf_names.each do |name|
-      self.class.send(:attr_accessor, name)
+      self.class.safe_send(:attr_accessor, name)
     end
   end
 

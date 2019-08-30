@@ -195,13 +195,7 @@ class Admin::AutomationDecorator < ApiDecorator
           end
         end
       end
-      if key == :value
-        value = current_account.tags.where("id in (?)", value).pluck(:name) if field_name == :tag_names
-        field = custom_ticket_fields_from_cache.find { |tf| tf.name == field_name.to_s }
-        value = value.is_a?(Array) ? value.map { |val| CGI.escapeHTML(val) } :
-                    CGI.escapeHTML(value) if SUBJECT_DESCRIPTION_FIELDS.include?(field_name) || (field.present? &&
-            CUSTOM_TEXT_FIELD_TYPES.include?(field.field_type.to_sym))
-      end
+      value = current_account.tags.where("id in (?)", value).pluck(:name) if field_name == :tag_names && key == :value
       has_key ? { key => value } : {}
     end
 end

@@ -6,7 +6,7 @@ class ApiAgentsController < ApiApplicationController
   SLAVE_ACTIONS = %w[index achievements].freeze
 
   def check_edit_privilege
-    if current_account.freshid_enabled?
+    if current_account.freshid_integration_enabled? && !current_account.allow_update_agent_enabled?
       AgentConstants::RESTRICTED_PARAMS.any? do |key|
         if @item.user_changes.key?(key)
           @item.errors[:base] << :cannot_edit_inaccessible_fields
@@ -130,7 +130,11 @@ class ApiAgentsController < ApiApplicationController
     def agents_filter(agents)
       @agent_filter.conditions.each do |key|
         clause = agents.api_filter(@agent_filter)[key.to_sym] || {}
-        agents = agents.where(clause[:conditions])
+        agents = if clause[:joins].present?
+                   agents.joins(clause[:joins]).where(clause[:conditions])
+                 else
+                   agents.where(clause[:conditions])
+                 end
       end
       agents
     end

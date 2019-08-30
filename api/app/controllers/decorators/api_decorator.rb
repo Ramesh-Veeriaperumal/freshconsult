@@ -7,6 +7,17 @@ class ApiDecorator
     @record = record
   end
 
+  # need to be overridden by the child class
+  def attributes
+    []
+  end
+
+  def attribute_values
+    attributes.inject({}) do |attribute_hash, key|
+      attribute_hash.merge({ key => safe_send(key.to_s) })
+    end
+  end
+
   def to_bool(field_to_be_converted)
     value = record.safe_send(field_to_be_converted)
     value ? value.to_s.to_bool : value

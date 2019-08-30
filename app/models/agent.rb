@@ -79,9 +79,9 @@ class Agent < ActiveRecord::Base
     # Assign points to agent if no point have been given before
     # Else increment the existing points total by the given amount
     if self.points.nil?
-      Agent.where(:id => self.id).update_all("points = #{score}")
+      Agent.where(id: id).update_all("points = #{score.to_i}")
     else
-      Agent.where(:id => self.id).update_all("points = points + #{score}")
+      Agent.where(id: id).update_all("points = points + #{score.to_i}")
     end
   end
 
@@ -381,7 +381,11 @@ class Agent < ActiveRecord::Base
 
       type: {
         conditions: { agent_type: AgentType.agent_type_id(agent_filter.type) }
-      } 
+      },
+      group_id: {
+        conditions: ['agent_groups.group_id = ? ', agent_filter.group_id],
+        joins: :agent_groups
+      }
     }
   end
 

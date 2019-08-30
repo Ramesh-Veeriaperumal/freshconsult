@@ -8,6 +8,19 @@
   <img class="failure-icon" src="/assets/alert-icon.svg" />
   <span id="request-change-message" class="m0 pl5"></span>
 </div>
+<div id="pending-cancellation-request-modal" class="modal fade pending-cancellation-request-modal hide" role="dialog" aria-hidden="true">
+  <div class="modal-header">
+    <h3 class="ellipsis modal-title"><%= t("downgrade.subscription_change") %></h3>
+  </div>
+  <div class="modal-body">
+    <p><%= t("subscription_change_confirm_para1")%></p>
+    <p class="subscription-change-sub"><%= t("subscription_change_confirm_para2").html_safe %></p>
+  </div>
+  <div class="modal-footer">
+    <button data-dismiss="modal" class="btn"><%= t("account.cancel") %></button>
+    <button data-submit="modal" class="btn btn-primary cancel-request"><%= t("proceed_btn") %></button>
+  </div>
+</div>
   <%
     plan = @subscription.subscription_plan
     is_new_sprout = new_sprout?(plan.name)
@@ -38,7 +51,7 @@
       <p class="omni-disabled">
         <img alt="omni channel experience" class="omni-close" src="/assets/close.svg" width="11" />
         <%= t('omni_disabled') %>
-      </p>  
+      </p>
     <% end %>
   </div>
 
@@ -48,11 +61,11 @@
     <% if plan.omni_plan? || plan.basic_variant? %>
       <p class="omni-billing-edit features-billing-edit__toggle">
         <span><%= t('omni_channel') %></span>
-        <input rel="toggle" type="checkbox" data-plan="<%= plan_id %>"  id="exclude-omni" name="omni-edit-toggle" data-checked-label="<%= t('plain_yes') %>" 
+        <input rel="toggle" type="checkbox" data-plan="<%= plan_id %>"  id="exclude-omni" name="omni-edit-toggle" data-checked-label="<%= t('plain_yes') %>"
         <%= plan.name.include?('Omni')? "checked='true'" : '' %> />
       </p>
     <% end %>
-    <% if fsm_supported_plan?(plan) %> 
+    <% if fsm_supported_plan?(plan) %>
       <p class="fsm-billing-edit features-billing-edit__toggle">
         <span><%= t('fsm_title') %></span>
         <input rel="toggle" type="checkbox" data-plan-id="<%= plan.id %>" id="edit-billing-fsm-toggle" name="fsm-edit-toggle" data-checked-label="<%= t('plain_yes') %>"
@@ -138,8 +151,8 @@
 <% unless @offline_subscription || @reseller_paid_account %>
 <div class="plan-section-title">
 <div class="choose-plan-title">
-  <a class="plan-expand <%= 'plan-expand-click' if @selected_plan.present? %>" href="#"> 
-  <%= t('choose_different_plan') %> 
+  <a class="plan-expand <%= 'plan-expand-click' if @selected_plan.present? %>" href="#">
+  <%= t('choose_different_plan') %>
   </a>
 </div>
 <% if !current_account.new_2019_pricing_enabled? %>
@@ -155,7 +168,7 @@
     <% end %>
   </div>
   <% end %>
-    <%= render :partial => "/subscriptions/select_new_plans", :locals => {:plans => @plans, :subscription => @subscription, 
+    <%= render :partial => "/subscriptions/select_new_plans", :locals => {:plans => @plans, :subscription => @subscription,
       :show_all => false } %>
   </div>
 </div>
@@ -164,7 +177,7 @@
 
 
 <script type="text/javascript">
-  (function($){    
+  (function($){
     $(".plan-expand").click(function(ev){
       ev.preventDefault();
       $('.choose-plan-drop').animate({

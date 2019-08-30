@@ -168,52 +168,23 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
   end
 
   def test_unresolved_tickets_count
-    contacts_url = "#{PRODUCT_FEEDBACK_CONFIG['feedback_account']}/#{PRODUCT_FEEDBACK_CONFIG['contacts_path']}?email=sample@freshdesk.com"
-    stub_request(:get, contacts_url).with(
-                  headers:  { 'Accept' => '*/*; q=0.5, application/xml',
-                              'Accept-Encoding' => 'gzip, deflate',
-                              'User-Agent' => 'Ruby' }
-                ).to_return(status: 200, body: SUPPORT_CONTACTS_RESPONSE.to_json, headers: {})
-    updated_since_date = (Time.now - 3.month).utc.iso8601
-    ticket_url = "#{PRODUCT_FEEDBACK_CONFIG['feedback_account']}/#{PRODUCT_FEEDBACK_CONFIG['tickets_path']}?company_id=854881&per_page=100&updated_since=#{updated_since_date}"
-    stub_request(:get, ticket_url).with(
-                  headers:  { 'Accept' => '*/*; q=0.5, application/xml',
-                              'Accept-Encoding' => 'gzip, deflate',
-                              'Authorization'=>'Basic ZHVtbXktYXBpLWtleTo=',
-                              'User-Agent' => 'Ruby' }
-                ).to_return(status: 200, body: SUPPORT_TICKETS_RESPONSE.to_json, headers: {})
+    stub_request(:get, contacts_path).to_return(body: SUPPORT_CONTACTS_RESPONSE.to_json, status: 200)
+    stub_request(:get, tickets_path).to_return(body: SUPPORT_TICKETS_RESPONSE.to_json, status: 200)
     get :support_tickets, controller_params(version: 'private')
     assert_response 200
     assert_equal JSON.parse(response.body)['unresolved_count'], fetch_unresolved_ticket_count
   end
 
   def test_unresolved_tickets_count_without_company
-    contacts_url = "#{PRODUCT_FEEDBACK_CONFIG['feedback_account']}/#{PRODUCT_FEEDBACK_CONFIG['contacts_path']}?email=sample@freshdesk.com"
-    stub_request(:get, contacts_url).with(
-                 headers: {  'Accept' => '*/*; q=0.5, application/xml',
-                             'Accept-Encoding' => 'gzip, deflate',
-                             'User-Agent' => 'Ruby' }
-               ).to_return(status: 200, body: SUPPORT_CONTACTS_RESPONSE_WITHOUT_COMPANY.to_json, headers: {})
-    updated_since_date = (Time.now - 3.month).utc.iso8601
-    ticket_url = "#{PRODUCT_FEEDBACK_CONFIG['feedback_account']}/#{PRODUCT_FEEDBACK_CONFIG['tickets_path']}?requester_id=28271068&per_page=100&updated_since=#{updated_since_date}"
-    stub_request(:get, ticket_url).with(
-                 headers: {  'Accept' => '*/*; q=0.5, application/xml',
-                             'Accept-Encoding' => 'gzip, deflate',
-                             'Authorization'=>'Basic ZHVtbXktYXBpLWtleTo=',
-                             'User-Agent' => 'Ruby' }
-               ).to_return(status: 200, body: SUPPORT_TICKETS_RESPONSE.to_json, headers: {})
+    stub_request(:get, contacts_path).to_return(body: SUPPORT_CONTACTS_RESPONSE_WITHOUT_COMPANY.to_json, status: 200)
+    stub_request(:get, tickets_path).to_return(body: SUPPORT_TICKETS_RESPONSE.to_json, status: 200)
     get :support_tickets, controller_params(version: 'private')
     assert_response 200
     assert_equal JSON.parse(response.body)['unresolved_count'], fetch_unresolved_ticket_count
   end
 
   def test_unresolved_tickets_counts_without_user
-    contacts_url = "#{PRODUCT_FEEDBACK_CONFIG['feedback_account']}/#{PRODUCT_FEEDBACK_CONFIG['contacts_path']}?email=sample@freshdesk.com"
-    stub_request(:get, contacts_url).with(
-                 headers: {  'Accept' => '*/*; q=0.5, application/xml',
-                             'Accept-Encoding' => 'gzip, deflate',
-                             'User-Agent' => 'Ruby' }
-               ).to_return(status: 200, body: '[]', headers: {})
+    stub_request(:get, contacts_path).to_return(body: '[]', status: 200)
     get :support_tickets, controller_params(version: 'private')
     assert_equal JSON.parse(response.body)['unresolved_count'], 0
   end
@@ -223,11 +194,7 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
     ln = Faker::Name.last_name
     User.any_instance.stubs(:email).returns("#{fn}+1+.#{ln}@freshdesk.com")
     contacts_url = "#{PRODUCT_FEEDBACK_CONFIG['feedback_account']}/#{PRODUCT_FEEDBACK_CONFIG['contacts_path']}?email=#{fn}+1+.#{ln}@freshdesk.com"
-    stub_request(:get, contacts_url).with(
-                 headers: {  'Accept' => '*/*; q=0.5, application/xml',
-                             'Accept-Encoding' => 'gzip, deflate',
-                             'User-Agent' => 'Ruby' }
-               ).to_raise(StandardError)
+    stub_request(:get, contacts_url).to_raise(StandardError)
     get :support_tickets, controller_params(version: 'private')
     assert_equal JSON.parse(response.body)['unresolved_count'], 0 
   end
@@ -242,5 +209,15 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
         end
       end
       unresolved_ticket_count
+    end
+
+    def contacts_path
+      user_email = Faker::Internet.email
+      User.any_instance.stubs(:email).returns(user_email)
+      "#{PRODUCT_FEEDBACK_CONFIG['feedback_account']}/#{PRODUCT_FEEDBACK_CONFIG['contacts_path']}?email=#{user_email}"
+    end
+
+    def tickets_path
+      %r{^#{PRODUCT_FEEDBACK_CONFIG['feedback_account']}/#{PRODUCT_FEEDBACK_CONFIG['tickets_path']}.*?$}
     end
 end

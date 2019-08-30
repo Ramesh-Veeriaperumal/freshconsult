@@ -2,8 +2,9 @@ class ApiBusinessHoursController < ApiApplicationController
   private
 
     def load_objects
+      paginate = params[:page].present? ? true : false
       items = multiple_business_hours_enabled? ? scoper.order(:name) : [Group.default_business_calendar]
-      super(items)
+      super(items, paginate)
     end
 
     def load_object

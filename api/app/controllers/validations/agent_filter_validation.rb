@@ -1,5 +1,5 @@
 class AgentFilterValidation < FilterValidation
-  attr_accessor :state, :phone, :mobile, :email, :conditions, :only, :type, :privilege
+  attr_accessor :state, :phone, :mobile, :email, :conditions, :only, :type, :privilege, :group_id
 
   validates :state, custom_inclusion: { in: AgentConstants::STATES }
   validates :email, data_type: { rules: String }
@@ -9,6 +9,7 @@ class AgentFilterValidation < FilterValidation
   validates :only, custom_inclusion: { in: AgentConstants::ALLOWED_ONLY_PARAMS }, data_type: { rules: String }
 
   validates :type, allow_nil: false, custom_inclusion: { in: proc { |x| x.account_agent_types }, data_type: { rules: String } }
+  validates :group_id, allow_nil: false, custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param }
 
   validate :validate_privilege
 

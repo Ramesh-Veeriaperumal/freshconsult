@@ -78,14 +78,14 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     assert_response 201
     match_json(mailbox_pattern({}, EmailConfig.last))
   end
-  
+
   def test_create_without_feature
     Account.any_instance.stubs(:multiple_emails_enabled?).returns(false)
     params_hash = create_mailbox_params_hash
     post :create, construct_params({}, params_hash)
     assert_response 403
     request_error_pattern(:require_feature, feature: 'multiple_emails')
-    Account.any_instance.unstub(:multiple_emails_enabled?)  
+    Account.any_instance.unstub(:multiple_emails_enabled?)
   end
 
   def test_create_without_support_email
@@ -235,6 +235,124 @@ class Email::MailboxesControllerTest < ActionController::TestCase
       :'Error while verifying the mailbox imap details. Please verify server name, port and credentials',
       code: :invalid_value
     )])
+    Account.any_instance.unstub(:has_features?)
+    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
+  end
+
+  # test update success
+  # test_update_without_feature
+  # test_update_support_email
+  # test_update_default_reply_email
+  # test_update_group_id
+  # test_update_product_id
+  # test_update_with_incoming_custom_mailbox
+  # test_update_with_outgoing_custom_mailbox
+  # test_update_freshdesk_to_custom_mailbox
+  # test_update_custom_to_freshdesk_mailbox
+
+  def test_update_success
+    email_config = create_email_config
+    params_hash = { name: 'updated name' }
+    post :update, construct_params({ id: email_config.id }, params_hash)
+    assert_response 200
+    match_json(mailbox_pattern(params_hash, EmailConfig.find_by_id(email_config.id)))
+  end
+
+  def test_update_without_feature
+    Account.any_instance.stubs(:multiple_emails_enabled?).returns(false)
+    email_config = create_email_config
+    params_hash = { name: 'updated name' }
+    post :update, construct_params({ id: email_config.id }, params_hash)
+    assert_response 200
+    match_json(mailbox_pattern(params_hash, EmailConfig.find_by_id(email_config.id)))
+    Account.any_instance.unstub(:multiple_emails_enabled?)
+  end
+
+  def test_update_support_email
+    email_config = create_email_config
+    params_hash = { support_email: Faker::Internet.email.to_s }
+    post :update, construct_params({ id: email_config.id }, params_hash)
+    assert_response 200
+    match_json(mailbox_pattern(params_hash, EmailConfig.find_by_id(email_config.id)))
+  end
+
+  def test_update_default_reply_email
+    email_config = create_email_config
+    params_hash = { default_reply_email: true }
+    post :update, construct_params({ id: email_config.id }, params_hash)
+    assert_response 200
+    match_json(mailbox_pattern(params_hash, EmailConfig.find_by_id(email_config.id)))
+  end
+
+  def test_update_group_id
+    email_config = create_email_config
+    params_hash = { group_id: create_group(@account).id }
+    post :update, construct_params({ id: email_config.id }, params_hash)
+    assert_response 200
+    match_json(mailbox_pattern(params_hash, EmailConfig.find_by_id(email_config.id)))
+  end
+
+  def test_update_product_id
+    email_config = create_email_config
+    Account.any_instance.stubs(:multi_product_enabled?).returns(true)
+    params_hash = { product_id: create_product.id }
+    post :update, construct_params({ id: email_config.id }, params_hash)
+    assert_response 200
+    match_json(mailbox_pattern(params_hash, EmailConfig.find_by_id(email_config.id)))
+    Account.any_instance.unstub(:multi_product_enabled?)
+  end
+
+  def test_update_with_incoming_custom_mailbox
+    Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
+    Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: true, msg: '')
+    Email::MailboxDelegator.any_instance.stubs(:verify_smtp_mailbox).returns(success: true, msg: '')
+    email_config = create_email_config(imap_mailbox_attributes: { imap_server_name: 'imap.gmail.com' })
+    params_hash = create_custom_mailbox_hash(access_type: 'outgoing')
+    post :update, construct_params({ id: email_config.id }, params_hash)
+    assert_response 200
+    match_json(mailbox_pattern({}, EmailConfig.find_by_id(email_config.id)))
+    Account.any_instance.unstub(:has_features?)
+    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
+    Email::MailboxDelegator.any_instance.unstub(:verify_smtp_mailbox)
+  end
+
+  def test_update_with_outgoing_custom_mailbox
+    Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
+    Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: true, msg: '')
+    email_config = create_email_config(smtp_mailbox_attributes: { smtp_server_name: 'smtp.gmail.com' })
+    params_hash = create_custom_mailbox_hash(access_type: 'incoming')
+    post :update, construct_params({ id: email_config.id }, params_hash)
+    assert_response 200
+    match_json(mailbox_pattern({}, EmailConfig.find_by_id(email_config.id)))
+    Account.any_instance.unstub(:has_features?)
+    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
+  end
+
+  def test_update_freshdesk_to_custom_mailbox
+    Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
+    Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: true, msg: '')
+    Email::MailboxDelegator.any_instance.stubs(:verify_smtp_mailbox).returns(success: true, msg: '')
+    email_config = create_email_config
+    params_hash = create_custom_mailbox_hash(access_type: 'both').merge(mailbox_type: CUSTOM_MAILBOX)
+    post :update, construct_params({ id: email_config.id }, params_hash)
+    assert_response 200
+    match_json(mailbox_pattern({}, EmailConfig.find_by_id(email_config.id)))
+    Account.any_instance.unstub(:has_features?)
+    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
+    Email::MailboxDelegator.any_instance.unstub(:verify_smtp_mailbox)
+  end
+
+  def test_update_custom_to_freshdesk_mailbox
+    Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
+    Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: true, msg: '')
+    email_config = create_email_config(
+      imap_mailbox_attributes: { imap_server_name: 'imap.gmail.com' },
+      smtp_mailbox_attributes: { smtp_server_name: 'smtp.gmail.com' }
+    )
+    params_hash = { name: 'updated name', mailbox_type: 'freshdesk_mailbox' }
+    post :update, construct_params({ id: email_config.id }, params_hash)
+    assert_response 200
+    match_json(mailbox_pattern({}, EmailConfig.find_by_id(email_config.id)))
     Account.any_instance.unstub(:has_features?)
     Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
   end

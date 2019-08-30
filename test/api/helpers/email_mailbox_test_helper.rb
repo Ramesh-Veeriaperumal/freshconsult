@@ -79,16 +79,30 @@ module EmailMailboxTestHelper
       name: options[:name] || Faker::Name.name,
       reply_email: options[:support_email] || "#{Faker::Internet.email}",
       to_email: options[:support_email] || "#{Faker::Internet.email}",
-      primary_role: options[:default_reply_email] || false,
+      primary_role:  options[:default_reply_email] || false,
       active: options[:active] || true,
       group_id: options[:group_id],
       product_id: options[:product_id]
     }
+    email_config_params[:imap_mailbox_attributes] = imap_hash(options[:imap_mailbox_attributes]) if options[:imap_mailbox_attributes].present?
+    email_config_params[:smtp_mailbox_attributes] = smtp_hash(options[:smtp_mailbox_attributes]) if options[:smtp_mailbox_attributes].present?
     test_email_config = FactoryGirl.build(:email_config, email_config_params)
     test_email_config.save(validate: false)
     test_email_config
   end
   
+  def imap_hash(options = {})
+    return_hash = create_incoming_type_hash(options)
+    return_hash[:server_name] = return_hash.delete(:mail_server)
+    return_hash
+  end
+
+  def smtp_hash(options = {})
+    return_hash = create_outgoing_type_hash(options)
+    return_hash[:server_name] = return_hash.delete(:mail_server)
+    return_hash
+  end
+
   def create_custom_mailbox_hash(options = {})
     mailbox_access_type = options[:access_type] || 'incoming'
     result_hash = { access_type: mailbox_access_type }

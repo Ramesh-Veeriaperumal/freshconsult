@@ -118,7 +118,7 @@
                         </div>
                       </div>
                     <% else %>
-                      <%= plan_button(plan, t('choose_plan'), "btn btn-flat", subscribe_direct_flag, true, equal_plan_check ? t('change_equal_plan_title', :to_plan => plan.display_name): t(subscription.trial? ? 'change_plan_title' : 'downgrade_plan_title'),
+                      <%= plan_button(plan, t('choose_plan'), "free-plan-button btn btn-flat", subscribe_direct_flag, true, equal_plan_check ? t('change_equal_plan_title', :to_plan => plan.display_name): t(subscription.trial? ? 'change_plan_title' : 'downgrade_plan_title'),
                         t(request_change, :name => plan.display_name), t('cancel') ) %>
                         <div id="confirm-message-<%= plan.id %>" class="plan-confirm-message hide">
                           <%= render :partial => "submit_plan",
@@ -157,7 +157,7 @@
                           <% downgrade_confirm = ((plan_ranking < current_plan_ranking) or current_account.subscription.classic? ) ? true : false %>
                           <% if downgrade_confirm %>
 
-                            <%= plan_button(plan, t('activate_free_plan'), "btn btn-flat", subscribe_direct_flag, true, t('change_plan_title'), t('confirm'), t('cancel') ) %>
+                            <%= plan_button(plan, t('activate_free_plan'), "free-plan-button btn btn-flat", subscribe_direct_flag, true, t('change_plan_title'), t('confirm'), t('cancel') ) %>
 
                             <div id="confirm-message-<%= plan.id %>" class="plan-confirm-message hide">
                               <%= render :partial => "submit_plan",

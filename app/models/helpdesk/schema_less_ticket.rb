@@ -137,6 +137,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
       self.reports_hash.merge!('first_response_id' => note_id)
       fetch_first_response_agent_id(note_id)
       self.reports_hash.merge!('first_response_group_id' => self.ticket.group_id)
+      Rails.logger.info "Helpdesk::SchemaLessTicket::set_first_response_id::#{Time.zone.now.to_f} and schema_less_ticket_object :: #{reports_hash.inspect}"
       self.save
 		end
 	end
@@ -147,6 +148,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 
   def update_first_response_agent_id
     first_response_agent_id = fetch_first_response_agent_id(reports_hash['first_response_id'])
+    Rails.logger.info "Helpdesk::SchemaLessTicket::update_first_response_agent_id::#{Time.zone.now.to_f} and schema_less_ticket_object :: #{reports_hash.inspect}"
     self.save
     first_response_agent_id
   end

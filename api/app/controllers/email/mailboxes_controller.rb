@@ -2,19 +2,27 @@ class Email::MailboxesController < ApiApplicationController
   include Email::Mailbox::Constants
   include Email::Mailbox::Utils
   include HelperConcern
+  include MailboxConcern
   decorate_views
 
   before_filter :check_multiple_emails_feature, only: [:create]
 
   def create
-    delegator_params = {
-      imap_mailbox_attributes: cname_params[:imap_mailbox_attributes],
-      smtp_mailbox_attributes: cname_params[:smtp_mailbox_attributes]
-    }
     return unless validate_delegator(@item, delegator_params)
 
     if @item.save
       render :create, status: 201
+    else
+      render_custom_errors
+    end
+  end
+
+  def update
+    return unless validate_delegator(@item, delegator_params)
+
+    if @item.update_attributes(cname_params)
+      @item.reload
+      render :update, status: 200
     else
       render_custom_errors
     end
@@ -34,20 +42,34 @@ class Email::MailboxesController < ApiApplicationController
     def scoper
       current_account.all_email_configs
     end
-    
+
     def check_multiple_emails_feature
       render_request_error(:require_feature, 403, feature: 'multiple_emails') unless current_account.multiple_emails_enabled?
+    end
+
+    def after_load_object
+      @item.imap_mailbox.try(:mark_for_destruction) if update? && imap_be_destroyed?
+      @item.smtp_mailbox.try(:mark_for_destruction) if update? && smtp_be_destroyed?
     end
 
     def before_validate_params
       cname_params[:mailbox_type].try(:downcase!)
       cname_params[:custom_mailbox][:access_type].try(:downcase!) if cname_params[:custom_mailbox].present? && cname_params[:access_type].present?
       cname_params[:custom_mailbox][:incoming][:authentication].try(:downcase!) if cname_params[:custom_mailbox].present? && cname_params[:custom_mailbox][:incoming].present?
+      cname_params[:custom_mailbox][:outgoing][:authentication].try(:downcase!) if cname_params[:custom_mailbox].present? && cname_params[:custom_mailbox][:outgoing].present?
     end
 
     def validate_params
       before_validate_params
-      validate_body_params
+      validate_body_params(@item)
+    end
+
+    def delegator_params
+      {
+        imap_mailbox_attributes: cname_params[:imap_mailbox_attributes],
+        smtp_mailbox_attributes: cname_params[:smtp_mailbox_attributes],
+        primary_role: cname_params[:primary_role]
+      }
     end
 
     def sanitize_params
@@ -58,7 +80,7 @@ class Email::MailboxesController < ApiApplicationController
     end
 
     def sanitize_custom_mailbox_params
-      if cname_params[:mailbox_type] == CUSTOM_MAILBOX && cname_params[:custom_mailbox].present?
+      if cname_params[:custom_mailbox].present?
         sanitize_incoming_params
         sanitize_outgoing_params
       end
@@ -80,6 +102,8 @@ class Email::MailboxesController < ApiApplicationController
     end
 
     def assign_to_email
+      return unless cname_params[:reply_email].present?
+
       cname_params[:to_email] = construct_to_email(cname_params[:reply_email], current_account.full_domain)
     end
 

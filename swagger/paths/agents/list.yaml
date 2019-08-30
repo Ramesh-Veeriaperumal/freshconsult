@@ -13,6 +13,14 @@ get:
       in: query
       type: string
       description: privilege symbol (Lists agents who has this privilege. Applicable iif with_privilege filter applied).
+    - name: type
+      in: query
+      type: string
+      description: type of the agent.(support_agent, field_agent...)
+    - name: group_id
+      in: query
+      type: string
+      description: group id (Lists agents belongs to the given group id.)
   responses:
     200:
       description: Success

@@ -7,8 +7,11 @@ module EmailMailboxConstants
   PARAMS_TO_DELETE = %i[mailbox_type freshdesk_mailbox custom_mailbox].freeze
   CREATE_FIELDS = %w[name support_email default_reply_email group_id product_id
                     mailbox_type custom_mailbox].freeze
+  UPDATE_FIELDS = CREATE_FIELDS
+
   VALIDATION_CLASS = 'Email::MailboxValidation'.freeze
   DELEGATOR_CLASS = 'Email::MailboxDelegator'.freeze
+  DECORATOR_CLASS = 'Email::MailboxDecorator'.freeze
   
   FIELD_MAPPINGS = { reply_email: :support_email }.freeze
 end
