@@ -1189,7 +1189,7 @@ GEM
       git-version-bump (~> 0.15)
       rack (~> 1.4)
     rack-cors (0.4.1)
-    rack-protection (1.5.4)
+    rack-protection (1.5.5)
       rack
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -1667,6 +1667,7 @@ DEPENDENCIES
   rack-cache (~> 1.2)
   rack-cors (~> 0.4.1)
   rack-openid!
+  rack-protection (= 1.5.5)
   rack-ssl!
   rack-test (~> 0.6.2)
   rack-throttle (~> 0.3.0)
