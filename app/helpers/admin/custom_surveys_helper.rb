@@ -24,4 +24,8 @@ module Admin::CustomSurveysHelper
     languages = Account.current.supported_languages_objects - Account.current.portal_languages_objects
     languages_status languages
   end
+
+  def survey_language_preview(language_code)
+    "#{Account.current.url_protocol}://#{Account.current.full_domain}/#{language_code}/support/custom_surveys/#{@survey.id}/preview"
+  end
 end
