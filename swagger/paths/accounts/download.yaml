@@ -1,5 +1,5 @@
 get:
-  tags: [File download]
+  tags: [Account]
   description: File Download
   parameters:
     - in: path

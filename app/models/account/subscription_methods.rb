@@ -81,16 +81,18 @@ class Account < ActiveRecord::Base
     clear_account_data
   end
 
-  def schedule_account_cancellation_request(feedback, end_of_term_cancellation = false)
+  def schedule_account_cancellation_request(feedback)
     SubscriptionNotifier.account_cancellation_requested(feedback) if Rails.env.production?
-    if end_of_term_cancellation
-      Billing::Subscription.new.cancel_subscription(self, end_of_term: true)
-      set_others_redis_key(account_cancellation_request_time_key, (Time.now.to_f * 1000).to_i, nil)
-      subscription_request.destroy if subscription_request.present?
-    else
-      job_id = AccountCancelWorker.perform_in(WIN_BACK_PERIOD.days.from_now, account_id: id)
-      set_others_redis_key(account_cancellation_request_job_key, job_id, 864_000)
-      renewal_extend if subscription.renewal_in_two_days?
+    unless account_cancellation_requested?
+      if launched?(:downgrade_policy)
+        Billing::Subscription.new.cancel_subscription(self, end_of_term: true)
+        set_others_redis_key(account_cancellation_request_time_key, (Time.now.to_f * 1000).to_i, nil)
+        subscription_request.destroy if subscription_request.present?
+      else
+        job_id = AccountCancelWorker.perform_in(WIN_BACK_PERIOD.days.from_now, account_id: id)
+        set_others_redis_key(account_cancellation_request_job_key, job_id, 864_000)
+        renewal_extend if subscription.renewal_in_two_days?
+      end
     end
   end
 
@@ -126,5 +128,9 @@ class Account < ActiveRecord::Base
     add_churn
     send_account_cancelled_email
     schedule_cleanup
+  end
+
+  def deletion_scheduled?
+    DeletedCustomers.find_by_account_id(self.id).present?
   end
 end

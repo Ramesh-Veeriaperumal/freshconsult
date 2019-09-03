@@ -70,12 +70,12 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
   end
 
   def test_cancellation_feedback_presence
-    post :cancel, construct_params({})
+    put :cancel, construct_params({})
     assert_response 400
   end
 
   def test_cancellation_feedback_data_type_mismatch
-    post :cancel, construct_params(cancellation_feedback: 1.to_i)
+    put :cancel, construct_params(cancellation_feedback: 1.to_i)
     assert_response 400
   end
 
@@ -83,7 +83,7 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
     reset_account_subscription_state('trail')
     url = "#{CHARGEBEE_SUBSCRIPTION_BASE_URL}/#{@account.id}"
     stub_request(:get, url).to_return(status: 200, body: chargebee_subscripiton_reponse.to_json, headers: {})
-    post :cancel, construct_params(get_valid_params_for_cancel)
+    put :cancel, construct_params(get_valid_params_for_cancel)
     assert_response 204
     reset_account_subscription_state('trail')
   end
@@ -91,7 +91,7 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
   def test_account_cancellation_for_paid_accounts
     create_subscription_payment(amount: 40)
     reset_account_subscription_state('active')
-    post :cancel, construct_params(get_valid_params_for_cancel)
+    put :cancel, construct_params(get_valid_params_for_cancel)
     Account.any_instance.stubs(:account_cancellation_requested?).returns(true)
     assert_response 204
     assert_equal true, @account.account_cancellation_requested?
@@ -103,7 +103,7 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
 
   def test_account_cancellation_state_validation_fail
     reset_account_subscription_state('suspended')
-    post :cancel, construct_params(get_valid_params_for_cancel)
+    put :cancel, construct_params(get_valid_params_for_cancel)
     assert_response 403
     match_json('code' => 'account_suspended', 'message' => 'Your account has been suspended.')
     reset_account_subscription_state('trail')
@@ -112,9 +112,8 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
   def test_account_cancellation_request_already_placed
     reset_account_subscription_state('active')
     Account.any_instance.stubs(:account_cancellation_requested?).returns(true)
-    post :cancel, construct_params(get_valid_params_for_cancel)
-    assert_response 400
-    match_json([{ code: 'invalid_value', field: 'account_cancel', message: 'Account Cancellation already requested.' }])
+    put :cancel, construct_params(get_valid_params_for_cancel)
+    assert_response 204
   ensure
     @account.delete_account_cancellation_request_job_key if @account
   end
@@ -127,7 +126,7 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
     url = "#{CHARGEBEE_SUBSCRIPTION_BASE_URL}/#{@account.id}"
     stub_request(:get, url).to_return(status: 200, body: subscription_response.to_json, headers: {})
     ChargeBee::Subscription.stubs(:cancel).returns(true)
-    post :cancel, construct_params(get_valid_params_for_cancel)
+    put :cancel, construct_params(get_valid_params_for_cancel)
     assert_response 204
     assert @account.account_cancellation_requested?
   ensure
@@ -197,6 +196,45 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
     stub_request(:get, contacts_url).to_raise(StandardError)
     get :support_tickets, controller_params(version: 'private')
     assert_equal JSON.parse(response.body)['unresolved_count'], 0 
+  end
+
+  def test_reactivate_cancelled_account
+    @account.launch(:downgrade_policy)
+    set_others_redis_key(@account.account_cancellation_request_time_key, Time.now, nil)
+    ChargeBee::Subscription.stubs(:remove_scheduled_cancellation).returns(true)
+    delete :reactivate, controller_params(version: 'private')
+    assert_response 204
+  ensure
+    ChargeBee::Subscription.unstub(:remove_scheduled_cancellation)
+    remove_others_redis_key @account.account_cancellation_request_time_key
+    @account.rollback(:downgrade_policy)
+  end
+
+  def test_reactivate_active_account
+    @account.launch(:downgrade_policy)
+    remove_others_redis_key @account.account_cancellation_request_time_key
+    delete :reactivate, controller_params(version: 'private')
+    assert_response 404
+  ensure
+    @account.rollback(:downgrade_policy)
+  end
+
+  def test_reactivate_on_chargebee_exception_account
+    @account.launch(:downgrade_policy)
+    set_others_redis_key(@account.account_cancellation_request_time_key, Time.now, nil)
+    ChargeBee::Subscription.stubs(:remove_scheduled_cancellation).raises(StandardError, 'Chargebee Exception')
+    delete :reactivate, controller_params(version: 'private')
+    assert_response 404
+  ensure
+    ChargeBee::Subscription.unstub(:remove_scheduled_cancellation)
+    remove_others_redis_key @account.account_cancellation_request_time_key
+    @account.rollback(:downgrade_policy)
+  end
+
+  def test_reactivate_unscheduled_account_cancellation
+    @account.rollback(:downgrade_policy)
+    delete :reactivate, controller_params(version: 'private')
+    assert_response 404
   end
 
   private

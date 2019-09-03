@@ -476,7 +476,8 @@ Helpkit::Application.routes.draw do
 
     resource :accounts, controller: 'admin/api_accounts' do
       collection do
-        post :cancel
+        put :cancellation, to: :cancel
+        delete :cancellation, to: :reactivate
         get :download_file, path: '/:type/download'
         get :support_tickets
       end
@@ -488,12 +489,6 @@ Helpkit::Application.routes.draw do
     end
 
     post '/account/export', to: 'admin/api_data_exports#account_export'
-
-    resource :accounts, controller: 'admin/api_accounts' do
-      collection do
-        post :cancel
-      end
-    end
 
     resources :topics, controller: 'ember/discussions/topics', only: [:show] do
       member do

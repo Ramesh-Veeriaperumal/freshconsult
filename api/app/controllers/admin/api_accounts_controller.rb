@@ -8,12 +8,18 @@ module Admin
 
     def cancel
       feedback = { title: params[cname][:cancellation_feedback], additional_info: params[cname][:additional_cancellation_feedback] }
-      end_of_term_cancellation = current_account.launched?(:downgrade_policy)
       if current_account.paid_account?
-        current_account.schedule_account_cancellation_request(feedback, end_of_term_cancellation)
+        current_account.schedule_account_cancellation_request(feedback)
       else
         current_account.perform_account_cancellation(feedback)
       end
+      head 204
+    end
+
+    def reactivate
+      return head(404) unless cancelled_account? && 
+        current_account.kill_scheduled_account_cancellation
+
       head 204
     end
 
@@ -49,6 +55,12 @@ module Admin
 
       def constants_class
         :AccountsConstants.to_s.freeze
+      end
+
+      def cancelled_account?
+        current_account.launched?(:downgrade_policy) && 
+          current_account.account_cancellation_requested? &&
+          !current_account.deletion_scheduled?
       end
 
       wrap_parameters(*wrap_params)

@@ -596,7 +596,7 @@
   $ref: ./account_admin/disable_billing_info_updation.yaml
 
 # Account
-/accounts/cancel:
+/accounts/cancellation:
   $ref: ./accounts/cancel.yaml
 /accounts/{type}/download:
   $ref: ./accounts/download.yaml
