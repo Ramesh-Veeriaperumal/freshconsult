@@ -16,6 +16,7 @@ class Freshchat::Account < ActiveRecord::Base
 
   before_save :construct_model_changes, on: :update
   before_destroy :save_deleted_freshchat_account_info
+  validates :app_id, presence: true
 
   attr_accessor :model_changes, :deleted_model_info
 

@@ -10,22 +10,17 @@ module FreddyHelper
     Account.current.revoke_feature(:autofaq)
   end
 
-  def params(portal_id)
+  def params(portal_id, widget_config)
     params = {}
     params['name'] = Faker::Name.name
     params['portal_id'] = portal_id
     params['cortex_id'] = portal_id
-    widget_config = {}
-    header_property = {}
-    header_property['backgroundColor'] = Faker::Name.name
-    header_property['backgroundImage'] = Faker::Name.name
-    widget_config['headerProperty'] = header_property
     params['widget_config'] = widget_config
     params
   end
 
-  def create_freddy(portal_id)
-    item = Account.current.freddy_bots.new(params(portal_id))
+  def create_freddy(portal_id, widget_config)
+    item = Account.current.freddy_bots.new(params(portal_id, widget_config))
     item.save
     item
   end

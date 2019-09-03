@@ -3,6 +3,7 @@ module LinkedAccountsTestHelper
     return @freshchat = @account.freshchat_account if @account.freshchat_account.present?
     @freshchat = @account.build_freshchat_account
     @freshchat.enabled = true
+    @freshchat.app_id = 'test'
     @freshchat.save
   end
 

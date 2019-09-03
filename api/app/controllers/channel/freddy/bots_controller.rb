@@ -8,20 +8,6 @@ module Channel
       skip_before_filter :check_privilege, :verify_authenticity_token
       before_filter :channel_client_authentication
 
-      def create
-        @item.save
-        if current_account.freshchat_account
-          freshchat_account = current_account.freshchat_account
-          freshchat_account.enabled = true
-          freshchat_account.save
-          sync_freshchat(freshchat_account.app_id)
-        else
-          freshchat_account = freshchat_signup
-        end
-        increment_portal_version
-        @response_hash = bot_response(freshchat_account)
-      end
-
       def update
         data = params['bot']
         @item.update_attributes(widget_config: data['widget_config'], name: data['name'], status: data['status'] == 'ENABLE')
@@ -39,10 +25,6 @@ module Channel
 
         def load_object
           @item = current_account.freddy_bots.find_by_cortex_id(params[:id])
-        end
-
-        def freshchat_enabled?
-          current_account.freshchat_account && current_account.freshchat_account.enabled?
         end
 
         def feature_name
