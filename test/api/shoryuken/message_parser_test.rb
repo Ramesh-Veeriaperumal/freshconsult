@@ -3,11 +3,6 @@ require_relative '../../api/unit_test_helper'
 class MessageParserTest < ActionView::TestCase
   include ChannelIntegrations::Utils::MessageParser
 
-  def test_ignore_facebook_owner_events
-    result = ignore_owner?('facebook')
-    assert_equal true, result
-  end
-
   def test_allow_other_owner_events
     result = ignore_owner?('somerandomowner')
     assert_equal false, result
