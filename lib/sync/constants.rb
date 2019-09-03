@@ -125,4 +125,23 @@ module Sync::Constants
     'Helpdesk::TicketField' => ['field_options']
   }
 
+  UNIQUE_MODEL_DATA = {
+    'all_va_rules' => ['VaRule', ['name', 'rule_type']],
+    'all_observer_rules' => ['VaRule', ['name', 'rule_type']],
+    'all_supervisor_rules' => ['VaRule', ['name', 'rule_type']],
+    'ticket_fields' => ['Helpdesk::TicketField', ['name'], true],
+    'contact_form' => ['ContactField', ['name', 'contact_form_id'], true],
+    'company_form' => ['CompanyField', ['name', 'company_form_id'], true],
+    'groups' => ['Group', ['name']],
+    'products' => ['Product', ['name']],
+    'canned_response_folders' => ['Admin::CannedResponses::Folder', ['name']],
+    'sla_policies' => ['Helpdesk::SlaPolicy', ['name']],
+    'skills' => ['Admin::Skill', ['name']],
+    'ticket_templates' => ['Helpdesk::TicketTemplate', ['name']],
+    'canned_responses' => ['Admin::CannedResponses::Response', ['title', 'folder_id']],
+    'roles' => ['Role', ['name']]
+  }.freeze
+
+  FORM_BASED_MODELS = ['contact_form', 'company_form'].freeze
+
 end
