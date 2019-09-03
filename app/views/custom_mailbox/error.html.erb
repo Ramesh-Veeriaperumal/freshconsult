@@ -1,7 +1,4 @@
-<%=t('custom_mailbox_admin_email_notifications.welcome_message')%>,
-<br/><br/>
+<%= render layout: 'shared/email_header_footer.html.erb', locals: { user_name: 'Admin', sent_by: t('custom_mailbox_admin_email_notifications.freshdesk_support'), other_recipients_note: true } do %>
 <%=t('custom_mailbox_admin_email_notifications.unable_to_fetch', :email_mailbox => @email_mailbox).html_safe %> 
 <br/><br/>
-<%=t('custom_mailbox_admin_email_notifications.regards')%>,
-<br/>
-<%=t('custom_mailbox_admin_email_notifications.freshdesk_support')%>.
+<% end %>

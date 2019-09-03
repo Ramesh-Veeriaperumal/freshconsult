@@ -132,4 +132,46 @@ class UserNotifierTest < ActionView::TestCase
   ensure
     I18n.locale = 'de'
   end
+
+  def test_notify_proactive_outreach_import
+    recipient = add_agent_to_account(@account, name: Faker::Name.name, active: 1, role: 1).user
+    I18n.locale = recipient.language
+    options = { import_success: true, user: recipient, outreach_name: 'sample', failed_count: 0, success_count: 10 }
+    mail_message = UserNotifier.send_email(:notify_proactive_outreach_import, recipient.email, options)
+    assert_equal recipient.email, mail_message.to.first
+    assert_equal 'Outreach in progress', mail_message.subject
+    html_part = mail_message.html_part ? mail_message.html_part.body.decoded : nil
+    if html_part.present?
+      test_part = 'Your import is complete'
+      assert_equal html_part.include?(test_part), true
+    end
+  ensure
+    I18n.locale = 'de'
+  end
+
+  def test_notify_customers_import
+    recipient = add_agent_to_account(@account, name: Faker::Name.name, active: 1, role: 1).user
+    I18n.locale = recipient.language
+    options = { user: recipient, type: 'tickets', created_count: 10, updated_count: 5, failed_count: 0, import_success: true }
+    mail_message = UserNotifier.send_email(:notify_customers_import, recipient.email, options)
+    assert_equal recipient.email, mail_message.to.first
+    assert_equal "Tickets import for #{@account.full_domain}", mail_message.subject
+    html_part = mail_message.html_part ? mail_message.html_part.body.decoded : nil
+    if html_part.present?
+      test_part = 'Your import has been successfully completed'
+      assert_equal html_part.include?(test_part), true
+    end
+  ensure
+    I18n.locale = 'de'
+  end
+
+  def test_notify_skill_import
+    recipient = User.current || add_agent_to_account(@account, name: Faker::Name.name, active: 1, role: 1).user.make_current
+    I18n.locale = recipient.language
+    mail_message = UserNotifier.send_email(:notify_skill_import, recipient.email, {})
+    assert_equal recipient.email, mail_message.to.first
+    assert_equal "Skills Import for #{@account.full_domain}", mail_message.subject
+  ensure
+    I18n.locale = 'de'
+  end
 end

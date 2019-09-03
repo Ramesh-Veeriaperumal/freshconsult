@@ -64,15 +64,12 @@ module Integrations
 
     def send_email installed_app, type, failure_reasons, size
       app_name = installed_app.configs_app_name
-      subject = (type == "crm") ? "#{app_name.capitalize} to Freshdesk Log" : "Freshdesk to #{app_name.capitalize} Log"
-      email_list =  Account.current.account_managers.map { |admin|
-        admin.email
-      }.join(",")
-      bcc_recipients = [AppConfig['integrations_email']]
+      subject_key = type == 'crm' ? 'cloud_log_email_to_freshdesk' : 'cloud_log_email_to_app'
+      email_list =  Account.current.account_managers.map { |admin| admin.email }
       subdomain = Account.current.domain
-      CloudLogMailer.cloud_log_email({
-        :subject => subject, :recipients => email_list, :size => size, :failure_reasons => failure_reasons, :subdomain => subdomain, :bcc_recipients => bcc_recipients
-      })
+      CloudLogMailer.send_email_to_group(:cloud_log_email, email_list,
+        subject_key: subject_key, app_name: app_name.capitalize, size: size, failure_reasons: failure_reasons, subdomain: subdomain
+      )
     end
   end
 end

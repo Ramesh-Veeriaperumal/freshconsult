@@ -155,3 +155,5 @@ en:
     helpdesk_url_reminder: 'Your Freshdesk Portal Information'
     notify_webhook_failure: 'Please recheck the webhook settings in your account'
     notify_webhook_drop: 'Webhook dropped'
+    cloud_log_email_to_freshdesk: "%{app_name} to Freshdesk Log"
+    cloud_log_email_to_app: "Freshdesk to %{app_name} Log"

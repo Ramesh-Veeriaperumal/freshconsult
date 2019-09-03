@@ -1,13 +1,10 @@
 <p>
-  <%= I18n.t('customize_domain.email.greeting',name: @name) %>
-  <br/>
+  <%= render layout: 'shared/email_header_footer.html.erb', locals: { user_name: @name, sent_by: :freshdesk_team } do %>
   <% if @is_agent %>
   	<%= I18n.t('customize_domain.email.agent_line',url: @url).html_safe %>
   <% else %>
     <%= I18n.t('customize_domain.email.admin_line',url: @url).html_safe %> 
   <% end %>
   <br/>
-  <%= I18n.t('customize_domain.email.cheers') %>
-  <br/>
-  <%= I18n.t('customize_domain.email.team') %>
+  <% end %>
 </p>
