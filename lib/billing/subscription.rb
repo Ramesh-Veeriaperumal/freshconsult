@@ -118,7 +118,15 @@ class Billing::Subscription < Billing::ChargebeeWrapper
   def cancelled_subscription?(account_id)
     retrieve_subscription(account_id).subscription.status.eql?("cancelled")
   end
-  
+ 
+  def retrieve_plan_from_cache(plan, renewal_period)
+    key = plan.chargebee_plan_cache_key(renewal_period,
+      Account.current.subscription.currency_name)
+    MemcacheKeys.fetch(key) do
+      retrieve_plan(plan.name, renewal_period)
+    end
+  end
+
   def retrieve_plan(plan_name, renewal_period = 1)
     billing_plan_name = %(#{plan_name.gsub(' ','_').to_s.downcase}_#{BILLING_PERIOD[renewal_period]})
     super billing_plan_name
