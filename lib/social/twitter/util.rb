@@ -93,7 +93,7 @@ module Social::Twitter::Util
     note = Account.current.notes.find(note_id)
     ticket = note.notable
     iris_payload = generate_payload(ticket, note)
-    Rails.logger.info 'Pushing twitter reply failure notification for {ticket.display_id}'
+    Rails.logger.info "Pushing twitter reply failure notification for #{ticket.display_id}"
     push_data_to_service(IrisNotificationsConfig['api']['collector_path'], iris_payload)
   end
 
