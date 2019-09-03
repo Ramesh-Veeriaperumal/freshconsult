@@ -12,8 +12,18 @@ module Cache::Memcache::SubscriptionPlan
   end
 
   def clear_cache
+    Subscription::Currency.all.collect(&:name).each do |currency|
+      Billing::Subscription::BILLING_PERIOD.keys.each do |period|
+        MemcacheKeys.delete_from_cache(chargebee_plan_cache_key(period, currency))
+      end
+    end
     MemcacheKeys.delete_multiple_from_cache [SUBSCRIPTION_PLANS, 
       PLANS_AGENT_COSTS_BY_CURRENCY]
+  end
+
+  def chargebee_plan_cache_key(renewal_period, currency)
+    format(MemcacheKeys::CHARGEBEE_SUBSCRIPTION_PLAN, plan_name: self.canon_name.to_s,
+      period: renewal_period, currency: currency)
   end
 
   module ClassMethods
