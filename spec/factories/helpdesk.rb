@@ -142,5 +142,8 @@ if Rails.env.test?
 
     factory :scheduled_tasks, :class => Helpdesk::ScheduledTask do |t|
     end
+
+    factory :scheduled_exports, :class => ScheduledExport do |t|
+    end
   end
 end

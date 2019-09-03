@@ -31,7 +31,7 @@ module UsersHelper
                                     :active => options[:active] || 1,
                                     :user_role => options[:role] || role_id,
                                     :delta => 1,
-                                    :language => "en",
+                                    :language => options[:language] || "en",
                                     :role_ids => options[:role_ids] || ["#{role_id}"])
     if options[:unique_external_id]
       new_user.unique_external_id = options[:unique_external_id]

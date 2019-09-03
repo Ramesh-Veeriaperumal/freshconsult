@@ -1,9 +1,5 @@
-Hi ,
-<br/>
-<br/>
+<%= render layout: 'shared/email_header_footer.html.erb', locals: { sent_by: :freshdesk_support } do %>
 <%= t('export_data.data_backup_failure.body') %>
 <br/>
 <br/>
-Regards,
-<br/>
-Freshdesk Support
+<% end %>

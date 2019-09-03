@@ -5,8 +5,7 @@ class DataExportFailureMailer < ActionMailer::Base
     headers = {
         :to    => options[:email],
         :from  => AppConfig['from_email'],
-        :bcc   => AppConfig['reports_email'],
-        :subject => "Data Export for #{options[:host]}",
+        :subject => I18n.t('mailer_notifier_subject.data_export', host: options[:host]),
         :sent_on => Time.now,
         "Reply-to" => ""
     }

@@ -1,6 +1,4 @@
 <%= render layout: 'shared/email_header_footer.html.erb', locals: { user_name: @user.name, sent_by: :freshdesk_customer_support } do %>
-<br/>
-<br/>
 <%= t("mailer_notifier.export_success_download", export_type: @type, url: @url).html_safe %>
 <br/>
 <br/>

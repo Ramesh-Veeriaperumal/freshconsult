@@ -7,6 +7,19 @@ test-ui:
     no_logs_mail:
       body: "$There is no logs for given request. Please try with different timeline or filter$"
     failure_message: "$An error occurred while exporting data. Please try again or contact Freshdesk support.$"
+    scheduled_ticket_export:
+      subject: "$%{title} for %{date}$"
+      body: "$Hello there,<br><br>The export scheduled by %{user_name} is now ready. This report has the details of tickets that were created and updated from %{latest_schedule_range}.<br><br><a href=%{url}>Download Report</a><br><br>Please download this report within 30 days, after which the link will expire.<br><br>Happy number crunching!<br>%{helpdesk_name}$"
+    scheduled_ticket_export_no_data:
+      subject: "$%{title} - No tickets created or updated$"
+      body: "$Hello there,<br><br>It’s been a little quiet here! You have no tickets created or updated from %{latest_schedule_range}. We’ll be back once your support is in action.<br><br>%{helpdesk_name}$"
+    ticket_export:
+      note: "$This link will expire in 15 days.$"
+    data_backup_failure:
+      body: '$Your data export has failed. Can you please initiate the export again?$'
+    customer_export:
+      subject: "$%{type} export for %{domain}$"
+      note: "$This link will expire in 15 days.$"
   mailer_notifier:
     hi: '$Hi,$'
     hi_user: '$Hi %{user_name},$'
@@ -178,7 +191,7 @@ test-ui:
     report_type_sub: "$%{report_name} report for %{date_range}$"
     ticket_export: '$Ticket export | $'
     account_data_export: "$Data Export for %{account}$"
-    agent_export: '$Agents list export$'
+    agent_export: '$Agents List Export$'
     no_tickets_to_export: "$No tickets in range - %{domain}$"
     audit_log_export: $Audit Log Export$
     spam_watcher: "$Freshdesk :: Spam watcher$"
@@ -194,6 +207,7 @@ test-ui:
     helpdesk_url_reminder: '$Your Freshdesk Portal Information$'
     notify_webhook_failure: '$Please recheck the webhook settings in your account$'
     notify_webhook_drop: '$Webhook dropped$'
+    agent_deleted: "$%{account_name}: %{agent_name} was deleted$"
     cloud_log_email_to_freshdesk: "$%{app_name} to Freshdesk Log$"
     cloud_log_email_to_app: "$Freshdesk to %{app_name} Log$"
     outreach_customer_import: "$Outreach in progress$"

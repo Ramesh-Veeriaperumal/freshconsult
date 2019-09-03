@@ -24,7 +24,6 @@ class DataExportMailer < ActionMailer::Base
       :subject   => safe_send("#{options[:type]}_export_subject", options),
       :to        => options[:user].email,
       :from      => AppConfig['from_email'],
-      :bcc       => AppConfig['reports_email'],
       :sent_on   => Time.now,
       "Reply-to" => ""
     }
@@ -41,18 +40,23 @@ class DataExportMailer < ActionMailer::Base
   def scheduled_ticket_export options={}
     @account = Account.current
     schedule = @account.scheduled_ticket_exports.find_by_id(options[:filter_id])
+    emails = schedule.agent_emails
+    self.class.send_email_to_group(:scheduled_ticket_export_message, emails, @account, schedule) if emails.present?
+  end
+
+  def scheduled_ticket_export_message(emails, account, schedule)
     schedule.user.make_current
     TimeZone.set_time_zone
     headers = {
       :subject   => schedule.email_subject,
-      :to        => schedule.agent_emails,
+      :to        => emails[:group],
       :from      => AppConfig['from_email'],
-      :bcc       => AppConfig['reports_email'],
       :sent_on   => Time.now,
       "Reply-to" => ""
     }
-    headers.merge!(make_header(nil, nil, @account.id, "Scheduled Ticket Export"))
+    headers.merge!(make_header(nil, nil, account.id, 'Scheduled Ticket Export'))
     @description = schedule.email_description
+    @other_emails = emails[:other]
     mail(headers) do |part|
       part.html { render "scheduled_ticket_export", :formats => [:html] }
     end.deliver
@@ -61,18 +65,23 @@ class DataExportMailer < ActionMailer::Base
   def scheduled_ticket_export_no_data options={}
     @account = Account.current
     schedule = @account.scheduled_ticket_exports.find_by_id(options[:filter_id])
+    emails = schedule.agent_emails
+    self.class.send_email_to_group(:scheduled_ticket_export_no_data_message, emails, @account, schedule)
+  end
+
+  def scheduled_ticket_export_no_data_message(emails, account, schedule)
     schedule.user.make_current
     TimeZone.set_time_zone
     headers = {
       :subject   => schedule.email_no_data_subject,
-      :to        => schedule.agent_emails,
+      :to        => emails[:group],
       :from      => AppConfig['from_email'],
-      :bcc       => AppConfig['reports_email'],
       :sent_on   => Time.now,
       "Reply-to" => ""
     }
-    headers.merge!(make_header(nil, nil, @account.id, "Scheduled Ticket Export No Data"))
+    headers.merge!(make_header(nil, nil, account.id, 'Scheduled Ticket Export No Data'))
     @description = schedule.email_no_data_description
+    @other_emails = emails[:other]
     mail(headers) do |part|
       part.html { render "scheduled_ticket_export", :formats => [:html] }
     end.deliver
@@ -102,7 +111,6 @@ class DataExportMailer < ActionMailer::Base
       subject: safe_send("#{type}_export_subject", options),
       to: @user.email,
       from: AppConfig['from_email'],
-      bcc: AppConfig['reports_email'],
       sent_on: Time.now,
       'Reply-to' => ''
     }
@@ -119,7 +127,6 @@ class DataExportMailer < ActionMailer::Base
       :subject => safe_send('customer_export_subject', options),
       :to      => options[:user].email,
       :from    => "support@freshdesk.com",
-      :bcc     => AppConfig['reports_email'],
       "Reply-to" => "",
       :sent_on   => Time.now
     }

@@ -12980,7 +12980,6 @@ en:
     no_ticket_in_range: 'No tickets in range - %{domain}'
     export_type: '%{export_type} export for %{domain}'
     report_export: 'Reports export for %{range}'
-    agent_export: 'Agents list export'
     ecommerce_token: 'Ecommerce account %{ecom_name} token expiration'
     test_email: "Woohoo.. Your Freshdesk test email"
     scheduled_report_update: "[Important] Scheduled report - Recipient update required"

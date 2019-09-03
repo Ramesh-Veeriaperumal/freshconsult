@@ -29,20 +29,20 @@ class Export::Ticket < Struct.new(:export_params)
         send_no_ticket_email
       else
         upload_file(@file_path)
-        DataExportMailer.ticket_export(email_params)
+        DataExportMailer.send_email(:ticket_export, email_params[:user], email_params)
       end
     rescue Exception => e
       NewRelic::Agent.notice_error(e)
       Rails.logger.debug "Error  ::#{e.message}\n#{e.backtrace.join("\n")}"
       @data_export.failure!(e.message + "\n" + e.backtrace.join("\n"))
-      DataExportMailer.export_failure(email_params)
+      DataExportMailer.send_email(:export_failure, email_params[:user], email_params)
     end
   ensure
     # Moving data exports entry to failed status in case of any failures
     if !@data_export.destroyed? && @data_export.status == DataExport::EXPORT_STATUS[:started]
       Rails.logger.error "Ticket export status at the end of export job :: #{@data_export.status}"
       @data_export.failure!('Export::Failed')
-      DataExportMailer.export_failure(email_params)
+      DataExportMailer.send_email(:export_failure, email_params[:user], email_params)
     end
     schedule_export_cleanup(@data_export, data_export_type) if @data_export.present?
   end
@@ -354,7 +354,7 @@ class Export::Ticket < Struct.new(:export_params)
     end
 
     def email_params
-      {
+      @email_params ||= {
         user: User.current,
         domain: export_params[:portal_url],
         url: hash_url(export_params[:portal_url]),
