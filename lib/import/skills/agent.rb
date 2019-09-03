@@ -144,14 +144,13 @@ class Import::Skills::Agent
     end
 
     def notify_and_cleanup
-      UserNotifier.notify_skill_import({:message => notify_details[:customer_message],
-          :csv_data => build_csv_string})
+      UserNotifier.send_email(:notify_skill_import, User.current.email, :message => notify_details[:customer_message], :csv_data => build_csv_string)
       delete_import_file(file_location)
       current_account.agent_skill_import.destroy
     end
 
     def notify_error_and_cleanup
-      UserNotifier.notify_skill_import({:failure => true, :file_name => file_location.split('/').last})
+      UserNotifier.send_email(:notify_skill_import, User.current.email, :failure => true, :file_name => file_location.split('/').last)
       delete_import_file(file_location)
       current_account.agent_skill_import.destroy
     end

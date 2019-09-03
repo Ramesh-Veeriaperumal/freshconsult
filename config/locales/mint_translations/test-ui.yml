@@ -158,3 +158,42 @@ test-ui:
     helpdesk_url_reminder: '$Your Freshdesk Portal Information$'
     notify_webhook_failure: '$Please recheck the webhook settings in your account$'
     notify_webhook_drop: '$Webhook dropped$'
+    cloud_log_email_to_freshdesk: "$%{app_name} to Freshdesk Log$"
+    cloud_log_email_to_app: "$Freshdesk to %{app_name} Log$"
+    outreach_customer_import: "$Outreach in progress$"
+    outreach_customer_import_failure: "$Outreach: some contacts weren't imported$"
+  flash:
+    import:
+      hi: "$Hi$"
+      info8: "$Agents for whom skill update failed can be found in the attachment along with the reason for the failure.$"
+      info9: "$The successfully imported skills and mapping can be viewed under Admin->Skills. Kindly ensure that you add conditions to the new skills in order to map the skill to the right tickets. The new skills can be found at the bottom of the skill list.$"
+      info10: "$The agent to skill mapping CSV file that you uploaded has been imported. Please find the summary below:$"
+      info11: "$Please check the formatting of the CSV file and upload it again.$"
+      info12: "$The value 'Email' or 'Skills' was not present in the first row.$"
+      info13: "$The columns Email or Skills was missing is the CSV.$"
+      info14: "$We could not import skills from the file %{file_name} due to one of the following reasons:$"
+      info15: "$No. of new skills that were created: %{create_count}$"
+      info16: "$No. of agents whose skills were updated: %{update_count}$"
+      info17: "$No. of new skills that could not be created: %{create_failed_count}$"
+      info18: "$No. of agents whose skills could not be updated: %{update_failed_count}$"
+      info19: "$Skills Import for %{portal_url}$"
+      info20: "$The %{type} import running on %{domain} was stopped. Please find the summary below:$"
+      invalid_file: "$Please upload proper csv file$"
+      info21: "$Your import is complete. Your outreach %{outreach_name} will now begin.$"
+      info22: "$You recently tried to send an outreach via Freshdesk. %{failed_count} contact(s) failed to get imported.$"
+      info23: "$Once you clean up the errors, please create a new outreach with the new CSV to send them an email.$"
+      info24: "$The outreach you set up will now be sent to %{success_count} contact(s) who were successfully imported.$"
+  customize_domain:
+    email:
+      subject: "$%{account_name}: Here's your new helpdesk URL$"
+      greeting: "$Hello %{name},$"
+      agent_line: "$The administrator has changed the URL of your helpdesk. Your new helpdesk URL is: <a href='%{url}'> %{url} </a> (bookmark this for easier access)$"
+      admin_line: "$The URL of your helpdesk has changed. Your new helpdesk URL is: <a href='%{url}'> %{url} </a> (bookmark this for easier access)$"
+      cheers: "$Cheers,$"
+      team: "$Freshdesk Team$"
+  custom_mailbox_admin_email_notifications:
+    subject: "$System notification: Custom email server is unable to fetch emails$"
+    welcome_message: "$Dear Admin$"
+    unable_to_fetch: "$Freshdesk is unable to fetch emails from %{email_mailbox}. Please ensure that the mailbox is reachable or that the configurations are correct.<br/>If you need any further assistance, please contact support@freshdesk.com.$"
+    regards: "$Regards$"
+    freshdesk_support": "$Freshdesk support$"
