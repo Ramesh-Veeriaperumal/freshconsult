@@ -447,16 +447,19 @@ module Ember
       end
 
       def handle_twitter_conversations
-        if @tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:dm]
-          reply_handle = current_account.twitter_handles.find_by_id(@twitter_handle_id)
-          stream_id = reply_handle.default_stream_id
-          tweet_id = random_tweet_id
+        reply_handle = current_account.twitter_handles.find_by_id(@twitter_handle_id)
+        stream = fetch_stream || reply_handle.default_stream
+        tweet_id = random_tweet_id
+        if @tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:dm] ||
+          (current_account.mentions_to_tms_enabled? && stream.default_stream?)
+          stream_id = stream.id
           @item.build_tweet(tweet_id: tweet_id,
-                            tweet_type: Social::Twitter::Constants::TWITTER_NOTE_TYPE[:dm],
+                            tweet_type: @tweet_type,
                             twitter_handle_id: @twitter_handle_id, stream_id: stream_id)
         end
         if @item.save_note
-          if @tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:mention]
+          if stream.custom_stream? || (!current_account.mentions_to_tms_enabled? &&
+            @tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:mention])
             Social::TwitterReplyWorker.perform_async(ticket_id: @ticket.id, note_id: @item.id,
                                                      tweet_type: @tweet_type,
                                                      twitter_handle_id: @twitter_handle_id)
@@ -583,6 +586,11 @@ module Ember
         # for undo_send, since we don't have a note id for 10 seconds,
         # we are rendering a note with dummy note id with the maximum integer limit in javascipt
         @item.id = DUMMY_ID_FOR_UNDO_SEND_NOTE - @ticket.display_id
+      end
+
+      def fetch_stream
+        tweet = @ticket.tweet
+        tweet.stream if tweet.present?
       end
 
       wrap_parameters(*wrap_params)

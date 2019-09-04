@@ -120,16 +120,21 @@ class Helpdesk::ConversationsController < ApplicationController
       error_message = (I18n.t('social.streams.twitter.handle_auth_error')).to_s
     end
     if error_message.blank?
-      if twt_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:dm]
-        stream_id = reply_handle.default_stream_id
+      stream = fetch_stream || reply_handle.default_stream
+      if twt_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:dm] ||
+        (current_account.mentions_to_tms_enabled? && stream.default_stream?)
+        stream_id = stream.id
         tweet_id = random_tweet_id
         @item.build_tweet(tweet_id: tweet_id,
-                          tweet_type:  Social::Twitter::Constants::TWITTER_NOTE_TYPE[:dm],
+                          tweet_type: twt_type,
                           twitter_handle_id: reply_handle_id, stream_id: stream_id)
       end
       if @item.save_note
         args = { ticket_id: @parent.id, note_id: @item.id, tweet_type: twt_type, twitter_handle_id: twitter_handle_id }
-        Social::TwitterReplyWorker.perform_async(args) if twt_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:mention]
+        if stream.custom_stream? || (!current_account.mentions_to_tms_enabled? &&
+            twt_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:mention])
+          Social::TwitterReplyWorker.perform_async(args)
+        end
         flash.now[:notice] = t(:'flash.tickets.reply.success')
         process_and_redirect
       else
@@ -457,5 +462,10 @@ class Helpdesk::ConversationsController < ApplicationController
             :type => Helpdesk::Email::Constants::MESSAGE_TYPE_BY_NAME[:ham]})
           Rails.logger.info "Enqueued job to sidekiq to learn ticket"
         end
+      end
+
+      def fetch_stream
+        tweet = @parent.tweet
+        tweet.stream if tweet.present?
       end
 end

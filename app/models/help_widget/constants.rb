@@ -43,8 +43,7 @@ class HelpWidget < ActiveRecord::Base
     neutral: 2
   }.freeze
 
-  def self.default_settings(product = nil)
-    portal = (product && product.portal) || Account.current.main_portal
+  def self.default_settings(product, portal)
     {
       message: product ? I18n.t('help_widget.name', name: product.name) : I18n.t('help_widget.message'),
       button_text: I18n.t('help_widget.button_text'),

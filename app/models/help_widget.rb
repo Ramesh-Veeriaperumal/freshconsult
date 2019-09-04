@@ -1,8 +1,11 @@
 class HelpWidget < ActiveRecord::Base
   include MemcacheKeys
-  validates :name, data_type: {rules: String}, custom_length: {maximum:  ApiConstants::MAX_LENGTH_STRING }
-  validates :settings, data_type:{ rules: Hash }
+  validates :name, data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
+  validates :settings, data_type: { rules: Hash }
   belongs_to_account
+  has_many :help_widget_solution_categories, class_name: 'HelpWidgetSolutionCategory', dependent: :destroy, inverse_of: :help_widget
+
+  accepts_nested_attributes_for :help_widget_solution_categories, allow_destroy: true
 
   serialize :settings, Hash
 

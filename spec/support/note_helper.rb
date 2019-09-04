@@ -2,7 +2,7 @@ module NoteHelper
 
   def create_note(params = {})
     test_note = FactoryGirl.build(:helpdesk_note, :source => params[:source],
-                                         :notable_id => params[:ticket_id],
+                                         :notable_id => params[:notable_id] || params[:ticket_id],
                                          :created_at => params[:created_at],
                                          :user_id => params[:user_id],
                                          :account_id => @account.id,

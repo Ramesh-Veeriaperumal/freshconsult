@@ -211,10 +211,17 @@ module Facebook
           message = nil
           begin
             data = { message: { text: note.body }, recipient: { id: page_scoped_user_id }, tag: MESSAGE_TAG, messaging_type: MESSAGE_TYPE }
-            message = RestClient.post "#{FACEBOOK_GRAPH_URL}/#{GRAPH_API_VERSION}/me/messages?access_token=#{page_token}", data.to_json, content_type: :json, accept: :json
+            message = RestClient::Request.execute(method:  :post,
+                                                  url:     "#{FACEBOOK_GRAPH_URL}/#{GRAPH_API_VERSION}/me/messages?access_token=#{page_token}",
+                                                  payload: data.to_json,
+                                                  timeout: 5,
+                                                  open_timeout: 5,
+                                                  headers: { content_type: :json, accept: :json })
             message = JSON.parse(message)
             message['id'] = "#{FB_MESSAGE_PREFIX}#{message['message_id']}"
             message.symbolize_keys!
+          rescue RestClient::RequestTimeout => ex
+            raise Koala::Facebook::APIError.new(408, "{ 'error': { 'type': 'timeout', '#{ex.message}': 'timeout', 'code': 408 } }")
           rescue StandardError => ex
             message = nil
             http_status = ex.try(:http_code)

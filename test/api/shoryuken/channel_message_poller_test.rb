@@ -24,7 +24,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
   end
 
   def test_twitter_dm_convert_as_ticket
-    payload, command_payload = twitter_create_ticket_command
+    payload, command_payload = twitter_create_ticket_command('dm')
     push_to_channel(command_payload)
 
     ticket = @account.tickets.last
@@ -47,10 +47,10 @@ class ChannelMessagePollerTest < ActionView::TestCase
   # end
 
   def test_update_social_tweets
-    note = create_twitter_dm_ticket_and_note
+    note = create_twitter_ticket_and_note
 
     payload = { "status_code": 200, "tweet_id": '100000200', "note_id": note.id }
-    command_payload = sample_twitter_dm_acknowledgement(@account, @handle, @stream, payload)
+    command_payload = sample_twitter_reply_acknowledgement(@account, @handle, @stream, payload)
     push_to_channel(command_payload)
 
     tweet = @account.tweets.last
@@ -60,7 +60,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
   def test_update_social_tweets_with_error
     remove_others_redis_key TWITTER_APP_BLOCKED
     payload = { "status_code": 403, "tweet_id": '100000200', "note_id": 123, "code": Twitter::Error::Codes::CANNOT_WRITE }
-    command_payload = sample_twitter_dm_acknowledgement(@account, @handle, @stream, payload)
+    command_payload = sample_twitter_reply_acknowledgement(@account, @handle, @stream, payload)
     push_to_channel(command_payload)
 
     assert_equal true, redis_key_exists?(TWITTER_APP_BLOCKED)
@@ -114,12 +114,12 @@ class ChannelMessagePollerTest < ActionView::TestCase
 
   private
 
-    def twitter_create_ticket_command
+    def twitter_create_ticket_command(tweet_type)
       payload = {
         "subject": Faker::Lorem.characters(50),
         "description": Faker::Lorem.characters(100),
         "requester_id": @account.users.last.id,
-        "tweet_type": 'dm',
+        "tweet_type": tweet_type,
         "tweet_id": SecureRandom.hex
       }
 
@@ -132,7 +132,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
       if tweet && tweet.tweetable_id
         ticket_id = @account.tickets.find(tweet.tweetable_id).display_id
       else
-        payload, command_payload = twitter_create_ticket_command
+        payload, command_payload = twitter_create_ticket_command(tweet_type)
         push_to_channel(command_payload)
         ticket_id = @account.tickets.last.display_id
       end
@@ -150,8 +150,8 @@ class ChannelMessagePollerTest < ActionView::TestCase
       [payload, sample_twitter_create_note_command(@account, @handle, @stream, payload)]
     end
 
-    def create_twitter_dm_ticket_and_note
-      payload, command_payload = twitter_create_ticket_command
+    def create_twitter_ticket_and_note(tweet_type = 'dm')
+      payload, command_payload = twitter_create_ticket_command(tweet_type)
       push_to_channel(command_payload)
 
       ticket = @account.tickets.last
@@ -162,7 +162,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
 
       last_note = ticket.notes.last
 
-      last_note.build_tweet(tweet_id: random_tweet_id, tweet_type: 'dm', twitter_handle_id: @handle.id, stream_id: @stream.id)
+      last_note.build_tweet(tweet_id: random_tweet_id, tweet_type: tweet_type, twitter_handle_id: @handle.id, stream_id: @stream.id)
       last_note.save!
 
       last_note

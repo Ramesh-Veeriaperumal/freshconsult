@@ -58,12 +58,18 @@ class HelpWidgetsController < ApiApplicationController
     def build_object
       super
       @item.name = widget_name if cname_params[:name].blank?
-      @item.settings = assign_default_settings(cname_params[:settings], cname_params[:product_id])
+      product = Account.current.products_from_cache.find { |p| p.id == cname_params[:product_id] }
+      portal = (product && product.portal) || Account.current.main_portal_from_cache
+      @item.settings = assign_default_settings(cname_params[:settings], product, portal)
+      if Account.current.help_widget_solution_categories_enabled?
+        category_ids = portal.solution_category_meta.customer_categories.pluck(:id)
+        category_id_hash_array = category_ids.map { |category_id| { solution_category_meta_id: category_id } }
+        @item.help_widget_solution_categories_attributes = category_id_hash_array
+      end
     end
 
-    def assign_default_settings(settings_param, product_id)
-      current_product = Account.current.products_from_cache.find { |product| product.id == product_id }
-      settings = HelpWidget.default_settings(current_product)
+    def assign_default_settings(settings_param, product, portal)
+      settings = HelpWidget.default_settings(product, portal)
       settings[:components].merge!(settings_param[:components].symbolize_keys)
       settings
     end

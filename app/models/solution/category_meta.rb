@@ -36,7 +36,13 @@ class Solution::CategoryMeta < ActiveRecord::Base
 		:foreign_key => :solution_category_meta_id,
 		:dependent => :destroy
 
-	has_many :portals, 
+  has_many :help_widget_solution_categories,
+           class_name: 'HelpWidgetSolutionCategory',
+           dependent: :destroy,
+           foreign_key: :solution_category_meta_id,
+           inverse_of: :solution_category_meta
+
+  has_many :portals,
 		:through => :portal_solution_categories,
 		:class_name => "Portal",
     :after_add => :clear_cache,

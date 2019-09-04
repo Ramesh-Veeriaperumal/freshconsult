@@ -1151,13 +1151,13 @@ module Channel::V2
     end
 
     def test_index_with_company_side_load
-      get :index, controller_params(include: 'company')
-      assert_response 200
-      response = parse_response @response.body
       tkts =  Helpdesk::Ticket.where(deleted: 0, spam: 0)
                               .created_in(Helpdesk::Ticket.created_in_last_month)
                               .order('created_at DESC')
                               .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
+      get :index, controller_params(include: 'company')
+      assert_response 200
+      response = parse_response @response.body
       assert_equal tkts.count, response.size
       param_object = OpenStruct.new(:company => true)
       pattern = tkts.map do |tkt|

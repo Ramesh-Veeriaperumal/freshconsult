@@ -128,3 +128,6 @@ test-ui:
 long-text:
   - 43
   - Long-Text
+is:
+  - 44
+  - Icelandic
