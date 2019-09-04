@@ -79,13 +79,15 @@ module Community::MonitorshipHelper
     final_agent_list = []
     agents = object.unsubscribed_agents
     current_user_present = false
-    agents.each do |agent|
-      next unless agent.privilege?(:view_forums)
-      if agent.id == User.current.id
+    agents.keys.each do |agent_id|
+      agent_privilege_object = PrivilegesUtil.new
+      agent_privilege_object[:privileges] = agents[agent_id][1]
+      next unless agent_privilege_object.privilege?(:view_forums)
+      if agent_id == User.current.id
         current_user_present = true
         next
       end
-      final_agent_list << [agent.id, agent.name]
+      final_agent_list << [agent_id, agents[agent_id][0]]
     end
     final_agent_list.insert(0, [User.current.id, t('monitorships.me') + " (#{User.current.name})"]) if current_user_present
     final_agent_list

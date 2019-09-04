@@ -13,7 +13,9 @@ module TicketsNotesHelper
       stream_id: tweet.stream_id,
       requester_screen_name: requester_twitter_id
     }
-    twt_hash.merge(twt_handle_info)
+    twt_hash.merge!(twt_handle_info)
+    twt_hash[:latest_tweet_id] = latest_tweet_id if tweet.is_note?
+    twt_hash
   end
 
   def twt_handle_info
@@ -59,6 +61,14 @@ module TicketsNotesHelper
 
   def email_ticket?
     email?
+  end
+
+  def latest_tweet_id
+    twitter_notes = notable.notes.latest_twitter_comment
+    if twitter_notes.present?
+      lasest_note = twitter_notes.first
+      return lasest_note.tweet.tweet_id if lasest_note.tweet.present?
+    end
   end
 
   def handler_info(fb_page)

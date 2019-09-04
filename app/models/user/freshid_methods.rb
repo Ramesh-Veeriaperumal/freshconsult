@@ -39,6 +39,14 @@ class User < ActiveRecord::Base
     Rails.logger.info "FRESHID User created :: a=#{self.account_id}, u=#{self.id}, email=#{self.email}, uuid=#{self.freshid_authorization.uid}"
   end
 
+  def sync_profile_info_in_freshid
+    return if freshid_authorization.nil?
+
+    user_params = freshid_attributes.except(:domain, :email)
+    freshid_user = account.freshid_org_v2_enabled? ? Freshid::V2::Models::User.new(id: freshid_authorization.uid) : Freshid::User.new(uuid: freshid_authorization.uid)
+    freshid_user.update(user_params)
+  end
+
   def update_freshid_user
     destroy_freshid_user # Delete old email user from freshID
     create_freshid_user # Create new email user in freshID
@@ -101,6 +109,10 @@ class User < ActiveRecord::Base
     }
   end
 
+  def freshid_profile_info_updated?
+    [:name, :phone, :mobile, :job_title].any? { |k| @all_changes.key?(k) }
+  end
+
   def active_freshid_agent?
     active_and_verified? && freshid_enabled_and_agent?
   end
@@ -118,6 +130,10 @@ class User < ActiveRecord::Base
 
   def freshid_enabled_and_agent?
     agent? && freshid_integration_enabled_account? && email_allowed_in_freshid?
+  end
+
+  def allow_agent_update?
+    Account.current.allow_update_agent_enabled?
   end
 
   private

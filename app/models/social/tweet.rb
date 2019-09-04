@@ -77,10 +77,14 @@ class Social::Tweet < ActiveRecord::Base
     is_ticket? || is_archive_ticket? || tweetable.incoming || tweetable.import_id.present? || destroy_action?
   end
 
+  def mention_stream_tweet?
+    stream = tweetable.tweet.stream
+    is_note? && stream.present? && stream.default_stream?
+  end
+
   def publish_note_for_tweet
-    # For outgoing DM, source additional info is published via note create with tweet_id as nil
-    # though it has negative random number
-    return if is_dm? && tweet_id < 0
+    # For outgoing DM and Mentions, source additional info is published via note create with tweet_id as nil
+    return if (tweet_id < 0 && is_dm?) || (mention_stream_tweet? && Account.current.mentions_to_tms_enabled?)
 
     old_payload = transaction_include_action?(:create) ? {} : construct_tweet_payload_for_central(self, tweetable, @previous_changes)
     new_payload = construct_tweet_payload_for_central(self, tweetable)

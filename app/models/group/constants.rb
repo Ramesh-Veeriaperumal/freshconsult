@@ -53,4 +53,5 @@ class Group < ActiveRecord::Base
     ["#{i} #{I18n.t("group.capping_tickets")}", i] 
     }.insert(0, ["1 #{I18n.t("group.capping_ticket")}", 1])
   NON_DEFAULT_BUSINESS_HOURS = { 'business_calendars.is_default': false }
+  GROUP_TYPE = { support_agent_groups: 1 }
 end

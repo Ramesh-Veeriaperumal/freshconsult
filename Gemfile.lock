@@ -204,10 +204,10 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/central-publisher.git
-  revision: 8d7ac73faf30915d86954f04ecfc696b345203ac
-  tag: v2.0.4
+  revision: f2f9fea3983d96b4dc6c0422d2d148914c116b06
+  tag: v2.0.5
   specs:
-    central-publisher (2.0.4)
+    central-publisher (2.0.5)
       active_record_shards (>= 3.2.0)
       faraday (= 0.9)
       faraday_middleware (~> 0.10.0)
@@ -297,6 +297,15 @@ GIT
       newrelic_rpm (~> 5.5.0)
       redis (>= 3)
       redis-namespace (>= 1)
+
+GIT
+  remote: git@github.com:freshdesk/optar.git
+  revision: 871c298671855ddaf60fcdc39d821b33ce3e5255
+  tag: v1.1.1
+  specs:
+    optar (1.1.1)
+      activerecord (>= 3.2)
+      mysql2 (>= 0.3)
 
 GIT
   remote: git@github.com:freshdesk/platforms-sdk-ruby.git
@@ -1612,6 +1621,7 @@ DEPENDENCIES
   omniauth-quickbooks (= 0.0.2)
   omniauth-salesforce!
   open_id_authentication!
+  optar!
   paperclip (~> 4.2.2)
   paperclip_ext!
   pg

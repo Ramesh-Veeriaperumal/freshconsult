@@ -61,8 +61,7 @@ class User < ActiveRecord::Base
   after_rollback :remove_freshid_user, on: :create, if: :freshid_enabled_and_agent?
   after_rollback :remove_freshid_user, on: :update, if: [:freshid_integration_enabled_account?, :converted_to_agent?]
   after_commit :tag_update_central_publish, :on => :update, :if => :tags_updated?
-
-
+  after_commit :sync_profile_info_in_freshid, on: :update, if: [:freshid_enabled_and_agent?, :freshid_profile_info_updated?, :allow_agent_update?]
 
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
