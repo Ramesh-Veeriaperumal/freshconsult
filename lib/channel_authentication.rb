@@ -7,7 +7,8 @@ module ChannelAuthentication
     proactive: 'proactive'.freeze,
     ocr: 'ocr_channel'.freeze,
     freshmover: 'freshmover'.freeze,
-    sherlock: 'sherlock'.freeze
+    sherlock: 'sherlock'.freeze,
+    freshchat: 'freshchat'.freeze
   }.freeze
 
   def channel_client_authentication

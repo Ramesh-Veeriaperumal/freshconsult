@@ -4,7 +4,7 @@ module Channel
     CHANNEL_TICKETS_VALIDATION_CLASS = 'TicketValidation'.constantize
 
     include ChannelAuthentication
-
+    skip_before_filter :check_privilege, if: :skip_privilege_check?
     before_filter :channel_client_authentication
 
     private
@@ -46,6 +46,10 @@ module Channel
 
         ticket = validation_class.new(params_hash, @item, string_request_params?)
         render_custom_errors(ticket, true) unless ticket.valid?(original_action_name.to_sym)
+      end
+
+      def skip_privilege_check?
+        channel_source?(:freshchat)
       end
   end
 end
