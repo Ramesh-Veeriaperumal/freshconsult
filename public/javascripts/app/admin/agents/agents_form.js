@@ -20,7 +20,9 @@ window.App.Agents = window.App.Agents || {};
 	role_details: {},
 	groups: {},
 	group_details: {},
-    fsm_group_type: null,
+  fsm_group_type: null,
+  new_agent: null,
+  field_tech_role_enabled: null,
 	freshid_enabled: {},
 	userEmail: '',
   initializeData: function(data) {
@@ -33,6 +35,8 @@ window.App.Agents = window.App.Agents || {};
     this.fsm_group_type = data.fsm_group_type;
     this.freshid_enabled = data.freshid_enabled;
     this.userEmail = data.userEmail;
+    this.new_agent = data.new_agent;
+    this.field_tech_role_enabled = data.field_tech_role_enabled;
     this.bindHandlers();
   },
 	repaintSkills: function() {
@@ -119,16 +123,41 @@ window.App.Agents = window.App.Agents || {};
 	},
 
 	defaultScope: function(agentType) {
-       if (agentType === 'field_agent') {
-       	$("#role_and_scope").text(I18n.t('agent.scope'));
-       	$("#agent_role_wrapper").addClass('hide');
-       	$("#global_scope").addClass('hide');
-       } else {
-       	$("#role_and_scope").text(I18n.t('agent.role_and_scope'));
-       	$("#agent_role_wrapper").removeClass('hide');
-       	$("#global_scope").removeClass('hide');
-       } 
+   if (agentType === 'field_agent') {
+   	$("#role_and_scope").text(I18n.t('agent.scope'));
+   	$("#agent_role_wrapper .icon_remove").addClass('hide');
+    $("#agent_role_wrapper #add-role").addClass('hide');
+   	$("#global_scope").addClass('hide');
+   } else {
+   	$("#role_and_scope").text(I18n.t('agent.role_and_scope'));
+   	$("#agent_role_wrapper .icon_remove").removeClass('hide');
+    $("#agent_role_wrapper #add-role").removeClass('hide');
+   	$("#global_scope").removeClass('hide');
+   } 
 	},
+
+  defaultRole: function(agentType) {
+    var _this = this;
+    var field_agent = (agentType === 'field_agent') ? true : false;
+    var field_tech_role = _this.field_tech_role_enabled ? 'field technician' : 'agent';
+    for(var key in _this.role_details) {
+      if(!field_agent && _this.role_details[key][0].toLowerCase().trim() == 'agent'){
+        _this.roles[key] = true;
+        $("#selected-roles ul").append(JST["app/admin/agents/templates/selected_item"]({
+          type: 'role',
+          key: key,
+          details: _this.role_details[key]
+        }));
+      } else if(field_agent && _this.role_details[key][0].toLowerCase().trim() == field_tech_role) {
+          _this.roles[key] = true;
+          $("#selected-roles ul").append(JST["app/admin/agents/templates/selected_item"]({
+            type: 'role',
+            key: key,
+            details: _this.role_details[key]
+          }));
+      }
+    }
+  },
 
 	resetScope: function(agentType) {
        if (agentType === 'field_agent') {
@@ -154,21 +183,11 @@ window.App.Agents = window.App.Agents || {};
 	initializeAgentForm: function() {
 		var $doc = $(document);
 		var _this = this;
+    var agentType = $("input[name='agent[agent_type]']:checked").val();
 		if($("#selected-roles ul li").length == 0 ) {
-			for(var key in _this.role_details){
-				if(_this.role_details[key][0].toLowerCase().trim()=='agent'){
-					_this.roles[key] = true;
-					$("#selected-roles ul").append(JST["app/admin/agents/templates/selected_item"]({
-						type: 'role',
-						key: key,
-						details: _this.role_details[key]
-		     		}));
-				}
-	      	}
-      	}
-
-  		var agentType = $("input[name='agent[agent_type]']:checked").val();
-  		_this.defaultScope(agentType);
+			_this.defaultRole(agentType);
+    }
+    _this.defaultScope(agentType);
       	
 		$doc.on("click.agent-roles", 'div.icon_remove', function(){
 			$('#role_'+$(this).attr('rel')).remove();
@@ -249,8 +268,13 @@ window.App.Agents = window.App.Agents || {};
 
 		$("input[name='agent[agent_type]']").on( "change", function(event) {
 			var agentType = event.target.value;
-			_this.defaultScope(agentType);
-  			_this.resetScope(agentType);
+  		_this.resetScope(agentType);
+      if (_this.new_agent) {
+        $("#selected-roles ul").children().remove();
+        _this.defaultRole(agentType);
+      }
+      _this.defaultScope(agentType);
+
 		});
 
 		$doc.on("click.agent-roles", "#agent-group-container-submit", function(){

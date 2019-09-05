@@ -104,7 +104,6 @@ api_error_messages:
   invalid_bot: "There is no bot with the external id %{id}"
   cannot_set_closed_at: "It cannot be set, when created_at and updated_at are not set or status is not closed"
   field_agent_scope: "Field technician should have restricted or group scope"
-  field_agent_roles: "Field technician should have agent role"
   invalid_field_auto_assign: "Auto ticket assignment is not available for service groups."
   agent_type_change_not_allowed: "You cannot change the agent type"
   should_not_be_field_agent: "Field technicians cannot be assigned to support groups."
