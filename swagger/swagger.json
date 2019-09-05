@@ -19538,6 +19538,38 @@
               },
               "value": {
                 "type": "string"
+              },
+              "from_nested_field": {
+                "type": "object",
+                "properties": {
+                  "level": {
+                    "type": "object",
+                    "properties": {
+                      "field_name": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              },
+              "to_nested_field": {
+                "type": "object",
+                "properties": {
+                  "level": {
+                    "type": "object",
+                    "properties": {
+                      "field_name": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
               }
             }
           }
@@ -19569,6 +19601,28 @@
                     },
                     "value": {
                       "type": "string"
+                    },
+                    "business_hours_id": {
+                      "type": "integer"
+                    },
+                    "case_senstive": {
+                      "type": "boolean"
+                    },
+                    "nested_fields": {
+                      "type": "object",
+                      "properties": {
+                        "level": {
+                          "type": "object",
+                          "properties": {
+                            "field_name": {
+                              "type": "string"
+                            },
+                            "value": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
                     }
                   }
                 }
@@ -19584,10 +19638,104 @@
           "items": {
             "type": "object",
             "properties": {
-              "name": {
+              "field_name": {
                 "type": "string"
               },
               "value": {
+                "type": "string"
+              },
+              "email_to": {
+                "type": "integer"
+              },
+              "email_body": {
+                "type": "string"
+              },
+              "api_key": {
+                "type": "string"
+              },
+              "auth_header": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              },
+              "custom_headers": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "type": "object",
+                "properties": {
+                  "content_layout": {
+                    "type": "string"
+                  },
+                  "content_type": {
+                    "type": "string"
+                  }
+                }
+              },
+              "request_type": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              },
+              "note_body": {
+                "type": "string"
+              },
+              "notify_agents": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "nested_fields": {
+                "type": "object",
+                "properties": {
+                  "level": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "field_name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              },
+              "fwd_to": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "fwd_cc": {
+                "type": "string"
+              },
+              "fwd_bcc": {
+                "type": "string"
+              },
+              "fwd_note_body": {
+                "type": "string"
+              },
+              "push_to": {
+                "type": "string"
+              },
+              "slack_text": {
+                "type": "string"
+              },
+              "office365_text": {
                 "type": "string"
               }
             }
