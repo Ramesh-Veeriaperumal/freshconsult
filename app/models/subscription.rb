@@ -15,7 +15,8 @@ class Subscription < ActiveRecord::Base
                               :subscription_plan_id => :subscription_plan_id, :agent_limit => :agent_limit,
                               :free_agents => :free_agents, :renewal_period => :renewal_period, 
                               :subscription_discount_id => :subscription_discount_id, 
-                              :usd_equivalent => :usd_equivalent }
+                              :usd_equivalent => :usd_equivalent, :subscription_term_start => :subscription_term_start,
+                              :additional_info => :additional_info }
 
   ADDRESS_INFO = { :first_name => :first_name, :last_name => :last_name, :address1 => :billing_addr1,
                   :address2 => :billing_addr2, :city => :billing_city, :state => :billing_state,
@@ -104,7 +105,7 @@ class Subscription < ActiveRecord::Base
   after_commit :update_sandbox_subscription, on: :update, if: :account_has_sandbox?
   after_commit :complete_onboarding, on: :update, if: :upgrade_from_trial?
 
-  attr_accessor :creditcard, :address, :billing_cycle
+  attr_accessor :creditcard, :address, :billing_cycle, :subscription_term_start
   attr_reader :response
   serialize :additional_info, Hash
 
@@ -832,11 +833,17 @@ class Subscription < ActiveRecord::Base
     end
 
     def add_to_subscription_events
-      Subscriptions::SubscriptionAddEvents.perform_async(
-        account_id: account_id,
-        subscription_id: id,
-        subscription_hash: subscription_info(@old_subscription)
-      )
+      args = { account_id: account_id,
+               subscription_id: id,
+               subscription_hash: subscription_info(@old_subscription) }
+      if account.launched?(:downgrade_policy)
+        args[:requested_subscription_hash] = subscription_info(self)
+        args[:requested_subscription_hash][:is_downgrade] = downgrade?
+        args[:requested_subscription_hash][:field_agent_limit] = subscription_request.present? ? subscription_request.fsm_field_agents : nil
+        args[:subscription_hash][:subscription_term_start] = subscription_term_start
+        args[:subscription_hash][:field_agent_limit] = @old_subscription.additional_info[:field_agent_limit]
+      end
+      Subscriptions::SubscriptionAddEvents.perform_async(args)
     end
 
     def subscription_info(subscription)

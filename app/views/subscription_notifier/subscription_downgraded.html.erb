@@ -1,35 +1,65 @@
 <% period = { 1 => "Monthly", 3 => "Quarterly", 6 => "Half Yearly", 12 => "Annual" } %>
 
 <div>
-	Contact Email : <%= @subscription.admin_email %><br>
-	Account ID : <%= @subscription.account_id %><br>
-	Domain : <%= @subscription.account.full_domain %><br>
+	Contact Email : <%= @current_subscription[:admin_email] %><br>
+	Account ID : <%= @current_subscription[:account_id] %><br>
+	Domain : <%= @current_subscription[:account_full_domain] %><br>
 </div><br />
 <div>
-	<%currency_name = @subscription.currency.name%>
+	<%currency_name = @current_subscription[:currency_name]%>
+	<%is_new_downgrade = @current_subscription[:is_downgrade].present? && @current_subscription[:is_downgrade] %>
 	Previously,
 		<ul>
-			<li>Plan : <%= SubscriptionPlan.find(@old_subscription[:subscription_plan_id]).name %></li>
+			<li>Plan : <%= @old_subscription[:plan_name]  %></li>
 			<li>Billing Period : <%= period[@old_subscription[:renewal_period]] %></li>
 			<li>Agents : <%= @old_subscription[:agent_limit]%> <%= "(#{pluralize(@old_subscription[:free_agents], 'free agent')})" if @old_subscription[:free_agents] > 0 %></li>
-			<li>Monthly Revenue : <b><%=currency_name%> <%= @old_subscription[:amount] %>
+			<li>Monthly Revenue : <b><%=currency_name%> <%= @old_subscription[:amount]/@old_subscription[:renewal_period] %>
 				<%unless currency_name == "USD"%>
 					($ <%=@old_subscription[:usd_equivalent]%>)
 				<%end%>
 			</b></li>
-		<ul>
+			<li>Last Invoice Amount : <b><%=currency_name%> <%= @old_subscription[:amount] %>
+				<%unless currency_name == "USD"%>
+					($ <%=@old_subscription[:usd_equivalent]%>)
+				<%end%>
+			</b></li>
+			<% if is_new_downgrade %>
+				<li>Billing Start date (YYYY-MM-DD): <%=@old_subscription[:subscription_term_start].to_date.to_s %></li>
+			<% end %>
+			<% if @old_subscription[:field_agent_limit].present? %>
+				<li>Field Technician: <%= @old_subscription[:field_agent_limit] %></li>
+			<% end %>
+		</ul>
 </div><br />
 
 <div>
 	Now,
 		<ul>
-			<li>Plan : <%= @subscription.subscription_plan.name %></li>
-			<li>Billing Period : <%= period[@subscription.renewal_period] %></li>
-			<li>Agents : <%= @subscription.agent_limit %> <%= "(#{pluralize(@subscription.free_agents, 'free agent')})" if @subscription.free_agents > 0 %></li>
-			<li>Monthly Revenue : <b><%=currency_name%> <%= @subscription.amount %>
+			<li>Plan : <%= @current_subscription[:plan_name]  %></li>
+			<li>Billing Period : <%= period[@current_subscription[:renewal_period]] %></li>
+			<li>Agents : <%= @current_subscription[:agent_limit] %> <%= "(#{pluralize(@current_subscription[:free_agents], 'free agent')})" if @current_subscription[:free_agents] > 0 %></li>
+			<li>Monthly Revenue : <b><%=currency_name%> <%= @current_subscription[:amount]/@current_subscription[:renewal_period] %>
 				<% unless currency_name == "USD"%>
-					($ <%=@subscription.usd_equivalent%>)
+					($ <%=@current_subscription[:usd_equivalent]%>)
 				<%end%></b>
 			</li>
+			<li>New Invoice amount : <b><%=currency_name%> <%= @current_subscription[:amount] %>
+				<% unless currency_name == "USD"%>
+					($ <%=@current_subscription[:usd_equivalent]%>)
+				<%end%></b>
+			</li>
+			<% if is_new_downgrade %>
+				<li>Effective date (YYYY-MM-DD): <%= @old_subscription[:next_renewal_at].to_date.to_s %></li>
+			<% end %>
+			<% if @current_subscription[:field_agent_limit].present? %>
+				<li>Field Technician: <%= @current_subscription[:field_agent_limit] %></li>
+			<% end %>
 		</ul>
+</div>
+<% if is_new_downgrade %>
+	<div>Please check freshops for latest downgrade request. If none is present then the customer must have deleted the downgrade request.</div><br/>
+<% end %>	
+<div>
+   <div>Thanks,</div>
+   Freshdesk Product Team
 </div>
