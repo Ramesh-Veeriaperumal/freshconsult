@@ -4,7 +4,7 @@ class SendDomainChangedMail < BaseWorker
 
   def perform(args)
     current_account.technicians.each do |agent|
-      CustomizeDomainMailer.domain_changed({to_email: agent.email, name: agent.first_name, url: current_account.full_url, is_agent: !agent.privilege?(:admin_tasks), account_name: args[:account_name]})
+      CustomizeDomainMailer.send_email(:domain_changed, agent.email, to_email: agent.email, name: agent.first_name, url: current_account.full_url, is_agent: !agent.privilege?(:admin_tasks), account_name: args[:account_name])
       agent.enqueue_activation_email
     end
   end

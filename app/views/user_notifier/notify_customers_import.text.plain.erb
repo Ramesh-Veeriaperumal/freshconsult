@@ -1,4 +1,4 @@
-<%= t("mailer_notifier.hi_user", user_name: @user.name) %>
+<%= render layout: 'shared/email_header_footer.plain.erb', locals: { user_name: @user.name, sent_by: :freshdesk_team } do %>
 
 <% if @import_success %>
 	<%= "#{t('flash.import.info1', :type => @type, :uc_type => @type.capitalize)}"%>
@@ -20,6 +20,4 @@
 
 <%= t(:'flash.import.help_desk')%>
 
-<%= t(:'flash.import.regards')%>
-
-<%= t(:'flash.import.freshdesk')%>
+<% end %>

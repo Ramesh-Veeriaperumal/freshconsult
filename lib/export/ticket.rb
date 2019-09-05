@@ -20,7 +20,7 @@ class Export::Ticket < Struct.new(:export_params)
         send_no_ticket_email
       else
         build_file(file_string, "ticket", export_params[:format]) 
-        DataExportMailer.ticket_export({:user => User.current, 
+        DataExportMailer.send_email(:ticket_export, User.current, {:user => User.current, 
                                                 :domain => export_params[:portal_url],
                                                 :url => hash_url(export_params[:portal_url]),
                                                 :export_params => export_params})

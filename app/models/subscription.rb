@@ -559,6 +559,38 @@ class Subscription < ActiveRecord::Base
     account.reseller_paid_account?
   end
 
+  def downgrade?
+    (account.launched?(:downgrade_policy) && active? &&
+      !present_subscription.subscription_plan.amount.zero? &&
+      (plan_downgrade? || omni_plan_dowgrade? || term_reduction? || agent_limit_reduction? || fsm_downgrade?))
+  end
+
+  def plan_downgrade?
+    cost_per_agent < present_subscription.cost_per_agent if subscription_plan_id != present_subscription.subscription_plan_id
+  end
+
+  def omni_plan_dowgrade?
+    present_subscription.subscription_plan.omni_plan? && subscription_plan.basic_variant?
+  end
+
+  def term_reduction?
+    renewal_period < present_subscription.renewal_period
+  end
+
+  def agent_limit_reduction?
+    agent_limit < present_subscription.agent_limit
+  end
+
+  def fsm_downgrade?
+    present_subscription.field_agent_limit.present? && (field_agent_limit.blank? ||
+      present_subscription.field_agent_limit > field_agent_limit)
+  end
+
+  def cost_per_agent
+    plan = billing.retrieve_plan_from_cache(subscription_plan, renewal_period)
+    (plan.plan.price/plan.plan.period)/100
+  end
+
   protected
   
     def set_renewal_at

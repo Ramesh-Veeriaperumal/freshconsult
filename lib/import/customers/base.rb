@@ -196,7 +196,7 @@ class Import::Customers::Base
   end
 
   def notify_mailer param = false
-    UserNotifier.notify_customers_import(mailer_params(param))
+    UserNotifier.send_email(:notify_customers_import, @current_user.email, mailer_params(param))
   end
 
   def mailer_params corrupted

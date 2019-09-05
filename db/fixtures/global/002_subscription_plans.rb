@@ -35,10 +35,10 @@ def self.plan_list(all_addons, estate_addons, garden_addons, blossom_addons, est
         :addons => estate_17_addons },
     { name: 'Forest Jan 19', amount: 125.0, renewal_period: 1, trial_period: 1, free_agents: 0,
         day_pass_amount: 6, price: plan_price[:forest_jan_19], classic: false, display_name: 'Forest' },
-    { name: 'Garden Omni Jan 19', amount: 39.0, renewal_period: 1, trial_period: 1, free_agents: 0,
+    { name: 'Garden Omni Jan 19', amount: 45.0, renewal_period: 1, trial_period: 1, free_agents: 0,
         day_pass_amount: 2, price: plan_price[:garden_omni_jan_19], classic: false, display_name: 'Garden',
         :addons => garden_17_addons },
-    { name: 'Estate Omni Jan 19', amount: 69.0, renewal_period: 1, trial_period: 1, free_agents: 0,
+    { name: 'Estate Omni Jan 19', amount: 85.0, renewal_period: 1, trial_period: 1, free_agents: 0,
         day_pass_amount: 4, price: plan_price[:estate_omni_jan_19], classic: false, display_name: 'Estate',
         :addons => estate_17_addons }
 	]

@@ -14,7 +14,8 @@ module ChannelIntegrations::Constants
     'microsoft-teams': 'MicrosoftTeams',
     'twitter': 'Twitter',
     'shopify': 'Shopify',
-    'proactive': 'Proactive'
+    'proactive': 'Proactive',
+    'facebook': 'Facebook'
   }.freeze
 
   # The module names for the Command/replies.
@@ -61,9 +62,7 @@ module ChannelIntegrations::Constants
     PAYLOAD_TYPES[:reply_from_channel]
   ].freeze
 
-  IGNORE_OWNER_LIST = [
-    OWNERS_LIST[:facebook]
-  ].freeze
+  IGNORE_OWNER_LIST = [].freeze # owners can be added in the future if need to be ignored
 
   COMMON_COMMANDS_MODULES_MAPPING = {
     create_ticket: 'ChannelIntegrations::CommonActions::Ticket',

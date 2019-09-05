@@ -40,10 +40,9 @@ class Helpdesk::ExportDataWorker < Struct.new(:params)
     rescue Exception => e
       @data_export.failure!(e.message + "\n" + e.backtrace.join("\n"))
       NewRelic::Agent.notice_error(e)
-      DataExportFailureMailer.data_backup_failure({:email => params[:email],
-                                    :domain => params[:domain],
-                                    :host => @current_account.host}
-                                    )
+      DataExportFailureMailer.send_email(:data_backup_failure, params[:email],
+                                         email: params[:email], domain: params[:domain],
+                                         host: @current_account.host)
     end
     Account.reset_current_account
   end

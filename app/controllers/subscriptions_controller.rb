@@ -227,7 +227,7 @@ class SubscriptionsController < ApplicationController
       @addons = scoper.applicable_addons(@addons, @subscription_plan)
     end
 
-    def build_subscription_request
+    def construct_subscription_request
       downgrade_request = scoper.subscription_request.nil? ? scoper.build_subscription_request : scoper.subscription_request
       downgrade_request.plan_id = scoper.plan_id
       downgrade_request.renewal_period = scoper.renewal_period
@@ -283,15 +283,15 @@ class SubscriptionsController < ApplicationController
     #chargebee and model updates
     def update_subscription
       coupon = coupon_applicable? ? @coupon : nil
-      if downgrade?
+      if scoper.downgrade?
         scoper.convert_to_free if new_sprout?
         billing_subscription.update_subscription(scoper, prorate?, @addons, coupon, true)
-        build_subscription_request.save!
+        construct_subscription_request.save!
         return false
       else
-        scoper.subscription_request.destroy if scoper.subscription_request.present?
         current_account.delete_account_cancellation_requested_time_key if scoper.suspended? && current_account.launched?(:downgrade_policy) && current_account.account_cancellation_requested?
         result = billing_subscription.update_subscription(scoper, prorate?, @addons)
+        scoper.subscription_request.destroy if scoper.subscription_request.present?
         unless result.subscription.coupon == coupon
           billing_subscription.add_discount(scoper.account, coupon)
         end
@@ -504,33 +504,5 @@ class SubscriptionsController < ApplicationController
         flash[:error] = t("subscription.error.invalid_currency")
         redirect_to subscription_url
       end
-    end
-
-    def downgrade?
-      (current_account.launched?(:downgrade_policy) && scoper.active? &&
-        !@cached_subscription.subscription_plan.amount.zero? &&
-        (plan_downgrade? || omni_plan_dowgrade? || term_reduction? || agent_limit_reduction? || fsm_downgrade?))
-    end
-
-
-    def plan_downgrade?
-      SubscriptionPlan::SUBSCRIPTION_PLAN_NAMES_BY_RANKING[scoper.subscription_plan.name] < SubscriptionPlan::SUBSCRIPTION_PLAN_NAMES_BY_RANKING[@cached_subscription.subscription_plan.name]
-    end
-
-    def omni_plan_dowgrade?
-      @cached_subscription.subscription_plan.omni_plan? && scoper.subscription_plan.basic_variant?
-    end
-
-    def term_reduction?
-      scoper.renewal_period < @cached_subscription.renewal_period
-    end
-
-    def agent_limit_reduction?
-      scoper.agent_limit < @cached_subscription.agent_limit
-    end
-
-    def fsm_downgrade?
-      @cached_subscription.field_agent_limit.present? && (scoper.field_agent_limit.blank? ||
-        @cached_subscription.field_agent_limit > scoper.field_agent_limit)
     end
 end

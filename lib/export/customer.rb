@@ -28,19 +28,19 @@ class Export::Customer
       end
     end
     upload_file(@file_path)
-    DataExportMailer.deliver_customer_export(email_params.merge(url: hash_url_with_token(@portal_url, @data_export.token)))
+    DataExportMailer.send_email(:deliver_customer_export, email_params[:user], email_params.merge(url: hash_url_with_token(@portal_url, @data_export.token)))
   rescue => e
     NewRelic::Agent.notice_error(e)
     puts "Error  ::#{e.message}\n#{e.backtrace.join("\n")}"
     @data_export.failure!(e.message + "\n" + e.backtrace.join("\n"))
-    DataExportMailer.export_failure(email_params)
+    DataExportMailer.send_email(:export_failure, email_params[:user], email_params)
   ensure
     # Moving data exports entry to failed status in case of any failures
     export_status = DataExport::EXPORT_STATUS.key(@data_export.status)
     if !@data_export.destroyed? && DataExport::EXPORT_IN_PROGRESS_STATUS.include?(export_status)
       Rails.logger.error "#{@type} export status at the end of export job :: #{@data_export.status}"
       @data_export.failure!('Export::Failed')
-      DataExportMailer.export_failure(email_params)
+      DataExportMailer.send_email(:export_failure, email_params[:user], email_params)
     end
     schedule_export_cleanup(@data_export, @type) if @data_export.present?
   end
@@ -74,6 +74,6 @@ class Export::Customer
     end
 
     def email_params
-      { user: User.current, domain: @portal_url, type: @type }
+      @email_params ||= { user: User.current, domain: @portal_url, type: @type }
     end
 end
