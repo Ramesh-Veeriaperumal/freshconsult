@@ -3212,6 +3212,8 @@ en:
   suspended_plan_info: Your account has been suspended.
   suspended_account_info: "Your account has been suspended and the customer portal will not be accessible."
   plan_info_update: Your plan has been changed.
+  subscription_request_info_update: Your subscription change request has been updated
+  subscription_info_update: Your subscription has been updated
   note: "Note: "
   warning: WARNING
   facebook: Facebook
