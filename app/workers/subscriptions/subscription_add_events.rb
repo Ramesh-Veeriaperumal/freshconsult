@@ -12,7 +12,13 @@ class Subscriptions::SubscriptionAddEvents < BaseWorker
     subscription = Account.current.subscription
     old_subscription = args[:subscription_hash].symbolize_keys!
     old_subscription[:amount] = old_subscription[:amount].to_f if old_subscription
-    event_attributes = assign_event_attributes(subscription, old_subscription)
+    if Account.current.launched?(:downgrade_policy)
+      requested_subscription = args[:requested_subscription_hash].symbolize_keys!
+      requested_subscription[:amount] = requested_subscription[:amount].to_f
+      event_attributes = assign_event_attributes(subscription, old_subscription, requested_subscription)
+    else
+      event_attributes = assign_event_attributes(subscription, old_subscription)
+    end
     SubscriptionEvent.add_event(subscription.account, event_attributes) if event_attributes[:code]
   rescue Exception => e
     Rails.logger.debug "Exception while adding subscription event,\n#{e.message}\n#{e.backtrace.join("\n\t")}"
@@ -21,9 +27,9 @@ class Subscriptions::SubscriptionAddEvents < BaseWorker
 
   private
 
-    def assign_event_attributes(subscription, old_subscription) 
+    def assign_event_attributes(subscription, old_subscription, requested_subscription = nil)
       attributes = subscription_info(subscription)
-      attributes[:code] = Subscriptions::SubscriptionAddEvents::assign_code(subscription, old_subscription)
+      attributes[:code] = Subscriptions::SubscriptionAddEvents::assign_code(subscription, old_subscription, requested_subscription)
       attributes[:code].blank? ? attributes :
             attributes.merge(revenue_info(subscription, old_subscription, attributes[:code]))
     end

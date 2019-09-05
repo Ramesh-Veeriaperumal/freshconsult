@@ -1,5 +1,6 @@
 class SubscriptionNotifier < ActionMailer::Base
   include ActionView::Helpers::NumberHelper
+  include Cache::Memcache::SubscriptionPlan
   include EmailHelper
 
   layout "email_font"
@@ -118,10 +119,16 @@ class SubscriptionNotifier < ActionMailer::Base
     end.deliver
   end
 
-  def subscription_downgraded(subscription, old_subscription)
-    setup_email(AppConfig['cs_email'], "#{subscription.account.full_domain} downgraded", subscription.account_id, "Subscription Downgraded")
-    @subscription = subscription
-    @old_subscription = old_subscription
+  def subscription_downgraded(subscription, old_subscription, requested_subscription)
+    setup_email(AppConfig['cs_email'], "Downgrade request from #{subscription.account.full_domain}", subscription.account_id, 'Subscription Downgraded')
+    @old_subscription = downgrade_notification_fields(old_subscription)
+    @current_subscription = if requested_subscription.present?
+                              downgrade_notification_fields(requested_subscription)
+                            else
+                              downgrade_notification_fields(subscription_info(subscription))
+                            end
+    @current_subscription.merge!({ admin_email: subscription.admin_email, account_id: subscription.account_id,
+                                   account_full_domain: subscription.account.full_domain, currency_name: subscription.currency.name })
     mail(@headers) do |part|
       part.html { render "subscription_downgraded", :formats => [:html]}
     end.deliver
@@ -146,9 +153,12 @@ class SubscriptionNotifier < ActionMailer::Base
     period = { 1 => "Monthly", 3 => "Quarterly", 6 => "Half Yearly", 12 => "Annual" }
     setup_email(AppConfig['cs_email'], "Cancellation request from #{Account.current.full_domain}.", Account.current.id, "Cancellation Request")
     @account = Account.current
+    customer_details = @account.subscription.billing.retrieve_subscription(@account.id)
+    @billing_start_date = Time.zone.at(customer_details.subscription.current_term_start).to_date.to_s(:db)
     @reason  = feedback
     @billing_period = period[@account.subscription.renewal_period]
     @freshops_account_url = freshops_account_url(Account.current)
+    @field_technicians = @account.subscription.additional_info.present? ? @account.subscription.additional_info[:field_agent_limit] : nil
     mail(@headers) do |part|
       part.html { render "account_cancellation_requested", :formats => [:html]}
     end.deliver
@@ -182,6 +192,17 @@ class SubscriptionNotifier < ActionMailer::Base
 
     def setup_bcc(bcc)
       @headers[:bcc] = bcc || AppConfig['sub_bcc_email'][Rails.env] if Rails.env.production?
+    end
+
+    def subscription_info(subscription)
+      subscription_attributes =
+        Subscription::SUBSCRIPTION_ATTRIBUTES.inject({}) { |h, (k, v)| h[k] = subscription.safe_send(v); h }
+      subscription_attributes.merge!(next_renewal_at: subscription.next_renewal_at.to_s(:db))
+    end
+
+    def downgrade_notification_fields(subscription)
+      subscription[:plan_name] = subscription_plans_from_cache.find { |plan| plan.id == subscription[:subscription_plan_id] }.name
+      subscription
     end
   
   # TODO-RAILS3 Can be removed oncewe fully migrate to rails3

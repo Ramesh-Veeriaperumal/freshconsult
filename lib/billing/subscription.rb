@@ -63,7 +63,9 @@ class Billing::Subscription < Billing::ChargebeeWrapper
     data.merge!(:replace_addon_list => true)
     data.merge!(:coupon => coupon, :end_of_term => true) if downgrade
 
-    super(subscription.account_id, data)
+    result = super(subscription.account_id, data)
+    subscription.subscription_term_start = Time.zone.at(result.subscription.current_term_start) if result.subscription.current_term_start.present?
+    result
   end
 
   #estimate
