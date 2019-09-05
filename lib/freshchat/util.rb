@@ -2,15 +2,19 @@ module Freshchat::Util
   SYSTEM42_SERVICE = 'system42'.freeze
   def freshchat_signup
     response = HTTParty.post("#{Freshchat::Account::CONFIG[:signup][:host]}signup", body: freshchat_signup_body.to_json)
-    Rails.logger.info "Response from signup freshchat #{response}"
-    parsed_response = response.parsed_response
-    save_freshchat_account(parsed_response['app_id'], parsed_response['widget_token'])
+    Rails.logger.info "Response from freshchat_signup code - #{response.code} response - #{response}"
+    if response.code == 201
+      parsed_response = response.parsed_response
+      save_freshchat_account(parsed_response['app_id'], parsed_response['widget_token'])
+    end
+    response
   end
 
   def sync_freshchat(app_id)
     query = { appAlias: app_id }
     response = HTTParty.put("#{Freshchat::Account::CONFIG[:signup][:host]}enable", query: query, body: { account: current_account.full_domain }.to_json, headers: sync_freshchat_headers(app_id))
     Rails.logger.info "Response from sync_freshchat #{response}"
+    response
   end
 
   def enable_freshchat_feature

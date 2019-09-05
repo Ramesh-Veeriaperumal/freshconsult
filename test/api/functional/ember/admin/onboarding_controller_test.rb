@@ -179,7 +179,7 @@ class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
   end
 
   def test_freshchat_channel_update_succeeds
-    response_stub = { 'userInfoList' => [{ 'app_id' => Faker::Lorem.word, 'appKey' => Faker::Lorem.word }] }
+    response_stub = { 'userInfoList' => [{ 'appId' => Faker::Lorem.word, 'appKey' => Faker::Lorem.word }] }
     response_stub.stubs(:code).returns(200)
     HTTParty::Request.any_instance.stubs(:perform).returns(response_stub)
     post :update_channel_config, construct_params(version: 'private', channel: 'freshchat')

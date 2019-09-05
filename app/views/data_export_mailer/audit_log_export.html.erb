@@ -1,6 +1,4 @@
 <%= render layout: 'shared/email_header_footer.html.erb', locals: { user_name: @user.name, sent_by: :portal_support, portal_name: Account.current.helpdesk_name } do %>
-<br/>
-<br/>
 <%= "#{t('export_data.audit_log_export.body',url: @url)}".html_safe %>
 <br/>
 <br/>

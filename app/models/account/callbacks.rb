@@ -185,6 +185,7 @@ class Account < ActiveRecord::Base
   def enable_new_onboarding
     if onboarding_applicable?
       launch :onboarding_v2 if redis_key_exists?(ONBOARDING_V2_ENABLED)
+      launch :onboarding_i18n if redis_key_exists?(ONBOARDING_I18N_ENABLED)
       launch :new_onboarding
     end
   end
@@ -626,7 +627,7 @@ class Account < ActiveRecord::Base
     end
 
     def onboarding_applicable?
-      has_feature?(:falcon) && LOCALES_FOR_NEW_ONBOARDING.include?(language)
+      has_feature?(:falcon) && get_others_redis_list(LANGUAGES_UNDERTAKEN_FOR_NEW_ONBOARDING).include?(language)
     end
     
     def domain_already_exists?

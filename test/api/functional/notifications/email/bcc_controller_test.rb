@@ -79,6 +79,14 @@ class Notifications::Email::BccControllerTest < ActionController::TestCase
     User.any_instance.stubs(:privilege?).with(:manage_email_settings).returns(true)
   end
 
+  def test_update_bcc_exceeding_max_characters_supported
+    params = create_valid_update_params
+    params[:emails] = ['test1@yopmail.com', 'test2@yopmail.com', 'test3@yopmail.com', 'test4@yopmail.com', 'test5@yopmail.com', 'test6@yopmail.com', 'test7@yopmail.com', 'test8@yopmail.com', 'test9@yopmail.com', 'test10@yopmail.com', 'test11@yopmail.com', 'test12@yopmail.com', 'test13@yopmail.com', 'test14@yopmail.com', 'test15@yopmail.com', 'test18@yopmail.com', 'test19@yopmail.com', 'test20@yopmail.com']
+    put :update, construct_params({}, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('emails', 'Has 332 characters, it can have maximum of 255 characters', code: :invalid_value)])
+  end
+
   def test_show_bcc_without_privilege
     User.any_instance.stubs(:privilege?).with(:manage_email_settings).returns(false)
     get :show, controller_params

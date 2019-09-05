@@ -16,6 +16,7 @@ module OmniChannelsTestHelper
     twitter.screen_name = 'ocr'
     twitter.save
     freshchat = @account.build_freshchat_account
+    freshchat.app_id = 'test'
     freshchat.enabled = true
     freshchat.save
     @account.build_freshcaller_account.save

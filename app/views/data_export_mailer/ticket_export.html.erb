@@ -1,14 +1,10 @@
-Hi <%=@user%>,
-<br/>
-<br/>
+<%= render layout: 'shared/email_header_footer.html.erb', locals: { user_name: @user.name, sent_by: :portal_support, portal_name: @user.account.helpdesk_name } do %>
 <%= "#{t('export_data.ticket_export.body',:url => @url)}".html_safe %>
 <br/>
 <br/>
 <%=  @url %>
 <br/>
-Note: <%= "#{t('export_data.ticket_export.note')}" %>
+<%= t('mailer_notifier.note') %> <%= "#{t('export_data.ticket_export.note')}" %>
 <br/>
 <br/>
-Regards,
-<br/>
-<%= @user.account.helpdesk_name %> Support
+<% end %>

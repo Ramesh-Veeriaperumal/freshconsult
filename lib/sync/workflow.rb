@@ -1,6 +1,7 @@
 module Sync
   class Workflow
     include Util
+    include Sync::Validation::ValidationHandler
 
     attr_accessor :master_account_id, :repo_path, :staging_account_id, :retain_id, :staging_repo_path
 
@@ -42,10 +43,9 @@ module Sync
     end
 
     def move_sandbox_config_to_prod(committer)
-      sync_config_to_local(master_account_id, repo_path)
-      merge_changes = get_diff(master_account_id, staging_account_id, repo_path)
-      if merge_changes[:conflict].blank?
-        apply_staging_config_to_prod(master_account_id, staging_account_id, repo_path, true, retain_id, merge_changes)
+      config_changes = sandbox_config_changes
+      unless config_changes[:conflict]
+        apply_staging_config_to_prod(master_account_id, staging_account_id, repo_path, true, retain_id, config_changes[:merge_changes])
         message = "Merge from sandbox config #{Time.now.strftime('%H:%M:%S')}"
         commit_and_push_config_to_git(master_account_id, repo_path, message, committer[:name], committer[:email])
       else
@@ -55,7 +55,14 @@ module Sync
 
     def sandbox_config_changes
       sync_config_to_local(master_account_id, repo_path)
-      get_diff(master_account_id, staging_account_id, repo_path)
+      diff_changes = get_diff(master_account_id, staging_account_id, repo_path)
+      @validation_error ||= {}
+      diff = perform_validation(::Sync::Templatization.new(diff_changes, @sandbox_account_id).build_delta)
+      {
+        conflict: @validation_error.present? || diff_changes[:conflict].present?,
+        merge_changes: diff_changes,
+        diff: diff
+      }
     end
 
     private

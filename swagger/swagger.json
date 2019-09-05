@@ -11541,10 +11541,10 @@
         }
       }
     },
-    "/accounts/cancel": {
-      "post": {
+    "/accounts/cancellation": {
+      "put": {
         "tags": [
-          "Account Cancellation"
+          "Account"
         ],
         "summary": "Account Cancellation",
         "description": "Request for Account cancellation.",
@@ -11571,12 +11571,30 @@
             "description": "Access denied"
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "Account"
+        ],
+        "summary": "Delete account cancellation",
+        "description": "it removes the scheduled cancellation job and reactive the account",
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
       }
     },
     "/accounts/{type}/download": {
       "get": {
         "tags": [
-          "File download"
+          "Account"
         ],
         "description": "File Download",
         "parameters": [

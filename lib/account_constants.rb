@@ -6,8 +6,6 @@ module AccountConstants
     2 => :us
   }
 
-  LOCALES_FOR_NEW_ONBOARDING = ["en"]
-
   DATEFORMATS_TYPES = {
     :us => {
       :short_day => "%b %-d %Y",

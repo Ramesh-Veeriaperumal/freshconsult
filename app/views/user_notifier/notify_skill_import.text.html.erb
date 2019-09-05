@@ -1,4 +1,4 @@
-<%= t(:'flash.import.hi').html_safe%> <%=User.current.name%>,<br/><br/>
+<%= render layout: 'shared/email_header_footer.html.erb', locals: { user_name: User.current.name, sent_by: :freshdesk_team } do %>
 <%if @params[:failure]%>
 <%= "#{t(:'flash.import.info14', :file_name => @params[:file_name])}".html_safe%><br/>
 1. <%= t(:'flash.import.info12').html_safe%><br/>
@@ -22,5 +22,4 @@
 <%= t(:'flash.import.info9').html_safe%><br/><br/>
 <%= t(:'flash.import.help_desk').html_safe%><br/><br/>
 <%end%>
-<%= t(:'flash.import.regards').html_safe%><br/>
-<%= t(:'flash.import.freshdesk').html_safe%><br/>
+<% end %>

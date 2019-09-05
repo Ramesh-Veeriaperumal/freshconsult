@@ -270,6 +270,8 @@ module MemcacheKeys
 
   CUSTOM_NESTED_FIELD_CHOICES = 'v1/CUSTOM_NESTED_FIELD_CHOICES:%{account_id}'.freeze
 
+  CHARGEBEE_SUBSCRIPTION_PLAN = 'CHARGEBEE_SUBSCRIPTION_PLAN:%{plan_name}:%{period}:%{currency}'.freeze
+
   def fetch_from_cache(key, &block)
     @cached_values = {} unless @cached_values
     return @cached_values[key] if @cached_values.include? key

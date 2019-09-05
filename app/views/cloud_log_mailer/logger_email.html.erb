@@ -1,3 +1,4 @@
+<%= render layout: 'shared/email_header_footer.html.erb', locals: { sent_by: t('cloud_log_mailer.logger_email.freshdesk_support'), other_recipients_note: true } do %>
 <%= t("cloud_log_mailer.logger_email.account") %><%=@subdomain%>
 <br/>
 <% if @size == Integrations::CloudElements::Constant::LOG_PAGE_SIZE %>
@@ -33,6 +34,4 @@
   </table>
 <% end%>
 <br/>
-<%= t("cloud_log_mailer.logger_email.regards") %>
-<br/>
-<%= t("cloud_log_mailer.logger_email.freshdesk_support") %>
+<% end %>

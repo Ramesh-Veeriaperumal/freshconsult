@@ -15,13 +15,14 @@ class Admin::Sandbox::DiffWorker < BaseWorker
       production_config_time_taken = Benchmark.realtime { s.sync_config_from_production(committer) }
       sandbox_config_time_taken = Benchmark.realtime { s.sync_config_from_sandbox(committer) }
       @account.make_current
-      diff_changes = s.sandbox_config_changes
-      @job.additional_data[:conflict] = diff_changes[:conflict].present?
-      templatization_time_taken = Benchmark.realtime { @job.additional_data[:diff] = ::Sync::Templatization.new(diff_changes, @sandbox_account_id).build_delta }
+      diff_changes = {}
+      templatization_diff_calc_time_taken = Benchmark.realtime { diff_changes = s.sandbox_config_changes }
+      @job.additional_data[:conflict] = diff_changes[:conflict]
+      @job.additional_data[:diff] = diff_changes[:diff]
       update_last_diff_details
       @job.mark_as!(:diff_complete)
       Rails.logger.info(" **** [SANDBOX]  Diff worker AccountId #{@account.id} Product config time: #{production_config_time_taken}
-                        Sandbox config time #{sandbox_config_time_taken} Templatization time #{templatization_time_taken}****")
+                        Sandbox config time #{sandbox_config_time_taken} Templatization & Diff Calculation time #{templatization_diff_calc_time_taken}****")
     end
   rescue StandardError => e
     Rails.logger.error("Sandbox Diff Exception in account: #{@account.id} \n#{e.message}\n#{e.backtrace[0..7].inspect}")

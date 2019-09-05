@@ -57,7 +57,7 @@ class Import::Customers::OutreachContact < Import::Customers::Contact
   end
 
   def notify_mailer(param = false)
-    UserNotifier.notify_proactive_outreach_import(mailer_params(param))
+    UserNotifier.send_email(:notify_proactive_outreach_import, @current_user.email, mailer_params(param))
   end
 
   def max_limit

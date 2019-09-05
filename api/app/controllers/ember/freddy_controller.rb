@@ -13,7 +13,7 @@ module Ember
 
     def bulk_create_bot
       bulk_create_bot_perform(action: :autofaq)
-      render status: @proxy_response.code, json: @parsed_response.to_json
+      render status: @proxy_response.code, json: @proxy_response.parsed_response.to_json
     end
 
     private

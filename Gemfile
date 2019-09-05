@@ -376,3 +376,4 @@ gem 'codecov', :require => false, :group => :test
 gem 'ejson', :require => false
 
 gem 'optar', git: 'git@github.com:freshdesk/optar.git', tag: 'v1.1.1'
+gem 'rack-protection', '1.5.5'

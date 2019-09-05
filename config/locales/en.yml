@@ -2957,8 +2957,9 @@ en:
       status_untranslated: Not available
       status_outdated: Outdated
       status_incomplete: Outdated
+      translation: TRANSLATION
+      primary: Primary
       surveys:
-        translation: TRANSLATION
         visible_on_portal: Languages visible on portal
         visible_on_portal_helptext: These languages can be viewed on your portal
         show_info: Save the survey to start translating
@@ -12980,7 +12981,6 @@ en:
     no_ticket_in_range: 'No tickets in range - %{domain}'
     export_type: '%{export_type} export for %{domain}'
     report_export: 'Reports export for %{range}'
-    agent_export: 'Agents list export'
     ecommerce_token: 'Ecommerce account %{ecom_name} token expiration'
     test_email: "Woohoo.. Your Freshdesk test email"
     scheduled_report_update: "[Important] Scheduled report - Recipient update required"

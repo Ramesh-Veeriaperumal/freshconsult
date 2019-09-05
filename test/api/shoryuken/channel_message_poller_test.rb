@@ -1,18 +1,21 @@
 require_relative '../unit_test_helper'
 require_relative '../test_helper'
 require_relative '../../test_transactions_fixtures_helper'
-['twitter_test_helper', 'account_test_helper', 'shopify_test_helper'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
+['twitter_test_helper', 'fb_test_helper', 'account_test_helper', 'shopify_test_helper'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 
 class ChannelMessagePollerTest < ActionView::TestCase
   include UsersTestHelper
   include AccountTestHelper
   include TwitterTestHelper
   include ShopifyTestHelper
+  include FBTestHelper
+  include SocialTestHelper
   include Redis::RedisKeys
   include Redis::OthersRedis
 
   def teardown
     cleanup_twitter_handles(@account)
+    Account.current.rollback(:skip_posting_to_fb)
   end
 
   def setup
@@ -21,6 +24,9 @@ class ChannelMessagePollerTest < ActionView::TestCase
     Account.stubs(:current).returns(@account)
     @handle = create_test_twitter_handle(@account)
     @stream = @handle.default_stream
+    @fb_ticket = create_ticket_from_fb_post
+    @fb_page = @fb_ticket.fb_post.facebook_page
+    Account.current.launch(:skip_posting_to_fb)
   end
 
   def test_twitter_dm_convert_as_ticket
@@ -110,6 +116,30 @@ class ChannelMessagePollerTest < ActionView::TestCase
     Ryuken::ChannelMessagePoller.new.perform(sqs_payload)
     redis_key_status = $redis_others.perform_redis_op('exists', 'TWITTER_APP_BLOCKED')
     assert redis_key_status.blank?
+  end
+
+  # Facebook command tests
+  def test_update_facebook_reply_state_success
+    note = create_post_note_with_negative_post_id(@fb_ticket)
+    old_post_id = note.fb_post.post_id
+
+    command_payload = update_facebook_reply_state_command_payload(@account, note, @fb_page)
+    push_to_channel(command_payload)
+
+    new_post_id = @fb_ticket.notes.last.fb_post.post_id
+    assert_not_equal old_post_id, new_post_id
+  end
+
+  def test_update_facebook_reply_state_failure
+    note = create_post_note_with_negative_post_id(@fb_ticket)
+    old_post_id = note.fb_post.post_id
+
+    command_payload = update_facebook_reply_state_command_payload(@account, note, @fb_page)
+    command_payload[:payload][:data] = update_facebook_reply_state_failure_data_payload
+    push_to_channel(command_payload)
+
+    new_post_id = @fb_ticket.notes.last.fb_post.post_id
+    assert_equal old_post_id, new_post_id
   end
 
   private

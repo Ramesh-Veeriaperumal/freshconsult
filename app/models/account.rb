@@ -770,7 +770,7 @@ class Account < ActiveRecord::Base
       Billing::Subscription.new.remove_scheduled_cancellation(self)
       return delete_account_cancellation_requested_time_key
     rescue => e
-      Rails.logger.error("Error while cancelling account cancellation request :: #{e.message}")
+      Rails.logger.error("Error while cancelling account cancellation request :: #{e.inspect}")
     end
     false
   end

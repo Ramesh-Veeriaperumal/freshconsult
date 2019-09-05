@@ -3,21 +3,25 @@ module Freddy
     include Freshchat::Util
     FRESHDESK_SERVICE = 'freshdesk'.freeze
     SUCCESS = 200
+    FRESHCHAT_SUCCESS_STATUS_CODES = [201, 200].freeze
     BOT_ATTRIBUTES = ['cortex_id', 'name', 'status', 'widget_config', 'portal_id'].freeze
 
     def bulk_create_bot_perform(args)
+      @proxy_response = {}
       args.symbolize_keys!
       @current_account = Account.current
       @action = args[:action]
-      enable_freshchat if @action == :autofaq
-      @proxy_response = {}
+      @proxy_response = enable_freshchat if @action == :autofaq
+      return unless FRESHCHAT_SUCCESS_STATUS_CODES.include?(@proxy_response.code)
+
       time_taken = Benchmark.realtime { @proxy_response = HTTParty.put(FreddySkillsConfig[:system42][:onboard_url], bulk_create_bot_options) }
       Rails.logger.info "Time Taken for bulk_create_bot - #{@current_account.id} time - #{time_taken}"
       parsed_response = @proxy_response.parsed_response
       create_freddy_bot(parsed_response) if (parsed_response.is_a? Hash) && (@proxy_response.code == SUCCESS)
     rescue StandardError => e
       FreddyLogger.log "Error in BulkCreateBotWorker::Exception:: #{e.message}"
-      NewRelic::Agent.notice_error(e, description: "Error in BulkCreateBotWorker::Exception:: #{e.message}")
+      options_hash = { custom_params: { description: "Error in BulkCreateBotWorker::Exception:: #{e.message}", account_id: Account.current.id, job_id: Thread.current[:message_uuid].to_s } }
+      NewRelic::Agent.notice_error(e, options_hash)
     end
 
     private

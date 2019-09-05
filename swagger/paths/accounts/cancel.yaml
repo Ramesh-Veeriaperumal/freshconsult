@@ -1,5 +1,5 @@
-post:
-  tags: [Account Cancellation]
+put:
+  tags: [Account]
   summary: Account Cancellation
   description: Request for Account cancellation.
   parameters:
@@ -14,5 +14,17 @@ post:
       description: Bad Request Error
       schema:
         $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+
+delete:
+  tags: [Account]
+  summary: Delete account cancellation
+  description: it removes the scheduled cancellation job and reactive the account
+  responses:
+    204:
+      description: Success
+    404:
+      description: Not found
     403:
       description: Access denied

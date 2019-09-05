@@ -62,11 +62,10 @@ class ImapMailboxObserver < ActiveRecord::Observer
   end
 
   def send_error_email mailbox
-    subject = I18n.t("custom_mailbox_admin_email_notifications.subject")
-    to_emails = Account.current.account_managers.map(&:email).join(",")
+    to_emails = Account.current.account_managers.map(&:email)
 
-    options = {:to_emails => to_emails, :subject => subject, :email_mailbox => mailbox.user_name}
-    CustomMailbox.error(options)
+    options = { email_mailbox: mailbox.user_name }
+    CustomMailbox.send_email_to_group(:error, to_emails, options)
   end
 
     def set_imap_timeout mailbox

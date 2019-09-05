@@ -1,5 +1,6 @@
 class Notifications::Email::BccController < ApiApplicationController
   include HelperConcern
+  include BccConcern
   decorate_views
 
   private
@@ -13,9 +14,7 @@ class Notifications::Email::BccController < ApiApplicationController
     end
 
     def sanitize_params
-      bcc_email_string = cname_params[:emails].map(&:downcase).uniq.reject(&:blank?).join(',')
-      cname_params.delete(:emails)
-      cname_params[:bcc_email] = bcc_email_string
+      cname_params[:bcc_email] = build_bcc_params(cname_params.delete(:emails))
     end
 
     def constants_class

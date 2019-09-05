@@ -5,7 +5,7 @@ class ActionController::TestCase
     Rake::Task['forum_moderation:create_tables'].invoke(Time.zone.now.year, Time.zone.now.month) if Rails.env.test?
     Rake::Task['forum_moderation:create_tables'].invoke(Time.zone.now.year, (Time.zone.now.month + 1)) if Rails.env.test?
   end
-
+  @@setup_stub = false
   # awk '/START <test_method_name>/,/END <test_method_name>/' log/test.log
   # Eg: awk '/START test_agent_filter_state/,/END test_agent_filter_state/' log/test.log
   def initialize(name = nil)
@@ -25,11 +25,20 @@ class ActionController::TestCase
     set_key(default_key, 100, nil)
 
     # Enabling Private API
-    @account.launch(:falcon)
-    @account.add_feature(:falcon)    
-    @account.features.es_v2_writes.destroy
-    @account.reputation = 1
-    @account.save
+    @account.launch(:falcon) unless @account.launched?(:falcon)
+    @account.add_feature(:falcon) unless @account.has_feature?(:falcon)
+    @account.features.es_v2_writes.destroy if @account.features?(:es_v2_writes)
+    if @account.reputation != 1
+      @account.reputation = 1
+      @account.save
+    end
+    setup_stub
+
+    Rails.logger.debug "START #{@test_name}"
+  end
+
+  def setup_stub
+    return if @@setup_stub
 
     # To prevent DynamoDB errors.
     SpamCounter.stubs(:count).returns(0)
@@ -41,8 +50,7 @@ class ActionController::TestCase
     Dalli::Client.any_instance.stubs(:get).returns(nil)
     Dalli::Client.any_instance.stubs(:delete).returns(true)
     Dalli::Client.any_instance.stubs(:set).returns(true)
-
-    Rails.logger.debug "START #{@test_name}"
+    @@setup_stub = true
   end
 
   def self.fixture_path(path = File.join(Rails.root, 'test/api/fixtures/'))
