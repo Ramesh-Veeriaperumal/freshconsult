@@ -260,6 +260,7 @@ module FreshdeskCore::Model
     remove_from_spam_detection_service(account)
     delete_canned_forms(account)
     delete_widget_data_from_s3(account)
+    delete_account_from_fluffy(account)
     delete_data_from_tables(account.id)
     account.destroy
   end
@@ -411,6 +412,12 @@ module FreshdeskCore::Model
       account.groups.find_each do |group|
         group.remove_round_robin_data(group.agents.pluck(:id))
       end
+    end
+
+    def delete_account_from_fluffy(account)
+      account.destroy_fluffy_account
+    rescue => e
+      Rails.logger.info("FLUFFY Account deletion failed #{e.message}, #{e.backtrace}")
     end
 
     def delete_info_from_table(account_id)
