@@ -84,7 +84,11 @@ class Support::SearchV2::SpotlightController < SupportController
           es_params[:article_status]            = SearchUtil::DEFAULT_SEARCH_VALUE.to_i
           es_params[:article_visibility]        = visibility_opts(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN)
           es_params[:article_company_id]        = current_user.company_ids if current_user
-          es_params[:article_category_id]       = current_portal.portal_solution_categories.map(&:solution_category_meta_id)
+          es_params[:article_category_id]       = soln_search_categories
+          if current_account.portal_article_filters_enabled?
+            es_params[:article_folder_id]         = soln_search_folders if params[:folder_ids]
+            es_params[:article_tags]              = params[:tags].to_s.split(',').uniq.join('","') if params[:tags]
+          end
         end
 
         if searchable_klasses.include?('Topic')
@@ -239,4 +243,21 @@ class Support::SearchV2::SpotlightController < SupportController
       }
     end
 
+    def soln_search_categories
+      @soln_search_categories ||= begin
+        portal_category_meta_ids = current_portal.portal_solution_categories.map(&:solution_category_meta_id)
+        if current_account.portal_article_filters_enabled? && params[:category_ids].present?
+          filtered_categories = params[:category_ids].split(',').map(&:to_i) & portal_category_meta_ids
+          @invalid = true if filtered_categories.empty?
+        end
+        filtered_categories.presence || portal_category_meta_ids
+      end
+    end
+
+    def soln_search_folders
+      portal_folder_meta_ids = current_portal.account.solution_folder_meta.public_folders(soln_search_categories).map(&:id)
+      filtered_folders = params[:folder_ids].split(',').map(&:to_i) & portal_folder_meta_ids
+      @invalid = true if filtered_folders.empty?
+      filtered_folders.presence || portal_folder_meta_ids
+    end
 end
