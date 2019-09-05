@@ -103,7 +103,7 @@ class User < ActiveRecord::Base
   validate :max_user_emails
   validate :max_user_companies, :if => :has_multiple_companies_feature?
   validate :unique_external_id_feature, :if => :unique_external_id_changed?
-  validate :check_roles_for_field_agents, if: -> { Account.current.field_service_management_enabled? }, on: :update
+  validate :check_roles_for_field_agents, if: -> { Account.current.field_service_management_enabled? && self.agent.try(:field_agent?) }, on: :update
   validate :validate_agent, on: :update, :if => :agent?
 
   def save_tags
@@ -1037,7 +1037,7 @@ class User < ActiveRecord::Base
       self.deleted = args[:deleted] || false
       self.helpdesk_agent = true
       self.address = nil
-      self.role_ids = args[:role_ids].present? ? args[:role_ids] : [account.roles.find_by_name("Agent").id]
+      self.role_ids = args[:role_ids] || default_agent_role(args[:type])
       self.tags.clear
       self.user_companies.delete_all
       self.user_companies.reload
@@ -1062,6 +1062,14 @@ class User < ActiveRecord::Base
   def fetch_agent_ticket_scope(args)
     default_ticket_permission = args[:type] == Agent::FIELD_AGENT ? Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] : Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets]
     args[:ticket_permission] || default_ticket_permission
+  end
+
+  def default_agent_role(agent_type)
+    if agent_type == Agent::FIELD_AGENT
+      Account.current.field_tech_role_enabled? ? account.roles.field_agent.map(&:id) : account.roles.agent.map(&:id)
+    else
+      account.roles.agent.map(&:id)
+    end
   end
 
   def update_search_index
@@ -1397,12 +1405,19 @@ class User < ActiveRecord::Base
       end
     end
 
+    # Checks are temporary. Need to cleanup after field tech role migration.
     def check_roles_for_field_agents
-      if self.agent.try(:field_agent?) && (self.role_ids - account.roles.agent.map(&:id)).present?
-        self.errors[:role_ids] << :field_agent_roles
-        return false
+      valid_role = true
+      if Account.current.field_tech_role_enabled?
+        if (self.role_ids - account.roles.field_agent.map(&:id)).present?
+          self.errors.add(:role_ids, :field_agent_roles, role: 'field technician')
+          valid_role = false
+        end
+      elsif (self.role_ids - account.roles.agent.map(&:id)).present?
+        self.errors.add(:role_ids, :field_agent_roles, role: 'agent')
+        valid_role = false
       end
-      true
+      valid_role
     end
 
     def validate_agent

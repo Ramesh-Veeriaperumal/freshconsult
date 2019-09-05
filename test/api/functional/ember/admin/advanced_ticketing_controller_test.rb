@@ -134,6 +134,22 @@ module Ember
         end
       end
 
+      def test_create_fsm_with_field_tech_role
+        enable_fsm do
+          begin
+            Account.current.launch(:field_tech_role)
+            Sidekiq::Testing.inline! do
+              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+            end
+            assert_response 204
+            assert Account.current.field_service_management_enabled?
+            assert_equal Role.last.name, Helpdesk::Roles::FIELD_TECHNICIAN_ROLE[:name]
+          ensure
+            Account.current.rollback(:field_tech_role)
+          end
+        end
+      end
+
       def test_destroy_fsm_without_any_data_loss
         enable_fsm do
           begin

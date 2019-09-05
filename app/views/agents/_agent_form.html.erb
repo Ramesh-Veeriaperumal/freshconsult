@@ -263,7 +263,7 @@
             </ul>
           </li>
           <%end%>
-  				<li id="agent_role_wrapper" class="agent-role control-group hide">
+  				<li id="agent_role_wrapper" class="agent-role control-group">
   					<%= label(:agent, :roles, t('agent.role'), :class => "control-label") %>
   					<div class="controls" id="selected-roles">
               <input type="hidden" value="" name="roleValidate" class="at_least_one_item"
@@ -272,14 +272,14 @@
                 <% @agent.user.roles.each do |role| %>
           				<li id = <%= "role_#{role.id}" %>
                         <%= label( :agent, :ticket_permission,
-                        "<div class='icon_remove tooltip' title='#{t('agent.remove_role')}' id = 'remove_role_#{role.id}' rel='#{role.id}'><span></span>
+                        "<div class='icon_remove tooltip hide' title='#{t('agent.remove_role')}' id = 'remove_role_#{role.id}' rel='#{role.id}'><span></span>
         							   </div><b>#{h(role.name)}</b><span class='muted info_data ellipsis'>#{h(role.description)}</span>".html_safe) %>
                       <input type='hidden' name='user[role_ids][]' value= <%= "#{role.id}" %> />
           				</li>
                 <% end %>
   						</ul>
               <div>
-                <a href="#agent-role-container" rel="freshdialog" data-width="400px" class="btn" id="add-role"
+                <a href="#agent-role-container" rel="freshdialog" data-width="400px" class="btn hide" id="add-role"
                    title="<%= t('agent.roles') %>" data-submit-label="<%= t('agent.assign') %>" data-close-label="<%= t('cancel') %>"
                    data-close-on-submit="true">
                   <b> <%= t('agent.assign_role')%> </b>
@@ -403,6 +403,8 @@
 			var groups = {};
 			var group_details = {};
       var fsm_group_type = null;
+      var new_agent = null;
+      var field_tech_role_enabled = <%= current_account.field_tech_role_enabled? %>
       var freshid_enabled= <%= freshid_integration_enabled? %>;
 			var userName = '<%= @agent.user.name %>';
       var userEmail = '<%= @agent.user.email %>';
@@ -432,7 +434,7 @@
       <% end %>
 
       App.Agents.Form.initializeData({userName: userName, roles: roles, userEmail: userEmail,
-				role_details: role_details, freshid_enabled: freshid_enabled, groups: groups, group_details: group_details, fsm_group_type: fsm_group_type, SkillBasedRRFlag: <%=@manage_skills%>});
+				role_details: role_details, freshid_enabled: freshid_enabled, field_tech_role_enabled: field_tech_role_enabled, groups: groups, group_details: group_details, fsm_group_type: fsm_group_type, new_agent: <%= @agent.new_record? %>, SkillBasedRRFlag: <%=@manage_skills%>});
     });
 
   })(jQuery);

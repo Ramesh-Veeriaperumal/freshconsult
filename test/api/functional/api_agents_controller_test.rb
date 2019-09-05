@@ -286,6 +286,47 @@ class ApiAgentsControllerTest < ActionController::TestCase
     Account.unstub(:current)
   end
 
+  def test_update_field_agent_with_field_tech_role
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+    field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
+    field_tech_role = @account.roles.create(name: 'Field technician', default_role: true)
+    agent = add_test_agent(@account, { role: Role.find_by_name('Agent').id, agent_type: field_agent_type.agent_type_id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] })
+    params = {email: Faker::Internet.email, role_ids: [field_tech_role.id]}
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:field_tech_role_enabled?).returns(true)
+    put :update, construct_params({ id: agent.id }, params)
+    assert_response 200
+    updated_agent = User.find(agent.id)
+    match_json(agent_pattern_with_additional_details(params, updated_agent))
+    match_json(agent_pattern_with_additional_details({}, updated_agent))
+  ensure
+    agent.destroy
+    field_tech_role.destroy
+    field_agent_type.destroy
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.any_instance.unstub(:field_tech_role_enabled?)
+    Account.unstub(:current)
+  end
+
+  def test_update_field_agent_with_agent_role_when_field_tech_enabled
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+    Account.any_instance.stubs(:field_tech_role_enabled?).returns(true)
+    field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
+    field_tech_role = @account.roles.create(name: 'Field technician', default_role: true)
+    agent = add_test_agent(@account, { role: Role.find_by_name('Field technician').id, agent_type: field_agent_type.agent_type_id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] })
+    params = { role_ids: [Role.find_by_name('Agent').id] } 
+    put :update, construct_params({ id: agent.id }, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('user.role_ids', I18n.t('activerecord.errors.messages.field_agent_roles', role: 'field technician'), :code => :invalid_value)])
+  ensure
+    agent.destroy
+    field_tech_role.destroy
+    field_agent_type.destroy
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.any_instance.unstub(:field_tech_role_enabled?)
+    Account.unstub(:current)
+  end
+
   def test_update_field_agent_with_incorrect_scope_and_role
     Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
     field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
@@ -294,7 +335,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
     Account.stubs(:current).returns(Account.first)
     put :update, construct_params({ id: agent.id }, params)
     assert_response 400
-    match_json([ bad_request_error_pattern('user.role_ids', :field_agent_roles, :code => :invalid_value), bad_request_error_pattern('ticket_permission', :field_agent_scope, :code => :invalid_value)])
+    match_json([ bad_request_error_pattern('user.role_ids', I18n.t('activerecord.errors.messages.field_agent_roles', role: 'agent'), :code => :invalid_value), bad_request_error_pattern('ticket_permission', :field_agent_scope, :code => :invalid_value)])
   ensure
     agent.destroy if agent.present?
     field_agent_type.destroy if field_agent_type.present?
@@ -378,7 +419,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
     Account.stubs(:current).returns(Account.first)
     put :update, construct_params({ id: agent.id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('user.role_ids', :field_agent_roles, :code => :invalid_value)])
+    match_json([bad_request_error_pattern('user.role_ids', I18n.t('activerecord.errors.messages.field_agent_roles', role: 'agent'), :code => :invalid_value)])
   ensure
     agent.destroy if agent.present?
     field_agent_type.destroy if field_agent_type.present?

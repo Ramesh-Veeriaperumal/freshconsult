@@ -4680,6 +4680,7 @@ en:
         max_scheduled_exports_per_account: Cannot have more than %{max_limit} scheduled exports
         skill_name: Should not contain comma
         email_disposable: Register using your work email
+        field_agent_roles: "Field technician should have %{role} role"
       full_messages:
         format: "%{attribute} %{message}"
       template:
