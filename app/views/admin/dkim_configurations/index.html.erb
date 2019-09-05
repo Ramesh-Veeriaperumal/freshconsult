@@ -4,8 +4,12 @@
 <div class="list-page">
   <div class="list-page-header">
     <div class="row-fluid">
+      <% if current_account.launched?(:email_mailbox) %>
+        <h3 class="lead span8"><a class="falcon-mailbox-listall falcon-mailbox-link"> <%= t('email_configs.title')%> </a > / <%=t('email_configs.dkim.title')%></h3>
+      <% else %>
         <h3 class="lead span8"><a href="/admin/email_configs" > <%= t('email_configs.title')%> </a > / <%=t('email_configs.dkim.title')%></h3>
-        <a href="https://support.freshdesk.com/support/solutions/articles/223779-digitally-sign-emails-with-dkim-" class="pull-right pt5" target = "_blank"> <%= t('email_configs.dkim.help') %> </a>
+      <% end %>
+      <a href="https://support.freshdesk.com/support/solutions/articles/223779-digitally-sign-emails-with-dkim-" class="pull-right pt5" target = "_blank" rel="noopener"> <%= t('email_configs.dkim.help') %> </a>
     </div>
   </div>
   <p class="muted">
@@ -29,8 +33,12 @@
     <%else%>
       <div class="new-email-domain muted"> 
         <span><%= t('email_configs.dkim.new_dkim') %> - </span>
-        <a href="/admin/email_configs/new"><%= t("create") %></a></div>
-        </div>
+        <%if current_account.launched?(:email_mailbox) %>
+          <a class="falcon-mailbox-new falcon-mailbox-link"><%= t("create") %></a>
+        <% else %>
+          <a href="/admin/email_configs/new" class="email_config-new"><%= t("create") %></a>
+        <% end %>
       </div>
     <%end%>
+  </div>
 </div>
