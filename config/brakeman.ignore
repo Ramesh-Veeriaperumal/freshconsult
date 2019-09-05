@@ -1009,7 +1009,7 @@
       "fingerprint": "428e880c56fbdfd8ed26dcd1c1e529a37803b49768dc549c6bf2eeb290ce88ea",
       "message": "Unprotected mass assignment",
       "file": "lib/admin/advanced_ticketing/field_service_management/util.rb",
-      "line": 94,
+      "line": 96,
       "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
       "code": "FlexifieldDefEntry.new(ff_meta_data(field_details, account, true))",
       "render_path": null,
@@ -1644,6 +1644,25 @@
     {
       "warning_type": "Mass Assignment",
       "warning_code": 17,
+      "fingerprint": "5f0d4beeed1a142ead619cf2f703fd1e444693347d1a22fd864598440a8496c0",
+      "message": "Unprotected mass assignment",
+      "file": "app/controllers/fdadmin/freshops_pod_controller.rb",
+      "line": 76,
+      "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "Ecommerce::EbayRemoteUser.new(validate_integration_params(params[:ebay_remote_user]))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Fdadmin::FreshopsPodController",
+        "method": "create_global_ebay_integration"
+      },
+      "user_input": "params[:ebay_remote_user]",
+      "confidence": "High",
+      "note": ""
+    },
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 17,
       "fingerprint": "6197ffafe33c3aa28a3dc400fbe13fd7755bf7bcee92e6d1e63d70da4fdf943c",
       "message": "Unprotected mass assignment",
       "file": "app/models/helpdesk/archive_ticket.rb",
@@ -1934,6 +1953,25 @@
       "note": ""
     },
     {
+      "warning_type": "Mass Assignment",
+      "warning_code": 17,
+      "fingerprint": "7d35fd8f71963ccc33ac163c018139de7d17892ac1e842a25c832e91f38f5a84",
+      "message": "Unprotected mass assignment",
+      "file": "app/controllers/fdadmin/freshops_pod_controller.rb",
+      "line": 44,
+      "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "Integrations::HootsuiteRemoteUser.new(validate_integration_params(params[:hootsuite_remote_user]))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Fdadmin::FreshopsPodController",
+        "method": "create_hoot_suite_user"
+      },
+      "user_input": "params[:hootsuite_remote_user]",
+      "confidence": "High",
+      "note": ""
+    },
+    {
       "warning_type": "Cross Site Scripting",
       "warning_code": 2,
       "fingerprint": "7d762f66749406e46c70f913df8f1ac6fb4c6bf24224f388c5ca26e005ebed79",
@@ -2195,6 +2233,25 @@
       },
       "user_input": "super.join(\",\")",
       "confidence": "Medium",
+      "note": ""
+    },
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 17,
+      "fingerprint": "8d1e388936d68eb8c035c4cc09e85e9154d0405c8f8735ed5871c7457539d205",
+      "message": "Unprotected mass assignment",
+      "file": "app/controllers/fdadmin/freshops_pod_controller.rb",
+      "line": 50,
+      "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "Integrations::ShopifyRemoteUser.new(validate_integration_params(params[:shopify_remote_user]))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Fdadmin::FreshopsPodController",
+        "method": "create_shopify_user"
+      },
+      "user_input": "params[:shopify_remote_user]",
+      "confidence": "High",
       "note": ""
     },
     {
@@ -2533,6 +2590,25 @@
     {
       "warning_type": "Mass Assignment",
       "warning_code": 17,
+      "fingerprint": "acf4a5be1d820f3c36c1239360d8362d3e7b957eef1242ebe51326da6e0b5b2f",
+      "message": "Unprotected mass assignment",
+      "file": "app/controllers/fdadmin/freshops_pod_controller.rb",
+      "line": 70,
+      "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "Integrations::SlackRemoteUser.new(validate_integration_params(params[:slack_remote_user]))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Fdadmin::FreshopsPodController",
+        "method": "create_slack_user"
+      },
+      "user_input": "params[:slack_remote_user]",
+      "confidence": "High",
+      "note": ""
+    },
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 17,
       "fingerprint": "ad70060f4746cca723269139d40c63140b67dbd26d6a6f7b064140d7b0ba1856",
       "message": "Unprotected mass assignment",
       "file": "app/controllers/support/discussions/posts_controller.rb",
@@ -2701,6 +2777,25 @@
       },
       "user_input": null,
       "confidence": "Weak",
+      "note": ""
+    },
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 17,
+      "fingerprint": "c19e443e112ed9f02e2bb66ef86cc6c02a45c0dd1a08b25e7f9a3db969aabf09",
+      "message": "Unprotected mass assignment",
+      "file": "app/controllers/fdadmin/freshops_pod_controller.rb",
+      "line": 60,
+      "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "Integrations::QuickbooksRemoteUser.new(validate_integration_params(params[:quickbooks_remote_user]))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Fdadmin::FreshopsPodController",
+        "method": "create_quickbooks_user"
+      },
+      "user_input": "params[:quickbooks_remote_user]",
+      "confidence": "High",
       "note": ""
     },
     {
@@ -3514,6 +3609,6 @@
       "note": "The embed is within quoted text"
     }
   ],
-  "updated": "2019-08-27 14:35:06 +0530",
+  "updated": "2019-09-03 17:26:34 +0530",
   "brakeman_version": "3.3.0"
 }
