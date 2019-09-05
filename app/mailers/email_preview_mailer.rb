@@ -4,11 +4,11 @@ class EmailPreviewMailer < ActionMailer::Base
 
   def send_test_email(mail_body, subject, to_email)
     @body = mail_body
-    subject ||= I18n.t("preview_message")
+    subject ||= I18n.t('email_notifications.preview_message')
     @headers = {
       :from    => Account.current.default_friendly_email,
       :to      => to_email,
-      :subject => subject,
+      :subject => I18n.t('email_notifications.preview_mail_prefix') + subject,
       :sent_on => Time.now
     }
     mail(@headers) do |part|

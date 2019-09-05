@@ -18,14 +18,13 @@ class EmailPreviewController < ApplicationController
   end
 
   def send_test_email
-    subject     = t('email_notifications.preview_mail_prefix') + params[:subject].to_s
-    subject     = Helpdesk::HTMLSanitizer.clean(subject)
+    subject     = Helpdesk::HTMLSanitizer.clean(params[:subject].to_s)
     mail_body   = Helpdesk::HTMLSanitizer.clean(params[:mail_body].to_s)
     # Exception handling: To avoid any exception in sending mail via delayed jobs, as it will exceed the size of the column.
     if (mail_body + subject).length > MAX_MAIL_CONTENT_SIZE
       render :json => { :success => false, :msg => I18n.t('email_notifications.preview_message_too_large') }
     else
-      EmailPreviewMailer.send_later(:send_test_email, mail_body, subject, current_user.email)
+      EmailPreviewMailer.send_later(:send_test_email, mail_body, subject, current_user.email, locale_object: current_user)
       render :json => { :success => true, :message => I18n.t('email_notifications.preview_mail_sent', :email => User.current.email) }
     end
     
