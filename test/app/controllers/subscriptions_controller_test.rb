@@ -33,7 +33,6 @@ class SubscriptionsControllerTest < ActionController::TestCase
     assert_equal @account.subscription.subscription_plan_id, sprout_plan_id
     assert_response 302
 
-    plan_ids = SubscriptionPlan.current.map(&:id)
     params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
     params = { plan_id: params_plan_id }
     @account.subscription.update_attributes(agent_limit: '1')

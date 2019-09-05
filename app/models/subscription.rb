@@ -545,25 +545,29 @@ class Subscription < ActiveRecord::Base
   def update_subscription(params)
     return false unless save_subscription(params)
 
-    update_features if plan_changed?
+    update_features if plan_changed? && !subscription_downgrade?
     add_to_subscription_events
   end
 
   def fetch_immediate_estimate
     @fetch_immediate_estimate ||= begin
-      self.addons = applicable_addons(present_subscription.addons, subscription_plan)
-      Billing::Subscription.new.fetch_estimate_info(self, addons)
+      updated_addons = applicable_addons(present_subscription.addons, subscription_plan)
+      Billing::Subscription.new.fetch_estimate_info(self, updated_addons)
     end
   end
 
   def fetch_subscription_estimate
-    self.addons = applicable_addons(present_subscription.addons, subscription_plan)
+    updated_addons = applicable_addons(present_subscription.addons, subscription_plan)
     applicable_coupon = verify_coupon(present_subscription.coupon)
-    subscription_estimate(addons, applicable_coupon)
+    subscription_estimate(updated_addons, applicable_coupon)
   end
 
   def reseller_paid_account?
     account.reseller_paid_account?
+  end
+
+  def subscription_downgrade?
+    @subscription_downgrade ||= downgrade?
   end
 
   def downgrade?
@@ -596,6 +600,10 @@ class Subscription < ActiveRecord::Base
   def cost_per_agent
     plan = billing.retrieve_plan_from_cache(subscription_plan, renewal_period)
     (plan.plan.price/plan.plan.period)/100
+  end
+
+  def present_subscription
+    @present_subscription ||= cache_old_model
   end
 
   protected
@@ -688,23 +696,40 @@ class Subscription < ActiveRecord::Base
     def save_subscription(params)
       self.renewal_period = params[:renewal_period] if params[:renewal_period].present?
       self.agent_limit = params[:agent_seats] if params[:agent_seats]
+      updated_addons = self.addons
       if params[:plan_id].present? && params[:plan_id] != plan_id
         new_plan = SubscriptionPlan.current.find_by_id(params[:plan_id])
         self.plan = new_plan
-        self.addons = applicable_addons(addons, new_plan)
+        updated_addons = applicable_addons(addons, new_plan)
         self.free_agents = new_plan.free_agents
         convert_to_free if new_sprout?
       end
       applicable_coupon = verify_coupon(present_subscription.coupon)
-      response = billing.update_subscription(self, prorate?(applicable_coupon), addons)
-      billing.add_discount(account, applicable_coupon) if response.subscription.coupon != applicable_coupon
-      set_next_renewal_at(response.subscription)
-      save
+      if subscription_downgrade?
+        billing.update_subscription(self, prorate?(applicable_coupon), updated_addons, applicable_coupon, true)
+        construct_subscription_request(updated_addons).save!
+      else
+        response = billing.update_subscription(self, prorate?(applicable_coupon), updated_addons)
+        subscription_request.destroy if subscription_request.present?
+        billing.add_discount(account, applicable_coupon) if response.subscription.coupon != applicable_coupon
+        set_next_renewal_at(response.subscription)
+        self.addons = updated_addons
+        save
+      end
     rescue ChargeBee::InvalidRequestError => e
       Rails.logger.error("Exception on updating the subscription account_id: \
         #{account_id}, message: #{e.json_obj[:message]}")
       errors.add(e.error_code, e.json_obj[:message])
       false
+    end
+
+    def construct_subscription_request(updated_addons)
+      downgrade_request = subscription_request.nil? ? build_subscription_request : subscription_request
+      downgrade_request.plan_id = plan_id
+      downgrade_request.renewal_period = renewal_period
+      downgrade_request.agent_limit = agent_limit
+      downgrade_request.fsm_field_agents = (updated_addons.map(&:name).include?(Subscription::Addon::FSM_ADDON) && field_agent_limit.present?) ? field_agent_limit : nil
+      downgrade_request
     end
 
     def verify_coupon(old_coupon)
@@ -715,10 +740,6 @@ class Subscription < ActiveRecord::Base
     def prorate?(applicable_coupon)
       !(present_subscription.active? && (total_amount(addons, applicable_coupon) < present_subscription.amount) &&
         NO_PRORATION_PERIOD_CYCLES.include?(present_subscription.renewal_period))
-    end
-
-    def present_subscription
-      @present_subscription ||= cache_old_model
     end
 
     #CRM

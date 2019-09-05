@@ -13,7 +13,12 @@ class Admin::SubscriptionsController < ApiApplicationController
   end
 
   def update
-    @item.update_subscription(cname_params) ? render(action: :show) : render_custom_errors
+    if @item.update_subscription(cname_params)
+      @item = @item.present_subscription if @item.subscription_downgrade?
+      render(action: :show)
+    else
+      render_custom_errors
+    end
   end
   
   def estimate
