@@ -23,7 +23,6 @@ module Widget
         subscription.save
         @account.reload
         @account.launch :help_widget
-        @account.add_feature(:open_solutions)
         set_widget
         create_article_for_widget
       end
@@ -116,16 +115,6 @@ module Widget
         end
         assert_response 200
         assert_equal [widget_article_search_pattern(@article)].to_json, response.body
-        assert_nil Language.current
-      end
-
-      def test_results_without_open_solutions
-        @account.remove_feature(:open_solutions)
-        stub_private_search_response([@article]) do
-          post :results, construct_params(version: 'widget', term: @article.title, limit: 3)
-        end
-        assert_response 403
-        @account.add_feature(:open_solutions)
         assert_nil Language.current
       end
 

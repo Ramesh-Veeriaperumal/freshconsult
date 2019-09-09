@@ -17,9 +17,6 @@ module Widget
     private
 
       def sanitize_params
-        check_anonymous_tickets
-        return if @error.present?
-
         validate_widget
         params[cname][:attachable_type] = AttachmentConstants::ATTACHABLE_TYPES['widget_draft']
         params[cname][:attachable_id] = @widget_id

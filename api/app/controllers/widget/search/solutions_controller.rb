@@ -6,7 +6,6 @@ module Widget
       skip_before_filter :check_privilege
 
       before_filter :check_feature
-      before_filter :check_open_solutions
       before_filter :validate_widget
       before_filter :set_current_language
 
@@ -26,6 +25,7 @@ module Widget
         end
 
         def construct_es_params
+          # getting solution_category_meta from portal_solution_categories
           super.tap do |es_params|
             es_params[:language_id] = Language.current.id
             es_params[:article_status] = SearchUtil::DEFAULT_SEARCH_VALUE.to_i

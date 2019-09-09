@@ -25,7 +25,6 @@ module Widget
         additional.additional_settings[:portal_languages] = ['es', 'en', 'ar']
         additional.save
         @account.features.enable_multilingual.create
-        @account.add_feature(:open_solutions)
         subscription = @account.subscription
         subscription.state = 'active'
         subscription.save
@@ -287,28 +286,12 @@ module Widget
         assert_nil Language.current
       end
 
-      def test_suggested_articles_without_open_solutions
-        @account.remove_feature(:open_solutions)
-        get :suggested_articles, controller_params
-        assert_response 403
-        @account.add_feature(:open_solutions)
-        assert_nil Language.current
-      end
-
       def test_suggested_articles_with_solution_disabled
         @widget.settings[:components][:solution_articles] = false
         @widget.save
         get :suggested_articles, controller_params
         assert_response 200
         match_json(get_suggested_articles)
-        assert_nil Language.current
-      end
-
-      def test_show_without_open_solutions
-        @account.remove_feature(:open_solutions)
-        get :show, controller_params(id: @article.parent_id)
-        assert_response 403
-        @account.add_feature(:open_solutions)
         assert_nil Language.current
       end
 

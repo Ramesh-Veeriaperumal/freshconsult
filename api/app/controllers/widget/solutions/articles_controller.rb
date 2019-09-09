@@ -51,9 +51,6 @@ module Widget
           check_feature
           return if @error.present?
 
-          check_open_solutions
-          return if @error.present?
-
           validate_widget
           return if @error.present?
 
