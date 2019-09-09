@@ -270,13 +270,9 @@ window.App = window.App || {};
 
     toggleOmniPlans: function(button) {
       if(jQuery(button).parent().hasClass("omni-billing-edit") && !jQuery(button).hasClass("active")) {
-        this.omni_disabled = true;
-        jQuery(".billing-actions .submit-confirm").show();
-        jQuery(".billing-actions #commit").hide();
+        this.omni_disabled = true; 
       } else if(jQuery(button).hasClass("active")) {
         this.omni_disabled = false;
-        jQuery(".billing-actions .submit-confirm").hide();
-        jQuery(".billing-actions #commit").show();
       }
 
       if(jQuery(button).hasClass("active")) {
@@ -350,7 +346,6 @@ window.App = window.App || {};
       delete this.addons[key];
     },
     submitPlanUpdate: function() {
-      jQuery(".billing-actions .submit-confirm").hide();
       jQuery(".billing-actions #commit").show().trigger("click");
       this.omni_disabled = null;
     },
