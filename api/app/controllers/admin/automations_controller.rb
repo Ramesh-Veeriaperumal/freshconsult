@@ -79,6 +79,7 @@ class Admin::AutomationsController < ApiApplicationController
     def assign_protected
       va_rule_params = params[cname]
       @conditions = va_rule_params[:conditions]
+      @operator = va_rule_params[:operator]
       @performers = va_rule_params[:performer]
       @events = va_rule_params[:events]
       @actions = va_rule_params[:actions]

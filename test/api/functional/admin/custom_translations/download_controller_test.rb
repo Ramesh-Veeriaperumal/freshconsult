@@ -307,7 +307,7 @@ class Admin::CustomTranslations::DownloadControllerTest < ActionController::Test
   ensure
     unstub_for_custom_translations
     set_secondary_language
-  end   
+  end
 
   def test_secondary_custom_field_number
     stub_for_custom_translations

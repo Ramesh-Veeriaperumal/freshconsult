@@ -64,6 +64,7 @@ module VaRulesTesthelper
 
   CASE_SENSITIVE_TYPES = %i[text paragraph text_array].freeze
   ARRAY_VALUE_OPERATORS = %i[contains does_not_contain starts_with ends_with in not_in is_any_of is_none_of].freeze
+  ARRAY_VALUE_ACTIONS = %i[add_tag].freeze
 
   FIELD_TO_TYPE_MAPPING_CONTACT = {
     email: :email,
@@ -71,7 +72,11 @@ module VaRulesTesthelper
     job_title: :text,
     segments: :object_id_array,
     time_zone: :choice_list,
-    language: :choice_list
+    language: :choice_list,
+    test_custom_text: :text,
+    test_custom_paragraph: :text,
+    test_custom_checkbox: :checkbox,
+    test_custom_number: :number
   }.freeze
 
   FIELD_TO_TYPE_MAPPING_COMPANY = {
@@ -81,7 +86,11 @@ module VaRulesTesthelper
     health_score: :choice_list,
     account_tier: :choice_list,
     industry: :choice_list,
-    renewal_date: :date
+    renewal_date: :date,
+    test_custom_text: :text,
+    test_custom_paragraph: :text,
+    test_custom_checkbox: :checkbox,
+    test_custom_number: :number
   }.freeze
 
   EVALUATE_ON_MAPPING = {

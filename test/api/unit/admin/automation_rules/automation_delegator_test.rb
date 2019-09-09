@@ -5,138 +5,80 @@ require "#{Rails.root}/test/api/helpers/automation_delegator_test_helper.rb"
 
 module Admin::AutoAutomationRules
   class AutomationDelegatorTest < ActionView::TestCase
-
     include AutomationDelegatorTestHelper
     include TicketFieldsTestHelper
     include CompanyFieldsTestHelper
     include ContactFieldsTestHelper
+    include Admin::AutomationConstants
 
-    def teardown
-      Account.unstub(:current)
-      super
+    # test valid ticket default fields
+    DEFAULT_TICKET_FIELD_VALUES.each do |field|
+      define_method "test_valid_#{field[:field_name]}_ticket_params" do
+        Account.stubs(:current).returns(Account.first)
+        params = construct_delegator_params(field[:field_name], 'ticket')
+        automation_delegator_class.new(params, params, 1)
+        Account.unstub(:current)
+      end
     end
 
-    def stub_account
-      Account.stubs(:current).returns(Account.first)
+    # test valid contact default fields
+    DEFAULT_CONTACT_FIELD_VALUES.each do |field|
+      define_method "test_valid_#{field[:field_name]}_contact_params" do
+        Account.stubs(:current).returns(Account.first)
+        params = construct_delegator_params(field[:field_name], 'contact')
+        automation_delegator_class.new(params, params, 1)
+        Account.unstub(:current)
+      end
     end
 
-    def test_dispatchr_valid
-      Account.stubs(:current).returns(Account.first)
-      get_all_custom_fields
-      create_products(Account.current)
-      create_tags_data(Account.current)
-      get_a_dropdown_custom_field
-      get_a_nested_custom_field
-      param_hash = valid_dispatchr_hash(Account.current.products.map(&:id).first)
-      delegator = Admin::AutomationRules::AutomationDelegator.new(param_hash, param_hash, 1)
-      assert delegator.valid?
-    ensure
-      Account.unstub(:current)
+    # test valid company default fields
+    DEFAULT_COMPANY_FIELD_VALUES.each do |field|
+      define_method "test_valid_#{field[:field_name]}_company_params" do
+        Account.stubs(:current).returns(Account.first)
+        params = construct_delegator_params(field[:field_name], 'company')
+        automation_delegator_class.new(params, params, 1)
+        Account.unstub(:current)
+      end
     end
 
-    def test_dispatchr_invalid
-      Account.stubs(:current).returns(Account.first)
-      param_hash = invalid_dispatchr_hash
-      delegator = Admin::AutomationRules::AutomationDelegator.new(param_hash, param_hash, 1)
-      assert delegator.invalid?
-    ensure
-      Account.unstub(:current)
+    # test valid ticket custom fields
+    CUSTOM_FIELD_CONDITION_HASH.keys.each do |field_type|
+      define_method "test_valid_custom_field_#{field_type}_ticket_params" do
+        Account.stubs(:current).returns(Account.first)
+        @account = Account.current
+        create_ticket_custom_field(field_type)
+        params = construct_custom_field_params(field_type, 'ticket')
+        automation_delegator_class.new(params, params, 1)
+        Account.unstub(:current)
+      end
     end
 
-    def test_observer_valid
-      Account.stubs(:current).returns(Account.first)
-      get_all_custom_fields
-      create_products(Account.current)
-      create_tags_data(Account.current)
-      get_a_dropdown_custom_field
-      get_a_nested_custom_field
-      param_hash = valid_observer_hash(Account.current.products.map(&:id).first)
-      delegator = Admin::AutomationRules::AutomationDelegator.new(param_hash, param_hash, 4)
-      assert delegator.valid?
-    ensure
-      Account.unstub(:current)
+    # test valid custom company fields
+    CUSTOM_FIELDS_TYPES.each do |field_type|
+      define_method "test_valid_custom_field_#{field_type}_company_params" do
+        Account.stubs(:current).returns(Account.first)
+        @account = Account.current
+        cf_params = cf_params(type: field_type, field_type: "custom_#{field_type}",
+                              label: "test_custom_#{field_type}", editable_in_signup: 'true')
+        create_custom_contact_field(cf_params)
+        params = construct_customer_params(field_type, 'company')
+        automation_delegator_class.new(params, params, 1)
+        Account.unstub(:current)
+      end
     end
 
-    def test_observer_invalid
-      Account.stubs(:current).returns(Account.first)
-      param_hash = invalid_observer_hash
-      delegator = Admin::AutomationRules::AutomationDelegator.new(param_hash, param_hash, 4)
-      assert delegator.invalid?
-    ensure
-      Account.unstub(:current)
-    end
-
-    def test_valid_contact_condition
-      Account.stubs(:current).returns(Account.first)
-      get_all_custom_fields
-      create_products(Account.current)
-      create_tags_data(Account.current)
-      get_a_dropdown_custom_field
-      get_a_nested_custom_field
-      get_custom_contact_fields
-      param_hash = valid_rule(valid_performer, valid_event, 'contact', valid_action)
-      delegator = Admin::AutomationRules::AutomationDelegator.new(param_hash, param_hash, 4)
-      assert delegator.valid?
-    ensure
-      Account.unstub(:current)
-    end
-
-    def test_valid_company_condition
-      Account.stubs(:current).returns(Account.first)
-      @account = Account.current
-      get_all_custom_fields
-      create_products(Account.current)
-      create_tags_data(Account.current)
-      get_a_dropdown_custom_field
-      get_a_nested_custom_field
-      get_custom_company_fields
-      param_hash = valid_rule(valid_performer, valid_event, 'company', valid_action)
-      delegator = Admin::AutomationRules::AutomationDelegator.new(param_hash, param_hash, 4)
-      assert delegator.valid?
-    ensure
-      Account.unstub(:current)
-    end
-
-    def test_valid_nested_array
-      Account.stubs(:current).returns(Account.first)
-      get_all_custom_fields
-      create_products(Account.current)
-      create_tags_data(Account.current)
-      get_a_dropdown_custom_field
-      get_a_nested_custom_field
-      param_hash = valid_observer_array_hash
-      delegator = Admin::AutomationRules::AutomationDelegator.new(param_hash, param_hash, 4)
-      assert delegator.valid?
-    ensure
-      Account.unstub(:current)
-    end
-
-    def test_invalid_nested_array
-      Account.stubs(:current).returns(Account.first)
-      get_all_custom_fields
-      create_products(Account.current)
-      create_tags_data(Account.current)
-      get_a_dropdown_custom_field
-      get_a_nested_custom_field
-      param_hash = invalid_observer_array_hash
-      delegator = Admin::AutomationRules::AutomationDelegator.new(param_hash, param_hash, 4)
-      assert delegator.invalid?
-    ensure
-      Account.unstub(:current)
-    end
-
-    def test_valid_nested_field_keys
-      Account.stubs(:current).returns(Account.first)
-      get_all_custom_fields
-      create_products(Account.current)
-      create_tags_data(Account.current)
-      get_a_dropdown_custom_field
-      get_a_nested_custom_field
-      param_hash = valid_observer_array_hash
-      delegator = Admin::AutomationRules::AutomationDelegator.new(param_hash, param_hash, 4)
-      assert delegator.valid?
-    ensure
-      Account.unstub(:current)
+    # test valid custom contact fields
+    CUSTOM_FIELDS_TYPES.each do |field_type|
+      define_method "test_valid_custom_field_#{field_type}_contact_params" do
+        Account.stubs(:current).returns(Account.first)
+        @account = Account.current
+        cf_params = cf_params(type: field_type, field_type: "custom_#{field_type}",
+                              label: "test_custom_#{field_type}", editable_in_signup: 'true')
+        create_custom_contact_field(cf_params)
+        params = construct_customer_params(field_type, 'contact')
+        automation_delegator_class.new(params, params, 1)
+        Account.unstub(:current)
+      end
     end
   end
 end

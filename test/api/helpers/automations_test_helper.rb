@@ -1,39 +1,54 @@
+require_relative '../../lib/helpers/va_rules_test_helper.rb'
+require_relative '../../lib/helpers/contact_segments_test_helper.rb'
+
 module AutomationTestHelper
+  include VaRulesTesthelper
   include Admin::Automation::AutomationSummary
   include Va::Constants
   include Admin::AutomationConstants
+  include ContactSegmentsTestHelper
 
-  def rules_pattern(rules)
+  def rules_pattern(rules, affected_tickets_counts = {})
     rules.map do |rule|
-      automation_rule_pattern(rule, true)
+      automation_rule_pattern(rule, true, affected_tickets_counts[rule.id])
     end
   end
 
-  def automation_rule_pattern(rule, list_page = false)
-    automations_hash = {
-        name: rule.name,
-        position: fetch_visual_position(rule),
-        active: rule.active,
-        actions: actions_pattern(rule.action_data),
-        outdated: rule.outdated,
-        last_updated_by: rule.last_updated_by,
-        id: rule.id,
-        created_at: rule.created_at.try(:utc),
-        summary: generate_summary(rule, true),
-        updated_at: rule.updated_at.try(:utc)
-      }
-      automations_hash.merge!(meta: meta_hash(rule)) unless list_page
-      automations_hash.merge!({performer: perfromer_pattern(rule.rule_performer)}) if rule.observer_rule?
-      automations_hash.merge!({events: events_pattern(rule.rule_events)}) if rule.observer_rule?
-      automations_hash.merge!({conditions: conditions_pattern(rule.rule_conditions, rule.rule_operator)}) if
-          rule.observer_rule? || rule.dispatchr_rule? || rule.supervisor_rule?
-      automations_hash
+  def automation_rule_pattern(rule, list_page = false, affected_tickets_count = nil)
+    automations_hash = default_rule_pattern(rule, list_page, affected_tickets_count)
+    automations_hash[:actions] = actions_pattern(rule.action_data)
+    automations_hash[:performer] = perfromer_pattern(rule.rule_performer) if rule.observer_rule?
+    automations_hash[:events] = events_pattern(rule.rule_events) if rule.observer_rule?
+    automations_hash[:conditions] = conditions_pattern(rule.rule_conditions, rule.rule_operator) if
+        rule.observer_rule? || rule.dispatchr_rule? || rule.supervisor_rule?
+    if nested?(rule.rule_conditions)
+      automations_hash[:operator] = case(rule.rule_operator.try(:to_sym))
+                                    when :any
+                                      'condition_set_1 or condition_set_2'
+                                    when :all
+                                      "condition_set_1 and condition_set_2"
+                                    else
+                                      rule.rule_operator
+                                    end
+    end
+    automations_hash
   end
 
-  def fetch_visual_position(rule)
-    rule_association = VAConfig::ASSOCIATION_MAPPING[VAConfig::RULES_BY_ID[rule.rule_type]]
-    all_rules_positions = rule.account.safe_send("all_#{rule_association}".to_sym).pluck(:position)
-    all_rules_positions.index(rule.position) + 1
+  def default_rule_pattern(rule, list_page = false, affected_tickets_count = nil)
+    automations_hash = {
+      name: rule.name,
+      position: rule.position,
+      active: rule.active,
+      outdated: rule.outdated,
+      last_updated_by: rule.last_updated_by,
+      id: rule.id,
+      created_at: rule.created_at.try(:utc),
+      summary: generate_summary(rule, true),
+      updated_at: rule.updated_at.try(:utc)
+    }
+    automations_hash[:meta] = meta_hash(rule) unless list_page
+    automations_hash[:affected_tickets_count] = affected_tickets_count if affected_tickets_count.present?
+    automations_hash
   end
 
   def meta_hash(record)
@@ -73,45 +88,36 @@ module AutomationTestHelper
     nested_condition = (condition_data.first &&
         (condition_data.first.key?(:all) || condition_data.first.key?(:any)))
     if nested_condition
-      conditions = {}
+      conditions = []
       condition_data.each_with_index do |condition_set, index|
-        conditions[:operator] = READABLE_OPERATOR[operator.to_s] if index == 1
-        conditions["condition_set_#{index + 1}".to_sym] = condition_set_hash(condition_set.values.first,
-                                                                             condition_set.keys.first)
+        conditions << {
+          name: "condition_set_#{index + 1}",
+          match_type: condition_set.keys.first,
+          properties: condition_set_hash(condition_set.values.first)
+        }
       end
       conditions
     else
-      { 'condition_set_1'.to_sym => condition_set_hash(condition_data, operator) }
+      [{
+        name: 'condition_set_1',
+        match_type: operator,
+        properties: condition_set_hash(condition_data)
+      }]
     end
   end
 
-  def condition_set_hash(condition_set, match_type)
-    return {} if condition_set.nil?
-    condition_hash = { match_type: match_type }
-    condition_set.each do |condition|
+  def condition_set_hash(condition_set)
+    condition_set.map do |condition|
       condition_data = {}
-      evaluate_on_type = condition[:evaluate_on] || 'ticket'
-      condition_hash[evaluate_on_type.to_sym] ||= []
+      condition_data[:resource_type] = condition[:evaluate_on] || condition[:resource_type] || :ticket
       condition_data[:field_name] = condition[:name] unless condition[:name].nil?
       condition_data[:operator] = condition[:operator] unless condition[:operator].nil?
       condition_data[:custom_status_id] = condition[:custom_status_id] unless condition[:custom_status_id].nil?
       condition_data[:value] = condition[:value] unless condition[:value].nil?
+      condition_data[:value] = transform_value(condition_data[:value], :array) if !condition_data[:value].is_a?(Array) && ARRAY_VALUE_OPERATORS.include?(condition[:operator].to_sym)
       condition_data[:case_sensitive] = condition[:case_sensitive] unless condition[:case_sensitive].nil?
-      condition_data[:case_sensitive] = false if DEFAULT_TEXT_FIELDS.include?(condition[:name].to_sym) &&
-                                                !condition.key?(:case_sensitive) && condition[:last_updated_by].present?
-      condition_data = support_for_old_operators(condition_data)
-      condition_hash[evaluate_on_type.to_sym] << condition_data
+      condition_data
     end
-    condition_hash
-  end
-
-  def support_for_old_operators(data)
-    data.symbolize_keys!
-    if data[:operator].is_a?(String) && NEW_ARRAY_VALUE_OPERATOR_MAPPING.key?(data[:operator].to_sym)
-      data[:value] = *data[:value]
-      data[:operator] = NEW_ARRAY_VALUE_OPERATOR_MAPPING[data[:operator].to_sym]
-    end
-    data
   end
 
   def actions_pattern(action_data)
@@ -128,45 +134,10 @@ module AutomationTestHelper
     end
   end
 
-  def create_dispatcher_rule
-    VaRule.create(
-      rule_type: VAConfig::BUSINESS_RULE,
-      name: Faker::Lorem.characters(10),
-      match_type: 'any',
-      filter_data: [{ evaluate_on: 'ticket', name: 'subject_or_description',
-                      operator: 'contains_any_of', value: ['return'] }],
-      action_data: [{ name: 'group_id', value: 2 }],
-      active: true,
-      description: Faker::Lorem.characters(20),
-      condition_data: { all: [
-        { any: [{ evaluate_on: 'ticket', name: 'subject_or_description',
-                  operator: 'contains_any_of', value: ['return'] }] }
-      ] }
-    )
-  end
-
-  def sample_json_for_observer
-    observer_payload = JSON.parse('{"active":true,"performer":{"type":1},
-    "events":[{"field_name":"priority","from":1,"to":2},{"field_name":"ticket_type","from":"Question","to":"Incident"},
-    {"field_name":"status","from":3,"to":4}],"conditions":{"condition_set_1":{"match_type":"all","ticket":[{"field_name":"group_id","operator":"in","value":[1]}]}},
-      "actions":[{"field_name":"group_id","value":1}]}')
-    observer_payload['name'] = Faker::Lorem.characters(20)
-    observer_payload
-  end
-
   def sample_supervisor_json_without_conditions
     supervisor_payload = JSON.parse('{"active": true,"actions":[{"field_name":"priority","value":4}]}')
     supervisor_payload['name'] = Faker::Lorem.characters(20)
     supervisor_payload
-  end
-
-  def sample_json_for_dispatcher
-    dispatcher_payload = JSON.parse('{"name":"test 1234423","active":true,
-      "conditions":{"condition_set_1":{"match_type":"all","ticket":[{"field_name":"ticket_type","operator":"in","value":["Refund"]}]},
-      "operator":"or","condition_set_2":{"match_type":"all","ticket":[{"field_name":"ticket_type","operator":"in","value":["Question"]},
-        {"field_name":"subject_or_description","operator":"contains","value":["billing"]}]}},"actions":[{"field_name":"status","value":2}] }')
-    dispatcher_payload['name'] = Faker::Lorem.characters(20)
-    dispatcher_payload
   end
 
   def set_default_fields(sample_response)
@@ -176,28 +147,102 @@ module AutomationTestHelper
   end
 
   def observer_rule_json_with_thank_you_note
-    observer_payload = JSON.parse('{ "active": true, "performer": { "type": 2 }, "events": [ { "field_name": "reply_sent" }, { "field_name": "note_type", "value": "public" } ], "conditions": { "condition_set_1": { "match_type": "all", "ticket": [ { "field_name": "freddy_suggestion", "operator": "is_not", "value": "thank_you_note" }, { "field_name": "status", "operator": "in", "value": [ 3, 4 ] } ] }, "operator": "and", "condition_set_2": { "match_type": "any", "ticket": [ { "field_name": "status", "operator": "not_in", "value": [ 2, 4, 5 ] } ] } }, "actions": [ { "field_name": "status", "value": 2 } ] }')
+    observer_payload = JSON.parse('{ "active": true, "performer": { "type": 2 }, "events": [{ "field_name": "reply_sent" }, { "field_name": "note_type", "value": "public" }], "operator": "condition_set_1 and condition_set_2", "conditions": [{ "name": "condition_set_1", "match_type": "all", "properties": [{ "resource_type": "ticket", "field_name": "freddy_suggestion", "operator": "is_not", "value": "thank_you_note" }, { "resource_type": "ticket", "field_name": "status", "operator": "in", "value": [3, 4] }] }, { "name": "condition_set_2", "match_type": "any", "properties": [{ "resource_type": "ticket", "field_name": "status", "operator": "not_in", "value": [2, 4, 5] }] } ], "actions": [{ "field_name": "status", "value": 2 }] }')
     observer_payload['name'] = Faker::Lorem.characters(20)
     observer_payload
   end
 
-  def get_va_rules_position
-    Account.current.va_rules.where('id is not null').inject({}) do |hash, x|
-      next if x.position.nil?
+  def valid_request_dispatcher_with_ticket_conditions(condition_field_name, action_field_name = :priority, resource_type = :ticket)
+    {
+      name: Faker::Lorem.characters(10),
+      active: true,
+      conditions: [{  name: 'condition_set_1',
+                      match_type: 'all',
+                      properties: generate_request_condition_data(condition_field_name, resource_type) }],
+      actions: generate_request_actions(action_field_name)
+    }
+  end
 
-      hash.merge!(x.id.to_s => x.position.to_s)
+  def valid_request_observer(event_field_name, condition_field_name = :subject, action_field_name = :priority)
+    {
+      name: Faker::Lorem.characters(10),
+      active: true,
+      performer: { type: 1 },
+      conditions: [{  name: 'condition_set_1',
+                      match_type: 'all',
+                      properties: generate_request_condition_data(condition_field_name) }],
+      actions: generate_request_actions(action_field_name),
+      events: generate_events(event_field_name)
+    }
+  end
+
+  def generate_request_condition_data(field_name, resource_type = :ticket)
+    field_type = get_condition_field_type(field_name, resource_type)
+    TYPE_TO_OPERATOR_MAPPING[field_type].map do |operator|
+      value = generate_mock_value(field_type, field_name)
+      value = transform_value(value, :array) if ARRAY_VALUE_OPERATORS.include?(operator)
+      condition = { field_name: field_name.to_s, operator: operator.to_s }
+      condition[:value] = value if value.present?
+      condition[:resource_type] = resource_type.to_s
+      condition[:case_sensitive] = false if CASE_SENSITIVE_TYPES.include?(field_type)
+      condition
     end
   end
 
-  def create_rules(num, rule_type)
-    created_ids = []
-    num.times do
-      va_rule_request = sample_json_for_dispatcher # depending on rule_type fetch json
-      next if va_rule_request.nil?
+  def generate_request_actions(field_name)
+    field_type = ACTIONS_FIELD_TO_TYPE_MAPPING[field_name]
+    value = generate_mock_value(field_type, field_name)
+    action = { field_name: transform_name(field_name).to_s }
+    value = transform_value(value, :array) if ARRAY_VALUE_ACTIONS.include?(field_name.try(:to_sym))
+    action[:value] = value if value.present?
+    [action]
+  end
 
-      post :create, construct_params({ rule_type: rule_type }.merge(va_rule_request), va_rule_request)
-      created_ids << JSON.parse(response.body)['id']
+  def generate_events(field_name)
+    field_type = EVENTS_FIELD_TO_TYPE_MAPPING[field_name]
+    value = generate_mock_value(field_type, field_name)
+    event = { field_name: transform_name(field_name).to_s }
+
+    if value.present?
+      if field_name == :note_type
+        event[:value] = value
+      else
+        event[:from] = value
+        event[:to] = value
+      end
     end
-    created_ids
+    [event]
+  end
+
+  def ceate_contact_segments
+    input_params = [{ name: 'tag_names', value: ['test1'], operator: 'is_in' }]
+    create_segment(input_params)
+  end
+
+  def dispatcher_create_test(field_name, action_field_name = :priority, resource_type = :ticket)
+    va_rule_request = valid_request_dispatcher_with_ticket_conditions(field_name, action_field_name, resource_type)
+    post :create, construct_params({ rule_type: VAConfig::RULES[:dispatcher] }.merge(va_rule_request), va_rule_request)
+    assert_response 201
+    parsed_response = JSON.parse(response.body)
+    @va_rule_id = parsed_response['id'].to_i
+    rule = Account.current.account_va_rules.find(@va_rule_id)
+    @status = nil
+    match_custom_json(parsed_response, va_rule_request.merge!(default_rule_pattern(rule, false)))
+  end
+
+  def observer_create_test(event_field_name, condition_field_name = :subject, action_field_name = :priority)
+    Account.current.account_va_rules.destroy_all
+    va_rule_request = valid_request_observer(event_field_name, condition_field_name, action_field_name)
+    post :create, construct_params({ rule_type: VAConfig::RULES[:observer] }.merge(va_rule_request), va_rule_request)
+
+    assert_response 201
+    parsed_response = JSON.parse(response.body)
+    @va_rule_id = parsed_response['id'].to_i
+    rule = Account.current.account_va_rules.find(@va_rule_id)
+    match_custom_json(parsed_response, va_rule_request.merge!(default_rule_pattern(rule, false)))
+  end
+
+  def nested?(conditions)
+    conditions.first && (conditions.first.key?(:all) || conditions.first.key?(:any))
   end
 end

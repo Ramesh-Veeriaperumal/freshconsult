@@ -242,6 +242,10 @@ class Helpdesk::TicketField < ActiveRecord::Base
     field_type == 'custom_dropdown'
   end
 
+  def custom_checkbox_field?
+    field_type == 'custom_checkbox'
+  end
+
   def parent_field
     if level == 3
       parent.child_levels.find { |sub_level_field| sub_level_field.level == 2 }
