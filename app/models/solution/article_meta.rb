@@ -98,6 +98,14 @@ class Solution::ArticleMeta < ActiveRecord::Base
       	}
 	}
 
+  scope :for_help_widget, lambda { |help_widget|
+    {
+      conditions: [' solution_folder_meta.solution_category_meta_id in (?) AND solution_folder_meta.visibility = ? ',
+                   help_widget.help_widget_solution_categories.pluck(:solution_category_meta_id), Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:anyone]],
+      joins: :solution_folder_meta
+    }
+  }
+
 	delegate :visible_in?, :to => :solution_folder_meta
 	delegate :visible?, :to => :solution_folder_meta
 

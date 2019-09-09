@@ -33,7 +33,12 @@ module Widget
       private
 
         def scoper
-          current_account.solution_article_meta.for_portal(@current_portal).published
+          if current_account.help_widget_solution_categories_enabled?
+            current_account.solution_article_meta.for_help_widget(@help_widget).published
+          else
+            fetch_portal
+            current_account.solution_article_meta.for_portal(@current_portal).published
+          end
         end
 
         def load_object(items = scoper)
@@ -52,7 +57,6 @@ module Widget
           validate_widget
           return if @error.present?
 
-          fetch_portal
           return render_request_error(:solution_article_not_enabled, 400, id: @widget_id) unless solution_article_enabled
 
           set_current_language
