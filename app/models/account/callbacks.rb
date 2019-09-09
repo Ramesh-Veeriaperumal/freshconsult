@@ -48,6 +48,7 @@ class Account < ActiveRecord::Base
   after_commit :remove_email_restrictions, on: :update , :if => :account_verification_changed?
 
   after_commit :update_crm_and_map, :send_domain_change_email, on: :update, :if => :account_domain_changed?
+  after_commit :change_fluffy_account_domain, on: :update, if: [:account_domain_changed?, :fluffy_integration_enabled?]
   after_commit :update_bot, on: :update, if: :update_bot?
 
   after_commit :update_account_details_in_freshid, on: :update, :if => :update_freshid?
@@ -208,6 +209,16 @@ class Account < ActiveRecord::Base
     else
       account_additional_settings.decrement_dashboard_limit
     end
+  end
+
+  def change_fluffy_account_domain
+    fluffy_account = current_fluffy_limit(@all_changes[:full_domain].first)
+    if fluffy_account.present?
+      limit = fluffy_account.limit
+      granularity = (fluffy_account.granularity == "HOUR" || fluffy_enabled?) ? Fluffy::ApiWrapper::HOUR_GRANULARITY : Fluffy::ApiWrapper::MINUTE_GRANULARITY
+      destroy_fluffy_account(@all_changes[:full_domain].first)
+    end
+    create_fluffy_account(limit, granularity)
   end
 
   protected
