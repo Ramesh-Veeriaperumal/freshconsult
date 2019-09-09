@@ -76,11 +76,11 @@
                       :plan_name_id => plan_name_id }%>
                   </div>
                   <% subscribe_direct_flag =  (current_account.full_time_support_agents.count) <= plan.free_agents %>
-                       <% request_change = (@subscription.state == 'active' && current_account.launched?(:downgrade_policy)) ? 'request_change' : 'activate_free_plan'%>
+                       <% request_change = (@subscription.state == 'active' && @subscription.cost_per_agent != 0 && current_account.launched?(:downgrade_policy)) ? 'request_change' : 'activate_free_plan'%>
 
                   <% if is_new_sprout %>
 
-                    <% if current_account.launched?(:downgrade_policy) && @subscription.subscription_request.present? %>
+                    <% if current_account.launched?(:downgrade_policy) && @subscription.subscription_request.present? && @subscription.cost_per_agent != 0  %>
                      <button  data-id="#confirm-message-<%= plan.id %>" class="btn btn-flat sprout-second-downgrade-modal" title="" data-submit-label="<%= t('request_change') %>" data-submit-class="btn btn-primary sprout-downgrade"> <%= t('choose_plan') %></button>
 
                       <div id="confirm-message-<%= plan.id %>" class="modal hide sprout-form-submit"  aria-hidden="true" role="dialog">

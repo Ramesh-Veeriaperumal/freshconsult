@@ -1,10 +1,12 @@
 require_relative '../../test_helper'
 require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
 require Rails.root.join('test', 'api', 'helpers', 'agents_test_helper.rb')
+require Rails.root.join('test', 'models', 'helpers', 'subscription_test_helper.rb')
 
 class Admin::SubscriptionsControllerTest < ActionController::TestCase
   include AccountTestHelper
   include AgentsTestHelper
+  include SubscriptionTestHelper
   
   CHARGEBEE_LIST_PLANS_API_RESPONSE = '{"list":[{"plan":{"id":"sprout_monthly",
     "name":"Sprout Monthly", "invoice_name":"Sprout Monthly 2016","price":1500,
@@ -70,18 +72,12 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
   end
 
   def test_update_subscription
-    create_new_account("test123", "test123@freshdesk.com")
-    @account.launch(:enable_customer_journey)
+    create_new_account('test1', 'test1@freshdesk.com')
     update_currency
-    agent = @account.users.where(helpdesk_agent: true).first
-    User.stubs(:current).returns(agent)
-    Account.any_instance.stubs(:reseller_paid_account?).returns(false)
-    @controller.stubs(:api_current_user).returns(User.current)
-    @controller.api_current_user.stubs(:privilege?).returns(true)
-    result = ChargeBee::Result.new(stub_update_params)
-    ChargeBee::Subscription.stubs(:update).returns(result)
-    @account.subscription.state = 'active'
-    @account.subscription.card_number = '12345432'
+    @account.launch(:enable_customer_journey)
+    stub_chargebee_methods
+    stub_current_user
+    @account.rollback :downgrade_policy
     # Testing upgrade from sprout/blossom to garden enables customer_journey feature
     assert !@account.features_list.include?(:customer_journey)
     put :update, construct_params({ version: 'private', plan_id: SubscriptionPlan.cached_current_plans.map(&:id).third, agent_seats: 1 }, {})
@@ -102,12 +98,11 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     ChargeBee::Subscription.unstub(:update)
     User.unstub(:current)
     @controller.api_current_user.unstub(:privilege?)
-    @account.destroy
   end
 
   def test_update_subscription_with_trial_state
     account = Account.current
-    result = ChargeBee::Result.new(stub_update_params)
+    result = ChargeBee::Result.new(stub_update_params(account.id))
     ChargeBee::Subscription.stubs(:update).returns(result)
     account.subscription.state = 'trial'
     put :update, construct_params({ version: 'private', plan_id: 8 }, {})
@@ -118,7 +113,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
 
   def test_update_subscription_with_suspended_state
     account = Account.current
-    result = ChargeBee::Result.new(stub_update_params)
+    result = ChargeBee::Result.new(stub_update_params(account.id))
     ChargeBee::Subscription.stubs(:update).returns(result)
     account.subscription.state = 'suspended'
     put :update, construct_params({ version: 'private', plan_id: 8 }, {})
@@ -129,7 +124,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
 
   def test_update_subscription_with_free_state
     account = Account.current
-    result = ChargeBee::Result.new(stub_update_params)
+    result = ChargeBee::Result.new(stub_update_params(account.id))
     ChargeBee::Subscription.stubs(:update).returns(result)
     account.subscription.state = 'free'
     put :update, construct_params({ version: 'private', plan_id: 8 }, {})
@@ -140,7 +135,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
 
   def test_update_susbcription_with_invalid_plan_id
     account = Account.current
-    result = ChargeBee::Result.new(stub_update_params)
+    result = ChargeBee::Result.new(stub_update_params(account.id))
     ChargeBee::Subscription.stubs(:update).returns(result)
     account.subscription.state = 'active'
     put :update, construct_params({ version: 'private', plan_id: '8' }, {})
@@ -151,7 +146,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
 
   def test_update_subscription_with_invalid_renewal_period
     account = Account.current
-    result = ChargeBee::Result.new(stub_update_params)
+    result = ChargeBee::Result.new(stub_update_params(account.id))
     ChargeBee::Subscription.stubs(:update).returns(result)
     account.subscription.state = 'active'
     put :update, construct_params({ version: 'private', renewal_period: 20 }, {})
@@ -162,7 +157,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
 
   def test_update_subscription_with_no_card_number
     account = Account.current
-    result = ChargeBee::Result.new(stub_update_params)
+    result = ChargeBee::Result.new(stub_update_params(account.id))
     ChargeBee::Subscription.stubs(:update).returns(result)
     account.subscription.card_number = nil
     put :update, construct_params({ version: 'private', plan_id: 8 }, {})
@@ -173,7 +168,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
 
   def test_update_without_valid_plan_id
     account = Account.current
-    result = ChargeBee::Result.new(stub_update_params)
+    result = ChargeBee::Result.new(stub_update_params(account.id))
     ChargeBee::Subscription.stubs(:update).returns(result)
     account.subscription.state = 'active'
     account.subscription.card_number = '12345432'
@@ -185,7 +180,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
 
   def test_update_with_invalid_agent_seats
     account = Account.current
-    result = ChargeBee::Result.new(stub_update_params)
+    result = ChargeBee::Result.new(stub_update_params(account.id))
     ChargeBee::Subscription.stubs(:update).returns(result)
     account.subscription.state = 'active'
     account.subscription.card_number = '12345432'
@@ -237,6 +232,35 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     unstub_chargebee_requests
   end
 
+  def test_update_subscription_downgrade_to_sprout
+    @account = Account.find_by_full_domain('test1.freshpo.com').make_current
+    plan_ids = SubscriptionPlan.current.map(&:id)
+    stub_chargebee_methods
+    stub_current_user
+    params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
+    params = { plan_id: params_plan_id }
+    @account.subscription.card_number = '12345432'
+    @account.subscription.update_attributes(agent_limit: '1')
+    @account.subscription.update_attributes(subscription_plan_id: @account.subscription.subscription_plan_id)
+    put :update, construct_params({ version: 'private' }.merge!(params.merge!(params_hash.except(:plan_id))), {})
+    @account.reload
+    assert_equal @account.subscription.subscription_request.nil?, true
+    assert_equal @account.subscription.subscription_plan_id, params_plan_id
+    assert_response 200
+
+    sprout_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount == 0.0 }.compact.first
+    params = { plan_id: sprout_plan_id }
+    @account.rollback :downgrade_policy
+    put :update, construct_params({ version: 'private' }.merge!(params.merge!(params_hash.except(:plan_id, :renewal_period))), {})
+    assert_equal @account.subscription.subscription_request.nil?, true
+    @account.reload
+    assert_equal @account.subscription.subscription_plan_id, sprout_plan_id
+    assert_response 200
+  ensure
+    unstub_chargebee_methods
+    @account.destroy
+  end
+
   private
 
     def stub_chargebee_requests
@@ -279,6 +303,39 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
       Billing::Subscription.any_instance.unstub(:calculate_update_subscription_estimate)
       ChargeBee::Subscription.unstub(:retrieve)
       RestClient::Request.unstub(:execute)
+    end
+
+    def params_hash
+      {
+        plan_id: SubscriptionPlan.current.map(&:id).third,
+        renewal_period: SubscriptionPlan.current.third.renewal_period,
+        agent_seats: 1
+      }
+    end
+
+    def stub_current_user
+      @account.subscription.card_number = '12345432'
+      agent = @account.users.where(helpdesk_agent: true).first
+      User.stubs(:current).returns(agent)
+      @controller.stubs(:api_current_user).returns(User.current)
+      @controller.api_current_user.stubs(:privilege?).returns(true)
+    end
+
+    def stub_chargebee_methods
+      @account.launch :downgrade_policy
+      Account.any_instance.stubs(:reseller_paid_account?).returns(true)
+      Subscription.any_instance.stubs(:active?).returns(true)
+      result = ChargeBee::Result.new(stub_update_params(@account.id))
+      ChargeBee::Subscription.stubs(:update).returns(result)
+    end
+
+    def unstub_chargebee_methods
+      User.unstub(:current)
+      Account.any_instance.unstub(:reseller_paid_account?)
+      @controller.api_current_user.unstub(:privilege?)
+      Subscription.any_instance.unstub(:active?)
+      ChargeBee::Subscription.unstub(:update)
+      @account.rollback :downgrade_policy
     end
 
     def mock_plan(id, plan_name)
@@ -327,44 +384,6 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     def unstub_plans
       SubscriptionPlan.unstub(:current)
       RestClient::Request.unstub(:execute)
-    end
-
-    def stub_update_params
-      {
-        'subscription':
-          {
-            'id': '1', 'plan_id': 'blossom_jan_19_annual',
-            'plan_quantity': 1, 'status': 'active', 'trial_start': 1556863974,
-            'trial_end': 1556864678, 'current_term_start': 1557818479,
-            'current_term_end': 1589440879, 'created_at': 1368442623,
-            'started_at': 1368442623, 'activated_at': 1556891503,
-            'has_scheduled_changes': false, 'object': 'subscription',
-            'coupon': '1FREEAGENT', 'coupons': [{ 'coupon_id': '1FREEAGENT',
-            'applied_count': 38, 'object': 'coupon' }], 'due_invoices_count': 0
-          },
-          'customer': { 'id': '1', 'first_name': 'Ethan hunt',
-                        'last_name': 'Ethan hunt', 'email': 'meaghan.bergnaum@kaulke.com',
-                        'company': 'freshdesk', 'auto_collection': 'on',
-                        'allow_direct_debit': false, 'created_at': 1368442623,
-                        'taxability': 'taxable', 'object': 'customer',
-                        'billing_address': { 'first_name': 'asdasd', 'last_name': 'asdasasd',
-                                             'line1': 'A14, Sree Prasad Apt, Jeswant Nagar, Mugappair West',
-                                             'city': 'Chennai', 'state_code': 'TN', 'state': 'Tamil Nadu',
-                                             'country': 'IN', 'zip': '600037', 'object': 'billing_address' },
-                        'card_status': 'valid',
-                        'payment_method': { 'object': 'payment_method', 'type': 'card',
-                                            'reference_i': 'tok_HngTopzRQR3BKK1E17', 'gateway': 'chargebee',
-                                            'status': 'valid' },
-                        'account_credits': 0, 'refundable_credits': 4553100, 'excess_payments': 0,
-                        'cf_account_domain': 'aut.freshpo.com', 'meta_data': { 'customer_key': 'fdesk.1' } },
-          'card': { 'status': 'valid', 'gateway': 'chargebee', 'first_name': 'sdasd',
-                    'last_name': 'asdasd', 'iin': '411111', 'last4': '1111', 'card_type': 'visa',
-                    'expiry_month': 12, 'expiry_year': 2020, 'billing_addr1': 'A14, Sree Prasad Apt',
-                    'billing_addr2': 'Jeswant Nagar, Mugappair West', 'billing_city': 'Chennai',
-                    'billing_state_code': 'TN', 'billing_state': 'Tamil Nadu', 'billing_country': 'IN',
-                    'billing_zip': '600037', 'ip_address': '182.73.13.166', 'object': 'card',
-                    'masked_number': '************1111', 'customer_id': '1' }
-      }
     end
 
     def plans_response(currency='USD')

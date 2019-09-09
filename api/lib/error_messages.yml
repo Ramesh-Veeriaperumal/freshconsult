@@ -254,7 +254,6 @@ api_error_messages:
   should_not_be_support_group: "Field technicians cannot join Support groups"
   invalid_date_time_range: "Invalid date time range, end time should be greater or equal to the start time."
   field_agent_scope: "Field technician should have restricted or group scope"
-  field_agent_roles: "Field technician should have agent role"
   field_agent_state: "Field technician cannot be an occasional agent"
 
   source_update_not_permitted: "Source of tickets of sources %{sources} can not be updated."

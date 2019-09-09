@@ -17,6 +17,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
 
       def perform_fsm_operations
         Rails.logger.info "Started adding FSM artifacts for Account - #{Account.current.id}"
+        create_field_tech_role if Account.current.field_tech_role_enabled?
         update_field_agent_limit_for_active_account
         create_service_task_field_type
         fsm_fields_to_be_created = fetch_fsm_fields_to_be_created
@@ -40,6 +41,18 @@ module Admin::AdvancedTicketing::FieldServiceManagement
           subscription.field_agent_limit=0
           subscription.save
         end
+      end
+
+      def create_field_tech_role
+        field_tech_role = Helpdesk::Roles::FIELD_TECHNICIAN_ROLE
+        return if Account.current.roles.map(&:name).include?(field_tech_role[:name])
+
+        role_params = { name: field_tech_role[:name],
+                        description: field_tech_role[:description],
+                        default_role: true,
+                        privilege_list: field_tech_role[:privileges] }
+        role = Account.current.roles.build(role_params)
+        role.save!
       end
 
       def create_field_service_manager_role
@@ -272,6 +285,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       def cleanup_fsm
         Rails.logger.info "Started disabling FSM feature for Account - #{Account.current.id}"
         remove_fsm_addon_and_reset_agent_limit
+        destroy_field_tech_role if Account.current.field_tech_role_enabled?
         destroy_field_agent
         destroy_field_group
         Rails.logger.info "Completed disabling FSM feature for Account - #{Account.current.id}"
@@ -283,6 +297,11 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         fsm_dashboard = Account.current.dashboards.find_by_name(I18n.t("fsm_dashboard.name"))
         fsm_dashboard.try(:destroy)
         destroy_fsm_ticket_filters
+      end
+
+      def destroy_field_tech_role
+        role = Account.current.roles.find_by_name(Helpdesk::Roles::FIELD_TECHNICIAN_ROLE[:name])
+        role.try(:destroy)
       end
 
       def destroy_fsm_ticket_filters

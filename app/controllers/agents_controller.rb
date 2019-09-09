@@ -178,8 +178,8 @@ class AgentsController < ApplicationController
   end
 
   def check_field_agent_roles
-    if params[:agent][:agent_type] == Account.current.agent_types.find_by_name(Agent::FIELD_AGENT).agent_type_id 
-      params[:user][:role_ids] = [Account.current.roles.find_by_name("Agent").id]
+    if params[:agent][:agent_type] == Account.current.agent_types.find_by_name(Agent::FIELD_AGENT).agent_type_id
+      params[:user][:role_ids] = Account.current.field_tech_role_enabled? ? [Account.current.roles.find_by_name('Field technician').id] : [Account.current.roles.find_by_name('Agent').id]
     end
   end
   

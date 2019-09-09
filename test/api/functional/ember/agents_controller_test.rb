@@ -322,7 +322,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     params = { ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets], role_ids: [Role.find_by_name('Administrator').id] }
     put :update, construct_params({ id: agent.user.id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('ticket_permission', :field_agent_scope, :code => :invalid_value), bad_request_error_pattern('user.role_ids', :field_agent_roles, :code => :invalid_value)])
+    match_json([bad_request_error_pattern('ticket_permission', :field_agent_scope, :code => :invalid_value), bad_request_error_pattern('user.role_ids', I18n.t('activerecord.errors.messages.field_agent_roles', role: 'agent'), :code => :invalid_value)])
   ensure
     agent.destroy if agent.present?
     cleanup_fsm
@@ -342,7 +342,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     params = {role_ids: [Role.find_by_name('Administrator').id,Role.find_by_name('Agent').id]}
     put :update, construct_params({ id: agent.id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('user.role_ids', :field_agent_roles, :code => :invalid_value)])
+    match_json([bad_request_error_pattern('user.role_ids', I18n.t('activerecord.errors.messages.field_agent_roles', role: 'agent'), :code => :invalid_value)])
   ensure
     agent.destroy if agent.present?
     field_agent_type.destroy if field_agent_type.present?

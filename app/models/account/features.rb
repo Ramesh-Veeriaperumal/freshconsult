@@ -25,7 +25,7 @@ class Account < ActiveRecord::Base
     :bot_email_channel, :bot_email_central_publish, :description_by_default,
     :bot_chat_history, :new_es_api, :filter_factory, :ticket_fields_central_publish,
     :skip_invoice_due_warning, :automation_revamp,
-    :scheduled_export_fix, :compact_lang_detection,
+    :scheduled_export_fix, :compact_lang_detection, :field_tech_role,
     :facebook_page_scope_migration, :agent_group_central_publish, :custom_fields_search,
     :update_billing_info, :allow_billing_info_update, :tag_central_publish,
     :native_apps, :archive_tickets_api, :bot_agent_response,
@@ -77,7 +77,7 @@ class Account < ActiveRecord::Base
     :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible, :autofaq, :proactive_spam_detection,
     :ticket_properties_suggester, :ticket_properties_suggester_eligible,
     :hide_first_response_due, :agent_articles_suggest, :email_articles_suggest, :customer_journey, :botflow,
-    :help_widget, :help_widget_appearance, :help_widget_predictive
+    :help_widget, :help_widget_appearance, :help_widget_predictive, :portal_article_filters
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 

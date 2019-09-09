@@ -48,4 +48,21 @@ class SubscriptionAddEventsTest < ActionView::TestCase
   ensure
     Subscriptions::SubscriptionAddEvents.unstub(:assign_event_attributes)
   end
+
+  def test_subscription_contraction_with_downgrade_policy_enabled
+    @account.launch(:downgrade_policy)
+    @subscription_events_count = @account.subscription_events.count
+    @subscription = @account.subscription
+    Subscription.any_instance.stubs(:active?).returns(true)
+    args = { subscription_hash: { account_id: 1, amount: 11772.0, state: 'active', subscription_plan_id: 15, agent_limit: 10, free_agents: 0, renewal_period: 12,
+               subscription_discount_id: nil, usd_equivalent: 11772.0, subscription_term_start: '2019-08-22', next_renewal_at: '2020-08-22 05:28:40' },
+             requested_subscription_hash: { account_id: 1, amount: 7848.0, state: 'active', subscription_plan_id: 15, agent_limit: 7,
+               free_agents: 0, renewal_period: 12, subscription_discount_id: nil, usd_equivalent: 7848.0, next_renewal_at: '2020-08-22 05:28:40' } }
+    SubscriptionEvent.stubs(:update_record?).returns(false)
+    Subscriptions::SubscriptionAddEvents.new.perform(args)
+    assert_equal @subscription_events_count + 1, @account.subscription_events.count
+  ensure
+    SubscriptionEvent.unstub(:update_record?)
+    @account.rollback(:downgrade_policy)
+  end
 end
