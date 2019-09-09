@@ -37,7 +37,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
 
          if subscription.field_agent_limit.nil?
           subscription.field_agent_limit=0
-          subscription.save
+          subscription.save!
         end
       end
 
@@ -60,7 +60,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
                         description: I18n.t('fsm_scheduling_dashboard.description'),
                         privilege_list: FIELD_SERVICE_MANAGER_ROLE_PRIVILEGES }
         role = Account.current.roles.build(role_params)
-        role.save
+        role.save!
       end
 
       def log_operation_failure(operation, exception)
@@ -113,7 +113,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         ticket_field.name = field_name
         ticket_field.flexifield_def_entry = ff_def_entry
 
-        raise "Couldn't save ticket field #{field_name}" unless ticket_field.save
+        ticket_field.save!
         ticket_field.insert_at(field_details[:position]) if field_details[:position].present?
       end
 
@@ -174,7 +174,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
           section_data.section_fields.build(section_field)
         end
 
-        section_data.save
+        section_data.save!
       end
       
       def add_data_to_group_type
