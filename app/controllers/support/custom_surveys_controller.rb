@@ -1,6 +1,8 @@
 class Support::CustomSurveysController < SupportController #for Portal Customization
 
-  skip_before_filter :check_privilege
+  skip_before_filter :check_privilege, except: [:preview]
+  before_filter :preview_feature_check, only: [:preview]
+  before_filter :load_survey, only: [:preview]
   before_filter :load_handle, :only => [:new_via_handle, :hit]
   before_filter :load_translation, only: [:new_via_handle]
   before_filter :backward_compatibility_check, :only => [:hit]
@@ -62,6 +64,16 @@ class Support::CustomSurveysController < SupportController #for Portal Customiza
     render json: { thanks_message: thanks_message || @survey_result.survey.feedback_response_text }
   end
 
+  def preview
+    respond_to do |format|
+      format.html do
+        @survey_preview = true
+        set_portal_page :csat_survey
+        render 'new'
+      end
+    end
+  end
+
   protected
     # To support survey handles which are sent with older ratings before migration
     def backward_compatibility_check
@@ -70,6 +82,21 @@ class Support::CustomSurveysController < SupportController #for Portal Customiza
       if !allowed_choices.include?(rating) and @survey_handle.survey.default?
         params[:rating] = CustomSurvey::Survey::CLASSIC_TO_CUSTOM_RATING[params[:rating]]
       end
+    end
+
+    def preview_feature_check
+      render_404 if !current_account.custom_survey_enabled? || !current_account.csat_translations_enabled?
+    end
+
+    def load_survey
+      @survey = scoper.undeleted.where(id: params[:id]).first
+      render_404 && return if !@survey
+      @survey_language = Language.current
+      @translated_survey = @survey.translation_record(Language.current) if current_account.language != @survey_language
+    end
+
+    def scoper
+      current_account.custom_surveys
     end
 
     def load_handle
