@@ -60,6 +60,7 @@ translations:
     , '*.ticket.broadcast_notes'
     , '*.ticket.properties_updated'
     , '*.dashed_none'
+    , '*.downgrade_policy.*'
     ]
   - file: 'public/javascripts/cdn/i18n/portal/%{locale}.js' 
     only: [
