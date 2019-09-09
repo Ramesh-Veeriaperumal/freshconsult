@@ -77,12 +77,8 @@ module Reports::ConstructReport
                 sum(case when (helpdesk_tickets.due_by >= helpdesk_ticket_states.resolved_at) then 1 else 0 end) as sla_tickets, 
                 avg(helpdesk_ticket_states.resolution_time_by_bhrs) as avgresolutiontime,
                 count(*) as resolved_tickets", "#{@val}_id"]),
-     :conditions => "#{date_condition}",
+     :conditions => ['helpdesk_ticket_states.resolved_at > ? and helpdesk_ticket_states.resolved_at < ?', start_date_db, end_date_db],
      :group => ActiveRecord::Base.send(:sanitize_sql_array, ["?", "#{@val}_id"]))
- end
-
- def date_condition
-  " helpdesk_ticket_states.resolved_at > '#{start_date_db}' and helpdesk_ticket_states.resolved_at < '#{end_date_db}' "
  end
 
  def start_date_db(zone = true)
