@@ -294,7 +294,7 @@ module FilterFactory::Tickets
       end
 
       def fsm_in_the_past_condition
-        fetch_date_range(nil, Time.zone.now.utc.iso8601)
+        fetch_date_range(nil, Time.zone.now.ago(1.second).utc.iso8601)
       end
 
       def any_time_condition
