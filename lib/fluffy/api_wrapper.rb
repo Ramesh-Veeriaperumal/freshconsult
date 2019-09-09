@@ -59,7 +59,8 @@ class Fluffy::ApiWrapper
         name: domain
       }
       log_response_with_time(:find_application, params) do
-        $fluffy_client.find_application(params)
+        response = $fluffy_client.find_application(params)
+        success?(response) ? response : nil
       end
     end
 
