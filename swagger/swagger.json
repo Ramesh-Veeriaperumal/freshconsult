@@ -24248,6 +24248,13 @@
         "name": {
           "type": "string"
         },
+        "solution_category_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "description": "List of selected solution category ids"
+        },
         "settings": {
           "type": "object",
           "properties": {
@@ -24395,6 +24402,13 @@
         "name": {
           "type": "string"
         },
+        "solution_category_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "description": "List of selected solution category ids"
+        },
         "settings": {
           "type": "object",
           "properties": {
@@ -24529,6 +24543,13 @@
         },
         "name": {
           "type": "string"
+        },
+        "solution_category_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "description": "List of selected solution category ids"
         },
         "settings": {
           "type": "object",
@@ -24681,6 +24702,13 @@
         },
         "name": {
           "type": "string"
+        },
+        "solution_category_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "description": "List of selected solution category ids"
         },
         "settings": {
           "type": "object",

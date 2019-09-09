@@ -4,6 +4,7 @@ class HelpWidgetDelegator < BaseDelegator
   attr_accessor :settings, :components, :predictive_support, :freshmarketer
 
   validate :validate_product, :check_multi_product_feature, if: -> { @product_id }
+  validate :validate_solution_category_ids, if: -> { @solution_category_ids.present? }
   validate :check_appearance, if: -> { @settings.present? && @settings[:appearance].present? }
   validate :check_predictive_support, if: -> { predictive_support_present? || @freshmarketer.present? }
   validate :validate_widget_flow, if: -> { @settings.present? && @settings[:widget_flow].present? }
@@ -18,6 +19,7 @@ class HelpWidgetDelegator < BaseDelegator
     @components = options[:settings][:components] if settings
     @predictive_support = options[:settings][:predictive_support] if settings
     @freshmarketer = options[:freshmarketer]
+    @solution_category_ids = options[:solution_category_ids]
     @error_options ||= {}
   end
 
@@ -47,6 +49,13 @@ class HelpWidgetDelegator < BaseDelegator
   def validate_freshmarketer
     validate_domain if freshmarketer[:type] == 'associate'
     errors[:predictive_support] << I18n.t('help_widget.freshmarketer_sign_up_error') if components && !components[:predictive_support]
+  end
+
+  def validate_solution_category_ids
+    return required_feature_error(:solution_category_ids, :help_widget_solution_categories) unless Account.current.help_widget_solution_categories_enabled?
+
+    meta_size = Account.current.solution_category_meta.customer_categories.where(id: @solution_category_ids).size
+    errors[:solution_category_ids] << I18n.t('help_widget.invalid_solution_category_ids') unless @solution_category_ids.size == meta_size
   end
 
   def check_appearance

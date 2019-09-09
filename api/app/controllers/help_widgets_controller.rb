@@ -24,12 +24,7 @@ class HelpWidgetsController < ApiApplicationController
 
   def update
     remove_predictive_cname_params unless preserve_predictive?
-    delegator_hash = {
-      product_id: cname_params[:product_id],
-      settings: cname_params[:settings],
-      freshmarketer: cname_params[:freshmarketer]
-    }
-    (return unless validate_delegator(@item, delegator_hash))
+    return unless validate_delegator(@item, delegator_hash)
 
     if predictive_support_toggled?
       unless freshmarketer_signup && toggle_predictive_support
@@ -39,6 +34,7 @@ class HelpWidgetsController < ApiApplicationController
       update_freshmarketer_domain(true)
     end
     cname_params[:settings] = @item.settings.deep_merge(cname_params[:settings].symbolize_keys || {}) unless cname_params[:settings].nil?
+    @item.build_help_widget_solution_categories(cname_params.delete(:solution_category_ids)) if can_update_solution_category
     @item.update_attributes(cname_params)
   end
 
@@ -110,5 +106,18 @@ class HelpWidgetsController < ApiApplicationController
     def validate_widget_count
       widget_count = Account.current.account_additional_settings_from_cache.widget_count
       render_request_error(:widget_limit_exceeded, 400, widget_count: widget_count) if Account.current.help_widgets.active.count >= widget_count
+    end
+
+    def can_update_solution_category
+      current_account.help_widget_solution_categories_enabled? && cname_params.key?(:solution_category_ids)
+    end
+
+    def delegator_hash
+      {
+        product_id: cname_params[:product_id],
+        settings: cname_params[:settings],
+        freshmarketer: cname_params[:freshmarketer],
+        solution_category_ids: cname_params[:solution_category_ids]
+      }
     end
 end
