@@ -52,11 +52,11 @@ defaults: &defaults
   podeucentral1:
     eu_shard_1:   7000000000
     eu_shard_2:  10000000000
-    eu_shard_3:  75000000000
-    euc_shard_1: 15000000000
+    eu_shard_3:  6000000000000
+    euc_shard_1: 5000000000000
     euc_shard_2: 76000000000
     shard_source: 1
-    sandbox_shard_euc: 12000000000000
+    sandbox_shard_euc: 50000000000000
   podapsoutheast2:
     aus_shard_1: 51000000000
     shard_source: 1
