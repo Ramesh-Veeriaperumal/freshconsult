@@ -43,18 +43,22 @@ module Admin::AutomationRules
     end
 
     def validate_conditions
-      MAXIMUM_CONDITION_SET_COUNT.times do |set_count|
-        condition_set = conditions["condition_set_#{set_count + 1}".to_sym]
-        break if condition_set.blank?
-        CONDITION_SET_PARAMS.each do |field_type|
-          evaluate_on_condition(field_type, condition_set) if condition_set.key? field_type
+      conditions.each do |condition_set|
+        condition_set.symbolize_keys
+        grouped_condition_set = group_by_resource_type(condition_set[:properties])
+        RESOURCE_TYPES.each do |resource_type|
+          evaluate_on_condition(resource_type, grouped_condition_set[resource_type]) if grouped_condition_set.key? resource_type
         end
       end
     end
 
+    def group_by_resource_type(conditions_set)
+      conditions_set.group_by { |c| c[:resource_type] || :ticket }
+    end
+
     def evaluate_on_condition(evaluate_on, condition_set)
       condition_delegator_klass ="Admin::AutomationRules::Conditions::#{evaluate_on.to_s.capitalize}Delegator".constantize
-      condition_delegator = condition_delegator_klass.new(@rule, condition_set[evaluate_on])
+      condition_delegator = condition_delegator_klass.new(@rule, condition_set)
       merge_errors(condition_delegator) if condition_delegator.invalid?
     end
 

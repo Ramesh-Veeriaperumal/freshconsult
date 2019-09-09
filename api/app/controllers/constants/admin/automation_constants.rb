@@ -21,7 +21,8 @@ module Admin::AutomationConstants
     from_nested_rules: :from_nested_field,
     to_nested_rules: :to_nested_field,
     nested_rules: :nested_fields,
-    name: :field_name
+    name: :field_name,
+    evaluate_on: :resource_type
   }.freeze
 
   FIELD_VALUE_CHANGE_MAPPING = {
@@ -54,6 +55,8 @@ module Admin::AutomationConstants
   TAG_NAMES = 'tag_names'.freeze
 
   TAGS = %w[tag_names add_tag].freeze
+
+  CONDITION_SET_NAMES = %w[condition_set_1 condition_set_2].freeze
 
   DEFAULT_TEXT_FIELDS = %i[subject description subject_or_description].freeze
 
@@ -116,7 +119,7 @@ module Admin::AutomationConstants
 
   CONDITON_SET_NESTED_FIELDS = %i[nested_fields nested_rules].freeze
 
-  CONDITION_SET_COMMON_FIELDS = %i[operator value rule_type case_sensitive business_hours_id custom_status_id].freeze + CONDITON_SET_NESTED_FIELDS
+  CONDITION_SET_COMMON_FIELDS = %i[evaluate_on operator value rule_type case_sensitive business_hours_id custom_status_id].freeze + CONDITON_SET_NESTED_FIELDS
 
   ACTION_COMMON_FIELDS = %i[value email_to email_subject email_body request_type
                             url need_authentication username password api_key
@@ -146,10 +149,12 @@ module Admin::AutomationConstants
 
   MATCH_TYPE = %w[all any].freeze
 
-  PERMITTED_PARAMS = %i[name position active performer events conditions actions preview custom_ticket_event
+  PERMITTED_PARAMS = %i[name position active performer events conditions operator actions preview custom_ticket_event
                         custom_ticket_action custom_ticket_condition custom_contact_condition custom_company_condition].freeze
 
-  PERMITTED_CONDITION_SET_VALUES = %i[field_name operator value case_sensitive rule_type nested_fields business_hours_id].freeze
+  PERMITTED_DEFAULT_CONDITION_SET_VALUES = %i[field_name operator value].freeze
+
+  PERMITTED_CONDITION_SET_VALUES = (PERMITTED_DEFAULT_CONDITION_SET_VALUES + %i[case_sensitive rule_type nested_fields business_hours_id]).freeze
 
   PERMITTED_EVENTS_PARAMS = %i[field_name from to value rule_type from_nested_field to_nested_field].freeze
 
@@ -208,7 +213,11 @@ module Admin::AutomationConstants
 
   MAXIMUM_CONDITION_SET_COUNT = 2
 
+  MAXIMUM_SUPERVISOR_CONDITION_SET_COUNT = 1
+
   CONDITION_SET_PARAMS = %i[ticket contact company].freeze
+
+  RESOURCE_TYPES = %i[ticket contact company].freeze
 
   DELEGATOR_IGNORE_CONTACT_FIELDS = %i[segments email name domain job_title].freeze
 
@@ -293,13 +302,23 @@ module Admin::AutomationConstants
 
   MAP_CONDITION_SET_OPERATOR = { or: 'any', and: 'all' }.freeze
 
+  DEFAULT_CONDITION_SET_OPERATOR = 'condition_set_1 and condition_set_2'.freeze
+
   READABLE_OPERATOR = { 'any' => 'or', 'all' => 'and' }.freeze
 
   CONDITION_SET_REQUEST_PARAMS = %i[match_type ticket contact company].freeze
 
+  CONDITION_SET_DEFAULT_PARAMS = %i[name match_type properties].freeze
+
+  CONDITION_RESOURCE_TYPES = %i[ticket contact company].freeze
+
+  CONDITION_PROPERTIES_REQUEST_PARAMS = %i[resource_type field_name operator value].freeze
+
   SUPERVISOR_IGNORE_CONDITION_PARAMS = %i[contact company].freeze
 
-  CONDITION_SET_REQUEST_VALUES = %i[field_name operator value nested_fields case_sensitive business_hours_id custom_status_id].freeze
+  CONDITION_SET_PROPERTIES = %i[resource_type field_name operator value].freeze
+
+  CONDITION_SET_REQUEST_VALUES = (CONDITION_SET_PROPERTIES + %i[nested_fields case_sensitive business_hours_id custom_status_id]).freeze
 
   MARKETPLACE_INTEGRATION_PARAMS = %i[push_to slack_text office365_text].freeze
 
@@ -392,4 +411,6 @@ module Admin::AutomationConstants
     in: :in,
     not_in: :not_in
   }.freeze
+
+  CONDITION_NAME_PREFIX = 'condition_set'.freeze
 end.freeze

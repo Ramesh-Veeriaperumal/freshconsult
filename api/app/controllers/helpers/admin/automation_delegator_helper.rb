@@ -270,12 +270,7 @@ module Admin::AutomationDelegatorHelper
   def validate_other_custom_field(name, *value, type)
     name = name.chomp("_#{current_account.id}") if name.ends_with? "_#{current_account.id}"
     value.flatten.each do |val|
-      if type == Integer || type == Float
-        # handling it for now to support front-end. Should not be done this way
-        # invalid_value(name, val) unless conv_value.is_a?(type)
-      else
-        invalid_data_type(name, type, val) unless val.is_a? type
-      end
+      invalid_data_type(name, type, val) unless val.is_a? type
     end
   end
 

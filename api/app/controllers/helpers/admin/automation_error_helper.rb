@@ -82,4 +82,11 @@ module Admin::AutomationErrorHelper
       errors[key] << value
     end
   end
+
+  def invalid_condition_set_count(count)
+    errors[:condition_sets] << :invalid_condition_set_count
+    error_message = {}
+    error_message[:condition_sets] = { count: count }
+    error_options.merge!(error_message)
+  end
 end

@@ -23,9 +23,10 @@ class Admin::AutomationDecorator < ApiDecorator
       updated_at: updated_at.try(:utc)
     }.merge!(automation_hash)
     if current_account.automation_rule_execution_count_enabled?
-      response.merge!(affected_tickets_count: affected_tickets_count)
+      response[:affected_tickets_count] = affected_tickets_count
     end
-    response.merge!(meta: meta_hash) unless list_page
+    response[:operator] = construct_operator if nested_condition?(record.rule_conditions)
+    response[:meta] = meta_hash unless list_page
     response
   end
 
@@ -72,7 +73,7 @@ class Admin::AutomationDecorator < ApiDecorator
           hash.merge!(construct_data(key.to_sym, event.rule[key], event.rule.key?(key), EVENT_NESTED_FIELDS, nil, nil, true))
         end
         event_hash = event_hash.symbolize_keys
-          transform_value(event_hash)
+        transform_value(event_hash)
         reconstruct_nested_data(event_hash) if (event_hash.keys & NESTED_FIELD_CONSTANTS.values).present?
         event_hash
       end
@@ -133,39 +134,42 @@ class Admin::AutomationDecorator < ApiDecorator
     end
 
     def condition_data_hash(condition_data, operator)
-      nested_condition = (condition_data.first &&
-          (condition_data.first.key?(:all) || condition_data.first.key?(:any)))
-      if nested_condition
-        condition_data.each_with_index.inject({}) do |hash, (condition_set, index)|
-          hash[:operator] = READABLE_OPERATOR[operator.to_s] if index == 1
-          hash.merge!("condition_set_#{index + 1}".to_sym =>
-              condition_set_hash(condition_set.values.first, condition_set.keys.first))
+      if nested_condition?(condition_data)
+        condition_data.each_with_index.inject([]) do |array, (condition_set, index)|
+          array.push(name: "#{CONDITION_NAME_PREFIX}_#{index + 1}",
+                     match_type: condition_set.keys.first,
+                     properties: condition_set_hash(condition_set.values.first))
         end
       else
-        { 'condition_set_1'.to_sym => condition_set_hash(condition_data, operator) }
+        [{
+          name: "#{CONDITION_NAME_PREFIX}_1",
+          match_type: operator,
+          properties: condition_set_hash(condition_data)
+        }]
       end
     end
 
-    def condition_set_hash(condition_set, match_type)
-      condition_hash = { match_type: match_type }
-      condition_set.each do |condition|
+    def condition_set_hash(condition_set)
+      condition_set.map do |condition|
         condition.deep_symbolize_keys
         condition = time_and_status_based_condition(condition) if condition[:name].to_s.include? TIME_AND_STATUS_BASED_FILTER[0]
         evaluate_on_type = condition[:evaluate_on] || DEFAULT_EVALUATE_ON
         evaluate_on = EVALUATE_ON_MAPPING_INVERT[evaluate_on_type.to_sym] || evaluate_on_type.to_sym
-        condition_hash[evaluate_on] ||= []
         condition_set_data = CONDITION_SET_FIELDS.inject({}) do |hash, key|
-          hash.merge!(construct_data(key.to_sym, condition[key], condition.key?(key),
-                                     CONDITON_SET_NESTED_FIELDS, hash[:field_name], evaluate_on))
+          hash.merge!(construct_data(key.to_sym,
+                                     condition[key],
+                                     condition.key?(key),
+                                     CONDITON_SET_NESTED_FIELDS,
+                                     hash[:field_name],
+                                     evaluate_on))
         end
         record.supervisor_rule? ? convert_supervisor_operators(condition_set_data) : support_for_old_operators(condition_set_data)
         transform_value(condition_set_data)
         add_operator_for_nested_field(condition_set_data)
         reconstruct_nested_data(condition_set_data) if (condition_set_data.keys & NESTED_FIELD_CONSTANTS.values).present?
         delete_value_for_old_rule(condition_set_data)
-        condition_hash[evaluate_on] << condition_set_data
+        condition_set_data
       end
-      condition_hash
     end
 
     def construct_nested_data(nested_values)
@@ -176,7 +180,7 @@ class Admin::AutomationDecorator < ApiDecorator
       end
     end
 
-    def construct_data(key, value, has_key, nested_field_names = nil, field_name=nil, evaluate_on = nil, is_event = false)
+    def construct_data(key, value, has_key, nested_field_names = nil, field_name = nil, evaluate_on = nil, is_event = false)
       key = FIELD_NAME_CHANGE_MAPPING[key] if FIELD_NAME_CHANGE.include?(key)
       value = construct_nested_data(value) if
               nested_field_names.present? && nested_field_names.include?(key)
@@ -195,7 +199,21 @@ class Admin::AutomationDecorator < ApiDecorator
           end
         end
       end
-      value = current_account.tags.where("id in (?)", value).pluck(:name) if field_name == :tag_names && key == :value
+      value = current_account.tags.where('id in (?)', value).pluck(:name) if field_name == :tag_names && key == :value
+      if key == :resource_type
+          value = value.present? ? EVALUATE_ON_MAPPING_INVERT[value.try(:to_sym)] || value : DEFAULT_EVALUATE_ON
+      end
       has_key ? { key => value } : {}
+    end
+
+    def nested_condition?(condition)
+      condition.first && (condition.first.key?(:all) || condition.first.key?(:any))
+    end
+
+    def construct_operator
+      condition_names = record.rule_conditions.each_with_index.inject([]) do |array, (condition_set, index)|
+        array.push("#{CONDITION_NAME_PREFIX}_#{index + 1}")
+      end
+      condition_names.join(" #{READABLE_OPERATOR[record.rule_operator.to_s]} ")
     end
 end
