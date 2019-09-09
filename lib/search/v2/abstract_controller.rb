@@ -30,7 +30,7 @@ module Search::V2::AbstractController
       # Method that makes call to ES and loads AR results
       #
       def search(es_models)
-        @result_set = Search::V2::QueryHandler.new({
+        handler = Search::V2::QueryHandler.new(
           account_id:   current_account.id,
           context:      @search_context,
           exact_match:  @exact_match,
@@ -40,7 +40,8 @@ module Search::V2::AbstractController
           types:        searchable_types,
           es_params:    construct_es_params,
           locale:       @es_locale
-        }).query_results
+        )
+        @result_set = @invalid ? [] : handler.query_results
         yield(@result_set) if block_given?
         process_results
       end

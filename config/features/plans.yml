@@ -309,6 +309,7 @@
       - :analytics_surveys
       - :analytics_survey_results
       - :custom_translations
+      - :portal_article_filters
     :inherits:
       - :garden_jan_19
     :exclude: []

@@ -102,7 +102,7 @@ class User < ActiveRecord::Base
   validate :max_user_emails
   validate :max_user_companies, :if => :has_multiple_companies_feature?
   validate :unique_external_id_feature, :if => :unique_external_id_changed?
-  validate :check_roles_for_field_agents, if: -> { Account.current.field_service_management_enabled? }, on: :update
+  validate :check_roles_for_field_agents, if: -> { Account.current.field_service_management_enabled? && self.agent.try(:field_agent?) }, on: :update
 
   def save_tags
     @prev_tags = self.tags.map(&:name)
@@ -1362,11 +1362,18 @@ class User < ActiveRecord::Base
       end
     end
 
+    # Checks are temporary. Need to cleanup after field tech role migration.
     def check_roles_for_field_agents
-      if self.agent.try(:field_agent?) && roles_changed?
-        self.errors[:role_ids] << :field_agent_roles
-        return false
+      valid_role = true
+      if Account.current.field_tech_role_enabled?
+        if (self.role_ids - account.roles.field_agent.map(&:id)).present?
+          self.errors.add(:role_ids, :field_agent_roles, role: 'field technician')
+          valid_role = false
+        end
+      elsif (self.role_ids - account.roles.agent.map(&:id)).present?
+        self.errors.add(:role_ids, :field_agent_roles, role: 'agent')
+        valid_role = false
       end
-      true
+      valid_role
     end
 end

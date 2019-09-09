@@ -33,6 +33,7 @@ class Role < ActiveRecord::Base
   scope :admin,         -> { where(:name => 'Administrator') }
   scope :supervisor,    -> { where(:name => 'Supervisor') }
   scope :agent,         -> { where(:name => 'Agent') }
+  scope :field_agent,   -> { where(:name => 'Field technician') }
   
   API_OPTIONS = { 
     :except     => [:account_id, :privileges]

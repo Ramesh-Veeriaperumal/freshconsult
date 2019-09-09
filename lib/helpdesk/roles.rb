@@ -452,6 +452,30 @@ module Helpdesk
       :create_tags
     ]
 
+    FIELD_TECHNICIAN = [
+      :manage_tickets,
+      :publish_solution,
+      :edit_conversation,
+      :forward_ticket,
+      :edit_time_entries,
+      :edit_ticket_properties,
+      :manage_solutions,
+      :reply_ticket,
+      :view_time_entries,
+      :view_solutions,
+      :delete_solution,
+      :export_tickets,
+      :assign_agent,
+      :assign_group,
+      :create_solution_draft,
+      :create_tags,
+      :solution_exports
+    ].freeze
+
+    FIELD_TECHNICIAN_ROLE = { name: 'Field technician',
+                              description: 'Can view, reply, update and resolve service tasks',
+                              privileges:  FIELD_TECHNICIAN }.freeze
+
     DEFAULT_ROLES_LIST = 
     [  
       [ "Account Administrator",

@@ -63,7 +63,7 @@ class Account < ActiveRecord::Base
   # Any new changes made to this method please validate if it needs to be added to
   # perform_anonymous_account_cancellation method too
   def perform_account_cancellation(feedback = {})
-    response = Billing::Subscription.new.cancel_subscription(self)
+    response = subscription.billing.cancel_subscription(self)
     if response
       cancellation_feedback = "#{feedback[:title]} #{feedback[:additional_info]}"
       send_account_deleted_email(cancellation_feedback)
@@ -82,9 +82,9 @@ class Account < ActiveRecord::Base
   end
 
   def schedule_account_cancellation_request(feedback, end_of_term_cancellation = false)
-    SubscriptionNotifier.account_cancellation_requested(feedback) if Rails.env.production?
+    SubscriptionNotifier.send_later(:deliver_account_cancellation_requested, feedback) if Rails.env.production?
     if end_of_term_cancellation
-      Billing::Subscription.new.cancel_subscription(self, end_of_term: true)
+      subscription.billing.cancel_subscription(self, end_of_term: true)
       set_others_redis_key(account_cancellation_request_time_key, (Time.now.to_f * 1000).to_i, nil)
       subscription_request.destroy if subscription_request.present?
     else
@@ -99,7 +99,7 @@ class Account < ActiveRecord::Base
   end
 
   def perform_cancellation_for_paid_account
-    response = Billing::Subscription.new.cancel_subscription(self)
+    response = subscription.billing.cancel_subscription(self)
     if response
       perform_paid_account_cancellation_actions
       delete_account_cancellation_request_job_key

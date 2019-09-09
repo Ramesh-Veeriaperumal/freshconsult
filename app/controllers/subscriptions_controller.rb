@@ -284,11 +284,13 @@ class SubscriptionsController < ApplicationController
     def update_subscription
       coupon = coupon_applicable? ? @coupon : nil
       if scoper.downgrade?
+        flash[:notice] = t('subscription_request_info_update') if scoper.subscription_request.present?
         scoper.convert_to_free if new_sprout?
         billing_subscription.update_subscription(scoper, prorate?, @addons, coupon, true)
         construct_subscription_request.save!
         return false
       else
+        flash[:notice] = t('subscription_info_update') if current_account.launched?(:downgrade_policy) && scoper.subscription_request.present?
         current_account.delete_account_cancellation_requested_time_key if scoper.suspended? && current_account.launched?(:downgrade_policy) && current_account.account_cancellation_requested?
         result = billing_subscription.update_subscription(scoper, prorate?, @addons)
         scoper.subscription_request.destroy if scoper.subscription_request.present?
@@ -360,7 +362,7 @@ class SubscriptionsController < ApplicationController
       elsif card_needed_for_payment?
         redirect_to :action => "billing"
       else
-        flash[:notice] = t('plan_info_update')
+        flash[:notice] = t('plan_info_update') unless current_account.launched?(:downgrade_policy)
         redirect_to :action => "show"
       end
     end
@@ -442,12 +444,20 @@ class SubscriptionsController < ApplicationController
     def subscription_info(subscription)
       subscription_attributes =
         Subscription::SUBSCRIPTION_ATTRIBUTES.inject({}) { |h, (k, v)| h[k] = subscription.safe_send(v); h }
-      subscription_attributes.merge!( :next_renewal_at => subscription.next_renewal_at.to_s(:db) )
+      subscription_attributes.merge!(next_renewal_at: subscription.next_renewal_at.to_s(:db))
     end
 
     def add_event
-      args = { :account_id => @subscription.account_id, :subscription_id => @subscription.id,
-            :subscription_hash => subscription_info(@cached_subscription) }
+      args = { account_id: @subscription.account_id, subscription_id: @subscription.id,
+               subscription_hash: subscription_info(@cached_subscription) }
+      if current_account.launched?(:downgrade_policy)
+        args[:requested_subscription_hash] = subscription_info(@subscription)
+        args[:requested_subscription_hash][:is_downgrade] = scoper.downgrade?
+        args[:requested_subscription_hash][:field_agent_limit] = scoper.subscription_request.present? ? scoper.subscription_request.fsm_field_agents : nil
+        args[:subscription_hash][:subscription_term_start] = @subscription.subscription_term_start
+        args[:subscription_hash][:field_agent_limit] = @cached_subscription.additional_info[:field_agent_limit]
+      end
+
       Subscriptions::SubscriptionAddEvents.perform_async(args)
     end
 

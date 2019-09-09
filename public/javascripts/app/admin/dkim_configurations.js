@@ -39,6 +39,17 @@ window.App.Admin = window.App.Admin || {};
 				}
 			})
 
+			$(document).on('click.dkim', '.falcon-mailbox-new', function (e) {
+				e.preventDefault();
+				window.parent.location.replace(window.parent.location.origin + '/a/admin/email/mailboxes/new')
+			})
+
+			$(document).on('click.dkim', '.falcon-mailbox-listall', function (e) {
+				e.preventDefault();
+				window.parent.location.replace(window.parent.location.origin + '/a/admin/email/mailboxes')
+			})
+
+
 			$(document).on('focus.dkim', '.clip-data', function () {
 				$('.copy-clip').removeClass('show');
 				$(this).select();

@@ -1,4 +1,7 @@
 test-ui:
+  email_notifications:
+    preview_message: "$Preview Message$"
+    preview_mail_prefix: "$Test Mail - $"
   export_data:
     audit_log_export:
       subject: "$Audit Log Export for %{domain}$"
