@@ -608,7 +608,7 @@ module Widget
         create_articles
         @account.remove_feature(:open_solutions)
         get :suggested_articles, controller_params
-        assert_response 403
+        assert_response 200
         @account.add_feature(:open_solutions)
         assert_nil Language.current
       ensure
@@ -637,7 +637,7 @@ module Widget
         @account.remove_feature(:open_solutions)
         create_articles
         get :show, controller_params(id: @article.parent_id)
-        assert_response 403
+        assert_response 200
         @account.add_feature(:open_solutions)
         assert_nil Language.current
       ensure

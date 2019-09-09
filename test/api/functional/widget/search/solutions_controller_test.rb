@@ -224,7 +224,7 @@ module Widget
         stub_private_search_response([@article]) do
           post :results, construct_params(version: 'widget', term: @article.title, limit: 3)
         end
-        assert_response 403
+        assert_response 200
         @account.add_feature(:open_solutions)
         assert_nil Language.current
       ensure
