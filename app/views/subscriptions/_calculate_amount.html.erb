@@ -135,17 +135,6 @@
 			<% submit_text = t('request_change')%>
 		<% end %>
 		<input type="submit" class="btn btn-flat billing-cancel" value="<%= t('cancel') %>" />
-		<a id="show-confirmation-box" href="#omni-disable-confirmation" class="btn submit-confirm hide btn-primary" rel="freshdialog"
-			data-width="450"
-			title="<%= t('disable_omni_title')%>"
-			data-target="#omni-disable-confirmation"
-			data-close-on-submit="true"
-			data-submit-label="<%=t('plain_yes')%>"
-			data-close-label="<%=t('plain_no')%>"
-			data-destroy-on-close="true"
-			>
-			<%= t('update_plan') %>
-			</a>
 			<% subscription_plan_id = @subscription.subscription_plan_id %>
 			
 			<% if current_account.launched?(:downgrade_policy) && @subscription.subscription_request.present? %>
