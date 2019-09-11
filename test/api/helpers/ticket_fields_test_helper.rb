@@ -2,7 +2,7 @@ module TicketFieldsTestHelper
   include Helpdesk::Ticketfields::ControllerMethods
 
   FIELD_MAPPING = { 'number' => 'int', 'checkbox' => 'boolean', 'paragraph' => 'text', 'decimal' => 'decimal', 'date' => 'date', 'date_time' => 'date' }.freeze
-  FIELD_MAPPING_DN = { 'paragraph' => 'mlt', 'text' => 'slt' }.freeze
+  FIELD_MAPPING_DN = { 'paragraph' => 'mlt', 'text' => 'slt', 'file' => 'slt' }.freeze
   SECTIONS_FOR_TYPE = [ { title: 'section1', value_mapping: %w(Question Problem), ticket_fields: %w(test_custom_number test_custom_date) },
                         { title: 'section2', value_mapping: ['Incident'], ticket_fields: %w(test_custom_paragraph test_custom_dropdown) } ]
   SECTIONS_FOR_CUSTOM_DROPDOWN = [ { title: 'section1', value_mapping: %w(Choice\ 1 Choice\ 2), ticket_fields: %w(test_custom_number test_custom_date) },

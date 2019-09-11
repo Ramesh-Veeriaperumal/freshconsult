@@ -116,6 +116,14 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
                                           list: Helpdesk::TicketField::MODIFIABLE_CUSTOM_FIELD_TYPES.uniq.join(','))])
   end
 
+  def test_create_file_type_field
+    params = { type: 'custom_file' }
+    post :create, construct_params({}, common_field_params(params))
+    assert_response 400
+    match_json([bad_request_error_pattern('type', :not_included,
+                                          list: Helpdesk::TicketField::MODIFIABLE_CUSTOM_FIELD_TYPES.uniq.join(','))])
+  end
+
   def test_create_with_wrong_boolean_params
     params = {
       required_for_closure: '',

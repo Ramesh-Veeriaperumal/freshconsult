@@ -47,6 +47,22 @@ class Archive::TicketsControllerTest < ActionController::TestCase
     end
   end
 
+  def test_show_with_custom_file_field
+    custom_field = create_custom_field_dn('test_signature_file', 'file')
+    stub_archive_assoc_for_show(@archive_association) do
+      archive_ticket = @account.archive_tickets.find_by_ticket_id( @archive_ticket.id)
+      return if archive_ticket.blank?
+
+      get :show, controller_params(id: archive_ticket.display_id, include: 'stats')
+      assert_response 200
+      response = parse_response @response.body
+      file_field = response['custom_fields'].key? 'test_signature_file'
+      assert_equal file_field, false
+    end
+  ensure
+    custom_field.destroy
+  end
+
   def test_show_with_empty_conversations
     stub_archive_assoc_for_show(@archive_association) do
       archive_ticket = @account.archive_tickets.find_by_ticket_id( @archive_ticket.id)
