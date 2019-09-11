@@ -685,7 +685,6 @@
 /solutions/articles/{id}/reorder:
   $ref: ./solutions/article/reorder.yaml
 
-
 /configs/{id}:
   $ref: ./configs/show.yaml
 
@@ -696,6 +695,8 @@
   $ref: ./email/mailboxes/list_and_create.yaml
 /email/mailboxes/{id}:
   $ref: ./email/mailboxes/crud.yaml
+/email/mailboxes/{id}/send_verification:
+  $ref: ./email/mailboxes/send_verification.yaml
 /email/settings:
   $ref: ./email/settings.yaml
 #notfication
