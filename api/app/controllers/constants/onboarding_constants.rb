@@ -2,6 +2,7 @@ module OnboardingConstants
   LOAD_OBJECTS_EXCEPT = [:update_channel_config, :forward_email_confirmation].freeze
   UPDATE_ACTIVATION_EMAIL_FIELDS = [:new_email].freeze
   UPDATE_CHANNEL_CONFIG_FIELDS = [:channel].freeze
+  FORWARD_EMAIL_CONFIRMATION_FIELDS = [:requested_time].freeze
   TEST_EMAIL_FORWARDING_FIELDS = [:attempt, :send_to].freeze
   CHANNELS = %w[phone freshchat social forums].freeze
   DISABLEABLE_CHANNELS = %w[social forums].freeze
@@ -13,7 +14,7 @@ module OnboardingConstants
   FROM_EMAIL = ::ONBOARDING_CONFIG['email_forwarding']['from_email'].freeze
   CONFIRMATION_REGEX = ::ONBOARDING_CONFIG['email_forwarding']['confirmation_regex'].freeze
   TEST_FORWARDING_ATTEMPT_THRESHOLD = 6
-  TEST_FORWARDING_SUBJECT = 'Woohoo.. Your Freshdesk Test Mail'.freeze
+  TEST_FORWARDING_SUBJECT = 'Woohoo.. Your Freshdesk test email'.freeze
   FRESHCHAT = 'freshchat'.freeze
   FRESHCALLER = 'phone'.freeze
   ACCOUNT_CREATION_CHANNELS = %w[phone freshchat].freeze

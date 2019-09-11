@@ -6844,6 +6844,14 @@
           "onboarding"
         ],
         "description": "Forward Email Confirmation",
+        "parameters": [
+          {
+            "name": "requested_time",
+            "in": "query",
+            "type": "string",
+            "description": "Get verification code"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",

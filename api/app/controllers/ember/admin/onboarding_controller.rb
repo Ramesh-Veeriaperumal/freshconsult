@@ -7,6 +7,7 @@ module Ember
       include ::Onboarding::OnboardingHelperMethods
 
       before_filter :validate_body_params, only: [:update_activation_email, :update_channel_config, :test_email_forwarding, :anonymous_to_trial]
+      before_filter :validate_query_params, only: [:forward_email_confirmation]
       before_filter :set_user_email_config, only: [:update_activation_email]
       before_filter :check_forward_verification_email_ticket, only: [:forward_email_confirmation]
       before_filter :construct_domain_name, only: [:customize_domain, :validate_domain_name]
@@ -187,7 +188,7 @@ module Ember
         end
 
         def forward_verification_email_ticket
-          @forward_verification_email_ticket ||= current_account.tickets.requester_latest_tickets(forward_verification_email_requester, OnboardingConstants::TICKET_CREATE_DURATION.ago).first
+          @forward_verification_email_ticket ||= current_account.tickets.requester_latest_tickets(forward_verification_email_requester, params[:requested_time]).first
         end
 
         def email_service_provider

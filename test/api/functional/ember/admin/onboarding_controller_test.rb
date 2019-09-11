@@ -242,14 +242,13 @@ class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
     email = Faker::Internet.email
     Account.current.account_configuration.company_info[:email_service_provider] = 'google'
     Account.current.account_configuration.save
-    get :forward_email_confirmation, construct_params(version: 'private')
+    get :forward_email_confirmation, controller_params(version: 'private', requested_time: Time.zone.now.iso8601)
     assert_response 204
     contact = add_new_user(@account, email: 'forwarding-noreply@google.com')
-
-    create_ticket({:subject => "(##{verification_code}) Gmail Forwarding Confirmation - Receive Mail from #{email}",
-                   :description => "please click the link below to confirm the request:\n\n#{confirmation_url} \n\nIf you click the link and it appears to be broken, please copy and paste it\ninto a new browser window.",
-                   :requester_id => contact.id})
-    get :forward_email_confirmation, construct_params(version: 'private')
+    ticket = create_ticket(subject: "(##{verification_code}) Gmail Forwarding Confirmation - Receive Mail from #{email}",
+                            description: "please click the link below to confirm the request:\n\n#{confirmation_url} \n\nIf you click the link and it appears to be broken, please copy and paste it\ninto a new browser window.",
+                            requester_id: contact.id, created_at: Time.zone.now + 5.minutes)
+    get :forward_email_confirmation, controller_params(version: 'private', requested_time: (ticket.created_at - 5.minutes).iso8601)
     assert_response 200
     match_json(forward_email_confirmation_pattern(verification_code, email))
   end
@@ -257,11 +256,29 @@ class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
   def test_forward_email_confirmation_with_invalid_email_service_provider
     Account.current.account_configuration.company_info[:email_service_provider] = 'yahoo'
     Account.current.account_configuration.save
-    get :forward_email_confirmation, construct_params(version: 'private')
+    get :forward_email_confirmation, controller_params(version: 'private', requested_time: Time.zone.now.iso8601)
     assert_response 400
   end
 
-  def test_test_email_forwarding
+  def test_forward_email_confirmation_without_required_params
+    get :forward_email_confirmation, controller_params(version: 'private')
+    assert_response 400
+    match_json([bad_request_error_pattern(:requested_time, :missing_field)])
+  end
+
+  def test_forward_email_confirmation_without_invalid_params
+    get :forward_email_confirmation, controller_params(version: 'private', attempt: 4)
+    assert_response 400
+    match_json([bad_request_error_pattern(:attempt, :invalid_field)])
+  end
+
+  def test_forward_email_confirmation_with_invalid_date_format
+    get :forward_email_confirmation, controller_params(version: 'private', requested_time: Faker::Lorem.word)
+    assert_response 400
+    match_json([bad_request_error_pattern(:requested_time, :invalid_date, code: :invalid_value, accepted: 'combined date and time ISO8601')])
+  end
+
+  def test_email_forwarding
     post :test_email_forwarding, construct_params(version: 'private', attempt: 1, send_to: Faker::Internet.email)
     assert_response 204
     create_forwarding_test_ticket
@@ -269,10 +286,10 @@ class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
     assert_response 200
     forward_test_ticket_requester = @account.users.find_by_email(Helpdesk::EMAIL[:default_requester_email])
     forward_test_ticket = @account.tickets.requester_latest_tickets(forward_test_ticket_requester, OnboardingConstants::TICKET_CREATE_DURATION.ago).first
-    assert_equal forward_test_ticket.subject, "Woohoo.. Your Freshdesk Test Mail"
+    assert_equal forward_test_ticket.subject, OnboardingConstants::TEST_FORWARDING_SUBJECT
   end
 
-  def test_test_email_forwarding_with_valid_attempt
+  def test_email_forwarding_with_valid_attempt
     create_forwarding_test_ticket
     post :test_email_forwarding, construct_params(version: 'private', attempt: 3, send_to: Faker::Internet.email)
     assert_response 200
@@ -280,7 +297,7 @@ class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
     assert_response 200
   end
 
-  def test_test_email_forwarding_with_invalid_or_no_attempt
+  def test_email_forwarding_with_invalid_or_no_attempt
     post :test_email_forwarding, construct_params(version: 'private', send_to: Faker::Internet.email)
     assert_response 400
     post :test_email_forwarding, construct_params(version: 'private', attempt: 0, send_to: Faker::Internet.email)
@@ -289,14 +306,14 @@ class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
     assert_response 400
   end
 
-  def test_test_email_forwarding_with_invalid_or_no_sendto_email
+  def test_email_forwarding_with_invalid_or_no_sendto_email
     post :test_email_forwarding, construct_params(version: 'private', attempt: 0)
     assert_response 400
     post :test_email_forwarding, construct_params(version: 'private', attempt: 2, send_to: Faker::Name.name())
     assert_response 400
   end
 
-  def test_test_email_forwarding_with_no_success_email
+  def test_email_forwarding_with_no_success_email
     delete_forwarding_test_ticket
     post :test_email_forwarding, construct_params(version: 'private', attempt: 2, send_to: Faker::Internet.email)
     assert_response 204
@@ -309,9 +326,9 @@ class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
   def create_forwarding_test_ticket
     email = new_email({:email_config => @account.primary_email_config.to_email,
       :reply => Helpdesk::EMAIL[:default_requester_email]})
-    email[:subject] = "Woohoo.. Your Freshdesk Test Mail"
-    email[:text] = "Woohoo.. Your Freshdesk Test Mail"
-    email[:html] = "Woohoo.. Your Freshdesk Test Mail"
+    email[:subject] = OnboardingConstants::TEST_FORWARDING_SUBJECT
+    email[:text] = OnboardingConstants::TEST_FORWARDING_SUBJECT
+    email[:html] = OnboardingConstants::TEST_FORWARDING_SUBJECT
     Helpdesk::ProcessEmail.new(email).perform
   end
 
