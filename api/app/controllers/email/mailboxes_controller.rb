@@ -7,6 +7,11 @@ class Email::MailboxesController < ApiApplicationController
 
   before_filter :check_multiple_emails_feature, only: [:create]
 
+  def index
+    super
+    response.api_meta = { count: @items_count }
+  end
+
   def create
     return unless validate_delegator(@item, delegator_params)
 
@@ -40,7 +45,7 @@ class Email::MailboxesController < ApiApplicationController
   private
 
     def scoper
-      current_account.all_email_configs
+      current_account.all_email_configs.reorder('primary_role DESC')
     end
 
     def check_multiple_emails_feature
@@ -105,6 +110,25 @@ class Email::MailboxesController < ApiApplicationController
       return unless cname_params[:reply_email].present?
 
       cname_params[:to_email] = construct_to_email(cname_params[:reply_email], current_account.full_domain)
+    end
+
+    def validate_filter_params
+      @validation_klass = Email::MailboxFilterValidation.to_s.freeze
+      validate_query_params
+    end
+
+    def paginate_options(is_array = false)
+      options = super(is_array)
+      options[:order] = order_clause if params[:order_by].present?
+      options
+    end
+
+    def order_clause
+      "#{params[:order_by].to_sym} #{order_type} "
+    end
+
+    def order_type
+      params[:order_type] || EmailMailboxConstants::DEFAULT_ORDER_TYPE
     end
 
     def set_custom_errors(item = @item)

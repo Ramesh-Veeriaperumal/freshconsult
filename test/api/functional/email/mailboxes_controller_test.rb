@@ -20,15 +20,6 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     { mailbox: params }
   end
 
-  def setup
-    super
-    Account.any_instance.stubs(:multiple_emails_enabled?).returns(true)
-  end
-
-  def teardown
-    Account.any_instance.unstub(:multiple_emails_enabled?)
-  end
-
   def create_mailbox_params_hash
     {
       support_email: Faker::Internet.email,
@@ -74,7 +65,6 @@ class Email::MailboxesControllerTest < ActionController::TestCase
   def test_create_success
     params_hash = create_mailbox_params_hash
     post :create, construct_params({}, params_hash)
-    p "response :: #{response.inspect}" # check random failure 403 repsonse
     assert_response 201
     match_json(mailbox_pattern({}, EmailConfig.last))
   end
@@ -355,5 +345,45 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     match_json(mailbox_pattern({}, EmailConfig.find_by_id(email_config.id)))
     Account.any_instance.unstub(:has_features?)
     Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
+  end
+  
+   # test_index_success
+  # test_index_success_with_order_type
+
+  def test_index_success
+    user = add_new_user(@account)
+    email_configs = []
+    3.times do
+      email_configs << create_email_config(active: false, default_reply_email: false)
+    end
+    per_page = 1
+    get :index, controller_params(version: 'private', per_page: per_page)
+
+    assert_response 200
+    assert JSON.parse(response.body).count == per_page
+    assert_equal "<http://#{@request.host}/api/_/email/mailboxes?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
+
+    get :index, controller_params(version: 'private', per_page: per_page, page: EmailConfig.count)
+    assert_response 200
+    assert JSON.parse(response.body).count == 1
+    assert_nil response.headers['Link']
+  end
+
+  def test_index_success_with_order_type
+    user = add_new_user(@account)
+    email_configs = []
+    email_configs << create_email_config(active: false, default_reply_email: false, group_id: 5)
+    email_configs << create_email_config(active: false, default_reply_email: false, group_id: 2)
+    email_configs << create_email_config(active: false, default_reply_email: false, group_id: 1)
+    per_page = 2
+
+    get :index, controller_params(version: 'private', per_page: per_page, order_by: 'group_id', order_type: 'desc')
+    assert_response 200
+    assert JSON.parse(response.body).count == per_page
+
+    parsed_response = JSON.parse(response.body)
+    if parsed_response[0]['default_reply_email'] == false || (parsed_response[0]['default_reply_email'] == true && parsed_response[1]['default_reply_email'] == true) && (parsed_response[0]['group_id'].present? && parsed_response[1]['group_id'].present?)
+      assert parsed_response[0]['group_id'] > parsed_response[1]['group_id']
+    end
   end
 end
