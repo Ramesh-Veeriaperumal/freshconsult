@@ -50,6 +50,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
     end
 
     alias_method :validate_encrypted_text, :validate_custom_text
+    alias_method :validate_custom_file, :validate_custom_text
 
     # Required validator for string field based on condition
     def validate_custom_paragraph(record, field_name)
