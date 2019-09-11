@@ -8,9 +8,9 @@ get:
       description: search term for automations
       required: true
     - name: query
-        in: query
-        type: string
-        description: search filter for automations
+      in: query
+      type: string
+      description: search filter for automations
   responses:
     200:
       description: Success
