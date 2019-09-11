@@ -553,7 +553,8 @@ class VaRule < ActiveRecord::Base
     end
 
     def has_conditions?
-      return if automation_rule? || account_id == 0
+      return if !automated_rule? || account_id.zero?
+
       errors.add(:base,I18n.t("errors.conditions_empty")) if
         ((!account.automation_revamp_enabled? && filter_data.blank?) ||
           (account.automation_revamp_enabled? && condition_data.blank?))
