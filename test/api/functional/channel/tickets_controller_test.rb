@@ -189,11 +189,25 @@ module Channel
       assert_response 201
     end
 
-    def test_create_ticket_with_freshchat_jwt_header
+    def test_create_ticket_with_freshchat_jwt_header_success
       params = ticket_params_hash
+      params.delete(:tags)
       set_jwt_auth_header('freshchat')
+      @controller.stubs(:api_current_user).returns(nil)
       post :create, construct_params({version: 'channel'}, params)
       assert_response 201
+    ensure
+      @controller.unstub(:api_current_user)
+    end
+
+    def test_create_ticket_with_freshchat_jwt_header_failure
+      params = ticket_params_hash
+      set_jwt_auth_header('zapier')
+      @controller.stubs(:api_current_user).returns(nil)
+      post :create, construct_params({ version: 'channel' }, params)
+      assert_response 401
+    ensure
+      @controller.unstub(:api_current_user)
     end
 
     def test_create_with_custom_fields_required_invalid
