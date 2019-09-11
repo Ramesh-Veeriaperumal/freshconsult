@@ -1,11 +1,13 @@
 class Email::MailboxesController < ApiApplicationController
   include Email::Mailbox::Constants
   include Email::Mailbox::Utils
+  include Admin::EmailConfig::Utils
   include HelperConcern
   include MailboxConcern
   decorate_views
 
   before_filter :check_multiple_emails_feature, only: [:create]
+  skip_before_filter :before_load_object, :after_load_object, only: [:send_verification]
 
   def index
     super
@@ -38,6 +40,18 @@ class Email::MailboxesController < ApiApplicationController
       render_errors(error: :cannot_delete_default_reply_email)
     else
       @item.destroy
+      head 204
+    end
+  end
+
+  def send_verification
+    if @item.active
+      render_request_error(:active_mailbox_verification, 409)
+    else
+      remove_bounced_email(@item.reply_email) # remove the email from bounced email list so that 'resend verification' will send mail again.
+
+      @item.set_activator_token
+      @item.save
       head 204
     end
   end

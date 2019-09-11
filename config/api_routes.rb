@@ -312,7 +312,11 @@ Helpkit::Application.routes.draw do
     end
 
     scope '/email' do
-      resources :mailboxes, controller: 'email/mailboxes', only: [:create, :update, :show, :destroy, :index]
+      resources :mailboxes, controller: 'email/mailboxes', only: [:create, :update, :show, :destroy, :index] do
+        member do
+          post :send_verification
+        end
+      end
 
       get '/settings', to: 'email/settings#show'
       put '/settings', to: 'email/settings#update'

@@ -66,7 +66,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/admin/onboarding", only: %i[forward_email_confirmation test_email_forwarding]
     resource :"admin/api_email_notification"
     resource :"email/setting", only: %i[show update]
-    resource :"email/mailbox", only: %i[create update show destroy index]
+    resource :"email/mailbox"
     resource :"notifications/email/bcc", only: %i[update show]
   end
 

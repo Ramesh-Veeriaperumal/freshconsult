@@ -346,8 +346,23 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:has_features?)
     Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
   end
+
+  def test_send_verification
+    email_config = create_email_config(active: false)
+    post :send_verification, construct_params({ id: email_config.id })
+    assert_response 204
+  end
+
+  def test_send_verification_on_active_mailbox
+    email_config = create_email_config
+    email_config.active = true
+    email_config.save
+    post :send_verification, construct_params({ id: email_config.id })
+    assert_response 409
+    match_json(request_error_pattern(:active_mailbox_verification))
+  end
   
-   # test_index_success
+  # test_index_success
   # test_index_success_with_order_type
 
   def test_index_success

@@ -378,6 +378,8 @@ api_error_messages:
   smtp_error: "Error while verifying the mailbox smtp details - %{error}"
   default_primary_role_changed: "Cannot set default_reply_email to false of the default support email of a product"
   file_size_limit_error: "File size cannot exceed %{file_size}."
+  active_mailbox_verification: 'Cannot send verification to an active mailbox'
+
   # Search settings
   search_settings_blank: "search settings should not be blank"
   ticket_search_settings_blank: "ticket search settings should not be blank"
