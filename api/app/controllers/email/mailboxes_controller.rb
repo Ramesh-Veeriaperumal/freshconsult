@@ -153,4 +153,42 @@ class Email::MailboxesController < ApiApplicationController
     def constants_class
       EmailMailboxConstants.to_s.freeze
     end
+
+    def load_objects
+      super mailboxes_filter(scoper.includes(:imap_mailbox, :smtp_mailbox))
+    end
+
+    def mailboxes_filter(mailboxes)
+      filter_params = sanitize_filter_params(mailboxes_filter_conditions)
+      filter_params.each do |key, value|
+        clause = mailboxes.mailbox_filter(filter_params, private_api?)[key.to_sym] || {}
+        mailboxes = mailboxes.where(clause[:conditions])
+      end
+      mailboxes
+    end
+
+    def mailboxes_filter_conditions
+      params.select do |key, value|
+        EmailMailboxConstants::INDEX_FIELDS.include?(key)
+      end
+    end
+
+    def sanitize_filter_params(filter_params)
+      sanitize_support_email_filter(filter_params) if filter_params.include?('support_email')
+      sanitize_forward_email_filter(filter_params) if filter_params.include?('forward_email')
+      sanitize_active_filter(filter_params) if filter_params.include?('active')
+      filter_params
+    end
+
+    def sanitize_support_email_filter(filter_params)
+      filter_params['reply_email'] = filter_params.delete('support_email').tr('*', '%')
+    end
+
+    def sanitize_forward_email_filter(filter_params)
+      filter_params['to_email'] = filter_params.delete('forward_email')
+    end
+
+    def sanitize_active_filter(filter_params)
+      filter_params['active'] = filter_params['active'].to_bool
+    end
 end

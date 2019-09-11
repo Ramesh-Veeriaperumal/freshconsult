@@ -12,13 +12,15 @@ module EmailMailboxConstants
   CREATE_FIELDS = %w[name support_email default_reply_email group_id product_id
                     mailbox_type custom_mailbox].freeze
 
-  INDEX_FIELDS = %w[order_by order_type].freeze
+  INDEX_FIELDS = %w[order_by order_type product_id group_id support_email forward_email active].freeze
 
   UPDATE_FIELDS = CREATE_FIELDS
 
   VALIDATION_CLASS = 'Email::MailboxValidation'.freeze
   DELEGATOR_CLASS = 'Email::MailboxDelegator'.freeze
   DECORATOR_CLASS = 'Email::MailboxDecorator'.freeze
- 
+
   FIELD_MAPPINGS = { reply_email: :support_email }.freeze
+
+  MIN_CHAR_FOR_SEARCH = 3
 end

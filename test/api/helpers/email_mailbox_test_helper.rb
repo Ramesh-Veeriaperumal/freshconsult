@@ -78,7 +78,7 @@ module EmailMailboxTestHelper
     email_config_params = {
       name: options[:name] || Faker::Name.name,
       reply_email: options[:support_email] || "#{Faker::Internet.email}",
-      to_email: options[:support_email] || "#{Faker::Internet.email}",
+      to_email: options[:forward_email] || "#{Faker::Internet.email}",
       primary_role:  options[:default_reply_email] || false,
       active: options[:active] || true,
       group_id: options[:group_id],
@@ -90,7 +90,7 @@ module EmailMailboxTestHelper
     test_email_config.save(validate: false)
     test_email_config
   end
-  
+
   def imap_hash(options = {})
     return_hash = create_incoming_type_hash(options)
     return_hash[:server_name] = return_hash.delete(:mail_server)
