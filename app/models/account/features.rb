@@ -43,7 +43,7 @@ class Account < ActiveRecord::Base
     :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr,
     :csat_email_scan_compatibility, :mint_portal_applicable, :twitter_microservice, :quoted_text_parsing_feature, :enable_customer_journey,
     :csat_translations, :email_mailbox, :supervisor_custom_status, :sandbox_temporary_offset, :downgrade_policy,
-    :fluffy_min_level, :allow_update_agent, :help_widget_solution_categories
+    :fluffy_min_level, :allow_update_agent, :help_widget_solution_categories, :search_settings
   ].freeze
 
   DB_FEATURES = [

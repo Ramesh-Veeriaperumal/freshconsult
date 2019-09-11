@@ -9,16 +9,25 @@ module Users
         :show_onBoarding => true, 
         :falcon_ui => false,
         freshchat_token: nil,
-        undo_send: false
+        undo_send: false,
+        search_settings: {
+          tickets: {
+            include_subject: true,
+            include_description: true,
+            include_other_properties: true,
+            include_notes: true,
+            include_attachment_names: true,
+            archive: true
+          }
+        }
         # Add new pref for agents here
-      }, 
+      },
       :user_preferences => {
         # Add new pref for users here
         :was_agent => false,
         :agent_deleted_forever => false,
         :marked_for_hard_delete => false
       }
-
     }
 
     def merge_preferences=(pref = {})

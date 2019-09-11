@@ -310,7 +310,6 @@ class ApiConversationsControllerTest < ActionController::TestCase
   end
 
   def test_forward_with_child_description_attachment_ids
-    # byebug
     Account.any_instance.stubs(:parent_child_tickets_enabled?).returns(true)
     child_attachment_ids = []
     create_parent_child_tickets

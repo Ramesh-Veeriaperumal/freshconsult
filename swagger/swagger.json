@@ -13985,6 +13985,34 @@
                     },
                     "freshchat_token": {
                       "type": "string"
+                    },
+                    "search_settings": {
+                      "type": "object",
+                      "properties": {
+                        "tickets": {
+                          "type": "object",
+                          "properties": {
+                            "include_subject" : {
+                              "type": "boolean"
+                            },
+                            "include_description" : {
+                              "type": "boolean"
+                            },
+                            "include_other_properties" : {
+                              "type": "boolean"
+                            },
+                            "include_notes" : {
+                              "type": "boolean"
+                            },
+                            "include_attachment_names" : {
+                              "type": "boolean"
+                            },
+                            "archive" : {
+                              "type": "boolean"
+                            }
+                          }
+                        }
+                      }
                     }
                   }
                 }
@@ -16122,6 +16150,34 @@
         },
         "avatar_id": {
           "type": "integer"
+        },
+        "search_settings": {
+          "type": "object",
+          "properties": {
+            "tickets": {
+              "type": "object",
+              "properties": {
+                "include_subject" : {
+                  "type": "boolean"
+                },
+                "include_description" : {
+                  "type": "boolean"
+                },
+                "include_other_properties" : {
+                  "type": "boolean"
+                },
+                "include_notes" : {
+                  "type": "boolean"
+                },
+                "include_attachment_names" : {
+                  "type": "boolean"
+                },
+                "archive" : {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
         }
       }
     },

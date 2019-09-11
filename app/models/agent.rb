@@ -44,7 +44,7 @@ class Agent < ActiveRecord::Base
   # validate :only_primary_email, :on => [:create, :update] moved to user.rb
 
   attr_accessible :signature_html, :user_id, :ticket_permission, :occasional, :available, :shortcuts_enabled,
-    :scoreboard_level_id, :user_attributes, :group_ids, :freshchat_token, :agent_type
+                  :scoreboard_level_id, :user_attributes, :group_ids, :freshchat_token, :agent_type, :search_settings
     
   attr_accessor :agent_role_ids, :freshcaller_enabled, :user_changes, :group_changes, :ocr_update, :misc_changes
 

@@ -49,11 +49,19 @@ module Agents
       update_preferences(freshchat_token: token)
     end
 
+    # Helpers for getting and setting Search Settings
+    def search_settings
+      preferences[:search_settings]
+    end
+
+    def search_settings=(search_settings)
+      update_preferences(search_settings: search_settings.deep_symbolize_keys)
+    end
+
     private
 
       def update_preferences(settings = {})
         self.user.merge_preferences = { :agent_preferences => settings }
       end
-
   end
 end
