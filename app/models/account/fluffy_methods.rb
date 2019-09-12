@@ -5,8 +5,8 @@ class Account < ActiveRecord::Base
     Fluffy::ApiWrapper.create(full_domain, limit, granularity)
   end
 
-  def destroy_fluffy_account
-    fluffy_account = Fluffy::ApiWrapper.new(full_domain)
+  def destroy_fluffy_account(domain = full_domain)
+    fluffy_account = Fluffy::ApiWrapper.new(domain)
     fluffy_account.destroy
   end
 
@@ -38,8 +38,7 @@ class Account < ActiveRecord::Base
 
   def current_fluffy_limit(domain = full_domain)
     fluffy_account = Fluffy::ApiWrapper.find_by_domain(domain)
-    curr_api_limit = fluffy_account.limit if fluffy_account.present? && fluffy_account.is_a?(Fluffy::Account)
-    curr_api_limit
+    fluffy_account if fluffy_account.present? && fluffy_account.is_a?(Fluffy::Account)
   end
 
   def enable_fluffy

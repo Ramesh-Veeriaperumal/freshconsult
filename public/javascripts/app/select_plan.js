@@ -106,7 +106,7 @@ window.App = window.App || {};
     },
     handleCancellationSuccess: function(cancel_type) {
       this.pending_cancellation_request = false;
-      var message = cancel_type === this.subscription_cancel ? 'common_js_translations.subscription_cancel_request_success' : 'common_js_translations.cancel_request_success'
+      var message = cancel_type === this.subscription_cancel ? 'downgrade_policy.subscription_cancel_request_success' : 'downgrade_policy.request_cancel_success'
       $('#cancellation-wrapper').removeClass('sloading inner-form-hide');
       $('.request-change-wrapper').addClass('hide');
       $('.request-change-info').addClass('hide');
@@ -118,7 +118,7 @@ window.App = window.App || {};
       }, 5000);
     },
     handleCancellationFailure: function(cancel_type) {
-      var message = cancel_type === this.subscription_cancel ? 'common_js_translations.subscription_cancel_request_failure' : 'common_js_translations.cancel_request_failure'
+      var message = cancel_type === this.subscription_cancel ? 'downgrade_policy.subscription_cancel_request_failure' : 'downgrade_policy.cancel_request_failure'
       $('#cancellation-button').removeClass('disabled');
       $('#cancellation-wrapper').removeClass('sloading inner-form-hide');
       $('.request-change-status').addClass('failure').removeClass('hide');
@@ -271,13 +271,9 @@ window.App = window.App || {};
 
     toggleOmniPlans: function(button) {
       if(jQuery(button).parent().hasClass("omni-billing-edit") && !jQuery(button).hasClass("active")) {
-        this.omni_disabled = true;
-        jQuery(".billing-actions .submit-confirm").show();
-        jQuery(".billing-actions #commit").hide();
+        this.omni_disabled = true; 
       } else if(jQuery(button).hasClass("active")) {
         this.omni_disabled = false;
-        jQuery(".billing-actions .submit-confirm").hide();
-        jQuery(".billing-actions #commit").show();
       }
 
       if(jQuery(button).hasClass("active")) {
@@ -354,7 +350,6 @@ window.App = window.App || {};
       delete this.addons[key];
     },
     submitPlanUpdate: function() {
-      jQuery(".billing-actions .submit-confirm").hide();
       jQuery(".billing-actions #commit").show().trigger("click");
       this.omni_disabled = null;
     },
@@ -458,7 +453,7 @@ window.App = window.App || {};
               $(".features-billing-edit").removeClass('hide');
             }
             billing_template.find(".billing-cancel").show();
-            var submitText = request_change ? I18n.t('common_js_translations.request_change') : I18n.t('common_js_translations.update_plan');
+            var submitText = request_change ? I18n.t('downgrade_policy.change_request') : I18n.t('common_js_translations.update_plan');
             billing_template.find(".billing-submit").val(submitText).addClass('btn-primary');
             billing_template.find(".billing-submit").html(submitText).addClass('btn-primary');
             if(request_change){
@@ -478,8 +473,8 @@ window.App = window.App || {};
           }
           else {
             if(request_change) {
-              billing_template.find(".billing-submit").val(I18n.t('common_js_translations.request_change'));
-              billing_template.find(".billing-submit").html(I18n.t('common_js_translations.request_change'));
+              billing_template.find(".billing-submit").val(I18n.t('downgrade_policy.change_request'));
+              billing_template.find(".billing-submit").html(I18n.t('downgrade_policy.change_request'));
               $('.upgrade-same-plan').css('display','none');
               $('.upgrade-same-plan-header').css('display','block');
             }

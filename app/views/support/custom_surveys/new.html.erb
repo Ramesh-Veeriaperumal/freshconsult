@@ -4,6 +4,13 @@
 
 <%= javascript_include_tag :'cdn/survey'  %>
 
+<% if @survey_preview %>
+  <div class = "satisfaction_survey_wrapper">
+	<%= render partial: 'layouts/shared/survey', locals: { survey_preview: @survey_preview, survey: @survey, survey_language: @survey_language, translation_record: @translated_survey, rating: nil, survey_handle: nil }  %>
+  <div>
+<% else %>
+
+
 <%= javascript_tag do %>
   surveyFeedbackI18n = {};
   surveyFeedbackI18n.thanksFeedback =  "<%= t('admin.surveys.new_thanks.thanks_feedback')%>";
@@ -96,3 +103,5 @@
 		})
 	})
 </script>
+<% end %>
+
