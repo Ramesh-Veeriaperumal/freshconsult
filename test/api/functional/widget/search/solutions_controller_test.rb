@@ -155,6 +155,19 @@ module Widget
         @account.rollback(:help_widget_solution_categories)
       end
 
+      def test_search_results_without_solution_categories_associated
+        create_article_for_widget
+        @account.launch(:help_widget_solution_categories)
+        stub_private_search_response([@article]) do
+          post :results, construct_params(version: 'widget', term: @article.title, limit: 3)
+        end
+        assert_response 200
+        search_result = JSON.parse(response.body)
+        assert_empty search_result
+      ensure
+        @account.rollback(:help_widget_solution_categories)
+      end
+
       def test_widget_category_results_with_invalid_term
         @account.launch(:help_widget_solution_categories)
         create_article_for_widget
