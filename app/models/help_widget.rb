@@ -12,15 +12,15 @@ class HelpWidget < ActiveRecord::Base
 
   scope :active, conditions: { active: true }
 
-  private
+  def upload_configs
+    args = {
+      widget_id: self.id,
+      _destroy: transaction_include_action?(:destroy) || !active
+    }
+    HelpWidget::UploadConfig.perform_async(args)
+  end
 
-    def upload_configs
-      args = {
-        widget_id: self.id,
-        _destroy: transaction_include_action?(:destroy) || !active
-      }
-      HelpWidget::UploadConfig.perform_async(args)
-    end
+  private
 
     def clear_cache
       key = HELP_WIDGETS % { :account_id => self.account_id, :id => self.id }
