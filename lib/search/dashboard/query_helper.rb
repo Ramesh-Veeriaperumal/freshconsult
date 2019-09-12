@@ -248,7 +248,7 @@ module Search::Dashboard::QueryHelper
                             when date_filter_values[:next_week]
                               [Time.zone.now.next_week.beginning_of_week, Time.zone.now.next_week.end_of_week]
                             when date_filter_values[:in_the_past]
-                              [nil, Time.zone.now]
+                              [nil, Time.zone.now.ago(1.second)]
                             when date_filter_values[:none]
                               [nil, nil]
                             else

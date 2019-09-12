@@ -7,7 +7,6 @@ module Widget
 
     skip_before_filter :check_privilege
     before_filter :check_feature
-    before_filter :check_anonymous_tickets
     before_filter :check_ticket_permission, only: :create
     before_filter :check_recaptcha, unless: :predictive_ticket?
     before_filter :validate_attachment_ids, if: :attachment_ids?
@@ -46,7 +45,6 @@ module Widget
         params[cname].permit(*field)
         set_default_values
         params_hash = params[cname].merge(statuses: Helpdesk::TicketStatus.status_objects_from_cache(current_account), ticket_fields: @ticket_fields)
-        additional_params = get_additional_params
         ticket = validation_class.new(params_hash, @item, string_request_params?, additional_params)
         render_custom_errors(ticket, true) unless ticket.valid?(original_action_name.to_sym)
       end
@@ -66,9 +64,9 @@ module Widget
       def validate_attachment_ids
         @delegator_klass = 'WidgetAttachmentDelegator'
         validate_delegator(@item,
-                            attachment_ids: @attachment_ids,
-                            widget_id: @widget_id,
-                            widget_client_id: @client_id)
+                           attachment_ids: @attachment_ids,
+                           widget_id: @widget_id,
+                           widget_client_id: @client_id)
       end
 
       def remove_ignore_params
@@ -78,7 +76,7 @@ module Widget
         super
       end
 
-      def get_additional_params
+      def additional_params
         additional_params = {}
         additional_params[:is_ticket_fields_form] = @help_widget.ticket_fields_form?
         additional_params[:is_predictive] = predictive_ticket?

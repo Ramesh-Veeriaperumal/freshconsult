@@ -47,28 +47,28 @@ module Wf
       def fsm_appointment_date_filter_sql_condition
         date_time_filter_options_hash = TicketFilterConstants::DATE_TIME_FILTER_DEFAULT_OPTIONS_HASH
         if value == date_time_filter_options_hash[:today]
-          get_sql_condition(::Time.zone.now.beginning_of_day.to_s(:db), ::Time.zone.now.end_of_day.to_s(:db))
+          get_sql_condition(::Time.zone.now.beginning_of_day, ::Time.zone.now.end_of_day)
         elsif value == date_time_filter_options_hash[:yesterday]
-          get_sql_condition(::Time.zone.now.yesterday.beginning_of_day.to_s(:db), ::Time.zone.now.yesterday.end_of_day.to_s(:db))
+          get_sql_condition(::Time.zone.now.yesterday.beginning_of_day, ::Time.zone.now.yesterday.end_of_day)
         elsif value == date_time_filter_options_hash[:tomorrow]
-          get_sql_condition(::Time.zone.now.tomorrow.beginning_of_day.to_s(:db), ::Time.zone.now.tomorrow.end_of_day.to_s(:db))
+          get_sql_condition(::Time.zone.now.tomorrow.beginning_of_day, ::Time.zone.now.tomorrow.end_of_day)
         elsif value == date_time_filter_options_hash[:week]
-          get_sql_condition(::Time.zone.now.beginning_of_week.to_s(:db), ::Time.zone.now.end_of_week.to_s(:db))
+          get_sql_condition(::Time.zone.now.beginning_of_week, ::Time.zone.now.end_of_week)
         elsif value == date_time_filter_options_hash[:last_week]
-          get_sql_condition(::Time.zone.now.prev_week.beginning_of_week.to_s(:db), ::Time.zone.now.prev_week.end_of_week.to_s(:db))
+          get_sql_condition(::Time.zone.now.prev_week.beginning_of_week, ::Time.zone.now.prev_week.end_of_week)
         elsif value == date_time_filter_options_hash[:next_week]
-          get_sql_condition(::Time.zone.now.next_week.beginning_of_week.to_s(:db), ::Time.zone.now.next_week.end_of_week.to_s(:db))
+          get_sql_condition(::Time.zone.now.next_week.beginning_of_week, ::Time.zone.now.next_week.end_of_week)
         elsif value == date_time_filter_options_hash[:in_the_past]
-          return [" #{condition.full_key} <= '#{::Time.zone.now.to_s(:db)}' "]
+          return [" #{condition.full_key} <= '#{::Time.zone.now.ago(1.second).to_s(:db)}' "]
         elsif value == date_time_filter_options_hash[:none]
           return [" #{condition.full_key} is null"]
         else
           condition_key = condition.full_key
           begin
             start_date, end_date = value.split(' - ')
-            start_date = ::Time.zone.parse(start_date).to_s(:db)
-            end_date = ::Time.zone.parse(end_date).end_of_day.to_s(:db)
-            return [" (#{condition_key} >= ? and #{condition_key} <= ?) ", start_date, end_date]
+            start_time = ::Time.zone.parse(start_date)
+            end_time = ::Time.zone.parse(end_date).end_of_day
+            return [" (#{condition_key} >= ? and #{condition_key} <= ?) ", start_time.to_s(:db), end_time.to_s(:db)]
           rescue StandardError => e
             Rails.logger.info "Will_filter date_time::: Invalid date time for #{condition.key}"
           end
@@ -76,7 +76,7 @@ module Wf
       end
 
       def get_sql_condition(time1, time2)
-        [" #{condition.full_key} >= '#{time1}' and #{condition.full_key} <= '#{time2}'"]
+        [" #{condition.full_key} >= '#{time1.to_s(:db)}' and #{condition.full_key} <= '#{time2.to_s(:db)}'"]
       end
     end
   end

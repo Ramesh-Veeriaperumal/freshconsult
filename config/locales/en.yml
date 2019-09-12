@@ -64,6 +64,12 @@ en:
       x_seconds:
         one: "1 second"
         other: "%{count} seconds"
+  downgrade_policy:
+    change_request: Request Change
+    request_cancel_success: Successfully cancelled the request.  
+    subscription_cancel_request_success: Subscription change request has been cancelled.
+    subscription_cancel_request_failure: An error occurred while cancelling subscription change request.
+    cancel_request_failure: Error occurred while cancelling request. Please try after sometime.       
   common_js_translations:
     new: new
     remove_quoted_text: "Remove quoted text"
@@ -182,6 +188,7 @@ en:
   confirm_delete_message: Are you sure you want to delete the %{human_name}?
   reload: Reload
   any: Any
+  from: From
   or: or
   go_to_new_ui: "Switch to the Mint experience"
   enable: "Enable"
@@ -720,8 +727,8 @@ en:
   change_equal_plan_title: "Are you sure you want to move to the new %{to_plan} plan?"
   downgrade_plan_title: "Are you sure you want to downgrade?"
   activate_free_plan: Activate Free Plan
-  request_change: Request change
   create: Create
+  request_change: Request change
   feedbackwidget_custom_image_info: if you are using a custom image the color and text will be ignored.
   account_admin_updated: Account admin has been updated!
   no_images_uploaded_yet: No Images Uploaded Yet.
@@ -769,6 +776,7 @@ en:
         load_questions: View More
         comments: Comments
         survey_on_open_ticket: Could not submit survey rating as ticket is not resolved.
+        preview_survey: 'This is what a test mail looks like :'
     login:
       form:
         email: Email

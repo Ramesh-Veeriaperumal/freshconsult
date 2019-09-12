@@ -20,14 +20,6 @@ module WidgetConcern
     render_request_error(:require_feature, 403, feature: :help_widget) unless current_account.help_widget_enabled?
   end
 
-  def check_open_solutions
-    render_request_error(:require_feature, 403, feature: :open_solutions) unless current_account.features?(:open_solutions)
-  end
-
-  def check_anonymous_tickets
-    render_request_error(:require_feature, 403, feature: :anonymous_tickets) unless current_account.features?(:anonymous_tickets)
-  end
-
   def add_attachments
     @item.attachments = current_account.attachments.where(id: @attachment_ids) if @attachment_ids.present?
   end

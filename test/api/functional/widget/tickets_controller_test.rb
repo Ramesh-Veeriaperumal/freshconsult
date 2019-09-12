@@ -8,7 +8,6 @@ module Widget
     def setup
       super
       @account.launch :help_widget
-      @account.add_feature(:anonymous_tickets)
       @widget = create_widget
       @request.env['HTTP_X_WIDGET_ID'] = @widget.id
       @client_id = UUIDTools::UUID.timestamp_create.hexdigest

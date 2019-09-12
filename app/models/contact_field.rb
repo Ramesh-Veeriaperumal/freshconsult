@@ -110,4 +110,8 @@ class ContactField < ActiveRecord::Base
   def save_deleted_contact_field_info
     @deleted_model_info = as_api_response(:central_publish_destroy)
   end
+
+  def custom_checkbox_field?
+    field_type.to_sym == :custom_checkbox
+  end
 end

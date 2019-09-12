@@ -101,7 +101,7 @@ class VaRule < ActiveRecord::Base
   end
 
   def rule_operator
-     @rule_operator ||= self[:match_type].to_sym  if supervisor_rule?
+     @rule_operator ||= self[:match_type].try(:to_sym)  if supervisor_rule?
      @rule_operator ||= (observer_rule? ?
                           condition_data[:conditions].keys.first.to_sym :
                           condition_data.keys.first.to_sym) if has_condition_data?

@@ -319,6 +319,10 @@ api_error_messages:
   reauthorization_required: "%{app_name} requires reauthorization"
   duplicate_name_in_automations: "A rule already exists with name - '%{name}'"
   case_sensitive_not_allowed: "'case_sensitive' not allowed in '%{name}'"
+  invalid_condition_set_count: "Maximum %{count} condition sets allowed for this rule type"
+  duplicate_condition_set_name: "Duplicate condition set name - %{name}"
+  cannot_be_blank: "'%{name}' can't be blank"
+
   # Solutions
   invalid_portal_id: 'Portal id is invalid'
   no_ratings: "The article doesn't have any ratings to be reset"

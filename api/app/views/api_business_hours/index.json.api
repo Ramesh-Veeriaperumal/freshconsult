@@ -4,6 +4,7 @@ JSON.generate(@items.map do |business_hour|
     name: business_hour.name,
     description: business_hour.description,
     business_hours: business_hour.business_intervals,
+    time_zone: business_hour.time_zone,
     created_at: business_hour.created_at.try(:utc),
     updated_at: business_hour.updated_at.try(:utc)
   }

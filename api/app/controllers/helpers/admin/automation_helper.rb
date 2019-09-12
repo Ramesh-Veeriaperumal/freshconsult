@@ -13,8 +13,10 @@ module Admin::AutomationHelper
     end
 
     def check_conditions_params
-      params[cname][:conditions].permit(*CONDITIONS_REQUEST_PRAMS)
-      check_condition_set_params
+      params[cname][:conditions].each do |condition|
+        condition.permit(*CONDITION_SET_DEFAULT_PARAMS)
+        check_condition_set_values_params(condition[:properties])
+      end
     end
 
     def check_events_params
@@ -33,24 +35,14 @@ module Admin::AutomationHelper
       params[cname][:performer].permit(*PERFORMER_REQUEST_PRAMS)
     end
 
-    def check_condition_set_params
-      %i[condition_set_1 condition_set_2].each do |key|
-        if params[cname][:conditions][key].present?
-          params[cname][:conditions][key].permit(*CONDITION_SET_REQUEST_PARAMS)
-          check_condition_set_values_params(params[cname][:conditions][key])
-        end
-      end
-    end
-
     def check_condition_set_values_params(condition_params)
-      %i[ticket contact company].each do |key|
-        next unless condition_params[key].is_a?(Array)
-        condition_params[key].map do |condition|
-          values = *condition[:value]
+      condition_params.map do |condition|
+        CONDITION_RESOURCE_TYPES.each do |key|
           condition.permit(*CONDITION_SET_REQUEST_VALUES) if condition.is_a?(Hash)
           condition = convert_tag_fields(condition) if condition[:field_name] == TAG_NAMES && key == :ticket
           condition[:field_name] = 'ticlet_cc' if condition[:field_name] == 'ticket_cc' && key == :ticket
           condition[:field_name] = condition[:field_name].to_s + '_' + condition[:custom_status_id].to_s if condition[:field_name].to_s == TIME_AND_STATUS_BASED_FILTER[0] && key == :ticket
+          condition[:nested_fields].permit(*LEVELS).values.each { |value| value.permit(*PERMITTED_DEFAULT_CONDITION_SET_VALUES) } if condition.key?(:nested_fields)
           add_case_sensitive_key(condition) if condition.present?
         end
       end
@@ -64,7 +56,7 @@ module Admin::AutomationHelper
 
     def set_automations_fields
       @condition_data = @item.condition_data || {}
-      @match_type = @item.supervisor_rule? ? ((@conditions.present? && @conditions[:condition_set_1]['match_type']) || 
+      @match_type = @item.supervisor_rule? ? ((@conditions.present? && @conditions.first['match_type']) ||
                                                @item.match_type || 
                                                DEFAULT_OPERATOR) : @item.match_type
       automation_fields = AUTOMATION_FIELDS[VAConfig::RULES_BY_ID[params[:rule_type].to_i]]
@@ -79,7 +71,7 @@ module Admin::AutomationHelper
     end
 
     def set_conditions_data
-      if @conditions.blank?
+      if @conditions.blank? && @operator.blank?
         @condition_data.merge!(conditions: (@item.condition_data.present? && 
                                             @item.condition_data[:conditions]) || 
                                            {:all=>[]}) if @item.observer_rule?
@@ -299,38 +291,26 @@ module Admin::AutomationHelper
     end
 
     def construct_condition_data
-      operator = (@conditions[:operator] || 'and').to_sym
-      operator = MAP_CONDITION_SET_OPERATOR[operator]
-      condition_sets = construct_condition_sets
+      params_operator = @operator.present? ? @operator.split(' ')[1].to_sym : nil
+      operator = MAP_CONDITION_SET_OPERATOR[params_operator] || @item.rule_operator.to_s || 'and'
+      condition_sets = if @conditions.present?
+                         @conditions.inject([]) { |result, condition| result << construct_condition_set(condition) }
+                       else
+                         @item.observer_rule? ? @item.condition_data[:conditions].first[1] : @item.condition_data.first[1]
+                       end
       condition_sets.count > 1 ? { operator.to_sym => condition_sets } : condition_sets[0]
     end
 
-    def construct_condition_sets
-      %i[condition_set_1 condition_set_2].inject([]) do |condition_sets, key|
-        if @conditions.key?(key)
-          condition_sets.push(construct_condition_set(@conditions[key]))
-        else
-          condition_sets
-        end
-      end
-    end
-
     def construct_condition_set(condition_set)
-      operator = condition_set['match_type'] || DEFAULT_OPERATOR
-      conditions = EVALUATE_ON_MAPPING.keys.inject([]) do |condition_array, evaluate_on|
-        if condition_set[evaluate_on].present?
-          condition_array.push(*construct_condition(condition_set[evaluate_on], evaluate_on))
-        else
-          condition_array
-        end
-      end
-      @item.supervisor_rule? ? conditions : { operator.to_sym => conditions } 
+      match_type = condition_set[:match_type] || DEFAULT_OPERATOR
+      conditions = construct_condition(condition_set[:properties])
+      @item.supervisor_rule? ? conditions : { match_type.to_sym => conditions }
     end
 
-    def construct_condition(condition_set, evaluate_on)
-      evaluate_on = EVALUATE_ON_MAPPING[evaluate_on] || evaluate_on
+    def construct_condition(condition_set)
       condition_set.map do |condition|
         return {} if condition.blank?
+        evaluate_on = EVALUATE_ON_MAPPING[condition[:resource_type].try(:to_sym)] || condition[:resource_type].try(:to_sym)
         PERMITTED_CONDITION_SET_VALUES.inject({}) do |hash, key|
           is_ticket = evaluate_on == :ticket
           hash.merge!(evaluate_on: evaluate_on) unless @item.supervisor_rule?

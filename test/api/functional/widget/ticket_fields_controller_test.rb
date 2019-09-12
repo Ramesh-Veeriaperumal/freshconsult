@@ -14,7 +14,6 @@ module Widget
       @request.env['HTTP_X_CLIENT_ID'] = @client_id
       current_product = @widget.product_id
       @account.launch :help_widget
-      @account.add_feature(:anonymous_tickets)
       @current_portal = current_product ? @account.portals.find_by_product_id(current_product) : current_account.main_portal_from_cache
     end
 
@@ -77,13 +76,6 @@ module Widget
       get :index, controller_params
       assert_response 403
       @account.add_feature(:help_widget)
-    end
-
-    def test_index_without_anonymous_tickets
-      @account.remove_feature(:anonymous_tickets)
-      get :index, controller_params
-      assert_response 403
-      @account.add_feature(:anonymous_tickets)
     end
 
     def test_index_with_choices

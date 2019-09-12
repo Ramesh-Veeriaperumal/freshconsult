@@ -780,7 +780,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       ticket_filter.query_hash = filter_data[:filter]
       ticket_filter.visibility = { :visibility => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents], :user_id => Account.current.account_managers.first }
       ticket_filter.account_id = Account.current.id
-      ticket_filter.save
+      ticket_filter.save!
     end
   end
 

@@ -39,7 +39,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
 
         if subscription.field_agent_limit.nil?
           subscription.field_agent_limit=0
-          subscription.save
+          subscription.save!
         end
       end
 
@@ -62,7 +62,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
                         description: I18n.t('fsm_scheduling_dashboard.description'),
                         privilege_list: FIELD_SERVICE_MANAGER_ROLE_PRIVILEGES }
         role = Account.current.roles.build(role_params)
-        role.save
+        role.save!
       end
 
       def log_operation_failure(operation, exception)
@@ -113,7 +113,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         ticket_field.name = field_name
         ticket_field.flexifield_def_entry = ff_def_entry
 
-        raise "Couldn't save ticket field #{field_name}" unless ticket_field.save
+        ticket_field.save!
         ticket_field.insert_at(field_details[:position]) if field_details[:position].present?
       end
 
@@ -172,12 +172,12 @@ module Admin::AdvancedTicketing::FieldServiceManagement
             next if field_data.field_options["section"] 
             
             field_data.field_options = { "section" => true }
-            field_data.save
+            field_data.save!
           end
           ticket_type_field = Account.current.ticket_fields.find_by_name('ticket_type')
           if !ticket_type_field.field_options["section_present"]
             ticket_type_field.field_options = { "section_present" => true}
-            ticket_type_field.save
+            ticket_type_field.save!
           end
         end
         fields_to_be_created.each_with_index do |custom_field, index|
@@ -188,7 +188,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         section_fields.each do |section_field|
           section_data.section_fields.build(section_field)
         end
-        section_data.save
+        section_data.save!
       end
 
       def create_field_group_type
@@ -210,7 +210,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         dashboard_object = DashboardObjectConcern.new(I18n.t("fsm_dashboard.name"))
         dashboard_object_with_widget = add_widgets_to_fsm_dashboard(dashboard_object, options)
         fsm_dashboard = Dashboard.new(dashboard_object_with_widget.get_dashboard_payload(:db))
-        raise "Failed to create fsm dashboard" unless fsm_dashboard.save
+        fsm_dashboard.save!
       end
 
       def create_fsm_default_custom_filters
