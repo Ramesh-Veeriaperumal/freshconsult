@@ -14,6 +14,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
   after_update :handle_email_notification_outdate, :if => :had_supported_languages?
   after_initialize :set_default_rlimit
   after_commit :clear_cache
+  after_commit :update_help_widget_languages, if: -> { Account.current.help_widget_enabled? && @portal_languages_changed }
   serialize :additional_settings, Hash
   serialize :resource_rlimit_conf, Hash
   validate :validate_bcc_emails
@@ -76,6 +77,11 @@ class AccountAdditionalSettings < ActiveRecord::Base
     else
       DASHBOARD_LIMITS[:min]
     end
+  end
+
+  def portal_language_setter(portal_languages)
+    @portal_languages_changed = true
+    additional_settings[:portal_languages] = portal_languages
   end
 
   def delete_spam_tickets_days
@@ -199,6 +205,11 @@ class AccountAdditionalSettings < ActiveRecord::Base
   end
 
   private
+
+  def update_help_widget_languages
+    Account.current.help_widgets.active.map(&:upload_configs)
+    @portal_languages_changed = false
+  end
 
   def clear_cache
     self.account.clear_account_additional_settings_from_cache
