@@ -19,7 +19,8 @@ class Portal < ActiveRecord::Base
   validates_inclusion_of :language, :in => Language.all_codes, :if => :language_changed?
   validate :validate_preferences
   before_update :backup_portal_changes , :if => :main_portal
-  after_commit :update_solutions_language, on: :update, :if => :main_portal_language_changes?
+  after_commit :update_solutions_language, on: :update, if: :main_portal_language_changes?
+  after_commit :update_help_widget_language, on: :update, if: -> { Account.current.help_widget_enabled? && main_portal_language_changes? }
   delegate :friendly_email, :to => :product, :allow_nil => true
   before_save :downcase_portal_url
   after_save :update_chat_widget
@@ -257,6 +258,10 @@ class Portal < ActiveRecord::Base
     ### MULTILINGUAL SOLUTIONS - META READ HACK!! - shouldn't be necessary after we let users decide the language
     def update_solutions_language
       Community::HandleLanguageChange.perform_async unless account.features_included?(:enable_multilingual)
+    end
+
+    def update_help_widget_language
+      Account.current.help_widgets.active.map(&:upload_configs)
     end
 
     def main_portal_language_changes?
