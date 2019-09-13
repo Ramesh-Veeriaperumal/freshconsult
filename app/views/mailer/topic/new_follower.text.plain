@@ -1,13 +1,12 @@
-Added as topic follower
+<%= t("mailer_notifier.notify_new_follower.topic.title") %>
 
 <%= "_" * 100 %>
-
-You have been added as a follower by <%= @user.name %> to this topic. 
+<%= t("mailer_notifier.notify_new_follower.topic.message", name: @user.name) %> 
 
 <%= @topic.title %>
 <%= @topic.first_post.body %>
 
 <%= "_" * 100 %>
 
-<%= link_to 'Stop following this topic',toggle_monitorship_url(:object => "topic", 
+<%= link_to t("mailer_notifier.notify_new_follower.topic.unfollow"),toggle_monitorship_url(:object => "topic", 
                   :id => @topic.id, :type=>"unfollow", :host=> @portal.host), :class => "desc" %> 

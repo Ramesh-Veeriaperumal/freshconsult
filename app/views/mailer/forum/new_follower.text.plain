@@ -1,14 +1,12 @@
-Added as forum follower
+<%= t("mailer_notifier.notify_new_follower.forum.title") %>
 
 <%= "_" * 100 %>
-
-You have been added as a follower by <%= @user.name %> to this forum. 
+<%= t("mailer_notifier.notify_new_follower.forum.message", name: @user.name) %> 
 
 <%= @forum.name %>
 <%= @forum.description %>
 
 <%= "_" * 100 %>
 
-<%= link_to 'Stop following this forum',toggle_monitorship_url(:object => "forum", 
+<%= link_to t("mailer_notifier.notify_new_follower.forum.unfollow"),toggle_monitorship_url(:object => "forum", 
                   :id => @forum.id, :type=>"unfollow", :host=> @portal.host), :class => "desc" %>
-

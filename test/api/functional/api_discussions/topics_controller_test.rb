@@ -182,6 +182,8 @@ module ApiDiscussions
 
     def test_permit_toggle_params_deleted_user
       monitor_topic(first_topic, deleted_user, 1)
+      puts first_topic
+      puts deleted_user
       delete :unfollow, controller_params(id: first_topic.id, user_id: deleted_user.id)
       assert_response 204
       deleted_user.update_column(:deleted, false)
