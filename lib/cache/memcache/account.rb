@@ -690,6 +690,14 @@ module Cache::Memcache::Account
     end
   end
 
+  def picklist_values_by_id_cache
+    @picklist_values_by_id_cache ||= MemcacheKeys.get_multi_from_cache(dropdown_nested_fields.map(&:picklist_values_by_id_key))
+  end
+
+  def picklist_ids_by_value_cache
+    @picklist_ids_by_value_cache ||= MemcacheKeys.get_multi_from_cache(dropdown_nested_fields.map(&:picklist_ids_by_value_key))
+  end
+
   private
     def permissible_domains_memcache_key id = self.id
       HELPDESK_PERMISSIBLE_DOMAINS % { :account_id => id }
