@@ -10,6 +10,8 @@ class HelpdeskPermissibleDomain < ActiveRecord::Base
   before_validation :validate_permissible_domain
   after_commit :clear_helpdesk_permissible_domains_from_cache
 
+  swindle :basic_info, attrs: %i[domain]
+
   MAX_HELPDESK_PERMISSIBLE_DOMAINS = 40
 
   protected

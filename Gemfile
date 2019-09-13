@@ -48,6 +48,8 @@ gem 'charlock_holmes', "0.7.3"
 gem "tnef", "1.0.2"
 gem "central-publisher", :git => 'git@github.com:freshdesk/central-publisher.git', :tag => 'v2.0.5'
 
+gem 'optar', git: 'git@github.com:freshdesk/optar.git', tag: 'v1.1.3'
+
 group :development, :test do
   gem 'active_record_query_trace'  
   gem 'rails-dev-boost', :git => 'git://github.com/thedarkone/rails-dev-boost.git'
@@ -364,5 +366,4 @@ gem "rubocop", "0.52.1"
 gem 'safe_yaml', "1.0.4"
 
 gem 'ejson', :require => false
-gem 'optar', git: 'git@github.com:freshdesk/optar.git', tag: 'v1.1.1'
 gem 'rack-protection', '1.5.5'

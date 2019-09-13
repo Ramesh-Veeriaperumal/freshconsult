@@ -2,8 +2,9 @@ module Cache::Memcache::User
   include MemcacheKeys
 
   def clear_agent_list_cache
-    delete_value_from_cache(format(ACCOUNT_AGENTS, account_id: self.account_id))
-    delete_value_from_cache(format(ACCOUNT_AGENTS_DETAILS, account_id: self.account_id))
+    delete_value_from_cache(format(ACCOUNT_AGENTS, account_id: account_id))
+    delete_value_from_cache(format(ACCOUNT_AGENTS_DETAILS, account_id: account_id))
+    delete_value_from_cache(format(ACCOUNT_AGENTS_DETAILS_OPTAR, account_id: account_id))
     delete_value_from_cache(format(ACCOUNT_AGENTS_HASH, account_id: account_id))
   end
 

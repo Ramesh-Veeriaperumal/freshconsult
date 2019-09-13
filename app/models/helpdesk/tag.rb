@@ -74,7 +74,8 @@ class Helpdesk::Tag < ActiveRecord::Base
 
   scope :tag_search, lambda { |keyword| { :conditions => ["name like ?","#{keyword}%"] } if keyword.present? }
 
-
+  swindle :basic_info,
+          attrs: %i[name]
 
 
 
