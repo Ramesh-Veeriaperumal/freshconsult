@@ -358,7 +358,7 @@ class SubscriptionsController < ApplicationController
       elsif card_needed_for_payment?
         redirect_to :action => "billing"
       else
-        flash[:notice] = t('plan_info_update') unless current_account.launched?(:downgrade_policy)
+        flash[:notice] = t('plan_info_update') if scoper.subscription_request.nil?
         redirect_to :action => "show"
       end
     end
