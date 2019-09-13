@@ -17,7 +17,7 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
     validate_conditions?
   end
 
-  belongs_to :account
+  belongs_to_account
   
   has_many :sla_details , :class_name => "Helpdesk::SlaDetail", :foreign_key => "sla_policy_id", 
     :dependent => :destroy 
@@ -33,8 +33,8 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
   scope :active, :conditions => {:active => true }
   scope :inactive, :conditions => {:active => false }
 
-  default_scope :order => "is_default, position"
-  
+  default_scope order: 'is_default, position'
+
   attr_accessor :datatype
 
   ESCALATION_LEVELS = [
