@@ -12,24 +12,23 @@ SIDEKIQ_CLASSIFICATION_MAPPING = SIDEKIQ_CLASSIFICATION[:classification].inject(
   t_h
 end
 
-REDIS_CONFIG_KEYS = ['host', 'port', 'password'].freeze
+REDIS_CONFIG_KEYS = ['host', 'port', 'password', 'namespace'].freeze
 
-$sidekiq_datastore = proc {
-  Redis::Namespace.new(config['namespace'],
-                       redis: Redis.new(config.slice(*REDIS_CONFIG_KEYS).merge(tcp_keepalive: config['keepalive'])))
-}
+redis_config = config.slice(*REDIS_CONFIG_KEYS).merge(tcp_keepalive: config['keepalive'], network_timeout: sidekiq_config['timeout'])
 
-$sidekiq_redis_pool_size = sidekiq_config[:redis_pool_size] || sidekiq_config[:concurrency]
-# setting redis connection pool size of sidekiq client to (concurrency / 2) because of limitations from redis-labs
-$sidekiq_client_redis_pool_size = ($sidekiq_redis_pool_size / 2).to_i
-$sidekiq_client_redis_pool_size = $sidekiq_redis_pool_size if $sidekiq_client_redis_pool_size.zero?
-$sidekiq_redis_timeout = sidekiq_config[:timeout]
+MIN_SIDEKIQ_CONNECTIONS = 7
+
+pool_size = sidekiq_config[:redis_pool_size] || sidekiq_config[:concurrency]
+sidekiq_redis_pool_size = (pool_size > MIN_SIDEKIQ_CONNECTIONS ? pool_size + 2 : MIN_SIDEKIQ_CONNECTIONS)
+
+sidekiq_client_redis_pool_size = (pool_size / 2).to_i
+sidekiq_client_redis_pool_size = pool_size if sidekiq_client_redis_pool_size.zero?
 
 poll_interval = config['scheduled_poll_interval']
 Sidekiq.default_worker_options = { backtrace: 10 }
 Sidekiq.options[:dead_max_jobs] = config['dead_max_jobs'] || MAX_DEAD_SET_SIZE
 Sidekiq.configure_client do |config|
-  config.redis = ConnectionPool.new(size: $sidekiq_client_redis_pool_size, timeout: $sidekiq_redis_timeout, &$sidekiq_datastore)
+  config.redis = redis_config.merge({:size => sidekiq_client_redis_pool_size})
   config.client_middleware do |chain|
     chain.add Middleware::Sidekiq::Client::RouteORDrop
     chain.add Middleware::Sidekiq::Client::BelongsToAccount, :ignore => [
@@ -132,8 +131,8 @@ Sidekiq.configure_server do |config|
   # ActiveRecord::Base.logger = Logger.new(STDOUT)
   # Sidekiq::Logging.logger = ActiveRecord::Base.logger
   # Sidekiq::Logging.logger.level = ActiveRecord::Base.logger.level
-  config.redis = ConnectionPool.new(:size => $sidekiq_redis_pool_size, :timeout => $sidekiq_redis_timeout, &$sidekiq_datastore)
-  config.reliable_fetch!
+  config.redis = redis_config.merge({:size => sidekiq_redis_pool_size})
+  config.super_fetch!
   config.average_scheduled_poll_interval = poll_interval if poll_interval.present?
   config.error_handlers << proc { |ex, ctx_hash|
     begin

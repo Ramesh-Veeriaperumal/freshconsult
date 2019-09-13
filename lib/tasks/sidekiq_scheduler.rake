@@ -1,8 +1,8 @@
 require 'sidekiq'
 require 'sidekiq/util'
-require 'sidekiq/actor'
+#require 'sidekiq/actor'
 require 'sidekiq/api'
-require 'celluloid'
+#require 'celluloid'
 require 'sidekiq/scheduled'
 
 
