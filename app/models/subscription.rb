@@ -104,6 +104,7 @@ class Subscription < ActiveRecord::Base
   after_commit :reactivate_account, :update_status_in_freshid, on: :update, :if => [:moved_from_suspended?]
   after_commit :update_sandbox_subscription, on: :update, if: :account_has_sandbox?
   after_commit :complete_onboarding, on: :update, if: :upgrade_from_trial?
+  after_commit :launch_downgrade_policy, unless: :policy_applied_account?
 
   attr_accessor :creditcard, :address, :billing_cycle, :subscription_term_start
   attr_reader :response
@@ -845,6 +846,10 @@ class Subscription < ActiveRecord::Base
       account.anonymous_account?
     end
 
+    def policy_applied_account?
+      account.launched? :downgrade_policy
+    end
+
     def plan_changed?
       @old_subscription.subscription_plan_id != subscription_plan_id
     end
@@ -891,5 +896,10 @@ class Subscription < ActiveRecord::Base
 
     def account_has_sandbox?
       account.production_with_sandbox? && (moved_to_suspended? || moved_from_suspended?)
+    end
+
+    def launch_downgrade_policy
+      renewal_period_change = previous_changes['renewal_period']
+      account.launch(:downgrade_policy) if redis_key_exists?(DOWNGRADE_POLICY_TO_ALL) && renewal_period_change.present? && renewal_period_change[0] != renewal_period_change[1]
     end
  end

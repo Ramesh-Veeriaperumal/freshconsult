@@ -314,6 +314,6 @@ class Account < ActiveRecord::Base
   PARENT_CHILD_INFRA_FEATURES = [:parent_child_tickets, :field_service_management]
 
   CONDITION_BASED_LAUNCHPARTY_FEATURES = {
-    downgrade_policy: lambda { |account| account.redis_key_exists?(Redis::Keys::Others::SUBSCRIPTION_REQUESTS_ENABLED) }
+    downgrade_policy: lambda { |account| account.redis_key_exists?(Redis::Keys::Others::DOWNGRADE_POLICY) }
   }.freeze
 end
