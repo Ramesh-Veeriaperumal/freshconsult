@@ -568,6 +568,7 @@ class Subscription < ActiveRecord::Base
   def downgrade?
     (account.launched?(:downgrade_policy) && active? &&
       !present_subscription.subscription_plan.amount.zero? &&
+      present_subscription.agent_limit > present_subscription.free_agents &&
       (plan_downgrade? || omni_plan_dowgrade? || term_reduction? || agent_limit_reduction? || fsm_downgrade?))
   end
 
@@ -593,7 +594,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def cost_per_agent
-    plan = billing.retrieve_plan_from_cache(subscription_plan, renewal_period)
+    plan = retrieve_plan_from_cache(subscription_plan, renewal_period)
     (plan.plan.price/plan.plan.period)/100
   end
 
