@@ -5,6 +5,8 @@ require Rails.root.join('test', 'models', 'helpers', 'subscription_test_helper.r
 class SubscriptionsControllerTest < ActionController::TestCase
   include AccountTestHelper
   include SubscriptionTestHelper
+  include Redis::OthersRedis
+  include Redis::Keys::Others
 
   def setup
     Subscription.any_instance.stubs(:chk_change_field_agents).returns(nil)
@@ -86,6 +88,24 @@ class SubscriptionsControllerTest < ActionController::TestCase
     assert_equal @account.subscription.subscription_request.renewal_period, SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:monthly]
     assert_response 302
   ensure
+    unstub_chargebee_requests
+  end
+
+  def test_same_plan_billing_cycle_downgrade_for_existing_customers
+    params = { plan_id: @account.subscription.subscription_plan_id, billing_cycle: SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:monthly] }
+    stub_chargebee_requests
+    $redis_others.perform_redis_op('set', DOWNGRADE_POLICY_TO_ALL, true)
+    @account.subscription.update_attributes(agent_limit: '1')
+    @account.subscription.update_attributes(renewal_period: SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual])
+    current_subscription = @account.subscription
+    current_subscription.account.rollback :downgrade_policy
+    post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id, :billing_cycle)))
+    current_subscription.reload
+    assert_equal current_subscription.account.launched?(:downgrade_policy), true
+    assert_equal @account.subscription.subscription_request.nil?, true
+    assert_response 302
+  ensure
+    $redis_others.perform_redis_op('del', DOWNGRADE_POLICY_TO_ALL)
     unstub_chargebee_requests
   end
 
@@ -299,10 +319,13 @@ class SubscriptionsControllerTest < ActionController::TestCase
 
     def unstub_chargebee_requests
       ChargeBee::Subscription.unstub(:update)
+      ChargeBee::Estimate.unstub(:update_subscription)
       ChargeBee::Subscription.unstub(:retrieve)
       ChargeBee::Plan.unstub(:retrieve)
-      ChargeBee::Estimate.unstub(:update_subscription)
+      ChargeBee::Coupon.unstub(:retrieve)
       Subscription.any_instance.unstub(:active?)
+      @controller.unstub(:set_current_account)
+      @controller.unstub(:request_host)
       @account.destroy
     end
 
