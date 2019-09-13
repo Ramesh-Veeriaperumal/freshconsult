@@ -35,6 +35,7 @@ module Community::MailerHelper
   end
 
   def new_follower_subject(object)
-    "Added as #{object.class.name} Follower - #{object[:name] || object[:title]}"
+    key = object.class.name == 'Topic' ? 'mailer_notifier_subject.notify_new_topic_follower' : 'mailer_notifier_subject.notify_new_forum_follower'
+    I18n.t(key, title: (object[:name] || object[:title]))
   end
 end
