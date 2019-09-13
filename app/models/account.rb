@@ -903,6 +903,22 @@ class Account < ActiveRecord::Base
     Portal.current ? Portal.current.language : (Account.current ? Account.current.language : I18n.default_locale)
   end
 
+  def dropdown_nested_fields
+    @dropdown_nested_fields ||= begin
+      ticket_fields_from_cache.select do |ticket_field|
+        ticket_field.field_type == 'custom_dropdown' || ticket_field.field_type == 'nested_field'
+      end
+    end
+  end
+
+  def ticket_field_by_flexifield_name
+    @ticket_field_by_flexifield_name ||= {}.tap do |h|
+      dropdown_nested_fields.each do |ticket_field|
+        h[ticket_field.flexifield_name] = ticket_field
+      end
+    end
+  end
+
   protected
 
     def external_url_is_valid?(url)
