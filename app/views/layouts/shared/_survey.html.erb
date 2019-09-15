@@ -1,28 +1,15 @@
-<% if survey_preview %>
-  <div id="survey_info" style='width: 100%; display: flex; justify-content: space-between; padding: 10px 0;'>
-    <div> <%= I18n.t('from') %>: <%= @current_account.default_email %> </div>
-    <div> <%= fetch_current_time %> </div>
-  </div>
-  <div> <%= I18n.t('support.tickets.ticket_survey.preview_survey') %> </div>
-  <hr>
-<% end %>
-
 <div class="freshdesk_satisfaction_survey">
   <div  style="width: 100%;font: 13px 'Helvetica Neue', Helvetica, Arial, sans-serif;">
-    <% if !rating && !survey_preview %>
+    <% unless rating %>
       <hr style="height:0;border:0;margin-top:20px;border-top:1px solid #ccc;">
     <% end %>
     <span style="font-family: Arial, sans-serif; color: #333;font-weight:bold;">
-      <%if survey_preview %>
-        <% question_label = translation_record.present? ? translation_record.translations.fetch('default_question', {})['question'] || survey.default_question.label : survey.default_question.label %>
-      <% else %>
-        <% question_label = translation_record.present? ? translation_record.translations.fetch('default_question', {})['question'] || survey_handle.survey.default_question.label : survey_handle.survey.default_question.label %>
-      <% end %>
+      <% question_label = translation_record.present? ? translation_record.translations.fetch('default_question', {})['question'] || survey_handle.survey.default_question.label : survey_handle.survey.default_question.label %>
       <%= simple_format(question_label) %>
     </span>
     <table  cellspacing="0" cellpadding="0" style="table-layout:fixed; margin-top:10px; <%= 'margin-left: auto; margin-right: auto;' if rating %>">
     <tr>
-      <% JSON.parse((survey || survey_handle.survey).choices).each do |option| %>
+      <% JSON.parse(survey_handle.survey.choices).each do |option| %>
           <% choice_face_value = option["survey_question_choice"]["face_value"] %>
           <% choice_bg_color = CustomSurvey::Survey::CUSTOMER_RATINGS_COLOR[choice_face_value] %>
           <% if rating %>
@@ -33,7 +20,7 @@
       <% end %>
     </tr>
     <tr>
-      <% JSON.parse((survey || survey_handle.survey).choices).each do |option| %>
+      <% JSON.parse(survey_handle.survey.choices).each do |option| %>
         <% choice_face_value = option["survey_question_choice"]["face_value"] %>
         <% choice_bg_color = CustomSurvey::Survey::CUSTOMER_RATINGS_TEXT_BGCOLOR[choice_face_value] %>
         <% if rating %>
@@ -41,13 +28,9 @@
           <td class="survey_option <%= rating == choice_face_value ? 'selected' : 'unselected' %>" style="width: 14.28%;  border-right: 2px #fff solid; text-align:center; padding: 16px 0px; background-color:<%= rating == choice_face_value ? choice_bg_color : 'lightgrey' %>;" data-bg-color=<%= choice_bg_color %> data-choice=<%= choice_face_value %>>
             <a href="<%= translation_record.present? ? custom_survey_url(survey_handle, choice_face_value, language) : custom_survey_url(survey_handle, choice_face_value) %>" style="margin:0; padding:5px; text-decoration:none; display:block; color:<%= choice_font_color %>;"><%= translation_record.present? ? translation_record.translations.fetch('default_question', {}).fetch('choices', {})[choice_face_value] || option["survey_question_choice"]["value"] : option["survey_question_choice"]["value"] %></a>
           </td>
-        <% elsif survey_preview %>
-          <td style="width: 14.28%;  border-right: 2px #fff solid; text-align:center; padding: 16px 0px; background-color:<%= choice_bg_color %>;">
-            <a href="<%= preview_custom_survey_url(survey) %>" style="margin:0; padding:5px; text-decoration:none; display:block;"><%= translation_record.present? ? translation_record.translations.fetch('default_question', {}).fetch('choices', {})[choice_face_value] || option["survey_question_choice"]["value"] : option["survey_question_choice"]["value"] %></a>
-          </td>
         <% else %>
           <td style="width: 14.28%;  border-right: 2px #fff solid; text-align:center; padding: 16px 0px; background-color:<%= choice_bg_color %>;">
-            <a href="<%= translation_record.present? ? custom_survey_url(survey_handle, choice_face_value, language) : custom_survey_url(survey_handle, choice_face_value) %>" style="margin:0; padding:5px; text-decoration:none; display:block;"><%= translation_record.present? ? translation_record.translations.fetch('default_question',{}).fetch('choices', {})[choice_face_value] || option["survey_question_choice"]["value"] : option["survey_question_choice"]["value"] %></a>
+            <a href="<%= translation_record.present? ? custom_survey_url(survey_handle, choice_face_value, language) : custom_survey_url(survey_handle, choice_face_value) %>" style="margin:0; padding:5px; text-decoration:none; display:block;"><%= translation_record.present? ? translation_record.translations.fetch('default_question', {}).fetch('choices', {})[choice_face_value] || option["survey_question_choice"]["value"] : option["survey_question_choice"]["value"] %></a>
           </td>
         <% end %>
       <% end %>
