@@ -2794,9 +2794,6 @@ Helpkit::Application.routes.draw do
     match '/surveys/:survey_code/:rating/new' => 'surveys#new', :as => :customer_survey
     match '/surveys/:survey_code/:rating' => 'surveys#create', :as => :survey_feedback, :via => :post
 
-    match '/custom_surveys/:id/preview' => 'custom_surveys#preview', :as => :custom_survey_preview
-    match '/custom_surveys/:id/preview/questions' => 'custom_surveys#preview_questions', :as => :custom_survey_preview_questions
-
     match '/custom_surveys/:survey_result/:rating' => 'custom_surveys#create', :as => :custom_survey_feedback, :via => :post
     match '/custom_surveys/:survey_code/:rating/new' => 'custom_surveys#new_via_handle' ,:as => :customer_custom_survey
     match '/custom_surveys/:survey_code/:rating/hit' => 'custom_surveys#hit' ,:as => :customer_custom_survey_hit
