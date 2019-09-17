@@ -41,18 +41,39 @@ class HelpWidget < ActiveRecord::Base
     settings[:components][:solution_articles]
   end
 
-  private
+  def build_help_widget_solution_categories(category_meta_ids)
+    category_ids_in_db = help_widget_solution_categories.pluck(:solution_category_meta_id)
+    categories_to_delete = category_ids_in_db - category_meta_ids
+    categories_to_add = category_meta_ids - category_ids_in_db
 
-    def upload_configs
-      args = {
-        widget_id: self.id,
-        _destroy: transaction_include_action?(:destroy) || !active
-      }
-      HelpWidget::UploadConfig.perform_async(args)
+    category_attributes_array = []
+
+    if categories_to_delete.present?
+      item_ids = help_widget_solution_categories.where(solution_category_meta_id: categories_to_delete).pluck(:id)
+      category_attributes_array = item_ids.map { |id| category_hash(id) }
     end
+
+    category_attributes_array |= categories_to_add.map { |category_id| category_hash(nil, category_id) } if categories_to_add.present?
+
+    self.help_widget_solution_categories_attributes = category_attributes_array if category_attributes_array.present?
+  end
+
+  def upload_configs
+    args = {
+      widget_id: id,
+      _destroy: transaction_include_action?(:destroy) || !active
+    }
+    HelpWidget::UploadConfig.perform_async(args)
+  end
+
+  private
 
     def clear_cache
       key = HELP_WIDGETS % { :account_id => self.account_id, :id => self.id }
       MemcacheKeys.delete_from_cache key
+    end
+
+    def category_hash(id, category_meta_id = nil)
+      { id: id, solution_category_meta_id: category_meta_id, _destroy: id.present? }
     end
 end

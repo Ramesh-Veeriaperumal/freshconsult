@@ -3,7 +3,8 @@ module AgentConstants
   STATES = %w[occasional fulltime].freeze
   INDEX_FIELDS = %w[state email phone mobile only type privilege group_id].freeze
   UPDATE_ARRAY_FIELDS = %w[group_ids role_ids].freeze
-  UPDATE_FIELDS = %w[name email phone mobile time_zone job_title language signature ticket_scope occasional shortcuts_enabled].freeze | UPDATE_ARRAY_FIELDS | [ticket_assignment: [:available]].freeze
+  TICKET_SEARCH_SETTINGS = [:include_subject, :include_description, :include_other_properties, :include_notes, :include_attachment_names, :archive].freeze
+  UPDATE_FIELDS = %w[name email phone mobile time_zone job_title language signature ticket_scope occasional shortcuts_enabled].freeze | UPDATE_ARRAY_FIELDS | [ticket_assignment: [:available]].freeze | [search_settings: [tickets: TICKET_SEARCH_SETTINGS]].freeze
   CREATE_MULTIPLE_FIELDS = UPDATE_FIELDS
   TICKET_SCOPES = Agent::PERMISSION_TOKENS_BY_KEY.keys
   USER_FIELDS = %w[name email phone mobile time_zone job_title language role_ids].freeze

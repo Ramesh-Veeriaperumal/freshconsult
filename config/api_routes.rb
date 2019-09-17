@@ -310,9 +310,14 @@ Helpkit::Application.routes.draw do
         end
       end
     end
-    
+
     scope '/email' do
-      resources :mailboxes, controller: 'email/mailboxes', only: [:create, :update, :show, :destroy]
+      resources :mailboxes, controller: 'email/mailboxes', only: [:create, :update, :show, :destroy, :index] do
+        member do
+          post :send_verification
+        end
+      end
+
       get '/settings', to: 'email/settings#show'
       put '/settings', to: 'email/settings#update'
     end
@@ -435,7 +440,7 @@ Helpkit::Application.routes.draw do
         get '*all', to: 'ember/ocr_proxy#execute'
         put '*all', to: 'ember/ocr_proxy#execute'
       end
-    end 
+    end
 
     resources :autofaq, controller: 'ember/freddy' do
       collection do
@@ -799,13 +804,13 @@ Helpkit::Application.routes.draw do
                                         only: [:index]
     resources :agent_password_policy, controller: 'ember/agent_password_policies',
                                         only: [:index]
-    
+
    resource :subscription, controller: 'admin/subscriptions', only: [:show, :update] do
       collection do
         get :estimate
       end
    end
-    
+
     get '/plans', to: 'admin/subscriptions#plans'
 
     get '/yearin_review', to: 'ember/year_in_review#index'

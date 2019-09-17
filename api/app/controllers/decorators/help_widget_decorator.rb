@@ -12,6 +12,7 @@ class HelpWidgetDecorator < ApiDecorator
   def to_hash
     ret_hash = to_index_hash
     ret_hash = ret_hash.merge!(settings: settings_hash)
+    ret_hash[:solution_category_ids] = solution_category_ids if Account.current.help_widget_solution_categories_enabled?
     ret_hash
   end
 
@@ -41,4 +42,10 @@ class HelpWidgetDecorator < ApiDecorator
   def predictive_support_hash
     settings[:predictive_support].slice(*HelpWidgetConstants::WHITELISTED_PREDICTIVE_SUPPORT.map(&:to_sym))
   end
+
+  private
+
+    def solution_category_ids
+      record.help_widget_solution_categories.pluck(:solution_category_meta_id)
+    end
 end

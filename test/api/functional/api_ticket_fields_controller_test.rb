@@ -212,7 +212,7 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
   def test_index_with_invalid_filter_value
     get :index, controller_params({ type: 'junk' }, {})
     assert_response 400
-    match_json([bad_request_error_pattern('type', :not_included, list: 'default_subject, default_requester, default_ticket_type, default_status, default_priority, default_group, default_agent, default_source, default_description, default_product, default_company, custom_text, custom_paragraph, custom_checkbox, custom_number, custom_date, custom_decimal, custom_dropdown, nested_field, encrypted_text, custom_date_time')])
+    match_json([bad_request_error_pattern('type', :not_included, list: 'default_subject, default_requester, default_ticket_type, default_status, default_priority, default_group, default_agent, default_source, default_description, default_product, default_company, custom_text, custom_paragraph, custom_checkbox, custom_number, custom_date, custom_decimal, custom_dropdown, nested_field, encrypted_text, custom_date_time, custom_file')])
   end
 
   def test_index_with_valid_filter
@@ -260,5 +260,16 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
     assert_equal old_ticket_fields_count + fsm_fields_count, response.count
   ensure
     Account.unstub(:current)
+  end
+
+  def test_index_with_custom_file
+    custom_field = create_custom_field_dn('test_signature_file', 'file')
+    get :index, controller_params({}, {})
+    assert_response 200
+    response = parse_response @response.body
+    cd_field = response.find { |x| x['type'] == Helpdesk::TicketField::CUSTOM_FILE }
+    assert_equal true, cd_field.present?
+  ensure
+    custom_field.destroy
   end
 end

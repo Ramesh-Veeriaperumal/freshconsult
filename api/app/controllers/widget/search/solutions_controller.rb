@@ -11,7 +11,7 @@ module Widget
 
       def results
         @search_context = :portal_spotlight_solution
-        @items = esv2_query_results(esv2_portal_models)
+        @items = solution_category_meta_ids.blank? ? [] : esv2_query_results(esv2_portal_models)
       end
 
       private
@@ -39,11 +39,13 @@ module Widget
         end
 
         def solution_category_meta_ids
-          if current_account.help_widget_solution_categories_enabled?
-            @help_widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
-          else
-            fetch_portal
-            @current_portal.portal_solution_categories.pluck(:solution_category_meta_id)
+          @solution_category_meta_ids ||= begin
+            if current_account.help_widget_solution_categories_enabled?
+              @help_widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
+            else
+              fetch_portal
+              @current_portal.portal_solution_categories.pluck(:solution_category_meta_id)
+            end
           end
         end
     end

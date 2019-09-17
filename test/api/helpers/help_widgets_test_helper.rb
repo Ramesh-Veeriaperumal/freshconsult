@@ -17,6 +17,14 @@ module HelpWidgetsTestHelper
     test_widget
   end
 
+  def build_solution_categories(help_widget)
+    portal = Account.current.portals.find_by_product_id(help_widget.product_id)
+    category = create_category(portal_id: portal.id)
+    help_widget.help_widget_solution_categories.build(solution_category_meta_id: category.id)
+    help_widget.save
+    category
+  end
+
   def settings_hash(options = {})
     {
       message: 'Welcome to dovetails support',
@@ -80,12 +88,14 @@ module HelpWidgetsTestHelper
   end
 
   def widget_show_pattern(widget)
-    {
+    ret_hash = {
       id: widget.id,
       product_id: widget.product_id,
       name: widget.name,
       settings: widget.settings.except(:freshmarketer)
     }
+    ret_hash[:solution_category_ids] = widget.help_widget_solution_categories.pluck(:solution_category_meta_id) if Account.current.help_widget_solution_categories_enabled?
+    ret_hash
   end
 
   def widget_pattern(widget)

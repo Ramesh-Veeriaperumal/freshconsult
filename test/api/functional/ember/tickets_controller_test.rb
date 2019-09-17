@@ -184,6 +184,19 @@ module Ember
       assert_response 200
     end
 
+    def test_index_with_custom_file_field
+      custom_field = create_custom_field_dn('test_signature_file', 'file')
+      ticket = create_ticket
+      get :index, controller_params(version: 'private', filter: 'all_tickets')
+      assert_response 200
+      response = parse_response @response.body
+      file_field = response.select { |h| h['custom_fields'].key?('test_signature_file') }.present?
+      assert_equal file_field, false
+    ensure
+      ticket.destroy
+      custom_field.destroy
+    end
+
     def test_index_with_invalid_filter_names
       Account.current.stubs(:freshconnect_enabled?).returns(true)
       get :index, controller_params(version: 'private', filter: Faker::Lorem.word)
@@ -489,6 +502,19 @@ module Ember
       pattern[:archive_ticket] = { :subject => archive_ticket.subject, :id => archive_ticket.display_id }
       assert_response 200
       match_json(pattern)
+    end
+
+    def test_show_with_custom_file_field
+      custom_field = create_custom_field_dn('test_signature_file', 'file')
+      ticket = create_ticket
+      get :show, controller_params(version: 'private', id: ticket.display_id)
+      assert_response 200
+      response = parse_response @response.body
+      file_field = response['custom_fields'].key? 'test_signature_file'
+      assert_equal file_field, false
+    ensure
+      ticket.destroy
+      custom_field.destroy
     end
 
     def test_create_with_incorrect_attachment_type
@@ -4856,6 +4882,20 @@ module Ember
           cleanup_fsm
         end
       end
+    end
+
+    def test_create_ticket_with_custom_file_field_with_invalid
+      custom_field = create_custom_field_dn('test_signature_file', 'file')
+      Account.reset_current_account
+      @account = Account.first
+      params_hash = { email: Faker::Internet.email, description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
+                      priority: 2, status: 2, type: 'Problem', responder_id: @agent.id, custom_fields: { test_signature_file: 1234 }}
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 400
+      response_body = JSON.parse(response.body)
+      match_json([bad_request_error_pattern('custom_fields.test_signature_file', :datatype_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: Integer)])
+    ensure
+      custom_field.destroy
     end
 
     def test_create_ticket_with_date_time_custom_field

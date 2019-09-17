@@ -24,6 +24,7 @@ module ApiSolutions
       p.name = "Sample Portal"
       p.account_id  = @account.id
       p.save
+      @account.add_feature(:multi_language)
       @account.reload
       @@initial_setup_run = true
     end

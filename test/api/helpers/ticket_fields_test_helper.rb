@@ -2,7 +2,7 @@ module TicketFieldsTestHelper
   include Helpdesk::Ticketfields::ControllerMethods
 
   FIELD_MAPPING = { 'number' => 'int', 'checkbox' => 'boolean', 'paragraph' => 'text', 'decimal' => 'decimal', 'date' => 'date', 'date_time' => 'date' }.freeze
-  FIELD_MAPPING_DN = { 'paragraph' => 'mlt', 'text' => 'slt' }.freeze
+  FIELD_MAPPING_DN = { 'paragraph' => 'mlt', 'text' => 'slt', 'file' => 'slt' }.freeze
   SECTIONS_FOR_TYPE = [ { title: 'section1', value_mapping: %w(Question Problem), ticket_fields: %w(test_custom_number test_custom_date) },
                         { title: 'section2', value_mapping: ['Incident'], ticket_fields: %w(test_custom_paragraph test_custom_dropdown) } ]
   SECTIONS_FOR_CUSTOM_DROPDOWN = [ { title: 'section1', value_mapping: %w(Choice\ 1 Choice\ 2), ticket_fields: %w(test_custom_number test_custom_date) },
@@ -25,7 +25,7 @@ module TicketFieldsTestHelper
       return ticket_field_exists
     end
     field_num = (type == 'date_time' && field_num == '05') ? '06' : field_num
-    flexifield_mapping = type == 'text' ? unused_ffs_col : "ff_#{FIELD_MAPPING[type]}#{field_num}"
+    flexifield_mapping = type == 'text' ? unused_ffs_col : unused_ff_col(FIELD_MAPPING[type], field_num)
     flexifield_def_entry = FactoryGirl.build(:flexifield_def_entry,
                                              flexifield_def_id: @account.flexi_field_defs.find_by_module('Ticket').id,
                                              flexifield_alias: "#{name.downcase}_#{@account.id}",
@@ -921,5 +921,16 @@ module TicketFieldsTestHelper
 
     def ffs_col_taken?(ffs_col)
       @account.reload.flexifield_def_entries.select{|flexifield| flexifield['flexifield_name'] == ffs_col}.present?
+    end
+
+    def unused_ff_col(field_type, field_num)
+      ff_col = "ff_#{field_type}#{field_num}"
+      return ff_col unless ffs_col_taken? ff_col
+
+      (1..10).each do |i|
+        ff_col = "ff_#{field_type}#{i.to_s.rjust(2, '0')}"
+        break unless ffs_col_taken? ff_col
+      end
+      ff_col
     end
 end

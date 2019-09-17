@@ -1,23 +1,10 @@
 get:
   tags: [FreddySkill]
-  summary: Freddy skill details
+  summary: List of eligible freddy skills
   responses:
     200:
       description: Success
-      schema: '#/definitions/freddy_skills_show_and_update'
+      schema:
+        $ref: '#/definitions/freddy_skills_show_and_update'
     403:
       description: Access denied
-    404:
-      description: Skill not found or not eligible
-put:
-  tags: [FreddySkill]
-  summary: Freddy skill update
-  parameters:
-    - name: enabled
-      in: body
-      schema:
-        type: object
-        properties:
-          enabled:
-            type: boolean
-            description: Enable or disable the skill

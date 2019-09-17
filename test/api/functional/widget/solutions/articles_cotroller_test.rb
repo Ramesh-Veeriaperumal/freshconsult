@@ -141,8 +141,6 @@ module Widget
         assert_response 200
         ar_article = @account.solution_articles.where(parent_id: @article.parent_id, language_id: Language.find_by_code('en').id).first
         match_json(widget_article_show_pattern(ar_article))
-        result = parse_response(@response.body)
-        assert_equal result['title'], 'en Test'
         assert_nil Language.current
       end
 
@@ -151,8 +149,6 @@ module Widget
         assert_response 200
         ar_article = @account.solution_articles.where(parent_id: @article.parent_id, language_id: Language.find_by_code('es').id).first
         match_json(widget_article_show_pattern(ar_article))
-        result = parse_response(@response.body)
-        assert_equal result['title'], 'es Test'
         assert_nil Language.current
       end
 
@@ -161,8 +157,6 @@ module Widget
         assert_response 200
         ar_article = @account.solution_articles.where(parent_id: @article.parent_id, language_id: Language.find_by_code('en').id).first
         match_json(widget_article_show_pattern(ar_article))
-        result = parse_response(@response.body)
-        assert_equal result['title'], 'en Test'
         assert_nil Language.current
       end
 

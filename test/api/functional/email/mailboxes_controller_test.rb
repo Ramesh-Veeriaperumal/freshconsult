@@ -20,15 +20,6 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     { mailbox: params }
   end
 
-  def setup
-    super
-    Account.any_instance.stubs(:multiple_emails_enabled?).returns(true)
-  end
-
-  def teardown
-    Account.any_instance.unstub(:multiple_emails_enabled?)
-  end
-
   def create_mailbox_params_hash
     {
       support_email: Faker::Internet.email,
@@ -74,7 +65,6 @@ class Email::MailboxesControllerTest < ActionController::TestCase
   def test_create_success
     params_hash = create_mailbox_params_hash
     post :create, construct_params({}, params_hash)
-    p "response :: #{response.inspect}" # check random failure 403 repsonse
     assert_response 201
     match_json(mailbox_pattern({}, EmailConfig.last))
   end
@@ -355,5 +345,151 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     match_json(mailbox_pattern({}, EmailConfig.find_by_id(email_config.id)))
     Account.any_instance.unstub(:has_features?)
     Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
+  end
+
+
+  def test_send_verification
+    email_config = create_email_config(active: false)
+    post :send_verification, construct_params({ id: email_config.id })
+    assert_response 204
+  end
+
+  def test_send_verification_on_active_mailbox
+    email_config = create_email_config
+    email_config.active = true
+    email_config.save
+    post :send_verification, construct_params({ id: email_config.id })
+    assert_response 409
+    match_json(request_error_pattern(:active_mailbox_verification))
+  end
+
+  # test_index_success
+  # test_index_success_with_order_type
+
+  def test_index_success
+    user = add_new_user(@account)
+    email_configs = []
+    3.times do
+      email_configs << create_email_config(active: false, default_reply_email: false)
+    end
+    per_page = 1
+    Email::MailboxFilterValidation.any_instance.stubs(:private_api?).returns(true)
+    get :index, controller_params(version: 'private', per_page: per_page)
+
+    assert_response 200
+    assert JSON.parse(response.body).count == per_page
+    assert_equal "<http://#{@request.host}/api/_/email/mailboxes?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
+
+    get :index, controller_params(version: 'private', per_page: per_page, page: EmailConfig.count)
+    assert_response 200
+    assert JSON.parse(response.body).count == 1
+    assert_nil response.headers['Link']
+  ensure
+    Email::MailboxFilterValidation.any_instance.unstub(:private_api?)
+  end
+
+  def test_index_success_with_order_type
+    user = add_new_user(@account)
+    email_configs = []
+    email_configs << create_email_config(active: false, default_reply_email: false, group_id: 5)
+    email_configs << create_email_config(active: false, default_reply_email: false, group_id: 2)
+    email_configs << create_email_config(active: false, default_reply_email: false, group_id: 1)
+    per_page = 2
+    Email::MailboxFilterValidation.any_instance.stubs(:private_api?).returns(true)
+    get :index, controller_params(version: 'private', per_page: per_page, order_by: 'group_id', order_type: 'desc')
+    assert_response 200
+    assert JSON.parse(response.body).count == per_page
+
+    parsed_response = JSON.parse(response.body)
+    if parsed_response[0]['default_reply_email'] == false || (parsed_response[0]['default_reply_email'] == true && parsed_response[1]['default_reply_email'] == true) && (parsed_response[0]['group_id'].present? && parsed_response[1]['group_id'].present?)
+      assert parsed_response[0]['group_id'] > parsed_response[1]['group_id']
+    end
+  ensure
+    Email::MailboxFilterValidation.any_instance.unstub(:private_api?)
+  end
+
+  def test_list_with_support_email_filter_private
+    Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
+    mailbox = create_email_config(support_email: 'testsupport@fd.com')
+    Email::MailboxFilterValidation.any_instance.stubs(:private_api?).returns(true)
+    get :index, controller_params(support_email: '*testsupport*', version: 'private')
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal 1, response.size
+  ensure
+    Account.any_instance.unstub(:has_features?)
+    @account.email_configs.destroy(mailbox)
+    Email::MailboxFilterValidation.any_instance.unstub(:private_api?)
+  end
+
+  def test_list_failure_with_partial_support_email_v2
+    Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
+    mailbox = create_email_config(support_email: 'testsupport@fd.com')
+    Email::MailboxFilterValidation.any_instance.stubs(:private_api?).returns(false)
+    get :index, controller_params(support_email: '*testsupport*', version: 'v2')
+    assert_response 400
+    parsed_response = JSON.parse(response.body)
+    assert parsed_response['errors'][0]['message'].eql?('It should be in the \'valid email address\' format')
+  ensure
+    Account.any_instance.unstub(:has_features?)
+    @account.email_configs.destroy(mailbox)
+    Email::MailboxFilterValidation.any_instance.unstub(:private_api?)
+  end
+
+  def test_list_with_forward_email_filter
+    Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
+    mailbox = create_email_config(forward_email: 'testforward@fd.com')
+    get :index, controller_params(forward_email: 'testforward@fd.com')
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal 1, response.size
+  ensure
+    Account.any_instance.unstub(:has_features?)
+    @account.email_configs.destroy(mailbox)
+    Email::MailboxFilterValidation.any_instance.unstub(:private_api?)
+  end
+
+  def test_list_with_product_id_filter
+    Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
+    mailbox = create_email_config(support_email: 'testprodid@fd.com', product_id: 1)
+    Email::MailboxFilterValidation.any_instance.stubs(:private_api?).returns(true)
+    get :index, controller_params(support_email: 'testprodid@fd.com', product_id: 1)
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal 1, response.size
+  ensure
+    Account.any_instance.unstub(:has_features?)
+    @account.email_configs.destroy(mailbox)
+    Email::MailboxFilterValidation.any_instance.unstub(:private_api?)
+  end
+
+  def test_list_with_group_id_filter
+    Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
+    mailbox = create_email_config(support_email: 'testgroupid@fd.com', group_id: 1)
+    Email::MailboxFilterValidation.any_instance.stubs(:private_api?).returns(true)
+    get :index, controller_params(support_email: 'testgroupid@fd.com', group_id: 1)
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal 1, response.size
+  ensure
+    Account.any_instance.unstub(:has_features?)
+    @account.email_configs.destroy(mailbox)
+    Email::MailboxFilterValidation.any_instance.unstub(:private_api?)\
+  end
+
+  def test_list_with_active_filter
+    Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
+    mailbox = create_email_config(support_email: 'testactivefilter@fd.com')
+    mailbox.active = true
+    mailbox.save!
+    Email::MailboxFilterValidation.any_instance.stubs(:private_api?).returns(true)
+    get :index, controller_params(support_email: 'testactivefilter@fd.com', active: true)
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal 1, response.size
+  ensure
+    Account.any_instance.unstub(:has_features?)
+    @account.email_configs.destroy(mailbox)
+    Email::MailboxFilterValidation.any_instance.unstub(:private_api?)
   end
 end

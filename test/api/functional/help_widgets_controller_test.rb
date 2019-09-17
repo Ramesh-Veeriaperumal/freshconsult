@@ -161,6 +161,17 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     match_json(widget_show_pattern(help_widget))
   end
 
+  def test_show_with_solution_category_ids
+    @account.launch(:help_widget_solution_categories)
+    help_widget = create_widget
+    category = build_solution_categories(help_widget)
+    get :show, controller_params(version: 'v2', id: help_widget.id)
+    assert_response 200
+    assert_equal [category.id], JSON.parse(@response.body)['solution_category_ids']
+    match_json(widget_show_pattern(help_widget))
+    @account.rollback(:help_widget_solution_categories)
+  end
+
   def test_show_with_invalid_help_widget_id
     get :show, controller_params(version: 'v2', id: 0)
     assert_response 404
@@ -261,6 +272,47 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     match_json(widget_show_pattern(widget))
     assert widget.settings[:appearance][:theme_color] == request_params[:settings][:appearance].fetch('theme_color')
     assert widget.settings[:appearance][:button_color] == request_params[:settings][:appearance].fetch('button_color')
+  end
+
+  def test_update_solution_category_ids
+    @account.launch(:help_widget_solution_categories)
+    widget = create_widget
+    build_solution_categories(widget)
+    new_category = create_category
+    request_params = {
+      solution_category_ids: [new_category.id]
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    assert_response 200
+    widget.reload
+    id = JSON.parse(@response.body)['id']
+    match_json(widget_show_pattern(widget))
+    assert_equal [new_category.id], JSON.parse(@response.body)['solution_category_ids']
+    @account.rollback(:help_widget_solution_categories)
+  end
+
+  def test_update_invalid_solution_category_ids
+    @account.launch(:help_widget_solution_categories)
+    widget = create_widget
+    request_params = {
+      solution_category_ids: [100]
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    assert_response 400
+    match_json(validation_error_pattern(bad_request_error_pattern(:solution_category_ids, 'Please specify valid solution category ids.', code: 'invalid_value')))
+    @account.rollback(:help_widget_solution_categories)
+  end
+
+  def test_update_solution_category_ids_without_feature
+    widget = create_widget
+    build_solution_categories(widget)
+    new_category = create_category
+    request_params = {
+      solution_category_ids: [new_category.id]
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    assert_response 400
+    match_json(validation_error_pattern(bad_request_error_pattern(:solution_category_ids, :require_feature, feature: :help_widget_solution_categories)))
   end
 
   def test_update_appearance_without_feature

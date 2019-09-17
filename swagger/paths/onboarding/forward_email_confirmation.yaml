@@ -1,15 +1,20 @@
-  get:
-    tags: [onboarding]
-    description: Forward Email Confirmation
+get:
+  tags: [onboarding]
+  description: Forward Email Confirmation
+  parameters:
+    - name: requested_time
+      in: query
+      type: string
+      description: Get verification code
 
-    responses:
-      200:
-        description: OK
-        schema:
-            $ref: '#/definitions/onboarding_forward_email_confirmation'
-      204:
-        description: Data Not Found
-      400:
-        description: Bad Request Error
-        schema:
-          $ref: '#/definitions/bad_request_error'
+  responses:
+    200:
+      description: OK
+      schema:
+        $ref: '#/definitions/onboarding_forward_email_confirmation'
+    204:
+      description: Data Not Found
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

@@ -6146,50 +6146,6 @@
         }
       }
     },
-    "/search/automations": {
-      "get": {
-        "tags": [
-          "search"
-        ],
-        "summary": "Search Automations",
-        "parameters": [
-          {
-            "name": "term",
-            "in": "query",
-            "type": "string",
-            "description": "search term for automations",
-            "required": true
-          },
-          {
-            "name": "query",
-            "in": "query",
-            "type": "string",
-            "description": "search filter for automations",
-            "required": false
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/automation_search"
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request Error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          }
-        }
-      }
-    },
     "/companies/autocomplete": {
       "get": {
         "tags": [
@@ -6212,6 +6168,49 @@
               "type": "array",
               "items": {
                 "$ref": "#/definitions/company_search"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/search/automations": {
+      "get": {
+        "tags": [
+          "search"
+        ],
+        "summary": "Search Automations",
+        "parameters": [
+          {
+            "name": "term",
+            "in": "query",
+            "type": "string",
+            "description": "search term for automations",
+            "required": true
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "type": "string",
+            "description": "search filter for automations"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/automation_search"
               }
             }
           },
@@ -6845,6 +6844,14 @@
           "onboarding"
         ],
         "description": "Forward Email Confirmation",
+        "parameters": [
+          {
+            "name": "requested_time",
+            "in": "query",
+            "type": "string",
+            "description": "Get verification code"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -13660,6 +13667,33 @@
         }
       }
     },
+    "/email/mailboxes/{id}/send_verification": {
+      "post": {
+        "tags": [
+          "email mailboxes"
+        ],
+        "summary": "Verify mailbox",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "Mailbox not found"
+          },
+          "409": {
+            "description": "If the mailbox is in a state that doesn't require/support verification",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
     "/email/settings": {
       "put": {
         "tags": [
@@ -13748,6 +13782,82 @@
             "schema": {
               "$ref": "#/definitions/email_notification_bcc"
             }
+          }
+        }
+      }
+    },
+    "/admin/freddy_skills": {
+      "get": {
+        "tags": [
+          "FreddySkill"
+        ],
+        "summary": "List of eligible freddy skills",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/freddy_skills_show_and_update"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/admin/freddy_skills/:name": {
+      "get": {
+        "tags": [
+          "FreddySkill"
+        ],
+        "summary": "Freddy skill details",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/freddy_skills_show_and_update"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Skill not found or not eligible"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "FreddySkill"
+        ],
+        "summary": "Freddy skill update",
+        "parameters": [
+          {
+            "name": "enabled",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "boolean",
+                  "description": "Enable or disable the skill"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/freddy_skills_show_and_update"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Skill not found or not eligible"
           }
         }
       }
@@ -13883,6 +13993,34 @@
                     },
                     "freshchat_token": {
                       "type": "string"
+                    },
+                    "search_settings": {
+                      "type": "object",
+                      "properties": {
+                        "tickets": {
+                          "type": "object",
+                          "properties": {
+                            "include_subject" : {
+                              "type": "boolean"
+                            },
+                            "include_description" : {
+                              "type": "boolean"
+                            },
+                            "include_other_properties" : {
+                              "type": "boolean"
+                            },
+                            "include_notes" : {
+                              "type": "boolean"
+                            },
+                            "include_attachment_names" : {
+                              "type": "boolean"
+                            },
+                            "archive" : {
+                              "type": "boolean"
+                            }
+                          }
+                        }
+                      }
                     }
                   }
                 }
@@ -16020,6 +16158,34 @@
         },
         "avatar_id": {
           "type": "integer"
+        },
+        "search_settings": {
+          "type": "object",
+          "properties": {
+            "tickets": {
+              "type": "object",
+              "properties": {
+                "include_subject" : {
+                  "type": "boolean"
+                },
+                "include_description" : {
+                  "type": "boolean"
+                },
+                "include_other_properties" : {
+                  "type": "boolean"
+                },
+                "include_notes" : {
+                  "type": "boolean"
+                },
+                "include_attachment_names" : {
+                  "type": "boolean"
+                },
+                "archive" : {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -20763,21 +20929,37 @@
       "type": "object",
       "properties": {
         "automations": {
-          "type": "object",
-          "allOf": [
-            {
-              "$ref": "#/definitions/automation_rule"
-            },
-            {
-              "$ref": "#/definitions/automation_rule_common"
-            },
-            {
-              "$ref": "#/definitions/extension_generic"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "automations": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/automation_rule"
+                    },
+                    {
+                      "$ref": "#/definitions/automation_rule_common"
+                    },
+                    {
+                      "$ref": "#/definitions/extension_generic"
+                    }
+                  ]
+                }
+              },
+              "meta": {
+                "type": "object",
+                "properties": {
+                  "count": {
+                    "type": "integer"
+                  }
+                }
+              }
             }
-          ]
-        },
-        "meta": {
-          "$ref": "#/definitions/meta"
+          }
         }
       }
     },
@@ -23842,7 +24024,8 @@
           "type": "integer"
         },
         "next_renewal_at": {
-          "type": "date-time"
+          "type": "string",
+          "format": "date-time"
         },
         "agent_seats": {
           "type": "integer"
@@ -24248,6 +24431,13 @@
         "name": {
           "type": "string"
         },
+        "solution_category_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "description": "List of selected solution category ids"
+        },
         "settings": {
           "type": "object",
           "properties": {
@@ -24395,6 +24585,13 @@
         "name": {
           "type": "string"
         },
+        "solution_category_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "description": "List of selected solution category ids"
+        },
         "settings": {
           "type": "object",
           "properties": {
@@ -24529,6 +24726,13 @@
         },
         "name": {
           "type": "string"
+        },
+        "solution_category_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "description": "List of selected solution category ids"
         },
         "settings": {
           "type": "object",
@@ -24681,6 +24885,13 @@
         },
         "name": {
           "type": "string"
+        },
+        "solution_category_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "description": "List of selected solution category ids"
         },
         "settings": {
           "type": "object",
@@ -26462,6 +26673,41 @@
         "name": {
           "type": "string",
           "description": "Bitmap/Launchparty feature name"
+        }
+      }
+    },
+    "freddy_skills_index": {
+      "type": "object",
+      "properties": {
+        "freddy_skills": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "enabled": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      }
+    },
+    "freddy_skills_show_and_update": {
+      "type": "object",
+      "properties": {
+        "freddy_skill": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "enabled": {
+              "type": "boolean"
+            }
+          }
         }
       }
     }

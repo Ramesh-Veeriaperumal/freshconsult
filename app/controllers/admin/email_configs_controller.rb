@@ -8,6 +8,7 @@ class Admin::EmailConfigsController < Admin::AdminController
   include Redis::RedisKeys
   include Redis::OthersRedis
   include Admin::EmailConfig
+  include Admin::EmailConfig::Utils
 
   before_filter only: [:new, :create] do |c|
     c.requires_this_feature :multiple_emails
@@ -37,14 +38,14 @@ class Admin::EmailConfigsController < Admin::AdminController
     @products = current_account.products
     @groups = current_account.groups.support_agent_groups
   end
-
+  
   def edit
     @products = current_account.products
     @groups = current_account.groups.support_agent_groups
     @imap_mailbox = (@email_config.imap_mailbox || @email_config.build_imap_mailbox)
     @smtp_mailbox = (@email_config.smtp_mailbox || @email_config.build_smtp_mailbox)
   end
-  
+
   def update
     @email_config.imap_mailbox.error_type = 0 if @email_config.imap_mailbox && current_account.imap_error_status_check_enabled?
     if @email_config.update_attributes(params[:email_config])
@@ -82,7 +83,7 @@ class Admin::EmailConfigsController < Admin::AdminController
     if @email_config
       unless @email_config.active
         @email_config.active = true
-        flash[:notice] = t(:'flash.email_settings.activation.success', 
+        flash[:notice] = t(:'flash.email_settings.activation.success',
             :reply_email => @email_config.reply_email) if @email_config.save
       else
         flash[:warning] = t(:'flash.email_settings.activation.already_activated', 
@@ -162,25 +163,7 @@ class Admin::EmailConfigsController < Admin::AdminController
       format.xml  { head :ok }
       format.json { head :ok }
     end
-    
   end
-
-  private
-    # This method uses send grid api to remove the supplied email from send grid bounce list
-    def remove_bounced_email (bounced_email_addr)
-      send_grid_credentials = Helpdesk::EMAIL[:outgoing][Rails.env.to_sym]
-      Rails.logger.debug "Start remove_bounced_email " +bounced_email_addr
-      begin
-        unless (bounced_email_addr.blank? or send_grid_credentials.blank?)
-          send_grid_response = HTTParty.get("https://sendgrid.com/api/bounces.delete.xml?api_user=#{send_grid_credentials[:user_name]}&api_key=#{send_grid_credentials[:password]}&email=#{bounced_email_addr}", {}) 
-          send_grid_res_hash = Hash.from_xml(send_grid_response)
-          result_msg = send_grid_res_hash["result"] || send_grid_res_hash["errors"] unless (send_grid_res_hash.nil?)
-        end
-        Rails.logger.info "Removing email id " +bounced_email_addr+" from send gird bounced list resulted in "+result_msg.to_s
-      rescue => e
-        Rails.logger.error("Error during removing bounced email #{bounced_email_addr} from send grid. \n#{e.message}\n#{e.backtrace.join("\n")}")
-      end
-    end
 
   protected
     def scoper

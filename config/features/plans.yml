@@ -310,6 +310,8 @@
       - :analytics_survey_results
       - :custom_translations
       - :portal_article_filters
+      - :autofaq
+      - :botflow
     :inherits:
       - :garden_jan_19
     :exclude: []

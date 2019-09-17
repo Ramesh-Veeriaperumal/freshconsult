@@ -6,6 +6,19 @@ class Ember::AgentsControllerTest < ActionController::TestCase
   include AttachmentsTestHelper
   include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
 
+  SEARCH_SETTINGS_PARAMS = {
+    search_settings: {
+      tickets: {
+        include_subject: true,
+        include_description: true,
+        include_other_properties: false,
+        include_notes: false,
+        include_attachment_names: false,
+        archive: false
+      }
+    }
+  }.freeze
+
   def wrap_cname(params)
     { agent: params }
   end
@@ -243,6 +256,73 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     assert_equal user.text_uc01[:agent_preferences][:freshchat_token], token
     assert_response 200
     match_json(private_api_agent_pattern(user.agent))
+  end
+
+  def test_update_with_search_settings_for_agent
+    @account.launch(:search_settings)
+    user = get_or_create_agent
+    params_hash = SEARCH_SETTINGS_PARAMS
+    put :update, construct_params({ version: 'private', id: user.id }, params_hash)
+    user.reload
+    assert_equal user.text_uc01[:agent_preferences][:search_settings], SEARCH_SETTINGS_PARAMS[:search_settings]
+    assert_response 200
+    @account.rollback(:search_settings)
+  end
+
+  def test_update_with_invalid_search_settings_for_agent
+    @account.launch(:search_settings)
+    user = get_or_create_agent
+    invalid_params_hash = SEARCH_SETTINGS_PARAMS
+    invalid_params_hash[:search_settings][:invalid_param] = 1
+    put :update, construct_params({ version: 'private', id: user.id }, invalid_params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('invalid_param', 'Unexpected/invalid field in request', code: 'invalid_field')])
+    SEARCH_SETTINGS_PARAMS[:search_settings].delete(:invalid_param)
+    @account.rollback(:search_settings)
+  end
+
+  def test_update_with_invalid_ticket_search_settings
+    @account.launch(:search_settings)
+    user = get_or_create_agent
+    invalid_params_hash = SEARCH_SETTINGS_PARAMS
+    invalid_params_hash[:search_settings][:tickets][:invalid_param] = 1
+    put :update, construct_params({ version: 'private', id: user.id }, invalid_params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('invalid_param', 'Unexpected/invalid field in request', code: 'invalid_field')])
+    SEARCH_SETTINGS_PARAMS[:search_settings][:tickets].delete(:invalid_param)
+    @account.rollback(:search_settings)
+  end
+
+  def test_update_with_non_boolean_ticket_search_settings
+    @account.launch(:search_settings)
+    user = get_or_create_agent
+    invalid_params_hash = SEARCH_SETTINGS_PARAMS
+    invalid_params_hash[:search_settings][:tickets][:include_subject] = 1
+    put :update, construct_params({ version: 'private', id: user.id }, invalid_params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern_with_nested_field('search_settings', 'include_subject', 'It should be a/an Boolean', code: 'datatype_mismatch')])
+    SEARCH_SETTINGS_PARAMS[:search_settings][:tickets][:include_subject] = true
+    @account.rollback(:search_settings)
+  end
+
+  def test_update_with_blank_search_settings
+    @account.launch(:search_settings)
+    user = get_or_create_agent
+    blank_search_settings = { search_settings: {} }
+    put :update, construct_params({ version: 'private', id: user.id }, blank_search_settings)
+    assert_response 400
+    match_json([bad_request_error_pattern('search_settings_blank', 'search settings should not be blank', code: 'invalid_value')])
+    @account.rollback(:search_settings)
+  end
+
+  def test_update_with_blank_ticket_search_settings
+    @account.launch(:search_settings)
+    user = get_or_create_agent
+    blank_ticket_search_settings = { search_settings: { tickets: {} } }
+    put :update, construct_params({ version: 'private', id: user.id }, blank_ticket_search_settings)
+    assert_response 400
+    match_json([bad_request_error_pattern('tickets', 'ticket search settings should not be blank', code: 'invalid_value')])
+    @account.rollback(:search_settings)
   end
 
   def test_accept_gdpr_with_admin_and_not_gdpr_pending

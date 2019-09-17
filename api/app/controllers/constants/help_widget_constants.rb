@@ -1,5 +1,5 @@
 module HelpWidgetConstants
-  HELP_WIDGET_FIELDS = %w[id product_id name settings freshmarketer].freeze
+  HELP_WIDGET_FIELDS = %w[id product_id name settings freshmarketer solution_category_ids].freeze
   VALIDATION_CLASS = 'HelpWidgetValidation'.freeze
   DELEGATOR_CLASS = 'HelpWidgetDelegator'.freeze
   WHITELISTED_SETTINGS = %w[message button_text components contact_form appearance predictive_support widget_flow].freeze

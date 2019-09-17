@@ -1,7 +1,8 @@
 class HelpWidgetValidation < ApiValidation
-  attr_accessor :name, :product_id, :settings, :request_params, :id, :freshmarketer
+  attr_accessor :name, :product_id, :settings, :request_params, :id, :freshmarketer, :solution_category_ids
   validates :name, data_type: { rules: String }, custom_length: { maximum: HelpWidgetConstants::TEXT_FIELDS_MAX_LENGTH }, allow_nil: true
   validates :product_id, data_type: { rules: Integer }, allow_nil: true
+  validates :solution_category_ids, data_type: { rules: Array }, array: { custom_numericality: { only_integer: true, greater_than: 0 } }, allow_nil: true, on: :update
   validates :settings, data_type: { rules: Hash }, hash: { validatable_fields_hash: proc { |x| x.widget_settings_format } }, allow_nil: true, on: :update
   validates :settings, data_type: { rules: Hash }, hash: { validatable_fields_hash: proc { |x| x.components_format } }, presence: true, allow_nil: false, on: :create
   validates :freshmarketer, data_type: { rules: Hash }, hash: { validatable_fields_hash: proc { |x| x.freshmarketer_format } }, allow_nil: true, on: :update

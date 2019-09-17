@@ -17,6 +17,7 @@ module ApiSolutions
       additional = @account.account_additional_settings
       additional.supported_languages = ["es","ru-RU"]
       additional.save
+      @account.add_feature(:multi_language)
       @account.reload
       @@initial_setup_run = true
     end

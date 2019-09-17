@@ -54,6 +54,63 @@ module Settings
       assert_equal @account.main_portal.language, 'en'
     end
 
+    def test_helpdesk_update_portal_language_with_help_widget
+      account_additional_settings = @account.account_additional_settings
+      account_additional_settings.supported_languages = ['ru-RU']
+      account_additional_settings.save
+      Account.any_instance.stubs(:help_widget_enabled?).returns(true)
+      help_widget = @account.help_widgets.create
+      HelpWidget::UploadConfig.jobs.clear
+      assert_equal HelpWidget::UploadConfig.jobs.size, 0
+      put :update, construct_params('portal_languages' => ['ru-RU'])
+      assert_response 200
+      assert_equal @account.account_additional_settings.additional_settings[:portal_languages], ['ru-RU']
+      widget_json_upload_ids = HelpWidget::UploadConfig.jobs.map { |a| a['args'].first['widget_id'] }
+      assert_include widget_json_upload_ids, help_widget.id
+    ensure
+      Account.any_instance.unstub(:help_widget_enabled?)
+      help_widget.destroy
+    end
+
+    def test_helpdesk_update_portal_language_without_help_widget
+      @account.help_widgets.destroy_all
+      help_widget = @account.help_widgets.create
+      Account.any_instance.stubs(:help_widget_enabled?).returns(false)
+      HelpWidget::UploadConfig.jobs.clear
+      put :update, construct_params('primary_language' => 'en', 'supported_languages' => ['ru-RU'], 'portal_languages' => ['ru-RU'])
+      assert_response 200
+      assert_equal @account.account_additional_settings.additional_settings[:portal_languages], ['ru-RU']
+      widget_json_upload_ids = HelpWidget::UploadConfig.jobs.map { |a| a['args'].first['widget_id'] }
+      assert widget_json_upload_ids.exclude?(help_widget.id)
+    end
+
+    def test_helpdesk_update_primary_language_with_help_widget
+      Account.any_instance.stubs(:help_widget_enabled?).returns(true)
+      help_widget = @account.help_widgets.create
+      HelpWidget::UploadConfig.jobs.clear
+      assert_equal HelpWidget::UploadConfig.jobs.size, 0
+      put :update, construct_params('primary_language' => 'ca')
+      assert_response 200
+      assert_equal @account.main_portal.language, 'ca'
+      widget_json_upload_ids = HelpWidget::UploadConfig.jobs.map { |a| a['args'].first['widget_id'] }
+      assert_include widget_json_upload_ids, help_widget.id
+    ensure
+      Account.any_instance.unstub(:help_widget_enabled?)
+      help_widget.destroy
+    end
+
+    def test_helpdesk_update_primary_language_without_help_widget
+      @account.help_widgets.destroy_all
+      help_widget = @account.help_widgets.create
+      Account.any_instance.stubs(:help_widget_enabled?).returns(false)
+      HelpWidget::UploadConfig.jobs.clear
+      put :update, construct_params('primary_language' => 'en')
+      assert_response 200
+      assert_equal @account.account_additional_settings.additional_settings[:portal_languages], ['ru-RU']
+      widget_json_upload_ids = HelpWidget::UploadConfig.jobs.map { |a| a['args'].first['widget_id'] }
+      assert widget_json_upload_ids.exclude?(help_widget.id)
+    end
+
     def test_supported_language_already_primary
       put :update, construct_params('primary_language' => 'en', 'supported_languages' => ['en', 'ru-RU'], 'portal_languages' => ['ru-RU'])
       assert_response 400

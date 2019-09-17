@@ -110,6 +110,27 @@ class EmailConfig < ActiveRecord::Base
     reply_email.downcase
   end
 
+  def self.mailbox_filter(mailbox_filter, private_api)
+    comparison_operator = private_api ? 'LIKE' : '='
+    {
+      product_id: {
+        conditions: { product_id: mailbox_filter['product_id'] }
+      },
+      group_id: {
+        conditions: { group_id: mailbox_filter['group_id'] }
+      },
+      active: {
+        conditions: { active: mailbox_filter['active'] }
+      },
+      reply_email: {
+        conditions: ["reply_email #{comparison_operator} ?", mailbox_filter['reply_email']]
+      },
+      to_email: {
+        conditions: { to_email: mailbox_filter['to_email'] }
+      }
+    }
+  end
+
   protected
     def blacklisted_domain?
       domain = self.reply_email.split("@").last.strip if self.reply_email.present?
