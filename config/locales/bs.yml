@@ -5192,3 +5192,12 @@ bs:
     add_forum: Add Forum
   and_more_plan_downgrade: I više...
   change_my_plan: Izaberite ovaj plan ...
+  help_widget:
+    form_title: Kontaktiraj nas
+    form_button_text: Send
+    button_text: Pomoć
+    welcome_message: Možemo li pomoći?
+    predictive_message: >-
+      Primjetili smo zastoj. Recite nam šta ste pokušali da postignete, a naš
+      tim za podršku će vam se javiti što je prije moguće.
+    success_message: Hvala. Bićemo u kontaktu!

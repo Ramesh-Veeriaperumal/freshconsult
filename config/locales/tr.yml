@@ -6962,3 +6962,12 @@ tr:
     alert:
       code_mandatory: "Both fields are required. Shorthands can be upto 10 characters and cannot contain any special characters except '-'."
       code_duplicate: "This shorthand is already in use."
+  help_widget:
+    form_title: Bizimle İletişime Geçin
+    form_button_text: Geribildirim yolla
+    button_text: Yardım.
+    welcome_message: Yardımcı olabilir miyiz?
+    predictive_message: >-
+      Takılmış olduğunuzu fark ettik. Bize neyi başarmaya çalıştığınızı
+      söyleyin; destek ekibimiz mümkün olan en kısa sürede size ulaşacaktır.
+    success_message: Teşekkürler. İletişimde olacağız!

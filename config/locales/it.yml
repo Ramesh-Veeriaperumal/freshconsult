@@ -11508,3 +11508,13 @@ it:
             <p>Gentile James Dean (come l'attore),</p><br /><p>Grazie per il messaggio inviatoci, in cui riportava i dettagli dello sfortunato evento connesso alla perdita del suo bagaglio. A tal proposito, la prego di accettare le mie più sentite scuse per tutti i disagi creati. Mi auguro che nonostante ciò abbia fatto buon viaggio.</p><br /><p>Fortunatamente, il giorno successivo sono stato io a risponderle e ad informarla che il bagaglio era stato trovato e inviatole. Più seriamente James, sono lieto di offrire un Tier Point. sperando che sia di suo gradimento, come se fosse una magia. Inoltre, ho aggiunto un rimborso spese e i Tier Point restanti dei voli più recenti che effettuato con noi, cosa che la rende un Gold Member (non come il film).</p><br /><p>la prego di accettare nuovamente le mie sincere scuse. Presso la nostra azienda, questi eventi si verificano di rado e spero che non influiscano sulla scelta di volare nuovamente con noi, poiché sarà un piacere darle ancora il benvenuto.</p><br /><p>Cordiali saluti.
             <br />La signora in rosso,
             <br />Baggage Services Advisor</p>
+  help_widget:
+    form_title: Contattaci
+    form_button_text: Invia feedback
+    form_submit_message: Grazie per il tuo feedback.
+    button_text: Assistenza
+    welcome_message: Possiamo aiutarti?
+    predictive_message: >-
+      Abbiamo notato che ti sei bloccato. Spiegaci cosa stavi cercando di
+      ottenere e il nostro team di assistenza ti contatterà al più presto.
+    success_message: Grazie. Ti faremo sapere!

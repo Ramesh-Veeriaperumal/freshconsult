@@ -10136,3 +10136,11 @@ ja-JP:
   add_new_company: 会社を追加
   more_companies: "さらに%{count}"
   n_companies: "%{count}社の会社"
+  help_widget:
+    form_title: お問い合わせ
+    form_button_text: フィードバックを送信
+    form_submit_message: フィードバックありがとうございます.
+    button_text: ヘルプ
+    welcome_message: お手伝いさせて下さい。
+    predictive_message: お困りのようですね。必要なことを教えてください、サポートチームよりすぐにご連絡致します。
+    success_message: ありがとうございます。間もなくご連絡致します！

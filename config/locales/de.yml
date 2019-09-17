@@ -17909,3 +17909,26 @@ de:
       leicht deren Gespräche in Freshdesk. <br><a
       href="https://support.freshdesk.com/support/solutions/articles/226804-identifying-contacts-with-an-external-id"
       target="_blank">Hilfe beim Einrichten der externen ID</a>
+  help_widget:
+    name: 'Willkommen beim %{name}-Support'
+    message: Willkommen beim Support
+    form_title: Kontaktaufnahme
+    form_button_text: Senden
+    form_submit_message: Vielen Dank für Ihr Feedback.
+    button_text: Hilfe
+    untitled_widget: 'Unbenanntes Widget %{count}'
+    invalid_components: 'Ungültiges Komponenten-Hash mit %{key}'
+    freshmarketer_sign_up_error: >-
+      Frustrationsverfolgung muss bei der Integration mit Freshmarketer leider
+      aktiviert sein
+    invalid_settings: 'Ungültiges Einstellungs-Hash mit %{key}'
+    welcome_message: Können wir helfen?
+    predictive_message: >-
+      Uns ist aufgefallen, dass Sie nicht weiterkommen. Teilen Sie uns mit, was
+      Sie machen wollen, und unser Support-Team wird sich so schnell wie möglich
+      mit Ihnen in Verbindung setzen.
+    success_message: Vielen Dank. Wir bleiben in Kontakt!
+    invalid_domain: 'Entschuldigen Sie, geben Sie bitte eine gültige Domäne ein.'
+    domain_list_empty: >-
+      Geben Sie bitte die URLs an, die für vorausschauenden Support verfolgt
+      werden sollen.

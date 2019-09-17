@@ -3910,3 +3910,13 @@ id:
   no_message:
     canned_responses: "Tidak ada tanggapan tersedia."
     products: "Anda belum membuat produk apapun."
+  help_widget:
+    form_title: Kontak kami
+    form_button_text: Kirimkan umpan balik
+    form_submit_message: Terima kasih telah mengirimkan kritik dan saran.
+    button_text: Membantu
+    welcome_message: Bisakah kami membantu?
+    predictive_message: >-
+      Kami perhatikan Anda sedang buntu. Beri tahu kami yang Anda sedang capai
+      agar tim dukungan kami bisa menghubungi Anda secepatnya.
+    success_message: Terima kasih. Kami akan menghubungi Anda!

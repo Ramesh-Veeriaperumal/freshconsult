@@ -8693,3 +8693,13 @@ ro:
     search_group: "Search by group"
     search_agent: "Search by agent"
     loading_label: Loading
+  help_widget:
+    form_title: Contactaţi-ne
+    form_button_text: Trimite feedback
+    form_submit_message: Multumim pentru feedback-ul dvs.
+    button_text: Ajutor
+    welcome_message: Vă putem ajuta?
+    predictive_message: >-
+      Am observat că v-ați blocat. Spuneți-ne ce ați încercat să realizați și
+      echipa noastră de asistență vă va contacta cât mai curând posibil.
+    success_message: Mulțumim. Vom tine legătura!

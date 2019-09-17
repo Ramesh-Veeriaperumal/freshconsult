@@ -2,3 +2,13 @@
 ru:
   meta:
     language_name: 'Russian - Test'
+  help_widget:
+    form_title: Связаться с нами
+    form_button_text: Отправить отзыв
+    form_submit_message: Спасибо за ваш отзыв.
+    button_text: Справка
+    welcome_message: Можем ли мы помочь?
+    predictive_message: >-
+      Мы заметили, что у вас трудности. Расскажите о проблеме, и наша служба
+      поддержки постарается помочь в кратчайшие сроки.
+    success_message: Спасибо! Будем на связи!

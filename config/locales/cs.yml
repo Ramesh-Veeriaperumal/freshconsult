@@ -7112,3 +7112,13 @@ cs:
       code_duplicate: "This shorthand is already in use."
   password_policy:
     username: "Heslo nesmí obsahovat uživatelské jméno"
+  help_widget:
+    form_title: Kontaktujte nás
+    form_button_text: Odeslat zpětnou vazbu
+    form_submit_message: Děkujeme Vám za zpětnou vazbu.
+    button_text: Nápověda
+    welcome_message: Můžeme nějak pomoci?
+    predictive_message: >-
+      Všimli jsme si, že jste se zasekli. Sdělte nám, čeho jste se snažili
+      dosáhnout a náš tým podpory vás co nejdříve kontaktuje.
+    success_message: Díky. Budeme v kontaktu!

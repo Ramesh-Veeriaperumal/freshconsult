@@ -6967,3 +6967,13 @@ ca:
     alert:
       code_mandatory: "Both fields are required. Shorthands can be upto 10 characters and cannot contain any special characters except '-'."
       code_duplicate: "This shorthand is already in use."
+  help_widget:
+    form_title: Contacteu-nos
+    form_button_text: Envia valoració
+    form_submit_message: Gràcies per la teva valoració.
+    button_text: Ajuda
+    welcome_message: Et podem ajudar?
+    predictive_message: >-
+      Hem observat que t'has encallat. Digue'ns què estaves intentant i el
+      nostre equip de suport t'atendrà el més aviat possible.
+    success_message: Gràcies. Estarem en contacte!

@@ -7741,3 +7741,13 @@ uk:
   new_label: NEW
   api:
     record_not_found: "Resource not found."
+  help_widget:
+    form_title: Зв'язатися з нами
+    form_button_text: Відправити відгук
+    form_submit_message: Thank you for submitting your feedback.
+    button_text: Довідка
+    welcome_message: Як ми можемо допомогти?
+    predictive_message: >-
+      Ми помітили, що у вас виникли певні ускладнення. Розкажіть нам, що ви
+      хотіли зробити і наша команда підтримки зв'яжеться з вами якнайшвидше.
+    success_message: Дякуємо. Будемо на зв'язку!

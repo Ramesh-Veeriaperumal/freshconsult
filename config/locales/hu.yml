@@ -3459,3 +3459,13 @@ hu:
   total: Összesen
   export_to_CSV: "Exportálás CSV-be"
   back_to_reports: "&larr; Vissza a jelentésekhez"
+  help_widget:
+    form_title: Kapcsolat
+    form_button_text: Értékelés küldése
+    form_submit_message: Köszönjük visszajelzését.
+    button_text: Súgó
+    welcome_message: Segíthetünk?
+    predictive_message: >-
+      Észrevettük, hogy elakadt. Ossza meg velünk mit szeretne végrehajtani és
+      ügyfélszolgálatunk a lehető leghamarabb felveszi Önnel a kapcsolatot.
+    success_message: Köszönjük. Hamarosan jelentkezünk!

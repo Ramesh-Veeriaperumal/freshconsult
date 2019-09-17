@@ -7033,3 +7033,13 @@ sl:
     alert:
       code_mandatory: "Both fields are required. Shorthands can be upto 10 characters and cannot contain any special characters except '-'."
       code_duplicate: "This shorthand is already in use."
+  help_widget:
+    form_title: Kontaktirajte nas
+    form_button_text: Pošlji povratno informacijo
+    form_submit_message: Hvala za informacije.
+    button_text: Pomoč
+    welcome_message: Ali lahko pomagamo?
+    predictive_message: >-
+      Opazili smo, da ste obtičali. Povejte nam, kaj ste skušali doseči, in naša
+      ekipa za podporo se bo potrudila čim hitreje stopiti v stik z vami.
+    success_message: Hvala. Stopili bomo v stik z vami!

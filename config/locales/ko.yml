@@ -7729,3 +7729,11 @@ ko:
   new_label: "새로 만들기"
   api:
     record_not_found: "리소스가 없습니다."
+  help_widget:
+    form_title: 고객센터
+    form_button_text: 피드백 보내기
+    form_submit_message: 피드백을 제출해 주셔서 감사합니다.
+    button_text: 도움말
+    welcome_message: 저희가 도와드릴까요?
+    predictive_message: 도움이 필요한 것 같습니다. 무엇을 원하는지 말씀해주시면 지원 팀이 가능한 한 빨리 연락을 드리겠습니다.
+    success_message: 감사합니다. 연락 드리겠습니다!

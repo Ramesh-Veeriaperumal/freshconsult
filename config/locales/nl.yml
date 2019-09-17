@@ -15508,3 +15508,23 @@ nl:
     proberen in de oude Freshdesk
   pts_plain: ' pnt'
   in: Gepubliceerd in
+  help_widget:
+    name: 'Welkom bij %{name}-ondersteuning'
+    message: Welkom bij ondersteuning
+    form_title: Contact met ons opnemen
+    form_button_text: Feedback versturen
+    form_submit_message: Hartelijk bedankt voor uw feedback.
+    button_text: Help
+    untitled_widget: 'Widget zonder naam %{count}'
+    invalid_components: 'Ongeldige component-hash met %{key}'
+    freshmarketer_sign_up_error: >-
+      Sorry, frustratie bijhouden moet ingeschakeld zijn bij de integratie met
+      Freshmarketer
+    invalid_settings: 'Ongeldige instellingen-hash met %{key}'
+    welcome_message: Kunnen we helpen?
+    predictive_message: >-
+      We hebben gemerkt dat u vastzit. Vertel ons wat u probeerde te bereiken en
+      ons ondersteuningsteam zal zo snel mogelijk contact met u opnemen.
+    success_message: Bedankt. We nemen contact op!
+    invalid_domain: 'Sorry, voer een geldig domein in.'
+    domain_list_empty: Specificeer de URL's om de voorspellende ondersteuning bij te houden.
