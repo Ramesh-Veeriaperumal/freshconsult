@@ -28,10 +28,17 @@ class Helpdesk::TicketField < ActiveRecord::Base
     custom_date_time: { type: :custom, dom_type: :date },
     custom_decimal: { type: :custom, dom_type: :decimal },
     nested_field: { type: :custom, dom_type: :nested_field },
-    encrypted_text: { type: :custom, dom_type: :encrypted_text }
+    encrypted_text: { type: :custom, dom_type: :encrypted_text },
+    custom_file: { type: :custom, dom_type: :text }
   }.freeze
 
   CUSTOM_DATE_TIME = 'custom_date_time'.freeze
+
+  CUSTOM_FILE = 'custom_file'.freeze
+
+  SKIP_FIELD_TYPES = [CUSTOM_DATE_TIME.to_sym, CUSTOM_FILE.to_sym]
+
+  DATE_TIME_FIELD = 'date_time'.freeze
 
   SECTION_LIMIT = 2
 
@@ -112,7 +119,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   publishable
 
   def self.custom_fields_to_show
-    CUSTOM_FIELD_PROPS.except(CUSTOM_DATE_TIME.to_sym)
+    CUSTOM_FIELD_PROPS.except(*SKIP_FIELD_TYPES)
   end
 
   def update_ticket_filter
@@ -189,7 +196,9 @@ class Helpdesk::TicketField < ActiveRecord::Base
                   custom_dropdown: { type: :custom,  dom_type: 'dropdown_blank' },
                   nested_field: { type: :custom,  dom_type: 'nested_field' },
                   encrypted_text: { type: :custom,  dom_type: 'encrypted_text' },
-                  custom_date_time: { type: :custom, dom_type: 'date', visible_in_view_form: false }}.freeze
+                  custom_date_time: { type: :custom, dom_type: 'date', visible_in_view_form: false },
+                  custom_file: { type: :custom, dom_type: 'text', visible_in_view_form: false }
+                }.freeze
 
   def dom_type
     FIELD_CLASS[field_type.to_sym][:dom_type]

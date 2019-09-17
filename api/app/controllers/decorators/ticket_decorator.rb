@@ -19,6 +19,7 @@ class TicketDecorator < ApiDecorator
   def custom_fields
     custom_fields_hash = {}
     custom_field_via_mapping.each do |k, v|
+      next if @custom_fields_mapping[k] == Helpdesk::TicketField::CUSTOM_FILE
       custom_fields_hash[@name_mapping[k]] = if v.respond_to?(:utc)
                                                if @custom_fields_mapping[k] == Helpdesk::TicketField::CUSTOM_DATE_TIME
                                                  format_date(v, true)
