@@ -1376,3 +1376,13 @@ pt-PT:
   zendesk_credentials: "Credenciais Zendesk"
   zendesk_url: "URL do Zendesk"
   zendesk_url_info: "ex: http://qualquercoisa.zendesk.com"
+  help_widget:
+    form_title: Contacte-nos
+    form_button_text: Enviar feedback
+    form_submit_message: Obrigado pelo seu feedback.
+    button_text: Ajuda
+    welcome_message: Podemos ajudar?
+    predictive_message: >-
+      Reparámos que não consegue prosseguir. Conte-nos o que está a tentar fazer
+      e a nossa equipa de apoio entrará em contacto consigo logo que possível.
+    success_message: Obrigado. Entraremos em contacto!

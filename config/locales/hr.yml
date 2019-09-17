@@ -5192,3 +5192,12 @@ hr:
     add_forum: Dodaj forum
   and_more_plan_downgrade: I više...
   change_my_plan: Odaberite ovaj plan ...
+  help_widget:
+    form_title: Kontaktirajte nas
+    form_button_text: Poslati
+    button_text: Pomozite
+    welcome_message: Možemo li pomoći?
+    predictive_message: >-
+      Primijetili smo da ste zapeli. Recite nam što ste pokušali napraviti, a
+      naš tim za podršku će vam se javiti u što kraćem roku.
+    success_message: Hvala. Javit ćemo Vam se!

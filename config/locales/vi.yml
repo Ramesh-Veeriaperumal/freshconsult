@@ -4848,3 +4848,14 @@ vi:
   total: Tổng
   export_to_CSV: "xuất CSV"
   back_to_reports: "← Quay lại báo cáo"
+  help_widget:
+    form_title: Liên hệ với chúng tôi
+    form_button_text: Gửi phản hồi
+    form_submit_message: Cám ơn phản hồi của bạn.
+    button_text: Hổ trợ
+    welcome_message: Chúng tôi có thể giúp được gì?
+    predictive_message: >-
+      Chúng tôi nhận thấy bạn đang gặp khó khăn. Hãy cho chúng tôi biết bạn đang
+      muốn làm gì và bộ phận hỗ trợ của chúng tôi sẽ liên hệ với bạn sớm nhất có
+      thể.
+    success_message: Xin cám ơn. Chúng tôi sẽ liên hệ với bạn!

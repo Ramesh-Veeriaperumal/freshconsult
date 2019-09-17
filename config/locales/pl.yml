@@ -12499,3 +12499,13 @@ pl:
   ecommerce_reauth: >-
     Twoje konto Ecommerce jest niedostępne. Wydaje się, że wygasł token
     uwierzytelnienia.
+  help_widget:
+    form_title: Skontaktuj się z nami
+    form_button_text: Wyślij opinię
+    form_submit_message: Dziękujemy za opinię.
+    button_text: Pomoc
+    welcome_message: W czym możemy Ci pomóc?
+    predictive_message: >-
+      Zauważyliśmy, że nie wiesz co dalej. Powiedz nam, co chcesz zrobić, a nasz
+      zespół ds. obsługi wkrótce się z Tobą skontaktuje.
+    success_message: Dzięki. Wkrótce się z Tobą skontaktujemy!

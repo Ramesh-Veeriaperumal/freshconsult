@@ -6963,3 +6963,12 @@ et:
     alert:
       code_mandatory: "Both fields are required. Shorthands can be upto 10 characters and cannot contain any special characters except '-'."
       code_duplicate: "This shorthand is already in use."
+  help_widget:
+    form_title: Võta meiega ühendust
+    form_button_text: Saada tagasisidet
+    button_text: Abi
+    welcome_message: Kas saame aidata?
+    predictive_message: >-
+      Märkasime, et jäid hätta. Räägi meile, mida teha üritasid, ja meie
+      klienditugi võtab sinuga niipea kui võimalik ühendust.
+    success_message: Aitäh. Võtame ühendust!

@@ -11795,3 +11795,13 @@ ar:
             <p>Dear Mr James Dean (Like the Actor),</p><br /><p>Thank you for your email detailing your unfortunate events following the delay of your luggage. Please accept my sincerest apologies for this, and for the unexpected inconveniences caused as a result. I do hope that despite this, you had a pleasant trip.</p><br /><p>Thankfully, the following morning, it was me that you spoke to,and I advised you that your cat hadbeen found and was on its way to you. On a serious note though James,I'm happy to give you a Tier Point. I hope you cherish it. Like it's Magic.I have also added the mileage and remaining tier points from your most recentflight with us, which means that you are now a Gold Member (not like the movie).</p><br /><p>Please once again accept my sincerest apologies. This experience is not typical of us, and I hope it has not discouraged you from travelling with us again, as it would certainlybe a pleasure to welcome you back on board.</p><br /><p>Yours sincerely,
             <br />The Lady in Red
             <br />Baggage Services Advisor</p>
+  help_widget:
+    form_title: اتصل بنا
+    form_button_text: إرسال ملاحظات
+    form_submit_message: شكرًا لك على ملاحظاتك.
+    button_text: التعليمات
+    welcome_message: أيمكننا مساعدتك؟
+    predictive_message: >-
+      لقد لاحظنا بأنك تواجه مشكلة. أخبرنا بما كنت تحاول إنجازه، وسيقوم فريق
+      الدعم التابع لنا بالاتصال بك في أقرب وقت ممكن.
+    success_message: شكراً. سنتواصل معك!

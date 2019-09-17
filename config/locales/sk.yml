@@ -2297,3 +2297,13 @@ sk:
     dashboard: 
       index: 
         todo_title: Úlohy
+  help_widget:
+    form_title: Kontaktujte nás
+    form_button_text: Odoslať spätnú väzbu
+    form_submit_message: Ďakujeme za odoslání reakcie.
+    button_text: Pomocník
+    welcome_message: Môžeme vám pomôcť?
+    predictive_message: >-
+      Všimli sme si, že neviete postupovať ďalej. Povedzte nám, čo ste chceli
+      dosiahnuť, a náš tím podpory vás bude čo najskôr kontaktovať.
+    success_message: Ďakujeme. Budeme v kontakte!

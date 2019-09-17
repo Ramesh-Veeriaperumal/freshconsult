@@ -7027,3 +7027,13 @@ fi:
     alert:
       code_mandatory: "Both fields are required. Shorthands can be upto 10 characters and cannot contain any special characters except '-'."
       code_duplicate: "This shorthand is already in use."
+  help_widget:
+    form_title: Ota meihin yhteyttä
+    form_button_text: Lähetä palautetta
+    form_submit_message: Kiitos palautteestasi.
+    button_text: Apua
+    welcome_message: Voimmeko auttaa?
+    predictive_message: >-
+      Huomasimme, että olet jumissa. Kerro meille, mitä yritit tehdä, ja
+      tukitiimimme ottaa sinuun yhteyttä mahdollisimman pian.
+    success_message: Kiitos. Palaamme asiaan!

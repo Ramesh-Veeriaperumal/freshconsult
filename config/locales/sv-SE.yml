@@ -12912,3 +12912,23 @@ sv-SE:
       widget_token: Widget token
   pts_plain: ' poäng'
   in: i
+  help_widget:
+    name: 'Välkommen till %{name} Support'
+    message: Välkommen till Support
+    form_title: Kontakta oss
+    form_button_text: Skicka feedback
+    form_submit_message: Tack för din feedback.
+    button_text: Hjälp
+    untitled_widget: 'Namnlös widget %{count}'
+    invalid_components: 'Ogiltig komponenthash med %{key}'
+    freshmarketer_sign_up_error: >-
+      Du måste aktivera frustrationsspårning innan du integrerar med
+      Freshmarketer
+    invalid_settings: 'Ogiltig inställningshash med %{key}'
+    welcome_message: Hur kan vi hjälpa till?
+    predictive_message: >-
+      Vi har lagt märke till att du har kört fast. Berätta vad du vill
+      åstadkomma så kontaktar vårt supportteam dig så snart som möjligt.
+    success_message: Tack. Vi hör av oss!
+    invalid_domain: Du måste ange en giltig domän.
+    domain_list_empty: 'Vänligen specificera URL:er att spåra för förebyggande support.'

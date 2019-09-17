@@ -16648,3 +16648,24 @@ pt-BR:
     outros idiomas no antigo Freshdesk
   pts_plain: ' pontos'
   in: em
+  help_widget:
+    name: 'Bem-vindo ao suporte %{name}'
+    message: Bem-vindo ao Suporte
+    form_title: Fale conosco
+    form_button_text: Enviar
+    form_submit_message: Obrigado pelo seu feedback.
+    button_text: Ajuda
+    untitled_widget: 'Widget sem nome %{count}'
+    invalid_components: 'Hash de componentes inválido com %{key}'
+    freshmarketer_sign_up_error: >-
+      Desculpe, o rastreamento de frustração precisa estar ativado ao integrar
+      com o Freshmarketer
+    invalid_settings: 'Hash de configurações inválido com %{key}'
+    welcome_message: Podemos ajudar?
+    predictive_message: >-
+      Notamos que você está com dificuldades. Informe-nos o que estava tentando
+      realizar, e nossa equipe de suporte entrará em contato o mais brevemente
+      possível.
+    success_message: Obrigado. Retornaremos em breve!
+    invalid_domain: 'Desculpe, por favor, insira um domínio válido.'
+    domain_list_empty: 'Por favor, especifique os URLs para rastrear para suporte preditivo.'

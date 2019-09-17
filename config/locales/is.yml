@@ -5179,3 +5179,7 @@ is:
     add_forum: Bæta við spjallborði
   and_more_plan_downgrade: Og fleira...
   change_my_plan: Veldu áskrift...
+  help_widget:
+    form_title: Hafðu samband við okkur
+    form_button_text: Senda
+    button_text: Hjálp

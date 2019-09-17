@@ -4737,3 +4737,23 @@ da:
     add_forum: Legg til forum
   and_more_plan_downgrade: Og mere...
   change_my_plan: Vælg denne plan...
+  help_widget:
+    name: 'Velkommen til %{name}-support'
+    message: Velkommen til support
+    form_title: Kontakt oss
+    form_button_text: Send tilbakemelding
+    form_submit_message: Takk for tilbakemeldingen.
+    button_text: Hjælp
+    untitled_widget: 'Ukendt widget %{count}'
+    invalid_components: 'Ugyldig komponent-hash med %{key}'
+    freshmarketer_sign_up_error: >-
+      Beklager, frustrationssporing skal være aktiveret, når der integreres med
+      Freshmarketer
+    invalid_settings: 'Ugyldigt indstilling-hash med %{key}'
+    welcome_message: Kan vi hjælpe?
+    predictive_message: >-
+      Vi bemærkede at du sidder fast. Fortæl os hvad du prøvede at opnå, så vil
+      vores supportteam kontakte dig så hurtigt som muligt.
+    success_message: Tak. Vi kontakter dig!
+    invalid_domain: 'Beklager, indtast et gyldigt domæne.'
+    domain_list_empty: 'Angiv venligst URL''er, der skal spores for forudsigelig support.'

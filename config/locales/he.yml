@@ -7821,3 +7821,13 @@ he:
     record_not_found: "המשאב לא נמצא."
   unresolved_tickets:
     title: "כרטיסים שלא נפתרו"
+  help_widget:
+    form_title: צור קשר
+    form_button_text: שלח משוב
+    form_submit_message: תודה על המשוב.
+    button_text: עזרה
+    welcome_message: האם אנו יכולים לעזור?
+    predictive_message: >-
+      שמנו לב שאתה תקוע. ספר לנו מה ניסית לעשות וצוות התמיכה שלנו יפנה אליך
+      בהקדם האפשרי.
+    success_message: תודה. נהיה בקשר!

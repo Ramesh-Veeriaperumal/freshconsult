@@ -7034,3 +7034,11 @@ zh-CN:
     alert:
       code_mandatory: "Both fields are required. Shorthands can be upto 10 characters and cannot contain any special characters except '-'."
       code_duplicate: "This shorthand is already in use."
+  help_widget:
+    form_title: 联系我们
+    form_button_text: 发送反馈
+    form_submit_message: 感谢您的反馈。
+    button_text: 帮助
+    welcome_message: 我们可以帮您吗？
+    predictive_message: 我们注意到您似乎遇到了一些困难。告诉我们您想完成的工作，支持团队将会尽快与您取得联系。
+    success_message: 感谢。稍后我们会与您联系！
