@@ -312,6 +312,7 @@
       - :portal_article_filters
       - :autofaq
       - :botflow
+      - :supervisor_custom_status
     :inherits:
       - :garden_jan_19
     :exclude: []

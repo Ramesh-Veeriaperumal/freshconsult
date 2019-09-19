@@ -42,7 +42,7 @@ class Account < ActiveRecord::Base
     :prevent_wc_ticket_create, :allow_wildcard_ticket_create, :requester_privilege,
     :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr,
     :csat_email_scan_compatibility, :mint_portal_applicable, :twitter_microservice, :quoted_text_parsing_feature, :enable_customer_journey,
-    :csat_translations, :email_mailbox, :supervisor_custom_status, :sandbox_temporary_offset, :downgrade_policy,
+    :csat_translations, :email_mailbox, :sandbox_temporary_offset, :downgrade_policy,
     :fluffy_min_level, :allow_update_agent, :help_widget_solution_categories, :search_settings, :optar_cache
   ].freeze
 
@@ -77,7 +77,7 @@ class Account < ActiveRecord::Base
     :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible, :autofaq, :proactive_spam_detection,
     :ticket_properties_suggester, :ticket_properties_suggester_eligible,
     :hide_first_response_due, :agent_articles_suggest, :email_articles_suggest, :customer_journey, :botflow,
-    :help_widget, :help_widget_appearance, :help_widget_predictive, :portal_article_filters
+    :help_widget, :help_widget_appearance, :help_widget_predictive, :portal_article_filters, :supervisor_custom_status
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
