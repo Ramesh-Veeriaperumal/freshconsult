@@ -118,5 +118,32 @@ module Ember::Search
       assert_response 400
       match_json([bad_request_error_pattern('include', :not_included, list: SearchTicketValidation::ALLOWED_INCLUDE_PARAMS.join(','), code: :invalid_value)])
     end
+
+    def test_results_with_valid_params_only_count
+      ticket = create_ticket
+      stub_private_search_response([ticket]) do
+        post :results, construct_params(version: 'private', only: 'count')
+      end
+      assert_response 200
+      assert_equal response.api_meta[:count], 1
+      match_json []
+    end
+
+    def test_results_with_valid_params_only_count_with_filter_params
+      account = Account.current
+      account.ticket_fields.custom_fields.each(&:destroy)
+      ticket_field = []
+      custom_field_name = []
+      ticket_field << create_custom_field('test_custom_number', 'number')
+      custom_field_name << ticket_field.last.name
+      account.save
+      ticket = create_ticket(custom_field: { 'test_custom_number_1' => '3' })
+      stub_private_search_response([ticket]) do
+        post :results, construct_params(version: 'private', only: 'count', filter_params: { custom_fields: { 'test_custom_number_1' => '3' } })
+      end
+      assert_response 200
+      assert_equal response.api_meta[:count], 1
+      match_json []
+    end
   end
 end

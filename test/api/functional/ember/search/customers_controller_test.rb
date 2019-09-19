@@ -94,5 +94,61 @@ module Ember::Search
         assert_equal [private_search_company_pattern(company)].to_json, response.body
       end
     end
+
+    def test_results_with_valid_params_for_contact_only_count
+      enable_multiple_user_companies do
+        companies = [create_company, create_company]
+        companies.each { |company| add_avatar_to_company(company) }
+        contact = create_contact_with_other_companies(@account, companies.map(&:id))
+        add_avatar_to_user(contact)
+        stub_private_search_response([contact]) do
+          post :results, construct_params(version: 'private', context: 'spotlight', term: contact.name, only: 'count')
+        end
+        assert_response 200
+        assert_equal response.api_meta[:count], 1
+        match_json []
+      end
+    end
+
+    def test_results_with_valid_params_for_company_only_count
+      enable_multiple_user_companies do
+        company = create_company
+        add_avatar_to_company(company)
+        stub_private_search_response([company]) do
+          get :results, construct_params(version: 'private', only: 'count', term: company.name)
+        end
+        assert_response 200
+        assert_equal response.api_meta[:count], 1
+        match_json []
+      end
+    end
+
+    def test_results_with_filtered_contact_search_context_only_count
+      enable_multiple_user_companies do
+        companies = [create_company, create_company]
+        companies.each { |company| add_avatar_to_company(company) }
+        contact = create_contact_with_other_companies(@account, companies.map(&:id))
+        add_avatar_to_user(contact)
+        stub_private_search_response([contact]) do
+          get :results, construct_params(version: 'private', context: 'filteredContactSearch', term: contact.name, all: true, only: 'count')
+        end
+        assert_response 200
+        assert_equal response.api_meta[:count], 1
+        match_json []
+      end
+    end
+
+    def test_results_with_filtered_company_search_context_only_count
+      enable_multiple_user_companies do
+        company = create_company
+        add_avatar_to_company(company)
+        stub_private_search_response([company]) do
+          get :results, construct_params(version: 'private', context: 'filteredCompanySearch', term: company.name, all: true, only: 'count')
+        end
+        assert_response 200
+        assert_equal response.api_meta[:count], 1
+        match_json []
+      end
+    end
   end
 end

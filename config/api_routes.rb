@@ -821,7 +821,9 @@ Helpkit::Application.routes.draw do
 
     post '/search/tickets/',      to: 'ember/search/tickets#results'
     post '/search/customers/',    to: 'ember/search/customers#results'
+    get '/search/customers/',     to: 'ember/search/customers#results'
     post '/search/topics/',       to: 'ember/search/topics#results'
+    get '/search/topics/',        to: 'ember/search/topics#results'
 
     post '/search/multiquery',    to: 'ember/search/multiquery#search_results'
     get  '/search/multiquery',    to: 'ember/search/multiquery#search_results'

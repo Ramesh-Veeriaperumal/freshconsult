@@ -38,5 +38,15 @@ module Ember::Search
       assert_response 403
       User.any_instance.unstub(:privilege?)
     end
+
+    def test_results_with_valid_params_only_count
+      topic = create_test_topic(Account.current.forums.first)
+      stub_private_search_response([topic]) do
+        get :results, construct_params(version: 'private', only: 'count', term: Faker::Lorem.word)
+      end
+      assert_response 200
+      assert_equal response.api_meta[:count], 1
+      match_json []
+    end
   end
 end
