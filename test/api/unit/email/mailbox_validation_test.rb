@@ -53,6 +53,7 @@ class Email::MailboxValidationTest < ActionView::TestCase
           mail_server: 'imap.gmail.com',
           port: 993,
           use_ssl: true,
+          delete_from_server: false,
           authentication: 'plain',
           user_name: Faker::Internet.email,
           password: 'password'
@@ -110,6 +111,7 @@ class Email::MailboxValidationTest < ActionView::TestCase
           mail_server: 'imap.gmail.com',
           port: 993,
           use_ssl: true,
+          delete_from_server: false,
           authentication: 'some_method',
           user_name: Faker::Internet.email,
           password: 'password'

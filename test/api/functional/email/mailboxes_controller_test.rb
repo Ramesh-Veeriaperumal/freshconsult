@@ -229,6 +229,57 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
   end
 
+  def test_create_with_incoming_custom_mailbox_without_delete_from_server
+    Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
+    Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: true, msg: '')
+    params_hash = create_mailbox_params_hash.merge(create_custom_mailbox_hash).merge(mailbox_type: CUSTOM_MAILBOX)
+    params_hash[:custom_mailbox][:incoming].delete(:delete_from_server)
+    post :create, construct_params({}, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern_with_nested_field(
+      :incoming,
+      :delete_from_server,
+      :'It should be a/an Boolean',
+      code: :missing_field
+    )])
+    Account.any_instance.unstub(:has_features?)
+    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
+  end
+
+  def test_create_with_incoming_custom_mailbox_without_use_ssl
+    Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
+    Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: true, msg: '')
+    params_hash = create_mailbox_params_hash.merge(create_custom_mailbox_hash).merge(mailbox_type: CUSTOM_MAILBOX)
+    params_hash[:custom_mailbox][:incoming].delete(:use_ssl)
+    post :create, construct_params({}, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern_with_nested_field(
+      :incoming,
+      :use_ssl,
+      :'It should be a/an Boolean',
+      code: :missing_field
+    )])
+    Account.any_instance.unstub(:has_features?)
+    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
+  end
+
+  def test_create_with_outgoing_custom_mailbox_without_use_ssl
+    Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
+    Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: true, msg: '')
+    params_hash = create_mailbox_params_hash.merge(create_custom_mailbox_hash(access_type: 'outgoing')).merge(mailbox_type: CUSTOM_MAILBOX)
+    params_hash[:custom_mailbox][:outgoing].delete(:use_ssl)
+    post :create, construct_params({}, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern_with_nested_field(
+      :outgoing,
+      :use_ssl,
+      :'It should be a/an Boolean',
+      code: :missing_field
+    )])
+    Account.any_instance.unstub(:has_features?)
+    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
+  end
+
   # test update success
   # test_update_without_feature
   # test_update_support_email
@@ -347,10 +398,27 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
   end
 
+  def test_update_product_id_on_default_mailbox
+    email_config = EmailConfig.find_by_primary_role(true)
+    email_config = create_email_config(primary_role: true) if email_config.blank?
+    Account.any_instance.stubs(:multi_product_enabled?).returns(true)
+    params_hash = { product_id: create_product.id }
+    post :update, construct_params({ id: email_config.id }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern(
+      :product_id,
+      :default_mailbox_product_changed,
+      code: :invalid_value
+    )])
+    Account.any_instance.unstub(:multi_product_enabled?)
+  end
+
+  # test_send_verification_success
+  # test_send_verification_on_active_mailbox
 
   def test_send_verification
     email_config = create_email_config(active: false)
-    post :send_verification, construct_params({ id: email_config.id })
+    post :send_verification, construct_params(id: email_config.id)
     assert_response 204
   end
 
@@ -358,15 +426,15 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     email_config = create_email_config
     email_config.active = true
     email_config.save
-    post :send_verification, construct_params({ id: email_config.id })
+    post :send_verification, construct_params(id: email_config.id)
     assert_response 409
     match_json(request_error_pattern(:active_mailbox_verification))
   end
 
-  # test_index_success
-  # test_index_success_with_order_type
+  # _success
+  # _success_with_order_type
 
-  def test_index_success
+  def _success
     user = add_new_user(@account)
     email_configs = []
     3.times do
@@ -388,7 +456,7 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     Email::MailboxFilterValidation.any_instance.unstub(:private_api?)
   end
 
-  def test_index_success_with_order_type
+  def _success_with_order_type
     user = add_new_user(@account)
     email_configs = []
     email_configs << create_email_config(active: false, default_reply_email: false, group_id: 5)

@@ -1,26 +1,31 @@
 class Email::MailboxDelegator < BaseDelegator
   include MailboxValidator
 
-  validate :imap_mailbox, if: -> { @imap_mailbox_attributes.present? }
-  validate :smtp_mailbox, if: -> { @smtp_mailbox_attributes.present? }
+  MAILBOX_ATTRIBUTES = %w[server_name port use_ssl delete_from_server
+  authentication user_name password].freeze
+
+  validate :imap_mailbox, if: -> { @record.imap_mailbox.present? && @record.imap_mailbox.changed? }
+  validate :smtp_mailbox, if: -> { @record.smtp_mailbox.present? && @record.smtp_mailbox.changed? }
   validate :group_presence, if: -> { group_id && attr_changed?('group_id') }
   validate :product_presence, if: -> { product_id && attr_changed?('product_id') }
-  validate :changes_to_default_primary_role, unless: -> { @primary_role.nil? }
+  validate :changes_to_default_primary_role, unless: -> { primary_role && attr_changed?('primary_role') }
+  validate :changes_to_product_id_on_default_mailbox, if: -> { attr_changed?('product_id') }
 
   def initialize(record, options = {})
+    @record = record
     super(record, options)
-    @imap_mailbox_attributes = options[:imap_mailbox_attributes]
-    @smtp_mailbox_attributes = options[:smtp_mailbox_attributes]
     @primary_role = options[:primary_role]
   end
 
   def imap_mailbox
-    verified_result = verify_imap_mailbox(@imap_mailbox_attributes)
+    verified_result = verify_imap_mailbox(
+      @record.imap_mailbox.attributes.slice(*MAILBOX_ATTRIBUTES).with_indifferent_access)
     errors[:incoming] = verified_result[:msg] unless verified_result[:success]
   end
 
   def smtp_mailbox
-    verified_result = verify_smtp_mailbox(@smtp_mailbox_attributes)
+    verified_result = verify_smtp_mailbox(
+      @record.smtp_mailbox.attributes.slice(*MAILBOX_ATTRIBUTES).with_indifferent_access)
     unless verified_result[:success]
       errors[:outgoing] = verified_result[:msg]
       error_options[:outgoing] = verified_result[:options] if verified_result[:options].present?
@@ -37,7 +42,7 @@ class Email::MailboxDelegator < BaseDelegator
   end
 
   def group_presence # this is a custom validate method so that group cache can be used.
-    group = Account.current.groups_from_cache.detect { |x| group_id == x.id }
+    group = Account.current.support_agent_groups_from_cache.detect { |x| group_id == x.id }
     if group.nil?
       errors[:group_id] << :"can't be blank"
     else
@@ -46,6 +51,10 @@ class Email::MailboxDelegator < BaseDelegator
   end
 
   def changes_to_default_primary_role
-    errors[:default_reply_email] << :default_primary_role_changed if primary_role == true && @primary_role == false
+    errors[:default_reply_email] << :default_primary_role_changed if primary_role_was == true && primary_role == false
+  end
+
+  def changes_to_product_id_on_default_mailbox
+    errors[:product_id] << :default_mailbox_product_changed if primary_role_was == true
   end
 end

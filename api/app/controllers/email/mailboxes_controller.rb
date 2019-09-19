@@ -15,7 +15,7 @@ class Email::MailboxesController < ApiApplicationController
   end
 
   def create
-    return unless validate_delegator(@item, delegator_params)
+    return unless validate_delegator(@item)
 
     if @item.save
       render :create, status: 201
@@ -25,7 +25,8 @@ class Email::MailboxesController < ApiApplicationController
   end
 
   def update
-    return unless validate_delegator(@item, delegator_params)
+    @item.assign_attributes(validatable_delegator_attributes)
+    return unless validate_delegator(@item)
 
     if @item.update_attributes(cname_params)
       @item.reload
@@ -83,12 +84,13 @@ class Email::MailboxesController < ApiApplicationController
       validate_body_params(@item)
     end
 
-    def delegator_params
-      {
-        imap_mailbox_attributes: cname_params[:imap_mailbox_attributes],
-        smtp_mailbox_attributes: cname_params[:smtp_mailbox_attributes],
-        primary_role: cname_params[:primary_role]
-      }
+    def validatable_delegator_attributes
+      cname_params.select do |attr, value|
+        if EmailMailboxConstants::VALIDATABLE_DELEGATOR_ATTRIBUTES.include?(attr)
+          cname_params.delete(attr)
+          true
+        end
+      end
     end
 
     def sanitize_params
