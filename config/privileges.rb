@@ -40,6 +40,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"mobile/freshfone"
     resource :"mobile/setting"
     resource :"helpdesk/mobihelp_info"
+    resource :"mobile_app_download"
     # Social - Twitter
     resource :"social/twitter_handle",
       :only => [:create_twicket, :feed, :tweet_exists, :send_tweet, :twitter_search]

@@ -6,8 +6,10 @@ class HomeController < ApplicationController
   before_filter :set_content_scope, :set_mobile
   
   def index
-    # redirect_to MOBILE_URL and return if (current_user && mobile?)
-    if (current_user && privilege?(:manage_tickets))
+    # redirect_to MOBILE_URL 
+    if(can_redirect_to_mobile?)
+      redirect_to mobile_welcome_path and return
+    elsif (current_user && privilege?(:manage_tickets))
       redirect_to '/a/' and return if current_account.falcon_ui_enabled?(current_user)
       redirect_to helpdesk_dashboard_path and return
     else
@@ -37,5 +39,9 @@ class HomeController < ApplicationController
       @content_scope = 'portal_'
       @content_scope = 'user_'  if privilege?(:view_forums)
     end
+
+    def can_redirect_to_mobile?
+      current_user && mobile_agent? && !request.cookies['skip_mobile_app_download']&& current_user.agent?
+    end  
 
 end
