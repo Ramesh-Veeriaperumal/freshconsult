@@ -230,6 +230,8 @@ module Redis::Keys::Others
   # Enable logs for specific account when supressed
   ENABLE_LOGS = 'ENABLE_LOGS:%{account_id}'.freeze
 
+  SYSTEM42_SUPPORTED_LANGUAGES = 'SYSTEM42_SUPPORTED_LANGUAGES'.freeze
+
   BULK_OPERATIONS_RATE_LIMIT_BATCH_SIZE = 'BULK_OPERATIONS_RATE_LIMIT_BATCH_SIZE:%{class_name}'.freeze
   BULK_OPERATIONS_RATE_LIMIT_NEXT_RUN_AT = 'BULK_OPERATIONS_RATE_LIMIT_NEXT_RUN_AT:%{class_name}'.freeze
 
