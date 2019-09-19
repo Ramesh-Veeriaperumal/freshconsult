@@ -256,6 +256,7 @@ class SAAS::SubscriptionEventActions
     end
 
     def change_api_limit
-      account.change_fluffy_api_limit
+      account.change_fluffy_api_limit if account.fluffy_enabled?
+      account.change_fluffy_api_min_limit if account.fluffy_min_level_enabled?
     end
 end
