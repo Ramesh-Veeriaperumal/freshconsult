@@ -39,7 +39,7 @@ module CoreForumsTestHelper
               :stamp_type => stamp_type,
               :user_votes => 0
               )
-    topic.save
+    topic.save!
     post = FactoryGirl.build(:post,
               :account_id => @account.id,
               :topic_id => topic.id,

@@ -6,6 +6,15 @@ en:
     regards: "Regards,"
     freshdesk_support_team: "Freshdesk Support Team"
     note_for_recipients: "Note: This email is also sent to - %{to_emails}."
+    notify_new_follower:
+      topic:
+        title: 'Added as topic follower'
+        message: 'You have been added as a follower by %{name} to this topic.'
+        unfollow: 'Stop following this topic'
+      forum:
+        title: 'Added as forum follower'
+        message: 'You have been added as a follower by %{name} to this forum.'
+        unfollow: 'Stop following this forum'
     email_config_notifier:
       activation_instructions:
         body: 'This email has been added as your support email address in %{app_name}. Click the URL below to activate your support email
@@ -134,6 +143,8 @@ en:
       account_cancel: "<div>This email is a confirmation that your Freshdesk account has been cancelled. We’re sorry to see you go.</div><br/>
            <div>If you have feedback on how we can provide a better experience, please write to us at %{support_email}. We’d love to hear from you. </div>"
   mailer_notifier_subject:
+    notify_new_topic_follower: 'Added as Topic Follower - %{title}'
+    notify_new_forum_follower: 'Added as Forum Follower - %{title}'
     discard_email: "[Draft Discarded] %{draft_title}"
     token_expiry: 'Ecommerce account %{ecom_name} token expiration'
     new_forum_topic: "[New Topic] %{title} in %{forum_name}"

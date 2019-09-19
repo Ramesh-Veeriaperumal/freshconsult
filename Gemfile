@@ -49,7 +49,9 @@ gem 'iconv', '~> 1.0.4'
 gem 'thrift', '~> 0.9.2.0'
 gem 'charlock_holmes', "0.7.3"
 gem "tnef", "1.0.2"
-gem "central-publisher", :git => 'git@github.com:freshdesk/central-publisher.git', :tag => 'v2.0.5'
+gem "central-publisher", git: 'git@github.com:freshdesk/central-publisher.git', tag: 'v2.0.6'
+
+gem 'optar', git: 'git@github.com:freshdesk/optar.git', tag: 'v1.1.3'
 
 group :development, :test do
   gem 'active_record_query_trace'
@@ -104,10 +106,10 @@ gem "dynamics_crm", :git => 'git@github.com:TinderBox/dynamics_crm.git', :branch
 gem "google-api-client", "~> 0.7.0"
 gem "ipaddress", "0.8.0"
 
-gem 'sidekiq', "3.5.4"
+gem 'sidekiq', "4.2.10"
 # This needs bundler 1.7.2 or 1.10.6 as other version has problem in resolving.
 source "https://690a8c5e:5d9334f0@gems.contribsys.com/" do
-  gem 'sidekiq-pro'
+  gem 'sidekiq-pro', '3.7.1'
 end
 gem 'shoryuken', '2.0.4'
 
@@ -156,6 +158,7 @@ gem "sax-machine", "~> 0.1.0"
 gem "insensitive_hash", "0.2.3"
 
 gem "redis","3.3.1"
+gem 'redis-namespace'
 gem "resque","~> 1.24.0"
 gem "resque-status", "0.4.1"
 gem 'resque-scheduler', "2.2.0", :require => 'resque_scheduler'
@@ -343,7 +346,6 @@ end
 
 # Marketplace
 gem 'doorkeeper', '2.2.1'
-
 # Search v2
 gem 'typhoeus'
 
@@ -375,5 +377,4 @@ gem 'codecov', :require => false, :group => :test
 
 gem 'ejson', :require => false
 
-gem 'optar', git: 'git@github.com:freshdesk/optar.git', tag: 'v1.1.1'
 gem 'rack-protection', '1.5.5'

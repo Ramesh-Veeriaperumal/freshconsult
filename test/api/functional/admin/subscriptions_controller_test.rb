@@ -7,6 +7,8 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
   include AccountTestHelper
   include AgentsTestHelper
   include SubscriptionTestHelper
+  include Redis::OthersRedis
+  include Redis::Keys::Others
   
   CHARGEBEE_LIST_PLANS_API_RESPONSE = '{"list":[{"plan":{"id":"sprout_monthly",
     "name":"Sprout Monthly", "invoice_name":"Sprout Monthly 2016","price":1500,
@@ -258,6 +260,31 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     assert_response 200
   ensure
     unstub_chargebee_methods
+  end
+
+
+  def test_update_subscription_renewal_period_for_existing_customers
+    @account = Account.find_by_full_domain('test1.freshpo.com').make_current
+    plan_ids = SubscriptionPlan.current.map(&:id)
+    stub_chargebee_methods
+    stub_current_user
+    $redis_others.perform_redis_op('set', DOWNGRADE_POLICY_TO_ALL, true)
+    params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
+    params = { plan_id: params_plan_id, renewal_period: 1 }
+    @account.subscription.card_number = '12345432'
+    @account.subscription.update_attributes(agent_limit: '1')
+    @account.subscription.update_attributes(renewal_period: 12)
+    @account.subscription.update_attributes(subscription_plan_id: @account.subscription.subscription_plan_id)
+    current_subscription = @account.subscription
+    current_subscription.account.rollback :downgrade_policy
+    put :update, construct_params({ version: 'private' }.merge!(params.merge!(params_hash.except(:plan_id, :renewal_period))), {})
+    assert_equal current_subscription.account.launched?(:downgrade_policy), true
+    assert_equal @account.subscription.subscription_request.nil?, true
+    assert_equal @account.subscription.subscription_plan_id, params_plan_id
+    assert_response 200
+  ensure
+    unstub_chargebee_methods
+    $redis_others.perform_redis_op('del', DOWNGRADE_POLICY_TO_ALL)
     @account.destroy
   end
 

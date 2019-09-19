@@ -47,6 +47,11 @@ class User < ActiveRecord::Base
                                                                user_companies.user_id = users.id),
                                                    :conditions => conditions } }
   scope :company_users_via_customer_id, lambda { |cust_id| { :conditions => ["customer_id = ?", cust_id]} }
+
+  swindle :technicians_basics,
+          scope: :technicians,
+          attrs: %i[id name email privileges]
+
   # Using text_uc01 column as the preferences hash for storing user based settings
   serialize :text_uc01, Hash
   alias_attribute :preferences, :text_uc01

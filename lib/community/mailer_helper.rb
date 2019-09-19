@@ -18,7 +18,6 @@ module Community::MailerHelper
       @user   = user
       @account = object.account
       @monitorship = monitorship
-
       mail(headers) do |part|
         part.text { render "mailer/#{o_type}/new_follower.text.plain" }
         part.html do
@@ -35,6 +34,7 @@ module Community::MailerHelper
   end
 
   def new_follower_subject(object)
-    "Added as #{object.class.name} Follower - #{object[:name] || object[:title]}"
+    key = object.class.name == 'Topic' ? 'mailer_notifier_subject.notify_new_topic_follower' : 'mailer_notifier_subject.notify_new_forum_follower'
+    I18n.t(key, title: (object[:name] || object[:title]))
   end
 end

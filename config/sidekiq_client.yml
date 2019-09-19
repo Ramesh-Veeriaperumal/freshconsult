@@ -1,6 +1,5 @@
 defaults: &defaults
   :verbose: true
-  :require: ./config/environment.rb
   :concurrency: 5
   :redis_pool_size: 5
   :logfile: ./log/sidekiq.log

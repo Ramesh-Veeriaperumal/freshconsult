@@ -292,7 +292,6 @@
     - premium_sla_reminders
     - sla_reminders
   :cron_webhook:
-    - cron_webhook
     - cron_contacts_sync
     - cron_google_contacts_sync
     - cron_resque_watcher_check_load

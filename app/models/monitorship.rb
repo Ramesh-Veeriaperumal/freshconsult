@@ -37,7 +37,7 @@ class Monitorship < ActiveRecord::Base
 
   def notify_new_follower
     return if mail_unnecessary?
-    "#{monitorable.class.name}Mailer".constantize.send_later(:notify_new_follower,monitorable,User.current,self)
+    "#{monitorable.class.name}Mailer".constantize.send_later(:notify_new_follower,monitorable,User.current,self,locale_object: self.user)
   end
 
   protected
