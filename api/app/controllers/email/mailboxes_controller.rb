@@ -60,7 +60,11 @@ class Email::MailboxesController < ApiApplicationController
   private
 
     def scoper
-      current_account.all_email_configs.reorder('primary_role DESC')
+      if index? && params[:order_by] == EmailMailboxConstants::FAILURE_CODE
+        current_account.all_email_configs.reorder('imap_mailboxes.error_type > 0 DESC, primary_role DESC')
+      else
+        current_account.all_email_configs.reorder('primary_role DESC')
+      end
     end
 
     def check_multiple_emails_feature
@@ -135,7 +139,7 @@ class Email::MailboxesController < ApiApplicationController
 
     def paginate_options(is_array = false)
       options = super(is_array)
-      options[:order] = order_clause if params[:order_by].present?
+      options[:order] = order_clause if params[:order_by].present? && params[:order_by] != EmailMailboxConstants::FAILURE_CODE
       options
     end
 

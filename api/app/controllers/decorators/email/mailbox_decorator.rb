@@ -105,7 +105,8 @@ class Email::MailboxDecorator < ApiDecorator
           delete_from_server: imap_mailbox.delete_from_server,
           authentication: imap_mailbox.authentication == IMAP_CRAM_MD5 ? CRAM_MD5 : imap_mailbox.authentication,
           user_name: imap_mailbox.user_name,
-          password: imap_mailbox.password
+          password: imap_mailbox.password,
+          failure_code: failure_code
         )
       end
       result_hash
@@ -124,5 +125,9 @@ class Email::MailboxDecorator < ApiDecorator
         )
       end
       result_hash
+    end
+
+    def failure_code
+      Admin::EmailConfig::Imap::ErrorMapper.new(error_type: imap_mailbox.error_type).fetch_error_mapping if imap_mailbox.error_type.present?
     end
 end

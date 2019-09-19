@@ -542,7 +542,7 @@ class Email::MailboxesControllerTest < ActionController::TestCase
   ensure
     Account.any_instance.unstub(:has_features?)
     @account.email_configs.destroy(mailbox)
-    Email::MailboxFilterValidation.any_instance.unstub(:private_api?)\
+    Email::MailboxFilterValidation.any_instance.unstub(:private_api?)
   end
 
   def test_list_with_active_filter
@@ -558,6 +558,34 @@ class Email::MailboxesControllerTest < ActionController::TestCase
   ensure
     Account.any_instance.unstub(:has_features?)
     @account.email_configs.destroy(mailbox)
+    Email::MailboxFilterValidation.any_instance.unstub(:private_api?)
+  end
+
+  def test_list_with_failure_code_filter
+    Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
+    @account.all_email_configs.delete_all
+    mailbox1 = create_email_config(support_email: 'testafailurecodefilter1@fd.com', imap_mailbox_attributes: { error_type: 543 }, default_reply_email: true)
+    mailbox2 = create_email_config(support_email: 'testafailurecodefilter2@fd.com', imap_mailbox_attributes: { error_type: 541 })
+    mailbox3 = create_email_config(support_email: 'testafailurecodefilter3@fd.com')
+    mailbox1.active = true
+    mailbox1.save!
+    mailbox2.active = true
+    mailbox2.save!
+    Email::MailboxFilterValidation.any_instance.stubs(:private_api?).returns(true)
+    get :index, controller_params(order_by: 'failure_code')
+    assert_response 200
+    response = parse_response @response.body
+    primary_error_email = response[0]
+    secondary_error_email = response[1]
+    normal_email = response[2]
+    assert_not_nil primary_error_email['custom_mailbox']['incoming']['failure_code']
+    assert_not_nil secondary_error_email['custom_mailbox']['incoming']['failure_code']
+    assert primary_error_email['id'] == mailbox1.id && secondary_error_email['id'] == mailbox2.id && normal_email['id'] == mailbox3.id
+  ensure
+    Account.any_instance.unstub(:has_features?)
+    @account.email_configs.destroy(mailbox1)
+    @account.email_configs.destroy(mailbox2)
+    @account.email_configs.destroy(mailbox3)
     Email::MailboxFilterValidation.any_instance.unstub(:private_api?)
   end
 end

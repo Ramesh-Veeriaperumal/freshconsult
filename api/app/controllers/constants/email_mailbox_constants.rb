@@ -5,7 +5,8 @@ module EmailMailboxConstants
   }.freeze
   ACCESS_TYPE_PARAMS_MAPPING = { mail_server: :server_name }.freeze
   PARAMS_TO_DELETE = %i[mailbox_type freshdesk_mailbox custom_mailbox].freeze
-  ORDER_BY = %w[group_id product_id].freeze
+  FAILURE_CODE = 'failure_code'.freeze
+  ORDER_BY = ['group_id', 'product_id', FAILURE_CODE].freeze
   ORDER_TYPE = %w[desc asc].freeze
   DEFAULT_ORDER_TYPE = 'asc'.freeze
 
