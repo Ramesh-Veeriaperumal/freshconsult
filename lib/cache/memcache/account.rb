@@ -148,8 +148,13 @@ module Cache::Memcache::Account
   end
 
   def agents_details_from_cache
-    key = agents_details_memcache_key
-    fetch_from_cache(key) { users.where(helpdesk_agent: true).select('id,name,email,privileges').all }
+    if optar_cache_enabled?
+      key = agents_details_optar_key
+      fetch_from_cache(key) { users.technicians_basics }
+    else
+      key = agents_details_memcache_key
+      fetch_from_cache(key) { users.where(helpdesk_agent: true).select('id,name,email,privileges').all }
+    end
   end
 
   def groups_from_cache
@@ -170,8 +175,13 @@ module Cache::Memcache::Account
 
   def agent_groups_from_cache
     @agent_groups_from_cache ||= begin
-      key = agent_groups_memcache_key
-      MemcacheKeys.fetch(key) { agent_groups.select('user_id,group_id').all }
+      if optar_cache_enabled?
+        key = agent_groups_optar_key
+        MemcacheKeys.fetch(key) { agent_groups.basic_info }
+      else
+        key = agent_groups_memcache_key
+        MemcacheKeys.fetch(key) { agent_groups.select('user_id,group_id').all }
+      end
     end
   end
 
@@ -191,16 +201,24 @@ module Cache::Memcache::Account
     end
   end 
 
-  
-
   def products_from_cache
-    key = ACCOUNT_PRODUCTS % { :account_id => self.id }
-    MemcacheKeys.fetch(key) { self.products.find(:all, :order => 'name') }
+    if optar_cache_enabled?
+      key = format(ACCOUNT_PRODUCTS_OPTAR, account_id: id)
+      MemcacheKeys.fetch(key) { products.basic_info }
+    else
+      key = format(ACCOUNT_PRODUCTS, account_id: id)
+      MemcacheKeys.fetch(key) { products.find(:all, order: 'name') }
+    end
   end
 
   def tags_from_cache
-    key = tags_memcache_key
-    MemcacheKeys.fetch(key) { self.tags.all }
+    if optar_cache_enabled?
+      key = tags_optar_key
+      MemcacheKeys.fetch(key) { tags.basic_info }
+    else
+      key = tags_memcache_key
+      MemcacheKeys.fetch(key) { tags.all }
+    end
   end
 
   def feature_from_cache
@@ -223,8 +241,13 @@ module Cache::Memcache::Account
   end
 
   def companies_from_cache
-    key = companies_memcache_key
-    MemcacheKeys.fetch(key) { self.companies.all }
+    if optar_cache_enabled?
+      key = companies_optar_key
+      MemcacheKeys.fetch(key) { companies.basic_info }
+    else
+      key = companies_memcache_key
+      MemcacheKeys.fetch(key) { companies.all }
+    end
   end
 
   def default_calendar_from_cache
@@ -515,11 +538,18 @@ module Cache::Memcache::Account
   end
 
   def helpdesk_permissible_domains_from_cache
-    MemcacheKeys.fetch(permissible_domains_memcache_key) { self.helpdesk_permissible_domains.select(:domain).all }
+    if optar_cache_enabled?
+      key = permissible_domains_optar_key
+      MemcacheKeys.fetch(key) { helpdesk_permissible_domains.basic_info }
+    else
+      key = permissible_domains_memcache_key
+      MemcacheKeys.fetch(key) { helpdesk_permissible_domains.select(:domain).all }
+    end
   end
 
   def clear_helpdesk_permissible_domains_from_cache
     MemcacheKeys.delete_from_cache(permissible_domains_memcache_key(Account.current.id))
+    MemcacheKeys.delete_from_cache(permissible_domains_optar_key(Account.current.id))
   end
 
   def contact_password_policy_from_cache
@@ -680,6 +710,10 @@ module Cache::Memcache::Account
       HELPDESK_PERMISSIBLE_DOMAINS % { :account_id => id }
     end
 
+    def permissible_domains_optar_key(account_id = id)
+      format(HELPDESK_PERMISSIBLE_DOMAINS_OPTAR, account_id: account_id)
+    end
+
     def unassociated_categories_memcache_key
       UNASSOCIATED_CATEGORIES % { account_id: Account.current.id }
     end
@@ -704,6 +738,10 @@ module Cache::Memcache::Account
       ACCOUNT_AGENTS_DETAILS % { :account_id => self.id }
     end
 
+    def agents_details_optar_key
+      format(ACCOUNT_AGENTS_DETAILS_OPTAR, account_id: id)
+    end
+
     def installed_apps_key
       format(INSTALLED_APPS_HASH, account_id: id)
     end
@@ -716,6 +754,10 @@ module Cache::Memcache::Account
       ACCOUNT_AGENT_GROUPS % { account_id: id }
     end
 
+    def agent_groups_optar_key
+      format(ACCOUNT_AGENT_GROUPS_OPTAR, account_id: id)
+    end
+
     def agent_groups_hash_memcache_key
       ACCOUNT_AGENT_GROUPS_HASH % { account_id: id }
     end 
@@ -724,8 +766,16 @@ module Cache::Memcache::Account
       ACCOUNT_TAGS % { :account_id => self.id }
     end
 
+    def tags_optar_key
+      format(ACCOUNT_TAGS_OPTAR, account_id: id)
+    end
+
     def companies_memcache_key
       ACCOUNT_COMPANIES % { :account_id => self.id }
+    end
+
+    def companies_optar_key
+      format(ACCOUNT_COMPANIES_OPTAR, account_id: id)
     end
 
     def handles_memcache_key

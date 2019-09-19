@@ -32,6 +32,9 @@ class Company < ActiveRecord::Base
       :limit => 1000  }
   }  
 
+  swindle :basic_info,
+          attrs: %i[name]
+
   def self.filter(letter, page, per_page = 50)
     paginate :per_page => per_page, :page => page,
              :conditions => ['name like ?', "#{letter}%"],

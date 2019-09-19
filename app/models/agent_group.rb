@@ -49,6 +49,9 @@ class AgentGroup < ActiveRecord::Base
     { :conditions => ["user_id = ? AND group_id in (?)", user_id, group_ids] }
   }
 
+  swindle :basic_info,
+          attrs: %i[user_id group_id]
+
   def sync_skill_based_user_queues
     if account.skill_based_round_robin_enabled? && group.skill_based_round_robin_enabled? && 
         (user.agent.nil? || user.agent.available?)#user.agent.nil? - hack for agent destroy
@@ -77,8 +80,9 @@ class AgentGroup < ActiveRecord::Base
   end
 
   def clear_agent_groups_cache
-    MemcacheKeys.delete_from_cache(ACCOUNT_AGENT_GROUPS % { account_id: Account.current.id })
-    MemcacheKeys.delete_from_cache(ACCOUNT_AGENT_GROUPS_ONLY_IDS % { account_id: Account.current.id })
+    MemcacheKeys.delete_from_cache(format(ACCOUNT_AGENT_GROUPS, account_id: Account.current.id))
+    MemcacheKeys.delete_from_cache(format(ACCOUNT_AGENT_GROUPS_OPTAR, account_id: Account.current.id))
+    MemcacheKeys.delete_from_cache(format(ACCOUNT_AGENT_GROUPS_ONLY_IDS, account_id: Account.current.id))
   end
 
   def clear_agent_groups_hash_cache

@@ -1,6 +1,8 @@
 config = YAML::load_file(File.join(Rails.root, 'config', 'sidekiq.yml'))[Rails.env]
 sidekiq_config = YAML::load_file(File.join(Rails.root, 'config', 'sidekiq_client.yml'))[Rails.env]
 
+MAX_DEAD_SET_SIZE = 50_000
+
 SIDEKIQ_CLASSIFICATION = YAML::load_file(File.join(Rails.root, 'config', 'sidekiq_classification.yml'))
 
 SIDEKIQ_CLASSIFICATION_MAPPING = SIDEKIQ_CLASSIFICATION[:classification].inject({}) do |t_h, queue|
@@ -10,22 +12,23 @@ SIDEKIQ_CLASSIFICATION_MAPPING = SIDEKIQ_CLASSIFICATION[:classification].inject(
   t_h
 end
 
-REDIS_CONFIG_KEYS = ['host', 'port', 'password'].freeze
+REDIS_CONFIG_KEYS = ['host', 'port', 'password', 'namespace'].freeze
 
-$sidekiq_datastore = proc {
-  Redis::Namespace.new(config['namespace'],
-                       redis: Redis.new(config.slice(*REDIS_CONFIG_KEYS).merge(tcp_keepalive: config['keepalive'])))
-}
+redis_config = config.slice(*REDIS_CONFIG_KEYS).merge(tcp_keepalive: config['keepalive'], network_timeout: sidekiq_config['timeout'])
 
-$sidekiq_redis_pool_size = sidekiq_config[:redis_pool_size] || sidekiq_config[:concurrency]
-# setting redis connection pool size of sidekiq client to (concurrency / 2) because of limitations from redis-labs
-$sidekiq_client_redis_pool_size = ($sidekiq_redis_pool_size / 2).to_i
-$sidekiq_client_redis_pool_size = $sidekiq_redis_pool_size if $sidekiq_client_redis_pool_size.zero?
-$sidekiq_redis_timeout = sidekiq_config[:timeout]
+MIN_SIDEKIQ_CONNECTIONS = 7
 
+pool_size = sidekiq_config[:redis_pool_size] || sidekiq_config[:concurrency]
+sidekiq_redis_pool_size = (pool_size > MIN_SIDEKIQ_CONNECTIONS ? pool_size + 2 : MIN_SIDEKIQ_CONNECTIONS)
 
+sidekiq_client_redis_pool_size = (pool_size / 2).to_i
+sidekiq_client_redis_pool_size = pool_size if sidekiq_client_redis_pool_size.zero?
+
+poll_interval = config['scheduled_poll_interval']
+Sidekiq.default_worker_options = { backtrace: 10 }
+Sidekiq.options[:dead_max_jobs] = config['dead_max_jobs'] || MAX_DEAD_SET_SIZE
 Sidekiq.configure_client do |config|
-  config.redis = ConnectionPool.new(size: $sidekiq_client_redis_pool_size, timeout: $sidekiq_redis_timeout, &$sidekiq_datastore)
+  config.redis = redis_config.merge({:size => sidekiq_client_redis_pool_size})
   config.client_middleware do |chain|
     chain.add Middleware::Sidekiq::Client::RouteORDrop
     chain.add Middleware::Sidekiq::Client::BelongsToAccount, :ignore => [
@@ -39,6 +42,7 @@ Sidekiq.configure_client do |config|
       "Freshfone::AcwWorker",
       "Freshfone::TranscriptAttachmentWorker",
       "Freshfone::CallTimeoutWorker",
+      "Freshcaller::AccountDeleteWorker",
       "Ecommerce::EbayWorker",
       "Ecommerce::EbayUserWorker",
       "PasswordExpiryWorker",
@@ -67,6 +71,7 @@ Sidekiq.configure_client do |config|
       "DkimSwitchCategoryWorker",
       "DelayedJobs::MailboxJob",
       "Email::S3RetryWorker",
+      'Email::AccountDetailsDestroyWorker',
       "Tickets::Schedule",
       "Tickets::Dump",
       "BlockAccount",
@@ -74,8 +79,12 @@ Sidekiq.configure_client do |config|
       "CRMApp::Freshsales::Signup",
       "CRMApp::Freshsales::AdminUpdate",
       "CRMApp::Freshsales::TrackSubscription",
-      'Freshid::V2::ProcessEvents',
+      "Admin::Sandbox::CreateAccountWorker",
+      'Admin::CloneWorker',
       'Freshid::AccountDetailsUpdate',
+      'MigrationWorker',
+      'DataExportCleanup',
+      'Freshid::V2::ProcessEvents',
       'Freshid::V2::AccountDetailsUpdate',
       'FreshidRetryWorker',
       'Admin::Sandbox::CleanupWorker',
@@ -97,8 +106,8 @@ Sidekiq.configure_client do |config|
       "Reports::ScheduledReports",
       "Reports::Export",
       "LivechatWorker",
-      "Admin::ProvisionSandbox",
       "Tickets::LinkTickets",
+      "Tickets::UnlinkTickets",
       "BroadcastMessages::NotifyBroadcastMessages",
       "BroadcastMessages::NotifyAgent",
       "Import::SkillWorker",
@@ -107,8 +116,13 @@ Sidekiq.configure_client do |config|
       "ProductFeedbackWorker",
       "Freshid::ProcessEvents",
       "Community::MergeTopicsWorker",
+      "Admin::Sandbox::FileToDataWorker",
+      "Admin::Sandbox::DataToFileWorker",
+      "Admin::Sandbox::DiffWorker",
+      'Admin::Sandbox::MergeWorker',
+      'Tickets::UndoSendWorker',
       'Freshid::V2::ProcessEvents',
-      'Roles::UpdateAgentsRoles'
+      "Roles::UpdateAgentsRoles"
     ]
   end
 end
@@ -117,8 +131,21 @@ Sidekiq.configure_server do |config|
   # ActiveRecord::Base.logger = Logger.new(STDOUT)
   # Sidekiq::Logging.logger = ActiveRecord::Base.logger
   # Sidekiq::Logging.logger.level = ActiveRecord::Base.logger.level
-  config.redis = ConnectionPool.new(:size => $sidekiq_redis_pool_size, :timeout => $sidekiq_redis_timeout, &$sidekiq_datastore)
-  config.reliable_fetch!
+  config.redis = redis_config.merge({:size => sidekiq_redis_pool_size})
+  config.super_fetch!
+  config.average_scheduled_poll_interval = poll_interval if poll_interval.present?
+  config.error_handlers << proc { |ex, ctx_hash|
+    begin
+      log_tags = (ctx_hash.try(:[], 'message_uuid') || [])
+      log_tags << ctx_hash['jid']
+    rescue StandardError => e
+      log_tags = []
+    end
+    Rails.logger.tagged(log_tags) do
+      Rails.logger.error "Sidekiq worker failed: #{ex.message}, context: #{ctx_hash.inspect}"
+      Rails.logger.error "Sidekiq worker Backtrace: #{ex.backtrace.join(', ')}"
+    end
+  }
   #https://forums.aws.amazon.com/thread.jspa?messageID=290781#290781
   #Making AWS as thread safe
   AWS.eager_autoload!
@@ -136,6 +163,7 @@ Sidekiq.configure_server do |config|
       "Freshfone::AcwWorker",
       "Freshfone::TranscriptAttachmentWorker",
       "Freshfone::CallTimeoutWorker",
+      "Freshcaller::AccountDeleteWorker",
       "Ecommerce::EbayWorker",
       "Ecommerce::EbayUserWorker",
       "PasswordExpiryWorker",
@@ -164,6 +192,7 @@ Sidekiq.configure_server do |config|
       "DkimSwitchCategoryWorker",
       "DelayedJobs::MailboxJob",
       "Email::S3RetryWorker",
+      'Email::AccountDetailsDestroyWorker',
       "Tickets::Schedule",
       "Tickets::Dump",
       "BlockAccount",
@@ -171,8 +200,12 @@ Sidekiq.configure_server do |config|
       "CRMApp::Freshsales::Signup",
       "CRMApp::Freshsales::AdminUpdate",
       "CRMApp::Freshsales::TrackSubscription",
-      'Freshid::V2::ProcessEvents',
+      "Admin::Sandbox::CreateAccountWorker",
+      'Admin::CloneWorker',
       'Freshid::AccountDetailsUpdate',
+      'MigrationWorker',
+      'DataExportCleanup',
+      'Freshid::V2::ProcessEvents',
       'Freshid::V2::AccountDetailsUpdate',
       'FreshidRetryWorker',
       'Admin::Sandbox::CleanupWorker',
@@ -193,8 +226,8 @@ Sidekiq.configure_server do |config|
       "Tickets::Export::PremiumTicketsExport",
       "Reports::Export",
       "LivechatWorker",
-      "Admin::ProvisionSandbox",
       "Tickets::LinkTickets",
+      "Tickets::UnlinkTickets",
       "BroadcastMessages::NotifyBroadcastMessages",
       "BroadcastMessages::NotifyAgent",
       "Import::SkillWorker",
@@ -202,7 +235,12 @@ Sidekiq.configure_server do |config|
       "CollabNotificationWorker",
       "ProductFeedbackWorker",
       "Community::MergeTopicsWorker",
-      'Roles::UpdateAgentsRoles'
+      "Admin::Sandbox::DataToFileWorker",
+      "Admin::Sandbox::FileToDataWorker",
+      "Admin::Sandbox::DiffWorker",
+      "Admin::Sandbox::MergeWorker",
+      'Tickets::UndoSendWorker',
+      "Roles::UpdateAgentsRoles"
     ]
 
     chain.add Middleware::Sidekiq::Server::JobDetailsLogger
@@ -221,12 +259,14 @@ Sidekiq.configure_server do |config|
       "Freshfone::AcwWorker",
       "Freshfone::TranscriptAttachmentWorker",
       "Freshfone::CallTimeoutWorker",
+      "Freshcaller::AccountDeleteWorker",
       "Ecommerce::EbayWorker",
       "Ecommerce::EbayUserWorker",
       "PasswordExpiryWorker",
       "WebhookV1Worker",
       "SendSignupActivationMail",
       "DevNotificationWorker",
+      "PodDnsUpdate",
       "SearchV2::Manager::DisableSearch",
       "CountES::IndexOperations::DisableCountES",
       "Gamification::ProcessTicketQuests",
@@ -248,6 +288,7 @@ Sidekiq.configure_server do |config|
       "DkimSwitchCategoryWorker",
       "DelayedJobs::MailboxJob",
       "Email::S3RetryWorker",
+      'Email::AccountDetailsDestroyWorker',
       "AccountCreation::PopulateSeedData",
       "Tickets::Schedule",
       "Tickets::Dump",
@@ -255,9 +296,13 @@ Sidekiq.configure_server do |config|
       "Freshid::ProcessEvents",
       "CRMApp::Freshsales::Signup",
       "CRMApp::Freshsales::AdminUpdate",
-      "CRMApp::Freshsales::TrackSubscription",
-      'Freshid::V2::ProcessEvents',
+      'CRMApp::Freshsales::TrackSubscription',
+      'Admin::Sandbox::CreateAccountWorker',
+      'Admin::CloneWorker',
       'Freshid::AccountDetailsUpdate',
+      'MigrationWorker',
+      'DataExportCleanup',
+      'Freshid::V2::ProcessEvents',
       'Freshid::V2::AccountDetailsUpdate',
       'FreshidRetryWorker',
       'Admin::Sandbox::CleanupWorker',
@@ -277,8 +322,8 @@ Sidekiq.configure_server do |config|
       "Tickets::Export::PremiumTicketsExport",
       "Reports::Export",
       "LivechatWorker",
-      "Admin::ProvisionSandbox",
       "Tickets::LinkTickets",
+      "Tickets::UnlinkTickets",
       "BroadcastMessages::NotifyBroadcastMessages",
       "BroadcastMessages::NotifyAgent",
       "Import::SkillWorker",
@@ -286,7 +331,12 @@ Sidekiq.configure_server do |config|
       "CollabNotificationWorker",
       "ProductFeedbackWorker",
       "Community::MergeTopicsWorker",
-      'Roles::UpdateAgentsRoles'
+      "Admin::Sandbox::DataToFileWorker",
+      "Admin::Sandbox::FileToDataWorker",
+      "Admin::Sandbox::DiffWorker",
+      "Admin::Sandbox::MergeWorker",
+      'Tickets::UndoSendWorker',
+      "Roles::UpdateAgentsRoles"
     ]
   end
 end

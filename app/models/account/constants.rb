@@ -294,7 +294,7 @@ class Account < ActiveRecord::Base
       description_by_default: false, ticket_fields_central_publish: false, fluffy: false, facebook_page_scope_migration: false, agent_group_central_publish: false, custom_fields_search: true,
       update_billing_info: false, allow_billing_info_update: false, tag_central_publish: false, redis_picklist_id: true,
       nested_field_revamp: true, freshvisual_configs: false, freshid_org_v2: false, hide_agent_login: false,
-      kbase_mint: false, text_custom_fields_in_etl: false, recalculate_daypass: false,  email_spoof_check: false,
+      kbase_mint: true, text_custom_fields_in_etl: false, recalculate_daypass: false,  email_spoof_check: false,
       disable_email_spoof_check: false, attachment_redirect_expiry: false, solutions_agent_portal: false, solutions_agent_metrics: false,
       prevent_wc_ticket_create: true, allow_wildcard_ticket_create: false,
       requester_privilege: false, scheduling_fsm_dashboard: false, sso_unique_session: false, supervisor_custom_status: false,
@@ -314,6 +314,6 @@ class Account < ActiveRecord::Base
   PARENT_CHILD_INFRA_FEATURES = [:parent_child_tickets, :field_service_management]
 
   CONDITION_BASED_LAUNCHPARTY_FEATURES = {
-    downgrade_policy: lambda { |account| account.redis_key_exists?(Redis::Keys::Others::SUBSCRIPTION_REQUESTS_ENABLED) }
+    downgrade_policy: lambda { |account| account.redis_key_exists?(Redis::Keys::Others::DOWNGRADE_POLICY) }
   }.freeze
 end

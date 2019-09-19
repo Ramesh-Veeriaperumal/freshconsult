@@ -37,6 +37,15 @@ test-ui:
     regards: "$Regards,$"
     freshdesk_support_team: "$Freshdesk Support Team$"
     note_for_recipients: "$Note: This email is also sent to - %{to_emails}.$"
+    notify_new_follower:
+      topic:
+        title: '$Added as topic follower$'
+        message: '$You have been added as a follower by %{name} to this topic.$'
+        unfollow: '$Stop following this topic$'
+      forum:
+        title: '$Added as forum follower$'
+        message: '$You have been added as a follower by %{name} to this forum.$'
+        unfollow: '$Stop following this forum$'
     email_config_notifier:
       activation_instructions:
         body: '$This email has been added as your support email address in %{app_name}. Click the URL below to activate your support email
@@ -187,6 +196,8 @@ test-ui:
       configure_change_html: '$You can configure this notification settings by <a href="%{security_url}"> clicking here </a> or going to Admin -> Security in your account$'
     export_success_download: "$The %{export_type} export you had requested is complete. You can download the file from <a href='%{url}'>here</a>. If the link does not work, copy and paste the URL below in your browser's address bar:$"
   mailer_notifier_subject:
+    notify_new_topic_follower: '$Added as Topic Follower - %{title}$'
+    notify_new_forum_follower: '$Added as Forum Follower - %{title}$'
     discard_email: "$[Draft Discarded] %{draft_title}$"
     token_expiry: '$Ecommerce account %{ecom_name} token expiration$'
     new_forum_topic: "$[New Topic] %{title} in %{forum_name}$"

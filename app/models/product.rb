@@ -40,6 +40,9 @@ class Product < ActiveRecord::Base
 
   scope :trimmed, :select => [:'products.id', :'products.name']
 
+  swindle :basic_info,
+          attrs: %i[name]
+
   attr_protected :account_id
   
   attr_accessor :enable_portal

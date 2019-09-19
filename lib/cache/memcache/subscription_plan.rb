@@ -9,10 +9,16 @@ module Cache::Memcache::SubscriptionPlan
     @subscription_plans_from_cache ||= MemcacheKeys.fetch(SUBSCRIPTION_PLANS) { SubscriptionPlan.select('id,name,display_name,classic').all }
   end
 
+  def retrieve_plan_from_cache(plan, renewal_period)
+    key = plan.chargebee_plan_cache_key(renewal_period,
+      Account.current.subscription.currency_name)
+    fetch_from_cache(key) { Billing::Subscription.new.retrieve_plan(plan.name, renewal_period) }
+  end
+
   def clear_cache
     Subscription::Currency.all.collect(&:name).each do |currency|
       Billing::Subscription::BILLING_PERIOD.keys.each do |period|
-        MemcacheKeys.delete_from_cache(chargebee_plan_cache_key(period, currency))
+        delete_value_from_cache(chargebee_plan_cache_key(period, currency))
       end
     end
     MemcacheKeys.delete_from_cache SUBSCRIPTION_PLANS
