@@ -10,36 +10,75 @@ class Helpdesk::ResetResponder < BaseWorker
   def perform(args)
     begin
       args.symbolize_keys!
-      account     = Account.current
-      user_id     = args[:user_id]
-      user        = account.all_users.find_by_id(user_id)
-      reason      = args[:reason].symbolize_keys!
-      options     = { reason: reason, manual_publish: true, rate_limit: rate_limit_options(args) }
-      ticket_ids  = []
-      ocr_enabled = account.omni_channel_routing_enabled?
-      return if user.nil?
+      @account     = Account.current
+      user_id      = args[:user_id]
+      @user        = @account.all_users.find_by_id(user_id)
+      reason       = args[:reason].symbolize_keys!
+      options      = { reason: reason, manual_publish: true, rate_limit: rate_limit_options(args) }
+      return if @user.nil?
 
-      if account.automatic_ticket_assignment_enabled?
-        status_ids = Helpdesk::TicketStatus.sla_timer_on_status_ids(account)
-        group_ids = account.groups_from_cache.select(&:automatic_ticket_assignment_enabled?).map(&:id)
-        account.tickets.visible.sla_on_tickets(status_ids).where(group_id: group_ids).assigned_to(user).select('id').find_in_batches do |tickets|
-          ticket_ids.concat(tickets.map(&:id))
-        end
+      Sharding.run_on_slave do
+        handle_automatic_ticket_assignments
+        handle_agent_tickets(options)
+        handle_internal_agent_tickets(reason.dup)
+        handle_archive_tickets
       end
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e, args: args)
+    end
+  end
 
-      # Reset agent and internal agent for tickets
-      account.tickets.where(responder_id: user.id).update_all_with_publish({ responder_id: nil }, {}, options)
-      if account.shared_ownership_enabled?
-        reason[:delete_internal_agent]  = reason.delete(:delete_agent)
-        options                         = {:reason => reason, :manual_publish => true}
-        updates_hash                    = {:internal_agent_id => nil}
+  private
 
-        tickets = account.tickets.where(:internal_agent_id => user.id)
-        tickets.update_all_with_publish(updates_hash, {}, options)
-      end
+    def handle_automatic_ticket_assignments
+      return unless @account.automatic_ticket_assignment_enabled?
+
+      status_ids = Helpdesk::TicketStatus.sla_timer_on_status_ids(@account)
+      group_ids = fetch_auto_ticket_assign_groups
+
+      ticket_ids = @account.tickets.visible
+                           .sla_on_tickets(status_ids)
+                           .where(group_id: group_ids)
+                           .assigned_to(@user).pluck(:id)
+      return if ticket_ids.empty?
+
+      Sharding.run_on_master { reassign_tickets(ticket_ids) }
+    end
+
+    def handle_agent_tickets(options)
+      @account.tickets
+              .where(responder_id: @user.id)
+              .update_all_with_publish({ responder_id: nil }, {}, options)
+    end
+
+    def handle_internal_agent_tickets(reason)
+      return unless @account.shared_ownership_enabled?
+
+      reason[:delete_internal_agent]  = reason.delete(:delete_agent)
+      options                         = { reason: reason, manual_publish: true }
+      updates_hash                    = { internal_agent_id: nil }
+
+      tickets = @account.tickets.where(internal_agent_id: @user.id)
+      tickets.update_all_with_publish(updates_hash, {}, options)
+    end
+
+    def handle_archive_tickets
+      return unless @account.features_included?(:archive_tickets)
+
+      @account.archive_tickets
+              .where(responder_id: @user.id)
+              .update_all_with_publish({ responder_id: nil }, {})
+    end
+
+    def fetch_auto_ticket_assign_groups
+      @account.groups_from_cache.select(&:automatic_ticket_assignment_enabled?).map(&:id)
+    end
+
+    def reassign_tickets(ticket_ids)
+      ocr_enabled = @account.omni_channel_routing_enabled?
 
       ticket_ids.each_slice(100).each do |ticket_ids_slice|
-        account.tickets.where('id in (?)', ticket_ids_slice).preload(:group).find_each do |ticket|
+        @account.tickets.where('id in (?)', ticket_ids_slice).preload(:group).find_each do |ticket|
           if ticket.group.try(:skill_based_round_robin_enabled?)
             trigger_sbrr ticket
           elsif ocr_enabled && ticket.group.omni_channel_routing_enabled? && ticket.eligible_for_ocr?
@@ -49,21 +88,16 @@ class Helpdesk::ResetResponder < BaseWorker
           end
         end
       end
-
-      return unless account.features_included?(:archive_tickets)
-
-      account.archive_tickets.where(responder_id: user.id).update_all_with_publish({ responder_id: nil }, {})
-
-    rescue Exception => e
-      puts e.inspect, args.inspect
-      NewRelic::Agent.notice_error(e, {:args => args})
     end
-  end
 
-  def trigger_sbrr ticket
-    ticket.sbrr_fresh_ticket = true
-    #args = {:model_changes => {}, :ticket_id => ticket.display_id, :attributes => ticket.sbrr_attributes, :sbrr_state_attributes => ticket.sbrr_state_attributes, :options => {:action => "reset_responder", :jid => self.jid}}
-    args = {:model_changes => {}, :options => {:action => "reset_responder", :jid => self.jid}}
-    SBRR::Execution.enqueue(ticket, args).execute if ticket.eligible_for_round_robin?
-  end
+    def trigger_sbrr(ticket)
+      ticket.sbrr_fresh_ticket = true
+      args = {
+        model_changes: {},
+        options: {
+          action: 'reset_responder', jid: jid
+        }
+      }
+      SBRR::Execution.enqueue(ticket, args).execute if ticket.eligible_for_round_robin?
+    end
 end
