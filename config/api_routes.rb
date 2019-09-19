@@ -338,6 +338,10 @@ Helpkit::Application.routes.draw do
 
     post '/audit_log/export', to: 'audit_logs#export'
     get '/audit_log/export/:id', to: 'audit_logs#export_s3_url'
+
+    scope '/automations/:rule_type' do
+      resources :rules, controller: 'admin/automations', only: [:index, :create, :update, :destroy, :show]
+    end
   end
 
   ember_routes = proc do
@@ -832,10 +836,6 @@ Helpkit::Application.routes.draw do
     post '/search/autocomplete/companies', to: 'api_search/autocomplete#companies_search'
     post '/search/autocomplete/agents', to: 'api_search/autocomplete#agents'
     post '/search/autocomplete/tags', to: 'api_search/autocomplete#tags'
-
-    scope '/automations/:rule_type' do
-      resources :rules, controller: 'admin/automations', only: [:index, :create, :update, :destroy, :show]
-    end
 
     get '/admin/freddy_skills', to: 'ember/admin/freddy_skills#index'
     get '/admin/freddy_skills/:name', to: 'ember/admin/freddy_skills#show'
