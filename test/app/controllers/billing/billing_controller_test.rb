@@ -1,15 +1,18 @@
 require_relative '../../../api/test_helper'
+require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
+require Rails.root.join('test', 'core', 'helpers', 'users_test_helper.rb')
+require Rails.root.join('test', 'models', 'helpers', 'subscription_test_helper.rb')
 
 class Billing::BillingControllerTest < ActionController::TestCase
   include Billing::BillingHelper
-  def current_account
-    Account.first.make_current
-  end
+  include AccountTestHelper
+  include SubscriptionTestHelper
+  include CoreUsersTestHelper
 
   def normal_event_content
     {
       customer: {
-        id: current_account.id,
+        id: @account.id,
         auto_collection: 'on'
       }
     }
@@ -17,12 +20,15 @@ class Billing::BillingControllerTest < ActionController::TestCase
 
   def invoice_event_content
     {
-      invoice: { customer_id: current_account.id }
+      invoice: { customer_id: @account.id }
     }
   end
 
   def stub_subscription_settings
     WebMock.allow_net_connect!
+    Account.stubs(:current).returns(@account)
+    chargebee_update = ChargeBee::Result.new(stub_update_params(@account.id))
+    ChargeBee::Subscription.stubs(:retrieve).returns(chargebee_update)
     Digest::MD5.stubs(:hexdigest).returns('5c8231431eca2c61377371de706a52cc')
     @controller.request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials('freshdesk', 'freshdesk')
     ChargeBee::Subscription.any_instance.stubs(:plan_id).returns('forest_annual')
@@ -30,21 +36,25 @@ class Billing::BillingControllerTest < ActionController::TestCase
     Subscription.any_instance.stubs(:save).returns(true)
     AccountAdditionalSettings.any_instance.stubs(:set_payment_preference).returns(true)
     Subscription::UpdatePartnersSubscription.stubs(:perform_async).returns(true)
+    Billing::Subscription.any_instance.stubs(:update_subscription).returns(true)
   end
 
   def unstub_subscription_settings
+    Account.unstub(:current)
+    ChargeBee::Subscription.unstub(:retrieve)
     Digest::MD5.unstub(:hexdigest)
     ChargeBee::Subscription.any_instance.unstub(:plan_id)
     Subscription.any_instance.unstub(:update_attributes)
     Subscription.any_instance.unstub(:save)
     AccountAdditionalSettings.any_instance.unstub(:set_payment_preference)
     Subscription::UpdatePartnersSubscription.unstub(:perform_async)
+    Billing::Subscription.any_instance.unstub(:update_subscription)
     WebMock.disable_net_connect!
   end
 
   def test_subscription_changed_event
     stub_subscription_settings
-    user = add_new_user(current_account)
+    user = add_new_user(@account)
     ChargeBee::Subscription.any_instance.stubs(:addons).returns([Subscription::Addon.new])
     Subscription::Addon.stubs(:fetch_addon).returns(Subscription::Addon.new)
     ChargeBee::Customer.any_instance.stubs(:auto_collection).returns('off')
@@ -60,7 +70,7 @@ class Billing::BillingControllerTest < ActionController::TestCase
 
   def test_subscription_changed_event_with_new_plan
     stub_subscription_settings
-    user = add_new_user(current_account)
+    user = add_new_user(@account)
     Subscription.any_instance.stubs(:addons).returns([Subscription::Addon.new])
     Subscription::Addon.stubs(:fetch_addon).returns(Subscription::Addon.new)
     ChargeBee::Subscription.any_instance.stubs(:status).returns('in_trial')
@@ -87,12 +97,30 @@ class Billing::BillingControllerTest < ActionController::TestCase
     ChargeBee::Subscription.any_instance.unstub(:status)
   end
 
+  def test_subscription_changed_event_with_subscribed_agent_count_less_than_agents
+    stub_subscription_settings
+    old_subscription = @account.subscription
+    Subscription.any_instance.unstub(:update_attributes)
+    Subscription.any_instance.unstub(:save)
+    user = add_test_agent(@account)
+    @account.launch(:downgrade_policy)
+    post :trigger, event_type: 'subscription_changed', content: normal_event_content, format: 'json'
+    assert_response 200
+    assert_equal @account.reload.subscription.agent_limit, @account.full_time_support_agents.count
+  ensure
+    user.destroy
+    @account.subscription.agent_limit = old_subscription.agent_limit
+    @account.subscription.save
+    unstub_subscription_settings
+    @account.rollback(:downgrade_policy)
+  end
+
   def test_subscription_activated_event
     stub_subscription_settings
     ChatSetting.any_instance.stubs(:site_id).returns(1)
     ChargeBee::Subscription.any_instance.stubs(:status).returns('active')
     ChargeBee::Customer.any_instance.stubs(:card_status).returns('no_card')
-    user = add_new_user(current_account)
+    user = add_new_user(@account)
     post :trigger, event_type: 'subscription_activated', content: normal_event_content, format: 'json'
   ensure
     unstub_subscription_settings
@@ -104,9 +132,9 @@ class Billing::BillingControllerTest < ActionController::TestCase
   def test_subscription_renewed_event
     stub_subscription_settings
     ChargeBee::Subscription.any_instance.stubs(:status).returns('active')
-    @account = current_account
+    @account = @account
     set_others_redis_key(card_expiry_key, 'test')
-    user = add_new_user(current_account)
+    user = add_new_user(@account)
     post :trigger, event_type: 'subscription_renewed', content: normal_event_content, format: 'json'
     assert_response 200
   ensure
@@ -117,7 +145,7 @@ class Billing::BillingControllerTest < ActionController::TestCase
 
   def test_subscription_cancelled_event
     stub_subscription_settings
-    user = add_new_user(current_account)
+    user = add_new_user(@account)
     post :trigger, event_type: 'subscription_cancelled', content: normal_event_content, format: 'json'
     assert_response 200
   ensure
@@ -126,7 +154,7 @@ class Billing::BillingControllerTest < ActionController::TestCase
 
   def test_subscription_reactivated_event
     stub_subscription_settings
-    user = add_new_user(current_account)
+    user = add_new_user(@account)
     post :trigger, event_type: 'subscription_reactivated', content: normal_event_content, format: 'json'
     assert_response 200
   ensure
@@ -135,20 +163,20 @@ class Billing::BillingControllerTest < ActionController::TestCase
 
   def test_subscription_reactivated_event_with_pending_cancellation_request
     stub_subscription_settings
-    user = add_new_user(current_account)
-    current_account.launch(:downgrade_policy)
-    set_others_redis_key(current_account.account_cancellation_request_time_key, (Time.now.to_f * 1000).to_i, nil)
+    user = add_new_user(@account)
+    @account.launch(:downgrade_policy)
+    set_others_redis_key(@account.account_cancellation_request_time_key, (Time.now.to_f * 1000).to_i, nil)
     post :trigger, event_type: 'subscription_reactivated', content: normal_event_content, format: 'json'
     assert_response 200
-    refute current_account.account_cancellation_requested_time
+    refute @account.account_cancellation_requested_time
   ensure
     unstub_subscription_settings
-    current_account.rollback(:downgrade_policy)
+    @account.rollback(:downgrade_policy)
   end
 
   def test_subscription_scheduled_cancellation_removed_event
     stub_subscription_settings
-    user = add_new_user(current_account)
+    user = add_new_user(@account)
     post :trigger, event_type: 'subscription_scheduled_cancellation_removed', content: normal_event_content, format: 'json'
     assert_response 200
   ensure
@@ -157,7 +185,7 @@ class Billing::BillingControllerTest < ActionController::TestCase
 
   def test_card_added_event
     stub_subscription_settings
-    user = add_new_user(current_account)
+    user = add_new_user(@account)
     content = normal_event_content
     content[:customer][:card_status] = 'valid'
     post :trigger, event_type: 'card_added', content: content, format: 'json'
@@ -168,7 +196,7 @@ class Billing::BillingControllerTest < ActionController::TestCase
 
   def test_card_deleted_event
     stub_subscription_settings
-    user = add_new_user(current_account)
+    user = add_new_user(@account)
     post :trigger, event_type: 'card_deleted', content: normal_event_content, format: 'json'
     assert_response 200
   ensure
@@ -177,7 +205,7 @@ class Billing::BillingControllerTest < ActionController::TestCase
 
   def test_card_expiring_event
     stub_subscription_settings
-    user = add_new_user(current_account)
+    user = add_new_user(@account)
     post :trigger, event_type: 'card_expiring', content: normal_event_content, format: 'json'
     assert_response 200
   ensure
@@ -186,7 +214,7 @@ class Billing::BillingControllerTest < ActionController::TestCase
 
   def test_customer_changed_event
     stub_subscription_settings
-    user = add_new_user(current_account)
+    user = add_new_user(@account)
     content = normal_event_content
     content[:customer][:auto_collection] = 'off'
     post :trigger, event_type: 'customer_changed', content: content, format: 'json'
@@ -198,7 +226,7 @@ class Billing::BillingControllerTest < ActionController::TestCase
   def test_payment_succeeded_event
     stub_subscription_settings
     Billing::WebhookParser.any_instance.stubs(:invoice_hash).returns(chargebee_invoice_id: 1)
-    user = add_new_user(current_account)
+    user = add_new_user(@account)
     content = normal_event_content
     content[:transaction] = {
       amount: 2000
@@ -218,7 +246,7 @@ class Billing::BillingControllerTest < ActionController::TestCase
   def test_payment_refunded_event
     stub_subscription_settings
     Billing::WebhookParser.any_instance.stubs(:invoice_hash).returns(chargebee_invoice_id: 1)
-    user = add_new_user(current_account)
+    user = add_new_user(@account)
     content = normal_event_content
     content[:transaction] = {
       amount: 2000

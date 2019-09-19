@@ -153,7 +153,7 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
       @account.subscription.subscription_request.destroy if has_pending_downgrade_request?(@account) && !has_scheduled_changes?(content)
       @account.subscription.update_attributes(@subscription_data.merge(plan_info(plan)))
       update_addons(@account.subscription, @billing_data.subscription)
-
+      check_subscribed_seats_availability(@account.subscription, @billing_data.subscription)
       update_features if update_features?
       @account.account_additional_settings.set_payment_preference(@billing_data.subscription.cf_reseller)
     end
@@ -256,7 +256,6 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
       
       plan = subscription_plan(billing_subscription.plan_id)
       subscription.addons = subscription.applicable_addons(addons, plan)
-      update_field_agent_limit(subscription, billing_subscription)
       subscription.save #to update amount in subscription
     end
 
