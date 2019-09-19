@@ -84,7 +84,8 @@ class Flexifield < ActiveRecord::Base
   end
 
   def write_ff_attribute(attribute, value, ff_alias)
-    if TicketFieldData::NEW_DROPDOWN_COLUMN_NAMES.include?(attribute.to_s)
+    if TicketFieldData::NEW_DROPDOWN_COLUMN_NAMES.include?(attribute.to_s) ||
+       TicketFieldData::NEW_CHECKBOX_COLUMN_NAMES.include?(attribute.to_s)
       flexifield_set.ticket_field_data.set_ff_value(ff_alias, value)
       return
     end
@@ -99,7 +100,8 @@ class Flexifield < ActiveRecord::Base
   end
 
   def read_ff_attribute(attribute, field_type, ff_alias)
-    if TicketFieldData::NEW_DROPDOWN_COLUMN_NAMES.include?(attribute.to_s)
+    if TicketFieldData::NEW_DROPDOWN_COLUMN_NAMES.include?(attribute.to_s) ||
+       TicketFieldData::NEW_CHECKBOX_COLUMN_NAMES.include?(attribute.to_s)
       flexifield_set.ticket_field_data.get_ff_value(ff_alias)
     elsif self.class.flexiblefield_names_hash.key?(attribute.to_sym)
       if field_type == 'dropdown' && ticket_field_limit_increase_enabled?
