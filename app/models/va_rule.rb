@@ -175,7 +175,9 @@ class VaRule < ActiveRecord::Base
       ff = account.flexifields_with_ticket_fields_from_cache.detect{ |ff|
           ff.flexifield_name == condition[:name] || ff.flexifield_alias == condition[:name] }
       ticket_field = ff.present? ? ff.ticket_field : nil
-      ticket_field.present? && ticket_field.parent_id.nil? ? ticket_field.field_type.to_sym : :default
+      field_type = ticket_field.present? && ticket_field.parent_id.nil? ? ticket_field.field_type.to_sym : :default
+      Rails.logger.info("Automation fetch_field_type, field_name: #{condition[:name]}, ticket_field present: #{ticket_field.present?}, ticket_field parent_id: #{ticket_field.try(:parent_id)}, field_type: #{field_type}")
+      field_type
     end
   end
 
