@@ -167,10 +167,14 @@ class VaRule < ActiveRecord::Base
     case condition[:evaluate_on].try(:to_sym)
     when :requester
       contact_field = account.contact_form.custom_contact_fields.detect{ |cnf| cnf.name == condition[:name] }
-      contact_field.present? ? contact_field.field_type.to_sym : :default
+      field_type = contact_field.present? ? contact_field.field_type.to_sym : :default
+      Rails.logger.info("Automation fetch_field_type: field_type: #{field_type}")
+      field_type
     when :company
       company_field = account.company_form.custom_company_fields.detect{ |csf| csf.name == condition[:name] }
-      company_field.present? ? company_field.field_type.to_sym : :default
+      field_type = company_field.present? ? company_field.field_type.to_sym : :default
+      Rails.logger.info("Automation fetch_field_type: field_type: #{field_type}")
+      field_type
     else
       ff = account.flexifields_with_ticket_fields_from_cache.detect{ |ff|
           ff.flexifield_name == condition[:name] || ff.flexifield_alias == condition[:name] }
