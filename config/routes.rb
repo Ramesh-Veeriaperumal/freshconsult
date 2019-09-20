@@ -3019,6 +3019,7 @@ Helpkit::Application.routes.draw do
           put :change_api_limit
           put :change_v2_api_limit
           put :change_fluffy_limit
+          put :change_fluffy_min_level_limit
           put :change_webhook_limit
           put :add_feature
           put :change_url
