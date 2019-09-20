@@ -350,10 +350,9 @@ GIT
 GIT
   remote: git@github.com:freshdesk/rule_engine.git
   revision: 8b5c4eff550c74c6597cf61cc325d1c8a1cd382e
-  tag: hv0.0.13.1
+  tag: hv0.0.13.2
   specs:
     rule_engine (0.0.1)
-
 GIT
   remote: git@github.com:freshdesk/xeroizer.git
   revision: db93979351dc8047d6aeeeab63d697f8c4517f7b
