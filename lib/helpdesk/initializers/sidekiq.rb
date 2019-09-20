@@ -16,10 +16,7 @@ REDIS_CONFIG_KEYS = ['host', 'port', 'password', 'namespace'].freeze
 
 redis_config = config.slice(*REDIS_CONFIG_KEYS).merge(tcp_keepalive: config['keepalive'], network_timeout: sidekiq_config['timeout'])
 
-MIN_SIDEKIQ_CONNECTIONS = 7
-
 pool_size = sidekiq_config[:redis_pool_size] || sidekiq_config[:concurrency]
-sidekiq_redis_pool_size = (pool_size > MIN_SIDEKIQ_CONNECTIONS ? pool_size + 2 : MIN_SIDEKIQ_CONNECTIONS)
 
 sidekiq_client_redis_pool_size = (pool_size / 2).to_i
 sidekiq_client_redis_pool_size = pool_size if sidekiq_client_redis_pool_size.zero?
@@ -131,7 +128,10 @@ Sidekiq.configure_server do |config|
   # ActiveRecord::Base.logger = Logger.new(STDOUT)
   # Sidekiq::Logging.logger = ActiveRecord::Base.logger
   # Sidekiq::Logging.logger.level = ActiveRecord::Base.logger.level
-  config.redis = redis_config.merge({:size => sidekiq_redis_pool_size})
+
+  # Sidekiq takes care of ideal redis pool size based on concurrency
+  # It will be `concurrency + 5` unless, we override
+  config.redis = redis_config
   config.super_fetch!
   config.average_scheduled_poll_interval = poll_interval if poll_interval.present?
   config.error_handlers << proc { |ex, ctx_hash|

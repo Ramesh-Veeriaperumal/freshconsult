@@ -349,8 +349,8 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/rule_engine.git
-  revision: f364a4d52c70738a9c97014c024015fc63352b7c
-  tag: hv0.0.13
+  revision: 8b5c4eff550c74c6597cf61cc325d1c8a1cd382e
+  tag: hv0.0.13.1
   specs:
     rule_engine (0.0.1)
 
