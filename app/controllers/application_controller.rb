@@ -353,8 +353,12 @@ class ApplicationController < ActionController::Base
     end
 
     def set_last_active_time
-      Sharding.run_on_master do
-        current_user.agent.update_last_active if Account.current && current_user && current_user.agent? && !current_user.agent.nil?
+      begin
+        Sharding.run_on_master do
+          current_user.agent.update_last_active if Account.current && current_user && current_user.agent? && !current_user.agent.nil?
+        end
+      rescue StandardError => e
+        Rails.logger.error "Exception setting last activity :: #{e.message} :: #{Account.current.id if Account.current}"
       end
     end
 

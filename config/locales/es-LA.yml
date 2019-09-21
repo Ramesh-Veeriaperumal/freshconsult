@@ -16819,3 +16819,26 @@ es-LA:
     idiomas en el antiguo Freshdesk
   pts_plain: ' ptos'
   in: en
+  help_widget:
+    name: 'Bienvenido al servicio de soporte %{name}'
+    message: Bienvenido al servicio de soporte
+    form_title: Comunícate con nosotros
+    form_button_text: Enviar comentarios
+    form_submit_message: gracias por sus comentarios.
+    button_text: Ayuda
+    untitled_widget: 'Widget sin nombre %{count}'
+    invalid_components: 'Hash de componentes no válidos con %{key}'
+    freshmarketer_sign_up_error: >-
+      Lo sentimos, el seguimiento de frustración tiene que estar activado
+      durante la integración con Freshmarketer
+    invalid_settings: 'Hash de configuración no válido con %{key}'
+    welcome_message: ¿Podemos ayudarle?
+    predictive_message: >-
+      Nos damos cuenta de que está atascado. Díganos lo que intentaba hacer y
+      nuestro equipo de soporte se pondrá en contacto con usted lo antes
+      posible.
+    success_message: Gracias. ¡Estaremos en contacto!
+    invalid_domain: Lo sentimos. Por favor introduzca un dominio válido.
+    domain_list_empty: >-
+      Por favor, especifique los URL a los que desea hacer seguimiento para el
+      soporte predictivo.

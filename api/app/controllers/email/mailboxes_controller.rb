@@ -15,7 +15,7 @@ class Email::MailboxesController < ApiApplicationController
   end
 
   def create
-    return unless validate_delegator(@item, delegator_params)
+    return unless validate_delegator(@item)
 
     if @item.save
       render :create, status: 201
@@ -25,7 +25,8 @@ class Email::MailboxesController < ApiApplicationController
   end
 
   def update
-    return unless validate_delegator(@item, delegator_params)
+    @item.assign_attributes(validatable_delegator_attributes)
+    return unless validate_delegator(@item)
 
     if @item.update_attributes(cname_params)
       @item.reload
@@ -59,7 +60,11 @@ class Email::MailboxesController < ApiApplicationController
   private
 
     def scoper
-      current_account.all_email_configs.reorder('primary_role DESC')
+      if index? && params[:order_by] == EmailMailboxConstants::FAILURE_CODE
+        current_account.all_email_configs.reorder('imap_mailboxes.error_type > 0 DESC, primary_role DESC')
+      else
+        current_account.all_email_configs.reorder('primary_role DESC')
+      end
     end
 
     def check_multiple_emails_feature
@@ -83,12 +88,13 @@ class Email::MailboxesController < ApiApplicationController
       validate_body_params(@item)
     end
 
-    def delegator_params
-      {
-        imap_mailbox_attributes: cname_params[:imap_mailbox_attributes],
-        smtp_mailbox_attributes: cname_params[:smtp_mailbox_attributes],
-        primary_role: cname_params[:primary_role]
-      }
+    def validatable_delegator_attributes
+      cname_params.select do |attr, value|
+        if EmailMailboxConstants::VALIDATABLE_DELEGATOR_ATTRIBUTES.include?(attr)
+          cname_params.delete(attr)
+          true
+        end
+      end
     end
 
     def sanitize_params
@@ -133,7 +139,7 @@ class Email::MailboxesController < ApiApplicationController
 
     def paginate_options(is_array = false)
       options = super(is_array)
-      options[:order] = order_clause if params[:order_by].present?
+      options[:order] = order_clause if params[:order_by].present? && params[:order_by] != EmailMailboxConstants::FAILURE_CODE
       options
     end
 

@@ -3019,6 +3019,7 @@ Helpkit::Application.routes.draw do
           put :change_api_limit
           put :change_v2_api_limit
           put :change_fluffy_limit
+          put :change_fluffy_min_level_limit
           put :change_webhook_limit
           put :add_feature
           put :change_url
@@ -3319,4 +3320,7 @@ Helpkit::Application.routes.draw do
 
   post '/yearin_review/share', to: 'year_in_review#share'
   post '/yearin_review/clear', to: 'year_in_review#clear'
+  
+  match '/mobile/welcome'  => 'mobile_app_download#index'
+
 end

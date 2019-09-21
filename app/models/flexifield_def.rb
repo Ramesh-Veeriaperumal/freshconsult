@@ -3,24 +3,24 @@ class FlexifieldDef < ActiveRecord::Base
   include FlexifieldConstants
 
   self.primary_key = :id
-  
+
   belongs_to_account
   belongs_to :survey
-  
+
   attr_protected  :account_id
 
   has_many :flexifield_def_entries, :class_name => 'FlexifieldDefEntry', :order => 'flexifield_order', :dependent => :destroy
   accepts_nested_attributes_for :flexifield_def_entries,
     :reject_if => proc { |attrs| attrs['flexifield_alias'].blank? }
-    
+
   has_many :flexifield_picklist_vals, :class_name => 'FlexifieldPicklistVal',:through =>:flexifield_def_entries
 
   scope :default_form, :conditions => ["product_id is NULL and module='Ticket'"]
-  
+
   validates_presence_of :name
-  
+
   # after_update :save_entries
-  
+
   TEXT_COL_TYPES  = ["text",    "paragraph"]
   NUM_COL_TYPES   = ["number",  "decimal"]
 
@@ -54,7 +54,7 @@ class FlexifieldDef < ActiveRecord::Base
   def to_ff_def_entry ff_alias
     (flexifield_def_entries || []).find { |f| f.flexifield_alias == ff_alias.to_s }
   end
-  
+
   def to_ff_def_entry ff_alias
     (flexifield_def_entries || []).find { |f| f.flexifield_alias == ff_alias.to_s }
   end
@@ -75,9 +75,9 @@ class FlexifieldDef < ActiveRecord::Base
     flexifield_column_hash =  self.account.flexifields.columns_hash
     ff_alias_column_mapping.map { |key, value| key if (flexifield_column_hash[value] && flexifield_column_hash[value].type) == :boolean }.compact
   end
-  
+
   def non_text_ff_aliases
-    flexifield_def_entries.nil? ? [] : non_text_fields.map(&:flexifield_alias)                                                   
+    flexifield_def_entries.nil? ? [] : non_text_fields.map(&:flexifield_alias)
   end
 
   def text_ff_aliases
@@ -87,7 +87,7 @@ class FlexifieldDef < ActiveRecord::Base
   def ff_fields
     flexifield_def_entries.nil? ? [] : flexifield_def_entries.map(&:flexifield_name)
   end
-  
+
   def non_text_ff_fields
     flexifield_def_entries.nil? ? [] : non_text_fields.map(&:flexifield_name)
   end
@@ -95,7 +95,7 @@ class FlexifieldDef < ActiveRecord::Base
   def text_ff_fields
     flexifield_def_entries.nil? ? [] : text_fields.map(&:flexifield_name)
   end
-  
+
   def text_and_number_ff_fields
     flexifield_def_entries.nil? ? [] : text_and_number_fields.map(&:flexifield_name)
   end
@@ -110,6 +110,8 @@ class FlexifieldDef < ActiveRecord::Base
       result = []
       used_hash.each { |key, value| result += value }
       check_limit_exceeded_for_text_or_dropdown(used_hash, type) ? fetch_available(result, type) : nil
+    elsif type.to_s.to_sym == :checkbox
+      check_checkbox_count(used_hash.count) ? fetch_available(used_hash, type) : nil
     else
       check_limit_exceeded_for_other_fields(used_hash, type) ? fetch_available(used_hash, type) : nil
     end
@@ -122,7 +124,7 @@ class FlexifieldDef < ActiveRecord::Base
       entry.save false
     end
   end
-  
+
   def non_text_fields
     flexifield_def_entries.select {|field| !TEXT_COL_TYPES.include?(field.flexifield_coltype)}
   end
@@ -180,6 +182,10 @@ class FlexifieldDef < ActiveRecord::Base
       req_fields = hash[:ffs_and_dropdown_only]
       req_fields.count < (account.ticket_field_limit_increase_enabled? ? TICKET_FIELD_DATA_DROPDOWN_COUNT : FFS_LIMIT)
     end
+  end
+
+  def check_checkbox_count(existing_count)
+    existing_count < (account.ticket_field_limit_increase_enabled? ? TICKET_FIELD_DATA_CHECKBOX_COUNT : CHECKBOX_FIELD_COUNT)
   end
 
   def check_limit_exceeded_for_other_fields(fields, type)

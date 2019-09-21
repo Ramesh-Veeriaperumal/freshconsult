@@ -214,11 +214,10 @@ class Account < ActiveRecord::Base
   def change_fluffy_account_domain
     fluffy_account = current_fluffy_limit(@all_changes[:full_domain].first)
     if fluffy_account.present?
-      limit = fluffy_account.limit
-      granularity = (fluffy_account.granularity == "HOUR" || fluffy_enabled?) ? Fluffy::ApiWrapper::HOUR_GRANULARITY : Fluffy::ApiWrapper::MINUTE_GRANULARITY
+      fluffy_account.name = full_domain
+      Fluffy::ApiWrapper.fluffy_add_account(account: fluffy_account)
       destroy_fluffy_account(@all_changes[:full_domain].first)
     end
-    create_fluffy_account(limit, granularity)
   end
 
   protected

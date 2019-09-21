@@ -2810,6 +2810,7 @@ ActiveRecord::Schema.define(version: 20190628073857) do
     t.integer  "timeout"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.column 'error_type', 'smallint'
   end
 
   add_index "imap_mailboxes", ["account_id", "email_config_id"], :name => "index_mailboxes_on_account_id_email_config_id"

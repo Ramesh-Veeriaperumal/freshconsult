@@ -21,7 +21,7 @@ get:
     - name: order_by
       in: query
       type: string
-      description: Possible values are group_id, product_id.
+      description: Possible values are group_id, product_id and failure_code.
     - name: order_type
       in: query
       type: string

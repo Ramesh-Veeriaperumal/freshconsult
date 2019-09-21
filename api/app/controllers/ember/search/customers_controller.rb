@@ -3,12 +3,6 @@ module Ember
     class CustomersController < SpotlightController
       def results
         case params[:context]
-        when 'spotlight'
-          @search_sort = params[:search_sort].presence
-          @sort_direction = 'desc'
-          @klasses = %w(User company)
-          @search_context = :agent_spotlight_customer
-          @items = esv2_query_results(esv2_agent_models)
         when 'merge'
           # Only Contact Merge
           @klasses = ['User']
@@ -28,9 +22,15 @@ module Ember
           @klasses = ['Company']
           @search_context = :filtered_company_search
           @items = esv2_query_results(esv2_company_search_models)
+        else
+          @search_sort = params[:search_sort].presence
+          @sort_direction = 'desc'
+          @klasses = %w[User company]
+          @search_context = :agent_spotlight_customer
+          @items = esv2_query_results(esv2_agent_models)
         end
-
         response.api_meta = { count: @items.total_entries }
+        @items = [] if @count_request
       end
 
       private

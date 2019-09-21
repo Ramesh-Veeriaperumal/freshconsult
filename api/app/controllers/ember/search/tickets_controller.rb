@@ -5,17 +5,7 @@ module Ember
         @tracker = params[:context] == 'tracker'
         @recent_tracker = params[:context] == 'recent_tracker'
 
-        if params[:context] == 'spotlight'
-          @search_sort = params[:search_sort].presence
-          @sort_direction = 'desc'
-          if filter_params?
-            @filter_params = params[:filter_params]
-            @search_context = :filteredTicketSearch
-          else
-            @search_context = :agent_spotlight_ticket
-          end
-          @klasses = ['Helpdesk::Ticket', 'Helpdesk::ArchiveTicket']
-        elsif (params[:context] == 'merge' || @tracker) && params[:field]
+        if (params[:context] == 'merge' || @tracker) && params[:field]
           @search_field = params[:field]
           @klasses = ['Helpdesk::Ticket']
 
@@ -39,10 +29,20 @@ module Ember
           @sort_direction   = 'desc'
           @search_context = :assoc_recent_trackers
           @klasses = ['Helpdesk::Ticket', 'Helpdesk::ArchiveTicket']
+        else
+          @search_sort = params[:search_sort].presence
+          @sort_direction = 'desc'
+          if filter_params?
+            @filter_params = params[:filter_params]
+            @search_context = :filteredTicketSearch
+          else
+            @search_context = :agent_spotlight_ticket
+          end
+          @klasses = ['Helpdesk::Ticket', 'Helpdesk::ArchiveTicket']
         end
-
         @items = esv2_query_results(esv2_agent_models)
         response.api_meta = { count: @items.total_entries }
+        @items = [] if @count_request
         @items.reject!(&:nil?)
       end
 

@@ -1,4 +1,5 @@
 module Redis::RateLimitRedis
+  include Fluffy::Constants
 
   def get_account_api_limit
     handle_exception { $rate_limit.perform_redis_op("get", account_api_limit_key) }
@@ -38,8 +39,16 @@ module Redis::RateLimitRedis
   end
 
   def get_api_min_limit_from_redis(plan_id)
-    api_min_limits = get_multiple_rate_limit_redis_keys(plan_api_min_limit_key(plan_id), DEFAULT_API_MIN_LIMIT) || []
-    (api_min_limits[0] || api_min_limits[1])
+    {
+      "limit": get_others_redis_key(format(PLAN_API_MIN_LIMIT, plan_id: plan_id)),
+      "granularity": MINUTE_GRANULARITY,
+      "account_paths": [
+        JSON.parse(get_others_redis_hash_value(format(PLAN_API_MIN_PATHS_LIMIT, plan_id: plan_id), 'TICKETS_LIST') || '{}'),
+        JSON.parse(get_others_redis_hash_value(format(PLAN_API_MIN_PATHS_LIMIT, plan_id: plan_id), 'CONTACTS_LIST') || '{}'),
+        JSON.parse(get_others_redis_hash_value(format(PLAN_API_MIN_PATHS_LIMIT, plan_id: plan_id), 'CREATE_TICKET') || '{}'),
+        JSON.parse(get_others_redis_hash_value(format(PLAN_API_MIN_PATHS_LIMIT, plan_id: plan_id), 'UPDATE_TICKET') || '{}')
+      ]
+    }
   end
 
   def account_api_limit_key(account_id)

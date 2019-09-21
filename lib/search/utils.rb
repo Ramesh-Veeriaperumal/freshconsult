@@ -7,6 +7,7 @@ class Search::Utils
   MAX_PER_PAGE          = 30
   DEFAULT_PAGE          = 1
   DEFAULT_OFFSET        = 0
+  COUNT_REQUEST_PER_PAGE = 1
 
   # Normal templates do not work for pubsupport/souq
   #

@@ -6,7 +6,7 @@ class Email::MailboxValidation < ApiValidation
   attr_accessor :name, :support_email, :default_reply_email, :mailbox_type, :custom_mailbox,
                 :group_id, :product_id, :incoming, :outgoing
 
-  validates :name, data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
+  validates :name, data_type: { rules: String, allow_nil: true }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :support_email, required: true, data_type: { rules: String }, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, accepted: :'valid email address' }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :mailbox_type, required: true, custom_inclusion: { in: MAILBOX_TYPES }
   validate :custom_mailbox_feature_check, if: :custom_mailbox?
@@ -33,9 +33,9 @@ class Email::MailboxValidation < ApiValidation
             hash: {
               mail_server: { data_type: { rules: String, required: true } },
               port: { custom_numericality: { only_integer: true, greater_than: 0, required: true } },
-              use_ssl: { data_type: { rules: 'Boolean' } },
-              delete_from_server: { data_type: { rules: 'Boolean' } },
-              authentication: { custom_inclusion: { in: IMAP_AUTHENTICATION_TYPES, required: true } }, # TODO
+              use_ssl: { data_type: { rules: 'Boolean', required: true } },
+              delete_from_server: { data_type: { rules: 'Boolean', required: true } },
+              authentication: { custom_inclusion: { in: IMAP_AUTHENTICATION_TYPES, required: true } },
               user_name: { data_type: { rules: String, required: true } },
               password: { data_type: { rules: String, required: true } }
             }, if: :incoming_required?
@@ -46,7 +46,7 @@ class Email::MailboxValidation < ApiValidation
             hash: {
               mail_server: { data_type: { rules: String, required: true } },
               port: { custom_numericality: { only_integer: true, greater_than: 0, required: true } },
-              use_ssl: { data_type: { rules: 'Boolean' } },
+              use_ssl: { data_type: { rules: 'Boolean', required: true } },
               authentication: { custom_inclusion: { in: SMTP_AUTHENTICATION_TYPES, required: true } },
               user_name: { data_type: { rules: String, required: true } },
               password: { data_type: { rules: String, required: true } }

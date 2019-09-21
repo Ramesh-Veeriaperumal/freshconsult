@@ -89,11 +89,15 @@ module Settings
       help_widget = @account.help_widgets.create
       HelpWidget::UploadConfig.jobs.clear
       assert_equal HelpWidget::UploadConfig.jobs.size, 0
+      @account.add_feature(:autofaq)
+      @account.add_feature(:botflow)
       put :update, construct_params('primary_language' => 'ca')
       assert_response 200
       assert_equal @account.main_portal.language, 'ca'
       widget_json_upload_ids = HelpWidget::UploadConfig.jobs.map { |a| a['args'].first['widget_id'] }
       assert_include widget_json_upload_ids, help_widget.id
+      assert_equal @account.autofaq_enabled?, false
+      assert_equal @account.botflow_enabled?, false
     ensure
       Account.any_instance.unstub(:help_widget_enabled?)
       help_widget.destroy

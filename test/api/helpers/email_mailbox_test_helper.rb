@@ -54,7 +54,8 @@ module EmailMailboxTestHelper
         use_ssl: mailbox.imap_mailbox.use_ssl,
         delete_from_server: mailbox.imap_mailbox.delete_from_server,
         authentication: mailbox.imap_mailbox.authentication == Email::Mailbox::Constants::IMAP_CRAM_MD5 ? Email::Mailbox::Constants::CRAM_MD5 : mailbox.imap_mailbox.authentication,
-        user_name: mailbox.imap_mailbox.user_name
+        user_name: mailbox.imap_mailbox.user_name,
+        failure_code: mailbox.imap_mailbox.error_type ? Admin::EmailConfig::Imap::ErrorMapper.new(error_type: mailbox.imap_mailbox.error_type).fetch_error_mapping : nil
         })
     end
     result_hash
@@ -119,7 +120,8 @@ module EmailMailboxTestHelper
       delete_from_server: options[:imap_delete_from_server] || true,
       authentication: options[:imap_authentication] || 'plain',
       user_name: options[:imap_user_name] || 'smtp@gmail.com',
-      password: options[:imap_password] || 'password'
+      password: options[:imap_password] || 'password',
+      error_type: options[:error_type] || nil
     }
   end
   

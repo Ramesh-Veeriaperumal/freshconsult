@@ -224,6 +224,9 @@ class ContactsControllerTest < ActionController::TestCase
     user = Account.current.users.create(name: Faker::Name.name, email: Faker::Internet.email, time_zone: 'Chennai', company_id: nil, language: 'en')
     assert user.present?
 
+    old_subscription = Account.current.subscription
+    Account.current.subscription.update_attributes(agent_limit: 100)
+
     get :make_agent, id: user.id
     assert_response 302
 
@@ -264,7 +267,8 @@ class ContactsControllerTest < ActionController::TestCase
 
     get :make_agent, id: user.id, format: 'json'
     assert_response 400
-
+  ensure
+    Account.current.subscription.update_attributes(agent_limit: old_subscription.agent_limit)
     Account.any_instance.unstub(:reached_agent_limit?)
     log_out
   end

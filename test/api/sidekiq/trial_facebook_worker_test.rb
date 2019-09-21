@@ -18,18 +18,19 @@ class TrialFacebookWorkerTest < ActionView::TestCase
     @account.facebook_pages.destroy_all
     @account.facebook_streams.destroy_all
     @account.tickets.where(source: Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook]).destroy_all
+    Facebook::KoalaWrapper::DirectMessage.any_instance.unstub(:fetch_page_scope_id)
+    Social::FacebookPage.any_instance.unstub(:gateway_facebook_page_mapping_details)
     Account.unstub(:current)
-    WebMock.disable_net_connect!
   end
 
   def setup
-    # TODO: Stub all fb methods instead of the below hack
-    WebMock.allow_net_connect!
     @account = create_test_account
     Account.stubs(:current).returns(Account.first)
     @account = Account.current
     @fb_page = create_test_facebook_page(@account)
     @user_id = rand(10**10)
+    Facebook::KoalaWrapper::DirectMessage.any_instance.stubs(:fetch_page_scope_id).returns(nil)
+    Social::FacebookPage.any_instance.stubs(:gateway_facebook_page_mapping_details).returns(nil)
     before_all
   end
 
@@ -225,6 +226,7 @@ class TrialFacebookWorkerTest < ActionView::TestCase
   end
 
   def test_post_is_converted_to_ticket
+    Facebook::Core::Post.any_instance.stubs(:fetch_page_scope_id).returns(nil)
     @fb_page.update_attributes(import_visitor_posts: true, message_since: nil)
 
     sender_id = rand(10**10)

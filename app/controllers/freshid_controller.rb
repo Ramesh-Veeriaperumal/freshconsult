@@ -32,7 +32,7 @@ class FreshidController < ApplicationController
         store_freshid_tokens(access_token, refresh_token, access_token_expires_in) if (access_token.present? && refresh_token.present?)
         Rails.logger.info "FRESHID create_user_session :: a=#{current_account.try(:id)}, u=#{@current_user.try(:id)}"
         perform_after_login if @current_user.agent?
-        set_freshid_session_state if current_account.freshid_org_v2_enabled?
+        set_freshid_session_info_in_cookie if current_account.freshid_org_v2_enabled?
         return unless grant_day_pass
         set_cookies_for_mobile if is_native_mobile?
         mobile_and_freshid_v2?(mobile_login) ? redirect_to_mobile_freshid_login(@current_user) : redirect_back_or_default(default_return_url)
@@ -94,8 +94,9 @@ class FreshidController < ApplicationController
       end
     end
 
-    def set_freshid_session_state
+    def set_freshid_session_info_in_cookie
       cookies[:session_state] = params[:session_state]
+      cookies[:session_token] = params[:session_token] if params[:session_token].present?
     end
 
     def authorize_callback_helper 

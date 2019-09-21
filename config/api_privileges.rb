@@ -217,6 +217,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :'ember/solutions/category', only: %i[create update destroy reorder]
     resource :'ember/company', only: %i[index]
     resource :'ember/freddy'
+    resource :'ember/flow'
   end
 
   publish_solution do
@@ -248,6 +249,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/admin/bot_feedback", only: %i[index bulk_delete bulk_map_article create_article chat_history]
     resource :"ember/admin/bot", only: %i[index show]
     resource :'ember/freddy'
+    resource :'ember/flow'
   end
 
   manage_dashboard do

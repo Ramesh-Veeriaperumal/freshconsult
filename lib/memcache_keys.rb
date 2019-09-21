@@ -29,6 +29,8 @@ module MemcacheKeys
 
   ACCOUNT_GROUPS = "v6/ACCOUNT_GROUPS:%{account_id}"
 
+  ACCOUNT_SUPPORT_AGENT_GROUPS = "v1/ACCOUNT_SUPPORT_AGENT_GROUPS:%{account_id}"
+
   ACCOUNT_GROUP_TYPES = "v1/ACCOUNT_GROUP_TYPES:%{account_id}"
 
   ACCOUNT_AGENT_GROUPS = "v4/ACCOUNT_AGENT_GROUPS:%{account_id}"
@@ -88,7 +90,7 @@ module MemcacheKeys
   ACCOUNT_SKILLS_TRIMMED = "v1/ACCOUNT_SKILLS_TRIMMED:%{account_id}"
 
   ACCOUNT_SCHEDULED_TICKET_EXPORTS = "v1/ACCOUNT_SCHEDULED_TICKET_EXPORTS:%{account_id}"
-  
+
   ACCOUNT_TWITTER_HANDLES = "v2/ACCOUNT_TWITTER_HANDLES:%{account_id}"
 
   CUSTOM_MAILBOX_STATUS_CHECK = "v1/CUSTOM_MAILBOX_STATUS_CHECK:%{account_id}"
@@ -96,7 +98,7 @@ module MemcacheKeys
   FORUM_CATEGORIES = "v1/FORUM_CATEGORIES:%{account_id}"
 
   ALL_SOLUTION_CATEGORIES = "v1/ALL_SOLUTION_CATEGORIES:%{account_id}"
-  
+
   ACCOUNT_ACTIVITY_EXPORT = "v1/ACCOUNT_ACTIVITY_EXPORT:%{account_id}"
 
   CONTACT_FORM_FIELDS = "v1/CONTACT_FORM_FIELDS:%{account_id}:%{contact_form_id}"
@@ -173,7 +175,7 @@ module MemcacheKeys
   EXTENSION_CATEGORIES = "v1/FA:EXTENSION_CATEGORIES"
 
   MKP_EXTENSIONS = "v1/FA:MKP_EXTENSIONS:%{category_id}:%{type}:%{locale_id}:%{sort_by}:%{platform_version}"
-  
+
   CUSTOM_APPS = "v1/FA:CUSTOM_APPS:%{account_id}:%{locale_id}:%{platform_version}"
 
   EXTENSION_DETAILS = "v2/FA:EXTENSION:%{extension_id}:%{locale_id}:%{platform_version}"
@@ -316,7 +318,7 @@ module MemcacheKeys
     end
 
     def memcache_delete(key, account=Account.current, user=User.current)
-      newrelic_begin_rescue { memcache_client.delete(memcache_view_key(key, account, user)) } 
+      newrelic_begin_rescue { memcache_client.delete(memcache_view_key(key, account, user)) }
     end
 
     def memcache_client

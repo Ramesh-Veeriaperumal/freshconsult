@@ -45,6 +45,8 @@ properties:
             description: Possible values are plain, login, cram_md5.
           user_name:
             type: string
+          failure_code:
+            type: string
       outgoing:
         type: object
         properties:

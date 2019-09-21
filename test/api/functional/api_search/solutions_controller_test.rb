@@ -84,5 +84,15 @@ module ApiSearch
       assert_response 403
       User.any_instance.unstub(:privilege?)
     end
+
+    def test_results_with_valid_params_only_count
+      article = create_article(article_params).primary_article
+      stub_private_search_response([article]) do
+        get :results, construct_params(version: 'private', term: article.title, only: 'count')
+      end
+      assert_response 200
+      assert_equal @response.api_meta[:count], 1
+      match_json []
+    end
   end
 end

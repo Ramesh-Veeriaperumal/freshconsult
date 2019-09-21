@@ -16707,3 +16707,24 @@ fr:
     langues dans l'ancien Freshdesk
   pts_plain: ' points'
   in: dans
+  help_widget:
+    name: 'Bienvenue sur le support %{name}'
+    message: Bienvenue sur le support informatique
+    form_title: Contactez-nous
+    form_button_text: Envoyer
+    form_submit_message: Merci pour vos commentaires.
+    button_text: Aide
+    untitled_widget: 'Widget sans nom %{count}'
+    invalid_components: 'Hash de composants non valide avec %{key}'
+    freshmarketer_sign_up_error: >-
+      Désolé, le suivi de frustration doit être activé lors de l'intégration
+      avec Freshmarketer
+    invalid_settings: 'Hash de paramètres non valide avec %{key}'
+    welcome_message: Pouvons-nous vous aider ?
+    predictive_message: >-
+      Nous avons remarqué que vous êtes bloqué. Dites-nous ce que vous vouliez
+      accomplir et notre équipe de support vous contactera dans les meilleurs
+      délais.
+    success_message: Merci. Nous vous contacterons sous peu !
+    invalid_domain: 'Désolé, veuillez saisir un domaine valide.'
+    domain_list_empty: Veuillez spécifier les URL pour effectuer le suivi du support prédictif.

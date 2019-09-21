@@ -10,6 +10,8 @@ class TicketFieldData < ActiveRecord::Base
   ALLOWED_FIELD_TYPES = ['custom_dropdown', 'custom_number', 'custom_checkbox', 'nested_field', 'custom_date'].freeze
   NEW_DROPDOWN_COLUMN_NAMES = column_names.grep(/ffs.+/)[80..249]
   NEW_DROPDOWN_COLUMN_NAMES_SET = Set.new(NEW_DROPDOWN_COLUMN_NAMES)
+  NEW_CHECKBOX_COLUMN_NAMES = column_names.grep(/ff_boolean.+/)[10..30]
+  NEW_CHECKBOX_COLUMN_NAMES_SET = Set.new(NEW_CHECKBOX_COLUMN_NAMES)
 
   def ff_def
     self[:flexifield_def_id]
@@ -102,6 +104,7 @@ class TicketFieldData < ActiveRecord::Base
     def process_while_reading(field)
       field_type = field.field_type
       ff_value = Time.use_zone('UTC') { read_ff_attribute(field.column_name, field_type) }
+      return (ff_value ? true : false) if field.field_type.to_s.to_sym == :custom_checkbox
       return nil if ff_value.blank?
 
       case field_type

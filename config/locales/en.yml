@@ -12980,6 +12980,11 @@ en:
     spam_watcher: "Freshdesk :: Spam watcher"
     account_cancelled: "%{account_domain} has been cancelled"
     notify_dkim_activation: "DKIM signatures activation email"
+  mobile_onboarding:
+    try_mobile_app: "Try using the Freshdesk app for a"
+    for_better_experience: "better experience."
+    use_this_url: "Use this URL while logging in"
+    skip_app_download: "Skip for now"
   sandbox:
     live: Sandbox is live
     sync_complete: Sandbox sync complete!
