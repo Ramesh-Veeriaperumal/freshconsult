@@ -424,6 +424,10 @@ class Account < ActiveRecord::Base
     PRICING_PLAN_MIGRATION_FEATURES_2019.include?(feature) ? true : super
   end
 
+  def help_widget_enabled?
+    launched?(:help_widget)
+  end
+
   def features_list
     return super if launched?(:enable_customer_journey)
     (super + PRICING_PLAN_MIGRATION_FEATURES_2019.to_a).uniq

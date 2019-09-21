@@ -292,6 +292,7 @@ window.App = window.App || {};
       }
     },
     toggleFSMAddon: function(toggler, editBilling, triggerType) {
+
       var parent_plan = this.selected_plan;
       var non_omni_plan_id = this.nonOmniId(toggler);
       var parent_plan_element = this.parentPlanItem(toggler);
@@ -445,7 +446,7 @@ window.App = window.App || {};
             }
             billing_template.find(".billing-cancel").show();
             var submitText = request_change ? I18n.t('downgrade_policy.change_request') : I18n.t('common_js_translations.update_plan');
-            billing_template.find(".billing-submit").val(submitText).addClass('btn-primary')
+            billing_template.find(".billing-submit").val(submitText).addClass('btn-primary');
             billing_template.find(".billing-submit").html(submitText).addClass('btn-primary');
             if(request_change){
               $('.upgrade-same-plan').css('display','none');

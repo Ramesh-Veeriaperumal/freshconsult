@@ -759,7 +759,7 @@ class Account < ActiveRecord::Base
   end
 
   def kill_account_cancellation_request_job
-    job_id= get_others_redis_key(account_cancellation_request_job_key)
+    job_id = get_others_redis_key(account_cancellation_request_job_key)
     job = Sidekiq::ScheduledSet.new.find_job(job_id)
     job.delete if job.present?
     delete_account_cancellation_request_job_key

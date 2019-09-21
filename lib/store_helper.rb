@@ -25,9 +25,10 @@ module StoreHelper
 
 
   def get_agent_list
-    agentslist = current_account.agents_details_from_cache
-    @agent_list ||= agentslist.inject([]) do |res,agent|
-      res << { id: agent.id, name: agent.name, is_account_admin: agent.email == current_account.admin_email}
+    agent_hash = current_account.agents_hash_from_cache
+    @agent_list ||= agent_hash.keys.inject([]) do |result, agent_id|
+      agent = agent_hash[agent_id]
+      result << { id: agent_id, name: agent[0], is_account_admin: agent[2] == current_account.admin_email}
     end
   end
 

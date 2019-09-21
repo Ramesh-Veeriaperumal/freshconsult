@@ -30,7 +30,7 @@ class Account < ActiveRecord::Base
     },
 
     sprout: {
-      features: [:scenario_automations, :business_hours, :help_widget]
+      features: [:scenario_automations, :business_hours, :marketplace, :help_widget]
     },
 
     blossom: {
@@ -61,7 +61,7 @@ class Account < ActiveRecord::Base
     },
 
     sprout_classic: {
-      features: [:scenario_automations, :business_hours, :custom_domain, :multiple_emails, :help_widget]
+      features: [:scenario_automations, :business_hours, :custom_domain, :multiple_emails, :marketplace, :help_widget]
     },
 
     blossom_classic: {
@@ -85,7 +85,7 @@ class Account < ActiveRecord::Base
     },
 
     sprout_jan_17: {
-      features: [:scenario_automations, :business_hours, :help_widget]
+      features: [:scenario_automations, :business_hours, :marketplace, :help_widget]
     },
 
     blossom_jan_17: {

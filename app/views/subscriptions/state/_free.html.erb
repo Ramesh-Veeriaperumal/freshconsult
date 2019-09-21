@@ -1,7 +1,7 @@
 <div class="well-active well-active-new">
-  <%
-      plan = @subscription.subscription_plan
-      is_new_sprout = new_sprout?(plan.name)
+   <% 
+      plan = @subscription.subscription_plan       
+      is_new_sprout = new_sprout?(plan.name)  
   %>
     <div class="current-plan">
       <h1 class="plan-title <%= 'classic' if @subscription.classic?%>">

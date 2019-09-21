@@ -12,6 +12,11 @@ class Helpdesk::TicketState <  ActiveRecord::Base
   STATS_ATTRIBUTES = ['resolved_at','first_assigned_at','assigned_at','opened_at']
   TICKET_STATE_SEARCH_FIELDS = [ 'resolved_at', 'closed_at', 'agent_responded_at',
                                  'requester_responded_at', 'status_updated_at' ]
+  # Model changes for presenter includes only the listed fields
+  PRESENTER_FIELDS_MAPPING = { 'first_resp_time_by_bhrs': 'first_response_by_bhrs', 'resolution_time_by_bhrs': 'time_to_resolution_in_bhrs',
+                               'resolution_time_by_chrs': 'time_to_resolution_in_chrs', 'first_assigned_at': nil,
+                               'closed_at': nil, 'resolved_at': nil, 'first_response_time': nil,
+                               'inbound_count': nil }
 
   # Model changes for presenter includes only the listed fields
   PRESENTER_FIELDS_MAPPING = { 'first_resp_time_by_bhrs': 'first_response_by_bhrs', 'resolution_time_by_bhrs': 'time_to_resolution_in_bhrs',

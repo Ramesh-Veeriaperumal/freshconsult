@@ -999,7 +999,7 @@ es:
         last_stream_delete_alert: >-
           ¿Estás seguro de querer eliminar esta cadena de twitter? No podrás ver
           las cadenas de tus clientes si no tienes asociadas cadenas por
-          defecto.
+          defecto. 
       twitter_streams:
         define_stream: Definir Cadena Social
         stream_brief: >-
@@ -1492,7 +1492,7 @@ es:
             lleguen a tu cuenta de eBay desde el departamento de soporte. Una
             vez configurado, las consultas de los clientes de eBay se
             convertirán automáticamente en tickets. También puedes responder
-            directamente desde Freshdesk.
+            directamente desde Freshdesk. 
       index:
         title: Cuentas de comercio electrónico
         renew: Renovar clave
@@ -2039,7 +2039,7 @@ es:
           portales de freshdesk
         customer_portal_ssl_warning: >-
           Debido a que se configura una URL de helpdesk personalizada para su
-          cuenta, pasará a
+          cuenta, pasará a 
         multiple_product_ssl_warning: SSL no será aplicable si se configuran múltiples productos.
         enabled: Habilitado
         disabled: Deshabilitado
@@ -2902,8 +2902,7 @@ es:
         minutos, dependiendo del volumen de los datos
       info1: >-
         La importación se ha completado correctamente. Puedes abrir el servicio
-        de ayuda e ir a Cliente->%{uc_type} para ver el %{type} recién
-        agregado.
+        de ayuda e ir a Cliente->%{uc_type} para ver el %{type} recién agregado.
       info2: >-
         No hemos podido importar todos los %{type} del archivo CSV enviado. Aquí
         está el resumen:
@@ -3499,9 +3498,7 @@ es:
           {{category_name}}
       new_topic:
         short: 'Crear un nuevo topico {{user_path}}'
-        long: >-
-          crear un nuevo topico {{user_path}} {{notable_path}} en
-          {{forum_name}}
+        long: 'crear un nuevo topico {{user_path}} {{notable_path}} en {{forum_name}}'
       published_topic:
         short: 'El tema de {{user_path}} ''{{notable_path}}'' ha sido publicado'
         long: >-
@@ -4113,7 +4110,7 @@ es:
       email_blank: El email no puede quedar en balnco
   portal:
     article:
-      created_by: 'Created by:'
+      created_by: 'Creado por:'
       see_all_articles: 'Ver los %{count} artículos'
       more_articles: 'Mas artículos en <span class=''folder-name''> %{article_name} </span>'
       modified_on: 'Modificado en:'
@@ -4142,7 +4139,7 @@ es:
         de su navegador.
       privacy_policy: Política de Privacidad
     no_topics_in_this_view: ~ No hay temas en esta vista ~
-    reported: declarado
+    reported: reportada
     said: dicho
     solutions_home: Inicio
     print_title: Imprimir este articulo
@@ -4153,7 +4150,7 @@ es:
         aquí</a> para volver.
     new_support_ticket: Nuevo ticket de ayuda
     submit_new_ticket: ... o enviar un nuevo ticket
-    login: Iniciar sesión
+    login: Conectar
     login_portal: Iniciar sesión en el portal de asistencia
     login_details: 'Introduce los datos que utilizaste para registrarte con nosotros:'
     login_options: ...o iniciar sesión usando
@@ -4178,7 +4175,8 @@ es:
       <a href=%{topic_reply_url}>Inicia Sesion</a> o <a
       href=%{signup_url}>Registrate</a>para postear en un Topic
     login_signup_to_post_comment: >-
-      <a href=%{topic_reply_url}>Inicie sesión</a> o <a href=%{signup_url}>regístrese</a> para publicar un comentario
+      <a href=%{topic_reply_url}>Inicie sesión</a> o <a
+      href=%{signup_url}>regístrese</a> para publicar un comentario
     to_post_topic: ' para publicar un tema'
     preview:
       view_on_helpdesk: Ver en Helpdesk
@@ -4221,7 +4219,7 @@ es:
       comment_placeholder: Pulsar aquí para añadir un comentario
       started: empezó un tema
       more_topic: Más temas en
-      last_reply: Última respuesta
+      last_reply: Última Respuesta
       fb_reply_info: >-
         <a href='%{reply_url}'> Ultima respuesta </a>por
         %{user_name}<br>%{created_on}
@@ -4287,9 +4285,9 @@ es:
       problem_unlike_button: ¡No tengo este problema!
       howto_unlike_button: ¡No tengo esta pregunta!
       announce_users_voted_title: Personas que les gusta esto
-      ideas_users_voted_title: Gente a la que le gusta esta idea
-      problem_users_voted_title: Gente que tiene este problema
-      howto_users_voted_title: Gente que tiene esta pregunta
+      ideas_users_voted_title: Personas a las que les gusta esta idea
+      problem_users_voted_title: Personas que tienen este problema
+      howto_users_voted_title: Personas que tienen esta pregunta
     post_vote:
       upvoted: Usted voto para subir
       upvote: Votar
@@ -4298,7 +4296,7 @@ es:
         other: Les gusta esto
     tickets:
       merged_topic_note: Los topic fusionados no pueden ser convertidos en ticket
-      export: Exportar consultas
+      export: Exportar tickets
       submit_export: Exportar
       export_ticket_data: Exportar tickets
       export_to_csv: Exportar a CSV
@@ -4312,7 +4310,7 @@ es:
         Agregar o eliminar emails que necesitan copiarse cuando se envía una
         notificación para este ticket.
       add_people_title: Agregar personas a la conversación
-      reopen_reply: Reabrir y responder
+      reopen_reply: Responder
       related_articles: Artículos relacionados...
     customer_login_info: ¿Es usted un cliente?
     agent_signin: Iniciar sesión aquí
@@ -4683,7 +4681,7 @@ es:
       <b>publicarse</b> directamente.
     info16: >-
       Los artículos <b>publicados</b> se verán en el portal de autoservicio y
-      también aparecerán en los resultados de búsqueda.
+      también aparecerán en los resultados de búsqueda. 
     info17: >-
       El <b>borrador</b> de los artículos solo lo podrán ver los agentes y solo
       aparecerán en sus resultados de búsqueda.
@@ -4911,7 +4909,7 @@ es:
           ticket.<br /><br />Si has activado múltiples idiomas en tu helpdesk,
           puedes crear esta notificación de manera específica para cada idioma.
           El <i class="common-icon-outdated"></i> icono indica si la traducción
-          de la notificación a otros idiomas ha quedado obsoleta.
+          de la notificación a otros idiomas ha quedado obsoleta. 
       agent_template_3:
         topic: Ticket Asignado a un Agente
         info1: >-
@@ -4921,7 +4919,7 @@ es:
           <br/><br/>Si has activado múltiples idiomas en tu helpdesk, puedes
           crear esta notificación de manera específica para cada idioma. El <i
           class="common-icon-outdated"></i> icono indica si la traducción de la
-          notificación a otros idiomas ha quedado obsoleta.
+          notificación a otros idiomas ha quedado obsoleta. 
       agent_template_11:
         topic: Ticket sin atender en un Grupo
         info1: >-
@@ -7252,7 +7250,7 @@ es:
         Combine los contactos de Freshdesk y Google (la última actualización
         tiene prioridad)
       import_later_success: >-
-        La importación de los contactos de Google se inició correctamente
+        La importación de los contactos de Google se inició correctamente 
         Recibirá un correo electrónico a %{email} una vez que haya finalizado.
       import_success_no_stats: Contactos de Google importados correctamente.
       import_problem: Problema al importar los contactos de Google.
@@ -7683,7 +7681,7 @@ es:
         la pone a disposición de los agentes.<br><br>Puedes buscar contactos de
         Batchbook usando sus direcciones de correo electrónico. Si existen
         múltiples contactos con la misma dirección, se mostrarán todos en una
-        lista.</p><br/>
+        lista.</p><br/> 
       desc: Traiga información de contacto de su cuenta en Batchbook Freshdesk
       detect_error: >-
         Imposible de detectar version de Batchbook, Porfavor verifique el
@@ -8008,7 +8006,7 @@ es:
         password: SSO Contraseña
         logmein_company_info: >-
           Para ver tu ID de Compañia ve a Centro Administrador->Grupo
-          Técnico->Configuracion Global->Ejemplo ASP.Net C# lado servidor
+          Técnico->Configuracion Global->Ejemplo ASP.Net C# lado servidor 
         logmein_sso_pwd_info: >-
           Para establecer la contraseña de inicio único de sesión (SSO), vaya al
           centro de administración -> grupo técnico -> configuración global ->
@@ -8032,7 +8030,7 @@ es:
       desc: >-
         Busca y administra las suscripciones de tu cuenta de monitor de
         campañas,  y traer ideas sobre las estadísticas de uso de los clientes
-        dentro de Freshdesk
+        dentro de Freshdesk 
       helptext: >-
         <h4>Ayuda para la integración de Campaign Monitor </h4><br/>Para
         integrar Campaign Monitor, deberá introducir tu clave API y el
@@ -8050,7 +8048,7 @@ es:
         client_id: ID de Cliente
         client_id_info: >-
           Para obtener la Id del cliente, sigue las instrucciones descritas en
-          http://www.campaignmonitor.com/api/getting-started/#clientid
+          http://www.campaignmonitor.com/api/getting-started/#clientid 
     icontact:
       label: IContact
       desc: >-
@@ -8067,7 +8065,7 @@ es:
           Para obtener la direccion URL de tu API vaya a la seccion
           https://app.icontact.com/icp/core/externallogin and copie la URL de la
           API URL que aparece en la sección &quot;Información de su
-          Cuenta&quot;.
+          Cuenta&quot;. 
     dropbox:
       label: DropBox
       desc: Adjunta y comparte tus datos/archivos de DropBox.
@@ -10511,12 +10509,12 @@ es:
         puedes crear múltiples categorías para productos o equipos. Esto ayudará
         a dirigir conversaciones relevantes hacia todos los niveles superiores
         de las secciones y como administrador, podrás gestionar todo desde un
-        único lugar.
+        único lugar. 
       para3: >-
         Si tienes configurados portales para múltiples productos en tu cuenta
         Freshdesk, puedes elegir vincular una categoría para cada producto. Una
         vez hecho, los usuarios podrán ver esa categoría, sus foror y todos los
-        temas tanto desde tu portal principal como desde tu portal de producto.
+        temas tanto desde tu portal principal como desde tu portal de producto. 
       para4: Saber más sobre múltiples productos en Freshdesk.
     shared:
       topic:
@@ -11229,15 +11227,15 @@ es:
     overview: Resumen
     recent: Reciente
     popular: Popular
-    planned: Planeado
+    planned: Planificado
     implemented: Implementado
-    nottaken: No cogido
-    deferred: Aplazado
-    inprogress: En Proceso
+    nottaken: No Recogido
+    deferred: Diferido
+    inprogress: En Progreso
     answered: Respondido
     unanswered: No respondido
     solved: Resuelto
-    unsolved: No resuelto
+    unsolved: Sin Resolver
   payment_info: Información de pago
   billing_address: Dirección para facturación
   support:
@@ -11323,6 +11321,9 @@ es:
         neutral_info: Nos gustaría poder ayudarte más la próxima vez.
         unhappy_info: Estamos seguros de que pondremos un cuidado extra la próxima vez.
         additional_info: 'Además, podrías compartir tu experiencia de trabajo con nosotros.'
+    canned_form:
+      next: Siguiente
+      form_submit: Enviar
   quests:
     delete: Estas seguro de que quieres borrar este reto?
     survey_disabled_event: >-
@@ -11520,7 +11521,7 @@ es:
       Autoriza de nuevo y Activa </a>
   import_user_notification: >-
     Puedes enviar el correo de activación de usuario a los contactos importados
-    desde la pestaña Clientes.
+    desde la pestaña Clientes. 
   what_is_cvv: Qué es cw?
   pro_details: >-
     Todas las funciones del Plan &quot;Basico&quot; más Automatización de
@@ -12433,7 +12434,8 @@ es:
   right: Derecha
   footer:
     helpdesk_software: Software de servicio de asistencia
-    helpdesk_software_link: "https://freshdesk.es/?utm_source=portal&utm_medium=reflink&utm_campaign=portal_reflink"
+    helpdesk_software_link: >-
+      https://freshdesk.es/?utm_source=portal&utm_medium=reflink&utm_campaign=portal_reflink
     by_freshdesk: por Freshdesk
     submit_feedback: Enviar informacion
     footer_feedback_subject_placeholder: ¿Podrías decirnos como mejorar Freshdesk?
@@ -14589,7 +14591,7 @@ es:
     classic: Clásico
     confirm: >-
       ¿Está seguro de que desea aplicar el nuevo aspecto? Todas las
-      personalizaciones CSS se perderán.
+      personalizaciones CSS se perderán. 
 
 
       Consejo: Cree una copia con sus personalizaciones CSS que tiene

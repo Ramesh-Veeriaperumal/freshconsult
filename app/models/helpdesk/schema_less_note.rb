@@ -65,6 +65,14 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
     note_properties[:last_modified_user_id] = user_id.to_s
   end
 
+  def quoted_parsing_done=(quoted_parse_val)
+    note_properties[:quoted_parsing_done] = quoted_parse_val
+  end
+
+  def quoted_parsing_done
+    note_properties[:quoted_parsing_done]
+  end
+
   def last_modified_timestamp
     note_properties[:last_modified_timestamp].to_datetime.in_time_zone(Time.zone) if note_properties.is_a?(Hash) && note_properties[:last_modified_timestamp].present?
   end
