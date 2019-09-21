@@ -1,5 +1,5 @@
 class Helpdesk::SchemaLessNote < ActiveRecord::Base
-  
+
   include RabbitMq::Publisher
   # Including this because we are doing business hour calculation in rabbitmq for reports
   include BusinessHoursCalculation

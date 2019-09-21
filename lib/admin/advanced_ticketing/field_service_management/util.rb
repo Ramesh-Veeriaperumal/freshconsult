@@ -320,11 +320,6 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         GroupType.destroy_group_type(Account.current, FIELD_GROUP_NAME)
       end
  
-      def destroy_field_tech_role
-        role = Account.current.roles.find_by_name(Helpdesk::Roles::FIELD_TECHNICIAN_ROLE[:name])
-        role.try(:destroy)
-      end
-
       def expire_cache
         Account.current.clear_required_ticket_fields_cache
         Account.current.clear_section_parent_fields_cache

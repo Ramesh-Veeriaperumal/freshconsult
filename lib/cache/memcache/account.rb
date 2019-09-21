@@ -853,17 +853,6 @@ module Cache::Memcache::Account
       format(ACCOUNT_TICKET_FIELDS_NAME_TYPE_MAPPING, account_id: account_id)
     end
 
-    # Ex: [[{"ticket_type"=>["Question", "Feature Request"]}, [11, 12, 13]], [{"ticket_type"=>["Problem"]}, [11]]]
-    def parent_field_value_mapping
-      sections_fields_group_by_parent_field_value_mapping.map { |parent_grouping, fields| [parent_grouping, fields.map(&:ticket_field_id)] }
-    end
-
-    def sections_fields_group_by_parent_field_value_mapping
-      section_fields_with_field_values_mapping.group_by do |x|
-        { x.parent_ticket_field.name => x.section.section_picklist_mappings.map { |y| y.picklist_value.value } }
-      end
-    end
- 
     def custom_nested_field_choices_hash_key(account_id)
       format(CUSTOM_NESTED_FIELD_CHOICES, account_id: account_id)
     end
