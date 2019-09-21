@@ -612,6 +612,7 @@ da:
   trial_plan_name: 'Nedgradere prøveversjonen til %{name}'
   user:
     phone_no: Telefon
+    work_phone: Arbejdstelefon
     remove_profile_image_confirm: Er du sikker på du ønsker at slette dette profilbilled?
     full_name: Fulde navn
     change_photo: Skift billed
