@@ -767,6 +767,7 @@ module Cache::Memcache::Account
 
     def custom_date_time_fields_memcache_key
       format(ACCOUNT_CUSTOM_DATE_TIME_FIELDS, account_id: self.id)
+    end
 
     def agent_hash_memcache_key
       format(ACCOUNT_AGENTS_HASH, account_id: id)
