@@ -29,7 +29,10 @@ class Subscription < ActiveRecord::Base
   end
 
   def event_info action
-    { :ip_address => Thread.current[:current_ip] }
+    {
+      ip_address: Thread.current[:current_ip],
+      pod: ChannelFrameworkConfig['pod']
+    }
   end
 
   def model_changes_for_central
