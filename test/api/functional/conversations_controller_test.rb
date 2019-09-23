@@ -984,5 +984,5 @@ class ConversationsControllerTest < ActionController::TestCase
     post :create, construct_params({ version: 'private', id: ticket.display_id, user_id: current_account.id }, params_hash)
     assert_equal count_of_delayed_jobs_before + 1, Delayed::Job.count
   end
-  
+
 end

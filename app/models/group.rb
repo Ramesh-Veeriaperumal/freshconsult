@@ -82,8 +82,9 @@ class Group < ActiveRecord::Base
   scope :trimmed, :select => [:'groups.id', :'groups.name']
   scope :disallowing_toggle_availability, :conditions => { :toggle_availability => false }
   scope :round_robin_groups, :conditions => 'ticket_assign_type > 0', :order => :name
-  scope :support_agent_groups, :order => :name,
-        :conditions => "group_type = #{GROUP_TYPE[:support_agent_groups]}"
+  scope :support_agent_groups,
+        order: :name,
+        conditions: "group_type = #{GROUP_TYPE[:support_agent_groups]}"
   scope :basic_round_robin_enabled, :conditions => ["ticket_assign_type = 1 and capping_limit = 0"], :order => :name
   scope :capping_enabled_groups, :conditions => ["ticket_assign_type = 1 and capping_limit > 0"], :order => :name
   scope :skill_based_round_robin_enabled, :order => :name,

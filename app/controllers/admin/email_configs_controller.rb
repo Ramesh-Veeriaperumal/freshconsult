@@ -66,8 +66,7 @@ class Admin::EmailConfigsController < Admin::AdminController
     @email_config = current_account.primary_email_config
     EmailConfigNotifier.send_email(:test_email, nil, current_account.primary_email_config)
 
-    render :json => {:email_sent => true}.to_json
-
+    render json: { email_sent: true }.to_json
   end
 
   def make_primary
@@ -173,7 +172,7 @@ class Admin::EmailConfigsController < Admin::AdminController
     def post_process
       current_account.reload
       flash[:notice] = t(:'email_configs.config_saved_message')
-      render :partial => 'show_message'
+      render partial: 'show_message'
     end
 
     def human_name

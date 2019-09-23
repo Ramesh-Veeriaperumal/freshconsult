@@ -146,10 +146,10 @@ module Cache::Memcache::Account
   end
 
   def agents_hash_from_cache
-    @agent_hash_from_cache ||= begin
+    @agents_hash_from_cache ||= begin
       key = agent_hash_memcache_key
       MemcacheKeys.fetch(key) do
-        agents_hash = Hash.new
+        agents_hash = {}
         Account.current.technicians.pluck_all('id', 'name', 'privileges', 'email').each do |agent|
           agents_hash[agent[0]] = [agent[1], agent[2], agent[3]]
         end

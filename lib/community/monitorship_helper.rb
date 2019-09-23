@@ -83,6 +83,7 @@ module Community::MonitorshipHelper
       agent_privilege_object = PrivilegesUtil.new
       agent_privilege_object[:privileges] = agents[agent_id][1]
       next unless agent_privilege_object.privilege?(:view_forums)
+
       if agent_id == User.current.id
         current_user_present = true
         next

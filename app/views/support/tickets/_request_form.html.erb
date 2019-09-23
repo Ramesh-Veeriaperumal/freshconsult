@@ -246,7 +246,7 @@
         alert('You can add upto 50 CC emails');
         return false;
       }
-      
+
       if(getFromSessionStorage('seenArticlesArray') && getFromSessionStorage('seenArticlesArray').length > 0){
         var _seenArticles = getFromSessionStorage('seenArticlesArray').slice().splice(-50); // only taking last 50 items
         jQuery('#meta_seen_articles').val(JSON.stringify(_seenArticles));

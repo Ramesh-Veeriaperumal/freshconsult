@@ -319,7 +319,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         Group.destroy_groups(Account.current, GroupType.group_type_id(FIELD_GROUP_NAME))
         GroupType.destroy_group_type(Account.current, FIELD_GROUP_NAME)
       end
- 
+
       def expire_cache
         Account.current.clear_required_ticket_fields_cache
         Account.current.clear_section_parent_fields_cache
