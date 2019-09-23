@@ -6,6 +6,7 @@ module Redis::Keys::RateLimit
   DEFAULT_API_LIMIT             = "DEFAULT_API_LIMIT".freeze
   PLAN_API_LIMIT                = "PLAN_API_LIMIT:%{plan_id}".freeze
   PLAN_API_MIN_LIMIT            = "PLAN_API_MIN_LIMIT:%{plan_id}".freeze
+  PLAN_API_MIN_PATHS_LIMIT      = "PLAN_API_MIN_PATHS_LIMIT:%{plan_id}".freeze
   DEFAULT_API_MIN_LIMIT         = 'DEFAULT_API_MIN_LIMIT'.freeze
   PRIVATE_API_THROTTLER         = "PRIVATE_API_THROTTLER:%{account_id}".freeze
   ACCOUNT_PRIVATE_API_LIMIT     = "ACCOUNT_PRIVATE_API_LIMIT:%{account_id}".freeze

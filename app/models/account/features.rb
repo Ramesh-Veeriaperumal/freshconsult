@@ -30,7 +30,7 @@ class Account < ActiveRecord::Base
     :fb_page_api_improvement, :attachment_redirect_expiry, :solutions_agent_portal, :solutions_agent_metrics, :fuzzy_search,
     :delete_trash_daily, :automation_revamp, :prevent_wc_ticket_create, 
     :allow_wildcard_ticket_create, :requester_privilege, :sso_unique_session, :fluffy_min_level,
-    :scheduling_fsm_dashboard, :enable_customer_journey, :csat_translations, :supervisor_custom_status,
+    :scheduling_fsm_dashboard, :enable_customer_journey, :csat_translations,
     :sandbox_temporary_offset, :downgrade_policy, :mentions_to_tms, :allow_update_agent, :optar_cache
   ].freeze
 
@@ -62,7 +62,7 @@ class Account < ActiveRecord::Base
     :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible, :ticket_properties_suggester, :ticket_properties_suggester_eligible,
     :autofaq, :proactive_spam_detection,
     :hide_first_response_due, :agent_articles_suggest, :email_articles_suggest, :customer_journey, :botflow,
-    :help_widget, :help_widget_appearance, :help_widget_predictive, :portal_article_filters
+    :help_widget, :help_widget_appearance, :help_widget_predictive, :portal_article_filters, :supervisor_custom_status
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 

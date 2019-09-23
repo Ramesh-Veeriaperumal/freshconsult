@@ -36,6 +36,120 @@ class HtmlSanitizerTest < ActionView::TestCase
     refute html_value.include?('onmouseover="alert(1)"'), 'js events not trimmed'
   end
 
+  def test_css_if_does_not_contains_blacklisted_properties
+    controller_params = %[
+  <div
+    style="height: 100px;position: absolute;z-index:1"
+    onmouseover="alert(1)"
+    class="random"
+  ></div>
+  <p>hello!</p>
+]
+    html_value = Helpdesk::HTMLSanitizer.clean(controller_params)
+    refute html_value.include?('position: absolute;'), 'blacklisted css property removed'
+    refute html_value.include?('z-index:1'), 'z-index property removed'
+  end
+
+  def test_css_if_does_not_contains_blacklisted_properties_with_negative_values
+    controller_params = %[
+  <div
+    style="height: 100px;position: absolute;margin-left: 25px;margin-right: -50px;"
+    onmouseover="alert(1)"
+    class="random"
+  ></div>
+  <p>hello!</p>
+]
+    html_value = Helpdesk::HTMLSanitizer.clean(controller_params)
+    assert html_value.include?('margin-left: 25px'), 'positive values retained'
+    refute html_value.include?('position: absolute;'), 'blacklisted css property removed'
+    refute html_value.include?('margin-right: -50px;'), 'negative margins removed'
+  end
+
+  def test_css_if_it_ignores_empty_styles
+    controller_params = %[
+  <div
+    style="height: 100px;position: absolute;;margin-left: 25px;margin-right: -50px;"
+    onmouseover="alert(1)"
+    class="random"
+  ></div>
+]
+    html_value = Helpdesk::HTMLSanitizer.clean(controller_params)
+    assert html_value.include?('height: 100px;margin-left: 25px'), 'positive values retained'
+    refute html_value.include?('position: absolute'), 'able to ignore the empty styles'
+  end
+
+  def test_css_if_it_contains_invalid_styles
+    controller_params = %[
+  <div
+    style="height: 100px;position: absolute;;margin-left: 25px;width color;; transform"
+    onmouseover="alert(1)"
+    class="random"
+  ></div>
+]
+    html_value = Helpdesk::HTMLSanitizer.clean(controller_params)
+    assert html_value.include?('height: 100px;margin-left: 25px'), 'positive values retained'
+    refute html_value.include?('width color;; transform'), 'able to handle invalid styles in css'
+  end
+
+  def test_css_if_it_contains_only_name_in_the_negative_properties
+    controller_params = %(
+  <div
+    style="height: 100px;position: absolute;;margin:;width color;; transform"
+  ></div>
+)
+    html_value = Helpdesk::HTMLSanitizer.clean(controller_params)
+    assert_equal('
+  <div style="height: 100px"></div>
+', html_value, 'handle negaitve properties with nil')
+  end
+
+  def test_css_sanitizer_if_it_is_able_to_handle_junk_invalid_styles
+    controller_params = %(
+  <div
+    style="height: 100px;position: absolute;;margin:;width color;; junk::;;;:::,;;kjbjkbda:;;;;;;:::transform"
+  ></div>
+)
+    html_value = Helpdesk::HTMLSanitizer.clean(controller_params)
+    assert_equal('
+  <div style="height: 100px"></div>
+', html_value, 'handle junk and invalid values')
+  end
+
+  def test_css_sanitizer_if_it_is_able_to_handle_case_sensitive_styles
+    controller_params = %(
+  <div
+    style="height: 100px; POSITION: ABSOLUTE"
+  ></div>
+)
+    html_value = Helpdesk::HTMLSanitizer.clean(controller_params)
+    assert_equal('
+  <div style="height: 100px"></div>
+', html_value, 'handle case sensitive styles')
+  end
+
+  def test_css_sanitizer_check_if_able_to_parse_quot_in_font_family
+    controller_params = %(
+  <div
+    style="font-size: 10pt; font-family: Arial, sans-serif, &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif, &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif"
+  ></div>
+)
+    html_value = Helpdesk::HTMLSanitizer.clean(controller_params)
+    assert_equal("
+  <div style='font-size: 10pt; font-family: Arial, sans-serif, \"Helvetica Neue\", Helvetica, Arial, sans-serif, \"Helvetica Neue\", Helvetica, Arial, sans-serif'></div>
+", html_value, 'handle quotes in font-family')
+  end
+
+  def test_css_sanitizer_if_it_is_able_strip_off_blacklisted_values_in_style_property
+    controller_params = %(
+  <div
+    style="height: 100px; POSITION: ABSOLUTE; position: Relative;"
+  ></div>
+)
+    html_value = Helpdesk::HTMLSanitizer.clean(controller_params)
+    assert html_value.include?('position: Relative'), 'positive values retained'
+    refute html_value.include?('POSITION: ABSOLUTE;'), 'blacklisted style value trimmed'
+  end
+
   def test_table_containing_bgcolor_removed_and_pasted_style
     controller_params = %[ <table style="padding:5px;width:300px;color:#ffffff;font-size:12px" bgcolor="#EC3710"> ]
     html_value = Helpdesk::HTMLSanitizer.clean(controller_params)

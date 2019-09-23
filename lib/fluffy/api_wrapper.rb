@@ -1,17 +1,25 @@
 class Fluffy::ApiWrapper
+  include Fluffy::Constants
 
   attr_accessor :domain, :limit, :granularity, :path
-
-  HOUR_GRANULARITY = :hour
-  MINUTE_GRANULARITY = :minute
-  GRANULARITY_OPTIONS = { hour: 'HOUR', minute: 'MINUTE' }.freeze
 
   def initialize(domain)
     @domain = domain
   end
 
-  def update(limit, granularity = :hour)
-    fluffy_account = Fluffy::Account.new({name: domain, limit: limit, granularity: GRANULARITY_OPTIONS[granularity]})
+  def update(limit, granularity = HOUR_GRANULARITY, account_paths = [])
+    unless domain.present? || limit.present?
+      Rails.logger.info "FLUFFY domain/limit is missing in the params"
+      return false
+    end
+    fluffy_account = Fluffy::Account.new(
+      {
+        name: domain,
+        limit: limit.to_i,
+        granularity: GRANULARITY_OPTIONS[granularity],
+        account_paths: account_paths
+      }
+    )
     response = self.class.log_response_with_time(:update_application, [domain, fluffy_account]) do
       $fluffy_client.update_application(domain, fluffy_account)
     end
@@ -28,26 +36,30 @@ class Fluffy::ApiWrapper
     success?(response)
   end
 
-  def update_path_limits(limit, path, request_type, granularity = :hour)
-    fluffy_account_path = Fluffy::AccountPath.new(:method => request_type, :limit => limit, :path => path, :granularity => GRANULARITY_OPTIONS[granularity])
-    fluffy_account = Fluffy::Account.new({name: domain, limit: limit, granularity: GRANULARITY_OPTIONS[granularity], path: fluffy_account_path})
-
-    response = self.class.log_response_with_time(:update_application, [domain, fluffy_account]) do
-      $fluffy_client.update_application(domain, fluffy_account)
-    end
-    success?(response)
-  end
-
   def success?(response)
     self.class.success?(response)
   end
 
   class << self
 
-    def create(domain, limit, granularity = :hour)
+    def create(domain, limit, granularity = HOUR_GRANULARITY, account_paths = [])
+      unless domain.present? || limit.present?
+        Rails.logger.info 'FLUFFY domain/limit is missing in the params'
+        return false
+      end
+
       params = {
-        account: Fluffy::Account.new(name: domain, limit: limit, granularity: GRANULARITY_OPTIONS[granularity])
+        account: Fluffy::Account.new(
+          name: domain,
+          limit: limit.to_i,
+          granularity: Fluffy::Constants::GRANULARITY_OPTIONS[granularity],
+          account_paths: account_paths
+        )
       }
+      fluffy_add_account(params)
+    end
+
+    def fluffy_add_account(params)
       response = log_response_with_time(:add_application, params) do
         $fluffy_client.add_application(params)
       end

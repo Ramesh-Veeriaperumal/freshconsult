@@ -3,6 +3,9 @@ require_dependency "cache/memcache/portal"
 class Portal < ActiveRecord::Base
 
   self.primary_key = :id
+
+  include Redis::OthersRedis
+  include Redis::Keys::Others
   HEX_COLOR_REGEX = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/
   VERIFICATION_HASH_SECRET = 'f1cb366f-c4e7-4fde-b761-995fd5e5fbf7'.freeze
 
@@ -32,6 +35,7 @@ class Portal < ActiveRecord::Base
   before_create :update_custom_portal , :unless => :main_portal
   after_create :update_custom_portal , :unless => :main_portal
   before_update :update_custom_portal , :unless => :main_portal
+  after_commit :toggle_autofaq_features, :on => :update, if: :main_portal_language_changes?
 
   include Mobile::Actions::Portal
   include Cache::Memcache::Portal
@@ -357,6 +361,14 @@ class Portal < ActiveRecord::Base
       if forum_category_id_changed?
         portal_forum_categories.first.delete if !portal_forum_categories.empty?
         portal_forum_categories.build(:forum_category_id => forum_category_id) if forum_category_id?
+      end
+    end
+
+    def toggle_autofaq_features
+      unless ismember?(SYSTEM42_SUPPORTED_LANGUAGES, account.language)
+        account.reset_feature(:autofaq)
+        account.reset_feature(:botflow)
+        account.save
       end
     end
 

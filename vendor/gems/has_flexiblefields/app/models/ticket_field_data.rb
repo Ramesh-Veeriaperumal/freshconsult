@@ -13,6 +13,7 @@ class TicketFieldData < ActiveRecord::Base
 
   ALLOWED_FIELD_TYPES = ['custom_dropdown', 'custom_number', 'custom_checkbox', 'nested_field', 'custom_date'].freeze
   NEW_DROPDOWN_COLUMN_NAMES = column_names.grep(/ffs.+/)[80..249]
+  NEW_CHECKBOX_COLUMN_NAMES = column_names.grep(/ff_boolean.+/)[10..30]
 
   def ff_def
     read_attribute :flexifield_def_id

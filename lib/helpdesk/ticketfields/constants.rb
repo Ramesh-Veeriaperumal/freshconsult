@@ -8,12 +8,14 @@ module Helpdesk::Ticketfields::Constants
   TEXT_FIELD_COUNT      = 10
   DECIMAL_FIELD_COUNT   = 10
   TICKET_FIELD_DATA_DROPDOWN_COUNT = 250
+  TICKET_FIELD_DATA_CHECKBOX_COUNT = 30
 
   DROPDOWN_FIELDS = (1..DROPDOWN_FIELD_COUNT).collect { |n| "ffs_#{format('%02d', n)}" }.freeze
   TICKET_FIELD_DATA_DROPDOWN_FIELDS = (1..TICKET_FIELD_DATA_DROPDOWN_COUNT).collect { |n| "ffs_#{format('%02d', n)}" }.freeze
   NUMBER_FIELDS   = (1..NUMBER_FIELD_COUNT).collect { |n| "ff_int#{format('%02d', n)}" }.freeze
   DATE_FIELDS     = (1..DATE_FIELD_COUNT).collect { |n| "ff_date#{format('%02d', n)}" }.freeze
   CHECKBOX_FIELDS = (1..CHECKBOX_FIELD_COUNT).collect { |n| "ff_boolean#{format('%02d', n)}" }.freeze
+  TICKET_FIELD_DATA_CHECKBOX_FIELDS = (1..TICKET_FIELD_DATA_CHECKBOX_COUNT).collect { |n| "ff_boolean#{format('%02d', n)}" }.freeze
   TEXT_FIELDS     = (1..TEXT_FIELD_COUNT).collect { |n| "ff_text#{format('%02d', n)}" }.freeze
   DECIMAL_FIELDS  = (1..DECIMAL_FIELD_COUNT).collect { |n| "ff_decimal#{format('%02d', n)}" }.freeze
 
@@ -47,7 +49,7 @@ module Helpdesk::Ticketfields::Constants
     text:    TEXT_FIELD_COUNT,
     number:  NUMBER_FIELD_COUNT,
     date:    DATE_FIELD_COUNT,
-    boolean: CHECKBOX_FIELD_COUNT,
+    boolean: TICKET_FIELD_DATA_CHECKBOX_COUNT,
     decimal: DECIMAL_FIELD_COUNT
   }.freeze
 
@@ -56,7 +58,7 @@ module Helpdesk::Ticketfields::Constants
     nested_field:   [['text', 'dropdown'], TICKET_FIELD_DATA_DROPDOWN_FIELDS, TICKET_FIELD_DATA_DROPDOWN_COUNT],
     dropdown:       [['text', 'dropdown'], TICKET_FIELD_DATA_DROPDOWN_FIELDS, TICKET_FIELD_DATA_DROPDOWN_COUNT],
     number:         ['number', NUMBER_FIELDS, NUMBER_FIELD_COUNT],
-    checkbox:       ['checkbox', CHECKBOX_FIELDS, CHECKBOX_FIELD_COUNT],
+    checkbox:       ['checkbox', TICKET_FIELD_DATA_CHECKBOX_FIELDS, TICKET_FIELD_DATA_CHECKBOX_COUNT],
     date:           ['date', DATE_FIELDS, DATE_FIELD_COUNT],
     date_time:      ['date_time', DATE_FIELDS, DATE_FIELD_COUNT],
     paragraph:      ['paragraph', SERIALIZED_MLT_FIELDS, SERIALIZED_MLT_FIELDS.length],

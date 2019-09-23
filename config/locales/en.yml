@@ -3059,6 +3059,7 @@ en:
         decimal: You are not allowed to create more than 10 decimal fields.
         boolean: You are not allowed to create more than 10 checkbox fields.
         date: You are not allowed to create more than 10 date fields.
+        boolean_ticket_field_data: You are not allowed to create more than 30 checkbox fields.
     cf:
       type:
         contact_fields_controller: Contact Fields
@@ -12716,6 +12717,11 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     webhook_dropped: "Webhook dropped"
     customer_import: "%{import_type} import for %{account_full_domain}"
     customer_import_stopped: "%{import_type} import for %{account_full_domain} stopped"
+  mobile_onboarding:
+    try_mobile_app: "Try using the Freshdesk app for a"
+    for_better_experience: "better experience."
+    use_this_url: "Use this URL while logging in"
+    skip_app_download: "Skip for now"
   sandbox:
     live: Sandbox is live
     sync_complete: Sandbox sync complete!

@@ -1,0 +1,119 @@
+<!doctype html>
+<html>
+    <head>
+      <style>
+        * {
+            font-family: -apple-system, BlinkMacSystemFont, "National-Regular", "National-Regular", "National-Regular", National-Regular, sans-serif;
+        }
+        html {
+          width: 100%;
+          height: 100%;
+        } 
+        body {
+          background: linear-gradient(#b8f5d4, #ffffff);
+          height: 100%;
+          background-repeat: no-repeat;
+          padding: 20px;
+        }
+       
+        #app_onboarding_title {
+          color: #000000;
+          font-weight: bold;
+          padding: 10px;
+          font-size: 18px
+        } 
+
+        #url_title {
+          color: #000000;
+          padding-top: 5px;
+          font-size: 16px
+        } 
+
+        #url_domain {
+          color: #000000;
+          font-weight: bold;
+          margin-top: -10px;
+          font-size: 16px
+        } 
+
+        h5 {
+          color: #000000;
+        }
+
+        .media {
+          height: 40%;
+          overflow-y: hidden;
+          text-align: center;
+        }
+
+        .content {
+          text-align: center;
+        }
+
+      #setSkipCookie {
+        text-decoration: underline;
+        color: #000000;
+        display: block;
+        margin: 5px;
+        padding: 5px;
+        cursor: pointer;
+      }  
+
+      .ios_button {
+        display:inline-block;
+        overflow:hidden;
+        background:url(https://linkmaker.itunes.apple.com/en-us/badge-lrg.svg?releaseDate=2014-04-08&kind=iossoftware&bubble=ios_apps) no-repeat;
+        width:135px;
+        height:40px;
+      }
+      .android_button {
+        display:inline-block;
+        overflow:hidden;
+        background:url(https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png) no-repeat center ;
+        width:135px;
+        height:40px;
+        background-size:cover;
+      }
+     
+     
+      @media only screen and (orientation: landscape) {
+        .media, .content {
+          float: left;
+          width: 50%;
+        }
+        .media{
+          height: 100%;
+        }
+      }
+    </style>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Freshdesk</title>
+    </head>
+
+    <body>
+      <div class="media">
+      <%= image_tag("#{asset_host_url}/images/mobile/mobile_activation_image.svg") %>
+       </div>
+      <div class="content">
+        <p id ="app_onboarding_title"><%= t('mobile_onboarding.try_mobile_app') %> <br/> <%= t("mobile_onboarding.for_better_experience") %></p>
+        <p id ="url_title"><%= t('mobile_onboarding.use_this_url') %>:</p>
+        <p id="url_domain"><%= app_helpdesk_url %><p>
+        <%= link_to "" ,redirection_url, class: (mobile_os == :android ? 'android_button' : 'ios_button')%>
+        <a id="setSkipCookie"><%=t('mobile_onboarding.skip_app_download')%></a>
+      </div>
+    </body>
+
+    <script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function(){
+      document.querySelector('#setSkipCookie').addEventListener('click', function(){
+        var date = new Date();
+        date.setTime(date.getTime()+365*24*60*60*1000); 
+        var expires = "; expires=" + date.toGMTString(); 
+        document.cookie = "skip_mobile_app_download"+"=" + true +expires + ";path=/";       
+        window.location = '<%= skip_app_download_url %>'
+      })
+    });
+    </script>
+</html>
