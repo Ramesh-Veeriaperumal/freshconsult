@@ -17,12 +17,6 @@ module Cache::Memcache::SubscriptionPlan
     fetch_from_cache(key) { Billing::Subscription.new.retrieve_plan(plan.name, renewal_period) }
   end
 
-  def retrieve_plan_from_cache(plan, renewal_period)
-    key = plan.chargebee_plan_cache_key(renewal_period,
-      Account.current.subscription.currency_name)
-    fetch_from_cache(key) { Billing::Subscription.new.retrieve_plan(plan.name, renewal_period) }
-  end
-
   def clear_cache
     Subscription::Currency.all.collect(&:name).each do |currency|
       Billing::Subscription::BILLING_PERIOD.keys.each do |period|

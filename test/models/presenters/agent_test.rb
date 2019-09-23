@@ -50,17 +50,6 @@ class AgentTest < ActiveSupport::TestCase
     event_info.must_match_json_expression(event_info_pattern())
   end
 
-  def test_agent_create_event_info
-    CentralPublishWorker::UserWorker.jobs.clear
-    agent = add_agent(@account, role: Role.find_by_name('Agent').id, available: false).agent
-    # assert_equal 1, CentralPublishWorker::UserWorker.jobs.size
-    job = ::CentralPublishWorker::UserWorker.jobs.last
-    payload = agent.central_publish_payload.to_json
-    payload.must_match_json_expression(central_publish_post_pattern(agent))
-    event_info = agent.event_info(:create)
-    event_info.must_match_json_expression(event_info_pattern())
-  end
-
   def test_agent_update_publish_to_central
     agent = add_agent(@account, role: Role.find_by_name('Agent').id, available: false).agent
     agent.reload
