@@ -34,10 +34,15 @@ module Ember
     def test_bulk_create_with_freshchat_success_response
       @account.reload
       enable_autofaq_feature
+      plan = SubscriptionPlan.find_by_name(SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_19])
+      @account.subscription.state = 'trial'
+      @account.subscription.plan = plan
+      @account.subscription.save
       stub_request(:post, %r{^#{Freshchat::Account::CONFIG[:signup][:host]}.*?$}).to_return(body: freshchat_response, headers: { 'Content-Type' => 'application/json' }, status: 201)
       stub_request(:put, %r{^#{FreddySkillsConfig[:system42][:onboard_url]}.*?$}).to_return(status: 200)
       post :bulk_create_bot, controller_params
       assert_response 200
+      assert_equal @account.subscription.plan_name, SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_omni_jan_19]
     ensure
       @account.freshchat_account.destroy
       disable_autofaq_feature

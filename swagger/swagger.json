@@ -13518,7 +13518,7 @@
             "name": "order_by",
             "in": "query",
             "type": "string",
-            "description": "Possible values are group_id, product_id."
+            "description": "Possible values are group_id, product_id and failure_code."
           },
           {
             "name": "order_type",
@@ -20032,6 +20032,9 @@
                   "description": "Possible values are plain, login, cram_md5."
                 },
                 "user_name": {
+                  "type": "string"
+                },
+                "failure_code": {
                   "type": "string"
                 }
               }

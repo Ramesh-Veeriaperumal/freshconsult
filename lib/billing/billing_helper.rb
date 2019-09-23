@@ -59,21 +59,31 @@ module Billing::BillingHelper
     end
 
     def update_field_agent_limit(subscription, billing_subscription)
+      result = false
       fsm_addon = subscription.addons.find { |addon| addon.name == Subscription::Addon::FSM_ADDON }
-      existing_field_agent_limit = subscription.field_agent_limit
       if fsm_addon
-        new_field_agent_limit = billing_subscription.addons.find { |addon| addon.id ==
-          fsm_addon.billing_addon_id.to_s }.quantity
-        subscription.field_agent_limit = new_field_agent_limit
-        if existing_field_agent_limit && new_field_agent_limit < existing_field_agent_limit
-          params = { account_id: subscription.account_id, old_field_agent_limit: existing_field_agent_limit, new_field_agent_limit: new_field_agent_limit }
-          msg = 'FSM addon quantity dropped from Chargebee. There may be additional (no more charged) field agents in Freshdesk'
-          Rails.logger.info " #{msg} #{params.inspect}"
-          Admin::AdvancedTicketing::FieldServiceManagement::Util.notify_fsm_dev(msg, params)
-        end
+        new_field_agent_limit = billing_subscription.addons.find { |addon| addon.id == fsm_addon.billing_addon_id.to_s }.quantity
+        result = field_agent_quantity_exceeded?(new_field_agent_limit)
+        subscription.field_agent_limit = result ? @account.field_agents_count : new_field_agent_limit
       else
         subscription.reset_field_agent_limit
       end
+      result
+    end
+
+    def check_subscribed_seats_availability(subscription, billing_subscription)
+      result = agent_quantity_exceeded?(billing_subscription)
+      subscription.agent_limit = @account.full_time_support_agents.count if result
+      result = true if update_field_agent_limit(subscription, billing_subscription)
+      if result
+        updated_addons = subscription.addons
+        Billing::Subscription.new.update_subscription(subscription, false, updated_addons)
+      end
+      subscription.save
+    end
+
+    def agent_quantity_exceeded?(billing_subscription)
+      billing_subscription.plan_quantity && billing_subscription.plan_quantity < @account.full_time_support_agents.count
     end
 
     def has_pending_downgrade_request?(account)
@@ -82,5 +92,9 @@ module Billing::BillingHelper
 
     def has_scheduled_changes?(content)
       content[:subscription][:has_scheduled_changes]
+    end
+
+    def field_agent_quantity_exceeded?(new_field_agent_limit)
+      new_field_agent_limit && new_field_agent_limit < @account.field_agents_count
     end
 end

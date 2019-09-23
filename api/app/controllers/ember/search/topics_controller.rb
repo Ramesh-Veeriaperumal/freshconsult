@@ -6,17 +6,18 @@ module Ember
         @category_id = params[:category_id].to_i if params[:category_id].present?
         @sort_direction = 'desc'
 
-        if params[:context] == 'spotlight'
-          @search_context = :agent_spotlight_topic
-          @search_sort = params[:search_sort] if params[:search_sort].present?
-        elsif params[:context] == 'merge'
+        if params[:context] == 'merge'
           @search_context = :merge_topic_search
-          @search_sort    = 'created_at'
+          @search_sort = 'created_at'
           @visibility	= params[:visibility].to_i if params[:visibility].present?
+        else
+          @search_context = :agent_spotlight_topic
+          @search_sort = params[:search_sort].presence
         end
 
         @items = esv2_query_results(esv2_agent_models)
         response.api_meta = { count: @items.total_entries }
+        @items = [] if @count_request
       end
 
       private

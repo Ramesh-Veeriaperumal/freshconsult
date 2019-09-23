@@ -169,6 +169,13 @@ module Cache::Memcache::Account
     end
   end
 
+  def support_agent_groups_from_cache
+    @support_agent_groups_from_cache ||= begin
+      key = support_agent_groups_memcache_key
+      MemcacheKeys.fetch(key) { self.groups.support_agent_groups }
+    end
+  end
+
   def group_types_from_cache
     key = group_types_memcache_key
     fetch_from_cache(key) { self.get_or_create_group_types }
@@ -193,18 +200,18 @@ module Cache::Memcache::Account
   def agent_groups_hash_from_cache
     @agent_groups_hash_from_cache ||= begin
       key = agent_groups_hash_memcache_key
-      MemcacheKeys.fetch(key) { 
+      MemcacheKeys.fetch(key) {
         Rails.logger.debug "fetching agent_groups from db"
-        agent_groups_ids = Hash.new              
+        agent_groups_ids = Hash.new
         agents_groups = Account.current.agent_groups_from_cache
         agents_groups.each do |ag|
-          agent_groups_ids[ag.group_id] ||= []          
+          agent_groups_ids[ag.group_id] ||= []
           agent_groups_ids[ag.group_id].push(ag.user_id)
-        end        
+        end
         agent_groups_ids
       }
     end
-  end 
+  end
 
   def products_from_cache
     if optar_cache_enabled?
@@ -234,7 +241,7 @@ module Cache::Memcache::Account
   end
 
   def clear_feature_from_cache
-    MemcacheKeys.delete_from_cache(FEATURES_LIST % { :account_id => self.id }) 
+    MemcacheKeys.delete_from_cache(FEATURES_LIST % { :account_id => self.id })
   end
 
   def reset_feature_from_cache_variable
@@ -260,7 +267,7 @@ module Cache::Memcache::Account
       key = DEFAULT_BUSINESS_CALENDAR % {:account_id => self.id}
       MemcacheKeys.fetch(key) do
         self.business_calendar.default.first
-      end    
+      end
     end
   end
 
@@ -388,11 +395,11 @@ module Cache::Memcache::Account
       end
     end
   end
-  
+
   def reset_skills_trimmed_version_from_cache
     @skills_trimmed_version_from_cache = nil
   end
-  
+
   def reset_skills_from_cache
     @skills_from_cache = nil
   end
@@ -769,6 +776,10 @@ module Cache::Memcache::Account
       ACCOUNT_GROUPS % { :account_id => self.id }
     end
 
+    def support_agent_groups_memcache_key
+      ACCOUNT_SUPPORT_AGENT_GROUPS % { :account_id => self.id }
+    end
+
     def agent_groups_memcache_key
       ACCOUNT_AGENT_GROUPS % { account_id: id }
     end
@@ -779,7 +790,7 @@ module Cache::Memcache::Account
 
     def agent_groups_hash_memcache_key
       ACCOUNT_AGENT_GROUPS_HASH % { account_id: id }
-    end 
+    end
 
     def tags_memcache_key
       ACCOUNT_TAGS % { :account_id => self.id }

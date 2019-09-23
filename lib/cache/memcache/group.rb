@@ -4,6 +4,7 @@ module Cache::Memcache::Group
 
   def clear_cache
     MemcacheKeys.delete_from_cache(ACCOUNT_GROUPS % { :account_id =>self.account_id })
+    MemcacheKeys.delete_from_cache(ACCOUNT_SUPPORT_AGENT_GROUPS % { :account_id =>self.account_id })
   end
 
 end

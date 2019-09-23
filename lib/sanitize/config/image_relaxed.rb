@@ -65,9 +65,10 @@ class Sanitize
         'img'        => {'src'  => ['http', 'https', :relative,'cid']},
         'ins'        => {'cite' => ['http', 'https', :relative]},
         'q'          => {'cite' => ['http', 'https', :relative]},
-        'source'     => {'src'  => ['http', 'https']}
+        'source'     => {'src'	=> ['http', 'https']}
       },
       transformers: lambda do |env|
+        Sanitize::Config::CSSSanitizer.sanitize_styles(env[:node])
         Sanitize::Config::BgColorSanitizer.bg_color_sanitizer(env[:node])
       end
     }

@@ -45,7 +45,8 @@ module Search::V2::AbstractController
           offset:       @offset,
           types:        searchable_types,
           es_params:    construct_es_params,
-          locale:       @es_locale
+          locale:       @es_locale,
+          count_request: @count_request
         )
         @invalid ? [] : handler.query_results
       end
@@ -120,7 +121,8 @@ module Search::V2::AbstractController
         @search_key     = (params[:term] || params[:search_key] || params[:q] || params[:v] || params[:name] || '')
         @exact_match    = true if Search::Utils.exact_match?(@search_key)
         @es_search_term = Search::Utils.extract_term(@search_key, @exact_match)
-
+        @count_request  = params[:only] == 'count'
+        params[:limit]  = Search::Utils::COUNT_REQUEST_PER_PAGE if @count_request
         limit           = (params[:max_matches] || params[:limit] || params[:per_page]).to_i
         @size           = (limit.zero? or (limit > Search::Utils::MAX_PER_PAGE)) ? Search::Utils::MAX_PER_PAGE : limit
         @mq_limit       = limit.zero? ? Search::Utils::MQ_SPOTLIGHT_SEARCH_LIMIT : limit

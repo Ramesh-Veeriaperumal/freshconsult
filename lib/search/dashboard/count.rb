@@ -117,6 +117,7 @@ module Search
       end
 
       def write_to_analytics_cluster(model_object, version_stamp)
+        Rails.logger.info "Index to CountClient --- account::: #{@account_id}, #{@payload[:klass_name]}::: #{@payload[:document_id]}, action::: #{@payload[:action]}, version::: #{version_stamp}"
         SearchService::Client.new(@account_id).write_count_object(model_object, version_stamp)
       end
 
@@ -125,6 +126,7 @@ module Search
       end
 
       def delete_from_analytics_cluster(document_id)
+        Rails.logger.info "Remove from CountClient --- account::: #{@account_id}, #{@payload[:klass_name]}::: #{@payload[:document_id]}, action::: #{@payload[:action]}"
         SearchService::Client.new(@account_id).delete_object('ticketanalytics', document_id)
       end
     end

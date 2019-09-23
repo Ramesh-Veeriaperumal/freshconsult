@@ -29,10 +29,10 @@ module Ember
 
     def setup
       super
-      WebMock.allow_net_connect!
       MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
       Account.current.features.es_v2_writes.destroy
       Account.find(Account.current.id).make_current
+      Facebook::KoalaWrapper::DirectMessage.any_instance.stubs(:fetch_page_scope_id).returns(nil)
 
       Social::CustomTwitterWorker.stubs(:perform_async).returns(true)
 
@@ -42,7 +42,7 @@ module Ember
 
     def teardown
       super
-      WebMock.disable_net_connect!
+      Facebook::KoalaWrapper::DirectMessage.any_instance.unstub(:fetch_page_scope_id)
       MixpanelWrapper.unstub(:send_to_mixpanel)
       Social::CustomTwitterWorker.unstub(:perform_async)
     end
@@ -824,6 +824,7 @@ module Ember
     end
 
     def test_facebook_reply_without_facebook_page
+      Social::FacebookPage.any_instance.stubs(:gateway_facebook_page_mapping_details).returns(nil)
       ticket = create_ticket_from_fb_post(true, true)
       fb_page = ticket.fb_post.facebook_page
       fb_page.destroy

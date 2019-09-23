@@ -695,8 +695,10 @@ private
     @model_changes.merge!(schema_less_ticket.changes) unless schema_less_ticket.nil?
     @model_changes.merge!(flexifield.before_save_changes) unless flexifield.nil?
     if account.ticket_field_limit_increase_enabled? && ticket_field_data.present?
-      changes = ticket_field_data.attribute_changes.reject { |k,v|
-                  !TicketFieldData::NEW_DROPDOWN_COLUMN_NAMES_SET.include?(k.to_s) }
+      changes = ticket_field_data.attribute_changes.select do |k,v|
+        TicketFieldData::NEW_DROPDOWN_COLUMN_NAMES_SET.include?(k.to_s) ||
+          TicketFieldData::NEW_CHECKBOX_COLUMN_NAMES_SET.include?(k.to_s)
+      end
       @model_changes.merge!(changes)
     end
     @model_changes.merge!({ tags: [] }) if self.tags_updated #=> Hack for when only tags are updated to trigger ES publish

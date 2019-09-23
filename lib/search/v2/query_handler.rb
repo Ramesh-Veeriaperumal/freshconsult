@@ -17,6 +17,7 @@ module Search
         @es_params        = args[:es_params]
         @locale           = args[:locale]
         @templates        = args[:templates]
+        @count_request    = args[:count_request] || false
         @records          = []
       end
 
@@ -34,7 +35,8 @@ module Search
             SearchService::Utils.construct_payload(@searchable_types, template_name, @es_params, @locale),
             request_id,
             { search_type: template_name }
-          ).records_with_ar(@es_models, @account_id, paginate_params)
+          )
+          @records = @count_request ? @records : @records.records_with_ar(@es_models, @account_id, paginate_params)
         rescue Exception => e
           Rails.logger.error "Searchv2 exception - #{e.message} - #{e.backtrace.first}"
           NewRelic::Agent.notice_error(e)

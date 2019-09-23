@@ -3319,4 +3319,7 @@ Helpkit::Application.routes.draw do
 
   post '/yearin_review/share', to: 'year_in_review#share'
   post '/yearin_review/clear', to: 'year_in_review#clear'
+  
+  match '/mobile/welcome'  => 'mobile_app_download#index'
+
 end
