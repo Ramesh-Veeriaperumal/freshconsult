@@ -24030,6 +24030,9 @@
           "type": "string",
           "format": "date-time"
         },
+        "days_remaining": {
+          "type": "integer"
+        },
         "agent_seats": {
           "type": "integer"
         },
@@ -24044,6 +24047,23 @@
         },
         "reseller_paid_account": {
           "type": "boolean"
+        },
+        "subscription_request": {
+          "type": "object",
+          "properties": {
+            "plan_name": {
+              "type": "string"
+            },
+            "agent_seats": {
+              "type": "integer"
+            },
+            "renewal_period": {
+              "type": "integer"
+            },
+            "fsm_field_agents": {
+              "type": "integer"
+            }
+          }
         },
         "created_at": {
           "type": "string",

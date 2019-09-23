@@ -12,6 +12,7 @@ class Admin::TrialSubscriptionsControllerTest < ActionController::TestCase
   def before_all
     TrialSubscription.all.each(&:delete)
     Account.current.launch TrialSubscription::TRIAL_SUBSCRIPTION_LP_FEATURE
+    Account.current.rollback(:downgrade_policy)
     subscription = Account.current.subscription
     if subscription.trial?
       subscription.state = Subscription::ACTIVE
@@ -97,6 +98,94 @@ class Admin::TrialSubscriptionsControllerTest < ActionController::TestCase
     params_hash = { trial_plan: get_valid_plan_name }
     post :create, construct_params({}, params_hash)
     assert_response 204
+  end
+
+  def test_create_when_scheduled_subscription_is_present_in_chargebee
+    subscription_request = SubscriptionRequest.new(
+      account_id: @account.id,
+      agent_limit: 1,
+      plan_id: SubscriptionPlan.current.map(&:id).third,
+      renewal_period: 1,
+      subscription_id: @account.subscription.id
+    )
+    subscription_request.save!
+    ChargeBee::Subscription.stubs(:remove_scheduled_changes).returns(true)
+    params_hash = { trial_plan: get_valid_plan_name }
+    post :create, construct_params({}, params_hash)
+    assert_response 204
+  ensure
+    ChargeBee::Subscription.unstub(:remove_scheduled_changes)
+    Account.current.subscription.subscription_request.destroy if @account.subscription.subscription_request.present?
+  end
+
+  def test_create_when_scheduled_subscription_not_present_in_chargebee
+    subscription_request = SubscriptionRequest.new(
+      account_id: @account.id,
+      agent_limit: 1,
+      plan_id: SubscriptionPlan.current.map(&:id).third,
+      renewal_period: 1,
+      subscription_id: @account.subscription.id
+    )
+    subscription_request.save!
+    invalid_request_json = { message: 'id: The value chargebee_account is already present.', type: 'invalid_request', api_error_code: 'duplicate_entry', param: 'id', error_code: 'no_scheduled_changes', error_msg: 'The value chargebee_account is already present.', error_param: 'id', http_status_code: 400 }
+    chargebee_error = ChargeBee::InvalidRequestError.new(200, invalid_request_json)
+    ChargeBee::Subscription.stubs(:remove_scheduled_changes).raises(chargebee_error)
+    params_hash = { trial_plan: get_valid_plan_name }
+    post :create, construct_params({}, params_hash)
+    assert_response 204
+  ensure
+    ChargeBee::Subscription.unstub(:remove_scheduled_changes)
+    Account.current.subscription.subscription_request.destroy if @account.subscription.subscription_request.present?
+  end
+
+  def test_create_when_chargebee_rises_error
+    @account = Account.current
+    subscription_request = SubscriptionRequest.new(
+      account_id: @account.id,
+      agent_limit: 1,
+      plan_id: SubscriptionPlan.current.map(&:id).third,
+      renewal_period: 1,
+      subscription_id: @account.subscription.id
+    )
+    @account.launch :downgrade_policy
+    subscription_request.save!
+    invalid_request_json = { message: 'id: The value chargebee_account is already present.', type: 'invalid_request', api_error_code: 'duplicate_entry', param: 'id', error_code: 'param_not_unique', error_msg: 'The value chargebee_account is already present.', error_param: 'id', http_status_code: 400 }
+    chargebee_error = ChargeBee::InvalidRequestError.new(400, invalid_request_json)
+    ChargeBee::Subscription.stubs(:remove_scheduled_changes).raises(chargebee_error)
+    params_hash = { trial_plan: get_valid_plan_name }
+    assert_raise(ChargeBee::InvalidRequestError) { post :create, construct_params({}, params_hash) }
+  ensure
+    ChargeBee::Subscription.unstub(:remove_scheduled_changes)
+    Account.current.subscription.subscription_request.destroy if @account.subscription.subscription_request.present?
+  end
+
+  def test_create_when_scheduled_cancellation_is_present_in_chargebee
+    @account.launch :downgrade_policy
+    set_others_redis_key(@account.account_cancellation_request_time_key, Time.zone.now)
+    ChargeBee::Subscription.stubs(:remove_scheduled_cancellation).returns(true)
+    params_hash = { trial_plan: get_valid_plan_name }
+    post :create, construct_params({}, params_hash)
+    assert_response 204
+    refute @account.account_cancellation_requested_time
+  ensure
+    @account.rollback :downgrade_policy
+    remove_others_redis_key(@account.account_cancellation_request_time_key)
+    ChargeBee::Subscription.unstub(:remove_scheduled_cancellation)
+  end
+
+  def test_create_when_scheduled_cancellation_not_present_in_chargebee
+    @account = Account.current
+    @account.launch :downgrade_policy
+    set_others_redis_key(@account.account_cancellation_request_time_key, Time.zone.now)
+    ChargeBee::Subscription.stubs(:remove_scheduled_cancellation).raises(ChargeBee::InvalidRequestError)
+    params_hash = { trial_plan: get_valid_plan_name }
+    post :create, construct_params({}, params_hash)
+    assert_response 400
+    match_json([{ 'code' => 'invalid_value', 'field' => :base, 'message' => 'Error while removing account cancellation request!' }])
+  ensure
+    @account.rollback :downgrade_policy
+    remove_others_redis_key(@account.account_cancellation_request_time_key)
+    ChargeBee::Subscription.unstub(:remove_scheduled_cancellation)
   end
 
   def test_latest_trial_subscription_ends_at

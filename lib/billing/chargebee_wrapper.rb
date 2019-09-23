@@ -47,9 +47,6 @@ class Billing::ChargebeeWrapper
 
 	def remove_scheduled_changes(account_id)
 		ChargeBee::Subscription.remove_scheduled_changes(account_id)
-	rescue Exception => e
-		Rails.logger.error("Error while cancelling scheduled subscription request :: #{e.message}")
-		nil
 	end
 
 	#estimate

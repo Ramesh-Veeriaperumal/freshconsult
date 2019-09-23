@@ -159,6 +159,12 @@ class Billing::Subscription < Billing::ChargebeeWrapper
     end
   end
 
+  def remove_scheduled_changes(account_id)
+    super
+  rescue ChargeBee::InvalidRequestError => error
+    raise error unless error.error_code == 'no_scheduled_changes'
+  end
+
   def current_plans_costs_per_agent(currency)
     chargebee_id_to_subscription_plan_name = {}
     plans_to_agent_cost = {}
