@@ -5,7 +5,7 @@ ar:
     phone_number: Phone Number
     job_title: Job Title
     company_name: Company Name
-    industry: Industry
+    industry: الصناعة
     company: الشركة
     photo: صورة
     title: العنوان
@@ -47,7 +47,7 @@ ar:
       new_performed_by: When an action performed by...
       new_anyone: Agent or Requester
       anyone: أي شخص
-      system: System
+      system: النظام
       info_help_1: >-
         عندما يتم تنفيذ أي حدث في بطاقة ما، تتيح لك قواعد المراقب تشغيل إجراءات
         معينة.
@@ -122,9 +122,9 @@ ar:
       index:
         save_label: Save
         cancel_label: Cancel
-        add_label: Add
+        add_label: إضافة
         manage_label: إدراة
-        no_agent_label: No Agent
+        no_agent_label: لا يوجد مندوب
         agent_label: الوكيل
         agents_label: الوكلاء
         description: الوصف
@@ -134,9 +134,9 @@ ar:
         nav_skill_list_text: Skill List
         nav_agent_skill_text: Agents' Skill
         confirm_delete_message: Are you sure you want to delete this skill?
-        skill_create: Create
-        add_agents: Add agents
-        skills: Skills
+        skill_create: إنشاء
+        add_agents: إضافة مندوبين
+        skills: المهارات
         agent_skills: Agents' Skills
         agents: الوكلاء
         edit: Edit Skill
@@ -202,7 +202,7 @@ ar:
       index:
         sbrr_disabled_admin: Skill based assignment has not been turned on for this group -
         turn_on: Turn On
-        any: Any
+        any: أي
         groups: المجموعة
         more: المزيد
         manage_skills: Manage Skills
@@ -610,7 +610,7 @@ ar:
           فقط: <b> /^[a-zA-Z0-9]*$/ </b>. لمطابقة سلسلة نصية تبدأ بكلمة "fresh"
           <b> %{regex} </b>.
         max_choices: وصلت إلى الحد الأقصى للعناصر
-        mapped_internal_groups: Mapped Internal Groups
+        mapped_internal_groups: المجموعات الداخلية المعيّنة
         multiple_company_message: Contacts can be associated with only one company.
         multiple_company_message_enable: Contacts can be associated with multiple companies.
     portal:
@@ -624,9 +624,9 @@ ar:
         signup_login: الاشتراك وتسجيل الدخول
         allow_signup: السماح للمستخدمين بالتسجيل من بوابة العملاء
         allow_signin: السماح للمستخدمين بتسجيل الدخول باستخدام...
-        google: Google
+        google: جوجل
         twitter: Twitter
-        facebook: Facebook
+        facebook: فيسبوك
         user_permissions: أذونات المستخدم للبوابة
         submit_ticket: مَنْ يمكنه تقديم بطاقة جديدة في البوابة
         public_ticket_urls_label: من يمكنه عرض بطاقات في البوابة
@@ -641,9 +641,9 @@ ar:
         simple_none: بلا
         auto_suggest_solutions: اقتراح الحلول تلقائيًا أثناء إنشاء بطاقة جديدة
         auto_suggest_solutions_help: ينطبق هذا أيضًا على ميزة البحث داخل ودجة الملاحظات.
-        restricted_login_signup: Sign up and login has been restricted to specific domains
-        important: Important
-        view_settings: View Settings
+        restricted_login_signup: تم تقييد التسجيل وتسجيل الدخول إلى نطاقات محددة
+        important: هام
+        view_settings: عرض الإعدادات
         captcha: تمكين CAPTCHA للمساعدة في تجنب البريد العشوائي
         forum_captcha: على المستخدم إدخال CAPTCHA لإنشاء موضوع
         view_solutions: مَنْ يمكنه عرض الحلول
@@ -667,6 +667,7 @@ ar:
         moderate_none_help: >-
           يتم تمكين هذه الميزة إذا كنت متأكدًا من أن مجتمعك لا يجذب مرسلي البريد
           العشوائي.
+        reset_portal_changes: إعادة تعيين تغييرات البوابة
       helpnote:
         title: إعداد بواباتك
         tour: ساعدني في تكوين بوابتي
@@ -687,6 +688,13 @@ ar:
           إعدادات إيقاف المنتديات، فانقر فوق علامة تبويب "الإعدادات". لا يمكن
           تكوين الإعدادات لكل بوابة وستكون الإعدادات عامة لكل البوابات التي تم
           إنشاؤها.
+        exit_fullscreen: إنهاء وضع ملء الشاشة
+        editor_shortcuts: اختصارات المحرر
+        preview_changes: معاينة التغييرات
+        editor_in_fullscreen: المحرر في وضع ملء الشاشة
+        level_customizations: التخصيص على مستوى الصفحة
+        advanced_rebranding: تخصيص وتغيير هوية متقدم
+        custom_stylesheets: استخدام الأنماط المخصصة
     hotline:
       heading1: Mobihelp users meet hotline
       content1:
@@ -702,14 +710,14 @@ ar:
         list4: Native integration into Freshdesk
         list5: Campaign tools and rich messaging
       content3:
-        note_title: 'Note:'
+        note_title: 'ملاحظة:'
         note_info: >-
           We will continue to support Mobihelp for existing customers, but are
           discontinuing active development for it. We encourage you to move to
           Hotline at the earliest. If you are an existing Mobihelp customer
           please reach out to support@hotline.io for special pricing.
       get_started: Get started with Hotline today
-      list_title: Mobihelp Apps
+      list_title: تطبيقات Mobihelp
     mobihelp:
       app_review:
         request_sent: تم إرسال طلب مراجعة التطبيق
@@ -1078,11 +1086,11 @@ ar:
       new_layout:
         loading: جارٍ التحميل...
         default_survey: الاستطلاع الافتراضي
-        survey: Survey
+        survey: استطلاع
         title: العنوان
         rating_order: Rating order &nbsp;
-        good_to_bad: Good to Bad
-        bad_to_good: Bad to Good
+        good_to_bad: من الجيد للسيئ
+        bad_to_good: من السيئ للجيد
         title_error_text: اسم الاستطلاع مستخدم بالفعل
         result_exist_msg: >-
           نظرًا لأنه قد تم بالفعل جمع إجابات لهذا الاستطلاع، فإنه يتعذر تعديل
@@ -1114,7 +1122,7 @@ ar:
         thanks_feedback: شكرًا لك على ملاحظاتك القيّمة.
         thanks_feedback_v2: شكرًا لك. تم تقديم ملاحظاتك.
         additional_comments_feedback: جمع ملاحظات إضافية
-        additional_comments_feedback_v2: Include additional comments box
+        additional_comments_feedback_v2: تضمين مربع ملاحظات إضافية
         additional_comments_feedback_statement: Additional feedback
         comments_feedback: أضف مزيدًا من التفاصيل عن تجربة العملاء.
         thanks_message_feedback: رسالة شكر لاستطلاع الملاحظات
@@ -1140,7 +1148,7 @@ ar:
         questions: الأسئلة
       index:
         custom_title: الاستطلاعات
-        custom_title_v2: Customer Satisfaction Surveys
+        custom_title_v2: استطلاعات رضى العملاء
         title: إعدادات رضى العملاء
         new_survey: استطلاع جديد
         load_text: جارٍ تحميل قائمة الاستطلاعات...
@@ -1158,7 +1166,7 @@ ar:
         edit: تحرير
         cancel: إلغاء
         hide: إزالة
-        preview_survey: Preview
+        preview_survey: معاينة
         preview: تجربة
         enabled: ممكَّن
         disabled: معطَّل
@@ -1176,9 +1184,9 @@ ar:
         'off': 'OFF'
         'true': true
         'false': false
-        confirm_text: Please confirm...
+        confirm_text: يرجى التأكيد...
         delete: حذف
-        activate_survey: Activate
+        activate_survey: تنشيط
         activate_msg: >-
           Activating this survey will deactivate <b id='active_survey_name'>
           Default Survey </b><br> Are you sure you want to activate?
@@ -1394,13 +1402,13 @@ ar:
         available_passes: Available Day passes
         buy_passes: Buy Day passes
         time_period: 'Time Period:'
-        filtered_by: 'Filtered by:'
+        filtered_by: 'تصفية حسب:'
         agent: الوكيل
         days_filter: 'Last %{days} days'
         wait: Please wait...
         usage_history: Usage History
         all: جميع ما ذكر
-        date: Date
+        date: التاريخ
         email: البريد الإلكتروني
         no_result: No results found for selected options.
         auto_recharge_notice: 'Current auto recharge quantity is set to '
@@ -1472,10 +1480,11 @@ ar:
         feedbackwidget_use_https: استخدام https
         feedbackwidget_mobile_view: تمكين طريقة عرض الجوال
         feedbackwidget_use_captcha: تمكين CAPTCHA
-        feedbackwidget_submit_title: Send Feedback
+        feedbackwidget_submit_title: إرسال ملاحظات
         feedbackwidget_form_submit_title: Form Submit Button
         feedbackwidget_title_maxlength: Maximum 30 characters
         feedbackwidget_submit_title_maxlength: Maximum 16 characters
+        feedbackwidget_offset: 'إزاحة:'
       embedded_widget:
         feedbackwidget_height_placeholder: 500
         feedbackwidget_form_customization: تخصيص النموذج
@@ -1495,7 +1504,7 @@ ar:
         feedbackwidget_search_area: البحث في مقالات
         feedbackwidget_use_https: استخدام https
         feedbackwidget_use_captcha: تمكين CAPTCHA
-        feedbackwidget_submit_title: Send Feedback
+        feedbackwidget_submit_title: إرسال ملاحظات
         feedbackwidget_form_submit_title: Form Submit Button
         feedbackwidget_title_maxlength: Maximum 16 characters
         feedbackwidget_submit_title_maxlength: Maximum 16 characters
@@ -1888,14 +1897,14 @@ ar:
       title: أدوار الوكلاء
       agent_label: الوكيل
       agents_label: الوكلاء
-      no_agent_label: No Agent
+      no_agent_label: لا يوجد مندوب
       add_agent_label: أضف مندوباً
-      add_label: Add
+      add_label: إضافة
       no_label: 'No'
       done_label: تم
       manage_label: دراة
       save_label: حفظ
-      saving_label: Saving...
+      saving_label: حفظ...
       no_agent_added: No Agent added
       cancel_label: إلغاء
       new: دور جديد
@@ -1915,6 +1924,7 @@ ar:
         reports: تقارير
         administration: المسئول
         general: عام
+        bots: الروبوتات
       permissions: الأذونات
       helpcard:
         title1: فهم الأدوار
@@ -2040,6 +2050,7 @@ ar:
         mobihelp: Mobihelp
         customer-portal: مدخل العميل
         portals: البوابات
+        search_admin: البحث في إعدادات المسؤول
       keywords:
         forum_moderation: الإشراف على المنتدى
         configure_support_email: تكوين البريد الإلكتروني للدعم
@@ -2604,7 +2615,7 @@ ar:
     time_entry: إدخال الوقت
   activations:
     helpnote3: Please confirm your details and set a password for your account
-    activate_freshdesk_account: Activate your account
+    activate_freshdesk_account: تنشيط حسابك
     helpnote1: Tell us a little more about you and help us personalize your experience.
     helpnote2: 'Login to your account using %{email}'
   helpdesk:
@@ -2813,6 +2824,9 @@ ar:
       history:
         recent_item: العناصر الأخيرة
       update: تحديث
+      do_not_link: لا تربط
+      view_in_detail: عرض التفاصيل
+      ok: موافق
     realtime_dashboard:
       view_all: عرض الكل
       view_more: View more
@@ -3020,7 +3034,7 @@ ar:
         reply_form:
           title: رد إلى
           from: From
-          to: 'To:'
+          to: 'إلى:'
           cc: نسخة
           addcc: إضافة نسخة
           removecc: إزالة نسخة
@@ -3112,8 +3126,8 @@ ar:
         spam: عشوائي
         monitored_by: البطاقات التي أشاهدها
         raised_by_me: تذاكر طلبت
-        shared_by_me: Tickets I've shared
-        shared_with_me: Tickets shared with me
+        shared_by_me: بطاقات قمت بمشاركتها
+        shared_with_me: بطاقات تمت مشاركتها معي
         my_closed: بطاقاتي المغلقة
         my_open: بطاقاتي المفتوحة
         tickets_by: بطاقات بواسطة
@@ -3290,9 +3304,9 @@ ar:
   helpdesk_reports:
     ticket_schedule:
       schedule_export: Scheduled Export
-      all_reports: All Reports
-      schedule: Schedule
-      new_schedule: New Schedule
+      all_reports: كافة التقارير
+      schedule: جدولة
+      new_schedule: جدول جديد
       no_schedule: You haven’t created any schedule yet!
       create_new: Create
       schedule_show_message: You cannot edit a schedule once it's created
@@ -3330,6 +3344,9 @@ ar:
         scheduled_weekly: 'Runs weekly on %{day} at %{hrs}:00 hrs'
         scheduled_hourly: Runs hourly
         cancel: إلغاء
+        delete_title: حذف الجدولة
+        delete_text: هل تريد بالتأكيد حذف هذه الجدولة؟
+        confirm: تأكيد
       new:
         title: Title
         filter: Filters
@@ -3338,7 +3355,7 @@ ar:
         add_new: Add new
         delivery: Delivery
         ticket_fields_title: حقول البطاقة
-        contact_fields_title: Contact Fields
+        contact_fields_title: حقول الاتصال
         field_selected:
           zero: No field selected
           one: field selected
@@ -3346,12 +3363,12 @@ ar:
           few: fields selected
           many: fields selected
           other: fields selected
-        company_fields_title: Company Fields
+        company_fields_title: حقول الشركة
         one_time_export_label: >-
           Send a one time export of tickets created or updated from the
           beginning of the current month for initial seeding of data
         helpnote:
-          api_info1: The API will have the link to the latest export.
+          api_info1: سيحتوي API على الرابط إلى آخر تصدير.
           api_info2: >-
             The export will contain a log of all ticket related updates peformed
             the previous day.
@@ -3365,9 +3382,10 @@ ar:
         select_all: select all
         schedule_message: '%{zone} for tickets created/updated in the last %{label}'
         email: البريد الإلكتروني
+        frequency: جدولة
     ticket_activity:
       title: Export ticket activities
-      edit: Edit Schedule
+      edit: تعديل الجدول
       learn_more: التعرف على المزيد
       sample_file: Sample file
       default:
@@ -3376,6 +3394,8 @@ ar:
           description: >-
             Contains a log of all the updates performed on new or old tickets by
             user or automation on a given day
+      helpnote:
+        api_info1: سيحتوي API على الرابط إلى آخر تصدير.
     helpdesk_analysis: تحليل مكتب الدعم
     productivity: الإنتاجية
     customer_happiness: سعادة العميل
@@ -3407,15 +3427,15 @@ ar:
     yesterday: الأمس
     this_week: الأسبوع الحالي
     previous_week: Previous week
-    this_month: This month
+    this_month: هذا الشهر
     previous_month: Previous month
     this_year: This year
     today: اليوم
     date_range: نطاق التاريخ.
     start_date: تاريخ البدء
     end_date: تاريخ الانتهاء
-    summary: Summary
-    chats: Chats
+    summary: الملخص
+    chats: المحادثات
     edit: Edit
     filter_error_msg: >-
       *يمكنك تحديد 5 تصفيات بحد أقصى. (يعد كل مستوى محدد لحقل متداخل تصفية
@@ -3440,8 +3460,8 @@ ar:
       title: Report title
       dialog_header: Save & Schedule Report
       copy_of: 'Copy of '
-      edit_dialog_header: Edit Report
-      delete_dialog_header: Delete Report
+      edit_dialog_header: تحرير التقرير
+      delete_dialog_header: حذف التقرير
       dialog_sub_header: This report will be visible only to you
       dialog_schedule_guide: >-
         After saving, you can schedule the report by clicking on the calendar
@@ -3492,11 +3512,14 @@ ar:
     scheduled_reports:
       dialog:
         email: البريد الإلكتروني
-        generate_report: Generate report
-        'on': 'On'
+        generate_report: إنشاء تقرير
+        'on': تشغيل
         'true': true
         subject: الموضوع
         desc: الوصف
+        monthly: شهريًّا
+        daily: يوميًا
+        weekly: أسبوعيًا
       errors:
         emails_limit: 'You can add maximum %{num} emails'
         invalid_email: Invalid emails
@@ -3507,7 +3530,7 @@ ar:
           You can only create %{count} schedules. Please delete a schedule and
           try again.
         general: Some of the fields in form are invalid
-        disabled: Reports with custom date ranges cannot be scheduled
+        disabled: لا يمكن جدولة التقارير التي تتضمن نطاقات تاريخ مخصصة
         invalid_frequency: Invalid frequency
     deprecated_message: 'The old reports will no longer be available after 30th March, 2016'
     deprecated_header: 'This report will no longer be available after 30th March, 2016'
@@ -3773,9 +3796,9 @@ ar:
       busiest_day_resolved_tickets: Most tickets were resolved on
       received_tickets: البطاقات المتلقاه
       resolved_tickets: بطاقات تم حلها
-      unresolved_tickets: Unresolved Tickets
+      unresolved_tickets: بطاقات لم يتم حلها
       load_analysis:
-        title: Load Analysis
+        title: تحميل التحليل
       labels:
         day_month: '%{day} %{month}'
         day_month_year: '%{day} %{month}, %{year}'
@@ -3872,7 +3895,7 @@ ar:
     timesheet_reports:
       title: Time Sheet Summary
     phone_summary:
-      title: Phone Summary
+      title: ملخص الهاتف
     chat_summary:
       title: Chat Summary
     satisfaction_survey:
@@ -3883,10 +3906,18 @@ ar:
       email_report_pdf: Email PDF
       email_report_csv: Email CSV
     customer_satisfaction:
-      title: Customer Satisfaction Report
+      title: تقرير رضى العميل
     timespent_export:
       button_export: تصدير
+      export_csv: تصدير ملف CSV
     change: تغيير
+    insights:
+      customize_link: تخصيص
+    year_in_review:
+      title: استعراض عامك
+    show: 'إظهار:'
+    filtered_by: 'تصفية حسب:'
+    at: في
   user_notifications:
     collab_group_mention: 'mentioned your group - %{group_name} in a message on ticket %{object}'
     collab_group_mention_multi: >-
@@ -3907,8 +3938,8 @@ ar:
       ticket_created: New Ticket
     header: الإخطارات
     mark_all_as_read: وضع علامة مقروء على الكل
-    preferences: Preferences
-    notification_preferences: Notification Preferences
+    preferences: التفضيلات
+    notification_preferences: تفضيلات الإخطارات
     notify_when: Notify when...
     checking_your_preferences: Checking your preferences...
     actor_text_2: '%{actor_name_1} and %{actor_name_2}'
@@ -3942,6 +3973,7 @@ ar:
     desktop_notifications_disabled: You've disabled desktop notifications
     toggle_mobile_notifications: Toggle mobile notifications
     toggle_web_notifications: Toggle web notifications
+    mute: كتم الصوت
   meta:
     language_name: Arabic
   date:
@@ -4174,7 +4206,7 @@ ar:
   reorder_rules: إعادة ترتيب القواعد النشطة
   plain_yes: نعم
   plain_no: لا
-  plain_on: 'On'
+  plain_on: تشغيل
   plain_off: إيقاف
   add_all: إضافة الكل
   unspam: غير عشوائي
@@ -4410,7 +4442,7 @@ ar:
       status: الحالة
       group: المجموعة
       agent: الوكيل
-      skill: Skill
+      skill: المهارة
       internal_group: Internal Group
       internal_agent: Internal Agent
       priority: الأولوية
@@ -4612,8 +4644,8 @@ ar:
         cancel: إلغاء
         back: الخلف
         loading_feedback: تحميل الملاحظات
-        load_questions: View More
-        comments: Comments
+        load_questions: عرض المزيد
+        comments: التعليقات
         survey_on_open_ticket: Could not submit survey rating as ticket is not resolved.
     login:
       form:
@@ -4640,6 +4672,7 @@ ar:
       email: البريد الإلكتروني الخاص بك *
       comments: التعليقات
       send_feedback: إرسال ملاحظات
+      related_files: الملفات ذات الصلة
     surveys:
       thanks_for_feedback: لقد تلقينا ملاحظاتك. شكرًا جزيلاً.
       feedback_already_done: لقد أرسلت لنا ملاحظات بالفعل بشأن هذه الاستجابة.
@@ -4666,6 +4699,9 @@ ar:
     canned_form:
       next: التالي
       form_submit: تقديم
+      okay: حسناً
+      hey: مرحبًا
+      thank_you_text: شكرًا لك
   gamification:
     levels:
       beginner: مبتدئ
@@ -5701,6 +5737,16 @@ ar:
       trial_extension_requested: Trial extension requested
     new:
       company: Company Name
+      full_name: الاسم الكامل
+      confirmation: التأكيد
+      create_an_account: إنشاء حساب
+    edit_domain:
+      email_error: يجب ألا يقل اسم الشركة عن 3 أحرف.
+      getting_started: البدء
+      url_error1: 'المجال <strong>%{domain_name}</strong> غير متوفر.'
+    signup_google:
+      sign_up: التسجيل!
+      privacy_policy: سياسة الخصوصية
   success_msg: تم تحديث إعدادات الحساب بنجاح!
   failure_msg: فشل تحديث إعدادات الحساب!
   account_configuration:
@@ -6541,7 +6587,7 @@ ar:
       Tickets coming into this group will be automatically assigned to available
       agents based on <strong>Round robin method</strong>
     escalation_rule: Escalation Rule
-    send_escalation_to: '....then send escalation email to :'
+    send_escalation_to: '.... ثم أرسل رسالة التصعيد إلى:'
     info1: الوكلاء
     info2: لا يوجد وكلاء في هذه المجموعة
     info3: إرسال رسالة بريد إلكتروني للتصعيد إلى
@@ -6555,7 +6601,7 @@ ar:
       New: Allow your supervisors the ability to manage automatic ticket
       assignment and agent availability for the groups they belong to -
     info8_readmore: Read More
-    enable: Enable
+    enable: تمكين
     enable_success_message: >-
       The ability to manage ticket assignment has been enabled for your
       supervisors successfully.
@@ -6563,8 +6609,8 @@ ar:
       The ability to manage ticket assignment could not be enabled for your
       supervisors. Please send an email to support@freshdesk.com to proceed
       further.
-    confirm: Confirm
-    please_confirm: Please confirm...
+    confirm: تأكيد
+    please_confirm: يرجى التأكيد...
     rr_v2_confimation_message: This action cannot be undone. Are you sure you want to proceed?
     tour: ساعدني في إنشاء مجموعة وكلاء جديدة
     helptext: >-
@@ -6588,7 +6634,7 @@ ar:
     select_business_calendar: تحديد ساعات العمل
     learn_more: التعرف على المزيد
     settings_saved: تم حفظ إعدادك بنجاح.
-    toggle_availability_for_rr: Allow agents to change their availability for automatic ticket assignment
+    toggle_availability_for_rr: السماح للوكلاء بتغيير إتاحتهم لتعيين البطاقات تلقائيًا
     toggle_availability_enabled: >-
       Agents will be able to manually change their availability for round robin
       ticket assignment. Admins and supervisors can change the agent
@@ -6643,6 +6689,7 @@ ar:
       day: يوم واحد
       twoday: يومين
       threeday: 3 أيام
+    maximum: الحد الأقصى
   four: 4 ساعات
   oneweek: أسبوع واحد
   twoweek: أسبوعين
@@ -6733,7 +6780,7 @@ ar:
       مقدم الطلب صاحب البريد الإلكتروني '%{existing_email}' موجود بالفعل،
       %{use_email}
     signature: التوقيع
-    insert_placeholder: Insert Placeholder
+    insert_placeholder: إدراج عنصر نائب
     info3: هل تريد الحذف بالتأكيد
     helpcard:
       tour: ساعدني في إضافة وكلاء جدد
@@ -6816,6 +6863,7 @@ ar:
     password_reset_note: 'ملاحظة: سيتم إرسال رسالة بريد إلكتروني تتضمن تعليمات إلى %{requester}'
     member: عضو في
     more: المزيد
+    skill: المهارات
   account_admin: مسئول الحساب
   right: يمين
   footer:
@@ -7147,9 +7195,9 @@ ar:
     free: محانًا
     paid: مدفوع
     type: النوع
-    date: Date
+    date: التاريخ
     status: الحالة
-    refund: Refunded
+    refund: تم استرداده
     info1: >-
       يمكنك تغيير تفاصيل اشتراكك في أي وقت. سيتم شحن بطاقتك بنسبة تاريخ تغيير
       الاشتراك إلى تاريخ الفوترة التالي.
@@ -7161,11 +7209,11 @@ ar:
     invoice_title: 'List of invoices for all account payments done online '
     no_invoice: No invoices present
     sub_total: Sub Total
-    quantity: Quantity
+    quantity: الكمية
     unit_price: Unit Price
-    invoice: Invoice
+    invoice: فاتورة
     line_items: Line Items
-    download: Download
+    download: تنزيل
     transaction_details: Payments and Refund details
   activate: تنشيط
   feedbackwidget_button_text: تسمية
@@ -7305,13 +7353,13 @@ ar:
       sticky: الموضوع مثبت
       merge_continue: 'لكن يمكنك متابعة المحادثة هنا: '
       merge_note:
-        zero: 'الموضوعات التي تم دمجها في هذا الموضوع:'
+        zero: 'المواضيع التي تم دمجها في هذا الموضوع:'
         one: 'الموضوع الذي تم دمجه في هذا الموضوع:'
-        two: 'موضوعان اللذان تم دمجهما في هذا الموضوع:'
+        two: 'المواضيع التي تم دمجها في هذا الموضوع:'
         few: 'المواضيع التي تم دمجها في هذا الموضوع:'
         many: 'المواضيع التي تم دمجها في هذا الموضوع:'
         other: 'المواضيع التي تم دمجها في هذا الموضوع:'
-      sort_heading: 'مرتبة حسب:'
+      sort_heading: 'فرز حسب:'
       sort_order:
         date: القديم أولاً
         recency: الحديث أولاً
@@ -7328,17 +7376,17 @@ ar:
         many: 'أنت و '
         other: 'أنت و '
       more:
-        zero: '%{count} آخرين '
+        zero: '2 آخران '
         one: '1 آخر '
         two: '2 آخران '
-        few: '%{count} آخرين '
-        many: '%{count} آخرين '
-        other: '%{count} آخرين '
+        few: '2 آخران '
+        many: '2 آخران '
+        other: '2 آخران '
       people:
-        zero: '%{count} أشخاص '
+        zero: '%{count} شخص '
         one: 'شخص واحد '
-        two: 'شخصان %{count} '
-        few: '%{count} أشخاص '
+        two: '%{count} شخص '
+        few: '%{count} شخص '
         many: '%{count} شخص '
         other: '%{count} شخص '
     vote_label:
@@ -7350,30 +7398,30 @@ ar:
       other: stemmer
     topic_vote:
       announce:
-        zero: يعجبهم هذا
+        zero: يعجبهما هذا
         one: يعجبه هذا
         two: يعجبهما هذا
-        few: يعجبهم هذا
-        many: يعجبهم هذا
-        other: يعجبهم هذا
+        few: يعجبهما هذا
+        many: يعجبهما هذا
+        other: يعجبهما هذا
       ideas:
-        zero: لا أحد أعجبته هذه الفكرة
+        zero: أعجبتهم هذه الفكرة
         one: أعجبه هذه الفكرة
-        two: أعجبتهما هذه الفكرة
+        two: أعجبتهم هذه الفكرة
         few: أعجبتهم هذه الفكرة
         many: أعجبتهم هذه الفكرة
         other: أعجبتهم هذه الفكرة
       problem:
-        zero: لا أحد لديه هذه المشكلة
+        zero: لديهم هذه المشكلة
         one: لديه هذه المشكلة
-        two: لديهما هذه المشكلة
+        two: لديهم هذه المشكلة
         few: لديهم هذه المشكلة
         many: لديهم هذه المشكلة
         other: لديهم هذه المشكلة
       howto:
-        zero: لا أحد لديه هذا السؤال
+        zero: لديهم هذا السؤال
         one: لديه هذا السؤال
-        two: لديهما هذا السؤال
+        two: لديهم هذا السؤال
         few: لديهم هذا السؤال
         many: لديهم هذا السؤال
         other: لديهم هذا السؤال
@@ -7397,12 +7445,12 @@ ar:
       upvoted: قمت بالتصويت إيجابياً
       upvote: تصويت إيجابي
       like:
-        zero: يعجبهم هذا
+        zero: يعجبهما هذا
         one: يعجبه هذا
         two: يعجبهما هذا
-        few: يعجبهم هذا
-        many: يعجبهم هذا
-        other: يعجبهم هذا
+        few: يعجبهما هذا
+        many: يعجبهما هذا
+        other: يعجبهما هذا
     tickets:
       merged_topic_note: لا يمكن تحويل الموضوعات التي تم دمجها إلى تذكرة.
       export: تصدير بطاقات
@@ -7413,7 +7461,7 @@ ar:
       mark_closed: وضع علامة على بطاقة كمغلقة
       add_people: إضافة أشخاص
       reply_placeholder: انقر هنا للرد على هذه البطاقة
-      comments: Comments
+      comments: التعليقات
       details: تفاصيل البطاقة
       add_or_remove_emails: >-
         إضافة أو إزالة رسائل البريد الإلكتروني التي يتعين نسخها عند إرسال إشعار
@@ -7423,6 +7471,7 @@ ar:
       related_articles: مقالات ذات صلة...
     agent_login_info: هل أنت مندوب؟
     agent_signin: تسجيل الدخول هنا
+    agent_login_details: أدخل التفاصيل أدناه
   feedbackwidget_form_heading: رأس النموذج
   feedbackwidget_form_title: عنصر واجهة مستخدم من عنوان
   cancel_and_back: إلغاء ورجوع للخلف
@@ -7626,7 +7675,7 @@ ar:
       feedback: ملاحظات
       analytics: التحليلات
       mark_as_outdated:
-        text_1: Mark other translations as outdated
+        text_1: وضع علامة "قديمة" على الترجمات الأخرى
         text_2: in case you have changed this article
       outdating: <span class="sloading loading-small"></span>Outdating other translations
       update_complete: >-
@@ -7872,7 +7921,7 @@ ar:
     info31: >-
       You can chose to make your folders visible to different groups of people
       (<b>All, Logged in users, Agents & Selected companies</b>).
-    kb: Knowledge Base
+    kb: قاعدة المعرفة
     tour_v2: Help me set up my knowledge base
     kbase_email_msg: >-
       All emails sent by agents to <b>%{email}</b> will be stored as a draft
@@ -8055,6 +8104,8 @@ ar:
     linked_paren_child_desc: عمليات سير العمل للبطاقات المرتبطة وبطاقات الآباء والأبناء
     scheduled_reports_desc: التقارير المجدولة
     custom_survey_desc: استطلاعات رضا العملاء المخصصة
+    bot: روبوت
+    freshchat: تكامل Freshchat
   zendesk_account: تفاصيل حساب Zendesk
   zendesk_import_files: هل تريد تحديد ما يتم استيراده؟
   file_url: عنوان URL لاستيراد XML
@@ -8443,6 +8494,8 @@ ar:
           notification specific to each language. The <i
           class="common-icon-outdated"></i> icon indicates that the notification
           translations in other languages may be outdated.
+      agent_template_25:
+        topic: رسالة دعوة المندوب
     insert_placeholder: إدراج عناصر نائبة
     modify_agent_template: تعديل قالب البريد الإلكتروني للوكيل
     event: حدث
@@ -8651,20 +8704,20 @@ ar:
         Provider's website. Once you have copied all the settings for each
         domain, you can click the Verify button to validate that the settings
         are active
-      config: Configure
+      config: تكوين
       configuring: Configuring...
-      verify: Verify
+      verify: التحقق
       verified: تم التحقق
       dkim_remove_message: Are you sure you want to remove DKIM configuration for
       verification_sent: Verification Sent
       unverified: لم يتم التحقق منه
-      last_verified: Last Verified
+      last_verified: تاريخ آخر تحقق
       remove: إزالة
       type: النوع
       host_value: Host Value
-      host_value_help: Host name for the TXT record
-      data: Data
-      data_help: Value to be assigned to the DNS record
+      host_value_help: اسم المضيف لسجل TXT
+      data: البيانات
+      data_help: القيمة التي سيتم تعيينها لسجل DNS
       status: الحالة
       cname: CNAME
       config_fail: Cannot configure DKIM settings. Please try again later.
@@ -8673,6 +8726,7 @@ ar:
       verify_fail: DNS settings can take upto 48 hours to propagate
       new_dkim: You haven't created a support email with a custom domain yet!
       limit_exceeded: You cannot configure more than two DKIM signatures on this plan.
+    plain_unverified: لم يتم التحقق منه -
   step2: خطوة 2
   import_users_contacts: مستخدمون → جهات الاتصال
   linkback_info: يمكنك اختيار الرجوع إلى موقع الويب الخاص بك عندما ينقر مستخدم فوق شعار الرأس
@@ -8836,7 +8890,7 @@ ar:
     note_saved: لم يتم حفظها
     edit_note: <b>تحرير ملاحظة</b>
     thanks: شكرًا لك على تقديم ملاحظة
-    thanks_v1: Thank you for your feedback
+    thanks_v1: شكرًا لك على ملاحظاتك
     portal_created_on: >-
       تم الإنشاء بواسطة <span class='emphasize'>%{username}</span> في <span
       class='emphasize'>%{date}</span>
@@ -9366,7 +9420,7 @@ ar:
       لديك.
     ticket_url: عنوان URL للبطاقة
     submit_feedback: Send Feedback
-    search_text: Search Articles
+    search_text: مقالات البحث
     search_close_text: Close search
     integrations:
       jira:
@@ -9638,7 +9692,7 @@ ar:
     company_domain: Company Domains
     domains_allowed: Only customers from these domains will be allowed to sign up and log in.
     twitter_disabled: لدواعي أمنية، سيتم تعطيل تسجيل الدخول من تويتر للعملاء والمندوبين.
-    important: Important
+    important: هام
     includes_contacts_company_domain: (تشتمل على جهات الاتصال ونطاقات الشركة الموجودة)
     permission:
       helpdesk_restrictions: Helpdesk restrictions
@@ -9648,6 +9702,10 @@ ar:
       users_from_any_domain: المستخدمون من أي نطاق
     gdpr_agent: الوكيل
     gdpr_to: إلى
+    gdpr_terms_link: الشروط
+    gdpr_admin: مسئول.
+    gdpr_policy: سياسة الخصوصية.
+    gdpr_acknowledgement: وأقرّ بأني قرأت
   lead: تقديم
   comments: التعليقات
   forum_confirm_msg1: هل تريد حذف هذه الفئة بالتأكيد؟
@@ -9791,6 +9849,8 @@ ar:
     events_empty: لا يمكن أن تكون الأحداث فارغة
     conditions_empty: لا يمكن أن تكون الشروط فارغة
     actions_empty: لا يمكن أن تكون الإجراءات فارغة
+    invalid_domain:
+      freshdesk: Freshdesk
   export_data:
     in_sla: ضمن اتفاقية مستوى الخدمة
     out_of_sla: انتهاك اتفاقية مستوى الخدمة
@@ -9989,6 +10049,8 @@ ar:
         flash_card_html: ما الجديد في المجتمع؟
         flash_card_text: فهم علامة تبويب التواصل الاجتماعي
         tickets: بطاقات
+        post: ' نشر '
+        interactions: تفاعلات
       index:
         all: الكل
       search_btn: بحث
@@ -10157,6 +10219,7 @@ ar:
       update: تحديث
       delete: حذف
       write_feedback: كتابة ملاحظات
+    connect: اتصال
   home:
     mobile_index:
       email: البريد الإلكتروني
@@ -10370,6 +10433,12 @@ ar:
       submitting: جارٍ الإرسال...
     error_calling_method: 'حدث خطأ أثناء استدعاء الطريقة: '
     validation_failed: فشل التحقق من الصحة.
+    third_party_apps_policy: >-
+      يتم امتلاك هذا التطبيق، وتشغيله، وصيانته من قِبل طرف ثالث وليس من قِبل
+      Freshworks Inc. بتحميل هذا التطبيق، ومكاملته، و/ أو استخدام هذا التطبيق،
+      فأنت تفهم بأنك ملزم بأحكام وسياسات خصوصية مطوره، بما في ذلك معالجة
+      بياناتك. للمزيد من التفاصيل حول الأحكام وسياسات الخصوصية هذه، الرجاء
+      التواصل مع المطوّر أو زيارة صفحة المطور.
   integrations:
     native_integrations: تكاملات أصلية
     freshplugs_title: FreshPlugs
@@ -10378,10 +10447,10 @@ ar:
     deprecated_message: This app is no longer supported. Please install the latest version.
     no_timesheet_feature: This app can only be installed for accounts with Time Tracking enabled.
     custom_apps:
-      refresh: Refresh
+      refresh: تحديث
       custom_widget_preview: Custom Widget Preview
-      show_preview: Show Preview
-      hide_preview: Hide Preview
+      show_preview: إظهار المعاينة
+      hide_preview: إخفاء المعاينة
       show_widget_in_ticket_view_page: Show the widget in ticket view page.
       show_the_widget_in_contact_view_page: Show the widget in contact view page.
       custom_app_preview: معاينة التطبيق المخصص
@@ -10432,10 +10501,10 @@ ar:
         ticket_reference_id: المعرف المرجعي للاتصال
         link_to_ticket: ربط بهذه التذكرة
         link_to_new_ticket: ربط بتذكرة جديدة
-        do_not_link: Do not link
+        do_not_link: لا تربط
         requester: اسم مقدم الطلب
         subject: الموضوع
-        create: Create
+        create: إنشاء
         cancel: إلغاء
         new_ticket_with_id: تذكرة جديدة تمّ إنشاؤها بالمعرّف
         add_note_to_ticket: إضافة ملاحظة إلى التذكرة
@@ -10942,8 +11011,8 @@ ar:
         infusionsoft_settings_info: ''
         infusionsoft_settings: Infusionsoft Settings
         select: حدد خيارًا
-        contact: Contact Fields
-        account: Account Fields
+        contact: حقول الاتصال
+        account: حقول الحساب
     salesforce:
       label: Salesforce
       desc: يمكنك عرض معلومات جهة اتصال من Salesforce crm في Freshdesk.
@@ -10977,7 +11046,7 @@ ar:
         remove: Remove
       form:
         salesforce_v2_settings_info: ''
-        salesforce_v2_settings: Salesforce Settings
+        salesforce_v2_settings: إعدادات Salesforce
         lead: Lead Fields
         opportunity: Opportunity Fields
         opportunity_settings: Agents can create/link or unlink opportunities from the ticket
@@ -10989,13 +11058,13 @@ ar:
         ticket_sync: Sync tickets to Salesforce
     cloud_elements:
       form:
-        field_mapping: Field Mapping
+        field_mapping: تعيين الحقل
         field_visibility: Field Visibility
         sync_info: Sync contact and company...
         sync_settings: Sync Settings
-        contact: Contact Fields
-        account: Account Fields
-        lead: Lead Fields
+        contact: حقول الاتصال
+        account: حقول الحساب
+        lead: حقول العميل المتوقع
         opportunity: Opportunity Fields
         opportunity_settings: Agents can create/link or unlink opportunities from the ticket
         contract: Contract Fields
@@ -11004,8 +11073,8 @@ ar:
         two_way: Two way sync
         sync_frequency: Sync Frequency
         instant: 30 Mins Once
-        hourly: Hourly
-        daily: Daily
+        hourly: بالساعة
+        daily: يوميًا
       mail:
         page_full: 'Log for the last %{size} Contacts/Accounts synced Today.'
         page_not_full: 'Log for the %{size} Contacts/Accounts synced Today.'
@@ -11172,9 +11241,9 @@ ar:
         username: اسم المستخدم
         password: كلمة المرور
         sugarcrm_settings: SugarCRM Settings
-        contact: Contact Fields
-        lead: Lead Fields
-        account: Account Fields
+        contact: حقول الاتصال
+        lead: حقول العميل المتوقع
+        account: حقول الحساب
         error: Unable to connect to SugarCRM. Please try after sometime.
     dynamicscrm:
       label: Dynamics CRM
@@ -11330,6 +11399,13 @@ ar:
           على سبيل المثال إلى كان عنوان URL لـ Shopify هو
           <strong>https://my_shop_name.shopify.com</strong>، فيرجى إدخال
           <strong>my_shop_name</strong>.
+        shop_name_info_mint: >-
+          على سبيل المثال إلى كان عنوان URL لـ Shopify هو
+          <strong>https://my_shop_name.shopify.com</strong>، فيرجى إدخال
+          <strong>my_shop_name</strong>.
+        shop_name_mint: اسم المتجر
+      edit:
+        disconnect: قطع الاتصال
     outlook_contacts:
       label: Outlook Contacts Sync
       desc: Periodically synchronize contacts between Outlook and Freshdesk.
@@ -11510,9 +11586,9 @@ ar:
         chat: Chat Conversation with
         default_chat: Chat Conversation of
     slack_v3:
-      slack_prof_label: Connect to Slack
-      slack_connect_desc: Configure your account to create Slack tickets from Slack
-      slack_auth_btn: Authorize Slack
+      slack_prof_label: الربط بـ Slack
+      slack_connect_desc: قم بتهيئة حسابك لإنشاء تذاكر Slack من Slack
+      slack_auth_btn: مصادقة Slack
       slack_reauth_btn: Re-Authorize Slack
       slack_token_success: Token successfully updated.
       slack_token_failure: Error while updating the token.
@@ -11945,22 +12021,30 @@ ar:
       desc: You can view contact information from Freshsales in Freshdesk.
       form:
         freshsales_settings: Freshsales Settings
-        domain: Account Domain
+        domain: نطاق الحساب
         auth_token: الرمز المميز للمصادقة
         domain_info: 'Enter your freshsales domain without https. Ex: example.freshsales.io'
         auth_token_info: Enter your authentication token
         error: Please verify your settings and try again
         select: حدد خيارًا
-        contact: Contact Fields
-        lead: Lead Fields
-        account: Account Fields
-        deal: Deal Fields
+        contact: حقول الاتصال
+        lead: حقول العميل المتوقع
+        account: حقول الحساب
+        deal: حقول الصفقة
         deal_settings: Agents can create/link or unlink deals from the ticket
     applications:
       crm:
         mapping:
           company: Company Name
           contact: جهة اتصال
+          contact_fields: ' حقول الاتصال '
+          account_fields: ' حقول الحساب '
+    google_drive:
+      form:
+        developer_key: مفتاح API والذي تم الحصول عليه من لوحة تحكم مطوري جوجل.
+        client_id: معرف عميل OAuth للنطاق الخاص بك
+    microsoft_teams:
+      auth_btn: مصادقة
   widgets:
     contact_widget:
       description: عرض جهة اتصال أو خيار لإضافة جهة الاتصال إلى كبسولة.
@@ -11974,6 +12058,7 @@ ar:
         feedback_widgets_help_articles_v1: or Browse articles
         show_all_results: إظهار كافة النتائج
         no_results: No results for
+        problems_with_fields: 'كانت هناك مشكلات في الحقول التالية:'
   reorder: إعادة الترتيب
   reports:
     no_data: لا توجد بيانات ليتم عرضها!
@@ -12111,7 +12196,7 @@ ar:
       main:
         all: الكل
         time_period: الفترة الزمنية
-        survey_name: Survey name
+        survey_name: العنوان
         group: المجموعة
         agent: الوكيل
         overview: نظرة عامة
@@ -12129,7 +12214,7 @@ ar:
         filter_by: تصفية حسب
         preparing_chart_for: إعداد مخطط لـ
         loading_chart: جارٍ التحميل...
-        loading_msg: Generating Reports ...
+        loading_msg: إنشاء التقارير ...
         no_remarks: لا تتوفر إجابات
         loading_remarks: تحميل التعليقات
         loading_responses: Loading responses
@@ -12169,31 +12254,31 @@ ar:
           شركة</li><li>عرض تقارير لإطار زمني محدد</li></ol></p></p>
     livechat:
       report_title: Live Chat Summary
-      filter_by_title: Filtered by
+      filter_by_title: تمت التصفية حسب
       time_period: الفترة الزمنية
-      widget: Widget
+      widget: عنصر واجهة
       group: المجموعة
-      chat_type: Chat Type
+      chat_type: نوع المحادثة
       summary: Summary
-      filter_report: Edit Filter
-      select_widget: Select Widget
+      filter_report: تحرير عامل تصفية
+      select_widget: تحديد عنصر الواجهة
       select_group: Select Group
-      select_chat_type: Select Chat Type
+      select_chat_type: تحديد نوع المحادثة
       all: All
       chat_type_visitor: Visitor Initiated
       chat_type_agent: Agent Initiated
       chat_type_proactive: Proactive
-      generate_summary: Generate
-      filter_close: Close
+      generate_summary: إنشاء
+      filter_close: إغلاق
       total_chats: إجمالي
-      num_of_chats: No of Chats
+      num_of_chats: عدد المحادثات
       answered_chats: تمت الإجابة
-      missed_chats: Missed
-      num_of_transfer: Transfers
-      avg_handle_time: Avg Handle Time
-      avg_time_queue: Time in Queue
+      missed_chats: فائتة
+      num_of_transfer: التحويلات
+      avg_handle_time: متوسط وقت المعالجة
+      avg_time_queue: الوقت في قائمة الانتظار
       total_duration: Total Duration
-      agent_chat_summary: Agent Chat Summary
+      agent_chat_summary: ملخص محادثة المندوب
       agent: Agent
       deleted: Deleted
     freshchat:
@@ -12225,6 +12310,7 @@ ar:
       agent_chat_summary: ملخص محادثة المندوب
       agent: المندوب
       deleted: تم حذفه
+    discard_changes: تجاهل التغييرات
   delete_the_ticket: حذف البطاقة
   mark_as_spam: وضع علامة كعشوائي
   bulk_actions: إجراءات مجمعة
@@ -12397,6 +12483,7 @@ ar:
       relevance: الصلة
       created_at: تاريخ الإنشاء
       updated_at: آخر تعديل
+    searching: البحث
   assumed_identity_msg: 'لقد افترضت أن هويتك %{user_name}.'
   unauthorized_msg: فشل المصادقة
   assuming_identity_user_does_not_exist_msg: المستخدم الذي حاولت افتراضه غير موجود.
@@ -12686,6 +12773,7 @@ ar:
         اللوحية. يمكنك اختيار إيقاف تشغيل هذا الإعداد في حالة رغبتك في الحصول
         على سمة متناسقة لا تستجيب عبر كافة الأجهزة.
     classic: قديم
+    apply_mint: تطبيق
   any_time: أي وقت
   five_minutes: خلال 5 دقائق
   fifteen_minutes: خلال 15 دقيقة
@@ -13023,6 +13111,7 @@ ar:
       see_detailed_pricing: رؤية سعر تفصيلي
       followup: قيمة رصيد الهاتف
       followup_text: قيمة رصيد الهاتف
+      purchase_credits: شراء أرصدة
     dialpad:
       not_valid_number: يرجى إدخال رقم صالح
       could_be_invalid_number: قد يكون الرقم غير صحيح.
@@ -13615,7 +13704,7 @@ ar:
             إلى مكتب المساعدة. بالإضافة إلى ذلك، يمكن للمندوبين استقبال
             المكالمات عبر المتصفح أو إعادة توجيهها تلقائياً إلى هاتف المكتب.
         caller_id:
-          manage_caller_id: 'Manage Caller ID '
+          manage_caller_id: 'إدارة معرف المتصل '
           add_another: / Add another
           enter_code: Pick up your phone and enter the validation code
           enter_number: Enter the number you want to add as caller id
@@ -13625,7 +13714,7 @@ ar:
           number_added: Number Added
           no_number_added: No caller id added
           ok: OK
-          add_new: Add New
+          add_new: إضافة جديد
           add_new_caller_id: Add new Caller ID
           wait: Please wait...
           error_message: Sorry! There was some issue. Please try again
@@ -13717,7 +13806,7 @@ ar:
         trial_version_calls: Limited incoming and outgoing calls
         trial_version_number_purchse: Can buy only one number
         trial_button_text: Enable free trial version
-        trial_or: OR
+        trial_or: أو
         compare_trial_and_full: Compare full and free trial version
   livechat:
     feature_request:
@@ -13734,56 +13823,52 @@ ar:
       additional_note: Live Chat request will take two business days
       button_label: Request for Live Chat
     title: Live Chat
-    widget: Widget
+    widget: عنصر واجهة
     messages: Messages
-    set_default_msgs: Default messages
+    set_default_msgs: الرسائل الافتراضية
     header_title: الرأس
-    welcome: Welcome message
-    thank_title: Thank you message
-    wait_title: Message while waiting for agent to join
+    welcome: رسالة ترحيب
+    thank_title: رسالة شكر
+    wait_title: رسالة أثناء انتظار انضمام الوكيل
     is_typing_header: When agent/visitor <br> starts typing
-    prechat_title: Pre-chat form
+    prechat_title: نموذج ما قبل المحادثة
     prechat_desc: >-
-      Collect details about your visitors so you have better context while you
-      are chatting with them. When this is enabled, visitors will need to submit
-      the form to initiate a conversation.
-    prechat_msg: Pre-chat message
+      اجمع تفاصيل عن زوارك بحيث تحظى بمعلومات أفضل أثناء المحادثة معهم. عند
+      تمكين هذا الخيار، سيحتاج الزوار إلى تقديم النموذج لبدء المحادثة.
+    prechat_msg: رسالة ما قبل المحادثة
     prechat_dropdown_msg: >-
-      You can associate your dropdown choices to different groups in the
-      Preferences tab. Chats will be assigned to the specified groups
-      accordingly.
+      يمكنك إقران خيارات القائمة المنسدلة الخاصة بك بمجموعات مختلفة في علامة
+      تبويب التفضيلات. وسيتم تعيين المحادثات إلى المجموعات المحددة وفقًا لذلك.
     welcome_tip: Text will appear at the top of chat window
-    proactive_title: Proactive chat
+    proactive_title: محادثة استباقية
     typing_message: is typing...
-    msgbox_placeholder_title: Reply box placeholder
+    msgbox_placeholder_title: العنصر النائب عن صندوق الرد
     msg_joining_agent_title: Message when agent joins chat
     msg_leaving_agent_title: Message when agent leaves chat
-    chat_transfer_msg_title: Chat transfer message
-    end_chat_confirm_msg_title: End chat confirmation message
-    agent_network_disconnect_msg_title: Message when agent gets disconnected
-    help_text_wait_onhold_msg: >-
-      This message will appear when visitor is waiting for an agent for more
-      than one minute
+    chat_transfer_msg_title: رسالة تحويل المحادثة
+    end_chat_confirm_msg_title: رسالة تأكيد إنهاء المحادثة
+    agent_network_disconnect_msg_title: رسالة عندما ينقطع اتصال الوكيل
+    help_text_wait_onhold_msg: ستظهر هذه الرسالة عندما ينتظر الزائر مندوباً لأكثر من دقيقة واحدة
     showform: Show pre-chat form
     proactive_note: >-
-      Note: Pre-chat form will not be shown when a chat is proactively
-      initiated. You can still manually add all visitor details.
+      ملاحظة: لن يظهر نموذج ما قبل المحادثة عند بدء المحادثة بشكل استباقي. ولا
+      يزال يمكنك إضافة كل تفاصيل الزائر يدويًا.
     proactive_time: 'Initiate chat when more than %{seconds} on the same page'
     procative_info: >-
-      Automatically initiate chat conversations with visitors if they spend more
-      than a certain amount of time on the same page.
-    chat_availability: Chat availability
-    show_chat_hours: Show chat
-    show_chat_hours_msg: Set when your chat window will be available to your visitors.
-    chat_hours_msg_note: 'Note: Chat window will be hidden outside of this time.'
-    business_hours: During business hours
-    anytime: Always (24/7)
+      بدء المحادثات تلقائيًا مع الزوار إذا قضوا أكثر من فترة زمنية محددة في
+      الصفحة نفسها.
+    chat_availability: توافر المحادثات
+    show_chat_hours: عرض المحادثة
+    show_chat_hours_msg: تعيين وقت إتاحة نافذة المحادثة الخاصة بك لزوارك.
+    chat_hours_msg_note: 'ملاحظة: ستُخفى نافذة المحادثة في غير هذا الوقت.'
+    business_hours: أثناء ساعات العمل
+    anytime: دائمًا (24/7)
     business_calendar: Select business hour
-    show_widget: When agents are online and accepting chats
-    texton: 'On'
+    show_widget: عندما يكون الوكلاء متصلين ويقبلون المحادثات
+    texton: تشغيل
     textoff: إيقاف
-    form_details: Form details
-    copy_to_clipboard: Copy to clipboard
+    form_details: تفاصيل النموذج
+    copy_to_clipboard: النسخ إلى الحافظة
     copied: Copied!!
     show: Show
     required: Required
@@ -13799,15 +13884,17 @@ ar:
     save: حفظ
     done: Done
     me: Me
-    window_position: Position
-    window_offset: Offset
+    window_position: الموضع
+    window_offset: إزاحة
     align_to: Align to
     bottom_left: Bottom Left
     bottom_right: Bottom Right
-    integrate_msg: Copy & paste this code before the last </body> tag on your website or app
-    integrate_livechat_title: Integrate Live Chat into your website and applications
-    custom_chat_window: Chat window
-    chatbox_bgcolor: Color
+    integrate_msg: >-
+      انسخ هذا الرمز وألصقه قبل آخر علامة </body> في موقع الويب أو التطبيق
+      الخاصين بك
+    integrate_livechat_title: أدمج المحادثة المباشرة في موقع الويب والتطبيقات الخاصة بك
+    custom_chat_window: نافذة المحادثة
+    chatbox_bgcolor: اللون
     in_conversation: In-conversation
     available_agents: Available Agents
     new_visitors: New Visitors
@@ -13833,7 +13920,7 @@ ar:
     visitor_details: Visitor Details
     enter_tags: Enter the tags
     chat_with: Chat with
-    chat_with_us: Connect with us
+    chat_with_us: التواصل معنا
     ticket_success_msg: New ticket has been created.
     ticket_error_msg: Error while creating ticket
     website_visitors: Visitors
@@ -13847,7 +13934,7 @@ ar:
     agent: Agent
     back: Back
     select_location: Select Location
-    valid_code: Please enter a valid color value
+    valid_code: يُرجى إدخال قيمة لون صالحة
     chat_inactive_for_10_min: >-
       This chat has been inactive for the past 10 minutes. If you have completed
       your conversation, please close the chat.
@@ -13861,7 +13948,7 @@ ar:
     last_message: Last Message...
     chat_recent_empty_tip: No recent messages
     add_agent_to_chat: No other agents logged in
-    url_error_msg: Please enter a valid URL
+    url_error_msg: يُرجى إدخال عنوان URL صالح
     accept: Accept
     ignore: Ignore
     transfer_msg: 'Transferred via '
@@ -13907,7 +13994,7 @@ ar:
     install_tip: >-
       <a href='/admin/chat_setting' id='visitor-list-install'>Install the
       script</a> on your site to see your visitors
-    window_offset_error_msg: Please enter a valid offset value(< 500px).
+    window_offset_error_msg: يُرجى إدخال قيمة إزاحة صالحة (< 500 بكسل).
     nochat: No chat available
     chat_with_archive: <b>$1</b> and <b>$2</b>
     chat_loadmore: تحميل المزيد
@@ -13957,54 +14044,53 @@ ar:
     help_text_agent_msg: >-
       Use {{agent_name}} and {{helpdesk_name}} to display Agent Name and
       Helpdesk Name in your messages
-    installation: Widget Code
-    visitor_form: Visitor Form
-    preferences: Preferences
-    intro_title: Why Live Chat?
+    installation: رمز عنصر الواجهة
+    visitor_form: نموذج الزائر
+    preferences: التفضيلات
+    intro_title: ما مزايا المحادثة المباشرة؟
     intro: >-
-      Freshdesk's integrated Live Chat solution lets you view and chat with
-      users on your website, online software, or support portal directly from
-      within Freshdesk. You can proactively start chatting with your website
-      visitors too. Once you finish a chat session, you can choose to convert
-      the conversation into a ticket and continue following up with the visitor
-      over email, or archive the chat transcript.
-    enable_chat: Enable Live Chat
-    learn_livechat: Learn more about Live Chat
-    support_portal: Chat for your support portal
-    logged_in_users: Only Logged in users
+      يتيح لك حل المحادثة الحية المتكاملة في Freshdesk عرض المستخدمين والمحادثة
+      معهم على موقعك أو على برنامج عبر الإنترنت أو على مدخل الدعم مباشرة من داخل
+      Freshdesk. يمكنك أيضًا بدء محادثات استباقية مع زائري موقعك. بمجرد الانتهاء
+      جلسة محادثة، يمكنك اختيار تحويل المحادثة إلى بطاقة والاستمرار في متابعة
+      الزائر عبر البريد الإلكتروني أو أرشفة البرنامج النصي للمحادثة.
+    enable_chat: تمكين المحادثة المباشرة
+    learn_livechat: اعرف المزيد حول المحادثة المباشرة
+    support_portal: محادثة لبوابة الدعم الخاصة بك
+    logged_in_users: المستخدمون مسجلو الدخول فقط
     everyone: الجميع
     portal_desc: >-
-      While the chat widget on your website is visible to everyone, you can
-      enable it on your support portal only for your customers.
-    portal_option_info: Show chat widget for
-    maximum_chat_title: Maximum number of visitor chats
+      بينما يكون عنصر واجهة المحادثة على موقع الويب الخاص بك مرئيًا للجميع؛
+      يمكنك تمكينه على بوابة الدعم الخاصة بك لعملائك فقط.
+    portal_option_info: عرض عنصر واجهة المحادثة من أجل
+    maximum_chat_title: أقصى عدد من محادثات الزوار
     maximum_change_label: تحرير
     maximum_chat_desc: >-
-      Set the limit for the number of chats an agent can handle simultaneously.
-      When an agent reaches this limit, they will not receive any new chat
-      notifications.
+      قم بتعيين حد أقصى لعدد المحادثات التي يمكن للمندوب التعامل معها بشكل
+      متزامن. عندما يصل المندوب إلى هذا الحد، لن يستقبل أي إخطارات من محادثات
+      جديدة.
     maximum_chat_error: You have reached the maximum chat limit.
     transfer_limt_exceeded_msg: ' has reached his capacity. Please transfer the chat to another agent.'
     loading_new_archives: Loading new archives...
-    non_availability_msg_header: Message when agents are away
+    non_availability_msg_header: المراسلة عندما يكون الوكلاء بعيدين
     non_availability_msg_help: >-
-      To hyperlink a phrase in your message that will point to your URL, enclose
-      it within '# #'
+      لإنشاء رابط تشعبي في عبارة ضمن رسالتك ستشير إلى عنوان URL الخاص بك، ضعها
+      بين "##"
     feedback_widget: Open feedback widget
     new_ticket_page: Goto new ticket page on your support portal
     custom_link: Open a custom link
-    use_custom_link: 'Redirect visitors to a separate page '
+    use_custom_link: 'إعادة توجيه الزوار إلى صفحة منفصلة '
     widget_option_info: 'If feedback widget not available, new ticket page will be opened'
     no_matching_agents: No matching agents
-    chat_enabled_label: Enable Chat
-    cobrowsing: Onpage Help
+    chat_enabled_label: تمكين المحادثة
+    cobrowsing: المساعدة في الصفحة
     cobrowsing_info: >-
-      Guide your customers more effectively during your chat conversations by
-      having an option to view and control their screen.
-    routing: Chat routing
-    routing_info: Route all incoming chats to specific groups
-    dropdown_based_routing: Dropdown based routing
-    default_routing: Default routing
+      قم يتوجيه عملائك بشكل أكثر فعالية أثناء محادثاتكم بتوفير خيار عرض شاشتهم
+      والتحكم فيها.
+    routing: توجيه المحادثات
+    routing_info: توجيه كل المحادثات الواردة إلى مجموعات محددة
+    dropdown_based_routing: توجيه مرتكز على عنصر منسدل
+    default_routing: توجيه افتراضي
     choice_info: <b>$</b> then notify group
     select_groups: Select groups
     routing_note: >-
@@ -14025,22 +14111,22 @@ ar:
     close: Close
     visitorId: Visitor ID
     createdAt: Created at
-    enable: Enable
+    enable: تمكين
     widgets_list_info: >-
-      For every product you have set up in Freshdesk, you will have a
-      corresponding chat widget available here
+      لكل تطبيق مثبت لديك في Freshdesk، سيكون لديك عنصر واجهة محادثة مطابق له
+      ومتاح هنا
     text_yes: نعم
     text_no: لا
     enabled: ممكَّن
     disabled: معطَّل
-    offline_message: Away messages
+    offline_message: رسائل وقت الابتعاد
     help_offline_title: الرأس
     help_offline_minimized_msg: Chat header (minimised)
     help_offline_maximized_msg: Chat header (maximised)
-    help_offline_thank_msg: Confirmation message
-    help_offline_thank_header_msg: Header after message is submitted
-    missed_chat_title: Missed chat form
-    missed_chat_desc: Collect visitor details when you are not available.
+    help_offline_thank_msg: رسالة التأكيد
+    help_offline_thank_header_msg: الرأس بعد إرسال الرسالة
+    missed_chat_title: نموذج محادثة فائتة
+    missed_chat_desc: اجمع تفاصيل الزائر عندما لا تكون متاحًا.
     outside_business_hours: Outside business hours
     offline_chat_window_desc: Applicable during non-business hour or when agents offline.
     hide_offline_chat_window: Hide chat window
@@ -14052,7 +14138,7 @@ ar:
     missed_chat_info: Chat has been missed.!
     change_livechat_tone: Incoming chat notification alert
     message: Message
-    enabling: Enabling
+    enabling: تمكين
     unmark_spam: Mark As Not Spam
     mark_spam: Mark As Spam
     convert: Convert
@@ -14424,6 +14510,13 @@ ar:
     admin:
       save: حفظ
       cancel: إلغاء
+      sidebar_title: Freshchat
+      action:
+        success_message: تم تحديث الإعدادات
+      admin_apikey: 'مفتاح واجهة برمجة التطبيقات:'
+      title_text: Freshchat
+      portal_url: 'عنوان URL للمدخل:'
+      app_id: معرف التطبيق
   facebook_tab:
     remove_tab: إزالة علامة تبويب صفحة
     tab_not_removed: يتعذر إزالة علامة التبويب
@@ -14487,7 +14580,7 @@ ar:
   ticket_cc: نسخة البطاقة
   select_watchers: تحديد مشاهدين
   select_values: Select one or more values
-  enter_a_value: Enter a value
+  enter_a_value: أدخل قيمة
   enter_values: Enter one or more values
   admins: المسؤولين
   shortcuts:
@@ -14599,8 +14692,8 @@ ar:
     tour_v2: Help me setup my knowledge base
     show_more: خيارات أخرى
     general:
-      unsaved_content: You have unsaved content in this page.
-      leave_page_que: Do you want to leave this page?
+      unsaved_content: لديك محتوى لم يتم حفظه في هذه الصفحة.
+      leave_page_que: هل تريد مغادرة هذه الصفحة؟
     helpnote:
       title: تنظيم مجتمعك
       para1: >-
@@ -14935,7 +15028,7 @@ ar:
     contact_us: اتصل بنا
     whats_new: ما الجديد
     user_notifications_header: Notifications
-    load_more: Load More
+    load_more: تحميل المزيد
   trial_plan_downgrade: 'هام: تقوم حالياً بتخفيض الترقية من الخطة %{plan_from} إلى الخطة %{plan_to} '
   discounted_sum: بعد الخصم
   selecting_plan: جاري الاختيار...
@@ -15087,18 +15180,18 @@ ar:
         class='email-wrapper'>%{admin_email}</span>  for your activation email.
       helpnote1: Can't see it?
       helpnote_or: أو
-      resend_message: Resend activation
-      change_email: change your email
-      modal_title: Signed up using the wrong email address?
+      resend_message: إعادة إرسال التنشيط
+      change_email: تغيير بريدك الإلكتروني
+      modal_title: هل قمت بالتسجيل باستخدام عنوان البريد الإلكتروني الخاطئ؟
       modal_helpnote1: Enter your correct email below to receive the activation link.
-      modal_invalid_email_error: Please enter a valid email address.
+      modal_invalid_email_error: يرجى إدخال عنوان بريد إلكتروني صالح.
       modal_user_exists_error: Email already associated to an agent.
       modal_send_button: إرسال التنشيط
       modal_sending_button: Sending Activation
       cancel_button: إلغاء
     modal:
       welcome_frame:
-        title: Welcome to Freshdesk
+        title: مرحبًا بك في Freshdesk
         message: >-
           I'm Girish, the CEO of Freshdesk and I wanted to personally welcome
           you onboard and let you know that our team is here to help if you need
@@ -15108,16 +15201,16 @@ ar:
           to talk to your customers. Let's get you started with the basics.
         forward_link: Select support channels
       channels_frame:
-        title: How do you talk to your customers today?
+        title: كيف تتحدث إلى عملائك اليوم؟
         message: >-
           In addition to email, Freshdesk lets you support your customers over
           phone, chat, social and more. Click on the channels you would like to
           try to enable them in your account.
         message2: 'Don''t worry, you can add or remove them later too.'
-        forward_link: Invite your team
+        forward_link: قم بدعوة فريقك
         default_channel: Added by default
         email_channel: البريد الإلكتروني
-        phone_channel: Phone
+        phone_channel: الهاتف
         chat_channel: إعدادات المحادثة
         social_channel: اجتماعي
         forums_channel: المنتديات
@@ -15134,7 +15227,7 @@ ar:
         message: >-
           Before you get started, here's a 2 minute video overview of your
           helpdesk.
-        forward_link: Let’s get started
+        forward_link: دعنا نبدأ
   multifile_attachments:
     label: إرفاق ملفات
     sending: Sending...
@@ -15264,6 +15357,9 @@ ar:
     folder_unavailable: المجلد غير متوفر في صندوق البريد.
     tcp_socket: غير قادر على إنشاء مأخذ توصيل TCP لخادم البريد الإلكتروني.
     email_bad_request: أرسل خادم البريد الإلكتروني رداً غير صالح أثناء الاتصال بالخادم.
+    unkown_error: >-
+      تعذّر استحضار رسائل البريد الإلكتروني من خادم البريد المخصص. الرجاء
+      التواصل مع support@freshdesk.com
   imap_error: لا يمكن الوصول إلى خادم البريد الإلكتروني
   freshcaller:
     admin:
@@ -15274,4 +15370,48 @@ ar:
         email: البريد الإلكتروني
         continue: استمرار
         password: كلمة المرور
+        connect_existing_account: ربط حساب موجود
+        account_url: رابط حساب Freshcaller
+      sidebar_title: الهاتف
+      title_text: الهاتف
+      feature_request_content:
+        create_new_account: إنشاء حساب جديد
+      freshcaller_subtext: >-
+        شراء الأرقام، وإعداد قوائم انتظار المكالمات، الاستجابة الصوتية
+        التفاعلية، إلخ
   in: في
+  mailer_notifier:
+    hi: مرحباً،
+    thanks: شكرًا،
+  copied_link: تم النسخ
+  cloud_log_mailer:
+    logger_email:
+      regards: مع خالص التحيات،
+      account: 'الحساب: '
+      reason: السبب
+  helpcard:
+    title: معرّف خارجي فريد
+  admin_upgrade:
+    enable_mint_title: السماح للوكلاء بالاستمتاع بتجربة Mint الأحدث والأسرع
+    enable_mint_error: لقد تم تمكين Mint بالفعل لكل الوكلاء. قم بالتحديث لرؤية أحدث الإعدادات.
+    enable_mint_success: مرحى! لقد تم تمكين Mint بنجاح لكل الوكلاء.
+  customize_domain:
+    email:
+      cheers: 'مرحى,'
+      team: فريق Freshdesk
+  profiles:
+    freshid_edit:
+      profile_details: تفاصيل ملف التعريف
+  'on': في
+  save_as: حفظ باسم
+  currency_label: 'العملة :'
+  help_widget:
+    form_title: اتصل بنا
+    form_button_text: إرسال ملاحظات
+    form_submit_message: شكرًا لك على ملاحظاتك.
+    button_text: التعليمات
+    welcome_message: أيمكننا مساعدتك؟
+    predictive_message: >-
+      لقد لاحظنا بأنك تواجه مشكلة. أخبرنا بما كنت تحاول إنجازه، وسيقوم فريق
+      الدعم التابع لنا بالاتصال بك في أقرب وقت ممكن.
+    success_message: شكراً. سنتواصل معك!

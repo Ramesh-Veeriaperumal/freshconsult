@@ -318,13 +318,18 @@ et:
       custom_url: URL ei ole kehtiv
       custom_date: ei ole korrektne kuupäev
     phone_number: Telefoninumber
+    industry: Majandusharu
+    last_name: Perekonnanimi
+    first_name: Eesnimi
+    company_name: Ettevõte
+    job_title: Ametikoha nimetus
   custom_fields:
     insert_field: Drag & Drop Field
     drag_drop_field_intro: >-
       Drag and drop any field type into the "%{name}" form below to add a new
       custom field
     number: Number
-    text: Single Line Text
+    text: Tekstirida
     paragraph: Multi Line Text
     checkbox: Märkeruut
     dropdown: Rippmenüü
@@ -335,6 +340,7 @@ et:
     regex: Regex
     email: E-post
     delete: Kustuta
+    nested_field: Sõltuv väli
   ticket_fields:
     fields:
       source: Allikas
@@ -349,6 +355,8 @@ et:
       ticket_type: Tüüp
       created_at: Loodud
       tags: Sildid
+      company: Ettevõte
+      skill: Oskus
     saving_ticket: Taotluse kirjete salvestamine...
     untitled: Pealkirjata
     first_choice: Esimene valik
@@ -403,7 +411,7 @@ et:
       agent_info2: Väli ei tohi taotluse sulgemisel tühi olla
       agent_mandatory_submission: Nõutav vormi esitamisel
       customer_info1: Väli ei tohi võrgus taotluse esitamisel tühi olla
-      for_agents: Lahendaja
+      for_agents: Lahendajatele
       dropdown_choices: Rippmenüü valikud
       label_in_portal: Märgend portaalis
       customer_visible: Kuvatakse kliendile
@@ -419,6 +427,9 @@ et:
     section:
       continue_btn: Jätka
       delete_btn: Kustuta
+      ok_btn: OK
+      confirm_btn: Kinnita
+      oops_btn: Ups!
   folder:
     edit: Redigeeri kausta
     info1: 'Kas oled kindel, et soovid selle kausta kustutada?'
@@ -475,6 +486,8 @@ et:
         rate_again: Hinda meid uuesti
         submit: Esita
         cancel: Tühista
+        load_questions: Vaata rohkem
+        comments: Kommentaarid
     login:
       form:
         email: E-post
@@ -502,6 +515,7 @@ et:
       email: Sinu e-post
       comments: Kommentaar
       send_feedback: Saada tagasisidet
+      related_files: Seotud failid
     surveys:
       thanks_for_feedback: Me oleme su tagasiside kätte saanud. Suur tänu!
       feedback_already_done: Sa oled selle vastuse kohta juba tagasisidet andnud.
@@ -532,6 +546,8 @@ et:
     canned_form:
       next: Järgmine
       form_submit: Esita
+      hey: Hei
+      thank_you_text: Aitäh!
   gamification:
     levels:
       beginner: Algaja
@@ -825,37 +841,37 @@ et:
         save: Save
         saving: Saving
       formfield_props:
-        default: Default
+        default: Kasuta vaikesätet
         form_title: Seadistused
         behavior: Käitumine
         label: Märgend
         nested_label: Nested field labels
-        level1: Level 1
-        level2: Level 2
-        level3: Level 3
+        level1: Tase 1
+        level2: Tase 2
+        level3: Tase 3
         nestedfield_helptext: >-
           Use the below free form textarea to add or edit items for your
           dropdown, Indent items by pressing the tab key once or twice. we will
           convert it to dropdown items based on the indentation, please take
           extra care. <a target='_blank' href=%{learn_more}>Learn more</a> 
-        dropdown_items_edit: Dropdown items - edit view
-        dropdown_items_preview: Dropdown items - Preview
-        status_choices: Status choices
-        display_to_customer: Display message for customer
-        sla_timer: SLA timer
+        dropdown_items_edit: Rippmenüü elemendid - redigeerimisvaade
+        dropdown_items_preview: Rippmenüü elemendid - eelvaade
+        status_choices: Oleku valikud
+        display_to_customer: Kuva sõnum kliendile
+        sla_timer: SLA taimer
         nestedfield_helptext_preview: >-
-          This is the "Preview" of sample dropdown items, use the freeform
-          textarea in "Edit view" to edit items
-        delete_field: Delete field
-        field_label_agents: Field label for agents
-        field_label_customer: Field label for customers
+          See on rippmenüü näidiselementide eelvaade. Elemente saad redigeerida
+          redigeerimisvaate vabas vormis tekstialal.
+        delete_field: Kustuta väli
+        field_label_agents: Väljamärgend lahendajatele
+        field_label_customer: Väljamärgend klientidele
         add_new_choice: Add Item
-        customer_mandatory: Required when submitting the form
-        customer_edit_signup: Customer can see this when they Sign up
-        customer_edit: Customer can edit
+        customer_mandatory: Nõutav vormi esitamisel
+        customer_edit_signup: Kliendid näevad seda registreerudes
+        customer_edit: Klient saab redigeerida
         agent_info1: Väli ei või olla taotluse esitamisel täitmata
         agent_info2: Väli ei või olla taotluse sulgemisel täitmata
-        agent_mandatory_submission: Required when submitting the form
+        agent_mandatory_submission: Nõutav vormi esitamisel
         customer_info1: Väli ei või olla taotluse võrgus esitamisel täitamata
         for_agents: Lahendajatele
         dropdown_choices: Dropdown Items
@@ -866,9 +882,9 @@ et:
         agent_mandatory_closure: Nõutud taotluse sulgemisel
         choices: Valikud
         label_in_portal_info: The label that is displayed in your self service portal
-        display_cc_field: Display CC Field
-        cc_company_contacts: Can CC only company contacts
-        cc_any_email: Can CC any email address
+        display_cc_field: Kuva koopiaväli
+        cc_company_contacts: Koopia saab saata ainult ettevõtte kasutajatele
+        cc_any_email: Koopia saab saata mis tahes e-posti aadressile
         regexp: Regular Expression
         validate_regexp: Validate using Regular Expression
         regexp_example_html: >-
@@ -924,23 +940,23 @@ et:
         nestedfield_helptext_preview: >-
           This is the "Preview" of sample dropdown items, use the freeform
           textarea in "Edit view" to edit items
-        delete_field: Delete field
-        field_label_agents: Field label for agents
-        field_label_customer: Field label for customers
+        delete_field: Kustuta väli
+        field_label_agents: Väljamärgend lahendajatele
+        field_label_customer: Väljamärgend klientidele
         add_new_choice: Add Item
-        customer_mandatory: Required when submitting the form
-        customer_edit_signup: Customer can see this when they Sign up
-        customer_edit: Customer can edit
+        customer_mandatory: Nõutav vormi esitamisel
+        customer_edit_signup: Kliendid näevad seda registreerudes
+        customer_edit: Klient saab redigeerida
         agent_info1: Väli ei või olla taotluse võrgus esitamisel täitamata
         agent_info2: Väli ei või olla taotluse sulgemisel täitmata
-        agent_mandatory_submission: Required when submitting the form
+        agent_mandatory_submission: Nõutav vormi esitamisel
         customer_info1: Väli ei või olla taotluse võrgus esitamisel täitamata
-        for_agents: Lahendajad
+        for_agents: Lahendajatele
         dropdown_choices: Dropdown Items
         label_in_portal: Label in Portal
-        customer_visible: Display to customer
+        customer_visible: Kliendivaade
         description: Description
-        for_customer: For Customers
+        for_customer: Klientidele
         agent_mandatory_closure: Nõutud taotluse sulgemisel
         choices: Choices
         label_in_portal_info: The label that is displayed in your self service portal
@@ -994,6 +1010,11 @@ et:
           ligi rämpsposti levitajaid.
       settings:
         simple_none: Mitte ükski
+        google: Google
+        important: Tähtis
+        twitter: Twitter
+        facebook: Facebook
+        everyone: Kõik
     mobihelp:
       app_review:
         request_sent: Rakenduse ülevaatamise nõue on saadetud
@@ -1052,6 +1073,7 @@ et:
           app_key: Rakenduse võti
           app_secret: Rakenduse saladus
           integration_details: Integratsiooni üksikasjad
+          saving: Salvestamine...
         index:
           title: MobiHelpi rakendused
           new_app: Uus rakendus
@@ -1213,6 +1235,7 @@ et:
         video: Vaata videot
         learn_arcade: Loe lähemalt arkaadi kohta
         enable_arcade: Luba Freshdeski arkaad
+        start_over: Võta tagasi
       gamification_settings:
         award_points: Anna punkte
         agent_resolves_ticket: 'Kui lahendaja <br /> lahendab taotluse:'
@@ -1258,6 +1281,11 @@ et:
         delete: Kustuta
         save_survey: Salvesta
         edit: Redigeeri
+        hide: Eemalda
+        new: Uus
+        update: uuendus
+        activate_survey: Luba
+        preview_survey: Eelvaade
       satisfaction_settings:
         enable_label: Rahulolu-uuringud
         link_text_label: Rahulolu-uuringu lingi tekst
@@ -1271,6 +1299,19 @@ et:
         enter_happy_text: Sisesta õnnelik tekst
         enter_neutral_text: Sisesta neutraalne tekst
         enter_unhappy_text: Sisesta õnnetu tekst
+      new_layout:
+        title: Uuringu nimi
+        loading: Laadimine...
+        survey: Uuring
+      thanks_contents:
+        title_text_v2: Kliendi rahulolu-uuringu tänamissõnum
+      new_questions_layout:
+        questions: Küsimused
+      new_rating:
+        error_text: See väli on nõutud
+      new_thanks:
+        thanks_message_feedback_v2: Tagasiside tänamissõnum
+        additional_comments_feedback_v2: Lisakommentaari välja lisamine
     getting_started:
       send_mail_content:
         test_info_1: 'Sulle tundub, et kõik sujub? Saada proovikiri.'
@@ -1434,6 +1475,9 @@ et:
           päevapääsmete arv langeb kaheni.
         email: E-post
         all: Kõik
+        agent: Lahendaja
+        date: Kuupäev
+        filtered_by: 'Filtreerimisalus:'
     widget_config:
       index:
         feedbackwidget_embedded_tab: Manusvidin
@@ -1467,9 +1511,37 @@ et:
         feedbackwidget_mobile_view: Mobiilivaade
       popup_widget:
         feedbackwidget_attach_a_file: Manusta fail
+        feedbackwidget_button_type: Nuputüüp
+        feedbackwidget_submit_title: Saada tagasisidet
+        feedbackwidget_button_customization: Kohanda nuppu
+        thankyou_default: Täname sind tagasiside eest!
+        feedbackwidget_form_submit_message: Sõnum vormi esitamise kohta
+        feedbackwidget_screenshot: Tee kuvatõmmis
+        feedbackwidget_form_customization: Kohanda vormi
+        feedbackwidget_image_button: Pildinupp
+        thankyou_info: 'Sõnum, mis kuvatakse siis, kui kasutaja on taotluse vormi esitanud'
+        feedbackwidget_offset: 'Nihutamine:'
+        feedbackwidget_px: pikslit
+        feedbackwidget_search_area: Otsi artikleid
+        feedbackwidget_popup_code: Hüpikvidina kood
+        feedbackwidget_use_https: Kasuta HTTPSi
+        feedbackwidget_text_button: Tekstinupp
+        feedbackwidget_form_height: Vormi kõrgus
+        feedbackwidget_button_text_placeholder: Tugi
+        feedbackwidget_form_height_message: 'Kui sa näed oma vidinas kerimisribasid, kohanda vidina kõrgust.'
       embedded_widget:
         feedbackwidget_embedded_code: Manusvidina kood
         feedbackwidget_attach_a_file: Manusta fail
+        feedbackwidget_submit_title: Saada tagasisidet
+        thankyou_default: Täname sind tagasiside eest!
+        feedbackwidget_form_submit_message: Sõnum vormi esitamise kohta
+        feedbackwidget_form_customization: Kohanda vormi
+        thankyou_info: 'Sõnum, mis kuvatakse siis, kui kasutaja on taotluse vormi esitanud'
+        feedbackwidget_px: pikslit
+        feedbackwidget_search_area: Otsi artikleid
+        feedbackwidget_use_https: Kasuta HTTPSi
+        feedbackwidget_form_height: Vormi kõrgus
+        feedbackwidget_form_height_message: 'Kui sa näed oma vidinas kerimisribasid, kohanda vidina kõrgust.'
     supervisor_rules:
       info_help: >-
         Vii <b>iga taotluse</b> puhul, mida on uuendatud 30 päeva jooksul, ellu
@@ -1565,6 +1637,8 @@ et:
         checked: on märgitud
         unchecked: on märkimata
         deselected: Valik on tühistatud
+      anyone: Igaüks
+      system: Süsteem
     va_rules:
       index:
         human_name: Dispetšeri reegel
@@ -1729,6 +1803,10 @@ et:
         notifications: Teade saadetakse
         agent_create_or_delete: Lahendaja on Lisatud või Kustutatud
         whitelisted_ip_modified: IP Whitelisting is modified
+        saml_cert_fingerprint_info_sha256: >-
+          Sinu SAMLi pakkuja antud SAML-sertifikaadi sõrmejälg (SHA256). Seda
+          kasutatakse krüpteerimiseks / valideerimiseks.
+        for_agents: Lahendajatele
       helpnote:
         title: Turvasätted
         info1: >-
@@ -1754,6 +1832,14 @@ et:
           juurdepääsu piirata ka klientide või ainult oma lahendajate puhul. <a
           href="https://support.freshdesk.com/support/solutions/articles/195168">
           Loe lähemalt.</a>
+      password_security:
+        advanced: Edasijõudnud
+        never: Mitte iial
+        characters: tähemärki
+        days: päeva
+        password: parool
+        have_mixed_case: Sisaldab erinevaid tähemärke
+        default: Kasuta vaikesätet
     products:
       helpnote:
         tour: Aita mul mitut toodet hõlmavat kliendituge pakkuda
@@ -1808,6 +1894,8 @@ et:
         last_published: Sinu portaal avaldati viimati
         contact_us: Võta meiega ühendust
         logo_and_favicon: Logo ja lemmikuikoon
+        settings: Sätted
+        customer_portal: Kliendiportaal
       edit:
         title: Redigeeri toodet
         updating: Uuendamine...
@@ -1876,6 +1964,8 @@ et:
         customers: Kliendid
         reports: Aruanded
         administration: Haldus
+        general: Üldine
+        bots: Robotid
       permissions: Load
       helpcard:
         title1: Mis on rollid?
@@ -1948,6 +2038,11 @@ et:
       cancel_label: Tühista
       done_label: Tehtud
       save_label: Salvesta
+      agent_label: Lahendaja
+      add_agent_label: Lisa agent
+      saving_label: Salvestamine...
+      manage_label: Halda
+      add_label: Lisa
     home:
       index:
         group: Grupid
@@ -2098,9 +2193,30 @@ et:
         agents_label: Lahendajad
         agents: Lahendajad
         description: Kirjeldus
+        skills: Oskused
+        agent_label: Lahendaja
+        add_agents: Lisa lahendajaid
+        skill_create: Loo
+        manage_label: Halda
+        add_label: Lisa
     user_skills:
       index:
         more: rohkem
+        any: Kõik
+        groups: Grupp
+    ecommerce:
+      new:
+        account_name: Konto nimi
+        title: Uus konto
+        assign_product: Määra tootele
+        assign_group: Määra grupile
+      index:
+        new_account: Uus konto
+      index_title: E-äri
+    hotline:
+      content3:
+        note_title: 'Märkus:'
+      list_title: MobiHelpi rakendused
   ends_with: 'Lõpp:'
   last_name: Perekonnanimi
   forum:
@@ -2960,6 +3076,17 @@ et:
         <strong>%{delete_at}</strong>. Kui soovid oma konto taastada, saada kiri
         aadressile <a
         href='mailto:support@freshdesk.com'>support@freshdesk.com</a>.
+    edit_domain:
+      email_error: Ettevõtte nimes peaks olema vähemalt kolm tähemärki.
+      url_error1: 'Domeen <strong>%{domain_name}</strong> ei ole saadaval.'
+    new:
+      full_name: Täisnimi
+      company: Ettevõte
+      confirmation: Kinnitamine
+      create_an_account: Loo konto
+    signup_google:
+      sign_up: Registreeru!
+      privacy_policy: privaatsuspoliitika
   success_msg: Konto sätted on edukalt uuendatud!
   failure_msg: Konto sätete uuendamine ebaõnnestus!
   account_configuration:
@@ -3017,7 +3144,7 @@ et:
     logiksid.
   set_type_as: Seadista tüübiks
   change_my_plan: Vali see plaan...
-  make_payment: Make Payment
+  make_payment: Maksa
   add_new_email: Lisa uus e-posti aadress
   chatwidget_title: Vestluse sätted
   feedbackwidget_title: Tagasisidevidin
@@ -3107,6 +3234,7 @@ et:
     solution_categories_portal_info: >-
       This category will be visible in the main product portal along with the
       above selected product portals.
+    manage_categories: Halda
   forum_category:
     product_portal_visibility: Nähtav -
     select_product: Select a product portal...
@@ -3241,6 +3369,7 @@ et:
       created_at: Loomise kuupäev
       asc: Ülenev
       desc: Alanev
+      last_active_at: Viimati nähtud
   topic:
     ideas_stamps:
       planned: Plaanitud
@@ -3517,6 +3646,12 @@ et:
       day: 1 päev
       twoday: 2 päeva
       threeday: 3 päeva
+    toggle_availability_for_rr: >-
+      Luba lahendajatel muuta oma kättesaadavust taotluste automaatseks
+      määramiseks
+    maximum: Suurim
+    enable: Luba
+    confirm: Kinnita
   four: 4 tundi
   oneweek: 1 nädal
   twoweek: 2 nädalat
@@ -3641,6 +3776,12 @@ et:
     password_reset_note: 'Märkus: lähtestamiskiri koos juhistega saadetakse nõudjale %{requester}'
     more: rohkem
     export: Ekspordi
+    insert_placeholder: Sisesta kohatäide
+    days_ago: '%{days} tagasi'
+    ago: '%{time} tagasi.'
+    last_logged: Viimane sisselogimine
+    no_recent_activity: Hiljutisi tegevusi pole
+    skill: Oskused
   account_admin: Kontoülem
   right: Parem
   footer:
@@ -3683,7 +3824,7 @@ et:
     Täida allolev vorm ja sulle saadetakse e-kirjaga juhised parooli
     lähtestamiseks.
   done: Tehtud
-  reset: Lähtesta
+  reset: Võta tagasi
   ticket_due_by_time: Tähtaeg
   ticket_past_due_by: 'Tähtaeg: %{time} tagasi'
   ticket_past_due_by_live: 'Tähtaeg <abbr data-livestamp=''%{timestamp}''>%{time} tagasi</abbr>'
@@ -3806,6 +3947,7 @@ et:
       unverified: Kinnitamata e-posti aadressidega kasutajad
       deleted: Kustutatud kasutajad
       all: Kõik kasutajad
+      blocked: Eiratud kontaktid
     verified:
       no_contacts: Sul ei ole ühtki kontakti.
       no_contacts_with_letter: 'Mitte ükski sobiv kontakt ei alga tähega "%{alphabet}"'
@@ -3930,6 +4072,10 @@ et:
       makse järgmises valuutas: 
     status: Olek
     type: Tüüp
+    invoice: Arve
+    refund: Hüvitatud
+    download: Laadi alla
+    date: Kuupäev
   activate: Aktiveeri
   feedbackwidget_button_text: Märgend
   amount_billed_per_month: 'You will be billed <b>%{amount} %{period}</b>.'
@@ -4065,6 +4211,11 @@ et:
       merge_note:
         one: 'Teema on liidetud selle teemaga:'
         other: 'Teemad on liidetud selle teemaga:'
+      sort_heading: 'Sortimisalus:'
+      sort_order:
+        popularity: Populaarne
+      sort_by_most_recent: Kõige viimane
+      sort_by_default: Kasuta vaikesätet
     topic_vote:
       you:
         one: Sul
@@ -4093,6 +4244,8 @@ et:
       ideas_users_voted_title: 'Inimesed, kellele see idee meeldib'
       problem_users_voted_title: 'Inimesed, kellel see probleem on'
       howto_users_voted_title: 'Inimesed, kellel see küsimus on'
+      votes: stemmer
+      announce_unlike_button: ei meeldi!
     tickets:
       merged_topic_note: Liidetud pealkirja ei konverdita taotlusele
       export: Ekspordi taotlused
@@ -4110,6 +4263,12 @@ et:
       add_people_title: Lisa vestlusesse inimesi
       reopen_reply: Vasta
       related_articles: Seotud artiklid...
+      comments: Kommentaarid
+    agent_login_details: Sisesta andmed allpool
+    account: konto
+    vote_label:
+      one: 1 stemme
+      other: stemmer
   feedbackwidget_form_heading: Vormi pealkiri
   feedbackwidget_form_title: Vidina vormi pealkiri
   cancel_and_back: Tühista ja mine tagasi
@@ -4126,7 +4285,7 @@ et:
       new:
         new_folder: Lisa kaust
       folder_form:
-        category: Category
+        category: Kategooria
         visible_to: Seda näevad
     articles:
       where: Kus?
@@ -4144,9 +4303,9 @@ et:
       article_not_useful: Täname sind tagasiside eest! Me parandame seda artiklit.
       error_message: 'Esines viga %{error_msg}'
       reset_rating:
-        link: Reset
+        link: Võta tagasi
         dialog_title: Reset likes and dislikes
-        dialog_submit: Reset
+        dialog_submit: Võta tagasi
         resetting: Resetting
         dialog_msg: >-
           Are you sure you want to reset article rating - likes and dislikes to
@@ -4154,6 +4313,10 @@ et:
         count: >-
           %{no_of_likes} likes and %{no_of_dislikes} dislikes will be reset to
           zero.
+      prop_tabs:
+        meta: Meta
+      search_all: Otsi artikleid
+      views: Vaatamist
     info9: Avalik (nähtav iseteeninduses)
     edit: Redigeeri lahendust
     view_on_portal: Vaata portaalis
@@ -4207,11 +4370,24 @@ et:
     draft:
       portal:
         all: Kõik
+      name: Mustandid
     general:
       mark_as_uptodate:
         text_1: Märgi see tõlge ajakohaseks
+      something_wrong: Midagi läks valesti!
+      created_by: 'Looja:'
+      feedback: Tagasiside
+      analytics: Analüütika
     add_category: Uus kategooria
     solution_title: Pealkiri
+    kb: Teadmistebaas
+    sidebar:
+      feedbacks:
+        title: Artikli tagasiside
+      view_all: Vaata kõiki
+      drafts:
+        title: Mustandid
+      view_less: Näita vähem
   import_updated: Uuendatud
   feedbackwidget_intro: Kohanda oma Freshdeski vidinat allpool ja vaata reaalajas eelvaadet.
   chatwidget_intro: Kohanda oma Live Chati vidinat allpool ja vaata reaalajas eelvaadet.
@@ -4236,7 +4412,7 @@ et:
       the header information (eg. companyname domains etc..) Read more about it
       <a href = '%{solution_link}' target = '_blank' >here.</a>
   import_example_title: Alljärgnev on näide CSV-failist
-  change_password: Change Password
+  change_password: Muuda parooli
   answered: Vastatud
   errors_in_payment_info: 'Seoses sinu makseandmetega esinenud vead:'
   attach_files: Manusta faile
@@ -4271,7 +4447,7 @@ et:
     email_ticketing: Email Ticketing
     feedback_widget: Tagasisidevidin
     knowledge_base: Knowledge Base
-    automations: Automations
+    automations: Automatiseerimine
     phone_integration: Phone Integration
     mobile_apps: Mobile Apps
     integrations: Built-in Integrations
@@ -4298,6 +4474,11 @@ et:
     custom_mailbox: Custom Mail Servers
     ip_restriction: Secure IP Restriction
     auto_ticket_assignment: Taotluse automaatne määramine
+    bot: Robot
+    parent_child: Parent-child taotlused
+    scheduled_reports: Ajastatud aruanded
+    ticket_templates: Taotluse mallid
+    freshchat: Freshchati ühilduvus
   zendesk_account: Zendeski konto andmed
   zendesk_import_files: 'Vali, mida importida'
   file_url: Täielik XMLi ekspordi URL
@@ -4620,6 +4801,8 @@ et:
           saad selle teate igas keeles eraldi luua. Ikoon <i
           class="common-icon-outdated"></i> viitab sellele, et teate tõlked
           teistesse keeltesse võivad olla aegunud.
+      agent_template_25:
+        topic: Lahendaja kutse e-kiri
     insert_placeholder: Sisesta kohatäited
     modify_agent_template: Muuda Lahendaja e-kirja malli
     event: Sündmus
@@ -4785,6 +4968,12 @@ et:
       status: Olek
       unverified: Kinnitamata
       type: Tüüp
+      last_verified: Viimati kinnitatud
+      config: Seadista
+      cname: CNAME
+      verify: Kontrolli
+      remove: Eemalda
+    plain_unverified: Kinnitamata -
   step2: Samm 2
   import_users_contacts: Kasutajad &rarr; kasutajad
   linkback_info: 'Sa saad valida tagasilingi sinu veebilehele, kui klient päise logol klõpsab.'
@@ -5098,6 +5287,9 @@ et:
         tooltip: Vaata seotud JIRA küsimust
         add_new: Lingi küsimus
         existing: Vaata küsimust
+    search_text: Otsi artikleid
+    action: Toiming
+    thanks_v1: Täname sind tagasiside eest!
   recent_activity: Hiljutine tegevus
   recent_activities: Hiljutised tegevused
   forgot_password: Unustasid parooli?
@@ -5270,6 +5462,14 @@ et:
     forums_toggle:
       title: Foorumid
     gdpr_to: '- '
+    gdpr_terms_link: tingimustega
+    gdpr_admin: Ülem.
+    important: Tähtis
+    gdpr_policy: Privaatsuspoliitika.
+    helpdesk: Kasutajatugi
+    gdpr_agent: Lahendaja
+    anyone: Igaüks
+    gdpr_acknowledgement: 'ja kinnitad, et oled lugenud meie'
   lead: Vihje
   comments: Kommentaarid
   forum_confirm_msg1: 'Kas oled kindel, et soovid selle kategooria kustutada?'
@@ -5324,6 +5524,7 @@ et:
     multiple: Erinevad tööajad
     helpdesk_hours: Kasutajatoe tunnid
     select_time_zone: Vali ajatsoon
+    holiday_calendar: Pühadekalender
   import_org_companies: Organisatsioonid &rarr; ettevõtted
   add: Lisa
   portal_customizer_title: Kohanda oma avalikku kliendiportaali
@@ -5492,6 +5693,8 @@ et:
       history:
         recent_item: Hiljutised elemendid
       update: Uuenda
+      ok: OK
+      hide_cc: Lisa „Salakoopia“
     dashboard:
       round_robin:
         all_agents: Kõik lahendajad
@@ -5603,6 +5806,7 @@ et:
           addbcc: Lisa salakoopia
           removebcc: Eemalda salakoopia
           not_sent: Vastust ei saadetud!
+          to: 'Saaja:'
         forward_form:
           cc: Koopia
           addcc: Lisa koopia
@@ -5680,6 +5884,11 @@ et:
         open_or_pending: Avatud või ootel
         resolved_or_closed: Lahendatud või suletud
         no_tickets: Sul ei ole praeguses vaates ühtki taotlust
+        shared_by_me: 'Taotlused, mida olen jaganud'
+        shared_with_me: 'Taotlused, mida on minuga jagatud'
+        article_feedback: Artikli tagasiside
+        archived: Arhiiv
+        my_article_feedback: Minu artiklite tagasiside
       note:
         posted_on: '%{user_name} kuupäeval %{note_date}'
         created_on:
@@ -5834,6 +6043,8 @@ et:
       requester_responded_at: Kliendi vastus
       asc: Ülenev
       desc: Alanev
+      agent_responded_at: Lahendaja vastus
+    company: Ettevõte
   click_to_change_sort_order: Klõpsa sortimisjärjestuse muutmiseks
   user_sessions:
     new:
@@ -5859,13 +6070,15 @@ et:
     events_empty: Sündmuste väljad ei tohi tühjad olla
     conditions_empty: Tingimuste väljad ei tohi tühjad olla
     actions_empty: Toimingute väljad ei tohi tühjad olla
+    invalid_domain:
+      freshdesk: Freshdesk
   export_data:
     in_sla: SLA raames
     out_of_sla: SLA-d on rikutud
     info: Ekspordi praeguses vaates pileti kohta saada olev teave CSV-faili.
     contact_info: Ekspordi aktiivsed kasutajad CSV-faili.
     select_header: Vali kõik väljad
-    select_all: Select all
+    select_all: Vali kõik
     select_format: 'Ekspordi kui '
     csv: CSV
     xls: Excel
@@ -5966,6 +6179,7 @@ et:
       export_limit_breached: >-
         We currently allow only %{limit} concurrent exports. Kindly try again
         after some time. Apologies for the inconveniences caused.
+    view_all_tickets: Ekspordi CSV-na
   sla:
     minutes: minutit
     hours: tundi
@@ -6043,6 +6257,8 @@ et:
         flash_card_html: Mis sotsiaalvõrgustikes uut on?
         flash_card_text: Understanding your Social tab
         tickets: Taotlused
+        post: ' Postita '
+        interactions: Interaktsioon
       index:
         all: Kõik
       search_btn: Otsi
@@ -6136,7 +6352,7 @@ et:
         show_more_results: Näita veel tulemusi
         search_twitter: Otsi Twitterist
         title: Twitteri kontod
-        reauthorize: Autoriseeri uuesti
+        reauthorize: Volita uuesti
         reauth_required: Vajalik on uuesti autoriseerimine
         handle_auth_error: >-
           Üks su Twitteri kasutajanimedest vajab autentimist. Seega ei saanud me
@@ -6227,6 +6443,8 @@ et:
     configure_custom_addon: Seadista see vidin
     tooltip:
       edit: Redigeeri
+      settings: Sätted
+    connect: Seosta
   home:
     mobile_index:
       email: E-post
@@ -6614,7 +6832,7 @@ et:
         select: Tee oma valik
         contact: Kontaktandmete väljad
         lead: Vihjeväljad
-        account: Kontoväljad
+        account: Konto väljad
     nimble:
       label: Nimble
       desc: Vaata kontaktandmeid Nimble'i CRMist Freshdeski keskkonnas.
@@ -6684,6 +6902,9 @@ et:
         widget_title: Vidina nimi
         username: Kasutajanimi
         password: Parool
+        lead: Vihjeväljad
+        account: Konto väljad
+        contact: Kontaktandmete väljad
     google_calendar:
       label: Google'i kalender
       desc: Sa saad iga taotluse sündmuseid hallata Google'i kalendri abil.
@@ -6787,6 +7008,13 @@ et:
           Näiteks kui su Shopify URL on
           <strong>https://minu_poe_nimi.shopify.com</strong>, sisesta palun
           <strong>minu_poe_nimi</strong>.
+        shop_name_info_mint: >-
+          Näiteks kui su Shopify URL on
+          <strong>https://minu_poe_nimi.shopify.com</strong>, sisesta palun
+          <strong>minu_poe_nimi</strong>.
+        shop_name_mint: Poe nimi
+      edit:
+        disconnect: Eemalda seos
     slack:
       label: Slack
       desc: Stay up to date about Freshdesk tickets in Slack
@@ -7041,7 +7269,7 @@ et:
         https://www.pivotaltracker.com/profile
       pivotal_updates: 'Vali, et saada Pivotal Trackeri uuendusi'
     remote_login:
-      connect: Connect
+      connect: Seosta
       sign_up: Loo konto
       freshdesk_url: Freshdesk URL
       freshdesk_api_key: Freshdesk API võti
@@ -7052,6 +7280,15 @@ et:
     ilos:
       messages:
         video_desc: Kirjeldus
+      settings:
+        for_agents: Lahendajatele
+        for_customer: Klientidele
+      portal_ticket:
+        placeholder: 'Taotlus#'
+      agent_ticket:
+        placeholder: 'Taotlus#'
+      solution:
+        placeholder: 'Artikkel#'
     dynamics_v2:
       form:
         username: Kasutajanimi
@@ -7091,13 +7328,26 @@ et:
       crm:
         mapping:
           contact: Kontakt
+          company: Ettevõte
+          contact_fields: ' Kontaktandmete väljad '
+          account_fields: ' Konto väljad '
+          sync: ' Ajakohasta '
     dynamicscrm:
       form:
         password: Parool
+        contact_email: Kontakti e-posti aadress
+        lead: Vihjeväljad
+        account: Konto väljad
+        contact: Kontaktandmete väljad
     screen_pop:
       widget:
         cancel: Tühista
         subject: Teema
+        view_all: Vaata kõiki
+        requester: Taotluse esitaja nimi
+        add_note_text: Kõne märkused
+        recent_tickets: Hiljutised taotlused
+        create: Loo
     hootsuite:
       reply_btn: Vasta
       send: Saada tagasisidet
@@ -7115,13 +7365,22 @@ et:
         email: E-post
       header:
         reply: Vasta
+      reset: Võta tagasi
+      domain:
+        continue_to_login: Jätka sisselogimisega
+      search:
+        ticket_id: Pileti ID
+        keyword: Võtmesõna
     infusionsoft:
       form:
         select: Tee oma valik
+        contact: Kontaktandmete väljad
+        account: Konto väljad
     cti_admin:
       phone:
         save: Salvesta
         cancel: Tühista
+        delete_msg: 'Kas oled kindel, et soovid selle numbri kustutada?'
       ctd:
         api_key: API võti
         callback_url: Tagasihelistamise URL
@@ -7134,6 +7393,8 @@ et:
         have_user_pass: Kas mul on kasutajanimi ja parool?
     github_settings:
       resolved: Lahendatud
+      none: Ära tee midagi
+      closed: Suletud
     magento:
       form:
         shop_name: Poe nimi
@@ -7145,6 +7406,11 @@ et:
       form:
         auth_token: Autentsustõend
         select: Tee oma valik
+        deal: Pakkumise väljad
+        lead: Vihjeväljad
+        domain: Konto domeen
+        account: Konto väljad
+        contact: Kontaktandmete väljad
     outlook_contacts:
       form:
         mail_box_detail: 'Sünkroniseeri:'
@@ -7161,6 +7427,22 @@ et:
         delete_account: Kustuta
         last_sync_time: Viimane sünkroniseerimine
         syncing_in_progress: Sünkroniseerimine on töös
+    quickbooks:
+      form:
+        quickbooks_note: Märkuse tekst
+    custom_apps:
+      refresh: Värskenda
+    uninstall: Laadi maha
+    salesforce_v2:
+      form:
+        salesforce_v2_settings: Salesforce'i sätted
+    cloud_elements:
+      form:
+        lead: Vihjeväljad
+        daily: Iga päev
+        account: Konto väljad
+        hourly: Iga tund
+        contact: Kontaktandmete väljad
   widgets:
     contact_widget:
       description: 'Kuva kontakt või valik, et kontakt kapslisse lisada.'
@@ -7173,6 +7455,7 @@ et:
         feedback_widgets_help_articles: või sirvi abistavaid artikleid
         show_all_results: Näita kõiki tulemusi
         no_results: 'Tulemusi ei leitud - '
+        problems_with_fields: 'Järgmiste väljadega oli probleeme:'
   reorder: Telli uuesti
   reports:
     no_data: 'Puuduvad andmed, mida kuvada!'
@@ -7216,7 +7499,7 @@ et:
       select_group: Vali grupp
       select_call_type: Vali kõne tüüp
       select_number: Vali number
-      all_numbers: All Numbers
+      all_numbers: Kõik numbrid
       all_call_types: Kõik
       number: Number
       avg_handle_time: Keskmine käsitlusaeg
@@ -7235,6 +7518,7 @@ et:
       includes_transfer: Includes transferred calls
       no_agent: '-Lahendajat pole määratud-'
       business_hours: Tööaeg
+      filter_option_all_calls: Kõik kõned
     time_sheets:
       billable: Tasulised tunnid
       non_billable: Tasuta tunnid
@@ -7331,15 +7615,30 @@ et:
       main:
         total_responses_v2: Kokku
         all: Kõik
+        time_period: Ajavahemik
+        neutral: Erapoolik
+        survey_name: Uuringu nimi
+        agent: Lahendaja
+        positive: Hea
+        group: Grupp
+        overall_rating: Hinne
+        responses: Vastused
+        negative: Halb
+        no_overview: Andmed puuduvad
+        unanswered: Vastamata
+        overview: Ülevaade
+        answered: Vastatud
+        rating: Hinne
+        loading_msg: Aruannete genereerimine...
     livechat:
       report_title: Live Chat Summary
-      filter_by_title: Filtered by
+      filter_by_title: 'Filtreerimisalus:'
       time_period: Ajavahemik
       widget: Vidin
       group: Grupp
       chat_type: Vestluse tüüp
       summary: Kokkuvõte
-      filter_report: Edit Filter
+      filter_report: Redigeeri filtrit
       select_widget: Vali vidin
       select_group: Vali grupp
       select_chat_type: Vali Vestluse tüüp
@@ -7348,18 +7647,19 @@ et:
       chat_type_agent: Agent Initiated
       chat_type_proactive: Proactive
       generate_summary: Loo
-      filter_close: Close
+      filter_close: Sulge
       total_chats: Kokku
       num_of_chats: No of Chats
-      answered_chats: Answered
-      missed_chats: Missed
+      answered_chats: Vastatud
+      missed_chats: Vastamata
       num_of_transfer: Transfers
-      avg_handle_time: Avg Handle Time
+      avg_handle_time: Keskmine käsitlusaeg
       avg_time_queue: Time in Queue
       total_duration: Total Duration
       agent_chat_summary: Agent Chat Summary
       agent: Lahendaja
       deleted: Deleted
+    discard_changes: Loobu muudatustest
   delete_the_ticket: Kustuta taotlus
   mark_as_spam: Märgi rämpspostiks
   bulk_actions: Masstoimingud
@@ -7393,6 +7693,7 @@ et:
         Ülejäänud osa sinu e-kirja sisust lisatakse vestlusena Freshdeski ja
         saadetakse e-kirjaga ka nõudjale.
       ticket_type_example: Küsimus
+      note: Märkus
   email_command_delimeter_label: E-posti käskude eraldaja
   email_command_preview_to_email: 'Kellele:'
   email_command_preview_to_email_value: support@acme.freshdesk.com
@@ -7502,6 +7803,7 @@ et:
       relevance: Asjakohasus
       created_at: Loomiskuupäev
       updated_at: Viimati muudetud
+    searching: Otsib
   assumed_identity_msg: 'Sa võtsid oma identiteediks kasutajanime %{user_name}.'
   unauthorized_msg: Autoriseerimine ebaõnnestus
   assuming_identity_user_does_not_exist_msg: Sellist kasutajat ei eksisteeri.
@@ -7776,6 +8078,8 @@ et:
         tahvelarvutite jaoks optimaalseks. Sa saad selle seadistuse
         mitteaktiveerida, kui soovid, et kõigis seadmetes oleks ühesugune
         mittereageeriv kujundus.
+    apply_mint: Kinnita
+    classic: Klassikaline
   any_time: Igal ajal
   five_minutes: 5 minuti jooksul
   fifteen_minutes: 15 minuti jooksul
@@ -8091,6 +8395,7 @@ et:
       see_detailed_pricing: Vaata hinna üksikasju
       followup_text: väärtuses Freshfone'i krediiti
       followup: väärtuses Freshfone'i krediiti
+      purchase_credits: Osta kõneaega
     dialpad:
       not_valid_number: Palun sisesta kehtiv number
       could_be_invalid_number: Number võib olla ebakorrektne
@@ -8340,6 +8645,8 @@ et:
         recording_privacy_public: Nähtav klientidele ja lahendajatele
         recording_privacy_private: Nähtav ainult lahendajatele
         name_maxlength: Name cannot have more than 255 Characters
+        number_accessible: Ligipääsetav kasutajale
+        attachment_help_text: Võtab vastu kuni 5 MB suuruseid helifaile
       numbers:
         title: Paku kliendituge Freshfone'i kaudu
         info: >-
@@ -8364,7 +8671,7 @@ et:
         purchase_number: Osta number
         purchase_phone_number: 'Buy Number (%{number})'
         buy: Osta number
-        buy_button_text: Buy
+        buy_button_text: Osta
         purchase_loading_text: Ostmine...
         buy_loading_text: Buying...
         purchase_alert_text: >-
@@ -8408,6 +8715,8 @@ et:
             parajasti kasutajatoe keskkonda sisse logitud lahendajatele. Lisaks
             saavad su lahendajad kõnesid vastu võtta brauseris või lasta need
             automaatselt lauatelefonile suunata.
+        caller_id:
+          manage_caller_id: 'Halda helistaja ID-d '
       invalid_attachment: 'Manus "%{name}" ei ole kehtiv helifail/see on suurem kui 5 MB'
       ivr:
         simple_message_title: Lihtsõnum
@@ -8451,6 +8760,7 @@ et:
         invalid_number_format: 'Sisesta kehtiv telefoninumber, mille ees on prefiks "+" ja riigi kood.'
       welcome_page:
         title: Tere tulemast Freshfone'i!
+        title_text: Telefon
       feature_request_content:
         title: Freshfone
         heading: Paku kliendituge Freshfone'i abil
@@ -8472,6 +8782,9 @@ et:
         additional_note: Freshfone'i nõude töötlemine võtab kaks tööpäeva.
         button_label: Küsi Freshfone'i
         learn_more: Loe lähemalt
+        trial_or: VÕI
+        title_text: Telefon
+      freshfone_numbers_title: Telefon
   livechat:
     feature_request:
       title: Tere tulemast Live Chatti!
@@ -8518,7 +8831,7 @@ et:
     msg_waiting_agent_title: Olekusõnum lahendaja ootamise ajal
     msg_joining_agent_title: 'Sõnum, mis kuvatakse, kui lahendaja vestlusega liitub'
     msg_leaving_agent_title: 'Sõnum, mis kuvatakse, kui lahendaja vestlusest lahkub'
-    chat_transfer_msg_title: Chat transfer message
+    chat_transfer_msg_title: Sõnumi edastamine vestluses
     help_text_wait_onhold_msg: 'See sõnum ilmub, kui külaline on agenti oodanud rohkem kui ühe minuti'
     prechat_message: >-
       Me ei jõua sinuga vestlemist ära oodata. Kõigepealt aga räägi meile pisut
@@ -8713,9 +9026,9 @@ et:
     non_availability_message: >-
       Vabandame, kõik meie lahendajad on hõivatud. Palun # jäta meile sõnum # ja
       me võtame sinuga esimesel võimalusel ühendust.
-    installation: Widget Code
-    visitor_form: Visitor Form
-    preferences: Preferences
+    installation: Vidina kood
+    visitor_form: Külalise ankeet
+    preferences: Eelistused
     intro_title: Miks valida Live Chat?
     intro: >-
       Sest erakordne klienditeenindus tähendab alati kliendi jaoks olemas
@@ -8733,9 +9046,8 @@ et:
     maximum_chat_title: Maximum Number Of Visitor Chats
     maximum_change_label: Redigeeri
     maximum_chat_desc: >-
-      Set the limit for the number of chats an agent can handle simultaneously.
-      When an agent reaches this limit, they will not receive any new chat
-      notifications.
+      Määra, mitu vestlust võib lahendaja samaaegselt pidada. Piirangu
+      täitumisel ei saa lahendaja uusi teavitusi vestlusest.
     maximum_chat_error: You have reached the maximum chat limit.
     transfer_limt_exceeded_msg: ' has reached his capacity. Please transfer the chat to another agent.'
     loading_new_archives: Uute arhiivide laadimine...
@@ -8748,11 +9060,11 @@ et:
     enter_custom_link: Sisesta URL
     widget_option_info: 'Kui tagasisidevidin ei ole saadaval, avaneb uue taotluse leht'
     no_matching_agents: No matching agents
-    chat_enabled_label: Enable Chat
-    routing: Chat routing
-    routing_info: Route all incoming chats to specific groups
-    dropdown_based_routing: Dropdown based routing
-    default_routing: Default routing
+    chat_enabled_label: Luba vestlus
+    routing: Vestluse suunamine
+    routing_info: Suuna kõik sissetulevad vestlused kindlasse rühma
+    dropdown_based_routing: Rippmenüül põhinev suunamine
+    default_routing: Tavaline suunamine
     choice_info: <b>$</b> then notify group
     select_groups: Vali gruppe
     routing_note: >-
@@ -8772,10 +9084,8 @@ et:
     close: Sulge
     visitorId: Visitor ID
     createdAt: Created at
-    enable: Enable
-    widgets_list_info: >-
-      For every product you have set up in Freshdesk, you will have a
-      corresponding chat widget available here
+    enable: Luba
+    widgets_list_info: Kõigi Freshdeskis seadistatud toote kohta ilmub siia vastav vestlusvidin
     text_yes: Jah
     text_no: Ei
     enabled: Lubatud
@@ -8805,6 +9115,19 @@ et:
     change_livechat_tone: LiveChat Notification Tone
     message: Message
     header_title: Päis
+    prechat_dropdown_msg: >-
+      Rippmenüü valikuid saab vahekaardil „Eelistused“ seostada eri rühmadega.
+      Vestlused määratakse valitud rühmadesse.
+    show_widget: 'Lahendajate tööaeg, millal nad võtavad vastu vestlusi'
+    agent_network_disconnect_msg_title: 'Sõnum, kui lahendaja lahkub vestlusest'
+    chat_hours_msg_note: 'Märkus: väljaspool seda aega ei kuvata vestlusakent.'
+    enabling: Lubamine
+    cobrowsing: Leheküljel olev abi
+    end_chat_confirm_msg_title: Vestluse lõppemist kinnitav sõnum
+    chat_with_us: Suhtle meiega
+    cobrowsing_info: >-
+      Aita kliente vestlemise ajal tõhusamalt, võimaldades näha ja hallata nende
+      ekraani.
   facebook_tab:
     remove_tab: Eemalda lehe vahekaart
     tab_not_removed: Vahekaarti ei saanud eemaldada
@@ -8900,6 +9223,7 @@ et:
       reply: Vasta
       forward: Edasta
       add_note: Lisa märkus
+      scenario: Stsenaariumid
     ticket_list:
       title: Taotluste loetelu
       move_cursor: Hüppa kursoriga eelmisele/järgmisele taotlusele
@@ -8982,7 +9306,7 @@ et:
     folders: Kaustad
     views_categories: Vaated ja kategooriad
     tour: Aita mul mu foorumeid seadistada
-    show_more: Show more
+    show_more: Näita rohkem
     helpnote:
       title: Kogukonna organiseerimine
       para1: >-
@@ -9074,7 +9398,7 @@ et:
         delete_confirm: Kustutad selle kommentaari? Kas oled kindel?
         created_topic: lõi teema
         replied_to: vastas teemale
-        replied: replied
+        replied: vastas
       title_meta:
         replies:
           one: 1 vastus
@@ -9153,18 +9477,18 @@ et:
           title: Vasta
           posted: Vastatud kasutajale
     unpublished:
-      page_title: Forum Moderation
+      page_title: Foorumi modereerimine
       empty_spam: Delete all Spam
       more: ' more'
       less: ' less'
       after_ban:
-        marked: Marked as Spam
+        marked: Märgitud rämpspostiks
         restore_contact: Taasta kasutaja
-        contact_deleted: To avoid further Spam the contact was deleted -
-        cleared_rest: All older posts by this user have also been marked as Spam
+        contact_deleted: Tulevikus rämpsposti vältimiseks kustutati kontakt -
+        cleared_rest: Ka kõik vanemad postitused sellelt kasutajalt märgiti rämpspostiks
       after_approve:
-        published: Post has been published
-        goto_post: Goto Post
+        published: Postitus on avaldatud
+        goto_post: Goto-postitus
       invalid_topic:
         went_wrong: Midagi läks valesti
         try_later: Unable to approve the post. Please try again later.
@@ -9285,6 +9609,7 @@ et:
     search_articles: Otsi artiklit
     contact_us: Võta meiega ühendust
     whats_new: Mis on uut?
+    load_more: Laadi rohkem
   trial_plan_downgrade: >-
     Important: You are currently downgrading from %{plan_from} plan to
     %{plan_to} plan
@@ -9296,8 +9621,8 @@ et:
   subscribed_billing: '%{billing_cycle} billing'
   next_renewal: 'Next Renewal in %{renewal_period}'
   suspended_since: 'Suspended since %{days}'
-  plan: Plan
-  edit_plan: Edit Plan
+  plan: Kava
+  edit_plan: Muuda plaani
   account_created: 'Account created %{total_time} ago on %{date}'
   short_code:
     title: Chat Shorthands
@@ -9325,6 +9650,31 @@ et:
       apps out-of-the-box. To browse our selection of apps, click on the “Get
       more Apps” button.
     description: Kirjeldus
+    delete_action:
+      success: Integratsioon on edukalt keelatud.
+    view_all: Vaata kõiki
+    view_more: Kuva rohkem
+    api_error: Me ei saanud su nõuet töödelda. Palun proovi natukese aja pärast uuesti.
+    help_and_support: Abi ja tugi
+    settings: Sätted
+    custom_apps: FreshPlugi vidinad
+    time_ago: tagasi
+    validation_failed: Valideerimine ebaõnnestus.
+    installing_text: Palun oota...
+    overview: Ülevaade
+    install: Paigalda
+    published_in: 'Otsi siit:'
+    popular: Populaarne
+    apps: Rakendused
+    reauthorize: Volita uuesti
+    go_to_dev_portal: Mine veebiarendaja portaali
+    no_mktp_apps_note: Oleme integreerinud mõned sinu lemmikrakendused.
+    ver: 'Versioon: '
+    coming_soon: Peagi tulemas
+    latest: Hiljutised
+    no_custom_apps_note: Loo kohandatud rakendusi ja avalda need veebiarendaja portaalis.
+    field_blank: Palun täida nõutavad väljad.
+    no_mktp_apps: Rakendusi pole paigaldatud
   freshcaller:
     admin:
       link_account_request_content:
@@ -9332,21 +9682,43 @@ et:
         email: E-post
         continue: Jätka
         password: Parool
+        link_errors:
+          validation_error: See väli on nõutud
+      sidebar_title: Telefon
+      title_text: Telefon
+      feature_request_content:
+        create_new_account: Loo uus konto
   multifile_attachments:
     label: Manusta faile
+    remove: Eemalda
+    mb: ' MB '
   plain_on: Sees
   helpdesk_reports:
     saved_report:
       save: Salvesta
       cancel: Tühista
+      delete_dialog_header: Kustuta aruanne
+      edit_dialog_header: Muuda aruannet
     today: Täna
     ticket_schedule:
       index:
         cancel: Tühista
+        delete_text: 'Kas oled kindel, et soovid selle kava kustutada?'
+        confirm: Kinnita
       new:
         ticket_fields_title: Taotluse väljad
         email: E-post
         description: Kirjeldus
+        helpnote:
+          api_info1: APIs on viimase ekspordi link.
+        contact_fields_title: Kontaktandmete väljad
+        select_all: Vali kõik
+        one_time_export_label: 'Ekspordi pileti sisu selle kuu algusest, mil see ajakava algab'
+        frequency: Ajasta
+      schedule_export: Ajasta eksport
+      schedule: Ajasta
+      all_reports: Kõik aruanded
+      new_schedule: Uus graafik
     generate: Loo
     scheduled_reports:
       dialog:
@@ -9354,16 +9726,58 @@ et:
         'on': Sees
         desc: Kirjeldus
         subject: Teema
+        monthly: Kord kuus
+        generate_report: Loo aruanne
+        daily: Iga päev
+        weekly: Iga nädal
     ticket_volume:
       resolved_tickets: Lahendatud taotlused
       received_tickets: Saadud taotlused
+      time_trends:
+        year: aasta
+        week: nädal
+        day: Päev
+        month: kuu
+      load_analysis:
+        title: Koormusanalüüs
     date_range: Kuupäevavahemik
     timespent_export:
       button_export: Ekspordi
+      export_csv: Ekspordi CSV fail
     ticket_activity:
       learn_more: Loe lähemalt
+      helpnote:
+        api_info1: APIs on viimase ekspordi link.
+      edit: Muuda ajakava
     yesterday: Eile
     change: Muuda
+    time_period: Vali ajavahemik
+    chats: Vestlused
+    more: Rohkem...
+    no_data_to_display_msg: 'Puuduvad andmed, mida kuvada.'
+    insights:
+      customize_link: Kohanda
+    this_week: Sel nädalal
+    agent_summary:
+      title: Agendi sooritus
+    this_month: Sel kuul
+    edit_filter: Filter
+    year_in_review:
+      title: Sinu möödunud aasta
+    summary: Kokkuvõte
+    show: 'Näita:'
+    filter_by: 'Filtreerimisalus:'
+    performance_distribution:
+      title: Tõhususe jaotus
+      resolution_bar: Lahendamise aeg
+      first_response_bar: Esimese vastuse aeg
+      response_bar: Keskmine vastamisaeg
+    group_summary:
+      title: Grupi sooritus
+    filtered_by: 'Filtreerimisalus:'
+    at: '-'
+    customer_satisfaction:
+      title: Kliendi rahulolu aruanne
   admin_onboarding:
     modal:
       channels_frame:
@@ -9371,14 +9785,81 @@ et:
         forums_channel: Foorumid
         chat_channel: Vestluse sätted
         email_channel: E-post
+        phone_channel: Telefon
+        title: Kuidas oled siiani oma klientidega suhelnud?
+        forward_link: Kutsu oma meeskond
       agents_frame:
         send_invite: Saada kutse
         emails_invalid: Üks või rohkem e-posti aadressi on kehtetud.
+        emails_placeholder: 'bruce@just.ly, diana@just.ly, clark@just.ly'
+      welcome_frame:
+        title: Tere tulemast Freshdeski
     account_verification_message:
       helpnote_or: või
       modal_send_button: Saada aktiveerimiskiri
       cancel_button: Tühista
+      modal_title: Registreerusid vale e-posti aadressiga?
+      modal_invalid_email_error: Palun sisesta kehtiv e-posti aadress
+      resend_message: Saada aktiveerimiskiri uuesti
+      change_email: muuda oma e-posti aadressi
   freshchat:
     admin:
       save: Salvesta
       cancel: Tühista
+      sidebar_title: Freshchat
+      action:
+        success_message: Seaded uuendatud
+      admin_apikey: 'API võti:'
+      title_text: Freshchat
+      portal_url: 'Portaali URL:'
+      app_id: Rakenduse ID
+  mailer_notifier:
+    hi: 'Tere,'
+    thanks: Tänan
+  copied_link: Kopeeritud
+  enter_a_value: Sisesta väärtus
+  custom_mailbox_admin_email_notifications:
+    regards: 'Tervitades,'
+  activations:
+    activate_freshdesk_account: Ava oma konto
+  cloud_log_mailer:
+    logger_email:
+      regards: 'Tervitades,'
+      account: 'Konto: '
+      reason: Põhjus
+  portals_key: Portaalid
+  classic_label: Klassikaline
+  helpcard:
+    title: Ainulaadne väline ID
+  admin_upgrade:
+    enable_mint_title: Luba lahendajatel proovida uuemat ja kiiremat Minti
+    enable_mint_error: >-
+      Mint on juba lubatud kõikidele lahendajatele. Uusimate seadete nägemiseks
+      värskenda.
+    enable_mint_success: Juhhuu! Mint on nüüd saadaval kõikidele lahendajatele.
+  plain_off: Väljas
+  customize_domain:
+    email:
+      cheers: 'Tervist,'
+      team: Freshdeski meeskond
+  'on': kuupäeval
+  save_as: Salvesta kui
+  reload: Lae uuesti
+  currency_label: 'Valuuta :'
+  user_notifications:
+    mute: Vaigista
+    mark_all_as_read: Märgi kõik loetuks
+    header: Teated
+    preferences: Eelistused
+  ticket_templates:
+    create_new: Loo uus
+  in: 'Otsi siit:'
+  help_widget:
+    form_title: Võta meiega ühendust
+    form_button_text: Saada tagasisidet
+    button_text: Abi
+    welcome_message: Kas saame aidata?
+    predictive_message: >-
+      Märkasime, et jäid hätta. Räägi meile, mida teha üritasid, ja meie
+      klienditugi võtab sinuga niipea kui võimalik ühendust.
+    success_message: Aitäh. Võtame ühendust!

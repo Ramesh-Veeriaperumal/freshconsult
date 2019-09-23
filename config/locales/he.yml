@@ -340,6 +340,11 @@ he:
       custom_url: אינה כתובת URL חוקית
       custom_date: אינו תאריך חוקי
     phone_number: טלפון
+    industry: תעשייה
+    last_name: שם משפחה
+    first_name: שם פרטי
+    company_name: חברה
+    job_title: תפקיד
   custom_fields:
     insert_field: גרור ושחרר שדה
     drag_drop_field_intro: 'גרור ושחרר כל סוג של שדה לטופס "%{name}" שלהלן כדי להוסיף שדה מותאם חדש'
@@ -374,6 +379,8 @@ he:
       ticket_type: סוג
       created_at: נוצר
       tags: תגיות
+      company: חברה
+      skill: מיומנות
     saving_ticket: שומר שדות כרטיס...
     untitled: חסר כותרת
     properties: מאפיינים
@@ -489,6 +496,7 @@ he:
       sectino_label: כותרת אזור
       section_type_is: הצג אזור כאשר הסוג הוא
       section_name_unique: שם האזור כבר נמצא בשימוש
+      add_section: הוספת אזור
     customer_label_missing: תווית הלקוח אינה יכולה להיות ריקה
   folder:
     edit: ערוך תיקיה
@@ -503,7 +511,7 @@ he:
   amount_for_annual: '$%{amount} annually '
   agent_deleted_message: זהו סוכן שנמחק
   cancel: ביטול
-  confirm: אישור
+  confirm: אשר
   downgrade_dialog_title: בטוח שברצונך לשנמך?
   yes_password_reset: כן
   no_password_reset: לא
@@ -519,11 +527,11 @@ he:
   change_equal_plan_title: 'האם אתה בטוח שברצונך לעבור לתוכנית החדשה %{to_plan}?'
   downgrade_plan_title: האם אתה בטוח שברצונך לשדרג לאחור?
   activate_free_plan: בצע אקטיבציה תוכנית חינמית
-  create: יצירה
+  create: צור
   feedbackwidget_custom_image_info: 'אם אתה משתמש בתמונה מותאמת אישית, התעלם מהצבע והטקסט.'
   account_admin_updated: מנהל החשבון עודכן!
   forums_order:
-    overview: מבט על
+    overview: סקירה כללית
     recent: לאחרונה
     popular: פופולרי
     planned: מתוכנן
@@ -556,6 +564,8 @@ he:
         cancel: ביטול
         back: חזרה
         loading_feedback: טוען משוב
+        load_questions: הצג עוד
+        comments: תגובות
     login:
       form:
         email: דוא"ל
@@ -581,6 +591,8 @@ he:
       email: כתובת הדוא"ל שלך *
       comments: תגובות
       send_feedback: שלח משוב
+      related_files: קבצים קשורים
+      was_this_article_useful: האם מאמר זה היה מועיל?
     surveys:
       thanks_for_feedback: 'קיבלנו את המשוב שלך, תודה רבה.'
       feedback_already_done: כבר שלחת משוב לתגובה זו.
@@ -606,6 +618,9 @@ he:
     canned_form:
       next: הבא
       form_submit: שלח
+      okay: אישור
+      hey: היי
+      thank_you_text: תודה
   gamification:
     levels:
       beginner: מתחיל
@@ -809,7 +824,7 @@ he:
           new_account: חשבון חדש
           new_stream: זרם חדש
         twitter_streams:
-          reauthorize: אמת מחדש
+          reauthorize: אישור מחדש
           edit: ערוך
         stream_delete_alert: האם אתה בטוח שברצונך למחוק זרם זה של Twitter?
         last_stream_delete_alert: >-
@@ -1014,6 +1029,7 @@ he:
           /^[a-zA-Z0-9]*$/ </b>. כדי להתאים מחרוזת שמתחילה במילה "fresh" <b>
           %{regex} </b>.
         max_choices: הגעת למספר הפריטים המרבי המותר
+        mapped_internal_groups: קבוצות פנימיות ממופות
     portal:
       delete_confirm:
         title: מחיקת פורטל זה תסיר את
@@ -1027,7 +1043,7 @@ he:
         allow_signin: אפשר למשתמשים להיכנס באמצעות...
         google: Google
         twitter: טוויטר
-        facebook: Facebook
+        facebook: פייסבוק
         user_permissions: הרשאות משתמש עבור הפורטל
         submit_ticket: מי יכול לשלוח כרטיס חדש בפורטל
         portal_security: אבטחת הפורטל
@@ -1066,6 +1082,10 @@ he:
           המשתמשים יכולים להציג כרטיסים ללא התחברות, באמצעות כתובות ה-URL
           הציבוריות של הכרטיסים. ניתן להוסיף אותן להודעות בדוא"ל ולתשובות
           לכרטיסים שנשלחות ללקוחות באמצעות מצייני מיקום.
+        important: חשוב
+        view_settings: הצג הגדרות
+        restricted_login_signup: ההרשמה והכניסה הוגבלו לדומיינים מסוימים
+        reset_portal_changes: אפס שינויי פורטל
       helpnote:
         title: הגדרת הפורטלים שלך
         tour: עזרו לי להגדיר את הפורטל שלי
@@ -1085,6 +1105,13 @@ he:
           אם ברצונך להגדיר הרשאות משתמש ולכוונן את הגדרות הנחיית הפורום, לחץ על
           הכרטיסייה 'הגדרות'. לא ניתן לקבוע את תצורת ההגדרות לכל פורטל, והן יהיו
           משותפות לכל הפורטלים שנוצרו.
+        exit_fullscreen: יציאה ממסך מלא
+        editor_shortcuts: קיצורי דרך בעורך
+        preview_changes: תצוגה מקדימה של השינויים
+        editor_in_fullscreen: עורך במסך מלא
+        level_customizations: התאמות אישיות ברמת הדף
+        advanced_rebranding: מיתוג מחדש והתאמה אישית מתקדמים
+        custom_stylesheets: שימוש בגיליונות סגנון מותאמים אישית
     mobihelp:
       app_review:
         request_sent: בקשה לבדיקת היישום נשלחה
@@ -1381,6 +1408,9 @@ he:
         result_exist_msg: >-
           מאחר שכבר נאספו תשובות לסקר זה, לא ניתן לשנות את סולם הניקוד ואת מס'
           השאלות. עם זאת, תוכל לערוך את השאלות והתשובות.
+        bad_to_good: מרע לטוב
+        survey: סקר
+        good_to_bad: מטוב לרע
       new_rating:
         content_text: >-
           שאלה זו עוזרת לגשת לשביעות הרצון הכוללת עבו התשובה שסופקה על-ידי
@@ -1416,6 +1446,7 @@ he:
         help_text_v2: >-
           שאלות סקר נוספות מופיעות בדף חדש לאחר שהלקוח ממלא את סקר שביעות הרצון.
           השאלות יכולות להתייחס למוצר/חברה/סוכן.
+        additional_comments_feedback_v2: כלול תיבת תגובות נוספות
       new_questions_layout:
         title_text: בחר את סולם הניקוד עבור השאלות שלך
         title_text_v2: בחר את סולם הניקוד עבור השאלות שלך
@@ -1452,6 +1483,10 @@ he:
         'true': true
         'false': false
         delete: מחק
+        confirm_text: אנא אשר...
+        activate_survey: הפעל
+        preview_survey: תצוגה מקדימה
+        custom_title_v2: סקרי שביעות רצון לקוחות
       choice_contents:
         strongly_disagree: לחלוטין לא מסכים
         some_what_disagree: לא מסכים במידה מסוימת
@@ -1638,6 +1673,8 @@ he:
         agent: סוכן
         email: דוא"ל
         all: הכל
+        date: תאריך
+        filtered_by: 'מסונן לפי:'
     widget_config:
       index:
         feedbackwidget_embedded_tab: וידג'ט מוטבע
@@ -1649,8 +1686,8 @@ he:
         feedbackwidget_text_button: לחצן טקסט
         feedbackwidget_image_button: לחצן תמונה
         feedbackwidget_button_text_placeholder: תמיכה
-        feedbackwidget_height_placeholder: '500'
-        feedbackwidget_offset_placeholder: '235'
+        feedbackwidget_height_placeholder: '"500"'
+        feedbackwidget_offset_placeholder: '"235"'
         feedbackwidget_button_customization: התאם אישית לחצן
         feedbackwidget_form_customization: התאם אישית טופס
         feedbackwidget_embedded_code: קוד וידג'ט מוטבע
@@ -1688,6 +1725,12 @@ he:
         feedbackwidget_form_height: גובה הטופס
         feedbackwidget_button_text_placeholder: תמיכה
         feedbackwidget_form_height_message: 'אם אתה רואה פסי גלילה בוידג''ט, כוונן את גובה הוידג''ט.'
+        feedbackwidget_submit_title: שלח משוב
+        thankyou_default: תודה על המשוב
+        feedbackwidget_height_placeholder: '"500"'
+        feedbackwidget_offset: 'היסט:'
+        feedbackwidget_offset_placeholder: '"235"'
+        feedbackwidget_search_area: חפש מאמרים
       embedded_widget:
         feedbackwidget_embedded_code: קוד וידג'ט מוטבע
         feedbackwidget_form_submit_message: הודעת שליחת טופס
@@ -1700,6 +1743,10 @@ he:
         feedbackwidget_use_https: השתמש ב-https
         feedbackwidget_form_height: גובה הטופס
         feedbackwidget_form_height_message: 'אם אתה רואה פסי גלילה בוידג''ט, כוונן את גובה הוידג''ט.'
+        feedbackwidget_submit_title: שלח משוב
+        thankyou_default: תודה על המשוב
+        feedbackwidget_height_placeholder: '"500"'
+        feedbackwidget_search_area: חפש מאמרים
     supervisor_rules:
       info_help: 'עבור <b>כל כרטיס</b> שעודכן בתוך 30 יום, בצע את כל הכללים המתאימים.'
       index:
@@ -1786,6 +1833,8 @@ he:
         checked: מסומן
         unchecked: לא מסומן
         deselected: ללא בחירה
+      anyone: כל אחד
+      system: מערכת
     va_rules:
       index:
         human_name: כלל משגר
@@ -1945,6 +1994,9 @@ he:
         for_contacts: עבור אנשי קשר
         password_policy: מדיניות סיסמאות
         for_agents: עבור סוכנים
+        saml_cert_fingerprint_info_sha256: >-
+          טביעת האצבע (SHA256) של אישור SAML שסופק על ידי ספק ה-SAML שלך. היא
+          תשמש עבור הצפנה/אימות
       helpnote:
         title: הגדרות אבטחה
         info1: >-
@@ -1969,6 +2021,14 @@ he:
           סוכנים בלבד או גם עבור לקוחות. <a
           href="https://support.freshdesk.com/support/solutions/articles/195168">
           למידע נוסף.</a>
+        info4: >-
+          <b>מדיניות סיסמאות</b><br>ניתן להגדיר מדיניות סיסמאות שונה עבור סוכנים
+          ועבור לקוחות. ההגדרות המתקדמות מאפשרות לך להגדיר מדיניות סיסמאות
+          מותאמת אישית, כגון מועד תפוגת הסיסמה ואורך סיסמה מינימלי. השינויים
+          שתבצע יחולו על סוכנים ולקוחות חדשים וקיימים. קבל מידע נוסף על מדיניות
+          סיסמאות <a
+          href="https://support.freshdesk.com/support/solutions/articles/213865-password-policy"
+          target="_top">כאן</a>.
       password_security:
         passwords: סיסמאות
         session_expiry: תוקף הפעלת המשתמש יפוג בעוד
@@ -2115,6 +2175,8 @@ he:
         customers: לקוחות
         reports: דוחות
         administration: מנהלה
+        general: כללי
+        bots: בוטים
       permissions: הרשאות
       helpcard:
         title1: מהם תפקידים
@@ -2185,6 +2247,11 @@ he:
       cancel_label: ביטול
       done_label: בוצע
       save_label: שמור
+      add_agent_label: הוספת סוכן
+      saving_label: שומר...
+      manage_label: נהל
+      add_label: הוסף
+      no_agent_label: אין סוכן
     home:
       index:
         group: קבוצות
@@ -2234,6 +2301,7 @@ he:
         mobihelp: MobiHelp
         customer-portal: פורטל לקוחות
         portals: פורטלים
+        search_admin: חפש הגדרות ניהול
       keywords:
         forum_moderation: הנחיית פורום
         configure_support_email: הגדר דוא"ל של תמיכה
@@ -2338,10 +2406,17 @@ he:
         agents_label: סוכנים
         agents: סוכנים
         description: תיאור
+        skills: מיומנויות
+        add_agents: הוסף סוכנים
+        skill_create: צור
+        manage_label: נהל
+        add_label: הוסף
+        no_agent_label: אין סוכן
     user_skills:
       index:
         more: עוד
         groups: קבוצה
+        any: כלשהו
     ecommerce:
       helpnote:
         no_account: הוסף חשבון חדש
@@ -2370,6 +2445,11 @@ he:
       edit:
         expiry_date: תאריך תפוגת האסימון
         title: ערוך חשבון
+      index_title: מסחר אלקטרוני
+    hotline:
+      content3:
+        note_title: 'הערה:'
+      list_title: אפליקציות MobiHelp
   ends_with: מסתיים ב-
   last_name: שם משפחה
   forum:
@@ -3083,6 +3163,11 @@ he:
         כאן ניתן להתאים אישית הגדרות בסיסיות של מערכת התמיכה שלך, כמו שפה, אזור
         זמן וסכימות צבעים.
       info4: האפשרות 'ערוך פורטל' תאפשר לך להגדיר את תצורת הפורטל עבור המוצר שלך.
+      info5: >-
+        באפשרותך להגביל את הגישה למוקד התמיכה שלך לאנשי הקשר שאתה מוסיף
+        לדומיינים מסוימים. אחרים לא יוכלו להירשם, להיכנס או לשלוח כרטיסים. תוכל
+        לקרוא עוד על נושא זה
+      info6: כאן.
     cancel:
       cancel_account: בטל את חשבון Freshdesk שלך
       info_text: >-
@@ -3169,6 +3254,29 @@ he:
         החשבון שלך בוטל והנתונים יימחקו ב-<strong>%{delete_at}</strong>. כדי
         לשחזר את החשבון, צור קשר עם <a
         href='mailto:support@freshdesk.com'>support@freshdesk.com</a>.
+    multilingual_support:
+      helpcard:
+        supported_languages:
+          title: <b>שפות נתמכות</b><br/>
+        info1: ספק חוויית תמיכה חלקה ללקוחות הגלובליים שלך מחלקים שונים של העולם.
+        title: דבר בשפה של הלקוחות שלך
+      add_languages: הוספת שפות
+      warning_msg: >-
+        הערה: השפה העיקרית היא שפת ברירת המחדל של מוקד התמיכה שלך. לא ניתן לשנות
+        אותה לאחר הוספת השפות הנתמכות.
+      manage_languages: ניהול שפות
+    edit_domain:
+      email_error: שם החברה צריך לכלול לפחות 3 תווים
+      getting_started: התחלת העבודה
+      url_error1: 'הדומיין <strong>%{domain_name}</strong> אינו זמין.'
+    new:
+      full_name: שם מלא
+      company: חברה
+      confirmation: אישור
+      create_an_account: צור חשבון
+    signup_google:
+      sign_up: הרשמה!
+      privacy_policy: מדיניות הפרטיות
   success_msg: הגדרות החשבון עודכנו בהצלחה!
   failure_msg: עדכון הגדרות החשבון נכשל!
   account_configuration:
@@ -3307,6 +3415,7 @@ he:
     more_catogories: ראה את כל הקטגוריות
     other_categories: ראה קטגוריות אחרות
     other_categories_info: קטגוריות שאינן משויכות לפורטל זה
+    manage_categories: נהל
   forum_category:
     product_portal_visibility: זמין ב-
     select_product: בחר פורטל מוצר...
@@ -3743,6 +3852,12 @@ he:
       day: יום
       twoday: יומיים
       threeday: שלושה ימים
+    toggle_availability_for_rr: אפשר לסוכנים לשנות את הזמינות שלהם להקצאה אוטומטית של כרטיסים
+    maximum: מקסימום
+    enable: הפעל
+    please_confirm: אנא אשר...
+    confirm: אשר
+    send_escalation_to: '...ואז שלח דוא"ל הסלמה ל- :'
   four: 4 שעות
   oneweek: שבוע
   twoweek: שבועיים
@@ -3912,6 +4027,9 @@ he:
     no_recent_activity: אין פעילות אחרונה
     reset_score_title: איפוס תגים ונקודות
     assign_group: שייך קבוצות
+    insert_placeholder: הוסף מציין מיקום
+    skill: מיומנויות
+    last_seen_at: נראה לאחרונה ב-
   account_admin: מנהל חשבון
   right: ימין
   footer:
@@ -4166,6 +4284,11 @@ he:
     free_plan_currency_note: 'כאשר תשדרג או תוסיף סוכנים, התשלום שלך יהיה במטבע '
     status: סטטוס
     type: סוג
+    invoice: חשבונית
+    refund: התקבל החזר כספי
+    download: הורד
+    quantity: כמות
+    date: תאריך
   activate: הפעל
   feedbackwidget_button_text: תווית
   amount_billed_per_month: 'תחויב ב-<b>%{amount} %{period}</b>.'
@@ -4296,8 +4419,8 @@ he:
       merge_continue: 'עם זאת, תוכל להמשיך את השיחה כאן: '
       merge_note:
         one: 'נושא אחד מוזג לתוך נושא זה:'
-        two: ''
-        many: ''
+        two: 'נושאים מוזגו לתוך נושא זה:'
+        many: 'נושאים מוזגו לתוך נושא זה:'
         other: 'נושאים מוזגו לתוך נושא זה:'
       sort_heading: 'מוין על-ידי:'
       sort_order:
@@ -4310,29 +4433,29 @@ he:
     vote:
       you:
         one: 'אתה '
-        two: ''
-        many: ''
+        two: 'אתם ו- '
+        many: 'אתם ו- '
         other: 'אתם ו- '
       more:
         one: 'אחד אחר '
-        two: שני אחרים
-        many: רבים אחרים
+        two: '%{count} אחרים '
+        many: '%{count} אחרים '
         other: '%{count} אחרים '
       people:
         one: 'אדם אחד '
-        two: שני אנשים
-        many: אנשים רבים
+        two: '%{count} אנשים '
+        many: '%{count} אנשים '
         other: '%{count} אנשים '
     topic_vote:
       announce:
         one: אוהב את זה
-        two: ''
-        many: ''
+        two: אוהבים את זה
+        many: אוהבים את זה
         other: אוהבים את זה
       ideas:
         one: אוהב את הרעיון
-        two: אוהב את הרעיונות
-        many: אוהב את הרעיונות
+        two: אוהבים את הרעיון
+        many: אוהבים את הרעיון
         other: אוהבים את הרעיון
       problem:
         one: בעיה זו קיימת
@@ -4341,8 +4464,8 @@ he:
         other: בעיות אלו קיימות
       howto:
         one: השאלה קיימת
-        two: השאלות קיימת
-        many: השאלות קיימת
+        two: השאלות האלו קיימות
+        many: השאלות האלו קיימות
         other: השאלות האלו קיימות
       votes: הצבעות
       upvote: הצבע
@@ -4365,8 +4488,8 @@ he:
       upvote: הצבע
       like:
         one: אוהב את זה
-        two: ''
-        many: ''
+        two: אוהבים את זה
+        many: אוהבים את זה
         other: אוהבים את זה
     tickets:
       merged_topic_note: לא ניתן להמיר נושא ממוזג לכרטיס.
@@ -4383,6 +4506,17 @@ he:
       add_people_title: הוסף אנשים לשיחה
       reopen_reply: תשובה
       related_articles: מאמרים קשורים...
+      comments: תגובות
+    agent_login_info: האם אתה סוכן?
+    agent_signin: הכנס כאן
+    agent_login_details: הכנס את הפרטים מתחת
+    user_signup_portal: 'הירשם '
+    account: לחשבון שלך
+    vote_label:
+      one: 1 stemme
+      two: stemmer
+      many: stemmer
+      other: stemmer
   feedbackwidget_form_heading: כותרת הטופס
   feedbackwidget_form_title: כותרת ווידג'ט
   cancel_and_back: בטל וחזור אחורה
@@ -4443,6 +4577,8 @@ he:
       something_wrong: משהו השתבש!
       mark_as_uptodate:
         text_1: סמן תרגום זה כעדכני
+      mark_as_outdated:
+        text_1: סמן תרגומים אחרים כלא עדכניים
     folders:
       view_all: הצג את כל התיקיות...
       choose_folder: בחר תיקייה
@@ -4626,6 +4762,7 @@ he:
       title_counter_message: 'דפי SEO הטובים ביותר,  מומלץ 50-6- תווים לכל היותר לכותרת.'
       description_counter_message: 'דפי SEO הטובים ביותר,  מומלץ 150-160 תווים לתיאור.'
     unassociated: לא משויך
+    kb: מאגר המידע
   import_updated: עודכן
   feedbackwidget_intro: התאם אישית את וידג'ט המשוב להלן וצפה בתצוגה מקדימה בזמן אמת.
   chatwidget_intro: התאם אישית את הווידג'ט 'צ'אט חי' להלן וצפה בתצוגה מקדימה בזמן אמת.
@@ -4759,6 +4896,8 @@ he:
     linked_paren_child_desc: 'זרימות עבודה של כרטיסים מקושרים, כרטוס אב-צאצא'
     scheduled_reports_desc: דיווח מתוזמן
     custom_survey_desc: סקרי שביעות רצון מותאמים אישית
+    bot: בוט
+    freshchat: שילוב Freshchat
   zendesk_account: פרטי חשבון Zendesk
   zendesk_import_files: בחר מה לייבא
   file_url: כתובת URL של יצוא XML מלא
@@ -5103,6 +5242,8 @@ he:
           דוא"ל תחת 'עותק לידיעה' בעת שליחת הכרטיס למערכת התמיכה שלך. באופן
           אידאלי, הודעה זו צריכה לכלול את שם הפונה {{ticket.requester.name}} ואת
           תיאור הכרטיס {{ticket.description}}.
+      agent_template_25:
+        topic: דוא"ל הזמנת סוכן
     insert_placeholder: הוסף מצייני מיקום
     modify_agent_template: שנה את תבנית הדוא"ל של הסוכן
     event: אירוע
@@ -5287,11 +5428,19 @@ he:
       remove: הסר
       unverified: לא מאומת
       type: סוג
+      last_verified: אומת לאחרונה
+      config: קבע תצורה
+      data_help: ערך שיוקצה לרשומת ה-DNS
+      cname: CNAME
+      verify: בצע אימות
+      host_value_help: שם המארח עבור רשומת ה-TXT
+      data: נתונים
     enable_compose_info: >-
       אם כן, הסוכנים יוכלו לשלוח הודעות דוא"ל יוצאות ללקוחות חדשים או קיימים,
       והודעות אלו יומרו לכרטיסים יוצאים.
     enable_compose: לאפשר לסוכנים ליזום שיחות עם לקוחות?
     personalized_email_replies_title: להשתמש בשמות סוכנים בתשובות לכרטיסים והודעות דוא"ל יוצאות?
+    plain_unverified: לא מאומת -
   step2: שלב 2
   import_users_contacts: משתשים ואנשי קשר
   linkback_info: תוכל לבחור לקשר לאחור לאתר שלך כאשר הלקוח לוחץ על הלוגו בכותרת
@@ -5610,6 +5759,8 @@ he:
         existing: הצג בעיה
     compose:
       to_address_placeholder: הזן את כתובת הלקוח
+    search_text: חפש מאמרים
+    thanks_v1: תודה על המשוב
   recent_activity: פעילות אחרונה
   recent_activities: פעילויות אחרונות
   forgot_password: שכחתי סיסמה
@@ -5732,7 +5883,7 @@ he:
         שילובים ב-Freshdesk מאפשרים לך לשתף נתונים עם אפליקציות ושירותים של צד
         שלישי שבהם אתה משתמש באופן סדיר. Freshdesk מציע כמה שילובים מקוריים
         לשימוש מיידי. כדי להתחיל להשתמש בשילוב מקורי, לחץ על לחצן 'הפעל' המתאים.
-      title2: וידג'טים של FreshPlug
+      title2: יישומים מותאמים אישית
       info2: >-
         בנוסף לשילובים המובנים, תוכל לצרף נתונים של אפליקציות צד שלישי, מערכות
         ישנות או מסדי נתונים לתוך כרטיסים ודפי אנשי קשר באמצעות FreshPlugs. תוכל
@@ -5787,6 +5938,23 @@ he:
     forums_toggle:
       title: פורומים
     gdpr_to: עד
+    gdpr_terms_link: תנאים
+    twitter_disabled: כניסת Twitter תושבת עבור לקוחות וסוכנים למטרות אבטחה.
+    gdpr_admin: מנהל מערכת.
+    includes_contacts_company_domain: (כולל אנשי קשר קיימים ודומיינים קיימים של החברה)
+    hidden_on_portal: חבוי בפורטל
+    important: חשוב
+    gdpr_policy: מדיניות הפרטיות.
+    supported_languages: 'שפות נתמכות (%{count})'
+    languages: שפות
+    permission:
+      users_from_any_domain: משתמשים מכל דומיין
+      who_can_create: מי יכול להיכנס (או) להירשם (או) ליצור כרטיסים?
+      users_from_selected_domains: משתמשים מדומיינים ברשימת ההיתרים
+    anyone: כל אחד
+    gdpr_acknowledgement: ואישור שקראת את
+    search_domain: חפש דומיין
+    visible_in_portal: גלוי בפורטל
   lead: הפניה
   comments: תגובות
   forum_confirm_msg1: האם אתה בטוח שברצונך למחוק את הקטגוריה הזו?
@@ -6017,6 +6185,9 @@ he:
         recent_item: פריטים אחרונים
       update: עדכן
       hide_cc: הסתר 'עותק לידיעה'
+      do_not_link: אל תקשר
+      view_in_detail: הצג בפירוט
+      ok: אישור
     dashboard:
       agent_availability: זמינות הסוכן
       round_robin:
@@ -6137,6 +6308,7 @@ he:
           addbcc: הוסף עותק מוסתר
           removebcc: הסר עותק מוסתר
           not_sent: התשובה לא נשלחה!
+          to: 'אל:'
         forward_form:
           cc: עותק לידיעה
           addcc: הוסף עותק לידיעה
@@ -6227,6 +6399,10 @@ he:
         my_article_feedback: משוב על המאמרים שלי
         archive_view: תצוגת ארכיון
         archived: ארכיון
+        shared_by_me: כרטיסים ששיתפתי
+        shared_with_me: כרטיסים ששותפו איתי
+        invalid_requester: פונה לא חוקי
+        raised_by_me: כרטיסים שאני ביקשתי
       note:
         posted_on: '%{user_name} בתאריך %{note_date}'
         created_on:
@@ -6388,6 +6564,8 @@ he:
       asc: סדר עולה
       desc: סדר יורד
       agent_responded_at: תגובת הסוכן
+      recently_active: פעיל לאחרונה
+    company: חברה
   click_to_change_sort_order: לחץ כדי לשנות את סדר המיון
   user_sessions:
     new:
@@ -6413,6 +6591,8 @@ he:
     events_empty: אירועים לא יכולים להיות ריקים
     conditions_empty: תנאים לא יכולים להיות ריקים
     actions_empty: פעולות לא יכולות להיות ריקות
+    invalid_domain:
+      freshdesk: Freshdesk
   export_data:
     in_sla: במסגרת SLA
     out_of_sla: SLA הופר
@@ -6581,6 +6761,8 @@ he:
         flash_card_html: מה חדש ברשתות החברתיות?
         flash_card_text: היכרות עם הכרטיסייה 'חברתי'
         tickets: כרטיסים
+        post: ' פרסם '
+        interactions: אינטראקציות
       index:
         all: הכל
       search_btn: חיפוש
@@ -6662,7 +6844,7 @@ he:
         show_more_results: הצג תוצאות נוספות
         search_twitter: חפש ב-Search
         title: חשבונות Twitter
-        reauthorize: אמת מחדש
+        reauthorize: אישור מחדש
         reauth_required: נדרש אישור מחדש
         handle_auth_error: אחד ממזהי Twitter שלך מחייב אימות. לכן לא ניתן לבצע את הפעולה
         rate_limit_reached: הגעת למגבלת הדירוג של Twitter. בדוק בעוד זמן מה
@@ -6742,6 +6924,7 @@ he:
     tooltip:
       edit: ערוך
       settings: הגדרות
+    connect: חבר
   home:
     mobile_index:
       email: דוא"ל
@@ -7098,7 +7281,7 @@ he:
         salesforce_settings_info: ''
         salesforce_settings: הגדרות Salesforce
         select: בחר אפשרות
-        contact: שדות איש קשר
+        contact: שדות של אנשי קשר
         lead: שדות הפניה
         account: שדות חשבון
     nimble:
@@ -7206,6 +7389,9 @@ he:
         widget_title: כותרת וידג'ט
         username: שם משתמש
         password: סיסמה
+        lead: שדות הפניה
+        account: שדות חשבון
+        contact: שדות של אנשי קשר
     dynamicscrm:
       label: Dynamics CRM
       helptext: >-
@@ -7256,7 +7442,7 @@ he:
           https://<HostName>/XRMServices/2011/Organization.svc?wsdl=wsdl0 ואתר
           אזור: SecureTokenService -> חל על.
         dynamicscrm_settings: הגדרות Dynamics CRM
-        contact: שדות איש קשר
+        contact: שדות של אנשי קשר
         lead: שדות הפניה
         account: שדות חשבון
         error: 'אופס, משהו השתבש! בדוק אם הזנת את הערכים כראוי.'
@@ -7358,6 +7544,13 @@ he:
           לדוגמה, אם כתובת ה-URL של Shopify היא
           <strong>https://my_shop_name.shopify.com</strong>, הזן
           <strong>my_shop_name</strong>.
+        shop_name_info_mint: >-
+          לדוגמה, אם כתובת ה-URL של Shopify היא
+          <strong>https://my_shop_name.shopify.com</strong>, הזן
+          <strong>my_shop_name</strong>.
+        shop_name_mint: שם חנות
+      edit:
+        disconnect: נתק
     slack:
       label: Slack
       desc: המשך להתעדכן בכל הקשור לכרטיסים של Freshdesk ב-Slack
@@ -7449,6 +7642,9 @@ he:
         widget_script: מקטע קוד של וידג'ט
         create_n_enable: צור והפעל
         insert_placeholder: הוסף מציין מיקום
+      get_custom_apps: קבל יישום מותאמים אישית
+      edit_custom_app: ערוך יישום מותאם אישית
+      new_custom_app: יישום מותאם אישית חדש
     logmein:
       label: LogMeIn Rescue
       desc: ספק תמיכה מידית מרחוק ללקוחות ולעובדים באמצעות LogMeIn Rescue
@@ -7609,7 +7805,7 @@ he:
         https://www.pivotaltracker.com/profile
       pivotal_updates: בחר לקבל עדכונים מ-Pivotal Tracker
     remote_login:
-      connect: התחבר
+      connect: חבר
       sign_up: הירשם
       freshdesk_url: כתובת URL של Freshdesk
       freshdesk_api_key: מפתח API של Freshdesk
@@ -7717,10 +7913,27 @@ he:
       crm:
         mapping:
           contact: איש קשר
+          company: חברה
+          contact_fields: ' שדות של אנשי קשר '
+          account_fields: ' שדות חשבון '
     screen_pop:
       widget:
         cancel: ביטול
         subject: נושא
+        view_all: הצג הכל
+        requester: שם הפונה
+        do_not_link: אל תקשר
+        link_to_ticket: קישור לכרטיס זה
+        call_actions: פעולות שיחה
+        new_ticket_with_id: כרטיס חדש נוצר עם מזהה
+        link_to_new_ticket: קישור לכרטיס חדש
+        add_note_to_ticket: הוסף הערה לכרטיס
+        agent_phone_details: פרטי הטלפון של הסוכן
+        add_note_text: הערות לשיחה
+        agent_phone_updated: פרטי הטלפון של הסוכן עודכנו
+        recent_tickets: כרטיסים אחרונים
+        create: צור
+        ticket_reference_id: מזהה הפניית שיחה
     hootsuite:
       no_ticket_msg: אין לך כרטיסים עבור בחירת מסנן זו
       reply_btn: תשובה
@@ -7761,10 +7974,19 @@ he:
     infusionsoft:
       form:
         select: בחר אפשרות
+        contact: שדות של אנשי קשר
+        account: שדות חשבון
     cti_admin:
       phone:
         save: שמור
         cancel: ביטול
+        add_number: הוסף מספר
+        number_not_in_use: לא בשימוש
+        add_number_tooltip: על כל שורה להכיל מספר אחד בלבד
+        title: מספרי מוקד התמיכה
+        delete_number: אנא אשר
+        delete_msg: האם אתה בטוח שברצונך למחוק מספר זה?
+        number_in_use: מספרים בשימוש
       ctd:
         api_key: מפתח API
         callback_url: כתובת URL ללחיצה
@@ -7775,6 +7997,16 @@ he:
         content: תוכן
         password: סיסמה
         have_user_pass: יש לי שם משתמש וסיסמה?
+        req_authentication: דרוש אימות
+      save_agent_private_note: שמור הערות שיחה כפרטיות
+      ctd_toggle: הגדרת Click to Dial
+      softfone:
+        max_dimension: לכל היותר 550px &times; 250px
+        width: רוחב
+        height: גובה
+        url: כתובת URL עבור ה-Iframe
+      title: הגדרות שילוב טלפוניה ומחשוב
+      iframe_toggle: אפשר Softphone Iframe
     github_settings:
       resolved: נפתר
       none: אל תעשה דבר
@@ -7808,6 +8040,11 @@ he:
       form:
         auth_token: אסימון אימות
         select: בחר אפשרות
+        deal: שדות עסקה
+        lead: שדות הפניה
+        domain: דומיין חשבון
+        account: שדות חשבון
+        contact: שדות של אנשי קשר
     onedrive:
       desc: צרף ושתף את הנתונים/הקבצים מ-OneDrive.
     outlook_contacts:
@@ -7826,6 +8063,40 @@ he:
         delete_account: מחק
         last_sync_time: שעת סנכרון אחרון
         syncing_in_progress: הסנכרון בתהליך
+    google_drive:
+      form:
+        developer_key: מפתח API הושג ממסוף המפתחים של Google.
+        client_id: מזהה לקוח OAuth עבור הדומיין שלך
+    custom_apps:
+      ticket_detail_page: עמוד פרטי כרטיס
+      preview_helptext: יישום מותאם אישית זה יופיע בסרגל הצד
+      hide_preview: הסתר תצוגה מקדימה
+      custom_app_used_in: יישום מותאם אישית מוצג ב-
+      contact_detail_page: עמוד פרטי איש קשר
+      refresh: רענן
+      show_preview: הצג תצוגה מקדימה
+      custom_app_preview: תצוגת מקדימה עבור יישום מותאם אישית
+    microsoft_teams:
+      auth_btn: אשר
+    uninstall: הסר
+    slack_v3:
+      slack_prof_label: התחבר ל-Slack
+      slack_connect_desc: הגדר את חשבונך ליצור כרטיסי Slack מ-Slack
+      slack_auth_btn: אשר את Slack
+    salesforce_v2:
+      form:
+        salesforce_v2_settings: הגדרות Salesforce
+    slack_v2:
+      form:
+        slash_command_token: אסימון פקודת Slash
+    cloud_elements:
+      form:
+        lead: שדות הפניה
+        daily: יומי
+        account: שדות חשבון
+        field_mapping: מיפוי שדות
+        hourly: שעתי
+        contact: שדות של אנשי קשר
   widgets:
     contact_widget:
       description: הצג איש קשר או אפשרות כדי להוסיף את איש הקשר לכמוסה.
@@ -7838,6 +8109,7 @@ he:
         feedback_widgets_help_articles: או עיין במאמרי העזרה
         show_all_results: הצג את כל התוצאות
         no_results: 'אין תוצאות עבור '
+        problems_with_fields: 'יש בעיות עם השדות הבאים:'
   reorder: שנה את הסדר
   reports:
     no_data: אין נתונים להצגה!
@@ -7919,7 +8191,7 @@ he:
       on_time_resolution: פתרון<br> בזמן
       on_time_resolution_percent: OTR %
       fcr_count: פתרון בהתקשרות<br> ראשונה
-      fcr_percent: FCR %
+      fcr_percent: אחוז FCR
       avg_1st_response_time: זמן תגובה <br> ראשונה ממוצע
       avg_response_time: זמן תגובה <br> ממוצע
       avg_resolution_time: זמן פתרון <br> ממוצע
@@ -7972,7 +8244,7 @@ he:
         time_period: פרק זמן
         group: קבוצה
         agent: סוכן
-        overview: מבט על
+        overview: סקירה כללית
         responses: תשובות
         response_to: תשובה ל-
         rating: דירוג
@@ -7994,6 +8266,8 @@ he:
         overall_rating: דירוג
         all_responses: כל התשובות
         total_responses_v2: סך הכל
+        survey_name: כותרת
+        loading_msg: יוצר דוחות...
       index:
         agent_list_loading: מאחזר רשימת סוכנים
       feedbacks:
@@ -8051,6 +8325,7 @@ he:
       agent_chat_summary: סיכום צ'אט של סוכן
       agent: סוכן
       deleted: נמחק
+    discard_changes: מחק שינויים
   delete_the_ticket: מחק את הכרטיס
   mark_as_spam: סמן כספאם
   bulk_actions: פעולות בצובר
@@ -8119,6 +8394,21 @@ he:
         target='_blank'
         href='https://support.freshdesk.com/support/solutions/articles/210807'>קרא
         עוד על שדות דינמיים</a>.
+      info4_v3: >-
+        אם אתה נמצא בתכנית Estate או תכנית מתקדמת יותר, תוכל להציג אזורים עם
+        שדות דינמיים שיופיעו על סמך האפשרות שנבחרה בשדה רשימה נפתחת. ניתן להוסיף
+        שדות כרטיס לכל אזור, ולשייך אזור עם אפשרויות בשדה הרשימה הנפתחת. אם אתה
+        מפעיל חנות מסחר אלקטרוני, לדוגמה, יכול להיות לך אזור שייפתח עם שדה בשם
+        'סיבה' כאשר הלקוח בוחר את האפשרות 'החלפה'. בדרך זו, אתה יכול להבין טוב
+        יותר למה הלקוח שלך מעוניין בהנפקת החלפה. ניתן ליצור מקסימום של שני
+        אזורים דינמיים ולהשתמש בהם בשתי רשימות נפתחות מותאמות אישית. אם כבר
+        שייכת אזור עם השדה 'סוג', תוכל להוסיף עוד אזור אחד בלבד לטופס הכרטיס.
+      info4_v2: >-
+        אם אתה נמצא בתכנית Estate או תכנית מתקדמת יותר, תוכל להציג שדות דינמיים
+        בהתבסס על האפשרות שנבחרה בשדה הסוג. לכל אפשרות בשדה הסוג תוכל ליצור אזור
+        שונה. לאחר מכן תוכל להוסיף שדות כרטיס שונים לכל אזור. לדוגמה, בתרחיש של
+        מסחר אלקטרוני, כאשר הסוג שנבחר הוא 'החלפה', אזור עם שדה שנקרא 'סיבה'
+        יכול להיפתח להזנת הסיבה שבגללה הלקוח רוצה להחליף את הפריט.
   contact_field:
     helpcard:
       title2: התאמה אישית של שדות איש הקשר שלך
@@ -8194,6 +8484,7 @@ he:
       relevance: רלוונטיות
       created_at: תאריך יצירה
       updated_at: שינוי אחרון
+    searching: מחפש
   assumed_identity_msg: 'קיבלת על עצמך את הזהות של %{user_name}.'
   unauthorized_msg: האימות נכשל
   assuming_identity_user_does_not_exist_msg: המשתמש שניסית לקבל על עצמך לא קיים.
@@ -8270,7 +8561,7 @@ he:
   bcc_emails_key_pop: ' <li class=''left''>עותק מוסתר :</li> <li>%{bcc_emails}<li>'
   clear: נקה
   saved_draft: נשמר
-  saving_draft: שומר....
+  saving_draft: שומר...
   saving: שומר...
   draft: טיוטה
   last_draft: הטיוטה האחרונה שלך
@@ -8474,6 +8765,7 @@ he:
         וימטב אותה לטלפונים ולטאבלטים. תוכל לבחור לכבות אפשרות זו במקרה שברצונך
         לשמור על עקביות עם ערכת נושא שאינה מגיבה בכל המכשירים.
     classic: קלאסי
+    apply_mint: החל
   any_time: בכל עת
   five_minutes: בתוך 5 דקות
   fifteen_minutes: בתוך 15 דקות
@@ -8565,6 +8857,9 @@ he:
       total_resolved_tickets: סה"כ כרטיסים שנפתרו
       average_received_tickets: ממוצע כרטיסים שהתקבלו
       total_received_tickets: סה"כ כרטיסים שהתקבלו
+      load_analysis:
+        title: ניתוח עומסים
+      unresolved_tickets: כרטיסים שלא נפתרו
     glance:
       title: מבט מהיר על מערכת התמיכה
       index_title: מבט מעמיק על<br/>מערכת התמיכה
@@ -8581,16 +8876,31 @@ he:
     saved_report:
       save: שמור
       cancel: ביטול
+      delete_dialog_header: מחיקת דוח
+      edit_dialog_header: עריכת דוח
     loading_text: יוצר דוח...
     today: היום
     ticket_schedule:
       index:
         cancel: ביטול
+        delete_title: מחיקת לוח זמנים
+        delete_text: האם אתה בטוח שברצונך למחוק תזמון זה?
+        confirm: אשר
       new:
         ticket_fields_title: שדות כרטיס
         email: דוא"ל
         select_all: בחר הכל
         description: תיאור
+        helpnote:
+          api_info1: ל-API יהיה את הקישור ליצוא האחרון.
+        contact_fields_title: שדות של אנשי קשר
+        one_time_export_label: יצא תוכן כרטיסים מתחילת החודש כאשר לוח זמנים זה מתחיל
+        company_fields_title: שדות חברה
+        frequency: תזמן
+      schedule_export: תזמון ייצוא
+      schedule: תזמן
+      all_reports: כל הדוחות
+      new_schedule: לוח זמנים חדש
     generate: צור
     scheduled_reports:
       dialog:
@@ -8598,6 +8908,12 @@ he:
         'on': מופעל
         desc: תיאור
         subject: נושא
+        monthly: מדי חודש
+        generate_report: הפק דוח
+        daily: יומי
+        weekly: שבועי
+      errors:
+        disabled: לא ניתן לתזמן דוחות עם טווחי זמנים מותאמים אישית
     view_new_reports: הצג דוחות חדשים
     productivity: פרודוקטיביות
     date_range: טווח תאריכים
@@ -8606,6 +8922,7 @@ he:
     customer_happiness: שביעות הרצון של הלקוח
     timespent_export:
       button_export: יצא
+      export_csv: יצוא לקובץ CSV
     performance_distribution:
       title: התפלגות ביצועים
       resolution_bar: זמן לפתרון
@@ -8616,10 +8933,28 @@ he:
     something_went_wrong_msg: משהו השתבש. נסה שוב.
     ticket_activity:
       learn_more: למד עוד
+      helpnote:
+        api_info1: ל-API יהיה את הקישור ליצוא האחרון.
+      edit: עריכת לוח זמנים
     export_tickets_success_msg: נתוני הכרטיס שלך יישלחו לדוא"ל שלך בקרוב!
     helpdesk_analysis: ניתוח של מערכת התמיכה
     yesterday: אתמול
     change: שינוי
+    chats: צ'אטים
+    phone_summary:
+      title: סיכום טלפון
+    insights:
+      customize_link: התאם אישית
+    this_week: השבוע הזה
+    this_month: החודש הזה
+    year_in_review:
+      title: סקירת השנה שלך
+    summary: סיכום
+    show: 'הצג:'
+    filtered_by: 'מסונן לפי:'
+    at: ב-
+    customer_satisfaction:
+      title: דוח שביעות רצון של הלקוח
   adv_reports:
     at_a_glance: מבט מהיר
     select_an_option: בחר אפשרות
@@ -8807,6 +9142,7 @@ he:
       see_detailed_pricing: הצג תמחור מפורט
       followup: שווה לנקודות זכות לטלפון
       followup_text: שווה לנקודות זכות לטלפון
+      purchase_credits: רכוש נקודות זכות
     dialpad:
       not_valid_number: הזן מספר חוקי
       could_be_invalid_number: ייתכן שהמספר אינו חוקי.
@@ -9173,6 +9509,9 @@ he:
             טלפון למוקד התמיכה, כל השיחות הנכנסות יוחלקו לסוכנים שמחוברים למערכת
             התמיכה. בנוסף, הסוכנים שלך יכולים לבחור שיחות להשיב לשיחות טלפון
             מתוך הדפדפן, או להעביר אותן לטלפון השולחני שלהם באופן אוטומטי.
+        caller_id:
+          manage_caller_id: 'נהל שיחה מזוהה '
+          add_new: הוסף חדש
       invalid_attachment: 'הקובץ המצורף ''%{name}'' אינו קובץ שמע חוקי / הגודל שלו גדול מ-5MB'
       ivr:
         simple_message_title: הודעה פשוטה
@@ -9198,7 +9537,7 @@ he:
         rename: שנה שם
         done: בוצע
         save: שמור
-        saving: שומר....
+        saving: שומר...
         preview: תצוגה מקדימה
         previewing: מציג תצוגה מקדימה...
         delete_menu: מחק תפריט
@@ -9233,6 +9572,7 @@ he:
           בחשבון שלך
         button_text: בקשה לטלפון
         video_title: צפה בסרטון כדי לברר מה תוכל לעשות עם ערוץ הטלפון
+        trial_or: או
   livechat:
     feature_request:
       title: ברוכים הבאים לצ'אט חי
@@ -9556,6 +9896,19 @@ he:
     reported: דווח
     view_ticket: צפה בכרטיסים קודמים
     header_title: כותרת עמוד
+    prechat_dropdown_msg: >-
+      ניתן לשייך את אפשרויות התפריט הנפתח לקבוצות שונות בכרטיסיה 'העדפות'. שיחות
+      צ'אט יוקצו לקבוצות המתאימות שצוינו.
+    show_widget: כאשר סוכנים מחוברים ומקבלים שיחות צ'אט
+    agent_network_disconnect_msg_title: הודעה כאשר סוכן מתנתק
+    chat_hours_msg_note: 'הערה: חלון הצ''אט יהיה מוסתר מחוץ לפרק הזמן הזה.'
+    enabling: הפעלה
+    cobrowsing: עזרה בדף
+    end_chat_confirm_msg_title: הודעת אישור של סיום צ'אט
+    chat_with_us: התחבר אלינו
+    cobrowsing_info: >-
+      הדרך את לקוחותיך בצורה יעילה יותר במהלך שיחות צ'אט בעזרת אפשרות להציג את
+      המסך שלהם ולשלוט בו.
   facebook_tab:
     remove_tab: הסר כרטיסיית דף
     tab_not_removed: לא ניתן להסיר כרטיסייה
@@ -9975,6 +10328,9 @@ he:
         בפורום %{forum} (%{category})<br />מאת %{username}, לפני <span
         class='emphasize'>%{time_ago}</span>
       title_placeholder: בחר נושאים למיזוג
+    general:
+      unsaved_content: יש לך תוכן לא שמור בדף זה.
+      leave_page_que: האם ברצונך לצאת מדף זה?
   link_with_marketplace: קשר ל-Google Marketplace
   google_signup:
     associate_google:
@@ -10025,6 +10381,7 @@ he:
     search_articles: חפש מאמר
     contact_us: צור קשר
     whats_new: מה חדש
+    load_more: טען עוד
   trial_plan_downgrade: 'חשוב: אתה משדרג כעת לאחר מתוכנית %{plan_from} לתוכנית %{plan_to}'
   discounted_sum: אחרי הנחה
   selecting_plan: בוחר...
@@ -10095,6 +10452,54 @@ he:
     no_mktp_apps: >-
       לא מותקנות אצלך אפליקציות. חפש והתקן אפליקציות מתוך גלריית האפליקציות
       על-ידי לחיצה על
+    share_app: שתף יישום זה
+    view_all: הצג הכל
+    view_more: הצג יותר
+    installation: התקנה
+    terms_of_use_link: 'http://freshdesk.com/terms#marketplace'
+    developed_by: 'פורסם על-ידי '
+    all_apps: כל היישומים
+    api_error: לא ניתן לעבד את בקשתך. נסה שוב בעוד זמן מה.
+    help_and_support: עזרה ותמיכה
+    tooltip:
+      suspended: לא זמין
+    no_mktp_apps_note_2: לחץ על 'קבל יישומים נוספים' כדי לעיין במבחר.
+    no_configs: יישום זה אינו דורש הגדרות.
+    custom_apps: יישומים מותאמים אישית
+    third_party_apps_policy: >-
+      יישום זה הוא בבעלות, מפותח, מופעל ומתוחזק על-ידי צד שלישי ולא על-ידי
+      Freshworks Inc. על ידי הורדה, שילוב עם ו/או שימוש ביישום זה, אתה מבין שאתה
+      מחויב על ידי תנאי מדיניות הפרטיות של המפתח שלו, כולל על עיבוד הנתונים שלך.
+      לקבלת פרטים נוספים על תנאים והגבלות אלה, פנה למפתח או בקר בדף המפתח.
+    time_ago: לפני
+    error_calling_method: 'התרחשה שגיאה במהלך הקריאה לפעולה: '
+    no_search_results: לא הצלחנו למצוא את מה שאתה מחפש. אולי תנסה שוב עם מילת מפתח אחרת?
+    validation_failed: האימות נכשל.
+    no_custom_apps_installed: לא הותקנו יישומים מותאמים אישית
+    paid_app: שולם
+    popular_apps: יישומים פופולריים
+    installed_mkp_apps_unavailable: >-
+      רשימת היישומים המותקנים אינה זמינה כעת. אנא נסה שוב מאוחר יותר. צור איתנו
+      קשר אם הבעיה נמשכת.
+    overview: סקירה כללית
+    write_a_custom_app: כתוב יישום מותאם אישית
+    published_in: ב-
+    confirm_uninstall_message: 'האם אתה בטוח שברצונך להסיר את התקנת ה-%{human_name}?'
+    latest_apps: היישומים האחרונים
+    popular: פופולרי
+    policy_on_custom_apps: מדיניות ביישומים מותאמים אישית
+    no_custom_apps_note_2: לחץ על 'קבל יישומים מותאמים אישית' כדי לעיין בהם ולהתקין אותם.
+    reauthorize: אישור מחדש
+    custom_app_gallery: גלריית יישומים מותאמים אישית
+    apps_unavailable: >-
+      לא ניתן היה להציג יישומים מסוימים. אנא נסה שנית מאוחר יותר. צור איתנו קשר
+      אם הבעיה נמשכת.
+    policy_on_tp_apps: מדיניות עבור יישומי צד שלישי
+    no_mktp_apps_note: השתלבנו עם כמה מהיישומים המועדפים עליך.
+    installing: מתקין
+    coming_soon: מגיע בקרוב
+    latest: האחרונים
+    no_custom_apps_note: צור יישומים מותאמים אישית ופרסם אותם בפורטל המפתחים.
   freshcaller:
     admin:
       link_account_request_content:
@@ -10104,9 +10509,17 @@ he:
         email: דוא"ל
         continue: המשך
         password: סיסמה
+        connect_existing_account: קשר חשבון קיים
+        account_url: כתובת URL חשבון Freshcaller
+      sidebar_title: טלפון
+      title_text: טלפון
+      feature_request_content:
+        create_new_account: צור חשבון חדש
+      freshcaller_subtext: 'רכוש מספרים, הגדר תורי שיחה, מערכות מענה קולי מקוון, וכו'''
   multifile_attachments:
     remove: הסר
     label: צרף קבצים
+    mb: ' MB '
   reset_arcade: איפוס ארקייד
   plain_on: מופעל
   recaptcha_require_message: אימות תמונה נדרש.
@@ -10117,16 +10530,104 @@ he:
         forums_channel: פורומים
         chat_channel: צ'אט חי
         email_channel: דוא"ל
+        phone_channel: טלפון
+        title: איך אתה מדבר עם הלקוחות שלך היום?
+        forward_link: הזמן את חברי הצוות שלך
       agents_frame:
         send_invite: שליחת הזמנה
         emails_invalid: אחד או יותר מהכתובת הדוא"ל לא תקינות
+        emails_placeholder: 'bruce@just.ly, diana@just.ly, clark@just.ly'
+      overview_frame:
+        forward_link: בוא נתחיל
+      welcome_frame:
+        title: ברוך הבא אל Freshdesk
     account_verification_message:
       helpnote_or: או
       modal_send_button: שלח אקטיבציה
       cancel_button: ביטול
+      modal_title: נרשמת באמצעות כתובת דוא"ל לא נכונה?
+      modal_invalid_email_error: הזן כתובת דוא"ל חוקית.
+      resend_message: שלח מחדש הודעת הפעלה
+      change_email: שנה כתובת דוא"ל
   user_notifications:
     preferences: העדפות
+    notification_preferences: העדפות הודעות
+    enable_desktop_notifications_help: אנא לחץ על 'איפשור' כאשר תתבקש לעשות זאת
+    mute: השתק
+    mark_all_as_read: סמן הכול כנקרא
+    header: הודעות
   freshchat:
     admin:
       save: שמור
       cancel: ביטול
+      sidebar_title: Freshchat
+      action:
+        success_message: ההגדרות עודכנו
+      admin_apikey: 'מפתח API:'
+      title_text: Freshchat
+      portal_url: 'URL של הפורטל:'
+      app_id: מזהה אפליקציה
+  mailer_notifier:
+    hi: 'שלום,'
+    thanks: 'תודה,'
+  copied_link: הועתק
+  enter_a_value: הזן ערך
+  custom_mailbox_admin_email_notifications:
+    regards: בברכה
+    welcome_message: מנהל מערכת יקר
+  custom_mailbox_error_type:
+    unkown_error: >-
+      לא ניתן לאחזר הודעות דוא"ל משרת הדוא"ל המותאם אישית. אנא צור קשר עם
+      support@freshdesk.com
+    ssl_errror: שגיאת SSL.
+    server_response_invalid: תגובת השרת היא בפורמט לא חוקי בעת החיבור לשרת.
+    unable_to_connect: לא ניתן לחבר את התיקייה בתיבת הדואר.
+    tcp_connection: לא ניתן ליצור חיבור TCP.
+    tcp_refused: שרת הדוא"ל סרב לחיבור TCP.
+    mailbox_idle: תיבת הדואר אינה תומכת ביכולת IDLE.
+    unable_fetch_status: לא ניתן לאחזר את סטטוס התיקייה.
+    io_error: שגיאת חיבור קלט/פלט.
+    mailbox_suspended: שרת דוא"ל מושעה
+    server_no_resp: שרת הדוא"ל שלח תגובת NO במהלך ההתקשרות לשרת.
+    bye_response: שרת הדוא"ל שלח תגובת BYE במהלך ההתקשרות לשרת.
+    invalid_login: פרטי כניסה לא חוקיים.
+    folder_unavailable: התיקייה אינה זמינה בתיבת הדואר.
+    tcp_socket: לא ניתן ליצור שקע TCP עבור שרת הדוא"ל.
+    email_bad_request: שרת הדוא"ל שלח תגובת BAD במהלך ההתקשרות לשרת.
+  imap_error: שרת דוא"ל לא נגיש
+  activations:
+    activate_freshdesk_account: הפעל את החשבון שלך
+  cloud_log_mailer:
+    logger_email:
+      regards: 'בברכה,'
+      account: 'חשבון: '
+      reason: סיבה
+  helpcard:
+    title: מזהה חיצוני ייחודי
+  admin_upgrade:
+    enable_mint_title: אפשר לסוכנים לנסות את חוויית Mint הרעננה והמהירה יותר
+    enable_mint_error: Mint כבר הופעל עבור כל הסוכנים. רענן כדי לראות את ההגדרות האחרונות.
+    enable_mint_success: מעולה! Mint הופעל בהצלחה עבור כל הסוכנים.
+  plain_off: כבוי
+  customize_domain:
+    email:
+      team: צוות Freshdesk
+  profiles:
+    freshid_edit:
+      profile_details: פרטי פרופיל
+  'on': ב-
+  save_as: שמור בשם
+  currency_label: 'מטבע :'
+  ticket_templates:
+    create_new: יצירת חדשה
+  in: ב-
+  help_widget:
+    form_title: צור קשר
+    form_button_text: שלח משוב
+    form_submit_message: תודה על המשוב.
+    button_text: עזרה
+    welcome_message: האם אנו יכולים לעזור?
+    predictive_message: >-
+      שמנו לב שאתה תקוע. ספר לנו מה ניסית לעשות וצוות התמיכה שלנו יפנה אליך
+      בהקדם האפשרי.
+    success_message: תודה. נהיה בקשר!

@@ -12089,3 +12089,13 @@ th:
   pts_plain: ' pts'
   in: ใน
   and_more_plan_downgrade: และอื่น ๆ...
+  help_widget:
+    form_title: ติดต่อเรา
+    form_button_text: ส่ง
+    form_submit_message: ขอบคุณสำหรับข้อเสนอแนะ.
+    button_text: ความช่วยเหลือ
+    welcome_message: ให้เราช่วยอะไรไหม?
+    predictive_message: >-
+      เราได้สังเกตเห็นว่าคุณติดขัด บอกให้เราทราบว่าคุณกำลังพยายามทำอะไรให้สำเร็จ
+      และทีมสนับสนุนของเราจะติดต่อคุณโดยเร็วที่สุด
+    success_message: ขอบคุณ เราจะติดต่อกลับไป!

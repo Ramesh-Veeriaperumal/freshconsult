@@ -12933,3 +12933,11 @@ zh-TW:
   click_here: '<a href=''javascript: switchToOld()''>點擊此處</a>已在舊版Freshdesk嘗試另一種語言'
   pts_plain: ' 分'
   in: 在
+  help_widget:
+    form_title: 聯繫我們
+    form_button_text: 傳送
+    form_submit_message: 感謝您的意見。
+    button_text: 幫助台
+    welcome_message: 我們可以協助您嗎？
+    predictive_message: 我們發現您遇到問題了。請告訴我們您想要執行的操作，我們的支持團隊會盡快與您聯繫。
+    success_message: 感謝您。我們將與您聯繫！

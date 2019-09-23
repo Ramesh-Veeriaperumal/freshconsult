@@ -7778,3 +7778,12 @@ bg:
     add_forum: Добави форум
   and_more_plan_downgrade: И още...
   change_my_plan: Изберете този план ...
+  help_widget:
+    form_title: Свържете се с нас
+    form_button_text: изпращам
+    button_text: Помогне
+    welcome_message: Можем ли да помогнем?
+    predictive_message: >-
+      Забелязахме, че блокирахте. Кажете ни какво се опитвате да постигнете и
+      нашият екип за поддръжка ще се свърже с Вас възможно най-скоро.
+    success_message: Благодарим. Ще подържаме връзка!

@@ -55,7 +55,7 @@ tr:
       - Şbt
       - Mrt
       - Nis
-      - May
+      - Mayıs
       - Haz
       - Tem
       - Ağu
@@ -142,7 +142,7 @@ tr:
   date_title: Tarih
   status: Durum
   sales: Satış
-  preview: Ön Görünüm
+  preview: Önizleme
   no_agents_in_selected_group: Seçilen grup içinde temsilci bulunmamaktadır
   send_feedback: Geribildirim yolla
   sidebar_help: Yardım
@@ -315,6 +315,11 @@ tr:
       custom_url: Geçersiz URL
       custom_date: Geçerli bir tarih değil
     phone_number: Telefon
+    industry: Endüstri
+    last_name: Soyadı
+    first_name: Adı
+    company_name: Şirket
+    job_title: İş unvanı
   custom_fields:
     insert_field: Sürükle & Bırak Alanı
     drag_drop_field_intro: >-
@@ -332,13 +337,16 @@ tr:
     regex: Regex
     email: E-posta
     delete: Sil
+    nested_field: Bağımlı Alan
+    drag_and_drop_field: Sürükle & Bırak Alanı
+    decimal: Ondalık
   ticket_fields:
     fields:
       source: Kaynak
       subject: Konu
       requester: Talep Eden
       status: Durum
-      group: Grubu
+      group: Grup
       agent: Temsilci
       priority: Öncelik
       description: Açıklama
@@ -346,6 +354,8 @@ tr:
       ticket_type: Tür
       created_at: Oluşturulma arihi
       tags: Etiketler
+      company: Şirket
+      skill: Beceri
     saving_ticket: Bildiri alanları kaydediliyor...
     untitled: Başlıksız
     first_choice: İlk Seçim
@@ -399,7 +409,7 @@ tr:
       agent_info2: Alan bildirim kapatılırken boş bırakılamaz
       agent_mandatory_submission: Form onlayanırken gereklidir.
       customer_info1: Çevirimiçi bildirim yapılıken birim boş bırakılamaz
-      for_agents: Temsilciler için
+      for_agents: Temsilciler
       dropdown_choices: Açılır Menü Seçenekleri
       label_in_portal: Portal için Etiket
       customer_visible: Oyuncuya Gösterilir
@@ -415,6 +425,9 @@ tr:
     section:
       continue_btn: Devam Et
       delete_btn: Sil
+      ok_btn: Tamam
+      confirm_btn: Onayla
+      oops_btn: Hoop!
   folder:
     edit: Klasörü düzenle
     info1: Bu klasörü silmek istediğinizden emin misiniz?
@@ -474,6 +487,7 @@ tr:
         submit: Gönder
         cancel: İptal
         comments: Yorum
+        load_questions: Daha Fazlasını Görüntüle
     login:
       form:
         email: E-posta
@@ -486,7 +500,7 @@ tr:
         help: Yardım
     shared:
       attachment_form:
-        feedback_widgets_screenshot: Ekran Görüntüsü Al
+        feedback_widgets_screenshot: Ekran görüntüsü al
       survey_form:
         survey_title: Lütfen hizmetimizi değerlendirin
         feedback_title: Düşünceleriniz destek sistemimizin gelişmesine yardımcı olacaktır.
@@ -499,6 +513,7 @@ tr:
       email: E-posta Adresiniz *
       comments: Yorumlar
       send_feedback: Geribildirim Yolla
+      related_files: İlgili Dosyalar
     surveys:
       thanks_for_feedback: Geribildiriminiz tarafımıza ulaştı. Teşekkür ederiz.
       feedback_already_done: Bu cevap için zaten geri bildirimde bulundunuz.
@@ -534,6 +549,8 @@ tr:
     canned_form:
       next: Sonraki
       form_submit: Gönder
+      hey: Selam
+      thank_you_text: Teşekkürler
   gamification:
     levels:
       beginner: Başlangıç
@@ -891,7 +908,7 @@ tr:
         save: Kaydet
         saving: Kaydediliyor
       formfield_props:
-        default: Varsayılan
+        default: Varsayılan.
         form_title: Özellikler
         behavior: Davranış
         label: Ekitket
@@ -922,7 +939,7 @@ tr:
         agent_info2: Bildirim gönderirken alan boş bırakılamaz
         agent_mandatory_submission: Form onlayanırken gereklidir.
         customer_info1: Bidirm gönderilirken alan boş bırakılamaz.
-        for_agents: Temsilciler için
+        for_agents: Temsilciler
         dropdown_choices: Açılır Menü öğeleri
         label_in_portal: Portal etiketi
         customer_visible: Oyuncu Görebilir
@@ -978,6 +995,11 @@ tr:
         moderate_none_help: Topluluğunuzda spam yapan kişiler yok ise bu özelliği aktif edin
       settings:
         simple_none: NA
+        google: Google
+        important: Önemli
+        twitter: Twitter
+        facebook: Facebook
+        everyone: Herkes
     mobihelp:
       app_review:
         request_sent: Uygulama Yorumları İsteği Gönderildi
@@ -1032,6 +1054,7 @@ tr:
           app_key: App Key
           app_secret: App Secret
           integration_details: Entegre Detayları
+          saving: Kaydediliyor
         index:
           title: Cepyardım Uygulamaları
           new_app: Yeni uygulama
@@ -1192,6 +1215,7 @@ tr:
         video: Videoyu kontrol et
         learn_arcade: Geçit hakkında daha fazla bilgi edin.
         enable_arcade: Freshdesk Yarışmasını Başlat
+        start_over: Sıfırla
       gamification_settings:
         award_points: Ödül Puanları
         agent_resolves_ticket: 'Temsilci <br /> bir bildirim çözümlediği zaman:'
@@ -1234,6 +1258,12 @@ tr:
         cancel: İptal
         delete: Sil
         save_survey: Kaydet
+        hide: Kaldır
+        new: Yeni
+        update: güncelleme
+        edit: Düzenle
+        activate_survey: Etkinleştir
+        preview_survey: Önizleme
       satisfaction_settings:
         enable_label: Müşteri Memnuniyeti Anketi
         link_text_label: Memnuniyet anketi metin bağlantıları
@@ -1251,6 +1281,19 @@ tr:
         enter_happy_text: Mutlu metin girin
         enter_neutral_text: Tarafsız metin girin.
         enter_unhappy_text: Mutsuz metin girin
+      new_layout:
+        title: Anket adı
+        loading: Yükleniyor...
+        survey: Anket
+      thanks_contents:
+        title_text_v2: Müşteri Memnuniyeti Anketi için teşekkür mesajı
+      new_questions_layout:
+        questions: Sorular
+      new_rating:
+        error_text: Bu alan gereklidir
+      new_thanks:
+        thanks_message_feedback_v2: Ek geri bildirim için teşekkür mesajı
+        additional_comments_feedback_v2: Ek yorum kutusu ekle
     getting_started:
       send_mail_content:
         test_info_1: >-
@@ -1406,6 +1449,9 @@ tr:
         helptext: Geçici Temsilci miktarı 2 olduğunda otomatik olarak arttırılacaktır.
         email: E-posta
         all: Hepsi
+        agent: Temsilci
+        date: Tarih
+        filtered_by: 'Şuna göre filtrele :'
     widget_config:
       index:
         feedbackwidget_embedded_tab: Ekli Araç
@@ -1440,10 +1486,34 @@ tr:
       popup_widget:
         feedbackwidget_search_area: Makaleleri ara
         feedbackwidget_attach_a_file: Dosya Ekle
+        feedbackwidget_button_type: Buton tipi
+        feedbackwidget_submit_title: Geribildirim Yolla
+        feedbackwidget_button_customization: Butonu özelleştir.
+        thankyou_default: Geri bildirimleriniz için teşekkür ederiz.
+        feedbackwidget_form_submit_message: Form gönderi mesajı
+        feedbackwidget_screenshot: Ekran görüntüsü al
+        feedbackwidget_form_customization: Formu özelleştir.
+        feedbackwidget_image_button: Resim Butonu
+        thankyou_info: Kullanıcı bidirim formu gönderdikten sonra görüntülenecek mesaj
+        feedbackwidget_offset: 'Mesafe:'
+        feedbackwidget_popup_code: Pop-up Buton Kodu
+        feedbackwidget_use_https: https kullan
+        feedbackwidget_text_button: Metin butonu
+        feedbackwidget_form_height: Form yüksekliği
+        feedbackwidget_button_text_placeholder: Destek
+        feedbackwidget_form_height_message: 'Araçta indirme çubuğu var ise, araç yüksekliğini arayabilirsiniz.'
       embedded_widget:
         feedbackwidget_embedded_code: Bastırılmış Buton Kodu
         feedbackwidget_search_area: Makaleleri ara
         feedbackwidget_attach_a_file: Dosya Ekle
+        feedbackwidget_submit_title: Geribildirim Yolla
+        thankyou_default: Geri bildirimleriniz için teşekkür ederiz.
+        feedbackwidget_form_submit_message: Form gönderi mesajı
+        feedbackwidget_form_customization: Formu özelleştir.
+        thankyou_info: Kullanıcı bidirim formu gönderdikten sonra görüntülenecek mesaj
+        feedbackwidget_use_https: https kullan
+        feedbackwidget_form_height: Form yüksekliği
+        feedbackwidget_form_height_message: 'Araçta indirme çubuğu var ise, araç yüksekliğini arayabilirsiniz.'
     supervisor_rules:
       info_help: >-
         30 gün içinde güncellenen </b> her bildirim <b> için, eşleştirme kuralı
@@ -1539,6 +1609,8 @@ tr:
         checked: Kontrol edildi
         unchecked: Kontrol edilmedi
         deselected: Seçim kaldırıldı
+      anyone: Hiç kimse
+      system: Sistem
     va_rules:
       index:
         human_name: Gönderici Kuralları
@@ -1580,9 +1652,9 @@ tr:
         api_key?: API Key var
         user_pass?: Kullanıcı adım ve şifrem var?
         username: Kullanıcı adı
-        api_key: API Key
+        api_key: API Anahtarı
         password: Şifre
-        insert_placeholder: Yerimi Yerleştir
+        insert_placeholder: Placeholder ekle
         subject: Konu
         body: Gövde
         to: Kime
@@ -1694,6 +1766,7 @@ tr:
         notifications: Şu olduğunda bildirimler gönderilecektir.
         agent_create_or_delete: Temsilci eklendi ya da silindi.
         whitelisted_ip_modified: IP Beyaz Listesi değiştirildi.
+        for_agents: Temsilciler
       helpnote:
         title: Güvenlik ayarları.
         info1: >-
@@ -1719,6 +1792,14 @@ tr:
           only for your agents. <a
           href="https://support.freshdesk.com/support/solutions/articles/195168">
           Learn more.</a>
+      password_security:
+        advanced: Gelişmiş
+        never: Asla
+        characters: karakterler
+        days: gün
+        password: şifre
+        have_mixed_case: Hem büyük hem küçük harfe sahip
+        default: Varsayılan.
     products:
       helpnote:
         tour: Birden çok üründe destek vermeme yardımcı ol.
@@ -1771,6 +1852,8 @@ tr:
         last_published: Portalınızın son yayınlandığı zaman
         contact_us: Bizimle İletişime Geçin
         logo_and_favicon: Logo
+        settings: Ayarlar
+        customer_portal: Oyuncu Portalı
       edit:
         title: Ürünü Düzenle
         updating: Güncelleniyor...
@@ -1839,6 +1922,8 @@ tr:
         customers: Müşteriler
         reports: Raporlar
         administration: Yönetim
+        general: Genel
+        bots: Robotlar
       permissions: İzinler
       helpcard:
         title1: Anlaşılır İşlevler
@@ -1909,6 +1994,13 @@ tr:
       agents_label: Temsilci
       cancel_label: İptal
       save_label: Kaydet
+      agent_label: Temsilci
+      add_agent_label: Temsilci Ekle
+      saving_label: Kaydediliyor
+      done_label: Tamamlandı
+      manage_label: Yönet
+      add_label: Ekle
+      no_agent_label: Temsilci Yok
     home:
       index:
         group: Gruplar
@@ -2059,9 +2151,31 @@ tr:
         agents_label: Temsilci
         agents: Temsilci
         description: Açıklama
+        skills: Beceriler
+        agent_label: Temsilci
+        add_agents: Temsilcileri ekle
+        skill_create: Oluştur
+        manage_label: Yönet
+        add_label: Ekle
+        no_agent_label: Temsilci Yok
     user_skills:
       index:
         more: daha fazlası
+        any: Herhangi Biri
+        groups: Grup
+    ecommerce:
+      new:
+        account_name: Hesap Adı
+        title: Yeni Hesap
+        assign_product: Ürüne Ata
+        assign_group: Gruba Ata
+      index:
+        new_account: Yeni Hesap
+      index_title: E-ticaret
+    hotline:
+      content3:
+        note_title: 'Not:'
+      list_title: Cepyardım Uygulamaları
   ends_with: ile biter
   last_name: Soyisim
   forum:
@@ -2782,7 +2896,7 @@ tr:
     The file exceeds the prescribed limit of 50MB, please <a href='#'
     id='import_request'>contact support</a> to proceed with the import.
   your_email_address: E-mail adresiniz
-  username: Username
+  username: Kullanıcı adı
   reply: Cevapla
   is_not: Is not
   during: during
@@ -2791,20 +2905,20 @@ tr:
   feedbackwidget_background: Arkaplan
   day: 1 Day
   trial_day: Day
-  current_plan: Current Plan
+  current_plan: Mevcut Plan
   current_free_plan: Current Free Plan
-  medium: Medium
+  medium: Ortam
   suspended_plan_admin_info: >-
     Your account has been suspended please contact your account administrator
     (%{email})
   delete_confirm_scenario: Bu seneryoyu silmek istediğinden emin misin?
-  days: Days
+  days: Günler
   basic_brief: For Small teams
   phone: Phone
-  edit: Edit
-  clone: Clone
-  disable: Disable
-  enable: Enable
+  edit: Düzenle
+  clone: Klonla
+  disable: Devre Dışı Bırak
+  enable: Etkinleştir
   accounts:
     helpcard:
       title: Rebranding your support portal
@@ -2825,10 +2939,10 @@ tr:
       info_text: >-
         Please take a moment to tell us why you want to cancel your account.
         Perhaps we could still help...
-      goback: Not now
+      goback: Şimdi değil
       delete_my_account: Hesabımı sil
-      deleting_account: Cancelling
-      confirm_and_cancel_my_account: I confirm that I want to cancel my account and delete all my data
+      deleting_account: İptal ediliyor
+      confirm_and_cancel_my_account: Hesabımı iptal etmek ve tüm verilerimi silmek istediğimi onaylıyorum
       you_must_confirm: İptali onaylamalısın
       you_must_select: Please select a reason from the list
       tell_us_more: Tell us something
@@ -2853,8 +2967,8 @@ tr:
           href="http://www.freshdesk.com/free-support-software">Learn more about
           the free plan</a>
         budget_extra: >-
-          Perhaps you'd like us to hold on to this account for sometime, till
-          you get your wallet back?
+          Belki de bu hesabı, cüzdanınızı geri alana kadar tutmamızı
+          isteyebilirsiniz.
         requirement: Freshdesk does not handle some of my requirements
         requirement_followup: >-
           We are constantly adding more features and enhancements to Freshdesk.
@@ -2865,15 +2979,16 @@ tr:
         requirement_extra: >-
           Drop us a couple of lines on what you were looking for, and we'll try
           and move it up our queue real quick
-        moving: We are moving to another product
+        moving: Bir başka ürüne geçiş yapıyoruz
         moving_followup: >-
-          We really hate to see you go. Was it the features? The price? That bad
-          bad marketing guy who keeps spamming you? But well, if you’ve made up
-          your mind for someone else, we can only hope you’ll be back soon.
+          Ayrıldığınızı görmekten gerçekten nefret ediyoruz. Nedeni özellikler
+          miydi? Fiyat mı? Yoksa size sürekli spam gönderen şu kötü pazarlama
+          elemanı mı? İyi, ancak başkası için zaten kararınızı verdiyseniz
+          sadece yakında geri dönmenizi umabiliriz.
         moving_extra: >-
           A line or two on what made you switch would go a long way in helping
           us build a better product for you
-        support: We did not receive good support
+        support: İyi bir destek alamadık
         support_followup: >-
           We’re sorry. As a customer support company, there’s nothing more
           important to us than giving you a great support experience, every
@@ -2882,8 +2997,8 @@ tr:
         support_extra: >-
           Give us a few more details and we'll make sure the right support rep
           repents. A ticket ID? Or Issue?
-        else: Anything else?
-        else_followup: A couple of lines explaining your problem would be nice..
+        else: Başka bir şey var mı?
+        else_followup: Sorununuzu açıklayan birkaç satır işe yarayacaktır..
         test-account: We were just using this account for testing. We'll be back
     billing:
       update_billing_info: Update billing information
@@ -2897,22 +3012,33 @@ tr:
         and begin your subscription only once your trial is over.
       begin_subscription: Begin subscription now
     show:
-      export_data: Export Data
+      export_data: Datayı dışarı çıkar
       export_now: Export now
       export_data_text: Generate an XML of all available Help desk data and send it via email
-      account_settings: Account Settings
+      account_settings: Hesap
       primary_contact: Primary contact details
       primary_contact_info: (Used for all account-related communications from Freshdesk)
-      contact_first_name: First Name
-      contact_last_name: Last Name
+      contact_first_name: Adı
+      contact_last_name: Soyadı
       contact_email: E-posta
-      contact_phone: Phone
+      contact_phone: Telefon
       invoice_email_info: Send Invoices to
       invoice_emails: E-posta
       restore_account: >-
         Your account is cancelled and the data will be deleted on
         <strong>%{delete_at}</strong>. To restore your account, contact <a
         href='mailto:support@freshdesk.com'>support@freshdesk.com</a>.
+    edit_domain:
+      email_error: Company name should be atleast 3 characters
+      url_error1: 'The domain <strong>%{domain_name}</strong> is not available.'
+    new:
+      full_name: Tam İsim
+      company: Şirket
+      confirmation: Onay
+      create_an_account: Bir hesap oluştur
+    signup_google:
+      sign_up: Kayıt Ol!
+      privacy_policy: onaylamış olursunuz
   success_msg: Account settings updated successfully!
   failure_msg: Failed to update Account Settings!
   account_configuration:
@@ -2922,7 +3048,7 @@ tr:
   short_company_name_error: Company name should be atleast 3 characters
   forum_key: Forum
   topics:
-    edit_title: Edit
+    edit_title: Düzenle
     show:
       mark_this_idea_as: Mark this idea as
       mark_this_problem_as: Mark this problem as
@@ -2944,7 +3070,7 @@ tr:
     Please ensure that the first row has the header information (eg. name, email
     etc.). The fields in your CSV file, though, can be in any order.
   utf_8_format: The file has to be in UTF-8 format.
-  at: at
+  at: 'şunda:'
   add_a_topic: Yeni konu oluştur
   bottom: Bottom
   feedbackwidget_help_title: Geri bildirim aracı
@@ -3050,6 +3176,7 @@ tr:
     product_portal_visibility: Görünür
     select_solution_category: Portalda Gözüksün
     solution_categories_portal_info: 'Bu kategori, seçilen ürünler ile birlikte portal da görünür olacak.'
+    manage_categories: Yönet
   forum_category:
     product_portal_visibility: Görünür
     select_product: Portalda Gözüksün
@@ -3116,7 +3243,7 @@ tr:
     reorder: Yeniden şipariş ver
     add_new_action: Yeni Bir Eylem Ekle
     dispatch_rules: Göndeci Kuralı
-    match_all: Match <b>ALL</b> of the below
+    match_all: Aşağıdakilerin <b>HEPSİNİ</b> eşleştir
     match_any: Match <b>ANY</b> of the below
     add_condition: Yeni koşul ekle
     delete: Bu kuralı silmek istediğinizden emin misiniz ?
@@ -3178,6 +3305,7 @@ tr:
       created_at: Oluşturma Tarihi
       asc: Yukarı
       desc: Aşağı
+      last_active_at: Son görülen
   topic:
     ideas_stamps:
       planned: Planlanan
@@ -3454,6 +3582,12 @@ tr:
       day: 1 Gün
       twoday: 2 Gün
       threeday: 3 Gün
+    toggle_availability_for_rr: >-
+      Temsilcilerin otomatik bildirim ataması için uygunluklarını
+      değiştirmelerine izin ver
+    maximum: Maksimum
+    enable: Etkinleştir
+    confirm: Onayla
   four: 4 Saat
   oneweek: 1 Hafta
   twoweek: 2 Hafta
@@ -3496,7 +3630,7 @@ tr:
     available_seats: '%{count} Agent seats available'
     available_seats_without_count: Temsilci yeri var
     no_seats: Temsilci yeri yok
-    last_logged_in: 'Last logged in %{time} ago.'
+    last_logged_in: 'En son %{time} önce oturum açıldı.'
     never_logged_in: Hiç giriş yapılmadı
     day_pass_used: 'Used %{count} day pass till date'
     day_passes_available:
@@ -3575,6 +3709,13 @@ tr:
     password_reset_message: 'Do you want to reset %{requester}''s password?'
     password_reset_note: 'Note: A reset mail with instructions will be sent to %{requester}'
     more: daha fazlası
+    insert_placeholder: Placeholder ekle
+    days_ago: '%{days} önce'
+    ago: '%{time} önce.'
+    last_logged: En son giriş
+    export: Dışa aktar
+    no_recent_activity: Yakın zamanda hiç etkinlik yok
+    skill: Beceriler
   account_admin: Yönetici Hesabı
   right: Hak
   footer:
@@ -3738,6 +3879,7 @@ tr:
       unverified: Onaylanmamış E-postalar ile Kontaklar
       deleted: Silinmiş Kontaklar
       all: Bütün Kontaklar
+      blocked: Engellenmiş kişiler
     verified:
       no_contacts: Herhangi bir konuşmanız bulunmuyor
       no_contacts_with_letter: '''%{alphabet}'' harfi ile başlayan bir kontak bulunamadı'
@@ -3854,6 +3996,11 @@ tr:
     currency-note: 'All your future payments will be in '
     free_plan_currency_note: 'When you upgrade or add agents, your payment will be in '
     status: Durum
+    invoice: Fatura
+    refund: Para iadesi yapılmış
+    download: İndir
+    type: Tür
+    date: Tarih
   activate: Aktifleştir
   feedbackwidget_button_text: Ekitket
   amount_billed_per_month: 'You will be billed <b>%{amount} %{period}</b>.'
@@ -3950,7 +4097,8 @@ tr:
       see_all_articles: '%{count} diğer başlığı oku...'
       more_articles: 'More articles in <span class=''folder-name''> %{article_name} </span>'
       modified_on: 'Modified on:'
-      related_articles: Related Articles
+      related_articles: İlgili başlıklar...
+      created_by: 'Oluşturan kişi:'
     folder:
       filler_text: 'Watch this space for articles regarding %{folder_name}'
     topic:
@@ -3989,6 +4137,9 @@ tr:
       sort_heading: 'Şuna göre sıralandı:'
       sort_order:
         date: Eskiden yeniye
+        popularity: Popüler
+      sort_by_most_recent: En yakın zamandaki
+      sort_by_default: Varsayılan.
     topic_vote:
       you:
         one: Sen
@@ -4057,6 +4208,8 @@ tr:
       like:
         one: bunu beğenir
         other: bunu beğenirler
+    agent_login_details: Aşağıdaki ayrıntıları girin
+    account: hesap
   feedbackwidget_form_heading: Başlık Tarzı
   feedbackwidget_form_title: Araç Form Başlığı
   cancel_and_back: İptal et ve geri dön
@@ -4101,6 +4254,9 @@ tr:
         count: '%{no_of_likes} beğeni ve %{no_of_dislikes} hoşlanmama sıfırlanıyor.'
       search_all: Makaleleri ara
       votes: Oy
+      prop_tabs:
+        meta: Meta
+      views: Görüntüleme
     info9: Public (Will be published in self service)
     edit: Çözümü Düzenle
     view_on_portal: Portal'da görüntüle
@@ -4151,11 +4307,24 @@ tr:
     draft:
       portal:
         all: Hepsi
+      name: Taslaklar
     general:
       mark_as_uptodate:
         text_1: Bu çeviriyi güncel olarak işaretle
+      something_wrong: Bir şeyler ters gitti!
+      created_by: 'Oluşturan kişi:'
+      feedback: Geri bildirim
+      analytics: Matematiksel Analizler
     add_category: Yeni Kategori
     solution_title: Ünvan
+    kb: Bilgi Tabanı
+    sidebar:
+      feedbacks:
+        title: Makale Geri Bildirimi
+      view_all: Tümünü Göster
+      drafts:
+        title: Taslaklar
+      view_less: Daha azını görüntüle
   import_updated: Güncellendi.
   feedbackwidget_intro: >-
     Freshdesk widget'ınızı aşağıdaki özelleştirme ve gerçek zamanlı önizlemesini
@@ -4184,7 +4353,7 @@ tr:
       the header information (eg. companyname domains etc..) Read more about it
       <a href = '%{solution_link}' target = '_blank' >here.</a>
   import_example_title: Following is the example of a CSV file
-  change_password: Change Password
+  change_password: Şifre değiştir
   answered: Cevaplandı
   errors_in_payment_info: Ödeme bilgilerinizde hata meydana geldi.
   attach_files: Dosya ekle
@@ -4229,7 +4398,7 @@ tr:
     social_support: Sosyal Destek
     satisfaction_survey: Memnuniyet anketleri
     forums: Forumlar
-    gamification: Gamification
+    gamification: Oyunlaştırma
     everything_in_blossom: Everything in Blossom
     chat: Entegre Edilmiş Canlı Destek
     multiple_languages: Çoklu Dil
@@ -4246,6 +4415,11 @@ tr:
     custom_mailbox: Özel Posta Sunucuları
     ip_restriction: Secure IP Restriction
     auto_ticket_assignment: Otomatik Bildirim Atama
+    bot: Robot
+    parent_child: Üst-alt bildirimler
+    scheduled_reports: Planlanan raporlar
+    ticket_templates: Bildirim şablonları
+    freshchat: Freshchat entegrasyonu
   zendesk_account: Zendesk Hesap Detayları
   zendesk_import_files: Ne Aktaracağını Seç
   file_url: Full XML Export URL
@@ -4314,7 +4488,7 @@ tr:
     edit_profile: Profili Değiştir
     assumed_text: görüntülenen kullanıcı
     help_center: Bugün sana nasıl yardımcı olabiliriz?
-    new_support_ticket: Yeni Bildirim Gönder
+    new_support_ticket: Yeni sorun bildir
     check_ticket_status: Bildirim Durumlarını Göster
     user_available: Yeni bildirimler sana <br> otomatik olarak atanacaktır.
     user_not_available: Yeni bildirimler sana <br> otomatik olarak atanmayacaktır.
@@ -4563,7 +4737,7 @@ tr:
           This email is sent to the requestors asking them to verify a newly
           added email id to their contact.
       reply_template_15:
-        topic: Agent Reply Template
+        topic: Temsilci Hazır Cevap
         info1: >-
           You can customize and prefill default information you want added in
           agent ticket replies using the Reply Template. Agent Reply Templates
@@ -4573,7 +4747,9 @@ tr:
           specific to each language. The <i class="common-icon-outdated"></i>
           icon indicates that the notification translations in other languages
           may be outdated.
-    insert_placeholder: Insert Placeholders
+      agent_template_25:
+        topic: Temsilci Davet E-Postası
+    insert_placeholder: Yer tutucu ekle
     modify_agent_template: Modify Agent Email Template
     event: Etkinlik
     agent_notification: Temsilci Bildirimi
@@ -4624,7 +4800,7 @@ tr:
     name: Adı
     freshdesk: Freshdesk
     edit: Düzenle
-    info9: Bir Gruba Katıl
+    info9: Gruba Ata
     reply_emails: Freshdesk'ten E-postayı Yanıtla
     delete: Bu E-postayı silmek istediğine emin misin?
     change_this: Bunu Değiştir
@@ -4686,7 +4862,7 @@ tr:
     info7: This is also your Reply-to address eg. support@yourcompany.com
     solution_link: How to convert your emails into Freshdesk tickets?
     make_primary: Make primary
-    info8: Forward your emails to
+    info8: 'E-postalarınızı şuraya iletin:'
     help_link_info: Daha fazla bilgi için mail ayarları başlıklı konumuzu oku...
     bcc_email: Bcc address
     info17: >-
@@ -4730,6 +4906,13 @@ tr:
       verified: Onaylandı
       status: Durum
       unverified: Onaylanmamış
+      last_verified: Son Doğrulanan
+      config: Yapılandırma
+      cname: CNAME
+      verify: Doğrula
+      remove: Kaldır
+      type: Tür
+    plain_unverified: Onaylanmamış -
   step2: Adım 2
   import_users_contacts: Users &rarr; Contacts
   linkback_info: >-
@@ -4768,7 +4951,7 @@ tr:
     from: Kimden
     to: Kime
     by: Tarafından
-    type: Tip
+    type: Tür
     rating: Derece
   observer_events:
     priority: Öncelik değiştirildi
@@ -4966,7 +5149,7 @@ tr:
       create_success: The tag was added
       destroy_success: The tag was removed from this ticket
       add_tag: 'Add a tag:'
-    type: Type
+    type: Tür
     execute_scenario: Execute Scenario
     search_scenario: Search Scenarios
     conv_form_status_set_as: 'and set as <strong>%{status}</strong>'
@@ -4990,10 +5173,10 @@ tr:
       %{user_name} updated <abbr data-livestamp='%{timestamp}'></abbr>
       (%{note_date})
     requestor_info: Requestor Info
-    view_twitter: View on Twitter
+    view_twitter: Twitter'da Görüntüle
     view_facebook: Facebook'ta Görüntüle
     via: ile
-    created_by: 'Created by:'
+    created_by: 'Oluşturan kişi:'
     reply_to: Cevapla
     add_note: Not ekle
     monitor_btn_title: Monitor this ticket
@@ -5023,8 +5206,8 @@ tr:
       breadcrumbs: Breadcrumbs
       debug_log: Debug log
     properties: Bildiri Ayarları
-    updating: Updating
-    update_done: Done
+    updating: Güncelleniyor
+    update_done: Tamamlandı
     submit_ticket: Gönder
     submit_loading: Gönderiliyor..
     stop_monitor_btn_title: Bu bildiriyi izlemeyi bırak
@@ -5042,9 +5225,11 @@ tr:
         add_new: Link an issue
         existing: View issue
     search_text: Makaleleri ara
+    action: Eylem
+    thanks_v1: Geri bildirimleriniz için teşekkür ederiz.
   recent_activity: Recent Activity
   recent_activities: Recent Activites
-  forgot_password: Forgot Password
+  forgot_password: Şifremi Unuttum
   change_plan: Change plan
   feedbackwidget_embed_code_intro: >-
     Please copy and paste the code below anywhere before the &lt;/body&gt; tag
@@ -5088,7 +5273,7 @@ tr:
     edit: Edit Company
     quick_company: Quick Company
     title: Şirketler
-    title1: companies?
+    title1: şirketler?
     title2: company?
     description: Description
     notes: Notes
@@ -5096,7 +5281,7 @@ tr:
     add_notes: Add Notes
     delete_company: Delete Company
     info1: Are you sure you want to delete this company?
-    info11: Are you sure you want to delete
+    info11: Silmek istediğinizden emin misiniz
     info10: 'Note: Deleting a company will not delete its contacts.'
     info2: Domain Names for this company
     info5: >-
@@ -5209,6 +5394,14 @@ tr:
     forums_toggle:
       title: Forumlar
     gdpr_to: Hedef
+    gdpr_terms_link: Hükümlerimizi kabul etmiş
+    gdpr_admin: Yönetici.
+    important: Önemli
+    gdpr_policy: onaylamış olursunuz.
+    helpdesk: Yardım Masası
+    gdpr_agent: Temsilci
+    anyone: Hiç kimse
+    gdpr_acknowledgement: ve Gizlilik politikamızı okuduğunuzu
   lead: Yönet
   comments: Yorum
   forum_confirm_msg1: Bu kategoriyi silmek istediğinizden emin misiniz ?
@@ -5262,6 +5455,7 @@ tr:
     multiple: Çoklu çalışma saatleri
     helpdesk_hours: Destek Saatleri
     select_time_zone: Bir Zaman Dilimi Seçin.
+    holiday_calendar: Tatil Takvimi
   import_org_companies: 'Organizasyonlar &rarr, Firmalar'
   add: Ekle
   portal_customizer_title: Genel Oyuncu Portalınızı Özelleştirin
@@ -5320,7 +5514,7 @@ tr:
       priority: Öncelik
       status: Durum
       report:
-        no_timeentry: Data hazır değil
+        no_timeentry: Hiç veri yok
         total: Bütün
       form:
         start_timer: Zamanlayıcıyı başlat
@@ -5430,6 +5624,8 @@ tr:
       history:
         recent_item: Şu anki eşyalar
       update: Güncelle
+      ok: Tamam
+      hide_cc: Cc'yi gizle
     dashboard:
       round_robin:
         all_agents: Bütün temsilciler
@@ -5545,6 +5741,7 @@ tr:
           addbcc: Bcc Ekle
           removebcc: Bcc Kaldır
           not_sent: Cevap gönderilemedi.
+          to: 'Alıcı:'
         forward_form:
           cc: Kişi
           addcc: Kişi Ekle
@@ -5622,6 +5819,11 @@ tr:
         open_or_pending: Açık veya Bekletilen
         resolved_or_closed: Çözülmüş ve Kapatılmış
         no_tickets: Görünürde hiçbir bildirin yer almıyor.
+        shared_by_me: Paylaştığım bildirimler
+        shared_with_me: Benimle paylaşılan bildirimler
+        article_feedback: Makale Geri Bildirimi
+        archived: Arşiv
+        my_article_feedback: Makale Geri Bildirimlerim
       note:
         posted_on: '%{user_name}%{note_date}'
         created_on:
@@ -5774,6 +5976,8 @@ tr:
       requester_responded_at: Oyuncunun Cevabı
       asc: Yukarı
       desc: Aşağı
+      agent_responded_at: Temsilcinin Cevabı
+    company: Şirket
   click_to_change_sort_order: Click to change sort order
   user_sessions:
     new:
@@ -5799,6 +6003,8 @@ tr:
     events_empty: Etkinlikler boş geçilemez.
     conditions_empty: Koşullar boş geçilemez.
     actions_empty: Eylemler boş geçilemez.
+    invalid_domain:
+      freshdesk: Freshdesk
   export_data:
     in_sla: Within SLA
     out_of_sla: SLA Violated
@@ -5806,14 +6012,14 @@ tr:
     contact_info: Export active contacts to a CSV file.
     select_header: Tüm alanları seç
     select_all: Tümünü Seç
-    select_format: 'Export as:'
+    select_format: 'Farklı dışa aktar:'
     csv: CSV
     xls: Excel
     filter_label_customer: Bildirileri oluşturmaya göre filtrele
     filter_label_agent: Bildirileri Filtreleme
     field_select_title: İndirilecek alanları seç
     export_to_csv: CSV olarak kaydet
-    export: Export
+    export: Dışa aktar
     thirt_days: Son 30 Gün
     seven_days: Son 7 Gün
     twenty_four: Dünden
@@ -5906,6 +6112,7 @@ tr:
       export_limit_breached: >-
         We currently allow only %{limit} concurrent exports. Kindly try again
         after some time. Apologies for the inconveniences caused.
+    view_all_tickets: CSV Olarak Dışa Aktar
   sla:
     minutes: Dakika
     hours: Saat
@@ -5975,6 +6182,8 @@ tr:
         flash_card_html: What's New in Social?
         flash_card_text: Understanding your Social tab
         tickets: Bildiriler
+        post: ' Yazı '
+        interactions: Etkileşimler
       index:
         all: Hepsi
       search_btn: Ara
@@ -6062,7 +6271,7 @@ tr:
         show_more_results: Daha fazla sonuç göster
         search_twitter: Search twitter
         title: Twitter Hesapları
-        reauthorize: Yeniden Doğrula
+        reauthorize: Yeniden Yetkilendir
         reauth_required: Yeniden doğrulama gerekli.
         handle_auth_error: >-
           Twitter hesaplarından birinde yeniden doğrulama gerekli, bu yüzden
@@ -6139,12 +6348,16 @@ tr:
     disabled: Etkinsizleştirildi.
     enabled: Etkin
     configure: Yapılandır.
-    enable: Etkin
+    enable: Etkinleştir
     click_to_disable: Birleştirmeyi etkinsizleştir
     click_to_enable: Birleştirmeyi etkinleştir.
     confirm_disable: Birleştirmeyi etkinsizleştirmek istediğinizden emin misiniz ?
     configure_addon: Birleştirmeyi yapılandır.
     configure_custom_addon: Aracı yapılandır.
+    tooltip:
+      edit: Düzenle
+      settings: Ayarlar
+    connect: Bağlan
   home:
     mobile_index:
       email: E-posta
@@ -6273,9 +6486,7 @@ tr:
         Freshbooks.
       form:
         freshbooks_note: Not Metinleri.
-        freshbooks_note_info: >-
-          This text will be appended at the end of the note, with the time spent
-          log.
+        freshbooks_note_info: Bu metin harcanan zaman bilgileri ile birlikte nota eklenecektir.
         api_url: API Bağlantısı
         api_url_info: >-
           Enter complete API URL with https. Ex:
@@ -6337,7 +6548,7 @@ tr:
       form:
         domain: Alan
         domain_info: 'Alan adını başında https olmadan giriniz. Örnek:harvestapp.com'
-        harvest_note: Not Metinleri
+        harvest_note: Not Metinleri.
         harvest_note_info: >-
           This text that will be appended at the end of the note, with the time
           spent log.
@@ -6476,7 +6687,7 @@ tr:
         jira_note: Açıklama Metni
         jira_note_info: Bu metin JIRA'ya hata açıklama metni olarak eklenecek
         widget_title: Araç Başlığı
-        username: Kullanıcı Adı
+        username: Kullanıcı adı
         password: Şifre
         jira_status_sync: 'For any change in JIRA issue status %{dropdown}'
         jira_comment_sync: 'For any comment added in JIRA issue %{dropdown}'
@@ -6519,7 +6730,7 @@ tr:
         salesforce_settings_info: (boş alan)
         salesforce_settings: Salesforce Settings
         select: Özellik seçin
-        contact: Alanlar ile irtibata geçin.
+        contact: İletişim alanı
         lead: Alanları yönetin.
         account: Hesap Alanları
     nimble:
@@ -6539,7 +6750,7 @@ tr:
         target='_blank'>your accounts page.</a> <br/><br/>Once it is done you
         can view the contact information in any ticket or contact view.</p>
       form:
-        api_key: Auth Token
+        api_key: Yetkilendirme Simgesi
         api_key_info: >-
           <a
           href='http://www.zoho.com/crm/help/api/using-authentication-token.html#Generate_Auth_Token'
@@ -6589,8 +6800,11 @@ tr:
           Note: The on-premise variant of SugarCRM should be connected to the
           internet. </span>
         widget_title: Araç Başlığı
-        username: Kullanıcı Adı
+        username: Kullanıcı adı
         password: Şifre
+        lead: Alanları yönetin.
+        account: Hesap Alanları
+        contact: İletişim alanı
     google_calendar:
       label: Google Takvim
       desc: Google Tavim ile her bir bildirimdeki etkinlikleri yönetebilirsin.
@@ -6621,7 +6835,7 @@ tr:
           For example, if your Batchbook URL is
           <strong>http://mycompany.batchbook.com/</strong> , enter <strong>
           mycompany </strong>. </span>
-        api_key: API Key
+        api_key: API Anahtarı
         api_key_info: >-
           Your Batchbook API Key can be found by following the <i>Your
           Account</i> link in Batchbook.
@@ -6695,6 +6909,13 @@ tr:
           For example, if your Shopify URL is
           <strong>https://my_shop_name.shopify.com</strong>, please enter
           <strong>my_shop_name</strong>.
+        shop_name_info_mint: >-
+          For example, if your Shopify URL is
+          <strong>https://my_shop_name.shopify.com</strong>, please enter
+          <strong>my_shop_name</strong>.
+        shop_name_mint: Mağaza İsmi
+      edit:
+        disconnect: Bağlantıyı Kes
     slack:
       label: Slack
       desc: Stay up to date about Freshdesk tickets in Slack
@@ -6745,7 +6966,7 @@ tr:
           For example, if your Highrise URL is
           <strong>http://mycompany.highrisehq.com/</strong> , enter <strong>
           mycompany </strong>. </span>
-        api_key: API Keyp
+        api_key: API Anahtarı
         api_key_info: >-
           Your Highrise API Key can be found at Highrise. Please copy and paste
           the same here.
@@ -6764,7 +6985,7 @@ tr:
       form:
         workflow_max_note: Notes text to append
         workflow_max_note_info: Bu metin harcanan zaman bilgileri ile birlikte nota eklenecektir.
-        api_key: API Key
+        api_key: API Anahtarı
         api_key_info: >-
           Request your API Key from Workflow Max support and paste the same
           here.
@@ -6798,7 +7019,7 @@ tr:
         widget_title: Araç İsmi
         widget_script: Widget code snippet
         create_n_enable: Oluştur ve Etkinleştir.
-        insert_placeholder: Insert Placeholder
+        insert_placeholder: Placeholder ekle
     logmein:
       label: LogMeIn Rescue
       desc: >-
@@ -6864,7 +7085,7 @@ tr:
         <br/><br/>Now click &quot;Update&quot; to get started with your Campaign
         Monitor integration.
       form:
-        api_key: API Key
+        api_key: API Anahtarı
         api_key_info: API Key'i hesap ayarlarını kısmından alınız
         client_id: İstemci Kimliği
         client_id_info: >-
@@ -6963,11 +7184,19 @@ tr:
     ilos:
       settings:
         for_customer: Oyuncular İçin
+        for_agents: Temsilciler
       messages:
         video_desc: Açıklama
+      portal_ticket:
+        placeholder: 'Bilet#'
+      agent_ticket:
+        placeholder: 'Bilet#'
+      solution:
+        placeholder: 'Makale#'
     dynamics_v2:
       form:
         password: Şifre
+        username: Kullanıcı adı
     marketplace_login:
       admin_credentials:
         link_your_helpdesk: Yardım Masası bağlantısı
@@ -7002,13 +7231,25 @@ tr:
       crm:
         mapping:
           contact: Kişi
+          company: Şirket
+          contact_fields: ' İletişim alanı '
+          account_fields: ' Hesap Alanları '
     dynamicscrm:
       form:
         password: Şifre
+        contact_email: Kişi E-postası
+        lead: Alanları yönetin.
+        account: Hesap Alanları
+        contact: İletişim alanı
     screen_pop:
       widget:
         cancel: İptal
         subject: Konu
+        view_all: Tümünü Göster
+        requester: İstekte Bulunan Kişinin İsmi
+        add_note_text: Çağrı Notları
+        recent_tickets: En Yeni Bildirimler
+        create: Oluştur
     hootsuite:
       reply_btn: Cevapla
       send: Geribildirim yolla
@@ -7026,13 +7267,22 @@ tr:
         email: E-posta
       header:
         reply: Cevapla
+      reset: Sıfırla
+      domain:
+        continue_to_login: Oturuma Devam Et
+      search:
+        ticket_id: Bildirim Numarası
+        keyword: Anahtar kelime
     infusionsoft:
       form:
         select: Özellik seçin
+        contact: İletişim alanı
+        account: Hesap Alanları
     cti_admin:
       phone:
         save: Kaydet
         cancel: İptal
+        delete_msg: Bu numarayı silmek istediğinizden emin misiniz?
       ctd:
         callback_url: URL'yi geri al
         encoding: Kodlanıyor
@@ -7041,8 +7291,11 @@ tr:
         content: İçerik
         password: Şifre
         have_user_pass: Kullanıcı adım ve şifrem var?
+        api_key: API Anahtarı
+        username: Kullanıcı adı
     github_settings:
       resolved: Çözüldü
+      closed: Kapalı
     magento:
       form:
         shop_name: Mağaza İsmi
@@ -7053,6 +7306,11 @@ tr:
     freshsales:
       form:
         select: Özellik seçin
+        deal: Fırsat Alanları
+        lead: Alanları yönetin.
+        domain: Hesap Etki Alanı
+        account: Hesap Alanları
+        contact: İletişim alanı
     outlook_contacts:
       form:
         sync_tag_label: Senkronizasyon Etiketi
@@ -7067,6 +7325,20 @@ tr:
         delete_account: Sil
         last_sync_time: En son senkronile edilen zaman
         syncing_in_progress: Güncelleniyor
+        edit_account: Düzenle
+    quickbooks:
+      form:
+        quickbooks_note: Not Metinleri.
+    custom_apps:
+      refresh: Yenile
+    uninstall: Kaldır
+    cloud_elements:
+      form:
+        lead: Alanları yönetin.
+        daily: Günlük
+        account: Hesap Alanları
+        hourly: Saatlik
+        contact: İletişim alanı
   widgets:
     contact_widget:
       description: Bir kişiyi veya kapsül içine kartvizit eklemek için seçenek görüntüler
@@ -7079,6 +7351,7 @@ tr:
         feedback_widgets_help_articles: or Browse help articles
         show_all_results: Bütün sonuçları göster
         no_results: 'No results for '
+        problems_with_fields: 'Aşağıdaki alanlarda sorun oluştu :'
   reorder: Yeniden şipariş ver
   reports:
     no_data: Gösterilecek bir veri yok!
@@ -7095,7 +7368,7 @@ tr:
     scoreboard_title_nav: Sıralama Listesi
     scoreboard_group_title: Grup Sıralama Lisetesi
     scoreboard_agent_title: Temsilci Sıralama Listesi
-    reports_by: Reports by
+    reports_by: Raporlar
     select_time_period: Zamanı Dilimi Seç
     generate_button: Oluştur.
     pie_chart_title_prefix: Bildiriler
@@ -7110,8 +7383,8 @@ tr:
         all_groups: Bütün Gruplar
         unassigned: Atanmamış
       range_exceed: Boşluk 90 günü geçemez.
-      filter_by_title: Filtered by
-      time_period: Zaman Aralığı.
+      filter_by_title: Şuna göre filtrele
+      time_period: Zaman Aralığı
       report_title: Freshfone Summary
       summary_title: 'Agent Call Summary '
       agent: Temsilci
@@ -7141,13 +7414,14 @@ tr:
       includes_transfer: Includes transferred calls
       no_agent: '- Temsilci Yok -'
       business_hours: Mesai Saatleri
+      filter_option_all_calls: Tüm Aramalar
     time_sheets:
       billable: Billable Hours
       non_billable: Non-Billable Hours
       total_time: Hours Tracked
       billable_vs_non_billable: Billable vs Non-billable
-      filter_by_title: Filtered by
-      time_period: Zaman dilimi
+      filter_by_title: Şuna göre filtrele
+      time_period: Zaman Aralığı
     summary_report:
       back_to_reports: Raporlara geri dön
       show_report: Raporları göster.
@@ -7182,7 +7456,7 @@ tr:
       pending_tickets: Bekleyen Bildiriler
       resolved_tickets: Çözülen Bildiriler
       sla_compliance: SLA Compliance
-      fcr: First Call Resolution
+      fcr: İlk Cevapta Çözüm
     timesheet_reports:
       index:
         title: Time Sheet Report
@@ -7239,10 +7513,25 @@ tr:
       main:
         total_responses_v2: Bütün
         all: Hepsi
+        time_period: Zaman Aralığı
+        neutral: Nötr
+        survey_name: Anket adı
+        agent: Temsilci
+        positive: Pozitif
+        group: Grup
+        overall_rating: Derece
+        responses: Yanıtlar
+        negative: Negatif
+        no_overview: Hiç veri yok
+        unanswered: Cevaplanmadı
+        overview: Görünüm
+        answered: Cevaplandı
+        rating: Derece
+        loading_msg: Raporlar Oluşturuluyor..
     livechat:
       report_title: Live Chat Özeti
-      filter_by_title: Filtered by
-      time_period: Zaman Aralığı.
+      filter_by_title: Şuna göre filtrele
+      time_period: Zaman Aralığı
       widget: Araç
       group: Grup
       chat_type: Sohbet Tipi
@@ -7268,6 +7557,7 @@ tr:
       agent_chat_summary: Temsilci Sohbet Özeti
       agent: Temsilci
       deleted: Silindi
+    discard_changes: Değişiklikleri iptal et
   delete_the_ticket: Bildirimi Sil
   mark_as_spam: Gereksiz olarak işaretle
   bulk_actions: Toplu İşlemler
@@ -7302,6 +7592,7 @@ tr:
         The rest of your email content will be added as a conversation to
         Freshdesk and also sent to the Requestor via email.
       ticket_type_example: Soru
+      note: Not
   email_command_delimeter_label: E-Posta Yönetme Sınırlayıcısı
   email_command_preview_to_email: Kime
   email_command_preview_to_email_value: info@ntroy.com
@@ -7407,6 +7698,7 @@ tr:
       relevance: Uygunluk
       created_at: Oluşturulduğu Zaman
       updated_at: Son Düzenleme
+    searching: Aranıyor
   assumed_identity_msg: 'Kullanıcı adınızı %{user_name} olarak belirlediniz.'
   unauthorized_msg: Doğrulama başarısız
   assuming_identity_user_does_not_exist_msg: Almak istediğiniz şey yok.
@@ -7438,7 +7730,7 @@ tr:
   fwd_success_msg: Bildiri başarıyla iletildi.
   validate_fwd_to_email_msg: Lütfen geçerli bir e-posta adresi girin.
   use_reply_option: İstemciye e posta göndermek için lütfen Cevapla seçeneğini kullanın
-  index_tooltip_loading_msg: Yükleniyor.
+  index_tooltip_loading_msg: Yükleniyor...
   being_processed: İşlem Sürecinde
   awaiting_your_reply: Cevabınız bekleniyor.
   this_ticket_has_been_resolved: Bu bildirim çözüldü
@@ -7482,8 +7774,8 @@ tr:
   bcc_emails_key_pop: ' <li class=''left''>bcc :</li> <li>%{bcc_emails}<li>'
   clear: Temizle
   saved_draft: Kaydet
-  saving_draft: Kaydediliyor...
-  saving: Kaydediliyor...
+  saving_draft: Kaydediliyor
+  saving: Kaydediliyor
   draft: Taslak
   last_draft: Son taslağınız
   clear_draft_text: Kaydedilmiş taslağınız atılacak ? Emin misiniz ?
@@ -7493,7 +7785,7 @@ tr:
     Portalınızın Güvenli Giriş'i olmadığı için , Freshdesk'in güvenli sayfasına
     yönlendiriliyorsunuz. Devam etmek için giriş yapın.
   canned_folders:
-    insert_placeholder: Yer tutucu girin
+    insert_placeholder: Placeholder ekle
     important: 'Önemli: '
     delete_canned_response: Seçili hazır cevapları silmek istediğine emin misin ?
     delete_folder: >-
@@ -7688,6 +7980,8 @@ tr:
         This will make your default theme mobile friendly and will optimize it
         for phones and tablets. You can choose to turn this setting off in case
         you wish to have a consistent non-responsive theme across all devices.
+    apply_mint: Uygula
+    classic: Klasik
   any_time: Her zaman
   five_minutes: 5 dakika içerisinde
   fifteen_minutes: 15 dakika içerisinde
@@ -7987,6 +8281,7 @@ tr:
       see_detailed_pricing: Detaylı Fiyat Gör
       followup_text: Freshfone kredi bedeli
       followup: Freshfone kredi bedeli
+      purchase_credits: Kredi Satın Al
     dialpad:
       not_valid_number: Lütfen geçerli bir numara giriniz
       could_be_invalid_number: Geçersiz bir numara olabilir.
@@ -8233,6 +8528,8 @@ tr:
         recording_privacy_public: Oyuncu ve Temsilciler tarafından görünebilir
         recording_privacy_private: Sadece Temsilciler Görebilir
         name_maxlength: Name cannot have more than 255 Characters
+        number_accessible: Erişebilen kişi
+        attachment_help_text: Kabul edilen ses dosyaları < 5MB
       numbers:
         title: Freshfone ile Oyuncu desteği
         info: >-
@@ -8299,6 +8596,8 @@ tr:
             agents who are logged in to your helpdesk. In addition, your agents
             can choose to pick up phone calls from inside the browser or have
             them forwarded to their desk phone automatically.
+        caller_id:
+          manage_caller_id: 'Arayan Kimliğini Yönet '
       invalid_attachment: >-
         %{name} ek adı geçerli bir ses dosyası adı değildir, ve 5 MB'tan fazla
         değildir
@@ -8327,7 +8626,7 @@ tr:
         done: bitmiş
         save: Kaydet
         saving: Kaydediliyor
-        preview: Ön İzleme
+        preview: Önizleme
         previewing: Ön izleme yapılıyor..
         delete_menu: Menüyü Sil
         jump_to: Git
@@ -8346,6 +8645,7 @@ tr:
           girin.
       welcome_page:
         title: Freshfone'a Hoş Geldiniz
+        title_text: Telefon
       feature_request_content:
         title: Freshfone
         heading: Oyuncularınıza Freshfone ile destek verin
@@ -8365,6 +8665,9 @@ tr:
         additional_note: Freshfone talebi iki iş günü alacaktır
         button_label: Freshfone Talebi
         learn_more: Daha fazla bilgi edin
+        trial_or: VEYA
+        title_text: Telefon
+      freshfone_numbers_title: Telefon
   livechat:
     feature_request:
       title: Live Chat'e Hoşgeldiniz
@@ -8413,7 +8716,7 @@ tr:
     msg_waiting_agent_title: Temsilci beklerken ki Durum Mesajı
     msg_joining_agent_title: Temsilci sohbete katıldığı zaman ki Mesaj
     msg_leaving_agent_title: Temsilci sohbetten ayrıldığı zaman ki Mesaj
-    chat_transfer_msg_title: Chat transfer message
+    chat_transfer_msg_title: Sohbet aktarım mesajı
     help_text_wait_onhold_msg: >-
       Bu mesaj ziyaretçiler bir dakikadan daha fazladır bir temsilciyi
       bekliyorsa görünecek.
@@ -8613,8 +8916,8 @@ tr:
       Maalesef bütün temsilcilerimiz meşgul , Lütfen # bize mesaj bırakın # en
       kısa sürede geri dönüş yapılacaktır.
     installation: Widget kodu
-    visitor_form: Visitor Form
-    preferences: Preferences
+    visitor_form: Ziyaretçi Formu
+    preferences: Tercihler
     intro_title: Neden Live Chat?
     intro: >-
       Klasik müşteri servisleri müşteri için vardır, daha müşteri sorun
@@ -8700,6 +9003,21 @@ tr:
     change_livechat_tone: LiveChat Notification Tone
     message: Message
     header_title: Giriş
+    prechat_dropdown_msg: >-
+      Tercihler sekmesinden açılır menü seçeneklerinizi, farklı gruplarla
+      ilişkilendirebilirsiniz. Sohbetler, uygun şekilde belirtilen gruplara
+      atanacaktır.
+    show_widget: Temsilciler çevrimiçi olduklarında ve sohbetleri kabul ettiklerinde
+    agent_network_disconnect_msg_title: Temsilcinin bağlantısı kesildiğinde mesaj
+    chat_hours_msg_note: 'Not: Sohbet penceresi, bu süre dışında gizlenecektir.'
+    enabling: Etkinleştiriliyor
+    cobrowsing: Sayfada Yardım
+    end_chat_confirm_msg_title: Sohbet sonlandırma onay mesajı
+    chat_with_us: Bize bağlanın
+    cobrowsing_info: >-
+      Ekranlarını görüntüleme ve kontrol etme seçeneğine sahip olarak
+      müşterilerinizi sohbet konuşmalarınız sırasında daha etkili bir şekilde
+      yönlendirin.
   facebook_tab:
     remove_tab: Sayfa sekmesini kaldır
     tab_not_removed: Sekme kaldırılamaz
@@ -8794,6 +9112,7 @@ tr:
       reply: Cevapla
       forward: İlet
       add_note: Not ekle
+      scenario: Senaryolar
     ticket_list:
       title: Bildiri listesi
       move_cursor: Bir Sonraki/Önceki bildiriye atla
@@ -8828,7 +9147,7 @@ tr:
     imap_server_info: E-Postaları getirmek için IMAP sunucu adı
     smtp_server_info: Giden e-postalar için SMTP sunucu adı
     delete_from_server: Getirdikten sonra e-postalar sunucudan silinsin mi ?
-    domain: 'Domain:'
+    domain: 'Alan:'
     authentication: 'Doğrulama:'
     user_name: Kullanıcı Adı
     password: Şifre
@@ -9185,6 +9504,7 @@ tr:
     search_articles: Başlık Ara
     contact_us: Bize Ulaşın
     whats_new: Yenilikler
+    load_more: Daha Fazlasını Yükle
   trial_plan_downgrade: 'Önemli: Şuan da %{plan_from}''dan %{plan_to}''a geçiyorsunuz.'
   discounted_sum: İndirim sonrası
   selecting_plan: Seçiliyor...
@@ -9223,6 +9543,31 @@ tr:
       apps out-of-the-box. To browse our selection of apps, click on the “Get
       more Apps” button.
     description: Açıklama
+    delete_action:
+      success: Entegrasyon başarı ile devre dışı bırakıldı!
+    view_all: Tümünü Göster
+    view_more: Daha fazlasını görüntüle
+    api_error: İsteğinizi işleme koyamıyoruz lütfen daha sonra tekrar deneyiniz.
+    help_and_support: Yardım ve Destek
+    settings: Ayarlar
+    custom_apps: FreshPlug Araçları
+    time_ago: önce
+    validation_failed: Doğrulama başarısız.
+    installing_text: Lütfen bekleyin...
+    overview: Görünüm
+    install: Yükle
+    published_in: içinde
+    popular: Popüler
+    apps: Uygulamalar
+    reauthorize: Yeniden Yetkilendir
+    go_to_dev_portal: Geliştirici Portalı'na git
+    no_mktp_apps_note: Sevdiğiniz uygulamaların bazıları ile entegre ettik.
+    ver: 'Versiyon: '
+    coming_soon: Çok Yakında.
+    latest: En son
+    no_custom_apps_note: Özel uygulamalar oluşturun ve bunları geliştirici portalında yayınlayın.
+    field_blank: Lütfen gerekli alanları doldurun.
+    no_mktp_apps: Hiç Uygulama yüklenmedi
   freshcaller:
     admin:
       link_account_request_content:
@@ -9230,22 +9575,44 @@ tr:
         email: E-posta
         continue: Devam Et
         password: Şifre
+        link_errors:
+          validation_error: Bu alan gereklidir
+      sidebar_title: Telefon
+      title_text: Telefon
+      feature_request_content:
+        create_new_account: Yeni hesap oluştur
   multifile_attachments:
     label: Dosya ekle
+    remove: Kaldır
+    mb: ' MB '
   plain_on: Açık
   helpdesk_reports:
     saved_report:
       save: Kaydet
       cancel: İptal
+      delete_dialog_header: Raporu sil
+      edit_dialog_header: Raporu düzenle
     today: Bugün
     ticket_schedule:
       index:
         cancel: İptal
+        delete_text: Bu planı silmek istediğinizden emin misiniz?
+        confirm: Onayla
       new:
         ticket_fields_title: Bildirim alanları
         email: E-posta
         select_all: Tümünü Seç
         description: Açıklama
+        helpnote:
+          api_info1: 'API''nın, en son dışa aktarıma bağlantısı olacaktır.'
+        contact_fields_title: İletişim alanı
+        one_time_export_label: Bu planın başladığı ayın başından itibaren bilet içeriğini dışa aktar
+        company_fields_title: Şirket Alanı
+        frequency: Planla
+      schedule_export: Dışa Aktarımı planla
+      schedule: Planla
+      all_reports: Tüm Raporlar
+      new_schedule: Yeni Program
     generate: Oluştur.
     scheduled_reports:
       dialog:
@@ -9253,14 +9620,59 @@ tr:
         'on': Açık
         desc: Açıklama
         subject: Konu
+        monthly: Aylık
+        generate_report: Rapor oluştur
+        daily: Günlük
+        weekly: Haftalık
     ticket_volume:
       resolved_tickets: Çözülen Bildiriler
       received_tickets: Alınan Bildirimler
+      time_trends:
+        year: Yıl
+        week: Hafta
+        day: Gün
+        month: Ay
+      load_analysis:
+        title: Yük Analizi
     date_range: Tarih Aralığı.
     ticket_activity:
       learn_more: Daha fazla bilgi edin
+      helpnote:
+        api_info1: 'API''nın, en son dışa aktarıma bağlantısı olacaktır.'
+      edit: Planı düzenle
     yesterday: Dün.
     change: Değiştir
+    time_period: Zaman Aralığını Seçin
+    chats: Sohbetler
+    more: Daha fazlası...
+    no_data_to_display_msg: Gösterilecek veri yok
+    insights:
+      customize_link: Özelleştir
+    this_week: Bu hafta
+    agent_summary:
+      title: Temsilci Performansı
+    this_month: Bu ay
+    edit_filter: Filtrele
+    year_in_review:
+      title: Yılınıza Genel Bakış
+    summary: Özet
+    show: 'Göster:'
+    filter_by: Şuna göre filtrele
+    solution_article_text: Bu rapor nasıl okunur ?
+    timespent_export:
+      export_csv: CSV'yi dışarı aktar
+      button_export: Dışa aktar
+    performance_distribution:
+      title: Performans Dağılımı
+      resolution_bar: Çözüm süresi
+      first_response_bar: İlk yanıtın süresi
+      response_bar: Ort yanıt süresi
+    group_summary:
+      title: Grup Performansı
+    filtered_by: 'Şuna göre filtrele :'
+    at: 'şunda:'
+    customer_satisfaction:
+      title: Oyuncu Memnuniyet Raporu
   admin_onboarding:
     modal:
       channels_frame:
@@ -9268,14 +9680,82 @@ tr:
         forums_channel: Forumlar
         chat_channel: Live Chat.
         email_channel: E-posta
+        phone_channel: Telefon
+        title: Müşterileriniz ile bugün nasıl konuşuyorsunuz?
+        forward_link: Ekibinizi davet edin
       agents_frame:
         send_invite: Davet gönder
         emails_invalid: Mail adresin hatalı.
+        emails_placeholder: 'bruce@just.ly, diana@just.ly, clark@just.ly'
+      welcome_frame:
+        title: Freshdesk'e Hoş Geldiniz
     account_verification_message:
       helpnote_or: veya
       modal_send_button: Aktivasyon Gönder
       cancel_button: İptal
+      modal_title: Yanlış e-posta adresi kullanarak mı kaydoldunuz?
+      modal_invalid_email_error: Lütfen geçerli bir e-posta adresi giriniz.
+      resend_message: Aktivasyonu tekrar gönder
+      change_email: e-postanızı değiştirin
   freshchat:
     admin:
       save: Kaydet
       cancel: İptal
+      sidebar_title: Freshchat
+      action:
+        success_message: Ayarlar güncellendi
+      admin_apikey: 'API Anahtarı:'
+      title_text: Freshchat
+      portal_url: 'Portal URL''si:'
+  mailer_notifier:
+    hi: 'Selam,'
+    thanks: 'Teşekkürler,'
+  copied_link: Kopyalandı
+  enter_a_value: Bir değer girin
+  custom_mailbox_admin_email_notifications:
+    regards: Saygılarımızla
+  activations:
+    activate_freshdesk_account: Hesabınızı etkinleştirin
+  cloud_log_mailer:
+    logger_email:
+      regards: 'Saygılarımızla,'
+      account: 'Hesap: '
+      reason: Neden
+  portals_key: Portallar
+  classic_label: Klasik
+  helpcard:
+    title: Benzersiz Harici Kimlik
+  admin_upgrade:
+    enable_mint_title: >-
+      Temsilcilerin daha yeni ve daha hızlı Mint deneyimini denemelerine izin
+      verin
+    enable_mint_error: >-
+      Mint halihazırda tüm temsilciler için etkinleştirildi. En son ayarları
+      görmek için yenileyin.
+    enable_mint_success: 'Oley! Mint, tüm temsilciler için başarıyla etkinleştirildi.'
+  plain_off: Kapalı
+  customize_domain:
+    email:
+      cheers: 'Hoşçakalın,'
+      team: Freshdesk Takımı
+  'on': 'şunda:'
+  save_as: Farklı Kaydet
+  reload: Yeniden Yükle
+  currency_label: 'Para birimi :'
+  user_notifications:
+    mute: Sessiz
+    mark_all_as_read: Tümünü okundu olarak işaretle
+    header: Bildirimler
+    preferences: Tercihler
+  ticket_templates:
+    create_new: Yeni Oluştur
+  in: içinde
+  help_widget:
+    form_title: Bizimle İletişime Geçin
+    form_button_text: Geribildirim yolla
+    button_text: Yardım.
+    welcome_message: Yardımcı olabilir miyiz?
+    predictive_message: >-
+      Takılmış olduğunuzu fark ettik. Bize neyi başarmaya çalıştığınızı
+      söyleyin; destek ekibimiz mümkün olan en kısa sürede size ulaşacaktır.
+    success_message: Teşekkürler. İletişimde olacağız!

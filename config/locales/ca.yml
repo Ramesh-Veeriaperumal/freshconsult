@@ -104,7 +104,7 @@ ca:
         one: 1 segon
         other: '%{count} segons'
   validation:
-    required: This field is required.
+    required: El camp és obligatori.
     remote: Please fix this field.
     email: Please enter a valid email address.
     url: Please enter a valid URL.
@@ -241,7 +241,7 @@ ca:
   mobihelp: MobiHelp
   logmein_source: LogMeIn Rescue
   working: Treballant
-  attach: Attach
+  attach: Adjuntar
   attachment: Adjunt
   attachments: Adjunts
   attachment_delete: Estàs a punt d'eliminar permanentment aquest annex. Vols continuar?
@@ -318,23 +318,29 @@ ca:
       custom_url: is not a valid URL
       custom_date: is not a valid date
     phone_number: Nº de telèfon
+    industry: Sector
+    last_name: Cognoms
+    first_name: Nom
+    company_name: Empresa
+    job_title: Càrrec
   custom_fields:
     insert_field: Drag & Drop Field
     drag_drop_field_intro: >-
       Drag and drop any field type into the "%{name}" form below to add a new
       custom field
-    number: Number
-    text: Single Line Text
+    number: Número
+    text: Una línia de text
     paragraph: Multi Line Text
-    checkbox: Checkbox
-    dropdown: Dropdown
-    dropdown_blank: Dropdown
+    checkbox: Casella de selecció
+    dropdown: Llista desplegable
+    dropdown_blank: Llista desplegable
     phone_number: Número de telèfon
     url: URL
-    date: Date
+    date: Data
     regex: Regex
     email: Correu-e
     delete: Esborrar
+    nested_field: Camp dependent
   ticket_fields:
     fields:
       source: Origen
@@ -349,6 +355,8 @@ ca:
       ticket_type: Tipus
       created_at: Creat
       tags: Etiquetes
+      company: Empresa
+      skill: Destresa
     saving_ticket: Desant els camps dels tiquets...
     untitled: Sense títol
     first_choice: Primera opció
@@ -419,6 +427,10 @@ ca:
       level: Nivell
     section:
       delete_btn: Esborrar
+      ok_btn: D'ACORD
+      confirm_btn: Confirma
+      continue_btn: Continuar
+      oops_btn: Vaja!
   folder:
     edit: Edita carpeta
     info1: Esteu segur de que voleu borrar aquesta carpeta?
@@ -476,6 +488,8 @@ ca:
         rate_again: Valora'ns un altre cop
         submit: Envia
         cancel: Cancel·lar
+        load_questions: Veure més
+        comments: Comentaris
     login:
       form:
         email: Correu
@@ -503,6 +517,7 @@ ca:
       email: El teu correu electrònic
       comments: Comentaris
       send_feedback: Envia valoració
+      related_files: Fitxers relacionats
     surveys:
       thanks_for_feedback: Hem rebut la teva valoració. Moltes gràcies.
       feedback_already_done: Ja has fet la valoració sobre aquesta resposta.
@@ -535,6 +550,8 @@ ca:
     canned_form:
       next: Següent
       form_submit: Envia
+      hey: Hola!
+      thank_you_text: Gràcies
   gamification:
     levels:
       beginner: Principiant
@@ -622,7 +639,7 @@ ca:
     groups:
       general: Pàgines generals
       solutions: Solucions
-      discussions: Discussions
+      discussions: Debats
       tickets: Tiquets
     pages:
       portal_home: Inici del portal
@@ -828,50 +845,51 @@ ca:
         save: Save
         saving: Saving
       formfield_props:
-        default: Default
-        form_title: Properties
-        behavior: Behavior
-        label: Label
+        default: Per defecte
+        form_title: Propietats
+        behavior: Comportament
+        label: Etiqueta
         nested_label: Nested field labels
-        level1: Level 1
-        level2: Level 2
-        level3: Level 3
+        level1: Nivell 1
+        level2: Nivell 2
+        level3: Nivell 3
         nestedfield_helptext: >-
           Use the below free form textarea to add or edit items for your
           dropdown, Indent items by pressing the tab key once or twice. we will
           convert it to dropdown items based on the indentation, please take
           extra care. <a target='_blank' href=%{learn_more}>Learn more</a> 
-        dropdown_items_edit: Dropdown items - edit view
-        dropdown_items_preview: Dropdown items - Preview
-        status_choices: Status choices
-        display_to_customer: Display message for customer
-        sla_timer: SLA timer
+        dropdown_items_edit: Elements desplegables - vista d'edició
+        dropdown_items_preview: Elements desplegables - Previsualització
+        status_choices: Opcions d'estat
+        display_to_customer: Missatge que es mostrarà al client
+        sla_timer: Temporitzador ANS
         nestedfield_helptext_preview: >-
-          This is the "Preview" of sample dropdown items, use the freeform
-          textarea in "Edit view" to edit items
-        delete_field: Delete field
-        field_label_agents: Field label for agents
-        field_label_customer: Field label for customers
+          Aquesta és la "Vista prèvia" d'elements desplegables de mostra,
+          utilitzeu el camp de text lliure d'"Edita vista" per editar els
+          elements.
+        delete_field: Suprimeix el camp
+        field_label_agents: Etiquetes de camps per agents
+        field_label_customer: Etiqueta del camp per a clients
         add_new_choice: Add Item
-        customer_mandatory: Required when submitting the form
-        customer_edit_signup: Customer can see this when they Sign up
-        customer_edit: Customer can edit
+        customer_mandatory: Obligatori quan s'envia el formulari
+        customer_edit_signup: El client pot veure això en registrar-se
+        customer_edit: El client pot modificar
         agent_info1: Field cannot be blank when submitting the ticket
         agent_info2: Field cannot be blank when closing the ticket
-        agent_mandatory_submission: Required when submitting the form
+        agent_mandatory_submission: Obligatori quan s'envia el formulari
         customer_info1: Field cannot be blank when submitting the ticket online.
-        for_agents: For Agents
+        for_agents: Per agents
         dropdown_choices: Dropdown Items
         label_in_portal: Label in Portal
-        customer_visible: Display to customer
+        customer_visible: Mostra-ho al client
         description: Descripció
-        for_customer: For Customers
-        agent_mandatory_closure: Required when closing the ticket
+        for_customer: Per als clients
+        agent_mandatory_closure: Obligatori en tancar la sol·licitud
         choices: Choices
         label_in_portal_info: The label that is displayed in your self service portal
-        display_cc_field: Display CC Field
-        cc_company_contacts: Can CC only company contacts
-        cc_any_email: Can CC any email address
+        display_cc_field: Camp de visualització CC
+        cc_company_contacts: Camp CC només per a adreces internes
+        cc_any_email: Camp CC per a qualsevol adreça de contacte
         regexp: Regular Expression
         validate_regexp: Validate using Regular Expression
         regexp_example_html: >-
@@ -906,10 +924,10 @@ ca:
         save: Save
         saving: Saving
       formfield_props:
-        default: Default
-        form_title: Properties
-        behavior: Behavior
-        label: Label
+        default: Per defecte
+        form_title: Propietats
+        behavior: Comportament
+        label: Etiqueta
         nested_label: Nested field labels
         level1: Level 1
         level2: Level 2
@@ -927,23 +945,23 @@ ca:
         nestedfield_helptext_preview: >-
           This is the "Preview" of sample dropdown items, use the freeform
           textarea in "Edit view" to edit items
-        delete_field: Delete field
-        field_label_agents: Field label for agents
-        field_label_customer: Field label for customers
+        delete_field: Suprimeix el camp
+        field_label_agents: Etiquetes de camps per agents
+        field_label_customer: Etiqueta del camp per a clients
         add_new_choice: Add Item
-        customer_mandatory: Required when submitting the form
-        customer_edit_signup: Customer can see this when they Sign up
-        customer_edit: Customer can edit
+        customer_mandatory: Obligatori quan s'envia el formulari
+        customer_edit_signup: El client pot veure això en registrar-se
+        customer_edit: El client pot modificar
         agent_info1: Field cannot be blank when submitting the ticket
         agent_info2: Field cannot be blank when closing the ticket
-        agent_mandatory_submission: Required when submitting the form
+        agent_mandatory_submission: Obligatori quan s'envia el formulari
         customer_info1: Field cannot be blank when submitting the ticket online.
-        for_agents: For Agents
+        for_agents: Per agents
         dropdown_choices: Dropdown Items
         label_in_portal: Label in Portal
-        customer_visible: Display to customer
+        customer_visible: Mostra-ho al client
         description: Description
-        for_customer: For Customers
+        for_customer: Per als clients
         agent_mandatory_closure: Required when closing the ticket
         choices: Choices
         label_in_portal_info: The label that is displayed in your self service portal
@@ -999,6 +1017,11 @@ ca:
           correus brossa.
       settings:
         simple_none: Cap
+        google: Google
+        important: Important
+        twitter: Twitter
+        facebook: Facebook
+        everyone: Tothom
     mobihelp:
       app_review:
         request_sent: Sol·licitud de revisió d'APP enviada
@@ -1056,6 +1079,7 @@ ca:
           app_key: Clau App
           app_secret: App Secret
           integration_details: Detalls de la integració
+          saving: Guardant...
         index:
           title: Apps Mobihelp
           new_app: Nova App
@@ -1217,6 +1241,7 @@ ca:
         video: Mira el vídeo
         learn_arcade: Aprèn més sobre arcade
         enable_arcade: Activa l'arcade de Freshdesk
+        start_over: Restableix
       gamification_settings:
         award_points: Assigna punts
         agent_resolves_ticket: 'Quan l''agent <br /> resol un tiquet:'
@@ -1262,6 +1287,11 @@ ca:
         delete: Esborrar
         save_survey: Desa
         edit: Edita
+        hide: Suprimeix
+        new: Nou
+        update: actualització
+        activate_survey: Activa
+        preview_survey: Previsualització
       satisfaction_settings:
         enable_label: Enquestes de Satisfacció del Client
         link_text_label: Text de l'enllaç a l'enquesta de satisfacció
@@ -1279,6 +1309,19 @@ ca:
         enter_happy_text: Introdueix el text content
         enter_neutral_text: Introdueix el text neutre
         enter_unhappy_text: Introdueix el text descontent
+      new_layout:
+        title: Nom de l'enquesta
+        loading: S'està carregant...
+        survey: Enquesta
+      thanks_contents:
+        title_text_v2: Missatge d'agraïment per a l'enquesta de satisfacció dels clients
+      new_questions_layout:
+        questions: Preguntes
+      new_rating:
+        error_text: El camp és obligatori
+      new_thanks:
+        thanks_message_feedback_v2: Missatge d'agraïment per als comentaris addicionals
+        additional_comments_feedback_v2: Inclou un quadre de comentaris addicionals
     getting_started:
       send_mail_content:
         test_info_1: Creus que tot es veu bé fins ara? Intenta enviar un correu de proves.
@@ -1442,6 +1485,9 @@ ca:
           disponibles baixi a 2.
         email: Correu-e
         all: Tot
+        agent: Agent
+        date: Data
+        filtered_by: 'Filtrat per:'
     widget_config:
       index:
         feedbackwidget_embedded_tab: Giny incrustat
@@ -1475,9 +1521,35 @@ ca:
         feedbackwidget_mobile_view: Vista de mòbil
       popup_widget:
         feedbackwidget_attach_a_file: Adjunta arxiu
+        feedbackwidget_button_type: Tipus de botó
+        feedbackwidget_submit_title: Envia valoració
+        feedbackwidget_button_customization: Personalitza botó
+        thankyou_default: Gràcies per la teva valoració
+        feedbackwidget_form_submit_message: Formulari per enviar missatge
+        feedbackwidget_screenshot: Capturar pantalla
+        feedbackwidget_form_customization: Personalitza formulari
+        feedbackwidget_image_button: Imatge del botó
+        thankyou_info: Missatge que es mostrarà quan un usuari enviï el formulari de tiquet
+        feedbackwidget_offset: 'Desplaçament:'
+        feedbackwidget_search_area: Cercar articles
+        feedbackwidget_popup_code: Codi emergent giny
+        feedbackwidget_use_https: Utilitzeu https
+        feedbackwidget_text_button: Text del botó
+        feedbackwidget_form_height: Alçada del formulari
+        feedbackwidget_button_text_placeholder: Suport
+        feedbackwidget_form_height_message: 'Si veus barres de desplaçament en el giny, ajust l''altura de ginys.'
       embedded_widget:
         feedbackwidget_embedded_code: Codi incrustat giny
         feedbackwidget_attach_a_file: Adjunta arxiu
+        feedbackwidget_submit_title: Envia valoració
+        thankyou_default: Gràcies per la teva valoració
+        feedbackwidget_form_submit_message: Formulari per enviar missatge
+        feedbackwidget_form_customization: Personalitza formulari
+        thankyou_info: Missatge que es mostrarà quan un usuari enviï el formulari de tiquet
+        feedbackwidget_search_area: Cercar articles
+        feedbackwidget_use_https: Utilitzeu https
+        feedbackwidget_form_height: Alçada del formulari
+        feedbackwidget_form_height_message: 'Si veus barres de desplaçament en el giny, ajust l''altura de ginys.'
     supervisor_rules:
       info_help: >-
         Per a <b>tots els tiquets</b> actualitzats en els darrers 30 dies,
@@ -1577,6 +1649,8 @@ ca:
         checked: es comprova
         unchecked: No es comprova
         deselected: Desmarcat
+      anyone: Tothom
+      system: Sistema
     va_rules:
       index:
         human_name: Regla de despatxador
@@ -1600,7 +1674,7 @@ ca:
         params: Contingut
         url: URL de devolució de trucada
         url_req_auth: Necessita autenticació
-        simple_layout: Simple
+        simple_layout: Senzill
         advanced_layout: Avançat
         webhook_usecase: Exemples d'ús de Webhook
         webhook_usecase_tooltip: >-
@@ -1719,7 +1793,7 @@ ca:
           <b>Important:</b> Si us plau, actualitza el registre CNAME DNS a
           l'arxiu de zona DNS per apuntar el seu nom de domini amb el nom  ELB
           DNS. <br /> <br />El nom ELB DNS de %{url} és
-        whitelisted_ips_enabled: IP Whitelisting
+        whitelisted_ips_enabled: Llista blanca d'adreces IP
         whitelisted_ips_enabled_info: >-
           Restringir l'accés al portal de suport a les localitzacions i les
           xarxes de confiança especificades al rang d'adreces IP permeses.
@@ -1742,6 +1816,10 @@ ca:
         notifications: Notification will be sent when
         agent_create_or_delete: Agent is Added or Deleted
         whitelisted_ip_modified: IP Whitelisting is modified
+        saml_cert_fingerprint_info_sha256: >-
+          Empremta digital (SHA256) del certificat SAML proporcionat pel teu
+          proveïdor de SAML. Això s'utilitza per al xifrat / validació
+        for_agents: Per agents
       helpnote:
         title: Configuració de seguretat
         info1: >-
@@ -1769,6 +1847,14 @@ ca:
           els teus agents. <a
           href="https://support.freshdesk.com/support/solutions/articles/195168">Aprendre'n
           més.</a>
+      password_security:
+        advanced: Avançat
+        never: Mai
+        characters: Caràcters
+        days: dies
+        password: contrasenya
+        have_mixed_case: Ha de contenir majúscules i minúscules
+        default: Per defecte
     products:
       helpnote:
         tour: Ajuda'm a donar suport a molts productes
@@ -1825,6 +1911,8 @@ ca:
         last_published: El teu portal va ser publicat el passat
         contact_us: Contacteu-nos
         logo_and_favicon: Logotip i icona de web
+        settings: Configuració
+        customer_portal: Portal del client
       edit:
         title: Editar producte
         updating: Actualitzant
@@ -1893,6 +1981,8 @@ ca:
         customers: Clients
         reports: Informes
         administration: Administració
+        general: General
+        bots: Bots
       permissions: Permisos
       helpcard:
         title1: Descripció dels rols
@@ -1965,6 +2055,12 @@ ca:
       cancel_label: Cancel·lar
       done_label: Fet
       save_label: Desa
+      agent_label: Agent
+      add_agent_label: Afegir agent
+      agents_label: Agents
+      saving_label: Guardant...
+      manage_label: Gestionar
+      add_label: Afegeix
     home:
       index:
         group: Grups
@@ -2113,9 +2209,32 @@ ca:
     skills:
       index:
         description: Descripció
+        skills: Destreses
+        agent_label: Agent
+        agents_label: Agents
+        agents: Agents
+        add_agents: Afegeix agents
+        skill_create: Crear
+        manage_label: Gestionar
+        add_label: Afegeix
     user_skills:
       index:
         more: més
+        any: Qualsevol
+        groups: Grup
+    ecommerce:
+      new:
+        account_name: Nom del compte
+        title: Nou compte
+        assign_product: Assignar al Producte
+        assign_group: Assignar al Grup
+      index:
+        new_account: Nou compte
+      index_title: Comerç electrònic
+    hotline:
+      content3:
+        note_title: 'Nota:'
+      list_title: Apps Mobihelp
   ends_with: Finalitza amb
   last_name: Cognom
   forum:
@@ -2138,7 +2257,7 @@ ca:
     new: Nou fòrum
     edit: Editar fòrum
     title: Fòrums
-    start_topic: Start Topic
+    start_topic: Comença tema
     forum_created: El fòrum ha estat creat.
     forum_deleted: El fòrum ha estat eliminat.
     type: Tipus de fòrum
@@ -2555,7 +2674,7 @@ ca:
   undelete: Restaura
   import_zendesk_title: Importar de Zendesk
   closed: Tancat
-  suspended_plan_info: Your account has been suspended.
+  suspended_plan_info: El teu compte ha estat suspès.
   plan_info_update: El teu pla ha estat canviat.
   note: 'Nota: '
   warning: ATENCIÓ
@@ -2892,7 +3011,7 @@ ca:
   basic_brief: Per a equips petits
   phone: Telèfon
   edit: Edita
-  clone: Clone
+  clone: Clona
   disable: Desactiva
   enable: Activa
   accounts:
@@ -3009,6 +3128,20 @@ ca:
         El teu compte està cancel·lat i les dades seran esborrades el
         <strong>%{delete_at}</strong>. Per restaurar el teu compte, contacta amb
         <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>.
+    multilingual_support:
+      add_languages: Afegir idiomes
+    edit_domain:
+      email_error: El nom de la companyia ha de tenir un mínim de 3 caràcters
+      getting_started: Començar
+      url_error1: 'El domini <strong>%{domain_name}</strong> no està disponible.'
+    new:
+      full_name: Nom complet
+      company: Empresa
+      confirmation: Confirmació
+      create_an_account: Crea un compte
+    signup_google:
+      sign_up: Registrar-se!
+      privacy_policy: política de privacitat
   success_msg: Detalls del compte actualitzats amb èxit!
   failure_msg: Error actualitzant els detalls del compte!
   account_configuration:
@@ -3067,7 +3200,7 @@ ca:
     d'enviar un tiquet
   set_type_as: Ajusta el tipus com
   change_my_plan: Selecciona aquest pla
-  make_payment: Make Payment
+  make_payment: Fer un pagament
   add_new_email: Afegeix un nou correu
   chatwidget_title: configuració de Xat
   feedbackwidget_title: Giny de comentaris
@@ -3152,13 +3285,14 @@ ca:
     delete_confirm: >-
       Deleting this category will delete all %{folders} folders and %{articles}
       articles in it.
-    product_portal_visibility: Visible in
+    product_portal_visibility: Visible en
     select_solution_category: Select a product portal...
     solution_categories_portal_info: >-
       This category will be visible in the main product portal along with the
       above selected product portals.
+    manage_categories: Gestionar
   forum_category:
-    product_portal_visibility: Visible in
+    product_portal_visibility: Visible en
     select_product: Select a product portal...
     forum_categories_portal_info: >-
       This category will be visible in the main product portal along with the
@@ -3291,6 +3425,7 @@ ca:
       created_at: Data de creació
       asc: Ascendent
       desc: Descendent
+      last_active_at: Vist per última vegada
   topic:
     ideas_stamps:
       planned: Planificat
@@ -3466,7 +3601,7 @@ ca:
     post:
       posted_on: '%{user_name} el dia %{post_date}'
       edit_comment: Edita Comentari
-      unmark_answer: Unmark as answer
+      unmark_answer: Desmarca com a resposta
       post_accepted_as_a_good_answer: Aquest missatge s'accepta com a resposta adequada per al tema
       mark_answer: Mark as answer
       mark_as_solved: Marca com a Resolt
@@ -3568,6 +3703,12 @@ ca:
       day: 1 dia
       twoday: 2 dies
       threeday: 3 dies
+    toggle_availability_for_rr: >-
+      Permet que els agents canviïn la seva disponibilitat per a l'assignació
+      automàtica de sol·licituds
+    maximum: Màxim
+    enable: Activa
+    confirm: Confirma
   four: 4 hores
   oneweek: 1 setmana
   twoweek: 2 setmanes
@@ -3703,6 +3844,12 @@ ca:
       a %{requester}
     more: més
     export: Exporta
+    insert_placeholder: Insereix marcador de posició
+    days_ago: 'fa %{days}'
+    ago: 'fa %{time}.'
+    last_logged: Darrera connexió
+    no_recent_activity: No hi ha activitat recent
+    skill: Destreses
   account_admin: Compte d'administrador
   right: Dreta
   footer:
@@ -3869,6 +4016,7 @@ ca:
       unverified: Contactes amb correu electrònic no verificat
       deleted: Contactes eliminats
       all: Tots els contactes
+      blocked: Contactes bloquejats
     verified:
       no_contacts: No tens cap contacte.
       no_contacts_with_letter: 'No hi ha contactes coincidents que comencim amb la lletra ''%{alphabet}'''
@@ -3993,6 +4141,10 @@ ca:
     free_plan_currency_note: 'Quan donis d''alta o afegeixis usuaris, el teu pagament serà en'
     status: Estat
     type: Tipus
+    invoice: Factura
+    refund: Reembossat
+    download: Baixa
+    date: Data
   activate: Activa
   feedbackwidget_button_text: Etiqueta
   amount_billed_per_month: 'You will be billed <b>%{amount} %{period}</b>.'
@@ -4092,6 +4244,7 @@ ca:
       more_articles: 'Més artícles a <span class=''folder-name''> %{article_name} </span>'
       modified_on: 'Modificat el:'
       related_articles: Articles relacionats
+      created_by: 'Creat per:'
     folder:
       filler_text: 'Miri aquest espai per a articles relacionats amb %{folder_name}'
     topic:
@@ -4127,6 +4280,10 @@ ca:
       merge_note:
         one: 'Topic merged into this topic:'
         other: 'Topics merged into this topic:'
+      sort_heading: 'Ordenat per:'
+      sort_order:
+        popularity: Popular
+      sort_by_default: Per defecte
     topic_vote:
       you:
         one: You
@@ -4155,6 +4312,8 @@ ca:
       ideas_users_voted_title: Persones a les que agrada aquesta idea
       problem_users_voted_title: Persones que tenen aquest problema
       howto_users_voted_title: Persones que tenen aquesta pregunta
+      votes: stemmer
+      announce_unlike_button: No m'agrada!
     tickets:
       merged_topic_note: Merged topic cannot be converted into a ticket.
       export: Exporta tiquets
@@ -4172,6 +4331,12 @@ ca:
       add_people_title: Afegir persones a la conversa
       reopen_reply: Respondre
       related_articles: Articles relacionats...
+      comments: Comentaris
+    agent_login_details: Introdueixi els detalls a continuació
+    account: compte
+    vote_label:
+      one: 1 stemme
+      other: stemmer
   feedbackwidget_form_heading: Formulari de Capçalera
   feedbackwidget_form_title: Títol del formulari Widget
   cancel_and_back: Cancel·la i torna
@@ -4188,7 +4353,7 @@ ca:
       new:
         new_folder: Afegeix carpeta
       folder_form:
-        category: Category
+        category: Categoria
         visible_to: Visible per a
     articles:
       where: 'On'
@@ -4206,9 +4371,9 @@ ca:
       article_not_useful: Gràcies per la valoració. Millorarem aquest article.
       error_message: 'Hi ha un error %{error_msg}'
       reset_rating:
-        link: Reset
+        link: Restableix
         dialog_title: Reset likes and dislikes
-        dialog_submit: Reset
+        dialog_submit: Restableix
         resetting: Resetting
         dialog_msg: >-
           Are you sure you want to reset article rating - likes and dislikes to
@@ -4216,6 +4381,10 @@ ca:
         count: >-
           %{no_of_likes} likes and %{no_of_dislikes} dislikes will be reset to
           zero.
+      prop_tabs:
+        meta: Metadades
+      search_all: Cercar articles
+      views: Visualitzacions
     info9: Públic (serà publicat en autoservei)
     edit: Edita la solució
     view_on_portal: Veure el portal
@@ -4267,11 +4436,26 @@ ca:
     draft:
       portal:
         all: Tot
+      name: Esborranys
     general:
       mark_as_uptodate:
         text_1: Marqueu aquesta traducció com actualitzada
+      something_wrong: Alguna cosa ha anat malament!
+      created_by: Creat per
+      feedback: Comentaris
+      analytics: Anàlisi
     add_category: Nova categoria
     solution_title: Títol
+    kb: Base de coneixement
+    via: per mitjà de
+    sidebar:
+      feedbacks:
+        title: Comentaris sobre l'article
+      view_all: Veure tot
+      drafts:
+        title: Esborranys
+      view_less: Mostra'n menys
+    move_to: Moure a
   import_updated: Actualitzat
   feedbackwidget_intro: >-
     Personalitza el teu giny Freshdesk a continuació i veuràs la vista prèvia en
@@ -4298,7 +4482,7 @@ ca:
       the header information (eg. companyname domains etc..) Read more about it
       <a href = '%{solution_link}' target = '_blank' >here.</a>
   import_example_title: A continuació hi ha un exemple d'arxiu CSV
-  change_password: Change Password
+  change_password: Canvia contrasenya
   answered: Repòs
   errors_in_payment_info: 'Errors detectats a la teva informació de pagament:'
   attach_files: Adjunta arxius
@@ -4334,7 +4518,7 @@ ca:
     email_ticketing: Email Ticketing
     feedback_widget: Feedback Widget
     knowledge_base: Knowledge Base
-    automations: Automations
+    automations: Automatismes
     phone_integration: Phone Integration
     mobile_apps: Mobile Apps
     integrations: Built-in Integrations
@@ -4344,7 +4528,7 @@ ca:
     social_support: Social Support
     satisfaction_survey: Satisfaction surveys
     forums: Community Forums
-    gamification: Gamification
+    gamification: Ludificació
     everything_in_blossom: Everything in Blossom
     chat: Integrated Live Chat
     multiple_languages: Multiple Languages
@@ -4361,6 +4545,11 @@ ca:
     custom_mailbox: Custom Mail Servers
     ip_restriction: Secure IP Restriction
     auto_ticket_assignment: Assignació automàtica de tiquets
+    bot: Bot
+    parent_child: Sol·licituds principals-secundàries
+    scheduled_reports: Informes programats
+    ticket_templates: Plantilles de sol·licitud
+    freshchat: Integració amb el Freshchat
   zendesk_account: Detalls de compte de Zendesk
   zendesk_import_files: Seleccionar què importar?
   file_url: XML Complet Exporta URL
@@ -4689,6 +4878,8 @@ ca:
           specific to each language. The <i class="common-icon-outdated"></i>
           icon indicates that the notification translations in other languages
           may be outdated.
+      agent_template_25:
+        topic: Correu electrònic d'invitació de l'agent
     insert_placeholder: Inseriu marcadors de posició
     modify_agent_template: Modifica la platilla de correu de l'agent
     event: Esdeveniment
@@ -4869,6 +5060,12 @@ ca:
       status: Estat
       unverified: No verificat
       type: Tipus
+      last_verified: Última verificació
+      config: Configurar
+      cname: CNAME
+      verify: Verifica
+      remove: Suprimeix
+    plain_unverified: No verificat -
   step2: Pas 2
   import_users_contacts: Usaris &rarr; Contactes
   linkback_info: >-
@@ -5128,9 +5325,9 @@ ca:
       (%{note_date})
     requestor_info: Informació del sol·licitant
     view_twitter: Veure a Twitter
-    view_facebook: View on Facebook
-    via: via
-    created_by: 'Created by:'
+    view_facebook: Mostra-ho al Facebook
+    via: per mitjà de
+    created_by: 'Creat per:'
     reply_to: Respondre
     add_note: Afegir nota
     monitor_btn_title: Vigilar aquest tiquet
@@ -5178,6 +5375,9 @@ ca:
         tooltip: Veure la qüestió associada de JIRA
         add_new: Vincular un problema
         existing: Veure tema
+    search_text: Cercar articles
+    action: Acció
+    thanks_v1: Gràcies per la teva valoració
   recent_activity: Activitat recent
   recent_activities: Activitats recents
   forgot_password: Contrasenya oblidada
@@ -5350,6 +5550,15 @@ ca:
     forums_toggle:
       title: Fòrums
     gdpr_to: Per a
+    gdpr_terms_link: condicions
+    gdpr_admin: Administrador.
+    important: Important
+    gdpr_policy: política de privacitat.
+    helpdesk: Servei d'assistència
+    languages: Idiomes
+    gdpr_agent: Agent
+    anyone: Tothom
+    gdpr_acknowledgement: i confirmes que has llegit la
   lead: Avantatge
   comments: Comentaris
   forum_confirm_msg1: Esteu segur que voleu suprimir aquesta categoria?
@@ -5405,6 +5614,7 @@ ca:
     multiple: Múltiples horaris laborables
     helpdesk_hours: Horari del portal de suport
     select_time_zone: Seleccioneu una zona horària
+    holiday_calendar: Calendari de dies festius
   import_org_companies: Organitzations &rarr; Empreses
   add: Afegeix
   portal_customizer_title: Personalitza el teu portal públic del client
@@ -5556,7 +5766,7 @@ ca:
       flagged_unspam: '%{tickets} eliminats a la carpeta de correu brossa .'
     shared:
       addcc: Afegir cc
-      cc: cc
+      cc: a/c
       bcc: bcc
       reply_form:
         title: 'Respondre a %{email}'
@@ -5580,6 +5790,8 @@ ca:
       history:
         recent_item: Elements recents
       update: Actualitza
+      ok: D'acord
+      hide_cc: Amaga el camp A/c
     dashboard:
       round_robin:
         all_agents: All agents
@@ -5693,6 +5905,7 @@ ca:
           addbcc: Afegeix Bcc
           removebcc: Treu Bcc
           not_sent: La resposta no s'ha enviat!
+          to: 'Per a:'
         forward_form:
           cc: Cc
           addcc: Afegeix Cc
@@ -5770,6 +5983,11 @@ ca:
         open_or_pending: Obert o pendent
         resolved_or_closed: Resolt o tancat
         no_tickets: No tens cap tiquet a la vista actual
+        shared_by_me: Sol·licituds que he compartit
+        shared_with_me: Sol·licituds compartides amb mi
+        article_feedback: Comentaris sobre l'article
+        archived: Arxivar
+        my_article_feedback: Comentaris sobre els meus articles
       note:
         posted_on: '%{user_name} en %{note_date}'
         created_on:
@@ -5927,9 +6145,11 @@ ca:
       updated_at: Darrera modificació
       priority: Prioritat
       status: Estat
-      requester_responded_at: Customer Response
+      requester_responded_at: Resposta al client
       asc: Ascendent
       desc: Descendent
+      agent_responded_at: Resposta de l'agent
+    company: Empresa
   click_to_change_sort_order: Cliqueu per canviar l'ordre de classificació
   user_sessions:
     new:
@@ -5955,6 +6175,8 @@ ca:
     events_empty: Els esdeveniments no poden estar buits
     conditions_empty: No es poden buidar les condicions
     actions_empty: No es poden buidar les accions
+    invalid_domain:
+      freshdesk: Freshdesk
   export_data:
     in_sla: Dins d'ANS
     out_of_sla: ANS violat
@@ -5962,8 +6184,8 @@ ca:
       Exportar la Informació disponible de la vista actual del tiquet a un arxiu
       CSV.
     contact_info: Exportar contactes actius a un fitxer CSV.
-    select_header: Select all fields
-    select_all: Select all
+    select_header: Selecciona tots els camps
+    select_all: Selecciona-ho tot
     select_format: 'Exporta com:'
     csv: CSV
     xls: Excel
@@ -6064,6 +6286,7 @@ ca:
       export_limit_breached: >-
         We currently allow only %{limit} concurrent exports. Kindly try again
         after some time. Apologies for the inconveniences caused.
+    view_all_tickets: Exporta com a CSV
   sla:
     minutes: Minuts
     hours: Hores
@@ -6141,6 +6364,8 @@ ca:
         flash_card_html: Què hi ha de nou en Social?
         flash_card_text: Understanding your Social tab
         tickets: Tiquets
+        post: ' Envia '
+        interactions: Interaccions
       index:
         all: Tot
       search_btn: Cerca
@@ -6326,6 +6551,8 @@ ca:
     configure_custom_addon: Configureu aquest giny
     tooltip:
       edit: Edita
+      settings: Configuració
+    connect: Connecta
   home:
     mobile_index:
       email: Correu electrònic
@@ -6793,6 +7020,9 @@ ca:
         widget_title: Títol del giny
         username: Usuari
         password: Contrasenya
+        lead: Camps d'avantatge
+        account: Camps del compte
+        contact: Camps del contacte
     google_calendar:
       label: Calendari de Google
       desc: >-
@@ -6905,6 +7135,13 @@ ca:
           Per exemple, si la URL del teu Shopify és <strong>
           https://my_shop_name.shopify.com</strong>, si us plau entra
           <strong>my_shop_name</strong>.
+        shop_name_info_mint: >-
+          Per exemple, si la URL del teu Shopify és <strong>
+          https://my_shop_name.shopify.com</strong>, si us plau entra
+          <strong>my_shop_name</strong>.
+        shop_name_mint: Nom de la botiga
+      edit:
+        disconnect: Desconnecta
     slack:
       label: Slack
       desc: Stay up to date about Freshdesk tickets in Slack
@@ -7184,8 +7421,8 @@ ca:
         Tracker - https://www.pivotaltracker.com/profile
       pivotal_updates: Selecciona per obtenir actualitzacions del rastrejador giratori
     remote_login:
-      connect: Connect
-      sign_up: Sign Up
+      connect: Connecta
+      sign_up: Registrar-se
       freshdesk_url: Freshdesk URL
       freshdesk_api_key: Freshdesk API key
       api_key_available: >-
@@ -7195,6 +7432,13 @@ ca:
     ilos:
       messages:
         video_desc: Descripció
+      settings:
+        for_agents: Per agents
+        for_customer: Per als clients
+      portal_ticket:
+        placeholder: 'Sol·licitud#'
+      agent_ticket:
+        placeholder: 'Sol·licitud#'
     dynamics_v2:
       form:
         username: Usuari
@@ -7228,13 +7472,25 @@ ca:
       crm:
         mapping:
           contact: Contacte
+          company: Empresa
+          contact_fields: ' Camps del contacte '
+          account_fields: ' Camps del compte '
     dynamicscrm:
       form:
         password: Contrasenya
+        contact_email: Adreça electrònica del contacte
+        lead: Camps d'avantatge
+        account: Camps del compte
+        contact: Camps del contacte
     screen_pop:
       widget:
         cancel: Cancel·lar
         subject: Assumpte
+        view_all: Veure tot
+        requester: Nom del sol·licitant
+        add_note_text: Notes de trucada
+        recent_tickets: Tiquets recents
+        create: Crear
     hootsuite:
       reply_btn: Respondre
       send: Envia valoració
@@ -7252,13 +7508,22 @@ ca:
         email: Correu-e
       header:
         reply: Respondre
+      reset: Restableix
+      domain:
+        continue_to_login: Continuar a l'inici
+      search:
+        ticket_id: ID del cupó d'assistència
+        keyword: Paraula clau
     infusionsoft:
       form:
         select: Selecciona una opció
+        contact: Camps del contacte
+        account: Camps del compte
     cti_admin:
       phone:
         save: Desa
         cancel: Cancel·lar
+        delete_msg: Segur que vols suprimir aquest número?
       ctd:
         api_key: Clau API
         callback_url: URL de devolució de trucada
@@ -7271,6 +7536,8 @@ ca:
         have_user_pass: Tinc usuari i contrasenya?
     github_settings:
       resolved: Resolt
+      none: No fer res
+      closed: Tancat
     magento:
       form:
         shop_name: Nom de la botiga
@@ -7282,6 +7549,11 @@ ca:
       form:
         auth_token: Testimoni d'autenticació
         select: Selecciona una opció
+        deal: Camps de l'acord
+        lead: Camps d'avantatge
+        domain: Domini del compte
+        account: Camps del compte
+        contact: Camps del contacte
     outlook_contacts:
       form:
         mail_box_detail: Sincronitzar amb
@@ -7298,6 +7570,22 @@ ca:
         delete_account: Esborrar
         last_sync_time: Data de la darrera sincronització
         syncing_in_progress: Sincronització en marxa
+    quickbooks:
+      form:
+        quickbooks_note: Notes de text
+    custom_apps:
+      refresh: Actualitza
+    uninstall: Desinstal·lar
+    salesforce_v2:
+      form:
+        salesforce_v2_settings: Configuració de Salesforce
+    cloud_elements:
+      form:
+        lead: Camps d'avantatge
+        daily: Diàriament
+        account: Camps del compte
+        hourly: Per hora
+        contact: Camps del contacte
   widgets:
     contact_widget:
       description: >-
@@ -7312,6 +7600,7 @@ ca:
         feedback_widgets_help_articles: o cerca articles de suport
         show_all_results: Veure tots els resultats
         no_results: 'No hi ha resultats amb '
+        problems_with_fields: 'Hi ha hagut problemes amb els següents camps:'
   reorder: reordenar
   reports:
     no_data: No es mostres dades!
@@ -7338,26 +7627,26 @@ ca:
     satisfaction_title: Informe de satisfacció
     freshfone:
       options:
-        incoming: Incoming
-        outgoing: Outgoing
-        all_groups: All Groups
+        incoming: Entrant
+        outgoing: Sortint
+        all_groups: Tots els grups
         unassigned: Sense assignar
       range_exceed: Range cannot exceed 90 days
-      filter_by_title: Filtered by
-      time_period: Time Period
+      filter_by_title: Filtrat per
+      time_period: Període de temps
       report_title: Freshfone Summary
       summary_title: 'Agent Call Summary '
       agent: Agent
-      group: Group
-      call_type: Call Type
-      filter_report: Edit Filter
+      group: Grup
+      call_type: Tipus de trucada
+      filter_report: Editar el filtre
       select_agent: Select Agent
       select_group: Select Group
       select_call_type: Select Call Type
       select_number: Select a Number
-      all_numbers: All Numbers
+      all_numbers: Tots els números
       all_call_types: All
-      number: Number
+      number: Número
       avg_handle_time: Avg Handle Time
       num_of_calls: No of Calls
       total_answered: Answered Calls
@@ -7368,12 +7657,13 @@ ca:
       num_of_transfered: No of Transfers
       unanswered_transfers: Unanswered Transfers
       answered_percentage: Answer %
-      generate_summary: Generate
-      filter_close: Close
-      unanswered_count: Unanswered
+      generate_summary: Generar
+      filter_close: Tanca
+      unanswered_count: No respost
       includes_transfer: Includes transferred calls
       no_agent: '- No Agent -'
       business_hours: Hores laborables
+      filter_option_all_calls: Totes les trucades
     time_sheets:
       billable: Hores facturables
       non_billable: Hores no facturables
@@ -7429,7 +7719,7 @@ ca:
         view_between: Veure informe entre
         from: De
         to: Per a
-        filter_report: Edit Filter
+        filter_report: Editar el filtre
         ticket_type: Tipus de tiquet
     scoreboard_reports:
       champions_title: Campions
@@ -7471,15 +7761,30 @@ ca:
           timeframe</li></ol></p></p>
       main:
         all: Tot
+        time_period: Període de temps
+        neutral: Neutres
+        survey_name: Nom de l'enquesta
+        total_responses_v2: Total
+        agent: Agent
+        positive: Positives
+        group: Grup
+        overall_rating: Classificació
+        responses: Respostes
+        negative: Negatives
+        no_overview: No hi ha dades disponibles
+        unanswered: No respost
+        overview: Visió general
+        answered: Respost
+        rating: Classificació
     livechat:
       report_title: Live Chat Summary
-      filter_by_title: Filtered by
-      time_period: Time Period
-      widget: Widget
-      group: Group
-      chat_type: Chat Type
+      filter_by_title: Filtrat per
+      time_period: Període de temps
+      widget: Giny
+      group: Grup
+      chat_type: Tipus de xat
       summary: Summary
-      filter_report: Edit Filter
+      filter_report: Editar el filtre
       select_widget: Select Widget
       select_group: Select Group
       select_chat_type: Select Chat Type
@@ -7487,12 +7792,12 @@ ca:
       chat_type_visitor: Visitor Initiated
       chat_type_agent: Agent Initiated
       chat_type_proactive: Proactive
-      generate_summary: Generate
-      filter_close: Close
+      generate_summary: Generar
+      filter_close: Tanca
       total_chats: Total
       num_of_chats: No of Chats
-      answered_chats: Answered
-      missed_chats: Missed
+      answered_chats: Respost
+      missed_chats: Perduda
       num_of_transfer: Transfers
       avg_handle_time: Avg Handle Time
       avg_time_queue: Time in Queue
@@ -7500,6 +7805,7 @@ ca:
       agent_chat_summary: Agent Chat Summary
       agent: Agent
       deleted: Deleted
+    discard_changes: Descarta els canvis
   delete_the_ticket: Esborrar el tiquet
   mark_as_spam: Marca com a correu brossa
   bulk_actions: Accions en bloc
@@ -7535,6 +7841,7 @@ ca:
         conversa a Freshdesk i també s'enviarà al sol·licitant per correu
         electrònic.
       ticket_type_example: Pregunta
+      note: Nota
   email_command_delimeter_label: Ordres delimitants de correu electrònic
   email_command_preview_to_email: per a
   email_command_preview_to_email_value: support@acme.freshdesk.com
@@ -7643,6 +7950,7 @@ ca:
       relevance: Rellevància
       created_at: Data de creació
       updated_at: Darrera modificació
+    searching: Cercant
   assumed_identity_msg: 'Has assumit la teva identitat com a %{user_name}.'
   unauthorized_msg: Autorització errònia
   assuming_identity_user_does_not_exist_msg: L'usuari que has intentat assumir no existeix.
@@ -7934,6 +8242,8 @@ ca:
         l'optimitzarà per a telèfons i tauletes. Pots optar per desactivar
         aquesta opció en cas que desitgis tenir un tema consistent que no
         respongui a tots els dispositius.
+    apply_mint: Aplica
+    classic: Clàssic
   any_time: En qualsevol moment
   five_minutes: D'aquí a 5 minuts
   fifteen_minutes: D'aquí a 15 minuts
@@ -8255,6 +8565,7 @@ ca:
       see_detailed_pricing: Veure preu detallat
       followup_text: per valor de crèdits Freshfone
       followup: per valor de crèdits Freshfone
+      purchase_credits: Comprar crèdit
     dialpad:
       not_valid_number: 'Si us plau, Introdueix un número vàlid'
       could_be_invalid_number: Could be an invalid number.
@@ -8456,7 +8767,7 @@ ca:
           will be available to take calls only during working hours, and another
           high-priority helpline that will be available 24x7.<br/><br/>
         non_business_hours: Accept Calls during…
-        business_calendar: Select Business Hour
+        business_calendar: Selecciona l'horari d'atenció
         transcript_voice: Transcripció de veu
         text_to_speech: Text de veu
         record_calls: Gravar trucades
@@ -8505,6 +8816,8 @@ ca:
         recording_privacy_public: Visible to customers and agents
         recording_privacy_private: Visible only to agents
         name_maxlength: Name cannot have more than 255 Characters
+        number_accessible: Accessible per
+        attachment_help_text: Accepta arxius d'àudio < 5mb
       numbers:
         title: Suport dels clients amb Freshfone
         info: >-
@@ -8527,7 +8840,7 @@ ca:
         purchase_number: Compra número
         purchase_phone_number: 'Buy Number (%{number})'
         buy: Compra número
-        buy_button_text: Buy
+        buy_button_text: Compra
         purchase_loading_text: Comprant...
         buy_loading_text: Buying...
         purchase_alert_text: >-
@@ -8550,10 +8863,10 @@ ca:
           Si us plau, recarrega el teu saldo i torna-ho a provar.
         address:
           name: Company / Name
-          address: Address
-          city: City
-          state: State/Province/Region
-          postal_code: Postal Code
+          address: Adreça
+          city: Ciutat
+          state: Estat/província/regió
+          postal_code: Codi postal
           country: Country
           required_field: All fields are required
         setup:
@@ -8575,6 +8888,9 @@ ca:
             suport. A més, els agents poden optar per recollir les trucades de
             telèfon des de l'interior del navegador o fer que s'enviïn al teu
             telèfon d'escriptori de forma automàtica.
+        caller_id:
+          manage_caller_id: 'Gestiona l''ID de trucada '
+          add_new: Afegeix nova
       invalid_attachment: >-
         L'adjunt '%{name}' no és un arxiu d'àudio vàlid / la seva grandària és
         més gran de 5 MB
@@ -8624,6 +8940,7 @@ ca:
           país davant del número
       welcome_page:
         title: Welcome to Freshfone
+        title_text: Telèfon
       feature_request_content:
         title: Freshfone
         heading: Support your customers with Freshfone
@@ -8631,7 +8948,7 @@ ca:
         about_ivr: Create IVR's and route calls to the right agents
         about_recording: Record customer conversations and access it anywhere
         read_more: Read more
-        pricing: See all call rates and supported countries
+        pricing: Mostra totes les tarifes de trucades i els països admesos
         email_subject: 'Freshfone Request - %{account_name}'
         email_message: Need Freshfone Feature
         success_message_flash: >-
@@ -8641,6 +8958,9 @@ ca:
         additional_note: Freshfone request will take two business days
         button_label: Request for Freshfone
         learn_more: Més informació
+        trial_or: O
+        title_text: Telèfon
+      freshfone_numbers_title: Telèfon
   livechat:
     feature_request:
       title: Welcome to Live Chat
@@ -8658,14 +8978,14 @@ ca:
     title: Fresh Xat
     widget: Giny
     messages: Missatges
-    set_default_msgs: Default messages
+    set_default_msgs: Missatges per defecte
     minimize_chat_title: Títol quan el xat es minimitza
     maximize_chat_title: Títol quan el xat es maximitza
     welcome: Missatge de benvinguda
     thank_title: Gràcies / Tancament Missatge
     wait_title: Espera / en espera del Missatge
     is_typing_header: Quan l'agent/visitant <br> comença a escriure
-    prechat_title: Pre-chat form
+    prechat_title: Formulari previ al xat
     prechat_desc: >-
       Collect personal details about your visitors before you start chatting
       with them. When this is on, visitors will need to submit the form to begin
@@ -8681,14 +9001,14 @@ ca:
       contactar de nou amb nosaltres!
     wait_message: 'One of us will be with you right away, please wait.'
     typing_message: està escrivint ...
-    msgbox_placeholder_title: Reply box placeholder
+    msgbox_placeholder_title: Espai reservat del quadre de resposta
     msg_waiting_agent_title: Status Message while waiting for agent
     msg_joining_agent_title: Message when agent joins chat
     msg_leaving_agent_title: Message when agent leaves chat
-    chat_transfer_msg_title: Chat transfer message
+    chat_transfer_msg_title: Missatge de transferència del xat
     help_text_wait_onhold_msg: >-
-      This message will appear when visitor is waiting for an agent for more
-      than one minute
+      Aquest missatge es mostrarà quan faci més d'un minut que el visitant
+      espera un agent
     prechat_message: >-
       No podem esperar per parlar amb tu. Però abans, si us plau, pren un parell
       de minuts per explicar-nos una mica sobre tu.
@@ -8735,9 +9055,11 @@ ca:
     align_to: Alinear
     bottom_left: A baix a l'esquerra
     bottom_right: A baix a la dreta
-    integrate_msg: Copy & paste this code before the last </body> tag on your website or app
+    integrate_msg: >-
+      Copia i enganxa el codi abans de l'última etiqueta </body> del teu lloc
+      web o aplicació
     integrate_livechat_title: Integra Live Chat en el teu web i aplicacions
-    custom_chat_window: Chat window
+    custom_chat_window: Finestra de xat
     text_placeholder: El teu missatge
     chatbox_bgcolor: Color de la finestra
     in_conversation: Dins de la conversa
@@ -8799,7 +9121,7 @@ ca:
     last_message: Últim missatge...
     chat_recent_empty_tip: No has xatejat amb ningú recentment
     add_agent_to_chat: No other agents logged in
-    url_error_msg: Please enter a valid URL
+    url_error_msg: Introdueix un URL vàlid
     accept: Acceptar
     ignore: Ignorar
     transfer_msg: feta una sol·licitud de transferència de xat
@@ -8884,19 +9206,20 @@ ca:
     non_availability_message: >-
       Our agents are unavailable right now. Sorry about that, but please leave
       us a message and we'll get right back.
-    installation: Widget Code
-    visitor_form: Visitor Form
-    preferences: Preferences
+    installation: Codi del giny
+    visitor_form: Formulari de visitant
+    preferences: Preferències
     intro_title: Perquè Freschat?
     intro: >-
-      Freshdesk's integrated Live Chat solution lets you view and chat with
-      users on your website, online software, or support portal directly from
-      within Freshdesk. You can proactively start chatting with your website
-      visitors too. Once you finish a chat session, you can choose to convert
-      the conversation into a ticket and continue following up with the visitor
-      over email, or archive the chat transcript.
-    enable_chat: Enable Live Chat
-    learn_livechat: Learn more about Live Chat
+      La solució de xat en directe integrada al Freshdesk et permet veure i
+      parlar per xat amb els usuaris del teu lloc web, programari en línia o
+      portal d'assistència tècnica directament des del Freshdesk. També pots
+      iniciar una conversa de manera proactiva amb els visitants del teu lloc
+      web. Quan acabis la sessió de xat, podràs convertir la conversa en una
+      sol·licitud i continuar el seguiment del visitant per correu electrònic, o
+      bé arxivar la transcripció del xat.
+    enable_chat: Activa el xat en directe
+    learn_livechat: Més informació sobre el xat en directe
     support_portal: Xat al portal de suport
     logged_in_users: Només usuaris amb la sessió iniciada
     everyone: Tothom
@@ -8905,9 +9228,9 @@ ca:
     maximum_chat_title: Maximum Number Of Visitor Chats
     maximum_change_label: Edita
     maximum_chat_desc: >-
-      Set the limit for the number of chats an agent can handle simultaneously.
-      When an agent reaches this limit, they will not receive any new chat
-      notifications.
+      Defineix el nombre de xats que un agent pot gestionar de manera
+      simultània. Quan l'agent assoleixi el límit, deixarà de rebre noves
+      notificacions de xats.
     maximum_chat_error: You have reached the maximum chat limit.
     transfer_limt_exceeded_msg: ' has reached his capacity. Please transfer the chat to another agent.'
     loading_new_archives: Carregant nous arxius...
@@ -8920,11 +9243,11 @@ ca:
     enter_custom_link: Introduïu l'URL
     widget_option_info: 'Si el giny d''enquestes no està disponible, s''obrirà un nou tiquet '
     no_matching_agents: No matching agents
-    chat_enabled_label: Enable Chat
-    routing: Chat routing
-    routing_info: Route all incoming chats to specific groups
-    dropdown_based_routing: Dropdown based routing
-    default_routing: Default routing
+    chat_enabled_label: Activa el xat
+    routing: Encaminament del xat
+    routing_info: Encamina tots els xats entrants a grups específics
+    dropdown_based_routing: Encaminament basat en opcions desplegables
+    default_routing: Encaminament per defecte
     choice_info: <b>$</b> then notify group
     select_groups: Select groups
     routing_note: >-
@@ -8944,10 +9267,10 @@ ca:
     close: Close
     visitorId: Visitor ID
     createdAt: Created at
-    enable: Enable
+    enable: Activa
     widgets_list_info: >-
-      For every product you have set up in Freshdesk, you will have a
-      corresponding chat widget available here
+      Aquí es mostraran els ginys de xat per a cadascun dels productes que hagis
+      configurat al Freshdesk
     text_yes: Sí
     text_no: 'No'
     enabled: Habilitat
@@ -8977,6 +9300,19 @@ ca:
     change_livechat_tone: LiveChat Notification Tone
     message: Message
     header_title: Encapçalament
+    prechat_dropdown_msg: >-
+      Pots associar opcions desplegables a diversos grups des de la pestanya
+      Preferències. Els xats s'assignaran als grups indicats segons escaigui.
+    show_widget: Quan els agents estan en línia i accepten xats
+    agent_network_disconnect_msg_title: Missatge quan l'agent es desconnecta
+    chat_hours_msg_note: 'Nota: fora d''aquest període, la finestra de xat romandrà amagada.'
+    enabling: S'està activant
+    cobrowsing: Ajuda en pantalla
+    end_chat_confirm_msg_title: Missatge de confirmació de finalització del xat
+    chat_with_us: Connecta amb nosaltres
+    cobrowsing_info: >-
+      Orienta els clients amb més eficàcia durant les converses de xat gràcies a
+      les opcions per veure'n i controlar-ne la pantalla.
   facebook_tab:
     remove_tab: Treu la pestanya de la pàgina
     tab_not_removed: No es pot treure la pestanya
@@ -9054,7 +9390,7 @@ ca:
       title: Ves a pestanya
       dashboard: Tauler de control
       tickets: Tiquets
-      social: Social
+      social: Xarxes socials
       solutions: Solucions
       forums: Fòrums
       customers: Clients
@@ -9073,6 +9409,7 @@ ca:
       reply: Respondre
       forward: Endavant
       add_note: Afegir nota
+      scenario: Escenaris
     ticket_list:
       title: Llista de tiquets
       move_cursor: Prem cursor per al següent / anterior tiquet
@@ -9162,7 +9499,7 @@ ca:
     folders: Carpetes
     views_categories: Vistes i categories
     tour: Ajuda'm a configurar els meus fòrums
-    show_more: Show more
+    show_more: Mostra més
     helpnote:
       title: Organitzant la teva comunitat
       para1: >-
@@ -9257,7 +9594,7 @@ ca:
         delete_confirm: Esborrar aquest comentari? estàs segur?
         created_topic: Crear un tema
         replied_to: Respost a tema
-        replied: replied
+        replied: respost
       title_meta:
         replies:
           one: 1 resposta
@@ -9338,20 +9675,22 @@ ca:
           title: Respondre
           posted: Respost a
     unpublished:
-      page_title: Forum Moderation
+      page_title: Moderació del fòrum
       empty_spam: Delete all Spam
       more: ' more'
       less: ' less'
       after_ban:
-        marked: Marked as Spam
-        restore_contact: Restore contact
-        contact_deleted: To avoid further Spam the contact was deleted -
-        cleared_rest: All older posts by this user have also been marked as Spam
+        marked: Marcar com correu brossa
+        restore_contact: Restablir el contacte
+        contact_deleted: Per evitar més correu brossa el contacte s'ha eliminat -
+        cleared_rest: >-
+          Totes les entrades anteriors d'aquest usuari també s'han marcat com a
+          correu brossa
       after_approve:
-        published: Post has been published
-        goto_post: Goto Post
+        published: La entrada ha estat publicada
+        goto_post: Ves a publicació
       invalid_topic:
-        went_wrong: Something went wrong
+        went_wrong: Alguna cosa ha anat malament
         try_later: Unable to approve the post. Please try again later.
       spam_folder: Spam Folder
       flash:
@@ -9364,13 +9703,13 @@ ca:
       index:
         title: Correu brossa
         spam: Spam
-        unpublished: Waiting for approval
-        waiting: Waiting for Approval
-        waiting_desc: Review and publish
-        empty_folder: Empty Folder
-        no_forum_unpublished: All topics and replies have been reviewed.
-        no_forum_spam: There's no spam here. We swear!
-        moderation_solution: Learn more about Forum Moderation
+        unpublished: Esperant l'aprovació
+        waiting: A l'espera de l'aprovació
+        waiting_desc: Revisar i publicar
+        empty_folder: Carpeta buida
+        no_forum_unpublished: Tots els temes i les respostes han estat revisats.
+        no_forum_spam: Et juro que no hi ha correu brossa
+        moderation_solution: Aprèn més sobre la moderació del fòrum
         unpublished_posts: Unpublished replies
         deletion_alert: >-
           Topics/replies more than 30 days old will be automatically deleted
@@ -9387,22 +9726,22 @@ ca:
         approve: Aprovar i publicar
         new_topic:
           title: Nou tema
-          posted: posted a new topic
+          posted: publicat un nou tema
         reply:
           title: Respondre
-          posted: replied to
+          posted: Respost a
     topic_merge:
       merge_title: Merge Topics
-      continue: Continue
+      continue: Continuar
       cancel: Cancel·lar
       please_wait: Espera si us plau ...
-      mark_primary: Mark as primary
+      mark_primary: Marcar com a primària
       remove: Remove this topic
       detailed_note: Reason for Merge
-      confirm_and_merge: Confirm and Merge
+      confirm_and_merge: Confirmar i Combinar
       add_note: Reason for Merge
       note_saved: Note saved
-      add: Add
+      add: Afegeix
       visibility_info: 'Showing topics visible to <b>%{visibility}</b> '
       warning: >-
         Topics once merged cannot be unmerged. Followers and votes from the
@@ -9467,24 +9806,25 @@ ca:
     browse: Browse
     get_help: Get Help
     have_question: Have a question?
-    submit_feedback: Submit Feedback
+    submit_feedback: Envia valoració
     contact_support: ' Contact Support '
     search_articles: Search Article
     contact_us: Contact Us
     whats_new: What's New
+    load_more: Carrega més
   trial_plan_downgrade: >-
     Important: You are currently downgrading from %{plan_from} plan to
     %{plan_to} plan
   discounted_sum: After Discount
   selecting_plan: Selecting...
-  proceed_billing_info: 'Yes, Proceed to Billing'
+  proceed_billing_info: 'Sí, continuar a facturació'
   buy_plan: Buy this Plan
   agent_seats: '%{no_of_agents} Agent seats'
   subscribed_billing: '%{billing_cycle} billing'
   next_renewal: 'Next Renewal in %{renewal_period}'
   suspended_since: 'Suspended since %{days}'
-  plan: Plan
-  edit_plan: Edit Plan
+  plan: Pla
+  edit_plan: Editar el pla
   account_created: 'Account created %{total_time} ago on %{date}'
   short_code:
     title: Chat Shorthands
@@ -9512,57 +9852,229 @@ ca:
       apps out-of-the-box. To browse our selection of apps, click on the “Get
       more Apps” button.
     description: Descripció
+    delete_action:
+      success: La integració s'ha desactivat correctament!
+    view_all: Veure tot
+    view_more: Veure més
+    api_error: >-
+      No hem pogut processar la teva sol·licitud. Si us plau, intenta-ho més
+      tard.
+    help_and_support: Ajuda i suport
+    settings: Configuració
+    tooltip:
+      suspended: No disponible
+    custom_apps: Ginys de FreshPlug
+    time_ago: enrere
+    validation_failed: Error de validació.
+    installing_text: 'Si us plau, esperi ...'
+    paid_app: PAGAT
+    overview: Visió general
+    install: Instal·la
+    published_in: en
+    popular: Popular
+    apps: Aplicacions
+    reauthorize: Autoritza de nou
+    go_to_dev_portal: Anar al Portal dels desenvolupadors
+    no_mktp_apps_note: Hem integrat algunes de les teves aplicacions preferides.
+    ver: 'Versió: '
+    coming_soon: Properament
+    latest: Més recents
+    no_custom_apps_note: >-
+      Crea aplicacions personalitzades i publica-les al portal dels
+      desenvolupadors.
+    field_blank: Emplena els camps obligatoris.
+    no_mktp_apps: Cap aplicació instal·lada
   freshcaller:
     admin:
       link_account_request_content:
         cancel: Cancel·lar
         email: Correu-e
         password: Contrasenya
+        link_errors:
+          validation_error: El camp és obligatori
+        continue: Continuar
+      sidebar_title: Telèfon
+      title_text: Telèfon
+      feature_request_content:
+        create_new_account: Crea un compte nou
   multifile_attachments:
     label: Adjunta arxius
+    remove: Suprimeix
+    mb: ' MB '
   plain_on: Activa
   helpdesk_reports:
     saved_report:
       save: Desa
       cancel: Cancel·lar
+      delete_dialog_header: Eliminar l'informe
+      edit_dialog_header: Editar l'informe
     today: Avui
     ticket_schedule:
       index:
         cancel: Cancel·lar
+        delete_text: Segur que vols suprimir aquesta programació?
+        confirm: Confirma
       new:
         ticket_fields_title: Camps de peticions.
         email: Correu-e
         description: Descripció
+        helpnote:
+          api_info1: L'API tindrà l'enllaç a l'última exportació.
+        contact_fields_title: Camps del contacte
+        select_all: Selecciona-ho tot
+        one_time_export_label: >-
+          Exportar el contingut del ticket des de l'inici del mes en què comença
+          aquesta programació
+        frequency: Programar
+      schedule_export: Programar una exportació
+      schedule: Programar
+      all_reports: Tots els informes
+      new_schedule: Horari nou
     scheduled_reports:
       dialog:
         email: Correu-e
         'on': Activa
         desc: Descripció
         subject: Assumpte
+        monthly: Mensualment
+        generate_report: Genera un informe
+        daily: Diàriament
+        weekly: Setmanalment
     ticket_volume:
       resolved_tickets: Tiquets resolts
       received_tickets: Tiquets rebuts
+      time_trends:
+        year: any
+        week: setmana
+        day: Dia
+        month: mes
+      load_analysis:
+        title: Anàlisi de càrrega
     date_range: Rang de dates
     timespent_export:
       button_export: Exporta
+      export_csv: Exportar al CSV
     ticket_activity:
       learn_more: Més informació
+      helpnote:
+        api_info1: L'API tindrà l'enllaç a l'última exportació.
+      edit: Editar programació
     yesterday: Ahir
     change: Canvi
+    time_period: Seleccionar el període de temps
+    chats: Xats
+    more: Més...
+    no_data_to_display_msg: No hi ha dades per mostrar
+    insights:
+      customize_link: Personalitza
+    this_week: Aquesta setmana
+    agent_summary:
+      title: Rendiment de l'agent
+    generate: Generar
+    this_month: Aquest mes
+    edit_filter: Filtra
+    year_in_review:
+      title: Retrospectiva del teu any
+    summary: Resum
+    show: 'Veure:'
+    filter_by: Filtra per
+    solution_article_text: Com llegir aquest informe ?
+    performance_distribution:
+      title: Distribució del rendiment
+      resolution_bar: Temps de resolució
+      first_response_bar: Temps de primera resposta
+      response_bar: Temps mitjà de resposta
+    group_summary:
+      title: Rendiment del grup
+    filtered_by: 'Filtrat per:'
+    at: al
+    customer_satisfaction:
+      title: Informe de satisfacció de clients
   admin_onboarding:
     modal:
       channels_frame:
         forums_channel: Fòrums
         chat_channel: configuració de Xat
         email_channel: Correu-e
+        social_channel: Xarxes socials
+        phone_channel: Telèfon
+        title: Com et comuniques amb els clients actualment?
+        forward_link: Convida el teu equip
       agents_frame:
         send_invite: Enviar invitació
         emails_invalid: Una o més adreces de correu no són vàlides
+        emails_placeholder: 'bruce@just.ly, diana@just.ly, clark@just.ly'
+      welcome_frame:
+        title: Et donem la benvinguda al Freshdesk
     account_verification_message:
       helpnote_or: o
       modal_send_button: Enviar Activació
       cancel_button: Cancel·lar
+      modal_title: T'has registrat amb una adreça electrònica incorrecta?
+      modal_invalid_email_error: 'Si us plau, introdueix una adreça de correu vàlida.'
+      resend_message: Torna a enviar l'activació
+      change_email: canvia el correu electrònic
   freshchat:
     admin:
       save: Desa
       cancel: Cancel·lar
+      sidebar_title: Freshchat
+      action:
+        success_message: Configuració actualitzada
+      admin_apikey: 'Clau d''API:'
+      title_text: Freshchat
+      portal_url: 'URL del portal:'
+      app_id: Identificador de l'aplicació
+  mailer_notifier:
+    hi: 'Hola,'
+    thanks: 'Gràcies,'
+  copied_link: S'ha copiat
+  enter_a_value: Introdueix un valor
+  custom_mailbox_admin_email_notifications:
+    regards: Salutacions
+  activations:
+    activate_freshdesk_account: Activa el teu compte
+  cloud_log_mailer:
+    logger_email:
+      regards: 'Salutacions,'
+      account: 'Compte: '
+      reason: Motiu
+  portals_key: Portals
+  classic_label: Clàssic
+  helpcard:
+    title: ID extern únic
+  admin_upgrade:
+    enable_mint_title: >-
+      Permet que els agents provin l'experiència més ràpida i innovadora que els
+      ofereix el Mint
+    enable_mint_error: >-
+      El Mint ja s'ha activat per a tots els agents. Actualitza per veure la
+      configuració més recent.
+    enable_mint_success: Visca! El Mint s'ha activat correctament per a tots els agents.
+  plain_off: Apagat
+  customize_domain:
+    email:
+      cheers: 'Adéu,'
+      team: Equip Freshdesk
+  'on': el
+  save_as: Desa com a
+  reload: Tornar a carregar
+  currency_label: 'Moneda :'
+  user_notifications:
+    mute: Mut
+    mark_all_as_read: Marca-les totes com a llegides
+    header: Notificacions
+    preferences: Preferències
+  ticket_templates:
+    create_new: Crear nou
+  in: en
+  help_widget:
+    form_title: Contacteu-nos
+    form_button_text: Envia valoració
+    form_submit_message: Gràcies per la teva valoració.
+    button_text: Ajuda
+    welcome_message: Et podem ajudar?
+    predictive_message: >-
+      Hem observat que t'has encallat. Digue'ns què estaves intentant i el
+      nostre equip de suport t'atendrà el més aviat possible.
+    success_message: Gràcies. Estarem en contacte!

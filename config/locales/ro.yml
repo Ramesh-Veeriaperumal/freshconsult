@@ -152,8 +152,8 @@ ro:
   failure: Eroare ...
   amount: Sumă
   paid_with: Plătit cu
-  date_title: Data
-  status: Status
+  date_title: Dată
+  status: Stare
   sales: Vanzari
   preview: Previzualizare
   no_agents_in_selected_group: Nu sunt agenti in grupul selectat
@@ -161,7 +161,7 @@ ro:
   sidebar_help: Ajutor
   support_title: Suport
   ticket_form:
-    your_email_address: Email
+    your_email_address: E-mail
     your_name: Numele tau
     select_contacts: 'Selecteaza contacte din %{contact_name}'
   captcha_verify_message: 'Verificare codului de securitatea esuat, încercați din nou!'
@@ -324,7 +324,7 @@ ro:
     back_info: Informatii de fundal
     background: Fundal
     mobile: Mobil
-    twitter_id: Twitter
+    twitter_id: Twiter
     facebook: Facebook
     full_name: Nume complet
     name: Nume
@@ -335,7 +335,7 @@ ro:
     mobile_phone: Telefon mobil
     address: Adresă
     work: Loc de muncă
-    email: Email
+    email: E-mail
     emails: Email-uri
     choose_another_photo: Alege alta fotografie
     add_photo: Adauga fotografie
@@ -352,25 +352,30 @@ ro:
       custom_url: URL nevalid
       custom_date: data nevalida
     phone_number: Număr de telefon
+    industry: Sector
+    last_name: Nume de familie
+    first_name: Prenume
+    company_name: Companie
+    job_title: Denumire post
   custom_fields:
     insert_field: Campul Drag&Drop
     drag_drop_field_intro: >-
       Drag and drop orice tip de camp in formularul "%{name}" de mai jos pentru
       a adauga un nou camp personalizat
-    number: Numar
+    number: Număr
     empty_section_info: Trage campul aici
     text: Text pe un singur rand
     paragraph: Text pe mai multe randuri
     checkbox: Casuta
-    dropdown: Dropdown
+    dropdown: Derulant
     decimal: Zecimal
-    dropdown_blank: Dropdown
-    phone_number: Numar de telefon
+    dropdown_blank: Derulant
+    phone_number: Număr de telefon
     url: URL
-    date: Data
+    date: Dată
     delete: Sterge
     regex: Regex
-    email: Email
+    email: E-mail
     nested_field: Camp dependent
     drag_and_drop_field: Campul Drag&Drop
     default_field_error: Nu poti trage in aceasta sectiune campurile implicite
@@ -379,7 +384,7 @@ ro:
       source: Sursa
       subject: Subiect
       requester: Caută un expeditor
-      status: Status
+      status: Stare
       group: Grup
       agent: Agent
       priority: Prioritate
@@ -388,6 +393,8 @@ ro:
       ticket_type: Tip
       created_at: Creat
       tags: Etichete
+      company: Companie
+      skill: Competență
     saving_ticket: Se salveaza campul de tichete...
     untitled: Fără titlu
     properties: Proprietati
@@ -405,7 +412,7 @@ ro:
       add_custom_field: Adaugă un câmp personalizat
       customize_form: Personalizeza-ti formularul "Tichet nou"
       single_line: Text pe un singur rand
-      title: Campul de tichete
+      title: Campuri tichete
       paragraph: Paragraf
       checkbox: Casuta
       save: Salveza campurile de tichete
@@ -501,13 +508,14 @@ ro:
       field_available: Exista deja acest camp in sectiunea dorita.
       section_delete_btn: Sterge sectiune
       ok_btn: OK
-      confirm_btn: Confirma
+      confirm_btn: Confirmare
       delete_btn: Sterge
       continue_btn: Continua
       section_prop: Proprietati sectiune
       sectino_label: Denumire sectiune
       section_type_is: Arată secțiune atunci când este tip
       section_name_unique: Numele sectiuni este deja folosit
+      add_section: Adăugați o secțiune
   folder:
     edit: Editeaza director
     delete: Delete Folder
@@ -523,7 +531,7 @@ ro:
   amount_for_annual: '$%{amount} anual'
   agent_deleted_message: Acest agent este sters
   cancel: Anuleaza
-  confirm: Confirma
+  confirm: Confirmare
   downgrade_dialog_title: Sigur doresti sa revii la o versiune inferioara?
   yes_password_reset: Da
   no_password_reset: Nu
@@ -544,7 +552,7 @@ ro:
   forums_order:
     overview: Prezentare generala
     recent: Recent
-    popular: Popular
+    popular: Populare
     planned: Planificat
     implemented: Implementat
     nottaken: Nu a fost luat
@@ -579,6 +587,8 @@ ro:
         cancel: Anuleaza
         back: Inapoi
         loading_feedback: Incarca feedback
+        load_questions: Vezi mai mult
+        comments: Comentarii
     login:
       form:
         email: Email
@@ -591,7 +601,7 @@ ro:
         help: Ajutor
     shared:
       attachment_form:
-        feedback_widgets_screenshot: Fa captura de ecran
+        feedback_widgets_screenshot: Fa captură de ecran
       survey_form:
         survey_title: Oferiti-ne un minut pentru a aprecia serviciul de suport
         feedback_title: >-
@@ -606,6 +616,7 @@ ro:
       email: Email-ul tau*
       comments: Comentarii
       send_feedback: Trimte feedback
+      related_files: Fișiere asociate
     surveys:
       thanks_for_feedback: Am primit feedback-ul dvs. Multumesc foarte mult.
       feedback_already_done: You have already given feedback for this response.
@@ -636,6 +647,9 @@ ro:
     canned_form:
       next: Urmatorul
       form_submit: Trimite
+      okay: Ok
+      hey: Hei
+      thank_you_text: Mulțumim
   gamification:
     levels:
       beginner: Incepator
@@ -655,11 +669,11 @@ ro:
       back_to_dashboard: Inapoi la panoul de control
       agents_in: Agenti in
       mvp_trophie_info: Agent cu totalul cel mai mare de puncte in aceasta luna
-      sharpshooter_trophie_label: Sharpshooter
+      sharpshooter_trophie_label: Lunetist
       sharpshooter_trophie_info: >-
         Agent cu cele mai multe puncte de soluționare a primului apel în această
         lună
-      speed_trophie_label: Speed Racer
+      speed_trophie_label: Pilot de curse
       speed_trophie_info: Agent cu maximum de puncte pentru rezolvarea rapidă în această lună.
       love_trophie_label: Client campion
       love_trophie_info: Agent cu puncte maxime pentru clienti multumiti in aceasta luna.
@@ -737,7 +751,7 @@ ro:
       user_login: Pagina de autentificare
       forgot_password: Ati uitat parola
       profile_edit: Profil utilizator
-      search: Rezultatele cautarii
+      search: Rezultatele căutării
       solution_home: Soultii
       solution_category: Categorii de solutii
       article_list: Lista articol
@@ -861,7 +875,7 @@ ro:
           new_account: Cont nou
           new_stream: Flux nou
         twitter_streams:
-          reauthorize: Reautorizeaza
+          reauthorize: Reautorizați
           edit: Editeaza
         stream_delete_alert: Esti sigur ca doresti sa stergi acest flux twitter?
         last_stream_delete_alert: >-
@@ -1075,6 +1089,7 @@ ro:
           litere: <b> /^[a-zA-Z0-9]*$/ </b>. Pentru a potrivi un sir care incepe
           cu cuvantul "proaspat"  <b> %{regex} </b>.
         max_choices: S-a ajuns maximum de elemente
+        mapped_internal_groups: Grupuri interne mapate
     portal:
       delete_confirm:
         title: Ștergerea acest portal va elimina
@@ -1087,8 +1102,8 @@ ro:
         allow_signup: permite utilizatorilor sa se inscrie din portalul client
         allow_signin: Permite utilizatorilor sa se conecteze folosind...
         google: Google
-        twitter: Twitter
-        facebook: Facebook
+        twitter: Twiter
+        facebook: Fcaebook
         user_permissions: Permisiuni utilizator pentru portal
         submit_ticket: Cine poate adauga tichet nou in portal
         public_ticket_urls_label: Who can view tickets on portal
@@ -1134,6 +1149,10 @@ ro:
         moderate_none_help: >-
           Activati aceasta functie daca sunteti sigur ca comunitate dvs. nu va
           face spam-uri.
+        important: Important
+        view_settings: Vizualizați setările
+        restricted_login_signup: Înregistrarea și conectarea au fost restricționate la anumite domenii
+        reset_portal_changes: Resetați modificările portalului
       helpnote:
         title: Configureaza-ti portalurile
         tour: Ajută-mă sa-mi configurez portalul
@@ -1155,6 +1174,13 @@ ro:
           setările de moderare  forum, faceți clic pe fila "Setări". Setările nu
           pot fi configurate pentru fiecare portal și vor fi comune pentru toate
           portalurile care au fost create.
+        exit_fullscreen: Ieșiți din modul ecran complet
+        editor_shortcuts: Scurtături Editor
+        preview_changes: Previzualizați modificările
+        editor_in_fullscreen: Editor în ecran complet
+        level_customizations: Personalizare la nivel de pagină
+        advanced_rebranding: Rebranding și personalizare avansate
+        custom_stylesheets: Utilizarea Stylesheet-urilor personalizate
     mobihelp:
       app_review:
         request_sent: Cerere review aplicatie trimisa
@@ -1262,7 +1288,7 @@ ro:
           mobihelp_sdk_version: Versiune Mobihelp SDK
     ecommerce:
       human_name: Ecommerce Account
-      index_title: Ecommerce
+      index_title: Comerț electronic
       edit_account: Edit Account Details
       limit_exceed: Maximum account limit reached.
       ebay_note_not_added: Note not added to eBay. Connection unstable.
@@ -1289,17 +1315,17 @@ ro:
       index:
         title: Ecommerce Accounts
         renew: Renew Token
-        new_account: New Account
+        new_account: Cont nou
       new:
-        title: New Account
+        title: Cont nou
         save_account: Save Account
-        account_name: Account Name
+        account_name: Nume cont
         ebay_site: eBay Site
         site_helptext: select the eBay site where you sell your products
         duplicate_account: This eBay Account is already associated with a Freshdesk account
         max_limit: You have reached the maximum ecommerce account limit
-        assign_group: Assign to Group
-        assign_product: Assign to Product
+        assign_group: Atribuie grupului
+        assign_product: Atribuie produsului
         select_ebay_site: Select a eBay site
         select_group: Select a group
         select_product: Select a product
@@ -1424,7 +1450,7 @@ ro:
           pagina noastra de solutii. </p>
       index:
         title: Setari Arcade
-        start_over: Reset
+        start_over: Resetare
         info1: >-
           Acum, fiecare tichet de suport care apare, este o sansa pentru agenti
           de a face puncte. Mai bine, este  ca primesti puncte bonus pentru
@@ -1531,6 +1557,9 @@ ro:
           Deoarece raspunsurile pentru acest sondaj au fost colectate, marimea
           si numarul de intrebari nu pot fi modificate. Cu toate acestea, puteti
           edita intrebari si raspunsuri.
+        bad_to_good: Rău sau Bun
+        survey: Sondaj
+        good_to_bad: De la Bun la Rău
       new_rating:
         content_text: >-
           Aceasta intrebare faciliteaza accesul,  privind satisfactia oferita de
@@ -1569,6 +1598,7 @@ ro:
         help_text_v2: >-
           Intrebarile suplimentare din sondaj apar in noua pagina dupa ce
           clientul parcurge sondajul pentru satisfactie a clientului.
+        additional_comments_feedback_v2: Casetă pentru includerea de comentarii suplimentare
       new_questions_layout:
         title_text: Alege grila pentru intrebarile dumneavoastra.
         title_text_v2: Selectați scala de punctaj pentru întrebările dumneavoastră
@@ -1605,6 +1635,10 @@ ro:
           Atunci cand este selectat un rating de satisfactie, va aparea o pagina
           de multumire.
         delete: Sterge
+        confirm_text: Va rog sa confirmati...
+        activate_survey: Activare
+        preview_survey: Previzualizare
+        custom_title_v2: Sondaje privind satisfacția clienților
       choice_contents:
         strongly_disagree: Dezacord total
         some_what_disagree: Dezacord partial
@@ -1806,17 +1840,21 @@ ro:
           Permisele de o zi se vor autoreîncărca de indata ce vor ramane doar 2
           permise de o zi disponibile
         all: Toate
+        agent: Agent
+        email: E-mail
+        date: Dată
+        filtered_by: 'Filtrate după:'
     widget_config:
       index:
         feedbackwidget_embedded_tab: Widget incorporat
-        feedbackwidget_popup_tab: Popup Widget
+        feedbackwidget_popup_tab: Widget pop-up
       popup_embedded_widget:
         feedbackwidget_popup: popup
         feedbackwidget_embedded: încorporat
         feedbackwidget_button_type: Tip buton
         feedbackwidget_text_button: Buton text
         feedbackwidget_image_button: Buton imagine
-        feedbackwidget_button_text_placeholder: Asistenta
+        feedbackwidget_button_text_placeholder: Suport
         feedbackwidget_height_placeholder: '500'
         feedbackwidget_offset_placeholder: '235'
         feedbackwidget_button_customization: Personalizeaza buton
@@ -1842,47 +1880,58 @@ ro:
         feedbackwidget_use_https: Utilizeaza https
         feedbackwidget_mobile_view: Vezi mobil
       popup_widget:
-        feedbackwidget_button_type: Button type
-        feedbackwidget_text_button: Text button
-        feedbackwidget_image_button: Image button
-        feedbackwidget_button_text_placeholder: Support
+        feedbackwidget_button_type: Tip buton
+        feedbackwidget_text_button: Buton text
+        feedbackwidget_image_button: Buton imagine
+        feedbackwidget_button_text_placeholder: Suport
         feedbackwidget_height_placeholder: '500'
         feedbackwidget_offset_placeholder: '235'
-        feedbackwidget_button_customization: Customize Button
-        feedbackwidget_form_customization: Customize Form
-        feedbackwidget_popup_code: Popup Widget code
+        feedbackwidget_button_customization: Personalizeaza buton
+        feedbackwidget_form_customization: Personalizeaza formular
+        feedbackwidget_popup_code: Cod popup widget
         feedbackwidget_widget_code: Widget code
         feedbackwidget_embedded_form_code: Embedded form code
-        feedbackwidget_form_submit_message: Form Submit Message
-        feedbackwidget_form_height: Form height
-        feedbackwidget_form_height_message: 'If you see scroll bars in your widget, adjust the widget height.'
+        feedbackwidget_form_submit_message: Formular trimite mesaj
+        feedbackwidget_form_height: Inaltime formular
+        feedbackwidget_form_height_message: >-
+          Daca vezi barele de derulare in widget-ul tau, ajusteaza inaltimea
+          widget-ului.
         feedbackwidget_px: px
-        thankyou_default: Thank you for your feedback
-        thankyou_info: Message to be displayed after a user submits the ticket form
+        thankyou_default: Multumim pentru feedback-ul dvs
+        thankyou_info: >-
+          Mesajul care va fi afișat după ce un utilizator trimite formularul de
+          tichete
         feedbackwidget_users_can: Form options
         feedbackwidget_attach_a_file: Incarca un fisier
-        feedbackwidget_screenshot: Take Screenshot
-        feedbackwidget_search_area: Search Articles
-        feedbackwidget_use_https: Use https
+        feedbackwidget_screenshot: Fa captură de ecran
+        feedbackwidget_search_area: Cautare articole
+        feedbackwidget_use_https: Utilizeaza https
         feedbackwidget_mobile_view: Enable mobile view
         feedbackwidget_use_captcha: Enable CAPTCHA
+        feedbackwidget_submit_title: Trimte feedback
+        feedbackwidget_offset: 'Decalaj:'
       embedded_widget:
         feedbackwidget_height_placeholder: '500'
-        feedbackwidget_form_customization: Customize Form
+        feedbackwidget_form_customization: Personalizeaza formular
         feedbackwidget_embedded_code: Cod Widget incorporat
         feedbackwidget_widget_code: Widget code
         feedbackwidget_embedded_form_code: Embedded form code
-        feedbackwidget_form_submit_message: Form Submit Message
-        feedbackwidget_form_height: Form height
-        feedbackwidget_form_height_message: 'If you see scroll bars in your widget, adjust the widget height.'
+        feedbackwidget_form_submit_message: Formular trimite mesaj
+        feedbackwidget_form_height: Inaltime formular
+        feedbackwidget_form_height_message: >-
+          Daca vezi barele de derulare in widget-ul tau, ajusteaza inaltimea
+          widget-ului.
         feedbackwidget_px: px
-        thankyou_default: Thank you for your feedback
-        thankyou_info: Message to be displayed after a user submits the ticket form
+        thankyou_default: Multumim pentru feedback-ul dvs
+        thankyou_info: >-
+          Mesajul care va fi afișat după ce un utilizator trimite formularul de
+          tichete
         feedbackwidget_users_can: Form options
         feedbackwidget_attach_a_file: Incarca un fisier
-        feedbackwidget_search_area: Search Articles
-        feedbackwidget_use_https: Use https
+        feedbackwidget_search_area: Cautare articole
+        feedbackwidget_use_https: Utilizeaza https
         feedbackwidget_use_captcha: Enable CAPTCHA
+        feedbackwidget_submit_title: Trimte feedback
     supervisor_rules:
       new_info_help: >-
         For <b>each ticket</b> updated within 30 days, execute all matching
@@ -1984,6 +2033,8 @@ ro:
         checked: este verificat
         unchecked: nu este verificat
         deselected: Debifat
+      anyone: Oricine
+      system: Sistem
     va_rules:
       index:
         human_name: Regula Dispatch'r
@@ -1998,14 +2049,14 @@ ro:
       hipchat_hook_description: >-
         Ai putea trimite un mesaj catre HipChat Room atunci cand solicitantul
         trimite un raspuns la un tichet in Freshdesk.
-      hipchat_hook_alt: Hipchat Pinging GET Request
+      hipchat_hook_alt: Solicitare GET Hipchat Pinging
     shared:
       filter_jsinit:
         change_password: Schimba parola
         request_type: Tip solicitare
         content_type: Codare
         params: Continut
-        url: Callback URL
+        url: URL de retur
         url_req_auth: Necesită autentificare
         simple_layout: Simplu
         advanced_layout: Avansat
@@ -2026,7 +2077,7 @@ ro:
         api_key?: Am cheia API?
         user_pass?: Am numele utilizatorului si parola?
         username: Nume de utilizator
-        api_key: API Key
+        api_key: Cheie API
         password: Parola
         insert_placeholder: Introduceți substituent
         subject: Subiect
@@ -2124,7 +2175,7 @@ ro:
           <b>Important:</b>Va rugam sa actualizati inregistrarea CNAME DNS in
           fisierul DNS Zone ca sa indicati numele domeniului dvs. sub numele ELB
           DNS.  <br /> <br />Numele ELB DNS pentru %{url} este
-        whitelisted_ips_enabled: IP Whitelisting
+        whitelisted_ips_enabled: Listă albă IP-uri
         whitelisted_ips_enabled_info: >-
           Restrictioneaza accesul la portalul tau doar pentru locatiile si
           retelele de incredere, prin definirea intervalului de adrese IP
@@ -2148,18 +2199,22 @@ ro:
         notifications: Notificarile vor fi trimise cand
         agent_create_or_delete: Agentul este adaugat sau sters
         whitelisted_ip_modified: IP Whitelisting este modificat
-        password_policy: Password Policy
-        for_agents: For Agents
-        for_contacts: For Contacts
+        password_policy: Politica privind parolele
+        for_agents: Pentru agenti
+        for_contacts: Pentru Contacte
         password_policy_info3: >-
-          Changes you make to the password policy will be applicable within 8
-          hours. Your agents will be prompted to update their passwords during
-          this time. If they fail to conform, they will be logged out of the
-          support portal and will be forced to change their passwords the next
-          time they try to log in.
+          Modificările aduse politicii privind parolele vor fi aplicabile în
+          decurs de 8 ore. Agenții dvs. vor fi rugați să își actualizeze
+          parolele în acest timp. Dacă nu se conformează, vor fi deconectați de
+          pe portalul de asistență și vor fi obligați să își schimbe parolele
+          următoarea dată când încearcă să se conecteze.
         password_policy_info4: >-
-          Please note that once you enable password policy for your account
-          (either default or advanced), you will not be able to disable it.
+          Vă rugăm să rețineți că, odată ce activați politica de parole pentru
+          contul dvs. (fie implicită sau avansată), nu veți mai putea să o
+          dezactivați.
+        saml_cert_fingerprint_info_sha256: >-
+          Amprenta digitală (SHA256) a certificatului SAML furnizată de
+          furnizorul dvs. SAML. Aceasta va fi utilizată pentru criptare/validare
       helpnote:
         title: Setări de securitate
         info1: >-
@@ -2196,22 +2251,22 @@ ro:
           href="https://support.freshdesk.com/support/solutions/articles/213865-password-policy">
           here</a>.
       password_security:
-        default: Default
-        advanced: Advanced
-        never: Never
+        default: Implicit
+        advanced: Avansat
+        never: Niciodată
         minimum_characters: 'Minimum of %{count} characters'
-        minimum_of: Minimum of
-        characters: characters
-        cannot_contain_user_name: Cannot contain username
-        cannot_be_same_as_last: Cannot be same as last
-        password: password
-        passwords: passwords
-        password_expiry: Password expires in
-        days: days
-        session_expiry: User session expires in
-        atleast_an_alphabet_and_number: Have an alphabet and a number
-        have_mixed_case: Have mixed case
-        have_special_character: Have a special character
+        minimum_of: Minim
+        characters: caractere
+        cannot_contain_user_name: Nu pot conține nume de utilizator
+        cannot_be_same_as_last: Nu poate fi aceeași ca ultima
+        password: parolă
+        passwords: parole
+        password_expiry: Parola expiră în
+        days: zile
+        session_expiry: Sesiunea utilizatorului expiră în
+        atleast_an_alphabet_and_number: Aveți o literă și un număr
+        have_mixed_case: Combinați litere mici și mari
+        have_special_character: Aveți un caracter special
       password_policy_popover:
         password_must: Password must
         minimum_characters: 'Contain atleast %{count} characters'
@@ -2361,6 +2416,8 @@ ro:
         customers: Clienti
         reports: Rapoarte
         administration: Adminstrare
+        general: General
+        bots: Roboți
       permissions: Permisiuni
       helpcard:
         title1: Intelegerea rolurilor
@@ -2433,12 +2490,18 @@ ro:
       cancel_label: Anuleaza
       done_label: Terminat
       save_label: Salvati
+      agent_label: Agent
+      add_agent_label: Adăugați Agent
+      saving_label: Salvare...
+      manage_label: Gestionare
+      add_label: Adăugare
+      no_agent_label: Niciun agent
     home:
       index:
         group: Grupuri
         day_pass: Zile trecute
         business-hours: Program de lucru
-        title: Admin
+        title: Administrator
         email-notifications: Notificari email
         survey-settings: Satisfactia clientului
         gamification-settings: Arcada
@@ -2482,6 +2545,7 @@ ro:
         mobihelp: Mobihelp
         customer-portal: Portal client
         portals: Portale
+        search_admin: Căutați setările administratorului
       keywords:
         forum_moderation: Moderare forum
         configure_support_email: Configurare email de suport
@@ -2586,9 +2650,22 @@ ro:
         agents_label: Agenti
         agents: Agenti
         description: Descriere
+        skills: Competențe
+        agent_label: Agent
+        add_agents: Adauga agenti
+        skill_create: Creaza
+        manage_label: Gestionare
+        add_label: Adăugare
+        no_agent_label: Niciun agent
     user_skills:
       index:
         more: mai mult
+        any: Oricare
+        groups: Grup
+    hotline:
+      content3:
+        note_title: 'Nota:'
+      list_title: Aplicatii Mobihelp
   ends_with: Se termina cu
   last_name: Nume
   forum:
@@ -3500,6 +3577,12 @@ ro:
       info4: >-
         Optiunea 'Editeaza portalul' va permite sa va configurati portalul
         pentru produsul dumneavoastra..
+      info5: >-
+        Puteți restricționa accesul la serviciul de asistență contactelor pe
+        care le adăugați și anumitor domenii. Alții nu vor putea să se
+        înregistreze, să acceseze sau să trimită tichete. Puteți citi mai multe
+        despre acest lucru
+      info6: aici.
     cancel:
       cancel_account: Anuleaza-ti contul Frechdesk
       info_text: >-
@@ -3591,7 +3674,7 @@ ro:
       primary_contact_info: (Folosit pentru toate comunicările legate de cont de la Freshdesk)
       contact_first_name: Prenume
       contact_last_name: Nume
-      contact_email: Email
+      contact_email: E-mail
       contact_phone: Telefon
       invoice_email_info: Trimite facturi la
       invoice_emails: Email
@@ -3599,6 +3682,31 @@ ro:
         Contul dvs. este anulat, iar datele vor fi șterse de pe 
         <strong>%{delete_at}</strong>. Pentru a restaura contul, contactati  <a
         href='mailto:support@freshdesk.com'>support@freshdesk.com</a>.
+    multilingual_support:
+      helpcard:
+        supported_languages:
+          title: <b>Limbi suportate</b><br/>
+        info1: >-
+          Furnizați clienților dvs. din diferite părți ale lumii o experiență de
+          suport grozavă.
+        title: Vorbiți în limba clientului dvs.
+      add_languages: Adăugați limbi
+      warning_msg: >-
+        Notă: Limba principală este limba prestabilită de asistență. Nu poate fi
+        schimbată după adăugarea limbilor suportate.
+      manage_languages: Gestionați Limbile
+    edit_domain:
+      email_error: Numele companiei ar trebui sa contina cel putin 3 caractere.
+      getting_started: Să începem
+      url_error1: 'Domeniul <strong>%{domain_name}</strong> nu este disponibil.'
+    new:
+      full_name: Nume complet
+      company: Companie
+      confirmation: Confirmare
+      create_an_account: Creare cont
+    signup_google:
+      sign_up: Înregistrare!
+      privacy_policy: politica de confidențialitate
   success_msg: Setarile contului au fost actualizate cu succes!
   failure_msg: Nu s-a reusit actualizarea setarilor contului!
   account_configuration:
@@ -3638,7 +3746,7 @@ ro:
   at: la
   add_a_topic: Creaza un subiect
   bottom: De jos
-  feedbackwidget_help_title: Feedback widget
+  feedbackwidget_help_title: Feedback Widget
   feedbackwidget_learn_more: Learn more
   name: Nume
   import_user_org_text: >-
@@ -3666,8 +3774,8 @@ ro:
   change_my_plan: Alege acest plan...
   make_payment: Fa plata
   add_new_email: Adauga email nou
-  chatwidget_title: Live Chat
-  feedbackwidget_title: Feedback widget
+  chatwidget_title: Chat live
+  feedbackwidget_title: Feedback Widget
   errors_in_your_address: 'Erori întâlnite la adresa dvs.:'
   set_priority_as: Seteaza prioritate ca
   sign_in_info: Vei fi conectat cu
@@ -3796,6 +3904,7 @@ ro:
     more_catogories: Vezi toate categoriile
     other_categories: See other Categories
     other_categories_info: Categories that are not associated with this portal
+    manage_categories: Gestionare
   forum_category:
     product_portal_visibility: Vizibil in
     select_product: Selectați un portal produs ...
@@ -4257,6 +4366,14 @@ ro:
       day: 1 Zi
       twoday: 2 Zile
       threeday: 3 Zile
+    toggle_availability_for_rr: >-
+      Permiteți-le agenților să-și schime disponibilitatea pentru alocarea
+      automată a tichetelor
+    maximum: Maxim
+    enable: Activati
+    please_confirm: Va rog sa confirmati...
+    confirm: Confirmare
+    send_escalation_to: '.... apoi trimiteți e-mail de escaladare la:'
   four: 4 ore
   oneweek: 1 saptamana
   twoweek: 2 saptamani
@@ -4272,14 +4389,16 @@ ro:
   created_on: 'Creat la '
   zip: Zip
   import_solution_article: Transforma articolul din forum in solutie
-  close: Inchide
+  close: Închidere
   reset_arcade: Reset Arcade
   agent:
     full_time_agent: Agent cu normă întreagă
     occasional_agent: Agent ocazional
     export: Exporta
     export_successfull: Your Agents data will be sent to your email shortly!
-    invalid_export_params: An error occurred while exporting agent data. Please try again.
+    invalid_export_params: >-
+      A apărut o eroare la exportul datelor agentului. Vă rugăm să încercați din
+      nou.
     deleted_agent_info: 'Nota: Toate comunicatiile din agentii stersi vor fi marcate ca SPAM.'
     new: Agent nou
     edit: Sterge agent
@@ -4316,13 +4435,13 @@ ro:
     available_seats: '%{count} locuri de agenti disponibile'
     available_seats_without_count: Locuri de agenti disponibile
     no_seats: Nu sunt locuri de agenti disponibile
-    export_title: Export Agents to CSV
+    export_title: Exportați Agenți în CSV
     last_logged_in: 'Ultima vizita cu %{time} in urma.'
-    last_logged: Last logged in
-    ago: '%{time} ago.'
-    days_ago: '%{days} ago'
+    last_logged: Ultimul autentificat
+    ago: '%{time} în urmă.'
+    days_ago: 'cu %{days} în urmă'
     last_active_at: Last active at
-    no_recent_activity: No recent activity
+    no_recent_activity: Nicio activitate recentă
     never_logged_in: Niciodată autentificat
     day_pass_used: '%{count} permise de o zi folosite pana in prezent'
     day_passes_available:
@@ -4330,7 +4449,7 @@ ro:
       few: ''
       other: '%{count} permise de o zi disponibile'
     assign_role: Roluri asociate
-    assign_group: Associate Groups
+    assign_group: Asociați Grupuri
     cannot_edit_roles: 'Vei putea doar sa iti vezi rolurile si scopul, insa nu le poti edita.'
     assign: Atribui
     role: Rolul agentului
@@ -4401,7 +4520,7 @@ ro:
     roles: Roluri
     remove_role: Remove role
     roles_description: Asociaza unul sau mai multe roluri cu acest agent.
-    groups_description: Associate one or more groups with this agent.
+    groups_description: Asociați unul sau mai multe grupuri cu acest agent.
     remove_group: Remove group
     ticket_scope: Domeniul tichetului
     admin: Administrator
@@ -4417,7 +4536,7 @@ ro:
     group_info: Poate vedea tichetele din grupul(e) lor si tichetele atribuite lor
     individual_info: Poate vedea doar tichetele atribuite lor
     occasional_description: Acest agent va putea accesa portalul suport
-    full_time: Full time
+    full_time: Cu normă întreagă
     occasional: Ocazional
     day_pass_expired: >-
       Va expirat permisul de o zi, va rugam sa va autentificati pentru a procura
@@ -4429,8 +4548,10 @@ ro:
     password_reset_note: >-
       Retineti: Va fi trimis un email cu instructiunile de resetare la
       %{requester}
-    member: Member of
+    member: Membru al
     more: mai mult
+    insert_placeholder: Introduceți substituent
+    skill: Competențe
   account_admin: Cont admin
   right: Corect
   footer:
@@ -4760,6 +4881,12 @@ ro:
     currency-note: 'Toate plățile viitoare vor fi în '
     free_plan_currency_note: 'Cand actualizezi sau adaugi agenti, plata se va efectua '
     type: Tip
+    invoice: Factură
+    refund: Rambursată
+    download: Descărcare
+    quantity: Cantitate
+    status: Stare
+    date: Dată
   activate: Activati
   feedbackwidget_button_text: Eticheta
   amount_billed_per_month: 'Veți fi facturat <b>%{amount} %{period}</b>.'
@@ -4778,7 +4905,7 @@ ro:
   by: de
   portal:
     cookie:
-      cookie_policy: Cookie policy
+      cookie_policy: Politica cookie
       why_we_love_cookies: De ce iubim Cookies
       cookie_dialog_info1: >-
         Noi folosim cookie-uri pentru a încerca să vă oferim o experiență mai
@@ -4818,7 +4945,7 @@ ro:
       parolei pe email.
     signup: Inscrie-te
     user_signup_portal: 'Sign up for your '
-    account: account
+    account: cont
     login_or_signup: '%{login} sau %{signup} pentru un cont'
     to_post_comment: ' pentru a posta un comentariu'
     to_submit_ticket: ' pentru a trimite un tichet nou'
@@ -4904,45 +5031,45 @@ ro:
       merge_continue: 'Oricum, puteti continua conversatia aici: '
       merge_note:
         one: 'Subiect fuzionat in acest subiect:'
-        few: ''
+        few: 'Subiect fuzionat in acest subiect:'
         other: 'Subiect fuzionat in acest subiect:'
       sort_heading: 'Sortat dupa:'
       sort_order:
         date: Intai cele mai vechi
         recency: Intai cele mai vechi
-        popularity: Popular
+        popularity: Populare
       sort_by_most_recent: Cel mai recent
       sort_by_most_popular: Cel mai popular
       sort_by_default: Implicit
     vote:
       you:
         one: 'Tu '
-        few: ''
+        few: 'Tu si '
         other: 'Tu si '
       more:
         one: '1 alt '
-        few: ''
+        few: '%{count} altele '
         other: '%{count} altele '
       people:
         one: '1 persoana '
-        few: ''
+        few: '%{count} oameni '
         other: '%{count} oameni '
     topic_vote:
       announce:
         one: ii place acest
-        few: ''
+        few: ii place asta
         other: ii place asta
       ideas:
         one: ii place ideea aceasta
-        few: ''
+        few: ii place ideea asta
         other: ii place ideea asta
       problem:
         one: are aceasta problema
-        few: ''
+        few: au aceasta problema
         other: au aceasta problema
       howto:
         one: are aceasta intrebare
-        few: ''
+        few: au aceasta intrebare
         other: au aceasta intrebare
       votes: voturi
       upvote: voturi pentru
@@ -4964,9 +5091,9 @@ ro:
       upvoted: Ai votat pentru
       upvote: Vot favorabil
       like:
-        one: ii place aceasta
-        few: ''
-        other: in acest fel
+        one: ii place acest
+        few: ii place asta
+        other: ii place asta
     tickets:
       merged_topic_note: Subiectul fuzionat nu poate fi convertit intr-un subiect.
       export: Tichete exportate
@@ -4984,6 +5111,14 @@ ro:
       add_people_title: Adauga persoane la conversatie
       reopen_reply: Raspuns
       related_articles: Articole similare...
+      comments: Comentarii
+    agent_login_info: Sunteți agent?
+    agent_signin: Autentificați-vă aici
+    agent_login_details: Introduceti detaliile mai jos
+    vote_label:
+      one: 1 stemme
+      few: stemmer
+      other: stemmer
   feedbackwidget_form_heading: Rubrica formular
   feedbackwidget_form_title: Titlu formular widget
   cancel_and_back: Anuleaza si mergi inapoi
@@ -5002,7 +5137,7 @@ ro:
       orphan: Categorie fara parinte
       unassociated: Unassociated Categories
       orphan_desc: Aceste catogorii nu sunt asociate nici unui portal
-      view_all: Vezi tot
+      view_all: Vizualizare toate
       view_less: Vezi mai putine
       drafts:
         title: Ciorne
@@ -5128,7 +5263,7 @@ ro:
         Toate email-urile trimise la  kbase@%{domain_name} vor fi stocate ca
         ciorne aici
     articles:
-      search_all: Cauta articole
+      search_all: Cautare articole
       search_in: 'Cauta in %{search_scope}'
       type: Tip articol
       prop_tabs:
@@ -5328,6 +5463,7 @@ ro:
       description_counter_message: >-
         Cele mai bune pagini SEO recomanda 150-160 de caractere pentru
         descriere.
+    kb: Bază de cunoștințe
   import_updated: Actualizat
   feedbackwidget_intro: >-
     Personalizati-va widget freshdesk-ul de mai jos si vedeti o previzualizare
@@ -5403,7 +5539,7 @@ ro:
     social_support: Suport social
     satisfaction_survey: Sondaje privind satisfactia
     forums: Forumuri comunitare
-    gamification: Gamification
+    gamification: Gamificare
     everything_in_blossom: Totul in Blossom
     chat: Live Chat integrat
     multiple_languages: Limbi multiple
@@ -5420,6 +5556,11 @@ ro:
     custom_mailbox: Servere personalizate de mail
     ip_restriction: Restrictie IP securizata
     auto_ticket_assignment: Asignare automata de tichet
+    bot: Bot
+    parent_child: Sistem de tichete supra-subordonat
+    scheduled_reports: Rapoarte planificate
+    ticket_templates: Șabloane tichete
+    freshchat: Integrare Freshchat
   zendesk_account: Detalii cont Zendesk
   zendesk_import_files: Selectati ce sa importe?
   file_url: URL Export Complet XML
@@ -5459,7 +5600,7 @@ ro:
     lipiti codul integrat, generat in website-ul sau aplicatia dvs. pentru a
     incepe sa folositi Feedback Widget.
   chatwidget_help_content:
-    title: Live Chat
+    title: Chat live
     info1: >-
       Solutiile Live Chat integrate ale Freshdesk-ului iti permit sa vezi si sa
       vorbesti cu utilizatorii din website, softul online sau direct din
@@ -5485,7 +5626,7 @@ ro:
     new_ticket_tip: Tichet nou
     new_phone_ticket: Tichet
     compose_email: Email
-    search: Cauta
+    search: Căutare
     submit_a_ticket: Trimite un tichet
     login: <b>Autentificare</b>
     guest: Oaspete
@@ -5518,7 +5659,7 @@ ro:
       social: Social
   agent_adds_comment: Agentul adauga comentariu la tichet
   notify_comment: Note added to ticket
-  add_cc: Add Cc
+  add_cc: Adauga Cc
   portal_customizer_anon_tickets: Oricine poate inscrie un tichet
   portal_customizer_option_tickets: Utilizatorii pot inscrie un tichet fara a fi conectati
   feedbackwidget_help_para2: >-
@@ -5539,7 +5680,7 @@ ro:
     requestor_notification: Notificare solicitant
     requestor_notifications: Notificari solicitant
     notification_template: Sabloane raspuns
-    cc_notifications: CC Notifications
+    cc_notifications: Notificări CC
     title: Notificari email
     singular_title: Notificare
     index_outdated: Unele traduceri sunt depășite
@@ -5551,7 +5692,7 @@ ro:
     reset_last_saved: Resetati la ultimul continut salvat
     notify_agents: Notifica agentii
     edit: Editeaza
-    add: Adauga
+    add: Adăugare
     no_agents: Adauga agenti
     disabled_toggle: Nu poti opri aceasta notificare.
     translation_outdated: Această traducere este invechita.
@@ -5819,6 +5960,8 @@ ro:
           notificare sa fie specifica pentru fiecare limba. Pictograma <i
           class="common-icon-outdated"></i> indica faptul ca notificarea
           traducerilor in alte limbi ar putea fi invechita.
+      agent_template_25:
+        topic: E-mail de invitare Agenți
     insert_placeholder: Introdu substituenti
     modify_agent_template: Modificare sablon email agent
     event: Eveniment
@@ -6002,6 +6145,12 @@ ro:
       remove: Sterge
       unverified: Neverificat
       type: Tip
+      last_verified: Ultima verificare
+      config: Configureaza
+      cname: CNAME
+      verify: Verificare
+      status: Stare
+    plain_unverified: Neverificat -
   step2: Pasul 2
   import_users_contacts: Utilizatori &rarr; Contacte
   linkback_info: >-
@@ -6026,7 +6175,7 @@ ro:
     duplicate_status: Twitter-ul este duplicat. Raspunde cu un alt text
   stream:
     deleted: 'Contul twitter @%{stream_name} a fost sters.'
-  logo: Logo
+  logo: Siglă
   ok: Ok
   question: Intrebare
   feature request: Cerinta viitoare
@@ -6305,7 +6454,7 @@ ro:
     via: prin
     created_by: 'Creat de:'
     reply_to: Raspunde
-    add_note: Adauga nota
+    add_note: Adăugare notă
     monitor_btn_title: Monitorizeaza acest tichet
     canned_responses:
       ca_responses: Raspunsuri predefinite
@@ -6323,7 +6472,7 @@ ro:
     exporting: Se exporta
     export_tickets: Exporta tichete
     delete_btn: Sterge
-    status: Status
+    status: Stare
     source: Sursa
     verify_human: >-
       Pentru a verifica daca sunteti om, va rugam sa tastati literele amestecate
@@ -6403,6 +6552,8 @@ ro:
       in_progress_text: 'A bulk update started by %{user_name} is in progress.'
       in_progress_text_you: A bulk update started by you is in progress.
       bulk_action_submit_label: Confirm and update
+    search_text: Cautare articole
+    thanks_v1: Multumim pentru feedback-ul dvs
   archive_ticket:
     title: Archived tickets
     no_reply_msg: This ticket has been archived.
@@ -6454,7 +6605,7 @@ ro:
     edit: Editeaza companie
     quick_company: Quick Company
     title: Companii
-    title1: companies?
+    title1: companii?
     title2: companie?
     description: Descriere
     notes: Note
@@ -6525,7 +6676,7 @@ ro:
         Freshdesk ofera mai multe integrari native out-of-the-box. Pentru a
         incepe sa utilizati o integrare nativa, faceti click pe butonul
         corespunzator "Activare".
-      title2: FreshPlug Widgets
+      title2: Aplicații personalizate
       info2: >-
         In plus pentru a incorpora integrarile, puteti aduce in date de la orice
         alta aplicatie a unei terte parti, sisteme sau baze de date in tichetele
@@ -6584,6 +6735,26 @@ ro:
     forums_toggle:
       title: Forumuri
     gdpr_to: la
+    gdpr_terms_link: Condițiile
+    twitter_disabled: >-
+      Conectarea la Twitter va fi dezactivată pentru clienți și agenți din
+      rațiuni de securitate.
+    gdpr_admin: Administrator.
+    includes_contacts_company_domain: (include contactele existente și domeniile companiei)
+    hidden_on_portal: Ascuns pe portal
+    important: Important
+    gdpr_policy: Politica de confidențialitate.
+    supported_languages: 'Limbi acceptate (%{count})'
+    languages: Limbi
+    permission:
+      users_from_any_domain: Utilizatori din orice domeniu
+      who_can_create: Cine se poate conecta (sau) înregistra (sau) să creeze bilete?
+      users_from_selected_domains: Utilizatorii din domeniile prezente pe lista de acceptare
+    gdpr_agent: Agent
+    anyone: Oricine
+    gdpr_acknowledgement: și confirmați că ați citit
+    search_domain: Căutați Domeniul
+    visible_in_portal: Vizibil pe portal
   lead: Conduce
   comments: Comentarii
   forum_confirm_msg1: Esti sigur ca doresti sa stergi aceasta categorie?
@@ -6641,7 +6812,7 @@ ro:
     helpdesk_hours: Ore Helpdesk
     select_time_zone: Alege un fus orar
   import_org_companies: Organizatii &rarr; Companii
-  add: Adauga
+  add: Adăugare
   portal_customizer_title: Personalizeaza-ti portalul public client
   your_trial_account: Contul dvs. de proba
   reply_comment: Adauga comentariu
@@ -6656,7 +6827,7 @@ ro:
   edit_agent: Sterge agent
   high: Inalt
   scenario_label: Nume scenariu
-  email: Email
+  email: E-mail
   linkback_overlabel: Linkback URL
   select_a_plan: Alege un plan
   ticket_was: tichetul a fost
@@ -6703,7 +6874,7 @@ ro:
       priority: Prioritate
       status: Status
       report:
-        no_timeentry: Nu sunt date disponibile
+        no_timeentry: Nu există date disponibile
         total: Total
       form:
         start_timer: Porneste cronometru
@@ -6795,7 +6966,7 @@ ro:
       cc_label: Cc
       requester_label: Requester
       search_reqester: Search a requester
-      hide_cc: Hide Cc
+      hide_cc: Ascundeți Cc
       cc: cc
       bcc: bcc
       response_added_alert: >-
@@ -6823,6 +6994,9 @@ ro:
       history:
         recent_item: Articole recente
       update: Actualizare
+      do_not_link: Nu corelați
+      view_in_detail: Vizualizați în detaliu
+      ok: Ok
     dashboard:
       agent_availability: Disponibilitate agent
       round_robin:
@@ -6972,6 +7146,7 @@ ro:
           addbcc: Adauga Bcc
           removebcc: Elimina Bcc
           not_sent: Nu a fost trimis raspunsul!
+          to: 'Către:'
         forward_form:
           cc: Cc
           addcc: Adauga Cc
@@ -7065,7 +7240,12 @@ ro:
         no_tickets: Nu aveti tichete in vizualizarea curenta
         article_feedback: Feedback articol
         my_article_feedback: Feedback-ul articolelor mele
-        archived: Archive
+        archived: Arhivați
+        unresolved: Toate Tichetele nerezolvate
+        shared_by_me: Tichete pe care le-am partajat
+        shared_with_me: Tichete partajate cu mine
+        invalid_requester: Solicitant nevalid
+        raised_by_me: Tichete solicitate de mine
       note:
         posted_on: '%{user_name} pe %{note_date}'
         created_on:
@@ -7232,15 +7412,17 @@ ro:
       created_at: Data crearii
       updated_at: Modificat ultima data
       priority: Prioritate
-      status: Status
+      status: Stare
       requester_responded_at: Raspuns client
-      agent_responded_at: Agent Response
+      agent_responded_at: Raspuns agent
       asc: Crescator
       desc: Descrescator
+      recently_active: Active recent
+    company: Companie
   click_to_change_sort_order: Faceti click pentru a schimba ordinea de sortare
   user_sessions:
     new:
-      email: Email
+      email: E-mail
       password: Parola
       remember: Tine-ma minte pe acest calculator
       login: Autentificare
@@ -7262,6 +7444,8 @@ ro:
     events_empty: Evenimentele nu pot fi goale
     conditions_empty: Conditiile nu pot fi goale
     actions_empty: Actiunile nu pot fi goale
+    invalid_domain:
+      freshdesk: Freshdesk
   export_data:
     in_sla: In termenul SLA
     out_of_sla: S-a incalcat SLA
@@ -7295,7 +7479,7 @@ ro:
     archived_at: Archived
     from: de la
     to: la
-    view_all_tickets: Export as CSV
+    view_all_tickets: Exportare ca CSV
     check_uncheck_title: Bifeaza/Debifeaza tot
     data_backup:
       body: Datele dvs. de export sunt gata pentru descarcare.
@@ -7473,8 +7657,12 @@ ro:
         contact_details: Detalii contact
         flash_card_html: Ce e nou in Social?
         flash_card_text: Intelegerea  filei Social
+        post: ' Posteaza '
+        tickets: Tichete
+        interactions: Interactiuni
       index:
         all: Toate
+      search_btn: Căutare
     welcome:
       title: Suport social
       turn_off: Dezactivati Social
@@ -7559,13 +7747,13 @@ ro:
         no_search_default: >-
           Nu sunt cautari implicite pentru cautarea cuvintelor cheie, definite
           pentru oricare dintre twitter-ul dvs..
-        search: Cauta
+        search: Căutare
         convert_to_ticket: Converteste in tichet
         reply: Raspuns
         show_more_results: Arata mai multe rezultate
         search_twitter: Cauta twitter
         title: Conturi de twiitter
-        reauthorize: Reautorizeaza
+        reauthorize: Reautorizați
         reauth_required: Este necesara reautorizarea
         handle_auth_error: >-
           Unul dintre twitter-ele dvs. ajutatoare necesita autentificare. Asa ca
@@ -7656,10 +7844,11 @@ ro:
     configure_custom_addon: Configureaza acest widget
     tooltip:
       edit: Editeaza
-      settings: Settings
+      settings: Setari
       update: Update
       delete: Delete
       write_feedback: Write Feedback
+    connect: Conectare
   home:
     mobile_index:
       email: Email
@@ -7680,9 +7869,9 @@ ro:
       sign_in_error: email sau parola gresita.
   marketplace:
     installing: 'Installing:'
-    almost_done: Almost Done!
-    app_installation_agreement: 'By installing this app, you agree to abide by our '
-    terms_of_use: Terms of Use
+    almost_done: Aproape gata!
+    app_installation_agreement: 'Prin instalarea acestei aplicații, sunteți de acord să respectați '
+    terms_of_use: Termenii de utilizare
     terms_of_use_link: 'http://freshdesk.com/terms#marketplace'
     get_more_apps: Get more Apps
     your_plugs: Your Plugs
@@ -7692,31 +7881,31 @@ ro:
     app_delete_warning: Are you sure you want to delete this App?
     plug_delete_warning: Are you sure you want to delete this Plug?
     app_gallery: App Gallery
-    apps: Apps
+    apps: Aplicații
     in_dev_apps: In-Development Apps
     all: All
-    settings: Settings
-    install: Install
+    settings: Setari
+    install: Instalare
     update: Update
-    installing_text: Please wait...
+    installing_text: Te rugam sa astepti...
     in_development: In Development
     no_mktp_apps: >-
       You have no Apps installed. Browse and Install Apps from the App Gallery
       by clicking
-    go_to_dev_portal: Go to Developer Portal
+    go_to_dev_portal: Accesați Portalul pentru dezvoltatori
     developer_shortcuts: Developer Shortcuts
     plug_info: >-
       Did you know, now there is a better way to write and manage and even share
       your freshplugs to all of freshdesk community.
-    needs_developer_text: Needs Developer Account
+    needs_developer_text: Are nevoie de Contul dezvoltatorului
     write_a_plug: Write a Plug
     description: Descriere
-    instructions: Instructions
-    screenshots: Screenshots
-    version: VERSION
-    ver: 'Version: '
+    instructions: Instrucțiuni
+    screenshots: Capturi de ecran
+    version: VERSIUNE
+    ver: 'Versiune: '
     installs: Installs
-    no_apps: No Apps available
+    no_apps: Nu există aplicații disponibile
     no_apps_in_category: No Apps available in this category
     related_categories: 'Apps from Related Categories:'
     similar_apps: 'Similar Apps:'
@@ -7742,6 +7931,64 @@ ro:
       features to the ticket and contact details page. Freshdesk offers several
       apps out-of-the-box. To browse our selection of apps, click on the “Get
       more Apps” button.
+    share_app: Distribuiți această aplicație
+    view_all: Vizualizare toate
+    view_more: Vizualizează mai multe
+    installation: Instalare
+    developed_by: 'Publicat de '
+    all_apps: Toate aplicațiile
+    api_error: >-
+      Nu am putut procesa solicitarea dvs. Vă rugăm să încercați din nou după un
+      timp.
+    help_and_support: Ajutor și Asistență
+    tooltip:
+      suspended: Nu e disponibilă
+    no_mktp_apps_note_2: Faceți clic pe „Obțineți mai multe aplicații” pentru a naviga în selecție.
+    no_configs: Această aplicație nu necesită nicio configurare.
+    custom_apps: Aplicații personalizate
+    third_party_apps_policy: >-
+      Această aplicație este deținută, dezvoltată, operată și întreținută de un
+      terț, nu Freshworks Inc. Prin descărcarea, integrarea cu și/sau utilizarea
+      acestei aplicații, înțelegeți că sunteți sub incidența termenilor și
+      politicii de confidențialitate a dezvoltatorului său, inclusiv cu privire
+      la procesarea datelor dvs. Pentru mai multe detalii despre acești termeni
+      și politicile de confidențialitate, contactați dezvoltatorul sau vizitați
+      pagina dezvoltatorului.
+    time_ago: în urmă
+    error_calling_method: 'A apărut o eroare la apelarea metodei: '
+    no_search_results: >-
+      Nu am putut găsi ceea ce căutați. De ce nu încercați din nou cu un alt
+      cuvânt cheie?
+    validation_failed: Validarea a eșuat.
+    no_custom_apps_installed: Nu sunt instalate aplicații personalizate
+    paid_app: PLĂTIT
+    popular_apps: Aplicații populare
+    installed_mkp_apps_unavailable: >-
+      În prezent, lista aplicațiilor instalate nu este disponibilă. Vă rugăm să
+      încercați din nou mai târziu. Vă rugăm să ne contactați dacă problema
+      persistă.
+    overview: Prezentare generala
+    write_a_custom_app: Scrieți o aplicație personalizată
+    published_in: în
+    confirm_uninstall_message: 'Sigur doriți să dezinstalați %{human_name}?'
+    latest_apps: Ultimele aplicații
+    popular: Populare
+    policy_on_custom_apps: Politica privind aplicațiile personalizate
+    no_custom_apps_note_2: >-
+      Faceți clic pe „Obțineți aplicații personalizate” pentru a naviga și a le
+      instala.
+    reauthorize: Reautorizați
+    custom_app_gallery: Galerie de aplicații personalizate
+    apps_unavailable: >-
+      Anumite aplicații nu au putut fi randate. Vă rugăm să încercați din nou
+      mai târziu. Vă rugăm să ne contactați dacă problema persistă.
+    policy_on_tp_apps: Politica privind aplicațiile terțe
+    no_mktp_apps_note: Ne-am integrat cu unele dintre aplicațiile dvs. preferate.
+    coming_soon: În curând
+    latest: Cele mai recente
+    no_custom_apps_note: >-
+      Creați aplicații personalizate și publicați-le în portalul
+      dezvoltatorului.
   integrations:
     native_integrations: Integrari native
     freshplugs_title: FreshPlugs
@@ -7848,7 +8095,7 @@ ro:
           top right corner of the page).<br /> Copy the email address and paste
           it in the textfield above. <br /> Freshdesk will automatically add
           this email address to the Bcc field when you are replying to a Ticket
-        domain: Domain
+        domain: Domeniu
         domain_info: 'Just give the domain alone without https. Ex: example.capsulecrm.com'
         api_key: Api Key
         api_key_info: >-
@@ -7857,7 +8104,7 @@ ro:
           on the top right corner of the page).<br /> Click on <b>“API
           Authentication Token”</b>, and to get the unique API key.<br /> Copy
           the key and paste it in the textfield above.
-        widget_title: Widget Title
+        widget_title: Titlu widget
     freshbooks:
       label: Freshbooks
       desc: >-
@@ -7879,17 +8126,17 @@ ro:
         the FreshBooks will be displayed on tickets and contacts page if a match
         is established based on Company name or Requester email.
       form:
-        freshbooks_note: Notes text
+        freshbooks_note: Note text
         freshbooks_note_info: >-
-          This text will be appended at the end of the note, with the time spent
-          log.
-        api_url: API URL
+          Acest text va fi adăugat la sfârșitul notei, cu logarea timpul
+          petrecut.
+        api_url: URL API
         api_url_info: >-
-          Enter complete API URL with https. Ex:
+          Introduceți adresa URL completă API cu https. Ex:
           https://example.freshbooks.com/api/2.1/xml-in
-        api_key: Authentication Token
+        api_key: Token Autentificare
         api_key_info: ''
-        widget_title: Widget Title
+        widget_title: Titlu widget
         invoices: Agents can view invoices
         invoice_option: 'Show commercial details like cost, amount and total'
         timeactivity: Allow agents to log time entry in FreshBooks
@@ -7921,7 +8168,7 @@ ro:
         bg: Bulgarian
         da: Danish
         de: Deutsch
-        en: English
+        en: Engleză
         fr: French
         el: Greek
         it: Italian
@@ -7949,7 +8196,7 @@ ro:
         ticket_interaction: Tickets page
         forum_interaction: Forums page
         create_solution: Solutions article
-        for_agents: For Agents
+        for_agents: Pentru agenti
         for_customer: Pentru clienti
       messages:
         ilos_success: 200 Ok
@@ -7977,16 +8224,16 @@ ro:
           plugin has installed.<br/></p>
         moderated_forums: 'For moderated forums, the recording will appear after approval.'
       agent_ticket:
-        placeholder: 'Ticket#'
+        placeholder: 'Tichet#'
         back_to_page: Back to ticket
       agent_forum:
         placeholder: 'Topic#'
         back_to_page: Back to topic
       solution:
-        placeholder: 'Article#'
+        placeholder: 'Articol#'
         back_to_page: Back to article
       portal_ticket:
-        placeholder: 'Ticket#'
+        placeholder: 'Tichet#'
         back_to_page: Back to ticket
       portal_forum:
         placeholder: 'Topic#'
@@ -8003,15 +8250,15 @@ ro:
         Harvest.<br/><br/>Note: You can click on <b>Remember me</b>, so that you
         do not have to type in your Harvest credentials each time.
       form:
-        domain: Domain
+        domain: Domeniu
         domain_info: 'Enter the domain alone without https. Ex: example.harvestapp.com'
-        harvest_note: Notes text
+        harvest_note: Note text
         harvest_note_info: >-
           This text that will be appended at the end of the note, with the time
           spent log.
-        widget_title: Widget Title
+        widget_title: Titlu widget
     google_contacts:
-      label: Google contacts sync
+      label: Sincronizarea contactelor Google
       desc: Periodically synchronize contacts between Google and Freshdesk.
       helptext: >-
         <h4>Google contacts sync setup help</h4><p><br/> Click on <b>‘Sync new
@@ -8022,56 +8269,58 @@ ro:
         recommended that you take and store a back-up of your Google contacts
         before start syncing.
       import_success: |-
-        Successfully imported Google contacts.
-        Status: %{added} Added, %{updated} Updated and %{deleted} Deleted.
-      fetch_problem: Problem in fetching Google contacts.
+        Contactele Google au fost importate cu succes.
+        Status: %{added} Adăugate, %{updated} Actualizate și %{deleted} Șterse.
+      fetch_problem: Problemă la preluarea contactelor Google.
       import: Importa
-      account_not_configured: Google account is not configured properly. Please try again.
+      account_not_configured: Contul Google nu este configurat corect. Vă rugăm să încercați din nou.
       OVERWRITE_LOCAL_small: Exporta
       OVERWRITE_REMOTE_small: Importa
       MERGE_LOCAL_small: Merge (Freshdesk precedence)
-      MERGE_REMOTE_small: Merge (Google precedence)
+      MERGE_REMOTE_small: Fuzionare (prioritate Google)
       OVERWRITE_LOCAL: Export Freshdesk contacts and any updates into Google contacts
       OVERWRITE_REMOTE: Import Google contacts and any updates into Freshdesk contacts
       MERGE_LOCAL: Merge Freshdesk and Google contacts (Freshdesk precedence)
       MERGE_REMOTE: Merge Google and Freshdesk contacts (Google precedence)
       MERGE_LATEST: Merge Freshdesk and Google contacts (Latest update takes precedence)
       import_later_success: >-
-        Google contacts import started successfully.  You can check the import
-        status in the settings page itself.
-      import_success_no_stats: Successfully imported Google contacts.
-      import_problem: Problem in importing Google contacts.
-      install: Import & Activate
+        Importarea contactelor Google a început cu succes. Puteți verifica
+        starea importării în pagina de setări.
+      import_success_no_stats: Contactele Google au fost importate cu succes.
+      import_problem: Problemă la importarea contactelor Google.
+      install: Import & Activare
       edit_app: Actualizare
-      add_more: Sync new account
+      add_more: Sincronizați contul nou
       edit: Editeaza
       already_exist: >-
-        This email has already been configured. You cannot add the same email
-        again.
+        Acest e-mail a fost deja configurat. Nu puteți adăuga din nou același
+        e-mail.
       delete: Sterge
-      internal_error: An internal error occured.  Please contact support.
+      internal_error: A apărut o eroare internă. Vă rugăm să contactați asistența.
       overwrite_existing_user: Overwrite existing contact details in Freshdesk
-      enable_integration: Start automatic syncing after import completes (daily once).
-      account: Account
-      email: Email
-      group: Sync Group name
-      tag: Sync Setting
-      tag_label: Sync tag
-      sync_type: How to sync?
-      last_sync_time: Last sync time
-      last_sync_status: Last sync status
-      last_sync: Last sync
-      import_complete: One time import completed.
-      not_yet_synced: Syncing not started.
-      syncing_in_progress: Syncing in progress
-      no_status: N/A
+      enable_integration: >-
+        Începeți sincronizarea automată după finalizarea importării (o dată pe
+        zi).
+      account: Cont
+      email: E-mail
+      group: Sincronizați Numele grupului
+      tag: Setările sincronizării
+      tag_label: Etichetă de sincronizare
+      sync_type: Cum se sincronizează?
+      last_sync_time: Ultimă oră a sincronizării
+      last_sync_status: Ultimul status al sincronizării
+      last_sync: Ultima sincronizare
+      import_complete: Importare unică finalizată.
+      not_yet_synced: Sincronizarea nu a început.
+      syncing_in_progress: Sincronizare în curs
+      no_status: Indisponibil
       info1: >-
         Using the same sync tag across multiple Google accounts allows you to
         share Freshdesk contacts with all the accounts.  If you do not want to
         sync any contacts into Google, you may leave it empty.
       sync_group_info: >-
-        A new contact group <strong>%{group_name}</strong> will be created in
-        your Gmail account for syncing contacts.
+        În contul dvs. de Gmail va fi creat un nou grup de contacte
+        <strong>%{group_name}</strong> pentru sincronizarea contactelor.
       edit_helptext: >-
         <h4>Google contacts sync help</h4><p><br/> <b>Select Groups to
         Import</b> <br/> Along with setting up Google synchronization, you can
@@ -8085,27 +8334,27 @@ ro:
         sync contacts with Google. After the first time import, all contacts
         added to this group will be synced back to Freshdesk and vice versa.
       sync_status:
-        added: added
-        modified: modified
-        deleted: deleted
-        google: Exported Contacts status in Google
+        added: adaugat
+        modified: modificat
+        deleted: eliminat
+        google: Starea contactelor exportate pe Google
         freshdesk: Imported Contacts status in Freshdesk
       edit_form:
-        install_title: Google contacts sync setting
-        import_title: Google contacts import setting
-        mail_box_detail: Sync with
-        import_group: Select groups to import (optional)
-        edit_app_title: Edit Google contacts sync setting
+        install_title: Setarea sincronizării contactelor Google
+        import_title: Setarea de import a contactelor Google
+        mail_box_detail: Sincronizați cu
+        import_group: Selectați grupurile de import (opțional)
+        edit_app_title: Editați setarea pentru sincronizarea contactelor Google
       form:
-        sync_type: Synchronization type
+        sync_type: Tipul de sincronizare
         sync_type_info: >-
           How do you want to synchronize the contacts between Google and
           Freshdesk.
         account_settings: ''
         account_settings_info: ''
         account_not_configured: >-
-          <br/>Google account settings are not yet configured. Click on
-          '%{action}' to configure new account with Google.<br/><br/>
+          <br/>Setările contului Google nu sunt încă configurate. Faceți clic pe
+          "%{action}" pentru a configura un cont nou cu Google.<br/><br/>
       update_action:
         success: Successfully added Google account.
         also: '  Also '
@@ -8134,43 +8383,43 @@ ro:
         and click on Finish. In <b>Associate field to Screens</b> page, select
         all the check-boxes and click on 'Update'.<br/><br/>
       form:
-        domain: Domain
+        domain: Domeniu
         domain_info: >-
           Enter the complete JIRA account URL with https/http. Ex.
           https://example.atlassian.net. <br /><span class='italics'> Note: The
           on-premise variants of JIRA should be exposed to the internet. </span>
         jira_note: Description text
         jira_note_info: This text will be added to the issue description in JIRA.
-        widget_title: Widget Title
+        widget_title: Titlu widget
         username: Nume de utilizator
-        password: Password
-        jira_status_sync: 'For any change in JIRA issue status %{dropdown}'
-        jira_comment_sync: 'For any comment added in JIRA issue %{dropdown}'
-        do_nothing: Do nothing.
-        add_note: Add it as a private note.
-        send_reply: Send it as reply to customer.
+        password: Parola
+        jira_status_sync: 'Pentru orice schimbare în JIRA emiteți status %{dropdown}'
+        jira_comment_sync: 'Pentru orice comentariu adăugat în JIRA emiteți %{dropdown}'
+        do_nothing: Nu faceți nimic.
+        add_note: Adăugare ca notă privată.
+        send_reply: Trimiteți-l ca răspuns la client.
         jira_status_sync_update_field: Update Freshdesk status field.
-        jira_status_sync_update_customer: Send reply to customer and update status field.
+        jira_status_sync_update_customer: Trimiteți câmpul de răspuns la client și actualizați.
         fd_status_sync: 'For any change in Freshdesk status %{dropdown}'
         fd_comment_sync: 'For any comment added in Freshdesk %{dropdown}'
-        add_jira_comment: Add it as a comment in JIRA.
-        update_jira_status: Update JIRA status as well.
+        add_jira_comment: Adăugați-l ca un comentariu în JIRA.
+        update_jira_status: Actualizați și statusul JIRA.
     jira_settings:
-      sync_updates: Sync Updates
+      sync_updates: Sincronizați Actualizările
       info1: >-
         When a Freshdesk ticket is linked with JIRA issue, perform the below
         actions.
       info2: 'When ticket status is updated in Freshdesk '
       info3: 'When a comment is added in Freshdesk '
-      info4: When issue status is updated in JIRA
-      info5: When a comment is added in JIRA
-      none: Do nothing.
+      info4: Când starea problemei este actualizată în JIRA
+      info5: Când se adaugă un comentariu în JIRA
+      none: Nu faceți nimic.
       add_private_note_in_fd: Add a private note in Freshdesk and notify agent.
       add_public_note_in_fd: Add a public note in Freshdesk.
       update_status_in_fd: Update status in Freshdesk.
-      send_reply_in_fd: Notify customer via email
-      add_comment_in_jira: Add a comment in JIRA
-      update_jira_status: Update JIRA status
+      send_reply_in_fd: Notificați clientul prin e-mail
+      add_comment_in_jira: Adăugați un comentariu în JIRA
+      update_jira_status: Actualizați starea JIRA
       add_attachments_in_jira: While syncing exclude ticket attachments
     salesforce:
       label: Salesforce
@@ -8186,9 +8435,9 @@ ro:
         salesforce_settings_info: ''
         salesforce_settings: Salesforce Settings
         select: Select an option
-        contact: Contact Fields
+        contact: Campuri de contact
         lead: Lead Fields
-        account: Account Fields
+        account: Câmpuri cont
     nimble:
       label: Nimble
       desc: You can view contact information from Nimble crm in Freshdesk.
@@ -8216,10 +8465,10 @@ ro:
         details page that allows you to link tickets to GitHub issues.</p>
     github_settings:
       sync_updates: Sync Updates
-      none: Do nothing
+      none: Nu faceți nimic
       open: Open
       resolved: Rezolvat
-      closed: Closed
+      closed: Inchis
       add_comment_in_github: Add a comment in Github issue
       add_private_note_in_fd: Add a private note in Freshdesk.
       add_public_note_in_fd: Add a public note in Freshdesk.
@@ -8229,8 +8478,8 @@ ro:
         View customer details, invoices, and add time sheet entries to your
         QuickBooks Online account.
       connect_text: >-
-        Connecting to QuickBooks will make it easier for your agents to access
-        and update data in it right from your helpdesk.
+        Conectarea la QuickBooks va facilita accesul și actualizarea datelor de
+        către agenții dvs. direct din serviciul de asistență tehnică.
       remote_configurations:
         signup: >-
           <p>You are now being redirected to Freshdesk\'s account creation page.
@@ -8267,7 +8516,7 @@ ro:
         invoices: Agents can view invoices
         invoice_option: 'Show commercial details like rate, amount and total'
         timeactivity: Allow agents to log time entry in QuickBooks
-        quickbooks_note: Notes text
+        quickbooks_note: Note text
         quickbooks_note_info: >-
           This text will be appended at the start of the note, with the time
           spent log.
@@ -8287,7 +8536,7 @@ ro:
         target='_blank'>your accounts page.</a> <br/><br/>Once it is done you
         can view the contact information in any ticket or contact view.</p>
       form:
-        api_key: Auth Token
+        api_key: Token de autentificare
         api_key_info: >-
           <a
           href='http://www.zoho.com/crm/help/api/using-authentication-token.html#Generate_Auth_Token'
@@ -8336,9 +8585,11 @@ ro:
           , enter <strong> http://mycompany.xyz/sugar </strong><br /><br />
           Note: The on-premise variant of SugarCRM should be connected to the
           internet. </span>
-        widget_title: Widget Title
+        widget_title: Titlu widget
         username: Nume de utilizator
-        password: Password
+        password: Parola
+        account: Câmpuri cont
+        contact: Campuri de contact
     dynamicscrm:
       label: Dynamics CRM
       helptext: >-
@@ -8351,13 +8602,13 @@ ro:
       desc: You can view contact information from Dynamics CRM in Freshdesk.
       form:
         instance_type: Dynamics CRM Instance Type
-        password: Password
+        password: Parola
         domain: User Id
         endpoint: Organization Service SOAP End Point
         loginurl: Login Url
-        region: Region
+        region: Regiune
         organization_name: Organization Unique Name
-        contact_email: Contact Email
+        contact_email: E-mail contact
         account_email: Account Email (Optional)
         lead_email: Lead Email (Optional)
         instance_info: >-
@@ -8396,9 +8647,9 @@ ro:
           https://<HostName>/XRMServices/2011/Organization.svc?wsdl=wsdl0 and
           locate Region: SecureTokenService -> AppliesTo.
         dynamicscrm_settings: Dynamics CRM Settings
-        contact: Contact Fields
+        contact: Campuri de contact
         lead: Lead Fields
-        account: Account Fields
+        account: Câmpuri cont
         error: >-
           Oops, something went wrong! Please verify if you have entered correct
           values.
@@ -8434,7 +8685,7 @@ ro:
           For example, if your Batchbook URL is
           <strong>http://mycompany.batchbook.com/</strong> , enter <strong>
           mycompany </strong>. </span>
-        api_key: API Key
+        api_key: Cheie API
         api_key_info: >-
           Your Batchbook API Key can be found by following the <i>Your
           Account</i> link in Batchbook.
@@ -8446,7 +8697,7 @@ ro:
         version_info: >-
           Version field lets you choose between <i>Batchbook Classic</i> and
           <i>Batchbook New</i>.
-        widget_title: Widget Title
+        widget_title: Titlu widget
     surveymonkey:
       enable_integration_text: >-
         Click on the Enable button to connect with your Surveymonkey account and
@@ -8508,6 +8759,13 @@ ro:
           For example, if your Shopify URL is
           <strong>https://my_shop_name.shopify.com</strong>, please enter
           <strong>my_shop_name</strong>.
+        shop_name_info_mint: >-
+          For example, if your Shopify URL is
+          <strong>https://my_shop_name.shopify.com</strong>, please enter
+          <strong>my_shop_name</strong>.
+        shop_name_mint: Shop Name
+      edit:
+        disconnect: Deconectare
     magento:
       label: Magento
       desc: >-
@@ -8579,11 +8837,11 @@ ro:
           For example, if your Highrise URL is
           <strong>http://mycompany.highrisehq.com/</strong> , enter <strong>
           mycompany </strong>. </span>
-        api_key: API Key
+        api_key: Cheie API
         api_key_info: >-
           Your Highrise API Key can be found at Highrise. Please copy and paste
           the same here.
-        widget_title: Widget Title
+        widget_title: Titlu widget
     workflow_max:
       label: Workflow Max
       desc: You can log time spent on tickets into your Workflow Max jobs and tasks.
@@ -8598,9 +8856,9 @@ ro:
       form:
         workflow_max_note: Notes text to append
         workflow_max_note_info: >-
-          This text will be appended at the end of the note, with the time spent
-          log.
-        api_key: API Key
+          Acest text va fi adăugat la sfârșitul notei, cu logarea timpul
+          petrecut.
+        api_key: Cheie API
         api_key_info: >-
           Request your API Key from Workflow Max support and paste the same
           here.
@@ -8608,7 +8866,7 @@ ro:
         account_key_info: >-
           Request your Account Key from Workflow Max support and paste the same
           here.
-        widget_title: Widget Title
+        widget_title: Titlu widget
     custom_application:
       name: Nume
       description: Descriere
@@ -8636,7 +8894,10 @@ ro:
         widget_title: Widget Name
         widget_script: Widget code snippet
         create_n_enable: Create and Enable
-        insert_placeholder: Insert Placeholder
+        insert_placeholder: Introduceți substituent
+      get_custom_apps: Obțineți aplicații personalizate
+      edit_custom_app: Editați aplicația personalizată
+      new_custom_app: Aplicație personalizată nouă
     logmein:
       label: LogMeIn Rescue
       desc: >-
@@ -8663,8 +8924,8 @@ ro:
         chatlog: Chat Log
         tech_notes: Technician Notes
       form:
-        widget_title: Widget Title
-        company_id: Company ID
+        widget_title: Titlu widget
+        company_id: ID companie
         password: SSO Password
         logmein_company_info: >-
           To get your Company ID go to Admin Center -> Technician Group ->
@@ -8702,9 +8963,9 @@ ro:
         <br/><br/>Now click &quot;Update&quot; to get started with your Campaign
         Monitor integration.
       form:
-        api_key: API Key
+        api_key: Cheie API
         api_key_info: Get your API Key from Account Settings
-        client_id: Client ID
+        client_id: ID-ul clientului
         client_id_info: >-
           To get your Client ID, follow the instructions given in
           http://www.campaignmonitor.com/api/getting-started/#clientid
@@ -8725,10 +8986,10 @@ ro:
         the API URL field here. Enter your iContact username and the new API
         password and click Update. 
       form:
-        app_id: Application ID
+        app_id: ID-ul aplicației
         username: iContact Username
         api_password: API Password
-        api_url: API URL
+        api_url: URL API
         api_url_info: >-
           To get your API URL, go to
           https://app.icontact.com/icp/core/externallogin and copy the API URL
@@ -8820,29 +9081,30 @@ ro:
         existing_user: Existing account
         company_name: Numele companiei
         helpdesk_url: URL Helpdesk
-        your_freshdesk_url: Your Helpdesk URL
+        your_freshdesk_url: URL-ul dvs. de Helpdesk
         domain_info: >-
           ex. if your helpdesk is 'http://apple.freshdesk.com' then enter
           'apple'
-        phone_no: Phone Number
-        create_my_account: Create your Account
+        phone_no: Număr de telefon
+        create_my_account: Creați-vă contul
         terms_and_policy: >-
           By clicking 'Create your Account', you agree to our <a
           href='http://freshdesk.com/terms' target='_blank'>terms of service</a>
           and <a href='http://freshdesk.com/privacy' target='_blank'>privacy
           policy</a>
-        helpdesk_name: Helpdesk name
+        helpdesk_name: Nume Birou de Asistență
         submit: Trimite
         user_name: Nume
+        email: E-mail
       admin_credentials:
-        link_your_helpdesk: Link your helpdesk
-        login_your_helpdesk: Login to your helpdesk
-        email_address: Email address
-        your_helpdesk: Your helpdesk
+        link_your_helpdesk: Conectați helpdesk
+        login_your_helpdesk: Conectați-vă la helpdesk
+        email_address: Adresă de e-mail
+        your_helpdesk: Helpdesk-ul dvs.
         login: Autentificare
         login_with_admin: >-
-          You need to be an Account administrator to link your freshdesk account
-          with Google login
+          Trebuie să fiți administrator de cont pentru a vă conecta contul de
+          freshdesk cu conectarea la Google
       error:
         insufficient_privilege: >-
           <center><p class='big-text aligncenter'>Sorry! This integration can
@@ -8854,7 +9116,7 @@ ro:
           <center><p class='big-text aligncenter'>This account does not
           exist.</p></center>
     remote_login:
-      connect: Connect
+      connect: Conectare
       sign_up: Sign Up
       freshdesk_url: Freshdesk URL
       freshdesk_api_key: Freshdesk API key
@@ -8875,19 +9137,19 @@ ro:
         try_again: Try Again
       ticket_heading: Tickets
       filter:
-        status: Status
+        status: Stare
         priority: Prioritate
         all: Toate
       submit: Trimite
       search:
-        keyword: Keyword
-        ticket_id: Ticket ID
+        keyword: Cuvânt-cheie
+        ticket_id: ID tichet
         placeholder_keyword: Enter Keyword
         placeholder_ticket_id: Enter Ticket ID
       logged_in_message: 'Logged in as %{user_name}'
       domain:
         domain_message: Please enter helpdesk URL
-        continue_to_login: Continue to login
+        continue_to_login: Continuați la Autentificare
         freshdesk_domain: 'http://'
         domain_error: Unable to authorize freshdesk domain
       more:
@@ -8917,19 +9179,42 @@ ro:
         human_name: reply
       login:
         login: Login
-        email: Email
-        password: Password
+        email: E-mail
+        password: Parola
+      reset: Resetare
     dynamics_v2:
       form:
         username: Nume de utilizator
+        password: Parola
     screen_pop:
       widget:
         cancel: Anuleaza
         subject: Subiect
+        view_all: Vizualizare toate
+        requester: Nume solicitant
+        do_not_link: Nu corelați
+        link_to_ticket: Link către acest tichet
+        call_actions: Acțiuni Apel
+        new_ticket_with_id: Tichet nou creat cu id
+        link_to_new_ticket: Link către un tichet nou
+        add_note_to_ticket: Adăugați notă la tichet
+        agent_phone_details: Detaliile telefonului Agentului
+        add_note_text: Notițe apel
+        agent_phone_updated: Detaliile telefonului Agentului actualizate
+        recent_tickets: Tichete recente
+        create: Creaza
+        ticket_reference_id: Id de referință apel
     cti_admin:
       phone:
         save: Salvati
         cancel: Anuleaza
+        add_number: Adăugați număr
+        number_not_in_use: Nu se utilizează
+        add_number_tooltip: Fiecare rând trebuie să conțină un singur număr
+        title: Numere Birou de Ajutor
+        delete_number: Vă rugăm să confirmați
+        delete_msg: Sigur doriți să ștergeți acest număr?
+        number_in_use: Numere în uz
       ctd:
         username: Nume de utilizator
         encoding: Codare
@@ -8937,28 +9222,98 @@ ro:
         have_api_key: Am cheia API?
         content: Continut
         have_user_pass: Am numele utilizatorului si parola?
+        api_key: Cheie API
+        callback_url: URL de retur
+        req_authentication: Solicitați autentificare
+        password: Parola
+      save_agent_private_note: Salvați Notele de apel ca private
+      ctd_toggle: Configurați Clic pentru Apelare
+      softfone:
+        max_dimension: Maxim 550px &times; 250px
+        width: Lăţime
+        height: Înălţime
+        url: Adresa URL pentru iframe
+      title: Setări CTI
+      iframe_toggle: Activați iframe-ul Softphone
     outlook_contacts:
       edit_form:
         edit_account: Editeaza
         delete_account: Sterge
+        account: Cont
+        not_yet_synced: Sincronizarea nu a început.
+        tag_label: Etichetă de sincronizare
+        add_more: Sincronizați contul nou
+        last_sync_time: Ultimă oră a sincronizării
+        syncing_in_progress: Sincronizare în curs
+      form:
+        mail_box_detail: Sincronizați cu
+        sync_tag_label: Etichetă de sincronizare
+        sync_tag: Setările sincronizării
+        submit: Import & Activare
+    applications:
+      crm:
+        mapping:
+          company: Companie
+          contact: Contact
+          contact_fields: ' Campuri de contact '
+          account_fields: ' Câmpuri cont '
+    google_drive:
+      form:
+        developer_key: Cheia API obținută de la consola dezvoltatorilor Google.
+        client_id: ID-ul de client OAuth pentru domeniul dvs.
+    custom_apps:
+      ticket_detail_page: Pagina cu detalii despre tichete
+      preview_helptext: Această aplicație personalizată va apărea în bara laterală
+      hide_preview: Ascundeți Previzualizarea
+      custom_app_used_in: Aplicația personalizată este afișată pe
+      contact_detail_page: Pagina cu detalii de contact
+      refresh: Reîncărcare
+      show_preview: Afișați previzualizarea
+      custom_app_preview: Vizualizare particularizată a aplicației
+    microsoft_teams:
+      auth_btn: Autorizați
+    infusionsoft:
+      form:
+        contact: Campuri de contact
+        account: Câmpuri cont
+    uninstall: Dezinstalați
+    slack_v3:
+      slack_prof_label: Conectați-vă la Slack
+      slack_connect_desc: Configurați-vă contul pentru a crea tichete Slack din Slack
+      slack_auth_btn: Autorizați Slack
+    freshsales:
+      form:
+        auth_token: Token Autentificare
+        deal: Câmpuri afacere
+        domain: Domeniu cont
+        account: Câmpuri cont
+        contact: Campuri de contact
+    cloud_elements:
+      form:
+        daily: Zilnic
+        account: Câmpuri cont
+        field_mapping: Mapare câmp
+        hourly: În fiecare oră
+        contact: Campuri de contact
   widgets:
     contact_widget:
       description: Display a contact or option to add the contact into capsule.
     feedback_widgets:
       new:
-        feedback_widgets_search: Search
-        feedback_widgets_search_results: Search results
+        feedback_widgets_search: Căutare
+        feedback_widgets_search_results: Rezultatele căutării
         feedback_widgets_search_our: 'Search our '
-        feedback_widgets_knowledge_base: 'Knowledge base '
+        feedback_widgets_knowledge_base: 'Cunostinte de baza '
         feedback_widgets_help_articles: or Browse help articles
         show_all_results: Show all results
-        no_results: 'No results for '
-  reorder: Reorder
+        no_results: 'Nu există rezultate pentru '
+        problems_with_fields: 'Au fost probleme cu următoarele campuri:'
+  reorder: Reordona
   reports:
     no_data: No data to display!
     classic: Classic
     tab_heading: Reports
-    select_customer: Select Customer
+    select_customer: Selectați Client
     select_options: Reports by
     tickets_by: Tickets By
     helpdesk_title: Helpdesk Activity Report
@@ -8966,12 +9321,12 @@ ro:
     helpdesk_title_nav: Helpdesk Activity Report
     customer_title_nav: Customer Activity Report
     surveys_title_nav: Customer Satisfaction Report
-    scoreboard_title_nav: Leaderboard
+    scoreboard_title_nav: Clasament
     scoreboard_group_title: Group Leaderboard
     scoreboard_agent_title: Agent Leaderboard
     reports_by: Reports by
     select_time_period: Select Time period
-    generate_button: Generate
+    generate_button: Generați
     pie_chart_title_prefix: 'Tickets By '
     timeline_chart_title: Tickets Received vs Resolved
     customer_activity_title: Activity Report
@@ -8979,31 +9334,31 @@ ro:
     satisfaction_title: Satisfaction Report
     freshfone:
       options:
-        incoming: Incoming
-        outgoing: Outgoing
+        incoming: Primit
+        outgoing: Efectuat
         all_groups: All Groups
         unassigned: Neatribuit
       range_exceed: Range cannot exceed 90 days
-      filter_by_title: Filtered by
-      time_period: Time Period
+      filter_by_title: Filtrate după
+      time_period: Perioadă de timp
       ff_report_title: Phone Summary
       summary_title: 'Agent Call Summary '
       agent: Agent
-      group: Group
-      call_type: Call Type
+      group: Grup
+      call_type: Tip apel
       business_hours: Ore de lucru
-      filter_option_all_calls: All Calls
+      filter_option_all_calls: Toate apelurile
       filter_option_within_business_hours: Within Business hours
       filter_option_outside_business_hours: Outside Business hours
-      filter_report: Edit Filter
+      filter_report: Editați filtrul
       select_agent: Select Agent
       select_group: Select Group
       select_call_type: Select Call Type
       select_number: Select a Number
-      all_numbers: All Numbers
+      all_numbers: Toate numerele
       all_call_types: All
-      number: Number
-      avg_handle_time: Avg Handle Time
+      number: Număr
+      avg_handle_time: Durata medie de tratare
       num_of_calls: No of Calls
       total_answered: Answered Calls
       total_voice_mail: Voice Mails
@@ -9014,21 +9369,21 @@ ro:
       num_of_external_transfers: External Transfers
       unanswered_transfers: Unanswered Transfers
       answered_percentage: Answer %
-      generate_summary: Generate
-      filter_close: Close
-      unanswered_count: Unanswered
+      generate_summary: Generați
+      filter_close: Închidere
+      unanswered_count: Fara raspuns
       others: Others
       external: External Numbers
       includes_transfer: Includes transferred calls
-      no_agent: '- No Agent -'
+      no_agent: '- Niciun agent -'
       no_external: Transfers made to external numbers are not included
     time_sheets:
-      billable: Billable Hours
+      billable: Ore facturabile
       non_billable: Non-Billable Hours
       total_time: Hours Tracked
       billable_vs_non_billable: Billable vs Non-billable
-      filter_by_title: Filtered by
-      time_period: Time Period
+      filter_by_title: Filtrate după
+      time_period: Perioadă de timp
     summary_report:
       back_to_reports: Back to Reports
       show_report: Show report
@@ -9049,36 +9404,36 @@ ro:
         time elapsed between when the ticket was created and when the agent
         first replied to it.
     date_ranges:
-      today: Today
-      yesterday: Yesterday
-      last_7_days: Last 7 days
-      last_30_days: Last 30 days
-      last_90_days: Last 90 days
-      custom: Date Range
+      today: Astăzi
+      yesterday: Ieri
+      last_7_days: Ultimele 7 zile
+      last_30_days: Ultimele 30 de zile
+      last_90_days: Ultimele 90 de zile
+      custom: Interval de date
     summary:
       title: Tickets summary
       total_tickets: Total Tickets
       received_tickets: Received Tickets
       open_tickets: Open Tickets
       pending_tickets: Pending Tickets
-      resolved_tickets: Resolved Tickets
+      resolved_tickets: Tichete rezolvate
       sla_compliance: SLA Compliance
-      fcr: First Call Resolution
+      fcr: Rezolutia primului apel
     timesheet_reports:
       index:
         title: Time Sheet Report
         select_customer: Select Customer
         select_agent: Selectați agent
-        select_group: Select Group
+        select_group: Selectați Grup
         select_billable: Select Billable/Non-Billable
         select_priority: Select Priority
         select_product: Select Product
-        select_type: Select Type
+        select_type: Selectați Tip
         view_between: View report between
         from: From
         to: To
-        filter_report: Edit Filter
-        ticket_type: Ticket Type
+        filter_report: Editați filtrul
+        ticket_type: Tip tichet
     scoreboard_reports:
       champions_title: Champions
       sharpshooter_title: Sharp Shooters
@@ -9088,19 +9443,19 @@ ro:
     survey_reports:
       main:
         all: Toate
-        time_period: Time Period
-        group: Group
+        time_period: Perioadă de timp
+        group: Grup
         agent: Agent
-        overview: Overview
-        responses: Responses
+        overview: Prezentare generala
+        responses: Răspunsuri
         response_to: Response to
-        rating: Rating
+        rating: Evaluare
         question: Q
-        positive: Positive
-        neutral: Neutral
-        negative: Negative
-        answered: Answered
-        unanswered: Unanswered
+        positive: Pozitiv
+        neutral: Neutru
+        negative: Negativ
+        answered: Raspuns
+        unanswered: Fara raspuns
         total_responses: Total No.of responses
         filter_by: Filter by
         preparing_chart_for: Preparing chart for
@@ -9108,10 +9463,12 @@ ro:
         no_remarks: No responses available
         loading_remarks: Loading remarks
         fetching_responses: Fetching responses
-        no_overview: No data available
+        no_overview: Nu există date disponibile
         view_report_by: View by
-        overall_rating: Rating
+        overall_rating: Evaluare
         all_responses: All Responses
+        survey_name: Titlu
+        total_responses_v2: Total
       index:
         agent_list_loading: Fetching agent list
       feedbacks:
@@ -9145,33 +9502,34 @@ ro:
           timeframe</li></ol></p></p>
     livechat:
       report_title: Live Chat Summary
-      filter_by_title: Filtered by
-      time_period: Time Period
+      filter_by_title: Filtrate după
+      time_period: Perioadă de timp
       widget: Widget
-      group: Group
-      chat_type: Chat Type
+      group: Grup
+      chat_type: Tip chat
       summary: Summary
-      filter_report: Edit Filter
-      select_widget: Select Widget
+      filter_report: Editați filtrul
+      select_widget: Selectați Widget
       select_group: Select Group
-      select_chat_type: Select Chat Type
+      select_chat_type: Selectați Tip de chat
       all: All
       chat_type_visitor: Visitor Initiated
       chat_type_agent: Agent Initiated
       chat_type_proactive: Proactive
-      generate_summary: Generate
-      filter_close: Close
+      generate_summary: Generați
+      filter_close: Închidere
       total_chats: Total
-      num_of_chats: No of Chats
-      answered_chats: Answered
-      missed_chats: Missed
-      num_of_transfer: Transfers
-      avg_handle_time: Avg Handle Time
-      avg_time_queue: Time in Queue
+      num_of_chats: Număr de chat-uri
+      answered_chats: Raspuns
+      missed_chats: Nepreluat
+      num_of_transfer: Transferuri
+      avg_handle_time: Durata medie de tratare
+      avg_time_queue: Oră în lista de așteptare
       total_duration: Total Duration
-      agent_chat_summary: Agent Chat Summary
+      agent_chat_summary: Rezumat chat agent
       agent: Agent
       deleted: Deleted
+    discard_changes: Nu salva modificarile
   delete_the_ticket: Delete the Ticket
   mark_as_spam: Mark as Spam
   bulk_actions: Bulk Actions
@@ -9205,8 +9563,8 @@ ro:
       info3: >-
         The rest of your email content will be added as a conversation to
         Freshdesk and also sent to the Requestor via email.
-      ticket_type_example: Question
-      note: Note
+      ticket_type_example: Intrebare
+      note: Notă
   email_command_delimeter_label: Email Commands Delimeter
   email_command_preview_to_email: la
   email_command_preview_to_email_value: support@acme.freshdesk.com
@@ -9216,9 +9574,9 @@ ro:
   ticket_field:
     helpcard:
       tour: Help me understand ticket fields
-      title1: Ticket Fields
-      title2: Dependent Fields
-      title3: Dynamic Fields
+      title1: Campuri tichete
+      title2: Câmpuri dependente
+      title3: Câmpuri dinamice
       info1: >-
         The ticket form is the easiest way to capture all the data you need from
         the customer, even as they submit a ticket. For example, having the
@@ -9228,12 +9586,14 @@ ro:
         business, and let your customers and agents fill in the information you
         need in the format you want.
       info_1: >-
-        The ticket form helps capture the data you need from the customer when
-        they submit a ticket. You can customize your Ticket Form to include the
-        right ticket fields for your business, and let your customers and agents
-        fill in the information you need in the format you want. For example, in
-        an e-commerce company, getting a customer's order ID in the ticket form
-        would be very helpful to the agent solving the ticket.
+        Formularul de tichet ajută la captarea datelor de care aveți nevoie de
+        la client atunci când acesta creează un tichet. Puteți personaliza
+        Formularul de tichet pentru a include câmpurile potrivite pentru
+        afacerea dvs. și le puteți permite clienților și agenților dvs. să
+        completeze informațiile de care aveți nevoie în formatul dorit. De
+        exemplu, într-o companie de comerț electronic, obținerea unui ID al
+        comenzii clientului în formularul tichetului ar fi de mare ajutor
+        agentului care rezolvă tichetul.
       info2: >-
         Dependent Fields give you an easy way to create deeper ticket categories
         and identify the biggest issues that clog your support.  With dependent
@@ -9249,6 +9609,27 @@ ro:
         customer needs a replacement for the item. <a target='_blank'
         href='https://support.freshdesk.com/support/solutions/articles/212889-creating-your-dynamic-ticket-forms'>Read
         more about dynamic fields</a>.
+      info4_v3: >-
+        Dacă dețineți abonamentul Estate sau unul mai avansat, puteți crea
+        secțiuni cu câmpuri dinamice pe baza opțiunii selectate într-un câmp
+        derulant. Puteți adăuga câmpuri de tichet la fiecare secțiune și puteți
+        asocia o secțiune cu opțiuni în câmpul derulant. Dacă rulați un magazin
+        de comerț electronic, de exemplu, puteți deschide o secțiune cu un câmp
+        numit „Motiv” atunci când clientul alege opțiunea „Înlocuire”. În acest
+        fel, puteți înțelege mai bine de ce clientul dvs. dorește să fie emis un
+        înlocuitor. Puteți crea maximum două secțiuni dinamice și le puteți
+        utiliza în două meniuri derulante personalizate. Dacă ați asociat deja o
+        secțiune cu câmpul „tip”, veți mai putea adăuga doar o secțiune în
+        formularul de tichet.
+      info4_v2: >-
+        Dacă dețineți abonamentul Estate sau unul mai avansat, puteți crea
+        câmpuri dinamice care apar pe baza opțiunii selectate în câmpul tip.
+        Pentru fiecare opțiune din câmpul tip, puteți crea o altă secțiune.
+        Puteți adăuga apoi mai multe câmpuri de tichet la fiecare secțiune. De
+        exemplu, într-un scenariu de comerț electronic, când tipul ales este
+        „Înlocuire”, se poate deschide o secțiune cu un câmp numit „Motiv”, care
+        va colecta motivul pentru care clientul are nevoie de un înlocuitor
+        pentru articol.
   contact_field:
     helpcard:
       title2: Customizing your contact fields
@@ -9265,7 +9646,7 @@ ro:
         that are visible just to your agents.
   company_field:
     helpcard:
-      title1: Customizing your company fields
+      title1: Personalizarea câmpurilor companiei dvs.
       info1: >-
         In addition to contacts, Freshdesk lets you create companies in your
         helpdesk and makes it easy for you to manage support requests from the
@@ -9304,7 +9685,7 @@ ro:
   latest_ticket: new update
   latest_tickets: new updates
   search:
-    no_results_msg: No results found
+    no_results_msg: Nu s-au găsit rezultate
     showing: 'Showing:'
     all_results: All Results
     tickets: Tickets
@@ -9316,8 +9697,8 @@ ro:
     see_more_results: 'See more results for "%{term}"  &raquo;'
     display_results: 'Displaying %{result}'
     sorted_by: 'Sorted by:'
-    by: 'by:'
-    in: in
+    by: 'de:'
+    in: în
     created_by: Created by
     edited_by: Editat de
     requested_by: 'Requested by,'
@@ -9332,6 +9713,7 @@ ro:
       relevance: Relevance
       created_at: Date Created
       updated_at: Last Modified
+    searching: Se caută
   assumed_identity_msg: 'You''ve assumed your identity as %{user_name}.'
   unauthorized_msg: Authorization failed
   assuming_identity_user_does_not_exist_msg: User you've tried to assume does not exist.
@@ -9365,13 +9747,13 @@ ro:
   validate_fwd_to_email_msg: Please enter a valid email address
   use_reply_option: Please use Reply option for sending an email to the requester
   index_tooltip_loading_msg: Se incarca...
-  being_processed: Being Processed
+  being_processed: În curs de procesare
   awaiting_your_reply: Awaiting your Reply
   this_ticket_has_been_resolved: This ticket has been Resolved
   this_ticket_has_been_closed: This ticket has been Closed
   status_name_validate_presence_msg: ' Status name can''t be blank'
-  open_tickets: Open Tickets
-  resolved_tickets: Resolved Tickets
+  open_tickets: Tichete deschise
+  resolved_tickets: Tichete rezolvate
   waiting_on_customer: Waiting on Customer
   waiting_on_third_party: Waiting on Third Party
   bcc_email_updated_success_msg: Successfully updated Bcc email
@@ -9395,7 +9777,7 @@ ro:
   change_free_plan: Change your Free plan
   billing_info: Subscription information
   forwarded_email: Forwarded email
-  forwarded_to: Forwarded to
+  forwarded_to: Redirecționat către
   replied_to: Replied to
   notified_to: Notified to
   reply_to_forward: replied to forward
@@ -9405,10 +9787,10 @@ ro:
   conv_contacts_info: '%{conv_type_msg} : %{to_emails} %{cc_emails_key} %{bcc_emails_key}'
   cc_emails_key_pop: ' <li class=''left''>cc : </li><li>%{cc_emails}</li>'
   bcc_emails_key_pop: ' <li class=''left''>bcc :</li> <li>%{bcc_emails}<li>'
-  clear: Clear
+  clear: Ștergere
   saved_draft: Saved
-  saving_draft: Saving...
-  saving: Saving...
+  saving_draft: Salvare...
+  saving: Salvare...
   draft: Draft
   last_draft: Your last draft
   clear_draft_text: Your saved draft will be discarded. Are you sure?
@@ -9418,7 +9800,7 @@ ro:
     Since your portal does not have SSL, you are being redirected to Freshdesk's
     secure page. Please login to proceed.
   canned_folders:
-    insert_placeholder: Insert Placeholder
+    insert_placeholder: Introduceți substituent
     important: 'Important: '
     delete_canned_response: Are you sure you want to delete the selected Canned Responses?
     delete_folder: >-
@@ -9553,7 +9935,7 @@ ro:
     show_primary: '  (Default)'
     unverified: Email Unverified
     make_primary: Mark as Default
-    please_wait: Please Wait...
+    please_wait: Te rog asteapta...
     add_another: Add Another
     merged_with: 'This contact has been merged with : '
     email_remove: Are you sure you want to remove this Email?
@@ -9569,7 +9951,7 @@ ro:
     reset_all_confirm_message: >-
       This action will reset all your customizations to freshdesk default. Are
       you sure you want to continue?
-    publish_changes: Save and Publish
+    publish_changes: Salveaza si publica
     title: 'Portal customization "%{portal}"'
     color_and_font_header: Color &amp; font
     css_header: Stylesheet
@@ -9578,12 +9960,12 @@ ro:
     reset_to_last_published: Reset page to last published
     preview: Preview portal
     save_and_continue: Salvati
-    please_wait: Please wait...
+    please_wait: Te rugam sa astepti...
     layout_pages:
       subheader_layout: Portal layout
       subheader_pages: Portal pages
       pages_help_message: Here you will be able to customize body area of individual pages.
-      head_layout_title: Head
+      head_layout_title: Șef
       header_layout_title: Antet
       footer_layout_title: Subsol de pagina
       pagelayout_title: Page layout
@@ -9615,7 +9997,7 @@ ro:
           archived tickets. Placeholders related to updating the ticket
           properties like {% snippet ticket_reply %} will not work.
     cosmetic:
-      subheader_background_color: Background color
+      subheader_background_color: Culoare fundal
       subheader_tab_color: Tab colors
       subheader_portal_fonts: Portal fonts
       subheader_link_color: Link color
@@ -9627,6 +10009,7 @@ ro:
         This will make your default theme mobile friendly and will optimize it
         for phones and tablets. You can choose to turn this setting off in case
         you wish to have a consistent non-responsive theme across all devices.
+    apply_mint: Aplicare
   any_time: Any time
   five_minutes: Within 5 minutes
   fifteen_minutes: Within 15 minutes
@@ -9652,18 +10035,18 @@ ro:
   Subject: Subject
   Requester: Search a requester
   Status: Status
-  Group: Group
+  Group: Grup
   Agent: Agent
   Priority: Priority
   Description: Description
   Product: Product
   Type: Type
   showing: Showing
-  Email: Email
+  Email: E-mail
   Portal: Portal
-  Phone: Phone
+  Phone: Telefon
   Forum: Forum
-  Twitter: Twitter
+  Twitter: Twiter
   Facebook: Facebook
   Chat: Chat
   MobiHelp: MobiHelp
@@ -9683,12 +10066,12 @@ ro:
     back_to_dashboard: < Back to dashboard
     quests: Quests
   close_this_ticket: Inchide acest tichet
-  ticket_deleted: This ticket has been deleted
+  ticket_deleted: Acest tichet a fost sters
   reported_by: 'Reported by '
   password_confirmation: 'Password Confirmation:'
   search_results: Search results
   plans_and_pricing: Plans & Pricing
-  number_of_attachments: ' attachments'
+  number_of_attachments: ' atașamente'
   activation_link: 'Activation link has been sent to %{email}'
   activation_link_no_email: Successfully registered
   not_given: Not given.
@@ -9707,16 +10090,16 @@ ro:
     view_old_reports: View old reports
     view_new_reports: View new reports
     solution_article_text: How to read this report ?
-    loading_text: Generating Report...
+    loading_text: Generarea raportului...
     filter_limit_exceeded: 'You can select maximum of %{count} filters'
     time_period: Select Time Period
     filter_by: Filtrare dupa
     edit_filter: Filtru
     tickets: List of Tickets
-    generate: Generate
-    more: More...
+    generate: Generați
+    more: Mai mult...
     last_num_days: 'Last %{num} Days'
-    date_range: Date Range
+    date_range: Interval de date
     start_date: Start Date
     end_date: End Date
     filter_error_msg: >-
@@ -9946,14 +10329,16 @@ ro:
         subtitle: >-
           See which hour of which day receives the most number of tickets and
           allocate your staff accordingly
+      resolved_tickets: Tichete rezolvate
+      unresolved_tickets: Tichete nesoluționate
     glance:
       index_title: Helpdesk<br/>In-depth
       title: Helpdesk In-depth
     performance_distribution:
-      title: Performance Distribution
-      first_response_bar: First response time
-      response_bar: Avg response time
-      resolution_bar: Resolution time
+      title: Distribuție performanță
+      first_response_bar: Ora primului răspuns
+      response_bar: Timp mediu de răspuns
+      resolution_bar: Timp de rezolutie
       first_response_and_response_trend: Avg first response and response time trend
       resolution_trend: Avg resolution time trend
       description:
@@ -9973,10 +10358,10 @@ ro:
           All tickets resolved in the selected time period are plotted in this
           graph based on the avg resolution time
     group_summary:
-      title: Group Performance
+      title: Performanță Grup
       group: Group
     agent_summary:
-      title: Agent Performance
+      title: Performanță Agent
       ticket_assigned: Tickets assigned
       ticket_resolved: Tickets resolved
       tickets_reopened: Tickets reopened
@@ -10004,31 +10389,75 @@ ro:
     saved_report:
       save: Salvati
       cancel: Anuleaza
+      delete_dialog_header: Ștergere raport
+      edit_dialog_header: Editare raport
     ticket_schedule:
       index:
         cancel: Anuleaza
+        delete_title: Ștergeți programul
+        delete_text: Sigur doriți să ștergeți acest program?
+        confirm: Confirmare
       new:
         select_all: Selecteaza totul
         description: Descriere
+        helpnote:
+          api_info1: API-ul va avea linkul la ultima exportare.
+        ticket_fields_title: Campuri tichete
+        email: E-mail
+        contact_fields_title: Campuri de contact
+        one_time_export_label: >-
+          Exportați conținutul tichetului de la începutul lunii, când acest
+          program începe
+        company_fields_title: Campuri companie
+        frequency: Program
+      schedule_export: Programare exportare
+      schedule: Program
+      all_reports: Toate rapoartele
+      new_schedule: Program nou
     scheduled_reports:
       dialog:
         desc: Descriere
         subject: Subiect
+        monthly: Lunar
+        generate_report: Generare raport
+        email: E-mail
+        'on': Pe
+        daily: Zilnic
+        weekly: Săptămânal
+      errors:
+        disabled: Rapoartele cu intervale de date personalizate nu pot fi programate
     timespent_export:
       button_export: Exporta
+      export_csv: Exportare CSV
     ticket_activity:
       learn_more: Află mai multe
+      helpnote:
+        api_info1: API-ul va avea linkul la ultima exportare.
+      edit: Editare programare
     change: Schimba
+    chats: Conversații
+    insights:
+      customize_link: Personalizare
+    today: Astăzi
+    this_week: Saptamana asta
+    this_month: Luna aceasta
+    year_in_review:
+      title: Anul dvs. în retrospectivă
+    summary: Rezumat
+    show: 'Afișare:'
+    filtered_by: 'Filtrate după:'
+    at: la
+    yesterday: Ieri
   adv_reports:
     at_a_glance: At-a-glance
     select_an_option: Select an option
-    report: ' Report '
+    report: ' Raport '
     reports: Rapoarte
     helpdesk_at_a_glance: Helpdesk At A Glance
     customer_at_a_glance: Customer At A Glance
     agent_at_a_glance: Agent At A Glance
     group_at_a_glance: Group At A Glance
-    summary: Summary
+    summary: Rezumat
     agent_ticket_summary: Agent ticket summary
     group_ticket_summary: Group ticket summary
     load_analysis: Load Analysis
@@ -10042,7 +10471,7 @@ ro:
     group_top_n_analysis: Group Top-N Analysis
     time_sheet_report: Time Sheet Report
     customer_top_n_analysis: Customer Top-N Analysis
-    select_option_msg: Please select an option
+    select_option_msg: Te rugăm să selectezi o opțiune
     no_data_to_display_msg: No data to display!
     filtered_by: Filtered by
     time_period: Time Period
@@ -10060,7 +10489,7 @@ ro:
     report_title_mandatory: Report title is mandatory.
     report_export_success: Reports will be sent to your email shortly!
     glance:
-      all_reports: All Reports
+      all_reports: Toate rapoartele
       report_view: Report View
       download: Download as PDF
       print: Print
@@ -10073,10 +10502,10 @@ ro:
       num_of_reopens: Num. of Reopens
       num_of_reassigns: Num. of Reassigns
       sla_percentage: SLA %
-      select_customer_msg: Select Customer
+      select_customer_msg: Selectați Client
       select_agent_msg: Selectați agent
-      select_group_msg: Select Group
-      no_customers_msg: You don't have any customers
+      select_group_msg: Selectați Grup
+      no_customers_msg: Nu aveți clienți
       no_groups_msg: You don't have any groups
       loading_msg: Generating Reports ...
     load:
@@ -10291,6 +10720,7 @@ ro:
       see_detailed_pricing: See Detailed Pricing
       followup: worth phone credits
       followup_text: worth phone credits
+      purchase_credits: Achiziționează credite
     dialpad:
       not_valid_number: Please enter a valid number
       could_be_invalid_number: Could be an invalid number.
@@ -10514,10 +10944,10 @@ ro:
     admin:
       important: Important
       general: General
-      settings: Settings
+      settings: Setari
       greetings: Greetings
       messages: Messages
-      freshfone_numbers_title: Phone
+      freshfone_numbers_title: Telefon
       suspended_alert: >-
         <b>Important:</b> Disabling your phone channel will not prevent the
         monthly rental on your numbers. To avoid getting charged, please delete
@@ -10561,15 +10991,15 @@ ro:
           href='http://support.freshdesk.com/support/solutions/articles/169198'
           target='_blank'>Read more about customizing your number</a>
         non_business_hours: Accept Calls during…
-        business_calendar: Select Business Hour
+        business_calendar: Selectați program de lucru
         transcript_voice: Transcript Voice
         text_to_speech: Text to speech
         record_calls: Record Calls
-        voicemail: Voicemail
-        voicemail_on: 'On'
-        voicemail_off: 'Off'
-        record_all: Record all calls
-        record_none: Do not record calls
+        voicemail: Apel vocal
+        voicemail_on: Pe
+        voicemail_off: Oprit
+        record_all: Înregistrează toate apelurile
+        record_none: Nu înregistra apelurile
         record_alert: >-
           Call recording guidelines in most countries require notifying
           customers that their calls are being recorded. Please configure the
@@ -10582,18 +11012,18 @@ ro:
         voicemail_message: Voicemail Message
         non_business_hours_message: Non-Business hours message
         welcome_message_alert: Welcome message not play when IVR is enabled
-        welcome_message: Welcome Message
+        welcome_message: Mesaj de bun venit
         record_voice: Record your voice
         upload_voice: Upload audio files
         read_message: Text to speech
-        start_recording: Start recording
+        start_recording: Pornire înregistrare
         stop_recording: <span></span>Stop Recording
-        preparing_recording: Preparing your message...
+        preparing_recording: Se pregătește mesajul...
         recorded_voice: Recorded Voice
         audio_upload: Select file to upload
-        greeting_message: Enter your message here
+        greeting_message: Introduceti mesajul dvs. aici
         attachment_help_info: Accepts audio file (mp3) &lt; 5mb
-        attachment_help_text: Accepts audio file (mp3) < 5mb
+        attachment_help_text: Accepts audio file (mp3) &lt; 5mb
         recording_help_info: Turn on the microphone. Duration &lt; 5 mins.
         cancel: Anuleaza
         change: Schimba
@@ -10603,14 +11033,14 @@ ro:
         business_hours: Ore de lucru
         anytime: 24/7 Anytime
         name: Nume
-        name_placeholder: Enter a friendly name for your number
+        name_placeholder: Introduceți un pseudonim pentru numărul dvs.
         hunt_type: Call Routing
         routing_message: When multiple agents are available online...
         recording_privacy: Recording Visibility
         recording_privacy_public: Visible to customers and agents
         recording_privacy_private: Visible only to agents
         name_maxlength: Name cannot have more than 255 Characters
-        number_accessible: Accessible by
+        number_accessible: Accesibil prin
         wait_music: Wait Music
         hold_music: Hold Music
         queue_position_preference: Read out queue position
@@ -10645,8 +11075,8 @@ ro:
           target='_blank'>Read more about what you can do with phone</a>.
         purchase_number: Purchase Number
         purchase_phone_number: 'Buy Number (%{number})'
-        buy: Buy Number
-        buy_button_text: Buy
+        buy: Achiziționează un număr
+        buy_button_text: Cumpărare
         purchase_loading_text: Purchasing...
         buy_loading_text: Buying...
         purchase_alert_text: >-
@@ -10660,7 +11090,7 @@ ro:
         delete_alert: >-
           A number once deleted cannot be purchased again. Are you sure you want
           to delete the number?
-        manage: Manage
+        manage: Gestionare
         failure_purchase: >-
           Unable to purchase the phone number. Kindly make sure the address is a
           valid local address in <span class='certification-country'></span>.
@@ -10669,10 +11099,10 @@ ro:
           and try again.
         address:
           name: Company / Name
-          address: Address
-          city: City
-          state: State/Province/Region
-          postal_code: Postal Code
+          address: Adresa
+          city: Oraș
+          state: Stat/Provincie/Regiune
+          postal_code: Cod poștal
           country: Country
           required_field: All fields are required
         setup:
@@ -10696,13 +11126,16 @@ ro:
             helpdesk. In addition, your agents can choose to pick up phone calls
             from inside the browser or have them forwarded to their desk phone
             automatically.
+        caller_id:
+          manage_caller_id: 'Gestionare ID apelant '
+          add_new: Adăuga un nou
       invalid_attachment: >-
         Attachment '%{name}' is not a valid audio file/ its size is greater than
         5MB
       ivr:
         simple_message_title: Simple Message
         ivr_message_title: Interactive voice response (IVR)
-        welcome_message: Welcome Message
+        welcome_message: Mesaj de bun venit
         message_type: Message Type
         transcript_voice: Transcript Voice
         text_to_speech: Text to speech
@@ -10710,8 +11143,8 @@ ro:
           Welcome message is turned OFF. All incoming calls will directly reach
           your helpdesk.
         turned_on: Welcome message will be played for all incoming calls.
-        turn_on: 'On'
-        turn_off: 'Off'
+        turn_on: Pe
+        turn_off: Oprit
         add_new_menu: Add New <b>Menu</b>
         add_new_menu_from_option: Add new menu
         add_new_option: Add <b>Keypress</b> Option
@@ -10721,10 +11154,10 @@ ro:
         male: Male Voice
         female: Female Voice
         rename: rename
-        done: done
+        done: efectuat
         save: Salvati
-        saving: Saving...
-        preview: Preview
+        saving: Salvare...
+        preview: Previzualizare
         previewing: Previewing...
         delete_menu: Delete menu
         jump_to: Jump To
@@ -10742,24 +11175,27 @@ ro:
           Enter valid phone number with '+' prefix and country code in front of
           the number
       welcome_page:
-        title_text: Phone
+        title_text: Telefon
       feature_request_content:
-        title_text: Phone
+        title_text: Telefon
         heading_text: Support your customers using the phone channel
         number_info: Purchase local and toll-free numbers from across the globe
         ivr_info: Route calls to the right agent and group using IVR
         recording_info: 'Record and convert calls to tickets, just like your emails'
         learn_more: Află mai multe
-        pricing: See all call rates and supported countries
+        pricing: Vedeți toate tarifele de apel și țările acceptate
         request_subject: 'Phone Request - %{account_name}'
         email_message: Need Freshfone Feature
         success: We will get back to you within two business days.
-        error_message: Sorry we can not make your request right now. Try again later.
+        error_message: >-
+          Ne pare rău că nu vă putem executa cererea chiar acum. Încercați mai
+          târziu.
         additional_info: >-
           You will be able to purchase numbers, make and take calls once the
           phone channel is enabled in your account
         button_text: Request for phone
         video_title: Watch the video to find out what you can do with the phone channel
+        trial_or: SAU
   livechat:
     feature_request:
       title: Welcome to Live Chat
@@ -10777,21 +11213,21 @@ ro:
     title: Live Chat
     widget: Widget
     messages: Messages
-    set_default_msgs: Default messages
+    set_default_msgs: Mesajele prestabilite
     minimize_chat_title: Title when chat is minimized
     maximize_chat_title: Title when chat is maximized
     welcome: Welcome Message
     thank_title: Thank you/Closure Message
     wait_title: Wait/On hold Message
     is_typing_header: When agent/visitor <br> starts typing
-    prechat_title: Pre-chat form
+    prechat_title: Formular pre-chat
     prechat_desc: >-
       Collect personal details about your visitors before you start chatting
       with them. When this is on, visitors will need to submit the form to begin
       a chat.
     prechat_msg: Pre-Chat Message
     welcome_tip: Text will appear at the top of chat window
-    proactive_title: Proactive chat
+    proactive_title: Chat proactiv
     minimized_title: Let's talk!
     maximized_title: Chat in progress
     welcome_message: Hi! How can we help you today?
@@ -10800,14 +11236,14 @@ ro:
       free to ping us!
     wait_message: 'One of us will be with you right away, please wait.'
     typing_message: is typing...
-    msgbox_placeholder_title: Reply box placeholder
+    msgbox_placeholder_title: Casetă răspuns substituent
     msg_waiting_agent_title: Status Message while waiting for agent
     msg_joining_agent_title: Message when agent joins chat
     msg_leaving_agent_title: Message when agent leaves chat
-    chat_transfer_msg_title: Chat transfer message
+    chat_transfer_msg_title: Mesaj pentru transfer de chat
     help_text_wait_onhold_msg: >-
-      This message will appear when visitor is waiting for an agent for more
-      than one minute
+      Acest mesaj va apărea când vizitatorul așteaptă un agent pentru mai mult
+      de un minut
     prechat_message: >-
       We can't wait to talk to you. But first, please tell us a bit about
       yourself.
@@ -10820,16 +11256,16 @@ ro:
       Automatically initiate chat conversations with visitors if they spend more
       than a certain amount of time on the same page
     chat_availability: Chat Availability
-    show_chat_hours: Show chat
+    show_chat_hours: Afișare chat
     show_chat_hours_msg: >-
       Set the time during which you will be online and available to accept
       chats.
-    business_hours: During business hours
-    anytime: Always (24/7)
+    business_hours: În timpul programului de lucru
+    anytime: Întotdeauna (24/7)
     business_calendar: Select Business Hour
-    texton: 'On'
-    textoff: 'Off'
-    form_details: Form details
+    texton: Pe
+    textoff: Oprit
+    form_details: Detalii formular
     copy_to_clipboard: Copy to Clipboard
     copied: Copied!!
     show: Show
@@ -10851,9 +11287,11 @@ ro:
     align_to: Align to
     bottom_left: Bottom Left
     bottom_right: Bottom Right
-    integrate_msg: Copy & paste this code before the last </body> tag on your website or app
-    integrate_livechat_title: Integrate Live Chat into your website and applications
-    custom_chat_window: Chat window
+    integrate_msg: >-
+      Copiați și lipiți acest cod înainte de ultima </body> etichetă de pe
+      site-ul sau aplicația dvs.
+    integrate_livechat_title: Integrare Live Chat pe site și în aplicațiile dvs.
+    custom_chat_window: Fereastră de chat
     text_placeholder: Your Message
     chatbox_bgcolor: Window Color
     in_conversation: In-conversation
@@ -10893,7 +11331,7 @@ ro:
     agent: Agent
     back: Back
     select_location: Select Location
-    valid_code: Please enter a valid color value
+    valid_code: Introduceți o valoare validă a culorii
     visitor_left_chat_msg: Visitor has left the chat.
     visitor_disconnect_msg: Visitor has been disconnected.
     agent_transfer_accept_msg: '{{agent_name}} has accepted. You can now close this chat.'
@@ -10915,7 +11353,7 @@ ro:
     last_message: Last Message...
     chat_recent_empty_tip: No recent messages
     add_agent_to_chat: No other agents logged in
-    url_error_msg: Please enter a valid URL
+    url_error_msg: Vă rugăm să introduceți o adresă URL validă
     accept: Accept
     ignore: Ignore
     transfer_msg: 'Transferred via '
@@ -10999,30 +11437,31 @@ ro:
     non_availability_message: >-
       Our agents are unavailable right now. Sorry about that, but please leave
       us a message and we'll get right back.
-    installation: Widget Code
-    visitor_form: Visitor Form
-    preferences: Preferences
-    intro_title: Why Live Chat?
+    installation: Cod widget
+    visitor_form: Formular vizitator
+    preferences: Preferințe
+    intro_title: De ce Live Chat?
     intro: >-
-      Freshdesk's integrated Live Chat solution lets you view and chat with
-      users on your website, online software, or support portal directly from
-      within Freshdesk. You can proactively start chatting with your website
-      visitors too. Once you finish a chat session, you can choose to convert
-      the conversation into a ticket and continue following up with the visitor
-      over email, or archive the chat transcript.
-    enable_chat: Enable Live Chat
-    learn_livechat: Learn more about Live Chat
+      Soluția de Live Chat integrată de la Freshdesk vă permite să vă vedeți și
+      să conversați cu utilizatori de pe site-ul dvs., din software-ul online
+      sau portalul de asistență, totul direct din Freshdesk. Puteți începe să
+      conversați proactiv și cu vizitatorii de pe site-ul dvs. Odată ce
+      încheiați o sesiune de chat, puteți alege să transformați conversația
+      într-un tichet și puteți continua să discutați cu vizitatorul prin e-mail
+      sau puteți arhiva transcrierea chatului.
+    enable_chat: Activați Chat Live
+    learn_livechat: Aflați mai multe despre Live Chat
     support_portal: Chat on support portal
     logged_in_users: Logged in users only
     everyone: Toata lumea
     portal_desc: Support your customers in real-time within your Freshdesk portal.
-    portal_option_info: Show chat widget for
+    portal_option_info: Afișați widgetul de chat pentru
     maximum_chat_title: Maximum Number Of Visitor Chats
     maximum_change_label: Editeaza
     maximum_chat_desc: >-
-      Set the limit for the number of chats an agent can handle simultaneously.
-      When an agent reaches this limit, they will not receive any new chat
-      notifications.
+      Setați limita numărului de chat-uri ce pot fi purtate simultan de către un
+      agent. Când agentul atinge această limită, nu va mai primi noi notificări
+      privind chat-urile.
     maximum_chat_error: You have reached the maximum chat limit.
     transfer_limt_exceeded_msg: ' has reached his capacity. Please transfer the chat to another agent.'
     loading_new_archives: Loading new archives...
@@ -11035,11 +11474,11 @@ ro:
     enter_custom_link: Enter URL
     widget_option_info: 'If feedback widget not available, new ticket page will be opened'
     no_matching_agents: No matching agents
-    chat_enabled_label: Enable Chat
-    routing: Chat routing
-    routing_info: Route all incoming chats to specific groups
-    dropdown_based_routing: Dropdown based routing
-    default_routing: Default routing
+    chat_enabled_label: Activați Chat
+    routing: Dirijare chat
+    routing_info: Dirijați toate chat-urile primite către anumite grupuri
+    dropdown_based_routing: Dirijare cu meniu vertical
+    default_routing: Dirijare implicită
     choice_info: <b>$</b> then notify group
     select_groups: Select groups
     routing_note: >-
@@ -11060,10 +11499,10 @@ ro:
     close: Close
     visitorId: Visitor ID
     createdAt: Created at
-    enable: Enable
+    enable: Activati
     widgets_list_info: >-
-      For every product you have set up in Freshdesk, you will have a
-      corresponding chat widget available here
+      Aici, veți avea la dispoziție un widget de chat aferent fiecărui produs
+      instalat în Freshdesk
     text_yes: Da
     text_no: Nu
     enabled: Activat
@@ -11102,6 +11541,20 @@ ro:
     reported: reported
     view_ticket: view ticket
     header_title: Antet
+    prechat_dropdown_msg: >-
+      Puteți asocia selecțiile dvs. de meniuri verticale cu diferite grupuri din
+      fila Preferințe. Chaturile vor fi alocate în mod corespunzător grupurilor
+      specificate.
+    show_widget: Când agenții sunt online și acceptă chaturi
+    agent_network_disconnect_msg_title: Mesaj la deconectarea agentului
+    chat_hours_msg_note: 'Notă: fereastra de chat va fi ascunsă în afara acestui interval.'
+    enabling: Se activează
+    cobrowsing: Asistență pe pagină
+    end_chat_confirm_msg_title: Mesaj de confirmare a încheierii chatului
+    chat_with_us: Luați legătura cu noi
+    cobrowsing_info: >-
+      Vă puteți ghida mai eficient clienții în timpul conversațiilor pe chat
+      datorită opțiunii de a le vizualiza și controla ecranul.
   facebook_tab:
     remove_tab: Remove page Tab
     tab_not_removed: Could not remove tab
@@ -11170,13 +11623,13 @@ ro:
   select_watchers: Select Watchers
   admins: Admins
   shortcuts:
-    title: Keyboard shortcuts
+    title: Comenzi rapide pe tastatură
     goto_tab:
       title: Goto Tab
-      dashboard: Dashboard
-      tickets: Tickets
-      social: Social
-      solutions: Solutions
+      dashboard: Tablou de bord
+      tickets: Tichete
+      social: Rețele sociale
+      solutions: Solutii
       forums: Forumuri
       customers: Clienti
       reports: Reports
@@ -11184,17 +11637,17 @@ ro:
     ticket_detail_list_common:
       title: Common shortcuts for ticket list and view
       prev_next: Navigate between ticket list view pages
-      delete_ticket: Delete ticket
+      delete_ticket: Ștergere tichet
       pickup: Pickup ticket
       spam: Mark ticket as spam
       close: >-
         Close ticket ( <span class='shortcut-key'>Alt <span>+</span> ~</span> to
         skip notification )
-      search: Search
+      search: Căutare
       reply: Raspuns
-      forward: Forward
-      add_note: Add note
-      scenario: Scenarios
+      forward: Înainte
+      add_note: Adăugare notă
+      scenario: Scenarii
     ticket_list:
       title: Ticket List
       move_cursor: Jump cursor to next / previous ticket
@@ -11218,27 +11671,27 @@ ro:
     use_default: Default (Freshdesk)
     use_your_own: Use your own mail server
     email_system: 'Email System:'
-    incoming_mail_settings: Incoming Mail Settings
+    incoming_mail_settings: Setări e-mailuri primite
     incoming_mail_server: 'Incoming Mail server:'
     imap_server_name: IMAP Server Name
     imap_port: Port
-    use_ssl: Use SSL
-    use_ssl_tls: Use SSL/TLS
+    use_ssl: Utilizare SSL
+    use_ssl_tls: Utilizare SSL/TLS
     use_outbound_mailbox: Add a mailbox for only outbound mails
     imap_server_info: IMAP server name to fetch the emails
     smtp_server_info: SMTP server name to send emails
     delete_from_server: Delete emails from server after fetching?
-    domain: 'Domain:'
+    domain: 'Domeniu:'
     authentication: 'Authentication:'
-    user_name: User Name
-    password: Password
+    user_name: Nume utilizator
+    password: Parola
     change_password: Change Password
     outgoing_mail_settings: Outgoing Mail Settings
     outgoing_mail_server: 'Outgoing Mail Server:'
     smtp_server_name: SMTP Server Name
     domain_name: Domain Name
     smtp_port: Port
-    use_mail_server_for: 'Use mail server for:'
+    use_mail_server_for: 'Utilizați serverul de mail pentru:'
     incoming_and_outgoing: Incoming and Outgoing
     outgoing_only: Outgoing only
     idle_not_supported: Specified IMAP mail server is not supported. Please use a different one
@@ -11260,7 +11713,7 @@ ro:
       Error while authenticating the smtp server. Please make sure your user
       name and password are correct
     smtp_error: 'Error while verifying the mailbox smtp details - %{error}'
-    verifying_mailbox_input: Verifying...
+    verifying_mailbox_input: Verificare...
     smtp_alert_gmail: >-
       Gmail limits the number of emails sent per day. <a target="_blank"
       href="https://support.google.com/a/answer/166852?hl=en">Click here</a> to
@@ -11272,11 +11725,11 @@ ro:
       Generally the number of outgoing emails per day have a specific limit.
       Please contact your email provider for more info.
   discussions:
-    all_categories: All Categories
+    all_categories: Toate categoriile
     folders: Folders
     views_categories: Views and Categories
     tour: Help me setup my forums
-    show_more: Show more
+    show_more: Arata mai mult
     helpnote:
       title: Organizing your community
       para1: >-
@@ -11301,10 +11754,10 @@ ro:
           reply: Raspuns
         actions:
           new_topic: created a topic
-          reply: replied to topic
+          reply: a răspuns la subiectul
       post:
         approve: Approve
-        approve_tooltip: Approve and Publish
+        approve_tooltip: Aprobă și Publica
         ban_tooltip: Mark user and all his posts as Spam
         spam: Spam
     index:
@@ -11334,7 +11787,7 @@ ro:
           Forum topics can also be marked as a sticky when you want them to be
           featured prominently, and they can be locked to prevent more users
           from adding replies.
-      replied: replied
+      replied: a răspuns
       spam: Spam
       waiting_for_approval: Unpublished
       comment:
@@ -11358,9 +11811,9 @@ ro:
       merge_topic: Merge Topic
       close_topic: Lock Topic
       reopen_topic: Reopen Topic
-      edit_topic: Edit Topic
+      edit_topic: Editeaza subiect
       delete_topic: Delete Topic
-      approve: Approve and Publish
+      approve: Aprobă și Publica
       convert_to_ticket: Convert Topic to Ticket
       linked_ticket: Linked Ticket
       best_answer: Marked as best answer
@@ -11371,8 +11824,8 @@ ro:
       post:
         delete_confirm: Stergi acest comentariu? Esti sigur?
         created_topic: created a topic
-        replied_to: replied to topic
-        replied: replied
+        replied_to: a răspuns la subiectul
+        replied: a răspuns
       title_meta:
         replies:
           one: 1 reply
@@ -11451,15 +11904,15 @@ ro:
         no_unpublished_spam: There's no spam here. We swear!
         moderation_solution: Learn more about Forum Moderation
       spam:
-        approve: Approve and Publish
+        approve: Aprobă și Publica
         new_topic:
           title: Subiect nou
           posted: posted a new topic
         reply:
           title: Raspuns
-          posted: replied to
+          posted: i-a răspuns lui
     unpublished:
-      page_title: Forum Moderation
+      page_title: Moderare forum
       empty_spam: Delete all Spam
       more: ' more'
       less: ' less'
@@ -11472,7 +11925,7 @@ ro:
         published: Post has been published
         goto_post: Goto Post
       invalid_topic:
-        went_wrong: Something went wrong
+        went_wrong: A apărut o problemă
         try_later: Unable to approve the post. Please try again later.
       spam_folder: Spam Folder
       flash:
@@ -11485,7 +11938,7 @@ ro:
       index:
         title: Spam
         spam: Spam
-        unpublished: Waiting for approval
+        unpublished: Se așteaptă aprobarea
         waiting: Waiting for Approval
         waiting_desc: Review and publish
         empty_folder: Empty Folder
@@ -11498,32 +11951,32 @@ ro:
           from here
       spam_actions:
         approve: Approve
-        approve_tooltip: Approve and Publish
+        approve_tooltip: Aprobă și Publica
         ban_tooltip: Mark user and all his posts as Spam
         ban_confirm: >-
           Are you sure you want to delete the user and mark all his/her posts as
           Spam?
         spam: Spam
       spam:
-        approve: Approve and Publish
+        approve: Aprobă și Publica
         new_topic:
           title: Subiect nou
           posted: posted a new topic
         reply:
           title: Raspuns
-          posted: replied to
+          posted: i-a răspuns lui
     topic_merge:
       merge_title: Merge Topics
-      continue: Continue
+      continue: Continua
       cancel: Anuleaza
-      please_wait: Please Wait...
-      mark_primary: Mark as primary
+      please_wait: Te rog asteapta...
+      mark_primary: Marcheaza ca principal
       remove: Remove this topic
       detailed_note: Reason for Merge
-      confirm_and_merge: Confirm and Merge
+      confirm_and_merge: Confirma si uneste
       add_note: Reason for Merge
       note_saved: Note saved
-      add: Add
+      add: Adăugare
       visibility_info: 'Showing topics visible to <b>%{visibility}</b> '
       warning: >-
         Topics once merged cannot be unmerged. Followers and votes from the
@@ -11544,32 +11997,35 @@ ro:
         in %{forum} (%{category})<br />by %{username}, <span
         class='emphasize'>%{time_ago} ago</span>
       title_placeholder: Search topics to merge
+    general:
+      unsaved_content: Aveți conținut ce nu a fost salvat în această pagină.
+      leave_page_que: Doriti sa parasiti aceasta pagina?
   link_with_marketplace: Link with Google Marketplace
   google_signup:
     associate_google:
-      link_your_helpdesk: Link your helpdesk
-      login_your_helpdesk: Login to your helpdesk
-      email_address: Email address
-      your_helpdesk: Your helpdesk
+      link_your_helpdesk: Conectați helpdesk
+      login_your_helpdesk: Conectați-vă la helpdesk
+      email_address: Adresă de e-mail
+      your_helpdesk: Helpdesk-ul dvs.
       login: Autentificare
       login_with_admin: >-
-        You need to be an Account administrator to link your freshdesk account
-        with Google login
+        Trebuie să fiți administrator de cont pentru a vă conecta contul de
+        freshdesk cu conectarea la Google
     signup_google:
       new_account: New account
       existing_user: Existing account
       company_name: Numele companiei
       helpdesk_url: URL Helpdesk
-      your_freshdesk_url: Your Helpdesk URL
+      your_freshdesk_url: URL-ul dvs. de Helpdesk
       domain_info: 'ex. if your helpdesk is ''http://apple.freshdesk.com'' then enter ''apple'''
-      phone_no: Phone Number
-      create_my_account: Create your Account
+      phone_no: Număr de telefon
+      create_my_account: Creați-vă contul
       terms_and_policy: >-
         By clicking 'Create your Account', you agree to our <a
         href='http://freshdesk.com/terms' target='_blank'>terms of service</a>
         and <a href='http://freshdesk.com/privacy' target='_blank'>privacy
         policy</a>
-      helpdesk_name: Helpdesk name
+      helpdesk_name: Nume Birou de Asistență
       freshdesk_dot_com: .freshdesk.com
       submit: Trimite
     signup_google_error:
@@ -11589,11 +12045,12 @@ ro:
     browse: Browse
     get_help: Get Help
     have_question: Have a question?
-    submit_feedback: Submit Feedback
+    submit_feedback: Trimite Feedback
     contact_support: ' Contact Support '
     search_articles: Search Article
     contact_us: Contact Us
     whats_new: What's New
+    load_more: Încărcați mai mult
   trial_plan_downgrade: >-
     Important: You are currently downgrading from %{plan_from} plan to
     %{plan_to} plan
@@ -11606,7 +12063,7 @@ ro:
   next_renewal: 'Next Renewal in %{renewal_period}'
   suspended_since: 'Suspended since %{days}'
   plan: Plan
-  edit_plan: Edit Plan
+  edit_plan: Editați abonamentuul
   account_created: 'Account created %{total_time} ago on %{date}'
   not_available: N/A
   short_code:
@@ -11675,21 +12132,129 @@ ro:
         cancel: Anuleaza
         link_errors:
           validation_error: Este necesar acest camp
+        connect_existing_account: Conectați un cont existent
+        email: E-mail
+        account_url: URL-ul contului de Freshcaller
+        continue: Continua
+        password: Parola
+      sidebar_title: Telefon
+      title_text: Telefon
+      feature_request_content:
+        create_new_account: Creare cont nou
+      freshcaller_subtext: 'Cumpărați numere, configurați liste de apel în așteptare, IVR-uri etc'
   multifile_attachments:
     remove: Sterge
     label: Ataseaza fisier
+    mb: ' MB '
   admin_onboarding:
     modal:
       channels_frame:
         forums_channel: Forumuri
+        social_channel: Rețele sociale
+        chat_channel: Chat live
+        email_channel: E-mail
+        phone_channel: Telefon
+        title: Cum discutați cu clienții dvs. în prezent?
+        forward_link: Invitați-vă echipa
       agents_frame:
         send_invite: Trimite invitatie
         emails_invalid: Unul sau mai multe din email-urile dumneavoastra sunt invalide.
+        emails_placeholder: 'bruce@just.ly, diana@just.ly, clark@just.ly'
+      overview_frame:
+        forward_link: Să începem
+      welcome_frame:
+        title: Bun venit pe Freshdesk
     account_verification_message:
       helpnote_or: sau
       modal_send_button: Trimite activare
       cancel_button: Anuleaza
+      modal_title: V-ați înregistrat cu o adresă de e-mail incorectă?
+      modal_invalid_email_error: Va rugăm să introduceți o adresă de email validă.
+      resend_message: Retrimitere activare
+      change_email: schimbați-vă adresa de e-mail
   freshchat:
     admin:
       save: Salvati
       cancel: Anuleaza
+      sidebar_title: Freshchat
+      action:
+        success_message: Setări actualizate
+      admin_apikey: 'Cheie API:'
+      title_text: Freshchat
+      app_id: ID aplicatie
+  mailer_notifier:
+    hi: 'Salut,'
+    thanks: 'Mulțumim,'
+  copied_link: Copiat
+  enter_a_value: Introduceți o valoare
+  custom_mailbox_admin_email_notifications:
+    regards: Cu stimă
+    welcome_message: Dragă Administrator
+  custom_mailbox_error_type:
+    unkown_error: >-
+      Imposibil de preluat e-mailuri de pe serverul de e-mail personalizat. Vă
+      rugăm să contactați support@freshdesk.com
+    ssl_errror: Eroare SSL.
+    server_response_invalid: Răspunsul serverului are un format nevalid în timpul conectării.
+    unable_to_connect: Imposibil de conectat dosarul din Căsuța poștală.
+    tcp_connection: Imposibil de creat conexiunea TCP.
+    tcp_refused: Serverul de e-mail a refuzat conexiunea TCP.
+    mailbox_idle: Căsuța poștală nu suportă capabilitatea IDLE.
+    unable_fetch_status: Imposibil de obținut starea dosarului.
+    io_error: Eroare de conectare I/O.
+    mailbox_suspended: Serverul de e-mail este suspendat
+    server_no_resp: Serverul de e-mail a trimis răspunsul NO în timpul conectării.
+    bye_response: Serverul de e-mail a trimis răspunsul BYE în timpul conectării.
+    invalid_login: Date de autentificare nevalide.
+    folder_unavailable: Dosarul nu este disponibil în Căsuța poștală.
+    tcp_socket: Imposibil de creat socket TCP pentru serverul de e-mail.
+    email_bad_request: Serverul de e-mail a trimis un răspuns greșit în timpul conectării.
+  imap_error: Serverul de e-mail este inaccesibil
+  activations:
+    activate_freshdesk_account: Activați-vă contul
+  cloud_log_mailer:
+    logger_email:
+      regards: 'Salutări,'
+      account: 'Cont: '
+      reason: Motiv
+  helpcard:
+    title: ID extern unic
+  admin_upgrade:
+    enable_mint_title: >-
+      Permiteți agenților să beneficieze de noutatea și rapiditatea oferite de
+      Mint
+    enable_mint_error: >-
+      Mint a fost deja activat pentru toți agenții. Reîncărcați pagina pentru a
+      vedea cele mai recente setări.
+    enable_mint_success: Super! S-a reușit activarea Mint pentru toți agenții.
+  plain_off: Oprit
+  customize_domain:
+    email:
+      cheers: 'Salutare,'
+      team: Echipa Freshdesk
+  profiles:
+    freshid_edit:
+      profile_details: Detalii profil
+  'on': 'true'
+  save_as: Salvare ca
+  currency_label: 'Monedă :'
+  plain_on: Pe
+  user_notifications:
+    notification_preferences: Preferințe de notificare
+    enable_desktop_notifications_help: Vă rugăm să faceți clic pe „Permite” atunci când vi se solicită
+    mark_all_as_read: Marcare toate ca citite
+    header: Notificări
+    preferences: Preferințe
+  ticket_templates:
+    create_new: Creați unul nou
+  in: în
+  help_widget:
+    form_title: Contactaţi-ne
+    form_button_text: Trimite feedback
+    form_submit_message: Multumim pentru feedback-ul dvs.
+    button_text: Ajutor
+    welcome_message: Vă putem ajuta?
+    predictive_message: >-
+      Am observat că v-ați blocat. Spuneți-ne ce ați încercat să realizați și
+      echipa noastră de asistență vă va contacta cât mai curând posibil.
+    success_message: Mulțumim. Vom tine legătura!

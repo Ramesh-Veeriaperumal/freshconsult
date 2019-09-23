@@ -11,7 +11,7 @@ ja-JP:
     customers_placeholder: ''
     raised_by: チケット作成者：
     everyone_in_company: '%{company_name}の全員'
-    company: 会社
+    company: 会社名
     all_companies: すべての会社
     everyone: 全員
     copy_of: コピー元：
@@ -32,6 +32,7 @@ ja-JP:
       agent_responded_at: エージェントの対応
       asc: 上昇中
       desc: 下降中
+      recently_active: 最近アクティブ
   date:
     ago: 前
     from: 今から
@@ -174,7 +175,7 @@ ja-JP:
   failure: エラー…
   amount: 量
   paid_with: によって支払い
-  date_title: 月日
+  date_title: 日付
   status: ステータス
   sales: セールス
   preview: プレビュー
@@ -356,6 +357,11 @@ ja-JP:
       custom_url: は無効なURL です
       custom_date: は無効な日付です
     phone_number: 電話番号
+    industry: 業種
+    last_name: 姓
+    first_name: 名
+    company_name: 会社名
+    job_title: 役職
   custom_fields:
     insert_field: ドラッグ＆ドロップ フィールド
     drag_drop_field_intro: '下の「%{name}」フォームにフィールド タイプをドラッグ＆ドロップして、新しいフィールドを追加します。'
@@ -371,7 +377,7 @@ ja-JP:
     url: URL
     date: 日付
     delete: 削除
-    regex: Regex
+    regex: 正規表現
     email: メール
     nested_field: 依存フィールド
     drag_and_drop_field: ドラッグ＆ドロップ フィールド
@@ -390,7 +396,10 @@ ja-JP:
       ticket_type: 種類
       created_at: 作成済み
       tags: タグ
-      company: 会社
+      company: 会社名
+      internal_group: 内部グループ
+      internal_agent: 内部エージェント
+      skill: スキル
     saving_ticket: チケットフィールドを保存中・・・
     untitled: 無題
     properties: プロパティ
@@ -494,6 +503,7 @@ ja-JP:
       sectino_label: セクションタイトル
       section_type_is: タイプが次のときにセクションを表示
       section_name_unique: セクション名はすでに使用されています
+      add_section: セクションを追加する
   folder:
     edit: フォルダーを編集する
     delete: フォルダの削除
@@ -524,7 +534,7 @@ ja-JP:
   feedbackwidget_custom_image_info: カスタムイメージを使用する場合、カラーやテキストに関する設定は適用されません。
   account_admin_updated: アカウント管理が更新されました！
   forums_order:
-    overview: オーバービュー
+    overview: 概要
     recent: 最近
     popular: 人気
     planned: 計画済み
@@ -584,6 +594,8 @@ ja-JP:
       email: あなたのメールアドレス*
       comments: コメント
       send_feedback: フィードバックを送信
+      related_files: 関連ファイル
+      was_this_article_useful: この記事は役に立ちましたか？
     surveys:
       thanks_for_feedback: フィードバックを受信しました。誠にありがとうございます。
       feedback_already_done: この返信に対するフィードバックを既に提出済みです
@@ -610,6 +622,9 @@ ja-JP:
     canned_form:
       next: 次
       form_submit: 提出する
+      okay: OK
+      hey: こんにちは！
+      thank_you_text: ありがとうございます
   gamification:
     levels:
       beginner: ビギナー
@@ -788,7 +803,7 @@ ja-JP:
           new_account: 新しいアカウント
           new_stream: 新規ストリーム
         twitter_streams:
-          reauthorize: 再認可
+          reauthorize: 再認証
           edit: 編集
         stream_delete_alert: このTwitterストリームを削除してよろしいですか？
         last_stream_delete_alert: >-
@@ -1042,6 +1057,7 @@ ja-JP:
           例えば、アルファベットと数字のみを含む文字列と一致させるには<b> /^[a-zA-Z0-9]*$/ </b>
           を使用します。「fresh」という単語で始まる文字列と一致させるには<b>%{regex} </b> を使用します。
         max_choices: アイテムの最大数に達しました
+        mapped_internal_groups: マッピングされた内部グループ
     portal:
       delete_confirm:
         title: このポータルを削除すると次を取り除きます
@@ -1088,6 +1104,7 @@ ja-JP:
         moderate_all_help: コミュニティで作成されるすべての投稿を厳しく制限したい場合はこの機能を有効にしてください。
         moderate_none: モデレートしない
         moderate_none_help: コミュニティがスパマーを引きつけないという確信がある場合はこの機能を有効にしてください。
+        reset_portal_changes: ポータルの変更をリセットする
       helpnote:
         title: ポータルの設定
         tour: ポータルを設定するためのヘルプが必要です
@@ -1098,6 +1115,13 @@ ja-JP:
           さらに、ロゴやファビコンをアップロードしたり、ヘルプデスクに名前を付けたり、ポータルの色をカスタマイズしたりしてヘルプデスクの外観や感じをリブランドできます。
         info4: >-
           ユーザー権限の設定やフォーラムのモデレーションの設定を調整する場合は、設定タブをクリックします。設定はポータルごとに行うことはできません。作成したすべてのポータルで共通になります。
+        exit_fullscreen: 全画面を終了
+        editor_shortcuts: ショートカットエディタ
+        preview_changes: 変更プレビュー
+        editor_in_fullscreen: 全画面エディタ
+        level_customizations: ページごとのカスタマイズ
+        advanced_rebranding: 高度なリブランディング＆カスタマイズ
+        custom_stylesheets: カスタムスタイルシートの使用
     hotline:
       heading1: MobiHelpユーザーのためにHotline登場
       content1:
@@ -1423,6 +1447,8 @@ ja-JP:
         result_exist_msg: すでにこのアンケートで回答を収集したので、ポイントスケールと質問の数を変えることはできません。しかし、質問と回答を編集することはできます。
         result_exist_msg_v2: >-
           このアンケートに対する回答はすでに回収されているため、ポイントスケールと質問番号を変更することはできません。ただし、質問と回答選択肢を書き換えることは可能です。
+        bad_to_good: 悪い→良い
+        good_to_bad: 良い→悪い
       new_rating:
         content_text: >-
           この質問は、エージェントによって提供される回答の全体的な満足度を評価するのに役立ちます。顧客に送付した電子メールの下部にある署名の下に表示されます。この質問についての回答を収集すると、スケールを変更することはできません。
@@ -1677,6 +1703,8 @@ ja-JP:
         agent: エージェント
         email: メール
         all: すべて
+        date: 日付
+        filtered_by: 次のアイテムでフィルタ：
     widget_config:
       errors:
         invalid_requester: 無効なリクエスター
@@ -1726,17 +1754,19 @@ ja-JP:
         feedbackwidget_form_submit_message: フォーム送信メッセージ
         feedbackwidget_form_height: フォーム高さ
         feedbackwidget_form_height_message: ウィジェット内でスクロールバーが表示される場合、ウィジェットの高さを調節してください。
-        feedbackwidget_px: px
-        thankyou_default: フィードバックをありがとうございます
+        feedbackwidget_px: PX
+        thankyou_default: フィードバックありがとうございます
         thankyou_info: ユーザーがチケットフォームを送信した後に表示されるメッセージ
         feedbackwidget_users_can: フォームオプション
         feedbackwidget_attach_a_file: ファイルを添付
         feedbackwidget_screenshot: スクリーンショットを撮る
         feedbackwidget_screenr_recording: Screenr録画
-        feedbackwidget_search_area: アーティクルの検索
+        feedbackwidget_search_area: アーティクルを検索する
         feedbackwidget_use_https: HTTPSを使用する
         feedbackwidget_mobile_view: モバイルビューを有効にする
         feedbackwidget_use_captcha: CAPTCHAを有効にする
+        feedbackwidget_submit_title: フィードバックを送信
+        feedbackwidget_offset: 'オフセット:'
       embedded_widget:
         feedbackwidget_height_placeholder: 500
         feedbackwidget_form_customization: フォームのカスタマイズ
@@ -1746,14 +1776,15 @@ ja-JP:
         feedbackwidget_form_submit_message: フォーム送信メッセージ
         feedbackwidget_form_height: フォーム高さ
         feedbackwidget_form_height_message: ウィジェット内でスクロールバーが表示される場合、ウィジェットの高さを調節してください。
-        feedbackwidget_px: px
-        thankyou_default: フィードバックをありがとうございます
+        feedbackwidget_px: PX
+        thankyou_default: フィードバックありがとうございます
         thankyou_info: ユーザーがチケットフォームを送信した後に表示されるメッセージ
         feedbackwidget_users_can: フォームオプション
         feedbackwidget_attach_a_file: ファイルを添付
-        feedbackwidget_search_area: アーティクルの検索
+        feedbackwidget_search_area: アーティクルを検索する
         feedbackwidget_use_https: HTTPSを使用する
         feedbackwidget_use_captcha: CAPTCHAを有効にする
+        feedbackwidget_submit_title: フィードバックを送信
     supervisor_rules:
       new_info_help: 30日以内に更新された<b>各チケット</b>に対して、一致するすべてのルールを実行します。
       index:
@@ -1828,6 +1859,9 @@ ja-JP:
         checked: はチェックされています
         unchecked: はチェックされていません
         deselected: 選択解除されました
+      new_performed_by: 次の人物がアクションを行った場合：
+      anyone: 全員
+      system: システム
     va_rules:
       webhook:
         custom_headers_limit_error: '%{limit}を超えるカスタムヘッダーを設定できます'
@@ -1872,7 +1906,7 @@ ja-JP:
         username: ユーザー名
         api_key: APIキー
         password: パスワード
-        insert_placeholder: プレースホルダーを挿入する
+        insert_placeholder: プレースホルダを挿入
         subject: サブジェクト
         body: ボディー
         to: へ
@@ -1963,6 +1997,7 @@ ja-JP:
         password_policy_info3: >-
           パスワードポリシーの変更は8時間有効です。エージェントはこの時間内にパスワードを更新する必要があります。変更しない場合は、サポートポータルからログアウトされ、次回のログイン時にパスワードを変更する必要があります。
         password_policy_info4: アカウントのパスワードポリシー(既定または詳細)を有効にすると、無効にすることができません。
+        saml_cert_fingerprint_info_sha256: SAMLプロバイダから与えられるSAML認証の指紋(SHA256) です。これは暗号化/認証のために使用されます
       helpnote:
         title: セキュリティ設定
         info1: >-
@@ -2056,6 +2091,7 @@ ja-JP:
         categories_visible: ポータルカテゴリー
         product_label: '製品: %{product_name}'
         enable_multilingual: 多言語サポートをセットアップ
+        agent_portal: エージェントポータル
       edit:
         title: プロダクトを編集する
         updating: 更新中・・・
@@ -2139,6 +2175,8 @@ ja-JP:
         customers: カスタマー
         reports: 報告
         administration: アドミニストレーション
+        general: 一般
+        bots: ボット
       permissions: 許可
       helpcard:
         title1: 役割について
@@ -2251,6 +2289,7 @@ ja-JP:
         mobihelp: MobiHelp
         customer-portal: カスタマーポータル
         portals: ポータル
+        search_admin: 管理者設定を検索する
       keywords:
         forum_moderation: フォーラムモデレーション
         configure_support_email: サポートメールをコンフィギュア
@@ -2362,10 +2401,17 @@ ja-JP:
         agents_label: エージェント
         agents: エージェント
         description: 説明
+        skills: スキル
+        add_agents: エージェントを追加
+        skill_create: 作成
+        manage_label: 管理
+        add_label: 追加
+        no_agent_label: エージェントなし
     user_skills:
       index:
         more: その他
         groups: グループ
+        any: すべて
   ends_with: で終わる
   last_name: 名字
   forum:
@@ -3279,7 +3325,7 @@ ja-JP:
       contact_first_name: 名
       contact_last_name: 氏
       contact_email: メール
-      contact_phone: 電話
+      contact_phone: 電話番号
       invoice_email_info: インボイス送付先
       invoice_emails: メール
       restore_account: >-
@@ -3310,6 +3356,18 @@ ja-JP:
           info1: >-
             ナレッジベースの記事が他の言語に翻訳されて利用可能になったら、切り替えボタン（ポータルで非表示／ポータルで表示）をクリックしてその言語を顧客に公開することができます。<br
             /><br />
+    edit_domain:
+      email_error: 会社名は3文字以上で入力してください
+      getting_started: はじめに
+      url_error1: 'ドメイン<strong>%{domain_name}</strong>はご利用いただけません。'
+    new:
+      full_name: 氏名
+      company: 会社名
+      confirmation: 確認
+      create_an_account: アカウントを作成
+    signup_google:
+      sign_up: サインアップ!
+      privacy_policy: プライバシーポリシー
   success_msg: アカウント設定が正常に更新されました！
   failure_msg: アカウント設定の更新に失敗しました！
   account_configuration:
@@ -3943,6 +4001,11 @@ ja-JP:
       day: １日
       twoday: 2日
       threeday: 3日
+    maximum: 最大
+    toggle_availability_message: 管理者とスーパーバイザーは、ダッシュボードからエージェントの対応可否を上書きできます
+    round_robin_defalut: ラウンドロビンチケット割り当て
+    round_robin_capping: ロードバランスチケット割り当て
+    no_group_info: グループをまだ作成していません。
   four: 4時間
   oneweek: １週間
   twoweek: 2週間
@@ -4072,6 +4135,8 @@ ja-JP:
     password_reset_note: '注意：手順が掲載されたリセットメールが%{requester}に送信されます'
     member: のメンバー
     more: その他
+    insert_placeholder: プレースホルダを挿入
+    skill: スキル
   account_admin: アカウント管理
   right: 正しい
   footer:
@@ -4559,6 +4624,11 @@ ja-JP:
       add_people_title: 会話に人々を追加
       reopen_reply: 返信
       related_articles: 関連したアーティクル
+    agent_login_info: あなたはエージェントですか？
+    agent_signin: ここからログイン
+    agent_login_details: 詳細を下に入力してください
+    vote_label:
+      other: stemmer
   feedbackwidget_form_heading: ヘディングから
   feedbackwidget_form_title: ウィジェットフォーム題名
   cancel_and_back: キャンセルして戻る
@@ -4724,7 +4794,7 @@ ja-JP:
       draft: 'kbase@%{domain_name}に送信された全てのメールがここで下書きとして保存されます'
     articles:
       enter_version_name: '%{language_name}に記事タイトルを入力'
-      search_all: アーティクルを検索
+      search_all: アーティクルを検索する
       search_in: '%{search_scope}で検索'
       type: アーティクルの種類
       prop_tabs:
@@ -5030,6 +5100,10 @@ ja-JP:
     linked_paren_child_desc: リンクされたチケット、階層的チケットワークフロー
     scheduled_reports_desc: スケジュールされたレポーティング
     custom_survey_desc: カスタマイズされた満足度アンケート
+    skill_based_assignment_desc: スキルベースの割り当て
+    bot: ボット
+    skill_based_assignment: スキルベースの割り当て
+    freshchat: Freshchat統合
   zendesk_account: Zendeskアカウント詳細
   zendesk_import_files: 何をインポートするか選択？
   file_url: フルXMLエクスポートURL
@@ -5288,6 +5362,8 @@ ja-JP:
         info1: >-
           エージェントのチケット返信に追加したいデフォルト情報は、返信テンプレートを使用してカスタマイズしたり、予め入力することができます。エージェント返信テンプレートを使用すると、リクエスタ名、チケットURL、エージェントの署名などのダイナミックコンテンツを自動で追加することができます。<br/><br/>ヘルプデスクでサポート言語を複数設定した場合、各言語に特化した通知を作成することができます。<i
           class="common-icon-outdated"></i>アイコンは通知のその他の言語での翻訳は古くなっている可能性があることを示します。
+      agent_template_25:
+        topic: エージェント招待メール
     insert_placeholder: イベントプレースホルダー
     modify_agent_template: エージェントメールテンプレートを変更する
     event: イベント
@@ -5418,7 +5494,7 @@ ja-JP:
     secondary_supp_email_tool_tip: 主なメールにする
     remove_msg: 本当にこのメールを削除しますか？
     mark_as_primary_msg: これを主なサポートメールに設定しますか？
-    bcc_text: Bcc
+    bcc_text: BCC
     add_bcc_text: Bccを追加する
     set_bcc_email_text: Bccメールを自動化する
     name_info_msg: チケット返信に使用されるメールの名前
@@ -5445,6 +5521,14 @@ ja-JP:
       remove: 削除する
       unverified: 未認証
       type: 種類
+      last_verified: 最終検証時
+      config: コンフィギュア
+      data_help: DNSレコードに割り当てられる値
+      cname: CNAME
+      verify: 検証
+      host_value_help: TXTレコードのホスト名
+      data: データ
+    plain_unverified: 未認証 -
   step2: ステップ２
   import_users_contacts: ユーザー &rarr; 連絡先
   linkback_info: カスタマーがヘッダーロゴをクリックした時に自分のホームページにリンクバックするよう設定することもできます。
@@ -5823,6 +5907,8 @@ ja-JP:
       in_progress_text_you: 開始した一括更新は既に実行中です。
       bulk_action_submit_label: 確認して更新
     cannot_preview_attachment: プレビューは利用できません。
+    search_text: アーティクルを検索する
+    thanks_v1: フィードバックありがとうございます
   archive_ticket:
     title: アーカイブされたチケット
     no_reply_msg: このチケットはアーカイブされました。
@@ -5984,7 +6070,7 @@ ja-JP:
     last_published: 'ポータルが最後にパブリッシュされたのは%{last_published}前です'
     visible_in_portal: ポータルに表示
     hidden_on_portal: ポータルに非表示
-    anyone: 誰でも
+    anyone: 全員
     users_from_domains: 選択されたドメインのユーザー
     search_domain: ドメインを検索
     company_domain: 会社のドメイン
@@ -6002,6 +6088,10 @@ ja-JP:
     forums_toggle:
       title: フォーラム
     gdpr_to: まで
+    gdpr_terms_link: 利用条件
+    gdpr_admin: 管理者.
+    gdpr_policy: プライバシーポリシー.
+    gdpr_acknowledgement: よく読み、理解しました
   lead: リード
   comments: コメント
   forum_confirm_msg1: 本当にこのカテゴリーを削除しますか？
@@ -6220,6 +6310,9 @@ ja-JP:
       history:
         recent_item: 新しいアイテム
       update: 更新
+      do_not_link: リンクしない
+      view_in_detail: 詳細を表示する
+      ok: OK
     realtime_dashboard:
       view_all: すべて表示
       ticket: チケット
@@ -6394,6 +6487,7 @@ ja-JP:
           addbcc: BCCを追加
           removebcc: BCCを削除
           not_sent: 返信されませんでした！
+          to: '宛先:'
         forward_form:
           cc: CC
           addcc: CCを追加
@@ -6487,6 +6581,8 @@ ja-JP:
         my_article_feedback: マイアーティクルフィードバック
         archived: アーカイブ
         invalid_requester: 無効なリクエスター
+        shared_by_me: 自分が共有したチケット
+        shared_with_me: 自分と共有されているチケット
       note:
         posted_on: '%{note_date}の%{user_name}'
         created_on:
@@ -6643,6 +6739,8 @@ ja-JP:
     events_empty: イベントは空にできません
     conditions_empty: 条件を空欄にすることはできません
     actions_empty: アクションを空欄にすることはできません
+    invalid_domain:
+      freshdesk: Freshdesk
   export_data:
     in_sla: SLA内
     out_of_sla: SLAが違反されました
@@ -6820,6 +6918,8 @@ ja-JP:
         flash_card_html: ソーシャルの最新情報は？
         flash_card_text: ソーシャル タブについて
         tickets: チケット
+        post: ' 投稿 '
+        interactions: インタラクション
       index:
         all: すべて
       search_btn: 検索
@@ -6892,7 +6992,7 @@ ja-JP:
         show_more_results: 検索結果をさらに表示
         search_twitter: Twitterを検索
         title: Twitterアカウント
-        reauthorize: 再認可
+        reauthorize: 再認証
         reauth_required: 再認可が必要です
         handle_auth_error: あなたのTwitterハンドル名のひとつが認証を必要としています。このためオペレーションを実行できませんでした。
         rate_limit_reached: Twitterのレート制限に達しました。しばらくしてからチェックしてください
@@ -6973,6 +7073,7 @@ ja-JP:
       update: 更新
       delete: 削除
       write_feedback: フィードバックの入力
+    connect: 接続
   home:
     mobile_index:
       email: メール
@@ -7074,6 +7175,32 @@ ja-JP:
       submit: 送信
       submitting: 送信しています...
     cancel: キャンセル
+    share_app: このアプリを共有する
+    view_all: すべて表示
+    view_more: さらに表示
+    installation: インストール
+    all_apps: 全てのアプリ
+    tooltip:
+      suspended: 利用不可
+    third_party_apps_policy: >-
+      このアプリはFreshworks Inc.
+      ではなく第三者によって所有・開発・運用・管理されています。このアプリをダウンロード・統合・使用することで、あなたは自身のデータ処理を含む、開発者規約とプライバシーポリシーに従うことを理解します。
+    error_calling_method: '次の通話方法の実行中にエラーが発生しました： '
+    no_search_results: お探しのものが見つかりませんでした。別のキーワードをお試しください。
+    validation_failed: 認証に失敗しました.
+    no_custom_apps_installed: インストール済みのカスタムアプリはありません
+    paid_app: 支払い済み
+    popular_apps: 人気アプリ
+    overview: 概要
+    latest_apps: 最新のアプリ
+    popular: 人気
+    policy_on_custom_apps: カスタムアプリの方針
+    no_custom_apps_note_2: 「カスタムアプリを取得」をクリックしてアプリの閲覧とインストールを行う。
+    reauthorize: 再認証
+    custom_app_gallery: カスタムアプリギャラリー
+    policy_on_tp_apps: 外部アプリの方針
+    latest: 最新
+    no_custom_apps_note: カスタムアプリを作成し、開発者ポータルで公開する。
   integrations:
     native_integrations: ネイティブインテグレーション
     freshplugs_title: FreshPlug
@@ -7189,7 +7316,7 @@ ja-JP:
       form:
         freshbooks_note: メモテキスト
         freshbooks_note_info: このテキストはメモの最後に、使用された時間のログと共に付け加えられます。
-        api_url: API URL
+        api_url: APIのURL
         api_url_info: >-
           httpsも含めたAPI
           URLを入力してください。例）https://example.freshbooks.com/api/2.1/xml-in
@@ -7378,7 +7505,7 @@ ja-JP:
       import_complete: 一度限りのインポートが完了しました。
       not_yet_synced: 同期は開始されていません
       syncing_in_progress: 同期中
-      no_status: N/A
+      no_status: 該当なし
       info1: >-
         複数のGoogleアカウントにわたって同じ同期タグを使用すると、全てのアカウントをFershdesk連絡先と共有するようにできます。もしGoogleと同期したい連絡先がない場合は、空欄にしてください。
       sync_group_info: '新しい連絡先グループ<strong>%{group_name}</strong>が、連絡先を同期するためにGmailアカウント内に作成されます。'
@@ -7718,6 +7845,12 @@ ja-JP:
         shop_name_info: >-
           例えば、あなたのShopify
           URLが<strong>https://my_shop_name.shopify.com</strong>の場合、<strong>my_shop_name</strong>と入力します。
+        shop_name_info_mint: >-
+          例えば、あなたのShopify
+          URLが<strong>https://my_shop_name.shopify.com</strong>の場合、<strong>my_shop_name</strong>と入力します。
+        shop_name_mint: ショップ名
+      edit:
+        disconnect: 接続解除
     magento:
       label: Magento
       desc: チケット解決中にFreshdeskでカスタマーの最近のオーダーやオーダー詳細を表示
@@ -7859,7 +7992,8 @@ ja-JP:
         widget_title: ウィジェット名
         widget_script: ウィジェットコードの一部
         create_n_enable: 作成して有効にする
-        insert_placeholder: プレースホルダーを挿入する
+        insert_placeholder: プレースホルダを挿入
+      get_custom_apps: カスタムアプリを取得する
     logmein:
       label: LogMeIn Rescue
       desc: LogMein Rescueを使用して、カスタマーや従業員に遠隔サポートを早急に提供する
@@ -7932,7 +8066,7 @@ ja-JP:
         app_id: アプリケーションID
         username: iContactユーザー名
         api_password: APIパスワード
-        api_url: API URL
+        api_url: APIのURL
         api_url_info: >-
           API
           URLを取得するには、https://app.icontact.com/icp/core/externalloginへ移動し「アカウント情報」セクションからAPI
@@ -8115,18 +8249,43 @@ ja-JP:
         username: ユーザー名
         password: パスワード
         dynamics_v2_info: ウェブフックの使用法＞
+        opportunity_settings: エージェントはチケットからオポチュニティを作成／リンクまたはリンク解除できます
     applications:
       crm:
         mapping:
           contact: 連絡先
+          company: 会社名
+          contact_fields: ' 連絡先フィールド '
+          account_fields: ' アカウントフィールド '
     screen_pop:
       widget:
         cancel: キャンセル
         subject: サブジェクト
+        view_all: すべて表示
+        requester: リクエスター名
+        do_not_link: リンクしない
+        link_to_ticket: このチケットへリンクする
+        call_actions: 通話アクション
+        new_ticket_with_id: IDと一緒に作成された新規チケット
+        link_to_new_ticket: 新規チケットへリンクする
+        add_note_to_ticket: チケットにメモを追加する
+        agent_phone_details: エージェントの電話詳細
+        add_note_text: 通話メモ
+        agent_phone_updated: エージェントの電話詳細を更新しました
+        recent_tickets: 最近のチケット
+        create: 作成
+        ticket_reference_id: 通話参照ID
     cti_admin:
       phone:
         save: 保存
         cancel: キャンセル
+        add_number: 番号を追加する
+        number_not_in_use: 未使用
+        add_number_tooltip: 各行に入力できる番号は１つだけです
+        title: ヘルプデスク番号
+        delete_number: 確定してください
+        delete_msg: この番号を削除してよろしいですか？
+        number_in_use: 使用中の番号
       ctd:
         api_key: APIキー
         callback_url: コールバックURL
@@ -8137,9 +8296,20 @@ ja-JP:
         content: コンテンツ
         password: パスワード
         have_user_pass: 私にはユーザー名＆パスワードがありますか？
+        req_authentication: 認証が必要です
+      save_agent_private_note: 通話メモをプライベートとして保存する
+      ctd_toggle: Click to Dial構成
+      softfone:
+        max_dimension: 最大 550 px &times; 250 px
+        width: 幅
+        height: 高さ
+        url: インラインフレームURL
+      title: CTI設定
+      iframe_toggle: ソフトフォンインラインフレームを有効化する
     salesforce_v2:
       form:
         salesforce_v2_settings_info: ウェブフックの使用法＞
+        salesforce_v2_settings: Salesforce設定
     outlook_contacts:
       form:
         mail_box_detail: 〜と同期
@@ -8161,6 +8331,21 @@ ja-JP:
         lead: リードフィールド
         account: アカウントフィールド
         opportunity: オポチュニティフィールド
+        daily: 日次
+        field_mapping: フィールドマッピング
+        opportunity_settings: エージェントはチケットからオポチュニティを作成／リンクまたはリンク解除できます
+        hourly: 毎時
+        contact: 連絡先フィールド
+    google_drive:
+      form:
+        developer_key: Google開発者コンソールから取得したAPIキー。
+        client_id: あなたのドメイン用OAuthクライアントID
+    microsoft_teams:
+      auth_btn: 認証
+    slack_v3:
+      slack_prof_label: Slackに接続する
+      slack_connect_desc: SlackからSkackチケットを作成するために自身のアカウントを構成する
+      slack_auth_btn: Slack認証
   widgets:
     contact_widget:
       description: カプセルに連絡先を追加するには、連絡先またはオプションを表示してください
@@ -8173,6 +8358,7 @@ ja-JP:
         feedback_widgets_help_articles: あるいはヘルプアーティクルをブラウズ
         show_all_results: すべての結果を表示
         no_results: '次の項目の結果はありません: '
+        problems_with_fields: 次の項目で問題が発生しました：
   reorder: 再注文する
   reports:
     no_data: 表示するデータがありません！
@@ -8309,7 +8495,7 @@ ja-JP:
         survey_name: アンケート名
         group: グループ
         agent: エージェント
-        overview: オーバービュー
+        overview: 概要
         responses: 回答
         response_to: 次への回答
         rating: 評価
@@ -8416,6 +8602,7 @@ ja-JP:
       agent_chat_summary: エージェントチャット概要
       agent: エージェント
       deleted: 削除されました
+    discard_changes: 変更を破棄
   delete_the_ticket: チケットを削除する
   mark_as_spam: スパムとしてマークする
   bulk_actions: バルク・アクション
@@ -8466,6 +8653,9 @@ ja-JP:
         href='https://support.freshdesk.com/support/solutions/articles/210807'>ダイナミックフィールドの詳細はこちら</a>。
       info4_v2: >-
         Estateプラン以上のお客様はダイナミックフィールドを利用できます。これはタイプフィールドで選択したオプションに基づいて表示され、タイプフィールドのすべてのオプションに対して異なるセクションを作成できます。その後各セクションにさらにチケットフィールドを追加可能です。例えばEコマースシナリオでタイプが「交換」になっている場合、「理由」という名のフィールドを持つセクションが開き、製品の交換が必要な理由を収集します。
+      info4_v3: >-
+        Estateを含む上位プランをご利用の場合、ドロップダウンフィールドで選択したオプションに基づいて動的フィールドを含むセクションをご利用頂けます。各セクションへチケットフィールドを追加し、ドロップダウンフィールドでセクションにオプション付きのセクションを関連付けることができます。例えばEコマース店舗を運営している場合、顧客が「交換」オプションを選択した際に「理由」というフィールドでセクションを開くようにできます。こうすることで顧客がなぜ代替品を発行したいのかをよりよく理解することが可能です。最大で２つの動的セクションを作成し、それらを２つのカスタムドロップダウンで使用可能です。既にセクションを
+        「タイプ」フィールドに関連付けている場合は、チケットフォームにもう1つセクションを追加することができます。
   contact_field:
     helpcard:
       title2: 連絡先フィールドのカスタマイズ
@@ -8531,6 +8721,7 @@ ja-JP:
       relevance: 適合性
       created_at: 作成日
       updated_at: 最終変更時
+    searching: 検索中
   assumed_identity_msg: '%{user_name}としてのアイデンティティになりすましました。'
   unauthorized_msg: 承認に失敗しました！
   assuming_identity_user_does_not_exist_msg: なりすまそうとしたユーザーは存在しません。
@@ -8787,6 +8978,7 @@ ja-JP:
       css_responsive: モバイルフレンドリーなスタイルシートを含める
       css_responsive_help: >-
         これは、デフォルトテーマをモバイルフレンドリーにし、携帯やタブレット向けに最適化します。すべてのデバイスに通じて一貫性のあるレスポンシブでないテーマを使用したい場合は、この設定をオフにすることもできます。
+    apply_mint: 適用
   any_time: いつでも
   five_minutes: 5分以内
   fifteen_minutes: 15分以内
@@ -8821,7 +9013,7 @@ ja-JP:
   showing: 表示中
   Email: メール
   Portal: ポータル
-  Phone: 電話
+  Phone: 電話番号
   Forum: フォーラム
   Twitter: Twitter
   Facebook: Facebook
@@ -8956,6 +9148,9 @@ ja-JP:
         subject: サブジェクト
         desc: 説明
         'on': オン
+        monthly: 月額
+        daily: 日次
+        weekly: 週次
       errors:
         emails_limit: '最大%{num}件の電子メールを追加できます'
         invalid_email: 無効な電子メール
@@ -9185,6 +9380,9 @@ ja-JP:
         subtitle: どの曜日のどの時間にチケット数が最も多くなり、スタッフに適切に割り当てているか表示します
       resolved_tickets: 解消されたチケット
       received_tickets: 受け付けたチケット
+      load_analysis:
+        title: ロード分析
+      unresolved_tickets: 未解決のチケット
     glance:
       index_title: ヘルプデスク<br/>全体像
       title: ヘルプデスク全体像
@@ -9248,16 +9446,39 @@ ja-JP:
       index:
         cancel: キャンセル
         confirm: 確定
+        delete_title: スケジュールを削除する
+        delete_text: このスケジュールを削除してよろしいですか？
       new:
         ticket_fields_title: チケットフィールド
         email: メール
         select_all: 全て選択
         description: 説明
+        helpnote:
+          api_info1: APIには最後のエクスポート内容へのリンクが含まれます。
+        contact_fields_title: 連絡先フィールド
+        one_time_export_label: このスケジュールが始まる月の初めからチケットの内容をエクスポートする。
+        company_fields_title: 会社フィールド
+        frequency: スケジュール
+      schedule_export: エクスポートをスケジュール
+      schedule: スケジュール
+      all_reports: すべての報告
+      new_schedule: 新しいスケジュール
     timespent_export:
       button_export: エクスポート
+      export_csv: CSVエクスポート
     ticket_activity:
       learn_more: 詳細を見る
+      helpnote:
+        api_info1: APIには最後のエクスポート内容へのリンクが含まれます。
+      edit: スケジュール編集
     change: 変更
+    insights:
+      customize_link: カスタマイズ
+    year_in_review:
+      title: 今年のまとめ
+    show: 表示：
+    filtered_by: 次のアイテムでフィルタ：
+    at: で
   adv_reports:
     deprecated_message: （クラシック報告表示リンクは2016年3月18日金曜日から利用できなくなります）
     deprecated_header: この報告は2016年3月18日金曜日から利用できなくなります
@@ -9450,6 +9671,7 @@ ja-JP:
       see_detailed_pricing: 料金の詳細を見る
       followup: 電話クレジットに相当
       followup_text: 電話クレジットに相当
+      purchase_credits: クレジットの購入
     dialpad:
       not_valid_number: 有効な数字を入力してください
       could_be_invalid_number: 無効な番号でも結構です。
@@ -9726,7 +9948,7 @@ ja-JP:
       settings: 設定
       greetings: こんにちは
       messages: メッセージ
-      freshfone_numbers_title: 電話
+      freshfone_numbers_title: 電話番号
       suspended_alert: >-
         <b>重要</b>電話チャンネルを無効にしても、あなたの番号に請求される月々のレンタル料金は回避できません。料金の請求を回避するには、購入した番号を削除してください。
       purchase_credit_text: 番号を購入し、電話チャンネルを使用して電話を発信および受信するためにクレジットを購入してください。
@@ -9958,9 +10180,9 @@ ja-JP:
         seed_menu_name: ウェルカム/スタートメニュ
         invalid_number_format: +から始まる国番号がついた有効な電話番号を入力してください
       welcome_page:
-        title_text: 電話
+        title_text: 電話番号
       feature_request_content:
-        title_text: 電話
+        title_text: 電話番号
         heading_text: 電話チャンネルを使用してカスタマーをサポートしてください
         trial_description: >-
           電話チャンネルを利用すると、ブラウザ、携帯電話またはFreshdeskモバイルアプリの電話チャンネルを使って発信および着信を行うことができます。Freshdeskのチケットシステムと緊密に統合されているため、通話を録音して必要ならいつでもチケットに変換することで、通話をしっかりと記録することができます。
@@ -10291,6 +10513,7 @@ ja-JP:
     reported: 報告済み
     view_ticket: チケットを表示
     agent_parallel_accept_error: すでにチャットを開始しています。数秒間おいて再試行してください。
+    chat_with_us: お問い合わせ
   freshchat:
     feature_request:
       title: ライブチャットへようこそ
@@ -10615,6 +10838,13 @@ ja-JP:
     admin:
       save: 保存
       cancel: キャンセル
+      sidebar_title: Freshchat
+      action:
+        success_message: 設定を更新しました
+      admin_apikey: 'APIキー:'
+      title_text: Freshchat
+      portal_url: 'ポータルURLリンク:'
+      app_id: アプリID
   facebook_tab:
     remove_tab: ページタブを除去
     tab_not_removed: タブを除去できませんでした
@@ -10974,6 +11204,9 @@ ja-JP:
         %{username} さんにより<span
         class='emphasize'>%{time_ago}前</span>に%{forum}（%{category}）<br />で
       title_placeholder: 結合するトピックを検索
+    general:
+      unsaved_content: このページに保存されていないコンテンツがあります。
+      leave_page_que: このページから離れますか？
   link_with_marketplace: Googleマーケットプレイスにリンク
   google_signup:
     associate_google:
@@ -11020,6 +11253,7 @@ ja-JP:
     search_articles: アーカイブを検索
     contact_us: お問い合わせ
     whats_new: 最新情報
+    load_more: さらに読み込む
   trial_plan_downgrade: '重要: あなたは今%{plan_from} プランから%{plan_to} プランへダウングレードしています'
   discounted_sum: 割引後
   selecting_plan: 選択しています...
@@ -11120,9 +11354,17 @@ ja-JP:
         email: メール
         continue: 続行
         password: パスワード
+        connect_existing_account: 既存のアカウントで接続する
+        account_url: FreshcallerアカウントURL
+      sidebar_title: 電話番号
+      title_text: 電話番号
+      feature_request_content:
+        create_new_account: 新規アカウントを作成
+      freshcaller_subtext: 番号の購入・順番待ち通話の設定・IVR(自動音声応答) 等
   multifile_attachments:
     remove: 削除する
     label: ファイルを添付する
+    mb: ' MB '
   admin_onboarding:
     modal:
       channels_frame:
@@ -11130,13 +11372,85 @@ ja-JP:
         forums_channel: フォーラム
         chat_channel: ライブチャット
         email_channel: メール
+        phone_channel: 電話番号
+        title: 顧客とどうやってやりとりしますか？
+        forward_link: チームを招待
       agents_frame:
         send_invite: 招待状を送る
         emails_invalid: 少なくとも１つのメールアドレスが無効です。
+        emails_placeholder: 'bruce@just.ly, diana@just.ly, clark@just.ly'
+      overview_frame:
+        forward_link: では始めましょう
+      welcome_frame:
+        title: Freshdeskへようこそ
     account_verification_message:
       helpnote_or: 又は
       modal_send_button: アクティベーションを送信
       cancel_button: キャンセル
+      modal_title: 正しくないメールアドレスで登録しましたか？
+      modal_invalid_email_error: 有効なメールアドレスを入力してください。
+      resend_message: アクティベーションを再送
+      change_email: メールアドレスを変更
   user_notifications:
     preferences: プリファレンス
+    notification_preferences: 通知設定
+    enable_desktop_notifications_help: メッセージが表示されたら「許可」をクリックしてください
+    mute: ミュート
+    mark_all_as_read: すべて既読にする
+    header: 通知
   in: 公開：
+  mailer_notifier:
+    hi: こんにちは、
+    thanks: よろしくお願いいたします。
+  copied_link: コピー完了
+  custom_mailbox_admin_email_notifications:
+    regards: 敬具
+    welcome_message: 管理者様
+  custom_mailbox_error_type:
+    unkown_error: 顧客のメールサーバーからメールを取得できません。support@freshdesk.com までご連絡下さい
+    ssl_errror: SSLエラー
+    server_response_invalid: サーバー接続時のサーバーへの応答が無効な形式です。
+    unable_to_connect: 受信箱のフォルダーへ接続できません。
+    tcp_connection: TCP接続が作成出来ません。
+    tcp_refused: 電子メールサーバーがTCP接続を拒否しました
+    mailbox_idle: 受信箱はアイドル機能をご利用頂けません。
+    unable_fetch_status: フォルダのステータスを取得できませんでした。
+    io_error: 入出力接続エラー。
+    mailbox_suspended: メールアドレスサーバーが停止されています
+    server_no_resp: サーバー接続中に電子メールサーバーが応答していません。
+    bye_response: サーバー接続中に電子メールサーバーが終了(BYE) の応答を送っています。
+    invalid_login: ログイン認証情報が無効です。
+    folder_unavailable: 受信箱でフォルダーはご利用頂けません。
+    tcp_socket: 電子メールサーバーへTCPソケット作成ができませんでした
+    email_bad_request: サーバー接続中に電子メールサーバーが無効(BAD) の応答を送っています。
+  imap_error: 電子メールサーバーにアクセスできません
+  activations:
+    activate_freshdesk_account: アカウントをアクティベート
+  cloud_log_mailer:
+    logger_email:
+      regards: 敬具、
+      account: 'アカウント: '
+      reason: 理由
+  helpcard:
+    title: 一意の外部ID
+  admin_upgrade:
+    enable_mint_title: エージェントが新しいMintを試すことを許可する
+    enable_mint_error: 既にすべてのエージェントに対してMintが有効になっています。更新して最新設定をご確認ください。
+  customize_domain:
+    email:
+      cheers: 'それでは,'
+      team: Freshdeskチーム
+  profiles:
+    freshid_edit:
+      profile_details: プロフィール詳細
+  'on': に
+  save_as: 名前を付けて保存
+  currency_label: '通貨 :'
+  help_widget:
+    form_title: お問い合わせ
+    form_button_text: フィードバックを送信
+    form_submit_message: フィードバックありがとうございます.
+    button_text: ヘルプ
+    welcome_message: お手伝いさせて下さい。
+    predictive_message: お困りのようですね。必要なことを教えてください、サポートチームよりすぐにご連絡致します。
+    success_message: ありがとうございます。間もなくご連絡致します！

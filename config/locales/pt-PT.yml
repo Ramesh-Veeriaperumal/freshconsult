@@ -30,7 +30,7 @@ pt-PT:
       O próximo ticket terá um ID que começará neste número (deverá ser maior do
       que o último ID criado). Esta acção afectará todos os tickets
       subsequentes.
-    name: Nome da Conta
+    name: Nome Conta
     page_colors:
       background: Fundo
       header: Cabeçalho
@@ -41,6 +41,26 @@ pt-PT:
     time_zone: Fuso Horário
     forums_toggle:
       title: Fóruns
+    us: MÊS-DIA-ANO
+    gdpr_terms_link: Termos
+    date_format: Formato de Data
+    gdpr_admin: Administrador.
+    settings: Definições
+    important: Importante
+    gdpr_policy: Política de Privacidade.
+    customize_portal: Recriação da marca no Helpdesk
+    helpdesk: Helpdesk
+    languages: Idiomas
+    gdpr_agent: Agente
+    non_us: DIA-MÊS-ANO
+    anyone: Qualquer Um
+    change_logo: Alterar logótipo
+    gdpr_acknowledgement: e confirma ter lido a nossa
+    gdpr_to: para
+    language: Idioma
+    helpdesk_name_plain: Nome do Helpdesk
+    primary_language: Idioma Principal
+    additional_languages: Idiomas suportados
   account_admin: Administração de conta
   account_admin_updated: A conta de administração foi actualizada!
   accounts:
@@ -73,6 +93,65 @@ pt-PT:
         Ao prosseguir, não irá ter mais acesso à sua informação. Tenha a certeza
         que isto é aquilo que realmente deseja. 
       you_must_confirm: Precisa de confirmar o cancelamento
+      deleting_account: Cancelando
+      you_must_select: Por favor selecione uma razão nesta lista
+      trial_warning_message: >-
+        A partir do momento em que cancele a sua conta, os seus clientes e
+        agentes não terão mais acesso ao seu portal de suporte. Garante que é
+        mesmo o que pretende fazer.
+      feedback:
+        support_followup: >-
+          Lamentamos. Como empresa que trabalha no ramo do suporte, não há nada
+          mais importante para nós do que providenciar-lhe uma experiência de
+          suporte extraordinária, de todas as vezes. Apenas podemos pedir-lhe
+          que nos dê outra chance de nos redimirmos.
+        else: Algo mais?
+        else_followup: Umas poucas linhas que nos expliquem o que sucedeu seria muito bom...
+        requirement_followup: >-
+          Adicionamos funcionalidades e melhoramentos novos ao Freshdesk
+          constantemente. Já experimentou sugerir a sua ideia nos nossos fóruns?
+          Ou, quem sabe, aquilo que pretende exatamente já estará na calha e
+          será disponibilizado em breve?
+
+          <a
+          href="https://support.freshdesk.com/support/discussions/forums/6">Navegue
+          pelo nosso Fórum</a>
+        budget_extra: >-
+          Gostaria porventura que aguentássemos esta conta por algum tempo, até
+          que consiga restabelecer o orçamento?
+        test-account: Estávamos só a usar esta conta para testes. Voltaremos
+        requirement_extra: >-
+          Deixe-nos umas linhas sobre aquilo que procura e daremos o nosso
+          melhor para fazer acontecer rapidamente
+        requirement: O Freshdesk não cumpre alguns dos meus requisitos
+        moving_extra: >-
+          Uma linha ou duas sobre o que o fez mudar iria ajudar-nos imenso a
+          construir para si um produto cada vez melhor
+        support: Não recebemos bom suporte
+        moving_followup: >-
+          Não gostamos nada de o ver ir embora. Foram as funcionalidades? Foi o
+          preço? Os malvados do marketing que não pararam de o azucrinar? Mas
+          pronto, se já decidiu por outro parceiro, só podemos esperar que volte
+          em breve.
+        moving: Vamos mudar para outro produto
+        support_extra: >-
+          Dê-nos alguns detalhes e iremos assegurar-nos de que o respetivo
+          representante de suporte será incentivado a melhorar. Um ID de ticket?
+          Uma referência de ocorrência?
+        budget: Já não tenho orçamento para este efeito
+        budget_followup: >-
+          Pode despromover a sua conta para um plano inferior do Freshdesk sem
+          afetar os seus tickets existentes. De facto, se o orçamento estiver
+          mesmo complicado, pode mover a sua conta para um plano Sprout com 3
+          agentes grátis para sempre.
+
+          <a href="http://www.freshdesk.com/free-support-software">Saiba mais
+          sobre o plano gratuito</a>
+      info_text: >-
+        Por favor dedique uns momentos a dizer-nos porque quer cancelar a sua
+        conta. Talvez ainda possamos ajudá-lo...
+      tell_us_more: Diga-nos algo
+      goback: '&#x2190; Voltar às definições de conta'
     show:
       account_settings: Definições da Conta
       export_data: Exportar Dados
@@ -80,6 +159,29 @@ pt-PT:
         Crie um ficheiro XML de toda a informação relativa ao Helpdesk e envie
         por email
       export_now: Exportar agora
+      contact_email: E-mail
+      contact_phone: Telefone
+      primary_contact: Detalhes do contacto principal
+      invoice_email_info: Enviar faturas para
+      contact_first_name: Nome
+      primary_contact_info: (usado para todas as comunicações do Freshdesk respeitantes à conta)
+      contact_last_name: Apelido
+    multilingual_support:
+      add_languages: Adicionar idiomas
+    edit_domain:
+      email_error: O nome da empresa tem que ter pelo menos 3 caracteres.
+      getting_started: Para Começar
+      url_error1: 'O domínio <strong>%{domain_name}</strong> não está disponível.'
+    new:
+      full_name: Nome Completo
+      company: Empresa
+      confirmation: Confirmação
+      create_an_account: Criar uma conta
+    helpcard:
+      setup: A configurar helpdesk
+    signup_google:
+      sign_up: Registar!
+      privacy_policy: política de privacidade
   activate: Activar
   activate_account: Activar a sua conta
   activerecord:
@@ -234,6 +336,79 @@ pt-PT:
           <strong>Note:<strong> Vai poder alterar estas definições a qualquer
           momento no <a href='/admin/home' target='_blank'
           style='text-decoration:none; color:#1272DE'>Separador Admin</a>
+        support_email_subtitle: Adicione o seu principal endereço de email de suporte
+        emails_invalid: O seu email é inválido.
+        agent_limit_reached: Excedeu o limite de agentes.
+        going_social: Utilizar<br>Redes Sociais
+        support_email_title: Suporte<br> e-mail
+        title_message: Arranque rapidamente com o seu suporte a clientes em quatro passos...
+        rebranding_header: Atribua um nome apelativo ao seu heldesk
+        next_please_wait: Por favor aguarde...
+        bulk_invite_blocked: >-
+          É possível adicionar até 25 agentes nesta página. Mais tarde, pode
+          adicionar mais agentes na secção de administração.
+        rebrand_tab_empty: É obrigatório definir um código de cor para o separador.
+        info: >-
+          Vai precisar de criar uma regra simples na sua caixa de correio
+          eletrónico de suporte de maneira a reencaminhar os emails para este
+          endereço.
+        rebrand_title: Logotipo <br>&amp; cores
+        email_sent_success: Email enviado com êxito.
+        social_add_account: Adicionar Conta
+        rebrand_header_invalid: O código de cor do cabeçalho é inválido
+        adding_agents: Adicionar<br>Agentes
+        support_email_submsg: >-
+          Este também será o seu endereço de resposta quando responder a<br>
+          pedidos a partir do Freshdesk.
+        skip_text: 'Não obrigado, leve-me ao meu helpdesk.'
+        agents_subtitle: Convide a sua equipa para juntar-se à diversão
+        send_test_mail_info2: >-
+          Aqui está
+
+
+          <a
+          href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957'
+          target='_blank'>
+
+          como pode fazê-lo</a>.
+        rebrand_subtitle: Recrie a marca com o seu logótipo e cores!
+        agent_title_info: >-
+          Adicione os emails dos seus membros de equipa para convidá-los para o
+          Freshdesk. Separe múltiplos emails com uma vírgula.
+        rebrand_bg_invalid: O código de cor do fundo é inválido
+        email_send_problem: Problemas durante o envio do email.
+        implement_changes: Implementando as mudanças...
+        rebrand_company_field_placeholder: Insira o nome da empresa
+        rebrand_tab_invalid: O código de cor do separador é inválido
+        back_link: Atrás
+        agent_email_required: É necessário o ID de email para enviar convite.
+        agent_invite_field_placeholder: Introduza os Emails da sua Equipe
+        send_invite: Envia convite
+        congratulations: Parabéns! O seu Freshdesk está pronto a usar!
+        sending_test_mail_progress: 'Enviando um email de teste, por favor aguarde...'
+        title1: Agora vamos tratar de levar esses emails para dentro do Freshdesk
+        rebrand_header_empty: É obrigatório definir um código de cor para o cabeçalho.
+        problem_updating: 'Problema ao actualizar, por favor tente novamente.'
+        updating: Actualizando...
+        rebrand_bg_empty: É obrigatório definir um código de cor para o fundo.
+        validating: Validando...
+        social_info_text: >-
+          Adicione as suas contas de Facebook e Twitter para começar a
+          monitorizar todas as suas interacções sociais e trazer as publicações
+          no mural, os tweets, as Mensagens Privadas e outras mensagens para
+          dentro do Freshdesk.
+        successfully_sent: Enviado com sucesso.
+        email_invalid: 'O seu email é inválido, por favor verifique a situação.'
+        info2: >-
+          Não está satisfeito com o resultado? Digite um novo email e clique em
+          "Gravar"
+        next_alt_text: Atire-se de cabeça!
+        social_twitter_add: Adicionar Conta
+        helpdesk_preview_text: Previsualizar
+        social_subtitle: Torne-se social com o seu suporte a clientes!
+        agent_email_sending: Enviando convites...
+        successfully_updated: Actualização bem sucedida
+        rebrand_submit_label: Recriar marca
       send_mail_content:
         send_test_mail_info2: (Learn How)
         send_test_mail_link_title: sending a test email
@@ -242,6 +417,15 @@ pt-PT:
           id=reply_email_1>%%{reply_email}</span></b>. Pokud vše proběhne
           správně, uvidíte <a href="/helpdesk/tickets" target="_blank">nový
           lístek</a> v zobrazení lístků.
+        send_test_mail_yes_response: >-
+          Bom trabalho! Acabou de configurar com sucesso o seu email de suporte
+          para trabalhar com o Freshdesk. Votos de feliz atividade de suporte!
+        send_test_mail_confirm_no: 'Não, não consigo ver nenhum ticket.'
+        button_title: Enviar Mail de Teste
+        send_test_mail_confirm_yes: 'Sim, recebi.'
+        button_sending: Enviando...
+        test_info_1: Parece-lhe tudo ok por agora? Tente enviar um email de teste.
+        button_again_title: ...ou Enviar mail de teste outra vez
     home:
       index:
         agent: Agentes
@@ -264,6 +448,7 @@ pt-PT:
         survey-settings: Customer Satisfaction Settings
         ticket-fields: Campos do Ticket
         billing: Planos & Cobrança
+        title: Administrador
     products:
       edit:
         title: Editar Produto
@@ -273,6 +458,10 @@ pt-PT:
         enable_product_portal: Activar Portal de Produto
         enter_support_email_id: O seu email de suporte
         product_name: Nome do Produto
+        confirm_delete: Quer apagar o email de suporte?
+        forwarding_email_info: Email de reencaminhamento
+        product_support_emails: Emails de Suporte do Produto
+        product_desc: Descrição
       index:
         add_product: Adicionar Produto
         title: Produtos
@@ -304,9 +493,57 @@ pt-PT:
           Pode associar uma das categorias de solução a este produto. As
           soluções contidas em outras categorias não serão visíveis aos clientes
           registados no portal deste produto.
+        save_and_continue: >-
+          Existem alterações não guardadas no seu formulário. Deseja guardar e
+          continuar?
+        ago: à
+        portal_customization: Personalização do Portal
+        settings: Definições
+        customer_portal: Portal do Cliente
+        last_published: O seu portal foi publicado pela última vez
+        save_and_customize: Guardar & Personalizar portal
+        customize_portal: Costumizar portal
+        logo_and_favicon: Logótipo & Favicon
+        portal_language: Idioma do Portal
+        solution_categories: Categorias de Soluções
+        forum_categories: Categorias de Fóruns
+        portal_language_info: >-
+          Esta será a sua língua por omissão quando um cliente visita o seu
+          portal
+        solution_categories_info: >-
+          Pode associar múltiplas categorias de solução a este produto. Todas as
+          outras soluções não serão mostradas aos clientes quando estes
+          visualizarem o separador Soluções no portal deste produto.
+        helpdesk_phone: Telefone de Helpdesk
+        forum_categories_info: >-
+          Pode associar múltiplas categorias de fórum a este produto. Todos as
+          outros fóruns não serão mostrados aos clientes quando estes
+          visualizarem o separador Fóruns no portal deste produto.
+        contact_us: Contacte-nos
       product:
         delete: Tem a certeza que deseja apagar este Produto?
         email_not_verified: Não verificado
+        customize_portal: Costumizar portal
+        portal_disabled: Portal desativado
+        view_portal: Visualizar Portal
+        enable_portal: Ativar Portal
+      helpnote:
+        content1: >-
+          Pode suportar múltiplos produtos com portais de suporte personalizados
+          a partir de uma única conta Freshdesk. Configure emails de suporte
+          individuais para cada produto e encaminhe-os automaticamente para um
+          grupo específico.
+        heading2: Configurar um portal individual para produtos
+        content2: >-
+          Caso escolha configurar um portal individual personalizado para cada
+          produto, vai poder fornecer uma Base de Conhecimento e um conjunto de
+          Fóruns únicos para cada marca.
+        heading1: Múltiplos Produtos
+      primary_product_support_email: Endereço principal de apoio ao cliente
+      footer:
+        edit_portal: Guardar & Editar Portal
+        enable_portal: Guardar & Ativar Portal
+      add_another_email: Adicionar Outro Email
     security:
       index:
         enable_sso: Activar Iniciação de Sessão Sincronizada
@@ -330,6 +567,106 @@ pt-PT:
           activar a funcionalidade de autenticação remota. Encare isto como um
           segredo partilhado entre si e o Freshdesk.
         only_agents: Agentes
+        applies_to: Aplica-se a
+        enable_saml: SSO SAML
+        request_custom_ssl: Quer utilizar SSL Personalizado no seu portal de suporte?
+        ssl_info_new: >-
+          Para configurar o SSL Personalizado, é necessário configurar o seu
+          domínio com um registo DNS único fornecido pelo Freshdesk. <br /> Por
+          favor insira o URL do seu helpdesk e submeta o seu pedido abaixo. A
+          certificação demora tipicamente 15 a 20 dias. <br /><br />
+        submit_request: Submeter Pedido
+        enable_saml_info: >-
+          SAML é um padrão XML usado para comunicar entidades entre duas
+          aplicações web. Pode usá-lo para permitir o acesso fácil de equipas
+          extensas ao seu portal, usando Single Sign On.
+        select_admin: Selecionar um Administrador
+        notifications: A Notificação será enviada quando
+        helpdesk_url: URL do Helpdesk
+        saml_cert_fingerprint_info_sha256: >-
+          Impressão digital (SHA256) do certificado SAML fornecido pelo seu
+          fornecedor SAML. Isto será usado para encriptação / validação
+        saml_login_url: URL de Login SAML
+        security_title: Segurança
+        saml_logout_url_info: >-
+          URL de saída (Logout) opcional para o qual os utilizadores serão
+          enviados quando realizam logout do Freshdesk.
+        whitelisted_ips_enabled_info: >-
+          Restrinja o acesso ao seu portal de suporte a apenas localizações e
+          redes de confiança, definindo a gama permitida de endereços IP.
+        default_ssl: SSL Padrão
+        add_new: Adicionar Novo
+        start_ip: Início IP
+        enable_SSL: Ativar SSL
+        enable_SSL_anon: >-
+          Secure Sockets Layer permite-lhe encriptar os dados que são
+          transferidos para e do Freshdesk
+        multiple_product_ssl_warning: A SSL não será aplicável se estiverem configurados múltiplos produtos.
+        whitelisted_ips_enabled: Lista Segura de IP
+        custom_ssl: SSL Personalizado
+        customer_portal_ssl_warning: >-
+          Visto que está configurado um URL de helpdesk personalizado para a sua
+          conta, será redirecionado para 
+        saml_cert_fingerprint: Impressão digital do Certificado de Segurança
+        success_message: >-
+          O seu requerimento de certificado de SSL Personalizado foi iniciado e
+          será processado em breve. Receberá um email de confirmação do nosso
+          fornecedor antes da aprovação. Por favor verifique a sua caixa de
+          correio para se manter informado.
+        saml_logout_url: URL de Saída (Logout)
+        agent_create_or_delete: Agente é Adicionado ou Apagado
+        for_agents: Para Agentes
+        ip_range: 'Gamas de IP:'
+        enable_simple_sso: SSO Simples
+        saml_cert_fingerprint_info: >-
+          Impressão digital (SHA1) do certificado SAML fornecido pelo seu
+          fornecedor SAML. Isto será usado para encriptação / validação
+        send_notifications: Enviar notificações para
+        whitelisted_ip_modified: A Lista de Segura de IP for modificada
+        agents_customers: Agentes e Clientes
+        admin_notifications: Notificações do Administrador
+        end_ip: Fim IP
+        thanks_message: >-
+          <span class='thanks_message'> Obrigado por requisitar um certificado
+          de SSL Personalizado. </span><br />
+        saml_login_url_info: >-
+          O Freshdesk vai redirecionar os utilizadores para este URL de acesso
+          (Login). Pode obter isto junto do seu Fornecedor de Identidade SAML.
+      password_security:
+        advanced: Avançado
+        never: Nunca
+        characters: caracteres
+        days: Dias
+        password: palavra-passe
+        have_mixed_case: Deve ter maiúsculas e minúsculas
+        default: Por defeito
+      helpnote:
+        title: Parâmetros de Segurança
+        info2: >-
+          <b>Permitindo segurança SSL </b><br>Se não estiver a usar um domínio
+          personalizado para o seu portal de suporte, o Freshdesk oferece a
+          opção de certificado padrão Wildcard SSL para contas no domínio
+          freshdesk.com. <b> A opção SSL para domínios personalizados estão
+          disponíveis apenas no Plano Estate. </b> Pode <a
+          href="https://support.freshdesk.com/support/tickets/new"
+          target="_top">requerer um certificado de SSL personalizado para o seu
+          URL "vanity" de suporte aqui</a>.
+        info1: >-
+          <b>Permitindo acesso Single Sign On </b><br>Se os seus utilizadores já
+          têm credenciais de acesso em sistemas seus, por exemplo através de
+          Actiove Directory ou as suas próprias aplicações web, então pode
+          autorizar-lhes o login no seu portal de suporte com estas credenciais
+          usando Single Sign On (SSO). Saiba mais sobre SSO <a
+          href="https://support.freshdesk.com/support/solutions/articles/31166-single-sign-on-remote-authentication-in-freshdesk"
+          target="_top"> aqui</a>.
+        trusted_ip: >-
+          <b>Restringir acesso por endereço IP</b><br>Pode restringir o acesso
+          ao portal de suporte com base nos endereços de IP da sua empresa ou
+          organização. Pode adicionar um número ilimitado de gamas IP para lhes
+          conferir acesso, bem como definir se quer controlar o acesso também
+          para os clientes, ou se apenas para os seus agentes.<a
+          href="https://support.freshdesk.com/support/solutions/articles/195168"
+          target="_top"> Saiba mais.</a>
     shared:
       filter_jsinit:
         insert_placeholder: Inserir Moldura
@@ -338,6 +675,32 @@ pt-PT:
         to: Para
         change_password: Alterar palavra-passe
         password: Palavra-passe
+        user_pass?: Eu tenho Nome de Utilizador e Palavra-Passe?
+        api_key: Chave API
+        url: URL de Chamada
+        body: Corpo
+        url_req_auth: Requer Autenticação
+        api_key?: Eu tenho chave API?
+        params: Conteúdo
+        simple_webhook_tip: >-
+          Selecione qualquer das propriedades do ticket a partir da lista acima
+          para ser enviada juntamente com o pedido. Caso deseje escrever os seus
+          próprios pedidos API, por favor utilize a opção Avançado.
+        username: Nome
+        unchecked: não verificado
+        webhook_usecase_tooltip: Veja alguns exemplos sobre como pode usar webhooks com o Observador
+        request_type: Tipo de Pedido
+        simple_layout: Simples
+        subject: Assunto
+        webhook_usecase: Casos de Uso Webhook
+        advanced_webhook_tip: >-
+          Esta secção permite-lhe escrever os seus próprios pedidos API. Clique
+          no botão Inserir Molduras para incluir detalhes do ticket  no seu
+          pedido, tais como o Nome do Requerente, Prioridade, Estado do Ticket,
+          etc.
+        advanced_layout: Avançado
+        checked: verificado
+        content_type: Codificação
     supervisor_rules:
       edit:
         title: Supervisor - Editar Regra
@@ -360,6 +723,22 @@ pt-PT:
         title: Supervisor - Regras
       new:
         title: Supervisor - Nova Regra
+      helpnote:
+        help_title: Supervisor
+        help_info_2: >-
+          O Supervisor corre a intervalos de uma hora e processa os tickets que
+          foram atualizados nos últimos 30 dias. As regras do Supervisor são
+          processadas de forma sequencial, portanto a ordem das regras é
+          relevante. Uma regra pode causar certas ações que despoletam regras
+          subsequentes.
+        help_info_1: >-
+          O Supervisor realiza ações nos tickets que você especificar com base
+          em gatilhos de tempo e evento. Use o Supervisor para verificar
+          periodicamente tickets recentes e realizar ações tais como enviar
+          lembretes aos clientes sobre tickets pendentes ou para escalar tickets
+          que ultrapassaram o prazo para a pessoa certa na sua equipa.
+      clone_rule:
+        title: Supervisor - Regra Clone
     surveys:
       helptext: >-
         <p><b>Why enable satisfaction surveys?</b> <br> Satisfaction Surveys let
@@ -379,6 +758,81 @@ pt-PT:
         delete: Apagar
         save_survey: Gravar
         edit: Editar
+        default_survey: Sondagem padrão
+        new_survey: Nova Sondagem
+        hide: Remover
+        survey_feedback: Submetendo Feedback...
+        deleting_survey: Apagando sondagem
+        new: Novo
+        feedback_survey_begin: A enviar questionário para o seu email
+        feedback_survey_end: Questionário foi enviado para o seu email
+        update: Atualizar
+        saving_survey: Guardando a sondagem
+        confirm_text: Por favor confirme...
+        title: Configurações da satisfação de cliente
+        portal_msg: Redirecionando para a página do ticket
+        activate_survey: Ativar
+        delete_msg: Tem a certeza que deseja apagar esta sondagem?
+        preview_survey: Previsualizar
+        disabling_survey: Desativando a sondagem
+        editing_survey: Editando a sondagem
+        enabling_survey: Capacitando a sondagem
+        active_delete_tooltip: Não é possível apagar um questionário ativo
+      new_layout:
+        title: Nome questionário
+        loading: A carregar...
+        survey: Questionário
+        default_survey: Sondagem padrão
+        title_error_text: O nome do questionário já foi utilizado
+      thanks_contents:
+        solution_article_link_text: >-
+          O layout do seu portal será aplicado a esta página. <a target='_blank'
+          href='https://support.freshdesk.com/solution/articles/217757-customizing-your-thank-you-page'>Como
+          o alterar?</a>
+        label_text_v2: Questões adicionais de Sondagem
+        message_text: Obrigado pelo seu feedback valioso.
+        title_text_v2: Mensagem de agradecimento pelo questionário de satisfação do cliente
+        question_error_text: Questão já foi adicionada previamente.
+      satisfaction_settings:
+        link_text_info: >-
+          Este texto surge abaixo da sua assinatura no rodapé das mensagens de
+          email enviadas ao cliente
+        link_text_input: Diga-nos por favor a sua opinião sobre esta experiência de suporte
+        link_text_input_label: >-
+          Como classificaria a sua satisfação geral com a solução fornecida pelo
+          agente?
+        send_while_option4: >-
+          Permitir que os Agentes enviem links de inquéritos para determinados
+          emails.
+        send_while_option2: Emails enviados após um ticket ser "Resolvido".
+        link_text_label: Link para o questionário de satisfação
+        send_while_title: Que emails devem incluir um link para o questinário de satisfação?
+        send_while_option1: Todas as respostas enviadas ao cliente.
+        send_while_option3: Emails enviados após o encerramento de um ticket.
+        enable_label: Classificação de Satisfação do Cliente
+      new_questions_layout:
+        questions: Questões
+        title_text_v2: Questões adicionais
+        add_question: Adicionar questão
+      new_rating:
+        survey_question: Pergunta de sondagem
+        scale_text: Você escolheu
+        scale: escala de classificação
+        error_text: Este campo é obrigatório
+        point_scale_v2: Escala de Classificação
+      choice_contents:
+        extremly_dissatisfied: Extremamente desapontado
+        mostly_dissatisfied: Muito desapontado
+        slightly_dissatisfied: Um pouco desapontado
+        mostly_satisfied: Muito satisfeito
+        slightly_satisfied: Um pouco satisfeito
+        extremely_satisfied: Extremamente satisfeito
+        neutral_v2: Nem satisfeito nem desapontado
+      new_thanks:
+        thanks_feedback: Obrigado pelo seu feedback valioso.
+        thanks_message_feedback_v2: Mensagem de agradecimento pelos comentários adicionais
+        additional_comments_feedback_v2: Incluir caixa para comentário adicionais
+        additional_comments_feedback_statement: Mais informação
     twitters:
       change:
         capture_dm: Converter mensagens directas em tickets
@@ -401,41 +855,676 @@ pt-PT:
       index:
         agents_label: Agentes
         agents: Agentes
+        skills: Competências
+        agent_label: Agente
+        add_agents: Adicionar agentes
+        skill_create: Criar
+        manage_label: Gerir
+        description: Descrição
+        add_label: Adicionar
+        no_agent_label: Nenhum Agente
     user_skills:
       index:
         more: mais
+        any: Qualquer
+        groups: Grupo
     widget_config:
       popup_widget:
         feedbackwidget_attach_a_file: Anexar um ficheiro
+        feedbackwidget_button_type: Tipo de botão
+        feedbackwidget_submit_title: Enviar Comentários
+        feedbackwidget_button_customization: Personalizar botão
+        thankyou_default: Obrigado pelo seu feedback
+        feedbackwidget_submit_title_maxlength: Máximo de 16 carateres
+        feedbackwidget_form_submit_message: Mensagem de Submissão de Formulário
+        feedbackwidget_screenshot: Fazer uma captura de ecrã
+        feedbackwidget_title_maxlength: Máximo de 30 carateres
+        feedbackwidget_form_customization: Personalizar formulário
+        feedbackwidget_image_button: Imagem do botão
+        thankyou_info: >-
+          Mensagem a apresentar depois de um utilizador submeter o formulário de
+          ticket
+        feedbackwidget_offset: 'Desvio:'
+        feedbackwidget_search_area: Procurar Artigos
+        feedbackwidget_popup_code: Código de Widget Popup
+        feedbackwidget_use_https: Usar https
+        feedbackwidget_text_button: Texto do botão
+        feedbackwidget_form_height: Altura do formulário
+        feedbackwidget_button_text_placeholder: Suporte
+        feedbackwidget_form_height_message: 'Se vir barras de scroll no seu widget, ajuste a altura do widget.'
       popup_embedded_widget:
         feedbackwidget_attach_a_file: Anexar um ficheiro
+        feedbackwidget_button_type: Tipo de botão
+        feedbackwidget_button_customization: Personalizar botão
+        feedbackwidget_embedded_code: Código de Widget incorporado
+        feedbackwidget_mobile_view: Vista Dispositivo Móvel
+        thankyou_default: Obrigado pelo seu feedback
+        feedbackwidget_form_submit_message: Mensagem de Submissão de Formulário
+        feedbackwidget_screenshot: Fazer uma captura de ecrã
+        feedbackwidget_form_customization: Personalizar formulário
+        feedbackwidget_image_button: Imagem do botão
+        thankyou_info: >-
+          Mensagem a apresentar depois de um utilizador submeter o formulário de
+          ticket
+        feedbackwidget_users_can: 'Os utilizadores podem:'
+        feedbackwidget_search_area: Procurar Artigos
+        feedbackwidget_popup_code: Código de Widget Popup
+        feedbackwidget_use_https: Usar https
+        feedbackwidget_text_button: Texto do botão
+        feedbackwidget_form_height: Altura do formulário
+        feedbackwidget_button_text_placeholder: Suporte
+        feedbackwidget_form_height_message: 'Se vir barras de scroll no seu widget, ajuste a altura do widget.'
       embedded_widget:
         feedbackwidget_attach_a_file: Anexar um ficheiro
+        feedbackwidget_submit_title: Enviar Comentários
+        feedbackwidget_embedded_code: Código de Widget incorporado
+        thankyou_default: Obrigado pelo seu feedback
+        feedbackwidget_submit_title_maxlength: Máximo de 16 carateres
+        feedbackwidget_form_submit_message: Mensagem de Submissão de Formulário
+        feedbackwidget_title_maxlength: Máximo de 16 carateres
+        feedbackwidget_form_customization: Personalizar formulário
+        thankyou_info: >-
+          Mensagem a apresentar depois de um utilizador submeter o formulário de
+          ticket
+        feedbackwidget_search_area: Procurar Artigos
+        feedbackwidget_use_https: Usar https
+        feedbackwidget_form_height: Altura do formulário
+        feedbackwidget_form_height_message: 'Se vir barras de scroll no seu widget, ajuste a altura do widget.'
+      index:
+        feedbackwidget_embedded_tab: Widget incorporado
+        feedbackwidget_popup_tab: Widget Popup
     portal:
       settings:
         twitter: ID do Twitter
         simple_none: Nenhum
+        moderate_none_help: >-
+          Ative esta função se estiver certo de que a sua comunidade não atrai
+          spammers.
+        signup_login: Registo e Autenticação de Utilizador
+        google: Google
+        submit_ticket: Quem pode submeter um novo ticket no portal
+        forum_captcha: Utilizadores autenticados devem digitar CAPTCHA para criar tópico
+        notify_agents: 'Enviar Notificação de Moderação e de Spam para:'
+        view_forums: Quem pode visualizar fóruns
+        important: Importante
+        moderate_links_help: >-
+          Ativar esta função para proteção avançada contra spam. O sistema irá
+          procurar links externos em todos os tópicos e respostas e outra
+          atividade de spam.
+        logged_in: Utilizadores Ligados
+        moderate_all: Moderar todos os tópicos e respostas
+        user_permissions: Permissões do Utilizador no portal
+        moderate_links: Moderar todos os tópicos e respostas contendo links externos
+        captcha: Capacitar CAPTCHA para evitar spam
+        moderate_none: Não Moderar
+        facebook: Facebook
+        allow_signup: Permitir que os clientes se registem a partir do portal do cliente
+        moderation: Moderar Fóruns
+        view_solutions: Quem pode visualizar soluções
+        auto_suggest_solutions_help: Isto também se aplica à função de busca dentro do widget de feedback.
+        auto_suggest_solutions: >-
+          Sugerir soluções automaticamente quando o utilizador cria um novo
+          ticket
+        everyone: Todos
+        allow_signin: Permitir aos utilizadores que se registem usando...
+        public_ticket_urls_help: >-
+          Os utilizadores podem ver pedidos sem ser necessário iniciar a sessão,
+          utilizando um URL público do pedido. Pode ser inserido em notificações
+          de email e respostas enviadas para os clientes, através de marcadores.
+        moderate_all_help: >-
+          Ative esta função se quiser ser rigoroso em todas as publicações que
+          sejam criadas na sua comunidade.
+      helpnote:
+        info3: >-
+          Adicionalmente, poderá recriar o "look-and-feel" do seu helpdesk,
+          carregando o seu logo e favicon, atribuir um nome ao seu helpdesk e
+          personalizar as cores do seu portal.
+        info1: >-
+          Se desejar que os seus clientes e agentes de suporte acedam ao portal
+          de suporte no seu próprio domínio, pode fazer apontar o URL de suporte
+          <b>asuaempresa.freshdesk.com</b> para o seu próprio domínio, como por
+          exemplo <b>suporte.empresa.com</b>
+        info4: >-
+          Se desejar configurar as permissões dos utilizadores e afinar os
+          parâmetros de moderação dos fóruns, clique no separador
+          "Configurações". As configurações não podem ser específicas para cada
+          portal e serão comuns para todos os portais que tenham sido criados.
+        title: Criando os seus portais
+        info2: >-
+          Pode também escolher categorias específicas de soluções e fóruns para
+          serem listadas no portal principal e outros portais.
     day_passes:
       index:
         all: Tudo
+        agent: Agente
+        payment_info: Digite a informação de pagamento para adicionar mais Passes de Um Dia
+        no_of_day_passes: '# de Passes diários'
+        email: E-mail
+        auto_recharge: Carregamento automático
+        add_confirm: 'Cobraremos o seu cartão de crédito '
+        day_pass_history: Historial de Compra
+        add_payment_info: Digite a informação de pagamento
+        order: 'Encomenda #'
+        title: Passe Diário
+        recharge_quantity: Quantidade a carregar
+        buy_now: Comprar agora
+        date: Data
+        helptext: >-
+          Os seus Passes de Um Dia irão auto-recarregar assim que o número de
+          passes disponíveis atinja 2.
+        no_credit_card: Não há registo de cartão de crédito.
+        filtered_by: 'Filtrados por:'
+      helpnote:
+        title: Passe Diário
+        info: >-
+          É utilizado um Passe de Um Dia por cada dia em que um agente ocasional
+          se autentica no seu helpdesk. Pode adquirir Passes de Um Dia em
+          múltiplos de 5 de cada vez e pode até configurar o Freshdesk para
+          renovar automaticamente os seus Passes de Um Dia quando se esgotarem.
     social:
       twitter_streams:
         edit:
           visible_to: Visível para
+          link_to_product: Ligar a Produto
+          title: Editar Fluxo
+        includes: 'Criar um fluxo que contenha estas palavras-chave '
+        handles_helptext: 'exemplo: @tim_cook, @ericschmidt'
+        new:
+          title: Novo Fluxo
+          create: Criar
+        include_helptext: 'exemplo: @appleoficial, "apple mac", #smartphones, @android'
+        reply_handle: Handle de Resposta Predefinido
+        define_stream: Definir Fluxo Social
+        stream_brief: >-
+          Um fluxo pode conter qualquer marca ou palavra-chave relacionada com o
+          que queira monitorizar e responder
+        preview_stream: Previsualizar Fluxo
+        exclude_title: Filtrar palavras-chave e handles...
+        stream_name: Nome do Fluxo
+        exclude_keywords: Filtrar estas palavras-chave
+        exclude_helptext: 'exemplo: fruta, #dieta, espetacular'
+        exclude_handles: E tweets destes handles
       streams:
         cancel: Cancelar
         twitter_streams:
           edit: Editar
+          reauthorize: Autorizar novamente
         update: Actualizar
+        visibility:
+          all: Todos
+        stream_delete_alert: Tem a certeza de querer remover este fluxo de twitter?
+        index:
+          new_stream: Novo Fluxo
+          title: Fluxos Sociais
+          new_account: Nova Conta
+        last_stream_delete_alert: >-
+          Tem a certeza de querer remover este fluxo de twitter? Não será
+          possível visualizar os seus fluxos personalizados se não houver fluxos
+          predefinidos associados.
+      ticket_rules:
+        includes: Converter em ticket quando o fluxo contiver estas palavras-chave
+        dm_tickets: Converter em tickets todas as Mensagens Privadas
+        include_helptext: 'exemplo: suporte, "Sistema em baixo", @dentrodaapple'
+        header_ext: e atribuir produto
+        dm_info: >-
+          Múltiplas mensagens com a mesma pessoa dentro deste intervalo de tempo
+          serão fundidas num único ticket
+        title: Criar Regras de Ticket
+        assign_to_gp: Atribuir a Grupo
+        dm_threading_interval: Definir Intervalo de Encadeamento de Ticket
+        header: Converter em tickets os tweets dos fluxos acima
+      helpcard:
+        handle_title2: A converter tweets específicos em pedidos automaticamente
+        handle_info2: >-
+          Poderá converter em pedidos, tweets com determinadas palavras-chave
+          automaticamente, usando as Regras de Pedidos. Por exemplo, cada tweet
+          mencionando o seu handle de twitter que contenha as palavras "não
+          funciona" ou "problema" podem ser convertidas em pedidos e atribuídas
+          de imediato a um grupo "Suporte de problemas". E poderá criar outra
+          regra para tweets que tenham as palavras "sistema em baixo" e
+          atribuí-las ao seu grupo de "Desenvolvimento". A primeira regra a ser
+          satisfeita será executada. Poderá também ligar estes pedidos a
+          produtos específicos.
+        info1: >-
+          Adicione contas de Twitter ao seu helpdesk e faça a gestão das mesmas
+          em conjunto com os seus pedidos de suporte. Pode converter tweets
+          recebidos (@menções) e direcionar mensagens para pedidos e atribuí-los
+          automaticamente a grupos específicos. Clique numa conta para definir
+          as Regras de Pedidos para converter tweets em pedidos.
+        handle_info1: >-
+          Caso suporte a múltiplos produtos, poderá ligar cada produto uma conta
+          social diferente. Pode gerir a visibilidade de cada conta. Por
+          exemplo, pode fazer com que os tweets que mencionem
+          @Oseuproduto_frança visível apenas para o seu grupo de agentes de
+          suporte em França. O fluxo para esta conta irá conter todas as suas
+          @menções e será mostrado no seu separador social. As suas mensagens
+          privadas serão convertidas em pedidos e poderá atribuí-las a um grupo
+          específico de agentes. Poderá configurar um intervalo de encadeamento
+          de pedidos de forma a que múltiplas mensagens privadas da mesma pessoa
+          dentro desse intervalo de tempo fiquem todas num único pedido.
+        handle_title1: A integrar uma conta Twitter
+        stream_info1: >-
+          Poderá criar múltiplos fluxos para procurarem diferentes
+          palavras-chave no Twitter. Insira as principais palavras-chave que
+          quer monitorizar, tendo em conta o seu negócio. Pode também excluir
+          determinadas palavras, hashtags e handles, para refinar a sua
+          pesquisa. Por exemplo, poderá não querer ver tweets feitos pelos seus
+          funcionários no fluxo personalizado que criou para monitorizar
+          questões de suporte que entrem através da sua marca ou dos seus
+          acrónimos. Cada fluxo pode ser tornado visível para um ou vários
+          grupos de agentes. Pode também escolher o handle-padrão de resposta
+          para cada fluxo.
+        stream_title2: A converter tweets específicos em pedidos automaticamente
+        title2: Suporte proativo utilizando fluxos sociais
+        title1: A adicionar contas sociais
+        stream_info2: >-
+          Os tweets que entrem através destes fluxos sociais podem ser filtrados
+          utilizando palavras-chave e podem ser convertidos em pedidos
+          automaticamente. Podem inclusivamente ser atribuídos a grupos e
+          produtos. Poderá criar mais do que uma regra e a primeira regra que o
+          tweet satisfizer será executada. Por exemplo, pode converter em
+          pedidos os tweets que mencionem "vou mudar para" e que incluam os
+          nomes dos seus concorrentes e poderá escalá-los de imediato para o
+          responsável máximo da sua equipa de suporte.
+        info2: >-
+          Os fluxos sociais são um conjunto de palavras-chave que se podem
+          monitorizar a partir da sua conta Freshdesk, além das contas que tenha
+          adicionado. Permitem-lhe pesquisar perguntas de suporte que dão
+          entrada através de tweets que nem sequer mencionam a sua marca. Se
+          está a começar ou se tiver uma equipa de suporte que faz horas-extra
+          como equipa de marketing, pode até criar um fluxo para monitorizar o
+          seu espaço de negócio e seus concorrentes. Clique no botão <b>Novo
+          Fluxo</b> para adicionar um fluxo social e personalizá-lo de acordo
+          com as suas necessidades específicas. Por exemplo, poderá querer criar
+          um fluxo chamado "Suporte" e adicionar um acrónimo da sua marca, bem
+          como erros ortográficos comuns com esse nome. Todos estes tweets podem
+          ser vistos no seu separador Social e pode responder-lhes utilizando
+          qualquer uma das suas contas twitter integradas.
+        stream_title1: Definir fluxos sociais
     roles:
       scroll:
         customers: Clientes
         forums: Fóruns
+        administration: Administração
+        reports: Relatórios
+        solutions: Soluções
+        general: Geral
+        bots: Bots
+        tickets: Pedidos
+        scroll_to: Desloque-se para
       agents_label: Agentes
       cancel_label: Cancelar
       save_label: Gravar
+      permissions: Permissões
+      role_name: Nome da Função
+      agent_label: Agente
+      add_agent_label: Adicionar agente
+      new: Nova Função
+      default_role_edit: >-
+        Esta é uma função-padrão do sistema. Não pode ser editada ou removida.
+        Pode visualizar as suas permissões aqui, ou %{go_back}.
+      saving_label: A guardar...
+      helpcard:
+        info4: >-
+          Pode designar se quer que um agente tenha acesso às configurações no
+          Separador Admin.  Agentes com acesso admin podem ser Agentes
+          Operacionais com acesso limitado ou Super Admins com a capacidade de
+          editar todas as configurações.  Pode ter tantos Super Admins quantos
+          quiser com capacidade para visualizar e modificar os seus detalhes de
+          faturação, ou pode escolher ter apenas um.
+        title2: Privilégios Admin
+        info2: >-
+          Por exemplo, pode criar uma função para os seus Coordenadores de
+          Suporte que permita que estes atualizem campos e atribuam tickets e
+          até mesmo criem notas internas, mas que não permita que respondam aos
+          clientes.
+        title1: Perceber as Funções
+        info1: >-
+          As Funções permitem-lhe criar e editar permissões de acesso para os
+          agentes. Pode criar novas funções, especificar que ações os agentes
+          com essas funções podem realizar dentro do seu helpdesk e pode
+          atribuir as funções a agentes.
+        info3: >-
+          Assim que criar e guardar uma nova Função vai poder atribuí-la a
+          agentes quando criar ou editar os respetivos perfis clicando no ícone
+          Agentes no separador admin.
+        info5: Saiba mais sobre funções e privilégios
+      role_description: Descrição
+      done_label: Concluído
+      title: Funções do Agente
+      manage_label: Gerir
+      add_label: Adicionar
+      no_agent_label: Nenhum Agente
     help_image_alt:
       helpdesk_arcarde: Gamification Helpdesk
+    ecommerce:
+      helpnote:
+        no_account: Adicionar nova conta
+        content1:
+          info1: Integrar conta ecommerce
+      new:
+        site_helptext: selecionar o site eBay onde são vendidos os produtos
+        account_name: Nome Conta
+        select_product: Selecionar um produto
+        title: Nova Conta
+        save_account: Guardar Conta
+        select_group: Selecionar um grupo
+        select_ebay_site: Selecionar um site eBay
+        assign_product: Atribuir a Produto
+        ebay_site: Site eBay
+        assign_group: Atribuir a Grupo
+      index:
+        title: Contas Ecommerce
+        renew: Renovar Toker
+        new_account: Nova Conta
+      edit:
+        expiry_date: Token Expira
+        title: Editar Conta
+      index_title: Comércio Eletrónico
+    gamification:
+      gamification_settings:
+        title_ticket_points: Pontos dos Tickets
+        award_points: Atribuir pontos
+        title_levels: Níveis do Agente
+        bonus_points_for: 'Pontos-bónus por: '
+        firstcall_resolution: Primeira resolução de chamada
+        fast_resolution: Rápido <span>(< 1 hr)</span>
+        title_points_configuration: Configuração dos pontos
+        ontime_resolution: Atempadamente <span>(sem a SLA)</span>
+        happy_customer: Cliente Satisfeito
+        info_levels: >-
+          Definir os pontos a serem alcançados por um agente para atingir um
+          nível
+        late_resolution: Tardio <span>(Fora de prazo)</span>
+        agent_resolves_ticket: 'Quando o agente <br /> resolver um ticket:'
+        unhappy_customer: Cliente Insastifeito
+        bonus_points: Pontos de Bónus
+        title_trophies: Troféus
+        new_quest: Nova pesquisa específica
+        enable_label: Agentes Gamification
+        quest_title: Pesquisa específica
+      help_text:
+        why_game_info2: >-
+          Um agente pode atingir níveis superiores à medida que ganha mais e
+          mais pontos. Os pontos máximos a atingir são definidos pelo
+          Administrador.
+        quest_form_info2: >-
+          Depois de completar esse passo, escolha os critérios da demanda
+          (aquilo que o agente terá que fazer) e adicione as condições que os
+          agentes terão que cumprir para ganhar o crachá.
+        quest: Pesquisa específica
+        quest_info2: >-
+          Todas as demandas estão ON (ativas) por defeito. Pode optar por
+          desativar aquelas que não deseje. Se quiser adicionar mais demandas ou
+          criar demandas específicas de acordo com os seu objetivos, clique em
+          "Nova Demanda". Poderá criar novas Demandas com as condições que
+          entender.
+        trophies_info1: O Agente receberá 4 troféus baseados em critérios diferentes
+        quest_form_info3: >-
+          Escolha os pontos que o agente ganhará e o tipo de crachá que
+          receberá. Finalmente, dê um nome à Demanda e forneça uma pequena
+          explicação sobre a mesma.
+        quest_info1: >-
+          As demandas representam objetivos de performance que você define para
+          os seus agentes. À medida que este completam as demandas, recebem
+          crachás de distinção.
+        why_game: Pontos e níveis
+        why_game_info1: >-
+          São atribuídos pontos aos agentes com base na sua prestação ao
+          resolverem tickets que lhes são atribuídos. Existem também pontos de
+          bónus para resolução de primeira chamada e clientes satisfeitos. Os
+          agentes também podem perder pontos caso resolvam os tickets após o
+          prazo e produzam insatisfação nos clientes.
+        quest_form_info4: 'Clique em ''Save Quest, para gravar as suas configurações'
+        quest_form_info1: >-
+          Escolha o tipo de demanda que deseja estabelecer para os seus agentes.
+          Pode ser um de três tipos <br /> a) resolver tickets, <br /> publicar
+          soluções e <br /> contribuir nos fóruns.
+      quests: Pesquisa específica
+      index:
+        learn_arcade: Saiba mais sobre a arcada
+        info1: >-
+          Agora cada ticket de suporte que entrar torna-se uma oportunidade de
+          ganho para os agentes. Melhor ainda - você poderá atribuir
+          pontos-bónus à sua equipa de suporte com base naquilo que for mais
+          importante para si. Como por exemplo ultra-rapidez nas respostas,
+          acertar na solução à primeira tentativa e ganhar classificações
+          extraordinárias de satisfação dos clientes.
+        enable_arcade: Ative a Arcada Freshdesk
+        video: Veja este vídeo
+        info2: >-
+          Acompanhe o progresso da sua equipa de suporte com o quadro de
+          pontuação disponível no dashboard. E atribua troféus especiais aos
+          melhor classificados por serem Speed Racers, Snippers, Graxista e o
+          Jogador Mais Valioso do mês.
+        title: Configurações Arcade
+        start_over: Reiniciar
+      new_quest: Nova pesquisa específica
+      points: Pontos
+      fresh_arcade: O que é a Arcada do Freshdesk?
+    contact_fields:
+      formfield_props:
+        behavior: Comportamento
+        customer_edit: Cliente pode editar
+        field_label_agents: Etiqueta de campo para agentes
+        validate_regexp: Validar usando Expressão Regular
+        for_customer: Para Clientes
+        label: Rótulo
+        customer_visible: Mostrar ao cliente
+        customer_mandatory: Obrigatório na submissão do formulário
+        max_choices: Atingido o máximo de itens
+        regexp: Expressão Regular
+        field_label_customer: Legenda do campo para clientes
+        dropdown_choices: Itens de menu pendente
+        customer_edit_signup: Cliente pode ver isto quando se regista
+        for_agents: Para Agentes
+        field_label_agents_level2: Etiqueta de Nível 2 para agentes
+        add_new_choice: Adicionar item
+        field_label_customer_level2: Etiqueta de Nível 2 para clientes
+        agent_mandatory_submission: Obrigatório na submissão do formulário
+        delete_field: Apagar campo
+        default: Por defeito
+        form_title: Propriedades
+        regexp_example_html: >-
+          Por exemplo, para fazer corresponder uma cadeia que contém apenas
+          letras & números </b>/^[a-zA-Z0-9]*$<b>. Para fazer corresponder uma
+          cadeia que começa com a palavra "fresco" <b>%{regex}</b>.
+    quests:
+      quest_form:
+        quest_type: Tipo de demanda
+        forum: Envolver a <br /> <strong> Comunidade </strong>
+        save: Guardar demanda
+        no_condition: Não existem condições
+        quest_objectives: Objetivos da demanda
+        ticket: Resolvendo <br /> <strong> Tickets </strong>
+        brief: Resumo sobre a demanda
+        edit: Editar demanda
+        bonus_points: Pontos de Bónus
+        final: ...e finalmente
+        completion: >-
+          Após a conclusão com sucesso de uma demanda, conferir um crachá e
+          pontos de bónus
+        pick_badge: Escolher um crachá
+        reward: Recompensa
+        quest_name: Designe a sua demanda
+        solution: Publicando <br /> <strong> Soluções </strong>
+        change: Modificar
+        badge: Crachá
+      index:
+        new_quest: Nova pesquisa específica
+        quest_description: >-
+          As 'pesquisas específicas' servem para lançar objectivos de negócios
+          aos seus agentes
+        quest_title: Pesquisa específica
+    observer_rules:
+      helpnote:
+        help_info_2d: Isto especifica o que você quer que a regra faça.
+        help_info_3: >-
+          Pode usar o Observador para modificar campos, alterar estados ou até
+          mesmo enviar alertas de notificação assim que determinadas condições
+          sejam satisfeitas.
+        help_title: Observador
+        help_title_2d: Ações
+        help_info_2c: >-
+          Pode opcionalmente filtrar a regra para que seja aplicada apenas em
+          determinados tickets.
+        help_info_2a: >-
+          Um evento pode referir-se a qualquer alteração provocada por um
+          utilizador que despoletará uma regra específica do Observador.
+        help_title_2a: Eventos
+        help_info_1: >-
+          O Observador permite-lhe despoletar ações específicas no seu helpdesk
+          quando ocorram determinados eventos. Por exemplo, pode criar uma Regra
+          do Observador para alertar o responsável máximo quando um cliente
+          atribuir uma classificação desfavorável em qualquer ticket.
+        help_title_2b: Provocadores de Eventos
+        help_title_2c: Condições do ticket
+        help_info_4: Saiba mais sobre como usar o Observador
+      agent: Agente
+      index:
+        title: Observador - Regras
+      new:
+        title: Observador - Nova Regra
+      assigned_agent: Agente atribuído
+      performed_by: e os eventos são realizados por
+      clone_rule:
+        title: Observador - Regra Clone
+      edit:
+        title: Observador - Editar Regra
+      assigned_group: Grupo atribuído
+      events: Quando<b>Qualquer</b> destes eventos ocorrer
+      event_performer: Agente Realizador de Evento
+      anyone: Qualquer Um
+      add_new_event: Adicionar novo evento
+      system: Sistema
+      customer: Requerente
+      conditions: em tickets com estas propriedades
+      actions: realizar estas ações
+    portal_settings:
+      simple:
+        bg_color: Corpo
+        headingsColor: Cor de título
+        btn_background: Botão de segunda ação
+        inputFocusRingColor: Divisor de Título & brilho de foco de Input
+        tab_color: Fundo
+        linkColor: Texto de link
+        headingsFont: Fonte de título
+        footer_color: Rodapé
+        textColor: Cor de base
+        header_color: Cabeçalho
+        baseFont: Fonte de base
+        btn_primary_background: Botão de primeira ação
+        tab_hover_color: Tab ativa
+        help_center_color: Centro de ajuda
+        linkColorHover: Hover de texto de link
+    hotline:
+      content2:
+        list4: Integração nativa com o Freshdesk
+      content3:
+        note_title: 'Nota:'
+      list_title: Aplicações MobiHelp
+    company_fields:
+      formfield_props:
+        behavior: Comportamento
+        customer_edit: Cliente pode editar
+        field_label_agents: Etiqueta de campo para agentes
+        dropdown_items_edit: Itens de menu pendente - vista de edição
+        validate_regexp: Validar usando Expressão Regular
+        for_customer: Para Clientes
+        label: Rótulo
+        cc_company_contacts: Pode dar conhecimento (CC) apenas a contactos da empresa
+        customer_visible: Mostrar ao cliente
+        cc_any_email: Pode dar conhecimento (CC) a qualquer endereço de email
+        customer_mandatory: Obrigatório na submissão do formulário
+        sla_timer: Temporizador de SLA
+        regexp: Expressão Regular
+        field_label_customer: Legenda do campo para clientes
+        level2: Nível 2
+        nestedfield_helptext_preview: >-
+          Esta é a "previsualização" de amostra dos itens de menu pendente,
+          utilize a área de texto livre do formulário em "Vista de Edição" para
+          editar os items
+        dropdown_items_preview: Itens de menu pendente - Previsualizar
+        dropdown_choices: Itens de menu pendente
+        agent_mandatory_closure: Obrigatório no encerramento do ticket
+        level3: Nível 3
+        display_cc_field: Mostrar campo de CC
+        customer_edit_signup: Cliente pode ver isto quando se regista
+        for_agents: Para Agentes
+        status_choices: Opções de Estado
+        add_new_choice: Adicionar item
+        nested_label: Legendas de campos dependentes
+        agent_mandatory_submission: Obrigatório na submissão do formulário
+        level1: Nível 1
+        display_to_customer: Mostrar mensagem ao cliente
+        delete_field: Apagar campo
+        default: Por defeito
+        description: Descrição
+        form_title: Propriedades
+        regexp_example_html: >-
+          Por exemplo, para fazer corresponder uma cadeia que contém apenas
+          letras & números </b>/^[a-zA-Z0-9]*$<b>. Para fazer corresponder uma
+          cadeia que começa com a palavra "fresco" <b>%{regex}</b>.
+    webhook:
+      hipchat_hook_title: Notificação HipChat
+      jira_hook_description: >-
+        Pode usar um webhook para criar, automaticamente, ocorrências dentro da
+        sua conta JIRA quando seja criado um ticket no Freshdesk.
+      hipchat_hook_description: >-
+        Pode enviar uma mensagem a uma Sala HipChat sempre que um requerente
+        envie uma resposta a um ticket no Freshdesk.
+      jira_hook_alt: Pedido de Publicação de Criação de Ocorrência JIRA
+      hipchat_hook_alt: O HipChat está a fazer Ping ao Pedido GET
+      jira_hook_title: Criação de Ocorrência JIRA
+    mobihelp:
+      apps:
+        form:
+          gcm_api_key: Chave API GCM
+          configurations: Configurações de SDK
+          app_name: Nome da Aplicação
+          app_store_id_v12_info: >-
+            Necessário para Mobihelp SDK versões < 1.2. For version >= 1.2 ver
+            Guia de Integração
+          enable_push_notification: Ativar a Notificação via Push
+          solution_categories: Categorias de Soluções
+          saving: A guardar...
+          select_a_solution_category: Selecionar uma Categoria de Solução
+          solution_categories_info: >-
+            As categorias de solução que selecionar serão mostradas no Suporte
+            Aplicacional
+          app_secret: Segredo Aplicacional
+          integration_details: Detalhes de Integração
+          app_store_id: ID da Loja App
+          app_key: Chave Aplicacional
+        index:
+          title: Aplicações MobiHelp
+          no_app:
+            sdk_and_guide: Guia de Integração e SDK Mobihelp
+        helpnote:
+          content1:
+            info3: >-
+              O Mobihelp é completamente configurável. Pode selecionar tudo -
+              desde os campos no set formulário de feedback até à forma como ele
+              surge visualmente na sua aplicação. Informações tais como o nome
+              do aparelho, o sistema operativo e as versão da app são recolhidas
+              automaticamente sem qualquer esforço por parte do utilizador. Pode
+              também ativar campos personalizados e recolher logs de crash e
+              rastos de navegação.
+            info1: >-
+              O Mobihelp é o SDK do Freshdesk que lhe facilita a tarefa de
+              prestar suporte "in-app" aos seus clientes móveis.
+            info2: >-
+              A partir do momento em que integrar o Mobihelp, os seus
+              utilizadores poderão ver uma secção de suporte dedicada dentro da
+              sua aplicação. Esta secção incluirá a sua base de conhecimento e
+              um formulário de ticket de forma a que possam contactá-lo caso
+              precisem de ajuda.
+          heading1: O que é o Mobihelp?
+        edit:
+          title: Editar App MobiHelp
+        new:
+          title: Nova Aplicação Mobihelp
+      human_name: App MobiHelp
   agent:
     add_signature: Adicionar Assinatura
     edit: Editar Agente
@@ -501,7 +1590,73 @@ pt-PT:
         dia em volume no separador Admin. Note que só será cobrado(a) pelo
         número de agentes a tempo inteiro que forem adicionados na secção de
         planos e faturação.
+      title3: Grupos
     roles: Funções
+    insert_placeholder: Inserir Moldura
+    permissions: Permissões
+    delete_agent_confirmation: >-
+      O agente apagado ficará disponível como contacto. Isto removerá do
+      Helpdesk toda a informação do agente. Tem a certeza que deseja prosseguir?
+    days_ago: 'Hace %{days}'
+    role: Função de Agente
+    agent_restored: O agente foi restaurado
+    ticket_scope: Âmbito do Ticket
+    assign: Atribuir
+    ago: 'hace %{time}.'
+    day_pass_used: 'Usou até esta data %{count} Passes de Um Dia'
+    last_logged: Entrou pela última vez em
+    group_info: >-
+      Pode ver Tickets no(s) seu(s) Grupo(s) e Tickets que lhe tenham sido
+      atribuídos
+    full_time_agent: Agente a Tempo Inteiro
+    group: Grupos
+    convert_to_contact: Converter para Contacto
+    individual: Acesso Restrito
+    contact_exists: 'Já existe um requerente com email %{existing_email}, %{use_email}'
+    password_reset_note: >-
+      Nota: um email de restabelecimento de palavra-chave, com instruções, será
+      enviado para %{requester}
+    available_seats_without_count: Posições de Agente disponíveis
+    occasional_agent: Agente Ocasional
+    day_pass_expired: >-
+      O seu Passe de Um Dia expirou, por favor autentique-se para adquirir um
+      novo passe.
+    occasional: Ocasional
+    admin_info: Pode realizar todas as tarefas de Administração
+    admin: Administrador
+    last_logged_in: 'Entrou pela última vez há %{time} atrás'
+    cannot_edit_roles: 'Apenas poderá ver as suas funções e âmbito, não poderá editá-las.'
+    supervisor: Supervisor
+    supervisor_info: >-
+      Pode ver todos os Tickets no Helpdesk e aceder aos Relatórios (sem
+      privilégios de admin)
+    available_seats: '%{count} posições de Agente disponíveis'
+    never_logged_in: Nunca se autenticou
+    individual_info: Pode ver apenas os Tickets que lhe foram atribuídos
+    full_time: Tempo inteiro
+    info4: Converter para Contacto
+    convert_agent_confirmation: >-
+      Atenção - Converter um agente em contacto irá remover toda a informação do
+      agente permanentemente. Tem a certeza que deseja prosseguir?
+    password_reset_message: 'Deseja restabelecer a palavra-passe de %{requester}?'
+    no_seats: Não há posições de Agente disponíveis
+    deleted_agent_info: 'Nota: Todas as comunicações dos agentes apagados serão marcadas como SPAM.'
+    no_recent_activity: Não há atividades recentes
+    type: Tipo de Agente
+    deleted:
+      no_agents: Não tem agentes agentes apagados
+      agent_deleted: O agente foi apagado
+    occasional_description: Este agente utilizará o portal de suporte
+    delete_agent: Apagar Agente
+    global_info: Pode ver todos os Tickets no Helpdesk
+    skill: Competências
+    assign_role: Funções Associadas
+    active:
+      no_agents: Você não adicionou quaisquer agentes a esta lista
+    global: Acesso Global
+    account_suspended: conta suspensa.
+    trial: Na versão de demonstração
+    role_and_scope: Funções e Âmbito
   agent_adds_comment: O agente adicionou um comentário ao ticket
   agent_assigned_info: Não existem tickets abertos ou pendentes para este agente
   agent_assigned_title: Tickets recentemente atribuídos (Abertos &amp; Pendentes)
@@ -520,9 +1675,14 @@ pt-PT:
     click_to_enable: Click to enable Addon
     configure_addon: Click to configure this Addon
     confirm_disable: Are you sure you want to disable this Addon?
-    title: Addons & Integration
+    title: Integrações
     tooltip:
       edit: Editar
+      settings: Definições
+    enable: Ativar
+    enabled: Ativado
+    connect: Ligar
+    disabled: Desativado
   asked_on: Perguntado em
   assign: Atribuir
   assigned_to: Atribuído a
@@ -596,7 +1756,19 @@ pt-PT:
     info3: Horas úteis específicas
     info4: Dias úteis do serviço de Apoio ao Cliente
     info5: Os feriados serão ignorados quando as SLAs são tomadas em consideração.
-    title: Horário de Serviço
+    title: Horas de Atendimento
+    delete: Tem a certeza de que deseja eliminar?
+    holiday_calendar: Calendário de Feriados
+    new: Novo horário de funcionamento
+    valid_time: 'Por favor, introduza uma hora válida'
+    name: Nome
+    time_zone: Fuso Horário
+    change_time_zone: >-
+      Pode alterar o seu fuso horário predefinido em <a href='/account/edit'
+      >Definições Helpdesk</a>
+    to: para
+    description: Descrição
+    multiple: Múltiplos Horários de Atendimento
   cancel: Cancelar
   cancel_and_back: Cancelar e retroceder
   cancel_my_account: Cancelar a minha conta
@@ -617,7 +1789,7 @@ pt-PT:
   click_select_action: Clique para Seleccionar Acção
   click_to_change_sort_order: Clique para mudar a ordem
   click_to_select_filter: Clique para seleccionar o filtro
-  close: Encerrar
+  close: Fechar
   closed: Encerrado
   comments: Comentários
   company:
@@ -641,6 +1813,8 @@ pt-PT:
     notes: Anotações
     quick_company: Empresa Rápida
     title: Empresas
+    title1: empresas?
+    info11: Tem a certeza de que deseja eliminar
   company_name: Nome da empresa
   connect_ticket: Ligar ao ticket
   contact_name: Nome do Contacto
@@ -717,17 +1891,25 @@ pt-PT:
     abbr_month_names:
       - null
       - Jan
-      - Feb
+      - Fev
       - Mar
-      - Apr
-      - May
+      - Abr
+      - Mai
       - Jun
       - Jul
-      - Aug
-      - Sep
-      - Oct
+      - Ago
+      - Set
+      - Out
       - Nov
-      - Dec
+      - Dez
+    day_names:
+      - Domingo
+      - Segunda-feira
+      - Terça-feira
+      - Quarta-feira
+      - Quinta-feira
+      - Sexta-feira
+      - Sábado
   day: 1 Dia
   days: dias
   deactivate: Desactivar
@@ -762,6 +1944,26 @@ pt-PT:
     new_rule: Nova Regra
     reorder: Reordenar
     rule_name: Nome da Regra
+    match_any: Combine </b>QUALQUER<b> das opções abaixo
+    helpcard:
+      info1: >-
+        O Dispatch'r permite-lhe incorporar as suas regras de negócio no fluxo
+        de suporte ao realizar um conjunto de ações predefinidas em tickets
+        recém criados. Por exemplo, pode usar o Dispatch'r para, de forma
+        automática, categorizar, priorizar e atribuir cada ticket entrado e
+        juntá-lo ao agente apropriado dentro da sua equipa, tudo com base nas
+        soluções que você especificar.
+      info2: >-
+        Lembre-se, a ordem das regras do Dispatch'r é importante. Para cada
+        ticket entrado, o Dispatch'r vai executar a primeira regra
+        correspondente e parar. Você pode reordenar a lista de regras para que a
+        mais relevante surja no topo.
+    title: Dispatch'r
+    clone: Dispatch'r - Regra Clone
+    cascade_text: 'Para cada ticket entrado, Executar'
+    description: Descrição
+    conditions: Condições
+    actions: Ações
   does_not_contain: Não contém
   due_in: 'Vence em %{time_words}'
   edit: Editar
@@ -806,7 +2008,7 @@ pt-PT:
       Este será também o endereço que servirá como 'Reply-to' no email. Ex:
       suporte@yourcompany.com
     info8: Reencaminhar os seus emails para
-    info9: Atribuir ao Grupo
+    info9: Atribuir a Grupo
     make_primary: Marcar como Principal
     name: Nome
     primary_supp_email: Endereço principal de apoio ao cliente
@@ -824,8 +2026,25 @@ pt-PT:
       status: Estado
       unverified: Não verificado
       type: Tipo
+      last_verified: Última verificação
+      config: Configurar
+      data_help: Valor que será atribuído ao registo DNS
+      cname: CNAME
+      verify: Verificar
+      remove: Remover
+      host_value_help: Nome do anfitrião para o registo TXT
+      data: Dados
     Personalized_email_replies_no: Não
     edit: Editar
+    freshdesk: Freshdesk
+    send_verification_email: Enviar Ativação
+    bcc_text: Bcc
+    delete_confirm: Tem a certeza que deseja apagar esta configuração?
+    helpcard:
+      tour1: Ajudem-me a criar o meu email de suporte
+    Personalized_email_replies_yes: Sim
+    plain_unverified: Email ainda não verificado -
+    primary_supp_email_tool_tip: Endereço principal de apoio ao cliente
   email_notifications:
     agent_notification: Notificação de Agente
     customize_email: Personalizar Email
@@ -836,6 +2055,171 @@ pt-PT:
     requestor_notification: Notificação do Requerente
     title: Notificação de Email
     edit: Editar
+    disabled_toggle: Não pode desativar esta notificação.
+    no_agents: Adicionar agentes
+    last_saved: Guardado pela última vez
+    translation_uptodate: Esta tradução está atualizada.
+    take_back: Voltar atrás
+    notify_agents: Notificar Agentes
+    requestor_notifications: Notificações do Requerente
+    reset_confirm: >-
+      Todas as alterações serão perdidas quando efetuar a reposição. Ainda assim
+      pretende continuar?
+    translation_outdated: Esta tradução está desatualizada.
+    agent_select: >-
+      Por favor selecione um técnico para notificar quando um novo Ticket for
+      criado  no seu helpdesk.
+    agent_select_title: Notificar Agentes
+    mark_outdated: Marcar todas as traduções como desatualizadas
+    proceed_anyway: Avançar na mesma
+    agent_notifications: Notificações do Agente
+    mark_uptodate: Marcar esta tradução como atualizada
+    notification_template: Modelos de Resposta
+    reset_last_saved: Repor o último conteúdo gravado
+    show_default: Mostrar conteúdo original
+    unsaved_title: Atenção! Existem alterações por guardar.
+    hide_default: Esconder conteúdo original
+    singular_title: Notificação
+    unsaved_confirm: >-
+      Na pressa de avançar para a próxima notificação, aparentemente esqueceu-se
+      de salvar a anterior. Se realmente não gostou do que escreveu, pode
+      Avançar e perder todas as alterações, mas recomendamos que volte atrás e
+      guarde-as de imediato.
+    default_font: 'Fonte de letra Padrão : '
+    helpcard:
+      requester_template_17:
+        info1: >-
+          Este email é enviado aos requerentes pedindo-lhes para verificarem um
+          id de email adicionado recentemente ao contacto.
+        topic: Foi adicionado um novo id de Email
+      info3: >-
+        Pode configurar o Freshdesk para enviar notificações de email
+        automáticas para agentes e ao requerente quando ocorrem eventos
+        específicos. Estas notificações podem ser personalizadas e pode ser
+        adicionado conteúdo dinâmico através da utilização de marcadores. Por
+        exemplo, pode notificar os clientes quando os agentes adicionarem
+        comentários ou notas públicas aos seus pedidos, com um email
+        personalizado contendo um link para o pedido.<br/><br/>Se o seu plano
+        Freshdesk suportar múltiplos idiomas, poderá adicionar idiomas de
+        notificação e personalizar os modelos para cada idioma. O<i
+        class="common-icon-outdated"></i>ícone indica que as notificações
+        traduzidas noutros idiomas podem estar desatualizados.
+      agent_template_2:
+        info1: >-
+          Esta notificação segue para todos os agentes num grupo sempre que um
+          ticket é atribuído a esse grupo. Este email deve conter o URL do
+          ticket {{ticket.url}}, facilitando o acesso dos agentes ao mesmo. <br
+          /><br />Caso tenha definido múltiplos idiomas suportados no seu
+          helpdesk, poderá criar esta notificação de forma específica para cada
+          idioma. O <i class="common-icon-outdated"></i> ícone indica que as
+          notificações traduzidas em outra línguas podem estar desatualizadas. 
+        topic: Ticket Atribuído a um Grupo
+      reply_template_15:
+        topic: Model de Resposta do Agente
+      agent_template_12:
+        topic: Violação de Política de Primeira Resposta
+        info1: >-
+          Esta notificação é enviada a um agente quando este não tenha
+          respondido ao ticket dentro do tempo definido para primeira resposta
+          ao ticket. Este email pode conter o URL do ticket e a data definida
+          para o ticket.<br/><br/>Caso tenha definido múltiplos idiomas
+          suportados no seu helpdesk, poderá criar esta notificação de forma
+          específica para cada idioma. O <i class="common-icon-outdated"></i>
+          ícone indica que as notificações traduzidas em outra línguas podem
+          estar desatualizadas.
+      agent_template_10:
+        topic: Email de Activação do Utilizador
+        info1: >-
+          O Email de Activação do Utilizador é enviado quando um novo agente é
+          adicionado no seu helpdesk. O email de ativação tem que conter
+          necessariamente o "URL de Ativação de Agente" {{activation_url}} para
+          que estes possam criar as suas palavras-chave e completar o processo
+          de registo. <br /><br />Se tiver ativado múltiplos idiomas no seu
+          helpdesk, pode criar um email de ativação específico para cada língua.
+          O <i class="common-icon-outdated"></i> ícone indica que as traduções
+          de notificações noutras línguas podem estar desatualizadas.
+      agent_template_3:
+        topic: Ticket Atribuído a um Agente
+        info1: >-
+          Esta notificação segue para cada agente individual sempre que um
+          ticket lhe for atribuído. Este email deve conter o URL do ticket
+          {{ticket.url}}, facilitando o acesso do agentes ao
+          mesmo.<br/><br/>Caso tenha definido múltiplos idiomas suportados no
+          seu helpdesk, poderá criar esta notificação de forma específica para
+          cada idioma. O <i class="common-icon-outdated"></i> ícone indica que
+          as notificações traduzidas em outra línguas podem estar
+          desatualizadas. 
+      agent_template_25:
+        topic: E-mail de convite de agente
+      agent_template_6:
+        topic: Requerente Responde ao Ticket
+        info1: >-
+          Quando um cliente responde ao ticket que havia aberto anteriormente, o
+          agente responsável pelo ticket receberá esta notificação por email.
+          Este email pode conter o URL do ticket para rápido acesso do agente ao
+          ticket.<br/><br/>Caso tenha definido múltiplos idiomas suportados no
+          seu helpdesk, poderá criar esta notificação de forma específica para
+          cada idioma. O <i class="common-icon-outdated"></i> ícone indica que
+          as notificações traduzidas em outra línguas podem estar
+          desatualizadas.
+      requester_template_1:
+        topic: Novo Ticket foi criado
+      requester_template_4:
+        topic: Agente Adiciona Comentário ao Ticket
+      requester_template_8:
+        topic: Agente encerrou o Ticket
+      requester_template_7:
+        topic: Agente Soluciona o Ticket
+      agent_template_13:
+        topic: Tempo de resolução da Violação de SLA
+      agent_template_14:
+        info1: >-
+          O Email de Reposição de Palavra-passe será enviado aos seus agentes
+          quando estes solicitarem uma nova palavra-passe no seu helpdesk. A 
+          moldura {{password_reset_url}} é necessária para fornecer o link de
+          reposição de palavra-passe, gerado dinamicamente, no email.
+          <br/><br/>Se definiu múltiplos idiomas suportados no seu helpdesk,
+          poderá criar notificações específicas para cada idioma. o <i
+          class="common-icon-outdated"></i> ícone indica que as notificações
+          traduzidas para outras línguas podem estar desatualizadas.
+        topic: Email de Reposição de Palavra-passe
+      agent_template_1:
+        topic: Novo Ticket foi criado
+        info1: >-
+          O email de Novo Ticket Criado será enviado aos seus agentes sempre que
+          um novo ticket seja criado no seu helpdesk. Pode escolher que agente
+          deverá receber esta notificação. Este email contém o URL do ticket,
+          tornando mais fácil aceder ao mesmo. <br /><br />Se definiu múltiplos
+          idiomas suportados no seu helpdesk, poderá criar esta notificação de
+          maneira específica para cada idioma. O <i
+          class="common-icon-outdated"></i> ícone indica que as traduções de
+          notificações em outros idiomas podem estar desatualizadas.
+      info2: >-
+        <a target="_blank"
+        href="https://support.freshdesk.com/solution/categories/45922/folders/74513/articles/170407-configuring-dynamic-email-notifications">Clique
+        aqui </a>para saber mais
+      agent_template_11:
+        topic: Ticket Desacompanhado em um Grupo
+        info1: >-
+          Esta notificação é enviada quando um ticket atribuído a um grupo não
+          foi acompanhado dentro da janela temporal definida nos parâmetros do
+          Grupo. Esta notificação por email pode conter o tempo decorrido desde
+          que o ticket foi atribuído ao grupo.<br/><br/>Caso tenha definido
+          múltiplos idiomas suportados no seu helpdesk, poderá criar esta
+          notificação de forma específica para cada idioma. O <i
+          class="common-icon-outdated"></i> ícone indica que as notificações
+          traduzidas em outra línguas podem estar desatualizadas.
+      requester_template_10:
+        topic: Email de Activação do Utilizador
+      requester_template_14:
+        topic: Email de Reposição de Palavra-passe
+    subject: Assunto
+    add: Adicionar
+    index_outdated: Algumas traduções estão desatualizadas
+    default_reply_template_info: >-
+      O modelo de resposta será automaticamente incluído no editor de resposta a
+      tickets para TODOS os agentes. A posição do cursor neste modelo irá
+      decidir onde o seu agente iniciará a digitação.
   ends_with: Termina em
   enter_billing_for_free: >-
     Por favor introduza as informações do seu cartão de crédito antes de
@@ -845,6 +2229,8 @@ pt-PT:
   errors:
     actions_empty: O campo 'Acções' não pode ficar vazio
     conditions_empty: O campo 'Condições' não pode ficar vazio
+    invalid_domain:
+      freshdesk: Freshdesk
   errors_in_payment: 'Foram encontrados erros relacionados com o seu pagamento:'
   errors_in_payment_info: 'Foram econtrados erros nos seus dados de pagamento:'
   errors_in_plan_change: 'Erros encontrados após a alteração:'
@@ -915,6 +2301,7 @@ pt-PT:
     contacts:
       create:
         success: O contacto foi criado com sucesso.
+      info_select: Por favor selecione pelo menos 1 utilizador.
     contacts_import:
       failure: Por favor tente novamente
       no_file: Por favor carregue um ficheiro
@@ -1031,6 +2418,15 @@ pt-PT:
         success: A Tarefa for dada como cumprida.
     twitter:
       updated: As definições do Twitter foram actualizadas
+    customers:
+      info_select: Por favor selecione pelo menos 1 cliente.
+    import:
+      info6: >-
+        Por favor envie o ficheiro para support@freshdesk.com para que possamos
+        verificar e carregar o ficheiro a partir daqui.
+      info5: >-
+        Por favor siga as instruções mencionadas neste <a href =
+        '%{solution_link}'> link</a> para verificar a formatação do ficheiro CSV
   folder:
     add_folder: Adicionar pasta
     edit: Editar pasta
@@ -1080,21 +2476,33 @@ pt-PT:
       post_accepted_as_a_good_answer: Esta mensagem foi aceite como uma boa resposta ao tópico inicial
       posted_on: '%{user_name} a %{post_date}'
       unmark_answer: Desclassifique como a resposta acertada
+      delete_comment: Apagar Comentário
+      edit_comment: Editar Comentário
+      delete_comment_confirm: Deseja mesmo apagar este comentário?
+      mark_as_spam: Marcar como spam
     topic_vote:
       howto:
         vote_button: Eu tenho esta pergunta
         vote_info_include_1: Esta pergunta é-lhe também pertinente
+        voted_users_widget_title: Pessoas que têm esta questão
       ideas:
         vote_button: Eu gosto desta ideia
         vote_info_include_1: Você gosta desta ideia
+        voted_users_widget_title: Pessoas que gostam desta ideia
       problem:
         vote_button: Também tenho este problema
         vote_info_1: >-
           <a id='users-voted' href='#' title='See who has this'> %%{vote}
           Person</a> likes this Idea
         vote_info_include_1: Este problema também lhe afecta
+        voted_users_widget_title: Pessoas que têm este problema
       unlike: Não gosto
     edit_title: Editar
+    follow_topic: Seguir este tópico
+    best_answer:
+      answer_confirm: >-
+        Parece que este tópico já tem uma resposta. Por favor confirme antes de
+        avançar
   forums:
     form:
       type: Tipo de fórum
@@ -1107,6 +2515,16 @@ pt-PT:
   forums_order:
     overview: Resumo
     recent: Recente
+    popular: Popular
+    planned: Planeado
+    implemented: Implementado
+    nottaken: Não Tomado
+    deferred: Deferido
+    inprogress: Em Progresso
+    answered: Respondido
+    unanswered: Sem resposta
+    solved: Resolvido
+    unsolved: Por resolver
   four: 4 horas
   from_email: Email de origem
   go_back_admin: Voltar para a Administração
@@ -1131,6 +2549,40 @@ pt-PT:
     new: Novo Grupo
     select_agents: Seleccionar Agentes
     title: Grupos
+    select_business_calendar: Selecionar Horas de Serviço
+    working_hours_header: Horas de Atendimento
+    toggle_availability_for_rr: >-
+      Permitir que os agentes alterem a sua disponibilidade para a atribuição
+      automática de tickets
+    maximum: Máximo
+    enable: Ativar
+    please_confirm: Por favor confirme...
+    learn_more: Saiba mais
+    automatic_assignment: >-
+      Depois de criar grupos de agentes, pode definir a atribuição automática de
+      tickets no grupo para que sejam atribuídos ao próximo agente no Round
+      Robin.
+
+      <a href="https://support.freshdesk.com/support/solutions/articles/77157"
+      target="_blank">
+
+      Saiba mais</a>
+    automatic_assignment_header: Atribuição automática de ticket
+    confirm: Confirmar
+    helptext: >-
+      Pode organizar os seus agentes por Grupos, como "Vendas" e "Gestores de
+      Produto". Ao segmentá-los por grupos poderá facilmente atribuir tickets,
+      criar respostas específicas, gerir fluxos de trabalho e gerar relatórios
+      por grupo. Note que o mesmo agente pode ser membro de diversos grupos.
+    ticket_assignment: Atribuição Automática de Ticket
+    select_an_agent: Selecionar Agente
+    business_calendar: Horas de Atendimento
+    working_hours: >-
+      Pode definir conjuntos de horas de serviço e de feriados para cada Grupo.
+      Por exemplo, pode separar os agentes por turnos e atribuir-lhes horas de
+      serviço diferenciadas, ou criar grupos separados para cada fuso horário no
+      qual tenha agentes a operar
+    description: Descrição do Grupo
   half: 30 Minutos
   header:
     help_center: Como podemos ajudá-lo hoje?
@@ -1138,7 +2590,7 @@ pt-PT:
     check_ticket_status: Verificar o estado da senha
     login: entrar
     new_ticket: Novo Ticket
-    search: Pesquisa
+    search: Pesquisar
     signout: Sair
     submit_a_ticket: Submeter um ticket
     tabs:
@@ -1150,7 +2602,10 @@ pt-PT:
       home: Início
       reports: Relatórios
       solutions: Soluções
+      tickets: Pedidos
     welcome: Bem-vindo
+    edit_profile: Editar perfil
+    assumed_text: Você está a visualizar como
   header_logo: Logótipo de Cabeçalho
   helpdesk:
     dashboard:
@@ -1199,6 +2654,9 @@ pt-PT:
       tweet_form:
         title: 'Responder a %{user}'
       update: Actualizar
+      ok: OK
+      hide_cc: Ocultar Cc
+      cc: cc
     ticket_created_on_n_by: 'por %{requester} a %{date_time}'
     tickets:
       close_notice:
@@ -1231,8 +2689,13 @@ pt-PT:
         public_note: Anotação Pública
         split_this_as_new_ticket: Dividir em novo Ticket
         deleted_note: Eliminado
+        public_note_tip: Visível para o cliente
       show:
         linked_ticket: Este ticket está relacionado com o fórum
+        reply_form:
+          to: 'Para:'
+        forward_form:
+          title: 'De:'
       views:
         all: Todos os Tickets
         closed: Tickets Encerrados
@@ -1258,9 +2721,32 @@ pt-PT:
         tickets_twitter: Tickets através do Twitter
         spam: Spam
         all_tickets: Todos os Tickets
+        shared_by_me: Tickets que partilhei
+        shared_with_me: Tickets partilhados comigo
+        article_feedback: Comentário ao artigo
+        archived: Arquivar
+        deleted: Lixo
+        my_article_feedback: Comentários sobre os meus artigos
+      friendly_status:
+        customer_responded: Cliente Respondeu
+        elapsed: A Aguardar Resposta
+        customer_responded_overdue: Cliente Respondeu
+        resolved: Resolvido
+        overdue: Vencido
+        new: Novo
+      add_watcher:
+        mail:
+          hi: 'Olá,'
+        me: Eu
     time_sheets:
       report:
         total: Total
+        no_timeentry: Não há dados disponíveis
+      agent: Agente
+      group: Grupo
+      product: Produto
+      customer: Cliente
+      group_by: Agrupar Por
   high: Elevado
   how_to: Pergunta
   identity_reverted_msg: You have reverted your identify back to you.
@@ -1283,7 +2769,7 @@ pt-PT:
   import_step2_info: >-
     Faça corresponder os campos CSV seguintes com os campos da base de dados e
     realize a importação.
-  import_ticket_group: Tickets &amp; Grupos
+  import_ticket_group: Pedidos
   import_topics: Tópicos
   import_updated: Actualizado
   import_user_notification: Enviar email de activação de utilizador durante a importação
@@ -1324,6 +2810,14 @@ pt-PT:
       import: Importar
       edit: Editar
       OVERWRITE_LOCAL_small: Exportar
+      email: E-mail
+      last_sync_time: Hora da última sincronização
+      account: Conta
+      no_status: N/A
+      sync_status:
+        added: adicionado
+        modified: modificado
+        deleted: eliminado
     jira:
       helptext: >-
         <h4>JIRA Integration Help</h4><p><br/>To integrate JIRA with Freshdesk,
@@ -1344,25 +2838,54 @@ pt-PT:
         all the check-boxes and click on 'Update'.<br/><br/>
       form:
         password: Palavra-passe
+        username: Nome
+        do_nothing: No hacer nada.
+        domain: Dominio
     salesforce:
       desc: You can view contact information from Salesforce in Freshdesk.
+      form:
+        opportunity: Campos Oportunidade
+        opportunity_settings: Agentes podem criar e associar oportunidades do pedido
+        contact: Campos de Contacto
+        account: Campos de Contas
     dynamics_v2:
       form:
         password: Palavra-passe
+        username: Nome
+        opportunity_settings: Agentes podem criar e associar oportunidades do pedido
     marketplace_login:
       admin_credentials:
         login: Entrar
+        email_address: Endereço de e-mail
       associate_account:
         company_name: Nome da empresa
+        phone_no: Número de Telefone
+        user_name: Nome
+        helpdesk_url: URL do Helpdesk
+        email: E-mail
+        submit: Enviar
+        create_my_account: Criar a sua Conta
     sugarcrm:
       form:
         password: Palavra-passe
+        username: Nome
+        account: Campos de Contas
+        contact: Campos de Contacto
     dynamicscrm:
       form:
         password: Palavra-passe
+        contact_email: E-mail do Contacto
+        account: Campos de Contas
+        contact: Campos de Contacto
     screen_pop:
       widget:
         cancel: Cancelar
+        view_all: Ver todos
+        requester: Nome do Requerente
+        add_note_text: Notas de chamada
+        subject: Assunto
+        recent_tickets: Pedidos de suporte recentes
+        create: Criar
     hootsuite:
       reply_btn: Responder
       send: Enviar feedback
@@ -1372,18 +2895,151 @@ pt-PT:
         status: Estado
       login:
         password: Palavra-passe
+        email: E-mail
       header:
         reply: Responder
+      reset: Reiniciar
+      domain:
+        continue_to_login: Continuar para o início de sessão
+      submit: Enviar
+      social:
+        description: Descrição
+        requester: Requerente
+      search:
+        ticket_id: ID do pedido de suporte
+        keyword: Palavra-chave
     cti_admin:
       phone:
         save: Gravar
         cancel: Cancelar
+        delete_number: Por favor confirme
+        delete_msg: Tem a certeza de que deseja eliminar este número?
       ctd:
         password: Palavra-passe
+        api_key: Chave API
+        callback_url: URL de Chamada
+        username: Nome
+        encoding: Codificação
+        request_type: Tipo de Pedido
+        have_api_key: Eu tenho chave API?
+        content: Conteúdo
+        have_user_pass: Eu tenho Nome de Utilizador e Palavra-Passe?
     outlook_contacts:
       edit_form:
         edit_account: Editar
         delete_account: Apagar
+        account: Conta
+        last_sync_time: Hora da última sincronização
+    ilos:
+      settings:
+        for_agents: Para Agentes
+        for_customer: Para Clientes
+      portal_ticket:
+        placeholder: 'Ticket#'
+      agent_ticket:
+        placeholder: 'Ticket#'
+      messages:
+        video_desc: Descrição
+      solution:
+        placeholder: 'Artigo#'
+    logmein:
+      form:
+        company_id: ID da empresa
+    icontact:
+      form:
+        api_url: URL da API
+    remote_login:
+      connect: Ligar
+      sign_up: Registar-se
+    quickbooks:
+      connect_text: >-
+        A conexão ao QuickBooks permitirá que os seus agentes acedam e atualizem
+        dados neste último mais facilmente, a partir do seu helpdesk.
+    capsule:
+      form:
+        domain: Dominio
+    jira_settings:
+      none: No hacer nada.
+      add_attachments_in_jira: 'Durante a sincronização, excluir anexos dos tickets'
+    applications:
+      crm:
+        mapping:
+          company: Empresa
+          contact: Contacto
+          contact_fields: ' Campos de Contacto '
+          account_fields: ' Campos de Contas '
+    shopify:
+      edit:
+        disconnect: Desligar
+    freshbooks:
+      form:
+        api_url: URL da API
+    custom_apps:
+      ticket_detail_page: Página detalhes do pedido
+      preview_helptext: Esta app personalizada irá estar visível na barra lateral
+      hide_preview: Esconder Previzualização
+      custom_app_used_in: App personalizada visível em
+      contact_detail_page: Página detalhes do contacto
+      refresh: Atualizar
+      show_preview: Ver Previzualização
+      custom_app_preview: Previzualização da app personalizada
+    infusionsoft:
+      form:
+        contact: Campos de Contacto
+        account: Campos de Contas
+    seoshop:
+      form:
+        nl: Nederlands
+        en: Inglês
+        de: Alemão
+        language: Idioma
+    campaignmonitor:
+      form:
+        api_key: Chave API
+    batchbook:
+      form:
+        api_key: Chave API
+    uninstall: Desinstalar
+    custom_application:
+      name: Nome
+      description: Descrição
+      form:
+        insert_placeholder: Inserir Moldura
+      edit_custom_app: Editar app personalizada
+      new_custom_app: Nova app personalizada
+    github_settings:
+      resolved: Resolvido
+      none: No hacer nada
+      closed: Encerrado
+    workflow_max:
+      form:
+        api_key: Chave API
+    magento:
+      form:
+        product: Produto
+    freshsales:
+      form:
+        deal: Campos de Negócios
+        domain: Domínio de Conta
+        account: Campos de Contas
+        contact: Campos de Contacto
+    harvest:
+      form:
+        domain: Dominio
+    highrise:
+      form:
+        api_key: Chave API
+    zohocrm:
+      form:
+        api_key: Token de autenticação
+    cloud_elements:
+      form:
+        daily: Diário
+        account: Campos de Contas
+        opportunity: Campos Oportunidade
+        opportunity_settings: Agentes podem criar e associar oportunidades do pedido
+        hourly: Por hora
+        contact: Campos de Contacto
   is: É
   is_expiring_today: expira hoje
   is_not: Não é
@@ -1426,6 +3082,10 @@ pt-PT:
   portal:
     article:
       see_all_articles: 'Ver todos os %{count} artigos'
+      more_articles: 'Mais artigos em <span class=''folder-name''>%{article_name} </span>'
+      modified_on: 'Modificado em:'
+      related_articles: Artigos Relacionados
+      created_by: 'Criado por:'
     community_forums: Fóruns da comunidade
     login_portal: Iniciar sessão no portal de suporte
     login_details: >-
@@ -1436,7 +3096,7 @@ pt-PT:
       preview_message: >-
         <b>Modo de pré visualização</b> - <a
         href='javascript:window.close()'>Clique aqui</a> para voltar para trás.
-    knowledge_base: Base de dados
+    knowledge_base: Base de Conhecimento
     no_articles_info_1: 'Pedimos desculpa, não publicámos quaisquer artigos.'
     no_articles_info_2: Por favor volte a tentar mais tarde.
     no_forums_info_1: Ainda não há tópico de fórum
@@ -1448,17 +3108,30 @@ pt-PT:
       filters:
         solutions: Soluções
         topics: Tópicos
-        tickets: Tickets
+        tickets: Pedidos
         all: Tudo
       placeholder: Introduza aqui o seu termo para a pesquisa
+      results_for: Resultados de busca para
     showing_recent_updates: A mostrar as atualizações mais recentes
     showing_recently_popular_topics: A mostrar os tópicos populares mais recentes
     tickets:
       export: Exportas os dados das senhas para CSV
       export_ticket_data: Exportas os dados das senhas para CSV
-      export_to_csv: Export to CSV
+      export_to_csv: Exportar para CSV
       submit_export: Exportar
       reopen_reply: Responder
+      merged_topic_note: Tópicos agregados não podem ser convertidos em ticket.
+      ticket_list: Lista de Tickets
+      mark_closed: Marcar ticket como resolvido
+      add_people: Adicionar pessoas
+      reply_placeholder: Clique aqui para responder a este ticket
+      comments: Comentários
+      details: Detalhes do pedido
+      add_or_remove_emails: >-
+        Adicione ou remova emails que precisam de receber conhecimento quando
+        uma notificação sobre este ticket for enviada.
+      add_people_title: Adicionar pessoas à conversação
+      related_articles: Artigos relacionados...
     to_post_comment: para publicar um comentário
     to_post_topic: para publicar um tópico
     to_submit_ticket: para submeter uma senha nova
@@ -1466,6 +3139,43 @@ pt-PT:
       comments_closed: Os comentários a esta discussão estão agora encerrados!
       see_all_topics: 'Ver todos os %{count} tópicos'
       start_new_topic: Começar um novo tópico
+      follow: Seguir
+      following: Seguindo
+      topic_title: Título do tópico
+      post_topic: Publicar tópico em
+      monitor_topic: Monitorizar este tópico
+      default_select_option: Selecione um tipo de fórum
+      all_topics: Ver todos os tópicos
+      comment_placeholder: Clique aqui para adicionar um comentário
+      started: começou um tópico
+      more_topic: Mais tópicos em
+      last_reply: Última Resposta
+      fb_reply_info: >-
+        <a href='%{reply_url}'> Última Resposta </a> por
+        %{user_name}<br>%{created_on}
+      my_topic_reply: 'Última Resposta por <b>%{post_name}</b>, %{created_on}'
+      topic_brief: 'Publicado por <b>%{user_name}</b>, %{created_on}'
+      last_post_brief: >-
+        <a href='%{last_post_url}'>%{link_label}</a> por %{user_name}
+        %{created_on}
+      best_answer: Melhor Resposta
+      matching_results: Tópicos Correspondentes Encontrados
+      in_forum: 'Em: %{forum_name}'
+      merge: 'Agregados no tópico:'
+      locked: Tópico está fechado
+      sticky: Tópico está marcado como adesivo
+      merge_continue: 'No entanto, pode continuar a conversação aqui: '
+      merge_note:
+        one: 'Tópico agregado neste tópico:'
+        other: 'Tópicos agregados neste tópico:'
+      sort_heading: 'Ordenar por:'
+      sort_order:
+        date: Mais antigo primeiro
+        recency: Mais recente primeiro
+        popularity: Popular
+      sort_by_most_recent: Mais Recente
+      sort_by_most_popular: Mais Popular
+      sort_by_default: Por defeito
     topic_vote:
       howto:
         one: tem esta pergunta
@@ -1491,7 +3201,97 @@ pt-PT:
       you:
         one: Você
         other: 'Você e '
+      announce:
+        one: gosta disto
+        other: gostam disto
+      votes: votos
+      upvote: promover pelo voto
+      upvoted: promovido por voto
+      user_upvote_list_title: Pessoas que promoveram por voto
+      announce_button: Gosta disto?
+      announce_unlike_button: Não gosto!
+      announce_users_voted_title: Pessoas que gostam disto
+      ideas_users_voted_title: Pessoas que gostam desta ideia
+      problem_users_voted_title: Pessoas que têm este problema
+      howto_users_voted_title: Pessoas que têm esta questão
     login: Entrar
+    cookie:
+      cookie_policy: Política de Cookies
+      why_we_love_cookies: Porque gostamos de Cookies
+      cookie_dialog_info1: >-
+        Usamos cookies para lhe proporcionar uma melhor experiência no
+        Freshdesk. 
+      cookie_dialog_info2: >-
+        Pode saber mais sobre o tipo de cookies que usamos, porquê e como, no
+        nosso %{privacy_link}. Se os cookies não forem do seu agrado, pode
+        desativá-los simplesmente. Note porém que o serviço Freshdesk é do
+        melhor com alguns cookies (cookies de chocolate, alguém?), e algumas
+        porções do Freshdesk podem não funcionar da melhor maneira se desativar
+        os cookies. 
+      cookie_dialog_info3: >-
+        Vamos assumir que concorda com a nossa utilização dos cookies e que está
+        confortável com eles, conforme descrito no nosso %{privacy_link}, a
+        menos que escolha desativá-los através do seu browser. 
+      privacy_policy: Política de Privacidade
+    reported: comunicada
+    said: disse
+    solutions_home: Página de Soluções
+    print_title: Imprimir este Artigo
+    attach_file: Anexar um <b>ficheiro</b>
+    new_support_ticket: Nova senha de suporte
+    submit_new_ticket: ... ou submeter um novo Ticket
+    agent_login_details: >-
+      Introduza os detalhes de início de sessão que introduziu quando se
+      registou connosco
+    login_options: ... ou inicie sessão usando
+    reset_password: >-
+      Dê-nos o seu endereço de email e enviaremos por essa via as instruções
+      para restabelecer a sua palavra-chave.
+    account: conta
+    login_or_signup: '%{login}ou%{signup} para uma conta'
+    login_to_submit_ticket: '<a href=%{login_url}>Inicie sessão</a>para submeter um novo ticket'
+    login_signup_to_submit_ticket: >-
+      <a href=%{login_url}>Inicie sessão</a> ou <a
+      href=%{signup_url}>Registe-se</a> para submeter um novo ticket
+    login_to_post_topic: <a href='' class='solution_c'>Inicie sessão</a> para publicar um tópico
+    login_to_post_comment: >-
+      <a href='' class='solution_c'>Inicie sessão</a> para publicar um
+      comentário
+    login_signup_to_post_topic: >-
+      <a href=%{topic_reply_url}>Inicie sessão</a> ou <a
+      href=%{signup_url}>Registe-se</a> para publicar um tópico
+    login_signup_to_post_comment: >-
+      <a href=%{topic_reply_url}>Inicie sessão</a> ou <a
+      href=%{signup_url}>Registe-se</a> para publicar um comentário
+    preview:
+      view_on_helpdesk: Ver no Helpdesk
+      edit_article: Editar Artigo
+    my_topics: Os meus tópicos
+    topic_deleted: Parece que este tópico foi apagado. Não é possível publicar.
+    topic_not_found: Parece que este tópico foi apagado
+    post_not_found: Parece que este tópico foi apagado
+    showing_my_topics: A mostrar tópicos que você segue neste momento
+    folder:
+      filler_text: 'Monitorize este espaço para artigos sobre %{folder_name}'
+    vote:
+      you:
+        one: Você
+        other: 'Você e '
+      more:
+        one: 1 Outro
+        other: '%{count} Outros'
+      people:
+        one: '1 pessoa '
+        other: '%{count} pessoas '
+    vote_label:
+      one: 1 stemme
+      other: stemmer
+    post_vote:
+      upvoted: Você promoveu pelo voto
+      upvote: Promover pelo voto
+      like:
+        one: gosta disto
+        other: gostam disto
   send_feedback: Enviar feedback
   portal_customizer_anon_for_g: >-
     Active esta funcionalidade se pretende que os utilizadores possam entrar
@@ -1548,6 +3348,13 @@ pt-PT:
     current_password: Password actual
     edit: Editar Perfil
     new_password: Nova password
+    api_key:
+      reset_warning: >-
+        Uma vez resposta a chave API, todas as aplicações que utilizem a chave
+        anterior deixarão de funcionar. Tem a certeza que deseja continuar?
+      reset: Repor Chave API
+      title: A sua Chave API
+    manage: Gerir o seu perfil
   recent_activity: Actividade Recente
   recent_forum_posts: Mensagens de Fórum Recentes
   remove: Remover
@@ -1556,7 +3363,7 @@ pt-PT:
   reply_topic: Responder ao tópico
   requester_reopens: O requerente reabriu o Ticket
   requester_replies: O requerente respondeu ao ticket
-  reset: Repôr
+  reset: Reiniciar
   reset_my_password: Reformular a minha password
   resolution_time_sla: Tempo de resolução da Violação de SLA
   resolved: Resolvido
@@ -1616,9 +3423,25 @@ pt-PT:
         title: Contas Twitter
         reply: Responder
         note_title: 'Nota:'
+        reauthorize: Autorizar novamente
+        from: 'De: '
+        search: Pesquisar
+      form:
+        product: Produto
     streams:
       index:
         all: Tudo
+      tooltip:
+        replied: Respondido
+        db_contact: Contacto
+      twitter:
+        post: ' Publicar '
+        tickets: Pedidos
+      search_btn: Pesquisar
+      compose: Redigir
+      custom_streams: Fluxos Sociais
+    welcome:
+      get_started: Começar
   solution:
     add: Adicionar Solução
     add_new_solution: Adicionar nova solução
@@ -1628,6 +3451,7 @@ pt-PT:
         new_folder: Nova Pasta
       folder_form:
         visible_to: Visível para
+        category: Categoria
     info1: 'No Freshdesk, chamamos de Soluções às Bases de Conhecimento'
     info10: Privado (Visível apenas entre Agentes)
     info2: >-
@@ -1657,15 +3481,61 @@ pt-PT:
     draft:
       portal:
         all: Tudo
+      name: Rascunhos
     add_category: Nova Categoria
     solution_title: Título
+    solution_meta_description: Meta Descrição
+    folder: Pasta
+    kb: Base de Conhecimento
+    via: via
+    solution_meta_title: Etiqueta de Título
+    solution_meta_keywords: Meta Palavras-chave
+    feedback_message_2: Difícil de entender
+    sidebar:
+      feedbacks:
+        title: Comentário ao artigo
+      view_all: Ver todos
+      drafts:
+        title: Rascunhos
+      view_less: Ver menos
+    feedback_message_4: Link quebrado/em falta
+    general:
+      something_wrong: Algo correu mal!
+      created_by: Criada por
+      feedback: Comentários
+      mark_as_uptodate:
+        text_1: Marcar esta tradução como atualizada
+      mark_as_outdated:
+        text_1: Marcar outras traduções como desatualizadas
+      analytics: Análises
+    solution_meta: Meta etiquetas para motores de busca
+    articles:
+      reset_rating:
+        dialog_title: Repôr Gostos e Não Gostos
+        resetting: Repondo
+        link: Reiniciar
+        dialog_submit: Reiniciar
+      prop_tabs:
+        meta: Metadados
+      search_all: Procurar Artigos
+      views: Visualizações
+    meta_keywords_message: Separe as palavras-chave usando vírgulas
+    feedback_message_1: Necessita mais informação
+    feedback_message_3: Inexato/irrelevante
+    move_to: Mover para
+    article_properties:
+      title_counter_message: 'Extensión recomendada: de 50 a 60 caracteres'
+      description_counter_message: 'Extensión recomendada: de 150 a 160 caracteres'
   solution_category:
     edit: Editar categoria de soluções
     info1: Tem a certeza que deseja apagar esta categoria?
     info2: Não existem pastas nesta categoria
-    name: Nome da Categoria
+    name: Nome
     new: Nova categoria de soluções
     save_and_create: Gravar e Criar Outro
+    select_solution_category: Selecionar portal de produto...
+    product_portal_visibility: Visível em
+    manage_categories: Gerir
   solutions:
     search:
       placeholder: 'Pesquisar %{name}'
@@ -1699,6 +3569,32 @@ pt-PT:
     agents: Agentes
     status: Estado
     type: Tipo
+    currency-note: 'Todos os seus futuros pagamentos serão em '
+    free: Grátis
+    paid: Pago
+    invoice: Fatura
+    refund: Reembolsado
+    upgrade:
+      message: >-
+        Promova a sua conta para um plano superior para desbloquear esta
+        funcionalidade.
+      cname: >-
+        Quer usar o seu próprio domínio aqui? Por favor promova a sua conta para
+        um plano superior.
+    download: Transferir
+    info1: >-
+      Pode alterar os detalhes da sua subscrição a qualquer momento. Será
+      debitado do seu cartão o montante proporcional a partir da data de
+      alteração da subscrição até à próxima data de cobrança.
+    billing: Cobrança
+    free_plan_currency_note: >-
+      Quando promover o plano da sua conta ou adicionar agentes, o seu pagamento
+      será em 
+    date: Data
+    info2: >-
+      Despromover a sua conta de um plano superior para um plano inferior
+      resultará na perda de dados de configuração para funcionalidades que estão
+      disponíveis apenas no plano superior.
   subscription_plan:
     billing_cycle:
       annual: Anual
@@ -1741,6 +3637,7 @@ pt-PT:
     monitor_btn_title: Monitorizar Ticket
     note_form:
       private_note: Esta nota é privada - não divulgue o seu conteúdo ao requerente
+      form_title: Adicionar uma nota
     opened_at: Horas desde que reaberto
     pending_since: Horas desde que está pendente
     pick_up: Dar Seguimento
@@ -1788,6 +3685,21 @@ pt-PT:
     verify_human: >-
       De forma a provar que é um utilizador humano, por favor transcreva as
       letras abaixo
+    reported: comunicada
+    submit_ticket: Enviar
+    via: via
+    add_note: Adicionar nota
+    update_done: Concluído
+    view_facebook: Ver no Facebook
+    search_text: Procurar Artigos
+    view_twitter: Ver no Twitter
+    assigned_agent: Agente
+    created_by: 'Criado por:'
+    action: Ação
+    submit_loading: A enviar..
+    updating: A atualizar
+    from: 'De:'
+    thanks_v1: Obrigado pelo seu feedback
   ticket_due_by_time: Vencimento
   ticket_fields:
     fields:
@@ -1802,18 +3714,21 @@ pt-PT:
       subject: Assunto
       ticket_type: Tipo
       tags: Etiquetas
+      company: Empresa
+      created_at: Criado
+      skill: Competência
     formfield_props:
       add_new_choice: Adicionar nova opção
       agent_info1: O campo não poderá ficar em branco no momento de submissão do ticket
       agent_info2: O campo não poderá ficar em branco no momento de encerramento do ticket
-      agent_mandatory_closure: Obrigatório no encerramento
-      agent_mandatory_submission: Obrigatório na submissão
+      agent_mandatory_closure: Obrigatório no encerramento do ticket
+      agent_mandatory_submission: Obrigatório na submissão do formulário
       choices: Opções
-      customer_edit: Pode Editar este campo
+      customer_edit: Cliente pode editar
       customer_info1: >-
         O campo não poderá ficar em branco no momento de submissão do ticket
         através do formulário online
-      customer_mandatory: Obrigatório ao submeter o ticket
+      customer_mandatory: Obrigatório na submissão do formulário
       customer_visible: Visível para clientes
       description: Descrição
       dropdown_choices: Opções do Menu
@@ -1825,6 +3740,46 @@ pt-PT:
         O rótulo é o texto que será mostrado no portal de apoio ao cliente,
         visível aos utilizadores
       level: Nível
+      behavior: Comportamento
+      field_label_agents: Etiqueta de campo para agentes
+      dropdown_items_edit: Itens de menu pendente - vista de edição
+      cc_company_contacts: Pode dar conhecimento (CC) apenas a contactos da empresa
+      nested_3rd_level: Legenda necessária para itens de 3º nível
+      section_type_change: >-
+        Por favor guarde o formulário de pedido para ver as alterações
+        realizadas.
+      nested_unique_names: A legenda do agente não pode ser igual à doutros dois níveis
+      nested_field_helptext_preview: >-
+        Isto é uma "Pré-visualização" dos elementos da dropdown. Clique em
+        "Editar" para alterar os valores dos elementos da dropdown.
+      dropdown_choice_disabled: A escolha pré-definida não pode ser removida
+      cc_any_email: Pode dar conhecimento (CC) a qualquer endereço de email
+      sla_timer: Temporizador de SLA
+      drop_down_items_edit: Itens dropdown - Editar
+      field_label_customer: Legenda do campo para clientes
+      level2: Nível 2
+      default_field_delete_disabled: Os campos predefinidos não podem ser removidos
+      nestedfield_helptext_preview: >-
+        Esta é a "previsualização" de amostra dos itens de menu pendente,
+        utilize a área de texto livre do formulário em "Vista de Edição" para
+        editar os items
+      dropdown_items_preview: Itens de menu pendente - Previsualizar
+      level3: Nível 3
+      display_cc_field: Mostrar campo de CC
+      status_choices: Opções de Estado
+      nested_label: Legendas de campos dependentes
+      nested_field_helptext: >-
+        Utilize o campo de formulário em baixo para adicionar ou editar os items
+        na drowdown. Indente os itens ao carregar na tecla "tab" uma ou duas
+        vezes. Iremos converter isto numa dropdown baseada na sua indentação. <a
+        target='_blank'
+        href='https://support.freshdesk.com/solution/categories/45957/folders/74594/articles/37599-using-dependent-fields'>Saiba
+        mais</a> 
+      level1: Nível 1
+      display_to_customer: Mostrar mensagem ao cliente
+      delete_field: Apagar campo
+      nested_tree_validation: Necessita de pelo menos uma categoria e sub-categoria
+      form_title: Propriedades do campo
     index:
       add_custom_field: Adicionar Campo Personalizado
       customize_form: Personalizar o formulário de "Novo Ticket".
@@ -1835,10 +3790,40 @@ pt-PT:
       paragraph: Caixa de Texto
       save: Gravar campos
       single_line: Linha de Texto
-      title: Campos dos Tickets
+      title: Campos do Ticket
       save_ticket_fields: Gravar
     section:
       delete_btn: Apagar
+      delete_from_section: Tem a certeza que deseja remover este campo desta secção?
+      new_section: Nova Secção
+      delete_section: Tem a certeza que quer remover esta secção?
+      ok_btn: OK
+      confirm_btn: Confirmar
+      section_delete_btn: Remover secção
+      move_field_remove_section: Mover o campo para a secção destino
+      sectino_label: Título da Secção
+      field_remove_all_section: Mover o campo para fora irá remover o campo de todas as secções.
+      section_type_is: Mostrar secção quando o tipo é
+      continue_btn: Continuar
+      field_available: O campo já existe na secção destino.
+      confirm_text: Por favor confirme...
+      remove_type: A secção está associada a este tipo
+      delete_permanent: Remover campo de todas as secções
+      would_you_like_to: Gostaria de
+      section_name_unique: Nome da secção já está a ser utilizado
+      move_keep_copy: Copiar campo para a secção destino
+      section_prop: Propriedades da Secção
+      oops_btn: Ups!
+      section_has_fields: Secção tem campos
+      delete_field_section: Remover campo desta secção
+    untitled: Sem nome
+    confirm_delete: Tem a certeza que deseja remover este campo?
+    second_choice: Segunda Escolha
+    first_choice: Primeira Escolha
+    confirm_deletion: >-
+      Atenção! Irá perder todos os dados deste campo nos pedidos antigos. Tem
+      mesmo a certeza de que pretende remover este campo?
+    no_choice_message: Pelo menos uma opção válida tem de existir
   ticket_was: o ticket foi
   tickets_filter:
     sort_fields:
@@ -1848,6 +3833,10 @@ pt-PT:
       priority: Prioridade
       status: Estado
       updated_at: Última Modificação
+      desc: Descendente
+      asc: Ascendente
+      created_at: Data de Criação
+    company: Empresa
   tickets_were: tickets foram
   title: Título
   tkt_assigned_to_agent: Ticket atribuído ao Agente
@@ -1875,6 +3864,57 @@ pt-PT:
     unmark_answer: Desclassifique como a resposta acertada
     spam: Spam
     all: Tudo
+    marked_as: Marcado como
+    last_reply: Última Resposta
+    no_categories: Sem Categorias
+    mark_answer: Marque como resposta
+    requester: Requerente
+    post_comment: Publicar
+    no_posts: Sem Publicações
+    mark_as_sticky: Marcar como tópico adesivo
+    filter_8: Resolvido
+    add_topic: Adicionar Tópico
+    no_forums: Sem Fóruns
+    categories: Categorias
+    filter_1: Planeado
+    delete_confirm: >-
+      Tem a certeza de querer apagar o(s) tópico(s) selecionados
+      permanentemente?
+    filter_9: Por resolver
+    filter_2: Implementado
+    mark_as_spam: Marcar como spam
+    filter_4: Em Progresso
+    no_topics: Sem Tópicos
+    filter_7: Sem resposta
+    problems:
+      unsolved: Por resolver
+      solved: Resolvido
+    select_stamps: Selecionar Carimbos
+    spam_delete_confirm: >-
+      Marcar um tópico como spam irá mover o tópico para o spam e apagar
+      permanentemente todas as respostas ao mesmo.
+
+      Tem a certeza de querer marcar o(s) tópico(s) selecionados como spam?
+    filter_5: Deferido
+    spam_action: Aprovar e Publicar
+    filter_6: Respondido
+    spam_info:
+      spam: Resposta foi marcada como spam
+      waiting: Resposta aguarda a sua aprovação
+    update_comment: Atualizar comentário
+    upvote_appended_text: promoveu isto pelo voto
+    sticky_info: Os tópicos adesivos ficam no topo do fórum para visibilidade adicional
+    mark_topic: Marcar tópico como
+    filter_3: Não Tomado
+    visible_in: Visível em
+    filtered_by: A mostrar
+    view_on_portal: Visualizar no Portal
+    add_category: Adicionar Categoria
+    add_comment: Publicou comentário
+    questions:
+      answered: Respondido
+    change: modificar
+    add_forum: Adicionar Fórum
   topics:
     last_reply: 'Última resposta colocada à %{post_time} por %{user_link}'
     posted_at: 'Colocado à %{post_time}'
@@ -1923,6 +3963,23 @@ pt-PT:
     title: Título
     twitter_id: ID do Twitter
     work: Emprego
+    phone_no: Telefone
+    remove_profile_image_confirm: Tem a certeza que deseja apagar esta imagem de perfil?
+    change_photo: Modificar foto
+    phone_number: Telefone
+    choose_another_photo: Escolha outra foto
+    profile_picture: Foto do perfil
+    remove_photo: Remover foto
+    email: E-mail
+    industry: Setor
+    ie9_file_change_msg: '%{filename} Guarde para atualizar a imagem de perfil'
+    name: Nome
+    last_name: Apelido
+    add_photo: Adicionar Foto
+    first_name: Nome
+    mobile_phone: Telemóvel
+    company_name: Empresa
+    job_title: Cargo
   user_activation_email: Email de Activação do Utilizador
   feedback:
     title: Esta resposta foi útil?
@@ -1934,11 +3991,16 @@ pt-PT:
       remember: Lembrar acesso neste computador
       sign_in_using_google: Entrar através da sua conta Google
       password: Palavra-passe
+      email: E-mail
+      sign_in_using: Iniciar sessão
   users:
     activations:
       code_expired: O seu código de activação já expirou!
       send_invite_success: O email de activação foi enviado!
       success: A sua conta foi activada.
+      users: utilizadores.
+      bulk_send_invite_success: Email de ativação foi enviado para
+      user: utilizador.
   warning: AVISO
   what_is_cvv: O que é cvv?
   will_expire_in: irá expirar em
@@ -2059,17 +4121,95 @@ pt-PT:
       unauthorized_change_info: >-
         Se esta alteração foi feita sem a sua autorização, envie-nos uma
         resposta.
+    hi: 'Hola,'
+    thanks: 'Atenciosamente,'
   marketplace:
     cancel: Cancelar
+    delete_action:
+      success: The Addon has been disabled successfully!
+    custom_app_info: >-
+      Sabia que agora há uma melhor maneira de desenvolver, gerir e partilhar a
+      suas apps com toda a comunidade Freshdesk.
+    view_all: Ver todos
+    app_description: >-
+      As apps permitem integrar o Freshdesk com outras aplicações e tornar a
+      experiência no Freshdesk mais espetacular. Também permite personalizar o
+      portal do cliente.
+    view_more: Ver mais
+    developed_by: 'Por '
+    api_error: Não foi possível processar o seu pedido. Por favor tente mais tarde.
+    help_and_support: Ajuda e Suporte
+    settings: Definições
+    helpnote1: >-
+      As aplicações no Freshdesk permitem partilhar informação com soluções e
+      serviços externos que utiliza com regularidade. Também tornam possível
+      adicionar funcionalidades às páginas dos pedidos e contactos. Freshdesk
+      disponibiliza várias aplicações. Para consultar as aplicações disponíveis,
+      clique no botão "Obter mais Apps".
+    tooltip:
+      suspended: Indisponível
+    no_mktp_apps_note_2: Clique "Obter mais Apps" para consultar.
+    no_configs: Esta app não necessita de qualquer configuração.
+    custom_apps: Aplicações personalizadas
+    time_ago: à
+    validation_failed: Erro na validação.
+    installing_text: Por favor aguarde...
+    paid_app: PAGO
+    installed_mkp_apps_unavailable: >-
+      A lista de aplicações instaladas não está disponível. Tente mais tarde.
+      Por favor contacte-nos se o problema se mantiver.
+    overview: Resumo
+    install: Instalar
+    write_a_custom_app: Escreva uma custom app
+    published_in: Publicado a
+    confirm_uninstall_message: 'Quer mesmo remover a %{human_name}?'
+    popular: Popular
+    get_more_apps: Obter mais Apps
+    apps: Aplicações
+    reauthorize: Autorizar novamente
+    go_to_dev_portal: Ir para o Portal do Criador
+    apps_unavailable: >-
+      Algumas aplicações não conseguiram ser executadas. Por favor tente mais
+      tarde. Contacte-nos se o problema persistir.
+    no_mktp_apps_note: Desenvolvemos integrações com algumas aplicações.
+    ver: 'Versão: '
+    coming_soon: Brevemente
+    latest: Mais recentes
+    no_custom_apps_note: Criar apps personalizadas e depois publicá-las no portal do autor.
+    field_blank: 'Por favor, preencha os campos obrigatórios.'
+    description: Descrição
+    no_mktp_apps: Não Foram Instaladas Apps
   shortcuts:
     ticket_detail_list_common:
       reply: Responder
+      delete_ticket: Eliminar ticket
+      scenario: Cenários
+      add_note: Adicionar nota
+      forward: Reencaminhar
+      search: Pesquisar
     goto_tab:
       forums: Fóruns
       customers: Clientes
+      social: Redes sociais
+      tickets: Pedidos
+      dashboard: Painel
+      solutions: Soluções
+    title: Atalhos do teclado
   gamification:
     leaderboard:
       sharpshooter_trophie_label: Sniper
+      sharpshooter_trophie_info: Agente com a pontuação Resolução à Primeira mais alta este mês
+      love_trophie_info: Agente com o máximo de pontos de Satisfação do Cliente este mês
+      mvp_trophie_info: Agente com a melhor pontuação este mês
+      speed_trophie_info: Agente com o máximo de pontos pela rápida resolução este mês
+      mvp_trophie_label: Jogador Mais Valioso
+      love_trophie_label: Graxista
+    levels:
+      expert: Especialista
+      intermediate: Intermédio
+      professional: Profissional
+      master: Mestre
+      beginner: Estagiário
   email_command_preview_to_email: Para
   export: Exportar
   reports:
@@ -2077,54 +4217,188 @@ pt-PT:
       main:
         total_responses_v2: Total
         all: Tudo
+        time_period: Período de tempo
+        neutral: Neutro
+        survey_name: Nome questionário
+        agent: Agente
+        view_report_by: Ver por
+        positive: Positivo
+        group: Grupo
+        overall_rating: Avaliação
+        responses: Respostas
+        negative: Negativas
+        response_to: Resposta a
+        no_overview: Não há dados disponíveis
+        unanswered: Sem resposta
+        overview: Resumo
+        answered: Respondido
+        all_responses: Todas as Respostas
+        rating: Avaliação
+        deleted_list: QUESTIONÁRIOS ELIMINADOS
     livechat:
       total_chats: Total
+      time_period: Período de tempo
+      chat_type: Tipo de conversa
+      answered_chats: Respondido
+      missed_chats: Perdidas
+      group: Grupo
+      filter_close: Fechar
+      filter_report: Editar filtro
+      widget: Widget
+      filter_by_title: Filtrados por
     freshfone:
       options:
         unassigned: Não atribuído
+        incoming: Recebida
+        outgoing: Realizada
+      time_period: Período de tempo
+      no_agent: '- Sin agente -'
+      group: Grupo
+      call_type: Tipo de chamada
+      filter_option_all_calls: Todas as chamadas
+      filter_close: Fechar
+      all_numbers: Todos os números
+      filter_report: Editar filtro
+      number: Número
+      business_hours: Horas de Atendimento
+      unanswered_count: Sem resposta
+      filter_by_title: Filtrados por
+    scoreboard_reports:
+      speed_champion: Campeão Rapidez
+    summary:
+      fcr: Primeira resolução de chamada
+      resolved_tickets: Tickets Resolvidos
+    discard_changes: Descartar alterações
+    date_ranges:
+      yesterday: Ontem
+      custom: Intervalo de Datas
+      today: Hoje
+      last_30_days: Últimos 30 dias
+      last_90_days: Últimos 90 dias
+      last_7_days: Últimos 7 dias
+    timesheet_reports:
+      index:
+        select_agent: Selecionar Agente
+        filter_report: Editar filtro
+        ticket_type: Tipo de Ticket
+    time_sheets:
+      time_period: Período de tempo
+      filter_by_title: Filtrados por
   event:
     type: Tipo
   google_signup:
     associate_google:
       login: Entrar
+      email_address: Endereço de e-mail
     signup_google:
       company_name: Nome da empresa
+      phone_no: Número de Telefone
+      helpdesk_url: URL do Helpdesk
+      submit: Enviar
+      create_my_account: Criar a sua Conta
   tag:
     title: Etiquetas
   support:
     tickets:
       ticket_survey:
         cancel: Cancelar
+        rate_again: Classifique-nos outra vez
+        load_questions: Ver Mais
+        change_of_mind: Mudou de opinião?
+        title_v2: Grau de Satisfação
+        rating_sub_title: Você classificou-nos
+        submit: Enviar
+        title: Questionário ao Cliente
+        feedback_title: Descreva a sua experiência de suporte (opcional)
+        comments: Comentários
+        survey_title: >-
+          Na resposta à sua questão ou resolução do seu problema, como avalia o
+          nível de qualidade do nosso representante?
+        rating_sub_title_v2: O seu grau de satisfação
     shared:
       survey_form:
         cancel: Cancelar
+        feedback_title: >-
+          A sua opinião e críticas poderão ajudar-nos a melhorar a equipa de
+          suporte.
+        survey_title: Por favor avalie o nosso suporte em menos de 1 minuto
+        submit: Enviar
+        change_of_mind: Mudou de opinião?
+        rate_again: Classifique-nos outra vez
+      related_files: Ficheiros Relacionados
+      attachment_form:
+        feedback_widgets_screenshot: Fazer uma captura de ecrã
     canned_form:
       next: Seguinte
+      okay: Ok
+      hey: Olá
+      thank_you_text: Obrigado
+      form_submit: Enviar
     surveys:
       new:
         send: Enviar feedback
+        thanks: Muito obrigado por nos ter avaliado!
+        happy_info: >-
+          Foi um prazer servi-lo. Ficamos contentes com a sua satisfação com o
+          nosso serviço.
+        feedback_optional: Comentários são opcionais
+        additional_info: 'Se pretender, pode partilhar a sua experiência de trabalho connosco.'
+        submit: Enviar
+        thanks_info: >-
+          Obrigado por ter gasto algum do seu tempo a avaliar o nosso suporte a
+          cliente.
+        unhappy_info: 'Iremos certificar-nos, que da próxima vez seremos mais cuidadosos.'
+        neutral_information: >-
+          Gostaríamos que estivesse um pouco mais feliz. Vamos trabalhar para
+          que isso aconteça.
     login:
       form:
         remember: Lembrar acesso neste computador
         login: Entrar
         password: Palavra-passe
+        forgot: esqueceu-se da palavra-passe?
   discussions:
     topics:
       reply: Responder
       answer: Responder
+      helpnote:
+        para4: >-
+          Os tópicos de fórum podem também ser marcados como adesivos quando
+          quiser que tenham maior visibilidade e podem também ser protegidos de
+          maneira a prevenir que os utilizadores adicionem respostas.
+      edit_topic: Editar Tópico
+      post:
+        replied: Respondeu
+        delete_confirm: Deseja mesmo apagar este comentário?
+      replied: Respondeu
+      widgets:
+        ticket:
+          agent: Agente
+      mark_as_spam: Marcar como spam
+      approve: Aprovar e Publicar
     shared:
       topic:
         tags:
           new_topic: Novo tópico
           reply: Responder
+      post:
+        approve_tooltip: Aprovar e Publicar
     unpublished:
       spam:
         reply:
           title: Responder
+          posted: respondeu a
         new_topic:
           title: Novo tópico
+        approve: Aprovar e Publicar
       index:
         title: Spam
+        unpublished: A aguardar aprovação
+      invalid_topic:
+        went_wrong: Algo correu mal
+      spam_actions:
+        approve_tooltip: Aprovar e Publicar
+      page_title: Moderação do fórum
     moderation:
       index:
         title: Spam
@@ -2133,61 +4407,682 @@ pt-PT:
           title: Novo tópico
         reply:
           title: Responder
+          posted: respondeu a
+        approve: Aprovar e Publicar
     topic_merge:
       cancel: Cancelar
+      mark_primary: Marcar como principal
+      continue: Continuar
+      add: Adicionar
+      please_wait: 'Por favor, aguarde...'
+    show_more: Mostrar mais
   freshcaller:
     admin:
       link_account_request_content:
         cancel: Cancelar
         password: Palavra-passe
+        link_errors:
+          validation_error: Este campo é obrigatório
+        email: E-mail
+        continue: Continuar
+      sidebar_title: Telefone
+      title_text: Telefone
+      feature_request_content:
+        create_new_account: Criar nova conta
   status: Estado
   custom_fields:
     delete: Apagar
+    default_field_error: Os campos predefinidos não podem ser colocados nesta secção
+    empty_section_info: Arrastar os campos para aqui
+    url: URL
+    nested_field: Campo dependente
+    phone_number: Número de Telefone
+    dropdown: Menu suspenso
+    email: E-mail
+    checkbox: Caixa de verificação
+    drag_drop_field_intro: >-
+      Arraste e large qualquer tipo de campo para dentro do formulário %{name}
+      para adicionar um novo campo personalizado
+    dropdown_blank: Menu suspenso
+    text: Linha de Texto
+    number: Número
+    paragraph: Texto Múltiplas Linhas
+    drag_and_drop_field: Arraste o Campo
+    insert_field: Arraste o Campo
+    date: Data
   plain_no: Não
   multifile_attachments:
     label: Anexar ficheiros
+    remove: Remover
+    mb: ' MB '
   livechat:
     save: Gravar
     cancel: Cancelar
     maximum_change_label: Editar
     edit: Editar
     text_no: Não
+    routing_info: Encaminhar todas as conversas recebidas para grupos específicos
+    help_offline_thank_msg: Mensagem de confirmação
+    prechat_dropdown_msg: >-
+      Pode associar as opções do menu suspenso a diferentes grupos no separador
+      de Preferências. As conversas serão atribuídas aos grupos especificados em
+      conformidade.
+    non_availability_msg_header: Mensagem quando os agentes estão ausentes
+    integrate_msg: >-
+      Copie e cole este código antes da última etiqueta </body> no seu site ou
+      aplicação
+    wait_title: Mensagem enquanto aguarda que o agente entre
+    msgbox_placeholder_title: Marcador de posição para caixa de resposta
+    help_offline_thank_header_msg: Cabeçalho depois de enviar a mensagem
+    prechat_desc: >-
+      Obtenha mais informações sobre os visitantes para ter um melhor contexto
+      sobre as pessoas com quem está a conversar. Se esta opção estiver ativa,
+      os visitantes têm de enviar o formulário para iniciar uma conversa.
+    installation: Código do widget
+    show_widget: Quando os agentes estão online e a aceitar conversas
+    integrate_livechat_title: Integrar conversa em tempo real no seu site e aplicações
+    header_title: Cabeçalho
+    maximum_chat_desc: >-
+      Defina o limite para o número de conversas que um agente pode manter
+      simultaneamente. Quando um agente atingir este limite, não receberá
+      notificações de novas conversas.
+    chatbox_bgcolor: Cor
+    maximum_chat_title: Número máximo de conversas com visitantes
+    valid_code: 'Por favor, introduza um valor de cor válido'
+    non_availability_msg_help: >-
+      Para criar uma hiperligação de uma parte da mensagem que aponte para o seu
+      URL, coloque-a entre "# #"
+    chat_availability: Disponibilidade para o chat
+    proactive_title: Chat proativo
+    intro: >-
+      A solução integrada de chat ao vivo do Freshdesk permite-lhe visualizar e
+      conversar com os utilizadores no seu site, software online ou portal de
+      assistência, diretamente a partir do Freshdesk. Pode ainda iniciar uma
+      conversa com os visitantes do seu site. Depois de terminar uma sessão de
+      chat, pode optar por convertê-la num ticket e por continuar a fazer o
+      acompanhamento do visitante por e-mail ou por arquivar a transcrição da
+      conversa.
+    texton: Ativo
+    show_chat_hours: Mostrar conversa
+    agent_network_disconnect_msg_title: Mensagem quando o agente se desliga
+    thank_title: Mensagem de agradecimento
+    prechat_msg: Mensagem pré-chat
+    enable: Ativar
+    enabled: Ativado
+    welcome: Mensagem de boas-vindas
+    portal_desc: >-
+      Embora o widget de chat do seu site esteja visível para todos, pode
+      ativá-lo apenas para os seus clientes no portal de assistência.
+    copy_to_clipboard: Copiar para a área de transferência
+    missed_chat_title: Formulário de conversa perdida
+    portal_option_info: Mostrar widget de chat para
+    missed_chat_desc: Recolha os dados do visitante quando não estiver disponível.
+    proactive_note: >-
+      Nota: o formulário pré-chat não será apresentado quando uma conversa for
+      iniciada proativamente. Ainda pode adicionar manualmente todas as
+      informações dos visitantes.
+    default_routing: Encaminhamento predefinido
+    routing: Encaminhamento de conversa
+    anytime: Sempre (24/7)
+    help_text_wait_onhold_msg: >-
+      Esta mensagem aparece quando o visitante aguarda por um agente há mais de
+      um minuto
+    support_portal: Chat para o seu portal de assistência
+    chat_hours_msg_note: 'Nota: a janela de chat ficará oculta fora deste período.'
+    form_details: Detalhes do formulário
+    show_chat_hours_msg: >-
+      Define em que momento a sua janela de chat fica disponível para os
+      visitantes.
+    intro_title: Porquê usar o chat ao vivo?
+    set_default_msgs: Mensagens predefinidas
+    enable_chat: Ativar chat ao vivo
+    text_yes: Sim
+    business_hours: Durante o horário comercial
+    chat_enabled_label: Ativar chat
+    chat_transfer_msg_title: Mensagem de transferência de conversa
+    offline_message: Mensagens de ausência
+    window_position: Cargo
+    custom_chat_window: Janela de chat
+    help_offline_title: Cabeçalho
+    learn_livechat: Saber mais sobre o chat ao vivo
+    widget: Widget
+    textoff: Desligado
+    enabling: A ativar
+    use_custom_link: 'Redirecionar os visitantes para uma página separada '
+    procative_info: >-
+      Iniciar automaticamente conversas com visitantes se estes passarem mais de
+      um determinado tempo na mesma página.
+    dropdown_based_routing: Encaminhamento com base no menu suspenso
+    widgets_list_info: >-
+      Por cada produto que configurar no Freshdesk, terá um widget de chat
+      correspondente disponível aqui
+    visitor_form: Formulário do visitante
+    disabled: Desativado
+    url_error_msg: 'Por favor, introduza um URL válido'
+    window_offset: Desvio
+    everyone: Todos
+    prechat_title: Formulário pré-chat
+    cobrowsing: Ajuda na página
+    end_chat_confirm_msg_title: Mensagem de confirmação de fim de conversa
+    chat_with_us: Entre em contacto connosco
+    logged_in_users: Apenas utilizadores com sessão iniciada
+    cobrowsing_info: >-
+      Oriente os seus clientes de modo mais eficaz durante as conversas com uma
+      opção para visualizar e controlar os respetivos ecrãs.
+    window_offset_error_msg: 'Por favor, introduza um valor de desvio válido (< 500 px).'
+    preferences: Preferências
   portalcss:
     save_and_continue: Gravar
+    apply_mint: Aplicar
+    cosmetic:
+      subheader_background_color: Cor de fundo
+    please_wait: Por favor aguarde...
+    layout_pages:
+      footer_layout_title: Rodapé
+      header_layout_title: Cabeçalho
   freshfone:
     admin:
       ivr:
         save: Gravar
+        turn_on: Ativo
+        turn_off: Desligado
+        action: Ação
+        saving: A guardar...
+        preview: Previsualizar
+        done: feito
+        welcome_message: Mensagem de Boas-vindas
       number_settings:
         cancel: Cancelar
+        greeting_message: Introduza aqui a sua mensagem
+        number_accessible: Acessível por
+        voicemail_on: Ativo
+        record_none: Não gravar chamadas
+        voicemail_off: Desligado
+        name: Nome
+        voicemail: Correio de voz
+        business_hours: Horas de Atendimento
+        start_recording: Iniciar gravação
+        preparing_recording: A preparar a sua mensagem...
+        audio_upload: Carregar
+        business_calendar: Selecionar Horário de Atendimento
+        name_placeholder: Insira um nome fácil para o seu número
+        welcome_message: Mensagem de Boas-vindas
+        change: Modificar
+      settings: Definições
+      important: Importante
+      freshfone_numbers_title: Telefone
+      welcome_page:
+        title_text: Telefone
+      numbers:
+        caller_id:
+          manage_caller_id: 'Gerir o ID de quem telefona '
+          add_new: Adicionar Novo
+        buy: Comprar número
+        buy_button_text: Comprar
+        address:
+          address: Endereço
+          state: Distrito/Região
+          city: Cidade
+          postal_code: Código postal
+        manage: Gerir
+      feature_request_content:
+        learn_more: Saiba mais
+        trial_or: OU
+        title_text: Telefone
+        pricing: Ver todas as tarifas de chamadas e os países admitidos
+      local: Local
+      trial:
+        numbers:
+          search:
+            buy_confirmation: Pretende selecionar este número?
+    subscription:
+      purchase_credits: Comprar créditos
   agent_list:
     sort:
       sorted_by: Ordenar por
+      last_active_at: Visto pela última vez
+      created_at: Data de criação
+      asc: Ascendente
+      desc: Descendente
+      last_login_at: Entrou pela última vez em
+      name: Nome
   password: Palavra-passe
   helpdesk_reports:
     saved_report:
       save: Gravar
       cancel: Cancelar
+      error_title_unavailable: Já existe um relatório com este título
+      delete_cnfm_message: Tem a certeza que pretende remover este relatório?
+      dialog_sub_header: Este relatório é apenas visível para ti
+      delete_dialog_header: Apagar Relatório
+      edit_dialog_header: Editar Relatório
+      error_missing_title: Título é obrigatório
+      title: Título do Relatório
+      dialog_header: Guardar como
     ticket_schedule:
       index:
         cancel: Cancelar
+        delete_text: Tem a certeza de que deseja eliminar este agendamento?
+        confirm: Confirmar
       new:
         select_all: Selecionar tudo
+        helpnote:
+          api_info1: A API conterá o link para a última exportação.
+        ticket_fields_title: Campos do Ticket
+        email: E-mail
+        contact_fields_title: Campos de Contacto
+        one_time_export_label: >-
+          Exportar conteúdo do ticket a partir do início do mês quando este
+          cronograma começar
+        company_fields_title: Campos de Empresa
+        description: Descrição
+        frequency: Agendar
+      schedule_export: Agendar Exportação
+      schedule: Agendar
+      all_reports: Todos os Relatórios
+      new_schedule: Nova agenda
     timespent_export:
       button_export: Exportar
+      export_csv: Exportar CSV
+    chats: Chats
+    more: Mais...
+    deprecated_header: Este relatório não estará disponível depois de 30 de Março de 2016.
+    insights:
+      customize_link: Personalizar
+    today: Hoje
+    this_week: Esta semana
+    agent_summary:
+      title: Desempenho do Agente
+    this_month: Este mês
+    edit_filter: Filtrar
+    scheduled_reports:
+      dialog:
+        monthly: Mensalmente
+        generate_report: Gerar relatório
+        email: E-mail
+        'on': Ativo
+        desc: Descrição
+        daily: Diário
+        weekly: Semanal
+        subject: Assunto
+    year_in_review:
+      title: Retrospetiva do seu ano
+    ticket_volume:
+      resolved_tickets: Tickets Resolvidos
+      time_trends:
+        year: Ano
+        week: Semana
+        day: Dia
+        month: Mês
+    summary: Resumo
+    show: 'Mostrar:'
+    this_year: Este ano
+    date_range: Intervalo de Datas
+    filter_by: Filtrar por
+    solution_article_text: Cómo leer este informe ?
+    performance_distribution:
+      title: Distribuição de Desempenho
+      resolution_bar: Tempo de resolução
+      first_response_bar: Tempo da primeira resposta
+      response_bar: Tempo médio de resposta
+    group_summary:
+      title: Desempenho de Grupo
+    ticket_activity:
+      helpnote:
+        api_info1: A API conterá o link para a última exportação.
+      edit: Editar Agendamento
+      learn_more: Saiba mais
+    filtered_by: 'Filtrados por:'
+    at: em
+    yesterday: Ontem
+    change: Modificar
   Twitter: ID do Twitter
   features:
     feedback_widget: Definições do Widget
+    bot: Bot
+    multiple_languages: Múltiplos Idiomas
+    everything_in_sprout: Tudo no Sprout
+    portal_customization: Personalização do Portal
+    gamification: Gameficação
+    parent_child: Tickets superiores/inferiores
+    auto_ticket_assignment: Atribuição Automática de Ticket
+    social_support: Suporte Social
+    custom_domain: Domínio personalizado
+    email_ticketing: Ticketing por email
+    scheduled_reports: Relatórios agendados
+    knowledge_base: Base de Conhecimento
+    phone_integration: Integração com Telefone
+    agent_collision: Colisão de Agentes
+    mobile_apps: Aplicações Móveis
+    custom_ssl: SSL Personalizado
+    custom_mailbox: Servidores personalizados de Mail
+    everything_in_garden: Tudo no Garden
+    automations: Automatismos
+    multiple_mailboxes: Múltiplas caixas de correio
+    enterprise_reports: Reporte Empresarial
+    multiple_products: Suporte a Múltiplos Produtos
+    forums: Fóruns da comunidade
+    satisfaction_survey: Sondagem de satisfação do cliente
+    ip_restriction: Restrição de IP Seguro
+    everything_in_estate: Tudo no Estate
+    custom_roles: Funções personalizadas
+    integrations: Integrações Embutidas
+    multiple_timezones: Múltiplos Fusos Horários
+    ticket_templates: Modelos de ticket
+    everything_in_blossom: Tudo no Blossom
+    freshchat: Integração com o Freshchat
+    css_customization: Personalização da CSS
   admin_onboarding:
     modal:
       channels_frame:
         forums_channel: Fóruns
+        social_channel: Redes sociais
+        chat_channel: Conversa em tempo real
+        email_channel: E-mail
+        phone_channel: Telefone
+        title: 'Atualmente, como fala com os seus clientes?'
+        forward_link: Convide a sua equipa
+      agents_frame:
+        send_invite: Envia convite
+        emails_invalid: O seu email é inválido.
+        emails_placeholder: 'bruce@just.ly, diana@just.ly, clark@just.ly'
+      welcome_frame:
+        title: Bem-vindo ao Freshdesk
     account_verification_message:
       helpnote_or: ou
       cancel_button: Cancelar
+      modal_title: Registou-se com o endereço de e-mail errado?
+      modal_invalid_email_error: Por favor insira um endereço de email válido.
+      modal_send_button: Enviar Ativação
+      resend_message: Reenviar ativação
+      change_email: altere o seu e-mail
   no_password_reset: Não
   close_this_ticket: Fechar este ticket
   freshchat:
     admin:
       save: Gravar
       cancel: Cancelar
+      sidebar_title: Freshchat
+      action:
+        success_message: Definições atualizadas
+      admin_apikey: 'Chave API:'
+      title_text: Freshchat
+      portal_url: 'URL do Portal:'
+      app_id: ID da App
+  copied_link: Copiado
+  Email: E-mail
+  back: Atrás
+  current_free_plan: Plano Grátis atual
+  enter_a_value: Insira um valor
+  backup_error_msg: >-
+    O ficheiro excede o limite existente de 50MB, por favor <a href='#'
+    id='import_request'>contacte o suporte</a> para prosseguir com a importação.
+  email_command_preview_to_email_value: support@acme.freshdesk.com
+  custom_mailbox_admin_email_notifications:
+    regards: Cumprimentos
+  downgrade_plan_title: Tem a certeza de que quer realizar um downgrade da sua conta?
+  resolved_tickets: Tickets Resolvidos
+  change_plan_info: >-
+    Pode alterar o seu plano a qualquer momento, a sua próxima data de faturação
+    é %{date}.
+  forum_category:
+    select_product: Selecionar portal de produto...
+    product_portal_visibility: Visível em
+  trail_expiry_during_trial: >-
+    Faça uma atualização para uma conta paga ou use o Freshdesk gratuitamente
+    selecionando um plano a qualquer momento.
+  proceed_billing_info: 'Sim, Continuar para a Faturação'
+  integration:
+    helpcard:
+      title2: Aplicações personalizadas
+      title1: Integrações
+  add_note: Adicionar Nota
+  enter_payment_details_to_add: >-
+    Introduza dados de pagamento para adicionar mais agentes ou atualizar o seu
+    plano
+  settings: definições
+  ticket_field:
+    helpcard:
+      info_1: >-
+        O formulário de ticket ajuda a capturar os dados dos clientes dos quais
+        necessita quando eles submetem um ticket. Pode personalizar o seu
+        Formulário de Ticket para que inclua os campos certos para o seu negócio
+        e permitir assim que os seus clientes e agentes preencham a informação
+        de que você necessita no formato que pretende. Por exemplo, numa
+        companhia de e-comércio, ter o ID da encomenda do cliente no ticket
+        seria proveitoso do ponto de vista do agente que terá que resolver o
+        ticket.
+      title3: Campos dinâmicos
+      title1: Campos do Ticket
+  activations:
+    activate_freshdesk_account: Ative a sua conta
+  no_tags: Não foram encontradas etiquetas.
+  username: Nome
+  portal_key: Portal
+  customer_import:
+    import_csv: 'Importar %{type} a partir do CSV'
+  number_of_attachments: ' anexos'
+  trial_plan_name: 'Despromover Demonstração para %{name}'
+  cloud_log_mailer:
+    logger_email:
+      regards: 'Cumprimentos,'
+      account: 'Conta: '
+      reason: Motivo
+  merge_contacts:
+    please_wait: 'Por favor, aguarde...'
+  portals_key: Portais
+  canned_folders:
+    insert_placeholder: Inserir Moldura
+  enable: Ativar
+  choose_a_plan: Escolha um plano
+  plain_yes: Sim
+  enabled: Ativado
+  footer:
+    helpdesk_software: Software de Help Desk
+    by_freshdesk: pelo Freshdesk
+  email: E-mail
+  your_email: O seu email
+  yes_password_reset: Sim
+  dropbox_attach_from_text: Anexar da <b>Dropbox</b>
+  make_payment: Realizar Pagamento
+  being_processed: A ser processado
+  awaiting_your_reply: A aguardar a sua resposta
+  helpcard:
+    title: ID Externa Única
+  currency_note: >-
+    <a href='/subscription'>Clique aqui</a>para alterar a moeda. <br> Note por
+    favor que não poderá alterar a moeda depois de introduzir a informação do
+    seu cartão.
+  admin_upgrade:
+    enable_mint_title: 'Permita que os agentes experimentem o Mint, inovador e mais rápido'
+    enable_mint_error: >-
+      O Mint já foi ativado para todos os agentes. Atualize a página para ver as
+      últimas atualizações.
+  plain_off: Desligado
+  Agent: Agente
+  customize_domain:
+    email:
+      cheers: 'Obrigado,'
+      team: Equipa Freshdesk
+  trail_expiry_after_trial: >-
+    A sua conta de demonstração vai-se auto-destruir dentro de
+    <b>%{no_of_days}</b>. Escolha um plano para continuar a utilizar o Freshdesk
+  widgets:
+    feedback_widgets:
+      new:
+        feedback_widgets_search_results: Resultados da pesquisa
+        problems_with_fields: 'Ocorreram problemas com os seguintes campos:'
+        feedback_widgets_knowledge_base: 'Base de dados '
+        feedback_widgets_search: Pesquisar
+  quests:
+    solution_mand: Por favor preencha o número de soluções.
+    js_forum_txt: >-
+      Publicações de fórum $$questmode$$ $$questvalue$$ na extensão de 
+      $$questtime$$ e que correspondam a estas condições.
+    delete: Tem a certeza de que deseja apagar esta pesquisa específica?
+    ticket_mand: Por favor preencha o número de tickets resolvidos.
+    badge_mand: Por favor. escolha uma divisa.
+    js_ticket_txt: >-
+      Resolver tickets de $$questvalue$$ na extensão de $$questtime$$ e que
+      correspondam a estas condições.
+    js_solution_txt: >-
+      Criar artigo de base de conhecimento para $$questvalue$$ na extensão de
+      $$questtime$$ e que correspondam a estas condições.
+    js_quest_txt: >-
+      Depois de completar com sucesso a demanda, poderá desbloquear o crachá
+      $$badgename$$ e $$questpoints$$ pontos de bónus.
+    forum_mand: Por favor preencha o número de Fóruns.
+    name_mand: Por favor forneça o nome da Pesquisa específica
+  attach: Anexar
+  update_and_log_in: Atualizar & Autenticar
+  index_tooltip_loading_msg: A carregar...
+  confirm: Confirmar
+  add_cc: Adiconar Cc
+  failure: Erro ...
+  activate_free_plan: Activar Plano Grátis
+  feedbackwidget_background: Fundo
+  disable: Desativar
+  add_more_lang: Adicione os idiomas suportados pelo helpdesk
+  zendesk_import:
+    group: Grupos
+    post: Fóruns & Soluções
+    user: Utilizadores
+    title: Importar do Zendesk
+    details: 'Começado em: %{time} por %{user}'
+    organization: Organizações
+    autorefresh: O estado irá auto-atualizar a cada minuto
+    ticket: Pedidos
+  'on': em
+  box_attach_from: Anexar da <b>Box</b>
+  billing_info: Informação de subscrição
+  upgrade_plan: Atualizar
+  save_as: Guardar como
+  feedbackwidget_image_button: URL de imagem
+  chatwidget_title: Conversa em tempo real
+  register: Registo
+  portal_pages:
+    pages:
+      ticket_view: Detalhes do pedido
+      article_view: Vista de artigos
+      portal_home: Página principal do Portal
+      topic_view: Vista de Tópicos
+      submit_ticket: Novo pedido
+      discussions_category: Página de categorias de Discussões
+      article_list: Lista de artigos
+      archive_ticket_view: Detalhes do pedido arquivo
+      topic_list: Lista de tópicos
+      profile_edit: Perfil de utilizador
+      forgot_password: Esqueceu palavra-passe
+      user_login: Página de entrada
+      ticket_list: Lista de pedidos
+      discussions_home: Página de Discussões
+      new_topic: Novo tópico
+      my_topics: Os meus tópicos
+      solution_home: Página inicial das Soluções
+      solution_category: Página inicial da categorias de soluções
+      archive_ticket_list: Lista de pedidos arquivados
+      search: Resultados da pesquisa
+      user_signup: Registar novo utilizador
+    groups:
+      tickets: Pedidos
+      general: Páginas gerais
+      solutions: Soluções
+      discussions: Discussões
+  confirm_delete_message: 'Tem a certeza que quer apagar %{human_name}?'
+  reset_password_title: Redefinir palavra-passe
+  date_title: Data
+  zendesk_backup: Ficheiro de Backup
+  email_command_setting:
+    helpcard:
+      note: Nota
+      ticket_type_example: Pergunta
+      heading: ' Configurações de comandos por email'
+  saving: A guardar...
+  reload: Atualizar
+  amount: Quantidade
+  free_plan_agents: 'Para %{free_agents} agentes'
+  Portal: Portal
+  export_to_CSV: Exportar para CSV
+  email_command_preview_subject: Assunto
+  currency_label: 'Moeda :'
+  plain_on: Ativo
+  feedbackwidget_form_heading: Cabeçalho do Formulário
+  clone: Clonar
+  zendesk_import_files: Selecionar o que importar?
+  zendesk_account: Detalhes de Conta Zendesk
+  conversation: Conversação
+  plan: Plano
+  Phone: Telefone
+  add: Adicionar
+  choose_different_plan: Escolha um plano diferente
+  trail_expiry_one_more_day: Selecione um plano grátis ou pago para ter acesso contínuo ao Freshdesk
+  saving_draft: A guardar...
+  notification:
+    submit_feedback: Submeter Feedback
+    load_more: Carregar Mais
+  attachment_delete: Pretende apagar permanentemente este anexo?
+  clear: Limpar
+  support_multi_languge: Utilizar mais do que um idioma no suporte a clientes?
+  preview: Previsualizar
+  disabled: Desativado
+  Group: Grupo
+  adv_reports:
+    select_option_msg: 'Por favor, selecione uma opção'
+    load:
+      resp_time: Tempo de Resposta
+    reports: Relatórios
+    summary: Resumo
+    glance:
+      all_reports: Todos os Relatórios
+      select_agent_msg: Selecionar Agente
+    report: ' Relatório '
+  chatwidget_help_content:
+    title: Conversa em tempo real
+    info1: >-
+      A solução integrada de conversação em tempo real do Freshdesk permite-lhe
+      visualizar e conversar com os utilizadores no seu sítio web, software
+      online ou portal de suporte, diretamente a partir do seu Freshdesk. Pode
+      personalizar a totalidade da janela de conversação (incluindo textos e
+      cores padrão, etc.) e pode inclusivamente iniciar sessões proativamente
+      quando os visitantes demorarem mais tempo no seu sítio web.
+    info2: >-
+      Cada sessão de conversação irá capturar meta-informação sobre os
+      visitantes, incluindo a localização, aparelho, etc., bem como o seu
+      historial de suporte consigo. Uma vez terminada a sessão de conversação,
+      poderá decidir converter a conversação em ticket e continuar o
+      acompanhamento através de email, ou arquivar a transcrição da conversação.
+  please_wait: 'Por favor, aguarde...'
+  search:
+    in: Publicado a
+    by: 'por:'
+    searching: A procurar
+    no_results_msg: Não foram encontrados resultados
+  add_all: Adicionar todos
+  paid_with: Pago com
+  sales: Vendas
+  feedbackwidget_button_text: Rótulo
+  ticket_form:
+    your_email_address: E-mail
+    your_name: O seu nome
+  done: Concluído
+  user_notifications:
+    mark_all_as_read: Marcar todas como lidas
+    header: Notificações
+    preferences: Preferências
+  unblock: Lista de permissões
+  edit_plan: Editar plano
+  ticket_deleted: Este ticket foi apagado
+  signup_complete_activate_info: >-
+    Bem-vindo! Acabámos de lhe enviar um email com um link onde poderá definir a
+    sua palavra-passe e ativar a sua conta.
+  in: Publicado a
+  help_widget:
+    form_title: Contacte-nos
+    form_button_text: Enviar feedback
+    form_submit_message: Obrigado pelo seu feedback.
+    button_text: Ajuda
+    welcome_message: Podemos ajudar?
+    predictive_message: >-
+      Reparámos que não consegue prosseguir. Conte-nos o que está a tentar fazer
+      e a nossa equipa de apoio entrará em contacto consigo logo que possível.
+    success_message: Obrigado. Entraremos em contacto!
