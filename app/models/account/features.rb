@@ -31,7 +31,8 @@ class Account < ActiveRecord::Base
     :delete_trash_daily, :automation_revamp, :prevent_wc_ticket_create, 
     :allow_wildcard_ticket_create, :requester_privilege, :sso_unique_session, :fluffy_min_level,
     :scheduling_fsm_dashboard, :enable_customer_journey, :csat_translations,
-    :sandbox_temporary_offset, :downgrade_policy, :mentions_to_tms, :allow_update_agent, :optar_cache
+    :sandbox_temporary_offset, :downgrade_policy, :mentions_to_tms, :allow_update_agent, :optar_cache,
+    :support_ticket_rate_limit
   ].freeze
 
   DB_FEATURES = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone].freeze
