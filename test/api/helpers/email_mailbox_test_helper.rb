@@ -120,8 +120,7 @@ module EmailMailboxTestHelper
       delete_from_server: options[:imap_delete_from_server] || true,
       authentication: options[:imap_authentication] || 'plain',
       user_name: options[:imap_user_name] || 'smtp@gmail.com',
-      password: options[:imap_password] || 'password',
-      error_type: options[:error_type] || nil
+      password: options[:imap_password] || 'password'
     }
   end
   

@@ -564,12 +564,14 @@ class Email::MailboxesControllerTest < ActionController::TestCase
   def test_list_with_failure_code_filter
     Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
     @account.all_email_configs.delete_all
-    mailbox1 = create_email_config(support_email: 'testafailurecodefilter1@fd.com', imap_mailbox_attributes: { error_type: 543 }, default_reply_email: true)
-    mailbox2 = create_email_config(support_email: 'testafailurecodefilter2@fd.com', imap_mailbox_attributes: { error_type: 541 })
+    mailbox1 = create_email_config(support_email: 'testafailurecodefilter1@fd.com', imap_mailbox_attributes: { imap_server_name: 'imap.gmail.com' }, default_reply_email: true)
+    mailbox2 = create_email_config(support_email: 'testafailurecodefilter2@fd.com', imap_mailbox_attributes: { imap_server_name: 'imap.gmail.com' })
     mailbox3 = create_email_config(support_email: 'testafailurecodefilter3@fd.com')
     mailbox1.active = true
+    mailbox1.imap_mailbox.error_type = 543
     mailbox1.save!
     mailbox2.active = true
+    mailbox2.imap_mailbox.error_type = 541
     mailbox2.save!
     Email::MailboxFilterValidation.any_instance.stubs(:private_api?).returns(true)
     get :index, controller_params(order_by: 'failure_code')
