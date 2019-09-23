@@ -170,6 +170,11 @@ module Fdadmin::AccountsControllerMethods
     { enabled: account.fluffy_enabled? }
   end
 
+  def fluffy_api_v2_limit(account)
+    data = account.current_fluffy_limit(account.full_domain)
+    data.present? ? { limit: data.limit, granularity: data.granularity } : {}
+  end
+
   def trigger_enable_old_ui_action
     ::InternalService::FreshopsOperations.perform_async(params)
   end
