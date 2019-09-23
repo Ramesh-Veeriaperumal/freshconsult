@@ -611,10 +611,6 @@ class AccountsControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:onboarding_applicable?).returns(true)
     anonymous_signup_key = ANONYMOUS_ACCOUNT_SIGNUP_ENABLED
     set_others_redis_key(anonymous_signup_key, true)
-    onboarding_v2_key = ONBOARDING_V2_ENABLED
-    onboarding_i18n_enabled_key = ONBOARDING_I18N_ENABLED
-    set_others_redis_key(onboarding_v2_key, true)
-    set_others_redis_key(onboarding_i18n_enabled_key, true)
     Account.any_instance.expects(:add_to_billing).never
     Account.any_instance.expects(:enable_fresh_connect).never
     @request.env['CONTENT_TYPE'] = 'application/json'
@@ -624,7 +620,6 @@ class AccountsControllerTest < ActionController::TestCase
     assert_response 200
     account = Account.last
     assert_equal account.anonymous_account?, true
-    assert_equal account.launched?(:onboarding_i18n), true
     assert_equal account.admin_first_name, 'Demo'
     assert_equal account.admin_last_name, 'Account'
     assert_match(/freshdeskdemo[0-9]{13}@example.com/, account.admin_email)
@@ -638,8 +633,6 @@ class AccountsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:anonymous_account?)
     Account.any_instance.unstub(:onboarding_applicable?)
     remove_others_redis_key(anonymous_signup_key)
-    remove_others_redis_key(onboarding_v2_key)
-    remove_others_redis_key(onboarding_i18n_enabled_key)
     account.destroy if account.present?
   end
 
