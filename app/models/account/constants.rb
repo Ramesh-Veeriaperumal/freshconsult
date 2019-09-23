@@ -238,7 +238,7 @@ class Account < ActiveRecord::Base
   # List of Launchparty features available in code. Set it to true if it has to be enabled when signing up a new account
   LAUNCHPARTY_FEATURES = [TEMPORARY_AND_SELECTABLE_FEATURES_TO_LP].reduce(
     {
-      admin_dashboard: false, agent_conference: false, agent_dashboard: false,
+      hide_og_meta_tags: false, admin_dashboard: false, agent_conference: false, agent_dashboard: false,
       agent_new_ticket_cache: false, api_search_beta: false, autopilot_headsup: false,
       autoplay: false, bi_reports: false, cache_new_tkt_comps_forms: false,
       delayed_dispatchr_feature: false, disable_old_sso: false, enable_old_sso: false,
