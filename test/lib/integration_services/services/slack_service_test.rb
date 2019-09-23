@@ -1,9 +1,12 @@
 require_relative '../../../api/unit_test_helper'
-
+require Rails.root.join('test', 'lib', 'helpers', 'contact_segments_test_helper.rb')
 class SlackServiceTest < ActionView::TestCase
+  include ::ContactSegmentsTestHelper
   def setup
-    Account.stubs(:current).returns(Account.first)
-    User.stubs(:current).returns(Account.first.users.first)
+    account = Account.first || create_test_account
+    Account.stubs(:current).returns(account)
+    user = account.users.first || create_contact
+    User.stubs(:current).returns(user)
   end
 
   def teardown
@@ -45,24 +48,34 @@ class SlackServiceTest < ActionView::TestCase
   end
 
   def test_receive_slash_command
+    Rails.logger.info('test_receive_slash_command started')
+    contact1 = create_contact
+    contact2 = create_contact
+    user_list = {members: [{ id: contact1.id, name: 'test_name', profile: { email: contact1.email }.stringify_keys! }
+      .stringify_keys!, { id: contact2.id, name: 'new agent', profile: { email: contact2.email }.stringify_keys! }
+      .stringify_keys!] }.stringify_keys!
+    conversation = { conversation: 'first', user: contact2.id, message: { text: 'test' }.stringify_keys! }
+      .stringify_keys!
     IntegrationServices::Services::Slack::AuthResource.any_instance.stubs(:test).returns(auth: true)
-    IntegrationServices::Services::Slack::Processor::TicketProcessor.any_instance.stubs(:create_ticket).returns('ticket_url')
+    IntegrationServices::Services::Slack::UserResource.any_instance.stubs(:list).returns(user_list)
     Integrations::UserCredential.any_instance.stubs(:save!).returns(true)
     IntegrationServices::Services::Slack::ChatResource.any_instance.stubs(:post_message).returns(true)
-    IntegrationServices::Services::Slack::ImResource.any_instance.stubs(:history).returns(conversation: 'first')
-    IntegrationServices::Services::Slack::UserResource.any_instance.stubs(:list).returns({ 'members': [{ id: 1,
-                                                                                                         name: 'test_name',
-                                                                                                         profile: { email: Account.first.users.first.email }.stringify_keys! }.stringify_keys!] }.stringify_keys!)
+    IntegrationServices::Services::Slack::ImResource.any_instance.stubs(:history).returns([conversation])
+
     app = Integrations::InstalledApplication.new
-    slash = ::IntegrationServices::Services::SlackService.new(app, { act_hash: { user_slack_token: 'slack123', event_type: 'create_ticket', user_id: 1 } },
+    slash = ::IntegrationServices::Services::SlackService.new(app,
+      { act_hash: { user_slack_token: 'slack123', event_type: 'create_ticket', user_id: contact1.id } },
                                                               {}).receive_slash_command
     assert_equal true, slash[:post_notice]
-    IntegrationServices::Services::Slack::AuthResource.any_instance.unstub(:test)
-    IntegrationServices::Services::Slack::Processor::TicketProcessor.any_instance.unstub(:create_ticket)
+    Rails.logger.info('test_receive_slash_command ended')
+  ensure
+    contact1.destroy
+    contact2.destroy
     Integrations::UserCredential.any_instance.unstub(:save!)
     IntegrationServices::Services::Slack::ChatResource.any_instance.unstub(:post_message)
     IntegrationServices::Services::Slack::ImResource.any_instance.unstub(:history)
     IntegrationServices::Services::Slack::UserResource.any_instance.unstub(:list)
+    IntegrationServices::Services::Slack::AuthResource.any_instance.unstub(:test)
   end
 
   def test_receive_slash_command_nil
