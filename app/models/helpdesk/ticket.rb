@@ -43,7 +43,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   TICKET_BLACKLISTED_ATTRIBUTES = ['override_exchange_model'].freeze
                             
   OBSERVER_ATTR = []
-  TICKET_BLACKLISTED_ATTRIBUTES = ['override_exchange_model'].freeze
   self.table_name =  "helpdesk_tickets"
   
   serialize :cc_email

@@ -18,12 +18,6 @@ class Helpdesk::TicketState <  ActiveRecord::Base
                                'closed_at': nil, 'resolved_at': nil, 'first_response_time': nil,
                                'inbound_count': nil }
 
-  # Model changes for presenter includes only the listed fields
-  PRESENTER_FIELDS_MAPPING = { 'first_resp_time_by_bhrs': 'first_response_by_bhrs', 'resolution_time_by_bhrs': 'time_to_resolution_in_bhrs',
-                               'resolution_time_by_chrs': 'time_to_resolution_in_chrs', 'first_assigned_at': nil,
-                               'closed_at': nil, 'resolved_at': nil, 'first_response_time': nil,
-                               'inbound_count': nil }
-
   alias_attribute :on_state_time, :ts_int1
   alias_attribute :custom_status_updated_at, :ts_datetime1
 
