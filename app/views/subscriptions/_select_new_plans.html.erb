@@ -77,7 +77,7 @@
                       :plan_name_id => plan_name_id }%>
                   </div>
                   <% subscribe_direct_flag =  (current_account.full_time_support_agents.count) <= plan.free_agents %>
-                  <% request_change = (@subscription.state == 'active' && @subscription.cost_per_agent != 0 && current_account.launched?(:downgrade_policy)) ? 'request_change' : 'activate_free_plan'%>
+                  <% request_change = (@subscription.state == 'active' && current_account.launched?(:downgrade_policy) && @subscription.cost_per_agent != 0 && (@subscription.agent_limit > @subscription.free_agents) ) ? 'request_change' : 'activate_free_plan'%>
                   <% if is_new_sprout %>
                   <% if current_account.launched?(:downgrade_policy) && @subscription.subscription_request.present? && @subscription.cost_per_agent != 0 %>
                      <button  data-id="#confirm-message-<%= plan.id %>" class="btn btn-flat sprout-second-downgrade-modal" title="" data-submit-label="<%= t('request_change') %>" data-submit-class="btn btn-primary sprout-downgrade"> <%= t('choose_plan') %></button> 
@@ -102,7 +102,8 @@
                         </div>
                         <div class="modal-footer mt12">
                            <button class="btn btn-secondary" data-dismiss="modal" aria-hidden="true"><%= t("account.cancel") %></button>
-                           <button id="sprout-downgrade-submit" class="btn btn-primary" data-dismiss="modal" aria-hidden="true" ><%= t('request_change') %></button>
+                           <button id="sprout-downgrade-submit" class="btn btn-primary" data-dismiss="modal" aria-hidden="true" >
+                            <%= t(request_change) %></button>
                         </div>
                       </div>
                       <div id="sprout-downgrade-modal-show" class="modal hide second-downgrade-modal-wrapper"  aria-hidden="true" role="dialog">
@@ -293,6 +294,22 @@
 <script type="text/javascript">
 
   if(App.SelectPlan != undefined){ App.SelectPlan.destroy() }
-  App.SelectPlan.initialize("<%= @subscription.currency_name %>",<%= @subscription.renewal_period %>,"<%= @subscription.subscription_plan.id %>","<%= @subscription.agent_limit %>",<%= @subscription.field_agent_limit || 0 %>, <%= current_account.launched?(:downgrade_policy) %>,"<%= current_account.plan_name %>",<%= current_account.field_service_management_enabled? %>,"<%= @subscription.state %>", <%= current_account.account_cancellation_requested? %>);
+
+    let planInfo = {
+      currency_name: '<%= @subscription.currency_name %>',
+      renewal_period: <%= @subscription.renewal_period %>,
+      subscribed_plan_id: <%= @subscription.subscription_plan.id %>,
+      agent_limit: <%= @subscription.agent_limit || 0 %>,
+      fsm_agent_limit: <%= @subscription.field_agent_limit || 0 %>,
+      downgrade_policy_launched: <%= current_account.launched?(:downgrade_policy) %>,
+      subscribed_plan_name: '<%= current_account.plan_name %>',
+      fsm_enabled: <%= current_account.field_service_management_enabled? %>,
+      subscription_state: '<%= @subscription.state %>',
+      has_account_cancellation_request: <%= current_account.account_cancellation_requested? %>,
+      free_agents_count: <%= @subscription.free_agents %>,
+      is_omni_plan: <%= subscribed_plan.omni_plan? %>
+    };
+
+  App.SelectPlan.initialize(planInfo);
 
 </script>
