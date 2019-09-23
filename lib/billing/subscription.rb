@@ -150,6 +150,12 @@ class Billing::Subscription < Billing::ChargebeeWrapper
     end
   end
 
+  def remove_scheduled_changes(account_id)
+    super
+  rescue ChargeBee::InvalidRequestError => error
+    raise error unless error.error_code == 'no_scheduled_changes'
+  end
+
   def fetch_estimate_info(subscription, addons)
     addon_data = {}
     ids = []
