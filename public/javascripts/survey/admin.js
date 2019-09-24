@@ -30,6 +30,7 @@ var SurveyAdmin = {
 			}
 			SurveyValidate.initialize();
 			SurveyProtocol.currentView = view;
+			SurveyDetail.CustomSurveyLanguage();
 		},
 		list:function(){
 			pjaxify(SurveyAdmin.path);
@@ -63,5 +64,8 @@ var SurveyAdmin = {
                            				 :  jQuery('input#deleteSurvey').show();
             		jQuery('#survey_new_layout').show();
           		SurveyQuestion.defaultOptions(surveyProtocol);
-		}
+		},
+		unload: function(){
+			SurveyDetail.CustomSurveyLanguage('unload');
+		} 
 }

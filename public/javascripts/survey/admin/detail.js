@@ -120,5 +120,13 @@ var SurveyDetail = {
 			view.hasLayoutCustomization = SurveyAdmin.hasLayoutCustomization;
 			jQuery('#survey_thanks').html(JST["survey/admin/template/new_thanks"](view));
 		}
+	},
+	CustomSurveyLanguage: function(param) {
+		if(param){
+			CustomSurveyLanguage.unload();
+		}
+		else {
+			CustomSurveyLanguage.initLoad();
+		}
 	}
 }

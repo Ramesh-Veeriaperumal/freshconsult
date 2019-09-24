@@ -127,7 +127,7 @@ module TwitterTestHelper
     {
       "stream_id": stream.id,
       "tweet_id": options[:tweet_id] || '1005',
-      "tweet_type": options[:type] || 'dm',
+      "tweet_type": options[:tweet_type] || 'dm',
       "twitter_handle_id": handle.twitter_user_id
     }
   end

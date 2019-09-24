@@ -379,6 +379,8 @@ api_error_messages:
   default_primary_role_changed: "Cannot set default_reply_email to false of the default support email of a product"
   default_mailbox_product_changed: 'Cannot change product of default support email'
   file_size_limit_error: "File size cannot exceed %{file_size}."
+  subscription_request_destroy_error: 'Error while destroying subscription request!'
+  account_cancellation_destroy_error: 'Error while removing account cancellation request!'
   active_mailbox_verification: 'Cannot send verification to an active mailbox'
 
   # Search settings

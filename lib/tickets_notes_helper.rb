@@ -13,7 +13,7 @@ module TicketsNotesHelper
       requester_screen_name: requester_twitter_id
     }
     twt_hash.merge!(twt_handle_info)
-    twt_hash[:latest_tweet_id] = latest_tweet_id if tweet.is_note?
+    twt_hash[:latest_tweet_id] = latest_tweet_id.to_s if tweet.is_note?
     twt_hash
   end
 

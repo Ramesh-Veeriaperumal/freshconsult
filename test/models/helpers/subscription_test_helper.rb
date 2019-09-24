@@ -31,6 +31,13 @@ module SubscriptionTestHelper
     }
   end
 
+  def event_info_pattern
+    {
+      ip_address: Thread.current[:current_ip],
+      pod: ChannelFrameworkConfig['pod']
+    }
+  end
+
   def stub_update_params(account_id)
     {
       subscription:

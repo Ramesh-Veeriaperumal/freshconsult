@@ -40,6 +40,17 @@ class ChannelMessagePollerTest < ActionView::TestCase
     assert_equal ticket.description, payload[:description]
   end
 
+  def test_twitter_mention_convert_as_ticket
+    payload, command_payload = twitter_create_ticket_command('mention')
+    push_to_channel(command_payload)
+
+    ticket = @account.tickets.last
+    tweet = @account.tweets.last
+
+    assert_equal tweet[:tweetable_id], ticket.id
+    assert_equal ticket.description, payload[:description]
+  end
+
   # def test_twitter_dm_convert_as_note
   #   payload, command_payload = twitter_create_note_command
   #   push_to_channel(command_payload)
@@ -52,15 +63,31 @@ class ChannelMessagePollerTest < ActionView::TestCase
   #   assert_equal note.body, payload[:body]
   # end
 
-  def test_update_social_tweets
+  def test_update_social_tweets_for_dm
     note = create_twitter_ticket_and_note
-
-    payload = { "status_code": 200, "tweet_id": '100000200', "note_id": note.id }
+    fake_tweet_id = Faker::Number.number(10)
+    payload = { "status_code": 200, "tweet_id": fake_tweet_id, "note_id": note.id }
     command_payload = sample_twitter_reply_acknowledgement(@account, @handle, @stream, payload)
     push_to_channel(command_payload)
 
     tweet = @account.tweets.last
     assert_equal tweet[:tweetable_id], payload[:note_id]
+    assert_equal tweet[:tweet_id].to_s, payload[:tweet_id]
+  end
+
+  def test_update_social_tweets_for_mention
+    Account.current.launch(:mentions_to_tms)
+    note = create_twitter_ticket_and_note('mention')
+    fake_tweet_id = Faker::Number.number(10)
+    payload = { 'status_code': 200, 'tweet_id': fake_tweet_id, 'note_id': note.id, 'tweet_type': 'mention' }
+    command_payload = sample_twitter_reply_acknowledgement(@account, @handle, @stream, payload)
+    push_to_channel(command_payload)
+
+    tweet = @account.tweets.last
+    assert_equal tweet[:tweetable_id], payload[:note_id]
+    assert_equal tweet[:tweet_id].to_s, payload[:tweet_id]
+  ensure
+    Account.current.rollback(:mentions_to_tms)
   end
 
   def test_update_social_tweets_with_error

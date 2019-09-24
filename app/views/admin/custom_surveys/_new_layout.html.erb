@@ -21,9 +21,6 @@
 						onchange="javascript:SurveyStatus.change(0,this.checked);"
 						<% end %> />
 					   <%= pjax_link_to t('admin.surveys.index.cancel'), @layout_params[:cancelUrl] ,:class=> 'btn' %>
-					   <%if @layout_params[:id] != "" %>
-			           		<input type="button" onclick="javascript:SurveyDetail.preview(<%=@layout_params[:id]%>);" id="previewFeedback" class="btn" value="<%=t('admin.surveys.index.preview_survey')%>">
-			           <% end %>
 			           <input type="button" value="<%=t('admin.surveys.index.save_survey')%>" onclick='jQuery("#surveyForm input:submit").submit();' class="btn btn-primary save_survey_btn">
 					</div>
 				</h3>

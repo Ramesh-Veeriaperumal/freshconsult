@@ -19,11 +19,13 @@ class Admin::SubscriptionDecorator < ApiDecorator
       plan_id: subscription_plan_id,
       renewal_period: renewal_period,
       next_renewal_at: next_renewal_at,
+      days_remaining: (record.next_renewal_at.utc.to_date - DateTime.now.utc.to_date).to_i,
       agent_seats: agent_limit,
       card_number: card_number,
       card_expiration: card_expiration,
       name_on_card: (billing_address.name_on_card if billing_address.present?),
       reseller_paid_account: record.reseller_paid_account?,
+      subscription_request: subscription_request_hash,
       updated_at: updated_at,
       created_at: created_at,
       currency: currency_info,
@@ -127,5 +129,17 @@ class Admin::SubscriptionDecorator < ApiDecorator
 
   def modified_amount(amount)
     amount / 100
+  end
+
+  def subscription_request_hash
+    return if record.subscription_request.blank?
+
+    subscription_request = record.subscription_request
+    {
+      plan_name: subscription_request.plan_name,
+      agent_seats: subscription_request.agent_limit,
+      renewal_period: subscription_request.renewal_period,
+      fsm_field_agents: subscription_request.fsm_field_agents
+    }
   end
 end
