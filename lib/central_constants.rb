@@ -44,6 +44,7 @@ module CentralConstants
       'CompanyFieldChoice' => '0.0',
       'Freshcaller::Account' => '0.0',
       'Freshchat::Account' => '0.0',
+      'Admin::CannedResponses::Folder' => '0.0',
       'Admin::CannedResponses::Response' => '0.0'
   }
 end
