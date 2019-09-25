@@ -9,6 +9,7 @@ class Helpdesk::Access < ActiveRecord::Base
 
   has_many :group_accesses, :class_name => "Helpdesk::GroupAccess"
   has_many :user_accesses, :class_name => "Helpdesk::UserAccess"
+  attr_accessor :group_changes
   has_and_belongs_to_many :users,
     :join_table => 'user_accesses',
     :insert_sql => proc { |record|
@@ -19,8 +20,10 @@ class Helpdesk::Access < ActiveRecord::Base
     }
   
   has_and_belongs_to_many :groups,
-    :join_table => 'group_accesses',
-    :insert_sql => proc { |record|
+    join_table: 'group_accesses',
+    after_add: :touch_group_access_change,
+    after_remove: :touch_group_access_change,
+    insert_sql: proc { |record|
       %{
         INSERT INTO group_accesses (account_id, access_id, group_id) VALUES
         ("#{self.account_id}", "#{self.id}", "#{ActiveRecord::Base.sanitize(record.id)}")
@@ -52,6 +55,16 @@ class Helpdesk::Access < ActiveRecord::Base
   #This method is for handling self.alls in the above define_method.
   def alls
     []
+  end
+
+  def touch_group_access_change(group_accesses)
+    return unless group_accesses.id.present?
+
+    if self.group_changes.present?
+      self.group_changes.push(group_accesses.id)
+    else
+      self.group_changes = [group_accesses.id]
+    end
   end
 
   def access_type_str

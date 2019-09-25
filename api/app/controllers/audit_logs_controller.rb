@@ -1,4 +1,5 @@
 class AuditLogsController < ApiApplicationController
+  include AuditLog::CannedResponseHelper
   include AuditLog::AuditLogHelper
   include AuditLog::SubscriptionHelper
   include AuditLog::AgentHelper
@@ -52,8 +53,9 @@ class AuditLogsController < ApiApplicationController
   def event_name
     method_name = AuditLogConstants::AUTOMATION_RULE_METHODS[params[:type]]
     if method_name.present?
-      @items = current_account.safe_send(method_name).map do |rule|
-        { name: rule.name, id: rule.id }
+      name = AuditLogConstants::EVENT_TYPES_NAME[params[:type]] || :name
+      @items = current_account.safe_send(method_name).map do |model|
+        { name: model.safe_send(name), id: model.id }
       end
     end
   end
