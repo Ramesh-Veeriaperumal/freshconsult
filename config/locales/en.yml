@@ -2766,6 +2766,9 @@ en:
         observer: "Observer"
         supervisor: "Supervisor"
         subscription: "Subscription"
+        canned_response_folder: "Canned Response Folder"
+        canned_response: "Canned Response"
+        company: "Company"
       subscription:
         next_renewal_at: "Next Renewal at"
         card_number: "Card Number"
@@ -2789,6 +2792,16 @@ en:
         removed: "Removed"
         logged_in: "Logged in"
         logged_out: "Logged out"
+      company:
+        name: "Name"
+        description: "Description"
+        note: "Note"
+        domains: "Domains"
+        avatar: "Avatar"
+        health_score: "Health Score"
+        account_tier: "Account Tier"
+        industry: "Industry"
+        renewal_date: "Renewal Date"
       automation_rule:
         name: "Name"
         description: "Description"
@@ -2813,6 +2826,22 @@ en:
         operator_any: "OR"
         match_type_any: "Match ANY of the above"
         match_type_all: "Match ALL of the above"
+      canned_response_folder:
+        name: "Name"
+      canned_response:
+        title: 'Response Title'
+        content_html: "Message"
+        folder_id: "Folder"
+        visibility: "Available For"
+        attachments: "Attachment"
+        user_id: "User"
+        group_ids: "Group"
+        access_type: "Availability"
+        added: "Added"
+        removed: "Removed"
+        all: "All Agent"
+        groups: "Groups"
+        users: "User"
     automation_summary:
       '1': 'Selected'
       '0': 'Not Selected'
@@ -4937,6 +4966,7 @@ en:
     assign_role: Associate Roles
     assign_group: Associate Groups
     cannot_edit_roles: You will only be able to view your roles and scope, not edit them.
+    role_assign_error: You are not allowed to perform this action
     assign: Assign
     role : Agent Role
     title: Agents

@@ -5,6 +5,9 @@ class AuditLogExport < BaseWorker
   include AuditLog::SubscriptionHelper
   include AuditLog::AgentHelper
   include AuditLog::AutomationHelper
+  include AuditLog::CannedResponseFolderHelper
+  include AuditLog::CannedResponseHelper
+  include AuditLog::CompanyHelper
   include Export::Util
   require 'json'
   require 'zip'
@@ -92,12 +95,13 @@ class AuditLogExport < BaseWorker
     action = action.to_sym
     time = Time.zone.at(activity[:timestamp] / 1000)
     time = time.in_time_zone(User.current.time_zone)
+    event_name = AuditLogConstants::EVENT_TYPES_NAME[event_type.join('_')] || :name
     report_data = {
       performer_id: activity[:actor][:id],
       performer_name: activity[:actor][:name],
       ip_address: activity[:ip_address],
       time: time.strftime('%b %d at %l:%M %p'),
-      name: event_name_route(activity[:object][:name], event_type, activity[:object])
+      name: event_name_route(activity[:object][event_name], event_type, activity[:object], true)
     }
     report_data.merge! event_type_and_description(activity, action, event_type)
     report_data

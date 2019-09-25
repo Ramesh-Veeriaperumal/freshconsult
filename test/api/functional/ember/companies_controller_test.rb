@@ -436,6 +436,36 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     match_json(company_show_pattern(company.reload))
   end
 
+  def test_company_create_central_payload
+    CentralPublishWorker::CompanyWorker.jobs.clear
+    company = create_company
+    assert_response 200
+    job = CentralPublishWorker::CompanyWorker.jobs.last
+    assert_equal 'company_create', job['args'][0]
+    CentralPublishWorker::CompanyWorker.jobs.clear
+  end
+
+  def test_company_update_central_payload
+    CentralPublishWorker::CompanyWorker.jobs.clear
+    company = create_company
+    put :update, construct_params({ version: 'private', id: company.id }, { account_tier: 'Premium', industry: 'Media' })
+    assert_response 200
+    job = CentralPublishWorker::CompanyWorker.jobs.last
+    assert_equal 'company_update', job['args'][0]
+    assert_equal([nil, 'Premium'], job['args'][1]['model_changes']['string_cc02'])
+    CentralPublishWorker::CompanyWorker.jobs.clear
+  end
+
+  def test_company_delete_central_payload
+    CentralPublishWorker::CompanyWorker.jobs.clear
+    company = create_company
+    delete :destroy, construct_params(id: company.id)
+    assert_response 204
+    job = CentralPublishWorker::CompanyWorker.jobs.last
+    assert_equal 'company_destroy', job['args'][0]
+    CentralPublishWorker::CompanyWorker.jobs.clear
+  end
+
   def test_bulk_delete_with_no_params
     put :bulk_delete, construct_params({ version: 'private' }, {})
     assert_response 400

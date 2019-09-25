@@ -96,10 +96,13 @@ module AuditLog::AuditLogHelper
       meta
     end
 
-    def event_name_route(name, type, object)
+    def event_name_route(name, type, object, from_export = false)
       user_id = object[:user_id]
       id = object[:id]
-      type = type.join('_')
+      type = type.join('_').camelize(:lower)
+      export_url_type = AuditLogConstants::EXPORT_TYPE_CONST
+      export_url_type = export_url_type.merge(AuditLogConstants::AUTOMATION_EXPORT_TYPE) if automation_revamp_enabled?
+      type = export_url_type[type.to_sym] || type if from_export
       name ||= type
       {
         name: name, url_type: type, id: (type.to_sym == :agent ? user_id : id)
@@ -113,12 +116,14 @@ module AuditLog::AuditLogHelper
           activity = deep_symbolize_keys(activity)
           *event_type, action = activity[:action].split('_')
           action = action.to_sym
+          event_name = AuditLogConstants::EVENT_TYPES_NAME[event_type.join('_')] || :name
           custom_response = {
             time: activity[:timestamp],
             ip_address: activity[:ip_address] ? activity[:ip_address].gsub('.', '. ') : nil,
-            name: event_name_route(activity[:object][:name], event_type, activity[:object]),
+            name: event_name_route(activity[:object][event_name], event_type, activity[:object]),
             event_performer: performer(activity)
           }
+          custom_response[:name][:folder_id] = activity[:object][:folder_id] if event_type.join('_') == 'canned_response'
           custom_response.merge! event_type_and_description(activity, action, event_type)
           custom_response
         end
@@ -184,7 +189,9 @@ module AuditLog::AuditLogHelper
           end
         elsif description[:type] == :default
           if description[:value].present?
-            description_arr.push("#{description[:field]}\n\tfrom #{description[:value][:from]} to #{description[:value][:to]}\n")
+            value_from = description[:value][:from].presence || '--'
+            value_to = description[:value][:to].presence || '--'
+            description_arr.push("#{description[:field]}\nfrom:\n#{value_from}\nto:\n#{value_to}\n")
           else
             description_arr.push("#{description[:field]}\n")
           end

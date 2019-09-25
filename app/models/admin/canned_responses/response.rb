@@ -10,9 +10,12 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
   belongs_to_account
 
   has_many :shared_attachments,
-    :as => :shared_attachable,
-    :class_name => 'Helpdesk::SharedAttachment',
-    :dependent => :destroy
+    as: :shared_attachable,
+    class_name: 'Helpdesk::SharedAttachment',
+    dependent: :destroy,
+    after_add: :touch_attachment_change,
+    after_remove: :touch_attachment_change
+
 
   has_many :attachments_sharable, :through => :shared_attachments, :source => :attachment
 
@@ -34,8 +37,11 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
 
   delegate :groups, :users, :visible_to_me?, :to => :helpdesk_accessible
 
-  attr_accessor :visibility
+  attr_accessor :visibility, :attachment_removed, :action_destroy
   attr_accessible :title, :content_html, :folder_id, :helpdesk_accessible_attributes
+
+  concerned_with :presenter
+  publishable on: [:create, :update, :destroy]
 
   validates_length_of :title, :in => 3..240
   validates_presence_of :folder_id
@@ -45,6 +51,7 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
 
   after_commit :clear_inline_images_cache, on: :create
   after_commit :clear_inline_images_cache, on: :update
+  before_save :create_model_changes
 
   scope :accessible_for, lambda { |user|
     {
@@ -91,7 +98,23 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
     Admin::CannedResponses::Response => { :include => [:folder, {:helpdesk_accessible => [:group_accesses, :user_accesses]}]}
   }
 
-   def to_indexed_json
+  def create_model_changes
+    @model_changes = changes.to_hash
+    visibility_changes = helpdesk_accessible.changes
+    @model_changes = @model_changes.merge('visibility' => visibility_changes.to_hash.symbolize_keys!) if visibility_changes.present?
+    @group_access_changes = helpdesk_accessible.group_changes
+    @model_changes.symbolize_keys!
+  end
+
+  def touch_attachment_change(attachment)
+    return if attachment.attachment_id.blank?
+
+    attachment_hash = { id: attachment.attachment_id, name: attachment.attachment.content_file_name }
+    @attachment_changes ||= []
+    @attachment_changes << attachment_hash
+  end
+
+  def to_indexed_json
     to_json({
         :root =>"admin/canned_responses/response", 
         :tailored_json => true, 
@@ -111,7 +134,10 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
 
   def soft_delete!
     self.deleted = true
+    @deleted_model_info = central_publish_payload
     self.update_column(:deleted, true)
+    self.action_destroy = true
+    self.central_publish_action(:destroy)
     self.remove_es_document
   end
 

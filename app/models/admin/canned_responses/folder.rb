@@ -20,6 +20,9 @@ class Admin::CannedResponses::Folder < ActiveRecord::Base
   validates_length_of :name, :in => 3..240
   validates_uniqueness_of :name, :scope => :account_id, :case_sensitive => false
 
+  concerned_with :presenter
+  publishable on: [:create, :destroy]
+
   FOLDER_TYPE = [
     [:personal, "Personal", 100],
     [:default,  "General",  200],
@@ -68,9 +71,24 @@ class Admin::CannedResponses::Folder < ActiveRecord::Base
     :conditions => { :folder_type => FOLDER_TYPE_KEYS_BY_TOKEN[:others] }
 
 
-  before_save :set_folder_type
+  before_save :set_folder_type, :create_model_changes
   before_destroy :confirm_destroy
   after_commit :delete_ca_response, :on => :update, :if => :deleted?
+  after_commit :central_publisher_action, on: :update
+
+  def create_model_changes
+    @model_changes = changes.to_hash
+    @model_changes.symbolize_keys!
+  end
+
+  def central_publisher_action
+    if @model_changes.key?(:deleted) && deleted
+      @deleted_model_info = central_publish_payload
+      central_publish_action(:destroy)
+    else
+      central_publish_action(:update)
+    end
+  end
 
   def personal?
     self.folder_type == FOLDER_TYPE_KEYS_BY_TOKEN[:personal]

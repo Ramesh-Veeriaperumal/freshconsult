@@ -20,8 +20,8 @@ module CannedResponsesHelper
                                                               :attachable_type => 'Account',
                                                               :attachable_id => test_response.account_id)
     end
-    test_response.save(:validate => false)
     create_helpdesk_accessible(test_response,response_hash[:visibility])
+    test_response.save(:validate => false)
     test_response
   end
 

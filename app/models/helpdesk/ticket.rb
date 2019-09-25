@@ -1006,6 +1006,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
 
+  def last_forwardable_note
+    public_notes.where(['source NOT IN (?)', Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['feedback']]).last
+  end
+
   def current_cc_emails
     return [] unless cc_email
     unless cc_email.is_a?(Array)

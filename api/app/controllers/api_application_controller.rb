@@ -775,8 +775,12 @@ class ApiApplicationController < MetalApiController
     end
 
     def string_request_params?
-      @string_request_params ||= (request.content_type.try(:include?, 'multipart/form-data') || get_request? || request.delete?)
+      @string_request_params ||= (request.content_type.try(:include?, 'multipart/form-data') || allowed_http_method?)
       @string_request_params
+    end
+
+    def allowed_http_method?
+      get_request? || request.delete?
     end
 
     def json_request?
