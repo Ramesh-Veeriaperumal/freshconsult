@@ -38,7 +38,7 @@ module Admin::AutomationRules::Conditions
       index = 0
       @conditions.each do |condition|
         index += 1
-        errors[construct_key(:"[#{index}]")] << 'supervisor_custom_status_condition feature is not_enabled' if condition['field_name'] == TIME_AND_STATUS_BASED_FILTER[0] && !(Account.current.launched? :supervisor_custom_status)
+        errors[construct_key(:"[#{index}]")] << 'supervisor_custom_status_condition feature is not_enabled' if condition['field_name'] == TIME_AND_STATUS_BASED_FILTER[0] && !(Account.current.supervisor_custom_status_enabled?)
         errors[construct_key(:"[#{index}][custom_status_id]")] << :invalid_field if condition['custom_status_id'].present? && condition['field_name'] != TIME_AND_STATUS_BASED_FILTER[0]
       end
     end

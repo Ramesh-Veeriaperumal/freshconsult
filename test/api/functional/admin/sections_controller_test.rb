@@ -71,4 +71,12 @@ class Admin::SectionsControllerTest < ActionController::TestCase
       assert_response 403
     end
   end
+
+  def test_section_not_found
+    launch_ticket_field_revamp do
+      section = @account.sections.first
+      delete :destroy, construct_params(id: -1, ticket_field_id: 3)
+      assert_response 404
+    end
+  end
 end
