@@ -15,11 +15,6 @@ class FacebookRealtimeTest < ActionView::TestCase
     @account.facebook_pages.destroy_all
     @account.tickets.where(source: Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook]).destroy_all
     Social::FacebookPage.any_instance.unstub(:unsubscribe_realtime)
-    Facebook::Core::Post.any_instance.unstub(:fetch_page_scope_id)
-    Facebook::Core::Comment.any_instance.unstub(:fetch_page_scope_id)
-    Facebook::Core::ReplyToComment.any_instance.unstub(:fetch_page_scope_id)
-    Facebook::Core::Status.any_instance.unstub(:fetch_page_scope_id)
-    Facebook::KoalaWrapper::DirectMessage.any_instance.unstub(:fetch_page_scope_id)
     HttpRequestProxy.any_instance.unstub(:fetch_using_req_params)
     Account.unstub(:current)
   end
@@ -27,11 +22,6 @@ class FacebookRealtimeTest < ActionView::TestCase
   def setup
     Account.stubs(:current).returns(Account.first)
     Social::FacebookPage.any_instance.stubs(:unsubscribe_realtime).returns(true)
-    Facebook::Core::Post.any_instance.stubs(:fetch_page_scope_id).returns(nil)
-    Facebook::Core::Comment.any_instance.stubs(:fetch_page_scope_id).returns(nil)
-    Facebook::Core::ReplyToComment.any_instance.stubs(:fetch_page_scope_id).returns(nil)
-    Facebook::Core::Status.any_instance.stubs(:fetch_page_scope_id).returns(nil)
-    Facebook::KoalaWrapper::DirectMessage.any_instance.stubs(:fetch_page_scope_id).returns(nil)
     HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(status: 200, text: '{"pages": [{"id": 568, "freshdeskAccountId": "1", "facebookPageId": "532218423476440"}], "meta": {"count": 1}}')
     @account = Account.current
     @fb_page = create_test_facebook_page(@account)

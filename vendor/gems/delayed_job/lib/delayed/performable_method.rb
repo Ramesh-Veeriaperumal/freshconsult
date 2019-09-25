@@ -1,9 +1,14 @@
 module Delayed
+  class UserNotFoundException < StandardError
+  end
+
   class PerformableMethod < Struct.new(:object, :method, :args, :account, :portal, :locale_object)
     # attr_accessor :account
     
     CLASS_STRING_FORMAT = /^CLASS\:([A-Z][\w\:]+)$/
     AR_STRING_FORMAT    = /^AR\:([A-Z][\w\:]+)\:(\d+)$/
+    USER_NOTIFIER_CLASS = 'CLASS:UserNotifier'.freeze
+    DELIVER_USER_ACTIVATION = 'deliver_user_activation'.freeze
 
     def initialize(object, method, args, account = Account.current, portal = Portal.current)
       raise NoMethodError, "undefined method `#{method}' for #{self.inspect}" unless object.respond_to?(method)
@@ -26,19 +31,27 @@ module Delayed
     end    
 
     def perform
-       Account.reset_current_account
-       Portal.reset_current_portal
+      Account.reset_current_account
+      Portal.reset_current_portal
 
-       account_id = nil
-       if account
+      account_id = nil
+      if account
         account =~ AR_STRING_FORMAT
         account_id = $2
-       end
-       Sharding.select_shard_of(account_id) do
+      end
+      Sharding.select_shard_of(account_id) do
         load(account).safe_send(:make_current) if account
         load(portal).safe_send(:make_current) if portal
         set_locale
-        load(object).safe_send(method, *args.map{|a| load(a)})
+        begin
+          load(object).safe_send(method, *args.map { |a| load(a) })
+        rescue ActiveRecord::RecordNotFound => exception
+          if object == USER_NOTIFIER_CLASS && method.to_sym == DELIVER_USER_ACTIVATION.to_sym
+            Rails.logger.info("Deliver Activation :: Record not found :: Exception #{exception.inspect}")
+            raise UserNotFoundException, 'User not found for sending activation email'
+          end
+          raise exception
+        end
         set_default_locale
         # $statsd.increment "email_counter.#{account_id}"
       end

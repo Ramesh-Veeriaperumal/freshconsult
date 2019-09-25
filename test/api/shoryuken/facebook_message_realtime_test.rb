@@ -23,22 +23,10 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
     super
   ensure
     Social::FacebookPage.any_instance.unstub(:unsubscribe_realtime)
-    Facebook::Core::Post.any_instance.unstub(:fetch_page_scope_id)
-    Facebook::Core::Comment.any_instance.unstub(:fetch_page_scope_id)
-    Facebook::Core::ReplyToComment.any_instance.unstub(:fetch_page_scope_id)
-    Facebook::Core::Status.any_instance.unstub(:fetch_page_scope_id)
-    Facebook::KoalaWrapper::DirectMessage.any_instance.unstub(:fetch_page_scope_id)
-    Facebook::KoalaWrapper::RealTimeMessage.any_instance.unstub(:fetch_page_scope_id)
   end
 
   def setup
     Account.stubs(:current).returns(Account.first)
-    Facebook::Core::Post.any_instance.stubs(:fetch_page_scope_id).returns(nil)
-    Facebook::Core::Comment.any_instance.stubs(:fetch_page_scope_id).returns(nil)
-    Facebook::Core::ReplyToComment.any_instance.stubs(:fetch_page_scope_id).returns(nil)
-    Facebook::Core::Status.any_instance.stubs(:fetch_page_scope_id).returns(nil)
-    Facebook::KoalaWrapper::DirectMessage.any_instance.stubs(:fetch_page_scope_id).returns(nil)
-    Facebook::KoalaWrapper::RealTimeMessage.any_instance.stubs(:fetch_page_scope_id).returns(nil)
     HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(status: 200, text: '{"pages": [{"id": 568, "freshdeskAccountId": "1", "facebookPageId": "532218423476440"}], "meta": {"count": 1}}')
     @account = Account.current || Account.first
     user = @account.nil? ? @account.users.first : create_test_account

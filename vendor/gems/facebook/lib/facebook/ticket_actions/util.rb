@@ -1,6 +1,3 @@
-require 'net/http'
-require 'uri'
-
 module Facebook
   module TicketActions
     module Util
@@ -29,8 +26,7 @@ module Facebook
         profile.symbolize_keys! if profile.respond_to? :symbolize_keys!
         profile_id   = profile[:id]
         profile_name = profile[:name]
-        page_id = @fan_page.page_id
-        user = fetch_user_from_facebook_mapping(profile_id, page_id)
+        user = Account.current.all_users.find_by_fb_profile_id(profile_id)
 
         unless user
           user = Account.current.contacts.new
@@ -42,69 +38,11 @@ module Facebook
               helpdesk_agent: false
             }
           )
-            create_fb_user_mapping(profile_id, page_id, user.id)
           else
             Rails.logger.debug "unable to save the contact:: #{user.errors.inspect}"
           end
         end
         user
-      end
-
-      def fetch_user_from_facebook_mapping(profile_id, page_id)
-        if page_scope_migration_completed?
-          user_mapping = Account.current.fb_user_mappings.find_by_fb_page_id_and_page_scope_id(page_id, profile_id)
-        else
-          user_mapping = Account.current.fb_user_mappings.find_by_fb_page_id_and_app_scope_id(page_id, profile_id)
-          if user_mapping.nil?
-            user = Account.current.all_users.find_by_fb_profile_id(profile_id)
-            create_fb_user_mapping(profile_id, page_id, user.id) if user.present?
-          end
-        end
-        user_id = user_mapping.try(:user_id)
-        user = Account.current.all_users.find_by_id(user_id) if user_id.present?
-        user
-      end
-
-      def create_fb_user_mapping(profile_id, page_id, user_id)
-        if page_scope_migration_completed?
-          params = { fb_page_id: page_id, page_scope_id: profile_id, user_id: user_id }
-        else
-          page_scope_id = fetch_page_scope_id(profile_id)
-          params = { fb_page_id: page_id, page_scope_id: page_scope_id, app_scope_id: profile_id, user_id: user_id }
-        end
-        if params[:page_scope_id].present?
-          fb_user_mapping = Account.current.fb_user_mappings.new(params)
-          fb_user_mapping.save!
-        end
-      end
-
-      def page_scope_migration_completed?
-        Account.current.facebook_page_scope_migration_enabled?
-      end
-
-      def fetch_page_scope_id(app_scope_id)
-        limit = 0
-        begin
-          client_id, client_secret = Facebook::Tokens.new(false).tokens.values
-          mac = OpenSSL::HMAC.hexdigest('SHA256', client_secret, @fan_page.page_token)
-          uri = URI.parse("#{FACEBOOK_GRAPH_URL}/#{GRAPH_API_VERSION}/#{PAGE_SCOPE_URL}")
-          request = Net::HTTP::Post.new(uri)
-          req_options = {
-            use_ssl: uri.scheme == 'https'
-          }
-          request.body = "user_ids=#{app_scope_id}&appsecret_proof=#{mac}&access_token=#{@fan_page.page_token}"
-          response = Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
-            http.request(request)
-          end
-          response_body = JSON.parse(response.body)
-          raise "error in fetching page scope id -> #{response_body}" if response_body['error'] && response_body['error']['code'] < 200
-
-          response_body[app_scope_id]
-        rescue StandardError => e
-          Rails.logger.error("Error in fetching the page scope ID for account_id :: #{Account.current.id} :: page_id :: #{@fan_page.page_id} :: app scope id :: #{app_scope_id} :: #{e.message} :: #{e.backtrace}")
-          limit += 1
-          retry if limit < 3
-        end
       end
 
       def first_customer_message(messages)

@@ -85,16 +85,10 @@ module SocialTestHelper
       facebook_feed = sample_fb_post_feed(sender_id, feed_id, comment_id, reply_comment_id)
       #stub the api call for koala
       Koala::Facebook::API.any_instance.stubs(:get_object).returns(facebook_feed)
-      Facebook::Core::Post.any_instance.stubs(:fetch_page_scope_id).returns(nil)
-      Facebook::Core::Comment.any_instance.stubs(:fetch_page_scope_id).returns(nil)
-      Facebook::Core::ReplyToComment.any_instance.stubs(:fetch_page_scope_id).returns(nil)
 
       Facebook::Core::Post.new(fb_page.reload, feed_id).process
 
       Koala::Facebook::API.any_instance.unstub(:get_object)
-      Facebook::Core::Post.any_instance.unstub(:fetch_page_scope_id)
-      Facebook::Core::Comment.any_instance.unstub(:fetch_page_scope_id)
-      Facebook::Core::ReplyToComment.any_instance.unstub(:fetch_page_scope_id)
       @account.facebook_posts.find_by_post_id(feed_id).postable
     end
   end
@@ -108,19 +102,11 @@ module SocialTestHelper
       actor_id = thread_id + 1
       msg_id = thread_id + 2
       sample_dm = sample_dm_threads(thread_id, actor_id, msg_id)
-      Facebook::Core::Status.any_instance.stubs(:fetch_page_scope_id).returns(nil)
-      Facebook::Core::Post.any_instance.stubs(:fetch_page_scope_id).returns(nil)
-      Facebook::Core::Comment.any_instance.stubs(:fetch_page_scope_id).returns(nil)
-      Facebook::Core::ReplyToComment.any_instance.stubs(:fetch_page_scope_id).returns(nil)
       #stub the api call for koala
       Koala::Facebook::API.any_instance.stubs(:get_connections).returns(sample_dm)
       fb_message = Facebook::KoalaWrapper::DirectMessage.new(fb_page)
       fb_message.fetch_messages
       Koala::Facebook::API.any_instance.unstub(:get_connections)
-      Facebook::Core::Post.any_instance.unstub(:fetch_page_scope_id)
-      Facebook::Core::Comment.any_instance.unstub(:fetch_page_scope_id)
-      Facebook::Core::ReplyToComment.any_instance.unstub(:fetch_page_scope_id)
-      Facebook::Core::Status.any_instance.unstub(:fetch_page_scope_id)
       postable = @account.facebook_posts.find_by_post_id(msg_id).postable
       postable.is_a?(Helpdesk::Ticket) ? postable : postable.notable
     end
