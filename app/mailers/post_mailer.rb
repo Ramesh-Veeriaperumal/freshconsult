@@ -13,7 +13,7 @@ class PostMailer < ActionMailer::Base
       headers        = {
         :to      => emailcoll,
         :from    => sender,
-        :subject => "[New Reply] in #{post.topic.title}",
+        :subject => I18n.t('mailer_notifier_subject.monitor_email_subject', post_topic: post.topic.title),
         :sent_on => Time.now
       }
 

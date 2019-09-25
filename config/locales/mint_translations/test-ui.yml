@@ -36,7 +36,8 @@ test-ui:
     turn_off: $Turn Off,$
     regards: "$Regards,$"
     freshdesk_support_team: "$Freshdesk Support Team$"
-    note_for_recipients: "$Note: This email is also sent to - %{to_emails}.$"
+    note_for_recipients: "$Note: This email was also sent to - %{to_emails}.$"
+    freshdesk: "$Freshdesk$"
     notify_new_follower:
       topic:
         title: '$Added as topic follower$'
@@ -195,6 +196,11 @@ test-ui:
       configure_change: '$You can configure this notification settings under Admin -> Security.$'
       configure_change_html: '$You can configure this notification settings by <a href="%{security_url}"> clicking here </a> or going to Admin -> Security in your account$'
     export_success_download: "$The %{export_type} export you had requested is complete. You can download the file from <a href='%{url}'>here</a>. If the link does not work, copy and paste the URL below in your browser's address bar:$"
+    post_monitor:
+      new_reply_html: "$<b>New Reply</b> - %{posts_count} replies in topic$"
+      new_reply_plain: "$New Reply on topic %{post_topic}$"
+      reply_notify_html: '$Reply notifications for this topic$' 
+      reply_notify_plain: '$Turn off reply notifications for this topic$'
   mailer_notifier_subject:
     notify_new_topic_follower: '$Added as Topic Follower - %{title}$'
     notify_new_forum_follower: '$Added as Forum Follower - %{title}$'
@@ -227,6 +233,7 @@ test-ui:
     cloud_log_email_to_app: "$Freshdesk to %{app_name} Log$"
     outreach_customer_import: "$Outreach in progress$"
     outreach_customer_import_failure: "$Outreach: some contacts weren't imported$"
+    monitor_email_subject: "$[New Reply] in %{post_topic}$"
   flash:
     import:
       hi: "$Hi$"
