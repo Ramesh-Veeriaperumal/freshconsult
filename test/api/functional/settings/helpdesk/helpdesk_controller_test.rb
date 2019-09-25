@@ -2,6 +2,7 @@ require_relative '../../../test_helper'
 module Settings
   class HelpdeskControllerTest < ActionController::TestCase
     include HelpdeskTestHelper
+    include HelpWidgetsTestHelper
 
     def setup
       super
@@ -59,7 +60,7 @@ module Settings
       account_additional_settings.supported_languages = ['ru-RU']
       account_additional_settings.save
       Account.any_instance.stubs(:help_widget_enabled?).returns(true)
-      help_widget = @account.help_widgets.create
+      help_widget = create_widget
       HelpWidget::UploadConfig.jobs.clear
       assert_equal HelpWidget::UploadConfig.jobs.size, 0
       put :update, construct_params('portal_languages' => ['ru-RU'])
@@ -74,7 +75,7 @@ module Settings
 
     def test_helpdesk_update_portal_language_without_help_widget
       @account.help_widgets.destroy_all
-      help_widget = @account.help_widgets.create
+      help_widget = create_widget
       Account.any_instance.stubs(:help_widget_enabled?).returns(false)
       HelpWidget::UploadConfig.jobs.clear
       put :update, construct_params('primary_language' => 'en', 'supported_languages' => ['ru-RU'], 'portal_languages' => ['ru-RU'])
