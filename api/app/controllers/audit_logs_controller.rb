@@ -1,4 +1,5 @@
 class AuditLogsController < ApiApplicationController
+  include AuditLog::CannedResponseFolderHelper
   include AuditLog::CannedResponseHelper
   include AuditLog::AuditLogHelper
   include AuditLog::SubscriptionHelper

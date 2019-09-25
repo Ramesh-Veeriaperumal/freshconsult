@@ -5,6 +5,7 @@ class AuditLogExport < BaseWorker
   include AuditLog::SubscriptionHelper
   include AuditLog::AgentHelper
   include AuditLog::AutomationHelper
+  include AuditLog::CannedResponseFolderHelper
   include AuditLog::CannedResponseHelper
   include AuditLog::CompanyHelper
   include Export::Util

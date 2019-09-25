@@ -2765,6 +2765,7 @@ en:
         observer: "Observer"
         supervisor: "Supervisor"
         subscription: "Subscription"
+        canned_response_folder: "Canned Response Folder"
         canned_response: "Canned Response"
         company: "Company"
       subscription:
@@ -2824,6 +2825,8 @@ en:
         operator_any: "OR"
         match_type_any: "Match ANY of the above"
         match_type_all: "Match ALL of the above"
+      canned_response_folder:
+        name: "Name"
       canned_response:
         title: 'Response Title'
         content_html: "Message"
