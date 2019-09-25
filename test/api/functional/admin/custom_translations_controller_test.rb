@@ -78,7 +78,7 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     YAML.stubs(:safe_load).returns(payload)
     put :upload, construct_params({ object_type: 'surveys', object_id: survey.id }, translation_file: file, language_code: @language)
     assert_response 400
-    assert_equal JSON.parse(response.body)['errors'].first['message'], 'Invalid file type(test). Please upload yml/yaml file.'
+    assert_equal JSON.parse(response.body)['errors'].first['message'], 'This file type is not supported. Please upload a yml/yaml file.'
     YAML.unstub(:safe_load)
     unstub_for_custom_translations
   end
@@ -97,7 +97,7 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     lang = 'ab'
     put :upload, construct_params({ object_type: 'surveys', object_id: survey.id }, translation_file: file, language_code: 'ab')
     assert_response 400
-    assert_equal JSON.parse(response.body)['errors'].first['message'], "Language given in the request URL (#{lang}) is not found. Allowed languages are de, fr, ko"
+    assert_equal JSON.parse(response.body)['errors'].first['message'], "File mismatch. This file contains another supported language."
     YAML.unstub(:safe_load)
     unstub_for_custom_translations
   end
@@ -134,7 +134,7 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     YAML.stubs(:safe_load).returns(payload)
     put :upload, construct_params({ object_type: 'surveys', object_id: survey.id }, translation_file: file, language_code: @language)
     assert_response 400
-    assert_equal JSON.parse(response.body)['errors'].first['message'], 'Language code in file and url do not match.'
+    assert_equal JSON.parse(response.body)['errors'].first['message'], 'File mismatch. This file contains another supported language.'
     YAML.unstub(:safe_load)
     unstub_for_custom_translations
   end
@@ -153,7 +153,7 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     lang = Account.current.language
     put :upload, construct_params({ object_type: 'surveys', object_id: survey.id }, translation_file: file, language_code: lang)
     assert_response 400
-    assert_equal JSON.parse(response.body)['errors'].first['message'], 'Translations for primary language not allowed.'
+    assert_equal JSON.parse(response.body)['errors'].first['message'], 'File mismatch. This file contains another supported language.'
     YAML.unstub(:safe_load)
     unstub_for_custom_translations
   end
@@ -170,12 +170,97 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     @request.env['CONTENT_TYPE'] = 'multipart/form-data'
     YAML.stubs(:safe_load).returns(payload)
     put :upload, construct_params({ object_type: 'surveys', object_id: survey.id }, translation_file: file, language_code: @language)
-    assert_response 202
+    assert_response 200
+    custom_translations_record = survey.safe_send("#{@language}_translation")
+    assert custom_translations_record.present?
+    assert custom_translations_record.status == 1
+    YAML.unstub(:safe_load)
+    unstub_for_custom_translations
+  end
+
+  def test_upload_single_survey_update
+    stub_for_custom_translations
+    create_survey(1, true)
+    survey = Account.current.custom_surveys.last
+    create_survey_questions(survey)
+    payload = generate_content(survey)
+    write_yaml(payload)
+    # file = Rack::Test::UploadedFile.new(Rails.root.join('test/api/fixtures/files/translation_file.yaml'), 'test/yaml')
+    file = fixture_file_upload('files/translation_file.yaml', 'test/yaml', :binary)
+    @request.env['CONTENT_TYPE'] = 'multipart/form-data'
+    YAML.stubs(:safe_load).returns(payload)
+    put :upload, construct_params({ object_type: 'surveys', object_id: survey.id }, translation_file: file, language_code: @language)
+    assert_response 200
+    custom_translations_record = survey.safe_send("#{@language}_translation")
+    assert custom_translations_record.present?
+
+    payload = generate_content(survey)
+    write_yaml(payload)
+    ile = fixture_file_upload('files/translation_file.yaml', 'test/yaml', :binary)
+    @request.env['CONTENT_TYPE'] = 'multipart/form-data'
+    YAML.stubs(:safe_load).returns(payload)
+    put :upload, construct_params({ object_type: 'surveys', object_id: survey.id }, translation_file: file, language_code: @language)
+    assert_response 200
+    custom_translations_record = survey.safe_send("#{@language}_translation")
+    assert custom_translations_record.present?
+    assert custom_translations_record.status == 1
+    YAML.unstub(:safe_load)
+    unstub_for_custom_translations
+  end
+
+  def test_upload_single_survey_incomplete_data_missing
+    stub_for_custom_translations
+    create_survey(1, true)
+    survey = Account.current.custom_surveys.last
+    create_survey_questions(survey)
+    payload = generate_content(survey)
+    payload[@language]['custom_translations']['surveys']["survey_#{survey.id}"].delete('additional_questions')
+    write_yaml(payload)
+    # file = Rack::Test::UploadedFile.new(Rails.root.join('test/api/fixtures/files/translation_file.yaml'), 'test/yaml')
+    file = fixture_file_upload('files/translation_file.yaml', 'test/yaml', :binary)
+    @request.env['CONTENT_TYPE'] = 'multipart/form-data'
+    YAML.stubs(:safe_load).returns(payload)
+    put :upload, construct_params({ object_type: 'surveys', object_id: survey.id }, translation_file: file, language_code: @language)
+    assert_response 200
+    custom_translations_record = survey.safe_send("#{@language}_translation")
+    assert custom_translations_record.present?
+    assert custom_translations_record.status == 3
+    YAML.unstub(:safe_load)
+    unstub_for_custom_translations
+  end
+
+  def test_upload_single_survey_merge
+    stub_for_custom_translations
+    create_survey(1, true)
+    survey = Account.current.custom_surveys.last
+    create_survey_questions(survey)
+    payload = generate_content(survey)
+    payload[@language]['custom_translations']['surveys']["survey_#{survey.id}"].delete('additional_questions')
+    write_yaml(payload)
+    # file = Rack::Test::UploadedFile.new(Rails.root.join('test/api/fixtures/files/translation_file.yaml'), 'test/yaml')
+    file = fixture_file_upload('files/translation_file.yaml', 'test/yaml', :binary)
+    @request.env['CONTENT_TYPE'] = 'multipart/form-data'
+    YAML.stubs(:safe_load).returns(payload)
+    put :upload, construct_params({ object_type: 'surveys', object_id: survey.id }, translation_file: file, language_code: @language)
+    assert_response 200
+    custom_translations_record = survey.safe_send("#{@language}_translation")
+    assert custom_translations_record.present?
+
+    payload = generate_content(survey)
+    payload[@language]['custom_translations']['surveys']["survey_#{survey.id}"].delete('default_question')
+    write_yaml(payload)
+    ile = fixture_file_upload('files/translation_file.yaml', 'test/yaml', :binary)
+    @request.env['CONTENT_TYPE'] = 'multipart/form-data'
+    YAML.stubs(:safe_load).returns(payload)
+    put :upload, construct_params({ object_type: 'surveys', object_id: survey.id }, translation_file: file, language_code: @language)
+    assert_response 200
     custom_translations_record = survey.safe_send("#{@language}_translation")
     assert custom_translations_record.present?
     YAML.unstub(:safe_load)
     unstub_for_custom_translations
   end
+
+
 
   def assert_survey(survey, response_hash)
     assert_equal response_hash['title_text'], survey.title_text
