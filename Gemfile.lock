@@ -1025,7 +1025,7 @@ GEM
     mail (2.5.5)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
-    marginalia (1.5.0)
+    marginalia (1.6.0)
       actionpack (>= 2.3)
       activerecord (>= 2.3)
     memoizable (0.4.2)
@@ -1595,7 +1595,7 @@ DEPENDENCIES
   lockfile (= 1.4.3)
   log_filter!
   mail (= 2.5.5)
-  marginalia
+  marginalia (= 1.6.0)
   marketo!
   meta_request
   minitest (= 4.7.5)
