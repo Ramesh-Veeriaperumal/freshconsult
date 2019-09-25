@@ -345,7 +345,7 @@ fr:
   upgrade_plan: Mettre à jour
   go_back: Retour
   go_back_small: Retour
-  add_note: null
+  add_note: Ajouter une note
   set_field_label_as: 'Définir %{custom_field_name} en tant que'
   contact_name: Nom du contact
   requester_email: Adresse e-mail du demandeur
@@ -554,7 +554,13 @@ fr:
         fois ou deux. Nous nous baserons sur ce décalage pour convertir les
         éléments en menu déroulant, veuillez donc procéder avec précaution. <a
         target='_blank' href=%{learn_more}>En savoir plus</a>
-      nested_field_helptext: ''
+      nested_field_helptext: >-
+        Utilisez la zone de texte ci-dessous pour ajouter ou modifier les
+        éléments de votre menu déroulant. Décalez les éléments en appuyant sur
+        Tab une fois ou deux. Nous nous baserons sur ce décalage pour convertir
+        les éléments en menu déroulant. <a target='_blank'
+        href='https://support.freshdesk.com/solution/categories/45957/folders/74594/articles/37599-using-dependent-fields'>En
+        savoir plus</a> 
       dropdown_items_edit: Éléments des menus déroulants - Modifier
       drop_down_items_edit: Éléments des menus déroulants - Modifier
       dropdown_items_preview: Éléments des menus déroulants – Aperçu
@@ -765,6 +771,10 @@ fr:
     canned_form:
       next: Suivant
       form_submit: Envoyer
+      okay: Ok
+      hey: Salut
+      thank_you_text: "Merci "
+      move_to_form_field: ou appuyer sur Entrée
   gamification:
     levels:
       beginner: Débutant
@@ -884,14 +894,14 @@ fr:
       discussions_home: Accueil des discussions
       discussions_category: Accueil catégorie de discussions
       topic_list: Liste des sujets
-      topic_view: Aperçu des sujets
+      topic_view: Vue des sujets
       new_topic: Nouveau sujet
       submit_ticket: Nouveau ticket
       ticket_list: Liste des tickets
       ticket_view: Informations sur le ticket
       archive_ticket_list: Liste des tickets archivés
       archive_ticket_view: Informations sur le ticket archivé
-      my_topics: Discussions
+      my_topics: Mes sujets
       agent_login: Page de connexion de l'agent
   portal_meta:
     titles:
@@ -1524,7 +1534,7 @@ fr:
         captcha: Activer la fonction CAPTCHA pour lutter contre le courrier indésirable
         forum_captcha: >-
           Les utilisateurs connectés doivent saisir un code CAPTCHA pour créer
-          une discussion
+          un sujet
         view_solutions: Personnes pouvant consulter les solutions
         view_forums: Personnes pouvant consulter les forums
         notify_agents: >-
@@ -1534,17 +1544,15 @@ fr:
         enable: Activé
         disable: Désactivé
         moderation: Modérer les forums
-        moderate_links: >-
-          Modérer toutes les discussions et réponses contenant des liens
-          externes
+        moderate_links: Modérer tous les sujets et réponses contenant des liens externes
         moderate_links_help: >-
           Activez cette fonction pour bénéficier d'une protection avancée contre
-          le spam. Le système vérifie toutes les discussions et réponses à la
-          recherche de liens tiers et tout autre spam.
+          le spam. Le système vérifie tous les sujets et réponses à la recherche
+          de liens tiers et tout autre spam.
         moderate_links_help_2: >-
           Les messages suspects vous seront envoyés pour approbation avant leur
           publication.
-        moderate_all: Modérer toutes les discussions et réponses
+        moderate_all: Modérer tous les sujets et réponses
         moderate_all_help: >-
           Activez cette fonction si vous souhaitez effectuer une vérification
           rigoureuse de chaque publication créée dans votre communauté.
@@ -1671,7 +1679,7 @@ fr:
               section dédiée à l'assistance dans l'application même. Elle inclut
               votre base de connaissances et un formulaire de ticket pour vous
               contacter s'ils ont besoin d'aide.
-            info3: null
+            info3: "MobiHelp est totalement configurable. Vous pouvez décider de tout : des champs inclus dans le formulaire de commentaire à son aspect dans l'application. Les données comme le nom de l'appareil, le système d'exploitation et la version de l'application sont collectées automatiquement sans aucune intervention de l'utilisateur. Vous pouvez également activer des champs de données personnalisés et obtenir les journaux d'incidents et les fils d'Ariane."
             info4: >-
               Vous pouvez créer un nombre illimité d'applications à utiliser
               avec MobiHelp et les associer à votre compte Freshdesk. Une fois
@@ -3231,7 +3239,7 @@ fr:
     new: Nouveau forum
     edit: Modifier un forum
     title: Forums
-    start_topic: Démarrer une discussion
+    start_topic: Démarrer un sujet
     forum_created: Le forum a été créé.
     forum_deleted: Le forum a été supprimé.
     type: Type de forum
@@ -4788,7 +4796,7 @@ fr:
     votre compte à niveau pour l'utiliser.
   requester_replies: Le demandeur répond au ticket
   start_typing_a_question: Tapez une question et découvrez les réponses en temps réel.
-  delete_topic_msg: Supprimer définitivement cette rubrique
+  delete_topic_msg: Supprimer définitivement ce sujet
   first_response_sla: Première réponse en cas de violation du SLA
   response_reminder_sla: Rappel SLA de première réponse
   resolution_reminder_sla: Rappel SLA de délai de résolution
@@ -4797,7 +4805,7 @@ fr:
   utf_8_format: Le fichier doit être au format UTF-8.
   at: sur
   'on': actif
-  add_a_topic: Démarrer une discussion
+  add_a_topic: Démarrer un sujet
   bottom: Bas
   feedbackwidget_help_title: Widget commentaire
   feedbackwidget_learn_more: En savoir plus
@@ -5343,28 +5351,26 @@ fr:
     problems:
       solved: Résolues
       unsolved: Non résolues
-    name: Nom de la discussion
-    new: Ajouter une discussion
+    name: Nom du sujet
+    new: Publier un nouveau sujet
     edit: Modifier la discussion
-    open: Rouvrir cette discussion
-    close: Fermer la discussion
+    open: Rouvrir ce sujet
+    close: Fermer le sujet
     mark_as_spam: Marquer comme spam
     vote:
       one: 1 personne
       other: '%{count} personnes'
     upvote_appended_text: a apprécié ça
-    post: Démarrer la discussion
+    post: Publier le sujet
     add_comment: Publier un commentaire
     update_comment: Mettre à jour le commentaire
     post_comment: Publier
-    msg1: Les commentaires sont clos pour cette discussion.
+    msg1: Les commentaires sont clos pour ce sujet
     sticky: En vedette
-    mark_as_sticky: Marquer comme discussion vedette
-    sticky_info: >-
-      Les discussions vedettes restent en haut du forum pour une visibilité
-      optimale.
+    mark_as_sticky: Marquer comme sujet vedette
+    sticky_info: Les sujets vedettes restent en haut du forum pour une visibilité optimale
     locked: >-
-      Verrouillez la discussion pour empêcher les utilisateurs de publier des
+      Verrouillez le sujet pour empêcher les utilisateurs de publier des
       réponses.
     answered: Répondu
     view_on_portal: Afficher dans le portail
@@ -5385,7 +5391,7 @@ fr:
     filter_9: Non résolues
     filter_-: Non marquées
     select_stamps: Sélectionner les tampons
-    add_topic: Ajouter une discussion
+    add_topic: Ajouter un sujet
     add_forum: Ajouter un forum
     reorder: Réorganiser
     add_category: Ajouter une catégorie
@@ -5405,21 +5411,21 @@ fr:
       data-livestamp=%{created_time}>%{time_ago}</abbr>
     no_categories: Aucune catégorie
     no_forums: Aucun forum
-    no_topics: Aucune discussion
+    no_topics: Aucun sujet
     no_posts: Aucun message
     change: changer
     marked_as: Marquée comme
-    mark_topic: Marquer la discussion comme
+    mark_topic: Marquer le sujet comme
     view_answer: Cliquer ici pour afficher la réponse
     mark_answer: Marquer comme réponse
     unmark_answer: Ce message n'est plus la réponse
-    delete_confirm: "Voulez-vous vraiment supprimer la ou les discussions sélectionnées de manière permanente ?"
+    delete_confirm: "Voulez-vous vraiment définitivement supprimer la ou les sujets sélectionnés ?"
     spam_delete_confirm: >-
-      L'action qui consiste à marquer cette discussion comme indésirable
-      entraîne son déplacement vers le contenu indésirable et la suppression de
-      toutes les réponses qu'elle contient.
+      L'action qui consiste à marquer ce sujet comme indésirable entraîne son
+      déplacement vers le contenu indésirable et la suppression de toutes les
+      réponses qu'il contient.
 
-      Voulez-vous vraiment marquer la ou les discussions sélectionnées comme
+      Voulez-vous vraiment marquer la ou les sujets sélectionnés comme
       indésirables ?
     spam_confirm: >-
       Voulez-vous vraiment marquer la ou les discussions sélectionnées comme
@@ -5513,7 +5519,7 @@ fr:
   update: Mettre à jour
   save_reply: Enregistrer la réponse
   forum_shared:
-    follow_topic: Suivre cette discussion
+    follow_topic: Suivre ce sujet
     followers:
       one: '%{count} abonné'
       other: '%{count} abonnés'
@@ -5560,7 +5566,7 @@ fr:
       posted_on: '%{user_name} le %{post_date}'
       edit_comment: Modifier le commentaire
       unmark_answer: Ce message n'est plus la réponse
-      post_accepted_as_a_good_answer: Ce message est considéré comme une bonne réponse sur ce sujet
+      post_accepted_as_a_good_answer: Ce message est considéré comme une bonne réponse à ce sujet
       mark_answer: Ce message est la réponse
       mark_as_solved: Marquer comme résolu
       mark_as_unsolved: Marquer comme non résolu
@@ -5570,8 +5576,8 @@ fr:
       answer: Réponse
     best_answer:
       answer_confirm: >-
-        On dirait qu'il existe déjà une réponse pour cette discussion. Confirmez
-        avant de continuer.
+        On dirait qu'il existe déjà une réponse pour ce sujet. Confirmez avant
+        de continuer
   half: 30 minutes
   premium_sla_times:
     five_minutes: 5 minutes
@@ -5933,6 +5939,7 @@ fr:
     add_skills: Ajouter des compétences
     more: plus
     member: Membre de
+    search_placeholder: Rechercher tous les agents
   account_admin: Administrateur du compte
   right: Droite
   footer:
@@ -6072,7 +6079,7 @@ fr:
     post_created: >-
       <span class='muted'>Il y a %{time} dans </span><a
       href='%{forum_url}'>%{forum_name}</a>
-    new_topic: Nouvelle discussion
+    new_topic: Nouveau sujet
     reply: Répondre
     info_example: 'exemple : fan des Lakers de Los Angeles, etc.'
     helptext: >-
@@ -6337,8 +6344,10 @@ fr:
   portal:
     cookie:
       cookie_policy: Politique concernant les cookies
-      why_we_love_cookies: Nous adorons les cookies. Pourquoi ?
-      cookie_dialog_info1: 'Grâce aux cookies, l''utilisation de Freshdesk est plus agréable. '
+      why_we_love_cookies: Voilà pourquoi nous aimons les cookies
+      cookie_dialog_info1: >-
+        Nous utilisons des cookies afin de vous offrir une meilleure expérience
+        sur Freshdesk. 
       cookie_dialog_info2: >-
         Pour en savoir plus sur le type de cookies que nous utilisons, sur les
         raisons de ce choix et sur les méthodes employées, consultez notre
@@ -6346,111 +6355,109 @@ fr:
         régime, il vous suffit de les désactiver. Sachez simplement que le
         service Freshdesk est vraiment friand de cookies (notamment ceux aux
         pépites de chocolat) et il se peut que certaines options ne fonctionnent
-        pas correctement si vous les désactivez.
+        pas correctement si vous les désactivez. 
       cookie_dialog_info3: >-
         Nous partons du principe que vous acceptez la manière dont nous
         utilisons les cookies et que vous êtes d'accord avec ce qui figure dans
         notre %{privacy_link}, à moins que vous ne choisissiez de les désactiver
-        sur votre navigateur.
+        sur votre navigateur. 
       privacy_policy: Politique de confidentialité
-    no_topics_in_this_view: '- Aucune discussion dans cette section -'
+    no_topics_in_this_view: '- Aucun sujet dans cette vue -'
     reported: a indiqué
     said: dit
-    solutions_home: Accueil solutions
+    solutions_home: Accueil des solutions
     print_title: Imprimer cet article
     attach_file: Joindre un <b>fichier</b>
     header:
       preview_message: >-
         <b>Mode aperçu</b> -<a href='javascript:window.close()'>Cliquez ici</a>
         pour revenir en arrière.
-    new_support_ticket: Nouveau ticket d'assistance
-    submit_new_ticket: ...ou envoyez un nouveau ticket
+    new_support_ticket: Nouveau ticket de support
+    submit_new_ticket: ...ou Envoyer un nouveau ticket
     login: Connexion
-    login_portal: Connexion au portail d'assistance
+    login_portal: Connexion au portail de support
     login_details: Saisissez vos informations de connexion ci-dessous
-    login_options: ... Connectez-vous en utilisant
+    login_options: ...ou connectez-vous avec
     reset_password: >-
       Saisissez votre adresse e-mail et nous vous enverrons les instructions de
       réinitialisation du mot de passe par e-mail.
     signup: Inscription
-    user_signup_portal: 'Ouvrez votre '
+    user_signup_portal: 'Inscrivez-vous pour votre '
     account: compte
-    login_or_signup: '%{login} ou %{signup} pour créer un compte'
+    login_or_signup: '%{login} ou %{signup} pour un compte'
     to_post_comment: ' pour poster un commentaire'
-    to_submit_ticket: ' pour soumettre un nouveau ticket'
-    login_to_submit_ticket: '<a href=%{login_url}>Connectez-vous</a> pour soumettre un nouveau ticket'
+    to_submit_ticket: ' pour envoyer un nouveau ticket'
+    login_to_submit_ticket: '<a href=%{login_url}>Connectez-vous</a> pour envoyer un nouveau ticket'
     login_signup_to_submit_ticket: >-
       <a href=%{login_url}>Connectez-vous</a> ou <a
-      href=%{signup_url}>inscrivez-vous</a> pour soumettre un nouveau ticket
-    login_to_post_topic: >-
-      <a href='' class='solution_c'>Connectez-vous</a> pour publier une
-      discussion
+      href=%{signup_url}>inscrivez-vous</a> pour envoyer un nouveau ticket
+    login_to_post_topic: <a href='' class='solution_c'>Connectez-vous</a> pour publier un sujet
     login_to_post_comment: >-
       <a href='' class='solution_c'>Connectez-vous</a> pour publier un
       commentaire
     login_signup_to_post_topic: >-
       <a href=%{topic_reply_url}>Connectez-vous</a> ou <a
-      href=%{signup_url}>inscrivez-vous</a> pour publier une discussion
+      href=%{signup_url}>inscrivez-vous</a> pour publier un sujet
     login_signup_to_post_comment: >-
       <a href=%{topic_reply_url}>Connectez-vous</a> ou <a
       href=%{signup_url}>inscrivez-vous</a> pour publier un commentaire
-    to_post_topic: ' pour démarrer une discussion'
+    to_post_topic: ' pour publier un sujet'
     preview:
-      view_on_helpdesk: Afficher dans l'helpdesk
+      view_on_helpdesk: Afficher dans le centre de support
       edit_article: Modifier l'article
     search:
       filters:
         all: Tous
         solutions: Solutions
-        topics: Discussions
+        topics: Sujets
         tickets: Tickets
       placeholder: Saisissez votre terme de recherche ici...
       results_for: Résultats de recherche pour
     popular_topics: Sujets les plus consultés
-    my_topics: Discussions
-    showing_recently_popular_topics: Sujets récents les plus consultés
+    my_topics: Mes sujets
+    showing_recently_popular_topics: Affiche les sujets les plus consultés récemment
     topic_deleted: >-
-      Il semblerait que cette discussion ait été supprimée. Vous ne pouvez donc
-      pas publier de message.
-    topic_not_found: Il semblerait que ce ticket ait été supprimé
-    post_not_found: Il semblerait que ce message ait été supprimé
-    showing_my_topics: Discussions que vous suivez actuellement
+      On dirait que ce sujet a été supprimé. Vous ne pouvez donc pas publier de
+      message.
+    topic_not_found: On dirait que ce sujet a été supprimé
+    post_not_found: Cette publication semble avoir été supprimée
+    showing_my_topics: Affiche les sujets que vous suivez actuellement
     community_forums: Forums de la communauté
     knowledge_base: Base de connaissances
     showing_recent_updates: Affichage des mises à jour récentes
     no_articles_info_1: 'Désolé, nous n''avons pas encore publié d''articles dans cette section. '
     no_articles_info_2: 'Veuillez vérifier ultérieurement. '
-    no_forums_info_1: Aucune discussion sur les forums pour l'instant
-    no_forums_info_2: 'Pourquoi ne pas démarrer une %{start_topic_link} ?'
+    no_forums_info_1: Aucun sujet de discussion pour le moment
+    no_forums_info_2: 'Pourquoi ne pas %{start_topic_link} ?'
     article:
-      see_all_articles: 'Voir les %{count} articles'
+      see_all_articles: 'Voir l''ensemble des %{count} articles'
       more_articles: 'Plus d''articles dans <span class=''folder-name''> %{article_name} </span>'
-      modified_on: 'Modifié le :'
-      related_articles: Articles connexes
+      modified_on: "Modifié le :"
+      related_articles: Articles associés
       created_by: 'Créé par :'
       activation_warning: >-
         Il semble que votre compte n'ait pas encore été vérifié. Veuillez
         l'activer de manière à publier un article (vous pouvez déjà sauvegarder
         vos brouillons).
     folder:
-      filler_text: 'Consultez cette rubrique pour les articles concernant %{folder_name}.'
+      filler_text: 'Suivez cette page pour les articles concernant %{folder_name}'
     topic:
       activation_warning: >-
         Il semble que votre compte n'ait pas encore été vérifié. Veuillez
         l'activer de manière à publier un sujet de discussion.
       follow: Suivre
       following: Abonné
-      topic_title: Titre de la discussion
-      post_topic: Publier la discussion dans
-      monitor_topic: Surveiller cette discussion
+      topic_title: Titre du sujet
+      post_topic: Publier le sujet dans
+      monitor_topic: Surveiller ce sujet
       default_select_option: Sélectionner un type de forum
-      comments_closed: Les commentaires de cette discussion sont désormais fermés !
-      start_new_topic: Commencer une nouvelle discussion
-      see_all_topics: 'Voir les %{count} discussions'
-      all_topics: Voir toutes les discussions
-      comment_placeholder: Cliquez ici pour ajouter un commentaire
-      started: a créé une discussion
-      more_topic: Plus de discussions dans
+      comments_closed: "Les commentaires de cette discussion sont désormais fermés !"
+      start_new_topic: Commencer un nouveau sujet
+      see_all_topics: 'Voir tous les %{count} sujets'
+      all_topics: Voir tous les sujets
+      comment_placeholder: Cliquer ici pour ajouter un commentaire
+      started: a créé un sujet
+      more_topic: Plus de sujets dans
       last_reply: Dernière réponse
       fb_reply_info: >-
         <a href='%{reply_url}'> Dernière réponse </a> par %{user_name} <br>
@@ -6461,22 +6468,22 @@ fr:
         <a href='%{last_post_url}'>%{link_label}</a> par %{user_name}
         %{created_on}
       best_answer: Meilleure réponse
-      matching_results: Discussions correspondantes trouvées
-      in_forum: 'Dans : %{forum_name}'
-      merge: 'Fusion effectuée dans la discussion suivante :'
-      locked: La discussion est verrouillée
-      sticky: La discussion est à la une
-      merge_continue: 'Cependant, vous pouvez continuer la conversation à cet emplacement : '
+      matching_results: Sujets correspondants trouvés
+      in_forum: "Dans : %{forum_name}"
+      merge: 'Fusionné avec le sujet :'
+      locked: Le sujet est verrouillé
+      sticky: Le sujet est marqué en vedette
+      merge_continue: 'Cependant, vous pouvez continuer la conversation ici : '
       merge_note:
-        one: 'Discussion fusionnée avec la discussion suivante :'
-        other: 'Discussions fusionnées dans la discussion suivante :'
+        one: 'Sujet fusionné avec ce sujet :'
+        other: 'Sujets fusionnés avec ce sujet :'
       sort_heading: 'Triés par :'
       sort_order:
         date: Du plus ancien au plus récent
         recency: Du plus récent au plus ancien
         popularity: Les plus consultées
       sort_by_most_recent: Le plus récent
-      sort_by_most_popular: Le plus populaire
+      sort_by_most_popular: Le plus consulté
       sort_by_default: Par défaut
     vote:
       you:
@@ -6489,8 +6496,8 @@ fr:
         one: '1 personne '
         other: '%{count} personnes '
     vote_label:
-      one: 1 stemme
-      other: stemmer
+      one: vote
+      other: votes
     topic_vote:
       announce:
         one: aime ça
@@ -6505,7 +6512,7 @@ fr:
         one: se pose la même question
         other: se posent la même question
       votes: votes
-      upvote: appréciation
+      upvote: apprécie
       upvoted: a apprécié
       user_upvote_list_title: Personnes ayant apprécié
       announce_button: Aimez-vous ça ?
@@ -6527,15 +6534,15 @@ fr:
         one: aime ça
         other: aiment ça
     tickets:
-      merged_topic_note: Il n'est pas possible de convertir des discussions fusionnées en ticket.
+      merged_topic_note: Le sujet fusionné ne peut pas être converti en ticket.
       export: Exporter les tickets
       submit_export: Exporter
       export_ticket_data: Exporter les tickets
       export_to_csv: Exporter au format CSV
       ticket_list: Liste des tickets
-      mark_closed: Marquer le ticket comme clôturé
+      mark_closed: Marquer le ticket comme fermé
       add_people: Ajouter des personnes
-      reply_placeholder: Cliquez ici pour répondre à ce ticket
+      reply_placeholder: Cliquer ici pour répondre à ce ticket
       comments: Commentaires
       details: Informations sur le ticket
       add_or_remove_emails: >-
@@ -6547,6 +6554,8 @@ fr:
     customer_login_info: Êtes-vous un client ?
     agent_signin: Connectez-vous ici
     agent_login_info: Êtes-vous un agent ?
+    helpdesk_login_portal: Bon retour Agent
+    agent_login_details: Saisissez vos informations de connexion ci-dessous
   feedbackwidget_form_heading: Titre du formulaire
   feedbackwidget_form_title: Titre du formulaire de widget
   cancel_and_back: Annuler et revenir en arrière
@@ -7257,9 +7266,9 @@ fr:
     signout: Déconnexion
     edit_profile: Modifier le profil
     assumed_text: Vous consultez la page en tant que
-    help_center: Que pouvons-nous faire pour vous ?
-    new_support_ticket: Nouveau ticket d'assistance
-    check_ticket_status: Consulter le statut d'un ticket
+    help_center: "Comment pouvons-nous vous aider aujourd'hui ?"
+    new_support_ticket: Nouveau ticket de support
+    check_ticket_status: Vérifier le statut du ticket
     user_available: Les nouveaux tickets vous seront<br> attribués automatiquement
     user_not_available: Les nouveaux tickets ne vous seront PAS<br> assignés automatiquement.
     toggle_shortcuts: Raccourcis clavier
@@ -7280,7 +7289,7 @@ fr:
       new_solution_category: Nouvelle catégorie
       forums: Forums
       tickets: Tickets
-      home: Page d’accueil
+      home: Accueil
       company_tickets: Tickets de la société
       social: Social
     upgrade: Mise à jour
@@ -8607,7 +8616,7 @@ fr:
     pick_agents: Ajouter des agents
   forums:
     search_all:
-      placeholder: Chercher dans toutes les rubriques
+      placeholder: Chercher dans tous les sujets
     search:
       placeholder: 'Chercher %{name}'
     form:
@@ -8668,7 +8677,7 @@ fr:
     requester_not_associated: Cette société n'est plus associée à ce demandeur
   import_zendesk_summary_info: Les données Zendesk ont été importées avec succès.
   one: 1 heure
-  no_topics_text: Aucune discussion
+  no_topics_text: Aucun sujet
   send_email_to_group: Envoyer un e-mail au groupe
   activate_account: Activer votre compte
   activations:
@@ -8838,6 +8847,13 @@ fr:
     gdpr_admin_details: a changé vos permissions d'utilisateur de
     gdpr_acknowledgement: et reconnaissez avoir lu nos
     gdpr_to: à
+    sort_conversations:
+      label: Trier les conversations
+      helpnote: C'est l'ordre dans lequel les messages apparaîtront dans les tickets.
+      latest_top: Vous verrez maintenant la conversation la plus récente en haut.
+      oldest_top: Vous verrez maintenant la conversation la plus ancienne en haut.
+      option1: Afficher la plus récente en haut
+      option2: Afficher la plus ancienne en haut
   lead: Prospect
   comments: Commentaires
   forum_confirm_msg1: "Êtes-vous sûr de vouloir supprimer cette catégorie ?"
@@ -9712,8 +9728,8 @@ fr:
     field_select_title: Sélectionnez les champs à exporter
     export_to_csv: Exporter au format CSV
     export: Exporter
-    thirt_days: 30 derniers jours
-    seven_days: 7 derniers jours
+    thirt_days: Les 30 derniers jours
+    seven_days: Les 7 derniers jours
     twenty_four: À partir d'hier
     custom_filter: Définir la date
     no_fields_selected: Veuillez cocher au moins une des cases suivantes pour continuer.
@@ -10800,8 +10816,8 @@ fr:
         placeholder: '# Ticket'
         back_to_page: Revenir au ticket
       agent_forum:
-        placeholder: 'Discussion#'
-        back_to_page: Revenir à la discussion
+        placeholder: 'Sujet#'
+        back_to_page: Revenir au sujet
       solution:
         placeholder: '# Article'
         back_to_page: Revenir à l'article
@@ -10809,8 +10825,8 @@ fr:
         placeholder: '# Ticket'
         back_to_page: Revenir au ticket
       portal_forum:
-        placeholder: 'Discussion#'
-        back_to_page: Revenir à la discussion
+        placeholder: 'Sujet#'
+        back_to_page: Revenir au sujet
     harvest:
       label: Harvest
       desc: >-
@@ -10918,7 +10934,7 @@ fr:
       helptext: "<h4>Aide à l'intégration JIRA </h4><p><br/>Pour intégrer JIRA à Freshdesk, entrez votre nom d'utilisateur d'administrateur JIRA et votre mot de passe. L'intégration est compatible avec les versions sur demande et locales, de JIRA 4.2 à la dernière version - JIRA 5.<br/><br/> Pour créer un problème ou un lien vers un problème existant sur Freshdesk, allez sur la page des tickets et cliquez sur  <i class='integrations-jira vertical-alignment'></i><br/><br/> Pour consulter les informations concernant vos tickets mis en lien sur JIRA, mais aussi pour voir les informations concernant les problèmes JIRA sur Freshdesk, il est conseillé à l'administrateur JIRA de créer un champ personnalisé de texte libre avec le nom « Tickets Freshdesk » comme décrit ci-dessous. <br/><br/>Connectez-vous sur votre compte JIRA, cliquez sur <b>Administration</b>, allez sur <b>Problèmes</b> -> <b>Champs</b> et cliquez sur <b>Ajouter un champ personnalisé</b>. Sur l'écran <b>Créer un champ personnalisé</b> , choisissez <b> Champ texte libre </b> et cliquez sur <b>Suivant</b>. Entrez <b>« Tickets Freshdesk »</b> dans le nom du champ et cliquez sur Terminer. Sur la page <b>Champ associé aux écrans</b> , cochez toutes les cases et cliquez sur « Mettre à jour ».<br/><br/>"
       form:
         domain: Domaine
-        domain_info: ''
+        domain_info: "Entrez l'URL complète du compte JIRA avec https/http. Ex. https://exemple.atlassian.net. <br /><span class='italics'>Remarque : les versions locales de JIRA doivent être connectées à Internet. </span>"
         jira_note: Description
         jira_note_info: Ce texte sera ajouté à la description du problème dans JIRA.
         widget_title: Titre du widget
@@ -11254,7 +11270,10 @@ fr:
         domain_info: >-
           Utilisez l'ID d'utilisateur d'office 365 super admin,  comme
           nom@entreprise.onmicrosoft.com, en cas d'instances à la demande.
-        organization_name_info: null
+        organization_name_info: >-
+          Pour y accéder, allez dans les paramètres de Dynamics CRM >
+          Personnalisations > Ressources du développeur > Informations sur votre
+          organisation > Nom unique de l'organisation.
         end_point_info: >-
           Exemple :
           https://freshpo4.api.crm5.dynamics.com/XRMServices/2011/Organization.svc.
@@ -11834,7 +11853,7 @@ fr:
         Exportez les informations concernant vos clients, gérez les inscriptions
         existantes et importez les statistiques d'utilisation directement dans
         Freshdesk.
-      helptext: ''
+      helptext: "<h4>Aide à l'intégration de iContact</h4><br/> Pour intégrer iContact, allez sur <a target='_blank' href='https://app.icontact.com/icp/core/externallogin'>https://app.icontact.com/icp/core/externallogi</a> et autorisez l'accès à l'application Freshdesk en entrant l'identifiant d'application ci-dessous <br/><br/><b>qB7RYQgliAPwl5dwezYF0kAN4Islhj4e</b><br/><br/> Choisissez un mot de passe et cliquez sur &quot; Enregistrer&quot;. Ce mot de passe API sera utilisé pour toutes les demandes API de Freshdesk. <br/><br/> Copiez l'URL de l'API depuis la section &quot; Informations du compte&quot; et collez-la dans le champ de l'URL de l'API ici. Entrez votre nom d'utilisateur iContact et votre nouveau mot de passe API et cliquez sur Mettre à jour. "
       form:
         app_id: Identifiant de l'application
         username: Nom d'utilisateur iContact
@@ -11844,7 +11863,26 @@ fr:
     dropbox:
       label: DropBox
       desc: Envoyez et partagez vos données/fichiers avec DropBox.
-      helptext: ''
+      helptext: >-
+        <h4>Aide à l'intégration de DropBox</h4><br/><p>L'intégration de DropBox
+        permet aux agents et aux utilisateurs de parcourir des fichiers depuis
+        leur dossier DropBox et de les partager en les envoyant ou en répondant
+        à un ticket dans Freshdesk. Le ticket inclut un lien direct vers le
+        fichier, ce qui évite de devoir ajouter une pièce jointe et diminue la
+        taille de l'e-mail.</p><p>Avant de configurer l'intégration, allez sur
+        la <a target='_blank' href='https://dropbox.com/developers'><b>page des
+        développeurs DropBox</b></a>.</p><p> 1. Sélectionnez <b>Créer votre
+        application</b> dans la section <b>API v2</b>.</p><p>2. Dans <b>Choisir
+        un API</b>, sélectionnez <a>Dropbox API</a>.</p><p>3. Pour le type
+        d'accès, sélectionnez <b>Dropbox complet</b>.</p><p>4. Indiquez le nom
+        de votre application et cliquez sur <b>Créer l'application</b>.</p><p>5.
+        Sur la page de votre application, sélectionnez l'onglet
+        <b>Paramètres</b>, pour <b>domaines Chooser/Saver</b>, ajoutez l'URL de
+        votre centre d'assistance, sans https ni www, exemple :
+        <a>sauls.freshdesk.com</a>.</p><p>Enfin, copiez/collez la clé
+        d'application de la nouvelle application dans cette page et enregistrez
+        les modifications. Votre Dropbox Chooser devrait être prêt. Vous pouvez
+        le voir apparaître dans le formulaire de nouveau ticket.</p>
       form:
         app_key: Clé d'application enregistrée pour votre domaine
         app_key_info: >-
@@ -12637,7 +12675,7 @@ fr:
   being_processed: En cours de traitement
   awaiting_your_reply: En attente d'une réponse de votre part
   this_ticket_has_been_resolved: Le ticket a été résolu
-  this_ticket_has_been_closed: Le ticket a été clôturé
+  this_ticket_has_been_closed: Le ticket a été fermé
   status_name_validate_presence_msg: ' Le nom du statut ne peut pas être vide'
   open_tickets: Tickets ouverts
   resolved_tickets: Tickets résolus
@@ -12884,10 +12922,10 @@ fr:
           au moins un article de solution.
         topic_view: >-
           Remarque : pour afficher l'aperçu, veuillez vous assurer que vous avez
-          au moins une discussion de forum.
+          au moins un sujet de forum.
         topic_list: >-
           Remarque : pour afficher l'aperçu, veuillez vous assurer que vous avez
-          au moins une discussion de forum.
+          au moins un sujet de forum.
         ticket_view: >-
           Remarque : pour afficher l'aperçu, veuillez vous assurer que vous avez
           au moins un ticket.
@@ -15771,10 +15809,10 @@ fr:
     shared:
       topic:
         tags:
-          new_topic: Nouvelle discussion
+          new_topic: Nouveau sujet
           reply: Répondre
         actions:
-          new_topic: a créé une discussion
+          new_topic: a créé un sujet
           reply: a répondu à la discussion
       post:
         approve: Approuver
@@ -15783,8 +15821,8 @@ fr:
         spam: Spam
     index:
       all_topics: Toute l'activité
-      your_topics: Activité de vos discussions
-      your_topics_desc: Affiche l'activité des discussions que vous suivez
+      your_topics: Activité de vos sujets
+      your_topics_desc: Affiche l'activité des sujets que vous suivez
       tour: Quoi de neuf ?
     reorder_list:
       visible: Visible uniquement à
@@ -15792,13 +15830,12 @@ fr:
       helpnote:
         title: Mener des discussions avec des sujets
         para1: >-
-          Vous pouvez autoriser les utilisateurs à lancer de nouvelles
-          discussions dans votre communauté et à discuter entre eux de votre
-          produit.
+          Vous pouvez autoriser les utilisateurs à lancer de nouveaux sujets
+          dans votre communauté et à discuter entre eux de votre produit.
         para2: >-
-          Selon le type de votre forum, vos discussions peuvent avoir pour
-          origine des idées, des questions ou des problèmes. Les agents comme
-          les clients peuvent les commencer. Selon vos discussions, vous pourrez
+          Selon le type de votre forum, vos sujets peuvent avoir pour origine
+          des idées, des questions ou des problèmes. Les agents comme les
+          clients peuvent les commencer. Selon vos discussions, vous pourrez
           évaluer combien de personnes rencontrent le même problème, définir
           celles qui sont prêtes à bêta-tester vos nouvelles fonctionnalités ou
           déterminer quelle partie de votre produit est difficile à comprendre.
@@ -15806,10 +15843,9 @@ fr:
           De plus, les agents de votre équipe peuvent créer des annonces pour
           faire savoir qu'une nouvelle version ou campagne est prête.
         para4: >-
-          Les discussion de forum peuvent être également marquées comme
-          discussions vedettes lorsque vous souhaitez les plébisciter. Vous
-          pouvez les verrouiller pour éviter que d'autres réponses y soient
-          ajoutées.
+          Les sujets de discussions peuvent être également marqués comme sujets
+          vedettes lorsque vous souhaitez les plébisciter. Vous pouvez les
+          verrouiller pour éviter que d'autres réponses y soient ajoutées.
       replied: réponse envoyée
       spam: Spam
       waiting_for_approval: Non publiée
@@ -15826,18 +15862,18 @@ fr:
       add_note: Ajouter une note
       mark_as_spam: Marquer comme spam
       confirm_spam: >-
-        L'action qui consiste à marquer cette discussion comme indésirable
-        entraîne son déplacement vers le contenu indésirable et la suppression
-        de toutes les réponses qu'elle contient.
+        L'action qui consiste à marquer ce sujet comme indésirable entraîne son
+        déplacement vers le contenu indésirable et la suppression de toutes les
+        réponses qu'il contient.
 
         Voulez-vous vraiment marquer la discussion comme indésirable ?
-      merge_topic: Fusionner la discussion
-      close_topic: Verrouiller la discussion
-      reopen_topic: Rouvrir la discussion
+      merge_topic: Fusionner le sujet
+      close_topic: Verrouiller le sujet
+      reopen_topic: Rouvrir le sujet
       edit_topic: Modifier la discussion
-      delete_topic: Supprimer la discussion
+      delete_topic: Supprimer le sujet
       approve: Approuver et publier
-      convert_to_ticket: Convertir la discussion en ticket
+      convert_to_ticket: Convertir le sujet en ticket
       linked_ticket: Ticket associé
       best_answer: Marquer comme meilleure réponse
       widgets:
@@ -15846,7 +15882,7 @@ fr:
           agent: Agent
       post:
         delete_confirm: "Supprimer ce commentaire ? Vous êtes sûr ?"
-        created_topic: a créé une discussion
+        created_topic: a créé un sujet
         replied_to: a répondu à la discussion
         replied: réponse envoyée
       title_meta:
@@ -15910,14 +15946,14 @@ fr:
         waiting: En attente d'approbation
         waiting_desc: Réviser et publier
         empty_folder: Dossier vide
-        no_waiting_for_approval: Toutes les discussions et réponses ont été révisées.
+        no_waiting_for_approval: Tous les sujets et toutes les réponses ont été révisés.
         no_unpublished_spam: "Aucun spam ici. Croix de bois, croix de fer !"
         moderation_solution: En savoir plus sur la modération des forums
       spam:
         approve: Approuver et publier
         new_topic:
-          title: Nouvelle discussion
-          posted: a publié une nouvelle discussion
+          title: Nouveau sujet
+          posted: a publié un nouveau sujet
         reply:
           title: Répondre
           posted: a répondu à
@@ -15957,13 +15993,13 @@ fr:
         waiting: En attente d'approbation
         waiting_desc: Réviser et publier
         empty_folder: Dossier vide
-        no_forum_unpublished: Toutes les discussions et réponses ont été révisées.
+        no_forum_unpublished: Tous les sujets et toutes les réponses ont été révisés.
         no_forum_spam: "Aucun spam ici. Croix de bois, croix de fer !"
         moderation_solution: En savoir plus sur la modération des forums
         unpublished_posts: Réponses non publiées
         deletion_alert: >-
-          Les discussions/réponses datant de plus de 30 jours seront
-          automatiquement supprimées ici.
+          Les sujets/réponses datant de plus de 30 jours seront automatiquement
+          supprimées ici
       spam_actions:
         approve: Approuver
         approve_tooltip: Approuver et publier
@@ -15975,18 +16011,18 @@ fr:
       spam:
         approve: Approuver et publier
         new_topic:
-          title: Nouvelle discussion
-          posted: a publié une nouvelle discussion
+          title: Nouveau sujet
+          posted: a publié un nouveau sujet
         reply:
           title: Répondre
           posted: a répondu à
     topic_merge:
-      merge_title: Fusionner les discussions
+      merge_title: Fusionner les sujets
       continue: Continuer
       cancel: Annuler
       please_wait: Veuillez patienter...
       mark_primary: Marquer comme ticket principal
-      remove: Supprimer cette discussion
+      remove: Supprimer ce sujet
       detailed_note: Raison de la fusion
       confirm_and_merge: Confirmer et fusionner
       add_note: Raison de la fusion
@@ -15994,12 +16030,10 @@ fr:
       add: Ajouter
       visibility_info: 'Affichage des discussions visibles sur <b>%{visibility}</b> '
       warning: >-
-        Il n'est pas possible d'annuler la fusion des discussions. Les abonnés
-        et les votes liés aux discussions fusionnées seront ajoutés à la
-        discussion principale.
-      merge_notification: >-
-        Cette discussion est déjà verrouillée ou fusionnée. Veuillez actualiser
-        la page.
+        Il n'est pas possible d'annuler la fusion des sujets. Les abonnés et les
+        votes liés aux sujets fusionnés seront ajoutés à la discussion
+        principale.
+      merge_notification: Ce sujet est déjà verrouillé ou fusionné. Veuillez actualiser la page.
       merge_error_for_locked: >-
         Cette discussion est verrouillée et ne peut pas être modifiée,
         puisqu'elle a été fusionnée dans la discussion <a
@@ -16014,7 +16048,7 @@ fr:
       merge_topic_list_status_created_at: >-
         dans %{forum} (%{category})<br />par %{username}, il y a <span
         class='emphasize'>%{time_ago}</span>
-      title_placeholder: Rechercher des discussions à fusionner
+      title_placeholder: Rechercher des sujets à fusionner
   link_with_marketplace: Associer à Google Marketplace
   google_signup:
     associate_google:
@@ -16707,6 +16741,13 @@ fr:
     langues dans l'ancien Freshdesk
   pts_plain: ' points'
   in: dans
+  helpcard:
+    title: ID externe unique
+    info: >-
+      Importez les identifiants uniques de vos clients pour identifier
+      facilement leurs conversations dans Freshdesk. <br><a
+      href="https://support.freshdesk.com/support/solutions/articles/226804-identifying-contacts-with-an-external-id"
+      target="_blank">Aidez-moi à configurer un identifiant externe</a>
   help_widget:
     name: 'Bienvenue sur le support %{name}'
     message: Bienvenue sur le support informatique

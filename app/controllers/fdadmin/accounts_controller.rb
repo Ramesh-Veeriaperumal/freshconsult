@@ -833,6 +833,86 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       Rails.logger.error("Error in creating clone for account_id: #{account_id} :: Exception: #{e.message} :: #{e.backtrace[0..50]}")
     end
   end
+  
+  def enable_min_level_fluffy
+    begin
+      account = Account.find_by_id(params[:account_id]).make_current
+      result = { account_id: account.id, account_name: account.name }
+      if account.launched?(:fluffy_min_level)
+        result[:status] = 'notice'
+      else
+        account.disable_fluffy
+        account.enable_fluffy_min_level
+        result[:status] = 'success'
+      end
+    rescue StandardError => e
+      result[:status] = 'error'
+      Rails.logger.error("Error in Enable min level fluffy for account_id: #{params[:account_id]} :: Exception: #{e.message}")
+    ensure
+      Account.reset_current_account
+    end
+
+    respond_to do |format|
+      format.json do
+        render json: result
+      end
+    end
+  end
+
+  def disable_min_level_fluffy
+    begin
+      account = Account.find_by_id(params[:account_id]).make_current
+      result = { account_id: account.id, account_name: account.name }
+      if account.launched?(:fluffy_min_level)
+        account.disable_fluffy_min_level
+        account.enable_fluffy
+        result[:status] = 'success'
+      else
+        result[:status] = 'notice'
+      end
+    rescue StandardError => e
+      result[:status] = 'error'
+      Rails.logger.error("Error in Disable min level fluffy for account_id: #{params[:account_id]} :: Exception: #{e.message}")
+    ensure
+      Account.reset_current_account
+    end
+
+    respond_to do |format|
+      format.json do
+        render json: result
+      end
+    end
+  end
+
+  def min_level_fluffy_info
+    begin
+      account = Account.find_by_id(params[:account_id]).make_current
+      result = { account_id: account.id, account_name: account.name }
+      result.merge!(data: min_level_fluffy(account)) if account.launched?(:fluffy_min_level)
+    rescue StandardError => e
+      result[:status] = 'error'
+      Rails.logger.error("Error in fatching min level fluffy info for account_id: #{params[:account_id]} :: Exception: #{e.message}")
+    ensure
+      Account.reset_current_account
+    end
+
+    respond_to do |format|
+      format.json do
+        render json: result
+      end
+    end
+  end
+
+  def min_level_fluffy(account)
+    result = {}
+    data = account.current_fluffy_limit(account.full_domain)
+    result[:limits] = data.limit
+    result[:account_paths] = []
+    data.account_paths.each do |obj|
+      result[:account_paths] << [obj.method, obj.path, obj.limit]
+    end
+    result
+  end
 
   def enable_min_level_fluffy
     begin

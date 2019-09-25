@@ -336,7 +336,7 @@ es-LA:
   upgrade_plan: Actualizar
   go_back: Volver
   go_back_small: volver
-  add_note: null
+  add_note: Agregar nota
   set_field_label_as: 'Establecer %{custom_field_name} como'
   contact_name: Nombre de contacto
   requester_email: Correo electrónico del solicitante
@@ -547,7 +547,13 @@ es-LA:
         tener mucho cuidado, ya que se convertirán en elementos desplegables en
         función de la sangría. Más información<a target='_blank'
         href=%{learn_more}> aprender mas</a>
-      nested_field_helptext: ''
+      nested_field_helptext: >-
+        Usa el área de texto que aparece a continuación para agrega o editar
+        elementos en el menú desplegable. Aplica sangría a los elementos
+        presionando la tecla de tabulación una o dos veces. Se convertirán en
+        elementos desplegables en función de la sangría. <a target='_blank'
+        href='https://support.freshdesk.com/solution/categories/45957/folders/74594/articles/37599-using-dependent-fields'>Más
+        información</a> 
       dropdown_items_edit: 'Elementos desplegables: Editar vista'
       drop_down_items_edit: 'Elementos desplegables: Editar'
       dropdown_items_preview: 'Elementos desplegables: Vista previa'
@@ -759,6 +765,10 @@ es-LA:
     canned_form:
       next: Siguiente
       form_submit: Enviar
+      okay: Bien
+      hey: ¡Hola!
+      thank_you_text: Gracias
+      move_to_form_field: o presione enter
   gamification:
     levels:
       beginner: Principiante
@@ -1665,7 +1675,14 @@ es-LA:
               de soporte dedicada dentro de tu aplicación. Esta incluirá tu base
               de conocimientos y un formulario de ticket para que los usuarios
               puedan comunicarse contigo si necesitan ayuda.
-            info3: null
+            info3: >-
+              MobiHelp es totalmente configurable. Puedes seleccionar todo,
+              desde los campos de tu formulario de comentarios hasta el aspecto
+              que tendrá dentro de tu aplicación. La información como el nombre
+              del dispositivo, el sistema operativo y la versión de la
+              aplicación se recopila automáticamente sin esfuerzo del usuario.
+              También puedes habilitar campos de datos personalizados y
+              recopilar registros de bloqueos y rutas de exploración.
             info4: >-
               Puedes crear una cantidad ilimitada de aplicaciones para que se
               usen con MobiHelp y conectarlas con tu cuenta de Freshdesk. Una
@@ -5967,6 +5984,7 @@ es-LA:
     add_skills: Agregar aptitudes
     more: más
     member: Miembro de
+    search_placeholder: Buscar todos los agentes
   account_admin: Administrador de cuenta
   right: Derecha
   footer:
@@ -6366,7 +6384,7 @@ es-LA:
       why_we_love_cookies: Ventajas de las cookies
       cookie_dialog_info1: >-
         Usamos las cookies para intentar ofrecerte una mejor experiencia en
-        Freshdesk.
+        Freshdesk. 
       cookie_dialog_info2: >-
         Puedes obtener más información acerca de los tipos de cookies que
         usamos, el motivo y la manera en la que las utilizamos en nuestra
@@ -6374,12 +6392,12 @@ es-LA:
         resultan muy pesadas, también puedes deshabilitarlas totalmente. Solo
         ten en cuenta que el servicio de Freshdesk es bastante grande en algunas
         cookies y algunas partes de Freshdesk pueden no funcionar correctamente
-        si las deshabilitas.
+        si las deshabilitas. 
       cookie_dialog_info3: >-
         También supondremos que estás de acuerdo con la manera en la que usamos
         las cookies y que la aceptas, conforme a lo descrito en nuestra
         %{privacy_link}, a menos que elijas deshabilitarlas totalmente desde tu
-        explorador.
+        explorador. 
       privacy_policy: Directiva de privacidad
     no_topics_in_this_view: ~ No hay temas en esta vista. ~
     reported: informado
@@ -6406,7 +6424,7 @@ es-LA:
     login_or_signup: '%{login} o %{signup} para obtener una cuenta'
     to_post_comment: ' para publicar un comentario'
     to_submit_ticket: ' para enviar un nuevo ticket'
-    login_to_submit_ticket: '<a href=%{login_url}>Iniciar sesión</a> para enviar un nuevo ticket'
+    login_to_submit_ticket: '<a href=%{login_url}>Inicie sesión</a> para enviar un nuevo ticket'
     login_signup_to_submit_ticket: >-
       <a href=%{login_url}>Inicie sesión</a> o <a
       href=%{signup_url}>regístrese</a> para enviar un nuevo ticket
@@ -6547,8 +6565,8 @@ es-LA:
       upvoted: Calificaste positivamente
       upvote: Calificar positivamente
       like:
-        one: le gusta esto
-        other: les gusta esto
+        one: le gusta
+        other: les gusta
     tickets:
       merged_topic_note: Un tema combinado no se puede convertir en un ticket.
       export: Exportar tickets
@@ -6570,6 +6588,8 @@ es-LA:
     customer_login_info: ¿Es usted un cliente?
     agent_signin: Inicie sesión aquí
     agent_login_info: ¿Es usted un agente?
+    helpdesk_login_portal: 'Bienvenido de nuevo, agente'
+    agent_login_details: Introducir los detalles a continuación
   feedbackwidget_form_heading: Encabezado del formulario
   feedbackwidget_form_title: Título de formulario de widget
   cancel_and_back: Cancelar y volver
@@ -8846,6 +8866,13 @@ es-LA:
     gdpr_admin_details: ha cambiado sus permisos de usuario de
     gdpr_acknowledgement: y confirma haber leído nuestra
     gdpr_to: para
+    sort_conversations:
+      label: Ordenar conversaciones
+      helpnote: Este es el orden en el cual los mensajes aparecerán en los tickets.
+      latest_top: Ahora se mostrará la conversación más reciente en la parte superior.
+      oldest_top: Ahora se mostrará la conversación más antigua en la parte superior.
+      option1: Mostrar la más reciente en la parte superior
+      option2: Mostrar la más antigua en la parte superior
   lead: Líder
   comments: Comentarios
   forum_confirm_msg1: ¿Estás seguro de que quieres eliminar esta categoría?
@@ -11028,7 +11055,11 @@ es-LA:
         de verificación y haga clic en "Actualizar".<br/><br/>
       form:
         domain: Dominio
-        domain_info: ''
+        domain_info: >-
+          Introduce la dirección URL de la cuenta de JIRA completa con
+          https/http. P. ej.: https://ejemplo.atlassian.net. <br /><span
+          class='italics'>Nota: Las variantes locales de JIRA deben exponerse en
+          Internet. </span>
         jira_note: Texto de descripción
         jira_note_info: Este texto se agregará a la descripción del problema en JIRA.
         widget_title: Título del widget
@@ -11364,7 +11395,10 @@ es-LA:
         domain_info: >-
           Usa el ID de usuario de superadministrador de Office 365 como
           nombre@empresa.onmicrosoft.com en el caso de instancias a petición.
-        organization_name_info: null
+        organization_name_info: >-
+          Para ubicar esto, accede a Configuración de Dynamics CRM ->
+          Personalizaciones -> Recursos de desarrollador -> Información de la
+          organización -> Nombre único de la organización.
         end_point_info: >-
           Ejemplo:
           https://freshpo4.api.crm5.dynamics.com/XRMServices/2011/Organization.svc.
@@ -11959,7 +11993,18 @@ es-LA:
         Exporta información de los clientes, administra las suscripciones
         existentes e incorpora conocimientos sobre las estadísticas de uso de
         los clientes dentro de Freshdesk.
-      helptext: ''
+      helptext: >-
+        <h4>Ayuda para la integración con iContact</h4><br/> Para la integración
+        con iContact, accede a <a target='_blank'
+        href='https://app.icontact.com/icp/core/externallogin'>https://app.icontact.com/icp/core/externallogin</a>
+        y otorga acceso a la aplicación de Freshdesk introduciendo el ID de
+        aplicación <br/><br/><b>qB7RYQgliAPwl5dwezYF0kAN4Islhj4e</b>.<br/><br/>
+        Establece una contraseña de tu elección y haz clic en
+        &quot;Guardar&quot;. Esta contraseña de API se utilizará para todas las
+        solicitudes de la API de Freshdesk. <br/><br/> Copia la URL de la API de
+        la sección &quot;Información de cuenta&quot; y pégala en el campo de URL
+        de la API aquí. Introduce tu nombre de usuario de iContact y la nueva
+        contraseña de la API y haz clic en Actualizar. 
       form:
         app_id: ID de aplicación
         username: Nombre de usuario de iContact
@@ -11972,7 +12017,26 @@ es-LA:
     dropbox:
       label: DropBox
       desc: Adjunta y comparte tu información o archivos de DropBox.
-      helptext: ''
+      helptext: >-
+        <h4>Ayuda para la integración con Dropbox </h4><br/><p>La integración
+        con Dropbox permite a los agentes y a los usuarios buscar archivos desde
+        su carpeta de Dropbox y compartirlos al enviar o responder un ticket en
+        Freshdesk. En el ticket, se comparte un vínculo directo al archivo, lo
+        cual elimina la necesidad de archivos adjuntos y restricciones de tamaño
+        de correo electrónico.</p><p> Antes de configurar la integración, acceda
+        a la <a target='_blank' href='https://dropbox.com/developers'><b>página
+        para desarrolladores de Dropbox</b></a>.</p><p>1. Seleccione <b>Cree su
+        aplicación</b> en la sección <b>API v2</b>.</p><p>2. En <b>Elija una
+        API</b>, seleccione <a>API de Dropbox</a>.</p><p>3. Para el tipo de
+        acceso, seleccione <b>Full Dropbox</b>.</p><p>4. Escriba el nombre de su
+        aplicación y haga clic en <b>Crear aplicación</b>.</p><p>5. En su página
+        de aplicación, en la pestaña <b>Ajustes</b>, para <b>Dominios de
+        selector/almacenador</b>, agregue la dirección de URL de su plataforma
+        de soporte técnico sin https o www, por ejemplo:
+        <a>sauls.freshdesk.com</a>.</p><p> Por último, copie y pegue la clave de
+        aplicación de la nueva aplicación en esta página y guarde los cambios.
+        Su Selector de Dropbox ya debe estar listo. Puede comprobarlo en el
+        formulario Nuevo ticket.</p>
       form:
         app_key: Clave de aplicación registrada para tu dominio
         app_key_info: >-
@@ -16819,6 +16883,13 @@ es-LA:
     idiomas en el antiguo Freshdesk
   pts_plain: ' ptos'
   in: en
+  helpcard:
+    title: ID externo único
+    info: >-
+      Importe los ID únicos de sus clientes e identifique fácilmente sus
+      conversaciones en Freshdesk. <br><a
+      href="https://support.freshdesk.com/support/solutions/articles/226804-identifying-contacts-with-an-external-id"
+      target="_blank">Ayúdenme a configurar el ID externo</a>
   help_widget:
     name: 'Bienvenido al servicio de soporte %{name}'
     message: Bienvenido al servicio de soporte

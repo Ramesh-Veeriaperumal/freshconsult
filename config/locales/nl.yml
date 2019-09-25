@@ -274,7 +274,7 @@ nl:
   upgrade_plan: Upgrade uitvoeren
   go_back: Terug
   go_back_small: Terug
-  add_note: null
+  add_note: Opmerking toevoegen
   set_field_label_as: '%{custom_field_name} instellen als'
   contact_name: Naam contactpersoon
   requester_email: E-mailadres aanvrager
@@ -477,7 +477,13 @@ nl:
         Druk een- of tweemaal op de tabtoets om items te laten inspringen. De
         items worden op basis van de inspringing automatisch omgezet in
         dropdownitems, dus wees voorzichtig. Meer informatie.</a>
-      nested_field_helptext: ''
+      nested_field_helptext: >-
+        Gebruik het onderstaande tekstgebied om items toe te voegen aan de
+        dropdown of items te bewerken. Druk een- of tweemaal op de tabtoets om
+        items te laten inspringen. De items worden op basis van de inspringing
+        automatisch omgezet in dropdownitems. <a target='_blank'
+        href='https://support.freshdesk.com/solution/categories/45957/folders/74594/articles/37599-using-dependent-fields'>Meer
+        informatie</a> 
       dropdown_items_edit: Dropdownitems - bewerken
       drop_down_items_edit: Dropdownitems - bewerken
       dropdown_items_preview: Dropdownitems - voorbeeld
@@ -691,6 +697,10 @@ nl:
     canned_form:
       next: Volgende
       form_submit: Versturen
+      okay: Ok
+      hey: Hey
+      thank_you_text: Bedankt
+      move_to_form_field: of druk op enter
   gamification:
     levels:
       beginner: Beginner
@@ -1469,7 +1479,13 @@ nl:
               ondersteuningssectie binnen uw app. Deze sectie bevat uw
               kennisbank en een ticketformulier, zodat klanten contact met u
               kunnen opnemen als ze hulp nodig hebben.
-            info3: null
+            info3: >-
+              MobiHelp is volledig configureerbaar. U kunt alles selecteren; van
+              de velden in uw feedbackformulier tot de weergave van de velden in
+              uw app. Informatie zoals de apparaatnaam, het besturingssysteem en
+              de appversie worden automatisch verzameld zonder dat de gebruiker
+              hier iets voor hoeft te doen. U kunt ook aangepaste gegevensvelden
+              inschakelen en crashlogs en navigatiepaden verzamelen.
             info4: >-
               U kunt een onbeperkt aantal apps maken voor gebruik met MobiHelp
               en deze aan uw Freshdesk-account koppelen. Op deze manier kunt u
@@ -5564,6 +5580,7 @@ nl:
     invalid_placeholder: Ongeldige plaatshouders ingevoegd
     manage_skills: Vaardigheden Beheren
     skill: Vaardigheden
+    search_placeholder: Alle agents zoeken
   account_admin: Accountbeheerder
   right: Rechts
   footer:
@@ -5975,17 +5992,17 @@ nl:
       why_we_love_cookies: Waarom wij cookies gebruiken
       cookie_dialog_info1: >-
         We maken gebruik van cookies om u in Freshdesk een betere ervaring te
-        kunnen geven.
+        kunnen geven. 
       cookie_dialog_info2: >-
         Meer informatie over de typen cookies die we gebruiken en informatie
         over waarom en hoe we ze gebruiken, vindt u op %{privacy_link}.
         Desgewenst kunt u cookies uitschakelen. In de Freshdesk-service wordt
         veel gebruik gemaakt van cookies en bepaalde onderdelen werken mogelijk
-        niet correct als u cookies uitschakelt.
+        niet correct als u cookies uitschakelt. 
       cookie_dialog_info3: >-
         Daarnaast wordt aangenomen dat u instemt met de manier waarop we cookies
         gebruiken (zie %{privacy_link} voor een beschrijving), tenzij u cookies
-        uitschakelt in de browser.
+        uitschakelt in de browser. 
       privacy_policy: Privacybeleid
     no_topics_in_this_view: ~ Geen onderwerpen in deze weergave ~
     reported: 'heeft dit verstuurd,'
@@ -6097,7 +6114,7 @@ nl:
       merge_note:
         one: 'Onderwerp samengevoegd in dit onderwerp:'
         other: 'Onderwerpen samengevoegd in dit onderwerp:'
-      sort_heading: 'Gesorteerd op:'
+      sort_heading: 'Sorteren op:'
       sort_order:
         date: Oudste eerst
         recency: Nieuwste eerst
@@ -6174,6 +6191,11 @@ nl:
     customer_login_info: Bent u een klant?
     agent_signin: Hier inloggen
     agent_login_info: Bent u een agent?
+    helpdesk_login_portal: Welkom terug Agent
+    agent_login_details: Voer hieronder de details in
+    vote_label:
+      one: 1 stemme
+      other: stemmer
   feedbackwidget_form_heading: Formulierkoptekst
   feedbackwidget_form_title: Widgetformuliertitel
   cancel_and_back: Annuleren en teruggaan
@@ -8182,6 +8204,13 @@ nl:
         gebruikers uitgeschakeld
       title: Forums
     gdpr_to: tot
+    sort_conversations:
+      label: Gesprekken sorteren
+      helpnote: Dit is de volgorde waarin berichten verschijnen in tickets.
+      latest_top: U ziet nu het nieuwste gesprek bovenaan.
+      oldest_top: U ziet nu het oudste gesprek bovenaan.
+      option1: Nieuwste bovenaan tonen
+      option2: Oudste bovenaan tonen
   lead: Lead
   comments: Opmerkingen
   forum_confirm_msg1: Weet u zeker dat u deze categorie wilt verwijderen?
@@ -10094,7 +10123,11 @@ nl:
         alle selectievakjes in en klikt u op Bijwerken.<br/><br/>
       form:
         domain: Domein
-        domain_info: ''
+        domain_info: >-
+          Voer de volledige URL van het JIRA-account in, met https/http.
+          Bijvoorbeeld https://voorbeeld.atlassian.net.<br /><span
+          class='italics'> Opmerking: de on-premisevarianten van JIRA moet
+          beschikbaar zijn via  internet.</span>
         jira_note: Beschrijvingstekst
         jira_note_info: Deze tekst wordt toegevoegd aan de probleembeschrijving in JIRA.
         widget_title: Widgettitel
@@ -10367,7 +10400,10 @@ nl:
         domain_info: >-
           Gebruik voor on-demandinstances een Office 365-gebruikers-id met
           hoofdbeheerdersrechten, zoals naam@bedrijf.onmicrosoft.com.
-        organization_name_info: null
+        organization_name_info: >-
+          Om dit te zoeken gaat u naar Dynamics CRM-instellingen -> Aanpassingen
+          -> DeveloperResources -> Informatie over uw organisatie -> Unieke naam
+          organisatie.
         end_point_info: >-
           Bijvoorbeeld:
           https://freshpo4.api.crm5.dynamics.com/XRMServices/2011/Organization.svc.
@@ -10850,7 +10886,18 @@ nl:
       desc: >-
         U kunt in Freshdesk de klantgegevens exporteren, bestaande abonnementen
         beheren en inzicht krijgen in gebruiksstatistieken van klanten.
-      helptext: ''
+      helptext: >-
+        <h4>Help bij de integratie van iContact</h4><br/>Als u wilt integreren
+        met iContact, gaat u naar <a target='_blank'
+        href='https://app.icontact.com/icp/core/externallogin'>https://app.icontact.com/icp/core/externallogin</a>
+        en geeft u de Freshdesk-app toestemming door het volgende toepassings-id
+        in te voeren:
+        <br/><br/><b>qB7RYQgliAPwl5dwezYF0kAN4Islhj4e</b><br/><br/>Stel het
+        gewenste wachtwoord in en klik op Opslaan. Dit API-wachtwoord zal voor
+        alle API-aanvragen van Freshdesk worden gebruikt.<br/><br/>Kopieer de
+        API-URL uit het gedeelte met accountgegevens en plak de URL in het veld
+        API-URL. Voer uw iContact-gebruikersnaam en het nieuwe API-wachtwoord in
+        en klik op Bijwerken. 
       form:
         app_id: Toepassings-id
         username: iContact-gebruikersnaam
@@ -10863,7 +10910,24 @@ nl:
     dropbox:
       label: DropBox
       desc: U kunt uw gegevens en bestanden van DropBox bijvoegen en delen.
-      helptext: ''
+      helptext: >-
+        <h4>Hulp bij de integratie van Dropbox</h4><br/><p>Als u Dropbox
+        integreert, kunnen medewerkers en contactpersonen bestanden in hun
+        Dropbox-map zoeken en deze delen wanneer ze in Freshdesk een ticket
+        versturen of beantwoorden. In het ticket wordt een directe link naar het
+        bestand weergegeven, zodat u geen beperkingen meer hoeft in te stellen
+        voor de grootte van bijlagen en e-mails. </p><p>Voordat u de integratie
+        instelt, gaat u naar de <strong><a
+        href='https://www.dropbox.com/developers/apps' target='_blank'
+        alt='developers'>pagina voor Dropbox-ontwikkelaars</a></strong>.
+        </p><p>1. Klik in het gedeelte My Apps (Mijn apps) op Create an App (Een
+        app maken). </p><p>2. Selecteer Chooser als het apptype. </p><p>3. Voer
+        een naam en beschrijving in. </p><p>4. Voer uw ondersteunings-URL in
+        onder Domains (Domeinen) <i>(bijvoorbeeld uwbedrijf.dreshdesk.com).
+        </i></p><p>5. Klik op de knop Create (Maken). </p><p>Tot slot kopieert
+        en plakt u de toepassingssleutel van de nieuwe app op deze pagina en
+        slaat u de wijzigingen op. Dropbox Chooser is nu gereed. U kunt Chooser
+        bekijken op het formulier Nieuw ticket.</p>
       form:
         app_key: Geregistreerde toepassingssleutel voor uw domein
         app_key_info: Maak een app in de dropbox en voer hier de appsleutel in.
@@ -15508,6 +15572,13 @@ nl:
     proberen in de oude Freshdesk
   pts_plain: ' pnt'
   in: Gepubliceerd in
+  helpcard:
+    title: Unieke externe ID
+    info: >-
+      Importeer de unieke ID's van uw klanten en vindt hun gesprekken eenvoudig
+      in Freshdesk. <br><a
+      href="https://support.freshdesk.com/support/solutions/articles/226804-identifying-contacts-with-an-external-id"
+      target="_blank">Help me een extern ID in te stellen</a>
   help_widget:
     name: 'Welkom bij %{name}-ondersteuning'
     message: Welkom bij ondersteuning
