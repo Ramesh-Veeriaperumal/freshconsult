@@ -171,6 +171,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/account_feature", only: [:create, :destroy]
     resource :"api_search/automation", only: [:results]
     resource :"ember/admin/freddy_skill", only: [:index, :show, :update]
+    resource :"admin/ticket_field", only: [:create, :update, :destroy, :show, :index]
+    resource :"admin/section", only: [:create, :update, :destroy, :show, :index]
   end
 
   edit_ticket_properties do

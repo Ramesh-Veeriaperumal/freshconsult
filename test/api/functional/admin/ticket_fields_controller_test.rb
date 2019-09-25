@@ -1,212 +1,180 @@
 require_relative '../../test_helper.rb'
-# Tests written for api endpoints of api/ticket_fields controller.
+require Rails.root.join('test/api/helpers/ticket_fields_test_helper')
+require Rails.root.join('test/api/helpers/admin/ticket_field_helper')
+require Rails.root.join('test/api/helpers/test_case_methods')
+
+require 'faker'
+
 class Admin::TicketFieldsControllerTest < ActionController::TestCase
-  def wrap_cname(params)
-    params
+  include TestCaseMethods
+  include TicketFieldsTestHelper
+  include Admin::TicketFieldHelper
+
+  def setup
+    super
+    clean_db
   end
 
-  # test_helper
-  def common_field_params(input_params = {})
-    params_hash = {
-      label_for_customers: input_params[:label_for_customers] || Faker::Lorem.characters(10),
-      label: input_params[:label] || Faker::Lorem.characters(10),
-      type: input_params[:type] || 'custom_text'
-    }
-    params_hash.merge(input_params.except(*params_hash.keys))
+  def teardown
+    clean_db
+    super
   end
 
-  def custom_dropdown_params(input_params = {})
-    input_params[:type] = 'custom_dropdown'
-    common_field_params(input_params)
+  def clean_db
+    @account.ticket_fields.where(default: 0).destroy_all
   end
 
-  def nested_field_params(input_params = {})
-    first_nested_ticket_field = input_params.try(:[], :nested_ticket_fields).try(:[], 0) || {}
-    second_nested_ticket_field = input_params.try(:[], :nested_ticket_fields).try(:[], 1) || {}
-    params = {
-      type: 'nested_field',
-      nested_ticket_fields: [
-        {
-          label: first_nested_ticket_field[:label] || Faker::Lorem.characters(10),
-          label_in_portal: first_nested_ticket_field[:label_in_portal] || Faker::Lorem.characters(10)
-        },
-        {
-          label: second_nested_ticket_field[:label] || Faker::Lorem.characters(10),
-          label_in_portal: second_nested_ticket_field[:label_in_portal] || Faker::Lorem.characters(10)
-        }
-      ]
-    }
-    common_field_params(input_params.merge(params))
-  end
+  DROPDOWN_CHOICES_TICKET_TYPE = %w[Question Problem Incident].freeze
 
-  def nested_field_response_pattern(expected_output, ticket_field)
-    response_pattern = ticket_field_pattern(expected_output, ticket_field)
-    response_pattern['nested_ticket_fields'] = []
-    ticket_field.nested_ticket_fields.each do |nested_field|
-      response_pattern['nested_ticket_fields'] = response_pattern['nested_ticket_fields'].push("label": nested_field.label,
-                                                                                               "label_in_portal": nested_field.label_in_portal,
-                                                                                               "description": nested_field.description,
-                                                                                               "name": TicketDecorator.display_name(expected_output[:name] || nested_field.name),
-                                                                                               "level": nested_field.level,
-                                                                                               "ticket_field_id": nested_field.ticket_field_id,
-                                                                                               "created_at": ticket_field.utc_format(expected_output[:created_at] || ticket_field.created_at),
-                                                                                               "updated_at": ticket_field.utc_format(expected_output[:updated_at] || ticket_field.updated_at))
+  def test_deletion_of_decimal_field
+    launch_ticket_field_revamp do
+      name = "decimal_#{Faker::Lorem.characters(rand(10..20))}"
+      create_custom_field(name, :decimal, rand(0..1) == 1)
+      tf = @account.ticket_fields.find_by_field_type('custom_decimal')
+      delete :destroy, construct_params(id: tf.id)
+      assert_response 204
+      assert @account.ticket_fields_with_nested_fields.find_by_id(tf.id).blank?
     end
-    response_pattern[:choices] = Array
-    response_pattern
   end
 
-  def custom_dropdown_field_pattern(expected_output, ticket_field)
-    ticket_field_pattern(expected_output, ticket_field).merge(choices: Array)
+  def test_deletion_of_number_field
+    launch_ticket_field_revamp do
+      name = 'number' + Faker::Lorem.characters(rand(10..20))
+      create_custom_field(name, :number, field_num: '01', required: rand(0..1) == 1)
+      tf = @account.ticket_fields.find_by_field_type('custom_number')
+      delete :destroy, construct_params(id: tf.id)
+      assert_response 204
+      assert @account.ticket_fields_with_nested_fields.find_by_id(tf.id).blank?
+    end
   end
 
-  def ticket_field_pattern(expected_output, ticket_field)
-    {
-      id: expected_output[:id] || ticket_field.id,
-      label: expected_output[:labe] || ticket_field.label,
-      description: expected_output[:description] || ticket_field.description,
-      position: expected_output[:position] || ticket_field.position,
-      default: expected_output[:default] || ticket_field.default,
-      required_for_closure: expected_output[:required_for_closure] || ticket_field.required_for_closure,
-      created_at: ticket_field.utc_format(expected_output[:created_at] || ticket_field.created_at),
-      updated_at: ticket_field.utc_format(expected_output[:updated_at] || ticket_field.updated_at),
-      name: TicketDecorator.display_name(expected_output[:name] || ticket_field.name),
-      label_for_customers: expected_output[:label_for_customers] || ticket_field.label_in_portal,
-      type: expected_output[:type] || ticket_field.field_type,
-      required_for_agents: expected_output[:required_for_agents] || ticket_field.required,
-      required_for_customers: expected_output[:required_for_customers] || ticket_field.required_in_portal,
-      displayed_to_customers: expected_output[:displayed_to_customers] || ticket_field.visible_in_portal,
-      customers_can_edit: expected_output[:customers_can_edit] || ticket_field.editable_in_portal
-    }
+  def test_deletion_of_text_field
+    launch_ticket_field_revamp do
+      name = "text_#{Faker::Lorem.characters(rand(10..20))}"
+      create_custom_field_dn(name, 'text', rand(0..1) == 1)
+      tf = @account.ticket_fields.find_by_field_type('custom_text')
+      delete :destroy, construct_params(id: tf.id)
+      assert_response 204
+      assert @account.ticket_fields_with_nested_fields.find_by_id(tf.id).blank?
+    end
   end
 
-  def test_create_with_wrong_privilege
-    User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
-    post :create, construct_params({}, common_field_params)
+  def test_deletion_of_date_field
+    launch_ticket_field_revamp do
+      name = 'date' + Faker::Lorem.characters(rand(10..20))
+      create_custom_field(name, :date, rand(0..1) == 1)
+      tf = @account.ticket_fields.find_by_field_type('custom_date')
+      delete :destroy, construct_params(id: tf.id)
+      assert_response 204
+      assert @account.ticket_fields_with_nested_fields.find_by_id(tf.id).blank?
+    end
+  end
+
+  def test_deletion_of_paragraph_field
+    launch_ticket_field_revamp do
+      name = "paragraph_#{Faker::Lorem.characters(rand(10..20))}"
+      create_custom_field_dn(name, 'paragraph', rand(0..1) == 1)
+      tf = @account.ticket_fields.find_by_field_type('custom_paragraph')
+      delete :destroy, construct_params(id: tf.id)
+      assert_response 204
+      assert @account.ticket_fields_with_nested_fields.find_by_id(tf.id).blank?
+    end
+  end
+
+  def test_deletion_of_checkbox_field
+    launch_ticket_field_revamp do
+      name = 'checkbox' + Faker::Lorem.characters(rand(10..20))
+      create_custom_field(name, :checkbox, rand(0..1) == 1)
+      tf = @account.ticket_fields.find_by_field_type('custom_checkbox')
+      delete :destroy, construct_params(id: tf.id)
+      assert_response 204
+      assert @account.ticket_fields_with_nested_fields.find_by_id(tf.id).blank?
+    end
+  end
+
+  def test_deletion_of_dropdown_field
+    launch_ticket_field_revamp do
+      name = "dropdown_#{Faker::Lorem.characters(rand(10..20))}"
+      create_custom_field_dropdown(name, Faker::Lorem.words(6))
+      tf = @account.ticket_fields.find_by_field_type('custom_dropdown')
+      delete :destroy, construct_params(id: tf.id)
+      assert_response 204
+      assert @account.ticket_fields_with_nested_fields.find_by_id(tf.id).blank?
+    end
+  end
+
+  def test_deletion_of_nested_field
+    launch_ticket_field_revamp do
+      names = Faker::Lorem.words(3).map { |x| "nested_#{x}" }
+      tf = create_dependent_custom_field(names, 2, rand(0..1) == 1)
+      delete :destroy, construct_params(id: tf.id)
+      assert_response 204
+      assert @account.ticket_fields_with_nested_fields.find_by_id(tf.id).blank?
+    end
+  end
+
+  def test_deletion_of_dropdown_field_having_section
+    launch_ticket_field_revamp do
+      name = "dropdown_#{Faker::Lorem.characters(rand(10..20))}"
+      tf = create_custom_field_dropdown_with_sections(name, DROPDOWN_CHOICES_TICKET_TYPE)
+      create_section_fields(tf.id)
+      delete :destroy, construct_params(id: tf.id)
+      assert_response 400
+      # delete section fields and then try deleting dropdown
+      @account.ticket_fields.where(default: 0).each do |field|
+        next if field.field_options['section_present'].present?
+        delete :destroy, construct_params(id: field.id)
+        assert_response 204
+      end
+
+      delete :destroy, construct_params(id: tf.id)
+      assert_response 400
+      @account.sections.destroy_all
+
+      tf.field_options['section_present'] = false
+      tf.save
+      tf.reload
+
+      delete :destroy, construct_params(id: tf.id)
+      assert_response 204
+      assert @account.ticket_fields_with_nested_fields.find_by_id(tf.id).blank?
+    end
+  end
+
+  def test_deletion_of_default_field
+    launch_ticket_field_revamp do
+      tfs = @account.ticket_fields.where(default: 1)
+      tfs.each do |field|
+        delete :destroy, construct_params(id: field.id)
+        assert_response 400
+        assert @account.ticket_fields_with_nested_fields.find_by_id(field.id).present?
+      end
+      tfs1_count = @account.ticket_fields.where(default: 1).count
+      assert_equal tfs.count, tfs1_count
+    end
+  end
+
+  def test_deletion_of_invalid_field
+    launch_ticket_field_revamp do
+      delete :destroy, construct_params(id: -1)
+      assert_response 404
+    end
+  end
+
+  def test_deletion_without_feature
+    name = "decimal_#{Faker::Lorem.characters(rand(10..20))}"
+    create_custom_field(name, :decimal, rand(0..1) == 1)
+    tf = @account.ticket_fields.find_by_field_type('custom_decimal')
+    delete :destroy, construct_params(id: tf.id)
     assert_response 403
-  end
+    assert_match 'Ticket Field Revamp', response.body
 
-  def test_create_with_wrong_data_types_for_text_related_fields
-    params = { label: 1, label_for_customers: 1, description: 1 }
-    post :create, construct_params({}, common_field_params(params))
-    result = parse_response response.body
-    match_json([
-                 bad_request_error_pattern('label', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer),
-                 bad_request_error_pattern('label_for_customers', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer),
-                 bad_request_error_pattern('description', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer)
-               ])
-  end
-
-  def test_create_with_max_length_for_text_related_fields
-    params = {
-      label: "A#{Faker::Lorem.characters(255)}",
-      label_for_customers: "A#{Faker::Lorem.characters(255)}",
-      type: "A#{Faker::Lorem.characters(255)}",
-      description: "A#{Faker::Lorem.characters(255)}"
-    }
-    post :create, construct_params({}, common_field_params(params))
-    assert_response 400
-  end
-
-  def test_create_with_wrong_accepted_type
-    params = { type: 'test_type' }
-    post :create, construct_params({}, common_field_params(params))
-    assert_response 400
-    match_json([bad_request_error_pattern('type', :not_included,
-                                          list: Helpdesk::TicketField::MODIFIABLE_CUSTOM_FIELD_TYPES.uniq.join(','))])
-  end
-
-  def test_create_file_type_field
-    params = { type: 'custom_file' }
-    post :create, construct_params({}, common_field_params(params))
-    assert_response 400
-    match_json([bad_request_error_pattern('type', :not_included,
-                                          list: Helpdesk::TicketField::MODIFIABLE_CUSTOM_FIELD_TYPES.uniq.join(','))])
-  end
-
-  def test_create_with_wrong_boolean_params
-    params = {
-      required_for_closure: '',
-      required_for_agents: '',
-      required_for_customers: '',
-      customers_can_edit: '',
-      displayed_to_customers: ''
-    }
-    post :create, construct_params({}, common_field_params(params))
-    assert_response 400
-    match_json([
-                 bad_request_error_pattern('required_for_closure', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String, code: :invalid_value),
-                 bad_request_error_pattern('required_for_agents', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String, code: :invalid_value),
-                 bad_request_error_pattern('required_for_customers', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String, code: :invalid_value),
-                 bad_request_error_pattern('customers_can_edit', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String, code: :invalid_value),
-                 bad_request_error_pattern('displayed_to_customers', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String, code: :invalid_value)
-               ])
-  end
-
-  def test_create_with_wrong_position_number
-    params = { position: -1 }
-    post :create, construct_params({}, common_field_params(params))
-    assert_response 400
-    match_json([bad_request_error_pattern('position', :datatype_mismatch, expected_data_type: 'Positive Integer', code: :invalid_value)])
-  end
-
-  # Custom DropDown related tests starts here.
-  def test_create_with_duplicate_choices_in_under_ticket_field
-    choice_value = "A#{Faker::Lorem.characters(10)}"
-    params = {
-      choices: [{ value: choice_value, choices: [] }, { value: choice_value, choices: [] }]
-    }
-    post :create, construct_params({}, common_field_params(params))
-    assert_response 400
-    # result = parse_response response.body
-  end
-
-  def test_create_with_choices_of_in_correct_data_type
-    params = {
-      choices: [{ value: 1, choices: [] }]
-    }
-    post :create, construct_params({}, common_field_params(params))
-    assert_response 400
-    # result = parse_response response.body
-  end
-
-  # Nested Field related tests starts here.
-  def test_create_with_duplicate_choices_in_under_same_parent
-    choice_value = "A#{Faker::Lorem.characters(10)}"
-    params = {
-      choices: [{ value: choice_value, choices: [] }, { value: choice_value, choices: [] }]
-    }
-    post :create, construct_params({}, nested_field_params(params))
-    assert_response 409
-    # result = parse_response response.body
-  end
-
-  # test for delegator.
-  def test_create_of_ticket_field_with_duplicate_label
-    params = { label: "A#{Faker::Lorem.characters(10)}" }
-    post :create, construct_params({}, common_field_params(params))
-    post :create, construct_params({}, common_field_params(params))
-    assert_response 409
-  end
-
-  # test cases for positive/ticket field creation
-  def test_success_create_of_nested_field
-    params = {
-      choices: [{ value: "A#{Faker::Lorem.characters(10)}", choices: [{ value: "A#{Faker::Lorem.characters(10)}", choices: [] }] }, { value: "A#{Faker::Lorem.characters(10)}", choices: [] }]
-    }
-    params = construct_params({}, nested_field_params(params))
-    ticket_field_id = @account.ticket_fields_with_nested_fields.last.id
-    post :create, params
-    assert_response 201
-    ticket_field = @account.ticket_fields_with_nested_fields.find(ticket_field_id + 1)
-    match_json(nested_field_response_pattern({}, ticket_field))
-  end
-
-  def test_success_create_of_custom_dropdown_field
-    params = { choices: [{ value: "A#{Faker::Lorem.characters(10)}" }, { value: "A#{Faker::Lorem.characters(10)}" }] }
-    post :create, construct_params({}, custom_dropdown_params(params))
-    assert_response 201
-    ticket_field = Helpdesk::TicketField.last
-    match_json(custom_dropdown_field_pattern({}, ticket_field))
+    launch_ticket_field_revamp do
+      @account.revoke_feature :custom_ticket_fields
+      delete :destroy, construct_params(id: tf.id)
+      assert_response 403
+      assert_match 'custom_ticket_fields', response.body
+      @account.add_feature :custom_ticket_fields
+    end
   end
 end

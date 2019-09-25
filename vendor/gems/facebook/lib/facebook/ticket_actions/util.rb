@@ -176,13 +176,8 @@ module Facebook
       # reply to a comment in fb
       def send_comment(rest, parent, note)
         post_id = parent.fb_post.original_post_id
-        if skip_posting_to_fb
-          comment = true
-          comment_id = random_fb_post_id
-        else
-          comment    = rest.put_comment(post_id, note.body, STANDARD_TIMEOUT)
-          comment_id = comment.is_a?(Hash) ? comment['id'] : comment
-        end
+        comment    = rest.put_comment(post_id, note.body, STANDARD_TIMEOUT)
+        comment_id = comment.is_a?(Hash) ? comment['id'] : comment
         post_type = parent.fb_post.comment? ? POST_TYPE_CODE[:reply_to_comment] : POST_TYPE_CODE[:comment]
 
         if comment.present?
@@ -203,9 +198,7 @@ module Facebook
       def send_dm(rest, ticket, note, fan_page)
         thread_identifier = get_thread_key(fan_page, ticket.fb_post)
         # Real time messages
-        if skip_posting_to_fb
-          message = { id: random_fb_post_id }
-        elsif thread_identifier.include?(MESSAGE_THREAD_ID_DELIMITER)
+        if thread_identifier.include?(MESSAGE_THREAD_ID_DELIMITER)
           page_scoped_user_id = thread_identifier.split(MESSAGE_THREAD_ID_DELIMITER)[1]
           page_token = fan_page.page_token
           message = nil
@@ -261,6 +254,39 @@ module Facebook
                    end
           note.create_fb_post(params.merge(thread))
         end
+      end
+
+      def construct_post_hash(parent)
+        post_type = parent.fb_post.comment? ? POST_TYPE_CODE[:reply_to_comment] : POST_TYPE_CODE[:comment]
+        {
+          post_id: random_fb_post_id,
+          facebook_page_id: parent.fb_post.facebook_page_id,
+          account_id: parent.account_id,
+          parent_id: parent.fb_post.id,
+          post_attributes: {
+            can_comment: false,
+            post_type: post_type
+          }
+        }
+      end
+
+      def construct_dm_hash(parent)
+        return_hash = {
+          post_id: random_fb_post_id,
+          facebook_page_id: parent.fb_post.facebook_page_id,
+          msg_type: 'dm'
+        }
+        thread = if parent.fb_post.thread_key.present?
+                     {
+                       thread_id: parent.fb_post.thread_key,
+                       thread_key: parent.fb_post.thread_key
+                     }
+                   else
+                     {
+                       thread_id: parent.fb_post.thread_id
+                     }
+                   end
+        return_hash.merge(thread)
       end
 
       private

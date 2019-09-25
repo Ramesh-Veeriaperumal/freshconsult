@@ -388,3 +388,13 @@ api_error_messages:
   # Search settings
   search_settings_blank: "search settings should not be blank"
   ticket_search_settings_blank: "ticket search settings should not be blank"
+
+  invalid_ticket_field_section_mapping: "Section with id(%{section_id}) does not belong to given ticket_field id(%{ticket_field_id})"
+  invalid_ticket_field: "Invalid ticket field"
+  invalid_section: "Invalid section"
+  non_empty_section_fields: "Please delete ticket field inside section before deleting section"
+  invalid_choice_for_ticket_field: "Invalid choice id(%{id}) for ticket field id(%{ticket_field_id})"
+  clear_ticket_field_choices_error: "Can not delete all the choices from the ticket field"
+  delete_default_field_error: "Default field '%{name}' can't be deleted"
+  section_inside_ticket_field_error: "Ticket field '%{name}' has sections, so it can't be deleted"
+  nested_field_child_delete_error: "Can not delete Level2 and Level3 dependent field, if you want to remove please update the parent field"

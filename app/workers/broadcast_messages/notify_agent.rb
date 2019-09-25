@@ -25,13 +25,10 @@ class BroadcastMessages::NotifyAgent < BaseWorker
   private
 
     def send_notification
-      tkt_details = "[##{@ticket.display_id}] #{@ticket.subject}"
       url = Rails.application.routes.url_helpers.helpdesk_ticket_url(@ticket,
        :host => @ticket.portal_host,
        :protocol=> @ticket.url_protocol)
-      DataExportMailer.deliver_broadcast_message({
-        :to_email => @recipients, 
-        :subject => I18n.t("ticket.link_tracker.notifier_subject", :ticket_details => tkt_details),
+      DataExportMailer.send_email_to_group(:deliver_broadcast_message, @recipients.split(','), {
         :from_email => @tracker_ticket.reply_email,
         :url => url,
         :ticket_subject => @ticket.subject,
