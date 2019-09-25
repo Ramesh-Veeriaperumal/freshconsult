@@ -390,7 +390,6 @@
   :falcon: false
   :opt_out_analytics: false
   :disable_old_ui: true
-  :field_service_management: false
   :chat_enable: false
   :survey_links: true
   :tags_filter_reporting: false
