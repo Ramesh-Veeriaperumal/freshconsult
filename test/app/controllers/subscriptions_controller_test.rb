@@ -199,66 +199,56 @@ class SubscriptionsControllerTest < ActionController::TestCase
 
   def test_cancel_request_with_no_scheduled_requests
     @account = Account.current
+    ChargeBee::Subscription.stubs(:remove_scheduled_changes).returns(true)
     @account.subscription.subscription_request.destroy if @account.subscription.subscription_request.present?
-    chargebee_response = { 'subscription': { 'has_scheduled_changes': false } }
-    result = ChargeBee::Result.new(chargebee_response)
-    ChargeBee::Subscription.stubs(:remove_scheduled_changes).returns(result)
     delete :cancel_request
     assert_response 404
   ensure
     ChargeBee::Subscription.unstub(:remove_scheduled_changes)
-    @account.subscription.subscription_request.destroy if @account.subscription.subscription_request.present?
   end
 
   def test_cancel_request_when_chargebee_succeeds
     @account = Account.current
     create_subscription_request(@account)
-    chargebee_response = { 'subscription': { 'has_scheduled_changes': false } }
-    result = ChargeBee::Result.new(chargebee_response)
-    ChargeBee::Subscription.stubs(:remove_scheduled_changes).returns(result)
+    ChargeBee::Subscription.stubs(:remove_scheduled_changes).returns(true)
     delete :cancel_request
     assert_response 204
   ensure
-    ChargeBee::Subscription.unstub(:remove_scheduled_changes)
     @account.subscription.subscription_request.destroy if @account.subscription.subscription_request.present?
+    ChargeBee::Subscription.unstub(:remove_scheduled_changes)
   end
 
   def test_cancel_request_when_chargebee_throws_exception
     @account = Account.current
     create_subscription_request(@account)
-    ChargeBee::Subscription.stubs(:remove_scheduled_changes).raises(ChargeBee::InvalidRequestError)
-    delete :cancel_request
-    assert_response 404
+    ChargeBee::Subscription.stubs(:remove_scheduled_changes).raises(ChargeBee::InvalidRequestError.new "dummy error", {message: "dummy message", error_code: "dummy error code"})
+    assert_raise(ChargeBee::InvalidRequestError) { delete :cancel_request }
   ensure
-    ChargeBee::Subscription.unstub(:remove_scheduled_changes)
     @account.subscription.subscription_request.destroy if @account.subscription.subscription_request.present?
+    ChargeBee::Subscription.unstub(:remove_scheduled_changes)
+  end
+
+  def test_cancel_request_when_chargebee_has_no_scheduled_request
+    @account = Account.current
+    create_subscription_request(@account)
+    ChargeBee::Subscription.stubs(:remove_scheduled_changes).raises(ChargeBee::InvalidRequestError.new "dummy error", {message: "dummy message", error_code: "no_scheduled_changes"})
+    delete :cancel_request
+    assert_response 204
+  ensure
+    @account.subscription.subscription_request.destroy if @account.subscription.subscription_request.present?
+    ChargeBee::Subscription.unstub(:remove_scheduled_changes)
   end
 
   def test_cancel_request_when_destroy_fails
     @account = Account.current
     create_subscription_request(@account)
-    chargebee_response = { 'subscription': { 'has_scheduled_changes': false } }
-    result = ChargeBee::Result.new(chargebee_response)
-    ChargeBee::Subscription.stubs(:remove_scheduled_changes).returns(result)
+    ChargeBee::Subscription.stubs(:remove_scheduled_changes).returns(true)
     SubscriptionRequest.any_instance.stubs(:destroy).returns(false)
     delete :cancel_request
     assert_response 404
   ensure
-    ChargeBee::Subscription.unstub(:remove_scheduled_changes)
     @account.subscription.subscription_request.destroy if @account.subscription.subscription_request.present?
-  end
-
-  def test_cancel_request_when_chargebee_fails
-    @account = Account.current
-    create_subscription_request(@account)
-    chargebee_response = { 'subscription': { 'has_scheduled_changes': true } }
-    result = ChargeBee::Result.new(chargebee_response)
-    ChargeBee::Subscription.stubs(:remove_scheduled_changes).returns(result)
-    delete :cancel_request
-    assert_response 404
-  ensure
     ChargeBee::Subscription.unstub(:remove_scheduled_changes)
-    @account.subscription.subscription_request.destroy if @account.subscription.subscription_request.present?
   end
 
   def test_cancel_account_cancellation_request

@@ -30,9 +30,19 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
   
   def test_valid_show
     @account = Account.current
+    subscription_request = SubscriptionRequest.new(
+      account_id: @account.id,
+      agent_limit: 1,
+      plan_id: SubscriptionPlan.current.map(&:id).third,
+      renewal_period: 1,
+      subscription_id: @account.subscription.id
+    )
+    subscription_request.save!
     get :show, construct_params(version: 'private')
     assert_response 200
     match_json(subscription_response(@account.subscription))
+  ensure
+    @account.subscription.subscription_request.destroy if @account.subscription.subscription_request.present?
   end
 
   def test_show_no_privilege
@@ -471,11 +481,18 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
         'plan_id': subscription.subscription_plan_id,
         'renewal_period': subscription.renewal_period,
         'next_renewal_at': subscription.next_renewal_at,
+        'days_remaining': (subscription.next_renewal_at.utc.to_date - DateTime.now.utc.to_date).to_i,
         'agent_seats': subscription.agent_limit,
         'card_number': subscription.card_number,
         'card_expiration': subscription.card_expiration,
         'name_on_card': (subscription.billing_address.name_on_card if subscription.billing_address.present?),
         'reseller_paid_account': subscription.reseller_paid_account?,
+        'subscription_request': {
+          'plan_name': subscription.subscription_request.plan_name,
+          'agent_seats': subscription.subscription_request.agent_limit,
+          'renewal_period': subscription.subscription_request.renewal_period,
+          'fsm_field_agents': subscription.subscription_request.fsm_field_agents
+        },
         'updated_at': %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
         'created_at': %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
         'currency': subscription.currency.name,

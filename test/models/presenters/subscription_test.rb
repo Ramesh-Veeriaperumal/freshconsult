@@ -19,6 +19,8 @@ class SubscriptionTest < ActiveSupport::TestCase
     subscription = Account.current.subscription
     payload = subscription.central_publish_payload.to_json
     payload.must_match_json_expression(central_publish_post_pattern(subscription))
+    event_info = subscription.event_info(:update)
+    event_info.must_match_json_expression(event_info_pattern)
   end
 
   def test_publish_for_suspended_account?

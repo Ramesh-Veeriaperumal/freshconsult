@@ -4,7 +4,7 @@ module ChannelIntegrations::Utils
 
     def is_valid_request?(payload_type, payload)
       payload && is_valid_payload_type?(payload_type) && check_stack_info?(payload) &&
-        payload[:context] && payload[:command_name] && valid_twitter_update?(payload) && !ignore_owner?(payload[:owner])
+        payload[:context] && payload[:command_name] && !ignore_owner?(payload[:owner])
     end
 
     def check_stack_info?(payload)
@@ -31,7 +31,8 @@ module ChannelIntegrations::Utils
     end
 
     def valid_twitter_update?(payload)
-      return true if payload[:command_name] != Social::Twitter::Constants::STATUS_UPDATE_COMMAND_NAME
+      return true if payload[:command_name] != Social::Twitter::Constants::STATUS_UPDATE_COMMAND_NAME ||
+                     Account.current.mentions_to_tms_enabled?
 
       payload[:context][:tweet_type] != 'mention'
     end

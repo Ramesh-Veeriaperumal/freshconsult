@@ -15,6 +15,7 @@ module ChannelIntegrations
 
       Sharding.select_shard_of(args[:account_id]) do
         Account.find(args[:account_id]).make_current
+        return unless valid_twitter_update?(payload)
         log_params(payload)
         @replies.process(payload)
         perform_dedup_logic(args)

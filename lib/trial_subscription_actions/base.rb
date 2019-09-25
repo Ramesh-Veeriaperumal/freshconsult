@@ -39,4 +39,8 @@ class TrialSubscriptionActions::Base < SAAS::SubscriptionEventActions
     def trial_subscription?
       true
     end
+
+    def recalculate_daypass_enabled?
+      false
+    end
 end
