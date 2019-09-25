@@ -15,10 +15,15 @@ module Helpdesk::Ticketfields::Validations
     max_count = max_allowed_count(field_data_group)
 
     field_data_count_by_type.each_key do |key|
-      if field_data_count_by_type[key] > max_count[key]
-        translate_key = additional_fields_supported_type?(key) && denormalized_flexifields_enabled? ? "#{key}_with_dn" : key
-        error_str << "#{I18n.t("flash.custom_fields.failure.#{translate_key}")} <br/>"
-      end
+      next unless field_data_count_by_type[key] > max_count[key]
+      translate_key = if additional_fields_supported_type?(key) && denormalized_flexifields_enabled?
+                        "#{key}_with_dn"
+                      elsif ticket_field_limit_increase_enabled?
+                        "#{key}_ticket_field_data"
+                      else
+                        key
+                      end
+      error_str << "#{I18n.t("flash.custom_fields.failure.#{translate_key}")} <br/>"
     end
 
     unless error_str.blank?

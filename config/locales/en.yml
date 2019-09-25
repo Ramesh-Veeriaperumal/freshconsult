@@ -3327,6 +3327,7 @@ en:
         decimal: You are not allowed to create more than 10 decimal fields.
         boolean: You are not allowed to create more than 10 checkbox fields.
         date: You are not allowed to create more than 10 date fields.
+        boolean_ticket_field_data: You are not allowed to create more than 30 checkbox fields.
     cf:
       type:
         contact_fields_controller: Contact Fields
