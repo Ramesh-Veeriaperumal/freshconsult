@@ -21,7 +21,7 @@
 					</div>
 					<% if @account.portal_languages.present? %>
 						<div class="muted mt5">
-							<%= t('account.portal_languages', :count => @account.portal_languages.size) %>
+							<%= t('account.portal_languages_visible', :count => @account.portal_languages.size) %>
 						</div>
 						<div class="mt5">
 							<%= languages_listing(@account.portal_languages_objects) %>

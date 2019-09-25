@@ -6841,6 +6841,7 @@ en:
     supported_portal_languages: "Languages visible to users"
     supported_languages: "Supported Languages (%{count})"
     portal_languages: "Languages Visible on Portal (%{count})"
+    portal_languages_visible: "Visible in portal and widget (%{count})"
     same_language_alert: Supported languages should not include the Portal language.
     settings: "Settings"
     logo_and_colors: "Logo and colors"
