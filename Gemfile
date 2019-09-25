@@ -239,7 +239,7 @@ end
 
 gem "recaptcha", "4.4.1", require: "recaptcha/rails"
 
-gem "marginalia", "1.5.0"
+gem "marginalia", "1.6.0"
 
 gem "freshdesk_authority", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/freshdesk_authority-0.1"
 gem "delayed_job", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/delayed_job"
