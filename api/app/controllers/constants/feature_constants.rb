@@ -24,4 +24,5 @@ module FeatureConstants
   BOTFLOW = :botflow
   HELP_WIDGET = :help_widget
   AGENT_ARTICLES_SUGGEST = :agent_articles_suggest
+  TICKET_FIELD_REVAMP = :ticket_field_revamp
 end

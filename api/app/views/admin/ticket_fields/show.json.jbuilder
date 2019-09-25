@@ -1,0 +1,1 @@
+json.merge! @item.to_hash

@@ -40,6 +40,15 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
   
   concerned_with :presenter
 
+  scope :section_picklist_join, lambda { |conditions = nil|
+    picklist_value_table_name = 'helpdesk_picklist_values'
+    section_picklist_table_name = 'section_picklist_value_mappings'
+    join_query = "INNER JOIN #{section_picklist_table_name} ON "\
+                     "#{picklist_value_table_name}.account_id = #{section_picklist_table_name}.account_id AND "\
+                     "#{picklist_value_table_name}.id = #{section_picklist_table_name}.picklist_value_id"
+    joins(join_query).where(conditions)
+  }
+
   publishable
 
 
