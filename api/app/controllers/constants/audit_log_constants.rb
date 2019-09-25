@@ -2,7 +2,8 @@ module AuditLogConstants
   AUTOMATION_RULE_METHODS = {
       'supervisor' => :all_supervisor_rules,
       'dispatcher' => :all_va_rules,
-      'observer' => :observer_rules_from_cache
+      'observer' => :observer_rules_from_cache,
+      'company' => :companies
   }.freeze
   AUTOMATION_RULE_TYPES = [
       VAConfig::SUPERVISOR_RULE,
@@ -16,6 +17,7 @@ module AuditLogConstants
   MODEL_TRANSLATION_PATH = {
       subscription: 'admin.audit_log.subscription.',
       agent: 'admin.audit_log.agent.',
+      company: 'admin.audit_log.company.',
       action: 'admin.audit_log.action.',
       event_type: 'admin.audit_log.event_type.',
       automation_rule: 'admin.audit_log.automation_rule.'
@@ -27,7 +29,7 @@ module AuditLogConstants
   }.freeze
 
   FILTER_PARAMS = [:agent, :time, :type, :observer_id, :dispatcher_id,
-                   :agent_id, :supervisor_id, :next].freeze
+                   :agent_id, :supervisor_id, :next, :company_id].freeze
 
   EXPORT_FILTER_PARAMS = [:action, :performed_by].freeze
 
@@ -43,7 +45,7 @@ module AuditLogConstants
 
   AUTOMATION_TYPES = ['automation_1', 'automation_3', 'automation_4'].freeze
 
-  TYPES = ['agent', 'subscription'].freeze
+  TYPES = ['agent', 'subscription', 'company'].freeze
 
   ACTION_VALUES = ['create', 'delete', 'update'].freeze
 

@@ -2765,6 +2765,7 @@ en:
         observer: "Observer"
         supervisor: "Supervisor"
         subscription: "Subscription"
+        company: "Company"
       subscription:
         next_renewal_at: "Next Renewal at"
         card_number: "Card Number"
@@ -2788,6 +2789,16 @@ en:
         removed: "Removed"
         logged_in: "Logged in"
         logged_out: "Logged out"
+      company:
+        name: "Name"
+        description: "Description"
+        note: "Note"
+        domains: "Domains"
+        avatar: "Avatar"
+        health_score: "Health Score"
+        account_tier: "Account Tier"
+        industry: "Industry"
+        renewal_date: "Renewal Date"
       automation_rule:
         name: "Name"
         description: "Description"

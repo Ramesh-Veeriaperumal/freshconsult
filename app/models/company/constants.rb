@@ -8,6 +8,8 @@ class Company < ActiveRecord::Base
     industry:     :default_industry
   }.freeze
 
+  ENCRYPTED_VALUE_MASK = '********'.freeze
+
   TAM_DEFAULT_FIELD_MAPPINGS = {
     string_cc01:   :health_score,
     string_cc02:   :account_tier,

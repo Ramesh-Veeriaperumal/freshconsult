@@ -3,6 +3,7 @@ class AuditLogsController < ApiApplicationController
   include AuditLog::SubscriptionHelper
   include AuditLog::AgentHelper
   include AuditLog::AutomationHelper
+  include AuditLog::CompanyHelper
   include Admin::AutomationConstants
   include ContactsCompaniesConcern
   include AuditLog::AuditLogExportHelper

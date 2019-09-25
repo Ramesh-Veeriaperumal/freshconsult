@@ -52,4 +52,8 @@ class Company < ActiveRecord::Base
   def central_publish_worker_class
     'CentralPublishWorker::CompanyWorker'
   end
+
+  def event_info(_action)
+    { ip_address: Thread.current[:current_ip] }
+  end
 end

@@ -40,7 +40,12 @@ class Company < ActiveRecord::Base
       @model_changes = self.changes.clone.to_hash
       @model_changes.merge!(flexifield.changes)
       @model_changes.merge!(company_domains_changes || {})
+      @model_changes.merge!(avatar_changes_for_audit_log || {})
       @model_changes.symbolize_keys!
+    end
+
+    def avatar_changes_for_audit_log
+      { avatar: avatar_changes } if avatar_changes.present?
     end
 
     def nullify_contact_mapping

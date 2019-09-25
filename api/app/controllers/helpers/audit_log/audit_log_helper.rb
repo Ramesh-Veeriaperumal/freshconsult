@@ -184,7 +184,9 @@ module AuditLog::AuditLogHelper
           end
         elsif description[:type] == :default
           if description[:value].present?
-            description_arr.push("#{description[:field]}\n\tfrom #{description[:value][:from]} to #{description[:value][:to]}\n")
+            value_from = description[:value][:from].presence || '--'
+            value_to = description[:value][:to].presence || '--'
+            description_arr.push("#{description[:field]}\nfrom:\n#{value_from}\nto:\n#{value_to}\n")
           else
             description_arr.push("#{description[:field]}\n")
           end

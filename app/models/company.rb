@@ -13,7 +13,7 @@ class Company < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => :account_id , :case_sensitive => false
   attr_accessible :name,:description,:note,:domains ,:sla_policy_id, :import_id,
                   :domain_name, :health_score, :account_tier, :renewal_date, :industry
-  attr_accessor :highlight_name, :escape_liquid_attributes, :validatable_default_fields
+  attr_accessor :highlight_name, :escape_liquid_attributes, :validatable_default_fields, :avatar_changes
 
   xss_sanitize  :only => [:name], :plain_sanitizer => [:name]
   alias_attribute :domain_name, :domains

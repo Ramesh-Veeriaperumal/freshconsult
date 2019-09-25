@@ -44,13 +44,23 @@ module ContactsCompaniesConcern
 
   def assign_avatar
     given_avatar_id = params[cname][:avatar_id]
-    @item.avatar = @delegator.draft_attachments.first if given_avatar_id.present?
+    if given_avatar_id.present?
+      @item.avatar = @delegator.draft_attachments.first
+      avatar_changes_for_auditlog(:added, @item.avatar) if @item.is_a? Company
+    end
   end
 
   def mark_avatar_for_destroy
     avatar_id = @item.avatar.id if params[cname].key?('avatar_id') && @item.avatar
-    @item.avatar_attributes = { id: avatar_id, _destroy: 1 } if avatar_id.present? &&
-                                                                avatar_id != params[cname][:avatar_id]
+    if avatar_id.present? && avatar_id != params[cname][:avatar_id]
+      avatar_changes_for_auditlog(:removed, @item.avatar) if @item.is_a? Company
+      @item.avatar_attributes = { id: avatar_id, _destroy: 1 }
+    end
+  end
+
+  def avatar_changes_for_auditlog(key, value)
+    @item.avatar_changes = {} if @item.avatar_changes.nil?
+    @item.avatar_changes.merge!(value.present? ? { "#{key}": { id: value.id, name: value.content_file_name } } : {})
   end
 
   def fetch_data_export_item(export_type)
