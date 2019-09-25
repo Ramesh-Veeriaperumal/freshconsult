@@ -27,13 +27,15 @@ class Helpdesk::Email::FailedEmailMsg
 
   def notify
     return unless @recipient
-    ticket_url = "#{Account.current.url_protocol}://#{Account.current.full_domain}/helpdesk/tickets/#{@ticket.display_id}"
-    type    = Helpdesk::Email::Constants::FAILURE_CATEGORY[@failure_category]
-    error   = I18n.t("email_failure.#{type}.summary_error_text")
-    subject = I18n.t('email_failure.agent_notification.subject',failed_email: @failed_email)
-    content = I18n.t('email_failure.agent_notification.content',agent_name: @agent_name,ticket_id: @ticket.display_id,failed_email: @failed_email,error_message: error,failed_content: @failed_content,ticket_url: ticket_url)
-    Helpdesk::TicketNotifier.send_later(:internal_email, @ticket, @recipient, content, subject)
-    Rails.logger.info "FailedEmailPoller: Notified action performer! account_id: #{@ticket.account_id}, ticket_id: #{@ticket.id}, note_id: #{@note_id}, failed_email: #{@failed_email}, dynamo: #{@dynamodb_key}"
+    I18n.with_locale(Helpdesk::TicketNotifier.mailer_language(@recipient)) do
+      ticket_url = "#{Account.current.url_protocol}://#{Account.current.full_domain}/helpdesk/tickets/#{@ticket.display_id}"
+      type    = Helpdesk::Email::Constants::FAILURE_CATEGORY[@failure_category]
+      error   = I18n.t("email_failure.#{type}.summary_error_text")
+      subject = I18n.t('email_failure.agent_notification.subject', failed_email: @failed_email)
+      content = I18n.t('email_failure.agent_notification.content', agent_name: @agent_name, ticket_id: @ticket.display_id, failed_email: @failed_email, error_message: error, failed_content: @failed_content, ticket_url: ticket_url)
+      Helpdesk::TicketNotifier.send_later(:internal_email, @ticket, @recipient, content, subject)
+      Rails.logger.info "FailedEmailPoller: Notified action performer! account_id: #{@ticket.account_id}, ticket_id: #{@ticket.id}, note_id: #{@note_id}, failed_email: #{@failed_email}, dynamo: #{@dynamodb_key}"
+    end
   end
 
   def trigger_observer_system_events
@@ -47,5 +49,4 @@ class Helpdesk::Email::FailedEmailMsg
     outbound_initiator = ticket.outbound_initiator
     outbound_initiator.agent? ? outbound_initiator : ticket.agent
   end
-
 end

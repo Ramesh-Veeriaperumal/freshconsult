@@ -1,4 +1,4 @@
-<%= "#{t('helpdesk.tickets.add_watcher.mail.hi')}," %>
+<%= "#{t('mailer_notifier.hi')}" %>
 <br/>
 <br/>
 <%= "#{t('ticket.ticket_url')}: " %> <%= @url %>
@@ -11,3 +11,4 @@
 <%= @content.html_safe %>
 <br/>
 <br/>
+<%= render partial: "helpdesk/shared/other_recipients_note.html.erb" %>

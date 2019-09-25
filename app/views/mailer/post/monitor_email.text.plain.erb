@@ -1,20 +1,20 @@
-New Reply on topic "<%= @post.topic.title %>"
+<%= t('mailer_notifier.post_monitor.new_reply_plain', post_topic: @post.topic.title) %>
 
 <%= "_" * 100 %>
- 
-By: <%= @user.name %>
+
+<%= t('mailer_notifier.topic_notifications.author', user_name: @user.name) %>
 
 <%= @post.body %>
 
 <%= "_" * 100 %>
 
-View Topic
+<%= t('mailer_notifier.topic_notifications.view_topic') %>
 <%= discussions_topic_url(@post.topic.id, :host => @host) %>
 
 <% unless @post.topic.merged_topic_id? %>
-	Reply
+	<%= t('mailer_notifier.topic_notifications.reply') %>
 	<%= reply_discussions_topic_url(@post.topic.id, :host => @host, :anchor => 'reply-to-post') %>
 <% end %>
 
-Turn off reply notifications for this topic
+<%= t('mailer_notifier.post_monitor.reply_notify_plain') %>
 <%= toggle_monitorship_url("topic", @post.topic.id, "unfollow", :host => @host) %>

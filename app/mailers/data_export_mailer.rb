@@ -228,7 +228,7 @@ class DataExportMailer < ActionMailer::Base
     end.deliver
   end
 
-  def broadcast_message(options = {})
+  def broadcast_message(emails, options = {})
     message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@private-notification.freshdesk.com"
     ticket = Helpdesk::Ticket.find_by_display_id(options[:ticket_id])
     begin
@@ -237,8 +237,8 @@ class DataExportMailer < ActionMailer::Base
         'Message-ID'                =>  "<#{message_id}>",
         'Auto-Submitted'            =>  'auto-generated',
         'X-Auto-Response-Suppress'  =>  'DR, RN, OOF, AutoReply',
-        :subject                    => options[:subject],
-        :to                         => options[:to_email],
+        :subject                    => I18n.t('ticket.link_tracker.notifier_subject', ticket_details: "[##{options[:ticket_id]}] #{options[:ticket_subject]}"),
+        :to                         => emails[:group],
         :from                       => options[:from_email],
         :sent_on                    => Time.now
       }
@@ -248,6 +248,7 @@ class DataExportMailer < ActionMailer::Base
       @url = options[:url]
       @subject = options[:ticket_subject]
       @content = options[:content]
+      @other_emails = emails[:other]
       mail(headers) do |part|
         part.html { render 'broadcast_message', formats: [:html] }
       end.deliver
