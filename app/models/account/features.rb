@@ -26,7 +26,7 @@ class Account < ActiveRecord::Base
     :bot_chat_history, :new_es_api, :filter_factory, :ticket_fields_central_publish,
     :skip_invoice_due_warning, :automation_revamp,
     :scheduled_export_fix, :compact_lang_detection, :field_tech_role,
-    :facebook_page_scope_migration, :agent_group_central_publish, :custom_fields_search,
+    :agent_group_central_publish, :custom_fields_search,
     :update_billing_info, :allow_billing_info_update, :tag_central_publish,
     :native_apps, :archive_tickets_api, :bot_agent_response,
     :fetch_ticket_from_ref_first, :query_from_singleton, :surveys_central_publish,
