@@ -112,24 +112,31 @@ class SAAS::SubscriptionEventActions
   private
 
     def remove_old_plan_db_features
-      account.remove_features_of(old_plan.subscription_plan.canon_name)
+      old_plan_name = old_plan.subscription_plan.canon_name
+      Rails.logger.debug "old db features removed for account #{account.id} :: #{old_plan_name}"
+      account.remove_features_of(old_plan_name)
       account.clear_feature_from_cache
     end
 
     def reset_plan_features
-      account.features_list.each do |feature|
+      features_list = account.features_list
+      Rails.logger.debug "List of features to reset for account #{account.id} :: #{features_list.inspect}"
+      Rails.logger.debug "account add ons #{account_add_ons}"
+      features_list.each do |feature|
         account.reset_feature(feature) unless(plan_features.include?(feature) || 
           account_add_ons.include?(feature) || 
-          account.selectable_features_list.include?(feature))
+          account.selectable_features_list.include?(feature) ||
+          skipped_features.include?(feature))
       end
       account.save
     end
 
     def add_new_plan_features
+      Rails.logger.debug "List of new plan features for account #{account.id} :: #{plan_features.inspect}"
       plan_features.delete(:support_bot) if account.revoke_support_bot?
       plan_features.delete(:custom_translations) unless account.redis_picklist_id_enabled?
       plan_features.each do |feature|
-        account.set_feature(feature)
+        account.set_feature(feature) unless skipped_features.include?(feature)
       end
       account.save
     end
@@ -148,13 +155,11 @@ class SAAS::SubscriptionEventActions
 
     def handle_feature_drop_data
       drop_data_features_v2 = features_list_to_drop_data.select { |feature| feature unless account.has_feature?(feature) }
-      Rails.logger.info "Drop data feautres list:: #{drop_data_features_v2.inspect}"
       handle_feature_data(drop_data_features_v2, DROP) if drop_data_features_v2.present?
     end
 
     def handle_feature_add_data
       add_data_features_v2 = features_list_to_add_data.select { |feature| feature if account.has_feature?(feature) }
-      Rails.logger.info "Add data feautres list:: #{add_data_features_v2.inspect}"
       handle_feature_data(add_data_features_v2, ADD) if add_data_features_v2.present?
     end
 
