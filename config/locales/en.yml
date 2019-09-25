@@ -4692,6 +4692,7 @@ en:
     assign_role: Associate Roles
     assign_group: Associate Groups
     cannot_edit_roles: You will only be able to view your roles and scope, not edit them.
+    role_assign_error: You are not allowed to perform this action
     assign: Assign
     role : Agent Role
     title: Agents
