@@ -62,9 +62,10 @@ module SupportHelper
     output << %(
       <meta charset="utf-8" />
       <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-
-      <meta name="description" content="#{ meta['description'] }" />
-      <meta name="author" content="#{ meta['author'] }" /> )
+      <meta name="description" content= "#{meta['description']}" />
+      <meta name="author" content= "#{meta['author']}" />
+      )
+    output << og_meta_tags(meta) unless Account.current.hide_og_meta_tags_enabled?
 
     output << %( <meta name="keywords" content="#{ meta['keywords'] }" /> ) if meta['keywords'].present?
     output << %( <link rel="canonical" href="#{ meta['canonical'] }" /> ) if meta['canonical'].present?

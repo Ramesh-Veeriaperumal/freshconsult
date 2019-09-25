@@ -316,18 +316,23 @@ fi:
       custom_url: is not a valid URL
       custom_date: is not a valid date
     phone_number: Puhelinnumero
+    industry: Toimiala
+    last_name: Sukunimi
+    first_name: Etunimi
+    company_name: Yritys
+    job_title: Tehtävänimike
   custom_fields:
     insert_field: Raahaa & Pudota kenttä
     drag_drop_field_intro: >-
       Lisätäksesi uuden kentän lomakkeeseen "%{name}", vedä ja pudota mikä
       tahansa kenttätyyppi alla olevaan lomakkeeseen.
-    number: Number
+    number: Numero
     text: Yksittäinen tekstirivi
     paragraph: Useampi rivinen teksti
     checkbox: Valintaruutu
     dropdown: Pudotus
     dropdown_blank: Pudotus
-    phone_number: Phone Number
+    phone_number: Puhelinnumero
     url: url
     date: Päivämäärä
     regex: Regex
@@ -352,6 +357,8 @@ fi:
       ticket_type: Tyyppi
       created_at: Luotu
       tags: Tunnisteet
+      company: Yritys
+      skill: Taito
     saving_ticket: Tallennetaan tikettikenttiä...
     untitled: Nimetön
     first_choice: Ensimmäinen valinta
@@ -429,6 +436,8 @@ fi:
       drop_down_items_edit: Pudotusvalikon kohdat - Muokkaa
       default_field_delete_disabled: Oletuskenttiä ei voi poistaa
       nested_tree_validation: Vähintään yksi luokka & ala-luokka vaaditaan
+      nested_3rd_level: Tunniste pakollinen 3. tason nimikkeille
+      nested_unique_names: Tukihenkilötunniste ei voi olla sama kuin kahdessa muussa tasossa
     customer_label_missing: Asiakas kenttää ei voi jättää tyhjäksi
     section:
       delete_from_section: Haluatko varmasti poistaa tämän kentän kyseiseltä osioilta?
@@ -451,6 +460,12 @@ fi:
       oops_btn: Oho!
       section_has_fields: Osio pitää sisällään kenttiä
       delete_field_section: Poista kenttä tältä alueelta
+      delete_section: Haluatko varmasti poistaa tämän osion?
+      ok_btn: OK
+      confirm_btn: Vahvista
+      continue_btn: jatka
+      confirm_text: Ole hyvä ja vahvista...
+      add_section: Lisää osio
     confirm_deletion: >-
       Varoitus! Menetät kaiken datan tähän kenttään liittyen vanhoista
       tiketeistäsi. Oletko varma että haluat poistaa tämän kentän?
@@ -486,7 +501,7 @@ fi:
   feedbackwidget_custom_image_info: 'jos käytät kuvaa, väri ja teksti jätetään huomiotta'
   account_admin_updated: Tilin pääkäyttäjä on päivitetty.
   forums_order:
-    overview: Yleiskuvaus
+    overview: Yleiskatsaus
     recent: Äskettäinen
     popular: Suositut
     planned: Suunniteltu
@@ -541,6 +556,8 @@ fi:
       email: Sähköpostisi *
       comments: Kommentit
       send_feedback: Lähetä palautetta
+      related_files: Liittyvät tiedostot
+      was_this_article_useful: Oliko tästä artikkelista hyötyä?
     surveys:
       thanks_for_feedback: Olemme vastaanottaneet palautteesi. Kiitos.
       feedback_already_done: Olet jo antanut palautetta tähän vastaukseen.
@@ -575,6 +592,9 @@ fi:
     canned_form:
       next: Seuraava
       form_submit: Lähetä
+      okay: Okei
+      hey: Hei
+      thank_you_text: Kiitos
   gamification:
     levels:
       beginner: Aloittelija
@@ -788,7 +808,7 @@ fi:
           new_account: Uusi käyttäjätili
           new_stream: Uusi Twitter-virta
         twitter_streams:
-          reauthorize: Reauthorize
+          reauthorize: Valtuuta uudelleen
           edit: Muokkaa
         stream_delete_alert: 'Oletko varma, että haluat poistaa tämän Twitter-virran?'
         last_stream_delete_alert: >-
@@ -812,7 +832,7 @@ fi:
         handles_helptext: 'esimerkki: @matti_meikalainen, @mattimeikalainen'
         new:
           title: Uusi Twitter-virta
-          create: Create
+          create: Luo
         edit:
           title: Muokkaa virtaa
           link_to_product: Linkki tuotteeseen
@@ -864,7 +884,7 @@ fi:
         save: Save
         saving: Saving
       formfield_props:
-        default: Default
+        default: Oletus
         form_title: Ominaisuudet
         behavior: Käyttäytyminen
         label: Nimike
@@ -897,7 +917,7 @@ fi:
         agent_info2: Field cannot be blank when closing the ticket
         agent_mandatory_submission: Pakollinen lähetettäessä tikettiä
         customer_info1: Field cannot be blank when submitting the ticket online.
-        for_agents: For Agents
+        for_agents: Edustajille
         dropdown_choices: Pudotusvalikon kohdat
         label_in_portal: Label in Portal
         customer_visible: Näytä asiakkaalle
@@ -909,8 +929,8 @@ fi:
         display_cc_field: Näytä kopiokenttä
         cc_company_contacts: Erota kopiot vain yrityskontakteista
         cc_any_email: Erota kopiot kaikista sähköpostiosoitteista
-        regexp: Regular Expression
-        validate_regexp: Validate using Regular Expression
+        regexp: Säännöllinen lauseke
+        validate_regexp: Vahvista käyttäen säännöllistä lauseketta
         regexp_example_html: >-
           For example, To match a string that contains only alphabets & numbers:
           <b> /^[a-zA-Z0-9]*$/ </b>. To match a string that starts with word
@@ -943,7 +963,7 @@ fi:
         save: Save
         saving: Saving
       formfield_props:
-        default: Default
+        default: Oletus
         form_title: Ominaisuudet
         behavior: Käyttäytyminen
         label: Nimike
@@ -975,7 +995,7 @@ fi:
         agent_info2: Field cannot be blank when closing the ticket
         agent_mandatory_submission: Pakollinen lähetettäessä tikettiä
         customer_info1: Field cannot be blank when submitting the ticket online.
-        for_agents: For Agents
+        for_agents: Edustajille
         dropdown_choices: Pudotusvalikon kohdat
         label_in_portal: Label in Portal
         customer_visible: Näytä asiakkaalle
@@ -987,8 +1007,8 @@ fi:
         display_cc_field: Display CC Field
         cc_company_contacts: Can CC only company contacts
         cc_any_email: Can CC any email address
-        regexp: Regular Expression
-        validate_regexp: Validate using Regular Expression
+        regexp: Säännöllinen lauseke
+        validate_regexp: Vahvista käyttäen säännöllistä lauseketta
         regexp_example_html: >-
           For example, To match a string that contains only alphabets & numbers:
           <b> /^[a-zA-Z0-9]*$/ </b>. To match a string that starts with word
@@ -996,6 +1016,7 @@ fi:
         max_choices: Maksimimäärä kohteita saavutettu
         field_label_agents_level2: Tason 2 kentän nimi edustajille
         field_label_customer_level2: Tason 2 kentän nimi asiakkaille
+        mapped_internal_groups: Yhdistetyt sisäiset ryhmät
     portal:
       index:
         portal_customizer_title: Customer Portal Configuration
@@ -1035,6 +1056,13 @@ fi:
           attract spammers.
       helpnote:
         title: Portaalin käyttöönottaminen
+        exit_fullscreen: Poistu kokoruutu-tilasta
+        editor_shortcuts: Editorin pikanäppäimet
+        preview_changes: Esikatsele muutoksia
+        editor_in_fullscreen: Editori kokoruutu-tilassa
+        level_customizations: Sivutason mukautukset
+        advanced_rebranding: Edistynyt uudelleen brändäys ja mukautus
+        custom_stylesheets: Käytetään mukautettuja tyylisivuja
       settings:
         moderate_none_help: >-
           Ota käyttöön kun olet varma siitä että jäsenissä ei ole mukana
@@ -1076,6 +1104,15 @@ fi:
         moderate_all_help: >-
           Aktivoi käyttöön jos haluat seurata tarkasti kaikkia niitä lisäyksiä
           joita yhteisössä luodaan.
+        google: Google
+        important: Tärkeää
+        moderate_none: Älä valvo
+        view_settings: Näytä asetukset
+        restricted_login_signup: >-
+          Rekisteröityminen ja kirjautuminen on rajoitettu tiettyihin
+          verkkotunnuksiin
+        facebook: Facebook
+        reset_portal_changes: Kumoa muutokset portaaliin
     mobihelp:
       app_review:
         request_sent: App Review Request Sent
@@ -1131,8 +1168,9 @@ fi:
           app_key: Ohjelma-avain
           app_secret: App Secret
           integration_details: Integration Details
+          saving: Tallentaa...
         index:
-          title: Mobihelp Apps
+          title: Mobihelp ohjelmat
           new_app: New App
           no_app:
             title: Welcome to Mobihelp
@@ -1361,6 +1399,7 @@ fi:
         enabling_survey: Otetaan asiakastutkimus käyttöön
         custom_title_v2: Asiakastyytyväisyyskyselyt
         active_delete_tooltip: Aktiivista asiakastutkimusta ei voi poistaa
+        confirm_text: Ole hyvä ja vahvista...
       satisfaction_settings:
         enable_label: Asiakastyytyväisyyskyselyt
         link_text_label: Tyytyväisyyskyselyn linkkiteksti
@@ -1377,10 +1416,15 @@ fi:
         enter_neutral_text: Kirjoita neutraali viesti
         enter_unhappy_text: Kirjoita tyytymätön viesti
         enable_label_v2: Asiakastyytyväisyys kysely
+        link_text_input_label: Millaiseksi arvioisit edustajamme tuottaman ratkaisun?
       new_layout:
         loading: Lataa...
         default_survey: Oletuksena käytettävä asiakastutkimus
         title_error_text: Asiakastutkimuksen nimi on jo käytössä.
+        title: Otsikko
+        bad_to_good: Huonosta hyvään
+        survey: Kysely
+        good_to_bad: Hyvästä huonoon
       thanks_contents:
         label_text_v2: Asiakastutkimuksen lisäkysymykset
         message_text: Kiitos arvokkaasta palautteestasi!
@@ -1402,6 +1446,8 @@ fi:
         additional_comments_feedback_statement: Valinnainen palaute
         survey_feedback_v2: Kiitos-sivu
         comments_feedback: Anna muuta palautetta asiakaskokemuksesta
+        thanks_message_feedback_v2: Lisäpalautetta koskeva kiitosviesti
+        additional_comments_feedback_v2: Lisää ylimääräinen kommenttiruutu
     getting_started:
       send_mail_content:
         test_info_1: >-
@@ -1560,19 +1606,22 @@ fi:
         helptext: 'Päivälippusi ladataan uudelleen, kun niitä on käytettävissä enää 2.'
         email: Sähköposti
         all: Kaikki
+        agent: Edustaja
+        date: Päivämäärä
+        filtered_by: 'Suodatus:'
     widget_config:
       index:
         feedbackwidget_embedded_tab: Sulautettu Widget
-        feedbackwidget_popup_tab: Popup Widget
+        feedbackwidget_popup_tab: Popup-widget
       popup_embedded_widget:
         feedbackwidget_popup: popup
         feedbackwidget_embedded: sulautettu
         feedbackwidget_button_type: Painikkeen tyyppi
-        feedbackwidget_text_button: Text button
+        feedbackwidget_text_button: Tekstinappi
         feedbackwidget_image_button: Kuvanappi
         feedbackwidget_button_text_placeholder: Tuki
-        feedbackwidget_height_placeholder: '500'
-        feedbackwidget_offset_placeholder: '235'
+        feedbackwidget_height_placeholder: '"500"'
+        feedbackwidget_offset_placeholder: '"235"'
         feedbackwidget_button_customization: Kustomoi painike
         feedbackwidget_form_customization: Kustomoi lomake
         feedbackwidget_embedded_code: Sulautettu Widget koodi
@@ -1603,6 +1652,17 @@ fi:
         feedbackwidget_use_https: 'Käytä https:ää'
         feedbackwidget_form_height: Lomakkeen korkeus
         feedbackwidget_button_text_placeholder: Tuki
+        feedbackwidget_submit_title: Lähetä palautetta
+        thankyou_default: Kiitos palautteestasi
+        feedbackwidget_form_submit_message: Lomakkeen lähetyksen viesti
+        feedbackwidget_image_button: Kuvanappi
+        thankyou_info: Tiketti-lomakkeen lähetyksen jälkeen käyttäjälle näytettävä viesti
+        feedbackwidget_height_placeholder: '"500"'
+        feedbackwidget_offset: 'Reunus:'
+        feedbackwidget_offset_placeholder: '"235"'
+        feedbackwidget_search_area: Hae artikkeleita
+        feedbackwidget_text_button: Tekstinappi
+        feedbackwidget_form_height_message: 'Jos näet säätöpalkin widgetissä, säädä widgetin korkeutta.'
       embedded_widget:
         feedbackwidget_embedded_code: Sulautettu Widget koodi
         feedbackwidget_form_customization: Kustomoi lomake
@@ -1610,6 +1670,13 @@ fi:
         feedbackwidget_attach_a_file: Liitä tiedosto
         feedbackwidget_use_https: 'Käytä https:ää'
         feedbackwidget_form_height: Lomakkeen korkeus
+        feedbackwidget_submit_title: Lähetä palautetta
+        thankyou_default: Kiitos palautteestasi
+        feedbackwidget_form_submit_message: Lomakkeen lähetyksen viesti
+        thankyou_info: Tiketti-lomakkeen lähetyksen jälkeen käyttäjälle näytettävä viesti
+        feedbackwidget_height_placeholder: '"500"'
+        feedbackwidget_search_area: Hae artikkeleita
+        feedbackwidget_form_height_message: 'Jos näet säätöpalkin widgetissä, säädä widgetin korkeutta.'
     supervisor_rules:
       info_help: >-
         For <b>each tickets</b> updated within 30 days, Execute all matching
@@ -1663,9 +1730,9 @@ fi:
           unfavorable satisfaction rating on any ticket.
         help_title_2a: Tapahtumat
         help_info_2a: >-
-          An event may refer to any user-driven change that will trigger a
-          specific Observer rule.
-        help_title_2b: Event Performers
+          Tapahtuma voi viitata käyttäjäpohjaiseen muutokseen, joka käynnistää
+          tietyn Observer-säännön.
+        help_title_2b: Tapahtuman suorittajat
         help_info_2b: >-
           Specifies which user's changes should trigger the rule. You can choose
           between the agent, the requestor (or someone outside your support team
@@ -1673,10 +1740,10 @@ fi:
         help_title_2c: Tiketin tilat
         help_info_2c: You can optionally filter the rule to apply to only certain tickets.
         help_title_2d: Toimenpiteet
-        help_info_2d: This specifies what you want the rule to do.
+        help_info_2d: Tässä määritellään mitä säännön halutaan tekevän.
         help_info_3: >-
-          You can use the Observer to modify fields, change status, or even send
-          out notification alerts as soon as certain conditions are met.
+          Observeria voidaan käyttää kenttien muokkaamiseen, tilan vaihtamiseen
+          ja jopa lähettämään ilmoituksia, heti kun määritellyt ehdot täyttyvät.
         help_info_4: Learn more about how to use the Observer
       new:
         title: Tarkkailija - uusi sääntö
@@ -1705,21 +1772,23 @@ fi:
         checked: valittu
         unchecked: ei valittu
         deselected: Valinta poistettu
+      anyone: Kuka tahansa
+      system: Järjestelmä
     va_rules:
       index:
         human_name: Lähettäjäohje
       remember_to_save: 'After updating, please remember to save it.'
     webhook:
-      jira_hook_title: JIRA Issue Creation
+      jira_hook_title: JIRA-häiriön luonti
       jira_hook_description: >-
         You could use a webhook to automatically create issues inside your JIRA
         account when a ticket is raised in Freshdesk.
-      jira_hook_alt: JIRA Issue Creation Post Request
+      jira_hook_alt: JIRA-häiriön luontipyynnön lähetys
       hipchat_hook_title: Huomautus HipChatistä
       hipchat_hook_description: >-
         You could send out a message to a HipChat Room whenever a requester
         sends a reply to a ticket in Freshdesk.
-      hipchat_hook_alt: Hipchat Pinging GET Request
+      hipchat_hook_alt: Hipchat pingaa GET-pyyntöä
     shared:
       filter_jsinit:
         change_password: Vaihda salasana
@@ -1729,7 +1798,7 @@ fi:
         url: Paluuosoite
         url_req_auth: Vaatii tunnistautumisen
         simple_layout: Yksinkertainen
-        advanced_layout: Kehittynyt
+        advanced_layout: Edistynyt
         webhook_usecase: Webhook käyttötarkoitukset
         webhook_usecase_tooltip: Check out a few examples of how you can use webhooks with the Observer
         simple_webhook_tip: >-
@@ -1746,7 +1815,7 @@ fi:
         username: Käyttäjätunnus
         api_key: API-avain.
         password: Salasana
-        insert_placeholder: Lisää placeholder
+        insert_placeholder: Lisää paikkamerkki
         subject: Aihe
         body: Tekstiosa
         to: Saaja
@@ -1806,14 +1875,14 @@ fi:
         saml_login_url_info: >-
           Freshdesk will redirect users to this URL to login. You can get this
           from your SAML Identity Provider.
-        saml_logout_url: Logout URL
+        saml_logout_url: Uloskirjautumisen URL-osoite
         saml_logout_url_info: >-
           Optional logout URL to which users will be sent to when they logout of
           freshdesk.
         saml_cert_fingerprint: Security Certificate Fingerprint
         saml_cert_fingerprint_info: >-
-          Fingerprint (SHA1)  of the SAML certificate provided by your SAML
-          Provider. This will be used for encryption / validation
+          SAML-palveluntarjoajan tunnistetieto (SHA1) SAML-varmenteelle. Tätä
+          käytetään salauksessa / oikeellisuustarkistuksessa
         click_to_enable: Ota SSL käyttöön napsauttamalla
         click_to_disable: Poista SSL käytöstä napsauttamalla
         security_title: Suojaus
@@ -1826,19 +1895,19 @@ fi:
         helpdesk_url: Tukipalvelun URL
         submit_request: Lähetä pyyntö
         thanks_message: >-
-          <span class='thanks_message'> Thank you for requesting a Custom SSL
-          certificate.</span> <br />
+          <span class='thanks_message'> Kiitos, että pyysit mukautetun
+          SSL-varmenteen.</span> <br />
         success_message: >-
-          Your request for a Custom SSL certificate has been initiated and will
-          be processed shortly. You will be receiving a confirmation email from
-          our provider before approval. Please check your inbox for updates.
+          Pyyntösi mukautetulle SSL-varmenteelle on aloitettu ja käsitellään
+          pian. Saat vahvistussähköpostin palveluntarjoajaltasi ennen
+          hyväksyntää. Tarkista postilaatikkosi päivityksien varalta.
         default_ssl: Oletus SSL
         custom_ssl: Oma SSL
         dns_name: >-
           <b>Important:</b> Please update the CNAME DNS record in your DNS Zone
           file to point your domain name to the below ELB DNS name. <br /> <br
           />The ELB DNS name for %{url} is
-        whitelisted_ips_enabled: IP Whitelisting
+        whitelisted_ips_enabled: Sallitut IP-osoitteet
         whitelisted_ips_enabled_info: >-
           Restrict access to your support portal to only trusted locations and
           networks by defining the range of allowed IP addresses.
@@ -1861,6 +1930,21 @@ fi:
         notifications: Ilmoitus lähetetään kun
         agent_create_or_delete: Edustaja on lisätty tai poistettu
         whitelisted_ip_modified: IP Whitelisting is modified
+        saml_cert_fingerprint_info_sha256: >-
+          SAML-palveluntarjoajan tunnistetieto (SHA256) SAML-varmenteelle. Tätä
+          käytetään salauksessa / oikeellisuustarkistuksessa
+        password_policy_info3: >-
+          Muutokset salasanakäytäntöön astuvat voimaan 8 tunnin sisällä.
+          Tukihenkilöitä kehoitetaan päivittämään salasanansa tänä aikana. Jos
+          salasanaa ei päivitetä, kirjataan heidät ulos tukiportaalista ja
+          pakotetaan vaihtamaan salasana seuraavaan sisäänkirjausyrityksen
+          yhteydessä.
+        password_policy_info4: >-
+          Huomaa, että kun salasanakäytäntö otetaan käyttöön tilille (joko
+          oletus tai edistynyt), ei sitä voi ottaa pois käytöstä.
+        for_contacts: Kontakteille
+        password_policy: Salasanakäytäntö
+        for_agents: Edustajille
       helpnote:
         title: Turva-asetukset
         info1: >-
@@ -1891,6 +1975,17 @@ fi:
         password_expiry: Salasana vanhenee
         days: päivässä
         password: Salasana
+        session_expiry: Käyttäjän istunto vanhenee
+        advanced: Edistynyt
+        cannot_be_same_as_last: Ei voi olla sama kuin edellinen
+        have_special_character: Sisältää ainakin yhden erikoismerkin
+        never: Ei koskaan
+        characters: merkkiä
+        cannot_contain_user_name: Ei saa sisältää käyttäjätunnusta
+        have_mixed_case: Sisältää isoja ja pieniä kirjaimia
+        minimum_of: Vähintään
+        atleast_an_alphabet_and_number: Sisältää kirjaimia ja numeroita
+        default: Oletus
     products:
       helpnote:
         tour: Auta minua tukemaan useita tuotteita
@@ -1946,6 +2041,7 @@ fi:
         default_portal_language: Portaalin oletuskieli
         customer_portal: Asiakasportaali
         edit_portal: Mukauta portaalia
+        settings: Asetukset
       edit:
         title: Muokkaa tuotetta
         updating: Päivitetään...
@@ -2015,28 +2111,32 @@ fi:
         customers: Asiakkaat
         reports: Raportit
         administration: Ylläpito
+        general: Yleinen
+        bots: Botit
       permissions: Oikeudet
       helpcard:
         title1: Roolien ymmärtäminen
         info1: >-
-          Roles allow you to create and edit access permissions for agents. You
-          can create new roles, specify what actions agents with these roles can
-          perform within your help desk, and assign the role to agents.
+          Roolit mahdollistavat tukihenkilöiden pääsyoikeuksien luonnin ja
+          muokkaamisen. Voit luoda uusia rooleja, määritellä toiminnot, jotka
+          tukihenkilöt pystyvät tekemään tukipalvelussasi ja määrätä roolin
+          tukihenkilöille.
         info2: >-
-          For example, you can create a role for your Support Co-ordinators,
-          allowing them to update fields and assign tickets, and even add notes
-          internally, but not reply to customers.
+          Esimerkiksi voit luoda roolin tukesi koordinaattoreille, jolloin he
+          voivat päivittää kenttiä ja määrätä tukipyyntöjä ja jopa lisätä
+          muistiinpanoja sisäisesti, mutta he eivät voi vastata asiakkaille.
         info3: >-
-          Once you create and save a new Role you will be able to assign it to
-          agents when you create or edit their profile by clicking on the Agents
-          icon under the admin tab.
-        title2: Admin Privileges
+          Kun luot ja tallennat uuden roolin, voit määrätä sen tukihenkilölle
+          luodessasi profiilia tai muokkaamalla profiilia klikkaamalla
+          tukihenkilöt-kuvaketta pääkäyttäjä-välilehdessä.
+        title2: Pääkäyttäjän oikeudet
         info4: >-
-          You can nominate whether you want an agent to have access to settings
-          under the Admin tab. Agents with admin access can be Operation Agents
-          with limited access, or Super Admins with the ability to edit all
-          configurations. You can have as many Super Admins with the ability to
-          view and modify your billing details, or as few as one.
+          Voit valita mikäli haluat tukihenkilöllä olevan käyttöoikeudet
+          pääkäyttäjä-välilehden asetuksiin. Tukihenkilöt, joilla on
+          pääkäyttäjän oikeudet, voivat olla toiminnon tukihenkilöitä
+          rajoitetuilla oikeuksilla tai superpääkäyttäjiä, jotka voivat muokata
+          kaikki asetuksia. Superpääkäyttäjiä voi olla rajaton määrä tai vain
+          yksi, ja he voivat katsoa ja muokata laskutustietojasi.
         info5: Opi lisää rooleista ja oikeuksista
       privilege:
         tickets: Tiketit
@@ -2086,6 +2186,12 @@ fi:
       cancel_label: Keskeytä
       done_label: Valmis
       save_label: Tallenna
+      agent_label: Edustaja
+      add_agent_label: Lisää tukihenkilö
+      saving_label: Tallentaa...
+      manage_label: Hallitse
+      add_label: Lisää
+      no_agent_label: Ei tukihenkilöä
     home:
       index:
         group: Ryhmät
@@ -2133,6 +2239,7 @@ fi:
         tags: Tunnisteet
         mobihelp: Mobihelp
         customer-portal: Asiakassivusto
+        search_admin: Hae pääkäyttäjäasetuksia
       keywords:
         forum_moderation: Forum Moderation
         configure_support_email: Configure support email
@@ -2236,9 +2343,18 @@ fi:
         agents_label: Edustajat
         agents: Edustajat
         description: Kuvaus
+        skills: Taidot
+        agent_label: Edustaja
+        add_agents: Kaikki edustajat
+        skill_create: Luo
+        manage_label: Hallitse
+        add_label: Lisää
+        no_agent_label: Ei tukihenkilöä
     user_skills:
       index:
         more: lisää
+        any: Mikä vain
+        groups: Ryhmä
     ecommerce:
       helpnote:
         no_account: Lisää uusi käyttäjätili
@@ -2257,6 +2373,11 @@ fi:
         new_account: Uusi käyttäjätili
       edit:
         title: Muokkaa käyttäjätiliä
+      index_title: Sähköinen kauppa
+    hotline:
+      content3:
+        note_title: 'Kommentti:'
+      list_title: Mobihelp ohjelmat
   ends_with: Päättyen
   last_name: Sukunimi
   forum:
@@ -2475,8 +2596,8 @@ fi:
         Please follow the instructions mentioned in this <a href =
         '%{solution_link}'>link</a> to check the formatting of the CSV file
       info6: >-
-        Please send the file to support@freshdesk.com so that we can verify and
-        upload it from our end.
+        Lähetä tiedosto osoitteeseen support@freshdesk.com, jotta voimme
+        tarkistaa ja ladata sen meidän kautta.
       help_desk: Please feel free to get in touch with us if you need anything else.
       regards: Terveisin
       freshdesk: Freshdesk tiimi
@@ -2989,7 +3110,7 @@ fi:
     id='import_request'>contact support</a> to proceed with the import.
   your_email_address: Sähköpostiosoitteesi
   username: Käyttäjätunnus
-  reply: vastaus
+  reply: Vastaa
   is_not: Ei ole
   during: aikana
   less_than: Alle
@@ -3006,7 +3127,7 @@ fi:
   basic_brief: Pienille tiimeille
   phone: Puhelin
   edit: Muokkaa
-  clone: Clone
+  clone: Kloonaa
   disable: Poista käytöstä
   enable: Ota käyttöön
   accounts:
@@ -3027,11 +3148,16 @@ fi:
       info3: >-
         Kaikki tukipalvelusi perusasetukset kuten kieli, aikavyöhyke ja
         väriteemat voidaan muokata täältä.
+      info5: >-
+        Voit rajoittaa lisäämiesi kontaktien ja tiettyjen verkkotunnusten pääsyä
+        tukipalveluusi. Muut eivät pysty rekisteröitymään, kirjautumaan tai
+        lähettämään tukipyyntöjä. Voit lukea aiheesta lisää
+      info6: täältä.
     cancel:
       cancel_account: Poista Freshdesk-tili
       info_text: >-
-        Please take a moment to tell us why you want to cancel your account.
-        Perhaps we could still help...
+        Onko sinulla hetki aikaa? Kuulisimme mielellämme, miksi haluat peruuttaa
+        tilisi. Ehkä voimme myös auttaa...
       delete_my_account: Poista tilini.
       deleting_account: Peruutetaan
       confirm_and_cancel_my_account: 'Vahvistan, että tahdon poistaa tilini ja siihen liitetyt tiedot'
@@ -3055,8 +3181,8 @@ fi:
           href="http://www.freshdesk.com/free-support-software">Learn more about
           the free plan</a>
         budget_extra: >-
-          Perhaps you'd like us to hold on to this account for sometime, till
-          you get your wallet back?
+          Voitko harkita tilin säilyttämistä jonkin aikaa siihen saakka, että
+          budjettinäkymät paranevat?
         requirement: Freshdesk does not handle some of my requirements
         requirement_followup: >-
           We are constantly adding more features and enhancements to Freshdesk.
@@ -3069,24 +3195,23 @@ fi:
           and move it up our queue real quick
         moving: Siirrymme toiseen tuotteeseen
         moving_followup: >-
-          We really hate to see you go. Was it the features? The price? That bad
-          bad marketing guy who keeps spamming you? But well, if you’ve made up
-          your mind for someone else, we can only hope you’ll be back soon.
+          Harmin paikka! Oliko vika tuotteen ominaisuuksissa tai hinnassa? Vai
+          saitko liikaa markkinointiviestejä? Jos olet päätöksesi tehnyt, emme
+          voi kuin toivoa, että palaat pian takaisin.
         moving_extra: >-
           A line or two on what made you switch would go a long way in helping
           us build a better product for you
         support: Emme saaneet kunnon tukea
         support_followup: >-
-          We’re sorry. As a customer support company, there’s nothing more
-          important to us than giving you a great support experience, every
-          time. We can only request you to give us another chance to make it up
-          to you.
+          Ikävä kuulla. Asiakastuki on meidän ydinosaamista ja meille on
+          ehdottoman tärkeää, että asiakkaiden tukikokemus on aina paras
+          mahdollinen. Voitko antaa meille vielä mahdollisuuden?
         support_extra: >-
           Give us a few more details and we'll make sure the right support rep
           repents. A ticket ID? Or Issue?
         else: Oliko muuta?
         else_followup: A couple of lines explaining your problem would be nice..
-        test-account: We were just using this account for testing. We'll be back
+        test-account: Käytimme tätä tiliä testaamiseen. Palaamme pian
       goback: '&#x2190; Takaisin tiliasetuksiin'
     billing:
       update_billing_info: Päivitä laskutustietoja
@@ -3118,6 +3243,31 @@ fi:
         Your account is cancelled and the data will be deleted on
         <strong>%{delete_at}</strong>. To restore your account, contact <a
         href='mailto:support@freshdesk.com'>support@freshdesk.com</a>.
+    multilingual_support:
+      helpcard:
+        supported_languages:
+          title: <b>Tuetut kielet</b><br/>
+        info1: >-
+          Tarjoa saumaton tukipalvelukokemus kansainvälisille asiakkaillesi
+          ympäri maailmaa.
+        title: Puhu asiakkaasi kielellä
+      add_languages: Lisää kieliä
+      warning_msg: >-
+        Huom.: Ensisijainen kieli on tukipalvelusi oletuskieli. Sitä ei voi
+        muuttaa, kun tuettuja kieliä on lisätty.
+      manage_languages: Hallitse kieliä
+    edit_domain:
+      email_error: Yrityksen nimen tulisi olla vähintään 3 merkkiä
+      getting_started: Käytön aloittaminen
+      url_error1: 'The domain <strong>%{domain_name}</strong> is not available.'
+    new:
+      full_name: Koko nimi
+      company: Yritys
+      confirmation: Vahvistus
+      create_an_account: Luo tili
+    signup_google:
+      sign_up: Rekisteröidy!
+      privacy_policy: tietosuojakäytännön
   success_msg: Tiliasetukset päivitettiin onnistuneesti!
   failure_msg: Tiliasetuksien päivittäminen epäonnistui!
   account_configuration:
@@ -3178,7 +3328,7 @@ fi:
     tiketin lähettämistä.
   set_type_as: Aseta tyypiksi
   change_my_plan: Valitse tämä sopimus
-  make_payment: Make Payment
+  make_payment: Maksa Lasku
   add_new_email: Lisää uusi sähköposti
   chatwidget_title: Live keskustelu
   feedbackwidget_title: Palaute Widget
@@ -3261,13 +3411,14 @@ fi:
     delete_confirm: >-
       Deleting this category will delete all %{folders} folders and %{articles}
       articles in it.
-    product_portal_visibility: Visible in
+    product_portal_visibility: Näkyvissä kielellä
     select_solution_category: Select a product portal...
     solution_categories_portal_info: >-
       This category will be visible in the main product portal along with the
       above selected product portals.
+    manage_categories: Hallitse
   forum_category:
-    product_portal_visibility: Visible in
+    product_portal_visibility: Näkyvissä kielellä
     select_product: Select a product portal...
     forum_categories_portal_info: >-
       This category will be visible in the main product portal along with the
@@ -3399,6 +3550,7 @@ fi:
       created_at: Luotu päivä
       asc: Nouseva
       desc: Laskeva
+      last_active_at: Nähty viimeksi
   topic:
     ideas_stamps:
       planned: Suunniteltu
@@ -3428,7 +3580,7 @@ fi:
     sticky_info: Sticky topics stay on top of the forum for additional visibility
     locked: Lukitse aihe ja estä muita käyttäjiä vastaamasta.
     answered: Vastattu
-    view_on_portal: View on Portal
+    view_on_portal: Näytä portaalissa
     spam: Roskaposti
     bulk_delete: The topic(s) have been deleted.
     bulk_spam: The topic(s) have been reported as spam.
@@ -3436,14 +3588,14 @@ fi:
     recent: Recently updated
     filter_0: Kaikki
     filter_1: Suunniteltu
-    filter_2: Implemented
-    filter_3: Not Taken
-    filter_4: In Progress
-    filter_5: Deferred
-    filter_6: Answered
-    filter_7: Unanswered
-    filter_8: Solved
-    filter_9: Unsolved
+    filter_2: Toteutettu
+    filter_3: Ei ole otettu
+    filter_4: Keskeneräinen
+    filter_5: Lykätyt
+    filter_6: Vastattu
+    filter_7: Vastaamaton
+    filter_8: Ratkaistu
+    filter_9: Ratkaisematon
     filter_-: Not Stamped
     select_stamps: Select Stamps
     add_topic: Lisää aihe
@@ -3451,16 +3603,16 @@ fi:
     reorder: Reorder
     add_category: Lisää kategoria
     forums: Forums
-    categories: Categories
+    categories: Luokat
     sorted_by: Sorted by
-    filtered_by: Showing
+    filtered_by: Näytetään
     all: Kaikki
     showing_topics:
       one: 'Showing %{count} topic'
       other: 'Showing %{count} topics'
     matching_topics: '%{count} matching of %{total} topics'
     details: 'by %{user_path}, <abbr data-livestamp=%{created_time}>%{time_ago}</abbr>'
-    last_reply: Last Reply
+    last_reply: Viimeisin vastaus
     last_post: >-
       - %{last_reply} by %{user_path}, <abbr
       data-livestamp=%{created_time}>%{time_ago}</abbr>
@@ -3468,7 +3620,7 @@ fi:
     no_forums: No Forums
     no_topics: No Topics
     no_posts: Ei viestejä
-    change: change
+    change: vaihda
     marked_as: Marked as
     mark_topic: Mark topic as
     view_answer: Click here to view answer
@@ -3486,7 +3638,7 @@ fi:
       waiting: Reply waiting for your approval
     spam_action: Approve and Publish
     replied_time: ' replied, %{time_in_words} ago'
-    visible_in: Visible in
+    visible_in: Näkyvissä kielellä
     requester: Pyytäjä
   activerecord:
     errors:
@@ -3599,7 +3751,7 @@ fi:
   zendesk_import:
     title: Import from Zendesk
     details: 'Started on: %{time} by %{user}'
-    autorefresh: Status will auto-refresh every minute
+    autorefresh: Tila päivittyy joka minuutti
     user: Käyttäjät
     organization: Yritykset
     ticket: Tiketit
@@ -3673,6 +3825,14 @@ fi:
       day: päivä
       twoday: kaksi päivää
       threeday: kolme päivää
+    toggle_availability_for_rr: >-
+      Salli edustajien valita, missä määrin he voivat ottaa vastaan
+      automaattisesti määrättäviä tukipyyntöjä
+    maximum: Enintään
+    enable: Ota käyttöön
+    please_confirm: Ole hyvä ja vahvista...
+    confirm: Vahvista
+    send_escalation_to: '...sitten lähetä eskalointisähköposti osoitteeseen:'
   four: Neljä tuntia
   oneweek: 1 viikko
   twoweek: 2 viikkoa
@@ -3711,7 +3871,7 @@ fi:
       agent_deleted: Edustaja on poistettu
       no_agents: Sinulla ei ole yhtään poistettua edustajaa
     trial: Kokeiluversiossa
-    account_suspended: account suspended
+    account_suspended: tilin käyttö on keskeytetty
     buy: Osta lisää
     available_seats: '%{count} edustajapaikkoja vapaana'
     available_seats_without_count: Edustajapaikkoja vapaana
@@ -3776,7 +3936,7 @@ fi:
     role_and_scope: Roles and Scope
     roles: Roolit
     roles_description: Associate one or more roles with this agent.
-    ticket_scope: Ticket Scope
+    ticket_scope: Tukipyynnön vaikutusalue
     admin: Järjestelmänvalvoja
     supervisor: Valvoja
     global: Edustaja (yleiset oikeudet)
@@ -3804,6 +3964,18 @@ fi:
       %{requester}
     more: lisää
     export: Vie
+    insert_placeholder: Lisää paikkamerkki
+    days_ago: '%{days} sitten'
+    member: Kuuluu osana
+    ago: '%{time} sitten.'
+    last_logged: Viimeksi kirjauduttu sisään
+    invalid_export_params: Virhe tukihenkilön tietojen viennissä. Yritä uudelleen.
+    groups_description: Liitä yksi tai useampi ryhmä tähän tukihenkilöön.
+    export_title: Vie tukihenkilöitä CSV-tiedostoon
+    no_recent_activity: Ei viimeaikaisia tapahtumia
+    skill: Taidot
+    last_seen_at: Nähty viimeksi
+    assign_group: Liitä ryhmiä
   account_admin: Tilin pääkäyttäjä
   right: Oikealla
   footer:
@@ -3918,8 +4090,8 @@ fi:
     post_created: >-
       <span class='muted'>%{time} ago in </span><a
       href='%{forum_url}'>%{forum_name}</a>
-    new_topic: New Topic
-    reply: Reply
+    new_topic: Uusi aihe
+    reply: Vastaa
     info_example: example - LA Lakers fan etc.
     form_placeholder:
       description: 'Lisää huomautuksia tälle yhteystiedolle, esim. Tepsin fani jne.'
@@ -3967,6 +4139,7 @@ fi:
       unverified: 'Kontaktit, joiden sähköposteja ei ole varmennettu'
       deleted: Poista kontaktit
       all: Kaikki kontaktit
+      blocked: Estetyt kontaktit
     verified:
       no_contacts: Sinulla ei ole yhtään kontaktia.
       no_contacts_with_letter: 'Ei yhtään kontaktia ''%{alphabet}''-kirjaimen kohdalla'
@@ -4083,6 +4256,11 @@ fi:
     free_plan_currency_note: 'When you upgrade or add agents, your payment will be in '
     status: Tila
     type: Tyyppi
+    invoice: Lasku
+    refund: Hyvitetty
+    download: Lataa
+    quantity: Määrä
+    date: Päivämäärä
   activate: Aktivoi
   feedbackwidget_button_text: Nimike
   amount_billed_per_month: 'You will be billed <b>%{amount} %{period}</b>.'
@@ -4111,9 +4289,9 @@ fi:
         pretty big on some cookies (we love the choco-chip ones), and some
         portions of Freshdesk may not work properly if you disable cookies. 
       cookie_dialog_info3: >-
-        We’ll also assume you agree to the way we use cookies and are ok with it
-        as described in our %{privacy_link}, unless you choose to disable them
-        altogether through your browser. 
+        Oletamme myös, että suostut tapaamme käyttää evästeitä ja se ei ole
+        sinulle ongelma, kuten on kerrottu meidän osoitteessa %{privacy_link},
+        ellet poista niitä käytöstä kokonaan selaimesi kautta. 
       privacy_policy: Tietosuojakäytäntö
     no_topics_in_this_view: ~ Ei aiheita tässä näkymässä ~
     reported: raportoitu
@@ -4152,7 +4330,7 @@ fi:
       to post a comment
     to_post_topic: ' lähettääksesi aiheen'
     preview:
-      view_on_helpdesk: View on Helpdesk
+      view_on_helpdesk: Näytä tukipalvelussa
       edit_article: Muokkaa artikkelia
     search:
       filters:
@@ -4179,6 +4357,7 @@ fi:
       more_articles: 'More articles in <span class=''folder-name''> %{article_name} </span>'
       modified_on: 'Muokattu:'
       related_articles: Related Articles
+      created_by: 'Tekijä:'
     folder:
       filler_text: 'Katso tästä sijainnista artikkeleja, koskien %{folder_name}'
     topic:
@@ -4198,7 +4377,7 @@ fi:
       last_reply: Viimeisin vastaus
       fb_reply_info: '<a href=''%{reply_url}''> Last Reply </a> by %{user_name}<br>%{created_on}'
       my_topic_reply: 'Last Reply by <b>%{post_name}</b>, %{created_on}'
-      topic_brief: 'Posted by <b>%{user_name}</b>, %{created_on}'
+      topic_brief: 'Lähettänyt<b>%{user_name}</b>, %{created_on}'
       last_post_brief: >-
         <a href='%{last_post_url}'>%{link_label}</a> by %{user_name}
         %{created_on}
@@ -4212,6 +4391,11 @@ fi:
       merge_note:
         one: 'Topic merged into this topic:'
         other: 'Topics merged into this topic:'
+      sort_heading: 'Lajittele...:'
+      sort_order:
+        popularity: Suositut
+      sort_by_most_recent: Viimeisin
+      sort_by_default: Oletus
     topic_vote:
       you:
         one: Sinä
@@ -4240,6 +4424,8 @@ fi:
       ideas_users_voted_title: Tästä ideasta tykkäävät käyttäjät
       problem_users_voted_title: 'Käyttäjät, joilla on tämä ongelma'
       howto_users_voted_title: 'Käyttäjät, joilla on tämä kysymys'
+      votes: stemmer
+      announce_unlike_button: älä tykkää!
     tickets:
       merged_topic_note: Merged topic cannot be converted into a ticket.
       export: 'Vie tiketin tiedot CSV:hen'
@@ -4258,6 +4444,23 @@ fi:
       reopen_reply: Vastaa
       related_articles: Liittyvät artikkelit...
       comments: Kommentit
+    agent_login_info: Oletko tukihenkilö?
+    agent_signin: Kirjaudu täältä
+    agent_login_details: 'Syötä kirjautumistietosi, jotka annoit rekisteröinnin yhteydessä'
+    account: tiliäsi varten
+    vote:
+      you:
+        one: 'Sinä '
+        other: 'Sinä ja '
+      more:
+        one: '1 muu '
+        other: '%{count} muuta '
+      people:
+        one: '1 henkilö '
+        other: '%{count} henkilöä '
+    vote_label:
+      one: 1 stemme
+      other: stemmer
   feedbackwidget_form_heading: Lomakkeen otsikko
   feedbackwidget_form_title: Widget-otsikko
   cancel_and_back: Keskeytä ja palaa takaisin
@@ -4274,7 +4477,7 @@ fi:
       new:
         new_folder: Uusi kansio
       folder_form:
-        category: Category
+        category: Luokka
         visible_to: Näkyvissä
     articles:
       where: Missä
@@ -4302,6 +4505,10 @@ fi:
         count: >-
           %{no_of_likes} likes and %{no_of_dislikes} dislikes will be reset to
           zero.
+      prop_tabs:
+        meta: Meta
+      search_all: Hae artikkeleita
+      views: Näyttökertaa
     info9: Julkinen (julkaistaan itsepalvelusivustolla)
     edit: Muokkaa artikkelia
     view_on_portal: Näytä portaalissa
@@ -4346,15 +4553,29 @@ fi:
     sidebar:
       feedbacks:
         title: Artikkeli palaute
+      view_all: Näytä kaikki
+      drafts:
+        title: Luonnokset
+      view_less: Näytä vähemmän
     draft:
       portal:
         all: Kaikki
+      name: Luonnokset
     general:
       article_prop: Artikkelin ominaisuudet
       mark_as_uptodate:
         text_1: Merkkaa tämä käännös ajantasaiseksi
+      something_wrong: Jokin meni pieleen!
+      created_by: Tekijä
+      feedback: Palaute
+      mark_as_outdated:
+        text_1: Merkitse muut käännökset vanhentuneiksi
+      analytics: Analyysitiedot
     add_category: Uusi kategoria
     solution_title: Otsikko
+    kb: Tietokanta
+    via: '-'
+    move_to: Siirrä
   import_updated: Päivitetty
   feedbackwidget_intro: Muokkaa omaa Freshdesk-widgettiäsi. Näet muutokset reaaliajassa alla
   chatwidget_intro: Customize your Live Chat widget below and see a realtime preview.
@@ -4367,7 +4588,7 @@ fi:
     import_warning_info: >-
       If we encounter an already existing %{type} %{field} during import, then
       the other details of the %{type} will be updated.
-    import_csv: 'Import %{type} from CSV'
+    import_csv: 'Tuo %{type} CSV-tiedostosta'
     sample_data: Sample data
     contact_import_data_info: >-
       Please ensure that your CSV file is in UTF-8 format and the first row has
@@ -4379,7 +4600,7 @@ fi:
       the header information (eg. companyname domains etc..) Read more about it
       <a href = '%{solution_link}' target = '_blank' >here.</a>
   import_example_title: Ohessa esimerkki CSV-tiedostosta
-  change_password: Change Password
+  change_password: Vaihda salasana
   answered: Vastattu
   errors_in_payment_info: 'Maksutiedoissa oli virheitä:'
   attach_files: Liitä tiedostoja.
@@ -4415,7 +4636,7 @@ fi:
     email_ticketing: Email Ticketing
     feedback_widget: Palaute Widget
     knowledge_base: Tietopankki
-    automations: Automations
+    automations: Automatisoinnit
     phone_integration: Phone Integration
     mobile_apps: Mobile Apps
     integrations: Built-in Integrations
@@ -4425,7 +4646,7 @@ fi:
     social_support: Social Support
     satisfaction_survey: Satisfaction surveys
     forums: Community Forums
-    gamification: Gamification
+    gamification: Pelillistäminen
     everything_in_blossom: Everything in Blossom
     chat: Integrated Live Chat
     multiple_languages: Multiple Languages
@@ -4489,6 +4710,8 @@ fi:
     linked_paren_child_desc: Linkitettyjen tukipyyntöjen sekä pää- ja alitukipyyntöjen käsittely
     scheduled_reports_desc: Ajoitettu raportointi
     custom_survey_desc: Mukautetut asiakastyytyväisyyskyselyt
+    bot: Botti
+    freshchat: Freshchat-integraatio
   zendesk_account: Zendesk Account Details
   zendesk_import_files: Select what to import?
   file_url: Full XML Export URL
@@ -4705,7 +4928,7 @@ fi:
           language. The <i class="common-icon-outdated"></i> icon indicates that
           the notification translations in other languages may be outdated.
       agent_template_12:
-        topic: First Response SLA Violation
+        topic: 'Palvelutason alitus: Ensimmäinen vastaus'
         info1: >-
           This notification is sent out to an agent when he has not responded to
           the ticket within the first response due time of the ticket. This
@@ -4715,7 +4938,7 @@ fi:
           The <i class="common-icon-outdated"></i> icon indicates that the
           notification translations in other languages may be outdated.
       agent_template_13:
-        topic: Resolution Time SLA Violation
+        topic: 'Palvelutason alitus: Ratkaisuun kulunut aika'
         info1: >-
           This notification is sent out to agent when the ticket assigned to
           them has not been resolved within the due by time. This email could
@@ -4812,6 +5035,8 @@ fi:
         topic: Muistiinpano lisätty tikettiin
       cc_notification_19:
         topic: Uusi tiketti cc
+      agent_template_25:
+        topic: Kutsusähköposti tukihenkilölle
     insert_placeholder: Lisää paikkamerkit
     modify_agent_template: Vaihda edustajan sähköpostipohjaa
     event: Tapahtuma
@@ -5012,10 +5237,18 @@ fi:
       remove: Poista
       unverified: Ei ole varmennettu
       type: Tyyppi
+      last_verified: Vahvistettu viimeksi
+      config: Asetukset
+      data_help: Määrättävä arvo DNS-tietueelle
+      cname: CNAME
+      verify: Tarkista
+      host_value_help: Isännän nimi TXT-tietueelle
+      data: Tiedot
     personalized_email_replies_title: >-
       Näytä asiakaspalvelujan nimet tiketin vastauksissa ja lähtevissä
       sähköposteissa?
     disable_agent_forward: 'Välitetyissä sähköposteissa, käytä alkuperäistä asiakasta lähettäjänä'
+    plain_unverified: Ei ole varmennettu -
   step2: Vaihe 2
   import_users_contacts: Käyttäjät -> Yhteystiedot
   linkback_info: >-
@@ -5285,11 +5518,11 @@ fi:
       (%{note_date})
     requestor_info: Asiakkaan tiedot
     view_twitter: Katso Twitterissä
-    view_facebook: View on Facebook
-    via: via
-    created_by: 'Created by:'
+    view_facebook: Katso Facebookissa
+    via: '-'
+    created_by: 'Tekijä:'
     reply_to: Vastaa
-    add_note: Lisää huomautus
+    add_note: Lisää kommentti
     monitor_btn_title: Seuraa tätä tikettiä
     canned_responses:
       ca_responses: Säilytetyt vastaukset
@@ -5335,6 +5568,9 @@ fi:
         tooltip: Näytä liittyvä JIRA-ongelma
         add_new: Linkitä ongelma
         existing: Katso ongelmaa
+    search_text: Hae artikkeleita
+    action: Toiminto
+    thanks_v1: Kiitos palautteestasi
   recent_activity: Viimeaikaiset tapahtumat
   recent_activities: Viimeaikaiset tapahtumat
   forgot_password: Unohtunut salasana
@@ -5502,7 +5738,7 @@ fi:
     same_language_alert: Supported languages should not include the Portal language.
     settings: Asetukset
     logo_and_colors: Logo ja värit
-    logo_and_favicon: Logo & favicon
+    logo_and_favicon: Logo ja suosikit-kuvake
     change_logo: Vaihda logo
     change_favicon: Change favicon
     use_default: Käytä oletusta
@@ -5512,6 +5748,26 @@ fi:
       title: Keskustelualueet
     gdpr_to: '-'
     helpdesk_name_plain: Tukipalvelun nimi
+    gdpr_terms_link: käyttöehdot
+    twitter_disabled: >-
+      Turvallisuussyistä Twitter-kirjautuminen ei ole asiakkaiden ja
+      tukihenkilöiden käytössä.
+    gdpr_admin: Hallinta.
+    includes_contacts_company_domain: (sisältää nykyiset sopimukset ja yrityksen verkkotunnukset)
+    hidden_on_portal: Ei näy portaalissa
+    important: Tärkeää
+    gdpr_policy: Tietosuojakäytännön.
+    supported_languages: 'Tuetut kielet (%{count})'
+    languages: Kielet
+    permission:
+      users_from_any_domain: Minkä tahansa verkkotunnuksen käyttäjät
+      who_can_create: Kuka voi kirjautua sisään (tai) rekisteröityä (tai) luoda tukipyyntöjä?
+      users_from_selected_domains: Käyttäjät sallituista verkkotunnuksista
+    gdpr_agent: Edustaja
+    anyone: Kuka tahansa
+    gdpr_acknowledgement: ja vahvistat lukeneesi
+    search_domain: Etsi verkkotunnusta
+    visible_in_portal: Näkyy portaalissa
   lead: Liidi
   comments: Kommentit
   forum_confirm_msg1: 'Oletko varma, että tahdot poistaa tämän ryhmän?'
@@ -5523,7 +5779,7 @@ fi:
     name_eg: 'eg: Chicago Business Hours'
     description_eg: 'eg: This Business Calendar belongs to Chicago timezone'
     description: Kuvaus
-    new: New Business Hours
+    new: Uudet Aukioloajat
     to: '-'
     time_zone: Aikavyöhyke
     change_time_zone: >-
@@ -5564,16 +5820,17 @@ fi:
     holiday_list: Vuosittaiset pyhäpäivät
     info5: Pyhäpäivät ohitetaan laskettaessa tiketille palvelutasoa ja deadlinea.
     holidays: Pyhäpäivät
-    multiple: Multiple Business Hours
+    multiple: Useita aukioloaikoja
     helpdesk_hours: Avoinna
     select_time_zone: Valitse aikavyöhyke
+    holiday_calendar: Lomakalenteri
   import_org_companies: Organisaatiot &rarr; Yritykset
   add: Lisää
   portal_customizer_title: Muokkaa julkista asiakaspalvelusivustoa
   your_trial_account: Kokeilutilisi
   reply_comment: Lisää kommentti
   create_password: Create a Password
-  retype_password: Retype Password
+  retype_password: Syötä salasana uudelleen
   feedbackwidget_defaulttitle: Ohje ja tuki
   two: Kaksi tuntia
   set_status_as: Vaihda status
@@ -5625,7 +5882,7 @@ fi:
       priority: Tärkeysaste
       status: Tila
       report:
-        no_timeentry: Ei tietoja saatavilla
+        no_timeentry: Ei tietoja
         total: Yhteensä
       form:
         start_timer: Käynnistä ajastin
@@ -5740,6 +5997,9 @@ fi:
         recent_item: Viimeisimmät kohteet
       update: Päivitä
       hide_cc: Piilota kopiokenttä
+      do_not_link: Älä linkitä
+      view_in_detail: Katso tarkemmin
+      ok: OK
     dashboard:
       round_robin:
         all_agents: All agents
@@ -5853,6 +6113,7 @@ fi:
           addbcc: Lisää piilokopio
           removebcc: Poista piilokopio
           not_sent: Vastausta ei lähetetty!
+          to: 'Vastaanottaja:'
         forward_form:
           cc: Kopio
           addcc: Lisää kopio
@@ -5934,6 +6195,11 @@ fi:
         article_feedback: Artikkeli palaute
         archived: Arkisto
         my_article_feedback: Omien artikkeleiden palautteet
+        unresolved: Kaikki ratkaisemattomat tukipyynnöt
+        shared_by_me: Jakamani tukipyynnöt
+        shared_with_me: Kanssani jaetut tukipyynnöt
+        invalid_requester: Virheellinen pyytäjä
+        raised_by_me: Pyytämäni tukipyynnöt
       note:
         posted_on: '%{user_name} %{note_date}'
         created_on:
@@ -6084,9 +6350,12 @@ fi:
       updated_at: Muokattu
       priority: Prioriteetti
       status: Tila
-      requester_responded_at: Customer Response
+      requester_responded_at: Asiakkaan vastaus
       asc: Nouseva
       desc: Laskeva
+      recently_active: Hiljattain aktiivinen
+      agent_responded_at: Edustajan vastaus
+    company: Yritys
   click_to_change_sort_order: Klikkaa vaihtaaksesi lajittelujärjestystä
   user_sessions:
     new:
@@ -6112,13 +6381,15 @@ fi:
     events_empty: Events can't be empty
     conditions_empty: Conditions can't be empty.
     actions_empty: Toimenpiteet ovat pakollisia.
+    invalid_domain:
+      freshdesk: Freshdesk
   export_data:
     in_sla: Within SLA
     out_of_sla: SLA Violated
     info: Viedyn tiketin tiedot ovat saatavilla CSV-tiedoston nykyisessä näkymässä.
     contact_info: Vie aktiiviset kontaktit CSV-tiedostoon.
     select_header: Valitse kentät viemiseen
-    select_all: Select all
+    select_all: Valitse kaikki
     select_format: 'Vie nimellä:'
     csv: CSV
     xls: Excel
@@ -6219,6 +6490,7 @@ fi:
       export_limit_breached: >-
         We currently allow only %{limit} concurrent exports. Kindly try again
         after some time. Apologies for the inconveniences caused.
+    view_all_tickets: Vie CSV
   sla:
     minutes: Minuuttia
     hours: Hrs
@@ -6234,15 +6506,15 @@ fi:
       social_accounts: Social Accounts
       custom_streams: Twitter-virrat
       post_tweet: Post a tweet
-      compose: Compose
+      compose: Luo
       no_results: No recent posts in this stream.
       no_recent_searches: No recent searches
       search:
         exclude_handles: Filter out tweets from these handles
         img_twitter: <i class="ficon-twitter fsize-18" size="18"></i>
       tooltip:
-        db_contact: Contact
-        replied: Replied
+        db_contact: Kontakti
+        replied: Vastattu
         in_conversation: 'In conversation with %{user_mentions}'
         convert_to_tkt: Muuta tiketiksi
         go_to_tkt: 'Go to ticket #%{display_id}'
@@ -6292,15 +6564,16 @@ fi:
         flash_card_html: What's New in Social?
         flash_card_text: Understanding your Social tab
         tickets: Tiketit
+        post: ' Viesti '
       index:
         all: Kaikki
       search_btn: Hae
     welcome:
-      title: Social Support
+      title: Sosiaalinentuki
       turn_off: Turn OFF Social
       turn_on: Turn ON Social
       off_helptext_html: 'To Turn ON, add your <br /> twitter handle from admin'
-      get_started: Get Started
+      get_started: Aloita
       customer_tweets: 'Customer tweets:'
       replied_tweets: 'Customer tweets that were replied-to by the brand: '
       helptext_title1: Why should you support customers over social channels?
@@ -6384,7 +6657,7 @@ fi:
         show_more_results: Näytää lisää tuloksia
         search_twitter: Hae Twitter
         title: Twitter-tilit
-        reauthorize: Uudelleen valtuuta
+        reauthorize: Valtuuta uudelleen
         reauth_required: Uudelleen valtuuttaminen epäonnistui
         handle_auth_error: >-
           One of your twitter handles requires authentication. So could not
@@ -6474,6 +6747,8 @@ fi:
     configure_custom_addon: Konfiguroi tämä vimpain
     tooltip:
       edit: Muokkaa
+      settings: Asetukset
+    connect: Liitä
   home:
     mobile_index:
       email: Sähköposti
@@ -6857,9 +7132,9 @@ fi:
         salesforce_settings_info: (tyhjä lause)
         salesforce_settings: Salesforce-asetukset
         select: Valitse
-        contact: Contact Fields
+        contact: Yhteydenottokentät
         lead: Lead Fields
-        account: Account Fields
+        account: Asiakaskentät
     nimble:
       label: Nimble
       desc: 'Voit katsoa Nimble crm:ssä olevia kontaktitietoja Freshdeskissä'
@@ -6930,6 +7205,8 @@ fi:
         widget_title: Vimpaimen otsikko
         username: Käyttäjätunnus
         password: Salasana
+        account: Asiakaskentät
+        contact: Yhteydenottokentät
     google_calendar:
       label: Google-kalenteri
       desc: >-
@@ -7036,6 +7313,13 @@ fi:
           For example, if your Shopify URL is
           <strong>https://my_shop_name.shopify.com</strong>, please enter
           <strong>my_shop_name</strong>.
+        shop_name_info_mint: >-
+          For example, if your Shopify URL is
+          <strong>https://my_shop_name.shopify.com</strong>, please enter
+          <strong>my_shop_name</strong>.
+        shop_name_mint: Shop Name
+      edit:
+        disconnect: Poista liitos
     slack:
       label: Slack
       desc: Stay up to date about Freshdesk tickets in Slack
@@ -7146,6 +7430,9 @@ fi:
         widget_script: Vimpaimen koodinpätkä
         create_n_enable: Luo ja käytä
         insert_placeholder: Lisää paikkamerkki
+      get_custom_apps: Hanki omia sovelluksia
+      edit_custom_app: Muokkaa omaa sovellusta
+      new_custom_app: Uusi oma sovellus
     logmein:
       label: LogMeIn Rescue
       desc: >-
@@ -7301,8 +7588,8 @@ fi:
         https://www.pivotaltracker.com/profile
       pivotal_updates: Select to get updates from Pivotal Tracker
     remote_login:
-      connect: Connect
-      sign_up: Sign Up
+      connect: Liitä
+      sign_up: Rekisteröidy
       freshdesk_url: Freshdesk URL
       freshdesk_api_key: Freshdesk API key
       api_key_available: >-
@@ -7312,8 +7599,15 @@ fi:
     ilos:
       settings:
         for_customer: Asiakkaille
+        for_agents: Edustajille
       messages:
         video_desc: Kuvaus
+      portal_ticket:
+        placeholder: 'Tukipyyntö#'
+      agent_ticket:
+        placeholder: 'Tukipyyntö#'
+      solution:
+        placeholder: 'Artikkeli#'
     dynamics_v2:
       form:
         username: Käyttäjätunnus
@@ -7325,6 +7619,9 @@ fi:
         login_your_helpdesk: Kirjaudu tukipalveluun
         your_helpdesk: Tukipalvelusi
         login: Kirjaudu
+        login_with_admin: >-
+          Freshdesk-tilin liittämiseksi Google-tunnukseen tarvitset tilin
+          pääkäyttäjän oikeudet
       associate_account:
         user_name: Nimi
         helpdesk_url: Tukipalvelun URL
@@ -7336,18 +7633,39 @@ fi:
           Jos tukipalvelusi osoite on esimerkiksi 'http://apple.freshdesk.com',
           anna arvo 'apple'
         helpdesk_name: Tukipalvelun nimi
+        phone_no: Puhelinnumero
+        create_my_account: Luo tili
     dynamicscrm:
       form:
         password: Salasana
+        contact_email: Kontaktin sähköpostiosoite
+        region: Alue
+        account: Asiakaskentät
+        contact: Yhteydenottokentät
     screen_pop:
       widget:
         cancel: Keskeytä
         subject: Aihe
+        view_all: Näytä kaikki
+        requester: Pyytäjän nimi
+        do_not_link: Älä linkitä
+        link_to_ticket: Linkitä tähän tukipyyntöön
+        call_actions: Puheluntoiminnot
+        new_ticket_with_id: Luotiin uusi tukipyyntö tunnisteella
+        link_to_new_ticket: Linkitä uuteen tukipyyntöön
+        add_note_to_ticket: Lisää muistiinpano tukipyyntöön
+        agent_phone_details: Tukihenkilön puhelintiedot
+        add_note_text: Puhelun muistiinpanot
+        agent_phone_updated: Tukihenkilön puhelintiedot päivitettiin
+        recent_tickets: Viimeisimmät tukipyynnöt
+        create: Luo
+        ticket_reference_id: Puhelun viitetunniste
     hootsuite:
       send: Lähetä palautetta
       reset: Nollaus
       domain:
         domain_message: Ole hyvä ja syötä tukipalvelun URL
+        continue_to_login: Jatka sisäänkirjautumiseen
       filter:
         priority: Prioriteetti
         all: Kaikki
@@ -7360,16 +7678,37 @@ fi:
       login:
         password: Salasana
         email: Sähköposti
+      reply_btn: Vastaa
+      search:
+        ticket_id: Tukipyynnön tunniste
+        keyword: Avainsana
+      header:
+        reply: Vastaa
     custom_apps:
       hide_preview: Sulje esikatselu
       show_preview: Näytä esikatselu
+      ticket_detail_page: Tukipyyntötiedot-sivu
+      preview_helptext: Tämä oma sovellus näkyy sivupalkissa
+      custom_app_used_in: Oma sovellus näytetään kohteessa
+      contact_detail_page: Yhteystiedot-sivu
+      refresh: Päivitä
+      custom_app_preview: Oman sovelluksen esikatselu
     infusionsoft:
       form:
         select: Valitse
+        contact: Yhteydenottokentät
+        account: Asiakaskentät
     cti_admin:
       phone:
         save: Tallenna
         cancel: Keskeytä
+        add_number: Lisää numero
+        number_not_in_use: Ei käytössä
+        add_number_tooltip: Jokaisella rivillä saa olla vain yksi numero
+        title: Tukipalvelun numerot
+        delete_number: Vahvista
+        delete_msg: Haluatko varmasti poistaa tämän numeron?
+        number_in_use: Käytössä olevat numerot
       ctd:
         api_key: API-avain.
         callback_url: Paluuosoite
@@ -7380,8 +7719,20 @@ fi:
         content: Sisältö
         password: Salasana
         have_user_pass: Minulla on käyttäjänimi ja salasana?
+        req_authentication: Vaadi todennus
+      save_agent_private_note: Tallenna puhelun muistiinpanot henkilökohtaisina
+      ctd_toggle: Määritä Click to Dial
+      softfone:
+        max_dimension: Enint. 550px &times; 250px
+        width: Leveys
+        height: Korkeus
+        url: URL Iframelle
+      title: CTI-asetukset
+      iframe_toggle: Käytä Softphone Iframea
     github_settings:
       resolved: Selvitetty
+      none: Älä tee mitään
+      closed: Suljettu
     magento:
       form:
         product: Tuote
@@ -7389,6 +7740,10 @@ fi:
       form:
         auth_token: Todennustunnus
         select: Valitse
+        deal: Kaupan kentät
+        domain: Tilin verkkotunnus
+        account: Asiakaskentät
+        contact: Yhteydenottokentät
     onedrive:
       desc: 'Liitä ja jaa tiedostoja onedrive:stä'
     outlook_contacts:
@@ -7407,6 +7762,43 @@ fi:
         delete_account: Poista
         last_sync_time: Edellinen synkronointiaika
         syncing_in_progress: Synkronointi käynnissä
+    quickbooks:
+      form:
+        quickbooks_note: Huomautusten teksti
+      connect_text: >-
+        Yhdistämällä QuickBooksiin helpotat tukihenkilöidesi työtä päästä
+        käsiksi ja päivittää tietoja suoraan tukipalvelusta.
+    applications:
+      crm:
+        mapping:
+          company: Yritys
+          contact: Kontakti
+          contact_fields: ' Yhteydenottokentät '
+          account_fields: ' Asiakaskentät '
+    google_drive:
+      form:
+        developer_key: Google developers consolesta hankittu API-avain.
+        client_id: OAuth-asiakastunniste verkkotunnuksellesi
+    microsoft_teams:
+      auth_btn: Todenna
+    uninstall: Poista
+    slack_v3:
+      slack_prof_label: Yhdistä Slackiin
+      slack_connect_desc: 'Määritä tilisi, jotta voit luoda Slack-tukipyyntöjä Slackistä'
+      slack_auth_btn: Todenna Slack
+    salesforce_v2:
+      form:
+        salesforce_v2_settings: Salesforce-asetukset
+    slack_v2:
+      form:
+        slash_command_token: Slash-komennon pääsytunniste
+    cloud_elements:
+      form:
+        daily: Päivittäin
+        account: Asiakaskentät
+        field_mapping: Kenttien vastaavuus
+        hourly: Tunneittain
+        contact: Yhteydenottokentät
   widgets:
     contact_widget:
       description: >-
@@ -7420,7 +7812,8 @@ fi:
         feedback_widgets_knowledge_base: 'Tietopankki '
         feedback_widgets_help_articles: tai selaa ohje artikkeleita
         show_all_results: Näytä kaikki tulokset
-        no_results: 'No results for '
+        no_results: 'Ei tuloksia haulla '
+        problems_with_fields: 'Seuraavat kentät aiheuttivat ongelmia:'
   reorder: Uudelleenjärjestä
   reports:
     no_data: Ei näytettäviä tietoja!
@@ -7437,7 +7830,7 @@ fi:
     scoreboard_title_nav: Johtotaulu
     scoreboard_group_title: Ryhmien johtotaulu
     scoreboard_agent_title: Edustajien johtotaulu
-    reports_by: Reports by
+    reports_by: Raportit...
     select_time_period: Valitse ajanjakso
     generate_button: Luo
     pie_chart_title_prefix: 'Tiketit... '
@@ -7447,27 +7840,27 @@ fi:
     satisfaction_title: Tyytyväisyysraportti
     freshfone:
       options:
-        incoming: Incoming
-        outgoing: Outgoing
-        all_groups: All Groups
+        incoming: Saapuva
+        outgoing: Lähtevä
+        all_groups: Kaikki ryhmät
         unassigned: Ei ole osoitettu
       range_exceed: Range cannot exceed 90 days
-      filter_by_title: Filtered by
-      time_period: Time Period
+      filter_by_title: Suodatettu
+      time_period: Ajanjakso
       report_title: Freshfone Summary
       summary_title: 'Agent Call Summary '
       agent: Agent
-      group: Group
-      call_type: Call Type
-      filter_report: Edit Filter
+      group: Ryhmä
+      call_type: Puhelutyyppi
+      filter_report: Suodata raportit tämän mukaan
       select_agent: Select Agent
       select_group: Select Group
       select_call_type: Select Call Type
       select_number: Select a Number
-      all_numbers: All Numbers
+      all_numbers: Kaikki Numerot
       all_call_types: All
-      number: Number
-      avg_handle_time: Avg Handle Time
+      number: Numero
+      avg_handle_time: Keskimääräinen käsittelyaika
       num_of_calls: No of Calls
       total_answered: Answered Calls
       total_voice_mail: Voice Mails
@@ -7477,19 +7870,20 @@ fi:
       num_of_transfered: No of Transfers
       unanswered_transfers: Unanswered Transfers
       answered_percentage: Answer %
-      generate_summary: Generate
-      filter_close: Close
-      unanswered_count: Unanswered
+      generate_summary: Luo
+      filter_close: Sulje
+      unanswered_count: Vastaamaton
       includes_transfer: Includes transferred calls
-      no_agent: '- No Agent -'
+      no_agent: '- Ei tukihenkilöä -'
       business_hours: Aukioloajat
+      filter_option_all_calls: Kaikki Puhelut
     time_sheets:
-      billable: Billable Hours
+      billable: Laskutettavat tunnit
       non_billable: Non-Billable Hours
       total_time: Hours Tracked
       billable_vs_non_billable: Billable vs Non-billable
-      filter_by_title: Filtered by
-      time_period: Time Period
+      filter_by_title: Suodatettu
+      time_period: Ajanjakso
     summary_report:
       back_to_reports: Takaisin raportteihin
       show_report: Näytä raportti
@@ -7581,35 +7975,50 @@ fi:
       main:
         total_responses_v2: Yhteensä
         all: Kaikki
+        time_period: Ajanjakso
+        neutral: Neutraali
+        survey_name: Otsikko
+        agent: Edustaja
+        positive: Positiivinen
+        group: Ryhmä
+        overall_rating: Arviointi
+        responses: Vastaukset
+        negative: Negatiivinen
+        no_overview: Ei tietoja
+        unanswered: Vastaamaton
+        overview: Yleiskatsaus
+        answered: Vastattu
+        rating: Arviointi
     livechat:
       report_title: Live Chat Summary
-      filter_by_title: Filtered by
-      time_period: Time Period
+      filter_by_title: Suodatettu
+      time_period: Ajanjakso
       widget: Widget
-      group: Group
-      chat_type: Chat Type
+      group: Ryhmä
+      chat_type: Keskustelun tyyppi
       summary: Summary
-      filter_report: Edit Filter
-      select_widget: Select Widget
+      filter_report: Suodata raportit tämän mukaan
+      select_widget: Valitse Widget
       select_group: Select Group
-      select_chat_type: Select Chat Type
+      select_chat_type: Valitse keskustelutyyppi
       all: All
       chat_type_visitor: Visitor Initiated
       chat_type_agent: Agent Initiated
       chat_type_proactive: Proactive
-      generate_summary: Generate
-      filter_close: Close
+      generate_summary: Luo
+      filter_close: Sulje
       total_chats: Yhteensä
-      num_of_chats: No of Chats
-      answered_chats: Answered
-      missed_chats: Missed
-      num_of_transfer: Transfers
-      avg_handle_time: Avg Handle Time
-      avg_time_queue: Time in Queue
+      num_of_chats: Keskustelujen määrä
+      answered_chats: Vastattu
+      missed_chats: Vastaamatta
+      num_of_transfer: Siirrot
+      avg_handle_time: Keskimääräinen käsittelyaika
+      avg_time_queue: Aika jonossa
       total_duration: Total Duration
-      agent_chat_summary: Agent Chat Summary
+      agent_chat_summary: Yhteenveto tukihenkilön keskustelusta
       agent: Agent
       deleted: Deleted
+    discard_changes: Hylkää muutokset
   delete_the_ticket: Poista tiketti
   mark_as_spam: Merkitse roskapostiksi
   bulk_actions: Massatoiminnot
@@ -7671,9 +8080,37 @@ fi:
         Riippuvaisten kenttien ansiosta voit lajitella tiketit
         tärkeysjärjestykseen, kuten ryhmiin, alaryhmiin sekä tiketteihin
         vaikuttavat asiat.
+      info4_v3: >-
+        Jos sinulla on Estate tai sitä korkeampi sopimustaso, voit lisätä
+        osioita, joissa dynaamiset kentät tulevat näkyville pudotusvalikon
+        valinnan perusteella. Voit lisätä tukipyyntökentän jokaiseen osuuteen ja
+        liittää osion pudotusvalikon vaihtoehtoihin. Jos sinulla on
+        verkkokauppa, voit esimerkiksi asettaa syy-nimisen osion avautumaan, kun
+        asiakas valitsee vaihtoehdon "Tuotteen korvaus". Näin voit paremmin
+        ymmärtää miksi asiakas haluaa vaihtaa tuotteen. Voit luoda korkeintaan
+        kaksi dynaamista osiota ja käyttää niitä kahdessa omassa
+        pudotusvalinnassa. Jos olet jo liittänyt osion "tyyppi"-kenttään, voit
+        lisätä tukipyyntölomakkeeseen vain yhden osion lisää.
+      info_1: >-
+        Tukipyyntö-lomake auttaa keräämään tarvitsemasi tiedot asiakkaalta, kun
+        he lähettävät tukipyynnön. Voit mukauttaa tukipyyntö-lomakkeesi
+        sisältämään liiketoiminnallesi hyödylliset tukipyyntökentät ja
+        mahdollistaa, että asiakkaasi ja tukihenkilösi täyttävät tarvitsemasi
+        tiedot haluamassasi muodossa. Esimerkiksi jos verkkokauppaa pyörittävä
+        yritys saa asiakkaan tilauksen tunnuksen tukipyyntölomakkeeseen, voi se
+        auttaa tukihenkilöä tukipyynnön ratkaisussa.
+      title3: Dynaamiset kentät
+      info4_v2: >-
+        Jos sinulla on estate-sopimus tai sitä ylempi sopimustaso, voit lisätä
+        dynaamisia kenttiä, jotka tulevat näkyville tyyppikentässä valitun
+        vaihtoehdon mukaan. Jokaiselle tyyppikentän vaihtoehdolle voit luoda
+        erillisen osuuden. Voit sitten lisätä enemmän tukipyyntökenttiä
+        jokaiseen osioon. Esimerkiksi verkkokaupassa, jos valitaan tyypiksi
+        "Tuotteen korvaus", avautuu "Syy" niminen osuus, johon syötetään syy
+        miksi asiakas haluaa korvata tuotteen.
   contact_field:
     helpcard:
-      title2: Customizing your contact fields
+      title2: Kontaktikenttien mukautus
       info2: >-
         The contact form in Freshdesk lets you capture important data from your
         customers so that you can support them better. You can help your team
@@ -7682,12 +8119,12 @@ fi:
         information with custom fields for pricing plan, department etc. and
         prioritize tickets accordingly in your helpdesk.
       info3: >-
-        Just like your ticket fields, you can add new fields to the customer
-        sign up form and make them mandatory. You can also have private fields
-        that are visible just to your agents.
+        Aivan kuten tukipyyntö-kentät voit lisätä uusia kenttiä asiakkaiden
+        rekisteröintilomakkeeseen ja tehdä niistä pakollisia. Voit myös lisätä
+        yksityisiä kenttiä, jotka näkyvät vain tukihenkilöillesi.
   company_field:
     helpcard:
-      title1: Customizing your company fields
+      title1: Yrityskenttien mukautus
       info1: >-
         In addition to contacts, Freshdesk lets you create companies in your
         helpdesk and makes it easy for you to manage support requests from the
@@ -7743,8 +8180,8 @@ fi:
     see_more_results: 'See more results for "%{term}"  &raquo;'
     display_results: 'Displaying %{result}'
     sorted_by: 'Sorted by:'
-    by: 'by:'
-    in: in
+    by: 'tekijä:'
+    in: paikassa
     requested_by: 'Requested by,'
     agent: 'Edustaja:'
     status: 'Tila:'
@@ -7757,6 +8194,7 @@ fi:
       relevance: Merkitsevyys
       created_at: Luontipäivä
       updated_at: Muokattu viimeksi
+    searching: Haetaan
   assumed_identity_msg: 'Olet ottanut käyttäjänimeksesi %{user_name}.'
   unauthorized_msg: Valtuutus epäonnistui
   assuming_identity_user_does_not_exist_msg: 'Käyttäjä, jota yritit lähestyä, ei ole olemassa.'
@@ -7833,8 +8271,8 @@ fi:
   bcc_emails_key_pop: ' <li class=''left''>piilokopio :</li> <li>%{bcc_emails}<li>'
   clear: Tyhjennä
   saved_draft: Tallennettu
-  saving_draft: Tallennetaan…
-  saving: Tallennetaan...
+  saving_draft: Tallentaa...
+  saving: Tallentaa...
   draft: Luonnos
   last_draft: 'Viimeisin luonnos '
   clear_draft_text: Tyhjennetäänkö tallennettu luonnos?
@@ -7988,12 +8426,12 @@ fi:
     reset_to_last_published: Resetoi sivu viimeisimpään julkaisumuotoon
     preview: Esikatsele portaalia
     save_and_continue: Tallenna
-    please_wait: Odota...
+    please_wait: Ole hyvä ja odota…
     layout_pages:
       subheader_layout: Portaalin asettelu
       subheader_pages: Portaalin sivut
       pages_help_message: Tästä voit mukauttaa yksittäisten sivujen tekstialuetta.
-      head_layout_title: Head
+      head_layout_title: Päällikkö
       header_layout_title: Ylätunniste
       footer_layout_title: Alatunniste
       pagelayout_title: Sivun asettelu
@@ -8031,6 +8469,7 @@ fi:
         for phones and tablets. You can choose to turn this setting off in case
         you wish to have a consistent non-responsive theme across all devices.
     classic: Klassinen
+    apply_mint: Käytä
   any_time: Milloin vain
   five_minutes: 5 minuutin sisällä
   fifteen_minutes: 15 minuutin sisällä
@@ -8112,7 +8551,7 @@ fi:
     agent_top_n_analysis: Agent Top-N Analysis
     group_top_n_analysis: Group Top-N Analysis
     time_sheet_report: Time Sheet Report
-    customer_top_n_analysis: Customer Top-N Analysis
+    customer_top_n_analysis: Asiakkaan Top-N -analyysi
     select_option_msg: Ole hyvä ja valitse
     no_data_to_display_msg: Ei näytettäviä tietoja!
     filtered_by: Suodatettu
@@ -8347,6 +8786,7 @@ fi:
       see_detailed_pricing: Katso tarkka hinnasto
       followup_text: worth Freshfone credits
       followup: worth Freshfone credits
+      purchase_credits: Osta Krediittejä
     dialpad:
       not_valid_number: Syötä oikea numero
       could_be_invalid_number: Could be an invalid number.
@@ -8548,13 +8988,13 @@ fi:
           will be available to take calls only during working hours, and another
           high-priority helpline that will be available 24x7.<br/><br/>
         non_business_hours: Accept Calls during…
-        business_calendar: Select Business Hour
+        business_calendar: Valitse aukioloajat
         transcript_voice: Transcript Voice
         text_to_speech: Teksti puheeksi
         record_calls: Tallenna puhelut
         voicemail: Vastaaja
         voicemail_on: Päällä
-        voicemail_off: Pois
+        voicemail_off: Pois päältä
         record_all: Tallenna kaikki puhelut
         record_none: Älä tallenna puheluita
         record_alert: >-
@@ -8569,13 +9009,13 @@ fi:
         voicemail_message: Voicemail Message
         non_business_hours_message: Non-Business hours message
         welcome_message_alert: Welcome message not play when IVR is enabled
-        welcome_message: Welcome Message
+        welcome_message: Tervetuloviesti
         record_voice: Tallenna äänesi
         upload_voice: Upload audio files
         read_message: Teksti puheeksi
         start_recording: Aloita tallennus
         stop_recording: <span></span>Stop Recording
-        preparing_recording: Preparing your message...
+        preparing_recording: Valmistellaan viestiäsi...
         recorded_voice: Tallennettu ääni
         audio_upload: Select file to upload
         greeting_message: Syötä viestisi tähän
@@ -8589,13 +9029,15 @@ fi:
         business_hours: Aukioloajat
         anytime: 24/7 Anytime
         name: Nimi
-        name_placeholder: Enter a friendly name for your number
+        name_placeholder: Anna numerolle nimi
         hunt_type: Call Routing
         routing_message: When multiple agents are available online...
         recording_privacy: Recording Visibility
         recording_privacy_public: Visible to customers and agents
         recording_privacy_private: Visible only to agents
         name_maxlength: Name cannot have more than 255 Characters
+        number_accessible: Saatavilla henkilöille
+        attachment_help_text: Accepts audio files < 5mb
       numbers:
         title: Support customers with Freshfone
         info: >-
@@ -8617,8 +9059,8 @@ fi:
           levels of Smart IVRs.
         purchase_number: Purchase Number
         purchase_phone_number: 'Buy Number (%{number})'
-        buy: Buy Number
-        buy_button_text: Buy
+        buy: Osta Numero
+        buy_button_text: Osta
         purchase_loading_text: Purchasing...
         buy_loading_text: Buying...
         purchase_alert_text: >-
@@ -8639,10 +9081,10 @@ fi:
           recharge and try again
         address:
           name: Company / Name
-          address: Address
-          city: City
-          state: State/Province/Region
-          postal_code: Postal Code
+          address: Osoite
+          city: Kaupunki
+          state: Osavaltio/provinssi/alue
+          postal_code: Postinumero
           country: Country
           required_field: All fields are required
         setup:
@@ -8671,7 +9113,7 @@ fi:
       ivr:
         simple_message_title: Simple Message
         ivr_message_title: Interactive voice response (IVR)
-        welcome_message: Welcome Message
+        welcome_message: Tervetuloviesti
         message_type: Message Type
         transcript_voice: Transcript Voice
         text_to_speech: Teksti puheeksi
@@ -8686,13 +9128,13 @@ fi:
         add_new_option: Add <b>Keypress</b> Option
         keypress: Keypress
         input_number: Syötä numero
-        action: Action
+        action: Toiminto
         male: Miesääni
         female: Naisääni
         rename: nimeä uudelleen
         done: tehty
         save: Tallenna
-        saving: Tallennetaan...
+        saving: Tallentaa...
         preview: Esikatselu
         previewing: Esikatsellaan...
         delete_menu: Poista valikko
@@ -8712,6 +9154,7 @@ fi:
           the number
       welcome_page:
         title: Welcome to Freshfone
+        title_text: Puhelin
       feature_request_content:
         title: Freshfone
         heading: Support your customers with Freshfone
@@ -8719,21 +9162,25 @@ fi:
         about_ivr: Create IVR's and route calls to the right agents
         about_recording: Record customer conversations and access it anywhere
         read_more: Read more
-        pricing: See all call rates and supported countries
+        pricing: Näytä kaikki puheluhinnat ja saatavuus
         email_subject: 'Freshfone Request - %{account_name}'
         email_message: Need Freshfone Feature
         success_message_flash: >-
           Thanks for your interest in Freshfone. We will get back to you
           shortly.
-        error_message: Sorry we can not make your request right now. Try again later.
+        error_message: >-
+          Valitettavasti emme voi tehdä pyyntöäsi juuri nyt. Yritä myöhemmin
+          uudelleen.
         additional_note: Freshfone request will take two business days
         button_label: Request for Freshfone
         learn_more: Näytä lisää
         trial_or: tai
+        title_text: Puhelin
       trial:
         numbers:
           search:
             buy_confirmation: Haluatko varmasti valita tämän numeron?
+      freshfone_numbers_title: Puhelin
   livechat:
     feature_request:
       title: Welcome to Live Chat
@@ -8758,14 +9205,14 @@ fi:
     thank_title: Kiitos/Päätös viesti
     wait_title: Odota/Pidossa viesti
     is_typing_header: When agent/visitor <br> starts typing
-    prechat_title: Pre-chat form
+    prechat_title: Ennen keskustelua -lomake
     prechat_desc: >-
       Collect personal details about your visitors before you start chatting
       with them. When this is on, visitors will need to submit the form to begin
       a chat.
     prechat_msg: Pre-Chat Message
     welcome_tip: Text will appear at the top of chat window
-    proactive_title: Proactive chat
+    proactive_title: Proaktiivinen keskustelu
     minimized_title: Keskustellaan!
     maximized_title: Keskustelu meneillään
     welcome_message: Hi! How can we help you today?
@@ -8774,14 +9221,12 @@ fi:
       free to ping us!
     wait_message: 'One of us will be with you right away, please wait.'
     typing_message: kirjoittaa...
-    msgbox_placeholder_title: Reply box placeholder
+    msgbox_placeholder_title: Vastausruudun paikkamerkki
     msg_waiting_agent_title: Status Message while waiting for agent
     msg_joining_agent_title: Message when agent joins chat
     msg_leaving_agent_title: Message when agent leaves chat
-    chat_transfer_msg_title: Chat transfer message
-    help_text_wait_onhold_msg: >-
-      This message will appear when visitor is waiting for an agent for more
-      than one minute
+    chat_transfer_msg_title: Keskustelun siirtoviesti
+    help_text_wait_onhold_msg: 'Tämä viesti näkyy, kun kävijä odottaa tukihenkilöä yli minuutin ajan'
     prechat_message: >-
       We can't wait to talk to you. But first, please tell us a bit about
       yourself.
@@ -8794,16 +9239,16 @@ fi:
       Automatically initiate chat conversations with visitors if they spend more
       than a certain amount of time on the same page
     chat_availability: Chat Availability
-    show_chat_hours: Show chat
+    show_chat_hours: Näytä keskustelu
     show_chat_hours_msg: >-
       Set the time during which you will be online and available to accept
       chats.
     show_chat_hours_info: 'Note: Chat window will appear only when agents are available.'
-    business_hours: During business hours
-    anytime: Always (24/7)
+    business_hours: Työaikana
+    anytime: Aina (24/7)
     business_calendar: Select Business Hour
     texton: Päällä
-    textoff: Pois
+    textoff: Pois päältä
     form_details: Lomakkeen tiedot
     copy_to_clipboard: Kopioi leikepöydälle
     copied: Kopioitu!
@@ -8826,9 +9271,11 @@ fi:
     align_to: Asemoi
     bottom_left: Ala vasen
     bottom_right: Ala oikea
-    integrate_msg: Copy & paste this code before the last </body> tag on your website or app
-    integrate_livechat_title: Integrate Live Chat into your website and applications
-    custom_chat_window: Chat window
+    integrate_msg: >-
+      Kopioi tämä koodi ja liitä se sivuston tai sovelluksen viimeisen
+      </body>-tunnisteen eteen
+    integrate_livechat_title: Integroi Live Chat yrityksen sivustoon ja sovelluksiin
+    custom_chat_window: Keskusteluikkuna
     text_placeholder: Viestisi
     chatbox_bgcolor: Ikkunan väri
     in_conversation: Keskustelussa
@@ -8934,7 +9381,7 @@ fi:
     install_tip: >-
       <a href='/admin/chat_setting' id='visitor-list-install'>Install the
       script</a> on your site to see your visitors
-    window_offset_error_msg: Please enter a valid offset value(< 500px).
+    window_offset_error_msg: Anna kelvollinen reunusarvo (< 500 pikseliä).
     nochat: No chat available
     chat_with_archive: <b>$1</b> and <b>$2</b>
     chat_loadmore: Lataa lisää...
@@ -8976,29 +9423,28 @@ fi:
       Our agents are unavailable right now. Sorry about that, but please leave
       us a message and we'll get right back.
     installation: Asennus
-    visitor_form: Visitor Form
-    preferences: Preferences
+    visitor_form: Kävijälomake
+    preferences: Asetukset
     intro_title: Miksi Live Chat?
     intro: >-
-      Freshdesk's integrated Live Chat solution lets you view and chat with
-      users on your website, online software, or support portal directly from
-      within Freshdesk. You can proactively start chatting with your website
-      visitors too. Once you finish a chat session, you can choose to convert
-      the conversation into a ticket and continue following up with the visitor
-      over email, or archive the chat transcript.
-    enable_chat: Enable Live Chat
-    learn_livechat: Learn more about Live Chat
+      Freshdeskin integroidun Live Chat -ratkaisun avulla näet sivuston,
+      online-ohjelmistojen ja tukiportaalin käyttäjät ja voit keskustella heidän
+      kanssaan suoraan Freshdeskistä. Voit myös aloittaa keskusteluita heidän
+      kanssaan. Kun keskustelu on päättynyt, voit muuttaa sen tukipyynnöksi ja
+      jatkaa sen käsittelyä sähköpostitse tai arkistoida chat-tallenteen.
+    enable_chat: Ota Livekeskustelu käyttöön
+    learn_livechat: Lisätietoja Livekeskustelusta
     support_portal: Chat on support portal
     logged_in_users: Vain kirjautuneet käyttäjät
     everyone: Kaikki
     portal_desc: Support your customers in real-time within your Freshdesk portal.
-    portal_option_info: Show chat widget for
+    portal_option_info: Keskustelu-widget näkyy
     maximum_chat_title: Maximum Number Of Visitor Chats
     maximum_change_label: Muokkaa
     maximum_chat_desc: >-
-      Set the limit for the number of chats an agent can handle simultaneously.
-      When an agent reaches this limit, they will not receive any new chat
-      notifications.
+      Määritä, kuinka monta keskustelua tukihenkilö voi käsitellä
+      samanaikaisesti. Kun tukihenkilöllä on enimmäismäärä keskusteluita, hän ei
+      saa uusia keskustelu-ilmoituksia.
     maximum_chat_error: You have reached the maximum chat limit.
     transfer_limt_exceeded_msg: ' has reached his capacity. Please transfer the chat to another agent.'
     loading_new_archives: Loading new archives...
@@ -9011,11 +9457,11 @@ fi:
     enter_custom_link: Enter URL
     widget_option_info: 'If feedback widget not available, new ticket page will be opened'
     no_matching_agents: No matching agents
-    chat_enabled_label: Enable Chat
-    routing: Chat routing
-    routing_info: Route all incoming chats to specific groups
-    dropdown_based_routing: Dropdown based routing
-    default_routing: Default routing
+    chat_enabled_label: Ota keskustelut käyttöön
+    routing: Keskustelujen reititys
+    routing_info: Ohjaa kaikki saapuvat keskustelut määritetyille ryhmille
+    dropdown_based_routing: Pudotusvalikkoon perustuva ohjaus
+    default_routing: Oletusohjaus
     choice_info: <b>$</b> then notify group
     select_groups: Select groups
     routing_note: >-
@@ -9035,10 +9481,8 @@ fi:
     close: Close
     visitorId: Visitor ID
     createdAt: Created at
-    enable: Enable
-    widgets_list_info: >-
-      For every product you have set up in Freshdesk, you will have a
-      corresponding chat widget available here
+    enable: Ota käyttöön
+    widgets_list_info: Jokaiselle Freshdesk-tuotteelle on oma chat widget täällä
     text_yes: Kyllä
     text_no: Ei
     enabled: Käytössä
@@ -9068,6 +9512,19 @@ fi:
     change_livechat_tone: LiveChat Notification Tone
     message: Message
     header_title: Ylätunniste
+    prechat_dropdown_msg: >-
+      Voit liittää avattavan valikon vaihtoehdot eri ryhmiin
+      Asetukset-välilehdellä. Chat-keskustelut ohjataan määritetyille ryhmille.
+    show_widget: Kun edustajat ovat online-tilassa ja hyväksyvät chat-keskusteluja
+    agent_network_disconnect_msg_title: Viesti edustajan yhteyden katkeamisesta
+    chat_hours_msg_note: 'Huomautus: Chat-ikkuna piilotetaan muina aikoina.'
+    enabling: Otetaan käyttöön
+    cobrowsing: OnPage-tuki
+    end_chat_confirm_msg_title: Keskustelun päättymisviesti
+    chat_with_us: Ota yhteyttä
+    cobrowsing_info: >-
+      Opasta asiakkaita tehokkaasti chat-keskustelujen aikana tarkastelemalla ja
+      käyttämällä heidän näyttöään.
   facebook_tab:
     remove_tab: Remove page Tab
     tab_not_removed: Ei voitu poistaa välilehteä
@@ -9139,9 +9596,9 @@ fi:
     title: Näppäinyhdistelmät
     goto_tab:
       title: Goto Tab
-      dashboard: Dashboard
+      dashboard: Työpöytä
       tickets: Tiketit
-      social: Social
+      social: Some
       solutions: Ratkaisut
       forums: Keskustelualueet
       customers: Asiakkaat
@@ -9157,9 +9614,10 @@ fi:
         Close ticket ( <span class='shortcut-key'>Alt <span>+</span> ~</span> to
         skip notification )
       search: Hae
-      reply: Reply
-      forward: Forward
-      add_note: Add note
+      reply: Vastaa
+      forward: Edelleenlähetä
+      add_note: Lisää kommentti
+      scenario: Vaihtoehdot
     ticket_list:
       title: Tikettilista
       move_cursor: Jump cursor to next / previous ticket
@@ -9184,7 +9642,7 @@ fi:
     use_default: Default (Freshdesk)
     use_your_own: Use your own mail server
     email_system: 'Sähköpostijärjestelmä:'
-    incoming_mail_settings: Incoming Mail Settings
+    incoming_mail_settings: Saapuvan postin asetukset
     incoming_mail_server: 'Incoming Mail server:'
     imap_server_name: IMAP Server Name
     imap_port: Portti
@@ -9194,17 +9652,17 @@ fi:
     imap_server_info: IMAP palvelimen nimi sähköpostien noutamiseen
     smtp_server_info: SMTP palvelimen nimi sähköpostien lähettämiseen
     delete_from_server: Poista viestit palvelimelta noudon jälkeen?
-    domain: 'Domain:'
-    authentication: 'Authentication:'
-    user_name: User Name
+    domain: 'Toimialue:'
+    authentication: 'Todennus:'
+    user_name: Käyttäjän nimi
     password: Salasana
     change_password: Vaihda salasana
     outgoing_mail_settings: Outgoing Mail Settings
     outgoing_mail_server: 'Outgoing Mail Server:'
     smtp_server_name: SMTP Server Name
-    domain_name: Domain Name
+    domain_name: Verkkotunnus
     smtp_port: Portti
-    use_mail_server_for: 'Use mail server for:'
+    use_mail_server_for: 'Postipalvelimen käyttökohde:'
     incoming_and_outgoing: Incoming and Outgoing
     outgoing_only: Outgoing only
     idle_not_supported: Specified IMAP mail server is not supported. Please use a different one
@@ -9226,7 +9684,7 @@ fi:
       Error while authenticating the smtp server. Please make sure your user
       name and password are correct
     smtp_error: 'Error while verifying the mailbox smtp details - %{error}'
-    verifying_mailbox_input: Verifying...
+    verifying_mailbox_input: Vahvistetaan...
     smtp_alert_gmail: >-
       Gmail limits the number of emails sent per day. <a target="_blank"
       href="https://support.google.com/a/answer/166852?hl=en">Click here</a> to
@@ -9242,7 +9700,7 @@ fi:
     folders: Folders
     views_categories: Views and Categories
     tour: Help me setup my forums
-    show_more: Show more
+    show_more: Näytä lisää
     helpnote:
       title: Organizing your community
       para1: >-
@@ -9263,11 +9721,11 @@ fi:
     shared:
       topic:
         tags:
-          new_topic: New Topic
-          reply: Reply
+          new_topic: Uusi aihe
+          reply: Vastaa
         actions:
           new_topic: created a topic
-          reply: replied to topic
+          reply: vastattiin aiheeseen
       post:
         approve: Approve
         approve_tooltip: Approve and Publish
@@ -9300,7 +9758,7 @@ fi:
           Forum topics can also be marked as a sticky when you want them to be
           featured prominently, and they can be locked to prevent more users
           from adding replies.
-      replied: replied
+      replied: vastasi
       spam: Spam
       waiting_for_approval: Unpublished
       locked: Locked
@@ -9309,7 +9767,7 @@ fi:
       sticky_label: Topic is marked as sticky
       merged: Merged
       sticky: Sticky
-      reply: Reply
+      reply: Vastaa
       add_note: Add note
       mark_as_spam: Merkkaa roskapostiksi
       confirm_spam: >-
@@ -9320,7 +9778,7 @@ fi:
       merge_topic: Merge Topic
       close_topic: Lock Topic
       reopen_topic: Reopen Topic
-      edit_topic: Edit Topic
+      edit_topic: Muokkaa aihetta
       delete_topic: Delete Topic
       approve: Approve and Publish
       convert_to_ticket: Convert Topic to Ticket
@@ -9329,12 +9787,12 @@ fi:
       widgets:
         ticket:
           title: Linked Ticket
-          agent: Agent
+          agent: Edustaja
       post:
         delete_confirm: Poista tämä kommentti? Oletko varma?
         created_topic: created a topic
-        replied_to: replied to topic
-        replied: replied
+        replied_to: vastattiin aiheeseen
+        replied: vastasi
       title_meta:
         replies:
           one: 1 reply
@@ -9411,9 +9869,9 @@ fi:
           posted: posted a new topic
         reply:
           title: Vastaa
-          posted: replied to
+          posted: vastasi
     unpublished:
-      page_title: Forum Moderation
+      page_title: Foorumin ylläpito
       empty_spam: Delete all Spam
       more: ' more'
       less: ' less'
@@ -9426,7 +9884,7 @@ fi:
         published: Post has been published
         goto_post: Goto Post
       invalid_topic:
-        went_wrong: Something went wrong
+        went_wrong: Jokin meni pieleen
         try_later: Unable to approve the post. Please try again later.
       spam_folder: Spam Folder
       flash:
@@ -9439,10 +9897,10 @@ fi:
       index:
         title: Roskaposti
         spam: Spam
-        unpublished: Waiting for approval
+        unpublished: Odottaa hyväksyntää
         waiting: Waiting for Approval
         waiting_desc: Review and publish
-        empty_folder: Empty Folder
+        empty_folder: Tyhjä kansio
         no_forum_unpublished: All topics and replies have been reviewed.
         no_forum_spam: There's no spam here. We swear!
         moderation_solution: Learn more about Forum Moderation
@@ -9461,23 +9919,23 @@ fi:
       spam:
         approve: Approve and Publish
         new_topic:
-          title: New Topic
+          title: Uusi aihe
           posted: posted a new topic
         reply:
-          title: Reply
-          posted: replied to
+          title: Vastaa
+          posted: vastasi
     topic_merge:
       merge_title: Merge Topics
-      continue: Continue
+      continue: jatka
       cancel: Keskeytä
       please_wait: Odota hetki...
-      mark_primary: Mark as primary
+      mark_primary: Merkitse ensisijaiseksi
       remove: Remove this topic
       detailed_note: Reason for Merge
-      confirm_and_merge: Confirm and Merge
+      confirm_and_merge: Vahvista ja yhdistä
       add_note: Reason for Merge
       note_saved: Note saved
-      add: Add
+      add: Lisää
       visibility_info: 'Showing topics visible to <b>%{visibility}</b> '
       warning: >-
         Topics once merged cannot be unmerged. Followers and votes from the
@@ -9504,8 +9962,8 @@ fi:
       your_helpdesk: Tukipalvelusi
       login: Kirjaudu
       login_with_admin: >-
-        You need to be an Account administrator to link your freshdesk account
-        with Google login
+        Freshdesk-tilin liittämiseksi Google-tunnukseen tarvitset tilin
+        pääkäyttäjän oikeudet
     signup_google:
       new_account: New account
       existing_user: Existing account
@@ -9515,8 +9973,8 @@ fi:
       domain_info: >-
         Jos tukipalvelusi osoite on esimerkiksi 'http://apple.freshdesk.com',
         anna arvo 'apple'
-      phone_no: Phone Number
-      create_my_account: Create your Account
+      phone_no: Puhelinnumero
+      create_my_account: Luo tili
       terms_and_policy: >-
         By clicking 'Create your Account', you agree to our <a
         href='http://freshdesk.com/terms' target='_blank'>terms of service</a>
@@ -9542,17 +10000,18 @@ fi:
     browse: Browse
     get_help: Get Help
     have_question: Have a question?
-    submit_feedback: Submit Feedback
+    submit_feedback: Lähetä palautetta
     contact_support: ' Contact Support '
     search_articles: Search Article
     contact_us: Contact Us
     whats_new: What's New
+    load_more: Lataa lisää
   trial_plan_downgrade: >-
     Important: You are currently downgrading from %{plan_from} plan to
     %{plan_to} plan
   discounted_sum: After Discount
   selecting_plan: Selecting...
-  proceed_billing_info: 'Yes, Proceed to Billing'
+  proceed_billing_info: 'Kyllä, jatka laskutukseen'
   buy_plan: Buy this Plan
   classic_label: Klassinen
   agent_seats: '%{no_of_agents} edustajapaikkaa'
@@ -9561,8 +10020,8 @@ fi:
   subscribed_billing: '%{billing_cycle} billing'
   next_renewal: 'Aikaa seuraavaan uusiutumiseen: %{renewal_period}'
   suspended_since: 'Suspended since %{days}'
-  plan: Plan
-  edit_plan: Edit Plan
+  plan: Sopimus
+  edit_plan: Muokkaa sopimusta
   account_created: 'Account created %{total_time} ago on %{date}'
   short_code:
     title: Chat Shorthands
@@ -9591,6 +10050,78 @@ fi:
       more Apps” button.
     custom_apps: Kustomoidut applikaatiot
     description: Kuvaus
+    delete_action:
+      success: Lisäosa poistettiin käytöstä!
+    share_app: Jaa tämä sovellus
+    view_all: Näytä kaikki
+    needs_developer_text: Vaatii kehittäjä-tilin
+    no_connection: >-
+      Sovellusgalleria ei ole tällä hetkellä käytettävissä. Yritä uudelleen
+      myöhemmin. Ota meihin yhteyttä, jos ongelma jatkuu.
+    view_more: Näytä lisää
+    installation: Asennus
+    terms_of_use_link: 'http://freshdesk.com/terms#marketplace'
+    developed_by: 'Julkaissut '
+    all_apps: Kaikki sovellukset
+    api_error: Emme pystyneet käsittelemään pyyntöäsi. Yritä uudestaan hetken kuluttua.
+    help_and_support: Ohje ja tuki
+    settings: Asetukset
+    app_gallery: Sovellusgalleria
+    tooltip:
+      suspended: Ei saatavilla
+    app_installation_agreement: 'Asentamalla tämän sovelluksen suostut meidän '
+    no_mktp_apps_note_2: Klikkaa "Hanki lisää sovelluksia" nähdäksesi valikoiman.
+    screenshots: Kuvakaappaukset
+    no_configs: Tämä sovellus ei tarvitse määrittelyjä.
+    third_party_apps_policy: >-
+      Tämän sovelluksen omistaa, on kehittänyt, hallinnoi ja ylläpitää kolmas
+      osapuoli eikä Freshworks inc. Lataamalla, integroimalla ja/tai käyttämällä
+      tätä sovellusta ymmärrät, että sinua sitovat kyseisen kehittäjän
+      käyttöehdot sekä myös tietojesi käsittelyssä. Lisätietoja kyseisistä
+      käyttöehdoista saat ottamalla yhteyttä kehittäjään tai käymällä kehittäjän
+      sivulla.
+    time_ago: sitten
+    error_calling_method: 'Virhe kutsuessa metodia: '
+    no_search_results: Emme löytäneet etsimääsi. Koita uudestaan toisella avainsanalla?
+    validation_failed: Vahvistus epäonnistui.
+    no_custom_apps_installed: Ei asennettuja omia sovelluksia
+    installing_text: Ole hyvä ja odota…
+    paid_app: MAKSETTU
+    popular_apps: Suosituimmat sovellukset
+    installed_mkp_apps_unavailable: >-
+      Lista asennetuista sovelluksista ei ole tällä hetkellä käytettävissä.
+      Yritä uudelleen myöhemmin. Ota meihin yhteyttä, jos ongelma jatkuu.
+    overview: Yleiskatsaus
+    install: Asenna
+    write_a_custom_app: Kirjoita oma sovellus
+    published_in: paikassa
+    confirm_uninstall_message: 'Oletko varma, että haluat poistaa asennuksen %{human_name}?'
+    instructions: Ohjeet
+    latest_apps: Viimeisimmät sovellukset
+    popular: Suositut
+    get_more_apps: Hanki lisää sovelluksia
+    apps: Sovell.
+    policy_on_custom_apps: Omien sovellusten käytäntö
+    no_custom_apps_note_2: 'Klikkaa "Hanki omia sovelluksia", jotta voit selata ja asentaa niitä.'
+    version: VERSIO
+    reauthorize: Valtuuta uudelleen
+    custom_app_gallery: Oma sovellusgalleria
+    go_to_dev_portal: Mene kehittäjäportaaliin
+    apps_unavailable: >-
+      Joitain sovelluksia ei voitu renderöidä. Yritä uudelleen myöhemmin. Ota
+      meihin yhteyttä, jos ongelma jatkuu.
+    policy_on_tp_apps: Käytäntö kolmannen osapuolten sovellusten kanssa
+    no_mktp_apps_note: Olemme integroineet joitakin suosikkisovelluksiasi.
+    ver: 'Versio: '
+    installing: Asennetaan
+    coming_soon: Tulossa pian
+    latest: Viimeisimmät
+    no_custom_apps_note: Luo omia sovelluksia ja julkaise ne kehittäjäportaalissa.
+    no_apps: Ei sovelluksia saatavilla
+    field_blank: Täytä tarvittavat kentät.
+    terms_of_use: Käyttöehtoihin
+    almost_done: Melkein valmis!
+    no_mktp_apps: Ei asennettuja sovelluksia
   freshcaller:
     admin:
       link_account_request_content:
@@ -9599,9 +10130,18 @@ fi:
           validation_error: Tämä on vaadittu kenttä.
         email: Sähköposti
         password: Salasana
+        connect_existing_account: Yhdistä olemassa oleva tili
+        account_url: Freshcaller-tilin URL
+        continue: jatka
+      sidebar_title: Puhelin
+      title_text: Puhelin
+      feature_request_content:
+        create_new_account: Luo uusi asiakas
+      freshcaller_subtext: 'Osta numeroita, määritä puhelujonot, IVR:t jne.'
   multifile_attachments:
     remove: Poista
     label: Liitä tiedostoja.
+    mb: ' Mt '
   plain_on: Päällä
   helpdesk_reports:
     time_period: Valitse ajanjakso
@@ -9624,10 +10164,26 @@ fi:
     ticket_schedule:
       index:
         cancel: Keskeytä
+        delete_title: Poista ajoitus
+        delete_text: Haluatko varmasti poistaa ajoituksen?
+        confirm: Vahvista
       new:
         ticket_fields_title: Tikettikentät
         email: Sähköposti
         description: Kuvaus
+        helpnote:
+          api_info1: 'API:ssa on linkki uusimpaan vientiin.'
+        contact_fields_title: Yhteydenottokentät
+        select_all: Valitse kaikki
+        one_time_export_label: >-
+          Vie tukipyynnön sisältö sen kuukauden alusta, jolloin tämä aikataulu
+          alkaa
+        company_fields_title: Yrityskentät
+        frequency: Ajoitus
+      schedule_export: Ajoita vienti
+      schedule: Ajoitus
+      all_reports: Kaikki Raportit
+      new_schedule: Uusi Aikataulu
     agent_summary:
       title: Edustajan suorituskyky
     edit_filter: Suodata
@@ -9637,6 +10193,12 @@ fi:
         'on': Päällä
         desc: Kuvaus
         subject: Aihe
+        monthly: Kuukausittain
+        generate_report: Luo raportti
+        daily: Päivittäin
+        weekly: Viikottain
+      errors:
+        disabled: Raportteja mukautetulla päivämäärävälillä ei voi ajoittaa
     ticket_volume:
       busiest_hour_resolved_tickets: Kiireisimmät tunnit ratkaistuissa tiketeissä
       average_resolved_tickets: Ratkaistut tiketit keskimääräisesti
@@ -9659,6 +10221,9 @@ fi:
           Katso mihin aikaan päivästä tukipalveluusi saapuu eniten tikettejä ja
           resursoi henkilöstöäsi sen mukaisesti.
         title: Päivä viikosta sekä tunti päivästä kehityssuunta
+      load_analysis:
+        title: Kuormitusanalyysi
+      unresolved_tickets: Ratkaisemattomat tukipyynnöt
     view_new_reports: Katsele uusia raportteja
     productivity: Tuottavuus
     date_range: Päivämääräalue
@@ -9670,6 +10235,7 @@ fi:
     customer_happiness: Asiakastyytyväisyys
     timespent_export:
       button_export: Vie
+      export_csv: Vie CSV-tiedostoon
     performance_distribution:
       title: Suorituskyvyn jakautuminen
       resolution_bar: Ratkaisuun kulunut aika
@@ -9681,10 +10247,27 @@ fi:
       title: Ryhmän suorituskyky
     ticket_activity:
       learn_more: Näytä lisää
+      helpnote:
+        api_info1: 'API:ssa on linkki uusimpaan vientiin.'
+      edit: Muokkaa aikataulua
     export_tickets_success_msg: Tikettisi tiedot lähetetään sähköpostiisi hetken kuluttua!
     helpdesk_analysis: Tukipalvelun analyysi
     yesterday: Eilen
     change: Vaihda
+    chats: Chatit
+    insights:
+      customize_link: Mukauta
+    this_week: Tällä viikolla
+    generate: Luo
+    this_month: Tässä kuussa
+    year_in_review:
+      title: Vuosikatsaus
+    summary: Yhteenveto
+    show: 'Näytä:'
+    filtered_by: 'Suodatus:'
+    at: klo
+    customer_satisfaction:
+      title: Asiakastyytyväisyysraportti
   recaptcha_require_message: Kuvavarmennus vaaditaan.
   admin_onboarding:
     modal:
@@ -9692,15 +10275,111 @@ fi:
         forums_channel: Keskustelualueet
         chat_channel: Live keskustelu
         email_channel: Sähköposti
+        social_channel: Some
+        phone_channel: Puhelin
+        title: Miten haluat viestiä asiakkaille tänään?
+        forward_link: Kutsu tiimi
       agents_frame:
         send_invite: Lähetä kutsu
         emails_invalid: Ainakin yksi sähköpostiosoite on virheellinen.
+        emails_placeholder: 'bruce@just.ly, diana@just.ly, clark@just.ly'
+      overview_frame:
+        forward_link: Aloitetaan
+      welcome_frame:
+        title: Tervetuloa Freshdeskiin
     account_verification_message:
       helpnote_or: tai
       modal_send_button: Lähetä aktivointi
       cancel_button: Keskeytä
+      modal_title: Hankitko tilin väärällä sähköpostiosoitteella?
+      modal_invalid_email_error: Syötä toimiva sähköpostiosoite
+      resend_message: Lähetä uusi aktivointiviesti
+      change_email: vaihda sähköpostiosoitetta
   add_all: Lisää kaikki
   freshchat:
     admin:
       save: Tallenna
       cancel: Keskeytä
+      sidebar_title: Freshchat
+      action:
+        success_message: Asetukset päivitettiin
+      admin_apikey: 'API avain:'
+      title_text: Freshchat
+      portal_url: 'Portaalin URL:'
+      app_id: Ohjelma ID
+  mailer_notifier:
+    hi: 'Hei,'
+    thanks: Kiitos!
+  copied_link: Kopioitu
+  enter_a_value: Anna arvo
+  custom_mailbox_admin_email_notifications:
+    regards: Terveisin
+    welcome_message: Arvon pääkäyttäjä
+  custom_mailbox_error_type:
+    unkown_error: >-
+      Ei voida noutaa sähköpostetja omasta sähköpostipalvelimesta. Ota yhteyttä
+      osoitteeseen support@freshdesk.com
+    ssl_errror: SSL-virhe.
+    server_response_invalid: Palvelimen vastaus on väärässä muodossa yhdistettäessä palvelimeen.
+    unable_to_connect: Ei voida yhdistää kansioon postilaatikossa.
+    tcp_connection: Ei voida luoda TCP-yhteyttä.
+    tcp_refused: Sähköpostipalvelin hylkäsi TCP-yhdistyksen.
+    mailbox_idle: Postilaatikko ei tue IDLE-ominaisuutta.
+    unable_fetch_status: Ei voida noutaa kansion tilaa.
+    io_error: I/O-yhteysvirhe.
+    mailbox_suspended: Sähköpostipalvelin keskeytetty
+    server_no_resp: Sähköpostipalvelin lähetti vastauksen EI yhdistettäessä palvelimeen.
+    bye_response: Sähköpostipalvelin lähetti vastauksen NÄKEMIIN yhdistettäessä palvelimeen.
+    invalid_login: Virheelliset kirjautumistiedot.
+    folder_unavailable: Kansio ei ole saatavilla postilaatikossa.
+    tcp_socket: Ei voida luoda TCP-vastaketta sähköpostipalvelimelle.
+    email_bad_request: Sähköpostipalvelin lähetti vastauksen HUONO yhdistettäessä palvelimeen.
+  imap_error: Sähköpostipalvelinta ei voi käyttää
+  activations:
+    activate_freshdesk_account: Aktivoi tili
+  cloud_log_mailer:
+    logger_email:
+      regards: 'Terveisin,'
+      account: 'Asiakas: '
+      reason: Syy
+  portals_key: Portaalit
+  helpcard:
+    title: Yksilöllinen ulkoinen tunnus
+  admin_upgrade:
+    enable_mint_title: Anna edustajien kokeilla uutta ja nopeaa Mint-kokemusta
+    enable_mint_error: >-
+      Mint on jo otettu käyttöön kaikille edustajille. Päivitä, niin näet
+      uusimmat asetukset.
+    enable_mint_success: 'Hienoa, Mint otettiin käyttöön kaikille edustajille.'
+  plain_off: Pois päältä
+  customize_domain:
+    email:
+      cheers: 'Kiitos,'
+      team: Freshdesk tiimi
+  profiles:
+    freshid_edit:
+      profile_details: Profiilitiedot
+  'on': '-'
+  save_as: Tallenna nimellä
+  reload: Lataa uudelleen
+  currency_label: 'Valuutta :'
+  user_notifications:
+    notification_preferences: Ilmoitusasetukset
+    enable_desktop_notifications_help: Klikkaa ”Salli” pyydettäessä
+    mute: Vaimenna
+    mark_all_as_read: Merkitse kaikki luetuiksi
+    header: Ilmoitukset
+    preferences: Asetukset
+  ticket_templates:
+    create_new: Luo uusi
+  in: paikassa
+  help_widget:
+    form_title: Ota meihin yhteyttä
+    form_button_text: Lähetä palautetta
+    form_submit_message: Kiitos palautteestasi.
+    button_text: Apua
+    welcome_message: Voimmeko auttaa?
+    predictive_message: >-
+      Huomasimme, että olet jumissa. Kerro meille, mitä yritit tehdä, ja
+      tukitiimimme ottaa sinuun yhteyttä mahdollisimman pian.
+    success_message: Kiitos. Palaamme asiaan!

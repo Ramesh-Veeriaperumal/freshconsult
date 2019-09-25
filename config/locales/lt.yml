@@ -7593,3 +7593,12 @@ lt:
     add_forum: Pridėti forumą
   and_more_plan_downgrade: Ir dar...
   change_my_plan: Pasirinkite šį planą ...
+  help_widget:
+    form_title: Susisiekite su mumis
+    form_button_text: Siųsti
+    button_text: Pagalba
+    welcome_message: Ar galime padėti?
+    predictive_message: >-
+      Pastebėjome, kad užstrigote. Papasakokite, ką bandote padaryti, ir mūsų
+      klientų aptarnavimo komanda susisieks su Jumis kaip galima greičiau.
+    success_message: Dėkojame. Susisieksime su Jumis!

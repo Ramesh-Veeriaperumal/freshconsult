@@ -1,7 +1,7 @@
 class Account < ActiveRecord::Base
 
   LP_FEATURES = [
-    :select_all, :round_robin_capping, :suggest_tickets, :customer_sentiment_ui,
+    :hide_og_meta_tags, :select_all, :round_robin_capping, :suggest_tickets, :customer_sentiment_ui,
     :dkim, :scheduled_ticket_export, :ticket_contact_export, :disable_emails,
     :year_in_review_2017, :falcon_portal_theme, :freshid, :freshchat_integration,
     :announcements_tab, :sso_login_expiry_limitation, :es_msearch, :ticket_central_publish,
@@ -31,7 +31,8 @@ class Account < ActiveRecord::Base
     :delete_trash_daily, :automation_revamp, :prevent_wc_ticket_create, 
     :allow_wildcard_ticket_create, :requester_privilege, :sso_unique_session, :fluffy_min_level,
     :scheduling_fsm_dashboard, :enable_customer_journey, :csat_translations,
-    :sandbox_temporary_offset, :downgrade_policy, :mentions_to_tms, :allow_update_agent, :optar_cache
+    :sandbox_temporary_offset, :downgrade_policy, :mentions_to_tms, :allow_update_agent, :optar_cache,
+    :support_ticket_rate_limit
   ].freeze
 
   DB_FEATURES = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone].freeze

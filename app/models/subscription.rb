@@ -97,7 +97,7 @@ class Subscription < ActiveRecord::Base
   before_update :cache_old_model, :cache_old_addons
   after_update :add_to_crm, :update_reseller_subscription, unless: :anonymous_account?
   after_commit :update_crm, on: :update, unless: :anonymous_account?
-  after_commit :update_social_subscription, :add_free_freshfone_credit, :dkim_category_change, :update_ticket_activity_export, on: :update
+  after_commit :update_fb_subscription, :add_free_freshfone_credit, :dkim_category_change, :update_ticket_activity_export, on: :update
   after_commit :clear_account_susbcription_cache
   after_commit :schedule_account_block, :update_status_in_freshid, on: :update, :if => [:moved_to_suspended?]
   after_commit :suspend_tenant,  on: :update, :if => :trial_to_suspended?
@@ -328,16 +328,13 @@ class Subscription < ActiveRecord::Base
     self.next_renewal_at = Time.now.advance(:months => 1)
   end
 
-  def update_social_subscription
+  def update_fb_subscription
     old_state = @old_subscription.state
     if (old_state != "suspended" && state == "suspended")
       facebook_callback = "cleanup"
-      twitter_callback = "cleanup"
     elsif (old_state == "suspended" && state != "suspended")
       facebook_callback =  "subscribe_realtime"
-      twitter_callback = "build_default_streams"
     end
-    update_gnip_subscription(twitter_callback) if twitter_callback
     update_facebook_subscription(facebook_callback) if facebook_callback
   end
 
@@ -609,11 +606,6 @@ class Subscription < ActiveRecord::Base
       self.next_renewal_at = Time.now.advance(:days => TRIAL_DAYS)
     end
 
-    def update_gnip_subscription(twitter_method_name)
-      account.twitter_handles.each do |twt_handle|
-        twt_handle.safe_send(twitter_method_name)
-      end
-    end
 
     def update_facebook_subscription(facebook_method_name)
       account.facebook_pages.each do |fb_page|

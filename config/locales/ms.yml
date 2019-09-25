@@ -7711,3 +7711,12 @@ ms:
     add_forum: Tambah Forum
   and_more_plan_downgrade: Dan lebih lagi ...
   change_my_plan: Pilih rancangan ini ...
+  help_widget:
+    form_title: Hubungi Kami
+    form_button_text: Hantar
+    button_text: Bantuan
+    welcome_message: Boleh kami bantu?
+    predictive_message: >-
+      Kami dapati anda mengalami kesulitan. Beritahu kami apa yang anda cuba
+      lakukan dan pasukan sokongan kami akan menghubungi anda secepat mungkin.
+    success_message: Terima kasih. Kita akan berhubung!

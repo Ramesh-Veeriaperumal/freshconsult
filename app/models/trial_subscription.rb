@@ -10,6 +10,7 @@ class TrialSubscription < ActiveRecord::Base
   after_commit :clear_cache
   scope :trials_by_status, ->(s) { where(status: TRIAL_STATUSES[s.to_sym]) }
   scope :ending_trials, ->(date, status) { where('ends_at <= ?', date).trials_by_status(status) }
+  before_create :remove_scheduled_requests, if: -> { account.downgrade_policy_enabled? }
 
   def construct_and_save
     self.from_plan     = account.subscription.subscription_plan.name
@@ -122,7 +123,12 @@ class TrialSubscription < ActiveRecord::Base
       ACCOUNT_API_LIMIT % { account_id: Account.current.id }
     end
     
-    def recalculate_daypass_enabled?
-      false
+    def remove_scheduled_requests
+      if account.subscription.subscription_request.present?
+        (errors[:base] << :subscription_request_destroy_error; return false) unless account.subscription.subscription_request.destroy
+      elsif account.account_cancellation_requested?
+        (errors[:base] << :account_cancellation_destroy_error; return false) unless account.kill_scheduled_account_cancellation
+      end
+      true
     end
 end

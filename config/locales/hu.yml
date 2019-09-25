@@ -41,6 +41,7 @@ hu:
           addbcc: Bcc hozzáadása
           removebcc: Bcc eltávolítása
           not_sent: Válasz nem lett elküldve!
+          to: 'Címzett:'
         forward_form:
           cc: Cc
           addcc: Cc hozzáadása
@@ -90,7 +91,7 @@ hu:
         my_overdue: Lejárt kérelmeim
         my_all: Összes kérelmem
         select: Nézet választás...
-        spam: Spam
+        spam: Levélszemét
         my_closed: Lezárt kérelmeim
         my_open: Nyitott kérelmeim
         open_or_pending: Nyitott vagy Függőben lévő
@@ -101,6 +102,13 @@ hu:
         my_due_today: Ma esedékes bejelentéseim
         my_on_hold: Függőben levő bejelentéseim
         on_hold: Függőben levő bejelentések
+        shared_by_me: Megosztott kérelmek
+        shared_with_me: Velem megosztott kérelmek
+        invalid_requester: Érvénytelen bejelentő
+        article_feedback: Cikkvisszajelzés
+        archived: Archívum
+        raised_by_me: Általam Kérelmezett Bejelentések
+        my_article_feedback: Saját cikkek visszajelzés
       note:
         created_on:
           private_note: '%{user_name} hozzáadott egy privát megjegyzést ekkor: %{note_date}'
@@ -134,6 +142,7 @@ hu:
           exceed: >-
             A csatolni kívánt file mérete meghaladja a 15MB-ot, kérjük csatoljon
             kisebb méretű fájlt.
+          not_added: (Nincs Hozzáadva)
       to: 'Címzett: '
       no_email_found: 'Felhasználó ezzel az email címmel %{email} nem érhető el a rendszerben.'
       overlay_reply_time: 'válaszolt, %{time_in_words}'
@@ -285,6 +294,10 @@ hu:
       history:
         recent_item: Legutolsó elemek
       update: Frissítés
+      do_not_link: Ne hivatkozzon
+      view_in_detail: Részletek megtekintése
+      ok: Rendben
+      hide_cc: Cc elrejtése
     dashboard:
       index:
         todo_title: Teendő
@@ -357,14 +370,14 @@ hu:
   failure: Hiba
   amount: Összeg
   paid_with: Fizetve
-  date_title: Dátum
+  date_title: Dáum
   status: Státusz
   preview: Előnézet
   no_agents_in_selected_group: Nincs ügyintéző a kiválasztott csoportban
   send_feedback: Értékelés küldése
   sidebar_help: Súgó
   ticket_form:
-    your_email_address: Email
+    your_email_address: E-mail
     your_name: Az Ön neve
   captcha_verify_message: 'Ellenőrző kód érvénytelen, próbálja újra!'
   your_email: Az Ön email címe
@@ -487,7 +500,7 @@ hu:
     xls: Excel
     field_select_title: Exportálni kívánt mezők kiválasztása
     export_to_csv: Exportálás CSV-be
-    export: Export
+    export: Exportálás
     thirt_days: Utolsó 30 nap
     seven_days: Utolsó 7 nap
     twenty_four: Tegnapról
@@ -496,6 +509,8 @@ hu:
     to: 'Címzett:'
     data_backup:
       body: Az ön adatait készen állnak az exportálásra.
+    select_all: Összes kiválasztása
+    view_all_tickets: Exportálás CSV formátumban
   after_half: 30 perc után
   after_one: 1 óra után
   after_two: 2 óra után
@@ -538,6 +553,7 @@ hu:
     add_photo: Fénykép hozzáadása
     company_name: Cégnév
     job_title: Munka címe
+    first_name: Utónév
   sla:
     minutes: Percek
     hours: Órák
@@ -576,6 +592,8 @@ hu:
         from: 'Feladó: '
         note_title: 'Megjegyzés:'
         remove_handle_msg: Biztosan törölni szeretne ezrt a twitter felhasználót?
+        reauth_required: Újbóli engedélyezés szükséges
+        reauthorize: Újbóli engedélyezés
       signin_info:
         title: Bejelentkezés Twitterrel
         associate_account: >-
@@ -593,6 +611,8 @@ hu:
         twitter_settings_for_msg: 'Twitter beállítások:'
     welcome:
       turn_on: Közösség bekapcsolása
+      get_started: Első Lépések
+      title: Közösségi támogatás
     streams:
       index:
         all: Összes
@@ -600,8 +620,10 @@ hu:
       tooltip:
         convert_to_tkt: Kérelemmé konvertálás
         replied: Megválaszolt
+        db_contact: Névjegy
       twitter:
         tickets: Kérelmek
+        post: ' Bejegyzés '
       search_btn: Keresés
   ticket_fields:
     fields:
@@ -618,6 +640,9 @@ hu:
       created_at: Létrehozva
       company: Cégnév
       tags: Címkék
+      internal_group: Belső csoport
+      internal_agent: Belső ügyintéző
+      skill: Képesség
     saving_ticket: Kérelem mezők mentése...
     untitled: Névtelen
     first_choice: Első Választás
@@ -668,7 +693,7 @@ hu:
       customer_edit: Ügyfél módosíthatja
       agent_info1: A mező nem lehet üres a ticket küldésekor
       agent_info2: A mező nem lehet üres ticket lezárásakor
-      agent_mandatory_submission: Kötelező űrlap küldésekor
+      agent_mandatory_submission: Kötelező űrlap elküldésénél
       customer_info1: A mező nem lehet üres a ticket online küldésekor.
       for_agents: Ügyintézőknek
       dropdown_choices: Legördülő Lehetőségek
@@ -683,9 +708,38 @@ hu:
       cc_company_contacts: Csak céges kapcsolatokat rakhat másolatba
       cc_any_email: Bármely email címet rakhat másolatba
       level: Szint
+      nested_3rd_level: 3. szintű elemekhez címke szükséges
+      nested_unique_names: Az ügyintéző címkéje nem egyezhet meg a másik két szinttel
+      dropdown_choice_disabled: Az alapértelmezett lehetőség nem törölhető
+      default_field_delete_disabled: Alapértelmezett mezőket nem lehet törölni
+      nested_tree_validation: Legalább egy kategória & alkategória szükséges
     section:
       continue_btn: Következő
       delete_btn: Törlés
+      delete_from_section: Biztosan törölni szeretné ezt a mezőt ebből a szakaszból?
+      new_section: Új Szakasz
+      delete_section: Biztosan törölni szeretné ezt a szakaszt?
+      ok_btn: OK
+      confirm_btn: Megerősítés
+      section_delete_btn: Szakasz törlése
+      move_field_remove_section: Mező áthelyezése a célszakaszba
+      sectino_label: Szakasz Megnevezése
+      field_remove_all_section: A mező eltávolítása minden szakaszból eltávolítja a mezőt
+      field_available: A mező már létezik a célszakaszban.
+      confirm_text: Megerősítést kérünk...
+      remove_type: A szakasz ehhez a típushoz kapcsolódik
+      delete_permanent: Mező törlése minden szakaszból
+      add_section: Szakasz hozzáadása
+      would_you_like_to: Szeretne
+      section_name_unique: A szakasznév már foglalt
+      move_keep_copy: Mező másolása a célszakaszba
+      section_prop: Szakasz Tulajdonságai
+      oops_btn: Hoppá!
+      section_has_fields: A Szakasz mezőket tartalmaz
+      delete_field_section: Mező törlése ebből a szakaszból
+    confirm_deletion: >-
+      Figyelem! Ehhez a mezőhöz tartozó adat, minden régi bejelentésre
+      vonatkozóan véglegesen el fog veszni. Biztosan törölni szeretné a mezőt?
   all_due: Lejárt
   due_today: Ma
   due_tomo: Holnap
@@ -717,7 +771,7 @@ hu:
     disabled: Kikapcsolva
     enabled: Bekapcsolva
     configure: Konfigurálás
-    enable: Engedélyezve
+    enable: Engedélyez
     click_to_disable: Click to disable Addon
     click_to_enable: Click to enable Addon
     confirm_disable: Are you sure you want to disable this Addon?
@@ -725,11 +779,13 @@ hu:
     configure_custom_addon: Modul konfigurálása
     tooltip:
       edit: Szerkesztés
+      settings: Beállítások
+    connect: Csatlakozás
   amount_per_month: '$%{amount} %{period}'
   amount_for_annual: '$%{amount} évente'
   agent_deleted_message: Ez egy törölt ügyintéző
   cancel: Mégse
-  confirm: Megerősít
+  confirm: Megerősítés
   yes_password_reset: Igen
   no_password_reset: Nem
   last: utolsó
@@ -765,6 +821,8 @@ hu:
     implemented: Megvalósított
     solved: Megoldott
     unsolved: Megoldatlan
+    answered: Megválaszolt
+    unanswered: Nem fogadott
   settings: beállítások
   updated_on: '%{user_name} frissítve ekkor %{note_date}'
   mobile:
@@ -836,6 +894,13 @@ hu:
         freshbooks_note: Megjegyzések szöveg
         api_url: API URL
         widget_title: Modul cím
+        api_url_info: >-
+          Adja meg a teljes API-URL-t, beleértve a https-t. Pl.:
+          https://example.freshbooks.com/api/2.1/xml-in
+        api_key: Hitelesítési Token
+        freshbooks_note_info: >-
+          Ez a szöveg a megjegyzés végén a naplózott felhasznált idővel együtt
+          jelenik meg.
     harvest:
       helptext: >-
         <h4>Harvest Integration Help</h4><p><br/>To integrate Harvest with
@@ -867,8 +932,8 @@ hu:
       OVERWRITE_LOCAL_small: Exportálás
       OVERWRITE_REMOTE_small: Importálás
       import_later_success: >-
-        Google contacts import started successfully.  You can check the import
-        status in the settings page itself.
+        A Google kapcsolatok importálása sikeresen elkezdődött. A beállítások
+        oldalon megtekintheti az importálás állapotát.
       import_success_no_stats: Google kontaktok sikeresen importálva.
       import_problem: Probléma lépett fel a Google kontaktok importálása közben.
       install: Import & Aktiválás
@@ -890,8 +955,8 @@ hu:
         share Freshdesk contacts with all the accounts.  If you do not want to
         sync any contacts into Google, you may leave it empty.
       sync_group_info: >-
-        A new contact group <strong>%{group_name}</strong> will be created in
-        your Gmail account for syncing contacts.
+        Kapcsolatok szinkronizálásához egy új <strong>%{group_name}</strong>
+        kapcsolat csoport kerül létrehozásra Gmail-fiókjában.
       edit_helptext: >-
         <h4>Google contacts sync help</h4><p><br/> <b>Select Groups to Import
         (optional)</b> <br/> Along with setting up Google synchronization, you
@@ -908,16 +973,22 @@ hu:
         added: hozzáadva
         modified: módosított
         deleted: törölt
+        google: Exportált Kapcsolatok állapot a Googleban
       edit_form:
         install_title: Google kontaktok szinkronizálásának beállítása
         import_title: Google kontaktok importálásának beállítása
         edit_app_title: Google kontaktok szinkronizálásának beállítasai
         import_group: Csoportok kiválasztása importáláshoz (opcionális)
+        mail_box_detail: Szinkronizálás ezzel
       form:
         sync_type: Szinkronizálás típusa
         sync_type_info: >-
           Hogy kívánja szinkronizálni a kapcsolatokat a Google és a Freshdesk
           között?
+        account_not_configured: >-
+          <br/>A Google-fiók beállításai még nincsenek konfigurálva. A(z)
+          '%{action}' gombra kattintással konfigurálhatja új fiókját a
+          Googleval.<br/><br/>
       update_action:
         success: Google fiók sikeresen hozzáadva.
         also: ' Szintén '
@@ -925,6 +996,22 @@ hu:
       delete_action:
         success: Google fiók sikeresen törölve.
         error: Hiba lépett fel a Google fiók törlésekor.
+      import_complete: Egyszeri importálás befejeződött.
+      internal_error: >-
+        Belsõ hiba történt. Kérjük vegye fel a kapcsolatot az
+        ügyfélszolgálattal.
+      fetch_problem: Hiba történt a Google kapcsolatok lekérése során.
+      group: Csoport nevének szinkronizálása
+      sync_type: Szinkronizálás folyamata
+      already_exist: >-
+        Ezt az emailt már konfigurálták. Ugyanezt az emailt nem lehet újra
+        hozzáadni.
+      tag_label: Szinkronizálás címke
+      MERGE_REMOTE_small: Egyesítés (Google elsőbbség)
+      enable_integration: >-
+        Automatikus szinkronizálás indítása az importálás befejezése után
+        (naponta egyszer).
+      account_not_configured: 'A Google-fiók konfigurálása nem megfelelő. Kérjük, próbálja meg újra.'
     jira:
       label: Atlassian JIRA
       helptext: >-
@@ -956,10 +1043,20 @@ hu:
         password: Jelszó
         do_nothing: Ne csináljon semmit.
         add_note: Hozzáadás privát megjegyzésként.
+        update_jira_status: A JIRA státuszt is frissítse.
+        send_reply: Küldés válaszként az ügyfélnek.
+        jira_comment_sync: 'Minden, a JIRA kérdéhez hozzáadott megjegyzés esetén %{dropdown}'
+        jira_status_sync_update_customer: Válasz küldése az ügyfél részére és státusz mező frissítése.
+        jira_status_sync: 'JIRA kérdés állapotának bármely változása %{dropdown}'
+        add_jira_comment: Hozzáadás megjegyzésként a JIRA-ban.
     jira_settings:
       sync_updates: Frissítések szinkronizálása
       none: Ne csináljon semmit.
       send_reply_in_fd: Ügyfelek értesítése emailben
+      update_jira_status: JIRA állapot frissítése
+      info5: Ha a JIRA-ban megjegyés kerül hozzáadásra
+      info4: Ha a kérdés státusza a JIRA-ban frissítésre kerül
+      add_comment_in_jira: Megjegyzés hozzáadása a JIRA-ban
     salesforce:
       label: Salesforce
       desc: You can view contact information from Salesforce in Freshdesk.
@@ -973,7 +1070,8 @@ hu:
       form:
         salesforce_settings: Salesforce beállítások
         select: Opció kiválasztása
-        contact: Kapcsolato mezők
+        contact: Kapcsolat mezők
+        account: Fiók mezők
     nimble:
       label: Nimble
       desc: Megtekintheti a kapcsolat információkat a Nimble crm-ből a Freshdeskben.
@@ -995,6 +1093,7 @@ hu:
           href='http://www.zoho.com/crm/help/api/using-authentication-token.html#Generate_Auth_Token'
           target='_blank'>Generate the Auth Token</a> in Zoho CRM through
           Browser Mode and paste the generated Auth Token here.
+        api_key: Hitelesítési Token
     google_analytics:
       label: Google Analytics
       helptext: >-
@@ -1034,6 +1133,8 @@ hu:
         widget_title: Modul cím
         username: Felhasználónév
         password: Jelszó
+        account: Fiók mezők
+        contact: Kapcsolat mezők
     google_calendar:
       label: Google Calendar
       form:
@@ -1129,6 +1230,9 @@ hu:
           Request your Account Key from Workflow Max support and paste the same
           here.
         widget_title: Modul cím
+        workflow_max_note_info: >-
+          Ez a szöveg a megjegyzés végén a naplózott felhasznált idővel együtt
+          jelenik meg.
     custom_application:
       name: Név
       description: Leírás
@@ -1156,6 +1260,9 @@ hu:
         widget_script: Modul kódrészlet
         create_n_enable: Létrehozás és engedélyezés
         insert_placeholder: Placeholder beillesztése
+      get_custom_apps: Egyedi Alkalmazás választása
+      edit_custom_app: Egyedi alkalmazás szerkesztése
+      new_custom_app: Új Egyedi alkalmazás
     logmein:
       label: LogMeIn Rescue
       helptext: >-
@@ -1258,8 +1365,15 @@ hu:
     ilos:
       settings:
         for_customer: Ügyfeleknek
+        for_agents: Ügyintézőknek
       messages:
         video_desc: Leírás
+      portal_ticket:
+        placeholder: 'Kérelem#'
+      agent_ticket:
+        placeholder: 'Kérelem#'
+      solution:
+        placeholder: 'Cikk#'
     dynamics_v2:
       form:
         username: Felhasználónév
@@ -1267,6 +1381,7 @@ hu:
     remote_login:
       freshdesk_api_key: Freshdesk API kulcs
       sign_up: Regisztráció
+      connect: Csatlakozás
     marketplace_login:
       admin_credentials:
         link_your_helpdesk: Ügyfélszolgálat összekapcsolása
@@ -1291,22 +1406,44 @@ hu:
           pl. ha ügyfélszolgálata 'http://apple.freshdesk.com', akkor írja be,
           hogy 'apple'
         helpdesk_name: Ügyfélszolgálat neve
+        email: E-mail
     applications:
       crm:
         mapping:
           company: Cégnév
+          contact: Névjegy
+          contact_fields: ' Kapcsolat mezők '
+          account_fields: ' Fiók mezők '
     shopify:
       form:
         shop_name: Shop neve
+      edit:
+        disconnect: Csatlakozás befejezése
     dynamicscrm:
       form:
         password: Jelszó
+        contact_email: Névjegy e-mail címe
+        region: Régió
+        account: Fiók mezők
+        contact: Kapcsolat mezők
     screen_pop:
       widget:
         requester: Bejelentő neve
         cancel: Mégse
         subject: Tárgy
         recent_tickets: Legutolsó kérelmek
+        view_all: Összes megtekintése
+        do_not_link: Ne hivatkozzon
+        link_to_ticket: Hivatkozás ehhez a bejelentéshez
+        call_actions: Hívás Műveletek
+        new_ticket_with_id: Új bejelentés létrehozva az alábbi azonosítóval
+        link_to_new_ticket: Hivatkozás új bejelentéshez
+        add_note_to_ticket: Megjegyzés hozzáadása a bejelentéshez
+        agent_phone_details: Ügyintéző telefon adatai
+        add_note_text: Hívás Megjegyzései
+        agent_phone_updated: Ügyintéző telefon adatai Frissítve
+        create: Létrehozás
+        ticket_reference_id: Hívás referencia azonosító
     hootsuite:
       no_ticket_msg: Nem található a szűrésnek megfelelő bejelentés
       reply_btn: Válasz
@@ -1323,19 +1460,37 @@ hu:
         requester: Ügyfél
       login:
         password: Jelszó
+        email: E-mail
       header:
         reply: Válasz
+      reset: Visszaállítás
+      domain:
+        continue_to_login: Tovább a bejelentkezéshez
+      search:
+        ticket_id: Bejelentés azonosító
+        keyword: Kulcsszó
     infusionsoft:
       form:
         select: Opció kiválasztása
+        contact: Kapcsolat mezők
+        account: Fiók mezők
     seoshop:
       form:
         api_key: API kulcs
         language: Nyelv
+        nl: Nederlands
+        en: Angol
     cti_admin:
       phone:
         save: Mentés
         cancel: Mégse
+        add_number: Szám hozzáadása
+        number_not_in_use: Nincs használatban
+        add_number_tooltip: Minden sorban legalább egy tetszőleges számnak szerepelnie kell
+        title: Ügyfélszolgálati Telefonszámok
+        delete_number: Megerősítést kérünk
+        delete_msg: Biztosan törölni szeretné ezt a telefonszámot?
+        number_in_use: Használatban lévő számok
       ctd:
         api_key: API kulcs
         username: Felhasználónév
@@ -1343,8 +1498,23 @@ hu:
         request_type: Kérelem típusa
         content: Tartalom
         password: Jelszó
+        callback_url: Visszahívás URL
+        req_authentication: Hitelesítés szükséges
+        have_api_key: Van API-kulcsom
+        have_user_pass: Van felhasználónevem és jelszavam?
+      save_agent_private_note: Hívás Megjegyzések mentése privátként
+      ctd_toggle: Click to Dial beállítás konfigurálása
+      softfone:
+        max_dimension: Max 550px &times; 250px
+        width: Szélesség
+        height: Magasság
+        url: Iframe URL
+      title: CTI-beállítások
+      iframe_toggle: Softphone Iframe engedélyezése
     github_settings:
       resolved: Megoldott
+      none: Ne csináljon semmit
+      closed: Lezárt
     magento:
       form:
         shop_name: Shop neve
@@ -1352,10 +1522,17 @@ hu:
     freshsales:
       form:
         select: Opció kiválasztása
+        auth_token: Hitelesítési Token
+        deal: Üzlet mezők
+        domain: Fiók Domain
+        account: Fiók mezők
+        contact: Kapcsolat mezők
     outlook_contacts:
       form:
         sync_tag: Szinkronizálás beállítás
         submit: Import & Aktiválás
+        mail_box_detail: Szinkronizálás ezzel
+        sync_tag_label: Szinkronizálás címke
       edit_form:
         account: Fiók
         edit_account: Szerkesztés
@@ -1364,6 +1541,44 @@ hu:
         delete_account: Törlés
         last_sync_time: Utolsó szinkronizálás ideje
         syncing_in_progress: Szinkronizálás folyamatban
+        tag_label: Szinkronizálás címke
+    quickbooks:
+      form:
+        quickbooks_note: Megjegyzések szöveg
+      connect_text: >-
+        A QuickBookshoz csatlakozással megkönnyíti ügyintézői számára, hogy
+        ügyfélszolgálatában az adatokat megfelelő formában érhessék el és
+        frissíthessék.
+    google_drive:
+      form:
+        developer_key: Az API-kulcs a Google fejlesztői konzolból származik.
+        client_id: OAuth ügyfélazonosító az Ön domainjéhez
+    custom_apps:
+      preview_helptext: Ez az egyedi alkalmazás megjelenik az oldalsávban
+      hide_preview: Előnézet elrejtése
+      custom_app_used_in: Egyedi alkalmazás megjelenítésének helye
+      refresh: Frissítés
+      show_preview: Előnézet megjelenítése
+      custom_app_preview: Egyedi alkalmazás előnézete
+    microsoft_teams:
+      auth_btn: Engedélyez
+    uninstall: Eltávolítás
+    slack_v3:
+      slack_prof_label: Csatlakozás a Slackhez
+      slack_connect_desc: Konfigurálja fiókját a Slackből érkező bejelentések fogadásához
+      slack_auth_btn: Slack engedélyezése
+    salesforce_v2:
+      form:
+        salesforce_v2_settings: Salesforce beállítások
+    pivotal_tracker:
+      label: Pivotal Tracker
+    cloud_elements:
+      form:
+        daily: Napi
+        account: Fiók mezők
+        field_mapping: Mező Leképezés
+        hourly: Óránként
+        contact: Kapcsolat mezők
   payment_info: Fizetési információk
   billing_address: Számlázási cím
   support:
@@ -1375,6 +1590,11 @@ hu:
         rate_again: Értékeljen minket újra
         submit: Küldés
         cancel: Mégse
+        load_questions: További megtekintése
+        feedback_title: >-
+          Írja le az ügyfélszolgálattal kapcsolatos tapasztalatait (nem
+          kötelező)
+        comments: Megjegyzések
     login:
       form:
         email: Email
@@ -1387,7 +1607,7 @@ hu:
         help: Segítség
     shared:
       attachment_form:
-        feedback_widgets_screenshot: Képernyőfotó készítés
+        feedback_widgets_screenshot: Képernyőfotó készítése
       survey_form:
         survey_title: Kérjük értékelje ügyfélszolgálatunkat!
         feedback_title: >-
@@ -1401,6 +1621,8 @@ hu:
       email: Az Ön email címe *
       comments: Kommentek
       send_feedback: Értékelés küldése
+      related_files: Kapcsolódó fájlok
+      was_this_article_useful: Hasznosnak találta a bejegyzést?
     surveys:
       thanks_for_feedback: Megkaptuk visszajelzését. Köszönjük szépen.
       feedback_already_done: Erre a válaszra már küldött visszajelzést.
@@ -1418,9 +1640,13 @@ hu:
         unhappy_info: Következő alkalommal nagyobb figyelmet fordítunk a megoldásra.
         additional_info: 'Emellett megoszthatja, milyen velünk dolgozni.'
         submit: Küldés
+        neutral_information: Bárcsak egy kicsit elégedettebb lenne!
     canned_form:
       next: Következő
       form_submit: Küldés
+      okay: Rendben
+      hey: Üdv!
+      thank_you_text: Köszönjük
   gamification:
     levels:
       beginner: Kezdő
@@ -1614,6 +1840,7 @@ hu:
           Most Valuable Player of the month.
         video: Tekintse meg a videót
         enable_arcade: Freshdesk Arcade engedélyezése
+        start_over: Visszaállítás
       gamification_settings:
         agent_resolves_ticket: 'Mikor az ügyintéző <br /> megoldja a kérelmet:'
         title_ticket_points: Kérelem pontok
@@ -1648,6 +1875,13 @@ hu:
         delete: Törlés
         save_survey: Mentés
         edit: Szerkesztés
+        hide: Eltávolítás
+        new: Új
+        update: frissít
+        confirm_text: Megerősítést kérünk...
+        activate_survey: Aktiválás
+        preview_survey: Előnézet
+        custom_title_v2: Ügyfél-elégedettségi Felmérések
       satisfaction_settings:
         enable_label: Ügyfél elégedettségi felmérés
         link_text_label: Elégedettségmérő link szöveg
@@ -1667,6 +1901,21 @@ hu:
         enter_happy_text: Elégedett visszajelzés szövege
         enter_neutral_text: Semleges visszajelzés szövege
         enter_unhappy_text: Elégedetlen visszajelzés szövege
+      new_layout:
+        title: Kérdőív neve
+        bad_to_good: Rossztól Jóig
+        loading: Betöltés...
+        survey: Felmérés
+        good_to_bad: Jótól Rosszig
+      thanks_contents:
+        title_text_v2: Ügyfél-elégedettségi felmérés után küldött köszönőüzenet
+      new_questions_layout:
+        questions: Kérdések
+      new_rating:
+        error_text: Kötelező mező
+      new_thanks:
+        thanks_message_feedback_v2: További visszajelzésre vonatkozó köszönőüzenet
+        additional_comments_feedback_v2: További megjegyzések mező
     getting_started:
       send_mail_content:
         button_title: Teszt email küldése
@@ -1771,6 +2020,20 @@ hu:
         agent_email_sending: Meghívások küldése...
         agent_email_required: Email azonosító szükséges
         support_email_subtitle: Elsődleges kapcsolati email cím megadása
+        going_social: Közösségi <br> Élet
+        title_message: Ügyfélszolgálatának gyors elindítása négy lépésben...
+        skip_text: 'Köszönöm nem, az ügyfélszolgálatra szeretnék menni.'
+        agents_subtitle: Hívja meg csapatát is a buliba
+        send_test_mail_info2: >-
+          Itt megtudhatja <a
+          href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957'
+          target='_blank'>hogyan</a>.
+        rebrand_subtitle: Arculatváltás saját logóval és színekkel!
+        info2: >-
+          Nem elégedett? Adjon meg egy másik emailt és mentse el a 'Mentés'
+          gombbal
+        next_alt_text: Kezdjen bele!
+        social_subtitle: Éljen társasági éltet ügyfélszolgálatán keresztül!
     day_passes:
       helpnote:
         info: >-
@@ -1799,6 +2062,9 @@ hu:
           eléri a 2-t.
         all: Összes
         filtered_by: 'Az alábbi szerint szűrve:'
+        agent: Ügyintéző
+        email: E-mail
+        date: Dáum
     widget_config:
       index:
         feedbackwidget_embedded_tab: Beágyazott modul
@@ -1822,18 +2088,48 @@ hu:
           megfelelő magasságát.
         feedbackwidget_px: px
         thankyou_default: Köszönjük visszajelzését
-        thankyou_info: Kérelem készítése után megjelenő üzenet.
+        thankyou_info: Bejelentés beküldése után megjelenő üzenet.
         feedbackwidget_users_can: 'Felhasználók lehetőségei:'
         feedbackwidget_attach_a_file: Fájl csatolása
         feedbackwidget_screenshot: Képernyőfotó készítése
         feedbackwidget_use_https: Https használata
         feedbackwidget_mobile_view: Mobil nézet
+        feedbackwidget_image_button: Képes gomb
+        feedbackwidget_search_area: Cikkek keresése
+        feedbackwidget_text_button: Szöveges gomb
       popup_widget:
         feedbackwidget_button_type: Gomb típus
         feedbackwidget_attach_a_file: Fájl csatolása
+        feedbackwidget_submit_title: Értékelés küldése
+        feedbackwidget_button_customization: Gomb szerkesztése
+        thankyou_default: Köszönjük visszajelzését
+        feedbackwidget_screenshot: Képernyőfotó készítése
+        feedbackwidget_form_customization: Űrlap szerkesztése
+        feedbackwidget_image_button: Képes gomb
+        thankyou_info: Bejelentés beküldése után megjelenő üzenet.
+        feedbackwidget_offset: 'Offset:'
+        feedbackwidget_search_area: Cikkek keresése
+        feedbackwidget_popup_code: Popup modul kódja
+        feedbackwidget_use_https: Https használata
+        feedbackwidget_text_button: Szöveges gomb
+        feedbackwidget_form_height: Űrlap magassága
+        feedbackwidget_button_text_placeholder: Támogatás
+        feedbackwidget_form_height_message: >-
+          Ha scroll bar jelenik meg a modulban, kérjük állítsa be a modul
+          megfelelő magasságát.
       embedded_widget:
         feedbackwidget_embedded_code: Beágyazott modul kódja
         feedbackwidget_attach_a_file: Fájl csatolása
+        feedbackwidget_submit_title: Értékelés küldése
+        thankyou_default: Köszönjük visszajelzését
+        feedbackwidget_form_customization: Űrlap szerkesztése
+        thankyou_info: Bejelentés beküldése után megjelenő üzenet.
+        feedbackwidget_search_area: Cikkek keresése
+        feedbackwidget_use_https: Https használata
+        feedbackwidget_form_height: Űrlap magassága
+        feedbackwidget_form_height_message: >-
+          Ha scroll bar jelenik meg a modulban, kérjük állítsa be a modul
+          megfelelő magasságát.
     supervisor_rules:
       index:
         human_name: Supervisor Szabály
@@ -1871,6 +2167,15 @@ hu:
         help_title: Observer
         help_title_2d: Műveletek
         help_title_2a: Események
+        help_info_2d: 'Ez meghatározza, mit szeretne a szabállyal végrehajtani.'
+        help_info_3: >-
+          Az Observert mezők módosítására, státusz megváltoztatására, sőt még
+          figyelmezető üzenetek küldésére is használhatja, feltéve, ha bizonyos
+          feltételeknek megfelel.
+        help_info_2a: >-
+          Egy esemény bármely, felhasználó által kezdeményezett módosítást
+          jelöl, amely egy adott Observer szabályt indít el.
+        help_title_2b: Esemény Elvégzői
       new:
         title: Observer - Új Szabály
       edit:
@@ -1895,11 +2200,16 @@ hu:
       anyone: Bárki
       add_new_event: Új esemény hozzáadása
       system: Rendszer
+      performed_by: és az eseményeket elvégzik
+      actions: folyamat végrehajtása
     va_rules:
       index:
         human_name: Dispatch’r szabály
     webhook:
       hipchat_hook_title: HipChat értesítés
+      jira_hook_alt: JIRA Probléma Poszt Létrehozás Kérelem
+      hipchat_hook_alt: HipChat Pingelés GET Kérelem
+      jira_hook_title: JIRA Probléma Létrehozás
     shared:
       filter_jsinit:
         change_password: Jelszó megváltoztatása
@@ -1926,6 +2236,10 @@ hu:
           Kattintson a placeholder beillesztése gombra a bejelentés részleteinek
           beszúrásához, mint például bejelentő neve, fontosság, bejelentés
           állapota, stb.
+        user_pass?: Van felhasználónevem és jelszavam?
+        url: Visszahívás URL
+        api_key?: Van API-kulcsom
+        webhook_usecase: Webhook Felhasználási Módjai
     automations:
       index:
         human_name: Scenario
@@ -1967,9 +2281,10 @@ hu:
         request_custom_ssl: Egyedi SSL-t szeretne használni?
         helpdesk_url: Ügyfélszolgálati oldal URL
         success_message: >-
-          Your request for a Custom SSL certificate has been initiated and will
-          be processed shortly. You will be receiving a confirmation email from
-          our provider before approval. Please check your inbox for updates.
+          Egyedi SSL-tanúsítványra vonatkozó kérésnek feldolgozása megkezdődött
+          és hamarosan elkészül. Az engedélyezés előtt szolgáltatónktól egy
+          megerősítő emailt fog kapni. További információkat beérkezett levelei
+          között talál.
         default_ssl: Alapértelmezett SSL
         custom_ssl: Egyedi SSL
         dns_name: >-
@@ -1986,6 +2301,29 @@ hu:
         invalid_ip_range: Érvénytelen IP sor
         saml_login_url: SAML bejelentkezési URL
         saml_logout_url: Kijelentkezési URL
+        submit_request: Kérelem elküldése
+        saml_cert_fingerprint_info_sha256: >-
+          A SAML szolgáltató által rendelkezésre bocsátott SAML tanúsítvány
+          ujjlenyomata (SHA256). Titkosításra / érvényesítésre használjuk
+        password_policy_info3: >-
+          A jelszókezelési házirendben végrehajtott változások 8 órán belül
+          kerülnek érvényesítésre. Ezen idő alatt ügynökei felkérést kapnak
+          jelszavaik frissítésére. Amennyiben nem követik az utasításokat, az
+          ügyfélszolgálati portál kijelentkezteti őket és jelszavukat a
+          következő bejelentkezés alkalmával kell módosítaniuk.
+        password_policy_info4: >-
+          Felhívjuk figyelmét, hogy ha (alapértelmezett vagy haladó szintű)
+          fiókjához engedélyezi a jelszókezelési házirendet, az engedélyezést
+          már nem tudja törölni vagy visszavonni.
+        for_contacts: Kapcsolatoknak
+        password_policy: Jelszókezelési Házirend
+        for_agents: Ügyintézőknek
+        saml_cert_fingerprint_info: >-
+          A SAML szolgáltató által rendelkezésre bocsátott SAML tanúsítvány
+          ujjlenyomata (SHA1). Titkosításra / érvényesítésre használjuk
+        thanks_message: >-
+          <span class='thanks_message'> Köszönjük, hogy Egyedi SSL-tanúsítványt
+          kért.</span> <br />
       helpnote:
         title: Biztonsági beállítások
         info1: >-
@@ -2009,6 +2347,30 @@ hu:
           You can add unlimited number of IP ranges that have access, as well as
           define whether you want to control access for customers as well, or
           only for your agents.
+        trusted_ip: >-
+          <b>Hozzáférés korlátozása IP-címmel</b><br>Cége vagy szervezete
+          IP-címeihez kötötten korlátozhatja a hozzáférést ügyfélszolgálati
+          portáljához. Tetszőleges számú IP-tartományt megadhat és
+          meghatározhatja, hogy csupán az ügyintézői esetében szeretné
+          felügyelni a hozzáférést, vagy az ügyfelek esetében is. <a
+          href="https://support.freshdesk.com/support/solutions/articles/195168"
+          target="_top"> További információk.</a>
+      password_security:
+        passwords: jelszavak
+        session_expiry: Felhasználói munkamenet lejár az alábbi időn belül
+        password_expiry: A jelszó lejár az alábbi időn belül
+        advanced: Haladó
+        cannot_be_same_as_last: Nem egyezhet az előzővel
+        have_special_character: Speciális karaktert tartalmaz
+        never: Soha
+        characters: karakterek
+        days: napok
+        cannot_contain_user_name: Nem tartalmazhat felhasználónevet
+        password: jelszó
+        have_mixed_case: Kis- és nagybetűt tartalmaz
+        minimum_of: Legalább
+        atleast_an_alphabet_and_number: Tartalmazzon egy betűt és egy számot
+        default: Alapértelmezett
     products:
       helpnote:
         content1: >-
@@ -2018,6 +2380,7 @@ hu:
         content2: >-
           Ha úgy dönt, hogy külön portált állít be minden terméknek, akkor
           egyedi tudásbázist és fórumot is beállíthat minden terméknek.
+        heading1: Több termék
       new:
         title: Új termék
         saving: Mentés...
@@ -2051,6 +2414,10 @@ hu:
         contact_us: Kapcsolat
         logo_and_favicon: Logo & favicon
         customer_portal: Ügyfél oldal
+        ago: óta
+        settings: Beállítások
+        agent_portal: Ügyintéző oldal
+        edit_portal: Portál szerkesztése
       edit:
         title: Termék szerkesztése
         updating: Frissítés...
@@ -2126,23 +2493,35 @@ hu:
         customers: Ügyfelek
         reports: Jelentések
         administration: Adminisztráció
+        general: Általános
+        bots: Botok
       permissions: Engedélyek
       helpcard:
         info1: >-
-          Roles allow you to create and edit access permissions for agents. You
-          can create new roles, specify what actions agents with these roles can
-          perform within your help desk, and assign the role to agents.
+          A Feladatkörök lehetővé teszik, hogy az ügyintézők számára
+          engedélyeket hozzon létre és azokat szerkessze. Létrehozhat új
+          szerepeket, meghatározhatja, hogy ezekkel a szerepekkel rendelkező
+          ügyintézők ügyfélszolgálatában milyen műveleteket hajthatnak végre,
+          valamint a szerepeket hozzárendelheti ügyintézőkhöz.
         info2: >-
-          For example, you can create a role for your Support Co-ordinators,
-          allowing them to update fields and assign tickets, and even add notes
-          internally, but not reply to customers.
+          Például Ügyfélszolgálati Koordinátorai számára létrehozhat olyan
+          feladatköröket, melyben frissíthetik a mezőket és bejelentéseket
+          rendelhetnek ki, sőt még belső megjegyzéseket megadhatnak, de az
+          ügyfeleknek nem válaszolhatnak.
         title2: Admin kiváltásgok
         info4: >-
-          You can nominate whether you want an agent to have access to settings
-          under the Admin tab. Agents with admin access can be Operation Agents
-          with limited access, or Super Admins with the ability to edit all
-          configurations. You can have as many Super Admins with the ability to
-          view and modify your billing details, or as few as one.
+          Az Adminisztrátor fülön beállíthatja, hogy egy adott ügyintézőnek ad-e
+          jogosultságokt a beállítások kezeléséhez. Az adminisztrátori jogokkal
+          rendelkező ügyintéző lehet korlátozott hozzáférésű Műveleti Ügyintéző
+          vagy Szuper Ügyintéző, aki minden beállítást kezelhet. A számlázási
+          adatok megtekintésére és módosítására jogosult Szuper Ügyintézők száma
+          lehet egy, de akár lehetnek többen is.
+        title1: Feladatkörök megértése
+        info3: >-
+          Az Új Feladatkör létrehozását követően az adminisztrátor fülön
+          található Ügyintézők ikonra kattintva, egyből hozzá is rendelheti az
+          ügyintézőkhöz profiljuk létrehozása vagy módosítása során.
+        info5: További információ a feladatkörökről és a jogosultságokról
       privilege:
         tickets: Kérelmek
         manage_tickets: Kérelmek kezelése
@@ -2176,6 +2555,12 @@ hu:
       cancel_label: Mégse
       done_label: Rendben
       save_label: Mentés
+      agent_label: Ügyintéző
+      add_agent_label: Ügyintéző hozzáadása
+      saving_label: Mentés...
+      manage_label: Kezelés
+      add_label: Hozzáadás
+      no_agent_label: Nincs Ügyintéző
     home:
       index:
         group: Csoportok
@@ -2217,15 +2602,24 @@ hu:
         freshfone: Freshfone
         tags: Címkék
         billing: Csomagok & Számlázás
+        search_admin: Adminisztrátor beállítások keresése
     skills:
       index:
         agents_label: Ügyintézők
         agents: Ügyintézők
         add_agents: Ügyintézők hozzáadása
         description: Leírás
+        skills: Képességek
+        agent_label: Ügyintéző
+        skill_create: Létrehozás
+        manage_label: Kezelés
+        add_label: Hozzáadás
+        no_agent_label: Nincs Ügyintéző
     user_skills:
       index:
         more: tovább
+        any: Bármely
+        groups: Csoport
     ecommerce:
       helpnote:
         no_account: Új fiók hozzáadása
@@ -2233,6 +2627,11 @@ hu:
         select_group: Egy csoport kiválasztása
         assign_product: Termékhez rendelés
         assign_group: Csoporthoz rendelés
+        account_name: Fiók név
+        title: Új fiók
+      index:
+        new_account: Új fiók
+      index_title: E-kereskedelem
     contact_fields:
       formfield_props:
         behavior: Viselkedés
@@ -2244,6 +2643,18 @@ hu:
         dropdown_choices: Legördülő elemek
         delete_field: Mező törlése
         form_title: Tulajdonságok
+        validate_regexp: Érvényesítés Reguláris Kifejezés használatával
+        customer_visible: Ügyfélnek megjelenítve
+        customer_mandatory: Kötelező űrlap elküldésénél
+        regexp: Reguláris Kifejezés
+        customer_edit_signup: 'Az ügyfél látja ezt, amikor regisztrál'
+        for_agents: Ügyintézőknek
+        field_label_agents_level2: 2. szintű címke ügyintézőknek
+        add_new_choice: Elem hozzáadása
+        field_label_customer_level2: 2. szintű címke ügyfeleknek
+        agent_mandatory_submission: Kötelező űrlap elküldésénél
+        default: Alapértelmezett
+        mapped_internal_groups: Leképezett Belső Csoportok
     portal:
       settings:
         important: Fontos
@@ -2252,6 +2663,46 @@ hu:
         view_settings: Beállítások megtekintése
         simple_none: Nincs
         everyone: Bárki
+        moderate_none_help: >-
+          Engedélyezze ezt a funkciót, ha biztos szeretne lenni abban, hogy
+          közössége nem vonzza a levélszemetet küldő felhasználókat.
+        google: Google
+        submit_ticket: Ki küldhet új bejelentéseket a portálon
+        notify_agents: 'Moderálási és Spam Értesítés küldése ide:'
+        view_forums: Ki tekintheti meg a fórumokat
+        moderate_links_help: >-
+          Az erősebb védelem érdekében engedélyezze ezt a funkciót. A rendszer
+          ellenőrizni fog minden, harmadik féltől érkező témát és választ,
+          valamint a spam tevékenységeket is.
+        moderate_all: Összes téma és válasz moderálása
+        user_permissions: Felhasználói Engedélyek a portál számára
+        moderate_links: Külső hivatkozásokat tartalmazó témák és válaszok moderálása
+        captcha: CAPTCHA engedélyezése spam elkerülésére
+        moderate_none: Ne Moderáljon
+        restricted_login_signup: >-
+          A regisztráció és a bejelentkezés meghatározott domainekre
+          korlátozódik
+        facebook: Facebook
+        allow_signup: Felhasználók regisztrációjának engedélyezése ügyfélportálról
+        moderation: Fórumok moderálása
+        view_solutions: Ki nézheti meg a megoldásokat
+        auto_suggest_solutions_help: >-
+          Ez a visszajelzés minialkalmazásban található keresési funkcióra is
+          vonatkozik.
+        auto_suggest_solutions: 'Új bejelentések létrehozásakor, megoldások automatikus javaslata'
+        reset_portal_changes: Portál módosításainak visszaállítása
+        allow_signin: Felhasználók regisztrációjának engedélyezése...
+        moderate_all_help: >-
+          Engedélyezze ezt a funkciót, ha minden, a közösségben létrehozott
+          posztot felügyelni szeretne.
+      helpnote:
+        exit_fullscreen: Kilépés a teljes képernyős megjelenítésből
+        editor_shortcuts: Szerkesztési Hivatkozások
+        preview_changes: Módosítások előnézete
+        editor_in_fullscreen: Teljes képernyős szerkesztő
+        level_customizations: Oldal szintű testreszabások
+        advanced_rebranding: Arculatváltás & testreszabás magasabb fokon
+        custom_stylesheets: Egyedi stíluslap használata
     company_fields:
       formfield_props:
         behavior: Viselkedés
@@ -2274,11 +2725,30 @@ hu:
         delete_field: Mező törlése
         description: Leírás
         form_title: Tulajdonságok
+        validate_regexp: Érvényesítés Reguláris Kifejezés használatával
+        cc_company_contacts: Csak céges kapcsolatokat rakhat másolatba
+        customer_visible: Ügyfélnek megjelenítve
+        cc_any_email: Bármely email címet rakhat másolatba
+        customer_mandatory: Kötelező űrlap elküldésénél
+        regexp: Reguláris Kifejezés
+        nestedfield_helptext_preview: >-
+          Ez az "Előnézete" a minta legördülő elemeknek, használja az egyedi
+          szövegmezőt a "Nézet szerkesztés" alatt az elemek szerkesztéséhez
+        customer_edit_signup: 'Az ügyfél látja ezt, amikor regisztrál'
+        for_agents: Ügyintézőknek
+        add_new_choice: Elem hozzáadása
+        nested_label: Beágyazott mező címkék
+        agent_mandatory_submission: Kötelező űrlap elküldésénél
+        default: Alapértelmezett
     social:
       twitter_streams:
         handles_helptext: 'például: @tim_cook, @ericschmidt'
         include_helptext: 'például: @appleofficial, "apple mac", #smartphones, @android'
         exclude_helptext: 'például: fruit, #diet, awesome'
+        new:
+          create: Létrehozás
+        edit:
+          visible_to: 'Látható:'
       ticket_rules:
         header_ext: és termék hozzárendelése
         assign_to_gp: Csoporthoz rendelés
@@ -2290,7 +2760,10 @@ hu:
         cancel: Mégse
         twitter_streams:
           edit: Szerkesztés
+          reauthorize: Újbóli engedélyezés
         update: Frissítés
+        index:
+          new_account: Új fiók
     mobihelp:
       apps:
         form:
@@ -2301,9 +2774,12 @@ hu:
           integration_details: Integráció részletei
           app_store_id: App Store azonosító
           app_key: App kulcs
+          saving: Mentés...
+          select_a_solution_category: Megoldás kategória választása
         index:
           no_app:
             sdk_and_guide: Mobihelp SDK és Integrációs kézikönyv
+          title: Mobilhelp applikációk
         helpnote:
           heading1: Mi az a Mobihelp?
         edit:
@@ -2311,6 +2787,10 @@ hu:
         new:
           title: Új Mobilhelp applikáció
       human_name: Mobihelp Applikáció
+    hotline:
+      content3:
+        note_title: 'Megyjegyzés:'
+      list_title: Mobilhelp applikációk
   widgets:
     feedback_widgets:
       new:
@@ -2320,6 +2800,7 @@ hu:
         show_all_results: Összes találat mutatása
         no_results_for: 'Nincs találat a következőre: %{term}'
         no_results: 'Nincs eredmény '
+        problems_with_fields: 'Hibásak voltak a következő mezők:'
   reorder: Átrendezés
   reports:
     no_data: Nincs megjeleníthető adat!
@@ -2368,6 +2849,7 @@ hu:
         from: 'Feladó:'
         select_type: Típus kiválasztása
         ticket_type: Kérelem típusa
+        filter_report: Szűrő szerkesztése
     survey_reports:
       back_to: Vissza a lista nézetre
       list_content:
@@ -2390,11 +2872,41 @@ hu:
       main:
         total_responses_v2: Összesen
         all: Összes
+        time_period: Időszak
+        neutral: Semleges
+        survey_name: Kérdőív neve
+        agent: Ügyintéző
+        positive: Pozitív
+        group: Csoport
+        overall_rating: Értékelés
+        responses: Válaszok
+        negative: Negatív
+        no_overview: Nincs elérhető adat
+        unanswered: Nem fogadott
+        overview: Áttekintés
+        answered: Megválaszolt
+        rating: Értékelés
     customer_title: Ügyfél tevékenységi jelentés
     helpdesk_title: Ügyfélszolgálat tevékenységi jelentés
     livechat:
       total_chats: Összesen
       filter_by_title: 'Az alábbi szerint szűrve:'
+      time_period: Időszak
+      chat_type: Csevegés Típusa
+      answered_chats: Megválaszolt
+      select_widget: Minialkalmazás kiválasztása
+      agent_chat_summary: Ügyintéző Csevegés Összefoglaló
+      missed_chats: Nem fogadott
+      group: Csoport
+      filter_close: Bezárás
+      avg_handle_time: Átlagos Kezelési Idő
+      filter_report: Szűrő szerkesztése
+      num_of_transfer: Áthelyezések
+      avg_time_queue: Várólistán töltött Idő
+      num_of_chats: Csevegések Száma
+      select_chat_type: Csevegés Típusának Kiválasztása
+      generate_summary: Generálás
+      widget: Modul
     freshfone:
       no_agent: '- Nincs ügyintéző -'
       total_unanswered_calls: Nem fogadott hívások
@@ -2407,12 +2919,25 @@ hu:
         unassigned: Nincs kiosztva
         incoming: Bejövő
         outgoing: Kimenő
+        all_groups: Összes csoport
       filter_by_title: 'Az alábbi szerint szűrve:'
       total_voice_mail: Hangposta
+      time_period: Időszak
+      group: Csoport
+      filter_option_all_calls: Összes hívás
+      filter_close: Bezárás
+      avg_handle_time: Átlagos Kezelési Idő
+      all_numbers: Összes Szám
+      filter_report: Szűrő szerkesztése
+      generate_summary: Generálás
+      unanswered_count: Nem fogadott
     time_sheets:
       filter_by_title: 'Az alábbi szerint szűrve:'
+      billable: Számlázható Órák
+      time_period: Időszak
     satisfaction_title: Elégedettség jelentés
     helpdesk_activity_title: Ügyfélszolgálat tevékenységi jelentés
+    discard_changes: Módosítások elvetése
   delete_the_ticket: Kérelem törlése
   mark_as_spam: Spamnek jelöl
   bulk_actions: Bulk műveletek
@@ -2437,6 +2962,7 @@ hu:
         The rest of your email content will be added as a conversation to
         Freshdesk and also sent to the Requestor via email.
       ticket_type_example: Kérdés
+      note: Megyjegyzés
   email_command_preview_to_email_value: support@acme.freshdesk.com
   email_command_preview_subject: Tárgy
   ticket_field:
@@ -2456,6 +2982,35 @@ hu:
         and identify the biggest issues that clog your support.  With dependent
         fields you can organize tickets hierarchically  into categories,
         subcategories and item affected.
+      info4_v3: >-
+        Ha az Estate csomagot vagy magasabbat használja, dinamikus mezőkkel
+        rendelkező szakaszokat jeleníthet meg a legördülő mezőben kiválasztott
+        beállítás alapján. Minden szakaszhoz felvehet kérelem mezőket, és az
+        egyes szakaszokat társíthatja a legördülő mezőben található
+        beállításokhoz. Ha például egy webáruházat üzemeltet, beállíthatja egy
+        adott szakaszhoz, hogy egy „Ok” mezővel együtt nyíljon meg, ha az ügyfél
+        a „Csere” lehetőséget választja. Így jobban megértheti, hogy miért
+        szeretné, hogy a vásárló miért kéri a termék cseréjét. Legfeljebb két
+        dinamikus szakaszt hozhat létre, és azokat két egyéni legördülő menüben
+        használhatja. Ha már társított egy szakaszt a „típus” mezővel, akkor
+        csak egy továbbit vehet fel a kérelem űrlapjára.
+      info_1: >-
+        A kérelem űrlap segítségével rögzítheti az ügyféltől bekérendő adatokat,
+        amikor az ügyfél elküld egy kérelmet. A kérelem űrlapot testre szabhatja
+        úgy, hogy az a vállalkozásának megfelelő kérelem mezőket tartalmazza, és
+        ügyfelei vagy ügyintézői a szükséges adatokat az Ön által kívánt
+        formában tölthetik ki. Például egy webáruházas vállalkozás esetén az
+        ügyfél rendelési azonosítójának a kérelem űrlapon történő rögzítése az
+        ügyintéző számára jelentős segítséget nyújthat a kérelem megoldásánál.
+      title3: Dinamikus mezők
+      info4_v2: >-
+        Ha az Estate csomagot vagy magasabbat használja, dinamikus mezőket
+        jeleníthet meg a típus mezőben kiválasztott beállítás alapján. A típus
+        mező minden egyes beállításához létrehozhat egy különböző szakaszt.
+        Ezután minden egyes szakaszhoz több kérelem mezőt is hozzáadhat. Például
+        egy webáruházi forgatókönyv esetén, amikor „Csere" típust választanak,
+        egy „Ok” mezővel rendelkező szakasz nyitható meg, amely bekéri az okot,
+        hogy az ügyfél miért szeretné az árucikk cseréjét kérni.
   default_category: Alapértelmezett kategória
   default_folder: Piszkozatok
   category_edit_not_allowed: A kategória nem lett módosítva
@@ -2479,6 +3034,9 @@ hu:
   latest_tickets: új frissítések
   search:
     no_results_msg: Nincs keresési eredmény
+    in: itt
+    by: 'által:'
+    searching: Keresés
   assumed_identity_msg: 'Ön a következő ügyféllel van belépve %{user_name}.'
   identity_reverted_msg: You have reverted your identify back to you.
   assume_identity_button: Belépés mint ügyfél
@@ -2495,7 +3053,7 @@ hu:
   add_new_requester: Új ügyfél hozzáadása
   fwd_success_msg: Az üzenetet sikeresen továbbítottuk.
   validate_fwd_to_email_msg: Kérjük érvényes email címet adjon meg
-  index_tooltip_loading_msg: Töltés...
+  index_tooltip_loading_msg: Betöltés...
   this_ticket_has_been_resolved: Kérelem megoldva
   this_ticket_has_been_closed: Kérelem lezárva
   status_name_validate_presence_msg: ' Státusz neve nem lehet üres'
@@ -2565,7 +3123,7 @@ hu:
     editing: Szerkesztés
     preview: Ügyfélszolgálati oldal megtekintése
     save_and_continue: Mentés
-    please_wait: Kérem várjon...
+    please_wait: Kérjük várjon...
     layout_pages:
       subheader_layout: Portál layout
       subheader_pages: Portál oldalak
@@ -2589,6 +3147,8 @@ hu:
         This will make your default theme mobile friendly and will optimize it
         for phones and tablets. You can choose to turn this setting off in case
         you wish to have a consistent non-responsive theme across all devices.
+    apply_mint: Alkalmazás
+    classic: Klasszikus
   any_time: Bármikor
   five_minutes: 5 percen belül
   fifteen_minutes: 15 percen belül
@@ -2614,7 +3174,7 @@ hu:
   Product: Portál
   Type: Típus
   showing: Mutat
-  Email: Email
+  Email: E-mail
   Portal: Portál
   Phone: Telefon
   Forum: Fórum
@@ -2626,7 +3186,7 @@ hu:
   search_solutions: Megoldások keresése
   add_a_new_folder: új mappa hozzáadása
   likes: Kedvelések
-  export: Export
+  export: Exportálás
   helpdesk_quests:
     see_all: Összes
     all: Összes
@@ -2643,7 +3203,7 @@ hu:
     select_an_option: Opció kiválasztása
     report: ' Jelentés '
     reports: Jelentések
-    summary: Összesítés
+    summary: Összefoglalás
     agent_ticket_summary: Ügyintézők kérelmének összesítése
     group_ticket_summary: Csoportok kérelmének összesítése
     no_data_to_display_msg: Nincs megjeleníthető adat!
@@ -2665,6 +3225,7 @@ hu:
       select_customer_msg: Ügyfél kiválasztása
       select_agent_msg: Ügyintéző kiválasztása
       select_group_msg: Csoport kiválasztása
+      no_customers_msg: Nincsenek ügyfelei
     load:
       resp_time: Válaszidő
       num_of_tickets: Kérelmek száma
@@ -2679,6 +3240,9 @@ hu:
       happy_customers: Elégedett ügyfelek
       frustrated_customers: Elégedetlen ügyfelek
     comparison: Összehasonlítás
+    customer_at_a_glance: Egy Pillantás az Ügyfélre
+    select_option_msg: 'Kérjük, válasszon egy lehetőséget'
+    customer_top_n_analysis: Ügyfél Top-X Elemzés
   last_name: Vezetéknév
   forum:
     types:
@@ -2705,6 +3269,7 @@ hu:
       select_company: Cégek kiválasztása
     type: Fórum típus
     category: Fórum kategória
+    visible_to: 'Látható:'
   password_reset_email: Jelszó visszaállítási email
   default_reply_template: Ügyintéző válasz sablon
   import_user_org: 'Felhasználók, Szervezetek & Csoportok'
@@ -2818,6 +3383,9 @@ hu:
         %{customer}-->%{users} to check out the new information. 
       regards: Üdvözlettel
       freshdesk: Freshdesk csapat
+      info6: >-
+        Kérjük, a support@freshdesk.com email címre küldje el a fájlt, hogy
+        visszaigazolhassuk és feltölthessük.
     business_hours:
       create:
         success: Munkaidő sikeresen létrehozva
@@ -3013,8 +3581,8 @@ hu:
         voicemail: Hangposta
         voicemail_on: Be
         voicemail_off: Ki
-        record_all: Record all calls
-        record_none: Do not record calls
+        record_all: Minden hívás rögzítése
+        record_none: Ne rögzítse a hívásokat
         record_alert: >-
           The call recording guidelines require notifying customers on the call
           being recorded and the purpose for recording. Please configure the
@@ -3038,6 +3606,9 @@ hu:
         name: Név
         anytime: 24/7 bármikor
         business_hours: Munkaidő
+        number_accessible: Hozzáférő személyek
+        attachment_help_text: 'Engedélyezett audio fájlok mérete:'
+        name_placeholder: Barátságos név megadása a telefonszámhoz
       numbers:
         info: >-
           Freshfone is Freshdesk’s integrated telephony system. You can set up
@@ -3087,6 +3658,12 @@ hu:
           address: Cím
           city: Város
           postal_code: Irányítószám
+          state: Állam/tartomány/terület
+        caller_id:
+          manage_caller_id: 'Hívóazonosító kezelése '
+          add_new: Új hozzáadása
+        buy: Telefonszám Vásárlása
+        buy_button_text: Vásárlás
       invalid_attachment: 'A csatolmány ''%{name}'' érvénytelen audió fájl/ vagy nagyobb mint 5MB'
       ivr:
         simple_message_title: Egyszerű üzenet
@@ -3105,7 +3682,7 @@ hu:
         done: rendben
         save: Mentés
         saving: Mentés...
-        preview: Előznézet
+        preview: Előnézet
         previewing: Előnézet...
         delete_menu: Menü törlése
         jump_to: 'Ugrás ide:'
@@ -3114,10 +3691,19 @@ hu:
         back_to_menu: Vissza a főmenübe
         seed_menu_name: Üdvözlő/Kezdő menü
         invalid_number_format: Kérjük érvényes telefonszámot adjon meg "+" előjellel és körzetszámmal
+        action: Művelet
       greetings: Üdvözlés
       feature_request_content:
         learn_more: Tudjon meg többet
         pricing: Percdíjak és támogatott országok megtekintése
+        trial_or: VAGY
+        error_message: Sajnos a kérése jelenleg nem teljesíthető. Próbálja újra később.
+        title_text: Telefon
+      freshfone_numbers_title: Telefon
+      welcome_page:
+        title_text: Telefon
+    subscription:
+      purchase_credits: Kredit Vásárlása
   agent_closes_tkt: Ügyintéző lezárta a kérelmet
   submit: küldés
   import_topics: Témák
@@ -3340,6 +3926,95 @@ hu:
     textoff: Ki
     disabled: Kikapcsolva
     everyone: Bárki
+    routing_info: Az összes bejövő csevegés átirányítása adott csoportokhoz
+    help_offline_thank_msg: Megerősítő üzenet
+    prechat_dropdown_msg: >-
+      Legördülő lehetőségeket rendelhet az eltérő csoportokhoz a Preferenciák
+      fül alatt. A csevegések a megadott csoportok szerint kerülnek
+      hozzárendelésre.
+    non_availability_msg_header: 'Üzenet, amikor az ügyintézők nem csevegnek'
+    integrate_msg: >-
+      Másolja be ezt a kódot az utolsó </body> címke elé a weboldalán vagy
+      alkalmazásában
+    msgbox_placeholder_title: Válaszdoboz helyőrzője
+    help_offline_thank_header_msg: Fejléc az üzenet elküldését követően
+    prechat_desc: >-
+      Gyűjtsön adatokat a látogatókról, így teljesebb képet kap, miközben cseveg
+      velük. Az engedélyezést követően a látogatóknak ki kell töltenie egy
+      űrlapot a beszélgetés megkezdése előtt.
+    installation: Minialkalmazás Kód
+    show_widget: Amikor az ügyintézők online vannak és elfogadják a csevegéseket
+    integrate_livechat_title: Integráljon élő csevegést weboldalára vagy alkalmazásaiba
+    maximum_chat_desc: >-
+      Korlátozza, hogy egy ügyintéző egyszerre hány csevegésben vehet részt.
+      Amennyiben az ügyintéző eléri a limitet, nem kap új csevegési értesítést.
+    maximum_chat_title: Látogató csevegések maximum száma
+    non_availability_msg_help: >-
+      Annak érdekében, hogy egy rész az üzenetben hiperhivatkozásként mutasson
+      az URL-jére, tegye két "#" közé
+    chat_availability: Csevegés elérhetősége
+    proactive_title: Proaktív chat
+    intro: >-
+      A Freshdesk integrált élő csevegés megoldásának köszönhetően megtekintheti
+      és cseveghet a felhasználókkal a weboldalán vagy a Freshdesk-en található
+      ügyfélszolgálati portálon keresztül. Proaktívan kezdeményezhet csevegést a
+      weboldal látogatóival is. A csevegési munkamenet befejezését követően
+      kiválaszthatja, hogy konvertálja a beszélgetést kérelemmé, így követve a
+      látogatót e-mailben, vagy archiválhatja a csevegést leirat formájában.
+    texton: Be
+    show_chat_hours: Chat megjelenítés
+    agent_network_disconnect_msg_title: 'Üzenet, amikor az ügyintéző kapcsolata megszakad'
+    prechat_msg: Csevegés előtti üzenet
+    enable: Engedélyez
+    portal_desc: >-
+      Míg a csevegés modul elérhető mindenki számára a weboldalán, beállíthatja
+      azt, hogy az ügyfélszolgálati portálon kizárólag az ügyfelei láthassák.
+    copy_to_clipboard: Másolás vágólapra
+    missed_chat_title: Nem fogadott csevegés űrlap
+    portal_option_info: Csevegés minialkalmazás megjelenítése neki
+    missed_chat_desc: 'Gyűjtsön látogatói adatokat, amikor nem elérhető.'
+    proactive_note: >-
+      Figyelem: A csevegés előtti űrlap nem fog megjelenni, ha a csevegést
+      proaktívan indították. Manuálisa továbbra is hozzáadhatja a látogató
+      adatait.
+    default_routing: Alapértelmezett átirányítás
+    routing: Csevegés átirányítása
+    anytime: Bármikor (24/7)
+    help_text_wait_onhold_msg: >-
+      Ez az üzenet akkor látható, ha látogató 1 percnél régebb ideje várakozik
+      az ügyintézőre
+    support_portal: Csevegés ügyfélszolgálati portálhoz
+    chat_hours_msg_note: 'Figyelem: A csevegés-ablak rejtve marad ezen kívül.'
+    form_details: Űrlap részletei
+    show_chat_hours_msg: 'Adja meg, mikor legyen a csevegés-ablak elérhető a látogatóknak.'
+    intro_title: Miért pont az Élő Csevegés?
+    enable_chat: Élő Csevegés engedélyezése
+    business_hours: Munkaidőben
+    chat_enabled_label: Csevegés engedélyezése
+    chat_transfer_msg_title: Csevegés áthelyezése üzenet
+    offline_message: Távolléti üzenetek
+    learn_livechat: További információ az Élő Csevegésről
+    enabling: Engedélyezés
+    use_custom_link: 'Látogatók átirányítása másik oldalra '
+    procative_info: >-
+      Automatikusan kezdeményezzen csevegést a látogatókkal, amennyiben egy
+      adott időnél többet töltenek el az oldalon.
+    dropdown_based_routing: Legördülő lista szerinti átirányítás
+    widgets_list_info: >-
+      Minden Freshdesk-en beállított termék esetén elérhetővé válik egy
+      kapcsolódó csevegés modul
+    visitor_form: Látogatói Űrlap
+    url_error_msg: 'Kérjük, adjon meg egy érvényes URL-t'
+    window_offset: Offset
+    prechat_title: Csevegés előtti űrlap
+    cobrowsing: Súgó az oldalon
+    end_chat_confirm_msg_title: Csevegés végét megerősítő üzenet
+    chat_with_us: Lépjen kapcsolatba velünk
+    logged_in_users: Kizárólag bejelentkezett felhasználók
+    cobrowsing_info: >-
+      Segítsen ügyfelein hatékonyabban a csevegések során azzal a lehetőséggel,
+      hogy megtekinti és irányítja a képernyőjükön látottakat.
+    preferences: Beállítások
   credit_card_info: Hitelkártya adatok
   your_email_address: Az Ön e-mail címe
   username: Felhasználónév
@@ -3374,6 +4049,11 @@ hu:
         Lehetősége van a rendszert a saját domain neve alatt használni. Csak
         annyit kell tennie, hogy a yourcompany.freshdesk.com URL-t ráirányítja a
         saján domain nevére, pl. support.mycompany.com
+      info5: >-
+        A hozzáadott kapcsolatokra és bizonyos domainekre korlátozhatja azokat,
+        akik hozzáférhetnek ügyfélszolgálatához. Mások nem regisztrálhatnak, nem
+        jelentkezhetnek be és nem küldhetnek bejelentéseket. További információk
+      info6: itt.
     cancel:
       cancel_account: Freshdesk fiók törlése
       info_text: >-
@@ -3440,15 +4120,40 @@ hu:
       account_settings: Fiók beállítások
       contact_first_name: Vezetéknév
       contact_last_name: Keresztnév
-      contact_email: Email
+      contact_email: E-mail
       contact_phone: Telefon
       invoice_emails: Email
       restore_account: >-
         Your account is cancelled and the data will be deleted on
         <strong>%{delete_at}</strong>. To restore your account, contact <a
         href='mailto:support@freshdesk.com'>support@freshdesk.com</a>.
+      primary_contact: Elsődleges kapcsolat adatai
+      invoice_email_info: Számlák küldése ide
     new:
       company: Cégnév
+      full_name: Teljes név
+      confirmation: Megerősítés
+      create_an_account: Fiók létrehozása
+    multilingual_support:
+      helpcard:
+        supported_languages:
+          title: <b>Támogatott Nyelvek</b><br/>
+        info1: >-
+          Szerte a világon élő ügyfeleinek gördülékeny ügyfélszolgálati élményt
+          nyújthat.
+        title: Szólítsa meg Ügyfeleit Anyanyelvükön
+      add_languages: Nyelvek hozzáadása
+      warning_msg: >-
+        Megjegyzés: Az elsődleges nyelv ügyfélszolgálata alapértelmezett nyelve.
+        A támogatott nyelvek hozzáadását követően már nem lehet módosítani.
+      manage_languages: Nyelvek kezelése
+    edit_domain:
+      email_error: Cég nevének minimum 3 karakternek kell lennie
+      getting_started: Első lépések
+      url_error1: 'A következő domain; <strong>%{domain_name}</strong> nem érhető el.'
+    signup_google:
+      sign_up: Regisztráció!
+      privacy_policy: adatvédelmi irányelvek
   success_msg: Felhasználó beállítások sikeresen frissítve!
   domain_not_available_msg: 'A következő domain; <strong>%{domain_name}</strong> nem érhető el.'
   long_company_name_error: Cég neve maximum 100 karakter hosszú lehet
@@ -3546,6 +4251,7 @@ hu:
     save_and_create: Mentés és másik létrehozása
     product_portal_visibility: Látható
     visible_in_portal: Látható a honlapon
+    manage_categories: Kezelés
   billed_monthly: Kiszámlázott havi
   users:
     activations:
@@ -3592,6 +4298,8 @@ hu:
     skip_notification_yes: Igen
     skip_notification_no: Nem
     clone: Dispatch’r - szabály másolás
+    add_new_action: Új művelet hozzáadása
+    match_all: Rendeljen hozzá <b>MINDET</b> az alábbiakból
   ticket_cc: Kérelem CC
   select_watchers: Megtekintők kiválasztása
   header_logo: Header logo
@@ -3633,6 +4341,7 @@ hu:
       created_at: Létrehozás dátuma
       asc: Növekvő
       desc: Csökkenő
+      last_active_at: Utolsó megtekintés
   topic:
     ideas_stamps:
       deferred: Elhalasztott
@@ -3678,6 +4387,11 @@ hu:
     add_comment: Bejegyzés küldése
     change: változtat
     add_forum: Fórum hozzáadása
+    filter_7: Nem fogadott
+    filter_6: Megválaszolt
+    spam: Levélszemét
+    questions:
+      answered: Megválaszolt
   activerecord:
     errors:
       messages:
@@ -3807,6 +4521,14 @@ hu:
     learn_more: Tudjon meg többet
     info4: ha ennyi idő után sincs kiosztva a kérelem
     ticket_assignment: Automatikus kérelem hozzárendelés
+    toggle_availability_for_rr: >-
+      Engedélyezze, hogy az ügyintézők módosítsák rendelkezésre állásukat az
+      automatikus kérelem-hozzárendelésre vonatkozóan
+    maximum: Maximum
+    enable: Engedélyez
+    please_confirm: Megerősítést kérünk...
+    confirm: Megerősítés
+    send_escalation_to: '...ekkor kiterjesztés emailjét ide küldje:'
   four: 4 óra
   oneweek: 1 hét
   twoweek: 2 hét
@@ -3818,7 +4540,7 @@ hu:
   problem: Probléma
   created_on: 'Létrehozva: '
   zip: Irányítószám
-  close: Bezár
+  close: Bezárás
   agent:
     full_time_agent: Full-time ügyintéző
     occasional_agent: Alkalmi ügyintéző
@@ -3895,6 +4617,25 @@ hu:
     no_recent_activity: Nem volt tevékenység mostanában
     global: Teljes hozzáférés
     role_and_scope: Szerepek és hatáskör
+    days_ago: '%{days} ezelőtt'
+    member: 'Itt tag:'
+    ticket_scope: Bejelentés Hatáskör
+    ago: '%{time} idővel ezelőtt.'
+    last_logged: Utolsó belépés
+    export: Exportálás
+    invalid_export_params: >-
+      Hiba történt az ügyintézői adatok exportálása során. Kérjük, próbálja meg
+      újra.
+    info4: Kapcsolatra konvertálás
+    groups_description: Legalább egy csoport kapcsolása ehhez az ügyintézőhöz.
+    export_title: Ügyintézők exportálása CSV fájlba
+    deleted_agent_info: >-
+      Megjegyzés: A törölt ügyintézőktől származó összes bejövő levél SPAM
+      levélszemétként lesz jelölve.
+    skill: Képességek
+    info2: Email cím már létezik
+    last_seen_at: Utolsó megtekintés
+    assign_group: Társított Csoportok
   account_admin: Fiók admin
   right: Jobb
   footer:
@@ -3991,7 +4732,7 @@ hu:
       deleted: Törölt
       unverified: Megerősítetlen
       all: Összes
-      spam: Spam
+      spam: Levélszemét
       blocked: Blokkolt
     contacts: ügyfél
     deleted_user_info: 'Megjegyzés: Minden bejövő levél ezektől az ügyfelektől Spam levél lesz.'
@@ -4002,6 +4743,7 @@ hu:
       unverified: Nem megerősített emaillel rendelkező kapcsolatok
       all: Összes kapcsolat
       deleted: Törölt kapcsolatok
+      blocked: Blokkolt kapcsolatok
   between: Között
   profile_settings: Profil beállítások
   portal_key: Portál
@@ -4067,6 +4809,11 @@ hu:
     paid: Fizetve
     status: Státusz
     type: Típus
+    invoice: Számla
+    refund: Visszatérítve
+    download: Letöltés
+    quantity: Mennyiség
+    date: Dáum
   activate: Aktiválás
   feedbackwidget_button_text: Felirat
   user_activation_email: Ügyfél aktiválási email
@@ -4113,6 +4860,7 @@ hu:
         topics: Témák
         tickets: Kérelmek
       placeholder: Írja ide amit keresne...
+      results_for: Keresési eredmények a következőre
     popular_topics: Népszerű témák
     my_topics: Témáim
     showing_recently_popular_topics: Alább a népszerű témákat mutatjuk meg
@@ -4144,6 +4892,10 @@ hu:
         <a href='%{last_post_url}'>%{link_label}</a> tőle %{user_name}
         %{created_on}
       best_answer: Legjobb válasz
+      sort_heading: 'Rendezés:'
+      sort_order:
+        popularity: Népszerű
+      sort_by_default: Alapértelmezett
     topic_vote:
       you:
         one: Ön
@@ -4155,10 +4907,22 @@ hu:
         one: 1 személy
         other: '%{count} személy'
       ideas_button: Tetszett az ötlet?
-      ideas_unlike_button: nem tetszik!
+      ideas_unlike_button: nem úgy mint!
       ideas_users_voted_title: Emberek akiknek tetszett ez az ötlet
       problem_users_voted_title: Személyek akiknek ez a problémája
       howto_users_voted_title: Személyek akiknek ez a kérdése
+      ideas:
+        one: tetszik ez az ötlet
+        other: tetszik ez az ötlet
+      problem:
+        one: van ez a problémája
+        other: van ez a problémája
+      votes: stemmer
+      problem_button: Fennáll ez a problémája?
+      howto_button: Ön is ezt a kérdést szeretné feltenni?
+      announce_unlike_button: nem úgy mint!
+      problem_unlike_button: Nekem nincs ilyen problémám!
+      howto_unlike_button: Nekem nincs ilyen kérdésem!
     tickets:
       export: Kérelmek exportálása
       submit_export: Exportálás
@@ -4174,7 +4938,40 @@ hu:
         kérelem értesítéseiről
       add_people_title: Személyek hozzáadása
       reopen_reply: Válasz
+      comments: Megjegyzések
+      related_articles: Kapcsolódó cikkek...
     said: mondta
+    agent_login_info: Ön ügyintéző?
+    agent_signin: Jelentkezzen be itt
+    agent_login_details: Adja meg ügyfélfiókja regisztrált adatait
+    reset_password: >-
+      Kérjük, adja meg email címét és emailen elküldjük Önnek miképpen tudja
+      visszaállítani jelszavát.
+    user_signup_portal: Regisztráljon
+    account: fiók
+    login_or_signup: '%{login} vagy %{signup} egy fiókért'
+    login_to_submit_ticket: >-
+      <a href=%{login_url}>Bejelentkezés</a> szükséges új bejelentés
+      beküldéséhez
+    login_signup_to_submit_ticket: >-
+      <a href=%{login_url}>Bejelentkezés</a> vagy <a
+      href=%{signup_url}>Regisztráció</a> szükséges új bejelentés beküldéséhez
+    login_to_post_topic: <a href='' class='solution_c'>Bejelentkezés</a> téma létrehozásához
+    login_to_post_comment: <a href='' class='solution_c'>Bejelentkezés</a> hozzászólás létrehozásához
+    showing_recent_updates: Legutóbbi frissítések mutatása
+    vote:
+      you:
+        one: 'Ön '
+        other: 'Ön és '
+      more:
+        one: '1 másik '
+        other: '%{count} másik '
+      people:
+        one: '1 személy '
+        other: '%{count} személy '
+    vote_label:
+      one: 1 stemme
+      other: stemmer
   feedbackwidget_form_heading: Űrlap fejléc
   cancel_and_back: Mégsem és visszalépés
   due_in: 'Lejár ekkor: %{time_words}'
@@ -4190,6 +4987,7 @@ hu:
         new_folder: Mappa hozzáadása
       folder_form:
         visible_to: 'Látható:'
+        category: Kategória
     articles:
       where: Hol
       guides: Útmutatók
@@ -4199,6 +4997,13 @@ hu:
       deselect_all: Összes kijelölésének megszüntetése
       article_useful: 'Örülünk, hogy segítettünk. Köszönjük visszajelzését.'
       type: Cikk típus
+      reset_rating:
+        link: Visszaállítás
+        dialog_submit: Visszaállítás
+      prop_tabs:
+        meta: Meta
+      search_all: Cikkek keresése
+      views: Megtekintés
     edit: Megoldás szerkesztése
     add: Megoldás hozzáadása
     info10: Privát (csak ügyintézők láthatják)
@@ -4237,13 +5042,26 @@ hu:
     draft:
       portal:
         all: Összes
+      name: Piszkozatok
     add_folder: új mappa
     general:
       article_prop: Cikk tulajdonságok
       created_by: Létrehozta
+      something_wrong: Hiba történt!
+      feedback: Visszajelzés
+      analytics: Analitika
     move_to: Átmozgatás
     add_category: Új kategória
     solution_title: Cím
+    kb: Tudásbázis
+    via: a következő által
+    sidebar:
+      feedbacks:
+        title: Cikkvisszajelzés
+      view_all: Összes megtekintése
+      drafts:
+        title: Piszkozatok
+      view_less: Kevesebb megjelenítése
   import_updated: Frissítve
   chatwidget_intro: 'Szerkessze a Live Chat modult és nézze meg előnézetben, hogy hogy néz ki'
   save: Mentés
@@ -4275,7 +5093,7 @@ hu:
   zendesk_backup: Backup fájl
   twoday: 2 nap
   profile:
-    change_password: Jelszóváltoztatás
+    change_password: Jelszó megváltoztatása
     manage: Profil kezelése
     edit: Profil szerkesztése
     current_password: Jelenlegi jelszó
@@ -4362,6 +5180,7 @@ hu:
       company_tickets: Cég kérelmei
       social: Social
     search: Keresés
+    goto_agent_portal: Ügyintéző oldal
   agent_adds_comment: Ügyintéző kommentelte a kérelmet
   portal_customizer_anon_tickets: Bárki írhat kérelmet
   portal_customizer_option_tickets: Ügyfelek bejelentkezés nélkül írhatnak kérelmet
@@ -4493,6 +5312,7 @@ hu:
           helpdesk, you can create this notification specific to each language.
           The <i class="common-icons-outdated"></i> icon indicates that the
           notification translations in other languages may be outdated.
+        topic: Első Válasz SLA Megsértése
       agent_template_13:
         info1: >-
           This notification is sent out to agent when the ticket assigned to
@@ -4578,11 +5398,15 @@ hu:
           specific to each language. The <i class="common-icons-outdated"></i>
           icon indicates that the notification translations in other languages
           may be outdated.
+        topic: Ügyintéző válasz sablon
+      agent_template_25:
+        topic: Ügyintéző-meghívó Email
     insert_placeholder: Placeholderek megadása
     event: Esemény
     agent_notification: Ügyintéző értesítés
     agent_notifications: Ügyintéző értesítések
     subject: Tárgy
+    cc_notifications: CC Másolat Értesítések
   step1: Első lépés
   update_and_login: Frissítés és belépés
   activate_and_login: Aktiváció & Belépés
@@ -4664,17 +5488,25 @@ hu:
       status: Státusz
       unverified: Megerősítetlen
       type: Típus
+      last_verified: Utoljára hitelesített
+      config: Konfiguráció
+      cname: CNAME
+      verify: Hitelesítés
+      remove: Eltávolítás
     info17: >-
       Ez az email cím automatikusan szerepel a Titkos másolat mezőben az összes
       válaszban
     reply_email: Az ön ügyfélszolgálati emailje
+    info8: E-mailek továbbítása
+    disable_agent_forward: Továbbított emailek esetén az eredeti feladót jelölje meg bejelentőként
+    plain_unverified: Megerősítetlen -
   step2: 2. lépés
   twitter:
     deleted: 'A Twitter felhasználó @%{twitter_screen_name} eltávolítva.'
     sent: Tweet sikeresn közzétéve
     error_sending: Hiba lépett fel a tweet elküldése közben. Kérjük próbálkozzon újra.
     ticket_save: Tweet sikeresen kérelemmé konvertálva
-  logo: Logo
+  logo: Logó
   ok: Rendben
   question: Kérdés
   event:
@@ -4856,6 +5688,10 @@ hu:
     created_by: Létrehozta
     compose:
       to_address_placeholder: Ügyfél címének megadása
+    via: a következő által
+    search_text: Cikkek keresése
+    action: Művelet
+    thanks_v1: Köszönjük visszajelzését
   recent_activity: Legutóbbi tevékenységek
   recent_activities: Legutóbbi tevékenységek
   forgot_password: Elfelejtett jelszó
@@ -4927,7 +5763,7 @@ hu:
         applications and services that you use regularly. Freshdesk offers
         several native integrations out-of-the-box. To start using a native
         integration, click on the corresponding “Enable” button.
-      title2: FreshPlug modulok
+      title2: Egyedi Alkalmazások
       info2: >-
         In addition to the built-in integrations, you can bring in data from any
         other third party application, legacy system or database into the
@@ -4970,7 +5806,7 @@ hu:
     additional_languages: Támogatott nyelvek
     settings: Beállítások
     logo_and_colors: Logo és színek
-    logo_and_favicon: Logo & favicon
+    logo_and_favicon: Logó & favicon
     change_logo: Logo megváltoztatása
     change_favicon: Favicon megváltoztatása
     use_default: Alapértelmezett használata
@@ -4983,6 +5819,25 @@ hu:
     anyone: Bárki
     forums_toggle:
       title: Fórumok
+    gdpr_terms_link: Feltételek
+    twitter_disabled: >-
+      Biztonsági okokból ügyfelek és ügyintézők nem jelentkezhetnek be Twitter
+      fiókkal.
+    gdpr_admin: Adminisztrátor.
+    includes_contacts_company_domain: (beleértve a meglévő kapcsolatokat és céges domaineket)
+    hidden_on_portal: Rejtett a Portálon
+    gdpr_policy: Adatvédelmi irányelvek.
+    helpdesk: Ügyfélszolgálat
+    supported_languages: 'Támogatott Nyelvek (%{count})'
+    languages: Nyelvek
+    permission:
+      users_from_any_domain: Felhasználók bármely domainről
+      who_can_create: Ki jelentkezhet (vagy) regisztrálhat (vagy) hozhat létre bejelentéseket?
+      users_from_selected_domains: Felhasználók engedélyezett domainekről
+    gdpr_agent: Ügyintéző
+    search_domain: Domainek keresése
+    gdpr_to: ide
+    visible_in_portal: Látható a Portálon
   lead: Vezető
   comments: Megjegyzések
   forum_confirm_msg1: Biztosan törölni szeretné ezt a kategóriát?
@@ -5029,6 +5884,9 @@ hu:
     helpdesk_hours: Ügyfélszolgálati órák
     select_time_zone: Időzóna kiválasztása
     info5: Ünnepnapokat figyelmen kívül hagyja az SLA kiszámításakor
+    holiday_calendar: Szabadság Naptár
+    to: ide
+    multiple: Több munkaidő
   import_org_companies: Szervezetek &rarr; Cégek
   add: Hozzáadás
   portal_customizer_title: Ügyfélszolgálati oldal testreszabása
@@ -5067,6 +5925,8 @@ hu:
     incoming_mail_server: 'Bejövő E-Mail szerver:'
     smtp_server_info: SMTP szerver név E-mail küldéshez
     incoming_mail_settings: Bejövő E-Mail beállítások
+    imap_port: Port
+    smtp_port: Port
   your_feedback: Értékelése
   none: Nincs
   delete_topic_msg: Téma végleges törlése
@@ -5083,6 +5943,89 @@ hu:
       apps out-of-the-box. To browse our selection of apps, click on the “Get
       more Apps” button.
     description: Leírás
+    delete_action:
+      success: Az alkalmazás törlése sikeres.
+    share_app: Alkalmazás megosztása
+    view_all: Összes megtekintése
+    needs_developer_text: Fejlesztői Fiók Szükséges
+    no_connection: >-
+      A Marketplace jelenleg nem elérhető. Kérjük, később próbálja meg újra.
+      Amennyiben a probléma továbbra is fennáll, lépjen kapcsolatba velünk.
+    view_more: Több megjelenítése
+    installation: Telepítés
+    terms_of_use_link: 'http://freshdesk.com/terms#marketplace'
+    all_apps: Minden Alkalmazás
+    api_error: 'Kérését nem tudtuk teljesíteni. Kérjük, próbálja meg később.'
+    help_and_support: Segítség és támogatás
+    settings: Beállítások
+    app_gallery: Marketplace
+    tooltip:
+      suspended: Nem elérhető
+    app_installation_agreement: 'Ennek az alkalmazásnak a telepítésével Ön elfogadja a mi '
+    no_mktp_apps_note_2: >-
+      A választék böngészéshez kattintson a 'További Alkalmazások választása'
+      gombra.
+    screenshots: Képernyőképek
+    no_configs: Ez az alkalmazás nem igényel konfigurációt.
+    custom_apps: Egyedi Alkalmazások
+    third_party_apps_policy: >-
+      Ezen alkalmazást egy harmadik fél tulajdonolja, fejleszti, üzemelteti és
+      tartja karban, nem a Freshworks Inc. Letöltésével, integrálásával és/vagy
+      használatával Ön elfogadja az alkalmazás fejlesztőjének felhasználási
+      feltételeit és adatvédelmi nyilatkozatát, beleértve az adatainak
+      feldolgozására vonatkozó pontokat. Kérjük, a felhasználási feltételekkel
+      és adatvédelmi nyilatkozatokkal kapcsolatos további részletekért vegye fel
+      a kapcsolatot a fejlesztővel, vagy látogassa meg a fejlesztő webhelyét.
+    time_ago: óta
+    error_calling_method: 'Hiba történt az alábbi módszer behívása közben:'
+    no_search_results: >-
+      Nem találtuk amit keres. Talán próbáljon meg egy másik keresőszót
+      használni.
+    validation_failed: Érvényesítés sikertelen.
+    no_custom_apps_installed: Nincsenek telepített egyedi alkalmazások
+    installing_text: Kérjük várjon...
+    paid_app: FIZETŐS
+    popular_apps: Népszerű Alkalmazások
+    installed_mkp_apps_unavailable: >-
+      A telepített alkalmazások listája jelenleg nem elérhető. Kérjük, később
+      próbálja meg újra. Amennyiben a probléma továbbra is fennáll, lépjen
+      kapcsolatba velünk.
+    overview: Áttekintés
+    install: Telepítés
+    write_a_custom_app: Egyedi alkalmazás írása
+    published_in: itt
+    confirm_uninstall_message: 'Biztosan el szeretné távolítani: %{human_name}?'
+    instructions: Utasítások
+    latest_apps: Legújabb Alkalmazások
+    popular: Népszerű
+    get_more_apps: További Alkalmazások választása
+    apps: Alkalmazások
+    policy_on_custom_apps: Egyéni alkalmazásokra vonatkozó irányelvek
+    no_custom_apps_note_2: >-
+      A böngészéshez és telepítéshez kattintson az "Egyedi Alkalmazások
+      választása" lehetőségre.
+    version: VERZIÓ
+    reauthorize: Újbóli engedélyezés
+    custom_app_gallery: Egyedi Alkalmazások Gyűjteménye
+    go_to_dev_portal: A Fejlesztői Portálra
+    apps_unavailable: >-
+      Bizonyos alkalmazásokat nem lehetett megjeleníteni. Kérjük, később
+      próbálja meg újra. Amennyiben a probléma továbbra is fennáll, lépjen
+      kapcsolatba velünk.
+    policy_on_tp_apps: Harmadik fél alkalmazásaira vonatkozó irányelvek
+    no_mktp_apps_note: Egyesítettük néhány kedvenc alkalmazásával.
+    ver: 'Verzió: '
+    installing: Telepít
+    coming_soon: Hamarosan
+    latest: Legújabb
+    no_custom_apps_note: >-
+      Hozzon létre egyedi alkalmazásokat és tegye őket közzé a fejlesztői
+      portálon.
+    no_apps: Nincsenek elérhető Alkalmazások
+    field_blank: 'Kérjük, töltse ki a szükséges mezőket.'
+    terms_of_use: Felhasználói Feltételek
+    almost_done: Majdnem Kész!
+    no_mktp_apps: Nincsenek telepített Alkalmazások
   shortcuts:
     ticket_detail_list_common:
       delete_ticket: Kérelem tölrése
@@ -5092,6 +6035,7 @@ hu:
       pickup: Kérelem felvétele
       spam: Spamnek jelölt
       search: Keresés
+      scenario: Scenariok
     goto_tab:
       social: Közösség
       tickets: Kérelmek
@@ -5173,6 +6117,9 @@ hu:
       answer: Kérdés
       approve: Jóváhagyás és publikálás
       best_answer: Legjobb válasznak jelölés
+      widgets:
+        ticket:
+          agent: Ügyintéző
     all_categories: Összes kategória
     index:
       all_topics: Összes tevékenység
@@ -5191,6 +6138,7 @@ hu:
       spam:
         reply:
           title: Válasz
+          posted: 'válaszolt neki:'
         new_topic:
           title: Új topic
           posted: Új téma közzététele
@@ -5204,10 +6152,12 @@ hu:
         unpublished: Jóváhagyásra vár
         waiting: Jóváhagyásra vár
         no_forum_unpublished: Összes téma és válasz felülvizsgálva.
+        title: Levélszemét
       invalid_topic:
         went_wrong: Valami nem sikerült
       after_approve:
         published: Bejegyzés közzétéve
+        goto_post: Bejegyzéshez
       spam_actions:
         approve_tooltip: Jóváhagyás és publikálás
         ban_tooltip: Felhasználó és annak összes bejegyzése spam
@@ -5224,6 +6174,7 @@ hu:
     moderation:
       after_approve:
         published: Bejegyzés közzétéve
+        goto_post: Bejegyzéshez
       index:
         empty_folder: Üres mappa
         moderation_solution: Tudjon meg többet a fórum moderációról
@@ -5231,12 +6182,14 @@ hu:
         no_unpublished_spam: Itt nincs spam. Tényleg!
         waiting: Jóváhagyásra vár
         waiting_desc: Áttekintés és közzététel
+        title: Levélszemét
       spam:
         new_topic:
           posted: Új téma közzététele
           title: Új topic
         reply:
           title: Válasz
+          posted: 'válaszolt neki:'
         approve: Jóváhagyás és publikálás
       after_ban:
         cleared_rest: >-
@@ -5250,12 +6203,26 @@ hu:
       confirm_and_merge: Megerősít és összefűz
       continue: Következő
       please_wait: Kérjük várjon...
+      mark_primary: Megjelöl elsődlegesnként
+      add: Hozzáadás
   freshcaller:
     admin:
       link_account_request_content:
         cancel: Mégse
         continue: Következő
         password: Jelszó
+        connect_existing_account: Meglévő Fiók csatlakoztatása
+        link_errors:
+          validation_error: Kötelező mező
+        email: E-mail
+        account_url: Freshcaller Fiók URL
+      sidebar_title: Telefon
+      title_text: Telefon
+      feature_request_content:
+        create_new_account: Új fiók létrehozása
+      freshcaller_subtext: >-
+        Vásároljon számokat, állítson be hívási várakozó listákat, interaktív
+        hangválaszokat (IVR), stb.
   activate_free_plan: Ingyenes csomag aktiválása
   custom_fields:
     delete: Törlés
@@ -5265,10 +6232,22 @@ hu:
     dropdown_blank: Legördülő lista
     number: Szám
     paragraph: Több soros szöveg
+    default_field_error: Alapértelmezett mezőket nem lehet szakaszba átrakni
+    empty_section_info: Húzza a mezőket ide
+    url: URL
+    nested_field: Függő mező
+    email: E-mail
+    text: Egy soros szöveg
+    drag_and_drop_field: Mező áthúzása
+    insert_field: Mező áthúzása
+    date: Dáum
+    decimal: Tizedesjegy
   billing_info: Előfizetési információ
   register: Regisztrálás
   multifile_attachments:
     label: Csatolt fájlok
+    remove: Eltávolítás
+    mb: ' MB '
   reset_password_title: Jelszó törlése
   retype_password: Jelszó ismételt megadása
   free_plan_agents_v2: Korlátlan számú ügyintéző
@@ -5278,10 +6257,15 @@ hu:
     saved_report:
       save: Mentés
       cancel: Mégse
+      delete_dialog_header: Jelentés Törlése
+      edit_dialog_header: Jelentés szerkesztése
     today: Ma
     ticket_schedule:
       index:
         cancel: Mégse
+        delete_title: Ütemezés törlése
+        delete_text: Biztosan törölni szeretné ezt az időzítést?
+        confirm: Megerősítés
       new:
         fields_to_export: Exportálni kívánt mezők
         ticket_fields_title: Kérelem mezői
@@ -5289,24 +6273,88 @@ hu:
         title: Cím
         company_fields_title: Cég mezők
         description: Leírás
+        helpnote:
+          api_info1: >-
+            Az API (alkalmazásprogramozási felület) összeköttetéssel rendelkezik
+            a legfrissebb exporthoz.
+        email: E-mail
+        contact_fields_title: Kapcsolat mezők
+        select_all: Összes kiválasztása
+        one_time_export_label: >-
+          A kérelem tartalmának exportálása az ütemezés megkezdése hónapjának
+          kezdetétől
+        frequency: Ütemezés
       schedule_export: Ütemezett Export
       all_reports: Minden jelentés
+      schedule: Ütemezés
+      new_schedule: Új Beosztás
     scheduled_reports:
       dialog:
         desc: Leírás
         subject: Tárgy
+        monthly: Havi
+        generate_report: Jelentés generálása
+        email: E-mail
+        'on': Be
+        daily: Napi
+        weekly: Heti
+      errors:
+        disabled: >-
+          Egyedi időintervallummal rendelkező jelentések ütemezése nem
+          lehetséges
     ticket_volume:
       resolved_tickets: Megoldott kérelmek
       received_tickets: Fogadott kérelmek
       total_unresolved_tickets: Minden megoldásra váró Jegy
       unresolved_tickets: Megoldásra váró Jegyek
       average_unresolved_tickets: Megoldásra váró Jegyek átlagos száma
+      time_trends:
+        year: év
+        week: hét
+        day: Nap
+        month: hónap
     date_range: Dátumtartomány
     ticket_activity:
       learn_more: Tudjon meg többet
+      helpnote:
+        api_info1: >-
+          Az API (alkalmazásprogramozási felület) összeköttetéssel rendelkezik a
+          legfrissebb exporthoz.
+      edit: Ütemezés szerkesztése
     filtered_by: 'Az alábbi szerint szűrve:'
     yesterday: Tegnap
     change: Változtat
+    time_period: Időszak kiválasztása
+    chats: Csevegések
+    more: Több...
+    no_data_to_display_msg: Nincs mit megjeleníteni
+    insights:
+      customize_link: Testreszabás
+    loading_text: Jelentés generálása...
+    this_week: A héten
+    agent_summary:
+      title: Ügyintéző Teljesítmény
+    generate: Generálás
+    this_month: Ez a hónap
+    edit_filter: Szűrő
+    year_in_review:
+      title: Az év értékelése
+    summary: Összefoglalás
+    show: 'Mutat:'
+    filter_by: 'Szűrési feltétel:'
+    timespent_export:
+      export_csv: CSV exportálás
+      button_export: Exportálás
+    performance_distribution:
+      title: Teljesítmény Megoszlás
+      resolution_bar: Megoldási idő
+      first_response_bar: Első válaszidő
+      response_bar: Átlagos válaszidő
+    group_summary:
+      title: Csoportteljesítmény
+    at: 'ekkor:'
+    customer_satisfaction:
+      title: Ügyfél elégedettség-jelentés
   no_badge_achieved_label: Nincsenek elért jelvények még.
   plan: Terv
   back_plans_billing: Vissza a Csomagok és számlázáshoz
@@ -5321,25 +6369,51 @@ hu:
     whats_new_in_freshdesk: ' Újdonságok a Freshdeskben '
     get_help: Segítség
     contact_us: Kapcsolat
+    load_more: További betöltése
   clear: Törlés
   password_confirmation: 'Jelszó megerősítés:'
   features:
     auto_ticket_assignment: Automatikus kérelem hozzárendelés
     custom_ssl: Egyedi SSL
     feedback_widget: Kontakt widget
+    bot: Bot
+    portal_customization: Portál testreszabása
+    gamification: Gamifikáció
+    parent_child: Fő-al kérelmek
+    scheduled_reports: Ütemezett jelentések
+    knowledge_base: Tudásbázis
+    phone_integration: Telefonintegráció
+    automations: Automatizálás
+    forums: Közösségi fórumok
+    custom_roles: Egyedi szerepek
+    ticket_templates: Kérelem sablonok
+    freshchat: Freshchat integráció
   admin_onboarding:
     modal:
       channels_frame:
         social_channel: Közösség
         forums_channel: Fórumok
         chat_channel: Chat beállítások
+        email_channel: E-mail
+        phone_channel: Telefon
+        title: Hogyan kommunikál ügyfeleivel manapság?
+        forward_link: Hívja meg csapatát
       agents_frame:
         send_invite: Meghívás küldése
         emails_invalid: 1 vagy több email cím érvénytelen.
+        emails_placeholder: 'bruce@just.ly, diana@just.ly, clark@just.ly'
+      overview_frame:
+        forward_link: Vágjunk bele!
+      welcome_frame:
+        title: Üdvözöljük a Freshdesk-en
     account_verification_message:
       helpnote_or: vagy
       modal_send_button: Aktiválás elküldése
       cancel_button: Mégse
+      modal_title: Nem megfelelő e-mail címmel regisztrált?
+      modal_invalid_email_error: 'Kérjük, érvényes email címet adjon meg.'
+      resend_message: Aktiváció újraküldése
+      change_email: e-mail módosítása
   linkback_info: >-
     Választhat egy saját linket a honlapjára, ha az ügyfél rákattint a fejléc
     logóra
@@ -5353,3 +6427,106 @@ hu:
     admin:
       save: Mentés
       cancel: Mégse
+      sidebar_title: Freshchat
+      action:
+        success_message: Beállítások frissítve
+      admin_apikey: 'API kulcs:'
+      title_text: Freshchat
+      portal_url: 'Portál URL:'
+      app_id: Applikáció ID
+  change_password: Jelszó megváltoztatása
+  mailer_notifier:
+    hi: 'Üdv,'
+    thanks: 'Köszönettel,'
+  copied_link: Másolva
+  enter_a_value: Adjon meg értéket
+  custom_mailbox_admin_email_notifications:
+    regards: 'Üdvözlettel,'
+    welcome_message: 'Tisztelt admin,'
+  custom_mailbox_error_type:
+    unkown_error: >-
+      Nem sikerült az e-mailek lekérése az egyéni e-mail szerverről. Kérjük,
+      írjon a support@freshdesk.com címre
+    ssl_errror: SSL hiba.
+    server_response_invalid: >-
+      A szerver érvénytelen formátumú választ adott a szerverhez való
+      csatlakozáskor.
+    unable_to_connect: Nem sikerül a postafiók mappáját csatlakoztatni.
+    tcp_connection: Nem sikerül létrehozni a TCP kapcsolatot.
+    tcp_refused: Az e-mail szerver elutasította a TCP kapcsolatot.
+    mailbox_idle: A postafiók nem támogatja az IDLE képességet.
+    unable_fetch_status: Nem sikerül lekérni a mappa állapotát.
+    io_error: I/O kapcsolati hiba.
+    mailbox_suspended: E-mail szerver felfüggesztve
+    server_no_resp: Az e-mail szerver a csatlakozás során NO választ küldött.
+    bye_response: Az e-mail szerver a csatlakozás során BYE választ küldött.
+    invalid_login: Érvénytelen bejelentkezési hitelesítő adatok.
+    folder_unavailable: A mappa nem érhető el a postafiókban.
+    tcp_socket: Nem sikerül létrehozni a TCP socketet az e-mail szerver számára.
+    email_bad_request: Az e-mail szerver a csatlakozás során BAD választ küldött.
+  imap_error: Az e-mail szerver nem érhető el
+  activations:
+    activate_freshdesk_account: Aktiválja fiókját
+  customer_import:
+    import_csv: '%{type} importálása CSV-ből'
+  cloud_log_mailer:
+    logger_email:
+      regards: 'Üdvözlettel,'
+      account: 'Fiók: '
+      reason: Ok
+  portals_key: Portálok
+  classic_label: Klasszikus
+  enable: Engedélyez
+  errors:
+    invalid_domain:
+      freshdesk: Freshdesk
+  make_payment: Fizetés
+  being_processed: Feldolgozás Folyamatban
+  helpcard:
+    title: Egyedi külső azonosító
+  admin_upgrade:
+    enable_mint_title: Engedélyezze az ügyintézőknek a frissebb és gyorsabb Mint élményt
+    enable_mint_error: >-
+      A Mint-et már engedélyezték az összes ügyintéző számára. Frissítsen a
+      legújabb beállítások megtekintéséhez.
+    enable_mint_success: Hurrá! Sikeresen engedélyezte a Mint-et az összes ügyintéző számára.
+  customize_domain:
+    email:
+      cheers: 'Köszi,'
+      team: Freshdesk csapat
+  profiles:
+    freshid_edit:
+      profile_details: Profiladatok
+  disable: Letiltás
+  add_more_lang: '''Támogatott nyelvek'' hozzáadása ügyfélszolgálatához.'
+  'on': 'ekkor:'
+  save_as: Mentés mint
+  currency_label: 'Pénznem :'
+  plain_on: Be
+  attachment_delete: Épp véglegesen törölni fogja ezt a mellékletet. Folytatja?
+  company_field:
+    helpcard:
+      title1: Céges mezőinek testreszabása
+  support_multi_languge: Több nyelvű ügyfélszolgálatot működtet?
+  user_notifications:
+    notification_preferences: Értesítési Beállítások
+    enable_desktop_notifications_help: Kérés esetén kattintson az 'Engedélyezés' gombra
+    mute: Némít
+    mark_all_as_read: Összes megjelölése olvasottként
+    header: Értesítések
+    preferences: Beállítások
+  at: 'ekkor:'
+  unblock: Kivétellista
+  ticket_templates:
+    create_new: Új létrehozása
+  in: itt
+  help_widget:
+    form_title: Kapcsolat
+    form_button_text: Értékelés küldése
+    form_submit_message: Köszönjük visszajelzését.
+    button_text: Súgó
+    welcome_message: Segíthetünk?
+    predictive_message: >-
+      Észrevettük, hogy elakadt. Ossza meg velünk mit szeretne végrehajtani és
+      ügyfélszolgálatunk a lehető leghamarabb felveszi Önnel a kapcsolatot.
+    success_message: Köszönjük. Hamarosan jelentkezünk!

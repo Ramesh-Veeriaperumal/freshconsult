@@ -55,7 +55,7 @@ vi:
       friendly_status:
         customer_responded: Đã trả lời khách hàng
         overdue: quá hạn
-        new: mới
+        new: Mới
         elapsed: phản hồi
         resolved: đã gỉai quyết
         customer_responded_overdue: Đã trả lời khách hàng
@@ -125,6 +125,7 @@ vi:
           addbcc: thêm BCC
           removebcc: bỏ BCC
           not_sent: Trả lời chưa gửi được!
+          to: 'Đến:'
         forward_form:
           cc: CC
           addcc: Thêm CC
@@ -197,6 +198,12 @@ vi:
         no_tickets: lúc này bạn không có tickets nào.
         unresolved: Tất cả vé yêu cầu chưa được giải quyết
         invalid_requester: Người yêu cầu không hợp lệ
+        shared_by_me: Phiếu tôi đã chia sẻ
+        shared_with_me: Phiếu chia sẻ với tôi
+        article_feedback: Phản hồi Bài viết
+        archived: Lưu trữ
+        raised_by_me: Vé yêu cầu tôi đã yêu cầu
+        my_article_feedback: Phản hồi Bài viết của tôi
     merge:
       merge:
         merge_into: Hợp nhất vào?
@@ -256,7 +263,7 @@ vi:
       customer: Khách hàng
       executed_at: Ngày
       hours: Giờ
-      agent: Agent
+      agent: chuyên viên
       note: Ghi chú
       billable_entry: Đánh dấu như một mục lập hoá đơn
       billing_type: Loại thanh toán
@@ -268,7 +275,7 @@ vi:
       priority: Ưu tiên
       status: Trạng thái
       report:
-        no_timeentry: Thông tin không tồn tại
+        no_timeentry: Không có sẵn dữ liệu
         total: Tổng
       form:
         start_timer: Bắt Đầu Đếm Giờ
@@ -379,6 +386,10 @@ vi:
       history:
         recent_item: mẩu tin gần đây
       update: cập nhật
+      do_not_link: Không liên kết
+      view_in_detail: Xem chi tiết
+      ok: Ok
+      hide_cc: Ẩn Cc
     dashboard:
       index:
         todo_title: To-Do
@@ -420,7 +431,7 @@ vi:
   date_title: Ngày
   status: Trạng thái
   sales: Sales
-  preview: Xem trước
+  preview: xem trước
   no_agents_in_selected_group: không có chuyên viên trong nhóm đã chọn
   send_feedback: Gửi phản hồi
   sidebar_help: Hỗ trợ
@@ -455,6 +466,9 @@ vi:
       asc: tăng dần
       desc: giảm dần
       recently_active: Hoạt động gần đây
+      agent_responded_at: chuyên viên phản hồi
+      requester_responded_at: khách hàng phản hồi
+    company: Công ty
   your_email: mail cu3a bạn
   please_wait: Xin vui lòng chờ...
   filter_options:
@@ -531,6 +545,8 @@ vi:
     events_empty: Những sự kiện không thể bỏ trống
     conditions_empty: Điều kiện không thể để trống
     actions_empty: Hành động không thể để trống
+    invalid_domain:
+      freshdesk: Freshdesk
   choose_a_plan: chọn kế hoạch
   upgrade_trial: Nâng cấp!
   upgrade_plan: Nâng cấp
@@ -567,6 +583,9 @@ vi:
         Xuất ticket mà bạn yêu cầu đã hoàn tất. Bạn có thể tải file <a
         href=%{url}> ở đây </a>. Nếu đường dẫn không tác dụng, hãy copy và dán
         URL bên dưới vào thanh địa chỉ trong trình duyệt của bạn
+    select_all: Chọn tất cả
+    select_header: Chọn tất cả các trường
+    view_all_tickets: Xuất dưới dạng CSV
   go_back: Trở về
   go_back_small: trỡ về
   add_note: Thêm ghi chú
@@ -684,6 +703,11 @@ vi:
     remove_profile_image_confirm: Bạn chắc chắn muốn xóa hình Profile này sao?
     phone_number: Số điện thoại
     add_photo: Thêm hình
+    industry: Ngành
+    last_name: Họ
+    first_name: Tên
+    company_name: Công ty
+    job_title: Chức vụ
   go_back_admin: Quay trở lại Admin
   social:
     facebook_pages:
@@ -732,7 +756,7 @@ vi:
           lý twitter của bạn.
         search: Tìm kiếm
         convert_to_ticket: Chuyển đổi ticket
-        reply: Phản hồi
+        reply: Trả lời
         show_more_results: Xem kết quả khác
         search_twitter: Tìm twitter
         title: tài khoản Twitter
@@ -775,9 +799,16 @@ vi:
         all: tất cả
       tooltip:
         convert_to_tkt: Chuyển đổi ticket
+        replied: Đã trả lời
+        db_contact: Liên hệ
       twitter:
         tickets: Ticket
+        post: ' đăng '
       search_btn: Tìm kiếm
+      compose: Soạn
+    welcome:
+      get_started: Bắt đầu
+      title: Hỗ trợ xã hội
   ticket_fields:
     fields:
       source: nguồn
@@ -785,15 +816,19 @@ vi:
       requester: Tìm người yêu cầu
       status: Trạng thái
       group: Nhóm
-      agent: Chuyên viên
+      agent: chuyên viên
       priority: ưu tiên
       description: Mô tả
       product: Sản phẩm
       ticket_type: Thể loại
       created_at: Đã tạo
       tags: tags
+      internal_group: Nhóm nội bộ
+      company: Công ty
+      internal_agent: Hỗ trợ viên nội bộ
+      skill: Kỹ năng
     saving_ticket: Đang lưu ticket
-    untitled: Untitled
+    untitled: Không có tiêu đề
     first_choice: Lựa chọn đầu tiên
     second_choice: Lựa chọn thứ hai
     confirm_delete: Bạn chắc chắn muốn xóa trường này không?
@@ -818,9 +853,9 @@ vi:
       behavior: Hành vi
       label: Tên của trường (field)
       nested_label: Tên field nằm phía trong
-      level1: Level 1
-      level2: Level 2
-      level3: Level 3
+      level1: Cấp 1
+      level2: Cấp 2
+      level3: Cấp 3
       nestedfield_helptext: >-
         Vui lòng dùng khu vực phía dưới để chỉnh sửa các lựa chọn của bản
         dropdown, Lùi đầu dòng các món bằng cách bấm nút Tab một hoặc hai lần,
@@ -834,7 +869,7 @@ vi:
       nestedfield_helptext_preview: >-
         Đây là "Preview" của một ví dụ của các món trong dropdown, dùng khu vực
         đánh chữ trong "Edit View" để chỉnh sửa các món
-      delete_field: Xóa field
+      delete_field: Xóa trường
       field_label_agents: Tên field cho chuyên viên
       field_label_customer: Tên field cho khách hàng
       add_new_choice: Thêm lựa chọn mới
@@ -850,7 +885,7 @@ vi:
       customer_visible: 'Khách hàng sẽ thấy như vầy:'
       description: Mô tả
       for_customer: Dành cho Khach Hàng
-      agent_mandatory_closure: Yêu cầu phải có khi đóng ticket
+      agent_mandatory_closure: Bắt buộc khi đóng phiếu
       choices: Lựa chọn
       label_in_portal_info: Tên được hiển thị trong hệ thống tự phục vụ
       display_cc_field: Xem field CC
@@ -883,6 +918,12 @@ vi:
       oops_btn: Rất tiếc!
       section_has_fields: Phần có các trường
       delete_field_section: Xóa trường khỏi phần mục tiêu
+      ok_btn: OK
+      confirm_btn: Xác nhận
+      confirm_text: Vui lòng xác nhận...
+    confirm_deletion: >-
+      Cảnh báo! Bạn sẽ mất các dữ liệu liên quan đến trường này ở tất cả các vé
+      yêu cầu cũ vĩnh viễn. Bạn có chắc bạn muốn xóa trường này không?
   all_due: Quá hạn
   due_today: Hômnay
   due_tomo: Ngày mai
@@ -923,7 +964,7 @@ vi:
     disabled: bị vô hiệu hóa
     enabled: Đã kích hoạt
     configure: cấu hình
-    enable: cho phép
+    enable: Kích hoạt
     click_to_disable: không tích hợp được
     click_to_enable: có thề tích hợp
     confirm_disable: bạn có chắc là muốn vô hiệu hóa tích hợp này?
@@ -932,6 +973,7 @@ vi:
     tooltip:
       edit: Chỉnh sửa
       settings: Cài đặt
+    connect: Kết nối
   home:
     mobile_index:
       email: email
@@ -952,7 +994,7 @@ vi:
   settings: Thiết lập
   cancel: Hủy
   updated_on: '%{user_name} cập nhật lúc %{note_date}'
-  confirm: Xác Nhận
+  confirm: Xác nhận
   mobile:
     home:
       remember: Nhớ tôi
@@ -1012,7 +1054,7 @@ vi:
         freshbooks_note_info: >-
           Văn bản này sẽ được nối vào cuối của các lưu ý, với thời gian đăng
           nhập.
-        api_url: API URL
+        api_url: URL API
         api_key: Mã xác thực
         widget_title: têu đề lợi ích
         api_url_info: >-
@@ -1039,10 +1081,10 @@ vi:
         Nhập thành công địa chỉ liên lạc của Google.
         Tình trạng:%{added} đã thêm, %{updated} đã cập nhật và  %{deleted} xóa
       fetch_problem: Trong vấn đề lấy địa chỉ liên lạc của Google.
-      import: nhập vào
+      import: Nhập
       account_not_configured: Tài khoản Google không được cấu hình đúng. Vui lòng thử lại.
       OVERWRITE_LOCAL_small: Xuất
-      OVERWRITE_REMOTE_small: nhập khẩu
+      OVERWRITE_REMOTE_small: Nhập
       MERGE_LOCAL_small: Hợp nhất (Freshdesk ưu tiên)
       MERGE_REMOTE_small: Sáp nhập (Google ưu tiên)
       OVERWRITE_LOCAL: >-
@@ -1173,9 +1215,9 @@ vi:
       form:
         salesforce_settings: thiết lập salesforce
         select: chọn 1 cách
-        contact: Các trường liên lạc
+        contact: Trường Liên hệ
         lead: Các trường hướng dẫn
-        account: Phạm vi tài khoản
+        account: Trường Tài khoản
         salesforce_settings_info: Làm sao để sử dụng Webhooks?
     nimble:
       label: Nimble
@@ -1184,7 +1226,7 @@ vi:
       label: Zoho CRM
       desc: Bạn có thể xem thông tin liên lạc từ Zoho crm trong Freshdesk.
       form:
-        api_key: Auth Token
+        api_key: Mã xác thực
         api_key_info: >-
           <a
           href='http://www.zoho.com/crm/help/api/using-authentication-token.html#Generate_Auth_Token'
@@ -1212,6 +1254,9 @@ vi:
         widget_title: têu đề lợi ích
         username: Tên đăng nhập
         password: Mật khẩu
+        lead: Các trường hướng dẫn
+        account: Trường Tài khoản
+        contact: Trường Liên hệ
     google_calendar:
       label: Google Calendar
       desc: Bạn có thể quản lý sự kiện cho mỗi ticket với Google Calendar
@@ -1310,6 +1355,7 @@ vi:
       form:
         widget_title: tên tiện ích
         create_n_enable: Tạo và Kích hoạt
+        insert_placeholder: Thêm khu vực trống
       get_custom_apps: Tải ứng dụng tùy chỉnh
       edit_custom_app: Chỉnh sửa ứng dụng tùy chỉnh
       new_custom_app: Ứng dụng tùy chỉnh mới
@@ -1363,7 +1409,7 @@ vi:
         app_id: ID ứng dụng
         username: iContact Username
         api_password: mật khậu API
-        api_url: API URL
+        api_url: URL API
         api_url_info: >-
           Để có được URL API của bạn, hãy để
           https://app.icontact.com/icp/core/externallogin và sao chép URL API từ
@@ -1381,8 +1427,15 @@ vi:
     ilos:
       settings:
         for_agents: Dành cho hỗ trợ viên
+        for_customer: Dành cho Khach Hàng
       messages:
         video_desc: Mô tả
+      portal_ticket:
+        placeholder: 'Phiếu#'
+      agent_ticket:
+        placeholder: 'Phiếu#'
+      solution:
+        placeholder: 'Điều khoản#'
     dynamics_v2:
       form:
         username: Tên đăng nhập
@@ -1392,6 +1445,7 @@ vi:
       form:
         account_settings: Làm sao để sử dụng Webhooks?
         account_settings_info: Làm sao để sử dụng Webhooks?
+        quickbooks_note: ghi chú văn bản
       connect_text: >-
         Việc kết nối với QuickBooks sẽ giúp hỗ trợ viên dễ dàng truy cập và cập
         nhật dữ liệu ngay từ dịch vụ trợ giúp của bạn.
@@ -1428,6 +1482,11 @@ vi:
     dynamicscrm:
       form:
         password: Mật khẩu
+        contact_email: Email Liên hệ
+        lead: Các trường hướng dẫn
+        region: Khu vực
+        account: Trường Tài khoản
+        contact: Trường Liên hệ
     screen_pop:
       widget:
         view_all: Xem tất cả
@@ -1444,6 +1503,8 @@ vi:
         subject: Tiêu đề
         recent_tickets: Vé yêu cầu gần đây
         ticket_reference_id: ID tham chiếu cuộc gọi
+        do_not_link: Không liên kết
+        create: Tạo
     hootsuite:
       send: Gửi phản hồi
       filter:
@@ -1458,19 +1519,35 @@ vi:
       login:
         password: Mật khẩu
         email: email
+      reply_btn: Trả lời
+      reset: Đặt lại
+      domain:
+        continue_to_login: Tiếp tục để đăng nhập
+      search:
+        ticket_id: ID vé yêu cầu
+        keyword: Từ khóa
+      header:
+        reply: Trả lời
     custom_apps:
       ticket_detail_page: Trang chi tiết vé yêu cầu
       preview_helptext: Ứng dụng tùy chỉnh này sẽ xuất hiện trong thanh bên
       custom_app_used_in: Ứng dụng tùy chỉnh được hiển thị trên
       contact_detail_page: Trang chi tiết liên hệ
       custom_app_preview: Xem trước ứng dụng tùy chỉnh
+      hide_preview: Ẩn xem trước
+      refresh: Làm mới
+      show_preview: Hiển thị xem trước
     infusionsoft:
       form:
         infusionsoft_settings_info: Làm sao để sử dụng Webhooks?
         select: chọn 1 cách
+        contact: Trường Liên hệ
+        account: Trường Tài khoản
     seoshop:
       form:
         language: ngôn ngữ
+        nl: Nederlands
+        en: Tiếng Anh
     cti_admin:
       save_agent_private_note: Lưu ghi chú cuộc gọi dưới dạng riêng tư
       ctd_toggle: Cấu hình nhấp chuột để quay số
@@ -1505,16 +1582,24 @@ vi:
     uninstall: Gỡ bỏ
     github_settings:
       resolved: đã gỉai quyết
+      none: Không làm gì
+      closed: đóng
     magento:
       form:
         product: Sản phẩm
     salesforce_v2:
       form:
         salesforce_v2_settings_info: Làm sao để sử dụng Webhooks?
+        salesforce_v2_settings: thiết lập salesforce
     freshsales:
       form:
         auth_token: Mã xác thực
         select: chọn 1 cách
+        deal: Trường Giao dịch
+        lead: Các trường hướng dẫn
+        domain: Miền tài khoản
+        account: Trường Tài khoản
+        contact: Trường Liên hệ
     outlook_contacts:
       form:
         mail_box_detail: đồng bộ với
@@ -1531,6 +1616,42 @@ vi:
         delete_account: xóa
         last_sync_time: thời gian đồng bộ cuối
         syncing_in_progress: dang tiến hành đồng bộ
+    remote_login:
+      connect: Kết nối
+      sign_up: Đăng ký
+    applications:
+      crm:
+        mapping:
+          company: Công ty
+          contact: Liên hệ
+          contact_fields: ' Trường Liên hệ '
+          account_fields: ' Trường Tài khoản '
+    google_drive:
+      form:
+        developer_key: Đã thu được khóa API từ Google Developers Console.
+        client_id: ID ứng dụng OAuth cho miền của bạn
+    shopify:
+      edit:
+        disconnect: Ngắt kết nối
+    microsoft_teams:
+      auth_btn: Ủy quyền
+    slack_v3:
+      slack_prof_label: Kết nối với Slack
+      slack_connect_desc: Định cấu hình tài khoản của bạn để tạo vé yêu cầu Slack từ Slack
+      slack_auth_btn: Ủy quyền Slack
+    slack_v2:
+      form:
+        slash_command_token: Mã thông báo lệnh gạch chéo
+    pivotal_tracker:
+      label: Pivotal Tracker
+    cloud_elements:
+      form:
+        lead: Các trường hướng dẫn
+        daily: Hàng ngày
+        account: Trường Tài khoản
+        field_mapping: Ánh xạ trường
+        hourly: Hàng giờ
+        contact: Trường Liên hệ
   agent_emailnotverified: Email của chuyên viên này chưa được xác nhận!
   agent_assigned_info: Chuyên viên này không có ticket OPEN hoặc PENDING
   basic_details: >-
@@ -1585,7 +1706,7 @@ vi:
         help: Hỗ trợ
     shared:
       attachment_form:
-        feedback_widgets_screenshot: chụp màn hình
+        feedback_widgets_screenshot: Chụp màn hình
       survey_form:
         survey_title: Xin vui lòng nén lại một phút để đánh giá dịch vụ của chúng tôi
         feedback_title: >-
@@ -1600,6 +1721,8 @@ vi:
       email: Email của bạn *
       comments: Bình luân
       send_feedback: Gửi phản hồi
+      related_files: Tệp tin liên quan
+      was_this_article_useful: Bài viết này có hữu ích không?
     surveys:
       thanks_for_feedback: 'Chúng tôi đã nhận được góp ý của bạn. Xin cám ơn. '
       feedback_already_done: Bạn đã góp ý phần này rồi.
@@ -1617,9 +1740,13 @@ vi:
           Và thêm nữa, bạn có thể chia sẽ trải nghiệm của bạn khi tương tác với
           chúng tôi.
         submit: Gửi
+        neutral_information: Mong bạn hài lòng hơn.
     canned_form:
       next: Tiếp
       form_submit: Gửi
+      okay: Ok
+      hey: Chào bạn
+      thank_you_text: Xin cám ơn
   gamification:
     levels:
       beginner: người mới bắt đầu
@@ -1765,6 +1892,7 @@ vi:
         ticket: đang giải quyết <br /> <<strong> tickets </strong>
         solution: đang đề xuất <br /><strong> giải pháp </strong>
         forum: Tương tác với <br /><strong>Cộng Đồng</strong>
+        change: Thay đổi
     gamification:
       successfully_updated: thiết lập gamification đã cập nhật thành công
       error_updated: có lỗi khi cập nhật gamification.
@@ -1815,6 +1943,7 @@ vi:
           Hài Lòng của Khách Hàng trong trang Giải Pháp của chúng tôi. </p>
       index:
         title: thiết lập mái vòm
+        start_over: Đặt lại
       gamification_settings:
         agent_resolves_ticket: khi chuyên viên <br /> đã giải quyết một ticket
         bonus_points_for: 'điểm thưởng cho:'
@@ -1859,6 +1988,13 @@ vi:
         save_survey: lưu
         edit: Chỉnh sửa
         active_delete_tooltip: Không thể xóa cuộc khảo sát đang hoạt động
+        hide: Xóa
+        new: Mới
+        update: uập nhật
+        confirm_text: Vui lòng xác nhận...
+        activate_survey: Kích hoạt
+        preview_survey: xem trước
+        custom_title_v2: Khảo sát sự hài lòng của khách hàng
       satisfaction_settings:
         enable_label: Khảo sát sự hài lòng của khách hàng
         link_text_label: Đường dẫn đến phiếu khảo sát
@@ -1883,6 +2019,7 @@ vi:
           Giao diện của Cổng sẽ được áp dụng cho trang này. <a target='_blank'
           href='https://support.freshdesk.com/solution/articles/217757-customizing-your-thank-you-page'>Làm
           thế nào để thay đổi giao diện?</a>
+        title_text_v2: Cảm ơn bạn đã gửi tin nhắn về Khảo sát Mức độ hài lòng của Khách hàng
       choice_contents:
         extremly_dissatisfied: Rất không hài lòng
         mostly_dissatisfied: Không hài lòng
@@ -1893,6 +2030,18 @@ vi:
         neutral_v2: Không có ý kiến
       new_thanks:
         thanks_feedback_v2: Phản hồi của bạn đã được gởi đến chúng tôi. Cảm ơn
+        thanks_message_feedback_v2: Cảm ơn bạn đã gửi tin nhắn về phản hồi bổ sung
+        additional_comments_feedback_v2: Bao gồm hộp nhận xét bổ sung
+      new_layout:
+        title: Tên khảo sát
+        bad_to_good: Xấu đến tốt
+        loading: Đang tải...
+        survey: Khảo sát
+        good_to_bad: Tốt đến xấu
+      new_questions_layout:
+        questions: Câu hỏi
+      new_rating:
+        error_text: Trường này là bắt buộc
     getting_started:
       send_mail_content:
         test_info_1: mọi thứ vẫn ổn chứ?? hãy thử gửi mail test
@@ -1939,7 +2088,7 @@ vi:
           Freshdesk. Nhiều email bằng dấu phẩy.
         rebrand_subtitle: Tái thương hiệu với logo và màu sắc của bạn!
         rebranding_header: Nhập tên ưa thích cho helpdesk của bạn
-        helpdesk_preview_text: 'xem trước '
+        helpdesk_preview_text: xem trước
         social_info_text: >-
           Thêm tài khoản Facebook và Twitter của bạn để bắt đầu theo dõi tất cả
           các tương tác xã hội của bạn, và mang lại bài viết tường, tweet của
@@ -1972,7 +2121,7 @@ vi:
         rebrand_color_header: tiêu đề
         rebrand_color_tabs: tabs
         rebrand_color_background: nền
-        rebrand_submit_label: Rebrand
+        rebrand_submit_label: Tái cấu trúc thương hiệu
         admin_title: mọi thứ đều tốt??
         admin_sub_title: >-
           Đừng quên kiểm tra tất cả các tính năng under-the-hood, bạn có thể
@@ -2008,6 +2157,13 @@ vi:
         bulk_invite_blocked: >-
           Ở trang này bạn chỉ có thể thêm tối đa là 25 Chuyên viên. Nếu muốn
           thêm nhiều hơn thì vào phần quản trị của hệ thống.
+        title_message: Bắt đầu nhanh dịch vụ hỗ trợ khách hàng của bạn theo bốn bước...
+        info2: Bạn không hài lòng? Hãy nhập email mới và nhấn "Lưu"
+        social_subtitle: Hãy làm dịch vụ hỗ trợ khách hàng của bạn mang tính mạng xã hội!
+        footer_msg: >-
+          <strong>Lưu ý:<strong> Bạn có thể thay đổi các cài đặt này bất kỳ lúc
+          nào bằng cách chuyển đến <a href='/admin/home' target='_blank'
+          style='text-decoration:none; color:#1272DE'>Tab quản trị</a>
     day_passes:
       helpnote:
         title: ngày sử dụng
@@ -2030,6 +2186,9 @@ vi:
         helptext: hạn sử dụng sẽ tự động nạp tiền khi ngày dùng đến mức 2
         email: email
         all: tất cả
+        agent: chuyên viên
+        date: Ngày
+        filtered_by: 'Lọc theo:'
     widget_config:
       index:
         feedbackwidget_embedded_tab: nhúng tiện ích
@@ -2065,9 +2224,39 @@ vi:
         feedbackwidget_mobile_view: Xem trên di động
       popup_widget:
         feedbackwidget_attach_a_file: kèm tập tin
+        feedbackwidget_button_type: Loại button
+        feedbackwidget_submit_title: Gửi phản hồi
+        feedbackwidget_button_customization: Nút đặc chế
+        thankyou_default: Cám ơn phản hồi của bạn
+        feedbackwidget_form_submit_message: Tin nhắn mẫu trình bày
+        feedbackwidget_screenshot: Chụp màn hình
+        feedbackwidget_form_customization: Mẫu đặc chế
+        feedbackwidget_image_button: Button có hình
+        thankyou_info: Tin nhắn đã được hiển thị sau một user trình bày mẫu ticket
+        feedbackwidget_offset: 'Thẳng góc:'
+        feedbackwidget_search_area: Mục tìm kiếm
+        feedbackwidget_popup_code: Mã xuất hiện tiện ích
+        feedbackwidget_use_https: Sử dụng https
+        feedbackwidget_text_button: Button bằng chữ
+        feedbackwidget_form_height: chiều cao mẫu
+        feedbackwidget_button_text_placeholder: Hỗ trợ
+        feedbackwidget_form_height_message: >-
+          Nếu bạn thấy thanh kéo trong tiện ích của bạn, chỉ cần chỉnh chiều cao
+          lại cho phù hợp.
       embedded_widget:
         feedbackwidget_embedded_code: Mã tiện ích đã được nhúng vào
         feedbackwidget_attach_a_file: kèm tập tin
+        feedbackwidget_submit_title: Gửi phản hồi
+        thankyou_default: Cám ơn phản hồi của bạn
+        feedbackwidget_form_submit_message: Tin nhắn mẫu trình bày
+        feedbackwidget_form_customization: Mẫu đặc chế
+        thankyou_info: Tin nhắn đã được hiển thị sau một user trình bày mẫu ticket
+        feedbackwidget_search_area: Mục tìm kiếm
+        feedbackwidget_use_https: Sử dụng https
+        feedbackwidget_form_height: chiều cao mẫu
+        feedbackwidget_form_height_message: >-
+          Nếu bạn thấy thanh kéo trong tiện ích của bạn, chỉ cần chỉnh chiều cao
+          lại cho phù hợp.
     supervisor_rules:
       info_help: >-
         Cho<b>mỗi ticket</b>đã được cập nhật 30 ngày, Thi hành các nguyên tắc
@@ -2160,15 +2349,18 @@ vi:
         unchecked: Không có kiểm tra
         deselected: Đã xóa
       anyone: Bất kỳ ai
+      system: Hệ thống
     va_rules:
       index:
         human_name: Dispatch’r Rule
     webhook:
-      jira_hook_title: JIRA Issue Creation
+      jira_hook_title: Tạo sự cố JIRA
       hipchat_hook_title: Thông báo hipchat
       hipchat_hook_description: >-
         Bạn có thể gửi ra một tin nhắn đến phòng HipChat bất cứ khi nào từ người
         yêu cầu gửi trả lời trong ticket ở Freshdesk.
+      jira_hook_alt: Yêu cầu đăng bài tạo sự cố JIRA
+      hipchat_hook_alt: Yêu cầu Hipchat Pinging GET
     shared:
       filter_jsinit:
         change_password: Thay đổi mật khẩu
@@ -2202,6 +2394,7 @@ vi:
         checked: Đã kiểm tra
         unchecked: Không kiểm tra
         deselected: Đã loại bỏ
+        webhook_usecase: Trường hợp sử dụng webhook
     automations:
       index:
         human_name: Kịch bản
@@ -2299,6 +2492,10 @@ vi:
           cập nhật.
         password_policy: Chính sách mật khẩu
         for_agents: Dành cho hỗ trợ viên
+        for_contacts: Dành cho Liên hệ
+        thanks_message: >-
+          <span class='thanks_message'> Cảm ơn bạn đã yêu cầu chứng chỉ SSL tùy
+          chỉnh.</span> <br />
       helpnote:
         title: Cài đặt bảo mật
         info3: >-
@@ -2306,6 +2503,15 @@ vi:
           cổng hỗ trợ từ máy tính hoặc tổ chức của bạn. Bạn có thể thêm không
           giới hạn con số phạm vi của IP để mà truy cập, bạn muốn điều khiển
           quyền truy cập khách hàng hoặc các chuyên viên cũng được.
+        trusted_ip: >-
+          <b>Hạn chế quyền truy cập theo địa chỉ IP</b><br>Bạn có thể hạn chế
+          quyền truy cập vào cổng hỗ trợ của bạn trong phạm vu địa chỉ IP từ
+          công ty hoặc tổ chức của bạn. Bạn có thể thêm số lượng IP không hạn
+          chế có quyền truy cập, cũng như xác định xem bạn có muốn kiểm soát
+          quyền truy cập cho khách hàng hay không hoặc chỉ cho hỗ trợ viên của
+          bạn. <a
+          href="https://support.freshdesk.com/support/solutions/articles/195168"
+          target="_top"> Tìm hiểu thêm.</a>
       password_security:
         passwords: mật khẩu
         session_expiry: Phiên người dùng hết hạn sau
@@ -2377,6 +2583,9 @@ vi:
         settings: Cài đặt
         save_and_customize: Lưu và Tùy chỉnh cổng thông tin
         customize_portal: Tùy chỉnh cổng thông tin
+        portal_customization: Tùy chỉnh cổng thông tin
+        customer_portal: Portal khách hàng
+        edit_portal: Chỉnh sửa cổng thông tin
       edit:
         title: chỉnh sửa sản phẩm
         updating: Đang cập nhật...
@@ -2483,6 +2692,8 @@ vi:
         customers: Khách hàng
         reports: Các báo cáo
         administration: Quản trị
+        general: Tổng quát
+        bots: Bot
       permissions: quyền truy cập
       helpcard:
         title1: Hiểu các quy tắc
@@ -2550,6 +2761,11 @@ vi:
       cancel_label: Hủy
       done_label: Hoàn Tất
       save_label: lưu
+      agent_label: chuyên viên
+      saving_label: Đang lưu
+      manage_label: Quản lý
+      add_label: Thêm
+      no_agent_label: Không có hỗ trợ viên nào
     home:
       index:
         group: Nhóm
@@ -2594,20 +2810,47 @@ vi:
         billing: Kế hoạch & Thanh toán
         freshfone: Freshfone
         tags: Các thẻ
+        search_admin: Cài đặt quản trị tìm kiếm
     skills:
       index:
         agents_label: các chuyên viên
         agents: các chuyên viên
         description: Mô tả
+        skills: Kỹ năng
+        agent_label: chuyên viên
+        add_agents: Thêm chuyên viên
+        skill_create: Tạo
+        manage_label: Quản lý
+        add_label: Thêm
+        no_agent_label: Không có hỗ trợ viên nào
     user_skills:
       index:
         more: thêm
+        any: Bất kỳ
+        groups: Nhóm
     contact_fields:
       formfield_props:
         for_agents: Dành cho hỗ trợ viên
         field_label_agents_level2: Nhãn cấp 2 cho hỗ trợ viên
         field_label_customer_level2: Nhãn cấp 2 cho khách hàng
         default: Mặc định
+        behavior: Hành vi
+        customer_edit: Khách hàng có thể chỉnh
+        field_label_agents: Tên field cho chuyên viên
+        validate_regexp: Xác nhận bằng biểu thức thông dụng
+        for_customer: Dành cho Khach Hàng
+        label: Nhãn
+        customer_visible: Hiển thị cho khách hàng
+        customer_mandatory: Yêu cầu phải có khi gửi đơn
+        regexp: Biểu thức thông dụng
+        field_label_customer: Tên field cho khách hàng
+        dropdown_choices: Mục danh sách thả xuống
+        customer_edit_signup: Khách hàng có thể xem mục này khi họ Đăng ký
+        add_new_choice: Thêm mục
+        agent_mandatory_submission: Yêu cầu phải có khi gửi đơn
+        delete_field: Xóa trường
+        form_title: Thuộc tính
+        mapped_internal_groups: Nhóm nội bộ được ánh xạ
     portal:
       settings:
         signup_login: Người dùng đăng ký và đăng nhập
@@ -2619,11 +2862,81 @@ vi:
         simple_none: không
         everyone: Tất cả mọi người
         allow_signin: Cho phép người dùng đăng nhập bằng...
+        moderate_none_help: >-
+          Bật tính năng này nếu bạn chắc chắn rằng cộng đồng của mình không có
+          những kẻ gửi spam.
+        google: Google
+        notify_agents: 'Gửi thông báo kiểm duyệt và spam tới:'
+        view_forums: Ai có thể xem diễn đàn
+        important: Quan trọng
+        moderate_links_help: >-
+          Bật tính năng này để bảo vệ chống spam nâng cao. Hệ thống sẽ kiểm tra
+          tất cả các chủ đề và trả lời để tìm liên kết của bên thứ ba và các
+          hoạt động spam khác.
+        moderate_all: Kiểm duyệt tất cả chủ đề và câu trả lời
+        moderate_links: Kiểm duyệt tất cả chủ đề và câu trả lời chứa liên kết bên ngoài
+        moderate_none: Không kiểm duyệt
+        twitter: Twitter
+        view_settings: Xem cài đặt
+        restricted_login_signup: >-
+          Việc đăng ký và đăng nhập đã được hạn chế trong phạm vi các miền cụ
+          thể
+        facebook: Facebook
+        moderation: Kiểm duyệt diễn đàn
+        view_solutions: Ai có thể xem giải pháp
+        auto_suggest_solutions_help: >-
+          Chức năng này cũng áp dụng cho tính năng tìm kiếm bên trong tiện ích
+          phản hồi.
+        auto_suggest_solutions: Tự động đề xuất giải pháp khi tạo vé yêu cầu mới
+        reset_portal_changes: Đặt lại thay đổi cổng thông tin
+        moderate_all_help: >-
+          Bật tính năng này nếu bạn muốn kiểm soát nghiêm ngặt mọi bài đăng được
+          tạo trong cộng đồng của mình.
+      helpnote:
+        exit_fullscreen: Thoát chế độ toàn màn hình
+        editor_shortcuts: Lối tắt đến Trình chỉnh sửa
+        preview_changes: Xem trước thay đổi
+        editor_in_fullscreen: Trình chỉnh sửa ở chế độ toàn màn hình
+        level_customizations: Tùy chỉnh cấp trang
+        advanced_rebranding: Tái cấu trúc thương hiệu và tùy chỉnh nâng cao
+        custom_stylesheets: Đang sử dụng biểu định kiểu tùy chỉnh
     company_fields:
       formfield_props:
         for_agents: Dành cho hỗ trợ viên
         default: Mặc định
         description: Mô tả
+        behavior: Hành vi
+        customer_edit: Khách hàng có thể chỉnh
+        field_label_agents: Tên field cho chuyên viên
+        dropdown_items_edit: Các món dropdown - chỉnh sửa
+        validate_regexp: Xác nhận bằng biểu thức thông dụng
+        for_customer: Dành cho Khach Hàng
+        label: Nhãn
+        cc_company_contacts: Có thể CC contacts của công ty
+        customer_visible: Hiển thị cho khách hàng
+        cc_any_email: Có thể CC email tùy chọn
+        customer_mandatory: Yêu cầu phải có khi gửi đơn
+        sla_timer: Đếm giờ SLA
+        regexp: Biểu thức thông dụng
+        field_label_customer: Tên field cho khách hàng
+        level2: Cấp 2
+        nestedfield_helptext_preview: >-
+          Đây là "Preview" của một ví dụ của các món trong dropdown, dùng khu
+          vực đánh chữ trong "Edit View" để chỉnh sửa các món
+        dropdown_items_preview: Các món dropdown - xem trước
+        dropdown_choices: Mục danh sách thả xuống
+        agent_mandatory_closure: Bắt buộc khi đóng phiếu
+        level3: Cấp 3
+        display_cc_field: Xem field CC
+        customer_edit_signup: Khách hàng có thể xem mục này khi họ Đăng ký
+        status_choices: Lựa chọn cho Trạng Thái
+        add_new_choice: Thêm mục
+        nested_label: Tên field nằm phía trong
+        agent_mandatory_submission: Yêu cầu phải có khi gửi đơn
+        level1: Cấp 1
+        display_to_customer: Hiển thị nội dung cho khách hàng
+        delete_field: Xóa trường
+        form_title: Thuộc tính
     social:
       streams:
         visibility:
@@ -2633,6 +2946,30 @@ vi:
           reauthorize: Ủy quyền lại
           edit: Chỉnh sửa
         update: cập nhật
+        index:
+          new_account: Tài khoản mới
+      twitter_streams:
+        new:
+          create: Tạo
+        edit:
+          visible_to: Hiển thị cho
+      ticket_rules:
+        assign_to_gp: Giao cho Nhóm
+    ecommerce:
+      new:
+        account_name: tên tài khoản
+        title: Tài khoản mới
+        assign_group: Giao cho Nhóm
+      index:
+        new_account: Tài khoản mới
+      index_title: Thương mại điện tử
+    hotline:
+      content3:
+        note_title: 'Lưu ý:'
+    mobihelp:
+      apps:
+        form:
+          saving: Đang lưu
   widgets:
     contact_widget:
       description: Hiển thị một số liên lạc hoặc tùy chọn để thêm số liên lạc vào capsule
@@ -2645,6 +2982,8 @@ vi:
         feedback_widgets_help_articles: Hoặc trình duyệt giúp cho các mục
         show_all_results: Hiển thị tất cả các kết quả
         no_results_for: 'Không có kết quả nào cho %{term}'
+        no_results: 'Không có kết quả nào cho '
+        problems_with_fields: 'Chúng tôi gặp chút trở ngại với các trường (fields) này:'
   reorder: sắp xếp lại
   reports:
     no_data: Không có dữ liệu để hiển thị!
@@ -2664,14 +3003,15 @@ vi:
     reports_by: Báo cáo bởi
     select_time_period: Chọn khoảng thời gian
     generate_button: tạo ra
-    pie_chart_title_prefix: 'Tickets By '
+    pie_chart_title_prefix: 'tickets bởi '
     timeline_chart_title: tickets được nhận và giải quyết
     customer_activity_title: báo cáo hoạt động
     helpdesk_activity_title: hoạt động báo cáo của helpdesk
     satisfaction_title: sự hài lòng của báo cáo
     time_sheets:
-      filter_by_title: Được lọc bởi
-      time_period: Chu kỳ
+      filter_by_title: được lọc bởi
+      time_period: Khoảng thời gian
+      billable: Giờ có thể lập hóa đơn
     summary_report:
       back_to_reports: quay trở lại báo cáo
       show_report: Hiển thị báo cáo
@@ -2754,12 +3094,59 @@ vi:
         total_responses_v2: Tổng
         overview: Tổng quan
         all: tất cả
+        time_period: Khoảng thời gian
+        neutral: Trung lập
+        survey_name: Tên khảo sát
+        agent: chuyên viên
+        positive: Tích cực
+        group: Nhóm
+        overall_rating: Đánh giá
+        responses: Phản hồi
+        negative: Tiêu cực
+        no_overview: Không có sẵn dữ liệu
+        unanswered: Chưa được trả lời
+        answered: Đã được trả lời
+        rating: Đánh giá
     livechat:
       total_chats: Tổng
+      time_period: Khoảng thời gian
+      chat_type: Loại trò chuyện
+      answered_chats: Đã được trả lời
+      select_widget: Chọn tiện ích
+      agent_chat_summary: Tóm tắt trò chuyện của hỗ trợ viên
+      missed_chats: Bị nhỡ
+      group: Nhóm
+      filter_close: Đóng
+      avg_handle_time: Thời gian xử lý trung bình
+      filter_report: chỉnh sửa bộ lọc
+      num_of_transfer: Chuyển
+      avg_time_queue: Thời gian xếp hàng
+      num_of_chats: Số cuộc trò chuyện
+      select_chat_type: Chọn loại trò chuyện
+      generate_summary: tạo ra
+      widget: Tiện ích
+      filter_by_title: được lọc bởi
     freshfone:
       business_hours: Giờ làm việc
       options:
         unassigned: được giao
+        all_groups: Tất cả các nhóm
+        incoming: Cuội gọi tới
+        outgoing: Cuội gọi đi
+      time_period: Khoảng thời gian
+      no_agent: '- Không có hỗ trợ viên nào -'
+      group: Nhóm
+      call_type: Loại cuộc gọi
+      filter_option_all_calls: Tất cả cuộc gọi
+      filter_close: Đóng
+      avg_handle_time: Thời gian xử lý trung bình
+      all_numbers: Tất cả các số
+      filter_report: chỉnh sửa bộ lọc
+      number: Số
+      generate_summary: tạo ra
+      unanswered_count: Chưa được trả lời
+      filter_by_title: được lọc bởi
+    discard_changes: Hủy Bỏ
   delete_the_ticket: xóa ticket
   mark_as_spam: Đánh dấu là Spam
   bulk_actions: các hoạt động lớn
@@ -2786,6 +3173,7 @@ vi:
         được nhìn thấy người yêu cầu, trong khi phần còn lại của văn bản sẽ trở
         thành một phần của cuộc đàm thoại
       ticket_type_example: câu hỏi
+      note: chú ý
   email_command_delimeter_label: Email lệnh Delimiter
   email_command_preview_to_email: đến
   email_command_preview_to_email_value: support@acme.freshdesk.com
@@ -2816,6 +3204,8 @@ vi:
   search:
     no_results_msg: Không tìm thấy
     in: trong
+    by: 'bởi:'
+    searching: Đang tìm kiếm
   assumed_identity_msg: 'Bạn cho rằng nhận dạng của bạn như %{user_name}'
   assuming_identity_user_does_not_exist_msg: user không tồn tại
   assuming_identity_not_allowed_msg: user đã có người dùng
@@ -2841,7 +3231,7 @@ vi:
   fwd_success_msg: ticket đã được chuyển thành công
   validate_fwd_to_email_msg: Vui lòng nhập một địa chỉ email hợp lệ
   use_reply_option: Vui lòng sử dụng Trả lời tùy chọn để gửi một email cho người yêu cầu
-  index_tooltip_loading_msg: đang tải...
+  index_tooltip_loading_msg: Đang tải...
   being_processed: được tiến hành
   awaiting_your_reply: Đang chờ trả lời của bạn
   this_ticket_has_been_resolved: ticket đã được giải quyết
@@ -2885,8 +3275,8 @@ vi:
     %{cc_emails_key} %{bcc_emails_key}</ul>
   clear: xóa
   saved_draft: lưu
-  saving_draft: đang lưu
-  saving: đang lưu...
+  saving_draft: Đang lưu
+  saving: Đang lưu
   draft: bản thảo
   last_draft: bản thảo cuối
   clear_draft_text: bạn có chắc là xóa hết các bản thảo?
@@ -2928,6 +3318,7 @@ vi:
       Không có hồi đáp trong thư mục này <a href=%{link} id='new_resp'> tạo
       mới</a>
     select_folder: chọn thư mục
+    insert_placeholder: Thêm khu vực trống
   portalcss:
     reset_all_changes: Thiết lập lại tất cả những thay đổi
     reset_all_confirm_message: >-
@@ -2952,6 +3343,7 @@ vi:
       header_layout_help_message: Thay đổi khu vực tiêu đề của cổng thông tin hỗ trợ của bạn
       footer_layout_help_message: Thay đổi khu vực chân trang của cổng thông tin hỗ trợ của bạn
       pagelayout_help_message: Tùy chỉnh toàn bộ bố trí của cổng thông tin hỗ trợ của bạn
+      head_layout_title: Lãnh đạo
     cosmetic:
       subheader_background_color: màu nền
       subheader_tab_color: màu tab
@@ -2966,6 +3358,8 @@ vi:
         cho điện thoại và máy tính bảng. Bạn có thể chọn trở lại cài đặt này để
         tắt trong trường hợp bạn phải chắc chắc không hồi đáp lại từ phía thiết
         bị bên kia.
+    apply_mint: Đăng ký
+    classic: cổ điể
   any_time: bất cứ lúc nào
   five_minutes: trong 5 phút
   fifteen_minutes: trong 15 phút
@@ -2984,7 +3378,7 @@ vi:
   Subject: chủ đề
   Requester: tìm yêu cầu
   Status: ' tình trạng'
-  Group: nhóm
+  Group: Nhóm
   Agent: chuyên viên
   Priority: ưu tiên
   Description: mô tả
@@ -2993,7 +3387,7 @@ vi:
   showing: trình bày
   Email: email
   Portal: cổng thông tin
-  Phone: điện thoại
+  Phone: Điện thoại
   Forum: diễn đàn
   Twitter: Twitter
   Facebook: Facebook
@@ -3030,7 +3424,7 @@ vi:
     report: báo cáo
     reports: Các báo cáo
     helpdesk_at_a_glance: Helpdesk At A Glance
-    summary: tóm tắt
+    summary: Tóm tắt
     agent_ticket_summary: Tóm tắt ticket của chuyên viên
     group_ticket_summary: Tóm tắt ticket của nhóm
     load_analysis: tải phân tích
@@ -3042,7 +3436,7 @@ vi:
     top_n_analysis: Top-N Analysis
     agent_top_n_analysis: Agent Top-N Analysis
     group_top_n_analysis: Group Top-N Analysis
-    customer_top_n_analysis: Customer Top-N Analysis
+    customer_top_n_analysis: Phân tích Top-N khách hàng
     select_option_msg: vui lòng chọn 1 cách
     no_data_to_display_msg: Không có dữ liệu để hiển thị!
     filtered_by: được lọc bởi
@@ -3222,6 +3616,7 @@ vi:
         group_fcr: >-
           Tỷ lệ tickets được phân công vào nhóm này đã được giải quyết trong trả
           lời đầu tiên
+    customer_at_a_glance: Xem nhanh khách hàng
   ends_with: kết thúc với
   last_name: Họ
   forum:
@@ -3247,6 +3642,8 @@ vi:
       agents: các chuyên viên
       all: tất cả
       select_company: Lựa chọn công ty
+    visible_to: Hiển thị cho
+    type: Loại diễn đàn
   password_reset_email: Mật khẩu phục hồi email
   default_reply_template: Mẫu trả lời chuyên viên
   import_user_org: 'User, tổ chức và nhóm'
@@ -3380,6 +3777,9 @@ vi:
       help_desk: Hãy thoải mái tương tác với chúng tôi nếu bạn có vấn đề gì.
       regards: Thân
       freshdesk: Đội Freshdesk
+      info6: >-
+        Vui lòng gửi tập tin đến support@freshdesk.com để chúng tôi có thể xác
+        minh và tải lên bên phía chúng tôi.
     business_hours:
       create:
         failure: Thất bại khi tạo giờ làm việc
@@ -3555,6 +3955,7 @@ vi:
       see_detailed_pricing: Xem giá chi tiết
       purchase_text: Mua phone credit
       no_credit_card_text: Điền thông tin thanh toán để mua phone credit
+      purchase_credits: Mua tiền điện thoại
     dialpad:
       not_valid_number: Xin nhập một số giá trị
       not_enough_credit: Không đủ tín dụng
@@ -3683,7 +4084,7 @@ vi:
         text_to_speech: Phát âm tin nhắn
         record_calls: Thu Âm Cuộc Gọi
         voicemail: Thư thoại
-        voicemail_on: 'On'
+        voicemail_on: Mở
         voicemail_off: Tắt
         record_all: Thu âm tất cả cuộc gọi
         record_none: Không thu âm các cuộc gọi
@@ -3719,6 +4120,9 @@ vi:
         business_hours: Giờ làm việc
         anytime: Hoạt động 24/7
         name: Tên
+        number_accessible: Có thể truy cập bởi
+        attachment_help_text: Chấp nhận tập tin dưới 5mb
+        name_placeholder: Nhập tên thân thiện cho số của bạn
       numbers:
         title: Hỗ trợ khách hàng với Freshfone
         purchase_number: Số trả phí
@@ -3742,6 +4146,15 @@ vi:
           Vui lòng thanh toán lại
         setup:
           title: Thiết lập Freshfone
+        caller_id:
+          manage_caller_id: 'Quản lý ID người gọi '
+          add_new: Thêm mới
+        buy_button_text: Mua
+        address:
+          address: Địa chỉ
+          state: Tiểu bang/Tỉnh/Khu vực
+          city: Thành phố
+          postal_code: Mã bưu chính
       invalid_attachment: >-
         Đính kèm %{name} không được là tập tin âm thanh có kích thước lớn hơn
         5MB
@@ -3770,7 +4183,7 @@ vi:
         done: xong
         save: lưu
         saving: Đang lưu
-        preview: Xem trước
+        preview: xem trước
         previewing: Đang xem trước
         delete_menu: Xóa menu
         jump_to: Nhảy đến
@@ -3785,6 +4198,15 @@ vi:
         seed_menu_name: Xin chào/Bắt đầu
       feature_request_content:
         learn_more: học hỏi
+        trial_or: HOẶC
+        error_message: >-
+          Rất tiếc, chúng tôi không thể thực hiện yêu cầu của bạn ngay bây giờ.
+          Hãy thử lại sau.
+        title_text: Điện thoại
+        pricing: Xem tất cả cước phí cuộc gọi và quốc gia được hỗ trợ
+      freshfone_numbers_title: Điện thoại
+      welcome_page:
+        title_text: Điện thoại
   agent_closes_tkt: Chuyên viên đã đóng ticket
   submit: Gửi
   export_data_successfull: Dữ liệu helpdesk của bạn sẽ được gửi đến email của bạn ngay!
@@ -3792,7 +4214,7 @@ vi:
   export_file_not_available: Nội dung bạn đang tìm kiếm không khả dụng!
   import_topics: Chủ đề
   assigned_to: Phân chia
-  change: thay đổi
+  change: Thay đổi
   back_plans_billing: Trở lại Kế hoạch &amp; Thanh toán
   choose_different_plan: chọn kế hoạch khác
   downgrade_plan: 'Lưu ý: Nếu bạn hạ cấp một kế hoạch, bạn có thể mất một số tính năng hiện có'
@@ -4248,6 +4670,78 @@ vi:
     textoff: Tắt
     disabled: bị vô hiệu hóa
     everyone: Tất cả mọi người
+    routing_info: Phân phối tất cả cuộc trò chuyện đến cho các nhóm cụ thể
+    help_offline_thank_msg: Tin nhắn xác nhận
+    prechat_dropdown_msg: >-
+      Bạn có thể kết hợp các tùy chọn thả xuống của mình với các nhóm khác nhau
+      trong tab Mục ưu tiên. Các cuộc trò chuyện sẽ được gán cho các nhóm xác
+      định một cách phù hợp.
+    non_availability_msg_header: Tin nhắn khi hỗ trợ viên không có mặt
+    msgbox_placeholder_title: Trình giữ chỗ hộp trả lời
+    help_offline_thank_header_msg: Tiêu đề sau khi gửi tin nhắn
+    installation: Mã tiện ích
+    show_widget: Khi hỗ trợ viên trực tuyến và chấp nhận trò chuyện
+    maximum_chat_desc: >-
+      Thiết lập giới hạn số cuộc trò chuyện tối đa mà một hỗ trợ viên có thể xử
+      lý đồng thời. Khi một hỗ trợ viên đạt đến giới hạn này, họ sẽ không thể
+      nhận được thông báo trò chuyện mới nữa.
+    maximum_chat_title: Số cuộc trò chuyện tối đa với khách hàng
+    non_availability_msg_help: >-
+      Để tạo siêu liên kết cho một cụm từ trong tin nhắn của bạn mà sẽ trỏ đến
+      URL của bạn, hãy đặt cụm từ đó trong '# #'
+    chat_availability: Tính sẵn sàng cho trò chuyện
+    intro: >-
+      Giải pháp Trò chuyện trực tuyến tích hợp của Freshdesk cho phép bạn xem và
+      trò chuyện với người dùng trên trang web, phần mềm trực tuyến hoặc cổng
+      thông tin hỗ trợ trực tiếp từ Freshdesk. Bạn cũng có thể chủ động bắt đầu
+      trò chuyện với khách truy cập trang web của bạn. Khi hoàn thành phiên trò
+      chuyện, bạn có thể chọn chuyển cuộc trò chuyện thành phiếu và tiếp tục
+      theo dõi với khách qua email hoặc lưu trữ nội dung trò chuyện.
+    texton: Mở
+    show_chat_hours: Hiển thị trò chuyện
+    agent_network_disconnect_msg_title: Tin nhắn khi hỗ trợ viên bị ngắt kết nối
+    enable: Kích hoạt
+    portal_desc: >-
+      Mặc dù tiện ích trò chuyện trên trang web của bạn hiển thị cho tất cả mọi
+      người, bạn chỉ có thể kích hoạt tiện ích này trên cổng thông tin hỗ trợ
+      dành cho khách hàng.
+    copy_to_clipboard: Sao chép vào khay nhớ tạm
+    missed_chat_title: Biểu mẫu cuộc trò chuyện bị bỏ lỡ
+    portal_option_info: Hiển thị tiện ích trò chuyện cho
+    missed_chat_desc: Thu thập thông tin chi tiết của khách khi bạn không có mặt.
+    default_routing: Phân phối mặc định
+    routing: Phân phối cuộc trò chuyện
+    anytime: Luôn luôn (24/7)
+    help_text_wait_onhold_msg: Tin nhắn này sẽ xuất hiện khi khách chờ hỗ trợ viên quá một phút
+    support_portal: Trò chuyện cho cổng thông tin hỗ trợ của bạn
+    chat_hours_msg_note: 'Lưu ý: Cửa sổ trò chuyện sẽ bị ẩn ngoài khoảng thời gian này.'
+    form_details: Chi tiết biểu mẫu
+    show_chat_hours_msg: >-
+      Thiết lập khi nào cửa sổ trò chuyện của bạn được hiển thị sẵn cho khách
+      truy cập.
+    intro_title: Tại sao sử dụng tính năng Trò chuyện trực tiếp?
+    enable_chat: Bật Trò chuyện trực tiếp
+    business_hours: Trong giờ làm việc
+    chat_enabled_label: Bật Trò chuyện
+    chat_transfer_msg_title: Tin nhắn chuyển cuộc trò chuyện
+    offline_message: Tin nhắn khi không có mặt
+    learn_livechat: Tìm hiểu thêm về Trò chuyện trực tiếp
+    widget: Tiện ích
+    enabling: Đang bật
+    use_custom_link: 'Chuyển hướng người dùng đến một trang riêng '
+    dropdown_based_routing: Phân phối dựa trên thả xuống
+    widgets_list_info: >-
+      Đối với mỗi sản phẩm được thiết lập trong Freshdesk, bạn sẽ có một tiện
+      ích trò chuyện tương ứng khả dụng ở đây
+    visitor_form: Biểu mẫu cho khách truy cập
+    cobrowsing: Hỗ trợ trên trang
+    end_chat_confirm_msg_title: Tin nhắn xác nhận kết thúc trò chuyện
+    chat_with_us: Kết nối với chúng tôi
+    logged_in_users: Chỉ dành cho Người dùng đã đăng nhập
+    cobrowsing_info: >-
+      Hướng dẫn khách hàng của bạn hiệu quả hơn trong cuộc trò chuyện bằng cách
+      bổ sung tùy chọn xem và kiểm soát màn hình của họ.
+    preferences: Tùy chọn
   credit_card_info: Thông tin thẻ tín dụng
   zendesk_backup_info: Chọn tập tin sao lưu Zendesk tải về từ zendesk
   your_email_address: Địa chỉ email của bạn
@@ -4322,6 +4816,7 @@ vi:
           trọng với chúng tôi hơn là mang lại cho bạn trải nghiệm hỗ trợ tuyệt
           vời, mọi lúc. Chúng tôi chỉ có thể mong bạn cho chúng tôi một cơ hội
           khác để thực hiện điều đó cho bạn.
+        else_followup: Một vài dòng mô tả vấn đề bạn gặp phải sẽ rất hữu ích..
     billing:
       update_billing_info: Cập nhật thông tin thanh toán
       begin_subscription_info: sẽ tính phí thẻ của bạn và bắt đầu đăng ký của bạn ngay lập tức.
@@ -4345,7 +4840,7 @@ vi:
       contact_first_name: tên
       contact_last_name: họ
       contact_email: email
-      contact_phone: điện thoại
+      contact_phone: Điện thoại
       invoice_email_info: Hoá đơn gửi đến
       invoice_emails: Email
       restore_account: >-
@@ -4372,6 +4867,18 @@ vi:
         người khác sẽ không thể đăng ký, đăng nhập hoặc gửi vé yêu cầu. Bạn có
         thể đọc thêm về việc này
       info6: ở đây.
+    edit_domain:
+      email_error: Tên công ty nên có ít nhất 3 ký tự
+      getting_started: Bắt đầu
+      url_error1: 'tên miền <strong>%{domain_name}</strong> không sẵn sàng'
+    new:
+      full_name: Họ tên
+      company: Công ty
+      confirmation: Xác nhận
+      create_an_account: Tạo tài khoản
+    signup_google:
+      sign_up: Đăng ký!
+      privacy_policy: chính sách quyền riêng tư
   success_msg: cập nhật tài khoản thành công
   failure_msg: cập nhật tài khoản thất bại
   domain_not_available_msg: 'tên miền <strong>%{domain_name}</strong> không sẵn sàng'
@@ -4539,6 +5046,10 @@ vi:
         Đóng ticket (<span class='shortcut-key'>Alt<span>+</span>~</span> bỏ qua
         thông báo)
       search: Tìm kiếm
+      scenario: tình huống
+      add_note: Thêm ghi chú
+      reply: Trả lời
+      forward: Chuyển tiếp
     ticket_list:
       title: Danh sách ticket
       move_cursor: Di chuyển con trỏ để Đi tới / Quay lại ticket
@@ -4573,6 +5084,8 @@ vi:
     info1: Bạn có chắc chắn muốn xóa thể loại này?
     info2: Không có thư mục trong thể loại này
     save_and_create: lưu và tạo cái khác
+    product_portal_visibility: Hiển thị trong
+    manage_categories: Quản lý
   billed_monthly: thanh toán hàng tháng
   users:
     activations:
@@ -4636,6 +5149,9 @@ vi:
     smtp_alert_other: >-
       Thông thường email gửi đi trong ngày có số lượng nhất định. Xin hãy liên
       lạc với người đã cung cấp địa chỉ email của bạn để biết thêm thông tin.
+    use_mail_server_for: 'Sử dụng máy chủ thư cho:'
+    domain_name: Tên miền
+    domain: 'miền:'
   edit_email: chỉnh sửa mail
   fav_delete_msg: Bạn có chắc chắn muốn xóa biểu tượng fav này?
   dispatch:
@@ -4649,7 +5165,7 @@ vi:
     add_watcher: Thêm Giám Sát
     act_to_perform: Thực hiện các hành động
     edit: Dispatch'r - Chỉnh sửa quy tắc
-    title: Dispatch'r
+    title: Người phân phối
     inactive_rules: Nội quy hoạt động
     info1: Những ticket theo dạn "thuê bao"
     rule_name: Tên cai trị
@@ -4725,6 +5241,7 @@ vi:
       created_at: Ngày tạo
       asc: tăng dần
       desc: giảm dần
+      last_active_at: Lần xem gần nhất
   topic:
     ideas_stamps:
       planned: Đã lên kế hoạch
@@ -4733,7 +5250,7 @@ vi:
       deferred: hoãn lại
       inprogress: tiến trình
     questions:
-      answered: Đã trả lời
+      answered: Đã được trả lời
       unanswered: Chưa được trả lời
     problems:
       solved: Đã giải quyết
@@ -4755,6 +5272,23 @@ vi:
     filter_0: tất cả
     unmark_answer: Đánh dấu đây không phải là giải đáp
     all: tất cả
+    last_reply: Lần trả lời cuối
+    filter_8: Đã giải quyết
+    categories: Danh mục
+    filter_1: Đã lên kế hoạch
+    filter_9: Chưa được giải quyết
+    filter_2: Đã thực hiện
+    mark_as_spam: Đánh dấu là Spam
+    filter_4: Trong tiến trình
+    filter_7: Chưa được trả lời
+    filter_5: Đã hoãn lại
+    filter_6: Đã được trả lời
+    filter_3: Không chấp nhận
+    spam: Spam
+    visible_in: Hiển thị trong
+    filtered_by: trình bày
+    add_category: Thêm danh mục
+    change: thay đổi
   activerecord:
     errors:
       messages:
@@ -4850,6 +5384,7 @@ vi:
       delete_comment_confirm: xóa bình luận??? bạn có chắc?
       delete_comment: xóa bình luận
       answer: Trả lời
+      mark_as_spam: Đánh dấu là Spam
     best_answer:
       answer_confirm: Dường như topic này đã được trả lời. Xin xác nhận trước khi tiếp tục
   half: 30 Phút
@@ -4865,7 +5400,7 @@ vi:
     title: Nhập liệu từ Zendesk
     details: 'Khởi động lúc: %{time} by %{user}'
     autorefresh: Tình trạng sẽ được cập nhật mới tự động từng phút
-    user: Users
+    user: Người dùng
     organization: Organizations
     ticket: Ticket
     group: nhóm truy cập
@@ -4930,6 +5465,17 @@ vi:
       day: 1 ngày
       twoday: 2 ngày
       threeday: 3 ngày
+    toggle_availability_for_rr: >-
+      Cho phép đại lý thay đổi khả sự sẵn có của họ đối với chỉ định phiếu tự
+      động
+    maximum: Tối đa
+    enable: Kích hoạt
+    please_confirm: Vui lòng xác nhận...
+    confirm: Xác nhận
+    round_robin_defalut: Gán phiếu theo vòng tròn
+    round_robin_capping: Gán phiếu theo phân tải
+    no_group_info: Bạn chưa tạo ra bất kỳ nhóm nào.
+    send_escalation_to: '....sau đó gửi email đệ trình đến:'
   four: 4 tiếng
   oneweek: 1 tuần
   twoweek: 2 tuần
@@ -4945,7 +5491,7 @@ vi:
   created_on: tạo ra trên
   zip: Zip
   import_solution_article: Chuyển đổi nội dung forum thành giải pháp
-  close: đóng
+  close: Đóng
   agent:
     full_time_agent: Chuyên viên làm toàn giờ
     occasional_agent: Chuyên viên phụ đạo
@@ -5053,6 +5599,15 @@ vi:
     invalid_export_params: Đã xảy ra lỗi trong khi xuất dữ liệu hỗ trợ viên. Vui lòng thử lại.
     showing: 'Đang xem:'
     export_title: Xuất hỗ trợ viên sang CSV
+    insert_placeholder: Thêm khu vực trống
+    member: Thành viên của
+    ago: '%{time} trước.'
+    last_logged: Lần đăng nhập cuối
+    groups_description: Liên kết một hoặc nhiều nhóm với hỗ trợ viên này.
+    no_recent_activity: Không có hoạt động nào gần đây
+    skill: Kỹ năng
+    last_seen_at: Đã thấy gần đây nhất lúc
+    assign_group: Nhóm liên kết
   account_admin: quản trị tài khoản
   right: ngay
   footer:
@@ -5097,7 +5652,7 @@ vi:
     Điền vào mẫu dưới đây và hướng dẫn đặt lại mật khẩu của bạn sẽ được gửi đến
     bạn
   done: Hoàn Tất
-  reset: Reset
+  reset: Đặt lại
   ticket_due_by_time: Kỳ hạn
   ticket_past_due_by: 'hết hạn trước %{time}'
   ticket_past_due_by_live: 'hạn <abbr data-livestamp=''%{timestamp}''>%{time} trước</abbr> '
@@ -5176,6 +5731,7 @@ vi:
       unverified: liên lạc với các mail không xác minh
       deleted: xóa danh bạ
       all: tất cả danh bạ
+      blocked: Liên hệ bị chặn
     verified:
       no_contacts: bạn không có danh bạ nào
       no_contacts_with_letter: 'không có danh bạ nào bắt đầu bằng %{alphabet}'
@@ -5185,6 +5741,7 @@ vi:
     unverified:
       no_contacts: bạn không có danh bạ k xác thực
       no_contacts_with_letter: 'không có danh bạ nào bắt đầu bằng %{alphabet}'
+    reply: Trả lời
   between: giữa
   profile_settings: Thiết lập profile
   portal_key: cổng thông tin
@@ -5262,6 +5819,11 @@ vi:
       dữ liệu cấu hình cho các tính năng mà chỉ có sẵn trong kế hoạch cao hơn.
     status: Trạng thái
     type: Thể loại
+    invoice: Hóa đơn
+    refund: Đã được hoàn tiền
+    download: Tải xuống
+    quantity: Số lượng
+    date: Ngày
   activate: Kích hoạt
   feedbackwidget_button_text: Nhãn
   billed_amount_per_month: 'Bạn sẽ được lập hoá đơn $%{amount}%{period}'
@@ -5269,7 +5831,7 @@ vi:
   import_zendesk_summary: nhập vắn tắt zendesk
   user_activation_email: user kích hoạt Email
   incident: Sự cố nhỏ
-  import: Import
+  import: Nhập
   contains: chứa
   import_solution_article_info: 'Lưu ý: Hệ thống sẽ không lưu các bình luận trong forum'
   register: đăng ký
@@ -5319,7 +5881,7 @@ vi:
       filters:
         all: tất cả
         solutions: Giải pháp
-        topics: Topics
+        topics: Chủ đề
         tickets: Ticket
       placeholder: Nhập vào từ khóa tìm kiếm
       results_for: Kết quả tìm thấy
@@ -5337,9 +5899,10 @@ vi:
     no_forums_info_1: Không có topic trong forum
     no_forums_info_2: 'Tại sao không bắt đầu một %{start_topic_link}?'
     article:
-      see_all_articles: 'Xem tất cả %{count} bài'
+      see_all_articles: 'Xem tất car %{count} bài'
       more_articles: 'Nhiều bài viết trong <span class=''folder-name''>%{article_name}</span>'
       modified_on: 'Sửa đổi trên:'
+      created_by: 'Tạo vào:'
     topic:
       follow: Theo dõi
       following: Đang theo dõi
@@ -5367,6 +5930,7 @@ vi:
       sort_order:
         popularity: Phổ biến
       sort_by_default: Mặc định
+      sort_heading: 'Sort:'
     topic_vote:
       you:
         other: Bạn và
@@ -5383,12 +5947,14 @@ vi:
       ideas_button: Bạn có thích ý tưởng này không?
       problem_button: Bạn có gặp vấn đề gì không?
       howto_button: Bạn có thắc mắc nào không?
-      ideas_unlike_button: không thích!
+      ideas_unlike_button: bỏ thích!
       problem_unlike_button: Tôi chưa gặp vấn đề này!
       howto_unlike_button: Tôi chưa có thắc mắc này!
       ideas_users_voted_title: Người đã thích ý tưởng này
       problem_users_voted_title: Những người gặp vấn đề này
       howto_users_voted_title: Những người có thắc mắc này
+      votes: stemmer
+      announce_unlike_button: bỏ thích!
     tickets:
       export: xuất tickets
       submit_export: Xuất
@@ -5403,11 +5969,25 @@ vi:
         Thêm hoặc bớt emails để được nhận thông tin khi ticket này có thông báo
         hoặc cập nhật.
       add_people_title: Thêm người vào cuộc trao đổi
-      reopen_reply: Phản hồi
+      reopen_reply: Trả lời
       related_articles: Các mục liên quan...
       comments: Bình luận
     agent_login_info: Bạn có phải là hỗ trợ viên không?
     agent_signin: Hãy đăng nhập ở đây
+    agent_login_details: >-
+      Xin vui lòng nhập vào thông tin đăng nhập bạn đã dùng khi đăng ký với khu
+      vực hỗ trợ.
+    user_signup_portal: 'Đăng ký tài khoản tại '
+    account: tài khoản
+    vote:
+      you:
+        other: 'Bạn và '
+      more:
+        other: '%{count} người khác '
+      people:
+        other: '%{count} người '
+    vote_label:
+      other: stemmer
   feedbackwidget_form_heading: Tiêu đề mẫu
   feedbackwidget_form_title: Tiêu đề dạng Tiện ích
   cancel_and_back: Hủy và trở lại
@@ -5425,6 +6005,7 @@ vi:
         new_folder: Thêm Folder
       folder_form:
         visible_to: Hiển thị cho
+        category: Danh mục
     articles:
       where: Ở đâu
       search_articles: Tìm bài viết
@@ -5440,6 +6021,14 @@ vi:
       article_useful: Vui vì chúng tôi có thể hữu ích. Cảm ơn các ý kiến ​​phản hồi.
       article_not_useful: Cảm ơn các ý kiến ​​phản hồi. Chúng tôi sẽ cải thiện bài viết này.
       error_message: 'có lỗi xảy ra %{error_msg}'
+      reset_rating:
+        link: Đặt lại
+        dialog_submit: Đặt lại
+      prop_tabs:
+        meta: meta
+      search_all: Mục tìm kiếm
+      views: Lượt xem
+      view_draft: Xem trước bản nháp
     info9: Công chúng (sẽ được xuất đăng công khai trên Tự Hổ Trợ)
     edit: Chỉnh Giải Pháp
     add: Thêm Giải Pháp
@@ -5483,17 +6072,33 @@ vi:
     feedback_message_2: Nội dung khó hiểu
     sidebar:
       view_all: Xem tất cả
+      feedbacks:
+        title: Phản hồi Bài viết
+      drafts:
+        title: Thư nháp
+      view_less: Ẩn bớt
     draft:
       portal:
         all: tất cả
+      name: Thư nháp
     feedback_message_4: Thiếu thông tin/ Link hỏng
     general:
       mark_as_uptodate:
         text_1: Ghi nhận dịch thuật này mới
+      something_wrong: Đã xảy ra lỗi!
+      article_prop: Thuộc tính bài viết
+      created_by: Tạo vào
+      feedback: Phản hồi
+      mark_as_outdated:
+        text_1: Đánh dấu các bản dịch khác là đã lỗi thời
+      analytics: Phân tích
     feedback_message_1: Cần nhiều thông tin hơn
     feedback_message_3: Nội dung không chính xác/ Không thích hợp
     add_category: danh mục mới
     solution_title: Tiêu đề
+    kb: Kho kiến thức
+    via: thông qua
+    move_to: Chuyển tới
   import_updated: cập nhật
   feedbackwidget_intro: Tùy chỉnh tiện ích freshdesk của bạn dưới đây và xem trước thời gian thực.
   save: lưu
@@ -5640,7 +6245,7 @@ vi:
       solutions: Giải pháp
       forums: Diễn đàn
       tickets: Ticket
-      home: Home
+      home: Trang chủ
       company_tickets: Tickets (Công ty)
       social: Social
     search: Tìm kiếm
@@ -5869,6 +6474,8 @@ vi:
           thể theo từng ngôn ngữ. Icon <i class="common-icon-outdated"></i> này
           cho biết rằng thông báo được dịch thuật qua ngôn ngữ khác có thể đã bị
           lỗi thời.
+      agent_template_25:
+        topic: Email mời của hỗ trợ viên
     event: sự kiện
     agent_notification: thông báo từ chuyên viên
     agent_notifications: Thông Bào Chuyên Viên
@@ -5876,6 +6483,8 @@ vi:
     do_not_delete_ticket_id_from_subject: >-
       để nắm được các phản hồi của khách hàng thông qua việc trao đổi trên
       ticket, thì việc 
+    insert_placeholder: Placeholders
+    cc_notifications: Thông báo CC
   errors_in_plan_change: 'Lỗi gặp phải với sự thay đổi của bạn:'
   formatting_help: Trợ giúp định dạng
   step1: Bước1
@@ -5981,7 +6590,7 @@ vi:
     secondary_supp_email_tool_tip: tạo email này là chủ yếu
     remove_msg: Bạn có chắc bạn muốn loại bỏ email này?
     mark_as_primary_msg: Bạn có chắc đây là email hỗ trợ chính?
-    bcc_text: Bcc
+    bcc_text: BCC
     add_bcc_text: thêm Bcc
     set_bcc_email_text: Thiết lập email Bcc tự động
     name_info_msg: Tên của email sẽ được sử dụng trong trả lời các ticket
@@ -6004,6 +6613,14 @@ vi:
       status: Trạng thái
       unverified: không xác minh
       type: Thể loại
+      last_verified: Mới xác nhận
+      config: cấu hình
+      data_help: Giá trị sẽ được chỉ định cho bản ghi DNS
+      cname: CNAME
+      verify: Xác minh
+      remove: Xóa
+      host_value_help: Tên máy chủ lưu trữ cho bản ghi TXT
+      data: Dữ liệu
     enable_compose_info: >-
       Nếu có, các chuyên viên có thể gửi email đi cho khách hàng mới hoặc khách
       hàng hiện có và sẽ được chuyển đổi thành phiếu hỗ trợ.
@@ -6014,6 +6631,7 @@ vi:
     disable_agent_forward: >-
       Đối với email chuyển tiếp, sử dụng thông tin người gởi đầu tiên làm thông
       tin người yêu cầu
+    plain_unverified: không xác minh -
   step2: bước 2
   import_users_contacts: Người sử dụng → Liên hệ
   linkback_info: >-
@@ -6170,7 +6788,7 @@ vi:
     myself: Bản thân
     spam_btn_title: Ghi nhận là Spam
     assigned_to: Chỉ định cho
-    assigned_agent: Chuyên viên
+    assigned_agent: chuyên viên
     edit: Chỉnh ticket
     ham_btn_title: Đây không phải spam
     reported_from_source: 'Báo cáo bởi %{source}'
@@ -6272,7 +6890,7 @@ vi:
     requestor_info: Thông tin khách hàng
     view_twitter: Xem trên Twitter
     reply_to: Hồi âm
-    add_note: Thêm note
+    add_note: Thêm ghi chú
     monitor_btn_title: Theo giỏi ticket này
     canned_responses:
       ca_responses: Các hồi âm theo khuông
@@ -6314,6 +6932,12 @@ vi:
         tooltip: Xem về việc JIRA liên quan
         add_new: Kèm một sự cố
         existing: Xem sự cố
+    via: thông qua
+    view_facebook: Xem trên Facebook
+    search_text: Mục tìm kiếm
+    created_by: 'Tạo vào:'
+    action: Hành động
+    thanks_v1: Cám ơn phản hồi của bạn
   recent_activity: |
     hoạt động gần đây
   recent_activities: những hoạt động gần đây
@@ -6344,7 +6968,7 @@ vi:
     form:
       type: Loại diễn đàn
       visibility: khả năng hiển thị diễn đàn
-      visible_to: có thể nhìn thấy
+      visible_to: Hiển thị cho
   next_charge_amount: '%{type} chi phí'
   company:
     info9: >-
@@ -6467,6 +7091,16 @@ vi:
       title: Diễn đàn
     gdpr_to: đến
     visible_in_portal: Hiển thị trên cổng thông tin
+    us: NGÀY - THÁNG - NĂM
+    gdpr_terms_link: Điều khoản của chúng tôi
+    date_format: Định dạng ngày
+    gdpr_admin: Quản trị.
+    important: Quan trọng
+    gdpr_policy: Chính sách quyền riêng tư.
+    helpdesk: Bộ phận hỗ trợ
+    gdpr_agent: chuyên viên
+    non_us: NGÀY - THÁNG - NĂM
+    gdpr_acknowledgement: và thừa nhận bạn đã đọc
   lead: dẫn đầu
   comments: Bình luận
   forum_confirm_msg1: Bạn có chắc chắn muốn xóa thể loại này?
@@ -6512,9 +7146,11 @@ vi:
     holidays: các ngày nghỉ lễ
     helpdesk_hours: Thời gian trợ giúp
     select_time_zone: Chọn múi giờ
+    holiday_calendar: Lịch ngày nghỉ
+    multiple: Nhiều giờ làm việc
   import_org_companies: |
     Tổ chức công ty 
-  add: thêm
+  add: Thêm
   portal_customizer_title: tùy chỉnh cổng thông tin khách hàng
   your_trial_account: tài khoản thử nghiệm
   reply_comment: thêm bình luận
@@ -6533,7 +7169,7 @@ vi:
   select_a_plan: Chọn một chương trình
   ticket_was: ticket đã
   tickets_were: các tickets đã
-  undo: Undo
+  undo: Hoàn tác
   total: Tổng
   export_to_CSV: xuất CSV
   back_to_reports: ← Quay lại báo cáo
@@ -6562,6 +7198,9 @@ vi:
     folder_unavailable: Thư mục không có sẵn trong Hộp thư.
     tcp_socket: Không thể tạo cổng TCP cho máy chủ email.
     email_bad_request: Máy chủ email đã gửi phản hồi BAD trong khi kết nối với máy chủ.
+    unkown_error: >-
+      Không thể tìm nạp email từ máy chủ email tùy chỉnh. Vui lòng liên hệ với
+      support@freshdesk.com
   imap_error: Không thể truy cập vào máy chủ email
   marketplace:
     delete_action:
@@ -6641,6 +7280,17 @@ vi:
     description: Mô tả
     almost_done: Gần xong!
     no_mktp_apps: Chưa cài đặt ứng dụng nào
+    terms_of_use_link: 'http://freshdesk.com/terms#marketplace'
+    third_party_apps_policy: >-
+      Ứng dụng này được sở hữu, phát triển, vận hành và duy trì bởi bên thứ ba
+      chứ không phải Freshworks Inc. Bằng cách tải xuống, tích hợp và/hoặc sử
+      dụng Ứng dụng này, bạn hiểu rằng mình phải tuân theo các điều khoản và
+      chính sách quyền riêng tư của nhà phát triển, bao gồm cả việc xử lý dữ
+      liệu của bạn. Để biết thêm chi tiết về các điều khoản và chính sách quyền
+      riêng tư như vậy, vui lòng liên hệ với nhà phát triển hoặc truy cập trang
+      của nhà phát triển.
+    installing: Đang cài đặt
+    field_blank: Vui lòng điền vào các trường bắt buộc.
   link_with_marketplace: Kết nối với Google Marketplace
   ticket_field:
     helpcard:
@@ -6673,6 +7323,7 @@ vi:
         trong tính huống về thương mại điện tử, khi loại được chọn là "Thay
         thế", thì một phần có trường có tên "Lý do" có thể mở ra để thu thập lý
         do tại sao khách hàng cần thay thế cho mặt hàng đó.
+      title2: Trường phụ thuộc
   selecting_plan: Đang lựa chọn
   customer_import:
     import_csv: 'Nhập %{type} từ tập tin CSV'
@@ -6724,19 +7375,38 @@ vi:
     topics:
       post:
         delete_confirm: xóa bình luận??? bạn có chắc?
+        replied_to: đã trả lời chủ đề
+        replied: đã trả lời
       answer: Trả lời
+      reply: Trả lời
+      edit_topic: Chỉnh sửa Topic
+      replied: đã trả lời
+      widgets:
+        ticket:
+          agent: chuyên viên
+      mark_as_spam: Đánh dấu là Spam
     unpublished:
       spam:
         reply:
           posted: đã trả lời cho
+          title: Trả lời
         new_topic:
           posted: tạo một chủ đề mới
+      index:
+        unpublished: Đang chờ phê duyệt
+        title: Spam
+      invalid_topic:
+        went_wrong: Đã xảy ra lỗi
+      page_title: Kiểm duyệt trên Diễn đàn
     moderation:
       spam:
         new_topic:
           posted: tạo một chủ đề mới
         reply:
           posted: đã trả lời cho
+          title: Trả lời
+      index:
+        title: Spam
     topic_merge:
       detailed_note: Lí do Merge
       warning: >-
@@ -6752,6 +7422,14 @@ vi:
       merge_title: Gộp nhiều chủ đề
       merge_notification: Chủ đề này đã bị khoá hoặc merge.
       please_wait: Xin vui lòng chờ...
+      add: Thêm
+    shared:
+      topic:
+        actions:
+          reply: đã trả lời chủ đề
+        tags:
+          reply: Trả lời
+    show_more: Hiển thị thêm
   freshcaller:
     admin:
       link_account_request_content:
@@ -6759,6 +7437,15 @@ vi:
         email: email
         continue: Tiếp tục
         password: Mật khẩu
+        connect_existing_account: Kết nối tài khoản hiện có
+        link_errors:
+          validation_error: Trường này là bắt buộc
+        account_url: URL tài khoản Freshcaller
+      sidebar_title: Điện thoại
+      title_text: Điện thoại
+      feature_request_content:
+        create_new_account: Tạo tài khoản mới
+      freshcaller_subtext: 'Mua số, thiết lập hàng đợi cuộc gọi, IVR, v.v.'
   activate_free_plan: Kích hoạt gói miễn phí
   custom_fields:
     empty_section_info: Kéo vào đây
@@ -6769,36 +7456,112 @@ vi:
     text: Một dòng
     paragraph: Nhiều dòng
     decimal: Hệ thập phân
+    default_field_error: Không thể thả trường mặc định vào phần
+    nested_field: Trường phụ thuộc
+    dropdown: Thả xuống
+    checkbox: Hộp kiểm
+    dropdown_blank: Thả xuống
+    number: Số
+    drag_and_drop_field: Kéo và thả trường
+    insert_field: Kéo và thả trường
+    date: Ngày
   box_attach_from: Đính kèm từ <b>Box</b>
   multifile_attachments:
     label: Kèm file
+    remove: Xóa
+    mb: ' MB '
   retype_password: Nhập lại mật khẩu
   helpdesk_reports:
     saved_report:
       save: lưu
       cancel: Hủy
+      delete_dialog_header: Xóa báo cáo
+      edit_dialog_header: Chỉnh sửa báo cáo
     today: hôm nay
     ticket_schedule:
       index:
         cancel: Hủy
+        delete_title: Xóa lịch trình
+        delete_text: Bạn có chắc muốn xóa lịch trình này không?
+        confirm: Xác nhận
       new:
         ticket_fields_title: Các trường của phiếu hỗ trợ
         email: email
         description: Mô tả
+        helpnote:
+          api_info1: API sẽ có liên kết đến bản xuất mới nhất.
+        contact_fields_title: Trường Liên hệ
+        select_all: Chọn tất cả
+        one_time_export_label: Xuất nội dung vé yêu cầu từ đầu tháng khi lịch trình này bắt đầu
+        company_fields_title: Trường công ty
+        frequency: Lịch
+      schedule_export: Xuất lịch trình
+      schedule: Lịch
+      all_reports: tất cả báo cáo
+      new_schedule: Lịch làm việc mới
     scheduled_reports:
       dialog:
         email: email
         desc: Mô tả
         subject: Tiêu đề
+        monthly: Hàng tháng
+        generate_report: Tạo báo cáo
+        'on': Mở
+        daily: Hàng ngày
+        weekly: Hàng tuần
+      errors:
+        disabled: Không thể lên lịch báo cáo với phạm vi ngày tùy chỉnh
     ticket_volume:
       resolved_tickets: các ticket được giải quyết
       received_tickets: tickets nhận được
+      time_trends:
+        year: năm
+        week: tuần
+        day: Ngày
+        month: tháng
+      load_analysis:
+        title: tải phân tích
+      unresolved_tickets: Vé yêu cầu chưa giải quyết
     date_range: Phạm vi Ngày
     timespent_export:
       button_export: Xuất
+      export_csv: Xuất CSV
     ticket_activity:
       learn_more: học hỏi
+      helpnote:
+        api_info1: API sẽ có liên kết đến bản xuất mới nhất.
+      edit: Chỉnh sửa lịch trình
     yesterday: hôm qua
+    chats: Trò chuyện
+    more: Thêm...
+    no_data_to_display_msg: không có dữ liệu để trình bày
+    insights:
+      customize_link: Tùy chỉnh
+    loading_text: Đang tạo báo cáo...
+    this_week: tuần này
+    agent_summary:
+      title: Hiệu suất của hỗ trợ viên
+    generate: tạo ra
+    this_month: Tháng này
+    edit_filter: Bộ lọc
+    year_in_review:
+      title: Nhìn lại năm của bạn
+    summary: Tóm tắt
+    show: 'Hiển thị:'
+    filter_by: Lọc theo
+    solution_article_text: Làm sao đọc được báo cáo này ?
+    performance_distribution:
+      title: Phân phối hiệu suất
+      resolution_bar: Thời gian giải quyết
+      first_response_bar: Thời gian phản hồi lần đầu
+      response_bar: Thời gian phản hồi trung bình
+    group_summary:
+      title: Hiệu suất nhóm
+    filtered_by: 'Lọc theo:'
+    at: tại
+    customer_satisfaction:
+      title: báo cáo sự hài lòng của khách hàng
+    change: Thay đổi
   plan: Gói dịch vụ
   discounted_sum: Sau khi giảm giá
   trail_expiry_one_more_day: >-
@@ -6809,10 +7572,24 @@ vi:
     contact_support: ' Liên hệ hỗ trợ '
     have_question: Thắc mắc?
     whats_new_in_freshdesk: ' Có gì mới trong Freshdesk '
+    submit_feedback: Trình bày phản hồi
+    load_more: Tải thêm
   features:
     auto_ticket_assignment: Chuyển nhượng ticket tự động
     custom_ssl: SSL tùy chỉnh
     feedback_widget: phản hồi
+    bot: Trình trò chuyện
+    portal_customization: Tùy chỉnh cổng thông tin
+    gamification: Game hóa
+    parent_child: Phiếu cha - con
+    scheduled_reports: Báo cáo đã lên lịch
+    knowledge_base: Thông tin hỗ trợ
+    phone_integration: Tích hợp điện thoại
+    automations: Tự động hóa
+    forums: Forum dành cho cộng đồng
+    custom_roles: Vai trò tùy chỉnh
+    ticket_templates: Mẫu phiếu
+    freshchat: Tích hợp Freshchat
   admin_onboarding:
     modal:
       channels_frame:
@@ -6820,16 +7597,32 @@ vi:
         forums_channel: Diễn đàn
         chat_channel: Cài đặt trò chuyện
         email_channel: email
+        phone_channel: Điện thoại
+        title: Bạn đang trò chuyện với khách hàng bằng cách nào?
+        forward_link: Mời nhóm của bạn
       agents_frame:
         send_invite: gửi lời mời
         emails_invalid: Một hoặc nhiều email của bạn không hợp lệ.
+        emails_placeholder: 'bruce@just.ly, diana@just.ly, clark@just.ly'
+      overview_frame:
+        forward_link: Chúng ta hãy bắt đầu
+      welcome_frame:
+        title: Chào mừng đến với Freshdesk
     account_verification_message:
       helpnote_or: hoặc
       modal_send_button: gửi kích hoạt
       cancel_button: Hủy
+      modal_title: Đã đăng ký bằng địa chỉ email không chính xác?
+      modal_invalid_email_error: Vui lòng nhập email chính xác.
+      resend_message: Gửi lại kích hoạt
+      change_email: thay đổi email của bạn
   user_notifications:
     mark_all_as_read: Đánh dấu tất cả là đã đọc
     header: Thông báo
+    notification_preferences: Tùy chọn thông báo
+    enable_desktop_notifications_help: Vui lòng nhấp vào 'Cho phép' khi được nhắc
+    mute: Tắt âm
+    preferences: Tùy chọn
   ticket_templates:
     create_new: Tạo mới
   edit_plan: Thay đổi gói dịch vụ
@@ -6837,4 +7630,74 @@ vi:
     admin:
       save: lưu
       cancel: Hủy
+      sidebar_title: Freshchat
+      action:
+        success_message: Đã cập nhật thiết lập
+      admin_apikey: 'Khóa API:'
+      title_text: Freshchat
+      portal_url: 'cổng URL:'
+      app_id: ID ứng dụng
   in: trong
+  mailer_notifier:
+    hi: Xin chào!
+    thanks: 'Xin cám ơn,'
+  copied_link: Đã sao chép
+  enter_a_value: Nhập một giá trị
+  forum_category:
+    product_portal_visibility: Hiển thị trong
+  proceed_billing_info: 'Vâng, tiếp tục sang bước thanh toán'
+  contact_field:
+    helpcard:
+      info3: >-
+        Cũng giống như các trường vé yêu cầu, bạn có thể thêm các trường mới vào
+        biểu mẫu đăng ký khách hàng và yêu cầu bắt buộc phải điền các trường đó.
+        Bạn cũng có thể có các trường riêng tư chỉ hiển thị cho các hỗ trợ viên
+        của bạn.
+      title2: Tùy chỉnh các trường liên hệ của bạn
+  activations:
+    activate_freshdesk_account: Kích hoạt tài khoản của bạn
+  cloud_log_mailer:
+    logger_email:
+      regards: Trân trọng!
+      account: 'Tài khoản: '
+      reason: Lý do
+  portals_key: Cổng
+  classic_label: cổ điể
+  enter_values: Nhập một hoặc nhiều giá trị
+  make_payment: Thực hiện thanh toán
+  helpcard:
+    title: ID bên ngoài duy nhất
+  admin_upgrade:
+    enable_mint_title: Cho phép hỗ trợ viên thử trải nghiệm Mint mới và nhanh hơn
+    enable_mint_error: >-
+      Mint đã được kích hoạt cho tất cả hỗ trợ viên. Làm mới để xem cài đặt mới
+      nhất.
+    enable_mint_success: Tuyệt! Mint đã được kích hoạt thành công cho tất cả hỗ trợ viên.
+  customize_domain:
+    email:
+      cheers: 'Xin chào,'
+      team: Đội Freshdesk
+  profiles:
+    freshid_edit:
+      profile_details: Chi tiết hồ sơ
+  'on': vào
+  save_as: Lưu dưới dạng
+  reload: Tải lại
+  currency_label: 'Tiền tệ :'
+  plain_on: Mở
+  clone: Sao chép
+  company_field:
+    helpcard:
+      title1: Tùy chỉnh các trường công ty của bạn
+  unblock: Danh sách trắng
+  help_widget:
+    form_title: Liên hệ với chúng tôi
+    form_button_text: Gửi phản hồi
+    form_submit_message: Cám ơn phản hồi của bạn.
+    button_text: Hổ trợ
+    welcome_message: Chúng tôi có thể giúp được gì?
+    predictive_message: >-
+      Chúng tôi nhận thấy bạn đang gặp khó khăn. Hãy cho chúng tôi biết bạn đang
+      muốn làm gì và bộ phận hỗ trợ của chúng tôi sẽ liên hệ với bạn sớm nhất có
+      thể.
+    success_message: Xin cám ơn. Chúng tôi sẽ liên hệ với bạn!

@@ -721,6 +721,7 @@ it:
         moderate_none_help: >-
           Abilita questa funzione se sei sicuro che la community non attira
           spammer
+        reset_portal_changes: Reimposta le modifiche del portale
       helpnote:
         title: Configurazione dei portali personali
         tour: Supporto nella configurazione del portale personale
@@ -742,6 +743,13 @@ it:
           'Impostazioni'. Le impostazioni non possono essere configurate per
           ciascun portale e saranno le medesime per tutti quelli che sono stati
           creati.
+        exit_fullscreen: Esci dallo schermo intero
+        editor_shortcuts: Collegamenti dell’editor
+        preview_changes: Anteprima delle modifiche
+        editor_in_fullscreen: Editor a tutto schermo
+        level_customizations: Personalizzazioni a livello delle pagine
+        advanced_rebranding: Rebranding e personalizzazione avanzati
+        custom_stylesheets: Uso dei fogli di stile personalizzati (CSS)
     hotline:
       heading1: Gli utenti di Mobihelp incontrano Hotline
       content1:
@@ -869,7 +877,7 @@ it:
           mobihelp_sdk_version: Versione SDK Mobihelp
     ecommerce:
       human_name: Account Ecommerce
-      index_title: Ecommerce
+      index_title: E-commerce
       edit_account: Modifica dati account
       limit_exceed: Limite massimo account raggiunto.
       ebay_note_not_added: Nota non aggiunta a eBay. Connessione instabile.
@@ -1598,6 +1606,7 @@ it:
         feedbackwidget_form_submit_title: Pulsante di invio modulo
         feedbackwidget_title_maxlength: Massimo 30 caratteri
         feedbackwidget_submit_title_maxlength: Massimo 16 caratteri
+        feedbackwidget_offset: 'Offset:'
       embedded_widget:
         feedbackwidget_height_placeholder: 500
         feedbackwidget_form_customization: Personalizza modulo
@@ -1984,6 +1993,7 @@ it:
         enable_personalized_articles: >-
           Se abilitata, i nomi dell'autore verranno mostrati negli articoli
           della soluzione
+        agent_portal: Portale agenti
       edit:
         title: Modifica prodotto
         updating: Aggiornamento in corso...
@@ -2070,6 +2080,7 @@ it:
         reports: Report
         administration: Amministrazione
         general: Generale
+        bots: Bot
       permissions: Autorizzazioni
       helpcard:
         title1: Comprensione ruoli
@@ -2197,6 +2208,7 @@ it:
         mobihelp: MobiHelp
         customer-portal: Portale clienti
         portals: Portali
+        search_admin: Cerca impostazioni amministratore
       keywords:
         forum_moderation: Moderazione forum
         configure_support_email: Configura e-mail di supporto
@@ -3027,6 +3039,9 @@ it:
       history:
         recent_item: Voci recenti
       update: Aggiorna
+      do_not_link: Non collegare
+      view_in_detail: Vedi in dettaglio
+      ok: OK
     realtime_dashboard:
       view_all: Visualizza tutto
       view_more: Altre informazioni
@@ -3553,6 +3568,8 @@ it:
         scheduled_hourly: Eseguito ogni ora
         cancel: Annulla
         confirm: Conferma
+        delete_title: Elimina programma
+        delete_text: Sei sicuro di voler eliminare questo programma?
       new:
         title: Titolo
         filter: Filtri
@@ -3584,6 +3601,7 @@ it:
         select_all: Seleziona tutto
         schedule_message: '%{zone} per i ticket creati/aggiornati negli ultimi/e %{label}'
         email: E-mail
+        frequency: Programma
     ticket_activity:
       title: Esporta attività ticket
       edit: Modifica il programma
@@ -3724,6 +3742,9 @@ it:
         'true': true
         subject: Oggetto
         desc: Descrizione
+        monthly: Mensile
+        daily: Giornaliero
+        weekly: Settimanale
       errors:
         emails_limit: 'Puoi aggiungere al massimo %{num} e-mail'
         invalid_email: E-mail non valide
@@ -4052,9 +4073,9 @@ it:
       title: Approfondimento dettagliato Helpdesk
     performance_distribution:
       title: Distribuzione prestazioni
-      first_response_bar: First response time
-      response_bar: Avg response time
-      resolution_bar: Resolution time
+      first_response_bar: Tempo di prima risposta
+      response_bar: Tempo di risposta medio
+      resolution_bar: Tempo di risoluzione
       first_response_and_response_trend: Avg first response e tendenza tempi di risposta
       resolution_trend: Tendenza avg resolution time
       description:
@@ -4121,8 +4142,15 @@ it:
       title: Report soddisfazione clienti
     timespent_export:
       button_export: Esporta
+      export_csv: Esporta CSV
     filtered_by: 'Filtrati per:'
     change: Modifica
+    insights:
+      customize_link: Personalizza
+    year_in_review:
+      title: Il tuo anno per immagini
+    show: 'Mostra:'
+    at: a
   user_notifications:
     collab_group_mention: >-
       ha menzionato il tuo gruppo - %{group_name} in un messaggio sul ticket
@@ -4180,6 +4208,7 @@ it:
     desktop_notifications_disabled: Hai disabilitato le notifiche desktop
     toggle_mobile_notifications: Attiva/disattiva notifiche mobili
     toggle_web_notifications: Attiva/disattiva notifiche web
+    mute: Disattiva audio
   meta:
     language_name: Italian
   date:
@@ -4371,7 +4400,7 @@ it:
   reorder_rules: Riordina regole attive
   plain_yes: Sì
   plain_no: 'No'
-  plain_on: 'On'
+  plain_on: Il
   plain_off: Disattivato
   add_all: Aggiungi tutto
   unspam: Non spam
@@ -4862,6 +4891,8 @@ it:
       email: Il tuo indirizzo e-mail *
       comments: Commenti
       send_feedback: Invia feedback
+      related_files: File correlati
+      was_this_article_useful: Questo articolo ti è stato utile?
     surveys:
       thanks_for_feedback: Abbiamo ricevuto il tuo feedback. Grazie mille.
       feedback_already_done: Hai già inviato un feedback per questa risposta.
@@ -4892,6 +4923,9 @@ it:
     canned_form:
       next: Avanti
       form_submit: Invia
+      okay: OK
+      hey: Ciao
+      thank_you_text: Grazie
   gamification:
     levels:
       beginner: Principiante
@@ -6018,6 +6052,17 @@ it:
       trial_extension_requested: Estensione del periodo di prova richiesta
     new:
       company: Nome azienda
+      full_name: Nome completo
+      confirmation: Conferma
+      create_an_account: Crea un account
+    edit_domain:
+      email_error: Il nome dell'azienda deve essere di almeno 3 caratteri
+      getting_started: Per iniziare
+      url_error1: 'Il dominio <strong>%{domain_name}</strong> non è disponibile.'
+    signup_google:
+      sign_up: Iscriviti!
+      privacy_policy: politica della privacy
+      terms_of_service: termini del servizio
   success_msg: Impostazioni dell’account aggiornate.
   failure_msg: Impossibile aggiornare le impostazioni dell’account.
   account_configuration:
@@ -6999,6 +7044,7 @@ it:
       day: 1 giorno
       twoday: 2 giorni
       threeday: 3 giorni
+    maximum: Massimo
   four: 4 ore
   oneweek: 1 settimana
   twoweek: 2 settimane
@@ -7180,6 +7226,9 @@ it:
       reimpostazione
     member: Membro di
     more: altro
+    add_skills: Aggiungi competenze
+    manage_skills: Gestisci competenze
+    skill: Competenze
   account_admin: Amministratore account
   right: Destra
   footer:
@@ -7785,6 +7834,7 @@ it:
       related_articles: Articoli correlati...
     agent_login_info: Sei un operatore?
     agent_signin: Accedi qui
+    agent_login_details: Inserisci i dati di seguito
   feedbackwidget_form_heading: Intestazione modulo
   feedbackwidget_form_title: Titolo modulo widget
   cancel_and_back: Annulla e torna indietro
@@ -7943,7 +7993,7 @@ it:
       last_published: Ultima pubblicazione di
       article_prop: Proprietà articolo
       feedback: Feedback
-      analytics: Analytics
+      analytics: Analisi
       mark_as_outdated:
         text_1: Contrassegna le traduzioni come obsolete
         text_2: nel caso tu abbia modificato l'articolo
@@ -8406,6 +8456,8 @@ it:
     linked_paren_child_desc: 'Flussi di lavoro per creazione ticket padre/figlio, ticket collegati'
     scheduled_reports_desc: Creazione di report programmati
     custom_survey_desc: Sondaggi di soddisfazione personalizzati
+    bot: Bot
+    freshchat: Integrazione Freshchat
   zendesk_account: Dati account Zendesk
   zendesk_import_files: Selezionare gli elementi da importare
   file_url: URL di esportazione XML completo
@@ -8845,6 +8897,8 @@ it:
           che sia specifica per ogni lingua. L'<i
           class="common-icon-outdated"></i> icona indica che le traduzioni della
           notifica nelle altre lingue potrebbero essere scadute.
+      agent_template_25:
+        topic: Email di invito operatore
     insert_placeholder: Inserisci segnaposto
     modify_agent_template: Modifica il modello e-mail dell'agente
     event: Evento
@@ -9098,6 +9152,7 @@ it:
         Non hai ancora creato un e-mail di assistenza con un dominio
         personalizzato.
       limit_exceeded: Con questo piano non puoi configurare più di due firme DKIM.
+    plain_unverified: Non verificato -
   step2: Passaggio 2
   import_users_contacts: Utenti → Contatti
   linkback_info: >-
@@ -10010,6 +10065,10 @@ it:
       users_from_any_domain: Utenti di tutti i domini
     gdpr_agent: Agente
     gdpr_to: A
+    gdpr_terms_link: Condizioni
+    gdpr_admin: Amministratore.
+    gdpr_policy: Politica della privacy.
+    gdpr_acknowledgement: e confermi di aver letto la nostra
   lead: Lead
   comments: Commenti
   forum_confirm_msg1: Eliminare questa categoria?
@@ -10157,6 +10216,8 @@ it:
     events_empty: Gli eventi non possono essere vuoti
     conditions_empty: Le condizioni non possono essere vuote
     actions_empty: Le azioni non possono essere vuote
+    invalid_domain:
+      freshdesk: Freshdesk
   export_data:
     in_sla: Nello SLA
     out_of_sla: Violazione SLA
@@ -10378,6 +10439,8 @@ it:
         flash_card_html: Novità del social
         flash_card_text: Comprendere la scheda Social
         tickets: Ticket
+        post: ' Pubblica '
+        interactions: Interazioni
       index:
         all: Tutti
       search_btn: Cerca
@@ -10575,6 +10638,7 @@ it:
       update: Aggiorna
       delete: Elimina
       write_feedback: Scrivi feedback
+    connect: Connetti
   home:
     mobile_index:
       email: E-mail
@@ -10793,6 +10857,13 @@ it:
       submitting: Invio in corso...
     error_calling_method: 'Si è verificato un errore durante il metodo di chiamata: '
     validation_failed: Convalida non riuscita.
+    third_party_apps_policy: >-
+      Questa applicazione è di proprietà, sviluppata, gestita e mantenuta da una
+      terza parte e non da Freshworks Inc. Scaricando, integrando e/o usando
+      questa app tu comprendi di essere vincolato ai termini e alle politiche
+      della privacy del suo sviluppatore, compreso il trattamento dei tuoi dati.
+      Per ulteriori dettagli relativi a tali termini e politiche della privacy,
+      contatta lo sviluppatore o visita la sua pagina.
   integrations:
     native_integrations: Integrazioni native
     freshplugs_title: FreshPlug
@@ -11645,7 +11716,7 @@ it:
         la procedura, è possibile visualizzare le informazioni sui contatti in
         qualsiasi ticket o schermata di visualizzazione contatti.</p>
       form:
-        api_key: Auth Token
+        api_key: Token di autorizzazione
         api_key_info: >-
           <a
           href='http://www.zoho.com/crm/help/api/using-authentication-token.html#Generate_Auth_Token'
@@ -11880,6 +11951,13 @@ it:
           Ad esempio, se l'URL di Shopify è
           <strong>https://nome_mio_negozio.shopify.com</strong>, inserire
           <strong>nome_mio_negozio</strong>.
+        shop_name_info_mint: >-
+          Ad esempio, se l'URL di Shopify è
+          <strong>https://nome_mio_negozio.shopify.com</strong>, inserire
+          <strong>nome_mio_negozio</strong>.
+        shop_name_mint: Nome negozio
+      edit:
+        disconnect: Disconnetti
     outlook_contacts:
       label: Sincronizzazione contatti Outlook
       desc: Sincronizza periodicamente i contatti di Outlook e Freshdesk.
@@ -12575,6 +12653,14 @@ it:
         mapping:
           company: Nome azienda
           contact: Contatto
+          contact_fields: ' Campi contatto '
+          account_fields: ' Campi account '
+    google_drive:
+      form:
+        developer_key: Chiave API ottenuta da Google developers console.
+        client_id: ID client OAuth per il tuo dominio
+    microsoft_teams:
+      auth_btn: Autorizza
   widgets:
     contact_widget:
       description: >-
@@ -12590,6 +12676,7 @@ it:
         feedback_widgets_help_articles_v1: o sfoglia gli articoli
         show_all_results: Mostra tutti i risultati
         no_results: 'Nessun risultato per '
+        problems_with_fields: 'Sono stati riscontrati problemi con i seguenti campi:'
   reorder: Riordina
   reports:
     no_data: Nessun dato da visualizzare.
@@ -12845,6 +12932,7 @@ it:
       agent_chat_summary: Riepilogo chat agente
       agent: Agente
       deleted: Eliminato
+    discard_changes: Ignora
   delete_the_ticket: Elimina il ticket
   mark_as_spam: Contrassegna come spam
   bulk_actions: Azioni in blocco
@@ -13042,6 +13130,7 @@ it:
       relevance: Rilevanza
       created_at: Data di creazione
       updated_at: Ultima modifica
+    searching: Ricerca in corso
   assumed_identity_msg: 'Hai assunto l''identità di %{user_name}.'
   unauthorized_msg: Autorizzazione negata
   assuming_identity_user_does_not_exist_msg: L'utente di cui vuoi assumere l'identità non esiste.
@@ -13350,6 +13439,7 @@ it:
         impostazione se desideri un tema coerente non reattivo su tutti i
         dispositivi.
     classic: Classico
+    apply_mint: Applica
   any_time: In qualsiasi momento
   five_minutes: Entro 5 minuti
   fifteen_minutes: Entro 15 minuti
@@ -13718,6 +13808,7 @@ it:
       see_detailed_pricing: Visualizza prezzo dettagliato
       followup: vale crediti telefonici
       followup_text: vale crediti telefonici
+      purchase_credits: Acquista Crediti
     dialpad:
       not_valid_number: Inserisci un numero valido
       could_be_invalid_number: Potrebbe essere un numero non valido.
@@ -14177,7 +14268,7 @@ it:
         text_to_speech: Sintesi vocale
         record_calls: Registra chiamate
         voicemail: Segreteria vocale
-        voicemail_on: true
+        voicemail_on: Il
         voicemail_off: Disattivato
         record_all: Registra tutte le chiamate
         record_none: Non registrare le chiamate
@@ -14231,8 +14322,8 @@ it:
           Per leggere la posizione della coda, utilizzare il segnaposto
           {{queue.position}} <br/> Ad es: sei attualmente in coda. La tua
           posizione della coda è {{queue.position}}
-        queue_position_enable: 'ON'
-        queue_position_disable: 'OFF'
+        queue_position_enable: ACCESO
+        queue_position_disable: SPENTO
       numbers:
         sidebar_title: Canale telefonico
         sidebar_content: >-
@@ -14391,7 +14482,7 @@ it:
         turned_on: >-
           I messaggi di benvenuto verranno riprodotti per tutte le chiamate in
           entrata.
-        turn_on: true
+        turn_on: Il
         turn_off: Disattivato
         add_new_menu: Aggiungi nuovo <b>menu</b>
         add_new_menu_from_option: Aggiungi nuovo menu
@@ -14534,7 +14625,7 @@ it:
     anytime: Sempre (24/7)
     business_calendar: Seleziona orario di ufficio
     show_widget: Quando gli agenti sono online e accettano le chat
-    texton: 'On'
+    texton: Il
     textoff: Disattivato
     form_details: Dettagli modulo
     copy_to_clipboard: Copia negli Appunti
@@ -15212,6 +15303,13 @@ it:
     admin:
       save: Salva
       cancel: Annulla
+      sidebar_title: Freshchat
+      action:
+        success_message: Impostazioni aggiornate
+      admin_apikey: 'Chiave API:'
+      title_text: Freshchat
+      portal_url: 'URL portale:'
+      app_id: ID app
   facebook_tab:
     remove_tab: Rimuovi scheda pagina
     tab_not_removed: Impossibile rimuovere la scheda
@@ -15946,6 +16044,7 @@ it:
     attach: Aggiungi a risposta
     attached: Aggiunto alla risposta
     remove: Rimuovi
+    mb: ' MB '
   ml:
     similat_tickets_found: Trovati tracker simili
     no_suggestions: Ups! Nessun suggerimento.
@@ -16077,6 +16176,9 @@ it:
     email_bad_request: >-
       Il server email ha inviato la risposta BAD durante la connessione al
       server.
+    unkown_error: >-
+      Impossibile recuperare le email dal server email personalizzato. Contatta
+      support@freshdesk.com
   imap_error: Server email non accessibile
   freshcaller:
     admin:
@@ -16087,5 +16189,48 @@ it:
           validation_error: Questo campo è obbligatorio
         email: E-mail
         continue: Continua
+        connect_existing_account: Collega un account esistente
+        account_url: URL account di Freshcaller
+        password: Password
       title_text: Telefono
+      feature_request_content:
+        create_new_account: Crea nuovo account
+      freshcaller_subtext: 'Acquista numeri, imposta code delle chiamate, IVR, ecc.'
   in: tra
+  mailer_notifier:
+    hi: 'Ciao,'
+    thanks: 'Grazie,'
+  copied_link: Copiato
+  cloud_log_mailer:
+    logger_email:
+      regards: 'Cordiali saluti,'
+      account: 'Account: '
+      reason: Motivo
+  undo_toggle_error: 'Spiacenti, si è verificato un problema!'
+  helpcard:
+    title: ID esterno univoco
+  admin_upgrade:
+    enable_mint_title: 'Consenti agli agenti di provare il nuovo Mint, più aggiornato e rapido'
+    enable_mint_error: >-
+      Mint è già abilitato per tutti gli agenti. Aggiornalo per utilizzare le
+      impostazioni più recenti.
+  customize_domain:
+    email:
+      cheers: 'Saluti,'
+      team: Team di Freshdesk
+  profiles:
+    freshid_edit:
+      profile_details: Dettagli del profilo
+  'on': il
+  save_as: Salva come
+  currency_label: 'Valuta :'
+  help_widget:
+    form_title: Contattaci
+    form_button_text: Invia feedback
+    form_submit_message: Grazie per il tuo feedback.
+    button_text: Assistenza
+    welcome_message: Possiamo aiutarti?
+    predictive_message: >-
+      Abbiamo notato che ti sei bloccato. Spiegaci cosa stavi cercando di
+      ottenere e il nostro team di assistenza ti contatterà al più presto.
+    success_message: Grazie. Ti faremo sapere!

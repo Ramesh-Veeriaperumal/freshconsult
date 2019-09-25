@@ -5,6 +5,8 @@ id:
     events_empty: Acara tidak boleh kosong
     conditions_empty: Kondisi tidak boleh kosong
     actions_empty: Tindakan tidak boleh kosong
+    invalid_domain:
+      freshdesk: Freshdesk
   confirm_delete_message: 'Apakah Anda yakin ingin menghapus %{human_name}?'
   any: Apapun
   or: atau
@@ -28,11 +30,17 @@ id:
     mail:
       info: Data Tiket Anda akan dikirim ke email Anda segera!
       subject: 'Ekspor tiket - %{filter} - ( %{start_date} ke %{end_date} )'
+    export: Ekspor
+    csv: CSV
+    xls: Excel
+    select_all: Pilih semua
+    select_format: 'Ekspor sebagai:'
+    view_all_tickets: Ekspor sebagai CSV
   reorder_rules: Susun ulang Aturan Aktif
   plain_yes: Ya
   plain_no: Tidak
   unspam: Unspam`
-  unblock: Whitelist
+  unblock: Daftar putih
   enabled: Diaktifkan
   disabled: Dinonaktif
   private: Pribadi
@@ -48,13 +56,13 @@ id:
   amount: Jumlah
   paid_with: Dibayar dengan
   date_title: Tanggal
-  status: Keadaan
+  status: Status
   sales: Penjualan
   preview: Pratinjau
   no_agents_in_selected_group: Tidak ada agen di grup yang dipilih
   send_feedback: Kirimkan umpan balik
   ticket_form:
-    your_email_address: Email
+    your_email_address: Surel
     your_name: Nama Anda
     select_contacts: 'Pilih kontak dari %{contact_name}'
   date:
@@ -161,13 +169,13 @@ id:
         no_search_default: >-
           Tidak mencari standar kata kunci pencarian yang didefinisikan untuk
           setiap penanganan twitter Anda.
-        search: Mencari
+        search: Cari
         convert_to_ticket: mengkonversi ke tiket
-        reply: Membalas
+        reply: Balas
         show_more_results: Tampilkan hasil lainnya
         search_twitter: Mencari Twitter
         title: Akun Twitter
-        reauthorize: Otorisasi Ulang
+        reauthorize: Izinkan kembali
         reauth_required: reauthorization diperlukan
         from: 'Dari:'
         note_title: 'Catatan:'
@@ -209,6 +217,15 @@ id:
         all: Semua
       tooltip:
         convert_to_tkt: mengkonversi ke tiket
+        replied: Dibalas
+        db_contact: Kontak
+      twitter:
+        post: ' Mengirimkan '
+        tickets: Tiket
+      search_btn: Cari
+      compose: Gubah
+    welcome:
+      get_started: Memulai
   proceed_now: Lanjutkan sekarang?
   forward: Meneruskan
   apply: Berlakukan
@@ -283,7 +300,7 @@ id:
   due_next_eight: Lanjut 8 jam
   resolved_late: Diselesaikan terlambat
   print: Mencetak
-  remove: Menghapus
+  remove: Hapus
   block_users: Apakah Anda ingin memblokir kontak juga?
   no_tags: Tag Tidak Ditemukan
   user_block: Ya
@@ -337,6 +354,10 @@ id:
     confirm_disable: Apakah Anda yakin ingin menonaktifkan integrasi ini?
     configure_addon: Mengkonfigurasi integrasi ini
     configure_custom_addon: Mengkonfigurasi widget ini
+    tooltip:
+      edit: Sunting
+      settings: Pengaturan
+    connect: Sambungkan
   user:
     company: Perusahaan
     photo: Foto
@@ -354,7 +375,7 @@ id:
     phone_no: Nomor telepon
     address: Alamat Rumah
     work: Kantor
-    email: Email
+    email: Surel
     choose_another_photo: Pilih foto lain
     change_photo: Rubah foto
     remove_photo: Menghapus foto
@@ -365,6 +386,11 @@ id:
     ie9_file_change_msg: '%{filename} Simpan untuk memperbaharui gambar profil.'
     add_photo: Tambahkan foto
     mobile_phone: Handhphone
+    industry: Industri
+    last_name: Nama belakang
+    first_name: Nama depan
+    company_name: Perusahaan
+    job_title: Jabatan
   home:
     mobile_index:
       email: Email
@@ -386,10 +412,10 @@ id:
   ticket_fields:
     fields:
       source: Sumber
-      subject: Subyek
+      subject: Judul
       requester: Cari Pemohon
-      status: Kondisi
-      group: Grup
+      status: Status
+      group: Kelompok
       agent: Agen
       priority: Prioritas
       description: Deskripsi
@@ -397,8 +423,12 @@ id:
       ticket_type: Tipe
       created_at: Dibuat
       tags: Label
+      internal_group: Grup internal
+      company: Perusahaan
+      internal_agent: Agen internal
+      skill: Keterampilan
     saving_ticket: Menyimpan bidang tiket...
-    untitled: Untitled
+    untitled: Tanpa judul
     first_choice: Pilihan Pertama
     second_choice: Pilihan Kedua
     confirm_delete: Apakah Anda yakin ingin menghapus bagian ini?
@@ -441,7 +471,7 @@ id:
       nestedfield_helptext_preview: >-
         Ini adalah "Pratinjau" dari sampel dropdown item, gunakan textarea
         bentuk bebas di "Edit Tampilan" untuk mengedit item
-      delete_field: Menghapus field
+      delete_field: Hapus bidang
       field_label_agents: Bidang label untuk agen
       field_label_customer: Bidang label untuk pelanggan
       add_new_choice: Tambahkan pilihan baru
@@ -457,15 +487,23 @@ id:
       customer_visible: Ditampilkan ke pelanggan
       description: Deskripsi
       for_customer: Untuk Pelanggan
-      agent_mandatory_closure: Diperlukan ketika menutup tiket
+      agent_mandatory_closure: Diperlukan saat menutup tiket
       choices: Pilihan
       label_in_portal_info: Label yang ditampilkan dalam portal layanan diri Anda
       display_cc_field: Tampilan bidang CC
       cc_company_contacts: Bisa CC hanya kontak perusahaan
       cc_any_email: Bisa CC alamat email
       level: Tingkat
+      dropdown_choice_disabled: Pilihan standar tidak bisa dihapus
+      nested_tree_validation: Anda memerlukan setidaknya satu kategori & sub kategori
     section:
       delete_btn: Menghapuskan
+      ok_btn: OK
+      confirm_btn: Konfirmasi
+      continue_btn: Lanjutkan
+      confirm_text: Mohon Konfirmasi...
+      would_you_like_to: Apakah anda ingin
+      oops_btn: Aduh!
   integrations:
     native_integrations: Integrasi Asli
     freshplugs_title: FreshPlugs
@@ -562,7 +600,7 @@ id:
       form:
         domain: Domain
         domain_info: 'Masukkan domain sajai tanpa https. Ex: example.harvestapp.com'
-        harvest_note: Catatan teks
+        harvest_note: Catatan Teks
         harvest_note_info: >-
           Ini teks yang akan ditambahkan pada akhir catatan, dengan catatan
           waktu yang dihabiskan.
@@ -604,7 +642,7 @@ id:
       install: Impor & Aktifkan
       edit_app: Memperbarui
       add_more: Sinkronisasi akun baru
-      edit: Mengedit
+      edit: Sunting
       already_exist: >-
         Email ini telah dikonfigurasi. Anda tidak dapat menambahkan email yang
         sama lagi.
@@ -613,7 +651,7 @@ id:
       overwrite_existing_user: Timpa rincian kontak yang ada di Freshdesk
       enable_integration: Mulai sinkronisasi otomatis setelah impor selesai (setiap hari sekali).
       account: Akun
-      email: Email
+      email: Surel
       group: Sinkronisasi Nama grup
       tag: Sinkronisasi Pengaturan
       tag_label: Singkronisasi tag
@@ -703,7 +741,7 @@ id:
         jira_note_info: Teks ini akan ditambahkan ke deskripsi masalah di Jira.
         widget_title: Judul Widget
         username: Nama
-        password: Kata sandi
+        password: Kata Sandi
         jira_status_sync: 'Untuk perubahan apapaun di status permasalahan JIRA %{dropdown}'
         jira_comment_sync: >-
           Untuk komentar apapun yang ditambahkan di permasalahan JIRA
@@ -741,12 +779,16 @@ id:
       form:
         salesforce_settings: Pengaturan Tenaga penjualan
         select: Pilih opsi
+        contact: Bidang Kontak
+        account: Bidang Akun
     nimble:
       label: Cekatan
       desc: Anda dapat melihat informasi kontak dari Nimble CRM di Freshdesk.
     zohocrm:
       label: Zoho CRM
       desc: Anda dapat melihat informasi kontak dari Zoho crm di Freshdesk.
+      form:
+        api_key: Token Auth
     google_analytics:
       label: Analisis Google
       desc: >-
@@ -792,7 +834,9 @@ id:
           internet. </span>
         widget_title: Judul Widget
         username: Nama
-        password: Kata sandi
+        password: Kata Sandi
+        account: Bidang Akun
+        contact: Bidang Kontak
     google_calendar:
       label: Kalendar Google
       desc: Anda dapat mengelola acara untuk setiap tiket dengan kalendar Google.
@@ -822,6 +866,7 @@ id:
           new: Baru
           auto_detect: Mendeteksi Otomatis
         widget_title: Judul Widget
+        api_key: Kunci API
     surveymonkey:
       enable_integration_text: >-
         Klik pada tombol Mengaktifkan untuk terhubung dengan akun SurveyMonkey
@@ -866,7 +911,7 @@ id:
           Misalnya, jika Highrise URL anda adalah
           <strong>http://mycompany.highrisehq.com/</strong> , masukan <strong>
           perusahaansaya </strong>. </span>
-        api_key: API Key
+        api_key: Kunci API
         api_key_info: >-
           Highrise API Key Anda dapat ditemukan di Highrise. Silahkan copy dan
           paste sama di sini.
@@ -929,7 +974,10 @@ id:
         widget_title: Nama Widget
         widget_script: potongan kode Widget
         create_n_enable: Membuat dan Aktifkan
-        insert_placeholder: Masukkan Placeholder
+        insert_placeholder: Masukkan Tempat lokasi
+      get_custom_apps: Dapatkan Aplikasi Khusus
+      edit_custom_app: Edit Aplikasi Khusus
+      new_custom_app: Aplikasi Khusus baru
     logmein:
       label: Penyelamatan LogMeIn
       desc: >-
@@ -987,7 +1035,7 @@ id:
         wawasan tentang statistik penggunaan pelanggan yang tepat dalam
         Freshdesk.
       form:
-        api_key: API Key
+        api_key: Kunci API
         api_key_info: Dapatkan API Key anda dari Pengaturan Akun
         client_id: ID Klien
         client_id_info: >-
@@ -1017,9 +1065,19 @@ id:
     ilos:
       messages:
         video_desc: Deskripsi
+      settings:
+        for_agents: Untuk Agen
+        for_customer: Untuk Pelanggan
+      portal_ticket:
+        placeholder: 'Tiket#'
+      agent_ticket:
+        placeholder: 'Tiket#'
+      solution:
+        placeholder: 'Artikel#'
     dynamics_v2:
       form:
         username: Nama
+        password: Kata Sandi
     marketplace_login:
       associate_account:
         user_name: Nama
@@ -1027,33 +1085,106 @@ id:
         submit: mengajukan
         company_name: Nama Perusahaan
         create_my_account: Buat akun Anda
+        phone_no: Nomor Telepon
+        email: Surel
+        your_freshdesk_url: URL Helpdesk anda
+        helpdesk_name: Nama Helpdesk
+      admin_credentials:
+        link_your_helpdesk: Tautkan Helpdesk anda
+        email_address: Alamat surel
+        login_your_helpdesk: Masuk ke helpdesk anda
+        login_with_admin: >-
+          Anda perlu menjadi administrator akun untuk menautkan akun freshdesk
+          dengan login Google
+        your_helpdesk: Helpdesk anda
+        login: Masuk
     screen_pop:
       widget:
         cancel: Membatalkan
+        view_all: Melihat semua
+        requester: Nama pengaju
+        do_not_link: Jangan tautkan
+        link_to_ticket: Tautkan ke tiket ini
+        call_actions: Aksi Panggilan
+        new_ticket_with_id: Tiket baru dibuat dengan id
+        link_to_new_ticket: Tautkan ke tiket baru
+        add_note_to_ticket: Tambahkan catatan
+        agent_phone_details: Detail panggilan agen
+        add_note_text: Catatan Panggilan
+        agent_phone_updated: Detail telepon agen Diperbarui
+        subject: Judul
+        recent_tickets: Tiket Terbaru
+        create: Buat
+        ticket_reference_id: Id referensi panggilan
     hootsuite:
       send: Kirimkan umpan balik
       filter:
         priority: Prioritas
         all: Semua
+        status: Status
       submit: mengajukan
       social:
         description: Deskripsi
         convert_to_ticket: mengkonversi ke tiket
+        requester: Pemohon
+      reply_btn: Balas
+      reset: Reset
+      domain:
+        continue_to_login: Lanjutkan masuk
+      login:
+        password: Kata Sandi
+        email: Surel
+      search:
+        ticket_id: ID Tiket
+        keyword: Kata kunci
+      header:
+        reply: Balas
     infusionsoft:
       form:
         select: Pilih opsi
+        contact: Bidang Kontak
+        account: Bidang Akun
     seoshop:
       form:
         api_key: Api Key
         language: Bahasa
+        nl: Belanda
+        en: Inggris
     cti_admin:
       phone:
         save: Simpan
         cancel: Membatalkan
+        add_number: Tambahkan Nomor
+        number_not_in_use: Tidak digunakan
+        add_number_tooltip: Setiap baris hanya dapat berisi satu nomor
+        title: Nomor Helpdesk
+        delete_number: Mohon Konfirmasi
+        delete_msg: Anda yakin ingin mengapus nomor ini?
+        number_in_use: Nomor yang digunakan
       ctd:
         username: Nama
+        api_key: Kunci API
+        callback_url: URL Panggilan Kembali
+        req_authentication: Membutuhkan otentikasi
+        encoding: Pengodean
+        request_type: Jenis Permintaan
+        have_api_key: Saya memiliki kunci API?
+        content: Konten
+        password: Kata Sandi
+        have_user_pass: Saya memiliki Nama Pengguna & Kata Sandi?
+      save_agent_private_note: Simpan Catatan Panggilan sebagai pribadi
+      ctd_toggle: Konfigurasikan Click to Dial
+      softfone:
+        max_dimension: Maksimal 550px &times; 250px
+        width: Lebar
+        height: Tinggi
+        url: URL untuk Iframe
+      title: Pengaturan CTI
+      iframe_toggle: Aktifkan Softphone Iframe
     github_settings:
       resolved: Terselesaikan
+      none: Tidak melakukan apa-apa
+      closed: Tertutup
     magento:
       form:
         product: produk
@@ -1061,6 +1192,10 @@ id:
       form:
         auth_token: Otentikasi Token
         select: Pilih opsi
+        deal: Bidang Deal
+        domain: Domain Akun
+        account: Bidang Akun
+        contact: Bidang Kontak
     outlook_contacts:
       form:
         mail_box_detail: Sinkronisasi dengan
@@ -1076,6 +1211,68 @@ id:
         delete_account: Menghapuskan
         last_sync_time: Waktu terakhir sinkronisasi
         syncing_in_progress: Sinkronisasi berlangsung
+        edit_account: Sunting
+    remote_login:
+      connect: Sambungkan
+      sign_up: Mendaftar
+    quickbooks:
+      form:
+        quickbooks_note: Catatan Teks
+      connect_text: >-
+        Menghubungkan ke QuickBooks akan lebih mempermudah agen anda untuk
+        mengakses dan memperbarui data tepat dari helpdesk anda.
+    slack_settings:
+      ticket_create: Pembuatan tiket
+    applications:
+      crm:
+        mapping:
+          company: Perusahaan
+          contact: Kontak
+          contact_fields: ' Bidang Kontak '
+          account_fields: ' Bidang Akun '
+    google_drive:
+      form:
+        developer_key: Kunci API diperoleh dari konsol pengembang google.
+        client_id: ID Klien OAuth untuk domain anda
+    shopify:
+      edit:
+        disconnect: Putuskan sambungan
+    dynamicscrm:
+      form:
+        contact_email: Surel Kontak
+        account: Bidang Akun
+        password: Kata Sandi
+        contact: Bidang Kontak
+    custom_apps:
+      ticket_detail_page: Halaman rincian tiket
+      preview_helptext: Aplikasi khusus ini akan muncul pada sidebar
+      hide_preview: Sembunyikan Pratinjau
+      custom_app_used_in: Aplikasi khusus ditampilkan pada
+      contact_detail_page: Halaman rincian kontak
+      refresh: Segarkan
+      show_preview: Tampilkan Pratinjau
+      custom_app_preview: Pratinjau aplikasi khusus
+    microsoft_teams:
+      auth_btn: Otorisasi
+    uninstall: Copot
+    slack_v3:
+      slack_prof_label: Sambungkan ke Slack
+      slack_connect_desc: Konfigurasikan akun anda untuk membuat tiket Slack dari Slack
+      slack_auth_btn: Otorisasi Slack
+    salesforce_v2:
+      form:
+        salesforce_v2_settings: Pengaturan Tenaga penjualan
+    slack_v2:
+      form:
+        slash_command_token: Token Perintah Slash
+    pivotal_tracker:
+      label: Pivotal Tracker
+    cloud_elements:
+      form:
+        daily: Harian
+        account: Bidang Akun
+        hourly: Per jam
+        contact: Bidang Kontak
   folder:
     edit: Mengedit Folder
     info1: Apakah Anda yakin ingin menghapus folder ini?
@@ -1084,7 +1281,7 @@ id:
   amount_for_annual: '$%{amount} per tahun'
   agent_deleted_message: Ini adalah agen terhapus
   cancel: Membatalkan
-  confirm: Memastikan
+  confirm: Konfirmasi
   downgrade_dialog_title: Anda yakin ingin menurunkan mutu?
   yes_password_reset: Ya
   no_password_reset: Tidak
@@ -1097,7 +1294,7 @@ id:
     Komunitas
   choose_plan: Pilih Rencana
   select_plan: Pilih Rencana
-  create: Membuat
+  create: Buat
   feedbackwidget_custom_image_info: jika anda menggunakan gambar kustom warna dan teks akan diabaikan.
   account_admin_updated: Admin account telah diperbarui!
   forums_order:
@@ -1109,6 +1306,10 @@ id:
     nottaken: Tidak diambil
     deferred: Ditangguhkan
     inprogress: Dalam progres
+    answered: Dijawab
+    unanswered: Tidak terjawab
+    solved: Terpecahkan
+    unsolved: Belum Terpecahkan
   payment_info: Informasi Pembayaran
   billing_address: Alamat penagihan
   support:
@@ -1125,6 +1326,8 @@ id:
         submit: mengajukan
         cancel: Membatalkan
         rate_again: Nilai kami lagi
+        load_questions: Lihat Lebih Banyak
+        comments: Komentar
     login:
       form:
         email: Email
@@ -1137,7 +1340,7 @@ id:
         help: Bantuan
     shared:
       attachment_form:
-        feedback_widgets_screenshot: mengambil screenshot
+        feedback_widgets_screenshot: Mengambil Screenshot
       survey_form:
         survey_title: Harap luangkan waktu sebentar untuk menilai dukungan kami
         feedback_title: >-
@@ -1154,6 +1357,8 @@ id:
       email: Email Anda *
       comments: Komentar
       send_feedback: Kirim umpan balik
+      related_files: Berkas Terkait
+      was_this_article_useful: Apakah artikel ini bermanfaat?
     surveys:
       thanks_for_feedback: Kami telah menerima tanggapan Anda. Terima kasih banyak.
       feedback_already_done: Anda telah memberikan umpan balik untuk tanggapan ini.
@@ -1180,6 +1385,8 @@ id:
     canned_form:
       next: Lanjut
       form_submit: mengajukan
+      hey: Hai
+      thank_you_text: Terima kasih
   gamification:
     levels:
       beginner: Pemula
@@ -1293,7 +1500,7 @@ id:
         title: Pencarian
         sideinfo1: Info 1
         sideinfo2: Info 2
-        quest_title: Quests
+        quest_title: Pencarian
         new_quest: Quest Baru
         quest_description: >-
           Quests adalah tujuan bisnis-spesifik yang Anda buat untuk menantang
@@ -1335,7 +1542,7 @@ id:
           mendapatkan poin lebih dan lebih, set poin yang akan dicapai akan
           ditetapkan oleh Admin.
         trophies_info1: Agen akan menerima 4 gelar berdasarkan kriteria yang berbeda.
-        quest: Quests
+        quest: Pencarian
         quest_info1: >-
           Quests merupakan target pencapaian yang anda tetapkan untuk agen,
           ketika agen mencapai target tersebut, maka dia akan diberikan
@@ -1389,6 +1596,7 @@ id:
         video: Periksa video
         learn_arcade: Pelajari lebih lanjut tentang arcade
         enable_arcade: Izinkan Freshdesk arcade
+        start_over: Reset
       gamification_settings:
         award_points: Poin penghargaan
         agent_resolves_ticket: 'Ketika agen <br /> menyelesaikan tiket:'
@@ -1407,7 +1615,7 @@ id:
         info_levels: Set poin yang harus dicapai oleh agen untuk mencapai suatu tingkat
         title_trophies: Penghargaan
         new_quest: Quest Baru
-        quest_title: Quests
+        quest_title: Pencarian
     surveys:
       successfully_updated: Pengaturan Kepuasan Pelanggan telah berhasil diperbarui.
       error_updated: Kesalahan saat memperbarui pengaturan survei.
@@ -1430,6 +1638,14 @@ id:
         cancel: Membatalkan
         delete: Menghapuskan
         save_survey: Simpan
+        hide: Hapus
+        new: Baru
+        update: perbarui
+        edit: Sunting
+        confirm_text: Mohon Konfirmasi...
+        activate_survey: Aktifkan
+        preview_survey: Pratinjau
+        custom_title_v2: Survei Kepuasan Pelanggan
       satisfaction_settings:
         enable_label: Survei Kepuasan Pelanggan
         link_text_label: Survei kepuasan teks link
@@ -1445,6 +1661,19 @@ id:
         enter_happy_text: Masukkan teks bahagia
         enter_neutral_text: Masukkan teks netral
         enter_unhappy_text: Masukkan teks tidak bahagia
+      new_layout:
+        title: Nama survei
+        loading: Memuat...
+        survey: Penelitian
+      thanks_contents:
+        title_text_v2: Pesan terima kasih untuk Survei Kepuasan Pelanggan
+      new_questions_layout:
+        questions: Pertanyaan
+      new_rating:
+        error_text: Bidang ini wajib diisi
+      new_thanks:
+        thanks_message_feedback_v2: Pesan terima kasih untuk umpan balik tambahan
+        additional_comments_feedback_v2: Sertakan kotak komentar tambahan
     getting_started:
       send_mail_content:
         test_info_1: >-
@@ -1602,6 +1831,10 @@ id:
           Masa berlaku voucher anda akan otomatis mengisi ulang segera setelah
           jumlah tiket tersedia 2 hari mendatang
         all: Semua
+        agent: Agen
+        email: Surel
+        date: Tanggal
+        filtered_by: 'Difilter berdasarkan:'
     widget_config:
       index:
         feedbackwidget_embedded_tab: Embedded Widget
@@ -1634,9 +1867,38 @@ id:
         feedbackwidget_use_https: Gunakan https
       popup_widget:
         feedbackwidget_attach_a_file: lampirkan file
+        feedbackwidget_submit_title: Kirim umpan balik
+        feedbackwidget_button_customization: kustomisasi tombol
+        thankyou_default: Terima kasih untuk umpan balik anda
+        feedbackwidget_form_submit_message: Formulir Kirim Pesan
+        feedbackwidget_screenshot: Mengambil Screenshot
+        feedbackwidget_form_customization: kustomisasi formulir
+        thankyou_info: >-
+          Pesan yang akan ditampilkan setelah pengguna mengirimkan formulir
+          tiket
+        feedbackwidget_offset: 'Offset:'
+        feedbackwidget_search_area: Mencari Artikel
+        feedbackwidget_popup_code: kode Popup Widget
+        feedbackwidget_use_https: Gunakan https
+        feedbackwidget_button_text_placeholder: Dukungan
+        feedbackwidget_form_height_message: >-
+          Jika Anda melihat scroll bar di widget Anda, menyesuaikan tinggi
+          widget.
       embedded_widget:
         feedbackwidget_embedded_code: kode Embedded Widget
         feedbackwidget_attach_a_file: lampirkan file
+        feedbackwidget_submit_title: Kirim umpan balik
+        thankyou_default: Terima kasih untuk umpan balik anda
+        feedbackwidget_form_submit_message: Formulir Kirim Pesan
+        feedbackwidget_form_customization: kustomisasi formulir
+        thankyou_info: >-
+          Pesan yang akan ditampilkan setelah pengguna mengirimkan formulir
+          tiket
+        feedbackwidget_search_area: Mencari Artikel
+        feedbackwidget_use_https: Gunakan https
+        feedbackwidget_form_height_message: >-
+          Jika Anda melihat scroll bar di widget Anda, menyesuaikan tinggi
+          widget.
     supervisor_rules:
       index:
         human_name: Pengawas aturan
@@ -1704,6 +1966,18 @@ id:
         help_info_4: Pelajari lebih lanjut tentang cara menggunakan pengamat
       new:
         title: Pengamat - Aturan baru
+      agent: Agen
+      performed_by: dan event dilakukan oleh
+      edit:
+        title: Observer - Edit Aturan
+      events: Ketika <b>Setiap</b> peristiwa ini terjadi
+      new_performed_by: Ketika aksi dijalankan oleh...
+      anyone: Siapapun
+      add_new_event: Tambahkan event baru
+      system: Sistem
+      customer: Pemohon
+      conditions: pada tiket dengan properti ini
+      actions: lakukan aksi ini
     shared:
       filter_jsinit:
         insert_placeholder: Masukkan Tempat lokasi
@@ -1712,6 +1986,25 @@ id:
         selected: Terpilih
         not_selected: Tidak Dipilih
         username: Nama
+        user_pass?: Saya memiliki Nama Pengguna & Kata Sandi?
+        api_key: Kunci API
+        change_password: Ubah Kata Sandi
+        url: URL Panggilan Kembali
+        url_req_auth: Membutuhkan Otentikasi
+        api_key?: Saya memiliki kunci API?
+        params: Konten
+        simple_webhook_tip: >-
+          Pilih tiket properti apapun dari daftar di atas untuk dikirim bersama
+          permintaan. Jika Anda ingin menulis permintaan API Anda sendiri,
+          silakan gunakan opsi Advance.
+        request_type: Jenis Permintaan
+        simple_layout: Sederhana
+        subject: Judul
+        password: Kata Sandi
+        advanced_layout: Tingkat Lanjut
+        checked: diperiksa
+        custom_headers_tip: Masukkan sepasang nilai header khusus per baris.
+        content_type: Pengodean
     automations:
       edit:
         title: Mengedit Skenario
@@ -1766,12 +2059,33 @@ id:
           segera. Anda akan menerima email konfirmasi dari kami penyedia sebelum
           persetujuan. Silakan cek inbox Anda untuk mengupdate.
         default_ssl: SSL Standar
-        custom_ssl: Custom SSL
+        custom_ssl: SSL Khusus
         dns_name: >-
           <b>Important:</b> Perbarui CNAME DNS record di file zona DNS Anda
           untuk mengarahkan nama domain di bawah nama ELB DNS: <br /> <br />ELB
           DNS dengan nama %{url}
         only_agents: Agen
+        saml_cert_fingerprint_info_sha256: >-
+          Sidik Jari (SHA256) sertifikat SAML yang disediakan oleh Penyedia
+          SAML. Ini akan digunakan untuk enkripsi/validasi
+        password_policy_info3: >-
+          Perubahan yang anda buat pada kebijakan kata sandi akan berlaku dalam
+          8 jam. Agen anda akan diminta untuk memperbarui kata sandi mereka
+          dalam waktu ini. Jika mereka gagal mengkonfirmasi, mereka akan
+          dikeluarkan dari portal support dan akan dipaksa untuk merubah kata
+          sandi mereka saat mereka mencoba masuk lagi.
+        password_policy_info4: >-
+          Harap perhatikan, seklai anda mengaktifkan kebijakan kata sandi untuk
+          akun anda (standar ataupun advance), anda tidak akan bisa
+          menonaktifkannya.
+        whitelisted_ips_enabled: Pembuatan Daftar Putih IP
+        for_contacts: Untuk Kontak
+        saml_logout_url: URL Keluar
+        password_policy: Kebijakan Kata Sandi
+        for_agents: Untuk Agen
+        saml_cert_fingerprint_info: >-
+          Sidik Jari (SHA1) sertifikat SAML yang disediakan oleh Penyedia SAML.
+          Ini akan digunakan untuk enkripsi/validasi
       helpnote:
         title: Pengaturan keamanan
         info2: >-
@@ -1783,6 +2097,30 @@ id:
           dukungan merek Anda sendiri. </b> Jika Anda berada di Rencana Estate,
           Anda dapat meminta untuk sertifikat SSL kustom untuk URL dukungan
           kesombongan Anda.
+        trusted_ip: >-
+          <b>Membatasi akses berdasarkan alamat IP </b><br> Anda dapat membatasi
+          akses pada portal support anda melalui alamat IP dari perusahaan atau
+          organisasi anda. Anda dapat menambahkan jumlah IP yang memiliki akses
+          secara tidak terbatas, serta menentukan apakah anda ingin mengontrol
+          akses untuk pelanggan juga, atau hanya untuk agen. <a
+          href="https://support.freshdesk.com/support/solutions/articles/195168"
+          target="_top"> Pelajari lebih lanjut.</a>
+      password_security:
+        passwords: kata sandi
+        session_expiry: Sesi pengguna berakhir pada
+        password_expiry: Kata sandi kedaluwarsa pada
+        advanced: Tingkat Lanjut
+        cannot_be_same_as_last: Tidak bisa sama dengan yang terakhir
+        have_special_character: Terdiri dari karakter khusus
+        never: Tidak pernah
+        characters: karakter
+        days: Hari
+        cannot_contain_user_name: Tidak bisa berisikan nama pengguna
+        password: kata sandi
+        have_mixed_case: Memiliki campuran huruf besar dan kecil
+        minimum_of: Minimum dari
+        atleast_an_alphabet_and_number: Terdiri dari alfabet dan angka
+        default: Default
     products:
       helpnote:
         tour: Bantu saya untuk mendukung beberapa produk
@@ -1815,7 +2153,7 @@ id:
           lain akan tidak dapat dilihat oleh pelanggan, bila melihat tab forum
           dalam portal produk ini.
         top_level_forum: Tingkat atas forum kategori
-        portal_url: Portal URL
+        portal_url: URL Portal
         top_level_solution: Tingkat atas solusi kategori
         portal_name: Portal nama
         portal_language: Portal Bahasa
@@ -1833,6 +2171,9 @@ id:
         last_published: Portal Anda terakhir diterbitkan
         contact_us: Kontak kami
         logo_and_favicon: Logo & favicon
+        settings: Pengaturan
+        customer_portal: Portal Pelanggan
+        edit_portal: Edit Portal
       edit:
         title: Mengedit Produk
         updating: Memperbarui...
@@ -1931,11 +2272,48 @@ id:
       scroll:
         customers: Pelanggan
         forums: Forum
+        reports: Laporan
+        solutions: Solusi
+        general: Umum
+        bots: Bot
+        tickets: Tiket
       agents_label: Agen
       role_description: Deskripsi
       cancel_label: Membatalkan
       done_label: Selesai
       save_label: Simpan
+      role_name: Nama Peran
+      agent_label: Agen
+      add_agent_label: Tambah Agen
+      new: Peran Baru
+      saving_label: Menyimpan...
+      helpcard:
+        info4: >-
+          Anda bisa menomasikan apakah anda ingin agen memiliki akses pengaturan
+          di bawah tab Admin. Agen dengan akses admin bisa menjadi Agen Operasi
+          dengan akses terbatas, atau Admin Super dengan kemampuan untuk
+          mengedit seluruh konfigurasi. Anda bisa memiliki Admin Super sebanyak
+          mungkin dengan kemampuan untuk melihat dan memodifikasi detil tagihan
+          anda, atau sesedikit mungkin.
+        title2: Hak Khusus Admin
+        info2: >-
+          Misalnya, anda dapat membuat peran untuk Koordnator Support anda,
+          memungkinkan mereka untuk memperbarui bagian dan menugaskan tiket, dan
+          bahkan menambahkan catatan internal, namun tidak membalas pelanggan.
+        title1: Pemahaman Peran
+        info1: >-
+          Peran memungkinkan Anda untuk membuat dan mengedit izin akses untuk
+          agen. Anda dapat membuat peran baru, menentukan tindakan apa yang
+          dapat dilakukan oleh agen dengan peran ini di help desk Anda, dan
+          menetapkan peran tersebut ke agen.
+        info3: >-
+          Setelah membuat dan menyimpan Peran baru, anda dapat menugaskannya ke
+          agen ketika anda membuat atau mengedit profil mereka dengan mengklik
+          ikon Agen di bawah tab admin.
+        info5: Pelajari lebih lanjut tentang peran dan hak khusus
+      manage_label: Kelola
+      add_label: Tambah
+      no_agent_label: Tidak ada Agen
     home:
       index:
         group: Grup
@@ -1974,35 +2352,172 @@ id:
         security: Keamanan
         email_commands_setting: Email Perintah
         billing: Rencana & Penagihan
+        search_admin: Pengaturan cari admin
     skills:
       index:
         agents_label: Agen
         agents: Agen
         description: Deskripsi
+        skills: Keterampilan
+        agent_label: Agen
+        add_agents: Tambahkan agen
+        skill_create: Buat
+        manage_label: Kelola
+        add_label: Tambah
+        no_agent_label: Tidak ada Agen
     user_skills:
       index:
         more: lebih
+        any: Apa saja
+        groups: Kelompok
     portal:
       settings:
         twitter: Twitter Id
         simple_none: Tidak ada satu pun
+        moderate_none_help: >-
+          Aktifkan fitur ini jika anda yakin komunitas anda tidak menarik
+          spammer.
+        google: Google
+        submit_ticket: Siapa yang dapat mengirimkan tiket baru pada portal
+        notify_agents: 'Kirim Moderasi dan Notifikasi Spam ke:'
+        view_forums: Siapa yang dapat melihat forum
+        important: Penting
+        moderate_links_help: >-
+          Aktifkan fitur ini untuk proteksi spam yang lebih baik. Sistem akan
+          memeriksa semua topik dan balasan tautan pihak ketiga dan aktivitas
+          spam lainnya.
+        logged_in: Pengguna yang masuk
+        moderate_all: Moderasikan semua topik dan balasan
+        user_permissions: Izin Pengguna untuk portal
+        moderate_links: Moderasikan semua topik dan balasan yang berisi tautan eksternal
+        captcha: Aktifkan CAPTCHA untuk menghindari spam
+        moderate_none: Jangan Moderasikan
+        view_settings: Lihat Pengaturan
+        restricted_login_signup: Mendaftar dan masuk telah dibatasi untuk domain tertentu
+        facebook: Facebook
+        allow_signup: Izinkan pengguna untuk Mendaftar dari portal pelanggan
+        moderation: Moderasikan Forum
+        view_solutions: Siapa yang dapat melihat solusi
+        auto_suggest_solutions_help: Ini juga berlaku untuk fitur pencarian di dalam widget feedback.
+        auto_suggest_solutions: Otomatis menyarankan solusi ketika membuat tiket baru
+        reset_portal_changes: Reset perubahan portal
+        everyone: Semua orang
+        allow_signin: Izinkan pengguna untuk Masuk menggunakan...
+        moderate_all_help: >-
+          Aktifkan fitur ini jika anda ingin manjadi selektif pada setip post
+          yang dibuat di komunitas anda.
+      helpnote:
+        exit_fullscreen: Keluar dari layar penuh
+        editor_shortcuts: Editor Shortcuts
+        preview_changes: Preview perubahan
+        editor_in_fullscreen: Editor dalam layar penuh
+        level_customizations: Kustomisasi tingkat halaman
+        advanced_rebranding: Rebranding & kustomisasi lanjutan
+        custom_stylesheets: Gunakan Stylesheets Khusus
     company_fields:
       formfield_props:
         description: Deskripsi
+        behavior: Tingkah Laku
+        customer_edit: Pelanggan dapat mengedit
+        field_label_agents: Bidang label untuk agen
+        dropdown_items_edit: Dropdown Item - Edit Tampilan
+        for_customer: Untuk Pelanggan
+        label: Label
+        cc_company_contacts: Bisa CC hanya kontak perusahaan
+        customer_visible: Tampilkan ke pelanggan
+        cc_any_email: Bisa CC alamat email
+        customer_mandatory: Diperlukan ketika mengirimkan formulir
+        sla_timer: Waktu SLA
+        field_label_customer: Bidang label untuk pelanggan
+        level2: Tingkat 2
+        nestedfield_helptext_preview: >-
+          Ini adalah "Pratinjau" dari sampel dropdown item, gunakan textarea
+          bentuk bebas di "Edit Tampilan" untuk mengedit item
+        dropdown_items_preview: Dropdown item - Preview
+        dropdown_choices: Item Dropdown
+        agent_mandatory_closure: Diperlukan saat menutup tiket
+        level3: Tingkat 3
+        display_cc_field: Tampilan bidang CC
+        customer_edit_signup: Pelanggan dapat melihat ini ketika mereka Mendaftar
+        for_agents: Untuk Agen
+        status_choices: Pilihan Status
+        nested_label: Label Bidang Bersarang
+        agent_mandatory_submission: Diperlukan ketika mengirimkan formulir
+        level1: Tingkat 1
+        display_to_customer: Menampilkan pesan untuk pelanggan
+        delete_field: Hapus bidang
+        default: Default
+        form_title: Properti
     social:
       streams:
         cancel: Membatalkan
         update: Memperbarui
+        visibility:
+          all: Semua orang
+        index:
+          new_account: Akun Baru
+        twitter_streams:
+          reauthorize: Izinkan kembali
+          edit: Sunting
+      twitter_streams:
+        new:
+          create: Buat
+        edit:
+          visible_to: Terlihat oleh
+      ticket_rules:
+        assign_to_gp: Tetapkan ke Grup
+    ecommerce:
+      new:
+        account_name: Nama Rekening
+        title: Akun Baru
+        assign_group: Tetapkan ke Grup
+      index:
+        new_account: Akun Baru
+      index_title: Niaga-el
+    contact_fields:
+      formfield_props:
+        behavior: Tingkah Laku
+        customer_edit: Pelanggan dapat mengedit
+        field_label_agents: Bidang label untuk agen
+        for_customer: Untuk Pelanggan
+        label: Label
+        customer_visible: Tampilkan ke pelanggan
+        customer_mandatory: Diperlukan ketika mengirimkan formulir
+        field_label_customer: Bidang label untuk pelanggan
+        dropdown_choices: Item Dropdown
+        customer_edit_signup: Pelanggan dapat melihat ini ketika mereka Mendaftar
+        for_agents: Untuk Agen
+        agent_mandatory_submission: Diperlukan ketika mengirimkan formulir
+        delete_field: Hapus bidang
+        default: Default
+        form_title: Properti
+        mapped_internal_groups: Grup Internal yang Dipetakan
+    hotline:
+      content3:
+        note_title: 'Catatan:'
+    webhook:
+      hipchat_hook_title: Notifikasi HipChat
+      jira_hook_description: >-
+        Anda dapat menggunakan webhook secara otomatis untuk membuat isu di
+        dalam akun JIRA anda ketika tiket masuk ke Freshdesk.
+      jira_hook_alt: Permintaan Penerbitan Pembuatan Isu JIRA
+      hipchat_hook_alt: Hipchat Pinging MENDAPATKAN Permintaan
+      jira_hook_title: Pembuatan Isu JIRA
+    mobihelp:
+      apps:
+        form:
+          saving: Menyimpan...
   widgets:
     contact_widget:
       description: Tampilan kontak atau pilihan untuk menambahkan kontak ke dalam kapsul.
     feedback_widgets:
       new:
-        feedback_widgets_search: Pencarian
+        feedback_widgets_search: Cari
         feedback_widgets_search_results: Hasil pencarian
         feedback_widgets_search_our: Cari kami
         feedback_widgets_knowledge_base: pengetahuan dasar
         feedback_widgets_help_articles: atau Telusuri bantuan artikel
+        problems_with_fields: 'Ada masalah dengan bidang-bidang berikut:'
   reorder: Susun ulang
   reports:
     no_data: Tidak ada data untuk ditampilkan!
@@ -2016,7 +2531,7 @@ id:
     helpdesk_title_nav: Laporan Kegiatan Helpdesk
     customer_title_nav: Laporan Kegiatan Pelanggan
     surveys_title_nav: Laporan Kepuasan Pelanggan
-    scoreboard_title_nav: Leaderboard
+    scoreboard_title_nav: Papan peringkat
     scoreboard_group_title: Grup Leaderboard
     scoreboard_agent_title: Agen Leaderboard
     select_time_period: Pilih periode Waktu
@@ -2071,6 +2586,7 @@ id:
         from: Dari
         to: Untuk
         filter_report: Laporan Filter oleh
+        ticket_type: Jenis Tiket
     scoreboard_reports:
       champions_title: Juara
       sharpshooter_title: Penembak jitu
@@ -2110,10 +2626,62 @@ id:
           tertentu</p></p>
       main:
         all: Semua
+        time_period: Periode Waktu
+        neutral: Netral
+        survey_name: Nama survei
+        total_responses_v2: Total
+        agent: Agen
+        positive: Positif
+        group: Kelompok
+        overall_rating: Penilaian
+        responses: Respons
+        negative: Negatif
+        no_overview: Data tidak tersedia
+        unanswered: Tidak terjawab
+        overview: Ikhtisar
+        answered: Dijawab
+        rating: Penilaian
     freshfone:
       business_hours: Jam Kerja
       options:
         unassigned: Batal ditugaskan
+        incoming: Masuk
+        outgoing: Keluar
+      time_period: Periode Waktu
+      no_agent: '- Tidak ada Agen -'
+      group: Kelompok
+      call_type: Tipe Panggilan
+      filter_option_all_calls: Semua Panggilan
+      filter_close: Tutup
+      avg_handle_time: Waktu Menangani Rata-Rata
+      all_numbers: Semua Nomor
+      filter_report: Laporan Filter oleh
+      number: Nomor
+      generate_summary: Menghasilkan
+      unanswered_count: Tidak terjawab
+      filter_by_title: Difilter menurut
+    discard_changes: Buang perubahan
+    livechat:
+      time_period: Periode Waktu
+      chat_type: Tipe Obroaln
+      answered_chats: Dijawab
+      select_widget: Pilih Widget
+      missed_chats: Terlewat
+      group: Kelompok
+      filter_close: Tutup
+      avg_handle_time: Waktu Menangani Rata-Rata
+      filter_report: Laporan Filter oleh
+      num_of_transfer: Transfer
+      total_chats: Total
+      avg_time_queue: Waktu dalam Antrean
+      num_of_chats: Tidak ada Obrolan
+      generate_summary: Menghasilkan
+      widget: Widget
+      filter_by_title: Difilter menurut
+    time_sheets:
+      time_period: Periode Waktu
+      filter_by_title: Difilter menurut
+    reports_by: Laporan oleh
   delete_the_ticket: Hapus tiket
   mark_as_spam: Tandai sebagai Spam
   bulk_actions: Tindakan Massal
@@ -2148,10 +2716,11 @@ id:
         Sisa isi email Anda akan ditambahkan sebagai percakapan Freshdesk dan
         juga dikirim ke Pemohon melalui email.
       ticket_type_example: Pertanyaan
+      note: Catatan
   email_command_delimeter_label: Perintah Email delimeter
   email_command_preview_to_email: Untuk
   email_command_preview_to_email_value: support@acme.freshdesk.com
-  email_command_preview_subject: Subyek
+  email_command_preview_subject: Judul
   email_command_preview_subject_value: Tiket Dukungan
   unable_to_charge: Tidak dapat mengisi kartu untuk menambahkan agen!
   ticket_field:
@@ -2173,6 +2742,27 @@ id:
         lebih dalam dan mengidentifikasi masalah terbesar yang menyumbat
         dukungan Anda. Dengan bidang tergantung Anda dapat mengatur tiket
         hierarkis ke dalam kategori, subkategori dan konten terpengaruh.
+      info4_v3: >-
+        Jika anda memiliki paket Estate atau di atasnya, anda bisa memiliki sesi
+        dengan bagian dinamis yang muncul berdasarkan opsi yang dipilih pada
+        bagian dropdown. Anda bisa menambahkan bagian tiket pada setiap sesi,
+        dan sambungkan sesi dengan opsi pada bagian dropdown. Jika anda
+        menjalankan toko e-commerce, misalnya, anda bisa membuka bagian yang
+        disebut 'Alasan' ketika pelanggan anda memilih opsi 'Penggantian'.
+        Dengan ini, anda bisa memahami dengan baik mengapa pelanggan anda
+        melakukan pengajuan penggantian. Anda bisa membuat maksimum 2 sesi
+        dinamis dan menggunakan 2 dropdown khusus. Jika anda sudah menghubungkan
+        sebuah sesi dengan bagian 'tipe', anda bisa menambahkan sesi satu lagi
+        ke dalam formulir tiket.
+      info4_v2: >-
+        Jika anda memiliki paket Estate atau yang lebih tinggi, anda bisa
+        mendapatkan bagian dinamis yang muncul berdasarkan opsi yang dipilih
+        pada bagian tipe. Untuk setiap opsi pada bagian tipe, anda dapat membuat
+        sesi yang berbeda. Kemudian, anda bisa menambahkan beberapa tiket ke
+        dalam setiap sesi. Misalnya, skenario e-commerce, ketika tipe
+        "Penggantian" dipilih, sebuah sesi dengan nama "Alasan" akan terbuka
+        untuk mengumpulkan alasan mengapa pelanggan membutuhkan penggantian
+        item.
   default_category: Kategori Standar
   default_category_description: >-
     Semua email yang dikirim ke %{full_domain} akan disimpan di sini sebagai
@@ -2203,6 +2793,9 @@ id:
   latest_tickets: Baru mengupdate
   search:
     no_results_msg: Tidak ada hasil yang ditemukan
+    in: dalam
+    by: 'oleh:'
+    searching: Mencari
   assumed_identity_msg: 'Anda telah mengakui identitas Anda sebagai %{user_name}.'
   unauthorized_msg: Otorisasi gagal
   assuming_identity_user_does_not_exist_msg: Pengguna Anda sudah mencoba untuk menganggap tidak ada.
@@ -2229,7 +2822,7 @@ id:
   fwd_success_msg: Tiket telah berhasil diteruskan
   validate_fwd_to_email_msg: Harap masukkan alamat email yang valid
   use_reply_option: Silakan gunakan opsi Reply untuk mengirim email kepada pemohon
-  index_tooltip_loading_msg: Loading ...
+  index_tooltip_loading_msg: Memuat...
   being_processed: Sedang diproses
   awaiting_your_reply: Sedang menunggu balasan anda
   this_ticket_has_been_resolved: Tiket ini telah Terselesaikan
@@ -2276,7 +2869,7 @@ id:
     %{cc_emails_key} %{bcc_emails_key}</ul>
   clear: Membersihkan
   saved_draft: Disimpan
-  saving_draft: Sedang menyimpan..
+  saving_draft: Menyimpan...
   saving: Menyimpan...
   draft: Draf
   last_draft: Draft terakhir anda
@@ -2284,7 +2877,7 @@ id:
   ticket_close_success: Tiket Anda telah berhasil ditutup.
   ticket_close_failure: Menutup tiket gagal.
   canned_folders:
-    insert_placeholder: Masukkan Placeholder
+    insert_placeholder: Masukkan Tempat lokasi
     important: 'Penting:'
     delete_folder_warning: >-
       Menghapus folder juga akan menghapus semua canned responses yang
@@ -2333,7 +2926,7 @@ id:
     reset_to_last_published: Atur ulang halaman untuk terakhir kali diterbitkan
     preview: Pratinjau Portal
     save_and_continue: Simpan
-    please_wait: Silahkan tunggu...
+    please_wait: Silakan tunggu ...
     layout_pages:
       subheader_layout: Portal Tata Letak
       subheader_pages: Portal Halaman
@@ -2344,6 +2937,7 @@ id:
       header_layout_help_message: Mengubah area bagian atas portal dukungan Anda
       footer_layout_help_message: Mengubah area bagian bawah portal dukungan Anda
       pagelayout_help_message: Sesuaikan tata letak seluruh portal dukungan Anda
+      head_layout_title: Pemimpin
     cosmetic:
       subheader_background_color: Latar Belakang Warna
       subheader_tab_color: Tab Warna
@@ -2354,6 +2948,8 @@ id:
       css_help_message: >-
         Tambah atau menimpa bentuk standar freshdesk dengan css kustom Anda
         sendiri.
+    apply_mint: Terapkan
+    classic: Klasik
   any_time: kapan pun
   five_minutes: Dalam 5 menit
   fifteen_minutes: Dalam 15 menit
@@ -2372,14 +2968,14 @@ id:
   Subject: Subyek
   Requester: Mencari pemohon
   Status: Keadaan
-  Group: Grup
+  Group: Kelompok
   Agent: Agen
   Priority: Prioritas
   Description: Deskripsi
   Product: Produk
   Type: Tipe
   showing: Menampilkan
-  Email: Email
+  Email: Surel
   Portal: Pintu Gerbang
   Phone: Telepon
   Forum: Forum
@@ -2651,6 +3247,8 @@ id:
       agents: Agen
       all: Semua
       select_company: Pilih Perusahaan
+    visible_to: Terlihat oleh
+    type: Tipe Forum
   password_reset_email: Reset Password Email
   default_reply_template: Template Balasan Agent
   import_user_org: Pengguna &amp; amp; Organisasi
@@ -3050,7 +3648,7 @@ id:
   zendesk_backup_info: 'Pilih file cadangan Zendesk, download dari Zendesk'
   your_email_address: Alamat email Anda
   username: Nama
-  reply: Membalas
+  reply: Balas
   is_not: Bukan
   during: Selama
   less_than: Kurang dari
@@ -3107,7 +3705,7 @@ id:
   trial_day: Hari
   current_plan: Rencana saat ini
   current_free_plan: Saat ini Rencana Bebas
-  medium: Medium
+  medium: Sedang
   suspended_plan_admin_info: >-
     Akun anda telah ditangguhkan, Silahkan hubungi administrator akun anda
     (%{email})
@@ -3115,7 +3713,7 @@ id:
   days: Hari
   basic_brief: Untuk tim kecil
   phone: Telepon
-  edit: Mengedit
+  edit: Sunting
   accounts:
     helpcard:
       title: mengubah citra portal dukungan anda
@@ -3131,6 +3729,11 @@ id:
         bantuan anda dengan menggunakan domain anda sendiri. Anda dapat
         menempatkan URL bantuan anda di yourcompeny.freshdesk.com ke alamat
         domain anda sendiri, seperti support.mycompany.com
+      info5: >-
+        Anda dapat membatasi akses helpdesk pada kontak yang ditambahkan dan
+        pada domain tertentu. Orang lain tidak akan bisa mendaftar, masuk atau
+        mengirim tiket. Anda bisa membaca lebih lanjut tentang hal ini
+      info6: disini.
     cancel:
       cancel_account: Batalkan Account Freshdesk
       info_text: >-
@@ -3210,10 +3813,36 @@ id:
         Freshdesk)
       contact_first_name: Nama Depan
       contact_last_name: Nama belakang
-      contact_email: Email
-      contact_phone: telepon
+      contact_email: Surel
+      contact_phone: Telepon
       invoice_email_info: Mengirimkan tagihan ke
       invoice_emails: Email
+    multilingual_support:
+      helpcard:
+        supported_languages:
+          title: <b>Bahasa yang Didukung</b><br/>
+        info1: >-
+          Berikan pengalaman dukungan tanpa batas kepada pelanggan global Anda
+          dari berbagai belahan dunia.
+        title: Berbicaralah dalam Bahasa Pelanggan Anda
+      add_languages: Tambahkan bahasa
+      warning_msg: >-
+        Catatan: Bahasa utama adalah bahasa standar pada helpdesk anda. Hal
+        tersebut tidak dapat diubah sekali bahasa yang didukung ditambahkan.
+      manage_languages: Kelola Bahasa
+    edit_domain:
+      email_error: Nama perusahaan harus setidaknya 3 karakter
+      getting_started: Memulai
+      url_error1: |
+        Domain <strong>%{domain_name}</strong> tidak tersedia.
+    new:
+      full_name: Nama Lengkap
+      company: Perusahaan
+      confirmation: Konfirmasi
+      create_an_account: Buat akun
+    signup_google:
+      sign_up: Mendaftar!
+      privacy_policy: kebijakan privasi
   success_msg: Setelan akun berhasil diperbarui!
   failure_msg: Gagal memperbarui Pengaturan Akun!
   domain_not_available_msg: |
@@ -3226,6 +3855,7 @@ id:
       mark_this_idea_as: Tandai ide ini sebagai
     last_reply: 'balasan terakhir %{post_time} yang lalu dari %{user_link}'
     posted_at: 'Diposting %{post_time} yang lalu'
+    edit_title: Sunting
   non_covered_feature_error: Rencana anda Freshdesk tidak mencakup fitur ini.
   unavailable_feature: >-
     Sebuah %{feature} fitur tidak didukung dalam rencana Anda. Silakan
@@ -3315,6 +3945,8 @@ id:
     info1: Apakah Anda yakin ingin menghapus kategori ini?
     info2: Tidak ada folder dalam kategori ini
     save_and_create: Simpan dan Buat yang lain
+    product_portal_visibility: Terlihat dalam
+    manage_categories: Kelola
   billed_monthly: Ditagih per bulan
   users:
     activations:
@@ -3423,6 +4055,7 @@ id:
       created_at: Tanggal dibuat
       asc: Naik
       desc: Turun
+      last_active_at: Terakhir dilihat
   topic:
     ideas_stamps:
       planned: Berencana
@@ -3446,6 +4079,29 @@ id:
     filter_0: Semua
     unmark_answer: Menghapus tanda ini sebagai jawaban
     all: Semua
+    last_reply: Balasan terakhir
+    requester: Pemohon
+    filter_8: Terpecahkan
+    categories: Kategori
+    filter_1: Berencana
+    filter_9: Belum Terpecahkan
+    filter_2: Diimplementasikan
+    mark_as_spam: Tandai sebagai Spam
+    filter_4: Dalam progres
+    filter_7: Tidak terjawab
+    problems:
+      unsolved: Belum Terpecahkan
+      solved: Terpecahkan
+    filter_5: Ditangguhkan
+    filter_6: Dijawab
+    filter_3: Tidak diambil
+    spam: Spam
+    visible_in: Terlihat dalam
+    filtered_by: Menampilkan
+    add_category: Tambah Kategori
+    questions:
+      answered: Dijawab
+    change: ubah
   activerecord:
     errors:
       messages:
@@ -3479,7 +4135,7 @@ id:
   top: Puncak
   company_name: Nama Perusahaan
   expires: Kadaluwarsa
-  total_price: Jumlah Harga
+  total_price: Total
   downgrade: Penurunan
   update: Memperbarui
   save_reply: Simpan Balasan
@@ -3535,6 +4191,8 @@ id:
       delete_comment_confirm: Menghapus komentar ini? apakah anda yakin?
       delete_comment: Hapus komentar
       answer: Menjawab
+      mark_as_spam: Tandai sebagai Spam
+    edit_title: Sunting
   half: 30 Menit
   premium_sla_times:
     five_minutes: 5 menit
@@ -3593,6 +4251,18 @@ id:
       day: 1 Hari
       twoday: 2 Hari
       threeday: 3 Hari
+    toggle_availability_for_rr: >-
+      Izinkan agen untuk mengubah ketersediaan mereka untuk penetapan tiket
+      otomatis
+    maximum: Maksimum
+    enable: Memungkinkan
+    please_confirm: Mohon Konfirmasi...
+    confirm: Konfirmasi
+    toggle_availability_message: Admin dan supervisor dapat mengendalikan ketersediaan agen melalui dasbor
+    round_robin_defalut: Round Robin penetapan tiket
+    round_robin_capping: Muat keseimbangan penetapan tiket
+    no_group_info: Anda belum membuat grup apapun.
+    send_escalation_to: '....lalu kirim email eskalasi ke:'
   four: 4 Jam
   oneweek: 1 Minggu
   twoweek: 2 Minggu
@@ -3608,7 +4278,7 @@ id:
   created_on: Dibuat pada
   zip: Zip
   import_solution_article: Mengkonversi forum artikel untuk solusi
-  close: Menutup
+  close: Tutup
   agent:
     full_time_agent: Agen Penuh Waktu
     occasional_agent: Agen Paruh Waktu
@@ -3719,6 +4389,17 @@ id:
       Catatan: Sebuah email yang berisi perintah untuk me-reset beserta
       instruksinya akan dikirimkan ke %{requester}
     more: lebih
+    insert_placeholder: Masukkan Tempat lokasi
+    days_ago: '%{days} yang lalu'
+    member: Anggota dari
+    ago: '%{time} yang lalu.'
+    last_logged: Login Terakhir
+    export: Ekspor
+    invalid_export_params: Terjadi eror saat mengekspor data agen. Silakan coba lagi.
+    no_recent_activity: Tidak ada aktivitas terbaru
+    skill: Keterampilan
+    account_suspended: akun ditangguhkan
+    last_seen_at: Terakhir dilihat
   account_admin: Akun admin
   right: Tepat
   footer:
@@ -3761,7 +4442,7 @@ id:
     Mengisi formulir di bawah ini dan instruksi untuk mereset password Anda akan
     dikirim ke email Anda
   done: Selesai
-  reset: Atur ulang
+  reset: Reset
   ticket_due_by_time: Jatuh Tempo pada
   ticket_past_due_by: 'jatuh tempo %{time} yang lalu'
   ticket_past_due_by_live: 'Jatuh tempo <abbr data-livestamp=''%{timestamp}''>%{time} yang lalu</abbr>'
@@ -3831,6 +4512,7 @@ id:
       unverified: Kontak dengan email belum diverifikasi
       deleted: Hapus kontak
       all: Semua kontak
+      blocked: Kontak yang diblokir
     verified:
       no_contacts: Anda tidak memiliki kontak apapun
       no_contacts_with_letter: 'Tidak ada kontak yang cocok diawali dengan huruf ''%{alphabet}'''
@@ -3842,6 +4524,7 @@ id:
       no_contacts: Anda tidak memiliki kontak yang belum diverifikasi
       no_contacts_with_letter: |
         tidak ada kontak yang cocok diawali dengan huruf '%{alphabet}'
+    reply: Balas
   between: Antara
   profile_settings: Pengaturan Setting
   portal_key: Pintu Gerbang
@@ -3933,8 +4616,14 @@ id:
       yang lebih rendah akan mengakibatkan hilangnya data konfigurasi untuk
       fitur yang hanya tersedia dalam rencana yang lebih tinggi.
     type: Tipe
+    invoice: Faktur
+    refund: Dana dikembalikan
+    download: Unduh
+    quantity: Kuantitas
+    status: Status
+    date: Tanggal
   activate: Mengaktifkan
-  feedbackwidget_button_text: Teks tombol
+  feedbackwidget_button_text: Label
   billed_amount_per_month: 'Anda akan ditagih $%{amount} %{period}'
   billed_amount_annually: 'Anda akan ditagih $%{amount} setiap tahun'
   import_zendesk_summary: Impor dari ringkasan Zendesk
@@ -4006,6 +4695,7 @@ id:
       see_all_articles: 'Lihat semua %{count} artikel'
       more_articles: 'Artikel lainnya di <span class=''folder-name''> %{article_name} </span>'
       modified_on: 'Dimodifikasi pada:'
+      created_by: 'Dibuat oleh:'
     folder:
       filler_text: 'Menampilkan ruang ini untuk artikel tentang %{folder_name}'
     topic:
@@ -4022,6 +4712,10 @@ id:
       started: Memulai topik
       more_topic: topik yang lebih dalam
       last_reply: Balasan terakhir
+      sort_heading: 'Disaring oleh:'
+      sort_order:
+        popularity: Populer
+      sort_by_default: Default
     topic_vote:
       you:
         one: Anda
@@ -4050,6 +4744,8 @@ id:
       ideas_users_voted_title: Orang-orang yang menyukai ide ini
       problem_users_voted_title: Orang-orang yang memiliki masalah ini
       howto_users_voted_title: Orang yang memiliki pertanyaan ini
+      votes: stemmer
+      announce_unlike_button: Batal menyukai!
     tickets:
       export: Ekspor data tiket ke CSV
       export_ticket_data: Ekspor data tiket ke CSV
@@ -4063,8 +4759,21 @@ id:
         Menambah atau menghapus email yang perlu disalin bila pemberitahuan
         untuk tiket ini dikirim.
       add_people_title: Tambahkan orang-orang untuk percakapan
-      reopen_reply: membalas
+      reopen_reply: Balas
       related_articles: Artikel terkait ...
+      submit_export: Ekspor
+      comments: Komentar
+    agent_login_details: Masukkan rincian login yang Anda berikan saat mendaftar dengan kami
+    account: akun
+    vote:
+      you:
+        other: 'Anda dan '
+      more:
+        other: '%{count} lainnya '
+      people:
+        other: '%{count} orang '
+    vote_label:
+      other: stemmer
   feedbackwidget_form_heading: Formulir Judul
   feedbackwidget_form_title: Bentuk Judul Widget
   cancel_and_back: Batal dan kembali
@@ -4081,7 +4790,8 @@ id:
       new:
         new_folder: Berkas Baru
       folder_form:
-        visible_to: Terlihat
+        visible_to: Terlihat oleh
+        category: Kategori
     articles:
       where: dimana
       search_articles: mencari artikel
@@ -4097,6 +4807,14 @@ id:
       article_useful: Senang kami bisa membantu. Terima kasih untuk umpan balik.
       article_not_useful: Terima kasih untuk umpan balik. Kami akan memperbaiki artikel ini.
       error_message: 'Ada kesalahan %{error_msg}'
+      reset_rating:
+        link: Reset
+        dialog_submit: Reset
+      prop_tabs:
+        meta: rangka
+      search_all: Mencari Artikel
+      views: Lihat
+      view_draft: Preview Draf
     info9: Umum (Akan diterbitkan dalam layanan inti)
     edit: Mengedit Solusi
     add: Tambahkan Solusi
@@ -4140,8 +4858,27 @@ id:
     draft:
       portal:
         all: Semua
+      name: Draf
     add_category: Kategori Baru
     solution_title: Jabatan
+    kb: Basis Pengetahuan
+    via: melalui
+    sidebar:
+      feedbacks:
+        title: Umpan Balik Artikel
+      view_all: Melihat semua
+      drafts:
+        title: Draf
+      view_less: Lihat lebih sedikit
+    general:
+      something_wrong: Ada yang salah!
+      article_prop: Properti Artikel
+      created_by: Dibuat oleh
+      feedback: Masukan
+      mark_as_outdated:
+        text_1: Tandai terjemahan lain sebagai usang
+      analytics: Analitik
+    move_to: Pindahkan ke
   import_updated: Diperbarui
   feedbackwidget_intro: >-
     Sesuaikan widget freshdesk anda yang berada pada bagian bawah dan lihat
@@ -4164,9 +4901,9 @@ id:
   zendesk_backup: Menyokong file
   twoday: 2 Hari
   profile:
-    change_password: Ubah Password
+    change_password: Ubah Kata Sandi
     manage: Mengelola profil anda
-    edit: Edit Profile
+    edit: Edit Profil
     current_password: Password saat ini
     confirm_password: Konfirmasi password
     new_password: Kata sandi baru
@@ -4235,11 +4972,11 @@ id:
     submit_a_ticket: Kirim tiket
     login: <b>Login</b>
     guest: Pengunjung
-    signout: Sign out
+    signout: Keluar
     edit_profile: Edit Profil
     assumed_text: Anda sedang melihat sebagai
     help_center: bagaimana kami dapat membantu anda hari ini?
-    new_support_ticket: tiket dukungan baru
+    new_support_ticket: Dukungan tiket baru
     check_ticket_status: Cek status tiket
     user_available: Tiket baru akan <br>ditugaskan otomatis kepada anda.
     user_not_available: Tiket baru tidak akan <br>ditugaskan otomatis kepada anda.
@@ -4255,7 +4992,7 @@ id:
       home: Beranda
       company_tickets: Tiket Perusahaan
       social: Sosial
-    search: Mencari
+    search: Cari
   agent_adds_comment: Agen menambahkan komentar untuk Tiket
   portal_customizer_anon_tickets: Siapa saja bisa mengirimkan tiket
   portal_customizer_option_tickets: Pengguna dapat Kirim tiket tanpa login
@@ -4281,14 +5018,45 @@ id:
         Anda juga dapat menyesuaikan template email untuk agen balasan dan
         bahkan menambahkan konten dinamis dalam balasan menggunakan
         placeholders.
+      reply_template_15:
+        topic: Template Balasan Agent
+      agent_template_12:
+        topic: Respon Pertama SLA Pelanggaran
+      agent_template_10:
+        topic: Email aktivasi pengguna
+      agent_template_25:
+        topic: Email Undangan Agen
+      requester_template_1:
+        topic: Tiket Baru Dibuat
+      requester_template_8:
+        topic: Agen menutup Tiket tersebut
+      requester_template_7:
+        topic: Agen memecahkan Tiket tersebut
+      agent_template_13:
+        topic: Waktu pemecahan untuk pelanggaran SLA
+      agent_template_14:
+        topic: Reset Password Email
+      agent_template_1:
+        topic: Tiket Baru Dibuat
+      requester_template_10:
+        topic: Email aktivasi pengguna
+      requester_template_14:
+        topic: Reset Password Email
     insert_placeholder: Masukkan Placeholder
     modify_agent_template: Memodifikasi Template Agen Email
     event: Peristiwa
     agent_notification: Agen Pemberitahuan
-    subject: Subyek
+    subject: Judul
     do_not_delete_ticket_id_from_subject: >-
       Untuk mengambil balasan pelanggan sebagai percakapan tiket, placeholder ID
       tiket tidak harus dihapus dari baris subjek
+    no_agents: Tambahkan agen
+    notify_agents: Beri tahu Agen
+    agent_select_title: Beri tahu Agen
+    notification_template: Templat
+    edit: Sunting
+    singular_title: Notifikasi
+    add: Tambah
   errors_in_plan_change: 'Kesalahan yang ditemui dengan perubahan Anda:'
   formatting_help: Format Bantuan
   step1: Langkah 1
@@ -4296,7 +5064,7 @@ id:
   last_renewed_on: Terakhir Diperbaharui pada
   update_and_login: Perbarui dan login
   activate_and_login: Aktif dan Login
-  password: Kata sandi
+  password: Kata Sandi
   enter_payment: Masukkan rincian pembayaran ...
   errors_in_payment: 'Kesalahan yang ditemui dengan pembayaran Anda:'
   email_configs:
@@ -4304,7 +5072,7 @@ id:
     email: email
     name: Nama
     freshdesk: Freshdesk
-    edit: Mengedit
+    edit: Sunting
     info9: Tetapkan ke Grup
     reply_emails: Balas Email dari Freshdesk
     delete: Apakah Anda yakin ingin menghapus email ini?
@@ -4379,6 +5147,16 @@ id:
       verified: Diverifikasi
       unverified: Tidak terverifikasi
       type: Tipe
+      last_verified: Terakhir Diverifikasi
+      config: Konfigurasi
+      data_help: Nilai yang akan ditugaskan ke data DNS
+      cname: CNAME
+      verify: Verifikasi
+      status: Status
+      remove: Hapus
+      host_value_help: Nama host untuk data TXT
+      data: Data
+    plain_unverified: Tidak terverifikasi -
   step2: Langkah 2
   import_users_contacts: Pengguna → Kontak
   linkback_info: >-
@@ -4667,6 +5445,14 @@ id:
         tooltip: Lihat Isu terkait Jira
         add_new: Menghubungkan masalah
         existing: Tampilan masalah
+    via: melalui
+    add_note: Tambah catatan
+    view_facebook: Lihat di Facebook
+    search_text: Mencari Artikel
+    created_by: 'Dibuat oleh:'
+    action: Tindakan
+    submit_loading: Mengirimkan..
+    thanks_v1: Terima kasih untuk umpan balik anda
   recent_activity: Aktivitas Terbaru
   recent_activities: Kegiatan baru-baru ini
   forgot_password: Lupa Sandi
@@ -4690,7 +5476,7 @@ id:
     form:
       type: Tipe Forum
       visibility: Forum visibilitas
-      visible_to: terlihat untuk
+      visible_to: Terlihat oleh
   next_charge_amount: '%{type} biaya:'
   company:
     info9: >-
@@ -4798,6 +5584,36 @@ id:
     forums_toggle:
       title: Forum
     gdpr_to: Untuk
+    us: 'BULAN, HARI, TAHUN'
+    gdpr_terms_link: Ketentuan kami
+    date_format: Format Tanggal
+    twitter_disabled: >-
+      Masuk ke Twitter akan dinonaktifkan bagi pelangan dan agen dengan tujuan
+      keamanan.
+    gdpr_admin: Admin.
+    includes_contacts_company_domain: (termasuk kontak yang ada dan domain perusahaan)
+    hidden_on_portal: Sembunyikan pada Portal
+    settings: Pengaturan
+    important: Penting
+    gdpr_policy: Kebijakan privasi.
+    helpdesk: Helpdesk
+    supported_languages: 'Bahasa yang Didukung (%{count})'
+    logo_and_favicon: Logo & favicon
+    languages: Bahasa
+    permission:
+      users_from_any_domain: Pengguna dari domain apapun
+      who_can_create: Siapa yang dapat masuk (atau) mendaftar (atau) membuat tiket?
+      users_from_selected_domains: Pengguna dari domain yang masuk daftar putih
+    gdpr_agent: Agen
+    non_us: 'HARI, BULAN, TAHUN'
+    anyone: Siapapun
+    change_logo: Ubah logo
+    gdpr_acknowledgement: dan menyatakan telah membaca
+    search_domain: Cari Domain
+    helpdesk_name_plain: Nama Helpdesk
+    primary_language: Bahasa Utama
+    additional_languages: Bahasa yang Didukung
+    visible_in_portal: Terlihat pada Portal
   lead: Memimpin
   comments: Komentar
   forum_confirm_msg1: Apakah Anda yakin ingin menghapus kategori ini?
@@ -4845,8 +5661,9 @@ id:
     multiple: Beberapa Jam Kerja
     helpdesk_hours: Helpdesk Jam
     select_time_zone: Pilih Zona Waktu
+    holiday_calendar: Kalender Hari Libur
   import_org_companies: Organisasi → Perusahaan
-  add: Tambahkan
+  add: Tambah
   portal_customizer_title: Sesuaikan Portal Pelanggan Publik Anda
   your_trial_account: akun percobaan
   reply_comment: Tambahkan komentar
@@ -4859,7 +5676,7 @@ id:
   edit_agent: Mengedit Agen
   high: Tinggi
   scenario_label: Label Skenario
-  email: Email
+  email: Surel
   linkback_overlabel: URL linkback
   select_a_plan: Pilih Rencana
   ticket_was: Tiket adalah
@@ -4894,7 +5711,7 @@ id:
       billable: Ditagih
       non_billable: Tidak ditagih
       product: produk
-      group: Grup
+      group: Kelompok
       group_by: Grup Oleh
       report:
         no_timeentry: Data tidak tersedia
@@ -4944,6 +5761,9 @@ id:
       history:
         recent_item: Produk terbaru
       update: Memperbarui
+      do_not_link: Jangan tautkan
+      ok: Ok
+      hide_cc: Sembunyikan Cc
     dashboard:
       index:
         todo_title: To-Dos
@@ -5000,7 +5820,7 @@ id:
         add_agent: Masukan nama agen
         all_agents_watching: Semua agen mengamati tiket ini
         mail:
-          hi: Hi
+          hi: Hai
           added_as_watcher: '%{agent_name} telah menambahkan Anda sebagai pengamat dari tiket'
           new_activity: Aktivitas baru pada tiket yang diamati
           activity: Aktivitas
@@ -5041,6 +5861,7 @@ id:
           addbcc: Tambahkan Bcc
           removebcc: Hapus Bcc
           not_sent: Balasan tidak dikirim!
+          to: 'Untuk:'
         forward_form:
           cc: Cc
           addcc: Tambahkan Cc
@@ -5118,6 +5939,11 @@ id:
         open_or_pending: Buka atau Pending
         resolved_or_closed: Diselesaikan atau Ditutup
         no_tickets: Anda tidak memiliki tiket di tampilan saat ini
+        shared_by_me: Tiket yang telah saya bagikan
+        shared_with_me: Tiket yang dibagikan dengan saya
+        article_feedback: Umpan Balik Artikel
+        archived: Arsip
+        my_article_feedback: Umpan Balik Artikel Saya
       note:
         posted_on: '%{user_name} pada %{note_date}'
         created_on:
@@ -5199,7 +6025,7 @@ id:
             Tiket %{source_tickets} telah digabungkan dengan tiket
             %{target_ticket_id}. Percakapan akan ditambahkan dalam beberapa
             menit.
-  import_ticket_group: Tiket &amp; Kelompok
+  import_ticket_group: Tiket
   tickets_filter:
     title: Menyaring Tiket
     unsaved_view: Tidak ada judul tampilan
@@ -5216,13 +6042,16 @@ id:
       customer_response: Respon Pelanggan
       asc: Naik
       desc: Turun
+      agent_responded_at: Tanggapan Agent
+      requester_responded_at: Tanggapan Pelanggan
+    company: Perusahaan
   click_to_change_sort_order: Klik untuk mengubah urutan
   user_sessions:
     new:
-      email: Email
-      password: Kata sandi
+      email: Surel
+      password: Kata Sandi
       remember: Ingat saya di komputer ini
-      login: Login
+      login: Masuk
       forgot: Saya lupa password saya
       sign_in_using: Masuk
       sign_in_using_google: Masuk menggunakan akun Google Anda
@@ -5250,10 +6079,52 @@ id:
       apps out-of-the-box. To browse our selection of apps, click on the “Get
       more Apps” button.
     description: Deskripsi
+    delete_action:
+      success: Aplikasi berhasil dihapus.
+    view_all: Melihat semua
+    view_more: Lihat lebih banyak
+    terms_of_use_link: 'http://freshdesk.com/terms#marketplace'
+    help_and_support: Bantuan dan Dukungan
+    settings: Pengaturan
+    app_gallery: Marketplace
+    tooltip:
+      suspended: Tidak Tersedia
+    custom_apps: FreshPlug Widgets
+    time_ago: yang lalu
+    validation_failed: Validasi gagal.
+    installing_text: Silakan tunggu ...
+    paid_app: DIBAYAR
+    overview: Ikhtisar
+    install: Instal
+    published_in: dalam
+    popular: Populer
+    apps: Aplikasi
+    reauthorize: Izinkan kembali
+    go_to_dev_portal: Buka Portal Developer
+    no_mktp_apps_note: Kami telah terintegrasi dengan beberapa aplikasi favorit Anda.
+    ver: 'Versi: '
+    coming_soon: Segera Hadir
+    latest: Terbaru
+    no_custom_apps_note: Buat aplikasi kustom dan terbitkan di portal developer.
+    field_blank: Isi bidang yang diperlukan.
+    terms_of_use: Syarat Penggunaan
+    no_mktp_apps: Tidak ada Aplikasi diinstal
   shortcuts:
     goto_tab:
       forums: Forum
       customers: Pelanggan
+      social: Sosial
+      tickets: Tiket
+      dashboard: Dasbor
+      solutions: Solusi
+    ticket_detail_list_common:
+      delete_ticket: Hapus tiket
+      scenario: Skenario
+      add_note: Tambah catatan
+      reply: Balas
+      forward: Teruskan
+      search: Cari
+    title: Pintasan keyboard
   validation:
     required: Isian yang ini dibutuhkan.
   dropbox_attach_from_text: Lampirkan dari <b>Dropbox</b>
@@ -5263,27 +6134,106 @@ id:
       submit: mengajukan
       company_name: Nama Perusahaan
       create_my_account: Buat akun Anda
+      phone_no: Nomor Telepon
+      freshdesk_dot_com: .freshdesk.com
+      your_freshdesk_url: URL Helpdesk anda
+      helpdesk_name: Nama Helpdesk
+    associate_google:
+      login: Masuk
+      email_address: Alamat surel
+      login_your_helpdesk: Masuk ke helpdesk anda
+      link_your_helpdesk: Tautkan Helpdesk anda
+      login_with_admin: >-
+        Anda perlu menjadi administrator akun untuk menautkan akun freshdesk
+        dengan login Google
+      your_helpdesk: Helpdesk anda
   attach: Lampirkan
   discussions:
     topics:
       post:
         delete_confirm: Menghapus komentar ini? apakah anda yakin?
+        replied_to: balas ke topik
+        replied: balas
       answer: Menjawab
+      reply: Balas
+      edit_topic: Mengedit Topik
+      replied: balas
+      widgets:
+        ticket:
+          agent: Agen
+      mark_as_spam: Tandai sebagai Spam
     topic_merge:
       cancel: Membatalkan
+      mark_primary: Tandai sebagai yang utama
+      continue: Lanjutkan
+      add: Tambah
+      please_wait: Silahkan tunggu...
+    shared:
+      topic:
+        actions:
+          reply: balas ke topik
+        tags:
+          reply: Balas
+    unpublished:
+      spam:
+        reply:
+          title: Balas
+          posted: balas ke
+      index:
+        unpublished: Menunggu persetujuan
+        title: Spam
+      invalid_topic:
+        went_wrong: Terjadi kesalahan
+      page_title: Moderasi Forum
+    show_more: Munculkan lebih banyak
+    moderation:
+      index:
+        title: Spam
+      spam:
+        reply:
+          posted: balas ke
+          title: Balas
   freshcaller:
     admin:
       link_account_request_content:
         cancel: Membatalkan
+        connect_existing_account: Hubungkan Akun yang Tersedia
+        link_errors:
+          validation_error: Bidang ini wajib diisi
+        email: Surel
+        continue: Lanjutkan
+        password: Kata Sandi
+      sidebar_title: Telepon
+      title_text: Telepon
+      feature_request_content:
+        create_new_account: Buat akun baru
   activate_free_plan: Aktifkan Rencana Gratis
   custom_fields:
     delete: Menghapuskan
+    default_field_error: Bagian standar tidak bisa diletakkan ke dalam sesi
+    empty_section_info: Letakkan bagian disini
+    url: URL
+    nested_field: Bidang Dependent
+    phone_number: Nomor Telepon
+    dropdown: Drop-Down
+    email: Surel
+    checkbox: Kotak centang
+    dropdown_blank: Drop-Down
+    text: Satu Baris Teks
+    number: Nomor
+    drag_and_drop_field: Bagian Drag & Drop
+    insert_field: Bagian Drag & Drop
+    date: Tanggal
   add_more_lang: Tambahkan bahasa yang didukung pada helpdesk Anda.
   zendesk_import:
     group: Akses Grup
+    user: Pengguna
+    ticket: Tiket
   box_attach_from: Lampirkan dari <b>Box</b>
   multifile_attachments:
     label: Lampirkan file
+    remove: Hapus
+    mb: ' MB '
   livechat:
     save: Simpan
     cancel: Membatalkan
@@ -5293,55 +6243,423 @@ id:
     text_yes: Ya
     help_offline_title: Bagian Atas
     disabled: Dinonaktif
+    routing_info: Arahkan semua obrolan yang masuk ke dalam grup yang spesifik
+    help_offline_thank_msg: Pesan konfirmasi
+    prechat_dropdown_msg: >-
+      Anda dapat mengaitkan pilihan tarik turun Anda ke grup berbeda pada tab
+      Preferensi. Obrolan akan di tetapkan ke grup yang ditentukan secara
+      berurutan.
+    non_availability_msg_header: Pesan saat agen tidak di tempat
+    integrate_msg: >-
+      Salin & tempelkan kode ini sebelum tag </body> terakhir pada situs web
+      atau aplikasi anda
+    wait_title: Pesan pada saat menunggu agen bergabung
+    msgbox_placeholder_title: Placeholder kotak balasan
+    help_offline_thank_header_msg: Header setelah pesan dikirimkan
+    prechat_desc: >-
+      Kumpulkan detail tentang pengunjung agar Anda mendapatkan konteks yang
+      lebih baik pada saat Anda mengobrol dengan mereka. Bila diaktifkan,
+      pengunjung akan diminta untuk mengirimkan formulir tersebut guna memulai
+      percakapan.
+    installation: Kode Widget
+    show_widget: Ketika agen sedang online dan menerima obrolan
+    integrate_livechat_title: Integrasikan Obrolan Langsung ke dalam situs web dan aplikasi Anda
+    maximum_chat_desc: >-
+      Atur batas jumlah orbolan yang dapat ditangani sekaligus oleh agen. Ketika
+      agen mencapai batasnya, mereka tidak akan menerima notifikasi obrolan
+      baru.
+    chatbox_bgcolor: Warna
+    maximum_chat_title: Jumlah maksimal obrolan pengunjung
+    valid_code: Silakan masukkan nilai warna yang valid
+    non_availability_msg_help: >-
+      Untuk menautkan frasa dalam pesan Anda yang akan mengarah ke URL Anda,
+      akhiri frasa tersebut dengan '# #'
+    maximum_change_label: Sunting
+    chat_availability: Ketersediaan obrolan
+    proactive_title: Obrolan proaktif
+    intro: >-
+      Solusi Live Chat Freshdesk yang terintegrasi memungkinkan Anda dapat
+      melihat dan mengobrol dengan pengguna di situs web, perangkat lunak
+      online, atau portal dukungan Anda langsung dari dalam Freshdesk. Anda juga
+      dapat memulai obrolan secara proaktif dengan pengunjung situs web Anda.
+      Setelah Anda mengakhiri sesi obrolan, Anda dapat memilih untuk mengonversi
+      percakapan menjadi tiket dan melanjutkan menindaklanjuti pengunjung
+      melalui email, atau mengarsipkan transkrip obrolan.
+    texton: Pada
+    show_chat_hours: Tampilkan Obrolan
+    agent_network_disconnect_msg_title: Pesan ketika agen tidak tersambung
+    thank_title: Pesan Terima kasih
+    prechat_msg: Pesan obrolan pendahuluan
+    enable: Memungkinkan
+    welcome: Pesan selamat datang
+    portal_desc: >-
+      Selama widget obrolan di situs web Anda terlihat oleh semua orang, Anda
+      dapat mengaktifkannya di portal dukungan Anda hanya untuk pelanggan Anda.
+    copy_to_clipboard: Salin ke clipboard
+    missed_chat_title: Formulir obrolan yang terlewat
+    portal_option_info: Tampilkan widget obrolan untuk
+    missed_chat_desc: Kumpulkan detail pengunjung ketika Anda sedang tidak tersedia.
+    proactive_note: >-
+      Catatan: Formulir obrolan pendahuluan tidak akan ditampilkan ketika
+      obrolan dimulai secara proaktif. Anda tetap dapat menambahkan detail dari
+      semua pengunjung secara manual.
+    edit: Sunting
+    default_routing: Pengarahan standar
+    routing: Pengarahan obrolan
+    anytime: Selalu (24/7)
+    help_text_wait_onhold_msg: Pesan ini akan muncul ketika pengunjung menunggu agen lebih dari 1 menit
+    support_portal: Mengobrollah untuk portal dukungan Anda
+    chat_hours_msg_note: 'Catatan: Di luar waktu saat ini jendela obrolan akan tersembunyi.'
+    form_details: Detail Formulir
+    show_chat_hours_msg: Aturlah ketika jendela obrolan Anda akan tersedia bagi pengunjung.
+    intro_title: Mengapa Live Chat?
+    set_default_msgs: Pesan standar
+    enable_chat: Aktifkan Live Chat
+    business_hours: Selama jam kerja
+    chat_enabled_label: Aktifkan Obrolan
+    chat_transfer_msg_title: Pesan transfer obrolan
+    offline_message: Pesan tidak di tempat
+    window_position: Posisi
+    custom_chat_window: Jendela obrolan
+    learn_livechat: Pelajari Live Chat lebih jauh
+    widget: Widget
+    textoff: Mati
+    enabling: Mengaktifkan
+    use_custom_link: 'Arahkan kembali pengunjung ke halaman terpisah '
+    procative_info: >-
+      Percakapan obrolan dengan pengunjung akan dimulai secara otomatis apabila
+      mereka menghabiskan lebih dari jumlah waktu tertentu pada halaman yang
+      sama.
+    dropdown_based_routing: Dropdown berdasarkan pengarahan
+    widgets_list_info: >-
+      Untuk setiap produk yang telah Anda siapkan di Freshdesk, widget obrolan
+      yang sesuai akan tersedia di sini
+    visitor_form: Formulir Pengunjung
+    url_error_msg: Masukkan URL yang valid
+    window_offset: Offset
+    everyone: Semua orang
+    prechat_title: Formulir pra obrolan
+    cobrowsing: Bantuan Pada Halaman
+    end_chat_confirm_msg_title: Pesan konfirmasi mengakhiri obrolan
+    chat_with_us: Terhubung dengan kami
+    logged_in_users: Hanya untuk pengguna yang Masuk
+    cobrowsing_info: >-
+      Pandu pelanggan secara lebih efektif selama percakapan obrolan Anda dengan
+      mendapatkan opsi untuk melihat dan mengontrol layar mereka.
+    window_offset_error_msg: Masukkan nilai offset yang valid(<500px).
+    preferences: Preferensi
   freshfone:
     admin:
       feature_request_content:
         learn_more: pelajari lebih banyak
+        trial_or: ATAU
+        error_message: >-
+          Maaf kami tidak dapat memenuhi permintaan anda saat ini. Coba lagi
+          nanti.
+        title_text: Telepon
+        pricing: Lihat semua tarif panggilan dan negara yang didukung
       ivr:
         save: Simpan
+        turn_on: Pada
+        turn_off: Mati
+        action: Tindakan
+        saving: Menyimpan...
+        preview: Pratinjau
+        done: selesai
+        welcome_message: Pesan Sambutan
       number_settings:
         cancel: Membatalkan
         name: Nama
         business_hours: Jam Kerja
         change: mengubah
+        greeting_message: Masukkan pesan Anda di sini
+        number_accessible: Dapat diakses oleh
+        record_all: Rekam semua panggilan
+        voicemail_on: Pada
+        record_none: Jangan rekam panggilan
+        voicemail_off: Mati
+        voicemail: Pesan Suara
+        start_recording: Mulai perekaman
+        preparing_recording: Mempersiapkan pesan Anda...
+        audio_upload: Unggah
+        business_calendar: Pilih Jam Buka
+        name_placeholder: Masukkan nama yang mudah untuk nomor Anda
+        welcome_message: Pesan Sambutan
+      settings: Pengaturan
+      important: Penting
+      freshfone_numbers_title: Telepon
+      welcome_page:
+        title_text: Telepon
+      numbers:
+        caller_id:
+          manage_caller_id: 'Kelola ID Pemanggil '
+          add_new: Tambah Baru
+        buy: Beli Nomor
+        buy_button_text: Beli
+        address:
+          address: Alamat
+          state: Negara bagian/Provinsi/Wilayah
+          city: Kota
+          postal_code: Kode Pos
+        manage: Kelola
+      local: Lokal
+    subscription:
+      purchase_credits: Beli Kredit
   helpdesk_reports:
     saved_report:
       save: Simpan
       cancel: Membatalkan
+      delete_dialog_header: Hapus Laporan
+      edit_dialog_header: Edit Laporan
     today: Hari ini
     ticket_schedule:
       index:
         cancel: Membatalkan
+        delete_text: Anda yakin ingin menghapus jadwal ini?
+        confirm: Konfirmasi
       new:
         ticket_fields_title: Bidang Tiket
         description: Deskripsi
+        helpnote:
+          api_info1: API akan memiliki tautan ke ekspor terbaru.
+        email: Surel
+        contact_fields_title: Bidang Kontak
+        select_all: Pilih semua
+        one_time_export_label: Ekspor konten tiket dari awal bulan saat jadwal ini dimulai
+        company_fields_title: Bagian Perusahaan
+        frequency: Jadwal
+      schedule_export: Jadwalkan Laporan
+      schedule: Jadwal
+      all_reports: Semua laporan
+      new_schedule: Jadwal Baru
     scheduled_reports:
       dialog:
         desc: Deskripsi
+        monthly: Bulanan
+        generate_report: Buat laporan
+        email: Surel
+        'on': Pada
+        daily: Harian
+        weekly: Pekanan
+        subject: Judul
     ticket_volume:
       resolved_tickets: Tiket Terselesaikan
       received_tickets: Tiket Diterima
+      time_trends:
+        year: Tahun
+        week: Minggu
+        day: Hari
+        month: Bulan
+      load_analysis:
+        title: Analisis beban
+      unresolved_tickets: Tiket belum terselesaikan
     date_range: Rentang Tanggal
     ticket_activity:
       learn_more: pelajari lebih banyak
+      helpnote:
+        api_info1: API akan memiliki tautan ke ekspor terbaru.
+      edit: Edit Jadwal
     yesterday: Kemarin
     change: mengubah
+    chats: Obrolan
+    more: Lainnya...
+    no_data_to_display_msg: Tidak ada data untuk ditampilkan
+    insights:
+      customize_link: Kustomisasikan
+    this_week: Minggu ini
+    agent_summary:
+      title: Kinerja Agen
+    generate: Menghasilkan
+    this_month: Bulan ini
+    edit_filter: Filter
+    year_in_review:
+      title: Tahun Anda dalam Peninjauan
+    summary: Ringkasan
+    show: 'Munculkan:'
+    filter_by: Filter menurut
+    solution_article_text: Bagaimana membaca laporan ini ?
+    timespent_export:
+      export_csv: Ekspor CSV
+      button_export: Ekspor
+    performance_distribution:
+      title: Distribusi Kinerja
+      resolution_bar: Resolusi waktu
+      first_response_bar: Waktu respons pertama
+      response_bar: Rata2 waktu respons
+    group_summary:
+      title: Kinerja Grup
+    filtered_by: 'Difilter berdasarkan:'
+    at: di
+    customer_satisfaction:
+      title: Laporan Kepuasan Pelanggan
   support_multi_languge: Menyokong pelanggan dengan lebih dari satu bahasa?
   features:
     auto_ticket_assignment: Otomatis Penugasan Tiket
     feedback_widget: Pengaturan Widget
+    skill_based_assignment_desc: Penugasan berbasis kemampuan
+    bot: Bot
+    multiple_mailbox_desc: Email dari multipel kotak surat
+    custom_ssl_desc: Sertifikat SSL khusus
+    portal_customization: Kustomisasi Portal
+    advanced_phone_desc: Fitur telepon advance
+    gamification: Gamifikasi
+    custom_survey_desc: Survei kepuasan dikustomisasi
+    forums_desc: Komunitas forum diskusi
+    parent_child: Tiket turunan induk
+    adv_social_desc: Fitur sosial advance
+    custom_mailbox_desc: Server email khusus
+    shared_ticket_views_desc: Kustomisasi dan bagikan tampilan tiket
+    custom_domain: Domain khusus
+    cname_dkim_desc: Konfigurasi CNAME dan DKIM
+    scheduled_reports: Laporan terjadwal
+    knowledge_base: pengetahuan dasar
+    phone_integration: Integrasi telepon
+    custom_fields_desc: Tiket dan bagian kontak khusus
+    skill_based_assignment: Penugasan berbasis kemampuan
+    agent_collision: Kolisi agen
+    live_chat_desc: Konfigurasi dan transkrip live chat
+    custom_ssl: SSL Khusus
+    multiple_sla_business_desc: 'Multipel SLA, zona waktu dan jam kerja'
+    automations: Otomatisasi
+    multilingual_kbase_desc: Multilingual artikel berbasis pengetauan
+    forums: Komunitas forum
+    whitelisted_ip_desc: Alamat IP yang dimasukkan ke Daftar Putih
+    portal_customization_desc: Kustomisasi portal pelanggan
+    multiple_products_desc: Portal multipel produk/basis pengetahuan
+    sla_reminders: Pengingat & eskalasi SLA
+    time_event_automation_desc: 'Waktu dan event berbasis aturan otomatis (Supervisor, Observer)'
+    custom_roles: Aturan kustom
+    custom_roles_desc: Tugas agen yang dikostumisasi
+    ticket_templates: Template tiket
+    freshchat: Integrasi Freshchat
+    enterprise_reports_desc: Laporan perusahaan
   admin_onboarding:
     modal:
       channels_frame:
         forums_channel: Forum
+        social_channel: Sosial
+        chat_channel: Live Chat
+        email_channel: Surel
+        phone_channel: Telepon
+        title: Bagaimana cara Anda berbicara dengan pelanggan hari ini?
+        forward_link: Undang tim Anda
       agents_frame:
         send_invite: Kirim Undangan
         emails_invalid: Satu atau lebih dari email Anda tidak valid.
+        emails_placeholder: 'bruce@just.ly, diana@just.ly, clark@just.ly'
+      overview_frame:
+        forward_link: Ayo kita mulai
+      welcome_frame:
+        title: Selamat datang di Freshdesk
     account_verification_message:
       helpnote_or: atau
       modal_send_button: Kirimkan Aktivasi
       cancel_button: Membatalkan
+      modal_title: Mendaftar menggunakan alamat email yang salah?
+      modal_invalid_email_error: Harap berikan alamat email yang valid.
+      resend_message: Kirim ulang aktivasi
+      change_email: ubah email Anda
   freshchat:
     admin:
       save: Simpan
       cancel: Membatalkan
+      sidebar_title: Freshchat
+      action:
+        success_message: Pengaturan diperbarui
+      admin_apikey: 'Kunci API:'
+      title_text: Freshchat
+      portal_url: 'URL Portal:'
+      app_id: ID Aplikasi
+  mailbox:
+    imap_port: Port
+    authentication: 'Autentikasi:'
+    user_name: Nama Pengguna
+    use_mail_server_for: 'Gunakan server email untuk:'
+    domain_name: Nama Domain
+    verifying_mailbox_input: Memverifikasi...
+    use_ssl_tls: Gunakan SSL/TLS
+    domain: 'Domain:'
+    use_ssl: Gunakan SSL
+    smtp_port: Port
+    password: Kata Sandi
+    incoming_mail_settings: Pengaturan Surat Masuk
+  change_password: Ubah Kata Sandi
+  mailer_notifier:
+    hi: 'Hai,'
+    thanks: 'Terima kasih,'
+  copied_link: Disalin
+  enter_a_value: Masukkan nilai
+  custom_mailbox_admin_email_notifications:
+    regards: Salam
+  custom_mailbox_error_type:
+    ssl_errror: SSL eror.
+    io_error: I/O koneksi eror.
+  forum_category:
+    product_portal_visibility: Terlihat dalam
+  proceed_billing_info: 'Ya, Lanjutkan ke Tagihan'
+  select_values: Pilih sani nilai atau lebih
+  activations:
+    activate_freshdesk_account: Aktifkan akun Anda
+  cloud_log_mailer:
+    logger_email:
+      regards: 'Salam,'
+      account: 'Akun: '
+      reason: Alasan
+  merge_contacts:
+    please_wait: Silahkan tunggu...
+  portals_key: Portal
+  classic_label: Klasik
+  enable: Memungkinkan
+  enter_values: Masukkan satu nilai atau lebih
+  make_payment: Lakukan Pembayaran
+  helpcard:
+    title: ID Eksternal Unik
+  admin_upgrade:
+    enable_mint_title: >-
+      Izinkan agen untuk mencoba pengalaman Mint yang lebih segar dan lebih
+      cepat
+    enable_mint_error: >-
+      Mint telah diaktifkan untuk semua agen. Segarkan untuk melihat pengaturan
+      terbaru.
+    enable_mint_success: Hore! Mint telah berhasil diaktifkan untuk semua agen.
+  plain_off: Mati
+  customize_domain:
+    email:
+      cheers: 'Salam,'
+      team: Tim Freshdesk
+  profiles:
+    freshid_edit:
+      profile_details: Detail Profil
+  disable: Nonaktifkan
+  'on': pada
+  save_as: Simpan Sebagai
+  chatwidget_title: Live Chat
+  reload: Muat Ulang
+  currency_label: 'Mata uang :'
+  plain_on: Pada
+  clone: Klon
+  plan: Paket
+  notification:
+    submit_feedback: mengirim umpan balik
+    whats_new_in_freshdesk: ' Apa yang baru di Freshdesk '
+    load_more: Muat Lebih Banyak
+  chatwidget_help_content:
+    title: Live Chat
+  user_notifications:
+    mark_all_as_read: Tandai semua sebagai sudah dibaca
+    header: Notifikasi
+    preferences: Preferensi
+  ticket_templates:
+    create_new: Buat baru
+  edit_plan: Edit Paket
+  in: dalam
+  help_widget:
+    form_title: Kontak kami
+    form_button_text: Kirimkan umpan balik
+    form_submit_message: Terima kasih telah mengirimkan kritik dan saran.
+    button_text: Membantu
+    welcome_message: Bisakah kami membantu?
+    predictive_message: >-
+      Kami perhatikan Anda sedang buntu. Beri tahu kami yang Anda sedang capai
+      agar tim dukungan kami bisa menghubungi Anda secepatnya.
+    success_message: Terima kasih. Kami akan menghubungi Anda!

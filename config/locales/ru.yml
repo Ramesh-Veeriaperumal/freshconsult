@@ -22,6 +22,10 @@ ru:
     check_uncheck_title: Отметить/сбросить все
     view_all_tickets: Экспорт в CSV файл
     field_select_title: Выбрать поля для экспорта
+    thirt_days: Последние 30 дней
+    seven_days: Последние 7 дней
+    twenty_four: Со вчерашнего дня
+    custom_filter: Установить дату
   go_back: Назад
   change_plan_title: 'Вы уверены, что хотите изменить тарифный план?'
   mailbox:
@@ -372,6 +376,9 @@ ru:
     folder_unavailable: Папки нет в почтовом ящике.
     tcp_socket: Не удалось создать TCP-сокет для email-сервера.
     email_bad_request: Email-сервер отправил ответ BAD при подключении.
+    unkown_error: >-
+      Не удалось извлечь письма из пользовательского email-сервера. Пожалуйста,
+      напишите на support@freshdesk.com
   forum_category:
     select_product: Выберите портал технической поддержки продукта...
     product_portal_visibility: Где доступен просмотр
@@ -523,6 +530,14 @@ ru:
       target='_blank'>Узнайте больше!</a>
     almost_done: Почти завершено!
     no_mktp_apps: Нет установленных приложений.
+    terms_of_use_link: 'http://freshdesk.com/terms#marketplace'
+    third_party_apps_policy: >-
+      Владельцем, разработчиком и оператором данного Приложения является третья
+      сторона, отличная от Freshworks Inc. Выполнив загрузку, интеграцию и (или)
+      использование Приложения, вы подтверждаете свое согласие с условиями и
+      политикой конфиденциальности разработчика, включая положения об обработке
+      ваших данных. За подробностями о таких условиях и политике, пожалуйста,
+      свяжитесь с разработчиком или перейдите на его страницу.
   shortcuts:
     ticket_detail_list_common:
       delete_ticket: Удалить заявку
@@ -968,6 +983,7 @@ ru:
     helpdesk_activity_title: Отчет о действиях службы поддержки
     reports_by: Отчеты от
     pie_chart_title_prefix: Заявки от
+    discard_changes: Отклонить
   import_user_org_text: >-
     Все пользователи и организации из вашей учетной записи Zendesk будут
     импортированы в текущую учетную запись Freshdesk как контакты и компании
@@ -1041,6 +1057,7 @@ ru:
     company_name: Компания
     mobile: Мобильн.
     job_title: Должность
+    twitter_id: Twitter
   admin:
     products:
       helpnote:
@@ -1125,6 +1142,7 @@ ru:
           форумами на этом портале технической поддержки продукта.
         contact_us: Связаться с нами
         edit_portal: Редактирование портала
+        agent_portal: Портал агентов
       add_another_email: Добавить другой адрес электронной почты
     skills:
       index:
@@ -1438,6 +1456,7 @@ ru:
         feedbackwidget_form_height: Высота формы
         feedbackwidget_button_text_placeholder: Поддержка
         feedbackwidget_form_height_message: 'Если виджет отображается с полосами прокрутки, настройте его высоту'
+        feedbackwidget_offset: 'Смещение:'
       index:
         feedbackwidget_embedded_tab: Встроенный виджет
         feedbackwidget_popup_tab: Всплывающий виджет
@@ -1997,6 +2016,13 @@ ru:
         info2: >-
           Также можно выбрать отдельные категории решений и форумов, которые
           будут представлены на основном и других порталах.
+        exit_fullscreen: Выход из полного экрана
+        editor_shortcuts: Сочетания клавиш редактора
+        preview_changes: Предпросмотр изменений
+        editor_in_fullscreen: Полноэкранный редактор
+        level_customizations: Настройка на уровне страницы
+        advanced_rebranding: Дополнительные настройки оформления
+        custom_stylesheets: Использование собственных таблиц стилей
       settings:
         moderate_none_help: >-
           Включите этот компонент, если вы уверены, что ваше сообщество не
@@ -2043,6 +2069,10 @@ ru:
         moderate_all_help: >-
           Включите этот компонент для тщательной проверки каждой записи в вашем
           сообществе.
+        google: Google
+        twitter: Twitter
+        facebook: Facebook
+        reset_portal_changes: Сбросить изменения портала
     day_passes:
       index:
         agent: Агент
@@ -2085,6 +2115,7 @@ ru:
         billing: Тарифные планы и оплата
         title: Администратор
         invoice: Счета
+        search_admin: Искать настройки администратора
     getting_started:
       index:
         support_email_subtitle: Добавьте ваш основной адрес электронной почты службы поддержки
@@ -2358,6 +2389,7 @@ ru:
         tickets: Заявки
         forums: Форумы
         scroll_to: Прокрутить до
+        bots: Боты
       agents_label: Агенты
       new: Новая роль
       default_role_edit: >-
@@ -2431,6 +2463,7 @@ ru:
               специальным разделом технической поддержки в вашем приложении. Он
               будет включать базу знаний и форму заявки. Таким образом, если
               пользователям понадобится помощь, они смогут связаться с вами.
+            info3: "MobiHelp можно настроить с учетом всех пользовательских требований — начиная с полей в форме для отзывов и заканчивая внешним оформлением в приложении. Сбор данных (имя устройства, операционная система и версия приложения) осуществляется автоматически. Вы можете воспользоваться настраиваемыми полями, а также выполнять сбор сведений о сбоях и средствах навигации."
           heading1: Что представляет собой Mobihelp?
         edit:
           title: Изменить приложение Mobihelp
@@ -2503,6 +2536,9 @@ ru:
       addcc: Добавить копию
       hide_cc: Скрыть адресатов в копии
       cc: копия
+      do_not_link: Не добавлять
+      view_in_detail: Подробный просмотр
+      ok: Ок
     time_sheets:
       agent: Агент
       no_entry: Нет записей времени
@@ -2938,6 +2974,8 @@ ru:
           языка. Значок  <i class="common-icon-outdated"></i> указывает на то,
           что переведенные уведомления нуждаются в обновлении.
         topic: Письмо для сброса пароля
+      agent_template_25:
+        topic: Письмо приглашения агента
     requestor_notification: Уведомление для автора заявки
     subject: Тема
     account_not_activated: >-
@@ -2964,6 +3002,7 @@ ru:
         feedback_widgets_knowledge_base: базе знаний
         feedback_widgets_search: Поиск
         show_all_results: Показать все результаты
+        problems_with_fields: 'Имеются проблемы со следующими полями:'
   quests:
     solution_mand: Укажите количество решений.
     js_forum_txt: >-
@@ -3057,9 +3096,14 @@ ru:
         rate_again: Оцените нас еще раз
       attachment_form:
         feedback_widgets_screenshot: Сделать снимок экрана
+      related_files: Связанные файлы
+      was_this_article_useful: Статья была полезна?
     canned_form:
       next: Далее
       form_submit: Отправить
+      okay: Да
+      hey: Здравствуйте!
+      thank_you_text: Спасибо!
     surveys:
       new:
         thanks: 'Большое спасибо, что оценили нас!'
@@ -3096,6 +3140,7 @@ ru:
     click_to_enable: Включить приложение
     title: Интегрируемые сервисы
     disabled: Выключено
+    connect: Подключить
   confirm: Подтвердить
   discussions:
     helpnote:
@@ -3316,7 +3361,12 @@ ru:
         email: Электронная почта
         continue: Продолжить
         password: Пароль
+        connect_existing_account: Привязать существующий аккаунт
+        account_url: URL аккаунта Freshcaller
       title_text: Телефон
+      feature_request_content:
+        create_new_account: Создать новую учетную запись
+      freshcaller_subtext: 'Покупка номеров, настройка очередей, голосовых меню и т. п.'
   activate_free_plan: Активировать бесплатный тарифный план
   agent_assigned_info: У этого агента нет открытых или ожидающих заявок
   suspended_account_info: 'Действие вашего аккаунта было приостановлено, клиентский портал недоступен.'
@@ -3494,8 +3544,12 @@ ru:
       account_url_defaulted: >-
         В связи с отсутствием активности, мы автоматически сгенерировали URL для
         вашего аккаунта. Вы будете переадресованы на информационную панель...
+      getting_started: Начало работы
     new:
       company: Компания
+      full_name: Имя и фамилия
+      confirmation: Подтверждение
+      create_an_account: Создать учетную запись
     billing:
       begin_subscription_info: произойдет мгновенная активация подписки и снятие суммы оплаты с карты.
       billing: Оплата
@@ -3529,6 +3583,10 @@ ru:
       info3: >-
         В данном разделе доступны основные настройки службы поддержки - такие,
         как язык, часовой пояс и цветовые схемы.
+    signup_google:
+      sign_up: Регистрация!
+      privacy_policy: политикой конфиденциальности
+      terms_of_service: условия обслуживания
   zendesk_import:
     group: Группы
     post: Форумы и решения
@@ -3599,6 +3657,7 @@ ru:
   multifile_attachments:
     remove: Удалить
     label: Прикрепить файлы
+    mb: ' Мб '
   account:
     sort_conversations:
       label: Порядок отображения сообщений
@@ -3676,6 +3735,10 @@ ru:
     additional_languages: Поддерживаемые языки
     visible_in_portal: Доступно на портале
     helpdesk_name: Название портала/службы поддержки
+    gdpr_terms_link: Условия использования
+    gdpr_admin: Администратор.
+    gdpr_policy: Политикой конфиденциальности.
+    gdpr_acknowledgement: 'и подтверждаете, что ознакомились с'
   portal_pages:
     pages:
       ticket_view: Подробные сведения заявки
@@ -3898,6 +3961,7 @@ ru:
       head_layout_help_message: Изменить раздел заголовка HTML-страницы своего портала.
       header_layout_title: Верхний колонтитул
       pagelayout_title: Разметка страницы
+    apply_mint: Применить
   retype_password: Повторите пароль
   date_title: Дата
   open_tickets: Открытые заявки
@@ -3931,6 +3995,23 @@ ru:
   portal:
     cookie:
       privacy_policy: Политика конфиденциальности
+      cookie_policy: Политика файлов «cookie»
+      why_we_love_cookies: Почему мы любим файлы «cookie»
+      cookie_dialog_info1: >-
+        Мы используем файлы «cookie» для того, чтобы сделать использование вами
+        Freshdesk более комфортным.
+      cookie_dialog_info2: >-
+        Вы можете узнать больше о причинах и способах использования нами файлов
+        «cookie» здесь, а также их типах здесь: %{privacy_link}. Если вы не
+        хотите использовать файлы «cookie», их также можно полностью отключить.
+        При этом обратите внимание на то, что во Freshdesk файлы «cookie»
+        используются довольно часто, поэтому в случае их отключения некоторые
+        разделы Freshdesk могут работать ненадлежащим образом.
+      cookie_dialog_info3: >-
+        Мы также надеемся, что вы согласны со способами использования нами
+        файлов «cookie» и соответствующей информацией в нашей %{privacy_link},
+        если только вы не решите полностью отключить файлы «cookie» в вашем
+        браузере.
     reported: сообщил
     said: сказал
     login: Войти
@@ -3941,7 +4022,9 @@ ru:
         all: Все
         solutions: Решения
         tickets: Заявки
+        topics: Темы
       placeholder: Введите слово для поиска...
+      results_for: Результаты поиска для
     my_topics: Мои темы
     community_forums: Клиентские форумы
     knowledge_base: База знаний
@@ -3951,6 +4034,10 @@ ru:
         Похоже, ваш аккаунт пока еще не был активирован. Для того, чтобы чтобы
         опубликовать статью, пожалуйста, активируйте аккаунт (до этого вы можете
         сохранить черновик)
+      see_all_articles: 'Смотреть все статьи (%{count})'
+      more_articles: 'Больше статей в <span class=''folder-name''>%{article_name}</span>'
+      modified_on: 'Изменено:'
+      related_articles: Статьи по теме
     topic:
       activation_warning: >-
         Похоже, ваш аккаунт пока еще не был активирован. Для того, чтобы
@@ -3963,7 +4050,40 @@ ru:
       matching_results: Найдены соответствующие разделы
       sort_order:
         popularity: Популярные
+        date: По возрастанию даты
+        recency: По убыванию даты
       sort_by_default: По умолчанию
+      follow: Следить
+      following: Следим
+      monitor_topic: Следить за этой темой
+      comments_closed: Эта тема закрыта для комментариев!
+      start_new_topic: Начать новую тему
+      see_all_topics: 'Смотреть все темы (%{count})'
+      all_topics: Смотреть все темы
+      comment_placeholder: 'Щелкните здесь, чтобы добавить комментарий'
+      started: создал тему
+      more_topic: Еще темы в
+      fb_reply_info: >-
+        Автор <a href='%{reply_url}'>последнего ответа</a>:
+        %{user_name}<br>%{created_on}
+      my_topic_reply: 'Автор последнего ответа: <b>%{post_name}</b>, %{created_on}'
+      topic_brief: 'Автор записи: <b>%{user_name}</b>, %{created_on}'
+      last_post_brief: >-
+        <a href='%{last_post_url}'>%{link_label}</a>, автор: %{user_name},
+        %{created_on}
+      in_forum: 'В %{forum_name}'
+      merge: 'Объединено с тематическим разделом:'
+      locked: Тематический раздел заблокирован
+      sticky: Отмечен постоянный тематический раздел
+      merge_continue: 'Однако разговор можно продолжить здесь: '
+      merge_note:
+        one: 'Тематический раздел объединен с этим тематическим разделом:'
+        few: 'Тематические разделы объединены с этим тематическим разделом:'
+        many: 'Тематические разделы объединены с этим тематическим разделом:'
+        other: 'Тематические разделы объединены с этим тематическим разделом:'
+      sort_heading: 'Сортировка:'
+      sort_by_most_recent: Недавние
+      sort_by_most_popular: Наиболее популярные
     topic_vote:
       user_upvote_list_title: 'Проголосовали "за":'
       announce_button: Вам нравится?
@@ -3977,6 +4097,30 @@ ru:
       ideas_users_voted_title: 'Пользователи, которым нравится эта идея'
       problem_users_voted_title: Пользователи с этой проблемой
       howto_users_voted_title: Пользователи с этим вопросом
+      announce:
+        one: это нравится
+        few: это нравится
+        many: это нравится
+        other: это нравится
+      ideas:
+        one: приветствует эту идею
+        few: приветствуют эту идею
+        many: приветствуют эту идею
+        other: приветствуют эту идею
+      problem:
+        one: сталкивается с этой проблемой
+        few: сталкиваются с этой проблемой
+        many: сталкиваются с этой проблемой
+        other: сталкиваются с этой проблемой
+      howto:
+        one: задает этот вопрос
+        few: задают этот вопрос
+        many: задают этот вопрос
+        other: задают этот вопрос
+      votes: голосов
+      upvote: проголосовать "за"
+      upvoted: проголосовали "за"
+      announce_users_voted_title: 'Пользователи, которым это понравилось'
     tickets:
       export: Экспортировать заявки
       submit_export: Экспорт
@@ -3989,6 +4133,98 @@ ru:
         отправлять копии уведомлений по этой заявке.
       reopen_reply: Ответ
       related_articles: Статьи по теме...
+      merged_topic_note: Объединенный тематический раздел не может быть преобразован в заявку.
+      ticket_list: Список заявок
+      mark_closed: Отметить заявку как закрытую
+      add_people: Добавить людей
+      reply_placeholder: 'Щелкните, чтобы ответить на эту заявку'
+      add_people_title: Добавить людей в разговор
+    no_topics_in_this_view: ~ В этом представлении нет тем ~
+    solutions_home: Главная страница решений
+    print_title: Печать статьи
+    attach_file: Вложить <b>файл</b>
+    header:
+      preview_message: >-
+        <b>Режим предпросмотра</b> — <a href='javascript:window.close()'>Нажмите
+        здесь</a>, чтобы вернуться назад.
+    new_support_ticket: Новая заявка в службу поддержки
+    submit_new_ticket: ...или отправьте новую заявку
+    login_portal: Войти на портал поддержки
+    login_details: 'Введите учетные данные, полученные во время регистрации.'
+    agent_login_details: 'Введите учетные данные, полученные во время регистрации.'
+    login_options: ...или войдите через
+    reset_password: >-
+      Укажите ваш адрес электронной почты, и мы вышлем на него инструкции по
+      сбросу пароля.
+    signup: Зарегистрироваться
+    user_signup_portal: 'Зарегистрировать '
+    account: учётную запись
+    login_or_signup: '%{login} или %{signup} для учетной записи'
+    to_post_comment: чтобы опубликовать комментарий
+    to_submit_ticket: чтобы отправить новую заявку
+    login_to_submit_ticket: '<a href=%{login_url}>Войдите в систему</a> для отправки новой заявки'
+    login_signup_to_submit_ticket: >-
+      <a href=%{login_url}>Войдите в систему</a> или <a
+      href=%{signup_url}>зарегистрируйтесь</a> для отправки новой заявки
+    login_to_post_topic: >-
+      <a href='' class='solution_c'>Войдите в систему</a> для размещения записей
+      в тематическом разделе
+    login_to_post_comment: >-
+      <a href='' class='solution_c'>Войдите в систему</a> для размещения
+      комментария
+    login_signup_to_post_topic: >-
+      <a href=%{topic_reply_url}>Войдите в систему</a> или <a
+      href=%{signup_url}>зарегистрируйтесь</a> для размещения записей в
+      тематическом разделе
+    login_signup_to_post_comment: >-
+      <a href=%{topic_reply_url}>Войдите в систему</a> или <a
+      href=%{signup_url}>зарегистрируйтесь</a> для размещения комментария
+    to_post_topic: чтобы создать новую тему
+    preview:
+      view_on_helpdesk: Просмотреть в службе технической поддержки
+      edit_article: Редактировать статью
+    popular_topics: Популярные темы
+    showing_recently_popular_topics: Отображение последних популярных тем
+    topic_deleted: 'Вероятно, этот тематический раздел удален. Размещение записей запрещено.'
+    topic_not_found: 'Похоже, данная тема удалена'
+    post_not_found: 'Похоже, данное сообщение удалено'
+    showing_my_topics: 'Отображение тем, за которыми вы следите'
+    showing_recent_updates: Отображение последних обновлений
+    no_articles_info_1: 'К сожалению, в этом разделе нет статей.'
+    no_articles_info_2: Попробуйте проверить позже.
+    no_forums_info_1: Здесь пока нет ни одной темы форума
+    no_forums_info_2: 'Почему бы не %{start_topic_link}?'
+    folder:
+      filler_text: 'Здесь будут размещаться статьи, касающиеся %{folder_name}'
+    vote:
+      you:
+        one: 'Вам '
+        few: 'Вам и '
+        many: 'Вам и '
+        other: 'Вам и '
+      more:
+        one: 'ещё 1 пользователю '
+        few: 'ещё %{count} пользователям '
+        many: 'ещё %{count} пользователям '
+        other: 'ещё %{count} пользователям '
+      people:
+        one: 'ещё 1 человеку '
+        few: 'ещё %{count} человек '
+        many: 'ещё %{count} человек '
+        other: 'ещё %{count} человек '
+    vote_label:
+      one: 1 stemme
+      few: stemmer
+      many: stemmer
+      other: stemmer
+    post_vote:
+      upvoted: Вы проголосовали "за"
+      upvote: Проголосовать "за"
+      like:
+        one: это нравится
+        few: это нравится
+        many: это нравится
+        other: это нравится
   title: Должность
   free_plan_agents_v2: Неограниченное число агентов
   freshfone:
@@ -4288,6 +4524,7 @@ ru:
       current_balance: Ваш текущий баланс
       followup: телефонных кредитов
       no_credit_card_text: Введите платёжную информацию для приобретения телефонных кредитов
+      purchase_credits: Внести средства на счет
   special_beta_offer: Специальное предложение для учетных записей бета
   days: дн.
   tickets_filter:
@@ -4425,6 +4662,13 @@ ru:
       nested_tree_validation: Необходимо создать как минимум одну категорию и подкатегорию
       description: Описание
       form_title: Свойства поля
+      nested_field_helptext: >-
+        Используйте текстовую область ниже для добавления и редактирования
+        элементов выпадающего списка. Устанавливайте отступы путём однократного
+        или двукратного нажатия клавиши Tab. Данные будут преобразованы в
+        элементы выпадающего списка с учётом отступов. <a target='_blank'
+        href='https://support.freshdesk.com/solution/categories/45957/folders/74594/articles/37599-using-dependent-fields'>Узнать
+        больше</a> 
     no_choice_message: Должен быть хотя бы один действительный вариант выбора
   export_to_CSV: Экспорт в CSV файл
   email_configs:
@@ -4457,6 +4701,7 @@ ru:
         заданных настроек
       host_value: Хост
       dkim_remove_message: 'Вы уверены, что хотите удалить настройки DKIM для'
+      cname: CNAME
     info17: >-
       Этот адрес электронной почты будет автоматически добавляться в поле
       «скрытая копия» для всех переговоров по заявкам
@@ -4520,6 +4765,8 @@ ru:
     primary_supp_email_tool_tip: Основной адрес электронной почты службы поддержки продукта
     bcc_email: Адрес скрытой копии
     using_custom_mailbox: Использование собственного почтового сервера
+    freshdesk: Freshdesk
+    plain_unverified: Не подтверждено -
   create_password: Задайте пароль
   agent_list:
     sort:
@@ -4642,6 +4889,7 @@ ru:
         company_fields_title: Поля компаний
         description: Описание
         frequency: Расписание
+        api: API
       schedule_export: Запланированный экспорт
       schedule: Расписание
       all_reports: Все отчеты
@@ -4665,6 +4913,9 @@ ru:
         'on': Вкл.
         desc: Описание
         subject: Тема
+        monthly: Ежемесячно
+        daily: Ежедневно
+        weekly: Еженедельно
     ticket_volume:
       busiest_hour_resolved_tickets: 'Наибольшее число заявок решено:'
       average_resolved_tickets: Среднее количество решённых заявок
@@ -4712,6 +4963,7 @@ ru:
       title: Тайм-трекинг
     timespent_export:
       button_export: Экспорт
+      export_csv: Экспорт в CSV
     performance_distribution:
       title: Продуктивность обработки заявок
       resolution_bar: Время решения
@@ -4747,6 +4999,10 @@ ru:
       title: Отчёт об удовлетворённости клиентов
     yesterday: Вчера
     change: Изменить
+    year_in_review:
+      title: Итоги года
+    show: 'Показать:'
+    at: на
   enter_payment: Введите платежную информацию...
   no_badge_achieved_label: Значки еще не достигнуты.
   logo: Логотип
@@ -4879,6 +5135,8 @@ ru:
         add_search_keywords: Введите слово для поиска.
         tickets: Заявки
         no_retweets: Нет повторных твитов.
+        post: ' Запись '
+        interactions: Взаимодействие
       other_interactions: Другие примеры взаимодействия
       social_accounts: Учетные записи в социальных сетях
       search_btn: Поиск
@@ -4887,6 +5145,7 @@ ru:
       search:
         exclude_handles: Отфильтровать твиты от этих пользователей
       custom_streams: Ленты социальных сетей
+      interactions: Взаимодействие
   suspended_account_admin_info: >-
     Действие вашего аккаунта приостановлено, клиентский портал недоступен.
     Пожалуйста, свяжитесь с администратором аккаунта.
@@ -5062,6 +5321,8 @@ ru:
     everything_in_blossom: Все в тарифном плане Blossom
     enterprise_reports_desc: Расширенная отчетность
     css_customization: Настройка CSS
+    bot: Бот
+    freshchat: Интеграция Freshchat
   admin_onboarding:
     modal:
       channels_frame:
@@ -5092,6 +5353,7 @@ ru:
         emails_invalid: Один или несколько ваших адресов электронной почты недействительны.
         forward_link: Посмотреть краткий обзор
         title: Вместе с кем вы будете работать?
+        emails_placeholder: 'bruce@just.ly, diana@just.ly, clark@just.ly'
       welcome_frame:
         forward_link: Выберите каналы поддержки
         message2: >-
@@ -5435,6 +5697,18 @@ ru:
         Экспортируйте информацию о клиентах, управляйте действующими подписками
         и получайте статистические данные о действиях клиентов непосредственно
         во Freshdesk.
+      helptext: >-
+        <h4>Справка по интеграции iContact</h4><br/> Чтобы интегрировать
+        iContact, перейдите по адресу <a target='_blank'
+        href='https://app.icontact.com/icp/core/externallogin'>https://app.icontact.com/icp/core/externallogin</a>
+        и предоставьте доступ к приложению Freshdesk, введя приведенный ниже
+        идентификатор приложения
+        <br/><br/><b>qB7RYQgliAPwl5dwezYF0kAN4Islhj4e</b><br/><br/> Задайте
+        пароль на свое усмотрение и нажмите «Сохранить». Этот пароль API будет
+        использоваться для всех запросов API от Freshdesk. <br/><br/> Скопируйте
+        URL API из раздела «Информация учетной записи» и вставьте его в поле URL
+        API здесь. Введите ваше имя пользователя iContact и новый пароль API.
+        Затем нажмите «Обновить».
     dynamics_v2:
       form:
         username: Имя пользователя
@@ -5460,6 +5734,7 @@ ru:
         Ключ API можно получить в разделе параметров профиля своей учетной
         записи Freshdesk 
       sign_up: Зарегистрироваться
+      connect: Подключить
     five9:
       desc: >-
         Позволяет принимать и совершать звонки, записывать содержимое звонков и
@@ -5646,6 +5921,8 @@ ru:
         mapping:
           company: Компания
           contact: Контакт
+          contact_fields: ' Поля контакта '
+          account_fields: ' Поля учетных записей '
     mailchimp:
       desc: >-
         Добавьте MailChimp во Freshdesk и управляйте своими подписками,
@@ -5659,6 +5936,11 @@ ru:
           <strong>https://адрес_моего_магазина.shopify.com</strong>, введите
           <strong>адрес_моего_магазина</strong>.
         shop_name: Название магазина
+        shop_name_info_mint: >-
+          Например, если ваш URL-адрес Shopify представлен в виде
+          <strong>https://адрес_моего_магазина.shopify.com</strong>, введите
+          <strong>адрес_моего_магазина</strong>.
+        shop_name_mint: Название магазина
       helptext: >-
         <h4>Интеграция с Shopify</h4><br/><p>Укажите название магазина для
         отображения последних заказов клиента в системе Freshdesk. Для вас
@@ -5670,6 +5952,8 @@ ru:
       desc: >-
         Просмотр последних заказов и сведений о заказах клиента в системе
         Freshdesk во время выполнения заявок
+      edit:
+        disconnect: Отключить
     dynamicscrm:
       form:
         login_url: >-
@@ -5725,6 +6009,10 @@ ru:
         domain_info: >-
           В случае On-Demand установки используйте идентификатор супервизора
           Office 365, например, name@company.onmicrosoft.com.
+        organization_name_info: >-
+          Для получения этого значения обратитесь в настройках Dynamics CRM к
+          разделу Customizations -> Developer Resources -> Your Organization
+          Information -> Organization Unique Name
       desc: Вы можете просматривать контактную информацию Dynamics CRM из Freshdesk.
       helptext: >-
         <h4>Справка по интеграции с Dynamics CRM</h4><p><br/> После включения
@@ -5759,11 +6047,30 @@ ru:
         recent_tickets: Недавние заявки
         create: Создать
         ticket_reference_id: ID разговора
+        do_not_link: Не добавлять
     dropbox:
       form:
         app_key: Зарегистрированный ключ приложения для вашего домена
         app_key_info: Создайте приложение в DropBox и вставьте туда ключ приложения.
       desc: Прикрепляйте и отправляйте данные и файлы из DropBox.
+      helptext: >-
+        <h4>Справка по интеграции с Dropbox</h4><br/><p>Интеграция с Dropbox
+        позволяет агентам и пользователям просматривать файлы в Dropbox и
+        прикреплять их к исходящим письмам и ответам на заявки во Freshdesk. В
+        заявку добавляется прямая ссылка файл, что устраняет необходимость
+        вложений и снимает какие-либо ограничения на их размер.</p><p>Перед
+        установкой приложения перейдите на <strong><a target='_blank'
+        href='https://dropbox.com/developers'>страницу разработчиков
+        Dropbox</a></strong>.</p><p>1. В разделе <b>API v2</b> выберите
+        <b>Create your app</b>.</p><p>2. В разделе <b>Choose an API</b> выберите
+        <b>Dropbox API</b>.</p><p>3. В разделе 'Choose the type of access you
+        need' выберите <a>Full Dropbox</a>.</p><p>4. Назовите ваше приложение и
+        нажмите <b>Create App</b>.</p><p>5. На странице приложения в разделе
+        <b>Settings</b>в поле <b>Chooser/Saver domains</b> укажите свой
+        Freshdesk URL без https или www, например:
+        <a>sauls.freshdesk.com</a>.</p><p>Вставьте Application Key своего
+        приложения на этой странице и сохраните изменения. Интеграция настроена,
+        вы можете проверить ее работу на странице создания новой заявки.</p>
     freshbooks:
       form:
         api_url_info: >-
@@ -6405,6 +6712,11 @@ ru:
         jira_status_sync: 'Для изменения статуса задачи JIRA %{dropdown}'
         add_jira_comment: Добавить как комментарий в JIRA.
         jira_status_sync_update_field: Обновить поле статуса Freshdesk.
+        domain_info: >-
+          Введите полный URL учетной записи JIRA, в том числе https/http.
+          Например, https://пример.atlassian.net. <br /><span class='italics'>
+          Внимание: локальные версии JIRA необходимо выложить в Интернет.
+          </span>
       desc: 'Преобразовывать заявки в задачи, которые можно обрабатывать в JIRA.'
       helptext: >-
         <h4>Справка по интеграции JIRA</h4><p><br/>Чтобы интегрировать JIRA во
@@ -6430,6 +6742,7 @@ ru:
       desc: >-
         Создавайте записи в Pivotal Tracker и отслеживайте их с помощью
         Freshdesk
+      label: Pivotal Tracker
     harvest:
       desc: >-
         Вы можете вести учет времени, потраченного на заявки, в проектах и
@@ -6571,9 +6884,16 @@ ru:
         opportunity_settings: Агенты могут создавать Возможности и редактировать их связь с заявками
         hourly: Час
         contact: Поля контактов
+        daily: Ежедневно
       mail:
         no_data_found: Нет данных
         no_event: Нет действий за сегодня
+    google_drive:
+      form:
+        developer_key: API-ключ получен с консоли разработчика Google.
+        client_id: ID клиента OAuth для вашего домена
+    microsoft_teams:
+      auth_btn: Разрешить
   chatwidget_help_content:
     title: Онлайн чат
     info1: >-
@@ -6597,6 +6917,7 @@ ru:
     in: 'Категория: '
     by: 'по:'
     no_results_msg: Ничего не найдено
+    searching: Поиск
   created_on: Дата создания
   add_all: Добавить все
   total_price: Итого
@@ -6625,6 +6946,7 @@ ru:
     toggle_mobile_notifications: Вкл/Выкл мобильные уведомления
     header: Уведомления
     preferences: Настройки
+    mute: Выключить звук
   email_command_settings_info: >-
     Настройте разделитель, используемый для идентификации и извлечения команд
     электронной почты из писем
@@ -6636,6 +6958,16 @@ ru:
       solutions: Решения
       forums: Форумы
       tickets: Заявки
+      home: Главная
+    welcome: Добро пожаловать
+    login: <b>Войти</b>
+    edit_profile: Редактировать профиль
+    assumed_text: Вы просматриваете как
+    help_center: Чем мы можем вам сегодня помочь?
+    new_support_ticket: Новая заявка в службу поддержки
+    check_ticket_status: Проверить статус заявки
+    goto_customer_portal: Перейти к клиентскому порталу
+    goto_agent_portal: Портал агентов
   left: Остаток
   description: Описание
   solution:
@@ -6814,6 +7146,13 @@ ru:
     admin:
       save: Сохранить
       cancel: Отмена
+      sidebar_title: Freshchat
+      action:
+        success_message: Настройки обновлены
+      admin_apikey: 'Ключ API:'
+      title_text: Freshchat
+      portal_url: 'URL портала:'
+      app_id: Идентификатор приложения
   suspended_plan_info: Действие вашей учетной записи приостановлено.
   ticket_deleted: Эта заявка удалена
   signup_complete_activate_info: >-
@@ -6888,3 +7227,45 @@ ru:
     add_forum: Добавить форум
   and_more_plan_downgrade: И многое другое...
   change_my_plan: Выбрать этот тарифный план...
+  mailer_notifier:
+    hi: 'Здравствуйте,'
+    thanks: Спасибо
+  copied_link: Скопировано
+  email_command_preview_to_email_value: support@acme.freshdesk.com
+  add_note: Добавить заметку
+  cloud_log_mailer:
+    logger_email:
+      regards: 'С уважением,'
+      account: 'Аккаунт: '
+      reason: Причина
+  undo_toggle_error: 'Извините, что-то пошло не так!'
+  errors:
+    invalid_domain:
+      freshdesk: Freshdesk
+  being_processed: Обрабатывается
+  awaiting_your_reply: От вас ждут ответа
+  this_ticket_has_been_resolved: Эта заявка уже решена
+  this_ticket_has_been_closed: Эта заявка уже закрыта
+  helpcard:
+    title: Уникальный внешний ID
+  admin_upgrade:
+    enable_mint_title: Предоставить агентам доступ к новому интерфейсу
+    enable_mint_error: 'Mint уже был включен для всех агентов. Пожалуйста, обновите страницу.'
+    enable_mint_success: Ура! Mint был включен для всех агентов.
+  customize_domain:
+    email:
+      team: команда Freshdesk
+  save_as: Сохранить как
+  currency_label: 'Валюта :'
+  Twitter: Twitter
+  at: на
+  help_widget:
+    form_title: Связаться с нами
+    form_button_text: Отправить отзыв
+    form_submit_message: Спасибо за ваш отзыв.
+    button_text: Справка
+    welcome_message: Можем ли мы помочь?
+    predictive_message: >-
+      Мы заметили, что у вас трудности. Расскажите о проблеме, и наша служба
+      поддержки постарается помочь в кратчайшие сроки.
+    success_message: Спасибо! Будем на связи!

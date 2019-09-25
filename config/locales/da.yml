@@ -19,6 +19,19 @@ da:
     to: Til
     check_uncheck_title: Velg/fjern merking for alle
     field_select_title: 'Vælg felter, der skal eksporteres'
+    thirt_days: Seneste 30 dage
+    seven_days: De sidste 7 dage
+    twenty_four: i går
+    custom_filter: Indsæt dato
+    customer_export:
+      note: Dette link udløber om 15 dage.
+    csv: CSV
+    xls: Excel
+    data_backup_failure:
+      body: Din dataeksport mislykkedes. Kan du starte eksporten igen?
+    view_all_tickets: Eksporter som CSV
+    ticket_export:
+      note: Dette link udløber om 15 dage.
   go_back: Gå tilbage
   change_plan_title: Sikker på du ønsker å endre betalingsplan?
   mailbox:
@@ -50,6 +63,8 @@ da:
     smtp_server_info: SMTP-servernavn for å hente e-poster
     email_system: 'E-psotsystem:'
     incoming_mail_settings: Indgående mail opsætning
+    imap_port: Port
+    smtp_port: Port
   success: Vellykket
   forum:
     verb:
@@ -64,6 +79,11 @@ da:
     title: Fora
     type: Forumtype
     category: Forum kategori
+    max_description_length_allowed: Maksimalt 250 tegn
+    convert_to_ticket: Konverter automatisk emner til supportsager
+    convert_to_ticket_info: >-
+      Alle nye emner oprettet i dette forum konverteres automatisk og oprettes
+      som en supportsag.
   your_feedback: Din tilbakemelding
   agent_working_on_this_ticket: Medarbejder på denne supportsag
   zendesk_import_status:
@@ -98,6 +118,7 @@ da:
       unverified: Kontakter med ubekræftede emails
       all: Alle kontakter
       deleted: Slettede kontakter
+      blocked: Blokerede kontakter
     showing: 'Viser:'
     status:
       all: Alle
@@ -200,6 +221,35 @@ da:
         dagspas under fanen Admin. Bemærk, at du kun vil blive faktureret for
         det antal af fuldtidsagenter du tilføjer under afsnittet abonnementer og
         fakturering.
+      title4: Omfang og roller
+      info9: >-
+        Agenter på fuld tid er dem i dit supportteam, der logger på din helpdesk
+        hver dag.
+      info14: >-
+        Du kan vælge hvilke supportsager dine agenter kan se, ved at ændre deres
+        supportsagsomfang. Du bør også angive, hvilke handlinger en agent kan
+        udføre på din helpdesk, ved at vælge en rolle.
+      info11: >-
+        Du kan organisere agenter i bestemte grupper, såsom salg og
+        produktstyring. Ved at segmentere agenter i afdelinger, kan du nemt
+        tildele supportsager, oprette specifikke foruddefinerede svar,
+        administrere arbejdsflows og generere rapporter på gruppeniveau. Bemærk,
+        at en agent kan være medlem af flere grupper.
+      info12: >-
+        En agent i Freshdesk er enhver, der skal have adgang til, arbejde på og
+        løse dine supportsager. Listen viser alle agenter, der i øjeblikket
+        findes på din helpdesk. Hold markøren over en agent for at redigere
+        oplysninger, eller klik på Ny agent for at tilføje en ny agent. Agenter
+        du tilføjer, modtager en e-mail med et bekræftelseslink, så de kan
+        aktivere deres konto, hvorefter de kan tilgå og svare på supportsager.
+      info15: >-
+        Bemærk, at du hverken kan ændre dine egne roller eller slette dig selv
+        som agent.
+      info10: >-
+        Deltidsagenter er dem, der kun har brug for at logge ind fra tid til
+        anden, såsom din salgs- og marketingchef, så de kan tage sig af
+        specifikke kundespørgsmål. Du behøver ikke købe en ekstra agentplads i
+        en hel måned for sådanne agenter.
     signature: Signatur
     convert_agent_confirmation: >-
       Advarsel - hvis du konverterer en agent til en kontakt vil det permanent
@@ -228,6 +278,34 @@ da:
     roles: Roller
     trial: I prøveversjon
     role_and_scope: Roller og omfang
+    insert_placeholder: Sett inn plassholder
+    days_ago: '%{days} siden'
+    member: Medlem af
+    search_placeholder: Søg i alle agenter
+    ago: '%{time} siden.'
+    last_logged: Sist logget inn
+    remove_role: Fjern rolle
+    remove_group: Fjern gruppen
+    admin: Administrator
+    reset_scores: Nulstil badges og point
+    add_skills: Tilføj kompetencer
+    reset_score_alert_you: >-
+      Du mister dine badges, og dine point nulstilles til %{points}. Er du
+      sikker på, at du vil fortsætte?
+    invalid_export_params: Der opstod en fejl under eksport af agentdata. Prøv igen.
+    invalid_placeholder: Der er indsat ugyldige pladsholdere
+    reset_score_alert_them: >-
+      %{name} mister hans/hendes badges, og point nulstilles til %{points}. Er
+      du sikker på, at du vil fortsætte?
+    groups_description: Tilknyt én eller flere grupper til denne agent.
+    export_title: Eksportér agenter til CSV
+    export_successfull: Dine agenterdata sendes snart til din e-mail!
+    no_recent_activity: Ingen nylig aktivitet
+    manage_skills: Administrer kompetencer
+    skill: Kompetencer
+    reset_score_title: Nulstil badges og point
+    last_seen_at: Senest set
+    assign_group: Tilknyt grupper
   back: Tilbage
   change_plan: Skift plan
   current_free_plan: Gjeldende Gratis plan
@@ -261,6 +339,7 @@ da:
         sak vil Dispatch'r utføre den første regelen som matcher og deretter
         stoppe. Du kan endre rekkefølgen på listen av regler for å ha en
         viktigste øverst.
+      tour_v2: Hjælp mig med at oprette en Dispatch'r-regel
     inactive_rules: Inaktive regler
     clone: Dispatch’r – klone regel
     match_all: Match Alle
@@ -270,6 +349,10 @@ da:
     act_to_perform: Handlinger at Udføre
     conditions: Betingelser
     actions: Handlinger
+    info_help: 'For hver indgående supportsag, skal du udføre den første matchende regel'
+    default_rule_desc: Alle abonnementsrelaterede supportsager tildeles Faktureringsteamet
+    title: Dispatch'r
+    default_rule_name: Alle abonnementsrelaterede supportsager går til Fakturering
   warning: ADVARSEL
   downgrade_plan_title: Sikker på at du ønsker å nedgradere?
   delete_topic_msg: Slet dette emne for evigt
@@ -305,6 +388,122 @@ da:
       apps out-of-the-box. To browse our selection of apps, click on the “Get
       more Apps” button.
     description: Beskrivelse
+    delete_action:
+      success: App slettet.
+      error: >-
+        <span>Fejl ved sletning af appen.</span> Prøv igen. Hvis fejlen
+        fortsætter, bedes du <a href=https://support.freshdesk.com>kontakte
+        support.</a>
+    custom_app_info: >-
+      Vidste du, at der nu er en bedre måde at skrive og administrere, og endda
+      dele, dine apps med alle Freshdesk-fællesskaber.
+    share_app: Del denne app
+    needs_developer_text: Har behov for udviklerkonto
+    no_connection: >-
+      Markedspladsen er i øjeblikket utilgængelig. Prøv igen senere. Kontakt os
+      venligst, hvis problemet fortsætter.
+    app_description: >-
+      Apps giver dig mulighed for at integrere med andre applikationer, så du
+      kan gøre din Freshdesk-oplevelse mere fantastisk. De giver dig også
+      mulighed for at tilpasse og personliggøre din Freshdesk-portal.
+    view_more: Se mere
+    custom_app_policy: >-
+      En "Tilpasset app" er en applikation, der er udviklet specifikt til en
+      Freshdesk-kunde og ikke angivet i Markedspladsen. Tilpassede apps kan
+      udvikles af Freshdesk eller enhver anden udvikler, der måske eller måske
+      ikke er registreret hos Freshdesk som udvikler. Bemærk venligst, at en
+      tilpasset app leveres på en "UBESET"-basis uden nogen form for garanti i
+      det omfang, det er tilladt i henhold til gældende lovgivning. Freshservice
+      fraskriver sig udtrykkeligt alle betingelser, garantier eller andre
+      vilkår, hvad enten det er udtrykt eller underforstået, herunder, men ikke
+      begrænset til, nogen underforståede garantier for salgbarhed, titel,
+      egnethed til et bestemt formål og ikke-overtrædelse. Ved at installere den
+      tilpassede app forstår og anerkender du, at Freshdesk ikke garanterer, at
+      den tilpassede app vil fungere uafbrudt, rettidig, sikkert, fejlfrit eller
+      er fri for virus eller anden skadelig software. Freshdesk er ikke
+      ansvarlig overfor dig eller nogen anden person, der påråber sig noget for
+      dig gennem direkte, indirekte, hændelige, særlige, straffe eller
+      følgeskader for din brug af de tilpassede apps.
+    installation: Installation
+    terms_of_use_link: 'http://freshdesk.com/terms#marketplace'
+    developed_by: 'Udgivet af '
+    all_apps: Alle apps
+    api_error: Vi kunne ikke behandle din anmodning. Prøv venligst efter nogen tid.
+    help_and_support: Hjælp og support
+    settings: Innstillinger
+    app_gallery: Markedsplads
+    reauthorize_oauth_app: >-
+      Hvis din app er stoppet med at fungere, kan du prøve at godkende appen for
+      at få adgang til oplysninger fra tredjepartsapplikationer.
+    tooltip:
+      suspended: Ikke tilgængelig
+    app_installation_agreement: 'Ved at installere denne app, accepterer du at følge vores '
+    no_mktp_apps_note_2: Klik på "Hent flere apps" for at se udvalget.
+    screenshots: Skærmbilleder
+    no_configs: Denne app kræver ingen konfigurationer.
+    backend_log: Serverløse logfiler
+    custom_apps: Tilpasset apps
+    third_party_apps_policy: >-
+      Denne app ejes, udvikles, drives og vedligeholdes af en tredjepart, ikke
+      Freshworks Inc. Ved at downloade, integrere med og/eller bruge denne app
+      forstår du, at du er bundet af vilkårene og privatlivspolitikkerne fra
+      dennes udvikler, herunder om behandling af dine data. For yderligere
+      oplysninger om sådanne vilkår og privatlivspolitikker, kontakt venligst
+      udvikleren eller besøg udviklerens side.
+    time_ago: siden
+    error_calling_method: 'Der opstod en fejl under opkaldsmetoden: '
+    no_search_results: 'Vi kunne ikke finde det, du ledte efter. Prøv igen med et andet nøgleord.'
+    validation_failed: Validering mislykkedes.
+    no_custom_apps_installed: Ingen tilpassede apps installeret
+    installing_text: Vent et øjeblik...
+    paid_app: BETALT
+    popular_apps: Populære apps
+    installed_mkp_apps_unavailable: >-
+      Listen over installerede apps er i øjeblikket utilgængelig. Prøv igen
+      senere. Kontakt os venligst, hvis problemet fortsætter.
+    overview: Overblik
+    install: Installér
+    write_a_custom_app: Skriv en tilpasset app
+    published_in: i
+    confirm_uninstall_message: 'Er du sikker på, at du vil afinstallere %{human_name}?'
+    instructions: Instruktioner
+    latest_apps: Seneste apps
+    popular: Populære
+    get_more_apps: Hent flere apps
+    apps: Apps
+    policy_on_custom_apps: Politik om tilpassede apps
+    no_custom_apps_note_2: Klik på "Hent tilpassede apps" for at gennemse og installere dem.
+    version: VERSION
+    reauthorize: Godkendt igen
+    reauthorize_header: Genautorisér appen
+    install_action:
+      app_setup_error: Der opstod en fejl under installationen.
+    custom_app_gallery: Tilpasset appgalleri
+    go_to_dev_portal: Gå til udviklerportal
+    apps_unavailable: >-
+      Visse apps kunne ikke indlæses. Prøv igen senere. Kontakt os venligst,
+      hvis problemet fortsætter.
+    policy_on_tp_apps: Privatlivspolitik for tredjepartsapps
+    no_mktp_apps_note: Vi har integreret nogle af dine yndlingsprogrammer.
+    developer_shortcuts: Udviklergenveje
+    ver: 'Version: '
+    installing: Installerer
+    coming_soon: Kommer snart
+    latest: Seneste
+    no_custom_apps_note: Opret tilpassede apps og udgiv dem på udviklerportalen.
+    no_apps: Ingen tilgængelige apps
+    field_blank: Udfyld de påkrævede felter.
+    terms_of_use: Brugsvilkår
+    helpnote_custom_apps_html: >-
+      Kan du ikke finde en app, der passer til dine behov? Med vores tilpassede
+      apps (tidligere kaldet Freshplugs) kan du hente kontekstuelle oplysninger
+      fra enhver tredjepartsløsning, ældre system eller database. Disse
+      tilpassede apps kan også bruges til at foretage visuelle ændringer til din
+      helpdesk og øge produktiviteten. Klik <a
+      href='https://support.freshdesk.com/support/solutions/articles/121846'
+      target='_blank'>her</a> for at lære mere!
+    almost_done: Næsten færdig!
+    no_mktp_apps: Ingen apps installeret
   shortcuts:
     ticket_detail_list_common:
       delete_ticket: Slett sak
@@ -319,6 +518,8 @@ da:
       pickup: Plukk opp en sak
       spam: Merk saken som spam
       search: Søg
+      scenario: Scenarier
+      jump_to_views: Gå til visninger
     goto_tab:
       social: Sosialt
       tickets: Supportsager
@@ -362,6 +563,7 @@ da:
         og kontaktsider med FreshPlugs. Du kan skreddersy din FreshPlug-widget
         ved å pushe relevant informasjon fra Freshdesk til din datakilde med en
         AJAX-call, og formatere og vise informasjon med HTML, CSS og Javascript.
+      title2: Tilpasset apps
   plans_billing: Planer og fakturering
   gamification:
     levels:
@@ -370,6 +572,7 @@ da:
       professional: Professionel
       master: Mester
       beginner: Begynder
+      guru: Guru
     leaderboard:
       sharpshooter_trophie_info: Agent med flest højeste Løst i Første Opkald point i denne måned
       love_trophie_info: Agent med det maksimale antal Kundetilfredshedspointi denne måned
@@ -388,6 +591,11 @@ da:
         påmeldingsskjemaet for kunder og gjøre dem obligatorisk. Du kan også ha
         private felter som bare er synlig for dine agenter.
       title2: Tilpasser dine kundefelter
+      info2: >-
+        Kontaktformularen giver dig mulighed for hurtigt at indsamle ekstra
+        kontekst om kunder, ved at inkludere tilpassede felter baseret på din
+        forretningstype. For eksempel kan du indsamle oplysninger med tilpassede
+        felter for prisniveau, afdeling osv. samt prioritere supportsager.
   reply: svar
   user_sessions:
     new:
@@ -396,7 +604,7 @@ da:
       sign_in_using_google: Log ind med din Google-konto
       password: Kodeord
       remember: Husk mig på denne computer
-      sign_in_using: Log ind
+      sign_in_using: Log på
       help: Hjælp
       login: Log på
   enter_payment_details_to_add: Indtast betalingsdetaljer for at tilføje flere agenter
@@ -436,6 +644,48 @@ da:
       arbeidstid, eller opprette egne grupper for hver tidssone som dine agenter
       jobber fra
     description: gruppe beskrivelse
+    auto_assignment_description: >-
+      Supportsager tildelt denne gruppe, tildeles automatisk til tilgængelige
+      agenter baseret på den tildelingsmetode, du vælger
+    info8: >-
+      Nyt: Giv dine overordnede mulighed for at administrere automatisk
+      supportsagstildeling og agenttilgængelighed for de grupper, de tilhører -
+    toggle_availability_for_rr: >-
+      Tillad agenter at ændre deres tilgængelighed for automatisk tildeling af
+      supportsager
+    maximum: Maksimum
+    enable: Aktiver
+    please_confirm: Vennligst bekreft...
+    info8_readmore: Læs mere
+    confirm: Bekræft
+    alert_content: >-
+      Du omdirigeres til færdighedssiden. Alle de ændringer du har foretaget i
+      denne gruppe, gemmes automatisk, hvis du vælger at fortsætte.
+    round_robin_skill_based_tooltip: >-
+      Når der er to agenter med samme færdighed, tildeles supportsagen til
+      agenten, der håndterer det mindste antal supportsager.
+    alert_content_2: Vil du fortsætte?
+    escalation_rule: Eskaleringsregel
+    rr_v2_confimation_message: 'Denne handling kan ikke fortrydes. Er du sikker på, at du vil fortsætte?'
+    round_robin_skill_based: Færdighedsbaseret supportsagstildeling
+    toggle_availability_message: >-
+      Administratorer og overordnede kan overskrive en agentes tilgængelighed
+      fra instrumentbrættet
+    only_round_robin_description: >-
+      Supportsager der kommer ind i denne gruppe, tildeles automatisk til
+      tilgængelige agenter baseret på <strong>Round robin-metoden</strong>
+    per_agent: pr. agent
+    round_robin_defalut: Runde robin-supportsagstildeling
+    round_robin_capping: Byrdebalanceret supportsagstildeling
+    no_group_info: Du har ikke oprettet nogen grupper.
+    round_robin_skill_based_info: 'Tildel supportsager til agenter, der kan håndtere dem bedst'
+    round_robin_default_info: Tildel supportsager til agenter på en cirkulær måde
+    send_escalation_to: '....send derefter eskaleringsmail til:'
+    round_robin_capping_info: 'Begræns antallet af supportsager, som en agent kan håndtere samtidig'
+    sbrr_trial_text: >-
+      Vidste du, at du kan tildele supportsager baseret på dine agenters evner?
+      <a href="https://support.freshdesk.com/solution/articles/222692"
+      target="_blank">Lær mere</a>
   email_command_preview_to_email: Til
   ticket_field:
     helpcard:
@@ -447,8 +697,48 @@ da:
         kundeservice.  Med avhengige felter kan du organisere saker hierarkisk
         inn i kategorier, underkategorier og påvirkede problemer.
       title1: Saksfelt
+      info4_v3: >-
+        Hvis du har Estate-abonnementet eller derover, kan du have sektioner med
+        dynamiske felter, der vises ud fra den valgmulighed, der er valgt i et
+        rullefeltet. Du kan tilføje supportsagsfelter til hvert afsnit, og
+        tilknytte en sektion med valgmuligheder i rullemenuen. Hvis du f. eks.
+        driver en e-handelsbutik, kan du lave et afsnit der åbnes med et felt
+        kaldet 'Årsag', når din kunde vælger 'Udskiftning'. På den måde kan du
+        bedre forstå, hvorfor din kunde gerne vil have en udskiftningen udstedt.
+        Du kan oprette maksimalt to dynamiske sektioner og bruge dem i to
+        tilpassede rullemenuer. Hvis du allerede har tilknyttet en sektion med
+        feltet 'type', kan du kun tilføje endnu et afsnit til
+        supportsagsformularen.
+      info_1: >-
+        Formularen for supportsager hjælper med at indsamle de data, du har brug
+        for fra kunden, når de indsender en supportsag. Du kan tilpasse din
+        formular for supportsager til at inkludere de rigtige supportsagsfelter
+        for din virksomhed, og dermed lade dine kunder og agenter udfylde de
+        oplysninger, du har brug for i det ønskede format. For eksempel ville
+        det være meget nyttigt for agent til løsning af supportsagen ved et
+        e-handelsfirma, at få oplyst en kundes ordre-ID i formularen for
+        supportsager.
+      title3: Dynamiske felter
+      info4_v2: >-
+        Hvis du er i Estate-abonnementet eller over, kan du implementere
+        dynamiske felter, der vises ud fra den valgmulighed, der er valgt i
+        typefeltet. For hver indstilling i typefeltet kan du oprette en anden
+        sektion. Du kan derefter tilføje flere supportsagsfelter til hver
+        sektion. For eksempel kan du, i et e-handelsscenarie, når typen er valgt
+        som "Udskiftning", vælge at et afsnit med et felt kaldet "Årsag" åbnes,
+        der indsamler årsagen til, at kunden har brug for en erstatning for
+        varen.
   activations:
     helpnote3: Bekræft venligst dine detaljer og angiv en adgangskode til din konto
+    helpnote1: >-
+      Fortæl os lidt mere om dig, og hjælp os med at personliggøre din
+      oplevelse.
+    activate_freshdesk_account: Aktiver din konto
+    admin_consent: >-
+      Ved at klikke på "Aktivér og log ind" accepterer du vores <a
+      target="_blank" href="https://www.freshworks.com/terms/"> Vilkår</a> og
+      erkender at have læst vores <a target="_blank"
+      href="https://www.freshworks.com/privacy/">Privatlivspolitik</a>.
   no_level_achieved_label: Ingen niveauer opnået endnu
   import_note_info: >-
     Felterne i din CSV-fil kan være i vilkårlig rækkefølge. Bare sørg for, at
@@ -477,10 +767,38 @@ da:
       speed_champion: Fartsmester
       sharpshooter_title: Skarpskydere
       customer_champion: Kundemester
+      agent_highest_points: Agenter med de højeste samlede point
+      agents_fastest_resolve: 'Agenter, der løser supportsager hurtigst'
+      sample_name: Bruce Banner
+      agents_cs_highest: Agenter med højeste kundetilfredshedsundersøgelsespoint
     survey_reports:
       main:
         total_responses_v2: Totalt
         all: Alle
+        time_period: Tidsperiode
+        neutral: Neutral
+        survey_name: Undersøgelsesnavn
+        agent: Agent
+        view_report_by: Vis efter
+        positive: Positiv
+        group: Gruppe
+        overall_rating: Bedømmelse
+        responses: Svar
+        negative: Negativ
+        response_to: Svar til
+        no_overview: Ingen data tilgængelige
+        unanswered: Ikke besvaret
+        overview: Overblik
+        fetching_responses: Henter svar
+        question: S
+        loading_responses: Indlæser svar
+        preparing_chart_for: Forbereder diagram til
+        no_remarks: Ingen svar tilgængelig
+        answered: Besvaret
+        all_responses: Alle svar
+        rating: Bedømmelse
+        deleted_list: SLETTEDE UNDERSØGELSER
+        loading_msg: Genererer rapporter ...
       back_to: Tilbage til Listevisning
       list:
         no_feedback: Ingen har givet nogen feedback i løbet af denne tid.
@@ -517,6 +835,23 @@ da:
       last_7_days: De sidste 7 dage
     livechat:
       total_chats: Totalt
+      time_period: Tidsperiode
+      chat_type: Chattype
+      answered_chats: Besvaret
+      select_widget: Vælg widget
+      agent_chat_summary: Chatsammendrag for agent
+      missed_chats: Tapte
+      group: Gruppe
+      filter_close: Luk
+      avg_handle_time: Gennemsnitlig håndteringstid
+      filter_report: Ændre filter
+      num_of_transfer: Overførsler
+      avg_time_queue: Tid i kø
+      num_of_chats: Antal chats
+      select_chat_type: Vælg chattype
+      generate_summary: Generer
+      widget: Widget
+      filter_by_title: Filtreret efter
     generate_button: Generer
     timesheet_reports:
       index:
@@ -547,6 +882,15 @@ da:
         incoming: Innkommende
         outgoing: Utgående
       total_voice_mail: Talemeldinger
+      time_period: Tidsperiode
+      group: Gruppe
+      filter_option_all_calls: Alle anrop
+      filter_close: Luk
+      avg_handle_time: Gennemsnitlig håndteringstid
+      filter_report: Ændre filter
+      generate_summary: Generer
+      unanswered_count: Ikke besvaret
+      filter_by_title: Filtreret efter
     select_customer: Vælg Kunde
     summary_report:
       avg_1st_response_time: Gennemsnitlig tid for første svar
@@ -564,15 +908,20 @@ da:
         billetten blev oprettet, og da agenten først besvarede den.
       avg_response_time: Gennemsnitlig svar <br> tid
       on_time_resolution: Løsning til Tiden
+      fcr_percent: FCR %
     time_sheets:
       billable: Fakturerbare timer
       total_time: Timer sporet
       non_billable: Ikke-fakturerbare timer
       billable_vs_non_billable: Fakturerbar kontra ikke-fakturerbar
+      pick_columns: Vælg kolonner
+      time_period: Tidsperiode
+      filter_by_title: Filtreret efter
     satisfaction_title: Tilfredshedsrapport
     helpdesk_activity_title: Helpdesk Aktivitetsrapport
     reports_by: Rapporter fra
     pie_chart_title_prefix: Billetter efter
+    discard_changes: Kassér ændringer
   import_user_org_text: >-
     Alle Brugere & Organisationer i din Zendesk konto vil blive importeret til
     din aktuelle Freshdesk konto som "Kontakter & Firmaer"
@@ -610,6 +959,16 @@ da:
     view_ticket: Vis sak
     close_btn_title: Luk denne supportsag
     submit_ticket_title: Opret supportsag
+    search_close_text: Luk søgning
+    link_tracker:
+      notifier_body: 'Meddelelsesindhold: '
+    via: via
+    status: Status
+    action: Handling
+    compose:
+      to_address_placeholder: Indtast kundens adresse
+    type: Type
+    thanks_v1: Takk for tilbakemeldingen
   trial_plan_name: 'Nedgradere prøveversjonen til %{name}'
   user:
     phone_no: Telefon
@@ -637,6 +996,10 @@ da:
     company_name: Firmanavn
     mobile: Mobil
     job_title: Jobtitel
+    user_exist_in_freshid: >-
+      Eksisterende Freshworks-bruger! Administratorer kan ikke redigere
+      Agent-profiloplysninger.
+    edit_profile_in_freshid: Agenter kan redigere deres profiloplysninger på deres Freshworks-profil.
   admin:
     products:
       helpnote:
@@ -650,6 +1013,10 @@ da:
           kan du ha et unikt sett med kunnskapsbaseartikler og forum for hvert
           merke.
         heading1: Forskjellige produkter
+        heading3: Understøtter flere produkter
+        content3: >-
+          Du kan konfigurere portaler for disse produkter ved at klikke på fanen
+          Administrator og derefter på 'Portaler'
       index:
         add_product: Nytt produkt
         title: Produkter
@@ -669,6 +1036,7 @@ da:
         delete: Er du sikker på at du vil slette dette Produktet?
         view_portal: Se Portal
         enable_portal: Aktivér Portal
+        portal_disabled: Portalen er deaktiveret
       edit:
         title: Endre Produkt
       portal:
@@ -700,7 +1068,20 @@ da:
           produktportalen.
         contact_us: Kontakt oss
         edit_portal: Rediger portal
+        ago: siden
+        settings: Innstillinger
+        customer_portal: Kundeportal
+        edit_branding: Redigér branding
+        portal_settings: Portalindstillinger
+        categories_visible: Portalkategorier
+        show_author_name: Vis forfatternavne
+        agent_portal: Agentportal
+        enable_multilingual: Opsæt flersproget support
+        enable_personalized_articles: 'Når den er aktiveret, vises forfatternavne i løsningsartikler'
       add_another_email: Legg til flere E-post
+      footer:
+        edit_portal: Gem og redigér portal
+        enable_portal: Gem og aktivér portal
     skills:
       index:
         no_skill_info_1: Ingen kompetence er blevet oprettet.
@@ -734,6 +1115,8 @@ da:
         description: Beskrivelse
         add_label: Tilføj
         no_agent_label: Ingen agent
+        skills: Kompetencer
+        agent_label: Agent
       rule_form:
         info1: 'Eksempel: Håndterer VIP-kunder'
         info3: Knyt denne kompetence til supportsager der matcher
@@ -752,12 +1135,50 @@ da:
           rigtige agent. Du kan knytte forskellige kompetencer til hver agent og
           oprette regler for at sikre at kun supportsager der matcher disse
           kompetencer vil blive tildelt til dem.
+        learn_more_skill_based_info: Lær mere om færdighedsbaseret tildeling
+        info2: >-
+          Hver færdighed skal tildeles et sæt agenter samt mappes til
+          supportsager, der matcher visse betingelser.<br><br>Du kan tildele
+          færdigheder til agenter baseret på deres ekspertise eller evner. Hvis
+          du f.eks. understøtter flere sprog, kan du oprette en færdighed, der
+          hedder 'Flydende på spansk' for agenter, der håndterer spanske
+          supportsager. For at mappe færdigheder til supportsager, kan du bruge
+          betingelser der er baseret på supportsagsegenskaber såsom type, kilde,
+          produkt eller kundeegenskaber såsom anmoderens navn, e-mail,
+          virksomhed. Så supportsager der bruger spansk som anmodningssprog, kan
+          mappes til færdigheden 'Flydende i spansk'.<br><br>Hvis den færdighed,
+          der er mappet til en supportsag matcher en agents færdighed, tildeles
+          supportsagen til agenten.
+        title3: Færdighed til supportsagsmapning
+        info3: >-
+          Færdighedsregler bruges til at identificere hvilken færdighed der skal
+          tilknyttes til en supportsag, baseret på supportsags- eller
+          kundeegenskaber. For hver supportsag der er tildelt en gruppe, udføres
+          den første matchende færdighedsregel fra Færdighedslisten.
+          Administratorer kan omarrangen listen over færdigheder for at have de
+          vigtigste regler øverst.
       new:
         new: Ny kompetence
       import:
         important_note: Vigtig bemærkning
         download_xls_btn: Hent .CSV-fil
         upload_file: Upload .CSV-fil
+        download_xls_title: >-
+          Download den aktuelle liste over agenter og deres færdigheder (hvis
+          nogen) som csv-fil
+        note_info_3: >-
+          Bemærk, at kun maksimalt 35 færdigheder kan tilknyttes en agent, og
+          der kan oprettes 180 færdigheder pr. konto
+        add_skills_title: >-
+          Tilføj kompetencer til agenter i den faldende rækkefølge, og upload
+          filen
+        note_info_1: >-
+          Hvis vi støder på et nyt færdighedsnavn, opretter vi færdigheden og
+          mapper den til agenterne
+        note_info_2: >-
+          Hvis vi støder på en eksisterende agent med forskelligt færdighedssæt,
+          vil vi fjerne forbindelsen til eksisterende færdigheder og mappe det
+          nye sæt færdigheder, der findes i filen
       edit:
         edit: Rediger kompetence
     security:
@@ -842,6 +1263,26 @@ da:
           Freshdesk vil omdirigere brukere til denne URL-adressen for
           innlogging. Du kan få dette fra din SAML-identitetsleverandør.
         enable_sso: Enkel pålogging (Single Sign On/SSO)
+        enable_saml: SAML SSO
+        saml_cert_fingerprint_info_sha256: >-
+          Fingeraftryk (SHA256) for SAML-certifikatet, der leveres af din
+          SAML-udbyder. Dette vil blive brugt til kryptering/validering
+        password_policy_info3: >-
+          Ændringer du foretager til adgangskodepolitikken, vil blive anvendt
+          inden for 8 timer. Dine agenter bliver bedt om at opdatere deres
+          adgangskoder i løbet af denne tid. Hvis de ikke overholder dette, vil
+          de blive logget ud af supportportalen og blive tvunget til at ændre
+          deres adgangskoder, næste gang de forsøger at logge ind.
+        start_ip: Start-IP
+        password_policy_info4: >-
+          Bemærk, at når du aktiverer adgangskodepolitik for din konto (enten
+          standard eller avanceret), kan du ikke deaktivere den.
+        enable_oauth2_sso: OAuth 2.0
+        enable_oauth2_info: >-
+          Branchestandarden "OAuth-protokol" giver dig mulighed for at delegere
+          agent- og kundebekræftelse til den service, der er vært for deres
+          brugerkonti.
+        saml_cert_fingerprint: Fingerprint for sikkerhedscertifikat
       password_security:
         passwords: adgangskoder
         session_expiry: Brugersessionen udløber om
@@ -857,8 +1298,42 @@ da:
         minimum_of: Minimum
         atleast_an_alphabet_and_number: Have et bogstav og et tal
         default: Standard
+        password: passord
       helpnote:
         title: Sikkerhetsinnstillinger
+        info2: >-
+          <b>Aktivere SSL-sikkerhet </b><br>Hvisdu ikke bruker et eget domene
+          for din kundeserviceportal, bruker Freshdesk et standard wildcard
+          SSL-sertifikat til kontoer på domenet freshdesk.com. <b>SSL for egne
+          domener er bare tilgjengelig for Estate-planen.</b> Du kan <a
+          href="https://support.freshdesk.com/support/tickets/new"
+          target="_top">be om et eget SSL-sertifikat for din support-URL
+          her</a>.
+        info4: >-
+          <b>Adgangskodepolitik</b><br>Du kan indstille forskellige
+          adgangskodepolitikker for agenter og kunder. De avancerede
+          indstillinger giver dig mulighed for at konfigurere tilpassede
+          adgangskodepolitikker, f.eks. udløbstid for adgangskode og
+          minimum-adgangskodelængde. De ændringer du foretager, gælder for nye
+          og eksisterende agenter og kunder. Lær mere om adgangskodepolitik <a
+          href="https://support.freshdesk.com/support/solutions/articles/213865-password-policy"
+          target="_top"> her</a>.
+        info1: >-
+          <b>Tillate enkel påloggingstilgang</b><br>Hvis dine brukere allerede
+          har innlogging hos deg, sånn som gjennom Active Directory eller dine
+          egne nettapplikasjoner, kan du la dem logge seg på din
+          kundeserviceportal med denne informasjonen vha. enkel innlogging
+          (Single Sign On/SSO). Les mer om SSO<a
+          href="https://support.freshdesk.com/support/solutions/articles/31166-single-sign-on-remote-authentication-in-freshdesk"
+          target="_top"> her</a>.
+        trusted_ip: >-
+          <b>Begrense tilgang med IP-adresse</b><br>Du kan begrense tilgangen
+          til kundestøtteportalen til IP-adresser fra din bedrift eller
+          organisasjon. Du kan legge til et ubegrenset antall IP-serier som har
+          tilgang, samt angi om du vil styre tilgangen til kundene også, eller
+          bare for dine agenter. <a
+          href="https://support.freshdesk.com/support/solutions/articles/195168"
+          target="_top"> Lær mer.</a>
       password_policy_popover:
         password_should: Din adgangskode skal
     user_skills:
@@ -867,6 +1342,16 @@ da:
         more: mere
         any: Enhver
         sbrr_disabled_admin: Kompetence-baseret tilknytning er ikke slået til for denne gruppe
+        add_skills: Tilføj kompetencer
+        admin_info_help: >-
+          Tilføj færdigheder til agenter i den faldende rækkefølge efter deres
+          præference
+        manage_skills: Administrer kompetencer
+        supervisor_info_help: >-
+          Arrangér agenters færdigheder i den faldende rækkefølge efter deres
+          præference
+        groups: Gruppe
+      no_skills: Ingen færdigheder
     ecommerce:
       helpnote:
         no_account: Legg til ny konto
@@ -876,6 +1361,8 @@ da:
             eBay-konto inde fra din helpdesk. Når det er sat op, vil alle dine
             kundehenvendelser fra eBay automatisk blive konverteret til
             supportsager. Du kan også besvare dem direkte inde fra Freshdesk. 
+          info1: Integrering af e-handelskonto
+        integrate_ecommerce: Tag dine e-handelsmeddelelser til Freshdesk
       new:
         account_name: Kontonavn
         select_product: Velg et produkt
@@ -883,14 +1370,48 @@ da:
         save_account: Lagre konto
         select_group: Vælg gruppe
         assign_group: Tildel til gruppe
+        site_helptext: 'vælg den eBay-side, hvor du sælger dine produkter'
+        select_ebay_site: Vælg en eBay-side
+        assign_product: Tildel til produkt
+        ebay_site: eBay-side
       index:
         new_account: Ny konto
+        title: E-handelskonti
+        renew: Forny token
       edit:
         title: Rediger konto
+        expiry_date: Tokenudløb
+      ebay: eBay
+      index_title: E-handel
     widget_config:
       popup_widget:
         feedbackwidget_search_area: Søk Artikler
         feedbackwidget_attach_a_file: Vedhæft fil
+        feedbackwidget_button_type: Knapp type
+        feedbackwidget_submit_title: Send tilbakemelding
+        feedbackwidget_button_customization: Tilpass knapp
+        feedbackwidget_mobile_view: Aktivér mobilvisning
+        thankyou_default: Takk for tilbakemeldingen
+        feedbackwidget_submit_title_maxlength: Maksimalt 16 tegn
+        feedbackwidget_form_submit_message: Send inn skjema-melding
+        feedbackwidget_screenshot: Fange skjermbilde
+        feedbackwidget_title_maxlength: Maksimalt 30 tegn
+        feedbackwidget_form_customization: Tilpass skjema
+        feedbackwidget_image_button: Bilde knapp
+        thankyou_info: Melding som skal vises etter at en bruker sender inn skjemaet
+        feedbackwidget_users_can: Formularindstillinger
+        feedbackwidget_height_placeholder: '500'
+        feedbackwidget_offset: 'Forskudt:'
+        feedbackwidget_px: px
+        feedbackwidget_offset_placeholder: '235'
+        feedbackwidget_form_submit_title: Indsendelsesknap for formular
+        feedbackwidget_use_captcha: Aktivér CAPTCHA
+        feedbackwidget_popup_code: Pop-up widgetkode
+        feedbackwidget_use_https: Bruke https
+        feedbackwidget_text_button: Tekst knapp
+        feedbackwidget_form_height: Skjemahøyde
+        feedbackwidget_button_text_placeholder: Support
+        feedbackwidget_form_height_message: 'Hvis det er rullefelt i widget, kan du justere programmets høyde.'
       index:
         feedbackwidget_embedded_tab: Innebygd widget
         feedbackwidget_popup_tab: Pop-up widget
@@ -900,10 +1421,42 @@ da:
         feedbackwidget_users_can: 'Brukere kan:'
         feedbackwidget_search_area: Søk Artikler
         feedbackwidget_attach_a_file: Vedhæft fil
+        feedbackwidget_button_type: Knapp type
+        feedbackwidget_button_customization: Tilpass knapp
+        thankyou_default: Takk for tilbakemeldingen
+        feedbackwidget_form_submit_message: Send inn skjema-melding
+        feedbackwidget_screenshot: Fange skjermbilde
+        feedbackwidget_form_customization: Tilpass skjema
+        feedbackwidget_image_button: Bilde knapp
+        thankyou_info: Melding som skal vises etter at en bruker sender inn skjemaet
+        feedbackwidget_height_placeholder: '500'
+        feedbackwidget_px: px
+        feedbackwidget_offset_placeholder: '235'
+        feedbackwidget_popup_code: Pop-up widgetkode
+        feedbackwidget_use_https: Bruke https
+        feedbackwidget_text_button: Tekst knapp
+        feedbackwidget_form_height: Skjemahøyde
+        feedbackwidget_button_text_placeholder: Support
+        feedbackwidget_form_height_message: 'Hvis det er rullefelt i widget, kan du justere programmets høyde.'
       embedded_widget:
         feedbackwidget_embedded_code: Innebygd widgetkode
         feedbackwidget_search_area: Søk Artikler
         feedbackwidget_attach_a_file: Vedhæft fil
+        feedbackwidget_submit_title: Send tilbakemelding
+        thankyou_default: Takk for tilbakemeldingen
+        feedbackwidget_submit_title_maxlength: Maksimalt 16 tegn
+        feedbackwidget_form_submit_message: Send inn skjema-melding
+        feedbackwidget_title_maxlength: Maksimalt 16 tegn
+        feedbackwidget_form_customization: Tilpass skjema
+        thankyou_info: Melding som skal vises etter at en bruker sender inn skjemaet
+        feedbackwidget_users_can: Formularindstillinger
+        feedbackwidget_height_placeholder: '500'
+        feedbackwidget_px: px
+        feedbackwidget_form_submit_title: Indsendelsesknap for formular
+        feedbackwidget_use_captcha: Aktivér CAPTCHA
+        feedbackwidget_use_https: Bruke https
+        feedbackwidget_form_height: Skjemahøyde
+        feedbackwidget_form_height_message: 'Hvis det er rullefelt i widget, kan du justere programmets høyde.'
     gamification:
       gamification_settings:
         title_ticket_points: Sakspoeng
@@ -976,6 +1529,13 @@ da:
     surveys:
       new_layout:
         loading: Laster inn...
+        title: Undersøgelsesnavn
+        bad_to_good: Dårlig til god
+        rating_order: Bedømmelsesrækkefølge &nbsp;
+        survey: Spørreundersøkelse
+        good_to_bad: God til dårlig
+        default_survey: Standardundersøgelse
+        title_error_text: Undersøgelsens navn er allerede taget
       index:
         hide: Fjern
         cancel: Annuller
@@ -987,11 +1547,41 @@ da:
         title: Instillinger kundetilfredshet
         activate_survey: Aktiver
         preview_survey: Forhåndsvisning
+        default_survey: Standardundersøgelse
+        remove_msg: >-
+          Fjernelse af dette afsnit vil resultere i tab af eventuelle ændringer,
+          foretaget af de yderligere spørgsmål. Ønsker du at fortsætte?
+        new_survey: Ny undersøgelse
+        survey_feedback: Indsender feedback...
+        deleting_survey: Sletter undersøgelse
+        feedback_survey_begin: Sender en undersøgelse til dit mail-id
+        feedback_survey_end: Undersøgelsen er sendt til dit mail-id
+        survey_help_msg_v3: >-
+          Når der vælges en tilfredshedsvurdering, vises en takkeside for at
+          indsamle mere feedback
+        saving_survey: Gemme undersøgelse
+        confirm_text: Vennligst bekreft...
+        portal_msg: Omdirigerer til supportsagssiden
+        delete_msg: 'Er du sikker på, at du vil slette denne undersøgelse?'
+        activate_msg: >-
+          Aktivering af denne undersøgelse deaktiverer <b
+          id='active_survey_name'> Standardundersøgelsen </b><br> Er du sikker
+          på, at du vil aktivere?
+        disabling_survey: Deaktiverer undersøgelse
+        editing_survey: Redigerer undersøglese
+        enabling_survey: Aktiverer undersøgelse
+        custom_title_v2: Kundetilfredshedsundersøgelser
+        active_delete_tooltip: Den aktive undersøgelse kan ikke slettes
       thanks_contents:
         solution_article_link_text: >-
           Dit portal-layout vil blive anvendt på denne side. <a target='_blank'
           href='https://support.freshdesk.com/solution/articles/217757-customizing-your-thank-you-page'>Sådan
           ændres det?</a>
+        label_text_v2: Yderligere undersøgelsesspørgsmål
+        message_text: Tak for din værdifulde feedback.
+        empty_text: Spørgsmålets værdi kan ikke være tom.
+        title_text_v2: Tak for din meddelelse til kundetilfredshedsundersøgelsen
+        question_error_text: Spørgsmål er allerede indtastet.
       satisfaction_settings:
         link_text_info: >-
           Denne teksten vises under signaturen nederst på siden i e-post sendt
@@ -1011,6 +1601,102 @@ da:
         send_while_option1: Alle e-post sendt til kunde.
         send_while_option3: E-post sendt etter at en sak er "Lukket".
         enable_label: Undersøkerlser om kundetilfredshet
+        enable_label_v2: Kundetilfredshedsundersøgelse
+      new_questions_layout:
+        questions: Spørgsmål
+        title_text_v2: Yderligere spørgsmål
+        add_question: Tilføj spørgsmål
+      helptext_v2: >-
+        <p><b>Hvorfor aktivere tilfredshedsundersøgelser?</b> <br>
+
+        Tilfredshedsundersøgelser giver dig mulighed for at tilføje et link til
+        dine svarmails og direkte indsamle kundernes feedback og tilfredshed.
+        <br><br> <b>Oprettelse af din tilfredshedsundersøgelse:</b><br> Følgende
+        trin giver dig mulighed for at indsamle feedback fra dine kunder via et
+        link i dine svarmails:<br> 1. Aktivér kundetilfredshedsundersøgelsen<br>
+        2. Specificér undersøgelsesspørgsmålet. Standardteksten er
+        &ldquo;Hvordan vil du bedømme din generelle tilfredshed af agentens
+        løsning?&rdquo;<br> <br> <b>Vælg hvilke e-mails der har linket til
+        tilfredshedsundersøgelse:</b><br> Du kan vælge om links til
+        tilfredshedsundersøgelse sendes til kunderne i hver e-mail, eller kun i
+        den endelige e-mail, når supportsagen er løst. Kundernes svar kan ses i
+        <b>Rapporter > Rapport om kundetilfredshed</b> <br><br> Du kan lære mere
+        om tilfredshedsundersøgelser fra <a target= ‘_blank’
+        href='https://support.freshdesk.com/solution/articles/215322'>denne
+        løsningsartikel</a>. </p>
+      helptext: >-
+        <p><b>Hvorfor aktivere tilfredshedsundersøgelser?</b> <br>
+
+        Tilfredshedsundersøgelser giver dig mulighed for at tilføje et link til
+        dine svarmails og direkte indsamle kundernes feedback og tilfredshed.
+        <br><br> <b>Oprettelse af din tilfredshedsundersøgelse:</b><br> Følgende
+        trin giver dig mulighed for at indsamle feedback fra dine kunder via et
+        link i dine svarmails:<br> 1. Aktivér kundetilfredshedsundersøgelsen<br>
+        2. Specificér undersøgelsesspørgsmålet. Standardteksten er
+        &ldquo;Hvordan vil du bedømme din generelle tilfredshed af agentens
+        løsning?&rdquo;<br> <br> <b>Vælg hvilke e-mails der har linket til
+        tilfredshedsundersøgelse:</b><br> Du kan vælge om links til
+        tilfredshedsundersøgelse sendes til kunderne i hver e-mail, eller kun i
+        den endelige e-mail, når supportsagen er løst. Kundernes svar kan ses i
+        <b>Rapporter > Rapport om kundetilfredshed</b> <br><br> Du kan lære mere
+        om tilfredshedsundersøgelser fra vores løsningsside. </p>
+      new_rating:
+        survey_question: Undersøgelsesspørgsmål
+        scale_text: Du har valgt
+        scale: pointskala
+        error_text: Dette felt er obligatorisk
+        content_text_v2: >-
+          Dette spørgsmål hjælper med at vurdere den generelle tilfredshed af
+          agentens svar. Det vises under din signatur nederst i den e-mail, der
+          er sendt til kunden.
+        point_scale_v2: Pointskala
+      choice_contents:
+        extremly_dissatisfied: Ekstremt utilfreds
+        mostly_dissatisfied: Meget utilfreds
+        slightly_dissatisfied: Lidt utilfreds
+        mostly_satisfied: Meget tilfreds
+        slightly_satisfied: Lidt tilfreds
+        extremely_satisfied: Ekstremt tilfreds
+        neutral_v2: Hverken tilfreds eller utilfreds
+      custom_helptext_v2: >-
+        <p><b>Aktivering af tilfredshedsundersøgelse</b> <br>
+
+        Du kan tilføje en tilfredshedsundersøgelse i agentsvarene til en
+        supportsag for at finde ud af, hvor glade kunder er for
+        supporten/virksomheden/produktet. Du kan vælge at sende undersøgelser
+        med alle e-mails eller kun når et problem er 'lukket' eller 'løst'.
+        Kundernes svar kan ses under <b> Rapporter > Rapport om kundetilfredshed
+        </b> <br><br> <b>Tilfredshedsundersøgelse</b><br> Du kan stille et
+        kundetilfredshedsspørgsmål og yderligere undersøgelsesspørgsmål.
+        Kundetilfredshedsundersøgelsen vises i e-mailen, og når kunder vælger en
+        undersøgelsesmulighed, føres de til en side med de yderligere
+        undersøgelsesspørgsmål. Obeserver-reglerne og gamification-point vil kun
+        være baseret på kundetilfredshedsundersøgelsen.<br> <br>
+        <b>Pointskala</b><br> Du kan vælge forskellige punktskalaer til
+        kundetilfredshedsundersøgelsen og de yderligere undersøgelsesspørgsmål.
+        Det kunne være<br> 2 point (f.eks.: Ja, Nej)<br> 3 point (f.eks.: Enig,
+        Ved ikke, Uenig)<br> 5 point (f.eks.: altid til aldrig)<br> 7 point
+        (f.eks.: Meget dårlig til Enestående)<br><br>
+
+        Når en kunde tager undersøgelsen, vil skalaerne bliver låst, og de kan
+        ikke redigeres.<br><br> Du kan lære mere om tilfredshedsundersøgelser
+        fra <a target= ‘_blank’
+        href='https://support.freshdesk.com/solution/articles/215321'>denne
+        løsningsartikel</a>. </p>
+      new_thanks:
+        default_question_text: Er du tilfreds med din kundesupportoplevelse?
+        thanks_feedback: Tak for din værdifulde feedback.
+        thanks_message_feedback_v2: Tak for din meddelelse med yderligere feedback
+        additional_comments_feedback_v2: Medtag felt til yderligere kommentarer
+        thanks_label_v2: Beskeden vises efter indsendelse af feedback for yderligere spørgsmål.
+        thanks_feedback_v2: Tak. Din feedback er blevet sendt.
+        additional_comments_feedback_statement: Yderligere feedback
+        survey_feedback_v2: Takkeside
+        thanks_help_text: >-
+          Yderligere undersøgelsesspørgsmål vises på Takkesiden, når kunden har
+          taget tilfredshedsundersøgelsen. Spørgsmålene kan dreje sig om
+          produktet/virksomheden/agenten.
+        comments_feedback: Tilføj flere oplysninger om kundeoplevelsen.
     shared:
       filter_jsinit:
         user_pass?: Har jeg brukernavn og passord?
@@ -1043,6 +1729,10 @@ da:
         to: Til
         checked: Avhuket
         content_type: Koding
+        insert_placeholder: Sett inn plassholder
+        add_custom_headers: Tilføj tilpassede headere
+        remove_custom_headers: Fjern tilpassede headere
+        custom_headers_tip: Indtast et tilpasset header-værdipar pr. linje.
     contact_fields:
       formfield_props:
         behavior: Virkemåte
@@ -1071,8 +1761,21 @@ da:
           tall: <b> /^[a-zA-Z0-9]*$/ </b>. For å matche en søkestreng som
           starter med ordet "fersk" <b>%{regex} </b>.
         mapped_internal_groups: Tilknyttede interne grupper
+        multiple_company_message_enable: Kontakter kan tilknyttes flere virksomheder.
+        multiple_company_message: Kontakter kan kun tilknyttes én virksomhed.
       fields:
         multiple_company: Koble en kontrakt med flere bedrifter
+      multiple_company_dialog_on: >-
+        Kontakter (forhandlere eller partnere) kan vælge en af de virksomheder,
+        der er tilknyttet dem, når de indsender en supportsag.
+      multiple_company_dialog_warning: >-
+        Hvis du slukker for dette, slettes alle sekundære virksomheder permanent
+        fra alle kontaktpersoner. Selvom de gamle supportsager forbliver
+        upåvirket, kan nye supportsager kun startes for den primære virksomhed.
+      multiple_company_dialog_help_text: >-
+        Når det er slået til, kan kontakter (forhandlere eller partnere) vælge
+        en af de virksomheder, der er tilknyttet dem, når de indsender en
+        supportsag.
     quests:
       quest_form:
         quest_type: oppgave type
@@ -1153,6 +1856,15 @@ da:
         internal_group_actions: >-
           Kun gældende, hvis den valgte gruppe er knyttet til sagsstatus som en
           intern gruppe på tidspunktet for regeludførelsen.
+        internal_agent_actions: >-
+          Kun relevant hvis den valgte agent er mappet til den interne gruppe på
+          tidspunktet for udførelse af reglen.
+      agent: Agent
+      default_rule_desc: >-
+        Når en kunde giver en dårlig tilfredshedsvurdering på en supportsag,
+        skal teamledelse underrettes
+      system: System
+      default_rule_name: 'Underret teamledelsen, når en kunde er utilfreds'
     portal_settings:
       simple:
         bg_color: Krop
@@ -1190,11 +1902,35 @@ da:
           sjekke de nyeste sakene og utfør handlinger som å sende påminnere til
           kunder for pågående saker, eller eskalere forfalte saker til riktig
           person i ditt team.
+        tour_v2: Hjælp mig med at oprette en overvågerregel
       clone_rule:
         title: Systemansvarlig – Klone regel
+      new_info_help: >-
+        For <b>hver supportsag</b> opdateret inden for 30 dage, skal alle
+        matchende regler udføres.
     hotline:
       content3:
         note_title: 'Bemærkning:'
+        note_info: >-
+          Vi vil fortsætte med at understøtte Mobihelp for eksisterende kunder,
+          men udfaser den aktive udvikling af det. Vi opfordrer dig til at
+          flytte til Hotline hurtigst muligt. Hvis du er en eksisterende
+          Mobihelp-kunde, skal du kontakte support@hotline.io for specialpriser.
+      get_started: Kom i gang med Hotline i dag
+      content2:
+        list_title: 'Med Hotline får du:'
+        list1: Chat i app med push-meddelelser
+        list4: Indbygget integration i Freshdesk
+        list2: Ofte stillede spørgsmål for mobile applikationer
+        list3: Højhastighedssamtalegrænseflade for agenter
+        list5: Kampagneværktøjer og beskeder med medier
+      heading1: 'Mobihelp-brugere, mød Hotline'
+      list_title: Mobihelp-apper
+      content1:
+        info1: >-
+          Hotline er den nye platform for mobilsupport og -engagement fra
+          Freshdesk. Den giver dig alt, hvad Mobihelp havde at tilbyde og mere,
+          i et velfungerende nyt produkt.
     portal:
       helpnote:
         info3: >-
@@ -1202,6 +1938,64 @@ da:
           at uploade dit logo og favicon, give din helpdesk et navn, og tilpasse
           farverne på portalen.
         title: Sett opp dine portaler
+        portal_info: Vi har håndplukket et par tilpassede portaler til dig.
+        exit_fullscreen: Afslut fuld skærm
+        editor_shortcuts: Redigeringsgenveje
+        preview_changes: Forhåndsvisning af ændringer
+        info1: >-
+          Hvis du vil have at dine kunder og supportmedarbejdere får adgang til
+          din supportportal på dit eget domæne, kan du pege din
+          support-webadresse<b>yourcompany.freshdesk.com</b> til dit eget domæne
+          såsom<b>support.yourcompany.com</b>
+        can_override_existing_styles: >-
+          Du kan bruge din egen CSS til at overskrive eksisterende designs i din
+          kundeportal. For eksempel kan du angive dine egne stildefinationer for
+          header-faner, afsnit og brødtekst på din portal.
+        preview_your_changes: 'Husk at forhåndsvise dine ændringer, før du offentliggør dem.'
+        enter_your_css: >-
+          Indtast din CSS-kode i tekstområdet for at anvende din tilpassede kode
+          på din supportportal. Hvis din CSS-kode har mellemrum eller problemer,
+          kan det element du har anvendt den på, blive nulstillet til den
+          tilsvarende standardstil, så husk at forhåndsvise dine ændringer, før
+          du offentliggør dem på din portal.
+        info4: >-
+          Hvis du vil oprette brugerrettigheder og indstille
+          moderatorindstillinger for forum, skal du klikke på fanen
+          'Indstillinger'. Indstillinger kan ikke konfigureres for hver portal
+          og vil være fælles for alle portaler, der er oprettet.
+        layout_of_portal: >-
+          Supportportalens layout er sammensat af (a) headeren, (b) footeren og
+          (c) sidelayoutet. Du kan bruge din egen HTML og tilføje, fjerne eller
+          helt ændre indholdet på tværs af hver side på din portal og tilføje
+          dine egne JavaScript-interaktioner. Husk at forhåndsvise dit tema, før
+          du offentliggør det for dine kunder.
+        editor_in_fullscreen: Redigeringsværktøj i fuld skærm
+        level_customizations: Tilpasninger på sideniveau
+        advanced_rebranding: Avanceret rebranding og tilpasning
+        basic_coloring_changes: >-
+          Bortset fra de grundlæggende farveændringer du har foretaget på din
+          portal, kan du også tilpasse udseendet og følelsen af udvalgte punkter
+          på siden, for yderligere at matche dit brand.
+        check_out: >-
+          Tjek <b> <a
+          href='https://support.freshdesk.com/support/solutions/71599'
+          target='_blank'>FreshThemes Guide </a> </b> for at lære mere om at
+          udvikle dit eget supportportal-tema.
+        portal_freshdesk_title: Leder du efter idéer?
+        info2: >-
+          Du kan også vælge en specifik løsning og forumkategorier, der skal
+          vises i hovedportalen og andre portaler
+        custom_stylesheets: Brug af tilpassede typografiark
+        portal_freshdesk_link: Tag et kig
+        customize_the_layout: >-
+          Du kan tilpasse layoutet på hver side i din Freshdesk-portal. Du skal
+          designe dit layout ved hjælp af Freshdesk Portal-pladsholdere og
+          Liquid-skabelonframeworket.
+        stylize_color_and_font: >-
+          Du kan ændre stil, farve og indstille skrifttypen på næsten ethvert
+          element i din supportportal, sætte dit logo op og tilpasse dit
+          favicon. Vælg blot farven fra det farvehjul der hører til et element,
+          eller skriv direkte den hexadecimale farvekode i tekstboksen.
       settings:
         signup_login: Registrering og innlogging for bruker
         submit_ticket: Hvem kan legge inn ny sak på portalen
@@ -1219,6 +2013,36 @@ da:
         allow_signup: La kunde få registrere seg på kundeportalen
         simple_none: Ingen
         everyone: Alle
+        moderate_none_help: >-
+          Aktivér denne funktion, hvis du er sikker på, at dit fællesskab ikke
+          tiltrækker spambrugere.
+        last_published_version: til sidst offentliggjorte version
+        google: Google
+        reset_for: Dette nulstiller redigeringer for
+        forum_captcha: Brugere der er logget ind skal indtaste CAPTCHA for at oprette et emne
+        notify_agents: 'Send modererings- og spam-meddelelse til:'
+        view_forums: Hvem kan se fora
+        moderate_all: Moderer alle emner og svar
+        captcha: Aktivér CAPTCHA for at undgå spam
+        public_ticket_urls_option: Alle med offentlig supportsags-URL
+        restricted_login_signup: Tilmelding og login er begrænset til bestemte domæner
+        facebook: Facebook
+        public_ticket_urls_label: Der kan se supportsager på portal
+        will_reset_all: Dette vil nulstille ALLE portaltilpasninger til standard.
+        portal_was_published: Portalen blev offentliggjort
+        moderation: Moderer fora
+        view_solutions: Hvem kan se løsninger
+        auto_suggest_solutions_help: Dette gælder også for søgefunktionen i feedback-widget.
+        auto_suggest_solutions: 'Foreslå automatisk løsninger, mens der oprettes en ny supportsag'
+        reset_portal_changes: Nulstil portalændringer
+        allow_signin: Tillad brugere at logge ind ved hjælp af...
+        public_ticket_urls_help: >-
+          Brugere kan se supportsager uden at logge ind, ved hjælp af de
+          offentlige Supportsags-URL'er. De kan indsættes i e-mailmeddelelser og
+          supportsagssvar sendt til kunderne via pladsholdere.
+        moderate_all_help: >-
+          Aktivér denne funktion, hvis du vil have streng moderering af hvert
+          indlæg, der oprettes i dit fællesskab.
     day_passes:
       index:
         payment_info: Legg inn betalingsinformasjon for å kjøpe flere dagspass
@@ -1241,6 +2065,13 @@ da:
         auto_renewal_enabled_notice: Auto-forny dagspas aktiveret.
         no_credit_card: Ikke noe kredittkortinformasjon lagret
         all: Alle
+        agent: Agent
+        no_result: Ingen resultater fundet for de valgte indstillinger.
+        change_agent: Ændr agent
+        usage_history: Brugshistorik
+        auto_recharge_notice: 'Den aktuelle automatiske genopfyldningsmængde er indstillet til '
+        date: Dato
+        filtered_by: 'Filtrert etter:'
       helpnote:
         title: Dagspass
         info: >-
@@ -1251,6 +2082,10 @@ da:
     home:
       index:
         billing: Planer og fakturering
+        invalid_address: Ugyldig adresse
+        search_admin: Søg i adminindstillinger
+        title: Administrator
+        invoice: Fakturaer
     getting_started:
       index:
         support_email_subtitle: Legg til din primære e-post adresse til support
@@ -1318,6 +2153,10 @@ da:
           <strong>Merk: <strong>Du kan endre disse instillingene når som helst
           ved å gå til <a href='/admin/home' target='_blank'
           style='text-decoration:none; color:#1272DE'>Admin fanen</a>
+        next_please_wait: Vent et øjeblik...
+        bulk_invite_blocked: >-
+          Du kan tilføje op til 25 agenter fra denne side. Du kan tilføje flere
+          fra administratorsektionen senere.
       send_mail_content:
         send_test_mail_yes_response: Bra jobba! Din support e-post fungerer nå med Freshdesk. Lykke til!
         send_test_mail_confirm_no: 'Nei, jeg kan ikke se noen saker.'
@@ -1366,6 +2205,7 @@ da:
           Eksempel: For å matche en søkestreng som kun inneholder alfabeter og
           tall: <b> /^[a-zA-Z0-9]*$/ </b>. For å matche en søkestreng som
           starter med ordet "fersk" <b>%{regex} </b>.
+        sla_timer: SLA tidsur
     social:
       twitter_streams:
         includes: 'Lag en strøm som inneholder disse nøkkelordene '
@@ -1401,6 +2241,10 @@ da:
         assign_to_gp: Tildel til gruppe
         dm_threading_interval: Angi sakssorteringsinvervall
         header: Konverter tweets fra strømmen ovenfor til saker
+        brief_desc: >-
+          Tweets konverteres automatisk til supportsager baseret på det første
+          matchende filter
+        add: Tilføj nyt søgeordsfilter
       helpcard:
         handle_title2: Konvertere spesifike tweets til saker automatisk
         handle_info2: >-
@@ -1463,6 +2307,24 @@ da:
           tweets kan sees i Sosial fanen, og du kan svare på dem ved hjelp av
           noen av dine integrerte Twitter-kontoer.
         stream_title1: Definere sosiale strømmer
+        handle_smart_filter_title: Konverterer relevante tweets til supportsager automatisk
+        handle_smart_filter_info: >-
+          Social Signals drives af en maskinlæringsalgoritme (et system, der er
+          i stand til at lære og forbedre med feedback over tid). Denne funktion
+          begynder automatisk kun at konvertere relevante tweets, der kræver din
+          opmærksomhed til supportsager. <br>Du kan give feedback til systemet,
+          så det lærer din virksomhed at kende.<br><br>1. I tilfælde af at en
+          tweet konverteres til en supportsag; Markér supportsagen som spam for
+          at lære systemet ikke konvertere lignende tweets til
+          supportsager.<br><br>2. I tilfælde af at en tweet ikke blev
+          konverteret til en supportsag; Gå til den sociale fane og klik på
+          Konvertér til supportsag. Så vil systemet lære at konvertere lignende
+          tweets til supportsager.<br><br>Du kan vælge at bruge Social Signals
+          alene eller med en kombination af søgeordsbaserede filtre og Social
+          Signals, hvis du har specifikke forretningsnøgleord. <br>Når du bruger
+          en kombination af søgeordsbaserede filtre og Social Signals, får de
+          søgeordsbaserede filtre forrang frem for Social Signals. Bemærk, at
+          Socials Signals kun understøtter sproget engelsk.
       streams:
         visibility:
           all: Alle
@@ -1474,11 +2336,19 @@ da:
           new_account: Ny konto
         twitter_streams:
           edit: Rediger
+          reauthorize: Godkendt igen
         update: Opdatér
         last_stream_delete_alert: >-
           Er du sikker på at du vil slette denne twitter-strømmen? Du vil ikke
           være i stand til å vise dine egendefinerte strømmer når du ikke har
           noen tilknyttede standardstrømmer.
+      smart_filter:
+        convert_tweet: Begynd at konvertere tweets til supportsager
+        convert_all: Konvertér relevante @omtaler til billetter
+        enabled_header: Social Signals aktiveret
+        disabled_header: Aktivér Social Signals
+        convert_with_filters: Konvertér tweets til supportsager ved hjælp af filtre
+        convert_dm: Begynd at konvertere direkte beskeder til supportsager
     webhook:
       hipchat_hook_title: HipChat-varsling
       jira_hook_description: >-
@@ -1489,6 +2359,7 @@ da:
         på en sak i Freshdesk.
       jira_hook_alt: Forespørsel om opprettelse av JIRA-probleminnlegg
       jira_hook_title: Opprette JIRA-problem
+      hipchat_hook_alt: Hipchat Pinging GET-anmodning
     roles:
       permissions: Tilladelser
       role_name: Rolle Navn
@@ -1500,6 +2371,8 @@ da:
         tickets: Supportsager
         forums: Fora
         scroll_to: Skroll til
+        general: Generelt
+        bots: Bots
       agents_label: Agenter
       new: Ny Rolle
       default_role_edit: >-
@@ -1537,6 +2410,10 @@ da:
       manage_label: Administrer
       add_label: Tilføj
       no_agent_label: Ingen agent
+      default_role_with_name: '%{role_name} (Standardrolle)'
+      agent_label: Agent
+      add_agent_label: Tilføj agent
+      saving_label: Lagrer...
     mobihelp:
       apps:
         form:
@@ -1553,9 +2430,13 @@ da:
           app_secret: Apphemmelighet
           integration_details: Integreringsdetaljer
           app_key: App-nøgle
+          saving: Lagrer...
+          initialization_code: Initialiseringskode
+          app_store_id: App Store-ID
         index:
           no_app:
             sdk_and_guide: Mobihelp SDK og integreringsveiledning
+          title: Mobihelp-apper
         helpnote:
           content1:
             info1: >-
@@ -1566,14 +2447,29 @@ da:
               supportseksjon i din app. Dette omfatter en kunnskapsdatabase, og
               et saksskjema som lar dem komme i kontakt med deg hvis de trenger
               hjelp.
+            info3: >-
+              MobiHelp er fullstendig konfigurerbart. Du kan tilpasse alt – fra
+              feltene i tilbakemeldingsskjemaet til hvordan det ser ut inne i
+              appen. Informasjon som enhetsnavn, operativsystem og appversjon,
+              samles automatisk uten at brukeren trenger å gjøre noe. Du kan
+              også aktivere egendefinerte datafelt og hente krasjlogger og
+              Breadcrumb-spor.
           heading1: Hva er Mobihelp?
         edit:
           title: Rediger Mobihelp-app
         new:
           title: Ny Mobihelp-app
+      human_name: Mobihelp-app
+    va_rules:
+      disabled: 'For at slå til, skal du aktivere din konto.'
+    twitters:
+      stream_content: Denne stream vil indeholde alle dine @-omtaler
+    help_image_alt:
+      helpdesk_arcarde: Helpdesk-arkade
   posted_by: Oprettet af
   validation:
     required: Dette feltet kreves
+    integration_no_match: ingen matchende data...
   merge_contacts:
     email_remove: Er du sikker på at du vil slette denne e-posten?
     please_wait: Vennligst vent ...
@@ -1592,6 +2488,8 @@ da:
     manage: Ret brugerprofil
     confirm_password: Bekræft kodeord
     current_password: Nuværende kodeord
+    freshid_profile_info: Du bliver omdirigeret til din Freshworks-kontoside
+    freshid_profile_link: Ændr dine profiloplysninger eller adgangskode
   classic_label: Klassisk
   canned_folders:
     insert_placeholder: Indsæt pladsholder
@@ -1629,6 +2527,11 @@ da:
       update: Opdatér
       addcc: Legg til kopi
       cc: kopi
+      do_not_link: Tilknyt ikke
+      view_in_detail: Se alle oplysninger
+      ok: Ok
+      hide_cc: Skjul Cc
+      announcement_hide: Skjul denne meddelelse
     time_sheets:
       agent: Agenter
       billing_type: Faktueringstype
@@ -1640,6 +2543,9 @@ da:
         no_timeentry: Ingen data tilgængelig
         total: Totalt
       group_by: Grupperet af mig
+      no_entry: Ingen tidsindtastninger
+      archive_tickets_column_error: Arkivsupportsager vil ekskluderet
+      max_columns: Kan ikke tilføje mere end 10 kolonner
     tickets:
       views:
         my_closed: Mine lukkede supportsager
@@ -1671,6 +2577,15 @@ da:
         all_tickets: Alle supportsager
         due_today: Billetter der Forfalder i dag
         resolved: Løste supportsager
+        shared_by_me: 'Supportsager, jeg har delt'
+        shared_with_me: Supportsager delt med mig
+        invalid_requester: Ugyldig anmoder
+        archive_view: Arkivvisning
+        article_feedback: Feedback på artikel
+        archived: Arkiverér
+        ongoing_collab: Mine aktive klynger
+        raised_by_me: Supportsager jeg har anmodet om
+        my_article_feedback: Min feedback på artikler
       friendly_status:
         customer_responded: Kunde Svarede
         elapsed: Svar Forfalder
@@ -1682,6 +2597,9 @@ da:
         max_tag_length_msg: Tagger kan ikke være lengre enn 32 tegn
         forward_form:
           title: 'Fra:'
+        reply_form:
+          to: 'Til:'
+        archived_ticket: Denne supportsag er knyttet til denne arkiverede supportsag -
       note:
         attachment_size:
           exceed_limit: Overgår maks. størrelse for vedlegg
@@ -1699,6 +2617,8 @@ da:
         neutral: OK
         happy: Suveræn
         unhappy: Dårlig
+    attachment:
+      drop_files_here: Træk filer hertil
   import_solution_article: Konverter Artikelforum til løsning
   solutions:
     status:
@@ -1707,6 +2627,10 @@ da:
     company:
       add_existing: Tilføj til eksisterende
       replace_existing: Erstat eksisterende
+    visibility:
+      help_text: 'Vælg listen over brugere, der skal have adgang til denne mappe'
+    drafts:
+      empty: Der er ingen udkast her.
   email_command_delimeter_label: E-mail Kommando Skilletegn
   undo: Fortryd
   currency_note: >-
@@ -1742,6 +2666,7 @@ da:
         F.eks. hvis din kundestøtte er "http://apple.freshdesk.com" skriver du
         inn "apple"
       helpdesk_name: Kundestøttenavn
+      freshdesk_dot_com: .freshdesk.com
     thank_you:
       refresh_your_account: Alright! La oss fornye din kundestøtte.
       creating_your_account: Oppretter kontoen din nå ...
@@ -1988,6 +2913,71 @@ da:
           class="common-icon-outdated"></i> indikerer at varselsoversettelsene
           på andre språk kan være utdatert.
         topic: Password reset email
+      agent_template_23:
+        topic: Påmindelse om SLA om løsningstid
+        info1: >-
+          Denne meddelelse sendes til en agent, når forfaldstiden for løsning af
+          en supportsag nærmer sig overtrædelse. Denne e-mail kan indeholde
+          supportsags-URL'en, hvilket gør det lettere for agenten at tjekke
+          supportsagen.<br/><br/>Hvis du har konfigureret flere understøttede
+          sprog på din helpdesk, kan du oprette denne meddelelse specifik for
+          hvert sprog. Ikonet <i class="common-icon-outdated"></i> angiver, at
+          meddelelsesoversættelserne på andre sprog muligvis er forældede.
+      cc_notification_20:
+        topic: Offentlig note cc
+        info1: >-
+          Når en offentlig note tilføjes af en agent eller en anmoder, sendes
+          denne e-mail til personen i cc for at informere dem om den seneste
+          kommentar. Denne e-mail skal ideelt set indeholde den senest
+          kommenterende person {{comment.commenter.name}}  og sidste kommentar
+          {{comment.body}}.
+      agent_template_22:
+        info1: >-
+          Denne meddelelse sendes til en agent, når den tiden for første svar på
+          en supportsag nærmer sig overtrædelse. Denne e-mail kan indeholde
+          supportsags-URL'en og forfaldtiden for supportsagen.<br/><br/>Hvis du
+          har konfigureret flere understøttede sprog på din helpdesk, kan du
+          oprette denne meddelelse, der er specifik for hvert sprog. Ikonet <i
+          class="common-icon-outdated"></i> angiver, at
+          meddelelsesoversættelserne på andre sprog muligvis er forældede.
+        topic: Påmindelse om SLA om første svar
+      forward_template_24:
+        topic: Agentfremsendelsesskabelon
+        info1: >-
+          Du kan tilpasse og udfylde standardoplysningerne, som du vil tilføje
+          til agentsupportsager fremadrettet ved hjælp af
+          Videresendelsesskabelonen. Agentvideresendelsesskabeloner giver dig
+          mulighed for automatisk at tilføje dynamisk indhold såsom anmodernavn,
+          supportsags-URL'er og agentunderskrifter. <br/><br/>Hvis du har
+          konfigureret flere understøttede sprog på din helpdesk, kan du oprette
+          denne meddelelse specifik for hvert sprog. Ikonet <i
+          class="common-icon-outdated"></i> angiver, at
+          meddelelsesoversættelserne på andre sprog muligvis er forældede.
+      agent_template_25:
+        info1: >-
+          Agentinvitationsmailen sendes når en eksisterende Freshworks-agent
+          (Agent der allerede er aktiv på en af de andre Freshdesk-konti eller
+          på et af de andre Freshworks-produkter - Freshchat, Freshchaller,
+          Freshsales, Freshservice, Freshmarketer) tilføjes til din
+          helpdesk.<br/><br/>"Brugeraktiveringsmail" sendes til en ny
+          Freshworks-agent, og "Agentinvitationsmail" sendes til en agent, der
+          allerede er en aktiv Freshworks-agent.
+        topic: Agentinvitationsmail
+      agent_template_21:
+        info1: >-
+          Denne meddelelse vil blive sendt til de agenter, der er nævnt under
+          "underret agent", når en note tilføjes til supportsagen af en agent.
+          Denne e-mail kan indeholde supportsags-url {{ticket.url}}, for at gøre
+          det nemt for agenterne at tjekke supportsagen.
+        topic: Note tilføjet til supportsag
+      cc_notification_19:
+        topic: Ny supportsags-cc
+        info1: >-
+          Denne meddelelse sendes til personer i cc, hvis anmoderen har
+          inkluderet e-mailadresser under cc, under indsendelse af en supportsag
+          på din helpdesk. Denne e-mail skal ideelt set indeholde anmoderens
+          navn {{ticket.requester.name}} og supportsagsbeskrivelsen
+          {{ticket.description}}.
     requestor_notification: Rekvient Meddelelse
     subject: Emne
     title: E-mail notifikationer
@@ -1995,6 +2985,13 @@ da:
     index_outdated: Noen oversettelser er utdaterte
     default_reply_template_info: 'Skabelon vises automatisk for alle agent svar, når de svarer på billetter'
     agent_notification: Agent Meddelelse
+    account_not_activated: >-
+      Det ser ud til, at din konto ikke er bekræftet endnu. Aktivér den for at
+      aktivere e-mailmeddelelser.
+    cc_notifications: CC-meddelelser
+    default_forward_template_info: >-
+      Videresendelsesskabelon inkluderes automatisk i den videresendte
+      meddelelsesredigering for ALLE agenter.
   widgets:
     feedback_widgets:
       new:
@@ -2005,6 +3002,8 @@ da:
         feedback_widgets_knowledge_base: Vidensbase
         feedback_widgets_search: Søg
         show_all_results: Vis alle resultater
+        prohibited_error: 1 fejl gjorde at denne supportsag ikke kunne gemmes
+        problems_with_fields: 'Der var problemer med følgende felter:'
   quests:
     solution_mand: Udfyld venligst antal Løsninger.
     js_forum_txt: >-
@@ -2047,6 +3046,9 @@ da:
         vote_info_include_1: Du har har dette Spørgsmål
         vote_button: Jeg har dette Spørgsmål
       unlike: Ikke lik
+      announce:
+        voted_users_widget_title: Folk der synes godt om denne meddelelse
+        vote_info_include_1: Du synes godt om denne meddelelse.
     follow_topic: Følg dette emne
     post:
       delete_comment: Slet kommentar
@@ -2090,9 +3092,15 @@ da:
         rate_again: Bedøm os igen
       attachment_form:
         feedback_widgets_screenshot: Tag et skærmbillede
+      related_files: Relaterede filer
+      was_this_article_useful: Var denne artikel nyttig?
     canned_form:
       next: Næste
       form_submit: Send
+      okay: Okay
+      hey: Hej
+      thank_you_text: Tak
+      move_to_form_field: eller tryk på enter
     surveys:
       new:
         thanks: Tak for din tid.
@@ -2119,6 +3127,7 @@ da:
     configure_addon: Click to configure this Addon
     tooltip:
       edit: Rediger
+      settings: Innstillinger
     enable: Aktiver
     enabled: Aktiveret
     confirm_disable: Are you sure you want to disable this Addon?
@@ -2128,6 +3137,7 @@ da:
     click_to_enable: Click to enable Addon
     title: Addons & Integration
     disabled: Deaktiveret
+    connect: Opret forbindelse
   confirm: Bekræft
   discussions:
     helpnote:
@@ -2186,12 +3196,15 @@ da:
       widgets:
         ticket:
           title: Koblet sak
+          agent: Agent
       mark_as_spam: Merk som søppelpost
       convert_to_ticket: Konvertere emnet til en sak
       reopen_topic: Reåpne emne
       answer: Svar
       approve: Godkjenn og publiser
       best_answer: Merket som beste svar
+      title_meta:
+        no_votes: Ingen stemmer
     all_categories: Alle kategorier
     index:
       your_topics: Aktivitet i dine emner
@@ -2322,6 +3335,9 @@ da:
       merge_notification: Dette emnet er allerede låst eller slått sammen. Oppdater siden.
       add: Tilføj
       please_wait: Vennligst vent ...
+    general:
+      unsaved_content: Du har ikke-gemt indhold på denne side.
+      leave_page_que: Vil du forlade denne side?
   users:
     activations:
       users: brugere.
@@ -2337,6 +3353,58 @@ da:
         email: E-post
         continue: Fortsett
         password: Passord
+        freshcaller_domain: .freshcaller.com
+        connect_existing_account: Forbind eksisterende konto
+        link_errors:
+          validation_error: Dette felt er obligatorisk
+          pod_error: >-
+            Det ser ud til, at dine to konti findes i forskellige datacentre.
+            Opret en ny Freshcaller-konto for at forbinde til din
+            Freshdesk-konto.
+          access_error: >-
+            Du skal være administrator i både Freshcaller og Freshdesk for at
+            forbinde dine konti.
+          api_error: >-
+            Denne Freshcaller-konto findes ikke. Angiv en gyldig URL eller opret
+            en ny Freshcaller-konto.
+          authentication_error: Den angivne e-mail eller adgangskode er ikke gyldig.
+        account_url: URL til Freshcaller-konto
+        processing: Forbinder din Freshcaller-konto
+        settings_text: >-
+          Indtast Freshcaller-kontooplysninger for at forbinde den til din
+          Freshdesk-konto
+      sidebar_title: Telefon
+      no_access_text: Du har ikke adgang til Freshcaller
+      freshcaller_signup_text: >-
+        Freshdesk leverer en integreret telefonkanal gennem Freshcaller. Aktivér
+        din telefonkanal ved at oprette en ny Freshcaller-konto med 14 dages
+        gratis prøveperiode.
+      freshcaller_enable_subtext: Du kan aktivere adgang fra siden Agentindstillingsside.
+      manage_settings_text: Administrer indstillinger i Freshcaller
+      sidebar_content: >-
+        Freshdesks telefonkanal drives af Freshcaller. Du kan foretage/modtage
+        opkald direkte fra Freshdesk, samt optage alle dine opkald og konvertere
+        opkald og telefonsvarer til supportsager.<br/><br/> <b> Opsætning af
+        call-center </b> <br/>Du kan købe telefonkreditter fra din
+        Freshcaller-administratorkonto. Du kan købe telefonnumre fra <a
+        href='https://support.freshcaller.com/support/solutions/articles/229257'
+        target='_blank'>over 40 lande</a> ved at bruge dine telefonkreditter. Du
+        kan købe toldfrie numre i USA, Storbritannien, Canada og Australien. Du
+        behøver ikke at købe nogen hardware eller installere nogen software. Du
+        skal bare bruge en webbrowser med en fungerende internetforbindelse
+        <br/> <br/> <b>Call-centermuligheder </b> <br/> Du kan besvare opkald i
+        din browser, videresende opkald til din mobil eller overføre opkald til
+        enhver agent, bruge af IVR'er til at modtage opkald, overvåge opkald,
+        gribe ind når det er nødvendigt, opsætte åbningstidsregler og meget
+        mere.<br/> <br/> <a
+        href='https://www.freshworks.com/freshcaller-cloud-pbx/call-center-features/'
+        target='_blank'>Lær mere</a> om Freshcaller - den integrerede
+        telefonløsning for Freshdesk.
+      title_text: Telefon
+      feature_request_content:
+        create_new_account: Opret ny konto
+        processing: Sådan opretter du din Freshcaller-konto
+      freshcaller_subtext: 'Køb numre, opsæt opkaldskøer, IVR''er, osv.'
   activate_free_plan: Aktiver gratisversjon
   agent_assigned_info: Ingen åbne og afventende billetter for denne agent
   or: eller
@@ -2361,6 +3429,8 @@ da:
     drag_and_drop_field: Træk og slip-felt
     insert_field: Træk og slip-felt
     decimal: Desimal
+    url: URL
+    date: Dato
   edit_agent: Rediger Agent
   subscription:
     total: Totalt
@@ -2381,6 +3451,19 @@ da:
       Nedgradering fra en høyere plan til en lavere plan vil føre til tap av
       konfigurasjonsdata for funksjoner som bare er tilgjengelig i den høyeste
       planen.
+    sub_total: Subtotal
+    invoice: Faktura
+    refund: Refunderet
+    download: Download
+    unit_price: Enhedspris
+    quantity: Antal
+    no_invoice: Ingen fakturaer til stede
+    status: Status
+    type: Type
+    date: Dato
+    line_items: Linjeartikler
+    invoice_title: 'Liste over fakturaer for alle kontobetalinger foretaget online '
+    transaction_details: Betalings- og refunderingsoplysninger
   disable: Deaktiver
   add_more_lang: Legg til støttede språk til din helpdesk.
   cancel_and_back: Annuller og gå tilbage
@@ -2391,6 +3474,33 @@ da:
       warning_msg: >-
         Bemærk: Primært sprog er dit standard helpdesk sprog. Det kan ikke
         ændres når de understøttede sprog er tilføjet.
+      helpcard:
+        portal_languages:
+          title: <b>Syndling/skjult på Portal</b><br />
+          info1: >-
+            Når dine vidensbaseartikler oversættes til andre sprog og er klar
+            til at blive offentliggjort, kan du gøre sproget synligt for dine
+            kunder, ved at klikke på aktiveringsknappen (Skjult på portal/Synlig
+            på portal)<br /><br />
+        supported_languages:
+          title: <b>Understøttede sprog</b><br/>
+          info2: >-
+            <i>Når du har tilføjet understøttede sprog, vil du ikke kunne ændre
+            dit primære sprog.</i>
+          info1: >-
+            At tilføje sprog til denne liste, vil give dig mulighed for at
+            oversætte vidensbaseartikler og e-mailnotifikationer til de
+            respektive sprog, for at hjælpe dine kunder.<br /><br />
+        info1: >-
+          Giv dine globale kunder fra forskellige dele af verden en problemfri
+          supportoplevelse.
+        title: Tal din kundes sprog
+      add_languages: Tilføj sprog
+      manage_languages: Administrer sprog
+      add_more_languages_msg: >-
+        Tilføj andre sprog, som du yder kundeservice for kunder på her. Du kan
+        derefter oversætte mailmeddelelsesskabeloner og vidensbaseartikler for
+        hvert understøttet sprog separat.
     cancel:
       deleting_account: Kansellering
       delete_my_account: Slet min konto
@@ -2453,6 +3563,16 @@ da:
       goback: Tilbake til kontoinnstillinger
     new:
       company: Firmanavn
+      card_charge: 'Dit kort vil blive ændret '
+      site_url: Side-URL
+      enter_payment_info: Indtast dine betalingsoplysninger
+      full_name: Fullt navn
+      enter_name_subdomain: ' Indtast navnet på din forretning, og det underdomæne du vil bruge til din side.'
+      errors_encountered: 'Der opstod fejl med dine kontooplysninger:'
+      administrator_account: Indtast information til administratorkontoen
+      discount_code: Rabatkode
+      confirmation: Bekræftelse
+      create_an_account: Opret en konto
     billing:
       begin_subscription_info: >-
         vil trække penge på dit kreditkort og begynde dit abonnement med det
@@ -2484,6 +3604,46 @@ da:
       info3: >-
         Alle de grundlæggende indstillinger på din helpdesk kan tilpasses her
         såsom - sprog, tidszone og farveskemaer.
+      info8: >-
+        For at konfigurere portalen for dine produkter, skal du bruge muligheden
+        Redigér portal.
+      info6: her.
+    edit_domain:
+      email_label: Din Freshdesk-mail (du kan dele denne med dine kunder)
+      email_error: Firmanavn skal være på mindst 3 tegn
+      title2: 'Bekræft dine kontooplysninger, for at komme i gang.'
+      url_label: Din Freshdesk-URL (du kan tilgå din konto herfra)
+      email_info_text: 'Du kan ændre denne, eller tilføje din egen senere.'
+      getting_started: Sådan kommer du i gang
+      submit_button_text: Tag mig til min konto
+      url_error1: 'Domenet <strong>%{domain_name}</strong> er ikke tilgjengelig.'
+      account_url_defaulted: >-
+        Grundet inaktivitet, har vi nulstillet din URL for din konto til en
+        automatisk genereret URL. Omstiller dig til dit instrumentbræt nu...
+    signup_google_error:
+      allow_access_message: >-
+        Du skal klikke på <strong>Giv adgang</strong> for at fortsætte, da
+        Freshdesk skal bruge din e-mailadresse som dit login-id.
+      go_back: Klik her for at gå tilbage til Google App-markedspladsen
+    associate_google:
+      login_button: Log ind og færdiggør tilmedling
+      login_message: >-
+        Log ind med en kontoadministrators loginoplysninger for at tilknytte dit
+        Google Apps-login til din Freshdesk-konto.
+    thank_you:
+      account_created_login: Tak for at oprette en konto! Du kan nu logge ind på din konto på
+      account_created: Konto oprettet
+      launch_support: Åbner Twitter- og Facebook-support
+    signup_google:
+      existing_url: Din eksisterende Freshdesk-URL
+      sign_up: Tilmeld dig!
+      existing_account: Eksusterende Freshdesk-konto
+      link_existing_account: Forbind din eksisterende Freshdesk-konto.
+      sample_url: 'dvs. for "http://apple.freshdesk.com" skal du skrive "apple"'
+      privacy_policy: privatlivspolitik
+      terms_of_service: servicebetingelser
+      create_account: Opret en ny Freshdesk-konto.
+    canceled_account: 'Vi er kede af at du forlader os, men din konto er opsagt.'
   zendesk_import:
     group: Grupper
     post: Fora og løsninger
@@ -2546,6 +3706,7 @@ da:
     invalid_holiday: Ugyldig ferieimport
     description: Beskrivelse
     multiple: Flere åpningstider
+    holiday_calendar: Feriekalender
   feedbackwidget_image_button: URL-adresse for bilde
   chatwidget_title: Chat indstillinger
   register: Registrer
@@ -2553,6 +3714,7 @@ da:
   multifile_attachments:
     remove: Fjern
     label: Vedhæft filer
+    mb: ' MB '
   account:
     us: MÅNED-DAG-ÅR
     save: Gem ændringer
@@ -2577,6 +3739,9 @@ da:
     logo_and_favicon: Logo og favorittikon
     permission:
       users_from_selected_domains: Brugere fra positivlistet domæner
+      users_from_any_domain: Brugere fra ethvert domæne
+      who_can_create: Hvem kan logge ind (eller) tilmelde (eller) oprette supportsager?
+      helpdesk_restrictions: Helpdesk-begrænsninger
     non_us: DAG-MÅNED-ÅR
     same_language_alert: Støttede språk skal ikke omfatte portalspråket.
     active_since: Aktiv siden
@@ -2589,11 +3754,52 @@ da:
     change_logo: Ændre logo
     forums_toggle:
       title: Fora
+      forums_disabled: Fora er blevet deaktiveret for denne konto.
+      enable_forums: aktivér fora på din konto
+      go_back_message: Gå tilbage til din helpdesk
+      helpnote: >-
+        Deaktivering af dette vil deaktivere fora på alle dine produktportaler
+        for alle brugere
     gdpr_to: til
     language: Sprog
     primary_language: Primær sprog
     additional_languages: Sprog som understøttes
     helpdesk_name: Helpdesk navn
+    sort_conversations:
+      label: Sortér samtaler
+      helpnote: Dette er rækkefølgen beskeder vil vises på supportsager.
+      latest_top: Du ser ny den nyeste samtale øverst.
+      oldest_top: Du ser ny den ældste samtale øverst.
+      option1: Vis nyeste i toppen
+      option2: Vis ældste øverst
+    gdpr_terms: 'Ved at klikke Acceptér, accepterer du'
+    gdpr_terms_link: Vilkår
+    twitter_disabled: >-
+      Twitter-login bliver deaktiveret for kunder og agenter af
+      sikkerhedsmæssige årsager.
+    gdpr_admin: Administrator.
+    hidden_on_portal: Skjult i portal
+    branding_toggle:
+      helpnote: >-
+        Deaktivering af dette fjerner Freshdesk-brandingen i footeren for både
+        dine agent- og kundeportaler
+      disable_branding: Fjern Freshdesk-branding
+      title: Freshdesk-branding
+    supported_portal_languages: Synlige sprog for brugere
+    gdpr_policy: Politik om beskyttelse af personlige oplysninger.
+    helpdesk: Helpdesk
+    portal_languages: 'Synlige sprog på portalen (%{count})'
+    supported_languages: 'Understøttede sprog (%{count})'
+    languages: Sprog
+    gdpr_agent: Agent
+    time_zone_updation: >-
+      Tidszonen bliver opdateret for alle agenter og kontaker. Prøv igen efter
+      nogen tid.
+    gdpr_admin_details: har ændret dine brugertilladelser fra
+    gdpr_acknowledgement: 'og tilkendegiver, at du har læst vores'
+    search_domain: Søg efter domæne
+    helpdesk_name_plain: Helpdesk-navn
+    visible_in_portal: Synlig i portal
   portal_pages:
     pages:
       ticket_view: Sags detaljer
@@ -2617,6 +3823,7 @@ da:
       archive_ticket_list: Liste over arkiverte saker
       search: Søge resultater
       user_signup: Ny bruker registrering
+      agent_login: Side for agentlogin
     groups:
       tickets: Supportsager
       general: Generelle sider
@@ -2657,6 +3864,83 @@ da:
     disabled: Deaktiveret
     everyone: Alle
     logged_in_users: 'Kun for brugere, der er logget ind'
+    routing_info: Distribuer alle indgående chats til bestemte grupper
+    help_offline_thank_msg: Bekræftelsesmeddelelse
+    prechat_dropdown_msg: >-
+      Du kan knytte dine rullelistevalg til forskellige grupper under fanen
+      Præferencer. Der vil blive tildelt chats til de angivne grupper i
+      overensstemmelse hermed.
+    non_availability_msg_header: 'Meddelelse, når agenterne er væk'
+    integrate_msg: >-
+      Kopier & indsæt denne kode før det sidste </body>-tag på din hjemmeside
+      eller i din app
+    msgbox_placeholder_title: Pladsholder for svarfelt
+    help_offline_thank_header_msg: Overskrift efter meddelelse er sendt
+    prechat_desc: >-
+      Saml oplysninger om dine besøgende, så du har bedre kontekst, mens du
+      chatter med dem. Når dette er aktiveret, skal besøgende indsende
+      formularen for at indlede en samtale.
+    show_widget: Når agenter er online og accepterer chats
+    integrate_livechat_title: Integrer livechat på dit websted og i dine programmer
+    maximum_chat_desc: >-
+      Angiv grænsen for antallet af chats, som en agent kan håndtere på samme
+      tid. Når en agent når denne grænse, modtager de ikke nye chatmeddelelser.
+    maximum_chat_title: Maksimalt antal besøger-chats
+    non_availability_msg_help: >-
+      For at indsætte et hyperlink til en sætning i din meddelelse, der kan pege
+      på din URL-adresse, skal det omgives af '# #'
+    chat_availability: Chat-tilgængelighed
+    proactive_title: Proaktiv chat
+    texton: På
+    show_chat_hours: Vis chat
+    agent_network_disconnect_msg_title: 'Meddelelse, når agenten bliver afbrudt'
+    thank_title: Takkebesked
+    prechat_msg: Før-chat-meddelelse
+    enable: Aktiver
+    copy_to_clipboard: Kopier til udklipsholder
+    missed_chat_title: Formular for ubesvaret chat
+    portal_option_info: Vis chat-widget for
+    missed_chat_desc: 'Saml oplysninger om den besøgende, når du ikke er tilgængelig.'
+    proactive_note: >-
+      Bemærk: Før-chat-formularen vises ikke, når en chat indledes proaktivt. Du
+      kan stadig manuelt tilføje alle oplysninger om de besøgende.
+    default_routing: Standarddistribuering
+    routing: Chat-distribuering
+    anytime: Altid (24/7)
+    help_text_wait_onhold_msg: >-
+      Denne meddelelse vises, når den besøgende venter på en agent i mere end et
+      minut
+    support_portal: Chat til din supportportal
+    chat_hours_msg_note: 'Bemærk: Chatvinduet vil være skjult uden for denne tid.'
+    form_details: Formularoplysninger
+    show_chat_hours_msg: 'Angiv, hvornår dit chatvindue vil være tilgængeligt for dine besøgende.'
+    intro_title: Hvorfor livechat?
+    enable_chat: Aktivér livechat
+    business_hours: I åbningstiden
+    chat_enabled_label: Aktivér chat
+    chat_transfer_msg_title: Besked for chatoverførsel
+    offline_message: Fraværsmeddelelser
+    window_position: Posisjon
+    learn_livechat: Få mere at vide om livechat
+    widget: Widget
+    enabling: Aktiverer
+    use_custom_link: 'Omdirigere besøgende til en separat side '
+    dropdown_based_routing: Rullelistebaseret distribuering
+    widgets_list_info: >-
+      For hvert produkt, du har oprettet i Freshdesk, får du adgang til en
+      tilsvarende chat-widget her
+    visitor_form: Besøgerformular
+    url_error_msg: Indtast en gyldig URL
+    window_offset: Forskudt
+    prechat_title: Formular før chat
+    cobrowsing: Hjælp på siden
+    end_chat_confirm_msg_title: Meddelelse til at bekræfte afslutning på chatten
+    chat_with_us: Opret forbindelse til os
+    cobrowsing_info: >-
+      Vejled dine kunder mere effektivt under chatsamtalerne ved at have en
+      mulighed for at se og styre deres skærm.
+    window_offset_error_msg: Angiv en gyldig offset-værdi (< 500px).
+    preferences: Præferencer
   feedbackwidget_custom_image_info: >-
     hvis du bruger et brugerdefineret billede, vil farve og tekst blive
     ignoreret.
@@ -2719,11 +4003,37 @@ da:
         article_view: >-
           Merk: For å generere forhåndsvisning, må du sørge for at du har minst
           én løsningsartikkel.
+        archive_ticket_list: >-
+          Bemærk: For at tilgå og vise arkiverede supportsager, skal du bruge
+          "arkiv"-pladsholdere, såsom {% snippet archive_ticket_filters %}.
+        archive_ticket_view: >-
+          Bemærk: Supportsagsanmodere kan ikke svare på eller ændre
+          supportsagsegenskaber, for arkiverede supportsager. Pladsholdere
+          relateret til opdatering af supportsagsegenskaber som {% snippet
+          ticket_reply %} vil ikke fungere.
       footer_layout_help_message: Endre bunnen på din support portal
       pages_help_message: Her kan du tilpasse "body" området på enkelte sider.
       head_layout_help_message: Endre topptekstdelen av portalen html.
       header_layout_title: Sidehoved
       pagelayout_title: Sidelayout
+    mint: Mint
+    mint_preview: Forhåndsvis nyt udseende
+    apply_mint: Anvend
+    mint_info_portal_setting: 'Din kundeportal har nu et frisk, nyt udseende.'
+    confirm: >-
+      Er du sikker på at du vil anvende det nye udseende? Alle dine
+      CSS-tilpasninger går tabt. 
+
+
+      Tip: Opret en kopi af de CSS-tilpasninger du har lige nu, og tilføj dem
+      igen efter du har anvendt det nye udseende.
+    mint_info_portal_settings: 'Dine kundeportaler har nu et frisk, nyt udseende.'
+    mint_info_portals: >-
+      Dine kundeportaler har nu et frisk, nyt useende. Forhåndsvis det ved at
+      klikke på nedenstående link.
+    mint_info_portal: >-
+      Din kundeportal har nu et frisk, nyt useende. Forhåndsvis det ved at
+      klikke på nedenstående link.
   retype_password: Skriv inn passord på nytt
   date_title: Dato
   open_tickets: Åbne supportsager
@@ -2750,11 +4060,27 @@ da:
       info3: >-
         Resten av e-postinnholdet vil legges til som en samtale til Freshdesk og
         også sendes til forespørrer via e-post.
+      note: Note
   change_equal_plan_title: 'Er du sikker på, at du vil skifte til det nye %{to_plan}-abonnement?'
   portal:
     cookie:
       privacy_policy: Retningslinjer for personvern
       cookie_policy: Cookiepolitik
+      why_we_love_cookies: Hvorfor vi elsker Cookies
+      cookie_dialog_info1: >-
+        Vi bruger cookies for at prøve og give dig en bedre oplevelse med
+        Freshdesk. 
+      cookie_dialog_info2: >-
+        Du kan lære mer om hvilke cookies vi bruker samt hvorfor og hvordan vi
+        bruker dem på vår %{privacy_link}. Hvis du hater cookies eller er på
+        slankekur, kan du skru dem av helt. Merk at Freshdesk-tjenesten er
+        ganske stor på noen cookies (vi elsker de med sjokoladebiter), og noen
+        deler av Freshdesk virker kanskje ikke riktig hvis du deaktiverer
+        cookies. 
+      cookie_dialog_info3: >-
+        Vi antar også at du samtykker til måten vi bruker cookies og ikke har
+        noe problem med det som beskrevet i vår %{privacy_link}, med mindre du
+        velger å deaktivere dem helt. 
     reported: rapporterede
     said: sagde
     login: Log på
@@ -2765,12 +4091,21 @@ da:
         all: Alle
         solutions: Løsninger
         tickets: Supportsager
+        topics: Emner
       placeholder: Søg med enkeltord eller spørgsmål
+      results_for: Søgeresultater for
     my_topics: Mine emner
     community_forums: Fællesfora
     knowledge_base: Vidensbank
     article:
       created_by: 'Opprettet av:'
+      see_all_articles: 'Se alle %{count} artikler'
+      more_articles: 'Flere artikler om <span class=''folder-name''> %{article_name} </span>'
+      modified_on: 'Ændret den:'
+      related_articles: Relaterte løsninger
+      activation_warning: >-
+        Det ser ud til, at din konto endnu ikke er bekræftet. Aktivér den
+        venligst for at udgive en artikel (du kan gemme dine udkast indtil da).
     topic:
       topic_title: Emne tittel
       post_topic: Legg inn emne i
@@ -2780,7 +4115,39 @@ da:
       matching_results: Samsvarende emner funnet
       sort_by_default: Standard
       topic_brief: 'Oprettet af <b>%{user_name}</b>, %{created_on}'
-      fb_reply_info: "<a href='%{reply_url}'> Sidste svar </a> af %{user_name}<br>%{created_on}"
+      fb_reply_info: '<a href=''%{reply_url}''> Siste svar </a> by %{user_name}<br>%{created_on}'
+      activation_warning: >-
+        Det ser ud til at din konto endnu ikke er bekræftet. Aktivér den
+        venligst for at poste et forumemne.
+      follow: Følg
+      following: Følger
+      monitor_topic: Overvåg dette emen
+      comments_closed: Denne diskusjonen er nå lukket for kommentarer
+      start_new_topic: nyt emne
+      see_all_topics: 'Se alle %{count} emner'
+      all_topics: Se alle emner
+      comment_placeholder: Klikk her for å legge inn en kommentar
+      started: startet et emne
+      more_topic: Flere emner i
+      my_topic_reply: 'Sidst besvaret af <b>%{post_name}</b>, %{created_on}'
+      last_post_brief: >-
+        <a href='%{last_post_url}'>%{link_label}</a> af %{user_name}
+        %{created_on}
+      in_forum: 'I: %{forum_name}'
+      merge: 'Flettet inn i emnet:'
+      locked: Emnet er låst
+      sticky: Emnet er markert som sticky
+      merge_continue: 'Du kan derimot fortsette samtalen her: '
+      merge_note:
+        one: 'Emne slått sammen til dette emne:'
+        other: 'Emner slått sammen til dette emne:'
+      sort_heading: 'Sortert etter:'
+      sort_order:
+        date: Eldste først
+        recency: Nyeste først
+        popularity: Populære
+      sort_by_most_recent: Siste
+      sort_by_most_popular: Mest populære
     topic_vote:
       user_upvote_list_title: Personer som stemte opp
       announce_button: Liker du dette?
@@ -2794,6 +4161,22 @@ da:
       ideas_users_voted_title: Folk der godt kan lide denne Ide
       problem_users_voted_title: Folk der har dette problem
       howto_users_voted_title: Folk der har dette Spørgsmål
+      announce:
+        one: liker dette
+        other: liker dette
+      ideas:
+        one: kan lide denne idé
+        other: som denne idé
+      problem:
+        one: har dette problem
+        other: har dette problem
+      howto:
+        one: har dette spørgsmål
+        other: har dette spørgsmål
+      votes: stemmer
+      upvote: opp-stemming
+      upvoted: opp-stemt
+      announce_users_voted_title: Personer som liker dette
     tickets:
       export: Eksporter sag til CSV
       submit_export: Eksporter
@@ -2806,12 +4189,87 @@ da:
         om denne saken blir sendt.
       reopen_reply: Svar
       related_articles: Relaterede artikler...
+      merged_topic_note: Sammenslått emne kan ikke konverteres til sak.
+      ticket_list: Saksliste
+      mark_closed: Marker supportsag som lukket
+      add_people: Legg til personer
+      reply_placeholder: Klikk her for å svare på saken
+      add_people_title: Tilføj personer til samtalen
     new_support_ticket: Ny supportsag
     login_portal: Log på supportportalen
     login_details: Indtast nedenfor
     agent_login_details: Indtast nedenfor
     login_options: …eller log på med
-    user_signup_portal: 'Opret en bruge '
+    user_signup_portal: 'Opret en bruger '
+    no_topics_in_this_view: ~ Ingen emnefelt i denne visningen ~
+    solutions_home: Løsninger
+    print_title: Skriv ut denne artikkelen
+    attach_file: Vedhæft en <b>fil</b>
+    header:
+      preview_message: >-
+        <b>Forhåndsvisning</b> - <a href='javascript:window.close()'>Klikk
+        her</a> for å gå tilbake.
+    submit_new_ticket: ...eller tilføj en ny supportsag
+    customer_login_info: Er du en kunde?
+    helpdesk_login_portal: Velkommen tilbage agent
+    reset_password: >-
+      Giv os din e-mailadresse, så sender vi instruktioner til at nulstille din
+      adgangskode med det samme.
+    signup: Tilmeld
+    account: konto
+    login_or_signup: '%{login} eller %{signup} for en konto'
+    to_post_comment: ' publiser en kommentar'
+    to_submit_ticket: for å registrere ny sak
+    login_to_submit_ticket: '<a href=%{login_url}>Logg inn</a> for å sende inn en ny sak'
+    login_signup_to_submit_ticket: >-
+      <a href=%{login_url}>Logg inn</a> eller <a href=%{signup_url}>registrer
+      deg</a> for å sende inn en ny sak
+    login_to_post_topic: <a href='' class='solution_c'>Logg inn</a> for å starte et nytt emne
+    login_to_post_comment: <a href='' class='solution_c'>Logg inn</a> for å legge inn en kommentar
+    login_signup_to_post_topic: >-
+      <a href=%{topic_reply_url}>Logg inn</a> eller <a
+      href=%{signup_url}>registrer deg</a> for å starte et emne
+    login_signup_to_post_comment: >-
+      <a href=%{topic_reply_url}>Logg inn</a> eller <a
+      href=%{signup_url}>registrer deg</a> for å legge inn en kommentar
+    to_post_topic: ' publiser et emne'
+    preview:
+      view_on_helpdesk: Vis i kundestøtte
+      edit_article: Rediger artikkel
+    popular_topics: Populære emner
+    showing_recently_popular_topics: Viser siste populære emner
+    topic_deleted: >-
+      Det ser ut til at dette emnet har blitt slettet. Du kan derfor ikke legge
+      ut innlegget.
+    topic_not_found: Det ser ut til at dette emnet har blitt slettet
+    post_not_found: Det ser ut til at denne posten har blitt slettet
+    showing_my_topics: Vise emner som du følger
+    showing_recent_updates: Vis seneste opdateringer
+    no_articles_info_1: 'Beklager, vi har ikke publisert noen artikler i denne seksjonen. '
+    no_articles_info_2: 'Venligst prøv igen senere. '
+    no_forums_info_1: Endnu ingen emner i forummet
+    no_forums_info_2: 'Hvorfor starter du ikke et %{start_topic_link} ?'
+    folder:
+      filler_text: 'Her finder du artikler om %{folder_name}'
+    vote:
+      you:
+        one: 'Du '
+        other: 'Du og '
+      more:
+        one: '1 annen '
+        other: '%{count} andre '
+      people:
+        one: '1 person '
+        other: '%{count} personer  '
+    vote_label:
+      one: 1 stemme
+      other: stemmer
+    post_vote:
+      upvoted: Du har stemt opp
+      upvote: Stem opp
+      like:
+        one: liker dette
+        other: liker dette
   title: Titel
   free_plan_agents_v2: Ubegrænset antal agenter
   freshfone:
@@ -2900,6 +4358,39 @@ da:
         purchase_alert_text: >-
           Dette telefonnummeret vil belastes <strong><span
           class='number-rate'></span> månedlig</strong>.
+        sidebar_content_v2: >-
+          Ved brug af telefonkanalerne, kan du foretage og modtage opkald gennem
+          din browser, mobiltelefon eller ved brug af telefonkanalen i
+          Freshdesks mobilapps. Den er godt integreret med Freshdesks
+          supportsagssystem. Det betyder, at du kan holde styr på telefonopkald
+          ved at optage dem og konvertere dem til supportsager, når det er
+          nødvendigt.<br/><br/> <b>Opsætning af telefon</b></br>For at kunne
+          bruge telefonen, skal du først aktivere funktionen og købe et
+          supportnummer. Du kan købe lokale numre fra <a
+          href='https://support.freshdesk.com/support/solutions/articles/169322'
+          target='_blank'>de lande der er listet her</a>, og foretage eller
+          modtage opkald fra hele verden. Hvis dine kunder ringer til dig fra
+          USA, Storbritannien eller Canada, kan du også købe toldfrie
+          supportnumre (eller freephone i Storbritannien). <br/><br/><b>Leverer
+          komplet telefonsupport</b><br/>Med vores telefonkanal kan
+          du<br/><ul><li>Begynde at foretage og modtage opkald ved brug af
+          webbrowsere eller mobiltelefoner</li><li>Oprette telefonsvarer,
+          viderestille opkald eller overføre opkald til enhver agent, hvor som
+          helst</li><li>Overvåge opkald, gribe ind når det er nødvendigt,
+          tilføje agenter til igangværende opkald og
+          mere*</li></ul><br/><p>*Kontakt venligst <a
+          href='mailto:support@freshdesk.com'>support@freshdesk.com</a> for at
+          slå avancerede funktioner til for din konto. Disse omfatter
+          opkaldsovervågninger, indgriben i opkald, opkaldskonferencer,
+          opkaldsmaskering og målinger for opkald over hele perioden.</p><br/>
+        buy_phone_numbers: Køb telefonnumre
+        caller_id:
+          no_number_added: Intet opkalds-id tilføjet
+          call_id_mask: Maskér dette nummer
+          manage_caller_id: 'Administrer opkalds-ID '
+          add_new: Legg til ny
+        tour_link: Hjælp mig med at opsætte en telefonkanal
+        buy_phone_credits: Køb telefonkreditter
       feature_request_content:
         success: Vi kommer tilbake til deg innen to virkedager.
         recording_info: 'Ta opp og konverter samtaler til saker, akkurat som dine e-poster'
@@ -2913,6 +4404,12 @@ da:
         number_info: Kjøp lokale eller gratis numre fra hele verden
         video_title: Se videoen for å finne ut hva du kan gjøre med telefonkanalen
         heading_text: Hjelp dine kunder med telefonkanalen
+        compare_trial_and_full: Sammenlign fuld og gratis prøveversion
+        activation_disclaimer: Du kan bruge alle funktionerne i en ubegrænset periode
+        trial_or: ELLER
+        trial_button_text: Aktivér gratis prøveversion
+        title_text: Telefon
+        trial_version_disclaimer: Du kan bruge begrænsede funktioner 15 dage gratis
       local: Lokal
       search: Søk med tall eller fraser
       ivr:
@@ -2939,6 +4436,7 @@ da:
         done: færdig
         keypress: Tastevalg
         welcome_message: Velkomstbesked
+        action: Handling
       number_settings:
         read_message: Tekst til tale
         greeting_message: Skriv din besked her
@@ -3007,6 +4505,39 @@ da:
         welcome_message: Velkomstbesked
         change: Rediger
         stop_recording: <span></span>Stop optagning
+        queue_position_preference: Oplæs køposition
+        queue_wait_message: Ventebesked for kø
+        queue_position_enable: TIL
+        wait_music: Ventemusik
+        hold_music: Holdmusik
+        attachment_help_text: Tillater lydfiler på under 5 MB
+        queue_position_disable: FRA
+        queue_position_message_placeholder: 'Du er nu i kø. Din køposition er {{queue.position}}'
+        queue_position_message_alert: >-
+          For at oplæse køpositionen, skal du bruge pladsholderen
+          {{queue.position}} <br/>F.eks. Du er nu i kø. Din køposition er
+          {{queue.position}}
+      freshfone_numbers_title: Telefon
+      welcome_page:
+        title_text: Telefon
+      trial:
+        request_activation_msg: >-
+          Du kan vælge kun at bruge ét nummer for et begrænset antal lande under
+          telefonprøveperioden.<br> Du kan dog købe flere numre fra 41 lande,
+          når du aktiverer den fulde version
+        activate_btn_text: Anmod om aktivering
+        numbers:
+          search:
+            after_activation_request: >-
+              Du har anmodet om telefonkanalaktivering <br> Vi vender tilbage
+              til dig inden for 2 arbejdsdage.
+            buy_confirmation: 'Er du sikker på, at du vil vælge dette nummer?'
+            can_use_after_activation: >-
+              Du kan fortsætte med at bruge dette nummer, når du aktiverer
+              telefonkanalen.
+        requested_activation: >-
+          Vi har modtaget din anmodning om aktivering<br>Men den er under
+          behandling
     subscription:
       recharge_now_text: Fyll på kontoen med en engangsbetaling
       setup_auto_recharge: Konfigurere automatisk påfylling
@@ -3016,6 +4547,9 @@ da:
       purchase_text: Kjøp telefonkreditt
       current_balance: Din gjeldende saldo
       no_credit_card_text: Legg inn betalingsinformasjon for kjøp av telefonkreditt
+      purchase_credits: Køb kreditter
+      followup_text: verd som telefonkreditt
+      followup: verd som telefonkreditt
   special_beta_offer: Specielt tilbud til Beta-kontoer
   days: dage
   tickets_filter:
@@ -3029,6 +4563,9 @@ da:
       requester_responded_at: Kundesvar
       due_by: Skal færdiggøres inden
       date_created: Dato for oprettelse
+      status: Status
+      recently_active: Aktivt for nyligt
+      agent_responded_at: Svar fra Agent
     company: Firmanavn
     raised_by: Billetter oprettet af
   saving: Gemmer...
@@ -3076,6 +4613,9 @@ da:
       oops_btn: Ups!
       section_has_fields: Sektionen har felter
       delete_field_section: Slett feltet fra denne seksjonen
+      ok_btn: OK
+      confirm_btn: Bekræft
+      confirm_text: Vennligst bekreft...
     confirm_deletion: >-
       Advarsel! Du vil miste data vedrørende dette felt i alle gamle
       supportsager permanent. Er du sikker på at du vil slette dette felt?
@@ -3095,6 +4635,8 @@ da:
       created_at: Oprettet
       skill: Kompetence
       description: Beskrivelse
+      ticket_type: Type
+      status: Status
     formfield_props:
       behavior: Opførsel
       customer_edit: Kunde kan redigere
@@ -3140,6 +4682,14 @@ da:
       nested_tree_validation: Du er nødt til at have mindst én kategori og underkategori
       description: Beskrivelse
       form_title: Feltegenskaber
+      sla_timer: SLA tidsur
+      nested_field_helptext: >-
+        Brug nedenstående tekstområde til at tilføje eller redigere elementer i
+        din dropdown. Indryk elementer ved at trykke på tabulatortasten én eller
+        to gange. Vi vil konvertere den til dropdown poster baseret på
+        indrykningen. <a target='_blank'
+        href='https://support.freshdesk.com/solution/categories/45957/folders/74594/articles/37599-using-dependent-fields'>Lær
+        mere</a> 
     no_choice_message: Mindst et gyldigt valg skal være til stede
   export_to_CSV: Eksporter til CSV
   email_configs:
@@ -3149,6 +4699,31 @@ da:
       verified: Verificeret
       remove: Fjern
       unverified: Ikke verificeret
+      last_verified: Senest bekræftet
+      new_dkim: Du har ikke oprettet en supportmail med et tilpasset domæne endnu!
+      help_note: >-
+        DKIM hjælper dig med digitalt at underskrive e-mails fra din helpdesk,
+        med dine e-maildomænenavn(e). Dette hjælper dig med at opbygge en
+        brandidentitet ved alle samtaler med dine kunder.
+      verification_sent: Bekræftelse sendt
+      config: Konfigurer
+      configuring: Konfigurerer...
+      data_help: Værdi der skal tildeles DNS-optegnelsen
+      cname: CNAME
+      name: DKIM
+      verify: Bekræft
+      status: Status
+      host_value_help: Hostnavn for TXT-optegnelsen
+      title: DKIM-indstillinger
+      type: Type
+      help: Hvordan konfigurerer DKIM-indstillinger?
+      data: Data
+      description: >-
+        Opdatér følgende DNS-indstillinger på din internetudbyderes hjemmeside.
+        Når du har kopieret alle indstillingerne for hvert domæne, kan du klikke
+        på knappen Bekræft for at bekræfte, at indstillingerne er aktive
+      host_value: Hostværdi
+      dkim_remove_message: 'Er du sikker på, at du vil fjerne DKIM-konfigurationen for'
     info17: >-
       Denne e-mailadresse vil blive inkluderet automatisk i Bcc feltet for al
       billetkommunikation
@@ -3194,6 +4769,18 @@ da:
     primary_supp_email_tool_tip: Primær support e-mail
     bcc_email: Bcc adresse
     using_custom_mailbox: Bruk av egendefinert e-postserver
+    freshdesk: Freshdesk
+    bcc_text: Blindkopi
+    enable_compose_info: >-
+      Hvis ja, kan agenter sende udgående e-mails til nye eller eksisterende
+      kunder, som konverteres til udgående supportsager.
+    enable_compose: Giv agenter mulighed for at indlede samtale med kunderne?
+    personalized_email_replies_title: Brug agentnavne i supportsagssvar og udgående e-mails?
+    plain_unverified: Ikke verificeret -
+    disable_agent_forward_info: >-
+      Når en agent videresender en e-mail fra hans/hendes indbakke til
+      helpdesken, skal der oprettes en supportsag under den originale afsender.
+      Hvis dette er slået fra, vil anmoderen være agenten.
   create_password: Opprett et passord
   agent_list:
     sort:
@@ -3202,6 +4789,8 @@ da:
       asc: Stigende
       desc: Faldende
       name: Navn
+      last_active_at: Sidst set
+      last_login_at: Sist logget inn
   feedbackwidget_help_para1: >-
     Saml feedback fra dine kunder ved at tilføje en support-fane på dine
     hjemmesider.
@@ -3215,6 +4804,16 @@ da:
     saved_report:
       save: Gem
       cancel: Annuller
+      error_title_unavailable: Titel findes allerede
+      delete_cnfm_message: 'Er du sikker på, at du vil slette denne gemte rapport?'
+      dialog_sub_header: Denne rapport vil kun være synlig for dig
+      delete_dialog_header: Slet rapport
+      save_header: Gem rapport
+      edit_dialog_header: Redigér rapport
+      error_missing_title: Alle felter skal udfyldes
+      read_more: Hvordan planlægger man en rapport?
+      title: Rapporttitel
+      dialog_header: Gem & planlæg rapport
     today: I dag
     ticket_schedule:
       helpnote:
@@ -3244,6 +4843,9 @@ da:
         ticket_properties_title: Eksporter egenskaber for supportsag
         ticket_properties_note: Din konto har opbrugt det samlede antal tidplaner der kan oprettes
         cancel: Annuller
+        delete_title: Slet planlægning
+        delete_text: 'Er du sikker på, at du vil slette denne tidsplan?'
+        confirm: Bekræft
       new:
         helpnote:
           api_info1: API'et har linket til den seneste eksport.
@@ -3264,35 +4866,162 @@ da:
           forhåndsudfyldning af data
         company_fields_title: Firmafelter
         description: Beskrivelse
+        max_field: (op til 150 felter)
+        api: API
+        frequency: Tidsplan
       schedule_export: Planlæg eksport
       all_reports: Alle rapporter
       no_schedule: Ingen tidsplaner oprettet
       new_schedule: Ny tidsplan
       schedule_show_message: 'Du kan ikke redigere en tidsplan, når først den er oprettet'
+      schedule: Tidsplan
     scheduled_reports:
       dialog:
         email: E-post
         desc: Beskrivelse
         subject: Emne
+        monthly: Månedligt
+        generate_report: Genererer rapport
+        'on': På
+        daily: Daglig
+        weekly: Ugentlig
+      errors:
+        disabled: Rapporter med tilpassede datoperioder kan ikke planlægges
     ticket_volume:
       resolved_tickets: Løste supportsager
       received_tickets: Modtagne Billetter
       time_trends:
         title: tendens for supportsager der er modtaget og løst og uløste
+        year: år
+        week: uge
+        day: Dag
+        month: måned
+        qtr: Kvarter
       total_unresolved_tickets: Totale antal uløste supportsager
       unresolved_tickets: Uløste supportsager
       average_unresolved_tickets: Gennemsnitlig antal uløste supportsager
+      busiest_hour_resolved_tickets: De fleste supportsager blev løst omkring
+      average_resolved_tickets: Gennemsnitligt antal løste supportsager
+      busiest_hour_received_tickets: De fleste supportsager blev modtaget omkring
+      total_resolved_tickets: Totalt antal løste supportsager
+      average_received_tickets: Gennemsnit af modtagede supportsager
+      busiest_day_received_tickets: De fleste supportsager blev modtaget d.
+      load_analysis:
+        title: Hent analyse
+      total_received_tickets: Totale antal modtagede supportsager
+      title: Tendenser for supportsagsvolumen
+      busiest_day_resolved_tickets: De fleste supportsager blev løst d.
+      day_trend:
+        subtitle: >-
+          Se hvornår på hvilke dage du modtager flest supportsager, og allokér
+          dine medarbejdere derefter
+        title: Tendenser over Dag på ugen og Time på dagen
     date_range: Datointerval
     timespent_export:
       button_export: Eksporter
+      export_csv: Eksportér CSV
+      dialog_sub_header: Vi kan kun eksportere 25 kolonner med data
+      dialog_header: Eksportér rapporter
+      aggregate_title: Samlet info
+      ticket_title: Supportsagsmæssig info
+      ticket_dropdown: 'Inkluder tid brugt i:'
+      ticket_info: Tidsbrug pr. supportsag opdelt efter status
     ticket_activity:
       helpnote:
         api_info1: API'et har linket til den seneste eksport.
+        api_info2: >-
+          Eksporten vil indeholde en log over alle supportsagsrelaterede
+          opdateringer, der blev udført den foregående dag.
       edit: Rediger tidsplan
       title: Eksporter aktiviteter for supportsag
       learn_more: Læs mere
     yesterday: I går
     change: Endre
+    chats: Chats
+    more: Flere...
+    customer_report:
+      title: Analyse over bedste kunder
+    no_data_to_display_msg: Ingen data at vise
+    phone_summary:
+      title: Telefonoppsummering
+    export_tickets_error_msg: >-
+      Du har nået den maksimale grænse for samtidige eksportanmodninger. Prøv
+      venligst igen efter nogen tid.
+    deprecated_header: Denne rapport vil ikke længere være tilgængelig efter d. 30 marts 2016
+    previous_week: Forrige uge
+    insights:
+      customize_link: Tilpas
+      customize: Tilpas indsigter
+      tooltip: Lær mere om indsigt
+      todays_insights: Dagens indsigt
+      customize_helptext: >-
+        En indsigt eller afvigelse er en indikation af en interessant aktivitet
+        på din helpdesk. Tærskelværdien indikerer hvor stor ændringer på en
+        bestemt måling, der ville udgøre en afvigelse.
+      customize_helptext2: >-
+        Tilpaser indsigter ved at indstille tærskelværdier og vælge filtre for
+        hver måling.
+    loading_text: Genererer rapport...
+    average_time: ' Gennemsnitlig tid'
+    chat_summary:
+      title: Chatoversigt
+    previous_month: Forrige måned
+    export:
+      email_report_csv: E-mail CSV
+      email_report_pdf: E-mail PDF
+    this_week: Denne uge
+    agent_summary:
+      title: Agentpræstation
+    generate: Generer
+    this_month: Denne måned
+    jump_to_a_saved_report: Gå til en gemt rapport
+    edit_filter: Filtrer
+    year_in_review:
+      title: Tilbageblik på jeres år
+    view_new_reports: Se nye rapporter
+    summary: Oversigt
+    timespent:
+      title: Supportsagslivscyklus
+    show: 'Vis:'
+    this_year: Dette år
+    productivity: Produktivitet
+    filter_by: Filtrer efter
+    glance:
+      title: Dybdegående helpdesk
+      index_title: Dybdegående<br/>helpdesk
+    solution_article_text: Hvordan læses denne rapport ?
+    tickets: Liste over supportsager
+    customer_happiness: Kundetilfredshed
+    timesheet_reports:
+      title: Tidshæfteopsummering
+    performance_distribution:
+      title: Præstationsdistribution
+      resolution_bar: Løsningstid
+      resolution_trend: Tendens for gennemsnitlig løsningstid
+      first_response_and_response_trend: Tendens for gennemsnitlig første svar og svartid
+      first_response_bar: Første svartid
+      response_bar: Gennemsnitlig svartid
+    qna:
+      schedule_an_export: Planlæg en eksport
+      export_question: Vil du oprette tilpassede rapporter?
+      view_full_report: Dyk ned i dataene
+      recently_asked_questions: NYLIGT STILLEDE SPØRGSMÅL
+    something_went_wrong_msg: 'Der gik noget galt, prøv venligst igen'
+    group_summary:
+      title: Gruppepræstation
+    satisfaction_survey:
+      title: Tilfredshedsundersøgelse
+    filtered_by: 'Filtrert etter:'
+    export_tickets_success_msg: Dine supportsagsdata sendes snart til din e-mail!
+    resolved_tickets_split_by: 'Samlet tid brugt på løste supportsager divideret med '
+    view_old_report: Se gammel rapport
+    in_each_group: in hver gruppe
+    at: kl.
+    helpdesk_analysis: Helpdesk-analyse
+    customer_satisfaction:
+      title: Kundetilfredsheds Rapport
+    total_time: ' Totaltid'
+    view_classic_report: Se klassisk rapport
   enter_payment: Indtast Betalingsdetaljer...
   no_badge_achieved_label: Ingen Badges opnået endnu.
   zendesk_import_files: Velge hva du vil importere?
@@ -3405,6 +5134,10 @@ da:
       no_results: Ingen nylige innlegg i strømmen.
       index:
         all: Alle
+        click_activity: Klik på en stream for at se aktivitet
+        no_activity_available: Ingen aktivitet tilgængelig
+        retweets: Retweets
+        search_twitter: 'Søg på twitter efter opdateringer '
       recent_searches: Dine siste søk
       tooltip:
         convert_to_tkt: Konverter til billet
@@ -3419,6 +5152,9 @@ da:
         add_search_keywords: Skriv noe du vil søke etter
         tickets: Supportsager
         no_retweets: Ingen retweets
+        post: ' Indlæg '
+        interactions: Samhandlinger
+        follow_as: Følg som...
       other_interactions: Andre samhandlinger
       social_accounts: Sosiale profiler
       search_btn: Søg
@@ -3427,6 +5163,8 @@ da:
       search:
         exclude_handles: Filtrere ut tweets fra disse håndtakene
       custom_streams: Sosiale strømmer
+      no_conversation: 'Beklager, ingen samtale'
+      interactions: Samhandlinger
   conversation: Historik
   plan: Abonnement
   Phone: Telefon
@@ -3444,6 +5182,10 @@ da:
     manage_categories: Administrer
     edit: Rediger løsningsstatus
     info2: Ingen mapper fundet i denne kategori
+    info3: Ingen kategorier på denne portal
+    other_categories: Se andre kategorier
+    other_categories_info: Kategorier der ikke er knyttet til denne portal
+    visible_in_portal: Synlig i portal
   flash:
     customers:
       info_select: Vælg venligst mindst 1 kunde.
@@ -3486,6 +5228,7 @@ da:
     whats_new_in_freshdesk: ' Nye funksjoner i Freshdesk '
     get_help: Få hjelp
     contact_us: Kontakt oss
+    load_more: Indlæs flere
   attachment_delete: Du er i ferd med å slette dette vedlegget permanent. Vil du fortsette?
   clear: Ryd
   email_command_preview_subject_value: Support Billet
@@ -3521,6 +5264,8 @@ da:
     inprogress: Pågående
     solved: Løste
     unsolved: Uløste
+    answered: Besvaret
+    unanswered: Ikke besvaret
   downgrade_loss_message: >-
     <span class="label label-important">Vigtigt</span> Du vil miste data og
     konfigurationer for følgende funktioner permanent:
@@ -3592,6 +5337,12 @@ da:
     everything_in_blossom: Alt i blossom
     enterprise_reports_desc: Virksomhedsrapporter
     css_customization: CSS-tilpasning
+    skill_based_assignment_desc: Færdighedsbaseret tildeling
+    bot: Bot
+    gamification: Gamification
+    custom_dashboard: Administrer teaminstrumentbræt
+    skill_based_assignment: Færdighedsbaseret tildeling
+    freshchat: Freshchat-integration
   admin_onboarding:
     modal:
       channels_frame:
@@ -3599,15 +5350,58 @@ da:
         forums_channel: Fora
         chat_channel: Chat indstillinger
         email_channel: E-post
+        message: >-
+          Ud over e-mail giver Freshdesk dig mulighed for at hjælpe dine kunder
+          via telefon, chat, sociale medier og meget mere. Klik på de kanaler,
+          du gerne vil prøve at aktivere på din konto.
+        phone_channel: Telefon
+        title: Hvordan taler du med dine kunder i dag?
+        message2: 'Bare rolig, du kan også tilføje eller fjerne dem senere.'
+        forward_link: Inviter dit team
+        default_channel: Tilføjet som standard
       agents_frame:
         send_invite: Send Invitasjon
         emails_invalid: En eller flere av dine e-post er ugyldig
+        message: 'Tilføj dine teammedlemmer til din konto, og udforsk Freshdesk sammen'
+        emails_placeholder: 'bruce@just.ly, diana@just.ly, clark@just.ly'
+        forward_link: Se overblik
+        title: Hvem vil du arbejde sammen med?
       welcome_frame:
         forward_link: Vælg supportkanaler
+        message2: >-
+          Under din prøveperiode vil du opleve, hvor let det er at bruge
+          Freshdesk til at tale med dine kunder. Lad os komme i gang med det
+          grundlæggende.
+        title: Velkommen til Freshdesk
+        message: >-
+          Mit navn er Girish, den administrerende direkte hos Freshdesk, og jeg
+          vil gerne personligt byde dig velkommen ombord og fortælle dig, at
+          vores team er klar til at hjælpe dig, hvis du har brug for noget.
+      overview_frame:
+        title: Kom godt i gang med Freshdesk
+        message: >-
+          Før du kommer i gang, er her en 2 minutters videooversigt over din
+          helpdesk.
+        forward_link: Lad os komme i gang
     account_verification_message:
       helpnote_or: eller
       modal_send_button: Send aktivering
       cancel_button: Annuller
+      modal_sending_button: Sender aktivering
+      modal_title: Er du tilmeldt med den forkerte e-mailadresse?
+      helpnote1: Kan du ikke se det?
+      modal_user_exists_error: E-mail er allerede tilknyttet til en agent.
+      modal_helpnote1: 'Indtast din korrekte e-mail nedenfor, for at modtage aktiveringslinket.'
+      modal_invalid_email_error: Vennligst oppgi en gyldig e-postadresse
+      resend_message: Gensend aktivering
+      change_email: skift din e-mail
+      non_admin_message: >-
+        Din konto er endnu ikke aktiveret. Kontakt venligst din
+        kontoadministrator.
+    falcon_invite:
+      maybe_later: MÅSKE SENERE
+      try_new_look: PRØVE DET
+      greetings: Sig hej til Freshdesk Mint
   Group: Gruppe
   feedbackwidget_defaulttitle: Hjælp & Support
   pending: Afventer
@@ -3661,6 +5455,8 @@ da:
       num_of_reassigns: Antall omdelinger
       report_view: Rapportvisning
       select_agent_msg: Vælg Agent
+      sla_percentage: SLA %
+      loading_msg: Genererer rapporter ...
     unsaved_report_filter: Ulagret rapport
     helptext:
       glance:
@@ -3787,6 +5583,10 @@ da:
       select_agent_msg: Vælg agent (max 4)
     report_filter_title: Tittel for lagret rapport
     agent_at_a_glance: Agenter Ved et hurtigt blik
+    jump_to_saved: Gå til en gemt rapport
+    agent_comparison_report: Rapport om sammenligning af agenter
+    group_comparison_report: Rapport om sammenligning af grupper
+    report_export_success: Rapporter sendes snart til din e-mail!
   linkback_info: >-
     Du kan vælge LinkBack til din egen hjemmeside, når kunden klikker på
     hovedside logoet
@@ -3811,8 +5611,53 @@ da:
       settings:
         for_agents: For agenter
         for_customer: For kunder
+        create_solution: Løsningsartikel
+        enable_ilosvideos_recording: Aktivér ilos-videooptagelse
+        forum_interaction: Forumside
+        ticket_interaction: Supportsagsside
       messages:
         video_desc: Beskrivelse
+        about_recording: Lær mere om skærmoptagelse
+        ilos_video_initialized: >-
+          <p id='ilos-paragraph'><span><b>Skærmoptagelse
+          påbegyndt.</b></span></br>Ilos-optagelsesudvidelsen starter
+          automatisk. For yderligere hjkælp til optagelse af skærme, skal du
+          følge instruktionerne <a
+          href='https://support.freshdesk.com/solution/articles/214400-ilos-videos-integration-with-freshdesk'
+          target='blank'>her</a>.<br/><br/>Problemer med optagelse?<br/>Sørg
+          for, at du har installeret <a
+          href='https://app.ilosvideos.com/downloadRecorder/?returnTo=Freshdesk'
+          target='blank'>Ilos-udvidelsen</a> allerede. Hvis du installerer den
+          for første gang, bedes du gå tilbage og klik "optag" igen, efter du
+          har installeret udvidelsen.<br/></p>
+        moderated_forums: For modererede fora vises optagelsen efter godkendelse.
+        private_note: Gem som privat note
+        video_title: Videotitel
+      portal_forum:
+        placeholder: 'Emne#'
+        back_to_page: Tilbage til emne
+      form:
+        api_key: Indtast ilos videos API-nøgle
+      agent_forum:
+        back_to_page: Tilbage til emne
+        placeholder: 'Emne#'
+      portal_ticket:
+        placeholder: 'Supportsag#'
+        back_to_page: Tilbage til supportsag
+      desc: 'Optag og del skærmoptagelser på supportsager, fora og løsningsartikler.'
+      agent_ticket:
+        placeholder: 'Supportsag#'
+        back_to_page: Tilbage til supportsag
+      helptext: >-
+        <h4>Ilos-integration til Freshdesk</h4><p><br/>Indsæt administrator
+        API-nøglen for din Ilos-konto. Denne konto vil eje alle videoerne som
+        agenter og kunder opretter, ved brug af denne
+        integration.</br>Administrer adgang til Ilos-optagelsesknappen for
+        agenter og kunder på supportsagerne, fora eller siderne for
+        løsningsartikler.</p>
+      solution:
+        placeholder: 'Artikel#'
+        back_to_page: Tilbage til artiklen
     logmein:
       desc: >-
         Giv øjeblikkelig fjernsupport til dine kunder og medarbejdere med
@@ -3871,16 +5716,44 @@ da:
       desc: >-
         Eksporter kundeinformasjon, administrer eksisterende abonnementer og få
         innsikt angående brukernes bruksstatistikk rett i Freshdesk.
+      helptext: >-
+        <h4>Hjelp til integrasjon av iContact</h4><br/> For å integrerre med
+        iContact, går du til <a target='_blank'
+        href='https://app.icontact.com/icp/core/externallogin'>https://app.icontact.com/icp/core/externallogin</a>
+        og gir tilgang til Freshdesk-appen ved å legge inn nedenstående
+        applapplApplication ID
+        <br/><br/><b>qB7RYQgliAPwl5dwezYF0kAN4Islhj4e</b><br/><br/> Velg et
+        passord og klikk på &quot;Save&quot;. Dette API-passordet vil brukes for
+        alle API-forespørsler fra Freshdesk. <br/><br/> Kopier API-URL fra delen
+        &quot;Kontoinformasjon&quot; og lim den inn i API-URL-feltet her. Legg
+        inn ditt iContact brukernavn og den nye API-passordet, og klikk
+        oppdater. 
     dynamics_v2:
       form:
         username: Brugernavn
         password: Passord
+        freshdesk_to_crm: Fra Freshdesk til Dynamics
+        dynamics_v2_settings: Dynamics-indstillinger
+        crm_to_freshdesk: Fra Dynamics To Freshdesk
+        opportunity_settings: >-
+          Agenter kan oprette/forbinde eller fjerne forbindelse for muligheder
+          fra supportsagen
+        site_url: Side-URL
+      desc: >-
+        Du kan synkronisere kontakt- og kontooplysninger mellem Dynamics CRM og
+        Freshdesk.
+      helptext: >-
+        <h4>Dynamics Plus</h4><p><br/>For instruktioner og retningslinjer om
+        konfigurering af Dynamics-synkronisering, bedes du læse <a
+        href='https://support.freshdesk.com/solution/articles/224667-the-dynamics-crm-v2-app'
+        target='_blank'>artiklen Dynamics Plus-app</a>. </p>
     remote_login:
       freshdesk_url: Freshdesk URL-adresse
       new_to_freshdesk: 'Ny på Freshdesk? '
       freshdesk_api_key: Freshdesk API-nøkkel
       api_key_available: 'Du finner API-nøkkelen under profilinnstillinger i Freshdesk-kontoen '
       sign_up: Registrer deg
+      connect: Opret forbindelse
     five9:
       desc: >-
         Ring ut og motta samtaler, registrer samtaledetaljene og logg dem på en
@@ -3894,6 +5767,29 @@ da:
       desc: >-
         Vis detaljer om QuickBooks-kunder og opprett/oppdater
         tidsplansoppføringer for kunder i din QuickBooks-konto.
+      form:
+        quickbooks_note: Bemærkninger tekst
+        quickbooks_note_info: >-
+          Denne tekst tilføjes i begyndelsen af noten med den logfilen over
+          brugt tid.
+        timeactivity: Tillad agenter at logge tidsindtastning i QuickBooks
+        invoices: Agenter kan se fakturaer
+        invoice_option: 'Vis kommercielle oplysninger såsom kurs, beløb og total'
+      connect_text: >-
+        Tilslutning til QuickBooks gør det lettere for dine agenter at få adgang
+        til og opdatere data i softwaren, direkte fra din helpdesk.
+      helptext: >-
+        <h4>QuickBooks-integration</h4><p><br/>Vælg om du vil have agenter til
+        at logge tidshæfteindtastninger til QuickBooks. Du kan også ændre
+        standardbeskrivelsen der tilføjes for hver
+        tidshæfteindtastning.</p><p>Vælg om du vil have agenter til at se
+        QuickBooks-fakturaer. Hvis det er nødvendigt, kan du begrænse agenter
+        fra at se kommercielle oplysninger på en faktura, såsom "Faktureret
+        beløb", "Forfaldent beløb" og "Pris pr. enhed".</p><p>Når integrationen
+        er aktiveret, vises kundeoplysninger fra QuickBooks på supportsager og
+        kontaktsiden, hvis et match findes baseret på 1. Virksomhedsnavn eller
+        2. Anmodermail</p><p>Baseret på ovenstående match, kan agenter også se
+        de seneste fem fakturaer på supportsagssiden.</p>
     marketplace_login:
       admin_credentials:
         link_your_helpdesk: Koble din kundestøtte
@@ -3973,6 +5869,12 @@ da:
           , indtast <strong> http://mycompany.xyz/sugar </strong><br /><br />
           Bemærk: Den fysiske variant af SugarCRM skal være forbundet til
           internettet. </span>
+        sugarcrm_settings: SugarCRM-indstillinger
+        lead: Ledefelt
+        error: >-
+          Kan ikke oprette forbindelse til SugarCRM. Prøv venligst efter nogen
+          tid.
+        account: Kontofelter
       helptext: >-
         <h4>Sugar CRM Integration Hjælp</h4><p><br/> Du kan få adgang til din
         SugarCRM kontaktinformation i Freshdesk billetten & kontaktsiderne. <br
@@ -3998,11 +5900,20 @@ da:
       info2: 'Når billet status opdateres i Freshdesk '
       send_reply_in_fd: Underret kunde via e-mail
       add_public_note_in_fd: Tilføj en offentlig bemærkning i Freshdesk.
+      add_attachments_in_jira: Ekskludér supportsagsvedhæftede filer under synkronisering
     applications:
       crm:
         mapping:
           company: Firmanavn
           contact: Kontakt
+          freshdesk_contact_fields: ' Freshdesk-kontaktfelter '
+          freshdesk_company_fields: ' Freshdesk-virksomhedsfelter '
+          contact_fields: ' Kontaktfelter '
+          account_fields: ' Kontofelter '
+          sync: ' Synkronisering '
+      contacts_sync:
+        outlook_contact_sync: ' Outlook-kontaktsynkronisering '
+        resolve_the_errors: Løs venligst fejlene i formularen før du fortsætter!!
     mailchimp:
       desc: >-
         Legg til MailChimp til Freshdesk og begynn å administrere abonnementer,
@@ -4016,6 +5927,10 @@ da:
           <strong>https://my_shop_name.shopify.com</strong> skriver du
           <strong>my_shop_name</strong>.
         shop_name: Butikknavn
+        shop_name_info_mint: >-
+          Hvis det er <b>dinbutik.myshopify.com</b>, skal du bare skrive
+          <b>dinbutik</b> her.
+        shop_name_mint: Butiks-URL
       helptext: >-
         <h4>Shopify-integrering</h4><br/><p>Konfigurer ditt butikknavn for se
         kundens siste bestillinger i Freshdesk. Du vil bli videresendt til din
@@ -4026,6 +5941,31 @@ da:
       desc: >-
         Se de siste bestillinger og bestillingsdetaljer for kunden i Freshdesk
         mens du løser saker
+      edit:
+        sidebar: >-
+          <p>Forbind flere Shopify-butikker og begynd at se dine kunders
+          ordreroplysninger i Freshdesk. Du kan endda refundere eller annullere
+          ordrer fra Freshdesk.<br /><br />Hvis du har den gamle version af
+          Freshdesk, vil det kun være ordrer fra den første butik du har
+          forbundet, der vil være synlige. På Freshdesk Mint kan du se
+          ordreoplysninger fra enhver butik du arbejder med supportsager
+          for.</p><p><a
+          href="https://support.freshdesk.com/support/solutions/articles/195382-the-shopify-app"
+          target="_blank">Lær mere</a></p>
+        label: Shopify - forbundne butikker
+        sidebar_label: Shopify for Freshdesk
+        confirm_remove_store: 'Er du sikker på, at du vil afbryde forbindelsen til denne butik?'
+        connect: Forbind en anden butik
+        desc: >-
+          Forbind din Shopify-butik, så du nemt kan se ordrer og behandle
+          refunderinger fra Freshdesk
+        helpkit_cannot_edit: >-
+          Hvis du ønsker at fjerne forbindelsen til din eksisterende butik, skal
+          du afinstallere og geninstallere Shopify-appen fra markedspladsen.
+          Hvis du vil administrere flere butikker, bedes du skrifte til
+          Mint-oplevelsen.
+        disconnect: Afbryd forbindelse
+      title_mint: Tilslut din Shopify-butik
     dynamicscrm:
       form:
         login_url: >-
@@ -4074,6 +6014,13 @@ da:
         domain_info: >-
           Bruk superadmins office 365-bruker-ID som name@company.onmicrosoft.com
           i tilfelle på forespørsel.
+        lead: Ledefelt
+        region: Region
+        account: Kontofelter
+        organization_name_info: >-
+          For å finne dette går du til Dynamics CRM Settings -> Customizations
+          -> DeveloperResources -> Your Organization Information -> Organization
+          Unique Name.
       desc: Du kan se kontaktinformasjon fra Dynamics CRM i Freshdesk.
       helptext: >-
         <h4>Dynamics CRM integrasjonshjelp</h4><p><br/> Når du aktiverer denne
@@ -4088,11 +6035,38 @@ da:
         cancel: Annuller
         subject: Emne
         create: Opret
+        requester: Forespørgers navn
+        do_not_link: Tilknyt ikke
+        link_to_ticket: Tilknyt denne supportsag
+        call_actions: Opkaldshandlinger
+        new_ticket_with_id: Ny supportsag oprettet med id
+        link_to_new_ticket: Tilknyt til ny supportsag
+        add_note_to_ticket: Tilføj note til supportsag
+        agent_phone_details: Telefonoplysninger for agent
+        add_note_text: Opkaldsnoter
+        agent_phone_updated: Telefonoplysninger for agent opdateret
+        recent_tickets: Nylige supportsager
+        ticket_reference_id: Opkaldsreference-id
     dropbox:
       form:
         app_key: Registreret Application key til dit domæne
         app_key_info: Opret en app i dropbox og indsæt app nøglen her.
       desc: Vedhæft og dele dine data / filer fra DropBox.
+      helptext: >-
+        <h4>Hjelp til integrasjon av Dropbox</h4><p><br/>Integrasjon av Dropbox
+        lar agenter og brukere lete etter filer fra deres Dropbox-mappe og dele
+        dem ved innlevering av eller svar på sak i Freshdesk. En direktelenke
+        til filen lagres i saken, som betyr at behovet for restriksjoner på
+        vedlegg og e-post forsvinner.</p><p>Før du setter opp integrasjonen, går
+        du til <strong><a href='https://www.dropbox.com/developers/apps'
+        target='_blank' alt='developers'>Dropbox'
+        utviklerside</a></strong>.</p><p>1. Klikk linken “Create an app” fra
+        delen "My Apps".</p><p>2. Velg app-typen som "Chooser".</p><p>3. Legg
+        inn navn og beskrivelse.</p><p>4. Skriv inn din kundeservice-URL under
+        Domains <i>(f.eks. yourcompany.freshdesk.com)</i></p><p>5. Klikk på
+        opprett-knappen.</p><p>Til slutt limer du Applikasjon-nøkkelen til den
+        nye appen inn i den siden, og lagre endringer. Din Dropbox Chooser skal
+        nå være klar. Du kan se den i det nye sakskjemaet.</p>
     freshbooks:
       form:
         api_url_info: >-
@@ -4105,6 +6079,9 @@ da:
         freshbooks_note: Bemærkninger tekst
         api_url: API url
         widget_title: Widget Titel
+        timeactivity: Lad agenter logge tidsindtastninger i FreshBooks
+        invoices: Agenter kan se fakturaer
+        invoice_option: 'Vis kommercielle oplysninger såsom omkostninger, beløb og total'
       desc: >-
         Du kan logge tid brugt på billetter i dine FreshBooks projekter og
         opgaver.
@@ -4124,20 +6101,48 @@ da:
       filter:
         priority: Prioritet
         all: Alle
+        status: Status
       submit: Send
       social:
         description: Beskrivelse
         convert_to_ticket: Konverter til billet
         requester: Anmoder
+        facebook_name: Anmoders Facebook-navn
+        already_converted: Denne meddelelse er allerede konverteret til en supportsag
+        twitter_handles: Anmoders twitternavne
+        twitter_limit_exceed: Du har overskredet Twitters tegngrænse. Du skal ændre dit svar.
+        successfully_converted: Supportsagen blev oprettet
       login:
         password: Passord
         email: E-post
       header:
         reply: Svar
+        try_again: Prøv igen
+      no_ticket_msg: Du har ingen supportsager for dette filtervalg
+      signup_message: Ikke en Freshdesk-kunde endnu? Tilmeld dig
+      domain:
+        continue_to_login: Fortsæt til Login
+        domain_message: Indtast URL til helpdesk
+        domain_error: Kunne ikke godkende Freshdesk-domæne
+      agent_error: Du skal være agent for at se supportsagerne
+      cc_bcc: Cc/Bcc
+      search:
+        ticket_id: Supportsags-id
+        placeholder_keyword: Søg i supportsager efter nøgleord
+        keyword: Nøgleord
+        placeholder_ticket_id: Søg i supportsager med supportsags-id
     infusionsoft:
       form:
         contact: Kontaktfelter
         select: Vælg en mulighed
+        infusionsoft_settings: Infusionsoft-indstillinger
+        account: Kontofelter
+      desc: Du kan se kontaktoplysninger fra Infusionsoft CRM i Freshdesk.
+      helptext: >-
+        <h4>Infusionsoft-integration</h4><p><br/>Vælg listen over felter der
+        skal vises i infusionsoft-widget. Du kan vælge maks. 10
+        felter.</p><p><strong>Bemærk:</strong><br/>Fornavn og Virksomhed er
+        standardfelterne og kan ikke fjernes.</p>
     box:
       desc: Legg til og del dine data/filer fra Box.
       helptext: >-
@@ -4304,6 +6309,7 @@ da:
         mail_box_detail: Synkroniser med
         import_group: Vælg grupper til at importere (valgfrit)
         import_title: Google-kontakter import indstilling
+      no_status: Ikke tilgængelig
     batchbook:
       form:
         api_key: API nøgle
@@ -4333,6 +6339,13 @@ da:
       phone:
         save: Gem
         cancel: Annuller
+        add_number: Tilføj nummer
+        number_not_in_use: Ikke i brug
+        add_number_tooltip: Hver række må kun indeholde ét tal
+        title: Helpdesk-numre
+        delete_number: Bekræft venligst
+        delete_msg: 'Er du sikker på, at du vil slette dette nummer?'
+        number_in_use: Numre i brug
       ctd:
         api_key: API nøkkel
         callback_url: URL-adresse for tilbakeringing
@@ -4343,6 +6356,27 @@ da:
         content: Innhold
         password: Passord
         have_user_pass: Har jeg brukernavn og passord?
+        req_authentication: Kræv godkendelse
+      save_agent_private_note: Gem opkaldsnoter som private
+      ctd_toggle: Konfigurer Click to Dial
+      softfone:
+        max_dimension: Maks. 550px &times; 250px
+        width: Bredde
+        height: Højde
+        url: URL for Iframe
+      desc: Foren din telefonoplevelse i Freshdesk
+      title: CTI-indstillinger
+      iframe_toggle: Aktivér Softphone-Iframe
+      helptext: >-
+        <p>Integrér dit telefonsystem med din online-helpdesk ved hjælp af
+        Freshdesks CTI-frameworket. Med vores nemme dokumentation og ligetil
+        API'er bliver tilknytningen af din online-helpdesk og et telefonsystem
+        så let som ingenting.</p><p>Når du er færdig med at konfigurere din
+        adapter med vores helpdesk, vil dine supportagenter kunne ringe/modtage
+        opkald, få adgang til kundeoplysninger, tage noter under opkald og
+        opretholde kontekst for at give fantastisk kundesupport.</p><p><a href='
+        https://support.freshdesk.com/solution/articles/221418-computer-telephony-integration-framework'>
+        Lær mere </a>
     native_integrations: Tilhørende Integrationer
     custom_application:
       script: Skript
@@ -4356,8 +6390,13 @@ da:
       desc: >-
         Du kan tilføje en brugerdefineret widget til at vise detaljer ved hjælp
         af dit egen brugerdefinerede script.
+      get_custom_apps: Hent tilpassede apps
+      edit_custom_app: Redigér tilpasset app
+      new_custom_app: Ny tilpasset app
     github_settings:
       resolved: Løst
+      none: Gør intet
+      closed: Lukket
     workflow_max:
       desc: >-
         Du kan logge tid brugt på billetterne til din Workflow Max jobs og
@@ -4397,13 +6436,43 @@ da:
       desc: >-
         Du kan opprette en ny faktura for den registrerte tiden mot saken og se
         de siste fakturaene med lenker som skal modifiseres i Xero
+      form:
+        xero_settings: 'Organisationsnavn:'
+        accounts: Diagram over kontovalg (indtægter)
+        default_desc: Standardbeskrivelse for fakturaartikel
+        inventory_items: Valg af lagerbeholdning
+      helptext: >-
+        <h4>Integrationsmuligheder for Xero</h4><br><P>Vælg Xero-kontonavnene
+        under kontonheaderen 'Indtægter', som agenter kan tilgå når de opretter
+        fakturaer. Salg er som standard tilgængelig. Hvis der ikke findes Salg,
+        indstilles det første tilgængelige kontonavn som standard.</p><p>Du kan
+        også vælge Xero-lagerartikler som agenter kan knytte timesedelposter
+        til, når de opretter faktura-linjeposter.</p><p>Der kan vælges maksimalt
+        20 kontonavne og 30 lagerartikler.</p>
     magento:
       form:
         shop_name: Butikknavn
         product: Produkt
+        admin_url_info: 'For eksempel <strong>https://my_shop_name.com/admin</strong>.'
+        remove_shop: Fjern denne butik
+        invalid_shop_url: Den indtastede Butiks-URL er ugyldig.
+        consumer_secret: Forbrugerhemmelighed
+        add_shop: + Tilføj butik
+        admin_url: Administrator-URL
+        shop_url: Butiks-URL
+        shop_url_info: 'For eksempel <strong>https://my_shop_name.com</strong>.'
+        invalid_admin_url: Den angivne administrator-URL er ugyldig.
+        consumer_key: Forbrugernøgle
       desc: >-
         Se de siste bestillinger og bestillingsdetaljer for kunden i Freshdesk
         mens du løser saker
+      helptext: >-
+        <h4>Magneto-integration</h4><br/><p>Konfigurer dit butiksnavn for at
+        vise kundens seneste ordrer i Freshdesk. Du bliver omstillet til din
+        Magento-butik for at godkende Freshdesk. Når Freshdesk er godkendt, kan
+        du se kundens seneste ordrer og ordreoplysninger på siden med
+        supportsagsoplysninger. Du kan hurtigt få adgang til oplysningerne i
+        Magento med et enkelt klik på dit widget.</p>
     surveymonkey:
       edit_form:
         send_while_title: >-
@@ -4451,6 +6520,12 @@ da:
         select: Vælg en mulighed
         contact: Kontaktfelter
         salesforce_settings: Salesforce Indstillinger
+        opportunity: Mulighedsfelter
+        lead: Ledefelt
+        opportunity_settings: >-
+          Agenter kan oprette/forbinde eller fjerne forbindelse for muligheder
+          fra supportsagen
+        account: Kontofelter
       desc: You can view contact information from Salesforce in Freshdesk.
       helptext: >-
         <h4>Salesforce-integrering</h4><p><br/>Velg listen over felter som skal
@@ -4471,6 +6546,27 @@ da:
         auth_token: Autentificeringstoken
         select: Vælg en mulighed
         contact: Kontaktfelter
+        deal: Aftalefelter
+        lead: Ledefelt
+        error: 'Bekræft dine indstillinger, og prøv igen'
+        deal_settings: >-
+          Agenter kan oprette/linke eller fjerne link fra aftaler fra
+          supportsagen
+        freshsales_settings: Freshsales-indstillinger
+        auth_token_info: Indtast din godkendelsestoken
+        domain: Kontodomæne
+        account: Kontofelter
+        domain_info: >-
+          Indtast dit Freshsales-domæne uden https. Eksempel:
+          eksempel.freshsales.io
+      helptext: >-
+        <h4>Hjælp til integration af Freshsales</h4><p><br/> Når du har
+        aktiveret denne integration, kan dine agenter få adgang til Freshsales
+        kontaktoplysninger inde på Freshdesk supportsags- og kontaktsider. <br
+        /><br /> Bemærk at dine agenter kun kan se de felter, der er
+        konfigureret af dig på indstillingssiden, og søgefunktionen er baseret
+        på e-mailadressemapning.
+      desc: Du kan se kontaktoplysninger fra Freshsales i Freshdesk.
     czentrix:
       desc: >-
         Besvare anrop eller automatisk starte en utgående samtale med de
@@ -4502,7 +6598,30 @@ da:
         jira_status_sync: 'For enhver ændring i JIRA emnestatus %{dropdown}'
         add_jira_comment: Tilføj det som en kommentar i JIRA.
         jira_status_sync_update_field: Opdater Freshdesk statusfelt.
+        domain_info: >-
+          Indtast den komplette JIRA konto URL med https/http. Fx.
+          https://example.atlassian.net. <br /><span class='italics'> Bemærk: De
+          fysiske varianter af JIRA bør udsættes for internettet. </span>
       desc: 'Konverter billetter til emner, der kan spores i JIRA.'
+      helptext: >-
+        <h4>Hjælp til JIRA-integration</h4><p><br/>For at integrere JIRA med
+        Freshdesk skal du indtaste dit JIRA administratorbrugernavn og
+        -adgangskode. Integrationen understøtter både on-demand og integrerede
+        varianter fra JIRA 4.2 til den nyeste version - JIRA 5.<br/><br/> For at
+        oprette et problem eller forbinde til et eksisterende problem fra
+        Freshdesk, skal du navigere til siden med supportsager og klikke på <i
+        class='integrations-jira vertical-alignment'></i><br/><br/> For at se
+        oplysninger om dine tilknyttede Freshdesk-supportsager i JIRA og
+        omvendt, for at se JIRA-problemoplysninger på Freshdesk, det anbefales
+        at JIRA-administratoren opretter et tilpasset frit tekstfelt med navnet
+        &quot;Freshdesk-supportsager&quot; som beskrevet nedenfor. <br/><br/>Log
+        på din JIRA-konto, klik på <b>Administration</b>, navigér til
+        <b>problemer</b> -> <b>felter</b> og klik på <b>Tilføj tilpasset
+        felt</b>. På skærmbilledet <b>Opret tilpasset felt</b> skal du vælge <b>
+        Frit tekstfelt </b> og klikke på <b>Næste</b>. Skriv
+        <b>&quot;Freshdesk-supportsager&quot;</b> i feltnavn og klik på Udfør.
+        Afkryds alle afkrydsningsfelter på siden <b>tilknyt felt til
+        skærmbillede</b> og klik på 'Opdatér'.<br/><br/>
     pivotal_tracker:
       helptext: >-
         <h4>Integreringshjelp for Pivotal Tracker</h4><br/><p>Pivotal Tracker er
@@ -4516,6 +6635,7 @@ da:
         Tracker-kontoen og API-token for å aktivere integreringen. API-token
         finner du på profilsiden i din Pivotal Tracker-konto.</p>
       desc: Lag historier i Pivotal Tracker og spor dem internt i freshdesk
+      label: Pivotal Tracker
     harvest:
       desc: Du kan logge tid brugt på billetter i dine Harvest projekter og opgaver.
       form:
@@ -4564,6 +6684,19 @@ da:
         sync_tag: Synk. Indstillinger
         submit: Importer & Aktiver
         overwrite_existing_user: Overskriv eksisterende kontaktoplysninger i Freshdesk
+        sync_tag_info: >-
+          Brug af det samme synkroniseringstags på tværs af flere Outlook-konti,
+          giver dig mulighed for at dele Freshdesk-kontakter med alle konti.
+          Hvis du ikke vil synkronisere nogen kontakter med Outlook, kan du lade
+          det være tomt.
+        title: Indstillinger for synkronisering af Outlook-kontakter
+        account_not_configured: >-
+          <br/>Outlook-kontoindstillinger er endnu ikke konfigureret. Klik på
+          'Synkronisér ny konto' for at konfigurere ny konto med
+          Outlook.<br/><br/>
+        sync_group_info: >-
+          En ny kontaktgruppe <strong>"%{group_name}"</strong> oprettes på din
+          Outlook-konto til synkronisering af kontakter.
       edit_form:
         account: Konto
         edit_account: Rediger
@@ -4573,6 +6706,20 @@ da:
         delete_account: Slet
         last_sync_time: Sidste synkronisering tid
         syncing_in_progress: Synkronisering i gang
+      desc: Synkroniser jævnligt kontakter mellem Outlook og Freshdesk.
+      sync_settings:
+        outlook_fields: Outlook-felter
+        freshdesk_fields: Freshdesk-felter
+      helptext: >-
+        <h4>Hjælp til opsætning af Outlook-kontaktsynkronisering</h4><p><br/>
+        Klik på <b>'Synkronisér ny konto'</b> for at tilføje en ny Outlook-konto
+        til synkronisering. Når du bliver bedt om det, skal du give tilladelse
+        til at Freshdesk må bruge Outlook-kontakter (indtast dit
+        Outlook-brugernavn og -adgangskode, hvis du bliver bedt om
+        det).<br/><br/>Du kan slette en konto, hvis du ikke ønsker at
+        synkronisere med den konto længere.<br/><br/><b>Bemærk:</b> Det
+        anbefales, at du udfører og gemmer en sikkerhedskopi af dine
+        Outlook-kontakter, før du begynder at synkronisere.
     zohocrm:
       desc: Du kan se kontakt information fra Zoho CRM i Freshdesk.
       form:
@@ -4582,10 +6729,221 @@ da:
           target='_blank'>Generer autorisasjonstokenet</a> i Zoho CRM gjennom
           nettlesermodus og limer inn det genererte autorisasjonstokenet her.
         api_key: Autentiseringstoken
+      helptext: >-
+        <h4>Hjælp til integration af Zoho CRM</h4><p><br/>For at integrere Zoho
+        CRM med Freshdesk, <a
+        href='http://www.zoho.com/crm/help/api/using-authentication-token.html#Generate_Auth_Token'
+        target='_blank'>skal du generere en bekræftelsestoken</a> i Zoho CRM,
+        gennem browsertilstand og indsætte den genererede bekræftelsestoken her.
+        Hvis du allerede har genereret en bekræftelsestoken, kan du hente den
+        fra <a href='https://accounts.zoho.com/u/h#setting/authtoken'
+        target='_blank'>din kontoside.</a> <br/><br/>Når det er gjort, kan du se
+        kontaktoplysningerne på enhver supportsag eller kontaktvisning.</p>
     cloud_elements:
       form:
         sync_info: Synkroniser kontakt og firma...
         contact: Kontaktfelter
+        field_visibility: Feltsynlighed
+        source_of_truth: Masterkilde for data
+        lead: Ledefelt
+        daily: Daglig
+        account: Kontofelter
+        sync_frequency: Synkroniseringsfrekvens
+        order: Ordrefelter
+        two_way: Tovejs-synkronisering
+        contract: Kontaktfelter
+        field_mapping: Feltmapning
+        opportunity: Mulighedsfelter
+        sync_settings: Synkroniseringsindstillinger
+        instant: 30 minutter én gang
+        opportunity_settings: >-
+          Agenter kan oprette/forbinde eller fjerne forbindelse for muligheder
+          fra supportsagen
+        hourly: Hver time
+      mail:
+        no_data_found: Ingen data fundet
+        no_event: Ingen begivenheder i dag
+    github:
+      helptext: >-
+        <h4>Hjælp til GitHub-integration</h4><p><br/>Vælg alle de GitHub-mapper
+        under din organisation der skal bruges til at spore problemer, som
+        oprettes af Freshdesk-agenter. Denne handling bør kun foretages af en
+        <b>organisationsejerkonto</b>.<br/><br/>Hvis det er nødvendigt, bedes du
+        afkrydse muligheden der indstiller GitHub-problemlabelet til at matche
+        Freshdesk-supportsagstypen, når et nyt GItHub problem
+        oprettes.<br/><br/>Du kan indstille en ønsket status for
+        Freshdesk-supportsagen, når det respektive GitHub-problem lukkes. Denne
+        indstilling anvendes til den primære Freshdesk-supportsag, som er
+        forbundet til GitHub-problemet. En primær Freshdesk-supportsag
+        indstilles når to eller flere supportsager forbindes til det samme
+        GitHub-problem.<br/><br/>Vælg de passende indstillinger for de
+        synkroniseringsknapper der administrere synkroniseringen af beskeder
+        mellem Freshdesk-supportsager og GitHub-problemer. Beskeder
+        synkroniseres mellem den primære Freshdesk-supportsag og det forbundne
+        GitHub-problem.<br/><br/>Hvis indstillingen aktiveres, vil alle
+        Freshdesk-supportsager have et GitHub.widget på supportsagssiden, som
+        giver dig mulighed for at forbinde supportsager til
+        GitHub-problemer.</p>
+      desc: 'Konvertér supportsager til problemer, som kan spores i GitHub.'
+    ticket_summary:
+      desc: >-
+        Opret og del en opsummering af problemer, som kunder står overfor, når
+        du arbejder på supportsager.
+    shared_ownership:
+      desc: >-
+        Få forbedret agentsynlighed over supportsager, som kræver assistance fra
+        specialiserede teams, med muligheden for at dele supportsager mellem
+        agenter.
+    google_drive:
+      desc: Vedhæft og del dine data/filer fra GoogleDrive.
+      form:
+        developer_key: API-nøgle hentet fra Googles udviklerkonsol.
+        client_id: OAuth-klient-for dit domæne
+      helptext: >-
+        <h4>Hjælp til Google Drev-integration</h4><br/><p>Google
+        Drev-integrationen lader agenter og brugere gennemse filer fra deres
+        Google Drev-mappe, og dele dem når de indsender eller svarer på en
+        supportsag i Freshdesk. Et direkte link til filen deles på supportsagen,
+        som fjerner behovet for vedhæftede filer og begrænsninger i
+        e-mailstørrelser.</p><p>Før du opsætter integrationen, skal du gå til <a
+        target='_blank' href='https://console.developers.google.com/'><b>Googles
+        udviklerside</b></a>.</p><p>1. Vælg <b>Opret dit projekt</b> under
+        sektionen <b>API & tjenester</b>.</p><p>2. Under <b>Aktivering af API'er
+        og tjenester</b>, skal du aktivere <b>Google Drev API og Google Picker
+        API</b>.</p><p>3. Under <b>Loginoplysningssektionen</b> skal du oprette
+        dit OAuth klient-ID samt en API-nøgle. Når du opretter et OAuth
+        klient-ID, skal du indtaste Freshdesk-URL'en under sektionen for
+        Bekræftet Javascript-oprindelse. </p><p>4. <p>Til sidst skal du kopiere
+        og indsætte Klient-ID'et og AP-nøglen på denne side, og gemme dine
+        ændringer. Din vælger til Google Drev bør nu være klar. Du kan se den i
+        den nye supportsagsformular.</p>
+    link_ticket:
+      desc: >-
+        Administrer og spor relaterede supportsager sammen, for at sikre at
+        opdateringer leveres på en hurtig, ensartet og effektiv måde.
+    parent_child:
+      desc: >-
+        Supportsager med under-/overenheder hjælper agenter med at løse
+        problemer hurtigere og mere effektivt, ved at opdele handlingsartikler i
+        undersupportsager, som kan bearbejdes uafhængigt af forskellige teams på
+        samme tid.
+    custom_apps:
+      ticket_detail_page: Side for oplysninger om supportsager
+      preview_helptext: Denne tilpassede app vises i sidepanelet
+      hide_preview: Skjul forhåndsvisning
+      custom_app_used_in: Tilasset app vist på
+      contact_detail_page: Side for oplysninger om kontakt
+      refresh: Opdater
+      show_preview: Vis forhåndsvisning
+      custom_app_preview: Tilpasset appforhåndsvisning
+    microsoft_teams:
+      teams_connect_desc: Dette forbinder din Freshdesk-konto med Microsoft Teams.
+      teams_prof_label: Forbind til Microsoft Teams
+      desc: >-
+        Modtag underretninger for opdateringer til Freshdesk-supportsager og
+        -noter.
+      reauth_btn: Godkendt igen
+      auth_btn: Godkend
+    onedrive_mint:
+      form:
+        application_id: OneDrive-applikations-id til din Freshdesk-konto
+      desc: Vedhæft og del dine data/filer fra OneDrive.
+    uninstall: Afinstallér
+    slack_v3:
+      slack_reauth_btn: Godkend Slack igen
+      slack_prof_label: Forbind til Slack
+      slack_connect_desc: Konfigurer din konto til at oprette Slack-supportsager fra Slack
+      slack_auth_btn: Godkend Slack
+    knowlarity:
+      desc: Flet problemfrit din Knowlarity om opkaldssupport med din Freshdesk
+      helptext: >-
+        <h4>Hjælp til integration af Knowlarity</h4><p><br/>Du kan konfigurere
+        denne integration ved at indtaste dit Knowlarity-nummer og
+        API-nøgle.</p><p>Når den er aktiveret, kan du se telefonikonet i bunden
+        af siden.</p>
+    google_hangout_chat:
+      desc: >-
+        Modtag underretninger for opdateringer til Freshdesk-supportsager og
+        -noter.
+    office365:
+      desc: >-
+        Office 365-appen til Freshdesk giver dig mulighed for at udføre
+        supportsagshandlinger fra Outlook, som inkluderer prioriteretsændring,
+        agenttildeling, statusændring osv
+      helptext: <h4>Office 365</h4>
+    salesforce_v2:
+      form:
+        salesforce_v2_settings: Salesforce Indstillinger
+        crm_to_freshdesk: Fra Salesforce til Freshdesk
+        ticket_sync: Synkronisér supportsager til Salesforce
+        freshdesk_to_crm: Fra Freshdesk til Salesforce
+      helptext: >-
+        <h4>Salesforce Plus</h4><p><br/>For instruktioner og retningslinjer til
+        konfigurationsindstillinger for Salesforce-synkronisering, skal du læse
+        <a
+        href='https://support.freshdesk.com/solution/articles/224042-the-salesforce-app-for-v2'
+        target='_blank'>artiklen Salesforce Plus-app</a>. </p>
+      desc: >-
+        Du kan synkronisere kontakt- og kontooplysninger mellem Salesforce CRM
+        og Freshdesk.
+    fullcontact:
+      form:
+        api_key: FullContact API-nøgle
+      desc: >-
+        Automatisér berigelse af kontaktdata for nye kontakter, og opdatér
+        uaktuelle kontaktoplysninger efter behov
+      helptext: >-
+        <h4>Virksomhedsindstillinger</h4><br/>Virksomhedsdata hentes fra
+        FullContact og opdateres på din Freshdesk, hvis der oprettes en
+        virksomhed, eller når et virksomhedsdomæne opdateres på din helpdesk. Du
+        kan hente op til 6 felter fra FullContact, som opdateres
+        Freshdesk.<br/><br/><h4>Kontakterindstillinger</h4><br/>Kontaktdata
+        hentes fra FullContact og opdateres på din Freshdesk, når der oprettes
+        en kontaktperson på din helpdesk. Eksisterende Freshdesk-data
+        overskrives ikke. Du kan vælge højst fem sociale profiler.<br/><br/>For
+        at gemme FullContact-data, oprettes en standardmapping i Freshdesk. Til
+        placeringer og sociale profiler skal du oprette nye tilpassede kolonner.
+        Administratoren kan om nødvendigt ændre eller slette mapninger af et
+        FullContact-dataelement til enhver tid.
+    slack_v2:
+      helptext: >-
+        <h4>Slack-integration</h4><br><p>Vælg listen over offentlige kanaler og
+        private grupper, som du vil gøre tilgængelig for Freshdesks Dispatch'r
+        og Observer. Når du opretter automatiseringsregler, kan du angive
+        hvilken kanal, du vil skubbe beskeder til. </p>
+      desc: Hold dig ajour med din Freshdesk on Slack.
+      form:
+        access_private_channel: Tillad adgang til private kanaler
+        access_public_channel: Tillad adgang til offentlige kanaler
+        allow_dm_agent: Tillad DM til agent
+        allow_slash_command: >-
+          Tillad Skråstregskommando (<a
+          href='https://support.freshdesk.com/support/solutions/articles/206103'
+          target='_blank'> Konverter Slack DM til Freshdesk-supportsag</a>)
+        slash_command_token: Token for Skråstregskommando
+        slack_v2_settings: Slack-indstillinger
+    onedrive:
+      deprecated_title: OneDrive-app blev udfaset
+      desc: Vedhæft og del dine data/filer fra OneDrive.
+      deprecated_message: >-
+        OneDrive understøttes ikke længere i den klassiske version af Freshdesk.
+        Skift til <a
+        href='https://support.freshdesk.com/support/solutions/articles/229464'
+        target='_blank'>Mint-oplevelse</a> og installer den nye app, for at
+        fortsætte med at bruge OneDrive.
+    slack_msg:
+      update_notice: >-
+        Der er foretaget en opdatering til den aktuelle Slack-integration. Følg
+        denne <a
+        href='https://support.freshdesk.com/support/solutions/articles/206103'
+        target='_blank'>løsningsartikel</a>  for at se detaljerede trin om de
+        foretagne ændringer
+      deprecation_notice: >-
+        En ny udgave af Freshdesk Slack-appen er nu tilgængelig. Denne version
+        er nu forældet. Følg denne <a
+        href='https://support.freshdesk.com/support/solutions/articles/206103'
+        target='_blank'>løsningsartikel</a>  for detaljerede trin om, hvordan
+        man migrerer til den nye implementering.
   chatwidget_help_content:
     title: Chat indstillinger
     info1: >-
@@ -4600,12 +6958,15 @@ da:
       er ferdig med en chat, kan du velge å konvertere samtalen til en sak og
       fortsette å følge opp den besøkende via e-post, eller du kan arkivere
       chatteutskriften.
+    info4: Hjælp mig med at opsætte livechat
   please_wait: Vent venligst
   close_this_ticket: Luk denne billet
   cancel_my_account: Annuller min konto
   search:
     by: 'på:'
     no_results_msg: Ingen resultater
+    in: i
+    searching: Søger
   created_on: Oprettet
   add_all: Legg til alle
   total_price: Total pris
@@ -4640,6 +7001,10 @@ da:
     new_support_ticket: Ny supportsag
     check_ticket_status: Status på supportsag
     submit_a_ticket: Opret supportsag
+    login: Log ind
+    assumed_text: Du har visning som
+    goto_customer_portal: Gå til kundeportal
+    goto_agent_portal: Agentportal
   left: Tilbage
   description: Beskrivelse
   solution:
@@ -4655,13 +7020,56 @@ da:
           For at forbedre identificerbarheden af dine artikler, så har du
           mulighed for at tilføje <b>sprogspecifikke meta-tags</b> til
           oversættelse af artiklen.
+        info1: >-
+          For hurtigt at oversætte dine artikler, skal du bruge indstillingen
+          <b> 'Vis master' </b> til at se en forhåndsvisning af artiklen på dens
+          primære sprog, mens du aktivt arbejder på et andet sprog.
+        title: Arbejder med oversættelse af artikler
+        info2: >-
+          Begynd at tilføje indhold sammen med <b> sprogspecifikke vedhæftede
+          filer </b> for at hjælpe dine kunder på et sprog, de forstår.
+      feedbacks:
+        title: Feedback på artikel
+        my_articles: På mine artikler
+        all_articles: På alle artikler
+      drafts:
+        title: Kladder
+        all: Alle udkast
+        me: Mine udkast
+      orphan_desc: Disse kategorier er ikke knyttet til nogen portal
+      view_less: Vis mindre
+      unassociated: Ikke-tilknyttede kategorier
     draft:
       portal:
         all: Alle
+      my_drafts: Mine udkast
+      name: Kladder
+      all_drafts: Alle udkast
+      last_saved_by: Sidst gemt d.
+      kbase: Vidensbasemail
     feedback_message_4: Manglende/brutt kobling
     general:
       mark_as_uptodate:
         text_1: Merk denne oversettelsen som oppdatert
+        text_2: i tilfælde af at du har ændret denne oversættelse
+      something_wrong: Noget gik galt!
+      article_prop: Artikelegenskaber
+      last_published: Senest udgivet af
+      created_by: Oprettet af
+      feedback: Feedback
+      update_complete: >-
+        <span class="muted"><i class="ficon-checkmark-round-o
+        fsize-20"></i>Gennemført</span>
+      mark_as_outdated:
+        text_2: i tilfælde af at du har ændret denne artikel
+        text_1: Markér andre oversættelser som forældede
+      outdating: >-
+        <span class="sloading loading-small"></span>Forældelse af andre
+        oversættelser
+      updating: <span class="sloading loading-small"></span>Opdatering af
+      unsaved_content: Du har ikke-gemt indhold på denne side.
+      leave_page_que: Vil du forlade denne side?
+      analytics: Analyse
     solution_meta: Meta tagger for søkemotorer
     articles:
       reset_rating:
@@ -4671,19 +7079,104 @@ da:
         dialog_submit: Nullstill
       prop_tabs:
         tag_fol: Etiketter og mapper
+        meta: meta
       search_all: Søk Artikler
+      translations: Oversættelser
+      show_all_analytics: Se analyser for alle sprog
+      draft:
+        unpublish:
+          msg: Fjern artiklen fra portalen
+      views: Visninger
+      check_translations: 'Sørg for, at kategorien og mappen er oversat til de krævede sprog'
+      tag_max_len: Maksimal nøglelængde
+      type: Artikeltype
+      votes: Stemmer
+      article_deleted: Denne artikel er blevet slettet.
+      enter_version_name: 'Indtast artikeltitel på %{language_name}'
+      add_primary_info: >-
+        Du kan ikke oprette andre sprogoversættelser <br />før du opretter
+        artiklen på %{primary_language}
+      view_draft: Forhåndsvis udkast
+      missing_translations:
+        title: Tilføj manglende oversættelse
+        permission_denied: >-
+          Ups! Du har ikke tilladelse til at administrere kategori/mappe.
+          Kontakt din administrator for at tilføje oversættelse.
     meta_keywords_message: Skill nøkkelord med komma
     folders:
       folder_form:
         category: Kategori
         visible_to: Synlig for
+        check_translations: 'Sørg for, at kategorien er oversat til de krævede sprog'
       new:
         new_folder: Ny mappe
+      view_all: Se alle mapper...
+      choose_folder: Vælg mappe
     title: Løsninger
     feedback_message_1: Trenger mer informasjon
     feedback_message_3: Unøyaktig/irrelevant innhold
     add_category: Ny Kategori
     solution_title: Titel
+    info17: >-
+      Artikler i <b>udkast</b> er kun synlige for agenter og vises kun i
+      søgeresultater for agenter.
+    kb: Vidensbase
+    unassociated_category_info: >-
+      Denne kategori er ikke synlig for dine brugere<br /> da den ikke er
+      knyttet til nogen portal
+    add_article: Ny artikel
+    via: via
+    tour_v2: Hjælp mig med at oprette min vidensbase
+    info30: >-
+      Hvis du bruger flere produkter, kan de kategorier du opretter, synliggøres
+      på deres respektive produktportaler.
+    info29: >-
+      Freshdesks vidensbase har et hierarki på 3 niveauer: <b>Kategori -> Mappe
+      -> Artikel </b>
+    categories:
+      visibility_help_text: 'Vælg de portaler, hvor denne kategori skal være synlig'
+    unassociated: Ikke-tilknyttet
+    show_languages: Vis sprog
+    add_folder: Ny mappe
+    manage_categories: Administrer kategorier
+    change_author: Ændr forfatter
+    info28: >-
+      En vidensbaseportal fungerer som et samlet sted for dine kunder, så de med
+      det samme kan finde svar på deres spørgsmål. Det kan hjælpe dig med at
+      undgå almindelige spørgsmål ved at give en måde, hvorpå kunderne kan
+      hjælpe sig selv.
+    info20: >-
+      Du kan vedhæfte <b>tags</b> til dine artikler, hvilket er nyttigt til at
+      kategorisere artikler af lignende art.
+    home: Center for løsninger
+    move_to: Flyt til
+    info18: >-
+      En offentliggjort artikel kan redigeres og gemmes som et udkast, hvilket
+      bevarer den offentliggjorte version på portalen, mens en ekstra
+      udkastversion oprettes, som agenter kan redigere. Dette er nyttigt, når du
+      har brug for at opdatere artikler, uden at fjerne dem fra din portal.
+    info15: >-
+      Artikler kan enten gemmes som et <b>udkast</b> eller <b>offentliggøres</b>
+      direkte.
+    show_analytics: Vis analysedata
+    show_master: Vis master
+    change_portal: Ændr portal
+    info19: >-
+      Artikeltypen kan enten være <b>permanent</b> eller <b>midlertidig
+      løsning</b>.
+    no_articles_info: Ingen artikler i denne mappe
+    unassociated_category: Ikke-tilknyttet kategori
+    article_properties:
+      title_counter_message: 'Anbefalet længde: 50-60 tegn'
+      description_counter_message: 'Anbefalet længde: 150-160 tegn'
+    view_feedback: Se al feedback
+    info31: >-
+      Du kan vælge at gøre dine mapper synlige for forskellige grupper af
+      personer (<b>Alle, Indloggede brugere, Agenter & Udvalgte
+      virksomheder</b>).
+    info16: >-
+      <b>Udgivede</b> artikler vil være synlige i Selvbetjeningsportalen og
+      vises også i søgeresultater. 
   choose_plan: Vælg Plan
   unblock: Hviteliste
   edit_plan: Rediger plan
@@ -4692,6 +7185,48 @@ da:
     admin:
       save: Gem
       cancel: Annuller
+      widget_token_placeholder: 'F.eks.: d0bb2ebf-2746-481a-ll64-0bdfb91cb2de'
+      sidebar_title: Freshchat
+      sign_up_btn: Tilmeld dig nu
+      copy_from_freshchat: Kopi fra Freshchat
+      enable_chat_in_portal: Aktivér chat på din supportportal
+      action:
+        success_message: Indstillinger opdateret
+      sidebar_content:
+        para2:
+          header: >-
+            Brug messengeren inde i Freshdesk til at bringe dit support- og
+            beskedarbejdsflow sammen:
+          point2: >-
+            Lær hvem dine kunder er - deres profil, navigationssti og tidligere
+            supportsagsoplysninger, for at svare med kontekst.
+          point1: Tildel samtaler til en gruppe eller et teammedlem
+          point3: >-
+            Løs samtaler og vælg mellem at konvertere dem til en ny supportsag
+            eller tilføj dem til en eksisterende.
+        para1: >-
+          Freshdesks integrerede chatkanal, som drives af Freshchat, hjælper dig
+          med at deltage i samtaler med kunder, der er på din din hjemmeside,
+          mobilen, supportportalen eller i appen. Du kan også sende proaktive
+          beskeder til besøgende og brugere, og få dem til at foretage et køb,
+          tilmelde sig eller dele feedback om dit produkt.
+      enable_chat: Forbind Freshchat med din Freshdesk-konto
+      admin_apikey: 'API-nøkkel:'
+      title_text: Freshchat
+      sign_up_text: 'Begynd at chatte med kunder på din hjemmeside, portal eller mobilapp.'
+      enable_chat_in_portal_info: >-
+        Gør det nemt for dine kunder at chatte med dig, når de lander på din
+        supportportal.
+      app_id_placeholder: 'F.eks.: 09901344-2b17-4d55-b412-2fd41811a83f'
+      did_you_know_info: >-
+        For at konvertere Freshchat-samtaler til supportsager, skal du gå til
+        denne <a href='%{url}' target='_blank'>side</a>, kopiere og indsætte
+        nedenstående oplysninger. Hvis du har brug for mere hjælp, kan du læse
+        <a href='%{article_url}' target='_blank'>denne artikel</a>.
+      portal_url: 'Portaladresse:'
+      did_you_know: Konvertér Freshchat-samtaler til supportsager
+      app_id: App-ID
+      widget_token: Widget-token
   suspended_plan_info: 'Din konto er blevet suspenderet, vælg venligst en plan for at fortsætte!'
   ticket_deleted: Denne billet er blevet slettet
   signup_complete_activate_info: >-
@@ -4758,6 +7293,10 @@ da:
       answered: Besvaret
     change: endre
     add_forum: Legg til forum
+    filter_7: Ikke besvaret
+    first_email: Første e-mailtekst
+    filter_6: Besvaret
+    full_conversation: Sidste 5 samtaler (bortset fra private noter)
   and_more_plan_downgrade: Og mere...
   change_my_plan: Vælg denne plan...
   portal_meta:
@@ -4767,3 +7306,230 @@ da:
   signup_help_information: >-
     Når du er oprettet som bruger, kan du selv oprette supportsager og følge
     status på dine supportsager
+  undo_toggle: Fortryd afsendelse
+  requesting: Anmoder...
+  conv_contacts_info: '%{conv_type_msg} : %{to_emails} %{cc_emails_key} %{bcc_emails_key}'
+  mailer_notifier:
+    security_notification:
+      update_agent_billing_plain: >-
+        For at afspejle denne ændring på din fakturering, skal du opdatere
+        agentoplysningerne på faktureringssiden.
+      update_agent_billing: >-
+        For at afspejle denne ændring på din fakturering, skal du <a
+        href="%{billing_url}">opdatere</a> agentoplysningerne på
+        faktureringssiden.
+      unauthorized_change_contact: >-
+        Hvis denne ændring blev foretaget uden din tilladelse, skal du straks
+        kontakte din kontoadministrator.
+      configure_change: >-
+        Du kan konfigurere disse underretningsindstillinger under Administrator
+        -> Sikkerhed.
+      trusted_ip_disabled: IP-hvidlistning er deaktiveret for din konto.
+      unauthorized_change_info: >-
+        Hvis denne ændring blev foretaget uden din tilladelse, bedes du sende os
+        en besked.
+      configure_change_html: >-
+        Du kan konfigurere disse underretningsindstillinger ved at <a
+        href="%{security_url}"> klikke her </a> eller gå til Administrator ->
+        Sikkerhed på din konto
+    hi: 'Hej,'
+    freshdesk_customer_support: Freshdesks kundesupport
+    thanks: 'Tak,'
+  copied_link: Kopieret
+  mint: skift til Mint.
+  send_test_email: Send testmail
+  enter_a_value: Angiv en værdi
+  email_command_preview_to_email_value: support@acme.freshdesk.com
+  custom_mailbox_admin_email_notifications:
+    regards: Venligst hilsen
+    welcome_message: Kære admin
+  zendesk_url: Zendesk-URL
+  custom_mailbox_error_type:
+    unkown_error: >-
+      Kunne ikke hente e-mails fra tilpasset e-mailserver. Kontakt venligst
+      support@freshdesk.com
+    ssl_errror: SSL-fejl.
+    server_response_invalid: 'Serversvar er i ugyldigt format, under forbindelse til server.'
+    unable_to_connect: Kan ikke forbinde til mappen i indbakken.
+    tcp_connection: Kunne ikke oprette TCP-forbindelse.
+    tcp_refused: E-mailserver afviste TCP-forbindelse.
+    mailbox_idle: Indbakke understøtter ikke IDLE-evne.
+    unable_fetch_status: Kan ikke hente status for mappe.
+    io_error: I/O-forbindelsesfejl.
+    mailbox_suspended: E-mailserver suspenderet
+    server_no_resp: E-mailserver sendte INTET svar under forbindelse til server.
+    bye_response: E-mail-server sendte BYE-svar under forbindelse til server.
+    invalid_login: Ugyldige loginoplysninger.
+    folder_unavailable: Mappen er ikke tilgængelig i indbakken.
+    tcp_socket: Kunne ikke oprette TCP-socket for e-mailserver.
+    email_bad_request: E-mailserver sendte "BAD"-svar under forbindelse til server.
+  anonymous:
+    requests:
+      new:
+        request_support: Anmod om support
+  imap_error: E-mailserver utilgængelig
+  select_values: Vælg en eller flere værdier
+  add_note: Tilføj note
+  requester_widget:
+    helpcard:
+      info: >-
+        Vælg de felter du vil have vist under afsnittet med anmoderoplysninger
+        på supportsagssiden, i dit anmoderwidget. På denne måde kan dit team
+        opdatere anmodningsoplysninger direkte fra supportsagssiden og holde
+        styr på kundeoplysninger, mens de løser deres supportsag. <a
+        href="https://support.freshdesk.com/support/solutions/articles/37586-driving-additional-context-with-requestor-info"
+        target="_blank">Lær mere</a>
+      title: Tilpasning af anmoderwidget
+  onedrive_attach_from_text: Vedhæft fra <b>OneDrive (udfaset)</b>
+  portal_key: Portal
+  undo_toggle_tip: 'Opdatér siden, så denne indstilling træder i kraft.'
+  favicon: Favicon
+  cloud_log_mailer:
+    logger_email:
+      regards: 'Med venlig hilsen,'
+      freshdesk_support: Freshdesk Support.
+      execution_id: Udførelses-id
+      account: 'Konto: '
+      reason: Grund
+  portals_key: Portaler
+  bot_training_completed:
+    email:
+      info3: Lad os begynde at yde support!
+      signature: Freshdesk-botten
+      info2: >-
+        Du kan få mig til at være synlig på en af dine sider, ved blot at
+        tilføje indlejringskoden til dine hjemmesider.
+      widget_code_plain_text: 'Her er indlejringskoden til botten:'
+      info1: >-
+        Det er bare din venlige bot der tjekker op! Jeg ville bare fortælle dig,
+        at jeg er blevet trænet til at lære alle de supportartikler, du ønsker
+        jeg skal lære. Så nu kan jeg hjælpe dine kunder med at finde svar på
+        spørgsmål fra følgende kategorier:
+      widget_code: Hent indlejringskoden
+  undo_toggle_error: 'Beklager, noget gik galt!'
+  event:
+    type: Type
+  errors:
+    invalid_domain:
+      may_be_this_is_still_fresh: ' Måske er dette stadig nyt!  '
+      claim_it_now: Du kan gøre krav på det nu på
+      freshdesk: Freshdesk
+      we_couldnt_find: ' Vi kunne ikke finde '
+      there_is_no_helpdesk_here: Der er ingen helpdesk her!
+    error_page:
+      back_to_home: tilbage til forsiden
+  enter_values: Indtast en eller flere værdier
+  being_processed: Under behandling
+  awaiting_your_reply: Venter på svar fra dig
+  this_ticket_has_been_resolved: Denne supportsag er blevet løst
+  this_ticket_has_been_closed: Denne supportsag er blevet lukket
+  helpcard:
+    title: Unikt eksternt id
+    info: >-
+      Importér dine kunders unikke ID'er, og identificér nemt deres samtaler i
+      Freshdesk. <br><a
+      href="https://support.freshdesk.com/support/solutions/articles/226804-identifying-contacts-with-an-external-id"
+      target="_blank">Hjælp mig med at oprette eksternt ID</a>
+  admin_upgrade:
+    enable_mint_all: Aktivér Mint for agenter
+    enable_mint_info: Agenter kan skifte tilbage til den gamle Freshdesk til enhver tid
+    enable_mint_title: Tillad agenter at prøve den smartere og hurtigere Mint-oplevelse
+    enable_mint_error: >-
+      Mint er allerede blevet aktiveret for alle agenter. Opdater for at se de
+      seneste indstillinger.
+    enable_mint_success_info: >-
+      For at deaktivere den gamle Freshdesk helt, skal du gå til
+      administratorfanen i Mint
+    enable_mint_success: Sådan! Mint er blevet aktiveret for alle agenter.
+  Agent: Agent
+  customize_domain:
+    email:
+      cheers: 'Hilsen,'
+      team: Freshdesk team
+  preview_message_info: >-
+    Denne forhåndsvisning bruger prøveindhold som pladsholdere, til at generere
+    meddelelsen
+  undo_toggle_success: Opdatér så denne indstilling træder i kraft.
+  profiles:
+    freshid_edit:
+      profile_details: Profiloplysninger
+  suspended_account_info: 'Din konto er blevet opsagt, og kundeportalen er ikke længere tilgængelig.'
+  status: Status
+  activate_and_log_in_long: Aktivér og log ind
+  posts:
+    edit:
+      edit_post: Redigér opslag
+  'on': d.
+  save_as: Gem som
+  uncheck_remember_tooltip: Du kan fravælge denne mulighed hvis du logger ind fra en delt enhed
+  customize_requester_widget: Tilpaser anmoderwidget
+  reset_arcade: Nulstil arkade
+  Portal: Portal
+  segment_notice: >-
+    For at segmentere kunder baseret på prioritet, abonnement og andre
+    attributter,
+  currency_label: 'Valuta :'
+  plain_on: På
+  falcon_languages_alert: Vi arbejder på at understøtte andre sprog i Mint-oplevelsen.
+  logo: Logo
+  suspended_account_admin_info: >-
+    Din konto er blevet opsagt, og kundeportalen vil ikke være tilgængelig.
+    Kontakt din kontoadministrator.
+  sandbox:
+    sandbox_notification_for_agents: >-
+      Eventuelle nye agenter der bliver tilføjet, eller opdateringer til
+      agentprofiler her, synkroniseres ikke med din Freshdesk-konto.
+    sandbox_notification_for_ticketfields: >-
+      Vidste du, at du kan bruge <a href="/a/admin/sandbox"
+      class="group_item_link" target="_top">Testmiljøet</a> til at tilføje,
+      redigere eller slette supportsagsfelter, før du direkte ændrer dem her?
+    sandbox_notification_for_rules: >-
+      Vidste du, at du kan bruge <a href="/a/admin/sandbox"
+      class="group_item_link" target="_top">Testmiljøet</a> til at teste
+      automatiseringer, før du direkte ændrer dem her?
+  feedbackwidget_position: Posisjon
+  copy_link: Kopier link
+  widget_config_tour_text: Hjælp mig med at komme i gang med feedback-widget
+  no_images_uploaded_yet: Ingen billeder uploadet endnu.
+  billing_selected_plan: 'Valgt abonnement: '
+  user_notifications:
+    notification_preferences: Meddelelsesindstillinger
+    enable_desktop_notifications_help: 'Klik på ''Tillad'', når du bliver bedt om det'
+    muted: Slået fra
+    toggle_web_notifications: Slå webunderretninger til/fra
+    mute: Demp
+    enable_desktop_notifications: Aktivér computerunderretninger
+    notify_when: Underret når...
+    desktop_notifications_enabled_flash: Computerunderretninger aktiveret!
+    mark_all_as_read: Markér alle som læst
+    desktop_notifications_disabled: Du har deaktiveret computerunderretninger
+    toggle_mobile_notifications: Slå mobilunderretninger til/fra
+    header: Meddelelser
+    preferences: Præferencer
+  click_here: >-
+    <a href='javascript: switchToOld()'> Klik her </a> for at prøve andre sprog
+    på det gamle Freshdesk
+  ticket_templates:
+    create_new: Opret ny
+  pts_plain: ' point'
+  in: i
+  help_widget:
+    name: 'Velkommen til %{name}-support'
+    message: Velkommen til support
+    form_title: Kontakt oss
+    form_button_text: Send tilbakemelding
+    form_submit_message: Takk for tilbakemeldingen.
+    button_text: Hjælp
+    untitled_widget: 'Ukendt widget %{count}'
+    invalid_components: 'Ugyldig komponent-hash med %{key}'
+    freshmarketer_sign_up_error: >-
+      Beklager, frustrationssporing skal være aktiveret, når der integreres med
+      Freshmarketer
+    invalid_settings: 'Ugyldigt indstilling-hash med %{key}'
+    welcome_message: Kan vi hjælpe?
+    predictive_message: >-
+      Vi bemærkede at du sidder fast. Fortæl os hvad du prøvede at opnå, så vil
+      vores supportteam kontakte dig så hurtigt som muligt.
+    success_message: Tak. Vi kontakter dig!
+    invalid_domain: 'Beklager, indtast et gyldigt domæne.'
+    domain_list_empty: 'Angiv venligst URL''er, der skal spores for forudsigelig support.'

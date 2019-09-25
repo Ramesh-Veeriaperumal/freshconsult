@@ -108,3 +108,5 @@ api_error_messages:
   agent_type_change_not_allowed: "You cannot change the agent type"
   should_not_be_field_agent: "Field technicians cannot be assigned to support groups."
   should_not_be_support_group: "Field technicians cannot join Support groups"
+  subscription_request_destroy_error: 'Error while destroying subscription request!'
+  account_cancellation_destroy_error: 'Error while removing account cancellation request!'

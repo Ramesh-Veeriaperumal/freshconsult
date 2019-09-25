@@ -307,6 +307,11 @@ ko:
       custom_url: 은(는) 유효하지 않은 URL입니다.
       custom_date: 은(는) 유효하지 않은 날짜입니다.
     phone_number: 전화번호
+    industry: 산업
+    last_name: 성
+    first_name: 이름
+    company_name: 회사
+    job_title: 직함
   custom_fields:
     insert_field: 필드 드래그 앤 드롭
     drag_drop_field_intro: '새로운 사용자 정의 필드를 추가하려면 아래 "%{name}" 양식으로 필드 타입을 드래그 앤 드롭합니다.'
@@ -322,7 +327,7 @@ ko:
     url: URL
     date: 날짜
     delete: 삭제
-    regex: Regex
+    regex: 정규 표현식
     email: 이메일
     nested_field: 하위 분류를 가진 '중첩된 드롭다운' 필드
     drag_and_drop_field: 필드 드래그 앤 드롭
@@ -341,6 +346,10 @@ ko:
       ticket_type: 유형
       created_at: 생성 일자
       tags: 태그
+      internal_group: 내부 그룹
+      company: 회사
+      internal_agent: 내부 에이전트
+      skill: 스킬
     saving_ticket: 티켓 필드를 저장 중
     untitled: 제목 없음
     properties: 속성
@@ -443,6 +452,7 @@ ko:
       sectino_label: 섹션 제목
       section_type_is: 다음 유형이면 섹션 표시
       section_name_unique: 섹션 이름이 이미 사용됨
+      add_section: 섹션 추가
     customer_label_missing: 고객 라벨은 비워 둘 수 없습니다.
   folder:
     edit: 폴더 편집
@@ -469,13 +479,13 @@ ko:
   change_equal_plan_title: '새 플랜 %{to_plan}(으)로 이동하시겠습니까?'
   downgrade_plan_title: 다운그레이드하시겠습니까?
   activate_free_plan: 무료 플랜 활성화
-  create: 만들기
+  create: 생성
   feedbackwidget_custom_image_info: '커스텀 이미지를 사용한다면, 컬러와 텍스트는 무시됩니다.'
   account_admin_updated: 계정 관리자가 업데이트 되었습니다.
   forums_order:
-    overview: 전체 보기
+    overview: 개요
     recent: 최근
-    popular: 인기있는
+    popular: 인기 있는
     planned: 계획됨
     implemented: 구현됨
     nottaken: 사용 중이 아님
@@ -504,6 +514,8 @@ ko:
         cancel: 취소
         back: 뒤로
         loading_feedback: 피드백 로드 중
+        load_questions: 더 보기
+        comments: 코멘트
     login:
       form:
         email: 이메일
@@ -529,6 +541,8 @@ ko:
       email: 사용자 이메일
       comments: 코멘트
       send_feedback: 응답(피드백)을 보냅니다
+      related_files: 관련 파일
+      was_this_article_useful: 이 아티클이 유용했습니까?
     surveys:
       thanks_for_feedback: 고객님의 응답을 수신하였습니다. 매우 감사합니다.
       feedback_already_done: 이 응답에 대해 이미 피드백을 주셨습니다.
@@ -554,6 +568,9 @@ ko:
     canned_form:
       next: 다음
       form_submit: 제출
+      okay: 알겠습니다
+      hey: 안녕하세요
+      thank_you_text: 감사합니다
   gamification:
     levels:
       beginner: 초보자
@@ -935,6 +952,7 @@ ko:
           예: 알파벳과 숫자만 포함되어 있는 문자열 일치시키기: <b> /^[a-zA-Z0-9]*$/ </b>. 'fresh'라는
           단어로 시작하는 문자열 일치시키기: <b> %{regex} </b>.
         max_choices: 최대 항목 수에 도달함
+        mapped_internal_groups: 내부 그룹 매핑됨
     portal:
       delete_confirm:
         title: 이 포털을 삭제하면 제거됩니다.
@@ -946,9 +964,9 @@ ko:
         signup_login: 사용자 등록 및 로그인
         allow_signup: 사용자가 고객 포털에서 등록할 수 있도록 허용
         allow_signin: 사용자가 다음으로 등록하도록 허용...
-        google: Google
+        google: 구글
         twitter: 트위터 ID
-        facebook: Facebook
+        facebook: 페이스북
         user_permissions: 포털 사용자 권한
         submit_ticket: 포털에서 새 티켓을 제출할 수 있는 사람
         portal_security: 포털 보안
@@ -985,6 +1003,10 @@ ko:
         public_ticket_urls_help: >-
           사용자는 공개 티켓 URL을 통해 로그인하지 않고 티켓을 볼 수 있습니다. 사용자는 자리 표시자를 통해 고객에게 전송된 이메일
           알림 및 티켓 응답에 삽입될 수 있습니다.
+        important: 중요
+        view_settings: 설정 보기
+        restricted_login_signup: 가입과 로그인은 특정 도메인으로 제한되어있습니다
+        reset_portal_changes: 포털 변경사항 초기화
       helpnote:
         title: 포털 설정
         tour: 포털을 구성하는 방법
@@ -997,6 +1019,13 @@ ko:
         info4: >-
           사용자 권한을 설정하고 포럼 조정 설정을 변경하려면 '설정' 탭을 클릭합니다. 설정은 각 포털별로 구성할 수 없으며 생성된
           모든 포털에 공통으로 사용됩니다.
+        exit_fullscreen: 전체 화면 종료
+        editor_shortcuts: 편집기 단축키
+        preview_changes: 변경사항 미리보기
+        editor_in_fullscreen: 편집기 전체 화면으로 보기
+        level_customizations: 페이지 레벨 사용자 지정
+        advanced_rebranding: 고급 브랜드 및 사용자 지정 설정
+        custom_stylesheets: 사용자 지정 스타일시트 사용 중
     mobihelp:
       app_review:
         request_sent: 앱 검토 요청 전송됨
@@ -1260,6 +1289,9 @@ ko:
         result_exist_msg: >-
           이 설문 조사에 대한 응답이 이미 수집되었으므로 심사 표준과 질문 개수를 변경할 수 없습니다. 하지만 질문 및 대답은 편집할
           수 있습니다.
+        bad_to_good: 나쁨에서 좋음으로
+        survey: 설문
+        good_to_bad: 좋음에서 나쁨으로
       new_rating:
         content_text: >-
           이 질문을 통해 에이전트가 제공한 응답에 대한 전반적인 만족도를 확인할 수 있습니다. 이 질문은 고객에게 보내는 이메일 하단에
@@ -1293,6 +1325,7 @@ ko:
         help_text_v2: >-
           고객이 만족도 설문 조사에 응하면 추가 설문 조사 질문이 새 페이지에 나타납니다. 제품/회사/에이전트에 대한 질문이 포함되어
           있습니다.
+        additional_comments_feedback_v2: 추가 코멘트 박스 포함
       new_questions_layout:
         title_text: 질문에 대한 심사 표준을 선택합니다.
         title_text_v2: 질문에 대한 심사 표준을 선택합니다.
@@ -1329,6 +1362,10 @@ ko:
         'true': true
         'false': false
         delete: 삭제
+        confirm_text: 확인하십시오.
+        activate_survey: 활성화하기
+        preview_survey: 미리보기
+        custom_title_v2: 고객 만족도 설문 조사
       choice_contents:
         strongly_disagree: 매우 동의 안 함
         some_what_disagree: 다소 동의 안 함
@@ -1497,6 +1534,8 @@ ko:
         agent: 에이전트
         email: 이메일
         all: 모든
+        date: 날짜
+        filtered_by: '필터링 기준:'
     widget_config:
       index:
         feedbackwidget_embedded_tab: 임베디드 위젯
@@ -1508,8 +1547,8 @@ ko:
         feedbackwidget_text_button: 텍스트 버튼
         feedbackwidget_image_button: 이미지 버튼
         feedbackwidget_button_text_placeholder: 지원
-        feedbackwidget_height_placeholder: '500'
-        feedbackwidget_offset_placeholder: '235'
+        feedbackwidget_height_placeholder: '"500"'
+        feedbackwidget_offset_placeholder: '"235"'
         feedbackwidget_button_customization: 사용자 정의 버튼
         feedbackwidget_form_customization: 사용자 정의 양식
         feedbackwidget_embedded_code: 임베디드 위젯 코드
@@ -1547,6 +1586,12 @@ ko:
         feedbackwidget_form_height: 양식 높이
         feedbackwidget_button_text_placeholder: 지원
         feedbackwidget_form_height_message: '위젯에 스크롤 바가 표시될 경우, 위젯 높이를 조정하십시오.'
+        feedbackwidget_submit_title: 응답(피드백)을 보냅니다
+        thankyou_default: 피드백을 제공해 주셔서 감사합니다.
+        feedbackwidget_height_placeholder: '"500"'
+        feedbackwidget_offset: '오프셋:'
+        feedbackwidget_offset_placeholder: '"235"'
+        feedbackwidget_search_area: 항목 검색
       embedded_widget:
         feedbackwidget_embedded_code: 임베디드 위젯 코드
         feedbackwidget_form_submit_message: 포럼 제출 메시지
@@ -1559,6 +1604,10 @@ ko:
         feedbackwidget_use_https: https 사용
         feedbackwidget_form_height: 양식 높이
         feedbackwidget_form_height_message: '위젯에 스크롤 바가 표시될 경우, 위젯 높이를 조정하십시오.'
+        feedbackwidget_submit_title: 응답(피드백)을 보냅니다
+        thankyou_default: 피드백을 제공해 주셔서 감사합니다.
+        feedbackwidget_height_placeholder: '"500"'
+        feedbackwidget_search_area: 항목 검색
     supervisor_rules:
       info_help: 지난 30일 이내에 업데이트된 <b>각 티켓에 대해</b> 모든 일치하는 규칙을 실행하십시오.
       index:
@@ -1636,6 +1685,9 @@ ko:
         checked: 체크됨
         unchecked: 체크 안됨
         deselected: 선택 해제됨
+      new_performed_by: 작업이 다음 대상에 의해 수행되면...
+      anyone: 누구나
+      system: 시스템
     va_rules:
       index:
         human_name: 디스패처 규칙
@@ -1671,7 +1723,7 @@ ko:
         username: 사용자 이름
         api_key: API 키
         password: 비밀번호
-        insert_placeholder: 자리표기(처리지시어)를 삽입
+        insert_placeholder: 플레이스홀더 삽입
         subject: 제목
         body: 바디
         to: '끝(마지막) :'
@@ -1680,6 +1732,7 @@ ko:
         checked: 체크됨
         unchecked: 체크 안됨
         deselected: 선택 해제됨
+        custom_headers_tip: 한 줄마다 사용자 지정 헤더 값 쌍을 입력하세요.
     automations:
       index:
         human_name: 시나리오
@@ -1768,6 +1821,7 @@ ko:
         for_contacts: 연락처용
         password_policy: 비밀번호 정책
         for_agents: 에이전트용
+        saml_cert_fingerprint_info_sha256: SAML 인증서의 지문(SHA256)은 SAML 공급자로부터 제공되며 암호화 / 인증에 사용됩니다.
       helpnote:
         title: 보안 설정
         info1: >-
@@ -1788,6 +1842,12 @@ ko:
           제어할지도 정의할 수 있습니다.<a
           href="https://support.freshdesk.com/support/solutions/articles/195168">
           자세한 내용을 알아보십시오.</a>
+        info4: >-
+          <b>비밀번호 정책</b><br>에이전트와 고객에 대해 서로 다른 비밀번호 정책을 설정할 수 있습니다. 고급 설정에서는
+          비밀번호 만료 시기 및 최소 비밀번호 길이 등 사용자 정의 비밀번호 정책을 구성할 수 있습니다. 변경 사항은 신규 및 기존
+          에이전트와 고객에 적용됩니다. <a
+          href="https://support.freshdesk.com/support/solutions/articles/213865-password-policy"
+          target="_top">여기</a>에서 비밀번호 정책에 대해 자세히 알아보십시오.
       password_security:
         passwords: 비밀번호
         session_expiry: '사용자 세션 만료 잔여일:'
@@ -1930,6 +1990,8 @@ ko:
         customers: 고객
         reports: 보고서
         administration: 관리
+        general: 일반
+        bots: 봇
       permissions: 권한
       helpcard:
         title1: 역할 이해하기
@@ -1997,6 +2059,11 @@ ko:
       cancel_label: 취소
       done_label: 완료
       save_label: 저장
+      add_agent_label: 에이전트 추가
+      saving_label: 저장 중...
+      manage_label: 관리
+      add_label: 추가
+      no_agent_label: 에이전트 없음
     home:
       index:
         group: 그룹
@@ -2046,6 +2113,7 @@ ko:
         mobihelp: 모바일 도움말
         customer-portal: 고객 포털
         portals: 포털
+        search_admin: 관리 설정 검색
       keywords:
         forum_moderation: 포럼 조정
         configure_support_email: 지원 이메일 구성
@@ -2150,10 +2218,17 @@ ko:
         agents_label: 상담사(에이전트)
         agents: 상담사(에이전트)
         description: 설명
+        skills: 스킬
+        add_agents: 에이전트 추가
+        skill_create: 생성
+        manage_label: 관리
+        add_label: 추가
+        no_agent_label: 에이전트 없음
     user_skills:
       index:
         more: 더보기
         groups: 그룹
+        any: 일부
     ecommerce:
       helpnote:
         no_account: 신규 계정 추가
@@ -2183,6 +2258,10 @@ ko:
         expiry_date: 토큰 만료
         title: 계정 편집
       index_title: 전자 상거래
+    hotline:
+      content3:
+        note_title: '메모:'
+      list_title: 모바일 도움말 앱
   ends_with: '다음으로 끝남:'
   last_name: 성
   forum:
@@ -2840,7 +2919,7 @@ ko:
   edit: 편집
   clone: 복제
   disable: 비활성
-  enable: 활성
+  enable: 활성화
   accounts:
     helpcard:
       title: 고객지원포털 사용자 정의
@@ -2857,6 +2936,10 @@ ko:
         도메인에 링크되도록 만들 수 있습니다.
       info3: '언어, 시간대 및 색 구성표 등의 헬프데스크에 대한 모든 기본 설정은 여기서 사용자 정의할 수 있습니다.'
       info4: '''포털 편집'' 옵션을 사용하면 제품의 포털을 구성할 수 있습니다.'
+      info5: >-
+        추가된 연락처와 특정 도메인으로 헬프데스크의 접근을 제한할 수 있습니다. 그 외 사용자는 가입, 로그인, 티켓 제출이
+        불가능합니다. 더 자세한 정보는
+      info6: 여기를 확인하세요.
     cancel:
       cancel_account: Freshdesk 계정 취소
       info_text: 계정을 취소하려는 이유를 간단히 말씀해 주시면 감사하겠습니다. 저희가 도울 방법이 있는지 알아보겠습니다.
@@ -2929,6 +3012,27 @@ ko:
       restore_account: >-
         계정이 취소되었습니다. 데이터는 <strong>%{delete_at}</strong>에 삭제될 것입니다. 계정을 복원하려면 <a
         href='mailto:support@freshdesk.com'>support@freshdesk.com</a>에 요청하십시오.
+    multilingual_support:
+      helpcard:
+        supported_languages:
+          title: <b>지원하는 언어</b><br/>
+        info1: 세계 곳곳에서 귀하의 서비스를 이용하는 글로벌 고객을 위해 원활한 지원 경험을 제공하세요.
+        title: 고객의 언어로 대화하세요
+      add_languages: 언어 추가
+      warning_msg: '참고: 기본 언어는 헬프데스크의 기본 언어입니다. 지원하는 언어가 추가되면 이후 변경할 수 없습니다.'
+      manage_languages: 언어 관리
+    edit_domain:
+      email_error: 회사 이름은 적어도 3자 이상이어야 합니다.
+      getting_started: 시작하기
+      url_error1: '도메인 <strong>%{domain_name}</strong> 을(를) 사용할 수 없습니다.'
+    new:
+      full_name: 이름 전체(성씨/이름을 모두 포함한)
+      company: 회사
+      confirmation: 확인
+      create_an_account: 계정 생성
+    signup_google:
+      sign_up: 가입!
+      privacy_policy: 개인정보 보호정책
   success_msg: 성공적으로 계정 설정이 변경되었습니다.
   failure_msg: 계정 설정 변경에 실패하였습니다.
   account_configuration:
@@ -3056,6 +3160,7 @@ ko:
     more_catogories: 모든 범주 표시
     other_categories: 다른 범주 표시
     other_categories_info: 이 포털과 관련되지 않은 범주
+    manage_categories: 관리
   forum_category:
     product_portal_visibility: '다음에서 표시:'
     select_product: 제품 포털 선택...
@@ -3456,6 +3561,16 @@ ko:
       day: 1일
       twoday: 2일
       threeday: 3일
+    toggle_availability_for_rr: 에이전트가 자동 티켓 할당에 대한 가용성을 변경하도록 허용합니다.
+    maximum: 최대
+    enable: 활성화
+    please_confirm: 확인하십시오.
+    confirm: 확인
+    toggle_availability_message: 관리자와 감독자는 대시보드에서 에이전트의 이용 가능성을 무효화할 수 있습니다
+    round_robin_defalut: 라운드 로빈 티켓 할당
+    round_robin_capping: 작업량 기반 티켓 할당
+    no_group_info: 그룹을 아직 생성하지 않았습니다.
+    send_escalation_to: '...그리고 상부 보고 이메일을 다음 대상에게 전송:'
   four: 4시간
   oneweek: 1주일
   twoweek: 2주일
@@ -3605,6 +3720,9 @@ ko:
     no_recent_activity: 최근 활동 없음
     reset_score_title: 배지 및 포인트 재설정
     assign_group: 관련 그룹
+    insert_placeholder: 플레이스홀더 삽입
+    skill: 스킬
+    last_seen_at: 마지막 확인
   account_admin: 계정 관리자 (Admin)
   right: 권리
   footer:
@@ -3860,6 +3978,11 @@ ko:
     free_plan_currency_note: '에이전트를 업그레이드하거나 추가하는 경우 결제: '
     status: 상태
     type: 유형
+    invoice: 인보이스
+    refund: 환불됨
+    download: 다운로드
+    quantity: 수량
+    date: 날짜
   activate: 활성화
   feedbackwidget_button_text: 라벨
   amount_billed_per_month: '<b>%{amount} 금액이 %{period} 동안</b> 청구됩니다.'
@@ -3990,7 +4113,7 @@ ko:
       sort_order:
         date: 오래된 주제 먼저
         recency: 최신 주제 먼저
-        popularity: 인기 있는 주제
+        popularity: 인기 있는
       sort_by_most_recent: 가장 최근 주제
       sort_by_most_popular: 가장 인기 있는 주제
       sort_by_default: 기본
@@ -4054,6 +4177,14 @@ ko:
       add_people_title: 대화에 사람 추가
       reopen_reply: 응답
       related_articles: 관련 항목...
+      comments: 코멘트
+    agent_login_info: 에이전트이신가요?
+    agent_signin: 여기로 로그인하세요
+    agent_login_details: 아래 세부 정보를 입력하십시오.
+    user_signup_portal: '계정에 '
+    account: 등록하기
+    vote_label:
+      other: stemmer
   feedbackwidget_form_heading: 양식 머리글
   feedbackwidget_form_title: 위젯 양식 제목
   cancel_and_back: 취소하고 돌아가기
@@ -4112,6 +4243,8 @@ ko:
       something_wrong: 오류가 발생했습니다.
       mark_as_uptodate:
         text_1: 이 번역을 최신으로 표시
+      mark_as_outdated:
+        text_1: 다른 번역을 구 버전으로 표시
     folders:
       view_all: 모든 폴더 보기...
       choose_folder: 폴더 선택
@@ -4130,7 +4263,7 @@ ko:
           other: ' 및 %{count}개 이상의 회사'
       draft: 'kbase@%{domain_name}(으)로 전송된 모든 이메일은 여기에 초안으로 저장됩니다.'
     articles:
-      search_all: 문서 검색
+      search_all: 항목 검색
       search_in: '%{search_scope}에서 검색'
       type: 문서 유형
       prop_tabs:
@@ -4268,6 +4401,7 @@ ko:
       title_counter_message: 최고의 SEO 페이지. 제목에는 50~60자를 쓰는 것이 좋습니다.
       description_counter_message: 최고의 SEO 페이지. 설명에는 150~160자를 쓰는 것이 좋습니다.
     unassociated: 연관되지 않음
+    kb: 지식 베이스
   import_updated: 업데이트됨
   feedbackwidget_intro: 아래 Freshdesk 위젯을 사용자 정의하여 실시간 미리보기를 수행하십시오.
   chatwidget_intro: 아래 실시간 채팅 위젯을 사용자 정의하고 실시간 미리보기를 확인하십시오.
@@ -4394,6 +4528,10 @@ ko:
     linked_paren_child_desc: '연결된 티켓, 부모 자식 티켓팅 워크플로'
     scheduled_reports_desc: 예약된 보고
     custom_survey_desc: 사용자 정의된 만족도 설문 조사
+    skill_based_assignment_desc: 숙련도 기반 할당
+    bot: 봇
+    skill_based_assignment: 숙련도 기반 할당
+    freshchat: Freshchat 통합
   zendesk_account: Zendesk 계정 세부 정보
   zendesk_import_files: 가져올 내용을 선택하시겠습니까?
   file_url: 전체 XML 내보내기 URL
@@ -4455,7 +4593,7 @@ ko:
     edit_profile: 프로필 수정
     assumed_text: '다음 자격으로 보는 중:'
     help_center: 무엇을 도와드릴까요? (검색어 입력 시 실시간으로 결과값이 표시됩니다.)
-    new_support_ticket: 신규 고객지원 티켓 작성
+    new_support_ticket: 새 지원 티켓
     check_ticket_status: 티켓 진행상황을 확인
     user_available: 새 티켓은 자동으로<br>귀하에게 할당됩니다.
     user_not_available: 새 티켓이 자동으로<br>귀하에게 할당되지 않습니다.
@@ -4687,6 +4825,8 @@ ko:
           이 알림은 헬프데스크에 티켓을 제출할 때 요청자가 참조 아래에 이메일 주소를 포함한 경우 참조된 사람에게 전송됩니다. 이
           이메일은 요청자의 이름 {{ticket.requester.name}}와(과) 티켓 설명
           {{ticket.description}}을(를) 포함해야 합니다.
+      agent_template_25:
+        topic: 에이전트 초대 이메일
     insert_placeholder: 자리표기(처리지시어) 삽입
     modify_agent_template: 상담사 이메일 템플릿 수정하기
     event: 이벤트
@@ -4703,7 +4843,14 @@ ko:
   activate_and_log_in: 활성화 및 로그인
   password: 비밀번호
   enter_payment: 결제 진행
-  downgrade_confirm: "<span class=\"label label-important\">Important</span>  You are currently downgrading from <b>%{from}</b> plan to the <b>%{to}</b> plan. Please note that all data and configurations associated with features available in %{from} plan will be lost permanently.<br /><br /> To see the full list of plans and features, please visit <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Plans and Pricing</a>. <br />Still not sure? <a href = \"mailto:support@freshdesk.com\" >Let us help you decide</a>"
+  downgrade_confirm: >-
+    <span class="label label-important">Important</span>  You are currently
+    downgrading from <b>%{from}</b> plan to the <b>%{to}</b> plan. Please note
+    that all data and configurations associated with features available in
+    %{from} plan will be lost permanently.<br /><br /> To see the full list of
+    plans and features, please visit <a target="_blank"
+    href="http://freshdesk.com/pricing">Plans and Pricing</a>. <br />Still not
+    sure? <a href = "mailto:support@freshdesk.com" >Let us help you decide</a>
   downgrade_confirm_v2: '<b>%{current_plan}</b> 플랜에서 <b>%{new_plan}</b> 플랜으로 다운그레이드 중입니다.'
   downgrade_confirm_v3: '현재 플랜에서 새 <b>%{new_plan}</b> 플랜으로 이동 중입니다.'
   sprout_free_plan: >-
@@ -4845,9 +4992,17 @@ ko:
       remove: 제거
       unverified: 확인되지 않음
       type: 유형
+      last_verified: 마지막 확인
+      config: 구성
+      data_help: DNS 기록에 할당될 값
+      cname: CNAME
+      verify: 확인
+      host_value_help: TXT 기록 호스트 이름
+      data: 데이터
     enable_compose_info: '허용하려는 경우, 에이전트는 아웃바운드 티켓으로 전환되는 아웃바운드 이메일을 신규 또는 기존 고객에게 발송할 수 있습니다.'
     enable_compose: 에이전트가 고객과의 대화를 시작하도록 허용하시겠습니까?
     personalized_email_replies_title: 티켓 응답과 아웃바운드 이메일의 에이전트 이름을 사용하시겠습니까?
+    plain_unverified: 확인되지 않음 -
   step2: 2단계
   import_users_contacts: 사용자 → 연락처
   linkback_info: 고객이 머리글 로고를 클릭하면 여러분의 웹사이트로 링크되도록 선택할 수 있습니다.
@@ -5142,6 +5297,8 @@ ko:
         existing: 이슈 보기
     compose:
       to_address_placeholder: 고객 주소 입력
+    search_text: 항목 검색
+    thanks_v1: 피드백을 제공해 주셔서 감사합니다.
   recent_activity: 최근의 활동
   recent_activities: 최근 활동
   forgot_password: 비밀번호 분실
@@ -5249,7 +5406,7 @@ ko:
       info1: >-
         Freshdesk의 통합 기능을 통해 자주 사용하는 제3자 애플리케이션 및 서비스와 데이터를 공유할 수 있습니다.
         Freshdesk에서는 다수의 기본 통합 기능을 제공합니다. 기본 통합 기능을 사용하려면 해당 “활성화” 버튼을 클릭하십시오.
-      title2: 프레시플러그 위젯
+      title2: 사용자 지정 앱
       info2: >-
         내장 통합 기능 외에도 프레시플러그를 사용해 제3자 애플리케이션, 레거시 시스템 또는 데이터베이스에서 데이터를 티켓이나 연락처
         페이지로 불러올 수 있습니다. AJAX 호출을 사용해 관련 정보를 Freshdesk에서 원하는 데이터 소스로 보내 프레시플러그
@@ -5300,6 +5457,23 @@ ko:
     forums_toggle:
       title: 포럼
     gdpr_to: 에서
+    gdpr_terms_link: 약관에 동의하고
+    twitter_disabled: 보안을 위해 고객 및 에이전트의 Twitter 로그인은 사용할 수 없습니다.
+    gdpr_admin: 관리자.
+    includes_contacts_company_domain: (기존 연락처 및 회사 도메인 포함)
+    hidden_on_portal: 포털에서 숨김
+    important: 중요
+    gdpr_policy: 개인정보 보호정책.
+    supported_languages: '지원 언어 (%{count})'
+    languages: 언어
+    permission:
+      users_from_any_domain: 모든 도메인의 사용자
+      who_can_create: '로그인, 가입, 티켓 생성을 할 수 있는 사람:'
+      users_from_selected_domains: 화이트리스트 도메인의 사용자
+    anyone: 누구나
+    gdpr_acknowledgement: 당사
+    search_domain: 도메인 검색
+    visible_in_portal: 포털에 표시
   lead: 리드
   comments: 코멘트
   forum_confirm_msg1: 이 카테고리를 정말로 삭제 하시겠습니까 ?
@@ -5518,6 +5692,9 @@ ko:
         recent_item: 최근 아이템
       update: 업데이트
       hide_cc: 참조 숨기기
+      do_not_link: 링크하지 않음
+      view_in_detail: 세부 정보 보기
+      ok: 확인
     dashboard:
       agent_availability: 에이전트 가용성
       round_robin:
@@ -5638,6 +5815,7 @@ ko:
           addbcc: 숨은 참조 추가
           removebcc: 숨은 참조 제거
           not_sent: 답장이 보내지지 않았습니다!
+          to: '받는 사람:'
         forward_form:
           cc: 참조
           addcc: 참조 추가
@@ -5727,6 +5905,11 @@ ko:
         my_article_feedback: 나의 문서 피드백
         archive_view: 아카이브 보기
         archived: 아카이브
+        unresolved: 해결되지 않은 모든 티켓
+        shared_by_me: 내가 공유한 티켓
+        shared_with_me: 나와 공유된 티켓
+        invalid_requester: 유효하지 않은 요청자
+        raised_by_me: 내가 요청한 티켓
       note:
         posted_on: '%{user_name}에 의해 %{note_date}에 작성'
         created_on:
@@ -5875,6 +6058,8 @@ ko:
       asc: 증가
       desc: 감소
       agent_responded_at: 에이전트 응답
+      recently_active: 최근에 활성
+    company: 회사
   click_to_change_sort_order: 정렬방식 변경
   user_sessions:
     new:
@@ -5900,6 +6085,8 @@ ko:
     events_empty: 이벤트는 비어 있을 수 없습니다.
     conditions_empty: 처리 조건은 빈 값이 될 수 없습니다.
     actions_empty: 작업은 빈 값이 될 수 없습니다.
+    invalid_domain:
+      freshdesk: Freshdesk
   export_data:
     in_sla: SLA 준수
     out_of_sla: SLA 위반
@@ -6058,6 +6245,7 @@ ko:
         flash_card_html: 소셜 새로운 소식
         flash_card_text: 소셜 탭 이해
         tickets: 티켓
+        interactions: 상호 작용
       index:
         all: 모든
       search_btn: 검색
@@ -6208,6 +6396,7 @@ ko:
     tooltip:
       edit: 편집
       settings: 설정
+    connect: 연결
   home:
     mobile_index:
       email: 이메일
@@ -6539,7 +6728,7 @@ ko:
         salesforce_settings: 영업 인력 설정
         select: 옵션 선택
         contact: 연락처 필드
-        lead: 영업 기회 필드
+        lead: 잠재 고객 필드
         account: 계정 필드
     nimble:
       label: Nimble
@@ -6629,6 +6818,9 @@ ko:
         widget_title: 위젯 제목
         username: 사용자 이름
         password: 비밀번호
+        lead: 잠재 고객 필드
+        account: 계정 필드
+        contact: 연락처 필드
     dynamicscrm:
       label: Dynamics CRM
       helptext: >-
@@ -6763,6 +6955,12 @@ ko:
         shop_name_info: >-
           예를 들어 Shopify URL이 <strong>https://my_shop_name.shopify.com</strong>인
           경우 <strong>my_shop_name</strong>을(를) 입력하십시오.
+        shop_name_info_mint: >-
+          예를 들어 Shopify URL이 <strong>https://my_shop_name.shopify.com</strong>인
+          경우 <strong>my_shop_name</strong>을(를) 입력하십시오.
+        shop_name_mint: 매장 이름
+      edit:
+        disconnect: 연결 해제
     slack:
       label: Slack
       desc: Slack에서 Freshdesk 티켓에 대한 최신 정보 받기
@@ -6845,7 +7043,10 @@ ko:
         widget_title: 위젯 이름
         widget_script: 위젯 코드 스니핏(Snippet)
         create_n_enable: 생성하고 활성화
-        insert_placeholder: 자리표기(처리지시어) 삽입
+        insert_placeholder: 플레이스홀더 삽입
+      get_custom_apps: 사용자 지정 앱 받기
+      edit_custom_app: 사용자 지정 앱 편집
+      new_custom_app: 새 사용자 지정 앱
     logmein:
       label: LogMeIn Rescue
       desc: LogMeIn Rescue으로 '고객과 직원'에게 '원격지원 기능'을 즉시 제공
@@ -6922,7 +7123,7 @@ ko:
         app_id: 어플리케이션 ID
         username: 아이컨택트(iContact) 사용자이름
         api_password: API 비밀번호
-        api_url: API URL
+        api_url: API UR
         api_url_info: >-
           API URL을 얻기 위해, 다음 링크로 이동하세요. 
 
@@ -7066,6 +7267,7 @@ ko:
         new_account: 새 계정
         domain_info: '예를 들어 헬프데스크가 ''http://apple.freshdesk.com''이면 ''apple''을 입력합니다.'
         helpdesk_name: 헬프데스크 이름
+        your_freshdesk_url: 헬프데스크 URL
     github:
       helptext: >-
         <h4>GitHub 통합 도움말</h4><p><br/>Freshdesk 에이전트가 생성한 이슈를 추적하는데 사용할 조직 아래의
@@ -7084,10 +7286,27 @@ ko:
       crm:
         mapping:
           contact: 연락처
+          company: 회사
+          contact_fields: ' 연락처 필드 '
+          account_fields: ' 계정 필드 '
     screen_pop:
       widget:
         cancel: 취소
         subject: 제목
+        view_all: 모두 보기
+        requester: 요청자 이름
+        do_not_link: 링크하지 않음
+        link_to_ticket: 티켓 링크
+        call_actions: 통화 작업
+        new_ticket_with_id: 다음과 같은 id로 새 티켓 생성됨
+        link_to_new_ticket: 새 티켓 링크
+        add_note_to_ticket: 티켓에 메모 추가
+        agent_phone_details: 에이전트 전화 정보
+        add_note_text: 통화 메모
+        agent_phone_updated: 에이전트 전화 정보 업데이트됨
+        recent_tickets: 최근 티켓
+        create: 생성
+        ticket_reference_id: 통화 참조 id
     hootsuite:
       no_ticket_msg: 이 필터를 선택할 수 있는 티켓이 없습니다.
       reply_btn: 응답
@@ -7128,10 +7347,19 @@ ko:
     infusionsoft:
       form:
         select: 옵션 선택
+        contact: 연락처 필드
+        account: 계정 필드
     cti_admin:
       phone:
         save: 저장
         cancel: 취소
+        add_number: 번호 추가
+        number_not_in_use: 사용 중이지 않음
+        add_number_tooltip: 각 행은 숫자만 포함할 수 있습니다
+        title: 헬프데스크 번호
+        delete_number: 확인하십시오
+        delete_msg: 이 번호를 정말로 삭제하시겠습니까?
+        number_in_use: 사용 중인 번호
       ctd:
         api_key: API 키
         callback_url: 콜백 URL
@@ -7142,6 +7370,16 @@ ko:
         content: 내용
         password: 비밀번호
         have_user_pass: 사용자 이름과 비밀번호를 가지고 있습니까?
+        req_authentication: 인증 필요
+      save_agent_private_note: 통화 메모 비공개로 저장
+      ctd_toggle: Click to Dial 구성
+      softfone:
+        max_dimension: 최대 550px &times; 250px
+        width: 너비
+        height: 높이
+        url: Iframe을 위한 URL
+      title: CTI 설정
+      iframe_toggle: Softphone Iframe 사용
     github_settings:
       resolved: 해결됨
       none: 동작 없음
@@ -7170,6 +7408,11 @@ ko:
       form:
         auth_token: 인증 토큰
         select: 옵션 선택
+        deal: 거래 필드
+        lead: 잠재 고객 필드
+        domain: 계정 도메인
+        account: 계정 필드
+        contact: 연락처 필드
     onedrive:
       desc: OneDrive의 데이터/파일 첨부 및 공유
     outlook_contacts:
@@ -7188,6 +7431,40 @@ ko:
         delete_account: 삭제
         last_sync_time: 마지막 동기화 시각
         syncing_in_progress: 동기화가 진행 중
+    google_drive:
+      form:
+        developer_key: Google 개발자 콘솔에서 가져온 API 키.
+        client_id: 내 도메인의 OAuth 클라이언트 ID
+    custom_apps:
+      ticket_detail_page: 티켓 상세 정보 페이지
+      preview_helptext: 이 사용자 지정 앱은 사이드바에 보여집니다
+      hide_preview: 미리보기 숨기기
+      custom_app_used_in: 사용자 지정 앱 표시 위치
+      contact_detail_page: 연락처 상세 정보 페이지
+      refresh: 새로 고침
+      show_preview: 미리보기 표시
+      custom_app_preview: 사용자 지정 앱 미리보기
+    microsoft_teams:
+      auth_btn: 승인
+    uninstall: 제거
+    slack_v3:
+      slack_prof_label: Slack에 연결
+      slack_connect_desc: Slack에서 Slack 티켓을 생성하려면 계정을 설정하세요
+      slack_auth_btn: Slack 승인
+    salesforce_v2:
+      form:
+        salesforce_v2_settings: 영업 인력 설정
+    slack_v2:
+      form:
+        slash_command_token: 슬래시 명령 토큰
+    cloud_elements:
+      form:
+        lead: 잠재 고객 필드
+        daily: 일간
+        account: 계정 필드
+        field_mapping: 필드 매핑
+        hourly: 시간별
+        contact: 연락처 필드
   widgets:
     contact_widget:
       description: 연락처 또는 캡슐에 연락처를 추가할 수 있는 옵션을 표시
@@ -7200,6 +7477,7 @@ ko:
         feedback_widgets_help_articles: 도움말 항목 찾아보기
         show_all_results: 모든 결과 표시
         no_results: '다음에 대한 결과 없음: '
+        problems_with_fields: 다음 필드에 문제가 있습니다.
   reorder: 재정렬
   reports:
     no_data: 표시할 데이터가 없습니다.
@@ -7333,7 +7611,7 @@ ko:
         time_period: 기간
         group: 그룹
         agent: 에이전트
-        overview: 전체 보기
+        overview: 개요
         responses: 응답
         response_to: '다음에 대한 응답:'
         rating: 등급
@@ -7355,6 +7633,8 @@ ko:
         overall_rating: 등급
         all_responses: 모든 응답
         total_responses_v2: 총계
+        survey_name: 제목
+        loading_msg: 보고서 생성 중...
       index:
         agent_list_loading: 에이전트 목록을 가져오는 중
       feedbacks:
@@ -7415,6 +7695,7 @@ ko:
       agent_chat_summary: 에이전트 채팅 요약
       agent: 에이전트
       deleted: 삭제됨
+    discard_changes: 변경 사항 무시
   delete_the_ticket: 티켓 삭제
   mark_as_spam: 스팸으로 표시
   bulk_actions: 대량 작업
@@ -7474,6 +7755,17 @@ ko:
         있습니다. <a target='_blank'
         href='https://support.freshdesk.com/support/solutions/articles/210807'>동적
         필드에 대한 자세한 내용</a>을 참조하십시오.
+      info4_v3: >-
+        Estate 혹은 그 이상의 구독권을 사용하고 있을 경우, 드롭다운 필드에서 선택한 옵션에 따라 동적 필드가 나타나는 섹션을
+        설정할 수 있습니다. 각 섹션에 티켓 필드를 추가하고, 섹션을 드롭다운 필드의 옵션과 연결할 수 있습니다. 예를 들어, 전자상거래
+        상점을 운영하고 있는 경우, 고객이 '교환' 옵션을 선택하면 '이유'라는 섹션이 나타도록 설정할 수 있습니다. 이런 설정을 통해
+        고객이 왜 교환을 원했는지 이해할 수 있습니다. 최대 두 개의 동적 섹션을 생성할 수 있으며 두 개의 사용자 지정 드롭다운에서
+        사용할 수 있습니다. 이미 섹션을 '유형'필드와 연결했을 경우, 티켓 양식에 하나의 섹션만 더 추가할 수 있습니다.
+      info4_v2: >-
+        Estate 이상의 구독권을 사용하고 있다면 유형 필드에서 선택한 옵션에 따라 표시되는 동적 필드를 사용할 수 있습니다. 유형
+        필드의 각 옵션별로 다른 섹션을 생성할 수 있습니다. 그런 다음 각 섹션에 티켓 필드를 더 추가할 수 있습니다. 예를 들어
+        전자상거래 시나리오에서 '교환' 유형이 선택되었다면 고객에게 교환이 필요한 이유를 수집하는 '이유'라는 필드가 포함된 섹션이
+        나타나도록 설정할 수 있습니다.
   contact_field:
     helpcard:
       title2: 연락처 필드 사용자정의
@@ -7541,6 +7833,7 @@ ko:
       relevance: 관련성
       created_at: 생성된 날짜
       updated_at: 수정된 날짜
+    searching: 검색 중
   assumed_identity_msg: '귀하의 이름은 %{user_name}입니다.'
   unauthorized_msg: 인증 실패
   assuming_identity_user_does_not_exist_msg: 입력하신 사용자가 존재하지 않습니다.
@@ -7622,7 +7915,7 @@ ko:
   ticket_close_failure: 티켓을 종료하지 못했습니다.
   no_ssl_redirection: 포털에 SSL이 없으므로 Freshdesk 보안 페이지로 리디렉션됩니다. 진행하려면 로그인하십시오.
   canned_folders:
-    insert_placeholder: 자리표기(처리지시어) 삽입
+    insert_placeholder: 플레이스홀더 삽입
     important: '중요: '
     delete_canned_response: 선택한 응답 템플릿을 정말로 삭제하시겠습니까?
     delete_folder: |-
@@ -7799,6 +8092,7 @@ ko:
         이를 통해 기본 테마를 휴대폰이나 태블릿과 같은 모바일 장치에 맞게 최적화할 수 있습니다. 모드 장치에 대해 일관된 비응답 테마를
         사용하려는 경우 이설정을 해제할 수 있습니다.
     classic: 기본
+    apply_mint: 적용
   any_time: 아무 때나
   five_minutes: 5분 이내
   fifteen_minutes: 15분 이내
@@ -7888,6 +8182,9 @@ ko:
       total_resolved_tickets: 전체 해결된 티켓
       average_received_tickets: 평균 수신된 티켓
       total_received_tickets: 전체 수신된 티켓
+      load_analysis:
+        title: 부하 분석
+      unresolved_tickets: 해결되지 않은 티켓
     glance:
       title: 한 눈에 보는 헬프데스크
       index_title: 자세한<br/>헬프데스크
@@ -7904,16 +8201,31 @@ ko:
     saved_report:
       save: 저장
       cancel: 취소
+      delete_dialog_header: 보고서 삭제
+      edit_dialog_header: 보고서 편집
     loading_text: 보고서 생성 중...
     today: 오늘
     ticket_schedule:
       index:
         cancel: 취소
+        delete_title: 일정 삭제
+        delete_text: 이 일정을 정말로 삭제 하시겠습니까?
+        confirm: 확인
       new:
         ticket_fields_title: 티켓 필드
         email: 이메일
         select_all: 모두 선택
         description: 설명
+        helpnote:
+          api_info1: API는 마지막으로 작업한 내보내기의 링크를 제공합니다.
+        contact_fields_title: 연락처 필드
+        one_time_export_label: 이 일정이 시작되는 월 초에 티켓 콘텐츠 내보내기
+        company_fields_title: 회사 필드
+        frequency: 일정 예약
+      schedule_export: 내보내기 예약
+      schedule: 일정 예약
+      all_reports: 모든 보고서
+      new_schedule: 신규 스케쥴
     generate: 생성
     scheduled_reports:
       dialog:
@@ -7921,6 +8233,12 @@ ko:
         'on': 켜짐
         desc: 설명
         subject: 제목
+        monthly: 월간
+        generate_report: 보고서 생성
+        daily: 일간
+        weekly: 주간
+      errors:
+        disabled: 사용자 지정 데이터 범위가 포함된 보고서는 일정을 설정할 수 없습니다
     view_new_reports: 새 보고서 보기
     productivity: 생산성
     date_range: 날짜 범위
@@ -7929,6 +8247,7 @@ ko:
     customer_happiness: 고객 만족도
     timespent_export:
       button_export: 내보내기
+      export_csv: CSV 내보내기
     performance_distribution:
       title: 성과 분포
       resolution_bar: 해결 시간
@@ -7939,10 +8258,29 @@ ko:
     something_went_wrong_msg: 오류가 발생했습니다. 다시 시도해 주십시오.
     ticket_activity:
       learn_more: 자세히 알아보기
+      helpnote:
+        api_info1: API는 마지막으로 작업한 내보내기의 링크를 제공합니다.
+      edit: 일정 편집
     export_tickets_success_msg: 티켓 데이터가 곧 이메일로 전송됩니다!
     helpdesk_analysis: 헬프데스크 분석
     yesterday: 어제
     change: 변경
+    chats: 채팅
+    phone_summary:
+      title: 전화 요약
+    insights:
+      customize_link: 사용자 지정
+    this_week: 이번 주
+    this_month: 이번 달
+    year_in_review:
+      title: 지난해 회고
+    summary: 요약
+    show: '표시:'
+    this_year: 이번 연도
+    filtered_by: '필터링 기준:'
+    at: '시간:'
+    customer_satisfaction:
+      title: 고객 만족도 보고서
   adv_reports:
     at_a_glance: 한 눈에 보는
     select_an_option: 옵션 선택
@@ -8130,6 +8468,7 @@ ko:
       see_detailed_pricing: 자세한 가격 보기
       followup: Freshfone 크레딧 가치
       followup_text: Freshfone 크레딧 가치
+      purchase_credits: 크레딧 구매
     dialpad:
       not_valid_number: 유효한 번호를 입력하십시오.
       could_be_invalid_number: 유효하지 않은 숫자일 수 있습니다.
@@ -8469,6 +8808,9 @@ ko:
             target='_blank'>통화 요금은 여기</a>를 확인하십시오.<br/><br/>지원 헬프라인용 전화 번호를 구입하고
             나면 모든 수신 통화는 헬프데스크에 로그인한 에이전트에게 분배됩니다. 또한 에이전트는 이러한 전화 통화를 브라우저 내에서
             픽업하거나 자신의 데스크 전화로 자동 전달되도록 선택할 수 있습니다.
+        caller_id:
+          manage_caller_id: '발신자 ID 관리 '
+          add_new: 새로 추가
       invalid_attachment: '첨부 파일 ''%{name}''이(가) 유효한 오디오 파일이 아님/이 파일의 크기가 5MB보다 큼'
       ivr:
         simple_message_title: 단순 메시지
@@ -8525,6 +8867,7 @@ ko:
         additional_info: 전화 채널이 계정에서 활성화되면 번호를 구입하여 전화를 걸고 받을 수 있습니다.
         button_text: 전화 요청
         video_title: 동영상을 시청하여 전화 채널로 수행할 수 있는 작업에 대해 알아보기
+        trial_or: 또는
   livechat:
     feature_request:
       title: 실시간 채팅에 오신 것을 환영합니다
@@ -8840,6 +9183,15 @@ ko:
     reported: 보고됨
     view_ticket: 티켓 보기
     header_title: 헤더
+    prechat_dropdown_msg: 기본 설정 탭에서 드롭다운 선택 옵션을 다른 그룹에 연결할 수 있습니다. 채팅은 이에 따라 지정된 그룹에 할당됩니다.
+    show_widget: 에이전트가 온라인 상태이고 채팅을 수락할 때
+    agent_network_disconnect_msg_title: 에이전트가 연결 해제되었을 때의 메시지
+    chat_hours_msg_note: '참조 사항: 채팅 창은 이 시간 외에는 표시되지 않습니다.'
+    enabling: 활성화 중
+    cobrowsing: 페이지 내 도움
+    end_chat_confirm_msg_title: 채팅 종료 확인 메시지
+    chat_with_us: 연락주십시오.
+    cobrowsing_info: 화면을 보고 제어할 수 있는 옵션으로 채팅 대화 중 더욱 효과적으로 고객을 안내하십시오.
   facebook_tab:
     remove_tab: 페이지 탭 제거
     tab_not_removed: 탭을 제거할 수 없습니다.
@@ -9208,6 +9560,9 @@ ko:
         위치: %{forum}(%{category})<br /> 작성자: %{username}, <span
         class='emphasize'>%{time_ago} 전</span>
       title_placeholder: 병합할 주제 검색
+    general:
+      unsaved_content: 이 페이지에 저장되지 않은 콘텐츠가 있습니다.
+      leave_page_que: 이 페이지에서 나가시겠습니까?
   link_with_marketplace: Google Marketplace와 연결
   google_signup:
     associate_google:
@@ -9222,7 +9577,7 @@ ko:
       existing_user: 기존 계정
       company_name: 회사 이름
       helpdesk_url: 헬프데스크 URL
-      your_freshdesk_url: Your Helpdesk URL
+      your_freshdesk_url: 헬프데스크 URL
       domain_info: '예를 들어 헬프데스크가 ''http://apple.freshdesk.com''이면 ''apple''을 입력합니다.'
       phone_no: 전화 번호
       create_my_account: 계정 생성
@@ -9254,6 +9609,7 @@ ko:
     search_articles: 글(기사)
     contact_us: 연락처
     whats_new: 새 소식
+    load_more: 더 불러오기
   trial_plan_downgrade: '중요: 현재 플랜 %{plan_from}에서 플랜 %{plan_to}(으)로 다운그레이드하고 있습니다.'
   discounted_sum: 할인 후
   selecting_plan: 선택 중...
@@ -9317,6 +9673,49 @@ ko:
     description: 설명
     almost_done: 거의 완료되었습니다!
     no_mktp_apps: 설치된 앱이 없습니다. 다음을 클릭하여 앱 갤러리에서 앱을 검색하여 설치하십시오.
+    share_app: 이 앱 공유
+    view_all: 모두 보기
+    view_more: 더 보기
+    installation: 설치
+    terms_of_use_link: 'http://freshdesk.com/terms#marketplace'
+    developed_by: 게시자
+    all_apps: 모든 앱
+    api_error: 요청을 처리할 수 없습니다. 잠시 후에 다시 시도해주세요.
+    help_and_support: 도움말 및 지원
+    tooltip:
+      suspended: 사용 불가능
+    no_mktp_apps_note_2: '''앱 더 받기''를 클릭해 앱 목록을 탐색하세요'
+    no_configs: 이 앱은 구성을 필요로 하지 않습니다.
+    custom_apps: 사용자 지정 앱
+    third_party_apps_policy: >-
+      이 앱은 Freshworks Inc. 가 아닌 제 3자에 의해 소유, 개발, 운영 및 유지됩니다. 이 앱을 다운로드하고 통합 및
+      사용함으로써 귀하는 해당 개발자의 귀하의 데이터 사용을 비롯한 약관 및 개인 정보 취급 방침에 동의하는 것으로 간주된다는 점에
+      유의하세요. 해당 이용 약관 및 개인 정보 취급 방침에 대한 자세한 내용은 개발자에게 문의하거나 개발자 페이지를 방문하세요.
+    time_ago: 전
+    error_calling_method: '메서드 호출 중 오류가 발생헀습니다: '
+    no_search_results: 찾고 계시는 것을 찾지 못했습니다. 다른 키워드로 다시 시도해보시는 게 어떠신가요?
+    validation_failed: 검증 실패.
+    no_custom_apps_installed: 설치된 사용자 지정 앱 없음
+    paid_app: 유료
+    popular_apps: 인기 있는 앱
+    installed_mkp_apps_unavailable: 지금은 설치된 앱 목록을 확인할 수 없습니다. 잠시 후 다시 시도해주세요. 문제가 계속되면 저희에게 연락해주시기 바랍니다.
+    overview: 개요
+    write_a_custom_app: 사용자 지정 앱 작성
+    published_in: '위치:'
+    confirm_uninstall_message: '%{human_name} 님을 정말로 삭제하시겠습니까?'
+    latest_apps: 최신 앱
+    popular: 인기 있는
+    policy_on_custom_apps: 사용자 지정 앱 정책
+    no_custom_apps_note_2: '''사용자 지정 앱 받기''를 클릭해 앱을 찾아보고 설치하세요.'
+    reauthorize: 재인증
+    custom_app_gallery: 사용자 지정 앱 갤러리
+    apps_unavailable: 특정 앱을 렌더링할 수 없습니다. 잠시 후 다시 시도해주세요. 문제가 계속되면 저희에게 연락해주시기 바랍니다.
+    policy_on_tp_apps: 타사 앱에 대한 정책
+    no_mktp_apps_note: 여러분이 즐겨쓰는 앱을 몇가지 통합했습니다.
+    installing: 설치 중
+    coming_soon: 곧 출시
+    latest: 최신
+    no_custom_apps_note: 사용자 지정 앱을 만들고 개발자 포털에 게시하세요
   freshcaller:
     admin:
       link_account_request_content:
@@ -9326,9 +9725,17 @@ ko:
         email: 이메일
         continue: 계속
         password: 비밀번호
+        connect_existing_account: 기존 계정 연결
+        account_url: Freshcaller 계정 URL
+      sidebar_title: 전화
+      title_text: 전화
+      feature_request_content:
+        create_new_account: 새 계정 생성
+      freshcaller_subtext: '번호 구매, 대기열 설정, IVR, 등'
   multifile_attachments:
     remove: 제거
     label: 파일 첨부
+    mb: ' MB '
   reset_arcade: 아케이드 재설정
   plain_on: 켜짐
   recaptcha_require_message: CAPTCHA 확인이 필요합니다.
@@ -9339,16 +9746,104 @@ ko:
         forums_channel: 포럼
         chat_channel: 실시간 채팅
         email_channel: 이메일
+        phone_channel: 전화
+        title: 현재 고객과 어떤 방식으로 소통하고 계신가요?
+        forward_link: 팀 초대
       agents_frame:
         send_invite: 초대 보내기
         emails_invalid: 하나 이상의 이메일이 유효하지 않습니다.
+        emails_placeholder: 'bruce@just.ly, diana@just.ly, clark@just.ly'
+      overview_frame:
+        forward_link: 시작해보겠습니다
+      welcome_frame:
+        title: Freshdesk에 오신 것을 환영합니다!
     account_verification_message:
       helpnote_or: 또는
       modal_send_button: 활성코드 발송
       cancel_button: 취소
+      modal_title: 잘못된 이메일 주소를 사용하여 로그인하셨나요?
+      modal_invalid_email_error: 유효한 이메일 주소를 입력하십시오.
+      resend_message: 활성화 재전송
+      change_email: 이메일 변경
   user_notifications:
     preferences: 기본 설정
+    notification_preferences: 알림 기본 설정
+    enable_desktop_notifications_help: 메시지가 나타나면 '허용'을 클릭하세요
+    mute: 음소거
+    mark_all_as_read: 모두 읽음으로 표시
+    header: 알림
   freshchat:
     admin:
       save: 저장
       cancel: 취소
+      sidebar_title: Freshchat
+      action:
+        success_message: 설정이 업데이트되었습니다
+      admin_apikey: 'API 키:'
+      title_text: Freshchat
+      portal_url: '포털 URL:'
+      app_id: 앱 ID
+  mailer_notifier:
+    hi: '안녕하세요,'
+    thanks: 감사합니다.
+  copied_link: 복사됨
+  enter_a_value: 값 입력
+  custom_mailbox_admin_email_notifications:
+    regards: 감사합니다
+    welcome_message: 친애하는 관리자님께
+  custom_mailbox_error_type:
+    unkown_error: 사용자 지정 이메일 서버에서 이메일을 가져올 수 없습니다. support@freshdesk.com으로 문의해주세요
+    ssl_errror: SSL 오류
+    server_response_invalid: 서버에 연결하는 동안 서버 응답이 유효하지 않은 형식입니다.
+    unable_to_connect: 편지함의 폴더에 연결할 수 없습니다.
+    tcp_connection: TCOP 연결을 생성할 수 없습니다.
+    tcp_refused: 이메일 서버가 TCP 연결을 거부했습니다.
+    mailbox_idle: 편지함이 IDLE 기능을 지원하지 않습니다.
+    unable_fetch_status: 폴더의 상태를 가져올 수 없습니다.
+    io_error: I/O 연결 오류.
+    mailbox_suspended: Email 서버 일시 중지됨
+    server_no_resp: 서버에 연결하는 동안 이메일 서버에서 NO 응답을 보냈습니다.
+    bye_response: 서버에 연결하는 동안 이메일 서버에서 BYE 응답을 보냈습니다.
+    invalid_login: 유효하지 않은 자격 증명
+    folder_unavailable: 편지함에 폴더가 없습니다.
+    tcp_socket: 이메일 서버의 TCP 소켓을 만들 수 없습니다.
+    email_bad_request: 서버에 연결하는 동안 이메일 서버에서 BAD 응답을 보냈습니다.
+  imap_error: 이메일 서버에 접근할 수 없습니다
+  select_values: 하나 이상의 값을 선택하세요
+  activations:
+    activate_freshdesk_account: 계정 활성화
+  cloud_log_mailer:
+    logger_email:
+      regards: 감사합니다.
+      account: '계정: '
+      reason: 이유
+  undo_toggle_error: 오류가 발생했습니다!
+  enter_values: 하나 이상의 값을 입력하세요
+  helpcard:
+    title: 고유 외부 ID
+  admin_upgrade:
+    enable_mint_title: 에이전트가 최신의 더 빠른 Mint 경험을 이용하도록 허용합니다.
+    enable_mint_error: 모든 에이전트가 Mint를 사용할 수 있도록 활성화되었습니다. 최신 설정을 보려면 새로 고치십시오.
+    enable_mint_success: 모든 에이전트가 Mint를 사용할 수 있도록 성공적으로 활성화되었습니다.
+  plain_off: 꺼짐
+  customize_domain:
+    email:
+      cheers: '야호,'
+      team: Freshdesk 팀
+  profiles:
+    freshid_edit:
+      profile_details: 프로필 상세 정보
+  'on': 일시
+  save_as: 다른 이름으로 저장
+  currency_label: '통화 :'
+  ticket_templates:
+    create_new: 새로 생성
+  in: '위치:'
+  help_widget:
+    form_title: 고객센터
+    form_button_text: 피드백 보내기
+    form_submit_message: 피드백을 제출해 주셔서 감사합니다.
+    button_text: 도움말
+    welcome_message: 저희가 도와드릴까요?
+    predictive_message: 도움이 필요한 것 같습니다. 무엇을 원하는지 말씀해주시면 지원 팀이 가능한 한 빨리 연락을 드리겠습니다.
+    success_message: 감사합니다. 연락 드리겠습니다!

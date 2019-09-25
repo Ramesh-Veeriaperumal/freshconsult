@@ -53,7 +53,7 @@ pl:
       - null
       - Sty
       - Luty
-      - Mar
+      - mar
       - Kwi
       - Maj
       - Cze
@@ -357,6 +357,11 @@ pl:
       custom_url: nie jest prawidłowym adresem URL
       custom_date: nie jest prawidłową datą
     phone_number: Nr telefonu
+    industry: Branża
+    last_name: Nazwisko
+    first_name: Imię
+    company_name: Firma
+    job_title: Stanowisko
   custom_fields:
     insert_field: Przeciągnij i upuść pole
     drag_drop_field_intro: >-
@@ -371,7 +376,7 @@ pl:
     decimal: Separator dziesiętny
     dropdown_blank: Lista rozwijana
     phone_number: Numer telefonu
-    url: URL
+    url: Adres URL
     date: Data
     delete: Usuń
     regex: Wyrażenie regularne
@@ -395,6 +400,8 @@ pl:
       tags: Znaczniki
       internal_group: Grupa wewnętrzna
       internal_agent: Konsultant wewnętrzny
+      company: Firma
+      skill: Umiejętność
     saving_ticket: Zapisywanie pól zgłoszeń...
     untitled: Bez nazwy
     properties: Właściwości
@@ -621,6 +628,8 @@ pl:
       email: Twój adres e-mail *
       comments: Komentarze
       send_feedback: Wyślij opinię
+      related_files: Powiązane pliki
+      was_this_article_useful: Czy ten artykuł był pomocny?
     surveys:
       thanks_for_feedback: Otrzymaliśmy twoją opinię. Dziękujemy.
       feedback_already_done: Już wyraziłeś opinię dla tej odpowiedzi.
@@ -649,6 +658,9 @@ pl:
     canned_form:
       next: Dalej
       form_submit: Wyślij
+      okay: OK
+      hey: Cześć
+      thank_you_text: Dziękujemy
   gamification:
     levels:
       beginner: Początkujący
@@ -1185,6 +1197,10 @@ pl:
           Użytkownicy z publicznym adresem URL zgłoszeń mogą przeglądać
           zgłoszenia bez logowania. Adresy mogą być wstawiane do wiadomości
           e-mail oraz do odpowiedzi na zgłoszenia w postaci symboli zastępczych.
+        important: Ważne
+        view_settings: Wyświetl ustawienia
+        restricted_login_signup: Rejestracja i logowanie zostały ograniczone do określonych domen
+        reset_portal_changes: Zresetuj zmiany na portalu
       helpnote:
         title: Konfigurowanie portali
         tour: Pomóż mi skonfigurować portal
@@ -1206,6 +1222,13 @@ pl:
           ustawienia moderacji, kliknij kartę „Ustawienia”. Portali nie można
           konfigurować indywidualnie, ustawienia są takie same we wszystkich
           utworzonych przez Ciebie portalach.
+        exit_fullscreen: Wyjdź z widoku pełnego ekranu
+        editor_shortcuts: Skróty edycyjne
+        preview_changes: Podgląd zmian
+        editor_in_fullscreen: Edytor w widoku pełnego ekranu
+        level_customizations: Indywidualne modyfikacje na poziomie strony
+        advanced_rebranding: Zaawansowana modyfikacja wyglądu i dostosowanie do własnych potrzeb
+        custom_stylesheets: Używanie niestandardowych arkuszy stylów
     mobihelp:
       app_review:
         request_sent: Prośba o ocenę aplikacji wysłana
@@ -1539,6 +1562,9 @@ pl:
           Ponieważ uzyskano już odpowiedzi dla tej ankiety, nie można zmienić
           skali punktowej ani liczby pytań. Można jednak zmienić treść pytań i
           odpowiedzi.
+        bad_to_good: Złe do dobrych
+        survey: Ankieta
+        good_to_bad: Dobre do złych
       new_rating:
         content_text: >-
           To pytanie ułatwia ocenę ogólnej satysfakcji z odpowiedzi udzielonej
@@ -1579,6 +1605,7 @@ pl:
           Ankieta z dodatkowymi pytaniami otwiera się na nowej stronie po
           uzupełnieniu przez klienta ankiety satysfakcji. Pytania mogą dotyczyć
           produktu/firmy/konsultanta.
+        additional_comments_feedback_v2: Uwzględnij dodatkowe pole na komentarz
       new_questions_layout:
         title_text: Wybierz skalę punktów dla swojego pytania
         title_text_v2: Wybierz skalę punktową dla swojego pytania
@@ -1619,6 +1646,8 @@ pl:
         delete: Usuń
         confirm_text: Potwierdź...
         preview_survey: Podgląd
+        activate_survey: Aktywuj
+        custom_title_v2: Ankiety satysfakcji klienta
       choice_contents:
         strongly_disagree: Zdecydowanie się nie zgadzam
         some_what_disagree: Raczej się nie zgadzam
@@ -1840,6 +1869,7 @@ pl:
         wait: Czekaj...
         date: Data
         all: Wszystko
+        filtered_by: 'Przefiltrowane wg:'
     widget_config:
       index:
         feedbackwidget_embedded_tab: Zagnieżdżony widżet
@@ -1917,6 +1947,7 @@ pl:
         feedbackwidget_form_height: Wysokość formularza
         feedbackwidget_button_text_placeholder: Wsparcie
         feedbackwidget_form_height_message: 'Jeśli widzisz paski przewijania w widżecie, wyreguluj jego wysokość.'
+        feedbackwidget_offset: 'Przesunięcie:'
     supervisor_rules:
       info_help: >-
         W przypadku <b>każdego zgłoszenia</b> zaktualizowanego w ciągu 30 dni
@@ -2024,6 +2055,7 @@ pl:
         unchecked: jest odznaczone
         deselected: Odznaczono
       anyone: Dowolna osoba
+      system: System
     va_rules:
       index:
         human_name: Reguła dyspozytora
@@ -2243,7 +2275,8 @@ pl:
           ważności i minimalnej długości hasła. Wprowadzone zmiany zostaną
           zastosowane do nowych i istniejących konsultantów oraz klientów. Aby
           dowiedzieć się więcej na temat polityki haseł, kliknij <a
-          href="https://support.freshdesk.com/support/solutions/articles/213865-password-policy">tutaj</a>.
+          href="https://support.freshdesk.com/support/solutions/articles/213865-password-policy"
+          target="_top">tutaj</a>.
       password_policy_popover:
         minimum_characters: 'Zawierać co najmniej %{count} znaków'
         atleast_an_alphabet_and_number: Zawierać co najmniej 1 literę i 1 cyfrę
@@ -2409,6 +2442,8 @@ pl:
         customers: Klienci
         reports: Raporty
         administration: Administracja
+        general: Ogólne
+        bots: Boty
       permissions: Uprawnienia
       helpcard:
         title1: Omówienie ról
@@ -2488,6 +2523,9 @@ pl:
       add_agent_label: Dodaj konsultanta
       agents_label: Konsultanci
       done_label: Wykonano
+      manage_label: Zarządzaj
+      add_label: Dodaj
+      no_agent_label: Brak konsultanta
     home:
       index:
         group: Grupy
@@ -2537,6 +2575,7 @@ pl:
         mobihelp: Mobihelp
         customer-portal: Portal klienta
         portals: Portale
+        search_admin: Szukaj ustawień administratora
       keywords:
         forum_moderation: Moderowanie forum
         configure_support_email: Konfiguruj adres e-mail pomocy technicznej
@@ -2646,6 +2685,11 @@ pl:
         agent_label: Konsultant
         agents_label: Konsultanci
         agents: Konsultanci
+        skills: Umiejętności
+        add_agents: Dodaj konsultantów
+        manage_label: Zarządzaj
+        add_label: Dodaj
+        no_agent_label: Brak konsultanta
     user_skills:
       index:
         more: więcej
@@ -2698,6 +2742,11 @@ pl:
       limit_exceed: Osiągnięto limit konta.
       inactive: nieaktywne
       active: aktywne
+      index_title: Handel elektroniczny
+    hotline:
+      content3:
+        note_title: 'Notatka:'
+      list_title: Aplikacje MobiHelp
   ends_with: Kończy się na
   last_name: Nazwisko
   forum:
@@ -3733,7 +3782,7 @@ pl:
       contact_first_name: Imię
       contact_last_name: Nazwisko
       contact_email: E-mail
-      contact_phone: Telefon
+      contact_phone: Numer telefonu
       invoice_email_info: Wysyłaj faktury do
       invoice_emails: E-mail
       restore_account: >-
@@ -3748,8 +3797,14 @@ pl:
       requested_demo: <i class='ficon-checkmark-thick muted mr7'></i>Prośba o Demo otrzymana
     signup_google:
       helpdesk_url: URL centrum pomocy
+      sign_up: Zarejestruj się!
+      privacy_policy: polityka prywatności
+      terms_of_service: regulamin
     new:
       full_name: Imię i nazwisko
+      company: Firma
+      confirmation: Potwierdzenie
+      create_an_account: Utwórz konto
     multilingual_support:
       helpcard:
         supported_languages:
@@ -3761,6 +3816,10 @@ pl:
         Uwaga: Twoim podstawowym językiem jest domyślny język centrum pomocy.
         Nie można go zmienić po dodaniu obsługiwanych języków.
       manage_languages: Zarządzanie językami
+    edit_domain:
+      email_error: Nazwa firmy musi mieć przynajmniej 3 znaki.
+      getting_started: Wprowadzenie
+      url_error1: 'Domena <strong>%{domain_name}</strong> jest niedostępna.'
   success_msg: Ustawienia konta zostały zaktualizowane!
   failure_msg: Nie udało się zaktualizować ustawień konta!
   account_configuration:
@@ -3971,6 +4030,7 @@ pl:
     more_catogories: Wyświetl wszystkie kategorie
     other_categories: Wyświetl inne kategorie
     other_categories_info: Kategorie niepowiązane z portalem
+    manage_categories: Zarządzaj
   forum_category:
     product_portal_visibility: Widoczne w
     select_product: Wybierz portal produktu...
@@ -4469,6 +4529,17 @@ pl:
     enable: Włącz
     please_confirm: Potwierdź...
     confirm: Potwierdź
+    toggle_availability_for_rr: >-
+      Zezwalaj konsultantom na zmianę stanu dostępności na potrzeby
+      automatycznego przypisywania zgłoszeń
+    maximum: Maksimum
+    toggle_availability_message: >-
+      Administratorzy i nadzorcy mogą nadpisywać dostępność konsultantów z
+      poziomu pulpitu
+    round_robin_defalut: Przypisywanie w algorytmie szeregowym
+    round_robin_capping: Wczytaj zbilansowane przydzielanie zgłoszeń
+    no_group_info: Nie utworzono żadnych grup.
+    send_escalation_to: 'a następnie wyślij e-maila z eksalacją do:'
   four: 4 godziny
   oneweek: 1 tydzień
   twoweek: 2 tygodnie
@@ -4667,6 +4738,8 @@ pl:
     no_recent_activity: Brak ostatniej aktywności
     reset_score_title: Resetuj odznaki i punkty
     assign_group: Przypisz grupy
+    skill: Umiejętności
+    last_seen_at: Ostatnio widziano o
   account_admin: Administrator konta
   right: Prawa
   footer:
@@ -5016,6 +5089,10 @@ pl:
     status: Stan
     type: Typ
     date: Data
+    invoice: Faktura
+    refund: Zwrócono środki
+    download: Pobierz
+    quantity: Ilość
   activate: Aktywuj
   feedbackwidget_button_text: Etykieta
   amount_billed_per_month: 'Będziesz obciążany kwotą <b>%{amount} %{period}</b>.'
@@ -5163,38 +5240,38 @@ pl:
     vote:
       you:
         one: 'Ty '
-        few: ''
-        many: ''
+        few: 'Ty i '
+        many: 'Ty i '
         other: 'Ty i '
       more:
         one: '1 inna osoba '
-        few: inne osoby
-        many: ''
+        few: '%{count} innych osób'
+        many: '%{count} innych osób'
         other: '%{count} innych osób'
       people:
         one: '1 osoba '
-        few: osoby
-        many: ''
+        few: '%{count} osób '
+        many: '%{count} osób '
         other: '%{count} osób '
     topic_vote:
       announce:
         one: lubi to
-        few: lubią to
-        many: ''
+        few: lubi to
+        many: lubi to
         other: lubi to
       ideas:
         one: lubi ten pomysł
-        few: lubią ten pomysł
+        few: lubi ten pomysł
         many: lubi ten pomysł
         other: lubi ten pomysł
       problem:
         one: ma ten problem
-        few: mają ten problem
+        few: ma ten problem
         many: ma ten problem
         other: ma ten problem
       howto:
         one: ma to pytanie
-        few: mają to pytanie
+        few: ma to pytanie
         many: ma to pytanie
         other: ma to pytanie
       votes: głosy
@@ -5218,8 +5295,8 @@ pl:
       upvote: Zagłosuj
       like:
         one: lubi to
-        few: lubią to
-        many: ''
+        few: lubi to
+        many: lubi to
         other: lubi to
     tickets:
       merged_topic_note: Scalonego wątku nie można przekształcić w zgłoszenie.
@@ -5244,6 +5321,11 @@ pl:
     agent_login_details: Wpisz dane poniżej
     agent_login_info: Czy jesteś konsultantem?
     agent_signin: Zaloguj się tutaj
+    vote_label:
+      one: 1 stemme
+      few: stemmer
+      many: stemmer
+      other: stemmer
   feedbackwidget_form_heading: Utwórz nagłówek
   feedbackwidget_form_title: Tytuł formularza widżetu
   cancel_and_back: Anuluj i wróć
@@ -5315,6 +5397,8 @@ pl:
       something_wrong: Coś poszło nie tak!
       mark_as_uptodate:
         text_1: Oznacz to tłumaczenie jako aktualne
+      mark_as_outdated:
+        text_1: Oznacz inne tłumaczenia jako przestarzałe
     folders:
       view_all: Wyświetl wszystkie foldery...
       choose_folder: Wybierz folder
@@ -5343,7 +5427,7 @@ pl:
       type: Typ artykułu
       prop_tabs:
         tag_fol: Znaczniki i foldery
-        meta: Meta
+        meta: Metadane
       draft:
         show:
           edit: Edytuj
@@ -5525,6 +5609,7 @@ pl:
     unassociated: Nieprzypisane
     plain_new: Nowa
     plain_edit: Edytuj
+    kb: Baza wiedzy
   import_updated: Zaktualizowano
   feedbackwidget_intro: >-
     Dostosuj swój widżet Freshdesk umieszczony poniżej i zobacz podgląd w czasie
@@ -5668,6 +5753,8 @@ pl:
     linked_paren_child_desc: 'Przepływy powiązanych zgłoszeń, zgłoszeń nadrzędnych i podrzędnych'
     scheduled_reports_desc: Zaplanowane raportowanie
     custom_survey_desc: Niestandardowe ankiety zadowolenia klientów
+    bot: Bot
+    freshchat: Dodatek Freshchat
   zendesk_account: Szczegóły konta Zendesk
   zendesk_import_files: 'Wybrać, co poprawić?'
   file_url: Adres pełnego eksportu XML
@@ -6065,6 +6152,8 @@ pl:
           zgłaszającego {{ticket.requester.name}} oraz opis zgłoszenia
           {{ticket.description}}.
         topic: Nowe zgłoszenie DW
+      agent_template_25:
+        topic: Zaproszenie konsultanta przez e-mail
     insert_placeholder: Wstaw symbol zastępczy
     modify_agent_template: Zmodyfikuj szablon e-mail konsultanta
     event: Zdarzenie
@@ -6272,6 +6361,12 @@ pl:
       unverified: Niezweryfikowany
       status: Stan
       type: Typ
+      last_verified: Ostatnio zweryfikowane
+      data_help: Wartość do przydzielenia do rekordu DNS
+      cname: CNAME
+      verify: Weryfikuj
+      host_value_help: Nazwa hosta dla rekordu TXT
+      data: Dane
     personalized_email_replies_info: >-
       W razie wybrania odpowiedzi twierdzącej konsultanci będą mogli wybrać
       swoje imię i nazwisko jako imię i nazwisko nadawcy w odpowiedziach na
@@ -6287,6 +6382,7 @@ pl:
       Użyć imion i nazwisk konsultantów w odpowiedziach na zgłoszenia i
       wiadomościach wychodzących?
     blacklisted_domain_message: Wprowadzona domena jest blokowana. Wybierz inną domenę.
+    plain_unverified: Niezweryfikowany -
   step2: Krok 2
   import_users_contacts: Użytkownicy → Kontakty
   linkback_info: >-
@@ -6931,6 +7027,11 @@ pl:
     anyone: Dowolna osoba
     search_domain: Szukaj domeny
     visible_in_portal: Widoczne w portalu
+    gdpr_terms_link: regulamin
+    gdpr_admin: Administrator.
+    important: Ważne
+    gdpr_policy: Politykę prywatności.
+    gdpr_acknowledgement: i potwierdzasz przeczytanie naszych
   lead: Potencjalny klient
   comments: Komentarze
   forum_confirm_msg1: Czy na pewno chcesz usunąć tę kategorię?
@@ -7188,6 +7289,8 @@ pl:
       cc_label: DW
       requester_label: Zgłaszający
       search_reqester: Wyszukaj zgłaszającego
+      do_not_link: Nie powiązuj
+      view_in_detail: Pokaż szczegóły
     dashboard:
       agent_availability: Dostępność konsultantów
       round_robin:
@@ -7442,6 +7545,7 @@ pl:
         archive_view: Archiwizuj widok
         archived: Archiwizuj
         invalid_requester: Nieprawidłowy zgłaszający
+        raised_by_me: Zgłoszenia żądane przeze mnie
       note:
         posted_on: '%{user_name} dnia %{note_date}'
         created_on:
@@ -7686,6 +7790,7 @@ pl:
       recently_active: Ostatnio aktywne
     everyone: Każdy
     user_placeholder: Nazwa lub e-mail
+    company: Firma
   click_to_change_sort_order: 'Kliknij, aby zmienić porządek sortowania'
   user_sessions:
     new:
@@ -7711,6 +7816,8 @@ pl:
     events_empty: Zdarzenia nie mogą być puste
     conditions_empty: Warunki nie mogą być puste
     actions_empty: Czynności nie mogą być puste
+    invalid_domain:
+      freshdesk: Freshdesk
   export_data:
     in_sla: W ramach SLA
     out_of_sla: Pogwałcenie zasad SLA
@@ -7918,6 +8025,7 @@ pl:
         flash_card_text: Wyjaśnienie karty Społeczność
         tickets: Zgłoszenia
         interactions: Interakcje
+        post: ' Opublikuj '
       index:
         all: Wszystko
       search_btn: Wyszukaj
@@ -8532,7 +8640,7 @@ pl:
         select: Wybierz opcję
         contact: Pola kontaktów
         lead: Pola potencjalnych klientów
-        account: Pola konta
+        account: Pola klientów
     nimble:
       label: Nimble
       desc: >-
@@ -8667,6 +8775,7 @@ pl:
         password: Hasło
         lead: Pola potencjalnych klientów
         contact: Pola kontaktów
+        account: Pola klientów
     dynamicscrm:
       label: Dynamics CRM
       helptext: >-
@@ -8843,6 +8952,13 @@ pl:
           Na przykład, jeżeli adres URL w systemie Shopify jest taki:
           <strong>https://my_shop_name.shopify.com</strong>, wpisz
           <strong>my_shop_name</strong>.
+        shop_name_info_mint: >-
+          Na przykład, jeżeli adres URL w systemie Shopify jest taki:
+          <strong>https://my_shop_name.shopify.com</strong>, wpisz
+          <strong>my_shop_name</strong>.
+        shop_name_mint: Nazwa sklepu
+      edit:
+        disconnect: Rozłącz
     slack:
       label: Slack
       desc: Zawsze aktualne informacje o zgłoszeniach Freshdesk w aplikacji Slack
@@ -9289,6 +9405,9 @@ pl:
       crm:
         mapping:
           contact: Kontakt
+          company: Firma
+          contact_fields: ' Pola kontaktów '
+          account_fields: ' Pola klientów '
     screen_pop:
       widget:
         edit_note_text: Edytuj notatkę
@@ -9307,6 +9426,7 @@ pl:
         add_note_text: Uwagi do połączenia
         agent_phone_updated: Zaktualizowano dane telefonu konsultanta
         ticket_reference_id: Identyfikator połączenia
+        do_not_link: Nie powiązuj
     hootsuite:
       more:
         help: Pomoc
@@ -9369,6 +9489,7 @@ pl:
       form:
         contact: Pola kontaktów
         select: Wybierz opcję
+        account: Pola klientów
     cti_admin:
       ctd:
         api_key: Klucz API
@@ -9463,6 +9584,9 @@ pl:
         contact: Pola kontaktów
         lead: Pola potencjalnych klientów
         select: Wybierz opcję
+        deal: Pola transakcji
+        domain: Domena konta
+        account: Pola klientów
     slack_v2:
       action_options:
         public: Publiczna
@@ -9474,6 +9598,8 @@ pl:
 
           2. freshdeskbot - You will receive Freshdesk notification from this
           Bot.
+      form:
+        slash_command_token: Token komendy Slash
     onedrive:
       chooser_title: Wybierz plik z serwisu OneDrive
       desc: Załącz i udostępnij dane/pliki z serwisu OneDrive.
@@ -9506,13 +9632,30 @@ pl:
       form:
         lead: Pola potencjalnych klientów
         contact: Pola kontaktów
+        daily: Codziennie
+        account: Pola klientów
+        field_mapping: Mapowanie pól
+        hourly: Godzinowo
     custom_apps:
       ticket_detail_page: Strona szczegółów zgłoszenia
       preview_helptext: Ta aplikacja niestandardowa pojawi się na pasku bocznym
       custom_app_used_in: Aplikacja niestandardowa wyświetlana w
       contact_detail_page: Strona z danymi kontaktowymi
       custom_app_preview: Podgląd aplikacji niestandardowych
+      hide_preview: Ukryj podgląd
+      refresh: Odśwież
+      show_preview: Pokaż podgląd
     uninstall: Odinstaluj
+    google_drive:
+      form:
+        developer_key: Klucz API pozyskany z konsoli programistów Google.
+        client_id: ID klienta OAuth dla twojej domeny
+    microsoft_teams:
+      auth_btn: Autoryzuj
+    slack_v3:
+      slack_prof_label: Połącz ze Slack
+      slack_connect_desc: 'Skonfiguruj swoje konto, aby móc wysyłać zgłoszenia ze Slack'
+      slack_auth_btn: Autoryzacja Slack
   widgets:
     contact_widget:
       description: Wyświetl kontakt lub opcję dodawania kontaktu do aplikacji Capsule
@@ -9689,6 +9832,7 @@ pl:
         all_responses: Wszystkie odpowiedzi
         survey_name: Tytuł
         total_responses_v2: Razem
+        loading_msg: Generowanie raportów...
       index:
         agent_list_loading: Pobieranie listy konsultantów
       feedbacks:
@@ -9957,6 +10101,7 @@ pl:
       relevance: Istotność
       created_at: Data utworzenia
       updated_at: Ostatnia zmiana
+    searching: Wyszukiwanie
   assumed_identity_msg: 'Ustaliłeś swoją tożsamość jako %{user_name}.'
   unauthorized_msg: Autoryzacja nie powiodła się
   assuming_identity_user_does_not_exist_msg: 'Użytkownik, którego tożsamości próbowałeś użyć, nie istnieje .'
@@ -10300,7 +10445,7 @@ pl:
   showing: Wyświetla
   Email: E-mail
   Portal: Portal
-  Phone: Telefon
+  Phone: Numer telefonu
   Forum: Forum
   Twitter: Id Twittera
   Facebook: Facebook
@@ -10364,6 +10509,8 @@ pl:
       average_received_tickets: Średnia otrzymanych zgłoszeń
       total_received_tickets: Suma otrzymanych zgłoszeń
       unresolved_tickets: Nierozwiązane zgłoszenia
+      load_analysis:
+        title: Analiza obciążenia
     glance:
       title: Szybki przegląd centrum pomocy
       index_title: Centrum pomocy<br/>Więcej informacji
@@ -10407,6 +10554,7 @@ pl:
       category:
         product: Produkt
         group: Grupa
+      customize_link: Dostosuj
     priority: Priorytet
     end_date: Data zakończenia
     saved_report:
@@ -10418,6 +10566,8 @@ pl:
 
         Happy number crunching!
       cancel: Anuluj
+      delete_dialog_header: Usuń raport
+      edit_dialog_header: Edytuj raport
     loading_text: Generowanie raportu...
     hours: Godziny
     today: Dzisiaj
@@ -10435,10 +10585,22 @@ pl:
         ticket_fields_title: Pola zgłoszenia
         email: E-mail
         select_all: Zaznacz wszystko
+        helpnote:
+          api_info1: W interfejsie API znajduje się odnośnik do najnowszego eksportu.
+        one_time_export_label: >-
+          Eksportuj treść zgłoszenia od początku miesiąca po rozpoczęciu
+          harmonogramu
+        frequency: Zaplanuj
       index:
         confirm: Potwierdź
         cancel: Anuluj
+        delete_title: Usuń harmonogram
+        delete_text: Czy na pewno chcesz usunąć ten harmonogram?
       create_new: Utwórz
+      schedule_export: Zaplanuj eksport
+      schedule: Zaplanuj
+      all_reports: Wszystkie raporty
+      new_schedule: Nowy Harmonogram
     chart_title:
       unresolved: Nierozwiązane
       agent_and_customer_response: Liczba odpowiedzi konsultanta i klienta w
@@ -10519,6 +10681,11 @@ pl:
         email: E-mail
         desc: Opis
         'on': Wł.
+        generate_report: Generuj raport
+        daily: Codziennie
+        weekly: Co tydzień
+      errors:
+        disabled: Nie można zaplanować raportu z niestandardowymi zakresami dat
     'yes': Tak
     view_new_reports: Zobacz nowe raporty
     v2_helptext:
@@ -10614,6 +10781,7 @@ pl:
     customer_happiness: Zadowolenie klienta
     timespent_export:
       button_export: Eksportuj
+      export_csv: Importuj plik CSV
     abbr_qtr:
       - sty–mar
       - kwi–cze
@@ -10686,6 +10854,9 @@ pl:
     customer: Klient
     ticket_activity:
       learn_more: Dowiedz się więcej
+      helpnote:
+        api_info1: W interfejsie API znajduje się odnośnik do najnowszego eksportu.
+      edit: Edytuj harmonogram
     filter_limit_exceeded: 'Możesz wybrać maks. %{count} filtrów'
     export_tickets_success_msg: Twoje dane zgłoszenia zostaną wkrótce wysłane na e-mail.
     compliant_tickets: Zgodne zgłoszenia
@@ -10702,6 +10873,13 @@ pl:
     change: Zmień
     agent_responses: Odpowiedzi konsultantów
     customer_responses: Odpowiedzi klientów
+    chats: Czaty
+    this_month: Ten miesiąc
+    year_in_review:
+      title: Przegląd twojego roku
+    summary: Podsumowanie
+    show: 'Pokaż:'
+    filtered_by: 'Przefiltrowane wg:'
   adv_reports:
     at_a_glance: Szybki przegląd
     select_an_option: Wybierz opcję
@@ -10958,6 +11136,7 @@ pl:
       see_detailed_pricing: Wyświetl szczegółowy cennik
       followup: doładowania konta telefonicznego
       followup_text: doładowania konta telefonicznego
+      purchase_credits: Kup Środki
     dialpad:
       not_valid_number: Podaj prawidłowy numer
       could_be_invalid_number: Może być nieprawidłowym numerem.
@@ -11195,7 +11374,7 @@ pl:
       settings: Ustawienia
       greetings: Powitania
       messages: Wiadomości
-      freshfone_numbers_title: Telefon
+      freshfone_numbers_title: Numer telefonu
       suspended_alert: >-
         <b>Ważne:</b> Wyłączenie kanału telefonicznego nie powoduje przerwania
         naliczania comiesięcznej opłaty za dzierżawę numeru. Aby uniknąć opłat,
@@ -11384,6 +11563,8 @@ pl:
         caller_id:
           wait: Czekaj...
           delete: Usuń
+          manage_caller_id: 'Zarządzaj identyfikatorem dzwoniącego '
+          add_new: Dodaj nowy
       invalid_attachment: >-
         Załącznik ’%{name}’ nie zawiera prawidłowego pliku audio / jest większy
         niż 5MB.
@@ -11432,9 +11613,9 @@ pl:
           Wpisz prawidłowy numer telefonu z prefiksem „+” oraz poprzedzony kodem
           kraju
       welcome_page:
-        title_text: Telefon
+        title_text: Numer telefonu
       feature_request_content:
-        title_text: Telefon
+        title_text: Numer telefonu
         heading_text: >-
           Zapewniaj pomoc techniczną swoim klientom z wykorzystaniem kanału
           telefonicznego
@@ -11458,6 +11639,7 @@ pl:
           kupowania numerów, wykonywania i odbierania połączeń
         button_text: Wystąp o telefon
         video_title: Obejrzyj film demonstrujący możliwości kanału telefonicznego
+        trial_or: LUB
       trial:
         numbers:
           search:
@@ -11820,6 +12002,19 @@ pl:
       działem pomocy technicznej Freshdesk.
     end_chat_cancel_title: Anuluj
     duration: Czas trwania
+    prechat_dropdown_msg: >-
+      Możesz przypisać wybory z listy rozwijanej do różnych grup na karcie
+      Preferencje. Czaty będą odpowiednio przydzielane do określonych grup.
+    show_widget: Kiedy konsultanci są online i akceptują rozmowy na czacie
+    agent_network_disconnect_msg_title: 'Wiadomość wyświetlana, gdy konsultant zostanie rozłączony'
+    chat_hours_msg_note: 'Uwaga: okno czatu będzie ukryte poza tym czasem.'
+    enabling: Włączanie
+    cobrowsing: Pomoc na stronie
+    end_chat_confirm_msg_title: Wiadomość z potwierdzeniem zakończenia czatu
+    chat_with_us: Połącz się z nami
+    cobrowsing_info: >-
+      Wspieraj swoich klientów bardziej efektywnie podczas rozmów na czacie,
+      korzystając z opcji wyświetlania i kontrolowania ich ekranów.
   facebook_tab:
     remove_tab: Usuń kartę strony
     tab_not_removed: Nie można usunąć karty
@@ -12335,6 +12530,7 @@ pl:
     search_articles: Wyszukaj artykułu
     contact_us: Skontaktuj się z nami
     whats_new: Aktualności
+    load_more: Wczytaj więcej
   trial_plan_downgrade: >-
     Ważne: Przekształcasz plan %{plan_from} na plan %{plan_to} o niższej
     funkcjonalności
@@ -12378,6 +12574,8 @@ pl:
   public_note_cc: Nowa notatka dodana do zgłoszenia
   mailer_notifier:
     freshdesk_team: Zespół Freshdesk
+    hi: 'Witaj,'
+    thanks: 'Dziękujemy,'
   call:
     ticket:
       voicemail_title: 'Wiadomość głosowa od %{customer}'
@@ -12480,6 +12678,16 @@ pl:
     no_mktp_apps_note: Dokonaliśmy integracji z niektórymi z twoich ulubionych aplikacji.
     latest: Najnowsze
     no_custom_apps_note: Utwórz aplikacje niestandardowe i opublikuj je na portalu programowania.
+    terms_of_use_link: 'http://freshdesk.com/terms#marketplace'
+    third_party_apps_policy: >-
+      Ta aplikacja jest własnością firmy zewnętrznej a nie Freshworks Inc. i
+      jest przez nią opracowana, obsługiwana i utrzymywana. Pobierając,
+      integrując lub korzystając z tej aplikacji, potwierdzasz, że jesteś
+      związany regulaminem i polityką prywatności z jej developerem, włączając w
+      to przetwarzanie swoich danych. Więcej informacji o regulaminie i polityce
+      prywatności możesz uzyskać, kontaktując się z developerem lub przechodząc
+      na jego witrynę internetową.
+    installing: Instalacja
   requester_widget:
     company:
       name: Nazwa firmy
@@ -12515,8 +12723,13 @@ pl:
         email: E-mail
         continue: Kontynuuj
         password: Hasło
+        connect_existing_account: Połącz istniejące konto
+        account_url: Adres URL konta Freshcaller
       title_text: Numer telefonu
       sidebar_title: Numer telefonu
+      feature_request_content:
+        create_new_account: Utwórz nowe konto
+      freshcaller_subtext: 'Kupuj numery, konfiguruj kolejki połączeń, IVR, itp.'
   ml:
     submit: Wyślij
   requester_widget_edit: Edytuj
@@ -12527,6 +12740,7 @@ pl:
     label: Dołącz pliki
     permanent_delete: Zamierzasz trwale usunąć ten załącznik. Kontynuować?
     remove: Usuń
+    mb: ' MB '
   submit_and_new: Wyślij i <strong>nowe</strong>
   doorkeeper:
     authorizations:
@@ -12583,17 +12797,27 @@ pl:
       agents_frame:
         emails_invalid: Co najmniej jeden z twoich adresów e-mail jest nieprawidłowy.
         send_invite: Wyślij zaproszenie
+        emails_placeholder: 'bruce@just.ly, diana@just.ly, clark@just.ly'
       channels_frame:
         forums_channel: Fora
         email_channel: E-mail
         phone_channel: Numer telefonu
         social_channel: Społeczne
         chat_channel: Czat na żywo
+        title: Jak rozmawiasz ze swoimi klientami dzisiaj?
+        forward_link: Zaproś swój zespół
+      overview_frame:
+        forward_link: Zaczynajmy
+      welcome_frame:
+        title: Witaj w systemie Freshdesk
     account_verification_message:
       modal_invalid_email_error: Wpisz prawidłowy adres e-mail.
       modal_send_button: Wyślij wiadomość aktywacyjną
       cancel_button: Anuluj
       helpnote_or: lub
+      modal_title: Zarejestrowano przy użyciu niewłaściwego adresu e-mail?
+      resend_message: Wyślij wiadomość aktywacyjną ponownie
+      change_email: zmień swój adres e-mail
   helpdesk_search:
     priority: Priorytet
     requester: zgłaszającego
@@ -12617,6 +12841,8 @@ pl:
     mark_all_as_read: Oznacz wszystko jako przeczytane
     header: Powiadomienia
     preferences: Właściwości
+    notification_preferences: Preferencje powiadomień
+    enable_desktop_notifications_help: Kliknij „Zezwól“ po wyświetleniu monitu
   resolution_reminder_sla: Przypomnienie o SLA dla czasu rozwiązania
   ticket_templates:
     properties: Właściwości
@@ -12649,6 +12875,12 @@ pl:
       cancel: Anuluj
       save: Zapisz
       app_id: Identyfikator aplikacji
+      sidebar_title: Freshchat
+      action:
+        success_message: Zaktualizowano ustawienia
+      admin_apikey: 'Klucz API:'
+      title_text: Freshchat
+      portal_url: 'URL portalu:'
   more_companies: '%{count} więcej'
   ecommerce_reauth: >-
     Twoje konto Ecommerce jest niedostępne. Wydaje się, że wygasł token
@@ -12669,7 +12901,47 @@ pl:
     folder_unavailable: Folder jest niedostępny w skrzynce pocztowej.
     tcp_socket: Nie można utworzyć gniazda TCP dla serwera poczty e-mail.
     email_bad_request: Serwer poczty e-mail wysłał odpowiedź BAD podczas łączenia z serwerem.
+    unkown_error: >-
+      Nie udało się pobrać wiadomości e-mai z niestandardowego klienta
+      pocztowego. Skontaktuj się z support@freshdesk.com
   imap_error: Serwer poczty e-mail jest niedostępny
   plain_off: Wył.
   plain_on: Wł.
   in: w
+  copied_link: Skopiowane
+  enter_a_value: Wpisz wartość
+  cloud_log_mailer:
+    logger_email:
+      regards: 'Pozdrawiamy,'
+      account: 'Klient: '
+      reason: Powód
+  undo_toggle_error: 'Przepraszamy, coś poszło nie tak!'
+  enter_values: Wprowadź jedną wartość lub więcej
+  helpcard:
+    title: Unikatowy identyfikator zewnętrzny
+  admin_upgrade:
+    enable_mint_title: Pozwól konsultantom wypróbować nowszą i szybszą wersję środowiska Mint
+    enable_mint_error: >-
+      Środowisko Mint zostało już włączone dla wszystkich konsultantów. Odśwież,
+      aby zobaczyć najnowsze ustawienia.
+    enable_mint_success: Hura! Środowisko Mint zostało włączone dla wszystkich konsultantów.
+  customize_domain:
+    email:
+      cheers: 'Pozdrawiamy,'
+      team: Zespół Freshdesk
+  profiles:
+    freshid_edit:
+      profile_details: Szczegóły profilu
+  'on': dnia
+  save_as: Zapisz jako
+  currency_label: 'Waluta :'
+  help_widget:
+    form_title: Skontaktuj się z nami
+    form_button_text: Wyślij opinię
+    form_submit_message: Dziękujemy za opinię.
+    button_text: Pomoc
+    welcome_message: W czym możemy Ci pomóc?
+    predictive_message: >-
+      Zauważyliśmy, że nie wiesz co dalej. Powiedz nam, co chcesz zrobić, a nasz
+      zespół ds. obsługi wkrótce się z Tobą skontaktuje.
+    success_message: Dzięki. Wkrótce się z Tobą skontaktujemy!

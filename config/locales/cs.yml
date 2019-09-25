@@ -337,6 +337,11 @@ cs:
       custom_url: neplatné URL
       custom_date: neplatné datum
     phone_number: Telefon
+    industry: Odvětví
+    last_name: Příjmení
+    first_name: Jméno
+    company_name: Společnost
+    job_title: Pracovní pozice
   custom_fields:
     insert_field: Pole pro Drag&Drop
     drag_drop_field_intro: >-
@@ -349,7 +354,7 @@ cs:
     dropdown: Rozbalovací menu
     dropdown_blank: Rozbalovací menu
     phone_number: Telefonní číslo
-    url: URL
+    url: Adresa URL
     date: Datum
     regex: Regex
     email: E-mail
@@ -373,6 +378,8 @@ cs:
       ticket_type: Typ
       created_at: Vytvořeno
       tags: Značky
+      company: Společnost
+      skill: Dovednost
     saving_ticket: Ukládání položek požadavku...
     untitled: Bez názvu
     first_choice: První volba
@@ -451,6 +458,11 @@ cs:
       drop_down_items_edit: Položky rozbalovacího menu - Úprava
       default_field_delete_disabled: Defaultní pole nelze odstranit
       nested_tree_validation: Je zapotřebí alespoň jedna kategorie a sub-kategorie
+      nested_field_helptext: >-
+        Pro doplnění nebo úpravu položek rozbalovacího menu slouží toto textové
+        pole. Odsazení položek se provádí klávesou TAB. <a target='_blank'
+        href='https://support.freshdesk.com/solution/categories/45957/folders/74594/articles/37599-using-dependent-fields'>Další
+        informace zde</a> 
     customer_label_missing: Popisek pro zákazníka musí být zadán
     section:
       delete_from_section: 'Jste si jisti, že chcete odstranit pole z této sekce?'
@@ -473,6 +485,9 @@ cs:
       oops_btn: OOps!
       section_has_fields: Sekce obsahuje pole
       delete_field_section: Odstranit pole z této sekce
+      ok_btn: OK
+      confirm_btn: Potvrdit
+      confirm_text: Prosíme o potvrzení ...
     confirm_deletion: >-
       Varování! Pokud smažete toto pole, ztratíte všechny hodnoty, které do něj
       kdy byly zadány. Opravdu to chcete?
@@ -537,6 +552,8 @@ cs:
         rate_again: Ohodnoťte nás znova
         submit: Odeslat
         cancel: Storno
+        load_questions: zobrazit více
+        comments: Komentáře
     login:
       form:
         email: E-mail
@@ -564,6 +581,8 @@ cs:
       email: Váš e-mail *
       comments: Poznámky
       send_feedback: Odeslat zpětnou vazbu
+      related_files: Související soubory
+      was_this_article_useful: Byl tento článek užitečný?
     surveys:
       thanks_for_feedback: Obdrželi jsme vaši zpětnou vazbu. Velmi děkujeme.
       feedback_already_done: Na tuto odpověď jste nám již sdělili svůj názor.
@@ -598,6 +617,8 @@ cs:
     canned_form:
       next: Další
       form_submit: Odeslat
+      hey: Ahoj
+      thank_you_text: Děkujeme
   gamification:
     levels:
       beginner: Začátečník
@@ -1024,6 +1045,7 @@ cs:
           <b>%{regex}</b>.
         max_choices: Dosaženo maximálního počtu položek
         field_label_customer_level2: Popisek druhé úrovně pro agenty
+        field_label_agents_level2: Popisek druhé úrovně pro agenty
     portal:
       index:
         portal_customizer_title: Konfigurace zákaznického portálu
@@ -1067,6 +1089,10 @@ cs:
         allow_signup: Umožnit uživatelům přihlášení ze zákaznického portálu
         simple_none: Nic
         allow_signin: Povolit uživatelům přihlášení prostřednictvím ...
+        google: Google
+        important: Důležité
+        facebook: Facebook
+        everyone: Kdokoli
     mobihelp:
       app_review:
         request_sent: Požadavek na posudek aplikace byl odeslán
@@ -1125,6 +1151,7 @@ cs:
           app_key: Klíč aplikace
           app_secret: Tajemství aplikace
           integration_details: Detaily integrace
+          saving: Ukládám ...
         index:
           title: Aplikace MobiHelp
           new_app: Nová aplikace
@@ -1281,6 +1308,7 @@ cs:
         video: Vyzkoušejte video
         learn_arcade: Naučte se více o arkádě
         enable_arcade: Povolit FreshDesk arkádu
+        start_over: Resetovat
       gamification_settings:
         award_points: Body ocenění
         agent_resolves_ticket: 'Když zástupce <br /> vyřeší požadavek:'
@@ -1325,6 +1353,12 @@ cs:
         delete: Smazat
         save_survey: Uložit
         edit: Upravit
+        hide: Odebrat
+        new: Nová
+        update: aktualizace
+        confirm_text: Prosíme o potvrzení ...
+        activate_survey: Aktivovat
+        preview_survey: Náhled
       satisfaction_settings:
         enable_label: Dotazníky spokojenosti zákazníků
         link_text_label: Text odkazu na dotazník spokojenosti
@@ -1345,6 +1379,17 @@ cs:
       new_questions_layout:
         questions: Otázky
         add_question: Přidat otázku
+      new_layout:
+        title: Název průzkumu
+        loading: Načítání...
+        survey: Průzkum
+      thanks_contents:
+        title_text_v2: Zpráva s poděkováním pro průzkum spokojenosti zákazníků
+      new_rating:
+        error_text: Toto pole je povinné
+      new_thanks:
+        thanks_message_feedback_v2: Zpráva s poděkováním za dodatečnou zpětnou vazbu
+        additional_comments_feedback_v2: Vložit pole pro další komentáře
     getting_started:
       send_mail_content:
         test_info_1: >-
@@ -1504,6 +1549,9 @@ cs:
           denních propustek klesne na 2.
         email: E-mail
         all: Všichni
+        agent: Zástupce
+        date: Datum
+        filtered_by: 'Filtrováno podle:'
     widget_config:
       index:
         feedbackwidget_embedded_tab: Vestavěný panel
@@ -1538,10 +1586,34 @@ cs:
       popup_widget:
         feedbackwidget_form_customization: Přizpůsobený formulář
         feedbackwidget_attach_a_file: Přiložit soubor
+        feedbackwidget_button_type: Typ tlačítka
+        feedbackwidget_submit_title: Odeslat zpětnou vazbu
+        feedbackwidget_button_customization: Přizpůsobené tlačítko
+        thankyou_default: Děkujeme Vám za zpětnou vazbu
+        feedbackwidget_form_submit_message: Potvrzovací hlášení formuláře
+        feedbackwidget_screenshot: Vytvořit snímek obrazovky
+        feedbackwidget_image_button: Obrazové tlačítko
+        thankyou_info: 'Zpráva, která bude zobrazena po potvrzení formuláře s požadavkem'
+        feedbackwidget_offset: 'Odsazení:'
+        feedbackwidget_search_area: Vyhledat mezi články
+        feedbackwidget_popup_code: Kód vyskakovacího panelu
+        feedbackwidget_use_https: Použít https
+        feedbackwidget_text_button: Textové tlačítko
+        feedbackwidget_form_height: Výška formuláře
+        feedbackwidget_button_text_placeholder: Podpora
+        feedbackwidget_form_height_message: Jestliže jsou vidět na formuláři posuvníky upravte jeho výšku.
       embedded_widget:
         feedbackwidget_embedded_code: Kód vestavěného panelu
         feedbackwidget_form_customization: Přizpůsobený formulář
         feedbackwidget_attach_a_file: Přiložit soubor
+        feedbackwidget_submit_title: Odeslat zpětnou vazbu
+        thankyou_default: Děkujeme Vám za zpětnou vazbu
+        feedbackwidget_form_submit_message: Potvrzovací hlášení formuláře
+        thankyou_info: 'Zpráva, která bude zobrazena po potvrzení formuláře s požadavkem'
+        feedbackwidget_search_area: Vyhledat mezi články
+        feedbackwidget_use_https: Použít https
+        feedbackwidget_form_height: Výška formuláře
+        feedbackwidget_form_height_message: Jestliže jsou vidět na formuláři posuvníky upravte jeho výšku.
     supervisor_rules:
       info_help: >-
         Vykonej všechny odpovídající pravidla pro <b>každý požadavek</b>
@@ -1637,6 +1709,8 @@ cs:
         checked: zaškrtnuto
         unchecked: nezaškrtnuto
         deselected: Výběr zrušen
+      anyone: Kdokoliv
+      system: Systém
     va_rules:
       index:
         human_name: Pravidlo Dispečera
@@ -1792,6 +1866,10 @@ cs:
         notifications: Upozornění bude odesláno když
         agent_create_or_delete: Je přidán nebo odebrán zástupce
         whitelisted_ip_modified: IP whitelist je upraven
+        saml_cert_fingerprint_info_sha256: >-
+          "Otisk prstu" (SHA256) pro certifikát SAML od vašeho SAML
+          poskytovatele. Bude použit pro šifrování / validaci
+        for_agents: Pro zástupce
       helpnote:
         title: Bezpečnostní nastavení
         info1: >-
@@ -1820,6 +1898,14 @@ cs:
         password_should: Vaše heslo by mělo
         minimum_characters: 'obsahovat minimálně %{count} znaků'
         cannot_contain_user_name: Nesmí obsahovat uživatelské jméno
+      password_security:
+        advanced: Pokročilý
+        never: Nikdy
+        characters: znaků
+        days: dny
+        password: heslo
+        have_mixed_case: Musí obsahovat malá a velká písmena
+        default: Výchozí
     products:
       helpnote:
         tour: Pomozte mi spustit systém více produktů
@@ -1873,6 +1959,8 @@ cs:
         last_published: Váš portál byl naposledy publikován
         contact_us: Kontaktujte nás
         logo_and_favicon: Logo & FAV ikona
+        settings: Nastavení
+        customer_portal: Zákaznický portál
       edit:
         title: Upravit produkt
         updating: Aktualizuji...
@@ -1941,6 +2029,8 @@ cs:
         customers: Zákazníci
         reports: Reporty
         administration: Správa
+        general: Obecné
+        bots: Roboti
       permissions: Oprávnění
       helpcard:
         title1: Porozumění rolím
@@ -2012,12 +2102,17 @@ cs:
       done_label: Hotovo
       save_label: Uložit
       manage_label: Spravovat
+      agent_label: Zástupce
+      add_agent_label: Přidat operátora
+      saving_label: Ukládám ...
+      add_label: Přidat
+      no_agent_label: Žádný zástupce
     home:
       index:
         group: Skupiny
         day_pass: Denní propustky
         business-hours: Pracovní doba
-        title: Admin
+        title: Administrátor
         email-notifications: Emailové upozornění
         survey-settings: Spokojenost zákazníka
         gamification-settings: Nastavení Arcade
@@ -2163,9 +2258,30 @@ cs:
         agents: Zástupci
         manage_label: Spravovat
         description: Popis
+        skills: Dovednosti
+        agent_label: Zástupce
+        add_agents: Přidat zástupce
+        skill_create: Vytvořit
+        add_label: Přidat
+        no_agent_label: Žádný zástupce
     user_skills:
       index:
         more: více
+        any: Cokoli
+        groups: Skupina
+    ecommerce:
+      new:
+        account_name: Jméno uživatelského účtu
+        title: Nový účet
+        assign_product: Přiřadit k produktu
+        assign_group: Přiřadit skupině
+      index:
+        new_account: Nový účet
+      index_title: Elektronické obchodování
+    hotline:
+      content3:
+        note_title: 'Poznámka:'
+      list_title: Aplikace MobiHelp
   ends_with: Končí na
   last_name: Příjmení
   forum:
@@ -3003,6 +3119,17 @@ cs:
         Váš účet byl zrušen a všechna data <strong>%{delete_at}</strong>
         vymazána. Pro obnovu vašeho účtu kontaktujte prosím <a
         href='mailto:support@freshdesk.com'>support@freshdesk.com</a>.
+    edit_domain:
+      email_error: Jméno společnosti musí mít alespoň 3 znaky
+      url_error1: 'Doména <strong>%{domain_name}</strong> není dostupná.'
+    new:
+      full_name: Celé jméno
+      company: Společnost
+      confirmation: Potvrzení
+      create_an_account: Vytvořit účet
+    signup_google:
+      sign_up: Registrácia!
+      privacy_policy: zásady ochrany osobních údajů
   success_msg: Nastavení účtu byla úspěšně aktualizována!
   failure_msg: Nastavení účtu se nepodařilo aktualizovat!
   account_configuration:
@@ -3282,6 +3409,7 @@ cs:
       created_at: Vytvořeno dne
       asc: Vzestupně
       desc: Sestupně
+      last_active_at: Naposledy viděn
   topic:
     ideas_stamps:
       planned: Plánováno
@@ -3571,6 +3699,13 @@ cs:
       day: 1 den
       twoday: 2 dny
       threeday: 3 dny
+    toggle_availability_for_rr: >-
+      Umožnit agentům měnit jejich dostupnost pro automatické přiřazování
+      požadavků
+    maximum: Maximum
+    enable: Povolit
+    please_confirm: Prosíme o potvrzení ...
+    confirm: Potvrdit
   four: 4 hodiny
   oneweek: 1 týden
   twoweek: 2 týdny
@@ -3699,6 +3834,14 @@ cs:
     convert_agent_confirmation: >-
       Varování - pokud změníte zástupce na pracovníka, budou všechny infromace o
       něm nevratně odstraněny. Opravdu to chcete udělat?
+    insert_placeholder: Vložit zástupnou značku
+    days_ago: 'před %{days}'
+    ago: 'před %{time}.'
+    last_logged: Naposled přihlášen v
+    export: Exportovat
+    no_recent_activity: Žádná poslední aktivita
+    skill: Dovednosti
+    last_seen_at: Naposledy viděn v
   account_admin: Správce účtu
   right: Vpravo
   footer:
@@ -3860,6 +4003,7 @@ cs:
       unverified: Pracovníci s neověřeným e-mailem
       deleted: Smazaní pracovníci
       all: Všichni pracovníci
+      blocked: Blokované kontakty
     verified:
       no_contacts: Nemáte žádné verifikované pracovníky.
       no_contacts_with_letter: 'Žádní verifikovaní pracovníci nezačínají na písmeno ''%{alphabet}'''
@@ -3979,6 +4123,10 @@ cs:
     free_plan_currency_note: 'Když budete upgradovat nebo přidávat zástupce, vaše platby budou v '
     status: Stav
     type: Typ
+    invoice: Faktura
+    refund: Refundováno
+    download: Stáhnout
+    date: Datum
   activate: Aktivovat
   feedbackwidget_button_text: Popisek
   amount_billed_per_month: 'You will be billed <b>%{amount} %{period}</b>.'
@@ -3989,7 +4137,7 @@ cs:
   import_zendesk_summary: Importovat ze souhrnu Zendesku
   user_activation_email: Aktivační e-mail uživatele
   incident: Incident
-  import: Import
+  import: Importovat
   contains: Obsahuje
   import_solution_article_info: 'Poznámka: Neukládáme komentáře k fórům'
   register: Registrovat
@@ -4014,7 +4162,7 @@ cs:
     reported: nahlásil
     said: řekl
     solutions_home: Řešení – úvod
-    print_title: Print this Article
+    print_title: Tisknout tento článek
     attach_file: Přiložit <b>soubor</b>
     header:
       preview_message: >-
@@ -4109,9 +4257,17 @@ cs:
       merge_continue: 'Můžete však pokračovat v konverzaci zde: '
       merge_note:
         one: téma sloučené do tohoto tématu
-        few: témata sloučená do tohoto tématu
-        many: tématu sloučená do tohoto tématu
+        few: témat sloučených do tohoto tématu
+        many: témat sloučených do tohoto tématu
         other: témat sloučených do tohoto tématu
+      sort_heading: 'Třídit dle:'
+      sort_order:
+        date: Nejstarší první
+        recency: Nejnovější první
+        popularity: Oblíbené
+      sort_by_most_recent: Nejčerstvější
+      sort_by_most_popular: Nejoblíbenější
+      sort_by_default: Výchozí
     topic_vote:
       you:
         one: Vy
@@ -4155,6 +4311,15 @@ cs:
       user_upvote_list_title: 'Lidé, kteří hlasovali'
       announce_button: Líbí se vám to?
       announce_unlike_button: nelíbí se!
+      announce:
+        one: jako toto
+        few: jako toto
+        many: jako toto
+        other: jako toto
+      votes: hlasy
+      upvote: hlasování
+      upvoted: hlasováno
+      announce_users_voted_title: 'Lidé, kterým se to líbí'
     tickets:
       merged_topic_note: Sloučené téma nemůže být převedeno na požadavek.
       export: Exportovat požadavky
@@ -4172,6 +4337,40 @@ cs:
       add_people_title: Přidat osoby ke konverzaci
       reopen_reply: Odpověď
       related_articles: Podobné články...
+      comments: Komentáře
+    agent_login_details: Níže zadejte detaily
+    account: účet
+    topic_not_found: 'Vypadá to, že toto téma bylo smazáno'
+    post_not_found: 'Vypadá to, že tento příspěvek byl smazán'
+    vote:
+      you:
+        one: 'Vy '
+        few: 'Vy a '
+        many: 'Vy a '
+        other: 'Vy a '
+      more:
+        one: '1 další '
+        few: '%{count} dalších '
+        many: '%{count} dalších '
+        other: '%{count} dalších '
+      people:
+        one: 1 osoba
+        few: '%{count} osob'
+        many: '%{count} osob'
+        other: '%{count} osob'
+    vote_label:
+      one: 1 stemme
+      few: stemmer
+      many: stemmer
+      other: stemmer
+    post_vote:
+      upvoted: Dostal jste hlas
+      upvote: Odhlasovat
+      like:
+        one: jako toto
+        few: jako toto
+        many: jako toto
+        other: jako toto
   feedbackwidget_form_heading: Název formuláře
   feedbackwidget_form_title: Záhlaví formuláře Panelu
   cancel_and_back: Zrušit a jít zpět
@@ -4216,6 +4415,10 @@ cs:
         count: >-
           Počet %{no_of_likes} oblíbených a počet %{no_of_dislikes} neoblíbených
           budou resetovány na nulu.
+      prop_tabs:
+        meta: Meta
+      search_all: Vyhledat mezi články
+      views: Pohledy
     info9: Veřejné (bude publikováno na samoobslužném portále)
     edit: Upravit řešení
     view_on_portal: Zobrazit na portále
@@ -4262,11 +4465,25 @@ cs:
     draft:
       portal:
         all: Všichni
+      name: Koncepty
     general:
       mark_as_uptodate:
         text_1: Označit tento překlad jako platný
+      something_wrong: Něco se pokazilo!
+      created_by: Vytvořil(a)
+      feedback: Zpětná vazba
+      analytics: Analýza
     add_category: Nová kategorie
     solution_title: Pozice
+    kb: Znalostní báze
+    sidebar:
+      feedbacks:
+        title: Zpětná vazba k článku
+      view_all: Zobrazit Vše
+      drafts:
+        title: Koncepty
+      view_less: Zobrazit méně
+    move_to: Přesunout se do
   import_updated: Aktualizováno
   feedbackwidget_intro: >-
     Přizpůsobte si Panel pro zpětnou vazbu a rovnou můžete sledovat zobrazení v
@@ -4373,7 +4590,7 @@ cs:
     linked_tickets: Spojené požadavky na podporu
     parent_child: Nadřízené a podřízené požadavky na podporu
     scheduled_reports: Naplánované sestavy
-    ticket_templates: Ticket templates
+    ticket_templates: Šablony požadavků
     custom_surveys: Zákaznické průzkumy spokojenosti
     multiple_sla: Více SLA a časových pásem
     auto_ticket_assignment: Automatické přiřazení požadavku
@@ -4409,6 +4626,8 @@ cs:
       požadavky
     scheduled_reports_desc: Naplánované sestavy
     custom_survey_desc: Personalizované průzkumy spokojenosti
+    bot: Robot
+    freshchat: Integrace Freshchat
   zendesk_account: Detaily účtu Zendesk
   zendesk_import_files: Co zvolíte k importu?
   file_url: URL pro exportované XML
@@ -4735,6 +4954,8 @@ cs:
           specific to each language. The <i class="common-icon-outdated"></i>
           icon indicates that the notification translations in other languages
           may be outdated.
+      agent_template_25:
+        topic: E-mail s pozváním pro agenta
     insert_placeholder: Vložit zástupné značky
     modify_agent_template: Upravit šablonu e-mailu od zástupce
     event: Událost
@@ -4924,7 +5145,13 @@ cs:
       status: Stav
       unverified: Neověrení
       type: Typ
+      last_verified: Naposledy ověřeno
+      config: Konfigurovat
+      cname: CNAME
+      verify: Ověřit
+      remove: Odebrat
     disable_agent_forward: Pro přeposlání e-mailu uveďte původního odesílatele jako žadatel
+    plain_unverified: Neověrení -
   step2: Krok 2
   import_users_contacts: Uživatelé &rarr; Pracovníci
   linkback_info: >-
@@ -5242,6 +5469,9 @@ cs:
         tooltip: Zobrazit přiřazený problém JIRA
         add_new: Propojit problém
         existing: Zobrazit problém
+    search_text: Vyhledat mezi články
+    action: Akce
+    thanks_v1: Děkujeme Vám za zpětnou vazbu
   recent_activity: Poslední aktivita
   recent_activities: Poslední aktivity
   forgot_password: Zapomněl jsem heslo
@@ -5425,6 +5655,15 @@ cs:
     forums_toggle:
       title: Fóra
     gdpr_to: do
+    gdpr_terms_link: Podmínkami
+    gdpr_admin: Administrátor.
+    important: Důležité
+    gdpr_policy: Zásady ochrany osobních údajů.
+    helpdesk: Helpdesk
+    languages: Jazyky
+    gdpr_agent: Zástupce
+    anyone: Kdokoliv
+    gdpr_acknowledgement: 'a potvrzujete, že jste si přečetli naše'
   lead: Vést
   comments: Komentáře
   forum_confirm_msg1: 'Jste si jistí, že chcete smazat tuto kategorii?'
@@ -5480,6 +5719,7 @@ cs:
     multiple: Vácenásobná Pracovní doba
     helpdesk_hours: Pracovní doba
     select_time_zone: Zvolte Časovou zónu
+    holiday_calendar: Kalendář svátků
   import_org_companies: Organizace &rarr; Společnosti
   add: Přidat
   portal_customizer_title: Upravte svůj veřejný zákaznický portál
@@ -5650,6 +5890,8 @@ cs:
       history:
         recent_item: Nedávné položky
       update: Aktualizovat
+      ok: OK
+      hide_cc: Skrýt příjemce v Kopii
     dashboard:
       round_robin:
         all_agents: All agents
@@ -5761,6 +6003,7 @@ cs:
           addbcc: Přidat skrytou kopii
           removebcc: Odebrat skrytou kopii
           not_sent: Odpověď nebyla odeslána!
+          to: 'Komu:'
         forward_form:
           cc: Kopie
           addcc: Přidat kopii
@@ -5841,6 +6084,11 @@ cs:
         open_or_pending: Otevřené nebo Čekající
         resolved_or_closed: Vyřešené nebo uzavřené
         no_tickets: Ve zvoleném zobrazení nemáte žádné požadavky
+        shared_by_me: Mnou sdílené požadavky
+        shared_with_me: Požadavky sdílené se mnou
+        article_feedback: Zpětná vazba k článku
+        archived: Archiv
+        my_article_feedback: Zpětná vazba k mým článkům
       note:
         posted_on: '%{user_name} %{note_date}'
         created_on:
@@ -6007,6 +6255,8 @@ cs:
       requester_responded_at: Odpověď zákazníka
       asc: Vzestupně
       desc: Sestupně
+      agent_responded_at: Odpověď zástupce
+    company: Společnost
   click_to_change_sort_order: Klikněte pro změnu řazení položek
   user_sessions:
     new:
@@ -6032,6 +6282,8 @@ cs:
     events_empty: Musí být zvolena nějaká událost
     conditions_empty: Pole Podmínky nesmí být prázdné
     actions_empty: Pole Akce nesmí být prázdné
+    invalid_domain:
+      freshdesk: FreshDesk
   export_data:
     in_sla: V rámci SLA
     out_of_sla: SLA porušena
@@ -6046,7 +6298,7 @@ cs:
     filter_label_agent: 'Filtrovat požadavky podle:'
     field_select_title: 'Zvolte pole, která chcete exportovat'
     export_to_csv: Exportovat do CSV
-    export: Export
+    export: Exportovat
     thirt_days: Posledních 30 dnů
     seven_days: Posledních 7 dnů
     twenty_four: Ze včerejška
@@ -6140,6 +6392,7 @@ cs:
         We currently allow only %{limit} concurrent exports. Kindly try again
         after some time. Apologies for the inconveniences caused.
     check_uncheck_title: Vybrat/zrušit vše
+    view_all_tickets: Exportovat jako CSV
   sla:
     minutes: Min.
     hours: Hod.
@@ -6213,6 +6466,8 @@ cs:
         flash_card_html: Co je nového v sociálních sítích?
         flash_card_text: Understanding your Social tab
         tickets: Požadavky
+        post: ' Odeslat '
+        interactions: Interakce
       index:
         all: Všichni
       search_btn: Hledat
@@ -6395,6 +6650,8 @@ cs:
     configure_custom_addon: Konfigurovat tento doplněk
     tooltip:
       edit: Upravit
+      settings: Nastavení
+    connect: Připojit
   home:
     mobile_index:
       email: E-mail
@@ -6844,6 +7101,9 @@ cs:
         widget_title: Název aplikace
         username: Uživatelské jméno
         password: Heslo
+        lead: Pole vedení
+        account: Pole účtu
+        contact: Pole pracovníka
     google_calendar:
       label: Kalendář Google
       desc: S kalendářem Google můžete obsluhovat události pro všechny požadavky.
@@ -6942,6 +7202,13 @@ cs:
           Např. když URL vašeho Shopify je
           <strong>https://my_shop_name.com</strong>, prosím vložte
           <strong>my_shop_name</strong>.
+        shop_name_info_mint: >-
+          Např. když URL vašeho Shopify je
+          <strong>https://my_shop_name.com</strong>, prosím vložte
+          <strong>my_shop_name</strong>.
+        shop_name_mint: Název obchodu
+      edit:
+        disconnect: Odpojit
     slack:
       label: Slack
       desc: Stay up to date about Freshdesk tickets in Slack
@@ -7203,7 +7470,7 @@ cs:
         https://www.pivotaltracker.com/profile
       pivotal_updates: Select to get updates from Pivotal Tracker
     remote_login:
-      connect: Connect
+      connect: Připojit
       sign_up: Registrovat se
       freshdesk_url: Freshdesk URL
       freshdesk_api_key: Klíč API pro Freshdesk
@@ -7212,8 +7479,15 @@ cs:
     ilos:
       settings:
         for_customer: Pro zákazníky
+        for_agents: Pro zástupce
       messages:
         video_desc: Popis
+      portal_ticket:
+        placeholder: 'Požadavek#'
+      agent_ticket:
+        placeholder: 'Požadavek#'
+      solution:
+        placeholder: 'Článek#'
     dynamics_v2:
       form:
         username: Uživatelské jméno
@@ -7222,6 +7496,8 @@ cs:
       desc: >-
         Vidět detaily uživatele QuickBook a vytvořit/změnit položky v rozvrhu
         hodin pro zákazníky ve vašem účtu pro QuickBook
+      form:
+        quickbooks_note: Text poznámek
     marketplace_login:
       admin_credentials:
         link_your_helpdesk: Připojit váš helpdesk
@@ -7254,6 +7530,9 @@ cs:
       crm:
         mapping:
           contact: Prcovník
+          company: Společnost
+          contact_fields: ' Pole pracovníka '
+          account_fields: ' Pole účtu '
     dynamicscrm:
       form:
         login_url: >-
@@ -7288,11 +7567,19 @@ cs:
           Dynamics CRM (na základě toho, která položka asociovaná s poli CRM
           jsou uvedeny v dalším kroku)
         entity_error: není platná emailová adresa pro typ Entity
+        lead: Pole vedení
+        account: Pole účtu
+        contact: Pole pracovníka
       desc: Ve Freshdesku budou dostupné kontaktní informace z CRM systému Dynamics.
     screen_pop:
       widget:
         cancel: Storno
         subject: Předmět
+        view_all: Zobrazit Vše
+        requester: Jméno žadatele
+        add_note_text: Poznámky k hovoru
+        recent_tickets: Nedávné požadavky
+        create: Vytvořit
     hootsuite:
       reply_btn: Odpověď
       send: Odeslat zpětnou vazbu
@@ -7310,13 +7597,22 @@ cs:
         email: E-mail
       header:
         reply: Odpověď
+      reset: Resetovat
+      domain:
+        continue_to_login: Pokračovat k přihlášení
+      search:
+        ticket_id: ID požadavku
+        keyword: Klíčové slovo
     infusionsoft:
       form:
         select: Vyberte možnost
+        contact: Pole pracovníka
+        account: Pole účtu
     cti_admin:
       phone:
         save: Uložit
         cancel: Storno
+        delete_msg: Opravu chcete odstranit toto číslo?
       ctd:
         api_key: Klíč API
         callback_url: URL pro zpětné volání
@@ -7329,6 +7625,8 @@ cs:
         have_user_pass: Mám Jméno & Heslo?
     github_settings:
       resolved: Vyřešeno
+      none: Neudělat nic
+      closed: Uzavřeno
     xero:
       desc: >-
         You can create new invoice for the recorded time against the ticket and
@@ -7344,6 +7642,11 @@ cs:
       form:
         auth_token: Ověřovací token
         select: Vyberte možnost
+        deal: Pole obchodního případu
+        lead: Pole vedení
+        domain: Doména účtu
+        account: Pole účtu
+        contact: Pole pracovníka
     outlook_contacts:
       form:
         mail_box_detail: Synchronizovat s
@@ -7360,6 +7663,19 @@ cs:
         delete_account: Smazat
         last_sync_time: Čas poslední synchronizace
         syncing_in_progress: Synchronizace probíhá
+    custom_apps:
+      refresh: Aktualizovat
+    uninstall: Odinstalovat
+    salesforce_v2:
+      form:
+        salesforce_v2_settings: Nastavení Salesforce
+    cloud_elements:
+      form:
+        lead: Pole vedení
+        daily: denní
+        account: Pole účtu
+        hourly: Hodinově
+        contact: Pole pracovníka
   widgets:
     contact_widget:
       description: Zobrazit pracovníka nebo možnost přidání pracovníka do Capsule.
@@ -7374,6 +7690,7 @@ cs:
           dotazů - zobrazit ji můžete zde
         show_all_results: Ukázat všechny výsledky
         no_results: 'Žádné výsledky pro '
+        problems_with_fields: 'V následujících polích byl zjištěny problémy:'
   reorder: Změnit pořadí
   reports:
     no_data: Žádná data k zobrazení!
@@ -7437,6 +7754,7 @@ cs:
       no_agent: '- Žádný zástupce -'
       business_hours: Pracovní doba
       no_external: Přesnosy na externí čísla nejsou zahrnuty
+      filter_option_all_calls: Všechna volání
     time_sheets:
       billable: Účtovatelné hodiny
       non_billable: Neúčtovatelné hodiny
@@ -7535,15 +7853,30 @@ cs:
       main:
         total_responses_v2: Celkem
         all: Všichni
+        time_period: Časová perioda
+        neutral: Neutrální
+        survey_name: Název průzkumu
+        agent: Zástupce
+        positive: Kladné
+        group: Skupina
+        overall_rating: Hodnocení
+        responses: Reakce
+        negative: Záporné
+        no_overview: Nejsou dostupná žádná data
+        unanswered: Neodpovězeno
+        overview: Přehled
+        answered: Odpovězeno
+        rating: Hodnocení
+        loading_msg: Vytvářím reporty...
     livechat:
       report_title: Live Chat Summary
-      filter_by_title: Filtered by
-      time_period: Time Period
-      widget: Widget
-      group: Group
-      chat_type: Chat Type
+      filter_by_title: Filtrováno podle
+      time_period: Časová perioda
+      widget: FreshChat panel
+      group: Skupina
+      chat_type: Typ chatu
       summary: Summary
-      filter_report: Edit Filter
+      filter_report: Upravit filtr
       select_widget: Select Widget
       select_group: Select Group
       select_chat_type: Select Chat Type
@@ -7551,19 +7884,20 @@ cs:
       chat_type_visitor: Visitor Initiated
       chat_type_agent: Agent Initiated
       chat_type_proactive: Proactive
-      generate_summary: Generate
-      filter_close: Close
+      generate_summary: Vytvořit
+      filter_close: Zavřít
       total_chats: Celkem
       num_of_chats: No of Chats
-      answered_chats: Answered
-      missed_chats: Missed
+      answered_chats: Odpovězeno
+      missed_chats: Ztraceno
       num_of_transfer: Transfers
-      avg_handle_time: Avg Handle Time
+      avg_handle_time: Průměrná doba obsluhy
       avg_time_queue: Time in Queue
       total_duration: Total Duration
       agent_chat_summary: Agent Chat Summary
       agent: Agent
       deleted: Deleted
+    discard_changes: Zrušit změny
   delete_the_ticket: Smazat požadavek
   mark_as_spam: Označit jako Spam
   bulk_actions: Hromadné akce
@@ -7599,6 +7933,7 @@ cs:
         Zbytek vašeho e-mailu (tj. mimo e-mailové příkazy) bude přidán ke
         konverzaci daného požadavku a bude odeslán také jako e-mail žadateli.
       ticket_type_example: Otázka
+      note: Poznámka
   email_command_delimeter_label: Oddělovač e-mailových příkazů
   email_command_preview_to_email: Komu
   email_command_preview_to_email_value: support@acme.freshdesk.com
@@ -7703,6 +8038,7 @@ cs:
       relevance: Relevance
       created_at: Datum vytvoření
       updated_at: Naposledy upraven
+    searching: Vyhledávání
   assumed_identity_msg: 'Převzali jste identitu %{user_name}.'
   unauthorized_msg: Autorizace se nezdařila
   assuming_identity_user_does_not_exist_msg: 'Uživatel, jehož identitu jste chtěli převzít, neexistuje.'
@@ -7982,6 +8318,7 @@ cs:
         optimalizováno pro telefony a tablety. Toto nastavení lze vypnout pokud
         si budete přát zachovat stejnorodé téma nezávislé na zařízeních.
     classic: Klasický
+    apply_mint: Použít
   any_time: Jakýkoli čas
   five_minutes: Během 5 minut
   fifteen_minutes: Během 15 minut
@@ -8023,7 +8360,7 @@ cs:
   add_a_new_folder: přidat novou složku
   likes: Líbí se
   dislikes: Nelíbí se
-  export: Export
+  export: Exportovat
   helpdesk_quests:
     see_all: Prohlédnout vše
     available_quests: Dostupné výzvy
@@ -8044,7 +8381,7 @@ cs:
   adv_reports:
     at_a_glance: Rychlý přehled
     select_an_option: Vyberte možnost
-    report: ' Report '
+    report: ' Sestava '
     reports: Reporty
     helpdesk_at_a_glance: Helpdesk - rychlý přehled
     customer_at_a_glance: Zákazníci - rychlý přehled
@@ -8276,6 +8613,7 @@ cs:
       see_detailed_pricing: Zobrazit podrobné ceny
       followup_text: hodnota Freshfone kreditů
       followup: hodnota Freshfone kreditů
+      purchase_credits: Koupit kredit
     dialpad:
       not_valid_number: 'Vložte, prosím, platné číslo'
       could_be_invalid_number: Could be an invalid number.
@@ -8546,6 +8884,7 @@ cs:
           24x7.<br/><br/><a
           href='http://support.freshdesk.com/support/solutions/articles/169198'>Read
           more about customizing your number</a>
+        attachment_help_text: Zvukový soubor musí být < 5MB
       numbers:
         title: Podpořte zákazníky pomocí Freshfone
         info: >-
@@ -8646,6 +8985,9 @@ cs:
           department, team or agent. </b><br/><br/> <a
           href='http://freshdesk.com/freshfone'>Read more about what you can do
           with phone</a>.
+        caller_id:
+          manage_caller_id: 'Spravovat ID volajícího '
+          add_new: Přidat novou
       invalid_attachment: >-
         Příloha '%{name}' není platný audio soubor nebo její velikost přesahuje
         5MB
@@ -8693,6 +9035,7 @@ cs:
           vlastním číslem
       welcome_page:
         title: Vítejte ve Freshfone
+        title_text: Telefon
       feature_request_content:
         title: Freshfone
         heading: Podporujte své zákazníky pomocí Freshfone
@@ -8723,6 +9066,8 @@ cs:
           Podívejte se na video abyste zjistili, co se dá s telefonním kanálem
           dělat
         heading_text: Podporujte vaše zákazníky pomocí telefonního kanálu
+        trial_or: NEBO
+        title_text: Telefon
       purchase_numbers_text: >-
         Kupte si místní nebo nezpoplatněná čísla a začněte využívat telefon pro
         poskytování podpory vašim zákazníkům
@@ -8733,6 +9078,7 @@ cs:
         <b>Důležité:</b> I když zakážete váš účet pro telefonování, stále vám
         poběží nájem za vaše čísla. Abyste nic neplatili, musíte tato koupená
         čísla smazat.
+      freshfone_numbers_title: Telefon
   livechat:
     feature_request:
       title: Vítejte na Live Chat
@@ -8759,7 +9105,7 @@ cs:
     thank_title: Zpráva "Děkujeme/Končíme"
     wait_title: Zpráva pro stav Čekám / V pořadí
     is_typing_header: Když zástupce/návštěvník <br> zahájí psaní
-    prechat_title: Pre-chat form
+    prechat_title: Formulář před chatem
     prechat_desc: >-
       Collect personal details about your visitors before you start chatting
       with them. When this is on, visitors will need to submit the form to begin
@@ -8779,7 +9125,7 @@ cs:
     msg_waiting_agent_title: Stavová zpráva při čekání na zástupce
     msg_joining_agent_title: Zpráva pro případ připojení zástupce do rozhovoru
     msg_leaving_agent_title: Zpráva pro případ odpojení zástupce z rozhovoru
-    chat_transfer_msg_title: Chat transfer message
+    chat_transfer_msg_title: Zpráva při přepojení chatu
     help_text_wait_onhold_msg: >-
       Tato zpráva se objeví když návštěvník čeká na zástupce více než jednu
       minutu
@@ -8895,7 +9241,7 @@ cs:
     last_message: Poslední zpráva ...
     chat_recent_empty_tip: S nikým jste naposled nekonverzoval
     add_agent_to_chat: No other agents logged in
-    url_error_msg: Please enter a valid URL
+    url_error_msg: Zadejte platnou adresu URL
     accept: Přijmout
     ignore: Odmítnout
     transfer_msg: vytvořit požadavek na postoupení rozhovoru
@@ -8982,19 +9328,19 @@ cs:
     non_availability_message: >-
       Omlouváme se, ale všichni naši zástupci jsou zaneprázdněni. Prosíme #
       nechte nám vzkaz # a my se vám určitě ozveme.
-    installation: Widget Code
-    visitor_form: Visitor Form
-    preferences: Preferences
+    installation: Kód doplňku
+    visitor_form: Formulář návštěvníka
+    preferences: Předvolby
     intro_title: Proč právě Frechchat?
     intro: >-
-      Freshdesk's integrated Live Chat solution lets you view and chat with
-      users on your website, online software, or support portal directly from
-      within Freshdesk. You can proactively start chatting with your website
-      visitors too. Once you finish a chat session, you can choose to convert
-      the conversation into a ticket and continue following up with the visitor
-      over email, or archive the chat transcript.
-    enable_chat: Enable Live Chat
-    learn_livechat: Learn more about Live Chat
+      Prostřednictvím živého chatu integrovaného do Freshdesku můžete vidět
+      uživatele vašich webových stránek, on-line softwaru nebo portálu podpory a
+      komunikovat s nimi přímo z Freshdesku. S návštěvníky vašich webových
+      stránek můžete také sami proaktivně zahájit konverzaci. Jakmile chatovací
+      relaci dokončíte, můžete konverzaci převést na požadavek a pokračovat v
+      řešení problému přes e-mail, nebo archivovat přepis chatu.
+    enable_chat: Povolit živý chat
+    learn_livechat: Další informace o živém chatu
     support_portal: Konverzujte na portále podpory
     logged_in_users: Pouze přihlášení uživatelé
     everyone: Kdokoli
@@ -9003,9 +9349,9 @@ cs:
     maximum_chat_title: Maximum Number Of Visitor Chats
     maximum_change_label: Upravit
     maximum_chat_desc: >-
-      Set the limit for the number of chats an agent can handle simultaneously.
-      When an agent reaches this limit, they will not receive any new chat
-      notifications.
+      Nastavte limit počtu chatů, kterým se agent může věnovat současně. Jakmile
+      agent dosáhne stanoveného limitu, nebude dostávat žádná nová upozornění na
+      chat.
     maximum_chat_error: You have reached the maximum chat limit.
     transfer_limt_exceeded_msg: ' has reached his capacity. Please transfer the chat to another agent.'
     loading_new_archives: Načítám nový archiv...
@@ -9020,11 +9366,11 @@ cs:
       Když není dostupný panel Zpětné vazby, bude otevřen formulář pro nový
       požadavek
     no_matching_agents: No matching agents
-    chat_enabled_label: Enable Chat
-    routing: Chat routing
-    routing_info: Route all incoming chats to specific groups
-    dropdown_based_routing: Dropdown based routing
-    default_routing: Default routing
+    chat_enabled_label: Povolit chat
+    routing: Směrování chatu
+    routing_info: Směrovat všechny příchozí chaty do konkrétních skupin
+    dropdown_based_routing: Směrování podle rozevírací nabídky
+    default_routing: Výchozí směrování
     choice_info: <b>$</b> then notify group
     select_groups: Select groups
     routing_note: >-
@@ -9044,10 +9390,10 @@ cs:
     close: Close
     visitorId: Visitor ID
     createdAt: Created at
-    enable: Enable
+    enable: Povolit
     widgets_list_info: >-
-      For every product you have set up in Freshdesk, you will have a
-      corresponding chat widget available here
+      Zde budete mít k dispozici související doplněk pro chat pro každý produkt
+      nastavený ve Freshdesku
     text_yes: Ano
     text_no: Ne
     enabled: Povoleno
@@ -9077,6 +9423,19 @@ cs:
     change_livechat_tone: LiveChat Notification Tone
     message: Message
     header_title: Záhlaví
+    prechat_dropdown_msg: >-
+      Na kartě Předvolby můžete položky rozevírací nabídky přiřadit různým
+      skupinám. Chat pak bude přiřazen příslušným specifikovaným skupinám.
+    show_widget: Kdy jsou agenti on-line a přijímají zprávy přes chat
+    agent_network_disconnect_msg_title: Zpráva při odpojování agenta
+    chat_hours_msg_note: 'Poznámka: Okno s chatem bude mimo stanovený čas skryté.'
+    enabling: Povolování
+    cobrowsing: Nápověda na stránce
+    end_chat_confirm_msg_title: Zpráva pro potvrzení ukončení chatu
+    chat_with_us: Spojte se s námi
+    cobrowsing_info: >-
+      Poraďte zákazníkům během konverzací přes chat efektivněji díky možnosti
+      prohlížet a ovládat jejich obrazovku.
   facebook_tab:
     remove_tab: Odstranit záložku stránky
     tab_not_removed: Záložku nelze odstranit
@@ -9169,6 +9528,7 @@ cs:
       reply: Odpovědět
       forward: Přeposlat
       add_note: Přidat poznámku
+      scenario: Scénáře
     ticket_list:
       title: Seznam požadavků
       move_cursor: Přesun kurzoru na další / předchozí požadavek
@@ -9503,7 +9863,7 @@ cs:
       confirm_and_merge: Potvrdit a sloučit
       add_note: Důvod pro sloučení
       note_saved: Note saved
-      add: Add
+      add: Přidat
       visibility_info: 'Showing topics visible to <b>%{visibility}</b> '
       warning: >-
         Jakmile jsou témata sloučena, nelze je rozpojit. Následovníci a
@@ -9577,6 +9937,7 @@ cs:
     search_articles: Vyhledat článek
     contact_us: Kontaktujte nás
     whats_new: Co je nového
+    load_more: Načíst další
   trial_plan_downgrade: >-
     Important: You are currently downgrading from %{plan_from} plan to
     %{plan_to} plan
@@ -9622,6 +9983,32 @@ cs:
       apps out-of-the-box. To browse our selection of apps, click on the “Get
       more Apps” button.
     description: Popis
+    delete_action:
+      success: Aplikace byla úspěšně zakázána!
+    view_all: Zobrazit Vše
+    view_more: Zobrazit více
+    api_error: 'Nemůžeme provést váš požadavek. Prosíme, zkuste to za chvíli.'
+    help_and_support: Pomoc a podpora
+    settings: Nastavení
+    custom_apps: Doplňky FreshPlug
+    time_ago: zpátky
+    validation_failed: Ověřování selhalo.
+    installing_text: 'Čekejte, prosím…'
+    overview: Přehled
+    install: Nainstalovat
+    published_in: v
+    popular: Oblíbené
+    apps: Aplikace
+    reauthorize: Opětná autorizace
+    go_to_dev_portal: Přejděte do vývojářského portálu
+    no_mktp_apps_note: Integrovali jsme některé z vašich oblíbených aplikací.
+    ver: 'Verze: '
+    coming_soon: Již brzy
+    latest: Nejnovější
+    no_custom_apps_note: Vytvořte si vlastní aplikace a publikujte je na vývojářském portálu.
+    field_blank: Vyplňte povinná pole.
+    terms_of_use: Podmínky použití
+    no_mktp_apps: Nejsou nainstalovány žádné aplikace
   portals_key: Portály
   freshcaller:
     admin:
@@ -9630,37 +10017,107 @@ cs:
         email: E-mail
         continue: Pokračovat
         password: Heslo
+        link_errors:
+          validation_error: Toto pole je povinné
+      sidebar_title: Telefon
+      title_text: Telefon
+      feature_request_content:
+        create_new_account: Vytvořit nový účet
   multifile_attachments:
     label: Připojit soubory
+    remove: Odebrat
+    mb: ' MB '
   reload: Znovu načíst
   plain_on: Zapnout
   helpdesk_reports:
     saved_report:
       save: Uložit
       cancel: Storno
+      delete_dialog_header: Odstranit report
+      edit_dialog_header: Upravit report
     today: Dnes
     ticket_schedule:
       index:
         cancel: Storno
+        delete_text: Opravdu chcete odstranit tento plán?
+        confirm: Potvrdit
       new:
         ticket_fields_title: Pole požadavku
         email: E-mail
         select_all: Vybrat vše
         description: Popis
+        helpnote:
+          api_info1: Rozhraní API bude mít odkaz na nejnovější export.
+        contact_fields_title: Pole pracovníka
+        one_time_export_label: 'Exportovat obsah ticketu od začátku měsíce, kdy začne tento plán'
+        company_fields_title: Pole společnosti
+        frequency: Naplánovat
+      schedule_export: Naplánovat export
+      schedule: Naplánovat
+      all_reports: Zpět na seznam
+      new_schedule: Nový rozpis
     scheduled_reports:
       dialog:
         email: E-mail
         'on': Zapnout
         desc: Popis
         subject: Předmět
+        monthly: Měsíčně
+        generate_report: Generovat sestavu
+        daily: denní
+        weekly: týdenní
     ticket_volume:
       resolved_tickets: Vyřešené požadavky
       received_tickets: Přijaté požadavky
+      time_trends:
+        year: rok
+        week: týden
+        day: Den
+        month: měsíc
+      load_analysis:
+        title: Analýza vytížení
     date_range: Časový rozsah
     ticket_activity:
       learn_more: Zjistětět více
+      helpnote:
+        api_info1: Rozhraní API bude mít odkaz na nejnovější export.
+      edit: Upravit plán
     yesterday: Včera
     change: Změnit
+    time_period: Vyberte časové období
+    chats: Chaty
+    more: Více...
+    no_data_to_display_msg: Žádná data k zobrazení
+    phone_summary:
+      title: Přehled pro telefon
+    insights:
+      customize_link: Přizpůsobit
+    this_week: Tento týden
+    agent_summary:
+      title: Výkon agenta
+    generate: Vytvořit
+    this_month: Tento měsíc
+    edit_filter: Filtrovat
+    year_in_review:
+      title: Přehled vašeho roku
+    summary: Souhrn
+    show: 'Ukázat:'
+    filter_by: Filtrovat podle
+    solution_article_text: Jak číst tento report ?
+    timespent_export:
+      export_csv: Exportovat do CSV
+      button_export: Exportovat
+    performance_distribution:
+      title: Rozložení výkonu
+      resolution_bar: Vyřešit do
+      first_response_bar: Čas první reakce
+      response_bar: Průměrný čas reakce
+    group_summary:
+      title: Výkon skupiny
+    filtered_by: 'Filtrováno podle:'
+    at: v
+    customer_satisfaction:
+      title: Výkaz spokojenosti zákazníků
   recaptcha_require_message: Je požadována verifikace pomocí CAPTCHA.
   admin_onboarding:
     modal:
@@ -9669,15 +10126,78 @@ cs:
         forums_channel: Fóra
         chat_channel: Nastavení konverzace
         email_channel: E-mail
+        phone_channel: Telefon
+        title: Jakým způsobem v současné době komunikujete se zákazníky?
+        forward_link: Pozvěte svůj tým
       agents_frame:
         send_invite: Poslat pozvánku
         emails_invalid: Jeden nebo více vašich e-mailů je neplatných.
+        emails_placeholder: 'bruce@just.ly, diana@just.ly, clark@just.ly'
+      welcome_frame:
+        title: Vítejte na Freshdesku
     account_verification_message:
       helpnote_or: nebo
       modal_send_button: Poslat aktivaci
       cancel_button: Storno
+      modal_title: Přihlásili jste se pomocí nesprávné e-mailové adresy?
+      modal_invalid_email_error: 'Prosím, zadejte platnou emailovou adresu.'
+      resend_message: Znovu odeslat aktivaci
+      change_email: změnit e-mailovou adresu
   add_all: Přidat vše
   freshchat:
     admin:
       save: Uložit
       cancel: Storno
+      sidebar_title: Freshchat
+      action:
+        success_message: Nastavení aktualizováno
+      admin_apikey: 'Klíč API:'
+      title_text: Freshchat
+      portal_url: 'Adresa portálu:'
+      app_id: ID aplikace
+  mailer_notifier:
+    hi: 'Nazdar,'
+    thanks: Děkujeme!
+  copied_link: Zkopírováno
+  enter_a_value: Zadejte hodnotu
+  custom_mailbox_admin_email_notifications:
+    regards: S pozdravem
+  cloud_log_mailer:
+    logger_email:
+      regards: 'S pozdravem,'
+      account: 'Účet: '
+      reason: Důvod
+  helpcard:
+    title: Jedinečné externí ID
+  admin_upgrade:
+    enable_mint_title: Umožněte agentům vyzkoušet modernější a rychlejší rozhraní Mint
+    enable_mint_error: >-
+      Rozhraní Mint již bylo povoleno pro všechny agenty. Aktualizujte stránku,
+      abyste viděli nejnovější nastavení.
+    enable_mint_success: Juchů! Rozhraní Mint bylo úspěšně povoleno pro všechny agenty.
+  plain_off: Vypnuto
+  customize_domain:
+    email:
+      cheers: 'Ať se daří,'
+      team: FreshDesk tým
+  'on': v
+  save_as: Uložit jako
+  currency_label: 'Měna :'
+  user_notifications:
+    mute: Ztlumit
+    mark_all_as_read: Označit vše jako přečtené
+    header: Oznámení
+    preferences: Předvolby
+  ticket_templates:
+    create_new: Vytvořit novou
+  in: v
+  help_widget:
+    form_title: Kontaktujte nás
+    form_button_text: Odeslat zpětnou vazbu
+    form_submit_message: Děkujeme Vám za zpětnou vazbu.
+    button_text: Nápověda
+    welcome_message: Můžeme nějak pomoci?
+    predictive_message: >-
+      Všimli jsme si, že jste se zasekli. Sdělte nám, čeho jste se snažili
+      dosáhnout a náš tým podpory vás co nejdříve kontaktuje.
+    success_message: Díky. Budeme v kontaktu!
