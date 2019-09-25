@@ -148,14 +148,11 @@ module Ember
         end
 
         def properties_and_term_filters
-          @items = @items.all # to avoid n+1 queries
-          filtered_articles = if params[:term].present?
-                                ids = @items.map(&:id) & @results.map(&:id)
-                                @items.select { |item| ids.include?(item.id) }
-                              else
-                                @items
-                              end
-          filtered_articles.uniq
+          if params[:term].present?
+            @items.where('solution_articles.id in (?)', @results.map(&:id))
+          else
+            @items
+          end
         end
 
         def decorator_options

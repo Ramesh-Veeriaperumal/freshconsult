@@ -49,7 +49,7 @@ module SolutionConstants
 
   INDEX_PRELOAD_OPTIONS = [{ solution_article_meta: [:solution_folder_meta, :solution_category_meta] }, :article_body, { article_ticket: :ticketable }, :draft, draft: :draft_body].freeze
 
-  FILTER_PRELOAD_OPTIONS = [{ solution_article_meta: [:solution_folder_meta, :solution_category_meta] }, :draft, :article_ticket, { article_ticket: :ticketable }, :tags, tags: :tag_uses].freeze
+  FILTER_PRELOAD_OPTIONS = [{ solution_article_meta: [:solution_folder_meta, :solution_category_meta] }, { draft: :draft_body }, :tags].freeze
 
   LOAD_OBJECT_EXCEPT = [:category_folders, :folder_articles, :article_content, :filter, :untranslated_articles].freeze
 

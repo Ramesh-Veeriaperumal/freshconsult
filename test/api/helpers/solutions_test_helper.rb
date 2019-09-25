@@ -46,7 +46,6 @@ module SolutionsTestHelper
       title: expected_output[:title] || article.title,
       agent_id: expected_output[:agent_id] || article.user_id,
       type: expected_output[:type] || article.parent.reload.art_type,
-      feedback_count: expected_output[:feedback_count] || article.tickets.unresolved.reject(&:spam_or_deleted?).count,
       status: expected_output[:status] || article.status,
       seo_data: expected_output[:seo_data] || article.seo_data,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
@@ -82,6 +81,7 @@ module SolutionsTestHelper
         resp[:attachments] = Array
         resp[:cloud_files] = Array
       end
+      resp[:feedback_count] = expected_output[:feedback_count] || article.tickets.unresolved.reject(&:spam_or_deleted?).count
     end
     resp
   end
@@ -95,7 +95,6 @@ module SolutionsTestHelper
       type: expected_output[:type] || article.parent.reload.art_type,
       thumbs_up: expected_output[:thumbs_up] || article.solution_article_meta.thumbs_up,
       thumbs_down: expected_output[:thumbs_down] || article.solution_article_meta.thumbs_down,
-      feedback_count: expected_output[:feedback_count] || article.tickets.unresolved.reject(&:spam_or_deleted?).count,
       hits: expected_output[:hits] || article.solution_article_meta.hits,
       status: expected_output[:status] || article.status,
       seo_data: expected_output[:seo_data] || article.seo_data,
@@ -122,6 +121,7 @@ module SolutionsTestHelper
         resp[:attachments] = Array
         resp[:cloud_files] = Array
       end
+      resp[:feedback_count] = expected_output[:feedback_count] || article.tickets.unresolved.reject(&:spam_or_deleted?).count
     end
     resp
   end
