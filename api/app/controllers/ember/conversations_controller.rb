@@ -254,9 +254,15 @@ module Ember
       end
 
       def reply_to_fb_ticket(note)
-        return unless @item.save_note
         fb_page     = @ticket.fb_post.facebook_page
         parent_post = note || @ticket
+        if skip_posting_to_fb
+          build_fb_association(parent_post) 
+          return @item.save_note
+        end
+
+        return unless @item.save_note
+
         reply_sent = send_reply_to_fb(fb_page, parent_post)
         if reply_sent == :fb_user_blocked
           @item.errors[:body] << :facebook_user_blocked
@@ -266,12 +272,17 @@ module Ember
         reply_sent
       end
 
+      def build_fb_association(parent_post)
+        association_hash = @ticket.is_fb_message? ? construct_dm_hash(@ticket) : construct_post_hash(parent_post)
+        @item.build_fb_post(association_hash)
+      end
+
       def send_reply_to_fb(fb_page, parent_post)
-          if @ticket.is_fb_message?
-            return send_reply(fb_page, @ticket, @item, POST_TYPE[:message])
-          else
-            return send_reply(fb_page, parent_post, @item, POST_TYPE[:comment])
-          end
+        if @ticket.is_fb_message?
+          return send_reply(fb_page, @ticket, @item, POST_TYPE[:message])
+        else
+          return send_reply(fb_page, parent_post, @item, POST_TYPE[:comment])
+        end
       end
 
       def assign_note_attributes
