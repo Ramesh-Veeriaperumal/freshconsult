@@ -18,7 +18,7 @@ class Account < ActiveRecord::Base
     :installed_app_publish, :denormalized_select_for_update, :disable_banners,
     :skip_invoice_due_warning, :company_central_publish, :product_central_publish,
     :redis_picklist_id, :help_widget, :bot_email_channel, :bot_email_central_publish,
-    :description_by_default, :ticket_fields_central_publish, :facebook_page_scope_migration,
+    :description_by_default, :ticket_fields_central_publish,
     :agent_group_central_publish, :custom_fields_search, :update_billing_info, :fluffy,
     :allow_billing_info_update, :tag_central_publish, :native_apps,
     :surveys_central_publish, :id_for_choices_write, :nested_field_revamp, :session_logs, :bypass_signup_captcha,
