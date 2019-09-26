@@ -148,10 +148,11 @@ module Ember
         end
 
         def properties_and_term_filters
+          # uniq is needed for tags filter, if article contains mutliple tags and filtered by the same set of tags
           if params[:term].present?
-            @items.where('solution_articles.id in (?)', @results.map(&:id))
+            @items.where('solution_articles.id in (?)', @results.map(&:id)).uniq
           else
-            @items
+            @items.uniq
           end
         end
 

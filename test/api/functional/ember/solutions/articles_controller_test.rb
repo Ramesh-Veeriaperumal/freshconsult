@@ -1519,6 +1519,24 @@ module Ember
         match_json([pattern])
       end
 
+      def test_article_filters_by_tags_distinct_check
+        author_id = @account.agents.first.id
+        article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id)
+        article = article_meta.solution_articles.first
+        tag1 = "#{Faker::Lorem.characters(7)}#{rand(999_999)}"
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag1,
+                                 allow_skip: true)
+        tag2 = "#{Faker::Lorem.characters(7)}#{rand(999_999)}"
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag2,
+                                  allow_skip: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, tags: [tag1, tag2] }, false)
+        article.reload
+        assert_equal article.tags.count, 2
+        assert_response 200
+        pattern = private_api_solution_article_pattern(article, action: :filter)
+        match_json([pattern])
+      end
+
       def test_article_filters_by_status
         articles = get_portal_articles(@portal_id, [6]).where(status: '2').first(30)
         if articles.blank?
