@@ -66,10 +66,10 @@ en:
         other: "%{count} seconds"
   downgrade_policy:
     change_request: Request Change
-    request_cancel_success: Successfully cancelled the request.
+    request_cancel_success: Successfully cancelled the request.  
     subscription_cancel_request_success: Subscription change request has been cancelled.
     subscription_cancel_request_failure: An error occurred while cancelling subscription change request.
-    cancel_request_failure: Error occurred while cancelling request. Please try after sometime.
+    cancel_request_failure: Error occurred while cancelling request. Please try after sometime.       
   common_js_translations:
     new: new
     remove_quoted_text: "Remove quoted text"
@@ -221,10 +221,10 @@ en:
     agent_notification:
       subject: "Email was not delivered to %{failed_email}"
       content: |
-        <p>Hi %{agent_name},<br><br>
-          The following message composed by you on ticket <a target='_blank' href=%{ticket_url}>%{ticket_id}</a> failed to reach the recipient %{failed_email}.<br>
-          Reason: "%{error_message}.<br><br>"
-          Message content: <br>%{failed_content}</p>
+              <p>Hi %{agent_name},<br><br>
+                The following message composed by you on ticket <a target='_blank' href=%{ticket_url}>%{ticket_id}</a> failed to reach the recipient %{failed_email}.<br>
+                Reason: "%{error_message}.<br><br>"
+                Message content: <br>%{failed_content}</p>
     note_display:
       title  : "Message not delivered"
       failed_recipient: "recipient"
@@ -762,9 +762,9 @@ en:
         rating_sub_title: "You have rated us"
         rating_sub_title_v2: Your ratings as
         survey_title: How well did our customer service representative answer your question
-          or solve your problem?
+                      or solve your problem?
         survey_question_title: How well did our customer service representative answer your question
-          or solve your problem?
+                      or solve your problem?
         feedback_title: Describe your support experience (optional)
         rated_on: on %{rated_on}
         change_of_mind: Changed your mind?
@@ -1542,8 +1542,8 @@ en:
         integrate_ecommerce: Bring your eCommerce messages into Freshdesk
         account_desc: Link your eBay marketplace with <b> %{product_name} </b> to manage your customer requests within Freshdesk.
         content1:
-          info1: Integrating ecommerce account
-          info2: "Freshdesk lets you manage customer queries coming into your eBay account from within your helpdesk. Once setup, all your customer queries from eBay will get converted into tickets automatically. You can also respond to them directly from within Freshdesk. "
+            info1: Integrating ecommerce account
+            info2: "Freshdesk lets you manage customer queries coming into your eBay account from within your helpdesk. Once setup, all your customer queries from eBay will get converted into tickets automatically. You can also respond to them directly from within Freshdesk. "
       index:
         title: Ecommerce Accounts
         renew: Renew Token
@@ -1771,10 +1771,10 @@ en:
         result_exist_msg_v2: Since responses have already been collected for this survey, the point scale and no. of questions cannot be altered. However, you can rephrase the questions and answer choices.
       new_rating:
         content_text: This Question helps access the overall satisfaction for the response provided by the agent.
-          It appears below your signature at the bottom of the email sent to the customer.
-          Scale cannot be changed once response has been collected for this question.
+                      It appears below your signature at the bottom of the email sent to the customer.
+                      Scale cannot be changed once response has been collected for this question.
         content_text_v2: This question helps assess the overall satisfaction for the response provided by the agent.
-          It appears below your signature at the bottom of the email sent to the customer.
+                      It appears below your signature at the bottom of the email sent to the customer.
         survey_question: Survey question
         error_text: This field is required
         points_scale: points scale
@@ -1798,11 +1798,11 @@ en:
         thanks_label_v2: Message will appear after submitting feedback for additional questions.
         feedback_response_text: Thank you. Your feedback has been sent.
         help_text: Follow-up survey appears in a new page after the customer takes the agent survey.
-          Questions can be about product/company/agent.
+                    Questions can be about product/company/agent.
         help_text_v2: Additional survey questions appear in a new page after the customer takes the satisfaction survey.
-          Questions can be about product/company/agent.
+                    Questions can be about product/company/agent.
         thanks_help_text: Additional survey questions appear in the Thank You page after the customer takes the satisfaction survey.
-          Questions can be about product/company/agent.
+                    Questions can be about product/company/agent.
 
       new_questions_layout:
         title_text: Select the points scale for your questions
@@ -1892,101 +1892,101 @@ en:
         enter_neutral_text: Enter the neutral text
         enter_unhappy_text: Enter the unhappy text
     getting_started:
-      send_mail_content:
-        test_info_1: Think everything looks okay until now? Try sending a test email.
-        button_title: Send Test Mail
-        button_again_title: ...or Send test mail again
-        button_sending: Sending...
-        send_test_mail_info1: Make sure you've set up your emails to forward to <b> %{to_email} </b>.
-        send_test_mail_info3: If you think everything is good so far, try sending a test mail. <br>%{send_test_mail_link}
-        send_test_mail_link_title: Send test email
-        send_test_mail_response_1: We just sent a test email to <b><span id=reply_email_1>%{reply_email}</span></b>. If all went well, you  should see  a new ticket in your help desk. <a href="/helpdesk/tickets" target="_blank">Check to see if it's there</a>.
-        send_test_mail_confirm_yes: Yes, i got it.
-        send_test_mail_confirm_no: No, i can't see any ticket.
-        send_test_mail_yes_response: Good job! You have successfully setup your support email to work with Freshdesk. Happy Supporting!
-        send_test_mail_response_no1: There seems to be a problem ->
-        send_test_mail_response_no2: Learn how
-        send_test_mail_response_no_3: <strong>Bummer! There seems to be a problem!</strong><br>Check your forwarding rule to make sure everything is ok. If you don't get a test ticket in a couple of minutes, <a href="https://support.freshdesk.com/" target="_blank">get in touch with us</a>.
-      index:
-        congratulations: Congrats! Your Freshdesk is ready!
-        send_test_mail_info2: "Here is <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>how you can do it</a>."
-        title_message: Jump start your customer support in four steps...
-        support_email_title: Support<br> e-mail
-        rebrand_title: Logo <br>&amp; colors
-        adding_agents: "Adding<br> Agents"
-        going_social: "Going<br> Social"
-        skip_text: No thanks, take me to my helpdesk.
-        back_link: Back
-        next_link: Next
-        next_alt_text: Jump right in!
-        next_please_wait: Please wait...
-        support_email_subtitle: Add your primary support email address
-        support_email_submsg: This will also be the default reply-to address when you respond to<br> queries from Freshdesk.
-        save_text: Save
-        agents_subtitle: Invite your team to join in on the fun
-        agent_title_info: Add the emails of your team members to invite them over to Freshdesk. Separate multiple emails with a comma.
-        rebrand_subtitle: Rebrand with your logo and colors!
-        rebranding_header: Enter a fancy name for your helpdesk
-        helpdesk_preview_text: "Preview"
-        social_subtitle: Go social with your customer support!
-        social_info_text: Add your Facebook and Twitter accounts to start monitoring all your social interactions, and bring in wall posts, tweets, DMs and messages into Freshdesk.
-        social_add_account: Add Account
-        config-support-email-address: "Configure your support email address"
-        save-and-next: "Save and Go to next"
-        send_verification_email: Send verification
-        send_invite: Send Invite
-        title: Cool! Looks like your help desk is ready to roll...
-        title1: "Now let's get those emails into Freshdesk"
-        info: "You'll need to create a simple rule in your support mailbox to forward emails to this address."
-        info2:  Not happy with it? Enter a new email and hit "Save"
-        sub_title: Here's a bunch of stuff to help you get started
-        email_config_title: What's your support email?
-        email_config_sub_title: Let Freshdesk handle your Support Emails!
-        email_config_field_title: Your Support Email Address
-        agent_title: Feeling lonely?
-        agent_sub_title: Invite your team to Freshdesk
-        agent_send_invite_label: Send Invites to agents
-        agent_invite_field_placeholder: Enter your team members email
-        social_twitter: Twitter
-        social_twitter_add: Add Account
-        social_facebook: Facebook
-        social_facebook_add: Add a Page
-        rebrand_company_label: Company Name
-        rebrand_company_field_placeholder: Enter your company name
-        footer_msg: "<strong>Note:<strong> You can change these settings anytime by going to the <a href='/admin/home' target='_blank' style='text-decoration:none; color:#1272DE'>Admin tab</a>"
-        rebrand_paint_title: Paint your helpdesk
-        rebrand_color_header: Header
-        rebrand_color_tabs: Tabs
-        rebrand_color_background: Background
-        rebrand_submit_label: Rebrand
-        admin_title: Everything Good?
-        admin_sub_title: Don't forget to check out all under-the-hood features you can customize in the "%{admin_tab}" tab
-        product_link_label: Jump into your helpdesk >>
-        validating: Validating...
-        updating: Updating...
-        successfully_updated: Successfully updated.
-        successfully_sent: Successfully sent.
-        problem_updating: Problem in updating, please try again.
-        email_invalid: Your email is invalid, please check.
-        emails_invalid: One or more of your email is invalid.
-        implement_changes: Implementing the changes...
-        email_sent_success: Email has been succesfully sent.
-        email_send_problem: Problem while sending the mail.
-        sending_test_mail_progress: Sending test email, please wait...
-        agent_invite_multi_info: Use comma ( , ) to add multiple emails.
-        agent_limit_reached: You have exceeded your agents limit.
-        rebrand_header_invalid: Header color code is invalid.
-        rebrand_tab_invalid: Tab color code is invalid.
-        rebrand_bg_invalid: Background color code is invalid.
-        rebrand_header_empty: Header color code is required.
-        rebrand_tab_empty: Tab color code is required.
-        rebrand_bg_empty: Background color code is required.
-        agent_email_taken: Following email(s) has already been taken:<br> %{emails}
-        agent_email_exist: Email(s) already taken.
-        agent_email_partial: Partially successful.
-        agent_email_sending: Sending Invites...
-        agent_email_required: Email ID required to send invite.
-        bulk_invite_blocked: "You can add up to 25 agents from this page. You can add more from the admin section later."
+        send_mail_content:
+            test_info_1: Think everything looks okay until now? Try sending a test email.
+            button_title: Send Test Mail
+            button_again_title: ...or Send test mail again
+            button_sending: Sending...
+            send_test_mail_info1: Make sure you've set up your emails to forward to <b> %{to_email} </b>.
+            send_test_mail_info3: If you think everything is good so far, try sending a test mail. <br>%{send_test_mail_link}
+            send_test_mail_link_title: Send test email
+            send_test_mail_response_1: We just sent a test email to <b><span id=reply_email_1>%{reply_email}</span></b>. If all went well, you  should see  a new ticket in your help desk. <a href="/helpdesk/tickets" target="_blank">Check to see if it's there</a>.
+            send_test_mail_confirm_yes: Yes, i got it.
+            send_test_mail_confirm_no: No, i can't see any ticket.
+            send_test_mail_yes_response: Good job! You have successfully setup your support email to work with Freshdesk. Happy Supporting!
+            send_test_mail_response_no1: There seems to be a problem ->
+            send_test_mail_response_no2: Learn how
+            send_test_mail_response_no_3: <strong>Bummer! There seems to be a problem!</strong><br>Check your forwarding rule to make sure everything is ok. If you don't get a test ticket in a couple of minutes, <a href="https://support.freshdesk.com/" target="_blank">get in touch with us</a>.
+        index:
+            congratulations: Congrats! Your Freshdesk is ready!
+            send_test_mail_info2: "Here is <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>how you can do it</a>."
+            title_message: Jump start your customer support in four steps...
+            support_email_title: Support<br> e-mail
+            rebrand_title: Logo <br>&amp; colors
+            adding_agents: "Adding<br> Agents"
+            going_social: "Going<br> Social"
+            skip_text: No thanks, take me to my helpdesk.
+            back_link: Back
+            next_link: Next
+            next_alt_text: Jump right in!
+            next_please_wait: Please wait...
+            support_email_subtitle: Add your primary support email address
+            support_email_submsg: This will also be the default reply-to address when you respond to<br> queries from Freshdesk.
+            save_text: Save
+            agents_subtitle: Invite your team to join in on the fun
+            agent_title_info: Add the emails of your team members to invite them over to Freshdesk. Separate multiple emails with a comma.
+            rebrand_subtitle: Rebrand with your logo and colors!
+            rebranding_header: Enter a fancy name for your helpdesk
+            helpdesk_preview_text: "Preview"
+            social_subtitle: Go social with your customer support!
+            social_info_text: Add your Facebook and Twitter accounts to start monitoring all your social interactions, and bring in wall posts, tweets, DMs and messages into Freshdesk.
+            social_add_account: Add Account
+            config-support-email-address: "Configure your support email address"
+            save-and-next: "Save and Go to next"
+            send_verification_email: Send verification
+            send_invite: Send Invite
+            title: Cool! Looks like your help desk is ready to roll...
+            title1: "Now let's get those emails into Freshdesk"
+            info: "You'll need to create a simple rule in your support mailbox to forward emails to this address."
+            info2:  Not happy with it? Enter a new email and hit "Save"
+            sub_title: Here's a bunch of stuff to help you get started
+            email_config_title: What's your support email?
+            email_config_sub_title: Let Freshdesk handle your Support Emails!
+            email_config_field_title: Your Support Email Address
+            agent_title: Feeling lonely?
+            agent_sub_title: Invite your team to Freshdesk
+            agent_send_invite_label: Send Invites to agents
+            agent_invite_field_placeholder: Enter your team members email
+            social_twitter: Twitter
+            social_twitter_add: Add Account
+            social_facebook: Facebook
+            social_facebook_add: Add a Page
+            rebrand_company_label: Company Name
+            rebrand_company_field_placeholder: Enter your company name
+            footer_msg: "<strong>Note:<strong> You can change these settings anytime by going to the <a href='/admin/home' target='_blank' style='text-decoration:none; color:#1272DE'>Admin tab</a>"
+            rebrand_paint_title: Paint your helpdesk
+            rebrand_color_header: Header
+            rebrand_color_tabs: Tabs
+            rebrand_color_background: Background
+            rebrand_submit_label: Rebrand
+            admin_title: Everything Good?
+            admin_sub_title: Don't forget to check out all under-the-hood features you can customize in the "%{admin_tab}" tab
+            product_link_label: Jump into your helpdesk >>
+            validating: Validating...
+            updating: Updating...
+            successfully_updated: Successfully updated.
+            successfully_sent: Successfully sent.
+            problem_updating: Problem in updating, please try again.
+            email_invalid: Your email is invalid, please check.
+            emails_invalid: One or more of your email is invalid.
+            implement_changes: Implementing the changes...
+            email_sent_success: Email has been succesfully sent.
+            email_send_problem: Problem while sending the mail.
+            sending_test_mail_progress: Sending test email, please wait...
+            agent_invite_multi_info: Use comma ( , ) to add multiple emails.
+            agent_limit_reached: You have exceeded your agents limit.
+            rebrand_header_invalid: Header color code is invalid.
+            rebrand_tab_invalid: Tab color code is invalid.
+            rebrand_bg_invalid: Background color code is invalid.
+            rebrand_header_empty: Header color code is required.
+            rebrand_tab_empty: Tab color code is required.
+            rebrand_bg_empty: Background color code is required.
+            agent_email_taken: Following email(s) has already been taken:<br> %{emails}
+            agent_email_exist: Email(s) already taken.
+            agent_email_partial: Partially successful.
+            agent_email_sending: Sending Invites...
+            agent_email_required: Email ID required to send invite.
+            bulk_invite_blocked: "You can add up to 25 agents from this page. You can add more from the admin section later."
     day_passes:
       helpnote:
         title: Day Pass
@@ -4501,14 +4501,14 @@ en:
     skip_notification_no: "No"
   header_logo: Header Logo
   feedback:
-    title: "Did you find it helpful?"
-    up_vote_thank_you_message: "Glad we could be helpful. Thanks for the feedback."
-    upvote: "Yes"
-    downvote: "No"
-    link: "Send feedback"
-    down_vote_form_title: "Can you please tell us how we can improve this article?"
-    solution_article_author: "is the author of this solution article."
-    downvote_feedback_messasge: "Sorry we couldn't be helpful. Help us improve this article with your feedback."
+      title: "Did you find it helpful?"
+      up_vote_thank_you_message: "Glad we could be helpful. Thanks for the feedback."
+      upvote: "Yes"
+      downvote: "No"
+      link: "Send feedback"
+      down_vote_form_title: "Can you please tell us how we can improve this article?"
+      solution_article_author: "is the author of this solution article."
+      downvote_feedback_messasge: "Sorry we couldn't be helpful. Help us improve this article with your feedback."
   solutions:
     new_translation: "New %{language} translation"
     status:
@@ -6332,19 +6332,19 @@ en:
       tour1: Help me setup my support email
       tour2: Help me configure multiple mailboxes
       info5: Your default support email address is
-        <a class='break-all' target="_blank" href="https://%{solution_url}">
-        %{solution_url}</a>.
-        Any email sent here gets automatically converted into a ticket that you can
-        get working on.
+                      <a class='break-all' target="_blank" href="https://%{solution_url}">
+                      %{solution_url}</a>.
+                      Any email sent here gets automatically converted into a ticket that you can
+                      get working on.
       info19: You can configure your Freshdesk account to use a support email in your own domain,
-        like support@mycompany.com by forwarding emails from this address to
-        <a class='break-all' target="_blank" href="https://%{solution_url}">
-        %{solution_url}</a>.
+                      like support@mycompany.com by forwarding emails from this address to
+                      <a class='break-all' target="_blank" href="https://%{solution_url}">
+                        %{solution_url}</a>.
       edit_info: To create a new support email box, click “Edit” under global email settings.
       info20: Using Multiple Mailboxes
       info21: You can add unlimited incoming and outgoing mailboxes (like info@yourcompany.com,
-        sales@yourcompany.com, etc.) in your helpdesk. You can even setup Freshdesk to
-        automatically assign emails from each mailbox to a specific group.
+                      sales@yourcompany.com, etc.) in your helpdesk. You can even setup Freshdesk to
+                       automatically assign emails from each mailbox to a specific group.
     primary_supp_email: Primary support email
     info16: Tickets will be assigned to
     info7: This is also your Reply-to address eg. support@yourcompany.com
@@ -6681,7 +6681,7 @@ en:
       create_tracker_sidebar_line2: "Through a tracker, agents can broadcast messages to all related tickets and make sure updates are delivered to all the agents of the related tickets in a consistent manner."
 
     ticket_association:
-      title: Ticket Association
+       title: Ticket Association
     parent_child:
       permission_denied: "Oops! You are not allowed to create a child ticket."
       count_exceeded: "Failed to create child to the parent ticket as it already reached the limit of %{count} tickets."
@@ -7079,18 +7079,18 @@ en:
       option1: "Show newest on top"
       option2: "Show oldest on top"
     forums_toggle:
-      title: "Forums"
-      forums_disabled: "Forums have been disabled for this account."
-      enable_forums: "enable forums in your account"
-      go_back_message: "Go back to your helpdesk"
-      helpnote: "Disabling this will turn off forums in all of your product portals for all users"
+        title: "Forums"
+        forums_disabled: "Forums have been disabled for this account."
+        enable_forums: "enable forums in your account"
+        go_back_message: "Go back to your helpdesk"
+        helpnote: "Disabling this will turn off forums in all of your product portals for all users"
 
     branding_toggle:
-      title: "Freshdesk Branding"
-      disable_branding: "Remove Freshdesk branding"
-      enable_branding: "Enable branding in your account"
-      go_back_message: "Go back to your helpdesk"
-      helpnote: "Turning this off will remove the Freshdesk branding in the footer of both your agent and customer portals"
+            title: "Freshdesk Branding"
+            disable_branding: "Remove Freshdesk branding"
+            enable_branding: "Enable branding in your account"
+            go_back_message: "Go back to your helpdesk"
+            helpnote: "Turning this off will remove the Freshdesk branding in the footer of both your agent and customer portals"
     page_colors:
       title: Helpdesk Colors
       background: Background
@@ -7239,10 +7239,10 @@ en:
     surveys:
       invalid_rating: Rating value "%{rating}" is invalid. Please rate with the correct rating value.
     ticket_notifier:
-      reply:
-        happy: Awesome
-        neutral: Just Okay
-        unhappy: Not Good
+        reply:
+            happy: Awesome
+            neutral: Just Okay
+            unhappy: Not Good
     time_sheets:
       index:
         no_timeentry: "No time entry logged for this ticket"
@@ -7839,10 +7839,10 @@ en:
         broadcast_note: "Broadcast message"
         not_added: Note has not been added!
         attachment_size:
-          exceeded: Your attachments exceed %{attachment_limit} MB. Please make changes before you proceed.
-          not_added: (Not Added)
-          not_added_greater: (> 15 mb Not Added)
-          exceed_limit: Exceeds attachments size
+           exceeded: Your attachments exceed %{attachment_limit} MB. Please make changes before you proceed.
+           not_added: (Not Added)
+           not_added_greater: (> 15 mb Not Added)
+           exceed_limit: Exceeds attachments size
         survey_response: Survey response for %{survey_name}
         survey_response_to: to %{agent}
         survey_satisfaction: How would you rate your overall satisfaction for the resolution provided by the agent?
@@ -7882,10 +7882,10 @@ en:
           other: "The tickets %{source_tickets} have been merged into the ticket %{target_ticket_id}. The conversations will be added in a few minutes."
     canned_responses:
       helpnote:
-        title: Canned responses
-        tour: Help me use canned responses
-        info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets.
-        info2: You can use placeholders in your canned responses to fill in dynamic content like the requester’s name, ticket ID and URL inside the response.
+          title: Canned responses
+          tour: Help me use canned responses
+          info1: Canned Responses are predefined reply templates which can be used to quickly send out replies to tickets.
+          info2: You can use placeholders in your canned responses to fill in dynamic content like the requester’s name, ticket ID and URL inside the response.
       folders:
         helpnote:
           title: Canned responses
@@ -7949,15 +7949,15 @@ en:
     no_match_view: No matching views found
   click_to_change_sort_order: Click to change sort order
   user_sessions:
-    new:
-      email: Email
-      password: Password
-      remember: Remember me on this computer
-      login: Login
-      forgot: I forgot my password?
-      sign_in_using: Sign In
-      sign_in_using_google: Sign in using your Google account
-      help: Help
+      new:
+        email: Email
+        password: Password
+        remember: Remember me on this computer
+        login: Login
+        forgot: I forgot my password?
+        sign_in_using: Sign In
+        sign_in_using_google: Sign in using your Google account
+        help: Help
   delete_reminder: Delete this ToDo?
   subscription_plan:
     billing_cycle:
@@ -8327,15 +8327,15 @@ en:
       edit: Edit
       settings: Settings
   home:
-    mobile_index:
-      email: Email
-      password: Password
-      remember: Remember me on this computer
-      login: Login
-      forgot: I forgot my password?
-      sign_in_using: Sign In using
-      sign_in_using_google: Sign in using your Google account
-      help: Help
+      mobile_index:
+        email: Email
+        password: Password
+        remember: Remember me on this computer
+        login: Login
+        forgot: I forgot my password?
+        sign_in_using: Sign In using
+        sign_in_using_google: Sign in using your Google account
+        help: Help
   settings: settings
   updated_on: "%{user_name} updated on %{note_date}"
   mobile:
@@ -9157,19 +9157,19 @@ en:
       desc: "Stay up to date about Freshdesk tickets in Slack"
       helptext: "<h4>Slack Integration</h4><br><p>To enable the integration select the Slack channels from dropdown and choose notifications that you would like to see in Slack.<br>Get instant updates in Slack whenever a Freshdesk ticket is created or updated and proactively engage with your customers</p>"
       form:
-        slack_setting: ""
-        slack_info: ""
+         slack_setting: ""
+         slack_info: ""
     slack_v2:
       label: "Slack <span class='beta'>New</span>"
       desc: "Stay up to date with your Freshdesk on Slack."
       helptext: "<h4>Slack Integration</h4><br><p>Select the list of Public Channels and Private Groups that you want to make available to Freshdesk's Dispatch'r and Observer. When setting up their automation rules, you can specify which channel to push messages to. </p>"
       form:
-        slack_v2_settings: "Slack Settings"
-        access_public_channel: "Allow access to public channels"
-        access_private_channel: "Allow access to private channels"
-        allow_dm_agent: "Allow DM to agent"
-        allow_slash_command: "Allow Slash Command (<a href='https://support.freshdesk.com/support/solutions/articles/206103' target='_blank'> Convert Slack DM to Freshdesk ticket </a>)"
-        slash_command_token: "Slash Command Token"
+         slack_v2_settings: "Slack Settings"
+         access_public_channel: "Allow access to public channels"
+         access_private_channel: "Allow access to private channels"
+         allow_dm_agent: "Allow DM to agent"
+         allow_slash_command: "Allow Slash Command (<a href='https://support.freshdesk.com/support/solutions/articles/206103' target='_blank'> Convert Slack DM to Freshdesk ticket </a>)"
+         slash_command_token: "Slash Command Token"
       action_options:
         public: "Public"
         private: "Private"
@@ -9530,224 +9530,224 @@ en:
         problems_with_fields: "There were problems with the following fields:"
   reorder: "Reorder"
   reports:
-    no_data: No data to display!
-    classic: "Classic"
-    tab_heading: "Reports"
-    select_customer: "Select Customer"
-    select_options: "Reports by"
-    tickets_by: "Tickets By"
-    helpdesk_title: "Helpdesk Activity Report"
-    customer_title: "Customer Activity Report"
-    helpdesk_title_nav: "Helpdesk Activity Report"
-    customer_title_nav: "Customer Activity Report"
-    surveys_title_nav: "Customer Satisfaction Report"
-    scoreboard_title_nav: "Leaderboard"
-    scoreboard_group_title: "Group Leaderboard"
-    scoreboard_agent_title: "Agent Leaderboard"
-    reports_by: "Reports by"
-    select_time_period: "Select Time period"
-    generate_button: "Generate"
-    pie_chart_title_prefix: "Tickets By "
-    timeline_chart_title: "Tickets Received vs Resolved"
-    customer_activity_title: "Activity Report"
-    helpdesk_activity_title: "Helpdesk Activity Report"
-    satisfaction_title: "Satisfaction Report"
-    discard_changes: Discard changes
-    others: "Others"
-    freshfone:
-      options:
-        incoming: "Incoming"
-        outgoing: "Outgoing"
-        all_groups: "All Groups"
-        unassigned: Unassigned
-      range_exceed: "Range cannot exceed 90 days"
-      filter_by_title: "Filtered by"
-      time_period: "Time Period"
-      ff_report_title: "Phone Summary"
-      summary_title: "Agent Call Summary "
-      agent: "Agent"
-      group: "Group"
-      call_type: "Call Type"
-      business_hours: "Business Hours"
-      filter_option_all_calls: "All Calls"
-      filter_option_within_business_hours: "Within Business hours"
-      filter_option_outside_business_hours: "Outside Business hours"
-      filter_report: "Edit Filter"
-      select_agent: "Select Agent"
-      select_group: "Select Group"
-      select_call_type: "Select Call Type"
-      select_number: "Select a Number"
-      all_numbers: "All Numbers"
-      all_call_types: "All"
-      number: "Number"
-      avg_handle_time: "Avg Handle Time"
-      num_of_calls: "No of Calls"
-      total_answered: "Answered Calls"
-      total_voice_mail: "Voice Mails"
-      total_duration: "Total Duration"
-      agent_calls_count: "Calls"
-      total_unanswered_calls: "Unanswered Calls"
-      num_of_transfered: "No of Transfers"
-      num_of_external_transfers: "External Transfers"
-      unanswered_transfers: "Unanswered Transfers"
-      answered_percentage: "Answer %"
-      generate_summary: "Generate"
-      filter_close: "Close"
-      unanswered_count: "Unanswered"
-      external: "External Numbers"
-      includes_transfer: "Includes transferred calls"
-      no_agent: "- No Agent -"
-      no_external: "Transfers made to external numbers are not included"
-    time_sheets:
-      billable: "Billable Hours"
-      non_billable: "Non-Billable Hours"
-      total_time: "Hours Tracked"
-      billable_vs_non_billable: "Billable vs Non-billable"
-      filter_by_title: "Filtered by"
-      time_period: "Time Period"
-      pick_columns: Pick columns
-      column_limit_exceed: Cannot add more than 10 columns
-    summary_report:
-      back_to_reports: "Back to Reports"
-      show_report: "Show report"
-      tickets_resolved: "Tickets <br> Resolved"
-      on_time_resolution: "On Time <br> Resolution"
-      on_time_resolution_percent: "OTR %"
-      fcr_count: "First Contact <br> Resolution"
-      fcr_percent: "FCR %"
-      avg_1st_response_time: "Average First <br> Response Time"
-      avg_response_time: "Average Response <br> Time"
-      avg_resolution_time: "Average Resolution <br> Time"
-      helptext: "Statistics calculated in the report are with respect to the number of tickets resolved. <br /> Tickets resolved within SLAs are summarized as &quot;On Time Resolution&quot;. <br /> The &quot;First Contact Resolution&quot; column shows tickets that have been resolved within the first reply.<br /> &quot;Average First Response Time&quot; shows the time elapsed between when the ticket was created and when the agent first replied to it."
-    date_ranges:
-      today: "Today"
-      yesterday: "Yesterday"
-      last_7_days: "Last 7 days"
-      last_30_days: "Last 30 days"
-      last_90_days: "Last 90 days"
-      custom: "Date Range"
-    summary:
-      title: "Tickets summary"
-      total_tickets: "Total Tickets"
-      received_tickets: "Received Tickets"
-      open_tickets: "Open Tickets"
-      pending_tickets : "Pending Tickets"
-      resolved_tickets: "Resolved Tickets"
-      sla_compliance: "SLA Compliance"
-      fcr: "First Call Resolution"
-    timesheet_reports:
-      index:
-        title: Time Sheet Report
-        select_customer: Select Customer
-        select_agent: Select Agent
-        select_group: Select Group
-        select_billable: Select Billable/Non-Billable
-        select_priority: "Select Priority"
-        select: "Select"
-        select_product: Select Product
-        select_type: Select Type
-        view_between: View report between
-        from: From
-        to: To
-        filter_report: Edit Filter
-        ticket_type: Ticket Type
-    scoreboard_reports:
-      champions_title: Champions
-      sharpshooter_title: Sharp Shooters
-      speed_champion: Speed Champion
-      customer_champion: Customer Champion
-      valuable_player: Most valuable Player
-      agent_highest_points: Agents with highest overall points
-      sample_name: Bruce Banner
-      agents_cs_highest: Agents with highest customer satisfaction survey points
-      agents_fastest_resolve: Agents who resolve tickets faster
-      show_more_count: Show %{count} more
-    survey_reports:
-      main:
-        all: All
-        time_period: Time Period
-        survey_name: Survey name
-        group: Group
-        agent: Agent
-        overview: Overview
-        responses: Responses
-        response_to: Response to
-        rating: Rating
-        question: Q
-        positive: Positive
-        neutral: Neutral
-        negative: Negative
-        answered: Answered
-        unanswered: Unanswered
-        total_responses: Total No.of responses
-        total_responses_v2: Total
-        filter_by: Filter by
-        preparing_chart_for: Preparing chart for
-        loading_chart: Loading...
-        loading_msg: "Generating Reports ..."
-        no_remarks: No responses available
-        loading_remarks: Loading remarks
-        loading_responses: Loading responses
-        fetching_responses: Fetching responses
-        no_overview: No data available
-        view_report_by: View by
-        overall_rating: Rating
-        all_responses: All Responses
-        deleted_list: DELETED SURVEYS
-      index:
-        agent_list_loading: Fetching agent list
-      feedbacks:
-        in_response_to: -- In response to
-      back_to: Back to List View
-      list:
-        no_feedback: Nobody has given any feedback during this time.
-      list_content:
-        rating_msg_none: nobody said %{rating}
-        rating_msg_single: one said %{rating}
-        rating_msg_multiple: "%{count} said %{rating}"
-        rating_primary_msg_single: one customer said %{rating}
-        rating_primary_msg_multiple: "%{count} customers said %{rating}"
-        happy: awesome
-        neutral: just okay
-        unhappy: not good
-      sidebar:
-        from: From
-        to: To
-        filter_by: Satisfaction Views
-        view_report_date: View reports during
-        helptext: "<b>Why Customer Satisfaction Report ?</b><p>Customer Satisfaction Report gives you a snapshot of the service quality of your customer support agents.<br>The report helps you to understand the happiness quotient of your customers, which is represented as a percentage value (happy, neutral & unhappy) relevant to every support agent.<br><br><b>What more you can do?</b><br><p><ol class='ml15'><li>Filter the report results with respect to Agents, Group or Company</li><li>View reports for a particular timeframe</li></ol></p></p>"
-    livechat:
-      report_title: "Live Chat Summary"
-      filter_by_title: "Filtered by"
-      time_period: "Time Period"
-      widget: "Widget"
-      group: "Group"
-      chat_type: "Chat Type"
-      summary: "Summary"
-      filter_report: "Edit Filter"
-      select_widget: "Select Widget"
-      select_group: "Select Group"
-      select_chat_type: "Select Chat Type"
-      all: "All"
-      chat_type_visitor: "Visitor Initiated"
-      chat_type_agent: "Agent Initiated"
-      chat_type_proactive: "Proactive"
-      generate_summary: "Generate"
-      filter_close: "Close"
-      total_chats: Total
-      num_of_chats: No of Chats
-      answered_chats: Answered
-      missed_chats: Missed
-      num_of_transfer: Transfers
-      avg_handle_time: Avg Handle Time
-      avg_time_queue: Time in Queue
-      total_duration: "Total Duration"
-      agent_chat_summary: Agent Chat Summary
-      agent: "Agent"
-      deleted: "Deleted"
-    scheduled_exports:
-      create:
-        max_email_recipients_per_scheduled_export: "Cannot add more than %{max_limit} email recipients"
+      no_data: No data to display!
+      classic: "Classic"
+      tab_heading: "Reports"
+      select_customer: "Select Customer"
+      select_options: "Reports by"
+      tickets_by: "Tickets By"
+      helpdesk_title: "Helpdesk Activity Report"
+      customer_title: "Customer Activity Report"
+      helpdesk_title_nav: "Helpdesk Activity Report"
+      customer_title_nav: "Customer Activity Report"
+      surveys_title_nav: "Customer Satisfaction Report"
+      scoreboard_title_nav: "Leaderboard"
+      scoreboard_group_title: "Group Leaderboard"
+      scoreboard_agent_title: "Agent Leaderboard"
+      reports_by: "Reports by"
+      select_time_period: "Select Time period"
+      generate_button: "Generate"
+      pie_chart_title_prefix: "Tickets By "
+      timeline_chart_title: "Tickets Received vs Resolved"
+      customer_activity_title: "Activity Report"
+      helpdesk_activity_title: "Helpdesk Activity Report"
+      satisfaction_title: "Satisfaction Report"
+      discard_changes: Discard changes
+      others: "Others"
+      freshfone:
+        options:
+          incoming: "Incoming"
+          outgoing: "Outgoing"
+          all_groups: "All Groups"
+          unassigned: Unassigned
+        range_exceed: "Range cannot exceed 90 days"
+        filter_by_title: "Filtered by"
+        time_period: "Time Period"
+        ff_report_title: "Phone Summary"
+        summary_title: "Agent Call Summary "
+        agent: "Agent"
+        group: "Group"
+        call_type: "Call Type"
+        business_hours: "Business Hours"
+        filter_option_all_calls: "All Calls"
+        filter_option_within_business_hours: "Within Business hours"
+        filter_option_outside_business_hours: "Outside Business hours"
+        filter_report: "Edit Filter"
+        select_agent: "Select Agent"
+        select_group: "Select Group"
+        select_call_type: "Select Call Type"
+        select_number: "Select a Number"
+        all_numbers: "All Numbers"
+        all_call_types: "All"
+        number: "Number"
+        avg_handle_time: "Avg Handle Time"
+        num_of_calls: "No of Calls"
+        total_answered: "Answered Calls"
+        total_voice_mail: "Voice Mails"
+        total_duration: "Total Duration"
+        agent_calls_count: "Calls"
+        total_unanswered_calls: "Unanswered Calls"
+        num_of_transfered: "No of Transfers"
+        num_of_external_transfers: "External Transfers"
+        unanswered_transfers: "Unanswered Transfers"
+        answered_percentage: "Answer %"
+        generate_summary: "Generate"
+        filter_close: "Close"
+        unanswered_count: "Unanswered"
+        external: "External Numbers"
+        includes_transfer: "Includes transferred calls"
+        no_agent: "- No Agent -"
+        no_external: "Transfers made to external numbers are not included"
+      time_sheets:
+        billable: "Billable Hours"
+        non_billable: "Non-Billable Hours"
+        total_time: "Hours Tracked"
+        billable_vs_non_billable: "Billable vs Non-billable"
+        filter_by_title: "Filtered by"
+        time_period: "Time Period"
+        pick_columns: Pick columns
+        column_limit_exceed: Cannot add more than 10 columns
+      summary_report:
+        back_to_reports: "Back to Reports"
+        show_report: "Show report"
+        tickets_resolved: "Tickets <br> Resolved"
+        on_time_resolution: "On Time <br> Resolution"
+        on_time_resolution_percent: "OTR %"
+        fcr_count: "First Contact <br> Resolution"
+        fcr_percent: "FCR %"
+        avg_1st_response_time: "Average First <br> Response Time"
+        avg_response_time: "Average Response <br> Time"
+        avg_resolution_time: "Average Resolution <br> Time"
+        helptext: "Statistics calculated in the report are with respect to the number of tickets resolved. <br /> Tickets resolved within SLAs are summarized as &quot;On Time Resolution&quot;. <br /> The &quot;First Contact Resolution&quot; column shows tickets that have been resolved within the first reply.<br /> &quot;Average First Response Time&quot; shows the time elapsed between when the ticket was created and when the agent first replied to it."
+      date_ranges:
+        today: "Today"
+        yesterday: "Yesterday"
+        last_7_days: "Last 7 days"
+        last_30_days: "Last 30 days"
+        last_90_days: "Last 90 days"
+        custom: "Date Range"
+      summary:
+        title: "Tickets summary"
+        total_tickets: "Total Tickets"
+        received_tickets: "Received Tickets"
+        open_tickets: "Open Tickets"
+        pending_tickets : "Pending Tickets"
+        resolved_tickets: "Resolved Tickets"
+        sla_compliance: "SLA Compliance"
+        fcr: "First Call Resolution"
+      timesheet_reports:
+        index:
+          title: Time Sheet Report
+          select_customer: Select Customer
+          select_agent: Select Agent
+          select_group: Select Group
+          select_billable: Select Billable/Non-Billable
+          select_priority: "Select Priority"
+          select: "Select"
+          select_product: Select Product
+          select_type: Select Type
+          view_between: View report between
+          from: From
+          to: To
+          filter_report: Edit Filter
+          ticket_type: Ticket Type
+      scoreboard_reports:
+        champions_title: Champions
+        sharpshooter_title: Sharp Shooters
+        speed_champion: Speed Champion
+        customer_champion: Customer Champion
+        valuable_player: Most valuable Player
+        agent_highest_points: Agents with highest overall points
+        sample_name: Bruce Banner
+        agents_cs_highest: Agents with highest customer satisfaction survey points
+        agents_fastest_resolve: Agents who resolve tickets faster
+        show_more_count: Show %{count} more
+      survey_reports:
+        main:
+            all: All
+            time_period: Time Period
+            survey_name: Survey name
+            group: Group
+            agent: Agent
+            overview: Overview
+            responses: Responses
+            response_to: Response to
+            rating: Rating
+            question: Q
+            positive: Positive
+            neutral: Neutral
+            negative: Negative
+            answered: Answered
+            unanswered: Unanswered
+            total_responses: Total No.of responses
+            total_responses_v2: Total
+            filter_by: Filter by
+            preparing_chart_for: Preparing chart for
+            loading_chart: Loading...
+            loading_msg: "Generating Reports ..."
+            no_remarks: No responses available
+            loading_remarks: Loading remarks
+            loading_responses: Loading responses
+            fetching_responses: Fetching responses
+            no_overview: No data available
+            view_report_by: View by
+            overall_rating: Rating
+            all_responses: All Responses
+            deleted_list: DELETED SURVEYS
+        index:
+            agent_list_loading: Fetching agent list
+        feedbacks:
+            in_response_to: -- In response to
+        back_to: Back to List View
+        list:
+            no_feedback: Nobody has given any feedback during this time.
+        list_content:
+              rating_msg_none: nobody said %{rating}
+              rating_msg_single: one said %{rating}
+              rating_msg_multiple: "%{count} said %{rating}"
+              rating_primary_msg_single: one customer said %{rating}
+              rating_primary_msg_multiple: "%{count} customers said %{rating}"
+              happy: awesome
+              neutral: just okay
+              unhappy: not good
+        sidebar:
+          from: From
+          to: To
+          filter_by: Satisfaction Views
+          view_report_date: View reports during
+          helptext: "<b>Why Customer Satisfaction Report ?</b><p>Customer Satisfaction Report gives you a snapshot of the service quality of your customer support agents.<br>The report helps you to understand the happiness quotient of your customers, which is represented as a percentage value (happy, neutral & unhappy) relevant to every support agent.<br><br><b>What more you can do?</b><br><p><ol class='ml15'><li>Filter the report results with respect to Agents, Group or Company</li><li>View reports for a particular timeframe</li></ol></p></p>"
+      livechat:
+        report_title: "Live Chat Summary"
+        filter_by_title: "Filtered by"
+        time_period: "Time Period"
+        widget: "Widget"
+        group: "Group"
+        chat_type: "Chat Type"
+        summary: "Summary"
+        filter_report: "Edit Filter"
+        select_widget: "Select Widget"
+        select_group: "Select Group"
+        select_chat_type: "Select Chat Type"
+        all: "All"
+        chat_type_visitor: "Visitor Initiated"
+        chat_type_agent: "Agent Initiated"
+        chat_type_proactive: "Proactive"
+        generate_summary: "Generate"
+        filter_close: "Close"
+        total_chats: Total
+        num_of_chats: No of Chats
+        answered_chats: Answered
+        missed_chats: Missed
+        num_of_transfer: Transfers
+        avg_handle_time: Avg Handle Time
+        avg_time_queue: Time in Queue
+        total_duration: "Total Duration"
+        agent_chat_summary: Agent Chat Summary
+        agent: "Agent"
+        deleted: "Deleted"
+      scheduled_exports:
+        create:
+          max_email_recipients_per_scheduled_export: "Cannot add more than %{max_limit} email recipients"
   delete_the_ticket: "Delete the Ticket"
   mark_as_spam: "Mark as Spam"
   bulk_actions: "Bulk Actions"
@@ -10845,8 +10845,8 @@ en:
           name: "Daily export of ticket activities"
           description: "Contains a log of all the updates performed on new or old tickets by user or automation on a given day"
       helpnote:
-        api_info1: "The API will have the link to the latest export."
-        api_info2: "The export will contain a log of all ticket related updates performed the previous day."
+          api_info1: "The API will have the link to the latest export."
+          api_info2: "The export will contain a log of all ticket related updates performed the previous day."
   adv_reports:
     agent_comparison_report: Agents Comparison Report
     group_comparison_report: Groups Comparison Report
@@ -12055,8 +12055,8 @@ en:
     tour_v2: Help me setup my knowledge base
     show_more: Show more
     general:
-      unsaved_content: "You have unsaved content in this page."
-      leave_page_que: "Do you want to leave this page?"
+        unsaved_content: "You have unsaved content in this page."
+        leave_page_que: "Do you want to leave this page?"
     helpnote:
       title: Organizing your community
       para1: "Categories are top level hierarchies that let you broadly classify your community and target your discussions to different types of audiences."
