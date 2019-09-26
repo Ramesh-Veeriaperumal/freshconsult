@@ -6,8 +6,6 @@ class Support::TicketsController < SupportController
   include Support::TicketsHelper
   include ExportCsvUtil
   include Helpdesk::Permission::Ticket
-
-  before_filter :check_and_increment_usage, only: [:create]
   
   before_filter :only => [:new, :create] do |c| 
     c.check_portal_scope :anonymous_tickets
