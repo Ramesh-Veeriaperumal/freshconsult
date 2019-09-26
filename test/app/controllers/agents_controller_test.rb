@@ -523,12 +523,12 @@ class AgentsControllerTest < ActionController::TestCase
   def test_update_unpermitted_role_ids
     admin_role_id = Account.current.roles.admin.first.id
     agent_role_id = Account.current.roles.agent.first.id
-    admin = add_test_agent(admin_role_id)
-    agent = add_test_agent(agent_role_id)
+    admin = add_test_agent(@account, {role: admin_role_id})
+    agent = add_test_agent(@account, {role: agent_role_id})
     login_as(admin)
     acc_admin_role_id = Account.current.roles.account_admin.first.id
-    put :update, id: agent.agent.id, user: { 'name' => Faker::Name.name, role_ids = [acc_admin_role_id] }
-    assert_response 403
+    put :update, id: agent.agent.id, user: { 'name' => Faker::Name.name, 'role_ids' => [acc_admin_role_id] }
+    assert flash[:notice], "You are not allowed to perform this action"
   ensure
     agent.destroy
     admin.destroy
