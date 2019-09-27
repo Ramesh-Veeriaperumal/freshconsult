@@ -470,7 +470,7 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
   # END freddy test cases
 
   def test_create_supervisor_rule
-    Account.current.stubs(:supervisor_custom_status_enabled?).returns(true)
+    Account.current.add_feature :supervisor_custom_status
     va_rule_request = sample_supervisor_json_without_conditions
     custom_status = create_custom_status
     condition_data = [{ 'name': 'hours_since_waiting_on_custom_status', 'custom_status_id': custom_status.status_id, 'operator': 'greater_than', 'value': 6 }]
@@ -485,11 +485,12 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
     va_rules = Account.current.account_va_rules.find_by_id(va_rule_id)
     va_rules.destroy if va_rules.present?
     custom_status.destroy if custom_status.present?
-    Account.current.unstub(:supervisor_custom_status_enabled?)
+    Account.current.reload
+    Account.current.revoke_feature(:supervisor_custom_status) if Account.current.supervisor_custom_status_enabled?
   end
 
   def test_create_supervisor_condition_without_custom_status_id
-    Account.current.stubs(:supervisor_custom_status_enabled?).returns(true)
+    Account.current.add_feature :supervisor_custom_status
     va_rule_request = sample_supervisor_json_without_conditions
     condition_data = [{ 'name': 'hours_since_waiting_on_custom_status', 'operator': 'greater_than', 'value': 6 }]
     va_rule_request['conditions'] = conditions_hash(condition_data, 'any')
@@ -503,11 +504,12 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
                     }
                   ] })
   ensure
-    Account.current.unstub(:supervisor_custom_status_enabled?)
+    Account.current.reload
+    Account.current.revoke_feature(:supervisor_custom_status) if Account.current.supervisor_custom_status_enabled?
   end
 
   def test_create_supervisor_condition_invalid_custom_status_id
-    Account.current.stubs(:supervisor_custom_status_enabled?).returns(true)
+    Account.current.add_feature :supervisor_custom_status
     va_rule_request = sample_supervisor_json_without_conditions
     condition_data = [{ 'name': 'hours_since_waiting_on_custom_status', 'custom_status_id': -1, 'operator': 'greater_than', 'value': 6 }]
     va_rule_request['conditions'] = conditions_hash(condition_data, 'any')
@@ -515,7 +517,8 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
     assert_response 400
     match_json ({ 'description': 'Validation failed', 'errors': [{ 'field': 'custom_status_id', 'message': "Invalid value: '-1' for 'custom_status_id'", 'code': 'invalid_value' }] })
   ensure
-    Account.current.unstub(:supervisor_custom_status_enabled?)
+    Account.current.reload
+    Account.current.revoke_feature(:supervisor_custom_status) if Account.current.supervisor_custom_status_enabled?
   end
 
 end

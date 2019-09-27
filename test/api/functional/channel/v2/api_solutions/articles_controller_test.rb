@@ -2,6 +2,7 @@ require_relative '../../../../test_helper'
 class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::TestCase
   include JweTestHelper
   include SolutionsTestHelper
+  include SolutionsArticlesTestHelper
   SUPPORT_BOT = 'frankbot'.freeze
 
   def setup
@@ -138,6 +139,15 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
     sample_article = get_article
     get :show, controller_params(id: sample_article.parent_id)
     assert_response 200
+  end
+
+  def test_show_article_only_published
+    set_jwe_auth_header(SUPPORT_BOT)
+    sample_article = get_article
+    create_draft(article: sample_article)
+    get :show, controller_params(id: sample_article.parent_id, prefer_published: true)
+    assert_response 200
+    assert_not_equal '<b>draft body</b>', eval(@response.body)[:description]
   end
 
   def get_article
