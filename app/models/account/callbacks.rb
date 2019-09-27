@@ -25,6 +25,7 @@ class Account < ActiveRecord::Base
   after_update :update_advanced_ticketing_applications, :if => :disable_old_ui_feature_changed?
   after_update :update_freshvisual_configs, :if => :call_freshvisuals_api?
   after_update :set_disable_old_ui_changed_now, :if => :disable_old_ui_changed?
+  after_update :update_round_robin_type, if: :lbrr_by_omniroute_feature_changed?
   after_update :update_help_widget, if: -> { help_widget_enabled? && branding_feature_changed? }
 
   before_validation :sync_name_helpdesk_name
@@ -218,6 +219,14 @@ class Account < ActiveRecord::Base
       fluffy_account.name = full_domain
       Fluffy::ApiWrapper.fluffy_add_account(account: fluffy_account)
       destroy_fluffy_account(@all_changes[:full_domain].first)
+    end
+  end
+
+  def update_round_robin_type
+    if lbrr_by_omniroute_enabled?
+      groups.capping_enabled_groups.each(&:enable_lbrr_by_omniroute)
+    else
+      groups.omniroute_powered_rr_groups.each(&:turn_off_automatic_ticket_assignment)
     end
   end
 

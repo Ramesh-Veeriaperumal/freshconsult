@@ -610,15 +610,17 @@ class Account < ActiveRecord::Base
   def update_ticket_dynamo_shard
     acct_addtn_settings = self.account_additional_settings
     if acct_addtn_settings
-      if acct_addtn_settings.additional_settings.present?
-        acct_addtn_settings.additional_settings[:tkt_dynamo_shard] = Helpdesk::Ticket::TICKET_DYNAMO_NEXT_SHARD
-      else
-        addtn_settings = {
-          :tkt_dynamo_shard => Helpdesk::Ticket::TICKET_DYNAMO_NEXT_SHARD
-        }
-        acct_addtn_settings.additional_settings = addtn_settings
+      acct_addtn_settings.with_lock do
+        if acct_addtn_settings.additional_settings.present?
+          acct_addtn_settings.additional_settings[:tkt_dynamo_shard] = Helpdesk::Ticket::TICKET_DYNAMO_NEXT_SHARD
+        else
+          addtn_settings = {
+            :tkt_dynamo_shard => Helpdesk::Ticket::TICKET_DYNAMO_NEXT_SHARD
+          }
+          acct_addtn_settings.additional_settings = addtn_settings
+        end
+        acct_addtn_settings.save
       end
-      acct_addtn_settings.save
     end
   end
 
@@ -965,6 +967,22 @@ class Account < ActiveRecord::Base
 
   def remove_thank_you_redis_key
     delete_automation_redis_key(automation_rules_with_thank_you_configured)
+  end
+
+  def dropdown_nested_fields
+    @dropdown_nested_fields ||= begin
+      ticket_fields_from_cache.select do |ticket_field|
+        ticket_field.field_type == 'custom_dropdown' || ticket_field.field_type == 'nested_field'
+      end
+    end
+  end
+
+  def ticket_field_by_flexifield_name
+    @ticket_field_by_flexifield_name ||= {}.tap do |h|
+      dropdown_nested_fields.each do |ticket_field|
+        h[ticket_field.flexifield_name] = ticket_field
+      end
+    end
   end
 
   def default_account_locale

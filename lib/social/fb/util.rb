@@ -6,7 +6,7 @@ module Social::FB::Util
     ticket = note.notable
     iris_payload = generate_payload(ticket, note)
     Rails.logger.info "Pusing facebook reply failure notification for #{ticket.display_id}"
-    push_data_to_services(IrisNotificationsConfig['api']['collector_path'], iris_payload)
+    push_data_to_service(IrisNotificationsConfig['api']['collector_path'], iris_payload)
   end
 
   def generate_payload(ticket, note)

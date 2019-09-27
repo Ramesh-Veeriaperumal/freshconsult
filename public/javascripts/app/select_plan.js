@@ -51,6 +51,7 @@ window.App = window.App || {};
       this.current_plan_name = planInfo.subscribed_plan_name;
       this.fsm_active = planInfo.fsm_enabled;
       this.fsm_disabled = !(planInfo.fsm_enabled);
+      this.initial_fsm_state = !(planInfo.fsm_enabled);
       this.subscription_state = planInfo.subscription_state;
       this.pending_cancellation_request = planInfo.has_account_cancellation_request;
       this.free_agent_count = parseInt(planInfo.free_agents_count);
@@ -318,7 +319,6 @@ window.App = window.App || {};
             $(".billing-submit").attr("disabled", "true");
             this.addAddon(this.fsm_addon_key, $("#field-agents-text-box").val());
             this.calculateCost(non_omni_plan_id, parent_plan_element);
-            this.calculateCost();
           }
         } else {
           this.fsm_disabled = true;
@@ -445,7 +445,7 @@ window.App = window.App || {};
 
       var fsm_removed = (this.fsm_active && this.fsm_disabled);
 
-      var fsm_no_change = this.fsm_active === !this.fsm_disabled;
+      var fsm_no_change = this.initial_fsm_state === this.fsm_disabled;
 
       var request_change = ((this.subscription_state === 'active') && (this.current_agent_limit > this.free_agent_count) && (this.current_plan_name.indexOf('sprout') <= 0)) ? (this.downgrade_launched ? (omni_downgraded || this.agent_reduced || this.field_agent_reduced || fsm_removed || this.billing_cycle_downgraded) : false) : false;
 
