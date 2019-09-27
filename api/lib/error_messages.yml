@@ -216,6 +216,7 @@ api_error_messages:
   invalid_agent_id: "Invalid agent id"
   invalid_time_period: 'Both from and to should be present'
   invalid_time_range: 'From should be less than to when picking time period'
+  access_denied_record_with_list: "You are not allowed to set %{list} in %{model}'s %{column}"
 
   invalid_tracker: "Tracker is invalid"
   max_limit: "Has exceeded maximum %{name} limit of %{max_value}"

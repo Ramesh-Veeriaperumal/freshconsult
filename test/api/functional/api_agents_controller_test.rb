@@ -689,4 +689,17 @@ class ApiAgentsControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern('group_id', :datatype_mismatch, expected_data_type: 'Positive Integer')])
   end
+
+  def test_check_role_permission_valid
+    account_admin_role_id = Role.find_by_name('Account Administrator').id
+    agent = add_test_agent(@account, role: account_admin_role_id)
+    params = { role_ids: [account_admin_role_id] }
+    specimen_agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    agent.make_current
+    put :update, construct_params({ id: specimen_agent.id }, params)
+    assert_response 200
+  ensure
+    agent.destroy
+    specimen_agent.destroy
+  end
 end
