@@ -71,7 +71,7 @@ class Email::MailboxesController < ApiApplicationController
       render_request_error(:require_feature, 403, feature: 'multiple_emails') unless current_account.multiple_emails_enabled?
     end
 
-    def after_load_object
+    def after_load_object      
       @item.imap_mailbox.try(:mark_for_destruction) if update? && imap_be_destroyed?
       @item.smtp_mailbox.try(:mark_for_destruction) if update? && smtp_be_destroyed?
     end
@@ -116,6 +116,7 @@ class Email::MailboxesController < ApiApplicationController
         ParamsHelper.assign_and_clean_params(EmailMailboxConstants::ACCESS_TYPE_PARAMS_MAPPING, cname_params[:custom_mailbox][:incoming])
         cname_params[:imap_mailbox_attributes] = cname_params[:custom_mailbox].delete(:incoming)
         cname_params[:imap_mailbox_attributes][:authentication] = IMAP_CRAM_MD5 if cname_params[:imap_mailbox_attributes][:authentication] == CRAM_MD5
+        cname_params[:imap_mailbox_attributes][:id] = @item.imap_mailbox.id if update? && @item.imap_mailbox.present?
       end
     end
 
@@ -123,6 +124,7 @@ class Email::MailboxesController < ApiApplicationController
       if cname_params[:custom_mailbox][:outgoing].present?
         ParamsHelper.assign_and_clean_params(EmailMailboxConstants::ACCESS_TYPE_PARAMS_MAPPING, cname_params[:custom_mailbox][:outgoing])
         cname_params[:smtp_mailbox_attributes] = cname_params[:custom_mailbox].delete(:outgoing)
+        cname_params[:smtp_mailbox_attributes][:id] = @item.smtp_mailbox.id if update? && @item.smtp_mailbox.present?
       end
     end
 
