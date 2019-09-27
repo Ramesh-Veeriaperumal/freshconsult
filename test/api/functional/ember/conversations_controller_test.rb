@@ -32,8 +32,6 @@ module Ember
       MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
       Account.current.features.es_v2_writes.destroy
       Account.find(Account.current.id).make_current
-      Facebook::KoalaWrapper::DirectMessage.any_instance.stubs(:fetch_page_scope_id).returns(nil)
-
       Social::CustomTwitterWorker.stubs(:perform_async).returns(true)
 
       @twitter_handle = get_twitter_handle
@@ -42,7 +40,6 @@ module Ember
 
     def teardown
       super
-      Facebook::KoalaWrapper::DirectMessage.any_instance.unstub(:fetch_page_scope_id)
       MixpanelWrapper.unstub(:send_to_mixpanel)
       Social::CustomTwitterWorker.unstub(:perform_async)
     end

@@ -265,12 +265,16 @@ class Va::Action
       private: true
     }
     note = build_note act_on, note_params
-    note.note_body.body_html.concat(quoted_text(act_on, true)) if act_hash[:show_quoted_text] == 'true'
-    note.schema_less_note.to_emails = act_hash[:fwd_to]
-    note.schema_less_note.cc_emails = act_hash[:fwd_cc]
-    note.schema_less_note.bcc_emails = act_hash[:fwd_bcc]
+    last_item = act_on.last_forwardable_note || act_on
+    attachment = act_hash[:show_quoted_text] ? (act_on.last_forwardable_note.attachments || act_on.attachments.last) : nil
+    note.note_body.body_html.concat(quoted_text(last_item, true)) if act_hash[:show_quoted_text]
+    note.schema_less_note.to_emails = act_hash[:fwd_to] || []
+    note.schema_less_note.cc_emails = act_hash[:fwd_cc] || []
+    note.schema_less_note.bcc_emails = act_hash[:fwd_bcc] || []
     note.schema_less_note.from_email = act_on.account.default_email
+    note.attachments.push(*attachment) if attachment.present?
     sanitize_note note
+    note.safe_send(:add_cc_email)
     activity_params = { helpdesk_name: act_on.account.helpdesk_name, to_emails: act_hash[:fwd_to], cc_emails: act_hash[:fwd_cc], bcc_emails: act_hash[:fwd_bcc] }
     record_action(act_on, activity_params)
   end

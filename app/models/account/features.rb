@@ -26,7 +26,7 @@ class Account < ActiveRecord::Base
     :bot_chat_history, :new_es_api, :filter_factory, :ticket_fields_central_publish,
     :skip_invoice_due_warning, :automation_revamp,
     :scheduled_export_fix, :compact_lang_detection, :field_tech_role,
-    :facebook_page_scope_migration, :agent_group_central_publish, :custom_fields_search,
+    :agent_group_central_publish, :custom_fields_search,
     :update_billing_info, :allow_billing_info_update, :tag_central_publish,
     :native_apps, :archive_tickets_api, :bot_agent_response,
     :fetch_ticket_from_ref_first, :query_from_singleton, :surveys_central_publish,
@@ -43,7 +43,8 @@ class Account < ActiveRecord::Base
     :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr,
     :csat_email_scan_compatibility, :mint_portal_applicable, :twitter_microservice, :quoted_text_parsing_feature, :enable_customer_journey,
     :csat_translations, :email_mailbox, :sandbox_temporary_offset, :downgrade_policy,
-    :fluffy_min_level, :allow_update_agent, :help_widget_solution_categories, :search_settings, :optar_cache
+    :fluffy_min_level, :allow_update_agent, :help_widget_solution_categories, :search_settings, :optar_cache,
+    :ticket_field_revamp
   ].freeze
 
   DB_FEATURES = [
@@ -174,6 +175,10 @@ class Account < ActiveRecord::Base
 
   def any_survey_feature_enabled?
     survey_enabled? || default_survey_enabled? || custom_survey_enabled?
+  end
+
+  def supervisor_custom_status_enabled?
+    launched?(:supervisor_custom_status) || has_feature?(:supervisor_custom_status)
   end
 
   def any_survey_feature_enabled_and_active?

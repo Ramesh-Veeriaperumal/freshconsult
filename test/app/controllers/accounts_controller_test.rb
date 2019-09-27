@@ -7,6 +7,7 @@ class AccountsControllerTest < ActionController::TestCase
   include Redis::OthersRedis
   include UsersHelper
   include AccountTestHelper
+  include HelpWidgetsTestHelper
 
   def stub_signup_calls
     Signup.any_instance.stubs(:save).returns(true)
@@ -517,6 +518,61 @@ class AccountsControllerTest < ActionController::TestCase
   ensure
     ActionView::Renderer.any_instance.unstub(:render)
     Account.any_instance.unstub(:save)
+  end
+
+  def test_remove_branding_non_sprout_or_trail_plan
+    Subscription.any_instance.stubs(:trial_or_sprout_plan?).returns(false)
+    put :update, id: Account.first.id, account: { helpdesk_name: 'Test Account', account_additional_settings_attributes: { date_format: 1, id: 1, supported_languages: [] }, time_zone: 'Casablanca', ticket_display_id: 4, features: { forums: 1 }, bitmap_features: { forums: '', branding: 0 }, main_portal_attributes: { id: 1 }, permissible_domains: '' }
+    assert_response 302
+    refute Account.current.has_feature?(:branding)
+  ensure
+    Subscription.any_instance.unstub(:trial_or_sprout_plan?)
+  end
+
+  def test_branding_off_update_help_widget
+    Subscription.any_instance.stubs(:trial_or_sprout_plan?).returns(false)
+    help_widget = create_widget
+    HelpWidget::UploadConfig.jobs.clear
+    Account.any_instance.stubs(:help_widget_enabled?).returns(true)
+    put :update, id: Account.first.id, account: { helpdesk_name: 'Test Account', account_additional_settings_attributes: { date_format: 1, id: 1, supported_languages: [] }, time_zone: 'Casablanca', ticket_display_id: 4, features: { forums: 1 }, bitmap_features: { forums: '', branding: 0 }, main_portal_attributes: { id: 1 }, permissible_domains: '' }
+    widget_json_upload_ids = HelpWidget::UploadConfig.jobs.map { |a| a['args'].first['widget_id'] }
+    assert_include widget_json_upload_ids, help_widget.id
+    refute Account.current.has_feature?(:branding)
+    assert help_widget.as_api_response(:s3_format)[:settings][:appearance][:remove_freshworks_branding]
+  ensure
+    Subscription.unstub(:trial_or_sprout_plan?)
+    Account.any_instance.unstub(:help_widget_enabled?)
+  end
+
+  def test_branding_on_update_help_widget
+    Subscription.any_instance.stubs(:trial_or_sprout_plan?).returns(false)
+    help_widget = create_widget
+    HelpWidget::UploadConfig.jobs.clear
+    Account.any_instance.stubs(:help_widget_enabled?).returns(true)
+    put :update, id: Account.first.id, account: { helpdesk_name: 'Test Account', account_additional_settings_attributes: { date_format: 1, id: 1, supported_languages: [] }, time_zone: 'Casablanca', ticket_display_id: 4, features: { forums: 1 }, bitmap_features: { forums: '', branding: 1 }, main_portal_attributes: { id: 1 }, permissible_domains: '' }
+    widget_json_upload_ids = HelpWidget::UploadConfig.jobs.map { |a| a['args'].first['widget_id'] }
+    assert_include widget_json_upload_ids, help_widget.id
+    assert Account.current.has_feature?(:branding)
+    refute help_widget.as_api_response(:s3_format)[:settings][:appearance][:remove_freshworks_branding]
+  ensure
+    Subscription.any_instance.unstub(:trial_or_sprout_plan?)
+    Account.any_instance.unstub(:help_widget_enabled?)
+    Account.current.revoke_feature(:branding)
+  end
+
+  def test_branding_without_help_widget_feature
+    Subscription.any_instance.stubs(:trial_or_sprout_plan?).returns(false)
+    create_widget
+    HelpWidget::UploadConfig.jobs.clear
+    Account.any_instance.stubs(:help_widget_enabled?).returns(false)
+    put :update, id: Account.first.id, account: { helpdesk_name: 'Test Account', account_additional_settings_attributes: { date_format: 1, id: 1, supported_languages: [] }, time_zone: 'Casablanca', ticket_display_id: 4, features: { forums: 1 }, bitmap_features: { forums: '', branding: 1 }, main_portal_attributes: { id: 1 }, permissible_domains: '' }
+    assert Account.current.has_feature?(:branding)
+    widget_json_upload_ids = HelpWidget::UploadConfig.jobs.map { |a| a['args'].first['widget_id'] }
+    assert_empty HelpWidget::UploadConfig.jobs
+  ensure
+    Subscription.any_instance.unstub(:trial_or_sprout_plan?)
+    Account.any_instance.unstub(:help_widget_enabled?)
+    Account.current.revoke_feature(:branding)
   end
 
   def test_portal_logo_deletion

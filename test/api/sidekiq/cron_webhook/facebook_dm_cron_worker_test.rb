@@ -19,11 +19,9 @@ class FacebookDMCronWorker < ActionView::TestCase
   ensure
     Social::FacebookPage.any_instance.unstub(:unsubscribe_realtime)
     HttpRequestProxy.any_instance.unstub(:fetch_using_req_params)
-    Facebook::KoalaWrapper::DirectMessage.any_instance.unstub(:fetch_page_scope_id)
   end
 
   def setup
-    Facebook::KoalaWrapper::DirectMessage.any_instance.stubs(:fetch_page_scope_id).returns(nil)
     Account.stubs(:current).returns(Account.first)
     HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(status: 200, text: '{"pages": [{"id": 568, "freshdeskAccountId": "1", "facebookPageId": "532218423476440"}], "meta": {"count": 1}}')
     @account = Account.current

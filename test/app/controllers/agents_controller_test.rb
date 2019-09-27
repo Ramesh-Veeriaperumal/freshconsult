@@ -520,6 +520,21 @@ class AgentsControllerTest < ActionController::TestCase
     log_out
   end
 
+  def test_update_unpermitted_role_ids
+    admin_role_id = Account.current.roles.admin.first.id
+    agent_role_id = Account.current.roles.agent.first.id
+    admin = add_test_agent(admin_role_id)
+    agent = add_test_agent(agent_role_id)
+    login_as(admin)
+    acc_admin_role_id = Account.current.roles.account_admin.first.id
+    put :update, id: agent.agent.id, user: { 'name' => Faker::Name.name, role_ids = [acc_admin_role_id] }
+    assert_response 403
+  ensure
+    agent.destroy
+    admin.destroy
+    log_out
+  end
+
   def test_update_unpermitted_fields
     login_admin
     @user = Account.current.account_managers.first.make_current

@@ -661,4 +661,43 @@ class CannedResponsesControllerTest < ActionController::TestCase
     assert_response 200
     assert JSON.parse(response.body).count == ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]
   end
+
+  def test_central_publish_payload_create_cr
+    CentralPublisher::Worker.jobs.clear
+    post :create, construct_params(build_ca_param(create_ca_response_input(@@ca_folder_all.id, 0)))
+    assert_response 201
+
+    match_json(ca_response_show_pattern(ActiveSupport::JSON.decode(response.body)['id']))
+
+    job = CentralPublisher::Worker.jobs.last
+    assert_equal 'canned_response_create', job['args'][0]
+    CentralPublisher::Worker.jobs.clear
+  end
+
+  def test_central_publish_payload_update_cr_content_html
+    CentralPublisher::Worker.jobs.clear
+    ca_response1 = create_canned_response(@@ca_folder_all.id)
+    content_html = Faker::App.name
+    prev_content_html = ca_response1.content_html
+    canned_response = {
+      content_html: content_html
+    }
+    put :update, construct_params(build_ca_param(canned_response)).merge(id: ca_response1.id)
+    assert_response 200
+    assert content_html == ActiveSupport::JSON.decode(response.body)['content_html']
+
+    job = CentralPublisher::Worker.jobs.last
+    assert_equal 'canned_response_update', job['args'][0]
+    assert_equal({ 'content_html' => [prev_content_html, content_html] }, job['args'][1]['model_changes'])
+    CentralPublisher::Worker.jobs.clear
+  end
+
+  def test_central_publish_payload_delete_cr
+    CentralPublisher::Worker.jobs.clear
+    ca_response1 = create_canned_response(@@ca_folder_all.id)
+    ca_response1.destroy
+    job = CentralPublisher::Worker.jobs.last
+    assert_equal 'canned_response_destroy', job['args'][0]
+    CentralPublisher::Worker.jobs.clear
+  end
 end

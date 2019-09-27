@@ -331,7 +331,9 @@ Helpkit::Application.routes.draw do
     resources :email_notifications, controller: 'admin/api_email_notifications', only: [:show, :update]
 
     namespace :admin do
-      resources :ticket_fields, only: [:create]
+      resources :ticket_fields, only: [:create, :update, :destroy, :show, :index] do
+        resources :sections, only: [:create, :update, :destroy, :show, :index]
+      end
     end
 
     resources :help_widgets, controller: 'help_widgets'

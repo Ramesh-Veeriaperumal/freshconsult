@@ -1,9 +1,10 @@
 require_relative '../../test_helper'
 require_relative '../../api/helpers/test_class_methods.rb'
-['scheduled_export_helper.rb'].each { |file| require Rails.root.join('spec', 'support', file) }
+['scheduled_export_helper.rb', 'ticket_helper.rb'].each { |file| require Rails.root.join('spec', 'support', file) }
 
 class DataExportMailerTest < ActionMailer::TestCase
   include ScheduledExportHelper
+  include TicketHelper
   def setup
     super
     @account = create_test_account if @account.nil?
@@ -282,5 +283,36 @@ class DataExportMailerTest < ActionMailer::TestCase
   ensure
     I18n.locale = 'de'
     recipient.destroy
+  end
+
+  def test_broadcast_message
+    ticket = create_ticket
+    sender = add_agent(@account)
+    recipient1 = add_agent(@account)
+    recipient2 = add_agent(@account)
+    options = {
+      from_email: sender.email,
+      url: 'example.com',
+      ticket_subject: ticket.subject,
+      content: 'test content',
+      ticket_id: ticket.display_id,
+      account_id: ticket.account_id
+    }
+    email_hash = { group: [recipient1.email], other: [recipient2.email] }
+    I18n.locale = 'en'
+    mail_message = DataExportMailer.deliver_broadcast_message(email_hash, options)
+    assert_equal mail_message.to.first, recipient1.email
+    assert mail_message.subject.include?('Broadcast Message Added')
+    email_body = mail_message.body.present? ? mail_message.body.decoded : nil
+    if email_body.present?
+      test_part = 'Message Content:'
+      assert_equal email_body.include?(test_part), true
+    end
+  ensure
+    I18n.locale = 'de'
+    recipient1.destroy
+    recipient2.destroy
+    sender.destroy
+    ticket.destroy
   end
 end

@@ -7,7 +7,7 @@ class HelpWidget < ActiveRecord::Base
     t.add :product_id
     t.add :account_id
     t.add :name
-    t.add :settings
+    t.add :widget_settings, as: :settings
     t.add :active
     t.add :created_at
     t.add :updated_at
@@ -27,8 +27,12 @@ class HelpWidget < ActiveRecord::Base
     }
   end
 
+  def widget_settings
+    settings[:appearance][:remove_freshworks_branding] = !Account.current.has_feature?(:branding)
+    settings
+  end
+
   def date_format
     Account.current.account_additional_settings_from_cache.date_format
   end
-  
 end

@@ -217,8 +217,6 @@ class Account < ActiveRecord::Base
 
   has_many :facebook_posts, :class_name =>'Social::FbPost'
 
-  has_many :fb_user_mappings, :class_name =>'Social::FbUserIdMapping'
-
   has_many :ticket_filters , :class_name =>'Helpdesk::Filters::CustomTicketFilter'
 
   has_many :twitter_handles, :class_name =>'Social::TwitterHandle'

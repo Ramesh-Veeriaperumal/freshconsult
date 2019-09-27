@@ -5,7 +5,8 @@ en:
     turn_off: Turn Off,
     regards: "Regards,"
     freshdesk_support_team: "Freshdesk Support Team"
-    note_for_recipients: "Note: This email is also sent to - %{to_emails}."
+    note_for_recipients: "Note: This email was also sent to - %{to_emails}."
+    freshdesk: "Freshdesk"
     notify_new_follower:
       topic:
         title: 'Added as topic follower'
@@ -142,6 +143,11 @@ en:
       admin_spam_watcher_blocked: "Your Account has been blocked due to high volume of traffic. If you feel your requests are genuine, please send an email to %{support_email} with your account details."
       account_cancel: "<div>This email is a confirmation that your Freshdesk account has been cancelled. We’re sorry to see you go.</div><br/>
            <div>If you have feedback on how we can provide a better experience, please write to us at %{support_email}. We’d love to hear from you. </div>"
+    post_monitor:
+      new_reply_html: "<b>New Reply</b> - %{posts_count} replies in topic"
+      new_reply_plain: "New Reply on topic %{post_topic}"
+      reply_notify_html: 'Reply notifications for this topic' 
+      reply_notify_plain: 'Turn off reply notifications for this topic'
   mailer_notifier_subject:
     notify_new_topic_follower: 'Added as Topic Follower - %{title}'
     notify_new_forum_follower: 'Added as Forum Follower - %{title}'
@@ -168,3 +174,4 @@ en:
     notify_webhook_drop: 'Webhook dropped'
     cloud_log_email_to_freshdesk: "%{app_name} to Freshdesk Log"
     cloud_log_email_to_app: "Freshdesk to %{app_name} Log"
+    monitor_email_subject: "[New Reply] in %{post_topic}"

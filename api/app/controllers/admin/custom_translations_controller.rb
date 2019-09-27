@@ -12,16 +12,27 @@ class Admin::CustomTranslationsController < ApiApplicationController
     translation_file = cname_params['translation_file']
     translation_file = translation_file.is_a?(StringIO) ? translation_file : translation_file.tempfile
     tf_hash = YAML.safe_load(translation_file)
-    @language = Language.find_by_code(params['language_code'])
-    custom_translations_hash = tf_hash[@language.code]['custom_translations']
-    upload_translation(custom_translations_hash) unless custom_translations_hash.empty?
 
-    head 202
+    delegator_params = params_hash.merge(uploaded_hash: tf_hash)
+    custom_translation_delegator = Admin::CustomTranslationDelegator.new(delegator_params)
+
+    if custom_translation_delegator.valid?
+      @language = Language.find_by_code(params['language_code'])
+      custom_translations_hash = tf_hash[@language.code]['custom_translations']
+      upload_translation(custom_translations_hash) unless custom_translations_hash.empty?
+    else
+      render_custom_errors(custom_translation_delegator, true)
+    end
   end
 
   def download
-    translation = { @language => { 'custom_translations' => fetch_translation } }
-    respond_with_yaml(translation)
+    custom_translation_delegator = Admin::CustomTranslationDelegator.new(params_hash)
+    if custom_translation_delegator.valid?
+      translation = { @language => { 'custom_translations' => fetch_translation } }
+      respond_with_yaml(translation)
+    else
+      render_custom_errors(custom_translation_delegator, true)
+    end
   end
 
   private
@@ -61,8 +72,23 @@ class Admin::CustomTranslationsController < ApiApplicationController
     end
 
     def validate_upload_params
-      params_hash = cname_params.merge(language_code: params['language_code'], object_type: params['object_type'], object_id: params['object_id']) if cname_params.present?
       return unless validate_query_params(nil, params_hash)
+    end
+
+    def params_hash
+      params.slice('object_type', 'object_id', 'language_code', 'translation_file')
+    end
+
+    # string_request_params? (from api application controller) is true only for multipart content type & get
+    # If there is no file uploaded, then string_request_params? becomes false & doesnt allow string params.
+    # Overriding below method to allow it for put request also.
+
+    def allowed_http_method?
+      get_request? || request.delete? || put_request?
+    end
+
+    def put_request?
+      @put_request ||= request.put?
     end
 
     def download_type
@@ -109,14 +135,17 @@ class Admin::CustomTranslationsController < ApiApplicationController
       Admin::CustomTranslationsConstants::MODULE_MODEL_MAPPINGS[object][:lookup_key]
     end
 
-    def create_translation(field_object, translations)
-      custom_translation = field_object.safe_send(language_translation)
+    # Look for existing DB record. If not, create a empty record & update the values.
+    # Using the active record for sanitization & update-merge
 
-      if custom_translation.blank?
-        field_object.safe_send("build_#{language_translation}", translations: translations).save!
-      else
-        custom_translation.update_attributes(translations: translations)
+    def create_translation(field_object, translations)
+      @custom_translation_record = field_object.safe_send(language_translation)
+
+      if @custom_translation_record.blank?
+        @custom_translation_record = field_object.safe_send("build_#{language_translation}", translations: nil, status: 0)
       end
+      @custom_translation_record.sanitize_and_update(translations)
+      @custom_translation_record.save!
     end
 
     def language_translation

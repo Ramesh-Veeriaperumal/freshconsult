@@ -214,12 +214,15 @@ class Solutions::ArticleDecorator < ApiDecorator
     end
 
     def article_metrics
-      {
-        feedback_count: feedback_count,
+      metrics = {
         thumbs_up: @language_metric ? thumbs_up : parent.thumbs_up,
         thumbs_down: @language_metric ? thumbs_down : parent.thumbs_down,
         hits: @language_metric ? hits : parent.hits
       }
+
+      # TODO : we need to optimize feedback count as count query, for now we are excluding it for list page
+      metrics[:feedback_count] = feedback_count unless @is_list_page
+      metrics
     end
 
     def remove_deleted_attachments(attachments, type = :attachments)

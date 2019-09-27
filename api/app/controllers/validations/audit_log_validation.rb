@@ -50,7 +50,7 @@ class AuditLogValidation < ApiValidation
   def validate_export_automation_rules(entity)
     entity.each do |val|
       if !(AuditLogConstants::TYPES.include? val) && !(AuditLogConstants::AUTOMATION_TYPES.include? val)
-        errors[:entity] << :"valid entity is 'automation_1', 'automation_3', 'automation_4', 'agent', 'subscription'"
+        errors[:entity] << :"valid entity is #{ AuditLogConstants::TYPES.join(',') }, #{ AuditLogConstants::AUTOMATION_TYPES.join(',') }"
       end
     end
   end

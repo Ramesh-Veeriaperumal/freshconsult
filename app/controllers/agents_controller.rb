@@ -28,6 +28,7 @@ class AgentsController < ApplicationController
   before_filter :check_agent_limit, :only =>  [:restore, :create] 
   before_filter :check_field_agent_limit, only: [:restore, :create], if: :field_service_management_enabled?
   before_filter :check_agent_limit_on_update, :validate_params, :can_edit_roles_and_permissions, :only => [:update]
+  before_filter :check_role_permission, only: [:create, :update]
   before_filter :set_selected_tab
   before_filter :set_native_mobile, :only => :show
   before_filter :filter_params, :only => [:create, :update]
@@ -558,6 +559,13 @@ private
     if(params[:agent][:ticket_permission]  || params[:user][:role_ids]) && (current_user == @agent.user)
      error_responder(t('agent.cannot_edit_roles'), 'forbidden')
     end
+  end
+
+  def check_role_permission
+    return if current_user.privilege?(:manage_account)
+
+    roles = current_account.roles.where(id: params[:user][:role_ids])
+    error_responder(t('agent.role_assign_error'), 'forbidden') if roles.any? { |role| role.privilege?(:manage_account) }
   end
 
   def error_responder error_message, status

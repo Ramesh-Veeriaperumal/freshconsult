@@ -11,7 +11,7 @@ module EmailHelper
   MAX_TIMEOUT = 7 # Sendgrid's timeout is 25 seconds
   REQUEST_TIMEOUT = 25
   SENDGRID_RETRY_TIME = 4.hours
-
+  FRESHDESK_DOMAIN = 'freshdesk.com'.freeze
   COLLAB_STR_ARRAY = ['Invited to Team Huddle - [#', 'Mentioned in Team Huddle - [#',
                   'mentioned in Team Huddle - [#', 'Reply in Team Huddle - [#',
                   'Team Huddle - New Messages in [#', 'Team Huddle - New Message in [#'].freeze

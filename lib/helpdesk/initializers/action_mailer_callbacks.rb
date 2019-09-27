@@ -83,15 +83,15 @@ module ActionMailerCallbacks
       if (email_config && email_config.smtp_mailbox)
         smtp_mailbox = email_config.smtp_mailbox
         smtp_settings = {
-          :tls                  => smtp_mailbox.use_ssl,
-          :enable_starttls_auto => true,
-          :user_name            => smtp_mailbox.user_name,
-          :password             => smtp_mailbox.decrypt_password(smtp_mailbox.password),
-          :address              => smtp_mailbox.server_name,
-          :port                 => smtp_mailbox.port,
-          :authentication       => smtp_mailbox.authentication,
-          :domain               => smtp_mailbox.domain,
-          :return_response      => true
+          tls: smtp_mailbox.use_ssl,
+          enable_starttls_auto: true,
+          user_name: smtp_mailbox.user_name,
+          password: smtp_mailbox.decrypt_password(smtp_mailbox.password),
+          address: smtp_mailbox.server_name,
+          port: smtp_mailbox.port,
+          authentication: smtp_mailbox.authentication,
+          domain: FRESHDESK_DOMAIN,
+          return_response: true
         }
         Rails.logger.debug "Used SMTP mailbox : #{email_config.smtp_mailbox.user_name} in email config : #{email_config.id} while email delivery"
         self.smtp_settings = smtp_settings

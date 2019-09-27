@@ -25,6 +25,7 @@ class Account < ActiveRecord::Base
   after_update :update_advanced_ticketing_applications, :if => :disable_old_ui_feature_changed?
   after_update :update_freshvisual_configs, :if => :call_freshvisuals_api?
   after_update :set_disable_old_ui_changed_now, :if => :disable_old_ui_changed?
+  after_update :update_help_widget, if: -> { help_widget_enabled? && branding_feature_changed? }
 
   before_validation :sync_name_helpdesk_name
   before_validation :downcase_full_domain, :only => [:create , :update] , :if => :full_domain_changed?
@@ -580,6 +581,10 @@ class Account < ActiveRecord::Base
                          :: Account id : #{@bot.account_id} :: Portal id : #{@bot.portal_id}"
       NewRelic::Agent.notice_error(e, { description: error_msg })
       Rails.logger.error("#{error_msg} :: #{e.inspect}")
+    end
+
+    def update_help_widget
+      help_widgets.active.map(&:upload_configs)
     end
 
     def send_domain_change_email
