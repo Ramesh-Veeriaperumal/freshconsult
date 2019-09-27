@@ -14,6 +14,7 @@ class Solutions::ArticleDecorator < ApiDecorator
     @draft = options[:draft]
     @language_metric = options[:language_metric]
     @lang_code = options[:language_code]
+    @prefer_published = options[:prefer_published]
     if options[:exclude].present?
       @exclude_description = options[:exclude].include?(:description)
       @exclude_attachments = options[:exclude].include?(:attachments)
@@ -201,7 +202,7 @@ class Solutions::ArticleDecorator < ApiDecorator
     end
 
     def record_or_draft
-      @draft || (record.status == Solution::Constants::STATUS_KEYS_BY_TOKEN[:draft] ? draft : record)
+      (!@prefer_published && @draft.present?) || record.status == Solution::Constants::STATUS_KEYS_BY_TOKEN[:draft] ? draft : record
     end
 
     def category_and_folder
