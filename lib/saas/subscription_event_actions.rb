@@ -136,6 +136,7 @@ class SAAS::SubscriptionEventActions
       Rails.logger.debug "List of new plan features for account #{account.id} :: #{plan_features.inspect}"
       plan_features.delete(:support_bot) if account.revoke_support_bot?
       plan_features.delete(:custom_translations) unless account.redis_picklist_id_enabled?
+      plan_features.delete(:lbrr_by_omniroute) if account.round_robin_capping_enabled? && !account.lbrr_by_omniroute_enabled?
       plan_features.each do |feature|
         account.set_feature(feature) unless skipped_features.include?(feature)
       end

@@ -313,6 +313,8 @@
       - :autofaq
       - :botflow
       - :supervisor_custom_status
+      - :omni_channel_routing
+      - :lbrr_by_omniroute
     :inherits:
       - :garden_jan_19
     :exclude: []
