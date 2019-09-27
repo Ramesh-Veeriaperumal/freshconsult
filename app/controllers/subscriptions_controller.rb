@@ -63,15 +63,7 @@ class SubscriptionsController < ApplicationController
   end
 
   def convert_subscription_to_free
-    scoper.state = FREE if scoper.card_number.blank?
-    scoper.convert_to_free if new_sprout?
-    if activate_subscription
-      update_features
-      flash[:notice] = t('plan_is_selected', :plan => scoper.subscription_plan.display_name )
-    else
-      flash[:notice] = t('error_in_plan')
-    end
-    redirect_to subscription_url
+    convert_to_free_plan(true)
   end
 
   def billing
@@ -136,6 +128,18 @@ class SubscriptionsController < ApplicationController
   end
 
   private
+    def convert_to_free_plan(need_feature_update)
+      scoper.state = FREE if scoper.card_number.blank?
+      scoper.convert_to_free if new_sprout?
+      if activate_subscription
+        update_features if need_feature_update
+        flash[:notice] = t('plan_is_selected', :plan => scoper.subscription_plan.display_name)
+      else
+        flash[:notice] = t('error_in_plan')
+      end
+      redirect_to subscription_url
+    end
+
     def admin_selected_tab
       @selected_tab = :admin
     end
@@ -149,6 +153,7 @@ class SubscriptionsController < ApplicationController
     end
 
     def load_objects
+      Rails.logger.debug "FSM already enabled for account #{current_account.id} :: #{current_account.field_service_management_enabled?}"
       # TODO: Remove force_2019_plan?() after 2019 plan launched
       plans = (current_account.force_2019_plan? ? SubscriptionPlan.plans_2019 : SubscriptionPlan.current)
       plans << scoper.subscription_plan if scoper.subscription_plan.classic?
@@ -345,7 +350,7 @@ class SubscriptionsController < ApplicationController
 
     def perform_next_billing_action
       if free_plan? or new_sprout?
-        convert_subscription_to_free
+        convert_to_free_plan(false)
       elsif scoper.trial? && params["plan_switch"]
         flash[:notice] = t('plan_info_update')
         coupon = coupon_applicable? ? @coupon : nil

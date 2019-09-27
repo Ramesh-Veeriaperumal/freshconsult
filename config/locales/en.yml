@@ -4692,6 +4692,7 @@ en:
     assign_role: Associate Roles
     assign_group: Associate Groups
     cannot_edit_roles: You will only be able to view your roles and scope, not edit them.
+    role_assign_error: You are not allowed to perform this action
     assign: Assign
     role : Agent Role
     title: Agents
@@ -6840,6 +6841,7 @@ en:
     supported_portal_languages: "Languages visible to users"
     supported_languages: "Supported Languages (%{count})"
     portal_languages: "Languages Visible on Portal (%{count})"
+    portal_languages_visible: "Visible in portal and widget (%{count})"
     same_language_alert: Supported languages should not include the Portal language.
     settings: "Settings"
     logo_and_colors: "Logo and colors"

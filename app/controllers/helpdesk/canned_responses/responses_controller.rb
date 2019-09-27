@@ -80,9 +80,11 @@ class Helpdesk::CannedResponses::ResponsesController < ApplicationController
   end
 
   def delete_shared_attachments(ca_response)
+    @ca_response.attachment_removed = []
     if !params[:remove_attachments].nil?
       (params[:remove_attachments].uniq || []).each do |a|
         shared_attachment = Helpdesk::SharedAttachment.find_by_shared_attachable_id(ca_response, :conditions=>["attachment_id=?",a])
+        @ca_response.attachment_removed << { id: shared_attachment.attachment.id, name: shared_attachment.attachment.content_file_name}
         shared_attachment.destroy if shared_attachment
       end
     end

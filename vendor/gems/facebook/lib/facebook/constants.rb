@@ -148,8 +148,6 @@ module Facebook
 
     PARENT_POST_LENGTH = 230
 
-    PAGE_SCOPE_URL = 'pages_id_mapping'.freeze
-
     MESSAGE_UPDATED_AT = 'updated_time'.freeze
   end
 end
