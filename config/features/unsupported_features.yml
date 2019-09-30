@@ -15,9 +15,5 @@ production:
   poduseast1: []
   podeucentral1:
     - :session_replay
-  podapsoutheast2:
-    - :omni_channel_routing
-    - :lbrr_by_omniroute
-  podapsouth1:
-    - :omni_channel_routing
-    - :lbrr_by_omniroute
+  podapsoutheast2: []
+  podapsouth1: []

@@ -31,18 +31,10 @@ class Account < ActiveRecord::Base
   def model_changes_for_central(options = {})
     return @model_changes if @model_changes.present?
     changes = self.previous_changes
-    changes = merge_feature_changes(changes)
-    changes.delete(:shared_secret) if changes['shared_secret']
-    changes
-  end
-
-  def merge_feature_changes(changes)
     if changes['plan_features']
       plan_feature = { features: { added: [], removed: [] } }
       FEATURES_DATA[:plan_features][:feature_list].each do |feature, value|
-        old_feature_code = changes['plan_features'][0].to_i
-        new_feature_code = changes['plan_features'][1].to_i
-        unless ((old_feature_code ^ new_feature_code) & (2**value)).zero?
+        if changes['plan_features'][1].to_i == changes['plan_features'][0].to_i ^ 2**value
           if self.has_feature?(feature)
             plan_feature[:features][:added] << feature.to_s
           else
@@ -53,6 +45,7 @@ class Account < ActiveRecord::Base
       changes.delete('plan_features')
       changes = changes.merge(plan_feature)
     end
+    changes.delete(:shared_secret) if changes['shared_secret']
     changes
   end
 

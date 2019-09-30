@@ -16,8 +16,7 @@ class PrivateApiGroupValidation < ApiGroupValidation
   validate :round_robin_feature_check, if: -> { is_assignment_type_round_robin? }
   validate :lbrr_feature_check, if: -> { is_assignment_type_round_robin? && @request_params["round_robin_type"] == LOAD_BASED_ROUND_ROBIN }
   validate :sbrr_feature_check, if: -> { is_assignment_type_round_robin? && @request_params["round_robin_type"] == SKILL_BASED_ROUND_ROBIN }
-  validate :lbrr_by_omniroute_feature_check, if: -> { is_assignment_type_round_robin? && @request_params["round_robin_type"] == LBRR_BY_OMNIROUTE }
-  validate :ocr_feature_check, if: -> { is_assignment_type_ocr? || (is_assignment_type_round_robin? && @request_params["round_robin_type"] == LBRR_BY_OMNIROUTE)}
+  validate :ocr_feature_check, if: -> { is_assignment_type_ocr? }
   validates :group_type, custom_inclusion: { in: proc { |x| x.account_group_types} , data_type: { rules: String } }, on: :create
 
  
@@ -51,14 +50,7 @@ class PrivateApiGroupValidation < ApiGroupValidation
     errors[:round_robin_type] << :require_feature 
     error_options.merge!(round_robin_type:{ feature: 'skill_based_round_robin'.titleize, code: :require_feature })
     end 
-  end
-
-  def lbrr_by_omniroute_feature_check
-    if !Account.current.lbrr_by_omniroute_enabled?
-      errors[:assignment_type] << :require_feature 
-      error_options.merge!(assignment_type:{ feature: 'lbrr_by_omniroute'.titleize, code: :require_feature }) 
-    end 
-  end
+  end 
 
   def lbrr_feature_check    
     if !Account.current.round_robin_capping_enabled?
@@ -80,8 +72,7 @@ class PrivateApiGroupValidation < ApiGroupValidation
       assignment_type == ROUND_ROBIN_ASSIGNMENT 
     else
       ( update? && @item["ticket_assign_type"] == 1 ) ||  
-      ( update? && @item["ticket_assign_type"] == 2 ) ||
-      ( update? && @item["ticket_assign_type"] == 12 )
+      ( update? && @item["ticket_assign_type"] == 2 ) 
     end
   end 
 
@@ -102,8 +93,7 @@ class PrivateApiGroupValidation < ApiGroupValidation
   def get_round_robin_type       
     rr_type=ROUND_ROBIN if @item["ticket_assign_type"]==1 && @item["capping_limit"]==0
     rr_type=LOAD_BASED_ROUND_ROBIN if @item["ticket_assign_type"]==1 && @item["capping_limit"]!=0     
-    rr_type=SKILL_BASED_ROUND_ROBIN if @item["ticket_assign_type"]==2      
-    rr_type=LBRR_BY_OMNIROUTE if @item["ticket_assign_type"]==12       
+    rr_type=SKILL_BASED_ROUND_ROBIN if @item["ticket_assign_type"]==2       
     rr_type      
   end
 

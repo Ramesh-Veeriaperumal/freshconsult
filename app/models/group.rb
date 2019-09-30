@@ -86,7 +86,6 @@ class Group < ActiveRecord::Base
   scope :capping_enabled_groups, :conditions => ["ticket_assign_type = 1 and capping_limit > 0"], :order => :name
   scope :skill_based_round_robin_enabled, :order => :name,
         :conditions => ["ticket_assign_type = #{Group::TICKET_ASSIGN_TYPE[:skill_based]}"]
-  scope :omniroute_powered_rr_groups, conditions: ['ticket_assign_type IN (?)', OMNIROUTE_POWERED_RR_ASSIGNMENT_TYPES], order: :name
   scope :ocr_enabled_groups,
         order: :name,
         conditions: ["ticket_assign_type IN (?)", OMNI_CHANNEL_ASSIGNMENT_TYPES]
@@ -177,12 +176,6 @@ class Group < ActiveRecord::Base
 
   def has_agent? agent
     agents.exists?('users.id' => agent.id)
-  end
-
-  def enable_lbrr_by_omniroute
-    self.ticket_assign_type = TICKET_ASSIGN_TYPE[:lbrr_by_omniroute]
-    self.capping_limit = 0
-    self.save
   end
 
   def turn_off_automatic_ticket_assignment

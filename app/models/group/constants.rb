@@ -5,14 +5,11 @@ class Group < ActiveRecord::Base
     round_robin: 1, 
     skill_based: 2,
     load_based_omni_channel_assignment: 10,
-    lbrr_by_omniroute: 12
   }.freeze
 
   TICKET_ASSIGN_TYPE_BY_KEYS = Hash[*TICKET_ASSIGN_TYPE.map { |i| [i[1], i[0]] }.flatten]
 
-  OMNIROUTE_POWERED_RR_ASSIGNMENT_TYPES = [12].freeze
-
-  OMNI_CHANNEL_ASSIGNMENT_TYPES = [10, 12].freeze
+  OMNI_CHANNEL_ASSIGNMENT_TYPES = [10].freeze
 
   AUTOMATIC_TICKET_ASSIGNMENT_TYPES = [1, 2, 10].freeze
 

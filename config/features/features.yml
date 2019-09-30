@@ -374,7 +374,6 @@
       :help_widget_appearance: 369
       :help_widget_predictive: 370
       :supervisor_custom_status: 371
-      :lbrr_by_omniroute: 372
 :selectable_features:
   :redis_display_id: true
   :branding: true

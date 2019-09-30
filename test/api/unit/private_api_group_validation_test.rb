@@ -59,48 +59,6 @@ class PrivateApiGroupValidationTest < ActionView::TestCase
     Account.any_instance.stubs(:round_robin_capping_enabled?).returns(true)
   end  
 
-   def test_lbrr_by_omniroute_valid
-    Account.any_instance.stubs(:omni_channel_routing_enabled?).returns(true)
-    Account.any_instance.stubs(:lbrr_by_omniroute_enabled?).returns(true)
-    group = PrivateApiGroupValidation.new({ name: Faker::Name.name, unassigned_for: '30m', escalate_to: 1,
-                                     description: Faker::Lorem.paragraph, assignment_type: 1, round_robin_type: 12,
-                                     allow_agents_to_change_availability:true, agent_ids: [1, 2] }.with_indifferent_access, nil)
-    assert group.valid?    
-    Account.any_instance.unstub(:omni_channel_routing_enabled?)
-    Account.any_instance.unstub(:lbrr_by_omniroute_enabled?)
-  end  
-
-  def test_lbrr_by_omniroute_invalid
-    Account.any_instance.stubs(:omni_channel_routing_enabled?).returns(true)
-    Account.any_instance.stubs(:lbrr_by_omniroute_enabled?).returns(true)
-    group = PrivateApiGroupValidation.new({ name: Faker::Name.name, unassigned_for: '30m', escalate_to: 1,
-                                     description: Faker::Lorem.paragraph, assignment_type: 1, round_robin_type: 12,
-                                     capping_limit: 5, allow_agents_to_change_availability:true, agent_ids: [1, 2] }.with_indifferent_access, nil)
-    refute group.valid?
-    errors = group.errors.full_messages
-    assert errors.include?('Capping limit invalid_field')
-    Account.any_instance.unstub(:omni_channel_routing_enabled?)
-    Account.any_instance.unstub(:lbrr_by_omniroute_enabled?)
-  end  
-
-  def test_lbrr_by_omniroute_invalid_without_feature
-    Account.any_instance.stubs(:omni_channel_routing_enabled?).returns(false)
-    Account.any_instance.stubs(:lbrr_by_omniroute_enabled?).returns(true)
-    group = PrivateApiGroupValidation.new({ name: Faker::Name.name, unassigned_for: '30m', escalate_to: 1,
-                                     description: Faker::Lorem.paragraph, assignment_type: 1, round_robin_type: 12,
-                                     allow_agents_to_change_availability:true, agent_ids: [1, 2] }.with_indifferent_access, nil)
-    refute group.valid?   
-    errors = group.errors.full_messages
-    assert errors.include?('Assignment type require_feature')
-    Account.any_instance.stubs(:omni_channel_routing_enabled?).returns(true)
-    Account.any_instance.stubs(:lbrr_by_omniroute_enabled?).returns(false)
-    refute group.valid?    
-    errors = group.errors.full_messages
-    assert errors.include?('Assignment type require_feature')
-    Account.any_instance.unstub(:omni_channel_routing_enabled?)
-    Account.any_instance.unstub(:lbrr_by_omniroute_enabled?)
-  end  
-
   def test_value_invalid
     group = PrivateApiGroupValidation.new({ unassigned_for: '30hh', escalate_to: '23',
                                      description: 123, auto_ticket_assign: 'false',

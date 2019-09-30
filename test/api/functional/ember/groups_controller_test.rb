@@ -264,29 +264,6 @@ class Ember::GroupsControllerTest < ActionController::TestCase
     Account.current.stubs(:features?).with(:round_robin).returns(false)
     Account.current.unstub(:skill_based_round_robin_enabled?)
   end  
-
-  def test_create_group_with_lbrr_by_omniroute
-    Account.current.stubs(:features?).with(:round_robin).returns(true)
-    Account.current.stubs(:omni_channel_routing_enabled?).returns(true)    
-    Account.current.stubs(:lbrr_by_omniroute_enabled?).returns(true)    
-    post :create, construct_params({version: 'private'},{
-      name: Faker::Lorem.characters(10),
-      description: Faker::Lorem.paragraph,
-      assignment_type: 1,
-      round_robin_type: 12,
-      business_hour_id:1,
-      escalate_to:1,
-      agent_ids:[1],
-      unassigned_for:'30m',
-      allow_agents_to_change_availability:true
-    })
-    assert_response 201
-    match_json(private_group_pattern_with_lbrr_by_omniroute(Group.last))
-  ensure
-    Account.current.unstub(:features?)
-    Account.current.unstub(:omni_channel_routing_enabled?)
-    Account.current.unstub(:lbrr_by_omniroute_enabled?)
-  end
   
   def test_update_group
     group = create_group_private_api(@account)

@@ -95,7 +95,6 @@ class GroupDecorator < ApiDecorator
     rr_type = ROUND_ROBIN if record.ticket_assign_type == 1 && record.capping_limit == 0
     rr_type = LOAD_BASED_ROUND_ROBIN if record.ticket_assign_type == 1 && record.capping_limit != 0
     rr_type = SKILL_BASED_ROUND_ROBIN if record.ticket_assign_type == 2 
-    rr_type = LBRR_BY_OMNIROUTE if record.ticket_assign_type == 12
     rr_type
   end
 
@@ -136,7 +135,7 @@ class GroupDecorator < ApiDecorator
       allow_agents_to_change_availability: allow_agents_to_change_availability
     }
 
-    rr_hash.merge!({capping_limit: record.capping_limit}) if [LOAD_BASED_ROUND_ROBIN, SKILL_BASED_ROUND_ROBIN].include?(rr_type)
+    rr_hash.merge!({capping_limit: record.capping_limit}) unless rr_type == ROUND_ROBIN
     rr_hash
   end
 

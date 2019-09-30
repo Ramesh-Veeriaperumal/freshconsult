@@ -23,11 +23,9 @@ module Channel::OmniChannelRouting
     def update
       success = false
       account_additional_settings = current_account.account_additional_settings
-      account_additional_settings.with_lock do
-        account_additional_settings.additional_settings ||= {}
-        account_additional_settings.additional_settings[:ocr_account_id] = params[:ocr_account_id]
-        success = account_additional_settings.save
-      end
+      account_additional_settings.additional_settings ||= {}
+      account_additional_settings.additional_settings[:ocr_account_id] = params[:ocr_account_id]
+      success = account_additional_settings.save
       return head 204 if success
       render_errors(account_additional_settings.errors) if account_additional_settings.errors.present?
     end
