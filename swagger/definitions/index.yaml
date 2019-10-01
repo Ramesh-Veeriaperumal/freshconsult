@@ -807,3 +807,13 @@ freddy_skills_index:
   $ref: './response/admin/freddy_skills/index.yaml'
 freddy_skills_show_and_update:
   $ref: './response/admin/freddy_skills/show_and_update.yaml'
+
+#Skills
+skill_input:
+  $ref: ./request/admin/skill.yaml
+skill_index:
+  $ref: ./response/admin/skill_index.yaml
+skill:
+  $ref: ./resource/skill.yaml
+skill_response:
+  $ref: ./response/admin/skill.yaml

@@ -1,0 +1,44 @@
+type: object
+properties:
+  name:
+    type: string
+  position:
+    type: integer
+  agent_ids:
+    type: array
+    items:
+      type: integer
+  match_type:
+    type: string
+  conditions:
+    type: array
+    items:
+      type: object
+      properties:
+        resource_type:
+          type: string
+        field_name:
+          type: string
+        operator:
+          type: string
+        value:
+          type: string
+        nested_fields:
+          type: object
+          properties:
+            level2:
+              type: object
+              properties:
+                field_name:
+                  type: string
+                value:
+                  type: string
+            level3:
+              type: object
+              properties:
+                field_name:
+                  type: string
+                value:
+                  type: string
+required:
+  - name
