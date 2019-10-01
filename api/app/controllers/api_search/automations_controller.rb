@@ -1,6 +1,7 @@
 module ApiSearch
   class AutomationsController < Ember::Search::SpotlightController
     include Admin::AutomationConstants
+    include AutomationRuleHelper
 
     def results
       @klasses = ['VaRule']
@@ -19,7 +20,10 @@ module ApiSearch
     private
 
       def decorate_objects
-        @items.map! { |item| Admin::AutomationDecorator.new(item, nil).to_search_hash } if @items
+        if @items.present?
+          fetch_executed_ticket_counts
+          @items.map! { |item| Admin::AutomationDecorator.new(item, nil).to_search_hash }
+        end
       end
 
       def construct_es_params

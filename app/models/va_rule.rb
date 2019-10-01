@@ -240,10 +240,10 @@ class VaRule < ActiveRecord::Base
 
   def check_rule_events(doer, evaluate_on, current_events)
     performer_matched = rule_performer.matches? doer, evaluate_on
-    Va::Logger::Automation.log("rule performer matched=#{performer_matched}")
+    Va::Logger::Automation.log("rule performer matched=#{performer_matched}", true)
     return unless performer_matched
     event_matched = rule_event_matches? current_events, evaluate_on
-    Va::Logger::Automation.log("rule event matched=#{event_matched}")
+    Va::Logger::Automation.log("rule event matched=#{event_matched}", true)
     check_rule_conditions evaluate_on, nil, doer if event_matched
   end
 
@@ -251,7 +251,7 @@ class VaRule < ActiveRecord::Base
     rule_events.each do  |e|
       if e.event_matches?(current_events, evaluate_on)
         @triggered_event = {e.name => current_events[e.name]}
-        Va::Logger::Automation.log("matched rule event=#{@triggered_event.inspect}")
+        Va::Logger::Automation.log("matched rule event=#{@triggered_event.inspect}", true)
         return true
       end
     end
@@ -263,7 +263,7 @@ class VaRule < ActiveRecord::Base
     benchmark { is_a_match = RuleEngine::NestedCondition.new(evaluate_on,
                               rule_operator).process_block(rule_conditions(true)) }
     is_a_match = true if rule_conditions.blank? && observer_rule?
-    Va::Logger::Automation.log("rule condition matched=#{is_a_match}")
+    Va::Logger::Automation.log("rule condition matched=#{is_a_match}", true)
     trigger_actions(evaluate_on, doer) if is_a_match
     is_a_match ? evaluate_on : nil
   end

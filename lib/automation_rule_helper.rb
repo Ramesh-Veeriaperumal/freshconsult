@@ -22,4 +22,14 @@ module AutomationRuleHelper
     end
     response
   end
+
+  def fetch_executed_ticket_counts
+    rule_ids = @items.map(&:id)
+    data = get_rules_executed_count(rule_ids)
+    result = data.inject([]) do |_d, count|
+      count.each_with_index {|value, index| _d[index] =  _d[index].to_i + value.to_i }
+      _d
+    end
+    @items.each_with_index {|item, index| item.affected_tickets_count = result[index] }
+  end
 end

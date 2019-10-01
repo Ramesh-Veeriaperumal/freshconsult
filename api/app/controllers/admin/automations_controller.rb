@@ -59,16 +59,6 @@ class Admin::AutomationsController < ApiApplicationController
       response.api_root_key = params[:action] == 'index' ? root_key.to_s.pluralize : root_key
     end
 
-    def fetch_executed_ticket_counts
-      rule_ids = @items.map(&:id)
-      data = get_rules_executed_count(rule_ids)
-      result = data.inject([]) do |_d, count|
-        count.each_with_index {|value, index| _d[index] =  _d[index].to_i + value.to_i }
-        _d
-      end
-      @items.each_with_index {|item, index| item.affected_tickets_count = result[index] }
-    end
-
     def check_for_allowed_rule_type
       rule_name = VAConfig::RULES_BY_ID[params[:rule_type].to_i]
       unless VAConfig::ASSOCIATION_MAPPING.key?(rule_name)
