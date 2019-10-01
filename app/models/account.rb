@@ -681,6 +681,12 @@ class Account < ActiveRecord::Base
     )
   end
 
+  def fs_cookie
+      key = ACCOUNT_SIGN_UP_PARAMS % { account_id: id }
+      json_response = get_others_redis_key(key)
+      json_response.present? ? JSON.parse(json_response)['fs_cookie'] : nil
+  end
+
   def email_service_provider
     @email_service_provider ||= self.account_configuration.try('company_info').try(:[], :email_service_provider)
   end
@@ -985,6 +991,10 @@ class Account < ActiveRecord::Base
 
   def default_account_locale
     Portal.current ? Portal.current.language : (Account.current ? Account.current.language : I18n.default_locale)
+  end
+
+  def disable_freshsales_api_integration?
+    redis_key_exists?(DISABLE_FRESHSALES_API_CALLS)
   end
 
   protected

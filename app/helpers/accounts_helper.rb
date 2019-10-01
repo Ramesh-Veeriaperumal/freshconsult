@@ -47,7 +47,7 @@ module AccountsHelper
                                         signup_id: signup_params[:signup_id])
       CRMApp::Freshsales::Signup.perform_at(5.minutes.from_now,
                                             account_id: account_id,
-                                            fs_cookie: signup_params[:fs_cookie])
+                                            fs_cookie: signup_params[:fs_cookie]) unless Account.current.disable_freshsales_api_integration?
     end
   end
 

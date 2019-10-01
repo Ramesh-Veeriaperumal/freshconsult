@@ -27,7 +27,9 @@ module SubscriptionTestHelper
       updated_at: subscription.updated_at.try(:utc).try(:iso8601),
       next_renewal_at: subscription.next_renewal_at.try(:utc).try(:iso8601),
       discount_expires_at: subscription.discount_expires_at.try(:utc).try(:iso8601),
-      account_plan: subscription.subscription_plan.display_name
+      account_plan: subscription.subscription_plan.display_name,
+      currency: subscription.currency.name,
+      exchange_rate: subscription.currency.exchange_rate
     }
   end
 

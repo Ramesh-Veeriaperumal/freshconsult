@@ -95,7 +95,8 @@ class Subscription < ActiveRecord::Base
   before_save :update_amount, unless: :anonymous_account?
 
   before_update :cache_old_model, :cache_old_addons
-  after_update :add_to_crm, :update_reseller_subscription, unless: :anonymous_account?
+  after_update :add_to_crm, unless: [:anonymous_account?, :disable_freshsales_api_integration?]
+  after_update :update_reseller_subscription, unless: :anonymous_account?
   after_commit :update_crm, on: :update, unless: :anonymous_account?
   after_commit :update_fb_subscription, :add_free_freshfone_credit, :dkim_category_change, :update_ticket_activity_export, on: :update
   after_commit :clear_account_susbcription_cache
@@ -842,6 +843,10 @@ class Subscription < ActiveRecord::Base
 
     def anonymous_account?
       account.anonymous_account?
+    end
+
+    def disable_freshsales_api_integration?
+      account.disable_freshsales_api_integration?
     end
 
     def policy_applied_account?

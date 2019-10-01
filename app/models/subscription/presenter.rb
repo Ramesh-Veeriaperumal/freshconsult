@@ -26,6 +26,8 @@ class Subscription < ActiveRecord::Base
     DATETIME_FIELDS.each do |key|
       s.add proc { |d| d.utc_format(d.safe_send(key)) }, as: key
     end
+    s.add proc { |x| x.currency.name }, as: :currency
+    s.add proc { |x| x.currency.exchange_rate.to_f }, as: :exchange_rate
   end
 
   def event_info action

@@ -1,5 +1,6 @@
 class Account < ActiveRecord::Base
   require 'launch_party/feature_class_mapping'
+  include Subscription::Currencies::Constants
 
   before_create :set_default_values, :set_shard_mapping, :save_route_info
   before_create :update_currency_for_anonymous_account, if: :is_anonymous_account
@@ -29,6 +30,7 @@ class Account < ActiveRecord::Base
 
   before_validation :sync_name_helpdesk_name
   before_validation :downcase_full_domain, :only => [:create , :update] , :if => :full_domain_changed?
+  before_validation :build_new_subscription, on: :create
   
   after_destroy :remove_global_shard_mapping, :remove_from_master_queries
   after_destroy :destroy_freshid_account, if: :freshid_integration_enabled?
@@ -336,6 +338,19 @@ class Account < ActiveRecord::Base
       end
     end
 
+    def build_new_subscription
+      currency = fetch_currency
+      self.build_subscription(plan: @plan, next_renewal_at: @plan_start, creditcard: @creditcard, address: @address, affiliate: @affiliate, subscription_currency_id: currency)
+      subscription.set_billing_params(currency)
+    end
+
+    def fetch_currency
+      return DEFAULT_CURRENCY if conversion_metric.nil?
+
+      country = conversion_metric.country
+      COUNTRY_MAPPING[country].nil? ? DEFAULT_CURRENCY : COUNTRY_MAPPING[country]
+    end
+
     def create_shard_mapping
       if Fdadmin::APICalls.non_global_pods? && domain_mapping = DomainMapping.find_by_domain(full_domain) 
         self.id = domain_mapping.account_id
@@ -564,7 +579,7 @@ class Account < ActiveRecord::Base
 
     def update_crm_and_map
       if (Rails.env.production? or Rails.env.staging?) && !self.sandbox?
-        CRMApp::Freshsales::AdminUpdate.perform_at(15.minutes.from_now, {:account_id => self.id})
+        CRMApp::Freshsales::AdminUpdate.perform_at(15.minutes.from_now, { account_id: id }) unless disable_freshsales_api_integration?
         Subscriptions::AddLead.perform_at(15.minutes.from_now, {:account_id => self.id})
       end
     end

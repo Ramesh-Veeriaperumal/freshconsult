@@ -66,6 +66,7 @@ class AccountTest < ActionView::TestCase
 
   def test_domain_start_with_hyphen_invalid
     account = Account.new(domain: "-test1234")
+    account.plan = Account.current.plan
     refute account.valid?
     errors = account.errors.full_messages
     assert errors.include?('Domain is invalid')
@@ -73,6 +74,7 @@ class AccountTest < ActionView::TestCase
 
   def test_domain_end_with_hyphen_invalid
     account = Account.new(domain: "test1234-")
+    account.plan = Account.current.plan
     refute account.valid?
     errors = account.errors.full_messages
     assert errors.include?('Domain is invalid')
@@ -80,6 +82,7 @@ class AccountTest < ActionView::TestCase
 
   def test_domain_with_special_characters_invalid
     account = Account.new(domain: "test*1234")
+    account.plan = Account.current.plan
     refute account.valid?
     errors = account.errors.full_messages
     assert errors.include?('Domain is invalid')
