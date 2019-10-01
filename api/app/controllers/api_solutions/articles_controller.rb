@@ -14,6 +14,7 @@ module ApiSolutions
     before_filter :language_metric_presence
 
     def show
+      @prefer_published = params[:prefer_published].to_bool unless params[:prefer_published].nil?
       @meta = @item.solution_article_meta
     end
 
@@ -51,6 +52,7 @@ module ApiSolutions
     def folder_articles
       if validate_language
         if load_folder
+          @prefer_published = params[:prefer_published].to_bool unless params[:prefer_published].nil?
           load_folder_articles
           if private_api?
             # removing description, attachments, tags for article list api in two pane to improve performance

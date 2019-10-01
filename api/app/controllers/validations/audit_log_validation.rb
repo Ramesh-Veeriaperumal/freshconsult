@@ -8,7 +8,7 @@ class AuditLogValidation < ApiValidation
   validate :validate_from_to?, if: -> { @request_params[:action] == 'export' }
   validate :validate_receive_via, if: -> { @request_params[:action] == 'export' }
   validate :validate_filter_set?, if: -> { @request_params[:filter] && @request_params[:action] == 'export' }
-  validate :validate_condition, if: -> { @request_params[:condition] && @request_params[:action] == 'export' }
+  validate :validate_condition, if: -> { (@request_params[:condition] || (@request_params[:filter] && @request_params[:filter].count > 1)) && @request_params[:action] == 'export' }
 
   def initialize(request_params, item = nil, allow_string_param = false)
     super(request_params, item, allow_string_param)
@@ -59,15 +59,17 @@ class AuditLogValidation < ApiValidation
     if @request_params[:filter]
       AuditLogConstants::EXPORT_FILTER_PARAMS.each do |query_param|
         value = @request_params[:filter][query_param]
-        next if value.blank?
+        next unless @request_params[:filter].key?(query_param)
+
+        return errors[:filter_value] << :values_not_in_array unless value.is_a?(Array)
+
+        return errors[:filter_value] << "#{query_param} should not be empty" if value.empty?
 
         if query_param == :action
-          value.each { |val| errors[:filter_value] << :"#{value} must be in string" unless val.is_a?(String) }
           check_action_values(value)
         elsif query_param == :performed_by
-          value.each { |val| errors[:filter_value] << :"#{value} must be in integer" unless val.is_a?(Integer) }
+          value.each { |val| errors[:filter_value] << :"#{val} must be in integer" unless val.is_a?(Integer) }
         end
-        return errors[:filter_value] << :values_not_in_array unless value.is_a?(Array)
       end
     end
     filter_set_validation
@@ -77,8 +79,8 @@ class AuditLogValidation < ApiValidation
     type_count = 0
     filter_count = 0
     @request_params[:filter].each do |filter_sets|
-      filter_count += 1
       return errors[:filters] << :'Maximum number of filters allowed is four' unless filter_count <= 4
+      filter_count += 1
       filter_sets.each do |filter_set|
         if filter_set.is_a?(String)
           return errors[:'filter values'] << :"#{filter_set} is a invalid filter value" unless AuditLogConstants::EXPORT_FILTER_PARAMS.to_s.include?(filter_set) ||
@@ -94,14 +96,20 @@ class AuditLogValidation < ApiValidation
           type_count += 1
           return errors[:entity] << :'entity without ids should be given in single filter set' if type_count > 1
         end
+        return errors[:entity] << :'ids should have interger value' if filter_set_value.key?(:ids) && entity_ids.blank?
+
+        return errors[:filter_value] << :'entity not in array' unless entity_name.is_a?(Array)
+
         if entity_ids
           return errors[:filter_value] << :'ids not in array' unless entity_ids.is_a?(Array)
           return errors[:entity] << :'entity should have one value' if entity_name.count > 1
         end
         entity_ids.each { |ruleid| errors[:ids] << :'ids value must be in Integer' unless ruleid.is_a?(Integer) } if entity_ids && entity_ids.is_a?(Array)
-        return errors[:filter_value] << :'entity not in array' unless entity_name.is_a?(Array)
+
         if entity_name && entity_name.is_a?(Array)
-          entity_name.each { |rulename| errors[:entity] << :'entity value must be in string' unless rulename.is_a?(String) } 
+          return errors[:filter_value] << :'entity should not be empty' if entity_name.empty?
+
+          entity_name.each { |rulename| errors[:entity] << :'entity value must be in string' unless rulename.is_a?(String) }
           validate_export_automation_rules(entity_name)
         end
       end
@@ -122,7 +130,11 @@ class AuditLogValidation < ApiValidation
 
   def validate_condition
     return errors[:condition] << :'filter is not present' if @request_params[:condition] && !@request_params[:filter]
+
+    return errors[:condition] << :'condition is not present' if @request_params[:filter].count > 1 && !@request_params[:condition]
+
     condition = @request_params[:condition].split(' ')
+    return errors[:condition] << :'filter and condition is mismatching' if @request_params[:filter].count != condition.each_slice(2).map(&:first).count
 
     condition.each do |con|
       next if AuditLogConstants::CONDITION_LOWER_CASE.include? con

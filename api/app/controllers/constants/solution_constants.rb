@@ -53,7 +53,7 @@ module SolutionConstants
 
   LOAD_OBJECT_EXCEPT = [:category_folders, :folder_articles, :article_content, :filter, :untranslated_articles].freeze
 
-  INDEX_FIELDS = %w[language].freeze
+  INDEX_FIELDS = %w[language prefer_published].freeze
 
   RECENT_ARTICLES_FIELDS = %w[ids user_id language].freeze
   ARTICLE_CONTENT_FIELDS = %w[language].freeze

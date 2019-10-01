@@ -284,8 +284,8 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/freshid-ruby-client.git
-  revision: 8cbdbda09bb7ddcc8350b4ec3bb6e42c85bb58fc
-  tag: ignore-company-update
+  revision: 10dad461a873dcad3dbc10a278b8f4de758a1499
+  tag: v4.0.5
   specs:
     freshid (4.0.5)
       freshid-sdk

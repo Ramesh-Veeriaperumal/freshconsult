@@ -136,6 +136,14 @@ class User < ActiveRecord::Base
     Account.current.allow_update_agent_enabled?
   end
 
+  class << self
+
+    def freshid_company_field_update_required?
+      false
+    end
+
+  end
+
   private
 
     def freshid_integration_enabled_account?

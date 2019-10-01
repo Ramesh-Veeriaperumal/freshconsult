@@ -16,15 +16,15 @@ module AuditLog::AuditLogExportHelper
               entity_name = AuditLogConstants::ENTITY_HASH[filter_set_value[:entity][0]]
               entity_name = VAConfig::RULES_BY_ID[entity_name.to_i].to_s << '_id'
               export_filter_set_params[entity_name] = entity_ids
-              params[:condition].sub!(filter_sets_key.to_s, entity_name) if params[:condition].include? filter_sets_key.to_s
+              params[:condition].sub!(filter_sets_key.to_s, entity_name) if params[:condition].present? && (params[:condition].include? filter_sets_key.to_s)
             elsif filter_set_value[:entity][0] == 'agent' && !entity_ids.nil?
               entity_name = 'agent_id'
               export_filter_set_params[entity_name] = entity_ids
-              params[:condition].sub!(filter_sets_key.to_s, entity_name) if params[:condition].include? filter_sets_key.to_s
+              params[:condition].sub!(filter_sets_key.to_s, entity_name) if params[:condition].present? && (params[:condition].include? filter_sets_key.to_s)
             else
               type_value = construct_type_array(filter_set_value)
               type.push(type_value) unless type.nil?
-              update_condition(filter_sets_key, params)
+              update_condition(filter_sets_key, params) if params[:condition].present?
             end
           else
             filter_set_value[:entity].each do |entity|
@@ -35,7 +35,7 @@ module AuditLog::AuditLogExportHelper
                 type.push(entity)
               end
             end
-            update_condition(filter_sets_key, params)
+            update_condition(filter_sets_key, params) if params[:condition].present?
           end
           export_filter_set_params[:type] = type unless type.nil?
         end

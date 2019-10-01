@@ -66,7 +66,7 @@ module SolutionsArticlesTestHelper
 
     @draft_body = Solution::DraftBody.new
     @draft_body.draft = @draft
-    @draft_body.description = '<b>aaa</b>'
+    @draft_body.description = '<b>draft body</b>'
     @draft_body.account = @account
     @draft_body.save
   end

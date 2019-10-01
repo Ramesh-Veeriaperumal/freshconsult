@@ -61,7 +61,7 @@ class UpdateAgentsRolesTest < ActionView::TestCase
     assert_equal 1, @account.users.joins(:user_roles).where(user_roles: {role_id: test_role.id}).count
 
   ensure
-    @account.users.find(user.id).destroy if @account.users.find(user.id).present?
-    @account.roles.find(test_role.id).destroy if @account.roles.find(test_role.id).present?
+    @account.users.find(user.id).destroy if user.present? && @account.users.find(user.id).present?
+    @account.roles.find(test_role.id).destroy if test_role.present? && @account.roles.find(test_role.id).present?
   end
 end
