@@ -38,7 +38,7 @@ module Ember
           else
             @search_context = :agent_spotlight_ticket
           end
-          @klasses = ['Helpdesk::Ticket', 'Helpdesk::ArchiveTicket']
+          @klasses = include_archive? ? ['Helpdesk::Ticket', 'Helpdesk::ArchiveTicket'] : ['Helpdesk::Ticket']
         end
         @items = esv2_query_results(esv2_agent_models)
         response.api_meta = { count: @items.total_entries }
@@ -79,6 +79,11 @@ module Ember
               map_date if @filter_params[:created_at]
               sanitize_cf_params if @filter_params[:custom_fields].present?
               transformed_values = ::Search::KeywordSearch::Transform.new(@filter_params).transform
+              es_params.merge!(transformed_values)
+            end
+
+            if transform_with_search_settings?
+              transformed_values = ::Search::KeywordSearch::Transform.new(ticket_search_settings).transform_with_search_settings
               es_params.merge!(transformed_values)
             end
 
@@ -127,6 +132,26 @@ module Ember
         def validate_results_param
           @search_validation = SearchTicketValidation.new(params)
           render_custom_errors(@search_validation, true) unless @search_validation.valid?
+        end
+
+        def search_settings?
+          current_user.agent_preferences[:search_settings].present?
+        end
+
+        def ticket_search_settings
+          current_user.agent_preferences[:search_settings][:tickets]
+        end
+
+        def search_settings_enabled?
+          Account.current.launched?(:search_settings)
+        end
+
+        def transform_with_search_settings?
+          [:agent_spotlight_ticket, :filteredTicketSearch].include?(@search_context) && search_settings_enabled? && search_settings?
+        end
+
+        def include_archive?
+          transform_with_search_settings? ? ticket_search_settings[:archive] : true
         end
     end
   end

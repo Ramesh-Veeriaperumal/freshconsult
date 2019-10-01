@@ -350,4 +350,11 @@ module SearchTestHelper
   ensure
     SearchService::QueryHandler.any_instance.unstub(:query_results)
   end
+
+  def stub_private_search_response_with_empty_array
+    SearchService::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new([], total_entries: 0))
+    yield
+  ensure
+    SearchService::QueryHandler.any_instance.unstub(:query_results)
+  end
 end
