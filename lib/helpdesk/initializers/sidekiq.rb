@@ -150,6 +150,7 @@ Sidekiq.configure_server do |config|
   #Making AWS as thread safe
   AWS.eager_autoload!
   config.server_middleware do |chain|
+    chain.add Middleware::Sidekiq::Server::JobDetailsLogger
     chain.add Middleware::Sidekiq::Server::UnsetThread
     chain.add Middleware::Sidekiq::Server::RouteORDrop
     chain.add Middleware::Sidekiq::Server::BelongsToAccount, :ignore => [
@@ -243,7 +244,6 @@ Sidekiq.configure_server do |config|
       "Roles::UpdateAgentsRoles"
     ]
 
-    chain.add Middleware::Sidekiq::Server::JobDetailsLogger
     chain.add Middleware::Sidekiq::Server::Throttler, :required_classes => ["WebhookV1Worker"]
   end
   config.client_middleware do |chain|

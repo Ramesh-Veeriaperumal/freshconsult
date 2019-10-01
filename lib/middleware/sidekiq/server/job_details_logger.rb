@@ -4,9 +4,9 @@ module Middleware
       class JobDetailsLogger
 
         def call(worker, msg, queue)
+          msg['pickup_time'] = Time.now.to_i - msg['enqueued_at'].to_i
           elapsed = Benchmark.realtime { yield }
           msg['response_time'] = elapsed
-          msg['pickup_time'] = Time.now.to_i - msg["enqueued_at"].to_i
           log_details(msg.symbolize_keys)
         end
 
