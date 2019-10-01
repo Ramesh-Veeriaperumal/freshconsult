@@ -208,6 +208,7 @@ test-ui:
     new_forum_topic: "$[New Topic] %{title} in %{forum_name}$"
     topic_update: "$[Status Update] in %{title}$"
     topic_merged: "$[Topic Merged] to %{title}$"
+    send_reminder_email: '$Reminder:%{todo_body}$'
     report_type_sub: "$%{report_name} report for %{date_range}$"
     ticket_export: '$Ticket export | $'
     account_data_export: "$Data Export for %{account}$"
@@ -268,3 +269,10 @@ test-ui:
     unable_to_fetch: "$Freshdesk is unable to fetch emails from %{email_mailbox}. Please ensure that the mailbox is reachable or that the configurations are correct.<br/>If you need any further assistance, please contact support@freshdesk.com.$"
     regards: "$Regards$"
     freshdesk_support": "$Freshdesk support$"
+  todos_reminder:
+    email:
+      user: "$Hi %{user_name},$"
+      message: "$You have a reminder on the ticket$"
+      due: "$due now:$"
+      at: "$at$"
+      association: "$Here is the associated ticket:$"
