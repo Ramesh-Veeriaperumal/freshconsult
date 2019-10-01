@@ -25,6 +25,13 @@ module GroupsTestHelper
     group_json
   end
 
+  def private_group_pattern_with_lbrr_by_omniroute(expected_output={}, group)
+    group_json=private_group_pattern(expected_output={},group)
+    group_json[:allow_agents_to_change_availability]= group.toggle_availability if lbrr_by_omniroute_enabled?
+    group_json[:round_robin_type]=get_round_robin_type(group) if lbrr_by_omniroute_enabled?
+    group_json
+  end
+
   def private_group_pattern_with_ocr(expected_output={}, group)
     group_json=private_group_pattern(expected_output={},group)
     group_json[:allow_agents_to_change_availability]= group.toggle_availability if ocr_enabled?
@@ -152,10 +159,15 @@ module GroupsTestHelper
     Account.current.omni_channel_routing_enabled?
   end 
 
+  def lbrr_by_omniroute_enabled?
+    Account.current.lbrr_by_omniroute_enabled?
+  end 
+
   def get_round_robin_type(group)
     round_robin_type=1 if group.ticket_assign_type==1 && group.capping_limit==0
     round_robin_type=2 if group.ticket_assign_type==1 && group.capping_limit!=0
     round_robin_type=3 if group.ticket_assign_type==2
+    round_robin_type=12 if group.ticket_assign_type==12 && group.capping_limit==0
     round_robin_type
   end 
 end
