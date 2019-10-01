@@ -311,6 +311,7 @@ group :test do
   gem 'cucumber_statistics'
   gem "fakeweb", "~> 1.3"
   gem "webmock"
+  gem "yard" , "0.9.20"
 end
 
 #ruby 2.2.3 expects tesst-unit to be available by default.
