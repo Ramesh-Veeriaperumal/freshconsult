@@ -3,7 +3,7 @@ module AutomationRuleHelper
   include Redis::AutomationRuleRedis
 
   def update_ticket_execute_count(rule_ids_with_count = {})
-    return unless (Account.current.automation_rule_execution_count_enabled? && rule_ids_with_count.present?)
+    return if rule_ids_with_count.blank?
     set_expiry_of_account_rule(RULE_EXEC_COUNT_EXPIRY_DURATION)
     rule_ids_with_count.each_pair do |rule_id, count|
       inc_automation_rule_exec_count(rule_id, count)

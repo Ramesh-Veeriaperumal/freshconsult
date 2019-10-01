@@ -137,7 +137,6 @@ class Account < ActiveRecord::Base
     end
     if redis_key_exists?(ENABLE_AUTOMATION_REVAMP)
       launch(:automation_revamp)
-      launch(:automation_rule_execution_count)
       if redis_key_exists?(ENABLE_THANK_YOU_DETECTOR)
         add_feature(:detect_thank_you_note)
         add_feature(:detect_thank_you_note_eligible)
