@@ -720,6 +720,9 @@ role_bulk_update_request:
 #Business Hours
 business_hours:
   $ref: ./response/business_hours.yaml
+holiday_list:
+  $ref: ./resource/holiday_list.yaml
+
 
 #Canned Responses
 canned_response_create:

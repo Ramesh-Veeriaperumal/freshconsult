@@ -25887,6 +25887,13 @@
             "description": "Business Calender Intervals",
             "type": "object"
           },
+          "holiday_list": {
+            "description": "Business Calender holiday_list",
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/holiday_list"
+            }
+          },
           "created_at": {
             "description": "Business Calender created time",
             "type": "string",
@@ -25898,6 +25905,13 @@
             "format": "date-time"
           }
         }
+      }
+    },
+    "holiday_list": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "description": "It is pair of date and holiday name in array"
       }
     },
     "canned_response_create": {

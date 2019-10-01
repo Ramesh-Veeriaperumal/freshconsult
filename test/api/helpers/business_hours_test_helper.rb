@@ -10,14 +10,14 @@ module BusinessHoursTestHelper
   end
 
   def business_hour_index_pattern(expected_output = {}, business_hour)
-    bc_json = business_hour_default_pattern(expected_output, business_hour)
+    bc_json = business_hour_default_pattern(expected_output, business_hour, true)
     bc_json
   end
 
-  def business_hour_default_pattern(expected_output, business_hour)
+  def business_hour_default_pattern(expected_output, business_hour, index_request = false)
     expected_output[:ignore_created_at] ||= true
     expected_output[:ignore_updated_at] ||= true
-    {
+    result = {
       id: Fixnum,
       name: expected_output[:name] || business_hour.name,
       description: business_hour.description,
@@ -26,5 +26,7 @@ module BusinessHoursTestHelper
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
+    result[:holiday_list] = business_hour.holiday_data unless index_request
+    result
   end
 end
