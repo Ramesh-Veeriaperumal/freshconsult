@@ -181,6 +181,54 @@ module CronWebhooks::Constants
     sqs_monitor: {
       class_name: 'CronWebhooks::SqsMonitor',
       semaphore_expiry: 1.hour
+    },
+    scheduled_task_trigger_upcoming: {
+      class_name: 'CronWebhooks::ScheduledTask',
+      semaphore_expiry: 1.hour
+    },
+    scheduled_task_trigger_dangling: {
+      class_name: 'CronWebhooks::ScheduledTask',
+      semaphore_expiry: 1.hour
+    },
+    scheduled_task_calculate_next_run_at: {
+      class_name: 'CronWebhooks::ScheduledTask',
+      semaphore_expiry: 1.hour
+    },
+    meta_data_check_data_consistency_check: {
+      class_name: 'CronWebhooks::MetaDataCheck',
+      semaphore_expiry: 1.hour
+    },
+    freshfone_failed_costs: {
+      class_name: 'CronWebhooks::Freshfone',
+      semaphore_expiry: 1.hour
+    },
+    freshfone_suspend: {
+      class_name: 'CronWebhooks::Freshfone',
+      semaphore_expiry: 1.hour
+    },
+    freshfone_renew_numbers: {
+      class_name: 'CronWebhooks::Freshfone',
+      semaphore_expiry: 1.hour
+    },
+    freshfone_suspension_reminder_3days: {
+      class_name: 'CronWebhooks::Freshfone',
+      semaphore_expiry: 1.hour
+    },
+    freshfone_suspension_reminder_15days: {
+      class_name: 'CronWebhooks::Freshfone',
+      semaphore_expiry: 1.hour
+    },
+    freshfone_freshfone_call_twilio_recording_delete: {
+      class_name: 'CronWebhooks::Freshfone',
+      semaphore_expiry: 1.hour
+    },
+    freshfone_failed_call_status_update: {
+      class_name: 'CronWebhooks::Freshfone',
+      semaphore_expiry: 1.hour
+    },
+    freshfone_failed_close_accounts: {
+      class_name: 'CronWebhooks::Freshfone',
+      semaphore_expiry: 1.hour
     }
   }.freeze
 
