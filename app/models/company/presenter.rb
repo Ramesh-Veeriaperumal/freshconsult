@@ -18,8 +18,7 @@ class Company < ActiveRecord::Base
     u.add :domain_list_with_id, as: :domains
     u.add :delta
     u.add :import_id
-    #avatar is set as nil for prestaging only,please do not set as nil for falcon-presaging
-    u.add nil, as: :avatar
+    u.add :avatar
     u.add :health_score
     u.add :account_tier
     u.add :industry
