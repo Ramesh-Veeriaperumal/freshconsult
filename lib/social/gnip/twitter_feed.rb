@@ -111,8 +111,8 @@ class Social::Gnip::TwitterFeed
 
     def process_post(args)
       select_shard_and_account(args[:account_id]) do |account|
-        if Account.current.suspended?
-          Rails.logger.info "Freshdesk account is suspended. Account ID :: #{args[:account_id]} :: Tweet ID: #{@tweet_id}"
+        if Account.current.suspended? || Account.current.mentions_to_tms_enabled?
+          Rails.logger.info "Choosing not to process tweet here. Account ID :: #{args[:account_id]} :: Tweet ID: #{@tweet_id}"
           User.reset_current_user
           Account.reset_current_account
           return
