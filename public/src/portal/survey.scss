@@ -92,6 +92,24 @@ body {
 }
 
 //--------------------------------------------------------------------------------
+//                      Custom Survey Preview
+//--------------------------------------------------------------------------------
+
+.satisfaction_survey_wrapper {
+    padding: 1.9em 1.6em;
+    margin-top: 10px;
+    border: 1px solid rgba(0,0,0,0.2);
+    background-color: #FFF;
+  }
+
+#survey_info {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+//--------------------------------------------------------------------------------
 //                                  Button & Input
 //--------------------------------------------------------------------------------
 button, input[type="button"], input[type="reset"], input[type="submit"] {

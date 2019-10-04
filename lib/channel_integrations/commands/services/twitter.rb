@@ -117,9 +117,11 @@ module ChannelIntegrations::Commands::Services
       end
 
       def conflict_error(context)
+        existing_tweetable = current_account.tweets.find_by_tweet_id(context[:tweet_id]).tweetable
         error = default_error_format
         error[:status_code] = 409
-        error[:data] = { message: "Conflict: Tweet ID: #{context[:tweet_id]} already converted." }
+        error[:data] = { message: "Conflict: Tweet ID: #{context[:tweet_id]} already converted.",
+                         id: existing_tweetable.id }
         error
       end
 

@@ -39,14 +39,14 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
     thread_id = rand(10**10)
     msg_id = thread_id + 20
     time = Time.now.utc
-  
+
     realtime_dm_event = realtime_dms(@fb_page.page_id, msg_id, @user_id, time)
     sqs_msg = Hashit.new(body: realtime_dm_event.to_json)
     dm = sample_dms(thread_id, @user_id, msg_id, time)
-    msg = dm[0]['messages']['data'][0]
+    msg = dm['data'][0]['messages']['data'][0]
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(msg)
     Sqs::FacebookMessage.new(sqs_msg.body).process
-  
+
     dm_msg_id = msg[:id]
     ticket = @account.facebook_posts.find_by_post_id(dm_msg_id).postable
     assert_equal ticket.is_a?(Helpdesk::Ticket), true
@@ -60,19 +60,19 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
     rule = @fb_page.dm_stream.ticket_rules[0]
     rule[:action_data][:group_id] = group.id
     rule.save!
-  
+
     thread_id = rand(10**10)
     msg_id = thread_id + 20
     time = Time.now.utc
-  
+
     realtime_dm_event = realtime_dms(@fb_page.page_id, msg_id, @user_id, time)
     sqs_msg = Hashit.new(body: realtime_dm_event.to_json)
     dm = sample_dms(thread_id, @user_id, msg_id, time)
-    msg = dm[0]['messages']['data'][0]
+    msg = dm['data'][0]['messages']['data'][0]
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(msg)
     Sqs::FacebookMessage.new(sqs_msg.body).process
     dm_msg_id = msg[:id]
-  
+
     ticket = @account.facebook_posts.find_by_post_id(dm_msg_id).postable
     assert_equal ticket.is_a?(Helpdesk::Ticket), true
     assert_equal ticket.group_id, group.id
@@ -85,12 +85,12 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
     thread_id = rand(10**10)
     msg_id = thread_id + 20
     time = Time.now.utc
-  
+
     realtime_dm_event = realtime_dms(@fb_page.page_id, msg_id, @user_id, time)
     sqs_msg = Hashit.new(body: realtime_dm_event.to_json)
     dm = sample_dms(thread_id, @user_id, msg_id, time)
-    first_msg = dm[0]['messages']['data'][0]
-    second_msg = dm[1]['messages']['data'][0]
+    first_msg = dm['data'][0]['messages']['data'][0]
+    second_msg = dm['data'][1]['messages']['data'][0]
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(first_msg, second_msg)
     Timecop.freeze(Time.now.utc + 1.hour) do
       Sqs::FacebookMessage.new(sqs_msg.body).process
@@ -107,15 +107,15 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
     thread_id = rand(10**10)
     msg_id = thread_id + 20
     time = Time.now.utc
-  
+
     realtime_dm_event = realtime_dms(@fb_page.page_id, msg_id, @user_id, time)
     sqs_msg = Hashit.new(body: realtime_dm_event.to_json)
     dm = sample_dms(thread_id, @user_id, msg_id, time)
-    first_msg = dm[0]['messages']['data'][0]
-    second_msg = dm[1]['messages']['data'][0]
+    first_msg = dm['data'][0]['messages']['data'][0]
+    second_msg = dm['data'][1]['messages']['data'][0]
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(first_msg, second_msg)
     Sqs::FacebookMessage.new(sqs_msg.body).process
-  
+
     first_msg_id = first_msg[:id]
     second_msg_id = second_msg[:id]
     assert_equal @account.facebook_posts.find_by_post_id(first_msg_id).postable.is_a?(Helpdesk::Ticket), true
@@ -130,15 +130,15 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
     thread_id = "#{@fb_page.page_id.to_s}#{MESSAGE_THREAD_ID_DELIMITER}#{@user_id}"
     Timecop.travel(1.seconds)
     create_facebook_dm_as_ticket(@fb_page, thread_id, @user_id)
-  
+
     msg_id = rand(10**10)
     time = Time.now.utc
-  
+
     realtime_dm_event = realtime_dms(@fb_page.page_id, msg_id, @user_id, time)
     sqs_msg = Hashit.new(body: realtime_dm_event.to_json)
     dm = sample_dms(thread_id, @user_id, msg_id, time)
-    first_msg = dm[0]['messages']['data'][0]
-    second_msg = dm[1]['messages']['data'][0]
+    first_msg = dm['data'][0]['messages']['data'][0]
+    second_msg = dm['data'][1]['messages']['data'][0]
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(first_msg, second_msg)
     Sqs::FacebookMessage.new(sqs_msg.body).process
     first_msg_id = first_msg[:id]
@@ -154,11 +154,11 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
     thread_id = rand(10**10)
     msg_id = thread_id + 20
     time = Time.now.utc
-  
+
     realtime_dm_event = realtime_dms(@fb_page.page_id, msg_id, @user_id, time)
     sqs_msg = Hashit.new(body: realtime_dm_event.to_json)
     dm = sample_dms(thread_id, @user_id, msg_id, time)
-    msg = dm[0]['messages']['data'][0]
+    msg = dm['data'][0]['messages']['data'][0]
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(msg)
     Sqs::FacebookMessage.new(sqs_msg.body).process
     dm_msg_id = msg['id']

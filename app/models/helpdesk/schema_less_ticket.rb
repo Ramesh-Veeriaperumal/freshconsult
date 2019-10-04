@@ -2,6 +2,9 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	
 	include BusinessHoursCalculation
 	include Helpdesk::EmailFailureMethods
+  include LockVersion::Utility
+
+  self.locking_column = :int_tc05
 
   attr_reader :schema_less_was
 
@@ -28,6 +31,8 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
     :text_tc03        =>    :dirty_attributes,
     :text_tc04        =>    :additional_info
   }
+
+  SERIALIZED_DB_COLUMNS = ['text_tc01', 'text_tc02', 'text_tc03', 'text_tc04', 'text_tc05']
 
   COLUMN_TO_ATTRIBUTE_MAPPING.keys.each do |key|
     alias_attribute(COLUMN_TO_ATTRIBUTE_MAPPING[key], key)
@@ -299,8 +304,20 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
   end
 
   def override_exchange_model(_action)
-    changes = schema_less_changes
+    changes = attribute_changes('text_tc02')
     ticket.model_changes = changes if changes.present?
+  end
+
+  def update(*)
+    optimistic_rails_lock('update') do
+      super
+    end
+  end
+
+  def destroy(*)
+    optimistic_rails_lock('destroy') do
+      super
+    end
   end
 
   private
@@ -309,17 +326,25 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
     additional_info
   end
 
-  def schema_less_changes
-    presenter_attributes_was = schema_less_was['text_tc02']
-    presenter_attributes_is = attributes['text_tc02']
+  def attribute_changes(column_name = nil)
+    attributes_was, attributes_is = column_name ? [schema_less_was["#{column_name}"], attributes["#{column_name}"]] : [schema_less_was, attributes]
     change_hash = {}
-    if presenter_attributes_was != presenter_attributes_is
-      new_hash = presenter_attributes_was.merge(presenter_attributes_is)
+    if attributes_was != attributes_is
+      new_hash = attributes_was.merge(attributes_is)
       new_hash.keys.each do |key|
-        change_hash[key] = [presenter_attributes_was[key], presenter_attributes_is[key]] if presenter_attributes_was[key] != presenter_attributes_is[key]
+        change_hash[key] = [attributes_was[key], attributes_is[key]] if attributes_was[key] != attributes_is[key]
       end
     end
     change_hash
+  end
+
+  def reapply_values(retry_changes)
+    retry_changes.each do |db_column, db_value|
+      if SERIALIZED_DB_COLUMNS.include?(db_column)
+        db_value[1] = safe_send("#{db_column}").merge(db_value[1])
+      end
+      safe_send("#{db_column}=", db_value[1]) unless ['updated_at'].include?(db_column)
+    end
   end
 
   def backup_change

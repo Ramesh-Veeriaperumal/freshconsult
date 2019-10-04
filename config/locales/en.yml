@@ -188,6 +188,7 @@ en:
   confirm_delete_message: Are you sure you want to delete the %{human_name}?
   reload: Reload
   any: Any
+  from: From
   or: or
   go_to_new_ui: "Switch to the Mint experience"
   enable: "Enable"
@@ -776,6 +777,7 @@ en:
         load_questions: View More
         comments: Comments
         survey_on_open_ticket: Could not submit survey rating as ticket is not resolved.
+        preview_survey: 'This is what a test mail looks like :'
     login:
       form:
         email: Email

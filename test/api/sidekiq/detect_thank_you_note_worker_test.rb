@@ -110,6 +110,51 @@ class DetectThankYouNoteWorkerTest < ActionView::TestCase
     HTTParty.unstub(:post)
   end
 
+  def test_thank_you_note_worker_invoke_observer
+    WebMock.allow_net_connect!
+    @ticket = create_ticket
+    ::Tickets::ObserverWorker.clear
+    note = create_test_note
+    user = add_new_user(@account)
+    note.user_id = user.id
+    note.save!
+    args = { ticket_id: @ticket.id, note_id: note.id }
+    response_stub = ResponseStub.new({ 'reopen' => 0, 'confidence' => 99.77472623583164 }.to_json, 200)
+    HTTParty.stubs(:post).returns(response_stub)
+    ::Freddy::DetectThankYouNoteWorker.new.perform(args) if detect_thank_you_note?(note)
+    note.reload
+    assert_equal true, note.schema_less_note.thank_you_note.present?
+    current_jobs_count = ::Tickets::ObserverWorker.jobs.size
+    assert_equal current_jobs_count, 1
+    WebMock.disable_net_connect!
+  ensure
+    Account.unstub(:current)
+    HTTParty.unstub(:post)
+  end
+
+  def test_thank_you_note_worker_invoke_observer_with_feature_disabled
+    @account.stubs(:detect_thank_you_note_enabled?).returns(false)
+    WebMock.allow_net_connect!
+    ::Tickets::ObserverWorker.clear
+    @ticket = create_ticket
+    note = create_test_note
+    user = add_new_user(@account)
+    note.user_id = user.id
+    note.save!
+    args = { ticket_id: @ticket.id, note_id: note.id }
+    response_stub = ResponseStub.new({ 'reopen' => 0, 'confidence' => 99.77472623583164 }.to_json, 200)
+    HTTParty.stubs(:post).returns(response_stub)
+    ::Freddy::DetectThankYouNoteWorker.new.perform(args) if Account.current.detect_thank_you_note_enabled?
+    note.reload
+    assert_equal false, note.schema_less_note.thank_you_note.present?
+    current_jobs_count = ::Tickets::ObserverWorker.jobs.size
+    assert_equal current_jobs_count, 0
+    WebMock.disable_net_connect!
+  ensure
+    Account.unstub(:current)
+    HTTParty.unstub(:post)
+  end
+
   private
 
     def create_ticket

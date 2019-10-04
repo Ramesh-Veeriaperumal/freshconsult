@@ -11,7 +11,7 @@ class Helpdesk::Note < ActiveRecord::Base
   include BusinessHoursCalculation
   include MemcacheKeys
 
-  SCHEMA_LESS_ATTRIBUTES = ['from_email', 'to_emails', 'cc_emails', 'bcc_emails', 'header_info', 'category', 
+  SCHEMA_LESS_ATTRIBUTES = ['from_email', 'to_emails', 'cc_emails', 'bcc_emails', 'header_info', 'category',
                             'response_time_in_seconds', 'response_time_by_bhrs', 'email_config_id', 'subject',
                             'last_modified_user_id', 'last_modified_timestamp', 'sentiment','dynamodb_range_key',
                             'failure_count', 'import_id', 'thank_you_note'
@@ -22,10 +22,10 @@ class Helpdesk::Note < ActiveRecord::Base
   concerned_with :associations, :constants, :callbacks, :riak, :s3, :mysql, :attributes, :rabbitmq, :esv2_methods, :presenter
   text_datastore_callbacks :class => "note"
   spam_watcher_callbacks :user_column => "user_id", :import_column => "import_id"
-  #zero_downtime_migration_methods :methods => {:remove_columns => ["body", "body_html"] } 
-  
-  attr_accessor :nscname, :disable_observer, :send_survey, :include_surveymonkey_link, :quoted_text, 
-                :skip_notification, :changes_for_observer, :disable_observer_rule, :last_note_id, 
+  #zero_downtime_migration_methods :methods => {:remove_columns => ["body", "body_html"] }
+
+  attr_accessor :nscname, :disable_observer, :send_survey, :include_surveymonkey_link, :quoted_text,
+                :skip_notification, :changes_for_observer, :disable_observer_rule, :last_note_id,
                 :post_to_forum_topic, :import_note, :model_changes
 
   attr_protected :attachments, :notable_id
@@ -40,10 +40,10 @@ class Helpdesk::Note < ActiveRecord::Base
   delegate :to_emails, :cc_emails, :bcc_emails, :subject, :cc_emails_hash, :to => :schema_less_note
 
   scope :newest_first, :order => "created_at DESC,id DESC"
-  scope :visible, :conditions => { :deleted => false } 
-  scope :public, :conditions => { :private => false } 
-  scope :private, :conditions => { :private => true } 
-   
+  scope :visible, :conditions => { :deleted => false }
+  scope :public, :conditions => { :private => false }
+  scope :private, :conditions => { :private => true }
+
   scope :last_traffic_cop_note,
     :conditions => ["private = ? or incoming = ?",false,true],
     :order => "created_at DESC",
@@ -52,16 +52,16 @@ class Helpdesk::Note < ActiveRecord::Base
   scope :latest_twitter_comment,
               :conditions => [" incoming = 1 and social_tweets.tweetable_type =
  'Helpdesk::Note'"],
-              :joins => "INNER join social_tweets on helpdesk_notes.id = social_tweets.tweetable_id and helpdesk_notes.account_id = social_tweets.account_id", 
+              :joins => "INNER join social_tweets on helpdesk_notes.id = social_tweets.tweetable_id and helpdesk_notes.account_id = social_tweets.account_id",
               :order => "created_at desc"
-  
+
   scope :freshest, lambda { |account|
-    { :conditions => ["deleted = ? and account_id = ? ", false, account], 
+    { :conditions => ["deleted = ? and account_id = ? ", false, account],
       :order => "helpdesk_notes.created_at DESC"
     }
   }
   scope :since, lambda { |last_note_id|
-    { :conditions => ["helpdesk_notes.id > ? ", last_note_id], 
+    { :conditions => ["helpdesk_notes.id > ? ", last_note_id],
       :order => "helpdesk_notes.created_at DESC"
     }
   }
@@ -69,15 +69,15 @@ class Helpdesk::Note < ActiveRecord::Base
   scope :created_since, lambda { |last_note_id, last_note_created_at|
     { :conditions => ["helpdesk_notes.id != ? AND helpdesk_notes.created_at >= ?", last_note_id, last_note_created_at] }
   }
-  
+
   scope :before, lambda { |first_note_id|
-    { :conditions => ["helpdesk_notes.id < ? ", first_note_id], 
+    { :conditions => ["helpdesk_notes.id < ? ", first_note_id],
       :order => "helpdesk_notes.created_at DESC"
     }
   }
-  
+
   scope :for_quoted_text, lambda { |first_note_id|
-    { :conditions => ["source != ? AND helpdesk_notes.id < ? ",SOURCE_KEYS_BY_TOKEN["forward_email"], first_note_id], 
+    { :conditions => ["source != ? AND helpdesk_notes.id < ? ",SOURCE_KEYS_BY_TOKEN["forward_email"], first_note_id],
       :order => "helpdesk_notes.created_at DESC",
       :limit => 4
     }
@@ -92,21 +92,21 @@ class Helpdesk::Note < ActiveRecord::Base
     }
   }
   scope :latest_facebook_message,
-              :conditions => [" incoming = 1 and social_fb_posts.postable_type = 'Helpdesk::Note'"], 
-              :joins => "INNER join social_fb_posts on helpdesk_notes.id = social_fb_posts.postable_id and helpdesk_notes.account_id = social_fb_posts.account_id", 
+              :conditions => [" incoming = 1 and social_fb_posts.postable_type = 'Helpdesk::Note'"],
+              :joins => "INNER join social_fb_posts on helpdesk_notes.id = social_fb_posts.postable_id and helpdesk_notes.account_id = social_fb_posts.account_id",
               :order => "created_at desc"
 
-  CATEGORIES.keys.each { |c| scope c.to_s.pluralize, 
+  CATEGORIES.keys.each { |c| scope c.to_s.pluralize,
     :joins => 'INNER JOIN helpdesk_schema_less_notes on helpdesk_schema_less_notes.note_id ='\
       ' helpdesk_notes.id and helpdesk_notes.account_id = helpdesk_schema_less_notes.account_id',
     :conditions => { 'helpdesk_schema_less_notes' => { :int_nc01 => CATEGORIES[c]}}
     }
 
-  scope :created_between, lambda { |start_time, end_time| 
-    {:conditions => ['helpdesk_notes.created_at >= ? and helpdesk_notes.created_at <= ?', 
+  scope :created_between, lambda { |start_time, end_time|
+    {:conditions => ['helpdesk_notes.created_at >= ? and helpdesk_notes.created_at <= ?',
       start_time, end_time]}
   }
-  
+
   scope :exclude_source, lambda { |s| exclude_condition(s) }
 
   scope :broadcast_notes,
@@ -176,7 +176,7 @@ class Helpdesk::Note < ActiveRecord::Base
   def status?
     source == SOURCE_KEYS_BY_TOKEN["status"]
   end
-  
+
   def email?
     source == SOURCE_KEYS_BY_TOKEN["email"]
   end
@@ -184,17 +184,17 @@ class Helpdesk::Note < ActiveRecord::Base
   def note?
   	source == SOURCE_KEYS_BY_TOKEN["note"]
   end
-  
+
   def tweet?
-    source == SOURCE_KEYS_BY_TOKEN["twitter"]    
+    source == SOURCE_KEYS_BY_TOKEN["twitter"]
   end
-  
+
   def fb_note?
     source == SOURCE_KEYS_BY_TOKEN["facebook"]
   end
-  
+
   def feedback?
-    source == SOURCE_KEYS_BY_TOKEN["feedback"]    
+    source == SOURCE_KEYS_BY_TOKEN["feedback"]
   end
 
   def meta?
@@ -204,7 +204,7 @@ class Helpdesk::Note < ActiveRecord::Base
   def private_note?
     source == SOURCE_KEYS_BY_TOKEN["note"] && private
   end
-  
+
   def public_note?
     source == SOURCE_KEYS_BY_TOKEN["note"] && !private
   end
@@ -224,15 +224,15 @@ class Helpdesk::Note < ActiveRecord::Base
   def canned_form?
     source == SOURCE_KEYS_BY_TOKEN['canned_form']
   end
-  
+
   def inbound_email?
     email? && incoming
   end
-  
+
   def outbound_email?
     email_conversation? && !incoming
-  end 
-  
+  end
+
   def fwd_email?
     user_fwd_email? || automation_fwd_email?
   end
@@ -248,7 +248,7 @@ class Helpdesk::Note < ActiveRecord::Base
   def email_conversation?
     email? or fwd_email?
   end
-  
+
   def to_cc_emails
     [to_emails,cc_emails]
   end
@@ -256,8 +256,8 @@ class Helpdesk::Note < ActiveRecord::Base
   def can_split?
     return false unless Account.current.split_tickets_enabled?
      human_note_for_ticket? and (self.incoming and self.notable) and !user.blocked? and (self.private ? user.customer? : true) and
-      ((self.notable.facebook? and self.fb_post) ? self.fb_post.can_comment? : true) and 
-        (!self.mobihelp?) and (!self.ecommerce?) and(!self.feedback?) and 
+      ((self.notable.facebook? and self.fb_post) ? self.fb_post.can_comment? : true) and
+        (!self.mobihelp?) and (!self.ecommerce?) and(!self.feedback?) and
         self.notable.customer_performed?(self.user) and (!self.broadcast_note?)
   end
 
@@ -277,9 +277,9 @@ class Helpdesk::Note < ActiveRecord::Base
   def source_name
     SOURCES[source]
   end
-  
+
   def to_liquid
-    # { 
+    # {
     #   "commenter" => user,
     #   "body"      => liquidize_body,
     #   "body_text" => body
@@ -303,7 +303,7 @@ class Helpdesk::Note < ActiveRecord::Base
     hash = parse_email_text(self.schema_less_note.try(:from_email))
     hash[:email]
   end
-  
+
   def to_xml(options = {})
      options[:indent] ||= 2
       xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
@@ -319,9 +319,9 @@ class Helpdesk::Note < ActiveRecord::Base
 
   def create_fwd_note_activity(to_emails)
     notable.create_activity(user, 'activities.tickets.conversation.out_email.private.long',
-            {'eval_args' => {'fwd_path' => ['fwd_path', 
+            {'eval_args' => {'fwd_path' => ['fwd_path',
                                 {'ticket_id' => notable.display_id, 'comment_id' => id}]}, 'to_emails' => parse_to_comma_sep_emails(to_emails)},
-            'activities.tickets.conversation.out_email.private.short')  
+            'activities.tickets.conversation.out_email.private.short')
   end
 
   def respond_to?(attribute, include_private=false)
@@ -331,7 +331,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
   def save_response_time
     if human_note_for_ticket?
-      ticket_state = notable.ticket_states   
+      ticket_state = notable.ticket_states
       if notable.customer_performed?(user)
         if notable.outbound_email?
           ticket_state.requester_responded_at = created_at  if can_set_requester_response?
@@ -342,7 +342,7 @@ class Helpdesk::Note < ActiveRecord::Base
         ticket_state.inbound_count = notable.outbound_email? ? notable.notes.visible.customer_responses.count : notable.notes.visible.customer_responses.count+1
       elsif !private
         update_note_level_resp_time(ticket_state)
-        
+
         ticket_state.set_avg_response_time
         if notable.outbound_email?
           customer_resp = first_customer_note(notable,notable.created_at,created_at)
@@ -352,7 +352,7 @@ class Helpdesk::Note < ActiveRecord::Base
           ticket_state.agent_responded_at = created_at
           ticket_state.set_first_response_time(created_at)
         end
-      end 
+      end
       ticket_state.save
     end
   end
@@ -371,13 +371,13 @@ class Helpdesk::Note < ActiveRecord::Base
       customer_resp = first_customer_note(notable,ticket_state.agent_responded_at, self.created_at)
       resp_time,resp_time_bhrs = calculate_response_time(customer_resp) unless customer_resp.blank?
     end
-    
+
     schema_less_note.update_attributes(:response_time_in_seconds => resp_time,
       :response_time_by_bhrs => resp_time_bhrs) unless resp_time.blank?
   end
 
   def kind
-    return "reply_to_forward" if reply_to_forward? 
+    return "reply_to_forward" if reply_to_forward?
     return "private_note" if private_note? && !broadcast_note?
     return "public_note" if public_note?
     return "forward" if fwd_email?
@@ -389,12 +389,12 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def liquidize_body
-    all_attachments.empty? ? body_html : 
+    all_attachments.empty? ? body_html :
       "#{body_html}\n\nAttachments :\n#{notable.liquidize_attachments(all_attachments)}\n"
   end
-  
+
   def fb_reply_allowed?
-    self.notable.facebook? and self.fb_post and self.incoming and self.fb_post.can_comment? 
+    self.notable.facebook? and self.fb_post and self.incoming and self.fb_post.can_comment?
   end
 
   def load_note_reply_cc
@@ -429,7 +429,7 @@ class Helpdesk::Note < ActiveRecord::Base
     key = NER_ENRICHED_NOTE % { :account_id => self.account_id , :ticket_id => self.notable_id }
     MemcacheKeys.cache(key, ner_data, NER_DATA_TIMEOUT)
   end
-  
+
   # Instance level spam watcher condition
   # def rl_enabled?
   #   self.account.features?(:resource_rate_limit) && !self.instance_variable_get(:@skip_resource_rate_limit)
@@ -449,6 +449,15 @@ class Helpdesk::Note < ActiveRecord::Base
     schema_less_note.note_properties[:received_at] = received_at
   end
 
+  def recently_created_note?
+    Time.zone.now - created_at < 1.hour
+  end
+
+  def eligible_to_detect_thank_you?
+    user.customer? && !import_note && body.present? && !Helpdesk::Note::BLACKLISTED_THANK_YOU_DETECTOR_NOTE_SOURCES.include?(source) &&
+      recently_created_note?
+  end
+
   protected
 
     def send_reply_email
@@ -464,7 +473,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
     def add_cc_email
       return if third_party_response?
-      
+
       cc_email_hash_value = notable.cc_email_hash.nil? ? Helpdesk::Ticket.default_cc_hash : notable.cc_email_hash
       if fwd_email? || reply_to_forward?
         fwd_emails = self.to_emails | self.cc_emails | self.bcc_emails | cc_email_hash_value[:fwd_emails]
@@ -475,17 +484,17 @@ class Helpdesk::Note < ActiveRecord::Base
         tkt_cc_emails = self.cc_emails | cc_email_hash_value[:cc_emails]
         cc_emails = tkt_cc_emails.map { |email| parse_email(email)[:email].downcase }.compact.uniq
         cc_emails.delete_if {|email| (notable.requester.email.present? && email == notable.requester.email.downcase)}
-        cc_email_hash_value[:bcc_emails] = cc_email_hash_value[:bcc_emails].present? ? self.bcc_emails | cc_email_hash_value[:bcc_emails] : self.bcc_emails 
+        cc_email_hash_value[:bcc_emails] = cc_email_hash_value[:bcc_emails].present? ? self.bcc_emails | cc_email_hash_value[:bcc_emails] : self.bcc_emails
         cc_email_hash_value[:cc_emails] = cc_emails
       end
-      notable.cc_email = cc_email_hash_value    
+      notable.cc_email = cc_email_hash_value
     end
-    
-    # The below 2 methods are used only for to_json 
+
+    # The below 2 methods are used only for to_json
     def user_name
       human_note_for_ticket? ? (user.name || user_info) : "-"
     end
-    
+
     def user_info
       user.get_info if user
     end
@@ -495,7 +504,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
   private
-  
+
     # def rl_exceeded_operation
     #   key = "RL_%{table_name}:%{account_id}:%{user_id}" % {:table_name => self.class.table_name, :account_id => self.account_id,
     #           :user_id => self.user_id }
@@ -509,10 +518,10 @@ class Helpdesk::Note < ActiveRecord::Base
     def automated_note_for_ticket?
       (source == SOURCE_KEYS_BY_TOKEN["automation_rule"])
     end
-     
+
     # Replied by third pary to the forwarded email
     # Use this method only after checking human_note_for_ticket? and user.customer?
-    def replied_by_third_party? 
+    def replied_by_third_party?
       private_note? and incoming and notable.included_in_fwd_emails?(user.email)
     end
 
@@ -539,7 +548,7 @@ class Helpdesk::Note < ActiveRecord::Base
     def first_customer_note(ticket, from_time, to_time)
       notable.notes.visible.customer_responses.
           created_between(from_time,to_time).first(
-          :select => "helpdesk_notes.id,helpdesk_notes.created_at", 
+          :select => "helpdesk_notes.id,helpdesk_notes.created_at",
           :order => "helpdesk_notes.created_at ASC")
     end
 

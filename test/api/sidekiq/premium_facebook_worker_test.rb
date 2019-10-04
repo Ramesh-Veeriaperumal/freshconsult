@@ -47,7 +47,7 @@ class PremiumFacebookWorkerTest < ActionView::TestCase
             msg_id = thread_id + 20
             time = Time.now.utc
             dm = sample_dms(thread_id, @user_id, msg_id, time)
-            Koala::Facebook::API.any_instance.stubs(:get_connections).returns(dm)
+            Koala::Facebook::API.any_instance.stubs(:get_connections).returns(dm.to_json)
             account_id = Account.last.id + 20
             Social::PremiumFacebookWorker.new.perform('account_id' => account_id)
             Social::PremiumFacebookWorker.any_instance.unstub(:fan_page)
@@ -62,16 +62,15 @@ class PremiumFacebookWorkerTest < ActionView::TestCase
     time = Time.now.utc
     dm = sample_dms(thread_id, @user_id, msg_id, time)
     del_semaphore(semaphore_key)
-    Koala::Facebook::API.any_instance.stubs(:get_connections).returns(dm)
+    Koala::Facebook::API.any_instance.stubs(:get_connections).returns(dm.to_json)
     Social::PremiumFacebookWorker.new.perform('account_id' => @account.id)
     Koala::Facebook::API.any_instance.unstub(:get_connections)
-    dm = HashWithIndifferentAccess.new(dm[0])
+    dm = HashWithIndifferentAccess.new(dm['data'][0])
     direct_message_data = dm[:messages][:data][0]
     dm_msg_id = direct_message_data[:id]
     ticket = @account.facebook_posts.find_by_post_id(dm_msg_id).postable
     assert_equal ticket.is_a?(Helpdesk::Ticket), true
     assert_equal verify_ticket_properties(ticket, direct_message_data), true
-    assert_equal Time.at(@account.facebook_pages.first.message_since).utc.to_s, (time + 1.hour).to_s
     assert_equal semaphore_exists?(semaphore_key), false
   ensure
     del_semaphore(semaphore_key)
@@ -87,10 +86,10 @@ class PremiumFacebookWorkerTest < ActionView::TestCase
     msg_id = thread_id + 20
     time = Time.now.utc
     dm = sample_dms(thread_id, @user_id, msg_id, time)
-    Koala::Facebook::API.any_instance.stubs(:get_connections).returns(dm)
+    Koala::Facebook::API.any_instance.stubs(:get_connections).returns(dm.to_json)
     Social::PremiumFacebookWorker.new.perform('account_id' => @account.id)
     Koala::Facebook::API.any_instance.unstub(:get_connections)
-    dm = HashWithIndifferentAccess.new(dm[0])
+    dm = HashWithIndifferentAccess.new(dm['data'][0])
     dm_msg_id = dm[:messages][:data][0][:id]
 
     ticket = @account.facebook_posts.find_by_post_id(dm_msg_id).postable
@@ -109,12 +108,12 @@ class PremiumFacebookWorkerTest < ActionView::TestCase
 
     dm = sample_dms(thread_id, @user_id, msg_id, time)
     Timecop.freeze(Time.now.utc + 1.hour) do
-      Koala::Facebook::API.any_instance.stubs(:get_connections).returns(dm)
+      Koala::Facebook::API.any_instance.stubs(:get_connections).returns(dm.to_json)
       Social::PremiumFacebookWorker.new.perform('account_id' => @account.id)
     end
     Koala::Facebook::API.any_instance.unstub(:get_connections)
-    first_msg_id = HashWithIndifferentAccess.new(dm[0])[:messages][:data][0][:id]
-    second_msg_id = HashWithIndifferentAccess.new(dm[1])[:messages][:data][0][:id]
+    first_msg_id = HashWithIndifferentAccess.new(dm['data'][0])[:messages][:data][0][:id]
+    second_msg_id = HashWithIndifferentAccess.new(dm['data'][1])[:messages][:data][0][:id]
     assert_equal @account.facebook_posts.find_by_post_id(first_msg_id).postable.is_a?(Helpdesk::Ticket), true
     assert_equal @account.facebook_posts.find_by_post_id(second_msg_id).postable.is_a?(Helpdesk::Ticket), true
   ensure
@@ -127,11 +126,11 @@ class PremiumFacebookWorkerTest < ActionView::TestCase
     time = Time.now.utc
 
     dm = sample_dms(thread_id, @user_id, msg_id, time)
-    Koala::Facebook::API.any_instance.stubs(:get_connections).returns(dm)
+    Koala::Facebook::API.any_instance.stubs(:get_connections).returns(dm.to_json)
     Social::PremiumFacebookWorker.new.perform('account_id' => @account.id)
     Koala::Facebook::API.any_instance.unstub(:get_connections)
-    first_msg_id = HashWithIndifferentAccess.new(dm[0])[:messages][:data][0][:id]
-    second_msg_data = HashWithIndifferentAccess.new(dm[1])[:messages][:data][0]
+    first_msg_id = HashWithIndifferentAccess.new(dm['data'][0])[:messages][:data][0][:id]
+    second_msg_data = HashWithIndifferentAccess.new(dm['data'][1])[:messages][:data][0]
     second_msg_id = second_msg_data[:id]
     assert_equal @account.facebook_posts.find_by_post_id(first_msg_id).postable.is_a?(Helpdesk::Ticket), true
     note = @account.facebook_posts.find_by_post_id(second_msg_id).postable
@@ -149,11 +148,11 @@ class PremiumFacebookWorkerTest < ActionView::TestCase
     next_msg_id = rand(10**10)
     time = (Time.now + 1.hour).utc
     next_msgs = sample_dms(thread_id, @user_id, next_msg_id, time)
-    Koala::Facebook::API.any_instance.stubs(:get_connections).returns(next_msgs)
+    Koala::Facebook::API.any_instance.stubs(:get_connections).returns(next_msgs.to_json)
     Social::PremiumFacebookWorker.new.perform('account_id' => @account.id)
     Koala::Facebook::API.any_instance.unstub(:get_connections)
-    first_msg_id = HashWithIndifferentAccess.new(next_msgs[0])[:messages][:data][0][:id]
-    second_msg_id = HashWithIndifferentAccess.new(next_msgs[1])[:messages][:data][0][:id]
+    first_msg_id = HashWithIndifferentAccess.new(next_msgs['data'][0])[:messages][:data][0][:id]
+    second_msg_id = HashWithIndifferentAccess.new(next_msgs['data'][1])[:messages][:data][0][:id]
     fb_posts = @account.facebook_posts
     assert_equal fb_posts.find_by_post_id(first_msg_id).postable.is_a?(Helpdesk::Note), true
     assert_equal fb_posts.find_by_post_id(second_msg_id).postable.is_a?(Helpdesk::Note), true
@@ -168,10 +167,10 @@ class PremiumFacebookWorkerTest < ActionView::TestCase
     msg_id = thread_id + 20
     time = Time.now.utc
     dm = sample_dms(thread_id, @user_id, msg_id, time)
-    Koala::Facebook::API.any_instance.stubs(:get_connections).returns(dm)
+    Koala::Facebook::API.any_instance.stubs(:get_connections).returns(dm.to_json)
     Social::PremiumFacebookWorker.new.perform('account_id' => @account.id)
     Koala::Facebook::API.any_instance.unstub(:get_connections)
-    direct_message_data = HashWithIndifferentAccess.new(dm[0])['messages']['data'][0]
+    direct_message_data = HashWithIndifferentAccess.new(dm['data'][0])['messages']['data'][0]
     dm_msg_id = direct_message_data['id']
     assert_nil @account.facebook_posts.find_by_post_id(dm_msg_id)
   ensure
@@ -184,10 +183,10 @@ class PremiumFacebookWorkerTest < ActionView::TestCase
     msg_id = thread_id + 20
     time = Time.now.utc
     dm = sample_dms(thread_id, @user_id, msg_id, time)
-    Koala::Facebook::API.any_instance.stubs(:get_connections).returns(dm)
+    Koala::Facebook::API.any_instance.stubs(:get_connections).returns(dm.to_json)
     Social::PremiumFacebookWorker.new.perform('account_id' => @account.id)
     Koala::Facebook::API.any_instance.unstub(:get_connections)
-    direct_message_data = HashWithIndifferentAccess.new(dm[0])['messages']['data'][0]
+    direct_message_data = HashWithIndifferentAccess.new(dm['data'][0])['messages']['data'][0]
     dm_msg_id = direct_message_data['id']
     assert_nil @account.facebook_posts.find_by_post_id(dm_msg_id)
   ensure
@@ -200,10 +199,10 @@ class PremiumFacebookWorkerTest < ActionView::TestCase
     msg_id = thread_id + 20
     time = Time.now.utc
     dm = sample_dms(thread_id, @user_id, msg_id, time)
-    Koala::Facebook::API.any_instance.stubs(:get_connections).returns(dm)
+    Koala::Facebook::API.any_instance.stubs(:get_connections).returns(dm.to_json)
     Social::PremiumFacebookWorker.new.perform('account_id' => @account.id)
     Koala::Facebook::API.any_instance.unstub(:get_connections)
-    dm = HashWithIndifferentAccess.new(dm[0])
+    dm = HashWithIndifferentAccess.new(dm['data'][0])
     direct_message_data = dm[:messages][:data][0]
     dm_msg_id = direct_message_data[:id]
     ticket = @account.facebook_posts.find_by_post_id(dm_msg_id)

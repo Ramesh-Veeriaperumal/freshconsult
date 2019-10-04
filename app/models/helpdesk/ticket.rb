@@ -4,7 +4,7 @@ require 'digest/md5'
 class Helpdesk::Ticket < ActiveRecord::Base
 
   self.primary_key = :id
-  
+
   include Helpdesk::TicketModelExtension
   include Helpdesk::Ticketfields::TicketStatus
   include ParserUtil
@@ -28,10 +28,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include AccountConstants
   include RoundRobinCapping::Methods
   include MemcacheKeys
- 
+
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed",
-                            "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "sender_email", 
+                            "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "sender_email",
                             "parent_ticket", "reports_hash","sla_response_reminded","sla_resolution_reminded", "dirty_attributes",
                             "sentiment", "spam_score", "sds_spam", "dynamodb_range_key", "failure_count", "subsidiary_tkts_count"]
 
@@ -41,10 +41,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
                              "first_resp_time_by_bhrs", "resolution_time_by_bhrs", "avg_response_time_by_bhrs", "resolution_time_updated_at", "on_state_time"]
 
   TICKET_BLACKLISTED_ATTRIBUTES = ['override_exchange_model'].freeze
-                            
+
   OBSERVER_ATTR = []
   self.table_name =  "helpdesk_tickets"
-  
+
   serialize :cc_email
 
   concerned_with :associations, :validations, :presenter, :callbacks, :riak, :s3, :mysql,
@@ -64,14 +64,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :round_robin_assignment, :related_ticket_ids, :tracker_ticket_id, :unique_external_id, :assoc_parent_tkt_id,
     :sbrr_turned_on, :status_sla_toggled_to, :replicated_state, :skip_sbrr_assigner, :bg_jobs_inline,
     :sbrr_ticket_dequeued, :sbrr_user_score_incremented, :sbrr_fresh_ticket, :skip_sbrr, :model_changes,
-    :schedule_observer, :required_fields_on_closure, :observer_args, :skip_sbrr_save, 
-    :sbrr_state_attributes, :escape_liquid_attributes, :update_sla, :sla_on_background, 
+    :schedule_observer, :required_fields_on_closure, :observer_args, :skip_sbrr_save,
+    :sbrr_state_attributes, :escape_liquid_attributes, :update_sla, :sla_on_background,
     :sla_calculation_time, :disable_sla_calculation, :import_ticket, :ocr_update, :skip_ocr_sync,
     :custom_fields_hash, :thank_you_note_id
     # :skip_sbrr_assigner and :skip_sbrr_save can be combined together if needed.
     # Added :system_changes, :activity_type, :misc_changes for activity_revamp -
     # - will be clearing these after activity publish.
-  
+
 #  attr_protected :attachments #by Shan - need to check..
 
   attr_protected :account_id, :display_id, :attachments #to avoid update of these properties via api.
@@ -102,7 +102,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   }
   }
 
-  scope :all_user_tickets, lambda { |user_id| { 
+  scope :all_user_tickets, lambda { |user_id| {
     :conditions => [ "requester_id=? ", user_id ]
     }
   }
@@ -196,8 +196,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     }
   }
   scope :all_article_tickets,
-          :joins => %(INNER JOIN article_tickets ON article_tickets.ticketable_id = helpdesk_tickets.id and 
-                    article_tickets.ticketable_type = 'Helpdesk::Ticket' and 
+          :joins => %(INNER JOIN article_tickets ON article_tickets.ticketable_id = helpdesk_tickets.id and
+                    article_tickets.ticketable_type = 'Helpdesk::Ticket' and
                     article_tickets.account_id = helpdesk_tickets.account_id),
           :order => "`article_tickets`.`id` DESC"
 
@@ -277,7 +277,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   scope :associated_with_skill, lambda {|skill_id| {
     :conditions => ["sl_skill_id in (?)", skill_id],
-  }} 
+  }}
 
   scope :next_autoplay_ticket, lambda {|account,responder_id| {
     :select => "helpdesk_tickets.display_id",
@@ -373,13 +373,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def sla_calculation_time
     @sla_calculation_time ||= Time.zone.now
-  end  
+  end
 
   def sbrr_state_attributes
     @sbrr_state_attributes ||= attributes.symbolize_keys.slice(*TicketConstants::NEEDED_SBRR_ATTRIBUTES)
   end
 
-  def to_param 
+  def to_param
     display_id ? display_id.to_s : nil
   end
 
@@ -480,19 +480,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.canned_form_handles.where(canned_form_id: cf_obj.id).last
   end
 
-  # Create/Fetch canned form handle 
+  # Create/Fetch canned form handle
 
   def create_or_fetch_canned_form(cf_obj)
-    Sharding.run_on_master do 
+    Sharding.run_on_master do
       latest_cf_handle = fetch_latest_cf_handle(cf_obj)
-      
+
       # If there is any unused CF handle url, use it. Otherwise, create a new one.
       if latest_cf_handle.nil? || latest_cf_handle.response_note_id
         handle = cf_obj.canned_form_handles.build(ticket_id: self.id)
 
         unless handle.save
           Rails.logger.info "Error While saving canned form handle - #{handle.errors}"
-          return nil 
+          return nil
         else
           return handle
         end
@@ -1353,7 +1353,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       ticket_replica.safe_send("#{_attribute}=", value)
     end
 
-    _changes ||= begin 
+    _changes ||= begin
       temp_changes = changes #calling changes builds a hash everytime
       temp_changes.present? ? temp_changes : previous_changes
     end
@@ -1365,7 +1365,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ticket_replica.replicated_state = TicketConstants::TICKET_REPLICA[index]
     custom_attributes.each {|custom_attr| ticket_replica.safe_send("#{custom_attr}=", safe_send(custom_attr)) }
 
-    ticket_replica.schema_less_ticket = 
+    ticket_replica.schema_less_ticket =
       schema_less_ticket.replicate_schema_less_ticket(index, _schema_less_ticket_changes)
     ticket_replica
   end
@@ -1393,11 +1393,28 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def invoke_ticket_observer_worker(args)
-    delay = args[:note_id].present? && Account.current.detect_thank_you_note_enabled?
-    job_id = delay ? ::Tickets::ObserverWorker.perform_in(2.seconds, args) : ::Tickets::ObserverWorker.perform_async(args)
-    Va::Logger::Automation.set_thread_variables(Account.current.id, id, args[:doer_id], nil)
-    Va::Logger::Automation.log("Triggering Observer, job_id=#{job_id}, info=#{args.inspect}", true)
-    Va::Logger::Automation.unset_thread_variables
+    if trigger_thank_you_worker?(args)
+      ::Freddy::DetectThankYouNoteWorker.perform_async(args)
+      Rails.logger.info "Enqueueing DetectThankYouNoteWorker T :: #{id} , N :: #{args[:note_id]}"
+    else
+      job_id = ::Tickets::ObserverWorker.perform_async(args)
+      Va::Logger::Automation.set_thread_variables(Account.current.id, id, args[:doer_id], nil)
+      Va::Logger::Automation.log("Triggering Observer, job_id=#{job_id}, info=#{args.inspect}", true)
+      Va::Logger::Automation.unset_thread_variables
+    end
+
+  end
+
+  def trigger_thank_you_worker?(args)
+    return false unless args[:note_id].present?
+    note = notes.find_by_id(args[:note_id])
+    return false unless note.present?
+    Account.current.detect_thank_you_note_enabled? && Account.current.thank_you_configured_in_automation_rules? && sla_timer_off_status? &&
+      note.eligible_to_detect_thank_you?
+  end
+
+  def sla_timer_off_status?
+    Helpdesk::TicketStatus.onhold_and_closed_statuses(Account.current).include? status
   end
 
   def should_skip_agent_email_notifications?
@@ -1428,7 +1445,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def eligible_for_ocr?
     account.omni_channel_routing_enabled? && rr_active?
   end
- 
+
   def thank_you_note
     @thank_you_note ||= evaluate_on.notes.find_by_id(thank_you_note_id)
   end

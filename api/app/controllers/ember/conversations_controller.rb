@@ -86,12 +86,20 @@ module Ember
     def facebook_reply
       @validation_klass = 'FbReplyValidation'
       return unless validate_body_params(@ticket)
+
       sanitize_params
       build_object
       assign_note_attributes
       @delegator_klass = 'FbReplyDelegator'
       fb_page = @ticket.fb_post.facebook_page
-      return unless validate_delegator(@item, note_id: @note_id, fb_page: fb_page)
+
+      if facebook_outgoing_attachment_enabled?
+        return unless validate_delegator(@item, note_id: @note_id, fb_page: fb_page, attachment_ids: @attachment_ids)
+
+        add_facebook_attachments
+      else
+        return unless validate_delegator(@item, note_id: @note_id, fb_page: fb_page)
+      end
       reply_sent = reply_to_fb_ticket(@delegator.note)
       is_success = (reply_sent == :fb_user_blocked) || (reply_sent == :failure) ? false : reply_sent
       render_response(is_success)
@@ -164,6 +172,10 @@ module Ember
     alias reply_to_forward_template reply_forward_template
 
     private
+
+      def add_facebook_attachments
+        @item.attachments = @item.attachments + @delegator.draft_attachments if @delegator.draft_attachments
+      end
 
       def fetch_attachments
         return unless forward_template?

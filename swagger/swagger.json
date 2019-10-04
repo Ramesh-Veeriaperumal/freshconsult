@@ -14150,22 +14150,22 @@
                         "tickets": {
                           "type": "object",
                           "properties": {
-                            "include_subject" : {
+                            "include_subject": {
                               "type": "boolean"
                             },
-                            "include_description" : {
+                            "include_description": {
                               "type": "boolean"
                             },
-                            "include_other_properties" : {
+                            "include_other_properties": {
                               "type": "boolean"
                             },
-                            "include_notes" : {
+                            "include_notes": {
                               "type": "boolean"
                             },
-                            "include_attachment_names" : {
+                            "include_attachment_names": {
                               "type": "boolean"
                             },
-                            "archive" : {
+                            "archive": {
                               "type": "boolean"
                             }
                           }
@@ -16312,28 +16312,23 @@
         "search_settings": {
           "type": "object",
           "properties": {
-            "tickets": {
-              "type": "object",
-              "properties": {
-                "include_subject" : {
-                  "type": "boolean"
-                },
-                "include_description" : {
-                  "type": "boolean"
-                },
-                "include_other_properties" : {
-                  "type": "boolean"
-                },
-                "include_notes" : {
-                  "type": "boolean"
-                },
-                "include_attachment_names" : {
-                  "type": "boolean"
-                },
-                "archive" : {
-                  "type": "boolean"
-                }
-              }
+            "include_subject": {
+              "type": "boolean"
+            },
+            "include_description": {
+              "type": "boolean"
+            },
+            "include_other_properties": {
+              "type": "boolean"
+            },
+            "include_notes": {
+              "type": "boolean"
+            },
+            "include_attachment_names": {
+              "type": "boolean"
+            },
+            "archive": {
+              "type": "boolean"
             }
           }
         }
@@ -17762,12 +17757,6 @@
         },
         "displayed_to_customers": {
           "type": "boolean"
-        },
-        "portal_cc": {
-          "type": "boolean"
-        },
-        "portal_cc_to": {
-          "type": "string"
         }
       },
       "required": [
@@ -25229,7 +25218,7 @@
                   "label": {
                     "type": "string"
                   },
-                  "label_in_portal": {
+                  "label_for_customers": {
                     "type": "string"
                   },
                   "level": {
@@ -25269,6 +25258,12 @@
             },
             "has_section": {
               "type": "boolean"
+            },
+            "portal_cc": {
+              "type": "boolean"
+            },
+            "portal_cc_to": {
+              "type": "string"
             }
           }
         },
@@ -25293,7 +25288,7 @@
                   "label": {
                     "type": "string"
                   },
-                  "label_in_portal": {
+                  "label_for_customers": {
                     "type": "string"
                   }
                 }
@@ -25328,6 +25323,12 @@
         {
           "type": "object",
           "properties": {
+            "portal_cc": {
+              "type": "boolean"
+            },
+            "portal_cc_to": {
+              "type": "string"
+            },
             "dependent_fields": {
               "type": "array",
               "items": {
@@ -25336,7 +25337,7 @@
                   "label": {
                     "type": "string"
                   },
-                  "label_in_portal": {
+                  "label_for_customers": {
                     "type": "string"
                   },
                   "deleted": {
@@ -25400,7 +25401,7 @@
                   "label": {
                     "type": "string"
                   },
-                  "label_in_portal": {
+                  "label_for_customers": {
                     "type": "string"
                   },
                   "level": {
@@ -25440,6 +25441,12 @@
             },
             "has_section": {
               "type": "boolean"
+            },
+            "portal_cc": {
+              "type": "boolean"
+            },
+            "portal_cc_to": {
+              "type": "string"
             }
           }
         },
@@ -25469,21 +25476,6 @@
                   },
                   "parent_choice_id": {
                     "type": "integer"
-                  },
-                  "label_for_customer": {
-                    "type": "string"
-                  },
-                  "stop_sla_timer": {
-                    "type": "boolean"
-                  },
-                  "default": {
-                    "type": "boolean"
-                  },
-                  "group_ids": {
-                    "type": "array",
-                    "items": {
-                      "type": "integer"
-                    }
                   },
                   "choices": {
                     "type": "array",
@@ -25810,6 +25802,9 @@
             },
             "label": {
               "type": "string"
+            },
+            "parent_ticket_field_id": {
+              "type": "integer"
             },
             "choice_ids": {
               "type": "array",
