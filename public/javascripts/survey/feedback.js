@@ -102,5 +102,12 @@ var Feedback = {
         console.log(error);
       }
     });
+  },
+  surveyPreviewHit: function(event, translated_feedback_text) {
+    event.stopPropagation();
+    event.preventDefault();
+    Feedback.showOverlay(surveyFeedbackI18n.surveyFeedback);
+    Feedback.hide({thanks_message: translated_feedback_text});
+    return false;
   }
 }
