@@ -65,7 +65,7 @@ module Ember
       def reset_attributes                
         if params[cname]["assignment_type"] == NO_ASSIGNMENT
           @item["capping_limit"]=0, @item["toggle_availability"]=0
-        elsif (params[cname]["assignment_type"] == ROUND_ROBIN_ASSIGNMENT && [ROUND_ROBIN, LBRR_BY_OMNIROUTE].include?(params[cname]["round_robin_type"]))
+        elsif [ROUND_ROBIN, LBRR_BY_OMNIROUTE].include?(params[cname]["round_robin_type"])
           @item["capping_limit"]=0
         elsif params[cname]["assignment_type"]== OMNI_CHANNEL_ROUTING_ASSIGNMENT
           @item["capping_limit"]=0

@@ -62,7 +62,6 @@ class Account < ActiveRecord::Base
     
     def valid_subscription?
       return if errors.any? # Don't bother with a subscription if there are errors already
-      self.build_subscription(:plan => @plan, :next_renewal_at => @plan_start, :creditcard => @creditcard, :address => @address, :affiliate => @affiliate)
       if !subscription.valid?
         errors.add(:base,"Error with payment: #{subscription.errors.full_messages.to_sentence}")
         return false

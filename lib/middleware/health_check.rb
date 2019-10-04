@@ -9,6 +9,8 @@ module Middleware
       if HEALTH_CHECK_PATH["allowed_routes"].include?(env['PATH_INFO'])
         if check_asset_compilation && !File.exist?('/tmp/helpkit_app_restart.txt')
           [200, {'Content-Type' => 'text/plain'}, ["Success"]]
+        elsif File.exist?('/tmp/helpkit_app_restart.txt')
+          [400, {'Content-Type' => 'text/plain'}, ["Out of traffic"]]
         else
           [500, {'Content-Type' => 'text/plain'}, ["Failure"]]
         end

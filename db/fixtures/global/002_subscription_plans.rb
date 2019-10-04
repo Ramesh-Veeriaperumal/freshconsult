@@ -1,4 +1,4 @@
-def self.plan_list(all_addons, estate_addons, garden_addons, blossom_addons, estate_17_addons, garden_17_addons, blossom_17_addons, sprout_17_addons)
+def self.plan_list(all_addons, estate_addons, garden_addons, blossom_addons, estate_17_addons, garden_17_addons, blossom_17_addons, sprout_17_addons, estate_19_addons, forest_19_addons)
 	[
     { :name => 'Sprout', :amount => 15, :free_agents => 3, :day_pass_amount => 1.00,
     	:addons => all_addons, :price => plan_price[:sprout], :classic => true, :display_name => "Sprout" },
@@ -32,16 +32,16 @@ def self.plan_list(all_addons, estate_addons, garden_addons, blossom_addons, est
         :addons => garden_17_addons },
     { name: 'Estate Jan 19', amount: 65.0, renewal_period: 1, trial_period: 1, free_agents: 0,
         day_pass_amount: 4, price: plan_price[:estate_jan_19], classic: false, display_name: 'Estate',
-        :addons => estate_17_addons },
+        :addons => estate_19_addons },
     { name: 'Forest Jan 19', amount: 125.0, renewal_period: 1, trial_period: 1, free_agents: 0,
-        day_pass_amount: 6, price: plan_price[:forest_jan_19], classic: false, display_name: 'Forest' },
+        day_pass_amount: 6, price: plan_price[:forest_jan_19], classic: false, display_name: 'Forest',
+        :addons => forest_19_addons },
     { name: 'Garden Omni Jan 19', amount: 45.0, renewal_period: 1, trial_period: 1, free_agents: 0,
         day_pass_amount: 2, price: plan_price[:garden_omni_jan_19], classic: false, display_name: 'Garden',
         :addons => garden_17_addons },
     { name: 'Estate Omni Jan 19', amount: 85.0, renewal_period: 1, trial_period: 1, free_agents: 0,
         day_pass_amount: 4, price: plan_price[:estate_omni_jan_19], classic: false, display_name: 'Estate',
-        :addons => estate_17_addons }
-
+        :addons => estate_19_addons }
 	]
 end
 
@@ -398,6 +398,41 @@ unless Account.current
 	  a.addon_type = addon_types[:for_account]
 	end
 
+  fluffy_forest = Subscription::Addon.seed(:name) do |a|
+    a.name = 'Fluffy Forest'
+    a.amount = 2000.0
+    a.renewal_period = 1
+    a.addon_type = addon_types[:for_account]
+  end
+
+  fluffy_higher_plan1 = Subscription::Addon.seed(:name) do |a|
+    a.name = 'Fluffy Higher Plan1'
+    a.amount = 4000.0
+    a.renewal_period = 1
+    a.addon_type = addon_types[:for_account]
+  end
+
+  fluffy_higher_plan2 = Subscription::Addon.seed(:name) do |a|
+    a.name = 'Fluffy Higher Plan2'
+    a.amount = 5000.0
+    a.renewal_period = 1
+    a.addon_type = addon_types[:for_account]
+  end
+
+  fluffy_higher_plan3 = Subscription::Addon.seed(:name) do |a|
+    a.name = 'Fluffy Higher Plan3'
+    a.amount = 7000.0
+    a.renewal_period = 1
+    a.addon_type = addon_types[:for_account]
+  end
+
+  fluffy_higher_plan4 = Subscription::Addon.seed(:name) do |a|
+    a.name = 'Fluffy Higher Plan4'
+    a.amount = 8000.0
+    a.renewal_period = 1
+    a.addon_type = addon_types[:for_account]
+  end
+
 	all_addons = [ agent_collision, custom_ssl, custom_roles, gamification, layout_customization,
 	               multiple_business_hours, round_robin, chat, enterprise_reporting, custom_domain,
 	               custom_slas, custom_mailbox, whitelisted_ips, chat_routing, dynamic_sections,
@@ -413,7 +448,11 @@ unless Account.current
 	blossom_17_addons = all_addons + [link_tickets_toggle, parent_child_tickets_toggle] - [custom_domain, one_contact_multiple_companies, sandbox]
 	sprout_17_addons  = [custom_domain, call_center_advanced]
 
-  SubscriptionPlan.seed_many(:name, plan_list(all_addons, estate_addons, garden_addons, blossom_addons, estate_17_addons, garden_17_addons, blossom_17_addons, sprout_17_addons))
+	estate_jan_19 = estate_17_addons + [fluffy_forest, fluffy_higher_plan1, fluffy_higher_plan2, fluffy_higher_plan3, fluffy_higher_plan4]
+
+	forest_jan_19 = [fluffy_higher_plan1, fluffy_higher_plan2, fluffy_higher_plan3, fluffy_higher_plan4]
+
+  SubscriptionPlan.seed_many(:name, plan_list(all_addons, estate_addons, garden_addons, blossom_addons, estate_17_addons, garden_17_addons, blossom_17_addons, sprout_17_addons, estate_jan_19, forest_jan_19))
 
   Subscription::Currency.seed_many(:name, currencies)
 end

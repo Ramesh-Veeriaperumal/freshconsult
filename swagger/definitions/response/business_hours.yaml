@@ -14,6 +14,11 @@ items:
     business_hours:
       description: Business Calender Intervals
       type: object
+    holiday_list:
+      description: Business Calender holiday_list
+      type: array
+      items:
+        $ref: '#/definitions/holiday_list'
     created_at:
       description: Business Calender created time
       type: string

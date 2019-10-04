@@ -328,6 +328,8 @@
     - cron_delayedjobs_watcher
     - cron_failed_helpkit_feeds
     - cron_log_cloud_elements_sync
+    - cron_freshfone
+    - cron_meta_data_check
   :gamification:
     - gamification_user_score
     - gamification_ticket_score

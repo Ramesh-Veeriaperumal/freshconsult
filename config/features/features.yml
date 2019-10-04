@@ -96,11 +96,11 @@
       :smart_filter: 91
       :ticket_summary: 92
       :shared_ownership: 93
-      :autobots_1: 94
+      :fluffy_forest: 94
       :cascade_dispatcher: 95
       :hipaa: 96
       :custom_encrypted_fields: 97
-      :autobots_2: 98
+      :fluffy_higher_plan1: 98
       :google_signin: 99
       :twitter_signin: 100
       :facebook_signin: 101
@@ -123,7 +123,7 @@
       :client_debugging: 118
       :collision_socket: 119
       :single_session_per_user: 120
-      :suicide_squad_9: 121
+      :fluffy_higher_plan2: 121
       :suicide_squad_10: 122
       :sandbox: 123
       :call_quality_metrics: 124
@@ -172,8 +172,8 @@
       :limit_mobihelp_results: 167
       :ecommerce: 168
       :es_v2_writes: 169
-      :ninjas_8: 170
-      :ninjas_9: 171
+      :fluffy_higher_plan3: 170
+      :fluffy_higher_plan4: 171
       :freshfone_call_metrics: 172
       :custom_translations: 173
       :cobrowsing: 174
@@ -326,7 +326,7 @@
       :reports_99: 321
       :reports_100: 322
       :freshreports_analytics: 323
-      :disable_old_reports: 324      
+      :disable_old_reports: 324
       :article_filters: 325
       :adv_article_bulk_actions: 326
       :auto_article_order: 327
@@ -457,6 +457,7 @@
   :saml_unspecified_nameid: false
   :euc_hide_agent_metrics: false
   :single_session_per_user: false
+  :proactive_spam_detection: true
   :bi_reports: false
   :contact_merge_ui: false
   :multiple_user_emails: false
@@ -471,5 +472,9 @@
   :round_robin_revamp: false
   :social_revamp: true
   :activity_revamp: true
-  :proactive_spam_detection: true
   :hide_first_response_due: false
+  :fluffy_forest: false
+  :fluffy_higher_plan1: false
+  :fluffy_higher_plan2: false
+  :fluffy_higher_plan3: false
+  :fluffy_higher_plan4: false

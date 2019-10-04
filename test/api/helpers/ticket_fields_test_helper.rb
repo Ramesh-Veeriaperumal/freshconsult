@@ -257,7 +257,7 @@ module TicketFieldsTestHelper
                                                 flexifield_order: 6,
                                                 flexifield_coltype: 'dropdown',
                                                 account_id: @account.id)
-      flexifield_def_entry[0].save
+      puts "Flexifield errors: #{flexifield_def_entry[0].errors.inspect}" unless flexifield_def_entry[0].save
     end
     parent_custom_field = FactoryGirl.build(:ticket_field, account_id: @account.id,
                                                            name: "#{labels[0].downcase}_#{@account.id}",

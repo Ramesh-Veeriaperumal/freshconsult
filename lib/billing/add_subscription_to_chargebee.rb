@@ -9,7 +9,6 @@ class Billing::AddSubscriptionToChargebee
     begin
       account = Account.current
       subscription = account.subscription
-      set_billing_site(subscription)
       subscription.billing.create_subscription(account)
       perform_fsm_subscriptions
       subscription.save #to update resp. currency amount
@@ -24,19 +23,6 @@ class Billing::AddSubscriptionToChargebee
     end
   end
   private
-    def set_billing_site(subscription)
-      currency = fetch_currency(subscription.account)
-      subscription.set_billing_params(currency)      
-      # subscription.safe_send(:update_without_callbacks) #To avoid update amount callback
-      subscription.sneaky_save
-    end
-
-    def fetch_currency(account)      
-      return DEFAULT_CURRENCY if account.conversion_metric.nil?
-
-      country = account.conversion_metric.country
-      COUNTRY_MAPPING[country].nil? ? DEFAULT_CURRENCY : COUNTRY_MAPPING[country]  
-    end
 
     def perform_fsm_subscriptions
       return unless Account.current.admin_email.include?('+fsm') || redis_key_exists?(Redis::Keys::Others::FSM_GA_LAUNCHED)

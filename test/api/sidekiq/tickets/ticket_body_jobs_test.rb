@@ -23,7 +23,7 @@ class TicketBodyJobsTest < ActionView::TestCase
     file_path = Helpdesk::S3::Ticket::Body.generate_file_path(@account.id, ticket.id)
     bucket_name = S3_CONFIG[:ticket_body]
     ticket_body = Helpdesk::TicketOldBody.find_by_ticket_id_and_account_id(ticket.id, @account.id)
-    value = ticket_body.attributes.to_json
+    value = ticket_body.try(:attributes).to_json
     mock = MiniTest::Mock.new
     mock.expect(:call, AWS::S3::Bucket.new(bucket_name).objects[file_path], [file_path, value, bucket_name])
     Helpdesk::S3::Ticket::Body.stub(:create, mock) do

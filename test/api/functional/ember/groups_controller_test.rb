@@ -334,6 +334,27 @@ class Ember::GroupsControllerTest < ActionController::TestCase
     match_json(private_group_pattern_with_normal_round_robin(Group.find_by_id(group.id)))
   end
 
+  def test_update_group_from_lbrr_to_normal_round_robin
+    group = create_group_private_api(@account, ticket_assign_type:1, capping_limit:23) 
+    put :update, construct_params({version:'private', id: group.id }, escalate_to: 1, unassigned_for:'30m', agent_ids:[1],
+    round_robin_type:1)
+    assert_response 200
+    match_json(private_group_pattern_with_normal_round_robin(Group.find_by_id(group.id)))
+  end
+
+  def test_update_group_from_sbrr_to_lbrr_by_omniroute
+    @account.add_feature(:omni_channel_routing)
+    @account.add_feature(:lbrr_by_omniroute)
+    group = create_group_private_api(@account, ticket_assign_type:2, capping_limit:23) 
+    put :update, construct_params({version:'private', id: group.id }, escalate_to: 1, unassigned_for:'30m', agent_ids:[1],
+    round_robin_type: 12)
+    assert_response 200
+    match_json(private_group_pattern_with_lbrr_by_omniroute(Group.find_by_id(group.id)))
+  ensure
+    @account.revoke_feature(:omni_channel_routing)
+    @account.revoke_feature(:lbrr_by_omniroute)
+  end
+
   def test_update_group_from_lbrr_to_ocr
     Account.current.stubs(:features?).with(:round_robin).returns(true)
     Account.current.stubs(:omni_channel_routing_enabled?).returns(true) 

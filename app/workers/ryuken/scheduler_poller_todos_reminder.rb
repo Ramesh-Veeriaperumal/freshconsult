@@ -16,7 +16,7 @@ class Ryuken::SchedulerPollerTodosReminder
       @user = Account.current.users.where(id: @reminder.user_id).first
       @ticket = Account.current.tickets.where(id: @reminder.ticket_id).first
       time = format_time(@reminder.reminder_at)
-      TodosReminderMailer.safe_send(:send_reminder_email, @user, @reminder.body, @ticket, time, @ticket.mint_url)
+      TodosReminderMailer.send_email(:send_reminder_email, @user, @user, @reminder.body, @ticket, time, @ticket.mint_url)
       data = payload_to_iris
       Iris::Communication.push(IrisNotificationsConfig['api']['collector_path'], data)
       sqs_msg.try(:delete)

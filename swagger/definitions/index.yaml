@@ -720,6 +720,9 @@ role_bulk_update_request:
 #Business Hours
 business_hours:
   $ref: ./response/business_hours.yaml
+holiday_list:
+  $ref: ./resource/holiday_list.yaml
+
 
 #Canned Responses
 canned_response_create:
@@ -807,3 +810,13 @@ freddy_skills_index:
   $ref: './response/admin/freddy_skills/index.yaml'
 freddy_skills_show_and_update:
   $ref: './response/admin/freddy_skills/show_and_update.yaml'
+
+#Skills
+skill_input:
+  $ref: ./request/admin/skill.yaml
+skill_index:
+  $ref: ./response/admin/skill_index.yaml
+skill:
+  $ref: ./resource/skill.yaml
+skill_response:
+  $ref: ./response/admin/skill.yaml

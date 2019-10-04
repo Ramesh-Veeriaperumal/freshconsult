@@ -44,10 +44,10 @@ module AutomationTestHelper
       id: rule.id,
       created_at: rule.created_at.try(:utc),
       summary: generate_summary(rule, true),
-      updated_at: rule.updated_at.try(:utc)
+      updated_at: rule.updated_at.try(:utc),
+      affected_tickets_count: affected_tickets_count
     }
     automations_hash[:meta] = meta_hash(rule) unless list_page
-    automations_hash[:affected_tickets_count] = affected_tickets_count if affected_tickets_count.present?
     automations_hash
   end
 

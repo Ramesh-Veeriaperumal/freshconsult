@@ -146,14 +146,18 @@ module AccountTestHelper
       created_at: account.created_at.try(:utc).try(:iso8601),
       updated_at: account.updated_at.try(:utc).try(:iso8601),
       premium: account.premium,
-      freshid_account_id: account.freshid_account_id
+      freshid_account_id: account.freshid_account_id,
+      fs_cookie: account.fs_cookie,
+      anonymous_account: account.anonymous_account?,
+      account_configuration: account.account_configuration.account_configuration_for_central
     }
   end
 
   def central_publish_account_association_pattern(_expected_output = {})
     {
       subscription: Hash,
-      organisation: nil
+      organisation: nil,
+      conversion_metric: Hash
     }
   end
 

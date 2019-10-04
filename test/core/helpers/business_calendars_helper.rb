@@ -14,6 +14,7 @@ module BusinessCalendarsTestHelper
                                           },
                                                                                                weekdays: [1, 2, 3, 4, 5],
                                                                                                fullweek: false },
+                                          holiday_data: [['Jan 26', 'Republic Day'], ['Jan 1', 'New Year']],
                                           is_default: params[:is_default] || 0)
     business_calendar.save(validate: false)
     business_calendar

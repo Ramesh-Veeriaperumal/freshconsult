@@ -44,8 +44,9 @@ module Helpdesk::Ticketfields::Validations
     if denormalized_flexifields_enabled?
       ffs_slt_fields = calculate_ffs_string_fields_count(field_data_group['text'])
       dropdown_limit_with_dnf = ticket_field_limit_increase_enabled? ? TICKET_FIELD_DATA_DROPDOWN_COUNT : FFS_LIMIT
+      boolean_limit = ticket_field_limit_increase_enabled? ? TICKET_FIELD_DATA_CHECKBOX_COUNT : CHECKBOX_FIELD_COUNT
       dropdown_limit = dropdown_limit_with_dnf - ffs_slt_fields
-      MAX_ALLOWED_COUNT_DN.dup.merge(dropdown: dropdown_limit)
+      MAX_ALLOWED_COUNT_DN.dup.merge({ dropdown: dropdown_limit, boolean: boolean_limit })
     else
       ticket_field_limit_increase_enabled? ? TICKET_FIELD_DATA_COUNT.dup : MAX_ALLOWED_COUNT.dup
     end

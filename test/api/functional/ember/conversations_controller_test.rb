@@ -849,6 +849,7 @@ module Ember
         match_json(private_note_pattern(params_hash, latest_note))
         assert latest_note.attachments.size == attachment_ids.size
       end
+      ticket.destroy
     end
 
     def test_tweet_reply_without_params
@@ -860,6 +861,7 @@ module Ember
                    bad_request_error_pattern('tweet_type', :datatype_mismatch, code: :missing_field, expected_data_type: String),
                    bad_request_error_pattern('twitter_handle_id', :datatype_mismatch, code: :missing_field, expected_data_type: 'Positive Integer')
                  ])
+      ticket.destroy
     end
 
     def test_tweet_reply_with_invalid_ticket
@@ -878,6 +880,7 @@ module Ember
                                     twitter_handle_id: 123)
       assert_response 400
       match_json([bad_request_error_pattern('twitter_handle_id', 'is invalid')])
+      ticket.destroy
     end
 
     def test_tweet_reply_with_requth
@@ -889,6 +892,7 @@ module Ember
       assert_response 400
       match_json([bad_request_error_pattern('twitter_handle_id', 'requires re-authorization')])
       Social::TwitterHandle.any_instance.stubs(:reauth_required?).returns(false)
+      ticket.destroy
     end
 
     def test_tweet_reply_with_app_blocked
@@ -900,6 +904,7 @@ module Ember
                                     twitter_handle_id: twitter_handle.id)
       assert_response 400
       match_json(validation_error_pattern(bad_request_error_pattern('twitter', :twitter_write_access_blocked)))
+      ticket.destroy
     ensure
       remove_others_redis_key TWITTER_APP_BLOCKED
     end
@@ -922,6 +927,7 @@ module Ember
           tweet = latest_note.tweet
           assert_equal tweet.tweet_id, @twit.id
           assert_equal tweet.tweet_type, params_hash[:tweet_type]
+          ticket.destroy
         end
       end
     ensure
@@ -946,6 +952,7 @@ module Ember
           tweet = latest_note.tweet
           assert_equal tweet.tweet_id, @twit.id
           assert_equal tweet.tweet_type, params_hash[:tweet_type]
+          ticket.destroy
         end
       end
     ensure
@@ -970,6 +977,7 @@ module Ember
           tweet = latest_note.tweet
           assert_equal tweet.tweet_id < 0, true, 'Tweet id should be less than zero'
           assert_equal tweet.tweet_type, params_hash[:tweet_type]
+          ticket.destroy
         end
       end
     ensure
@@ -994,6 +1002,7 @@ module Ember
           tweet = latest_note.tweet
           assert_equal tweet.tweet_id < 0, true, 'Tweet id should be less than zero'
           assert_equal tweet.tweet_type, params_hash[:tweet_type]
+          ticket.destroy
         end
       end
     ensure
@@ -1028,6 +1037,7 @@ module Ember
           assert_equal File.exists?(file_name), false
         end
       end
+      ticket.destroy
     ensure
       @account.rollback(:twitter_mention_outgoing_attachment)
       Account.current.unstub(:mentions_to_tms_enabled?)
@@ -1047,6 +1057,7 @@ module Ember
         }
         post :tweet, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
         assert_response 400
+        ticket.destroy
       end
     end
 
@@ -1080,6 +1091,7 @@ module Ember
           assert_equal tweet.tweet_type, params_hash[:tweet_type]
         end
       end
+      ticket.destroy
     end
 
     def test_ticket_conversations
@@ -2029,6 +2041,7 @@ module Ember
         twitter_handle_id: get_twitter_handle.id
       })
       assert_response 400
+      ticket.destroy
       @account.revoke_feature(:traffic_cop)
     end
 
@@ -2047,6 +2060,7 @@ module Ember
     #     twitter_handle_id: get_twitter_handle.id
     #   })
     #   assert_response 400
+    #   ticket.destroy
     #   @account.revoke_feature(:traffic_cop)
     # end
 
@@ -2067,6 +2081,7 @@ module Ember
         twitter_handle_id: get_twitter_handle.id
       })
       assert_response 400
+      ticket.destroy
       @account.revoke_feature(:traffic_cop)
     end
 

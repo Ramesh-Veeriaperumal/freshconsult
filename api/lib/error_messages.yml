@@ -387,7 +387,6 @@ api_error_messages:
   active_mailbox_verification: 'Cannot send verification to an active mailbox'
 
   # Search settings
-  search_settings_blank: "search settings should not be blank"
   ticket_search_settings_blank: "ticket search settings should not be blank"
 
   invalid_ticket_field_section_mapping: "Section with id(%{section_id}) does not belong to given ticket_field id(%{ticket_field_id})"

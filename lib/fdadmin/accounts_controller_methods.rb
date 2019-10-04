@@ -172,7 +172,7 @@ module Fdadmin::AccountsControllerMethods
   end
 
   def fluffy_api_v2_limit(account)
-    data = account.current_fluffy_limit(account.full_domain)
+    data = account.current_fluffy_limit(account.full_domain) if account.fluffy_integration_enabled?
     data.present? ? { limit: data.limit, granularity: data.granularity } : {}
   end
 

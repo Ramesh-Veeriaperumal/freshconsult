@@ -4,7 +4,7 @@ module Archive
 
     private
 
-      def enqueue_ticket_archive_jobs
+      def enqueue_ticket_archive_jobs(args = {})
         max_display_id = @account.max_display_id
         @account.tickets.find_in_batches(batch_size: 300, conditions: archive_conditions) do |tickets|
           tickets.each do |ticket|
