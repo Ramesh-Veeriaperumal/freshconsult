@@ -152,5 +152,7 @@ module Facebook
     PARENT_POST_LENGTH = 230
 
     MESSAGE_UPDATED_AT = 'updated_time'.freeze
+
+    FB_MSG_TYPES = ['dm', 'post'].freeze
   end
 end
