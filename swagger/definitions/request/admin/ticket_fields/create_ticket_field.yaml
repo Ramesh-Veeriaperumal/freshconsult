@@ -7,7 +7,7 @@ properties:
       properties:
         label:
           type: string
-        label_in_portal:
+        label_for_customers:
           type: string
 
   section_mappings:

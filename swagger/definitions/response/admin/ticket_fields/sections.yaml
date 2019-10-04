@@ -4,6 +4,8 @@ properties:
     type: integer
   label:
     type: string
+  parent_ticket_field_id:
+    type: integer
   choice_ids:
     type: array
     items:

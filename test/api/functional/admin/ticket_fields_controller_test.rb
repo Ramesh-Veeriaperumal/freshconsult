@@ -24,8 +24,6 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
     @account.ticket_fields.where(default: 0).destroy_all
   end
 
-  DROPDOWN_CHOICES_TICKET_TYPE = %w[Question Problem Incident].freeze
-
   def test_deletion_of_decimal_field
     launch_ticket_field_revamp do
       name = "decimal_#{Faker::Lorem.characters(rand(10..20))}"
@@ -175,6 +173,27 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
       assert_response 403
       assert_match 'custom_ticket_fields', response.body
       @account.add_feature :custom_ticket_fields
+    end
+  end
+
+  def test_tickets_list_api_with_feature
+    launch_ticket_field_revamp do
+      create_ticket_fields_of_all_types
+      get :index, controller_params(version: 'private')
+      assert_response 200
+    end
+  end
+
+  def test_tickets_list_api_without_feature
+    create_ticket_fields_of_all_types
+    get :index, controller_params(version: 'private')
+    assert_response 403
+    assert_match 'Ticket Field Revamp', response.body
+    launch_ticket_field_revamp do
+      @account.rollback :ticket_field_revamp
+      get :index, controller_params(version: 'private')
+      assert_response 403
+      assert_match 'Ticket Field Revamp', response.body
     end
   end
 end

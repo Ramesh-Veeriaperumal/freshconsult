@@ -17,7 +17,7 @@ properties:
           type: string
         label:
           type: string
-        label_in_portal:
+        label_for_customers:
           type: string
         level:
           type: integer
@@ -43,3 +43,7 @@ properties:
 
   has_section:
     type: boolean
+  portal_cc:
+    type: boolean
+  portal_cc_to:
+    type: string
