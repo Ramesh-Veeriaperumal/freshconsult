@@ -103,7 +103,7 @@ module SocialTestHelper
       msg_id = thread_id + 2
       sample_dm = sample_dm_threads(thread_id, actor_id, msg_id)
       #stub the api call for koala
-      Koala::Facebook::API.any_instance.stubs(:get_connections).returns(sample_dm)
+      Koala::Facebook::API.any_instance.stubs(:get_connections).returns(sample_dm.to_json)
       fb_message = Facebook::KoalaWrapper::DirectMessage.new(fb_page)
       fb_message.fetch_messages
       Koala::Facebook::API.any_instance.unstub(:get_connections)
@@ -160,40 +160,52 @@ module SocialTestHelper
   end
 
   def sample_dm_threads(thread_id, actor_id, msg_id)
-    dm = [{
-        "id"   => "#{thread_id}",
-        "updated_time" => "#{Time.zone.now}",
-        "messages" => {
-          "data" => [
-              {
-                "id" => "#{msg_id}",
-                "message" => "#{Faker::Lorem.words(10).join(" ")}",
-                "from" => {
-                  "name" => "#{Faker::Lorem.words(1)}",
-                  "id" => "#{actor_id}"
-                },
-                "created_time" => "#{Time.zone.now}"
-              }
-          ]
+    dm = {
+      'data' => [{
+        'id' => thread_id.to_s,
+        'updated_time' => Time.zone.now.to_s,
+        'messages' => {
+          'data' => [{
+            'id' => msg_id.to_s,
+            'message' => Faker::Lorem.words(10).join(' ').to_s,
+            'from' => {
+              'name' => Faker::Lorem.words(1).to_s,
+              'id' => actor_id.to_s
+            },
+            'created_time' => Time.zone.now.to_s
+          }],
+          'paging' => {
+            'cursors' => {
+              'after' => Faker::Lorem.word
+            }
+          }
         }
-      },
-      {
-        "id"   => "#{thread_id}",
-        "updated_time" => "#{Time.zone.now}",
-        "messages" => {
-          "data" => [
-              {
-                "id" => "#{msg_id + 2}",
-                "message" => "#{Faker::Lorem.words(10).join(" ")}",
-                "from" => {
-                  "name" => "#{Faker::Lorem.words(1)}",
-                  "id" => "#{actor_id}"
-                },
-                "created_time" => "#{Time.zone.now}"
-              }
-          ]
+      }, {
+        'id' => thread_id.to_s,
+        'updated_time' => Time.zone.now.to_s,
+        'messages' => {
+          'data' => [{
+            'id' => (msg_id + 2).to_s,
+            'message' => Faker::Lorem.words(10).join(' ').to_s,
+            'from' => {
+              'name' => Faker::Lorem.words(1).to_s,
+              'id' => actor_id.to_s
+            },
+            'created_time' => Time.zone.now.to_s
+          }],
+          'paging' => {
+            'cursors' => {
+              'after' => Faker::Lorem.word
+            }
+          }
         }
-      }]
+      }],
+      'paging' => {
+        'cursors' => {
+          'after' => Faker::Lorem.word
+        }
+      }
+    }
   end
 
   def get_social_id
