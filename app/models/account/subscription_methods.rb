@@ -67,7 +67,7 @@ class Account < ActiveRecord::Base
     if response
       cancellation_feedback = "#{feedback[:title]} #{feedback[:additional_info]}"
       send_account_deleted_email(cancellation_feedback)
-      update_crm
+      update_crm unless disable_freshsales_api_integration?
       create_deleted_customers_info
       send_account_cancelled_email
       clear_account_data
@@ -123,7 +123,7 @@ class Account < ActiveRecord::Base
   end
 
   def perform_paid_account_cancellation_actions
-    update_crm
+    update_crm unless disable_freshsales_api_integration?
     create_deleted_customers_info
     add_churn
     send_account_cancelled_email

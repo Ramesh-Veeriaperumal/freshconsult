@@ -349,8 +349,8 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/rule_engine.git
-  revision: 78c195b3d065c8cf3f5d16d00a9923c9e32588ac
-  tag: hv0.0.13.4
+  revision: 53be7eac65855e1d996ccca687cc02db81a9c0f1
+  tag: hv0.0.13.6
   specs:
     rule_engine (0.0.1)
 GIT
@@ -1487,7 +1487,7 @@ GEM
     xml-simple (1.1.4)
     xpath (2.0.0)
       nokogiri (~> 1.3)
-    yard (0.9.12)
+    yard (0.9.20)
     yard-cucumber (3.1.0)
       cucumber (~> 2)
       gherkin (~> 4.0)
@@ -1757,6 +1757,7 @@ DEPENDENCIES
   xeroizer!
   xml-simple (= 1.1.4)
   xss!
+  yard (= 0.9.20)
   yard-cucumber
   yui-compressor!
   zip-zip

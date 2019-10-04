@@ -7,7 +7,7 @@ class TodosReminderMailer < ActionMailer::Base
     @ticket = ticket
     @ticket_url = ticket_url
     @reminder_at = reminder
-    subject ||= 'Reminder:' + todo_body
+    subject ||= I18n.t('mailer_notifier_subject.send_reminder_email', todo_body: todo_body)
     @headers = {
       from:    Account.current.default_friendly_email,
       to:      user.email,

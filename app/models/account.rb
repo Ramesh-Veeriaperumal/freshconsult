@@ -610,15 +610,17 @@ class Account < ActiveRecord::Base
   def update_ticket_dynamo_shard
     acct_addtn_settings = self.account_additional_settings
     if acct_addtn_settings
-      if acct_addtn_settings.additional_settings.present?
-        acct_addtn_settings.additional_settings[:tkt_dynamo_shard] = Helpdesk::Ticket::TICKET_DYNAMO_NEXT_SHARD
-      else
-        addtn_settings = {
-          :tkt_dynamo_shard => Helpdesk::Ticket::TICKET_DYNAMO_NEXT_SHARD
-        }
-        acct_addtn_settings.additional_settings = addtn_settings
+      acct_addtn_settings.with_lock do
+        if acct_addtn_settings.additional_settings.present?
+          acct_addtn_settings.additional_settings[:tkt_dynamo_shard] = Helpdesk::Ticket::TICKET_DYNAMO_NEXT_SHARD
+        else
+          addtn_settings = {
+            :tkt_dynamo_shard => Helpdesk::Ticket::TICKET_DYNAMO_NEXT_SHARD
+          }
+          acct_addtn_settings.additional_settings = addtn_settings
+        end
+        acct_addtn_settings.save
       end
-      acct_addtn_settings.save
     end
   end
 
@@ -679,6 +681,12 @@ class Account < ActiveRecord::Base
       json_response = get_others_redis_key(key)
       json_response.present? ? JSON.parse(json_response)['signup_method'] : self.conversion_metric.try(:signup_method)
     )
+  end
+
+  def fs_cookie
+      key = ACCOUNT_SIGN_UP_PARAMS % { account_id: id }
+      json_response = get_others_redis_key(key)
+      json_response.present? ? JSON.parse(json_response)['fs_cookie'] : nil
   end
 
   def email_service_provider
@@ -985,6 +993,10 @@ class Account < ActiveRecord::Base
 
   def default_account_locale
     Portal.current ? Portal.current.language : (Account.current ? Account.current.language : I18n.default_locale)
+  end
+
+  def disable_freshsales_api_integration?
+    redis_key_exists?(DISABLE_FRESHSALES_API_CALLS)
   end
 
   protected

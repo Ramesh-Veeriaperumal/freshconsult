@@ -17,7 +17,7 @@ class Admin::AutomationsController < ApiApplicationController
 
   def index
     super
-    fetch_executed_ticket_counts if current_account.automation_rule_execution_count_enabled? && @items.size > 0
+    fetch_executed_ticket_counts if @items.size > 0
     response.api_meta = {
       count: @items_count,
       cascading_rules: current_account.cascade_dispatcher_enabled?,
@@ -57,16 +57,6 @@ class Admin::AutomationsController < ApiApplicationController
       rule_type = params[:rule_type].to_i
       root_key = PRIVATE_API_ROOT_KEY_MAPPING[rule_type]
       response.api_root_key = params[:action] == 'index' ? root_key.to_s.pluralize : root_key
-    end
-
-    def fetch_executed_ticket_counts
-      rule_ids = @items.map(&:id)
-      data = get_rules_executed_count(rule_ids)
-      result = data.inject([]) do |_d, count|
-        count.each_with_index {|value, index| _d[index] =  _d[index].to_i + value.to_i }
-        _d
-      end
-      @items.each_with_index {|item, index| item.affected_tickets_count = result[index] }
     end
 
     def check_for_allowed_rule_type

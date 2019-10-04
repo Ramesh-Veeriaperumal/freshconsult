@@ -56,6 +56,7 @@ module Redis::Keys::Others
   EMPTY_TRASH_TICKETS                     = "EMPTY_TRASH_TICKETS:%{account_id}".freeze
   EMPTY_SPAM_TICKETS                      = "EMPTY_SPAM_TICKETS:%{account_id}".freeze
   CARD_EXPIRY_KEY                         = "CARD_EXPIRY_KEY:%{account_id}".freeze
+  DISABLE_FRESHSALES_API_CALLS            = 'DISABLE_FRESHSALES_API_CALLS'.freeze
   # List of languages used by agents in an account
   AGENT_LANGUAGE_LIST                     = "AGENT_LANGUAGE_LIST:%{account_id}".freeze
   # List of languges used by customers in an account

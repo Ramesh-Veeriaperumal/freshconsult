@@ -1,5 +1,6 @@
 class Account < ActiveRecord::Base
   require 'launch_party/feature_class_mapping'
+  include Subscription::Currencies::Constants
 
   before_create :set_default_values, :set_shard_mapping, :save_route_info
   before_create :update_currency_for_anonymous_account, if: :is_anonymous_account
@@ -25,10 +26,12 @@ class Account < ActiveRecord::Base
   after_update :update_advanced_ticketing_applications, :if => :disable_old_ui_feature_changed?
   after_update :update_freshvisual_configs, :if => :call_freshvisuals_api?
   after_update :set_disable_old_ui_changed_now, :if => :disable_old_ui_changed?
+  after_update :update_round_robin_type, if: :lbrr_by_omniroute_feature_changed?
   after_update :update_help_widget, if: -> { help_widget_enabled? && branding_feature_changed? }
 
   before_validation :sync_name_helpdesk_name
   before_validation :downcase_full_domain, :only => [:create , :update] , :if => :full_domain_changed?
+  before_validation :build_new_subscription, on: :create
   
   after_destroy :remove_global_shard_mapping, :remove_from_master_queries
   after_destroy :destroy_freshid_account, if: :freshid_integration_enabled?
@@ -135,7 +138,6 @@ class Account < ActiveRecord::Base
     end
     if redis_key_exists?(ENABLE_AUTOMATION_REVAMP)
       launch(:automation_revamp)
-      launch(:automation_rule_execution_count)
       if redis_key_exists?(ENABLE_THANK_YOU_DETECTOR)
         add_feature(:detect_thank_you_note)
         add_feature(:detect_thank_you_note_eligible)
@@ -218,6 +220,14 @@ class Account < ActiveRecord::Base
       fluffy_account.name = full_domain
       Fluffy::ApiWrapper.fluffy_add_account(account: fluffy_account)
       destroy_fluffy_account(@all_changes[:full_domain].first)
+    end
+  end
+
+  def update_round_robin_type
+    if lbrr_by_omniroute_enabled?
+      groups.capping_enabled_groups.each(&:enable_lbrr_by_omniroute)
+    else
+      groups.omniroute_powered_rr_groups.each(&:turn_off_automatic_ticket_assignment)
     end
   end
 
@@ -334,6 +344,19 @@ class Account < ActiveRecord::Base
       else
         Billing::AddSubscriptionToChargebee.perform_async
       end
+    end
+
+    def build_new_subscription
+      currency = fetch_currency
+      self.build_subscription(plan: @plan, next_renewal_at: @plan_start, creditcard: @creditcard, address: @address, affiliate: @affiliate, subscription_currency_id: currency)
+      subscription.set_billing_params(currency)
+    end
+
+    def fetch_currency
+      return DEFAULT_CURRENCY if conversion_metric.nil?
+
+      country = conversion_metric.country
+      COUNTRY_MAPPING[country].nil? ? DEFAULT_CURRENCY : COUNTRY_MAPPING[country]
     end
 
     def create_shard_mapping
@@ -564,7 +587,7 @@ class Account < ActiveRecord::Base
 
     def update_crm_and_map
       if (Rails.env.production? or Rails.env.staging?) && !self.sandbox?
-        CRMApp::Freshsales::AdminUpdate.perform_at(15.minutes.from_now, {:account_id => self.id})
+        CRMApp::Freshsales::AdminUpdate.perform_at(15.minutes.from_now, { account_id: id }) unless disable_freshsales_api_integration?
         Subscriptions::AddLead.perform_at(15.minutes.from_now, {:account_id => self.id})
       end
     end

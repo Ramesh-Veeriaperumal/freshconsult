@@ -16,6 +16,8 @@ REDIS_CONFIG_KEYS = ['host', 'port', 'password', 'namespace'].freeze
 
 redis_config = config.slice(*REDIS_CONFIG_KEYS).merge(tcp_keepalive: config['keepalive'], network_timeout: sidekiq_config['timeout'])
 
+DUP_SIDEKIQ_CONFIG = redis_config.dup
+
 pool_size = sidekiq_config[:redis_pool_size] || sidekiq_config[:concurrency]
 
 sidekiq_client_redis_pool_size = (pool_size / 2).to_i
@@ -150,6 +152,7 @@ Sidekiq.configure_server do |config|
   #Making AWS as thread safe
   AWS.eager_autoload!
   config.server_middleware do |chain|
+    chain.add Middleware::Sidekiq::Server::JobDetailsLogger
     chain.add Middleware::Sidekiq::Server::UnsetThread
     chain.add Middleware::Sidekiq::Server::RouteORDrop
     chain.add Middleware::Sidekiq::Server::BelongsToAccount, :ignore => [
@@ -243,7 +246,6 @@ Sidekiq.configure_server do |config|
       "Roles::UpdateAgentsRoles"
     ]
 
-    chain.add Middleware::Sidekiq::Server::JobDetailsLogger
     chain.add Middleware::Sidekiq::Server::Throttler, :required_classes => ["WebhookV1Worker"]
   end
   config.client_middleware do |chain|

@@ -72,6 +72,29 @@ class AccountConfiguration < ActiveRecord::Base
     self.update_attributes!(user_params.slice(*(CONTACT_INFO_KEYS + COMPANY_INFO_KEYS_WITH_PREFIX)))
   end
 
+  def account_configuration_for_central
+    {
+      first_name: contact_info[:first_name],
+      last_name: contact_info[:last_name],
+      work_number: contact_info[:phone],
+      email: contact_info[:email],
+      job_title: contact_info[:job_title],
+      twitter: contact_info[:twitter],
+      facebook: contact_info[:facebook],
+      linkedin: contact_info[:linkedin],
+      time_zone: contact_info[:time_zone],
+      address: company_info.try(:[], :location).try(:[], :streetName),
+      city: company_info.try(:[], :location).try(:[], :city),
+      state: company_info.try(:[], :location).try(:[], :state),
+      zipcode: company_info.try(:[], :location).try(:[], :postalCode),
+      country: company_info.try(:[], :location).try(:[], :country),
+      industry_type_id: company_info[:industry],
+      phone: company_info.fetch(:phone_numbers, []).join(','),
+      number_of_employees: company_info.try(:[], :metrics).try(:[], :employees),
+      annual_revenue: company_info.try(:[], :metrics).try(:[], :annualRevenue)
+    }
+  end
+
   private
 
     def ensure_values
@@ -99,8 +122,16 @@ class AccountConfiguration < ActiveRecord::Base
         CRMApp::Freshsales::AdminUpdate.perform_at(15.minutes.from_now, {
           account_id: account_id, 
           item_id: id
-        })
+        }) unless Account.current.disable_freshsales_api_integration?
         Subscriptions::AddLead.perform_at(15.minutes.from_now, {:account_id => account_id, :old_email => previous_email})
+      end
+      if company_contact_info_updated?
+        if account.model_changes.nil? 
+          account.model_changes = account_configuration_changes(previous_changes)
+        else
+          account.model_changes.merge!(account_configuration_changes(previous_changes))
+        end         
+        account.manual_publish_to_central(nil, :update, nil, false)
       end
     end
 
@@ -130,5 +161,35 @@ class AccountConfiguration < ActiveRecord::Base
 
     def anonymous_account?
       account.anonymous_account?
+    end
+
+    def account_configuration_changes(model_changes)
+      changes = [account_configuration_for_central, account_configuration_for_central]
+      contact_info = model_changes['contact_info']
+      if contact_info.present? && contact_info.length == 2
+        changes[0][:first_name] = contact_info[0][:first_name]
+        changes[0][:last_name] = contact_info[0][:last_name]
+        changes[0][:work_number] = contact_info[0][:phone]
+        changes[0][:email] = contact_info[0][:email]
+        changes[0][:job_title] = contact_info[0][:job_title]
+        changes[0][:twitter] = contact_info[0][:twitter]
+        changes[0][:facebook] = contact_info[0][:facebook]
+        changes[0][:time_zone] = contact_info[0][:time_zone]
+      end
+      company_info = model_changes['company_info']
+      if company_info.present? && company_info.length == 2
+        changes[0][:industry_type_id] = company_info[0][:industry]
+        changes[0][:phone] = company_info[0].fetch(:phone_numbers, []).join(',')
+        prev_location = company_info[0].fetch(:location, {})
+        changes[0][:address] = prev_location[:streetName]
+        changes[0][:city] = prev_location[:city]
+        changes[0][:state] = prev_location[:state]
+        changes[0][:zipcode] = prev_location[:postalCode]
+        changes[0][:country] = prev_location[:country]
+        prev_metrics = company_info[0].fetch(:metrics, {})
+        changes[0][:number_of_employees] = prev_metrics[:employees]
+        changes[0][:annual_revenue] = prev_metrics[:annualRevenue]
+      end
+      { account_configuration: changes }
     end
 end

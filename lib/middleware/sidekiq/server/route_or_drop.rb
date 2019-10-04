@@ -25,9 +25,13 @@ module Middleware
                 Rails.logger.info "Dropping worker: #{worker_name}, account_id: #{account_id}, payload: #{payload.inspect}"
                 true
               elsif route_or_drop.ends_with?('_queue')
-                payload['rerouted_queue'] = route_or_drop
+                payload['rerouted_queue'] = route_or_drop.split('_queue')[0]
                 Rails.logger.info "Rerouting worker #{worker_name} account_id: #{account_id} payload: #{payload.inspect} rerouting: #{route_or_drop}"
-                ::Sidekiq::Client.push(payload)
+                if Account::SidekiqControl::RouteDrop.via_redis_pool_exist?
+                  ::Sidekiq::Client.new(Account::SidekiqControl::Config.via_redis_pool).push(payload)
+                else
+                  ::Sidekiq::Client.push(payload)
+                end
                 true
               else
                 Rails.logger.info "Route or drop key present but value is not valid #{worker_name} account_id: #{account_id} payload: #{payload.inspect} rerouting: #{route_or_drop}"
@@ -50,8 +54,7 @@ module Middleware
             account_route_or_drop = nil
             all_route_or_drop     = nil
             begin
-              account_route_or_drop, all_route_or_drop = get_multiple_others_redis_keys(account_worker_key(account_id, worker_name),
-                                                                                 account_worker_key('all', worker_name)) || []
+              account_route_or_drop, all_route_or_drop = Account::SidekiqControl::RouteDrop.account_reroute_or_all(account_id, worker_name) || []
             rescue StandardError => exception
               Rails.logger.error "Error while fetching drop or reroute: #{worker_name}, account_id: #{account_id}, payload: #{payload}"
               Rails.logger.error "Error message: #{exception.message}, #{exception.backtrace.join("\n\t")}"

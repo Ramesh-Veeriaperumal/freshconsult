@@ -94,7 +94,8 @@ class TicketDelegator < BaseDelegator
 
   def product_presence
     ticket_product_id = schema_less_ticket.product_id
-    product = Account.current.products_from_cache.detect { |x| ticket_product_id == x.id }
+    product = Account.current.products.where(id: ticket_product_id).limit(1).first
+
     if product.nil?
       errors[:product_id] << :"can't be blank"
     else

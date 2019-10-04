@@ -90,4 +90,13 @@ class ApiBusinessHoursControllerTest < ActionController::TestCase
     assert JSON.parse(response.body).count == Account.current.business_calendar.count
     assert_response 200
   end
+
+  def test_single_business_hour_holiday_list
+    business_hour = create_business_calendar
+    get :show, construct_params(id: business_hour.id)
+    response_body = JSON.parse(response.body)
+    assert_response 200
+    assert_equal response_body['holiday_list'][0], ['Jan 26', 'Republic Day']
+    match_json(business_hour_pattern(BusinessCalendar.find(business_hour.id)))
+  end
 end

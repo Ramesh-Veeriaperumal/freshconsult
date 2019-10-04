@@ -48,6 +48,16 @@ class Search::KeywordSearch::Transform
 
     parameters
   end
+
+  def transform_with_search_settings
+    parameters = {}.tap do |searchparams|
+      AgentConstants::TICKET_SEARCH_SETTINGS.each do |field|
+        searchparams[field] = @filter_params[field]
+      end
+    end
+
+    parameters
+  end
   
   private
     

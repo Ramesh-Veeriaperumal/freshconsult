@@ -39,16 +39,24 @@ module Redis::RateLimitRedis
   end
 
   def get_api_min_limit_from_redis(plan_id)
-    {
-      "limit": get_others_redis_key(format(PLAN_API_MIN_LIMIT, plan_id: plan_id)),
-      "granularity": MINUTE_GRANULARITY,
-      "account_paths": [
-        JSON.parse(get_others_redis_hash_value(format(PLAN_API_MIN_PATHS_LIMIT, plan_id: plan_id), 'TICKETS_LIST') || '{}'),
-        JSON.parse(get_others_redis_hash_value(format(PLAN_API_MIN_PATHS_LIMIT, plan_id: plan_id), 'CONTACTS_LIST') || '{}'),
-        JSON.parse(get_others_redis_hash_value(format(PLAN_API_MIN_PATHS_LIMIT, plan_id: plan_id), 'CREATE_TICKET') || '{}'),
-        JSON.parse(get_others_redis_hash_value(format(PLAN_API_MIN_PATHS_LIMIT, plan_id: plan_id), 'UPDATE_TICKET') || '{}')
-      ]
-    }
+    overall_limit = get_others_redis_key(format(PLAN_API_MIN_LIMIT, plan_id: plan_id))
+    unless overall_limit.nil? || overall_limit.to_i == 0
+      {
+        "limit": overall_limit,
+        "granularity": MINUTE_GRANULARITY,
+        "account_paths": [
+          JSON.parse(get_others_redis_hash_value(format(PLAN_API_MIN_PATHS_LIMIT, plan_id: plan_id), 'TICKETS_LIST') || '{}'),
+          JSON.parse(get_others_redis_hash_value(format(PLAN_API_MIN_PATHS_LIMIT, plan_id: plan_id), 'CONTACTS_LIST') || '{}'),
+          JSON.parse(get_others_redis_hash_value(format(PLAN_API_MIN_PATHS_LIMIT, plan_id: plan_id), 'CREATE_TICKET') || '{}'),
+          JSON.parse(get_others_redis_hash_value(format(PLAN_API_MIN_PATHS_LIMIT, plan_id: plan_id), 'UPDATE_TICKET') || '{}')
+        ]
+      }
+    else
+      {
+        "limit": overall_limit || 400,
+        "granularity": MINUTE_GRANULARITY
+      }
+    end
   end
 
   def account_api_limit_key(account_id)

@@ -1,5 +1,6 @@
 module Archive
   class AccountTicketsWorker < BaseWorker
+    include BulkOperationsHelper
     sidekiq_options queue: ::ArchiveSikdekiqConfig['archive_account_tickets'], retry: 0,  failures: :exhausted
 
     def perform(args)
@@ -11,7 +12,7 @@ module Archive
         @status_id = @account.ticket_statuses.find_by_name(args['ticket_status'].to_s).status_id
         @archive_days = args['archive_days'] || @account.account_additional_settings.archive_days
         @display_ids = args['display_ids']
-        enqueue_ticket_archive_jobs
+        enqueue_ticket_archive_jobs(args)
       end
     rescue Exception => e
       Rails.logger.debug "Failure in ArchiveWorker :: #{e.message} :: #{args.inspect}"
@@ -30,9 +31,9 @@ module Archive
         conditions
       end
 
-      def enqueue_ticket_archive_jobs
+      def enqueue_ticket_archive_jobs(args)
         max_display_id = @account.max_display_id
-        @account.tickets.find_in_batches(batch_size: 300, conditions: archive_conditions) do |tickets|
+        @account.tickets.find_in_batches_with_rate_limit(batch_size: 300, conditions: archive_conditions, rate_limit: rate_limit_options(args)) do |tickets|
           tickets.each do |ticket|
             next if ticket.association_type.present? || !(ticket.display_id <= max_display_id && !ticket.archive_child)
 

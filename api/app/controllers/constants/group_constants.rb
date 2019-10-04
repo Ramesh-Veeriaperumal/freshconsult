@@ -32,9 +32,9 @@ module GroupConstants
 
   ASSIGNMENT_TYPES_SANITIZE = {0 => 0, 1 =>1, 2 => 10}
 
-  ROUND_ROBIN_TYPE_SANITIZE= {1 => 1, 2 => 1, 3 => 2}  
+  ROUND_ROBIN_TYPE_SANITIZE= {1 => 1, 2 => 1, 3 => 2, 12 => 12}  
 
-  DB_ASSIGNMENT_TYPE_FOR_MAP = {0 => 0, 1 => 1, 2 => 1, 10 => 2}   
+  DB_ASSIGNMENT_TYPE_FOR_MAP = {0 => 0, 1 => 1, 2 => 1, 12 => 1, 10 => 2}   
 
   UPDATE_PRIVATE_API_FIELDS_WITHOUT_ASSIGNMENT_CONFIG=%w(name description business_hour_id escalate_to unassigned_for agent_ids assignment_type).freeze | ARRAY_FIELDS
   
@@ -53,8 +53,9 @@ module GroupConstants
   ROUND_ROBIN = 1
   LOAD_BASED_ROUND_ROBIN = 2
   SKILL_BASED_ROUND_ROBIN = 3
+  LBRR_BY_OMNIROUTE = 12
 
-  ROUND_ROBIN_TYPES=[ ROUND_ROBIN, LOAD_BASED_ROUND_ROBIN, SKILL_BASED_ROUND_ROBIN ].freeze
+  ROUND_ROBIN_TYPES=[ ROUND_ROBIN, LOAD_BASED_ROUND_ROBIN, SKILL_BASED_ROUND_ROBIN, LBRR_BY_OMNIROUTE ].freeze
 
   
   

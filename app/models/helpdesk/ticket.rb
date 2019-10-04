@@ -196,7 +196,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     }
   }
   scope :all_article_tickets,
-          :joins => [:article_ticket],
+          :joins => %(INNER JOIN article_tickets ON article_tickets.ticketable_id = helpdesk_tickets.id and 
+                    article_tickets.ticketable_type = 'Helpdesk::Ticket' and 
+                    article_tickets.account_id = helpdesk_tickets.account_id),
           :order => "`article_tickets`.`id` DESC"
 
   # The below scope "for_user_articles" HAS to be used along with "all_article_tickets"

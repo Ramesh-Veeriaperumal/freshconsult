@@ -19,9 +19,9 @@ class AgentValidation < ApiValidation
   validates :role_ids, required: true, data_type: { rules: Array }, array: { custom_numericality: { only_integer: true, greater_than: 0 } }, unless: :bulk_create?
   validate :check_agent_limit, if: -> { @occasional_set && @previous_occasional && @occasional == false }
   validates :shorcuts_enabled, data_type: { rules: 'Boolean' }
-  validates :search_settings, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field, message_options: { attribute: 'search_settings', feature: :search_settings } }, unless: :search_settings_enabled?
-  validates :search_settings, data_type: { rules: Hash }, hash: { validatable_fields_hash: proc { |x| x.search_settings_format } }
-  validate :check_search_settings, if: -> { @search_settings }
+  validates :search_settings, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field, message_options: { attribute: 'search_settings', feature: :search_settings } }, unless: :search_settings_update?
+  validates :search_settings, data_type: { rules: Hash }, presence: true, hash: { validatable_fields_hash: proc { |x| x.search_settings_format } }, if: :search_settings_update?
+  validate :check_ticket_search_settings, if: :search_settings_update?
 
   validates :avatar_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param }, if: -> { private_api? }
 
@@ -69,9 +69,7 @@ class AgentValidation < ApiValidation
     end
   end
 
-  def check_search_settings
-    return errors[:search_settings_blank] = :search_settings_blank if @search_settings.blank?
-
+  def check_ticket_search_settings
     @search_settings.each_key do |key|
       return errors[key] = :ticket_search_settings_blank if @search_settings[key].blank?
     end
@@ -90,6 +88,10 @@ class AgentValidation < ApiValidation
   end
 
   def search_settings_enabled?
-    Account.current.launched?(:search_settings)
+    Account.current.search_settings_enabled?
+  end
+
+  def search_settings_update?
+    @search_settings && search_settings_enabled?
   end
 end

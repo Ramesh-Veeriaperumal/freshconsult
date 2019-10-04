@@ -61,7 +61,7 @@ class SAAS::SubscriptionEventActions
       handle_collab_feature
       disable_chat_routing unless account.has_feature?(:chat_routing)
       handle_daypass if recalculate_daypass_enabled?
-      change_api_limit if account.fluffy_integration_enabled?
+      change_api_limit if ( account.fluffy_integration_enabled? && !account.fluffy_addons_enabled? )
     end
 
     if add_ons_changed?
@@ -99,6 +99,7 @@ class SAAS::SubscriptionEventActions
     if plan_changed? || add_ons_changed?
       handle_feature_drop_data
       handle_feature_add_data
+      handle_fluffy_feature(to_be_added, to_be_removed)
     end
 
   end
@@ -136,6 +137,7 @@ class SAAS::SubscriptionEventActions
       Rails.logger.debug "List of new plan features for account #{account.id} :: #{plan_features.inspect}"
       plan_features.delete(:support_bot) if account.revoke_support_bot?
       plan_features.delete(:custom_translations) unless account.redis_picklist_id_enabled?
+      plan_features.delete(:lbrr_by_omniroute) if account.round_robin_capping_enabled? && !account.lbrr_by_omniroute_enabled?
       plan_features.each do |feature|
         account.set_feature(feature) unless skipped_features.include?(feature)
       end
@@ -154,6 +156,10 @@ class SAAS::SubscriptionEventActions
       ADD_DATA_FEATURES_V2
     end
 
+    def fluffy_feature_list
+      Fluffy::Constants::FLUFFY_FEATURES
+    end
+
     def handle_feature_drop_data
       drop_data_features_v2 = features_list_to_drop_data.select { |feature| feature unless account.has_feature?(feature) }
       handle_feature_data(drop_data_features_v2, DROP) if drop_data_features_v2.present?
@@ -162,6 +168,23 @@ class SAAS::SubscriptionEventActions
     def handle_feature_add_data
       add_data_features_v2 = features_list_to_add_data.select { |feature| feature if account.has_feature?(feature) }
       handle_feature_data(add_data_features_v2, ADD) if add_data_features_v2.present?
+    end
+
+    def handle_fluffy_feature(to_be_added, to_be_removed)
+      handle_fluffy_drop_data unless ( fluffy_feature_list & (to_be_removed || []) ).empty?
+      handle_fluffy_add_data unless ( fluffy_feature_list & (to_be_added || []) ).empty?
+    end
+
+    def handle_fluffy_drop_data
+      drop_fluffy_features = fluffy_feature_list.select { |feature| feature unless account.has_feature?(feature) }
+      Rails.logger.info "Drop fluffy feautres list:: #{drop_fluffy_features.inspect}"
+      handle_feature_data(drop_fluffy_features, DROP) if drop_fluffy_features.present?
+    end
+
+    def handle_fluffy_add_data
+      add_fluffy_features = fluffy_feature_list.select { |feature| feature if account.has_feature?(feature) }
+      Rails.logger.info "Add fluffy feautres list:: #{add_fluffy_features.inspect}"
+      handle_feature_data(add_fluffy_features, ADD) if add_fluffy_features.present?
     end
 
     def remove_chat_feature

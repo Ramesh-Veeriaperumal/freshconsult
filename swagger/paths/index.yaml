@@ -707,3 +707,9 @@
   $ref: ./admin/freddy_skills/index.yaml
 /admin/freddy_skills/:name:
   $ref: ./admin/freddy_skills/show_and_update.yaml
+
+#Skills
+/skills:
+  $ref: ./skills/list_and_create.yaml
+/skills/{id}:
+  $ref: ./skills/crud.yaml

@@ -264,6 +264,29 @@ class Ember::GroupsControllerTest < ActionController::TestCase
     Account.current.stubs(:features?).with(:round_robin).returns(false)
     Account.current.unstub(:skill_based_round_robin_enabled?)
   end  
+
+  def test_create_group_with_lbrr_by_omniroute
+    Account.current.stubs(:features?).with(:round_robin).returns(true)
+    Account.current.stubs(:omni_channel_routing_enabled?).returns(true)    
+    Account.current.stubs(:lbrr_by_omniroute_enabled?).returns(true)    
+    post :create, construct_params({version: 'private'},{
+      name: Faker::Lorem.characters(10),
+      description: Faker::Lorem.paragraph,
+      assignment_type: 1,
+      round_robin_type: 12,
+      business_hour_id:1,
+      escalate_to:1,
+      agent_ids:[1],
+      unassigned_for:'30m',
+      allow_agents_to_change_availability:true
+    })
+    assert_response 201
+    match_json(private_group_pattern_with_lbrr_by_omniroute(Group.last))
+  ensure
+    Account.current.unstub(:features?)
+    Account.current.unstub(:omni_channel_routing_enabled?)
+    Account.current.unstub(:lbrr_by_omniroute_enabled?)
+  end
   
   def test_update_group
     group = create_group_private_api(@account)
@@ -309,6 +332,27 @@ class Ember::GroupsControllerTest < ActionController::TestCase
     round_robin_type:1)
     assert_response 200
     match_json(private_group_pattern_with_normal_round_robin(Group.find_by_id(group.id)))
+  end
+
+  def test_update_group_from_lbrr_to_normal_round_robin
+    group = create_group_private_api(@account, ticket_assign_type:1, capping_limit:23) 
+    put :update, construct_params({version:'private', id: group.id }, escalate_to: 1, unassigned_for:'30m', agent_ids:[1],
+    round_robin_type:1)
+    assert_response 200
+    match_json(private_group_pattern_with_normal_round_robin(Group.find_by_id(group.id)))
+  end
+
+  def test_update_group_from_sbrr_to_lbrr_by_omniroute
+    @account.add_feature(:omni_channel_routing)
+    @account.add_feature(:lbrr_by_omniroute)
+    group = create_group_private_api(@account, ticket_assign_type:2, capping_limit:23) 
+    put :update, construct_params({version:'private', id: group.id }, escalate_to: 1, unassigned_for:'30m', agent_ids:[1],
+    round_robin_type: 12)
+    assert_response 200
+    match_json(private_group_pattern_with_lbrr_by_omniroute(Group.find_by_id(group.id)))
+  ensure
+    @account.revoke_feature(:omni_channel_routing)
+    @account.revoke_feature(:lbrr_by_omniroute)
   end
 
   def test_update_group_from_lbrr_to_ocr

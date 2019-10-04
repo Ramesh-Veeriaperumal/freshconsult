@@ -146,6 +146,7 @@ class SAAS::AccountDataCleanup
     return if custom_apps.blank?
 
     custom_apps_ext_ids = custom_apps.map { |ext| ext['id'] }
+    
     installed_apps = fetch_installed_extensions(account.id, [
         Marketplace::Constants::EXTENSION_TYPE[:plug],
         Marketplace::Constants::EXTENSION_TYPE[:custom_app]
@@ -163,7 +164,6 @@ class SAAS::AccountDataCleanup
     NewRelic::Agent.notice_error(e)
     raise e
   end
-
 
   def handle_customer_slas_drop_data
     account.sla_policies.where(is_default:false).destroy_all
@@ -368,6 +368,34 @@ class SAAS::AccountDataCleanup
   def handle_hipaa_drop_data
     account.revoke_feature :custom_encrypted_fields
     account.remove_encrypted_fields
+  end
+
+  def handle_fluffy_forest_add_data
+    account.enable_fluffy_min_level(nil, "FOREST")
+  end
+
+  def handle_fluffy_higher_plan1_add_data
+    account.enable_fluffy_min_level(nil, "HIGHER_PLAN1")
+  end
+
+  def handle_fluffy_higher_plan2_add_data
+    account.enable_fluffy_min_level(nil, "HIGHER_PLAN2")
+  end
+
+  def handle_fluffy_higher_plan3_add_data
+    account.enable_fluffy_min_level(nil, "HIGHER_PLAN3")
+  end
+
+  def handle_fluffy_higher_plan4_add_data
+    account.enable_fluffy_min_level(nil, "HIGHER_PLAN4")
+  end
+
+  ["handle_fluffy_forest_drop_data", "handle_fluffy_higher_plan1_drop_data", "handle_fluffy_higher_plan2_drop_data", 
+    "handle_fluffy_higher_plan3_drop_data", "handle_fluffy_higher_plan4_drop_data" ].each do |method|
+    define_method method do
+      limit = account.api_v2_enabled? ? nil : 0
+      account.enable_fluffy_min_level(limit)
+    end
   end
 
   def handle_field_service_management_add_data

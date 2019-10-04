@@ -4,6 +4,10 @@ module Ember::Search
   class TicketsControllerTest < ActionController::TestCase
   	include ApiTicketsTestHelper
   	include SearchTestHelper
+    include ConversationsTestHelper
+    include ArchiveTicketTestHelper
+    ARCHIVE_DAYS = 120
+    TICKET_UPDATED_DATE = 150.days.ago
 
     def test_result_without_user_access
       @controller.stubs(:api_current_user).raises(ActiveSupport::MessageVerifier::InvalidSignature)
@@ -29,6 +33,117 @@ module Ember::Search
       end
       assert_response 200
       assert_equal [search_ticket_pattern(ticket)].to_json, response.body
+    end
+
+    def test_results_with_search_settings_enabled
+      ticket = create_ticket
+      Account.any_instance.stubs(:search_settings_enabled?).returns(true)
+      user = User.current
+      stub_private_search_response([ticket]) do
+        post :results, construct_params(version: 'private', context: 'spotlight')
+      end
+      Account.any_instance.unstub(:search_settings_enabled?)
+      assert_response 200
+      assert_equal [search_ticket_pattern(ticket)].to_json, response.body
+    end
+
+    def test_resutls_with_include_subject_as_false
+      ticket = create_ticket(subject: 'test subject')
+      Account.any_instance.stubs(:search_settings_enabled?).returns(true)
+      user = User.current
+      user.agent_preferences[:search_settings][:tickets][:include_subject] = false
+      stub_private_search_response_with_empty_array do
+        post :results, construct_params(version: 'private', context: 'spotlight', term: 'subject', search_sort: 'relevance')
+      end
+      Account.any_instance.unstub(:search_settings_enabled?)
+      user.agent_preferences[:search_settings][:tickets][:include_subject] = true
+      assert_response 200
+      assert JSON.parse(response.body).empty?
+    end
+
+    def test_results_with_include_description_as_false
+      ticket = create_ticket(description: 'test description')
+      Account.any_instance.stubs(:search_settings_enabled?).returns(true)
+      user = User.current
+      user.agent_preferences[:search_settings][:tickets][:include_description] = false
+      stub_private_search_response_with_empty_array do
+        post :results, construct_params(version: 'private', context: 'spotlight', term: 'description', search_sort: 'relevance')
+      end
+      Account.any_instance.unstub(:search_settings_enabled?)
+      user.agent_preferences[:search_settings][:tickets][:include_description] = true
+      assert_response 200
+      assert JSON.parse(response.body).empty?
+    end
+
+    def test_results_with_include_other_properties_as_false
+      ticket_field = create_custom_field('king', 'text')
+      ticket = create_ticket(custom_field: { king_1: 'Arthur' })
+      Account.any_instance.stubs(:search_settings_enabled?).returns(true)
+      user = User.current
+      user.agent_preferences[:search_settings][:tickets][:include_other_properties] = false
+      stub_private_search_response_with_empty_array do
+        post :results, construct_params(version: 'private', context: 'spotlight', term: 'Arthur', searchSort: 'relevance')
+      end
+      user.agent_preferences[:search_settings][:tickets][:include_other_properties] = true
+      assert_response 200
+      assert JSON.parse(response.body).empty?
+    ensure
+      Account.any_instance.unstub(:search_settings_enabled?)
+      ticket_field.try(:destroy)
+    end
+
+    def test_results_with_include_notes_as_false
+      ticket = create_ticket
+      Account.any_instance.stubs(:search_settings_enabled?).returns(true)
+      user = User.current
+      conversation = create_note(user_id: user.id, ticket_id: ticket.id, body: 'Addition of note')
+      user.agent_preferences[:search_settings][:tickets][:include_notes] = false
+      stub_private_search_response_with_empty_array do
+        post :results, construct_params(version: 'private', context: 'spotlight', term: 'note', search_sort: 'relevance')
+      end
+      Account.any_instance.unstub(:search_settings_enabled?)
+      user.agent_preferences[:search_settings][:tickets][:include_notes] = true
+      assert_response 200
+      assert JSON.parse(response.body).empty?
+    end
+
+    def test_results_with_include_attachment_names_as_false
+      ticket = create_ticket
+      @account.launch(:search_settings)
+      Account.any_instance.stubs(:search_settings_enabled?).returns(true)
+      user = User.current
+      ticket.attachments << create_attachment(attachable_type: 'UserDraft', attachable_id: user.id)
+      user.agent_preferences[:search_settings][:tickets][:include_attachment_names] = false
+      stub_private_search_response_with_empty_array do
+        post :results, construct_params(version: 'private', context: 'spotlight', term: 'attachment.txt', search_sort: 'relevance')
+      end
+      Account.any_instance.unstub(:search_settings_enabled?)
+      user.agent_preferences[:search_settings][:tickets][:include_attachment_names] = true
+      assert_response 200
+      assert JSON.parse(response.body).empty?
+    end
+
+    def test_results_with_archive_as_false
+      ticket = create_ticket
+      Account.any_instance.stubs(:search_settings_enabled?).returns(true)
+      user = User.current
+      @account.enable_ticket_archiving(ARCHIVE_DAYS)
+      @account.features.send(:archive_tickets).create
+      create_archive_ticket_with_assoc(
+        created_at: TICKET_UPDATED_DATE,
+        updated_at: TICKET_UPDATED_DATE,
+        create_association: true
+      )
+      user.agent_preferences[:search_settings][:tickets][:archive] = false
+      stub_private_search_response_with_empty_array do
+        post :results, construct_params(version: 'private', context: 'spotlight', term: @archive_ticket.id.to_s, search_sort: 'relevance')
+      end
+      Account.any_instance.unstub(:search_settings_enabled?)
+      user.agent_preferences[:search_settings][:tickets][:archive] = true
+      assert_response 200
+      assert JSON.parse(@response.body).empty?
+    ensure
+      cleanup_archive_ticket(@archive_ticket)
     end
 
     def test_results_with_custom_field_filter_params

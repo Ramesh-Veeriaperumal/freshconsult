@@ -156,6 +156,7 @@ en:
     new_forum_topic: "[New Topic] %{title} in %{forum_name}"
     topic_update: "[Status Update] in %{title}"
     topic_merged: "[Topic Merged] to %{title}"
+    send_reminder_email: 'Reminder:%{todo_body}'
     account_data_export: "Data Export for %{account}"
     no_tickets_to_export: "No tickets in range - %{domain}"
     audit_log_export: Audit Log Export

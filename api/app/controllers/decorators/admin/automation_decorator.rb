@@ -20,11 +20,9 @@ class Admin::AutomationDecorator < ApiDecorator
       id: id,
       summary: generate_summary(record, add_html_tag),
       created_at: created_at.try(:utc),
-      updated_at: updated_at.try(:utc)
+      updated_at: updated_at.try(:utc),
+      affected_tickets_count: affected_tickets_count
     }.merge!(automation_hash)
-    if current_account.automation_rule_execution_count_enabled?
-      response[:affected_tickets_count] = affected_tickets_count
-    end
     response[:operator] = construct_operator if nested_condition?(record.rule_conditions)
     response[:meta] = meta_hash unless list_page
     response

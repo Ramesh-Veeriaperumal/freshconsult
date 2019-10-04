@@ -33,8 +33,7 @@ class Account < ActiveRecord::Base
     :id_for_choices_write, :fluffy, :session_logs, :nested_field_revamp, :service_worker, :kbase_mint,
     :freshvisual_configs, :ticket_field_limit_increase, :join_ticket_field_data, :bypass_signup_captcha,
     :contact_field_central_publish, :company_field_central_publish, :contact_company_split, :mentions_to_tms,
-    :simple_outreach, :disable_simple_outreach, :supervisor_text_field,
-    :automation_rule_execution_count, :disable_mint_analytics,
+    :simple_outreach, :disable_simple_outreach, :supervisor_text_field, :disable_mint_analytics,
     :freshid_org_v2, :hide_agent_login, :office365_adaptive_card,
     :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,
     :recalculate_daypass, :fb_page_api_improvement, :attachment_redirect_expiry,
@@ -78,7 +77,7 @@ class Account < ActiveRecord::Base
     :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible, :autofaq, :proactive_spam_detection,
     :ticket_properties_suggester, :ticket_properties_suggester_eligible,
     :hide_first_response_due, :agent_articles_suggest, :email_articles_suggest, :customer_journey, :botflow,
-    :help_widget, :help_widget_appearance, :help_widget_predictive, :portal_article_filters, :supervisor_custom_status
+    :help_widget, :help_widget_appearance, :help_widget_predictive, :portal_article_filters, :supervisor_custom_status, :portal_article_filters, :lbrr_by_omniroute
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 

@@ -1,0 +1,46 @@
+get:
+  tags: ['skills']
+  summary: Show skill
+  description: "Show a skill"
+  parameters:
+    - $ref: '#/parameters/id'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/skill_response'
+    404:
+      description: Skill not found
+delete:
+  tags: ['skills']
+  summary: Delete skill
+  description: Destroys the skill, will not be able to restore
+  parameters:
+    - $ref: '#/parameters/id'
+  responses:
+    204:
+      description: Success
+    404:
+      description: Skill not found
+put:
+  tags: ['skills']
+  summary: Update skill
+  description: "Update skill"
+  parameters:
+    - $ref: '#/parameters/id'
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/skill_input'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/skill_response'
+    404:
+      description: Skill not found
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

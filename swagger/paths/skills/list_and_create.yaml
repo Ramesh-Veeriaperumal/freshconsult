@@ -1,0 +1,39 @@
+get:
+  tags: [skills]
+  summary: List all skills
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          skills:
+            type: array
+            items:
+              $ref: '#/definitions/skill_index'
+          meta:
+            type: object
+            allOf:
+              - $ref: '#/definitions/meta'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+post:
+  tags: [skills]
+  description: Create skill
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/skill_input'
+  responses:
+    201:
+      description: Success
+      schema:
+        $ref: '#/definitions/skill_response'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
