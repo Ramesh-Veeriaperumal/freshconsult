@@ -159,6 +159,10 @@ class Account < ActiveRecord::Base
     self.secret_keys[:attachment_secret]
   end
 
+  def help_widget_secret
+    secret_keys[:help_widget]
+  end
+
   #Temporary feature check methods - using redis keys - ends here
 
   def round_robin_capping_enabled?
