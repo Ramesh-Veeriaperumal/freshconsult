@@ -1,6 +1,6 @@
 module Freddy
   class DetectThankYouNoteWorker < BaseWorker
-    sidekiq_options queue: :thank_you_note, retry: 5, backtrace: true
+    sidekiq_options queue: :thank_you_note, retry: 0, backtrace: true
 
     SUCCESS = 200
     PRODUCT = 'freshdesk'.freeze
@@ -16,7 +16,8 @@ module Freddy
       url = FreddySkillsConfig[:detect_thank_you_note][:url] + ACTION
       http_response = {}
       time_taken = Benchmark.realtime { http_response = HTTParty.post(url, options) }
-      Rails.logger.info "Time Taken for thank_you_ml - #{account.id} T - #{ticket_id} time - #{time_taken}"
+      Rails.logger.info "Time Taken for thank_you_ml - A - #{account.id} T - #{ticket_id} time - #{time_taken}"
+      Rails.logger.debug http_response.inspect.to_s
       parsed_response = JSON.parse http_response.parsed_response
       if (parsed_response.is_a? Hash) && (http_response.code == SUCCESS)
         @note.schema_less_note.thank_you_note = parsed_response.symbolize_keys
@@ -26,8 +27,10 @@ module Freddy
         @ticket.schema_less_ticket.save!
       end
     rescue StandardError => e
-      Rails.logger.error "Error in DetectThankYouNoteWorker::Exception:: #{e.message}"
+      Rails.logger.error "Error in DetectThankYouNoteWorker::Exception::  A - #{account.id} T - #{ticket_id} #{e.message}"
       NewRelic::Agent.notice_error(e, description: "Error in DetectThankYouNoteWorker::Exception:: #{e.message}")
+    ensure
+      trigger_observer(args)
     end
 
     private
@@ -50,6 +53,18 @@ module Freddy
           request_id: jid,
           options: param_options
         }
+      end
+
+      def trigger_observer(args)
+        job_id = ::Tickets::ObserverWorker.perform_async(args)
+        args[:job_id] = job_id
+        log_observer_info(args)
+      end
+
+      def log_observer_info(args)
+        Va::Logger::Automation.set_thread_variables(Account.current.id, args[:ticket_id], args[:doer_id], nil)
+        Va::Logger::Automation.log("Triggering Observer from Detect Thank You Note Worker, job_id=#{args[:job_id]}, info=#{args.inspect}", true)
+        Va::Logger::Automation.unset_thread_variables
       end
   end
 end

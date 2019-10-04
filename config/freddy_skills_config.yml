@@ -1,7 +1,7 @@
 defaults: &defaults
   detect_thank_you_note:
     url: 'https://thankyou.freddyproject.com/serve/'
-    timeout: 2
+    timeout: 1
     confidence_threshold: 80    
     feedback_timeout: 5
 
