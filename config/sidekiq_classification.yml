@@ -124,7 +124,6 @@
     - freshcaller_account_delete
     - update_segment_filter
     - custom_translations_upload_queue
-
   :maintainence:
     - select_all_tickets
     - select_all_batcher

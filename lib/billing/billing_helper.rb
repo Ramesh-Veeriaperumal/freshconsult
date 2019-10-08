@@ -85,7 +85,7 @@ module Billing::BillingHelper
     def agent_quantity_exceeded?(billing_subscription)
       billing_subscription.plan_quantity && billing_subscription.plan_quantity < @account.full_time_support_agents.count
     end
-  
+
     def has_pending_downgrade_request?(account)
       account.launched?(:downgrade_policy) && account.subscription.subscription_request.present?
     end
