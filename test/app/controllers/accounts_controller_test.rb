@@ -678,7 +678,7 @@ class AccountsControllerTest < ActionController::TestCase
     params = signup_params.symbolize_keys!
     post :anonymous_signup, params
     assert_response 200
-    p "Anonymous signup response body: #{@response.inspect}"
+    p "Anonymous signup response body: #{@response.body}"
     account = Account.last
     p "Account id : #{account.id}"
     assert_equal account.anonymous_account?, true
