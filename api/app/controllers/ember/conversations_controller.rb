@@ -475,16 +475,14 @@ module Ember
         reply_handle = current_account.twitter_handles.find_by_id(@twitter_handle_id)
         stream = fetch_stream || reply_handle.default_stream
         tweet_id = random_tweet_id
-        if @tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:dm] ||
-          (current_account.mentions_to_tms_enabled? && stream.default_stream?)
+        if dm_note? || mentions_in_tms?(stream) || reply_as_mention_for_dm?(stream)
           stream_id = stream.id
           @item.build_tweet(tweet_id: tweet_id,
                             tweet_type: @tweet_type,
                             twitter_handle_id: @twitter_handle_id, stream_id: stream_id)
         end
         if @item.save_note
-          if stream.custom_stream? || (!current_account.mentions_to_tms_enabled? &&
-            @tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:mention])
+          if stream.custom_stream? || (!current_account.mentions_to_tms_enabled? && mention_note?)
             Social::TwitterReplyWorker.perform_async(ticket_id: @ticket.id, note_id: @item.id,
                                                      tweet_type: @tweet_type,
                                                      twitter_handle_id: @twitter_handle_id)
@@ -616,6 +614,22 @@ module Ember
       def fetch_stream
         tweet = @ticket.tweet
         tweet.stream if tweet.present?
+      end
+
+      def mentions_in_tms?(stream)
+        current_account.mentions_to_tms_enabled? && stream.default_stream?
+      end
+
+      def dm_note?
+        @tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:dm]
+      end
+
+      def mention_note?
+        @tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:mention]
+      end
+
+      def reply_as_mention_for_dm?(stream)
+        current_account.mentions_to_tms_enabled? && mention_note? && stream.dm_stream?
       end
 
       wrap_parameters(*wrap_params)

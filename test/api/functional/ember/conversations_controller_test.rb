@@ -1179,6 +1179,31 @@ module Ember
       ticket.destroy
     end
 
+    def test_twitter_mention_reply_to_dm_ticket_in_tms
+      Account.current.launch(:mentions_to_tms)
+      Sidekiq::Testing.inline! do
+        with_twitter_update_stubbed do
+          ticket = create_twitter_ticket({tweet_type: 'dm'})
+          @account = Account.current
+          params_hash = {
+            body: Faker::Lorem.sentence[0..130],
+            tweet_type: 'mention',
+            twitter_handle_id: @twitter_handle.id
+          }
+          post :tweet, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+          assert_response 201
+          latest_note = Helpdesk::Note.last
+          match_json(private_note_pattern(params_hash, latest_note))
+          tweet = latest_note.tweet
+          assert_equal tweet.tweet_id < 0, true, 'Tweet id should be less than zero'
+          assert_equal tweet.tweet_type, params_hash[:tweet_type]
+          ticket.destroy
+        end
+      end
+    ensure
+        Account.current.unstub(:mentions_to_tms_enabled?)
+    end
+
     def test_ticket_conversations
       Account.stubs(:current).returns(Account.first)
       t = create_ticket
