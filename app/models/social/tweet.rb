@@ -84,7 +84,7 @@ class Social::Tweet < ActiveRecord::Base
 
   def publish_note_for_tweet
     # For outgoing DM and Mentions, source additional info is published via note create with tweet_id as nil
-    return if (tweet_id < 0 && is_dm?) || (mention_stream_tweet? && Account.current.mentions_to_tms_enabled?)
+    return if tweet_id < 0 && (is_dm? || (Account.current.mentions_to_tms_enabled? && mention_stream_tweet?))
 
     old_payload = transaction_include_action?(:create) ? {} : construct_tweet_payload_for_central(self, tweetable, @previous_changes)
     new_payload = construct_tweet_payload_for_central(self, tweetable)
