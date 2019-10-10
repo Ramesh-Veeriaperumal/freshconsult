@@ -86,7 +86,7 @@ class Account < ActiveRecord::Base
     unless account_cancellation_requested?
       if launched?(:downgrade_policy)
         Billing::Subscription.new.cancel_subscription(self, end_of_term: true)
-        set_others_redis_key(account_cancellation_request_time_key, (Time.now.to_f * 1000).to_i, nil)
+        set_others_redis_key(account_cancellation_request_time_key, DateTime.now.strftime('%Q'), nil)
         subscription_request.destroy if subscription_request.present?
       else
         job_id = AccountCancelWorker.perform_in(WIN_BACK_PERIOD.days.from_now, account_id: id)

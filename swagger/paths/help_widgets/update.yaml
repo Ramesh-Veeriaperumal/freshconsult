@@ -1,7 +1,7 @@
 put:
-  tags: [Widget settings update]
+  tags: [Help Widget]
   description: Update the settings of the Widget
-  summary: Update for settings
+  summary: Update settings
   parameters:
     - name: settings
       in: body

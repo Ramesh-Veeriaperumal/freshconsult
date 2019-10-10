@@ -1,6 +1,6 @@
 put:
-  tags: [Widget Solution Article]
-  summary: Increase hit count of solution article in widget
+  tags: [Help Widget]
+  summary: Hit solution article
   description: Increase hit count of solution article in widget
   parameters:
     - name: id

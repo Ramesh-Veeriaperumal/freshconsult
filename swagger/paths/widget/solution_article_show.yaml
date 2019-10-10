@@ -1,6 +1,6 @@
 get:
-  tags: [Widget Solution Article]
-  summary: Get solution article for widget
+  tags: [Help Widget]
+  summary: Get solution article
   description: Get solution article for widget
   parameters:
     - name: id

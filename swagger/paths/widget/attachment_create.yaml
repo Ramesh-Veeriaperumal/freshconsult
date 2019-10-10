@@ -1,6 +1,6 @@
 post:
-  tags: [Widget Attachment]
-  summary: Single Attachment for widget
+  tags: [Help Widget]
+  summary: Attachment for widget
   description: Single Attachment for widget
   parameters:
     - in: body

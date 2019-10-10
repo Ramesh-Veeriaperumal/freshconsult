@@ -43,7 +43,7 @@ class Account < ActiveRecord::Base
     :csat_email_scan_compatibility, :mint_portal_applicable, :twitter_microservice, :quoted_text_parsing_feature, :enable_customer_journey,
     :csat_translations, :email_mailbox, :sandbox_temporary_offset, :downgrade_policy,
     :fluffy_min_level, :allow_update_agent, :help_widget_solution_categories, :search_settings, :optar_cache,
-    :ticket_field_revamp, :hide_og_meta_tags, :facebook_dm_outgoing_attachment, :skip_posting_to_fb
+    :ticket_field_revamp, :facebook_dm_outgoing_attachment, :skip_posting_to_fb, :hide_mailbox_error_from_agents, :hide_og_meta_tags
   ].freeze
 
   DB_FEATURES = [
