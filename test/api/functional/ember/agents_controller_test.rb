@@ -32,7 +32,8 @@ class Ember::AgentsControllerTest < ActionController::TestCase
   end
 
   def get_or_create_agent(agent_type = nil)
-    if Account.current.agents.last.nil?
+    last_active_agent = Account.current.users.joins(:agent).where(active: true).last
+    if last_active_agent.nil?
       @account = Account.current
       agent_type_id = 1
       if agent_type.present?
@@ -40,7 +41,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
       end
       add_test_agent(@account, role: Role.find_by_name('Agent').id, agent_type: agent_type_id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
     else
-      Account.current.agents.last.user
+      last_active_agent
     end
   end
 
