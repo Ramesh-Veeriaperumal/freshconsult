@@ -23,7 +23,9 @@ module ApiTicketConstants
   COMPOSE_EMAIL_FIELDS = (CREATE_FIELDS - %w(source product_id responder_id requester_id phone twitter_id facebook_id)).freeze
   SHOW_FIELDS = ['include'].freeze
   PERMITTED_ARCHIVE_FIELDS = SHOW_FIELDS
-  UPDATE_PROPERTIES_FIELDS = %w(due_by responder_id group_id status priority tags skip_close_notification subject description attachment_ids requester_id company_id inline_attachment_ids).freeze | AttachmentConstants::CLOUD_FILE_FIELDS
+  FSM_FIELDS = [:cf_fsm_appointment_start_time, :cf_fsm_appointment_end_time].freeze
+  UPDATE_PROPERTIES_CUSTOM_FIELDS = [custom_fields: FSM_FIELDS].freeze
+  UPDATE_PROPERTIES_FIELDS = %w(due_by responder_id group_id status priority tags skip_close_notification subject description attachment_ids requester_id company_id inline_attachment_ids).freeze | AttachmentConstants::CLOUD_FILE_FIELDS | UPDATE_PROPERTIES_CUSTOM_FIELDS
 
   ALLOWED_INCLUDE_PARAMS = %w(conversations requester company stats survey sla_policy).freeze
   EXCLUDABLE_FIELDS = ['custom_fields'].freeze
