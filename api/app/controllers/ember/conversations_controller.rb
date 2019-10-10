@@ -129,8 +129,10 @@ module Ember
       build_object
       assign_note_attributes
       @delegator_klass = 'EbayReplyDelegator'
-      return unless validate_delegator(@item)
+      return unless validate_delegator(@item, attachment_ids: @attachment_ids)
 
+      draft_attachments = @delegator.draft_attachments
+      @item.attachments = @item.attachments + draft_attachments if draft_attachments
       handle_ebay_conversations
     end
 

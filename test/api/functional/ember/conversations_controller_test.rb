@@ -2414,6 +2414,46 @@ module Ember
       assert_response 400
     end
 
+    def test_ecommerce_reply_with_attachments
+      attachment_ids = []
+      file = fixture_file_upload('files/image4kb.png', 'image/png')
+      attachment_ids << create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
+      ticket = create_ebay_ticket
+      params_hash = {
+        body: Faker::Lorem.sentence[0..130],
+        attachment_ids: attachment_ids
+      }
+      Ecommerce::Ebay::Api.any_instance.stubs(:make_ebay_api_call).returns(timestamp: Time.current)
+      post :ecommerce_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      match_json(private_note_pattern(params_hash, Helpdesk::Note.last))
+      assert Helpdesk::Note.last.attachments.size == attachment_ids.size
+    ensure
+      @account.ebay_accounts.last.delete
+      Ecommerce::Ebay::Api.any_instance.unstub(:make_ebay_api_call)
+    end
+
+    def test_ecommerce_reply_with_invalid_attachment_size
+      attachment_ids = []
+      file = fixture_file_upload('files/image4kb.png', 'image/png')
+      attachment_ids << create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
+      ticket = create_ebay_ticket
+      params_hash = {
+        body: Faker::Lorem.sentence[0..130],
+        attachment_ids: attachment_ids
+      }
+      invalid_attachment_limit = @account.attachment_limit + 1
+      Helpdesk::Attachment.any_instance.stubs(:content_file_size).returns(invalid_attachment_limit.megabytes)
+      Ecommerce::Ebay::Api.any_instance.stubs(:make_ebay_api_call).returns(timestamp: Time.current)
+      post :ecommerce_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      match_json([bad_request_error_pattern(:attachment_ids, :invalid_size, max_size: "#{@account.attachment_limit} MB", current_size: "#{invalid_attachment_limit} MB")])
+      assert_response 400
+    ensure
+      @account.ebay_accounts.last.delete
+      Ecommerce::Ebay::Api.any_instance.unstub(:make_ebay_api_call)
+      Helpdesk::Attachment.any_instance.unstub(:content_file_size)
+    end
+
     def test_email_notification_without_notifying_emails
       current_account = Account.current
       assigned_agent = add_test_agent(@account)
