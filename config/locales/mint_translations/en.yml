@@ -1,5 +1,6 @@
 en:
   mailer_notifier:
+    hello_there: "Hello there,"
     note: "Note: "
     freshdesk_support: 'Freshdesk Support'
     turn_off: Turn Off,
@@ -176,3 +177,27 @@ en:
     cloud_log_email_to_freshdesk: "%{app_name} to Freshdesk Log"
     cloud_log_email_to_app: "Freshdesk to %{app_name} Log"
     monitor_email_subject: "[New Reply] in %{post_topic}"
+  downgrade_policy_subject:
+    downgrade_in_days: "Your freshdesk subscription will be modified in %{days} days"
+    downgrade_final_message: "Your freshdesk subscription will be modified tomorrow"
+    cancel_in_days: "Your freshdesk account will be canceled in %{days} days"
+    cancel_in_hours: "In %{hours} hours, your Freshdesk account will cease to exist"
+    cancel_final_message: "Final hours of your Freshdesk account. Act now!"
+  downgrade_policy_content:
+    downgrade_in_days: "Your subscription with Freshdesk for %{domain} will be modified in %{days} days, on %{next_renewal_at}. Once modified, all data and configuration pertaining to your %{current_plan} plan will be deleted irrevocably. If you want to cancel this modification, just reply to this email."
+    downgrade_in_hours: "This is to remind you that your subscription for %{domain} will be modified in the next %{hours} hours. We want to underscore that this action will delete all data and configurations that you created using features specific to your %{current_plan} plan. If you want to retain the said data and configurations, reply to this email and we will cancel your modification request."
+    downgrade_final_message: "Your subscription with Freshdesk for %{domain} is pending modification, that’s due tomorrow. We wanted to touch base with you one last time to see if you want to cancel this modification. If yes, just reply to this email and we will cancel it for you."
+    cancel_in_days: "Your subscription with Freshdesk for %{domain} is scheduled to be canceled in %{days} days, on %{next_renewal_at}. Your helpdesk data, including all customer details and conversations, will be deleted irrevocably after the cancellation is processed. If you want to retain your account, reply to this email and we will delete your cancellation request."
+    cancel_in_hours: "This is to remind you that your Freshesk account %{domain} will be canceled in the next %{hours} hours. We want to underscore that this action will delete all your helpdesk data irrevocably, including all customer details and conversations. If you want to retain your account, send us a reply and we will delete your cancellation request."
+    cancel_final_message: "With less than 24 hours left, we wanted to touch base with you one last time to see if you wanted to use this chance to retain your Freshdesk account. Once your cancellation request is processed, all your helpdesk data, including all customer details and conversations, will be deleted irrevocably. If you want to retain your account, send us a reply and we will delete your cancellation request."
+    current_subscription: "Your current subscription: "
+    agent_reduction: "As per request, please maintain %{requested_agents} full-time agents or fewer by %{next_renewal_at} or you will be charged as for %{current_agents} agents, as usual."
+    agent_field_reduction: "As per request, please maintain %{requested_field_agents} field technicians or fewer by %{next_renewal_at} or you will be charged as for %{current_field_agents} field technicians, as usual."
+    agent_and_agent_field_reduction: "As per request, please maintain %{requested_agents} full-time agents or fewer and %{requested_field_agents} field technicians or fewer by %{next_renewal_at} or you will be charged as for %{current_agents} agents and %{current_field_agents} field technicians, as usual."
+    current_plan: "Plan: %{plan}"
+    agents: "Agents: %{agents}"
+    billing_cycle: "Billing cycle: %{billing_cycle}"
+    modified_subscription: "Your modified subscription: "
+    omni_channel: "Omnichannel"
+    fsm: "FSM"
+    field_technicians: "Field Technicians: %{field_agents}"

@@ -1,0 +1,54 @@
+<%= render layout: 'shared/email_header_footer.plain.erb', locals: { sent_by: :freshdesk_team, other_recipients_note: true } do %>
+      <p><%= @email_body %></p>
+     
+      <% unless Account.current.account_cancellation_requested? %>
+         <% from_omni_fsm = []
+         to_omni_fsm = []
+         sprout_plan = @subscription_request.subscription_plan.amount.zero?
+         from_fsm_supported = Account.current.field_service_management_enabled? && Account.current.has_feature?(:field_service_management_toggle)
+         to_fsm_supported = @subscription_request.fsm_field_agents.present?
+         from_omni_fsm << I18n.t('downgrade_policy_content.omni_channel') if @subscription.subscription_plan.omni_plan?
+         from_omni_fsm << I18n.t('downgrade_policy_content.fsm') if from_fsm_supported
+         to_omni_fsm << I18n.t('downgrade_policy_content.omni_channel') if @subscription_request.subscription_plan.omni_plan?
+         to_omni_fsm << I18n.t('downgrade_policy_content.fsm') if to_fsm_supported
+         from_field_agents =  @subscription.field_agent_limit.to_i
+         to_field_agents = @subscription_request.fsm_field_agents.to_i
+         from_plan_name = @subscription.subscription_plan.display_name
+         modified_from_plan_name = SubscriptionPlan::JAN_2019_PLAN_NAMES.include?(@subscription.subscription_plan.name) ? from_plan_name : from_plan_name + ' Classic'
+         to_plan_name = @subscription_request.subscription_plan.display_name
+         modified_to_plan_name = SubscriptionPlan::JAN_2019_PLAN_NAMES.include?(@subscription_request.subscription_plan.name) ? to_plan_name : to_plan_name + ' Classic' %>
+        <p>
+          <b><%= I18n.t('downgrade_policy_content.current_subscription') %></b><br>
+          <%= I18n.t('downgrade_policy_content.current_plan', plan: modified_from_plan_name) %>
+          <% if from_omni_fsm.present? %>
+            <%= '(' + from_omni_fsm.join('+') + ')' %>
+          <% end %>
+          <% unless sprout_plan %>
+            <br><%= I18n.t('downgrade_policy_content.agents', agents: @subscription.agent_limit) %>
+          <% end %>
+          <br><%= I18n.t('downgrade_policy_content.billing_cycle', billing_cycle: SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[@subscription.renewal_period]) %><br>
+          <% if from_fsm_supported || to_fsm_supported %>
+            <%= I18n.t('downgrade_policy_content.field_technicians', field_agents: from_field_agents)%><br>
+          <%end%>
+          <br><b><%= I18n.t('downgrade_policy_content.modified_subscription') %><br></b>
+          <%= I18n.t('downgrade_policy_content.current_plan', plan: modified_to_plan_name)%>
+          <% if to_omni_fsm.present? %>
+            <%= '(' + to_omni_fsm.join('+') + ')' %><br>
+          <% end %>
+          <% unless sprout_plan %>
+            <%= I18n.t('downgrade_policy_content.agents', agents: @subscription_request.agent_limit) %><br>
+            <%= I18n.t('downgrade_policy_content.billing_cycle', billing_cycle: SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[@subscription_request.renewal_period]) %><br>
+            <% if from_fsm_supported || to_fsm_supported %>
+              <%= I18n.t('downgrade_policy_content.field_technicians', field_agents: to_field_agents)%><br>
+            <%end%>
+            <% if @subscription.field_agent_limit.present? && to_fsm_supported && @subscription_request.agent_limit < @subscription.agent_limit && @subscription_request.fsm_field_agents < @subscription.field_agent_limit %>
+                <%= I18n.t('downgrade_policy_content.agent_and_agent_field_reduction', requested_agents: @subscription_request.agent_limit, requested_field_agents: @subscription_request.fsm_field_agents.to_i, current_agents: @subscription.agent_limit, current_field_agents: @subscription.field_agent_limit, next_renewal_at: @subscription.next_renewal_at.strftime('%-d %b %Y')) %><br>
+            <% elsif @subscription.field_agent_limit.present? && to_fsm_supported && @subscription_request.fsm_field_agents < @subscription.field_agent_limit %>
+                <%= I18n.t('downgrade_policy_content.agent_field_reduction', requested_field_agents: @subscription_request.fsm_field_agents, current_field_agents: @subscription.field_agent_limit, next_renewal_at: @subscription.next_renewal_at.strftime('%-d %b %Y')) %><br>
+            <% elsif @subscription_request.agent_limit < @subscription.agent_limit %>
+              <%= I18n.t('downgrade_policy_content.agent_reduction', requested_agents: @subscription_request.agent_limit, current_agents: @subscription.agent_limit, next_renewal_at: @subscription.next_renewal_at.strftime('%-d %b %Y')) %><br>
+            <% end %>
+          <% end %>
+        </p>
+      <%end%>
+<%end%>

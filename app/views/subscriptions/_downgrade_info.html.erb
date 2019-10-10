@@ -10,7 +10,7 @@
 %>
 <% if current_account.launched?(:downgrade_policy) && @subscription.subscription_request.present? %>
   <div>
-    <% requested_plan= SubscriptionPlan.find(@subscription.subscription_request.plan_id)
+    <% requested_plan= @subscription.subscription_request.subscription_plan
        is_sprout  = new_sprout?(requested_plan.name)
        fsm_field_agents = @subscription.subscription_request.fsm_field_agents?
     %>

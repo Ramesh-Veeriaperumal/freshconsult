@@ -2,6 +2,7 @@ class Account < ActiveRecord::Base
   include MixpanelWrapper
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include SubscriptionHelper
   WIN_BACK_PERIOD = 2.freeze
 
   def customer_details
@@ -87,6 +88,7 @@ class Account < ActiveRecord::Base
       if launched?(:downgrade_policy)
         Billing::Subscription.new.cancel_subscription(self, end_of_term: true)
         set_others_redis_key(account_cancellation_request_time_key, DateTime.now.strftime('%Q'), nil)
+        trigger_downgrade_policy_reminder_scheduler
         subscription_request.destroy if subscription_request.present?
       else
         job_id = AccountCancelWorker.perform_in(WIN_BACK_PERIOD.days.from_now, account_id: id)
@@ -132,5 +134,13 @@ class Account < ActiveRecord::Base
 
   def deletion_scheduled?
     DeletedCustomers.find_by_account_id(self.id).present?
+  end
+
+  def fetch_all_admins_email
+    to_email = []
+    technicians.each do |agent|
+      to_email << agent.email if agent.privilege?(:admin_tasks)
+    end
+    to_email
   end
 end

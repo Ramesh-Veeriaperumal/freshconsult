@@ -18,6 +18,7 @@ class ConfigDecorator < ApiDecorator
     warn_items = {}
     warn_items[:livechat_deprecation] = livechat_deprecation?
     warn_items[:freshfone_deprecation] = freshfone_deprecation?
+    warn_items[:downgrade_policy_reminder] = redis_key_exists?(current_account.downgrade_policy_email_reminder_key)
     warn_items.merge!(card_expired?) if admin?
     warn_items[:invoice_overdue] = grace_period_exceeded? if invoice_due?
     warn_items
@@ -68,5 +69,4 @@ class ConfigDecorator < ApiDecorator
   def zendesk_app_id
     ZendeskAppConfig::FALCON_APP_ID if redis_key_exists?(ZENDESK_IMPORT_APP_KEY)
   end
-
 end

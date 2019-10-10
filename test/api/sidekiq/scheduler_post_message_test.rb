@@ -4,11 +4,13 @@ Sidekiq::Testing.fake!
 require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
 require Rails.root.join('test', 'api', 'sidekiq', 'create_ticket_helper.rb')
 require Rails.root.join('test', 'api', 'helpers', 'todos_test_helper.rb')
+require Rails.root.join('test', 'models', 'helpers', 'subscription_test_helper.rb')
 
 class SchedulerPostMessageTest < ActionView::TestCase
   include AccountTestHelper
   include CreateTicketHelper
   include TodosTestHelper
+  include SubscriptionTestHelper
   SUCCESS = 200..299
   def teardown
     Account.unstub(:current)
@@ -74,6 +76,33 @@ class SchedulerPostMessageTest < ActionView::TestCase
     RestClient::Request.any_instance.unstub(:execute)
   end
 
+  def test_post_message_downgrade_policy_reminder
+    WebMock.allow_net_connect!
+    Account.stubs(:current).returns(Account.first)
+    @account = Account.current
+    Account.current.launch(:downgrade_policy)
+    current_subscription = @account.subscription
+    new_reminder = get_new_subscription_request(@account, current_subscription.subscription_plan_id - 1, current_subscription.renewal_period)
+    params = downgrade_policy_job_params
+    res = ::Scheduler::PostMessage.new.perform(payload: params)
+    refute response.blank?
+    assert_includes SUCCESS, res.to_i, "Expected one of #{SUCCESS}, got #{res}"
+  end
+
+  def test_post_message_downgrade_policy_reminder_with_invalid_params
+    WebMock.allow_net_connect!
+    assert_raises(SchedulerService::Errors::BadRequestException) do
+      Account.stubs(:current).returns(Account.first)
+      @account = Account.current
+      current_subscription = @account.subscription
+      @account.launch(:downgrade_policy)
+      new_reminder = get_new_subscription_request(@account, current_subscription.subscription_plan_id - 1, current_subscription.renewal_period)
+      params = downgrade_policy_job_params
+      params.delete(:scheduled_time)
+      ::Scheduler::PostMessage.new.perform(payload: params)
+    end
+  end
+
   private
 
     def todo_job_params
@@ -96,5 +125,20 @@ class SchedulerPostMessageTest < ActionView::TestCase
 
     def ticket_job_id(ticket)
       [Account.current.id, 'ticket', ticket.id].join('_')
+    end
+
+    def downgrade_policy_job_params
+      {
+        job_id: "#{@account.id}_activate_downgrade_1",
+        group: 'helpkit_downgrade_policy_reminder',
+        scheduled_time: 1.day.from_now.iso8601,
+        data: {
+          account_id: @account.id,
+          enqueued_at: Time.now.to_i
+        },
+        sqs: {
+          url: 'https://sqs.us-east-1.amazonaws.com/213293927234/fd_scheduler_downgrade_policy_reminder_queue_dev'
+        }
+      }
     end
 end

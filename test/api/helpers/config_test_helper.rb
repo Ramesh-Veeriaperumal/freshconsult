@@ -22,6 +22,7 @@ module ConfigTestHelper
       warn_items.merge!(card_expired?)
     end  
     warn_items[:invoice_overdue] = grace_period_exceeded? if invoice_due?
+    warn_items[:downgrade_policy_reminder] = redis_key_exists?(Account.current.downgrade_policy_email_reminder_key)
     warn_items
   end
 

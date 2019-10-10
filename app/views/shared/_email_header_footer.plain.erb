@@ -1,4 +1,4 @@
-<%= defined?(user_name) ? t("mailer_notifier.hi_user", user_name: user_name) : t("mailer_notifier.hi") %>
+<%= defined?(user_name) ? t("mailer_notifier.hi_user", user_name: user_name) : t("mailer_notifier.hello_there") %>
 <%= yield %>
 <%= t("mailer_notifier.regards") %><br/>
 <%= sent_by.is_a?(Symbol) ? (defined?(portal_name) ? t("mailer_notifier.#{sent_by.to_s}", portal_name: portal_name) : t("mailer_notifier.#{sent_by.to_s}")) : sent_by %>
