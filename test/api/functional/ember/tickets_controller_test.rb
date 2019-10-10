@@ -2226,7 +2226,7 @@ module Ember
           ticket_fields: ['dependent']
         }
       ]
-      section_ids = create_section_fields(3, sections, false, true, '_1234568910', 20)
+      section_ids = create_section_fields(3, sections, false, true, '_1234568910', 31)
       @account.reload
       dependent_field = @account.section_fields.where(section_id: section_ids[0])[0].ticket_field
       dependent_field.update_attribute(:required, true)
