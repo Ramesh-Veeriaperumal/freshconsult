@@ -367,7 +367,6 @@ window.App = window.App || {};
       this.omni_disabled = null;
     },
     choosePlan: function (button) {
-      this.fsm_disabled = false;
       var btn = $(button),
       current_plan = btn.data("plan"),
       plan_cost = btn.data("planCost"),
