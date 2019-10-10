@@ -24,7 +24,7 @@ class Admin::EmailConfigsController < Admin::AdminController
   end
 
   def existing_email
-    email_config = current_account.all_email_configs.find_by_reply_email(params[:email_address]) 
+    email_config = current_account.all_email_configs.find_by_reply_email(params[:email_address])
     if email_config.nil?
       render :json => { :success => true, :message => "" }
     else
@@ -49,12 +49,12 @@ class Admin::EmailConfigsController < Admin::AdminController
   def update
     @email_config.imap_mailbox.error_type = 0 if @email_config.imap_mailbox && current_account.imap_error_status_check_enabled?
     if @email_config.update_attributes(params[:email_config])
-      respond_to do |format|        
+      respond_to do |format|
         format.html  do
           flash[:notice] = I18n.t(:'flash.general.update.success', :human_name => human_name)
           redirect_back_or_default redirect_url
         end
-        format.js 
+        format.js
       end
     else
       update_error
@@ -65,19 +65,18 @@ class Admin::EmailConfigsController < Admin::AdminController
   def test_email
     @email_config = current_account.primary_email_config
     EmailConfigNotifier.send_email(:test_email, nil, current_account.primary_email_config)
-    
-    render :json => {:email_sent => true}.to_json 
-    
+
+    render json: { email_sent: true }.to_json
   end
-  
-  def make_primary 
+
+  def make_primary
     @email_config = scoper.find(params[:id])
     if @email_config && @email_config.update_attributes(:primary_role => true)
         flash[:notice] = t(:'flash.email_settings.make_primary.success', :reply_email => @email_config.reply_email).html_safe
     end
     redirect_back_or_default redirect_url
   end
-  
+
   def register_email
     @email_config = scoper.find_by_activator_token params[:activation_code]
     if @email_config
@@ -86,16 +85,16 @@ class Admin::EmailConfigsController < Admin::AdminController
         flash[:notice] = t(:'flash.email_settings.activation.success',
             :reply_email => @email_config.reply_email) if @email_config.save
       else
-        flash[:warning] = t(:'flash.email_settings.activation.already_activated', 
+        flash[:warning] = t(:'flash.email_settings.activation.already_activated',
             :reply_email => @email_config.reply_email)
       end
     else
       flash[:warning] = t(:'flash.email_settings.activation.invalid_code')
     end
-    
+
     redirect_back_or_default redirect_url
   end
-  
+
   def deliver_verification
     @email_config = scoper.find(params[:id])
 
@@ -104,7 +103,7 @@ class Admin::EmailConfigsController < Admin::AdminController
     @email_config.set_activator_token
     @email_config.save
 
-    flash[:notice] = t(:'flash.email_settings.send_activation.success', 
+    flash[:notice] = t(:'flash.email_settings.send_activation.success',
         :reply_email => @email_config.reply_email)
 
     redirect_to :back
@@ -129,10 +128,10 @@ class Admin::EmailConfigsController < Admin::AdminController
     end
     post_process
   end
-  
-  def personalized_email_enable    
+
+  def personalized_email_enable
     current_account.features.personalized_email_replies.create
-    post_process  
+    post_process
   end
 
   def personalized_email_disable
@@ -153,7 +152,7 @@ class Admin::EmailConfigsController < Admin::AdminController
   def destroy
     @email_config = scoper.find(params[:id])
     if @email_config.primary_role
-      flash[:notice] = t('email_configs.delete_primary_email') 
+      flash[:notice] = t('email_configs.delete_primary_email')
       redirect_to :action => 'index' and return
     end
     @email_config.destroy
@@ -171,26 +170,26 @@ class Admin::EmailConfigsController < Admin::AdminController
     end
 
     def post_process
-      current_account.reload 
+      current_account.reload
       flash[:notice] = t(:'email_configs.config_saved_message')
-      render :partial => 'show_message' 
+      render partial: 'show_message'
     end
- 
+
     def human_name
       I18n.t('email_configs.email')
     end
-  
+
     def create_flash
       I18n.t('email_configs.email_added_succ_msg')
     end
-    
+
     def create_error #Need to refactor this code, after changing helpcard a bit.
       @imap_mailbox = @obj.imap_mailbox
       @smtp_mailbox = @obj.smtp_mailbox
       @products = current_account.products
-      @groups = current_account.groups 
+      @groups = current_account.groups
     end
-    
+
     def update_error
       @products = current_account.products
       @groups = current_account.groups

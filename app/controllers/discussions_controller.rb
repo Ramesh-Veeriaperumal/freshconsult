@@ -19,10 +19,10 @@ class DiscussionsController < ApplicationController
 
 	before_filter :fetch_spam_counts, :only => [:index, :your_topics, :sidebar]
 
-	def index
-		@topics = current_account.topics.as_activities.paginate(:page => params[:page])
-		respond_back
-	end
+  def index
+    @topics = current_account.topics.as_activities.preload(last_post: { user: :avatar }).paginate(page: params[:page])
+    respond_back
+  end
 
 	def your_topics
 		@topics, ids = [], {:topic => [], :forum => []}

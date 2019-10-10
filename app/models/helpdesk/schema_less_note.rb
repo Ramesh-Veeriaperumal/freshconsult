@@ -1,5 +1,5 @@
 class Helpdesk::SchemaLessNote < ActiveRecord::Base
-  
+
   include RabbitMq::Publisher
   # Including this because we are doing business hour calculation in rabbitmq for reports
   include BusinessHoursCalculation
@@ -63,6 +63,14 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
 
   def last_modified_user_id=(user_id)
     note_properties[:last_modified_user_id] = user_id.to_s
+  end
+
+  def quoted_parsing_done=(quoted_parse_val)
+    note_properties[:quoted_parsing_done] = quoted_parse_val
+  end
+
+  def quoted_parsing_done
+    note_properties[:quoted_parsing_done]
   end
 
   def last_modified_timestamp

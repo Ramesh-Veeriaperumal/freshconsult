@@ -232,7 +232,7 @@ sv-SE:
   upgrade_plan: Uppgradera
   go_back: Tillbaka
   go_back_small: tillbaka
-  add_note: null
+  add_note: Lägg till anteckning
   set_field_label_as: 'Ställ in %{custom_field_name} som'
   contact_name: Kontaktnamn
   requester_email: Beställarens epostadress
@@ -421,7 +421,13 @@ sv-SE:
         Tabb-tangenten en eller två gånger för att göra indrag. Vi kommer att
         konvertera dessa till objekt i rullistan baserat på indragen, så var
         extra försiktig. <a target='_blank' href=%{learn_more}>Läs mer</a>
-      nested_field_helptext: ''
+      nested_field_helptext: >-
+        Använd textrutan nedan till att lägga till objekt för rullistan. Tryck
+        på Tabb-tangenten en eller två gånger för att göra indrag. Vi kommer att
+        konvertera dessa till objekt i rullistan baserat på indragen. <a
+        target='_blank'
+        href='https://support.freshdesk.com/solution/categories/45957/folders/74594/articles/37599-using-dependent-fields'>Läs
+        mer</a> 
       dropdown_items_edit: Rullgardinselement - redigera vy
       drop_down_items_edit: Objekt i rullista - Redigera
       dropdown_items_preview: Rullgardinselement - förhandsgranska
@@ -529,15 +535,15 @@ sv-SE:
     overview: Översikt
     recent: Senaste
     popular: Populärt
-    planned: Planerad
-    implemented: Implementerad
-    nottaken: Ej tagen
+    planned: Planerade
+    implemented: Implementerade
+    nottaken: Inte taget
     deferred: Uppskjuten
     inprogress: Pågående
     answered: Besvarad
-    unanswered: Ej besvarad
+    unanswered: Obesvarad
     solved: Löst
-    unsolved: Ej löst
+    unsolved: Olöst
   payment_info: Betalningsinformation
   billing_address: Faktureringsadress
   support:
@@ -614,6 +620,13 @@ sv-SE:
         neutral_info: Vi önskar att du vore lite nöjdare.
         unhappy_info: Vi kommer se till att vara extra noggranna nästa gång.
         additional_info: Dela dina åsikter om hur det har varit att arbeta med oss.
+    canned_form:
+      next: Nästa
+      form_submit: Skicka in
+      okay: Okej
+      hey: Hej
+      thank_you_text: Tack
+      move_to_form_field: eller tryck på enter
   gamification:
     levels:
       beginner: Nybörjare
@@ -1241,7 +1254,13 @@ sv-SE:
               supportdel i din app. Denna innehåller din kunskapsbas och ett
               ärendeformulär, så att de kan komma i kontakt med dig om de
               behöver hjälp.
-            info3: null
+            info3: >-
+              Mobihelp är fullständigt konfigurerbart. Du kan välja allt - från
+              fälten i ditt feedbackformulär till hur det ser ut i din app.
+              Information såsom enhetsnamn, operativsystem och appversion samlas
+              automatiskt in utan att användaren behöver göra något. Du kan
+              också aktivera anpassade fält och samla in kraschloggar och
+              brödsmulor.
             info4: >-
               Du kan skapa ett obegränsat antal applikationer att använda med
               Mobihelp och knyta dem till ditt Freshdesk-konto. När du gjort det
@@ -2819,7 +2838,7 @@ sv-SE:
             Med Freshdesk kan du hantera de kundfrågor som kommer till ditt
             eBay-konto via din supportavdelning. När du har ställt in det ändras
             alla kundfrågor från eBay automatiskt till ärenden. Du kan också
-            svara på dem direkt i Freshdesk.
+            svara på dem direkt i Freshdesk. 
       new:
         site_helptext: välj en eBay-plats där du vill sälja dina produkter
         account_name: Kontonamn
@@ -4944,11 +4963,13 @@ sv-SE:
     reset_score_title: Nollställ brickor och poäng
     last_seen_at: Sågs senast vid
     assign_group: Associera grupper
+    search_placeholder: Sök bland handläggare
   account_admin: Kontoadministratör
   right: Höger
   footer:
     helpdesk_software: Programvara för hjälpcenter
-    helpdesk_software_link: "https://freshdesk.com/se/?utm_source=portal&utm_medium=reflink&utm_campaign=portal_reflink"
+    helpdesk_software_link: >-
+      https://freshdesk.com/se/?utm_source=portal&utm_medium=reflink&utm_campaign=portal_reflink
     by_freshdesk: av Freshdesk
     submit_feedback: Skicka in feedback
     browse_community: Bläddra bland användargrupper
@@ -5343,7 +5364,7 @@ sv-SE:
     topic_not_found: Det verkar som om ämnet har raderats
     post_not_found: Det verkar som om den här publiceringen har raderats
     showing_my_topics: Visar ämnen som du för närvarande följer
-    community_forums: Forum för användargrupper
+    community_forums: Gemenskapsforum
     knowledge_base: Kunskapsdatabas
     showing_recent_updates: Visar de senaste uppdateringarna
     no_articles_info_1: Vi har inte publicerat några artiklar i den här sektionen.
@@ -5359,6 +5380,7 @@ sv-SE:
         Det verkar som att ditt konto inte har verifierats ännu. Vänligen
         aktivera det för att publicera en artikel (du kan spara dina utkast fram
         till dess).
+      created_by: 'Skapat av:'
     folder:
       filler_text: 'Bevaka den här sidan för artiklar som handlar om %{folder_name}'
     topic:
@@ -5398,7 +5420,7 @@ sv-SE:
       sort_order:
         date: Äldsta först
         recency: Nyaste först
-        popularity: Populär
+        popularity: Populärt
       sort_by_most_recent: Senaste
       sort_by_most_popular: Populärast
       sort_by_default: Standard
@@ -5467,9 +5489,17 @@ sv-SE:
       add_people_title: Lägg till personer till konversationen
       reopen_reply: Svara
       related_articles: Relaterade artiklar ...
+      comments: Kommentarer
     customer_login_info: Är du en kund?
     agent_signin: Logga in här
     agent_login_info: Är du en agent?
+    helpdesk_login_portal: Välkommen tillbaka Handläggare
+    agent_login_details: Ange inloggningsuppgifterna du fick när du registrerade dig
+    user_signup_portal: 'Registrera dig för ditt '
+    account: konto
+    vote_label:
+      one: 1 stemme
+      other: stemmer
   feedbackwidget_form_heading: Rubrik för formulär
   feedbackwidget_form_title: Rubrik på widgetformulär
   cancel_and_back: Avbryt och gå tillbaka
@@ -5735,7 +5765,7 @@ sv-SE:
       en gång.
     info16: >-
       <b>Publicerade</b> artiklar visas i självbetjäningsportalen och i
-      sökresultat.
+      sökresultat. 
     info17: >-
       Artiklar som är <b>utkast</b> visas endast för representanterna och i
       representanternas sökresultat.
@@ -5823,17 +5853,17 @@ sv-SE:
 
 
       Importera %{type} från CSV
+               
+
+       
+       
 
 
 
-
-
-
-
-
-
-      \ \
-
+        
+       
+      \ \ 
+       
     sample_data: Provdata
     contact_import_data_info: >-
       Se till att din CSV-fil är i UTF-8-format och att första raden innehåller
@@ -6058,6 +6088,8 @@ sv-SE:
       home: Hem
       company_tickets: Företagsärenden
       social: sociala medier
+    goto_agent_portal: Agentportal
+    goto_customer_portal: Gå till kundportalen
   agent_adds_comment: Representant lägger till kommentar till ärendet
   portal_customizer_anon_tickets: Vem som helst kan skicka in ett ärende
   portal_customizer_option_tickets: Användare kan skicka in ärenden utan att logga in
@@ -6163,7 +6195,7 @@ sv-SE:
           kontrollera ärendet.<br /><br />Om du har ställt in stöd för flera
           språk i din helpdesk kan du skapa ett aktiveringsmeddelande för varje
           språk. Ikonen <i class="common-icon-outdated"></i> visar att
-          meddelandeöversättningarna för andra språk kan vara föråldrade.
+          meddelandeöversättningarna för andra språk kan vara föråldrade. 
       agent_template_3:
         topic: Ärende tilldelat till representant
         info1: >-
@@ -6173,7 +6205,7 @@ sv-SE:
           ärendet.<br/><br/>Om du har ställt in stöd för flera språk i din
           helpdesk kan du skapa ett aktiveringsmeddelande för varje språk.
           Ikonen <i class="common-icon-outdated"></i> visar att
-          meddelandeöversättningarna för andra språk kan vara föråldrade.
+          meddelandeöversättningarna för andra språk kan vara föråldrade. 
       agent_template_11:
         topic: Ärendet är oövervakat i en grupp
         info1: >-
@@ -7191,6 +7223,13 @@ sv-SE:
       title: Forum
     gdpr_to: till
     visible_in_portal: Synlig i portal
+    sort_conversations:
+      label: Sortera konversationer
+      helpnote: Det här är den ordning som meddelandena visas i ärenden.
+      latest_top: Du kommer nu att se den nyaste konversationen överst.
+      oldest_top: Du kommer nu att se den äldsta konversationen överst.
+      option1: Visa nyast överst
+      option2: Visa äldst överst
   lead: Möjlighet
   comments: Kommentarer
   forum_confirm_msg1: Är du säker på att du vill ta bort denna kategori?
@@ -8592,7 +8631,10 @@ sv-SE:
         Uppdatera.<br/><br/>
       form:
         domain: Domän
-        domain_info: ''
+        domain_info: >-
+          Ange den kompletta URL:en för JIRA-kontot med https/http. T.ex.
+          https://exempel.atlassian.net <br /><span class='italics'> Obs! På
+          plats-varianterna av JIRA måste vara anslutna till internet. </span>
         jira_note: Beskrivningstext
         jira_note_info: Denna text läggs till i ärendebeskrivningen i JIRA.
         widget_title: Widgetrubrik
@@ -8796,7 +8838,10 @@ sv-SE:
         domain_info: >-
           Använd superadmins office 365 användar-ID, såsom
           name@company.onmicrosoft.com när det gäller på begäran.
-        organization_name_info: null
+        organization_name_info: >-
+          För att lokalisera detta går du till inställningarna för Dynamics CRM
+          -> Anpassningar-> Utvecklarresurser -> Din organisationsinformation ->
+          Organisationens unika namn.
         end_point_info: >-
           Exempel:
           https://freshpo4.api.crm5.dynamics.com/XRMServices/2011/Organization.svc.
@@ -9162,7 +9207,17 @@ sv-SE:
       desc: >-
         Exportera kundinformation, hantera prenumerationer och hämta information
         om kunders användningsstatistik direkt till Freshdesk.
-      helptext: ''
+      helptext: >-
+        <h4>Hjälp med integrering av iContact</h4><br/> För att integrera
+        iContact går du till <a target='_blank'
+        href='https://app.icontact.com/icp/core/externallogin'>https://app.icontact.com/icp/core/externallogin</a>
+        och ger sedan Freshdesk-appen åtkomst genom att ange det program-ID du
+        ser nedan <br/><br/><b>qB7RYQgliAPwl5dwezYF0kAN4Islhj4e</b><br/><br/>
+        Ställ in ett lösenord och klicka på Spara. API-lösenordet kommer att
+        användas för alla API-begäranden från Freshdesk. <br/><br/> Kopiera
+        API-URL:en från sektionen Kontoinformation och klistra in den i fältet
+        för API-URL här. Ange ditt användarnamn för iContact och det nya
+        API-lösenordet. Klicka sedan på Uppdatera.
       form:
         app_id: Program-ID
         username: Användarnamn för iContact
@@ -9175,7 +9230,22 @@ sv-SE:
     dropbox:
       label: Dropbox
       desc: Bifoga och dela dina filer från Dropbox
-      helptext: ''
+      helptext: >-
+        <h4>Hjälp med integrering av Dropbox</h4><br/><p>Med integrering av
+        Dropbox kan representanter hämta filer från sina Dropbox-mappar och dela
+        dem när de skickar in ärenden eller svarar på ett ärende i Freshdesk. En
+        direktlänk till filen delas i ärendet, så du behöver inte bifoga någon
+        fil. På så sätt slipper du problem med storleksbegränsningar för
+        e-postmeddelanden.</p><p>Innan du ställer in integreringen, gå till
+        <strong><a href='https://www.dropbox.com/developers/apps'
+        target='_blank' alt='developers'>Dropbox sida för
+        utvecklare</a></strong>.</p><p>1. Från sektionen Mina appar, klicka på
+        Skapa en app.</p><p>2. Välj apptypen ”Väljaren”.</p><p>3. Ange namn och
+        beskrivning.</p><p>4. Ange din support-URL under Domäner <i>(t.ex.
+        dittföretag.freshdesk.com)</i></p><p>5. Klicka på knappen
+        Skapa</p><p>Slutligen, kopiera den nya app-nyckeln och klistra in den på
+        den här sidan. Spara sedan dina ändringar. Din Dropbox-väljare är nu
+        klar. Du kan se den i det nya ärendeformuläret.</p>
       form:
         app_key: Registrerad app-nyckel för din domän
         app_key_info: Skapa en app i Dropbox och ange app-nyckeln här.
@@ -9239,7 +9309,7 @@ sv-SE:
       freshdesk_api_key: API-nyckel för Freshdesk
       api_key_available: >-
         Du hittar din API-nyckel under profilinställningar i ditt
-        Freshdesk-konto
+        Freshdesk-konto 
       new_to_freshdesk: 'Nykomling till Freshdesk? '
     ilos:
       portal_forum:
@@ -11518,9 +11588,7 @@ sv-SE:
           e-post
         learn_more: Läs mer
         pricing: Se alla samtalskostnader och länder som stöds
-        request_subject: |-
-          Telefonärende - %{account_name}
-
+        request_subject: 'Telefonärende - %{account_name}'
         email_message: Freshfone-funktion krävs
         success: Vi återkommer till dig inom två vardagar.
         error_message: Tyvärr kan din förfrågan inte göras nu. Försök igen senare.
@@ -12087,12 +12155,12 @@ sv-SE:
         Om du exempelvis har en supportportal för ditt varumärke kan du skapa
         flera kategorier för produkter eller team. Detta hjälper dig att driva
         på relevanta konversationer till alla dina topnivåavdelningar och som
-        administratör kan du ändå hantera allt på ett ställe.
+        administratör kan du ändå hantera allt på ett ställe. 
       para3: >-
         Om du har flera produktportaler konfigurerade i ditt Freshdesk-konto kan
         du välja att länka en av dina kategorier till den produkten. När du gör
         det kan användare se kategorin, dess forum och alla dess ämnen både på
-        din huvudportal och din produktportal.
+        din huvudportal och din produktportal. 
       para4: Läs mer om att hantera flera produkter i Freshdesk.
     shared:
       topic:
@@ -12912,6 +12980,13 @@ sv-SE:
       widget_token: Widget token
   pts_plain: ' poäng'
   in: i
+  helpcard:
+    title: Unikt externt ID
+    info: >-
+      Importera dina kunders unika ID och identifiera deras konversationer i
+      Freshdesk med lätthet. <br><a
+      href="https://support.freshdesk.com/support/solutions/articles/226804-identifying-contacts-with-an-external-id"
+      target="_blank">Hjälp mig att ställa in externa ID</a>
   help_widget:
     name: 'Välkommen till %{name} Support'
     message: Välkommen till Support

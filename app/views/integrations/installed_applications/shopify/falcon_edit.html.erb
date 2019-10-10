@@ -14,27 +14,27 @@
         <div class="row-fluid">
           <div class="span4">
             <img alt="Shopify-admin-page" class="shp-logo" src="/assets/helpimages/integration-shopify.svg" width="52">
-          	<p class="shp-text-light"><%= t('integrations.shopify.edit.desc') %></p>
+            <p class="shp-text-light"><%= t('integrations.shopify.edit.desc') %></p>
           </div>
           <div class="span8">
-	        	<% @stores.each_with_index do |store, index| %>
-  	        	<div class="store-wrapper">
-  							<div class="left-pane">
-  								<div class="shp-title"><%= store[:shop_display_name] %></div>
-  								<div class="shp-text-light"><%= store[:shop_name] %></div>
+            <% @stores.each_with_index do |store, index| %>
+              <div class="store-wrapper">
+                <div class="left-pane">
+                  <div class="shp-title"><%= store[:shop_display_name] %></div>
+                  <div class="shp-text-light"><%= store[:shop_name] %></div>
                 </div>
                 <% if (index != 0) %>
-  							<div class="right-pane">
-  								<div class="pull-right"><%= link_to t('integrations.shopify.edit.disconnect'), integrations_marketplace_shopify_remove_store_path(:shop_name => store[:shop_name]),
+                <div class="right-pane">
+                  <div class="pull-right"><%= link_to t('integrations.shopify.edit.disconnect'), integrations_marketplace_shopify_remove_store_path(:shop_name => store[:shop_name]),
                     :confirm => t('integrations.shopify.edit.confirm_remove_store'),
                     :method => 'delete', :class => "btn btn-shopify" %>
                   </div>
                 </div>
                 <% end %>
-  						</div>
-						<% end %>
+              </div>
+            <% end %>
             <div>
-					   <%= link_to t('integrations.shopify.edit.connect'), integrations_application_path(@installing_application, :page => 'add_store') %>
+             <%= link_to t('integrations.shopify.edit.connect'), integrations_application_path(@installing_application, :page => 'add_store') %>
             </div>
             <div class="shp-action-toggle shp-text-light mt15">
               <% disable_shopify_actions = @installed_application.present? ? @installed_application.configs[:inputs]['disable_shopify_actions'] : false %>

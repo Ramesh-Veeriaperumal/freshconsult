@@ -144,14 +144,22 @@ class Support::Solutions::ArticlesController < SupportController
       @agent_actions << { url: agent_actions_path(@article), label: t('portal.preview.view_on_helpdesk'), icon: 'preview' } if privilege?(:view_solutions)
       @agent_actions
     end
-    
+
+    def generate_og_meta
+      @og_meta ||= {
+        title: @article.article_title,
+        short_description: @article.desc_un_html.truncate(100),
+        author: @article.user.name
+      }
+    end
+
     def load_page_meta
       @page_meta ||= {
-        :title => @article.article_title,
         :description => @article.article_description,
         :keywords => @article.article_keywords,
         :canonical => support_solutions_article_url(@article, :host => current_portal.host)
       }
+      @page_meta.merge!(generate_og_meta)
     end
 
     def draft_preview?
@@ -179,7 +187,7 @@ class Support::Solutions::ArticlesController < SupportController
 
         flash[:notice] = t('solution.articles.draft.portal_preview_msg_v2')
       end
-      @page_meta = { :title => @article.title }
+      @page_meta = generate_og_meta
     end
 
     def adapt_attachments

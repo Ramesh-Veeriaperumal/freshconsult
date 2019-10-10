@@ -53,17 +53,17 @@ class Account < ActiveRecord::Base
   end
 
   def renewal_extend
-	  subscription = self.subscription
+    subscription = self.subscription
     data = {:term_ends_at => WIN_BACK_PERIOD.days.from_now.utc.to_i.to_s}
-		result = Billing::ChargebeeWrapper.new.change_term_end(subscription.account_id, data)
-		subscription.next_renewal_at = WIN_BACK_PERIOD.days.from_now.utc
-		subscription.save!
-	end
+    result = Billing::ChargebeeWrapper.new.change_term_end(subscription.account_id, data)
+    subscription.next_renewal_at = WIN_BACK_PERIOD.days.from_now.utc
+    subscription.save!
+  end
 
   # Any new changes made to this method please validate if it needs to be added to
   # perform_anonymous_account_cancellation method too
   def perform_account_cancellation(feedback = {})
-    response = Billing::Subscription.new.cancel_subscription(self)
+    response = subscription.billing.cancel_subscription(self)
     if response
       cancellation_feedback = "#{feedback[:title]} #{feedback[:additional_info]}"
       send_account_deleted_email(cancellation_feedback)
@@ -101,7 +101,7 @@ class Account < ActiveRecord::Base
   end
 
   def perform_cancellation_for_paid_account
-    response = Billing::Subscription.new.cancel_subscription(self)
+    response = subscription.billing.cancel_subscription(self)
     if response
       perform_paid_account_cancellation_actions
       delete_account_cancellation_request_job_key

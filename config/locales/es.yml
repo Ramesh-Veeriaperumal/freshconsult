@@ -114,7 +114,13 @@ es:
         tabulador una o dos veces. Los convertiremos en objetos del menú según
         el criterio de ordenación, por favor tenga mucho cuidado. <a
         target='_blank' href=%{learn_more}> Aprender más</a>
-      nested_field_helptext: ''
+      nested_field_helptext: >-
+        Usa la siguiente área de texto para añadir o editar elementos del menú
+        desplegable. Para aplicar una sangría a los elementos, pulsa el
+        tabulador una o dos veces. Lo convertiremos en elementos del menú
+        desplegable en función de la  sangría. <a target='_blank'
+        href='https://support.freshdesk.com/solution/categories/45957/folders/74594/articles/37599-using-dependent-fields'>Más
+        información</a> 
       dropdown_items_edit: Editar vista - elemento desplegable
       drop_down_items_edit: 'Elementos del menú desplegable: Editar'
       dropdown_items_preview: Vista previa - elemento desplegable
@@ -999,7 +1005,7 @@ es:
         last_stream_delete_alert: >-
           ¿Estás seguro de querer eliminar esta cadena de twitter? No podrás ver
           las cadenas de tus clientes si no tienes asociadas cadenas por
-          defecto.
+          defecto. 
       twitter_streams:
         define_stream: Definir Cadena Social
         stream_brief: >-
@@ -1384,7 +1390,14 @@ es:
               sección de soporte dedicada dentro de tu aplicación, Incluirá tu
               base de conocimiento, y un formulario de tickets para que puedan
               contactar contigo siempre que necesiten ayuda.
-            info3: null
+            info3: >-
+              MobiHelp es completamente configurable, Puedes seleccionar
+              cualquier elemento - desde los campos de tu formulario de feedback
+              hasta la manera en que se muestra en tu app. Recogerá
+              automáticamente información sin esfuerzo del usuario como el
+              nombre del dispositivo, el sistema operativo o la versión de la
+              app. Podrás incorporar también campos customizables y recoger
+              histórico de errores y rutas de breadcrumb.
             info4: >-
               Puedes crear un número ilimitado de aplicaciones que podrán ser
               usadas con MobiHelp y vincularlas a tu cuenta de Freshdesk. Una
@@ -1492,7 +1505,7 @@ es:
             lleguen a tu cuenta de eBay desde el departamento de soporte. Una
             vez configurado, las consultas de los clientes de eBay se
             convertirán automáticamente en tickets. También puedes responder
-            directamente desde Freshdesk.
+            directamente desde Freshdesk. 
       index:
         title: Cuentas de comercio electrónico
         renew: Renovar clave
@@ -2039,7 +2052,7 @@ es:
           portales de freshdesk
         customer_portal_ssl_warning: >-
           Debido a que se configura una URL de helpdesk personalizada para su
-          cuenta, pasará a
+          cuenta, pasará a 
         multiple_product_ssl_warning: SSL no será aplicable si se configuran múltiples productos.
         enabled: Habilitado
         disabled: Deshabilitado
@@ -2902,8 +2915,7 @@ es:
         minutos, dependiendo del volumen de los datos
       info1: >-
         La importación se ha completado correctamente. Puedes abrir el servicio
-        de ayuda e ir a Cliente->%{uc_type} para ver el %{type} recién
-        agregado.
+        de ayuda e ir a Cliente->%{uc_type} para ver el %{type} recién agregado.
       info2: >-
         No hemos podido importar todos los %{type} del archivo CSV enviado. Aquí
         está el resumen:
@@ -3499,9 +3511,7 @@ es:
           {{category_name}}
       new_topic:
         short: 'Crear un nuevo topico {{user_path}}'
-        long: >-
-          crear un nuevo topico {{user_path}} {{notable_path}} en
-          {{forum_name}}
+        long: 'crear un nuevo topico {{user_path}} {{notable_path}} en {{forum_name}}'
       published_topic:
         short: 'El tema de {{user_path}} ''{{notable_path}}'' ha sido publicado'
         long: >-
@@ -3955,6 +3965,7 @@ es:
     add_skills: Añadir habilidades
     manage_skills: Gestionar habilidades
     skill: Habilidades
+    search_placeholder: Buscar todos los agentes
   contacts:
     facebook: Facebook
     email: Email
@@ -4113,7 +4124,7 @@ es:
       email_blank: El email no puede quedar en balnco
   portal:
     article:
-      created_by: 'Created by:'
+      created_by: 'Creado por:'
       see_all_articles: 'Ver los %{count} artículos'
       more_articles: 'Mas artículos en <span class=''folder-name''> %{article_name} </span>'
       modified_on: 'Modificado en:'
@@ -4126,7 +4137,7 @@ es:
       why_we_love_cookies: Por qué nos gustan las Cookies
       cookie_dialog_info1: >-
         Utilizamos cookies para tratar de darle una mejor experiencia en
-        Freshdesk.
+        Freshdesk. 
       cookie_dialog_info2: >-
         Usted puede aprender más acerca de qué tipo de cookies se usarán, por
         qué y cómo en nuestra %{privacy_link}. Si no te gustan  las cookies, o
@@ -4134,15 +4145,15 @@ es:
         completo también. Ten en cuenta que en nuestro soporte utilizamos
         bastante las cookies (amamos los choco-chips), y algunas partes del
         soporte pueden no funcionar correctamente si se deshabilitan las
-        cookies.
+        cookies. 
       cookie_dialog_info3: >-
         También daremos por supuesto que estás de acuerdo con la manera en que
         usamos las cookies y las acepta, como se describe en nuestra
         %{privacy_link}, a menos que decidas desactivarlas por completo a través
-        de su navegador.
+        de su navegador. 
       privacy_policy: Política de Privacidad
     no_topics_in_this_view: ~ No hay temas en esta vista ~
-    reported: declarado
+    reported: reportada
     said: dicho
     solutions_home: Inicio
     print_title: Imprimir este articulo
@@ -4153,7 +4164,7 @@ es:
         aquí</a> para volver.
     new_support_ticket: Nuevo ticket de ayuda
     submit_new_ticket: ... o enviar un nuevo ticket
-    login: Iniciar sesión
+    login: Conectar
     login_portal: Iniciar sesión en el portal de asistencia
     login_details: 'Introduce los datos que utilizaste para registrarte con nosotros:'
     login_options: ...o iniciar sesión usando
@@ -4178,7 +4189,8 @@ es:
       <a href=%{topic_reply_url}>Inicia Sesion</a> o <a
       href=%{signup_url}>Registrate</a>para postear en un Topic
     login_signup_to_post_comment: >-
-      <a href=%{topic_reply_url}>Inicie sesión</a> o <a href=%{signup_url}>regístrese</a> para publicar un comentario
+      <a href=%{topic_reply_url}>Inicie sesión</a> o <a
+      href=%{signup_url}>regístrese</a> para publicar un comentario
     to_post_topic: ' para publicar un tema'
     preview:
       view_on_helpdesk: Ver en Helpdesk
@@ -4221,7 +4233,7 @@ es:
       comment_placeholder: Pulsar aquí para añadir un comentario
       started: empezó un tema
       more_topic: Más temas en
-      last_reply: Última respuesta
+      last_reply: Última Respuesta
       fb_reply_info: >-
         <a href='%{reply_url}'> Ultima respuesta </a>por
         %{user_name}<br>%{created_on}
@@ -4287,18 +4299,18 @@ es:
       problem_unlike_button: ¡No tengo este problema!
       howto_unlike_button: ¡No tengo esta pregunta!
       announce_users_voted_title: Personas que les gusta esto
-      ideas_users_voted_title: Gente a la que le gusta esta idea
-      problem_users_voted_title: Gente que tiene este problema
-      howto_users_voted_title: Gente que tiene esta pregunta
+      ideas_users_voted_title: Personas a las que les gusta esta idea
+      problem_users_voted_title: Personas que tienen este problema
+      howto_users_voted_title: Personas que tienen esta pregunta
     post_vote:
       upvoted: Usted voto para subir
       upvote: Votar
       like:
-        one: Te gusta esto
-        other: Les gusta esto
+        one: Le Gusta
+        other: Les Gusta
     tickets:
       merged_topic_note: Los topic fusionados no pueden ser convertidos en ticket
-      export: Exportar consultas
+      export: Exportar tickets
       submit_export: Exportar
       export_ticket_data: Exportar tickets
       export_to_csv: Exportar a CSV
@@ -4312,11 +4324,16 @@ es:
         Agregar o eliminar emails que necesitan copiarse cuando se envía una
         notificación para este ticket.
       add_people_title: Agregar personas a la conversación
-      reopen_reply: Reabrir y responder
+      reopen_reply: Responder
       related_articles: Artículos relacionados...
     customer_login_info: ¿Es usted un cliente?
     agent_signin: Iniciar sesión aquí
     agent_login_info: ¿Es usted un agente?
+    helpdesk_login_portal: 'Bienvenido de nuevo, agente'
+    agent_login_details: 'Introduce los datos que utilizaste para registrarte con nosotros:'
+    vote_label:
+      one: 1 stemme
+      other: stemmer
   solution:
     'on': 'on'
     article_properties:
@@ -4683,7 +4700,7 @@ es:
       <b>publicarse</b> directamente.
     info16: >-
       Los artículos <b>publicados</b> se verán en el portal de autoservicio y
-      también aparecerán en los resultados de búsqueda.
+      también aparecerán en los resultados de búsqueda. 
     info17: >-
       El <b>borrador</b> de los artículos solo lo podrán ver los agentes y solo
       aparecerán en sus resultados de búsqueda.
@@ -4808,7 +4825,7 @@ es:
     edit_profile: Editar Perfil
     assumed_text: Está viendo como
     help_center: ¿Cómo podemos ayudarte?
-    new_support_ticket: Nuevo Ticket de Soporte
+    new_support_ticket: Nuevo ticket de ayuda
     check_ticket_status: Revisar el estado del ticket
     user_available: Nuevos Tickets serán <br>auto-asignados a Ud.
     user_not_available: Nuevos Tickets no serán <br>auto-asignados a Ud.
@@ -4911,7 +4928,7 @@ es:
           ticket.<br /><br />Si has activado múltiples idiomas en tu helpdesk,
           puedes crear esta notificación de manera específica para cada idioma.
           El <i class="common-icon-outdated"></i> icono indica si la traducción
-          de la notificación a otros idiomas ha quedado obsoleta.
+          de la notificación a otros idiomas ha quedado obsoleta. 
       agent_template_3:
         topic: Ticket Asignado a un Agente
         info1: >-
@@ -4921,7 +4938,7 @@ es:
           <br/><br/>Si has activado múltiples idiomas en tu helpdesk, puedes
           crear esta notificación de manera específica para cada idioma. El <i
           class="common-icon-outdated"></i> icono indica si la traducción de la
-          notificación a otros idiomas ha quedado obsoleta.
+          notificación a otros idiomas ha quedado obsoleta. 
       agent_template_11:
         topic: Ticket sin atender en un Grupo
         info1: >-
@@ -7252,7 +7269,7 @@ es:
         Combine los contactos de Freshdesk y Google (la última actualización
         tiene prioridad)
       import_later_success: >-
-        La importación de los contactos de Google se inició correctamente
+        La importación de los contactos de Google se inició correctamente 
         Recibirá un correo electrónico a %{email} una vez que haya finalizado.
       import_success_no_stats: Contactos de Google importados correctamente.
       import_problem: Problema al importar los contactos de Google.
@@ -7357,7 +7374,11 @@ es:
         de verificación y haga clic en 'Actualizar'.<br/><br/>
       form:
         domain: Dominio
-        domain_info: ''
+        domain_info: >-
+          Introduzca la URL completa de la cuenta JIRA con https/http. p. ej.
+          https://example.atlassian.net. <br /><span class='italics'>Nota: Las
+          variantes en las instalaciones de JIRA debe exponerse en Internet.
+          </span>
         jira_note: Descripción
         jira_note_info: Este texto se añadirá a la descripción del problema en JIRA.
         widget_title: Título del widget
@@ -7624,7 +7645,10 @@ es:
         domain_info: >-
           Usa el ID de usuario de Office 365 del superadministrados, como
           nombre@empresa.onmicrosoft.com, si hay algo bajo demanda.
-        organization_name_info: null
+        organization_name_info: >-
+          Para encontrarlo, ve a los ajustes de Dynamics CRM ->
+          Personalizaciones -> DeveloperResources -> Información de la
+          organización -> Nombre único de la organización.
         end_point_info: >-
           Ejemplo:
           https://freshpo4.api.crm5.dynamics.com/XRMServices/2011/Organization.svc.
@@ -7683,7 +7707,7 @@ es:
         la pone a disposición de los agentes.<br><br>Puedes buscar contactos de
         Batchbook usando sus direcciones de correo electrónico. Si existen
         múltiples contactos con la misma dirección, se mostrarán todos en una
-        lista.</p><br/>
+        lista.</p><br/> 
       desc: Traiga información de contacto de su cuenta en Batchbook Freshdesk
       detect_error: >-
         Imposible de detectar version de Batchbook, Porfavor verifique el
@@ -8008,7 +8032,7 @@ es:
         password: SSO Contraseña
         logmein_company_info: >-
           Para ver tu ID de Compañia ve a Centro Administrador->Grupo
-          Técnico->Configuracion Global->Ejemplo ASP.Net C# lado servidor
+          Técnico->Configuracion Global->Ejemplo ASP.Net C# lado servidor 
         logmein_sso_pwd_info: >-
           Para establecer la contraseña de inicio único de sesión (SSO), vaya al
           centro de administración -> grupo técnico -> configuración global ->
@@ -8032,7 +8056,7 @@ es:
       desc: >-
         Busca y administra las suscripciones de tu cuenta de monitor de
         campañas,  y traer ideas sobre las estadísticas de uso de los clientes
-        dentro de Freshdesk
+        dentro de Freshdesk 
       helptext: >-
         <h4>Ayuda para la integración de Campaign Monitor </h4><br/>Para
         integrar Campaign Monitor, deberá introducir tu clave API y el
@@ -8050,14 +8074,25 @@ es:
         client_id: ID de Cliente
         client_id_info: >-
           Para obtener la Id del cliente, sigue las instrucciones descritas en
-          http://www.campaignmonitor.com/api/getting-started/#clientid
+          http://www.campaignmonitor.com/api/getting-started/#clientid 
     icontact:
       label: IContact
       desc: >-
         Exporta información de los clientes, gestiona las suscripciones
         existentes, y traer ideas sobre las estadísticas de uso de los clientes
         dentro de Freshdesk.
-      helptext: ''
+      helptext: >-
+        <h4>Ayuda para integrar iContact</h4><br/> Para integrar iContact, ir a
+        <a target='_blank'
+        href='https://app.icontact.com/icp/core/externallogin'>https://app.icontact.com/icp/core/externallogin</a>
+        y da acceso a la aplicación Freshdesk introduciendo el siguiente
+        identificador de la aplicación
+        <br/><br/><b>qB7RYQgliAPwl5dwezYF0kAN4Islhj4e</b><br/><br/> Elije una
+        contraseña y pulsa en &quot;Guardar&quot;. Esta contraseña API se
+        utilizará para todas las peticiones API de Freshdesk. <br/><br/> Copia
+        la API URL de la sección &quot;Información de la cuenta&quot;y pégalo en
+        el campo de API URL. Introduce el nombre de usuario de iContact y la
+        nueva contraseña API y pulsa Actualizar.
       form:
         app_id: Aplicar la ID
         username: Nombre de usuario de iContact
@@ -8067,11 +8102,28 @@ es:
           Para obtener la direccion URL de tu API vaya a la seccion
           https://app.icontact.com/icp/core/externallogin and copie la URL de la
           API URL que aparece en la sección &quot;Información de su
-          Cuenta&quot;.
+          Cuenta&quot;. 
     dropbox:
       label: DropBox
       desc: Adjunta y comparte tus datos/archivos de DropBox.
-      helptext: ''
+      helptext: >-
+        <h4>Ayuda para la integración de Dropbox</h4><br/><p>La integración de
+        Dropbox permite a los agentes y usuarios ver los archivos de su carpeta
+        de Dropbox y compartirlos cuando envían o responden a un ticket en
+        Freshdesk. Se incluye en el ticket un enlace directo al archivo lo que
+        elimina la necesidad de archivos adjuntos y las restricciones de tamaño
+        de los emails.</p><p>Antes de disponer la integración, ir a <strong><a
+        href='https://www.dropbox.com/developers/apps' target='_blank'
+        alt='developers'>Página de los desarrolladores de Dropbox
+        </a></strong>.</p><p>1. Desde la sección My Apps, pulsar en "Create an
+        App"'.</p><p>2. Seleccionar el tipo de aplicación como
+        'Chooser'.</p><p>3. Introducir un nombre y una descripción.</p><p>4.
+        Escribir la URL de tu asistencia bajo Domains <i>(ej:
+        tucompañía.freshdesk.com)</i></p><p>5. Pulsar en el botón
+        Create.</p><p>Para finalizar, copiar y pegar la clave de la aplicación
+        de la nueva aplicación en esta página y guardar los cambios. Tu Dropbox
+        Chooser debería estar preparado. Puedes revisarlo en el formulario de
+        Nuevo ticket.</p>
       form:
         app_key: Clave de la aplicación registrada para tu dominio
         app_key_info: >-
@@ -10511,12 +10563,12 @@ es:
         puedes crear múltiples categorías para productos o equipos. Esto ayudará
         a dirigir conversaciones relevantes hacia todos los niveles superiores
         de las secciones y como administrador, podrás gestionar todo desde un
-        único lugar.
+        único lugar. 
       para3: >-
         Si tienes configurados portales para múltiples productos en tu cuenta
         Freshdesk, puedes elegir vincular una categoría para cada producto. Una
         vez hecho, los usuarios podrán ver esa categoría, sus foror y todos los
-        temas tanto desde tu portal principal como desde tu portal de producto.
+        temas tanto desde tu portal principal como desde tu portal de producto. 
       para4: Saber más sobre múltiples productos en Freshdesk.
     shared:
       topic:
@@ -11046,7 +11098,7 @@ es:
   upgrade_plan: Actualizar
   go_back: Volver
   go_back_small: Vuelva atrás
-  add_note: null
+  add_note: Agregar nota
   set_field_label_as: 'complete %{custom_field_name} como'
   contact_name: Nombre del contacto
   requester_email: Email del solicitante
@@ -11229,15 +11281,15 @@ es:
     overview: Resumen
     recent: Reciente
     popular: Popular
-    planned: Planeado
+    planned: Planificado
     implemented: Implementado
-    nottaken: No cogido
-    deferred: Aplazado
-    inprogress: En Proceso
+    nottaken: No Recogido
+    deferred: Diferido
+    inprogress: En Progreso
     answered: Respondido
     unanswered: No respondido
     solved: Resuelto
-    unsolved: No resuelto
+    unsolved: Sin Resolver
   payment_info: Información de pago
   billing_address: Dirección para facturación
   support:
@@ -11323,6 +11375,13 @@ es:
         neutral_info: Nos gustaría poder ayudarte más la próxima vez.
         unhappy_info: Estamos seguros de que pondremos un cuidado extra la próxima vez.
         additional_info: 'Además, podrías compartir tu experiencia de trabajo con nosotros.'
+    canned_form:
+      next: Siguiente
+      form_submit: Enviar
+      okay: Aceptar
+      hey: ¡Hola!
+      thank_you_text: Gracias
+      move_to_form_field: o presione enter
   quests:
     delete: Estas seguro de que quieres borrar este reto?
     survey_disabled_event: >-
@@ -11520,7 +11579,7 @@ es:
       Autoriza de nuevo y Activa </a>
   import_user_notification: >-
     Puedes enviar el correo de activación de usuario a los contactos importados
-    desde la pestaña Clientes.
+    desde la pestaña Clientes. 
   what_is_cvv: Qué es cw?
   pro_details: >-
     Todas las funciones del Plan &quot;Basico&quot; más Automatización de
@@ -12433,7 +12492,8 @@ es:
   right: Derecha
   footer:
     helpdesk_software: Software de servicio de asistencia
-    helpdesk_software_link: "https://freshdesk.es/?utm_source=portal&utm_medium=reflink&utm_campaign=portal_reflink"
+    helpdesk_software_link: >-
+      https://freshdesk.es/?utm_source=portal&utm_medium=reflink&utm_campaign=portal_reflink
     by_freshdesk: por Freshdesk
     submit_feedback: Enviar informacion
     footer_feedback_subject_placeholder: ¿Podrías decirnos como mejorar Freshdesk?
@@ -13416,6 +13476,13 @@ es:
         portales de sus productos para todos los usuarios
       title: Foros
     gdpr_to: 'para:'
+    sort_conversations:
+      label: Ordenar conversaciones
+      helpnote: Este es el orden en el cual los mensajes aparecerán en los tickets.
+      latest_top: Ahora se mostrará arriba la conversación más reciente.
+      oldest_top: Ahora se mostrará arriba la conversación más antigua.
+      option1: Mostrar lo más reciente arriba
+      option2: Mostrar lo más antiguo arriba
   lead: Líder
   comments: Comentarios
   forum_confirm_msg1: ¿Está seguro de que desea eliminar esta categoría?
@@ -14589,7 +14656,7 @@ es:
     classic: Clásico
     confirm: >-
       ¿Está seguro de que desea aplicar el nuevo aspecto? Todas las
-      personalizaciones CSS se perderán.
+      personalizaciones CSS se perderán. 
 
 
       Consejo: Cree una copia con sus personalizaciones CSS que tiene
@@ -15740,6 +15807,13 @@ es:
     idiomas en el antiguo Freshdesk
   pts_plain: ' pts.'
   in: Publicado en
+  helpcard:
+    title: ID externo único
+    info: >-
+      Importe los ID únicos de sus clientes e identifique fácilmente sus
+      conversaciones en Freshdesk. <br><a
+      href="https://support.freshdesk.com/support/solutions/articles/226804-identifying-contacts-with-an-external-id"
+      target="_blank">Ayúdenme a configurar el ID externo</a>
   help_widget:
     name: 'Bienvenido al servicio de soporte %{name}'
     message: Bienvenido al servicio de soporte

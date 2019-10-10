@@ -19,6 +19,12 @@ $modal_heading_color: #000;
 	}
 }
 
+#modal_validation_message{
+        text-align:center;
+        color:#b15151;
+        display:none;
+	
+}
 .ui-dialog.dialog3 {
 	
 	.ui-dialog-title {

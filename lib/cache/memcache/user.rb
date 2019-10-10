@@ -5,6 +5,7 @@ module Cache::Memcache::User
     delete_value_from_cache(format(ACCOUNT_AGENTS, account_id: account_id))
     delete_value_from_cache(format(ACCOUNT_AGENTS_DETAILS, account_id: account_id))
     delete_value_from_cache(format(ACCOUNT_AGENTS_DETAILS_OPTAR, account_id: account_id))
+    delete_value_from_cache(format(ACCOUNT_AGENTS_HASH, account_id: account_id))
   end
 
   def clear_agent_name_cache

@@ -613,7 +613,7 @@ class SidekiqConfigStandard
       "register_freshconnect", "undo_send", "unlink_tickets", "primary_language_change", "send_domain_changed_mail", "default_data_population", 'freshops_service', 'twitter_reply',
       "widget_upload_config", "bot_email_reply", "bot_email_ml_feedback", 'migration',
       "company_central_publish", "ticket_field_central_publish", "scheduler_post_message", "scheduler_cancel_message", "delete_archive_ticket","freshcaller_account_delete",
-      "remove_encrypted_fields","update_agents_roles"
+      "remove_encrypted_fields", "update_agents_roles"
     ]
 
     #falcon common sidekiq
