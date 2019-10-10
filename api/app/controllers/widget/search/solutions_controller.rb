@@ -40,12 +40,7 @@ module Widget
 
         def solution_category_meta_ids
           @solution_category_meta_ids ||= begin
-            if current_account.help_widget_solution_categories_enabled?
-              @help_widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
-            else
-              fetch_portal
-              @current_portal.portal_solution_categories.pluck(:solution_category_meta_id)
-            end
+            @help_widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
           end
         end
     end

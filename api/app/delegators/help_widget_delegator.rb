@@ -52,8 +52,6 @@ class HelpWidgetDelegator < BaseDelegator
   end
 
   def validate_solution_category_ids
-    return required_feature_error(:solution_category_ids, :help_widget_solution_categories) unless Account.current.help_widget_solution_categories_enabled?
-
     meta_size = Account.current.solution_category_meta.customer_categories.where(id: @solution_category_ids).size
     errors[:solution_category_ids] << I18n.t('help_widget.invalid_solution_category_ids') unless @solution_category_ids.size == meta_size
   end

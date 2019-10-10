@@ -34,7 +34,7 @@ class HelpWidgetsController < ApiApplicationController
       update_freshmarketer_domain(true)
     end
     cname_params[:settings] = @item.settings.deep_merge(cname_params[:settings].symbolize_keys || {}) unless cname_params[:settings].nil?
-    @item.build_help_widget_solution_categories(cname_params.delete(:solution_category_ids)) if can_update_solution_category
+    @item.build_help_widget_solution_categories(cname_params.delete(:solution_category_ids)) if cname_params.key?(:solution_category_ids)
     @item.update_attributes(cname_params)
   end
 
@@ -57,17 +57,19 @@ class HelpWidgetsController < ApiApplicationController
       product = Account.current.products_from_cache.find { |p| p.id == cname_params[:product_id] }
       portal = (product && product.portal) || Account.current.main_portal_from_cache
       @item.settings = assign_default_settings(cname_params[:settings], product, portal)
-      if Account.current.help_widget_solution_categories_enabled?
-        category_ids = portal.solution_category_meta.customer_categories.pluck(:id)
-        category_id_hash_array = category_ids.map { |category_id| { solution_category_meta_id: category_id } }
-        @item.help_widget_solution_categories_attributes = category_id_hash_array
-      end
+      assign_help_widget_solution_categories(portal)
     end
 
     def assign_default_settings(settings_param, product, portal)
       settings = HelpWidget.default_settings(product, portal)
       settings[:components].merge!(settings_param[:components].symbolize_keys)
       settings
+    end
+
+    def assign_help_widget_solution_categories(portal)
+      category_ids = portal.solution_category_meta.customer_categories.pluck(:id)
+      category_id_hash_array = category_ids.map { |category_id| { solution_category_meta_id: category_id } }
+      @item.help_widget_solution_categories_attributes = category_id_hash_array
     end
 
     def constants_class
@@ -106,10 +108,6 @@ class HelpWidgetsController < ApiApplicationController
     def validate_widget_count
       widget_count = Account.current.account_additional_settings_from_cache.widget_count
       render_request_error(:widget_limit_exceeded, 400, widget_count: widget_count) if Account.current.help_widgets.active.count >= widget_count
-    end
-
-    def can_update_solution_category
-      current_account.help_widget_solution_categories_enabled? && cname_params.key?(:solution_category_ids)
     end
 
     def delegator_hash
