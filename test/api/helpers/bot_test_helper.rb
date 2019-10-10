@@ -244,6 +244,7 @@ module ApiBotTestHelper
     bot_feedback = FactoryGirl.build(:bot_feedback,
                             account_id: Account.current.id,
                             bot_id: bot_id,
+                            bot_type: 'Bot',
                             category: params[:category] || BotFeedbackConstants::FEEDBACK_CATEGORY_KEYS_BY_TOKEN[:unanswered],
                             useful: params[:useful] || BotFeedbackConstants::FEEDBACK_USEFUL_KEYS_BY_TOKEN[:default],
                             received_at: DateTime.now.utc,
@@ -253,6 +254,20 @@ module ApiBotTestHelper
                             state: params[:state] || BotFeedbackConstants::FEEDBACK_STATE_KEYS_BY_TOKEN[:default])
     bot_feedback.save
     bot_feedback
+  end
+
+  def bot_feedback_params(bot_id, params = {})
+    {
+        account_id: Account.current.id,
+        bot_id: bot_id,
+        category: params[:category] || BotFeedbackConstants::FEEDBACK_CATEGORY_KEYS_BY_TOKEN[:unanswered],
+        useful: params[:useful] || BotFeedbackConstants::FEEDBACK_USEFUL_KEYS_BY_TOKEN[:default],
+        received_at: DateTime.now.utc,
+        query_id: UUIDTools::UUID.timestamp_create.hexdigest,
+        query: Faker::Lorem.sentence,
+        external_info: { chat_id: UUIDTools::UUID.timestamp_create.hexdigest, customer_id: UUIDTools::UUID.timestamp_create.hexdigest, client_id: UUIDTools::UUID.timestamp_create.hexdigest},
+        state: params[:state] || BotFeedbackConstants::FEEDBACK_STATE_KEYS_BY_TOKEN[:default]
+    }
   end
 
   def create_bot_feedback_and_bot_ticket(helpdesk_ticket,bot)

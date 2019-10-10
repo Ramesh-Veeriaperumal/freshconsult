@@ -263,4 +263,13 @@ class Tickets::BotResponseControllerTest < ActionController::TestCase
     get :show, construct_params(version: 'private', id: @ticket.display_id)
     assert_response 403
   end
+
+
+  def test_create_response_check_bot_type
+    enable_bot do
+      ticket = create_ticket
+      bot_responses = create_bot_response(ticket.id, @bot.id)
+      assert_equal bot_responses.bot.external_id, @bot.external_id
+    end
+  end
 end

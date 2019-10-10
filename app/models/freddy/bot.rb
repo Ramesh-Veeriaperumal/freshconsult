@@ -12,6 +12,8 @@ class Freddy::Bot < ActiveRecord::Base
   validates :portal_id, uniqueness: true
   before_save :sanitize_widget_config
   xss_sanitize only: [:name], plain_sanitizer: [:name]
+  has_many :bot_feedbacks, class_name: '::Bot::Feedback', as: :bot, dependent: :destroy
+  has_many :bot_responses, class_name: '::Bot::Response', as: :bot, dependent: :destroy
   belongs_to :portal
   belongs_to_account
   serialize :widget_config, Hash
