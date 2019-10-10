@@ -11069,7 +11069,7 @@
     "/help_widgets": {
       "get": {
         "tags": [
-          "List of Help widgets"
+          "Help Widget"
         ],
         "description": "Listing all widgets associated to the account",
         "summary": "List all",
@@ -11093,7 +11093,7 @@
       },
       "post": {
         "tags": [
-          "help widget creation"
+          "Help Widget"
         ],
         "description": "Creates new widget with a name  and default settings",
         "summary": "Create widget",
@@ -11129,7 +11129,7 @@
     "/help_widgets/{id}": {
       "get": {
         "tags": [
-          "Help Widget Show"
+          "Help Widget"
         ],
         "description": "Responses with default setting of the help widget",
         "summary": "Widget settings",
@@ -11163,7 +11163,7 @@
       "delete": {
         "summary": "Delete Help Widget",
         "tags": [
-          "Help Widget Delete"
+          "Help Widget"
         ],
         "parameters": [
           {
@@ -11190,10 +11190,10 @@
     "/help_widgets/update": {
       "put": {
         "tags": [
-          "Widget settings update"
+          "Help Widget"
         ],
         "description": "Update the settings of the Widget",
-        "summary": "Update for settings",
+        "summary": "Update settings",
         "parameters": [
           {
             "name": "settings",
@@ -11226,9 +11226,9 @@
     "/widget/attachment": {
       "post": {
         "tags": [
-          "Widget Attachment"
+          "Help Widget"
         ],
-        "summary": "Single Attachment for widget",
+        "summary": "Attachment for widget",
         "description": "Single Attachment for widget",
         "parameters": [
           {
@@ -11266,9 +11266,9 @@
     "/widget/search/solutions": {
       "post": {
         "tags": [
-          "Widget Search Solution"
+          "Help Widget"
         ],
-        "summary": "Search solution articles for widget",
+        "summary": "Search solution articles",
         "description": "Search solution articles for widget",
         "parameters": [
           {
@@ -11314,9 +11314,9 @@
     "/widget/suggested_articles": {
       "get": {
         "tags": [
-          "Widget Suggested Articles"
+          "Help Widget"
         ],
-        "summary": "Suggested articles for widget",
+        "summary": "Suggested articles",
         "description": "Suggested articles for widget",
         "responses": {
           "200": {
@@ -11348,9 +11348,9 @@
     "/widget/solutions/article/{id}": {
       "get": {
         "tags": [
-          "Widget Solution Article"
+          "Help Widget"
         ],
-        "summary": "Get solution article for widget",
+        "summary": "Get solution article",
         "description": "Get solution article for widget",
         "parameters": [
           {
@@ -11397,9 +11397,9 @@
     "/widget/solutions/article/{id}/hit": {
       "put": {
         "tags": [
-          "Widget Solution Article"
+          "Help Widget"
         ],
-        "summary": "Increase hit count of solution article in widget",
+        "summary": "Hit solution article",
         "description": "Increase hit count of solution article in widget",
         "parameters": [
           {
@@ -11420,9 +11420,9 @@
     "/widget/solutions/article/{id}/thumbs_up": {
       "put": {
         "tags": [
-          "Widget Solution Article"
+          "Help Widget"
         ],
-        "summary": "Increase thumbs_up count of solution article in widget",
+        "summary": "Thumbs up for solution article",
         "description": "Increase thumbs_up count of solution article in widget",
         "parameters": [
           {
@@ -11443,9 +11443,9 @@
     "/widget/solutions/article/{id}/thumbs_down": {
       "put": {
         "tags": [
-          "Widget Solution Article"
+          "Help Widget"
         ],
-        "summary": "Increase thumbs_down count of solution article in widget",
+        "summary": "Thumbs down for solution article",
         "description": "Increase thumbs_down count of solution article in widget",
         "parameters": [
           {
