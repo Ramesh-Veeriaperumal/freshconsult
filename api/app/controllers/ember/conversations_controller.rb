@@ -94,7 +94,7 @@ module Ember
       fb_page = @ticket.fb_post.facebook_page
 
       if facebook_outgoing_attachment_enabled?
-        return unless validate_delegator(@item, note_id: @note_id, fb_page: fb_page, attachment_ids: @attachment_ids)
+        return unless validate_delegator(@item, note_id: @note_id, fb_page: fb_page, attachment_ids: @attachment_ids, msg_type: @msg_type)
 
         add_facebook_attachments
       else

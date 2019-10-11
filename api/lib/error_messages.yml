@@ -136,6 +136,7 @@ api_error_messages:
   twitter_attachment_file_invalid: "Only Image(s) can be attached for twitter"
   twitter_attachment_file_unique_type: "Either Image(s) or GIF can only be attached for twitter"
   twitter_attachment_file_limit: "A maximum of %{maxLimit} %{fileType} can be attached for twitter"
+  attachment_format_invalid: "Invalid attachment format should be %{attachment_formats}"
   shorter_full_text: "Content of full text should be greater than that of body"
   invalid_full_text: "Content of full text is different from that of body"
   query_format_invalid: "Given query is invalid, expected format \"keyword:value  OPERATOR keyword:'string' OPERATOR keyword:>'yyyy-mm-dd' OPERATOR keyword:<integer\". Space is mandatory between key/value pair and operator. Please check the paranthesis if there are any."

@@ -37,6 +37,7 @@ module Ember
       @twitter_handle = get_twitter_handle
       @default_stream = @twitter_handle.default_stream
       Account.current.launch(:facebook_dm_outgoing_attachment)
+      Account.current.launch(:facebook_post_outgoing_attachment)
       Account.current.launch(:skip_posting_to_fb)
     end
 
@@ -45,6 +46,7 @@ module Ember
       MixpanelWrapper.unstub(:send_to_mixpanel)
       Social::CustomTwitterWorker.unstub(:perform_async)
       Account.current.rollback(:facebook_dm_outgoing_attachment)
+      Account.current.rollback(:facebook_post_outgoing_attachment)
       Account.current.rollback(:skip_posting_to_fb)
     end
 
@@ -902,6 +904,7 @@ module Ember
     # Can be removed once we do a launch all of the facebook outgoing attachments feature
     def test_facebook_reply_to_fb_comment_note_without_attachments
       Account.current.rollback(:facebook_dm_outgoing_attachment)
+      Account.current.rollback(:facebook_post_outgoing_attachment)
       Account.current.rollback(:skip_posting_to_fb)
       ticket = create_ticket_from_fb_post(true)
       put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
@@ -914,6 +917,42 @@ module Ember
       assert_response 201
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params_hash, latest_note))
+    end
+
+    def test_facebook_reply_to_fb_comment_with_attachments
+      attachment_ids = []
+      file = fixture_file_upload('files/image4kb.png', 'image/png')
+      attachment_ids << create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
+      ticket = create_ticket_from_fb_post(true)
+      fb_comment_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook']).first
+      params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id, msg_type: 'post', attachment_ids: attachment_ids }
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Account.current.notes.last
+      match_json(private_note_pattern(params_hash, latest_note))
+    end
+
+    def test_facebook_reply_post_failure_with_invalid_attachment
+      attachment_ids = []
+      file = fixture_file_upload('files/attachment.txt', 'text/plain')
+      attachment_ids << create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
+      ticket = create_ticket_from_fb_post(true)
+      params_hash = { body: Faker::Lorem.paragraph, msg_type: 'post', attachment_ids: attachment_ids }
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      match_json([bad_request_error_pattern('attachment_ids', :attachment_format_invalid, attachment_formats: ApiConstants::FACEBOOK_ATTACHMENT_CONFIG[:post][:fileTypes].join(', ').to_s)])
+    end
+
+    def test_facebook_reply_post_failure_with_invalid_attachment_size
+      attachment_ids = []
+      file = fixture_file_upload('files/attachment.txt', 'text/plain')
+      attachment_ids << create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
+      invalid_attachment_limit = @account.attachment_limit + 1
+      Helpdesk::Attachment.any_instance.stubs(:content_file_size).returns(invalid_attachment_limit.megabytes)
+      ticket = create_ticket_from_fb_post(true)
+      params_hash = { body: Faker::Lorem.paragraph, msg_type: 'post', attachment_ids: attachment_ids }
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      Helpdesk::Attachment.any_instance.unstub(:content_file_size)
+      match_json([bad_request_error_pattern('attachment_ids', :file_size_limit_error, file_size: ApiConstants::FACEBOOK_ATTACHMENT_CONFIG[:post][:size])])
     end
 
     def test_tweet_dm_reply_with_attachment_ids
