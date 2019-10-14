@@ -14,7 +14,7 @@ class Helpdesk::Note < ActiveRecord::Base
   before_destroy :save_deleted_note_info
 
   after_create :update_content_ids, :update_parent, :add_activity
-  after_commit :trigger_detect_thank_you_note_worker, on: :create, if: :detect_thank_you_note?
+ 
   after_commit :fire_create_event, on: :create
   # Doing update note count before pushing to ticket_states queue
   # So that note count will be reflected if the rmq publish happens via ticket states queue
@@ -490,24 +490,5 @@ class Helpdesk::Note < ActiveRecord::Base
       return if import_note
       Helpdesk::TicketNotifier.send_later(:deliver_forward, notable, self) unless only_kbase?
       create_fwd_note_activity(self.to_emails) if create_activity
-    end
-
-    def detect_thank_you_note?
-      account.detect_thank_you_note_enabled? && !BLACKLISTED_THANK_YOU_DETECTOR_NOTE_SOURCES.include?(source) &&
-        user.customer? && sla_timer_off_status? && !import_note && recently_created_note? &&
-        body.present? && account.thank_you_configured_in_automation_rules?
-    end
-
-    def sla_timer_off_status?
-      Helpdesk::TicketStatus.onhold_and_closed_statuses(account).include? notable.status
-    end
-
-    def recently_created_note?
-      Time.zone.now - created_at < 1.hour
-    end
-
-    def trigger_detect_thank_you_note_worker
-      Rails.logger.info "Enqueueing DetectThankYouNoteWorker T :: #{notable.id} , N :: #{id}"
-      ::Freddy::DetectThankYouNoteWorker.perform_async(ticket_id: notable.id, note_id: id)
-    end
+    end   
 end

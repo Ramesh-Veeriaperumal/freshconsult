@@ -38,6 +38,38 @@ class ChannelMessagePollerTest < ActionView::TestCase
 
     assert_equal tweet[:tweetable_id], ticket.id
     assert_equal ticket.description, payload[:description]
+    assert_equal tweet.tweet_type, 'dm'
+  end
+
+  def test_twitter_mention_convert_as_ticket_and_conflict_case
+    payload, command_payload = twitter_create_ticket_command('mention')
+    push_to_channel(command_payload)
+
+    ticket = @account.tickets.last
+    tweet = @account.tweets.last
+
+    assert_equal tweet[:tweetable_id], ticket.id
+    assert_equal ticket.description, payload[:description]
+    assert_equal tweet.tweet_type, 'mention'
+
+    conflict_result = ChannelIntegrations::Commands::Processor.new.process(command_payload[:payload])
+    assert_equal conflict_result, conflict_reply_payload(ticket, payload[:tweet_id])
+  end
+
+  def test_twitter_mention_convert_as_note_and_conflict_case
+    payload, command_payload = twitter_create_note_command('mention')
+    push_to_channel(command_payload)
+
+    ticket = @account.tickets.find_by_display_id(payload[:ticket_id])
+    note = ticket.notes.last
+    tweet = @account.tweets.last
+
+    assert_equal tweet[:tweetable_id], note.id
+    assert_equal note.body, payload[:body]
+    assert_equal tweet.tweet_type, 'mention'
+
+    conflict_result = ChannelIntegrations::Commands::Processor.new.process(command_payload[:payload])
+    assert_equal conflict_result, conflict_reply_payload(note, payload[:tweet_id])
   end
 
   def test_twitter_mention_convert_as_ticket
@@ -65,7 +97,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
 
   def test_update_social_tweets_for_dm
     note = create_twitter_ticket_and_note
-    fake_tweet_id = Faker::Number.number(10)
+    fake_tweet_id = Faker::Number.between(1, 999999999).to_s
     payload = { "status_code": 200, "tweet_id": fake_tweet_id, "note_id": note.id }
     command_payload = sample_twitter_reply_acknowledgement(@account, @handle, @stream, payload)
     push_to_channel(command_payload)
@@ -78,7 +110,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
   def test_update_social_tweets_for_mention
     Account.current.launch(:mentions_to_tms)
     note = create_twitter_ticket_and_note('mention')
-    fake_tweet_id = Faker::Number.number(10)
+    fake_tweet_id = Faker::Number.between(1, 999999999).to_s
     payload = { 'status_code': 200, 'tweet_id': fake_tweet_id, 'note_id': note.id, 'tweet_type': 'mention' }
     command_payload = sample_twitter_reply_acknowledgement(@account, @handle, @stream, payload)
     push_to_channel(command_payload)
@@ -183,7 +215,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
       [payload, sample_twitter_create_ticket_command(@account, @handle, @stream, payload)]
     end
 
-    def twitter_create_note_command
+    def twitter_create_note_command(tweet_type = 'dm')
       tweet = @account.tweets.where(tweetable_type: 'Helpdesk::Ticket').last
 
       if tweet && tweet.tweetable_id
@@ -200,7 +232,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
         "body": Faker::Lorem.characters(100),
         "user_id": user.id,
         "ticket_id": ticket_id,
-        "tweet_type": 'dm',
+        "tweet_type": tweet_type,
         "tweet_id": SecureRandom.hex
       }
 

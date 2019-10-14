@@ -1,1 +1,2 @@
-<%= link_to "#{Account.current.main_portal.name} powered by Freshdesk", "http://freshdesk.com?utm_source=email&utm_medium=referral&utm_campaign=freemium" if Account.current.subscription.sprout? %>
+<% current_subscription = Account.current.subscription %>
+<%= link_to "#{Account.current.main_portal.name} powered by Freshdesk", "http://freshdesk.com?utm_source=email&utm_medium=referral&utm_campaign=freemium" if current_subscription.sprout? || current_subscription.new_sprout? %>

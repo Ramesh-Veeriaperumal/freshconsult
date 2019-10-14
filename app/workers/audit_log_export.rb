@@ -103,6 +103,7 @@ class AuditLogExport < BaseWorker
       time: time.strftime('%b %d at %l:%M %p'),
       name: event_name_route(activity[:object][event_name], event_type, activity[:object], true)
     }
+    report_data[:name][:name] = 'Personal' if report_data[:name][:name] == "Personal_#{Account.current.id}"
     report_data.merge! event_type_and_description(activity, action, event_type)
     report_data
   end

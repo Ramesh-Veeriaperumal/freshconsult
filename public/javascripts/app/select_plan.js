@@ -324,7 +324,7 @@ window.App = window.App || {};
           this.fsm_disabled = true;
           var fsmWarning = editBilling ? $("#warning-btn-fsm-billing-edit") : $("#warning-btn-fsm-billing-change");
           var isEditBilling = jQuery(parent_plan_element).hasClass('calculate-container');
-          fsmWarning.length ? this.triggerFsmWarning(fsmWarning, non_omni_plan_id) : this.checkAndRemoveFSM('submit', isEditBilling, non_omni_plan_id);
+          fsmWarning.length ? this.triggerFsmWarning(fsmWarning, non_omni_plan_id) : this.checkAndRemoveFSM('submit', isEditBilling);
         }
       }
     },
@@ -367,7 +367,6 @@ window.App = window.App || {};
       this.omni_disabled = null;
     },
     choosePlan: function (button) {
-      this.fsm_disabled = false;
       var btn = $(button),
       current_plan = btn.data("plan"),
       plan_cost = btn.data("planCost"),
@@ -480,7 +479,7 @@ window.App = window.App || {};
             }
             billing_template.find(".billing-cancel").show();
             var submitText = request_change ? I18n.t('downgrade_policy.change_request') : I18n.t('common_js_translations.update_plan');
-            billing_template.find(".billing-submit").val(submitText).addClass('btn-primary')
+            billing_template.find(".billing-submit").val(submitText).addClass('btn-primary');
             billing_template.find(".billing-submit").html(submitText).addClass('btn-primary');
             if(request_change){
               $('.upgrade-same-plan').css('display','none');

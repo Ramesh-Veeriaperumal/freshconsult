@@ -88,7 +88,14 @@ module TicketsTestHelper
   def cp_ticket_event_info_pattern(ticket)
     # TODO: Testing lifecycle_hash.
     lifecycle_hash = {}
-    activity_type_hash = ticket.activity_type && ticket.activity_type[:type] == Helpdesk::Ticket::SPLIT_TICKET_ACTIVITY ? split_ticket_hash(ticket.activity_type) : {}
+    activity_type = ticket.activity_type
+    activity_type_hash = if activity_type && activity_type[:type] == Helpdesk::Ticket::SPLIT_TICKET_ACTIVITY
+                           split_ticket_hash(activity_type)
+                         elsif activity_type && activity_type[:type] == Helpdesk::Ticket::MERGE_TICKET_ACTIVITY
+                           merge_ticket_hash(activity_type)
+                         else
+                           {}
+                         end
     {
       action_in_bhrs: action_in_bhrs?(ticket),
       pod: ChannelFrameworkConfig['pod']
@@ -99,7 +106,18 @@ module TicketsTestHelper
     {
       activity_type: {
         type: Helpdesk::Ticket::SPLIT_TICKET_ACTIVITY,
-        source_ticket_id: activity_type[:source_ticket_id]
+        source_ticket_id: activity_type[:source_ticket_id],
+        source_note_id: activity_type[:source_note_id]
+      }
+    }
+  end
+
+  def merge_ticket_hash(activity_type)
+    {
+      activity_type: {
+        type: Helpdesk::Ticket::MERGE_TICKET_ACTIVITY,
+        source_ticket_id: activity_type[:source_ticket_id],
+        target_ticket_id: activity_type[:target_ticket_id]
       }
     }
   end

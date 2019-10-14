@@ -38,6 +38,9 @@ defaults: &defaults
   sherlock:
     auth_type: jwt
     jwt_secret: b202ec2b19b12bde6d665e87962fc
+  facebook:
+    auth_type: jwt
+    jwt_secret: 9rQ7H5RVm35vSvNUDWFjZPz3YKsqxp8p
 development:
   <<: *defaults
 

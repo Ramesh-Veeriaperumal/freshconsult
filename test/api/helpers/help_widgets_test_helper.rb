@@ -94,7 +94,7 @@ module HelpWidgetsTestHelper
       name: widget.name,
       settings: widget.settings.except(:freshmarketer)
     }
-    ret_hash[:solution_category_ids] = widget.help_widget_solution_categories.pluck(:solution_category_meta_id) if Account.current.help_widget_solution_categories_enabled?
+    ret_hash[:solution_category_ids] = widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
     ret_hash
   end
 

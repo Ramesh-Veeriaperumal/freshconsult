@@ -33,12 +33,7 @@ module Widget
       private
 
         def scoper
-          if current_account.help_widget_solution_categories_enabled?
-            current_account.solution_article_meta.for_help_widget(@help_widget).published
-          else
-            fetch_portal
-            current_account.solution_article_meta.for_portal(@current_portal).published
-          end
+          current_account.solution_article_meta.for_help_widget(@help_widget).published
         end
 
         def load_object(items = scoper)

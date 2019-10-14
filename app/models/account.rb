@@ -159,6 +159,10 @@ class Account < ActiveRecord::Base
     self.secret_keys[:attachment_secret]
   end
 
+  def help_widget_secret
+    secret_keys[:help_widget]
+  end
+
   #Temporary feature check methods - using redis keys - ends here
 
   def round_robin_capping_enabled?
@@ -766,8 +770,12 @@ class Account < ActiveRecord::Base
     get_others_redis_key(account_cancellation_request_time_key)
   end
 
+  def downgrade_policy_email_reminder_key
+    format(DOWNGRADE_POLICY_EMAIL_REMINDER, account_id: id)
+  end
+
   def kill_account_cancellation_request_job
-    job_id= get_others_redis_key(account_cancellation_request_job_key)
+    job_id = get_others_redis_key(account_cancellation_request_job_key)
     job = Sidekiq::ScheduledSet.new.find_job(job_id)
     job.delete if job.present?
     delete_account_cancellation_request_job_key
@@ -776,6 +784,7 @@ class Account < ActiveRecord::Base
   def kill_scheduled_account_cancellation
     begin
       Billing::Subscription.new.remove_scheduled_cancellation(self)
+      remove_others_redis_key(downgrade_policy_email_reminder_key)
       return delete_account_cancellation_requested_time_key
     rescue => e
       Rails.logger.error("Error while cancelling account cancellation request :: #{e.inspect}")

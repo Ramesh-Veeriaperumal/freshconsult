@@ -156,4 +156,15 @@ module TwitterTestHelper
       }
     }
   end
+
+  def conflict_reply_payload(entity, tweet_id)
+    {
+      data: {
+        message: "Conflict: Tweet ID: #{tweet_id} already converted.",
+        id: entity.id
+      },
+      status_code: 409,
+      reply_status: 'error'
+    }
+  end
 end

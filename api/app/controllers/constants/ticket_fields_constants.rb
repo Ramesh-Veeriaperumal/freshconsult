@@ -16,8 +16,8 @@ module TicketFieldsConstants
   TICKET_ESCAPE_FIELDS = %w[label_in_portal].freeze | ESCAPED_FIELDS
   CUSTOM_DROPDOWN_RELATED_FIELDS = %w[custom_dropdown].freeze
   TYPE_TO_VALIDATION_CLASS = {
-    'nested_field' => NestedTicketFieldValidation,
-    'custom_dropdown' => BaseChoicesTicketFieldValidation
+      'nested_field' => NestedTicketFieldValidation,
+      'custom_dropdown' => BaseChoicesTicketFieldValidation
   }.freeze
   DEFAULT_VALIDATION_CLASS = TicketFieldValidation
   DELEGATOR_CLASS = TicketFieldDelegator

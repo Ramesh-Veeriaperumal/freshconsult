@@ -20,6 +20,7 @@ module CustomTranslations::Associations
         Language.find_by_code(I18n.locale)
       end
 
+      # Overridable.
       def custom_translations_feature_check(language = current_language)
         Account.current.custom_translations_enabled? && Account.current.supported_languages.include?(language.code)
       end

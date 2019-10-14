@@ -121,8 +121,7 @@ class Helpdesk::ConversationsController < ApplicationController
     end
     if error_message.blank?
       stream = fetch_stream || reply_handle.default_stream
-      if twt_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:dm] ||
-        (current_account.mentions_to_tms_enabled? && stream.default_stream?)
+      if dm_note?(twt_type) || mentions_in_tms?(stream) || reply_as_mention_for_dm?(stream, twt_type)
         stream_id = stream.id
         tweet_id = random_tweet_id
         @item.build_tweet(tweet_id: tweet_id,
@@ -131,8 +130,7 @@ class Helpdesk::ConversationsController < ApplicationController
       end
       if @item.save_note
         args = { ticket_id: @parent.id, note_id: @item.id, tweet_type: twt_type, twitter_handle_id: twitter_handle_id }
-        if stream.custom_stream? || (!current_account.mentions_to_tms_enabled? &&
-            twt_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:mention])
+        if stream.custom_stream? || (!current_account.mentions_to_tms_enabled? && mention_note?(twt_type))
           Social::TwitterReplyWorker.perform_async(args)
         end
         flash.now[:notice] = t(:'flash.tickets.reply.success')
@@ -468,4 +466,21 @@ class Helpdesk::ConversationsController < ApplicationController
         tweet = @parent.tweet
         tweet.stream if tweet.present?
       end
+
+      def mentions_in_tms?(stream)
+        current_account.mentions_to_tms_enabled? && stream.default_stream?
+      end
+
+      def dm_note?(tweet_type)
+        tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:dm]
+      end
+
+      def mention_note?(tweet_type)
+        tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:mention]
+      end
+
+      def reply_as_mention_for_dm?(stream, tweet_type)
+        current_account.mentions_to_tms_enabled? && mention_note?(tweet_type) && stream.dm_stream?
+      end
+
 end

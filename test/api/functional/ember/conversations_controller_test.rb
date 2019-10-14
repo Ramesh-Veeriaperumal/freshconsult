@@ -36,12 +36,18 @@ module Ember
 
       @twitter_handle = get_twitter_handle
       @default_stream = @twitter_handle.default_stream
+      Account.current.launch(:facebook_dm_outgoing_attachment)
+      Account.current.launch(:facebook_post_outgoing_attachment)
+      Account.current.launch(:skip_posting_to_fb)
     end
 
     def teardown
       super
       MixpanelWrapper.unstub(:send_to_mixpanel)
       Social::CustomTwitterWorker.unstub(:perform_async)
+      Account.current.rollback(:facebook_dm_outgoing_attachment)
+      Account.current.rollback(:facebook_post_outgoing_attachment)
+      Account.current.rollback(:skip_posting_to_fb)
     end
 
     def wrap_cname(params)
@@ -671,12 +677,17 @@ module Ember
       ticket = create_ticket_from_fb_post
       post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, {})
       assert_response 400
-      match_json([bad_request_error_pattern('body', :datatype_mismatch, code: :missing_field, expected_data_type: String)])
+      match_json(
+        [
+          bad_request_error_pattern('body', :missing_field, code: :missing_field),
+          bad_request_error_pattern('msg_type', :datatype_mismatch, code: :missing_field, expected_data_type: String)
+        ]
+      )
     end
 
     def test_facebook_reply_with_invalid_ticket
       ticket = create_ticket
-      params_hash = { body: Faker::Lorem.paragraph }
+      params_hash = { body: Faker::Lorem.paragraph, msg_type: 'post' }
       post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('ticket_id', :not_a_facebook_ticket)])
@@ -685,16 +696,17 @@ module Ember
     def test_facebook_reply_with_invalid_note_id
       ticket = create_ticket_from_fb_post
       invalid_id = (Helpdesk::Note.last.try(:id) || 0) + 10
-      params_hash = { body: Faker::Lorem.paragraph, note_id: invalid_id }
+      params_hash = { body: Faker::Lorem.paragraph, note_id: invalid_id, msg_type: 'post' }
       post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('note_id', :absent_in_db, resource: :note, attribute: :note_id)])
     end
 
     def test_facebook_reply_failure
+      Account.current.rollback(:skip_posting_to_fb)
       ticket = create_ticket_from_fb_post
       @controller.stubs(:send_reply_to_fb).returns(:failure)
-      params_hash = { body: Faker::Lorem.paragraph }
+      params_hash = { body: Faker::Lorem.paragraph, msg_type: 'post' }
       post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('body', :unable_to_perform)])
@@ -702,9 +714,10 @@ module Ember
     end
 
    def test_facebook_reply_to_fb_dm_ticket_when_user_blocked
+      Account.current.rollback(:skip_posting_to_fb)
       ticket = create_ticket_from_fb_direct_message
       @controller.stubs(:send_reply_to_fb).returns(:fb_user_blocked)
-      params_hash = { body: "Note content" }
+      params_hash = { body: Faker::Lorem.paragraph, msg_type: 'dm' }
       res = post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('body', :facebook_user_blocked)])
@@ -712,11 +725,12 @@ module Ember
     end
 
     def test_facebook_reply_to_fb_post_ticket
+      Account.current.rollback(:skip_posting_to_fb)
       ticket = create_ticket_from_fb_post
       put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
       sample_put_comment = { 'id' => put_comment_id }
       Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)
-      params_hash = { body: Faker::Lorem.paragraph }
+      params_hash = { body: Faker::Lorem.paragraph, msg_type: 'post' }
       post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       Koala::Facebook::API.any_instance.unstub(:put_comment)
       assert_response 201
@@ -725,12 +739,13 @@ module Ember
     end
 
     def test_facebook_reply_to_fb_comment_note
+      Account.current.rollback(:skip_posting_to_fb)
       ticket = create_ticket_from_fb_post(true)
       put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
       sample_put_comment = { 'id' => put_comment_id }
       fb_comment_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook']).first
       Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)
-      params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id }
+      params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id, msg_type: 'post' }
       post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       Koala::Facebook::API.any_instance.unstub(:put_comment)
       assert_response 201
@@ -739,10 +754,11 @@ module Ember
     end
 
     def test_facebook_reply_to_fb_direct_message_ticket
+      Account.current.rollback(:skip_posting_to_fb)
       ticket = create_ticket_from_fb_direct_message
       sample_reply_dm = { 'id' => Time.now.utc.to_i + 5 }
       Koala::Facebook::API.any_instance.stubs(:put_object).returns(sample_reply_dm)
-      params_hash = { body: Faker::Lorem.paragraph }
+      params_hash = { body: Faker::Lorem.paragraph, msg_type: 'dm' }
       post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       Koala::Facebook::API.any_instance.unstub(:put_object)
       assert_response 201
@@ -753,7 +769,7 @@ module Ember
     def test_facebook_reply_to_non_fb_post_note
       ticket = create_ticket_from_fb_direct_message
       fb_dm_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook']).first
-      params_hash = { body: Faker::Lorem.paragraph, note_id: fb_dm_note.id }
+      params_hash = { body: Faker::Lorem.paragraph, note_id: fb_dm_note.id, msg_type: 'post' }
       post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('note_id', :unable_to_post_reply)])
@@ -762,7 +778,7 @@ module Ember
     def test_facebook_reply_to_non_commentable_note
       ticket = create_ticket_from_fb_post(true, true)
       fb_comment_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook']).last
-      params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id }
+      params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id, msg_type: 'post' }
       post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('note_id', :unable_to_post_reply)])
@@ -771,18 +787,19 @@ module Ember
     def test_facebook_reply_with_invalid_agent_id
       user = add_new_user(account)
       ticket = create_ticket_from_fb_direct_message
-      params_hash = { body: Faker::Lorem.paragraph, agent_id: user.id }
+      params_hash = { body: Faker::Lorem.paragraph, agent_id: user.id, msg_type: 'post' }
       post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('agent_id', :absent_in_db, resource: :agent, attribute: :agent_id)])
     end
 
     def test_facebook_reply_with_valid_agent_id
+      Account.current.rollback(:skip_posting_to_fb)
       user = add_test_agent(account, role: account.roles.find_by_name('Agent').id)
       ticket = create_ticket_from_fb_direct_message
       sample_reply_dm = { 'id' => Time.now.utc.to_i + 5 }
       Koala::Facebook::API.any_instance.stubs(:put_object).returns(sample_reply_dm)
-      params_hash = { body: Faker::Lorem.paragraph, agent_id: user.id }
+      params_hash = { body: Faker::Lorem.paragraph, agent_id: user.id, msg_type: 'post' }
       post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       Koala::Facebook::API.any_instance.unstub(:put_object)
       assert_response 201
@@ -794,7 +811,7 @@ module Ember
     def test_facebook_reply_to_spammed_ticket
       ticket = create_ticket_from_fb_direct_message
       ticket.update_attributes(spam: true)
-      params_hash = { body: Faker::Lorem.paragraph }
+      params_hash = { body: Faker::Lorem.paragraph, msg_type: 'post' }
       post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 404
     ensure
@@ -802,6 +819,7 @@ module Ember
     end
 
     def test_facebook_reauth_required_error
+      Account.current.rollback(:skip_posting_to_fb)
       ticket = create_ticket_from_fb_post(true)
       fb_page = ticket.fb_post.facebook_page
       fb_page.reauth_required = true
@@ -810,7 +828,7 @@ module Ember
       put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
       sample_put_comment = { 'id' => put_comment_id }
       Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)
-      params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id }
+      params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id, msg_type: 'post' }
       post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       Koala::Facebook::API.any_instance.unstub(:put_comment)
       assert_response 400
@@ -825,10 +843,116 @@ module Ember
       ticket = create_ticket_from_fb_post(true, true)
       fb_page = ticket.fb_post.facebook_page
       fb_page.destroy
-      params_hash = { body: Faker::Lorem.paragraph }
+      params_hash = { body: Faker::Lorem.paragraph, msg_type: 'post' }
       post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('fb_page_id', :invalid_facebook_id)])
+    end
+
+    def test_facebook_reply_without_msg_type
+      ticket = create_ticket_from_fb_post(true, true)
+      fb_comment_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook']).first
+      params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id }
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('msg_type', :datatype_mismatch, code: :missing_field, expected_data_type: String)])
+    end
+
+    def test_facebook_dm_reply_with_incorrect_msg_type
+      ticket = create_ticket_from_fb_post(true, true)
+      fb_comment_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook']).first
+      params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id, msg_type: 'posts' }
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('msg_type', :not_included, list: 'dm,post')])
+    end
+
+    def test_facebook_reply_dm_with_more_than_one_attachment_ids
+      ticket = create_ticket_from_fb_post(true, true)
+      fb_comment_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook']).first
+      params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id, msg_type: 'post', attachment_ids: [3, 4] }
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('attachment_ids', :too_long, current_count: 2, element_type: :characters, max_count: 1)])
+    end
+
+    def test_facebook_reply_dm_success_with_attachemnts
+      attachment_ids = []
+      file = fixture_file_upload('files/image4kb.png', 'image/png')
+      attachment_ids << create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
+      ticket = create_ticket_from_fb_direct_message
+      sample_reply_dm = { 'id' => Time.now.utc.to_i + 5 }
+      Koala::Facebook::API.any_instance.stubs(:put_object).returns(sample_reply_dm)
+      params_hash = { msg_type: 'dm', attachment_ids: attachment_ids }
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      Koala::Facebook::API.any_instance.unstub(:put_object)
+      assert_response 201
+      latest_note = Account.current.notes.last
+      match_json(private_note_pattern(params_hash, latest_note))
+    end
+
+    def test_facebook_reply_dm_failure_with_attachemnts_and_body
+      attachment_ids = []
+      file = fixture_file_upload('files/image4kb.png', 'image/png')
+      attachment_ids << create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
+      ticket = create_ticket_from_fb_direct_message
+      params_hash = { body: Faker::Lorem.paragraph, msg_type: 'dm', attachment_ids: attachment_ids }
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      match_json([bad_request_error_pattern('attachment_ids', :can_have_only_one_field, list: 'body, attachment_ids')])
+    end
+
+    # Can be removed once we do a launch all of the facebook outgoing attachments feature
+    def test_facebook_reply_to_fb_comment_note_without_attachments
+      Account.current.rollback(:facebook_dm_outgoing_attachment)
+      Account.current.rollback(:facebook_post_outgoing_attachment)
+      Account.current.rollback(:skip_posting_to_fb)
+      ticket = create_ticket_from_fb_post(true)
+      put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
+      sample_put_comment = { 'id' => put_comment_id }
+      fb_comment_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook']).first
+      Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)
+      params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id, msg_type: 'post' }
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      Koala::Facebook::API.any_instance.unstub(:put_comment)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(private_note_pattern(params_hash, latest_note))
+    end
+
+    def test_facebook_reply_to_fb_comment_with_attachments
+      attachment_ids = []
+      file = fixture_file_upload('files/image4kb.png', 'image/png')
+      attachment_ids << create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
+      ticket = create_ticket_from_fb_post(true)
+      fb_comment_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook']).first
+      params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id, msg_type: 'post', attachment_ids: attachment_ids }
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Account.current.notes.last
+      match_json(private_note_pattern(params_hash, latest_note))
+    end
+
+    def test_facebook_reply_post_failure_with_invalid_attachment
+      attachment_ids = []
+      file = fixture_file_upload('files/attachment.txt', 'text/plain')
+      attachment_ids << create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
+      ticket = create_ticket_from_fb_post(true)
+      params_hash = { body: Faker::Lorem.paragraph, msg_type: 'post', attachment_ids: attachment_ids }
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      match_json([bad_request_error_pattern('attachment_ids', :attachment_format_invalid, attachment_formats: ApiConstants::FACEBOOK_ATTACHMENT_CONFIG[:post][:fileTypes].join(', ').to_s)])
+    end
+
+    def test_facebook_reply_post_failure_with_invalid_attachment_size
+      attachment_ids = []
+      file = fixture_file_upload('files/attachment.txt', 'text/plain')
+      attachment_ids << create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
+      invalid_attachment_limit = @account.attachment_limit + 1
+      Helpdesk::Attachment.any_instance.stubs(:content_file_size).returns(invalid_attachment_limit.megabytes)
+      ticket = create_ticket_from_fb_post(true)
+      params_hash = { body: Faker::Lorem.paragraph, msg_type: 'post', attachment_ids: attachment_ids }
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      Helpdesk::Attachment.any_instance.unstub(:content_file_size)
+      match_json([bad_request_error_pattern('attachment_ids', :file_size_limit_error, file_size: ApiConstants::FACEBOOK_ATTACHMENT_CONFIG[:post][:size])])
     end
 
     def test_tweet_dm_reply_with_attachment_ids
@@ -1092,6 +1216,31 @@ module Ember
         end
       end
       ticket.destroy
+    end
+
+    def test_twitter_mention_reply_to_dm_ticket_in_tms
+      Account.current.launch(:mentions_to_tms)
+      Sidekiq::Testing.inline! do
+        with_twitter_update_stubbed do
+          ticket = create_twitter_ticket({tweet_type: 'dm'})
+          @account = Account.current
+          params_hash = {
+            body: Faker::Lorem.sentence[0..130],
+            tweet_type: 'mention',
+            twitter_handle_id: @twitter_handle.id
+          }
+          post :tweet, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+          assert_response 201
+          latest_note = Helpdesk::Note.last
+          match_json(private_note_pattern(params_hash, latest_note))
+          tweet = latest_note.tweet
+          assert_equal tweet.tweet_id < 0, true, 'Tweet id should be less than zero'
+          assert_equal tweet.tweet_type, params_hash[:tweet_type]
+          ticket.destroy
+        end
+      end
+    ensure
+        Account.current.unstub(:mentions_to_tms_enabled?)
     end
 
     def test_ticket_conversations
@@ -2093,7 +2242,7 @@ module Ember
       put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
       sample_put_comment = { 'id' => put_comment_id }
       Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)
-      params_hash = { body: Faker::Lorem.paragraph, last_note_id: note.id }
+      params_hash = { body: Faker::Lorem.paragraph, last_note_id: note.id, msg_type: 'post' }
       post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       Koala::Facebook::API.any_instance.unstub(:put_comment)
       assert_response 201
@@ -2327,6 +2476,46 @@ module Ember
       body_hash = { body: Faker::Lorem.characters(2010) }
       post :ecommerce_reply, construct_params({ version: 'private', id: ticket.display_id }, body_hash)
       assert_response 400
+    end
+
+    def test_ecommerce_reply_with_attachments
+      attachment_ids = []
+      file = fixture_file_upload('files/image4kb.png', 'image/png')
+      attachment_ids << create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
+      ticket = create_ebay_ticket
+      params_hash = {
+        body: Faker::Lorem.sentence[0..130],
+        attachment_ids: attachment_ids
+      }
+      Ecommerce::Ebay::Api.any_instance.stubs(:make_ebay_api_call).returns(timestamp: Time.current)
+      post :ecommerce_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      match_json(private_note_pattern(params_hash, Helpdesk::Note.last))
+      assert Helpdesk::Note.last.attachments.size == attachment_ids.size
+    ensure
+      @account.ebay_accounts.last.delete
+      Ecommerce::Ebay::Api.any_instance.unstub(:make_ebay_api_call)
+    end
+
+    def test_ecommerce_reply_with_invalid_attachment_size
+      attachment_ids = []
+      file = fixture_file_upload('files/image4kb.png', 'image/png')
+      attachment_ids << create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
+      ticket = create_ebay_ticket
+      params_hash = {
+        body: Faker::Lorem.sentence[0..130],
+        attachment_ids: attachment_ids
+      }
+      invalid_attachment_limit = @account.attachment_limit + 1
+      Helpdesk::Attachment.any_instance.stubs(:content_file_size).returns(invalid_attachment_limit.megabytes)
+      Ecommerce::Ebay::Api.any_instance.stubs(:make_ebay_api_call).returns(timestamp: Time.current)
+      post :ecommerce_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      match_json([bad_request_error_pattern(:attachment_ids, :invalid_size, max_size: "#{@account.attachment_limit} MB", current_size: "#{invalid_attachment_limit} MB")])
+      assert_response 400
+    ensure
+      @account.ebay_accounts.last.delete
+      Ecommerce::Ebay::Api.any_instance.unstub(:make_ebay_api_call)
+      Helpdesk::Attachment.any_instance.unstub(:content_file_size)
     end
 
     def test_email_notification_without_notifying_emails

@@ -5,7 +5,6 @@
 	<div class="mail_content">
 		<br><%= t("mailer_notifier.draft_mailer.discard_email.discard_msg_html", article_url: link_to(@draft[:title],solution_article_url(@article, :host => @host)), user: link_to(@user.name, contact_url(@user.id, :host => @host)) , time: Time.zone.now.strftime("%a, %d %b %Y at %H:%M %p"))%>
 	</div>
-
 	<div class="forum_content">
 		<div class="draft-title">
 			<%= t("mailer_notifier.draft_mailer.discard_email.draft_by_html", title: @draft[:title], author: @current_author.name).html_safe%>

@@ -22,27 +22,47 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
   def setup
     super
     @currency_map = Hash[Subscription::Currency.all.collect{ |cur| [cur.name, cur] }]
+    @account ||= create_test_account
+    @account.subscription.update_attributes(agent_limit: 10) if @account.subscription.agent_limit.blank?
+    unless Account.current.subscription.active?
+      subscription = Account.current.subscription
+      subscription.state = 'active'
+      subscription.save!
+    end
   end
 
   def wrap_cname(params)
     params
   end
+
+  def teardown
+    PLANS[:subscription_plans][:forest_jan_19][:features].map { |feature| @account.add_feature(feature) }
+  end
   
-  def test_valid_show
-    @account = Account.current
-    subscription_request = SubscriptionRequest.new(
-      account_id: @account.id,
+  def test_show_with_subscription_request
+    subscription_request = @account.subscription.subscription_request
+    subscription_request.destory if subscription_request.present?
+    subscription_request_params = {
       agent_limit: 1,
-      plan_id: SubscriptionPlan.current.map(&:id).third,
+      plan_id: @account.subscription.subscription_plan_id,
       renewal_period: 1,
-      subscription_id: @account.subscription.id
-    )
-    subscription_request.save!
+      subscription_id: @account.subscription.id,
+      fsm_field_agents: nil
+    }
+    @account.subscription.build_subscription_request(subscription_request_params).save!
+    get :show, construct_params(version: 'private')
+    assert_response 200
+    match_json(subscription_response(@account.subscription, subscription_request_params))
+  ensure
+    @account.subscription.subscription_request.destroy if @account.subscription.subscription_request.present?
+  end
+
+  def test_show_without_subscription_request
+    subscription_request = @account.subscription.subscription_request
+    subscription_request.destroy if subscription_request.present?
     get :show, construct_params(version: 'private')
     assert_response 200
     match_json(subscription_response(@account.subscription))
-  ensure
-    @account.subscription.subscription_request.destroy if @account.subscription.subscription_request.present?
   end
 
   def test_show_no_privilege
@@ -84,32 +104,25 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
   end
 
   def test_update_subscription
-    create_new_account('test1', 'test1@freshdesk.com')
     update_currency
-    @account.launch(:enable_customer_journey)
-    stub_chargebee_methods
-    stub_current_user
+    stub_methods
     @account.rollback :downgrade_policy
-    # Testing upgrade from sprout/blossom to garden enables customer_journey feature
-    assert !@account.features_list.include?(:customer_journey)
-    put :update, construct_params({ version: 'private', plan_id: SubscriptionPlan.cached_current_plans.map(&:id).third, agent_seats: 1 }, {})
-    @account.reload
+    plan_id = (SubscriptionPlan.cached_current_plans.map(&:id) - [@account.subscription.subscription_plan_id]).last
+    put :update, construct_params({ version: 'private', plan_id: plan_id, agent_seats: 1 })
     assert_response 200
-    assert_equal JSON.parse(response.body)['plan_id'], SubscriptionPlan.cached_current_plans.map(&:id).third
+    assert_equal JSON.parse(response.body)['plan_id'], plan_id
     plan = @account.subscription.subscription_plan
     assert (::PLANS[:subscription_plans][plan.canon_name.to_sym][:features].dup - @account.features_list).empty?
-    put :update, construct_params({ version: 'private', renewal_period: 6 }, {})
+    put :update, construct_params({ version: 'private', renewal_period: 6 })
     assert_response 200
-    #moving to sprout and checking all the validations
-    put :update, construct_params({ version: 'private', plan_id: SubscriptionPlan.cached_current_plans.map(&:id).first, renewal_period: 6 }, {})
+    # moving to sprout and checking all the validations
+    put :update, construct_params({ version: 'private', plan_id: sprout_plan_id, renewal_period: 6 })
     assert_equal @account.subscription_plan.renewal_period, 1
     assert_response 200
-    put :update, construct_params({ version: 'private', renewal_period: 6 }, {})
+    put :update, construct_params({ version: 'private', renewal_period: 6 })
     assert_response 400
   ensure
-    ChargeBee::Subscription.unstub(:update)
-    User.unstub(:current)
-    @controller.api_current_user.unstub(:privilege?)
+    unstub_methods
   end
 
   def test_update_subscription_with_trial_state
@@ -171,10 +184,11 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     account = Account.current
     result = ChargeBee::Result.new(stub_update_params(account.id))
     ChargeBee::Subscription.stubs(:update).returns(result)
-    account.subscription.card_number = nil
+    Subscription.any_instance.stubs(:card_number).returns(nil)
     put :update, construct_params({ version: 'private', plan_id: 8 }, {})
     assert_response 400
   ensure
+    Subscription.any_instance.unstub(:card_number)
     ChargeBee::Subscription.unstub(:update)
   end
 
@@ -183,7 +197,6 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     result = ChargeBee::Result.new(stub_update_params(account.id))
     ChargeBee::Subscription.stubs(:update).returns(result)
     account.subscription.state = 'active'
-    account.subscription.card_number = '12345432'
     put :update, construct_params({ version: 'private', plan_id: Faker::Number.number(3) }, {})
     assert_response 400
   ensure
@@ -194,11 +207,13 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     account = Account.current
     result = ChargeBee::Result.new(stub_update_params(account.id))
     ChargeBee::Subscription.stubs(:update).returns(result)
-    account.subscription.state = 'active'
-    account.subscription.card_number = '12345432'
+    Subscription.any_instance.stubs(:active?).returns(true)
+    Subscription.any_instance.stubs(:card_number).returns(true)
     put :update, construct_params({ version: 'private', plan_id: 8 , agent_seats: '1' }, {})
     assert_response 400
   ensure
+    Subscription.any_instance.unstub(:active?)
+    Subscription.any_instance.unstub(:card_number)
     ChargeBee::Subscription.unstub(:update)
   end
   
@@ -245,60 +260,53 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
   end
 
   def test_update_subscription_downgrade_to_sprout
-    @account = Account.find_by_full_domain('test1.freshpo.com').make_current
-    plan_ids = SubscriptionPlan.current.map(&:id)
-    stub_chargebee_methods
-    stub_current_user
-    params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
-    params = { plan_id: params_plan_id }
-    @account.subscription.card_number = '12345432'
-    @account.subscription.update_attributes(agent_limit: '1')
-    @account.subscription.update_attributes(subscription_plan_id: @account.subscription.subscription_plan_id)
-    put :update, construct_params({ version: 'private' }.merge!(params.merge!(params_hash.except(:plan_id))), {})
-    @account.reload
-    assert_equal @account.subscription.subscription_request.nil?, true
-    assert_equal @account.subscription.subscription_plan_id, params_plan_id
-    assert_response 200
-
-    sprout_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount == 0.0 }.compact.first
-    params = { plan_id: sprout_plan_id }
+    stub_methods
+    if @account.subscription.subscription_plan_id == sprout_plan_id
+      subscription = @account.subscription
+      subscription.plan = SubscriptionPlan.current.where("id != #{sprout_plan_id}").first
+      subscription.save!
+    end
+    Subscription.any_instance.stubs(:coupon).returns(nil)
+    params = { version: 'private', plan_id: sprout_plan_id, renewal_period: 12, agent_seats: 1 }
+    @account.subscription.subscription_request.destroy if @account.subscription.subscription_request.present?
     @account.rollback :downgrade_policy
-    put :update, construct_params({ version: 'private' }.merge!(params.merge!(params_hash.except(:plan_id, :renewal_period))), {})
-    assert_equal @account.subscription.subscription_request.nil?, true
-    @account.reload
-    assert_equal @account.subscription.subscription_plan_id, sprout_plan_id
+    put :update, construct_params(params)
     assert_response 200
+    params.delete(:renewal_period)
+    match_json(update_response(params, @account.subscription))
   ensure
-    unstub_chargebee_methods
+    Subscription.unstub(:coupon)
+    unstub_methods
   end
 
-
   def test_update_subscription_renewal_period_for_existing_customers
-    @account = Account.find_by_full_domain('test1.freshpo.com').make_current
     plan_ids = SubscriptionPlan.current.map(&:id)
-    stub_chargebee_methods
-    stub_current_user
+    stub_methods
     $redis_others.perform_redis_op('set', DOWNGRADE_POLICY_TO_ALL, true)
-    params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
-    params = { plan_id: params_plan_id, renewal_period: 1 }
-    @account.subscription.card_number = '12345432'
-    @account.subscription.update_attributes(agent_limit: '1')
-    @account.subscription.update_attributes(renewal_period: 12)
-    @account.subscription.update_attributes(subscription_plan_id: @account.subscription.subscription_plan_id)
+    params_plan_id = (paid_plans - [@account.subscription.subscription_plan_id]).first
+    renewal_period = (SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY.keys - [@account.subscription.renewal_period]).first
+    params = { plan_id: params_plan_id, renewal_period: renewal_period, agent_seats: 1, version: 'private' }
     current_subscription = @account.subscription
-    current_subscription.account.rollback :downgrade_policy
-    put :update, construct_params({ version: 'private' }.merge!(params.merge!(params_hash.except(:plan_id, :renewal_period))), {})
-    assert_equal current_subscription.account.launched?(:downgrade_policy), true
-    assert_equal @account.subscription.subscription_request.nil?, true
-    assert_equal @account.subscription.subscription_plan_id, params_plan_id
+    current_subscription.subscription_request.destory if current_subscription.subscription_request.present?
+    @account.rollback :downgrade_policy
+    put :update, construct_params(params)
     assert_response 200
+    assert_equal current_subscription.account.launched?(:downgrade_policy), true
+    match_json(update_response(params, @account.subscription))
   ensure
-    unstub_chargebee_methods
+    unstub_methods
     $redis_others.perform_redis_op('del', DOWNGRADE_POLICY_TO_ALL)
-    @account.destroy
   end
 
   private
+
+    def sprout_plan_id
+      @sprout_plan_id ||= SubscriptionPlan.current.where('amount = 0').compact.first.id
+    end
+
+    def paid_plans
+      @paid_plans ||= SubscriptionPlan.current.where('amount != 0').pluck(:id)
+    end
 
     def stub_chargebee_requests
       chargebee_subscription = ChargeBee::Subscription.create({
@@ -342,37 +350,28 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
       RestClient::Request.unstub(:execute)
     end
 
-    def params_hash
-      {
-        plan_id: SubscriptionPlan.current.map(&:id).third,
-        renewal_period: SubscriptionPlan.current.third.renewal_period,
-        agent_seats: 1
-      }
-    end
-
-    def stub_current_user
-      @account.subscription.card_number = '12345432'
-      agent = @account.users.where(helpdesk_agent: true).first
-      User.stubs(:current).returns(agent)
-      @controller.stubs(:api_current_user).returns(User.current)
-      @controller.api_current_user.stubs(:privilege?).returns(true)
-    end
-
-    def stub_chargebee_methods
+    def stub_methods
       @account.launch :downgrade_policy
       Account.any_instance.stubs(:reseller_paid_account?).returns(true)
       Subscription.any_instance.stubs(:active?).returns(true)
+      Subscription.any_instance.stubs(:card_number).returns('12767526')
       result = ChargeBee::Result.new(stub_update_params(@account.id))
       ChargeBee::Subscription.stubs(:update).returns(result)
+      agent = @account.users.where(helpdesk_agent: true).first
+      User.stubs(:current).returns(agent)
+      @controller.stubs(:api_current_user).returns(User.current)
+      User.any_instance.stubs(:privilege?).returns(true)
     end
 
-    def unstub_chargebee_methods
+    def unstub_methods
       User.unstub(:current)
       Account.any_instance.unstub(:reseller_paid_account?)
-      @controller.api_current_user.unstub(:privilege?)
+      unstub_privilege
       Subscription.any_instance.unstub(:active?)
+      Subscription.any_instance.unstub(:card_number)
       ChargeBee::Subscription.unstub(:update)
       @account.rollback :downgrade_policy
+      @controller.unstub(:api_current_user)
     end
 
     def mock_plan(id, plan_name)
@@ -474,31 +473,59 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
       ]
     end
 
-    def subscription_response(subscription)
+    def update_response(params, subscription)
       {
-        'id': subscription.id,
-        'state': subscription.state,
-        'plan_id': subscription.subscription_plan_id,
-        'renewal_period': subscription.renewal_period,
-        'next_renewal_at': subscription.next_renewal_at,
-        'days_remaining': (subscription.next_renewal_at.utc.to_date - DateTime.now.utc.to_date).to_i,
-        'agent_seats': subscription.agent_limit,
-        'card_number': subscription.card_number,
-        'card_expiration': subscription.card_expiration,
-        'name_on_card': (subscription.billing_address.name_on_card if subscription.billing_address.present?),
-        'reseller_paid_account': subscription.reseller_paid_account?,
-        'subscription_request': {
-          'plan_name': subscription.subscription_request.plan_name,
-          'agent_seats': subscription.subscription_request.agent_limit,
-          'renewal_period': subscription.subscription_request.renewal_period,
-          'fsm_field_agents': subscription.subscription_request.fsm_field_agents
-        },
-        'updated_at': %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
-        'created_at': %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
-        'currency': subscription.currency.name,
-        'addons': nil
-      
+        id: subscription.id,
+        state: subscription.state,
+        plan_id: params[:plan_id],
+        renewal_period: params[:renewal_period] || subscription.renewal_period,
+        next_renewal_at: subscription.next_renewal_at,
+        days_remaining: (subscription.next_renewal_at.utc.to_date - DateTime.now.utc.to_date).to_i,
+        agent_seats: params[:agent_limit] || subscription.agent_limit,
+        card_number: subscription.card_number,
+        card_expiration: subscription.card_expiration,
+        name_on_card: (subscription.billing_address.name_on_card if subscription.billing_address.present?),
+        reseller_paid_account: subscription.reseller_paid_account?,
+        subscription_request: nil,
+        updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+        created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+        currency: subscription.currency.name,
+        addons: nil
       }
+    end
+
+    def subscription_response(subscription, subscription_request_params = nil)
+      response_hash = {
+        id: subscription.id,
+        state: subscription.state,
+        plan_id: subscription.subscription_plan_id,
+        renewal_period: subscription.renewal_period,
+        next_renewal_at: subscription.next_renewal_at,
+        days_remaining: (subscription.next_renewal_at.utc.to_date - DateTime.now.utc.to_date).to_i,
+        agent_seats: subscription.agent_limit,
+        card_number: subscription.card_number,
+        card_expiration: subscription.card_expiration,
+        name_on_card: (subscription.billing_address.name_on_card if subscription.billing_address.present?),
+        reseller_paid_account: subscription.reseller_paid_account?,
+        updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+        created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+        currency: subscription.currency.name,
+        addons: nil,
+        subscription_request: nil
+      }
+      if subscription_request_params.present?
+        subscription_plan = SubscriptionPlan.find(subscription_request_params[:plan_id])
+        request_hash = {}.tap do |hash|
+          hash['plan_name'] = subscription_plan.name
+          unless subscription_plan.amount.zero?
+            hash['agent_seats'] = subscription_request_params[:agent_limit]
+            hash['renewal_period'] = subscription_request_params[:renewal_period]
+            hash['fsm_field_agents'] = subscription_request_params[:fsm_field_agents]
+          end
+        end
+        response_hash.merge!(subscription_request: request_hash)
+      end
+      response_hash
     end
 
     def immediate_invoice_stub

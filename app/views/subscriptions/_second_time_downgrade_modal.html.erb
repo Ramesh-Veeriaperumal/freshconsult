@@ -8,7 +8,7 @@
 
 	show_field_agent_current_plan = fsm_supported_plan?(current_plan) && current_account.field_service_management_enabled? && @cached_subscription.field_agent_limit.present?
 	subscription_plan_id = @subscription.subscription_plan_id
-	requested_plan = SubscriptionPlan.find(@subscription.subscription_request.plan_id)
+	requested_plan = @subscription.subscription_request.subscription_plan
 	is_sprout  = new_sprout?(requested_plan.name)
 	fsm_field_agents = @subscription.subscription_request.fsm_field_agents?
 	sub_plan_name = current_subscription.subscription_plan.name  

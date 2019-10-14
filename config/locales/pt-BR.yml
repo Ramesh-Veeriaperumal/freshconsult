@@ -339,7 +339,7 @@ pt-BR:
   upgrade_plan: Fazer upgrade
   go_back: Voltar
   go_back_small: voltar
-  add_note: null
+  add_note: Adicionar anotação
   set_field_label_as: 'Configurar %{custom_field_name} como'
   contact_name: Nome de contato
   requester_email: E-mail do solicitante
@@ -544,7 +544,13 @@ pt-BR:
         criar o recuo. Converteremos o texto dessa área nos itens da lista
         suspensa com base no recuo, por isso, escreva o texto com atenção.<a
         target='_blank' href=%{learn_more}> Saiba mais</a>
-      nested_field_helptext: ''
+      nested_field_helptext: >-
+        Use a área de texto abaixo para adicionar ou editar itens em sua lista
+        suspensa. Pressione a tecla TAB uma ou duas vezes para recuar os itens.
+        Converteremos o texto dessa área nos itens da lista suspensa com base no
+        recuo. <a target='_blank'
+        href='https://support.freshdesk.com/solution/categories/45957/folders/74594/articles/37599-using-dependent-fields'>Saiba
+        mais</a> 
       dropdown_items_edit: Itens da lista suspensa - modo de edição
       drop_down_items_edit: Itens da lista suspensa - Editar
       dropdown_items_preview: Itens da lista suspensa - Visualização
@@ -750,6 +756,13 @@ pt-BR:
         additional_info: >-
           Você também pode compartilhar como foi sua experiência de trabalhar
           conosco.
+    canned_form:
+      next: Próximo
+      form_submit: Enviar
+      okay: OK
+      hey: Oi
+      thank_you_text: Obrigado
+      move_to_form_field: ou pressione enter
   gamification:
     levels:
       beginner: Iniciante
@@ -1654,7 +1667,14 @@ pt-BR:
               seção de suporte dedicada em seu aplicativo. Ela incluirá sua base
               de dados de conhecimento e um formulário de ticket para que os
               usuários possam entrar em contato com você se precisarem de ajuda.
-            info3: null
+            info3: >-
+              O Mobihelp é totalmente configurável. Você pode selecionar tudo,
+              desde os campos do seu formulário de feedback até a sua aparência
+              no aplicativo. Informações como o nome do dispositivo, o sistema
+              operacional e a versão do aplicativo são coletadas sem qualquer
+              interferência do usuário. Você também pode habilitar os campos de
+              dados personalizados e coletar logs de falha e trilhas de
+              navegação.
             info4: >-
               Você pode criar um número ilimitado de aplicativos para usar com o
               Mobihelp e vinculá-los à sua conta do Freshdesk. Depois de fazer
@@ -1762,7 +1782,7 @@ pt-BR:
             de clientes enviadas para sua conta do eBay. Depois que ele for
             configurado, todas as consultas dos seus clientes do eBay serão
             automaticamente convertidas em tickets. Você também pode
-            respondê-las diretamente no Freshdesk.
+            respondê-las diretamente no Freshdesk. 
       index:
         title: Contas de comércio eletrônico
         renew: Renovar token
@@ -2706,7 +2726,7 @@ pt-BR:
           "para" e "do" Freshdesk.
         customer_portal_ssl_warning: >-
           Como um URL do helpdesk personalizado está configurado em sua conta,
-          você será redirecionado para
+          você será redirecionado para 
         multiple_product_ssl_warning: O SSL não será aplicável se vários produtos estiverem configurados.
         enabled: Habilitado
         disabled: Desabilitado
@@ -3860,7 +3880,7 @@ pt-BR:
       contato com o suporte pelo e-mail support@freshdesk.com.
   import_user_notification: >-
     Você pode enviar o e-mail de ativação do usuário para os contatos importados
-    da guia Clientes
+    da guia Clientes 
   what_is_cvv: O que é cvv?
   pro_details: >-
     Todas as funcionalidades do plano &quot;Básico&quot; mais automação de
@@ -5924,11 +5944,13 @@ pt-BR:
     add_skills: Adicionar habilidades
     more: mais
     member: Membro de
+    search_placeholder: Pesquisar todos os agentes
   account_admin: Administrador da conta
   right: Direita
   footer:
     helpdesk_software: Software de helpdesk automatizado
-    helpdesk_software_link: "https://freshdesk.com/br/?utm_source=portal&utm_medium=reflink&utm_campaign=portal_reflink"
+    helpdesk_software_link: >-
+      https://freshdesk.com/br/?utm_source=portal&utm_medium=reflink&utm_campaign=portal_reflink
     by_freshdesk: do Freshdesk
     submit_feedback: Enviar feedback
     footer_feedback_subject_placeholder: Nos diga como podemos fazer o Freshdesk melhor
@@ -6319,21 +6341,21 @@ pt-BR:
       why_we_love_cookies: Por que adoramos os cookies
       cookie_dialog_info1: >-
         Usamos os cookies para oferecer a você uma experiência melhor no
-        Freshdesk.
+        Freshdesk. 
       cookie_dialog_info2: >-
         Você pode saber mais sobre os tipos de cookies que usamos, por quê e
         como eles são usados em %{privacy_link}. Se você odeia cookies, ou está
         de dieta, você também pode desativar todos eles, mas observe que os
         serviços do Freshdesk são bem grandes em alguns cookies (adoramos
         aqueles com gotas de chocolate), e algumas partes do Freshdesk podem não
-        funcionar adequadamente se você desativar os cookies.
+        funcionar adequadamente se você desativar os cookies. 
       cookie_dialog_info3: >-
         Também consideramos que você concorda em usar os cookies e aceita isso,
         conforme descrito em %{privacy_link}, ao menos que você escolha
-        desabilitar todos eles por meio de seu navegador.
+        desabilitar todos eles por meio de seu navegador. 
       privacy_policy: Política de privacidade
     no_topics_in_this_view: ~ Nenhum tópico nesta exibição ~
-    reported: informado
+    reported: informou
     said: disse
     solutions_home: Página inicial de soluções
     print_title: Imprimir este artigo
@@ -6389,7 +6411,7 @@ pt-BR:
     post_not_found: Parece que este post foi excluído
     showing_my_topics: Mostrando os tópicos que você segue
     community_forums: Fóruns da comunidade
-    knowledge_base: Base de dados de conhecimento
+    knowledge_base: Base de conhecimento
     showing_recent_updates: Mostrando atualizações mais recentes
     no_articles_info_1: 'Desculpe, ainda não publicamos nenhum artigo nesta seção. '
     no_articles_info_2: 'Verifique novamente mais tarde. '
@@ -6447,7 +6469,7 @@ pt-BR:
       sort_order:
         date: Antigos Primeiro
         recency: Recentes Primeiro
-        popularity: Popular
+        popularity: Populares
       sort_by_most_recent: Mais Recente
       sort_by_most_popular: Mais Popular
       sort_by_default: Padrão
@@ -6490,8 +6512,8 @@ pt-BR:
       problem_unlike_button: Eu não estou com esse problema!
       howto_unlike_button: Eu não fiz esta pergunta!
       announce_users_voted_title: Pessoas que gostaram disso
-      ideas_users_voted_title: Pessoas que gostaram desta ideia
-      problem_users_voted_title: Pessoas que estão com este problema
+      ideas_users_voted_title: Pessoas que gostaram dessa ideia
+      problem_users_voted_title: Pessoas com este problema
       howto_users_voted_title: Pessoas que fizeram esta pergunta
     post_vote:
       upvoted: Você curtiu
@@ -6520,6 +6542,8 @@ pt-BR:
     customer_login_info: Você é um cliente?
     agent_signin: Fazer login aqui
     agent_login_info: Você é um analista?
+    helpdesk_login_portal: 'Bem-vindo de volta, Agente'
+    agent_login_details: Insira os detalhes abaixo
   feedbackwidget_form_heading: Título do formulário
   feedbackwidget_form_title: Título do formulário do widget
   cancel_and_back: Cancelar e voltar
@@ -6901,7 +6925,7 @@ pt-BR:
       diretamente.
     info16: >-
       Um artigo <b>publicado</b> estará visível no portal de autoatendimento e
-      também será exibido exibido nos resultados de pesquisa.
+      também será exibido exibido nos resultados de pesquisa. 
     info17: >-
       O <b>rascunho</b> dos arquivos ficam visíveis somente aos analistas e
       serão exibidos apenas nos resultados de pesquisa dos analistas.
@@ -7380,7 +7404,7 @@ pt-BR:
           para o suporte em seu helpdesk, você poderá criar uma notificação
           dessa específica para cada idioma. O ícone <i
           class="common-icon-outdated"></i> indica que as traduções da
-          notificação em outros idiomas podem estar desatualizadas.
+          notificação em outros idiomas podem estar desatualizadas. 
       agent_template_3:
         topic: Ticket atribuído a um analista
         info1: >-
@@ -7390,7 +7414,7 @@ pt-BR:
           tenha configurado o suporte para vários idiomas em seu helpdesk, você
           pode criar essa notificação em todos os idiomas oferecidos. O ícone <i
           class="common-icon-outdated"></i> indica que as traduções da
-          notificação em outros idiomas podem estar desatualizadas.
+          notificação em outros idiomas podem estar desatualizadas. 
       agent_template_11:
         topic: Ticket não acompanhado em um Grupo
         info1: >-
@@ -7601,7 +7625,15 @@ pt-BR:
   activate_and_log_in_long: Ativar e fazer login
   password: Senha
   enter_payment: Continuar com o pagamento
-  downgrade_confirm: "<span class=\"label label-important\">Importante</span>  Você está fazendo downgrade do plano <b>%{from}</b> para o plano <b>%{to}</b> . Observe que todos os dados e configurações associados aos recursos disponíveis no plano %{from} serão perdidos permanentemente.<br /><br /> Para ver a lista completa dos planos e recursos, visite <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Planos e preços</a>. <br />Ainda não tem certeza? <a href = \"mailto:support@freshdesk.com\" >Deixe-nos ajudar você a decidir</a>"
+  downgrade_confirm: >-
+    <span class="label label-important">Importante</span>  Você está fazendo
+    downgrade do plano <b>%{from}</b> para o plano <b>%{to}</b> . Observe que
+    todos os dados e configurações associados aos recursos disponíveis no plano
+    %{from} serão perdidos permanentemente.<br /><br /> Para ver a lista
+    completa dos planos e recursos, visite <a target="_blank"
+    href="http://freshdesk.com/pricing">Planos e preços</a>. <br />Ainda não tem
+    certeza? <a href = "mailto:support@freshdesk.com" >Deixe-nos ajudar você a
+    decidir</a>
   downgrade_confirm_v2: >-
     Você está fazendo downgrade do plano <b>%{current_plan}</b> para o plano
     <b>%{new_plan}</b>.
@@ -8764,6 +8796,13 @@ pt-BR:
     gdpr_admin_details: mudou suas permissões de usuário de
     gdpr_acknowledgement: e confirma ter lido a nossa
     gdpr_to: para
+    sort_conversations:
+      label: Ordenar conversas
+      helpnote: Essa é a ordem em que as mensagens aparecerão nos tickets.
+      latest_top: Agora você verá a conversa mais recente no topo.
+      oldest_top: Agora você verá a conversa mais antiga no topo.
+      option1: Mostrar mais nova no topo
+      option2: Mostrar mais antiga no topo
   lead: Cliente potencial
   comments: Comentários
   forum_confirm_msg1: Tem certeza de que deseja excluir esta categoria?
@@ -10924,7 +10963,11 @@ pt-BR:
         clique em 'Atualizar'.<br/><br/>
       form:
         domain: Domínio
-        domain_info: ''
+        domain_info: >-
+          Digite a URL completa da conta do JIRA com https/http. Ex.:
+          https://exemplo.atlassian.net. <br /><span class='italics'>Obs.: As
+          variantes de suporte no local do JIRA devem ser expostas na Internet.
+          </span>
         jira_note: Texto da descrição
         jira_note_info: Este texto será adicionado na descrição do problema no JIRA.
         widget_title: Título do widget
@@ -11270,7 +11313,10 @@ pt-BR:
         domain_info: >-
           Utilize a ID de superusuário do office 365, como
           nome@empresa.onmicrosoft.com, para instâncias sob demanda.
-        organization_name_info: null
+        organization_name_info: >-
+          Para localizar essa opção, vá para Configurações do Dynamics CRM ->
+          Personalizações -> Recursos do desenvolvedor  -> Informações da sua
+          organização -> Nome exclusivo da organização.
         end_point_info: >-
           Exemplo:
           https://freshpo4.api.crm5.dynamics.com/XRMServices/2011/Organization.svc.
@@ -11326,7 +11372,7 @@ pt-BR:
         e Celular do Batchbook e as disponibiliza para seus analistas.
         <br><br>Você pode procurar os contatos do Batchbook, pesquisando o
         endereço de e-mail. Se houver vários contatos com o mesmo endereço,
-        todos eles serão exibidos como uma lista.</p><br/>
+        todos eles serão exibidos como uma lista.</p><br/> 
       desc: Traga informações do contato de sua conta no Batchbook para o Freshdesk
       detect_error: Não foi possível identificar a versão do Batchbook. Verifique o domínio.
       form:
@@ -11818,7 +11864,7 @@ pt-BR:
         logmein_company_info: >-
           Para obter sua ID da empresa vá para Centro de administração -> Grupo
           de técnicos ->Configurações globais -> Exemplo de servidor do ASP.Net
-          C#
+          C# 
         logmein_sso_pwd_info: >-
           Para definir sua senha de Logon único, vá para Centro de administração
           -> Grupo de técnicos -> Configurações globais -> Logon único -> nova
@@ -11828,7 +11874,7 @@ pt-BR:
       desc: >-
         Adicione o MailChimp ao Freshdesk e inicie o gerenciamento de suas
         inscrições, exporte lista de clientes e obtenha as informações
-        necessárias sobre as atividades deles usando o helpdesk.
+        necessárias sobre as atividades deles usando o helpdesk.  
       helptext: <h4>Ajuda com a integração do MailChimp</h4>
     constantcontact:
       label: Constant Contact
@@ -11842,7 +11888,7 @@ pt-BR:
       desc: >-
         Consulte e gerencie assinaturas em sua conta do Campaign Monitor e traga
         as percepções sobre as estatísticas de uso dos clientes diretamente para
-        dentro do Freshdesk.
+        dentro do Freshdesk. 
       helptext: >-
         <h4>Ajuda para a Integração com o Campaign Monitor</h4><br/>Para
         integrar com o Campaign Monitor, você deve entrar sua Chave da API e o
@@ -11866,7 +11912,18 @@ pt-BR:
         Exporte informações de clientes, gerencie assinaturas existentes e traga
         as percepções sobre as estatísticas de uso dos clientes diretamente para
         dentro do Freshdesk.
-      helptext: ''
+      helptext: >-
+        <h4>Ajuda com a integração do iContact</h4><br/>
+
+        \nPara integrar com o iContact, vá para <a target='_blank'
+        href='https://app.icontact.com/icp/core/externallogin'>http://app.icontact.com/icp/core/externallogin</a>
+        e conceda acesso ao aplicativo Freshdesk, digitando a ID de inscrição
+        abaixo<br/><br/><b>qB7RYQgliAPwl5dwezYF0kAN4Islhj4e</b><br/><br/>Defina
+        uma senha e clique em &quot;Salvar&quot;. Esta senha de API será
+        utilizada para todas as solicitações de API do Freshdesk. <br/><br/>
+        Copie a URL da API na seção &quot;Informações da conta&quot; e cole-a no
+        campo da URL de API aqui. Digite seu nome de usuário do iContact, a nova
+        senha da API e clique em Atualizar. 
       form:
         app_id: ID de aplicativo
         username: Usuário do iContact
@@ -11875,11 +11932,31 @@ pt-BR:
         api_url_info: >-
           Para obter sua URL da API, vá para
           https://app.icontact.com/icp/core/externallogin e copie a URL da API
-          na seção &quot;Informações da conta&quot;.
+          na seção &quot;Informações da conta&quot;. 
     dropbox:
       label: DropBox
       desc: Anexe e compartilhe seus dados/arquivos usando o DropBox.
-      helptext: ''
+      helptext: >-
+        <h4>Ajuda com a integração do Dropbox</h4><br/><p>A Integração do
+        Dropbox permite que analistas e usuários procurem arquivos em suas
+        pastas do Dropbox e os compartilhem quando enviarem ou responderem
+        tickets no Freshdesk. Um link direto para o arquivo é compartilhado no
+        ticket, eliminando a necessidade de anexos e as restrições de tamanho de
+        e-mail.</p><p> Antes de configurar a integração, acesse a <a
+        target='_blank' href='https://dropbox.com/developers'><b>página do
+        Dropbox Developers</b></a>.</p><p>1. Na seção <b>API v2</b>, clique em
+        <b>Create Your App</b> (Crie seu aplicativo).</p><p>2. Em <b>Choose an
+        API</b> (Escolha uma API), selecione <a>Dropbox API</a> (API do
+        Dropbox).</p><p>3. Para o tipo de acesso, selecione <b>Full Dropbox</b>
+        (Dropbox ilimitado).</p><p>4. Forneça o nome do seu aplicativo e clique
+        em <b>Create App</b> (Criar aplicativo).</p><p>5. Na página do seu
+        aplicativo, na guia <b>Settings</b> (Configurações), para
+        <b>Chooser/Saver domains</b> (Domínios Chooser/Saver) , adicione a URL
+        do seu helpdesk sem https ou www, exemplo:
+        <a>sauls.freshdesk.com</a>.</p><p>Por fim, copie e cole a Chave de
+        aplicativo do novo aplicativo nesta página e salve suas alterações. Seu
+        Dropbox Chooser já deve estar pronto. Você pode confirmar isso no
+        formulário Novo ticket.</p>
       form:
         app_key: Chave de aplicativo registrada para seu domínio
         app_key_info: Crie um aplicativo no Dropbox e forneça a chave do aplicativo aqui.
@@ -12024,7 +12101,7 @@ pt-BR:
       freshdesk_api_key: Chave da API do Freshdesk
       api_key_available: >-
         A chave da API pode ser obtida em Configurações do perfil na sua conta
-        do Freshdesk
+        do Freshdesk 
       new_to_freshdesk: 'Novo no Freshdesk? '
     hootsuite:
       auth_error: >-
@@ -15747,13 +15824,13 @@ pt-BR:
         poderá criar várias categorias para produtos ou equipes. Isso ajudará
         você a direcionar conversas relevantes para todas as suas seções de
         nível superior e, como um administrador, você ainda pode gerenciar tudo
-        de um só lugar.
+        de um só lugar. 
       para3: >-
         Se você tiver portais com vários produtos configurados em sua conta do
         Freshdesk, poderá escolher ter uma de suas categorias vinculada a um
         produto. Depois que você fizer isso, os usuários poderão ver essa
         categoria, seus fóruns e todos os seus tópicos, tanto em seu portal
-        principal quanto no portal do produto.
+        principal quanto no portal do produto. 
       para4: Saiba mais sobre como ter vários produtos no Freshdesk.
     shared:
       topic:
@@ -16648,6 +16725,13 @@ pt-BR:
     outros idiomas no antigo Freshdesk
   pts_plain: ' pontos'
   in: em
+  helpcard:
+    title: ID externo exclusivo
+    info: >-
+      Importe os IDs exclusivos de seus clientes e identifique facilmente suas
+      conversas no Freshdesk. <br> <a
+      href="https://support.freshdesk.com/support/solutions/articles/226804-identifying-contacts-with-an-external-id"
+      target="_blank"> Ajude-me a configurar um ID externo</a>
   help_widget:
     name: 'Bem-vindo ao suporte %{name}'
     message: Bem-vindo ao Suporte

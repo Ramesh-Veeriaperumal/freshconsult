@@ -20,10 +20,6 @@ properties:
     type: boolean
   displayed_to_customers:
     type: boolean
-  portal_cc:
-    type: boolean
-  portal_cc_to:
-    type: string
 required:
 - label
 - label_for_customers

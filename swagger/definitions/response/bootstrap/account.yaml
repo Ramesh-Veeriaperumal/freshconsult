@@ -110,6 +110,11 @@ properties:
                 type: string
               phone:
                 type: string
+          account_cancellation_requested:
+            type: boolean
+          account_cancellation_requested_time:
+            type: string
+            format: date-time
       portal:
         type: object
         properties:

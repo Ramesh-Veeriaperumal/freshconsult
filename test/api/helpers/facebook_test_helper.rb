@@ -9,40 +9,58 @@ module FacebookTestHelper
   end
 
   def sample_dms(thread_id, user_id, msg_id, time)
-    dm = [
-      {
-        'id' => thread_id.to_s,
-        'messages' => {
-          'data' => [
-            {
-              'id' => msg_id.to_s,
-              'message' => Faker::Lorem.words(10).join(' ').to_s,
-              'from' => {
-                'name' => Faker::Lorem.words(1).to_s,
-                'id' => user_id.to_s
-              },
-              'created_time' => time.to_s
+    {
+      'data' => [
+        {
+          'id' => thread_id.to_s,
+          'updated_time' => time.to_s,
+          'messages' => {
+            'data' => [
+              {
+                'id' => msg_id.to_s,
+                'message' => Faker::Lorem.words(10).join(' ').to_s,
+                'from' => {
+                  'name' => Faker::Lorem.words(1).to_s,
+                  'id' => user_id.to_s
+                },
+                'created_time' => time.to_s
+              }
+            ],
+            'paging' => {
+              'cursors' => {
+                'after' => Faker::Lorem.word
+              }
             }
-          ]
+          }
+        }, {
+          'id' => thread_id.to_s,
+          'updated_time' => time.to_s,
+          'messages' => {
+            'data' => [
+              {
+                'id' => (msg_id + 5).to_s,
+                'message' => Faker::Lorem.words(10).join(' ').to_s,
+                'from' => {
+                  'name' => Faker::Lorem.words(1).to_s,
+                  'id' => user_id.to_s
+                },
+                'created_time' => (time + 1.hour).to_s
+              }
+            ],
+            'paging' => {
+              'cursors' => {
+                'after' => Faker::Lorem.word
+              }
+            }
+          }
         }
-      },
-      {
-        'id' => thread_id.to_s,
-        'messages' => {
-          'data' => [
-            {
-              'id' => (msg_id + 5).to_s,
-              'message' => Faker::Lorem.words(10).join(' ').to_s,
-              'from' => {
-                'name' => Faker::Lorem.words(1).to_s,
-                'id' => user_id.to_s
-              },
-              'created_time' => (time + 1.hour).to_s
-            }
-          ]
+      ],
+      'paging' => {
+        'cursors' => {
+          'after' => Faker::Lorem.word
         }
       }
-    ]
+    }
   end
 
   def realtime_dms(page_id, msg_id, user_id, time)
@@ -50,9 +68,9 @@ module FacebookTestHelper
       'entry' => {
         'id' => page_id.to_s,
         'time' => time.to_i,
-        'account_id': @account.id,
-        'pod': ChannelFrameworkConfig['pod'],
-        'region': 'us-east-1',
+        'account_id' => @account.id,
+        'pod' => ChannelFrameworkConfig['pod'],
+        'region' => 'us-east-1',
         'messaging' => [
           {
             'sender' => {
@@ -108,8 +126,8 @@ module FacebookTestHelper
     time = Time.now.utc
 
     dm = sample_dms(thread_id, user_id, msg_id, time)
-    dm.pop
-    Koala::Facebook::API.any_instance.stubs(:get_connections).returns(dm)
+    dm['data'].pop
+    Koala::Facebook::API.any_instance.stubs(:get_connections).returns(dm.to_json)
     fb_message = Facebook::KoalaWrapper::DirectMessage.new(fb_page)
     fb_message.fetch_messages
     Koala::Facebook::API.any_instance.unstub(:get_connections)

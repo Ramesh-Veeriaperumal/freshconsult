@@ -8,6 +8,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   include Cache::Memcache::Helpdesk::TicketField
   include DataVersioning::Model
   include Helpdesk::Ticketfields::PublisherMethods
+  include Admin::TicketFieldConstants
 
   clear_memcache [TICKET_FIELDS_FULL, CUSTOMER_EDITABLE_TICKET_FIELDS_FULL, CUSTOMER_EDITABLE_TICKET_FIELDS_WITHOUT_PRODUCT]
 
@@ -582,6 +583,18 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   def has_sections?
     field_options.blank? ? false : field_options.symbolize_keys.fetch(:section_present, false)
+  end
+
+  def requester_field?
+    field_type == DEFAULT_REQUESTER
+  end
+
+  def product_field?
+    field_type == DEFAULT_PRODUCT
+  end
+
+  def display_ticket_field_name
+    name[0..(-Account.current.id.to_s.length - 2)]
   end
 
   def has_sections_feature?

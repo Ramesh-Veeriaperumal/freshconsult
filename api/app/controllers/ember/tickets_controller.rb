@@ -137,7 +137,8 @@ module Ember
 
     def update_properties
       return unless validate_update_property_params
-      sanitize_params 
+      sanitize_params
+      change_custom_fields
       assign_ticket_status
       @item.assign_attributes(validatable_delegator_attributes)
       delegator_hash = { ticket_fields: @ticket_fields, attachment_ids: @attachment_ids, tags: cname_params[:tags], inline_attachment_ids: @inline_attachment_ids }
@@ -196,6 +197,10 @@ module Ember
       end
 
     private
+
+      def change_custom_fields
+        ParamsHelper.modify_custom_fields(cname_params[:custom_field], @name_mapping.invert) if cname_params[:custom_field]
+      end
 
       def ticket_filter_validation_class
         'TicketFilterValidation'

@@ -1,7 +1,40 @@
 module Admin::TicketFieldHelper
   include Admin::SectionHelper
+  include Admin::TicketFieldConstants
   include Admin::TicketFields::NestedFieldHelper
 
+  def ticket_field_id_sections
+    @section_ticket_field_id_mapping ||= begin
+      Account.current.section_fields_with_field_values_mapping_cache.inject({}) do |mappings, section_field|
+        section_mapping = {}
+        SECTION_MAPPING_RESPONSE_HASH.each_pair do |key, value|
+          section_mapping[key] = section_field[value]
+        end
+        mappings[section_field.ticket_field_id] ||= []
+        mappings[section_field.ticket_field_id] << section_mapping
+        mappings
+      end
+    end
+  end
+
+  def ticket_field_id_dependent_fields(ticket_fields = nil)
+    ticket_fields = current_account.ticket_fields_from_cache if ticket_fields.nil?
+    @dependent_field_ticket_field_id_mapping ||= begin
+      ticket_fields.inject({}) do |mappings, ticket_field|
+        if ticket_field.field_type == NESTED_FIELD && ticket_field.parent_id.present?
+          ticket_field.name = ticket_field.display_ticket_field_name if ticket_field.name.starts_with?("cf_")
+          dependent_field = {}
+          DEPENDENT_FIELD_RESPONSE_HASH.each_pair do |key, value|
+            dependent_field[key] = ticket_field[value]
+          end
+          mappings[ticket_field.parent_id] ||= []
+          mappings[ticket_field.parent_id] << dependent_field
+        end
+        mappings
+      end
+    end
+  end
+  
   private
 
     def run_validation(options = {})

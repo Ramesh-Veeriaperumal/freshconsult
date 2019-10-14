@@ -15,6 +15,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   SYSTEM_ACTIONS = [:add_comment, :add_a_cc, :email_to_requester, :email_to_group, :email_to_agent, :add_note, :forward_ticket].freeze
   DONT_CARE_VALUE = '*'.freeze
   SPLIT_TICKET_ACTIVITY = 'ticket_split_target'.freeze
+  MERGE_TICKET_ACTIVITY = 'ticket_merge_source'.freeze
   acts_as_api
 
   api_accessible :central_publish do |t|
@@ -166,10 +167,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
       id: current_association_type,
       type: TICKET_ASSOCIATION_TOKEN_BY_KEY[current_association_type]
     }
-  end
-
-  def requester_twitter_id
-    requester.present? ? requester.twitter_id : nil
   end
 
   def central_custom_fields_hash
@@ -346,18 +343,39 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def event_info(event_name)
     lifecycle_hash = event_name == :create && resolved_at ? default_lifecycle_properties : @ticket_lifecycle || {}
-    activity_type_hash = activity_type && activity_type[:type] == SPLIT_TICKET_ACTIVITY ? split_ticket_hash(activity_type) : {}
+    activity_hash = construct_activity_hash
     {
       action_in_bhrs: action_in_bhrs?,
       pod: ChannelFrameworkConfig['pod']
-    }.merge(lifecycle_hash).merge(activity_type_hash)
+    }.merge(lifecycle_hash).merge(activity_hash)
+  end
+
+  def construct_activity_hash
+    if activity_type && activity_type[:type] == SPLIT_TICKET_ACTIVITY
+      split_ticket_hash(activity_type)
+    elsif activity_type && activity_type[:type] == MERGE_TICKET_ACTIVITY
+      merge_ticket_hash(activity_type)
+    else
+      {}
+    end
   end
 
   def split_ticket_hash(activity_type)
     {
       activity_type: {
         type: SPLIT_TICKET_ACTIVITY,
-        source_ticket_id: activity_type[:source_ticket_id]
+        source_ticket_id: activity_type[:source_ticket_id],
+        source_note_id: activity_type[:source_note_id]
+      }
+    }
+  end
+
+  def merge_ticket_hash(activity_type)
+    {
+      activity_type: {
+        type: MERGE_TICKET_ACTIVITY,
+        source_ticket_id: activity_type[:source_ticket_id],
+        target_ticket_id: activity_type[:target_ticket_id]
       }
     }
   end

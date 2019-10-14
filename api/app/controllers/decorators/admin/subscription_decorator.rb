@@ -1,7 +1,8 @@
 class Admin::SubscriptionDecorator < ApiDecorator
   include SubscriptionsHelper
 
-  delegate :id, :state, :subscription_plan_id, :renewal_period, :next_renewal_at, :agent_limit, :card_number, :card_expiration, :billing_address, to: :record
+  delegate :id, :state, :subscription_plan_id, :renewal_period, :next_renewal_at, :created_at,
+           :updated_at, :agent_limit, :card_number, :card_expiration, :billing_address, to: :record
   EVENT_TYPE = 'plan'.freeze
 
   def initialize(record, options)
@@ -26,8 +27,8 @@ class Admin::SubscriptionDecorator < ApiDecorator
       name_on_card: (billing_address.name_on_card if billing_address.present?),
       reseller_paid_account: record.reseller_paid_account?,
       subscription_request: subscription_request_hash,
-      updated_at: updated_at,
-      created_at: created_at,
+      updated_at: updated_at.try(:utc),
+      created_at: created_at.try(:utc),
       currency: currency_info,
       addons: addon_hash
     }
@@ -135,11 +136,14 @@ class Admin::SubscriptionDecorator < ApiDecorator
     return if record.subscription_request.blank?
 
     subscription_request = record.subscription_request
-    {
-      plan_name: subscription_request.plan_name,
-      agent_seats: subscription_request.agent_limit,
-      renewal_period: subscription_request.renewal_period,
-      fsm_field_agents: subscription_request.fsm_field_agents
-    }
+    request_hash = { plan_name: subscription_request.plan_name }
+    unless subscription_request.subscription_plan.amount.zero?
+      request_hash.merge!(
+        agent_seats: subscription_request.agent_limit,
+        renewal_period: subscription_request.renewal_period,
+        fsm_field_agents: subscription_request.fsm_field_agents
+      )
+    end
+    request_hash
   end
 end

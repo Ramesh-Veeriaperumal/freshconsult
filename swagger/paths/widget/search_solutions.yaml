@@ -1,6 +1,6 @@
 post:
-  tags: [Widget Search Solution]
-  summary: Search solution articles for widget
+  tags: [Help Widget]
+  summary: Search solution articles
   description: Search solution articles for widget
   parameters:
     - in: body

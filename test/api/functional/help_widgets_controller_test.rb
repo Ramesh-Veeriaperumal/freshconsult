@@ -162,14 +162,12 @@ class HelpWidgetsControllerTest < ActionController::TestCase
   end
 
   def test_show_with_solution_category_ids
-    @account.launch(:help_widget_solution_categories)
     help_widget = create_widget
     category = build_solution_categories(help_widget)
     get :show, controller_params(version: 'v2', id: help_widget.id)
     assert_response 200
     assert_equal [category.id], JSON.parse(@response.body)['solution_category_ids']
     match_json(widget_show_pattern(help_widget))
-    @account.rollback(:help_widget_solution_categories)
   end
 
   def test_show_with_invalid_help_widget_id
@@ -275,7 +273,6 @@ class HelpWidgetsControllerTest < ActionController::TestCase
   end
 
   def test_update_solution_category_ids
-    @account.launch(:help_widget_solution_categories)
     widget = create_widget
     build_solution_categories(widget)
     new_category = create_category
@@ -288,11 +285,9 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     id = JSON.parse(@response.body)['id']
     match_json(widget_show_pattern(widget))
     assert_equal [new_category.id], JSON.parse(@response.body)['solution_category_ids']
-    @account.rollback(:help_widget_solution_categories)
   end
 
   def test_update_invalid_solution_category_ids
-    @account.launch(:help_widget_solution_categories)
     widget = create_widget
     request_params = {
       solution_category_ids: [100]
@@ -300,19 +295,6 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
     assert_response 400
     match_json(validation_error_pattern(bad_request_error_pattern(:solution_category_ids, 'Please specify valid solution category ids.', code: 'invalid_value')))
-    @account.rollback(:help_widget_solution_categories)
-  end
-
-  def test_update_solution_category_ids_without_feature
-    widget = create_widget
-    build_solution_categories(widget)
-    new_category = create_category
-    request_params = {
-      solution_category_ids: [new_category.id]
-    }
-    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
-    assert_response 400
-    match_json(validation_error_pattern(bad_request_error_pattern(:solution_category_ids, :require_feature, feature: :help_widget_solution_categories)))
   end
 
   def test_update_appearance_without_feature
@@ -1457,7 +1439,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
   def test_widget_create_default_language_check
     Account.current.help_widgets.destroy_all
     user = User.first.make_current
-    user.language = 'es'
+    user.language = 'de'
     user.save
     request_params = {
       name: 'First new widget',
@@ -1480,7 +1462,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
   def test_widget_create_predictive_language_check
     Account.current.help_widgets.destroy_all
     user = User.first.make_current
-    user.language = 'es'
+    user.language = 'de'
     user.save
     request_params = {
       settings: {
@@ -1532,9 +1514,8 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     match_json(widget_show_pattern(Account.current.help_widgets.find_by_id(id)))
   end
 
-  def test_widget_create_with_product_widget_solution_categories_present
+  def test_widget_create_with_product_widget_solution_categories
     Account.current.help_widgets.destroy_all
-    Account.current.launch(:help_widget_solution_categories)
     product1 = create_product(portal_url: 'sam1.freshpo.com')
     portal = product1.portal
     category = create_category(name: "#{Faker::Lorem.sentence(2)} .ok", description: "#{Faker::Lorem.sentence(3)}ok", is_default: false, portal_ids: [portal.id])
@@ -1554,13 +1535,10 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     portal_category_meta_ids = portal.solution_category_meta.customer_categories.pluck(:id)
     assert_equal widget_category_meta_ids, portal_category_meta_ids
     assert_include widget_category_meta_ids, category.id
-  ensure
-    Account.current.rollback(:help_widget_solution_categories)
   end
 
   def test_widget_create_with_product_without_portal_solution_categories
     Account.current.help_widgets.destroy_all
-    Account.current.launch(:help_widget_solution_categories)
     product1 = create_product
     portal = Account.current.main_portal
     category = create_category(name: "#{Faker::Lorem.sentence(2)} .ok", description: "#{Faker::Lorem.sentence(3)}ok", is_default: false, portal_ids: [portal.id])
@@ -1580,13 +1558,10 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     portal_category_meta_ids = portal.solution_category_meta.customer_categories.pluck(:id)
     assert_equal widget_category_meta_ids, portal_category_meta_ids
     assert_include widget_category_meta_ids, category.id
-  ensure
-    Account.current.rollback(:help_widget_solution_categories)
   end
 
-  def test_widget_create_with_no_product_widget_solution_categories_present
+  def test_widget_create_with_no_product_widget_solution_categories
     Account.current.help_widgets.destroy_all
-    Account.current.launch(:help_widget_solution_categories)
     portal = Account.current.main_portal
     category = create_category(name: "#{Faker::Lorem.sentence(1)} .main", description: "#{Faker::Lorem.sentence(3)}.main", is_default: false, portal_ids: [portal.id])
     request_params = {
@@ -1604,29 +1579,6 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     portal_category_meta_ids = portal.solution_category_meta.customer_categories.pluck(:id)
     assert_equal widget_category_meta_ids, portal_category_meta_ids
     assert_include widget_category_meta_ids, category.id
-  ensure
-    Account.current.rollback(:help_widget_solution_categories)
-  end
-
-  def test_widget_create_without_help_widget_solution_categories_feature
-    Account.current.help_widgets.destroy_all
-    product1 = create_product(portal_url: 'sam2.freshpo.com')
-    portal = Account.current.portals.find_by_product_id(product1.id)
-    category = create_category(portal_id: portal.id)
-    request_params = {
-      product_id: product1.id,
-      name: 'First new widget',
-      settings: {
-        components: {
-          contact_form: true
-        }
-      }
-    }
-    post :create, construct_params(version: 'v2', help_widget: request_params)
-    assert_response 201
-    id = JSON.parse(@response.body)['id']
-    current_widget_solution_categories = Account.current.help_widgets.find(id).help_widget_solution_categories
-    assert_equal current_widget_solution_categories.count, 0
   end
 
   def test_create_with_name

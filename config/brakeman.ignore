@@ -9,7 +9,14 @@
       "line": 32,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t(\"helpdesk.tickets.note.hootsuite_created_on.#{((Unresolved Model).new.conversation.last.kind or \"survey\")}\", :user_name => (Unresolved Model).new.conversation.last.user.name, :note_date => hootsuite_datetime_format((Unresolved Model).new.conversation.last.created_at), :timestamp => (Unresolved Model).new.conversation.last.created_at.to_i)",
-      "render_path": [{"type":"template","name":"integrations/hootsuite/home/index","line":33,"file":"app/views/integrations/hootsuite/home/index.html.erb"}],
+      "render_path": [
+        {
+          "type": "template",
+          "name": "integrations/hootsuite/home/index",
+          "line": 33,
+          "file": "app/views/integrations/hootsuite/home/index.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "integrations/hootsuite/home/_ticket"
@@ -22,6 +29,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "064fd728729290fa3f5ebd05147398c864c5ca9600b544dd59f471b69745ecdd",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/controllers/admin/freshchat_controller.rb",
       "line": 62,
@@ -66,7 +74,21 @@
       "line": 162,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t(\"helpdesk.tickets.note.#{(\"last_deleted_info\" or \"last_edited_info\")}\", :user_name => link_to_user(@note_last_modified_user_hash[(Unresolved Model).new.id.to_s]), :note_date => formated_date((Unresolved Model).new.last_modified_timestamp), :timestamp => (Unresolved Model).new.last_modified_timestamp.to_i)",
-      "render_path": [{"type":"controller","class":"Helpdesk::NotesController","method":"index","line":39,"file":"app/controllers/helpdesk/notes_controller.rb"},{"type":"template","name":"helpdesk/tickets/show/_conversations","line":3,"file":"app/views/helpdesk/tickets/show/_conversations.html.erb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Helpdesk::NotesController",
+          "method": "index",
+          "line": 39,
+          "file": "app/controllers/helpdesk/notes_controller.rb"
+        },
+        {
+          "type": "template",
+          "name": "helpdesk/tickets/show/_conversations",
+          "line": 3,
+          "file": "app/views/helpdesk/tickets/show/_conversations.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/tickets/show/_note"
@@ -79,6 +101,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "08107ad6d5f450e0a458190eea2d31a57b5e333e50799cf871f0cdd0f09cacd6",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "lib/import/zen/forum.rb",
       "line": 137,
@@ -143,7 +166,15 @@
       "line": 24,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t(\"ticket.ticket_from\", :username => requester((Unresolved Model).new))",
-      "render_path": [{"type":"controller","class":"Helpdesk::TicketsController","method":"associated_tickets","line":1489,"file":"app/controllers/helpdesk/tickets_controller.rb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Helpdesk::TicketsController",
+          "method": "associated_tickets",
+          "line": 1489,
+          "file": "app/controllers/helpdesk/tickets_controller.rb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/tickets/show/_associated_ticket"
@@ -181,7 +212,21 @@
       "line": 104,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t(\"helpdesk.tickets.note.#{(\"last_deleted_info\" or \"last_edited_info\")}\", :user_name => link_to_user(@note_last_modified_user_hash[(Unresolved Model).new.id.to_s]), :note_date => formated_date((Unresolved Model).new.last_modified_timestamp), :timestamp => (Unresolved Model).new.last_modified_timestamp.to_i)",
-      "render_path": [{"type":"controller","class":"Helpdesk::ArchiveNotesController","method":"index","line":20,"file":"app/controllers/helpdesk/archive_notes_controller.rb"},{"type":"template","name":"helpdesk/archive_tickets/show/_conversations","line":3,"file":"app/views/helpdesk/archive_tickets/show/_conversations.html.erb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Helpdesk::ArchiveNotesController",
+          "method": "index",
+          "line": 20,
+          "file": "app/controllers/helpdesk/archive_notes_controller.rb"
+        },
+        {
+          "type": "template",
+          "name": "helpdesk/archive_tickets/show/_conversations",
+          "line": 3,
+          "file": "app/views/helpdesk/archive_tickets/show/_conversations.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/archive_tickets/show/_note"
@@ -199,7 +244,15 @@
       "line": 14,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t(\".restore_account\", :delete_at => formated_date(14.days.since(DeletedCustomers.find_by_account_id(current_account.id).created_at), :format => :short_day_with_week, :include_year => true))",
-      "render_path": [{"type":"controller","class":"AccountsController","method":"show","line":64,"file":"app/controllers/accounts_controller.rb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "AccountsController",
+          "method": "show",
+          "line": 64,
+          "file": "app/controllers/accounts_controller.rb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "accounts/show"
@@ -236,7 +289,21 @@
       "line": 5,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t(\".#{scoper.find(params[:category_id]).forums.find(params[:forum_id]).type_symbol}.vote_info_include_#{(1 or 2)}\", :vote => (((1 or 2) == 2) ? ((topic_vote.user_votes - 1)) : (topic_vote.user_votes)))",
-      "render_path": [{"type":"controller","class":"TopicsController","method":"show","line":50,"file":"app/controllers/topics_controller.rb"},{"type":"template","name":"topics/show","line":148,"file":"app/views/topics/show.html.erb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "TopicsController",
+          "method": "show",
+          "line": 50,
+          "file": "app/controllers/topics_controller.rb"
+        },
+        {
+          "type": "template",
+          "name": "topics/show",
+          "line": 148,
+          "file": "app/views/topics/show.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "forum_shared/_topic_vote"
@@ -254,7 +321,15 @@
       "line": 3,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "Liquid::Template.parse(h(t((Unresolved Model).new.description))).render(eval_activity_data((Unresolved Model).new.activity_data).merge(\"user_path\" => link_to_user((Unresolved Model).new.user), \"notable_path\" => (if (Unresolved Model).new.notable.nil? then\n  (Unresolved Model).new.activity_data[:title]\nelse\n  link_to(h((Unresolved Model).new.notable), find_activity_url((Unresolved Model).new), :class => \"notelink\")\nend)))",
-      "render_path": [{"type":"controller","class":"Helpdesk::DashboardController","method":"index","line":39,"file":"app/controllers/helpdesk/dashboard_controller.rb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Helpdesk::DashboardController",
+          "method": "index",
+          "line": 39,
+          "file": "app/controllers/helpdesk/dashboard_controller.rb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/dashboard/_ticket_note"
@@ -383,6 +458,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "1ae8fff5503f6dbfecf07b3d7e9a5ed9d8eaa8e42b7b9591913a7f65691c1240",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "lib/spam/core/base.rb",
       "line": 78,
@@ -426,7 +502,21 @@
       "line": 43,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "(Unresolved Model).new[:stack].size",
-      "render_path": [{"type":"controller","class":"Helpdesk::TicketsController","method":"activities","line":1342,"file":"app/controllers/helpdesk/tickets_controller.rb"},{"type":"template","name":"helpdesk/tickets/activities","line":3,"file":"app/views/helpdesk/tickets/activities.html.erb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Helpdesk::TicketsController",
+          "method": "activities",
+          "line": 1342,
+          "file": "app/controllers/helpdesk/tickets_controller.rb"
+        },
+        {
+          "type": "template",
+          "name": "helpdesk/tickets/activities",
+          "line": 3,
+          "file": "app/views/helpdesk/tickets/activities.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/tickets/show/_activity"
@@ -491,7 +581,15 @@
       "line": 138,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "(scoper.find(params[:category_id]).forums.find(params[:forum_id]).topics.find(params[:id]) or (current_account.portal_topics.find(params[:id]) or nil)).posts.first.body_html",
-      "render_path": [{"type":"controller","class":"TopicsController","method":"show","line":50,"file":"app/controllers/topics_controller.rb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "TopicsController",
+          "method": "show",
+          "line": 50,
+          "file": "app/controllers/topics_controller.rb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "topics/show"
@@ -509,7 +607,21 @@
       "line": 1,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t(\"email_notifications.helpcard.#{params[:type]}_#{scoper.find_by_id(params[:id]).notification_type.to_s}.topic\")",
-      "render_path": [{"type":"controller","class":"Admin::EmailNotificationsController","method":"edit","line":55,"file":"app/controllers/admin/email_notifications_controller.rb"},{"type":"template","name":"admin/email_notifications/edit","line":518,"file":"app/views/admin/email_notifications/edit.html.erb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Admin::EmailNotificationsController",
+          "method": "edit",
+          "line": 55,
+          "file": "app/controllers/admin/email_notifications_controller.rb"
+        },
+        {
+          "type": "template",
+          "name": "admin/email_notifications/edit",
+          "line": 518,
+          "file": "app/views/admin/email_notifications/edit.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "admin/email_notifications/_helpnote"
@@ -522,6 +634,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "23ddbea531b55d9a5fc18305d6909b417b5bed091e8be2a5b67f9397ff83fcde",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/models/helpdesk/archive_note/s3.rb",
       "line": 7,
@@ -546,7 +659,15 @@
       "line": 22,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t(\"ticket.ticket_to\", :username => requester((Unresolved Model).new))",
-      "render_path": [{"type":"controller","class":"Helpdesk::TicketsController","method":"associated_tickets","line":1489,"file":"app/controllers/helpdesk/tickets_controller.rb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Helpdesk::TicketsController",
+          "method": "associated_tickets",
+          "line": 1489,
+          "file": "app/controllers/helpdesk/tickets_controller.rb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/tickets/show/_associated_ticket"
@@ -598,6 +719,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "2805db54a76837c64c83472814ea6f8b1440588c539fd45ab90393f0d379a325",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/controllers/partner_admin/affiliates_controller.rb",
       "line": 51,
@@ -642,7 +764,15 @@
       "line": 138,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t((\"ticket.ticket_user_list_status_\" + load_by_param(params[:id]).ticket_states.current_state(load_by_param(params[:id]).outbound_email?)), :time_ago => time_ago_in_words(load_by_param(params[:id]).ticket_states.safe_send(load_by_param(params[:id]).ticket_states.current_state(load_by_param(params[:id]).outbound_email?))))",
-      "render_path": [{"type":"controller","class":"Helpdesk::TicketsController","method":"ticket_association","line":1054,"file":"app/controllers/helpdesk/tickets_controller.rb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Helpdesk::TicketsController",
+          "method": "ticket_association",
+          "line": 1054,
+          "file": "app/controllers/helpdesk/tickets_controller.rb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/tickets/show/_ticket_association"
@@ -719,7 +849,21 @@
       "line": 136,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t(\"helpdesk.tickets.note.created_on_live.#{((Unresolved Model).new.kind or \"survey\")}\", :user_name => link_to_user((Unresolved Model).new.user), :note_date => formated_date((Unresolved Model).new.created_at), :timestamp => (Unresolved Model).new.created_at.to_i)",
-      "render_path": [{"type":"controller","class":"Helpdesk::NotesController","method":"index","line":39,"file":"app/controllers/helpdesk/notes_controller.rb"},{"type":"template","name":"helpdesk/tickets/show/_conversations","line":3,"file":"app/views/helpdesk/tickets/show/_conversations.html.erb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Helpdesk::NotesController",
+          "method": "index",
+          "line": 39,
+          "file": "app/controllers/helpdesk/notes_controller.rb"
+        },
+        {
+          "type": "template",
+          "name": "helpdesk/tickets/show/_conversations",
+          "line": 3,
+          "file": "app/views/helpdesk/tickets/show/_conversations.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/tickets/show/_note"
@@ -829,6 +973,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "3a96ddee92aa3802ac279aa80b0c3900c32a8f8383ebbe72e793cc21f30a3664",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "lib/helpdesk/ticketfields/controller_methods.rb",
       "line": 5,
@@ -853,7 +998,21 @@
       "line": 11,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t(\".associate_account\", :product_name => (if current_account.products.find(params[:product_id]) then\n  current_account.products.find(params[:product_id]).name\nelse\n  current_account.portal_name\nend))",
-      "render_path": [{"type":"controller","class":"Social::TwitterHandlesController","method":"signin","line":77,"file":"app/controllers/social/twitter_handles_controller.rb"},{"type":"template","name":"social/twitter_handles/signin","line":1,"file":"app/views/social/twitter_handles/signin.html.erb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Social::TwitterHandlesController",
+          "method": "signin",
+          "line": 77,
+          "file": "app/controllers/social/twitter_handles_controller.rb"
+        },
+        {
+          "type": "template",
+          "name": "social/twitter_handles/signin",
+          "line": 1,
+          "file": "app/views/social/twitter_handles/signin.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "social/twitter_handles/_signin_info"
@@ -871,7 +1030,27 @@
       "line": 94,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t(\"helpdesk.tickets.note.#{(\"last_deleted_info\" or \"last_edited_info\")}\", :user_name => link_to_user(@note_last_modified_user_hash[(Unresolved Model).new.id.to_s]), :note_date => formated_date((Unresolved Model).new.last_modified_timestamp), :timestamp => (Unresolved Model).new.last_modified_timestamp.to_i)",
-      "render_path": [{"type":"controller","class":"Helpdesk::CollabTicketsController","method":"show","line":17,"file":"app/controllers/helpdesk/collab_tickets_controller.rb"},{"type":"template","name":"helpdesk/collab_tickets/show","line":52,"file":"app/views/helpdesk/collab_tickets/show.html.erb"},{"type":"template","name":"helpdesk/collab_tickets/show/_conversations","line":3,"file":"app/views/helpdesk/collab_tickets/show/_conversations.html.erb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Helpdesk::CollabTicketsController",
+          "method": "show",
+          "line": 17,
+          "file": "app/controllers/helpdesk/collab_tickets_controller.rb"
+        },
+        {
+          "type": "template",
+          "name": "helpdesk/collab_tickets/show",
+          "line": 52,
+          "file": "app/views/helpdesk/collab_tickets/show.html.erb"
+        },
+        {
+          "type": "template",
+          "name": "helpdesk/collab_tickets/show/_conversations",
+          "line": 3,
+          "file": "app/views/helpdesk/collab_tickets/show/_conversations.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/collab_tickets/show/_note"
@@ -1007,9 +1186,10 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "428e880c56fbdfd8ed26dcd1c1e529a37803b49768dc549c6bf2eeb290ce88ea",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "lib/admin/advanced_ticketing/field_service_management/util.rb",
-      "line": 96,
+      "line": 109,
       "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
       "code": "FlexifieldDefEntry.new(ff_meta_data(field_details, account, true))",
       "render_path": null,
@@ -1039,6 +1219,26 @@
       },
       "user_input": "params[:scope]",
       "confidence": "High",
+      "note": ""
+    },
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 17,
+      "fingerprint": "42ebbda81c846125665c3f7df12c9511f7cd17667a49f7a68ba9f2981d07ffae",
+      "check_name": "MassAssignment",
+      "message": "Unprotected mass assignment",
+      "file": "lib/helpdesk/email/incoming_email_handler.rb",
+      "line": 573,
+      "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "Helpdesk::Ticket.new(build_ticket_params(account, get_user(account, ({} or orig_email_from_text), email_config, true), to_email, parse_all_cc_emails(account.kbase_email, account.support_emails)[(0..48)], email_config))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Helpdesk::Email::IncomingEmailHandler",
+        "method": "create_ticket"
+      },
+      "user_input": null,
+      "confidence": "Weak",
       "note": ""
     },
     {
@@ -1085,6 +1285,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "44ffb852a9711f455f246976823055b711bbd5d6e2cfeb0f20472baec8e19a2b",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/models/helpdesk/note/riak.rb",
       "line": 24,
@@ -1109,7 +1310,27 @@
       "line": 42,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "(Unresolved Model).new.body_html",
-      "render_path": [{"type":"controller","class":"Helpdesk::ArchiveNotesController","method":"index","line":20,"file":"app/controllers/helpdesk/archive_notes_controller.rb"},{"type":"template","name":"helpdesk/archive_tickets/show/_conversations","line":3,"file":"app/views/helpdesk/archive_tickets/show/_conversations.html.erb"},{"type":"template","name":"helpdesk/archive_tickets/show/_note","line":110,"file":"app/views/helpdesk/archive_tickets/show/_note.html.erb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Helpdesk::ArchiveNotesController",
+          "method": "index",
+          "line": 20,
+          "file": "app/controllers/helpdesk/archive_notes_controller.rb"
+        },
+        {
+          "type": "template",
+          "name": "helpdesk/archive_tickets/show/_conversations",
+          "line": 3,
+          "file": "app/views/helpdesk/archive_tickets/show/_conversations.html.erb"
+        },
+        {
+          "type": "template",
+          "name": "helpdesk/archive_tickets/show/_note",
+          "line": 110,
+          "file": "app/views/helpdesk/archive_tickets/show/_note.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/archive_tickets/show/_custom_survey_note"
@@ -1127,7 +1348,27 @@
       "line": 38,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "(Unresolved Model).new.body_html",
-      "render_path": [{"type":"controller","class":"Helpdesk::ArchiveNotesController","method":"index","line":20,"file":"app/controllers/helpdesk/archive_notes_controller.rb"},{"type":"template","name":"helpdesk/archive_tickets/show/_conversations","line":3,"file":"app/views/helpdesk/archive_tickets/show/_conversations.html.erb"},{"type":"template","name":"helpdesk/archive_tickets/show/_note","line":110,"file":"app/views/helpdesk/archive_tickets/show/_note.html.erb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Helpdesk::ArchiveNotesController",
+          "method": "index",
+          "line": 20,
+          "file": "app/controllers/helpdesk/archive_notes_controller.rb"
+        },
+        {
+          "type": "template",
+          "name": "helpdesk/archive_tickets/show/_conversations",
+          "line": 3,
+          "file": "app/views/helpdesk/archive_tickets/show/_conversations.html.erb"
+        },
+        {
+          "type": "template",
+          "name": "helpdesk/archive_tickets/show/_note",
+          "line": 110,
+          "file": "app/views/helpdesk/archive_tickets/show/_note.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/archive_tickets/show/_custom_survey_note"
@@ -1160,6 +1401,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "48fe5c26d0aaf55e2671e6c975da40fab30b4140e2c7a21569e4cbbe21b3b457",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/controllers/support/discussions/topics_controller.rb",
       "line": 102,
@@ -1179,6 +1421,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "49a036f9f43ca810cd94d83ed01cf23d2fc153c8b20e7c4aee47ec9b7fa64e3c",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/models/helpdesk/note/attributes.rb",
       "line": 31,
@@ -1236,7 +1479,14 @@
       "line": 18,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t(\"ticket.ticket_from\", :username => requester((Unresolved Model).new))",
-      "render_path": [{"type":"template","name":"helpdesk/tickets/show/_related_tickets_container","line":3,"file":"app/views/helpdesk/tickets/show/_related_tickets_container.html.erb"}],
+      "render_path": [
+        {
+          "type": "template",
+          "name": "helpdesk/tickets/show/_related_tickets_container",
+          "line": 3,
+          "file": "app/views/helpdesk/tickets/show/_related_tickets_container.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/tickets/show/_related_ticket"
@@ -1274,7 +1524,14 @@
       "line": 22,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t((\"ticket.ticket_user_list_status_\" + (Unresolved Model).new.ticket_states.current_state((Unresolved Model).new.outbound_email?)), :time_ago => time_ago_in_words((Unresolved Model).new.ticket_states.safe_send((Unresolved Model).new.ticket_states.current_state((Unresolved Model).new.outbound_email?))))",
-      "render_path": [{"type":"template","name":"helpdesk/tickets/show/_related_tickets_container","line":3,"file":"app/views/helpdesk/tickets/show/_related_tickets_container.html.erb"}],
+      "render_path": [
+        {
+          "type": "template",
+          "name": "helpdesk/tickets/show/_related_tickets_container",
+          "line": 3,
+          "file": "app/views/helpdesk/tickets/show/_related_tickets_container.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/tickets/show/_related_ticket"
@@ -1307,6 +1564,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "4f5783711f2b7c03060ddb4a120387ca90e2af150743df1e85c9dd2542301ed7",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/models/helpdesk/archive_ticket.rb",
       "line": 358,
@@ -1326,6 +1584,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "5043e31aa7148c47269112bae813091b000c75592a0ca091b160098dce014c77",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "lib/spam/core/base.rb",
       "line": 57,
@@ -1350,7 +1609,14 @@
       "line": 60,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t(\"ticket.ticket_to\", :username => requester((Unresolved Model).new))",
-      "render_path": [{"type":"template","name":"helpdesk/tags/show","line":67,"file":"app/views/helpdesk/tags/show.html.erb"}],
+      "render_path": [
+        {
+          "type": "template",
+          "name": "helpdesk/tags/show",
+          "line": 67,
+          "file": "app/views/helpdesk/tags/show.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/shared/expanded/_ticket"
@@ -1368,7 +1634,21 @@
       "line": 77,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t(\"helpdesk.tickets.note.created_on_live.#{((Unresolved Model).new.kind or \"survey\")}\", :user_name => link_to_user((Unresolved Model).new.user), :note_date => formated_date((Unresolved Model).new.created_at), :timestamp => (Unresolved Model).new.created_at.to_i)",
-      "render_path": [{"type":"controller","class":"Helpdesk::ArchiveNotesController","method":"index","line":20,"file":"app/controllers/helpdesk/archive_notes_controller.rb"},{"type":"template","name":"helpdesk/archive_tickets/show/_conversations","line":3,"file":"app/views/helpdesk/archive_tickets/show/_conversations.html.erb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Helpdesk::ArchiveNotesController",
+          "method": "index",
+          "line": 20,
+          "file": "app/controllers/helpdesk/archive_notes_controller.rb"
+        },
+        {
+          "type": "template",
+          "name": "helpdesk/archive_tickets/show/_conversations",
+          "line": 3,
+          "file": "app/views/helpdesk/archive_tickets/show/_conversations.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/archive_tickets/show/_note"
@@ -1386,7 +1666,15 @@
       "line": 28,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t((\"ticket.ticket_user_list_status_\" + (Unresolved Model).new.ticket_states.current_state((Unresolved Model).new.outbound_email?)), :time_ago => time_ago_in_words((Unresolved Model).new.ticket_states.safe_send((Unresolved Model).new.ticket_states.current_state((Unresolved Model).new.outbound_email?))))",
-      "render_path": [{"type":"controller","class":"Helpdesk::TicketsController","method":"associated_tickets","line":1489,"file":"app/controllers/helpdesk/tickets_controller.rb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Helpdesk::TicketsController",
+          "method": "associated_tickets",
+          "line": 1489,
+          "file": "app/controllers/helpdesk/tickets_controller.rb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/tickets/show/_associated_ticket"
@@ -1399,6 +1687,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "5322e94c7c808f61b069005128ea394c03b3e11909926896092bc4e15236b861",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/models/helpdesk/note/s3.rb",
       "line": 11,
@@ -1418,6 +1707,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "547d07af761430140fb6c8d9ca65aeaa82f69971a6a7848f8580610208fd19d3",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "lib/spam/core/base.rb",
       "line": 63,
@@ -1480,7 +1770,15 @@
       "line": 46,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t(\".posted_on\", :user_name => link_to_user((Unresolved Model).new.user), :note_date => formated_date((Unresolved Model).new.created_at))",
-      "render_path": [{"type":"controller","class":"Helpdesk::NotesController","method":"index","line":41,"file":"app/controllers/helpdesk/notes_controller.rb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Helpdesk::NotesController",
+          "method": "index",
+          "line": 41,
+          "file": "app/controllers/helpdesk/notes_controller.rb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/tickets/_note"
@@ -1594,7 +1892,21 @@
       "line": 15,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t((\"activities.tag.\" + (Unresolved Model).new[:important][:type]), :value => (Unresolved Model).new[:important][:value])",
-      "render_path": [{"type":"controller","class":"Helpdesk::TicketsController","method":"activities","line":1342,"file":"app/controllers/helpdesk/tickets_controller.rb"},{"type":"template","name":"helpdesk/tickets/activities","line":3,"file":"app/views/helpdesk/tickets/activities.html.erb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Helpdesk::TicketsController",
+          "method": "activities",
+          "line": 1342,
+          "file": "app/controllers/helpdesk/tickets_controller.rb"
+        },
+        {
+          "type": "template",
+          "name": "helpdesk/tickets/activities",
+          "line": 3,
+          "file": "app/views/helpdesk/tickets/activities.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/tickets/show/_activity"
@@ -1626,6 +1938,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "5e9e76ce4c097699faaba0982c296133800a8cf2b006d93cc91adcda3c8a4927",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/controllers/posts_controller.rb",
       "line": 64,
@@ -1645,6 +1958,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "5f0d4beeed1a142ead619cf2f703fd1e444693347d1a22fd864598440a8496c0",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/controllers/fdadmin/freshops_pod_controller.rb",
       "line": 76,
@@ -1664,6 +1978,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "6197ffafe33c3aa28a3dc400fbe13fd7755bf7bcee92e6d1e63d70da4fdf943c",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/models/helpdesk/archive_ticket.rb",
       "line": 362,
@@ -1714,7 +2029,14 @@
       "line": 16,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t(\"ticket.ticket_to\", :username => requester((Unresolved Model).new))",
-      "render_path": [{"type":"template","name":"helpdesk/tickets/show/_related_tickets_container","line":3,"file":"app/views/helpdesk/tickets/show/_related_tickets_container.html.erb"}],
+      "render_path": [
+        {
+          "type": "template",
+          "name": "helpdesk/tickets/show/_related_tickets_container",
+          "line": 3,
+          "file": "app/views/helpdesk/tickets/show/_related_tickets_container.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/tickets/show/_related_ticket"
@@ -1771,7 +2093,21 @@
       "line": 10,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t(\".#{scoper.find(params[:category_id]).forums.find(params[:forum_id]).type_symbol}.vote_info_#{(1 or 2)}\", :vote => topic_vote.user_votes)",
-      "render_path": [{"type":"controller","class":"TopicsController","method":"show","line":50,"file":"app/controllers/topics_controller.rb"},{"type":"template","name":"topics/show","line":148,"file":"app/views/topics/show.html.erb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "TopicsController",
+          "method": "show",
+          "line": 50,
+          "file": "app/controllers/topics_controller.rb"
+        },
+        {
+          "type": "template",
+          "name": "topics/show",
+          "line": 148,
+          "file": "app/views/topics/show.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "forum_shared/_topic_vote"
@@ -1848,7 +2184,14 @@
       "line": 68,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t((\"ticket.ticket_user_list_status_\" + (Unresolved Model).new.ticket_states.current_state((Unresolved Model).new.outbound_email?)), :time_ago => time_ago_in_words((Unresolved Model).new.ticket_states.safe_send((Unresolved Model).new.ticket_states.current_state((Unresolved Model).new.outbound_email?))))",
-      "render_path": [{"type":"template","name":"helpdesk/tags/show","line":67,"file":"app/views/helpdesk/tags/show.html.erb"}],
+      "render_path": [
+        {
+          "type": "template",
+          "name": "helpdesk/tags/show",
+          "line": 67,
+          "file": "app/views/helpdesk/tags/show.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/shared/expanded/_ticket"
@@ -1861,6 +2204,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "70085d050a3be53a08bd51c076a0d70774064ad4ccc2cad494da83ee448cdb0a",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/models/helpdesk/archive_note/attributes.rb",
       "line": 8,
@@ -1880,6 +2224,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "7409a53a16788299f5ee86d2fd52fec27144e34f69908b5ffa466ae5003a9acf",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/models/helpdesk/ticket/riak.rb",
       "line": 24,
@@ -1924,7 +2269,15 @@
       "line": 10,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "load_agent_text(current_account.tickets.includes(:responder).find_by_display_id(params[:ticket_id]).responder).to_s",
-      "render_path": [{"type":"controller","class":"Helpdesk::NotesController","method":"agents_autocomplete","line":128,"file":"app/controllers/helpdesk/notes_controller.rb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Helpdesk::NotesController",
+          "method": "agents_autocomplete",
+          "line": 128,
+          "file": "app/controllers/helpdesk/notes_controller.rb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/notes/agents_autocomplete"
@@ -1956,6 +2309,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "7d35fd8f71963ccc33ac163c018139de7d17892ac1e842a25c832e91f38f5a84",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/controllers/fdadmin/freshops_pod_controller.rb",
       "line": 44,
@@ -1980,7 +2334,21 @@
       "line": 60,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "(Unresolved Model).new.body_html",
-      "render_path": [{"type":"controller","class":"Integrations::Hootsuite::TicketsController","method":"show","line":21,"file":"app/controllers/integrations/hootsuite/tickets_controller.rb"},{"type":"template","name":"integrations/hootsuite/tickets/show","line":61,"file":"app/views/integrations/hootsuite/tickets/show.html.erb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Integrations::Hootsuite::TicketsController",
+          "method": "show",
+          "line": 21,
+          "file": "app/controllers/integrations/hootsuite/tickets_controller.rb"
+        },
+        {
+          "type": "template",
+          "name": "integrations/hootsuite/tickets/show",
+          "line": 61,
+          "file": "app/views/integrations/hootsuite/tickets/show.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "integrations/hootsuite/tickets/_note"
@@ -1998,7 +2366,21 @@
       "line": 9,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "render_timesheet_integrated_apps(\"requester\" => current_account.tickets.find_by_display_id(params[:ticket_id]).requester, \"ticket\" => current_account.tickets.find_by_display_id(params[:ticket_id]), \"agent\" => ((current_account.tickets.find_by_display_id(params[:ticket_id]).responder or current_user))).to_s",
-      "render_path": [{"type":"controller","class":"Helpdesk::TimeSheetsController","method":"index","line":28,"file":"app/controllers/helpdesk/time_sheets_controller.rb"},{"type":"template","name":"helpdesk/time_sheets/index","line":17,"file":"app/views/helpdesk/time_sheets/index.html.erb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Helpdesk::TimeSheetsController",
+          "method": "index",
+          "line": 28,
+          "file": "app/controllers/helpdesk/time_sheets_controller.rb"
+        },
+        {
+          "type": "template",
+          "name": "helpdesk/time_sheets/index",
+          "line": 17,
+          "file": "app/views/helpdesk/time_sheets/index.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/time_sheets/_integration"
@@ -2011,9 +2393,10 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "83ee91dac8f0cdb288fecb054a9e270a31df2bc22211ef7d7760b90f1e9e8dfb",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "lib/helpdesk/process_email.rb",
-      "line": 543,
+      "line": 539,
       "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
       "code": "Helpdesk::Ticket.new(build_ticket_params(account, get_user(account, ({} or orig_email_from_text), email_config, true), to_email, parse_all_cc_emails(account.kbase_email, account.support_emails), email_config))",
       "render_path": null,
@@ -2089,6 +2472,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "8775787bb243452768b61f662dcb9a5acfd282e017e945ea05af9913086fade6",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/models/helpdesk/ticket/attributes.rb",
       "line": 20,
@@ -2113,7 +2497,21 @@
       "line": 43,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t(\"helpdesk.tickets.note.created_on_live.#{(Unresolved Model).new.kind}\", :user_name => link_to_user((Unresolved Model).new.user), :note_date => formated_date((Unresolved Model).new.created_at), :timestamp => (Unresolved Model).new.created_at.to_i)",
-      "render_path": [{"type":"controller","class":"Integrations::Hootsuite::TicketsController","method":"show","line":21,"file":"app/controllers/integrations/hootsuite/tickets_controller.rb"},{"type":"template","name":"integrations/hootsuite/tickets/show","line":61,"file":"app/views/integrations/hootsuite/tickets/show.html.erb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Integrations::Hootsuite::TicketsController",
+          "method": "show",
+          "line": 21,
+          "file": "app/controllers/integrations/hootsuite/tickets_controller.rb"
+        },
+        {
+          "type": "template",
+          "name": "integrations/hootsuite/tickets/show",
+          "line": 61,
+          "file": "app/views/integrations/hootsuite/tickets/show.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "integrations/hootsuite/tickets/_note"
@@ -2131,7 +2529,27 @@
       "line": 45,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "(Unresolved Model).new.body_html",
-      "render_path": [{"type":"controller","class":"Helpdesk::NotesController","method":"index","line":39,"file":"app/controllers/helpdesk/notes_controller.rb"},{"type":"template","name":"helpdesk/tickets/show/_conversations","line":3,"file":"app/views/helpdesk/tickets/show/_conversations.html.erb"},{"type":"template","name":"helpdesk/tickets/show/_note","line":193,"file":"app/views/helpdesk/tickets/show/_note.html.erb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Helpdesk::NotesController",
+          "method": "index",
+          "line": 39,
+          "file": "app/controllers/helpdesk/notes_controller.rb"
+        },
+        {
+          "type": "template",
+          "name": "helpdesk/tickets/show/_conversations",
+          "line": 3,
+          "file": "app/views/helpdesk/tickets/show/_conversations.html.erb"
+        },
+        {
+          "type": "template",
+          "name": "helpdesk/tickets/show/_note",
+          "line": 193,
+          "file": "app/views/helpdesk/tickets/show/_note.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/tickets/show/_custom_survey_note"
@@ -2149,7 +2567,27 @@
       "line": 41,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "(Unresolved Model).new.body_html",
-      "render_path": [{"type":"controller","class":"Helpdesk::NotesController","method":"index","line":39,"file":"app/controllers/helpdesk/notes_controller.rb"},{"type":"template","name":"helpdesk/tickets/show/_conversations","line":3,"file":"app/views/helpdesk/tickets/show/_conversations.html.erb"},{"type":"template","name":"helpdesk/tickets/show/_note","line":193,"file":"app/views/helpdesk/tickets/show/_note.html.erb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Helpdesk::NotesController",
+          "method": "index",
+          "line": 39,
+          "file": "app/controllers/helpdesk/notes_controller.rb"
+        },
+        {
+          "type": "template",
+          "name": "helpdesk/tickets/show/_conversations",
+          "line": 3,
+          "file": "app/views/helpdesk/tickets/show/_conversations.html.erb"
+        },
+        {
+          "type": "template",
+          "name": "helpdesk/tickets/show/_note",
+          "line": 193,
+          "file": "app/views/helpdesk/tickets/show/_note.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/tickets/show/_custom_survey_note"
@@ -2239,6 +2677,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "8d1e388936d68eb8c035c4cc09e85e9154d0405c8f8735ed5871c7457539d205",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/controllers/fdadmin/freshops_pod_controller.rb",
       "line": 50,
@@ -2282,7 +2721,21 @@
       "line": 55,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "scoper.find_by_display_id(params[:id]).description_html",
-      "render_path": [{"type":"controller","class":"Integrations::Hootsuite::TicketsController","method":"show","line":21,"file":"app/controllers/integrations/hootsuite/tickets_controller.rb"},{"type":"template","name":"integrations/hootsuite/tickets/show","line":46,"file":"app/views/integrations/hootsuite/tickets/show.html.erb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Integrations::Hootsuite::TicketsController",
+          "method": "show",
+          "line": 21,
+          "file": "app/controllers/integrations/hootsuite/tickets_controller.rb"
+        },
+        {
+          "type": "template",
+          "name": "integrations/hootsuite/tickets/show",
+          "line": 46,
+          "file": "app/views/integrations/hootsuite/tickets/show.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "integrations/hootsuite/tickets/_original_request"
@@ -2300,7 +2753,21 @@
       "line": 2,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t(\"email_notifications.helpcard.#{params[:type]}_#{scoper.find_by_id(params[:id]).notification_type.to_s}.info1\")",
-      "render_path": [{"type":"controller","class":"Admin::EmailNotificationsController","method":"edit","line":55,"file":"app/controllers/admin/email_notifications_controller.rb"},{"type":"template","name":"admin/email_notifications/edit","line":518,"file":"app/views/admin/email_notifications/edit.html.erb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Admin::EmailNotificationsController",
+          "method": "edit",
+          "line": 55,
+          "file": "app/controllers/admin/email_notifications_controller.rb"
+        },
+        {
+          "type": "template",
+          "name": "admin/email_notifications/edit",
+          "line": 518,
+          "file": "app/views/admin/email_notifications/edit.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "admin/email_notifications/_helpnote"
@@ -2337,7 +2804,14 @@
       "line": 29,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t(\"ticket.system_activity_timestamp\", :system_rule => link_to_system_rule((Unresolved Model).new.rule), :timestamp => format_activity_date((Unresolved Model).new.performed_time, true).to_i, :note_date => formated_date(format_activity_date((Unresolved Model).new.performed_time, true)))",
-      "render_path": [{"type":"template","name":"helpdesk/tickets/activitiesv2","line":3,"file":"app/views/helpdesk/tickets/activitiesv2.html.erb"}],
+      "render_path": [
+        {
+          "type": "template",
+          "name": "helpdesk/tickets/activitiesv2",
+          "line": 3,
+          "file": "app/views/helpdesk/tickets/activitiesv2.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/tickets/show/_custom_activity"
@@ -2355,7 +2829,14 @@
       "line": 27,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t(\"ticket.user_activity_timestamp\", :user_name => link_to_user((Unresolved Model).new.performer, :class => \"user_name\"), :timestamp => format_activity_date((Unresolved Model).new.performed_time, true).to_i, :note_date => formated_date(format_activity_date((Unresolved Model).new.performed_time, true)))",
-      "render_path": [{"type":"template","name":"helpdesk/tickets/activitiesv2","line":3,"file":"app/views/helpdesk/tickets/activitiesv2.html.erb"}],
+      "render_path": [
+        {
+          "type": "template",
+          "name": "helpdesk/tickets/activitiesv2",
+          "line": 3,
+          "file": "app/views/helpdesk/tickets/activitiesv2.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/tickets/show/_custom_activity"
@@ -2373,7 +2854,15 @@
       "line": 13,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t(\"integrations.#{Integrations::Application.find_by_name(APP_NAME).name}.helptext\")",
-      "render_path": [{"type":"controller","class":"Integrations::GithubController","method":"new","line":20,"file":"app/controllers/integrations/github_controller.rb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Integrations::GithubController",
+          "method": "new",
+          "line": 20,
+          "file": "app/controllers/integrations/github_controller.rb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "integrations/applications/github_settings"
@@ -2410,7 +2899,14 @@
       "line": 62,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t(\"ticket.ticket_from\", :username => requester((Unresolved Model).new))",
-      "render_path": [{"type":"template","name":"helpdesk/tags/show","line":67,"file":"app/views/helpdesk/tags/show.html.erb"}],
+      "render_path": [
+        {
+          "type": "template",
+          "name": "helpdesk/tags/show",
+          "line": 67,
+          "file": "app/views/helpdesk/tags/show.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/shared/expanded/_ticket"
@@ -2467,7 +2963,14 @@
       "line": 43,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "(Unresolved Model).new[:stack].size",
-      "render_path": [{"type":"template","name":"helpdesk/archive_tickets/activities","line":3,"file":"app/views/helpdesk/archive_tickets/activities.html.erb"}],
+      "render_path": [
+        {
+          "type": "template",
+          "name": "helpdesk/archive_tickets/activities",
+          "line": 3,
+          "file": "app/views/helpdesk/archive_tickets/activities.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/archive_tickets/show/_activity"
@@ -2485,7 +2988,21 @@
       "line": 25,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "current_account.schema_less_tickets.find_by_access_token(params[:id]).ticket.description_html",
-      "render_path": [{"type":"controller","class":"Public::TicketsController","method":"show","line":11,"file":"app/controllers/public/tickets_controller.rb"},{"type":"template","name":"public/tickets/show","line":4,"file":"app/views/public/tickets/show.html.erb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Public::TicketsController",
+          "method": "show",
+          "line": 11,
+          "file": "app/controllers/public/tickets_controller.rb"
+        },
+        {
+          "type": "template",
+          "name": "public/tickets/show",
+          "line": 4,
+          "file": "app/views/public/tickets/show.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "public/tickets/_ticket"
@@ -2522,7 +3039,14 @@
       "line": 15,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t((\"activities.tag.\" + (Unresolved Model).new[:important][:type]), :value => (Unresolved Model).new[:important][:value])",
-      "render_path": [{"type":"template","name":"helpdesk/archive_tickets/activities","line":3,"file":"app/views/helpdesk/archive_tickets/activities.html.erb"}],
+      "render_path": [
+        {
+          "type": "template",
+          "name": "helpdesk/archive_tickets/activities",
+          "line": 3,
+          "file": "app/views/helpdesk/archive_tickets/activities.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/archive_tickets/show/_activity"
@@ -2578,7 +3102,21 @@
       "line": 74,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "current_account.tickets.find_by_display_id(params[:id]).description_html",
-      "render_path": [{"type":"controller","class":"Helpdesk::CollabTicketsController","method":"show","line":17,"file":"app/controllers/helpdesk/collab_tickets_controller.rb"},{"type":"template","name":"helpdesk/collab_tickets/show","line":37,"file":"app/views/helpdesk/collab_tickets/show.html.erb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Helpdesk::CollabTicketsController",
+          "method": "show",
+          "line": 17,
+          "file": "app/controllers/helpdesk/collab_tickets_controller.rb"
+        },
+        {
+          "type": "template",
+          "name": "helpdesk/collab_tickets/show",
+          "line": 37,
+          "file": "app/views/helpdesk/collab_tickets/show.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/collab_tickets/show/_original_request"
@@ -2591,6 +3129,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "acf4a5be1d820f3c36c1239360d8362d3e7b957eef1242ebe51326da6e0b5b2f",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/controllers/fdadmin/freshops_pod_controller.rb",
       "line": 70,
@@ -2610,6 +3149,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "ad70060f4746cca723269139d40c63140b67dbd26d6a6f7b064140d7b0ba1856",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/controllers/support/discussions/posts_controller.rb",
       "line": 107,
@@ -2634,7 +3174,14 @@
       "line": 19,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t(\"ticket.activity_timestamp\", :user_name => link_to_user((Unresolved Model).new[:user], :class => \"user_name\"), :timestamp => (Unresolved Model).new[:time].to_i, :note_date => formated_date((Unresolved Model).new[:time]))",
-      "render_path": [{"type":"template","name":"helpdesk/archive_tickets/activities","line":3,"file":"app/views/helpdesk/archive_tickets/activities.html.erb"}],
+      "render_path": [
+        {
+          "type": "template",
+          "name": "helpdesk/archive_tickets/activities",
+          "line": 3,
+          "file": "app/views/helpdesk/archive_tickets/activities.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/archive_tickets/show/_activity"
@@ -2669,7 +3216,7 @@
       "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/models/company_field.rb",
-      "line": 84,
+      "line": 92,
       "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
       "code": "CompanyField.new(field_data)",
       "render_path": null,
@@ -2751,7 +3298,27 @@
       "line": 28,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t(\".posted_on\", :user_name => link_to_user((Unresolved Model).new.user), :note_date => formated_date((Unresolved Model).new.created_at))",
-      "render_path": [{"type":"controller","class":"Public::TicketsController","method":"show","line":11,"file":"app/controllers/public/tickets_controller.rb"},{"type":"template","name":"public/tickets/show","line":2,"file":"app/views/public/tickets/show.html.erb"},{"type":"template","name":"public/tickets/_archived_ticket","line":44,"file":"app/views/public/tickets/_archived_ticket.html.erb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Public::TicketsController",
+          "method": "show",
+          "line": 11,
+          "file": "app/controllers/public/tickets_controller.rb"
+        },
+        {
+          "type": "template",
+          "name": "public/tickets/show",
+          "line": 2,
+          "file": "app/views/public/tickets/show.html.erb"
+        },
+        {
+          "type": "template",
+          "name": "public/tickets/_archived_ticket",
+          "line": 44,
+          "file": "app/views/public/tickets/_archived_ticket.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/archive_tickets/_archive_note"
@@ -2764,6 +3331,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "be564ee1672036d5561aa22ebbd93fceecddbdab3c89e59e518d380f290d2cb1",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/models/helpdesk/filters/custom_ticket_filter.rb",
       "line": 146,
@@ -2783,6 +3351,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "c19e443e112ed9f02e2bb66ef86cc6c02a45c0dd1a08b25e7f9a3db969aabf09",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/controllers/fdadmin/freshops_pod_controller.rb",
       "line": 60,
@@ -2807,7 +3376,15 @@
       "line": 63,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "(Unresolved Model).new.body_html",
-      "render_path": [{"type":"controller","class":"Helpdesk::NotesController","method":"index","line":41,"file":"app/controllers/helpdesk/notes_controller.rb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Helpdesk::NotesController",
+          "method": "index",
+          "line": 41,
+          "file": "app/controllers/helpdesk/notes_controller.rb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/tickets/_note"
@@ -2825,7 +3402,15 @@
       "line": 52,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t(\"integrations.hootsuite.notes_more\", :count => (scoper.find_by_display_id(params[:id]).conversation_count - 1))",
-      "render_path": [{"type":"controller","class":"Integrations::Hootsuite::TicketsController","method":"show","line":21,"file":"app/controllers/integrations/hootsuite/tickets_controller.rb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Integrations::Hootsuite::TicketsController",
+          "method": "show",
+          "line": 21,
+          "file": "app/controllers/integrations/hootsuite/tickets_controller.rb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "integrations/hootsuite/tickets/show"
@@ -2863,7 +3448,27 @@
       "line": 5,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "(Unresolved Model).new.body_html",
-      "render_path": [{"type":"controller","class":"Helpdesk::ArchiveNotesController","method":"index","line":20,"file":"app/controllers/helpdesk/archive_notes_controller.rb"},{"type":"template","name":"helpdesk/archive_tickets/show/_conversations","line":3,"file":"app/views/helpdesk/archive_tickets/show/_conversations.html.erb"},{"type":"template","name":"helpdesk/archive_tickets/show/_note","line":113,"file":"app/views/helpdesk/archive_tickets/show/_note.html.erb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Helpdesk::ArchiveNotesController",
+          "method": "index",
+          "line": 20,
+          "file": "app/controllers/helpdesk/archive_notes_controller.rb"
+        },
+        {
+          "type": "template",
+          "name": "helpdesk/archive_tickets/show/_conversations",
+          "line": 3,
+          "file": "app/views/helpdesk/archive_tickets/show/_conversations.html.erb"
+        },
+        {
+          "type": "template",
+          "name": "helpdesk/archive_tickets/show/_note",
+          "line": 113,
+          "file": "app/views/helpdesk/archive_tickets/show/_note.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/archive_tickets/show/_survey_note"
@@ -2895,9 +3500,10 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "cfd445a96cc31c44eb12e43e786e238c5bdca5989728cc4a912618ed9fe28a07",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/models/subscription.rb",
-      "line": 631,
+      "line": 666,
       "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
       "code": "self.billing_address.update_attributes(address(card))",
       "render_path": null,
@@ -2914,6 +3520,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "d04d4d4b1d1411319c9b251d31562e158395e7e15c4ca8998b68f1269490c5d5",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/controllers/admin/mobihelp/apps_controller.rb",
       "line": 63,
@@ -2938,7 +3545,15 @@
       "line": 10,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "requester_namecard_render(current_account.all_users.find(params[:requester_id]))",
-      "render_path": [{"type":"controller","class":"Integrations::Cti::ScreenPopController","method":"contact_details","line":13,"file":"app/controllers/integrations/cti/screen_pop_controller.rb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Integrations::Cti::ScreenPopController",
+          "method": "contact_details",
+          "line": 13,
+          "file": "app/controllers/integrations/cti/screen_pop_controller.rb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "integrations/cti/screen_pop/_requester_info"
@@ -2956,7 +3571,27 @@
       "line": 8,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "(Unresolved Model).new.body_html",
-      "render_path": [{"type":"controller","class":"Helpdesk::NotesController","method":"index","line":39,"file":"app/controllers/helpdesk/notes_controller.rb"},{"type":"template","name":"helpdesk/tickets/show/_conversations","line":3,"file":"app/views/helpdesk/tickets/show/_conversations.html.erb"},{"type":"template","name":"helpdesk/tickets/show/_note","line":196,"file":"app/views/helpdesk/tickets/show/_note.html.erb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Helpdesk::NotesController",
+          "method": "index",
+          "line": 39,
+          "file": "app/controllers/helpdesk/notes_controller.rb"
+        },
+        {
+          "type": "template",
+          "name": "helpdesk/tickets/show/_conversations",
+          "line": 3,
+          "file": "app/views/helpdesk/tickets/show/_conversations.html.erb"
+        },
+        {
+          "type": "template",
+          "name": "helpdesk/tickets/show/_note",
+          "line": 196,
+          "file": "app/views/helpdesk/tickets/show/_note.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/tickets/show/_survey_note"
@@ -2971,10 +3606,29 @@
       "fingerprint": "d8a03a0ced4edf60c547436d80d4dca492b77bc00a2af13b691f8882a7591bbc",
       "message": "Unescaped model attribute",
       "file": "app/views/helpdesk/collab_tickets/show/_custom_survey_note.html.erb",
-      "line": 42,
+      "line": 38,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "(Unresolved Model).new.body_html",
-      "render_path": [{"type":"template","name":"helpdesk/collab_tickets/show","line":52,"file":"app/views/helpdesk/collab_tickets/show.html.erb"},{"type":"template","name":"helpdesk/collab_tickets/show/_conversations","line":3,"file":"app/views/helpdesk/collab_tickets/show/_conversations.html.erb"},{"type":"template","name":"helpdesk/collab_tickets/show/_note","line":100,"file":"app/views/helpdesk/collab_tickets/show/_note.html.erb"}],
+      "render_path": [
+        {
+          "type": "template",
+          "name": "helpdesk/collab_tickets/show",
+          "line": 52,
+          "file": "app/views/helpdesk/collab_tickets/show.html.erb"
+        },
+        {
+          "type": "template",
+          "name": "helpdesk/collab_tickets/show/_conversations",
+          "line": 3,
+          "file": "app/views/helpdesk/collab_tickets/show/_conversations.html.erb"
+        },
+        {
+          "type": "template",
+          "name": "helpdesk/collab_tickets/show/_note",
+          "line": 100,
+          "file": "app/views/helpdesk/collab_tickets/show/_note.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/collab_tickets/show/_custom_survey_note"
@@ -2989,10 +3643,29 @@
       "fingerprint": "d8a03a0ced4edf60c547436d80d4dca492b77bc00a2af13b691f8882a7591bbc",
       "message": "Unescaped model attribute",
       "file": "app/views/helpdesk/collab_tickets/show/_custom_survey_note.html.erb",
-      "line": 38,
+      "line": 42,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "(Unresolved Model).new.body_html",
-      "render_path": [{"type":"template","name":"helpdesk/collab_tickets/show","line":52,"file":"app/views/helpdesk/collab_tickets/show.html.erb"},{"type":"template","name":"helpdesk/collab_tickets/show/_conversations","line":3,"file":"app/views/helpdesk/collab_tickets/show/_conversations.html.erb"},{"type":"template","name":"helpdesk/collab_tickets/show/_note","line":100,"file":"app/views/helpdesk/collab_tickets/show/_note.html.erb"}],
+      "render_path": [
+        {
+          "type": "template",
+          "name": "helpdesk/collab_tickets/show",
+          "line": 52,
+          "file": "app/views/helpdesk/collab_tickets/show.html.erb"
+        },
+        {
+          "type": "template",
+          "name": "helpdesk/collab_tickets/show/_conversations",
+          "line": 3,
+          "file": "app/views/helpdesk/collab_tickets/show/_conversations.html.erb"
+        },
+        {
+          "type": "template",
+          "name": "helpdesk/collab_tickets/show/_note",
+          "line": 100,
+          "file": "app/views/helpdesk/collab_tickets/show/_note.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/collab_tickets/show/_custom_survey_note"
@@ -3010,7 +3683,21 @@
       "line": 4,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "each_or_message(\"ca_response\", visible_responses(scoper.find_by_id(params[:id])), t(\"canned_folders.no_response_admin\", :link => new_helpdesk_canned_responses_folder_response_path(scoper.find_by_id(params[:id]))), :f => f)",
-      "render_path": [{"type":"controller","class":"Helpdesk::CannedResponses::FoldersController","method":"show","line":22,"file":"app/controllers/helpdesk/canned_responses/folders_controller.rb"},{"type":"template","name":"helpdesk/canned_responses/folders/index","line":145,"file":"app/views/helpdesk/canned_responses/folders/index.html.erb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Helpdesk::CannedResponses::FoldersController",
+          "method": "show",
+          "line": 22,
+          "file": "app/controllers/helpdesk/canned_responses/folders_controller.rb"
+        },
+        {
+          "type": "template",
+          "name": "helpdesk/canned_responses/folders/index",
+          "line": 145,
+          "file": "app/views/helpdesk/canned_responses/folders/index.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/canned_responses/folders/_show"
@@ -3042,6 +3729,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "dc669d0655f56fd4af970e57626bcd3704df42ed8ccb12c14a22ed46e9fc30a0",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/models/helpdesk/archive_ticket/attributes.rb",
       "line": 8,
@@ -3099,6 +3787,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "df150cd257b31c0d069d69d246fbd9033e75e817387cfedb8572c2cd85a0cedc",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "lib/helpdesk/ticketfields/controller_methods.rb",
       "line": 25,
@@ -3123,7 +3812,27 @@
       "line": 77,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t(\"helpdesk.tickets.note.created_on_live.#{((Unresolved Model).new.kind or \"survey\")}\", :user_name => link_to_user((Unresolved Model).new.user), :note_date => formated_date((Unresolved Model).new.created_at), :timestamp => (Unresolved Model).new.created_at.to_i)",
-      "render_path": [{"type":"controller","class":"Helpdesk::CollabTicketsController","method":"show","line":17,"file":"app/controllers/helpdesk/collab_tickets_controller.rb"},{"type":"template","name":"helpdesk/collab_tickets/show","line":52,"file":"app/views/helpdesk/collab_tickets/show.html.erb"},{"type":"template","name":"helpdesk/collab_tickets/show/_conversations","line":3,"file":"app/views/helpdesk/collab_tickets/show/_conversations.html.erb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Helpdesk::CollabTicketsController",
+          "method": "show",
+          "line": 17,
+          "file": "app/controllers/helpdesk/collab_tickets_controller.rb"
+        },
+        {
+          "type": "template",
+          "name": "helpdesk/collab_tickets/show",
+          "line": 52,
+          "file": "app/views/helpdesk/collab_tickets/show.html.erb"
+        },
+        {
+          "type": "template",
+          "name": "helpdesk/collab_tickets/show/_conversations",
+          "line": 3,
+          "file": "app/views/helpdesk/collab_tickets/show/_conversations.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/collab_tickets/show/_note"
@@ -3136,6 +3845,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "df34213fca8c06b615e8a8ed6d4ed0020f350d0f0ba8ceb5aaaeab9073caa0ad",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/models/freshfone/call.rb",
       "line": 326,
@@ -3237,7 +3947,27 @@
       "line": 46,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "(Unresolved Model).new.body_html",
-      "render_path": [{"type":"controller","class":"Public::TicketsController","method":"show","line":11,"file":"app/controllers/public/tickets_controller.rb"},{"type":"template","name":"public/tickets/show","line":2,"file":"app/views/public/tickets/show.html.erb"},{"type":"template","name":"public/tickets/_archived_ticket","line":44,"file":"app/views/public/tickets/_archived_ticket.html.erb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Public::TicketsController",
+          "method": "show",
+          "line": 11,
+          "file": "app/controllers/public/tickets_controller.rb"
+        },
+        {
+          "type": "template",
+          "name": "public/tickets/show",
+          "line": 2,
+          "file": "app/views/public/tickets/show.html.erb"
+        },
+        {
+          "type": "template",
+          "name": "public/tickets/_archived_ticket",
+          "line": 44,
+          "file": "app/views/public/tickets/_archived_ticket.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/archive_tickets/_archive_note"
@@ -3255,7 +3985,15 @@
       "line": 30,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t((\"ticket.ticket_user_list_status_\" + load_by_param(params[:id]).associated_prime_ticket(\"related\").ticket_states.current_state(load_by_param(params[:id]).outbound_email?)), :time_ago => time_ago_in_words(load_by_param(params[:id]).associated_prime_ticket(\"related\").ticket_states.safe_send(load_by_param(params[:id]).associated_prime_ticket(\"related\").ticket_states.current_state(load_by_param(params[:id]).associated_prime_ticket(\"related\").outbound_email?))))",
-      "render_path": [{"type":"controller","class":"Helpdesk::TicketsController","method":"ticket_association","line":1054,"file":"app/controllers/helpdesk/tickets_controller.rb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Helpdesk::TicketsController",
+          "method": "ticket_association",
+          "line": 1054,
+          "file": "app/controllers/helpdesk/tickets_controller.rb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/tickets/show/_ticket_association"
@@ -3268,6 +4006,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "ea5f87077636a5afdef0353842a844d90f1f1ba38ffd02bf3047239d6a91cfe4",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "lib/spam/core/base.rb",
       "line": 84,
@@ -3345,6 +4084,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "f063c60c56c9b98ba008b1dd232a4e0d5a58e51cd46ee4ba77c30f1c3184d11d",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/models/helpdesk/filters/custom_ticket_filter.rb",
       "line": 151,
@@ -3364,6 +4104,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "f087961da904eff9b1f1d3e0441d0ca514bf65e2e58eecee844f588ca98c29fc",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/controllers/support/discussions/posts_controller.rb",
       "line": 53,
@@ -3446,7 +4187,14 @@
       "line": 27,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t(\"ticket.system_activity_timestamp\", :system_rule => link_to_system_rule((Unresolved Model).new.rule), :timestamp => format_activity_date((Unresolved Model).new.performed_time, true).to_i, :note_date => formated_date(format_activity_date((Unresolved Model).new.performed_time, true)))",
-      "render_path": [{"type":"template","name":"helpdesk/archive_tickets/activitiesv2","line":3,"file":"app/views/helpdesk/archive_tickets/activitiesv2.html.erb"}],
+      "render_path": [
+        {
+          "type": "template",
+          "name": "helpdesk/archive_tickets/activitiesv2",
+          "line": 3,
+          "file": "app/views/helpdesk/archive_tickets/activitiesv2.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/archive_tickets/show/_custom_activity"
@@ -3479,6 +4227,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "f5b27c9a428f0ff90161e7b754b38ee4961ad72cab84b41a86b7e09ecc662beb",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/models/account/subscription_methods.rb",
       "line": 35,
@@ -3503,7 +4252,21 @@
       "line": 19,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "t(\"ticket.activity_timestamp\", :user_name => link_to_user((Unresolved Model).new[:user], :class => \"user_name\"), :timestamp => (Unresolved Model).new[:time].to_i, :note_date => formated_date((Unresolved Model).new[:time]))",
-      "render_path": [{"type":"controller","class":"Helpdesk::TicketsController","method":"activities","line":1342,"file":"app/controllers/helpdesk/tickets_controller.rb"},{"type":"template","name":"helpdesk/tickets/activities","line":3,"file":"app/views/helpdesk/tickets/activities.html.erb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Helpdesk::TicketsController",
+          "method": "activities",
+          "line": 1342,
+          "file": "app/controllers/helpdesk/tickets_controller.rb"
+        },
+        {
+          "type": "template",
+          "name": "helpdesk/tickets/activities",
+          "line": 3,
+          "file": "app/views/helpdesk/tickets/activities.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "helpdesk/tickets/show/_activity"
@@ -3521,7 +4284,21 @@
       "line": 26,
       "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "current_account.schema_less_tickets.find_by_access_token(params[:id]).ticket.description_html",
-      "render_path": [{"type":"controller","class":"Public::TicketsController","method":"show","line":11,"file":"app/controllers/public/tickets_controller.rb"},{"type":"template","name":"public/tickets/show","line":2,"file":"app/views/public/tickets/show.html.erb"}],
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Public::TicketsController",
+          "method": "show",
+          "line": 11,
+          "file": "app/controllers/public/tickets_controller.rb"
+        },
+        {
+          "type": "template",
+          "name": "public/tickets/show",
+          "line": 2,
+          "file": "app/views/public/tickets/show.html.erb"
+        }
+      ],
       "location": {
         "type": "template",
         "template": "public/tickets/_archived_ticket"
@@ -3553,6 +4330,7 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "fd818797297d28a0940bb1649505b099697042fe05c959d95a931bc24eb630cc",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/models/helpdesk/ticket/s3.rb",
       "line": 9,
@@ -3609,6 +4387,6 @@
       "note": "The embed is within quoted text"
     }
   ],
-  "updated": "2019-09-03 17:26:34 +0530",
-  "brakeman_version": "3.3.0"
+  "updated": "2019-10-04 19:06:15 +0530",
+  "brakeman_version": "3.7.2"
 }

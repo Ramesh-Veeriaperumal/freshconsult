@@ -27,7 +27,7 @@ class Va::Handlers::Boolean < Va::RuleHandler
     end
 
     def filter_query_negation
-      value.to_bool ?  [ "#{condition.db_column} IS NOT TRUE "] : [ "#{condition.db_column} IS TRUE"]
+      value.to_s.to_bool ?  [ "#{condition.db_column} IS NOT TRUE "] : [ "#{condition.db_column} IS TRUE"]
     end
 
 end

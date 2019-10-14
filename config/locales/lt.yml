@@ -23,7 +23,7 @@ lt:
     select_format: 'Eksportuoti kaip:'
     filter_label_customer: 'Filtruoti bilietus, sukurtus'
     data_backup_failure:
-      body: Duomenų eksportas nepavyko. Ar galite vėl pradėti eksportą?
+      body: Duomenų eksportas nepavyko. Ar pradėti eksportą iš naujo?
     data_backup:
       body: Duomenų eksportas yra paruoštas atsisiųsti.
     to: Kam
@@ -38,23 +38,23 @@ lt:
     imap_port: Portas
     authentication: 'Autentifikavimas:'
     user_name: Vartotojo vardas
-    imap_server_info: 'IMAP serverio pavadinimas, skirtas el. Laiškams gauti'
+    imap_server_info: 'IMAP serverio pavadinimas, skirtas el. laiškams gauti'
     outgoing_mail_settings: Siunčiamo pašto nustatymai
     use_mail_server_for: 'Naudokite pašto serverį:'
     domain_name: Domeno vardas
-    delete_from_server: Pašalinus el. Laiškus iš serverio?
-    use_your_own: Naudokite savo pašto serverį
-    verifying_mailbox_input: Patvirtinimas ...
-    use_ssl_tls: Naudokite SSL / TLS
+    delete_from_server: Pašalinti el. laiškus iš serverio?
+    use_your_own: Naudoti savo pašto serverį
+    verifying_mailbox_input: Tvirtinima...
+    use_ssl_tls: Naudoti SSL / TLS
     use_default: Numatytasis (Freshdesk)
     domain: 'Domenas:'
-    use_ssl: Naudokite SSL
+    use_ssl: Naudoti SSL
     smtp_port: Portas
     smtp_alert_gmail: >-
-      „Gmail“ apriboja siunčiamų laiškų skaičių per dieną. <a target="_blank"
+      Gmail riboja siunčiamų laiškų skaičių per dieną. <a target="_blank"
       href="https://support.google.com/a/answer/166852?hl=en">Jei norite
       sužinoti daugiau, spustelėkite čia</a>.
-    incoming_and_outgoing: Įeinantis ir išeinantis
+    incoming_and_outgoing: Įeinantys ir išeinantys
     imap_server_name: IMAP serverio pavadinimas
     password: Slaptažodis
     outgoing_mail_server: 'Išeinančio pašto serveris:'
@@ -62,17 +62,17 @@ lt:
     outgoing_only: Tik išeinantys
     mail_server: 'Pašto serveris:'
     incoming_mail_server: 'Gaunamo pašto serveris:'
-    smtp_server_info: SMTP serverio pavadinimas el. Laiškų siuntimui
+    smtp_server_info: SMTP serverio pavadinimas el. laiškų siuntimui
     email_system: 'El. Pašto sistema:'
     incoming_mail_settings: Gaunamo pašto nustatymai
-  success: Sėkmė
+  success: Sėkmingai
   forum:
     max_description_length_allowed: Ne daugiau kaip 250 simbolių
     verb:
       announcement: Paskelbė
       questions: Klausimas pateiktas
-      problems: 'Problema, apie kurią pranešė'
-      ideas: Idėja bendrai
+      problems: Problemą pranešė
+      ideas: Idėja pasidalinta
     new: Naujas forumas
     visible_to: Matoma
     edit: Redaguoti forumą
@@ -82,20 +82,20 @@ lt:
     type: Forumo tipas
     category: Forumo kategorija
     convert_to_ticket_info: >-
-      Visos naujos šiame forume sukurtos temos bus automatiškai konvertuojamos
-      ir sukurtos kaip bilietas.
-  your_feedback: Tavo atsiliepimas
-  agent_working_on_this_ticket: Agentas dirba šiuo bilietu
+      Visos šiame forume sukurtos naujos temos bus automatiškai konvertuojamos
+      ir sukurtos kaip bilietai.
+  your_feedback: Jūsų atsiliepimai
+  agent_working_on_this_ticket: Agentas dirbantis ties šiuo bilietu
   zendesk_import_status:
     extracting: >-
       <b>Žingsnis (1/2) „Zendesk“ atsarginės kopijos failo
       atsisiuntimas.</b><br/>Tai gali užtrukti kelias minutes, priklausomai nuo
-      jūsų duomenų dydžio. Prašau palauk.
+      jūsų duomenų dydžio. Prašome palaukti.
     info: >-
-      <b>Žingsnis (2/2) Importas vyksta. Prašau palauk.</b><br/>Kai importas bus
-      baigtas, gausite laišką iš mūsų.
+      <b>Žingsnis (2/2) Importas vyksta. Prašome palaukti.</b><br/>Kai importas
+      bus baigtas, gausite laišką.
   more: daugiau
-  message: Pranešimas
+  message: Žinutė
   level_label: Lygis
   topics:
     edit_title: Redaguoti
@@ -104,26 +104,26 @@ lt:
       mark_this_problem_as: Pažymėkite šią problemą kaip
   step1: 1 žingsnis
   contacts:
-    contacts: kontaktus
-    deleted_user_info: 'Pastaba: visas ištrintų vartotojų ryšys bus pažymėtas kaip SPAM.'
+    contacts: kontaktai
+    deleted_user_info: 'Pastaba: visos ištrintų vartotojų komunikacijos bus pažymėtos kaip SPAM.'
     reply: Atsakyti
     new: Naujas kontaktas
-    send_activation: Siųsti aktyvinimo el. Laišką
+    send_activation: Siųsti aktyvacijos el. laišką
     add_new_requester: Pridėti naują užklausiklį
     new_topic: Nauja tema
     status_title:
       verified: Aktyvūs kontaktai
-      unverified: Kontaktai su nepatvirtintais el. Laiškais
+      unverified: Kontaktai su nepatvirtintais el. pašto adresais
       blocked: Užblokuoti kontaktai
       all: Visi kontaktai
       deleted: Ištrinti kontaktai
     showing: 'Rodoma:'
     status:
       all: Viskas
-      unverified: Nepatvirtinta
-      deleted: Ištrinta
-      blocked: Užblokuotas
-      verified: Patvirtinta
+      unverified: Nepatvirtinti
+      deleted: Ištrinti
+      blocked: Užblokuoti
+      verified: Patvirtinti
       spam: Šlamštas
     title: Kontaktai
     restore: Atkurti
@@ -132,25 +132,25 @@ lt:
   forum_confirm_msg1: Ar tikrai norite ištrinti šią kategoriją?
   undo_toggle: Atšaukti siuntimą
   reorder: Tvarkyti
-  email_command_settings_heading: El. Pašto komandų nustatymai
-  billing_address: Atsiskaitymo adresas
+  email_command_settings_heading: El. pašto komandų nustatymai
+  billing_address: Sąskaitos išrašymo adresas
   view_invoices: 'Peržiūrėti sąskaitas faktūras: '
   reported_by: 'Pranešė '
-  requesting: Prašoma ...
-  save: Sutaupyti
+  requesting: Prašoma...
+  save: Saugoti
   change_password: Pakeisti slaptažodį
   filter_options:
     tags: Žymos
     source: Šaltinis
-    unassigned: Nenurodyta
+    unassigned: Nepriskirta
   no_topics_text: Nėra temų
   folder:
     edit: Redaguoti aplanką
   example: pavyzdys
   conv_contacts_info: '%{conv_type_msg} : %{to_emails} %{cc_emails_key} %{bcc_emails_key}'
   customers: Klientai
-  import_solution_article_info: 'Pastaba: forumo komentarus neišsaugosime'
-  none: Nė vienas
+  import_solution_article_info: 'Pastaba: forumo komentarų neišsaugosime'
+  none: Nieko
   mailer_notifier:
     security_notification:
       update_agent_billing_plain: >-
@@ -163,32 +163,34 @@ lt:
       unauthorized_change_contact: >-
         Jei šis pakeitimas buvo atliktas be jūsų leidimo, susisiekite su savo
         paskyros administratoriumi.
-      configure_change: Saugumas.
-      trusted_ip_disabled: „IP“ baltoji informacija buvo išjungta jūsų paskyroje.
+      configure_change: >-
+        Šiuos pranešimo parametrus galite konfigūruoti Administratorius ->
+        Saugumas.
+      trusted_ip_disabled: P whitelisting buvo išjungta jūsų paskyroje.
       unauthorized_change_info: >-
         Jei šis pakeitimas buvo atliktas be jūsų leidimo, atsiųskite mums
-        atsakymą.
+        žinutę.
       configure_change_html: >-
         Šiuos pranešimo parametrus galite konfigūruoti <a
         href="%{security_url}"> paspaudę čia </a> arba eikite į „Admin“ ->
-        Saugumą savo paskyroje
+        Saugumas savo paskyroje
     hi: 'Sveiki,'
-    freshdesk_customer_support: „Freshdesk“ klientų aptarnavimo tarnyba
+    freshdesk_customer_support: Freshdesk klientų aptarnavimo tarnyba
     thanks: 'Dėkoju,'
   copied_link: Kopijuota
-  Email: El. Paštas
+  Email: El. paštas
   zendesk_backup_info: 'Pasirinkite „Zendesk“ atsarginės kopijos failą, atsisiųstą iš „zendesk“'
-  mint: pereiti prie monetų kalyklos.
-  right: Teisė
+  mint: pereiti prie Mint.
+  right: Teisės
   agent:
     insert_placeholder: Įterpti vietos žymeklį
     permissions: Leidimai
     delete_agent_confirmation: >-
       Ištrintas agentas bus prieinamas kaip kontaktas. Tai pašalins visą agento
       informaciją iš pagalbos tarnybos. Ar tikrai norite tęsti?
-    days_ago: '%{days} prieš'
+    days_ago: 'prieš %{days} dienų'
     more: daugiau
-    role: Agentų vaidmuo
+    role: Agentų rolė
     agent_restored: Agentas atstatytas
     member: Narys
     ticket_scope: Bilietų taikymo sritis
@@ -201,29 +203,29 @@ lt:
       Gali peržiūrėti bilietus jų grupėje (-ėse) ir jiems priskirtuose
       bilietuose
     full_time_agent: Visą darbo laiką dirbantis agentas
-    remove_role: Pašalinti vaidmenį
+    remove_role: Pašalinti rolę
     add_signature: Pridėti parašą
     remove_group: Pašalinti grupę
     group: Grupės
     export: Eksportuoti
     convert_to_contact: Konvertuoti į kontaktą
     individual: Apribotas priėjimas
-    contact_exists: 'Prašytojas, turintis el. Laišką „%{existing_email}“, jau yra, %{use_email}'
-    password_reset_note: 'Pastaba: Reset mail su instrukcijomis bus išsiųstas į %{requester}'
+    contact_exists: 'Prašytojas, turintis el. paštą „%{existing_email}“, jau yra, %{use_email}'
+    password_reset_note: >-
+      Pastaba: Atnaujinimo laiškas su instrukcijomis bus išsiųstas į
+      %{requester}
     info1: Tai ištrintas agentas
     available_seats_without_count: Galimos agento vietos
-    occasional_agent: Atsitiktinis agentas
+    occasional_agent: Retkartinis agentas
     day_pass_expired: >-
       Jūsų dienos leidimas baigėsi, prašome prisijungti, kad įsigytumėte naują
       dienos leidimą.
-    occasional: Kartais
+    occasional: Retkartinis
     admin_info: Gali atlikti visas administratoriaus užduotis
     admin: Administratorius
-    last_logged_in: 'Paskutinį kartą prisijungėte prieš %{time}.'
+    last_logged_in: 'Paskutinį kartą prisijungė prieš %{time}.'
     new: Naujas agentas
-    cannot_edit_roles: >-
-      Jūs galėsite peržiūrėti tik savo vaidmenis ir taikymo sritį, o ne
-      redaguoti.
+    cannot_edit_roles: 'Jūs galėsite peržiūrėti tik savo rolęir taikymo sritį, o ne redaguoti.'
     supervisor: Vadovas
     reset_scores: Atstatyti ženklelius ir taškus
     add_skills: Pridėti įgūdžių
@@ -234,8 +236,8 @@ lt:
     supervisor_info: >-
       Galite peržiūrėti visus „Helpdesk“ bilietus ir pasiekti „Reports“ (be
       administratoriaus teisių)
-    available_seats: '%{count} Agentų vietų galima'
-    invalid_export_params: 'Eksportuojant agento duomenis įvyko klaida. Prašau, pabandykite dar kartą.'
+    available_seats: 'Galima %{count} agentų vietų'
+    invalid_export_params: Eksportuojant agento duomenis įvyko klaida. Prašome pabandyti dar kartą.
     never_logged_in: Niekada neprisijungę
     invalid_placeholder: Įterpti netinkami vietos žymekliai
     individual_info: Galima peržiūrėti tik jiems priskirtus bilietus
@@ -329,6 +331,7 @@ lt:
     trial: Bandomojoje versijoje
     role_and_scope: Vaidmenys ir taikymo sritis
     assign_group: Asocijuotosios grupės
+    search_placeholder: Ieškokite visų agentų
   back: Atgal
   change_plan: Keisti planą
   current_free_plan: Dabartinis nemokamas planas
@@ -661,7 +664,7 @@ lt:
   user_sessions:
     new:
       forgot: Pamiršau slaptažodį?
-      email: El. Paštas
+      email: El. paštas
       sign_in_using_google: Prisijunkite naudodami „Google“ paskyrą
       password: Slaptažodis
       remember: Prisiminti mane šiame kompiuteryje
@@ -672,7 +675,7 @@ lt:
     Įveskite mokėjimo informaciją, kad galėtumėte pridėti daugiau agentų arba
     atnaujinti dabartinį planą
   current_plan: Dabartinis planas
-  settings: parametrus
+  settings: parametrai
   email_notifications_agent_selection_msg: 'Pasirinkite agentus, apie kuriuos norite pranešti'
   group:
     select_business_calendar: Pasirinkite darbo valandas
@@ -962,7 +965,7 @@ lt:
       select_call_type: Pasirinkite Skambučio tipas
       options:
         all_groups: Visos grupės
-        unassigned: Nenurodyta
+        unassigned: Nepriskirta
         incoming: Gaunamas
         outgoing: Išeinantys
       filter_by_title: Filtruota pagal
@@ -1058,7 +1061,7 @@ lt:
     choose_another_photo: Pasirinkite kitą nuotrauką
     profile_picture: Profilio nuotrauka
     remove_photo: Pašalinti nuotrauką
-    email: El. Paštas
+    email: El. paštas
     industry: Industrija
     ie9_file_change_msg: '%{filename} Išsaugoti, jei norite atnaujinti profilio vaizdą'
     name: vardas
@@ -1112,7 +1115,7 @@ lt:
         edit_portal: Išsaugoti ir redaguoti portalą
         enable_portal: Išsaugoti ir įgalinti portalą
       product:
-        email_not_verified: Nepatvirtinta
+        email_not_verified: Nepatvirtinti
         customize_portal: Tinkinti portalą
         portal_disabled: Portalas išjungtas
         delete: Ar tikrai norite ištrinti šį produktą?
@@ -1637,7 +1640,7 @@ lt:
         feedback_survey_begin: Apklausos siuntimas į el. Pašto adresą
         feedback_survey_end: Apklausa išsiųsta į jūsų el. Pašto adresą
         update: atnaujinti
-        save_survey: Sutaupyti
+        save_survey: Saugoti
         edit: Redaguoti
         survey_help_msg_v3: >-
           Pasirinkus pasitenkinimo reitingą, rodomas padėkos puslapis, skirtas
@@ -2129,7 +2132,7 @@ lt:
         auto_suggest_solutions_help: Tai taip pat taikoma paieškos funkcijai grįžtamojo ryšio valdiklyje.
         auto_suggest_solutions: Auto pasiūlyti sprendimus kuriant naują bilietą
         reset_portal_changes: Atstatyti portalą
-        simple_none: Nė vienas
+        simple_none: Nieko
         everyone: Visi
         allow_signin: Leisti vartotojams prisijungti naudojant ...
         public_ticket_urls_help: >-
@@ -2147,7 +2150,7 @@ lt:
         payment_info: 'Įveskite mokėjimo informaciją, jei norite pridėti daugiau dienų'
         no_of_day_passes: '# dienos dienos leidimai'
         usage_history: Naudojimo istorija
-        email: El. Paštas
+        email: El. paštas
         available_passes: Galimos dienos bilietai
         auto_recharge_notice: 'Dabartinis automatinio įkrovimo kiekis yra nustatytas į '
         auto_recharge: Automatinis įkrovimas
@@ -2516,7 +2519,7 @@ lt:
       cancel_label: Atšaukti
       done_label: padaryta
       title: Agentų vaidmenys
-      save_label: Sutaupyti
+      save_label: Saugoti
       manage_label: Valdyti
       add_label: Papildyti
       no_agent_label: Nėra agento
@@ -2626,7 +2629,7 @@ lt:
   footer:
     helpdesk_software: „Help Desk“ programinė įranga
     by_freshdesk: pateikė Freshdesk
-  email: El. Paštas
+  email: El. paštas
   undo_toggle_error: 'Atsiprašome, kažkas negerai!'
   reset: Atstatyti
   feedbackwidget_intro: >-
@@ -2746,7 +2749,7 @@ lt:
           not_added: (Nepridėta)
           not_added_greater: (> 15 mb nepridėta)
         public_note_tip: Matoma klientui
-        deleted_note: Ištrinta
+        deleted_note: Ištrinti
       add_watcher:
         mail:
           hi: Sveiki
@@ -3537,7 +3540,7 @@ lt:
             Ši „Freshcaller“ paskyra neegzistuoja. Pateikite galiojantį URL arba
             sukurkite naują „Freshcaller“ paskyrą.
           authentication_error: Pateiktas el. Paštas arba slaptažodis negalioja.
-        email: El. Paštas
+        email: El. paštas
         account_url: „Freshcaller“ paskyros URL
         continue: Tęsti
         password: Slaptažodis
@@ -3587,7 +3590,7 @@ lt:
     phone_number: Telefono numeris
     regex: Regex
     dropdown: Išskleidimas
-    email: El. Paštas
+    email: El. paštas
     checkbox: Žymimasis langelis
     drag_drop_field_intro: >-
       Jei norite pridėti naują priskirtą lauką, vilkite ir nuleiskite bet kurį
@@ -3769,7 +3772,7 @@ lt:
         Sukurkite visų turimų pagalbos tarnybos duomenų XML ir išsiųskite el.
         Paštu
       account_settings: Paskyros nustatymai
-      contact_email: El. Paštas
+      contact_email: El. paštas
       contact_phone: Telefonas
       primary_contact: Pagrindiniai kontaktiniai duomenys
       invoice_email_info: Siųsti sąskaitas
@@ -3897,7 +3900,7 @@ lt:
     us: MĖNUO DIENA METAI
     gdpr_terms: Spustelėję „Priimti“ sutinkate su mūsų
     gdpr_terms_link: Sąlygos
-    save: Sutaupyti
+    save: Saugoti
     change_favicon: Pakeiskite favicon
     rebrand: Rebrand savo pagalbos tarnybą
     date_format: Datos formatas
@@ -3970,6 +3973,13 @@ lt:
     additional_languages: Palaikomos kalbos
     visible_in_portal: Matoma portale
     helpdesk_name: Pagalbos tarnyba / portalo pavadinimas
+    sort_conversations:
+      label: Rūšiuoti pokalbius
+      helpnote: 'Tvarka, kuria pranešimai bus rodomi bilietuose.'
+      latest_top: Dabar matysite naujausius pokalbius viršuje.
+      oldest_top: Dabar matysite seniausius pokalbius viršuje.
+      option1: Rodyti naujausius viršuje
+      option2: Rodyti seniausius viršuje
   portal_pages:
     pages:
       ticket_view: Bilieto duomenys
@@ -4011,7 +4021,7 @@ lt:
     integrate_msg: >-
       Nukopijuokite ir įklijuokite šį kodą prieš paskutinį </body> žymą jūsų
       svetainėje ar programoje
-    save: Sutaupyti
+    save: Saugoti
     wait_title: 'Pranešimas laukiant, kol agentas prisijungs'
     msgbox_placeholder_title: Atsakymo laukelio vietos rezervatorius
     help_offline_thank_header_msg: Antraštė po pranešimo pateikimo
@@ -4127,7 +4137,7 @@ lt:
     available_placeholders: Įterpti vietas
   portalcss:
     reset_all_changes: Atstatyti VISUS pakeitimus
-    save_and_continue: Sutaupyti
+    save_and_continue: Saugoti
     mint: Kalyklos
     mint_preview: Peržiūrėti naują išvaizdą
     apply_mint: Taikyti
@@ -4626,7 +4636,7 @@ lt:
       ivr:
         turn_on: Įjungta
         simple_message_title: Paprastas pranešimas
-        save: Sutaupyti
+        save: Saugoti
         turn_off: Išjungta
         rename: pervardyti
         add_new_option: Pridėti <b>klavišų klavišą</b>
@@ -4793,7 +4803,7 @@ lt:
   ticket_fields:
     index:
       title: Bilietų laukai
-      save_ticket_fields: Sutaupyti
+      save_ticket_fields: Saugoti
     untitled: Be pavadinimo
     customer_label_missing: Kliento etiketė negali būti tuščia
     confirm_delete: Ar tikrai norite ištrinti šį lauką?
@@ -4914,13 +4924,13 @@ lt:
       data_help: 'Vertė, priskiriama DNS įrašui'
       cname: CNAME
       name: DKIM
-      verified: Patvirtinta
+      verified: Patvirtinti
       verify: Patikrinkite
       status: Būsena
       remove: Pašalinti
       host_value_help: TXT įrašo šeimininko vardas
       title: DKIM nustatymai
-      unverified: Nepatvirtinta
+      unverified: Nepatvirtinti
       type: Tipas
       help: Kaip konfigūruoti DKIM nustatymus?
       data: Duomenys
@@ -5039,7 +5049,7 @@ lt:
     saved_report:
       error_title_unavailable: Šis pavadinimas jau egzistuoja
       delete_cnfm_message: Ar tikrai norite ištrinti šią išsaugotą ataskaitą?
-      save: Sutaupyti
+      save: Saugoti
       cancel: Atšaukti
       dialog_sub_header: Ši ataskaita bus matoma tik jums
       delete_dialog_header: Ištrinti ataskaitą
@@ -5100,7 +5110,7 @@ lt:
         ticket_fields_title: Bilietų laukai
         delivery: Gauti per
         max_field: (iki 150 laukų)
-        email: El. Paštas
+        email: El. paštas
         contact_fields_title: Kontaktų laukai
         select_all: Pasirinkti viską
         filter: Pasirinkite filtrus
@@ -5131,7 +5141,7 @@ lt:
       dialog:
         monthly: Mėnesio
         generate_report: Sukurti ataskaitą
-        email: El. Paštas
+        email: El. paštas
         'on': Įjungta
         desc: apibūdinimas
         daily: Kasdien
@@ -5490,6 +5500,15 @@ lt:
     recent: Naujausi
     overview: Apžvalga
     popular: Populiarūs
+    planned: Planuojama
+    implemented: Įgyvendinta
+    nottaken: Nepriimtas
+    deferred: Atidėtas
+    inprogress: „Progress“
+    answered: Atsakyta
+    unanswered: Atsakyta
+    solved: Išspręsta
+    unsolved: Neišspręsta
   downgrade_loss_message: >-
     <span class="label label-important">Svarbu</span> Nuolat prarandate šių
     funkcijų duomenis ir konfigūracijas:
@@ -5577,7 +5596,7 @@ lt:
         social_channel: Socialinis
         forums_channel: Forumai
         chat_channel: Gyvas pokalbis
-        email_channel: El. Paštas
+        email_channel: El. paštas
         phone_channel: Telefonas
         title: Kaip šiandien kalbate su savo klientais?
         message2: 'Nesijaudinkite, vėliau galite juos įtraukti arba pašalinti.'
@@ -6027,7 +6046,7 @@ lt:
         user_name: vardas
         existing_user: Esama paskyra
         helpdesk_url: „Helpdesk“ URL
-        email: El. Paštas
+        email: El. paštas
         your_freshdesk_url: Jūsų pagalbos tarnybos URL
         submit: Pateikti
         company_name: Įmonės pavadinimas
@@ -6419,7 +6438,7 @@ lt:
         successfully_converted: Bilietas sėkmingai sukurtas
       login:
         password: Slaptažodis
-        email: El. Paštas
+        email: El. paštas
       cc_bcc: Kopija / Bcc
       search:
         ticket_id: Bilieto ID
@@ -6569,7 +6588,7 @@ lt:
         account_settings: ''
       add_more: Sinchronizuoti naują paskyrą
       MERGE_REMOTE: Sujungti „Google“ ir „Freshdesk“ kontaktus („Google“ pirmenybė)
-      email: El. Paštas
+      email: El. paštas
       tag_label: Sinchronizuoti žymą
       last_sync_time: Paskutinis sinchronizavimo laikas
       OVERWRITE_REMOTE: >-
@@ -6680,7 +6699,7 @@ lt:
       title: CTI nustatymai
       iframe_toggle: Įgalinti „Softphone Iframe“
       phone:
-        save: Sutaupyti
+        save: Saugoti
         cancel: Atšaukti
         add_number: Pridėti numerį
         number_not_in_use: Nenaudojama
@@ -7235,7 +7254,7 @@ lt:
   sales: Pardavimai
   feedbackwidget_button_text: Etiketė
   ticket_form:
-    your_email_address: El. Paštas
+    your_email_address: El. paštas
     your_name: Tavo vardas
   done: padaryta
   sign_in_info: Jūs prisijungsite
@@ -7454,7 +7473,7 @@ lt:
   freshchat:
     admin:
       widget_token_placeholder: 'Pvz .: d0bb2ebf-2746-481a-ll64-0bdfb91cb2de'
-      save: Sutaupyti
+      save: Saugoti
       sidebar_title: Freshchat
       cancel: Atšaukti
       sign_up_btn: Užsiregistruokite dabar

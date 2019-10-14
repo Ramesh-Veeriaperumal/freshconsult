@@ -151,4 +151,45 @@ HTML
 		output << %(</div>)
 		output.join('').html_safe
 	end
+
+  def common_properties(meta)
+    {
+      title: meta['title'],
+      url: meta['canonical'],
+      description: meta['short_description']
+    }
+  end
+
+  def og_properties(meta)
+    og_properties = common_properties(meta)
+    og_properties[:site_name] = Account.current.main_portal.name || Account.current.main_portal.product.name || Account.current.name
+    og_properties[:type] = 'article'
+    og_properties
+  end
+
+  def twitter_properties(meta)
+    twitter_properties = common_properties(meta)
+    twitter_properties[:card] = 'summary'
+    twitter_properties
+  end
+
+  def og_article_properties(meta)
+    article_properties = {}
+    article_properties[:author] = meta['author'] if Account.current.main_portal.personalized_articles?
+    article_properties
+  end
+
+  def og_meta_tags(meta)
+    meta_tags = []
+    og_properties(meta).each do |key, value|
+      meta_tags << %( <meta property="og:#{key}" content="#{value}" /> )
+    end
+    og_article_properties(meta).each do |key, value|
+      meta_tags << %( <meta property="article:#{key}" content="#{value}" /> )
+    end
+    twitter_properties(meta).each do |key, value|
+      meta_tags << %( <meta name="twitter:#{key}" content="#{value}" /> )
+    end
+    meta_tags.join('').html_safe
+  end
 end

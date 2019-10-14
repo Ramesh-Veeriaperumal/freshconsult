@@ -369,6 +369,18 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     unstub_for_custom_translations
   end
 
+  def test_primary_download_without_additional_questions
+    stub_for_custom_translations
+    create_survey(1, true)
+    language = Account.current.language
+    survey = Account.current.custom_surveys.last
+    get :download, controller_params('object_type' => 'surveys', 'object_id' => survey.id)
+    response_hash = YAML.safe_load(response.body)[language]['custom_translations']['surveys']["survey_#{survey.id}"]
+    assert !response_hash.key?('additional_questions')
+    survey.destroy
+    unstub_for_custom_translations
+  end
+
   def test_secondary_download_for_surveys_with_id
     stub_for_custom_translations
     create_survey(1, true)
@@ -429,6 +441,17 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
       assert_response_secondary_download(survey_translation, response_hash["survey_#{survey.id}"])
       survey.destroy
     end
+    unstub_for_custom_translations
+  end
+
+  def test_secondary_download_without_additional_questions
+    stub_for_custom_translations
+    create_survey(1, true)
+    survey = Account.current.custom_surveys.last
+    get :download, controller_params('object_type' => 'surveys', 'language_code' => @language)
+    response_hash = YAML.safe_load(response.body)[@language]['custom_translations']['surveys']["survey_#{survey.id}"]
+    assert !response_hash.key?('additional_questions')
+    survey.destroy
     unstub_for_custom_translations
   end
 

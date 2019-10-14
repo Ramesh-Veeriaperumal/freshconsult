@@ -275,7 +275,6 @@ class SupportController < ApplicationController
     end
 
   private
-  
   def strip_url_locale
     # request.fullpath will return the current path without the url_locale
     # We are redirecting to fullpath here cos users shouldn't be able to access language specific urls when ... 

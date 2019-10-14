@@ -145,6 +145,19 @@ module Cache::Memcache::Account
     MemcacheKeys.delete_from_cache(custom_date_time_fields_memcache_key)
   end
 
+  def agents_hash_from_cache
+    @agents_hash_from_cache ||= begin
+      key = agent_hash_memcache_key
+      MemcacheKeys.fetch(key) do
+        agents_hash = {}
+        Account.current.technicians.pluck_all('id', 'name', 'privileges', 'email').each do |agent|
+          agents_hash[agent[0]] = [agent[1], agent[2], agent[3]]
+        end
+        agents_hash
+      end
+    end
+  end
+
   def roles_from_cache
     @roles_from_cache ||= begin
       key = roles_cache_key
@@ -762,6 +775,10 @@ module Cache::Memcache::Account
 
     def custom_date_time_fields_memcache_key
       format(ACCOUNT_CUSTOM_DATE_TIME_FIELDS, account_id: self.id)
+    end
+
+    def agent_hash_memcache_key
+      format(ACCOUNT_AGENTS_HASH, account_id: id)
     end
 
     def roles_cache_key

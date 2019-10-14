@@ -68,7 +68,6 @@ class Sanitize
         'source'     => {'src'	=> ['http', 'https']}
       },
       transformers: lambda do |env|
-        Sanitize::Config::CSSSanitizer.sanitize_styles(env[:node])
         Sanitize::Config::BgColorSanitizer.bg_color_sanitizer(env[:node])
       end
     }

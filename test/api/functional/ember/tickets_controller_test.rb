@@ -2226,7 +2226,7 @@ module Ember
           ticket_fields: ['dependent']
         }
       ]
-      section_ids = create_section_fields(3, sections, false, true, '_1234568910', 20)
+      section_ids = create_section_fields(3, sections, false, true, '_1234568910', 31)
       @account.reload
       dependent_field = @account.section_fields.where(section_id: section_ids[0])[0].ticket_field
       dependent_field.update_attribute(:required, true)
@@ -4983,6 +4983,70 @@ module Ember
           put :update, construct_params({ id: fsm_ticket.display_id, version: 'private' }, params)
           assert_response 400
           match_json([bad_request_error_pattern('custom_fields.cf_fsm_appointment_start_time', :invalid_date_time_range)])
+        ensure
+          fsm_ticket.destroy
+          cleanup_fsm
+          Account.unstub(:current)
+        end
+      end
+    end
+
+    def test_update_properties_wtih_appointment_start_and_end_time
+      enable_adv_ticketing([:field_service_management]) do
+        begin
+          perform_fsm_operations
+          Account.stubs(:current).returns(Account.first)
+          time = Time.zone.now
+          fsm_ticket = create_service_task_ticket(fsm_contact_name: 'User', fsm_service_location: 'Location', fsm_phone_number: '123344')
+          params = { custom_fields: { cf_fsm_appointment_start_time: (time + 1.hours).utc.iso8601,
+            cf_fsm_appointment_end_time: (time + 2.hour).utc.iso8601 } }
+          put :update_properties, construct_params({ id: fsm_ticket.display_id, version: 'private' }, params)
+          assert_response 200
+          response_body = JSON.parse(response.body)
+          assert_not_nil response_body['custom_fields']['cf_fsm_appointment_start_time']
+          assert_not_nil response_body['custom_fields']['cf_fsm_appointment_end_time']
+        ensure
+          fsm_ticket.destroy
+          cleanup_fsm
+          Account.unstub(:current)
+        end
+      end
+    end
+
+    def test_update_properties_wtih_appointment_end_time_nil
+      enable_adv_ticketing([:field_service_management]) do
+        begin
+          perform_fsm_operations
+          Account.stubs(:current).returns(Account.first)
+          time = Time.zone.now
+          ticket_params = {fsm_contact_name: 'User', fsm_service_location: 'Location',
+            fsm_phone_number: '123344', fsm_appointment_start_time: time.utc.iso8601,
+            fsm_appointment_end_time: (time + 1.hour).utc.iso8601}
+          fsm_ticket = create_service_task_ticket(ticket_params)
+          params = { custom_fields: { cf_fsm_appointment_end_time: nil } }
+          put :update_properties, construct_params({ id: fsm_ticket.display_id, version: 'private' }, params)
+          assert_response 200
+          response_body = JSON.parse(response.body)
+          assert_not_nil response_body['custom_fields']['cf_fsm_appointment_start_time']
+          assert_nil response_body['custom_fields']['cf_fsm_appointment_end_time']
+        ensure
+          fsm_ticket.destroy
+          cleanup_fsm
+          Account.unstub(:current)
+        end
+      end
+    end
+
+    def test_update_properties_wtih_fsm_phone_number
+      enable_adv_ticketing([:field_service_management]) do
+        begin
+          perform_fsm_operations
+          Account.stubs(:current).returns(Account.first)
+          fsm_ticket = create_service_task_ticket(fsm_contact_name: 'User', fsm_service_location: 'Location', fsm_phone_number: '123344')
+          params = { custom_fields: { cf_fsm_phone_number: '90908' } }
+          put :update_properties, construct_params({ id: fsm_ticket.display_id, version: 'private' }, params)
+          assert_response 400
+          match_json([bad_request_error_pattern('cf_fsm_phone_number', :invalid_field)])
         ensure
           fsm_ticket.destroy
           cleanup_fsm

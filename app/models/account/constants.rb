@@ -30,7 +30,7 @@ class Account < ActiveRecord::Base
     },
 
     sprout: {
-      features: [:scenario_automations, :business_hours, :help_widget]
+      features: [:scenario_automations, :business_hours, :marketplace, :help_widget]
     },
 
     blossom: {
@@ -61,7 +61,7 @@ class Account < ActiveRecord::Base
     },
 
     sprout_classic: {
-      features: [:scenario_automations, :business_hours, :custom_domain, :multiple_emails, :help_widget]
+      features: [:scenario_automations, :business_hours, :custom_domain, :multiple_emails, :marketplace, :help_widget]
     },
 
     blossom_classic: {
@@ -85,7 +85,7 @@ class Account < ActiveRecord::Base
     },
 
     sprout_jan_17: {
-      features: [:scenario_automations, :business_hours, :help_widget]
+      features: [:scenario_automations, :business_hours, :marketplace, :help_widget]
     },
 
     blossom_jan_17: {
@@ -239,7 +239,7 @@ class Account < ActiveRecord::Base
 
   LAUNCHPARTY_FEATURES = [TEMPORARY_AND_SELECTABLE_FEATURES_TO_LP].reduce(
     {
-      admin_dashboard: false, agent_conference: false, agent_dashboard: false,
+      hide_og_meta_tags: false, admin_dashboard: false, agent_conference: false, agent_dashboard: false,
       agent_new_ticket_cache: false, api_search_beta: false, autopilot_headsup: false,
       autoplay: false, bi_reports: false, cache_new_tkt_comps_forms: false,
       delayed_dispatchr_feature: false, disable_old_sso: false, enable_old_sso: false,
@@ -305,7 +305,8 @@ class Account < ActiveRecord::Base
       attachment_redirect_expiry: false, solutions_agent_portal: false, solutions_agent_metrics: false,
       requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false, supervisor_custom_status: false,
       sandbox_temporary_offset: false, downgrade_policy: false, skip_posting_to_fb: false, mentions_to_tms: false,
-      allow_update_agent: false
+      allow_update_agent: false, facebook_dm_outgoing_attachment: false, hide_mailbox_error_from_agents: false,
+      facebook_post_outgoing_attachment: false
     }, :merge
   )
 

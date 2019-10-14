@@ -3743,8 +3743,7 @@ de:
             Genehmigung angezeigt.
       tickets:
         create:
-          success: >-
-            Ihr Ticket wurde erstellt.
+          success: Ihr Ticket wurde erstellt.
           success_cc_drop: >-
             Ihr Ticket wurde erstellt, aber folgende CC-Adressen sind durch
             Moderation weggefallen.
@@ -6424,7 +6423,7 @@ de:
     add_skills: Fähigkeiten hinzufügen
     more: mehr
     member: Mitglied von
-    search_placeholder: Alle Agenten durchsuchen
+    search_placeholder: Alle agenten durchsuchen
   account_admin: Kontoadministrator
   right: Rechts
   footer:
@@ -7002,8 +7001,8 @@ de:
       sort_by_default: Standard
     vote:
       you:
-        one: 'Sie '
-        other: 'Sie und '
+        one: Ihnen
+        other: 'Ihnen '
       more:
         one: '1 anderer '
         other: '%{count} andere '
@@ -7046,8 +7045,8 @@ de:
       upvoted: Sie haben zugestimmt
       upvote: Zustimmung
       like:
-        one: mag dies
-        other: mögen dies
+        one: gefällt dies
+        other: gefällt dies
     tickets:
       merged_topic_note: Zusammengelegtes Thema kann nicht in ein Ticket konvertiert werden.
       export: Tickets exportieren
@@ -17804,7 +17803,7 @@ de:
     webhook_dropped: Webhook wurde gelöscht
     customer_import: '%{import_type} import für %{account_full_domain}'
     customer_import_stopped: '%{import_type} import für %{account_full_domain} gestoppt'
-    topic_update: "[Status Update] in %{title} <Translation not given>"
+    topic_update: '[Status Update] in %{title} <Translation not given>'
   sandbox:
     live: Sandbox ist aktiv
     sync_complete: Synchronisierung der Sandbox abgeschlossen!

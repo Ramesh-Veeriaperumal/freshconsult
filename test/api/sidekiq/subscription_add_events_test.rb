@@ -18,6 +18,7 @@ class SubscriptionAddEventsTest < ActionView::TestCase
   def test_create_new_subscription_event
     @subscription_events_count = @account.subscription_events.count
     args = { 'subscription_hash' => { 'amount' => 0, 'state' => STATES[:active] } }
+    @account.rollback :downgrade_policy
     @subscription = @account.subscription
     @subscription.state = 'active'
     SubscriptionEvent.stubs(:update_record?).returns(false)

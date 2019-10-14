@@ -59,7 +59,7 @@ module SplitNoteHelper
   end
 
   def new_ticket_activity
-    @new_ticket.activity_type = { type: 'ticket_split_target', source_ticket_id: [@item.display_id] }
+    @new_ticket.activity_type = { type: 'ticket_split_target', source_ticket_id: [@item.display_id], source_note_id: [@note.id] }
   end
 
   def set_source_activity_type

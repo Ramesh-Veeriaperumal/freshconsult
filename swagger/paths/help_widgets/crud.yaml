@@ -1,5 +1,5 @@
 get:
-  tags: [Help Widget Show]
+  tags: [Help Widget]
   description: Responses with default setting of the help widget
   summary: Widget settings
   parameters:
@@ -22,7 +22,7 @@ get:
 
 delete:
   summary: Delete Help Widget
-  tags: [Help Widget Delete]
+  tags: [Help Widget]
   parameters:
     - name: id
       type: integer

@@ -51,6 +51,10 @@ module CoreUsersTestHelper
       ag_grp = AgentGroup.new(:user_id => new_agent.user_id , :account_id =>  account.id, :group_id => options[:group_id])
       ag_grp.save!
     end
+    unless v 
+      Rails.logger.debug "#{new_user.errors.messages}"   
+      throw Exception.new("Failed to create user #{new_user.errors}");
+    end
     new_user.reload
   end
 

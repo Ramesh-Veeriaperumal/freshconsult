@@ -692,6 +692,14 @@ module Ember
         end
       end
 
+      def test_create_feedback_check_bot_type
+        enable_bot do
+          bot_feedback = @bot.bot_feedbacks.build(bot_feedback_params(@bot, category: 2, useful: 1))
+          bot_feedback.save
+          assert_equal bot_feedback.bot.external_id, @bot.external_id
+        end
+      end
+
     end
   end
 end

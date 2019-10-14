@@ -1,5 +1,4 @@
 module SubscriptionTestHelper
-
   def update_subscription
     subscription = Account.current.subscription
     subscription.card_number = Faker::Number.number(10)
@@ -76,5 +75,13 @@ module SubscriptionTestHelper
               billing_zip: 600_037, ip_address: '182.73.13.166', object: 'card',
               masked_number: '************1111', customer_id: '1' }
     }
+  end
+
+  def get_new_subscription_request(account, plan_id, renewal_period)
+    new_subscription_request = account.subscription.build_subscription_request
+    new_subscription_request.plan_id = plan_id
+    new_subscription_request.renewal_period = renewal_period
+    new_subscription_request.save
+    new_subscription_request
   end
 end

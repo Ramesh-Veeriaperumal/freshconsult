@@ -126,4 +126,11 @@ module ApiConstants
     }
   }.freeze
 
+  FACEBOOK_ATTACHMENT_CONFIG = {
+    post: {
+      fileTypes: ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/tiff'],
+      size: 20
+    }
+  }.freeze
+
 end.freeze

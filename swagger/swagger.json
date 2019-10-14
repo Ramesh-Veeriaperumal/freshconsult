@@ -11069,7 +11069,7 @@
     "/help_widgets": {
       "get": {
         "tags": [
-          "List of Help widgets"
+          "Help Widget"
         ],
         "description": "Listing all widgets associated to the account",
         "summary": "List all",
@@ -11093,7 +11093,7 @@
       },
       "post": {
         "tags": [
-          "help widget creation"
+          "Help Widget"
         ],
         "description": "Creates new widget with a name  and default settings",
         "summary": "Create widget",
@@ -11129,7 +11129,7 @@
     "/help_widgets/{id}": {
       "get": {
         "tags": [
-          "Help Widget Show"
+          "Help Widget"
         ],
         "description": "Responses with default setting of the help widget",
         "summary": "Widget settings",
@@ -11163,7 +11163,7 @@
       "delete": {
         "summary": "Delete Help Widget",
         "tags": [
-          "Help Widget Delete"
+          "Help Widget"
         ],
         "parameters": [
           {
@@ -11190,10 +11190,10 @@
     "/help_widgets/update": {
       "put": {
         "tags": [
-          "Widget settings update"
+          "Help Widget"
         ],
         "description": "Update the settings of the Widget",
-        "summary": "Update for settings",
+        "summary": "Update settings",
         "parameters": [
           {
             "name": "settings",
@@ -11226,9 +11226,9 @@
     "/widget/attachment": {
       "post": {
         "tags": [
-          "Widget Attachment"
+          "Help Widget"
         ],
-        "summary": "Single Attachment for widget",
+        "summary": "Attachment for widget",
         "description": "Single Attachment for widget",
         "parameters": [
           {
@@ -11266,9 +11266,9 @@
     "/widget/search/solutions": {
       "post": {
         "tags": [
-          "Widget Search Solution"
+          "Help Widget"
         ],
-        "summary": "Search solution articles for widget",
+        "summary": "Search solution articles",
         "description": "Search solution articles for widget",
         "parameters": [
           {
@@ -11314,9 +11314,9 @@
     "/widget/suggested_articles": {
       "get": {
         "tags": [
-          "Widget Suggested Articles"
+          "Help Widget"
         ],
-        "summary": "Suggested articles for widget",
+        "summary": "Suggested articles",
         "description": "Suggested articles for widget",
         "responses": {
           "200": {
@@ -11348,9 +11348,9 @@
     "/widget/solutions/article/{id}": {
       "get": {
         "tags": [
-          "Widget Solution Article"
+          "Help Widget"
         ],
-        "summary": "Get solution article for widget",
+        "summary": "Get solution article",
         "description": "Get solution article for widget",
         "parameters": [
           {
@@ -11397,9 +11397,9 @@
     "/widget/solutions/article/{id}/hit": {
       "put": {
         "tags": [
-          "Widget Solution Article"
+          "Help Widget"
         ],
-        "summary": "Increase hit count of solution article in widget",
+        "summary": "Hit solution article",
         "description": "Increase hit count of solution article in widget",
         "parameters": [
           {
@@ -11420,9 +11420,9 @@
     "/widget/solutions/article/{id}/thumbs_up": {
       "put": {
         "tags": [
-          "Widget Solution Article"
+          "Help Widget"
         ],
-        "summary": "Increase thumbs_up count of solution article in widget",
+        "summary": "Thumbs up for solution article",
         "description": "Increase thumbs_up count of solution article in widget",
         "parameters": [
           {
@@ -11443,9 +11443,9 @@
     "/widget/solutions/article/{id}/thumbs_down": {
       "put": {
         "tags": [
-          "Widget Solution Article"
+          "Help Widget"
         ],
-        "summary": "Increase thumbs_down count of solution article in widget",
+        "summary": "Thumbs down for solution article",
         "description": "Increase thumbs_down count of solution article in widget",
         "parameters": [
           {
@@ -14150,22 +14150,22 @@
                         "tickets": {
                           "type": "object",
                           "properties": {
-                            "include_subject" : {
+                            "include_subject": {
                               "type": "boolean"
                             },
-                            "include_description" : {
+                            "include_description": {
                               "type": "boolean"
                             },
-                            "include_other_properties" : {
+                            "include_other_properties": {
                               "type": "boolean"
                             },
-                            "include_notes" : {
+                            "include_notes": {
                               "type": "boolean"
                             },
-                            "include_attachment_names" : {
+                            "include_attachment_names": {
                               "type": "boolean"
                             },
-                            "archive" : {
+                            "archive": {
                               "type": "boolean"
                             }
                           }
@@ -14372,6 +14372,13 @@
                       "type": "string"
                     }
                   }
+                },
+                "account_cancellation_requested": {
+                  "type": "boolean"
+                },
+                "account_cancellation_requested_time": {
+                  "type": "string",
+                  "format": "date-time"
                 }
               }
             },
@@ -16312,28 +16319,23 @@
         "search_settings": {
           "type": "object",
           "properties": {
-            "tickets": {
-              "type": "object",
-              "properties": {
-                "include_subject" : {
-                  "type": "boolean"
-                },
-                "include_description" : {
-                  "type": "boolean"
-                },
-                "include_other_properties" : {
-                  "type": "boolean"
-                },
-                "include_notes" : {
-                  "type": "boolean"
-                },
-                "include_attachment_names" : {
-                  "type": "boolean"
-                },
-                "archive" : {
-                  "type": "boolean"
-                }
-              }
+            "include_subject": {
+              "type": "boolean"
+            },
+            "include_description": {
+              "type": "boolean"
+            },
+            "include_other_properties": {
+              "type": "boolean"
+            },
+            "include_notes": {
+              "type": "boolean"
+            },
+            "include_attachment_names": {
+              "type": "boolean"
+            },
+            "archive": {
+              "type": "boolean"
             }
           }
         }
@@ -17762,12 +17764,6 @@
         },
         "displayed_to_customers": {
           "type": "boolean"
-        },
-        "portal_cc": {
-          "type": "boolean"
-        },
-        "portal_cc_to": {
-          "type": "string"
         }
       },
       "required": [
@@ -25229,7 +25225,7 @@
                   "label": {
                     "type": "string"
                   },
-                  "label_in_portal": {
+                  "label_for_customers": {
                     "type": "string"
                   },
                   "level": {
@@ -25269,6 +25265,12 @@
             },
             "has_section": {
               "type": "boolean"
+            },
+            "portal_cc": {
+              "type": "boolean"
+            },
+            "portal_cc_to": {
+              "type": "string"
             }
           }
         },
@@ -25293,7 +25295,7 @@
                   "label": {
                     "type": "string"
                   },
-                  "label_in_portal": {
+                  "label_for_customers": {
                     "type": "string"
                   }
                 }
@@ -25328,6 +25330,12 @@
         {
           "type": "object",
           "properties": {
+            "portal_cc": {
+              "type": "boolean"
+            },
+            "portal_cc_to": {
+              "type": "string"
+            },
             "dependent_fields": {
               "type": "array",
               "items": {
@@ -25336,7 +25344,7 @@
                   "label": {
                     "type": "string"
                   },
-                  "label_in_portal": {
+                  "label_for_customers": {
                     "type": "string"
                   },
                   "deleted": {
@@ -25400,7 +25408,7 @@
                   "label": {
                     "type": "string"
                   },
-                  "label_in_portal": {
+                  "label_for_customers": {
                     "type": "string"
                   },
                   "level": {
@@ -25440,6 +25448,12 @@
             },
             "has_section": {
               "type": "boolean"
+            },
+            "portal_cc": {
+              "type": "boolean"
+            },
+            "portal_cc_to": {
+              "type": "string"
             }
           }
         },
@@ -25469,21 +25483,6 @@
                   },
                   "parent_choice_id": {
                     "type": "integer"
-                  },
-                  "label_for_customer": {
-                    "type": "string"
-                  },
-                  "stop_sla_timer": {
-                    "type": "boolean"
-                  },
-                  "default": {
-                    "type": "boolean"
-                  },
-                  "group_ids": {
-                    "type": "array",
-                    "items": {
-                      "type": "integer"
-                    }
                   },
                   "choices": {
                     "type": "array",
@@ -25810,6 +25809,9 @@
             },
             "label": {
               "type": "string"
+            },
+            "parent_ticket_field_id": {
+              "type": "integer"
             },
             "choice_ids": {
               "type": "array",

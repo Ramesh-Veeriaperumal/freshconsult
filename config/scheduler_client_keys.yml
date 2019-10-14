@@ -5,6 +5,7 @@ common: &common
   todo_group_name: helpkit_todo_reminder
   export_group_name: helpkit_export_cleanup
   ticket_delete_group_name: helpkit_ticket_delete
+  downgrade_policy_group_name: helpkit_downgrade_policy_reminder
 development:
   <<: *common
 staging:

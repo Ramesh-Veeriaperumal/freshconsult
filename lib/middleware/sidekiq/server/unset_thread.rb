@@ -8,6 +8,8 @@ module Middleware
             Thread.current[key] = nil
           end
           yield
+        ensure
+          I18n.locale = I18n.default_locale
         end
       end
     end

@@ -1,6 +1,6 @@
 get:
-  tags: [Widget Suggested Articles]
-  summary: Suggested articles for widget
+  tags: [Help Widget]
+  summary: Suggested articles
   description: Suggested articles for widget
   responses:
     200:

@@ -51,7 +51,7 @@ module Facebook
 
     MESSAGE_FIELDS              = FETCH_FIELDS[:message].join(',') # Used while fetching object of a message got through webhook
 
-    DM_FIELDS                   = 'messages.fields(id,message,from,created_time,attachments.fields(id,image_data,mime_type,name,size,video_data,file_url.fields(mime_type,name,id,size)),shares.fields(description,id,link,name))'.freeze # Used while fetching all messages of a page for non realtime enabled
+    DM_FIELDS                   = 'updated_time,messages.limit(100).fields(id,message,from,created_time,attachments.fields(id,image_data,mime_type,name,size,video_data,file_url.fields(mime_type,name,id,size)),shares.fields(description,id,link,name))'.freeze # Used while fetching all messages of a page for non realtime enabled
 
     PROFILE_NAME_FIELDS         = FETCH_FIELDS[:profile_name].join(',')
 
@@ -92,7 +92,7 @@ module Facebook
 
     FEED_LINK       = '<div class="facebook_post"><p> %{html_content}</p><p>%{link_story}</p></div>'.freeze
 
-    FEED_VIDEO_WITH_ORIGINAL_POST	= "
+    FEED_VIDEO_WITH_ORIGINAL_POST = "
     <div class=\"fb-original-post__image\">
       <a class=\"thumbnail\" href=\"%{target_url}\" target=\"_blank\">
         <img src=\"%{thumbnail}\">
@@ -103,7 +103,7 @@ module Facebook
         <p class=\"fb-original-post__post\">%{html_content}</p>
     </div>".freeze
 
-    FEED_PHOTO_WITH_ORIGINAL_POST	= "
+    FEED_PHOTO_WITH_ORIGINAL_POST = "
     <div class=\"fb-original-post__image\">
       <a href=\"%{link}\" target=\"_blank\">
         <img src=\"%{photo_url}\">
@@ -114,7 +114,7 @@ module Facebook
         <p class=\"fb-original-post__post\">%{html_content}</p>
     </div>".freeze
 
-    FEED_LINK_WITH_ORIGINAL_POST	= "
+    FEED_LINK_WITH_ORIGINAL_POST = "
     <div class=\"fb-original-post__description\">
         <h2 class=\"subject fb-original-post__title\">%{page_name}</h2>
         <p class=\"fb-original-post__post\">%{html_content}</p>
@@ -152,5 +152,23 @@ module Facebook
     PARENT_POST_LENGTH = 230
 
     MESSAGE_UPDATED_AT = 'updated_time'.freeze
+
+    FB_MSG_TYPES = ['dm', 'post'].freeze
+
+    DEFAULT_MESSAGE_LIMIT = 100
+
+    FB_API_ME = 'me'.freeze
+
+    FB_API_CONVERSATIONS = 'conversations'.freeze
+
+    FB_API_MESSAGES = 'messages'.freeze
+
+    FB_THREAD_DEFAULT_API_OPTIONS = { fields: DM_FIELDS, limit: DEFAULT_MESSAGE_LIMIT, request: { timeout: 10, open_timeout: 10 } }.freeze
+
+    FB_DM_DEFAULT_API_OPTIONS = { fields: MESSAGE_FIELDS, limit: DEFAULT_MESSAGE_LIMIT, request: { timeout: 10, open_timeout: 10 } }.freeze
+
+    FB_API_HTTP_COMPONENT = { http_component: 'body' }.freeze
+
+    DEFAULT_PAGE_LIMIT = 2 # Restrict the next page fetch logic to maximum of 2 pages apart from the first page fetched. So for a facebook page, only 3 pages with 100 threads and messages limit will be fetched per worker.
   end
 end

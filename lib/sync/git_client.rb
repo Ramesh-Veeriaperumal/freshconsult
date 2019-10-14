@@ -133,38 +133,6 @@ module Sync
       end
     end
 
-    # XXX - Todo -- Not working for deleted files
-    # def commit_all_changed_files(message, author, email)
-    #   files = []
-    #   repo_client.status { |file, status_data| files << file}
-
-    #   index = repo_client.index
-    #   files.each do |file|
-    #     oid   = Rugged::Blob.from_workdir(repo_client, file)
-    #     index.add(:path => file, :oid => oid, :mode => 0100644)
-    #   end
-
-    #   options = {}
-    #   options[:tree] = index.write_tree(repo_client)
-
-    #   options[:author] = {
-    #     :email  => email,
-    #     :name   => author,
-    #     :time   => Time.now
-    #   }
-    #   options[:committer] = {
-    #     :email  => email,
-    #     :name   => author,
-    #     :time   => Time.now
-    #   }
-    #   options[:message]     =  message
-    #   options[:parents]     =  repo_client.empty? ? [] : [ repo_client.head.target ].compact
-    #   options[:update_ref]  =  'HEAD'
-
-    #   commit = Rugged::Commit.create(repo_client, options)
-    #   index.write()
-    # end
-
     def checkout_branch
       Rails.logger.info 'Starting single branch git clone...'
       FileUtils.remove_dir(@repo_path) if repo_path_exists?

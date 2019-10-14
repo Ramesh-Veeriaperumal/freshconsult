@@ -701,8 +701,8 @@ class Subscription < ActiveRecord::Base
       end
       applicable_coupon = verify_coupon(present_subscription.coupon)
       if subscription_downgrade?
-        billing.update_subscription(self, prorate?(applicable_coupon), updated_addons, applicable_coupon, true)
-        construct_subscription_request(updated_addons).save!
+        response = billing.update_subscription(self, false, updated_addons, applicable_coupon, true)
+        construct_subscription_request(updated_addons, response.subscription.current_term_end).save!
       else
         response = billing.update_subscription(self, prorate?(applicable_coupon), updated_addons)
         subscription_request.destroy if subscription_request.present?
@@ -718,12 +718,13 @@ class Subscription < ActiveRecord::Base
       false
     end
 
-    def construct_subscription_request(updated_addons)
+    def construct_subscription_request(updated_addons, next_renewal_at)
       downgrade_request = subscription_request.nil? ? build_subscription_request : subscription_request
       downgrade_request.plan_id = plan_id
       downgrade_request.renewal_period = renewal_period
       downgrade_request.agent_limit = agent_limit
       downgrade_request.fsm_field_agents = (updated_addons.map(&:name).include?(Subscription::Addon::FSM_ADDON) && field_agent_limit.present?) ? field_agent_limit : nil
+      downgrade_request.next_renewal_at = Time.at(next_renewal_at).to_datetime.utc
       downgrade_request
     end
 

@@ -266,6 +266,13 @@ class AccountTest < ActionView::TestCase
     assert_equal response.status, 200
   end
 
+  def test_help_widget_secret
+    Account.current.help_widget_secret
+    assert Account.current.help_widget_secret.is_a?(String)
+    assert_equal Account.current.help_widget_secret.length, 32
+    assert_equal response.status, 200
+  end
+
   def test_round_robin_capping_enabled?
     Account.current.round_robin_capping_enabled?
     assert_equal response.status, 200

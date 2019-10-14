@@ -12,6 +12,8 @@ module SubscriptionHelper
     tags: 'OmnichannelPlan'
   }.freeze
 
+  EMAIL_REMINDER_DAYS = [7, 3, 1].freeze
+
   def omni_channel_ticket_params(account, old_subscription, user)
     description = format(TICKET_DESCRIPTION_TEMPLATE,
                          account_id: account.id,
@@ -27,5 +29,28 @@ module SubscriptionHelper
     old_subscription.subscription_plan.omni_plan? ||
       old_subscription.subscription_plan.free_omni_channel_plan? ||
       new_subscription.subscription_plan.omni_plan? || new_subscription.subscription_plan.free_omni_channel_plan?
+  end
+
+  def trigger_downgrade_policy_reminder_scheduler(next_renewal_at = nil)
+    next_renewal_at_date = next_renewal_at.present? ? next_renewal_at : Account.current.subscription.next_renewal_at
+    remaining_days = (next_renewal_at_date.utc.to_date - DateTime.now.utc.to_date).to_i
+    EMAIL_REMINDER_DAYS.each do |reminder|
+      if remaining_days - reminder >= 0
+        payload =
+          {
+            job_id: "#{Account.current.id}_activate_downgrade_#{reminder}",
+            group: ::SchedulerClientKeys['downgrade_policy_group_name'],
+            scheduled_time: (next_renewal_at_date - reminder.days).utc,
+            data: {
+              account_id: Account.current.id,
+              enqueued_at: Time.now.to_i
+            },
+            sqs: {
+              url: SQS_V2_QUEUE_URLS[SQS[:fd_scheduler_downgrade_policy_reminder_queue]]
+            }
+          }
+        ::Scheduler::PostMessage.perform_async(payload: payload)
+      end
+    end
   end
 end

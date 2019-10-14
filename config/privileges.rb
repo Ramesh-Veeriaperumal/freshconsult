@@ -581,6 +581,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/social/facebook_tab", :only => [:remove]
     resource :"admin/survey"
     resource :"admin/custom_survey"
+    resource :"support/custom_surveys", only: [:preview, :preview_questions]
     resource :group
     resource :ticket_field
     resource :"admin/requester_widget", :only => [:get_widget, :update_widget]

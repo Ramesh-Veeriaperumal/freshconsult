@@ -1,5 +1,5 @@
 get:
-  tags: [List of Help widgets]
+  tags: [Help Widget]
   description: Listing all widgets associated to the account
   summary: List all
   responses:
@@ -15,7 +15,7 @@ get:
       description: Access denied
 
 post:
-  tags: [help widget creation]
+  tags: [Help Widget]
   description: Creates new widget with a name  and default settings
   summary: Create widget
   parameters:

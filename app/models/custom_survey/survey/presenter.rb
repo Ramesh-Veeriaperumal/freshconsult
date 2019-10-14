@@ -29,7 +29,7 @@ class CustomSurvey::Survey < ActiveRecord::Base
     survey.add :thanks_text
     survey.add :feedback_response_text
     survey.add proc { |sur| sur.fetch_default_questions_and_choices }, as: :default_question
-    survey.add proc { |sur| sur.fetch_additional_questions_and_choices }, as: :additional_questions
+    survey.add proc { |sur| sur.fetch_additional_questions_and_choices }, as: :additional_questions, if: proc { |sur| sur.additional_questions_present? }
   end
 
   api_accessible :custom_translation_secondary do |survey|
@@ -38,7 +38,7 @@ class CustomSurvey::Survey < ActiveRecord::Base
     survey.add ->(model, options) { model.translation(options[:lang])['thanks_text'] || '' }, as: :thanks_text
     survey.add ->(model, options) { model.translation(options[:lang])['feedback_response_text'] || '' }, as: :feedback_response_text
     survey.add ->(model, options) { model.fetch_default_questions_and_choices(options[:lang]) }, as: :default_question
-    survey.add ->(model, options) { model.fetch_additional_questions_and_choices(options[:lang]) }, as: :additional_questions
+    survey.add ->(model, options) { model.fetch_additional_questions_and_choices(options[:lang]) }, as: :additional_questions, if: proc { |sur| sur.additional_questions_present? }
   end
 
   def fetch_default_questions_and_choices(lang = nil)
@@ -67,6 +67,10 @@ class CustomSurvey::Survey < ActiveRecord::Base
       choice_translation[choice[:face_value]] = lang.blank? ? choice[:value] : ((translation(lang)[type] || {})['choices'] || {})[choice[:face_value]] || ''
     end
     choice_translation
+  end
+
+  def additional_questions_present?
+    fetch_survey_questions.reject(&:default).present?
   end
 
   def fetch_survey_questions

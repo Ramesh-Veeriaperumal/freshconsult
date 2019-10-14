@@ -12,7 +12,7 @@ class HelpWidgetDecorator < ApiDecorator
   def to_hash
     ret_hash = to_index_hash
     ret_hash = ret_hash.merge!(settings: settings_hash)
-    ret_hash[:solution_category_ids] = solution_category_ids if Account.current.help_widget_solution_categories_enabled?
+    ret_hash[:solution_category_ids] = solution_category_ids
     ret_hash
   end
 

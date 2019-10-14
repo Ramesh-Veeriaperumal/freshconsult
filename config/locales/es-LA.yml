@@ -336,7 +336,7 @@ es-LA:
   upgrade_plan: Actualizar
   go_back: Volver
   go_back_small: volver
-  add_note: null
+  add_note: Agregar nota
   set_field_label_as: 'Establecer %{custom_field_name} como'
   contact_name: Nombre de contacto
   requester_email: Correo electrónico del solicitante
@@ -547,7 +547,13 @@ es-LA:
         tener mucho cuidado, ya que se convertirán en elementos desplegables en
         función de la sangría. Más información<a target='_blank'
         href=%{learn_more}> aprender mas</a>
-      nested_field_helptext: ''
+      nested_field_helptext: >-
+        Usa el área de texto que aparece a continuación para agrega o editar
+        elementos en el menú desplegable. Aplica sangría a los elementos
+        presionando la tecla de tabulación una o dos veces. Se convertirán en
+        elementos desplegables en función de la sangría. <a target='_blank'
+        href='https://support.freshdesk.com/solution/categories/45957/folders/74594/articles/37599-using-dependent-fields'>Más
+        información</a> 
       dropdown_items_edit: 'Elementos desplegables: Editar vista'
       drop_down_items_edit: 'Elementos desplegables: Editar'
       dropdown_items_preview: 'Elementos desplegables: Vista previa'
@@ -756,6 +762,13 @@ es-LA:
         neutral_info: Esperamos brindarte un mejor servicio la próxima vez.
         unhappy_info: Nos aseguraremos de tener más cuidado la próxima vez.
         additional_info: 'Además, puedes compartir tu experiencia de trabajar con nosotros.'
+    canned_form:
+      next: Siguiente
+      form_submit: Enviar
+      okay: Bien
+      hey: ¡Hola!
+      thank_you_text: Gracias
+      move_to_form_field: o presione enter
   gamification:
     levels:
       beginner: Principiante
@@ -1662,7 +1675,14 @@ es-LA:
               de soporte dedicada dentro de tu aplicación. Esta incluirá tu base
               de conocimientos y un formulario de ticket para que los usuarios
               puedan comunicarse contigo si necesitan ayuda.
-            info3: null
+            info3: >-
+              MobiHelp es totalmente configurable. Puedes seleccionar todo,
+              desde los campos de tu formulario de comentarios hasta el aspecto
+              que tendrá dentro de tu aplicación. La información como el nombre
+              del dispositivo, el sistema operativo y la versión de la
+              aplicación se recopila automáticamente sin esfuerzo del usuario.
+              También puedes habilitar campos de datos personalizados y
+              recopilar registros de bloqueos y rutas de exploración.
             info4: >-
               Puedes crear una cantidad ilimitada de aplicaciones para que se
               usen con MobiHelp y conectarlas con tu cuenta de Freshdesk. Una
@@ -1770,7 +1790,7 @@ es-LA:
             tu cuenta de eBay desde tu helpdesk. Una vez configurado, todas las
             consultas de los clientes de eBay se convertirán automáticamente en
             tickets. También puede responder a ellas directamente desde
-            Freshdesk.
+            Freshdesk. 
       index:
         title: Cuentas de comercio electrónico
         renew: Renovar token
@@ -2375,7 +2395,7 @@ es-LA:
         current_balance: 'Tienes %{balance} restantes.'
         buy_pass: Comprar más pases
         buy_now: Comprar ahora
-        day_pass_pack: "Paquete de %{quantity} pases por un día (%{currency} %{amount})"
+        day_pass_pack: 'Paquete de %{quantity} pases por un día (%{currency} %{amount})'
         day_pass_history: Historial de compras
         add_confirm: 'Se cobrará en tu tarjeta de crédito. '
         daypass_quantity: '%{quantity} pases por un día'
@@ -2734,7 +2754,7 @@ es-LA:
           transfieren hacia y desde Freshdesk.
         customer_portal_ssl_warning: >-
           Dado que se configura una dirección URL de helpdesk personalizada para
-          tu cuenta, se te redirigirá a
+          tu cuenta, se te redirigirá a 
         multiple_product_ssl_warning: No se podrá aplicar SSL si se configuran varios productos.
         enabled: Habilitado
         disabled: Deshabilitado
@@ -3916,7 +3936,7 @@ es-LA:
       dentro de un momento o escriba a support@freshdesk.com
   import_user_notification: >-
     Puedes enviar el correo electrónico de activación de usuario para los
-    contactos importados desde la pestaña Clientes.
+    contactos importados desde la pestaña Clientes. 
   what_is_cvv: ¿Qué es CVV?
   pro_details: >-
     Todo lo que incluye el plan &quot;Basic&quot; además de automatizaciones de
@@ -5964,11 +5984,12 @@ es-LA:
     add_skills: Agregar aptitudes
     more: más
     member: Miembro de
+    search_placeholder: Buscar todos los agentes
   account_admin: Administrador de cuenta
   right: Derecha
   footer:
     helpdesk_software: Software de helpdesk
-    helpdesk_software_link: "https://freshdesk.es"
+    helpdesk_software_link: 'https://freshdesk.es'
     by_freshdesk: por Freshdesk
     submit_feedback: Enviar comentarios
     footer_feedback_subject_placeholder: dinos cómo podemos mejorar freshdesk
@@ -6363,7 +6384,7 @@ es-LA:
       why_we_love_cookies: Ventajas de las cookies
       cookie_dialog_info1: >-
         Usamos las cookies para intentar ofrecerte una mejor experiencia en
-        Freshdesk.
+        Freshdesk. 
       cookie_dialog_info2: >-
         Puedes obtener más información acerca de los tipos de cookies que
         usamos, el motivo y la manera en la que las utilizamos en nuestra
@@ -6371,12 +6392,12 @@ es-LA:
         resultan muy pesadas, también puedes deshabilitarlas totalmente. Solo
         ten en cuenta que el servicio de Freshdesk es bastante grande en algunas
         cookies y algunas partes de Freshdesk pueden no funcionar correctamente
-        si las deshabilitas.
+        si las deshabilitas. 
       cookie_dialog_info3: >-
         También supondremos que estás de acuerdo con la manera en la que usamos
         las cookies y que la aceptas, conforme a lo descrito en nuestra
         %{privacy_link}, a menos que elijas deshabilitarlas totalmente desde tu
-        explorador.
+        explorador. 
       privacy_policy: Directiva de privacidad
     no_topics_in_this_view: ~ No hay temas en esta vista. ~
     reported: informado
@@ -6437,7 +6458,7 @@ es-LA:
     post_not_found: Parece que esta publicación se ha eliminado.
     showing_my_topics: Mostrando los temas que sigues actualmente
     community_forums: Foros de la comunidad
-    knowledge_base: Preguntas Frecuentes
+    knowledge_base: Base de conocimientos
     showing_recent_updates: Mostrando actualizaciones recientes
     no_articles_info_1: 'Lamentablemente, no hemos publicado ningún artículo en esta sección. '
     no_articles_info_2: 'Vuelve a comprobarlo más tarde. '
@@ -6448,7 +6469,7 @@ es-LA:
       more_articles: 'Más artículos en <span class=''folder-name''> %{article_name} </span>'
       modified_on: 'Fecha de modificación:'
       related_articles: Artículos relacionados
-      created_by: 'creado por:'
+      created_by: 'Creado por:'
       activation_warning: >-
         Parece que su cuenta aún no ha sido verificada. Actívela para publicar
         un artículo (puede guardar sus borradores hasta entonces).
@@ -6494,7 +6515,7 @@ es-LA:
       sort_order:
         date: Más antiguo primero
         recency: Más reciente primero
-        popularity: Popular
+        popularity: Destacada
       sort_by_most_recent: Más reciente
       sort_by_most_popular: Más popular
       sort_by_default: Predeterminado
@@ -6544,8 +6565,8 @@ es-LA:
       upvoted: Calificaste positivamente
       upvote: Calificar positivamente
       like:
-        one: le gusta esto
-        other: les gusta esto
+        one: le gusta
+        other: les gusta
     tickets:
       merged_topic_note: Un tema combinado no se puede convertir en un ticket.
       export: Exportar tickets
@@ -6567,6 +6588,8 @@ es-LA:
     customer_login_info: ¿Es usted un cliente?
     agent_signin: Inicie sesión aquí
     agent_login_info: ¿Es usted un agente?
+    helpdesk_login_portal: 'Bienvenido de nuevo, agente'
+    agent_login_details: Introducir los detalles a continuación
   feedbackwidget_form_heading: Encabezado del formulario
   feedbackwidget_form_title: Título de formulario de widget
   cancel_and_back: Cancelar y volver
@@ -6932,7 +6955,7 @@ es-LA:
       <b>publicarse</b>.
     info16: >-
       Los artículos <b>publicados</b> estarán visibles en el portal de
-      autoservicio y también aparecerán en los resultados de la búsqueda.
+      autoservicio y también aparecerán en los resultados de la búsqueda. 
     info17: >-
       Los artículos de <b>borrador</b> están visibles únicamente para los
       agentes y aparecerán en los resultados de la búsqueda solo para los
@@ -7267,7 +7290,7 @@ es-LA:
     user_not_available: Los tickets nuevos NO se te <br>asignarán automáticamente.
     toggle_shortcuts: Accesos directos de teclado
     goto_customer_portal: ir al portal de clientes
-    goto_agent_portal: portal de agentes
+    goto_agent_portal: Portal de agentes
     shortcuts_info: >-
       Presiona <span class='color-orange'>?</span> para ver <a
       id='shortcuts_info' href='#'>sugerencias de teclado.</a>
@@ -7426,7 +7449,7 @@ es-LA:
           específica para cada idioma. El icono <i
           class="common-icon-outdated"></i> indica que es posible que las
           traducciones de las notificaciones en otros idiomas estén
-          desactualizadas.
+          desactualizadas. 
       agent_template_3:
         topic: Ticket asignado a un agente
         info1: >-
@@ -7437,7 +7460,7 @@ es-LA:
           helpdesk, puedes crear una notificación específica para cada idioma.
           El icono <i class="common-icon-outdated"></i> indica que es posible
           que las traducciones de las notificaciones en otros idiomas estén
-          desactualizadas.
+          desactualizadas. 
       agent_template_11:
         topic: Ticket sin atender en un grupo
         info1: >-
@@ -7658,7 +7681,16 @@ es-LA:
   activate_and_log_in_long: Activar e iniciar sesión
   password: Contraseña
   enter_payment: Continuar con el pago
-  downgrade_confirm: "<span class=\"label label-important\">Importante:</span> Actualmente, estás cambiando del plan <b>%{from}</b> al plan <b>%{to}</b> de nivel inferior. Ten en cuenta que todos los datos y parámetros de configuración asociados con las funciones disponibles en el plan %{from} se perderán permanentemente.<br /><br /> Para ver la lista completa de planes y funciones, visita <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Planes y precios</a>. <br />¿Todavía no estás seguro? <a href = \"mailto:support@freshdesk.com\" >Permítenos ayudarte a decidir.</a>"
+  downgrade_confirm: >-
+    <span class="label label-important">Importante:</span> Actualmente, estás
+    cambiando del plan <b>%{from}</b> al plan <b>%{to}</b> de nivel inferior.
+    Ten en cuenta que todos los datos y parámetros de configuración asociados
+    con las funciones disponibles en el plan %{from} se perderán
+    permanentemente.<br /><br /> Para ver la lista completa de planes y
+    funciones, visita <a target="_blank"
+    href="http://freshdesk.com/pricing">Planes y precios</a>. <br />¿Todavía no
+    estás seguro? <a href = "mailto:support@freshdesk.com" >Permítenos ayudarte
+    a decidir.</a>
   downgrade_confirm_v2: >-
     Has optado por cambiar a una versión inferior la versión de prueba de
     <b>%{current_plan}</b> al plan <b>%{new_plan}</b>.
@@ -7965,8 +7997,12 @@ es-LA:
     expand: Expandir
     view_ticket: Ver ticket
     insert: Insertar
-    auto_delete_notification_spam: "Los tickets que estén en el correo no deseado durante más de 30 días se eliminarán automáticamente."
-    auto_delete_notification_trash: "Los tickets que estén en la papelera durante más de 30 días se eliminarán automáticamente."
+    auto_delete_notification_spam: >-
+      Los tickets que estén en el correo no deseado durante más de 30 días se
+      eliminarán automáticamente.
+    auto_delete_notification_trash: >-
+      Los tickets que estén en la papelera durante más de 30 días se eliminarán
+      automáticamente.
     parent_ticket: Ticket principal
     unresolved_child: >-
       El ticket no ha podido cerrarse ni resolverse, debido a que uno o más
@@ -8055,7 +8091,9 @@ es-LA:
       Recomendamos que conserves el ticket más antiguo como ticket principal
       para evitar errores en el cálculo de SLA.
     merge_confirm_info: Revisa tus notas de combinación y edición según sea necesario.
-    reply_cc_limit_exceeded: "Has alcanzado el umbral máximo de 50 destinatarios por ticket. Los destinatarios que no estén incluidos en esta cantidad se eliminarán."
+    reply_cc_limit_exceeded: >-
+      Has alcanzado el umbral máximo de 50 destinatarios por ticket. Los
+      destinatarios que no estén incluidos en esta cantidad se eliminarán.
     subject_placeholder: Buscar tickets por su asunto
     id_placeholder: Escribir un ID para buscar tickets
     requester_placeholder: Buscar tickets por solicitante
@@ -8625,7 +8663,9 @@ es-LA:
     info11: ¿Estás seguro de que quieres eliminar
     info10: 'Nota: Al eliminar una empresa no eliminarán sus contactos.'
     info2: Nombres de dominio para esta empresa
-    info5: "Agrega información específica de la empresa. Ejemplo: Estamos negociando un acuerdo de 100 k con esta empresa."
+    info5: >-
+      Agrega información específica de la empresa. Ejemplo: Estamos negociando
+      un acuerdo de 100 k con esta empresa.
     info6: 'Personas en %{name}'
     info7: No hay tickets creados por las personas de esta empresa.
     info8: >-
@@ -8826,6 +8866,13 @@ es-LA:
     gdpr_admin_details: ha cambiado sus permisos de usuario de
     gdpr_acknowledgement: y confirma haber leído nuestra
     gdpr_to: para
+    sort_conversations:
+      label: Ordenar conversaciones
+      helpnote: Este es el orden en el cual los mensajes aparecerán en los tickets.
+      latest_top: Ahora se mostrará la conversación más reciente en la parte superior.
+      oldest_top: Ahora se mostrará la conversación más antigua en la parte superior.
+      option1: Mostrar la más reciente en la parte superior
+      option2: Mostrar la más antigua en la parte superior
   lead: Líder
   comments: Comentarios
   forum_confirm_msg1: ¿Estás seguro de que quieres eliminar esta categoría?
@@ -9530,7 +9577,9 @@ es-LA:
         broadcast_note: Mensaje de difusión
         not_added: No se agregó la nota.
         attachment_size:
-          exceed: "Tus datos adjuntos superan los 15 MB. Realiza cambios antes de continuar."
+          exceed: >-
+            Tus datos adjuntos superan los 15 MB. Realiza cambios antes de
+            continuar.
           not_added: (sin agregar)
           not_added_greater: (> 15 mb sin agregar)
           exceed_limit: Supera el tamaño de datos adjuntos.
@@ -11006,7 +11055,11 @@ es-LA:
         de verificación y haga clic en "Actualizar".<br/><br/>
       form:
         domain: Dominio
-        domain_info: ''
+        domain_info: >-
+          Introduce la dirección URL de la cuenta de JIRA completa con
+          https/http. P. ej.: https://ejemplo.atlassian.net. <br /><span
+          class='italics'>Nota: Las variantes locales de JIRA deben exponerse en
+          Internet. </span>
         jira_note: Texto de descripción
         jira_note_info: Este texto se agregará a la descripción del problema en JIRA.
         widget_title: Título del widget
@@ -11342,7 +11395,10 @@ es-LA:
         domain_info: >-
           Usa el ID de usuario de superadministrador de Office 365 como
           nombre@empresa.onmicrosoft.com en el caso de instancias a petición.
-        organization_name_info: null
+        organization_name_info: >-
+          Para ubicar esto, accede a Configuración de Dynamics CRM ->
+          Personalizaciones -> Recursos de desarrollador -> Información de la
+          organización -> Nombre único de la organización.
         end_point_info: >-
           Ejemplo:
           https://freshpo4.api.crm5.dynamics.com/XRMServices/2011/Organization.svc.
@@ -11400,7 +11456,7 @@ es-LA:
         disposición de los agentes. <br><br>Puedes buscar contactos desde
         Batchbook al buscarlos con su dirección de correo electrónico. Si
         existen varios contactos con la misma dirección, todos ellos se
-        mostrarán en una lista.</p><br/>
+        mostrarán en una lista.</p><br/> 
       desc: >-
         Incorpora información de contacto de tu cuenta de Batchbook en
         Freshdesk.
@@ -11889,7 +11945,7 @@ es-LA:
         logmein_company_info: >-
           Para obtener tu ID de empresa, accede a Centro de administración ->
           Grupo del técnico -> Configuración general -> Ejemplo del lado del
-          servidor de ASP.Net C#.
+          servidor de ASP.Net C#. 
         logmein_sso_pwd_info: >-
           Para establecer tu contraseña de SSO, accede a Centro de
           administración -> Grupo del técnico-> Configuración global -> Inicio
@@ -11899,7 +11955,7 @@ es-LA:
       desc: >-
         Agrega MailChimp a Freshdesk y comienza a administrar tus suscripciones,
         exporta listas de clientes y extrae la información necesaria sobre sus
-        actividades desde tu helpdesk.
+        actividades desde tu helpdesk.  
       helptext: <h4>Ayuda para la integración con MailChimp</h4>
     constantcontact:
       label: Constant Contact
@@ -11913,7 +11969,7 @@ es-LA:
       desc: >-
         Busca y administra suscripciones en tu cuenta de Campaign Monitor, e
         incorpora conocimientos sobre las estadísticas de uso de los clientes
-        dentro de Freshdesk.
+        dentro de Freshdesk. 
       helptext: >-
         <h4> Ayuda para Integración de Monitor de campaña </h4><br/> Para
         integrar con Monitor de campaña, usted debe ingresar su clave de API y
@@ -11937,7 +11993,18 @@ es-LA:
         Exporta información de los clientes, administra las suscripciones
         existentes e incorpora conocimientos sobre las estadísticas de uso de
         los clientes dentro de Freshdesk.
-      helptext: ''
+      helptext: >-
+        <h4>Ayuda para la integración con iContact</h4><br/> Para la integración
+        con iContact, accede a <a target='_blank'
+        href='https://app.icontact.com/icp/core/externallogin'>https://app.icontact.com/icp/core/externallogin</a>
+        y otorga acceso a la aplicación de Freshdesk introduciendo el ID de
+        aplicación <br/><br/><b>qB7RYQgliAPwl5dwezYF0kAN4Islhj4e</b>.<br/><br/>
+        Establece una contraseña de tu elección y haz clic en
+        &quot;Guardar&quot;. Esta contraseña de API se utilizará para todas las
+        solicitudes de la API de Freshdesk. <br/><br/> Copia la URL de la API de
+        la sección &quot;Información de cuenta&quot; y pégala en el campo de URL
+        de la API aquí. Introduce tu nombre de usuario de iContact y la nueva
+        contraseña de la API y haz clic en Actualizar. 
       form:
         app_id: ID de aplicación
         username: Nombre de usuario de iContact
@@ -11946,11 +12013,30 @@ es-LA:
         api_url_info: >-
           Para obtener tu URL de la API, accede a
           https://app.icontact.com/icp/core/externallogin y copia la dirección
-          URL de la API en &quot;Información de cuenta&quot;.
+          URL de la API en &quot;Información de cuenta&quot;. 
     dropbox:
       label: DropBox
       desc: Adjunta y comparte tu información o archivos de DropBox.
-      helptext: ''
+      helptext: >-
+        <h4>Ayuda para la integración con Dropbox </h4><br/><p>La integración
+        con Dropbox permite a los agentes y a los usuarios buscar archivos desde
+        su carpeta de Dropbox y compartirlos al enviar o responder un ticket en
+        Freshdesk. En el ticket, se comparte un vínculo directo al archivo, lo
+        cual elimina la necesidad de archivos adjuntos y restricciones de tamaño
+        de correo electrónico.</p><p> Antes de configurar la integración, acceda
+        a la <a target='_blank' href='https://dropbox.com/developers'><b>página
+        para desarrolladores de Dropbox</b></a>.</p><p>1. Seleccione <b>Cree su
+        aplicación</b> en la sección <b>API v2</b>.</p><p>2. En <b>Elija una
+        API</b>, seleccione <a>API de Dropbox</a>.</p><p>3. Para el tipo de
+        acceso, seleccione <b>Full Dropbox</b>.</p><p>4. Escriba el nombre de su
+        aplicación y haga clic en <b>Crear aplicación</b>.</p><p>5. En su página
+        de aplicación, en la pestaña <b>Ajustes</b>, para <b>Dominios de
+        selector/almacenador</b>, agregue la dirección de URL de su plataforma
+        de soporte técnico sin https o www, por ejemplo:
+        <a>sauls.freshdesk.com</a>.</p><p> Por último, copie y pegue la clave de
+        aplicación de la nueva aplicación en esta página y guarde los cambios.
+        Su Selector de Dropbox ya debe estar listo. Puede comprobarlo en el
+        formulario Nuevo ticket.</p>
       form:
         app_key: Clave de aplicación registrada para tu dominio
         app_key_info: >-
@@ -12100,7 +12186,7 @@ es-LA:
       freshdesk_api_key: Clave de API de Freshdesk
       api_key_available: >-
         Puede obtener la clave de API en el menú Configuración de perfil de su
-        cuenta de Freshdesk
+        cuenta de Freshdesk 
       new_to_freshdesk: '¿Su primera vez en Freshdesk? '
     hootsuite:
       auth_error: >-
@@ -13048,7 +13134,7 @@ es-LA:
     classic: Clásico
     confirm: >-
       ¿Está seguro de que desea aplicar el nuevo aspecto? Todas las
-      personalizaciones\ \ CSS se perderán.
+      personalizaciones\ \ CSS se perderán. 
 
 
       Consejo: Cree una copia con las personalizaciones CSS que tiene
@@ -13218,7 +13304,7 @@ es-LA:
       dialog_schedule_guide: >-
         Después de guardar, puedes programar el informe al hacer clic en el
         icono de calendario.
-      error_max_limit: "Las cuentas pueden tener un máximo de %{limit} informes guardados."
+      error_max_limit: 'Las cuentas pueden tener un máximo de %{limit} informes guardados.'
       error_missing_title: Todos los campos son obligatorios.
       error_title_unavailable: Este título ya existe.
       delete_cnfm_message: ¿Estás seguro de que quieres eliminar este informe guardado?
@@ -13233,7 +13319,9 @@ es-LA:
       schedule_header: Programar informe
       read_more: ¿Cómo se programa un informe?
       schedule_success: El informe se programó correctamente.
-      limit_exceeded_message: "Solo puedes guardar %{count} filtros por informe. Elimina un informe guardado e intenta nuevamente."
+      limit_exceeded_message: >-
+        Solo puedes guardar %{count} filtros por informe. Elimina un informe
+        guardado e intenta nuevamente.
       tooltip: 'Programado cada %{period}'
       save: Guardar
       cancel: Cancelar
@@ -13274,10 +13362,14 @@ es-LA:
         daily: Diariamente
         weekly: Semanalmente
       errors:
-        emails_limit: "Puedes agregar un máximo de %{num} correos electrónicos."
+        emails_limit: 'Puedes agregar un máximo de %{num} correos electrónicos.'
         invalid_email: Correos electrónicos no válidos
-        acc_max_limit: "Solo puedes programar %{count} informes por cuenta. Elimina un programa e intenta nuevamente."
-        user_max_limit: "Solo puedes crear %{count} programas. Elimina un programa e intenta nuevamente."
+        acc_max_limit: >-
+          Solo puedes programar %{count} informes por cuenta. Elimina un
+          programa e intenta nuevamente.
+        user_max_limit: >-
+          Solo puedes crear %{count} programas. Elimina un programa e intenta
+          nuevamente.
         general: Algunos campos del formulario no son válidos.
         disabled: >-
           Los informes con intervalos de fechas personalizados no pueden
@@ -13414,8 +13506,8 @@ es-LA:
         total_tickets_received: 'total de tickets recibidos %{count}'
         total_tickets_resolved: 'total de tickets resueltos %{count}'
         reopened_tickets:
-          one: "%{ticket_count} tickets con %{reopen_count} reaperturas"
-          other: "%{ticket_count} tickets con %{reopen_count} reaperturas"
+          one: '%{ticket_count} tickets con %{reopen_count} reaperturas'
+          other: '%{ticket_count} tickets con %{reopen_count} reaperturas'
         total_tickets_unresolved: 'Total de tickets sin resolver: %{count}'
         total_load: Carga total
         carried_over: >-
@@ -14514,7 +14606,7 @@ es-LA:
             Activa tu cuenta telefónica y compra crédito para realizar o recibir
             llamadas.
           used_minutes: '%{used} de %{total} minutos utilizados'
-          purchase_limit: "Durante la prueba de teléfono, solo puedes comprar %{limit} números."
+          purchase_limit: 'Durante la prueba de teléfono, solo puedes comprar %{limit} números.'
           purchase_warning_expired: >-
             Una vez que caduca la prueba de teléfono, no se pueden buscar
             teléfonos.
@@ -14592,7 +14684,7 @@ es-LA:
         recorded_voice: Voz grabada
         audio_upload: Cargar
         greeting_message: Introduce tu mensaje aquí.
-        attachment_help_info: "Admite archivos de audio (mp3) de < 5 MB."
+        attachment_help_info: Admite archivos de audio (mp3) de < 5 MB.
         attachment_help_text: "Admite archivos de audio (mp3) de < 5 MB."
         recording_help_info: "Activa el micrófono. Duración de <5 min."
         cancel: Cancelar
@@ -14773,7 +14865,9 @@ es-LA:
             already_verified: El número de teléfono ya se verificó para tu cuenta.
         buy_phone_numbers: Comprar números de teléfono
         buy_phone_credits: Comprar crédito telefónico
-      invalid_attachment: "El archivo adjunto \"%{name}\" no es un archivo de audio válido o su tamaño es superior a 5 MB."
+      invalid_attachment: >-
+        El archivo adjunto "%{name}" no es un archivo de audio válido o su
+        tamaño es superior a 5 MB.
       ivr:
         simple_message_title: Mensaje simple
         ivr_message_title: Respuesta interactiva de voz (IVR)
@@ -15000,7 +15094,9 @@ es-LA:
     back: Volver
     select_location: Seleccionar ubicación
     valid_code: Ingresa un valor de color válido
-    chat_inactive_for_10_min: "Esta chat estuvo inactivo los últimos 10 minutos. Si terminaste la conversación, ciérralo."
+    chat_inactive_for_10_min: >-
+      Esta chat estuvo inactivo los últimos 10 minutos. Si terminaste la
+      conversación, ciérralo.
     close_chat_tooltip: Finalizar chat
     minimise_chat_tooltip: Minimizar
     settings_chat_tooltip: Opciones
@@ -15676,7 +15772,10 @@ es-LA:
       segura.</b><br />Debes habilitar el cifrado SSL desde <a
       href='/admin/security'>Configuración de seguridad</a>.
     image_upload_failed: No se puede actualizar la imagen personalizada en la pestaña de página.
-    image_instructions: "La imagen de destino debe tener una dimensión de 111 x 74 (las imágenes de cualquier dimensión pueden actualizarse a través de Facebook directamente)."
+    image_instructions: >-
+      La imagen de destino debe tener una dimensión de 111 x 74 (las imágenes de
+      cualquier dimensión pueden actualizarse a través de Facebook
+      directamente).
     configure_tab_auth: '<a href=''%{page_tab_url}''> Crear la pestaña de la página de Facebook</a>'
     configure_tab: Crear la pestaña de la página de Facebook
     config_info: >-
@@ -15861,13 +15960,13 @@ es-LA:
         puedes crear varias categorías de productos o equipos. Esto te ayudará a
         manejar las conversaciones relevantes en todas las secciones de nivel
         superior y, como administrador, aún podrás administrar todo desde un
-        solo lugar.
+        solo lugar. 
       para3: >-
         Si tienes portales de varios productos configurados en tu cuenta de
         Freshdesk, puedes elegir que una de tus categorías se vincule con un
         producto. Una vez que lo hagas, los usuarios podrán ver esa categoría,
         sus foros y todos sus temas en tu portal principal y en el portal del
-        producto.
+        producto. 
       para4: Más información acerca de varios productos en Freshdesk
     shared:
       topic:
@@ -16377,7 +16476,7 @@ es-LA:
   enable_n_companies: Habilitar
   add_new_company: Agregar empresa
   more_companies: '%{count} más'
-  n_companies: "%{count} empresas"
+  n_companies: '%{count} empresas'
   admin_onboarding:
     account_verification_message:
       non_admin_message: >-
@@ -16784,6 +16883,13 @@ es-LA:
     idiomas en el antiguo Freshdesk
   pts_plain: ' ptos'
   in: en
+  helpcard:
+    title: ID externo único
+    info: >-
+      Importe los ID únicos de sus clientes e identifique fácilmente sus
+      conversaciones en Freshdesk. <br><a
+      href="https://support.freshdesk.com/support/solutions/articles/226804-identifying-contacts-with-an-external-id"
+      target="_blank">Ayúdenme a configurar el ID externo</a>
   help_widget:
     name: 'Bienvenido al servicio de soporte %{name}'
     message: Bienvenido al servicio de soporte

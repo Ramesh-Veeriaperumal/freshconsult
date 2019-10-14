@@ -353,6 +353,7 @@ GIT
   tag: hv0.0.13.8
   specs:
     rule_engine (0.0.1)
+
 GIT
   remote: git@github.com:freshdesk/xeroizer.git
   revision: db93979351dc8047d6aeeeab63d697f8c4517f7b

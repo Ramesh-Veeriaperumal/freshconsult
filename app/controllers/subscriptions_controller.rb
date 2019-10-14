@@ -227,12 +227,13 @@ class SubscriptionsController < ApplicationController
       @addons = scoper.applicable_addons(@addons, @subscription_plan)
     end
 
-    def construct_subscription_request
+    def construct_subscription_request(next_renewal_at)
       downgrade_request = scoper.subscription_request.nil? ? scoper.build_subscription_request : scoper.subscription_request
       downgrade_request.plan_id = scoper.plan_id
       downgrade_request.renewal_period = scoper.renewal_period
       downgrade_request.agent_limit = scoper.agent_limit
       downgrade_request.fsm_field_agents = scoper.field_agent_limit
+      downgrade_request.next_renewal_at = Time.at(next_renewal_at).to_datetime.utc
       downgrade_request
     end
 
@@ -286,8 +287,8 @@ class SubscriptionsController < ApplicationController
       if scoper.downgrade?
         flash[:notice] = t('subscription_request_info_update') if scoper.subscription_request.present?
         scoper.convert_to_free if new_sprout?
-        billing_subscription.update_subscription(scoper, prorate?, @addons, coupon, true)
-        construct_subscription_request.save!
+        response = billing_subscription.update_subscription(scoper, false, @addons, coupon, true)
+        construct_subscription_request(response.subscription.current_term_end).save!
         return false
       else
         flash[:notice] = t('subscription_info_update') if current_account.launched?(:downgrade_policy) && scoper.subscription_request.present?
@@ -362,7 +363,7 @@ class SubscriptionsController < ApplicationController
       elsif card_needed_for_payment?
         redirect_to :action => "billing"
       else
-        flash[:notice] = t('plan_info_update') if scoper.subscription_request.nil?
+        flash[:notice] = t('plan_info_update') unless flash[:notice]
         redirect_to :action => "show"
       end
     end
