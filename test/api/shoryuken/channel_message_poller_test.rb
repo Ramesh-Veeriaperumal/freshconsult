@@ -108,7 +108,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
   end
 
   def test_update_social_tweets_for_mention
-    Account.current.launch(:mentions_to_tms)
+    Account.current.launch(:outgoing_tweets_to_tms)
     note = create_twitter_ticket_and_note('mention')
     fake_tweet_id = Faker::Number.between(1, 999999999).to_s
     payload = { 'status_code': 200, 'tweet_id': fake_tweet_id, 'note_id': note.id, 'tweet_type': 'mention' }
@@ -119,7 +119,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
     assert_equal tweet[:tweetable_id], payload[:note_id]
     assert_equal tweet[:tweet_id].to_s, payload[:tweet_id]
   ensure
-    Account.current.rollback(:mentions_to_tms)
+    Account.current.rollback(:outgoing_tweets_to_tms)
   end
 
   def test_update_social_tweets_with_error

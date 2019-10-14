@@ -1034,7 +1034,7 @@ module Ember
     end
 
     def test_twitter_reply_to_tweet_ticket
-      Account.current.stubs(:mentions_to_tms_enabled?).returns(false)
+      Account.current.stubs(:outgoing_tweets_to_tms_enabled?).returns(false)
       Sidekiq::Testing.inline! do
         with_twitter_update_stubbed do
           ticket = create_twitter_ticket
@@ -1055,11 +1055,11 @@ module Ember
         end
       end
     ensure
-      Account.current.unstub(:mentions_to_tms_enabled?)
+      Account.current.unstub(:outgoing_tweets_to_tms_enabled?)
     end
 
     def test_twitter_reply_to_tweet_note
-      Account.current.stubs(:mentions_to_tms_enabled?).returns(false)
+      Account.current.stubs(:outgoing_tweets_to_tms_enabled?).returns(false)
       Sidekiq::Testing.inline! do
         with_twitter_update_stubbed do
           ticket = create_twitter_ticket
@@ -1080,11 +1080,11 @@ module Ember
         end
       end
     ensure
-      Account.current.unstub(:mentions_to_tms_enabled?)
+      Account.current.unstub(:outgoing_tweets_to_tms_enabled?)
     end
 
     def test_twitter_reply_to_tweet_ticket_via_tms
-      Account.current.launch(:mentions_to_tms)
+      Account.current.launch(:outgoing_tweets_to_tms)
       Sidekiq::Testing.inline! do
         with_twitter_update_stubbed do
           ticket = create_twitter_ticket
@@ -1105,11 +1105,11 @@ module Ember
         end
       end
     ensure
-      Account.current.rollback(:mentions_to_tms)
+      Account.current.rollback(:outgoing_tweets_to_tms)
     end
 
     def test_twitter_reply_to_tweet_note_via_tms
-      Account.current.launch(:mentions_to_tms)
+      Account.current.launch(:outgoing_tweets_to_tms)
       Sidekiq::Testing.inline! do
         with_twitter_update_stubbed do
           ticket = create_twitter_ticket
@@ -1130,11 +1130,11 @@ module Ember
         end
       end
     ensure
-      Account.current.rollback(:mentions_to_tms)
+      Account.current.rollback(:outgoing_tweets_to_tms)
     end
 
     def test_twitter_reply_to_tweet_ticket_with_attachments
-      Account.current.stubs(:mentions_to_tms_enabled?).returns(false)
+      Account.current.stubs(:outgoing_tweets_to_tms_enabled?).returns(false)
       attachment_ids = []
       file = fixture_file_upload('files/image4kb.png', 'image/png')
       attachment_ids << create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
@@ -1164,7 +1164,7 @@ module Ember
       ticket.destroy
     ensure
       @account.rollback(:twitter_mention_outgoing_attachment)
-      Account.current.unstub(:mentions_to_tms_enabled?)
+      Account.current.unstub(:outgoing_tweets_to_tms_enabled?)
     end
 
     def test_twitter_reply_to_tweet_ticket_more_than_280_limit
@@ -1219,7 +1219,7 @@ module Ember
     end
 
     def test_twitter_mention_reply_to_dm_ticket_in_tms
-      Account.current.launch(:mentions_to_tms)
+      Account.current.launch(:outgoing_tweets_to_tms)
       Sidekiq::Testing.inline! do
         with_twitter_update_stubbed do
           ticket = create_twitter_ticket({tweet_type: 'dm'})
@@ -1240,7 +1240,7 @@ module Ember
         end
       end
     ensure
-        Account.current.unstub(:mentions_to_tms_enabled?)
+        Account.current.rollback(:outgoing_tweets_to_tms)
     end
 
     def test_ticket_conversations
