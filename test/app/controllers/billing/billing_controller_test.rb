@@ -24,10 +24,13 @@ class Billing::BillingControllerTest < ActionController::TestCase
     }
   end
 
-  def stub_subscription_settings
+  def stub_subscription_settings(options = {})
     WebMock.allow_net_connect!
     Account.stubs(:current).returns(@account)
-    chargebee_update = ChargeBee::Result.new(stub_update_params(@account.id))
+    update_params = stub_update_params(@account.id)
+    update_params[:subscription].merge!(options[:addons]) if options[:addons]
+    update_params[:subscription][:plan_id] = options[:plan_id] if options[:plan_id]
+    chargebee_update = ChargeBee::Result.new(update_params)
     ChargeBee::Subscription.stubs(:retrieve).returns(chargebee_update)
     Digest::MD5.stubs(:hexdigest).returns('5c8231431eca2c61377371de706a52cc')
     @controller.request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials('freshdesk', 'freshdesk')
@@ -113,6 +116,76 @@ class Billing::BillingControllerTest < ActionController::TestCase
     @account.subscription.save
     unstub_subscription_settings
     @account.rollback(:downgrade_policy)
+  end
+
+  def setup_fsm_addon_with_field_agent_count(field_agent_count)
+    subscription = @account.subscription
+    fsm_addon = Subscription::Addon.find_by_name('Field Service Management')
+    addon_mapping = subscription.subscription_addon_mappings.where(subscription_addon_id: fsm_addon.id)
+    if addon_mapping.nil?
+      addon_mapping = subscription.subscription_addon_mappings.new(subscription_addon_id: fsm_addon.id)
+      addon_mapping.save!
+    end
+    if field_agent_count.nil?
+      subscription.additional_info = subscription.additional_info.except(:field_agent_limit)
+    else
+      subscription.field_agent_limit=field_agent_count
+    end
+    subscription.save!
+  end
+
+  def test_subscription_changed_event_from_zero_to_ten_fsm_agents
+    addon_params = { addons: [{ id: 'field_service_management', quantity: 10, object: 'addon' }] }
+    stub_subscription_settings(addons: addon_params, plan_id: 'estate_jan_19_annual')
+    setup_fsm_addon_with_field_agent_count(0)
+    old_subscription = @account.subscription
+    Rails.env.stubs(:test?).returns(false)
+    Subscription.any_instance.unstub(:update_attributes)
+    Subscription.any_instance.unstub(:save)
+    ChargeBee::Subscription.any_instance.unstub(:plan_id)
+    post :trigger, event_type: 'subscription_changed', content: normal_event_content, format: 'json'
+    assert_response 200
+    assert_equal 10, @account.subscription.reload.field_agent_limit
+  ensure
+    @account.subscription.agent_limit = old_subscription.agent_limit
+    @account.subscription.save
+    unstub_subscription_settings
+  end
+
+  def test_subscription_changed_event_from_nil_to_ten_fsm_agents
+    addon_params = { addons: [{ id: 'field_service_management', quantity: 10, object: 'addon' }] }
+    stub_subscription_settings(addons: addon_params, plan_id: 'estate_jan_19_annual')
+    setup_fsm_addon_with_field_agent_count(nil)
+    old_subscription = @account.subscription
+    Rails.env.stubs(:test?).returns(false)
+    Subscription.any_instance.unstub(:update_attributes)
+    Subscription.any_instance.unstub(:save)
+    ChargeBee::Subscription.any_instance.unstub(:plan_id)
+    post :trigger, event_type: 'subscription_changed', content: normal_event_content, format: 'json'
+    assert_response 200
+    assert_equal 10, @account.subscription.reload.field_agent_limit
+  ensure
+    @account.subscription.agent_limit = old_subscription.agent_limit
+    @account.subscription.save
+    unstub_subscription_settings
+  end
+
+  def test_subscription_changed_event_from_two_to_ten_fsm_agents
+    addon_params = { addons: [{ id: 'field_service_management', quantity: 10, object: 'addon' }] }
+    stub_subscription_settings(addons: addon_params, plan_id: 'estate_jan_19_annual')
+    setup_fsm_addon_with_field_agent_count(2)
+    old_subscription = @account.subscription
+    Rails.env.stubs(:test?).returns(false)
+    Subscription.any_instance.unstub(:update_attributes)
+    Subscription.any_instance.unstub(:save)
+    ChargeBee::Subscription.any_instance.unstub(:plan_id)
+    post :trigger, event_type: 'subscription_changed', content: normal_event_content, format: 'json'
+    assert_response 200
+    assert_equal 10, @account.subscription.reload.field_agent_limit
+  ensure
+    @account.subscription.agent_limit = old_subscription.agent_limit
+    @account.subscription.save
+    unstub_subscription_settings
   end
 
   def test_subscription_activated_event

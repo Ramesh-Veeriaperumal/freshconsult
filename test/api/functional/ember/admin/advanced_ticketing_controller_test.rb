@@ -213,16 +213,18 @@ module Ember
               Account.current.subscription.update_attributes(additional_info: { field_agent_limit: 10 })
               Account.current.subscription.addons = Subscription::Addon.where(name: Subscription::Addon::FSM_ADDON)
               Account.current.subscription.save
+              Billing::Subscription.any_instance.stubs(:update_subscription).returns(true)
               delete :destroy, controller_params(version: 'private', id: 'field_service_management')
               assert_response 204
               fields_count_after_destroy = Account.current.ticket_fields.size
               assert fields_count_after_destroy == fields_count_after_installation
-              assert Account.current.subscription.additional_info[:field_agent_limit].present? == false
+              assert Account.current.subscription.reload.additional_info[:field_agent_limit].present? == false
               assert Account.current.subscription.addons.count.zero?
             end
           ensure
             User.any_instance.unstub(:privilege?)
             User.unstub(:current)
+            Billing::Subscription.any_instance.unstub(:update_subscription)
           end
         end
       end
