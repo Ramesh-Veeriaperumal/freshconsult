@@ -102,7 +102,7 @@ class Middleware::Pod
     Rails.logger.info "Shard #{shard.inspect}"
     if shard && PodConfig['CURRENT_POD'] != shard.pod_info
       Rails.logger.error "Current POD #{PodConfig['CURRENT_POD']}"
-      @redirect_url = "/pod_redirect/#{shard.pod_info}"
+      @redirect_url = "@pod_redirect_#{shard.pod_info}"
     end
        
   end
