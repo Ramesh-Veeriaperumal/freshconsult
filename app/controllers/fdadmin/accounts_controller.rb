@@ -14,7 +14,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
                 :migrate_to_freshconnect, :add_feature, :change_url, :single_sign_on, :remove_feature,:change_account_name,
                 :change_api_limit, :reset_login_count,:contact_import_destroy, :change_currency, :extend_trial, :reactivate_account,
                 :suspend_account, :change_webhook_limit, :change_primary_language, :trigger_action, :clone_account, :enable_fluffy,
-                :change_fluffy_limit, :change_fluffy_min_level_limit, :enable_fluffy_min_level , :disable_fluffy_min_leve]
+                :change_fluffy_limit, :change_fluffy_min_level_limit, :enable_fluffy_min_level , :disable_fluffy_min_level]
   before_filter :validate_params, :only => [:change_api_limit, :change_webhook_limit, :change_fluffy_limit, :change_fluffy_min_level_limit]
   before_filter :load_account, :only => [:user_info, :reset_login_count,
     :migrate_to_freshconnect, :extend_higher_plan_trial, :change_trial_plan]
@@ -891,6 +891,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       result.merge!(data: min_level_fluffy(account)) if account.launched?(:fluffy_min_level)
     rescue StandardError => e
       result[:status] = 'error'
+      Rails.logger.error("Error in fetching min level fluffy info for account_id: #{params[:account_id]} :: Exception: #{e.message}")
     ensure
       Account.reset_current_account
     end
@@ -947,7 +948,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       existing_account = Freshid::Account.find_by_domain(freshid_account_params[:domain])
       return false unless existing_account
       fd_account = Freshid::Account.new(freshid_account_params)
-      existing_organisation = fd_account.organisation_from_cache
+      existing_organisation = fd_account.organisation
       if !existing_organisation
         #org does not exist, create one
         response = account.create_freshid_org_without_account_and_user

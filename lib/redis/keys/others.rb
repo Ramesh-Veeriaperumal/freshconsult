@@ -130,8 +130,10 @@ module Redis::Keys::Others
   ACTIVE_SUSPENDED                        = "ACTIVE_SUSPENDED:%{account_id}".freeze
   CLEARBIT_NOTIFICATION                   = "CLEARBIT_NOTIFICATION".freeze
   CUSTOM_CATEGORY_NOTIFICATIONS           = "CUSTOM_CATEGORY_NOTIFICATIONS".freeze
+  CUSTOM_BOT_RULES                        = "CUSTOM_BOT_RULES".freeze
   SPAM_FILTERED_NOTIFICATIONS             = "SPAM_FILTERED_NOTIFICATIONS".freeze
   FACEBOOK_PREMIUM_ACCOUNTS               = "FACEBOOK_PREMIUM_ACCOUNTS".freeze
+  TWITTER_PREMIUM_ACCOUNTS                = "TWITTER_PREMIUM_ACCOUNTS".freeze
   TWITTER_SMART_FILTER_REVOKED            = "TWITTER_SMART_FILTER_REVOKED".freeze
   REVOKE_SUPPORT_BOT                      = "REVOKE_SUPPORT_BOT".freeze
   # Contact Delete Forever Key

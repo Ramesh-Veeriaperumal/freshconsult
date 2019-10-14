@@ -24,7 +24,15 @@ var SurveyOverview = {
                 }
              });
         },
-        renderContent:function(){            
+        renderContent:function(){    
+            var widget_queries_present = window.location.href.split("?")[1];
+            var widget_queries = (widget_queries_present) ? widget_queries_present.split("&") : false;
+
+            if (widget_queries && SurveyState.dashboard_widget_request) {
+                jQuery("#survey_report_group_list").val(widget_queries[0].split("=")[1]).trigger('change.select2');
+                SurveyState.dashboard_widget_request = false;
+            }
+
             if(!SurveyReport.isEmptyChart()){
                 SurveyReport.showReport();
                 SurveyUtil.mapQuestionsResult();

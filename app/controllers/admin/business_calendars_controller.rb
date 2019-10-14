@@ -1,4 +1,6 @@
 class Admin::BusinessCalendarsController <  Admin::AdminController
+
+  before_filter { access_denied unless current_account.sla_management_v2_enabled? }
   before_filter :load_object, :only => [:update, :destroy, :edit]
 
   def load_object

@@ -2,6 +2,7 @@
     Utilities that can be used across different modules.
 */
 var SurveyUtil = {
+        widget_queries_flag:false,
         smiley: {
              "HAPPY" : "ficon-survey-happy",
              "NEUTRAL" : "ficon-survey-neutral",

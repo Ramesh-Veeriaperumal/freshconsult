@@ -8,6 +8,7 @@ class Group < ActiveRecord::Base
   include Redis::OthersRedis
   include Redis::RoundRobinRedis
   include BusinessCalendarExt::Association
+  #include AccountOverrider # Yet to check why we have this Account current setter in legacy code
   include RoundRobinCapping::Methods
   include DataVersioning::Model
   include GroupConstants

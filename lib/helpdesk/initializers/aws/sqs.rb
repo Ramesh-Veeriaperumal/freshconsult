@@ -13,6 +13,7 @@ end
 # keys => name in yml, values => global variable to access SQS Queue url.
 GLOBAL_SQS_QUEUE_URLS = {
   :facebook_realtime_queue        => 'sqs_facebook',
+  :twitter_realtime_queue         => 'sqs_twitter',
   :channel_framework_services     => 'channel_framework_services',
   :custom_mailbox_status          => 'custom_mailbox_status',
   :fb_message_realtime_queue      => 'sqs_facebook_messages',
@@ -78,30 +79,3 @@ end unless Rails.env.development?
 
 SQS_V2_QUEUE_URLS.freeze
 
-# TWITTER RELATED SQS QUEUES
-begin
-  # EUC polls from the region specifuc queue pushed from EU
-  if S3_CONFIG[:region] == 'eu-central-1'
-    $sqs_twitter = AWS::SQS.new.queues.named(SQS[:twitter_realtime_queue])
-  # EU polls from the global queue, pushes it to region specific queues EU/EUC
-  elsif S3_CONFIG[:region] == 'eu-west-1'
-    $sqs_euc = AWS::SQS.new(
-      :access_key_id => S3_CONFIG[:access_key_id_euc],
-      :secret_access_key => S3_CONFIG[:secret_access_key_euc],
-      :region => S3_CONFIG[:region_euc],
-      :s3_signature_version => :v4)
-
-    # Initializing global variable polling the tweets from sqs - pod specific
-    $sqs_twitter_global = AWS::SQS.new.queues.named(SQS[:global_twitter_realtime_queue])
-    $sqs_twitter        = AWS::SQS.new.queues.named(SQS[:twitter_realtime_queue])
-    $sqs_twitter_eu     = AWS::SQS.new.queues.named(SQS[:twitter_realtime_queue_eu])
-    $sqs_twitter_euc    = $sqs_euc.queues.named(SQS[:twitter_realtime_queue_euc])
-  else
-    # US & AU Polls dircetly from the global queue - No region specific queues
-    $sqs_twitter  = AWS::SQS.new.queues.named(SQS[:twitter_realtime_queue])
-  end
-
-rescue => e
-  puts "Error in fetching URL for twitter queues - #{e.message}"
-  NewRelic::Agent.notice_error(e, {:description => "Error in fetching URL for twitter queues - #{e.message}"})
-end
