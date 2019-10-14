@@ -45,9 +45,9 @@ module IntegrationServices::Services
       def filter_system_information(resource)
         basic_information = resource['fields'].select { |x| x['name'] == 'basic_information' }.first
         basic_fields = basic_information['fields']
-        basic_fields.reject! { |x| x['name'] == 'system_information' }
-        email_field = basic_fields.find { |field| field['name'] == "email" }
-        email_field['visible'] = true
+        basic_fields.reject! { |x| x['name'] == 'system_information' || x['name'] == 'email' }
+        email_field = basic_fields.find { |field| field['name'] == 'emails' }
+        email_field['type'] = 'email'
         resource
       end
     end
