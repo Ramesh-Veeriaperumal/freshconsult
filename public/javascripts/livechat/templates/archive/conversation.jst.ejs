@@ -98,14 +98,14 @@
 												var link = "";
 												return msg.replace(linkRegex, function(token) {
 													if(mailRegExp.test(token)){
-														link = '<a href="mailto:'+token+'" class="mail_info_link" ><i class="ficon icon-mail"></i>'+token+'</a>';
+														link = '<a href="mailto:'+token+'" rel="noopener noreferrer" class="mail_info_link" ><i class="ficon icon-mail"></i>'+token+'</a>';
 													}else if(phoneRegExp.test(token)){
-														link = '<a href="javascript:void(0);" class="phone_info_link"><i class="ficon icon-mobile"></i>'+token+'</a>';
+														link = '<a href="javascript:void(0);" rel="noopener noreferrer" class="phone_info_link"><i class="ficon icon-mobile"></i>'+token+'</a>';
 													}else {
 														if(token.match("http") || token.match("https")){
-															link = '<a href="'+ token +'" target="_blank">'+token+'</a>';
+															link = '<a href="'+ token +'" rel="noopener noreferrer" target="_blank">'+token+'</a>';
 														}else{
-															link = '<a href="https:'+ token +'" target="_blank">'+token+'</a>';
+															link = '<a href="https:'+ token +'" rel="noopener noreferrer" target="_blank">'+token+'</a>';
 														}
 													}
 													return link;
