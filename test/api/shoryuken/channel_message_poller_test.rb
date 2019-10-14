@@ -61,7 +61,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
     push_to_channel(command_payload)
 
     ticket = @account.tickets.find_by_display_id(payload[:ticket_id])
-    note = ticket.notes.last
+    note = ticket.notes.find_by_notable_id(ticket.id)
     tweet = @account.tweets.last
 
     assert_equal tweet[:tweetable_id], note.id
