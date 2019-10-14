@@ -2928,6 +2928,8 @@ en:
       less_than: "less than"
       mail_del_failed_others: "Mail sent to cc or forward address failed"
       mail_del_failed_requester: "Mail sent to requester address failed"
+      response_due: "Ticket is marked overdue for response"
+      resolution_due: "Ticket is marked overdue for resolution"
       mark_as_spam: "Mark As Spam"
       marked_spam: "Marked As Spam"
       name: "Name"

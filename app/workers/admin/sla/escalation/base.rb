@@ -2,7 +2,11 @@ module Admin::Sla::Escalation
   class Base < BaseWorker
     include SlaSidekiq
     include SchedulerSemaphoreMethods
+
     sidekiq_options :queue => :sla, :retry => 0, :failures => :exhausted
+
+    RESOLUTION_DUE = { resolution_due: true }.freeze
+    RESPONSE_DUE = { response_due: true }.freeze
 
     def perform
       account = Account.current
@@ -58,6 +62,10 @@ module Admin::Sla::Escalation
             sla_policy = sla_rule_based[ticket.sla_policy_id] || sla_default
             execute_on_db("run_on_master") do
               sla_policy.safe_send("escalate_#{overdue_type}_overdue", ticket)
+            end
+            if account.automation_revamp_enabled?
+              event = overdue_type == 'response' ? RESPONSE_DUE : RESOLUTION_DUE
+              ticket.trigger_observer(event, false, true)
             end
           end
           overdue_tickets_count
