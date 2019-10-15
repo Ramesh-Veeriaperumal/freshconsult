@@ -36,6 +36,10 @@ new_dir=$1
 move_dir $new_dir/es-ES $new_dir/es
 move_dir $new_dir/ja $new_dir/ja-JP
 move_dir $new_dir/es-MX $new_dir/es-LA
+move_dir $new_dir/no $new_dir/nb-NO
+move_dir $new_dir/ru $new_dir/ru-RU
+
+
 
 for lang in `ls $1`
 do 
