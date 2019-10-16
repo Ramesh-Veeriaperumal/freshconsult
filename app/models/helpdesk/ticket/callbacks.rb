@@ -601,21 +601,27 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def trigger_ticket_properties_suggester_feedback
-    trigger_feedback = false
-    ticket_properties_suggester_hash = schema_less_ticket.try(:ticket_properties_suggester_hash)
-    suggested_fields = ticket_properties_suggester_hash[:suggested_fields] if ticket_properties_suggester_hash.present?
-
-    TicketPropertiesSuggester::Util::ML_FIELDS_TO_PRODUCT_FIELDS_MAP.each do |field, value|
-      next if !model_changes.key?(field)
-      suggested_fields[value.to_sym][:updated] = true
-      trigger_feedback = true
-    end
-    if trigger_feedback
-      ticket_properties_suggester_hash[:suggested_fields] = suggested_fields
-      schema_less_ticket.ticket_properties_suggester_hash = ticket_properties_suggester_hash
-      Rails.logger.info "Helpdesk::Ticket::trigger_ticket_properties_suggester_feedback::#{Time.zone.now.to_f} and schema_less_ticket_object :: #{schema_less_ticket.reports_hash.inspect}"
-      schema_less_ticket.save!
-      ::Freddy::TicketPropertiesSuggesterWorker.perform_async(ticket_id: id, action: 'feedback', model_changes: model_changes)
+    begin
+      trigger_feedback = false
+      ticket_properties_suggester_hash = schema_less_ticket.ticket_properties_suggester_hash                                        
+      suggested_fields = ticket_properties_suggester_hash[:suggested_fields]
+      
+      TicketPropertiesSuggester::Util::ML_FIELDS_TO_PRODUCT_FIELDS_MAP.each do |field, value|        
+        if model_changes.key?(field) && suggested_fields[value.to_sym].present?
+          suggested_fields[value.to_sym][:updated] = true
+          trigger_feedback = true
+        end
+      end
+      if trigger_feedback
+        ticket_properties_suggester_hash[:suggested_fields] = suggested_fields
+        schema_less_ticket.ticket_properties_suggester_hash = ticket_properties_suggester_hash
+        Rails.logger.info "Helpdesk::Ticket::trigger_ticket_properties_suggester_feedback::#{Time.zone.now.to_f} and schema_less_ticket_object :: #{schema_less_ticket.reports_hash.inspect}"
+        schema_less_ticket.save!
+        ::Freddy::TicketPropertiesSuggesterWorker.perform_async(ticket_id: id, action: 'feedback', model_changes: model_changes)
+      end
+    rescue Exception => e
+      Rails.logger.info "Exception in Triggering Ticket Properties Suggester :: #{e.message}"
+      NewRelic::Agent.notice_error(e, description: "Error in Triggering Ticket Properties Suggester::Exception:: #{e.message}")
     end
   end
 
@@ -1072,7 +1078,16 @@ private
   end
 
   def ticket_properties_suggester_feedback_required?
-    schema_less_ticket.ticket_properties_suggester_hash.present? && performed_by_agent? && !all_predicted_fields_updated?
+    account.ticket_properties_suggester_enabled? && model_changes.slice(*ml_suggested_fields).present? &&
+      ml_suggestions_present? && performed_by_agent? && !all_predicted_fields_updated?      
+  end
+
+  def ml_suggested_fields
+    TicketPropertiesSuggester::Util::ML_SUGGESTED_FIELDS
+  end
+
+  def ml_suggestions_present?
+    schema_less_ticket.ticket_properties_suggester_hash.present? && schema_less_ticket.ticket_properties_suggester_hash[:suggested_fields].present?
   end
 
   def performed_by_agent?
