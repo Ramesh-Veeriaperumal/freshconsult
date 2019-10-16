@@ -3483,6 +3483,7 @@ en:
   choose_different_plan: Choose a different plan
   downgrade_plan: "Note: If you downgrade a plan, you might lose some of the existing features"
   downgrade_plan_v2: "Note: If you downgrade your plan, you might lose some features!"
+  fsm_requirements_not_met: "Field service management cannot be enabled as some requirements are not met. Please reach out to support for more information"
   f_request: Feature Request
   save_and_create: Save and Create Another
   save_and_new: Save and <strong>New</strong>

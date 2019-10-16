@@ -7,6 +7,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
   include SubscriptionTestHelper
   include Redis::OthersRedis
   include Redis::Keys::Others
+  include TicketFieldsTestHelper
 
   def setup
     Subscription.any_instance.stubs(:chk_change_field_agents).returns(nil)
@@ -273,6 +274,62 @@ class SubscriptionsControllerTest < ActionController::TestCase
     ChargeBee::Subscription.stubs(:remove_scheduled_cancellation).raises(ChargeBee::InvalidRequestError)
     delete :cancel_request
     assert_response 404
+  end
+
+  def test_fsm_artifacts_with_9_date_fields
+    params = { agent_limit: '1', addons: { field_service_management: { enabled: 'true', value: ' ' } } }
+    stub_chargebee_requests
+    @account.subscription.update_attributes(agent_limit: '6')
+    (@account.custom_date_fields_from_cache.count..8).each do |i|
+      create_custom_field('date_time' + i.to_s, 'date')
+    end
+    post :plan, construct_params({}, params.merge!(params_hash.except(:agent_limit)))
+    @account.reload
+    assert_response 302
+    assert_equal @account.subscription.additional_info[:field_agent_limit], nil
+    assert_equal I18n.t('fsm_requirements_not_met'), flash[:notice]
+  ensure
+    unstub_chargebee_requests
+  end
+
+  def test_fsm_text_fields_with_normalized_flexi_field_with_limit_reached
+    params = { agent_limit: '1', addons: { field_service_management: { enabled: 'true', value: ' ' } } }
+    Account.any_instance.stubs(:denormalized_flexifields_enabled?).returns(false)
+    stub_chargebee_requests
+    (1..2).each do |i|
+      create_custom_field('text' + i.to_s, 'text')
+    end
+    stub_const(Helpdesk::Ticketfields::Constants, 'MAX_ALLOWED_COUNT', string: 4, text: 10, number: 20, date: 10, boolean: 10, decimal: 10) do
+      stub_const(Helpdesk::Ticketfields::Constants, 'TICKET_FIELD_DATA_COUNT', string: 4, text: 10, number: 20, date: 10, boolean: 10, decimal: 10) do
+        post :plan, construct_params({}, params.merge!(params_hash.except(:agent_limit)))
+        @account.reload
+        assert_response 302
+        assert_equal @account.subscription.additional_info[:field_agent_limit], nil
+        assert_equal I18n.t('fsm_requirements_not_met'), flash[:notice]
+      end
+    end
+  ensure
+    unstub_chargebee_requests
+    Account.any_instance.unstub(:denormalized_flexifields_enabled?)
+  end
+
+  def test_fsm_text_fields_with_denormalized_flexi_field_with_limit_reached
+    params = { agent_limit: '1', addons: { field_service_management: { enabled: 'true', value: ' ' } } }
+    Account.any_instance.stubs(:denormalized_flexifields_enabled?).returns(true)
+    stub_chargebee_requests
+    (1..2).each do |i|
+      create_custom_field('text' + i.to_s, 'text')
+    end
+    stub_const(Helpdesk::Ticketfields::Constants, 'MAX_ALLOWED_COUNT_DN', string: 4, text: 10, number: 20, date: 10, boolean: 10, decimal: 10) do
+      post :plan, construct_params({}, params.merge!(params_hash.except(:agent_limit)))
+      @account.reload
+      assert_response 302
+      assert_equal @account.subscription.additional_info[:field_agent_limit], nil
+      assert_equal I18n.t('fsm_requirements_not_met'), flash[:notice]
+    end
+  ensure
+    unstub_chargebee_requests
+    Account.any_instance.unstub(:denormalized_flexifields_enabled?)
   end
 
   private
