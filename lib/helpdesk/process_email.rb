@@ -1238,7 +1238,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
       if !ticket.nil? && !ticket.account.nil? && antispam_enabled?(ticket.account)
         begin
-          ticket.sds_spam = params[:spam_info]['spam']
           ticket.spam_score = params[:spam_info]['score']
           ticket.spam = true if params[:spam_info]['spam'] == true
           Rails.logger.info "Spam rules triggered for ticket with message_id #{params[:message_id]}: #{params[:spam_info]['rules']}"

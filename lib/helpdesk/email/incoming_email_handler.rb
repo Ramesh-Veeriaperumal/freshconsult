@@ -791,7 +791,6 @@ module Helpdesk
 
 					if (antispam_enabled?(ticket.account))
 						begin
-							ticket.sds_spam = spam_data['is_spam']
 							ticket.spam_score = spam_data['score']
 							ticket.spam = true if spam_data['is_spam'] == true
 							Rails.logger.info "Spam rules triggered for ticket with message_id #{params[:message_id]}: #{spam_data['rules'].inspect}"
