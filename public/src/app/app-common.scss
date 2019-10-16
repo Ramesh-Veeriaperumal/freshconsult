@@ -2277,6 +2277,33 @@ a.mobile_switchBtn {
 	}
 }
 
+.help-widget{
+  .clip-data{
+    background-color: #f5f7f9;
+    width: 280px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    padding: 7px;
+    font-size: 14px;
+  }
+  .copy-icon{
+    position: relative;
+    left: -38px;
+    border-left: 1px solid #eee;
+    padding: 0px 5px 0px 10px;
+    font-size: 18px;
+  }
+  .reset-key{
+    position: relative;
+    left: -20px;
+    top: -3px;
+    font-weight: 500;
+    .ficon-undo{
+      color: #06c;
+    }
+  }
+}
+
 .custom-select2{
   .select2-container{
     vertical-align: top;

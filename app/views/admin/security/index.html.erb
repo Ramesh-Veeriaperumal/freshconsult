@@ -235,6 +235,25 @@
       </div>
     </li>
     <% end %>
+    <% if current_account.help_widget_enabled? && current_account.help_widget_login_enabled? %>
+      <li class="help-widget">
+        <div class="ml10">
+          <h3 class="rebrand-head-text top-space-none"><%= t('.widget.settings') %></h3>
+          <div class="btn-bold pb5"><%= t('.widget.sso') %></div>
+          <div class="info-data">
+            <div><%= t('.widget.info1') %></div>
+            <div><%= t('.widget.info2').html_safe %></div>
+          </div>
+          <div class="pt6">
+            <input type="text" class="clip-data" value="<%= current_account.help_widget_secret %>" readonly>
+            <a class="tooltip copy-icon" title="<%= t('.widget.copy_to_clipboard') %>" id='copy-icon'>
+              <i class="ficon-clone fsize-18"></i>
+            </a>
+            <%= link_to "<i class='ficon-undo fsize-14 mr3'></i>#{t('.widget.reset_key')}".html_safe, '', :class => 'reset-key' %>
+          </div>
+        </div>
+      </li>
+    <%end%>
     <li>
       <div class="ml10">
         <h3 class="rebrand-head-text top-space-none"><%= t('.admin_notifications') %></h3>
@@ -473,6 +492,23 @@
       })
 
     <% end %>
+
+    $('#copy-icon').on('click', function(){
+      var clipboard = new Clipboard('.copy-icon', {
+          target: function(trigger) {
+            return $(trigger).siblings("input.clip-data")[0];
+          }
+      });
+
+      clipboard.on('success', function(e) {
+        $(e.trigger).attr('data-original-title', "<%= t('.widget.copied')%>").data('copied',true).twipsy('show');
+        setTimeout(function(){
+          $(e.trigger).twipsy('hide').attr('data-original-title', "<%= t('.widget.copy_to_clipboard')%>").data('copied',false);
+        },1000);
+        e.clearSelection();
+      });
+
+    });
 
   })(jQuery)
 <% end %>
