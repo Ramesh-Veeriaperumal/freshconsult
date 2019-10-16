@@ -9,7 +9,7 @@ properties:
   'type':
     type: string
     enum: ['custom_text','custom_paragraph','custom_checkbox','custom_number','custom_dropdown','custom_date',
-           'custom_date_time','custom_decimal','nested_field','encrypted_text']
+           'custom_decimal','nested_field','encrypted_text']
   required_for_closure:
     type: boolean
   required_for_agents:

@@ -15536,6 +15536,20 @@
           "items": {
             "type": "integer"
           }
+        },
+        "custom_fields": {
+          "type": "object",
+          "description": "Only field service appointment start and end times are permitted",
+          "properties": {
+            "cf_fsm_appointment_start_time": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "cf_fsm_appointment_end_time": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
         }
       }
     },
@@ -17744,7 +17758,6 @@
             "custom_number",
             "custom_dropdown",
             "custom_date",
-            "custom_date_time",
             "custom_decimal",
             "nested_field",
             "encrypted_text"

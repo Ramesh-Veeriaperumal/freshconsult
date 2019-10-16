@@ -1,36 +1,45 @@
 type: object
 properties:
-    due_by:
+  due_by:
+    type: string
+    format: date-time
+  responder_id:
+    type: integer
+  group_id:
+    type: integer
+  company_id:
+    type: integer
+  requester_id:
+    type: integer
+  status:
+    type: integer
+  priority:
+    type: integer
+  tags:
+    type: array
+    items:
       type: string
-      format: date-time
-    responder_id:
+  skip_close_notification:
+    type: boolean
+  subject:
+    type: string
+  description:
+    type: string
+  attachment_ids:
+    type: array
+    items:
       type: integer
-    group_id:
+  inline_attachment_ids:
+    type: array
+    items:
       type: integer
-    company_id:
-      type: integer
-    requester_id:
-      type: integer
-    status:
-      type: integer
-    priority:
-      type: integer
-    tags:
-      type: array
-      items:
+  custom_fields:
+    type: object
+    description: Only field service appointment start and end times are permitted
+    properties:
+      cf_fsm_appointment_start_time:
         type: string
-    skip_close_notification:
-      type: boolean
-    subject:
-      type: string
-    description:
-      type: string
-    attachment_ids:
-      type: array
-      items:
-        type: integer
-    inline_attachment_ids:
-      type: array
-      items:
-        type: integer
-
+        format: date-time
+      cf_fsm_appointment_end_time:
+        type: string
+        format: date-time
