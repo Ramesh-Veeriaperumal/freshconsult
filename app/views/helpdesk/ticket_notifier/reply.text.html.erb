@@ -11,6 +11,8 @@
 				:survey_feedback_preview => false } %>
 <%end%>
 
+<%= render :partial => 'helpdesk/shared/secure_attachments.html.erb' if @account.secure_attachments_enabled? %>
+
 <%= render :partial => 'shared/free_plan_message' %>
 
 <%= hidden_ticket_identifier(@ticket) %>

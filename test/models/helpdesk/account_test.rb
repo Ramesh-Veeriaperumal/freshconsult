@@ -17,4 +17,25 @@ class AccountTest < ActiveSupport::TestCase
       Account.find(invalid_id)
     end
   end
+
+  def test_enable_secure_attachments
+    @account = create_test_account if @account.nil?
+    @account.make_current
+    @account.revoke_feature(:private_inline)
+    @account.add_feature(:secure_attachments)
+    assert @account.private_inline_enabled?
+  ensure
+    @account.revoke_feature(:secure_attachments)
+  end
+
+  def test_disable_secure_attachments
+    @account = create_test_account if @account.nil?
+    @account.make_current
+    @account.add_feature(:secure_attachments)
+    @account.add_feature(:private_inline)
+    @account.revoke_feature(:secure_attachments)
+    assert !@account.private_inline_enabled?
+  ensure
+    @account.revoke_feature(:private_inline)
+  end
 end

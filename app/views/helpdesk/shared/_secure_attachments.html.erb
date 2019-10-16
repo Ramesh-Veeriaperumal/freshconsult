@@ -1,0 +1,9 @@
+<% if @attachment_files.present? %>
+  <%= t('mailer_notifier.attachment') %>
+  <ul>
+    <br>
+    <% @attachment_files.each do |a| %>
+      <li> <a href="<%= a.inline_url %>"> <%= a.content_file_name %></a> </li>
+    <% end %>
+  </ul>
+<% end %>

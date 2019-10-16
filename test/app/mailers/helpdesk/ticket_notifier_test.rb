@@ -4,6 +4,7 @@ require_relative '../../../core/helpers/account_test_helper.rb'
 require_relative '../../../core/helpers/controller_test_helper.rb'
 require_relative '../../../core/helpers/users_test_helper.rb'
 require_relative '../../../core/helpers/tickets_test_helper.rb'
+require_relative '../../../core/helpers/note_test_helper.rb'
 ['ticket_helper.rb', 'user_helper.rb'].each { |file| require Rails.root.join("spec/support/#{file}") }
 
 class TicketNotifierTest < ActionMailer::TestCase
@@ -13,7 +14,8 @@ class TicketNotifierTest < ActionMailer::TestCase
   include CoreTicketsTestHelper
   include TicketHelper
   include UsersHelper
-  
+  include NoteTestHelper
+
   def setup
     get_agent
     @ticket = create_ticket
@@ -63,4 +65,114 @@ class TicketNotifierTest < ActionMailer::TestCase
     e_notification.update_attributes({ agent_notification: true })
   end
 
+  def test_ticket_reply_with_secure_attachments
+    agent = add_test_agent(@account)
+    ticket = create_ticket(responder_id: agent.id)
+    note = create_note_with_attachments(ticket_id: ticket.id, user_id: agent.id)
+    options = {
+      include_cc: false,
+      send_survey: false,
+      quoted_text: note.quoted_text,
+      include_surveymonkey_link: false
+    }
+    from_email = Faker::Internet.email
+    to_email = Faker::Internet.email
+    note.schema_less_note.to_emails = to_email
+    note.schema_less_note.from_email = from_email
+    note.schema_less_note.save
+    @account.add_feature(:private_inline)
+    @account.stubs(:secure_attachments_enabled?).returns(true)
+    mail_message = Helpdesk::TicketNotifier.reply(ticket, note, options)
+    assert_equal mail_message.to.first, to_email
+    html_part = mail_message.html_part ? mail_message.html_part.body.decoded : nil
+    if html_part.present?
+      attachment_url = note.attachments.first.inline_url
+      assert html_part.include?(attachment_url)
+    end
+    text_part = mail_message.text_part ? mail_message.text_part.body.decoded : nil
+    if text_part.present?
+      attachment_url = note.attachments.first.inline_url
+      assert text_part.include?(attachment_url)
+    end
+  ensure
+    note.destroy
+    ticket.destroy
+    agent.destroy
+    @account.revoke_feature(:private_inline)
+    @account.unstub(:secure_attachments_enabled?)
+  end
+
+  def test_ticket_forward_with_secure_attachments
+    agent = add_test_agent(@account)
+    ticket = create_ticket(responder_id: agent.id)
+    num_of_files = 3
+    note = create_note_with_multiple_attachments(num_of_files: num_of_files, ticket_id: ticket.id, user_id: agent.id)
+    options = {
+      include_cc: false,
+      send_survey: false,
+      quoted_text: note.quoted_text,
+      include_surveymonkey_link: false
+    }
+    from_email = Faker::Internet.email
+    to_emails = [Faker::Internet.email]
+    note.schema_less_note.to_emails = to_emails
+    note.schema_less_note.from_email = from_email
+    note.schema_less_note.save
+    @account.add_feature(:private_inline)
+    @account.stubs(:secure_attachments_enabled?).returns(true)
+    mail_message = Helpdesk::TicketNotifier.forward(ticket, note, options)
+    assert_equal mail_message.to.first, to_emails.first
+    html_part = mail_message.html_part ? mail_message.html_part.body.decoded : nil
+    if html_part.present?
+      attachment_url = note.attachments.first.inline_url
+      assert html_part.include?(attachment_url)
+      assert_equal note.attachments.count, num_of_files
+    end
+    text_part = mail_message.text_part ? mail_message.text_part.body.decoded : nil
+    if text_part.present?
+      attachment_url = note.attachments.first.inline_url
+      assert text_part.include?(attachment_url)
+      assert_equal note.attachments.count, num_of_files
+    end
+  ensure
+    note.destroy
+    ticket.destroy
+    agent.destroy
+    @account.revoke_feature(:private_inline)
+    @account.unstub(:secure_attachments_enabled?)
+  end
+
+  def test_ticket_reply_to_forward_with_secure_attachments
+    agent = add_test_agent(@account)
+    ticket = create_ticket(responder_id: agent.id)
+    num_of_files = 3
+    note = create_note_with_multiple_attachments(num_of_files: num_of_files, ticket_id: ticket.id, user_id: agent.id)
+    from_email = Faker::Internet.email
+    to_email = Faker::Internet.email
+    note.schema_less_note.to_emails = to_email
+    note.schema_less_note.from_email = from_email
+    note.schema_less_note.save
+    @account.add_feature(:private_inline)
+    @account.stubs(:secure_attachments_enabled?).returns(true)
+    mail_message = Helpdesk::TicketNotifier.deliver_reply_to_forward(ticket, note)
+    assert_equal mail_message.to.first, to_email
+    html_part = mail_message.html_part ? mail_message.html_part.body.decoded : nil
+    if html_part.present?
+      attachment_url = note.attachments.first.inline_url
+      assert html_part.include?(attachment_url)
+      assert_equal note.attachments.count, num_of_files
+    end
+    text_part = mail_message.text_part ? mail_message.text_part.body.decoded : nil
+    if text_part.present?
+      attachment_url = note.attachments.first.inline_url
+      assert text_part.include?(attachment_url)
+      assert_equal note.attachments.count, num_of_files
+    end
+  ensure
+    note.destroy
+    ticket.destroy
+    agent.destroy
+    @account.revoke_feature(:private_inline)
+    @account.unstub(:secure_attachments_enabled?)
+  end
 end
