@@ -211,6 +211,12 @@ module ExportCsvUtil
     item.respond_to?(val) ? item.safe_send(val) : item.custom_field_value(val)
   end
 
+  def visible_fields_including_nested
+    visible_fields = ['display_id', 'status', 'created_at', 'updated_at', 'requester_name'] # removed "due_by", "resolved_at"
+    current_portal.all_ticket_fields(:customer_visible).each { |field| visible_fields.push(field.name) }
+    visible_fields
+  end
+
   private
 
   def split_flexifields fields
