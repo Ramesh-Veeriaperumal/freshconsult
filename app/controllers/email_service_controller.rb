@@ -60,7 +60,7 @@ class EmailServiceController < Fdadmin::MetalApiController
   
   def redirect_email(pod_info)
     # mail is redirected to the correct pod, using Nginx X-Accel-Redirect. There is no redirect sent to Sendgrid.
-    redirect_url = "@pod_redirect_#{pod_info}" #Should match with the location directive in Nginx Proxy
+    redirect_url = "/pod_redirect/#{pod_info}" #Should match with the location directive in Nginx Proxy
     Rails.logger.info "Redirecting to the correct POD. Redirect URL is #{redirect_url}"
     response.headers["X-Accel-Redirect"] = redirect_url
     response.headers["X-Accel-Buffering"] = "off"
