@@ -5,7 +5,7 @@ class Account < ActiveRecord::Base
   before_create :set_default_values, :set_shard_mapping, :save_route_info
   before_create :update_currency_for_anonymous_account, if: :is_anonymous_account
   before_create :add_features_to_binary_column
-  validates_inclusion_of :time_zone, :in => TIME_ZONES, :unless => :time_zone_updation_running?
+  validates_inclusion_of :time_zone, in: TIME_ZONES, if: :validate_timezone?
   before_update :check_default_values, :backup_changes, :check_timezone_update
   before_update :update_global_pod_domain
   before_update :generate_encryption_key, if: :enabled_custom_encrypted_fields?
@@ -258,6 +258,10 @@ class Account < ActiveRecord::Base
     def check_timezone_update
       self.time_zone = @old_object.time_zone if @all_changes.key?("time_zone") && 
                                                 self.time_zone_updation_running?
+    end
+
+    def validate_timezone?
+      !time_zone_updation_running? && time_zone_changed?
     end
 
     def account_verification_changed?
