@@ -50,7 +50,7 @@
 								</ul>
 
 							</div>
-							<%else%>
+							<%elsif current_account.personal_canned_response_enabled? %>
 							<%= t('canned_folders.viewing') %>
 							<%count = current_account.canned_responses.only_me(current_user).count(:conditions => {:folder_id => @pfolder.id})%>
 							<b ><%= CGI.escapeHTML(@pfolder.display_name) %> (<%= count %>)</b>

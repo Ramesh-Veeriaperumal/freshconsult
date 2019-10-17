@@ -6,6 +6,7 @@ module Channel::V2
   class TicketsControllerTest < ActionController::TestCase
     include ApiTicketsTestHelper
     include SocialTicketsCreationHelper
+    include TicketFiltersHelper
 
     CUSTOM_FIELDS = %w[number checkbox decimal text paragraph dropdown country state city date].freeze
 
@@ -493,7 +494,7 @@ module Channel::V2
       get :index, controller_params(order_type: 'test', order_by: 'test')
       assert_response 400
       pattern = [bad_request_error_pattern('order_type', :not_included, list: 'asc,desc')]
-      pattern << bad_request_error_pattern('order_by', :not_included, list: 'due_by,created_at,updated_at,priority,status')
+      pattern << bad_request_error_pattern('order_by', :not_included, list: sort_field_options.join(','))
       match_json(pattern)
     ensure
       @channel_v2_api = false
@@ -507,7 +508,7 @@ module Channel::V2
       get :index, controller_params(order_type: 'test', order_by: 'due_by')
       assert_response 400
       pattern = [bad_request_error_pattern('order_type', :not_included, list: 'asc,desc')]
-      pattern << bad_request_error_pattern('order_by', :not_included, list: 'created_at,updated_at,priority,status')
+      pattern << bad_request_error_pattern('order_by', :not_included, list: sort_field_options.join(','))
       match_json(pattern)
     ensure
       Account.any_instance.unstub(:sla_management_enabled?)

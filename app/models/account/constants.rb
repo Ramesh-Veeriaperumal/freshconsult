@@ -16,7 +16,7 @@ class Account < ActiveRecord::Base
                           attachment euattachment eucattachment ausattachment indattachment cobrowsing) + FreshopsSubdomains + PartnerSubdomains
 
   PLANS_AND_FEATURES = {
-    :basic => { :features => [ :twitter, :custom_domain, :multiple_emails ] },
+    :basic => { :features => [ :twitter, :custom_domain, :multiple_emails, :marketplace ] },
 
     :pro => {
       :features => [ :gamification, :scenario_automations, :customer_slas, :business_hours, :forums,
@@ -306,7 +306,7 @@ class Account < ActiveRecord::Base
       requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false, supervisor_custom_status: false,
       sandbox_temporary_offset: false, downgrade_policy: false, skip_posting_to_fb: false, mentions_to_tms: false,
       allow_update_agent: false, facebook_dm_outgoing_attachment: false, hide_mailbox_error_from_agents: false,
-      facebook_post_outgoing_attachment: false
+      facebook_post_outgoing_attachment: false, outgoing_tweets_to_tms: false, incoming_mentions_in_tms: false
     }, :merge
   )
 

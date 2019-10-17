@@ -151,6 +151,8 @@ module Ember
         end
 
         def include_archive?
+          return false unless current_account.features?(:archive_tickets)
+
           transform_with_search_settings? ? ticket_search_settings[:archive] : true
         end
     end

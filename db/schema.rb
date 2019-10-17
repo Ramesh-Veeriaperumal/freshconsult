@@ -147,6 +147,7 @@ ActiveRecord::Schema.define(version: 20190628073857) do
     t.integer  "account_id",         :limit => 8
     t.integer  "sandbox_account_id", :limit => 8
     t.integer  "status",                          :default => 0
+    t.string   'config'
     t.string   "git_tag"
     t.datetime "created_at",                      :null => false
     t.datetime "updated_at",                      :null => false
@@ -3899,6 +3900,7 @@ ActiveRecord::Schema.define(version: 20190628073857) do
   end
 
   add_index "survey_handles", ["account_id", "id_token"], :name => "index_survey_handles_on_account_id_and_id_token", :length => {"account_id"=>nil, "id_token"=>20}
+  add_index "survey_handles", ["account_id", "survey_id", "created_at"], :name => "index_survey_handles_on_account_id_and_survey_id_and_created_at"
   add_index "survey_handles", ["account_id", "surveyable_id", "surveyable_type"], :name => "index_on_account_id_and_surveyable_id_and_surveyable_type"
 
   execute "ALTER TABLE survey_handles ADD PRIMARY KEY (id,account_id)"

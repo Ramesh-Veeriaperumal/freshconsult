@@ -146,6 +146,27 @@ module Ember::Search
       cleanup_archive_ticket(@archive_ticket)
     end
 
+    def test_results_without_archive_tickets_feature
+      ticket = create_ticket
+      user = User.current
+      @account.enable_ticket_archiving(ARCHIVE_DAYS)
+      @account.features.send(:archive_tickets).create
+      create_archive_ticket_with_assoc(
+        created_at: TICKET_UPDATED_DATE,
+        updated_at: TICKET_UPDATED_DATE,
+        create_association: true
+      )
+      Account.any_instance.stubs(:archive_tickets_enabled?).returns(false)
+      stub_private_search_response_with_empty_array do
+        post :results, construct_params(version: 'private', context: 'spotlight', term: @archive_ticket.id.to_s, search_sort: 'relevance')
+      end
+      assert_response 200
+      assert JSON.parse(response.body).empty?
+      Account.any_instance.unstub(:archive_tickets_enabled?)
+    ensure
+      cleanup_archive_ticket(@archive_ticket)
+    end
+
     def test_results_with_custom_field_filter_params
 			account = Account.current   
       account.ticket_fields.custom_fields.each(&:destroy)	

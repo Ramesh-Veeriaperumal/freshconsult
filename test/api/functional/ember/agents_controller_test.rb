@@ -13,8 +13,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
         include_description: true,
         include_other_properties: false,
         include_notes: false,
-        include_attachment_names: false,
-        archive: false
+        include_attachment_names: false
       }
     }
   }.freeze
@@ -273,17 +272,47 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     login_as(currentuser)
   end
 
+  def test_update_with_search_settings_params_without_archive_feature
+    Account.any_instance.stubs(:search_settings_enabled?).returns(true)
+    Account.any_instance.stubs(:archive_tickets_enabled?).returns(false)
+    user = get_or_create_agent
+    currentuser = User.current
+    login_as(user)
+    search_settings_params_with_archive = SEARCH_SETTINGS_PARAMS.deep_dup
+    search_settings_params_with_archive[:search_settings][:tickets][:archive] = true
+    put :update, construct_params({ version: 'private', id: user.id }, search_settings_params_with_archive)
+    assert_response 400
+    match_json([bad_request_error_pattern('archive', 'Unexpected/invalid field in request', code: 'invalid_field')])
+    Account.any_instance.unstub(:search_settings_enabled?)
+    Account.any_instance.unstub(:archive_tickets_enabled?)
+  end
+
+  def test_update_with_search_settings_params_with_archive_feature
+    Account.any_instance.stubs(:search_settings_enabled?).returns(true)
+    Account.any_instance.stubs(:archive_tickets_enabled?).returns(true)
+    user = get_or_create_agent
+    currentuser = User.current
+    login_as(user)
+    search_settings_params_with_archive = SEARCH_SETTINGS_PARAMS.deep_dup
+    search_settings_params_with_archive[:search_settings][:tickets][:archive] = true
+    put :update, construct_params({ version: 'private', id: user.id }, search_settings_params_with_archive)
+    user.reload
+    assert_response 200
+    assert_equal user.text_uc01[:agent_preferences][:search_settings][:tickets][:archive], search_settings_params_with_archive[:search_settings][:tickets][:archive]
+    Account.any_instance.unstub(:search_settings_enabled?)
+    Account.any_instance.unstub(:archive_tickets_enabled?)
+  end
+
   def test_update_with_invalid_search_settings_for_agent
     Account.any_instance.stubs(:search_settings_enabled?).returns(true)
     user = get_or_create_agent
     currentuser = User.current
     login_as(user)
-    invalid_params_hash = SEARCH_SETTINGS_PARAMS
+    invalid_params_hash = SEARCH_SETTINGS_PARAMS.deep_dup
     invalid_params_hash[:search_settings][:invalid_param] = 1
     put :update, construct_params({ version: 'private', id: user.id }, invalid_params_hash)
     assert_response 400
     match_json([bad_request_error_pattern('invalid_param', 'Unexpected/invalid field in request', code: 'invalid_field')])
-    SEARCH_SETTINGS_PARAMS[:search_settings].delete(:invalid_param)
     Account.any_instance.unstub(:search_settings_enabled?)
     login_as(currentuser)
   end
@@ -293,12 +322,11 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     currentuser = User.current
     user = get_or_create_agent
     login_as(user)
-    invalid_params_hash = SEARCH_SETTINGS_PARAMS
+    invalid_params_hash = SEARCH_SETTINGS_PARAMS.deep_dup
     invalid_params_hash[:search_settings][:tickets][:invalid_param] = 1
     put :update, construct_params({ version: 'private', id: user.id }, invalid_params_hash)
     assert_response 400
     match_json([bad_request_error_pattern('invalid_param', 'Unexpected/invalid field in request', code: 'invalid_field')])
-    SEARCH_SETTINGS_PARAMS[:search_settings][:tickets].delete(:invalid_param)
     Account.any_instance.unstub(:search_settings_enabled?)
     login_as(currentuser)
   end
@@ -308,12 +336,11 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     currentuser = User.current
     user = get_or_create_agent
     login_as(user)
-    invalid_params_hash = SEARCH_SETTINGS_PARAMS
+    invalid_params_hash = SEARCH_SETTINGS_PARAMS.deep_dup
     invalid_params_hash[:search_settings][:tickets][:include_subject] = 1
     put :update, construct_params({ version: 'private', id: user.id }, invalid_params_hash)
     assert_response 400
     match_json([bad_request_error_pattern_with_nested_field('search_settings', 'include_subject', 'It should be a/an Boolean', code: 'datatype_mismatch')])
-    SEARCH_SETTINGS_PARAMS[:search_settings][:tickets][:include_subject] = true
     Account.any_instance.unstub(:search_settings_enabled?)
     login_as(currentuser)
   end

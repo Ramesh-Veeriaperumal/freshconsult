@@ -32,7 +32,7 @@ module ChannelIntegrations::Utils
 
     def valid_twitter_update?(payload)
       return true if payload[:command_name] != Social::Twitter::Constants::STATUS_UPDATE_COMMAND_NAME ||
-        Account.current.mentions_to_tms_enabled?
+        Account.current.outgoing_tweets_to_tms_enabled?
 
       payload[:context][:tweet_type] != 'mention'
     end

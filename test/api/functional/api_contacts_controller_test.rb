@@ -1081,12 +1081,15 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_make_agent
     assert_difference 'Agent.count', 1 do
       sample_user = add_new_user(@account)
+      @controller.stubs(:agent_limit_reached?).returns(false)
       put :make_agent, construct_params(id: sample_user.id)
       assert_response 200
       assert sample_user.reload.helpdesk_agent == true
       assert Agent.last.user.id == sample_user.id
       assert Agent.last.occasional == false
     end
+  ensure
+    @controller.unstub(:agent_limit_reached?)
   end
 
   def test_make_agent_with_params
@@ -1260,10 +1263,13 @@ class ApiContactsControllerTest < ActionController::TestCase
       twitter_handle = Faker::Internet.email
       last_user.update_attribute(:twitter_id, twitter_handle)
       sample_user.update_column(:twitter_id, twitter_handle)
+      @controller.stubs(:agent_limit_reached?).returns(false)
       put :make_agent, construct_params(id: sample_user.id)
       assert_response 409
       assert sample_user.helpdesk_agent == false
     end
+  ensure
+    @controller.unstub(:agent_limit_reached?)
   end
 
   def test_make_field_agent

@@ -2,7 +2,7 @@ nb-NO:
   meta:
     language_name: Norwegian
   validation:
-    required: This field is required.
+    required: Dette feltet er obligatorisk.
     remote: Please fix this field.
     email: Please enter a valid email address.
     url: Please enter a valid URL.
@@ -68,6 +68,7 @@ nb-NO:
           bcc: Bcc
           addbcc: Legg til Bcc
           removebcc: Fjern Bcc
+          to: 'Til:'
         forward_form:
           cc: Cc
           addcc: Legg til Cc
@@ -75,6 +76,7 @@ nb-NO:
           bcc: Bcc
           addbcc: Legg til Bcc
           removebcc: Fjern Bcc
+          title: 'Fra:'
         tweet_form:
           title: 'Svar til %{user}'
         facebook_form:
@@ -126,7 +128,7 @@ nb-NO:
         deleted: Søppel
         overdue: Forfalte saker
         due_today: Sak forfaller idag
-        resolved: Løste saker
+        resolved: Løste Saker
         my_overdue: Mine forfalte saker
         tags: Tagger av saker
         my_due_today: Min sak forfaller idag
@@ -142,6 +144,14 @@ nb-NO:
         open_or_pending: Åpen eller på vent
         resolved_or_closed: Løst eller lukket
         no_tickets: Du har ingen saker i denne visningen
+        unresolved: Alle uløste saker
+        shared_by_me: Saker jeg har delt
+        shared_with_me: Saker som er delt med meg
+        invalid_requester: Ugyldig bestiller
+        article_feedback: Tilbakemelding om min artikkel
+        archived: Arkiv
+        raised_by_me: Saker jeg forespurte
+        my_article_feedback: Tilbakemelding om mine artikler
       note:
         posted_on: '%{user_name} på %{note_date}'
         created_on:
@@ -163,6 +173,8 @@ nb-NO:
           exceed: >-
             Ops, vedlegget ditt er større enn 15mb. Vennligst legg ved en mindre
             fil.
+          not_added: (Ikke lagt til)
+        deleted_note: Slettet
       to: 'Til: '
       no_email_found: 'Bruker med e-post %{email} er ikke tilgjengelig i systemet.'
       overlay_reply_time: ' svarte for %{time_in_words} siden'
@@ -174,6 +186,7 @@ nb-NO:
         new: Ny
         elapsed: Svar ventet
         resolved: Løst
+        customer_responded_overdue: Kunde svarte
       tabular_view:
         title: Tittel
         posted: Publisert
@@ -297,6 +310,12 @@ nb-NO:
         title: 'Svar til %{user}'
       history:
         recent_item: Nylige ting
+      do_not_link: Ikke tilknytt
+      view_in_detail: Detaljert visning
+      ok: Ok
+      update: Oppdater
+      hide_cc: Skjul kopi
+      cc: kopi
     dashboard:
       index:
         todo_title: Oppgaver
@@ -330,6 +349,28 @@ nb-NO:
     months: måneder
     year: år
     years: år
+    day_names:
+      - Søndag
+      - Mandag
+      - Tirsdag
+      - Onsdag
+      - Torsdag
+      - Fredag
+      - Lørdag
+    abbr_month_names:
+      - null
+      - Jan
+      - Feb
+      - Mar
+      - Apr
+      - Mai
+      - Jun
+      - Jul
+      - Aug
+      - Sep
+      - Okt
+      - Nov
+      - Des
   any: Hvilken som helst
   or: eller
   plain_yes: Ja
@@ -352,7 +393,7 @@ nb-NO:
   date_title: Dato
   status: Status
   sales: Salg
-  preview: Forhåndsvisning
+  preview: Forhåndsvis
   send_feedback: Send tilbakemelding
   captcha_verify_message: 'Captcha verifisering feilet, vennligst prøv igjen!'
   your_email: Din e-post
@@ -391,7 +432,7 @@ nb-NO:
   signup: Registrer deg
   signup_title: 'Registrer deg på %{current_portal}'
   signup_up_with_us: Registrer deg hos oss
-  import_ticket_group: Saker og gruppe
+  import_ticket_group: Saker
   signup_help_information: >-
     Når du har registrert deg, så vil du ha tilgang til våre løsninger og FAQ.
     Spør spørsmål og lær fra vår brukergruppe. Du vil også kunne legge inn
@@ -413,6 +454,10 @@ nb-NO:
       customer_response: Kundesvar
       asc: Stigende
       desc: Synkende
+      recently_active: Nylig aktiv
+      agent_responded_at: Svar fra Agent
+      requester_responded_at: Svar fra Kunde
+    company: Bedrift
   upgrade_trial: Oppgrader din demoversjon!
   upgrade_plan: Oppgrader
   go_back: Gå tilbake
@@ -464,6 +509,8 @@ nb-NO:
   errors:
     conditions_empty: Forholdene kan ikke være tomme
     actions_empty: Handlinger kan ikke være tom
+    invalid_domain:
+      freshdesk: Freshdesk
   remove: Fjern
   no_tags: Ingen tagger funnet
   show_recent: Vis siste
@@ -485,6 +532,12 @@ nb-NO:
     closed_at: Lukket tidspunkt
     from: Fra
     to: Til
+    export: Eksporter
+    csv: CSV
+    xls: Excel
+    select_all: Velg alle
+    select_format: 'Eksporter som:'
+    view_all_tickets: Eksporter som CSV
   immediately: Umiddelbart
   after_half: Etter 30 minutter
   after_one: Etter en time
@@ -519,6 +572,14 @@ nb-NO:
     remove_photo: Fjern bildet
     remove_profile_image: Profilbildet er fjernet
     remove_profile_image_confirm: Er du sikker på at du vil slette dette profilbildet?
+    phone_number: Telefonnr.
+    industry: Bransje
+    last_name: Etternavn
+    add_photo: Legg til bilde
+    first_name: Fornavn
+    mobile_phone: Mobiltelefon
+    company_name: Bedrift
+    job_title: Stillingstittel
   go_back_admin: Gå tilbake til Admin
   social:
     facebook_pages:
@@ -555,10 +616,10 @@ nb-NO:
         show_more_results: Vis flere resultater
         search_twitter: Søk twitter
         title: Twitter kontoer
-        reauthorize: Tillat på nytt
+        reauthorize: Autoriser på nytt
         reauth_required: Tillatelse på nytt kreves
         from: 'Fra: '
-        note_title: 'Kommentar: '
+        note_title: 'Merk: '
         note: Svaret vil ikke bli registrert som en sak eller samtale i Freshdesk.
         remove_handle_msg: Er du sikker på at du vil fjerne denne twitterkontoen?
       signin_info:
@@ -577,6 +638,21 @@ nb-NO:
         product: Produkt
       edit:
         twitter_settings_for_msg: Twitter innstillinger for
+    welcome:
+      get_started: Kom i gang
+      title: Støtte via sosiale medier
+    streams:
+      index:
+        all: Alle
+      tooltip:
+        convert_to_tkt: Gjør om til sak
+        replied: Svart
+        db_contact: Kontakt
+      twitter:
+        post: ' Legg inn '
+        tickets: Saker
+      search_btn: Søk
+      compose: Opprett
   ticket_fields:
     fields:
       source: Kilde
@@ -590,6 +666,9 @@ nb-NO:
       product: Produkt
       ticket_type: Type
       created_at: Opprettet
+      company: Bedrift
+      tags: Tagger
+      skill: Ferdighet
     saving_ticket: Lagre feltene...
     untitled: Uten tittel
     first_choice: Førstevalg
@@ -601,7 +680,7 @@ nb-NO:
       add_custom_field: Legg til et egendefinert felt
       customize_form: Tilpass "Ny sak" skjemaet ditt.
       single_line: Tekst på en linje
-      title: Felter til denne saken
+      title: Saksfelt
       paragraph: Paragraftekst
       checkbox: Avmerkingsboks
       save: Lagre feltene for denne saken
@@ -610,6 +689,7 @@ nb-NO:
         et egendefinert felt
       dropdown: Nedtrekksliste
       nestedfield: Sammenhengende felt
+      save_ticket_fields: Lagre
     formfield_props:
       form_title: Feltegenskaper
       behavior: Oppførsel
@@ -651,12 +731,45 @@ nb-NO:
       customer_visible: Vises for kunde
       description: Beskrivelse
       for_customer: For kunder
-      agent_mandatory_closure: Nødvendig for å lukke supportsaken
+      agent_mandatory_closure: Påkrevd når billetten lukkes
       choices: Valg
       label_in_portal_info: Etiketten som vises på din selvbetjeningsside
       display_cc_field: Vis CC feltet
       cc_company_contacts: Kan bare CC kontakter tilhørende firma
       cc_any_email: Kan CC alle e-post adresser
+      nested_3rd_level: Etikett er påkrevet for artikler på 3. nivå
+      nested_unique_names: Agentetiketten kan ikke være den samme som de to andre nivåene
+      dropdown_choice_disabled: Standardvalg kan ikke slettes
+      level: Nivå
+      default_field_delete_disabled: Standardfelt kan ikke slettes
+      nested_tree_validation: Du trenger minst en kategori og underkategori
+    section:
+      delete_from_section: Er du sikker på at du vil slette dette feltet fra denne seksjonen?
+      new_section: Ny seksjon
+      delete_section: Er du sikker på at du vil slette denne seksjonen?
+      ok_btn: OK
+      confirm_btn: Bekreft
+      section_delete_btn: Slett seksjon
+      move_field_remove_section: Flytte feltet til målseksjonen
+      sectino_label: Seksjonstittel
+      field_remove_all_section: 'Hvis feltet flyttes utenfor, så fjernes det fra alle seksjoner'
+      continue_btn: Fortsett
+      delete_btn: Slett
+      field_available: Feltet eksisterer allerede i målseksjonen.
+      confirm_text: Vennligst bekreft...
+      remove_type: Seksjonen er tilknyttet til denne typen
+      delete_permanent: Slette feltet fra alle seksjoner
+      add_section: Legg til seksjon
+      would_you_like_to: Vil du
+      section_name_unique: Seksjonsnavn er allerede brukt
+      move_keep_copy: Kopier feltet til målseksjonen
+      section_prop: Seksjonsegenskaper
+      oops_btn: Ops!
+      section_has_fields: Seksjonen inneholder felter
+      delete_field_section: Slett feltet fra denne seksjonen
+    confirm_deletion: >-
+      Advarsel! Du vil permanent miste dataene som er knyttet til dette feltet i
+      alle gamle saker. Er du sikker på at du vil slette dette feltet?
   all_due: Forfalt
   due_today: Idag
   due_tomo: I morgen
@@ -693,7 +806,7 @@ nb-NO:
     add_folder: Legg til mappe
   application:
     new: Lag ny applikasjon
-    title: Integreringer
+    title: Integrasjoner
     disabled: Deaktivert
     enabled: Aktivert
     configure: Konfigurer
@@ -703,6 +816,10 @@ nb-NO:
     confirm_disable: Er du sikker på at du vil deaktivere denne integrasjonen
     configure_addon: Tilpass denne integreringen
     configure_custom_addon: Tilpass denne widget'en
+    tooltip:
+      edit: Rediger
+      settings: Innstillinger
+    connect: Koble til
   amount_per_month: '%{amount}%{period}'
   amount_for_annual: '%{amount} årlig'
   agent_deleted_message: Denne agenten er slettet
@@ -726,18 +843,20 @@ nb-NO:
   agent_assigned_info: Ingen åpne saker eller saker på vent for denne agenten
   choose_plan: Velg plan
   select_plan: Velg plan
-  create: Lag
+  create: Opprett
   feedbackwidget_custom_image_info: hvis du bruker et modifisert bilde vil tekst og farge bli ignorert
   account_admin_updated: Administratorkonto har blitt oppdatert!
   forums_order:
-    overview: Overblikk
+    overview: Oversikt
     recent: Nylig
-    popular: Populær
+    popular: Populært
     planned: Planlagt
     implemented: Implementert
     nottaken: Ikke tatt
     deferred: Utsatt
     inprogress: Under behandling
+    answered: Besvart
+    unanswered: Ubesvart
   settings: Innstillinger
   updated_on: '%{user_name} oppdatert %{note_date}'
   mobile:
@@ -773,15 +892,23 @@ nb-NO:
         oppgaver.
       form:
         freshbooks_note: Kommentarer
-        api_url: API URL
+        api_url: API url
         api_key_info: '  '
         widget_title: Widget tittel
+        api_url_info: >-
+          Angi fullstendig API-URL med https. F.eks.:
+          https://example.freshbooks.com/api/2.1/xml-in
+        api_key: Godkjenningstoken
+        freshbooks_note_info: >-
+          Denne teksten legges ved på slutten av notatet sammen med tidsloggen
+          for anvendt tid.
+        invoices: Representanter kan vise fakturaer
     harvest:
       label: Harvest
       form:
         domain: Domene
         domain_info: 'Skriv domenet uten https foran, for eksempel example.harvestapp.com'
-        harvest_note: Notat tekst
+        harvest_note: Kommentarer
         widget_title: Widget tittel
     google_contacts:
       label: Google kontaktsynkronisering
@@ -816,12 +943,13 @@ nb-NO:
       last_sync: Sist synkronisert
       not_yet_synced: Synkronisering ikke startet.
       syncing_in_progress: Synkronisering pågår
-      no_status: N/A
+      no_status: Ikke tilgjengelig
       sync_status:
         added: Lagt til
         modified: Endret
         deleted: slettet
         freshdesk: Status importerte kontakter i Freshdesk
+        google: Status for eksporterte kontakter i Google
       edit_form:
         install_title: Instillinger for kontakter fra Google
         import_title: Instillinger for import av kontakter fra Google
@@ -841,6 +969,22 @@ nb-NO:
       delete_action:
         success: Slettet Google konto.
         error: Feil ved sletting av Google konto.
+      import_complete: Engangsimport er fullført.
+      fetch_problem: Det oppstod et problem under henting av Google-kontaktene.
+      import_later_success: >-
+        Importeringen av Google-kontakter er startet. Du kan sjekke
+        importstatusen på selve innstillingssiden.
+      tag_label: Synkroniser etikett
+      enable_integration: >-
+        Start automatisk synkronisering etter at importen er fullført (en gang
+        daglig).
+      account_not_configured: Google-kontoen er ikke konfigurert riktig. Prøv på nytt.
+      sync_group_info: >-
+        En ny kontaktgruppe <strong>%{group_name}</strong> blir opprett på
+        Gmail-kontoen din for synkronisering av kontakter.
+      import_success: |-
+        Google-kontaktene er importert.
+        Status: %{added} lagt til, %{updated} oppdatert og %{deleted} slettet.
     jira:
       form:
         domain: Domene
@@ -848,18 +992,30 @@ nb-NO:
         widget_title: Widget tittel
         username: Brukernavn
         password: Passord
-        do_nothing: Gjør ingenting.
+        do_nothing: Ikke gjør noe.
         add_note: Legg til som privat notat.
         send_reply: Send som svar til kunde.
         jira_status_sync_update_customer: Send svar til kunde og oppdater status felt.
+        update_jira_status: Oppdater JIRA-status i tillegg.
+        jira_comment_sync: 'For enhver kommentar lagt til i JIRA-problem %{dropdown}'
+        jira_status_sync: 'For enhver endring i JIRA-problemstatus %{dropdown}'
+        add_jira_comment: Legg til som kommentar i JIRA.
     jira_settings:
       info1: 'Når en Freshdesk sak er koblet mot JIRA sak, utfør hendelsene nedenfor.'
       none: Ikke gjør noe.
       add_public_note_in_fd: Legg til offentlig notat i Freshdesk.
+      sync_updates: Synkroniser oppdateringer
+      update_jira_status: Oppdater JIRA-status
+      info5: Når en kommentar legges til i JIRA
+      info4: Når problemstatusen oppdateres i JIRA
+      add_comment_in_jira: Legg til en kommentar i JIRA
+      send_reply_in_fd: Varsle kunde via e-post
     nimble:
       label: Nimble
     zohocrm:
       label: Zoho CRM
+      form:
+        api_key: Auth-token
     google_analytics:
       label: Google analytics
       portal: Portal
@@ -877,6 +1033,8 @@ nb-NO:
         widget_title: Widget tittel
         username: Brukernavn
         password: Passord
+        account: Kontofelt
+        contact: Kontaktfelt
     google_calendar:
       label: Google kalender
       desc: Du kan organisere hendelser for hver sak med Google kalender.
@@ -888,7 +1046,7 @@ nb-NO:
         google_calendar_settings: Innstillinger Google Kalender
     batchbook:
       form:
-        api_key: API Nøkkel
+        api_key: API-nøkkel
         version:
           label: Versjon
           classic: Klassisk
@@ -897,13 +1055,16 @@ nb-NO:
     highrise:
       label: Highrise
       form:
-        api_key: API nøkkel
+        api_key: API-nøkkel
         widget_title: Widget tittel
     workflow_max:
       form:
-        api_key: API Nøkkel
+        api_key: API-nøkkel
         account_key: Konto Nøkkel
         widget_title: Widget tittel
+        workflow_max_note_info: >-
+          Denne teksten legges ved på slutten av notatet sammen med tidsloggen
+          for anvendt tid.
     custom_application:
       name: Navn
       description: Beskrivelse
@@ -914,6 +1075,9 @@ nb-NO:
         widget_script: Widget kode
         create_n_enable: Opprett og aktiver
         insert_placeholder: Sett inn plassholder
+      get_custom_apps: Få egendefinerte apper
+      edit_custom_app: Rediger egendefinert app
+      new_custom_app: Ny egendefinert app
     logmein:
       form:
         widget_title: Widget tittel
@@ -921,7 +1085,7 @@ nb-NO:
         password: SSO passord
     campaignmonitor:
       form:
-        api_key: API nøkkel
+        api_key: API-nøkkel
         api_key_info: Finn din API nøkkel under kontoinnstillinger
         client_id: Klientnr.
     icontact:
@@ -931,6 +1095,217 @@ nb-NO:
     dropbox:
       label: Dropbox
       desc: Legg ved og del dine data/filer fra Dropbox
+    ilos:
+      settings:
+        for_agents: For agenter
+        for_customer: For kunder
+      portal_ticket:
+        placeholder: 'Billett#'
+      agent_ticket:
+        placeholder: 'Billett#'
+      messages:
+        video_desc: Beskrivelse
+      solution:
+        placeholder: 'Artikkel#'
+    dynamics_v2:
+      form:
+        username: Brukernavn
+        password: Passord
+    remote_login:
+      connect: Koble til
+      sign_up: Registrer
+    quickbooks:
+      form:
+        quickbooks_note: Kommentarer
+        invoices: Representanter kan vise fakturaer
+      connect_text: >-
+        Ved å tilknytte til QuickBooks vil det gjøre det enklere for agentene
+        dine å få tilgang og oppdatere data i programvaren via helpdesken din.
+    marketplace_login:
+      admin_credentials:
+        link_your_helpdesk: Tilknytt helpdesken din
+        email_address: E-postadresse
+        login_your_helpdesk: Logg på helpdesken din
+        login_with_admin: >-
+          Du må være en kontoadministrator for å tilknytte Freshdesk-kontoen til
+          Google-pålogging
+        your_helpdesk: Din helpdesk
+        login: Logg inn
+      associate_account:
+        phone_no: Telefonnummer
+        user_name: Navn
+        helpdesk_url: URL-adresse for brukerstøtte
+        email: E-post
+        your_freshdesk_url: Din helpdesk-URL
+        submit: Send inn
+        company_name: Firma navn
+        create_my_account: Opprett konto
+        helpdesk_name: Helpdesknavn
+    applications:
+      crm:
+        mapping:
+          company: Bedrift
+          contact: Kontakt
+          contact_fields: ' Kontaktfelt '
+          account_fields: ' Kontofelt '
+    google_drive:
+      form:
+        developer_key: API-nøkkel hentet fra Google Developers Console.
+        client_id: OAuth klient-ID for domenet ditt
+    shopify:
+      edit:
+        disconnect: Koble fra
+    dynamicscrm:
+      form:
+        contact_email: Kontaktens e-postadresse
+        region: Region
+        account: Kontofelt
+        password: Passord
+        contact: Kontaktfelt
+    screen_pop:
+      widget:
+        view_all: Vis alle
+        requester: Bestillers navn
+        cancel: Angre
+        do_not_link: Ikke tilknytt
+        link_to_ticket: Tilknytt til denne saken
+        call_actions: Samtalehandlinger
+        new_ticket_with_id: Ny sak er opprettet med ID
+        link_to_new_ticket: Tilknytt til ny sak
+        add_note_to_ticket: Legg til notat i sak
+        agent_phone_details: Telefoninformasjon for agent
+        add_note_text: Samtalenotater
+        agent_phone_updated: Telefoninformasjon for agenten er oppdatert
+        subject: Emne
+        recent_tickets: Nylige saker
+        create: Opprett
+        ticket_reference_id: Samtalereferanse-ID
+    hootsuite:
+      reply_btn: Svar
+      send: Send tilbakemelding
+      reset: Tilbakestill
+      domain:
+        continue_to_login: Fortsett til å logge inn
+      filter:
+        priority: Prioritet
+        all: Alle
+        status: Status
+      submit: Send inn
+      social:
+        description: Beskrivelse
+        convert_to_ticket: Gjør om til sak
+        requester: Anmoder
+      login:
+        password: Passord
+        email: E-post
+      search:
+        ticket_id: Saks-ID
+        keyword: Nøkkelord
+      header:
+        reply: Svar
+    custom_apps:
+      ticket_detail_page: Side for saksdetaljer
+      preview_helptext: Denne egendefinerte appen vil vises i sidepanelet
+      hide_preview: Skjul forhåndsvisning
+      custom_app_used_in: Egendefinert app vises på
+      contact_detail_page: Side for kontaktinformasjon
+      refresh: Oppdater
+      show_preview: Vis forhåndsvisning
+      custom_app_preview: Forhåndsvisning av egendefinert app
+    microsoft_teams:
+      auth_btn: Autoriser
+    infusionsoft:
+      form:
+        contact: Kontaktfelt
+        account: Kontofelt
+    seoshop:
+      form:
+        nl: Nederlands
+        api_key: Api nøkkel
+        en: Engelsk
+        language: Språk
+    cti_admin:
+      save_agent_private_note: Lagre samtalenotater som privat
+      ctd_toggle: Konfigurer Click to Dial
+      softfone:
+        max_dimension: Maks 550px &times; 250px
+        width: Bredde
+        height: Høyde
+        url: URL-adresse for Iframe
+      title: CTI-innstillinger
+      iframe_toggle: Aktiver Iframe for softphone
+      phone:
+        save: Lagre
+        cancel: Angre
+        add_number: Legg til nummer
+        number_not_in_use: Ikke i bruk
+        add_number_tooltip: Hver rad kan kun inneholde ett nummer
+        title: Helpdesk-numre
+        delete_number: Vennligst bekreft
+        delete_msg: Er du sikker på at du vil slette dette nummeret?
+        number_in_use: Numre i bruk
+      ctd:
+        api_key: API-nøkkel
+        callback_url: URL for tilbakeringing
+        username: Brukernavn
+        req_authentication: Krev autentisering
+        encoding: Koding
+        request_type: Forespørselstype
+        have_api_key: Jeg har API-nøkkel?
+        content: Innhold
+        password: Passord
+        have_user_pass: Har jeg brukernavn og passord?
+    uninstall: Avinstaller
+    github_settings:
+      resolved: Løst
+      none: Gjør ingenting
+      closed: Lukket
+    slack_v3:
+      slack_prof_label: Tilknytt til Slack
+      slack_connect_desc: Konfigurer kontoen din for å opprette Slack-saker fra Slack
+      slack_auth_btn: Autoriser Slack
+    magento:
+      form:
+        product: Produkt
+    salesforce:
+      form:
+        contact: Kontaktfelt
+        account: Kontofelt
+    freshsales:
+      form:
+        auth_token: Godkjenningstoken
+        deal: Avtalefelt
+        domain: Kontodomene
+        account: Kontofelt
+        contact: Kontaktfelt
+    slack_v2:
+      form:
+        slash_command_token: Skråstrekskommando-token
+    pivotal_tracker:
+      label: Pivotal Tracker
+    outlook_contacts:
+      form:
+        mail_box_detail: Synkroniser med
+        sync_tag_label: Synkroniser etikett
+        sync_tag: Synkroniser innstillinger
+        submit: Import og aktivering
+        overwrite_existing_user: Skriv over eksisterende kontaktdetaljer i Freshdesk
+      edit_form:
+        account: Konto
+        edit_account: Rediger
+        not_yet_synced: Synkronisering ikke startet.
+        tag_label: Synkroniser etikett
+        add_more: Synkroniser ny konto
+        delete_account: Slett
+        last_sync_time: Siste gang synkronisert
+        syncing_in_progress: Synkronisering pågår
+    cloud_elements:
+      form:
+        daily: Daglig
+        account: Kontofelt
+        field_mapping: Felttilordning
+        hourly: Hver time
+        contact: Kontaktfelt
   payment_info: Betalingsinformasjon
   billing_address: Fakturaadresse
   support:
@@ -943,13 +1318,15 @@ nb-NO:
         rated_on: 'på%{rated_on}'
         change_of_mind: Har du forandret mening?
         rate_again: Vurdér oss gjerne på nytt
-        submit: Send
-        cancel: Avbryt
+        submit: Send inn
+        cancel: Angre
+        load_questions: Vis mer
+        comments: Kommentar
     login:
       form:
         email: E-post
         password: Passord
-        remember: Husk meg på denne enheten
+        remember: Husk meg på denne maskinen
         login: Logg inn
         forgot: glemt ditt passord?
         sign_in_using: Logg inn
@@ -960,14 +1337,16 @@ nb-NO:
         survey_title: Vi setter stor pris på om du kan vurdere vår support
         feedback_title: Ris og ros kan også hjelpe oss til bedre support i fremtiden
         rated_on: 'Du ga oss denne vurderingen %{rated_on}'
-        change_of_mind: Har du endret mening?
-        rate_again: Vurder oss igjen
-        submit: Send
-        cancel: Avbryt
+        change_of_mind: Har du forandret mening?
+        rate_again: Vurdér oss gjerne på nytt
+        submit: Send inn
+        cancel: Angre
       info1: Kan du fortelle oss hvordan vi kan forbedre denne artikkelen?
       email: Din e-postadresse *
       comments: Kommentarer
       send_feedback: Send tilbakemelding
+      related_files: Relaterte filer
+      was_this_article_useful: Var denne artikkelen nyttig?
     surveys:
       thanks_for_feedback: Vi har motatt din tilbakemelding. Tusen takk.
       feedback_already_done: Du har allerede gitt din tilbakemelding for denne supportsaken.
@@ -975,7 +1354,7 @@ nb-NO:
         thanks_info: Tusen takk for at du gir din vurdering av vår support.
         feedback_info: Din tilbakemelding er svært verdsatt.
         feedback_optional: Tilbakemelding er valgfri
-        send: Send
+        send: Send tilbakemelding
         thanks: Tusen takk for at du gir din vurdering av oss!
         sorry: Men beklager ulempene
         happy_info: >-
@@ -984,6 +1363,14 @@ nb-NO:
         neutral_info: Vi hadde ønsket du var mer fornøyd.
         unhappy_info: Håper vi kan gi deg bedre support neste gang du tar kontakt med oss.
         additional_info: I tillegg kan du også dele din erfaring med å ha jobbet med oss.
+        submit: Send inn
+        neutral_information: Vi skulle ønske du var mer fornøyd.
+    canned_form:
+      okay: Ok
+      hey: Hei
+      next: Neste
+      thank_you_text: Tusen takk
+      form_submit: Send inn
   gamification:
     levels:
       beginner: Nybegynner
@@ -1096,16 +1483,31 @@ nb-NO:
         ontime_resolution: I tide <span>(Innen SLA)</span>
         late_resolution: Forsinket<span>(Forfalt)</span>
         bonus_points: Bonus poeng
-        firstcall_resolution: Løst på første forsøk
+        firstcall_resolution: Saker løst ved første svar
         happy_customer: Fornøyd kunde
         unhappy_customer: Misfornøyd kunde
         title_levels: Agent nivåer
         title_trophies: Premier
+        new_quest: Ny oppgave
+        quest_title: Oppgaver
+      index:
+        start_over: Tilbakestill
     surveys:
       successfully_updated: Innstillinger for kundetilfredshet har blitt oppdatert.
       error_updated: Feil ved oppdatering av innstillinger for undersøkelser.
       index:
         title: Instillinger kundetilfredshet
+        hide: Fjern
+        cancel: Angre
+        delete: Slett
+        new: Ny
+        update: oppdater
+        save_survey: Lagre
+        edit: Rediger
+        confirm_text: Vennligst bekreft...
+        activate_survey: Aktiver
+        preview_survey: Forhåndsvis
+        custom_title_v2: Kundetilfredshetsundersøkelser
       satisfaction_settings:
         enable_label: Undersøkerlser om kundetilfredshet
         link_text_label: Lenke til kundetilfredshetsundersøkelse
@@ -1125,6 +1527,20 @@ nb-NO:
         enter_happy_text: Legg til fornøyd tekst
         enter_neutral_text: Legg til nøytral tekst
         enter_unhappy_text: Legg til misfornøyd tekst
+      new_layout:
+        title: Navn på undersøkelse
+        bad_to_good: Dårlig til bra
+        loading: Laster...
+        good_to_bad: Bra til dårlig
+      thanks_contents:
+        title_text_v2: Takk-melding for kundeundersøkelsen
+      new_questions_layout:
+        questions: Spørsmål
+      new_rating:
+        error_text: Dette feltet er obligatorisk
+      new_thanks:
+        thanks_message_feedback_v2: Takk-melding for ytterligere tilbakemeldinger
+        additional_comments_feedback_v2: Legg til tekstboks for ytterligere kommentarer
     getting_started:
       send_mail_content:
         test_info_1: Ser alt bra ut så langt? Forsøk å sende en e-post.
@@ -1163,7 +1579,7 @@ nb-NO:
         back_link: Tilbake
         next_link: Neste
         next_alt_text: Hopp i det!
-        next_please_wait: Vennligst vent...
+        next_please_wait: Vennligst vent …
         support_email_subtitle: Legg til din primære e-post adresse til support
         support_email_submsg: >-
           Dette vil også være den forhåndsvalgte svar-til adressen når du
@@ -1175,7 +1591,7 @@ nb-NO:
           hit til Freshdesk. Bruk komma for å skille mellom e-post.
         rebrand_subtitle: Skreddersy med din logo og farger!
         rebranding_header: Skriv inn et navn for din helpdesk
-        helpdesk_preview_text: Forhåndsvisning
+        helpdesk_preview_text: Forhåndsvis
         social_subtitle: Gjør din kundeservice tilgjengelig i sosiale medier
         social_add_account: Legg til Konto
         config-support-email-address: Sett opp din e-post adresse til support
@@ -1196,7 +1612,7 @@ nb-NO:
         agent_send_invite_label: Send invitasjon til agenter
         agent_invite_field_placeholder: Skriv inn dine team medlemmers epostadresser
         social_twitter: Twitter
-        social_twitter_add: Legg til konto
+        social_twitter_add: Legg til Konto
         social_facebook: Facebook
         social_facebook_add: Legg til en Side
         rebrand_company_label: Firmanavn
@@ -1264,6 +1680,11 @@ nb-NO:
         helptext: >-
           Dine dagspass vil fornyes automatisk når det kun er 2 tilgjenglige
           dagspass igjen.
+        agent: Agent
+        email: E-post
+        date: Dato
+        all: Alle
+        filtered_by: 'Filtrert på:'
     supervisor_rules:
       index:
         title: Leder - Regler
@@ -1276,11 +1697,26 @@ nb-NO:
         title: Leder - Endre regel
     shared:
       filter_jsinit:
-        insert_placeholder: Legg til plassholder
-        body: Body
+        insert_placeholder: Sett inn plassholder
+        body: Innhold
         to: Til
         selected: Valgt
         not_selected: Ikke valgt
+        user_pass?: Har jeg brukernavn og passord?
+        api_key: API-nøkkel
+        change_password: Endre passord
+        url: URL for tilbakeringing
+        url_req_auth: Krever autentisering
+        api_key?: Jeg har API-nøkkel?
+        params: Innhold
+        username: Brukernavn
+        request_type: Forespørselstype
+        simple_layout: Enkel
+        subject: Emne
+        webhook_usecase: Brukstilfeller med webhook
+        password: Passord
+        advanced_layout: Avansert
+        content_type: Koding
     automations:
       edit:
         title: Rediger scenario
@@ -1303,6 +1739,57 @@ nb-NO:
         click_to_enable: Klikk for å aktivere SSL
         click_to_disable: Klikk for å deaktivere SSL
         security_title: Sikkerhet
+        submit_request: Send forespørsel
+        helpdesk_url: URL-adresse for brukerstøtte
+        saml_cert_fingerprint_info_sha256: >-
+          Fingeravtrykk (SHA256) fra SAML-sertifikatet levert av
+          SAML-leverandøren din. Dette blir brukt til kryptering/validering
+        password_policy_info3: >-
+          Endringer du gjør i retningslinjer for passord vil gjelde innen 8
+          timer. Agentene dine vil bli bedt om å oppdatere passordene deres i
+          løpet av denne tiden. Hvis de ikke gjør dette, vil de bli logget ut av
+          støtteportalen og bli nødt til å endre passordene deres neste gang de
+          prøver å logge på.
+        default_ssl: Standard SSL
+        password_policy_info4: >-
+          Merk at når du aktiverer retningslinjer for passord for kontoen din
+          (enten standard eller avansert), så kan du ikke deaktivere de.
+        whitelisted_ips_enabled: IP-godkjenningslister
+        for_contacts: For kontakter
+        custom_ssl: Egendefinert SSL
+        only_agents: Agenter
+        customer_portal_ssl_warning: >-
+          Siden egendefinert helpdesk-URL er konfigurert for kontoen din, blir
+          du omdirigert til 
+        success_message: >-
+          Forespørselen din om et egendefinert SSL-sertifikat har blitt innledet
+          og blir behandlet i nær fremtid. Du vil motta en e-postbekreftelse fra
+          leverandøren vår før godkjennelse. Sjekk innboksen din for
+          oppdateringer.
+        saml_logout_url: URL for utlogging
+        password_policy: Retningslinjer for passord
+        for_agents: For agenter
+        saml_cert_fingerprint_info: >-
+          Fingeravtrykk (SHA1) fra SAML-sertifikatet levert av SAML-leverandøren
+          din. Dette blir brukt til kryptering/validering
+      password_security:
+        passwords: passord
+        session_expiry: Brukerøkten utløper om
+        password_expiry: Passordet utløper om
+        advanced: Avansert
+        cannot_be_same_as_last: Kan ikke være det samme som forrige
+        have_special_character: Inneholde et spesialtegn
+        never: Aldri
+        characters: tegn
+        days: dager
+        cannot_contain_user_name: Kan ikke inneholde brukernavnet
+        password: passord
+        have_mixed_case: Inneholde både store og små bokstaver
+        minimum_of: Minimum på
+        atleast_an_alphabet_and_number: Ha en bokstav og ett siffer
+        default: Standard
+      helpnote:
+        title: Sikkerhetsinnstillinger
     products:
       helpnote:
         tour: Hjelp meg med support på forskjellige produkter
@@ -1321,6 +1808,14 @@ nb-NO:
         portal_name: Portal navn
         portal_language: Portal språk
         portal_language_info: Dette vil være standard språk for besøkende til portalen
+        ago: siden
+        portal_customization: Portaltilpassing
+        settings: Innstillinger
+        customer_portal: Kundeportal
+        customize_portal: Tilpasse portal
+        helpdesk_phone: Helpdesk-telefon
+        contact_us: Kontakt oss
+        edit_portal: Rediger portal
       edit:
         title: Endre Produkt
       form:
@@ -1330,14 +1825,14 @@ nb-NO:
         configure_email: Konfigurere E-post
         product_support_emails: Produkt Support E-post
         product_name: Produkt navn
-        product_desc: Produkt beskrivelse
+        product_desc: Beskrivelse
         forwarding_email_info: 'Din videresendings e-post er:'
       product:
         edit_twitter_account: 'Endre Twitter Konto @%{screen_name}'
         edit_facebook_page: 'Endre Facebook side %{page_name}'
         customize_portal: Tilpasse portal
         enable_portal: Aktivér Portal
-        email_not_verified: E-post ikke verifisert
+        email_not_verified: Ikke verifisert
         delete: Er du sikker på at du vil slette dette Produktet?
       index:
         enable_portal: Aktivér Produkter
@@ -1407,7 +1902,7 @@ nb-NO:
         group: Grupper
         day_pass: Dagspass
         business-hours: Arbeidstid
-        title: Admin
+        title: Administrator
         email-notifications: E-post varsling
         survey-settings: Kundetilfredshet
         rebranding: Helpdesk tilpasning
@@ -1439,7 +1934,263 @@ nb-NO:
         facebook-setting: Facebook
         security: Sikkerhet
         email_commands_setting: E-post kommandoer
-        billing: Planer & Faktuerering
+        billing: Planer & Fakturering
+        search_admin: Søk i administratorinnstillinger
+    skills:
+      index:
+        skills: Ferdigheter
+        agent_label: Agent
+        agents_label: Agenter
+        agents: Agenter
+        add_agents: Legg til agenter
+        skill_create: Opprett
+        manage_label: Administrer
+        description: Beskrivelse
+        add_label: Legg til
+        no_agent_label: Ingen agenter
+    user_skills:
+      index:
+        more: Mer
+        any: Hvilken som helst
+        groups: Gruppe
+    ecommerce:
+      new:
+        account_name: Konto Navn
+        title: Ny konto
+        assign_group: Legg til Gruppe
+      index:
+        new_account: Ny konto
+      index_title: E-handel
+    widget_config:
+      popup_widget:
+        feedbackwidget_submit_title: Send tilbakemelding
+        thankyou_default: Takk for din tilbakemelding
+        feedbackwidget_offset: 'Offsett:'
+        feedbackwidget_search_area: Søk Artikler
+        feedbackwidget_attach_a_file: Vedlegg fil
+        feedbackwidget_button_text_placeholder: Støtte
+      index:
+        feedbackwidget_popup_tab: Popup-widget
+      popup_embedded_widget:
+        thankyou_default: Takk for din tilbakemelding
+        feedbackwidget_search_area: Søk Artikler
+        feedbackwidget_attach_a_file: Vedlegg fil
+        feedbackwidget_button_text_placeholder: Støtte
+      embedded_widget:
+        feedbackwidget_submit_title: Send tilbakemelding
+        thankyou_default: Takk for din tilbakemelding
+        feedbackwidget_search_area: Søk Artikler
+        feedbackwidget_attach_a_file: Vedlegg fil
+    contact_fields:
+      formfield_props:
+        behavior: Oppførsel
+        customer_edit: Kunde kan endre
+        field_label_agents: Feltnavn for agenter
+        validate_regexp: Bekreft med vanlig uttrykk
+        for_customer: For kunder
+        label: Etikett
+        customer_visible: Vis til kunde
+        customer_mandatory: Nødvendig for å sende inn skjemaet
+        regexp: Vanlig uttrykk
+        field_label_customer: Feltetikett for kunder
+        dropdown_choices: Rullegardinartikler
+        customer_edit_signup: Kunder kan se dette når de registrerer seg
+        for_agents: For agenter
+        field_label_agents_level2: Nivå 2-etikett for agenter
+        add_new_choice: Legg til enhet
+        field_label_customer_level2: Nivå 2-etikett for kunder
+        agent_mandatory_submission: Nødvendig for å sende inn skjemaet
+        delete_field: Slett felt
+        default: Standard
+        form_title: Egenskaper
+        mapped_internal_groups: Tilordnede interne grupper
+    observer_rules:
+      helpnote:
+        help_info_2d: Dette spesifiserer hva du ønsker at regelen skal gjøre.
+        help_info_3: >-
+          Du kan bruke Observer til å modifisere felter, endre status eller til
+          og med sende ut varslinger så snart visse betingelser er oppfylt.
+        help_title: Observer
+        help_title_2d: Handlinger
+        help_info_2a: >-
+          En hendelse kan henvise til enhver brukerutført endring som vil utløse
+          en bestemt Observer-regel.
+        help_title_2a: Hendelser
+        help_title_2b: Hendelsesutløsere
+      agent: Agent
+      index:
+        title: Observer - Regler
+      new:
+        title: Observer - Ny regel
+      performed_by: og hendelsene utføres av
+      edit:
+        title: Observer - Rediger regel
+      anyone: Hvem som helst
+      add_new_event: Legg til ny hendelse
+      system: System
+      customer: Anmoder
+      actions: handling som skal utføres
+    hotline:
+      content3:
+        note_title: 'Notat:'
+    portal:
+      helpnote:
+        exit_fullscreen: Avslutt fullskjermmodus
+        editor_shortcuts: Redigeringssnarveier
+        preview_changes: Forhåndsvis endringer
+        editor_in_fullscreen: Redigering i fullskjerm
+        level_customizations: Tilpassing på sidenivå
+        advanced_rebranding: Avansert omprofilering og tilpassing
+        custom_stylesheets: Bruk av egendefinerte stilark
+      settings:
+        moderate_none_help: >-
+          Aktiver denne funksjonen hvis du er sikker på at fellesskapet ditt
+          ikke tiltrekker utsendere av søppelpost.
+        google: Google
+        submit_ticket: Hvem kan sende inn en ny sak i portalen
+        notify_agents: 'Send varsling om moderering og søppelpost til:'
+        view_forums: Hvem kan vise forumer
+        important: Viktig
+        moderate_links_help: >-
+          Aktiver denne funksjonen for avansert beskyttelse mot søppelpost.
+          Systemet kontrollerer alle emner og svar for tredjepartslenker og
+          annen spam-aktivitet.
+        logged_in: Påloggede brukere
+        moderate_all: Moderer alle emner og svar
+        user_permissions: Brukertillatelser for portal
+        moderate_links: Moderer alle emner og svar som inneholder eksterne lenker
+        captcha: Aktiver CAPTCHA for å unngå søppelpost
+        moderate_none: Ikke moderer
+        twitter: Twitter
+        view_settings: Vis innstillinger
+        restricted_login_signup: Registrering og pålogging er begrenset til bestemte domener
+        facebook: Facebook
+        allow_signup: Tillat brukere å registrere seg fra kundeportalen
+        moderation: Moderer forumer
+        view_solutions: Hvem kan vise løsninger
+        auto_suggest_solutions_help: Dette gjelder også søkefunksjonen i Tilbakemelding-widgeten.
+        auto_suggest_solutions: Foreslå løsninger automatisk når en ny sak opprettes
+        reset_portal_changes: Tilbakestill portalendringer
+        simple_none: Ingen
+        everyone: Alle
+        allow_signin: Tillat brukere å logge på med …
+        moderate_all_help: >-
+          Aktiver denne funksjonen hvis du vil ha streng kontroll på hvert
+          innlegg som blir opprettet i fellesskapet ditt.
+    company_fields:
+      formfield_props:
+        behavior: Oppførsel
+        customer_edit: Kunde kan endre
+        field_label_agents: Feltnavn for agenter
+        dropdown_items_edit: Nedtrekkselementer - redigeringsvisning
+        validate_regexp: Bekreft med vanlig uttrykk
+        for_customer: For kunder
+        label: Etikett
+        cc_company_contacts: Kan bare CC kontakter tilhørende firma
+        customer_visible: Vis til kunde
+        cc_any_email: Kan CC alle e-post adresser
+        customer_mandatory: Nødvendig for å sende inn skjemaet
+        sla_timer: SLA tidsur
+        regexp: Vanlig uttrykk
+        field_label_customer: Feltetikett for kunder
+        level2: Nivå 2
+        nestedfield_helptext_preview: >-
+          Dette er "forhåndsvisning" av prøver av nedtrekkselementer, bruk det
+          åpne tekstfeltet i "Redigerinsvisningen" for å redigere elementene.
+        dropdown_items_preview: Nedtrekkselementer - forhåndsvisning
+        dropdown_choices: Rullegardinartikler
+        agent_mandatory_closure: Påkrevd når billetten lukkes
+        level3: Nivå 3
+        display_cc_field: Vis CC feltet
+        customer_edit_signup: Kunder kan se dette når de registrerer seg
+        for_agents: For agenter
+        status_choices: Statusvalg
+        add_new_choice: Legg til enhet
+        nested_label: Etikett sammenhengende felt
+        agent_mandatory_submission: Nødvendig for å sende inn skjemaet
+        level1: Nivå 1
+        display_to_customer: Vis melding til kunde
+        delete_field: Slett felt
+        default: Standard
+        description: Beskrivelse
+        form_title: Egenskaper
+    social:
+      twitter_streams:
+        new:
+          create: Opprett
+        edit:
+          visible_to: Vises for
+      ticket_rules:
+        assign_to_gp: Legg til Gruppe
+      streams:
+        visibility:
+          all: Alle
+        cancel: Angre
+        index:
+          new_account: Ny konto
+        twitter_streams:
+          reauthorize: Autoriser på nytt
+          edit: Rediger
+        update: Oppdater
+    webhook:
+      hipchat_hook_title: HipChat-varsling
+      jira_hook_alt: Problemoppretting i JIRA POST-forespørsel
+      hipchat_hook_alt: HipChat pinger GET-forespørsel
+      jira_hook_title: Oppretting av problem i JIRA
+    roles:
+      permissions: Rettigheter
+      role_name: Rollenavn
+      agent_label: Agent
+      add_agent_label: Legg til agent
+      scroll:
+        administration: Administrasjon
+        customers: Kunder
+        reports: Rapporter
+        solutions: Løsninger
+        general: Generelt
+        bots: Boter
+        tickets: Saker
+        forums: Forum
+      agents_label: Agenter
+      new: Ny rolle
+      saving_label: Lagrer...
+      helpcard:
+        info4: >-
+          Du kan velge om du vil at en agent skal ha tilgang til innstillinger
+          under administratorfanen. Agenter med administratortilgang kan være
+          operasjonsagenter med begrenset tilgang, eller superadministratorer
+          med evnen til å redigere alle konfigurasjoner. Du kan ha et ubegrenset
+          antall superadministratorer med evnen til å se og endre
+          faktureringsinformasjonen, eller så få som én.
+        title2: Administratorrettigheter
+        info2: >-
+          Du kan for eksempel opprette en rolle for støttekoordinatorer og la
+          dem oppdatere felter og tilordne saker, og til og med legge til
+          interne notater, men ikke svare kunder.
+        title1: Forklaring av roller
+        info1: >-
+          Roller lar deg opprette og redigere tilgangstillatelser for agenter.
+          Du kan opprette nye roller, spesifisere hvilke handlinger agenter med
+          disse rollene kan utføre i helpdesken din og tildele rollen til
+          agenter.
+        info3: >-
+          Når du oppretter og lagrer en ny rolle, kan du tilordne den til
+          agenter når du oppretter eller redigerer profilen deres ved å klikke
+          Agenter-ikonet under administratorfanen.
+        info5: Les mer om roller og rettigheter
+      role_description: Beskrivelse
+      cancel_label: Angre
+      done_label: Ferdig
+      title: Agentroller
+      save_label: Lagre
+      manage_label: Administrer
+      add_label: Legg til
+      no_agent_label: Ingen agenter
+    mobihelp:
+      apps:
+        form:
+          saving: Lagrer...
+          select_a_solution_category: Velg en løsningskategori
   reorder: Endre rekkefølge
   reports:
     no_data: Ingen data å vise
@@ -1480,18 +2231,20 @@ nb-NO:
       received_tickets: Mottatte saker
       open_tickets: Åpne saker
       pending_tickets: Saker på vent
-      resolved_tickets: Løste saker
+      resolved_tickets: Løste Saker
       fcr: Saker løst ved første svar
     timesheet_reports:
       index:
         title: Timeskjema rapport
         select_customer: Velg Kunde
-        select_agent: Velg Agent
+        select_agent: Velg agent
         select_group: Velg gruppe
         view_between: Vis rapport mellom
         from: Fra
         to: Til
         filter_report: Filtrér rapport på
+        select_type: Velg type
+        ticket_type: Type sak
     survey_reports:
       index:
         agent_list_loading: Henter agent liste
@@ -1514,6 +2267,67 @@ nb-NO:
         to: Til
         filter_by: Tilfredshetvisning
         view_report_date: Se rapporter mens
+      main:
+        time_period: Tidsperiode
+        neutral: Nøytral
+        survey_name: Navn på undersøkelse
+        total_responses_v2: Totalt
+        agent: Agent
+        positive: Positiv
+        group: Gruppe
+        overall_rating: Vurdering
+        responses: Svar
+        negative: Negativ
+        no_overview: Ingen data tilgjengelig
+        unanswered: Ubesvart
+        overview: Oversikt
+        answered: Besvart
+        all: Alle
+        rating: Vurdering
+    discard_changes: Forkast endringer
+    livechat:
+      time_period: Tidsperiode
+      chat_type: Chattetype
+      answered_chats: Besvart
+      select_widget: Velg widget
+      agent_chat_summary: Sammendrag av agentchat
+      missed_chats: Tapt
+      group: Gruppe
+      filter_close: Lukk
+      avg_handle_time: Gjennomsnittlig håndteringstid
+      filter_report: Filtrér rapport på
+      num_of_transfer: Overføringer
+      total_chats: Totalt
+      avg_time_queue: Tid i kø
+      num_of_chats: Antall chatter
+      select_chat_type: Velg chattetype
+      generate_summary: Lag
+      widget: Widget
+      filter_by_title: Filtrert etter
+    freshfone:
+      time_period: Tidsperiode
+      no_agent: '- Ingen agenter -'
+      group: Gruppe
+      call_type: Samtaletype
+      filter_option_all_calls: Alle samtaler
+      filter_close: Lukk
+      avg_handle_time: Gjennomsnittlig håndteringstid
+      all_numbers: Alle numre
+      filter_report: Filtrér rapport på
+      number: Antall
+      business_hours: Arbeidstid
+      generate_summary: Lag
+      unanswered_count: Ubesvart
+      options:
+        unassigned: Ikke tildelt
+        incoming: Innkommende
+        outgoing: Utgående
+      filter_by_title: Filtrert etter
+    time_sheets:
+      billable: Fakturerbare timer
+      time_period: Tidsperiode
+      filter_by_title: Filtrert etter
+    reports_by: Rapporter fra
   delete_the_ticket: Slett saken
   mark_as_spam: Merk som søppel
   bulk_actions: Bulk handlinger
@@ -1537,6 +2351,7 @@ nb-NO:
         synes for anmoder, mens resten av teksten vil legges inn som del av
         saksgangen.
       ticket_type_example: Spørsmål
+      note: Merknad
   email_command_preview_to_email: Til
   email_command_preview_to_email_value: support@acme.freshdesk.com
   email_command_preview_subject: Emne
@@ -1553,6 +2368,35 @@ nb-NO:
         fortgang på ting. Du kan endre ditt skjema i Freshdesk for best å
         tilpasse det din virksomhet. Kunder og agenter kan fylle inn all den
         informasjon du trenger, i det formatet du ønsker
+      info4_v3: >-
+        Hvis du har abonnementet Estate eller over, så kan du ha dynamiske
+        felter som vises basert på alternativet som er valgt i
+        rullegardinlisten. Du kan legge til saksfelter i hver seksjon og
+        tilknytte en seksjon med valgalternativer i en rullegardinliste. Hvis du
+        for eksempel driver en nettbutikk, så kan du velge å åpne en seksjon med
+        et felt kalt «Årsak» når kunden din velger alternativet «Erstatning».
+        Slik kan du bedre forstå hvorfor kunden din vil ha et
+        erstatningsprodukt. Du kan opprette maksimalt to dynamiske seksjoner og
+        bruke dem i to egendefinerte rullegardinlister. Hvis du allerede har
+        tilknyttet en seksjon til typefeltet, så kan du kun legge til en seksjon
+        i saksskjemaet.
+      title2: Avhengige felter
+      info_1: >-
+        Sakskjemaet hjelper med å samle inn opplysningene du trenger fra kunden
+        når de registrerer en sak. Du kan tilpasse saksskjemaet for å inkludere
+        de rette saksfeltene for bedriften din, og la kunder og agenter fylle ut
+        informasjonen du trenger i formatet du ønsker. For eksempel kan kundens
+        ordrenummer i sakskjemaet være veldig nyttig for en nettbutikk, og
+        agenten kan raskt løse saken.
+      title3: Dynamiske felter
+      info4_v2: >-
+        Hvis du har abonnementet Estate eller over, så kan du ha dynamiske
+        felter som vises basert på alternativet som er valgt i typefeltet. Du
+        kan opprette en unik seksjon for hvert alternativ i typefeltet. Deretter
+        kan du legge til flere saksfelter i hver seksjon. For eksempel kan det i
+        forbindelse med en nettbutikk være en type for «Erstatning», der en
+        seksjon med et felt kalt «Årsak» blir åpnet for å innsamle årsaken til
+        hvorfor kunden trenger et nytt produkt.
   default_category: Standard kategori
   default_category_description: 'All e-post sendt til %{full_domain} vil bli lagret her som utkast'
   default_folder: Utkast
@@ -1566,6 +2410,9 @@ nb-NO:
   latest_tickets: nye oppdateringer
   search:
     no_results_msg: Ingen resultater funnet
+    in: i
+    by: 'gjennom:'
+    searching: Søker
   assumed_identity_msg: 'Du har overtatt identiteten til %{user_name}'
   unauthorized_msg: Verifisering feilet
   assuming_identity_user_does_not_exist_msg: Brukeren du har forsøkt å overta identiteten til eksisterer ikke
@@ -1636,7 +2483,7 @@ nb-NO:
   ticket_close_success: Din sak har blitt lukket.
   ticket_close_failure: Feil ved lukking av sak.
   canned_folders:
-    insert_placeholder: Sett inn Bokmerke
+    insert_placeholder: Sett inn plassholder
     important: 'Viktig: '
     delete_canned_response: Er du sikker på at du ønsker å slette det valgte ferdigsvaret?
     delete_folder: Er du sikker på at du vil slette mappen og alt innhold?
@@ -1684,7 +2531,7 @@ nb-NO:
     reset_to_last_published: Nullstill side til sist publiserte versjon
     preview: Forhåndsvis portal
     save_and_continue: Lagre
-    please_wait: Vennligst vent...
+    please_wait: Vennligst vent …
     layout_pages:
       subheader_layout: Portal utseende
       subheader_pages: Portal sider
@@ -1695,6 +2542,7 @@ nb-NO:
       header_layout_help_message: Endre toppen på din support portal
       footer_layout_help_message: Endre bunnen på din support portal
       pagelayout_help_message: Tilpass hele visningen av din supportside
+      head_layout_title: Leder
     cosmetic:
       subheader_background_color: Bakgrunnsfarge
       subheader_tab_color: Fanefarger
@@ -1705,6 +2553,8 @@ nb-NO:
       css_help_message: >-
         Legg til eller skriv over freshdesk sine standardstiler med dine egne
         css.
+    apply_mint: Bruk
+    classic: Klassisk
   any_time: Når som helst
   five_minutes: Innen 5 minutter
   fifteen_minutes: Innen 15 minutter
@@ -1746,7 +2596,7 @@ nb-NO:
   likes: Liker
   dislikes: Misliker
   for_this_article: For denne artikkelen
-  export: Eksport
+  export: Eksporter
   helpdesk_quests:
     see_all: Se alle
     available_quests: Tilgjengelige oppdrag
@@ -1788,6 +2638,8 @@ nb-NO:
       agents: Agenter
       all: Alle
       select_company: Velg Firma
+    visible_to: Vises for
+    type: Forumtype
   password_reset_email: Nullstille Passord E-post
   default_reply_template: Agent Svar Mal
   import_user_org: Brukere og organisasjoner
@@ -2012,6 +2864,10 @@ nb-NO:
       page_not_found: >-
         Denne forum kategorien ble ikke funnet. Det kan ha blitt slettet eller
         det er skrevet feil inn URL.
+    import:
+      info6: >-
+        Send filen til support@freshdesk.com, slik at vi kan kontrollere den og
+        laste den opp.
   agent_closes_tkt: Agent lukker Saken
   submit: send
   export_data_successfull: Dine Helpdesk data vil bli sendt til din e-post i løpet av kort tid!
@@ -2241,11 +3097,69 @@ nb-NO:
         simple_message_title: Enkel beskjed
         ivr_message_title: Interaktiv stemme respons (IVR)
         message_type: Type beskjed
+        turn_on: Den
+        save: Lagre
+        turn_off: Av
+        action: Handling
+        saving: Lagrer...
+        preview: Forhåndsvis
+        done: ferdig
+        welcome_message: Velkomstmelding
+      settings: Innstillinger
+      important: Viktig
+      freshfone_numbers_title: Telefon
+      welcome_page:
+        title_text: Telefon
+      numbers:
+        caller_id:
+          manage_caller_id: 'Administrer oppringer-ID '
+          add_new: Legg til ny
+        buy: Kjøp nummer
+        buy_button_text: Kjøp
+        address:
+          address: Adresse
+          state: Delstat/provins/region
+          city: Poststed
+          postal_code: Postnummer
+        manage: Administrer
+      feature_request_content:
+        learn_more: Lær mer
+        trial_or: ELLER
+        error_message: >-
+          Beklager, vi kan ikke behandle forespørselen din akkurat nå. Prøv på
+          nytt senere.
+        title_text: Telefon
+        pricing: Se alle samtalepriser og hvilke land som støttes
+      local: Lokalt
+      number_settings:
+        greeting_message: Skriv inn din beskjed her
+        number_accessible: Tilgjengelig med
+        record_all: Spill inn alle samtaler
+        voicemail_on: Den
+        cancel: Angre
+        record_none: Ikke ta opp samtaler
+        voicemail_off: Av
+        name: Navn
+        voicemail: Talemelding
+        business_hours: Arbeidstid
+        start_recording: Start opptak
+        preparing_recording: Behandler meldingen din …
+        audio_upload: Last opp
+        business_calendar: Velg åpningstider
+        name_placeholder: Angi et egendefinert navn på nummeret ditt
+        welcome_message: Velkomstmelding
+        change: Endre
+    subscription:
+      purchase_credits: Kjøp telefonkreditt
+      setup_auto_recharge: Konfigurer automatisk påfylling
+      auto_recharge_amt: Automatisk påfyllingsbeløp
+      see_detailed_pricing: Vis detaljerte priser
+      purchase_text: Kjøp telefonkrediter
   credit_card_info: Kredittkort opplysninger
   zendesk_backup_info: Velg Zendesk backup-fil lastet ned fra zendesk
   your_email_address: Din e-post adresse
   username: Brukernavn
-  reply: svar
+  reply: Svar
   is_not: Er ikke
   during: mens
   less_than: Mindre enn
@@ -2266,6 +3180,11 @@ nb-NO:
     helpcard:
       title: Tilpass din supportportal
       tour: Hjelp meg å tilpasse min helpdesk
+      info5: >-
+        Du kan begrense tilgangen til helpdesken din til kontaktene du legger
+        til og til bestemte domener. Andre personer vil ikke kunne registrere
+        seg, logge på eller sende inn saker. Du kan lese mer om det
+      info6: her.
     cancel:
       cancel_account: Slett Freshdesk konto
       goback: Tilbake til kontoinnstillinger
@@ -2278,6 +3197,37 @@ nb-NO:
       warning_message: >-
         Når du gjort dette vil du ikke lenger ha tilgang til dine data så ver
         helt sikker på at det er dette du ønsker å gjøre.
+      deleting_account: Avbryter
+      feedback:
+        support_followup: >-
+          Vi beklager. Som et selskap for kundestøtte er det ingenting som er
+          viktigere for oss enn å gi deg en god støtteopplevelse – hver gang.
+          Alt vi kan gjøre er å be deg om en ny sjanse, slik at vi kan gjøre det
+          opp for deg.
+        else: Noe annet?
+        else_followup: >-
+          Det ville være fint om du sender oss noen ord om hva som er
+          problemet..
+        budget_extra: >-
+          Kanskje du ønsker at vi beholder denne kontoen en stund, i påvente av
+          at du får bedre råd?
+        test-account: Vi brukte denne kontoen kun for testing. Vi kommer tilbake
+        requirement: Freshdesk oppfyller ikke mine behov
+        support: Vi har ikke fått god kundestøtte
+        moving_followup: >-
+          Det er synd at du forlater oss. Var det funksjonene du ikke var
+          fornøyd med? Prisen? Den plagsomme markedsføringsfyren som stadig
+          spammet deg? Men hvis du er fast bestemt på å finne noen andre, håper
+          vi bare du kommer tilbake til oss snart.
+        moving: Vi flytter til et annet produkt
+        budget: Jeg har ikke budsjett til det lengre
+        budget_followup: >-
+          Dere kan nedgradere til et lavere abonnement i Freshdesk uten at det
+          påvirker de eksisterende billettene. Dere kan faktisk hvis budsjettet
+          deres er veldig stramt, skifte til Sprout-abonnementet med 3 gratis
+          representanter så lenge du lever. <a
+          href="http://www.freshdesk.com/free-support-software">Finn ut mer om
+          gratis abonnement</a>
     billing:
       update_billing_info: Oppdater betalingsinformasjon
       begin_subscription_info: vil belaste ditt kort og starte ditt abonnement umiddelbart.
@@ -2302,6 +3252,29 @@ nb-NO:
       contact_phone: Telefon
       invoice_email_info: Send faktura til
       invoice_emails: E-post
+    multilingual_support:
+      helpcard:
+        supported_languages:
+          title: <b>Støttede språk</b><br/>
+        info1: >-
+          Tilby en sømløs støtteopplevelse til dine globale kunder fra alle
+          verdens hjørner.
+        title: Snakk på kundens språk
+      add_languages: Legg til språk
+      warning_msg: >-
+        Merk: Hovedspråket er standardspråket for helpdesken din. Det kan ikke
+        endres når støttede språk er lagt til.
+      manage_languages: Administrer språk
+    edit_domain:
+      getting_started: Kom i gang
+    new:
+      full_name: Fullt navn
+      company: Bedrift
+      confirmation: Bekreftelse
+      create_an_account: Opprett en konto
+    signup_google:
+      sign_up: Registrer deg!
+      privacy_policy: personvernregler
   success_msg: Kontoinnstillinger oppdatert!
   failure_msg: Feil ved oppdatering av kontoinnstillinger
   forum_key: Forum
@@ -2310,6 +3283,7 @@ nb-NO:
       mark_this_idea_as: Merk denne ideen som
     last_reply: 'Siste svar %{post_time} siden av %{user_link}'
     posted_at: 'Publisert %{post_time}'
+    edit_title: Rediger
   non_covered_feature_error: Denne funksjonaliteten er for øyeblikket låst
   unavailable_feature: >-
     %{feature} er ikke tilgjengelig i din plan. Vennligst oppgrader din konto
@@ -2325,7 +3299,7 @@ nb-NO:
   at: ved
   add_a_topic: Opprett nytt emne
   bottom: Bunn
-  feedbackwidget_help_title: Tilbakemelding widget
+  feedbackwidget_help_title: Widget innstillinger
   name: Navn
   import_user_org_text: >-
     Alle brukere og avdelinger i din Zendesk konto vil bli importert inn i din
@@ -2346,6 +3320,115 @@ nb-NO:
     agent_joined_msg: $ har blitt med i samtalen
     agent_left_msg: $ har gått ut av samtalen
     connecting_msg: Venter på kundebehandler
+    routing_info: Rut alle innkommende chatter til bestemte grupper
+    help_offline_thank_msg: Bekreftelsesmelding
+    prechat_dropdown_msg: >-
+      Du kan tilknytte alternativene i rullegardinmenyen til ulike grupper i
+      fanen Preferanser. Chatter blir tilordnet de angitte gruppene.
+    non_availability_msg_header: Melding når agenter er fraværende
+    integrate_msg: >-
+      Kopier og lim inn denne koden før den siste </body>-taggen på nettstedet
+      eller appen din
+    save: Lagre
+    wait_title: Melding mens du venter på agenten
+    msgbox_placeholder_title: Plassholder for svarboks
+    help_offline_thank_header_msg: Overskrift etter at melding er sendt
+    prechat_desc: >-
+      Samle inn informasjon om den besøkende for å få mer bakgrunnsinformasjon
+      under chatter. Når dette er aktivert, må besøkende sende skjemaet for å
+      starte en samtale.
+    installation: Widget-kode
+    show_widget: Når agenter er oppkoblet og mottar chatter
+    cancel: Angre
+    integrate_livechat_title: Integrer Live Chat i ditt nettsted og dine applikasjoner
+    header_title: Topp
+    maximum_chat_desc: >-
+      Angi grensen for hvor mange chatter en agent kan håndtere samtidig. Når en
+      agent når denne grensen, får han/hun ingen flere nye chatvarslinger.
+    chatbox_bgcolor: Farge
+    maximum_chat_title: Maksimalt antall chatter med besøkende
+    valid_code: Angi en gyldig fargeverdi
+    non_availability_msg_help: >-
+      Du kan lage en hyperlenke fra en setning i meldingen til URL-en din ved å
+      omgi setningen med "# #"
+    maximum_change_label: Rediger
+    chat_availability: Chatt-tilgjengelighet
+    proactive_title: Proaktiv chat
+    intro: >-
+      Med Freshdesks integrerte Live Chat-løsning kan du vise og chatte med
+      brukere på nettstedet ditt, i oppkoblet programvare eller i støtteportalen
+      din, direkte fra Freshdesk. Du kan også begynne å chatte proaktivt med
+      besøkende på nettstedet. Når du har fullført en chatte-økt, kan du velge å
+      konvertere samtalen til en sak og fortsette å følge opp den besøkende via
+      e-post, eller du kan arkivere utskriften av chatten.
+    texton: Den
+    show_chat_hours: Vis chat
+    agent_network_disconnect_msg_title: Melding når agenten blir frakoblet
+    thank_title: Takkemelding
+    prechat_msg: Før-chatt-melding
+    enable: Aktiver
+    enabled: Aktivert
+    welcome: Velkomstmelding
+    portal_desc: >-
+      På nettstedet ditt er Chatt-widgeten synlig for alle, men i støtteportalen
+      kan du kun aktivere den for kundene dine.
+    copy_to_clipboard: Kopier til utklippstavle
+    missed_chat_title: Skjema for tapt chatt
+    portal_option_info: Vis chat-widget for
+    missed_chat_desc: Samle inn informasjon om besøkende når du ikke er tilgjengelig.
+    proactive_note: >-
+      Merk: Før-chatt-skjemaet vises ikke når en chatt er startet proaktivt. Du
+      kan likevel legge til informasjon om den besøkende manuelt.
+    edit: Rediger
+    default_routing: Standard ruting
+    routing: Chatruting
+    anytime: Alltid (24/7)
+    help_text_wait_onhold_msg: >-
+      Denne meldingen vises hvis den besøkende venter på en agent i mer enn ett
+      minutt
+    support_portal: Chatt for støtteportalen din
+    chat_hours_msg_note: 'Merk: Chatt-vinduet vil være skjult utenom denne tidsperioden.'
+    form_details: Skjemadetaljer
+    show_chat_hours_msg: Angi når chatt-vinduet skal bli tilgjengelig for besøkende.
+    intro_title: Hvorfor direkte chat?
+    text_no: Nei
+    set_default_msgs: Standardmeldinger
+    enable_chat: Aktiver direkte chat
+    text_yes: Ja
+    business_hours: I åpningstiden
+    chat_enabled_label: Aktiver chat
+    chat_transfer_msg_title: Melding ved overføring av chat
+    offline_message: Fraværsmeldinger
+    window_position: Posisjon
+    custom_chat_window: Chattevindu
+    help_offline_title: Topp
+    learn_livechat: Finn ut mer om Live Chat
+    widget: Widget
+    textoff: Av
+    enabling: Aktiverer
+    use_custom_link: 'Omdiriger besøkende til en egen side '
+    procative_info: >-
+      Start chatt med besøkende automatisk hvis de tilbringer mer enn en bestemt
+      tidsperiode på samme side.
+    dropdown_based_routing: Ruting basert på rullegardinliste
+    widgets_list_info: >-
+      For hvert produkt du har satt opp i Freshdesk, vil en tilsvarende
+      chatt-widget være tilgjengelig her
+    visitor_form: Skjema for besøkende
+    disabled: Deaktivert
+    url_error_msg: Angi en gyldig URL-adresse
+    window_offset: Offsett
+    everyone: Alle
+    prechat_title: Skjema før chat
+    cobrowsing: Sidehjelp
+    end_chat_confirm_msg_title: Melding som bekrefter avslutning av chatt
+    chat_with_us: Kommuniser med oss
+    logged_in_users: Kun påloggede brukere
+    cobrowsing_info: >-
+      Veiled kundene mer effektivt under chatt-samtalen ved å ha et alternativ
+      for å vise og kontrollere kundens skjerm.
+    window_offset_error_msg: Angi en gyldig offset-verdi(< 500 px).
+    preferences: Preferanser
   starts_with: Starter med
   portal_customizer_anon_tickets_i: >-
     Skru av dette dersom du ønsker at dine brukere skal være logget inn når de
@@ -2371,7 +3454,7 @@ nb-NO:
       klikk. De hjelper deg å raskt behandle gjentatte hendelser. For eksempl
       kan du merke en sak som feil og sende til en gruppe samt sende epost til
       produktleder, alt med ett klikk
-    available_placeholders: Plassholder
+    available_placeholders: Sett inn plassholder
     info2: >-
       For eksempel kan du før du tildeler en sak til QA sette saken som feil,
       tildele den til QA gruppen og sende epost til QA leder om den nye feilen.
@@ -2393,12 +3476,14 @@ nb-NO:
   send_email_to_requester: Send e-post til anmoder
   feedbackwidget_btcustomize: Knapp tilpasning
   solution_category:
-    name: Kategorinavn
+    name: Navn
     new: Ny løsningskategori
     edit: Rediger løsning kategori
     info1: Er du sikker på at du vil slette denne kategorien?
     info2: Ingen mapper i denne kategorien
     save_and_create: Lagre og opprett ny
+    product_portal_visibility: Synlig på
+    manage_categories: Administrer
   billed_monthly: Betalt månedlig
   users:
     activations:
@@ -2441,6 +3526,9 @@ nb-NO:
     skip_notifications: Hopp over ny saksvarsling
     skip_notification_yes: Ja
     skip_notification_no: Nei
+    description: Beskrivelse
+    conditions: Betingelser
+    actions: Handlinger
   last_interaction: Siste hendelse
   select_watchers: Velg følgere
   header_logo: Header Logo
@@ -2502,6 +3590,27 @@ nb-NO:
     sticky: Klistret
     locked: Låst
     answered: Besvart
+    last_reply: Siste svar
+    requester: Anmoder
+    categories: Kategorier
+    filter_1: Planlagt
+    filter_2: Implementert
+    mark_as_spam: Merk som søppel
+    filter_4: Under behandling
+    filter_7: Ubesvart
+    filter_0: Alle
+    filter_5: Utsatt
+    filter_6: Besvart
+    unmark_answer: Avmerk dette som svar
+    filter_3: Ikke tatt
+    spam: Søppel
+    all: Alle
+    visible_in: Synlig på
+    filtered_by: Viser
+    add_category: Legg til kategori
+    questions:
+      answered: Besvart
+    change: endre
   activerecord:
     errors:
       messages:
@@ -2535,7 +3644,7 @@ nb-NO:
   top: Topp
   company_name: Firmanavn
   expires: Uløper
-  total_price: Total
+  total_price: Totalt
   downgrade: Nedgrader
   update: Oppdater
   save_reply: Lagre svar
@@ -2591,6 +3700,8 @@ nb-NO:
       delete_comment_confirm: 'Slett denne kommentaren, er du sikker?'
       delete_comment: Slett kommentar
       answer: Svar
+      mark_as_spam: Merk som søppel
+    edit_title: Rediger
   half: 30 minutter
   premium_sla_times:
     five_minutes: 5 minutter
@@ -2604,7 +3715,7 @@ nb-NO:
     new: Ny gruppe
     name: Gruppenavn
     edit: Rediger gruppe
-    title: Grupper
+    title: Agent (gruppetilgang)
     ticket_assignment: Automatisk sakstildeling
     info1: Agenter
     info2: Ingen agenter i denne gruppen
@@ -2627,6 +3738,32 @@ nb-NO:
       day: 1 dag
       twoday: 2 dager
       threeday: 3 dager
+    working_hours_header: Arbeidstid
+    toggle_availability_for_rr: >-
+      Tillat at agenter kan endre tilgjengeligheten sin for automatisk
+      tilordning av saker
+    maximum: Maksimalt
+    enable: Aktiver
+    please_confirm: Vennligst bekreft...
+    confirm: Bekreft
+    toggle_availability_message: >-
+      Administratorer og ledere kan overstyre en agents tilgjengelighet fra
+      instrumentbordet
+    round_robin_defalut: Round Robin sakstilordning
+    helptext: >-
+      Du kan organisere dine agenter i spesifikke grupper, som «Kundestøtte» og
+      «Salg». Dette gjør at du enkelt kan tilordne saker, opprette spesifikke
+      malsvar, administrere arbeidsflyter, og generere rapporter på gruppenivå.
+      Merk at en agent kan være medlem i flere grupper.
+    round_robin_capping: Belastningsbalansert sakstilordning
+    no_group_info: Du har ikke opprettet noen grupper.
+    send_escalation_to: '... og deretter send eskalerings-e-post til:'
+    business_calendar: Arbeidstid
+    working_hours: >-
+      Du kan knytte ulike åpningstider til ulike grupper basert på deres
+      arbeidstider. Du kan gruppere agenter etter skift og tilordne ulike
+      åpningstider til hver gruppe, eller opprette separate grupper for hvert
+      sted agentene dine jobber fra.
   four: 4 timer
   oneweek: 1 uke
   twoweek: 2 uker
@@ -2668,10 +3805,11 @@ nb-NO:
       info3: >-
         Administratorer kan også redigere en agents profil og legge inn tittel,
         telefon, profilbilde osv.
+      title3: Agent (gruppetilgang)
     make_admin: Gjør denne agenten en admin
     view_user: Vis bruker
     use_email: Bruk denne e-posten
-    restore: Gjenopprette
+    restore: Gjenopprett
     add_signature: Legg til signatur
     update: Oppdater
     permissions: Rettigheter
@@ -2696,6 +3834,34 @@ nb-NO:
     password_reset_note: >-
       En e-post med instruksjoner for nullstilling vil bli sendt til
       %{requester}
+    insert_placeholder: Sett inn plassholder
+    days_ago: '%{days} siden'
+    more: Mer
+    role: Agentrolle
+    member: Medlem i
+    ticket_scope: Saksomfang
+    assign: Tilordne
+    ago: '%{time} siden.'
+    full_time_agent: Fulltidsagent
+    export: Eksporter
+    available_seats_without_count: Agentseter tilgjengelig
+    occasional_agent: Periodevis agent
+    last_logged_in: 'Sist pålogget for %{time} siden.'
+    available_seats: '%{count} agentseter tilgjengelig'
+    invalid_export_params: Det oppstod en feil under eksportering av agentinformasjon. Prøv på nytt.
+    never_logged_in: Aldri pålogget
+    groups_description: Tilknytt en eller flere grupper til denne agenten.
+    export_title: Eksporter agenter til CSV-feil
+    no_seats: Ingen agentseter tilgjengelig
+    deleted_agent_info: >-
+      Merk: All kommunikasjon fra de slettede agentene vil bli markert som
+      SØPPELPOST.
+    no_recent_activity: Ingen nylig aktivitet
+    skill: Ferdigheter
+    account_suspended: konto sperret
+    roles: Roller
+    last_seen_at: Sist sett
+    assign_group: Tilknytt grupper
   account_admin: Kontoadministrasjon
   right: Høyre
   footer:
@@ -2738,8 +3904,8 @@ nb-NO:
   forgot_password_intro: >-
     Fyll inn skjemaet nedenfor og du vil motta en e-post om hvordan du
     nullstiller ditt passord
-  done: Utført
-  reset: Nullstille
+  done: Ferdig
+  reset: Tilbakestill
   ticket_due_by_time: Forfaller den
   ticket_past_due_by: 'Forfalt for %{time} siden'
   ticket_future_due_by: 'Forfaller om %{time}'
@@ -2807,6 +3973,7 @@ nb-NO:
       unverified: Kontakter som ikke har verifisert e-post
       deleted: Slettede kontakter
       all: Alle kontakter
+      blocked: Blokkerte kontakter
     verified:
       no_contacts: Du har ingen kontakter.
       no_contacts_with_letter: 'Ingen kontakter som starter med bokstaven %{alphabet}'
@@ -2816,6 +3983,7 @@ nb-NO:
     unverified:
       no_contacts: Du har ikke noen kontakter som ikke er verifisert
       no_contacts_with_letter: 'Ingen kontakter som starter med bokstaven %{alphabet}'
+    reply: Svar
   between: Mellom
   profile_settings: Profil innstillinger
   portal_key: Portal
@@ -2869,6 +4037,16 @@ nb-NO:
     total: Totalt
     free: Gratis
     paid: Betalt
+    invoice: Faktura
+    refund: Refundert
+    download: Last ned
+    free_plan_currency_note: >-
+      Når dere oppgraderer eller legger til representanter, er betalingen deres
+      i 
+    quantity: Antall
+    status: Status
+    type: Type
+    date: Dato
   activate: Aktivér
   billed_amount_per_month: 'Du vil bli fakturert $%{amount}%{period}'
   billed_amount_annually: 'Du vil bli fakturert $%{amount} årlig'
@@ -2921,6 +4099,7 @@ nb-NO:
     no_forums_info_2: 'Hvorfor starter du ikke et %{start_topic_link}?'
     article:
       see_all_articles: 'Se alle %{count} artikler'
+      created_by: 'Opprettet av:'
     folder:
       filler_text: 'Følg med her for artikler om %{folder_name}'
     topic:
@@ -2937,6 +4116,11 @@ nb-NO:
       started: startet et emne
       more_topic: Flere emner i
       last_reply: Siste svar
+      sort_heading: 'Sortert etter:'
+      sort_order:
+        popularity: Populært
+      sort_by_most_recent: Siste
+      sort_by_default: Standard
     topic_vote:
       you:
         one: Du
@@ -2962,11 +4146,13 @@ nb-NO:
       ideas_unlike_button: liker ikke!
       problem_unlike_button: Jeg har ikke dette problemet!
       howto_unlike_button: Jeg har ikke dette spørsmålet!
-      ideas_users_voted_title: Andre som liker denne ideen
-      problem_users_voted_title: Andre som har dette problemet
-      howto_users_voted_title: Andre som har dette spørsmålet
+      ideas_users_voted_title: Personer som liker denne ideen
+      problem_users_voted_title: Personer som har dette problemet
+      howto_users_voted_title: Personer som har dette problemet
+      votes: stemmer
+      announce_unlike_button: liker ikke!
     tickets:
-      export: Eksporter saker
+      export: Eksporter saker til CSV
       export_ticket_data: Eksporter saker til CSV
       export_to_csv: Eksporter til CSV
       ticket_list: Saksliste
@@ -2978,7 +4164,35 @@ nb-NO:
         Legg til eller fjern e-postadresser som trenger en kopi når en varsling
         om denne saken blir sendt.
       add_people_title: Legg personer til samtalen
-      reopen_reply: Gjenåpne og svar
+      reopen_reply: Svar
+      submit_export: Eksporter
+      comments: Kommentar
+      related_articles: Relaterte artikler...
+    cookie:
+      cookie_policy: Retningslinjer for informasjonskapsler
+      why_we_love_cookies: Hvorfor vi elsker informasjonskapsler
+      cookie_dialog_info3: >-
+        Vi vil også anta at du godtar måten vi bruker informasjonskapsler på og
+        synes det er greit i henhold til beskrivelsen i %{privacy_link}, med
+        mindre du velger å deaktivere dem helt i nettleseren din. 
+      privacy_policy: Personvernpolicy
+    agent_login_info: Er du en agent?
+    agent_signin: Logg på her
+    agent_login_details: Logg deg inn med detaljene du oppga ved registrering
+    account: konto
+    vote:
+      you:
+        one: 'Du '
+        other: 'Du og '
+      more:
+        one: '1 annen '
+        other: '%{count} andre '
+      people:
+        one: '1 person '
+        other: '%{count} personer '
+    vote_label:
+      one: 1 stemme
+      other: stemmer
   feedbackwidget_form_title: Widget skjematittel
   cancel_and_back: Angre og gå tilbake
   due_in: 'Forfaller %{time_words}'
@@ -2994,7 +4208,8 @@ nb-NO:
       new:
         new_folder: Ny mappe
       folder_form:
-        visible_to: Synlig for
+        visible_to: Vises for
+        category: Kategori
     articles:
       where: Hvor
       search_articles: Søk Artikler
@@ -3010,6 +4225,13 @@ nb-NO:
       article_useful: Glade for at vi kunne være til hjelp. Takk for tilbakemeldingen.
       article_not_useful: Takk for tilbakemeldingen. Vi vil forbedre denne artikkelen.
       error_message: 'Det er en feil %{error_msg}'
+      reset_rating:
+        link: Tilbakestill
+        dialog_submit: Tilbakestill
+      prop_tabs:
+        meta: meta
+      search_all: Søk Artikler
+      views: Visninger
     info9: Offentlig (vil bli publisert i selvhjelp)
     edit: Rediger løsning
     add: Ny løsning
@@ -3042,6 +4264,29 @@ nb-NO:
     description_counter_message: De beste SEO sidene anbefaler maks 150 tegn i beskrivelsen.
     char_count: tegn
     meta_keywords_message: Skill nøkkelord med komma
+    kb: Kunnskapsbase
+    via: via
+    sidebar:
+      feedbacks:
+        title: Tilbakemelding om min artikkel
+      view_all: Vis alle
+      drafts:
+        title: Utkast
+      view_less: Vis mindre
+    draft:
+      portal:
+        all: Alle
+      name: Utkast
+    general:
+      something_wrong: Noe gikk galt!
+      created_by: Opprettet av
+      feedback: Tilbakemelding
+      mark_as_outdated:
+        text_1: Marker andre oversettelser som utdatert
+      analytics: Analyser
+    move_to: Flytt til
+    add_category: Ny kategori
+    solution_title: Tittel
   import_updated: Oppdatert
   feedbackwidget_intro: Skreddersy din freshdesk widget nedenfor og se hvordan den blir
   save: Lagre
@@ -3152,7 +4397,7 @@ nb-NO:
   portal_customizer_option_tickets: Brukere kan opprette saker uten å logge inn
   feedbackwidget_help_para2: 'Tilpasset fane åpner ny sak skjema. '
   tag:
-    title: Tags
+    title: Tagger
   email_notifications:
     customize_email: Tilpass E-post
     edit_reply_template: Endre Mal
@@ -3171,6 +4416,42 @@ nb-NO:
     do_not_delete_ticket_id_from_subject: >-
       For å fange opp brukersvar som saksvar, må ikke plassholderen med sakens
       ID fjernes fra tittellinjen
+    disabled_toggle: Du kan ikke slå av denne varslingen.
+    no_agents: Legg til agenter
+    last_saved: Sist lagret
+    notify_agents: Varsle agenter
+    agent_select: Velg agentene du ønsker å varsle når en ny sak opprettes i helpdesken din.
+    agent_select_title: Varsle agenter
+    notification_template: Maler
+    edit: Rediger
+    singular_title: Varsling
+    helpcard:
+      reply_template_15:
+        topic: Agent Svar Mal
+      agent_template_12:
+        topic: Første respons til SLA brudd
+      agent_template_10:
+        topic: E-post for aktivering av bruker
+      agent_template_25:
+        topic: E-post med agentinvitasjon
+      requester_template_1:
+        topic: Ny sak opprettet
+      requester_template_8:
+        topic: Agent lukker Saken
+      requester_template_7:
+        topic: Agenten løser saken
+      agent_template_13:
+        topic: Løsningstid SLA brudd
+      agent_template_14:
+        topic: Nullstille Passord E-post
+      agent_template_1:
+        topic: Ny sak opprettet
+      requester_template_10:
+        topic: E-post for aktivering av bruker
+      requester_template_14:
+        topic: Nullstille Passord E-post
+    add: Legg til
+    cc_notifications: CC-varslinger
   errors_in_plan_change: 'Feil oppstå ved din endring:'
   formatting_help: Hjelp Formattering
   step1: Steg 1
@@ -3213,7 +4494,7 @@ nb-NO:
     unverified_info1: >-
       En e-post med lenke for verifisering har blitt sendt til denne
       e-postadressen. Først etter verifisering vil denne support e-postadressen
-      bli aktiv. 
+      bli aktiv.
     inactive_info2: 'Til da vil standard e-post %{default_email} bli brukt som avsenderadresse.'
     info15: Du må videresende disse e-postene til
     helpcard:
@@ -3243,17 +4524,32 @@ nb-NO:
     forwarding_email: Videresend E-post
     group: Gruppe
     support_email_exists: Support e-post er i bruk
-    primary_supp_email_tool_tip: Primær support e-post
+    primary_supp_email_tool_tip: Primær produkt support e-post
     secondary_supp_email_tool_tip: Angi denne som primær e-post
     remove_msg: Er du sikker på at du vil fjerne denne e-posten
     mark_as_primary_msg: Er du sikker på at du vil angi denne som primær support e-post
-    bcc_text: Bcc
+    bcc_text: Blindkopi
     add_bcc_text: Legg til Bcc
     set_bcc_email_text: Set Bcc e-post automatisk
     name_info_msg: Navn på e-post som vil bli brukt som svar på saker
     Personalized_email_replies: Bruke Agent navn for å gjøre E-post svar personlige ?
     Personalized_email_replies_yes: Ja
     Personalized_email_replies_no: Nei
+    dkim:
+      last_verified: Sist verifisert
+      config: Konfigurer
+      data_help: Verdi som skal tilordnes til DNS-posten
+      cname: CNAME
+      verified: Verifisert
+      verify: Verifiser
+      status: Status
+      remove: Fjern
+      host_value_help: Vertsnavn for TXT-posten
+      unverified: Ikke verifisert
+      type: Type
+      data: Data
+    disable_agent_forward: Bruk original avsender som bestiller for videresendte e-poster
+    plain_unverified: Ikke verifisert -
   step2: Steg 2
   import_users_contacts: Brukere og kontakter
   linkback_info: >-
@@ -3435,7 +4731,7 @@ nb-NO:
     requestor_info: Anmoder info
     view_twitter: Vis på Twitter
     reply_to: Svar
-    add_note: Legg til kommentar
+    add_note: Legg til notat
     monitor_btn_title: Overvåk denne saken
     canned_responses:
       ca_responses: Ferdigsvar
@@ -3469,6 +4765,14 @@ nb-NO:
         tooltip: Se på den relaterte JIRA saken
         add_new: Lenk til en sak
         existing: Vis sak
+    reported: rapportert
+    via: via
+    view_facebook: Vis på Facebook
+    search_text: Søk Artikler
+    created_by: 'Opprettet av:'
+    action: Handling
+    submit_loading: Sender ...
+    thanks_v1: Takk for din tilbakemelding
   recent_activity: Nylig aktivitet
   recent_activities: Nylige aktiviteter
   forgot_password: Glemt passord
@@ -3489,7 +4793,7 @@ nb-NO:
     form:
       type: Forumtype
       visibility: Forum synlighet
-      visible_to: Synlig for
+      visible_to: Vises for
   next_charge_amount: '%{type} pris:'
   company:
     info9: >-
@@ -3548,6 +4852,7 @@ nb-NO:
   integration:
     helpcard:
       title1: Integrasjoner
+      title2: Egendefinerte apper
   account:
     name: Konto Navn
     cancel: Angre
@@ -3569,6 +4874,38 @@ nb-NO:
     rebrand: Tilpass din helpdesk
     helpdesk_url: Helpdesk/portal URL
     language: Språk
+    us: MÅNED-DAG-ÅR
+    gdpr_terms_link: Vilkår
+    date_format: Datoformat
+    twitter_disabled: >-
+      Av sikkerhetshensyn blir pålogging med Twitter deaktivert for kunder og
+      agenter.
+    gdpr_admin: Administrator.
+    includes_contacts_company_domain: (inkluderer eksisterende kontakter og bedriftsdomener)
+    hidden_on_portal: Skjult i portalen
+    settings: Innstillinger
+    important: Viktig
+    gdpr_policy: Personvernregler.
+    helpdesk: Brukerstøttesystem
+    supported_languages: 'Støttede språk (%{count})'
+    logo_and_favicon: Logo og favorittikon
+    languages: Språk
+    permission:
+      users_from_any_domain: Brukere fra ethvert domene
+      who_can_create: Hvem kan logge på (eller) registrere seg (eller) opprette saker?
+      users_from_selected_domains: Brukere fra hvitelistede domener
+    gdpr_agent: Agent
+    non_us: DAG-MÅNED-ÅR
+    anyone: Hvem som helst
+    change_logo: Endre logo
+    gdpr_acknowledgement: og bekrefter at du har lest vår
+    search_domain: Søk etter domene
+    forums_toggle:
+      title: Forum
+    gdpr_to: til
+    primary_language: Hovedspråk
+    additional_languages: Språk som støttes
+    visible_in_portal: Synlig i portalen
   lead: Ledelse
   comments: Kommentar
   forum_confirm_msg1: Er du sikker på at du vil slette denne kommentaren?
@@ -3579,7 +4916,7 @@ nb-NO:
     to: til
     valid_time: Vennligst oppgi en riktig tid
     holiday_name: Navn på fridag
-    title: Åpningstider
+    title: Arbeidstid
     holiday_added: Fridag allerede lagt til
     info3: Definert Arbeidstid
     info4: Arbeidsdager for din helpdesk
@@ -3587,6 +4924,13 @@ nb-NO:
     info5: Fridager vil bli ignorert når SLA blir beregnet for en sak
     holidays: Fridager
     helpdesk_hours: Helpdesk åpningstider
+    delete: Er du sikker på at du vil slette?
+    holiday_calendar: Helligdagskalender
+    new: Nye åpningstider
+    name: Navn
+    time_zone: Tidssone
+    description: Beskrivelse
+    multiple: Flere åpningstider
   import_org_companies: Organisasjoner og firmaer
   add: Legg til
   portal_customizer_title: Tilpass din offentlige brukerportal
@@ -3601,7 +4945,7 @@ nb-NO:
   edit_agent: Endre Agent
   high: Høy
   scenario_label: Scenario navn
-  email: Epost
+  email: E-post
   linkback_overlabel: URL for å linke tilbake
   select_a_plan: Velg en Plan
   ticket_was: saken var
@@ -3610,3 +4954,592 @@ nb-NO:
   total: Totalt
   export_to_CSV: Eksporter til CSV
   back_to_reports: og tilbake til rapporter
+  change_plan_title: Er du sikker på at du vil skifte plan?
+  mailbox:
+    imap_port: Port
+    authentication: 'Autentisering:'
+    user_name: Brukernavn
+    use_mail_server_for: 'Bruk e-postserver for:'
+    domain_name: Domenenavn
+    verifying_mailbox_input: Verifiserer...
+    use_ssl_tls: Bruk SSL/TLS
+    domain: 'Domene:'
+    use_ssl: Bruk SSL
+    smtp_port: Port
+    password: Passord
+    incoming_mail_settings: Innstillinger for innkommende e-post
+  view_invoices: 'Vis fakturaer:'
+  change_password: Endre passord
+  none: Ingen
+  mailer_notifier:
+    hi: 'Hei,'
+    thanks: 'Takk,'
+  copied_link: Kopiert
+  enter_a_value: Angi en verdi
+  custom_mailbox_admin_email_notifications:
+    regards: Med vennlig hilsen
+    welcome_message: Kjære administrator
+  downgrade_plan_title: Er du sikker på at du vil nedgradere?
+  custom_mailbox_error_type:
+    unkown_error: >-
+      Kan ikke hente e-poster fra egendefinert e-postserver. Vennligst kontakt
+      support@freshdesk.com
+    ssl_errror: SSL-feil.
+    server_response_invalid: Serversvar ved tilkobling til server er i ugyldig format.
+    unable_to_connect: Kan ikke koble til mappen i postboksen.
+    tcp_connection: Kan ikke opprette TCP-tilkobling.
+    tcp_refused: E-postserver avviste TCP-tilkobling.
+    mailbox_idle: Postboksen støtter ikke inaktiv-funksjonen.
+    unable_fetch_status: Kan ikke hente mappens status.
+    io_error: I/U-tilkoblingsfeil.
+    mailbox_suspended: E-postserver suspendert
+    server_no_resp: E-postserver sendte «NO»-svar under tilkobling til server.
+    bye_response: E-postserver sendte «BYE»-svar under tilkobling til server.
+    invalid_login: Ugyldig påloggingsinformasjon.
+    folder_unavailable: Mappen er utilgjengelig i postboksen.
+    tcp_socket: Kan ikke opprette TCP-socket for e-postserver.
+    email_bad_request: E-postserver sendte «BAD»-svar under tilkobling til server.
+  forum_category:
+    product_portal_visibility: Synlig på
+  choose_plan_trial_v2: >-
+    Kontoen deres deaktiveres etter prøveperioden. Hvis du vil fortsette å bruke
+    Freshdesk, velger du et abonnement nedenfor.<br />
+  imap_error: E-postserver utilgjengelig
+  marketplace:
+    delete_action:
+      success: Integrasjonen har blitt deaktivert!
+    share_app: Del denne appen
+    view_all: Vis alle
+    needs_developer_text: Krever utviklerkonto
+    no_connection: >-
+      Markedsplassen er utilgjengelig for øyeblikket. Prøv igjen senere. Kontakt
+      oss hvis problemet vedvarer.
+    view_more: Se mer
+    installation: Installasjon
+    terms_of_use_link: 'http://freshdesk.com/terms#marketplace'
+    developed_by: 'Publisert av '
+    cancel: Angre
+    all_apps: Alle apper
+    api_error: Vi kan ikke behandle forespørselen din. Prøv igjen om en stund.
+    help_and_support: Hjelp og støtte
+    settings: Innstillinger
+    app_gallery: Markedsplass
+    helpnote1: >-
+      Apps in Freshdesk let you share data with third party solutions and
+      services that you use regularly. They also enable you to add additional
+      features to the ticket and contact details page. Freshdesk offers several
+      apps out-of-the-box. To browse our selection of apps, click on the “Get
+      more Apps” button.
+    tooltip:
+      suspended: Ikke tilgjengelig
+    app_installation_agreement: 'Ved å installere denne appen godtar du å overholde våre '
+    no_mktp_apps_note_2: Klikk på «Få flere apper» for å bla gjennom utvalget.
+    screenshots: Skjermbilder
+    no_configs: Denne appen krever ingen konfigurasjoner.
+    custom_apps: Egendefinerte apper
+    third_party_apps_policy: >-
+      Denne appen eies, utvikles, driftes og vedlikeholde av en tredjepart og
+      ikke Freshworks Inc. Ved å laste ned, integrere med og/eller bruke denne
+      appen, forstår du at du er bundet av utviklerens vilkår og retningslinjer
+      for personvern, inkludert behandling av dine opplysninger. Kontakt
+      utvikleren eller besøk utviklerens nettside for mer informasjon om disse
+      vilkårene og retningslinjene for personvern.
+    time_ago: siden
+    error_calling_method: 'Det oppstod en feil under kall av metode: '
+    no_search_results: Vi finner ikke det du leter etter. Prøv igjen med et nytt søkeord.
+    validation_failed: Validering mislyktes.
+    no_custom_apps_installed: Ingen egendefinerte apper installert
+    installing_text: Vennligst vent …
+    paid_app: BETALT
+    popular_apps: Populære apper
+    installed_mkp_apps_unavailable: >-
+      Listen over installerte apper er for øyeblikket utilgjengelig. Prøv igjen
+      senere. Kontakt oss hvis problemet vedvarer.
+    overview: Oversikt
+    install: Installer
+    write_a_custom_app: Skriv en egendefinert app
+    published_in: i
+    confirm_uninstall_message: 'Er du sikker på at du vil avinstallere %{human_name}?'
+    instructions: Instruksjoner
+    latest_apps: Siste apper
+    popular: Populært
+    get_more_apps: Få flere apper
+    apps: Apper
+    policy_on_custom_apps: Retningslinjer for egendefinerte apper
+    no_custom_apps_note_2: Klikk på «Få egendefinerte apper» for å bla gjennom og installere dem.
+    version: VERSJON
+    reauthorize: Autoriser på nytt
+    custom_app_gallery: Egendefinert app-galleri
+    go_to_dev_portal: Gå til utviklerportalen
+    apps_unavailable: >-
+      Enkelte apper kan ikke vises. Prøv igjen senere. Kontakt oss hvis
+      problemet vedvarer.
+    policy_on_tp_apps: Retningslinjer for tredjepartsapper
+    no_mktp_apps_note: Vi har integrert med noen av favorittprogrammene dine.
+    ver: 'Versjon: '
+    installing: Installerer
+    coming_soon: Kommer snart
+    latest: Siste
+    no_custom_apps_note: Opprett egendefinerte apper og publiser dem i utviklerportalen.
+    no_apps: Ingen apper tilgjengelig
+    field_blank: Fyll ut de obligatoriske feltene.
+    terms_of_use: vilkår for bruk
+    description: Beskrivelse
+    almost_done: Nesten ferdig!
+    no_mktp_apps: Ingen apper installert
+  shortcuts:
+    ticket_detail_list_common:
+      delete_ticket: Slett sak
+      scenario: Scenarioer
+      add_note: Legg til notat
+      reply: Svar
+      forward: Frem
+      search: Søk
+    goto_tab:
+      social: Sosial
+      tickets: Saker
+      dashboard: Oversikt
+      forums: Forum
+      customers: Kunder
+      solutions: Løsninger
+    title: Hurtigtaster
+  proceed_billing_info: 'Ja, fortsett til betaling'
+  contact_field:
+    helpcard:
+      info3: >-
+        I likhet med saksfelter kan du legge til nye felter til
+        registreringsskjemaet for kunder og gjøre dem obligatorisk. Du kan også
+        ha private felter som bare er synlig for agentene dine.
+      title2: Tilpassing av dine kundefelter
+  activations:
+    activate_freshdesk_account: Aktiver kontoen din
+  downgrade_plan_v2: 'Merk: Hvis dere nedgraderer abonnementet, kan dere miste noen funksjoner!'
+  customer_import:
+    import_csv: 'Importer %{type} fra CSV-fil'
+  trial_plan_name: 'Nedgrader prøverperiode til %{name}'
+  cloud_log_mailer:
+    logger_email:
+      regards: 'Med vennlig hilsen,'
+      account: 'Konto: '
+      reason: Årsak
+  merge_contacts:
+    please_wait: Vennligst vent...
+  portals_key: Portaler
+  classic_label: Klassisk
+  enable: Aktiver
+  event:
+    type: Type
+  downgrade_contact_us: >-
+    Ta en titt på vår <a target="_blank"
+    href="https://freshdesk.com/helpdesk-features">fullstendige
+    funksjonssammenligning</a>. <br />Er dere fremdeles usikker? <a href =
+    "mailto:support@freshdesk.com" >Vi kan hjelpe dere med å bestemme dere!</a>
+  make_payment: Utfør betaling
+  helpcard:
+    title: Unik ekstern ID
+  google_signup:
+    associate_google:
+      login: Logg inn
+      email_address: E-postadresse
+      login_your_helpdesk: Logg på helpdesken din
+      link_your_helpdesk: Tilknytt helpdesken din
+      login_with_admin: >-
+        Du må være en kontoadministrator for å tilknytte Freshdesk-kontoen til
+        Google-pålogging
+      your_helpdesk: Din helpdesk
+    signup_google:
+      phone_no: Telefonnummer
+      helpdesk_url: URL-adresse for brukerstøtte
+      your_freshdesk_url: Din helpdesk-URL
+      submit: Send inn
+      company_name: Firma navn
+      create_my_account: Opprett konto
+      helpdesk_name: Helpdesknavn
+  admin_upgrade:
+    enable_mint_title: La agenter prøve den nyere og raskere Mint-opplevelsen
+    enable_mint_error: >-
+      Mint har allerede blitt aktivert for alle agenter. Oppdater for å se de
+      nyeste innstillingene.
+    enable_mint_success: Jippi! Mint har blitt aktivert for alle agenter.
+  plain_off: Av
+  customize_domain:
+    email:
+      cheers: 'Hilsen,'
+  free_plan: Gratis abonnement
+  widgets:
+    feedback_widgets:
+      new:
+        no_results: 'Ingen resultater for '
+        feedback_widgets_search_results: Søkeresultater
+        problems_with_fields: 'Det oppsto problemer med følgende felt:'
+        feedback_widgets_knowledge_base: 'Kunnskapsbase '
+        feedback_widgets_search: Søk
+  profiles:
+    freshid_edit:
+      profile_details: Profilopplysninger
+  attach: Legg ved
+  discussions:
+    topics:
+      reply: Svar
+      edit_topic: Rediger emne
+      post:
+        replied_to: svarte i emnet
+        replied: svart
+        delete_confirm: 'Slett denne kommentaren, er du sikker?'
+      replied: svart
+      widgets:
+        ticket:
+          agent: Agent
+      mark_as_spam: Merk som søppel
+      answer: Svar
+    shared:
+      topic:
+        actions:
+          reply: svarte i emnet
+        tags:
+          reply: Svar
+    unpublished:
+      spam:
+        reply:
+          title: Svar
+          posted: svart til
+      index:
+        unpublished: Venter på godkjenning
+        title: Søppel
+      invalid_topic:
+        went_wrong: Noe gikk galt
+      page_title: Endring av forum
+    show_more: Vis mer
+    moderation:
+      index:
+        title: Søppel
+      spam:
+        reply:
+          posted: svart til
+          title: Svar
+    topic_merge:
+      cancel: Angre
+      mark_primary: Merk som hovedsak
+      continue: Fortsett
+      add: Legg til
+      please_wait: Vennligst vent...
+  freshcaller:
+    admin:
+      sidebar_title: Telefon
+      link_account_request_content:
+        cancel: Angre
+        connect_existing_account: Koble til eksisterende konto
+        link_errors:
+          validation_error: Dette feltet er obligatorisk
+        email: E-post
+        account_url: Freshcaller konto-URL
+        continue: Fortsett
+        password: Passord
+      title_text: Telefon
+      feature_request_content:
+        create_new_account: Opprett ny konto
+      freshcaller_subtext: 'Kjøp numre, konfigurer ringekøer, IVR-er osv.'
+  activate_free_plan: Aktiver gratis abonnement
+  feedbackwidget_background: Bakgrunn
+  custom_fields:
+    default_field_error: Standardfelt kan ikke slippes i seksjonen
+    empty_section_info: Slipp felt her
+    url: URL
+    delete: Slett
+    nested_field: Sammenhengende felt
+    phone_number: Telefonnummer
+    dropdown: Rullegardinmeny
+    email: E-post
+    checkbox: Avmerkingsboks
+    dropdown_blank: Rullegardinmeny
+    text: Tekst på en linje
+    number: Antall
+    drag_and_drop_field: Dra og slipp felt
+    insert_field: Dra og slipp felt
+    date: Dato
+    decimal: Desimal
+  disable: Deaktiver
+  add_more_lang: Legg til «støttede språk» i helpdesken din.
+  zendesk_import:
+    group: Agent (gruppetilgang)
+    user: Brukere
+    autorefresh: Statusen oppdateres automatisk hvert minutt
+    ticket: Saker
+  'on': den
+  save_as: Lagre som
+  chatwidget_title: Direkte chat
+  multifile_attachments:
+    remove: Fjern
+    mb: ' MB '
+    label: Legg ved filer
+  retype_password: Skriv passord på nytt
+  change_equal_plan_title: 'Er dere sikker på at dere vil skifte til det nye %{to_plan}-abonnementet?'
+  free_plan_agents_v2: Ubegrensede representanter
+  reload: Last inn på nytt
+  agent_list:
+    sort:
+      last_active_at: Sist sett
+      sorted_by: Sortert etter
+      created_at: Opprettelsesdato
+      asc: Stigende
+      desc: Synkende
+      name: Navn
+  currency_label: 'Valuta :'
+  plain_on: Den
+  clone: Klon
+  helpdesk_reports:
+    chats: Chatter
+    more: Mer ...
+    customer_report:
+      title: Analyse over toppkunder
+    no_data_to_display_msg: Ingen data å vise
+    insights:
+      customize_link: Tilpass
+    saved_report:
+      save: Lagre
+      cancel: Angre
+      delete_dialog_header: Slett rapport
+      edit_dialog_header: Rediger rapport
+    loading_text: Genererer rapport ...
+    today: Idag
+    ticket_schedule:
+      index:
+        delete_title: Slett tidsplan
+        delete_text: Er du sikker på at du vil slette denne planen?
+        cancel: Angre
+        confirm: Bekreft
+      new:
+        helpnote:
+          api_info1: API-en vil inneholde lenken til den siste eksporten.
+        ticket_fields_title: Saksfelt
+        email: E-post
+        contact_fields_title: Kontaktfelt
+        select_all: Velg alle
+        one_time_export_label: >-
+          Eksporter saksinnhold fra begynnelsen av måneden når denne tidsplanen
+          starter
+        company_fields_title: Bedriftsfelt
+        description: Beskrivelse
+        frequency: Tidsplan
+      schedule_export: Planlegg eksport
+      schedule: Tidsplan
+      all_reports: Alle rapporter
+      new_schedule: Ny tidsplan
+    this_week: Denne uken
+    agent_summary:
+      title: Agentprestasjon
+    generate: Lag
+    this_month: Denne måneden
+    edit_filter: Filtrer
+    scheduled_reports:
+      errors:
+        disabled: Rapporter med egendefinerte datointervaller kan ikke planlegges
+      dialog:
+        monthly: Månedlig
+        generate_report: Generer rapport
+        email: E-post
+        'on': Den
+        desc: Beskrivelse
+        daily: Daglig
+        weekly: Ukentlig
+        subject: Emne
+    year_in_review:
+      title: Tilbakeblikk på året ditt
+    ticket_volume:
+      resolved_tickets: Løste Saker
+      received_tickets: Mottatte saker
+      time_trends:
+        year: år
+        week: uke
+        day: Dag
+        month: måned
+      title: Trender for saksvolum
+      unresolved_tickets: Uløste saker
+    summary: Sammendrag
+    timespent:
+      title: Sakssyklus
+    show: 'Vis:'
+    productivity: Produktivitet
+    date_range: Dato intervall
+    filter_by: Filtrer på
+    glance:
+      title: Brukerstøtte i detalj
+      index_title: Brukerstøtte<br/>i detalj
+    customer_happiness: Kundetilfredshet
+    timesheet_reports:
+      title: Sammendrag av timeliste
+    timespent_export:
+      export_csv: Eksporter CSV
+      button_export: Eksporter
+    performance_distribution:
+      title: Prestasjonsfordeling
+      resolution_bar: Løsetid
+      first_response_bar: Første svartid
+      response_bar: Gjennomsnittlig svartid
+    group_summary:
+      title: Gruppeprestasjon
+    satisfaction_survey:
+      title: Tilfredshetsundersøkelse
+    ticket_activity:
+      helpnote:
+        api_info1: API-en vil inneholde lenken til den siste eksporten.
+      edit: Rediger tidsplan
+      learn_more: Lær mer
+    filtered_by: 'Filtrert på:'
+    at: ved
+    helpdesk_analysis: Brukerstøtteanalyse
+    customer_satisfaction:
+      title: Kundetilfredshets rapport
+    yesterday: Igår
+    change: Endre
+  plan: Abonnement
+  trail_expiry_one_more_day: >-
+    Velg et betalt eller gratis abonnement umiddelbart for å dra fordel av
+    uavbrutt tilgang til Freshdesk
+  notification:
+    submit_feedback: Send tilbakemelding
+    whats_new_in_freshdesk: ' Hva er nytt i Freshdesk '
+    load_more: Last inn flere
+  company_field:
+    helpcard:
+      title1: Tilpasser bedriftsfeltene dine
+  support_multi_languge: Støtter du kunder på flere språk?
+  downgrade_loss_message: >-
+    <span class="label label-important">Viktig</span> Dere taper data og
+    konfigurasjoner for følgende funksjoner permanent:
+  features:
+    machine_learning: Maskinlæring
+    bot: Robot
+    helpdesk_report: Grundige rapporter for brukerstøttesystem
+    multiple_mailbox_desc: E-poster fra flere postkasser
+    advanced_phone_integration: Avansert telefonintegrering
+    custom_ssl_desc: Tilpassede SSL-sertifikater
+    portal_customization: Portaltilpassing
+    advanced_phone_desc: Avanserte telefonfunksjoner
+    gamification: Spillifisering
+    app_gallery: Få tilgang til appgalleriet
+    custom_survey_desc: Tilpassede tilfredsstillelsesundersøkelser
+    forums_desc: Diskusjoner på samfunnsforum
+    parent_child: Over-/underordnet-billetter
+    adv_social_desc: Avanserte sosiale funksjoner
+    auto_ticket_assignment: Automatisk sakstildeling
+    custom_mailbox_desc: Tilpassede e-postservere
+    shared_ticket_views_desc: Tilpassede og delte billettvisninger
+    custom_ticket_views_desc: Tilpassede billettvisninger
+    cname_dkim_desc: CNAME- og DKIM-konfigursjoner
+    time_event_automation: Tids-/hendelsesbaserte  automatiseringer
+    scheduled_reports: Planlagte rapporter
+    knowledge_base: Kunnskapsbase
+    phone_integration: Telefonintegrasjon
+    custom_fields_desc: Tilpassede billetter og kontaktfelt
+    custom_data_center: Datasenterplassering
+    live_chat_desc: Live-chat-konfigurasjoner og -avskrifter
+    m_k_base: Flerspråklig kunnskapsbase
+    role_dashboard: Rollebaserte instrumentpaneler
+    custom_ssl: Egendefinert SSL
+    custom_ticket_fields_and_views: Tilpassede billettfelt/-visninger
+    feedback_widget: Widget innstillinger
+    multiple_sla_business_desc: 'Flere servicenivåavtaler, tidssoner og åpningstider'
+    automations: Automatiseringer
+    ip_whitelisting: IP-godkjenningslister
+    multiple_products: Flere produkter
+    multilingual_kbase_desc: Flerspråklige kunnskapsbaseartikler
+    basic_phone: Grunnleggende telefoner og sosiale kanaler
+    whitelisted_ip_desc: IP-adresser for godkjenningslister
+    portal_customization_desc: Tilpasninger av kundeportal
+    dynamic_email_alert: Dynamiske e-postvarsler
+    multiple_products_desc: Flere produktportaler / kunnskapsbase
+    ticket_dispatch_automation: Automatisering av billettekspedering
+    custom_surveys: Tilpassede tilfredsstillelsesundersøkelser
+    sla_reminders: Påminnelser og opptrapping for servicenivåavtaler
+    multiple_sla: Flere servicenivåavtaler og tidssoner
+    time_event_automation_desc: 'Tids- og hendelsesbaserte automatiseringsregler (Supervisor, observatør)'
+    custom_roles: Tilpassede roller
+    custom_roles_desc: Tilpassede representantroller
+    ticket_templates: Billettmaler
+    freshchat: Freshchat-integrering
+    enterprise_reports_desc: Enterprise-rapporter
+  admin_onboarding:
+    modal:
+      channels_frame:
+        social_channel: Sosial
+        forums_channel: Forum
+        chat_channel: Direkte chat
+        email_channel: E-post
+        phone_channel: Telefon
+        title: Hvordan snakker du med kundene dine i dag?
+        forward_link: Inviter teamet ditt
+      overview_frame:
+        forward_link: La oss komme i gang
+      agents_frame:
+        send_invite: Send Invitasjon
+        emails_invalid: En eller flere av dine e-post er ugyldig
+        emails_placeholder: 'bruce@just.ly, diana@just.ly, clark@just.ly'
+      welcome_frame:
+        title: Velkommen til Freshdesk
+    account_verification_message:
+      helpnote_or: eller
+      modal_title: Har du registrert deg med feil e-postadresse?
+      modal_invalid_email_error: Vennligst oppgi en gyldig e-post adresse.
+      modal_send_button: Send aktivering
+      resend_message: Send aktivering på nytt
+      cancel_button: Angre
+      change_email: endre e-postadresse
+  adv_reports:
+    no_data_to_display_msg: Ingen data å vise
+    customer_at_a_glance: Kundeoversikt
+    select_option_msg: Vennligst velg et alternativ
+    load:
+      resp_time: Svartid
+    reports: Rapporter
+    summary: Sammendrag
+    customer_top_n_analysis: Toppanalyse av kunde
+    glance:
+      select_customer_msg: Velg kunde
+      select_group_msg: Velg gruppe
+      all_reports: Alle rapporter
+      no_customers_msg: Du har ingen kunder
+      select_agent_msg: Velg agent
+    report: ' Rapport '
+  chatwidget_help_content:
+    title: Direkte chat
+    info2: >-
+      Hver chatteøkt vil fange metainformasjon om besøkende, inkludert deres
+      plassering, enhet osv. samt støttehistorikken hos deg. Når chatteøkten er
+      over, kan du velge å konvertere samtalen til en sak, fortsette å følge opp
+      den besøkende over e-post eller arkivere chatavskriften.
+  feedbackwidget_button_text: Etikett
+  ticket_form:
+    your_email_address: E-post
+  user_notifications:
+    notification_preferences: Varslingsinnstillinger
+    enable_desktop_notifications_help: Klikk på «Tillat» når du blir bedt om det
+    mark_all_as_read: Marker alle som lest
+    header: Varsler
+    preferences: Preferanser
+  ticket_templates:
+    create_new: Opprett ny
+  edit_plan: Rediger abonnement
+  freshchat:
+    admin:
+      save: Lagre
+      sidebar_title: Freshchat
+      cancel: Angre
+      action:
+        success_message: Innstillingene er oppdatert
+      admin_apikey: 'API-nøkkel:'
+      title_text: Freshchat
+      portal_url: 'Portaladresse:'
+      app_id: App-ID
+  in: i
+  and_more_plan_downgrade: Med mer ...
+  help_widget:
+    form_title: Kontakt oss
+    form_button_text: Send tilbakemelding
+    form_submit_message: Takk for din tilbakemelding.
+    button_text: Hjelp
+    welcome_message: Kan vi hjelpe deg?
+    predictive_message: >-
+      Vi har lagt merke til at du sitter fast. Fortell oss hva du prøvde å
+      oppnå, så vil støtteteamet vårt kontakte deg så snart som mulig.
+    success_message: Takk. Vi kontakter deg snart!

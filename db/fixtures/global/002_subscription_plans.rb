@@ -433,13 +433,20 @@ unless Account.current
     a.addon_type = addon_types[:for_account]
   end
 
+  field_service_management = Subscription::Addon.seed(:name) do |a|
+    a.name = 'Field Service Management'
+    a.amount = 29.0
+    a.renewal_period = 1
+    a.addon_type = addon_types[:field_agent_quantity]
+  end
+
 	all_addons = [ agent_collision, custom_ssl, custom_roles, gamification, layout_customization,
 	               multiple_business_hours, round_robin, chat, enterprise_reporting, custom_domain,
 	               custom_slas, custom_mailbox, whitelisted_ips, chat_routing, dynamic_sections,
 	               custom_surveys, call_center_advanced, helpdesk_restriction,
 	               ticket_templates, round_robin_load_balancing, one_contact_multiple_companies, unique_external_id, sandbox ]
 
-	estate_addons  = [custom_mailbox, whitelisted_ips, call_center_advanced, skill_based_round_robin]
+	estate_addons  = [custom_mailbox, whitelisted_ips, call_center_advanced, skill_based_round_robin, field_service_management]
 	garden_addons  = all_addons + [shared_ownership_toggle] - [ multiple_business_hours, custom_domain, custom_slas, custom_surveys, ticket_templates, sandbox ]
 	blossom_addons = all_addons + [link_tickets_toggle, parent_child_tickets_toggle] - [ custom_domain, sandbox ]
 
@@ -450,7 +457,7 @@ unless Account.current
 
 	estate_jan_19 = estate_17_addons + [fluffy_forest, fluffy_higher_plan1, fluffy_higher_plan2, fluffy_higher_plan3, fluffy_higher_plan4]
 
-	forest_jan_19 = [fluffy_higher_plan1, fluffy_higher_plan2, fluffy_higher_plan3, fluffy_higher_plan4]
+	forest_jan_19 = [fluffy_higher_plan1, fluffy_higher_plan2, fluffy_higher_plan3, fluffy_higher_plan4, field_service_management]
 
   SubscriptionPlan.seed_many(:name, plan_list(all_addons, estate_addons, garden_addons, blossom_addons, estate_17_addons, garden_17_addons, blossom_17_addons, sprout_17_addons, estate_jan_19, forest_jan_19))
 

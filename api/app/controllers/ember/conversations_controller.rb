@@ -482,7 +482,7 @@ module Ember
                             twitter_handle_id: @twitter_handle_id, stream_id: stream_id)
         end
         if @item.save_note
-          if stream.custom_stream? || (!current_account.mentions_to_tms_enabled? && mention_note?)
+          if stream.custom_stream? || (!current_account.outgoing_tweets_to_tms_enabled? && mention_note?)
             Social::TwitterReplyWorker.perform_async(ticket_id: @ticket.id, note_id: @item.id,
                                                      tweet_type: @tweet_type,
                                                      twitter_handle_id: @twitter_handle_id)
@@ -617,7 +617,7 @@ module Ember
       end
 
       def mentions_in_tms?(stream)
-        current_account.mentions_to_tms_enabled? && stream.default_stream?
+        current_account.outgoing_tweets_to_tms_enabled? && stream.default_stream?
       end
 
       def dm_note?
@@ -629,7 +629,7 @@ module Ember
       end
 
       def reply_as_mention_for_dm?(stream)
-        current_account.mentions_to_tms_enabled? && mention_note? && stream.dm_stream?
+        current_account.outgoing_tweets_to_tms_enabled? && mention_note? && stream.dm_stream?
       end
 
       wrap_parameters(*wrap_params)

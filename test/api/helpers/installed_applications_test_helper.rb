@@ -219,18 +219,68 @@ module InstalledApplicationsTestHelper
   end
 
   def form_fields_result
-    {"Lead"=>{"id"=>2000022766, "name"=>"DefaultLeadForm", "field_class"=>"Lead",
-           "fields"=>[{"id"=>"56f639ac", "name"=>"basic_information", "label"=>"Basicinformation",
-           "fields"=>[{"id"=>"eda895ec", "name"=>"first_name", "label"=>"Firstname", "fields"=>[],
-           "form_id"=>2000022766, "field_class"=>"Lead"},{"id":"7e0basd636d","name":"email",
-           "label":"Emails","fields":[],"form_id":2000022765,"field_class":"Contact","visible":true,
-            "field_options":{"show_in_import":true}}], "form_id"=>2000022766, "field_class"=>"Lead"}]},
-           "Contact"=>{"id"=>2000022765, "name"=>"DefaultContactForm", "field_class"=>"Contact",
-           "fields"=>[{"id"=>"ead353bc-031b-4012-86b1-cd055f807c99", "name"=>"basic_information",
-           "label"=>"Basicinformation", "fields"=>[{"id"=>"7e0b636d", "name"=>"first_name", "label"=>"Firstname",
-           "fields"=>[], "form_id"=>2000022765, "field_class"=>"Contact", "field_options"=>{"show_in_import"=>true}},
-           {"id":"7e0basd636d","name":"email","label":"Emails","fields":[],"form_id":2000022765,
-            "field_class":"Contact","visible":true,"field_options":{"show_in_import":true}}],
-            "form_id"=>2000022765, "field_class"=>"Contact"}]}}
+    {
+      'Lead' => {
+        'id' => 2_000_022_766,
+        'name' => 'DefaultLeadForm',
+        'field_class' => 'Lead',
+        'fields' => [{
+          'id' => '56f639ac',
+          'name' => 'basic_information',
+          'label' => 'Basicinformation',
+          'fields' => [{
+            'id' => 'eda895ec',
+            'name' => 'first_name',
+            'label' => 'Firstname',
+            'fields' => [],
+            'form_id' => 2_000_022_766,
+            'field_class' => 'Lead'
+          }, {
+            'id' => '7e0basd636d',
+            'name' => 'emails',
+            'type' => 'email',
+            'label' => 'Emails',
+            'fields' => [],
+            'form_id' => 2_000_022_765,
+            'field_class' => 'Contact',
+            'visible' => 'true',
+            'field_options' => { 'show_in_import' => true }
+          }],
+          'form_id' => 2_000_022_766,
+          'field_class' => 'Lead'
+        }]
+      },
+      'Contact' => {
+        'id' => 2_000_022_765,
+        'name' => 'DefaultContactForm',
+        'field_class' => 'Contact',
+        'fields' => [{
+          'id' => 'ead353bc-031b-4012-86b1-cd055f807c99',
+          'name' => 'basic_information',
+          'label' => 'Basicinformation',
+          'fields' => [{
+            'id' => '7e0b636d',
+            'name' => 'first_name',
+            'label' => 'Firstname',
+            'fields' => [],
+            'form_id' => 2_000_022_765,
+            'field_class' => 'Contact',
+            'field_options' => { 'show_in_import' => true }
+          }, {
+            'id' => '7e0basd636d',
+            'name' => 'emails',
+            'label' => 'Emails',
+            'type' => 'email',
+            'fields' => [],
+            'form_id' => 2_000_022_765,
+            'field_class' => 'Contact',
+            'visible' => 'true',
+            'field_options' => { 'show_in_import' => true }
+          }],
+          'form_id' => 2_000_022_765,
+          'field_class' => 'Contact'
+        }]
+      }
+    }
   end
 end

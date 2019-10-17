@@ -130,7 +130,7 @@ class Helpdesk::ConversationsController < ApplicationController
       end
       if @item.save_note
         args = { ticket_id: @parent.id, note_id: @item.id, tweet_type: twt_type, twitter_handle_id: twitter_handle_id }
-        if stream.custom_stream? || (!current_account.mentions_to_tms_enabled? && mention_note?(twt_type))
+        if stream.custom_stream? || (!current_account.outgoing_tweets_to_tms_enabled? && mention_note?(twt_type))
           Social::TwitterReplyWorker.perform_async(args)
         end
         flash.now[:notice] = t(:'flash.tickets.reply.success')
@@ -468,7 +468,7 @@ class Helpdesk::ConversationsController < ApplicationController
       end
 
       def mentions_in_tms?(stream)
-        current_account.mentions_to_tms_enabled? && stream.default_stream?
+        current_account.outgoing_tweets_to_tms_enabled? && stream.default_stream?
       end
 
       def dm_note?(tweet_type)
@@ -480,7 +480,7 @@ class Helpdesk::ConversationsController < ApplicationController
       end
 
       def reply_as_mention_for_dm?(stream, tweet_type)
-        current_account.mentions_to_tms_enabled? && mention_note?(tweet_type) && stream.dm_stream?
+        current_account.outgoing_tweets_to_tms_enabled? && mention_note?(tweet_type) && stream.dm_stream?
       end
 
 end

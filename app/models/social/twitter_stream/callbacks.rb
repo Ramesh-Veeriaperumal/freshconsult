@@ -43,7 +43,7 @@ class Social::TwitterStream < Social::Stream
   end
 
   def mention_rule_defined?
-    default_stream? && Account.current.launched?(:mentions_to_tms)
+    default_stream? && Account.current.mentions_to_tms_enabled?
   end
   
   def construct_unsubscribe_args(rule_value)

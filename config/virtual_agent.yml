@@ -87,6 +87,8 @@ fields:
         due_by: change
         mail_del_failed_requester: change
         mail_del_failed_others: change
+        response_due: change
+        resolution_due: change
 
         custom_checkbox: value
         custom_dropdown: update

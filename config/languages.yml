@@ -122,12 +122,13 @@ lt:
 sr:
   - 41
   - Serbian
-test-ui:
+is:
   - 42
+  - Icelandic
+# !!!! please add new languages above test languages !!!!
+test-ui:
+  - 43
   - Test-UI
 long-text:
-  - 43
-  - Long-Text
-is:
   - 44
-  - Icelandic
+  - Long-Text

@@ -25,6 +25,10 @@ module Admin::Automation::Event::TicketFieldConstants
     { name: :mail_del_failed_requester, field_type: :label, expect_from_to: false,
       invalid_rule_types: [1, 3] }.freeze,
     { name: :mail_del_failed_others, field_type: :label, expect_from_to: false,
+      invalid_rule_types: [1, 3] }.freeze,
+    { name: :response_due, field_type: :label, expect_from_to: false,
+      invalid_rule_types: [1, 3] }.freeze,
+    { name: :resolution_due, field_type: :label, expect_from_to: false,
       invalid_rule_types: [1, 3] }.freeze
   ].freeze
 

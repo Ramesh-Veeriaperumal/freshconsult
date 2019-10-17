@@ -3,42 +3,42 @@ hr:
     language_name: Croatian
   attach_file: Priložite datoteku
   edit_forum_category: Uredi kategoriju foruma
-  total: ukupno
+  total: Ukupno
   export_data:
     thirt_days: Zadnjih 30 dana
     seven_days: Zadnjih 7 dana
     twenty_four: Od jučer
     custom_filter: Postavite datum
     customer_export:
-      note: Ova će veza isteći za 15 dana.
-    no_fields_selected: Provjerite barem jedno od dolje navedenih polja da biste nastavili.
+      note: Ova će poveznica isteći za 15 dana.
+    no_fields_selected: Za nastavak provjerite barem jedno od dolje navedenih polja.
     no_tickets_mail:
-      body: Čini se da u predviđenom rasponu datuma nema ulaznica.
+      body: Čini se da u navedenom vremenskom rasponu nema poruka.
     export: Izvoz
     csv: CSV
-    xls: nadmašiti
+    xls: Excel
     select_all: Odaberi sve
     select_header: Odaberite sva polja
-    from: Iz
+    from: Od
     select_format: 'Izvezi kao:'
-    filter_label_customer: Filtrirane ulaznice u
+    filter_label_customer: Filtriraj poruke stvorene u
     data_backup_failure:
       body: Izvoz podataka nije uspio. Možete li ponovno pokrenuti izvoz?
     data_backup:
       body: Izvoz podataka spreman je za preuzimanje.
-    to: Do
+    to: Za
     check_uncheck_title: Označi / poništi sve
     view_all_tickets: Izvezi kao CSV
     field_select_title: Odaberite polja za izvoz
     ticket_export:
-      note: Ova će veza isteći za 15 dana.
+      note: Ova će poveznica isteći za 15 dana.
   go_back: Vratite se
   change_plan_title: Jeste li sigurni da želite promijeniti plan?
   mailbox:
-    imap_port: Luka
+    imap_port: Ulaz
     authentication: 'Ovjera:'
     user_name: Korisničko ime
-    imap_server_info: Ime IMAP poslužitelja za preuzimanje poruka e-pošte
+    imap_server_info: Naziv IMAP poslužitelja za preuzimanje e-poruka
     outgoing_mail_settings: Postavke odlazne pošte
     use_mail_server_for: 'Koristi poslužitelj e-pošte za:'
     domain_name: Naziv domene
@@ -49,54 +49,54 @@ hr:
     use_default: Zadano (Freshdesk)
     domain: 'Domena:'
     use_ssl: Koristi SSL
-    smtp_port: Luka
+    smtp_port: Ulaz
     smtp_alert_gmail: >-
       Gmail ograničava broj poslanih e-poruka po danu. <a target="_blank"
       href="https://support.google.com/a/answer/166852?hl=en">Kliknite ovdje</a>
-      da biste saznali više.
+      kako biste saznali više.
     incoming_and_outgoing: Dolazne i odlazne
     imap_server_name: Naziv IMAP poslužitelja
-    password: Zaporka
+    password: Lozinka
     outgoing_mail_server: 'Poslužitelj odlazne pošte:'
-    smtp_server_name: Ime SMTP poslužitelja
+    smtp_server_name: Naziv SMTP poslužitelja
     outgoing_only: Samo odlazni
     mail_server: 'Poslužitelj pošte:'
-    incoming_mail_server: 'Dolazni Poštanski poslužitelj:'
-    smtp_server_info: Ime SMTP poslužitelja za slanje e-pošte
+    incoming_mail_server: 'Poslužitelj dolazne pošte:'
+    smtp_server_info: Naziv SMTP poslužitelja za slanje e-pošte
     email_system: 'Sustav e-pošte:'
     incoming_mail_settings: Postavke dolazne pošte
   success: Uspjeh
   forum:
     max_description_length_allowed: Najviše 250 znakova
     verb:
-      announcement: Najavljeno do
+      announcement: Najavljeno od
       questions: Pitanje koje je postavio
-      problems: Problem prijavio korisnik
+      problems: Problem je prijavio
       ideas: Ideju dijeli
     new: Novi forum
-    visible_to: Vidljivo korisniku
+    visible_to: Vidljivo
     edit: Uredi forum
-    convert_to_ticket: Automatsko pretvaranje tema u ulaznice
+    convert_to_ticket: Automatsko pretvaranje tema u poruke
     start_topic: Započnite temu
-    title: Forum
+    title: Forumi
     type: Vrsta foruma
     category: Kategorija foruma
     convert_to_ticket_info: >-
       Sve nove teme iz ovog foruma automatski će biti konvertirane i kreirane
-      kao ulaznica.
+      kao poruka.
   your_feedback: Vaše povratne informacije
-  agent_working_on_this_ticket: Agent radi na ovoj ulaznici
+  agent_working_on_this_ticket: Agent radi na ovoj poruci
   zendesk_import_status:
     extracting: >-
-      <b>Korak (1/2) Preuzimanje Zendesk datoteke sigurnosne kopije.</b><br/>To
-      može potrajati nekoliko minuta, ovisno o veličini vaših podataka.
-      Pričekajte.
+      <b>Korak (1/2) Preuzimanje sigurnosne kopije Vaše Zendesk
+      datoteke.</b><br/>To može potrajati nekoliko minuta, ovisno o količini
+      Vaših podataka. Pričekajte.
     info: >-
       <b>Korak (2/2) Uvoz je u tijeku. Pričekajte.</b><br/>Nakon dovršetka uvoza
-      primit ćete e-poštu od nas.
+      primit ćete našu e-poruku.
   more: više
   message: Poruka
-  level_label: nivo
+  level_label: Razina
   topics:
     edit_title: Uredi
     show:
@@ -106,17 +106,17 @@ hr:
   contacts:
     contacts: kontakti
     deleted_user_info: 'Napomena: Sva komunikacija izbrisanih korisnika bit će označena kao SPAM.'
-    reply: Odgovor
+    reply: Odgovori
     new: Novi kontakt
     send_activation: Pošalji e-poruku za aktivaciju
-    add_new_requester: Dodaj novi podnositelj zahtjeva
+    add_new_requester: Dodaj novog podnositelja zahtjeva
     new_topic: Nova tema
     status_title:
       verified: Aktivni kontakti
-      unverified: Kontakti s neprovjerenim porukama e-pošte
+      unverified: Kontakti s neprovjerenim e-adresama
       blocked: Blokirani kontakti
       all: Svi kontakti
-      deleted: Izbrisani su kontakti
+      deleted: Izbrisani kontakti
     showing: 'Prikazivanje:'
     status:
       all: svi
@@ -388,7 +388,7 @@ hr:
   zendesk_url: URL za Zendesk
   downgrade_plan_title: Jeste li sigurni da želite smanjiti?
   delete_topic_msg: Izbrišite ovu temu zauvijek
-  resolved_tickets: Riješene karte
+  resolved_tickets: Riješene poruke
   errors_in_payment_info: 'Došlo je do pogrešaka s podacima o plaćanju:'
   change_plan_info: >-
     Možete promijeniti plan u bilo kojem trenutku, sljedeći datum računa je
@@ -430,7 +430,7 @@ hr:
     requests:
       new:
         request_support: Zatražite podršku
-  cancel: Otkazati
+  cancel: Otkaži
   errors_in_plan_change: 'Došlo je do pogrešaka s vašom promjenom:'
   non_covered_feature_error: Ova je značajka trenutno zaključana
   trail_expiry_during_trial: >-
@@ -485,7 +485,7 @@ hr:
     installation: Montaža
     terms_of_use_link: 'http://freshdesk.com/terms#marketplace'
     developed_by: 'Objavljeno '
-    cancel: Otkazati
+    cancel: Otkaži
     all_apps: Sve aplikacije
     api_error: Nismo mogli obraditi vaš zahtjev. Pokušajte nakon nekog vremena.
     help_and_support: Pomoć i podrška
@@ -581,7 +581,7 @@ hr:
       scenario: scenariji
       jump_to_views: Skoči na prikaze
       add_note: Dodajte bilješke
-      reply: Odgovor
+      reply: Odgovori
       prev_next: Krećite se između stranica popisa ulaznica
       forward: Naprijed
       close: >-
@@ -593,11 +593,11 @@ hr:
       search: traži
     goto_tab:
       social: socijalni
-      tickets: Ulaznice
+      tickets: Poruke
       dashboard: kontrolna ploča
-      forums: Forum
+      forums: Forumi
       customers: Kupci
-      solutions: rješenja
+      solutions: Rješenja
       title: Goto Tab
     title: Prečaci na tipkovnici
     ticket_list:
@@ -670,13 +670,13 @@ hr:
         polja koja su vidljiva samo vašim agentima.
       title2: Prilagodba polja kontakata
   add_note: Dodajte bilješke
-  reply: Odgovor
+  reply: Odgovori
   user_sessions:
     new:
       forgot: Zaboravio sam lozinku?
       email: E-mail
       sign_in_using_google: Prijavite se pomoću Google računa
-      password: Zaporka
+      password: Lozinka
       remember: Zapamti me na ovom računalu
       sign_in_using: Prijaviti se
       help: Pomozite
@@ -772,7 +772,7 @@ hr:
       Jeste li znali da možete dodijeliti karte na temelju vještina vaših
       agenata? <a href="https://support.freshdesk.com/solution/articles/222692"
       target="_blank">Saznajte više</a>
-  email_command_preview_to_email: Do
+  email_command_preview_to_email: Za
   ticket_field:
     helpcard:
       info4_v3: >-
@@ -789,12 +789,12 @@ hr:
       title2: Ovisna polja
       tour: Pomozi mi da shvatim polja za karte
       info_1: >-
-        Obrazac ulaznice pomaže u hvatanju podataka koje trebate od kupca kada
-        predaju kartu. Svoj obrazac ulaznice možete prilagoditi tako da uključi
-        prava polja za svoju tvrtku, a klijentima i agentima omogućite da unesu
-        potrebne informacije u željenom formatu. Na primjer, u poduzeću za
-        e-trgovinu, dobivanje ID-a narudžbe kupca u obrascu za karte bilo bi
-        vrlo korisno za agenta koji rješava ulaznicu.
+        Obrazac poruke pomaže u prikupljanju podataka koje trebate od korisnika
+        kad oni šalju poruku. Svoj obrazac poruke možete prilagoditi tako da
+        uključi prava polja za Vašu tvrtku, a korisnicima i agentima omogućite
+        unos podataka koji Vam trebaju, u formatu koji želite. Na primjer, u
+        tvrtki za e-prodaju, broj narudžbe naveden u obrascu poruke bio bi jako
+        koristan agentu koji rješava ulaznicu.
       title3: Dinamička polja
       info2: >-
         Ovisna polja daju vam jednostavan način za stvaranje dubljih kategorija
@@ -868,7 +868,7 @@ hr:
         time_period: Vremenski period
         neutral: neutralan
         survey_name: Naziv ankete
-        total_responses_v2: ukupno
+        total_responses_v2: Ukupno
         agent: Agent
         view_report_by: Prikaži prema
         positive: Pozitivan
@@ -915,7 +915,7 @@ hr:
       fcr: Prva razlučivost poziva
       title: Sažetak ulaznica
       received_tickets: Primljene karte
-      resolved_tickets: Riješene karte
+      resolved_tickets: Riješene poruke
       sla_compliance: SLA usklađenost
     timeline_chart_title: Primljene ulaznice ili riješene
     discard_changes: Odbaciti promjene
@@ -939,7 +939,7 @@ hr:
       avg_handle_time: Prosječno vrijeme obrade
       filter_report: Uredi filtar
       num_of_transfer: prijenosi
-      total_chats: ukupno
+      total_chats: Ukupno
       avg_time_queue: Vrijeme u redu
       num_of_chats: Broj chatova
       select_chat_type: Odaberite Vrsta chata
@@ -992,7 +992,7 @@ hr:
       back_to_reports: Natrag na izvješća
       fcr_percent: FCR%
       fcr_count: Rezolucija prvog kontakta <br>
-      tickets_resolved: Ulaznice <br> Riješeno
+      tickets_resolved: Riješene<br> poruke
       show_report: Prikaži izvješće
       helptext: >-
         Statistike izračunate u izvješću odnose se na broj riješenih ulaznica.
@@ -1036,7 +1036,7 @@ hr:
     reported: izvijestio
     search_close_text: Zatvori pretraživanje
     sort_by: Poredano po
-    submit_ticket: podnijeti
+    submit_ticket: Pošalji
     priority: Prioritet
     link_tracker:
       notifier_body: 'Sadržaj poruke: '
@@ -1487,7 +1487,7 @@ hr:
         feedbackwidget_title_maxlength: Najviše 30 znakova
         feedbackwidget_form_customization: Prilagodi obrazac
         feedbackwidget_image_button: Gumb Slika
-        thankyou_info: Poruka koja će se prikazati nakon što korisnik pošalje obrazac karte
+        thankyou_info: Poruka koja će se prikazati nakon što korisnik pošalje obrazac poruke
         feedbackwidget_users_can: Opcije obrasca
         feedbackwidget_height_placeholder: '500'
         feedbackwidget_offset: 'Offset:'
@@ -1516,7 +1516,7 @@ hr:
         feedbackwidget_screenshot: Slikaj zaslon
         feedbackwidget_form_customization: Prilagodi obrazac
         feedbackwidget_image_button: Gumb Slika
-        thankyou_info: Poruka koja će se prikazati nakon što korisnik pošalje obrazac karte
+        thankyou_info: Poruka koja će se prikazati nakon što korisnik pošalje obrazac poruke
         feedbackwidget_users_can: 'Korisnici mogu:'
         feedbackwidget_height_placeholder: '500'
         feedbackwidget_px: px
@@ -1537,7 +1537,7 @@ hr:
         feedbackwidget_form_submit_message: Obrazac Pošalji poruku
         feedbackwidget_title_maxlength: Najviše 16 znakova
         feedbackwidget_form_customization: Prilagodi obrazac
-        thankyou_info: Poruka koja će se prikazati nakon što korisnik pošalje obrazac karte
+        thankyou_info: Poruka koja će se prikazati nakon što korisnik pošalje obrazac poruke
         feedbackwidget_users_can: Opcije obrasca
         feedbackwidget_height_placeholder: '500'
         feedbackwidget_px: px
@@ -1637,7 +1637,7 @@ hr:
           pitanja. Želite li nastaviti?
         new_survey: Novo istraživanje
         hide: Ukloniti
-        cancel: Otkazati
+        cancel: Otkaži
         survey_feedback: Slanje povratnih informacija ...
         delete: Izbrisati
         deleting_survey: Brisanje ankete
@@ -1815,7 +1815,7 @@ hr:
         how_to_use_webhook: ''
         request_type: Vrsta zahtjeva
         simple_layout: Jednostavan
-        subject: predmet
+        subject: Predmet
         webhook_usecase: Korištenje Webhooka
         advanced_webhook_tip: >-
           U ovom odjeljku možete pisati prilagođene API zahtjeve. Kliknite gumb
@@ -1823,9 +1823,9 @@ hr:
           kao što su ime podnositelja zahtjeva, prioritet, status ulaznice itd.
           Sa svojim zahtjevom.
         not_selected: Nije odabrano
-        password: Zaporka
+        password: Lozinka
         advanced_layout: Napredna
-        to: Do
+        to: Za
         remove_custom_headers: Uklanjanje prilagođenih zaglavlja
         checked: provjeren
         custom_headers_tip: Unesite jedan prilagođeni par vrijednosti zaglavlja po retku.
@@ -1861,15 +1861,15 @@ hr:
           "svježe" <b> %{regex} </b>.
         mapped_internal_groups: Mapirane interne grupe
       multiple_company_dialog_on: >-
-        Kontakti (preprodavači ili partneri) moći će odabrati jednu od tvrtki
-        povezanih s njima prilikom slanja ulaznice.
+        Kontakti (mali trgovci ili partneri) moći će odabrati jednu od s njima
+        povezanih tvrtki prilikom slanja poruke.
       multiple_company_dialog_warning: >-
         Isključivanje će trajno izbrisati sve sekundarne tvrtke iz svih
         kontakata. Dok će stare karte ostati nepromijenjene, nove se ulaznice
         mogu podići samo za primarnu tvrtku.
       multiple_company_dialog_help_text: >-
-        Kada su uključeni, kontakti (preprodavači ili partneri) moći će odabrati
-        jednu od tvrtki povezanih s njima prilikom slanja karte.
+        Kada su uključeni, kontakti (mali trgovci ili partneri) moći će odabrati
+        jednu od s njima povezanih tvrtki prilikom slanja poruke.
       fields:
         multiple_company: Povežite jedan kontakt s više tvrtki
     twitters:
@@ -2103,7 +2103,7 @@ hr:
         last_published_version: do zadnje objavljene verzije
         signup_login: Prijava korisnika i prijava
         google: Google
-        submit_ticket: Tko može poslati novu kartu na portalu
+        submit_ticket: Tko može poslati novu poruku na portalu
         reset_for: To će poništiti uređivanja za
         forum_captcha: Prijavljeni korisnici trebaju unijeti CAPTCHA za izradu teme
         notify_agents: 'Pošalji Obavijest o moderiranju i neželjenoj pošti na:'
@@ -2321,7 +2321,7 @@ hr:
           create: Stvoriti
         include_helptext: 'Primjer: @appleofficial, "apple mac", #smartphones, @android'
         edit:
-          visible_to: Vidljivo korisniku
+          visible_to: Vidljivo
           link_to_product: Veza na proizvod
           title: Uredi tok
         reply_handle: Zadana ručka odgovora
@@ -2441,7 +2441,7 @@ hr:
         visibility:
           all: Svatko
         stream_delete_alert: Jeste li sigurni da želite izbrisati ovaj Twitter cvrkut?
-        cancel: Otkazati
+        cancel: Otkaži
         index:
           new_stream: Novi tok
           title: Društveni tokovi
@@ -2474,11 +2474,11 @@ hr:
         administration: uprava
         customers: Kupci
         reports: Izvještaji
-        solutions: rješenja
+        solutions: Rješenja
         general: General
         bots: Botovi
-        tickets: Ulaznice
-        forums: Forum
+        tickets: Poruke
+        forums: Forumi
         scroll_to: Pomaknite se na
       agents_label: agenti
       new: Nova uloga
@@ -2510,7 +2510,7 @@ hr:
           ikonu Agenti ispod kartice admin.
         info5: Saznajte više o ulogama i privilegijama
       role_description: Opis
-      cancel_label: Otkazati
+      cancel_label: Otkaži
       done_label: Gotovo
       title: Uloge agenta
       save_label: Uštedjeti
@@ -2681,7 +2681,7 @@ hr:
       customer: kupac
       report:
         no_timeentry: Nema dostupnih podataka
-        total: ukupno
+        total: Ukupno
       group_by: Grupiraj po
     attachment:
       drop_files_here: Ispustite datoteke ovdje
@@ -2711,20 +2711,20 @@ hr:
         tickets_by: Ulaznice po
         ongoing_collab: Moje aktivne šetnje
         on_hold: Ulaznice na čekanju
-        resolved_or_closed: Riješeno ili zatvoreno
+        resolved_or_closed: Riješene ili zatvorene
         deleted: Smeće
-        open_or_pending: Otvori ili na čekanju
+        open_or_pending: Otvorene ili na čekanju
         raised_by_me: Ulaznice koje sam zatražio
         my_article_feedback: Moji članci Povratne informacije
         spam: spam
-        all: Sve ulaznice
+        all: Sve poruke
         my_all: Sve moje ulaznice
         overdue: Ulaznice koje kasne
-        no_tickets: U trenutnom prikazu nemate nijednu ulaznicu
+        no_tickets: U trenutnom pregledu nemate niti jednu poruku
         open: Otvori karte
-        all_tickets: Sve ulaznice
+        all_tickets: Sve poruke
         due_today: Ulaznice zbog danas
-        resolved: Riješene karte
+        resolved: Riješene poruke
       friendly_status:
         customer_responded: Korisnik je odgovorio
         elapsed: Rok odgovora
@@ -2801,7 +2801,7 @@ hr:
       existing_user: Postojeći račun
       helpdesk_url: URL za pomoć
       your_freshdesk_url: Vaš URL za pomoć
-      submit: podnijeti
+      submit: Pošalji
       company_name: Naziv tvrtke
       create_my_account: Kreiraj svoj račun
       terms_and_policy: >-
@@ -3104,11 +3104,11 @@ hr:
       cc_notification_19:
         topic: Nova ulaznica cc
         info1: >-
-          Ova će obavijest biti poslana osobama koje imaju prijavu ako je
-          podnositelj zahtjeva uključio adrese e-pošte pod cc dok je predao
-          kartu vašoj službi za pomoć. Ova e-pošta bi u idealnom slučaju trebala
-          sadržavati ime podnositelja zahtjeva {{ticket.requester.name}} i opis
-          ulaznice {{ticket.description}}.
+          Ova će obavijest biti poslana osobama koje poruku primaju na znanje
+          ako je Podnositelj zahtjeva uključio e-adrese pod cc tijekom slanja
+          poruke Vašoj službi za pomoć. Ova e-poruka bi, u idealnom slučaju,
+          trebala sadržavati ime podnositelja zahtjeva {{ticket.requester.name}}
+          i opis poruke {{ticket.description}}.
       info2: >-
         <a target="_blank"
         href="https://support.freshdesk.com/solution/categories/45922/folders/74513/articles/170407-configuring-dynamic-email-notifications">
@@ -3145,7 +3145,7 @@ hr:
           obavijesti na drugim jezicima možda zastarjeli.
         topic: Ponovno postavljanje zaporke putem e-pošte
     requestor_notification: Obavijest podnositelja zahtjeva
-    subject: predmet
+    subject: Predmet
     account_not_activated: >-
       Izgleda da vaš račun još nije potvrđen. Aktivirajte je kako biste
       omogućili obavijesti e-poštom.
@@ -3240,12 +3240,12 @@ hr:
     tickets:
       ticket_survey:
         rate_again: Ponovno nas ocijeni
-        cancel: Otkazati
+        cancel: Otkaži
         load_questions: Vidi više
         change_of_mind: Promijenili ste mišljenje?
         title_v2: Ocjena zadovoljstva
         rating_sub_title: Vi ste nas ocijenili
-        submit: podnijeti
+        submit: Pošalji
         title: Anketa korisnika
         feedback_title: Opišite iskustvo podrške (izborno)
         comments: komentari
@@ -3259,8 +3259,8 @@ hr:
           Također, naše dobre riječi i specifična kritika mogu nam pomoći u
           boljoj podršci u budućnosti
         survey_title: Odvojite trenutak da biste ocijenili našu podršku
-        submit: podnijeti
-        cancel: Otkazati
+        submit: Pošalji
+        cancel: Otkaži
         change_of_mind: Promijenili ste mišljenje?
         rate_again: Ponovno nas ocijeni
       related_files: Povezane datoteke
@@ -3273,7 +3273,7 @@ hr:
       next: Sljedeći
       thank_you_text: Hvala vam
       move_to_form_field: ili pritisnite enter
-      form_submit: podnijeti
+      form_submit: Pošalji
     surveys:
       new:
         thanks: Hvala vam što ste nas ocijenili!
@@ -3283,7 +3283,7 @@ hr:
         send: Poslati
         feedback_optional: Povratne informacije nisu obavezne
         additional_info: 'Osim toga, možete podijeliti svoje iskustvo rada s nama.'
-        submit: podnijeti
+        submit: Pošalji
         thanks_info: >-
           Zahvaljujemo što ste odvojili vrijeme da ocijenite naše iskustvo
           podrške.
@@ -3294,7 +3294,7 @@ hr:
         remember: Zapamti me na ovom računalu
         login: Prijaviti se
         forgot: Zaboravili ste lozinku?
-        password: Zaporka
+        password: Lozinka
   import: Uvoz
   edit: Uredi
   application:
@@ -3354,7 +3354,7 @@ hr:
           novih značajki ili dijela vašeg proizvoda koji je teško razumjeti.
       delete_topic: Izbriši temu
       close_topic: Zaključaj temu
-      reply: Odgovor
+      reply: Odgovori
       merge_topic: Spoji temu
       edit_topic: Uredi temu
       post:
@@ -3392,14 +3392,14 @@ hr:
           new_topic: stvorio temu
         tags:
           new_topic: Nova tema
-          reply: Odgovor
+          reply: Odgovori
       post:
         approve_tooltip: Odobri i objavi
         ban_tooltip: Označite korisnika i sve njegove postove kao neželjenu poštu
     unpublished:
       spam:
         reply:
-          title: Odgovor
+          title: Odgovori
           posted: odgovorio
         new_topic:
           title: Nova tema
@@ -3483,7 +3483,7 @@ hr:
           title: Nova tema
         reply:
           posted: odgovorio
-          title: Odgovor
+          title: Odgovori
         approve: Odobri i objavi
       after_ban:
         cleared_rest: >-
@@ -3497,7 +3497,7 @@ hr:
       warning: >-
         Teme koje su jednom spojene ne mogu se odvojiti. Sljedbenici i glasovi
         iz spojenih tema bit će dodani primarnoj temi.
-      cancel: Otkazati
+      cancel: Otkaži
       mark_primary: Označite kao primarni
       add_note: Razlog za spajanje
       confirm_and_merge: Potvrdite i spojite
@@ -3526,7 +3526,7 @@ hr:
         Freshcaller pomoću besplatne probne verzije od 14 dana.
       freshcaller_enable_subtext: Pristup možete omogućiti na stranici Postavke agenta.
       link_account_request_content:
-        cancel: Otkazati
+        cancel: Otkaži
         freshcaller_domain: .freshcaller.com
         connect_existing_account: Povežite postojeći račun
         link_errors:
@@ -3545,7 +3545,7 @@ hr:
         email: E-mail
         account_url: URL korisničkog računa Freshcaller
         continue: Nastaviti
-        password: Zaporka
+        password: Lozinka
         processing: Povezivanje vašeg računa za Freshcaller
         settings_text: >-
           Unesite detalje računa Freshcaller da biste ga povezali s vašim
@@ -3607,7 +3607,7 @@ hr:
   edit_agent: Uredi agenta
   activate_and_log_in_long: Aktivirajte i prijavite se
   subscription:
-    total: ukupno
+    total: Ukupno
     currency-note: 'Sva vaša buduća plaćanja bit će u '
     free: Besplatno
     sub_total: Sub Total
@@ -3780,9 +3780,9 @@ hr:
     helpcard:
       setup: Postavljanje službe za pomoć
       info5: >-
-        Pristup svojoj službi za pomoć možete ograničiti na kontakte koje
-        dodajete i na određene domene. Drugi se neće moći prijaviti, prijaviti
-        ili poslati ulaznice. Više o tome možete pročitati
+        Pristup svojoj službi za pomoć možete ograničiti na kontakte koje dodate
+        i na određene domene. Drugi se neće moći registrirati, prijaviti ili
+        poslati poruke. Više o tome možete pročitati
       info8: >-
         Da biste konfigurirali portal za svoj proizvod, upotrijebite opciju
         Uredi portal.
@@ -3827,7 +3827,7 @@ hr:
     details: 'Počelo od: %{time} do %{user}'
     organization: organizacije
     autorefresh: Status će se automatski osvježavati svake minute
-    ticket: Ulaznice
+    ticket: Poruke
   'on': na
   box_attach_from: Pričvrstite od <b>Okvir</b>
   fav_delete_msg: Jeste li sigurni da želite izbrisati ovu ikonu fav?
@@ -3905,7 +3905,7 @@ hr:
     includes_contacts_company_domain: (uključuje postojeće kontakte i domene tvrtke)
     logo_and_colors: Logotip i boje
     hidden_on_portal: Skriven na portalu
-    cancel: Otkazati
+    cancel: Otkaži
     settings: postavke
     important: Važno
     last_published: 'Portal je zadnji put objavljen prije %{last_published} dana'
@@ -3959,7 +3959,7 @@ hr:
       helpnote: >-
         Onemogućavanjem ovog programa isključit će se forumi na svim portalima
         proizvoda za sve korisnike
-      title: Forum
+      title: Forumi
     gdpr_to: do
     language: Jezik
     helpdesk_name_plain: Naziv službe za pomoć
@@ -3980,7 +3980,7 @@ hr:
       article_view: Prikaz članka
       portal_home: Početna stranica portala
       topic_view: Prikaz teme
-      submit_ticket: Nova ulaznica
+      submit_ticket: Nova poruka
       agent_login: Stranica za prijavu agenta
       discussions_category: Kategorija rasprava dom
       article_list: Popis članaka
@@ -3999,9 +3999,9 @@ hr:
       search: Rezultati pretraživanja
       user_signup: Prijava novog korisnika
     groups:
-      tickets: Ulaznice
+      tickets: Poruke
       general: Opće stranice
-      solutions: rješenja
+      solutions: Rješenja
       discussions: rasprave
   your_email_address: Vaša email adresa
   confirm_delete_message: 'Jeste li sigurni da želite izbrisati %{human_name}?'
@@ -4025,7 +4025,7 @@ hr:
       poslati obrazac za pokretanje razgovora.
     installation: Kôd widgeta
     show_widget: Kada su agenti na mreži i prihvaćaju chatove
-    cancel: Otkazati
+    cancel: Otkaži
     integrate_livechat_title: Integrirajte Live Chat u svoju web-lokaciju i aplikacije
     header_title: Zaglavlje
     maximum_chat_desc: >-
@@ -4272,7 +4272,7 @@ hr:
         <b>Način pregleda</b> - <a href='javascript:window.close()'>Kliknite
         ovdje</a> za povratak.
     new_support_ticket: Nova ulaznica za podršku
-    submit_new_ticket: ... ili Pošalji novu kartu
+    submit_new_ticket: ... ili Pošalji novu poruku
     login: Prijaviti se
     login_portal: Prijavite se na portal za podršku
     login_details: U nastavku unesite pojedinosti
@@ -4290,11 +4290,11 @@ hr:
     account: račun
     login_or_signup: '%{login} ili %{signup} za račun'
     to_post_comment: ' poslati komentar'
-    to_submit_ticket: ' poslati novu kartu'
-    login_to_submit_ticket: '<a href=%{login_url}>Prijavite se</a> kako biste poslali novu kartu'
+    to_submit_ticket: ' poslati novu poruku'
+    login_to_submit_ticket: '<a href=%{login_url}>Prijavite se</a> kako biste poslali novu poruku'
     login_signup_to_submit_ticket: >-
       <a href=%{login_url}>Prijava</a> ili <a href=%{signup_url}>Prijavite
-      se</a> da biste poslali novu kartu
+      se</a> kako biste poslali novu poruku
     login_to_post_topic: <a href='' class='solution_c'>Prijava</a> za postavljanje teme
     login_to_post_comment: <a href='' class='solution_c'>Prijava</a> za postavljanje komentara
     login_signup_to_post_topic: >-
@@ -4310,9 +4310,9 @@ hr:
     search:
       filters:
         all: svi
-        solutions: rješenja
+        solutions: Rješenja
         topics: Teme
-        tickets: Ulaznice
+        tickets: Poruke
       placeholder: Ovdje unesite pojam za pretraživanje ...
       results_for: Rezultati pretrage za
     popular_topics: Popularne teme
@@ -4458,7 +4458,7 @@ hr:
         Dodajte ili uklonite poruke e-pošte koje je potrebno kopirati prilikom
         slanja obavijesti za ovu ulaznicu.
       add_people_title: Dodajte osobe u razgovor
-      reopen_reply: Odgovor
+      reopen_reply: Odgovori
       related_articles: Povezani članci...
   title: Titula
   free_plan_agents_v2: Neograničeni agenti
@@ -4652,7 +4652,7 @@ hr:
         record_all: Snimanje svih poziva
         voicemail_on: Na
         max_queue_calls: Maksimalni broj poziva u redu
-        cancel: Otkazati
+        cancel: Otkaži
         routing_message: Kada je na mreži dostupno više agenata ...
         non_business_hours: Prihvati pozive tijekom…
         non_business_hours_message: Poruka bez radnog vremena
@@ -4783,7 +4783,7 @@ hr:
       placeholder: Pretraži sve teme
     form:
       type: Vrsta foruma
-      visible_to: Vidljivo korisniku
+      visible_to: Vidljivo
   working: Radna
   comments: komentari
   Portal: Portal
@@ -4840,7 +4840,7 @@ hr:
       internal_agent: Interni agent
       product: Proizvod
       status: Status
-      subject: predmet
+      subject: Predmet
       source: Izvor
       created_at: stvoren
       skill: Vještina
@@ -4864,8 +4864,8 @@ hr:
       customer_visible: Prikazuje se kupcu
       dropdown_choice_disabled: Zadani izbor ne može se izbrisati
       cc_any_email: Može CC bilo koju adresu e-pošte
-      customer_mandatory: Potrebno za slanje obrasca
-      level: nivo
+      customer_mandatory: Zahtijevano kod slanja poruke
+      level: Razina
       sla_timer: SLA timer
       drop_down_items_edit: Stavke padajućeg izbornika - Uredi
       field_label_customer: Oznaka polja za korisnike
@@ -4884,7 +4884,7 @@ hr:
       status_choices: Izbor statusa
       add_new_choice: Dodajte novi izbor
       nested_label: Oznake ovisnog polja
-      agent_mandatory_submission: Potrebno za slanje obrasca
+      agent_mandatory_submission: Zahtijevano kod slanja obrasca
       nested_field_helptext: >-
         Koristite donju tekstualnu zonu za dodavanje ili uređivanje stavki u
         padajućem izborniku. Postavite stavke tako da jednom ili dva puta
@@ -5009,12 +5009,12 @@ hr:
     osjećaj te položaj widgeta na svojoj web-lokaciji. Kada završite, kopirajte
     i zalijepite generirani kôd za ugradnju na svoju web-lokaciju ili aplikaciju
     da biste počeli koristiti widget za povratne informacije.
-  email_command_preview_subject: predmet
+  email_command_preview_subject: Predmet
   currency_label: 'Valuta:'
   add_new_forum: dodajte novi forum
   plain_on: Na
   feedbackwidget_form_heading: Zaglavlje obrasca
-  password: Zaporka
+  password: Lozinka
   falcon_languages_alert: Radimo na podržavanju drugih jezika u Mint iskustvu.
   clone: Klon
   helpdesk_reports:
@@ -5047,7 +5047,7 @@ hr:
       error_title_unavailable: Ovaj naslov već postoji
       delete_cnfm_message: Jeste li sigurni da želite izbrisati ovo spremljeno izvješće?
       save: Uštedjeti
-      cancel: Otkazati
+      cancel: Otkaži
       dialog_sub_header: Ovo će izvješće biti vidljivo samo vama
       delete_dialog_header: Izbriši izvješće
       save_header: Spremi izvješće
@@ -5094,7 +5094,7 @@ hr:
         delete_text: Jeste li sigurni da želite izbrisati taj raspored?
         ticket_properties_title: Izvoz svojstava ulaznica
         ticket_properties_note: Vaš je račun iscrpio ukupan broj rasporeda koji se mogu izraditi
-        cancel: Otkazati
+        cancel: Otkaži
         confirm: potvrditi
       new:
         helpnote:
@@ -5140,13 +5140,13 @@ hr:
         desc: Opis
         daily: Dnevno
         weekly: Tjedni
-        subject: predmet
+        subject: Predmet
     year_in_review:
       title: Vaša godina u pregledu
     ticket_volume:
       busiest_hour_resolved_tickets: Većina ulaznica riješena je okolo
       average_resolved_tickets: Prosječne riješene ulaznice
-      resolved_tickets: Riješene karte
+      resolved_tickets: Riješene poruke
       busiest_hour_received_tickets: Većina ulaznica primljena je uokolo
       received_tickets: Primljene karte
       total_resolved_tickets: Ukupno riješenih ulaznica
@@ -5305,7 +5305,7 @@ hr:
       index:
         go_to_ticket: Idi na ulaznicu
         reauth_required: Potrebna je ponovna autorizacija
-        reply: Odgovor
+        reply: Odgovori
         note_title: 'Bilješka: '
         show_more_results: Prikaži više rezultata
         note: >-
@@ -5369,7 +5369,7 @@ hr:
         post: ' pošta '
         flash_card_text: Razumijevanje kartice Social
         add_search_keywords: Unesite pojam za pretraživanje.
-        tickets: Ulaznice
+        tickets: Poruke
         interactions: interakcije
         no_retweets: Nema retweeta
         follow_as: Slijedi kao ...
@@ -5426,7 +5426,7 @@ hr:
       access_denied: Nije vam dopušten pristup ovoj stranici!
     contacts:
       info_select: Odaberite najmanje jednog korisnika.
-  import_forum: Forum
+  import_forum: Forumi
   select_watchers: Odaberite Watchers
   choose_different_plan: Odaberite drugi plan
   import_user_notification: >-
@@ -5468,7 +5468,7 @@ hr:
     contact_us: Kontaktirajte nas
   attachment_delete: Spremate se zauvijek izbrisati ovaj privitak. Nastaviti?
   clear: Čisto
-  email_command_preview_subject_value: Podrška ulaznica
+  email_command_preview_subject_value: Poruka za podršku
   connect_ticket: Veza na kartu
   company_field:
     helpcard:
@@ -5589,7 +5589,7 @@ hr:
           telefona, razgovora, društvenih i drugih sadržaja. Kliknite na kanale
           koje želite pokušati omogućiti na svom računu.
         social_channel: socijalni
-        forums_channel: Forum
+        forums_channel: Forumi
         chat_channel: Live Chat
         email_channel: E-mail
         phone_channel: Telefon
@@ -5630,7 +5630,7 @@ hr:
       modal_invalid_email_error: Unesite valjanu adresu e-pošte.
       modal_send_button: Pošalji aktivaciju
       resend_message: Ponovno pošalji aktivaciju
-      cancel_button: Otkazati
+      cancel_button: Otkaži
       change_email: promijenite e-poštu
       non_admin_message: Vaš račun još nije aktiviran. Obratite se administratoru računa.
     falcon_invite:
@@ -5983,7 +5983,7 @@ hr:
     dynamics_v2:
       form:
         username: Korisničko ime
-        password: Zaporka
+        password: Lozinka
         freshdesk_to_crm: Od Freshdesk do Dynamics
         dynamics_v2_settings: Postavke dinamike
         crm_to_freshdesk: Od dinamike do svježine
@@ -6060,7 +6060,7 @@ hr:
         helpdesk_url: URL za pomoć
         email: E-mail
         your_freshdesk_url: Vaš URL za pomoć
-        submit: podnijeti
+        submit: Pošalji
         company_name: Naziv tvrtke
         create_my_account: Kreiraj svoj račun
         terms_and_policy: >-
@@ -6151,7 +6151,7 @@ hr:
         error: Povezivanje s SugarCRM-om nije moguće. Pokušajte nakon nekog vremena.
         domain: URL SugarCRM računa
         account: Polja računa
-        password: Zaporka
+        password: Lozinka
         widget_title: Naslov widgeta
         contact: Polja kontakta
         domain_info: >-
@@ -6210,22 +6210,23 @@ hr:
         client_id: ID klijenta usluge OAuth za vašu domenu
       helptext: >-
         <h4>Pomoć za integraciju s Google diskom</h4><br/><p>Integracija s
-        Google diskom agentima i korisnicima omogućuje pregledavanje datoteka iz
-        mape na Google disku i njihovo dijeljenje prilikom slanja ili
-        odgovaranja na ulaznicu u programu Freshdesk. Izravna veza s datotekom
-        dijeli se u ulaznici, uklanjajući potrebu za ograničenjima veličine
-        privitaka i e-pošte.</p><p>Prije nego što za postavljanje integracije,
-        idite na <a target='_blank'
+        Google diskom agentima i korisnicima omogućuje pretraživanje datoteka iz
+        mape na njihovom Google disku i dijeljenje istih prilikom slanja ili
+        odgovaranja na poruke u programu Freshdesk. Izravna veza s datotekom
+        dijeli se u poruci, uklanjajući potrebu za ograničenjima veličine
+        privitaka i e-poruka.</p><p>Prije nego što namjestite integraciju, idite
+        na <a target='_blank'
         href='https://console.developers.google.com/'><b>Google Developers
-        stranici</b></a>.</p><p>1. Odaberite <b>Create Your Project</b> u
-        odjeljku <b>API & Services</b> .</p><p>2. U odjeljku <b>Omogući API-je i
-        usluge</b>omogućite <b>API-ja za Google disk i Google Picker
-        API</b>.</p><p>3. Pod <b>Mandatno-odjeljak</b> kreirati OAuth ID
-        klijenta, kao i API ključ, dok generira OAuth ID klijenta, unesite
-        freshdesk URL pod ovlaštenog ishodišta dijelu Javascript. </p><p>4.
-        <p>Na kraju kopirajte ID klijenta i API ključ na ovu stranicu i Spremi
-        promjene. Odabir Google diska trebao bi sada biti spreman. Možete ga
-        provjeriti u obrascu Nova ulaznica.</p>
+        stranicu</b></a>.</p><p>1. Odaberite <b>Stvori svoj projekt</b> u
+        izborniku <b>API i usluge</b>.</p><p>2. U izborniku <b>Omogući API i
+        usluge</b>omogućite <b>API za Google disk i Google Picker
+        API</b>.</p><p>3. u izborniku<b>Certifikati</b> stvorite OAuth
+        identifikacijski broj, kao i API ključ, dok stvarate OAuth
+        identifikacijski broj, unesite freshdesk poveznicu u izborniku
+        Autoriziranog Javascript porijekla. </p><p>4. <p>Na kraju kopirajte
+        identifikacijski broj klijenta i API ključ na ovu stranicu i Spremite
+        promjene. Izbornik Vašeg Google diska sad bi trebao biti spreman. Možete
+        ga provjeriti u obrascu Nova poruka.</p>
     shopify:
       edit:
         sidebar: >-
@@ -6314,7 +6315,7 @@ hr:
           Da biste to pronašli, idite na Postavke Dynamics CRM -> Prilagodbe ->
           DeveloperResources -> Informacije o vašoj organizaciji -> Jedinstveno
           ime organizacije.
-        password: Zaporka
+        password: Lozinka
         endpoint: Organizacijska usluga SOAP krajnja točka
         contact_email_info: >-
           Unesite važeći ID e-pošte koji je povezan s bilo kojim kontaktom u
@@ -6348,8 +6349,8 @@ hr:
     screen_pop:
       widget:
         view_all: Pogledaj sve
-        requester: Naziv podnositelja zahtjeva
-        cancel: Otkazati
+        requester: Ime podnositelja zahtjeva
+        cancel: Otkaži
         do_not_link: Ne povezujte
         link_to_ticket: Veza na ovu kartu
         call_actions: Radnje poziva
@@ -6359,30 +6360,30 @@ hr:
         agent_phone_details: Pojedinosti o agentu
         add_note_text: Bilješke poziva
         agent_phone_updated: Detalji telefona agenta Ažurirano
-        subject: predmet
+        subject: Predmet
         recent_tickets: Recent Tickets
         create: Stvoriti
         ticket_reference_id: Referentni ID poziva
     dropbox:
       helptext: >-
-        <h4>Pomoć za integraciju Dropboxa</h4><br/><p>Dropbox integracija
-        omogućuje agentima i korisnicima da pretražuju datoteke iz svoje Dropbox
-        mape i dijele ih prilikom slanja ili odgovaranja na ulaznicu u
-        Freshdesk. Izravna veza s datotekom dijeli se u ulaznici, uklanjajući
-        potrebu za prilozima i ograničenjima veličine e-pošte.</p><p>Prije nego
-        što za postavljanje integracije, idite na <a target='_blank'
-        href='https://dropbox.com/developers'><b>Dropbox Developers
-        stranici</b></a>.</p><p>1. Odaberite <b>Create Your App</b> u odjeljku
-        <b>API v2</b> .</p><p>2. Pod <b>Odaberite API</b>, odaberite <a>Dropbox
-        API</a>.</p><p>3. Za vrstu pristupa, odaberite <b>Full
-        Dropbox</b>.</p><p>4. Unesite naziv svoje aplikacije i kliknite
-        <b>Kreiraj aplikaciju</b>.</p><p>5. Na stranici aplikacije, na kartici
-        <b>Postavke</b> , za <b>domene izbornika / štednje</b>, dodajte URL
-        službe za pomoć bez https ili www, primjer:
-        <a>sauls.freshdesk.com</a>.</p><p>Na kraju, kopirajte zalijepite
-        aplikacijski ključ nove aplikacije u ovoj stranici, i Spremi promjene.
-        Vaš bi izbor spremnika trebao biti spreman. Možete ga provjeriti u
-        obrascu Nova ulaznica.</p>
+        <h4>Pomoć za integraciju Dropboxa</h4><br/><p>Integracija Dropboxa
+        omogućuje agentima i korisnicima pretraživanje datoteke iz njihove
+        Dropbox mape i njihovo dijeljenje tijekom slanja ili odgovaranja na
+        poruku u Freshdesku. Izravna poveznica s datotekom dijeli se u poruci,
+        uklanjajući potrebu za ograničenjima veličine priloga i
+        e-poruka.</p><p>Prije namještanja integracije, idite na <a
+        target='_blank' href='https://dropbox.com/developers'><b>Dropbox
+        Developers stranicu</b></a>.</p><p>1. Odaberite <b>Stvori svoju
+        aplikaciju</b> u izborniku <b>API v2</b>.</p><p>2. Pod <b>Odaberite
+        API</b>, odaberite <a>Dropbox API</a>.</p><p>3. Za vrstu pristupa,
+        odaberite <b>Cjeloviti Dropbox</b>.</p><p>4. Unesite naziv svoje
+        aplikacije i kliknite <b>Kreiraj aplikaciju</b>.</p><p>5. Na stranici
+        aplikacije, u izborniku <b>Postavke</b>, za <b>domene
+        Odabiratelj/Pohranjivač</b>, dodajte URL službe za pomoć bez https ili
+        www, primjer: <a>sauls.freshdesk.com</a>.</p><p>Na kraju, kopirajte
+        zalijepite aplikacijski ključ nove aplikacije na ovu stranicu i Spremi
+        promjene. Vaš bi izbornik spremnika sada trebao biti spreman. Možete ga
+        provjeriti u obrascu Nova poruka.</p>
       form:
         app_key: Ključ registrirane aplikacije za vašu domenu
         app_key_info: Izradite aplikaciju u spremniku i ovdje dajte ključ aplikacije.
@@ -6422,7 +6423,7 @@ hr:
         uspostavi na temelju naziva tvrtke ili e-pošte podnositelja zahtjeva.
     hootsuite:
       no_ticket_msg: Nemate ulaznica za ovaj odabir filtra
-      reply_btn: Odgovor
+      reply_btn: Odgovori
       send: Poslati
       signup_message: Još niste kupac Freshdesk? Prijavite se
       reset: Reset
@@ -6434,7 +6435,7 @@ hr:
         priority: Prioritet
         all: svi
         status: Status
-      submit: podnijeti
+      submit: Pošalji
       agent_error: Trebali biste biti agent za pregled ulaznica
       social:
         description: Opis
@@ -6448,7 +6449,7 @@ hr:
         requester: Podnositelj zahtjeva
         successfully_converted: Ulaznica je uspješno kreirana
       login:
-        password: Zaporka
+        password: Lozinka
         email: E-mail
       cc_bcc: Kopija / Skrivena kopija
       search:
@@ -6458,7 +6459,7 @@ hr:
         placeholder_ticket_id: Pretražite ulaznice po ID-u ulaznice
       header:
         try_again: Pokušajte ponovno
-        reply: Odgovor
+        reply: Odgovori
     custom_apps:
       ticket_detail_page: Stranica s detaljima ulaznice
       preview_helptext: Ova prilagođena aplikacija prikazat će se na bočnoj traci
@@ -6494,13 +6495,13 @@ hr:
     box:
       desc: Priložite i podijelite svoje podatke / datoteke iz okvira Box.
       helptext: >-
-        <h4>Pomoć pri integraciji u kutiju</h4><br/><p>Integracija okvira
-        omogućuje agentima i korisnicima pregledavanje datoteka iz mape Box i
-        njihovo dijeljenje prilikom slanja ili odgovaranja na ulaznicu u
-        Freshdesk. Izravna veza s datotekom dijeli se u ulaznici, uklanjajući
-        potrebu za ograničenjima veličine privitaka i e-pošte.</p> Vaš birač
-        kutija sada bi trebao biti spreman. Možete ga provjeriti u obrascu Nova
-        ulaznica.</p>
+        <h4>Pomoć pri integraciji Spremnika</h4><br/><p>Integracija spremnika
+        omogućuje agentima i korisnicima pregledavanje datoteka iz mape
+        Spremnika i njihovo dijeljenje prilikom slanja ili odgovaranja na poruku
+        u Freshdesku. Izravna poveznica s datotekom dijeli se u poruci,
+        uklanjajući potrebu za ograničenjima veličine privitaka i e-poruka.</p>
+        Vaš Izbornik spremnika sada bi trebao biti spreman. Možete ga provjeriti
+        u obrascu Nova poruka.</p>
     seoshop:
       form:
         nl: Nederlands
@@ -6538,8 +6539,8 @@ hr:
         vidjeti informacije o narudžbi kupaca koji su podigli karte u prikazu
         detalja o ulaznicama u Freshdesk.</p>
       desc: >-
-        Podignite podatke o narudžbi odmah kada vaši klijenti dostave ulaznice u
-        Freshdesk i pomognete im da odgovore dobiju što je brže moguće.
+        Povucite podatke o narudžbi odmah kada vaši korisnici dostave poruke u
+        Freshdesk i pomozite im da odgovore dobiju što je prije moguće.
     campaignmonitor:
       helptext: >-
         <h4>Pomoć za integraciju monitora kampanje</h4><br/>Da biste se
@@ -6702,7 +6703,7 @@ hr:
       iframe_toggle: Omogući Softphone Iframe
       phone:
         save: Uštedjeti
-        cancel: Otkazati
+        cancel: Otkaži
         add_number: Dodaj Broj
         number_not_in_use: Ne koristi se
         add_number_tooltip: Svaki redak treba sadržavati samo jedan broj
@@ -6730,7 +6731,7 @@ hr:
         request_type: Vrsta zahtjeva
         have_api_key: Imam API ključ?
         content: Sadržaj
-        password: Zaporka
+        password: Lozinka
         have_user_pass: Imam korisničko ime i zaporku?
     uninstall: Uninstall
     native_integrations: Izvorne integracije
@@ -7015,7 +7016,7 @@ hr:
         domain: Domena
         jira_note_info: Ovaj tekst bit će dodan opisu problema u JIRA-i.
         fd_comment_sync: 'Za sve komentare dodane u Freshdesk %{dropdown}'
-        password: Zaporka
+        password: Lozinka
         widget_title: Naslov widgeta
         jira_status_sync_update_customer: Pošaljite odgovor korisniku i polje za ažuriranje.
         jira_status_sync: 'Za svaku promjenu statusa izdavanja JIRA %{dropdown}'
@@ -7235,7 +7236,7 @@ hr:
     no_results_msg: Nema rezultata
   created_on: 'Izrađeno na '
   add_all: Dodaj Sve
-  total_price: ukupno
+  total_price: Ukupno
   paid_with: Plaćeno
   attachments: Prilozi
   choose_plan_trial: >-
@@ -7270,7 +7271,7 @@ hr:
   email_command_settings_info: >-
     Konfigurirajte graničnik koji se koristi za prepoznavanje i izdvajanje
     naredbi e-pošte s pošte
-  import_ticket_group: Ulaznice
+  import_ticket_group: Poruke
   header:
     welcome: Dobrodošli
     login: <b>Prijava</b>
@@ -7284,10 +7285,10 @@ hr:
     goto_customer_portal: Idite na Portal za korisnike
     goto_agent_portal: Agent Portal
     tabs:
-      solutions: rješenja
-      forums: Forum
-      tickets: Ulaznice
-      home: Dom
+      solutions: Rješenja
+      forums: Forumi
+      tickets: Poruke
+      home: Početna
   left: Lijevo
   description: Opis
   solution:
@@ -7416,11 +7417,11 @@ hr:
       folder_form:
         category: Kategorija
         check_translations: Provjerite je li kategorija prevedena na tražene jezike
-        visible_to: Vidljivo korisniku
+        visible_to: Vidljivo
       new:
         new_folder: Dodaj mapu
       choose_folder: Odaberite mapu
-    title: rješenja
+    title: Rješenja
     feedback_message_1: Trebate više informacija
     feedback_message_3: Netočan / nevažan sadržaj
     info20: >-
@@ -7465,7 +7466,7 @@ hr:
       widget_token_placeholder: 'Npr .: d0bb2ebf-2746-481a-ll64-0bdfb91cb2de'
       save: Uštedjeti
       sidebar_title: Freshchat
-      cancel: Otkazati
+      cancel: Otkaži
       sign_up_btn: Prijavi se sad
       copy_from_freshchat: Kopija iz Freshchata
       enable_chat_in_portal: Omogućite chat u portalu za podršku
@@ -7592,3 +7593,14 @@ hr:
       Primijetili smo da ste zapeli. Recite nam što ste pokušali napraviti, a
       naš tim za podršku će vam se javiti u što kraćem roku.
     success_message: Hvala. Javit ćemo Vam se!
+    name: 'Dobrodošli u %{name} podršku'
+    message: Dobrodošli u podršku
+    form_submit_message: Hvala za povratne informacije.
+    untitled_widget: 'Neimenovani widget %{count}'
+    invalid_components: 'Neispravan hash komponenti s %{key}'
+    freshmarketer_sign_up_error: >-
+      Ispričavamo se, praćenje ometanja mora biti Uključeno kod integriranja s
+      Freshmarketerom
+    invalid_settings: 'Netočna postavka hasha s %{key}'
+    invalid_domain: 'Ispričavamo se, unesite valjanu domenu.'
+    domain_list_empty: Specificirajte URL-ove za praćenje radi predviđanja podrške.

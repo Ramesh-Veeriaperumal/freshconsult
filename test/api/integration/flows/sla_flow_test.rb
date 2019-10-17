@@ -1,7 +1,12 @@
 require_relative '../../test_helper'
-
+require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
 class SlaFlowTest < ActionDispatch::IntegrationTest
   include ApiTicketsTestHelper
+
+  def setup
+    @account = Account.first || create_new_account
+    Account.stubs(:current).returns(@account)
+  end
 
   def test_sla_calculation_exception_handling
     t = create_ticket
