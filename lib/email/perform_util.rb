@@ -23,4 +23,19 @@ module Email::PerformUtil
   def allow_wild_card(account)
     !account.launched?(:prevent_wc_ticket_create) || account.launched?(:allow_wildcard_ticket_create)
   end
+
+  def assign_language(user, account, ticket)
+    if ticket.spam 
+      user.language = account.language
+      user.save
+    else
+      if params[:text]
+        text = text_for_detection(params[:text])
+        if user.present? and user.language.nil?
+          Rails.logger.info "language_detection => tkt_source:user.email, acc_id:#{Account.current.id}, req_id:#{user.id}, text:#{text}"
+          language_detection(user.id, Account.current.id, text)
+        end
+      end  
+    end 
+  end
 end

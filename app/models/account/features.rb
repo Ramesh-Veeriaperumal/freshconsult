@@ -44,7 +44,8 @@ class Account < ActiveRecord::Base
     :csat_translations, :email_mailbox, :sandbox_temporary_offset, :downgrade_policy,
     :fluffy_min_level, :allow_update_agent, :help_widget_solution_categories, :search_settings, :optar_cache,
     :ticket_field_revamp, :facebook_dm_outgoing_attachment, :skip_posting_to_fb, :hide_mailbox_error_from_agents, :hide_og_meta_tags,
-    :freshcaller_admin_new_ui, :facebook_post_outgoing_attachment, :outgoing_tweets_to_tms, :incoming_mentions_in_tms, :help_widget_login, :occlusion_rendering_ticket_fields
+    :freshcaller_admin_new_ui, :facebook_post_outgoing_attachment, :outgoing_tweets_to_tms, :incoming_mentions_in_tms, :help_widget_login, :occlusion_rendering_ticket_fields,
+    :prevent_lang_detect_for_spam
   ].freeze
 
   DB_FEATURES = [
