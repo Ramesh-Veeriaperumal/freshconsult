@@ -372,7 +372,7 @@ defaults: &defaults
     - [cron_log_cloud_elements_sync]
     - [cron_freshfone]
     - [cron_meta_data_check]
-
+    - [custom_translations_update_survey_status]
 development:
   <<: *defaults
 
