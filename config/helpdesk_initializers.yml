@@ -76,7 +76,6 @@ helpdesk:
     - wrap_parameters
     - big_brother
     - integrations
-    - autopilot_config
     - freshmarketer_config
     - marketplace_config
     - doorkeeper

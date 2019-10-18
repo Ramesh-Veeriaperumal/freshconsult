@@ -66,7 +66,6 @@ run "ln -nfs #{shared_path}/config/clamav.yml #{node[:rel_path]}/config/clamav.y
 run "ln -nfs #{shared_path}/config/zendesk_app.yml #{node[:rel_path]}/config/zendesk_app.yml"
 run "ln -nfs #{shared_path}/config/iris_notifications.yml #{node[:rel_path]}/config/iris_notifications.yml"
 run "ln -nfs #{shared_path}/config/archive_queue.yml #{node[:rel_path]}/config/archive_queue.yml"
-run "ln -nfs #{shared_path}/config/autopilot.yml #{node[:rel_path]}/config/autopilot.yml"
 run "ln -nfs #{shared_path}/config/freshmarketer_automation.yml #{node[:rel_path]}/config/freshmarketer_automation.yml"
 run "ln -nfs #{shared_path}/config/inline_manual.yml #{node[:rel_path]}/config/inline_manual.yml"
 run "ln -nfs #{shared_path}/config/redis_session.yml #{node[:rel_path]}/config/redis_session.yml"

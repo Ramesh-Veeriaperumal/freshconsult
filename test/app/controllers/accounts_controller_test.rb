@@ -729,10 +729,10 @@ class AccountsControllerTest < ActionController::TestCase
     assert_includes response.redirect_url, '/a/getstarted'
   end
 
-  def test_lead_deleted_from_autopilot_during_account_deletion
+  def test_lead_updated_from_freshmarketer_during_account_deletion_without_associated_accounts
     WebMock.allow_net_connect!
-    ThirdCRM.any_instance.expects(:delete_lead_from_autopilot).once
-    ThirdCRM.any_instance.stubs(:associated_accounts).returns('1')
+    ThirdCRM.any_instance.expects(:update_lead).once
+    AdminEmail::AssociatedAccounts.stubs(:find).returns(nil)
     Account.any_instance.stubs(:admin_email).returns(Faker::Internet.email)
     create_sample_account("#{Faker::Lorem.word}#{rand(1_000_000)}", Faker::Internet.email)
     account_id = @account.id
@@ -748,7 +748,7 @@ class AccountsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:admin_email)
   end
 
-  def test_lead_updated_from_autopilot_during_account_deletion
+  def test_lead_updated_from_freshmarketer_during_account_deletion_with_associated_accounts
     WebMock.allow_net_connect!
     ThirdCRM.any_instance.expects(:update_lead).once
     AdminEmail::AssociatedAccounts.stubs(:find).returns([Account.first, Account.last])

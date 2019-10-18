@@ -7,7 +7,6 @@ class ThirdCRM
   PRODUCT_NAME = "Freshdesk"
 
   ADD_LEAD_WAIT_TIME = 5
-  AUTOPILOT_CREDENTIALS = {"autopilotapikey" => AUTOPILOT_TOKENS['access_key'], "Content-Type" => 'application/json'}
   FRESHMARKETER_API_HEADERS = { 'fm-token' => ThirdCrm::FRESHMARKETER_CONFIG['access_key'], 'Content-Type' => 'application/json' }
 
   REQUEST_TYPES = {
@@ -67,15 +66,10 @@ class ThirdCRM
   end
 
   def update_lead_info(admin_email)
-    count = associated_accounts(admin_email).split(',').count
-    if count > 1
-      remaining_account_ids = (@associated_account_id_list.split(',') - ["#{Account.current.id}"]).join(',')
-      contact_data = { 'custom' => { 'string--Associated--Accounts' => remaining_account_ids } }
-      update_lead(contact_data.merge('Email' => admin_email))
-    else
-      delete_lead_from_freshmarketer(admin_email)
-      delete_lead_from_autopilot(admin_email)
-    end
+    associated_account_ids = associated_accounts(admin_email)
+    remaining_account_ids = ((associated_account_ids.present? ? associated_account_ids.split(',') : []) - ["#{Account.current.id}"]).join(',')
+    contact_data = { 'custom' => { 'string--Associated--Accounts': remaining_account_ids.present? ? remaining_account_ids : nil } }
+    update_lead(contact_data.merge('Email' => admin_email))
   end
 
   private
@@ -84,28 +78,21 @@ class ThirdCRM
       # Fetch list of associated accounts from dynamodb for the given email id
       associated_accounts = AdminEmail::AssociatedAccounts.find admin_email
       # Creating comma separated account ids
+      associated_account_id_list = nil
       if associated_accounts.present?
-        @associated_account_id_list = associated_accounts.map(&:id).join(',')
+        associated_account_id_list = associated_accounts.map(&:id).join(',')
       end
+      associated_account_id_list
     end
 
     def lead_info(account)
-      associated_accounts(account.admin_email)
-      account_info = user_info(account)
+      associated_account_ids = associated_accounts(account.admin_email)
+      account_info = user_info(account, associated_account_ids)
       subscription_info = subscription_info(account)
       misc = account.conversion_metric ? signup_info(account.conversion_metric) : {'default' => {}, 'custom' => {}}
       lead_details = account_info['default'].merge(misc['default'])
       lead_details["custom"] = account_info['custom'].merge(subscription_info['custom']).merge(misc['custom'])
       {"contact" => lead_details}
-    end
-
-    def delete_lead_from_autopilot(admin_email)
-      trigger_url = format(AUTOPILOT_TOKENS['delete_contact_url'], email_id: admin_email)
-      make_ap_api(REQUEST_TYPES[:delete], trigger_url)
-    end
-
-    def delete_lead_from_freshmarketer(admin_email)
-      make_fm_api(REQUEST_TYPES[:delete], "#{ThirdCrm::FRESHMARKETER_CONFIG['contact_url']}/#{admin_email}")
     end
 
     def beacon_report_info(_account, args)
@@ -133,16 +120,6 @@ class ThirdCRM
     end
 
     def add_lead_to_crm(lead_record)
-      add_lead_to_freshmarketer(lead_record)
-      add_lead_to_autopilot(lead_record)
-    end
-
-    def add_lead_to_autopilot(lead_record)
-      trigger_url = AUTOPILOT_TOKENS['contact_with_trigger_url']  % {:trigger_code => AUTOPILOT_TOKENS['trigger_code']}
-      make_ap_api(REQUEST_TYPES[:post], trigger_url, lead_record.to_json)
-    end
-
-    def add_lead_to_freshmarketer(lead_record)
       # AP trigger endpoint does 2 things
       # 1. upserts contact
       # 2. onboards contact to the given trigger
@@ -156,23 +133,14 @@ class ThirdCRM
     end
 
     def update_lead(lead_record)
-      update_lead_in_freshmarketer(lead_record)
-      update_lead_in_autopilot(lead_record)
-    end
-
-    def update_lead_in_autopilot(lead_record)
-      make_ap_api(REQUEST_TYPES[:post], AUTOPILOT_TOKENS['contact_url'], { 'contact' => lead_record }.to_json)
-    end
-
-    def update_lead_in_freshmarketer(lead_record)
       make_fm_api(REQUEST_TYPES[:put], ThirdCrm::FRESHMARKETER_CONFIG['contact_url'], lead_record)
     end
 
-    def user_info(account)
+    def user_info(account, associated_account_id_list)
       account_info = {
           "default" => (LEAD_INFO["default"].inject({}) { |h, (k, v)| h[k] = account.safe_send(v); h }).merge(clearbit_info(account)),
           "custom" => LEAD_INFO["custom"].inject({}) { |h, (k, v)| h[k] = account.safe_send(v); h }.merge(
-            {'string--Associated--Accounts' => @associated_account_id_list })
+            {'string--Associated--Accounts' => associated_account_id_list })
       }
       if @old_email
         account_info["default"]["Email"], account_info["default"]["_NewEmail"] = @old_email, account_info["default"]["Email"]
@@ -208,17 +176,6 @@ class ThirdCRM
         'custom' => SIGNUP_INFO["custom"].inject({}) { |h, (k, v)| h[k] = metrics.safe_send(v).to_s; h }.merge(
           {"string--Signup--ID" => @signup_id})
       }
-    end
-
-    def make_ap_api(req_type, url, data = {}) 
-      if req_type.to_s == REQUEST_TYPES[:get]
-        RestClient.safe_send(req_type, url, AUTOPILOT_CREDENTIALS)
-      elsif req_type.to_s == REQUEST_TYPES[:post]
-        RestClient.safe_send(req_type, url, data, AUTOPILOT_CREDENTIALS)
-      elsif req_type.to_s == REQUEST_TYPES[:delete]
-        RestClient.safe_send(req_type, url, AUTOPILOT_CREDENTIALS)
-      end
-      Rails.logger.info("make_ap_api successful for #{url} #{req_type} account_id:#{Account.current.id}")
     end
 
     def make_fm_api(req_type, url, data = {})

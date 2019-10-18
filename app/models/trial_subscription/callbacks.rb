@@ -4,12 +4,12 @@ class TrialSubscription < ActiveRecord::Base
                                                           if: :trigger_feature_downgrade?
   after_commit -> {
     change_trial_subscription(:activate)
-    push_data_to_autopilot(:activate)
+    push_data_to_freshmarketer(:activate)
   }, on: :create, if: :active?
 
   after_commit -> {
     remove_account_api_limit_key
-    push_data_to_autopilot(:cancel) }, on: :update,
+    push_data_to_freshmarketer(:cancel) }, on: :update,
     if: :cancelling_the_trial?
 
   private
@@ -34,8 +34,8 @@ class TrialSubscription < ActiveRecord::Base
           initializing : trying to #{action_type} : #{e.inspect} #{e.backtrace.join("\n\t")}"
     end
 
-    def push_data_to_autopilot(action_type)
-      Subscriptions::UpdateLeadToAutopilot.perform_async({
+    def push_data_to_freshmarketer(action_type)
+      Subscriptions::UpdateLeadToFreshmarketer.perform_async({
         email: self.actor.email,
         event: ThirdCRM::EVENTS[:trial_subscription],
         action_type: action_type,
