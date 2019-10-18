@@ -1,5 +1,12 @@
 module CronWebhooks
   class ScheduledTask < CronWebhooks::CronWebhookWorker
+    TASK_DISTRIBUTION = {
+      # :scheduled_report => { :min_delay        => 15.seconds,
+      #                        :max_delay        => 15.minute,
+      #                        :offset           => 15.seconds,
+      #                        :task_per_offset  => 5
+      #                      }
+    }
     sidekiq_options queue: :cron_scheduled_task, retry: 0, dead: true, backtrace: 10, failures: :exhausted
 
     def perform(args)
