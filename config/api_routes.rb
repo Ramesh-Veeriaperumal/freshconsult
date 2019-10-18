@@ -897,6 +897,11 @@ Helpkit::Application.routes.draw do
     get '/account', to: 'channel/v2/accounts#show'
     resources :ticket_filters, controller: 'channel/v2/ticket_filters', only: [:index, :show]
     resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :show, :index]
+    resources :fbms, controller: 'channel/v2/fbms' do
+      collection do
+        post :update_post_id
+      end
+    end
 
     get '/solutions/categories', to: 'channel/v2/api_solutions/categories#index'
     get '/solutions/categories/:id', to: 'channel/v2/api_solutions/categories#show'

@@ -57,6 +57,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
   end
 
   def test_twitter_mention_convert_as_note_and_conflict_case
+    Account.current.launch(:outgoing_tweets_to_tms)
     payload, command_payload = twitter_create_note_command('mention')
     push_to_channel(command_payload)
 
@@ -70,6 +71,8 @@ class ChannelMessagePollerTest < ActionView::TestCase
 
     conflict_result = ChannelIntegrations::Commands::Processor.new.process(command_payload[:payload])
     assert_equal conflict_result, conflict_reply_payload(note, payload[:tweet_id])
+  ensure
+    Account.current.rollback(:outgoing_tweets_to_tms)
   end
 
   def test_twitter_mention_convert_as_ticket
