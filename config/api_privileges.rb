@@ -275,10 +275,12 @@ Authority::Authorization::PrivilegeList.build do
   manage_dispatch_rules do
     resource :"admin/automation", only: [:index, :create, :show, :update, :destroy]
     resource :"api_business_hour", :only => [:index, :show]
+    resource :"api_search/automation", only: [:results]
   end
 
   manage_supervisor_rules do
     resource :"admin/automation", only: [:index, :create, :show, :update, :destroy]
     resource :"api_business_hour", :only => [:index, :show]
+    resource :"api_search/automation", only: [:results]
   end
 end
