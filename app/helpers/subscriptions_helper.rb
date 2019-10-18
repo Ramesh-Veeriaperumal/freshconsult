@@ -19,13 +19,13 @@ module SubscriptionsHelper
     "forest jan 17" => [ "everything_in_estate", "ip_whitelisting", "skill_based_assignment", "custom_mailbox", "advanced_phone_integration",  "custom_data_center", "fsm_option" ],
 
     "sprout jan 19" => [ "email_ticketing", "ticket_dispatch_automation" ,"knowledge_base", "basic_social", "freshcaller", "omni_channel_option"],
-    "blossom jan 19" => [ "everything_in_sprout", "multiple_mailboxes", "app_gallery", "time_event_automation", "custom_domain", "helpdesk_report", "custom_ticket_fields_and_views", "agent_collision", "omni_channel_option"],
-    "garden jan 19" => [ "everything_in_blossom", "satisfaction_survey", "timesheets", "sla_reminders", "agent_performance_report", "ticket_templates", "m_k_base", "customer_journey"],
-    "estate jan 19" => [ "everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "auto_ticket_assignment", "enterprise_reports", "custom_dashboard", "custom_surveys", "fsm_option", "custom_translations"],
-    "forest jan 19" => [ "everything_in_estate", "ip_whitelisting", "skill_based_assignment", "sandbox", "custom_data_center", "hippa_compliance", "extend_api", "omni_channel_option", "fsm_option"],
+    "blossom jan 19" => [ "everything_in_sprout", "multiple_mailboxes", "app_gallery", "time_event_automation", "custom_domain", "helpdesk_report", "custom_ticket_fields_and_views", "agent_collision", "api_rate_limit_blossom", "omni_channel_option"],
+    "garden jan 19" => [ "everything_in_blossom", "satisfaction_survey", "timesheets", "sla_reminders", "agent_performance_report", "ticket_templates", "m_k_base", "customer_journey",  "api_rate_limit_garden"],
+    "estate jan 19" => [ "everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "auto_ticket_assignment", "enterprise_reports", "custom_dashboard", "custom_surveys", "custom_translations", "api_rate_limit_estate", "fsm_option"],
+    "forest jan 19" => [ "everything_in_estate", "ip_whitelisting", "skill_based_assignment", "sandbox", "custom_data_center", "hippa_compliance", "extend_api", "api_rate_limit_forest", "omni_channel_option", "fsm_option"],
 
-    "garden omni jan 19" => [ "everything_in_blossom", "satisfaction_survey", "timesheets", "sla_reminders", "agent_performance_report", "ticket_templates", "m_k_base", "customer_journey", "omni_channel_option"],
-    "estate omni jan 19" => [ "everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "auto_ticket_assignment", "enterprise_reports", "custom_dashboard", "custom_surveys", "omni_channel_option", "fsm_option"]
+    "garden omni jan 19" => [ "everything_in_blossom", "satisfaction_survey", "timesheets", "sla_reminders", "agent_performance_report", "ticket_templates", "m_k_base", "customer_journey", "api_rate_limit_garden", "omni_channel_option"],
+    "estate omni jan 19" => [ "everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "auto_ticket_assignment", "enterprise_reports", "custom_dashboard", "custom_surveys", "api_rate_limit_estate", "omni_channel_option", "fsm_option"]
 
   }
 
