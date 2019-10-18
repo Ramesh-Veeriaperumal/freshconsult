@@ -887,6 +887,10 @@ input[type=text].input-agent-count{
 					.plan-from,.plan-to,.billing-cycle {
 						font-weight: bold;
 					}
+					.item-to {
+						font-weight: normal;
+						text-transform: initial;
+					}
 					.agents-count {
 						font-weight: bold;
 						color: #415D71;
@@ -920,8 +924,13 @@ input[type=text].input-agent-count{
 			}
 		}
 		.request-change-items {
-		 .plan-from,.plan-to,.billing-cycle {
-			 font-weight: normal
+		 	.plan-from,.plan-to,.billing-cycle {
+				font-weight: normal;
+				text-transform: capitalize;
+			}
+			.item-to {
+				font-weight: normal;
+				text-transform: initial;
 			}
 		}
 		.agents-count-text,.fsm-count-text {
@@ -934,6 +943,10 @@ input[type=text].input-agent-count{
 		.same-request {
 			.plan-from,.plan-to,.billing-cycle,.agents-count-text,.fsm-count-text {
 				font-weight: bold;
+			}
+			.item-to {
+				font-weight: normal;
+				text-transform: initial;
 			}
 			.required-mark{
 				font-weight:bold;

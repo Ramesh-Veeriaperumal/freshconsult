@@ -8,9 +8,7 @@
         <%= t('plan') %> :
         <strong>
           <%= " #{ plan.display_name }" %>
-          <%if previous_plan?(plan)%>
-            <%= content_tag(:span, "2016", :class => "label") %>
-          <%elsif @subscription.classic? %>
+          <%if @subscription.classic? %>
             <%= content_tag(:span, t('classic_label'), :class => "label") %>
           <%end%>
         </strong>
