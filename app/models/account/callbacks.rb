@@ -28,7 +28,6 @@ class Account < ActiveRecord::Base
   after_update :update_freshvisual_configs, :if => :call_freshvisuals_api?
   after_update :set_disable_old_ui_changed_now, :if => :disable_old_ui_changed?
   after_update :update_round_robin_type, if: :lbrr_by_omniroute_feature_changed?
-  after_update :update_help_widget, if: -> { help_widget_enabled? && branding_feature_changed? }
 
   before_validation :sync_name_helpdesk_name
   before_validation :downcase_full_domain, :only => [:create , :update] , :if => :full_domain_changed?
@@ -66,6 +65,7 @@ class Account < ActiveRecord::Base
   after_commit :update_advanced_ticketing_applications, on: :update, if: :disable_old_ui_changed
 
   after_commit :remove_organisation_account_mapping, on: :destroy, if: :freshid_org_v2_enabled?
+  after_commit :update_help_widgets, on: :update, if: [:help_widget_enabled?, :branding_feature_toggled?]
 
   after_rollback :destroy_freshid_account_on_rollback, on: :create, if: -> { freshid_integration_signup_allowed? && !domain_already_exists? }
   after_rollback :signup_completed, on: :create
@@ -619,7 +619,7 @@ class Account < ActiveRecord::Base
       Rails.logger.error("#{error_msg} :: #{e.inspect}")
     end
 
-    def update_help_widget
+    def update_help_widgets
       help_widgets.active.map(&:upload_configs)
     end
 

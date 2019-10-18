@@ -278,6 +278,25 @@ class AccountTest < ActionView::TestCase
     assert_equal response.status, 200
   end
 
+  def test_branding_feature_toggled?
+    old_plan_changes = '4208588308347660337495017571860378845317384693225991492345650271073663781650122203171342365763707723357060333567'
+    new_plan_changes = '4208588308347660337495017571860378845317384693225991492345650271073663781650122203171342365763131262604756910079'
+    previous_changes = { plan_features: [old_plan_changes, new_plan_changes] }
+    Account.current.stubs(:previous_changes).returns(previous_changes)
+    assert Account.current.branding_feature_toggled?
+  ensure
+    Account.current.unstub(:previous_changes)
+  end
+
+  def test_branding_feature_not_toggled
+    old_plan_changes = '4208588308347660337495017571860378845317384693225991492345650271073663781650122203171342365763707723357060333567'
+    previous_changes = { plan_features: [old_plan_changes, old_plan_changes] }
+    Account.current.stubs(:previous_changes).returns(previous_changes)
+    assert_nil Account.current.branding_feature_toggled?
+  ensure
+    Account.current.unstub(:previous_changes)
+  end
+
   def test_validate_required_ticket_fields?
     Account.current.validate_required_ticket_fields?
     assert_equal response.status, 200

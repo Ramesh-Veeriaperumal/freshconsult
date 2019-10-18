@@ -123,9 +123,19 @@ class Account < ActiveRecord::Base
     end
   end
 
+  # To check if a bitmap feature changed
+  # Use this for after_update hook
   Fdadmin::FeatureMethods::BITMAP_FEATURES_WITH_VALUES.each do |key, value|
     define_method "#{key.to_s}_feature_changed?" do
       self.changes[:plan_features].present? && bitmap_feature_changed?(value)
+    end
+  end
+
+  # To check if a bitmap feature changed
+  # Use this for after_commit hook
+  Fdadmin::FeatureMethods::BITMAP_FEATURES_WITH_VALUES.each do |key, value|
+    define_method "#{key}_feature_toggled?" do
+      previous_changes[:plan_features].present? && bitmap_feature_toggled?(value)
     end
   end
 
@@ -374,7 +384,6 @@ class Account < ActiveRecord::Base
   def new_onboarding_enabled?
     launched?(:new_onboarding) || launched?(:onboarding_v2)
   end
-
   def email_spoof_check_feature?
     email_spoof_check_enabled? && !disable_email_spoof_check_enabled?
   end
@@ -383,7 +392,7 @@ class Account < ActiveRecord::Base
     launched?(:help_widget) && has_feature?(:help_widget)
   end
 
-  # Checks if a bitmap feature has been added or removed
+  # Checks if a bitmap feature has been added or removed after_update
   # old_feature ^ new_feature - Will give the list of all features that have been modified in update call
   # (old_feature ^ new_feature) & (2**feature_val) - Will return zero if the given feature has not been modified
   # old_feature & (2**feature_val) - Checks if the given feature is part of old_feature. If so, the feature has been removed. Else,it's been added.
@@ -392,6 +401,15 @@ class Account < ActiveRecord::Base
     new_feature = self.changes[:plan_features][1].to_i
     return false if ((old_feature ^ new_feature) & (2**feature_val)).zero?
     @action = (old_feature & (2**feature_val)).zero? ? "add" : "drop"
+  end
+
+  # Checks if a bitmap feature has been added or removed after_commit
+  # old_feature ^ new_feature - Will give the list of all features that have been modified in update call
+  # (old_feature ^ new_feature) & (2**feature_val) - Will return zero if the given feature has not been modified
+  def bitmap_feature_toggled?(feature_val)
+    old_feature = previous_changes[:plan_features][0].to_i
+    new_feature = previous_changes[:plan_features][1].to_i
+    return true unless ((old_feature ^ new_feature) & (2**feature_val)).zero?
   end
 
   def custom_translations_enabled?
