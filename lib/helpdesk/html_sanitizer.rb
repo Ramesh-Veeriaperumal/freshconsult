@@ -4,11 +4,22 @@ module Helpdesk::HTMLSanitizer
    
   def self.clean(html)
     if html
-      tokenized_html = (!Account.current.launched?(:encode_emoji) and Account.current.features?(:tokenize_emoji)) ? html.tokenize_emoji : html
+      tokenized_html = get_tokenized_html(html)
       begin
         Sanitize.fragment(tokenized_html, Sanitize::Config::IMAGE_RELAXED)
       rescue Exception => e
         Sanitize.fragment(tokenized_html, Sanitize::Config::HTML_RELAXED)
+      end
+    end
+  end
+
+  def self.sanitize_ticket(html)
+    if html
+      tokenized_html = get_tokenized_html(html)
+      begin
+        Sanitize.fragment(tokenized_html, Sanitize::Config::TICKET_RELAXED_WITH_IMAGE)
+      rescue
+        Sanitize.fragment(tokenized_html, Sanitize::Config::TICKET_RELAXED_WITH_HTML)
       end
     end
   end
@@ -55,5 +66,9 @@ module Helpdesk::HTMLSanitizer
   
     def self.plain_text(html)
       CGI::unescapeHTML(html)
+    end
+
+    def self.get_tokenized_html(html)
+      (!Account.current.launched?(:encode_emoji) and Account.current.features?(:tokenize_emoji)) ? html.tokenize_emoji : html
     end
 end
