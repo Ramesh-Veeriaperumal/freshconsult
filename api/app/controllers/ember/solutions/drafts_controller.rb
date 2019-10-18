@@ -23,6 +23,7 @@ module Ember
 
       def autosave
         @draft.lock_for_editing
+        set_session
         render_errors(@draft.errors) unless @draft.update_attributes(cname_params.slice(*Solution::Draft::COMMON_ATTRIBUTES))
       end
 
@@ -33,12 +34,17 @@ module Ember
 
       def destroy
         return unless validate_delegator(@draft)
+        set_session # Cancel action on a published article - versioning
         @draft.discarding = true
         @draft.destroy ? (head 204) : render_errors(@draft.errors)
       end
 
       def delete_attachment
+        @article.false_delete_attachment_trigger = true
+        # Creating a draft calls draft.save twice. The draft binarize observer also calls a save.
         @draft = @article.create_draft_from_article unless @draft
+        set_session
+        @draft.false_delete_attachment_trigger = @article.false_delete_attachment_trigger = false # Above line already calls a save for draft. Need to set this so that below line does not cause the same issue.
         render_errors(@draft.errors) unless pseudo_delete_article_attachment
       end
 
@@ -85,6 +91,13 @@ module Ember
           @draft.keep_previous_author = true
           @draft.user_id = cname_params[:user_id] if cname_params[:user_id].present?
           @draft.modified_at = Time.at(cname_params[:modified_at]).to_datetime
+          @draft.cancelling = true
+          set_session
+        end
+
+        def set_session
+          # For cancel action (destroy), the session is sent in query params and hence the below checks
+          @draft.session = params[:session] || cname_params[:session] if params[:session] || (cname_params.present? && cname_params[:session])
         end
 
         def preload_options

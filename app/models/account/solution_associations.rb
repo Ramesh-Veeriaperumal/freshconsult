@@ -38,6 +38,9 @@ class Account < ActiveRecord::Base
     class_name: 'Solution::ArticleMeta',
     through: :public_folder_meta
 
+  has_many :solution_article_versions, # rubocop:disable HasManyOrHasOneDependent,InverseOf
+           class_name: 'Solution::ArticleVersion'
+
   # Alias
 
   alias_method :folders, :solution_folders

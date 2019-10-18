@@ -2,7 +2,7 @@ class ApiSolutions::ArticleValidation < ApiValidation
   CHECK_PARAMS_SET_FIELDS = %w[type folder_name category_name].freeze
   attr_accessor :title, :description, :agent_id, :status, :type, :tags,
                 :seo_data, :meta_title, :meta_keywords, :meta_description,
-                :folder_name, :category_name, :attachments, :attachments_list, :cloud_file_attachments, :folder_id, :unlock, :item, :attachable, :outdated, :prefer_published
+                :folder_name, :category_name, :attachments, :attachments_list, :cloud_file_attachments, :folder_id, :item, :attachable, :outdated, :prefer_published
 
   validates :title, required: true, on: :create
   validates :title, data_type: { rules: String }, custom_length: { maximum: SolutionConstants::TITLE_MAX_LENGTH, minimum: SolutionConstants::TITLE_MIN_LENGTH, message: :too_long_too_short }
@@ -65,7 +65,6 @@ class ApiSolutions::ArticleValidation < ApiValidation
     @attachments_list = request_params[:attachments_list] if request_params[:attachments_list]
     @cloud_file_attachments = request_params[:cloud_file_attachments] if request_params[:cloud_file_attachments]
     @folder_id = request_params[:folder_id] if request_params[:folder_id]
-    @unlock = request_params[:unlock] if request_params[:unlock]
     @outdated = request_params[:outdated] if request_params[:outdated]
 
     if request_params[:seo_data].is_a?(Hash)

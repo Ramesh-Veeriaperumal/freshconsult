@@ -14,7 +14,7 @@ class Solution::Article < ActiveRecord::Base
   include Email::Antivirus::EHawk
 
   belongs_to :recent_author, :class_name => 'User', :foreign_key => "modified_by"
-  has_one :draft, :dependent => :destroy
+  has_one :draft, inverse_of: :article, :dependent => :destroy
 
   include Solution::LanguageMethods
   
@@ -36,7 +36,7 @@ class Solution::Article < ActiveRecord::Base
   
   serialize :seo_data, Hash
   
-  attr_accessor :highlight_title, :highlight_desc_un_html, :tags_changed, :prev_tags, :latest_tags
+  attr_accessor :highlight_title, :highlight_desc_un_html, :tags_changed, :prev_tags, :latest_tags, :session, :unpublishing, :false_delete_attachment_trigger, :attachment_added
 
   attr_accessible :title, :description, :user_id, :status, :import_id, :seo_data, :outdated
 
@@ -277,6 +277,7 @@ class Solution::Article < ActiveRecord::Base
 
   def create_draft_from_article(opts = {})
     draft = build_draft_from_article(opts)
+    draft.false_delete_attachment_trigger = false_delete_attachment_trigger
     draft.save
     draft
   end

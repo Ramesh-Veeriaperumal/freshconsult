@@ -106,6 +106,7 @@ class Solution::Object
 		params_for(lang).with_indifferent_access.slice(*VERSION_ATTRIBUTES[obj]).each do |k,v|
 			object.safe_send("#{k}=", v)
 		end
+		set_session(object)
 		build_associations(object, lang)
 		@objects << object
 	end
@@ -125,7 +126,12 @@ class Solution::Object
 		p.reject{|k,v| ASSOCIATIONS.include?(k.to_sym) || META_ATTRIBUTES[obj].include?(k.to_sym) }
 	end
 
+	def set_session object
+		object.session = @params[:session] if @params.key?(:session)
+	end
+
 	def build_associations object, lang
+		object.attachment_added = true if ((@params["#{lang}_#{short_name}"] || {})[:cloud_file_attachments] || (@params["#{lang}_#{short_name}"] || {})[:attachments_list] || @args["attachments_list"])
 		attachment_builder(object, 
 						   (@params["#{lang}_#{short_name}"] || {})[:attachments],
 						   (@params["#{lang}_#{short_name}"] || {})[:cloud_file_attachments],

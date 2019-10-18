@@ -4,6 +4,8 @@ class Solution::DraftBinarizeObserver < ActiveRecord::Observer
 
 	def after_create(object)
 		return unless multilingual
+		object.unpublishing = object.article.status_changed? && !object.article.published?
+    # Set unpublishing so that version is not created more than once.
 		update_draft(object, true)
 	end
 
