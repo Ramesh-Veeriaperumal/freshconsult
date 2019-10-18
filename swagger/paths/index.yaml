@@ -685,6 +685,11 @@
 /solutions/articles/{id}/reorder:
   $ref: ./solutions/article/reorder.yaml
 
+/solutions/articles/{article_id}/versions/{language}:
+  $ref: ./solutions/article_version/list.yml
+/solutions/articles/{article_id}/versions/{id}/{language}:
+  $ref: ./solutions/article_version/show.yml
+
 /configs/{id}:
   $ref: ./configs/show.yaml
 

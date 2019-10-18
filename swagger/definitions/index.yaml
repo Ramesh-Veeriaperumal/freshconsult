@@ -789,6 +789,10 @@ draft_update_input:
   $ref: ./request/solutions/draft_update_input.yaml
 solutions_reorder:
   $ref: ./request/solutions/solutions_reorder.yaml
+article_version_index_response:
+  $ref: ./response/solutions/article_version_index.yml
+article_version_response:
+  $ref: ./response/solutions/article_version.yml
 
 #Custom translations
 languages:
@@ -820,3 +824,4 @@ skill:
   $ref: ./resource/skill.yaml
 skill_response:
   $ref: ./response/admin/skill.yaml
+

@@ -23,7 +23,6 @@ module ApiSolutions
     def initial_setup
       @portal_id = Account.current.main_portal.id
       return if @@initial_setup_run
-      MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
       Account.stubs(:current).returns(@account)
       @account.add_feature(:multi_language)
       $redis_others.perform_redis_op('set', 'ARTICLE_SPAM_REGEX', '(gmail|kindle|face.?book|apple|microsoft|google|aol|hotmail|aim|mozilla|quickbooks|norton).*(support|phone|number)')
@@ -38,7 +37,6 @@ module ApiSolutions
       @account.reload
       setup_articles
       @@initial_setup_run = true
-      MixpanelWrapper.unstub(:send_to_mixpanel)
       Account.unstub(:current)
     end
 

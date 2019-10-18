@@ -12,7 +12,7 @@ class ApiSolutions::ArticleValidation < ApiValidation
   validates :meta_description, data_type: { rules: String, allow_nil: true }
   validates :agent_id, custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param }, on: :update
   validates :status, custom_inclusion: {
-    in: Solution::Article::STATUS_NAMES_BY_KEY.keys,
+    in: [Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], Solution::Article::STATUS_KEYS_BY_TOKEN[:published]],
     ignore_string: :allow_string_param,
     detect_type: true,
     required: true

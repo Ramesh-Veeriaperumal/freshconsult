@@ -2,7 +2,8 @@ module Solution::Constants
 	
 	STATUSES = [
     [ :draft,     "solutions.status.draft",        1 ], 
-    [ :published, "solutions.status.published",    2 ]
+    [ :published, "solutions.status.published",    2 ],
+    [ :discarded, "solutions.status.discarded",    3] # only used in article versions.
   ]
   HITS_CACHE_THRESHOLD = 100
   STATUS_OPTIONS = STATUSES.map { |i| [i[1], i[2]] }

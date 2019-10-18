@@ -3,12 +3,55 @@ require_relative '../../../test_helper'
 
 module Ember
   module Solutions
+    module DraftsTestParameters
+      include SolutionsTestHelper
+
+      def article_params(options = {})
+        lang_hash = { lang_codes: options[:lang_codes] }
+        category = create_category({ portal_id: Account.current.main_portal.id }.merge(lang_hash))
+        {
+          title: options[:title] || 'Test',
+          description: 'Test',
+          folder_id: create_folder({ visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: category.id }.merge(lang_hash)).id,
+          status: options[:status] || Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
+        }.merge(lang_hash)
+      end
+
+      def get_my_drafts(language = 6)
+        @account.solution_drafts.my_drafts(@account.main_portal.id, language)
+      end
+
+      def autosave_params(with_timstamp = true)
+        @title = Faker::Name.name
+        @description = Faker::Lorem.paragraph
+        result = { title: @title, description: @description }
+        result.merge!({timestamp: @draft.updation_timestamp}) if with_timstamp
+        result
+      end
+
+      def update_params
+        @title = Faker::Name.name
+        @description = Faker::Lorem.paragraph
+        @agent = add_test_agent(@account)
+        { title: @title, description: @description, modified_at: @draft.modified_at.to_i, user_id: @agent.id, last_updated_at: @draft.updation_timestamp }
+      end
+
+      def create_drafts_for_article_meta article_meta
+        all_account_language_keys.each do |language|
+          draft = article_meta.safe_send("#{language}_article").build_draft_from_article
+          draft.save
+        end
+      end
+    end
+
     class DraftsControllerTest < ActionController::TestCase
       include SolutionsTestHelper
       include SolutionsHelper
       include SolutionBuilderHelper
       include SolutionDraftsTestHelper
       include AttachmentsTestHelper
+      include SolutionsArticleVersionsTestHelper
+      include DraftsTestParameters
 
       def setup
         super
@@ -26,7 +69,7 @@ module Ember
         subscription.save
 
         additional = @account.account_additional_settings
-        additional.supported_languages = ['es','ru-RU']
+        additional.supported_languages = ['es', 'ru-RU']
         additional.save
         @account.reload
         setup_articles
@@ -35,12 +78,9 @@ module Ember
 
       def setup_articles
         4.times do
-          languages = @account.supported_languages_objects.map(&:to_key) + ['primary']
+          languages = all_account_language_keys
           article_meta = create_article(article_params.merge(lang_codes: languages))
-          languages.each do |language|
-            draft = article_meta.safe_send("#{language}_article").build_draft_from_article
-            draft.save
-          end
+          create_drafts_for_article_meta article_meta
         end
       end
 
@@ -86,12 +126,6 @@ module Ember
       def test_index_with_language
         languages = @account.supported_languages + ['primary']
         language = @account.supported_languages.first
-
-        # binarize sync won't work if multilingual is not enabled. Cleaning up data for now. We have an FR issue for the same
-        get_my_drafts(Language.find_by_code(language).id).each do |draft|
-          draft.discarding = true
-          draft.destroy
-        end
 
         article = create_article(article_params(lang_codes: languages, status: 1))
         get :index, controller_params(version: 'private', portal_id: @account.main_portal.id, language: language)
@@ -445,36 +479,222 @@ module Ember
         delete :delete_attachment, controller_params(version: 'private', article_id: 999, attachment_type: 'attachment', attachment_id: attachment_id)
         assert_response 404
       end
-
-      private
-
-        def article_params(options = {})
-          lang_hash = { lang_codes: options[:lang_codes] }
-          category = create_category({ portal_id: Account.current.main_portal.id }.merge(lang_hash))
-          {
-            title: options[:title] || 'Test',
-            description: 'Test',
-            folder_id: create_folder({ visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: category.id }.merge(lang_hash)).id,
-            status: options[:status] || Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
-          }.merge(lang_hash)
-        end
-
-        def get_my_drafts(language = 6)
-          @account.solution_drafts.my_drafts(@account.main_portal.id, language)
-        end
-
-        def autosave_params
-          @title = Faker::Name.name
-          @description = Faker::Lorem.paragraph
-          { title: @title, description: @description, timestamp: @draft.updation_timestamp }
-        end
-
-        def update_params
-          @title = Faker::Name.name
-          @description = Faker::Lorem.paragraph
-          @agent = add_test_agent(@account)
-          { title: @title, description: @description, modified_at: @draft.modified_at.to_i, user_id: @agent.id, last_updated_at: @draft.updation_timestamp }
-        end
     end
+    # class end
+
+    class DraftsControllerVersionsTest < ActionController::TestCase
+      include SolutionsArticleVersionsTestHelper
+      include SolutionsArticlesTestHelper
+      include SolutionsTestHelper
+      include SolutionsHelper
+      include SolutionBuilderHelper
+      include DraftsTestParameters
+      include SolutionDraftsTestHelper
+      include AttachmentsTestHelper
+
+
+      tests Ember::Solutions::DraftsController
+
+      def setup
+        super
+        @account = Account.first
+        Account.stubs(:current).returns(@account)
+        setup_multilingual
+        before_all
+        @account.add_feature(:article_versioning)
+        languages = all_account_language_keys
+        article_meta = create_article(article_params(lang_codes: languages))
+        create_drafts_for_article_meta article_meta
+      end
+
+      def teardown
+        Account.unstub(:current)
+      end
+
+      @@before_all_run = false
+
+      def before_all
+        return if @@before_all_run
+        setup_redis_for_articles
+        setup_multilingual
+        @account.reload
+        @@before_all_run = true
+      end
+
+      def wrap_cname(params)
+        { draft: params }
+      end
+
+      def test_autosave_without_article_versioning
+        article_with_draft
+        disable_article_versioning do
+          should_not_create_version(@article) do
+            put :autosave, construct_params({ version: 'private', article_id: @article.parent_id, language: @account.language }, autosave_params.merge(session: session))
+            assert_response 200
+            @article.reload
+            draft = @article.draft
+            match_json(autosave_pattern(draft))
+            assert_equal draft.title, @title
+            assert_equal draft.description, @description
+          end
+        end
+      end
+
+      def test_destory_with_article_versions
+        article = @account.solution_articles.where(language_id: @account.language_object.id).first
+        article.draft.publish! if article.draft
+        article.reload
+        3.times do
+          create_draft_version_for_article(article)
+        end
+        @draft = article.draft
+        delete :destroy, controller_params(version: 'private', article_id: article.parent_id)
+        assert_response 204
+        article.solution_article_versions.latest.each do |article_verion|
+          break if article_verion.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
+          assert_equal article_verion.discarded?, true
+        end
+      end
+
+      def test_first_autosave_creates_article_version
+        article = @account.solution_articles.where(language_id: @account.language_object.id).first
+        article.draft.publish! if article.draft
+        3.times do
+          create_version_for_article(article)
+        end
+
+        @draft = article.create_draft_from_article
+        should_create_version(article) do
+          put :autosave, construct_params({ version: 'private', article_id: article.parent_id, language: @account.language }, autosave_params.merge(session: 'first-session'))
+          assert_response 200
+          article.reload
+          draft = article.draft
+          match_json(autosave_pattern(draft))
+          assert_equal draft.title, @title
+          assert_equal draft.description, @description
+          latest_version = get_latest_version(article)
+          assert_version_draft(latest_version)
+        end
+      end
+
+      def test_second_autosave_should_not_create_version
+        article = @account.solution_articles.where(language_id: @account.language_object.id).first
+        article.draft.publish! if article.draft
+        3.times do
+          create_version_for_article(article)
+        end
+
+        session = 'same-autosave-session'
+
+        @draft = article.create_draft_from_article
+       should_not_create_version(article) do
+         stub_version_session(session) do
+            stub_version_content do
+              put :autosave, construct_params({ version: 'private', article_id: article.parent_id, language: @account.language }, autosave_params.merge(session: session))
+              assert_response 200
+              article.reload
+              draft = article.draft
+              match_json(autosave_pattern(draft))
+              assert_equal draft.title, @title
+              assert_equal draft.description, @description
+              latest_version = get_latest_version(article)
+              assert_version_draft(latest_version)
+            end  
+          end
+        end
+      end
+
+      def test_published_autosave
+        sample_article = create_article(article_params(lang_codes: all_account_language_keys).merge(status: 2)).primary_article
+        should_create_version(sample_article) do
+          put :autosave, construct_params({ version: 'private', article_id: sample_article.parent_id, language: @account.language }, autosave_params(false).merge(session: 'first-session'))
+          assert_response 200
+          sample_article.reload
+          draft = sample_article.draft
+          match_json(autosave_pattern(draft))
+          assert_equal draft.title, @title
+          assert_equal draft.description, @description
+          latest_version = get_latest_version(sample_article)
+          assert_version_draft(latest_version)
+        end
+      end
+
+      def test_draft_autosave
+        sample_article = create_article(article_params(lang_codes: all_account_language_keys).merge(status: 1)).primary_article
+        @draft = sample_article.draft
+        should_create_version(sample_article) do
+          put :autosave, construct_params({ version: 'private', article_id: sample_article.parent_id, language: @account.language }, autosave_params.merge(session: 'first-session'))
+          assert_response 200
+          sample_article.reload
+          draft = sample_article.draft
+          match_json(autosave_pattern(draft))
+          assert_equal draft.title, @title
+          assert_equal draft.description, @description
+          latest_version = get_latest_version(sample_article)
+          assert_version_draft(latest_version)
+        end
+      end
+
+      def test_published_draft_autosave
+        sample_article = create_article(article_params(lang_codes: all_account_language_keys).merge(status: 2)).primary_article
+        create_draft_version_for_article(sample_article)
+        should_create_version(sample_article) do
+          put :autosave, construct_params({ version: 'private', article_id: sample_article.parent_id, language: @account.language }, autosave_params(false).merge(session: 'first-session'))
+          assert_response 200
+          sample_article.reload
+          draft = sample_article.draft
+          match_json(autosave_pattern(draft))
+          assert_equal draft.title, @title
+          assert_equal draft.description, @description
+          latest_version = get_latest_version(sample_article)
+          assert_version_draft(latest_version)
+        end
+      end
+      
+      def test_autosave_cancel
+        sample_article = create_article(article_params(lang_codes: all_account_language_keys).merge(status: 2)).primary_article
+        create_draft_version_for_article(sample_article)
+        @draft = sample_article.draft
+        should_not_create_version(sample_article) do
+          stub_version_session('first-session') do
+            put :update, construct_params({ version: 'private', article_id: sample_article.parent_id, session: 'first-session' }, update_params)
+            assert_response 200
+            match_json(private_api_solution_article_pattern(sample_article.reload))
+          end
+        end
+      end
+
+      def test_published_draft_autosave
+        sample_article = create_article(article_params(lang_codes: all_account_language_keys).merge(status: 2)).primary_article
+        create_draft_version_for_article(sample_article)
+        @draft = sample_article.draft
+        should_create_version(sample_article) do
+          put :autosave, construct_params({ version: 'private', article_id: sample_article.parent_id, language: @account.language }, autosave_params.merge(session: 'first-session'))
+          assert_response 200
+          sample_article.reload
+          draft = sample_article.draft
+          match_json(autosave_pattern(draft))
+          assert_equal draft.title, @title
+          assert_equal draft.description, @description
+          latest_version = get_latest_version(sample_article)
+          assert_version_draft(latest_version)
+        end
+      end
+          
+      def test_autosave_cancel
+        sample_article = create_article(article_params(lang_codes: all_account_language_keys).merge(status: 2)).primary_article
+        create_draft_version_for_article(sample_article)
+        @draft = sample_article.draft
+        should_delete_version(sample_article) do
+          stub_version_session('first-session') do
+            put :update, construct_params({ version: 'private', article_id: sample_article.parent_id, session: 'first-session' }, update_params)
+            assert_response 200
+            match_json(private_api_solution_article_pattern(sample_article.reload))
+          end
+        end
+      end
+
+    end
+    # class end
   end
 end

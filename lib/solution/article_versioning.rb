@@ -3,7 +3,7 @@ module Solution::ArticleVersioning
 
   included do
     def version_create_or_update(record, exclude_article_payload = false)
-      @delegator = if record.instance_of? Solution::Article #
+      @delegator = if record.instance_of? Solution::Article
                      ArticleHandler.new(record)
                    else
                      DraftHandler.new(record)
@@ -138,7 +138,7 @@ module Solution::ArticleVersioning
     def discard_draft_versions
       # while discarding draft, update discard status of article versions that are created after last published version
       last_published = article_version_scoper.latest.where(status: Solution::Article::STATUS_KEYS_BY_TOKEN[:published]).first
-      draft_versions = article_version_scoper.where('version_no > ?', last_published.version_no)
+      draft_versions = article_version_scoper.where('version_no > ? and status != ?', last_published.version_no, Solution::Article::STATUS_KEYS_BY_TOKEN[:discarded])
       draft_versions.find_each(&:discard!)
     end
 

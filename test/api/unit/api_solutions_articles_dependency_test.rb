@@ -18,7 +18,7 @@ class ApiSolutionsArticlesDependencyTest < ActionView::TestCase
 
   def test_validations_solution_article
     actual = Solution::Article.validators.map { |x| [x.class, x.attributes, x.options] }
-    expected = [[ActiveModel::Validations::PresenceValidator, [:title, :description, :user_id, :account_id], {}], [ActiveModel::Validations::LengthValidator, [:title], {:minimum=>3, :maximum=>240}], [ActiveModel::Validations::NumericalityValidator, [:user_id], {}], [ActiveRecord::Validations::UniquenessValidator, [:language_id], {:case_sensitive=>true, :scope=>[:account_id, :parent_id], :if=>"!solution_article_meta.new_record?"}], [ActiveModel::Validations::InclusionValidator, [:status], {:in=>1..2}]]
+    expected = [[ActiveModel::Validations::PresenceValidator, [:title, :description, :user_id, :account_id], {}], [ActiveModel::Validations::LengthValidator, [:title], {:minimum=>3, :maximum=>240}], [ActiveModel::Validations::NumericalityValidator, [:user_id], {}], [ActiveRecord::Validations::UniquenessValidator, [:language_id], {:case_sensitive=>true, :scope=>[:account_id, :parent_id], :if=>"!solution_article_meta.new_record?"}], [ActiveModel::Validations::InclusionValidator, [:status], {:in=>[1, 2]}]]
     assert_equal expected, actual
   end
 end

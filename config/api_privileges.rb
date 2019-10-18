@@ -211,6 +211,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :'ember/admin/bot', only: [:bot_folders]
     resource :'ember/solutions/home', only: %i[summary quick_views]
     resource :'ember/solutions/draft', only: %i[index]
+    resource :'ember/solutions/article_version', only: %i[index show]
   end
 
   manage_solutions do

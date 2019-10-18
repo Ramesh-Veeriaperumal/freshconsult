@@ -17,12 +17,18 @@ module Ember
       include TagUseTestHelper
       include SolutionsArticlesTestHelper
       include SolutionsArticlesCommonTests
+      include SolutionsArticleVersionsTestHelper
 
       def setup
         super
-        @account.features.enable_multilingual.create
+        Account.stubs(:current).returns(@account)
         initial_setup
+        setup_multilingual
         @account.reload
+      end
+
+      def teardown
+        Account.unstub(:current)
       end
 
       @@initial_setup_run = false
@@ -30,27 +36,14 @@ module Ember
       def initial_setup
         @portal_id = Account.current.main_portal.id
         return if @@initial_setup_run
-        MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
-        Account.stubs(:current).returns(@account)
-        $redis_others.perform_redis_op('set', 'ARTICLE_SPAM_REGEX', '(gmail|kindle|face.?book|apple|microsoft|google|aol|hotmail|aim|mozilla|quickbooks|norton).*(support|phone|number)')
-        $redis_others.perform_redis_op('set', 'PHONE_NUMBER_SPAM_REGEX', '(1|I)..?8(1|I)8..?85(0|O)..?78(0|O)6|(1|I)..?877..?345..?3847|(1|I)..?877..?37(0|O)..?3(1|I)89|(1|I)..?8(0|O)(0|O)..?79(0|O)..?9(1|I)86|(1|I)..?8(0|O)(0|O)..?436..?(0|O)259|(1|I)..?8(0|O)(0|O)..?969..?(1|I)649|(1|I)..?844..?922..?7448|(1|I)..?8(0|O)(0|O)..?75(0|O)..?6584|(1|I)..?8(0|O)(0|O)..?6(0|O)4..?(1|I)88(0|O)|(1|I)..?877..?242..?364(1|I)|(1|I)..?844..?782..?8(0|O)96|(1|I)..?844..?895..?(0|O)4(1|I)(0|O)|(1|I)..?844..?2(0|O)4..?9294|(1|I)..?8(0|O)(0|O)..?2(1|I)3..?2(1|I)7(1|I)|(1|I)..?855..?58(0|O)..?(1|I)8(0|O)8|(1|I)..?877..?424..?6647|(1|I)..?877..?37(0|O)..?3(1|I)89|(1|I)..?844..?83(0|O)..?8555|(1|I)..?8(0|O)(0|O)..?6(1|I)(1|I)..?5(0|O)(0|O)7|(1|I)..?8(0|O)(0|O)..?584..?46(1|I)(1|I)|(1|I)..?844..?389..?5696|(1|I)..?844..?483..?(0|O)332|(1|I)..?844..?78(0|O)..?675(1|I)|(1|I)..?8(0|O)(0|O)..?596..?(1|I)(0|O)65|(1|I)..?888..?573..?5222|(1|I)..?855..?4(0|O)9..?(1|I)555|(1|I)..?844..?436..?(1|I)893|(1|I)..?8(0|O)(0|O)..?89(1|I)..?4(0|O)(0|O)8|(1|I)..?855..?662..?4436')
-        $redis_others.perform_redis_op('set', 'CONTENT_SPAM_CHAR_REGEX', 'ℴ|ℕ|ℓ|ℳ|ℱ|ℋ|ℝ|ⅈ|ℯ|ℂ|○|ℬ|ℂ|ℙ|ℹ|ℒ|ⅉ|ℐ')
-        additional = @account.account_additional_settings
-        additional.supported_languages = ['es', 'ru-RU'] # dont remove it.
-        additional.save
-        subscription = @account.subscription
-        subscription.state = 'active'
-        subscription.save
+        setup_redis_for_articles
 
-        @account.features.marketplace.destroy
         @account.add_feature(:article_filters)
         @account.add_feature(:adv_article_bulk_actions)
 
         @account.reload
         setup_articles
         @@initial_setup_run = true
-        MixpanelWrapper.unstub(:send_to_mixpanel)
-        Account.unstub(:current)
       end
 
       def setup_articles # dont destroy articles from setup_articles in any of our test cases
@@ -720,7 +713,7 @@ module Ember
         sample_article = get_article_without_draft
         att_count = sample_article.cloud_files.count
         app = create_application('dropbox')
-        cloud_file_params = [{ name: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: app.first.application_id }]
+        cloud_file_params = [{ name: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: app.application_id }]
         put :update, construct_params({ version: 'private', id: sample_article.parent_id }, status: 2, cloud_file_attachments: cloud_file_params)
         assert_response 200
         sample_article.reload
@@ -732,7 +725,7 @@ module Ember
         sample_article = get_article_with_draft
         att_count = sample_article.draft.cloud_files.count
         app = create_application('dropbox')
-        cloud_file_params = [{ name: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: app.first.application_id }]
+        cloud_file_params = [{ name: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: app.application_id }]
         put :update, construct_params({ version: 'private', id: sample_article.parent_id }, status: 1, cloud_file_attachments: cloud_file_params)
         assert_response 200
         sample_article.reload
@@ -749,6 +742,23 @@ module Ember
       def test_delete_unavailable_article
         delete :destroy, construct_params(version: 'private', id: 9999)
         assert_response :missing
+      end
+
+      def test_delete_article_with_versioning
+        Sidekiq::Testing.inline! do
+          enable_article_versioning do
+            article_meta = create_article(article_params)
+            primary_article = article_meta.primary_article
+            3.times do
+              create_draft_version_for_article(primary_article)
+            end
+            no_of_versions = primary_article.reload.solution_article_versions.count
+            Solution::ArticleVersionsWorker.expects(:perform_async).times(no_of_versions)
+            delete :destroy, construct_params(version: 'private', id: article_meta.id)
+            assert_response 204
+            assert_equal @account.reload.solution_article_versions.where(article_id: primary_article.id).count, 0
+          end
+        end
       end
 
       def test_delete_article_someone_editing
@@ -1063,10 +1073,12 @@ module Ember
       end
 
       def test_update_article_unpublish_with_language_without_multilingual_feature
-        @account.features.enable_multilingual.destroy
+        Account.any_instance.stubs(:multilingual?).returns(false)
         put :update, construct_params(version: 'private', id: 0, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], language: @account.language)
         match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
         assert_response 404
+      ensure
+        Account.any_instance.unstub(:multilingual?)
       end
 
       def test_update_article_unpublish_with_invalid_language
@@ -1150,10 +1162,12 @@ module Ember
       end
 
       def test_reset_ratings_with_language_without_multilingual_feature
-        @account.features.enable_multilingual.destroy
+        Account.any_instance.stubs(:multilingual?).returns(false)
         put :reset_ratings, construct_params(version: 'private', id: 0, language: @account.language)
         match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
         assert_response 404
+      ensure
+        Account.any_instance.unstub(:multilingual?)
       end
 
       def test_reset_ratings_with_invalid_language
@@ -1235,10 +1249,12 @@ module Ember
       end
 
       def test_votes_with_language_without_multilingual_feature
-        @account.features.enable_multilingual.destroy
+        Account.any_instance.stubs(:multilingual?).returns(false)
         get :votes, controller_params(version: 'private', id: 0, language: @account.language)
         match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
         assert_response 404
+      ensure
+        Account.any_instance.unstub(:multilingual?)
       end
 
       def test_votes_with_invalid_language
@@ -1761,10 +1777,12 @@ module Ember
       end
 
       def test_untranslated_articles_without_multilingual_feature
-        @account.features.enable_multilingual.destroy
+        Account.any_instance.stubs(:multilingual?).returns(false)
         get :untranslated_articles, controller_params(version: 'private', language: 'es', portal_id: @account.main_portal.id)
         match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
         assert_response 404
+      ensure
+        Account.any_instance.unstub(:multilingual?)
       end
 
       def test_untranslated_articles_with_invalid_language
@@ -1839,52 +1857,23 @@ module Ember
         end
 
         def article_pattern(article, expected_output = {}, user = nil)
-          private_api_solution_article_pattern(article, expected_output, true, user)
+          private_api_solution_article_pattern(article, expected_output.merge({ request_language: true }), true, user)
         end
 
         def article_draft_pattern(article, _draft)
-          private_api_solution_article_pattern(article)
+          private_api_solution_article_pattern(article, { request_language: true })
         end
 
         def article_pattern_index(article)
-          private_api_solution_article_pattern(article, exclude_description: true, exclude_attachments: true, exclude_tags: true)
+          private_api_solution_article_pattern(article, exclude_description: true, exclude_attachments: true, exclude_tags: true, request_language: true)
         end
 
         def get_portal_articles(portal_id, language_ids)
           Solution::Article.portal_articles(portal_id, language_ids).joins('LEFT JOIN solution_drafts as drafts ON drafts.article_id = solution_articles.id').order('IFNULL(drafts.modified_at, solution_articles.modified_at) desc')
         end
 
-        def get_valid_not_supported_language
-          languages = @account.supported_languages + [@account.language]
-          Language.all.map(&:code).find { |language| !languages.include?(language) }
-        end
-
         def get_article_meta_with_translation
           @account.solution_category_meta.where(is_default: false).collect(&:solution_article_meta).flatten.map { |x| x if x.children.count > 1 }.flatten.reject(&:blank?).first
-        end
-
-        def populate_articles(folder_meta)
-          return if folder_meta.article_count > 10
-
-          (1..10).each do |i|
-            articlemeta = Solution::ArticleMeta.new
-            articlemeta.art_type = 1
-            articlemeta.solution_folder_meta_id = folder_meta.id
-            articlemeta.solution_category_meta = folder_meta.solution_category_meta
-            articlemeta.account_id = @account.id
-            articlemeta.published = false
-            articlemeta.save
-
-            article_with_lang = Solution::Article.new
-            article_with_lang.title = "#{Faker::Name.name} #{i}"
-            article_with_lang.description = '<b>aaa</b>'
-            article_with_lang.status = 1
-            article_with_lang.language_id = @account.language_object.id
-            article_with_lang.parent_id = articlemeta.id
-            article_with_lang.account_id = @account.id
-            article_with_lang.user_id = @account.agents.first.id
-            article_with_lang.save
-          end
         end
 
         def article_params(options = {})
@@ -1901,6 +1890,393 @@ module Ember
         def untranslated_language_articles
           translated_ids = @account.solution_articles.portal_articles(@portal_id, @language.id).pluck(:parent_id)
           get_portal_articles(@portal_id, [@account.language_object.id]).where('parent_id NOT IN (?)', (translated_ids.presence || ''))
+        end
+    end
+
+    class ArticlesControllerVersionsTest < ActionController::TestCase
+      include SolutionsArticleVersionsTestHelper
+      include SolutionsArticlesTestHelper
+      include SolutionsTestHelper
+      include SolutionsHelper
+      include SolutionBuilderHelper
+      tests Ember::Solutions::ArticlesController
+
+      def setup
+        super
+        @account = Account.first
+        Account.stubs(:current).returns(@account)
+        setup_multilingual
+        before_all
+        @account.add_feature(:article_versioning)
+        create_article(article_params(lang_codes: all_account_languages))
+      end
+
+      def teardown
+        Account.unstub(:current)
+      end
+
+      @@before_all_run = false
+
+      def before_all
+        return if @@before_all_run
+        setup_redis_for_articles
+        setup_multilingual
+        @account.reload
+        @@before_all_run = true
+      end
+
+      def wrap_cname(params)
+        { article: params }
+      end
+
+      def test_update_article_without_article_versioning
+        disable_article_versioning do
+          sample_article = get_article_without_draft
+          should_not_create_version(sample_article) do
+            paragraph = Faker::Lorem.paragraph
+            params_hash = { title: 'publish without draft title', description: paragraph, status: 2, agent_id: @agent.id }
+            put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+            assert_response 200
+          end
+        end
+      end
+
+      def test_update_article_with_article_versioning
+        sample_article = get_article_without_draft
+        should_create_version(sample_article) do
+          paragraph = Faker::Lorem.paragraph
+          params_hash = { title: 'publish without draft title', description: paragraph, status: 2, agent_id: @agent.id }
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+          assert_response 200
+        end
+      end
+
+      # save actions
+      def test_draft_autosave_save
+        sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 1)).primary_article
+        draft_version = create_draft_version_for_article(sample_article)
+        assert sample_article.draft != nil
+        session = 'lorem-ipsum'
+        should_not_create_version(sample_article) do
+          stub_version_session(session) do
+            stub_version_content do
+              params_hash = { status: 1, session: session }
+              put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+              assert_response 200
+              latest_version = get_latest_version(sample_article)
+              assert_equal latest_version.id, draft_version.id
+              assert_version_draft(latest_version)
+            end
+          end
+        end
+      end
+
+      def test_draft_save
+        sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 1)).primary_article
+        assert sample_article.status == 1
+        should_not_create_version(sample_article) do
+          params_hash = { status: 1, session: nil }
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+          assert_response 200
+          latest_version = get_latest_version(sample_article)
+          assert_version_draft(latest_version)
+        end
+      end
+
+      def test_draft_edit_save
+        sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 1)).primary_article
+        assert sample_article.status == 1
+        should_create_version(sample_article) do
+          description = Faker::Lorem.paragraph
+          params_hash = { status: 1, session: nil, description: description }
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+          assert_response 200
+          latest_version = get_latest_version(sample_article)
+          assert_version_draft(latest_version)
+          assert_equal sample_article.draft.description, description
+        end
+      end
+
+      def test_published_autosave_save
+        sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
+        assert sample_article.draft == nil
+        draft_version = create_draft_version_for_article(sample_article)
+        session = 'lorem-ipsum'
+        should_not_create_version(sample_article) do
+          stub_version_session(session) do
+            stub_version_content do
+              params_hash = { status: 1, session: session }
+              put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+              assert_response 200
+              latest_version = get_latest_version(sample_article)
+              assert_equal latest_version.id, draft_version.id
+              assert_version_draft(latest_version)
+            end
+          end
+        end
+      end
+
+      def test_published_save
+        sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
+        assert sample_article.draft == nil
+        should_create_version(sample_article) do
+          params_hash = { status: 1, session: nil}
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+          assert_response 200
+          latest_version = get_latest_version(sample_article)
+          assert_version_draft(latest_version)   
+        end
+      end
+
+      def test_published_edit_save
+        sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
+        assert sample_article.draft == nil        
+        should_create_version(sample_article) do
+          description = Faker::Lorem.paragraph
+          params_hash = { status: 1, session: nil, description: description}
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+          assert_response 200
+          latest_version = get_latest_version(sample_article)
+          assert_version_draft(latest_version)
+          assert_equal sample_article.draft.description, description
+        end
+      end
+
+      def test_published_draft_save
+        sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
+        assert sample_article.draft == nil
+        draft_version = create_draft_version_for_article(sample_article)
+        assert sample_article.draft != nil
+        should_create_version(sample_article) do
+          params_hash = { status: 1, session: nil }
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+          assert_response 200
+          latest_version = get_latest_version(sample_article)
+          assert_version_draft(latest_version)
+        end
+      end
+      
+      def test_published_draft_edit_save
+        sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
+        assert sample_article.draft == nil
+        draft_version = create_draft_version_for_article(sample_article)
+        should_create_version(sample_article) do
+          description = Faker::Lorem.paragraph
+          params_hash = { status: 1, session: nil, description: description}
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+          assert_response 200
+          latest_version = get_latest_version(sample_article)
+          assert_version_draft(latest_version)
+          assert_equal sample_article.draft.description, description
+        end
+      end
+
+      # publish actions
+      def test_draft_autosave_publish
+        sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 1)).primary_article
+        draft_version = create_draft_version_for_article(sample_article)
+        assert sample_article.draft != nil
+        session = 'lorem-ipsum'
+        should_not_create_version(sample_article) do
+          stub_version_session(session) do
+            stub_version_content do
+              params_hash = { status: 2, session: session }
+              put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+              assert_response 200
+              latest_version = get_latest_version(sample_article)
+              assert_equal latest_version.id, draft_version.id
+              assert_version_published(latest_version)
+              assert_version_live(latest_version)
+            end
+          end
+        end
+      end
+      
+      def test_draft_publish
+        sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 1)).primary_article
+        assert sample_article.status == 1
+        should_create_version(sample_article) do
+          params_hash = { status: 2, session: nil }
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+          assert_response 200
+          latest_version = get_latest_version(sample_article)
+          assert_version_published(latest_version)
+          assert_version_live(latest_version)
+        end
+      end
+      
+      def test_draft_edit_publish
+        sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 1)).primary_article
+        assert sample_article.status == 1
+        should_create_version(sample_article) do
+          description = Faker::Lorem.paragraph
+          params_hash = { status: 2, session: nil, description: description }
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+          assert_response 200
+          latest_version = get_latest_version(sample_article)
+          assert_version_published(latest_version)
+          assert_version_live(latest_version)
+          assert_equal sample_article.description, description
+        end
+      end
+
+      def test_published_publish
+        sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
+        assert sample_article.status == 2
+        should_not_create_version(sample_article) do
+          params_hash = { status: 2, session: nil }
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+          assert_response 200
+          latest_version = get_latest_version(sample_article)
+          assert_version_published(latest_version)
+          assert_version_live(latest_version)
+        end
+      end
+
+      def test_published_edit_publish
+        sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
+        assert sample_article.status == 2
+        should_create_version(sample_article) do
+          description = Faker::Lorem.paragraph
+          params_hash = { status: 2, session: nil, description: description }
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+          assert_response 200
+          latest_version = get_latest_version(sample_article)
+          assert_version_published(latest_version)
+          assert_version_live(latest_version)
+          assert_equal sample_article.description, description
+        end
+      end
+      
+      def test_published_autosave_publish
+        sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
+        assert sample_article.draft == nil
+        draft_version = create_draft_version_for_article(sample_article)
+        session = 'lorem-ipsum'
+        should_not_create_version(sample_article) do
+          stub_version_session(session) do
+            stub_version_content do
+              params_hash = { status: 2, session: session }
+              put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+              assert_response 200
+              latest_version = get_latest_version(sample_article)
+              assert_equal latest_version.id, draft_version.id
+              assert_version_published(latest_version)
+              assert_version_live(latest_version)
+            end
+          end
+        end
+      end
+  
+      def test_published_draft_publish
+        sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
+        assert sample_article.draft == nil
+        draft_version = create_draft_version_for_article(sample_article)
+        assert sample_article.draft != nil
+        should_create_version(sample_article) do
+          params_hash = { status: 2, session: nil }
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+          assert_response 200
+          latest_version = get_latest_version(sample_article)
+          assert_version_published(latest_version)
+          assert_version_live(latest_version)
+        end
+      end
+
+      def test_published_draft_autosave_publish
+        sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
+        assert sample_article.draft == nil
+        draft_version = create_draft_version_for_article(sample_article)
+        session = 'lorem-ipsum'
+        should_not_create_version(sample_article) do
+          stub_version_session(session) do
+            stub_version_content do
+              params_hash = { status: 2, session: session }
+              put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+              assert_response 200
+              latest_version = get_latest_version(sample_article)
+              assert_equal latest_version.id, draft_version.id
+              assert_version_published(latest_version)
+            end
+          end
+        end
+      end
+
+      def test_published_draft_edit_publish
+        sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
+        assert sample_article.draft == nil
+        draft_version = create_draft_version_for_article(sample_article)
+        should_create_version(sample_article) do
+          description = Faker::Lorem.paragraph
+          params_hash = { status: 2, session: nil, description: description}
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+          assert_response 200
+          latest_version = get_latest_version(sample_article)
+          assert_version_published(latest_version)
+          assert_equal sample_article.description, description
+        end
+      end
+      
+      # unpublish actions
+      def test_published_unpublish
+        sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
+        assert sample_article.draft == nil
+        should_create_version(sample_article) do
+          params_hash = { status: 1, session: nil}
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+          assert_response 200
+          latest_version = get_latest_version(sample_article)
+          assert_version_draft(latest_version)
+          assert sample_article.reload.draft != nil
+          assert sample_article.solution_article_versions.where(live: true).empty?
+        end
+      end
+
+      def test_published_draft_autosave_unpublish
+        sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
+        assert sample_article.draft == nil
+        draft_version = create_draft_version_for_article(sample_article)
+        session = 'lorem-ipsum'
+        should_not_create_version(sample_article) do
+          stub_version_session(session) do
+            stub_version_content do
+              params_hash = { status: 1, session: session }
+              put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+              assert_response 200
+              latest_version = get_latest_version(sample_article)
+              assert_equal latest_version.id, draft_version.id
+              assert_version_draft(latest_version)
+            end
+          end
+        end
+      end
+
+      def test_published_draft_unpublish
+        sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
+        assert sample_article.draft == nil
+        draft_version = create_draft_version_for_article(sample_article)
+        should_create_version(sample_article) do
+          params_hash = { status: 1, session: nil}
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+          assert_response 200
+          latest_version = get_latest_version(sample_article)
+          assert_version_draft(latest_version)
+          assert sample_article.reload.draft != nil
+          assert sample_article.solution_article_versions.where(live: true).empty?
+        end
+      end
+
+      private
+
+        def article_params(options = {})
+          lang_hash = { lang_codes: options[:lang_codes] }
+          category = create_category({ portal_id: Account.current.main_portal.id }.merge(lang_hash))
+          {
+            title: options[:title] || 'Test',
+            description: 'Test',
+            folder_id: create_folder({ visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: category.id }.merge(lang_hash)).id,
+            status: options[:status] || Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
+          }.merge(lang_hash)
         end
     end
   end
