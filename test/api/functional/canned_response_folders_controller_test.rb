@@ -265,7 +265,7 @@ class CannedResponseFoldersControllerTest < ActionController::TestCase
     }
     post :create, construct_params(build_request_param(folder))
     job = CentralPublisher::Worker.jobs.last
-    assert_equal 'canned_response_folder_create', job['args'][0]
+    assert_equal 'canned_response_folder_create', job['args'].try([0])
     CentralPublisher::Worker.jobs.clear
   end
 
@@ -280,7 +280,7 @@ class CannedResponseFoldersControllerTest < ActionController::TestCase
     put :update, construct_params(build_request_param(folder)).merge(id: ca_folder.id)
     assert_response 200
     job = CentralPublisher::Worker.jobs.last
-    assert_equal 'canned_response_folder_update', job['args'][0]
+    assert_equal 'canned_response_folder_update', job['args'].try([0])
     assert_equal({ 'name' => [old_name, new_name] }, job['args'][1]['model_changes'])
     CentralPublisher::Worker.jobs.clear
   end
