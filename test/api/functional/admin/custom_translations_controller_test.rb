@@ -1,4 +1,6 @@
 require_relative '../../test_helper'
+require 'sidekiq/testing'
+Sidekiq::Testing.fake!
 class Admin::CustomTranslationsControllerTest < ActionController::TestCase
   include SurveysTestHelper
   include ActionView::Helpers::NumberHelper
@@ -259,8 +261,6 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     YAML.unstub(:safe_load)
     unstub_for_custom_translations
   end
-
-
 
   def assert_survey(survey, response_hash)
     assert_equal response_hash['title_text'], survey.title_text

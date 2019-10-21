@@ -375,6 +375,7 @@
       :help_widget_predictive: 370
       :supervisor_custom_status: 371
       :lbrr_by_omniroute: 372
+      :secure_attachments: 373
 :selectable_features:
   :redis_display_id: true
   :branding: true

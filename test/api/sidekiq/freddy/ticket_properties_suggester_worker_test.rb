@@ -13,6 +13,8 @@ class TicketPropertiesSuggesterWorkerTest < ActionView::TestCase
   def setup
     @account = Account.first.presence || create_test_account
     Account.stubs(:current).returns(@account)
+    @account.stubs(:ticket_properties_suggester_enabled?).returns(true)
+
   end
 
   def teardown
@@ -41,7 +43,21 @@ class TicketPropertiesSuggesterWorkerTest < ActionView::TestCase
   ensure
     Account.unstub(:current)
     HTTParty.unstub(:post)
-  end
+  end  
+
+  def test_ticket_properties_suggester_feature_disabled?
+    WebMock.allow_net_connect!    
+    @account.stubs(:ticket_properties_suggester_enabled?).returns(false)    
+    jobs_count = ::Freddy::TicketPropertiesSuggesterWorker.jobs.size
+    ticket = Helpdesk::Ticket.new
+    ticket.source = 1
+    ticket.requester = User.first
+    ticket.save!
+    current_jobs_count = ::Freddy::TicketPropertiesSuggesterWorker.jobs.size
+    assert jobs_count == current_jobs_count 
+    @account.unstub(:ticket_properties_suggester_enabled?)
+    WebMock.disable_net_connect!
+  end    
 
   private
 

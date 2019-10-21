@@ -4,6 +4,7 @@ class SubscriptionsController < ApplicationController
   include Subscription::Currencies::Constants
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include Admin::AdvancedTicketing::FieldServiceManagement::CustomFieldValidator
 
   before_filter :prevent_actions_for_sandbox
   skip_before_filter :check_account_state
@@ -15,6 +16,7 @@ class SubscriptionsController < ApplicationController
   before_filter :load_billing, :validate_subscription, :only => :billing
   before_filter :load_freshfone_credits, :only => [:show]
   before_filter :valid_currency?, :only => :plan
+  before_filter :check_fsm_requirements, :only =>[:plan] , if: -> {fsm_addon_present_in_request?}
 
   before_filter :build_subscription, :only => [ :calculate_amount, :plan ]
   before_filter :build_free_subscription, :only => :convert_subscription_to_free
@@ -512,6 +514,19 @@ class SubscriptionsController < ApplicationController
       billing_currencies = scoper.trial? ? SUPPORTED_CURRENCIES : BILLING_CURRENCIES
       unless billing_currencies.include?(params[:currency])
         flash[:error] = t("subscription.error.invalid_currency")
+        redirect_to subscription_url
+      end
+    end
+
+    def fsm_addon_present_in_request?
+      fsm_addon = addon_params['field_service_management']
+      fsm_addon.present? && fsm_addon['enabled'] == 'true'
+    end
+
+    def check_fsm_requirements
+      return true if Account.current.field_service_management_enabled?
+      if !fsm_artifacts_available?
+        flash[:notice] = t('fsm_requirements_not_met')
         redirect_to subscription_url
       end
     end

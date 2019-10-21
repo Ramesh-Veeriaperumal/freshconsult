@@ -10,6 +10,7 @@ module Ember
       include Redis::OthersRedis
       include ::Admin::AdvancedTicketing::FieldServiceManagement::Constant
       include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
+      include TicketFieldsTestHelper
 
       def setup
         super
@@ -177,6 +178,7 @@ module Ember
         enable_fsm do
           begin
             Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
+            Account.current.revoke_feature(:field_service_management)
             Sidekiq::Testing.inline! do
               post :create, construct_params({ version: 'private' }, name: 'field_service_management')
               assert_response 204
@@ -549,6 +551,74 @@ module Ember
         cleanup_fsm
       ensure
         AdvancedTicketingControllerTest.any_instance.unstub(:remove_fsm_addon_and_reset_agent_limit)
+      end
+
+      def test_fsm_artifacts_with_8_date_fields
+        Account.current.revoke_feature(:field_service_management)
+        Account.current.custom_date_time_fields_from_cache.each(&:destroy)
+        ((Account.current.custom_date_fields_from_cache.count + 1)..8).each do |i|
+          create_custom_field('date_time' + i.to_s, 'date')
+        end
+        post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+        assert_response 204
+      ensure
+        Account.current.custom_date_fields_from_cache.each(&:destroy)
+        Account.current.custom_date_time_fields_from_cache.each(&:destroy)
+      end
+
+      def test_fsm_artifacts_with_9_date_fields
+        Account.current.revoke_feature(:field_service_management)
+        Account.current.custom_date_time_fields_from_cache.each(&:destroy)
+        ((Account.current.custom_date_fields_from_cache.count + 1)..9).each do |i|
+          create_custom_field('date_time' + i.to_s, 'date')
+        end
+        post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+        assert_response 400
+      ensure
+        Account.current.custom_date_fields_from_cache.each(&:destroy)
+        Account.current.custom_date_time_fields_from_cache.each(&:destroy)
+      end
+
+      def test_fsm_artifacts_with_10_date_fields_with_fsm_enabled
+        Account.current.custom_date_time_fields_from_cache.each(&:destroy)
+        perform_fsm_operations
+        Account.current.revoke_feature(:field_service_management)
+        ((Account.current.custom_date_fields_from_cache.count + Account.current.custom_date_time_fields_from_cache.count + 1)..10).each do |i|
+          create_custom_field('date_time_' + i.to_s, 'date')
+        end
+        post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+        assert_response 204
+      ensure
+        Account.current.custom_date_fields_from_cache.each(&:destroy)
+        Account.current.custom_date_time_fields_from_cache.each(&:destroy)
+      end
+
+      def test_fsm_text_fields_with_normalized_flexi_field_with_limit_reached
+        Account.any_instance.stubs(:denormalized_flexifields_enabled?).returns(false)
+        (1..2).each do |i|
+          create_custom_field('text' + i.to_s, 'text')
+        end
+        stub_const(Helpdesk::Ticketfields::Constants, 'MAX_ALLOWED_COUNT', string: 4, text: 10, number: 20, date: 10, boolean: 10, decimal: 10) do
+          stub_const(Helpdesk::Ticketfields::Constants, 'TICKET_FIELD_DATA_COUNT', string: 4, text: 10, number: 20, date: 10, boolean: 10, decimal: 10) do
+            post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+          end
+        end
+        assert_response 400
+      ensure
+        Account.any_instance.unstub(:denormalized_flexifields_enabled?)
+      end
+
+      def test_fsm_text_fields_with_denormalized_flexi_field_with_limit_reached
+        Account.any_instance.stubs(:denormalized_flexifields_enabled?).returns(true)
+        (1..2).each do |i|
+          create_custom_field('text' + i.to_s, 'text')
+        end
+        stub_const(Helpdesk::Ticketfields::Constants, 'MAX_ALLOWED_COUNT_DN', string: 4, text: 10, number: 20, date: 10, boolean: 10, decimal: 10) do
+          post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+          assert_response 400
+        end
+      ensure
+        Account.any_instance.unstub(:denormalized_flexifields_enabled?)
       end
     end
   end

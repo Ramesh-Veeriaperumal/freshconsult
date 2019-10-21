@@ -69,7 +69,6 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	alias_attribute :sla_resolution_reminded, :boolean_tc05
 	alias_attribute :dirty_attributes, :text_tc03
 	alias_attribute :spam_score, :string_tc04
-	alias_attribute :sds_spam, :int_tc05
 
 	alias_attribute :sentiment, :int_tc04
 	alias_attribute :additional_info, :text_tc04

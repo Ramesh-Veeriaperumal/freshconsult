@@ -357,7 +357,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       @include_quoted_text = options[:quoted_text]
       @surveymonkey_survey =  Integrations::SurveyMonkey.survey(options[:include_surveymonkey_link], ticket, note.user)
       @ticket = ticket
-      @account = note.account    
+      @account = note.account
+      @attachment_files = note.all_attachments
 
       unless ticket.parent_ticket.present?
         if ticket.account.new_survey_enabled?
@@ -372,12 +373,13 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       if attachments.present? && attachments.inline.present?
         handle_inline_attachments(attachments, note.full_text_html, note.account)
       end
-      note.all_attachments.each do |a|
+
+      @attachment_files.each do |a|
         attachments[a.content_file_name] = {
           :mime_type => a.content_content_type, 
           :content => Paperclip.io_adapters.for(a.content).read
         }
-      end
+      end unless @account.secure_attachments_enabled?
 
       mail(headers) do |part|
         part.text{ render "reply.text.plain"}
@@ -423,16 +425,20 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       @cloud_files= note.cloud_files
       @body_html = generate_body_html(note.full_text_html)
       @account = note.account
+      @attachment_files = note.all_attachments
 
       if attachments.present? && attachments.inline.present?
         handle_inline_attachments(attachments, note.full_text_html, note.account)
       end
-      self.class.trace_execution_scoped(['Custom/Helpdesk::TicketNotifier/read_binary_attachment']) do
-        note.all_attachments.each do |a|
-          attachments[a.content_file_name] = {
-            :mime_type => a.content_content_type, 
-            :content => Paperclip.io_adapters.for(a.content).read
-          }
+
+      unless @account.secure_attachments_enabled?
+        self.class.trace_execution_scoped(['Custom/Helpdesk::TicketNotifier/read_binary_attachment']) do
+          @attachment_files.each do |a|
+            attachments[a.content_file_name] = {
+              :mime_type => a.content_content_type, 
+              :content => Paperclip.io_adapters.for(a.content).read
+            }
+          end
         end
       end
       mail(headers) do |part|
@@ -475,16 +481,20 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       @cloud_files= note.cloud_files
       @body_html = generate_body_html(note.full_text_html)
       @account = note.account
+      @attachment_files = note.all_attachments
 
       if attachments.present? && attachments.inline.present?
         handle_inline_attachments(attachments, note.full_text_html, note.account)
       end
-      self.class.trace_execution_scoped(['Custom/Helpdesk::TicketNotifier/read_binary_attachment']) do
-        note.all_attachments.each do |a|
-          attachments[a.content_file_name] = {
-            :mime_type => a.content_content_type, 
-            :content => Paperclip.io_adapters.for(a.content).read
-          }
+
+      unless @account.secure_attachments_enabled?
+        self.class.trace_execution_scoped(['Custom/Helpdesk::TicketNotifier/read_binary_attachment']) do
+          @attachment_files.each do |a|
+            attachments[a.content_file_name] = {
+              :mime_type => a.content_content_type, 
+              :content => Paperclip.io_adapters.for(a.content).read
+            }
+          end
         end
       end
 
@@ -613,6 +623,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
           }
         end
       end
+      
       mail(headers) do |part|
         part.text{ render "notify_outbound_email.text.plain"}
         part.html{ render "notify_outbound_email.text.html"}

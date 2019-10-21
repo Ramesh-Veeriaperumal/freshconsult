@@ -8,6 +8,7 @@ en:
     freshdesk_support_team: "Freshdesk Support Team"
     note_for_recipients: "Note: This email was also sent to - %{to_emails}."
     freshdesk: "Freshdesk"
+    attachment: 'Attachments:'
     notify_new_follower:
       topic:
         title: 'Added as topic follower'

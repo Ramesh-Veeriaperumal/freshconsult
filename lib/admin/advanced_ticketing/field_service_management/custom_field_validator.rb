@@ -4,26 +4,35 @@ module Admin::AdvancedTicketing::FieldServiceManagement
     include Helpdesk::Ticketfields::Validations
     include Helpdesk::Ticketfields::ControllerMethods
     include Admin::AdvancedTicketing::FieldServiceManagement::Constant
+    include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
 
-    def custom_fields_available?
-      new_custom_fields_count = denormalized_flexifields_enabled? ? DENORMOLIZED_CUSTOM_FIELDS_COUNT : NORMAL_CUSTOM_FIELDS_COUNT
-
+    def fsm_artifacts_available?
+      fsm_fields_required = fetch_fsm_fields
       field_data_group = custom_fields_data.group_by { |c_f_d| c_f_d['type'] }
       field_data_count_by_type = {
         text:    calculate_fields_count(field_data_group['paragraph']),
         number:  calculate_fields_count(field_data_group['number']),
         boolean: calculate_fields_count(field_data_group['checkbox']),
         decimal: calculate_fields_count(field_data_group['decimal']),
-        date:    calculate_fields_count(field_data_group['date'])
+        date:    calculate_fields_count(field_data_group['date']),
+        date_time: calculate_fields_count(field_data_group['date_time'])
       }.merge(feature_based_fields_count(field_data_group))
-
       max_count = max_allowed_count(field_data_group)
-
-      new_field_data_count = add_new_custom_fields_count(field_data_count_by_type, new_custom_fields_count)
+      new_field_data_count = add_new_custom_fields_count(field_data_count_by_type, fsm_fields_required)
       new_field_data_count.try(:each) do |key, _|
         max_value = key == :date_time ?  max_count[:date] : max_count[key]
-        new_field_data_count[key] < max_value
+        new_fields_count = key == :date_time ? new_field_data_count[:date] : new_field_data_count[key]
+        return false if max_value < new_fields_count
       end
+      true
+    end
+
+    def fetch_fsm_fields
+      fsm_fields_to_create = fetch_fsm_fields_to_be_created
+      fsm_fields_required = {
+        date_time: fsm_fields_to_create.select { |x| x[:field_type] == 'custom_date_time' }.count,
+        string:    fsm_fields_to_create.select { |x| x[:field_type] == 'custom_text' }.count
+      }
     end
 
     def custom_fields_data
@@ -41,10 +50,14 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       end
     end
 
-    def add_new_custom_fields_count(field_data_count_by_type, new_custom_fields_count)
-      new_custom_fields_count.each do |k, v|
+    def add_new_custom_fields_count(field_data_count_by_type, fsm_fields_required)
+      fsm_fields_required.each do |k, v|
         existing_field_count = field_data_count_by_type[k].presence || 0
-        field_data_count_by_type[k] = existing_field_count + v
+        if k == :date_time
+          field_data_count_by_type[:date] = field_data_count_by_type[:date] + existing_field_count + v
+        else
+          field_data_count_by_type[k] = existing_field_count + v
+        end
       end
       field_data_count_by_type
     end

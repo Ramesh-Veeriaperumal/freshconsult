@@ -2326,6 +2326,14 @@ en:
         password_policy_info3: Changes you make to the password policy will be applicable within 8 hours. Your agents will be prompted to update their passwords during this time. If they fail to conform, they will be logged out of the support portal and will be forced to change their passwords the next time they try to log in.
         password_policy_info4: Please note that once you enable password policy for your account (either default or advanced), you will not be able to disable it.
         freshconnect_warning: If you are actively using Discuss, we recommend you to contact us to setup SSO at <a href="mailto:support@freshdesk.com">support@freshdesk.com</a> to avoid loss of conversations in Freshconnect.
+        widget:
+          settings: Widget Settings
+          sso: Single sign on for widget
+          info1: If you have solution articles or the contact form restricted to just logged in users, use this token to authenticate users into the widget.
+          info2: "Learn more about authentication in the widget <a href='https://support.freshdesk.com/support/solutions/articles/50000000978' target='_blank'>here</a>."
+          reset_key: Reset key
+          copy_to_clipboard: Copy to clipboard
+          copied: Copied
       errors:
         simple_sso:
           invalid_login_url: Please provide a valid login URL
@@ -3483,6 +3491,7 @@ en:
   choose_different_plan: Choose a different plan
   downgrade_plan: "Note: If you downgrade a plan, you might lose some of the existing features"
   downgrade_plan_v2: "Note: If you downgrade your plan, you might lose some features!"
+  fsm_requirements_not_met: "Field service management cannot be enabled as some requirements are not met. Please reach out to support for more information"
   f_request: Feature Request
   save_and_create: Save and Create Another
   save_and_new: Save and <strong>New</strong>

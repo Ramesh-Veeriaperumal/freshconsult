@@ -6,7 +6,7 @@ module GroupHelper
   def create_group(account, options = {})
     group = account.groups.find_by_name(options[:name])
     return group if group
-    name = options[:name] || Faker::Name.name
+    name = options[:name] || "#{Faker::Name.name}#{rand(1_000_000)}"
     group = FactoryGirl.build(:group, name: name)
     group.account_id = account.id
     group.group_type = options[:group_type] || GroupConstants::SUPPORT_GROUP_ID
@@ -23,7 +23,7 @@ module GroupHelper
     if group
       add_agent_to_group(group_id = group.id, ticket_permission = 3, role_id = @account.roles.first.id)
     else
-      name = options[:name] || Faker::Name.name
+      name = options[:name] || "#{Faker::Name.name}#{rand(1_000_000)}"
       group = FactoryGirl.build(:group, name: name)
       group.group_type = options[:group_type] || GroupConstants::SUPPORT_GROUP_ID
       group.account_id = account.id

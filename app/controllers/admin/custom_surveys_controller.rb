@@ -67,11 +67,13 @@ class Admin::CustomSurveysController < Admin::AdminController
   end  
 
   def update
+    survey_was = @survey.as_api_response(:custom_translation).stringify_keys if update_survey_status? 
     if @survey.store(survey_data)
       update_questions @survey.id
       params[:jsonData] = survey_questions_data.to_json
       super
       @surveys = scoper
+      update_survey_status(survey_was) if update_survey_status?
       result_set = {surveys: @surveys.to_json}
       result_set['redirect_url'] = edit_admin_custom_survey_path(@survey.id) if @errors.present?
     else
@@ -82,7 +84,7 @@ class Admin::CustomSurveysController < Admin::AdminController
     flash[:notice] = @survey_id.blank? ? t(:'admin.surveys.successfully_created_v2') : 
                                          t(:'admin.surveys.successfully_updated_v2') if @errors.blank?
     render :json => result_set
-  end  
+  end
 
   def destroy
     @survey.deleted = true
@@ -192,6 +194,14 @@ class Admin::CustomSurveysController < Admin::AdminController
 
     def scoper_class
       CustomSurvey::SurveyQuestion
+    end
+
+    def update_survey_status?
+      action_name.to_sym == :update && Account.current.csat_translations_enabled? && @errors.blank?
+    end
+
+    def update_survey_status(survey_was)
+      Admin::CustomTranslations::UpdateSurveyStatus.perform_async({ :survey_was => survey_was , :survey_id => @survey.id})
     end
 
     def index_scoper

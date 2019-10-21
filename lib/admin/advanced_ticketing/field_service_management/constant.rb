@@ -49,8 +49,6 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       }
     ].freeze
 
-    DENORMOLIZED_CUSTOM_FIELDS_COUNT = { string: 3, date_time: 2 }.freeze
-    NORMAL_CUSTOM_FIELDS_COUNT = { string: 3, date_time: 2 }.freeze
     FSM_FEATURE = :field_service_management
     SERVICE_TASK_TYPE = 'Service Task'
     FIELD_AGENT = :field_agent
