@@ -19,7 +19,22 @@ class Portal < ActiveRecord::Base
     DATETIME_FIELDS.each do |key|
       g.add proc { |x| x.utc_format(x.send(key)) }, as: key
     end
-
+  end
+    
+  api_accessible :central_publish_destroy do |br|
+    br.add :id
+    br.add :account_id
   end
 
+  def relationship_with_account
+    :portals
+  end
+
+  def self.central_publish_enabled?
+    Account.current.portal_central_publish_enabled?
+  end
+
+   def model_changes_for_central
+    @model_changes
+  end
 end
