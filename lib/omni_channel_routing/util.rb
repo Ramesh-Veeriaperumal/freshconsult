@@ -17,7 +17,8 @@ module OmniChannelRouting
     def payload
       {
         account_id: Account.current.id.to_s,
-        service: FRESHDESK_SERVICE
+        service: FRESHDESK_SERVICE,
+        actor: User.current.try(:id).to_s
       }
     end
 

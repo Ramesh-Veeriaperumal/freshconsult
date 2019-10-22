@@ -88,15 +88,17 @@ class Channel::OmniChannelRouting::AgentsControllerTest < ActionController::Test
     @account.add_feature(:omni_channel_routing)
     @agent = add_agent_to_account(@account, active: 1, role: 4, available: false)
     OmniChannelRouting::AgentSync.jobs.clear
-    append_header
+    append_header(@agent.user_id)
     params = { availability: true }
     put :update, construct_params({ version: 'channel/ocr', id: @agent.user_id }, params)
     assert_response 200
+    assert_equal @agent.user_id, User.current.id
     @agent.reload
     match_json(agent_pattern_with_additional_details({available: params[:availability]}, @agent.user))
     match_json(agent_pattern_with_additional_details({}, @agent.user))
     assert_equal 0, OmniChannelRouting::AgentSync.jobs.size
   ensure
     @account.revoke_feature(:omni_channel_routing)
+    User.reset_current_user
   end
 end

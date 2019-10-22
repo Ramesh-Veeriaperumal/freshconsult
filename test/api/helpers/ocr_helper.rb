@@ -24,8 +24,9 @@ module OcrHelper
     }
   end
   
-  def append_header
+  def append_header(user_id = nil)
     payload = { source: 'ocr_channel' }
+    payload[:actor] = user_id.to_s if user_id.present?
     header =  { alg: "HS256", typ: "JWT" }
     config = CHANNEL_API_CONFIG.fetch('ocr_channel', {})    
     jwt_token = JWT.encode payload, config[:jwt_secret][0], 'HS256', header

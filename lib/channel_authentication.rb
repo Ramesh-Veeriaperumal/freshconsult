@@ -16,6 +16,7 @@ module ChannelAuthentication
     if auth_token
       config = auth_token[:config]
       payload = config[:jwt_secret].is_a?(Array) ? verify_token_array_format(auth_token, config) : verify_token(auth_token, config)
+      return set_current_user(payload[:actor].to_i) if payload.present? && auth_token[:source] == CHANNELS[:ocr] && payload.key?(:actor)
       decrypt_payload(payload, config) if payload.present? && auth_token[:source] == CHANNELS[:zapier]
     else
       invalid_credentials_error unless params[:controller] == 'channel/tickets'
@@ -95,5 +96,12 @@ module ChannelAuthentication
       return @source if @source.present?
       jwt_header = token.split('.')[0]
       @source = JSON.parse(Base64.decode64(jwt_header))['source'] if jwt_header
+    end
+
+    def set_current_user(user_id)
+      user = current_account.users.find_by_id(user_id)
+      return user.make_current if user.present?
+      render_request_error :access_denied, 403
+      nil
     end
 end

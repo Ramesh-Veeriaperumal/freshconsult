@@ -36,7 +36,7 @@ module Ember
 
       def headers
         account_id = Account.current.account_additional_settings.additional_settings[:ocr_account_id].to_s
-        payload = { service: ADMINSERVICE, account_id: account_id }
+        payload = { service: ADMINSERVICE, account_id: account_id, actor: User.current.try(:id).to_s }
         jwt_token = construct_jwt_token(payload)
 
         { 
