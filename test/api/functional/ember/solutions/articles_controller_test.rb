@@ -25,10 +25,12 @@ module Ember
         initial_setup
         setup_multilingual
         @account.reload
+        @account.revoke_feature :marketplace
       end
 
       def teardown
         Account.unstub(:current)
+        @account.add_feature :marketplace
       end
 
       @@initial_setup_run = false

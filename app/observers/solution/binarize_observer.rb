@@ -19,7 +19,7 @@ class Solution::BinarizeObserver < ActiveRecord::Observer
 	private
 
 		def multilingual
-			Account.current.multilingual?
+			Account.current.multilingual_available?
 		end
 
 		def meta(object)

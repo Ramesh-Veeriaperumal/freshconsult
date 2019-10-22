@@ -32,8 +32,6 @@ class Solution::ArticleVersion < ActiveRecord::Base
   validates :title, presence: true, if: :validate_content?
   validates :description, presence: true, if: :validate_content?
 
-  before_save :update_attachments_info
-
   def content
     if @content.nil? # cache the content read from s3
       @content = if new_record? # for a new record s3 record won't be there and we don't need read from s3
