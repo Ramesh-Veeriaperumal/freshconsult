@@ -35,6 +35,7 @@ module Redis::Keys::Others
   PREMIUM_EMAIL_ACCOUNTS                  = "PREMIUM_EMAIL_ACCOUNTS".freeze
   SOLUTION_HIT_TRACKER                    = "SOLUTION:HITS:%{account_id}:%{article_id}".freeze
   SOLUTION_META_HIT_TRACKER               = "SOLUTION_META:HITS:%{account_id}:%{article_meta_id}".freeze
+  ARTICLE_VERSION_SESSION                 = 'ARTICLE_VERSION_SESSION:%{account_id}:%{article_id}:%{version_id}'.freeze
   TOPIC_HIT_TRACKER                       = "TOPIC:HITS:%{account_id}:%{topic_id}".freeze
   MESSAGE_PROCESS_STATE                   = "MESSAGE_PROCESS_STATE:%{uid}".freeze
   MESSAGE_RETRY_STATE                     = "MESSAGE_RETRY_STATE:%{uid}".freeze
@@ -208,6 +209,8 @@ module Redis::Keys::Others
   FRESHID_V2_ORG_CLIENT_CREDS_TOKEN_KEY   = 'FRESHID_V2_ORG_CLIENT_CREDS_TOKEN_KEY:%{organisation_domain}'.freeze
   FRESHID_USER_PW_AVAILABILITY            = 'FRESHID_USER_PW_AVAILABILITY:%{account_id}:%{email}'.freeze
   FRESHID_NEW_ACCOUNT_SIGNUP_ENABLED      = 'FRESHID_NEW_ACCOUNT_SIGNUP_ENABLED'.freeze
+  FLUFFY_HOUR_SIGNUP_ENABLED              = 'FLUFFY_HOUR_SIGNUP_ENABLED'.freeze
+  FLUFFY_MINUTE_SIGNUP_ENABLED            = 'FLUFFY_MINUTE_SIGNUP_ENABLED'.freeze
   FRESHWORKS_OMNIBAR_SIGNUP_ENABLED       = 'FRESHWORKS_OMNIBAR_SIGNUP_ENABLED'.freeze
   FRESHID_MIGRATION_IN_PROGRESS_KEY       = 'FRESHID_MIGRATION_IN_PROGRESS:%{account_id}'.freeze
   FRESHID_V2_NEW_ACCOUNT_SIGNUP_ENABLED   = 'FRESHID_V2_NEW_ACCOUNT_SIGNUP_ENABLED'.freeze

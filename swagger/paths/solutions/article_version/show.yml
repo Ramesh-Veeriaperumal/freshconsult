@@ -1,0 +1,40 @@
+get:
+  tags: [Solution Article Version]
+  summary: Get article version
+  parameters:
+    - $ref: '#/parameters/language'
+    - name: article_id
+      in: path
+      required: true
+      type: string
+      description: article meta id
+    - name: id
+      in: path
+      required: true
+      type: string
+      description: version number
+  responses: 
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          article_versions:
+            type: array
+            items:
+              $ref: '#/definitions/article_version_response'
+          meta:
+            type: object
+            properties:
+              count:
+                type: number
+              next_page:
+                type: boolean
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+    404:
+      description: Article not found

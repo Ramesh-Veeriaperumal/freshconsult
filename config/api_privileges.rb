@@ -211,6 +211,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :'ember/admin/bot', only: [:bot_folders]
     resource :'ember/solutions/home', only: %i[summary quick_views]
     resource :'ember/solutions/draft', only: %i[index]
+    resource :'ember/solutions/article_version', only: %i[index show]
   end
 
   manage_solutions do
@@ -275,10 +276,12 @@ Authority::Authorization::PrivilegeList.build do
   manage_dispatch_rules do
     resource :"admin/automation", only: [:index, :create, :show, :update, :destroy]
     resource :"api_business_hour", :only => [:index, :show]
+    resource :"api_search/automation", only: [:results]
   end
 
   manage_supervisor_rules do
     resource :"admin/automation", only: [:index, :create, :show, :update, :destroy]
     resource :"api_business_hour", :only => [:index, :show]
+    resource :"api_search/automation", only: [:results]
   end
 end

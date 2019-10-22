@@ -395,7 +395,7 @@ Helpkit::Application.routes.draw do
           end
         end
 
-        resources :articles, controller: 'ember/solutions/articles', only: [:index, :show, :destroy] do
+        resources :articles, controller: 'ember/solutions/articles', only: [:index, :show, :destroy], constraints: { id: /\d+/ } do
           collection do
             get :filter, path: 'filter/(:language)', constraints: { language: Regexp.union(Language.all_codes) }
             put :bulk_update, path: 'bulk_update/(:language)', constraints: { language: Regexp.union(Language.all_codes) }
@@ -409,6 +409,16 @@ Helpkit::Application.routes.draw do
             put :reorder
             post '(/:language)', to: :create, constraints: { language: Regexp.union(Language.all_codes) }
             put '(/:language)', to: :update, constraints: { language: Regexp.union(Language.all_codes) }
+          end
+
+          resource :versions, controller: 'ember/solutions/article_versions' do
+            collection do
+              get :index, path: '(:language)', constraints: { language: Regexp.union(Language.all_codes) }
+            end
+
+            member do
+              get '/:id(/:language)', to: :show, constraints: { language: Regexp.union(Language.all_codes) }
+            end
           end
 
           resource :drafts, controller: 'ember/solutions/drafts' do
@@ -897,6 +907,11 @@ Helpkit::Application.routes.draw do
     get '/account', to: 'channel/v2/accounts#show'
     resources :ticket_filters, controller: 'channel/v2/ticket_filters', only: [:index, :show]
     resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :show, :index]
+    resources :fbms, controller: 'channel/v2/fbms' do
+      collection do
+        post :update_post_id
+      end
+    end
 
     get '/solutions/categories', to: 'channel/v2/api_solutions/categories#index'
     get '/solutions/categories/:id', to: 'channel/v2/api_solutions/categories#show'

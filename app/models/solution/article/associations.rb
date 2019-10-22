@@ -55,4 +55,8 @@ class Solution::Article < ActiveRecord::Base
     :through => :solution_article_meta,
     :class_name => "Solution::FolderMeta",
     :readonly => false
+
+  has_many :solution_article_versions,
+    class_name: 'Solution::ArticleVersion',
+    dependent: :destroy
 end

@@ -1,14 +1,35 @@
 class ArticleObserver < ActiveRecord::Observer
-
+  include Solution::ArticleVersioning
 	observe Solution::Article
 	require 'nokogiri'
 
 	def before_save(article)
 		set_un_html_content(article)
-		modify_date_and_author(article) if (article.article_body.changed? || article.title_changed?)
 		article.article_changes
 		create_draft_for_article(article)
 		article.seo_data ||= {}
+      # article body change is captured only here
+      if article.article_body.changed? || article.title_changed? || article.status_changed? || (article.draft && article.draft.publishing) || article.attachment_added
+        modify_date_and_author(article)
+        return unless article.account.article_versioning_enabled?
+
+        only_status = article.status_changed? && !(article.article_body.changed? || article.title_changed?)
+        # When i directly unpublish, versions should be marked unlive
+        article.unpublishing = only_status && !article.published?
+        # When "Published : edit + autosave and Unpublish" draft observer will not be triggered, so sending draft for versioning
+        can_version_draft = article.draft && !article.draft.new_record? && article.unpublishing && !article.draft.unpublishing
+        can_version_article = article.draft ? (!article.draft.new_record? && (!article.draft.unpublishing || article.draft.publishing)) : true
+        # When unpublish is done on an article that is published and does not have a draft, version creation should not happen here. Draft observer will take care of it.
+        # Also, when a published article(without draft) is published again without an autosave, draft obj check is necessary. New version needs to be created.
+        if !article.new_record? # Avoid version creation twice
+          if can_version_draft
+            article.draft.session = article.session
+            version_create_or_update(article.draft)
+          elsif can_version_article
+            version_create_or_update(article)
+          end
+        end
+      end
 	end
 
 	def after_update(article)
@@ -22,6 +43,7 @@ class ArticleObserver < ActiveRecord::Observer
   end
 
   def after_create(article)
+    version_create_or_update(article) if article.account.article_versioning_enabled? && article.published?
   	enqueue_article_for_kbase_check(article)
   end
 

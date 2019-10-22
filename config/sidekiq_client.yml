@@ -373,6 +373,9 @@ defaults: &defaults
     - [cron_freshfone]
     - [cron_meta_data_check]
     - [custom_translations_update_survey_status]
+    - [kbase_article_versions_worker]
+    - [kbase_article_versions_migration_worker]
+
 development:
   <<: *defaults
 

@@ -1,5 +1,5 @@
 put:
-  tags: [drafts]
+  tags: [Solution draft]
   summary: Create or update draft content on autosave
   parameters:
     - $ref: '#/parameters/language'

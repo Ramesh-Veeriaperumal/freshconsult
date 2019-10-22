@@ -36,8 +36,6 @@ module Sqs
           set_account_id(page_id, @entry)
           if page_rate_limit_reached?(@account_id,page_id)
             requeue(JSON.parse(raw_obj),{:delay_seconds => 900})
-          elsif post_from_admin?(entry_change)
-            requeue(JSON.parse(raw_obj))
           else
             fb_feed.process_feed(raw_obj)
           end
@@ -47,11 +45,6 @@ module Sqs
           Rails.logger.info("Pushing message back to Dynamo due to re-auth")
         end
       end
-    end
-
-    def post_from_admin?(entry_change)
-      Account.current.launched?(:skip_posting_to_fb) && page_id.present? &&
-        entry_change.try(:[], 'value').try(:[], 'from').try(:[], 'id') == page_id && @feed.try(:[], 'counter').blank?
     end
 
     #Push Realtime Facebook Feed back to SQS from Dynamo on re-authorization

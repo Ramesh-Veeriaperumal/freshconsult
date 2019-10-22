@@ -1,5 +1,5 @@
 delete:
-  tags: [drafts]
+  tags: [Solution draft]
   summary: Delete the attachments from draft which are present in article
   parameters:
     - $ref: '#/parameters/language'

@@ -2,12 +2,12 @@ require_relative '../../test_helper'
 require_relative '../../api/unit_test_helper'
 require_relative '../../core/helpers/account_test_helper'
 require_relative '../../core/helpers/tickets_test_helper'
-
+require_relative '../../../lib/email/perform_util'
 # Test cases for email process
 class ProcessEmailTest < ActiveSupport::TestCase
   include AccountTestHelper
   include CoreTicketsTestHelper
-
+  include Email::PerformUtil
   def setup
     super
     @account = Account.first || create_test_account
@@ -240,4 +240,33 @@ class ProcessEmailTest < ActiveSupport::TestCase
                          .safe_send(:add_email_to_ticket, Helpdesk::Ticket.first, { email: 'customfrom@test.com' }, { email: 'customto@test.com' }, User.first)
     assert_equal 'success', add_email_response[:processed_status]
   end
+
+  def test_prevent_lang_detect_for_spam
+    account = Account.current
+    account.launch(:prevent_lang_detect_for_spam)
+    user = account.users.first
+    user.language = 'ar'
+    user.save
+    ticket = account.tickets.first
+    ticket.spam = true
+    assign_language(user, account, ticket)
+    user = account.users.find_by_id(user.id)
+    assert_equal account.language, user.language
+    ensure
+      Helpdesk::Ticket.any_instance.unstub(:spam_or_deleted?)
+      account.rollback(:prevent_lang_detect_for_spam)
+  end 
+      
+  def test_lang_detect_for_non_spam
+    account = Account.current
+    user = account.users.first
+    user.language = 'ar'
+    user.save
+    ticket = account.tickets.first
+    ticket.spam = false
+    text = Faker::Lorem.characters(10)
+    Helpdesk::DetectUserLanguage.stubs(:language_detect).returns(['fr', 1200]) 
+    Helpdesk::DetectUserLanguage.set_user_language!(user, text)
+    assert_equal 'fr', user.language
+  end  
 end

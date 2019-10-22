@@ -1,0 +1,20 @@
+type: object
+properties:
+  id:
+    type: integer
+    description: version no
+  user_id:
+    type: integer
+  discarded_by:
+    type: integer
+    description: by whom this article is discarded
+  status:
+    type: integer
+  live:
+    type: boolean
+  created_at:
+    type: string
+    format: date-time
+  updated_at:
+    type: string
+    format: date-time

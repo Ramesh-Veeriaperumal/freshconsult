@@ -5,6 +5,7 @@
   current_plan_ranking = SubscriptionsHelper::PLAN_RANKING["#{current_plan_name}"] || 0 # default rank as zero
   has_credit_card = current_account.has_credit_card?
   field_agent_limit = @subscription.field_agents_display_count
+  fluffyMinLevelEnabled = current_account.fluffy_min_level_enabled?
 %>
 <div id="ChangePlan">
   <div class="plans">
@@ -67,7 +68,15 @@
                             <%= render :partial => "/subscriptions/features/info-box/fsm_info", :locals => { :plan => plan,
                               :feature_name => feature_name }%>
                           <% else %>
-                            <span><%= t("features.#{feature_name}").html_safe %></span>
+              
+                                 <% if feature_name.include? "api_rate_limit_"%>
+                                  <% if fluffyMinLevelEnabled %>
+                                     <span><%= t("features.#{feature_name}").html_safe %></span>
+                                  <% end %>  
+                                <% else %> 
+                                  <span><%= t("features.#{feature_name}").html_safe %></span>
+                               <% end %>
+
                           <% end %>
                         <% end %>
                       <% end %>
@@ -111,7 +120,7 @@
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
                               <h3 class="downgrade-header mt14"><%= t("downgrade.header_txt") %></h3>
                           </div>
-                        <%= render :partial => "second_time_downgrade_modal" ,:locals => { :new_sprout => is_new_sprout , :sprout_plan => plan.name } %>
+                        <%= render :partial => "second_time_downgrade_modal" ,:locals => { :new_sprout => is_new_sprout , :sprout_plan => plan.name, :sprout_plan_display_name => plan.display_name, :actual_plan => plan } %>
                         <div class="modal-footer mt12">
                           <button class="downgrade-btn btn-secondary" data-dismiss="modal" aria-hidden="true"><%= t("account.cancel") %></button>
                           <button id="downgrade-sprout-btn" class="downgrade-btn btn-primary" data-dismiss="modal" aria-hidden="true"><%= t("downgrade.confirm_btn") %></button>

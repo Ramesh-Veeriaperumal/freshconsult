@@ -470,7 +470,7 @@ module BocGroups
                   'app/workers/subscriptions/add_lead.rb',
                   'app/workers/subscriptions/subscription_add_events.rb',
                   'app/workers/subscriptions/add_deleted_event.rb',
-                  'app/workers/subscriptions/update_lead_to_autopilot.rb',
+                  'app/workers/subscriptions/update_lead_to_freshmarketer.rb',
                   'app/workers/chargebee_invoice_worker.rb',
                   'app/workers/modify_ticket_status.rb',
                   'app/workers/helpdesk/reset_group.rb',

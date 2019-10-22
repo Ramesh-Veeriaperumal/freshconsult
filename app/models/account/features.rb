@@ -44,7 +44,8 @@ class Account < ActiveRecord::Base
     :csat_translations, :email_mailbox, :sandbox_temporary_offset, :downgrade_policy,
     :fluffy_min_level, :allow_update_agent, :help_widget_solution_categories, :search_settings, :optar_cache,
     :ticket_field_revamp, :facebook_dm_outgoing_attachment, :skip_posting_to_fb, :hide_mailbox_error_from_agents, :hide_og_meta_tags,
-    :freshcaller_admin_new_ui, :facebook_post_outgoing_attachment, :outgoing_tweets_to_tms, :incoming_mentions_in_tms, :help_widget_login, :occlusion_rendering_ticket_fields
+    :freshcaller_admin_new_ui, :facebook_post_outgoing_attachment, :outgoing_tweets_to_tms, :incoming_mentions_in_tms, :help_widget_login, :occlusion_rendering_ticket_fields,
+    :prevent_lang_detect_for_spam, :jira_onpremise_reporter, :css_sanitizer
   ].freeze
 
   DB_FEATURES = [
@@ -79,7 +80,7 @@ class Account < ActiveRecord::Base
     :ticket_properties_suggester, :ticket_properties_suggester_eligible,
     :hide_first_response_due, :agent_articles_suggest, :email_articles_suggest, :customer_journey, :botflow,
     :help_widget, :help_widget_appearance, :help_widget_predictive, :portal_article_filters, :supervisor_custom_status, :lbrr_by_omniroute,
-    :secure_attachments
+    :secure_attachments, :article_versioning
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
@@ -122,9 +123,19 @@ class Account < ActiveRecord::Base
     end
   end
 
+  # To check if a bitmap feature changed
+  # Use this for after_update hook
   Fdadmin::FeatureMethods::BITMAP_FEATURES_WITH_VALUES.each do |key, value|
     define_method "#{key.to_s}_feature_changed?" do
       self.changes[:plan_features].present? && bitmap_feature_changed?(value)
+    end
+  end
+
+  # To check if a bitmap feature changed
+  # Use this for after_commit hook
+  Fdadmin::FeatureMethods::BITMAP_FEATURES_WITH_VALUES.each do |key, value|
+    define_method "#{key}_feature_toggled?" do
+      previous_changes[:plan_features].present? && bitmap_feature_toggled?(value)
     end
   end
 
@@ -373,7 +384,6 @@ class Account < ActiveRecord::Base
   def new_onboarding_enabled?
     launched?(:new_onboarding) || launched?(:onboarding_v2)
   end
-
   def email_spoof_check_feature?
     email_spoof_check_enabled? && !disable_email_spoof_check_enabled?
   end
@@ -382,7 +392,7 @@ class Account < ActiveRecord::Base
     launched?(:help_widget) && has_feature?(:help_widget)
   end
 
-  # Checks if a bitmap feature has been added or removed
+  # Checks if a bitmap feature has been added or removed after_update
   # old_feature ^ new_feature - Will give the list of all features that have been modified in update call
   # (old_feature ^ new_feature) & (2**feature_val) - Will return zero if the given feature has not been modified
   # old_feature & (2**feature_val) - Checks if the given feature is part of old_feature. If so, the feature has been removed. Else,it's been added.
@@ -391,6 +401,15 @@ class Account < ActiveRecord::Base
     new_feature = self.changes[:plan_features][1].to_i
     return false if ((old_feature ^ new_feature) & (2**feature_val)).zero?
     @action = (old_feature & (2**feature_val)).zero? ? "add" : "drop"
+  end
+
+  # Checks if a bitmap feature has been added or removed after_commit
+  # old_feature ^ new_feature - Will give the list of all features that have been modified in update call
+  # (old_feature ^ new_feature) & (2**feature_val) - Will return zero if the given feature has not been modified
+  def bitmap_feature_toggled?(feature_val)
+    old_feature = previous_changes[:plan_features][0].to_i
+    new_feature = previous_changes[:plan_features][1].to_i
+    return true unless ((old_feature ^ new_feature) & (2**feature_val)).zero?
   end
 
   def custom_translations_enabled?

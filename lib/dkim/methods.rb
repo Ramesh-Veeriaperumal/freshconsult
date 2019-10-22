@@ -175,9 +175,14 @@ module Dkim::Methods
     subusers = SUB_USERS.keys
     response = make_api(SG_URLS[:get_domain][:request], SG_URLS[:get_domain][:url]%{:domain => domain})
     Rails.logger.info("Fetched DKIM records on in verify_email_domain ::: #{response.inspect}")
-    domain_records = JSON.parse(response[1]) if response[0] == SENDGRID_RESPONSE_CODE[:success]
-    record_1 = domain_records.select { |record| record['username'] == subusers[0] }[0]
-    record_2 = domain_records.select { |record| record['username'] == subusers[1] }[0]
-    record_1.try(:[], 'valid') || record_2.try(:[], 'valid')
+    begin
+      raise 'sendgrid_response_failed_status' unless response[0] == SENDGRID_RESPONSE_CODE[:success]
+      domain_records = response[1].is_a?(String) ? JSON.parse(response[1]) : response[1]
+      record_1 = domain_records.select { |record| record['username'] == subusers[0] }[0]
+      record_2 = domain_records.select { |record| record['username'] == subusers[1] }[0]
+      record_1.try(:[], 'valid') || record_2.try(:[], 'valid')
+    rescue StandardError =>e
+      Rails.logger.info('Error message: #{e.message}')
+    end
   end
 end

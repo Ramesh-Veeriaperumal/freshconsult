@@ -6,7 +6,7 @@ class Solution::Draft < ActiveRecord::Base
 
   belongs_to_account
   belongs_to :user
-  belongs_to :article, :class_name => "Solution::Article", :readonly => false
+  belongs_to :article, :class_name => "Solution::Article", inverse_of: :draft, :readonly => false
   belongs_to :category_meta, :class_name => "Solution::CategoryMeta"
   
   has_one :draft_body, :class_name => "Solution::DraftBody", :autosave => true, :dependent => :destroy
@@ -26,7 +26,7 @@ class Solution::Draft < ActiveRecord::Base
   after_create :add_activity_new
 
   attr_accessible :title, :meta, :description
-  attr_accessor :discarding, :publishing, :keep_previous_author
+  attr_accessor :discarding, :publishing, :keep_previous_author, :session, :cancelling, :unpublishing, :false_delete_attachment_trigger
 
   alias_attribute :modified_by, :user_id
 

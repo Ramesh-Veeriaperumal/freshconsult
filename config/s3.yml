@@ -27,6 +27,7 @@ development:
   failed_email_storage_bucket: cdn.freshpo.com
   baikal_bucket: baikal-data-staging
   help_widget_bucket: help-widget-staging
+  article_versioning_bucket: article-versioning-dev
 
 staging:
   <<: *common
@@ -44,6 +45,7 @@ staging:
   failed_email_storage_bucket: archive-email-data-staging
   baikal_bucket: baikal-data-staging
   help_widget_bucket: help-widget-staging
+  article_versioning_bucket: article-versioning-staging
 
 test:
   <<: *common
@@ -61,6 +63,7 @@ test:
   failed_email_storage_bucket: fd-testbed
   baikal_bucket: baikal-data-staging
   help_widget_bucket: help-widget-staging
+  article_versioning_bucket: article-versioning-test
 
 production:
   access_key_id: dummy
@@ -81,3 +84,4 @@ production:
   failed_email_storage_bucket: cdn.freshdesk.com
   baikal_bucket: baikal-data-production
   help_widget_bucket: help-widget-production
+  article_versioning_bucket: article-versioning-production

@@ -5,7 +5,7 @@ module CronWebhooks
     def perform(args)
       perform_block(args) do
         if Fdadmin::APICalls.non_global_pods?
-          MetaDataCheck::MetaDataCheckMethods.accounts_data
+          ::MetaDataCheck::MetaDataCheckMethods.accounts_data
         else
           Rails.logger.info 'Task failed -- Please make sure this task is run in non global pod'
         end

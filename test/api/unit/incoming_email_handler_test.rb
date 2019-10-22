@@ -1,9 +1,11 @@
 require_relative '../../api/unit_test_helper'
 require_relative '../../core/helpers/tickets_test_helper'
+require_relative '../../../lib/email/perform_util'
 module Helpdesk
   module Email
     class IncomingEmailHandlerTest < ActionView::TestCase
       include CoreTicketsTestHelper
+      include ::Email::PerformUtil
 
       def setup
         Account.stubs(:current).returns(Account.first)
@@ -758,6 +760,34 @@ module Helpdesk
         auto_responder_marked = incoming_email_handler.check_for_auto_responders(Helpdesk::Ticket.last)
         assert_equal true, auto_responder_marked
       end
+
+      def test_prevent_lang_detect_for_spam
+        account = Account.current
+        account.launch(:prevent_lang_detect_for_spam)
+        user = account.users.first
+        user.language = 'ar'
+        user.save
+        ticket = account.tickets.first
+        ticket.spam = true
+        assign_language(user, account, ticket)
+        user = account.users.find_by_id(user.id)
+        assert_equal account.language, user.language
+        ensure
+          account.rollback(:prevent_lang_detect_for_spam)
+      end 
+      
+      def test_lang_detect_for_non_spam
+        account = Account.current
+        user = account.users.first
+        user.language = 'ar'
+        user.save
+        ticket = account.tickets.first
+        ticket.spam = false
+        text = Faker::Lorem.characters(10)
+        Helpdesk::DetectUserLanguage.stubs(:language_detect).returns(['fr', 1200]) 
+        Helpdesk::DetectUserLanguage.set_user_language!(user, text)
+        assert_equal 'fr', user.language
+      end  
 
       def test_incoming_email_check_support_emails_from
         id = Faker::Lorem.characters(50)

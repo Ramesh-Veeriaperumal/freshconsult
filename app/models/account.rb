@@ -897,7 +897,7 @@ class Account < ActiveRecord::Base
 
   def beacon_report
     current_user = User.current
-    Subscriptions::UpdateLeadToAutopilot.perform_async(email: current_user.email,
+    Subscriptions::UpdateLeadToFreshmarketer.perform_async(email: current_user.email,
                                                         event: ThirdCRM::EVENTS[:beacon_report],
                                                         name: current_user.name)
     generate_download_url("#{id}/beacon_report/beacon_report.pdf")

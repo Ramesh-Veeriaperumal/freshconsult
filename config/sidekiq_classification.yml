@@ -42,6 +42,7 @@
     - freshvisual_configs
     - model_destroy
     - gateway_facebook_page
+    - kbase_article_versions_worker
 
   :central_realtime:
     - central_publish
@@ -125,6 +126,8 @@
     - update_segment_filter
     - custom_translations_upload_queue
     - custom_translations_update_survey_status
+    - kbase_article_versions_migration_worker
+
   :maintainence:
     - select_all_tickets
     - select_all_batcher

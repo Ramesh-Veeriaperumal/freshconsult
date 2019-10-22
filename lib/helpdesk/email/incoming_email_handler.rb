@@ -24,7 +24,7 @@ module Helpdesk
 			include Helpdesk::Email::NoteMethods
 			include Helpdesk::LanguageDetection
 			include ::Email::AntiSpoof
-      include ::Email::PerformUtil
+            include ::Email::PerformUtil
 
 			class UserCreationError < StandardError
 			end
@@ -65,127 +65,127 @@ module Helpdesk
 			end
 
 			def perform(parsed_to_email = Hash.new, skip_encoding = false)
-        if collab_email_reply? params[:subject]
-          # block all email related to collab based on subject
-          return processed_email_data(PROCESSED_EMAIL_STATUS[:noop_collab_email_reply])
-        end
-        result = {}
-        email_processing_log("Email received: Message-Id #{message_id}")
-        self.start_time = Time.now.utc
-        to_email = parsed_to_email.present? ? parsed_to_email : parse_to_email
-        shardmapping = ShardMapping.fetch_by_domain(to_email[:domain])
-        unless shardmapping.present?
-          email_processing_log("Email Processing Failed: No Shard Mapping found!")
-          return processed_email_data(PROCESSED_EMAIL_STATUS[:shard_mapping_failed])
-        end
-        unless shardmapping.ok?
-          if shardmapping.status == MAINTENANCE_STATUS
-            email_processing_log("Email Processing Failed: Account in maintenance")
-            raise ShardMappingError("Account in maintenance")
-          else
-            email_processing_log("Email Processing Failed: invalid shard mapping status")
-            return processed_email_data(PROCESSED_EMAIL_STATUS[:inactive_account])
-          end
-        end
-        Account.reset_current_account
-        Portal.reset_current_portal
-        Sharding.select_shard_of(to_email[:domain]) do
-          account = Account.find_by_full_domain(to_email[:domain])
-          if account && account.allow_incoming_emails?
-            account.make_current
-            email_spam_watcher_counter(account)
-            TimeZone.set_time_zone
-            from_email = parse_from_email(account)
-            if from_email.nil?
-              email_processing_log("Email Processing Failed: No From Email found!", to_email[:email])
-              return processed_email_data(PROCESSED_EMAIL_STATUS[:invalid_from_email], account.id)
-            end
-            if account.features?(:domain_restricted_access)
-              domain = (/@(.+)/).match(from_email[:email]).to_a[1]
-              wl_domain  = account.account_additional_settings_from_cache.additional_settings[:whitelisted_domain]
-              unless Array.wrap(wl_domain).include?(domain)
-                email_processing_log "Email Processing Failed: Not a White listed Domain!", to_email[:email]
-                return processed_email_data(PROCESSED_EMAIL_STATUS[:restricted_domain_access], account.id)
-              end
-            end
-            kbase_email = account.kbase_email
-            if (to_email[:email] != kbase_email)
-              email_config = account.email_configs.find_by_to_email(to_email[:email])
-              if email_config && (!params[:migration_enable_outgoing]) && (from_email[:email].to_s.downcase == email_config.reply_email.to_s.downcase)
-                email_processing_log "Email Processing Failed: From-email and reply-email are same!", to_email[:email]
-                return processed_email_data(PROCESSED_EMAIL_STATUS[:self_email], account.id)
-              end
-              if duplicate_email?(from_email[:email], to_email[:email], params[:subject], message_id)
-                return processed_email_data(PROCESSED_EMAIL_STATUS[:duplicate], account.id)
-              end
-              if (from_email[:email] =~ EMAIL_VALIDATOR).nil?
-                envelope_from_email = parse_email JSON.parse(params[:envelope])["from"]
-                if (envelope_from_email[:email] =~ EMAIL_VALIDATOR).nil?
-                  error_msg = "Invalid email address found in requester details - #{from_email[:email]} for account - #{account.id}"
-                  Rails.logger.debug error_msg
-                  return processed_email_data(PROCESSED_EMAIL_STATUS[:invalid_from_email], account.id)
-                else
-                  from_email = envelope_from_email
-                end
-              end
-              # check for wildcards
-              wc_check_result = check_for_wildcard(email_config, account, to_email)
-              return wc_check_result[:message] if wc_check_result[:status]
+		        if collab_email_reply? params[:subject]
+		          # block all email related to collab based on subject
+		          return processed_email_data(PROCESSED_EMAIL_STATUS[:noop_collab_email_reply])
+		        end
+		        result = {}
+		        email_processing_log("Email received: Message-Id #{message_id}")
+		        self.start_time = Time.now.utc
+		        to_email = parsed_to_email.present? ? parsed_to_email : parse_to_email
+		        shardmapping = ShardMapping.fetch_by_domain(to_email[:domain])
+		        unless shardmapping.present?
+		          email_processing_log("Email Processing Failed: No Shard Mapping found!")
+		          return processed_email_data(PROCESSED_EMAIL_STATUS[:shard_mapping_failed])
+		        end
+		        unless shardmapping.ok?
+		          if shardmapping.status == MAINTENANCE_STATUS
+		            email_processing_log("Email Processing Failed: Account in maintenance")
+		            raise ShardMappingError("Account in maintenance")
+		          else
+		            email_processing_log("Email Processing Failed: invalid shard mapping status")
+		            return processed_email_data(PROCESSED_EMAIL_STATUS[:inactive_account])
+		          end
+		        end
+		        Account.reset_current_account
+		        Portal.reset_current_portal
+		        Sharding.select_shard_of(to_email[:domain]) do
+		          account = Account.find_by_full_domain(to_email[:domain])
+		          if account && account.allow_incoming_emails?
+		            account.make_current
+		            email_spam_watcher_counter(account)
+		            TimeZone.set_time_zone
+		            from_email = parse_from_email(account)
+		            if from_email.nil?
+		              email_processing_log("Email Processing Failed: No From Email found!", to_email[:email])
+		              return processed_email_data(PROCESSED_EMAIL_STATUS[:invalid_from_email], account.id)
+		            end
+		            if account.features?(:domain_restricted_access)
+		              domain = (/@(.+)/).match(from_email[:email]).to_a[1]
+		              wl_domain  = account.account_additional_settings_from_cache.additional_settings[:whitelisted_domain]
+		              unless Array.wrap(wl_domain).include?(domain)
+		                email_processing_log "Email Processing Failed: Not a White listed Domain!", to_email[:email]
+		                return processed_email_data(PROCESSED_EMAIL_STATUS[:restricted_domain_access], account.id)
+		              end
+		            end
+		            kbase_email = account.kbase_email
+		            if (to_email[:email] != kbase_email)
+		              email_config = account.email_configs.find_by_to_email(to_email[:email])
+		              if email_config && (!params[:migration_enable_outgoing]) && (from_email[:email].to_s.downcase == email_config.reply_email.to_s.downcase)
+		                email_processing_log "Email Processing Failed: From-email and reply-email are same!", to_email[:email]
+		                return processed_email_data(PROCESSED_EMAIL_STATUS[:self_email], account.id)
+		              end
+		              if duplicate_email?(from_email[:email], to_email[:email], params[:subject], message_id)
+		                return processed_email_data(PROCESSED_EMAIL_STATUS[:duplicate], account.id)
+		              end
+		              if (from_email[:email] =~ EMAIL_VALIDATOR).nil?
+		                envelope_from_email = parse_email JSON.parse(params[:envelope])["from"]
+		                if (envelope_from_email[:email] =~ EMAIL_VALIDATOR).nil?
+		                  error_msg = "Invalid email address found in requester details - #{from_email[:email]} for account - #{account.id}"
+		                  Rails.logger.debug error_msg
+		                  return processed_email_data(PROCESSED_EMAIL_STATUS[:invalid_from_email], account.id)
+		                else
+		                  from_email = envelope_from_email
+		                end
+		              end
+		              # check for wildcards
+		              wc_check_result = check_for_wildcard(email_config, account, to_email)
+		              return wc_check_result[:message] if wc_check_result[:status]
 
-              user = existing_user(account, from_email)
-              unless user
-                text_part
-                user = create_new_user(account, from_email, email_config)
-              else
-                if user.blocked?
-                  email_processing_log "Email Processing Failed: User is been blocked!", to_email[:email]
-                  return processed_email_data(PROCESSED_EMAIL_STATUS[:user_blocked], account.id)
-                end
-                text_part
-              end
-              if (user.blank? && !account.restricted_helpdesk?)
-                email_processing_log "Email Processing Failed: Blank User!", to_email[:email]
-                return processed_email_data(PROCESSED_EMAIL_STATUS[:blank_user], account.id)
-              end
-              set_current_user(user)
-              if(params[:sanitize_done].nil? or params[:sanitize_done].to_s.downcase == "false")
-                self.class.trace_execution_scoped(['Custom/Helpdesk::IncomingEmailHandler/sanitize']) do
-                # Workaround for params[:html] containing empty tags
-                  if params[:html].blank? && !params[:text].blank? 
-                    email_cmds_regex = get_email_cmd_regex(account) 
-                    params[:html] = body_html_with_formatting(params[:text],email_cmds_regex) 
-                  end
-                end
-              end
-              result = add_to_or_create_ticket(account, from_email, to_email, user, email_config)
-            end
-            begin
-              if kbase_email_present?(kbase_email)
-                result = create_article(account, from_email, to_email)
-              end
-            rescue Exception => e
-              NewRelic::Agent.notice_error(e)
-            ensure
-              Account.reset_current_account
-            end
-          else
-            email_processing_log "Email Processing Failed: No active Account found!"
-            Rails.logger.info "Email Processing Failed: No active Account found!"
-            if account.nil?
-              Rails.logger.info "Email Processing Failed: Account is nil"
-              return processed_email_data(PROCESSED_EMAIL_STATUS[:invalid_account])
-            elsif !account.active?
-              Rails.logger.info "Email Processing Failed: Account is not active"
-              return processed_email_data(PROCESSED_EMAIL_STATUS[:inactive_account], account.id)
-            else
-              Rails.logger.info "Email Processing Failed: Invalid Account"
-              return processed_email_data(PROCESSED_EMAIL_STATUS[:invalid_account])
-            end
-          end
-        end
-        elapsed_time = (Time.now.utc - start_time).round(3)
-        Rails.logger.info "Time taken for incoming_email_handler perform : #{elapsed_time} seconds"
-        result
+		              user = existing_user(account, from_email)
+		              unless user
+		                text_part
+		                user = create_new_user(account, from_email, email_config)
+		              else
+		                if user.blocked?
+		                  email_processing_log "Email Processing Failed: User is been blocked!", to_email[:email]
+		                  return processed_email_data(PROCESSED_EMAIL_STATUS[:user_blocked], account.id)
+		                end
+		                text_part
+		              end
+		              if (user.blank? && !account.restricted_helpdesk?)
+		                email_processing_log "Email Processing Failed: Blank User!", to_email[:email]
+		                return processed_email_data(PROCESSED_EMAIL_STATUS[:blank_user], account.id)
+		              end
+		              set_current_user(user)
+		              if(params[:sanitize_done].nil? or params[:sanitize_done].to_s.downcase == "false")
+		                self.class.trace_execution_scoped(['Custom/Helpdesk::IncomingEmailHandler/sanitize']) do
+		                # Workaround for params[:html] containing empty tags
+		                  if params[:html].blank? && !params[:text].blank? 
+		                    email_cmds_regex = get_email_cmd_regex(account) 
+		                    params[:html] = body_html_with_formatting(params[:text],email_cmds_regex) 
+		                  end
+		                end
+		              end
+		              result = add_to_or_create_ticket(account, from_email, to_email, user, email_config)
+		            end
+		            begin
+		              if kbase_email_present?(kbase_email)
+		                result = create_article(account, from_email, to_email)
+		              end
+		            rescue Exception => e
+		              NewRelic::Agent.notice_error(e)
+		            ensure
+		              Account.reset_current_account
+		            end
+		          else
+		            email_processing_log "Email Processing Failed: No active Account found!"
+		            Rails.logger.info "Email Processing Failed: No active Account found!"
+		            if account.nil?
+		              Rails.logger.info "Email Processing Failed: Account is nil"
+		              return processed_email_data(PROCESSED_EMAIL_STATUS[:invalid_account])
+		            elsif !account.active?
+		              Rails.logger.info "Email Processing Failed: Account is not active"
+		              return processed_email_data(PROCESSED_EMAIL_STATUS[:inactive_account], account.id)
+		            else
+		              Rails.logger.info "Email Processing Failed: Invalid Account"
+		              return processed_email_data(PROCESSED_EMAIL_STATUS[:invalid_account])
+		            end
+		          end
+		        end
+		        elapsed_time = (Time.now.utc - start_time).round(3)
+		        Rails.logger.info "Time taken for incoming_email_handler perform : #{elapsed_time} seconds"
+		        result
       end
 
 			def parse_to_email
@@ -349,12 +349,15 @@ module Helpdesk
 						email_processing_log "Email Processing Failed: Couldn't create new user!"
 						raise e
 					end
-					if params[:text]
-						text = text_for_detection(params[:text])
-						if language.nil? and signup_status
-							language_detection(user.id, Account.current.id, text)
-						end
-					end
+					unless Account.current.launched?(:prevent_lang_detect_for_spam)
+					 if params[:text]
+                       text = text_for_detection(params[:text])
+                       if signup_status and language.nil?
+                         Rails.logger.info "language_detection => tkt_source:user.email, acc_id:#{Account.current.id}, req_id:#{user.id}, text:#{text}"
+                         language_detection(user.id, Account.current.id, text)
+                       end
+                     end  
+				    end		
 				else
 					email_processing_log "Can't create new user for #{from_email.inspect}"
 				end
@@ -590,6 +593,9 @@ module Helpdesk
 				end
 				message_key = zendesk_email || message_id
 				ticket = update_spam_data(ticket)
+				if Account.current.launched?(:prevent_lang_detect_for_spam)
+				  assign_language(user, account, ticket)
+			    end
 				# Creating attachments without attachable info
 				# Hitting S3 outside create-ticket transaction
 				self.class.trace_execution_scoped(['Custom/IncomingEmailHandler/ticket_attachments']) do

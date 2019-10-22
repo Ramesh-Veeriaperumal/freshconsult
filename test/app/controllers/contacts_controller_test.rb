@@ -171,9 +171,11 @@ class ContactsControllerTest < ActionController::TestCase
 
     user_email = Faker::Internet.email
     user = Account.current.users.create(name: Faker::Name.name, email: user_email, time_zone: 'Chennai', company_id: nil, language: 'en')
+    user.reload
     assert user.present?
-
-    get :verify_email, email_id: user.id, format: 'js'
+    assert user.user_emails.present?
+    user_email_id = user.user_emails.first.id
+    get :verify_email, email_id: user_email_id, format: 'js'
     assert_response 200
     log_out
   end

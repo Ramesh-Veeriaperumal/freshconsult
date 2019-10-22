@@ -12954,7 +12954,7 @@
     "/solutions/articles/{article_id}/draft/{language}/autosave": {
       "put": {
         "tags": [
-          "drafts"
+          "Solution draft"
         ],
         "summary": "Create or update draft content on autosave",
         "parameters": [
@@ -12999,7 +12999,7 @@
     "/solutions/articles/{article_id}/draft/{language}": {
       "put": {
         "tags": [
-          "drafts"
+          "Solution draft"
         ],
         "summary": "Cancel the autosave session changes",
         "parameters": [
@@ -13042,7 +13042,7 @@
       },
       "delete": {
         "tags": [
-          "drafts"
+          "Solution draft"
         ],
         "summary": "Delete the draft for a solution article",
         "parameters": [
@@ -13070,7 +13070,7 @@
     "/solutions/articles/{article_id}/draft/{language}/{attachment_type}/{attachment_id}": {
       "delete": {
         "tags": [
-          "drafts"
+          "Solution draft"
         ],
         "summary": "Delete the attachments from draft which are present in article",
         "parameters": [
@@ -13381,6 +13381,143 @@
           },
           "403": {
             "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/solutions/articles/{article_id}/versions/{language}": {
+      "get": {
+        "tags": [
+          "Solution Article Version"
+        ],
+        "summary": "List all versions of an article",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "type": "string",
+            "description": "Page number"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "type": "string",
+            "description": "Page number"
+          },
+          {
+            "$ref": "#/parameters/language"
+          },
+          {
+            "name": "article_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "article meta id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "article_versions": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/article_version_index_response"
+                  }
+                },
+                "meta": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "number"
+                    },
+                    "next_page": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Article not found"
+          }
+        }
+      }
+    },
+    "/solutions/articles/{article_id}/versions/{id}/{language}": {
+      "get": {
+        "tags": [
+          "Solution Article Version"
+        ],
+        "summary": "Get article version",
+        "parameters": [
+          {
+            "$ref": "#/parameters/language"
+          },
+          {
+            "name": "article_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "article meta id"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "version number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "article_versions": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/article_version_response"
+                  }
+                },
+                "meta": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "number"
+                    },
+                    "next_page": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Article not found"
           }
         }
       }
@@ -26826,6 +26963,75 @@
         "position": {
           "type": "integer",
           "description": "New position of the item"
+        }
+      }
+    },
+    "article_version_index_response": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "version no"
+        },
+        "user_id": {
+          "type": "integer"
+        },
+        "discarded_by": {
+          "type": "integer",
+          "description": "by whom this article is discarded"
+        },
+        "status": {
+          "type": "integer"
+        },
+        "live": {
+          "type": "boolean"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "article_version_response": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "version no"
+        },
+        "user_id": {
+          "type": "integer"
+        },
+        "discarded_by": {
+          "type": "integer",
+          "description": "by whom this article is discarded"
+        },
+        "status": {
+          "type": "integer"
+        },
+        "live": {
+          "type": "boolean"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "published_by": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
         }
       }
     },

@@ -37,7 +37,7 @@ class Subscription < ActiveRecord::Base
                      SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_omni_jan_19],
                      SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_19]].freeze
 
-  AUTOPILOT_FILEDS = ["state", "next_renewal_at", "renewal_period", "amount", "subscription_plan_id", "agent_limit"]
+  FRESHMARKETER_FILEDS = ["state", "next_renewal_at", "renewal_period", "amount", "subscription_plan_id", "agent_limit"]
 
   FRESHCALLER_PLAN_MAPPING = {
     sprout_jan_19: 'sprout',
@@ -759,8 +759,8 @@ class Subscription < ActiveRecord::Base
     end
 
     def update_crm
-      if autopilot_fields_changed? and (Rails.env.staging? or Rails.env.production?)
-        Subscriptions::UpdateLeadToAutopilot.perform_async(event: ThirdCRM::EVENTS[:subscription])
+      if freshmarketer_fields_changed? and (Rails.env.staging? or Rails.env.production?)
+        Subscriptions::UpdateLeadToFreshmarketer.perform_async(event: ThirdCRM::EVENTS[:subscription])
       end
     end
 
@@ -802,8 +802,8 @@ class Subscription < ActiveRecord::Base
       SearchService::Client.new(self.account_id).tenant_reactivate
     end
 
-    def autopilot_fields_changed?
-      AUTOPILOT_FILEDS.each do |field|
+    def freshmarketer_fields_changed?
+      FRESHMARKETER_FILEDS.each do |field|
         return true if self.safe_send(field) != @old_subscription.safe_send(field)
       end
       return nil

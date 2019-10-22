@@ -36,14 +36,23 @@ module ApiSolutions
       # for an article with unassociated folder, folder needs to be set before publishing the article
       @item.solution_article_meta.update_attributes(solution_folder_meta_id: @article_params[:folder_id]) if @article_params.key?(:folder_id)
       if @status == Solution::Article::STATUS_KEYS_BY_TOKEN[:published] && @draft
+        # When article is published with content change and without autosave we need to make sure draft has updated content
+        assign_draft_attributes(@article_params)
+        set_session
         @draft.publish!
       elsif @article_params[language_scoper] && @status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft] && !article_properties? && !unpublish?
         @draft ||= @item.build_draft_from_article
+        set_session
         @draft.unlock # So that the lock in period for 'editing' status is reset
         assign_draft_attributes(@article_params)
         add_attachments if private_api?
         render_custom_errors(@draft, true) unless @draft.save
         remove_lang_scoper_params
+      else
+        set_session
+        # When "Published : edit + autosave and Unpublish" draft observer will not be triggered, so sending draft for versioning
+        # Session needs to be set so that update happens
+        # Session also is needed for dummy publish cases
       end
       remove_lang_scoper_params if !unpublish? && article_properties?
       create_or_update_article
@@ -95,6 +104,12 @@ module ApiSolutions
         validate_delegator(@item, delegator_params)
       end
 
+      def set_session
+        # For autosave in versioning
+        @item.session = @article_params[:session]
+        @draft.session = @article_params[:session] if @draft
+      end
+
       def load_folder_articles
         items = @folder.solution_articles.where(language_id: @lang_id).reorder(Solution::Constants::ARTICLE_ORDER_COLUMN_BY_TYPE[@folder.article_order]).preload(
           {
@@ -115,12 +130,12 @@ module ApiSolutions
 
       def article_properties?
         # Only article properties are changed.
-        (SolutionConstants::ARTICLE_PROPERTY_FIELDS.any? { |key| @article_params[language_scoper].key?(key) || @article_params.key?(key) }) && @article_params[language_scoper].except(:status, :unlock, *SolutionConstants::ARTICLE_PROPERTY_FIELDS).keys.empty?
+        (SolutionConstants::ARTICLE_PROPERTY_FIELDS.any? { |key| @article_params[language_scoper].key?(key) || @article_params.key?(key) }) && @article_params[language_scoper].except(:status, :session, *SolutionConstants::ARTICLE_PROPERTY_FIELDS).keys.empty?
       end
 
       def unpublish?
         # If only status is present in params, then it means unpublish article
-        @article_params[language_scoper].keys.length == 1 && @article_params[language_scoper].key?(:status)
+        !article_properties? && @article_params[language_scoper].keys.length == 1 && @article_params[language_scoper][:status] == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
       end
 
       def construct_article_object

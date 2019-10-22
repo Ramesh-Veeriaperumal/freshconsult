@@ -122,7 +122,7 @@ class AccountConfiguration < ActiveRecord::Base
         CRMApp::Freshsales::AdminUpdate.perform_at(15.minutes.from_now, {
           account_id: account_id, 
           item_id: id
-        }) unless Account.current.disable_freshsales_api_integration?
+        }) unless account.disable_freshsales_api_integration?
         Subscriptions::AddLead.perform_at(15.minutes.from_now, {:account_id => account_id, :old_email => previous_email})
       end
       if company_contact_info_updated?

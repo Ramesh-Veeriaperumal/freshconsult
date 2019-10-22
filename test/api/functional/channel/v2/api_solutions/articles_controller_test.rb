@@ -14,7 +14,6 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
 
   def initial_setup
     return if @@initial_setup_run
-    MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
     Account.stubs(:current).returns(@account)
     additional = @account.account_additional_settings
     additional.supported_languages = ['es', 'ru-RU']
@@ -25,7 +24,6 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
     @account.reload
     setup_articles
     @@initial_setup_run = true
-    MixpanelWrapper.unstub(:send_to_mixpanel)
     Account.unstub(:current)
   end
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190628073857) do
+ActiveRecord::Schema.define(version: 20190722080453) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -3540,6 +3540,26 @@ ActiveRecord::Schema.define(version: 20190628073857) do
 
   add_index "solution_article_meta", ["account_id", "solution_folder_meta_id", "created_at"], :name => "index_article_meta_on_account_id_folder_meta_and_created_at"
   add_index "solution_article_meta", ["account_id", "solution_folder_meta_id", "position"], :name => "index_article_meta_on_account_id_folder_meta_and_position"
+
+  create_table "solution_article_versions", :force => true do |t|
+    t.integer  "status",                                   :null => false
+    t.boolean  "live",                                     :null => false
+    t.integer  "version_no",   :limit => 8,                :null => false
+    t.integer  "article_id",   :limit => 8,                :null => false
+    t.integer  "account_id",   :limit => 8,                :null => false
+    t.integer  "user_id",      :limit => 8,                :null => false
+    t.integer  "published_by", :limit => 8
+    t.integer  "thumbs_up",                 :default => 0
+    t.integer  "thumbs_down",               :default => 0
+    t.integer  "hits",                      :default => 0
+    t.text     "meta"
+    t.datetime "created_at",                               :null => false
+    t.datetime "updated_at",                               :null => false
+  end
+
+  add_index "solution_article_versions", ["account_id", "article_id", "version_no"], :name => "index_version_on_account_id_article_id_version_no", :unique => true
+  add_index "solution_article_versions", ["account_id", "article_id"], :name => "index_version_on_account_id_article_id"
+  add_index "solution_article_versions", ["account_id", "article_id", "created_at"], :name => "index_version_on_account_id_article_id_created_at"
 
   create_table "solution_articles", :force => true do |t|
     t.string   "title"
