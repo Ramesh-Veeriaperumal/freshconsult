@@ -266,7 +266,7 @@ class Va::Action
     }
     note = build_note act_on, note_params
     last_item = act_on.last_forwardable_note || act_on
-    attachment = act_hash[:show_quoted_text] ? (act_on.last_forwardable_note.attachments || act_on.attachments.last) : nil
+    attachment = act_hash[:show_quoted_text] ? (act_on.last_forwardable_note.try(:attachments) || act_on.attachments.last) : nil
     note.note_body.body_html.concat(quoted_text(last_item, true)) if act_hash[:show_quoted_text]
     note.schema_less_note.to_emails = act_hash[:fwd_to] || []
     note.schema_less_note.cc_emails = act_hash[:fwd_cc] || []
