@@ -1051,6 +1051,7 @@ module Ember
           tweet = latest_note.tweet
           assert_equal tweet.tweet_id, @twit.id
           assert_equal tweet.tweet_type, params_hash[:tweet_type]
+          assert_equal tweet.stream_id, @twitter_handle.default_stream.id
           ticket.destroy
         end
       end
@@ -1101,6 +1102,7 @@ module Ember
           tweet = latest_note.tweet
           assert_equal tweet.tweet_id < 0, true, 'Tweet id should be less than zero'
           assert_equal tweet.tweet_type, params_hash[:tweet_type]
+          assert_equal tweet.stream_id, @twitter_handle.default_stream.id
           ticket.destroy
         end
       end
@@ -1126,6 +1128,7 @@ module Ember
           tweet = latest_note.tweet
           assert_equal tweet.tweet_id < 0, true, 'Tweet id should be less than zero'
           assert_equal tweet.tweet_type, params_hash[:tweet_type]
+          assert_equal tweet.stream_id, @twitter_handle.default_stream.id
           ticket.destroy
         end
       end
@@ -1213,6 +1216,7 @@ module Ember
           tweet = latest_note.tweet
           assert_equal tweet.tweet_id < 0, true,"Tweet id should be less than zero"
           assert_equal tweet.tweet_type, params_hash[:tweet_type]
+          assert_equal tweet.stream_id, @twitter_handle.dm_stream.id
         end
       end
       ticket.destroy

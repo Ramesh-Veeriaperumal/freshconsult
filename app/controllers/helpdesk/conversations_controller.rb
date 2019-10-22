@@ -120,8 +120,8 @@ class Helpdesk::ConversationsController < ApplicationController
       error_message = (I18n.t('social.streams.twitter.handle_auth_error')).to_s
     end
     if error_message.blank?
-      stream = fetch_stream || reply_handle.default_stream
-      if dm_note?(twt_type) || mentions_in_tms?(stream) || reply_as_mention_for_dm?(stream, twt_type)
+      stream = fetch_stream(reply_handle, twt_type)
+      if dm_note?(twt_type) || outgoing_tweets_in_tms?(stream)
         stream_id = stream.id
         tweet_id = random_tweet_id
         @item.build_tweet(tweet_id: tweet_id,
@@ -462,12 +462,19 @@ class Helpdesk::ConversationsController < ApplicationController
         end
       end
 
-      def fetch_stream
+      def fetch_stream(reply_handle, tweet_type)
         tweet = @parent.tweet
-        tweet.stream if tweet.present?
+        tweet_stream = tweet.stream if tweet.present?
+        if tweet_stream && tweet_stream.custom_stream?
+          tweet_stream
+        elsif tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:dm]
+          reply_handle.dm_stream
+        else
+          reply_handle.default_stream
+        end
       end
 
-      def mentions_in_tms?(stream)
+      def outgoing_tweets_in_tms?(stream)
         current_account.outgoing_tweets_to_tms_enabled? && stream.default_stream?
       end
 
@@ -478,9 +485,4 @@ class Helpdesk::ConversationsController < ApplicationController
       def mention_note?(tweet_type)
         tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:mention]
       end
-
-      def reply_as_mention_for_dm?(stream, tweet_type)
-        current_account.outgoing_tweets_to_tms_enabled? && mention_note?(tweet_type) && stream.dm_stream?
-      end
-
 end
