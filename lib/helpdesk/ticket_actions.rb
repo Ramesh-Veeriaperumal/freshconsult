@@ -19,14 +19,9 @@ module Helpdesk::TicketActions
     #Using .dup as otherwise its stored in reference format(&id0001 & *id001).
     @ticket.cc_email = {:cc_emails => cc_emails , :fwd_emails => [], :bcc_emails => [], :reply_cc => cc_emails.dup, :tkt_cc => cc_emails.dup}
     set_default_values
-    # The below is_native_mobile? check is valid for iPhone app version 1.0.0 and Android app update 1.0.3 
-    # Once substantial amout of users have upgraded from these version, we need to remove 
-    # 1. json format in create method in lib/support_ticket_controller_method.rb
-    # 2. is_native_mobile? check in create method in lib/helpdesk/ticket_actions.rb
-    return false if need_captcha && !(current_user || is_native_mobile? || 
-                                      verify_recaptcha(model: @ticket,
-                                                       message: t('captcha_verify_message'),
-                                                       hostname: current_portal.method(:matches_host?)))
+    return false if need_captcha && !verify_recaptcha(model: @ticket,
+                                                      message: t('captcha_verify_message'),
+                                                      hostname: current_portal.method(:matches_host?))
     build_ticket_attachments
     @ticket.skip_notification = skip_notifications
     @ticket.meta_data = params[:meta] if params[:meta]
