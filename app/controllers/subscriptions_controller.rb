@@ -236,6 +236,8 @@ class SubscriptionsController < ApplicationController
       downgrade_request.agent_limit = scoper.agent_limit
       downgrade_request.fsm_field_agents = scoper.field_agent_limit
       downgrade_request.next_renewal_at = Time.at(next_renewal_at).to_datetime.utc
+      downgrade_request.from_plan = scoper.present_subscription.subscription_plan_from_cache
+      downgrade_request.fsm_downgrade = scoper.present_subscription.field_agent_limit.present? && scoper.field_agent_limit.blank?
       downgrade_request
     end
 

@@ -725,6 +725,8 @@ class Subscription < ActiveRecord::Base
       downgrade_request.agent_limit = agent_limit
       downgrade_request.fsm_field_agents = (updated_addons.map(&:name).include?(Subscription::Addon::FSM_ADDON) && field_agent_limit.present?) ? field_agent_limit : nil
       downgrade_request.next_renewal_at = Time.at(next_renewal_at).to_datetime.utc
+      downgrade_request.from_plan = present_subscription.subscription_plan_from_cache
+      downgrade_request.fsm_downgrade = present_subscription.field_agent_limit.present? && field_agent_limit.blank?
       downgrade_request
     end
 
