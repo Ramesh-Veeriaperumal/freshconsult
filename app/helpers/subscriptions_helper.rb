@@ -16,13 +16,13 @@ module SubscriptionsHelper
        "ticket_templates", "custom_surveys"],
     "estate jan 17" => [ "everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "agent_collision", "auto_ticket_assignment",
        "role_dashboard", "enterprise_reports", "custom_dashboard", "fsm_option"],
-    "forest jan 17" => [ "everything_in_estate", "ip_whitelisting", "skill_based_assignment", "custom_mailbox", "advanced_phone_integration",  "custom_data_center", "fsm_option" ],
+    "forest jan 17" => [ "everything_in_estate", "ip_whitelisting", "skill_based_assignment", "custom_mailbox", "advanced_phone_integration", "fsm_option" ],
 
     "sprout jan 19" => [ "email_ticketing", "ticket_dispatch_automation" ,"knowledge_base", "basic_social", "freshcaller", "omni_channel_option"],
     "blossom jan 19" => [ "everything_in_sprout", "multiple_mailboxes", "app_gallery", "time_event_automation", "custom_domain", "helpdesk_report", "custom_ticket_fields_and_views", "agent_collision", "api_rate_limit_blossom", "omni_channel_option"],
     "garden jan 19" => [ "everything_in_blossom", "satisfaction_survey", "timesheets", "sla_reminders", "agent_performance_report", "ticket_templates", "m_k_base", "customer_journey",  "api_rate_limit_garden"],
     "estate jan 19" => [ "everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "auto_ticket_assignment", "enterprise_reports", "custom_dashboard", "custom_surveys", "custom_translations", "api_rate_limit_estate", "fsm_option"],
-    "forest jan 19" => [ "everything_in_estate", "ip_whitelisting", "skill_based_assignment", "sandbox", "custom_data_center", "hippa_compliance", "extend_api", "api_rate_limit_forest", "omni_channel_option", "fsm_option"],
+    "forest jan 19" => [ "everything_in_estate", "ip_whitelisting", "skill_based_assignment", "sandbox", "hippa_compliance", "extend_api", "api_rate_limit_forest", "omni_channel_option", "fsm_option"],
 
     "garden omni jan 19" => [ "everything_in_blossom", "satisfaction_survey", "timesheets", "sla_reminders", "agent_performance_report", "ticket_templates", "m_k_base", "customer_journey", "api_rate_limit_garden", "omni_channel_option"],
     "estate omni jan 19" => [ "everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "auto_ticket_assignment", "enterprise_reports", "custom_dashboard", "custom_surveys", "api_rate_limit_estate", "omni_channel_option", "fsm_option"]
@@ -59,7 +59,7 @@ module SubscriptionsHelper
     "blossom jan 17" => ["time_event_automation_desc", "sla_reminders", "agent_performance_report_desc", "agent_scope_desc", "business_hours_desc", "custom_fields_desc", "multiple_mailbox_desc", "adv_social_desc", "custom_apps_desc"],
     "garden jan 17" => ["multilingual_kbase_desc", "live_chat_desc", "forums_desc", "custom_survey_desc", "parent_child_desc"],
     "estate jan 17" => ["multiple_products_desc", "multiple_sla_business_desc", "portal_customization_desc", "custom_ssl_desc", "enterprise_reports_desc", "custom_dashboard_desc"],
-    "forest jan 17" => ["whitelisted_ip_desc", "skill_based_assignment_desc", "sandbox_desc", "custom_data_center_desc"],
+    "forest jan 17" => ["whitelisted_ip_desc", "skill_based_assignment_desc", "sandbox_desc"],
 
     "blossom jan 19" => ["multiple_mailboxes_desc", "app_gallery_desc",
       "time_event_automation_desc", "custom_domain_desc",
@@ -75,7 +75,7 @@ module SubscriptionsHelper
       "scheduled_reports_desc", "custom_surveys_desc", "custom_apps_desc", "timesheets_desc", "co_browsing", "customer_journey_desc"],
     "estate omni jan 19" => ["multiple_products_desc", "multiple_sla_business_desc", "portal_customization_desc",
       "custom_ssl_desc", "auto_ticket_assignment_desc", "enterprise_reports_desc", "custom_dashboard_desc"],   
-    "forest jan 19" => ["skill_based_assignment_desc", "sandbox_desc", "custom_data_center_desc", "whitelisted_ip_desc", "co_browsing", "multilingual_chat", "omni_routing"]
+    "forest jan 19" => ["skill_based_assignment_desc", "sandbox_desc", "whitelisted_ip_desc", "co_browsing", "multilingual_chat", "omni_routing"]
   }
 
   PLAN_RANKING = {
