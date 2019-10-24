@@ -8,6 +8,7 @@ development:
   domain_prefix: ''
   domain_suffix: ''
   widget_loader_url: '//localhost:8002/fc-widget.js'
+  signup_supported: false
 test:
   signing_key: "iM6YIMpv7N3G4EsCTFTsCgN3GPwshizpsfnYo--4dvw"
   verification_keys: ["iM6YIMpv7N3G4EsCTFTsCgN3GPwshizpsfnYo--4dvw"]
