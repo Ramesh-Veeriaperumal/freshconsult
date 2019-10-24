@@ -268,24 +268,27 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
                             )
       @body_html           = generate_body_html(params[:email_body_html])
       @account             = params[:ticket].account
+      @attachment_files    = params[:attachments]
 
       if attachments.present? && attachments.inline.present?
         handle_inline_attachments(attachments, params[:email_body_html], params[:ticket].account)
       end
 
-      params[:attachments].each do |a|
-        attachments[a.content_file_name] = {
-          :mime_type => a.content_content_type,
-          :content => Paperclip.io_adapters.for(a.content).read
-        }
-      end if params[:attachments].present?
-      
+      unless @account.secure_attachments_enabled?
+        @attachment_files.each do |a|
+          attachments[a.content_file_name] = {
+            :mime_type => a.content_content_type,
+            :content => Paperclip.io_adapters.for(a.content).read
+          }
+        end if @attachment_files.present?
+      end
+
       if !params[:cc_mails].nil?
          headers[:cc] = params[:cc_mails].join(", ")
       end
       email_config = params[:ticket].friendly_reply_email_config
       if via_email_service?(params[:ticket].account, email_config)
-         deliver_email(headers, params[:attachments], "email_notification")
+        deliver_email(headers, regular_attachments, "email_notification")
       else
         ##Setting the templates for mail usage###
         message = mail(headers) do |part|
@@ -610,17 +613,20 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       @account = ticket.account
       @ticket = ticket
       @cloud_files= ticket.cloud_files
+      @attachment_files = ticket.all_attachments
       
       if attachments.present? && attachments.inline.present?
         handle_inline_attachments(attachments, ticket.description_html, ticket.account)
       end
 
-      self.class.trace_execution_scoped(['Custom/Helpdesk::TicketNotifier/read_binary_attachment']) do
-        ticket.all_attachments.each do |a|
-          attachments[ a.content_file_name] = { 
-            :mime_type => a.content_content_type, 
-            :content => Paperclip.io_adapters.for(a.content).read
-          }
+      unless @account.secure_attachments_enabled?
+        self.class.trace_execution_scoped(['Custom/Helpdesk::TicketNotifier/read_binary_attachment']) do
+          @attachment_files.each do |a|
+            attachments[ a.content_file_name] = { 
+              :mime_type => a.content_content_type, 
+              :content => Paperclip.io_adapters.for(a.content).read
+            }
+          end
         end
       end
       
@@ -810,6 +816,10 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       references = generate_email_references(ticket)
       reply_to = in_reply_to(ticket)
       return references, reply_to
+    end
+
+    def regular_attachments
+      @account.secure_attachments_enabled? ? [] : @attachment_files 
     end
 
   # TODO-RAILS3 Can be removed oncewe fully migrate to rails3

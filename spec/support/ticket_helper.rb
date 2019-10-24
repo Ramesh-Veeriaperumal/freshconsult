@@ -32,9 +32,12 @@ module TicketHelper
                                          :ticket_type => params[:type] || "Question")
     test_ticket.build_ticket_body(:description => params[:description] || Faker::Lorem.paragraph)
     if params[:attachments]
-      test_ticket.attachments.build(content: params[:attachments][:resource],
-                                    description: params[:attachments][:description],
-                                    account_id: test_ticket.account_id)
+      attachment_params = params[:attachments].is_a?(Array) ? params[:attachments] : [params[:attachments]]
+      attachment_params.each do |attach|
+        test_ticket.attachments.build(content: attach[:resource],
+                                      description: attach[:description],
+                                      account_id: test_ticket.account_id)
+      end
     end
     test_ticket.cloud_files = params[:cloud_files] if params[:cloud_files]
 
@@ -113,5 +116,14 @@ module TicketHelper
                                          user_id: agent_id)
       ticket_watcher.save!
     end
+  end
+
+  def create_ticket_with_multiple_attachments(params = {})
+    attachments = []
+    params[:num_of_files].times do
+      file = File.new(Rails.root.join("spec/fixtures/files/attachment.txt"))
+      attachments << { resource: file }
+    end
+    create_ticket(params.merge(attachments: attachments))
   end
 end
