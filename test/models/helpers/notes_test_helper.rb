@@ -95,6 +95,7 @@ module NotesTestHelper
 
     if tweet.present?
       twitter_handle = tweet.twitter_handle
+      latest_tweet_info = latest_tweet(note)
       source_info[:twitter] = {
         tweet_id: tweet.tweet_id.to_s,
         type: tweet.tweet_type,
@@ -103,7 +104,8 @@ module NotesTestHelper
         requester_screen_name: tweet.tweetable.user.twitter_id,
         twitter_handle_id: twitter_handle.present? ? twitter_handle.id : nil,
         stream_id: tweet.stream_id,
-        latest_tweet_id: latest_tweet_id(note)
+        latest_tweet_id: latest_tweet_info[:latest_tweet_id],
+        latest_tweet_stream_id: latest_tweet_info[:latest_tweet_stream_id]
       }
     end
 
@@ -181,11 +183,16 @@ module NotesTestHelper
     }
   end
 
-  def latest_tweet_id(note)
+  def latest_tweet(note)
+    latest_tweet_info = {}
     twitter_notes = note.notable.notes.latest_twitter_comment
     if twitter_notes.present?
-      latest_note = twitter_notes.first
-      return latest_note.tweet.tweet_id if latest_note.tweet.present?
+      lasest_note = twitter_notes.first
+      if lasest_note.tweet.present?
+        latest_tweet_info[:latest_tweet_id] = lasest_note.tweet.tweet_id
+        latest_tweet_info[:latest_tweet_stream_id] = lasest_note.tweet.stream_id
+      end
     end
+    latest_tweet_info
   end
 end

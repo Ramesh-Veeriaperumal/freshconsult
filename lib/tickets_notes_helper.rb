@@ -13,7 +13,11 @@ module TicketsNotesHelper
       requester_screen_name: requester_twitter_id
     }
     twt_hash.merge!(twt_handle_info)
-    twt_hash[:latest_tweet_id] = latest_tweet_id.to_s if tweet.is_note?
+    if tweet.is_note?
+      latest_tweet_info = latest_tweet
+      twt_hash[:latest_tweet_id] = latest_tweet_info[:latest_tweet_id].to_s
+      twt_hash[:latest_tweet_stream_id] = latest_tweet_info[:latest_tweet_stream_id]
+    end
     twt_hash
   end
 
@@ -76,11 +80,16 @@ module TicketsNotesHelper
     }
   end
 
-  def latest_tweet_id
+  def latest_tweet
+    latest_tweet_info = {}
     twitter_notes = notable.notes.latest_twitter_comment
     if twitter_notes.present?
       lasest_note = twitter_notes.first
-      return lasest_note.tweet.tweet_id if lasest_note.tweet.present?
+      if lasest_note.tweet.present?
+        latest_tweet_info[:latest_tweet_id] = lasest_note.tweet.tweet_id
+        latest_tweet_info[:latest_tweet_stream_id] = lasest_note.tweet.stream_id
+      end
     end
+    latest_tweet_info
   end
 end
