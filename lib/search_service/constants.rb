@@ -10,5 +10,6 @@ module SearchService
     MULTI_AGGREGATE_PATH = 'v1/analytics/%{product_name}/%{account_id}/multi_aggregate'.freeze
     AGGREGATE_PATH = 'v1/analytics/%{product_name}/%{account_id}/aggregate'.freeze
     ANALYTICS_QUERY_PATH = 'v1/analytics/%{product_name}/%{account_id}/query'
+    ES_TIMEOUT = 17 # need to reduce timeout to 10 or 5 in future based on search performance
   end.freeze
 end.freeze
