@@ -22,7 +22,6 @@ class Account < ActiveRecord::Base
     s.add proc { |x| x.utc_format(x.updated_at) }, as: :updated_at
     s.add :freshid_account_id
     s.add proc { |x| x.fs_cookie }, as: :fs_cookie
-    s.add proc { |x| x.anonymous_account? }, as: :anonymous_account
     s.add proc { |x| x.account_configuration.account_configuration_for_central }, as: :account_configuration
   end
 

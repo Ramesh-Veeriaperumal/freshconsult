@@ -13,6 +13,7 @@ class AccountConfiguration < ActiveRecord::Base
   validate :admin_notification_emails, on: :update, if: :notification_email_changed?
   after_update :update_billing, :update_reseller_subscription, unless: :anonymous_account?
   after_commit :update_crm_and_map, on: :update, unless: [:sandbox?, :anonymous_account?]
+  after_commit :publish_account_central_payload, on: :update, unless: [:sandbox?, :is_anonymous_account?]
   after_commit :populate_industry_based_default_data, on: :update
   include Concerns::DataEnrichmentConcern
 
@@ -76,6 +77,7 @@ class AccountConfiguration < ActiveRecord::Base
     {
       first_name: contact_info[:first_name],
       last_name: contact_info[:last_name],
+      anonymous_account: company_info[:anonymous_account],
       work_number: contact_info[:phone],
       email: contact_info[:email],
       job_title: contact_info[:job_title],
@@ -124,7 +126,10 @@ class AccountConfiguration < ActiveRecord::Base
           item_id: id
         }) unless account.disable_freshsales_api_integration?
         Subscriptions::AddLead.perform_at(15.minutes.from_now, {:account_id => account_id, :old_email => previous_email})
-      end
+      end      
+    end
+
+    def publish_account_central_payload
       if company_contact_info_updated?
         if account.model_changes.nil? 
           account.model_changes = account_configuration_changes(previous_changes)
@@ -159,6 +164,11 @@ class AccountConfiguration < ActiveRecord::Base
       end
     end
 
+    def is_anonymous_account?
+      anonymous_account = company_info.key?(:anonymous_account) ? company_info[:anonymous_account] : true     
+      account.anonymous_account? && anonymous_account
+    end
+
     def anonymous_account?
       account.anonymous_account?
     end
@@ -179,6 +189,7 @@ class AccountConfiguration < ActiveRecord::Base
       company_info = model_changes['company_info']
       if company_info.present? && company_info.length == 2
         changes[0][:industry_type_id] = company_info[0][:industry]
+        changes[0][:anonymous_account] = company_info[0][:anonymous_account]
         changes[0][:phone] = company_info[0].fetch(:phone_numbers, []).join(',')
         prev_location = company_info[0].fetch(:location, {})
         changes[0][:address] = prev_location[:streetName]
