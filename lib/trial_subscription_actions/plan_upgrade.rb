@@ -11,8 +11,7 @@ class TrialSubscriptionActions::PlanUpgrade < TrialSubscriptionActions::Base
   private
 
     def plan_features
-      @plan_features ||=  ::PLANS[:subscription_plans][
-        SubscriptionPlan::SUBSCRIPTION_PLANS.key(trial_plan)][:features].dup
+      @plan_features ||= (::PLANS[:subscription_plans][SubscriptionPlan::SUBSCRIPTION_PLANS.key(trial_plan)][:features].dup - (UnsupportedFeaturesList || []))
     end
 
     def dashboard_plan?
