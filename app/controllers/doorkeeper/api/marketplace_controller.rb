@@ -20,7 +20,7 @@ class Doorkeeper::Api::MarketplaceController < Doorkeeper::Api::ApiController
   private
 
   def allow_login?
-    current_resource_owner.privilege?(:admin_tasks)
+    current_resource_owner.account_id == MarketplaceConfig::SUDODEV_ACC_NUMBER || current_resource_owner.privilege?(:admin_tasks)
   end
 
   def ssl_enabled?

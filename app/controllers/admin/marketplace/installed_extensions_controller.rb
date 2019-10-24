@@ -165,7 +165,7 @@ class Admin::Marketplace::InstalledExtensionsController < Admin::AdminController
                     :account_full_domain => current_account.full_domain
                   }
                   .merge(params[:installed_version] ? {:installed_version => params[:installed_version]} : {})
-                  .merge(paid_app_params)
+                  .merge(offline_subscription? ? {} : paid_app_params)
     if configs.present? && configs[:oauth_configs].present?
       inst_params[:oauth_configs] = configs[:oauth_configs]
       inst_params[:configs].except!(:oauth_configs)

@@ -27,9 +27,10 @@ defaults: &defaults
   jwt_secret: e44e458a4903a1292cfe2bd11d96559108d1e5a7
   data_pipe_key: vyz8wvmoQGIGkCQPUP0431rUE4x8LtO2qIjeyMF1
   freshapps_js_url: "https://s3.amazonaws.com/static.freshcloud.io"
-  fresh_parent: "fdk/2.0/assets/fresh_parent.js"
+  fresh_parent: "fdk/2.0/assets/fresh_parent-v1.5.1.js"
   account_api_poll_interval: 3000 ### In milliseconds
   tenant_id: 4
+  sudodev_acc_number: 6000060890
 
 development:
   <<: *defaults

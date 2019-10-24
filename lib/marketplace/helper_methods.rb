@@ -66,7 +66,7 @@ module Marketplace::HelperMethods
   end
 
   def paid_app_params
-    paid_app? && !offline_subscription? ? {
+    paid_app? ? {
       :billing => {
         :addon_id => @extension['addon']['id']  
       }.merge(account_params)
