@@ -53,7 +53,7 @@ module Pipe
 
     def test_create_contact_without_name
       post :create, construct_params({}, email: Faker::Internet.email)
-      match_json([bad_request_error_pattern('name', :datatype_mismatch, code: :missing_field, expected_data_type: String)])
+      match_json([bad_request_error_pattern('name', :missing_field)])
       assert_response 400
     end
 

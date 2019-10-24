@@ -252,6 +252,17 @@ class ContactValidationTest < ActionView::TestCase
       }, contact.error_options)
     end
   end
+
+  def test_contact_create_without_name
+    Account.stubs(:current).returns(Account.new)
+    Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
+    ContactForm.any_instance.stubs(:default_contact_fields).returns([])
+    controller_params = { email: Faker::Internet.email }
+    item = nil
+    contact = ContactValidation.new(controller_params, item)
+    assert contact.valid?
+  end
+
   private
 
     def contact_field(name)

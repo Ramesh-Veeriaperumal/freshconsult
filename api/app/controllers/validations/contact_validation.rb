@@ -31,13 +31,13 @@ class ContactValidation < ApiValidation
   validates :language, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field,  message_options: { attribute: 'language', feature: :multi_language } }, unless: :multi_language_enabled?
   validates :time_zone, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field, message_options: { attribute: 'time_zone', feature: :multi_timezone } }, unless: :multi_timezone_enabled?
   validates :unique_external_id, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field, message_options: { attribute: 'unique_external_id', feature: :unique_contact_identifier } }, unless: :unique_contact_identifier_enabled?
-  validates :email, :phone, :mobile, :company_name, :address, :job_title, :twitter_id, :language, :time_zone, :description, :unique_external_id, :other_emails, default_field:
+  validates :name, :email, :phone, :mobile, :company_name, :address, :job_title, :twitter_id, :language, :time_zone, :description, :unique_external_id, :other_emails, default_field:
                               {
                                 required_fields: proc { |x| x.required_default_fields },
                                 field_validations: DEFAULT_FIELD_VALIDATIONS
                               }
 
-  validates :name, data_type: { rules: String, required: true }, unless: -> { validation_context == :channel_contact_create }
+  validates :name, data_type: { rules: String, allow_nil: true }, unless: -> { validation_context == :channel_contact_create }
   validates :name, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :view_all_tickets, data_type: { rules: 'Boolean',  ignore_string: :allow_string_param, allow_nil: true }
   validates :tags, data_type: { rules: Array, allow_nil: false }, array: { data_type: { rules: String }, custom_length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING } }, string_rejection: { excluded_chars: [','], allow_nil: true }

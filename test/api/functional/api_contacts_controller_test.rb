@@ -117,8 +117,21 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_create_contact_without_name
     post :create, construct_params({},  email: Faker::Internet.email)
-    match_json([bad_request_error_pattern('name', :datatype_mismatch, code: :missing_field, expected_data_type: String)])
+    match_json([bad_request_error_pattern('name', :missing_field)])
     assert_response 400
+  end
+
+  def test_create_contact_without_name_when_non_mandatory
+    name_field = Account.current.contact_form.default_fields.find_by_name('name')
+    name_field.required_for_agent = false
+    name_field.save!
+    Account.current.reload
+    post :create, construct_params({},  email: Faker::Internet.email)
+    assert_response 201
+  ensure
+    name_field.required_for_agent = true
+    name_field.save!
+    Account.current.reload
   end
 
   def test_create_contact_tags_with_comma
@@ -2544,7 +2557,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_unique_external_id_update_with_feature_without_name
     @account.add_feature(:unique_contact_identifier)
     post :create, construct_params({},  unique_external_id: Faker::Lorem.characters(10))
-    match_json([bad_request_error_pattern('name', :datatype_mismatch, code: :missing_field, expected_data_type: String)])
+    match_json([bad_request_error_pattern('name', :missing_field)])
     assert_response 400
   ensure
     @account.revoke_feature(:unique_contact_identifier)
