@@ -825,3 +825,6 @@ skill:
 skill_response:
   $ref: ./response/admin/skill.yaml
 
+#Freshcaller
+freshcaller:
+  $ref: './resource/freshcaller.yaml'

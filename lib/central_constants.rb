@@ -43,7 +43,7 @@ module CentralConstants
     'ContactFieldChoice' => '0.0',
     'CompanyField' => '0.0',
     'CompanyFieldChoice' => '0.0',
-    'Freshcaller::Account' => '0.0',
+    'Freshcaller::Account' => '0.1',
     'Freshchat::Account' => '0.0',
     'Admin::CannedResponses::Folder' => '0.0',
     'Admin::CannedResponses::Response' => '0.0',

@@ -242,6 +242,10 @@ class Account < ActiveRecord::Base
     has_feature?(:freshcaller) and freshcaller_account.present?
   end
 
+  def freshcaller_admin_new_ui_enabled?
+    has_feature?(:freshcaller) and launched?(:freshcaller_admin_new_ui)
+  end
+
   def livechat_enabled?
     features?(:chat) and !chat_setting.site_id.blank?
   end

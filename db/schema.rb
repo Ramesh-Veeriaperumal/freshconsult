@@ -1742,6 +1742,7 @@ ActiveRecord::Schema.define(version: 20190722080453) do
     t.string   "domain"
     t.datetime "created_at",                          :null => false
     t.datetime "updated_at",                          :null => false
+    t.boolean  "enabled",                             :default => true
   end
 
   add_index "freshcaller_accounts", ["account_id"], :name => "index_freshcaller_accounts_on_account_id"
