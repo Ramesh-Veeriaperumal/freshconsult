@@ -24358,6 +24358,9 @@
             },
             "fsm_field_agents": {
               "type": "integer"
+            },
+            "feature_loss": {
+              "type": "boolean"
             }
           }
         },

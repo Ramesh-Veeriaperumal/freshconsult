@@ -2,11 +2,13 @@ module Middleware
   module Sidekiq
     module Server
       class JobDetailsLogger
+        include Middleware::Sidekiq::PublishToCentralUtil
         def call(_worker, msg, _queue)
           msg['pickup_time']   = Time.now.to_i - msg['enqueued_at'].to_i
           msg['enqueue_time']  = msg['enqueued_at'].to_i - msg['created_at'].to_i
           elapsed              = Benchmark.realtime { yield }
           msg['response_time'] = elapsed
+          publish_data_to_central(msg, PAYLOAD_TYPE[:job_picked_up]) if publish_to_central?(msg['original_queue'])
           log_details(msg.symbolize_keys)
         end
 
@@ -31,3 +33,4 @@ module Middleware
     end
   end
 end
+

@@ -36,6 +36,8 @@ class Portal < ActiveRecord::Base
   after_create :update_custom_portal , :unless => :main_portal
   before_update :update_custom_portal , :unless => :main_portal
   after_commit :toggle_autofaq_features, :on => :update, if: :main_portal_language_changes?
+  before_save :create_model_changes, on: :update
+  before_destroy :save_deleted_portal_info
 
   include Mobile::Actions::Portal
   include Cache::Memcache::Portal
@@ -86,6 +88,7 @@ class Portal < ActiveRecord::Base
   belongs_to :product
 
   concerned_with :solution_associations, :presenter
+  publishable on: [:create, :update, :destroy]
 
   APP_CACHE_VERSION = "FD79"
 
@@ -235,6 +238,10 @@ class Portal < ActiveRecord::Base
     account_domains.include?(hostname.downcase) if hostname.present?
   end
 
+  def save_deleted_portal_info
+    @deleted_model_info = as_api_response(:central_publish_destroy)
+  end
+
   def bot_info
     logo_url = logo.content.url if logo.present?
     bot_name, bot_id = [bot.name, bot.id] if bot
@@ -270,6 +277,11 @@ class Portal < ActiveRecord::Base
 
     def main_portal_language_changes?
       main_portal && @portal_changes && @portal_changes.has_key?(:language)
+    end
+
+    def create_model_changes
+      @model_changes = self.changes.to_hash
+      @model_changes.symbolize_keys!
     end
 
     def backup_portal_changes

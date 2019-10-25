@@ -17,7 +17,7 @@ class Solution::DraftBinarizeObserver < ActiveRecord::Observer
 	private
 
 		def multilingual
-			Account.current.multilingual?
+			Account.current.multilingual_available?
 		end
 
 		def update_draft(object, status)

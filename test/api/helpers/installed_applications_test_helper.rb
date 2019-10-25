@@ -63,7 +63,7 @@ module InstalledApplicationsTestHelper
       application.save
     end
     installed_app = Account.current.installed_applications.where(
-      application_id: application.id)
+      application_id: application.id).first
     unless installed_app.present?
       configs = respond_to?("#{app_name}_config") ? 
         safe_send("#{app_name}_config") : {}

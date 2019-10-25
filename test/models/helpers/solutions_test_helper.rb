@@ -23,6 +23,11 @@ module ModelsSolutionsTestHelper
     test_portal
   end
 
+  def update_portal(portal)
+    portal.name = Faker::Name.name
+    portal.save(validate: false)
+  end
+
   def add_new_category
     portal = create_portal
     create_category({

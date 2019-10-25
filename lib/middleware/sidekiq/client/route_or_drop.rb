@@ -2,6 +2,7 @@ module Middleware
   module Sidekiq
     module Client
       class RouteORDrop
+        include Middleware::Sidekiq::PublishToCentralUtil
         def call(_worker, msg, _queue, _redis_pool)
           original_queue = msg['queue']
           msg['original_queue'] = original_queue
@@ -11,6 +12,7 @@ module Middleware
                          else
                            queue_from_classification(msg['queue'])
                          end
+          publish_data_to_central(msg, PAYLOAD_TYPE[:job_enqueued]) if publish_to_central?(msg['original_queue'])
           yield
         end
 
@@ -43,3 +45,4 @@ module Middleware
     end
   end
 end
+

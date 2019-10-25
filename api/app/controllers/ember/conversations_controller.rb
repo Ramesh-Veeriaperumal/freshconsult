@@ -473,9 +473,9 @@ module Ember
 
       def handle_twitter_conversations
         reply_handle = current_account.twitter_handles.find_by_id(@twitter_handle_id)
-        stream = fetch_stream || reply_handle.default_stream
+        stream = fetch_stream(reply_handle, @tweet_type)
         tweet_id = random_tweet_id
-        if dm_note? || mentions_in_tms?(stream) || reply_as_mention_for_dm?(stream)
+        if dm_note? || outgoing_tweets_in_tms?(stream)
           stream_id = stream.id
           @item.build_tweet(tweet_id: tweet_id,
                             tweet_type: @tweet_type,
@@ -611,12 +611,19 @@ module Ember
         @item.id = DUMMY_ID_FOR_UNDO_SEND_NOTE - @ticket.display_id
       end
 
-      def fetch_stream
+      def fetch_stream(reply_handle, tweet_type)
         tweet = @ticket.tweet
-        tweet.stream if tweet.present?
+        tweet_stream = tweet.stream if tweet.present?
+        if tweet_stream && tweet_stream.custom_stream?
+          tweet_stream
+        elsif tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:dm]
+          reply_handle.dm_stream
+        else
+          reply_handle.default_stream
+        end
       end
 
-      def mentions_in_tms?(stream)
+      def outgoing_tweets_in_tms?(stream)
         current_account.outgoing_tweets_to_tms_enabled? && stream.default_stream?
       end
 
@@ -626,10 +633,6 @@ module Ember
 
       def mention_note?
         @tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:mention]
-      end
-
-      def reply_as_mention_for_dm?(stream)
-        current_account.outgoing_tweets_to_tms_enabled? && mention_note? && stream.dm_stream?
       end
 
       wrap_parameters(*wrap_params)

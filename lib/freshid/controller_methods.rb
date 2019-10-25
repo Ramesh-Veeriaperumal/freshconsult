@@ -35,9 +35,7 @@ module Freshid::ControllerMethods
   end
 
   def redirect_to_v2_customer_authorize
-    # redirect_to Freshid::V2::UrlGenerator.freshid_customer_authorize(
-      # freshid_customer_authorize_callback_url, current_account.full_domain)
-    redirect_to support_login_path
+    redirect_to customer_freshid_sso_enabled? ? freshid_customer_authorize(freshid_customer_authorize_callback_url, freshid_logout_url, current_account.full_domain) : support_login_path
   end
 
   def redirect_to_freshid_login(options = {})
@@ -94,7 +92,7 @@ module Freshid::ControllerMethods
   end
 
   def customer_oauth2_enabled?
-    current_account.customer_oauth2_sso_enabled? && current_account.freshid_enabled?
+    current_account.customer_oauth2_sso_enabled? && current_account.freshid_integration_enabled?
   end
 
   def agent_freshid_saml_enabled?
@@ -102,7 +100,7 @@ module Freshid::ControllerMethods
   end
 
   def customer_freshid_saml_enabled?
-    current_account.customer_freshid_saml_sso_enabled? && current_account.freshid_enabled?
+    current_account.customer_freshid_saml_sso_enabled? && current_account.freshid_integration_enabled?
   end
 
   def agent_freshid_sso_enabled?

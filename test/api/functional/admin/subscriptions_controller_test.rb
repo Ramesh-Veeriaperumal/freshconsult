@@ -50,6 +50,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
       fsm_field_agents: nil
     }
     @account.subscription.build_subscription_request(subscription_request_params).save!
+    subscription_request_params.merge!(feature_loss: @account.subscription.subscription_request.feature_loss?)
     get :show, construct_params(version: 'private')
     assert_response 200
     match_json(subscription_response(@account.subscription, subscription_request_params))
@@ -517,6 +518,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
         subscription_plan = SubscriptionPlan.find(subscription_request_params[:plan_id])
         request_hash = {}.tap do |hash|
           hash['plan_name'] = subscription_plan.name
+          hash['feature_loss'] = subscription_request_params[:feature_loss]
           unless subscription_plan.amount.zero?
             hash['agent_seats'] = subscription_request_params[:agent_limit]
             hash['renewal_period'] = subscription_request_params[:renewal_period]

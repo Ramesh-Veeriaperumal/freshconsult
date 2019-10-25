@@ -136,7 +136,9 @@ class Admin::SubscriptionDecorator < ApiDecorator
     return if record.subscription_request.blank?
 
     subscription_request = record.subscription_request
-    request_hash = { plan_name: subscription_request.plan_name }
+    request_hash = { plan_name: subscription_request.plan_name,
+                     feature_loss: subscription_request.feature_loss?
+                   }
     unless subscription_request.subscription_plan.amount.zero?
       request_hash.merge!(
         agent_seats: subscription_request.agent_limit,

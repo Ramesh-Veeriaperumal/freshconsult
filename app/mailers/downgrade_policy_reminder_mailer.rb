@@ -1,5 +1,4 @@
 class DowngradePolicyReminderMailer < ActionMailer::Base
-  include SubscriptionsHelper
   layout 'email_font'
 
   PLACEHOLDER_KEYS = {
@@ -27,7 +26,9 @@ class DowngradePolicyReminderMailer < ActionMailer::Base
   def send_reminder_email(to_emails, subscription, remaining_days, reminder_type)
     @subscription = subscription
     @subscription_request = subscription.subscription_request
-    @email_body = construct_email_body(reminder_type, remaining_days, subscription)
+    @from_plan_name = construct_plan_name(subscription, Account.current.field_service_management_enabled?)
+    @to_plan_name = construct_plan_name(subscription.subscription_request, subscription.subscription_request.fsm_enabled?)
+    @email_body = construct_email_body(reminder_type, remaining_days)
     @days_left = remaining_days
     @other_emails = to_emails[:other]
     @headers = {
@@ -44,16 +45,17 @@ class DowngradePolicyReminderMailer < ActionMailer::Base
 
   private
 
-    def construct_email_body(reminder_type, remaining_days, subscription)
+    def construct_email_body(reminder_type, remaining_days)
       placeholders = {
         domain: Account.current.full_domain,
-        next_renewal_at: subscription.next_renewal_at.strftime('%-d %b %Y'),
-        current_plan: subscription.subscription_plan.display_name
+        next_renewal_at: @subscription.next_renewal_at.strftime('%-d %b %Y'),
+        current_plan: @from_plan_name,
+        to_plan: @to_plan_name
       }
-      days_count_placeholder_value(reminder_type, remaining_days, :content, placeholders)
+      construct_email_content_and_subject(reminder_type, remaining_days, :content, placeholders)
     end
       
-    def days_count_placeholder_value(reminder_type, remaining_days, section, placeholders = {})
+    def construct_email_content_and_subject(reminder_type, remaining_days, section, placeholders = {})
       PLACEHOLDER_KEYS[section][reminder_type].each do |key, range|
         return safe_send(key, reminder_type, remaining_days, section, placeholders) if remaining_days.between?(*range)
       end
@@ -61,14 +63,26 @@ class DowngradePolicyReminderMailer < ActionMailer::Base
     end
 
     def in_days(reminder_type, remaining_days, section, placeholders = {})
-      I18n.t("downgrade_policy_#{section}.#{reminder_type}_in_days", placeholders.merge!(days: remaining_days))
+      in_days_content = (section == :content && @subscription_request.feature_loss?) ? "downgrade_policy_#{section}.#{reminder_type}_in_days_with_feature_loss" : "downgrade_policy_#{section}.#{reminder_type}_in_days"
+      I18n.t(in_days_content, placeholders.merge!(days: remaining_days))
     end
 
     def in_hours(reminder_type, remaining_days, section, placeholders = {})
-      I18n.t("downgrade_policy_#{section}.#{reminder_type}_in_hours", placeholders.merge!(hours: remaining_days * 24))
+      in_hours_content = (section == :content && @subscription_request.feature_loss?) ? "downgrade_policy_#{section}.#{reminder_type}_in_hours_with_feature_loss" : "downgrade_policy_#{section}.#{reminder_type}_in_hours"
+      I18n.t(in_hours_content, placeholders.merge!(hours: remaining_days * 24))
     end
 
     def construct_email_subject(reminder_type, remaining_days)
-      days_count_placeholder_value(reminder_type, remaining_days, :subject)
+      construct_email_content_and_subject(reminder_type, remaining_days, :subject)
+    end
+
+    def construct_plan_name(subscription, fsm_enabled)
+      omin_fsm_str = []
+      subscription_plan = subscription.subscription_plan
+      omin_fsm_str << I18n.t('downgrade_policy_content.omni_channel') if subscription_plan.omni_plan? || subscription_plan.free_omni_channel_plan?
+      omin_fsm_str << I18n.t('downgrade_policy_content.fsm') if fsm_enabled
+      plan_name = subscription.subscription_plan.classic? ? subscription_plan.display_name + ' Classic' : subscription_plan.display_name 
+      plan_name << '(' + omin_fsm_str.join('+') + ')' if omin_fsm_str.present?
+      plan_name
     end
 end

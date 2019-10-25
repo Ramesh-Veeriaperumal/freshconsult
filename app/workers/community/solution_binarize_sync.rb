@@ -19,9 +19,9 @@ class Community::SolutionBinarizeSync < BaseWorker
     def sync_model(meta, association)
       Account.current.safe_send(meta).find_in_batches(:batch_size => 100, :include => [association[0] => [association[1]].compact]) do |batch|
         batch.each do |sm|
-          sm.children.each do |solution_obj|
-            sm.class::BINARIZE_COLUMNS.each do |col|
-              sm.safe_send("#{col}=", 0)
+          sm.class::BINARIZE_COLUMNS.each do |col|
+            sm.safe_send("#{col}=", 0)
+            sm.children.each do |solution_obj|
               sm.compute_assign_binarize(col, solution_obj)
             end
           end

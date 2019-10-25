@@ -4246,6 +4246,7 @@ ActiveRecord::Schema.define(version: 20190722080453) do
     t.integer 'fsm_field_agents'
     t.datetime 'created_at',                  :null => false
     t.datetime 'updated_at',                  :null => false
+    t.boolean  "feature_loss",      :default => false
   end
 
   add_index 'subscription_requests', ['account_id', 'subscription_id'], :name => 'index_subscription_requests_on_account_id_subscription_id'

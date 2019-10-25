@@ -36,6 +36,8 @@ properties:
         type: integer
       fsm_field_agents:
         type: integer
+      feature_loss:
+        type: boolean
   created_at:
     type: string
     format: date-time
