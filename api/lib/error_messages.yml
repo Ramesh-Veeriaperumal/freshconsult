@@ -286,6 +286,9 @@ api_error_messages:
   invalid_attribute_for_key: "Allowed attribute :'%{list}'"
   expecting_value_for_event_field: "Expecting these field '%{value}' present for request parameter '%{name}'"
   condition_set_operator_error: "Operator should be given only if there are multiple conditions_set"
+  expecting_single_association_type: "Association type must be the same across all conditions"
+  associated_tickets_count_without_event: "'Ticket is linked' event need to be selected for associated_ticket_count condition"
+  association_type_not_allowed: "Association type can't be a property when 'Ticket is Linked' is an event"
 
   expecting_detect_thank_you_note_feature: "Detect Thank you note must be enabled to save this condition"
   expecting_note_or_reply_event: "Thank you note in condition can only be used for 'add private note/reply sent' events performed by customer"
@@ -327,7 +330,11 @@ api_error_messages:
   invalid_condition_set_count: "Maximum %{count} condition sets allowed for this rule type"
   duplicate_condition_set_name: "Duplicate condition set name - %{name}"
   cannot_be_blank: "'%{name}' can't be blank"
-
+  ticket_association_type_not_allowed: "'ticket_association_type' is not allowed in actions without being present in conditions"
+  expecting_parent_association_type: "'ticket_association_type' should be 1 when parent ticket is selected in conditions"
+  expecting_parent_or_child: "'ticket_association_type' should be 1 or 2 when child ticket is selected in conditions"
+  expecting_tracker_association_type: "'ticket_association_type' should be 3 when tracker ticket is selected in conditions"
+  expecting_parent_or_related: "'ticket_association_type' should be 3 or 4 when related ticket is selected in conditions"
   # Solutions
   invalid_portal_id: 'Portal id is invalid'
   no_ratings: "The article doesn't have any ratings to be reset"

@@ -20,6 +20,14 @@ module Admin::Automation::ActionHelper
       else #label
         validate_label_field_type(expected, actual)
     end
+    validate_resource_type(expected, actual) if actual.key?(:resource_type)
+  end
+
+  def validate_resource_type(expected, actual)
+    unexpected_parameter('resource_type') if supervisor_rule?
+    allowed_types = dispatcher_rule? ? DISPATCHER_ACTION_TICKET_ASSOCIATION_TYPES : OBSERVER_ACTION_TICKET_ASSOCIATION_TYPES
+    not_included_error(:"#{expected[:name]}[:resource_type]",
+                       allowed_types) if !allowed_types.include?(actual[:resource_type])
   end
 
   def validate_action_value(expected, actual)

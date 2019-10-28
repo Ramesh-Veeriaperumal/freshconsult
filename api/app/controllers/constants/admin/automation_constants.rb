@@ -82,11 +82,11 @@ module Admin::AutomationConstants
 
   FIELD_WITH_IDS = %i[priority status group_id responder_id language product_id customer_feedback
                       source add_watcher trigger_webhook request_type add_note internal_agent_id
-                      internal_group_id freddy_suggestion segments].freeze
+                      internal_group_id freddy_suggestion segments association_type].freeze
 
   RESPONDER_ID = 'responder_id'.freeze
 
-  TICKET_ACTION = %w[added updated].freeze
+  TICKET_ACTION = %w[update delete marked_spam linked].freeze
 
   TIME_SHEET_ACTION = %w[new_time_entry updated_time_entry].freeze
 
@@ -104,6 +104,8 @@ module Admin::AutomationConstants
 
   LEVELS = %i[level2 level3].freeze
 
+  PERMITTED_ASSOCIATED_FIELDS = %i[field_name operator value].freeze
+
   DB_FIELD_NAME_CHANGE_MAPPING = FIELD_NAME_CHANGE_MAPPING.inject({}) { |hash, field_mapping| hash.merge!(field_mapping[1] => field_mapping[0]) }
 
   FIELD_NAME_CHANGE = FIELD_NAME_CHANGE_MAPPING.map { |field_mapping| field_mapping[0] }
@@ -119,13 +121,24 @@ module Admin::AutomationConstants
 
   CONDITON_SET_NESTED_FIELDS = %i[nested_fields nested_rules].freeze
 
-  CONDITION_SET_COMMON_FIELDS = %i[evaluate_on operator value rule_type case_sensitive business_hours_id custom_status_id].freeze + CONDITON_SET_NESTED_FIELDS
+  CONDITION_SET_COMMON_FIELDS = %i[evaluate_on operator value rule_type case_sensitive business_hours_id 
+                                   custom_status_id associated_fields].freeze + CONDITON_SET_NESTED_FIELDS
 
   ACTION_COMMON_FIELDS = %i[value email_to email_subject email_body request_type
                             url need_authentication username password api_key
                             custom_headers content_layout params nested_rules
-                            fwd_to fwd_cc fwd_bcc fwd_note_body
-                            show_quoted_text note_body notify_agents].freeze
+                            fwd_to fwd_cc fwd_bcc fwd_note_body evaluate_on
+                            show_quoted_text note_body notify_agents resource_type].freeze
+  
+  TICKET_ASSOCIATION_TYPES = [1, 2, 3, 4].freeze
+
+  DISPATCHER_CONDITION_TICKET_ASSOCIATION_TYPES = [2, 3].freeze
+
+  PARENT_CHILD_ASSOCIATION_TYPES = [1, 2].freeze
+
+  DISPATCHER_ACTION_TICKET_ASSOCIATION_TYPES = %w(parent_ticket same_ticket tracker_ticket).freeze
+
+  OBSERVER_ACTION_TICKET_ASSOCIATION_TYPES = %w(parent_ticket same_ticket tracker_ticket).freeze
 
   NESTED_DATA_COMMON_FIELDS = %i[value operator from to].freeze
 
@@ -154,7 +167,9 @@ module Admin::AutomationConstants
 
   PERMITTED_DEFAULT_CONDITION_SET_VALUES = %i[field_name operator value].freeze
 
-  PERMITTED_CONDITION_SET_VALUES = (PERMITTED_DEFAULT_CONDITION_SET_VALUES + %i[case_sensitive rule_type nested_fields business_hours_id]).freeze
+  PERMITTED_CONDITION_SET_VALUES = (PERMITTED_DEFAULT_CONDITION_SET_VALUES + %i[case_sensitive rule_type nested_fields 
+                                                                                business_hours_id associated_fields
+                                                                                associated_ticket_count]).freeze
 
   PERMITTED_EVENTS_PARAMS = %i[field_name from to value rule_type from_nested_field to_nested_field].freeze
 
@@ -192,12 +207,13 @@ module Admin::AutomationConstants
                                        priority ticket_type status source product_id responder_id group_id].freeze
 
   OBSERVER_CONDITION_TICKET_FIELDS = %i[updated_at last_interaction subject_or_description internal_agent_id
-                                        internal_group_id tag_ids tag_names].freeze
+                                        internal_group_id tag_ids tag_names association_type associated_ticket_count].freeze
 
   OBSERVER_CONDITION_FREDDY_FIELD = %i[freddy_suggestion].freeze
 
   DISPATCHER_CONDITION_TICKET_FIELDS = %i[created_at ticket_cc subject_or_description internal_agent_id
-                                          internal_group_id tag_ids ticlet_cc tag_names created_during].freeze
+                                          internal_group_id tag_ids ticlet_cc tag_names created_during
+                                          association_type].freeze
 
   SUPERVISOR_CONDITION_TICKET_FIELDS = %i[contact_name company_name].freeze
 
@@ -265,7 +281,10 @@ module Admin::AutomationConstants
     Array: :list
   }.freeze
 
-  ACTIONS_HASH = { fields_name: { data_type: { rules: String, presence: true } }, value: { presence: true } }.freeze
+  ACTIONS_HASH = { fields_name: { data_type: { rules: String, presence: true } },
+                   value: { presence: true },
+                   resource_type: { data_type: { rules: String, presence: true } }
+                  }.freeze
 
   EVENTS_HASH = { field_name: { data_type: { rules: String, allow_nil: false } },
                   from: { data_type: { rules: String, allow_nil: false } },
@@ -278,7 +297,8 @@ module Admin::AutomationConstants
 
   MAXIMUM_CONDITIONAL_SET_COUNT = 2
 
-  WEBHOOK_PERMITTED_PARAMS = %w[field_name request_type url content_layout content_type auth_header custom_headers content].freeze
+  WEBHOOK_PERMITTED_PARAMS = %w[field_name request_type url content_layout content_type
+                                auth_header custom_headers content resource_type].freeze
 
   WEBHOOK_HTTP_METHODS = %i[GET POST PUT PATCH DELETE].freeze
 
@@ -318,11 +338,12 @@ module Admin::AutomationConstants
 
   CONDITION_SET_PROPERTIES = %i[resource_type field_name operator value].freeze
 
-  CONDITION_SET_REQUEST_VALUES = (CONDITION_SET_PROPERTIES + %i[nested_fields case_sensitive business_hours_id custom_status_id]).freeze
+  CONDITION_SET_REQUEST_VALUES = (CONDITION_SET_PROPERTIES + %i[nested_fields case_sensitive business_hours_id 
+                                                                custom_status_id associated_fields]).freeze
 
   MARKETPLACE_INTEGRATION_PARAMS = %i[push_to slack_text office365_text].freeze
 
-  ACTION_REQUEST_PRAMS = (%i[field_name value nested_fields] + WEBHOOK_PERMITTED_PARAMS + SEND_EMAIL_TO_PARAMS +
+  ACTION_REQUEST_PRAMS = (%i[field_name value nested_fields resource_type] + WEBHOOK_PERMITTED_PARAMS + SEND_EMAIL_TO_PARAMS +
                          FORWARD_TICKET_PARAMS + ADD_NOTE_PARAMS + MARKETPLACE_INTEGRATION_PARAMS).freeze
 
   PERFORMER_REQUEST_PRAMS = %i[type members].freeze
@@ -335,7 +356,8 @@ module Admin::AutomationConstants
   DELEGATOR_IGNORE_FIELDS = (%i[subject subject_or_description reply_sent trigger_webhook from_email to_email
                                 mail_del_failed_requester mail_del_failed_others add_a_cc add_comment delete_ticket
                                 mark_as_spam skip_notification due_by from_email to_email ticket_cc last_interaction
-                                inbound_count outbound_count description forward_ticket ticlet_cc response_due resolution_due] + (TIME_BASED_FILTERS - %i[hours_since_waiting_on_custom_status]) +
+                                inbound_count outbound_count description forward_ticket ticlet_cc response_due resolution_due
+                                association_type associated_ticket_count] + (TIME_BASED_FILTERS - %i[hours_since_waiting_on_custom_status]) +
                                 SUPERVISOR_CONDITION_TICKET_FIELDS).uniq.freeze
 
   DEFAULT_FIELDS = (DEFAULT_FIELDS_DELEGATORS + DELEGATOR_IGNORE_FIELDS).freeze
@@ -388,7 +410,8 @@ module Admin::AutomationConstants
     status: :Integer, priority: :Integer, source: :Integer, responder_id: :Integer, group_id: :Integer,
     internal_group_id: :Integer, internal_agent_id: :Integer, add_watcher: :Integer, product_id: :Integer,
     inbound_count: :Integer, outbound_count: :Integer, customer_feedback: :Integer,
-    send_email_to_group: :Integer, send_email_to_agent: :Integer, segments: :Integer
+    send_email_to_group: :Integer, send_email_to_agent: :Integer, segments: :Integer,
+    association_type: :Integer, associated_ticket_count: :Integer
   }.merge(TIME_BASED_FILTERS.each_with_object({}) do |field, data|
     data[field] = :Integer
   end).freeze

@@ -25,6 +25,8 @@ module Admin
     validate :unpermitted_params
     validate :validate_params
     validate :system_event, if: -> { performer.present? && events.present? && events.is_a?(Array) }
+    validate :associated_tickets_count, if: -> { events.present? && events.is_a?(Array) && conditions.present? }
+    validate :associated_ticket_conditions_actions, if: -> { !supervisor_rule? }
 
     def initialize(request_params, cf_fields, item = nil, allow_string_param = false)
       @request_params = request_params
@@ -66,6 +68,65 @@ module Admin
         else 
           events.each do |event|
             unexpected_parameter(event[:field_name]) if SYSTEM_EVENT_FIELDS.include?(event[:field_name].to_sym)
+          end
+        end
+      end
+
+      def associated_tickets_count
+        linked_ticket_event = false
+        events.each do |event|
+          linked_ticket_event = true if event[:field_name] == 'ticket_action' && event[:value] == 'linked'
+        end
+        conditions.each do |set, properties|
+          properties.each do |property|
+            if property['resource_type'] == 'ticket'
+              if property['field_name'] == 'associated_ticket_count' && !linked_ticket_event
+                not_allowed_error('conditions[:associated_ticket_count]', 
+                                             message=:associated_tickets_count_without_event)
+              end
+              if property['field_name'] == 'association_type' && linked_ticket_event
+                not_allowed_error('conditions[:association_type]', 
+                                             message=:association_type_not_allowed)
+              end
+            end
+          end
+        end
+      end
+
+      def associated_ticket_conditions_actions
+        condition_association_types = []
+        action_association_types = []
+        conditions.each do |set, properties|
+          properties.each do |property|
+            condition_association_types.push(property['value']) if property['field_name'] == 'association_type'
+          end
+        end
+        condition_association_types.uniq!
+        if condition_association_types.count > 1
+          unexpected_value_for_attribute(:conditions, 'association_type', 
+                                         message=:expecting_single_association_type)
+        else
+          actions.each do |action|
+            action_association_types.push(action[:ticket_association_type]) if action[:ticket_association_type].present?
+          end
+          action_association_types.uniq!
+          @type_name = :actions
+          case condition_association_types.first
+          when nil
+            not_allowed_error('ticket_association_type', 
+                              :ticket_association_type_not_allowed) if action_association_types.present?
+          when 1
+            not_allowed_error('ticket_association_type', 
+                              :expecting_parent_association_type) if action_association_types != [1]
+          when 2
+            not_allowed_error('ticket_association_type', 
+                              :expecting_parent_or_child) if action_association_types.any? { |type| ![1, 2].include?(type) }
+          when 3
+            not_allowed_error('ticket_association_type', 
+                              :expecting_tracker_association_type) if action_association_types != [3]
+          when 4
+            not_allowed_error('ticket_association_type', 
+                              :expecting_parent_or_related) if action_association_types.any? { |type| ![3, 4].include?(type) }
           end
         end
       end

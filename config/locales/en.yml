@@ -2866,7 +2866,7 @@ en:
       action_responder_id: 'Assign to Agent'
       action_group_id: 'Assign to Group'
       action_product_id: 'Assign to Product'
-      action_key_value: "%{field_name} %{field_value}"
+      action_key_value: "%{resource_type} %{field_name} %{field_value}"
       action_nested_value: " And %{field_name} %{field_operator} %{field_value}"
       action_value: "Set %{field_name} as %{field_value}"
       action_webhook:  "%{field_name} Method-: %{field_from} Url-: %{field_to}"
@@ -3002,6 +3002,13 @@ en:
       before: 'Before'
       after: 'After'
       match_case: 'Match Case'
+      association_type: 'Association Type'
+      associated_ticket_count: 'Related ticket count on tracker'
+      linked: 'Linked'
+      parent_ticket: 'On the parent ticket'
+      tracker_ticket: 'On the tracker ticket'
+      same_ticket: 'On the same ticket'
+      related_ticket_count: 'Related ticket count on tracker'
     custom_translation:
       status_translated: Translated
       status_untranslated: Untranslated

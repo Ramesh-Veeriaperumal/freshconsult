@@ -238,7 +238,7 @@ module Admin::AutomationDelegatorHelper
         source: SOURCE_BY_ID,
         priority: ApiTicketConstants::PRIORITIES,
         created_at: VAConfig::CREATED_DURING_NAMES_BY_KEY.values,
-        note_type: Helpdesk::Note::NOTE_TYPE.values,
+        note_type: EVENT_NOTE_TYPE,
         ticket_action: TICKET_ACTION,
         time_sheet_action: TIME_SHEET_ACTION,
         customer_feedback: CustomSurvey::Survey::CUSTOMER_RATINGS_FACE_VALUE,

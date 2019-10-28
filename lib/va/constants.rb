@@ -128,6 +128,8 @@ module Va
       'Company'          => [:segments]
     }.freeze
 
+    PRIME_TICKETS = %w(parent_ticket tracker_ticket).freeze
+
     def self.webhook_content_layouts
       {
         '1' => I18n.t('admin.shared.filter_jsinit.simple_layout'),

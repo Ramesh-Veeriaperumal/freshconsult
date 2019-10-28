@@ -43,4 +43,5 @@ module Admin::Automation::Event::TicketFieldConstants
 
   EVENT_ANY_FIELDS = %i[priority ticket_type status group_id responder_id note_type customer_feedback].freeze
   EVENT_NONE_FIELDS = %i[group_id responder_id].freeze
+  EVENT_NOTE_TYPE = %w[public private --].freeze
 end

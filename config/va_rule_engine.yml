@@ -39,6 +39,8 @@ fields:
         segments: object_id_array
         to_emails: email
         domain_list: text_array
+        association_type: numeric
+        associated_ticket_count: numeric
 
         created_during: date_time
         updated_at: date_time

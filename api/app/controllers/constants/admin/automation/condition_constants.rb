@@ -27,7 +27,8 @@ module Admin::Automation::ConditionConstants
     tags: %i[in not_in and],
     url: %i[is is_not contains does_not_contain starts_with ends_with is_any_of is_none_of],
     phone_number: %i[is is_not contains does_not_contain starts_with ends_with is_any_of is_none_of],
-    freddy_field_type: %i[is is_not]
+    freddy_field_type: %i[is is_not],
+    ticket_association_type: %i[is is_not]
   }.freeze
 
   EMAIL_FIELD_TYPE = %i[email old_email].freeze

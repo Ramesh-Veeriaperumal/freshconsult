@@ -20009,7 +20009,7 @@
           "items": {
             "type": "object",
             "properties": {
-              "name": {
+              "field_name": {
                 "type": "string"
               },
               "from": {
@@ -20103,6 +20103,20 @@
                               "type": "string"
                             }
                           }
+                        }
+                      }
+                    },
+                    "associated_fields": {
+                      "type": "object",
+                      "properties": {
+                        "field_name": {
+                          "type": "string"
+                        },
+                        "operator": {
+                          "type": "string"
+                        },
+                        "value": {
+                          "type": "integer"
                         }
                       }
                     }
@@ -20219,6 +20233,14 @@
               },
               "office365_text": {
                 "type": "string"
+              },
+              "resource_type": {
+                "type": "string",
+                "enum": [
+                  "same_ticket",
+                  "parent_ticket",
+                  "tracker_ticket"
+                ]
               }
             }
           }

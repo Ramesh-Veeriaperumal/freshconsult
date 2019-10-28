@@ -135,6 +135,7 @@ module Admin::Automation::AutomationSummary
         array << generate_value(data[:name], value, ' OR ')
       end
       array << generate_case_sensitive(data[:case_sensitive]) if data[:case_sensitive].present?
+      array << generate_associated_fields(data[:associated_fields]) if data[:associated_fields].present?
       sentence = array.join(' ')
       I18n.t('admin.automation_summary.condition', field_name: sentence)
     end
@@ -166,7 +167,7 @@ module Admin::Automation::AutomationSummary
         return I18n.t('admin.automation_summary.action_webhook',
                       field_name: name, field_from: request_type, field_to: data[:url])
       end
-      create_sentence(field_name, translated_key, values, 'ticket', :action)
+      create_sentence(field_name, translated_key, values, 'ticket', :action, data[:evaluate_on])
     end
 
     def nested_fields_sentence_generate(data, type, field_name = :name)
@@ -197,15 +198,17 @@ module Admin::Automation::AutomationSummary
       sentence
     end
 
-    def create_sentence(field_name, cons_field_name, value = nil, evaluate_on = 'ticket', type = nil)
+    def create_sentence(field_name, cons_field_name, value = nil, evaluate_on = 'ticket', type = nil, action_resource_type = nil)
       name = generate_key(field_name, evaluate_on, ', ', type)
       field = ticket_fields.find { |tf| tf.name == field_name.to_s }
       value = value.map { |val| CGI.escapeHTML(val) } if field.present? && CUSTOM_TEXT_FIELD_TYPES.include?(field.field_type.to_sym)
       value1 = generate_value(field_name, value.first || I18n.t('admin.automation_summary.none')) if value.present?
       value2 = generate_value(field_name, value.second ||
                   I18n.t('admin.automation_summary.none')) if value.present? && value.length == 2
+      resource_type = I18n.t("admin.automation_summary.#{action_resource_type}") if action_resource_type.present?
       I18n.t("admin.automation_summary.#{cons_field_name}",
-             field_name: name, field_value: value1, field_from: value1, field_to: value2)
+             field_name: name, field_value: value1, field_from: value1, field_to: value2,
+             resource_type: resource_type)
     end
 
     def get_name(method_name, input, separator = ', ')
@@ -231,6 +234,7 @@ module Admin::Automation::AutomationSummary
               elsif field_name.to_s.include? TIME_AND_STATUS_BASED_FILTER[0].to_s
                 supervisor_custom_status_name(field_name)
               else
+                evaluate_on = 'ticket' unless EVALUATE_ON_MAPPING.values.include?(evaluate_on)
                 get_name("custom_#{evaluate_on}_fields", field_name, separator)
               end
       add_html_tag(value, 1)
@@ -289,6 +293,14 @@ module Admin::Automation::AutomationSummary
       "#{text_and.downcase} #{text_match_case} #{text_is} #{value}"
     end
 
+    def generate_associated_fields(associated_fields)
+      value = add_html_tag(associated_fields[:value], 2)
+      text_and = I18n.t('admin.automation_summary.condition_all')
+      text_related_ticket_count = add_html_tag(I18n.t('admin.automation_summary.related_ticket_count'), 1)
+      operator = I18n.t("admin.automation_summary.#{associated_fields[:operator]}")
+      "#{text_and.downcase} #{text_related_ticket_count} #{operator} #{value}"
+    end
+
     def generate_operator(t_value)
       t_value = I18n.t("admin.automation_summary.#{t_value}")
       add_html_tag(t_value, 3)
@@ -300,6 +312,13 @@ module Admin::Automation::AutomationSummary
 
     def priority
       PRIORITY_MAP
+    end
+
+    def association_type
+      TicketConstants::TICKET_ASSOCIATION_TOKEN_BY_KEY.keys.inject({}) do |hash, key|
+        hash[key.to_s] = TicketConstants.translate_association_type_name(key)
+        hash
+      end
     end
 
     def trigger_webhook

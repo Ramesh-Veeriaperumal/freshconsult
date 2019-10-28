@@ -178,10 +178,17 @@ class Admin::AutomationDecorator < ApiDecorator
       end
     end
 
+    def construct_associated_fields(associated_fields)
+      associated_fields.inject({}) do |hash, arr|
+        hash.merge!(construct_data(arr.first, arr.last, true, nil, nil, nil, true))
+      end if associated_fields.present?
+    end
+
     def construct_data(key, value, has_key, nested_field_names = nil, field_name = nil, evaluate_on = nil, is_event = false)
       key = FIELD_NAME_CHANGE_MAPPING[key] if FIELD_NAME_CHANGE.include?(key)
       value = construct_nested_data(value) if
               nested_field_names.present? && nested_field_names.include?(key)
+      value = construct_associated_fields(value) if key == :associated_fields
       value = MASKED_FIELDS[key] if MASKED_FIELDS.key? key
       if key == :field_name
         if value.present?

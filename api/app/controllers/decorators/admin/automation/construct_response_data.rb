@@ -18,6 +18,7 @@ module Admin::Automation::ConstructResponseData
     action_hash[:content_layout] = action[:content_layout].to_s
     action_hash[:content] = webhook_content(action) if action[:params].present?
     action_hash[:custom_headers] = (action[:custom_headers].to_hash rescue action[:custom_headers])
+    action_hash[:resource_type] = action[:evaluate_on] if action[:evaluate_on].present?
     action_hash.select! { |_, value| value.present? }
     construct_auth_header(action, action_hash)
     action_hash

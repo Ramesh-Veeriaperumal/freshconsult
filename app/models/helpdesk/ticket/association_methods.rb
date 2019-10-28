@@ -69,6 +69,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
     prime_ticket? ? asstn_obj_count : 0
   end
 
+  def associated_ticket_count
+    return 0 if association_type.nil?
+    prime_ticket? ?
+      asstn_obj_count :
+      associated_prime_ticket(TicketConstants::TICKET_ASSOCIATION_FILTER_NAMES_BY_KEY[association_type.to_s]).safe_send('asstn_obj_count')
+  end
+
   def validate_assoc_parent_tkt_status
     child_tkt_states = self.associated_subsidiary_tickets("assoc_parent").pluck(:status)
     child_tkt_states.present? and (child_tkt_states - [CLOSED, RESOLVED]).present?

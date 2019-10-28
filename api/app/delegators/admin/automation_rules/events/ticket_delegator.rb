@@ -18,6 +18,7 @@ module Admin::AutomationRules::Events
           FROM_TO.each do |type|
             validate_default_ticket_field(event[:field_name], event[type]) unless ANY_NONE.values.include? event[type]
           end
+          validate_default_ticket_field(event[:field_name], event[:value]) if event.key?(:value)
         else
           custom_field = custom_ticket_fields.find { |t| t.name == "#{event[:field_name]}_#{current_account.id}" }
           validate_custom_field_event(event, custom_field, :event) if custom_field.present?

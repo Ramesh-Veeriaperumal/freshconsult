@@ -37,6 +37,7 @@
       @sla_on_background = params['sla_args'] && params['sla_args']['sla_on_background']
       @sla_attributes    = params['sla_args'] && params['sla_args']['sla_state_attributes']
       @sla_calculation_time = params['sla_args'] && params['sla_args']['sla_calculation_time']
+      @ticket.prime_ticket_args = params
       Va::Logger::Automation.set_thread_variables(@account.id, params['ticket_id'], params['user_id'])
       Va::Logger::Automation.log("user_nil=#{@user.nil?}, ticket_nil=#{@ticket.nil?}", true) if @user.nil? || @ticket.nil?
     end
