@@ -148,9 +148,10 @@ class Support::Solutions::ArticlesController < SupportController
     def generate_og_meta
       @og_meta ||= {
         title: @article.article_title,
-        short_description: @article.desc_un_html.truncate(100),
-        author: @article.user.name
+        short_description: @article.desc_un_html.truncate(250)
       }
+        @og_meta[:author] = @article.user.name if @article.user && Account.current.main_portal.personalized_articles?
+        @og_meta
     end
 
     def load_page_meta

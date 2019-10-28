@@ -175,7 +175,7 @@ HTML
 
   def og_article_properties(meta)
     article_properties = {}
-    article_properties[:author] = meta['author'] if Account.current.main_portal.personalized_articles?
+    article_properties[:author] = meta['author'] if meta['author']
     article_properties
   end
 
