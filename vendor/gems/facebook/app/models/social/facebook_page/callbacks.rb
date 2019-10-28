@@ -24,6 +24,7 @@ class Social::FacebookPage < ActiveRecord::Base
   after_update :fetch_fb_wall_posts
   after_commit :clear_cache
   before_destroy :save_deleted_page_info
+  publishable on: :update, :if => :can_central_publish?
 
   def cleanup(push_to_sidekiq = false)
     if can_cleanup?
@@ -134,4 +135,7 @@ class Social::FacebookPage < ActiveRecord::Base
     @model_changes.symbolize_keys!
   end
 
+  def can_central_publish?
+    @model_changes.except(:message_since, :fetch_since).present?
+  end
 end

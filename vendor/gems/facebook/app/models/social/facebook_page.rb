@@ -1,5 +1,5 @@
 class Social::FacebookPage < ActiveRecord::Base
-  publishable on: [:create, :update, :destroy]
+  publishable on: [:create, :destroy]
 
   include Social::Util
   include Facebook::Constants
