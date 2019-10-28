@@ -435,5 +435,15 @@ module ApiSolutions
       match_json([bad_request_error_pattern('page', :datatype_mismatch, expected_data_type: 'Positive Integer'),
         bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
     end
+
+    def test_emoji_in_folder_name_and_description
+      category_meta = get_category
+      post :create, construct_params({ id: category_meta.id }, {name: 'hey 😅 folder name', description: 'hey 😅 folder description', visibility: 1})
+      assert_response 201
+      result = parse_response(@response.body)
+      assert_equal "http://#{@request.host}/api/v2/solutions/folders/#{result['id']}", response.headers['Location']
+      assert_equal UnicodeSanitizer.remove_4byte_chars('hey 😅 folder name'), result['name']
+      assert_equal UnicodeSanitizer.remove_4byte_chars('hey 😅 folder description'), result['description']
+    end
   end
 end

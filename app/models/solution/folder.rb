@@ -11,6 +11,8 @@ class Solution::Folder < ActiveRecord::Base
 
   before_destroy :save_deleted_folder_info
 
+  before_save :remove_emoji_in_folders
+
   validates_presence_of :name
   validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id], :if => "!solution_folder_meta.new_record?"
 
@@ -108,6 +110,11 @@ class Solution::Folder < ActiveRecord::Base
 
     def populate_account
       self.account = category.account
+    end
+    
+    def remove_emoji_in_folders
+      self.name = UnicodeSanitizer.remove_4byte_chars(self.name)
+      self.description = UnicodeSanitizer.remove_4byte_chars(self.description)
     end
     
     def clear_cache

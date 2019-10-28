@@ -1853,6 +1853,148 @@ module Ember
         match_json([bad_request_error_pattern('outdated', :cannot_mark_primary_as_uptodate, code: :invalid_value)])
       end
 
+      def test_create_article_with_emoji_content_in_description_and_title_with_encode_emoji_enabled
+        Account.current.launch(:encode_emoji_in_solutions)
+        folder_meta = get_folder_meta
+        title = '<span> hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is title with emoji </span>'
+        paragraph = '<span> hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is line after emoji </span>'
+        post :create, construct_params({ version: 'private', id: folder_meta.id }, { title: title, description: paragraph, status: 2 })
+        paragraph_with_emoji_enabled = UnicodeSanitizer.utf84b_html_c(paragraph)
+        paragraph_with_emoji_disabled = UnicodeSanitizer.remove_4byte_chars(paragraph)
+        paragraph_desc_un_html = Helpdesk::HTMLSanitizer.plain(paragraph_with_emoji_disabled)
+        assert_equal Solution::Article.last.description, paragraph_with_emoji_enabled
+        assert_equal Solution::Article.last.desc_un_html, paragraph_desc_un_html
+        assert_response 201
+        match_json(private_api_solution_article_pattern(Solution::Article.last))
+      ensure
+        Account.current.rollback(:encode_emoji_in_solutions)
+      end
+
+      def test_update_article_with_emoji_content_in_description_and_title_with_encode_emoji_enabled
+        Account.current.launch(:encode_emoji_in_solutions)
+        sample_article = get_article_without_draft
+        title = '<span> hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is title with emoji </span>'
+        paragraph = '<span> hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is line after emoji </span>'
+        params_hash = { title: title, description: paragraph, status: 2 }
+        put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+        paragraph_with_emoji_enabled = UnicodeSanitizer.utf84b_html_c(paragraph)
+        paragraph_with_emoji_disabled = UnicodeSanitizer.remove_4byte_chars(paragraph)
+        paragraph_desc_un_html = Helpdesk::HTMLSanitizer.plain(paragraph_with_emoji_disabled)
+        assert_equal sample_article.reload.description, paragraph_with_emoji_enabled
+        assert_equal sample_article.reload.desc_un_html, paragraph_desc_un_html
+        assert_response 200
+        match_json(private_api_solution_article_pattern(sample_article.reload))
+      ensure
+        Account.current.rollback(:encode_emoji_in_solutions)
+      end
+
+      
+      def test_create_draft_with_emoji_content_in_description_and_title_with_encode_emoji_enabled
+        Account.current.launch(:encode_emoji_in_solutions)
+        folder_meta = get_folder_meta
+        title = '<span> hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is title with emoji </span>'
+        paragraph = '<span> hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is line after emoji </span>'
+        post :create, construct_params({ version: 'private', id: folder_meta.id }, { title: title, description: paragraph, status: 1 })
+        paragraph_with_emoji_enabled = UnicodeSanitizer.utf84b_html_c(paragraph)
+        assert_equal Solution::Article.last.draft.description, paragraph_with_emoji_enabled
+        assert_response 201
+        match_json(private_api_solution_article_pattern(Solution::Article.last))
+      ensure
+        Account.current.rollback(:encode_emoji_in_solutions)
+      end
+
+      def test_update_draft_with_emoji_content_in_description_and_title_with_encode_emoji_enabled
+        Account.current.launch(:encode_emoji_in_solutions)
+        sample_article = get_article_without_draft
+        title = '<span> hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is title with emoji </span>'
+        paragraph = '<span> hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is line after emoji </span>'
+        params_hash = { title: title, description: paragraph, status: 1 }
+        put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+        paragraph_with_emoji_enabled = UnicodeSanitizer.utf84b_html_c(paragraph)
+        assert_equal sample_article.reload.draft.description, paragraph_with_emoji_enabled
+        assert_response 200
+        match_json(private_api_solution_article_pattern(sample_article.reload))
+      ensure
+        Account.current.rollback(:encode_emoji_in_solutions)
+      end
+
+      def test_create_article_with_emoji_content_in_description_and_title_with_encode_emoji_disabled
+        Account.current.rollback(:encode_emoji_in_solutions)
+        folder_meta = get_folder_meta
+        title = '<span> hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is title with emoji </span>'
+        paragraph = '<span> hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is line after emoji </span>'
+        post :create, construct_params({ version: 'private', id: folder_meta.id }, { title: title, description: paragraph, status: 2 })
+        paragraph_with_emoji_disabled = UnicodeSanitizer.remove_4byte_chars(paragraph)
+        paragraph_desc_un_html = Helpdesk::HTMLSanitizer.plain(paragraph_with_emoji_disabled)
+        assert_equal Solution::Article.last.description, paragraph_with_emoji_disabled
+        assert_equal Solution::Article.last.desc_un_html, paragraph_desc_un_html
+        assert_response 201
+        match_json(private_api_solution_article_pattern(Solution::Article.last))
+      end
+
+      def test_update_article_with_emoji_content_in_description_and_title_with_encode_emoji_disabled
+        Account.current.rollback(:encode_emoji_in_solutions)
+        sample_article = get_article_without_draft
+        title = '<span> hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is title with emoji </span>'
+        paragraph = '<span> hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is line after emoji </span>'
+        params_hash = { title: title, description: paragraph, status: 2 }
+        put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+        paragraph_with_emoji_disabled = UnicodeSanitizer.remove_4byte_chars(paragraph)
+        paragraph_desc_un_html = Helpdesk::HTMLSanitizer.plain(paragraph_with_emoji_disabled)
+        assert_equal sample_article.reload.description, paragraph_with_emoji_disabled
+        assert_equal sample_article.reload.desc_un_html, paragraph_desc_un_html
+        assert_response 200
+        match_json(private_api_solution_article_pattern(sample_article.reload))
+      end
+
+      
+      def test_create_draft_with_emoji_content_in_description_and_title_with_encode_emoji_disabled
+        Account.current.rollback(:encode_emoji_in_solutions)
+        folder_meta = get_folder_meta
+        title = '<span> hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is title with emoji </span>'
+        paragraph = '<span> hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is line after emoji </span>'
+        post :create, construct_params({ version: 'private', id: folder_meta.id }, { title: title, description: paragraph, status: 1 })
+        paragraph_with_emoji_disabled = UnicodeSanitizer.remove_4byte_chars(paragraph)
+        assert_equal Solution::Article.last.draft.description, paragraph_with_emoji_disabled
+        assert_response 201
+        match_json(private_api_solution_article_pattern(Solution::Article.last))
+      end
+
+      def test_update_draft_with_emoji_content_in_description_and_title_with_encode_emoji_disabled
+        Account.current.rollback(:encode_emoji_in_solutions)
+        sample_article = get_article_without_draft
+        title = '<span> hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is title with emoji </span>'
+        paragraph = '<span> hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is line after emoji </span>'
+        params_hash = { title: title, description: paragraph, status: 1 }
+        put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+        paragraph_with_emoji_disabled = UnicodeSanitizer.remove_4byte_chars(paragraph)
+        assert_equal sample_article.reload.draft.description, paragraph_with_emoji_disabled
+        assert_response 200
+        match_json(private_api_solution_article_pattern(sample_article.reload))
+      end
+
+      def test_article_sanitization_in_drafts
+        folder_meta = get_folder_meta
+        title = Faker::Name.name
+        paragraph = '<span> This is a paragraph </span><script>alert(ALERT!)</script>'
+        post :create, construct_params({ version: 'private', id: folder_meta.id }, { title: title, description: paragraph, status: 1 })
+        paragraph = '<span> This is a paragraph </span>'
+        assert_equal Solution::Article.last.draft.description, paragraph
+        assert_response 201
+        match_json(private_api_solution_article_pattern(Solution::Article.last))
+      end
+
+      def test_article_sanitization_in_articles
+        folder_meta = get_folder_meta
+        title = Faker::Name.name
+        paragraph = '<span> This is a paragraph </span><script>alert(ALERT!)</script>'
+        post :create, construct_params({ version: 'private', id: folder_meta.id }, { title: title, description: paragraph, status: 2 })
+        paragraph = '<span> This is a paragraph </span>'
+        assert_equal Solution::Article.last.description, paragraph
+        assert_response 201
+        match_json(private_api_solution_article_pattern(Solution::Article.last))
+      end
+    
       private
         def version
           'private'

@@ -115,7 +115,7 @@ module SolutionsTestHelper
     unless expected_output[:action] == :filter
       unless expected_output[:exclude_description]
         resp[:description] = expected_output[:description] || draft.description
-        resp[:description_text] = expected_output[:description_text] || Helpdesk::HTMLSanitizer.plain(draft.draft_body.description)
+        resp[:description_text] = expected_output[:description_text] || UnicodeSanitizer.remove_4byte_chars(Helpdesk::HTMLSanitizer.plain(draft.draft_body.description))
       end
       unless expected_output[:exclude_attachments]
         resp[:attachments] = Array
