@@ -80,4 +80,17 @@ module Dkim::Constants
     ['CREATE',   'CNAME',   "build_domain_key('fd2freshdeskdkim')",               "FILTERED_DKIM_RECORDS['dkim2']",                 false, false,  false,         false],
     ['CREATE',   'CNAME',   "build_domain_key('fd2acc'+Account.current.id.to_s)", "build_domain_key('fd2freshdeskdkim')",           true,  true,  'dkim2',        false] 
   ]
+
+  FD_EMAIL_SERVICE = YAML.load_file(File.join(Rails.root, 'config', 'fd_email_service.yml'))[Rails.env]
+  EMAIL_SERVICE_AUTHORISATION_KEY = FD_EMAIL_SERVICE['key']
+  EMAIL_SERVICE_HOST = FD_EMAIL_SERVICE['host']
+  EMAIL_SERVICE_GET_DOMAINS = FD_EMAIL_SERVICE['get_domains']
+  EMAIL_SERVICE_RESPONSE_CODE = {
+    success: 200
+  }.freeze
+  EMAIL_SERVICE_ACTION = {
+    get_domains: :get_domains,
+    configure_domain: :configure_domain,
+    verify_domain: :verify_domain
+  }.freeze
 end

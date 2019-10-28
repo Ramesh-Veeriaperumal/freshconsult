@@ -7,6 +7,7 @@ defaults: &defaults
   email_campaign_urlpath: "api/v1/campaign/send"
   account_validate_urlpath: "api/v1/account/validate/"
   sender_config_urlpath: "api/v1/account/senderconfig"
+  get_domains: "api/v1/whitelabel/domains/all/"
   ip_pool_category : "35"
   incoming_email_api_key1: "sESov8gFIU03kFEUAZS7ikilAU5Ip2"
   incoming_email_api_key2: "e7d6Gee5HkF6VjD7kIhpu7QmNkDeC6"

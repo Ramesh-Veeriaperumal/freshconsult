@@ -6434,6 +6434,7 @@ en:
       new_dkim: You haven't created a support email with a custom domain yet!
       limit_exceeded: You cannot configure more than two DKIM signatures on this plan.
       already_verified: The domain is verified in another account.
+      fetch_domain_failed: Error fetching DNS settings. Please try again later.
   step2: Step 2
   import_users_contacts: Users &rarr; Contacts
   linkback_info: You can choose to Linkback to your own website when the customer clicks on the header logo

@@ -34,4 +34,16 @@ module Dkim::UtilityMethods
       end
     end
   end
+
+  def es_response_success?(email_service_response)
+    email_service_response == Dkim::Constants::EMAIL_SERVICE_RESPONSE_CODE[:success]
+  end
+
+  def construct_dkim_hash(email_service_domains)
+    email_service_domains.inject({}) do |dkim, value|
+      dkim[value['domain'].to_sym] = [] | value['records']['dkim']
+      dkim[value['domain'].to_sym].push(value['records']['spfmx'])
+      dkim
+    end
+  end
 end

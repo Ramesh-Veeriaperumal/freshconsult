@@ -185,4 +185,8 @@ module Dkim::Methods
       Rails.logger.info('Error message: #{e.message}')
     end
   end
+
+  def configured_domains_from_email_service
+    Dkim::EmailServiceHttp.new(current_account.id).get_domains
+  end
 end
