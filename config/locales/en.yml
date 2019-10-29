@@ -2343,9 +2343,11 @@ en:
       helpnote:
         title: Security Settings
         info1: <b>Allowing Single Sign On access </b><br>If your users already have login credentials with you, such as through Active Directory or your own web applications, you can allow them to login to your support portal with these credentials using Single Sign On (SSO). Learn more about SSO<a href="https://support.freshdesk.com/support/solutions/articles/31166-single-sign-on-remote-authentication-in-freshdesk" target="_top"> here</a>.
-        info2: <b>Enabling SSL security </b><br>If you are not using a custom domain for your support portal, Freshdesk offers a default wildcard SSL certificate to accounts on the freshdesk.com domain. <b>SSL option for custom domains are available from Blossom Plan.</b> You can <a href="https://support.freshdesk.com/support/tickets/new" target="_top">request for a custom SSL certificate for your vanity support URL here</a>.
+        v1info1: <b>Allowing Single Sign On access </b><br>If your users already have login credentials with you, such as through Active Directory or your own web applications, you can allow them to login to your support portal with these credentials using Single Sign On (SSO). Learn more about SSO<a href="https://support.freshworks.com/support/solutions/folders/274996" target="_top"> here</a>.
+        info2: <b>Enabling SSL security </b><br>If you are not using a custom domain for your support portal, Freshdesk offers a default wildcard SSL certificate to accounts on the <a href="https://freshdesk.com" target="_top">freshdesk.com</a> domain. <b>SSL option for custom domains are available from Blossom Plan.</b> You can <a href="https://support.freshdesk.com/support/tickets/new" target="_top">request for a custom SSL certificate for your vanity support URL here</a>.
         trusted_ip: <b>Restricting access by IP address</b><br>You can restrict access to your support portal to IP addresses from your company or organization. You can add unlimited number of IP ranges that have access, as well as define whether you want to control access for customers as well, or only for your agents. <a href="https://support.freshdesk.com/support/solutions/articles/195168" target="_top"> Learn more.</a>
         info4: <b>Password Policy</b><br>You can set up different password policies for agents and customers. The advanced settings allow you to configure custom password policies such as password expiry time and minimum password length. The changes you make will apply to new and existing agents and customers. Learn more about password policy <a href="https://support.freshdesk.com/support/solutions/articles/213865-password-policy" target="_top"> here</a>.
+        v1info4: <b>Password Policy</b><br>You can set up different password policies for customers. The advanced settings allow you to configure custom password policies such as password expiry time and minimum password length. The changes you make will apply to new and existing customers. Learn more about password policy<a href="https://support.freshdesk.com/support/solutions/articles/213865-password-policy" target="_top"> here</a>.
       password_security:
         default: Default
         advanced: Advanced
@@ -5985,7 +5987,6 @@ en:
     agent_group_pf_report: "Agent and group performance report"
     advanced_phone_integration: "Advanced phone integration"
     machine_learning: "Machine learning"
-    custom_data_center: "Data centre location"
     whitelisted_ip_desc: "Whitelisted IP addresses"
     scenario_automations_desc: "Scenario automations"
     parent_child_desc: "Parent child ticketing"
@@ -6041,7 +6042,6 @@ en:
     omni_widget: "Omnichannel widgets"
     livechat: "Livechat widget with embedded FAQs & multiple channels (200k MUV)"
     omni_channel_option: "omni channel option"
-    custom_data_center_desc: "Custom data center"
     sandbox: "Sandbox"
     sandbox_desc: "Sandbox"
     custom_dashboard_desc: "Custom dashboard"

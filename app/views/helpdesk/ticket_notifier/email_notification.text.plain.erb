@@ -1,3 +1,5 @@
 <%= @body %>
 
 <%=render :partial => 'cloud_files_plaintext_template',:locals => {:cloud_files => @cloud_files} %>
+
+<%= render :partial => 'helpdesk/shared/secure_attachments.plain.erb' if @account.secure_attachments_enabled? %>

@@ -148,7 +148,6 @@ module AccountTestHelper
       premium: account.premium,
       freshid_account_id: account.freshid_account_id,
       fs_cookie: account.fs_cookie,
-      anonymous_account: account.anonymous_account?,
       account_configuration: account.account_configuration.account_configuration_for_central
     }
   end

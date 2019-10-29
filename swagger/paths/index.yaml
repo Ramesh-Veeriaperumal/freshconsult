@@ -718,3 +718,7 @@
   $ref: ./skills/list_and_create.yaml
 /skills/{id}:
   $ref: ./skills/crud.yaml
+
+#Freshcaller
+/admin/freshcaller:
+  $ref: ./admin/freshcaller/show.yaml

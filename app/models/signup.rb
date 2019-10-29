@@ -134,16 +134,17 @@ class Signup < ActivePresenter::Base
 
     def admin_contact_info
       {
-        :contact_info => { 
-          :first_name => contact_first_name || user.first_name,
-          :last_name => contact_last_name || user.last_name,
-          :email => user.email,
-          :phone => user.phone 
+        contact_info: { 
+          first_name: contact_first_name || user.first_name,
+          last_name: contact_last_name || user.last_name,
+          email: user.email,
+          phone: user.phone 
         },
-        :company_info => {
-          :name => account.name
+        company_info: {
+          name: account.name,
+          anonymous_account: account.is_anonymous_account
         },
-        :billing_emails => { :invoice_emails => [ user.email ] }
+        billing_emails: { invoice_emails: [ user.email ] }
       }
     end
 

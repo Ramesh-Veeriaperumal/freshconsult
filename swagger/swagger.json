@@ -14148,6 +14148,26 @@
           }
         }
       }
+    },
+    "/admin/freshcaller": {
+      "get": {
+        "tags": [
+          "Freshcaller"
+        ],
+        "summary": "Freshcaller account show",
+        "description": "Return account details if a freshcaller account is linked",
+        "responses": {
+          "200": {
+            "description": "Success gives the details of the freshcaller account",
+            "schema": {
+              "$ref": "#/definitions/freshcaller"
+            }
+          },
+          "204": {
+            "description": "Success returns no content when not linked with freshcaller"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -27288,6 +27308,17 @@
           "$ref": "#/definitions/skill"
         }
       ]
+    },
+    "freshcaller": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "domain": {
+          "type": "string"
+        }
+      }
     }
   },
   "parameters": {

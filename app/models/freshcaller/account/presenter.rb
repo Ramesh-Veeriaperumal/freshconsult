@@ -2,11 +2,17 @@ class Freshcaller::Account < ActiveRecord::Base
   include RepresentationHelper
   acts_as_api
 
+  api_accessible :api do |fc|
+    fc.add :domain
+    fc.add :enabled    
+  end
+
   api_accessible :central_publish do |fc|
     fc.add :id
     fc.add :account_id, as: :freshdesk_account_id
     fc.add :freshcaller_account_id
     fc.add :domain, as: :freshcaller_domain
+    fc.add :enabled
     fc.add proc { |x| x.utc_format(x.created_at) }, as: :created_at
     fc.add proc { |x| x.utc_format(x.updated_at) }, as: :updated_at
   end

@@ -87,6 +87,25 @@ module Ember
       other_companies
     end
 
+    def test_create_contact_without_name
+      name_field = Account.current.contact_form.default_fields.find_by_name('name')
+      name_field.required_for_agent = false
+      name_field.save!
+      Account.current.reload
+      params_hash = {
+        email: Faker::Internet.email
+      }
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 201
+      contact_name = parse_response(@response.body)['name'].downcase!
+      contact_name_from_mail = params_hash[:email].split('@')[0]
+      assert_equal contact_name, contact_name_from_mail
+    ensure
+      name_field.required_for_agent = true
+      name_field.save!
+      Account.current.reload
+    end
+
     def test_create_with_incorrect_avatar_type
       params_hash = contact_params_hash.merge(avatar_id: 'ABC')
       post :create, construct_params({ version: 'private' }, params_hash)

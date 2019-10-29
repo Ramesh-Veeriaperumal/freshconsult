@@ -1,0 +1,1 @@
+JSON.generate(@item.as_api_response(:api))

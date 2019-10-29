@@ -264,6 +264,7 @@ module Helpkit
 
     config.middleware.insert_before "ActionDispatch::Cookies","Rack::SSL"
     config.middleware.insert_before "Auth::Builder","Middleware::Pod"
+    config.middleware.insert_after 'Middleware::SecurityResponseHeader', 'Middleware::PodRedirect'
 
     config.assets.handle_expiration = true
     config.assets.expire_after= 2.months

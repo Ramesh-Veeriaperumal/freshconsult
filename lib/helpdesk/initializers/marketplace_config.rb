@@ -27,6 +27,7 @@ module MarketplaceConfig
   GLOBAL_API_TIMEOUT = { :read => config[:global_api_read_timeout], :conn => config[:global_api_conn_timeout] }
   DATA_PIPE_TIMEOUT = { :read => config[:data_pipe_timeout], :conn => config[:data_pipe_timeout] }
   FRESHAPPS_JS_URL = config[:freshapps_js_url]
+  SUDODEV_ACC_NUMBER = config[:sudodev_acc_number]
   TENANT_ID = config[:tenant_id]
   FRESH_PARENT = config[:fresh_parent]
   ACCOUNT_API_POLL_INTERVAL = config[:account_api_poll_interval]

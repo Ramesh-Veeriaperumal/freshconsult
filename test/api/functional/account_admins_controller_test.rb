@@ -61,6 +61,7 @@ class AccountAdminsControllerTest < ActionController::TestCase
   def test_third_party_apps_not_called_for_anonymous_signup
     Account.any_instance.stubs(:anonymous_account?).returns(true)
     Account.any_instance.stubs(:sandbox?).returns(true)
+    AccountConfiguration.any_instance.stubs(:anonymous_account?).returns(true)
     AccountConfiguration.any_instance.expects(:update_billing).never
     AccountConfiguration.any_instance.expects(:update_reseller_subscription).never
     AccountConfiguration.any_instance.expects(:update_crm_and_map).never
@@ -69,5 +70,6 @@ class AccountAdminsControllerTest < ActionController::TestCase
   ensure
     Account.any_instance.unstub(:anonymous_account?)
     Account.any_instance.unstub(:sandbox?)
+    AccountConfiguration.any_instance.unstub(:anonymous_account?)
   end
 end

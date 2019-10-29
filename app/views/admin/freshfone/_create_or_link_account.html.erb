@@ -8,13 +8,15 @@
     <div class="freshcaller-admin-content">
       <%= t('freshcaller.admin.freshcaller_signup_text').html_safe %>
     </div>
-    <div class="signup-linking">
-      <div class="freshcaller-signup">
-        <%= link_to t("freshcaller.admin.feature_request_content.create_new_account").html_safe, "/admin/freshcaller/signup", :method => 'post', :class => "btn btn-primary btn-large freshcaller_signup_btn" %>
-      </div>
-      <div class="or-text">
-      <%= t("or") %>
-      </div>
+    <div <%= 'class=signup-linking' if (Account.current.launched?(:enable_datacenter)? FreshcallerConfig['signup_supported'] : true) %>>
+      <% if (Account.current.launched?(:enable_datacenter)? FreshcallerConfig['signup_supported'] : true) %>
+        <div class="freshcaller-signup">
+          <%= link_to t("freshcaller.admin.feature_request_content.create_new_account").html_safe, "/admin/freshcaller/signup", :method => 'post', :class => "btn btn-primary btn-large freshcaller_signup_btn" %>
+        </div>
+        <div class="or-text">
+        <%= t("or") %>
+        </div>
+      <% end %>
       <div class="freshcaller-linkup">
         <button class="btn btn-primary btn-large freshcaller_linking_btn">
           <%=t('freshcaller.admin.link_account_request_content.connect_existing_account').html_safe%>

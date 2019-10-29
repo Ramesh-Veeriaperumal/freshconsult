@@ -175,4 +175,65 @@ class TicketNotifierTest < ActionMailer::TestCase
     @account.revoke_feature(:private_inline)
     @account.unstub(:secure_attachments_enabled?)
   end
+
+  def test_notify_outbound_email_with_secure_attachments
+    agent = add_test_agent(@account)
+    num_of_files = 3
+    ticket = create_ticket_with_multiple_attachments(num_of_files: num_of_files, requester_id: agent.id)
+    @account.add_feature(:private_inline)
+    @account.stubs(:secure_attachments_enabled?).returns(true)
+    mail_message = Helpdesk::TicketNotifier.notify_outbound_email(ticket)
+    assert_equal mail_message.to.first, agent.email
+    html_part = mail_message.html_part ? mail_message.html_part.body.decoded : nil
+    if html_part.present?
+      attachment_url = ticket.all_attachments.first.inline_url
+      assert html_part.include?(attachment_url)
+      assert_equal ticket.all_attachments.count, num_of_files
+    end
+    text_part = mail_message.text_part ? mail_message.text_part.body.decoded : nil
+    if text_part.present?
+      attachment_url = ticket.all_attachments.first.inline_url
+      assert text_part.include?(attachment_url)
+      assert_equal ticket.all_attachments.count, num_of_files
+    end
+  ensure
+    ticket.destroy
+    agent.destroy
+    @account.revoke_feature(:private_inline)
+    @account.unstub(:secure_attachments_enabled?)
+  end
+
+  def test_email_notification_with_secure_attachments
+    agent = add_test_agent(@account)
+    num_of_files = 3
+    ticket = create_ticket_with_multiple_attachments(num_of_files: num_of_files, requester_id: agent.id)
+    @account.add_feature(:private_inline)
+    @account.stubs(:secure_attachments_enabled?).returns(true)
+    params = { :ticket => ticket,
+               :notification_type => EmailNotification::NEW_TICKET_CC,
+               :receips => agent.email,
+               :email_body_plain => Faker::Lorem.characters(10),
+               :email_body_html => Faker::Lorem.characters(10),
+               :subject => Faker::Lorem.characters(10),
+               :attachments => ticket.attachments }
+    mail_message = Helpdesk::TicketNotifier.email_notification(params)
+    assert_equal mail_message.to.first, agent.email
+    html_part = mail_message.html_part ? mail_message.html_part.body.decoded : nil
+    if html_part.present?
+      attachment_url = ticket.attachments.first.inline_url
+      assert html_part.include?(attachment_url)
+      assert_equal ticket.attachments.count, num_of_files
+    end
+    text_part = mail_message.text_part ? mail_message.text_part.body.decoded : nil
+    if text_part.present?
+      attachment_url = ticket.attachments.first.inline_url
+      assert text_part.include?(attachment_url)
+      assert_equal ticket.attachments.count, num_of_files
+    end
+  ensure
+    ticket.destroy
+    agent.destroy
+    @account.revoke_feature(:private_inline)
+    @account.unstub(:secure_attachments_enabled?)
+  end
 end

@@ -12,6 +12,7 @@ module FreshcallerAccountTestHelper
       freshdesk_account_id: fcaller_account.account_id,
       freshcaller_account_id: fcaller_account.freshcaller_account_id,
       freshcaller_domain: fcaller_account.domain,
+      enabled: fcaller_account.enabled,
       created_at: fcaller_account.created_at.try(:utc).try(:iso8601),
       updated_at: fcaller_account.updated_at.try(:utc).try(:iso8601)
     }

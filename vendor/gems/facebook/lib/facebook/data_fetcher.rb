@@ -23,7 +23,6 @@ class Facebook::DataFetcher
   end
 
   def messages_fetched_since
-    Rails.logger.info("Messages fetched since for page #{@fan_page.id} is #{@fan_page.message_since}")
     @fan_page.message_since
   end
 

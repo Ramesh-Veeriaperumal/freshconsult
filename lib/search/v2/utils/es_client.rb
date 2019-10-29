@@ -7,9 +7,8 @@ module Search
       #####################################
 
       class EsClient
-
+        include SearchService::Constants
         ES_TIME_DEFAULT = -1
-        ES_TIMEOUT = 10
 
         attr_accessor :method, :path, :payload, :logger, :response, :log_data
 

@@ -3,6 +3,8 @@
 
 <%=render :partial => 'cloud_files_template',:locals => {:cloud_files => @cloud_files} %>
 
+<%= render :partial => 'helpdesk/shared/secure_attachments.html.erb' if @account.secure_attachments_enabled? %>
+
 <%if @account.new_survey_enabled? %>
 	<%=render :partial => "custom_survey", :locals => {:ticket => @ticket,
 		:survey_handle => @survey_handle, :surveymonkey_survey => @surveymonkey_survey, :in_placeholder => false,

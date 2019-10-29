@@ -1,4 +1,4 @@
-<% if current_user.privilege?(:admin_tasks)%>
+<% if current_user.account_id == MarketplaceConfig::SUDODEV_ACC_NUMBER || current_user.privilege?(:admin_tasks)%>
   <%= render :partial => "new_form" %>
 <% else %>
   <%= render :partial => "error_form" %>

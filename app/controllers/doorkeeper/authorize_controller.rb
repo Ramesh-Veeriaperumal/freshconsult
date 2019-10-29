@@ -19,7 +19,7 @@ class Doorkeeper::AuthorizeController < Doorkeeper::AuthorizationsController
   end
 
   def allow_login?
-    current_user.privilege?(:admin_tasks)
+    current_user.account_id == MarketplaceConfig::SUDODEV_ACC_NUMBER || current_user.privilege?(:admin_tasks)
   end
 
 end

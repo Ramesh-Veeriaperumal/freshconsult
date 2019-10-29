@@ -79,6 +79,7 @@ module Ember
       def anonymous_to_trial
         return unless validate_delegator(email: params[cname]['admin_email'])
         ActiveRecord::Base.transaction do
+          current_account.is_anonymous_account = false
           update_admin_related_info
           update_current_user_info
           convert_to_trial

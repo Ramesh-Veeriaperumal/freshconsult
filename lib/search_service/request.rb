@@ -1,6 +1,6 @@
 module SearchService
   class Request
-    ES_TIMEOUT = 10
+    include SearchService::Constants
     attr_accessor :typhoeus_request, :account_id, :additional_info, :logger, :response
 
     def initialize(path, method, uuid, payload, headers, account_id, additional_info = {}, timeout = ES_TIMEOUT)

@@ -25,11 +25,18 @@ module Onboarding::OnboardingHelperMethods
 
   def update_admin_account_config
     account_config = current_account.account_configuration
-    account_config.contact_info[:first_name] = name_from_email
-    account_config.contact_info[:last_name] = name_from_email
-    account_config.contact_info[:email] = params[cname]['admin_email']
-    account_config.billing_emails[:invoice_emails] = [params[cname]['admin_email']]
-    account_config.company_info[:name] = company_name_from_email
+    account_config.contact_info = (account_config.contact_info || {}).merge({
+      first_name: name_from_email,
+      last_name: name_from_email,
+      email: params[cname]['admin_email']
+    })
+    account_config.billing_emails = (account_config.billing_emails || {}).merge({
+      invoice_emails: [params[cname]['admin_email']]
+    })
+    account_config.company_info = (account_config.company_info || {}).merge({
+      name: company_name_from_email,
+      anonymous_account: current_account.is_anonymous_account
+    })    
     account_config.save!
   end
 

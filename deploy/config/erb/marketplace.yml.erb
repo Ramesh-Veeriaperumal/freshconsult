@@ -33,5 +33,7 @@ defaults: &defaults
   mkp_oauth_conn_timeout: 5
   integrations_cache_invd_time: 60
   custom_apps_cache_invd_time: <%= node[:ymls][:marketplace][:custom_app_invalid_time] %>
-  fresh_parent: "fdk/2.0/assets/fresh_parent.js"
+  fresh_parent: "fdk/2.0/assets/fresh_parent-v1.5.1.js"
   tenant_id: <%= node[:ymls][:marketplace][:tenant_id] %>
+  sudodev_acc_number: <%= node[:ymls][:marketplace][:sudodev_acc_number] %>
+  
