@@ -354,6 +354,10 @@ email_notification_bcc:
 # RESPONSE
 meta:
   $ref: './response/meta.yaml'
+next_page_meta:
+  $ref: './response/next_page_meta.yaml'
+rank:
+  $ref: ./response/rank.yaml
 automation_rule_meta:
   $ref: './resource/automation_rule_meta.yaml'
 ner_api_data:

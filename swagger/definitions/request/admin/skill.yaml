@@ -2,14 +2,18 @@ type: object
 properties:
   name:
     type: string
-  position:
-    type: integer
-  agent_ids:
+    example: 'Indian Customer Experts'
+  agents:
     type: array
     items:
-      type: integer
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
   match_type:
     type: string
+    enum: ['all', 'any']
   conditions:
     type: array
     items:
@@ -17,12 +21,17 @@ properties:
       properties:
         resource_type:
           type: string
+          enum: ['ticket', 'contact', 'company']
         field_name:
           type: string
+          example: 'cf_continent'
         operator:
           type: string
+          enum: ['in', 'not_in', 'is', 'is_not']
+          example: 'is'
         value:
           type: string
+          example: 'Asia'
         nested_fields:
           type: object
           properties:
@@ -31,14 +40,18 @@ properties:
               properties:
                 field_name:
                   type: string
+                  example: 'cf_country'
                 value:
                   type: string
+                  example: 'India'
             level3:
               type: object
               properties:
                 field_name:
                   type: string
+                  example: 'cf_state'
                 value:
                   type: string
+                  example: 'Tamil Nadu'
 required:
   - name

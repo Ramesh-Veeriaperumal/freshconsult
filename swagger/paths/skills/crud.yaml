@@ -11,6 +11,10 @@ get:
         $ref: '#/definitions/skill_response'
     404:
       description: Skill not found
+    500:
+      description: Internal server error
+      schema:
+        $ref: '#/definitions/internal_server_error'
 delete:
   tags: ['skills']
   summary: Delete skill
@@ -22,6 +26,10 @@ delete:
       description: Success
     404:
       description: Skill not found
+    500:
+      description: Internal server error
+      schema:
+        $ref: '#/definitions/internal_server_error'
 put:
   tags: ['skills']
   summary: Update skill
@@ -44,3 +52,7 @@ put:
       description: Bad Request Error
       schema:
         $ref: '#/definitions/bad_request_error'
+    500:
+      description: Internal server error
+      schema:
+        $ref: '#/definitions/internal_server_error'

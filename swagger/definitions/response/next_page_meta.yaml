@@ -1,0 +1,5 @@
+type: object
+title: meta
+properties:
+  next_page:
+    type: boolean
