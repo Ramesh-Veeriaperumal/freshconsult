@@ -5,6 +5,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   before_validation :validate_assoc_parent_ticket, :if => :child_ticket?
   before_validation :validate_related_tickets, :on => :create, :if => :tracker_ticket?
   before_validation :validate_tracker_ticket, :on => :update, :if => :tracker_ticket_id
+  before_validation :fetch_and_validate_file_field_attachment_ids, only: [:create, :update]
 
   before_create :set_outbound_default_values, :if => :outbound_email?
 
@@ -1142,4 +1143,21 @@ private
   def schema_less_ticket_changes
     schema_less_ticket.schema_less_was == schema_less_ticket.attributes
   end
+
+    def fetch_and_validate_file_field_attachment_ids
+      account_file_fields = account.ticket_fields.select { |ticket_field| ticket_field.field_type == Helpdesk::TicketField::CUSTOM_FILE }
+      self.file_field_attachment_ids = account_file_fields.map { |file_field| self.safe_send(file_field.name) }.compact
+      return if self.file_field_attachment_ids.empty?
+
+      total_file_size = account.attachments.where(id: self.file_field_attachment_ids).collect(&:content_file_size).sum
+      max_attachment_size = account.attachment_limit.megabytes
+      if total_file_size > max_attachment_size
+        self.errors[:ticket] << :exceeded_total_file_field_attachments_size
+        return false
+      end
+      if self.file_field_attachment_ids.size != self.file_field_attachment_ids.uniq.size
+        self.errors[:ticket] << :non_unique_file_field_attachment_ids
+        return false
+      end
+    end
 end

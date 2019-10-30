@@ -51,7 +51,12 @@ class CustomFieldValidator < ActiveModel::EachValidator
     end
 
     alias_method :validate_encrypted_text, :validate_custom_text
-    alias_method :validate_custom_file, :validate_custom_text
+
+    # validator for file field
+    def validate_custom_file(record, field_name)
+      file_options = construct_options(ignore_string: :allow_string_param, attributes: field_name, only_integer: true, required: @is_required)
+      FileFieldValidator.new(file_options).validate(record)
+    end
 
     # Required validator for string field based on condition
     def validate_custom_paragraph(record, field_name)

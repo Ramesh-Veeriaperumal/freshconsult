@@ -9,6 +9,8 @@ module AttachmentConstants
 
   WIDGET_ATTACHMENT_TYPE = 'WidgetDraft'.freeze
 
+  FILE_TICKET_FIELD = 'Helpdesk::FileTicketField'.freeze
+
   INLINE_ATTACHABLE_TYPES = [
     [:ticket,              'Tickets Image',            1],
     [:forum,               'Forums Image',             2],
