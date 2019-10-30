@@ -313,6 +313,7 @@ class VaRule < ActiveRecord::Base
       @associated_ticket.prime_ticket_args = evaluate_on.prime_ticket_args
       @associated_ticket.prime_save
     end
+    true
   end
 
   def associated_ticket(ticket, association_type)
