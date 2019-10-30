@@ -3,10 +3,6 @@ module Widget
     class SolutionsController < ApiSearch::SolutionsController
       include WidgetConcern
 
-      skip_before_filter :check_privilege
-
-      before_filter :check_feature
-      before_filter :validate_widget
       before_filter :set_current_language
 
       def results

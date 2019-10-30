@@ -54,6 +54,16 @@ class User < ActiveRecord::Base
     end
   end
 
+  api_accessible :widget do |u|
+    u.add :id
+    u.add :name
+    u.add :email
+    u.add :phone
+    u.add :mobile
+    u.add :language
+    u.add :external_id
+  end
+
   def central_payload_type
     action = [:create, :update, :destroy].find{ |action| 
       transaction_include_action? action }

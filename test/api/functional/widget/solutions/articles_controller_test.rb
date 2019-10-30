@@ -131,6 +131,94 @@ module Widget
         @account.unstub(:multilingual?)
       end
 
+      def test_show_article_help_widget_login
+        @account.launch :help_widget_login
+        @account.stubs(:multilingual?).returns(false)
+        get :show, controller_params(id: @article.parent_id)
+        assert_response 200
+        match_json(widget_article_show_pattern(@article))
+        ar_article = @account.solution_articles.where(parent_id: @article.parent_id, language_id: Language.find_by_code('en').id).first
+        match_json(widget_article_show_pattern(ar_article))
+        solution_folder_meta = @article.parent.solution_folder_meta
+        solution_category_meta_id = solution_folder_meta.solution_category_meta_id
+        help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
+        assert_equal solution_folder_meta.visibility, ALL_USER_VISIBILITY
+        result = parse_response(@response.body)
+        assert_equal result['title'], 'en Test'
+        assert_nil Language.current
+      ensure
+        @account.unstub(:multilingual?)
+        @account.rollback :help_widget_login
+      end
+
+      def test_show_article_with_x_widget_auth_user_present
+        User.unstub(:current)
+        @account.launch :help_widget_login
+        @account.stubs(:multilingual?).returns(false)
+        timestamp = Time.zone.now.utc.iso8601
+        User.any_instance.stubs(:agent?).returns(false)
+        secret_key = SecureRandom.hex
+        @account.stubs(:help_widget_secret).returns(secret_key)
+        user = add_new_user(@account)
+        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
+        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+        get :show, controller_params(id: @article.parent_id)
+        assert_response 200
+        match_json(widget_article_show_pattern(@article))
+        ar_article = @account.solution_articles.where(parent_id: @article.parent_id, language_id: Language.find_by_code('en').id).first
+        match_json(widget_article_show_pattern(ar_article))
+        solution_folder_meta = @article.parent.solution_folder_meta
+        solution_category_meta_id = solution_folder_meta.solution_category_meta_id
+        help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
+        assert_equal solution_folder_meta.visibility, ALL_USER_VISIBILITY
+        result = parse_response(@response.body)
+        assert_equal result['title'], 'en Test'
+        assert_nil Language.current
+        assert_equal User.current.id, user.id
+      ensure
+        @account.unstub(:multilingual?)
+        @account.rollback :help_widget_login
+        @account.unstub(:help_widget_secret)
+        User.any_instance.unstub(:agent?)
+        User.stubs(:current).returns(nil)
+      end
+
+      def test_show_article_with_x_widget_auth_user_absent
+        @account.launch :help_widget_login
+        @account.stubs(:multilingual?).returns(false)
+        timestamp = Time.zone.now.utc.iso8601
+        User.any_instance.stubs(:agent?).returns(false)
+        secret_key = SecureRandom.hex
+        @account.stubs(:help_widget_secret).returns(secret_key)
+        auth_token = JWT.encode({ name: 'Padmashri', email: 'pdfgdfftom@freshworks.com', timestamp: timestamp }, secret_key)
+        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+        get :show, controller_params(id: @article.parent_id)
+        assert_response 404
+      ensure
+        @account.unstub(:multilingual?)
+        @account.rollback :help_widget_login
+        @account.unstub(:help_widget_secret)
+        User.any_instance.unstub(:agent?)
+      end
+
+      def test_show_article_with_wrong_x_widget_auth
+        @account.launch :help_widget_login
+        @account.stubs(:multilingual?).returns(false)
+        timestamp = Time.zone.now.utc.iso8601
+        User.any_instance.stubs(:agent?).returns(false)
+        secret_key = SecureRandom.hex
+        @account.stubs(:help_widget_secret).returns(secret_key)
+        auth_token = JWT.encode({ name: 'Padmashri', email: 'praaji.longbottom@freshworks.com', timestamp: timestamp }, secret_key + 'oyo')
+        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+        get :show, controller_params(id: @article.parent_id)
+        assert_response 401
+      ensure
+        @account.unstub(:multilingual?)
+        @account.rollback :help_widget_login
+        @account.unstub(:help_widget_secret)
+        User.any_instance.unstub(:agent?)
+      end
+
       def test_show_article_with_primary_language
         create_widget(language: 'es')
         create_articles

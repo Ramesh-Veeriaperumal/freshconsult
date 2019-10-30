@@ -982,6 +982,7 @@ Helpkit::Application.routes.draw do
     resources :ticket_fields, controller: 'widget/ticket_fields', only: [:index]
     resources :attachments, controller: 'widget/attachments', only: [:create]
     namespace :widget, path: '' do
+      resources :bootstrap, controller: 'bootstrap', only: [:index]
       namespace :search do
         resources :solutions, controller: 'solutions' do
           collection do

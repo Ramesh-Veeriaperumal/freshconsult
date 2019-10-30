@@ -5,7 +5,6 @@ module Widget
 
       RELAXED_ACTIONS = [:suggested_articles, :show].freeze
 
-      skip_before_filter :check_privilege
       skip_before_filter :load_object, only: [:suggested_articles]
 
       decorate_views(decorate_objects: [:suggested_articles])

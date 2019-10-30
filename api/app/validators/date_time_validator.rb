@@ -12,6 +12,11 @@ class DateTimeValidator < ApiValidator
   DATE_TIME_REGEX        = /^\d{4}-\d{2}-\d{2}/
   DATE_REGEX             = /^\d{4}-\d{2}-\d{2}$/
 
+  def validate_date_time(value)
+    @value = value
+    parse_time
+  end
+
   private
 
     def invalid?

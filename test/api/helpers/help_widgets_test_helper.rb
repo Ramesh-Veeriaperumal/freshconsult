@@ -87,6 +87,23 @@ module HelpWidgetsTestHelper
     }
   end
 
+  def widget_bootstrap_pattern(user, expire_at, email = nil)
+    user_hash = {
+      user: {
+        id: user.id,
+        name: user.name,
+        email: email || user.email,
+        phone: user.phone,
+        mobile: user.mobile,
+        external_id: user.external_id,
+        language: user.language
+      },
+      meta: {
+        expire_at: expire_at
+      }
+    }
+  end
+
   def widget_show_pattern(widget)
     ret_hash = {
       id: widget.id,

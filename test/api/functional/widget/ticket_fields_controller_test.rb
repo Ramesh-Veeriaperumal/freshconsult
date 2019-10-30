@@ -34,6 +34,63 @@ module Widget
       assert JSON.parse(response.body).count > 1
     end
 
+    def test_index_without_x_widget_auth
+      @account.launch :help_widget_login
+      get :index, controller_params
+      assert_response 200
+      assert JSON.parse(response.body).count > 1
+    ensure
+      @account.rollback :help_widget_login
+    end
+
+    def test_index_with_correct_x_widget_auth_user_present
+      @account.launch :help_widget_login
+      timestamp = Time.zone.now.utc.iso8601
+      User.any_instance.stubs(:agent?).returns(false)
+      user = add_new_user(@account)
+      secret_key = SecureRandom.hex
+      @account.stubs(:help_widget_secret).returns(secret_key)
+      auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
+      @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+      get :index, controller_params
+      assert_response 200
+      assert_equal User.current.id, user.id
+      assert JSON.parse(response.body).count > 1
+    ensure
+      @account.rollback :help_widget_login
+      @account.unstub(:help_widget_secret)
+    end
+
+    def test_index_with_correct_x_widget_auth_user_absent
+      @account.launch :help_widget_login
+      timestamp = Time.zone.now.utc.iso8601
+      User.any_instance.stubs(:agent?).returns(false)
+      secret_key = SecureRandom.hex
+      @account.stubs(:help_widget_secret).returns(secret_key)
+      auth_token = JWT.encode({ name: 'Padmashri', email: 'praajiddslongbottom@freshworks.com', timestamp: timestamp }, secret_key)
+      @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+      get :index, controller_params
+      assert_response 404
+    ensure
+      @account.rollback :help_widget_login
+      @account.unstub(:help_widget_secret)
+    end
+
+    def test_index_with_wrong_x_widget_auth
+      @account.launch :help_widget_login
+      timestamp = Time.zone.now.utc.iso8601
+      User.any_instance.stubs(:agent?).returns(false)
+      secret_key = SecureRandom.hex
+      @account.stubs(:help_widget_secret).returns(secret_key)
+      auth_token = JWT.encode({ name: 'Padmashri', email: 'praaji.longbottom@freshworks.com', timestamp: timestamp }, secret_key + 'opo')
+      @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+      get :index, controller_params
+      assert_response 401
+    ensure
+      @account.rollback :help_widget_login
+      @account.unstub(:help_widget_secret)
+    end
+
     def test_index_default_field_name
       get :index, controller_params
       assert_response 200

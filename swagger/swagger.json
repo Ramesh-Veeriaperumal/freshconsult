@@ -11463,6 +11463,76 @@
         }
       }
     },
+    "/widget/bootstrap": {
+      "get": {
+        "tags": [
+          "Help Widget"
+        ],
+        "summary": "Bootstrap",
+        "description": "Gives user details as response. If user with the given email is not present, a new user is created.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Widget-Auth",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "user": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string"
+                    },
+                    "external_id": {
+                      "type": "string"
+                    },
+                    "language": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "meta": {
+                  "type": "object",
+                  "properties": {
+                    "expire_at": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "401": {
+            "description": "Invalid Credentials"
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/business_hours": {
       "get": {
         "summary": "Business Hours",

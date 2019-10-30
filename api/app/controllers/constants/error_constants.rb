@@ -25,7 +25,8 @@ module ErrorConstants
   API_HTTP_ERROR_STATUS_BY_CODE = {
     duplicate_value: 409,
     access_denied: 403,
-    twitter_app_blocked: 400
+    twitter_app_blocked: 400,
+    unauthorized: 401
   }.freeze
 
   # Reverse mapping, this will result in:
