@@ -55,7 +55,7 @@ module Solution::ArticleVersioning
     end
 
     def create_version?
-      !latest_version || latest_version.user_id != user_id || !same_session?
+      !latest_version || latest_version.user_id != current_user || !same_session?
     end
 
     def latest_version
@@ -86,7 +86,7 @@ module Solution::ArticleVersioning
     def assign_common_attributes(version_record)
       assign_version_no(version_record)
       version_record.exclude_article_payload = @exclude_article_payload
-      version_record.user_id = User.current.id
+      version_record.user_id = current_user
       Solution::ArticleVersion::COMMON_ATTRIBUTES.each do |attribute|
         version_record.safe_send("#{attribute}=", safe_send(attribute))
       end
@@ -101,7 +101,7 @@ module Solution::ArticleVersioning
       assign_common_attributes(version_record)
       version_record.status = status
       mark_unlive if (published? && latest_version) || unpublishing
-      version_record.published_by = User.current.id if published?
+      version_record.published_by = current_user if published?
       version_record.live = published?
       version_record.triggered_from = 'article'
     end
@@ -112,6 +112,11 @@ module Solution::ArticleVersioning
 
     def article_version_scoper
       @article_version_scoper ||= solution_article_versions
+    end
+
+    def current_user
+      @current_user ||= User.current ? User.current.id : modified_by
+      # When migration is run, current user will not be present. We need to take modified_by into consideration for article and user_id for draft
     end
   end
 
@@ -145,5 +150,11 @@ module Solution::ArticleVersioning
     def article_version_scoper
       @article_version_scoper ||= article.solution_article_versions
     end
+
+    def current_user
+      @current_user ||= User.current ? User.current.id : user_id
+      # When migration is run, current user will not be present. We need to take modified_by into consideration for article and user_id for draft
+    end
+
   end
 end
