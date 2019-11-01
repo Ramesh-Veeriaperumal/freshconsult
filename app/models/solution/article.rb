@@ -8,6 +8,7 @@ class Solution::Article < ActiveRecord::Base
   publishable
 
   before_destroy :save_deleted_article_info
+  before_save :encode_emoji_in_articles
   
   include Juixe::Acts::Voteable
   include Search::ElasticSearchIndex
@@ -28,6 +29,7 @@ class Solution::Article < ActiveRecord::Base
   include Solution::UrlSterilize
   include Solution::Activities
   include Solution::ArticleFilterScoper
+  include Solution::SolutionMethods
 
   spam_watcher_callbacks
   rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['solution_articles'] }, :if => lambda{|obj| obj.rl_enabled? }
@@ -37,7 +39,7 @@ class Solution::Article < ActiveRecord::Base
   serialize :seo_data, Hash
   
   attr_accessor :highlight_title, :highlight_desc_un_html, :tags_changed, :prev_tags, :latest_tags, :session, :unpublishing, :false_delete_attachment_trigger, :attachment_added
-
+  alias_attribute :body, :article_body
   attr_accessible :title, :description, :user_id, :status, :import_id, :seo_data, :outdated
 
   validates_presence_of :title, :description, :user_id , :account_id
@@ -81,7 +83,7 @@ class Solution::Article < ActiveRecord::Base
   delegate :visible?, :to => :solution_folder_meta
 
   xss_sanitize only: [:title], plain_sanitizer: [:title]
-  
+
   VOTE_TYPES = [:thumbs_up, :thumbs_down]
 
   VOTES = {

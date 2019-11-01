@@ -15,6 +15,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
                                 :dependent => :destroy,
                                 :before_add => :set_inline_attachable_type
 
+  has_many :file_field_attachments, class_name: 'Helpdesk::Attachment', inverse_of: :attachable,
+                                    conditions: { attachable_type: AttachmentConstants::FILE_TICKET_FIELD },
+                                    foreign_key: 'attachable_id',
+                                    dependent: :destroy,
+                                    before_add: [proc { |ticket, attachment| self.set_file_field_attachments(ticket, attachment) }]
+
   has_many_cloud_files
 
   has_many :shared_attachments,
@@ -144,5 +150,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     ticket_field_data_without_safe_access
   end
-  alias_method_chain :ticket_field_data, :safe_access
+
+    def self.set_file_field_attachments(ticket, attachment)
+      return if attachment.attachable_type == AttachmentConstants::FILE_TICKET_FIELD
+
+      attachment.attachable_type = AttachmentConstants::FILE_TICKET_FIELD
+      file_fields = Account.current.ticket_fields_from_cache.select { |field| field.field_type == Helpdesk::TicketField::CUSTOM_FILE }
+      custom_fields_hash = ticket.custom_fields_hash
+      field = file_fields.find { |x| custom_fields_hash.key?(x.name) && custom_fields_hash[x.name] == attachment.id }
+      attachment.description = field.column_name
+    end
+    alias_method_chain :ticket_field_data, :safe_access
 end

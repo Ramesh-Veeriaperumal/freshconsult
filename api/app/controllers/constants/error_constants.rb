@@ -19,13 +19,16 @@ module ErrorConstants
     max_limit_reached: ['dashboard_limit_exceeded', 'announcement_limit_exceeded', 'widget_limit_exceeded'],
     undo_send_enqueued_alert: ['undo_send_enqueued_alert'],
     undo_send_enqueued_agent_alert: ['undo_send_enqueued_agent_alert'],
-    twitter_app_blocked: ['twitter_write_access_blocked']
+    twitter_app_blocked: ['twitter_write_access_blocked'],
+    exceeded_total_file_field_attachments_size: ['exceeded_total_file_field_attachments_size'],
+    non_unique_file_field_attachment_ids: ['non_unique_file_field_attachment_ids']
   }.freeze
 
   API_HTTP_ERROR_STATUS_BY_CODE = {
     duplicate_value: 409,
     access_denied: 403,
-    twitter_app_blocked: 400
+    twitter_app_blocked: 400,
+    unauthorized: 401
   }.freeze
 
   # Reverse mapping, this will result in:

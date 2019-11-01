@@ -67,7 +67,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :schedule_observer, :required_fields_on_closure, :observer_args, :skip_sbrr_save,
     :sbrr_state_attributes, :escape_liquid_attributes, :update_sla, :sla_on_background,
     :sla_calculation_time, :disable_sla_calculation, :import_ticket, :ocr_update, :skip_ocr_sync,
-    :custom_fields_hash, :thank_you_note_id
+    :custom_fields_hash, :thank_you_note_id, :perform_post_observer_actions, :prime_ticket_args
     # :skip_sbrr_assigner and :skip_sbrr_save can be combined together if needed.
     # Added :system_changes, :activity_type, :misc_changes for activity_revamp -
     # - will be clearing these after activity publish.
@@ -1458,6 +1458,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def requester_language
     requester.language if requester
+  end
+
+  def prime_save
+    round_robin_on_ticket_update(changes) if rr_allowed_on_update?
+    ticket_changes = merge_changes(changes, changes.slice(:responder_id)) 
+    update_old_group_capping(ticket_changes)
+    sla_args = prime_ticket_args[:sla_args].try(:symbolize_keys) if prime_ticket_args.present?
+    if sla_args && sla_args[:sla_on_background] && evaluate_on.is_in_same_sla_state?(sla_args[:sla_state_attributes])
+      update_sla = true
+      sla_calculation_time = sla_args[:sla_calculation_time]
+    end
+    skip_ocr_sync = true
+    self.save
   end
 
   private

@@ -1,0 +1,8 @@
+response_hash = { user: @user.as_api_response(:widget) }
+
+# Email specified in request can be the primary email or one of the secondary emails. We will be sending email specifield in the payload.
+
+response_hash[:user][:email] = @jwt_auth.payload[:email]
+response_hash[:meta] = { expire_at: @jwt_auth.expire_at }
+
+JSON.generate(response_hash)

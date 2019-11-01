@@ -16,6 +16,8 @@ class Solution::Category < ActiveRecord::Base
 
   before_destroy :save_deleted_category_info
 
+  before_save :remove_emoji_in_categories
+
   belongs_to_account
 
   belongs_to :solution_category_meta, 
@@ -103,6 +105,11 @@ class Solution::Category < ActiveRecord::Base
         return false
       end
       return true
+    end
+
+    def remove_emoji_in_categories
+      self.name = UnicodeSanitizer.remove_4byte_chars(self.name)
+      self.description = UnicodeSanitizer.remove_4byte_chars(self.description)
     end
 
     def clear_cache(obj=nil)

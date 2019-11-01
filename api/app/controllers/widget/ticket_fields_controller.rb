@@ -1,9 +1,6 @@
 module Widget
   class TicketFieldsController < Ember::TicketFieldsController
     include WidgetConcern
-    skip_before_filter :check_privilege
-    before_filter :check_feature
-    before_filter :validate_widget
     before_filter :fetch_portal
     before_filter :set_current_language
     before_filter :set_locale

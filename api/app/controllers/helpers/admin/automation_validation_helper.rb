@@ -258,6 +258,11 @@ module Admin::AutomationValidationHelper
     @contact_form_fields ||= Account.current.contact_form.contact_fields_from_cache
   end
 
+  def validate_association_type(name, actual)
+    allowed_types = dispatcher_rule? ? DISPATCHER_CONDITION_TICKET_ASSOCIATION_TYPES : TICKET_ASSOCIATION_TYPES
+    not_included_error(name, allowed_types) unless allowed_types.include?(actual[:value])
+  end
+
   def none_value?(value, is_none_field)
     value == '' && is_none_field
   end

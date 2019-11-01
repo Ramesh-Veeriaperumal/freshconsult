@@ -24,6 +24,15 @@ module AttachmentsTestHelper
                                 attachable_id: params[:attachable_id])
   end
 
+  def create_file_ticket_field_attachment(params = {})
+    @account.attachments.create(content_file_name: params[:content_file_name] || 'image.png',
+                                attachable_type: params[:attachable_type] || 'UserDraft',
+                                attachable_id: params[:attachable_id] || @agent.id,
+                                content_content_type: params[:content_content_type] || 'image/png',
+                                description: params[:description] || Faker::Lorem.characters(10),
+                                content_file_size: params[:content_file_size] || 1024)
+  end
+
   def create_cloud_file_attachment(params = {})
     @account.cloud_files.create(filename: params[:filename] || 'image.jpg',
                                 url: CLOUD_FILE_IMAGE_URL,

@@ -11463,6 +11463,76 @@
         }
       }
     },
+    "/widget/bootstrap": {
+      "get": {
+        "tags": [
+          "Help Widget"
+        ],
+        "summary": "Bootstrap",
+        "description": "Gives user details as response. If user with the given email is not present, a new user is created.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Widget-Auth",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "user": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string"
+                    },
+                    "external_id": {
+                      "type": "string"
+                    },
+                    "language": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "meta": {
+                  "type": "object",
+                  "properties": {
+                    "expire_at": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "401": {
+            "description": "Invalid Credentials"
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/business_hours": {
       "get": {
         "summary": "Business Hours",
@@ -14022,6 +14092,9 @@
                   "allOf": [
                     {
                       "$ref": "#/definitions/meta"
+                    },
+                    {
+                      "$ref": "#/definitions/next_page_meta"
                     }
                   ]
                 }
@@ -14032,6 +14105,12 @@
             "description": "Bad Request Error",
             "schema": {
               "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/internal_server_error"
             }
           }
         }
@@ -14063,6 +14142,12 @@
             "schema": {
               "$ref": "#/definitions/bad_request_error"
             }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/internal_server_error"
+            }
           }
         }
       }
@@ -14088,6 +14173,12 @@
           },
           "404": {
             "description": "Skill not found"
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/internal_server_error"
+            }
           }
         }
       },
@@ -14108,6 +14199,12 @@
           },
           "404": {
             "description": "Skill not found"
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/internal_server_error"
+            }
           }
         }
       },
@@ -14145,6 +14242,12 @@
           },
           "404": {
             "description": "Skill not found"
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/internal_server_error"
+            }
           }
         }
       }
@@ -20009,7 +20112,7 @@
           "items": {
             "type": "object",
             "properties": {
-              "name": {
+              "field_name": {
                 "type": "string"
               },
               "from": {
@@ -20103,6 +20206,20 @@
                               "type": "string"
                             }
                           }
+                        }
+                      }
+                    },
+                    "associated_fields": {
+                      "type": "object",
+                      "properties": {
+                        "field_name": {
+                          "type": "string"
+                        },
+                        "operator": {
+                          "type": "string"
+                        },
+                        "value": {
+                          "type": "integer"
                         }
                       }
                     }
@@ -20219,6 +20336,14 @@
               },
               "office365_text": {
                 "type": "string"
+              },
+              "resource_type": {
+                "type": "string",
+                "enum": [
+                  "same_ticket",
+                  "parent_ticket",
+                  "tracker_ticket"
+                ]
               }
             }
           }
@@ -20421,6 +20546,25 @@
       "properties": {
         "count": {
           "type": "integer"
+        }
+      }
+    },
+    "next_page_meta": {
+      "type": "object",
+      "title": "meta",
+      "properties": {
+        "next_page": {
+          "type": "boolean"
+        }
+      }
+    },
+    "rank": {
+      "type": "object",
+      "title": "rank",
+      "properties": {
+        "rank": {
+          "type": "integer",
+          "example": 1
         }
       }
     },
@@ -27146,19 +27290,27 @@
       "type": "object",
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "example": "Indian Customer Experts"
         },
-        "position": {
-          "type": "integer"
-        },
-        "agent_ids": {
+        "agents": {
           "type": "array",
           "items": {
-            "type": "integer"
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "example": 1
+              }
+            }
           }
         },
         "match_type": {
-          "type": "string"
+          "type": "string",
+          "enum": [
+            "all",
+            "any"
+          ]
         },
         "conditions": {
           "type": "array",
@@ -27166,16 +27318,30 @@
             "type": "object",
             "properties": {
               "resource_type": {
-                "type": "string"
+                "type": "string",
+                "enum": [
+                  "ticket",
+                  "contact",
+                  "company"
+                ]
               },
               "field_name": {
-                "type": "string"
+                "type": "string",
+                "example": "cf_continent"
               },
               "operator": {
-                "type": "string"
+                "type": "string",
+                "enum": [
+                  "in",
+                  "not_in",
+                  "is",
+                  "is_not"
+                ],
+                "example": "is"
               },
               "value": {
-                "type": "string"
+                "type": "string",
+                "example": "Asia"
               },
               "nested_fields": {
                 "type": "object",
@@ -27184,10 +27350,12 @@
                     "type": "object",
                     "properties": {
                       "field_name": {
-                        "type": "string"
+                        "type": "string",
+                        "example": "cf_country"
                       },
                       "value": {
-                        "type": "string"
+                        "type": "string",
+                        "example": "India"
                       }
                     }
                   },
@@ -27195,10 +27363,12 @@
                     "type": "object",
                     "properties": {
                       "field_name": {
-                        "type": "string"
+                        "type": "string",
+                        "example": "cf_state"
                       },
                       "value": {
-                        "type": "string"
+                        "type": "string",
+                        "example": "Tamil Nadu"
                       }
                     }
                   }
@@ -27222,83 +27392,13 @@
     },
     "skill": {
       "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer"
+      "allOf": [
+        {
+          "$ref": "#/definitions/extension_generic"
         },
-        "name": {
-          "type": "string"
-        },
-        "position": {
-          "type": "integer"
-        },
-        "created_at": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "updated_at": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "agent_ids": {
-          "type": "array",
-          "items": {
-            "type": "integer"
-          }
-        },
-        "match_type": {
-          "type": "string"
-        },
-        "conditions": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "resource_type": {
-                "type": "string"
-              },
-              "field_name": {
-                "type": "string"
-              },
-              "operator": {
-                "type": "string"
-              },
-              "value": {
-                "type": "string"
-              },
-              "nested_fields": {
-                "type": "object",
-                "properties": {
-                  "level2": {
-                    "type": "object",
-                    "properties": {
-                      "field_name": {
-                        "type": "string"
-                      },
-                      "value": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "level3": {
-                    "type": "object",
-                    "properties": {
-                      "field_name": {
-                        "type": "string"
-                      },
-                      "value": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
+        {
+          "$ref": "#/definitions/skill_input"
         }
-      },
-      "required": [
-        "name"
       ]
     },
     "skill_response": {
@@ -27306,6 +27406,9 @@
       "allOf": [
         {
           "$ref": "#/definitions/skill"
+        },
+        {
+          "$ref": "#/definitions/rank"
         }
       ]
     },

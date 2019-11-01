@@ -11,7 +11,17 @@ class Admin::DkimConfigurationsController < Admin::AdminController
   MAX_CAP = 6.hours
 
   def index
-    @domain_categories = scoper.active_domains.paginate(:page => params[:page], :per_page =>10)
+    if current_account.launched?(:dkim_email_service)
+      response = configured_domains_from_email_service
+      if es_response_success?(response[:status])
+        @dkim_records = construct_dkim_hash(JSON.parse(response[:text])['result'])
+      else
+        flash[:error] = t('email_configs.dkim.fetch_domain_failed')
+      end
+      @domain_categories = scoper.active_domains.paginate(page: params[:page], per_page: 10)
+    else
+      @domain_categories = scoper.active_domains.paginate(page: params[:page], per_page: 10)
+    end
   end
 
   def create

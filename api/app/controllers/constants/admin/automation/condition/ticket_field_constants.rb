@@ -74,6 +74,10 @@ module Admin::Automation::Condition::TicketFieldConstants
     { name: :contact_name, field_type: :old_text, data_type: :String,
       invalid_rule_types: [1, 4] }.freeze,
     { name: :freddy_suggestion, field_type: :freddy_field_type, data_type: :String,
+      invalid_rule_types: [1, 3] }.freeze,
+    { name: :association_type, field_type: :ticket_association_type, data_type: :Integer,
+      invalid_rule_types: [3] }.freeze,
+    { name: :associated_ticket_count, field_type: :number, data_type: :Integer,
       invalid_rule_types: [1, 3] }.freeze
   ].freeze
 
@@ -100,4 +104,7 @@ module Admin::Automation::Condition::TicketFieldConstants
                              internal_agent_id health_score account_tier industry].freeze
 
   SUPERVISOR_FEATURE_CUSTOM_FIELDS = %i[custom_text custom_paragraph].freeze
+
+  ASSOCIATED_FIELD_NAMES = %w[associated_ticket_count].freeze
+  ASSOCIATED_TICKET_OPERATORS = %w[is is_not greater_than less_than is_any_of is_none_of].freeze
 end

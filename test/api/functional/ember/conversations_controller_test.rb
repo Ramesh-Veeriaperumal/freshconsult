@@ -2532,6 +2532,15 @@ module Ember
       assert_equal count_of_delayed_jobs_before + 1, Delayed::Job.count
     end
 
+    def test_html_to_text_conversion_in_conversations
+      ticket = create_ticket
+      body_html = "<table border='1'><tbody><tr><td>A</td><td>B</td></tr><tr><td>C</td><td>D</td></tr></tbody></table><div>"
+      post :create, construct_params(version: 'private', id: ticket.display_id, body: body_html)
+      response_text = JSON.parse(response.body)['body_text']
+      required_text = 'A  B  C  D'
+      assert_equal response_text, required_text
+    end
+
     private
 
       def archive_note_payload(note, payload)

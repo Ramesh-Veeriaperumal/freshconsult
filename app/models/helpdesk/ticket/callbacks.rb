@@ -5,6 +5,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   before_validation :validate_assoc_parent_ticket, :if => :child_ticket?
   before_validation :validate_related_tickets, :on => :create, :if => :tracker_ticket?
   before_validation :validate_tracker_ticket, :on => :update, :if => :tracker_ticket_id
+  before_validation :fetch_and_validate_file_field_attachment_ids, only: [:create, :update]
 
   before_create :set_outbound_default_values, :if => :outbound_email?
 
@@ -72,6 +73,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :update_capping_on_create, :update_count_for_skill, on: :create, if: -> { outbound_email? }
   after_commit :send_outbound_email, on: :create, if: -> { outbound_email? && import_ticket.blank? }
   after_commit :trigger_observer_events, on: :update, :if => :execute_observer?
+  after_commit :trigger_post_observer_actions, on: :update, if: -> { perform_post_observer_actions.present? }
   after_commit :enqueue_sla_calculation, :if => :enqueue_sla_calculation?
   after_commit :notify_on_update, :update_activity, :stop_timesheet_timers, :fire_update_event, on: :update
   #after_commit :regenerate_reports_data, on: :update, :if => :regenerate_data?
@@ -964,6 +966,31 @@ private
     filter_observer_events(true)
   end
 
+  def trigger_post_observer_actions
+    va_rules_after_save_actions.each do |action|
+      klass = action[:klass].constantize
+      klass.safe_send(action[:method], action[:args])
+    end
+
+    if Account.current.skill_based_round_robin_enabled?
+      if prime_ticket_args[:enqueued_class] == 'Helpdesk::Ticket'
+        sbrr_state_attributes = prime_ticket_args[:sbrr_state_attributes]
+        enqueue_skill_based_round_robin if should_enqueue_sbrr_job? && !skip_sbrr
+      elsif should_enqueue_sbrr_job? && !skip_sbrr
+        enqueue_skill_based_round_robin
+      end
+    end
+
+    if Account.current.omni_channel_routing_enabled?
+      skip_ocr_sync = false
+      if prime_ticket_args[:enqueued_class] == 'Helpdesk::Ticket'
+        sync_task_changes_to_ocr if allow_ocr_sync?
+      elsif allow_ocr_sync? && !skip_sbrr
+        sync_task_changes_to_ocr
+      end
+    end
+  end
+
   def execute_observer?
     @execute_observer ||= begin
       _execute_observer = user_present? && !disable_observer_rule && !import_ticket && !service_task?
@@ -1116,4 +1143,21 @@ private
   def schema_less_ticket_changes
     schema_less_ticket.schema_less_was == schema_less_ticket.attributes
   end
+
+    def fetch_and_validate_file_field_attachment_ids
+      account_file_fields = account.ticket_fields.select { |ticket_field| ticket_field.field_type == Helpdesk::TicketField::CUSTOM_FILE }
+      self.file_field_attachment_ids = account_file_fields.map { |file_field| self.safe_send(file_field.name) }.compact
+      return if self.file_field_attachment_ids.empty?
+
+      total_file_size = account.attachments.where(id: self.file_field_attachment_ids).collect(&:content_file_size).sum
+      max_attachment_size = account.attachment_limit.megabytes
+      if total_file_size > max_attachment_size
+        self.errors[:ticket] << :exceeded_total_file_field_attachments_size
+        return false
+      end
+      if self.file_field_attachment_ids.size != self.file_field_attachment_ids.uniq.size
+        self.errors[:ticket] << :non_unique_file_field_attachment_ids
+        return false
+      end
+    end
 end

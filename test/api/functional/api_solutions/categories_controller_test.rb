@@ -433,5 +433,14 @@ module ApiSolutions
       pattern = categories.map { |category| solution_category_pattern(category) }
       match_json(pattern)
     end
+
+    def test_emoji_in_category_name_and_description
+      post :create, construct_params({},  name: 'hey 😅 category name', description: 'hey 😅 category description')
+      assert_response 201
+      result = parse_response(@response.body)
+      assert_equal "http://#{@request.host}/api/v2/solutions/categories/#{result['id']}", response.headers['Location']
+      assert_equal UnicodeSanitizer.remove_4byte_chars('hey 😅 category name'), result['name']
+      assert_equal UnicodeSanitizer.remove_4byte_chars('hey 😅 category description'), result['description']
+    end
   end
 end

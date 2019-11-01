@@ -178,8 +178,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
         custom_field = {
           name: field.name,
           label: field.label,
-          type: field.flexifield_coltype,
-          value: field.field_type == 'custom_date' ? utc_format(field_value) : field_value,
+          type: map_field_type(field),
+          value: map_field_value(field, field_value),
           column: field.column_name
         }
         if field.flexifield_coltype == 'dropdown'
@@ -198,8 +198,26 @@ class Helpdesk::Ticket < ActiveRecord::Base
     arr
   end
 
+  def map_field_type(ticket_field)
+    ticket_field.field_type == 'custom_file' ? 'file' : ticket_field.flexifield_coltype
+  end
+
+  def map_field_value(ticket_field, value)
+    if ticket_field.field_type == 'custom_date'
+      utc_format(value)
+    elsif ticket_field.field_type == 'custom_file' && value.present?
+      value.to_i
+    else
+      value
+    end
+  end
+
   def custom_ticket_fields
     @custom_tkt_fields ||= account.ticket_fields_from_cache.reject(&:default)
+  end
+
+  def file_ticket_fields
+    custom_ticket_fields.select { |x| x.field_type == 'custom_file' }
   end
 
   def resolution_time_by_chrs
@@ -242,10 +260,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
     # Handling changes to custom_fields - flexifield name should be replaced with flexifield alias
     flexifield_changes = changes.select { |k, v| k.to_s.starts_with?(*FLEXIFIELD_PREFIXES) }
     return changes if flexifield_changes.blank?
+
+    file_fields = file_ticket_fields.map(&:column_name)
     flexifield_changes.each_pair do |key, val|
-      changes[custom_field_name_mapping[key.to_s]] = val
+      changes[custom_field_name_mapping[key.to_s]] = file_fields.include?(key.to_s) ? convert_file_field_values(val) : val
     end
     changes.except(*flexifield_changes.keys)
+  end
+
+  def convert_file_field_values(values)
+    values.map! { |x| x.to_i if x.present? }
   end
 
   def status_modified?

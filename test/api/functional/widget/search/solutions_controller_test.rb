@@ -75,6 +75,98 @@ module Widget
         assert_nil Language.current
       end
 
+      def test_results_help_widget_login
+        @account.launch :help_widget_login
+        stub_private_search_response([@article]) do
+          post :results, construct_params(version: 'widget', term: @article.title, limit: 3)
+        end
+        assert_response 200
+        solution_folder_meta = @article.parent.solution_folder_meta
+        solution_category_meta_id = solution_folder_meta.solution_category_meta_id
+        help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
+        assert_equal solution_folder_meta.visibility, ALL_USER_VISIBILITY
+        assert_equal [widget_article_search_pattern(@article)].to_json, response.body
+        assert_nil Language.current
+      ensure
+        @account.rollback :help_widget_login
+      end
+
+      def test_results_with_x_widget_auth_user_present
+        @account.launch :help_widget_login
+        timestamp = Time.zone.now.utc.iso8601
+        User.any_instance.stubs(:agent?).returns(false)
+        secret_key = SecureRandom.hex
+        @account.stubs(:help_widget_secret).returns(secret_key)
+        user = add_new_user(@account)
+        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
+        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+        stub_private_search_response([@article]) do
+          post :results, construct_params(version: 'widget', term: @article.title, limit: 3)
+        end
+        assert_response 200
+        solution_folder_meta = @article.parent.solution_folder_meta
+        solution_category_meta_id = solution_folder_meta.solution_category_meta_id
+        help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
+        assert_equal solution_folder_meta.visibility, ALL_USER_VISIBILITY
+        assert_equal [widget_article_search_pattern(@article)].to_json, response.body
+        assert_nil Language.current
+        assert_equal User.current.id, user.id
+      ensure
+        @account.rollback :help_widget_login
+        @account.unstub(:help_widget_secret)
+        User.any_instance.unstub(:agent?)
+      end
+
+      def test_results_with_x_widget_auth_user_absent
+        @account.launch :help_widget_login
+        timestamp = Time.zone.now.utc.iso8601
+        User.any_instance.stubs(:agent?).returns(false)
+        secret_key = SecureRandom.hex
+        @account.stubs(:help_widget_secret).returns(secret_key)
+        auth_token = JWT.encode({ name: 'Padmashri', email: 'praajifflongbottom@freshworks.com', timestamp: timestamp }, secret_key)
+        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+        stub_private_search_response([@article]) do
+          post :results, construct_params(version: 'widget', term: @article.title, limit: 3)
+        end
+        assert_response 404
+      ensure
+        @account.rollback :help_widget_login
+        @account.unstub(:help_widget_secret)
+        User.any_instance.unstub(:agent?)
+      end
+
+      def test_results_with_wrong_x_widget_auth
+        @account.launch :help_widget_login
+        timestamp = Time.zone.now.utc.iso8601
+        User.any_instance.stubs(:agent?).returns(false)
+        secret_key = SecureRandom.hex
+        @account.stubs(:help_widget_secret).returns(secret_key)
+        auth_token = JWT.encode({ name: 'Padmashri', email: 'praajingbottom@freshworks.com', timestamp: timestamp }, secret_key + 'oyo')
+        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+        stub_private_search_response([@article]) do
+          post :results, construct_params(version: 'widget', term: @article.title, limit: 3)
+        end
+        assert_response 401
+      ensure
+        @account.rollback :help_widget_login
+        @account.unstub(:help_widget_secret)
+        User.any_instance.unstub(:agent?)
+      end
+
+      def test_results_widget_authentication
+        @account.launch :help_widget_login
+        stub_private_search_response([@article]) do
+          post :results, construct_params(version: 'widget', term: @article.title, limit: 3)
+        end
+        assert_response 200
+        solution_folder_meta = @article.parent.solution_folder_meta
+        solution_category_meta_id = solution_folder_meta.solution_category_meta_id
+        help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
+        assert_equal solution_folder_meta.visibility, ALL_USER_VISIBILITY
+        assert_equal [widget_article_search_pattern(@article)].to_json, response.body
+        assert_nil Language.current
+      end
+
       def test_results_with_invalid_term
         stub_private_search_response([]) do
           post :results, construct_params(version: 'widget', term: 'no results', limit: 3)

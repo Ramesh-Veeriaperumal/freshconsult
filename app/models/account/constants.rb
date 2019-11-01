@@ -269,7 +269,7 @@ class Account < ActiveRecord::Base
       close_validation: false, pjax_reload: false, one_hop: false, lifecycle_report: false,
       service_writes: false, service_reads: false, disable_banners: false,
       admin_only_mint: false, send_emails_via_fd_email_service_feature: false,
-      user_notifications: false, freshplug_enabled: false, dkim: false,
+      user_notifications: false, freshplug_enabled: false, dkim: false, dkim_email_service: false,
       sha1_enabled: false, disable_archive: false, sha256_enabled: false,
       auto_ticket_export: false, select_all: false, facebook_realtime: false,
       :"Freshfone Call Tracker" => false, ticket_contact_export: false, field_agent_availability: false,
@@ -304,11 +304,10 @@ class Account < ActiveRecord::Base
       recalculate_daypass: false, prevent_wc_ticket_create: true, allow_wildcard_ticket_create: false,
       attachment_redirect_expiry: false, solutions_agent_portal: false, solutions_agent_metrics: false,
       requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false, supervisor_custom_status: false,
-      sandbox_temporary_offset: false, downgrade_policy: false, skip_posting_to_fb: false, mentions_to_tms: false,
-      allow_update_agent: false, facebook_dm_outgoing_attachment: false, hide_mailbox_error_from_agents: false,
-      facebook_post_outgoing_attachment: false, outgoing_tweets_to_tms: false, incoming_mentions_in_tms: false, 
-      prevent_lang_detect_for_spam: false, jira_onpremise_reporter: false, support_ticket_rate_limit: false, sidekiq_logs_to_central: false, portal_central_publish: false
-
+      sandbox_temporary_offset: false, downgrade_policy: false, skip_posting_to_fb: true, mentions_to_tms: false,
+      allow_update_agent: false, facebook_dm_outgoing_attachment: true, hide_mailbox_error_from_agents: false,
+      facebook_post_outgoing_attachment: true, outgoing_tweets_to_tms: false, incoming_mentions_in_tms: false, 
+      prevent_lang_detect_for_spam: false, jira_onpremise_reporter: false, support_ticket_rate_limit: false, sidekiq_logs_to_central: false, portal_central_publish: false, encode_emoji_in_solutions: false
     }, :merge
   )
 

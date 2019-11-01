@@ -41,7 +41,8 @@ class VaRule < ActiveRecord::Base
 
   attr_writer :conditions, :actions, :events, :performer, :rule_operator,
               :rule_performer, :rule_events, :rule_conditions
-  attr_accessor :triggered_event, :response_time, :affected_tickets_count, :frontend_positions
+  attr_accessor :triggered_event, :response_time, :affected_tickets_count, :frontend_positions,
+                :current_evaluate_on_id
 
   attr_accessible :name, :description, :match_type, :active, :filter_data, :action_data, :rule_type, :position
 
@@ -116,11 +117,11 @@ class VaRule < ActiveRecord::Base
       Va::Event.new(e.symbolize_keys, account) } if has_condition_data?
    end
 
-  def rule_conditions(with_dispatcher_key = nil)
+  def rule_conditions(with_dispatcher_key = nil, current_evaluate_on = false)
     return unless has_condition_data?
     conditions = []
     if observer_rule? || dispatchr_rule?
-      modify_condition_sets(with_dispatcher_key)
+      modify_condition_sets(with_dispatcher_key, current_evaluate_on)
       conditions = condition_sets
     elsif supervisor_rule?
       conditions = condition_data
@@ -128,18 +129,16 @@ class VaRule < ActiveRecord::Base
     @rule_conditions ||= conditions
   end
 
-  def modify_condition_sets(with_dispatcher_key = nil)
+  def modify_condition_sets(with_dispatcher_key = nil, current_evaluate_on = false)
     condition_sets.each do |set|
       if set.is_a?(Hash) && (set.key?(:any) || set.key?(:all))
         set.each_pair do |_, conditions|
           conditions.each do |condition|
-            field_type(condition)
-            fetch_dispatcher_column(condition, condition[:name]) if with_dispatcher_key
+            modify_condition(condition, with_dispatcher_key, current_evaluate_on)
           end
         end
       else
-        field_type(set)
-        fetch_dispatcher_column(set, set[:name]) if with_dispatcher_key
+        modify_condition(set, with_dispatcher_key, current_evaluate_on)
       end
     end
   end
@@ -149,8 +148,18 @@ class VaRule < ActiveRecord::Base
     condition_sets.present? ? condition_sets.first[1] : {}
   end
 
+  def modify_condition(condition, with_dispatcher_key, current_evaluate_on)
+    field_type(condition)
+    evaluate_on_id(condition) if current_evaluate_on
+    fetch_dispatcher_column(condition, condition[:name]) if with_dispatcher_key
+  end
+
   def field_type(condition)
     condition[:field_type] = fetch_field_type(condition)
+  end
+
+  def evaluate_on_id(condition)
+    condition[:current_evaluate_on_id] = self.current_evaluate_on_id
   end
 
   def fetch_dispatcher_column(condition, name)
@@ -260,8 +269,9 @@ class VaRule < ActiveRecord::Base
 
   def check_rule_conditions(evaluate_on, actions=nil, doer=nil)
     is_a_match = false
+    self.current_evaluate_on_id = evaluate_on.id
     benchmark { is_a_match = RuleEngine::NestedCondition.new(evaluate_on,
-                              rule_operator).process_block(rule_conditions(true)) }
+                              rule_operator).process_block(rule_conditions(true, true)) }
     is_a_match = true if rule_conditions.blank? && observer_rule?
     Va::Logger::Automation.log("rule condition matched=#{is_a_match}", true)
     trigger_actions(evaluate_on, doer) if is_a_match
@@ -291,7 +301,31 @@ class VaRule < ActiveRecord::Base
     @triggered_event ||= TICKET_CREATED_EVENT
     add_rule_to_system_changes(evaluate_on) if evaluate_on.respond_to?(:system_changes)
     add_thank_you_note_to_system_changes(evaluate_on) if Thread.current[:thank_you_note].present?
-    actions.each { |a| a.trigger(evaluate_on, doer, triggered_event) }
+    actions.each do |action|
+      association_type = action.act_hash[:evaluate_on]
+      ticket = PRIME_TICKETS.include?(association_type) ? associated_ticket(evaluate_on, association_type) : evaluate_on
+      if ticket.present?
+        action.trigger(ticket, doer, triggered_event)
+      end
+    end
+    if @associated_ticket.present?
+      @associated_ticket.perform_post_observer_actions = true
+      @associated_ticket.prime_ticket_args = evaluate_on.prime_ticket_args
+      @associated_ticket.prime_save
+    end
+    true
+  end
+
+  def associated_ticket(ticket, association_type)
+    @associated_ticket ||= begin
+      assoc_ticket = if association_type == 'parent_ticket'
+        ticket.associated_prime_ticket('child')
+      elsif association_type == 'tracker_ticket'
+        ticket.associated_prime_ticket('related')
+      end
+      add_rule_to_system_changes(assoc_ticket)
+      assoc_ticket
+    end
   end
 
   def trigger_actions_for_validation(evaluate_on, doer=nil)

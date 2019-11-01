@@ -11,6 +11,8 @@ module Admin::Automation::ConditionHelper
   end
 
   def validate_condition_value(expected, actual)
+    case_sensitive_validation(expected, actual) if actual.key?(:case_sensitive)
+    associated_fields_validation(expected, actual) if actual.key?(:associated_fields)
     expecting_value, expected_data_type = validate_condition_operator(expected, actual)
     if expecting_value
       if actual.key?(:value)
@@ -20,6 +22,7 @@ module Admin::Automation::ConditionHelper
                                                            EMAIL_VALIDATOR_OPERATORS.include?(actual[:operator].to_sym)
         validate_date(expected[:name], actual[:value]) if expected[:field_type] == :date && is_expected_data_type
         validate_business_hours(expected[:name], actual) if BUSINESS_HOURS_FIELDS.include?(expected[:name])
+        validate_association_type(expected[:name], actual) if expected[:name] == :association_type
       else
         missing_field_error(expected[:name], 'value')
       end
@@ -31,7 +34,6 @@ module Admin::Automation::ConditionHelper
   def validate_condition_operator(expected, actual)
     operator_list = operator_list_by_field_type(expected)
     operator = operator_list.include?((actual[:operator].to_sym rescue actual[:operator]))
-    case_sensitive_validation(expected, actual) if actual.key?(:case_sensitive)
     if operator.present?
       expecting_value = !NO_VALUE_EXPECTING_OPERATOR.include?(actual[:operator].to_sym)
       text_field_value = SINGLE_VALUE_EXPECTING_OPERATOR.include?(actual[:operator].to_sym)
@@ -64,6 +66,24 @@ module Admin::Automation::ConditionHelper
     end
   end
 
+  def associated_fields_validation(expected, actual)
+    return unexpected_parameter('associated_fields') if (actual[:field_name] != 'association_type') ||
+                                                        supervisor_rule? ||
+                                                        dispatcher_rule? ||
+                                                        PARENT_CHILD_ASSOCIATION_TYPES.include?(actual[:value])
+    associated_fields = actual[:associated_fields]
+    return missing_field_error(expected[:name], 'associated_fields[field_name]') unless associated_fields.key?(:field_name)
+    not_included_error(:"#{expected[:name]}[associated_fields][field_name]", 
+                       ASSOCIATED_FIELD_NAMES) unless ASSOCIATED_FIELD_NAMES.include?(associated_fields[:field_name])
+    return missing_field_error(expected[:name], 'associated_fields[operator]') unless associated_fields.key?(:operator)
+    not_included_error(:"#{expected[:name]}[associated_fields][operator]", 
+                       ASSOCIATED_TICKET_OPERATORS) if associated_fields.key?(:operator) &&
+                                                       !ASSOCIATED_TICKET_OPERATORS.include?(associated_fields[:operator])
+    return missing_field_error(expected[:name], 'associated_fields[value]') unless associated_fields.key?(:value)
+    invalid_data_type("#{expected[:name]}[associated_fields][value]", 
+                      Integer, 
+                      :invalid) if associated_fields.key?(:value) && !associated_fields[:value].is_a?(Integer)
+  end
 
   def valid_condition_data_type?(expected, value, expected_data_type)
     data_type_class = expected[:data_type].to_s.constantize
@@ -79,5 +99,4 @@ module Admin::Automation::ConditionHelper
     none_or_any = CONDITION_NONE_FIELDS.include?(expected[:name])
     none_or_any || (CUSTOM_FIELD_NONE_OR_ANY.include?(expected[:field_type]) && expected[:custom_field])
   end
-
 end

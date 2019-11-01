@@ -251,6 +251,7 @@ module Admin::AutomationHelper
       key = DB_FIELD_NAME_CHANGE_MAPPING[key] if DB_FIELD_NAME_CHANGE.include?(key)
       value = construct_nested_fields_data(value) if
             nested_field_names.present? && nested_field_names.include?(key)
+      value = construct_asssociated_fields_data(value) if key == :associated_fields && value.present?
       if is_event && value.present? && 
          TRANSFORMABLE_EVENT_FIELDS.include?(original_key.to_sym) && 
          !value.is_a?(Array) &&
@@ -324,6 +325,12 @@ module Admin::AutomationHelper
         PERMITTED_NESTED_DATA_PARAMS.inject({}) do |hash, key|
           hash.merge!(construct_data(key.to_sym, nested_value[key], nested_value.key?(key), nil, true))
         end
+      end
+    end
+
+    def construct_asssociated_fields_data(associated_fields)
+      PERMITTED_ASSOCIATED_FIELDS.inject({}) do |hash, key|
+        hash.merge!(construct_data(key.to_sym, associated_fields[key], associated_fields.key?(key), nil, true))
       end
     end
 

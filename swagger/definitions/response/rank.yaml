@@ -1,0 +1,6 @@
+type: object
+title: rank
+properties:
+  rank:
+    type: integer
+    example: 1

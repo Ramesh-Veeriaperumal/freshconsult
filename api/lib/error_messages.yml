@@ -280,12 +280,17 @@ api_error_messages:
   invalid_import_value: "Invalid value. Should be set as the index of field"
   invalid_import_fields: "Invalid fields: %{invalid_values}"
   rule_type_not_allowed: "Rule type not allowed: %{rule_type}"
+  exceeded_total_file_field_attachments_size: "Total file ticket field attachment(s) size exceeded maximum allowed limit."
+  non_unique_file_field_attachment_ids: "Same attachment id(s) used with different file ticket fields."
 
   unexpected_parameter_error: "Parameter '%{value}' is not allowed for '%{name}'"
   invalid_attribute_for_rules: "'%{name}' is only available for '%{value}'"
   invalid_attribute_for_key: "Allowed attribute :'%{list}'"
   expecting_value_for_event_field: "Expecting these field '%{value}' present for request parameter '%{name}'"
   condition_set_operator_error: "Operator should be given only if there are multiple conditions_set"
+  expecting_single_association_type: "Association type must be the same across all conditions"
+  associated_tickets_count_without_event: "'Ticket is linked' event need to be selected for associated_ticket_count condition"
+  association_type_not_allowed: "Association type can't be a property when 'Ticket is Linked' is an event"
 
   expecting_detect_thank_you_note_feature: "Detect Thank you note must be enabled to save this condition"
   expecting_note_or_reply_event: "Thank you note in condition can only be used for 'add private note/reply sent' events performed by customer"
@@ -327,7 +332,13 @@ api_error_messages:
   invalid_condition_set_count: "Maximum %{count} condition sets allowed for this rule type"
   duplicate_condition_set_name: "Duplicate condition set name - %{name}"
   cannot_be_blank: "'%{name}' can't be blank"
+  missing_or_blank: "Field is missing/blank"
 
+  ticket_association_type_not_allowed: "'ticket_association_type' is not allowed in actions without being present in conditions"
+  expecting_parent_association_type: "'ticket_association_type' should be 1 when parent ticket is selected in conditions"
+  expecting_parent_or_child: "'ticket_association_type' should be 1 or 2 when child ticket is selected in conditions"
+  expecting_tracker_association_type: "'ticket_association_type' should be 3 when tracker ticket is selected in conditions"
+  expecting_parent_or_related: "'ticket_association_type' should be 3 or 4 when related ticket is selected in conditions"
   # Solutions
   invalid_portal_id: 'Portal id is invalid'
   no_ratings: "The article doesn't have any ratings to be reset"

@@ -1,6 +1,15 @@
 module WidgetConcern
   extend ActiveSupport::Concern
 
+  include WidgetAuthentication
+
+  included do
+    skip_before_filter :check_privilege
+    before_filter :check_feature
+    before_filter :validate_widget
+    before_filter :widget_token_authentication
+  end
+
   def validate_widget
     @widget_id = request.env['HTTP_X_WIDGET_ID']
     return render_request_error(:widget_id_not_given, 400) if @widget_id.blank?

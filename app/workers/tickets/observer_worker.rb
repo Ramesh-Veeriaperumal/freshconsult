@@ -27,6 +27,7 @@ module Tickets
           aggregated_response_time = 0
           observer_rules = account.observer_rules_from_cache
           rule_ids_with_exec_count = {}
+          evaluate_on.prime_ticket_args = args
           observer_rules.each do |vr|
             begin
               Va::Logger::Automation.set_rule_id(vr.id)

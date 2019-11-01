@@ -79,6 +79,75 @@ module Widget
       match_json(id: t.display_id)
     end
 
+    def test_create_with_required_fields_help_widget_login
+      @account.launch :help_widget_login
+      # email, description
+      params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }
+      post :create, construct_params({ version: 'widget' }, params)
+      t = Helpdesk::Ticket.last
+      result = parse_response(@response.body)
+      assert_response 201
+      match_json(id: t.display_id)
+    ensure
+      @account.unstub :help_widget_login
+    end
+
+    def test_create_with_required_fields_with_x_widget_auth_user_present
+      @account.launch :help_widget_login
+      timestamp = Time.zone.now.utc.iso8601
+      User.any_instance.stubs(:agent?).returns(false)
+      secret_key = SecureRandom.hex
+      @account.stubs(:help_widget_secret).returns(secret_key)
+      # auth_token = JWT.encode({ name: 'Padmashri', email: 'praaji.longbottom@freshworks.com', timestamp: timestamp }, secret_key)
+      user = add_new_user(@account)
+      auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
+      @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+      # email, description
+      params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }
+      post :create, construct_params({ version: 'widget' }, params)
+      t = Helpdesk::Ticket.last
+      result = parse_response(@response.body)
+      assert_response 201
+      assert_equal User.current.id, user.id
+      match_json(id: t.display_id)
+    ensure
+      @account.unstub(:help_widget_login)
+      @account.unstub(:help_widget_secret)
+      User.any_instance.unstub(:agent?)
+    end
+
+    def test_create_with_required_fields_with_x_widget_auth_user_absent
+      @account.launch :help_widget_login
+      timestamp = Time.zone.now.utc.iso8601
+      User.any_instance.stubs(:agent?).returns(false)
+      secret_key = SecureRandom.hex
+      @account.stubs(:help_widget_secret).returns(secret_key)
+      auth_token = JWT.encode({ name: 'Padmashri', email: 'praajiopdsdlongbottom@freshworks.com', timestamp: timestamp }, secret_key)
+      @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+      # email, description
+      params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }
+      post :create, construct_params({ version: 'widget' }, params)
+      assert_response 404
+    ensure
+      @account.unstub(:help_widget_login)
+      @account.unstub(:help_widget_secret)
+      User.any_instance.unstub(:agent?)
+    end
+
+    def test_create_with_required_fields_with_wrong_x_widget_auth
+      @account.launch :help_widget_login
+      timestamp = Time.zone.now.utc.iso8601
+      User.any_instance.stubs(:agent?).returns(false)
+      secret_key = SecureRandom.hex
+      @account.stubs(:help_widget_secret).returns(secret_key)
+      auth_token = JWT.encode({ name: 'Padmashri', email: 'praaji.longbottom@freshworks.com', timestamp: timestamp }, secret_key + 'opo')
+      @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+      # email, description
+      params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }
+      post :create, construct_params({ version: 'widget' }, params)
+      assert_response 401
+    end
+
     def test_create_without_help_widget_launch
       @account.rollback(:help_widget)
       params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }
@@ -214,14 +283,14 @@ module Widget
         email: Faker::Internet.email
       }
       post :create, construct_params({ version: 'widget' }, params_hash)
-      ticket_type_list = "Question,Incident,Problem,Feature Request,Refund"
+      ticket_type_list = 'Question,Incident,Problem,Feature Request,Refund'
       service_task = Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE
       ticket_type_list << ",#{service_task}" if Account.current.picklist_values.map(&:value).include?(service_task)
       match_json([bad_request_error_pattern('description', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Integer'),
                   bad_request_error_pattern('subject',  :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Integer'),
                   bad_request_error_pattern('responder_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'String'),
                   bad_request_error_pattern('product_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'String'),
-                  bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7,8')])
+                  bad_request_error_pattern('status', :not_included, list: @account.ticket_status_values_from_cache.map(&:status_id).join(','))])
       assert_response 400
       toggle_required_attribute(default_non_required_fields)
     end

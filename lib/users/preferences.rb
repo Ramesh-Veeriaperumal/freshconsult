@@ -37,7 +37,8 @@ module Users
     private
 
       def preferences_with_defaults
-        preferences_with_defaults = DEFAULTS_PREFERENCES.deep_merge(self.preferences_without_defaults || {})
+        preferences_with_defaults = DEFAULTS_PREFERENCES.deep_dup
+        preferences_with_defaults = preferences_with_defaults.deep_merge(self.preferences_without_defaults || {})
         preferences_with_defaults[:agent_preferences][:search_settings][:tickets].except!(:archive) unless Account.current.archive_tickets_enabled?
 
         preferences_with_defaults

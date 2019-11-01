@@ -245,6 +245,35 @@ module Ember
         assert_response 404
       end
 
+      def test_autosave_with_emoji_content_feature_enabled
+        Account.current.launch(:encode_emoji_in_solutions)
+        article_with_draft
+        title = 'hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is line after emoji'
+        description = 'hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is line after emoji'
+        put :autosave, construct_params({ version: 'private', article_id: @article.parent_id }, { title: title, description: description, timestamp: @draft.updation_timestamp })
+        title = UnicodeSanitizer.remove_4byte_chars(title)
+        description = UnicodeSanitizer.utf84b_html_c(description)
+        assert_response 200
+        match_json(autosave_pattern(@draft.reload))
+        assert_equal @draft.title, title
+        assert_equal @draft.description, description
+        Account.current.rollback(:encode_emoji_in_solutions)
+      end
+
+      def test_autosave_with_emoji_content_feature_disabled
+        Account.current.rollback(:encode_emoji_in_solutions)
+        article_with_draft
+        title = 'hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is line after emoji'
+        description = 'hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is line after emoji'
+        put :autosave, construct_params({ version: 'private', article_id: @article.parent_id }, { title: title, description: description, timestamp: @draft.updation_timestamp })
+        title = UnicodeSanitizer.remove_4byte_chars(title)
+        description = UnicodeSanitizer.remove_4byte_chars(description)
+        assert_response 200
+        match_json(autosave_pattern(@draft.reload))
+        assert_equal @draft.title, title
+        assert_equal @draft.description, description
+      end
+
       def test_destroy
         article_with_draft
         assert @article.draft.present?

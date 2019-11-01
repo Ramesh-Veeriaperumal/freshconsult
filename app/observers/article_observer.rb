@@ -50,7 +50,7 @@ class ArticleObserver < ActiveRecord::Observer
 private
 
 		def set_un_html_content(article)
-			article.desc_un_html = Helpdesk::HTMLSanitizer.plain(article.description) unless article.description.empty?
+			article.desc_un_html = UnicodeSanitizer.remove_4byte_chars(Helpdesk::HTMLSanitizer.plain(article.description)) unless article.description.empty?
     end
 
     def modify_date_and_author(article)

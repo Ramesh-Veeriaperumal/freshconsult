@@ -27,6 +27,82 @@ module Widget
       params_hash = { content: file }
     end
 
+    def test_create_attachment_without_x_widget_auth
+      @account.launch :help_widget_login
+      DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+      post :create, construct_params({ version: 'widget' }, attachment_params_hash)
+      DataTypeValidator.any_instance.unstub(:valid_type?)
+      assert_response 200
+      latest_attachment = Helpdesk::Attachment.last
+      match_json(id: latest_attachment.id)
+      assert_equal latest_attachment.attachable_id, @widget.id
+      assert_equal latest_attachment.attachable_type, 'WidgetDraft'
+      assert_equal latest_attachment.description, @client_id.to_s
+      assert_equal latest_attachment.attachable, @widget
+    end
+
+    def test_create_attachment_with_x_widget_auth_user_present
+      @account.launch :help_widget_login
+      timestamp = Time.zone.now.utc.iso8601
+      User.any_instance.stubs(:agent?).returns(false)
+      secret_key = SecureRandom.hex
+      @account.stubs(:help_widget_secret).returns(secret_key)
+      user = add_new_user(@account)
+      auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
+      @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+      DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+      post :create, construct_params({ version: 'widget' }, attachment_params_hash)
+      DataTypeValidator.any_instance.unstub(:valid_type?)
+      assert_response 200
+      latest_attachment = Helpdesk::Attachment.last
+      match_json(id: latest_attachment.id)
+      assert_equal latest_attachment.attachable_id, @widget.id
+      assert_equal latest_attachment.attachable_type, 'WidgetDraft'
+      assert_equal latest_attachment.description, @client_id.to_s
+      assert_equal latest_attachment.attachable, @widget
+      assert_equal User.current.id, user.id
+    ensure
+      @account.rollback :help_widget_login
+      User.any_instance.unstub(:agent?)
+      @account.unstub(:help_widget_secret)
+    end
+
+    def test_create_attachment_with_x_widget_auth_user_absent
+      @account.launch :help_widget_login
+      timestamp = Time.zone.now.utc.iso8601
+      User.any_instance.stubs(:agent?).returns(false)
+      secret_key = SecureRandom.hex
+      @account.stubs(:help_widget_secret).returns(secret_key)
+      auth_token = JWT.encode({ name: 'Padmashri', email: 'praajiddslongbottom@freshworks.com', timestamp: timestamp }, secret_key)
+      @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+      DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+      post :create, construct_params({ version: 'widget' }, attachment_params_hash)
+      DataTypeValidator.any_instance.unstub(:valid_type?)
+      assert_response 404
+    ensure
+      @account.rollback :help_widget_login
+      User.any_instance.unstub(:agent?)
+      @account.unstub(:help_widget_secret)
+    end
+
+    def test_create_attachment_with_wrong_x_widget_auth
+      @account.launch :help_widget_login
+      timestamp = Time.zone.now.utc.iso8601
+      User.any_instance.stubs(:agent?).returns(false)
+      secret_key = SecureRandom.hex
+      @account.stubs(:help_widget_secret).returns(secret_key)
+      auth_token = JWT.encode({ name: 'Padmashri', email: 'praaji.longbottom@freshworks.com', timestamp: timestamp }, secret_key + 'opo')
+      @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+      DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+      post :create, construct_params({ version: 'widget' }, attachment_params_hash)
+      assert_response 401
+    ensure
+      @account.rollback :help_widget_login
+      User.any_instance.unstub(:agent?)
+      @account.unstub(:help_widget_secret)
+      DataTypeValidator.any_instance.unstub(:valid_type?)
+    end
+
     def test_create_attachment
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
       post :create, construct_params({ version: 'widget' }, attachment_params_hash)

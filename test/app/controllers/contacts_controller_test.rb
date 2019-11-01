@@ -195,12 +195,12 @@ class ContactsControllerTest < ActionController::TestCase
     user_email = Faker::Internet.email
     user = Account.current.users.create(name: Faker::Name.name, email: user_email, time_zone: 'Chennai', company_id: nil, language: 'en')
 
-    user.preferences[:user_preferences][:agent_deleted_forever] = true
+    User.any_instance.stubs(:agent_deleted_forever?).returns(true)
 
     get :show, email: user_email
     assert_response 302
 
-    user.preferences[:user_preferences][:agent_deleted_forever] = false
+    User.any_instance.unstub(:agent_deleted_forever?)
     log_out
   end
 
@@ -400,7 +400,7 @@ class ContactsControllerTest < ActionController::TestCase
 
     user = add_new_user(@account)
 
-    user.preferences[:user_preferences][:agent_deleted_forever] = true
+    User.any_instance.stubs(:agent_deleted_forever?).returns(true)
 
     post :restore, id: user.id, user: { email: user.email }
     assert_response 302
@@ -411,7 +411,7 @@ class ContactsControllerTest < ActionController::TestCase
     post :restore, id: user.id, user: { email: user.email }, format: 'json'
     assert_response 400
 
-    user.preferences[:user_preferences][:agent_deleted_forever] = false
+    User.any_instance.unstub(:agent_deleted_forever?)
     log_out
   end
 

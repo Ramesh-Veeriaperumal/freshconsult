@@ -27,7 +27,7 @@ class Solutions::ArticleDecorator < ApiDecorator
   end
 
   def un_html(html_string)
-    Helpdesk::HTMLSanitizer.plain(html_string)
+    UnicodeSanitizer.remove_4byte_chars(Helpdesk::HTMLSanitizer.plain(html_string))
   end
 
   def article_info

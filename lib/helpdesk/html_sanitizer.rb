@@ -25,7 +25,7 @@ module Helpdesk::HTMLSanitizer
   end
   
   def self.plain(html)
-   plain_text(Sanitize.fragment(html)) if html
+    plain_text(Sanitize.fragment(html, Sanitize::Config::ADDITIONAL_DEFAULT_CONFIG)) if html
   end
 
   def self.sanitize_article(html)

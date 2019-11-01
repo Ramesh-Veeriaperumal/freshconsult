@@ -1,5 +1,7 @@
 class Solution::Draft < ActiveRecord::Base
 
+  include Solution::SolutionMethods
+  
   self.table_name = "solution_drafts"
   self.primary_key = :id
   serialize :meta, Hash
@@ -21,7 +23,7 @@ class Solution::Draft < ActiveRecord::Base
   validates_numericality_of :user_id
 
   before_validation :populate_defaults
-  before_save :change_modified_at
+  before_save :change_modified_at, :encode_emoji_in_articles
   before_destroy :discard_notification, :add_activity_delete
   after_create :add_activity_new
 
@@ -29,6 +31,7 @@ class Solution::Draft < ActiveRecord::Base
   attr_accessor :discarding, :publishing, :keep_previous_author, :session, :cancelling, :unpublishing, :false_delete_attachment_trigger
 
   alias_attribute :modified_by, :user_id
+  alias_attribute :body, :draft_body
 
   default_scope :order => "modified_at DESC"
 
@@ -75,6 +78,7 @@ class Solution::Draft < ActiveRecord::Base
 
   COMMON_ATTRIBUTES = ["title", "description"]
   #defining writer method for delegated attribute
+
   def description= content
     unless self.draft_body.present?
       self.build_draft_body({

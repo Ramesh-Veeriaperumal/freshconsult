@@ -1,24 +1,51 @@
 <li class="dkim-list" id = "dkim-list-<%=domain_category.id%>">
   <div>
-    <a href="#" class="list-toggle <% unless dkim_configured?(domain_category) %> disable <% end %>">
-      <i class="cart-icon ficon-caret-right"> </i>
-      <strong class="cart-text inline-block ml5"><%= domain_category.email_domain %></strong>
-    </a>
+    <% if current_account.launched?(:dkim_email_service) %>
+      <a href="#" class="list-toggle <% unless  es_dkim_configured?(@dkim_records, domain_category.email_domain) %> disable <% end %>">
+        <i class="cart-icon ficon-caret-right"> </i>
+        <strong class="cart-text inline-block ml5"><%= domain_category.email_domain %></strong>
+      </a>
+    <% else %>
+      <a href="#" class="list-toggle <% unless dkim_configured?(domain_category) %> disable <% end %>">
+        <i class="cart-icon ficon-caret-right"> </i>
+        <strong class="cart-text inline-block ml5"><%= domain_category.email_domain %></strong>
+      </a>
+    <% end %>
     <div class="pull-right text-right verification-status">
-      <% unless dkim_configured?(domain_category) %>
-        <button data-url="<%= admin_dkim_configuration_path(domain_category.id) %>" class="btn btn-mini config-dkim <%= dkim_limit_exceeded?%>"  data-alt-text="<%= t('email_configs.dkim.configuring') %> "/> <%= t('email_configs.dkim.config') %> </button>
-      <% else %>
-        <% if domain_category.status == OutgoingEmailDomainCategory::STATUS['active'] %>
-          <span class="muted"> <%= t('email_configs.dkim.verified')%> </span>
+      <% if current_account.launched?(:dkim_email_service) %>
+        <% unless es_dkim_configured?(@dkim_records, domain_category.email_domain) %>
+          <button data-url="<%= admin_dkim_configuration_path(domain_category.id) %>" class="btn btn-mini config-dkim <%= dkim_limit_exceeded?%>"  data-alt-text="<%= t('email_configs.dkim.configuring') %> "/> <%= t('email_configs.dkim.config') %> </button>
         <% else %>
-          <span class="alert-text"><%= t('email_configs.dkim.unverified')%>  </span>
+          <% if domain_category.status == OutgoingEmailDomainCategory::STATUS['active'] %>
+            <span class="muted"> <%= t('email_configs.dkim.verified')%> </span>
+          <% else %>
+            <span class="alert-text"><%= t('email_configs.dkim.unverified')%>  </span>
+          <% end %>
+        <% end %>
+      <% else %>
+        <% unless dkim_configured?(domain_category) %>
+          <button data-url="<%= admin_dkim_configuration_path(domain_category.id) %>" class="btn btn-mini config-dkim <%= dkim_limit_exceeded?%>"  data-alt-text="<%= t('email_configs.dkim.configuring') %> "/> <%= t('email_configs.dkim.config') %> </button>
+        <% else %>
+          <% if domain_category.status == OutgoingEmailDomainCategory::STATUS['active'] %>
+            <span class="muted"> <%= t('email_configs.dkim.verified')%> </span>
+          <% else %>
+            <span class="alert-text"><%= t('email_configs.dkim.unverified')%>  </span>
+          <% end %>
         <% end %>
       <% end %>
     </div>
   </div>
-  <% if dkim_configured?(domain_category) %>
-    <div class="hide dkim-table-wraper">
-      <%= render "dkim_table", :domain_category => domain_category %>
-    </div>
-  <%end%>
+  <% if current_account.launched?(:dkim_email_service) %>
+    <% if es_dkim_configured?(@dkim_records, domain_category.email_domain) %>
+      <div class="hide dkim-table-wraper">
+        <%= render "dkim_table", :domain_category => domain_category %>
+      </div>
+    <%end%>
+  <% else %>
+    <% if dkim_configured?(domain_category) %>
+      <div class="hide dkim-table-wraper">
+        <%= render "dkim_table", :domain_category => domain_category %>
+      </div>
+    <%end%>
+  <% end %> 
 </li>

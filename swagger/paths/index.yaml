@@ -584,6 +584,8 @@
   $ref: /widget/solution_article_thumbs_up.yaml
 /widget/solutions/article/{id}/thumbs_down:
   $ref: /widget/solution_article_thumbs_down.yaml
+/widget/bootstrap:
+  $ref: /widget/bootstrap_index.yaml
 
 # Business Hours
 /business_hours:

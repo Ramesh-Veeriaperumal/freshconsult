@@ -1,5 +1,5 @@
 <div id="dkim-<%= domain_category.id %>">
-  <% if domain_category.status == OutgoingEmailDomainCategory::STATUS['active']%>
+  <% if domain_category.status == OutgoingEmailDomainCategory::STATUS['active'] %>
     <div class="dkim-verify-dtn">
       <span class="last-verified"> <%= t('email_configs.dkim.last_verified') %> : <%= formated_date(domain_category.last_verified_at) %>
       </span>
@@ -27,33 +27,66 @@
         </tr>
     </thead>
     <tbody>
-      <% fetch_customer_settings(domain_category).each do |record|%>
-        <tr >  
-          <td> <%= t('email_configs.dkim.cname')%> </td>
-          <td>
-            <div class="input-append">
-              <input type="text" class="clip-data" value="<%= record.host_name.try(:chomp, '.') %>" readonly>
-              <button type="button" class="btn tooltip copy-clip" title="<%= t("livechat.copy_to_clipboard") %>">
-                <i class="ficon-clone fsize-18"></i>
-              </button>
-            </div>
-          </td>
-          <td>
-            <div class="input-append">
-              <input type="text" class="clip-data" value="<%=record.fd_cname.try(:chomp, '.')%>" readonly>
-              <button type="button" class="btn  tooltip copy-clip" title="<%= t("livechat.copy_to_clipboard") %>">
-                <i class="ficon-clone fsize-18"></i>
-              </button>
-            </div>
-          </td>
-          <td class="text-center"> 
-            <% if record.status %>
+      <% if current_account.launched?(:dkim_email_service) %>
+        <% if @dkim_records[domain_category.email_domain.to_sym].present? %>
+          <% @dkim_records[domain_category.email_domain.to_sym].each do |record| %>
+            <tr >  
+              <td> <%= t('email_configs.dkim.cname')%> </td>
+              <td>
+                <div class="input-append">
+                  <input type="text" class="clip-data" value="<%= record['host'] %>" readonly>
+                  <button type="button" class="btn tooltip copy-clip" title="<%= t("livechat.copy_to_clipboard") %>">
+                    <i class="ficon-clone fsize-18"></i>
+                  </button>
+                </div>
+              </td>
+              <td>
+                <div class="input-append">
+                  <input type="text" class="clip-data" value="<%=record['value']%>" readonly>
+                  <button type="button" class="btn  tooltip copy-clip" title="<%= t("livechat.copy_to_clipboard") %>">
+                    <i class="ficon-clone fsize-18"></i>
+                  </button>
+                </div>
+              </td>
+              <td class="text-center"> 
+                <% if record['verified'] %>
+                  <i class="ficon-checkmark-round-o fsize-20"></i>
+                <% else %>
+                  <i class="ficon-unverified fsize-15"></i> 
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        <% end %>
+      <% else %>
+        <% fetch_customer_settings(domain_category).each do |record|%>
+          <tr >  
+            <td> <%= t('email_configs.dkim.cname')%> </td>
+            <td>
+              <div class="input-append">
+                <input type="text" class="clip-data" value="<%= record.host_name.try(:chomp, '.') %>" readonly>
+                <button type="button" class="btn tooltip copy-clip" title="<%= t("livechat.copy_to_clipboard") %>">
+                  <i class="ficon-clone fsize-18"></i>
+                </button>
+              </div>
+            </td>
+            <td>
+              <div class="input-append">
+                <input type="text" class="clip-data" value="<%=record.fd_cname.try(:chomp, '.')%>" readonly>
+                <button type="button" class="btn  tooltip copy-clip" title="<%= t("livechat.copy_to_clipboard") %>">
+                  <i class="ficon-clone fsize-18"></i>
+                </button>
+              </div>
+            </td>
+            <td class="text-center"> 
+              <% if record.status %>
                 <i class="ficon-checkmark-round-o fsize-20"></i>
-            <% else %>
+              <% else %>
                 <i class="ficon-unverified fsize-15"></i> 
-            <% end %>
-          </td>
-        </tr>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
       <% end %>
     </tbody>
   </table>

@@ -191,7 +191,7 @@ module Ember
       assert_response 200
       response = parse_response @response.body
       file_field = response.select { |h| h['custom_fields'].key?('test_signature_file') }.present?
-      assert_equal file_field, false
+      assert_equal file_field, true
     ensure
       ticket.destroy
       custom_field.destroy
@@ -511,7 +511,7 @@ module Ember
       assert_response 200
       response = parse_response @response.body
       file_field = response['custom_fields'].key? 'test_signature_file'
-      assert_equal file_field, false
+      assert_equal file_field, true
     ensure
       ticket.destroy
       custom_field.destroy
@@ -544,6 +544,223 @@ module Ember
       Helpdesk::Attachment.any_instance.unstub(:content_file_size)
       match_json([bad_request_error_pattern(:attachment_ids, :invalid_size, max_size: "#{@account.attachment_limit} MB", current_size: "#{invalid_attachment_size} MB")])
       assert_response 400
+    end
+
+    def test_create_ticket_with_file_field
+      attachment = create_file_ticket_field_attachment
+      custom_field = create_custom_field_dn('test_file_field', 'file')
+      Account.first.make_current
+      params_hash = ticket_params_hash.merge(custom_fields: { test_file_field: attachment.id })
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 201
+      response_body = JSON.parse(response.body)
+      assert_equal attachment.id, response_body['custom_fields']['test_file_field']
+      attachment = Account.current.attachments.find(attachment.id)
+      assert_equal attachment.attachable_type, 'Helpdesk::FileTicketField'
+      assert_equal attachment.description, custom_field.column_name
+    ensure
+      custom_field.destroy
+      Account.reset_current_account
+    end
+
+    def test_create_ticket_with_nil_file_field_value
+      custom_field = create_custom_field_dn('test_file_field', 'file')
+      Account.first.make_current
+      params_hash = ticket_params_hash.merge(custom_fields: { test_file_field: nil })
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 201
+      response_body = JSON.parse(response.body)
+      assert_equal nil, response_body['custom_fields']['test_file_field']
+    ensure
+      custom_field.destroy
+      Account.reset_current_account
+    end
+
+    def test_create_ticket_with_invalid_file_attachment_type
+      attachment_id = create_attachment(attachable_type: 'Tickets Image Upload', attachable_id: @agent.id).id
+      custom_field = create_custom_field_dn('test_invalid_file_field', 'file')
+      Account.first.make_current
+      params_hash = ticket_params_hash.merge(custom_fields: { test_invalid_file_field: attachment_id })
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('custom_fields.test_invalid_file_field', :invalid_attachment, code: :invalid_attachment)])
+    ensure
+      custom_field.destroy
+      Account.reset_current_account
+    end
+
+    def test_create_ticket_with_nil_file_field_attachment_when_required_for_submission
+      custom_field = create_custom_field_dn('test_file_field', 'file', true, false)
+      Account.first.make_current
+      params_hash = ticket_params_hash.merge(custom_fields: { test_file_field: nil })
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('custom_fields.test_file_field', :blank, code: :blank)])
+    ensure
+      custom_field.destroy
+      Account.reset_current_account
+    end
+
+    def test_close_ticket_with_nil_file_field_attachment_when_required_for_submission
+      custom_field = create_custom_field_dn('test_file_field', 'file', true, false)
+      Account.first.make_current
+      ticket = create_ticket
+      assert_not_nil ticket
+      update_params = { status: Helpdesk::Ticketfields::TicketStatus::CLOSED }
+      put :update, construct_params({ id: ticket.display_id, version: 'private' }, update_params)
+      assert_response 400
+      match_json([bad_request_error_pattern('custom_fields.test_file_field', :blank, code: :blank)])
+    ensure
+      custom_field.destroy
+      Account.reset_current_account
+    end
+
+    def test_close_ticket_with_file_field_attachment_value_when_required_for_submission
+      attachment = create_file_ticket_field_attachment
+      custom_field = create_custom_field_dn('test_file_field', 'file', true, false)
+      Account.first.make_current
+      ticket = create_ticket(custom_field: { custom_field.name => attachment.id })
+      assert_not_nil ticket
+      update_params = { status: Helpdesk::Ticketfields::TicketStatus::CLOSED }
+      put :update, construct_params({ id: ticket.display_id, version: 'private' }, update_params)
+      assert_response 200
+      response_body = JSON.parse(response.body)
+      assert_equal Helpdesk::Ticketfields::TicketStatus::CLOSED, response_body['status']
+    ensure
+      custom_field.destroy
+      Account.reset_current_account
+    end
+
+    def test_create_ticket_with_invalid_file_field_attachment_size
+      attachment = create_file_ticket_field_attachment(content_file_size: 2.megabytes)
+      custom_field = create_custom_field_dn('test_file_field', 'file')
+      Account.first.make_current
+      Account.any_instance.stubs(:attachment_limit).returns(1)
+      params_hash = ticket_params_hash.merge(custom_fields: { test_file_field: attachment.id })
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern(:ticket, :exceeded_total_file_field_attachments_size, code: :exceeded_total_file_field_attachments_size)])
+    ensure
+      custom_field.destroy
+      Account.any_instance.unstub(:attachment_limit)
+      Account.reset_current_account
+    end
+
+    def test_create_ticket_with_non_uniq_field_attachments
+      attachment = create_file_ticket_field_attachment
+      custom_field1 = create_custom_field_dn('test_file_field1', 'file')
+      Account.first.make_current
+      custom_field2 = create_custom_field_dn('test_file_field2', 'file', false, false, flexifield_name: '006')
+      Account.first.make_current
+      params_hash = ticket_params_hash.merge(custom_fields: { test_file_field1: attachment.id, test_file_field2: attachment.id })
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern(:ticket, :non_unique_file_field_attachment_ids, code: :non_unique_file_field_attachment_ids)])
+    ensure
+      custom_field1.destroy
+      custom_field2.destroy
+      Account.reset_current_account
+    end
+
+    def test_create_ticket_with_invalid_image_for_file_field
+      attachment = create_file_ticket_field_attachment
+      custom_field = create_custom_field_dn('test_file_field', 'file')
+      Account.first.make_current
+      Helpdesk::Attachment.any_instance.stubs(:image?).returns(false)
+      params_hash = ticket_params_hash.merge(custom_fields: { test_file_field: attachment.id })
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('custom_fields.test_file_field', :invalid_image, code: :invalid_image)])
+    ensure
+      custom_field.destroy
+      Helpdesk::Attachment.any_instance.unstub(:image?)
+      Account.reset_current_account
+    end
+
+    def test_close_ticket_with_file_field_value_when_required_for_closure
+      attachment = create_file_ticket_field_attachment
+      custom_field = create_custom_field_dn('test_file_field', 'file', false, true)
+      Account.first.make_current
+      ticket = create_ticket(custom_field: { custom_field.name => attachment.id })
+      assert_not_nil ticket
+      update_params = { status: Helpdesk::Ticketfields::TicketStatus::CLOSED }
+      put :update, construct_params({ id: ticket.display_id, version: 'private' }, update_params)
+      assert_response 200
+      response_body = JSON.parse(response.body)
+      assert_equal Helpdesk::Ticketfields::TicketStatus::CLOSED, response_body['status']
+    ensure
+      custom_field.destroy
+      Account.any_instance.unstub(:attachment_limit)
+      Account.reset_current_account
+    end
+
+    def test_close_ticket_with_nil_file_field_value_when_required_for_closure
+      custom_field = create_custom_field_dn('test_file_field', 'file', false, true)
+      Account.first.make_current
+      ticket = create_ticket
+      assert_not_nil ticket
+      update_params = { status: Helpdesk::Ticketfields::TicketStatus::CLOSED }
+      put :update, construct_params({ id: ticket.display_id, version: 'private' }, update_params)
+      assert_response 400
+      match_json([bad_request_error_pattern('custom_fields.test_file_field', :blank, code: :blank)])
+    ensure
+      custom_field.destroy
+      Account.any_instance.unstub(:attachment_limit)
+      Account.reset_current_account
+    end
+
+    def test_update_ticket_file_field_with_draft_attachment
+      Account.any_instance.stubs(:ticket_central_publish_enabled?).returns(true)
+      custom_field1 = create_custom_field_dn('test_file_field1', 'file')
+      Account.first.make_current
+      custom_field2 = create_custom_field_dn('test_file_field2', 'file', false, false, flexifield_name: '006')
+      Account.first.make_current
+      attachment1 = create_file_ticket_field_attachment
+      attachment2 = create_file_ticket_field_attachment
+      attachment3 = create_file_ticket_field_attachment
+      ticket = create_ticket(custom_field: { custom_field1.name => attachment1.id, custom_field2.name => attachment2.id })
+      assert_not_nil ticket
+      update_params = { custom_fields: { test_file_field1: attachment3.id } }
+      put :update, construct_params({ id: ticket.display_id, version: 'private' }, update_params)
+      assert_response 200
+      Account.current.reload
+      assert_equal true, Account.current.attachments.where(id: attachment1.id).blank?
+      assert_equal false, Account.current.attachments.where(id: attachment2.id).blank?
+      assert_equal false, Account.current.attachments.where(id: attachment3.id).blank?
+      response_body = JSON.parse(response.body)
+      assert_equal attachment3.id, response_body['custom_fields']['test_file_field1']
+      assert_equal attachment2.id, response_body['custom_fields']['test_file_field2']
+    ensure
+      Account.any_instance.unstub(:ticket_central_publish_enabled?)
+      custom_field2.destroy
+      custom_field1.destroy
+      ticket.reload.destroy
+      Account.reset_current_account
+    end
+
+    def test_update_ticket_file_field_with_nil_value
+      custom_field1 = create_custom_field_dn('test_file_field1', 'file')
+      Account.first.make_current
+      custom_field2 = create_custom_field_dn('test_file_field2', 'file', false, false, flexifield_name: '006')
+      Account.first.make_current
+      attachment1 = create_file_ticket_field_attachment
+      attachment2 = create_file_ticket_field_attachment
+      ticket = create_ticket(custom_field: { custom_field1.name => attachment1.id, custom_field2.name => attachment2.id })
+      assert_not_nil ticket
+      update_params = { custom_fields: { test_file_field1: nil } }
+      put :update, construct_params({ id: ticket.display_id, version: 'private' }, update_params)
+      assert_response 200
+      Account.current.reload
+      assert_equal true, Account.current.attachments.where(id: attachment1.id).blank?
+      assert_equal false, Account.current.attachments.where(id: attachment2.id).blank?
+      response_body = JSON.parse(response.body)
+      assert_nil response_body['custom_fields']['test_file_field1']
+      assert_equal attachment2.id, response_body['custom_fields']['test_file_field2']
+    ensure
+      custom_field2.destroy
+      custom_field1.destroy
+      ticket.reload.destroy
+      Account.reset_current_account
     end
 
     def test_create_with_invalid_email_and_custom_field_email
@@ -4884,16 +5101,16 @@ module Ember
       end
     end
 
-    def test_create_ticket_with_custom_file_field_with_invalid
+    def test_create_ticket_with_custom_file_field_with_invalid_type
       custom_field = create_custom_field_dn('test_signature_file', 'file')
       Account.reset_current_account
       @account = Account.first
       params_hash = { email: Faker::Internet.email, description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
-                      priority: 2, status: 2, type: 'Problem', responder_id: @agent.id, custom_fields: { test_signature_file: 1234 }}
+                      priority: 2, status: 2, type: 'Problem', responder_id: @agent.id, custom_fields: { test_signature_file: '1234' } }
       post :create, construct_params({ version: 'private' }, params_hash)
       assert_response 400
       response_body = JSON.parse(response.body)
-      match_json([bad_request_error_pattern('custom_fields.test_signature_file', :datatype_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: Integer)])
+      match_json([bad_request_error_pattern('custom_fields.test_signature_file', :datatype_mismatch, expected_data_type: Integer, prepend_msg: :input_received, given_data_type: String)])
     ensure
       custom_field.destroy
     end

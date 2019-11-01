@@ -15,10 +15,15 @@ get:
             type: object
             allOf:
               - $ref: '#/definitions/meta'
+              - $ref: '#/definitions/next_page_meta'
     400:
       description: Bad Request Error
       schema:
         $ref: '#/definitions/bad_request_error'
+    500:
+      description: Internal server error
+      schema:
+        $ref: '#/definitions/internal_server_error'
 post:
   tags: [skills]
   description: Create skill
@@ -37,3 +42,7 @@ post:
       description: Bad Request Error
       schema:
         $ref: '#/definitions/bad_request_error'
+    500:
+      description: Internal server error
+      schema:
+        $ref: '#/definitions/internal_server_error'
