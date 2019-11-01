@@ -163,9 +163,11 @@ module Social::Constants
   TWEET_MEDIA_PHOTO = 'photo'.freeze
   TWEET_MEDIA_ANIMATED_GIF = 'animated_gif'.freeze
   TWEET_ALREADY_EXISTS = "Tweet already converted as a ticket".freeze
+  TICKET_ARCHIVED = "Ticket is an archived ticket".freeze
 
   TWITTER_ERROR_CODES = {
     reauth_required: 89,
-    timeout: 504
+    timeout: 504,
+    archived_ticket_error: 406
   }
 end

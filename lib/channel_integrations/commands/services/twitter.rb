@@ -36,7 +36,7 @@ module ChannelIntegrations::Commands::Services
 
       context = payload[:context]
       data = payload[:data]
-
+      ticket_id = payload[:data][:ticket_id]
       set_current_user(data[:user_id])
       check_twitter_handle?(context[:twitter_handle_id])
 
@@ -50,6 +50,7 @@ module ChannelIntegrations::Commands::Services
     rescue StandardError => e
       Rails.logger.error "Something wrong in Twitter::CreateNote account_id: #{current_account.id}, context: #{context.inspect} #{e.message}"
 
+      return archived_ticket_error(ticket_id) if e.message.include? Social::Constants::TICKET_ARCHIVED
       return conflict_error(context) if e.message.include? Social::Constants::TWEET_ALREADY_EXISTS
       error_message("Error in Creating note, account_id: #{current_account.id}, context: #{context.inspect}")
     end
@@ -116,12 +117,20 @@ module ChannelIntegrations::Commands::Services
         error
       end
 
+      def archived_ticket_error(ticket_id)
+        error = default_error_format
+        error[:status_code] = Social::Constants::TWITTER_ERROR_CODES[:archived_ticket_error]
+        error[:data] = { message: Social::Constants::TICKET_ARCHIVED,
+                         ticket_id: ticket_id }
+        error
+      end
+
       def conflict_error(context)
-        existing_tweetable = current_account.tweets.find_by_tweet_id(context[:tweet_id]).tweetable
+        existing_tweet = current_account.tweets.find_by_tweet_id(context[:tweet_id])
         error = default_error_format
         error[:status_code] = 409
         error[:data] = { message: "Conflict: Tweet ID: #{context[:tweet_id]} already converted.",
-                         id: existing_tweetable.id }
+                         id: existing_tweet.is_ticket? ? existing_tweet.tweetable.display_id : existing_tweet.tweetable_id }
         error
       end
 
