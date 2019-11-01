@@ -88,7 +88,7 @@ module Admin::AutomationConstants
 
   TICKET_ACTION = %w[update delete marked_spam linked].freeze
 
-  TIME_SHEET_ACTION = %w[new_time_entry updated_time_entry].freeze
+  TIME_SHEET_ACTION = %w[added updated].freeze
 
   SUBJECT_DESCRIPTION_FIELDS = %w[subject description subject_or_description].freeze
 
@@ -436,4 +436,6 @@ module Admin::AutomationConstants
   }.freeze
 
   CONDITION_NAME_PREFIX = 'condition_set'.freeze
+
+  CUSTOMER_FEEDBACK_RATINGS = (CustomSurvey::Survey::CUSTOMER_RATINGS_FACE_VALUE + %w(--)).freeze
 end.freeze
