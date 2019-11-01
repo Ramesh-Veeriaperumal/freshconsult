@@ -208,8 +208,17 @@ module Ember
         def paginate_filter_items
           @items_count = @items.size
           @items = paginate_items(@items)
+          @items = reorder_articles_by_relevance if params[:term].present?
           response.api_root_key = :articles
           response.api_meta = { count: @items_count, next_page: @more_items }
+        end
+
+        def reorder_articles_by_relevance
+          items_map = {}
+          @items.map { |item| items_map[item.id] = item }
+          ordered_items = []
+          @results.map { |result| ordered_items.push(items_map[result.id]) if items_map.keys.include?(result.id) }
+          ordered_items
         end
 
         def modify_and_cleanup_language_param
