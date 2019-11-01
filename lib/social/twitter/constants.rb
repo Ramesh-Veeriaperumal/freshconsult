@@ -43,6 +43,8 @@ module Social::Twitter::Constants
   }
   
   AVATAR_SIZES = ["normal", "bigger", "mini"]
+
+  DEFAULT_AVATAR = "http://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png"
   
   SEARCH_RESULT_TYPE = {
     :mixed => "mixed",

@@ -383,20 +383,38 @@ class Social::TwitterController < Social::BaseController
         :account_id => current_account.id,
         :user_id    => current_user.id
       )
-      saved = note.save_note
-      if saved
-        twitter_handle_id = params[:twitter_handle_id]
-        error_message, reply_twt = send_tweet_as_mention(twitter_handle_id, ticket, note, tweet_body)
-        if error_message.blank?
-          @interactions[:current] << recent_agent_reply(reply_twt, note) if reply_twt
+      if current_account.outgoing_tweets_to_tms_enabled?
+        reply_handle = current_account.twitter_handles.find_by_id(params[:twitter_handle])
+        stream = reply_handle.default_stream
+        tweet_id = random_tweet_id
+        stream_id = stream.id
+        note.build_tweet(tweet_id: tweet_id,
+          tweet_type: Social::Twitter::Constants::TWITTER_NOTE_TYPE[:mention],
+          twitter_handle_id: params[:twitter_handle], stream_id: stream_id)
+        if note.save_note
+          reply_hash = construct_twitter_reply_hash(note, reply_handle)
+          @interactions[:current] << recent_agent_reply(reply_hash, note)
           MOBILE_TWITTER_RESPONSE_CODES[:reply_success]
         else
-          flash.now[:notice] = error_message
-          MOBILE_TWITTER_RESPONSE_CODES[:not_authorized]
+          flash.now[:notice] = t(:'flash.tickets.reply.failure')
+          MOBILE_TWITTER_RESPONSE_CODES[:reply_failure]
         end
       else
-        flash.now[:notice] = t(:'flash.tickets.reply.failure')
-        MOBILE_TWITTER_RESPONSE_CODES[:reply_failure]
+        saved = note.save_note
+        if saved
+          twitter_handle_id = params[:twitter_handle_id]
+          error_message, reply_twt = send_tweet_as_mention(twitter_handle_id, ticket, note, tweet_body)
+          if error_message.blank?
+            @interactions[:current] << recent_agent_reply(reply_twt.attrs, note) if reply_twt
+            MOBILE_TWITTER_RESPONSE_CODES[:reply_success]
+          else
+            flash.now[:notice] = error_message
+            MOBILE_TWITTER_RESPONSE_CODES[:not_authorized]
+          end
+        else
+          flash.now[:notice] = t(:'flash.tickets.reply.failure')
+          MOBILE_TWITTER_RESPONSE_CODES[:reply_failure]
+        end
       end
     else
       flash.now[:notice] = error_message
@@ -416,7 +434,7 @@ class Social::TwitterController < Social::BaseController
       reply_handle = current_account.twitter_handles.find_by_id(params[:twitter_handle_id])
       @sandbox_error_msg, return_value = twt_sandbox(reply_handle, TWITTER_TIMEOUT[:reply]) {
         twt = tweet_to_twitter(reply_handle, tweet_params)
-        @interactions[:current] << recent_agent_reply(twt, nil) if twt
+        @interactions[:current] << recent_agent_reply(twt.attrs, nil) if twt
       }
       if return_value
         if params[:search_type] == SEARCH_TYPE[:saved]
@@ -452,8 +470,8 @@ class Social::TwitterController < Social::BaseController
     }
   end
 
-  def recent_agent_reply(twt, note)
-    feed = Social::Twitter::Feed.new(twt.attrs)
+  def recent_agent_reply(attrs, note)
+    feed = Social::Twitter::Feed.new(attrs)
     feed.agent_name = current_user.name
     feed.ticket_id = helpdesk_ticket_link(note) if note
     feed
@@ -477,5 +495,20 @@ class Social::TwitterController < Social::BaseController
     Social::SmartFilterFeedbackWorker.perform_async({ :ticket_id => ticket_id,
       :type_of_feedback => SMART_FILTER_FEEDBACK_TYPE[:new_ticket]}) 
   end
-  
+
+  def construct_twitter_reply_hash(note, reply_handle)
+    {
+      id_str: note.notable.tweet.tweet_id.to_s,
+      text: note.body,
+      created_at: DateTime.now.to_s,
+      stream_id: "#{current_account.id}_#{reply_handle.default_stream.id}",
+      user: {
+        name: reply_handle.screen_name,
+        screen_name: reply_handle.screen_name,
+        profile_image_url: DEFAULT_AVATAR
+      },
+      entities: []
+    }
+  end
+
 end
