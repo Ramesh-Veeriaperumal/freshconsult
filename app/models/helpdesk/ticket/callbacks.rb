@@ -88,7 +88,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :enqueue_skill_based_round_robin, :on => :update, :if => :enqueue_sbrr_job?
   after_commit :save_sentiment, on: :create
   after_commit :update_spam_detection_service, :if => :model_changes?
-  after_commit :spam_feedback_to_smart_filter, :on => :update, :if => :twitter_ticket_spammed?
+  after_commit :spam_feedback_to_smart_filter, :on => :update, if: -> { twitter_ticket_spammed? && !Account.current.incoming_mentions_in_tms_enabled? } 
   after_commit :tag_update_central_publish, :on => :update, :if => :tags_updated?
   after_commit :trigger_ticket_properties_suggester_feedback, on: :update, if: :ticket_properties_suggester_feedback_required?
   after_commit :trigger_detect_thank_you_note_feedback, on: :update, if: :detect_thank_you_note_feedback_required?
