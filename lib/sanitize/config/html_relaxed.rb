@@ -27,7 +27,7 @@ class Sanitize
         a abbr acronym address audio b bdo blockquote br caption cite code col colgroup dd del details dfn dl div
         dt em font figcaption figure h1 h2 h3 h4 h5 h6 hgroup hr i img ins kbd li mark
         ol p pre q rp rt ruby s samp section summary small strike strong sub sup table tbody td
-        tfoot th thead time tr tt u ul var wbr span source video
+        tfoot th thead time tr tt u ul var wbr span source video area map
       ],
       :remove_contents => [ 'style','title','script' ],
       :attributes => {
@@ -37,7 +37,7 @@ class Sanitize
         'col'        => ['span', 'width'],
         'colgroup'   => ['span', 'width'],
         'del'        => ['cite', 'datetime'],
-        'img'        => ['align', 'alt', 'height', 'src', 'width', 'class', 'data-id', 'data-height'],
+        'img'        => ['align', 'alt', 'height', 'src', 'width', 'class', 'data-id', 'data-height' , 'usemap'],
         'ins'        => ['cite', 'datetime'],
         'ol'         => ['start', 'reversed', 'type'],
         'q'          => ['cite'],
@@ -53,7 +53,9 @@ class Sanitize
         'audio'      => ['controls', 'width', 'height'],
         'video'      => ['src', 'width', 'height', 'crossorigin', 'poster', 'preload', 'autoplay', 'mediagroup', 'loop', 'muted', 'controls'],
         'pre'        => ['rel','code-brush','data-code-brush'],
-        'font'       => ['color']
+        'font'       => ['color'],
+        'map'        => ['name'],
+        'area'       => ['coords' , 'shape' , 'href' , 'target' , 'alt' , 'rel']
       },
       :add_attributes => {
         'a' => {'rel' => 'noreferrer'}

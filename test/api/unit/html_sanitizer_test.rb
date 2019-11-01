@@ -200,4 +200,15 @@ class HtmlSanitizerTest < ActionView::TestCase
     assert html_value.include?('position: Relative'), 'positive values retained'
     refute html_value.include?('POSITION: ABSOLUTE;'), 'blacklisted style value trimmed'
   end
+
+  def test_should_not_strip_area_and_map_tag
+    controller_params = %{<div>
+                          <img src="test" usemap="" /><map name=""><area coords="" shape="" href="test" target="" /></map>
+                          </div>}
+    html_value = Helpdesk::HTMLSanitizer.clean(controller_params)
+    assert html_value.include?('<img src="test" usemap="">'), "<img> , usemap is stripped"
+    assert html_value.include?('<map name="">') , "<map> tag is stripped"
+    assert html_value.include?('<area coords="" shape="" href="test" target="">') , "<area> tags and its attributes are stripped and not whitelisted"
+  end
+
 end
