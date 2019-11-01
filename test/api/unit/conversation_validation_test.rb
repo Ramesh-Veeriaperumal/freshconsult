@@ -80,6 +80,14 @@ class ConversationValidationTest < ActionView::TestCase
     assert errors.include?('From email invalid_format')
   end
 
+  def test_emails_validation_non_english_characters
+    controller_params = { 'body' => 'test', 'notify_emails' => ['0_9flaadaagas <adgasg@fff.com>'], 'to_emails' => ['aasgasA0d<adgasg@fff.com>'],
+                            'cc_emails' => ['Бургер Кинг<adgasg@fff.com>'], 'bcc_emails' => ['ÒÂÅÎÏÍÍÅ<adgasg@fff.com>'], 'from_email' => 'fggg@ddd.com'}
+    item = nil
+    conversation = ConversationValidation.new(controller_params, item)
+    assert  conversation.valid?
+  end
+
   def test_attachment_multiple_errors
     Account.stubs(:current).returns(Account.first)
     String.any_instance.stubs(:size).returns(20_000_000)
