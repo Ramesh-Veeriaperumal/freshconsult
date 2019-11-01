@@ -255,6 +255,7 @@ module SubscriptionsHelper
                   class="#{button_classes}" 
                   id="#{ plan.name.parameterize.underscore }_button" 
                   data-current-plan="false"
+                  data-heap-id="choose-plan"
                   data-free-plan="#{ free_plan_flag }"
                   data-billing-cycle="#{ billing_cycle }")
     if add_freshdialog
