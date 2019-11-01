@@ -25,6 +25,7 @@ class MetalApiController < ActionController::Metal
   include ActionController::ParamsWrapper
   include ActionController::Instrumentation # need this for active support instrumentation.
   include ActionController::RequestForgeryProtection
+  include Marginalia::ActionControllerInstrumentation
 
   # Inorder to make NewRelic work for ActionController::Metal
   include NewRelic::Agent::Instrumentation::ControllerInstrumentation
