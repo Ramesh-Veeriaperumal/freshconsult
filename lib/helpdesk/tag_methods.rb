@@ -73,12 +73,12 @@ module Helpdesk::TagMethods
     tag_list = []
     # add tags to the item which already exists
     # not using cache as the tags can be added more often. Hence using cache will result in full array.
-    existing_tags = current_account.tags.where(name: tags_to_be_added)
+    existing_tags = Account.current.tags.where(name: tags_to_be_added)
     tag_list.push(*existing_tags)
     # Collect new tags to be added
     existing_tag_names = tag_list.collect(&:name)
     tags_to_be_added.each do |tag|
-      tag_list << current_account.tags.new(name: tag) unless existing_tag_names.any? { |x| x.casecmp(tag).zero? }
+      tag_list << Account.current.tags.new(name: tag) unless existing_tag_names.any? { |x| x.casecmp(tag).zero? }
     end
     tag_list
   end
