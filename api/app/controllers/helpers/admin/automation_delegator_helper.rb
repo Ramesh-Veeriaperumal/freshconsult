@@ -241,7 +241,7 @@ module Admin::AutomationDelegatorHelper
         note_type: EVENT_NOTE_TYPE,
         ticket_action: TICKET_ACTION,
         time_sheet_action: TIME_SHEET_ACTION,
-        customer_feedback: CustomSurvey::Survey::CUSTOMER_RATINGS_FACE_VALUE,
+        customer_feedback: CUSTOMER_FEEDBACK_RATINGS,
         language: LANGUAGE_CODES,
         time_zone: ContactConstants::TIMEZONES,
         freddy_suggestion: FREDDY_ACCEPTED_VALUES
