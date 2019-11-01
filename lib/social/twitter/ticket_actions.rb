@@ -33,6 +33,11 @@ module Social::Twitter::TicketActions
     ticket.ticket_body_attributes = {
       :description_html => body_content
     }
+    if options[:from_social_tab] == true
+      ticket.activity_type = {
+        type: TWITTER_FEED_TICKET
+      }
+    end
     ticket.requester = user
     ticket.build_archive_child(:archive_ticket_id => archived_ticket.id) if archived_ticket
     if ticket.save_ticket
@@ -93,7 +98,9 @@ module Social::Twitter::TicketActions
         feeds.each_with_index do |feed, index|
           if feed.feed_id == current_feed_id
             index_to_be_deleted = index
-            notable = feed.convert_to_fd_item(stream, {:convert => true, :tweet =>true} )
+            params_hash = {:convert => true, :tweet =>true}
+            params_hash.merge!(from_social_tab: true) if Account.current.incoming_mentions_in_tms_enabled?
+            notable = feed.convert_to_fd_item(stream, params_hash)
             fd_items << notable
           else
             if feed.in_reply_to && feed.in_reply_to == current_feed_id

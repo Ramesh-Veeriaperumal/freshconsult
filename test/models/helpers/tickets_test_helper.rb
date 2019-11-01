@@ -93,6 +93,8 @@ module TicketsTestHelper
                            split_ticket_hash(activity_type)
                          elsif activity_type && activity_type[:type] == Helpdesk::Ticket::MERGE_TICKET_ACTIVITY
                            merge_ticket_hash(activity_type)
+                         elsif activity_type && activity_type[:type] == Social::Constants::TWITTER_FEED_TICKET
+                           social_tab_ticket_hash(activity_type)
                          else
                            {}
                          end
@@ -118,6 +120,14 @@ module TicketsTestHelper
         type: Helpdesk::Ticket::MERGE_TICKET_ACTIVITY,
         source_ticket_id: activity_type[:source_ticket_id],
         target_ticket_id: activity_type[:target_ticket_id]
+      }
+    }
+  end
+
+  def social_tab_ticket_hash(activity_type)
+    {
+      activity_type: {
+        type: Social::Constants::TWITTER_FEED_TICKET
       }
     }
   end
