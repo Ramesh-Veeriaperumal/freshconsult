@@ -307,7 +307,8 @@ class Account < ActiveRecord::Base
       sandbox_temporary_offset: false, downgrade_policy: false, skip_posting_to_fb: true, mentions_to_tms: false,
       allow_update_agent: false, facebook_dm_outgoing_attachment: true, hide_mailbox_error_from_agents: false,
       facebook_post_outgoing_attachment: true, outgoing_tweets_to_tms: false, incoming_mentions_in_tms: false, 
-      prevent_lang_detect_for_spam: false, jira_onpremise_reporter: false, sidekiq_logs_to_central: false, portal_central_publish: false, encode_emoji_in_solutions: false
+      prevent_lang_detect_for_spam: false, jira_onpremise_reporter: false, sidekiq_logs_to_central: false, portal_central_publish: false, encode_emoji_in_solutions: false,
+      forums_agent_portal: false
     }, :merge
   )
 
