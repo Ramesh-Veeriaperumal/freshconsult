@@ -135,6 +135,7 @@ Sidekiq.configure_server do |config|
   # It will be `concurrency + 5` unless, we override
   config.redis = redis_config
   config.super_fetch!
+  config.reliable_scheduler!
   config.average_scheduled_poll_interval = poll_interval if poll_interval.present?
   config.error_handlers << proc { |ex, ctx_hash|
     begin
