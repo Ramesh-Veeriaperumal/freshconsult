@@ -46,7 +46,7 @@ class Subscription < ActiveRecord::Base
     garden_omni_jan_19: 'blossom',
     estate_jan_19: 'garden',
     estate_omni_jan_19: 'garden',
-    forest_jan_19: 'standard'
+    forest_jan_19: 'estate'
   }.freeze
 
   FRESHCHAT_PLAN_MAPPING = {
