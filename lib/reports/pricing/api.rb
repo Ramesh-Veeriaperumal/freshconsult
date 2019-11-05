@@ -15,7 +15,7 @@ module Reports::Pricing
       url = API_RESOURCES[:create_tenant]
       body = { tenantId: current_account.id }
 
-      http_request('tenant', 'post', url, body)
+      http_request('tenant', 'put', url, body)
     end
 
     # def delete_tenant
@@ -60,13 +60,13 @@ module Reports::Pricing
       end
 
       def log_request_and_call(resource, action)
-        Rails.logger.debug "Reports pricing API called :: #{resource}_#{action}"
+        Rails.logger.debug "Reports pricing API called :: #{resource}_#{action}, for Account #{current_account.id}"
         response = yield(build_connection)
 
-        Rails.logger.debug "Reports pricing API #{SUCCESS_CODES.include?(response.status) ? 'success' : 'error'} :: #{resource}_#{action}, response: #{response.body.inspect}"
+        Rails.logger.debug "Reports pricing API #{SUCCESS_CODES.include?(response.status) ? 'success' : 'error'} :: #{resource}_#{action}, response: #{response.body.inspect}, for Account #{current_account.id}"
         raise "Pricing API Invalid response, code: #{response.status}" unless SUCCESS_CODES.include?(response.status)
       rescue StandardError => e
-        Rails.logger.error "Pricing API: Exception in log_request_and_call :: #{resource}_#{action}, error: #{e.message}"
+        Rails.logger.error "Pricing API: Exception in log_request_and_call :: #{resource}_#{action}, error: #{e.message} for Account #{current_account.id}"
         NewRelic::Agent.notice_error(e, description: "Pricing API: Exception in log_request_and_call :: #{resource}_#{action} for Account #{current_account.id}")
       end
 
