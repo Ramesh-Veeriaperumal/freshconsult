@@ -32,7 +32,7 @@ window.App.Channel = window.App.Channel || new MessageChannel();
 			var isIframe = (window !== window.top);
 			if (isIframe) {
 				var prefix = '/admin';
-				var emberizedPath = location.pathname.includes('helpdesk') ? prefix + location.pathname.replace('helpdesk/', '') : prefix + location.pathname;
+				var emberizedPath = location.pathname.indexOf('helpdesk') ? prefix + location.pathname.replace('helpdesk/', '') : prefix + location.pathname;
 				window.App.Channel.port1.postMessage({ action: "update_iframe_url", path: emberizedPath });
 			}
 		},

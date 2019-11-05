@@ -36,8 +36,9 @@ module ChannelIntegrations::CommonActions
       def construct_note(payload)
         ticket_id = payload.delete(:ticket_id)
         raise 'Ticket ID should be present' unless ticket_id
-
         ticket = load_ticket(ticket_id)
+        archived_ticket = load_archived_ticket(ticket_id) unless ticket
+        raise Social::Constants::TICKET_ARCHIVED if archived_ticket
         raise 'Ticket not found' unless ticket
 
         body_html = payload.delete(:body)
@@ -50,6 +51,10 @@ module ChannelIntegrations::CommonActions
 
       def load_ticket(ticket_display_id)
         current_account.tickets.find_by_display_id(ticket_display_id)
+      end
+
+      def load_archived_ticket(ticket_display_id)
+        current_account.archive_tickets.find_by_display_id(ticket_display_id)
       end
   end
 end

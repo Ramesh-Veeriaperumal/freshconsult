@@ -134,7 +134,7 @@
 		<% if current_account.launched?(:downgrade_policy) && is_plan_downgrade %>
 			<% submit_text = t('request_change')%>
 		<% end %>
-		<input type="submit" class="btn btn-flat billing-cancel" value="<%= t('cancel') %>" />
+		<input type="submit" class="btn btn-flat billing-cancel" value="<%= t('cancel') %>" data-heap-id="billing-cancel"  />
 			<% subscription_plan_id = @subscription.subscription_plan_id %>
 			
 			<% if current_account.launched?(:downgrade_policy) && @subscription.subscription_request.present? %>
@@ -146,7 +146,7 @@
 				</div>	
 			<% else %>
 		 		<%= submit_tag(submit_text, type:"submit" , :class => "btn billing-submit submit-disable", 
-				:id => "commit", :name => "commit", "data-loading-text" => t('please_wait')) %>
+				:id => "commit", :name => "commit", "data-loading-text" => t('please_wait'), "data-heap-id" => "billing-submit") %>
 			 <% end %>
 			<% if current_account.launched?(:downgrade_policy) && @subscription.subscription_request.present? %>
 				<div id="downgrade-info<%= subscription_plan_id %>" class="modal hide second-downgrade-modal-wrapper"  aria-hidden="true" role="dialog"> 

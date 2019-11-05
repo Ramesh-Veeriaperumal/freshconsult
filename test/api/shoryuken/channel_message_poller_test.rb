@@ -12,6 +12,10 @@ class ChannelMessagePollerTest < ActionView::TestCase
   include SocialTestHelper
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include ArchiveTicketTestHelper
+
+  ARCHIVE_DAYS = 120
+  TICKET_UPDATED_DATE = 150.days.ago
 
   def teardown
     cleanup_twitter_handles(@account)
@@ -53,26 +57,18 @@ class ChannelMessagePollerTest < ActionView::TestCase
     assert_equal tweet.tweet_type, 'mention'
 
     conflict_result = ChannelIntegrations::Commands::Processor.new.process(command_payload[:payload])
-    assert_equal conflict_result, conflict_reply_payload(ticket, payload[:tweet_id])
+    assert_equal conflict_result, conflict_reply_payload(ticket.display_id, payload[:tweet_id])
   end
 
-  def test_twitter_mention_convert_as_note_and_conflict_case
-    Account.current.launch(:outgoing_tweets_to_tms)
-    payload, command_payload = twitter_create_note_command('mention')
-    push_to_channel(command_payload)
-
-    ticket = @account.tickets.find_by_display_id(payload[:ticket_id])
-    note = ticket.notes.find_by_notable_id(ticket.id)
-    tweet = @account.tweets.last
-
-    assert_equal tweet[:tweetable_id], note.id
-    assert_equal note.body, payload[:body]
-    assert_equal tweet.tweet_type, 'mention'
-
-    conflict_result = ChannelIntegrations::Commands::Processor.new.process(command_payload[:payload])
-    assert_equal conflict_result, conflict_reply_payload(note, payload[:tweet_id])
+  def test_twitter_mention_convert_as_note_and_ticket_archived_case
+    Account.current.launch(:incoming_mentions_in_tms)
+    @account.enable_ticket_archiving(ARCHIVE_DAYS)
+    @account.features.send(:archive_tickets).create
+    payload, command_payload = twitter_create_note_command('mention',true)
+    archive_result = ChannelIntegrations::Commands::Processor.new.process(command_payload[:payload])
+    assert_equal archive_result, ticket_archived_error_payload(payload[:ticket_id])
   ensure
-    Account.current.rollback(:outgoing_tweets_to_tms)
+    Account.current.rollback(:incoming_mentions_in_tms)
   end
 
   def test_twitter_mention_convert_as_ticket
@@ -218,7 +214,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
       [payload, sample_twitter_create_ticket_command(@account, @handle, @stream, payload)]
     end
 
-    def twitter_create_note_command(tweet_type = 'dm')
+    def twitter_create_note_command(tweet_type = 'dm',archive_ticket = false)
       tweet = @account.tweets.where(tweetable_type: 'Helpdesk::Ticket').last
 
       if tweet && tweet.tweetable_id
@@ -227,6 +223,14 @@ class ChannelMessagePollerTest < ActionView::TestCase
         payload, command_payload = twitter_create_ticket_command(tweet_type)
         push_to_channel(command_payload)
         ticket_id = @account.tickets.last.display_id
+      end
+
+      if archive_ticket
+        ticket = @account.tickets.find_by_display_id(ticket_id)
+        ticket.updated_at = TICKET_UPDATED_DATE
+        ticket.status = 5
+        ticket.save!
+        convert_ticket_to_archive(ticket)
       end
 
       # create a twitter contact and pass the ID to the user_id here.

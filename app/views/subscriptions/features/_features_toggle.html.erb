@@ -11,7 +11,7 @@
 		</p>
 	<% end %>
 	<% if fsm_supported_plan?(plan) %>
-		<p class="features-billing__toggle toggle-fsm-billing hide">
+		<p data-heap-id="fsm-internal-toggle" class="features-billing__toggle toggle-fsm-billing hide">
 		  <span class="fsm-toggle-holder">
 		    <input rel="toggle" type="checkbox" data-plan-id="<%= plan.id %>" data-plan="<%= plan_name_id %>" id="billing-fsm-toggle" name="stop_sla_timer" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" checked=true />
 		    <%= t('fsm_title') %>

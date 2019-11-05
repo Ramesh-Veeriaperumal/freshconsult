@@ -1,6 +1,6 @@
 module KafkaCollector
   module CollectorRestClient
-    POST_TO_COLLECTOR_TIMEOUT = 2
+    POST_TO_COLLECTOR_TIMEOUT = 10
     def post_to_collector(data, msg_id=nil, is_channel_token=true)
       token = is_channel_token ? KafkaCollectorConfig['service'] : CentralConfig['service_token']
 

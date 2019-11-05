@@ -140,10 +140,9 @@ module ApiSolutions
 
       def construct_article_object
         parse_attachment_params if private_api?
-        article_builder_params = { solution_article_meta: @article_params, language_id: @lang_id }
+        article_builder_params = { solution_article_meta: @article_params, language_id: @lang_id, tags: @tags }
         @meta = Solution::Builder.article(article_builder_params)
         @item = @meta.safe_send(language_scoper)
-        @item.tags = @tags if @tags
         @item.create_draft_from_article if @status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft] && create?
         !(@item.errors.any? || @item.parent.errors.any?)
       end

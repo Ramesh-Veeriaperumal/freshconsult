@@ -83,7 +83,7 @@ module SupportTicketControllerMethods
 
     def sanitize_params
       # To avoid reflected xss - we assign sanitized description
-      params["helpdesk_ticket"]["ticket_body_attributes"]["description_html"] = @ticket.description_html
+      params["helpdesk_ticket"]["ticket_body_attributes"]["description_html"] = Helpdesk::HTMLSanitizer.sanitize_ticket(@ticket.description_html)
     rescue => e
       Rails.logger.error(e)
     ensure

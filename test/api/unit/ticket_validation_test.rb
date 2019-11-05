@@ -64,6 +64,15 @@ class TicketValidationTest < ActionView::TestCase
     Account.unstub(:current)
   end
 
+    def test_cc_emails_validation_non_english
+    Account.stubs(:current).returns(Account.first)
+    controller_params = { ticket_fields: [], 'email' => 'fgggss@fff.com', 'cc_emails' => ['Бургер Кинг<adgasg@fff.com>', 'ÒÂÅÎÏÍÍÅ<adgasg@fff.com>'], statuses: statuses }
+    item = nil,
+           ticket = TicketValidation.new(controller_params, item)
+    assert ticket.valid?
+    Account.unstub(:current)
+  end
+
   def test_tags_comma_invalid
     Account.stubs(:current).returns(Account.first)
     controller_params = { 'requester_id' => 1, ticket_fields: [], tags: ['comma,test'], statuses: statuses }

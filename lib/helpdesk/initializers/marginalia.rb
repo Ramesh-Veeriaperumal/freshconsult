@@ -32,12 +32,6 @@ module Marginalia
 end
 
 Sidekiq.configure_server do |config|
-  ActiveSupport.on_load :action_controller do
-    if defined? ActionController::Metal
-      ActionController::Metal.send(:include, AbstractController::Callbacks)
-      ActionController::Metal.send(:include, Marginalia::ActionControllerInstrumentation)
-    end
-  end
   config.server_middleware do |chain|
     chain.add Marginalia::SidekiqInstrumentation
   end

@@ -157,14 +157,25 @@ module TwitterTestHelper
     }
   end
 
-  def conflict_reply_payload(entity, tweet_id)
+  def conflict_reply_payload(entity_id, tweet_id)
     {
       data: {
         message: "Conflict: Tweet ID: #{tweet_id} already converted.",
-        id: entity.id
+        id: entity_id
       },
       status_code: 409,
       reply_status: 'error'
+    }
+  end
+
+  def ticket_archived_error_payload(ticket_id)
+    {
+        data: {
+          message: Social::Constants::TICKET_ARCHIVED,
+          ticket_id: ticket_id
+        },
+        status_code: Social::Constants::TWITTER_ERROR_CODES[:archived_ticket_error],
+        reply_status: 'error'
     }
   end
 end

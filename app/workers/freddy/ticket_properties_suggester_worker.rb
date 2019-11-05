@@ -43,6 +43,8 @@ module Freddy
         suggested_fields = @ticket.schema_less_ticket.ticket_properties_suggester_hash[:suggested_fields]
         method_options[:model_changes].each do |ml_field, value|
           product_field = ML_FIELDS_TO_PRODUCT_FIELDS_MAP[ml_field.to_sym].try(:to_sym)
+          next if suggested_fields[product_field].nil?
+          
           case ml_field
           when 'group_id'
             predicted_values[ml_field] = suggested_fields[product_field][:response].to_s
