@@ -21,12 +21,12 @@ module Widget
         end
 
         def construct_es_params
-          # getting solution_category_meta from portal_solution_categories
           super.tap do |es_params|
             es_params[:language_id] = Language.current.id
             es_params[:article_status] = SearchUtil::DEFAULT_SEARCH_VALUE.to_i
-            es_params[:article_visibility] = [Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]]
+            es_params[:article_visibility] = user_visibility
             es_params[:article_category_id] = solution_category_meta_ids
+            es_params[:article_company_id]  = User.current.company_ids if User.current && User.current.has_company?
             es_params[:size]  = 5
             es_params[:from]  = 1
             es_params[:sort_by]         = 'hits'
