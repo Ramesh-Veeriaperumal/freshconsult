@@ -53,7 +53,7 @@ module Ember
       def bulk_update
         @succeeded_list = []
         @failed_list = []
-        @article_meta = meta_scoper.where(id: cname_params[:ids]).preload(:solution_folder_meta, primary_article: [:solution_folder_meta, :article_body])
+        @article_meta = meta_scoper.where(id: cname_params[:ids]).preload(:solution_folder_meta, primary_article: [:solution_folder_meta, :article_body, :draft])
         @article_meta.each do |article_meta|
           if update_article_properties(article_meta)
             @succeeded_list << article_meta.id

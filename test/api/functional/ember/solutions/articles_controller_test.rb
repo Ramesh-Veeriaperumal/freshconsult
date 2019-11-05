@@ -233,7 +233,9 @@ module Ember
       end
 
       def test_index_with_both_draft_and_article
-        draft = @account.solution_drafts.last
+        sample_article = @account.solution_articles.where(language_id: 6).first
+        create_draft(article: sample_article)
+        draft = sample_article.draft
         get :index, controller_params(version: 'private', ids: draft.article.parent_id, language: 'en')
         response_body = JSON.parse(response.body).last
         assert_response 200
@@ -1852,6 +1854,207 @@ module Ember
         assert_response 400
         match_json([bad_request_error_pattern('outdated', :cannot_mark_primary_as_uptodate, code: :invalid_value)])
       end
+ 
+      def test_bulk_update_publish_without_feature
+        Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(false)
+        draft = @account.solution_drafts.last
+        put :bulk_update, construct_params({ version: 'private' }, ids: [draft.article.parent_id], properties: { status: 2 })
+        assert_response 403
+        match_json(validation_error_pattern(bad_request_error_pattern('properties[:status]', :require_feature, feature: :adv_article_bulk_actions, code: :access_denied)))
+      ensure
+        Account.any_instance.unstub(:adv_article_bulk_actions_enabled?)
+      end
+
+      def test_bulk_update_publish
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+        draft = @account.solution_drafts.last
+        put :bulk_update, construct_params({ version: 'private' }, ids: [draft.article.parent_id], properties: { status: 2 })
+        assert_response 204
+        assert_equal draft.article.status, 2
+      end
+
+      def test_bulk_update_publish_without_publish_privilege
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
+        draft = @account.solution_drafts.last
+        put :bulk_update, construct_params({ version: 'private' }, ids: [draft.article.parent_id], properties: { status: 2 })
+        assert_response 403
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_bulk_update_publish_without_multilingual_feature
+        Account.any_instance.stubs(:multilingual?).returns(false)
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+        article_title1 = Faker::Lorem.characters(10)
+        article_meta1 = create_article(article_params(title: article_title1,status: 1))
+        sample_article1 = article_meta1.safe_send("primary_article")
+        create_draft(article: sample_article1)
+        draft1 = sample_article1.draft
+        article_title2 = Faker::Lorem.characters(10)
+        article_meta2 = create_article(article_params(title: article_title2,status: 1))
+        sample_article2 = article_meta2.safe_send("primary_article")
+        create_draft(article: sample_article2)
+        draft2 = sample_article2.draft
+        put :bulk_update, construct_params({ version: 'private' }, ids: [draft1.article.parent_id, draft2.article.parent_id], properties: { status: 2 })
+        assert_response 204
+        assert_equal draft1.article.reload.status, 2
+        assert_equal draft2.article.reload.status, 2
+      ensure
+        Account.any_instance.unstub(:multilingual?)
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_bulk_update_publish_with_multilingual_feature
+        Account.any_instance.stubs(:multilingual?).returns(true)
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+        languages = @account.supported_languages + ['primary']
+        language  = @account.supported_languages.first
+        article_title = Faker::Lorem.characters(10)
+        article_meta = create_article(article_params(title: article_title, lang_codes: languages, status: 1))
+        sample_article = article_meta.safe_send("#{language}_article")
+        create_draft(article: sample_article)
+        draft = sample_article.draft
+        put :bulk_update, construct_params({ version: 'private', language: language }, ids: [draft.article.parent_id], properties: { status: 2 })
+        assert_response 204
+        assert_equal draft.article.reload.status, 2
+      ensure
+        Account.any_instance.unstub(:multilingual?)
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_bulk_update_publish_for_unsupported_language
+        Account.any_instance.stubs(:multilingual?).returns(true)
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+        languages = @account.supported_languages + ['primary']
+        unsupported_languages = Language.all.map(&:code).reject {|language| languages.include?(language) }
+        language  = unsupported_languages.first
+        draft = @account.solution_drafts.last
+        put :bulk_update, construct_params({ version: 'private', language: language }, ids: [draft.article.parent_id], properties: { status: 2 })
+        assert_response 404
+      ensure
+        Account.any_instance.unstub(:multilingual?)
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_bulk_update_publish_with_invalid_status
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+        draft = @account.solution_drafts.last
+        put :bulk_update, construct_params({ version: 'private' }, ids: [draft.article.parent_id], properties: { status: 1 })
+        assert_response 400
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_bulk_update_publish_for_article_with_no_draft
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+        article_title = Faker::Lorem.characters(10)
+        article_meta = create_article(article_params(title: article_title,status: 1))
+        sample_article = article_meta.safe_send("primary_article")
+        sample_article.draft.destroy if sample_article.draft.present?
+        put :bulk_update, construct_params({ version: 'private' }, ids: [sample_article.parent_id], properties: { status: 2 })
+        assert_response 202
+        sample_article.destroy
+        article_meta.destroy
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_bulk_update_publish_for_article_with_draft_locked   
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+        article_title = Faker::Lorem.characters(10)
+        article_meta = create_article(article_params(title: article_title,status: 1))
+        sample_article = article_meta.safe_send("primary_article")
+        create_draft(article: sample_article)
+        draft = sample_article.draft
+        Solution::Draft.any_instance.stubs(:locked?).returns(true)
+        put :bulk_update, construct_params({ version: 'private' }, ids: [sample_article.parent_id], properties: { status: 2 })       
+        assert_response 202
+        sample_article.destroy
+        draft.destroy
+        article_meta.destroy
+      ensure
+        User.any_instance.unstub(:privilege?)
+        Solution::Draft.any_instance.unstub(:locked?)
+      end
+
+      def test_bulk_update_mark_as_upto_date
+        Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(true)
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+        languages = @account.supported_languages + ['primary']
+        language = @account.supported_languages.first
+        article_meta = create_article(article_params(lang_codes: languages))
+        article = article_meta.safe_send("#{language}_article")
+        article.outdated = true
+        article.save
+        put :bulk_update, construct_params({ version: 'private', language: language}, ids: [article_meta.parent_id], properties: { outdated: false })
+        assert_response 204
+        assert !article_meta.reload.safe_send("#{language}_article").outdated
+      ensure
+        Account.any_instance.unstub(:adv_article_bulk_actions_enabled?)
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_bulk_update_mark_as_upto_date_without_adv_article_bulk_actions_feature
+        Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(false)
+        languages = @account.supported_languages + ['primary']
+        language = @account.supported_languages.first
+        article_meta = create_article(article_params(lang_codes: languages))
+        article = article_meta.safe_send("#{language}_article")
+        article.outdated = true
+        article.save
+        put :bulk_update, construct_params({ version: 'private', language: language}, ids: [article_meta.parent_id], properties: { outdated: false })
+        assert_response 403
+        match_json(validation_error_pattern(bad_request_error_pattern('properties[:outdated]', :require_feature, feature: :adv_article_bulk_actions, code: :access_denied)))
+      ensure
+        Account.any_instance.unstub(:adv_article_bulk_actions_enabled?)
+      end
+
+      def test_bulk_update_mark_as_upto_date_without_privilege
+        Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(true)
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
+        languages = @account.supported_languages + ['primary']
+        language = @account.supported_languages.first
+        article_meta = create_article(article_params(lang_codes: languages))
+        article = article_meta.safe_send("#{language}_article")
+        article.outdated = true
+        article.save
+        put :bulk_update, construct_params({ version: 'private', language: language}, ids: [article_meta.parent_id], properties: { outdated: false })
+        assert_response 403
+      ensure
+        Account.any_instance.unstub(:adv_article_bulk_actions_enabled?)
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_bulk_update_mark_as_upto_date_with_wrong_parameters
+        Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(true)
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+        languages = @account.supported_languages + ['primary']
+        language = @account.supported_languages.first
+        article_meta = create_article(article_params(lang_codes: languages))
+        article = article_meta.safe_send("#{language}_article")
+        article.outdated = true
+        article.save
+        put :bulk_update, construct_params({ version: 'private', language: language}, ids: [article_meta.parent_id], properties: { outdated: true })
+        assert_response 400
+      ensure
+        Account.any_instance.unstub(:adv_article_bulk_actions_enabled?)
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_bulk_update_mark_as_upto_date_already_upto_date_articles
+        Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(true)
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+        languages = @account.supported_languages + ['primary']
+        language = @account.supported_languages.first
+        article_meta = create_article(article_params(lang_codes: languages))
+        article = article_meta.safe_send("#{language}_article")
+        article.save
+        put :bulk_update, construct_params({ version: 'private', language: language}, ids: [article_meta.parent_id], properties: { outdated: false })
+        assert_response 204
+      ensure
+        Account.any_instance.unstub(:adv_article_bulk_actions_enabled?)
+        User.any_instance.unstub(:privilege?)
+      end
 
       def test_create_article_with_emoji_content_in_description_and_title_with_encode_emoji_enabled
         Account.current.launch(:encode_emoji_in_solutions)
@@ -1994,7 +2197,7 @@ module Ember
         assert_response 201
         match_json(private_api_solution_article_pattern(Solution::Article.last))
       end
-    
+  
       private
         def version
           'private'

@@ -6,12 +6,32 @@ class ArticleBulkUpdateValidation < ApiValidation
 
   validate :validate_properties
 
+  validate :validate_status, if: -> { properties && properties[:status].present? }
+
+  validate :validate_outdated_property, if: -> { properties && properties[:outdated].present? }
+
   def articles_bulk_validation
     {
       folder_id: { data_type: { rules: Integer, allow_nil: false } },
       agent_id: { data_type: { rules: Integer, allow_nil: false } },
-      tags: { data_type: { rules: Array, allow_nil: false } }
+      tags: { data_type: { rules: Array, allow_nil: false } },
+      outdated: { data_type: { rules: 'Boolean' } },
+      status: { data_type: { rules: Integer, allow_nil: false } }
     }
+  end
+
+  def validate_status
+    if properties[:status] != Solution::Constants::STATUS_KEYS_BY_TOKEN[:published]
+      (error_options[:properties] ||= {}).merge!(nested_field: :status, code: :status_is_not_valid)
+      errors[:properties] = :status_is_not_valid
+    end
+  end
+
+  def validate_outdated_property
+    if properties[:outdated] != false
+      (error_options[:properties] ||= {}).merge!(nested_field: :outdated, code: :outdated_property_is_not_valid)
+      errors[:properties] = :outdated_property_is_not_valid
+    end
   end
 
   def validate_properties
@@ -20,6 +40,8 @@ class ArticleBulkUpdateValidation < ApiValidation
     elsif !Account.current.adv_article_bulk_actions_enabled?
       advanced_article_bulk_action_error(:agent_id) if properties[:agent_id]
       advanced_article_bulk_action_error(:tags) if properties[:tags]
+      advanced_article_bulk_action_error(:status) if properties[:status]
+      advanced_article_bulk_action_error(:outdated) if properties.key?(:outdated)
     end
     errors.blank?
   end
