@@ -95,7 +95,7 @@ class Support::CustomSurveysController < SupportController #for Portal Customiza
     end
 
     def preview_feature_check
-      access_denied if !current_account.custom_survey_enabled? || !current_account.csat_translations_enabled?
+      access_denied if !current_account.custom_survey_enabled? || !current_account.custom_translations_enabled?
     end
 
     def load_survey

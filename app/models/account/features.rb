@@ -41,7 +41,7 @@ class Account < ActiveRecord::Base
     :prevent_wc_ticket_create, :allow_wildcard_ticket_create, :requester_privilege,
     :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr,
     :csat_email_scan_compatibility, :mint_portal_applicable, :twitter_microservice, :quoted_text_parsing_feature, :enable_customer_journey,
-    :csat_translations, :email_mailbox, :sandbox_temporary_offset, :downgrade_policy,
+    :email_mailbox, :sandbox_temporary_offset, :downgrade_policy,
     :fluffy_min_level, :allow_update_agent, :help_widget_solution_categories, :search_settings, :optar_cache,
     :ticket_field_revamp, :facebook_dm_outgoing_attachment, :skip_posting_to_fb, :hide_mailbox_error_from_agents, :hide_og_meta_tags,
     :freshcaller_admin_new_ui, :facebook_post_outgoing_attachment, :outgoing_tweets_to_tms, :incoming_mentions_in_tms, :help_widget_login, :occlusion_rendering_ticket_fields,
@@ -257,10 +257,6 @@ class Account < ActiveRecord::Base
 
   def supervisor_feature_launched?
     features?(:freshfone_call_monitoring) || features?(:agent_conference)
-  end
-
-  def csat_translations_enabled?
-    launched?(:csat_translations) && custom_translations_enabled?
   end
 
   def compose_email_enabled?
