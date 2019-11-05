@@ -28,6 +28,6 @@ class Helpdesk::Section < ActiveRecord::Base
   after_commit :clear_cache
 
   def parent_ticket_field_id
-    section_picklist_mappings[0].picklist_value.pickable_id
+    ticket_field_id || section_picklist_mappings[0].picklist_value.pickable_id
   end
 end

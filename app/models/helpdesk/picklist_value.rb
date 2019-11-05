@@ -32,6 +32,8 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
 
   before_create :assign_picklist_id, if: :redis_picklist_id_enabled?
 
+  before_save :assign_ticket_field_id, if: -> { pickable_type == 'Helpdesk::TicketField' }
+
   before_save :construct_model_changes
 
   before_destroy :save_deleted_picklist_info
@@ -120,17 +122,23 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
   end
 
   def clear_ticket_types_cache
-    return if pickable_id != Account.current.ticket_fields_from_cache.find { |x| x.name == 'ticket_type' }.id
-
-    Account.current.clear_ticket_types_from_cache
-  end
-  
-  def clear_ticket_types_cache
     ticket_type_id = Account.current.ticket_fields_from_cache.find { |x| x.name == 'ticket_type' }.id
     Account.current.clear_ticket_types_from_cache if pickable_id == ticket_type_id
   end
 
   private
+
+    def assign_ticket_field_id
+      self.ticket_field_id = pickable_id if self.ticket_field_id.blank?
+      sub_picklist_values.each do |level2|
+        next if destroyed? || level2.ticket_field_id.present?
+        level2.ticket_field_id = pickable_id
+        level2.sub_picklist_values.each do |level3|
+          next if level3.ticket_field_id.present? || level2.destroyed?
+          level3.ticket_field_id = pickable_id
+        end
+      end
+    end
 
     def assign_picklist_id
       key = PICKLIST_ID % { account_id: account_id }

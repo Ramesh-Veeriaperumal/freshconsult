@@ -17,7 +17,8 @@ class Sync::DataToFile::Transformer
     'Admin::CannedResponses::Response' => [['content_html']],
     'EmailNotification'           => [['requester_template', 'agent_template']],
     'Helpdesk::Attachment'        => [['attachable_id'], lambda { |transformer, object| object.read_attribute('attachable_type') == 'Account' }],
-    'Helpdesk::SlaPolicy'         => [['conditions', 'escalations']]
+    'Helpdesk::SlaPolicy'         => [['conditions', 'escalations']],
+    'Helpdesk::PicklistValue'     => ['picklist_id']
   }
 
   INLINE_ATTACHMENT_TRANSFORMATION_COLUMNS = {
@@ -110,6 +111,10 @@ class Sync::DataToFile::Transformer
     apply_id_mapping(data)
   end
 
+  def transform_helpdesk_picklist_value_picklist_id(data)
+    data
+  end
+
   TRANSFORMATION_IDS.each do |model|
     define_method "transform_#{model.gsub('::', '').snakecase}_id" do |data|
       apply_id_mapping(data)
@@ -156,7 +161,7 @@ class Sync::DataToFile::Transformer
   def calc_id(val, reverse = false)
     new_val = reverse ? val.to_i + @offset_value : val.to_i - @offset_value
     val.is_a?(String) ? new_val.to_s : new_val
-  end    
+  end
 
   private
 

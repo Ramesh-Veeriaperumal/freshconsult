@@ -4,7 +4,7 @@ class Helpdesk::SectionPicklistValueMapping < ActiveRecord::Base
   
   clear_memcache [TICKET_FIELDS_FULL, CUSTOMER_EDITABLE_TICKET_FIELDS_FULL, CUSTOMER_EDITABLE_TICKET_FIELDS_WITHOUT_PRODUCT]
 
-  self.primary_key = :id  
+  self.primary_key = :id
   attr_protected  :account_id
   
   belongs_to_account
