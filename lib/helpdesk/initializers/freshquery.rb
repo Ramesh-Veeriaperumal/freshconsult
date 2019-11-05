@@ -227,7 +227,7 @@ module Freshquery
       attribute :agent_id, transform: :responder_id, type: :positive_integer
       attribute :internal_agent_id, :sl_skill_id, type: :positive_integer
       attribute :created_at, :updated_at, :due_by, type: :date_time
-      attribute :fr_due_by, transform: :frDueBy, type: :date
+      attribute :fr_due_by, transform: :frDueBy, type: :date_time
       attribute :type, transform: :ticket_type, choices: :ticket_types, type: :string
       attribute :tag, transform: :tag_names, type: :string
       attribute :spam, :deleted, :trashed, :status_stop_sla_timer, :status_deleted, type: :boolean

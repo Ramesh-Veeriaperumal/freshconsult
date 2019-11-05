@@ -8,6 +8,8 @@ module TicketFilterConstants
 
   INDEX_FIELDS = %w[filter ids company_id requester_id email order_by order_type updated_since include query_hash only article_id exclude portal_id language_id].freeze
 
+  RENAME_CONDITIONS = { 'fr_due_by' => 'frDueBy' }.freeze
+
   RENAME_FILTER_NAMES = { 'watching' => 'monitored_by' }.freeze
 
   SIDE_LOADING_FEATURES = [

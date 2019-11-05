@@ -143,4 +143,51 @@ class QueryHashValidationTest < ActionView::TestCase
     assert query_validation.valid?
   end
 
+  def test_due_by_value_match
+    stub_account
+    query = sample_query_params
+    query[:condition] = 'due_by'
+    query[:operator] = 'due_by_op'
+    query[:value] = [8]
+    query_validation = QueryHashValidation.new(query)
+    assert query_validation.valid?
+  end
+
+  def test_fr_due_by_condition
+    stub_account
+    query = sample_query_params
+    query[:condition] = 'fr_due_by'
+    query[:operator] = 'due_by_op'
+    query[:value] = [2]
+    query_validation = QueryHashValidation.new(query)
+    assert query_validation.valid?
+  end
+
+  # def test_nr_due_by_without_feature
+  #   stub_account
+  #   Account.current.stubs(:next_response_sla_enabled?).returns(false)
+  #   query = sample_query_params
+  #   query[:condition] = 'nr_due_by'
+  #   query[:operator] = 'due_by_op'
+  #   query[:value] = [2]
+  #   query_validation = QueryHashValidation.new(query)
+  #   refute query_validation.valid?
+  #   assert query_validation.errors.full_messages.include?('Condition require_feature')
+  # ensure
+  #   Account.current.unstub(:next_response_sla_enabled?)
+  # end
+
+  # def test_nr_due_by_with_feature
+  #   stub_account
+  #   Account.current.stubs(:next_response_sla_enabled?).returns(true)
+  #   query = sample_query_params
+  #   query[:condition] = 'nr_due_by'
+  #   query[:operator] = 'due_by_op'
+  #   query[:value] = [2]
+  #   query_validation = QueryHashValidation.new(query)
+  #   assert query_validation.valid?
+  # ensure
+  #   Account.current.unstub(:next_response_sla_enabled?)
+  # end
+
 end

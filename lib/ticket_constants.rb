@@ -114,7 +114,8 @@ module TicketConstants
   TICKET_ASSOCIATION_FILTER_NAMES_BY_KEY = Hash[*TICKET_ASSOCIATION_FILTER.map { |i| [i[2].join(','), i[1]] }.flatten]
   TICKET_ASSOCIATION_FILTER_KEYS_BY_TOKEN = Hash[*TICKET_ASSOCIATION_FILTER.map { |i| [i[0], i[2].join(',')] }.flatten]
 
-  DEFAULT_COLUMNS_ORDER = [ :responder_id, :group_id, :created_at, :due_by, :status, :priority,
+  # TODO: nr_due_by
+  DEFAULT_COLUMNS_ORDER = [ :responder_id, :group_id, :created_at, :due_by, :frDueBy, :status, :priority,
     :ticket_type, :source, "helpdesk_tags.name", :owner_id,
     :requester_id, :sl_skill_id, "helpdesk_schema_less_tickets.product_id", :association_type ]
   
@@ -138,6 +139,8 @@ module TicketConstants
     [ :source,              'source',           :dropdown],
     [ :priority,            'priority',         :dropdown],
     [ :due_by,              'due_by',           :due_by],
+    [ :frDueBy,             'frDueBy',          :due_by],
+    #[ :nr_due_by,           'nr_due_by',        :due_by],
     [ "helpdesk_tags.name", "tags",             :tags],
     [ :owner_id,            "customers",        :customer],
     [ :created_at,          "created_at",       :created_at],
@@ -198,7 +201,11 @@ module TicketConstants
     [ :all_due,         'all_due',               1 ], # If modified, _auto_refresh.html.erb has to be modified.
     [ :due_today,       'due_today',             2 ], # By Shridar.
     [ :due_tomo,        'due_tomo',              3 ],
-    [ :due_next_eight,  'due_next_eight',        4 ]
+    [ :due_next_eight,  'due_next_eight',        4 ],
+    [ :due_next_four,   'due_next_four',         5 ],
+    [ :due_next_two,    'due_next_two',          6 ],
+    [ :due_next_hour,     'due_next_hour',       7 ],
+    [ :due_next_half_hour,'due_next_half_hour',  8 ]
   ]
 
   DUE_BY_TYPES_OPTIONS = DUE_BY_TYPES.map { |i| [i[1], i[2]] }

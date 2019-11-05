@@ -148,4 +148,18 @@ class QueryHashTest < ActionView::TestCase
     assert !contains_custom_field_condition(oq, @custom_field, false)
   end
 
+  def test_fr_due_by_lossless_transformation
+    q = sample_fr_due_by_input_condition
+    aq = QueryHash.new(q)
+    sq = aq.to_system_format
+    oq = aq.to_json
+    bq = QueryHash.new(oq)
+    soq = bq.to_system_format
+    ooq = bq.to_json
+
+    assert_equal(q, oq)
+    assert_equal(q, ooq)
+    assert_equal(sq, soq)
+  end
+
 end

@@ -481,10 +481,14 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
 
   def remove_invalid_conditions action_hash
+    reject_conditions = []
     unless Account.current.shared_ownership_enabled?
       reject_conditions = TicketConstants::SHARED_AGENT_COLUMNS_ORDER + TicketConstants::SHARED_GROUP_COLUMNS_ORDER
-      action_hash.reject!{|condition_hash| reject_conditions.include?(condition_hash["condition"])}
     end
+    # unless Account.current.next_response_sla_enabled?
+    #   reject_conditions << TicketConstants::DEFAULT_COLUMNS_OPTIONS[:nr_due_by]
+    # end
+    action_hash.reject!{|condition_hash| reject_conditions.include?(condition_hash["condition"])} if reject_conditions.present?
     action_hash
   end
 

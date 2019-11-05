@@ -2,6 +2,7 @@
 class Helpdesk::Ticket < ActiveRecord::Base
   include CustomAttributes
   include FlexifieldConstants
+  # TODO: nr_due_by
   DEFAULT_FIELDS = [
       :subject, :description, :requester_id, :to_emails, :cc_email, :priority,
       :status, :ticket_type, :responder_id, :group_id, :source, :due_by,

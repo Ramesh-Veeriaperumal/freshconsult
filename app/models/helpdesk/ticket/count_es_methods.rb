@@ -52,6 +52,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ]
   end
 
+  # TODO: nr_due_by
   def ticket_indexed_fields
     [
       :requester_id, :responder_id, :status, :source, :spam, :deleted, 

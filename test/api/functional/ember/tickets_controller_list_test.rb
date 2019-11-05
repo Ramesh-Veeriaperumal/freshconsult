@@ -222,6 +222,13 @@ module Ember
       Account.current.rollback(:new_es_api)
     end
 
+    def enable_next_response_sla(&block)
+      Account.current.add_feature(:next_response_sla)
+      yield if block_given?
+    ensure
+      Account.current.revoke_feature(:next_response_sla)
+    end
+
     def test_skill_filter
       enable_adv_ticketing([:skill_based_round_robin]) do
         create_skill_tickets
@@ -302,6 +309,123 @@ module Ember
       query_hash_params = { '0' => query_hash_param('due_by', 'due_by_op', [4]) }
       match_db_and_es_query_responses(query_hash_params)
     end
+
+    def test_next_4_hrs_dueby_filter
+      query_hash_params = { '0' => query_hash_param('due_by', 'due_by_op', [5]) }
+      match_db_and_es_query_responses(query_hash_params)
+    end
+
+    def test_next_2_hrs_dueby_filter
+      query_hash_params = { '0' => query_hash_param('due_by', 'due_by_op', [6]) }
+      match_db_and_es_query_responses(query_hash_params)
+    end
+
+    def test_next_1_hrs_dueby_filter
+      query_hash_params = { '0' => query_hash_param('due_by', 'due_by_op', [7]) }
+      match_db_and_es_query_responses(query_hash_params)
+    end
+
+    def test_next_30_mins_dueby_filter
+      query_hash_params = { '0' => query_hash_param('due_by', 'due_by_op', [8]) }
+      match_db_and_es_query_responses(query_hash_params)
+    end
+
+    def test_fr_overdue_filter
+      query_hash_params = { '0' => query_hash_param('fr_due_by', 'due_by_op', [1]) }
+      match_db_and_es_query_responses(query_hash_params)
+    end
+
+    def test_today_fr_dueby_filter
+      query_hash_params = { '0' => query_hash_param('fr_due_by', 'due_by_op', [2]) }
+      match_db_and_es_query_responses(query_hash_params)
+    end
+
+    def test_tomorrow_fr_dueby_filter
+      query_hash_params = { '0' => query_hash_param('fr_due_by', 'due_by_op', [3]) }
+      match_db_and_es_query_responses(query_hash_params)
+    end
+
+    def test_next_8_hrs_fr_dueby_filter
+      query_hash_params = { '0' => query_hash_param('fr_due_by', 'due_by_op', [4]) }
+      match_db_and_es_query_responses(query_hash_params)
+    end
+
+    def test_next_4_hrs_fr_dueby_filter
+      query_hash_params = { '0' => query_hash_param('fr_due_by', 'due_by_op', [5]) }
+      match_db_and_es_query_responses(query_hash_params)
+    end
+
+    def test_next_2_hrs_fr_dueby_filter
+      query_hash_params = { '0' => query_hash_param('fr_due_by', 'due_by_op', [6]) }
+      match_db_and_es_query_responses(query_hash_params)
+    end
+
+    def test_next_1_hrs_fr_dueby_filter
+      query_hash_params = { '0' => query_hash_param('fr_due_by', 'due_by_op', [7]) }
+      match_db_and_es_query_responses(query_hash_params)
+    end
+
+    def test_next_30_mins_fr_dueby_filter
+      query_hash_params = { '0' => query_hash_param('fr_due_by', 'due_by_op', [8]) }
+      match_db_and_es_query_responses(query_hash_params)
+    end
+
+    # def test_nr_overdue_filter
+    #   enable_next_response_sla do
+    #     query_hash_params = { '0' => query_hash_param('nr_due_by', 'due_by_op', [1]) }
+    #     match_db_and_es_query_responses(query_hash_params)
+    #   end
+    # end
+
+    # def test_today_nr_dueby_filter
+    #   enable_next_response_sla do
+    #     query_hash_params = { '0' => query_hash_param('nr_due_by', 'due_by_op', [2]) }
+    #     match_db_and_es_query_responses(query_hash_params)
+    #   end
+    # end
+
+    # def test_tomorrow_nr_dueby_filter
+    #   enable_next_response_sla do
+    #     query_hash_params = { '0' => query_hash_param('nr_due_by', 'due_by_op', [3]) }
+    #     match_db_and_es_query_responses(query_hash_params)
+    #   end
+    # end
+
+    # def test_next_8_hrs_nr_dueby_filter
+    #   enable_next_response_sla do
+    #     query_hash_params = { '0' => query_hash_param('nr_due_by', 'due_by_op', [4]) }
+    #     match_db_and_es_query_responses(query_hash_params)
+    #   end
+    # end
+
+    # def test_next_4_hrs_nr_dueby_filter
+    #   enable_next_response_sla do
+    #     query_hash_params = { '0' => query_hash_param('nr_due_by', 'due_by_op', [5]) }
+    #     match_db_and_es_query_responses(query_hash_params)
+    #   end
+    # end
+
+    # def test_next_2_hrs_nr_dueby_filter
+    #   enable_next_response_sla do
+    #     query_hash_params = { '0' => query_hash_param('nr_due_by', 'due_by_op', [6]) }
+    #     match_db_and_es_query_responses(query_hash_params)
+    #   end
+    # end
+
+    # def test_next_1_hrs_nr_dueby_filter
+    #   enable_next_response_sla do
+    #     query_hash_params = { '0' => query_hash_param('nr_due_by', 'due_by_op', [7]) }
+    #     match_db_and_es_query_responses(query_hash_params)
+    #   end
+    # end
+
+    # def test_next_30_mins_nr_dueby_filter
+    #   enable_next_response_sla do
+    #     query_hash_params = { '0' => query_hash_param('nr_due_by', 'due_by_op', [8]) }
+    #     match_db_and_es_query_responses(query_hash_params)
+    #   end
+    # end
+
 
     def test_fsm_last_week_appointment_time_filter
       Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
