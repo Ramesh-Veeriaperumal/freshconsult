@@ -75,6 +75,7 @@ class SsoUtilTestControllerTest < ActionController::TestCase
       User.new(name: sso_data[:name], email: sso_data[:email],
                phone: sso_data[:phone], helpdesk_agent: false, language: 'en')
     )
+    @controller.stubs(:remove_old_filters).returns(true)
     @controller.stubs(:action_name).returns('sso_response_handling')
     actual = @controller.send(:sso_response_handling, sso_data)
     assert_response 200

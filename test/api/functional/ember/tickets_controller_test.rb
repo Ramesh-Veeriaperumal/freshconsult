@@ -647,10 +647,13 @@ module Ember
     end
 
     def test_create_ticket_with_non_uniq_field_attachments
+      flexifield_def = FlexifieldDef.find_by_account_id_and_module(@account.id, 'Ticket')
+      file_field1_col_name = flexifield_def.first_available_column('file')
       attachment = create_file_ticket_field_attachment
-      custom_field1 = create_custom_field_dn('test_file_field1', 'file')
+      custom_field1 = create_custom_field_dn('test_file_field1', 'file', false, false, flexifield_name: file_field1_col_name)
       Account.first.make_current
-      custom_field2 = create_custom_field_dn('test_file_field2', 'file', false, false, flexifield_name: '006')
+      file_field2_col_name = flexifield_def.first_available_column('file')
+      custom_field2 = create_custom_field_dn('test_file_field2', 'file', false, false, flexifield_name: file_field2_col_name)
       Account.first.make_current
       params_hash = ticket_params_hash.merge(custom_fields: { test_file_field1: attachment.id, test_file_field2: attachment.id })
       post :create, construct_params({ version: 'private' }, params_hash)
@@ -710,10 +713,13 @@ module Ember
     end
 
     def test_update_ticket_file_field_with_draft_attachment
+      flexifield_def = FlexifieldDef.find_by_account_id_and_module(@account.id, 'Ticket')
+      file_field1_col_name = flexifield_def.first_available_column('file')
       Account.any_instance.stubs(:ticket_central_publish_enabled?).returns(true)
-      custom_field1 = create_custom_field_dn('test_file_field1', 'file')
+      custom_field1 = create_custom_field_dn('test_file_field1', 'file', false, false, flexifield_name: file_field1_col_name)
       Account.first.make_current
-      custom_field2 = create_custom_field_dn('test_file_field2', 'file', false, false, flexifield_name: '006')
+      file_field2_col_name = flexifield_def.first_available_column('file')
+      custom_field2 = create_custom_field_dn('test_file_field2', 'file', false, false, flexifield_name: file_field2_col_name)
       Account.first.make_current
       attachment1 = create_file_ticket_field_attachment
       attachment2 = create_file_ticket_field_attachment
@@ -739,9 +745,12 @@ module Ember
     end
 
     def test_update_ticket_file_field_with_nil_value
-      custom_field1 = create_custom_field_dn('test_file_field1', 'file')
+      flexifield_def = FlexifieldDef.find_by_account_id_and_module(@account.id, 'Ticket')
+      file_field1_col_name = flexifield_def.first_available_column('file')
+      custom_field1 = create_custom_field_dn('test_file_field1', 'file', false, false, flexifield_name: file_field1_col_name)
       Account.first.make_current
-      custom_field2 = create_custom_field_dn('test_file_field2', 'file', false, false, flexifield_name: '006')
+      file_field2_col_name = flexifield_def.first_available_column('file')
+      custom_field2 = create_custom_field_dn('test_file_field2', 'file', false, false, flexifield_name: file_field2_col_name)
       Account.first.make_current
       attachment1 = create_file_ticket_field_attachment
       attachment2 = create_file_ticket_field_attachment
@@ -5113,6 +5122,35 @@ module Ember
       match_json([bad_request_error_pattern('custom_fields.test_signature_file', :datatype_mismatch, expected_data_type: Integer, prepend_msg: :input_received, given_data_type: String)])
     ensure
       custom_field.destroy
+    end
+
+    def test_create_ticket_with_multiple_custom_file_and_text_fields
+      flexifield_def = FlexifieldDef.find_by_account_id_and_module(@account.id, 'Ticket')
+      file_field1_col_name = flexifield_def.first_available_column('file')
+      file_custom_field1 = create_custom_field_dn('test_signature_file1', 'file', false, false, flexifield_name: file_field1_col_name)
+      text_field1_col_name = flexifield_def.first_available_column('text')
+      text_custom_field1 = create_custom_field_dn('test_text1', 'text', false, false, flexifield_name: text_field1_col_name)
+      file_field2_col_name = flexifield_def.first_available_column('file')
+      file_custom_field2 = create_custom_field_dn('test_signature_file2', 'file', false, false, flexifield_name: file_field2_col_name)
+      text_field2_col_name = flexifield_def.first_available_column('text')
+      text_custom_field2 = create_custom_field_dn('test_text2', 'text', false, false, flexifield_name: text_field2_col_name)
+      attachment = create_file_ticket_field_attachment
+      Account.reset_current_account
+      @account = Account.first
+      params_hash = { email: Faker::Internet.email, description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
+                      priority: 2, status: 2, type: 'Problem', responder_id: @agent.id,
+                      custom_fields: { test_signature_file2: attachment.id, test_text1: 'my test work' } }
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 201
+      response_body = JSON.parse(response.body)
+      assert_equal 'my test work', response_body['custom_fields']['test_text1']
+      assert_equal attachment.id, response_body['custom_fields']['test_signature_file2']
+    ensure
+      text_custom_field2.destroy
+      file_custom_field2.destroy
+      text_custom_field1.destroy
+      file_custom_field1.destroy
+      Account.reset_current_account
     end
 
     def test_create_ticket_with_date_time_custom_field

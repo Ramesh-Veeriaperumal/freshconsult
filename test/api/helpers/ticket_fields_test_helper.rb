@@ -56,7 +56,8 @@ module TicketFieldsTestHelper
       ticket_field_exists.update_attributes(required: required, required_for_closure: required_for_closure)
       return ticket_field_exists
     end
-    flexifield_mapping = options[:flexifield_name] ? "dn_#{FIELD_MAPPING_DN[type]}_" + options[:flexifield_name] : "dn_#{FIELD_MAPPING_DN[type]}_005"
+
+    flexifield_mapping = options[:flexifield_name] ? options[:flexifield_name] : "dn_#{FIELD_MAPPING_DN[type]}_005"
     flexifield_def_entry = FactoryGirl.build(:flexifield_def_entry,
                                              flexifield_def_id: @account.flexi_field_defs.find_by_module('Ticket').id,
                                              flexifield_alias: "#{name.downcase}_#{@account.id}",

@@ -178,7 +178,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
         custom_field = {
           name: field.name,
           label: field.label,
-          type: map_field_type(field),
+          type: field.flexifield_coltype,
           value: map_field_value(field, field_value),
           column: field.column_name
         }
@@ -196,10 +196,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
       end
     end
     arr
-  end
-
-  def map_field_type(ticket_field)
-    ticket_field.field_type == 'custom_file' ? 'file' : ticket_field.flexifield_coltype
   end
 
   def map_field_value(ticket_field, value)

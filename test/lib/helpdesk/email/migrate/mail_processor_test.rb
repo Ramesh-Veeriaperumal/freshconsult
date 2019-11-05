@@ -56,6 +56,7 @@ class MailProcessorTest < ActionView::TestCase
     Helpdesk::EmailParser::EmailProcessor.any_instance.stubs(:processed_mail).returns(Helpdesk::EmailParser::ProcessedMail.new(Faker::Internet.email))
     Helpdesk::EmailParser::ProcessedMail.any_instance.stubs(:date).returns('2019-01-20')
     Helpdesk::Email::Migrate::MailProcessor.any_instance.stubs(:get_others_redis_key).returns(ticket_params.merge(date: '2019-01-26').except(:internal_date).to_json)
+    Helpdesk::Email::Migrate::MailProcessor.any_instance.stubs(:duplicate_email?).returns(false)
     response = Helpdesk::Email::Migrate::MailProcessor.new(construct_args).process
     assert_not_nil response
   ensure
@@ -63,6 +64,7 @@ class MailProcessorTest < ActionView::TestCase
     Helpdesk::EmailParser::EmailProcessor.any_instance.unstub(:processed_mail)
     Helpdesk::EmailParser::ProcessedMail.any_instance.unstub(:date)
     Helpdesk::Email::Migrate::MailProcessor.any_instance.unstub(:get_others_redis_key)
+    Helpdesk::Email::Migrate::MailProcessor.any_instance.unstub(:duplicate_email?)
   end
 
   def test_mail_processor_without_email

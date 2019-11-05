@@ -130,7 +130,7 @@ class PrivateApiFlowsTest < ActionDispatch::IntegrationTest
     old_acc_version = Digest::MD5.hexdigest(version_set.values.join)
     @account.launch(:test_feature)
     new_acc_version = Digest::MD5.hexdigest(get_others_redis_hash(version_redis_key).values.join)
-    get requests.first
+    get "api/_/tickets/#{ticket.display_id}"
     assert_not_equal old_acc_version, response.headers['X-Account-Data-Version']
     assert_equal new_acc_version, response.headers['X-Account-Data-Version']
   end

@@ -21,7 +21,7 @@ module Helpdesk::Ticketfields::Constants
 
   # Whenever you add new fields here, ensure that you add it in search indexing.
   FIELD_COLUMN_MAPPING = {
-    text:          ['text', SERIALIZED_SLT_FIELDS, SERIALIZED_SLT_FIELDS.length],
+    text:          [['text', 'file'], SERIALIZED_SLT_FIELDS, SERIALIZED_SLT_FIELDS.length],
     nested_field:  [['text', 'dropdown'], DROPDOWN_FIELDS, DROPDOWN_FIELD_COUNT],
     dropdown:      [['text', 'dropdown'], DROPDOWN_FIELDS, DROPDOWN_FIELD_COUNT],
     number:        ['number', NUMBER_FIELDS, NUMBER_FIELD_COUNT],
@@ -30,7 +30,8 @@ module Helpdesk::Ticketfields::Constants
     date_time:     ['date_time', DATE_FIELDS, DATE_FIELD_COUNT],
     paragraph:     ['paragraph', SERIALIZED_MLT_FIELDS, SERIALIZED_MLT_FIELDS.length],
     decimal:       ['decimal', DECIMAL_FIELDS, DECIMAL_FIELD_COUNT],
-    encrypted_text:['encrypted_text', SERIALIZED_ESLT_FIELDS, SERIALIZED_ESLT_FIELDS.length]
+    encrypted_text:['encrypted_text', SERIALIZED_ESLT_FIELDS, SERIALIZED_ESLT_FIELDS.length],
+    file:          [['text', 'file'], SERIALIZED_SLT_FIELDS, SERIALIZED_SLT_FIELDS.length]
   }.freeze
 
   FFS_LIMIT = 80
@@ -54,7 +55,7 @@ module Helpdesk::Ticketfields::Constants
   }.freeze
 
   TICKET_FIELD_DATA_COLUMN_MAPPING = {
-    text:           ['text', SERIALIZED_SLT_FIELDS, SERIALIZED_SLT_FIELDS.length],
+    text:           [['text', 'file'], SERIALIZED_SLT_FIELDS, SERIALIZED_SLT_FIELDS.length],
     nested_field:   [['text', 'dropdown'], TICKET_FIELD_DATA_DROPDOWN_FIELDS, TICKET_FIELD_DATA_DROPDOWN_COUNT],
     dropdown:       [['text', 'dropdown'], TICKET_FIELD_DATA_DROPDOWN_FIELDS, TICKET_FIELD_DATA_DROPDOWN_COUNT],
     number:         ['number', NUMBER_FIELDS, NUMBER_FIELD_COUNT],
@@ -63,7 +64,8 @@ module Helpdesk::Ticketfields::Constants
     date_time:      ['date_time', DATE_FIELDS, DATE_FIELD_COUNT],
     paragraph:      ['paragraph', SERIALIZED_MLT_FIELDS, SERIALIZED_MLT_FIELDS.length],
     decimal:        ['decimal', DECIMAL_FIELDS, DECIMAL_FIELD_COUNT],
-    encrypted_text: ['encrypted_text', SERIALIZED_ESLT_FIELDS, SERIALIZED_ESLT_FIELDS.length]
+    encrypted_text: ['encrypted_text', SERIALIZED_ESLT_FIELDS, SERIALIZED_ESLT_FIELDS.length],
+    file:           [['text', 'file'], SERIALIZED_SLT_FIELDS, SERIALIZED_SLT_FIELDS.length]
   }.freeze
 
   MAX_ALLOWED_COUNT_DN = {
