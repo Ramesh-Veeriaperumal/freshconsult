@@ -118,14 +118,13 @@ class AuditLogValidation < ApiValidation
 
   def validate_from_to?
     return errors[:'from/to'] << :invalid_time_period unless @request_params[:to].present? && @request_params[:from].present?
-    before = Date.parse @request_params[:to]
     since = Date.parse @request_params[:from]
-    months = (before.year * 12 + before.month) - (since.year * 12 + since.month)
-    years = before.year - since.year
-    check_date(since, before)
-    return errors[:'from/to'] << :conditions_and_filters_are_only_for_between_six_months if months > 3 && @request_params[:condition]
-    return errors[:'from/to'] << :time_limit_exceeded if years > 2
-    return errors[:'from<to'] << :invalid_time_range if since > before
+    before = Date.parse @request_params[:to]
+    check_date(before, since)
+    days = (before - since)+1.to_i
+    current_date = Time.now.in_time_zone(User.current.time_zone).to_date
+    month_days = (current_date - since)+1.to_i
+    return errors[:'from/to'] << :'date range should be three months within 6 months' if (days > 92) || (month_days > 183)
   end
 
   def validate_condition
@@ -167,8 +166,8 @@ class AuditLogValidation < ApiValidation
     end
 
     def check_date(since, before)
-      if since > Time.zone.today || before > Time.zone.today
-        errors[:'from/to'] << :'invalid date'
+      if since > Time.now.in_time_zone(User.current.time_zone).to_date || before > Time.now.in_time_zone(User.current.time_zone).to_date
+        errors[:'from/to'] << :'start and end date should not be in future'
       end
     end
 end
