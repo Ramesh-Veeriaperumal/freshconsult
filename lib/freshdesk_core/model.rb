@@ -4,8 +4,15 @@ module FreshdeskCore::Model
   include Redis::OthersRedis
   include Cache::Memcache::WhitelistUser
   include Redis::PortalRedis
+  include Mysql::RecordsHelper
+  include Utils::Freno
+  APPLICATION_NAME = 'AccountCleanup::DeleteAccount'
+  # These are tables without id column. account_id need not be mentioned in the composite key list.
+  HELPKIT_TABLES_AND_COMPOSITE_KEYS = { :user_roles => ['user_id', 'role_id'], :user_accesses=> ['user_id', 'access_id'],
+                                      :group_accesses => ['group_id', 'access_id'] }
 
-  HELPKIT_TABLES = ['account_additional_settings',
+  HELPKIT_TABLES = ['helpdesk_attachments',
+                    'account_additional_settings',
                     'account_configurations',
                     'addresses',
                     'admin_canned_responses',
@@ -89,7 +96,6 @@ module FreshdeskCore::Model
                     'achieved_quests',
 
                     'roles',
-                    'user_roles',
 
                     'scoreboard_levels',
                     'scoreboard_ratings',
@@ -149,8 +155,6 @@ module FreshdeskCore::Model
                     'helpdesk_shared_attachments',
 
                     'helpdesk_accesses',
-                    'user_accesses',
-                    'group_accesses',
 
                     'mobihelp_apps',
                     'mobihelp_devices',
@@ -243,29 +247,45 @@ module FreshdeskCore::Model
     :archive_notes => :note_body
   }
 
+  DELETE_BATCH_COUNT = 50
+
   def perform_destroy(account)
-    publish_account_destroy_to_central(account)
-    delete_gnip_twitter_rules(account)
-    delete_dkim_r53_entries(account)
-    delete_social_redis_keys(account)
-    delete_facebook_subscription(account)
-    delete_jira_webhooks(account)
-    delete_cloud_element_instances(account)
-    clear_attachments(account)
-    clear_archive_data_from_s3(account)
-    remove_mobile_registrations(account.id)
-    remove_addon_mapping(account)
-    remove_card_info(account)
-    remove_whitelist_users(account.id)
-    remove_remote_integration_mappings(account.id)
-    remove_round_robin_redis_info(account)
-    account.delete_sitemap
-    remove_from_spam_detection_service(account)
-    delete_canned_forms(account)
-    delete_widget_data_from_s3(account)
-    delete_account_from_fluffy(account)
-    delete_data_from_tables(account.id)
-    account.destroy
+    @continue_account_destroy_from ||= 0
+    @shard_name = ActiveRecord::Base.current_shard_selection.shard.to_s
+    account_destroy_functions = [
+      lambda { publish_account_destroy_to_central(account) },
+      lambda { delete_gnip_twitter_rules(account) },
+      lambda { delete_dkim_r53_entries(account) },
+      lambda { delete_social_redis_keys(account) },
+      lambda { delete_facebook_subscription(account) },
+      lambda { delete_jira_webhooks(account) },
+      lambda { delete_cloud_element_instances(account) },
+      lambda { clear_attachments(account) },
+      lambda { clear_archive_data_from_s3(account) },
+      lambda { remove_mobile_registrations(account.id) },
+      lambda { remove_addon_mapping(account) },
+      lambda { remove_card_info(account) },
+      lambda { remove_whitelist_users(account.id) },
+      lambda { remove_remote_integration_mappings(account.id) },
+      lambda { remove_round_robin_redis_info(account) },
+      lambda { account.delete_sitemap },
+      lambda { remove_from_spam_detection_service(account) },
+      lambda { delete_canned_forms(account) },
+      lambda { delete_widget_data_from_s3(account) },
+      lambda { delete_account_from_fluffy(account) },
+      lambda { delete_data_from_tables(account.id) },
+      lambda { delete_data_from_tables_without_id(account.id) },
+      lambda { account.destroy } ]
+
+    account_destroy_functions.slice(@continue_account_destroy_from,
+      account_destroy_functions.size).each_with_index do |function, index|
+      begin
+        function.call
+      rescue ReplicationLagError => e
+        @continue_account_destroy_from = index
+        raise e
+      end
+    end
   end
 
   private
@@ -366,7 +386,6 @@ module FreshdeskCore::Model
 
     def clear_attachments(account)
       delete_files(account)
-      delete_info_from_table(account.id)
     end
 
     def delete_files(account)
@@ -423,13 +442,8 @@ module FreshdeskCore::Model
       Rails.logger.info("FLUFFY Account deletion failed #{e.message}, #{e.backtrace}")
     end
 
-    def delete_info_from_table(account_id)
-      delete_query = "DELETE FROM helpdesk_attachments WHERE account_id = #{account_id}"
-      execute_sql(delete_query) unless account_id.blank?
-    end
-
     def remove_card_info(account)
-      if account.subscription.card_number.present?
+      if account.try(:subscription).try(:card_number).present?
         Billing::Subscription.new.remove_credit_card(account.id)
       end
     end
@@ -438,17 +452,27 @@ module FreshdeskCore::Model
       Subscription::AddonMapping.destroy_all(:account_id => account.id)
     end
 
-
     def delete_data_from_tables(account_id)
-      HELPKIT_TABLES.each { |table| execute_sql(delete_query(table, account_id)) } unless account_id.blank?
+      return if account_id.blank?
+      HELPKIT_TABLES.each { |table_name| 
+        delete_in_batches(account_id, table_name, DELETE_BATCH_COUNT) do 
+          find_db_lag
+        end
+      }
     end
 
-    def delete_query(table_name, account_id)
-      "DELETE FROM #{table_name} WHERE account_id = #{account_id}"
+    def delete_data_from_tables_without_id(account_id)
+      HELPKIT_TABLES_AND_COMPOSITE_KEYS.each_key do |table_name|
+        composite_key = HELPKIT_TABLES_AND_COMPOSITE_KEYS[table_name]
+        delete_data_from_tables_with_composite_key(account_id, table_name, composite_key, DELETE_BATCH_COUNT) do 
+          find_db_lag
+        end
+      end
     end
 
-    def execute_sql(delete_query)
-      ActiveRecord::Base.connection.execute(delete_query)
+    def find_db_lag
+      lag = get_replication_lag_for_shard(APPLICATION_NAME, @shard_name)
+      raise ReplicationLagError.new(lag) if lag > 0
     end
 
     def remove_from_spam_detection_service(account)

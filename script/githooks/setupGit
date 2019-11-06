@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Get your Freshrelease token from https://freshworks.freshrelease.com/api_token.json"
+echo "Get your Freshrelease API token from Freshrelease > Profile Settings"
 echo "Please enter your Freshrelease token "
 read token
 
