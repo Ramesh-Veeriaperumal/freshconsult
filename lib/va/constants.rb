@@ -182,7 +182,10 @@ module Va
         "requester_responded_at" => [I18n.t('ticket.requester_responded_at')],
         "agent_responded_at" => [I18n.t('ticket.agent_responded_at')],
         "frDueBy" => [I18n.t('ticket.first_response_due')],
-        "due_by" => [I18n.t('ticket.due_by')]
+        "due_by" => [I18n.t('ticket.due_by')],
+        "association_type" => [I18n.t('admin.automation_summary.association_type'), 
+                               TicketConstants::TICKET_ASSOCIATION_TOKEN_BY_KEY.map {|k, v| [k.to_s, I18n.t(v)]}.to_h],
+        "associated_ticket_count" => [I18n.t('admin.automation_summary.associated_ticket_count')]
       }
     end
 
@@ -203,7 +206,8 @@ module Va
         "ticket_action" => [I18n.t('observer_events.ticket'), {
                               "update" => I18n.t('ticket.updated'),
                               "delete" => I18n.t('ticket.deleted'),
-                              "marked_spam" => I18n.t('ticket.marked_spam')
+                              "marked_spam" => I18n.t('ticket.marked_spam'),
+                              "linked" => I18n.t('ticket.linked')
                             }],
         "time_sheet_action" => [I18n.t('observer_events.time_entry'), {
                                   "added" => I18n.t('ticket.new_time_entry'),
