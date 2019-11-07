@@ -17,7 +17,7 @@ class Dashboard::SearchServiceTrendCount < Dashboards
     @agg_options = options[:agg_options]
     @limit = options[:limit] || options[:limit_option]
     @is_agent = options[:is_agent]
-    @with_permissible = options[:with_permissible] || true
+    @with_permissible = options[:with_permissible] != false
     @errors = []
     @tag_errors = []
   end
