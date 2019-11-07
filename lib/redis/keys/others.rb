@@ -249,4 +249,7 @@ module Redis::Keys::Others
   DOWNGRADE_POLICY_EMAIL_REMINDER = 'DOWNGRADE_POLICY_EMAIL_REMINDER:%{account_id}'.freeze
   DOWNGRADE_POLICY = 'DOWNGRADE_POLICY'.freeze
   DOWNGRADE_POLICY_TO_ALL = 'DOWNGRADE_POLICY_TO_ALL'.freeze
+
+  #Increasing Domains for accounts as per request by the account holder
+  INCREASE_DOMAIN_FOR_EMAILS = 'INCREASE_DOMAIN_FOR_EMAILS'.freeze
 end

@@ -36,7 +36,7 @@ class AccountsController < ApplicationController
 
   before_filter :anonymous_signup_enabled?, :build_anonymous_signup_params, only: [:anonymous_signup]
   before_filter :validate_signup_email, only: [:email_signup, :new_signup_free]
-  before_filter :check_for_existing_accounts, only: [:email_signup, :new_signup_free]
+  before_filter :check_for_existing_accounts, only: [:email_signup, :new_signup_free], :if => :whitelisted_email?
 
   before_filter :ensure_proper_user, :only => [:edit_domain]
   before_filter :check_activation_mail_job_status, :only => [:edit_domain, :update_domain], :unless => :freshid_integration_enabled?
@@ -774,5 +774,9 @@ class AccountsController < ApplicationController
 
     def mark_account_as_anonymous
       @signup.account.account_additional_settings.mark_account_as_anonymous
+    end
+
+    def whitelisted_email?
+      !ismember?(INCREASE_DOMAIN_FOR_EMAILS, params["user"]["email"])
     end
 end

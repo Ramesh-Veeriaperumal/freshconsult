@@ -1,8 +1,11 @@
+require_relative '../../../lib/redis/others_redis'
 class OnboardingDelegator < BaseDelegator
   include OnboardingConstants
-
+  include Redis::OthersRedis
+  
   validate :validate_domain_name, if: -> { @domain }
-  validate :validate_trial_account, :validate_email_limit_for_account, on: :anonymous_to_trial
+  validate :validate_trial_account, on: :anonymous_to_trial
+  validate :validate_email_limit_for_account, on: :anonymous_to_trial, :if => :whitelisted_email?
   validate :validate_freshchat_account_availability, on: :update_channel_config, if: -> { @channel == FRESHCHAT }
   validate :validate_freshcaller_account_availability, on: :update_channel_config, if: -> { @channel == FRESHCALLER }
 
@@ -12,7 +15,11 @@ class OnboardingDelegator < BaseDelegator
     @email = options[:email]
     @channel = options[:channel]
   end
-
+  
+  def whitelisted_email?
+    !ismember?(INCREASE_DOMAIN_FOR_EMAILS, @email)
+  end
+    
   def validate_domain_name
     errors[:domain] << :invalid_domain unless DomainGenerator.valid_domain?(@domain)
   end

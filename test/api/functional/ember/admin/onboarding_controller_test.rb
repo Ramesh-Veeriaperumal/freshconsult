@@ -398,6 +398,19 @@ class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
     unset_anonymous_flag
   end
 
+  def test_anonymous_to_trial_email_increase_signup_count
+    admin_email = Faker::Internet.email
+    @account.account_additional_settings.mark_account_as_anonymous
+    add_member_to_redis_set(INCREASE_DOMAIN_FOR_EMAILS, admin_email)
+    AdminEmail::AssociatedAccounts.stubs(:find).returns(Array.new(11))
+    post :anonymous_to_trial, construct_params(version: 'private', admin_email: admin_email)
+    assert_response 200
+    ensure
+      AdminEmail::AssociatedAccounts.unstub(:find)
+      unset_anonymous_flag
+      remove_member_from_redis_set(INCREASE_DOMAIN_FOR_EMAILS, admin_email)
+  end  
+
   def test_anonymous_to_trial_success
     @account.account_additional_settings.mark_account_as_anonymous
     new_admin_email = Faker::Internet.email
