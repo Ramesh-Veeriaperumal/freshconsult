@@ -128,4 +128,24 @@ module Export::Util
     Rails.logger.info "scheduler response message successful job_id:::: #{job_id} :::: #{response}"
     response
   end
+
+  def parse_date(date_time)
+    if date_time.class == String
+      Time.zone.parse(date_time).strftime('%F %T')
+    else
+      date_time.strftime('%F %T')
+    end
+  end
+
+  def escape_html(val)
+    val.blank? || val.is_a?(Integer) ? val : CGI.unescapeHTML(val.to_s).gsub(/\s+/, ' ')
+  end
+
+  def set_current_user
+    unless User.current
+      user = Account.current.users.find(export_params[:current_user_id])
+      user.make_current
+    end
+    TimeZone.set_time_zone
+  end
 end

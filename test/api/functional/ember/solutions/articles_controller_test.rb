@@ -41,6 +41,7 @@ module Ember
         setup_redis_for_articles
 
         @account.add_feature(:article_filters)
+        @account.add_feature(:article_export)
         @account.add_feature(:adv_article_bulk_actions)
 
         @account.reload
@@ -1591,6 +1592,104 @@ module Ember
                                          author: author_id.to_s, created_at: { start: start_date.to_s, end: end_date.to_s } }, false)
         assert_response 200
         match_json([])
+      end
+
+      def test_export_articles_with_filters
+        export_params = { portal_id: @portal_id.to_s, author: 1, status: 1, category: ['2'], folder: ['4'], tags: ['Tag1'], article_fields: [{ field_name: 'title', column_name: 'Title' }] }
+        post :export, construct_params({ version: 'private' }, export_params)
+        assert_response 204
+        assert_equal(' ', response.body)
+      end
+
+      def test_export_articles_without_feature
+        Account.any_instance.stubs(:article_export_enabled?).returns(false)
+        export_params = { portal_id: @portal_id.to_s, author: 1, status: 1, category: ['2'], folder: ['4'], tags: ['Tag1'], article_fields: [{ field_name: 'title', column_name: 'Title' }] }
+        post :export, construct_params({ version: 'private' }, export_params)
+        assert_response 403
+        match_json(request_error_pattern(:require_feature, feature: :article_export))
+      ensure
+        Account.any_instance.unstub(:article_export_enabled?)
+      end
+
+      def test_export_articles_with_export_feature_with_advanced_filters
+        Account.any_instance.stubs(:article_filters_enabled?).returns(false)
+        export_params = { portal_id: @portal_id.to_s, author: 1, category: ['2'], article_fields: [{ field_name: 'title', column_name: 'Title' }] }
+        post :export, construct_params({ version: 'private' }, export_params)
+        assert_response 403
+      ensure
+        Account.any_instance.unstub(:article_filters_enabled?)
+      end
+
+      def test_export_articles_with_export_feature_with_default_filters
+        Account.any_instance.stubs(:article_filters_enabled?).returns(false)
+        export_params = { portal_id: @portal_id.to_s, author: 1, article_fields: [{ field_name: 'title', column_name: 'Title' }] }
+        post :export, construct_params({ version: 'private' }, export_params)
+        assert_response 204
+        assert_equal(' ', response.body)
+      ensure
+        Account.any_instance.unstub(:article_filters_enabled?)
+      end
+
+      def test_export_articles_without_filters
+        export_params = { portal_id: @portal_id.to_s, article_fields: [{ field_name: 'title', column_name: 'Title' }] }
+        post :export, construct_params({ version: 'private' }, export_params)
+        assert_response 204
+        assert_equal(' ', response.body)
+      end
+
+      def test_export_articles_without_mandatory_fields
+        post :export, construct_params({ version: 'private' }, {})
+        assert_response 400
+        expected = { description: 'Validation failed', errors: [{ field: 'portal_id', message: 'Mandatory attribute missing', code: 'missing_field' }, { field: 'article_fields', message: 'Mandatory attribute missing', code: 'missing_field' }] }
+        assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+      end
+
+      def test_export_articles_with_invalid_portalid
+        export_params = { portal_id: 1232, article_fields: [{ field_name: 'title', column_name: 'Title' }] }
+        post :export, construct_params({ version: 'private' }, export_params)
+        assert_response 400
+        expected = { description: 'Validation failed', errors: [{ field: 'portal_id', message: 'Value set is of type Integer.It should be a/an String', code: 'datatype_mismatch' }] }
+        assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+      end
+
+      def test_export_articles_with_invalid_author
+        export_params = { portal_id: @portal_id.to_s, author: 'invalid', article_fields: [{ field_name: 'title', column_name: 'Title' }] }
+        post :export, construct_params({ version: 'private' }, export_params)
+        assert_response 400
+        expected = { description: 'Validation failed', errors: [{ field: 'author', message: 'Value set is of type String.It should be a/an Positive Integer', code: 'datatype_mismatch' }] }
+        assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+      end
+
+      def test_export_articles_with_invalid_status
+        export_params = { portal_id: @portal_id.to_s, status: 'invalid', article_fields: [{ field_name: 'title', column_name: 'Title' }] }
+        post :export, construct_params({ version: 'private' }, export_params)
+        assert_response 400
+        expected = { description: 'Validation failed', errors: [{ field: 'status', message: 'Value set is of type String.It should be a/an Positive Integer', code: 'datatype_mismatch' }] }
+        assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+      end
+
+      def test_export_articles_with_invalid_category
+        export_params = { portal_id: @portal_id.to_s, category: 'invalid', article_fields: [{ field_name: 'title', column_name: 'Title' }] }
+        post :export, construct_params({ version: 'private' }, export_params)
+        assert_response 400
+        expected = { description: 'Validation failed', errors: [{ field: 'category', message: 'Value set is of type String.It should be a/an Array', code: 'datatype_mismatch' }] }
+        assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+      end
+
+      def test_export_articles_with_invalid_folder
+        export_params = { portal_id: @portal_id.to_s, folder: 'invalid', article_fields: [{ field_name: 'title', column_name: 'Title' }] }
+        post :export, construct_params({ version: 'private' }, export_params)
+        assert_response 400
+        expected = { description: 'Validation failed', errors: [{ field: 'folder', message: 'Value set is of type String.It should be a/an Array', code: 'datatype_mismatch' }] }
+        assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+      end
+
+      def test_export_articles_with_invalid_tags
+        export_params = { portal_id: @portal_id.to_s, tags: 'invalid', article_fields: [{ field_name: 'title', column_name: 'Title' }] }
+        post :export, construct_params({ version: 'private' }, export_params)
+        assert_response 400
+        expected = { description: 'Validation failed', errors: [{ field: 'tags', message: 'Value set is of type String.It should be a/an Array', code: 'datatype_mismatch' }] }
+        assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
       end
 
       def test_reorder_without_position

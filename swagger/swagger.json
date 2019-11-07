@@ -13285,6 +13285,44 @@
         }
       }
     },
+    "/solutions/articles/export": {
+      "post": {
+        "tags": [
+          "solutions"
+        ],
+        "summary": "Export list of articles along with meta data.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/article_export"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "429": {
+            "description": "Simultaneous export limit reached",
+            "schema": {
+              "$ref": "#/definitions/request_error_with_data"
+            }
+          }
+        }
+      }
+    },
     "/solutions/articles/untranslated_articles/{language}": {
       "get": {
         "tags": [
@@ -26799,6 +26837,61 @@
           }
         }
       ]
+    },
+    "article_export": {
+      "type": "object",
+      "properties": {
+        "portal_id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "author": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "language": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "folder": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "int64"
+          }
+        },
+        "category": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "int64"
+          }
+        },
+        "article_fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "field_name": {
+                "type": "string"
+              },
+              "column_name": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
     },
     "category_response": {
       "type": "object",

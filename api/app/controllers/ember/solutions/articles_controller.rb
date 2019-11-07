@@ -1,6 +1,7 @@
 module Ember
   module Solutions
     class ArticlesController < ApiSolutions::ArticlesController
+      include ::Search::V2::AbstractController
       include HelperConcern
       include SolutionConcern
       include Solution::ArticleFilters
@@ -15,13 +16,19 @@ module Ember
       skip_before_filter :initialize_search_parameters, unless: :search_articles?
       before_filter :filter_ids, only: [:index]
       before_filter :modify_and_cleanup_language_param, only: [:article_content]
-      before_filter :validate_language, only: [:filter, :bulk_update, :untranslated_articles, :article_content, :index]
-      before_filter :check_filter_feature, :modify_and_cleanup_status_param, only: [:filter]
+      before_filter :validate_language, only: [:filter, :export, :bulk_update, :untranslated_articles, :article_content, :index]
+      before_filter :modify_and_cleanup_status_param, only: [:filter, :export]
+      before_filter :check_filter_feature, only: [:filter]
+      before_filter :check_export_feature, only: [:export]
       before_filter :validate_filter, only: [:article_content, :filter, :untranslated_articles]
-      before_filter :sanitize_filter_data, :reconstruct_params, only: [:filter, :untranslated_articles]
+      before_filter :validate_export_filter_params, only: [:export]
+      before_filter :sanitize_filter_data, only: [:filter, :untranslated_articles]
+      before_filter :sanitize_article_export_data, only: [:export]
+      before_filter :reconstruct_params, only: [:filter, :untranslated_articles]
       before_filter :validate_bulk_update_article_params, only: [:bulk_update]
-      before_filter :filter_delegator_validation, only: [:filter, :untranslated_articles]
-      around_filter :use_time_zone, only: [:filter, :untranslated_articles]
+      before_filter :filter_delegator_validation, only: [:filter, :export, :untranslated_articles]
+      before_filter :article_export_limit_reached?, only: [:export]
+      around_filter :use_time_zone, only: [:filter, :export, :untranslated_articles]
 
       decorate_views(decorate_object: [:article_content, :votes])
 
@@ -39,6 +46,36 @@ module Ember
         @items = apply_article_scopes(@portal_articles)
         @items = properties_and_term_filters
         paginate_filter_items
+      end
+
+      def export
+        export_params = {
+          filter_params: cname_params,
+          lang_id: @lang_id,
+          lang_code: @lang_code,
+          current_user_id: User.current.id,
+          export_fields: construct_header_fields(cname_params['article_fields']),
+          portal_url: current_account.portals.where(id: cname_params[:portal_id]).first.portal_url.presence || current_account.host
+        }
+        Export::Article.enqueue(export_params)
+        head 204
+      end
+
+      def article_export_limit_reached?
+        if DataExport.article_export_limit_reached?(current_user)
+          export_limit = DataExport::ARTICLE_EXPORT_LIMIT
+          render_request_error_with_info(:export_limit_reached, 429, max_limit: export_limit, export_type: 'article')
+        end
+      end
+
+      def search_articles
+        @klasses        = ['Solution::Article']
+        @sort_direction = 'desc'
+        @search_sort    = 'relevance'
+        @search_context = :filtered_solution_search
+        @category_ids   = portal_catagory_ids if portal_catagory_ids.present?
+        @language_id    = @lang_id
+        @results        = esv2_query_results(esv2_agent_article_model)
       end
 
       def untranslated_articles
@@ -77,6 +114,11 @@ module Ember
       end
 
       private
+        def construct_header_fields(header_fields)
+          header = {}
+          header_fields.each { |column| header[column[:field_name]] = column[:column_name] }
+          header
+        end
 
         def constants_class
           'SolutionConstants'.freeze
@@ -126,6 +168,12 @@ module Ember
           return unless validate_query_params
         end
 
+        def validate_export_filter_params
+          @constants_klass  = 'SolutionConstants'.freeze
+          @validation_klass = 'SolutionArticleFilterValidation'.freeze
+          return unless validate_body_params
+        end
+
         def validate_filter_params(addtional_fields = [])
           return unless modify_and_cleanup_language_param
           params.permit(*SolutionConstants::RECENT_ARTICLES_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS, *addtional_fields)
@@ -139,9 +187,15 @@ module Ember
           sanitize_hash_values filter_data
         end
 
+        def sanitize_article_export_data
+          filter_fields = SolutionConstants::EXPORT_FIELDS
+          filter_data   = params.select { |k, v| filter_fields.include? k }
+          sanitize_hash_values filter_data
+        end
+
         def sanitize_hash_values(filter_data)
           filter_data.each do |key, value|
-            next if [true, false].include?(value)
+            next if [true, false].include?(value) || value.is_a?(Integer)
 
             filter_data[key] = sanitize_value(value)
           end
@@ -194,6 +248,10 @@ module Ember
 
         def check_filter_feature
           render_request_error(:require_feature, 403, feature: :article_filters) unless current_account.article_filters_enabled? || (params.keys & SolutionConstants::ADVANCED_FILTER_FIELDS).empty?
+        end
+
+        def check_export_feature
+          render_request_error(:require_feature, 403, feature: :article_export) unless current_account.article_export_enabled? && (current_account.article_filters_enabled? || (cname_params.keys & SolutionConstants::ADVANCED_FILTER_FIELDS).empty?)
         end
 
         def untranslated_articles_preload_options

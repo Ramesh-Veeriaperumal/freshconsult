@@ -1,8 +1,7 @@
 class DataExportMailer < ActionMailer::Base
-  
   layout "email_font"
   include EmailHelper
-  
+
   def data_backup(options={})
     headers = {
       :to    => options[:email],
@@ -17,7 +16,7 @@ class DataExportMailer < ActionMailer::Base
     mail(headers) do | part|
       part.html { render "data_backup", :formats => [:html] }
     end.deliver
-  end 
+  end
 
   def ticket_export(options={})
     headers = {
@@ -34,6 +33,24 @@ class DataExportMailer < ActionMailer::Base
     @account = @user.account
     mail(headers) do |part|
       part.html { render "ticket_export", :formats => [:html] }
+    end.deliver
+  end
+
+  def article_export(options = {})
+    headers = {
+      :subject => safe_send("#{options[:type]}_export_subject", options),
+      :to        => options[:user].email,
+      :from      => AppConfig['from_email'],
+      :sent_on   => Time.zone.now,
+      'Reply-to' => ''
+    }
+
+    headers.merge!(make_header(nil, nil, options[:user].account_id, 'Article Export'))
+    @user = options[:user]
+    @url  = options[:url]
+    @account = @user.account
+    mail(headers) do |part|
+      part.html { render 'article_export', formats: [:html] }
     end.deliver
   end
 
@@ -104,6 +121,22 @@ class DataExportMailer < ActionMailer::Base
     end.deliver
   end
 
+  def no_articles(options = {})
+    headers = {
+      :subject => I18n.t('mailer_notifier_subject.no_articles_to_export', domain: options[:domain]),
+      :to       => options[:user].email,
+      :from     => AppConfig['from_email'],
+      :sent_on  => Time.now,
+      'Reply-to' => ''
+    }
+    headers.merge!(make_header(nil, nil, options[:user].account_id, 'No Articles'))
+    @user = options[:user]
+    @account = @user.account
+    mail(headers) do |part|
+      part.html { render 'no_articles', formats: [:html] }
+    end.deliver
+  end
+
   def export_failure(options = {})
     @user = options[:user]
     type = ['contact', 'company'].include?(options[:type]) ? 'customer' : options[:type]
@@ -140,7 +173,7 @@ class DataExportMailer < ActionMailer::Base
       part.html { render "customer_export", :formats => [:html] }
     end.deliver
   end
-  
+
   def reports_export options={}
     headers = {
       :subject => "Reports Export for #{options[:range]}",
@@ -261,6 +294,10 @@ class DataExportMailer < ActionMailer::Base
 
     def ticket_export_subject(options)
       options[:export_params][:archived_tickets] && options[:export_params][:use_es] ? options[:export_params][:export_name] : formatted_export_subject(options)
+    end
+
+    def article_export_subject(options)
+      I18n.t('export_data.article_export.subject', domain: options[:domain])
     end
 
     def audit_log_export_subject(options)

@@ -9,10 +9,12 @@ class DataExport < ActiveRecord::Base
     :dependent => :destroy
   
   EXPORT_TYPE = { :backup => 1, :ticket => 2, :contact => 3, :company => 4, :call_history => 5, :agent => 6, :reports => 7, 
-                  :archive_ticket => 8, audit_log: 9 }
+                  :archive_ticket => 8, audit_log: 9, article: 10 }
 
   TICKET_EXPORT_LIMIT = 3
   PAID_TICKET_EXPORT_LIMIT = 10
+
+  ARTICLE_EXPORT_LIMIT = 3
   
   CONTACT_EXPORT_LIMIT_PER_ACCOUNT = 1
   COMPANY_EXPORT_LIMIT_PER_ACCOUNT = 1
@@ -45,9 +47,10 @@ class DataExport < ActiveRecord::Base
   scope :running_archive_ticket_exports, :conditions => ["source = #{EXPORT_TYPE[:archive_ticket]} and status NOT in (?)", [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]]
   scope :running_contact_exports, conditions: ["source = #{EXPORT_TYPE[:contact]} and status NOT in (?)", [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]]
   scope :running_company_exports, conditions: ["source = #{EXPORT_TYPE[:company]} and status NOT in (?)", [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]]
-  scope :old_data_backup, lambda{ |threshold = OLD_BACKUP_UPPER_THRESHOLD_DAYS.days.ago| { 
+  scope :old_data_backup, lambda{ |threshold = OLD_BACKUP_UPPER_THRESHOLD_DAYS.days.ago| {
     conditions: ["source = #{EXPORT_TYPE[:backup]} and created_at <= (?) and created_at >= (?)", 
       threshold, OLD_BACKUP_LOWER_THRESHOLD_DAYS.days.ago] }}
+  scope :running_article_exports, conditions: ["source = #{EXPORT_TYPE[:article]} and status NOT in (?)", [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]]
 
 
   def owner?(downloader)
@@ -116,6 +119,10 @@ class DataExport < ActiveRecord::Base
 
   def self.archive_ticket_export_limit_reached?
     Account.current.data_exports.running_archive_ticket_exports.count >= self.archive_ticket_export_limit
+  end
+
+  def self.article_export_limit_reached?(user)
+    user.data_exports.running_article_exports.count >= ARTICLE_EXPORT_LIMIT
   end
 
   def self.contact_export_limit_reached?

@@ -288,7 +288,8 @@
     - premium_ticket_export
     - activity_export
     - report_export_queue
-    - audit_log_export    
+    - audit_log_export
+    - articles_export_queue
   :bulk_scheduled:
     - supervisor
     - sla
