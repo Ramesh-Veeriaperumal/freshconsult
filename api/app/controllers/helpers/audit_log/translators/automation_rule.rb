@@ -116,7 +116,7 @@ module AuditLog::Translators::AutomationRule
   end
 
   def assign_readable(action, translated_items)
-    name_key = action.key?(:evaluate_on) && ['requester', 'company'].include?(action[:evaluate_on]) ?
+    name_key = action.key?(:evaluate_on) && ['requester', 'company', 'created_at'].include?(action[:evaluate_on]) ?
                     "#{action[:evaluate_on]}_#{action[:name]}" :
                     action[:name]
     name_key = 'created_at_supervisor' if supervisor_rule? && name_key == 'created_at'

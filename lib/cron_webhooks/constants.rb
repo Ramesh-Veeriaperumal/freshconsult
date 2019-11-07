@@ -229,6 +229,10 @@ module CronWebhooks::Constants
     freshfone_failed_close_accounts: {
       class_name: 'CronWebhooks::Freshfone',
       semaphore_expiry: 1.hour
+    },
+    enable_omniroute_for_new_accounts: {
+      class_name: 'CronWebhooks::EnableOmnirouteForNewAccounts',
+      semaphore_expiry: 1.hour
     }
   }.freeze
 
