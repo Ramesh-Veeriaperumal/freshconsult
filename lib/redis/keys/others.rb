@@ -250,6 +250,8 @@ module Redis::Keys::Others
   DOWNGRADE_POLICY = 'DOWNGRADE_POLICY'.freeze
   DOWNGRADE_POLICY_TO_ALL = 'DOWNGRADE_POLICY_TO_ALL'.freeze
 
+  MAILBOX_GMAIL_OAUTH = 'GMAIL_OAUTH:%{account_id}:%{user_id}:%{random_number}'.freeze
+
   #Increasing Domains for accounts as per request by the account holder
   INCREASE_DOMAIN_FOR_EMAILS = 'INCREASE_DOMAIN_FOR_EMAILS'.freeze
 end

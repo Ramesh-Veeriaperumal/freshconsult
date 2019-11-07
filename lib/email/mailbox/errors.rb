@@ -1,0 +1,17 @@
+module Email::Mailbox::Errors
+  class MissingRedis < Exception
+    attr_reader :url_params_string
+    def initialize(msg = 'Missing redis key in google callback')
+      @url_params_string = 'error=500'
+      super(msg)
+    end
+  end
+  
+  class GoogleAuthenticateFailure < Exception
+    attr_reader :url_params_string
+    def initialize(msg = 'Google Authenticate failure')
+      @url_params_string = 'error=401'
+      super(msg)
+    end
+  end
+end

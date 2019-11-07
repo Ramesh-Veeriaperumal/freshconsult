@@ -27,6 +27,9 @@ class Auth::Authenticator
     @user_id = options[:user_id]
     @state_params = options[:state_params]
     @falcon_enabled = options[:falcon_enabled]
+    @options = options
+    @failed = options[:failed]
+    @failed_reason = options[:message]
   end
 
   def name
