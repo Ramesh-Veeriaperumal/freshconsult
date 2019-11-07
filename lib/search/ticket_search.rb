@@ -171,8 +171,9 @@ module Search::TicketSearch
       return products_list.concat(products.collect { |au| [au.id, CGI.escapeHTML(au.name)] })
     end
 
-    if criteria_key == :due_by and Account.current.sla_management_enabled?
-      return TicketConstants.due_by_list
+    # TODO: nr_due_by
+    if [:due_by, :frDueBy].include?(criteria_key) && Account.current.sla_management_enabled?
+      return TicketConstants.due_by_list # if criteria_key != :nr_due_by || Account.current.next_response_sla_enabled?
     end
 
     if criteria_key == "helpdesk_tags.name"

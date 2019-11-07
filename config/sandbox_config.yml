@@ -93,7 +93,11 @@ MODEL_DEPENDENCIES:
       - Helpdesk::PicklistValue
     - pickable_id
     - pickable_type
-  Helpdesk::Section: []
+  - - - Helpdesk::TicketField
+    - ticket_field_id
+  Helpdesk::Section:
+  - - - Helpdesk::TicketField
+    - ticket_field_id
   Helpdesk::SectionField:
   - - - Helpdesk::TicketField
     - ticket_field_id
@@ -101,8 +105,6 @@ MODEL_DEPENDENCIES:
     - parent_ticket_field_id
   - - - Helpdesk::Section
     - section_id
-  - - - Helpdesk::TicketField
-    - ticket_field_id
   Helpdesk::SectionPicklistValueMapping:
   - - - Helpdesk::Section
     - section_id

@@ -26,6 +26,8 @@ module SolutionBulkActionConcern
       article = article_meta.safe_send(language_scoper)
       update_tags(article)
       update_author(article)
+      update_outdated(article)
+      raise 'Status updation failed!' if !update_status(article)
       article_meta.save!
       article.save! # Dummy save to trigger publishable callbacks
     end
@@ -90,5 +92,20 @@ module SolutionBulkActionConcern
       folder_meta.add_companies(valid_companies, !(cname_params[:properties][:add_to_existing] == false)) if visibility == Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:company_users]
       folder_meta.visibility = cname_params[:properties][:visibility]
     end
+  end
+
+  def update_status(article)
+    if cname_params[:properties][:status] == Solution::Constants::STATUS_KEYS_BY_TOKEN[:published]
+      if !article.draft.present? || article.draft.locked? || article.solution_folder_meta.is_default?
+        return false
+      else
+         article.draft.publish! if article.draft.present?
+      end
+    end
+    return true
+  end
+
+  def update_outdated(article)
+    article.outdated = cname_params[:properties][:outdated] if cname_params[:properties].key?(:outdated)
   end
 end

@@ -1,5 +1,6 @@
 class Sync::FileToData::PushToSql
   include Sync::FileToData::Util
+  include Sync::Constants
   attr_accessor :retain_id, :resync, :self_associations, :account, :mapping_table, :deleted_associations
 
   def initialize(root_path, master_account_id, retain_id = false, resync = false, clone = false, account = Account.current)
@@ -42,7 +43,7 @@ class Sync::FileToData::PushToSql
         data = YAML.load_file(file_path)
         column_values[column] = data
       end
-      if object.respond_to?('deleted') && action == :deleted
+      if !ignore_soft_deleted_model?(table_name) && object.respond_to?('deleted') && action == :deleted
         action = :modified
         arel_values = [[table[:deleted], 1]]
       else
@@ -74,7 +75,7 @@ class Sync::FileToData::PushToSql
       elsif column_values[column].present? && action != :deleted && @transformer.available?(model, column)
         transformed_column_value = @transformer.safe_send("transform_#{model.gsub('::', '').snakecase}_#{column}", column_values[column], @mapping_table)
         Sync::Logger.log("available transformer, column: #{column}, value: #{column_values[column].inspect}, transformed_column_value: #{transformed_column_value}  model: #{model}")
-        if transformed_column_value != column_values[column] && !serialized_columns.include?(column)
+        if @transformer.can_map_column?(model, column) || (transformed_column_value != column_values[column] && !serialized_columns.include?(column))
           @mapping_table[model][column] ||= {}
           @mapping_table[model][column][column_values[column]] = transformed_column_value
         end
@@ -114,6 +115,10 @@ class Sync::FileToData::PushToSql
         @deleted_associations[model].append(item_id)
         delete_record(table_name, item_id)
       end
+    end
+
+    def ignore_soft_deleted_model?(table_name)
+      IGNORE_SOFT_DELETE_TABLES.include?(table_name)
     end
 
     def modified(_table_name, item_id, arel_values, object, table)

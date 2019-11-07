@@ -144,4 +144,6 @@ module Sync::Constants
 
   FORM_BASED_MODELS = ['contact_form', 'company_form'].freeze
 
+  IGNORE_SOFT_DELETE_TABLES = %w(helpdesk_ticket_fields helpdesk_picklist_values flexifield_def_entries).freeze
+
 end

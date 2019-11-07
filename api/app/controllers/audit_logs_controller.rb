@@ -130,15 +130,12 @@ class AuditLogsController < ApiApplicationController
       export_params = {}
       export_filter_params = {}
       export_filter_params[:filters] = clean_export_filters if params[:filter]
-      since = Date.parse params[:from]
       before = Date.parse params[:to]
-      zone = fetch_zone
-      since = DateTime.new(since.year, since.month, since.day, 0, 0, 0, zone)
-      export_params[:since] = since.strftime('%Q').to_i # changing to milliseconds
-      export_params[:before] = if before == Time.zone.today
+      export_params[:since] = DateTime.parse(params[:from]).beginning_of_day.strftime('%Q').to_i # changing to epoch
+      export_params[:before] = if before == Time.zone.today || before > Time.zone.today
                                  Time.zone.now.to_i * 1000
                                else
-                                 DateTime.new(before.year, before.month, before.day, 23, 59, 59, zone).strftime('%Q').to_i
+                                DateTime.parse(params[:to]).end_of_day.strftime('%Q').to_i
                                end
 
       export_params[:cond] = construct_export_condition if params[:condition]

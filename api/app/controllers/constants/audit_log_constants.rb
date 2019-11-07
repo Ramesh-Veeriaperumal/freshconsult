@@ -59,7 +59,8 @@ module AuditLogConstants
     'automation_4' => 4
   }.freeze
 
-  EXPORT_PARAMS = [:from, :to, :filter, :condition, :receive_via].freeze
+  
+  EXPORT_PARAMS = [:from, :to, :filter, :condition, :receive_via, :export_format].freeze
 
   EXPORT_FILTER_SET_PARAMS = [:entity, :ids].freeze
 

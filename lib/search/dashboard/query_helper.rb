@@ -12,7 +12,8 @@ module Search::Dashboard::QueryHelper
       'helpdesk_schema_less_tickets.product_id'   =>  'product_id',
       'internal_group'                            =>  'internal_group_id',
       'internal_agent'                            =>  'internal_agent_id',
-      'ticket_type'                               =>  'type'
+      'ticket_type'                               =>  'type',
+      'frDueBy'                                   =>  'fr_due_by'
     }
 
   STRING_FIELDS = ["type","tag"]
@@ -198,23 +199,41 @@ module Search::Dashboard::QueryHelper
     "updated_at:>'#{Time.zone.parse(value).utc.iso8601}'"
   end
 
+  ['due_by','fr_due_by'].each do |field_name|
+    define_method "transform_#{field_name}" do |field_name, values|
+      transform_due_by_fields(field_name, values)
+    end
+  end
+
   # due by fields
-  def transform_due_by(field_name, values)
+  def transform_due_by_fields(field_name, values)
     queries = []
     values.each do |value|
       case value.to_i
       # Overdue
       when TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:all_due]
-      	queries << "due_by:<'#{Time.zone.now.utc.iso8601}'"
+      	queries << "#{field_name}:<'#{Time.zone.now.utc.iso8601}'"
       # Today
       when TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_today]
-      	queries << "(due_by:>'#{Time.zone.now.beginning_of_day.utc.iso8601}' AND due_by:<'#{Time.zone.now.end_of_day.utc.iso8601}')"
+      	queries << "(#{field_name}:>'#{Time.zone.now.beginning_of_day.utc.iso8601}' AND #{field_name}:<'#{Time.zone.now.end_of_day.utc.iso8601}')"
       # Tomorrow
       when TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_tomo]
-      	queries << "(due_by:>'#{Time.zone.now.tomorrow.beginning_of_day.utc.iso8601}' AND due_by:<'#{Time.zone.now.tomorrow.end_of_day.utc.iso8601}')"
+      	queries << "(#{field_name}:>'#{Time.zone.now.tomorrow.beginning_of_day.utc.iso8601}' AND #{field_name}:<'#{Time.zone.now.tomorrow.end_of_day.utc.iso8601}')"
       # Next 8 hours
       when TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_next_eight]
-      	queries << "(due_by:>'#{Time.zone.now.utc.iso8601}' AND due_by:<'#{8.hours.from_now.utc.iso8601}')"
+      	queries << "(#{field_name}:>'#{Time.zone.now.utc.iso8601}' AND #{field_name}:<'#{8.hours.from_now.utc.iso8601}')"
+      # Next 4 hours
+      when TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_next_four]
+        queries << "(#{field_name}:>'#{Time.zone.now.utc.iso8601}' AND #{field_name}:<'#{4.hours.from_now.utc.iso8601}')"
+      # Next 2 hours
+      when TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_next_two]
+        queries << "(#{field_name}:>'#{Time.zone.now.utc.iso8601}' AND #{field_name}:<'#{2.hours.from_now.utc.iso8601}')"
+      # Next 1 hour
+      when TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_next_hour]
+        queries << "(#{field_name}:>'#{Time.zone.now.utc.iso8601}' AND #{field_name}:<'#{1.hours.from_now.utc.iso8601}')"
+      # Next 30 minutes
+      when TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_next_half_hour]
+        queries << "(#{field_name}:>'#{Time.zone.now.utc.iso8601}' AND #{field_name}:<'#{30.minutes.from_now.utc.iso8601}')"
       end
     end
     add_or_condition(queries) + " AND status_stop_sla_timer:false AND status_deleted:false"

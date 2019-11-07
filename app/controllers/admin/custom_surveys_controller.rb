@@ -150,7 +150,7 @@ class Admin::CustomSurveysController < Admin::AdminController
     end
 
     def multilingual_csat_enabled?
-      current_account.csat_translations_enabled?
+      current_account.custom_translations_enabled?
     end
 
     def load_survey
@@ -197,7 +197,7 @@ class Admin::CustomSurveysController < Admin::AdminController
     end
 
     def update_survey_status?
-      action_name.to_sym == :update && Account.current.csat_translations_enabled? && @errors.blank?
+      action_name.to_sym == :update && Account.current.custom_translations_enabled? && @errors.blank?
     end
 
     def update_survey_status(survey_was)

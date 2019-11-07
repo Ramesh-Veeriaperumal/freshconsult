@@ -22,7 +22,8 @@ class Sync::FileToData::Transformer
     'Helpdesk::PicklistValue'           => ['picklist_id'],
     'Social::Stream'                    => ['data'],
     'Social::TicketRule'                => ['action_data'],
-    'Social::TwitterHandle'             => ['state']
+    'Social::TwitterHandle'             => ['state'],
+    'Helpdesk::SectionPicklistValueMapping' => ['picklist_id']
   }.freeze
 
   CUSTOM_TEXT_FIELDS_TYPES = {
@@ -45,6 +46,10 @@ class Sync::FileToData::Transformer
     'Helpdesk::TicketStatus',
   ].freeze
 
+  EXTRA_COLUMN_TO_ADD = {
+    'Helpdesk::PicklistValue' => ['picklist_id']
+  }.freeze
+
   attr_accessor :master_account_id, :mapping_table, :account, :resync
 
   def initialize(master_account_id, resync = false, clone = false, account = Account.current)
@@ -58,6 +63,10 @@ class Sync::FileToData::Transformer
     shard_name                = temporary_offset_enabled? ? 'default' : production_account_shard.shard_name
     @offset_value             = Integer(SANDBOX_ID_OFFSET[shard_name] || SANDBOX_ID_OFFSET['default'])
     load_resync_dependent_vars if resync
+  end
+
+  def can_map_column?(model, column)
+    (EXTRA_COLUMN_TO_ADD[model] || []).include?(column)
   end
 
   def available?(model, column)
@@ -117,6 +126,10 @@ class Sync::FileToData::Transformer
     return data unless @resync
 
     @max_picklist_id += 1
+  end
+
+  def transform_helpdesk_section_picklist_value_mapping_picklist_id(data, _mapping_table)
+    (get_mapping_data('Helpdesk::PicklistValue', _mapping_table, 'picklist_id') || {})[data]
   end
 
   def skip_transformation?(data, model = '')

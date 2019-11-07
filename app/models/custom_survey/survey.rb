@@ -138,8 +138,8 @@ class CustomSurvey::Survey < ActiveRecord::Base
 
   private
 
-    def custom_translations_feature_check(language)
-      return false unless Account.current.csat_translations_enabled? 
+    def custom_translations_available?(language)
+      return false unless Account.current.custom_translations_enabled? 
       if User.current && User.current.agent?
         Account.current.supported_languages.include?(language.code)
       else

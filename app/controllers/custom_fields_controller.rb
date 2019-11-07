@@ -230,6 +230,7 @@ class CustomFieldsController < Admin::AdminController
       return if invalid_section?(sec)
       section = sec[:id].nil? ? account.sections.build : find_section(account, sec[:id])
       section.label = sec[:label]
+      section.ticket_field_id = sec[:parent_ticket_field_id]
       build_section_picklist_mappings(section, 
                                       sec[:picklist_ids],
                                       sec[:parent_ticket_field_id].to_i,
@@ -247,12 +248,14 @@ class CustomFieldsController < Admin::AdminController
       # Supposedly, since it increases load on the browser
       # Need to change
       ticket_field = account.ticket_fields.find_by_id(ticket_field_id)
-      pl_values = ticket_field.picklist_values.map(&:id)
+      pl_values = ticket_field.picklist_values
+      pl_ids = pl_values.map(&:id)
       pl_mappings = section.section_picklist_mappings
       db_ids = pl_mappings.map(&:picklist_value_id)
       ui_ids = picklist_ids.map {|p| p["picklist_value_id"].to_i}
       (ui_ids - db_ids).each do |id|
-        section.section_picklist_mappings.build(:picklist_value_id => id) if pl_values.include?(id)
+        picklist_id = pl_values.find { |pl| pl.id == id }.picklist_id
+        section.section_picklist_mappings.build(:picklist_value_id => id, :picklist_id => picklist_id) if pl_ids.include?(id)
       end
       (db_ids - ui_ids).each do |id|
         pl_val = pl_mappings.find { |p| p.picklist_value_id == id }

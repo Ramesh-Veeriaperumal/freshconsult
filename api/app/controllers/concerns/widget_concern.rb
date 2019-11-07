@@ -42,4 +42,14 @@ module WidgetConcern
     end
     Language.fetch_from_primary({}).make_current unless Language.current?
   end
+
+  def user_visibility
+    vis_arr = [Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]]
+    if User.current
+      vis_arr << Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users]
+      vis_arr << Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:agents] if User.current.agent?
+      vis_arr << Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users] if User.current.agent? || User.current.has_company?
+    end
+    vis_arr
+  end
 end

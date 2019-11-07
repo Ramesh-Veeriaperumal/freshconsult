@@ -78,6 +78,26 @@ class Reports::PricingApiTest < ActiveSupport::TestCase
     FD_FRESVISUAL_FEATURE_MAPPING.keys.each do |f|
       Account.any_instance.unstub("#{f}_enabled?".to_sym)
     end
+  end 
+
+  def test_create_tenant_upsert_success_response
+    mock = Minitest::Mock.new
+    Faraday::Connection.any_instance.stubs(:put).returns(Faraday::Response.new({status: 200}))
+    mock.expect(:call, nil, ["Reports pricing API called :: tenant_put, for Account #{Account.current.id}"])
+    Rails.logger.stub :debug, mock do
+      self.safe_send(:create_tenant)
+    end
+    assert_equal mock.verify, true
+  end
+
+  def test_create_tenant_upsert_failure_response
+    mock = Minitest::Mock.new
+    Faraday::Connection.any_instance.stubs(:put).returns(Faraday::Response.new({status: 422}))
+    mock.expect(:call, nil, ["Pricing API: Exception in log_request_and_call :: tenant_put, error: Pricing API Invalid response, code: 422 for Account #{Account.current.id}" ])
+    Rails.logger.stub :error, mock do
+      self.safe_send(:create_tenant)
+    end
+    assert_equal mock.verify, true
   end
 
   private

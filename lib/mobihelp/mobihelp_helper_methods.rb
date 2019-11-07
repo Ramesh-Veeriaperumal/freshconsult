@@ -18,12 +18,15 @@ module Mobihelp::MobihelpHelperMethods
 
   MOBIHELP_UUID_REGEX = /[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}/
 
-
-
   private
 
     def validate_credentials
-      authKeyEncoded = request.headers["X-FD-Mobihelp-Auth"];
+      if current_account.launched?(:disable_mobihelp)
+        render_json(generate_mh_err_resp(MOBIHELP_STATUS_CODE_BY_NAME[:MHC_APP_DELETED], MOBIHELP_STATUS_MESSAGE_BY_NAME[:MHC_APP_DELETED]))
+        return
+      end
+      
+      authKeyEncoded = request.headers["X-FD-Mobihelp-Auth"]
       unless  authKeyEncoded.nil?
         authKey = Base64.decode64(authKeyEncoded)
         app_key = authKey.split(":")[0]
@@ -39,6 +42,7 @@ module Mobihelp::MobihelpHelperMethods
       elsif @mobihelp_app.deleted
         render_json(generate_mh_err_resp(MOBIHELP_STATUS_CODE_BY_NAME[:MHC_APP_DELETED], MOBIHELP_STATUS_MESSAGE_BY_NAME[:MHC_APP_DELETED]))
       end
+
     end
 
     def save_user(user_params, device_uuid)

@@ -24,7 +24,7 @@ module Sync::SqlUtil
   def record_present?(table_name, account_id, id, object)
     return false if id == 0
     sql = "select (1) from #{table_name} where id = #{id} and account_id = #{account_id}"
-    sql += " and deleted = 0" if object.respond_to?('deleted') # soft delete
+    sql += " and deleted = 0" if !IGNORE_SOFT_DELETE_TABLES.include?(table_name) && object.respond_to?('deleted') # soft delete
     Sync::Logger.log("EXISTS: #{sql}")
     ActiveRecord::Base.connection.execute(sql).to_a.present?
   end

@@ -61,13 +61,17 @@ class QueryHash
       if format.eql?(:system)
         condition_to_system_format(query)
       else
-        { 'condition' => (is_flexi_field?(query) ? ff_field_alias(query) : query['condition']) }
+        { 'condition' => (is_flexi_field?(query) ? ff_field_alias(query) : sanitize_condition_param(query['condition'], true)) }
       end
+    end
+
+    def sanitize_condition_param(condition, reverse_lookup=false)
+      (reverse_lookup ? TicketFilterConstants::RENAME_CONDITIONS.key(condition) : TicketFilterConstants::RENAME_CONDITIONS[condition]) || condition
     end
 
     def condition_to_system_format(query)
       return {} if REMOVE_FFNAME_FOR.include?(query['condition'])
-      condition = { 'ff_name' => 'default' }
+      condition = { 'ff_name' => 'default', 'condition' => sanitize_condition_param(query['condition']) }
       if query['type'] == 'custom_field'
         ff_name = "#{query['condition']}_#{Account.current.id}"
         condition = { 'condition' => "flexifields.#{ff_alias_name_map[ff_name]}", 'ff_name' => ff_name }

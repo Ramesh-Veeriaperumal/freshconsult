@@ -263,13 +263,18 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
   end
 
   def test_index_with_custom_file
-    custom_field = create_custom_field_dn('test_signature_file', 'file')
+    flexifield_def = FlexifieldDef.find_by_account_id_and_module(@account.id, 'Ticket')
+    text_field_col_name = flexifield_def.first_available_column('text')
+    custom_text_field = create_custom_field_dn('test_text_field', 'text', false, false, flexifield_name: text_field_col_name)
+    file_field_col_name = flexifield_def.first_available_column('file')
+    custom_file_field = create_custom_field_dn('test_file_field', 'file', false, false, flexifield_name: file_field_col_name)
     get :index, controller_params({}, {})
     assert_response 200
     response = parse_response @response.body
     cd_field = response.find { |x| x['type'] == Helpdesk::TicketField::CUSTOM_FILE }
-    assert_equal true, cd_field.present?
+    assert_not_nil cd_field
   ensure
-    custom_field.destroy
+    custom_text_field.destroy
+    custom_file_field.destroy
   end
 end

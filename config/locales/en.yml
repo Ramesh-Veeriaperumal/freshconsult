@@ -6608,6 +6608,7 @@ en:
     updated: updated
     deleted: deleted
     marked_spam: marked as spam
+    linked: linked
     time_entry: Time Entry
     new_time_entry: added
     updated_time_entry: updated

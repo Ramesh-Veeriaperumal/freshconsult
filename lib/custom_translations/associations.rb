@@ -11,7 +11,7 @@ module CustomTranslations::Associations
     end
 
     def translation_record(language = current_language)
-      @translation_record ||= custom_translations_feature_check(language) ? safe_send("#{language.to_key}_translation") : nil
+      @translation_record ||= custom_translations_available?(language) ? safe_send("#{language.to_key}_translation") : nil
     end
 
     private
@@ -21,7 +21,7 @@ module CustomTranslations::Associations
       end
 
       # Overridable.
-      def custom_translations_feature_check(language = current_language)
+      def custom_translations_available?(language = current_language)
         Account.current.custom_translations_enabled? && Account.current.supported_languages.include?(language.code)
       end
   end

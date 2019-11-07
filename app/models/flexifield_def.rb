@@ -20,6 +20,8 @@ class FlexifieldDef < ActiveRecord::Base
   validates_presence_of :name
 
   # after_update :save_entries
+  TEXT_GROUP = ['text', 'nested_field', 'dropdown', 'file'].freeze
+  DN_TEXT_GROUP = ['text', 'file'].freeze
 
   TEXT_COL_TYPES  = ["text",    "paragraph"]
   NUM_COL_TYPES   = ["number",  "decimal"]
@@ -106,7 +108,7 @@ class FlexifieldDef < ActiveRecord::Base
 
   def first_available_column(type)
     used_hash = used_fields_hash(type)
-    if text_or_dropdown?(type) # change
+    if text_group_include?(type) # change
       result = []
       used_hash.each { |key, value| result += value }
       check_limit_exceeded_for_text_or_dropdown(used_hash, type) ? fetch_available(result, type) : nil
@@ -139,7 +141,7 @@ class FlexifieldDef < ActiveRecord::Base
 
   def used_fields_hash(type)
     @used_fields_hash ||= {}
-    if text_or_dropdown?(type)
+    if text_group_include?(type)
       @used_fields_hash['text_and_dropdown'] ||= begin
         fields = used_fields(type)
         fetch_used_hash_for_text_or_dropdown(fields)
@@ -159,8 +161,12 @@ class FlexifieldDef < ActiveRecord::Base
   def field_mappings_required(type)
     if type.eql?('date') || type.eql?('date_time')
       [FIELD_COLUMN_MAPPING['date'.to_sym][0], FIELD_COLUMN_MAPPING['date_time'.to_sym][0]]
-    elsif text_or_dropdown? type
-      FIELD_COLUMN_MAPPING['dropdown'.to_sym][0]
+    elsif text_group_include?(type)
+      if type == 'text'
+        FIELD_COLUMN_MAPPING['dropdown'.to_sym][0] + ['file']
+      else
+        FIELD_COLUMN_MAPPING[type.to_sym][0]
+      end
     else
       FIELD_COLUMN_MAPPING[type.to_sym][0]
     end
@@ -175,8 +181,8 @@ class FlexifieldDef < ActiveRecord::Base
   end
 
   def check_limit_exceeded_for_text_or_dropdown(hash, type)
-    text_hash = hash[:ffs_and_text_only] + hash[:denormalized_and_text]
-    if type == 'text'
+    if dn_text_group_include?(type)
+      text_hash = hash[:ffs_and_text_only] + hash[:denormalized_and_text]
       text_hash.count < TICKET_FIELD_DATA_DROPDOWN_COUNT
     else
       req_fields = hash[:ffs_and_dropdown_only]
@@ -199,8 +205,8 @@ class FlexifieldDef < ActiveRecord::Base
   end
 
   def add_to_used_hash(value, type)
-    if text_or_dropdown?(type)
-      type == 'text' ? @used_fields_hash['text_and_dropdown'][:denormalized_and_text] << value : @used_fields_hash['text_and_dropdown'][:ffs_and_dropdown_only] << value
+    if text_group_include?(type)
+      dn_text_group_include?(type) ? @used_fields_hash['text_and_dropdown'][:denormalized_and_text] << value : @used_fields_hash['text_and_dropdown'][:ffs_and_dropdown_only] << value
     else
       @used_fields_hash[type] << value
     end
@@ -209,8 +215,12 @@ class FlexifieldDef < ActiveRecord::Base
   def select_fields(fields, field_name, coltype)
     fields.select { |field| field.flexifield_name.include?(field_name) && field.flexifield_coltype == coltype }.map(&:flexifield_name)
   end
+  
+  def text_group_include?(type)
+    TEXT_GROUP.include?(type)
+  end
 
-  def text_or_dropdown?(type)
-    type.eql?('text') || type.eql?('nested_field') || type.eql?('dropdown')
+  def dn_text_group_include?(type)
+    DN_TEXT_GROUP.include?(type)
   end
 end

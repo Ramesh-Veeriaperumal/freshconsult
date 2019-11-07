@@ -100,6 +100,17 @@ module QueryHashHelper
     ]
   end
 
+  def sample_fr_due_by_input_condition(options = {})
+    [
+      {
+        'condition' => 'fr_due_by',
+        'operator' => 'due_by_op',
+        'type' => 'default',
+        'value' => [1]
+      }
+    ]
+  end
+
   def response_query_created_at_pattern(options = {})
     [
       {

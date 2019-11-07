@@ -47,14 +47,26 @@ module Wf
      end
      
       def get_due_by_con(val)
-        eight_hours = ::Time.zone.now + 8.hours
-        
-       due_by_hash = { TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:all_due] => "due_by <= '#{::Time.zone.now.to_s(:db)}'",
-          TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_today] => "due_by >= '#{::Time.zone.now.beginning_of_day.to_s(:db)}' and due_by <= '#{::Time.zone.now.end_of_day.to_s(:db)}' ",
-          TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_tomo] => "due_by >= '#{::Time.zone.now.tomorrow.beginning_of_day.to_s(:db)}' and due_by <= '#{::Time.zone.now.tomorrow.end_of_day.to_s(:db)}' ",
-          TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_next_eight] => "due_by >= '#{::Time.zone.now.to_s(:db)}' and due_by <= '#{eight_hours.to_s(:db)}' "}
+        due_by_hash = { TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:all_due] => "#{condition.full_key} <= '#{::Time.zone.now.to_s(:db)}'",
+          TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_today] => "#{condition.full_key} >= '#{::Time.zone.now.beginning_of_day.to_s(:db)}' and #{condition.full_key} <= '#{::Time.zone.now.end_of_day.to_s(:db)}' ",
+          TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_tomo] => "#{condition.full_key} >= '#{::Time.zone.now.tomorrow.beginning_of_day.to_s(:db)}' and #{condition.full_key} <= '#{::Time.zone.now.tomorrow.end_of_day.to_s(:db)}' ",
+          TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_next_eight] => "#{condition.full_key} >= '#{::Time.zone.now.to_s(:db)}' and #{condition.full_key} <= '#{8.hours.from_now.to_s(:db)}' ",
+          TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_next_four] => "#{condition.full_key} >= '#{::Time.zone.now.to_s(:db)}' and #{condition.full_key} <= '#{4.hours.from_now.to_s(:db)}' ",
+          TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_next_two] => "#{condition.full_key} >= '#{::Time.zone.now.to_s(:db)}' and #{condition.full_key} <= '#{2.hours.from_now.to_s(:db)}' ",
+          TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_next_hour] => "#{condition.full_key} >= '#{::Time.zone.now.to_s(:db)}' and #{condition.full_key} <= '#{1.hour.from_now.to_s(:db)}' ",
+          TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_next_half_hour] => "#{condition.full_key} >= '#{::Time.zone.now.to_s(:db)}' and #{condition.full_key} <= '#{30.minutes.from_now.to_s(:db)}' "}
+
+        response_due_conditions = ""
+        case condition.to_s
+        when :frDueBy
+          response_due_conditions = " and helpdesk_tickets.source != #{TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]} and helpdesk_ticket_states.first_response_time IS NULL "
+        # when :nr_due_by
+        #   response_due_conditions = " and nr_due_by IS NOT NULL "
+        end
+
+        due_by_hash.each_pair{ |option, query_cond| due_by_hash[option] = query_cond + response_due_conditions } if response_due_conditions.present?
           
-       due_by_hash[val.to_i]
+        due_by_hash[val.to_i]
       end
 
       def sql_condition

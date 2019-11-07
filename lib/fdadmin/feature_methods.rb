@@ -7,13 +7,15 @@ module Fdadmin::FeatureMethods
 
     FEATURE_TYPES = ["bitmap", "db", "launchparty"]
 
+    BLACKLISTED_LP_FEATURES = [:freshid, :freshid_org_v2, :fluffy, :fluffy_min_level].freeze
+
     private
 
     def feature_types(feature_name)
       feature_types = []
       feature_types << "bitmap" if BITMAP_FEATURES.include?(feature_name)
       # feature_types << "db" if @account.features.respond_to?(feature_name) # disabling adding db features via freshops
-      feature_types << "launchparty" if Account::LAUNCHPARTY_FEATURES.keys.include?(feature_name)
+      feature_types << "launchparty" if Account::LAUNCHPARTY_FEATURES.keys.include?(feature_name) && !BLACKLISTED_LP_FEATURES.include?(feature_name)
       feature_types
     end
 

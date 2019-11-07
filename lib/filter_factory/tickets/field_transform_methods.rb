@@ -4,7 +4,11 @@ module FilterFactory::Tickets
       '1' => :overdue,
       '2' => :due_today,
       '3' => :due_tomorrow,
-      '4' => :due_in_eight
+      '4' => :due_in_eight,
+      '5' => :due_in_four,
+      '6' => :due_in_two,
+      '7' => :due_in_one,
+      '8' => :due_in_half_hour,
     }.freeze
 
     FIELDS_WITH_CUSTOM_VALUES = [:responder_id, :internal_agent_id, :group_id, :internal_group_id,
@@ -14,7 +18,8 @@ module FilterFactory::Tickets
 
     DATETIME_FIELDS = [:created_at].freeze
 
-    SPECIAL_API_FIELDS = [:updated_since, :due_by, :any_group_id, :any_agent_id].freeze
+    # TODO : nr_due_by
+    SPECIAL_API_FIELDS = [:updated_since, :due_by, :frDueBy, :any_group_id, :any_agent_id].freeze
 
     # appointment start time(custom datetime) is indexed in ES under fsm_appointment_start_time name.
     ES_SORTABLE_CUSTOM_FIELDS_MAP = [
@@ -134,11 +139,23 @@ module FilterFactory::Tickets
       end
 
       def append_due_by_condition
-        due_by_condition = args[:conditions].select { |condition| condition['condition'].to_sym == :due_by }
+        condition_for_due_by(:due_by)
+      end
+
+      def append_frDueBy_condition
+        condition_for_due_by(:frDueBy)
+      end
+
+      # def append_nr_due_by_condition
+      #   condition_for_due_by(:nr_due_by)
+      # end
+
+      def condition_for_due_by(due_by)
+        due_by_condition = args[:conditions].select { |condition| condition['condition'].to_sym == due_by }
         return if due_by_condition.blank?
         args[:or_conditions] ||= []
-        args[:or_conditions] += fetch_due_by(due_by_condition.first)
-        args[:conditions] = args[:conditions].select { |condition| condition['condition'].to_sym != :due_by }  # Check reject
+        args[:or_conditions] += fetch_due_by(due_by_condition.first, due_by)
+        args[:conditions] = args[:conditions].select { |condition| condition['condition'].to_sym != due_by }  # Check reject
       end
 
       def append_updated_since_condition
@@ -182,12 +199,12 @@ module FilterFactory::Tickets
         args[:conditions] = args[:conditions].select { |condition| condition['condition'].to_sym != :any_group_id }  # Check reject
       end
 
-      def fetch_due_by(condition)
+      def fetch_due_by(condition, due_by_type)
         transformed_conditions = []
         values = condition['value'].to_s.split(',')
         values.each do |value|
-          cond = safe_send("#{DUE_BY_MAPPING[value.to_s]}_condition")
-          transformed_conditions << cond.merge(condition: 'due_by', ff_name: 'default')
+          cond = due_by_time_range(DUE_BY_MAPPING[value.to_s])
+          transformed_conditions << cond.merge(condition: due_by_type.to_s, ff_name: 'default')
         end
         append_status_sla_conditions
         [transformed_conditions]
@@ -251,20 +268,25 @@ module FilterFactory::Tickets
         fetch_date_range(Time.zone.now.beginning_of_day.ago(6.months).utc.iso8601)
       end
 
-      def overdue_condition
-        fetch_date_range(nil, Time.zone.now.utc.iso8601)
-      end
-
-      def due_today_condition
-        fetch_date_range(Time.zone.now.beginning_of_day.utc.iso8601, Time.zone.now.end_of_day.utc.iso8601)
-      end
-
-      def due_tomorrow_condition
-        fetch_date_range(Time.zone.now.tomorrow.beginning_of_day.utc.iso8601, Time.zone.now.tomorrow.end_of_day.utc.iso8601)
-      end
-
-      def due_in_eight_condition
-        fetch_date_range(Time.zone.now.utc.iso8601, 8.hours.from_now.utc.iso8601)
+      def due_by_time_range(due_time)
+        case due_time
+        when :overdue
+          fetch_date_range(nil, Time.zone.now.utc.iso8601)
+        when :due_today
+          fetch_date_range(Time.zone.now.beginning_of_day.utc.iso8601, Time.zone.now.end_of_day.utc.iso8601)
+        when :due_tomorrow
+          fetch_date_range(Time.zone.now.tomorrow.beginning_of_day.utc.iso8601, Time.zone.now.tomorrow.end_of_day.utc.iso8601)
+        when :due_in_eight
+          fetch_date_range(Time.zone.now.utc.iso8601, 8.hours.from_now.utc.iso8601)
+        when :due_in_four
+          fetch_date_range(Time.zone.now.utc.iso8601, 4.hours.from_now.utc.iso8601)
+        when :due_in_two
+          fetch_date_range(Time.zone.now.utc.iso8601, 2.hours.from_now.utc.iso8601)
+        when :due_in_one
+          fetch_date_range(Time.zone.now.utc.iso8601, 1.hours.from_now.utc.iso8601)
+        when :due_in_half_hour
+          fetch_date_range(Time.zone.now.utc.iso8601, 30.minutes.from_now.utc.iso8601)
+        end 
       end
 
       # Adding time filter for Field Service Management

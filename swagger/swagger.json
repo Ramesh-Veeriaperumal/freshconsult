@@ -26998,6 +26998,17 @@
               "type": "integer",
               "description": "Author id of the articles"
             },
+            "status": {
+              "type": "integer",
+              "description": "status:\n   * `published` - 2\n",
+              "enum": [
+                2
+              ]
+            },
+            "outdated": {
+              "type": "boolean",
+              "description": "Status of the translation of the article"
+            },
             "tags": {
               "type": "array",
               "description": "Array of tags to be mapped to the articles",

@@ -20,14 +20,14 @@ class CustomSurveysHelperTest < ActionView::TestCase
   end
 
   def stub_for_csat_translations
-    Account.current.stubs(:csat_translations_enabled?).returns(true)
+    Account.current.stubs(:custom_translations_enabled?).returns(true)
     Account.current.stubs(:portal_languages_objects).returns([Language.find_by_code('de')])
     Account.current.stubs(:supported_languages_objects).returns([Language.find_by_code('de'), Language.find_by_code('fr'), Language.find_by_code('es')])
     @survey_statuses = { 5 => 1 } 
   end
 
   def unstub_for_csat_translations
-    Account.any_instance.unstub(:csat_translations_enabled?)
+    Account.any_instance.unstub(:custom_translations_enabled?)
     Account.any_instance.unstub(:all_portal_languages)
     @survey_statuses = nil
   end

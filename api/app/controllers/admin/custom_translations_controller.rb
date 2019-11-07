@@ -1,7 +1,6 @@
 class Admin::CustomTranslationsController < ApiApplicationController
   include HelperConcern
 
-  before_filter :check_launch_party_feature
   before_filter :validate_query_params, only: [:download]
   before_filter :validate_upload_params, only: [:upload]
   before_filter :set_scope
@@ -36,12 +35,6 @@ class Admin::CustomTranslationsController < ApiApplicationController
   end
 
   private
-
-    def check_launch_party_feature
-      return if Account.current.csat_translations_enabled?
-
-      render_request_error(:require_feature, 403, feature: 'csat_translations'.titleize)
-    end
 
     def fetch_translation
       data = {}

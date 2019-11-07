@@ -108,8 +108,9 @@ module RabbitMq::Constants
   RMQ_COUNT_TICKET_KEY      = "*.*.*.1"
   RMQ_COUNT_TAG_USE_KEY     = "*.1"
 
+  # TODO: nr_due_by
   AUTO_REFRESH_TICKET_KEYS  = ["id", "display_id", "tag_names", "account_id", "user_id", "responder_id", "group_id", "status",
-    "priority", "ticket_type", "source", "requester_id", "due_by", "created_at", "sl_skill_id"
+    "priority", "ticket_type", "source", "requester_id", "due_by", "frDueBy", "first_response_by_bhrs", "created_at", "sl_skill_id"
   ]
 
   ACTIVITIES_TICKET_KEYS         = ["id", "account_id", "created_at", "display_id", "updated_at", "parent_id",

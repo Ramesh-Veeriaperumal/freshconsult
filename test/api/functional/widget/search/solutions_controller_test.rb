@@ -1,6 +1,7 @@
 require_relative '../../../test_helper'
 require Rails.root.join('spec', 'support', 'solution_builder_helper.rb')
 require Rails.root.join('spec', 'support', 'solutions_helper.rb')
+require Rails.root.join('spec', 'support', 'user_helper.rb')
 
 module Widget
   module Search
@@ -9,6 +10,7 @@ module Widget
       include SolutionBuilderHelper
       include SearchTestHelper
       include HelpWidgetsTestHelper
+      include UsersHelper
 
       ALL_USER_VISIBILITY = 1
 
@@ -24,7 +26,7 @@ module Widget
         @account.reload
         @account.launch :help_widget
         set_widget
-        create_article_for_widget
+        @article = create_article_for_widget
       end
 
       def set_widget
@@ -36,11 +38,11 @@ module Widget
         @request.env['HTTP_X_CLIENT_ID'] = @client_id
       end
 
-      def article_params(category)
+      def article_params(category, visibility = Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone])
         {
           title: 'Widget Search Test',
           description: 'Widget Search Test',
-          folder_id: create_folder(visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: category.id).id
+          folder_id: create_folder(visibility: visibility, category_id: category.id).id
         }
       end
 
@@ -53,13 +55,22 @@ module Widget
         }
       end
 
-      def create_article_for_widget
+      def create_article_category
         category = create_category
         help_widget_category = HelpWidgetSolutionCategory.new
         help_widget_category.help_widget = @widget
         help_widget_category.solution_category_meta = category
         help_widget_category.save
-        @article = create_article(article_params(category)).primary_article
+        category
+      end
+
+      def create_article_for_widget(visibility = nil, user = nil)
+        article_param = article_params(create_article_category, visibility)
+        if visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users]
+          folder_meta = @account.solution_folder_meta.find(article_param[:folder_id])
+          folder_meta.customer_folders.create(customer_id: user.customer_id)
+        end
+        create_article(article_param).primary_article
       end
 
       def test_results
@@ -73,6 +84,45 @@ module Widget
         assert_equal solution_folder_meta.visibility, ALL_USER_VISIBILITY
         assert_equal [widget_article_search_pattern(@article)].to_json, response.body
         assert_nil Language.current
+      end
+
+      def test_results_with_login
+        @account.launch :help_widget_login
+        secret_key = SecureRandom.hex
+        @account.stubs(:help_widget_secret).returns(secret_key)
+        user = @account.users.first
+        timestamp = Time.zone.now.utc.iso8601
+        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
+        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+        logged_user_article = create_article_for_widget(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
+        stub_private_search_response([logged_user_article]) do
+          post :results, construct_params(version: 'widget', term: logged_user_article.title, limit: 3)
+        end
+        assert_response 200
+        assert_equal [widget_article_search_pattern(logged_user_article)].to_json, response.body
+        assert_nil Language.current
+        @account.rollback :help_widget_login
+        @account.unstub(:help_widget_secret)
+      end
+
+      def test_results_with_login_company_user
+        @account.launch :help_widget_login
+        secret_key = SecureRandom.hex
+        @account.stubs(:help_widget_secret).returns(secret_key)
+        customer = create_company
+        user = add_new_user(@account, customer_id: customer.id)
+        timestamp = Time.zone.now.utc.iso8601
+        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
+        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+        company_user_article = create_article_for_widget(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users], user)
+        stub_private_search_response([company_user_article]) do
+          post :results, construct_params(version: 'widget', term: company_user_article.title, limit: 3)
+        end
+        assert_response 200
+        assert_equal [widget_article_search_pattern(company_user_article)].to_json, response.body
+        assert_nil Language.current
+        @account.rollback :help_widget_login
+        @account.unstub(:help_widget_secret)
       end
 
       def test_results_help_widget_login

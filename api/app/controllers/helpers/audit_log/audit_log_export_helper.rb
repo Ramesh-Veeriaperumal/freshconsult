@@ -66,10 +66,4 @@ module AuditLog::AuditLogExportHelper
       value = rule_name unless rule_name.nil?
       value
     end
-
-    def fetch_zone
-      zone = User.current.time_zone
-      zone = Time.now.in_time_zone(zone).strftime('%:z')
-      zone
-    end
 end
