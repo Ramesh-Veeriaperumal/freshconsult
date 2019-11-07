@@ -4112,6 +4112,12 @@
           "204": {
             "description": "Success"
           },
+          "400": {
+            "description": "Validation error"
+          },
+          "401": {
+            "description": "Unauthorized action"
+          },
           "403": {
             "description": "Access denied"
           },
