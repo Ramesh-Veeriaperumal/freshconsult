@@ -4,7 +4,7 @@ class ArticleObserver < ActiveRecord::Observer
 	require 'nokogiri'
 
 	def before_save(article)
-		set_un_html_content(article)
+		set_un_html_content(article) if article.article_body.changed?
 		article.article_changes
 		create_draft_for_article(article)
 		article.seo_data ||= {}
