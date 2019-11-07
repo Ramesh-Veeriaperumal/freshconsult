@@ -8,7 +8,8 @@ module ChannelAuthentication
     ocr: 'ocr_channel'.freeze,
     freshmover: 'freshmover'.freeze,
     sherlock: 'sherlock'.freeze,
-    freshchat: 'freshchat'.freeze
+    freshchat: 'freshchat'.freeze,
+    facebook: 'facebook'.freeze
   }.freeze
 
   def channel_client_authentication

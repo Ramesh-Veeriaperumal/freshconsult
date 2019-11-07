@@ -21,7 +21,7 @@ module ContactConstants
   MERGE_FIELDS = %w[primary_contact_id contact].freeze | MERGE_ARRAY_FIELDS
   EXPORT_ARRAY_FIELDS = %w[default_fields custom_fields].freeze
   EXPORT_FIELDS = %w[fields].freeze
-  CHANNEL_INDEX_FIELDS = INDEX_FIELDS | %w[twitter_id].freeze
+  CHANNEL_INDEX_FIELDS = INDEX_FIELDS | %w[twitter_id facebook_id].freeze
 
   SCOPE_BASED_ON_ACTION = {
     'update'  => { deleted: false, blocked: false },
