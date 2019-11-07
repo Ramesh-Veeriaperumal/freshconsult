@@ -200,6 +200,95 @@ class ChannelMessagePollerTest < ActionView::TestCase
     assert_equal old_post_id, new_post_id
   end
 
+  def test_facebook_receive_create_ticket
+    fb_page = create_facebook_page
+    Faraday::Connection.any_instance.stubs(:post).returns(Faraday::Response.new({status: 202}))
+    sqs_body = get_fb_create_ticket_command(fb_page.page_id)
+    @account.reload
+    old_tickets_count = @account.tickets.count
+    push_to_channel(sqs_body)
+    @account.reload
+    ticket = @account.tickets.last
+    last_fb_post = fb_page.fb_posts.find_by_post_id(sqs_body[:payload][:context][:post_id])
+    new_tickets_count = @account.tickets.count
+
+    assert_equal ticket.id, last_fb_post.postable_id
+    assert_equal old_tickets_count + 1, new_tickets_count
+  ensure
+    ticket.destroy
+    Faraday::Connection.any_instance.unstub(:post)
+  end
+
+  def test_facebook_receive_create_note_command
+    fb_page = create_facebook_page
+    Faraday::Connection.any_instance.stubs(:post).returns(Faraday::Response.new({status: 202}))
+    ticket = create_ticket_from_fb_post
+    old_notes_count = @account.notes.count
+    note_sqs_body = get_fb_create_note_command(fb_page.page_id, ticket.display_id)
+    push_to_channel(note_sqs_body)
+    @account.reload
+    note = @account.notes.last
+    last_fb_post_after_note_added = fb_page.fb_posts.find_by_post_id (note_sqs_body[:payload][:context][:post_id])
+    new_notes_count = @account.notes.count
+
+
+    assert_equal note.id, last_fb_post_after_note_added.postable_id
+    assert_equal old_notes_count + 1, new_notes_count
+  ensure
+    note.destroy
+    ticket.destroy
+    Faraday::Connection.any_instance.unstub(:post)
+  end
+
+  def test_receive_create_ticket_when_fb_page_not_present
+    assert_nothing_raised do
+      Faraday::Connection.any_instance.stubs(:post).returns(Faraday::Response.new({status: 202}))
+      sqs_body = get_fb_create_ticket_command(123)
+      @account.reload
+      old_tickets_count = @account.tickets.count
+      push_to_channel(sqs_body)
+      @account.reload
+      new_tickets_count = @account.tickets.count
+
+      assert_equal old_tickets_count, new_tickets_count
+    end
+  ensure
+    Faraday::Connection.any_instance.unstub(:post)
+  end
+
+  def test_receive_create_ticket_when_requester_record_not_present
+    assert_nothing_raised do
+      fb_page = create_facebook_page
+      Faraday::Connection.any_instance.stubs(:post).returns(Faraday::Response.new({status: 202}))
+      sqs_body = get_fb_create_ticket_command(fb_page.page_id, @account.users.last.id + 999)
+      @account.reload
+      old_tickets_count = @account.tickets.count
+      push_to_channel(sqs_body)
+      @account.reload
+      new_tickets_count = @account.tickets.count
+
+      assert_equal old_tickets_count, new_tickets_count
+    end
+  ensure
+    Faraday::Connection.any_instance.unstub(:post)
+  end
+
+  def test_receive_create_note_when_ticket_not_present
+    assert_nothing_raised do
+      fb_page = create_facebook_page
+      Faraday::Connection.any_instance.stubs(:post).returns(Faraday::Response.new({status: 202}))
+      ticket_id = @account.tickets.last.display_id + 1
+      note_sqs_body = get_fb_create_note_command(fb_page.page_id, ticket_id)
+      old_note_count = @account.notes.count
+      push_to_channel(note_sqs_body)
+      @account.reload
+      new_note_count = @account.notes.count
+      assert_equal old_note_count, new_note_count
+    end
+  ensure
+    Faraday::Connection.any_instance.unstub(:post)
+  end
+
   private
 
     def twitter_create_ticket_command(tweet_type)
@@ -292,5 +381,89 @@ class ChannelMessagePollerTest < ActionView::TestCase
 
     def random_tweet_id
       -"#{Time.now.utc.to_i}#{rand(100...999)}".to_i
+    end
+
+    def get_fb_create_ticket_command(page_id, requester_id = @account.users.first.id)
+      {
+        "msg_id": Faker::Lorem.characters(10),
+        "payload_type": "helpkit_command",
+        "account_id": @account.id,
+        "payload": {
+          "owner": "facebook",
+          "client": "helpkit",
+          "account_id": @account.id,
+          "domain": @account.full_domain,
+          "pod": "development",
+          "context": {
+            "pod": "production",
+            "stream_id": "68",
+            "post_id": rand(100).to_s,
+            "post_type": "ad_post",
+            "facebook_page_id": page_id,
+            "fbms_stream_id": 1,
+            "contact_facebook_user_id": "323232"
+          },
+          "data": {
+            "subject": "Sample Subject",
+            "requester_id": requester_id,
+            "group_id": "10",
+            "product_id": "12",
+            "description": "<div>Test Description</div>",
+            "status": 2,
+            "source": 6,
+            "created_at": Time.now.utc.iso8601,
+            "priority": 1
+          },
+          "meta": {
+            "fallbackToReplyQueue": false,
+            "timeout": 30000,
+            "waitForReply": false
+          },
+            "command_name": "create_ticket",
+            "command_id": Faker::Lorem.characters(10),
+            "schema_version": 1
+          }
+      }
+    end
+
+    def get_fb_create_note_command(page_id, ticket_id)
+      {
+        "msg_id": Faker::Lorem.characters(10),
+        "payload_type": "helpkit_command",
+        "account_id": "1",
+        "payload": {
+          "owner":"facebook",
+          "client":"helpkit",
+          "account_id":@account.id,
+          "domain": @account.full_domain,
+          "pod":"development",
+          "context":{
+            "pod": "production",
+            "stream_id":"68",
+            "post_id":"1006",
+            "post_type":"ad_post",
+            "facebook_page_id": page_id,
+            "fbms_stream_id": 1,
+            "contact_facebook_user_id": "323232"
+          },
+          "data": {
+            "body": "<div>Hi</div>",
+            "user_id": @account.users.first.id,
+            "ticket_id": ticket_id,
+            "incoming": true,
+            "source": 7,
+            "created_at": Time.now.utc.iso8601,
+            "private": true
+          },
+          "meta": {
+            "fallbackToReplyQueue": false,
+            "timeout": 30000,
+            "waitForReply": false
+          },
+          "command_name": "create_note",
+          "command_id": Faker::Lorem.characters(10),
+          "schema_version": 1
+        }
+      }
     end
 end
