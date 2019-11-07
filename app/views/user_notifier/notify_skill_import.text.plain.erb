@@ -27,3 +27,5 @@
 
 <%end%>
 <% end %>
+
+<%= render :partial => 'helpdesk/shared/secure_attachments.plain.erb' if @account.secure_attachments_enabled? %>

@@ -144,7 +144,10 @@ class Import::Skills::Agent
     end
 
     def notify_and_cleanup
-      UserNotifier.send_email(:notify_skill_import, User.current.email, :message => notify_details[:customer_message], :csv_data => build_csv_string)
+      UserNotifier.send_email(:notify_skill_import, User.current.email,
+                              :message => notify_details[:customer_message],
+                              :csv_data => build_csv_string,
+                              :attachments => current_account.agent_skill_import.attachments.all)
       delete_import_file(file_location)
       current_account.agent_skill_import.destroy
     end
@@ -197,6 +200,31 @@ class Import::Skills::Agent
       notify_details[:customer_message][:agent_not_found] = invalid_emails
     end
 
+    def write_file file_string
+      File.open(failed_file_path , "wb") do |f|
+        f.write(file_string)
+      end
+    end
+
+    def failed_file_path
+      @failed_file_path ||= begin
+        output_dir = "#{Rails.root}/tmp"
+        FileUtils.mkdir_p output_dir
+        file_path = "#{output_dir}/#{failed_file_name}"
+        file_path
+      end
+    end
+
+    def failed_file_name
+      "failed_#{file_location.split('/').last}"
+    end
+
+    def build_failed_attachment
+      file = File.open(failed_file_path, 'r')
+      failed_attachment = current_account.agent_skill_import.attachments.build(content: file, account_id: current_account.id)
+      failed_attachment.save!
+    end
+
     def build_csv_string
       return if notify_details[:csv_errors].blank? and notify_details[:customer_message][:agent_not_found].blank?
       csv_string = CSVBridge.generate do |csv|
@@ -211,6 +239,9 @@ class Import::Skills::Agent
           csv << [agent_email, agent_info.join(', '), "Incorrect Email"]
         end
       end
+      write_file(csv_string)
+      build_failed_attachment
+      csv_string
     end
 
     Agent::SKILL_IMPORT_FIELDS.each do |header_name|

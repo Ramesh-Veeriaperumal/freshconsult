@@ -158,9 +158,10 @@ class UserNotifier < ActionMailer::Base
   end
 
   def notify_skill_import(args)
-    account = Account.current
+    @account = Account.current
+    @attachment_files = args[:attachments] if args[:attachments].present?
     headers = {
-      :subject    => t(:'flash.import.info19', :portal_url => account.full_domain),
+      :subject    => t(:'flash.import.info19', :portal_url => @account.full_domain),
       :to         => User.current.email,
       :from       => AppConfig['from_email'],
       :sent_on    => Time.now,
@@ -174,7 +175,7 @@ class UserNotifier < ActionMailer::Base
         :mime_type => "text/csv",
         :content => args[:csv_data]
       }
-    end
+    end unless @account.secure_attachments_enabled?
 
     @params = args
     mail(headers) do |part|
@@ -204,26 +205,28 @@ class UserNotifier < ActionMailer::Base
     begin
       # sending this email via account's primary email config so that if the customer wants this emails 
       # to be sent via custom mail server, simply switching the primary email config will do
-      email_config = options[:user].account.primary_email_config
+      @account = options[:user].account
+      email_config = @account.primary_email_config
       configure_email_config email_config
       @import_stopped = options[:import_stopped]
-      import_subject_key = @import_stopped ? 'customer_import_stopped' : 'customer_import' 
-      
-      @account_domain = options[:user].account.full_domain
+      import_subject_key = @import_stopped ? 'customer_import_stopped' : 'customer_import'
+      @attachment_files = options[:attachments] if options[:attachments].present?
+
+      @account_domain = @account.full_domain
       headers = {
         :subject                    => I18n.t("mailer_notifier_subject.#{import_subject_key}",
                                       import_type: I18n.t("search.#{options[:type]}", default: options[:type].capitalize),
                                       account_full_domain: @account_domain),
         :to                         => options[:user].email,
-        :from                       => options[:user].account.default_friendly_email,
+        :from                       => @account.default_friendly_email,
         :bcc                        => AppConfig['reports_email'],
         :sent_on                    => Time.now,
-        :"Reply-to"                 => "#{options[:user].account.default_friendly_email}", 
-        :"Auto-Submitted"           => "auto-generated", 
+        :"Reply-to"                 => "#{@account.default_friendly_email}",
+        :"Auto-Submitted"           => "auto-generated",
         :"X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
       }
 
-      headers.merge!(make_header(nil, nil, options[:user].account.id, "Notify Customers Import"))
+      headers.merge!(make_header(nil, nil, @account.id, "Notify Customers Import"))
       headers.merge!({"X-FD-Email-Category" => email_config.category}) if email_config.category.present?
       @user = options[:user]
       @type = options[:type]
@@ -235,7 +238,7 @@ class UserNotifier < ActionMailer::Base
       @corrupted = options[:corrupted]
       @wrong_csv = options[:wrong_csv]
 
-      unless options[:file_path].nil?
+      if options[:file_path].present? && !@account.secure_attachments_enabled?
         attachments[options[:file_name]] = {
           :mime_type => "text/csv",
           :content => File.read(options[:file_path], :mode => "rb")
@@ -396,23 +399,25 @@ class UserNotifier < ActionMailer::Base
 
   def notify_proactive_outreach_import(options = {})
     @render_options = {}
-    email_config = options[:user].account.primary_email_config
+    @account = options[:user].account
+    email_config = @account.primary_email_config
     configure_email_config email_config
     @render_options[:import_success] = options[:import_success]
     import_subject_key = @render_options[:import_success] ? 'outreach_customer_import' : 'outreach_customer_import_failure'
+    @attachment_files = options[:attachments] if options[:attachments].present?
 
     headers = {
       :subject => I18n.t("mailer_notifier_subject.#{import_subject_key}"),
       :to => options[:user].email,
-      :from => options[:user].account.default_friendly_email,
+      :from => @account.default_friendly_email,
       :bcc => AppConfig['reports_email'],
       :sent_on => Time.zone.now,
-      :"Reply-to" => options[:user].account.default_friendly_email.to_s,
+      :"Reply-to" => @account.default_friendly_email.to_s,
       :"Auto-Submitted" => 'auto-generated',
       :"X-Auto-Response-Suppress" => 'DR, RN, OOF, AutoReply'
     }
 
-    headers.merge!(make_header(nil, nil, options[:user].account.id, 'Notify Customers Import'))
+    headers.merge!(make_header(nil, nil, @account.id, 'Notify Customers Import'))
     headers["X-FD-Email-Category"] = email_config.category if email_config.category.present?
     @render_options.merge!({
       user: options[:user],
@@ -425,7 +430,7 @@ class UserNotifier < ActionMailer::Base
       wrong_csv: options[:wrong_csv]
     })
 
-    unless options[:file_path].nil?
+    if options[:file_path].present? && !@account.secure_attachments_enabled?
       attachments[options[:file_name]] = {
         mime_type: 'text/csv',
         content: File.read(options[:file_path], :mode => 'rb')

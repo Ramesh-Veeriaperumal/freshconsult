@@ -260,7 +260,8 @@ class Import::Customers::Base
       hash.merge!(:wrong_csv => @wrong_csv)
     else
       # Attachment(csv file) will not be send, if the file is more than 1MB
-      hash.merge!(:file_path => failed_file_path, :file_name => failed_file_name) unless @failed_items.blank? || failed_file_size > ONE_MEGABYTE 
+      hash.merge!(:file_path => failed_file_path, :file_name => failed_file_name) unless @failed_items.blank? || failed_file_size > ONE_MEGABYTE
+      hash.merge!(:attachments => customer_import.attachments.all) unless @failed_items.blank?
       hash.merge!(:import_success => true) if @failed_items.blank? && !redis_key_exists?(stop_redis_key)
       hash.merge!(:import_stopped => true) if redis_key_exists?(stop_redis_key)
     end
@@ -268,7 +269,6 @@ class Import::Customers::Base
   end
 
   def cleanup_file
-    FileUtils.rm_f(failed_file_path) unless @failed_items.blank?
     AwsWrapper::S3Object.delete(@customer_params[:file_location], S3_CONFIG[:bucket])
   rescue => e
     NewRelic::Agent.notice_error(e, {:description => "Error while removing file from s3 :: account_id :: #{current_account.id}"})

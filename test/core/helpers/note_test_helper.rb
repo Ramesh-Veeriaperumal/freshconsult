@@ -71,6 +71,15 @@ module NoteTestHelper
     create_note(params.merge(attachments: attachments))
   end
 
+  def create_note_with_multiple_attachments(params = {})
+    attachments = []
+    params[:num_of_files].times do
+      file = File.new(Rails.root.join("spec/fixtures/files/attachment.txt"))
+      attachments << { resource: file }
+    end
+    create_note(params.merge(attachments: attachments))
+  end
+
   # def create_note_with_freshcaller(params = {})
   #   test_note = create_note(params)
   #   call_obj = build_call

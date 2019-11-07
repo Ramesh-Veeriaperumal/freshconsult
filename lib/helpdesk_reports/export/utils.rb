@@ -85,7 +85,7 @@ module HelpdeskReports::Export::Utils
   def set_attachment_method file_path
     size_from_redis    = get_reports_redis_key BI_REPORTS_MAIL_ATTACHMENT_LIMIT_IN_BYTES
     max_size_allowed   = size_from_redis ? size_from_redis.to_i : HelpdeskReports::Constants::Export::MAIL_ATTACHMENT_LIMIT_IN_BYTES
-    @attachment_via_s3 = (File.size(file_path) > max_size_allowed)
+    @attachment_via_s3 = Account.current.secure_attachments_enabled? || (File.size(file_path) > max_size_allowed)
   end
 
   def content_of csv_file

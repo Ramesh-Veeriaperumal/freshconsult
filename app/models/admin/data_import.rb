@@ -3,17 +3,17 @@ class Admin::DataImport < ActiveRecord::Base
 
   include Import::Zen::Redis
 
+  before_destroy :clear_attachments, if: -> { !Account.current.secure_attachments_enabled? }
   after_destroy :clear_key, :if => :zendesk_import?
-  
-  self.table_name =  "admin_data_imports"    
-  
+
+  self.table_name =  "admin_data_imports"
+
   belongs_to :account
-  
+
   has_many :attachments,
     :as => :attachable,
-    :class_name => 'Helpdesk::Attachment',
-    :dependent => :destroy
-    
+    :class_name => 'Helpdesk::Attachment'
+  
   IMPORT_TYPE = { zendesk: 1, contact: 2, company: 3, agent_skill: 4, outreach_contact: 5 }.freeze
 
   IMPORT_STATUS = { started: 1,
@@ -59,5 +59,9 @@ class Admin::DataImport < ActiveRecord::Base
 
   def zendesk_import?
     source == IMPORT_TYPE[:zendesk]
+  end
+
+  def clear_attachments
+    self.attachments.destroy_all
   end
 end

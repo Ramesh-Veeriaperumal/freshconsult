@@ -18,5 +18,6 @@
 <p></p>
 <p><%= t(:'flash.import.help_desk').html_safe%></p>
 <p></p>
-<div>
+</div>
 <% end %>
+<%= render :partial => 'helpdesk/shared/secure_attachments.html.erb' if @account.secure_attachments_enabled? %>

@@ -80,12 +80,13 @@ class Import::Customers::OutreachContact < Import::Customers::Contact
     else
       # Attachment(csv file) will not be send, if the file is more than 1MB
       hash.merge!(file_path: failed_file_path, file_name: failed_file_name) unless @failed_items.blank? || failed_file_size > ONE_MEGABYTE
+      hash.merge!(attachments: [@import.attachments.find_by_content_file_name(failed_file_name)]) unless @failed_items.blank?
       hash[:import_success] = true if @failed_items.blank?
     end
     hash
   end
 
-  def cleanup_file
-    @import.attachments.destroy_all
-  end
+  # def cleanup_file
+  #   @import.attachments.destroy_all
+  # end
 end
