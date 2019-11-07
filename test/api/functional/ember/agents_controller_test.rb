@@ -259,7 +259,6 @@ class Ember::AgentsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_search_settings_for_agent
-    Account.any_instance.stubs(:search_settings_enabled?).returns(true)
     user = get_or_create_agent
     currentuser = User.current
     login_as(user)
@@ -268,12 +267,10 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     user.reload
     assert_equal user.text_uc01[:agent_preferences][:search_settings], SEARCH_SETTINGS_PARAMS[:search_settings]
     assert_response 200
-    Account.any_instance.unstub(:search_settings_enabled?)
     login_as(currentuser)
   end
 
   def test_update_with_search_settings_params_without_archive_feature
-    Account.any_instance.stubs(:search_settings_enabled?).returns(true)
     Account.any_instance.stubs(:archive_tickets_enabled?).returns(false)
     user = get_or_create_agent
     currentuser = User.current
@@ -283,12 +280,10 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     put :update, construct_params({ version: 'private', id: user.id }, search_settings_params_with_archive)
     assert_response 400
     match_json([bad_request_error_pattern('archive', 'Unexpected/invalid field in request', code: 'invalid_field')])
-    Account.any_instance.unstub(:search_settings_enabled?)
     Account.any_instance.unstub(:archive_tickets_enabled?)
   end
 
   def test_update_with_search_settings_params_with_archive_feature
-    Account.any_instance.stubs(:search_settings_enabled?).returns(true)
     Account.any_instance.stubs(:archive_tickets_enabled?).returns(true)
     user = get_or_create_agent
     currentuser = User.current
@@ -299,12 +294,10 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     user.reload
     assert_response 200
     assert_equal user.text_uc01[:agent_preferences][:search_settings][:tickets][:archive], search_settings_params_with_archive[:search_settings][:tickets][:archive]
-    Account.any_instance.unstub(:search_settings_enabled?)
     Account.any_instance.unstub(:archive_tickets_enabled?)
   end
 
   def test_update_with_invalid_search_settings_for_agent
-    Account.any_instance.stubs(:search_settings_enabled?).returns(true)
     user = get_or_create_agent
     currentuser = User.current
     login_as(user)
@@ -313,12 +306,10 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     put :update, construct_params({ version: 'private', id: user.id }, invalid_params_hash)
     assert_response 400
     match_json([bad_request_error_pattern('invalid_param', 'Unexpected/invalid field in request', code: 'invalid_field')])
-    Account.any_instance.unstub(:search_settings_enabled?)
     login_as(currentuser)
   end
 
   def test_update_with_invalid_ticket_search_settings
-    Account.any_instance.stubs(:search_settings_enabled?).returns(true)
     currentuser = User.current
     user = get_or_create_agent
     login_as(user)
@@ -327,12 +318,10 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     put :update, construct_params({ version: 'private', id: user.id }, invalid_params_hash)
     assert_response 400
     match_json([bad_request_error_pattern('invalid_param', 'Unexpected/invalid field in request', code: 'invalid_field')])
-    Account.any_instance.unstub(:search_settings_enabled?)
     login_as(currentuser)
   end
 
   def test_update_with_non_boolean_ticket_search_settings
-    Account.any_instance.stubs(:search_settings_enabled?).returns(true)
     currentuser = User.current
     user = get_or_create_agent
     login_as(user)
@@ -341,12 +330,10 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     put :update, construct_params({ version: 'private', id: user.id }, invalid_params_hash)
     assert_response 400
     match_json([bad_request_error_pattern_with_nested_field('search_settings', 'include_subject', 'It should be a/an Boolean', code: 'datatype_mismatch')])
-    Account.any_instance.unstub(:search_settings_enabled?)
     login_as(currentuser)
   end
 
   def test_update_with_blank_search_settings
-    Account.any_instance.stubs(:search_settings_enabled?).returns(true)
     currentuser = User.current
     user = get_or_create_agent
     login_as(user)
@@ -354,12 +341,10 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     put :update, construct_params({ version: 'private', id: user.id }, blank_search_settings)
     assert_response 400
     match_json([bad_request_error_pattern('search_settings', "can't be blank", code: 'invalid_value')])
-    Account.any_instance.unstub(:search_settings_enabled?)
     login_as(currentuser)
   end
 
   def test_update_with_blank_ticket_search_settings
-    Account.any_instance.stubs(:search_settings_enabled?).returns(true)
     currentuser = User.current
     user = get_or_create_agent
     login_as(user)
@@ -367,17 +352,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     put :update, construct_params({ version: 'private', id: user.id }, blank_ticket_search_settings)
     assert_response 400
     match_json([bad_request_error_pattern('tickets', 'ticket_search_settings_blank', code: 'invalid_value')])
-    Account.any_instance.unstub(:search_settings_enabled?)
     login_as(currentuser)
-  end
-
-  def test_update_search_settings_without_search_settings_feature
-    currentuser = User.current
-    login_as(currentuser)
-    params_hash = SEARCH_SETTINGS_PARAMS
-    put :update, construct_params({ version: 'private', id: currentuser.id }, params_hash)
-    assert_response 400
-    match_json([bad_request_error_pattern('search_settings', 'require_feature_for_attribute', code: 'inaccessible_field', attribute: 'search_settings', feature: 'search_settings')])
   end
 
   def test_accept_gdpr_with_admin_and_not_gdpr_pending
