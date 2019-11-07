@@ -197,6 +197,7 @@
     - archive_account_tickets_channel_queue
     - archive_tickets_channel_queue
     - update_agents_roles
+    - kbase_article_versions_reset_rating
 
   :external:
     - thank_you_note

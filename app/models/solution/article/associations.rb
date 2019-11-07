@@ -59,4 +59,8 @@ class Solution::Article < ActiveRecord::Base
   has_many :solution_article_versions,
     class_name: 'Solution::ArticleVersion',
     dependent: :destroy
+
+  has_one :live_version, 
+    class_name: 'Solution::ArticleVersion',
+    conditions: { live: true }
 end

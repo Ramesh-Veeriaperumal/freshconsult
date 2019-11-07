@@ -39,6 +39,9 @@ class Solution::ArticleVersionsMigrationWorker < BaseWorker
               if article.status != Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
                 version_record = version_create_or_update(article, true)
                 version_record.created_at = article.created_at
+                version_record.thumbs_up = article.thumbs_up
+                version_record.thumbs_down = article.thumbs_up
+                version_record.hits = article.read_attribute(:hits)
                 version_record.save
               end
               if draft

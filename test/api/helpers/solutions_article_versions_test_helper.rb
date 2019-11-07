@@ -121,6 +121,14 @@ module SolutionsArticleVersionsTestHelper
     article.reload.solution_article_versions.latest.where(live: true).first
   end
 
+  def versions_thumbs_up_count(article)
+    article.solution_article_versions.sum(&:thumbs_up)
+  end
+
+  def versions_thumbs_down_count(article)
+    article.solution_article_versions.sum(&:thumbs_down)
+  end
+
   def assert_version_published(article_version)
     assert_equal article_version.status, Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
   end

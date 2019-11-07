@@ -376,6 +376,7 @@ defaults: &defaults
     - [custom_translations_update_survey_status]
     - [kbase_article_versions_worker]
     - [kbase_article_versions_migration_worker]
+    - [kbase_article_versions_reset_rating]
 
 development:
   <<: *defaults

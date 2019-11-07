@@ -232,10 +232,16 @@ class Solution::Article < ActiveRecord::Base
     "Solution::ArticleMeta".constantize
   end
 
+  def version_class
+    "Solution::ArticleVersion".constantize
+  end
+
   VOTE_TYPES.each do |method|
     define_method "toggle_#{method}!" do
-      self.class.update_counters(self.id, method => 1, (VOTE_TYPES - [method]).first => -1 )
-      meta_class.update_counters(self.parent_id, method => 1, (VOTE_TYPES - [method]).first => -1 )
+      toggle_method = (VOTE_TYPES - [method]).first
+      self.class.update_counters(self.id, method => 1, toggle_method => -1 )
+      meta_class.update_counters(self.parent_id, method => 1, toggle_method => -1 )
+      version_class.update_counters(self.live_version.id, method => 1, toggle_method => -1 ) if Account.current.article_versioning_enabled? && self.live_version
       self.sqs_manual_publish #=> Publish to ES
       queue_quest_job if self.published?
       return true
@@ -244,6 +250,7 @@ class Solution::Article < ActiveRecord::Base
     define_method "#{method}!" do
       self.class.increment_counter(method, self.id)
       meta_class.increment_counter(method, self.parent_id)
+      version_class.increment_counter(method, self.live_version.id) if Account.current.article_versioning_enabled? && self.live_version
       self.sqs_manual_publish #=> Publish to ES
       self.manual_publish_to_central(nil, method, {}, true)
       queue_quest_job if (method == :thumbs_up && self.published?)
@@ -261,6 +268,11 @@ class Solution::Article < ActiveRecord::Base
   def reset_ratings
     self.class.where({ :id => self.id}).update_all_with_publish({:thumbs_up => 0, :thumbs_down => 0}, {})
     meta_class.update_counters(self.parent_id, :thumbs_up => -self.thumbs_up, :thumbs_down => -self.thumbs_down)
+    if Account.current.article_versioning_enabled?
+      version_class.where({ :id => self.live_version.id}).update_all({:thumbs_up => 0, :thumbs_down => 0}) if self.live_version
+      job_id = Solution::ArticleVersionsResetRating.perform_async({ id: self.id })
+      Rails.logger.info("AVRR:: Reset Rating [Account Id :: #{account_id} :: Article Id : #{id} :: Job Id : #{job_id}]")
+    end
     self.votes.destroy_all
   end
 

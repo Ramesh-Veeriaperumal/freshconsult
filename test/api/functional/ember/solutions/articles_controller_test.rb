@@ -2613,6 +2613,125 @@ module Ember
         end
       end
 
+      def test_version_ratings_with_primary_language
+        meta_article = create_article(article_params.merge(status: 2))
+        article = meta_article.primary_article
+        draft = create_draft(article: article)
+        assert_equal 2, versions_count(article)
+        10.times do
+          article.thumbs_up!
+        end
+        15.times do
+          article.thumbs_down!
+        end
+        article.reload
+        assert_equal article.thumbs_up, versions_thumbs_up_count(article)
+        assert_equal article.thumbs_down, versions_thumbs_down_count(article)
+      end
+
+      def test_version_ratings_with_supported_language
+        meta_article = create_article(article_params(lang_codes: all_account_languages, status: 2))
+        article = meta_article.primary_article
+        draft = create_draft(article: article)
+        assert_equal 2, versions_count(article)
+        12.times do
+          article.thumbs_up!
+        end
+        8.times do
+          article.thumbs_down!
+        end
+        article.reload
+        assert_equal article.thumbs_up, versions_thumbs_up_count(article)
+        assert_equal article.thumbs_down, versions_thumbs_down_count(article)
+      end
+
+      def test_version_reset_ratings_with_primary_language
+        Sidekiq::Testing.inline! do
+          meta_article = create_article(article_params.merge(status: 2))
+          article = meta_article.primary_article
+          draft = create_draft(article: article)
+          assert_equal 2, versions_count(article)
+          10.times do
+            article.thumbs_up!
+          end
+          3.times do
+            article.thumbs_down!
+          end
+          article.reload
+          assert_equal article.thumbs_up, versions_thumbs_up_count(article)
+          assert_equal article.thumbs_down, versions_thumbs_down_count(article)
+          put :reset_ratings, construct_params(version: 'private', id: meta_article.id)
+          assert_response 204
+          article.reload
+          assert_equal 0, article.thumbs_up
+          assert_equal 0, article.thumbs_down
+          assert_equal article.thumbs_up, versions_thumbs_up_count(article)
+          assert_equal article.thumbs_down, versions_thumbs_down_count(article)
+        end
+      end
+
+      def test_version_reset_ratings_with_supported_language
+        Sidekiq::Testing.inline! do
+          meta_article = create_article(article_params(lang_codes: all_account_languages, status: 2))
+          article = meta_article.primary_article
+          draft = create_draft(article: article)
+          assert_equal 2, versions_count(article)
+          15.times do
+            article.thumbs_up!
+          end
+          5.times do
+            article.thumbs_down!
+          end
+          article.reload
+          assert_equal article.thumbs_up, versions_thumbs_up_count(article)
+          assert_equal article.thumbs_down, versions_thumbs_down_count(article)
+          put :reset_ratings, construct_params(version: 'private', id: meta_article.id)
+          assert_response 204
+          article.reload
+          assert_equal 0, article.thumbs_up
+          assert_equal 0, article.thumbs_down
+          assert_equal article.thumbs_up, versions_thumbs_up_count(article)
+          assert_equal article.thumbs_down, versions_thumbs_down_count(article)
+        end
+      end
+
+      def test_version_hits
+        article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
+        assert article.draft == nil
+        create_draft_version_for_article(article)
+        105.times do
+          article.hit!
+        end
+        article.reload
+        assert_equal 100, article.read_attribute(:hits)
+        assert_equal article.read_attribute(:hits), article.live_version.hits
+      end
+
+      def test_flush_hits_article_publish
+        #Published article with hits/views count
+        article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
+        assert article.draft == nil
+        create_draft_version_for_article(article)
+        105.times do
+          article.hit!
+        end
+        article.reload
+        old_live_version = article.live_version
+        assert_equal article.read_attribute(:hits), old_live_version.hits
+
+        #Publishing article should flush hits/views count
+        should_create_version(article) do
+          description = Faker::Lorem.paragraph
+          params_hash = { status: 2, session: nil, description: description}
+          put :update, construct_params({ version: 'private', id: article.parent_id }, params_hash)
+          assert_response 200
+        end
+        article.reload
+        old_live_version.reload
+        assert_equal 105, article.read_attribute(:hits)
+        assert_equal 105, old_live_version.hits
+      end      
+
       private
 
         def article_params(options = {})

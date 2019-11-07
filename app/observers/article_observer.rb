@@ -22,6 +22,8 @@ class ArticleObserver < ActiveRecord::Observer
         # When unpublish is done on an article that is published and does not have a draft, version creation should not happen here. Draft observer will take care of it.
         # Also, when a published article(without draft) is published again without an autosave, draft obj check is necessary. New version needs to be created.
         if !article.new_record? # Avoid version creation twice
+          # Flush article and version votes on article publish
+          article.flush_hits! if (article.draft && article.draft.publishing) || (!article.status_changed? && article.published?)
           if can_version_draft
             article.draft.session = article.session
             version_create_or_update(article.draft)
