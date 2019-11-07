@@ -26,4 +26,13 @@ module Redis::Semaphore
   def exec_semaphore
     $semaphore.perform_redis_op('exec')
   end
+
+  def lock_and_run(key, expiry = nil)
+    return if semaphore_exists?(key)
+
+    set_semaphore(key, 1, expiry)
+    yield
+  ensure
+    del_semaphore(key)
+  end
 end
