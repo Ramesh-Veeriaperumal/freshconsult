@@ -1,7 +1,9 @@
 class ConversationBaseDelegator < BaseDelegator
   include Redis::UndoSendRedis
   def validate_unseen_replies
-    unseen_notes_exists = (notable.notes.visible.last_traffic_cop_note.pluck(:id).try(:first) || 0) > last_note_id
+    traffic_cop_note_id = notable.notes.visible.last_traffic_cop_note.pluck(:id).try(:first)
+    unseen_notes_exists = (traffic_cop_note_id || 0) > last_note_id
+    Rails.logger.info "Traffic cop alert :: #{notable.display_id} :: #{(traffic_cop_note_id || 0)} :: #{last_note_id}"
     if unseen_notes_exists
       errors[:conversation] << :traffic_cop_alert
     elsif undo_send_msg_enqueued?(notable.display_id).present?

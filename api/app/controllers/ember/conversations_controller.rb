@@ -202,6 +202,7 @@ module Ember
                                  end
 
         @items = paginate_items(filtered_conversations)
+        Rails.logger.info "Traffic cop alert :: #{@ticket.display_id} :: #{filtered_conversations.map(&:id).inspect} :: #{@items.map(&:id).inspect}" if Account.current.traffic_cop_enabled?
         @items_count = conversations.count
       end
 
