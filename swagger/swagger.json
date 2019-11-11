@@ -24552,6 +24552,9 @@
         "reseller_paid_account": {
           "type": "boolean"
         },
+        "switch_to_annual_percentage": {
+          "type": "integer"
+        },
         "subscription_request": {
           "type": "object",
           "properties": {

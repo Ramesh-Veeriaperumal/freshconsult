@@ -49,6 +49,8 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
       subscription_id: @account.subscription.id,
       fsm_field_agents: nil
     }
+    Subscription.any_instance.stubs(:cost_per_agent).returns(65)
+    Subscription.any_instance.stubs(:cost_per_agent).with(12).returns(49)
     @account.subscription.build_subscription_request(subscription_request_params).save!
     subscription_request_params.merge!(feature_loss: @account.subscription.subscription_request.feature_loss?)
     get :show, construct_params(version: 'private')
@@ -56,14 +58,19 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     match_json(subscription_response(@account.subscription, subscription_request_params))
   ensure
     @account.subscription.subscription_request.destroy if @account.subscription.subscription_request.present?
+    Subscription.any_instance.unstub(:cost_per_agent)
   end
 
   def test_show_without_subscription_request
     subscription_request = @account.subscription.subscription_request
+    Subscription.any_instance.stubs(:cost_per_agent).returns(65)
+    Subscription.any_instance.stubs(:cost_per_agent).with(12).returns(49)
     subscription_request.destroy if subscription_request.present?
     get :show, construct_params(version: 'private')
     assert_response 200
     match_json(subscription_response(@account.subscription))
+  ensure
+      Subscription.any_instance.unstub(:cost_per_agent)
   end
 
   def test_show_no_privilege
@@ -107,6 +114,8 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
   def test_update_subscription
     update_currency
     stub_methods
+    Subscription.any_instance.stubs(:cost_per_agent).returns(65)
+    Subscription.any_instance.stubs(:cost_per_agent).with(12).returns(49)
     @account.rollback :downgrade_policy
     plan_id = (SubscriptionPlan.cached_current_plans.map(&:id) - [@account.subscription.subscription_plan_id]).last
     put :update, construct_params({ version: 'private', plan_id: plan_id, agent_seats: 1 })
@@ -124,6 +133,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     assert_response 400
   ensure
     unstub_methods
+    Subscription.any_instance.unstub(:cost_per_agent)
   end
 
   def test_update_subscription_with_trial_state
@@ -262,6 +272,8 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
 
   def test_update_subscription_downgrade_to_sprout
     stub_methods
+    Subscription.any_instance.stubs(:cost_per_agent).returns(65)
+    Subscription.any_instance.stubs(:cost_per_agent).with(12).returns(49)
     if @account.subscription.subscription_plan_id == sprout_plan_id
       subscription = @account.subscription
       subscription.plan = SubscriptionPlan.current.where("id != #{sprout_plan_id}").first
@@ -278,11 +290,14 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
   ensure
     Subscription.unstub(:coupon)
     unstub_methods
+    Subscription.any_instance.unstub(:cost_per_agent)
   end
 
   def test_update_subscription_renewal_period_for_existing_customers
     plan_ids = SubscriptionPlan.current.map(&:id)
     stub_methods
+    Subscription.any_instance.stubs(:cost_per_agent).returns(65)
+    Subscription.any_instance.stubs(:cost_per_agent).with(12).returns(49)
     $redis_others.perform_redis_op('set', DOWNGRADE_POLICY_TO_ALL, true)
     params_plan_id = (paid_plans - [@account.subscription.subscription_plan_id]).first
     renewal_period = (SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY.keys - [@account.subscription.renewal_period]).first
@@ -297,6 +312,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
   ensure
     unstub_methods
     $redis_others.perform_redis_op('del', DOWNGRADE_POLICY_TO_ALL)
+    Subscription.any_instance.unstub(:cost_per_agent)
   end
 
   private
@@ -487,6 +503,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
         card_expiration: subscription.card_expiration,
         name_on_card: (subscription.billing_address.name_on_card if subscription.billing_address.present?),
         reseller_paid_account: subscription.reseller_paid_account?,
+        switch_to_annual_percentage: 30,
         subscription_request: nil,
         updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
         created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
@@ -508,6 +525,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
         card_expiration: subscription.card_expiration,
         name_on_card: (subscription.billing_address.name_on_card if subscription.billing_address.present?),
         reseller_paid_account: subscription.reseller_paid_account?,
+        switch_to_annual_percentage: 30,
         updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
         created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
         currency: subscription.currency.name,

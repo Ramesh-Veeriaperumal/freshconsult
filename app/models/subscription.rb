@@ -597,9 +597,9 @@ class Subscription < ActiveRecord::Base
       present_subscription.field_agent_limit > field_agent_limit)
   end
 
-  def cost_per_agent
-    plan = retrieve_plan_from_cache(subscription_plan, renewal_period)
-    (plan.plan.price/plan.plan.period)/100
+  def cost_per_agent(plan_period = renewal_period)
+    plan = retrieve_plan_from_cache(subscription_plan, plan_period)
+    (plan.plan.price / plan.plan.period) / 100
   end
 
   def present_subscription

@@ -4,6 +4,7 @@ class Admin::SubscriptionDecorator < ApiDecorator
   delegate :id, :state, :subscription_plan_id, :renewal_period, :next_renewal_at, :created_at,
            :updated_at, :agent_limit, :card_number, :card_expiration, :billing_address, to: :record
   EVENT_TYPE = 'plan'.freeze
+  ANNUAL_PERIOD = 12.freeze
 
   def initialize(record, options)
     super(record)
@@ -20,12 +21,13 @@ class Admin::SubscriptionDecorator < ApiDecorator
       plan_id: subscription_plan_id,
       renewal_period: renewal_period,
       next_renewal_at: next_renewal_at,
-      days_remaining: (record.next_renewal_at.utc.to_date - DateTime.now.utc.to_date).to_i,
+      days_remaining: (record.next_renewal_at.utc.to_date - Time.now.utc.to_date).to_i,
       agent_seats: agent_limit,
       card_number: card_number,
       card_expiration: card_expiration,
       name_on_card: (billing_address.name_on_card if billing_address.present?),
       reseller_paid_account: record.reseller_paid_account?,
+      switch_to_annual_percentage: calculate_percentage,
       subscription_request: subscription_request_hash,
       updated_at: updated_at.try(:utc),
       created_at: created_at.try(:utc),
@@ -147,5 +149,12 @@ class Admin::SubscriptionDecorator < ApiDecorator
       )
     end
     request_hash
+  end
+
+  def calculate_percentage
+    return if renewal_period == ANNUAL_PERIOD
+    current_cycle_cost = record.cost_per_agent
+    annual_cycle_cost = record.cost_per_agent(ANNUAL_PERIOD)
+    ((((current_cycle_cost - annual_cycle_cost) / annual_cycle_cost.to_f) * 100) / 5).floor * 5
   end
 end
