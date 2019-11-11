@@ -8,6 +8,12 @@ module Channel
       skip_before_filter :check_privilege, :verify_authenticity_token
       before_filter :channel_client_authentication
 
+      def create
+        @item.save
+        increment_portal_version
+        @response_hash = bot_response(current_account.freshchat_account)
+      end
+
       def update
         data = params['bot']
         @item.update_attributes(widget_config: data['widget_config'], name: data['name'], status: data['status'] == 'ENABLE')
@@ -15,6 +21,12 @@ module Channel
         freshchat_account.update_attributes(portal_widget_enabled: 'true', enabled: true) if data['status'] == 'ENABLE'
         increment_portal_version
         @response_hash = bot_response(freshchat_account)
+      end
+
+      def destroy
+        @item.destroy
+        increment_portal_version
+        head 204
       end
 
       private

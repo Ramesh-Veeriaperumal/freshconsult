@@ -13,5 +13,7 @@ module Freddy
     SYSTEM42_NAMESPACE = '/api/v1/'.freeze
 
     BOTFLOW_URL = 'botflow/'.freeze
+
+    ATTACHMENTS = 'attachments'.freeze
   end
 end
