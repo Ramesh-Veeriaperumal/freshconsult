@@ -164,6 +164,7 @@ class Support::TicketsController < SupportController
           ticket_scope : 
           ticket_scope.created_at_inside(params[:start_date], params[:end_date])
       @tickets = TicketsFilter.filter(current_filter, current_user, date_added_ticket_scope)
+      filter_helpdesk_tickets_by_product if current_account.launched?(:helpdesk_tickets_by_product)
       per_page = params[:wf_per_page] || 10
       is_correct_order_type = TicketsFilter::SORT_ORDER_FIELDS_BY_KEY.keys.include?(current_wf_order_type)
       current_order = visible_fields.include?(current_wf_order.to_s) && is_correct_order_type  ? "#{current_wf_order} #{current_wf_order_type}" :
@@ -220,6 +221,16 @@ class Support::TicketsController < SupportController
     end
 
   private
+
+    def filter_helpdesk_tickets_by_product
+      product_id = current_portal.product_id
+      join_sql = format("INNER JOIN helpdesk_schema_less_tickets ON
+          helpdesk_tickets.account_id = helpdesk_schema_less_tickets.account_id AND
+          helpdesk_schema_less_tickets.account_id = %s AND
+          helpdesk_tickets.id = helpdesk_schema_less_tickets.ticket_id AND helpdesk_schema_less_tickets.product_id %s",
+                        Account.current.id, product_id.present? ? format(' = %s', product_id) : ' IS NULL')
+      @tickets = @tickets.joins(join_sql)
+    end
 
     def update_ticket_cc cc_hash
       if cc_hash[:cc_emails].present?
