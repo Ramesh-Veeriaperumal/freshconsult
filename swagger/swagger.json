@@ -24606,6 +24606,9 @@
               }
             }
           }
+        },
+        "paying_account": {
+          "type": "boolean"
         }
       }
     },

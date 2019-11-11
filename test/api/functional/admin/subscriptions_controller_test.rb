@@ -508,7 +508,8 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
         updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
         created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
         currency: subscription.currency.name,
-        addons: nil
+        addons: nil,
+        paying_account: subscription.paying_account?
       }
     end
 
@@ -530,7 +531,8 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
         created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
         currency: subscription.currency.name,
         addons: nil,
-        subscription_request: nil
+        subscription_request: nil,
+        paying_account: subscription.paying_account?
       }
       if subscription_request_params.present?
         subscription_plan = SubscriptionPlan.find(subscription_request_params[:plan_id])

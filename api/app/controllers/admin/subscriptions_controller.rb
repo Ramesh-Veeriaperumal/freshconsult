@@ -20,7 +20,7 @@ class Admin::SubscriptionsController < ApiApplicationController
       render_custom_errors
     end
   end
-  
+
   def estimate
     return unless validate_delegator(nil, params)
     @item.agent_limit = fetch_agent_limit
@@ -56,14 +56,14 @@ class Admin::SubscriptionsController < ApiApplicationController
       end
       super options
     end
-  
+
     def fetch_estimate_details_from_chargebee
       {
         immediate_subscription_estimate: @item.fetch_immediate_estimate,
         future_subscription_estimate: @item.fetch_subscription_estimate
       }
     end
-  
+
     def constants_class
       ADMIN_SUBSCRIPTION_CONSTANTS_CLASS
     end

@@ -32,7 +32,8 @@ class Admin::SubscriptionDecorator < ApiDecorator
       updated_at: updated_at.try(:utc),
       created_at: created_at.try(:utc),
       currency: currency_info,
-      addons: addon_hash
+      addons: addon_hash,
+      paying_account: record.paying_account?
     }
   end
 
