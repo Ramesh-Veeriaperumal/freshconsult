@@ -8050,6 +8050,8 @@ en:
       body: Your data export has failed. Can you please initiate the export again?
     no_tickets_mail:
       body: Seems like there are no tickets in the provided date range.
+    no_articles_mail:
+      body: Seems like there are no articles for the provided filters.
     customer_export:
       subject: "%{type} export for %{domain}"
       body: "The %{field} export you had requested is complete. You can download the file from <a href=%{url}>here</a>. If the link does not work, copy and paste the URL below in your browser's address bar:"
@@ -8061,6 +8063,9 @@ en:
       body: "The ticket export you had requested is complete. You can download the file from <a href=%{url}>here</a>. If the link does not work, copy and paste the URL below in your browser's address bar:"
       note: "This link will expire in 15 days."
       limit_reached: Cannot run more than %{max_limit} ticket exports per agent at a time. Please try again later.
+    article_export:
+      subject: "Article Export for %{domain}"
+      body: "The article export you had requested is complete. You can download the file from <a href=%{url}>here</a>. If the link does not work, copy and paste the URL below in your browser's address bar:"
     archive_ticket_export:
       limit_reached: Cannot run more than %{max_limit} archived ticket exports per account at a time. Please try again later.
     scheduled_ticket_export:
@@ -13019,6 +13024,7 @@ en:
     topic_merged: "[Topic Merged] to %{title}"
     account_data_export: "Data Export for %{account}"
     no_tickets_to_export: "No tickets in range - %{domain}"
+    no_articles_to_export: "No articles - %{domain}"
     agent_export: Agents List Export
     audit_log_export: Audit Log Export
     spam_watcher: "Freshdesk :: Spam watcher"

@@ -74,14 +74,6 @@ class Export::Ticket < Struct.new(:export_params)
       @headers << 'support_ticket_path'
     end
 
-    def set_current_user
-      unless User.current
-        user = Account.current.users.find(export_params[:current_user_id])
-        user.make_current
-      end
-      TimeZone.set_time_zone
-    end
-
     def export_tickets
       write_export_file(@file_path) do |file|
         safe_send("#{export_params[:format]}_ticket_export", file)
@@ -252,14 +244,6 @@ class Export::Ticket < Struct.new(:export_params)
       end
     end
 
-    def parse_date(date_time)
-      if date_time.class == String
-        Time.zone.parse(date_time).strftime('%F %T')
-      else
-        date_time.strftime('%F %T')
-      end
-    end
-
     def sql_conditions
       @sql_conditions ||= begin
         @index_filter =  Account.current.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME).deserialize_from_params(export_params)
@@ -297,10 +281,6 @@ class Export::Ticket < Struct.new(:export_params)
                      helpdesk_ticket_states.ticket_id = helpdesk_tickets.id AND
                      helpdesk_tickets.account_id = helpdesk_ticket_states.account_id))
       all_joins
-    end
-
-    def escape_html(val)
-      val.blank? || val.is_a?(Integer) ? val : CGI.unescapeHTML(val.to_s).gsub(/\s+/, ' ')
     end
 
     def send_no_ticket_email

@@ -399,6 +399,7 @@ Helpkit::Application.routes.draw do
         resources :articles, controller: 'ember/solutions/articles', only: [:index, :show, :destroy], constraints: { id: /\d+/ } do
           collection do
             get :filter, path: 'filter/(:language)', constraints: { language: Regexp.union(Language.all_codes) }
+            post :export, path: 'export/(:language)', constraints: { language: Regexp.union(Language.all_codes) }
             put :bulk_update, path: 'bulk_update/(:language)', constraints: { language: Regexp.union(Language.all_codes) }
             get :untranslated_articles, path: 'untranslated_articles/(:language)', constraints: { language: Regexp.union(Language.all_codes) }
           end

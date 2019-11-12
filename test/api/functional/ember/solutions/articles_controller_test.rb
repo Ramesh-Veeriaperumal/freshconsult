@@ -41,6 +41,7 @@ module Ember
         setup_redis_for_articles
 
         @account.add_feature(:article_filters)
+        @account.add_feature(:article_export)
         @account.add_feature(:adv_article_bulk_actions)
 
         @account.reload
@@ -1593,6 +1594,104 @@ module Ember
         match_json([])
       end
 
+      def test_export_articles_with_filters
+        export_params = { portal_id: @portal_id.to_s, author: 1, status: 1, category: ['2'], folder: ['4'], tags: ['Tag1'], article_fields: [{ field_name: 'title', column_name: 'Title' }] }
+        post :export, construct_params({ version: 'private' }, export_params)
+        assert_response 204
+        assert_equal(' ', response.body)
+      end
+
+      def test_export_articles_without_feature
+        Account.any_instance.stubs(:article_export_enabled?).returns(false)
+        export_params = { portal_id: @portal_id.to_s, author: 1, status: 1, category: ['2'], folder: ['4'], tags: ['Tag1'], article_fields: [{ field_name: 'title', column_name: 'Title' }] }
+        post :export, construct_params({ version: 'private' }, export_params)
+        assert_response 403
+        match_json(request_error_pattern(:require_feature, feature: :article_export))
+      ensure
+        Account.any_instance.unstub(:article_export_enabled?)
+      end
+
+      def test_export_articles_with_export_feature_with_advanced_filters
+        Account.any_instance.stubs(:article_filters_enabled?).returns(false)
+        export_params = { portal_id: @portal_id.to_s, author: 1, category: ['2'], article_fields: [{ field_name: 'title', column_name: 'Title' }] }
+        post :export, construct_params({ version: 'private' }, export_params)
+        assert_response 403
+      ensure
+        Account.any_instance.unstub(:article_filters_enabled?)
+      end
+
+      def test_export_articles_with_export_feature_with_default_filters
+        Account.any_instance.stubs(:article_filters_enabled?).returns(false)
+        export_params = { portal_id: @portal_id.to_s, author: 1, article_fields: [{ field_name: 'title', column_name: 'Title' }] }
+        post :export, construct_params({ version: 'private' }, export_params)
+        assert_response 204
+        assert_equal(' ', response.body)
+      ensure
+        Account.any_instance.unstub(:article_filters_enabled?)
+      end
+
+      def test_export_articles_without_filters
+        export_params = { portal_id: @portal_id.to_s, article_fields: [{ field_name: 'title', column_name: 'Title' }] }
+        post :export, construct_params({ version: 'private' }, export_params)
+        assert_response 204
+        assert_equal(' ', response.body)
+      end
+
+      def test_export_articles_without_mandatory_fields
+        post :export, construct_params({ version: 'private' }, {})
+        assert_response 400
+        expected = { description: 'Validation failed', errors: [{ field: 'portal_id', message: 'Mandatory attribute missing', code: 'missing_field' }, { field: 'article_fields', message: 'Mandatory attribute missing', code: 'missing_field' }] }
+        assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+      end
+
+      def test_export_articles_with_invalid_portalid
+        export_params = { portal_id: 1232, article_fields: [{ field_name: 'title', column_name: 'Title' }] }
+        post :export, construct_params({ version: 'private' }, export_params)
+        assert_response 400
+        expected = { description: 'Validation failed', errors: [{ field: 'portal_id', message: 'Value set is of type Integer.It should be a/an String', code: 'datatype_mismatch' }] }
+        assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+      end
+
+      def test_export_articles_with_invalid_author
+        export_params = { portal_id: @portal_id.to_s, author: 'invalid', article_fields: [{ field_name: 'title', column_name: 'Title' }] }
+        post :export, construct_params({ version: 'private' }, export_params)
+        assert_response 400
+        expected = { description: 'Validation failed', errors: [{ field: 'author', message: 'Value set is of type String.It should be a/an Positive Integer', code: 'datatype_mismatch' }] }
+        assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+      end
+
+      def test_export_articles_with_invalid_status
+        export_params = { portal_id: @portal_id.to_s, status: 'invalid', article_fields: [{ field_name: 'title', column_name: 'Title' }] }
+        post :export, construct_params({ version: 'private' }, export_params)
+        assert_response 400
+        expected = { description: 'Validation failed', errors: [{ field: 'status', message: 'Value set is of type String.It should be a/an Positive Integer', code: 'datatype_mismatch' }] }
+        assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+      end
+
+      def test_export_articles_with_invalid_category
+        export_params = { portal_id: @portal_id.to_s, category: 'invalid', article_fields: [{ field_name: 'title', column_name: 'Title' }] }
+        post :export, construct_params({ version: 'private' }, export_params)
+        assert_response 400
+        expected = { description: 'Validation failed', errors: [{ field: 'category', message: 'Value set is of type String.It should be a/an Array', code: 'datatype_mismatch' }] }
+        assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+      end
+
+      def test_export_articles_with_invalid_folder
+        export_params = { portal_id: @portal_id.to_s, folder: 'invalid', article_fields: [{ field_name: 'title', column_name: 'Title' }] }
+        post :export, construct_params({ version: 'private' }, export_params)
+        assert_response 400
+        expected = { description: 'Validation failed', errors: [{ field: 'folder', message: 'Value set is of type String.It should be a/an Array', code: 'datatype_mismatch' }] }
+        assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+      end
+
+      def test_export_articles_with_invalid_tags
+        export_params = { portal_id: @portal_id.to_s, tags: 'invalid', article_fields: [{ field_name: 'title', column_name: 'Title' }] }
+        post :export, construct_params({ version: 'private' }, export_params)
+        assert_response 400
+        expected = { description: 'Validation failed', errors: [{ field: 'tags', message: 'Value set is of type String.It should be a/an Array', code: 'datatype_mismatch' }] }
+        assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+      end
+
       def test_reorder_without_position
         folder = @account.solution_folder_meta.where(is_default: false).first
         populate_articles(folder)
@@ -2612,6 +2711,125 @@ module Ember
           assert sample_article.solution_article_versions.where(live: true).empty?
         end
       end
+
+      def test_version_ratings_with_primary_language
+        meta_article = create_article(article_params.merge(status: 2))
+        article = meta_article.primary_article
+        draft = create_draft(article: article)
+        assert_equal 2, versions_count(article)
+        10.times do
+          article.thumbs_up!
+        end
+        15.times do
+          article.thumbs_down!
+        end
+        article.reload
+        assert_equal article.thumbs_up, versions_thumbs_up_count(article)
+        assert_equal article.thumbs_down, versions_thumbs_down_count(article)
+      end
+
+      def test_version_ratings_with_supported_language
+        meta_article = create_article(article_params(lang_codes: all_account_languages, status: 2))
+        article = meta_article.primary_article
+        draft = create_draft(article: article)
+        assert_equal 2, versions_count(article)
+        12.times do
+          article.thumbs_up!
+        end
+        8.times do
+          article.thumbs_down!
+        end
+        article.reload
+        assert_equal article.thumbs_up, versions_thumbs_up_count(article)
+        assert_equal article.thumbs_down, versions_thumbs_down_count(article)
+      end
+
+      def test_version_reset_ratings_with_primary_language
+        Sidekiq::Testing.inline! do
+          meta_article = create_article(article_params.merge(status: 2))
+          article = meta_article.primary_article
+          draft = create_draft(article: article)
+          assert_equal 2, versions_count(article)
+          10.times do
+            article.thumbs_up!
+          end
+          3.times do
+            article.thumbs_down!
+          end
+          article.reload
+          assert_equal article.thumbs_up, versions_thumbs_up_count(article)
+          assert_equal article.thumbs_down, versions_thumbs_down_count(article)
+          put :reset_ratings, construct_params(version: 'private', id: meta_article.id)
+          assert_response 204
+          article.reload
+          assert_equal 0, article.thumbs_up
+          assert_equal 0, article.thumbs_down
+          assert_equal article.thumbs_up, versions_thumbs_up_count(article)
+          assert_equal article.thumbs_down, versions_thumbs_down_count(article)
+        end
+      end
+
+      def test_version_reset_ratings_with_supported_language
+        Sidekiq::Testing.inline! do
+          meta_article = create_article(article_params(lang_codes: all_account_languages, status: 2))
+          article = meta_article.primary_article
+          draft = create_draft(article: article)
+          assert_equal 2, versions_count(article)
+          15.times do
+            article.thumbs_up!
+          end
+          5.times do
+            article.thumbs_down!
+          end
+          article.reload
+          assert_equal article.thumbs_up, versions_thumbs_up_count(article)
+          assert_equal article.thumbs_down, versions_thumbs_down_count(article)
+          put :reset_ratings, construct_params(version: 'private', id: meta_article.id)
+          assert_response 204
+          article.reload
+          assert_equal 0, article.thumbs_up
+          assert_equal 0, article.thumbs_down
+          assert_equal article.thumbs_up, versions_thumbs_up_count(article)
+          assert_equal article.thumbs_down, versions_thumbs_down_count(article)
+        end
+      end
+
+      def test_version_hits
+        article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
+        assert article.draft == nil
+        create_draft_version_for_article(article)
+        105.times do
+          article.hit!
+        end
+        article.reload
+        assert_equal 100, article.read_attribute(:hits)
+        assert_equal article.read_attribute(:hits), article.live_version.hits
+      end
+
+      def test_flush_hits_article_publish
+        #Published article with hits/views count
+        article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
+        assert article.draft == nil
+        create_draft_version_for_article(article)
+        105.times do
+          article.hit!
+        end
+        article.reload
+        old_live_version = article.live_version
+        assert_equal article.read_attribute(:hits), old_live_version.hits
+
+        #Publishing article should flush hits/views count
+        should_create_version(article) do
+          description = Faker::Lorem.paragraph
+          params_hash = { status: 2, session: nil, description: description}
+          put :update, construct_params({ version: 'private', id: article.parent_id }, params_hash)
+          assert_response 200
+        end
+        article.reload
+        old_live_version.reload
+        assert_equal 105, article.read_attribute(:hits)
+        assert_equal 105, old_live_version.hits
+      end      
 
       private
 

@@ -9,16 +9,18 @@ namespace :ticket_marketplace_app do
     while(true) do
       account_ids = LaunchParty.new.accounts_for(:synchronous_apps)
       account_ids.each do |account_id|
-        tkt_tokens = ticket_tokens(account_id)
-        next if tkt_tokens.blank?
-        Sharding.select_shard_of(account_id) do
-          Sharding.run_on_slave do
-            a = Account.find(account_id).make_current
-            tkt_tokens.each do |ticket_token|
-              Rails.logger.info "Enqueued dispatcher for account_id :: #{account_id} :: Ticket #{ticket_token}"
-              Helpdesk::QueueDispatcher.new(ticket_token).perform
+        lock_and_run(ticket_marketplace_app_semaphore_key(account_id), MARKETPLACE_APP_TIMEOUT) do
+          tkt_tokens = ticket_tokens(account_id)
+          next if tkt_tokens.blank?
+          Sharding.select_shard_of(account_id) do
+            Sharding.run_on_slave do
+              a = Account.find(account_id).make_current
+              tkt_tokens.each do |ticket_token|
+                Rails.logger.info "Enqueued dispatcher for account_id :: #{account_id} :: Ticket #{ticket_token}"
+                Helpdesk::QueueDispatcher.new(ticket_token).perform
+              end
+              Account.reset_current_account
             end
-            Account.reset_current_account
           end
         end
       end

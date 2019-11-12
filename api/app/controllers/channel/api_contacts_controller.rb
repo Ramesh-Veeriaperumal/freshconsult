@@ -56,7 +56,7 @@ module Channel
       end
 
       def validate_filter_params
-        if channel_source?(:twitter)
+        if channel_source?(:twitter) || channel_source?(:facebook)
           params.permit(*ContactConstants::CHANNEL_INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
           @contact_filter = ContactFilterValidation.new(params, nil, string_request_params?)
           render_errors(@contact_filter.errors, @contact_filter.error_options) unless @contact_filter.valid?
@@ -66,7 +66,13 @@ module Channel
       end
 
       def contacts_filter_conditions
-        params[:twitter_id].present? ? @contact_filter.conditions.push(:twitter_id) : super
+        attribute = if params[:twitter_id]
+                      :twitter_id
+                    elsif params[:facebook_id]
+                      :facebook_id
+                    end
+        return @contact_filter.conditions.push(attribute) if attribute
+        super
       end
 
       def assign_protected

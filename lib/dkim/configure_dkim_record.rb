@@ -20,6 +20,15 @@ class Dkim::ConfigureDkimRecord
     domain_category
   end
 
+  def configure_domain_with_email_service
+    response = Dkim::EmailServiceHttp.new(current_account.id, domain_category.email_domain).configure_domain
+    if es_response_success?(response[:status])
+      dkim_records = construct_dkim_hash([JSON.parse(response[:text])])
+      update_domain_category
+      dkim_records
+    end
+  end 
+
   private
     def add_whitelabel_to_domain
       response = request_configure
@@ -67,7 +76,6 @@ class Dkim::ConfigureDkimRecord
         elsif content[5] # account specific records
           handle_dns_action("UPSERT", content[1], eval(content[2]), eval(content[3]))
         end
-
         if content[4] # if customer record
           dkim_record = domain_category.dkim_records.where(:sg_type => content[6], :customer_record => true).first
           Rails.logger.debug "dkim_record ::: #{dkim_record.inspect}"
@@ -83,5 +91,4 @@ class Dkim::ConfigureDkimRecord
       domain_category.status = OutgoingEmailDomainCategory::STATUS['unverified']
       domain_category.save!
     end
-
 end

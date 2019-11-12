@@ -79,8 +79,8 @@ module Helpkit
     config.filter_parameters += [/^enc_/]
 
     # Other sensitive fields to be filtered out
-    config.filter_parameters += [:password, :password_confirmation, :creditcard]
-
+    config.filter_parameters += [:password, :password_confirmation, :creditcard, :crypted_password, :password_salt, :card_number, :card_expiration]
+    config.filter_parameters += [/token/]
     # Fields to be filtered to reduce the logging impact
     config.filter_parameters += [
       :description_html, :description, # Ticket bodies and Articles

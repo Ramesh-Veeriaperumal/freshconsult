@@ -369,6 +369,9 @@ class User < ActiveRecord::Base
         },
         twitter_id: {
           conditions: { twitter_id: contact_filter.twitter_id }
+        },
+        facebook_id: {
+            conditions: {fb_profile_id: contact_filter.facebook_id}
         }
       }
     end

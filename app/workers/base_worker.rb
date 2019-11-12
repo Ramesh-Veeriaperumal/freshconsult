@@ -30,13 +30,4 @@ class BaseWorker
                                         subject: 'Splunk logging Error for sla',
                                         recipients: (Rails.env.production? ? Helpdesk::EMAIL[:production_dev_ops_email] : 'dev-ops@freshpo.com'))
     end
-
-    def lock_and_run(key, expiry = nil)
-      return if semaphore_exists?(key)
-
-      set_semaphore(key, 1, expiry)
-      yield
-    ensure
-      del_semaphore(key)
-    end
 end

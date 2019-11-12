@@ -81,6 +81,8 @@ module DeleteSpamConcern
           can_destroy = true if current_user && file.attachable_id == current_user.id
         elsif ['ContactNote', 'CompanyNote'].include? file_type
           can_destroy = true if privilege?(:view_contacts)
+        elsif [AttachmentConstants::FILE_TICKET_FIELD].include? file_type
+          return render_request_error(:cannot_delete_file_ticket_field_attachment, 400) if api_current_user
         end
         access_denied unless can_destroy
       end

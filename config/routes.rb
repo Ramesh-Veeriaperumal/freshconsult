@@ -207,6 +207,9 @@ Helpkit::Application.routes.draw do
     match "/auth/#{provider}/callback" => 'omniauth_callbacks#complete', :provider => provider
   end
 
+  match "/auth/gmail/callback" => 'omniauth_callbacks#complete', :provider => 'gmail'
+  match "/auth/gmail/failure" => 'omniauth_callbacks#failure', :as => :failure
+
   match '/shopify_integration_redirect' => 'shopify_listing#send_approval_request', :via => :get
   match '/shopify_landing' => 'shopify_listing#show', :via => :get
   match '/shopify_account_verification' => 'shopify_listing#verify_domain_shopify', :via => :post
@@ -1244,6 +1247,7 @@ Helpkit::Application.routes.draw do
 
     resources :email_configs do
       collection do
+        get :google_signin
         get :existing_email
         post :personalized_email_enable
         post :personalized_email_disable

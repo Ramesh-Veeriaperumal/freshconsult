@@ -172,7 +172,7 @@ class SidekiqConfigUsEast
     search_two               = ["es_alias_queue","new_es_index","es_index_queue","tag_uses_destroy","es_v2_queue","solution_binarize_sync","parallel_report_exports","count_es_queue","update_all_callbacks","esv2_count_index"]
     freshfone_one            = ["freshfone_notifications","freshfone_node","freshfone_trial_worker"]
     freshfone_two            = ["freshfone_node","freshfone_notifications","freshfone_trial_worker"]
-    solution                 = ["solution_language_change","deactivate_monitorship","export_agents","clear_moderation_records","empty_moderation_trash","flush_portal_solution_cache","generate_sitemap","clear_sitemap", "remove_encrypted_fields", 'kbase_article_versions_worker', 'kbase_article_versions_migration_worker']
+    solution                 = ["solution_language_change","deactivate_monitorship","export_agents","clear_moderation_records","empty_moderation_trash","flush_portal_solution_cache","generate_sitemap","clear_sitemap", "remove_encrypted_fields", 'kbase_article_versions_worker', 'kbase_article_versions_migration_worker', 'articles_export_queue']
     archive_splitter         = ["archive_ticket_splitter"]
     archive_splitter_delete  = ["archive_delete_ticket","archive_modify_ticket_association","archive_build_create_ticket"]
     archive_build            = ["archive_build_create_ticket","archive_modify_ticket_association","archive_delete_ticket","archive_delete_ticket_dependencies"]
@@ -317,7 +317,7 @@ class SidekiqConfigUsEast
                                 "register_freshconnect", "undo_send", "unlink_tickets", "primary_language_change", "send_domain_changed_mail", "default_data_population", 'freshops_service', 'twitter_reply',
                                 "widget_upload_config""widget_upload_config", "bot_email_reply", "bot_email_ml_feedback", 'migration', 'company_central_publish', "ticket_field_central_publish",
                                 "scheduler_post_message", "scheduler_cancel_message", "delete_archive_ticket", "freshcaller_account_delete", "remove_encrypted_fields", "update_agents_roles",
-                                'kbase_article_versions_worker', 'kbase_article_versions_migration_worker'
+                                'kbase_article_versions_worker', 'kbase_article_versions_migration_worker', 'articles_export_queue'
                                ]
 
     # sidekiq queues in falcon alone
@@ -614,7 +614,7 @@ class SidekiqConfigStandard
       "register_freshconnect", "undo_send", "unlink_tickets", "primary_language_change", "send_domain_changed_mail", "default_data_population", 'freshops_service', 'twitter_reply',
       "widget_upload_config", "bot_email_reply", "bot_email_ml_feedback", 'migration',
       "company_central_publish", "ticket_field_central_publish", "scheduler_post_message", "scheduler_cancel_message", "delete_archive_ticket","freshcaller_account_delete",
-      "remove_encrypted_fields", "update_agents_roles", 'kbase_article_versions_worker', 'kbase_article_versions_migration_worker'
+      "remove_encrypted_fields", "update_agents_roles", 'kbase_article_versions_worker', 'kbase_article_versions_migration_worker', 'articles_export_queue'
     ]
 
     #falcon common sidekiq

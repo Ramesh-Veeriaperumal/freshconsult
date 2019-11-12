@@ -8,6 +8,7 @@ defaults: &defaults
   account_validate_urlpath: "api/v1/account/validate/"
   sender_config_urlpath: "api/v1/account/senderconfig"
   get_domains: "api/v1/whitelabel/domains/all/"
+  configure_domain: "api/v1/whitelabel/configure"
   ip_pool_category : "35"
   incoming_email_api_key1: "sESov8gFIU03kFEUAZS7ikilAU5Ip2"
   incoming_email_api_key2: "e7d6Gee5HkF6VjD7kIhpu7QmNkDeC6"

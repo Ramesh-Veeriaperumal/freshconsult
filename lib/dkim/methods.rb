@@ -45,6 +45,7 @@ module Dkim::Methods
     elsif req_type.to_s == REQUEST_TYPES[:post]
       response = RestClient.safe_send(req_type, url, data, key)
     end
+    
     response.headers[:content_length].to_i > 2 ? [response.code.to_i, JSON.parse(response)] : [response.code.to_i, response]
   rescue RestClient::RequestFailed, RestClient::ResourceNotFound => e
     [e.response.code.to_i, e.response]

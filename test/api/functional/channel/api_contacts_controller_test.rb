@@ -1,10 +1,12 @@
 require_relative '../../test_helper'
+require Rails.root.join('spec', 'support', 'social_tickets_creation_helper.rb')
 
 module Channel
   class ApiContactsControllerTest < ActionController::TestCase
     include UsersTestHelper
     include CustomFieldsTestHelper
     include JweTestHelper
+    include ::SocialTicketsCreationHelper
 
     SUPPORT_BOT = 'frankbot'.freeze
 
@@ -266,6 +268,17 @@ module Channel
       get :index, controller_params(version: 'channel', twitter_id: twitter_contact.twitter_id)
 
       users = @account.all_contacts.order('users.name').select { |x|  x.twitter_id == twitter_contact.twitter_id }
+      pattern = users.map { |user| index_contact_pattern(user) }
+      match_json(pattern.ordered!)
+      assert_response 200
+    end
+
+    def test_get_a_fb_contact_by_facebook_id
+      fb_user = create_fb_user({name: Faker::Lorem.characters(10), id: rand(100).to_s})
+      set_jwt_auth_header('facebook')
+      get :index, controller_params(version: 'channel', facebook_id: fb_user.fb_profile_id)
+
+      users = @account.all_contacts.select { |x|  x.fb_profile_id == fb_user.fb_profile_id }
       pattern = users.map { |user| index_contact_pattern(user) }
       match_json(pattern.ordered!)
       assert_response 200

@@ -167,6 +167,23 @@ class AccountsControllerTest < ActionController::TestCase
     AdminEmail::AssociatedAccounts.unstub(:find)
   end
 
+  def test_email_for_increasing_signup_count
+    account_name = Faker::Lorem.word
+    domain_name = Faker::Lorem.word
+    user_email = Faker::Internet.email
+    fake_account = []
+    11.times do
+      fake_account << Faker::Lorem.word
+    end
+    AdminEmail::AssociatedAccounts.stubs(:find).returns(fake_account)
+    add_member_to_redis_set(INCREASE_DOMAIN_FOR_EMAILS, user_email)
+    get :email_signup, action: 'email_signup', callback: '', user: { name: Faker::Name.name, email: user_email, time_zone: 'Chennai', language: 'en' }, account: { account_name: account_name, account_domain: domain_name, locale: I18n.default_locale, time_zone: 'Chennai', user_name: 'Support', user_password: 'test1234', user_password_confirmation: 'test1234', user_email: user_email, user_helpdesk_agent: true, new_plan_test: true }, format: 'json'
+    assert_response 200
+    ensure
+      AdminEmail::AssociatedAccounts.unstub(:find)
+      remove_member_from_redis_set(INCREASE_DOMAIN_FOR_EMAILS, user_email)
+  end  
+
   def test_domain_existence
     get :check_domain, domain: "#{Faker::Lorem.word}.com", callback: '', format: 'json'
     parsed_response = parse_response response.body

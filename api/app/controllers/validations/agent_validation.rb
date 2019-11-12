@@ -19,8 +19,7 @@ class AgentValidation < ApiValidation
   validates :role_ids, required: true, data_type: { rules: Array }, array: { custom_numericality: { only_integer: true, greater_than: 0 } }, unless: :bulk_create?
   validate :check_agent_limit, if: -> { @occasional_set && @previous_occasional && @occasional == false }
   validates :shorcuts_enabled, data_type: { rules: 'Boolean' }
-  validates :search_settings, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field, message_options: { attribute: 'search_settings', feature: :search_settings } }, unless: :search_settings_update?
-  validates :search_settings, data_type: { rules: Hash }, presence: true, hash: { validatable_fields_hash: proc { |x| x.search_settings_format } }, if: :search_settings_update?
+  validates :search_settings, data_type: { rules: Hash }, presence: true, hash: { validatable_fields_hash: proc { |x| x.search_settings_format } }, if: -> { @search_settings }
   validate :check_ticket_search_settings, if: -> { @search_settings.present? }
 
   validates :avatar_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param }, if: -> { private_api? }
@@ -86,14 +85,6 @@ class AgentValidation < ApiValidation
 
   def bulk_create?
     [:create_multiple].include?(validation_context)
-  end
-
-  def search_settings_enabled?
-    Account.current.search_settings_enabled?
-  end
-
-  def search_settings_update?
-    @search_settings && search_settings_enabled?
   end
 
   def archive_tickets_enabled?

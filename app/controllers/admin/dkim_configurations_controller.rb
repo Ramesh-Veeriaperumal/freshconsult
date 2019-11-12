@@ -26,10 +26,19 @@ class Admin::DkimConfigurationsController < Admin::AdminController
 
   def create
     if @domain_category
+      if current_account.launched?(:dkim_email_service)
+        @dkim_records = Dkim::ConfigureDkimRecord.new(@domain_category).configure_domain_with_email_service
+        if @dkim_records.nil?
+          flash[:notice] = t('email_configs.dkim.config_fail')
+        else
+          render :action => :verify_email_domain
+        end
+      else
       # Sendgrid having limit of 1 DKIM configuration/sec, So we have put this configuration block in retries
-      configure_with_retry_timeout
-      raise unless @domain_category.status == OutgoingEmailDomainCategory::STATUS['unverified']
-      render :action => :verify_email_domain
+        configure_with_retry_timeout
+        raise unless @domain_category.status == OutgoingEmailDomainCategory::STATUS['unverified']
+        render :action => :verify_email_domain
+      end
     else
       raise "Domain Not Found"
     end

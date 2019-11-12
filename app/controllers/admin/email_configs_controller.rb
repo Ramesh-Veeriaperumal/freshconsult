@@ -9,6 +9,7 @@ class Admin::EmailConfigsController < Admin::AdminController
   include Redis::OthersRedis
   include Admin::EmailConfig
   include Admin::EmailConfig::Utils
+  include Email::Mailbox::Utils
 
   before_filter only: [:new, :create] do |c|
     c.requires_this_feature :multiple_emails
@@ -21,6 +22,11 @@ class Admin::EmailConfigsController < Admin::AdminController
     @global_email_configs = current_account.global_email_configs
     @products = current_account.products
     @account_additional_settings = current_account.account_additional_settings
+  end
+  
+  def google_signin
+    redis_key = populate_redis_gmail_oauth(params.except(:action, :controller))
+    redirect_to gmail_oauth_url({ 'account_id' => current_account.id, 'r_key' => redis_key})  and return
   end
 
   def existing_email

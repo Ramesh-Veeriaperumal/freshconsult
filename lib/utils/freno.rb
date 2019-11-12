@@ -49,5 +49,14 @@ module Utils
        rescue ArgumentError
          return 0
        end
+
+      class ReplicationLagError < StandardError
+        attr_accessor :lag
+        def initialize(lag, message = "Replication lag")
+          @lag = lag
+          super(message)
+        end
+      end
   end
+
 end

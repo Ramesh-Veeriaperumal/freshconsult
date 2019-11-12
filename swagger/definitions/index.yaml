@@ -773,6 +773,8 @@ article_input:
   $ref: ./request/solutions/article_input.yaml
 article_update:
   $ref: ./request/solutions/article_update.yaml
+article_export:
+  $ref: ./request/solutions/article_export.yaml
 category_response:
   $ref: ./response/solutions/category_response.yaml
 folder_input:

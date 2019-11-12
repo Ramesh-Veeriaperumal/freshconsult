@@ -13,4 +13,6 @@ module Email::Mailbox::Constants
   IMAP_CRAM_MD5 = 'cram-md5'.freeze
   IMAP_AUTHENTICATION_TYPES = [PLAIN, LOGIN, CRAM_MD5].freeze
   SMTP_AUTHENTICATION_TYPES = [PLAIN, LOGIN].freeze
+  
+  GMAIL_OAUTH_URL = "/auth/gmail?origin=id%3D{{account_id}}%26r_key%3D{{r_key}}"
 end

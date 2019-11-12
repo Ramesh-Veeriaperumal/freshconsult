@@ -197,6 +197,7 @@
     - archive_account_tickets_channel_queue
     - archive_tickets_channel_queue
     - update_agents_roles
+    - kbase_article_versions_reset_rating
 
   :external:
     - thank_you_note
@@ -287,7 +288,8 @@
     - premium_ticket_export
     - activity_export
     - report_export_queue
-    - audit_log_export    
+    - audit_log_export
+    - articles_export_queue
   :bulk_scheduled:
     - supervisor
     - sla
@@ -333,6 +335,7 @@
     - cron_log_cloud_elements_sync
     - cron_freshfone
     - cron_meta_data_check
+    - cron_enable_omniroute_for_new_accounts
   :gamification:
     - gamification_user_score
     - gamification_ticket_score

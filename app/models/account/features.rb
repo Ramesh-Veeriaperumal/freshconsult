@@ -1,4 +1,4 @@
-class Account < ActiveRecord::Base
+, mailbox_google_oauth: falseclass Account < ActiveRecord::Base
 
   LP_FEATURES = [
     :select_all, :round_robin_capping, :suggest_tickets, :field_agent_availability,
@@ -42,11 +42,11 @@ class Account < ActiveRecord::Base
     :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr,
     :csat_email_scan_compatibility, :mint_portal_applicable, :twitter_microservice, :quoted_text_parsing_feature, :enable_customer_journey,
     :email_mailbox, :sandbox_temporary_offset, :downgrade_policy,
-    :fluffy_min_level, :allow_update_agent, :help_widget_solution_categories, :search_settings, :optar_cache,
+    :fluffy_min_level, :allow_update_agent, :help_widget_solution_categories, :optar_cache,
     :ticket_field_revamp, :facebook_dm_outgoing_attachment, :skip_posting_to_fb, :hide_mailbox_error_from_agents, :hide_og_meta_tags,
     :freshcaller_admin_new_ui, :facebook_post_outgoing_attachment, :outgoing_tweets_to_tms, :incoming_mentions_in_tms, :help_widget_login, :occlusion_rendering_ticket_fields,
     :prevent_lang_detect_for_spam, :jira_onpremise_reporter, :css_sanitizer, :support_ticket_rate_limit, :sidekiq_logs_to_central, :portal_central_publish, :global_navbar, :advanced_automations, :encode_emoji_in_solutions,
-    :forums_agent_portal, :agent_shifts
+    :forums_agent_portal, :agent_shifts, :mailbox_google_oauth
   ].freeze
 
   DB_FEATURES = [
@@ -81,7 +81,7 @@ class Account < ActiveRecord::Base
     :ticket_properties_suggester, :ticket_properties_suggester_eligible,
     :hide_first_response_due, :agent_articles_suggest, :email_articles_suggest, :customer_journey, :botflow,
     :help_widget, :help_widget_appearance, :help_widget_predictive, :portal_article_filters, :supervisor_custom_status, :lbrr_by_omniroute,
-    :secure_attachments, :article_versioning
+    :secure_attachments, :article_versioning, :article_export
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 

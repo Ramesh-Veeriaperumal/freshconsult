@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190722080453) do
+ActiveRecord::Schema.define(version: 20191021120954) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -2817,6 +2817,7 @@ ActiveRecord::Schema.define(version: 20190722080453) do
     t.integer  "timeout"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "refresh_token"
     t.column 'error_type', 'smallint'
   end
 
@@ -3385,6 +3386,8 @@ ActiveRecord::Schema.define(version: 20190722080453) do
     t.string   "domain"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "refresh_token"
+    t.column   'error_type', 'smallint'
   end
 
   add_index "smtp_mailboxes", ["account_id", "email_config_id"], :name => "index_mailboxes_on_account_id_email_config_id"

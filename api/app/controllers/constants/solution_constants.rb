@@ -30,6 +30,9 @@ module SolutionConstants
   FILTER_FIELDS = %w[portal_id language term page per_page].freeze | FILTER_ATTRIBUTES
   ADVANCED_FILTER_FIELDS = %w[created_at last_modified tags category folder].freeze
 
+  ARTICLE_EXPORT_HEADER_MASTER_LIST = %w[id title live status author_name author_id created_at tags modified_at recent_author_name language_code url hits thumbs_up thumbs_down feedback_count seo_title seo_description folder_id folder_name category_id category_name].freeze
+  EXPORT_FIELDS = (%w[portal_id language article_fields] | FILTER_ATTRIBUTES).freeze
+
   IGNORE_PARAMS = %w[folder_id attachments_list cloud_file_attachments].freeze
 
   ARTICLE_ATTRIBUTES_TO_BE_STRIPPED = %w[title category_name folder_name].freeze
@@ -50,6 +53,8 @@ module SolutionConstants
   INDEX_PRELOAD_OPTIONS = [{ solution_article_meta: [:solution_folder_meta, :solution_category_meta] }, :article_body, { article_ticket: :ticketable }, :draft, draft: :draft_body].freeze
 
   FILTER_PRELOAD_OPTIONS = [{ solution_article_meta: [:solution_folder_meta, :solution_category_meta] }, { draft: :draft_body }, :tags].freeze
+
+  EXPORT_PRELOAD_OPTIONS = [{ solution_article_meta: [:solution_folder_meta, :solution_category_meta] }, { draft: [:draft_body, :user] }, :user, :tags].freeze
 
   LOAD_OBJECT_EXCEPT = [:category_folders, :folder_articles, :article_content, :filter, :untranslated_articles].freeze
 

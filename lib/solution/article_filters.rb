@@ -1,6 +1,5 @@
 module Solution::ArticleFilters
   extend ActiveSupport::Concern
-  include ::Search::V2::AbstractController
 
   included do
     has_scope :by_status
@@ -11,16 +10,6 @@ module Solution::ArticleFilters
     has_scope :by_last_modified, type: :hash, using: [:start, :end, :only_draft]
     has_scope :by_tags, type: :array
     has_scope :by_outdated, type: :boolean, allow_blank: true
-
-    def search_articles
-      @klasses        = ['Solution::Article']
-      @sort_direction = 'desc'
-      @search_sort    = 'relevance'
-      @search_context = :filtered_solution_search
-      @category_ids   = portal_catagory_ids if portal_catagory_ids.present?
-      @language_id    = @lang_id
-      @results        = esv2_query_results(esv2_agent_article_model)
-    end
 
     def apply_article_scopes(article_scoper)
       if is_draft?

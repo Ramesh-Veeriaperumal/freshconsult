@@ -110,4 +110,12 @@ class ApiAttachmentsControllerTest < ActionController::TestCase
     delete :destroy, controller_params(id: invalid_attachment_id)
     assert_response 404
   end
+
+  def test_destroy_file_ticket_field_attachment
+    ticket_id = create_ticket.display_id
+    attachment = create_attachment(attachable_type: AttachmentConstants::FILE_TICKET_FIELD, attachable_id: ticket_id)
+    delete :destroy, controller_params(id: attachment.id)
+    assert_response 400
+    match_custom_json(JSON.parse(response.body), request_error_pattern(:cannot_delete_file_ticket_field_attachment))
+  end
 end

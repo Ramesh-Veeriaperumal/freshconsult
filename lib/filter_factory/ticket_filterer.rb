@@ -1,7 +1,7 @@
 module FilterFactory
   class TicketFilterer
     PERMITTED_ARGS = [:filter_name, :data_hash, :conditions, :missing_fields, :include, :order_by,
-                      :order_type, :page, :per_page, :query_hash, :updated_since, :ids].freeze
+                      :order_type, :page, :per_page, :query_hash, :updated_since, :ids, :wf_order, :wf_order_type].freeze
 
     FINAL_ARGS_PARAMS = [:conditions, :or_conditions, :missing_fields, :include, :order_by, :order_type, :page, :per_page].freeze
 
@@ -32,6 +32,7 @@ module FilterFactory
           args.merge!(permissible_conditions) if with_permissible
           args[:conditions] = fetch_filter_conditions
           handle_custom_field_values
+          handle_order_by_values
           args.slice!(*FINAL_ARGS_PARAMS)
         end
 

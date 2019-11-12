@@ -1,5 +1,5 @@
 <%= render layout: 'shared/email_header_footer.html.erb', locals: { user_name: @user.name, sent_by: :freshdesk_team } do %>
-<div>
+
 <% if @import_success %>
 	<p><%= "#{t('flash.import.info1', :type => @type, :uc_type => @type.capitalize)}".html_safe%></p>
 <% elsif @wrong_csv %>
@@ -28,3 +28,5 @@
 <p><%= t(:'flash.import.help_desk').html_safe%></p>
 <p></p>
 <% end %>
+
+<%= render :partial => 'helpdesk/shared/secure_attachments.html.erb' if @account.secure_attachments_enabled? %>

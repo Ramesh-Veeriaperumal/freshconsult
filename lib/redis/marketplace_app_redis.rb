@@ -1,5 +1,10 @@
 module Redis::MarketplaceAppRedis
   include Redis::RedisKeys
+  include Redis::Semaphore
+
+  def ticket_marketplace_app_semaphore_key(account_id)
+    format(TICKET_MARKETPLACE_APP, account_id: account_id)
+  end
 
   def detail_key(account_id)
     MARKETPLACE_APP_TICKET_DETAILS % { :account_id => account_id }

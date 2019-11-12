@@ -142,12 +142,8 @@ module Ember
           current_user.agent_preferences[:search_settings][:tickets]
         end
 
-        def search_settings_enabled?
-          Account.current.launched?(:search_settings)
-        end
-
         def transform_with_search_settings?
-          [:agent_spotlight_ticket, :filteredTicketSearch].include?(@search_context) && search_settings_enabled? && search_settings?
+          [:agent_spotlight_ticket, :filteredTicketSearch].include?(@search_context) && search_settings?
         end
 
         def include_archive?

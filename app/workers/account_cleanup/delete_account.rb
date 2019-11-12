@@ -6,11 +6,12 @@ class AccountCleanup::DeleteAccount < BaseWorker
   include Redis::OthersRedis
   include Redis::DisplayIdRedis
   include SandboxConstants
+  include Utils::Freno
 
   def perform(args)
     account = Account.current
     return if account.active?
-
+    @continue_account_destroy_from = args[:continue_account_destroy_from] || 0
     account.delete_account_cancellation_requested_time_key if account.launched?(:downgrade_policy)
     ::Admin::Sandbox::DeleteWorker.new.perform(event: SANDBOX_DELETE_EVENTS[:deactivate]) if account.production_with_sandbox?
     deleted_customer = DeletedCustomers.find_by_account_id(account.id)
@@ -27,6 +28,8 @@ class AccountCleanup::DeleteAccount < BaseWorker
 
     begin
       perform_destroy(account)
+    rescue ReplicationLagError => e
+      rerun_after(e.lag, account.id) if e.lag > 0
     rescue Exception => error
       Rails.logger.info "Account deletion Error sidekiq - #{error}"
       NewRelic::Agent.notice_error(error)             
@@ -35,8 +38,8 @@ class AccountCleanup::DeleteAccount < BaseWorker
 
     update_status(deleted_customer, STATUS[:deleted])
   end
-
   private 
+
 
   def update_status(deleted_customer, status)
     deleted_customer.update_attributes(:status => status) if deleted_customer
@@ -117,7 +120,7 @@ class AccountCleanup::DeleteAccount < BaseWorker
        end
      end
 
-      #account topic 
+      #account topic
       ACCOUNT_TOPIC_KEYS.each do |redis_key|
         account.topics.find_each do |topic|
          key = redis_key % {:account_id => account.id, :topic_id => topic.id }
@@ -125,6 +128,13 @@ class AccountCleanup::DeleteAccount < BaseWorker
        end
      end
 
+   end
+
+   def rerun_after(lag, account_id)
+     shard_name = ActiveRecord::Base.current_shard_selection.shard.to_s
+     Rails.logger.debug("Warning: Freno: AccountCleanup::DeleteAccount: replication lag: #{lag} secs :: shard :: #{shard_name} :: account :: #{account_id}")
+     AccountCleanup::DeleteAccount.perform_in(lag.seconds.from_now, {:account_id => account_id,
+       :continue_account_destroy_from => @continue_account_destroy_from})
    end
 
  end

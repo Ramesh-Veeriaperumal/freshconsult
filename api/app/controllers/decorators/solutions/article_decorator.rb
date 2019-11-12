@@ -15,11 +15,11 @@ class Solutions::ArticleDecorator < ApiDecorator
     @language_metric = options[:language_metric]
     @lang_code = options[:language_code]
     @prefer_published = options[:prefer_published]
-    if options[:exclude].present?
-      @exclude_description = options[:exclude].include?(:description)
-      @exclude_attachments = options[:exclude].include?(:attachments)
-      @exclude_tags = options[:exclude].include?(:tags)
-    end
+    @exclude_options = options[:exclude]
+  end
+
+  def exclude?(param)
+    @exclude_options.present? && @exclude_options.include?(param)
   end
 
   def fetch_tags
@@ -56,9 +56,9 @@ class Solutions::ArticleDecorator < ApiDecorator
   def to_hash
     ret_hash = article_info
     ret_hash[:seo_data] = seo_data
-    ret_hash[:tags] = fetch_tags unless @exclude_tags
+    ret_hash[:tags] = fetch_tags unless exclude?(:tags)
 
-    unless @is_list_page || @exclude_attachments
+    unless @is_list_page || exclude?(:attachments)
       ret_hash[:attachments] = attachments_hash
       ret_hash[:cloud_files] = cloud_files_hash
     end
@@ -76,6 +76,46 @@ class Solutions::ArticleDecorator < ApiDecorator
     ret_hash
   end
 
+  def draft_user_name
+    @draft.user.try(:name) if @draft.user && @draft.user.helpdesk_agent
+  end
+
+  def modified_by_name
+    if @draft.present?
+      draft_user_name
+    else
+      record.recent_author.try(:name) if record.recent_author && record.recent_author.helpdesk_agent
+    end
+  end
+
+  def last_modified_at_time
+    @draft.present? ? @draft.modified_at.try(:utc) : modified_at.try(:utc)
+  end
+
+  def author_name
+    record.user.try(:name)
+  end
+
+  def to_export_hash
+    export_hash = to_hash.merge!(live: published?,
+                                 author_id: nil,
+                                 author_name: nil,
+                                 status: I18n.t(Solution::Constants::STATUS_NAMES_BY_KEY[@draft.present? ? Solution::Constants::STATUS_KEYS_BY_TOKEN[:draft] : status]),
+                                 seo_title: seo_data['meta_title'],
+                                 seo_description: seo_data['meta_description'],
+                                 modified_at: last_modified_at_time,
+                                 language_code: @lang_code)
+    if record.user && record.user.helpdesk_agent
+      export_hash[:author_id] = record.user_id
+      export_hash[:author_name] = author_name
+    end
+    export_hash[:recent_author_name] = modified_by_name unless exclude?(:recent_author_name)
+    export_hash[:tags] = fetch_tags.join(';') unless exclude?(:tags)
+    export_hash[:folder_name] = folder_name if export_hash[:folder_id].present? && !exclude?(:folder_name)
+    export_hash[:category_name] = category_name if export_hash[:folder_id].present? && !exclude?(:category_name)
+    export_hash
+  end
+
   def to_index_hash
     to_hash.except!(:draft_present, :translation_summary)
   end
@@ -85,7 +125,7 @@ class Solutions::ArticleDecorator < ApiDecorator
       title: item.title,
       updated_at: item.updated_at.try(:utc)
     }
-    ret_hash.merge!(description_hash(item)) unless @exclude_description || @is_list_page || (@search_context && SEARCH_CONTEXTS_WITHOUT_DESCRIPTION.include?(@search_context))
+    ret_hash.merge!(description_hash(item)) unless exclude?(:description) || @is_list_page || (@search_context && SEARCH_CONTEXTS_WITHOUT_DESCRIPTION.include?(@search_context))
     ret_hash
   end
 
@@ -136,7 +176,8 @@ class Solutions::ArticleDecorator < ApiDecorator
   private
 
     def folder_name
-      record.solution_folder_meta.safe_send("#{language_key}_folder").name
+      # articles moved from one folder to other may not have folder/category name if not translated.
+      record.solution_folder_meta.safe_send("#{language_key}_folder").try(:name)
     end
 
     def category_meta
@@ -144,7 +185,8 @@ class Solutions::ArticleDecorator < ApiDecorator
     end
 
     def category_name
-      category_meta.safe_send("#{language_key}_category").name
+      # articles moved from one folder to other may not have folder/category name if not translated.
+      category_meta.safe_send("#{language_key}_category").try(:name)
     end
 
     def language_object

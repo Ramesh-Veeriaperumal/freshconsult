@@ -338,5 +338,10 @@ module FilterFactory::Tickets
       def fsm_appointment_filter?(condition)
         condition['ff_name'] && TicketFilterConstants::FSM_DATE_TIME_FIELDS.include?(TicketDecorator.display_name(condition['ff_name']))
       end
+
+      def handle_order_by_values
+        args[:order_by] ||= args[:wf_order]
+        args[:order_type] ||= args[:wf_order_type]
+      end
   end
 end

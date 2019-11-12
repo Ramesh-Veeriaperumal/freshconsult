@@ -315,4 +315,52 @@ class DataExportMailerTest < ActionMailer::TestCase
     sender.destroy
     ticket.destroy
   end
+
+  def test_article_export_mail
+    recipient = add_agent(@account)
+    export_params = { export_name: 'Article Export' }
+    options = {
+      user: recipient,
+      type: 'article',
+      url: 'example.com',
+      domain: @account.domain,
+      export_params: export_params
+    }
+    I18n.locale = 'en'
+
+    mail_message = DataExportMailer.send_email(:article_export, recipient, options)
+
+    assert_equal recipient.email, mail_message.to.first
+    assert_equal mail_message.subject.include?(export_params[:export_name]), true
+    email_body = mail_message.body.decoded
+    test_body_part = 'The article export you had requested is complete.'
+    assert_equal email_body.include?(test_body_part), true
+  ensure
+    I18n.locale = 'de'
+    recipient.destroy
+  end
+
+  def test_article_export_failed_mail
+    recipient = add_agent(@account)
+    export_params = { export_name: 'Article Export' }
+    options = {
+      user: recipient,
+      type: 'article',
+      url: 'example.com',
+      domain: @account.domain,
+      export_params: export_params
+    }
+    I18n.locale = 'en'
+
+    mail_message = DataExportMailer.send_email(:export_failure, recipient, options)
+
+    assert_equal recipient.email, mail_message.to.first
+    assert_equal mail_message.subject.include?(export_params[:export_name]), true
+    email_body = mail_message.body.decoded
+    test_body_part = 'An error occurred while exporting data. Please try again or contact Freshdesk support.'
+    assert_equal email_body.include?(test_body_part), true
+  ensure
+    I18n.locale = 'de'
+    recipient.destroy
+  end
 end

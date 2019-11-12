@@ -19,7 +19,9 @@ class OmniauthCallbacksController < ApplicationController
       :omniauth => @omniauth,
       :user_id => @user_id,
       :falcon_enabled => @falcon_enabled,
-      :state_params => @state_params
+      :state_params => @state_params,
+      :r_key => @r_key,
+      :failed => false
     )
     
     result = authenticator.after_authenticate(params)
@@ -31,11 +33,30 @@ class OmniauthCallbacksController < ApplicationController
   end
 
   def failure
-    port = ''
-    path = ''
-    path = integrations_applications_path
-    flash[:notice] = t(:'flash.g_app.authentication_failed')
-    redirect_to portal_url + port + path
+    if params[:provider] == 'gmail'
+      authenticator_class = Auth::Authenticator.get_auth_class(params[:provider])
+
+      authenticator = authenticator_class.new(
+        :origin_account => origin_account,
+        :current_account => current_account,
+        :portal_url => @ignore_build.blank? ? portal_url : nil,
+        :app => app,
+        :omniauth => @omniauth,
+        :user_id => @user_id,
+        :falcon_enabled => @falcon_enabled,
+        :state_params => @state_params,
+        :r_key => @r_key,
+        :failed => true,
+        :message => @message
+      )
+      result = authenticator.after_authenticate(params)
+      redirect_to result.redirect_url || root_url(:host => origin_account.host) and return
+    else
+      port = path = ''
+      path = integrations_applications_path
+      flash[:notice] = t(:'flash.g_app.authentication_failed')
+      redirect_to portal_url + port + path
+    end
   end
 
   private
@@ -53,7 +74,7 @@ class OmniauthCallbacksController < ApplicationController
   end
 
   def load_origin_info
-    origin = request.env["omniauth.origin"]
+    origin = request.env["omniauth.origin"].present? ? request.env["omniauth.origin"] : params[:origin]
     @omniauth = request.env['omniauth.auth']
     @provider = (@omniauth and @omniauth['provider']) ? @omniauth['provider'] : params[:provider]
     raise ActionController::RoutingError, "Not Found" if (origin.blank? and origin_required?) && params[:state].blank?
@@ -61,6 +82,7 @@ class OmniauthCallbacksController < ApplicationController
     @app_name ||= Integrations::Constants::PROVIDER_TO_APPNAME_MAP["#{@provider}"] if @provider.present?
     assign_state_variables(origin) if params[:state].present?
     assign_default_variables(origin) if origin.present? && origin.has_key?('id')
+    @message = params[:message] if params[:message].present?
   end
 
   def assign_default_variables origin
@@ -69,6 +91,7 @@ class OmniauthCallbacksController < ApplicationController
     @user_id = origin['user_id'][0].to_i if origin.has_key?('user_id')
     @state_params = origin['state_params'][0] if origin.has_key?('state_params')
     @falcon_enabled = origin['falcon_enabled'][0] if origin.has_key?('falcon_enabled')
+    @r_key = origin.has_key?('r_key') ? origin['r_key'][0] : params[:r_key]
   end
 
   def assign_state_variables origin

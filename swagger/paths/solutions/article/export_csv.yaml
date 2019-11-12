@@ -1,0 +1,23 @@
+post:
+  tags: [solutions]
+  summary: Export list of articles along with meta data.
+  parameters:
+  - name: data
+    in: body
+    required: true
+    schema:
+      $ref: '#/definitions/article_export'
+  responses:
+    204:
+      description: Success
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+    429:
+      description: Simultaneous export limit reached
+      schema:
+        $ref: '#/definitions/request_error_with_data'
+

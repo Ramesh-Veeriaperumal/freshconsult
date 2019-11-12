@@ -1,0 +1,37 @@
+type: object
+properties:
+  portal_id:
+    type: string
+    format: int64
+  author:
+    type: integer
+    format: int64
+  status:
+    type: integer
+    format: int64
+  language:
+    type: integer
+    format: int64
+  tags:
+    type: array
+    items:
+      type: string
+  folder:
+    type: array
+    items:
+      type: string
+      format: int64
+  category:
+    type: array
+    items:
+      type: string
+      format: int64
+  article_fields:
+    type: array
+    items:
+      type: object
+      properties:
+        field_name:
+          type: string
+        column_name:
+          type: string
