@@ -1,4 +1,4 @@
-, mailbox_google_oauth: falseclass Account < ActiveRecord::Base
+class Account < ActiveRecord::Base
 
   LP_FEATURES = [
     :select_all, :round_robin_capping, :suggest_tickets, :field_agent_availability,
