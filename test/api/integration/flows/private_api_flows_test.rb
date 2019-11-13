@@ -263,7 +263,7 @@ class PrivateApiFlowsTest < ActionDispatch::IntegrationTest
   end
 
   def disable_custom_translation
-    Account.any_instance.stubs(:custom_translations_enabled).returns(false)
+    Account.any_instance.stubs(:custom_translations_enabled?).returns(false)
     yield
     Account.any_instance.unstub(:custom_translation_enabled?)
   end
