@@ -1,5 +1,5 @@
 module Redis::Keys::Others
-  
+
   PREVIEW_URL                             = "PREVIEW_URL:%{account_id}:%{user_id}:%{portal_id}".freeze
   EMAIL_TICKET_ID                         = "EMAIL_TICKET_ID:%{account_id}:%{message_id}".freeze
   MINT_PREVIEW_KEY                        = "MINT_PREVIEW_KEY:%{account_id}:%{user_id}:%{portal_id}"
@@ -84,7 +84,7 @@ module Redis::Keys::Others
   MAILGUN_EVENT_LAST_SYNC                 = "MAILGUN_EVENT_LAST_SYNC:%{domain}".freeze
   SIGNUP_RESTRICTED_DOMAINS               = "SIGNUP_RESTRICTED_DOMAINS".freeze
   SIGNUP_RESTRICTED_EMAIL_DOMAINS         = "SIGNUP_RESTRICTED_EMAIL_DOMAINS".freeze
-  # Email sender config redis key  
+  # Email sender config redis key
   EMAIL_SENDER_CONFIG                     = "EMAIL_SENDER_CONFIG:%{account_id}:%{email_type}".freeze
   # Key to hold the "From" of various language. This helps in identifying the original sender while agent forward
   AGENT_FORWARD_FROM_REGEX                = "AGENT_FORWARD_FROM_REGEX".freeze
@@ -95,7 +95,7 @@ module Redis::Keys::Others
   #deprecated style parsing in email html content
   DEPRECATED_STYLE_PARSING                = "DEPRECATED_STYLE_PARSING:%{account_id}".freeze
   # key for enabling fd email service to all the account
-    # keys for switching the email traffic to mailgun 
+    # keys for switching the email traffic to mailgun
   TRIAL_MAILGUN_TRAFFIC_PERCENTAGE        = "TRIAL_MAILGUN_TRAFFIC_PERCENTAGE".freeze
   ACTIVE_MAILGUN_TRAFFIC_PERCENTAGE       = "ACTIVE_MAILGUN_TRAFFIC_PERCENTAGE".freeze
   PREMIUM_MAILGUN_TRAFFIC_PERCENTAGE      = "PREMIUM_MAILGUN_TRAFFIC_PERCENTAGE".freeze
@@ -216,7 +216,7 @@ module Redis::Keys::Others
   FRESHID_V2_NEW_ACCOUNT_SIGNUP_ENABLED   = 'FRESHID_V2_NEW_ACCOUNT_SIGNUP_ENABLED'.freeze
   FRESHID_ORG_V2_USER_ACCESS_TOKEN        = 'FRESHID_ORG_V2_USER_ACCESS_TOKEN:%{account_id}:%{user_id}'.freeze
   FRESHID_ORG_V2_USER_REFRESH_TOKEN       = 'FRESHID_ORG_V2_USER_REFRESH_TOKEN:%{account_id}:%{user_id}'.freeze
-  
+
   # new pricing plan flip key
   NEW_2019_PRICING_ENABLED = 'NEW_2019_PRICING_ENABLED'.freeze
   NEW_2019_PRICING_TEST_USERS = 'NEW_2019_PRICING_TEST_USERS'.freeze
@@ -249,6 +249,8 @@ module Redis::Keys::Others
   DOWNGRADE_POLICY_EMAIL_REMINDER = 'DOWNGRADE_POLICY_EMAIL_REMINDER:%{account_id}'.freeze
   DOWNGRADE_POLICY = 'DOWNGRADE_POLICY'.freeze
   DOWNGRADE_POLICY_TO_ALL = 'DOWNGRADE_POLICY_TO_ALL'.freeze
+
+  SUPPORT_TICKET_LIMIT = "SUPPORT_TICKET_LIMIT:%{account_id}%{user_id}".freeze
 
   MAILBOX_GMAIL_OAUTH = 'GMAIL_OAUTH:%{account_id}:%{user_id}:%{random_number}'.freeze
 
