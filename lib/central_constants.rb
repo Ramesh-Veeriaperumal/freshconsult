@@ -17,7 +17,7 @@ module CentralConstants
     'VaRule' => '0.1',
     'Group' => '3.0',
     'Post' => '0.0',
-    'Helpdesk::TimeSheet' => '1.0',
+    'Helpdesk::TimeSheet' => '1.1',
     'DashboardAnnouncement' => '0.0',
     'Social::TwitterHandle' => '0.0',
     'Social::TwitterStream' => '0.0',
