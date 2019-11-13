@@ -1417,10 +1417,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     Helpdesk::TicketStatus.onhold_and_closed_statuses(Account.current).include? status
   end
 
-  def should_skip_agent_email_notifications?
-    service_task?
-  end
-
   def has_active_forum_topic? # rubocop:disable PredicateName
     ticket_topic && ticket_topic.topic && !ticket_topic.topic.locked?
   end

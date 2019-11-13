@@ -70,6 +70,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   after_commit :create_initial_activity, on: :create
   after_commit :trigger_dispatcher, on: :create, :unless => :skip_dispatcher?
+
+  # TODO: Need to remove once we start supporting dispatcher for service tasks
+  after_commit :service_task_create_notification, on: :create, if: :service_task?
+  
   after_commit :update_capping_on_create, :update_count_for_skill, on: :create, if: -> { outbound_email? }
   after_commit :send_outbound_email, on: :create, if: -> { outbound_email? && import_ticket.blank? }
   after_commit :trigger_observer_events, on: :update, :if => :execute_observer?
