@@ -1,27 +1,41 @@
 class Admin::TicketFieldDecorator < ApiDecorator
   include Admin::TicketFieldConstants
-  delegate :field_type, :field_options, :parent_id, to: :record
+  include Admin::TicketFieldHelper
+  delegate :id, :field_type, :field_options, :parent_id, to: :record
 
   def initialize(record, options)
+    @include_rel = options[:include] && options[:include].to_s.split(',')
     super(record, options)
   end
 
   def to_hash(list = false)
-    return if((record.product_field? && current_account.products_from_cache.length == 0) || (record.nested_field? && parent_id.present?))
-    return form_item_hash
-  end
-
-  def form_item_hash
     response = {}
+    return response if ignored_fields? && list
     TICKET_FIELDS_RESPONSE_HASH.each_pair do |key, value|
       response[key] = record.safe_send(value) unless record.safe_send(value).nil?
-      response[key] = record.display_ticket_field_name if key == :name && record.name.starts_with?("cf_")
+      response[key] = TicketDecorator.display_name(record.name) if key == :name && !record.default?
     end
-    response.merge!(HAS_SECTION => field_options[SECTION_PRESENT]) if record.has_sections?
-    if record.requester_field?
-      response.merge!(PORTAL_CC => field_options[PORTALCC])
-      response.merge!(PORTAL_CC_TO => field_options[PORTALCC_TO])
+    add_requester_field(response)
+    if record.has_sections?
+      response[HAS_SECTION] = field_options[SECTION_PRESENT]
+      response[:sections] = construct_sections(record) if @include_rel.respond_to?(:include?) && @include_rel.include?('section')
     end
+    response[:choices] = record.new_formatted_choices if record.choices? && !list
     response
+  end
+
+  def add_requester_field(response)
+    if record.requester_field?
+      response[PORTAL_CC] = field_options[PORTALCC]
+      response[PORTAL_CC_TO] = field_options[PORTALCC_TO]
+    end
+  end
+
+  def ignored_fields?
+    (record.nested_field? && parent_id.present?)
+  end
+
+  def current_account
+    @current_account ||= Account.current
   end
 end

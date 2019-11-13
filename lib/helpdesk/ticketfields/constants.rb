@@ -96,4 +96,6 @@ module Helpdesk::Ticketfields::Constants
 
   CUSTOM_FIELD_LABEL_PREFIX = 'cf_'
   ENCRYPTED_FIELD_LABEL_PREFIX = 'cf_enc_'
+
+  PLUCKED_COLUMN_FOR_CHOICES = %i[id pickable_id pickable_type position value picklist_id].freeze
 end

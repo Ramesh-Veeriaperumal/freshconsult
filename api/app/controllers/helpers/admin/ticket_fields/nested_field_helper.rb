@@ -4,6 +4,6 @@ module Admin::TicketFields::NestedFieldHelper
   end
 
   def can_delete_nested_field?
-    errors[:"#{tf[:name]}"] << :nested_field_child_delete_error unless tf[:parent_id].nil?
+    errors[:"#{TicketDecorator.display_name(tf[:name])}"] << :nested_field_child_delete_error unless tf[:parent_id].nil?
   end
 end

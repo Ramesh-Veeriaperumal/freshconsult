@@ -125,14 +125,21 @@ class PrivateApiFlowsTest < ActionDispatch::IntegrationTest
   end
 
   def test_account_version_header_after_launch_party_change
-    requests, redis_timestamp, version_set = private_api_keys_values
-    set_others_redis_hash(version_redis_key, version_set)
-    old_acc_version = Digest::MD5.hexdigest(version_set.values.join)
-    @account.launch(:test_feature)
-    new_acc_version = Digest::MD5.hexdigest(get_others_redis_hash(version_redis_key).values.join)
-    get "api/_/tickets/#{ticket.display_id}"
-    assert_not_equal old_acc_version, response.headers['X-Account-Data-Version']
-    assert_equal new_acc_version, response.headers['X-Account-Data-Version']
+    disable_custom_translation do
+      requests, redis_timestamp, version_set = private_api_keys_values
+      set_others_redis_hash(version_redis_key, version_set)
+      old_acc_version = Digest::MD5.hexdigest(version_set.values.join)
+      @account.launch(:test_feature)
+      data_version_after_launch = get_others_redis_hash(version_redis_key)
+      new_acc_version = Digest::MD5.hexdigest(data_version_after_launch.values.compact.join)
+      get requests.first
+      data_version_after_controller_hit = get_others_redis_hash(version_redis_key)
+      assert_not_equal old_acc_version, response.headers['X-Account-Data-Version']
+      assert_equal new_acc_version, response.headers['X-Account-Data-Version'],
+                   msg: "Expected #{new_acc_version} but actual #{response.headers['X-Account-Data-Version']},"\
+                      "Data Versioning before => #{data_version_after_launch.inspect},"\
+                      "after => #{data_version_after_controller_hit.inspect}"
+    end
   end
 
   def test_account_version_header_custom_tranlsation_with_user_supported_language
@@ -252,6 +259,12 @@ class PrivateApiFlowsTest < ActionDispatch::IntegrationTest
     yield
     User.any_instance.stubs(:supported_language)
     Account.any_instance.unstub(:supported_language)
+    Account.any_instance.unstub(:custom_translation_enabled?)
+  end
+
+  def disable_custom_translation
+    Account.any_instance.stubs(:custom_translations_enabled).returns(false)
+    yield
     Account.any_instance.unstub(:custom_translation_enabled?)
   end
 
