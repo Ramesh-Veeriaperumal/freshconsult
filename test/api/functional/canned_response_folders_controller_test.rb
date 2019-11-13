@@ -194,9 +194,9 @@ class CannedResponseFoldersControllerTest < ActionController::TestCase
 
   def test_update
     folder = {
-      name: Faker::App.name
+      name: SecureRandom.uuid
     }
-    ca_folder = create_cr_folder(name: Faker::Name.name)
+    ca_folder = create_cr_folder(name: SecureRandom.uuid)
     put :update, construct_params(build_request_param(folder)).merge(id: ca_folder.id)
     assert_response 200
     ca_folder.reload
