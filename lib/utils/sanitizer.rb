@@ -33,7 +33,7 @@ module Utils
     private
 
       def is_ticket_sanitizer
-        (Account.current.launched?(:css_sanitizer) && ['Helpdesk::Ticket', 'Helpdesk::Note'].include?(self.class.name))
+        ['Helpdesk::Ticket', 'Helpdesk::Note'].include?(self.class.name)
       end
 
   end
