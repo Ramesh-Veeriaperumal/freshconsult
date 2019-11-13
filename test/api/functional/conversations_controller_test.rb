@@ -8,6 +8,10 @@ class ConversationsControllerTest < ActionController::TestCase
   include SocialTicketsCreationHelper
   include TwitterHelper
   include NoteHelper
+  include ContactSegmentsTestHelper
+
+  SEND_CC_EMAIL_JOB_STRING = "handler LIKE '%send_cc_email%'".freeze
+
   def wrap_cname(params)
     { conversation: params }
   end
@@ -974,7 +978,6 @@ class ConversationsControllerTest < ActionController::TestCase
     match_json(v2_note_pattern({}, Helpdesk::Note.last))
     assert_response 201
   end
-
   def test_email_notification_without_notifying_emails
     current_account = Account.current
     assigned_agent = add_test_agent(@account)
@@ -983,5 +986,33 @@ class ConversationsControllerTest < ActionController::TestCase
     count_of_delayed_jobs_before = Delayed::Job.count
     post :create, construct_params({ version: 'private', id: ticket.display_id, user_id: current_account.id }, params_hash)
     assert_equal count_of_delayed_jobs_before + 1, Delayed::Job.count
+  end
+  
+  def test_avoid_duplicate_email_notification_for_cc
+    user = create_contact
+    notification_count_before_note_creation = Delayed::Job.where(SEND_CC_EMAIL_JOB_STRING).all.count
+    ticket = create_ticket({source: 1, subject: "TEST_TICKET", description: "Test duplicate notify to cc", requester_id: user.id, cc_emails: [user.email, "cc1@gmail.com", "cc2@gmail.com"] })
+    note = create_note({source: 0, incoming: 1, private: false, body: "Requester Reply", body: "<div>Requester Reply</div>", ticket_id: ticket.id, user_id: user.id })
+    notification_count_after_note_creation = Delayed::Job.where(SEND_CC_EMAIL_JOB_STRING).all.count
+    assert_equal notification_count_after_note_creation, notification_count_before_note_creation + 1
+  end
+
+  def test_send_comment_added_notification_to_cc_when_requester_adds_comment
+    user = create_contact
+    notification_count_before_note_creation = Delayed::Job.where(SEND_CC_EMAIL_JOB_STRING).all.count
+    ticket = create_ticket({source: 1, subject: "TEST_TICKET", description: "Test send comment notification to cc", requester_id: user.id, cc_emails: ["cc1@gmail.com", "cc2@gmail.com"] })
+    note = create_note({source: 0, incoming: 1, private: false, body: "Requester Reply", body: "<div>Requester Reply</div>", ticket_id: ticket.id, user_id: user.id })
+    notification_count_after_note_creation = Delayed::Job.where(SEND_CC_EMAIL_JOB_STRING).all.count
+    assert_equal notification_count_after_note_creation, notification_count_before_note_creation + 1
+  end
+
+  def test_send_comment_added_notification_when_cc_adds_comment
+    requester = create_contact
+    cc = create_contact
+    notification_count_before_note_creation = Delayed::Job.where(SEND_CC_EMAIL_JOB_STRING).all.count
+    ticket = create_ticket({source: 1, subject: "TEST_TICKET", description: "Test send comment notification to cc", requester_id: requester.id, cc_emails: [cc.email] })
+    note = create_note({source: 0, incoming: 1, private: false, body: "CC Reply", body: "<div>CC Reply</div>", ticket_id: ticket.id, user_id: cc.id })
+    notification_count_after_note_creation = Delayed::Job.where(SEND_CC_EMAIL_JOB_STRING).all.count
+    assert_equal notification_count_after_note_creation, notification_count_before_note_creation + 1
   end
 end
