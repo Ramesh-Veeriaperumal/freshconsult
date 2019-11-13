@@ -1350,7 +1350,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
     put :make_agent, construct_params({ id: sample_user.id }, type: Agent::FIELD_AGENT, role_ids: role_ids)
     assert_response 400
-    match_json([bad_request_error_pattern('role_ids', I18n.t('activerecord.errors.messages.field_agent_roles', role: 'agent'))])
+    match_json([bad_request_error_pattern('role_ids', I18n.t('activerecord.errors.messages.field_agent_roles', role: 'field technician'))])
   ensure
     field_agent_type.destroy
     sample_user.destroy
@@ -1361,7 +1361,6 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_make_field_agent_with_field_tech_role
     Account.any_instance.stubs(:current).returns(@account)
     @account.add_feature(:field_service_management)
-    @account.launch(:field_tech_role)
     field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
     role = @account.roles.create(name: 'Field technician', default_role: true)
     sample_user = add_new_user(@account)
@@ -1377,15 +1376,13 @@ class ApiContactsControllerTest < ActionController::TestCase
     field_agent_type.destroy
     sample_user.destroy
     role.destroy
-    @account.rollback(:field_tech_role)
     @account.revoke_feature(:field_service_management)
     Account.unstub(:current)
   end
 
-  def test_make_field_agent_with_agent_role_when_field_tech_enabled
+  def test_make_field_agent_with_agent_role
     Account.any_instance.stubs(:current).returns(@account)
     @account.add_feature(:field_service_management)
-    @account.launch(:field_tech_role)
     field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
     sample_user = add_new_user(@account)
 
@@ -1395,7 +1392,6 @@ class ApiContactsControllerTest < ActionController::TestCase
   ensure
     field_agent_type.destroy
     sample_user.destroy
-    @account.rollback(:field_tech_role)
     @account.revoke_feature(:field_service_management)
     Account.unstub(:current)
   end

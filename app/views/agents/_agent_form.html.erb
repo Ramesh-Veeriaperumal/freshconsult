@@ -404,7 +404,6 @@
 			var group_details = {};
       var fsm_group_type = null;
       var new_agent = null;
-      var field_tech_role_enabled = <%= current_account.field_tech_role_enabled? %>
       var freshid_enabled= <%= freshid_integration_enabled? %>;
 			var userName = '<%= @agent.user.name %>';
       var userEmail = '<%= @agent.user.email %>';
@@ -434,7 +433,7 @@
       <% end %>
 
       App.Agents.Form.initializeData({userName: userName, roles: roles, userEmail: userEmail,
-				role_details: role_details, freshid_enabled: freshid_enabled, field_tech_role_enabled: field_tech_role_enabled, groups: groups, group_details: group_details, fsm_group_type: fsm_group_type, new_agent: <%= @agent.new_record? %>, SkillBasedRRFlag: <%=@manage_skills%>});
+				role_details: role_details, freshid_enabled: freshid_enabled, groups: groups, group_details: group_details, fsm_group_type: fsm_group_type, new_agent: <%= @agent.new_record? %>, SkillBasedRRFlag: <%=@manage_skills%>});
     });
 
   })(jQuery);
