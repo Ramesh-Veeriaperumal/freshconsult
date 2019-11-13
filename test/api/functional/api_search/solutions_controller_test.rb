@@ -60,6 +60,24 @@ module ApiSearch
       match_json [search_solution_article_pattern(article)]
     end
 
+    def test_results_with_language_code_params
+      article = create_article(article_params).primary_article
+      stub_private_search_response([article]) do
+        post :results, construct_params(version: 'private', context: 'portal_based_solutions', term: article.title, limit: 3,language_code: "en")
+      end
+      assert_response 200
+      match_json [search_solution_article_pattern(article, :portal_based_solutions)]
+    end
+
+    def test_results_with_invalid_language_code_params
+      article = create_article(article_params).primary_article
+      stub_private_search_response([article]) do
+        post :results, construct_params(version: 'private', context: 'portal_based_solutions', term: article.title, limit: 3,language_code: "invalid language")
+      end
+      assert_response 200
+      match_json [search_solution_article_pattern(article, :portal_based_solutions)]
+    end
+
     def test_results_with_insert_solutions_context
       article = create_article(article_params).primary_article
       stub_private_search_response([article]) do
