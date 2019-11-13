@@ -80,11 +80,6 @@
 
 	  var APP_ENV = "<%= Rails.env %>";
 	</script>
-
-<% if !current_account.new_onboarding_enabled? && (current_user.privilege?(:admin_tasks) && current_account.onboarding_pending?)  %>	
-  <%= javascript_include_tag :'cdn/admin_onboarding' %>	
-  <%= render partial: "admin_onboarding/onboarding_modal" %>	
-<% else %>
 	<% if current_account.launched?(:onboarding_inlinemanual) %>
 		<script>window.inlineManualOptions = { language: "<%= I18n.locale %>" } ;</script>
 		<% if Rails.env.production? %>
@@ -101,7 +96,6 @@
 			<span class="<%= inline_manual_classes_for_multilingual %>" id="multilingual-meta-info"></span>
 		</div>
 	<% end %>
-<% end %>
 
 <% if current_user.falcon_invite_eligible? %>
 	<%= javascript_include_tag :'cdn/falcon_invite' %>

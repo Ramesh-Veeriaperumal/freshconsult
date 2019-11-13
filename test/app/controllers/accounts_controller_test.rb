@@ -680,7 +680,6 @@ class AccountsControllerTest < ActionController::TestCase
 
   def test_anonymous_signup
     Account.any_instance.stubs(:anonymous_account?).returns(true)
-    Account.any_instance.stubs(:onboarding_applicable?).returns(true)
     anonymous_signup_key = ANONYMOUS_ACCOUNT_SIGNUP_ENABLED
     set_others_redis_key(anonymous_signup_key, true)
     Account.any_instance.expects(:add_to_billing).never
@@ -703,7 +702,6 @@ class AccountsControllerTest < ActionController::TestCase
     assert_equal value[:signup_id], params[:signup_id]
   ensure
     Account.any_instance.unstub(:anonymous_account?)
-    Account.any_instance.unstub(:onboarding_applicable?)
     remove_others_redis_key(anonymous_signup_key)
     account.destroy if account.present?
   end
