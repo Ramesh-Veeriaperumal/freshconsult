@@ -153,9 +153,13 @@ class Admin::SubscriptionDecorator < ApiDecorator
   end
 
   def calculate_percentage
-    return if renewal_period == ANNUAL_PERIOD
+    return if renewal_period == ANNUAL_PERIOD || annual_cost_per_agent.zero?
     current_cycle_cost = record.cost_per_agent
-    annual_cycle_cost = record.cost_per_agent(ANNUAL_PERIOD)
+    annual_cycle_cost = annual_cost_per_agent
     ((((current_cycle_cost - annual_cycle_cost) / annual_cycle_cost.to_f) * 100) / 5).floor * 5
+  end
+
+  def annual_cost_per_agent
+    @annual_cost ||= record.cost_per_agent(ANNUAL_PERIOD)
   end
 end

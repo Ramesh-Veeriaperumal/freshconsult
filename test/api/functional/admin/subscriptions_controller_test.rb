@@ -272,8 +272,6 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
 
   def test_update_subscription_downgrade_to_sprout
     stub_methods
-    Subscription.any_instance.stubs(:cost_per_agent).returns(65)
-    Subscription.any_instance.stubs(:cost_per_agent).with(12).returns(49)
     if @account.subscription.subscription_plan_id == sprout_plan_id
       subscription = @account.subscription
       subscription.plan = SubscriptionPlan.current.where("id != #{sprout_plan_id}").first
@@ -290,7 +288,6 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
   ensure
     Subscription.unstub(:coupon)
     unstub_methods
-    Subscription.any_instance.unstub(:cost_per_agent)
   end
 
   def test_update_subscription_renewal_period_for_existing_customers
@@ -503,7 +500,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
         card_expiration: subscription.card_expiration,
         name_on_card: (subscription.billing_address.name_on_card if subscription.billing_address.present?),
         reseller_paid_account: subscription.reseller_paid_account?,
-        switch_to_annual_percentage: 30,
+        switch_to_annual_percentage: subscription.cost_per_agent(12).zero? ? nil : 30,
         subscription_request: nil,
         updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
         created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
