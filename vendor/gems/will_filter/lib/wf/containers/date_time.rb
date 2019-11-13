@@ -66,9 +66,15 @@ module Wf
           condition_key = condition.full_key
           begin
             start_date, end_date = value.split(' - ')
-            start_time = ::Time.zone.parse(start_date)
-            end_time = ::Time.zone.parse(end_date).end_of_day
-            return [" (#{condition_key} >= ? and #{condition_key} <= ?) ", start_time.to_s(:db), end_time.to_s(:db)]
+            start_time = ::Time.zone.parse(start_date.to_s)
+            end_time = ::Time.zone.parse(end_date.to_s)
+            if start_time && end_time
+              return [" (#{condition_key} >= ? and #{condition_key} <= ?) ", start_time.to_s(:db), end_time.to_s(:db)]
+            elsif start_time
+              return [" (#{condition_key} >= ?) ", start_time.to_s(:db)]
+            elsif end_time
+              return [" (#{condition_key} <= ?) ", end_time.to_s(:db)]
+            end
           rescue StandardError => e
             Rails.logger.info "Will_filter date_time::: Invalid date time for #{condition.key}"
           end
