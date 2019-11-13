@@ -44,7 +44,7 @@ class Va::Action
     act_hash[:value]
   end
   
-  def trigger(act_on, doer=nil, triggered_event=nil, only_reversible_actions = false)
+  def trigger(act_on, doer=nil, triggered_event=nil, only_reversible_actions = false, original_ticket = nil)
     begin
       if only_reversible_actions && IRREVERSIBLE_ACTIONS.include?(action_key.to_sym)
         Rails.logger.debug "In validation, Skipping trigger act_on : #{act_on.inspect} action_key : #{action_key}"
@@ -52,6 +52,7 @@ class Va::Action
       end
       @skip_record_action = only_reversible_actions
       @doer = doer
+      @original_ticket = original_ticket
       @triggered_event = triggered_event
       Va::Logger::Automation.log "action=#{action_key.inspect}, value=#{value.inspect}"
       return safe_send(action_key, act_on) if respond_to?(action_key)
@@ -370,7 +371,8 @@ class Va::Action
       substitute_placeholders act_on, content_key
     end
 
-    def substitute_placeholders act_on, content_key     
+    def substitute_placeholders act_on, content_key
+      act_on = @original_ticket.present? ? @original_ticket : act_on
       content           = act_hash[content_key].to_s
       content           = RedCloth.new(content).to_html unless content_key == :email_subject
 

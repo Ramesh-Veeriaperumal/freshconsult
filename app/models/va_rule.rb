@@ -305,7 +305,7 @@ class VaRule < ActiveRecord::Base
       association_type = action.act_hash[:evaluate_on]
       ticket = PRIME_TICKETS.include?(association_type) ? associated_ticket(evaluate_on, association_type) : evaluate_on
       if ticket.present?
-        action.trigger(ticket, doer, triggered_event)
+        action.trigger(ticket, doer, triggered_event, false, evaluate_on)
       end
     end
     if @associated_ticket.present?

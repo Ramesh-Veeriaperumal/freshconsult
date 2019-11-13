@@ -143,5 +143,7 @@
       total_time = end_time - start_time
       Va::Logger::Automation.unset_rule_id
       Va::Logger::Automation.log_execution_and_time(total_time, total_tickets, rule_type, start_time, end_time)
+    rescue Exception => e
+      Va::Logger::Automation.log_error("Error in log_total_execution_info", e)
     end
   end
