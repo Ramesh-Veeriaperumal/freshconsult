@@ -276,6 +276,43 @@ module SocialTicketsCreationHelper
     fb_ticket
   end
 
+  def create_fb_post_ticket(options = {})
+    if options.empty?
+      options[:fb_page] = Account.current.facebook_pages.first || create_fb_page(true)
+      options[:post] = fb_post_stream_params
+      options[:group_id] = Account.current.groups.first.id
+
+    end
+    requester = create_fb_user(options[:post][:from])
+    fb_ticket = Account.current.tickets.build(
+      subject:    "FB - #{options[:post][:message].truncate(100)}",
+      requester:  requester,
+      product_id: options[:fb_page].product_id,
+      group_id:   options[:group_id],
+      source:     Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook],
+      cc_email: Helpdesk::Ticket.default_cc_hash,
+      created_at: Time.zone.now, # Time.zone.parse(options[:post][:created_time]),
+      fb_post_attributes: get_fb_post_attributes(options),
+      ticket_body_attributes: {
+        description_html: options[:post][:message]
+      }
+    )
+    fb_ticket.account_id = Account.current.id
+    fb_ticket.save
+    fb_ticket
+  end
+
+  def fb_post_stream_params(options = {})
+    {
+      id:           (Time.now.to_f * 10**6).to_i,
+      message:      Faker::Lorem.sentence(10),
+      created_time: Time.now.utc.to_s,
+      msg_type:     %w(post).sample, # msg type can either be a direct message (dm) or a post
+      from:         options[:fb_user] || fb_user_params,
+      post_type_code: Facebook::Constants::POST_TYPE_CODE[:comment]
+    }
+  end
+
   def fb_reply_to_ticket(ticket, options = {}, agent = false)
     if agent
       note_params = {

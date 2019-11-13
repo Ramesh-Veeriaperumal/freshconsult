@@ -68,10 +68,13 @@ module TicketsNotesHelper
 
   def handler_info(fb_page)
     parent_source_fb_post = try(:notable).try(:fb_post)
+    parent_post_id = try(:fb_post).try(:parent).try(:post_id)
     handler_key = if fb_page.nil?
                     nil
                   elsif parent_source_fb_post && parent_source_fb_post.message?
                     get_thread_key(fb_page, parent_source_fb_post)
+                  elsif parent_post_id
+                    parent_post_id
                   else
                     parent_source_fb_post.original_post_id
                   end
