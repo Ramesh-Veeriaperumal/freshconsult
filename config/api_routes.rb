@@ -102,8 +102,8 @@ Helpkit::Application.routes.draw do
       resources :tickets, only: [:index]
       resources :contacts, only: [:index]
       resources :companies, only: [:index]
-      post :solutions, to: 'solutions#results'
-      get :solutions, to: 'solutions#results'
+      post 'solutions(/:language_code)', to: 'solutions#results', constraints: { language_code: Regexp.union(Language.all_codes) }
+      get 'solutions(/:language_code)', to: 'solutions#results', constraints: { language_code: Regexp.union(Language.all_codes) }
       get :automations, to: 'automations#results'
     end
     get '/companies/autocomplete', to: 'api_search/autocomplete#companies'

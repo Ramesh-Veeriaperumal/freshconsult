@@ -411,7 +411,8 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
     Agent.any_instance.stubs(:ticket_permission).returns(::Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
     field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
-    agent = add_test_agent(@account, { role: Role.find_by_name('Agent').id, agent_type: field_agent_type.agent_type_id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] })
+    field_tech_role = @account.roles.create(name: 'Field technician', default_role: true)
+    agent = add_test_agent(@account, { role: Role.find_by_name('Field technician').id, agent_type: field_agent_type.agent_type_id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] })
     params = {email: Faker::Internet.email}
     Account.stubs(:current).returns(Account.first)
     put :update, construct_params({ id: agent.id }, params)
@@ -421,6 +422,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     agent.destroy if agent.present?
     field_agent_type.destroy if field_agent_type.present?
     Account.any_instance.unstub(:field_service_management_enabled?)
+    field_tech_role.destroy
     Account.unstub(:current)
   end
 
@@ -442,7 +444,8 @@ class Ember::AgentsControllerTest < ActionController::TestCase
   def test_update_field_agent_with_multiple_role
     Agent.any_instance.stubs(:check_ticket_permission).returns(true)
     field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
-    agent = add_test_agent(@account, { role: Role.find_by_name('Agent').id, agent_type: field_agent_type.agent_type_id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] })
+    field_tech_role = @account.roles.create(name: 'Field technician', default_role: true)
+    agent = add_test_agent(@account, { role: Role.find_by_name('Field technician').id, agent_type: field_agent_type.agent_type_id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] })
     Account.any_instance.stubs(:agent_types_from_cache).returns(agent)
     User.any_instance.stubs(:find).returns(field_agent_type)
     Agent.any_instance.stubs(:find).returns(Account.first.agent_types.first)
@@ -452,11 +455,12 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     params = {role_ids: [Role.find_by_name('Administrator').id,Role.find_by_name('Agent').id]}
     put :update, construct_params({ id: agent.id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('user.role_ids', I18n.t('activerecord.errors.messages.field_agent_roles', role: 'agent'), :code => :invalid_value)])
+    match_json([bad_request_error_pattern('user.role_ids', I18n.t('activerecord.errors.messages.field_agent_roles', role: 'field technician'), :code => :invalid_value)])
   ensure
     agent.destroy if agent.present?
     field_agent_type.destroy if field_agent_type.present?
     Account.any_instance.unstub(:field_service_management_enabled?)
+    field_tech_role.destroy
     Account.unstub(:current)
   end
 

@@ -18,11 +18,11 @@ module Admin::TicketFieldHelper
   end
 
   def ticket_field_id_dependent_fields(ticket_fields = nil)
-    ticket_fields = current_account.ticket_fields_from_cache if ticket_fields.nil?
     @dependent_field_ticket_field_id_mapping ||= begin
+      ticket_fields = current_account.ticket_fields_from_cache
       ticket_fields.inject({}) do |mappings, ticket_field|
         if ticket_field.field_type == NESTED_FIELD && ticket_field.parent_id.present?
-          ticket_field.name = ticket_field.display_ticket_field_name if ticket_field.name.starts_with?("cf_")
+          ticket_field.name = TicketDecorator.display_name(ticket_field.name) unless  ticket_field.default?
           dependent_field = {}
           DEPENDENT_FIELD_RESPONSE_HASH.each_pair do |key, value|
             dependent_field[key] = ticket_field[value]
@@ -80,6 +80,14 @@ module Admin::TicketFieldHelper
       validation_context == :create || validation_context == :update
     end
 
+    def show_or_index?
+      validation_context == :show || validation_context == :index
+    end
+
+    def not_index?
+      validation_context != :index
+    end
+
     def dynamic_section?
       unless Account.current.features?(:dynamic_sections)
         errors[:dynamic_sections] << :require_feature
@@ -101,6 +109,22 @@ module Admin::TicketFieldHelper
         errors[:custom_ticket_fields] << :require_feature
         error_options.merge!(custom_ticket_fields: { feature: :custom_ticket_fields,
                                                      code: :access_denied })
+      end
+    end
+
+    def multi_product_feature?
+      unless Account.current.multi_product_enabled?
+        errors[:multi_product] << :require_feature
+        error_options.merge!(multi_product: { feature: :multi_product,
+                                              code: :access_denied })
+      end
+    end
+
+    def multi_company_feature?
+      unless Account.current.multiple_user_companies_enabled?
+        errors[:multiple_user_companies] << :require_feature
+        error_options.merge!(multiple_user_companies: { feature: :multiple_user_companies,
+                                                        code: :access_denied })
       end
     end
 

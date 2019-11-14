@@ -17,7 +17,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
 
       def perform_fsm_operations
         Rails.logger.info "Started adding FSM artifacts for Account - #{Account.current.id}"
-        create_field_tech_role if Account.current.field_tech_role_enabled?
+        create_field_tech_role
         update_field_agent_limit_for_active_account
         create_service_task_field_type
         fsm_fields_to_be_created = fetch_fsm_fields_to_be_created
@@ -285,7 +285,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       def cleanup_fsm
         Rails.logger.info "Started disabling FSM feature for Account - #{Account.current.id}"
         remove_fsm_addon_and_reset_agent_limit
-        destroy_field_tech_role if Account.current.field_tech_role_enabled?
+        destroy_field_tech_role
         destroy_field_agent
         destroy_field_group
         Rails.logger.info "Completed disabling FSM feature for Account - #{Account.current.id}"

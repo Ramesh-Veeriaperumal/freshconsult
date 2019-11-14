@@ -261,6 +261,14 @@ class Helpdesk::TicketDrop < BaseDrop
     @source.active?
   end
 
+  def parent_ticket_id
+    @source.child_ticket? ? @source.associates_rdb : nil
+  end
+
+  def tracker_ticket_id
+    @source.related_ticket? ? @source.associates_rdb : nil
+  end
+
   def before_method(method)
     field_name = "#{method}_#{@source.account_id}"
     @field_mappings ||= @source.custom_field_type_mappings

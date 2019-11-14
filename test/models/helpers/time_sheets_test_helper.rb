@@ -46,6 +46,11 @@ module TimeSheetsTestHelper
       h[:id]         = time_sheet.id
       h[:account_id] = time_sheet.account_id
       h[:workable] = workable_hash(time_sheet)
+      h[:billable]      = time_sheet.billable
+      h[:time_spent]    = time_sheet.time_spent
+      h[:timer_running] = time_sheet.timer_running
+      h[:user_id]       = time_sheet.user_id
+      h[:executed_at]   = time_sheet.executed_at
     end
   end
 

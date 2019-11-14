@@ -60,7 +60,6 @@ class Account < ActiveRecord::Base
   after_commit :disable_freshid, on: :update, :if => [:sso_enabled_freshid_account?, :freshid_migration_not_in_progress?]
   after_commit :enable_freshid, on: :update, :if => [:sso_disabled_not_freshid_account?, :freshid_migration_not_in_progress?]
 
-  after_commit :enable_new_onboarding, on: :create
   after_commit :mark_customize_domain_setup_and_save, on: :create, if: :full_signup?
   after_commit :update_advanced_ticketing_applications, on: :update, if: :disable_old_ui_changed
 
@@ -185,14 +184,6 @@ class Account < ActiveRecord::Base
       name: name,
       full_domain: full_domain,
     }
-  end
-
-  def enable_new_onboarding
-    if onboarding_applicable?
-      launch :onboarding_v2 if redis_key_exists?(ONBOARDING_V2_ENABLED)
-      launch :onboarding_i18n if redis_key_exists?(ONBOARDING_I18N_ENABLED)
-      launch :new_onboarding
-    end
   end
 
   def generate_encryption_key
@@ -677,10 +668,6 @@ class Account < ActiveRecord::Base
       Reports::FreshvisualConfigs.perform_async
     end
 
-    def onboarding_applicable?
-      has_feature?(:falcon) && get_others_redis_list(LANGUAGES_UNDERTAKEN_FOR_NEW_ONBOARDING).include?(language)
-    end
-    
     def domain_already_exists?
       domain_mapping = DomainMapping.find_by_domain(full_domain) if full_domain.present?
       domain_mapping.present? && id != domain_mapping.account_id

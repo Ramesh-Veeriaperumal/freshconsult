@@ -99,7 +99,7 @@ class QueryHash
 
     def formatted_created_at(query)
       if format == :system
-        query['value'].is_a?(Hash) ? system_created_at(query) : query['value']
+        query['value'].is_a?(Hash) ? format_date_time(query) : query['value']
       else
         return query['value'] unless query['value'].include?('-')
         from, to = query['value'].split('-')
@@ -110,13 +110,21 @@ class QueryHash
       end
     end
 
-    def system_created_at(query)
-      [format_time(query['value']['from']), format_time(query['value']['to'])].join(' - ')
+    def format_date_time(query)
+      if query['condition'] == 'created_at'
+        [format_time(query['value']['from']), format_time(query['value']['to'])].join(' - ')
+      else
+        [iso_time_format(query['value']['from']), iso_time_format(query['value']['to'])].join(' - ')
+      end
     end
 
     def format_time(time)
       time = Time.zone.parse(time)
       format.eql?(:system) ? time.strftime('%d %b %Y') : time.iso8601
+    end
+
+    def iso_time_format(time)
+      Time.zone.parse(time.to_s).try(:iso8601)
     end
 
     def get_ff_field_name_from_query(query)

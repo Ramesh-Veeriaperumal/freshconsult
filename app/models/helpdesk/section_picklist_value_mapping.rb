@@ -8,6 +8,8 @@ class Helpdesk::SectionPicklistValueMapping < ActiveRecord::Base
   attr_protected  :account_id
   
   belongs_to_account
+
+  swindle :section_picklists, attrs: %i[section_id picklist_value_id picklist_id]
   belongs_to :section, :class_name => "Helpdesk::Section"
   belongs_to :picklist_value, :class_name => "Helpdesk::PicklistValue"
 

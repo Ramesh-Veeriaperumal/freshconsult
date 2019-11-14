@@ -101,10 +101,10 @@ class Solution::ArticleMeta < ActiveRecord::Base
       	}
 	}
 
-  scope :for_help_widget, lambda { |help_widget|
+  scope :for_help_widget, lambda { |help_widget, user|
     {
-      conditions: [' solution_folder_meta.solution_category_meta_id in (?) AND solution_folder_meta.visibility = ? ',
-                   help_widget.help_widget_solution_categories.pluck(:solution_category_meta_id), Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:anyone]],
+      conditions: [" solution_folder_meta.solution_category_meta_id in (?) AND #{Solution::FolderMeta.visibility_condition(user)}",
+                   help_widget.help_widget_solution_categories.pluck(:solution_category_meta_id)],
       joins: :solution_folder_meta
     }
   }

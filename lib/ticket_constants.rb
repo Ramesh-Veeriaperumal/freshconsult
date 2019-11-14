@@ -118,7 +118,7 @@ module TicketConstants
   DEFAULT_COLUMNS_ORDER = [ :responder_id, :group_id, :created_at, :due_by, :frDueBy, :status, :priority,
     :ticket_type, :source, "helpdesk_tags.name", :owner_id,
     :requester_id, :sl_skill_id, "helpdesk_schema_less_tickets.product_id", :association_type ]
-  
+
   ARCHIVE_DEFAULT_COLUMNS_ORDER = [ :responder_id, :group_id, :created_at, :due_by, :status, :priority,
     :ticket_type, :source, "helpdesk_tags.name", "users.customer_id", :owner_id,
     :requester_id, :sl_skill_id, :product_id, :association_type ]

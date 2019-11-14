@@ -125,7 +125,9 @@ module FilterFactory::Tickets
         value = condition['value']
         transformed_condition = if value.include? ' - '
                                   from, to = value.split(' - ')
-                                  fetch_date_range(Time.zone.parse(from).utc.iso8601, Time.zone.parse(to).end_of_day.utc.iso8601)
+                                  from_time = Time.zone.parse(from.to_s).try(:utc).try(:iso8601)
+                                  end_time = Time.zone.parse(to.to_s).try(:utc).try(:iso8601)
+                                  fetch_date_range(from_time, end_time)
                                 else
                                   safe_send("fsm_#{value}_condition")
                                 end

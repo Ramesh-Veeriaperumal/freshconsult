@@ -57,7 +57,7 @@ module MemcacheKeys
 
   ACCOUNT_STATUSES = "v2/ACCOUNT_STATUSES:%{account_id}"
 
-  ACCOUNT_STATUS_GROUPS = "v1/ACCOUNT_STATUS_GROUPS:%{account_id}"
+  ACCOUNT_STATUS_GROUPS = "v2/ACCOUNT_STATUS_GROUPS:%{account_id}"
 
   PORTAL_BY_URL = "v4/PORTAL_BY_URL:%{portal_url}"
 
@@ -287,6 +287,14 @@ module MemcacheKeys
   CUSTOM_NESTED_FIELD_CHOICES = 'v1/CUSTOM_NESTED_FIELD_CHOICES:%{account_id}'.freeze
 
   CHARGEBEE_SUBSCRIPTION_PLAN = 'CHARGEBEE_SUBSCRIPTION_PLAN:%{plan_name}:%{period}:%{currency}'.freeze
+
+  PICKLIST_MAPPING_BY_FIELD_ID = 'v1/PICKLIST_MAPPING_BY_FIELD_ID:%{account_id}:%{ticket_field_id}'
+
+  SECTION_PICKLIST_MAPPING_BY_FIELD_ID = 'v1/SECTION_PICKLIST_MAPPING_BY_FIELD_ID:%{account_id}:%{ticket_field_id}'
+
+  TICKET_FIELD_SECTION = 'v1/TICKET_FIELD_SECTION:%{account_id}'
+
+  SECTION_FIELDS_IN_TICKET_FIELD = 'v1/SECTION_FIELDS_IN_TICKET_FIELD:%{account_id}'
 
   def fetch_from_cache(key, &block)
     @cached_values = {} unless @cached_values

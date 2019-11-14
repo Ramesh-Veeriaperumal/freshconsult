@@ -24,6 +24,18 @@ module Helpdesk::TicketNotifications
       end
     end
 
+    # Adding a new method as for we are skipping dispatcher for service task
+    # duplicate autoreply without model changes in the ticket callback
+
+    def service_task_create_notification
+      # dont send email if user creates ticket by "save and close"
+      self.reload
+      return if spam? || deleted? || self.skip_notification? || closed_at.present? 
+      notify_by_email(EmailNotification::NEW_TICKET)
+      notify_by_email_without_delay(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if group_id
+      notify_by_email_without_delay(EmailNotification::TICKET_ASSIGNED_TO_AGENT) if responder_id
+    end
+
   def notify_on_update
     return if spam? || deleted?
     if Account.current.shared_ownership_enabled?

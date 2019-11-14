@@ -109,7 +109,7 @@ module NotesTestHelper
       }
     end
 
-    if note.facebook_source?
+    if note.fb_note?
       fb_post = note.fb_post
       fb_page = (fb_post.present? ? fb_post.facebook_page : note.notable.fb_post.try(:facebook_page))
 
@@ -143,7 +143,15 @@ module NotesTestHelper
 
   def fetch_handler_id(fb_page, note)
     return nil if fb_page.nil?
-    note.notable.is_fb_message? ? get_thread_key(fb_page, note.notable.fb_post) : note.notable.fb_post.original_post_id
+    parent_post_id = note.try(:fb_post).try(:parent).try(:post_id)
+    handler_key = if note.notable.is_fb_message?
+                    get_thread_key(fb_page, note.notable.fb_post)
+                  elsif parent_post_id
+                    parent_post_id
+                  else
+                    note.notable.fb_post.original_post_id
+                  end
+    handler_key
   end
 
   # def freshcaller_call_hash(note)

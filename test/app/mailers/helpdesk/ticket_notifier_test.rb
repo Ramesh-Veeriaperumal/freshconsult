@@ -52,12 +52,11 @@ class TicketNotifierTest < ActionMailer::TestCase
     Helpdesk::TicketNotifier.notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT, ticket)
   end
 
-  def test_agent_assign_email_notification_dont_go_for_service_ticket_ticket
+  def test_agent_assign_email_notification_service_ticket_ticket
     agent = add_test_agent(@account)
-    ticket = create_service_task_ticket({ email: 'sample@freshdesk.com', source: Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email], responder_id: agent.id })
     enable_agent_assign_notification
-    Mail::Message.any_instance.expects(:deliver).never
-    Helpdesk::TicketNotifier.notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT, ticket)
+    Mail::Message.any_instance.expects(:deliver).once
+    ticket = create_service_task_ticket({ email: 'sample@freshdesk.com', source: Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email], responder_id: agent.id }
   end
 
   def enable_agent_assign_notification

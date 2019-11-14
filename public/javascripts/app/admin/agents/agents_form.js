@@ -22,7 +22,6 @@ window.App.Agents = window.App.Agents || {};
 	group_details: {},
   fsm_group_type: null,
   new_agent: null,
-  field_tech_role_enabled: null,
 	freshid_enabled: {},
 	userEmail: '',
   initializeData: function(data) {
@@ -36,7 +35,6 @@ window.App.Agents = window.App.Agents || {};
     this.freshid_enabled = data.freshid_enabled;
     this.userEmail = data.userEmail;
     this.new_agent = data.new_agent;
-    this.field_tech_role_enabled = data.field_tech_role_enabled;
     this.bindHandlers();
   },
 	repaintSkills: function() {
@@ -139,7 +137,7 @@ window.App.Agents = window.App.Agents || {};
   defaultRole: function(agentType) {
     var _this = this;
     var field_agent = (agentType === 'field_agent') ? true : false;
-    var field_tech_role = _this.field_tech_role_enabled ? 'field technician' : 'agent';
+    var field_tech_role = 'field technician';
     for(var key in _this.role_details) {
       if(!field_agent && _this.role_details[key][0].toLowerCase().trim() == 'agent'){
         _this.roles[key] = true;

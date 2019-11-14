@@ -537,7 +537,7 @@ module Cache::Memcache::Account
   def account_status_groups_from_cache
     @account_status_groups_from_cache ||= begin
       key = ACCOUNT_STATUS_GROUPS % {:account_id => self.id}
-      MemcacheKeys.fetch(key) { self.status_groups.all }
+      MemcacheKeys.fetch(key) { self.status_groups.order(:group_id).all }
     end
   end
 

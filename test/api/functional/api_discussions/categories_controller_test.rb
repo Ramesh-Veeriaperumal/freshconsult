@@ -114,10 +114,14 @@ module ApiDiscussions
     end
 
     def test_update_with_invalid_model
-      new_fc = create_test_category
-      put :update, construct_params({ id: fc.id }, name: new_fc.name)
+      fc_1 = create_test_category
+      fc_2 = create_test_category
+      put :update, construct_params({ id: fc_1.id }, name: fc_2.name)
       match_json([bad_request_error_pattern('name', :'has already been taken')])
       assert_response 409
+    ensure
+      fc_1.destroy
+      fc_2.destroy
     end
 
     def test_update_length_invalid

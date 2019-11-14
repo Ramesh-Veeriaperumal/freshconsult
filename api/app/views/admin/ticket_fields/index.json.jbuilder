@@ -1,7 +1,7 @@
 position = 1
-section_field_position = @items.length - @dependent_field_ticket_field_id_mapping.length * 2 - @section_ticket_field_id_mapping.length
+section_field_position = @decorated_items.length - @dependent_field_ticket_field_id_mapping.length * 2 - @section_ticket_field_id_mapping.length
 section_field_position -= 1 if current_account.products_from_cache.length == 0
-json.array! @items do |item|
+json.array! @decorated_items do |item|
   item_hash = item.to_hash(true)
   if item_hash.length != 0
     item_hash[:section_mappings] =  @section_ticket_field_id_mapping[item_hash[:id]] if @section_ticket_field_id_mapping[item_hash[:id]].present?
