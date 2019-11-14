@@ -959,7 +959,7 @@ Helpkit::Application.routes.draw do
     end
 
     scope '/freddy' do
-      resources :bots, controller: 'channel/freddy/bots', only: [:create, :update]
+      resources :bots, controller: 'channel/freddy/bots', only: [:create, :update, :destroy]
     end
 
     match '/bots/:id/training_completed', to: 'channel/bot/services#training_completed', via: :post

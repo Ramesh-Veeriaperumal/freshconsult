@@ -21,7 +21,7 @@ module Freddy
     private
 
       def construct_header(url)
-        if url.include? UPLOAD_FILE
+        if url.include?(UPLOAD_FILE) || url.end_with?(ATTACHMENTS)
           content_type = request.headers['CONTENT_TYPE']
           body = request.body.read
         else
