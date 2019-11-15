@@ -283,6 +283,15 @@ module TicketsTestHelper
     }
   end
 
+  def cp_ticket_destroy_pattern_for_archive_action(expected_output = {}, ticket)
+    {
+      id: ticket.id,
+      display_id: ticket.display_id,
+      account_id: ticket.account_id,
+      archive: true
+    }
+  end
+
   def render_assoc_hash(current_association_type)
     return nil if current_association_type.blank?
 

@@ -253,6 +253,19 @@ class TicketTest < ActiveSupport::TestCase
     job['args'][1]['model_properties'].must_match_json_expression(pattern_to_match)
   end
 
+  def test_central_publish_ticket_destroy_while_archive_action
+    archive_enabled = @account.archive_tickets_enabled?
+    archive_action = true
+    @account.features.archive_tickets.create unless archive_enabled
+    t = create_ticket(ticket_params_hash)
+    pattern_to_match = cp_ticket_destroy_pattern_for_archive_action(t)
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    t = @account.tickets.find(t.id)
+    t.destroy
+    assert_equal t.save_deleted_ticket_info(archive_action), pattern_to_match
+    @account.features.archive_tickets.delete unless archive_enabled
+  end
+
   def test_block_central_publish_for_suspended_accounts
     skip('skip failing test cases')
     @account.subscription.state = 'suspended'
