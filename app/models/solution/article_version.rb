@@ -70,6 +70,10 @@ class Solution::ArticleVersion < ActiveRecord::Base
     meta[:discarded_by]
   end
 
+  def restore(version_no)
+    meta[:restored_version] = version_no
+  end
+
   def unlive!
     self.live = false
     save

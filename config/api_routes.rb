@@ -421,6 +421,7 @@ Helpkit::Application.routes.draw do
 
             member do
               get '/:id(/:language)', to: :show, constraints: { language: Regexp.union(Language.all_codes) }
+              post '/:id(/:language)/restore', to: :restore, constraints: { language: Regexp.union(Language.all_codes) }
             end
           end
 

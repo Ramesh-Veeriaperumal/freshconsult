@@ -232,6 +232,7 @@ Authority::Authorization::PrivilegeList.build do
   publish_solution do
     resource :'ember/solutions/article', only: %i[bulk_update create update reorder]
     resource :'ember/solutions/draft', only: %i[autosave update delete_attachment]
+    resource :'ember/solutions/article_version', only: %i[restore]
   end
 
   delete_solution do

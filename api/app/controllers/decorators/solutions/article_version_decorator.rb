@@ -43,6 +43,8 @@ class Solutions::ArticleVersionDecorator < ApiDecorator
       result[:discarded_by] = discarded_by
     elsif published?
       result[:live] = live
+    elsif meta[:restored_version]
+      result[:restored_version] = meta[:restored_version]
     end
     result
   end

@@ -86,6 +86,8 @@ module SolutionsArticleVersionsTestHelper
       pattern[:discarded_by] = article_version.discarded_by
     elsif article_version.published?
       pattern[:live] = article_version.live
+    elsif article_version.meta[:restored_version]
+      pattern[:restored_version] = article_version.meta[:restored_version]
     end
     pattern
   end
@@ -215,6 +217,7 @@ module SolutionsArticleVersionsTestHelper
 
   def stub_version_content(content = '{"title": "title", "description":"description"}')
     AwsWrapper::S3Object.stubs(:read).returns(content)
+    yield
   ensure
     AwsWrapper::S3Object.unstub(:read)
   end

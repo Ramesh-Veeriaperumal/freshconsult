@@ -13675,6 +13675,50 @@
         }
       }
     },
+    "/solutions/articles/{article_id}/versions/{id}/restore/{language}": {
+      "post": {
+        "tags": [
+          "Solution Article Version"
+        ],
+        "summary": "Restore an article version",
+        "parameters": [
+          {
+            "$ref": "#/parameters/language"
+          },
+          {
+            "name": "article_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "article meta id"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "version number"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Unable to restore"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Article not found"
+          },
+          "412": {
+            "description": "Cannot restore latest current version"
+          }
+        }
+      }
+    },
     "/configs/{id}": {
       "get": {
         "tags": [
