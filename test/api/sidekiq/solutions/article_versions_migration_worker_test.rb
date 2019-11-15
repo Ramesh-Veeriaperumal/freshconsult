@@ -31,6 +31,22 @@ class ArticleVersionsMigrationWorkerTest < ActionView::TestCase
       Solution::ArticleVersionsMigrationWorker.perform_async(account_id: @account.id, action: 'add')
       @account.reload
       assert_equal @account.solution_articles.where(status: Solution::Article::STATUS_KEYS_BY_TOKEN[:published]).count + @account.solution_drafts.count, @account.solution_article_versions.count
+      @account.solution_articles.each do |solution_article|
+        if solution_article.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
+          if solution_article.draft
+            published_version = solution_article.solution_article_versions.latest.last
+            assert_article_attachment_count(published_version, solution_article)
+            draft_version = solution_article.solution_article_versions.latest.first
+            assert_draft_attachment_count(published_version, solution_article)
+          else
+            published_version = solution_article.solution_article_versions.latest.first
+            assert_article_attachment_count(published_version, solution_article)
+          end
+        else
+          draft_version = solution_article.solution_article_versions.latest.first
+          assert_draft_attachment_count(draft_version, solution_article)
+        end
+      end
     end
   end
 
@@ -94,4 +110,23 @@ class ArticleVersionsMigrationWorkerTest < ActionView::TestCase
       Solution::ArticleVersionsMigrationWorker.perform_async(account_id: @account.id, action: 'add')
     end
   end
+
+  private
+
+    def assert_article_attachment_count(article_version, article)
+      assert_equal article_version.meta[:attachments].length, article.attachments.count
+      assert_equal article_version.meta[:cloud_files].length, article.cloud_files.count
+    end
+
+    def assert_draft_attachment_count(article_version, article)
+      draft = article.draft
+      assert_equal article_version.meta[:attachments].length, (article.attachments.count + draft.attachments.count - deleted_attachments(draft, :attachments).count)
+      assert_equal article_version.meta[:cloud_files].length, (article.cloud_files.count + draft.cloud_files.count - deleted_attachments(draft, :cloud_files).count)
+    end
+
+    def deleted_attachments(draft, type)
+      return draft.meta[:deleted_attachments][type] if draft.meta.present? && draft.meta[:deleted_attachments].present? && draft.meta[:deleted_attachments][type].present?
+
+      []
+    end
 end

@@ -2,13 +2,13 @@ module Solution::ArticleVersioning
   extend ActiveSupport::Concern
 
   included do
-    def version_create_or_update(record, exclude_article_payload = false)
+    def version_create_or_update(record, from_migration_worker = false)
       @delegator = if record.instance_of? Solution::Article
                      ArticleHandler.new(record)
                    else
                      DraftHandler.new(record)
                    end
-      @delegator.exclude_article_payload = exclude_article_payload
+      @delegator.from_migration_worker = from_migration_worker
       @delegator.create_or_update
     end
 
@@ -79,13 +79,13 @@ module Solution::ArticleVersioning
       version_record.version_no = (article_version_scoper.maximum(:version_no) || 0) + 1 if create_version?
     end
 
-    def exclude_article_payload=(val)
-      @exclude_article_payload = val
+    def from_migration_worker=(val)
+      @from_migration_worker = val
     end
 
     def assign_common_attributes(version_record)
       assign_version_no(version_record)
-      version_record.exclude_article_payload = @exclude_article_payload
+      version_record.from_migration_worker = @from_migration_worker
       version_record.user_id = current_user
       Solution::ArticleVersion::COMMON_ATTRIBUTES.each do |attribute|
         version_record.safe_send("#{attribute}=", safe_send(attribute))

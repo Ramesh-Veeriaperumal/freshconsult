@@ -9,7 +9,7 @@ class Solution::ArticleVersion < ActiveRecord::Base
 
   # we are excluding title, and description while feature migration, we will directly get title and description from record itself
   # to avoid sending huge payload to sidekiq servers during migration
-  attr_accessor :exclude_article_payload, :triggered_from
+  attr_accessor :from_migration_worker, :triggered_from
 
   serialize :meta, Hash
 
@@ -122,7 +122,7 @@ class Solution::ArticleVersion < ActiveRecord::Base
 
   def store_version_in_s3
     payload = s3_payload('store')
-    unless exclude_article_payload
+    unless from_migration_worker
       payload[:title] = title
       payload[:description] = description
     end
@@ -141,7 +141,11 @@ class Solution::ArticleVersion < ActiveRecord::Base
     normal_attachments = article.attachments
     cloud_files = article.cloud_files
     draft = article.draft
-    if draft
+
+    # to handle draft attachment changes, draft should be present,
+    # and the version should not be created from article migration script, for draft migration script we can handle as usual
+
+    if draft && !(from_migration_worker && triggered_from == 'article')
       normal_attachments = remove_deleted_attachments(draft, normal_attachments + draft.attachments, :attachments)
       cloud_files = remove_deleted_attachments(draft, cloud_files + draft.cloud_files, :cloud_files)
     end
