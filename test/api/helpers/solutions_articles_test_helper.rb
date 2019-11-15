@@ -19,6 +19,24 @@ module SolutionsArticlesTestHelper
     article.reload
   end
 
+  def without_publish_solution_privilege
+    User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
+    User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
+    User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
+    yield
+  ensure
+     User.any_instance.unstub(:privilege?)
+  end
+
+  def with_publish_solution_privilege
+    User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
+    User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
+    User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+    yield
+  ensure
+     User.any_instance.unstub(:privilege?)
+  end
+
   def get_folder_meta
     @account.solution_category_meta.where(is_default: false).collect(&:solution_folder_meta).flatten.map { |x| x unless x.is_default }.first
   end

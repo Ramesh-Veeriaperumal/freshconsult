@@ -46,7 +46,7 @@ module ApiSolutions
     end
 
     def agent_exists?
-      unless Account.current.agents_details_from_cache.detect { |x| x.id == @agent_id && x.privilege?(:publish_solution) }
+      unless Account.current.agents_details_from_cache.detect { |x| x.id == @agent_id && (x.privilege?(:create_and_edit_article) || x.privilege?(:publish_solution)) }
         errors[:agent_id] = :invalid_agent_id
         false
       end

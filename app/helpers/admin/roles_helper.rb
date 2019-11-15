@@ -52,7 +52,15 @@ module Admin::RolesHelper
               [{ :dom_type => "check_box", :id => "view_solutions", :class => "nested",
                  :children =>
 
-                  [{ :dom_type => "check_box", :id => "publish_solution" },
+                  [{ :dom_type => "check_box", :id => "create_and_edit_article", :class => "nested",
+                    :children =>
+                       [{ :dom_type => "radio_button", :id => "publish_solution" },
+                        { :dom_type => "radio_button", :id => "publish_approved_solution", 
+                          :not_display => !current_account.article_approval_workflow_enabled? },
+                        { :dom_type => "radio_button", :id => "do_not_publish",
+                          :privilege => "0", :class => "default" }]
+                   },
+                   { :dom_type => "check_box", :id => "approve_article", :not_display => !current_account.article_approval_workflow_enabled? },
                    { :dom_type => "check_box", :id => "delete_solution" },
                    { :dom_type => "check_box", :id => "manage_solutions" },
                    { :dom_type => "check_box", :id => "export_articles" }]

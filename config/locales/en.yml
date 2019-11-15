@@ -2539,7 +2539,10 @@ en:
         delete_ticket: Delete a ticket
         solutions: Solutions
         view_solutions: View solutions tab
-        publish_solution: Publish a solution
+        publish_solution: Publish an article
+        create_and_edit_article: Create or edit article
+        approve_article: Approve an article
+        publish_approved_solution: Publish an article, if approved
         delete_solution: Delete a solution
         manage_solutions: Create / Edit category or folder
         forums: Forums

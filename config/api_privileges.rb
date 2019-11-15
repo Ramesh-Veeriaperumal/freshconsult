@@ -229,10 +229,17 @@ Authority::Authorization::PrivilegeList.build do
     resource :'ember/flow'
   end
 
+  create_and_edit_article do
+    resource :'ember/solutions/article', only: %i[create update]
+    resource :'ember/solutions/draft', only: %i[autosave update delete_attachment]
+  end
+
   publish_solution do
-    resource :'ember/solutions/article', only: %i[bulk_update create update reorder]
+    #---start-This resource mapping is here to handle delta phase backward compatablility.
+    resource :'ember/solutions/article', only: %i[bulk_update reorder create update]
     resource :'ember/solutions/draft', only: %i[autosave update delete_attachment]
     resource :'ember/solutions/article_version', only: %i[restore]
+    #---end-
   end
 
   delete_solution do
