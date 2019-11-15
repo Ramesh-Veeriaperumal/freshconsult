@@ -18,11 +18,6 @@ class Bot::Response < ActiveRecord::Base
   after_update :send_feedback_to_ml, :if => :ml_feedback_changes?
   after_commit :close_ticket, :if => Proc.new { useful_changed && changed_model_value }
 
-  before_destroy :save_deleted_bot_response_info
-
-  concerned_with :presenter
-  publishable
-
   ARTICLE_ATTRIBUTES = [:useful, :opened, :agent_feedback]
 
   ARTICLE_ATTRIBUTES.each do |attr_name|
@@ -65,11 +60,7 @@ class Bot::Response < ActiveRecord::Base
   def has_positive_feedback?
     suggested_articles.each { |k,v| return true if v[:useful] == true }
     return false
-  end
-
-  def save_deleted_bot_response_info
-    @deleted_model_info = as_api_response(:central_publish_destroy)
-  end
+  end  
 
   def send_feedback_to_ml
     ::Bot::Emailbot::MlBotFeedback.perform_async(bot_response_id: id, article_meta_id: model_changes[:article_id])
