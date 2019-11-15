@@ -206,7 +206,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   view_solutions do
-    resource :'ember/solutions/article', only: %i[index article_content folder_articles show votes filter untranslated_articles export]
+    resource :'ember/solutions/article', only: %i[index article_content folder_articles show votes filter untranslated_articles]
     resource :'ember/solutions/category', only: %i[index show]
     resource :'ember/solutions/folder', only: %i[index category_folders show]
     resource :"ember/search/multiquery", only: [:search_results]
@@ -214,6 +214,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :'ember/solutions/home', only: %i[summary quick_views]
     resource :'ember/solutions/draft', only: %i[index]
     resource :'ember/solutions/article_version', only: %i[index show]
+  end
+
+  export_articles do
+    resource :'ember/solutions/article', only: %i[export]
   end
 
   manage_solutions do

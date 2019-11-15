@@ -1601,6 +1601,15 @@ module Ember
         assert_equal(' ', response.body)
       end
 
+      def test_export_articles_without_article_export_privilege
+        User.any_instance.stubs(:privilege?).with(:export_articles).returns(false)
+        export_params = { portal_id: @portal_id.to_s, author: 1, status: 1, category: ['2'], folder: ['4'], tags: ['Tag1'], article_fields: [{ field_name: 'title', column_name: 'Title' }] }
+        post :export, construct_params({ version: 'private' }, export_params)
+        assert_response 403
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
       def test_export_articles_without_feature
         Account.any_instance.stubs(:article_export_enabled?).returns(false)
         export_params = { portal_id: @portal_id.to_s, author: 1, status: 1, category: ['2'], folder: ['4'], tags: ['Tag1'], article_fields: [{ field_name: 'title', column_name: 'Title' }] }

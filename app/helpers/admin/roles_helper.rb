@@ -54,7 +54,8 @@ module Admin::RolesHelper
 
                   [{ :dom_type => "check_box", :id => "publish_solution" },
                    { :dom_type => "check_box", :id => "delete_solution" },
-                   { :dom_type => "check_box", :id => "manage_solutions" }]
+                   { :dom_type => "check_box", :id => "manage_solutions" },
+                   { :dom_type => "check_box", :id => "export_articles" }]
               }]
           },
 
