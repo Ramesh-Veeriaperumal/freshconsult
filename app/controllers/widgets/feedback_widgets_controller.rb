@@ -7,6 +7,7 @@ class Widgets::FeedbackWidgetsController < SupportController
   #Because multilingual is NOT applicable to widgets at the moment
 
   before_filter :build_item, :only => :new
+  before_filter :check_and_increment_usage, only: [:create]
   before_filter :set_native_mobile, :only => [:create]
   before_filter :remove_non_editable_fields, :only => [:create]
   before_filter :check_ticket_permission, :only => [:create]
@@ -14,6 +15,9 @@ class Widgets::FeedbackWidgetsController < SupportController
 
   include SupportTicketControllerMethods
   include Helpdesk::Permission::Ticket
+  include SupportTicketRateLimitMethods
+
+  helper SupportTicketRateLimitMethods
 
   def new
     respond_to do |format|
@@ -27,7 +31,7 @@ class Widgets::FeedbackWidgetsController < SupportController
   end
 
   def create
-    check_captcha = params[:check_captcha] == "true" || (current_account && current_account.launched?(:feedback_widget_captcha))
+    check_captcha_for_anonymous = params[:check_captcha] == "true" || (current_account && current_account.launched?(:feedback_widget_captcha))
     widget_response = {}
 
     if params[:meta].present?
@@ -35,7 +39,7 @@ class Widgets::FeedbackWidgetsController < SupportController
       params[:meta][:referrer] = sanitize_referrer params[:meta][:referrer] if params[:meta][:referrer].present?
     end
 
-    if create_the_ticket(check_captcha)
+    if create_the_ticket(enforce_captcha?(check_captcha_for_anonymous))
       widget_response = {:success => true }
     else
       @feeback_widget_error = true

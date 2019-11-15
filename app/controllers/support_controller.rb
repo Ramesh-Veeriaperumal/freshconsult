@@ -20,6 +20,9 @@ class SupportController < ApplicationController
   include Portal::Multilingual
   include Redis::OthersRedis
   include Portal::PreviewKeyTemplate
+  include SupportTicketRateLimitMethods
+
+  helper SupportTicketRateLimitMethods
 
   caches_action :show, :index, :new, :robots,
   :if => proc { |controller|
