@@ -51,7 +51,7 @@ module Facebook
 
     MESSAGE_FIELDS              = FETCH_FIELDS[:message].join(',') # Used while fetching object of a message got through webhook
 
-    DM_FIELDS                   = 'updated_time,messages.limit(100).fields(id,message,from,created_time,attachments.fields(id,image_data,mime_type,name,size,video_data,file_url.fields(mime_type,name,id,size)),shares.fields(description,id,link,name))'.freeze # Used while fetching all messages of a page for non realtime enabled
+    DM_FIELDS                   = 'updated_time,messages.limit(25).fields(id,message,from,created_time,attachments.fields(id,image_data,mime_type,name,size,video_data,file_url.fields(mime_type,name,id,size)),shares.fields(description,id,link,name))'.freeze # Used while fetching all messages of a page for non realtime enabled
 
     PROFILE_NAME_FIELDS         = FETCH_FIELDS[:profile_name].join(',')
 
@@ -155,7 +155,7 @@ module Facebook
 
     FB_MSG_TYPES = ['dm', 'post'].freeze
 
-    DEFAULT_MESSAGE_LIMIT = 100
+    DEFAULT_MESSAGE_LIMIT = 25
 
     FB_API_ME = 'me'.freeze
 
@@ -169,6 +169,6 @@ module Facebook
 
     FB_API_HTTP_COMPONENT = { http_component: 'body' }.freeze
 
-    DEFAULT_PAGE_LIMIT = 2 # Restrict the next page fetch logic to maximum of 2 pages apart from the first page fetched. So for a facebook page, only 3 pages with 100 threads and messages limit will be fetched per worker.
+    DEFAULT_PAGE_LIMIT = 9 # Restrict the next page fetch logic to maximum of 9 pages apart from the first page fetched. So for a facebook page, only 10 pages with the limit of 25 threads and messages on each call will be fetched.
   end
 end
