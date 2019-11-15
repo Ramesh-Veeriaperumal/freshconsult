@@ -25,4 +25,14 @@ class Admin::AccountFeaturesControllerTest < ActionController::TestCase
     delete :destroy, controller_params(name: 'invalid_feature')
     assert_response 400
   end
+
+  def test_feature_enable_for_help_widget
+    post :create, controller_params(name: 'help_widget')
+    assert_response 204
+  end
+
+   def test_disable_feature_for_help_widget
+    delete :destroy, controller_params(name: 'help_widget')
+    assert_response 204
+  end
 end
