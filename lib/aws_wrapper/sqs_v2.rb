@@ -7,7 +7,7 @@ module AwsWrapper
     # max_number_of_messages  => Need to pass
     # wait_time_seconds       => Can get from Queue by default
     # visibility_timeout      => Can get from Queue by default
-    
+
     def self.send_message(queue_name, message_body, delay_seconds = 0, options = {})
       $sqs_v2_client.send_message(
         queue_url: SQS_V2_QUEUE_URLS[queue_name],
@@ -22,7 +22,7 @@ module AwsWrapper
       poller = Aws::SQS::QueuePoller.new(SQS_V2_QUEUE_URLS[queue_name], client: $sqs_v2_client)
       poll_options = queue_attributes(queue_name).merge(options).merge(max_number_of_messages: 10)
       poller.poll(poll_options) do |messages|
-        messages.each do |msg| 
+        messages.each do |msg|
           yield(msg) if block_given?
         end
       end
@@ -34,32 +34,40 @@ module AwsWrapper
       poller = Aws::SQS::QueuePoller.new(SQS_V2_QUEUE_URLS[queue_name], client: $sqs_v2_client)
       poll_options = queue_attributes(queue_name).merge(options).merge(wait_time_seconds: nil, max_number_of_messages: 10)
       poller.poll(poll_options) do |messages|
-        messages.each do |msg| 
+        messages.each do |msg|
           yield(msg) if block_given?
         end
       end
     end
-      
+
     private
-      
-      def self.queue_url(queue_name)
-        begin
-          $sqs_v2_client.get_queue_url(queue_name: queue_name).queue_url
-        rescue => e
-          puts "Queue has not been created for #{queue_name} - error #{e.message}"
+
+    def self.queue_url(queue_name)
+      begin
+        if is_url?(queue_name)
+          return queue_name
+        else
+          return $sqs_v2_client.get_queue_url(queue_name: queue_name).queue_url
         end
+      rescue => e
+        puts "Queue has not been created for #{queue_name} - error #{e.message}"
       end
+    end
 
-      def self.queue_attributes(queue_name)
-        attributes = $sqs_v2_client.get_queue_attributes(
-          queue_url: SQS_V2_QUEUE_URLS[queue_name], 
-          attribute_names: ['VisibilityTimeout','ReceiveMessageWaitTimeSeconds']
-        ).attributes
+    def self.queue_attributes(queue_name)
+      attributes = $sqs_v2_client.get_queue_attributes(
+        queue_url: SQS_V2_QUEUE_URLS[queue_name],
+        attribute_names: ['VisibilityTimeout','ReceiveMessageWaitTimeSeconds']
+      ).attributes
 
-        {
-          visibility_timeout: attributes['VisibilityTimeout'],
-          wait_time_seconds: attributes['ReceiveMessageWaitTimeSeconds']
-        }
-      end
+      {
+        visibility_timeout: attributes['VisibilityTimeout'],
+        wait_time_seconds: attributes['ReceiveMessageWaitTimeSeconds']
+      }
+    end
+
+    def self.is_url?(str)
+      str.start_with?("https://")
+    end
   end
 end
