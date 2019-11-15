@@ -22,6 +22,7 @@ class AgentDecorator < ApiDecorator
       signature: record.signature_html,
       group_ids: group_ids,
       role_ids:  record.user.user_roles.map(&:role_id),
+      skill_ids: record.user.skill_ids,
       available_since: record.active_since.try(:utc),
       contact: ContactDecorator.new(record.user, {}).to_hash,
       created_at: created_at.try(:utc),

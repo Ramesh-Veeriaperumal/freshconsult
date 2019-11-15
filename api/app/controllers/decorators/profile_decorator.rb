@@ -13,6 +13,7 @@ class ProfileDecorator < ApiDecorator
       signature:        record.signature_html,
       group_ids:        record.group_ids,
       role_ids:         record.user.role_ids,
+      skill_ids:        record.user.skill_ids,
       available_since:  record.active_since.try(:utc),
       contact:          ContactDecorator.new(record.user, {}).to_hash,
       created_at:       created_at.try(:utc),
