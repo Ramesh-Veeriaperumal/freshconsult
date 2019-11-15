@@ -528,7 +528,7 @@ Authority::Authorization::PrivilegeList.build do
 
     # Used by V2 API
     resource :"api_contact", :only => [:make_agent]
-    resource :"api_agent", :only => [:show, :index, :update, :destroy]
+    resource :"api_agent", :only => [:show, :index, :update, :destroy, :create]
   end
 
   manage_availability do

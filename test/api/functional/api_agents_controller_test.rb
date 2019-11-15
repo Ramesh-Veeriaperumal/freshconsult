@@ -233,7 +233,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
     role_ids = Role.limit(2).pluck(:id)
     params = { time_zone: 'Chennai', language: 'en', ticket_scope: 2,
                role_ids: role_ids }
-    Account.any_instance.stubs(:has_feature?).with(:multi_timezone).returns(false)
+    Account.any_instance.stubs(:multi_timezone_enabled?).returns(false)
     Account.any_instance.stubs(:features?).with(:multi_language).returns(false)
     put :update, construct_params({ id: @agent.id }, params)
     match_json([bad_request_error_pattern(:language, :require_feature_for_attribute, code: :inaccessible_field, attribute: 'language', feature: :multi_language),
@@ -243,7 +243,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
     assert_response 400
   ensure
     Account.any_instance.unstub(:features?)
-    Account.any_instance.unstub(:has_feature?)
+    Account.any_instance.unstub(:multi_timezone_enabled?)
   end
 
   def test_update_agent_with_length_invalid
@@ -434,6 +434,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
     field_agent_type.destroy if field_agent_type.present?
     field_tech_role.destroy
     Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.any_instance.unstub(:agent_types_from_cache)
     Account.unstub(:current)
   end
 
@@ -459,6 +460,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
 
   def test_update_support_agent_with_field_type_group
     Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+    field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
     group_type = GroupType.create(name: 'field_agent_group', account_id: @account.id, group_type_id: 2)
     field_tech_role = @account.roles.create(name: 'Field technician', default_role: true)
     agent = add_test_agent(@account, role: Role.find_by_name('Field technician').id)
@@ -471,6 +473,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
   ensure
     agent.destroy
     group.destroy
+    field_agent_type.destroy
     group_type.destroy
     field_tech_role.destroy
     Account.any_instance.unstub(:field_service_management_enabled?)
@@ -715,5 +718,235 @@ class ApiAgentsControllerTest < ActionController::TestCase
   ensure
     agent.destroy
     specimen_agent.destroy
+  end
+
+  def test_create_agent_without_freshid
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(false)
+    params_hash = { email: Faker::Internet.email, ticket_scope: 2, role_ids: [Account.current.roles.find_by_name('Agent').id], name: Faker::Name.name }
+    post :create, construct_params(params_hash)
+    assert_response 201
+    response = parse_response @response.body
+    agent_id = response['id']
+  ensure
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    Account.current.agents.find_by_user_id(agent_id).destroy
+    Account.unstub(:current)
+  end
+
+  def test_create_support_agent_blank_roleids
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(false)
+    params_hash = { email: Faker::Internet.email, ticket_scope: 2, name: Faker::Name.name }
+    post :create, construct_params(params_hash)
+    assert_response 201
+    response = parse_response @response.body
+    agent_id = response['id']
+  ensure
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    Account.current.agents.find_by_user_id(agent_id).destroy
+    Account.unstub(:current)
+  end
+
+  def test_create_agent_with_invalid_ticket_scope
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(false)
+    params_hash = { email: Faker::Internet.email, ticket_scope: 5, name: Faker::Name.name }
+    post :create, construct_params(params_hash)
+    assert_response 400
+    response = parse_response @response.body
+    match_json([bad_request_error_pattern(:ticket_scope, :not_included, list: Agent::PERMISSION_TOKENS_BY_KEY.keys.join(','))])
+  ensure
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    Account.unstub(:current)
+  end
+
+  def test_create_agent_with_invalid_fields
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(false)
+    role_ids = [Account.current.roles.find_by_name('Agent').id]
+    group_ids = [create_group(@account).id]
+    params = { name: Faker::Name.name, phone: Faker::PhoneNumber.phone_number, mobile: Faker::PhoneNumber.phone_number, email: Faker::Internet.email, time_zone: 'Central Time (US & Canada)', language: 'hu', occasional: false, signature: Faker::Lorem.paragraph, ticket_scope: 2,
+               role_ids: role_ids, group_ids: group_ids, job_title: Faker::Name.name, company_id: 1 }
+    post :create, construct_params(params)
+    match_json([bad_request_error_pattern(:company_id, :invalid_field)])
+    assert_response 400
+  ensure
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    Account.unstub(:current)
+  end
+
+  def test_create_agent_invalid_datatypes
+    Account.stubs(:current).returns(Account.first)
+    params = { name: nil, phone: 3_534_653, mobile: 6_756_868, email: Faker::Name.name, time_zone: 'Cntral Time (US & Canada)', language: 'huty', occasional: 'yes', signature: 123, ticket_scope: 212,
+               role_ids: ['test', 'y'], group_ids: ['test', 'y'], job_title: 234 }
+    post :create, construct_params(params)
+    match_json([bad_request_error_pattern(:name, :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'),
+                bad_request_error_pattern(:phone, :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer),
+                bad_request_error_pattern(:job_title, :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer),
+                bad_request_error_pattern(:signature, :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer),
+                bad_request_error_pattern(:occasional, :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String),
+                bad_request_error_pattern(:mobile, :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer),
+                bad_request_error_pattern(:role_ids, :array_datatype_mismatch, expected_data_type: 'Positive Integer'),
+                bad_request_error_pattern(:group_ids, :array_datatype_mismatch, expected_data_type: 'Positive Integer'),
+                bad_request_error_pattern(:email, :invalid_format, accepted: 'valid email address'),
+                bad_request_error_pattern(:language, :not_included, list: I18n.available_locales.map(&:to_s).join(',')),
+                bad_request_error_pattern(:time_zone, :not_included, list: ActiveSupport::TimeZone.all.map(&:name).join(',')),
+                bad_request_error_pattern(:ticket_scope, :not_included, list: Agent::PERMISSION_TOKENS_BY_KEY.keys.join(','))])
+    assert_response 400
+  ensure
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    Account.unstub(:current)
+  end
+
+  def test_create_with_role_ids_for_field_agent
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(false)
+    field_agent_type = AgentType.create_agent_type(@account, 'field_agent')
+    params_hash = { email: Faker::Internet.email, ticket_scope: 2, role_ids: [Account.current.roles.find_by_name('Agent').id], agent_type: 2, name: Faker::Name.name }
+    post :create, construct_params(params_hash)
+    response = parse_response @response.body
+    assert_equal response['errors'][0]['message'], 'role_assign_not_allowed_for_field_agent'
+    assert_response 400
+  ensure
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    field_agent_type.destroy
+    Account.unstub(:current)
+  end
+
+  def test_create_to_check_freshid_existing_user
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(true)
+    AgentDelegator.any_instance.stubs(:freshid_user_details).returns(User.first)
+    params_hash = { email: Faker::Internet.email, ticket_scope: 2, name: Faker::Name.name }
+    post :create, construct_params(params_hash)
+    assert_response 400
+    response = parse_response @response.body
+  ensure
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.any_instance.unstub(:freshid_user_details)
+    AgentDelegator.any_instance.unstub(:freshid_user_details)
+    Account.unstub(:current)
+  end
+
+  def test_create_without_privilege
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(false)
+    Account.current.stubs(:freshid_user_details).returns(User.first)
+    User.any_instance.stubs(:privilege?).with(:manage_users).returns(false)
+    params_hash = { email: Faker::Internet.email, ticket_scope: 2, name: Faker::Name.name }
+    post :create, construct_params(params_hash)
+    assert_response 403
+    match_json(request_error_pattern(:access_denied))
+  ensure
+    Account.unstub(:current)
+    User.any_instance.unstub(:privilege?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.any_instance.unstub(:freshid_user_details)
+  end
+
+  def test_create_agent_with_length_invalid
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(false)
+    params_hash = { name: Faker::Lorem.characters(300), job_title: Faker::Lorem.characters(300), mobile: Faker::Lorem.characters(300),
+                    email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(300)}.com", phone: Faker::Lorem.characters(300) }
+    post :create, construct_params(params_hash)
+    match_json([bad_request_error_pattern('name', :'Has 300 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('job_title', :'Has 300 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('mobile', :'Has 300 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('email', :'Has 328 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('phone', :'Has 300 characters, it can have maximum of 255 characters'),
+                bad_request_error_pattern('ticket_scope', :'Mandatory attribute missing', code: :inaccessible_field)])
+    assert_response 400
+  ensure
+    Account.unstub(:current)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    Account.any_instance.unstub(:field_service_management_enabled?)
+  end
+
+  def test_create_field_agent_with_correct_scope_and_role
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(false)
+    field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
+    field_tech_role = @account.roles.create(name: 'Field technician', default_role: true)
+    params_hash = { email: Faker::Internet.email, ticket_scope: 2, agent_type: field_agent_type.agent_type_id, name: Faker::Name.name }
+    post :create, construct_params(params_hash)
+    response = parse_response @response.body
+    agent_id = response['id']
+    assert_response 201
+  ensure
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    field_agent_type.destroy
+    field_tech_role.destroy
+    Account.current.agents.find_by_user_id(agent_id).destroy
+    Account.unstub(:current)
+  end
+
+  def test_create_agent_with_incorrect_scope_and_role
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(false)
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+    field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
+    params_hash = { role_ids: [Role.find_by_name('Account Administrator').id], agent_type: field_agent_type.agent_type_id, ticket_scope: Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets], email: Faker::Internet.email, name: Faker::Name.name }
+    Account.stubs(:current).returns(Account.first)
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('role_ids', :role_assign_not_allowed_for_field_agent, code: :invalid_value),
+                bad_request_error_pattern('ticket_scope', :"It should be one of these values: '2,3'", code: :invalid_value)])
+  ensure
+    field_agent_type.destroy if field_agent_type.present?
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.unstub(:current)
+  end
+
+  def test_create_field_agent_with_field_type_group
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(false)
+    field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
+    field_tech_role = @account.roles.create(name: 'Field technician', default_role: true)
+    group_type = GroupType.create(name: 'field_agent_group', account_id: Account.current.id, group_type_id: 2)
+    group = create_group(Account.current, group_type: group_type.group_type_id)
+    params_hash = { email: Faker::Internet.email, ticket_scope: 2, agent_type: field_agent_type.agent_type_id, name: Faker::Name.name, group_ids: [group.id] }
+    post :create, construct_params(params_hash)
+    response = parse_response @response.body
+    agent_id = response['id']
+    assert_response 201
+  ensure
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    field_agent_type.destroy
+    group.destroy
+    group_type.destroy
+    field_tech_role.destroy
+    Account.current.agents.find_by_user_id(agent_id).destroy
+    Account.unstub(:current)
+  end
+
+  def test_create_agent_with_support_group
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(false)
+    group = create_group(@account)
+    params_hash = { email: Faker::Internet.email, ticket_scope: 2, name: Faker::Name.name, group_ids: [group.id] }
+    post :create, construct_params(params_hash)
+    response = parse_response @response.body
+    agent_id = response['id']
+    assert_response 201
+  ensure
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    group.destroy
+    Account.unstub(:current)
   end
 end

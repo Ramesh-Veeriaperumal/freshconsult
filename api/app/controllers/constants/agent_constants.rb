@@ -5,11 +5,18 @@ module AgentConstants
   UPDATE_ARRAY_FIELDS = %w[group_ids role_ids].freeze
   TICKET_SEARCH_SETTINGS = [:include_subject, :include_description, :include_other_properties, :include_notes, :include_attachment_names, :archive].freeze
   UPDATE_FIELDS = %w[name email phone mobile time_zone job_title language signature ticket_scope occasional shortcuts_enabled].freeze | UPDATE_ARRAY_FIELDS | [ticket_assignment: [:available]].freeze | [search_settings: [tickets: TICKET_SEARCH_SETTINGS]].freeze
+  CREATE_FIELDS = %w[name email phone mobile time_zone job_title language signature ticket_scope occasional agent_type].freeze | UPDATE_ARRAY_FIELDS | [ticket_assignment: [:available]].freeze
   CREATE_MULTIPLE_FIELDS = UPDATE_FIELDS
   TICKET_SCOPES = Agent::PERMISSION_TOKENS_BY_KEY.keys
+  FIELD_AGENT_SCOPES = Agent::PERMISSIONS_TOKEN_FOR_FIELD_AGENT.keys
+  AGENT_TYPES = Agent::PERMISSION_KEYS_FOR_AGENT_TYPES.keys
   USER_FIELDS = %w[name email phone mobile time_zone job_title language role_ids].freeze
   VALIDATABLE_DELEGATOR_ATTRIBUTES = %w[agent_role_ids group_ids].freeze
   VALIDATION_CLASS = 'AgentValidation'.freeze
+  DEFAULT_AGENT_TYPE_LIST = {
+    support_agent: [:support_agent, 'support_agent'],
+    field_agent: [:field_agent, 'field_agent']
+  }.freeze
   AGENT_CHANNELS = { ticket_assignment: 'ticket_assignment', chat: 'live_chat', phone: 'freshfone' }.freeze
   ALLOWED_ONLY_PARAMS = %w[available available_count with_privilege].freeze
   FIELD_MAPPINGS = { :"user.primary_email.email" => :email, :"user.base" => :email }.freeze

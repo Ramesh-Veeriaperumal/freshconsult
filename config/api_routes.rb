@@ -131,8 +131,7 @@ Helpkit::Application.routes.draw do
     match 'agents/me' => 'api_profiles#update', :defaults => { format: 'json', id: 'me' }, via: :put
     match 'agents/me/reset_api_key' => 'api_profiles#reset_api_key', :defaults => { format: 'json', id: 'me' }, via: :post
 
-    resources :agents, controller: 'api_agents', only: [:index, :show, :update, :destroy]
-
+    resources :agents, controller: 'api_agents', only: [:index, :show, :update, :destroy, :create]
     resources :canned_response_folders, controller: 'canned_response_folders', only: [:index, :show, :create, :update]
     resources :canned_responses, controller: 'canned_responses', only: [:index, :show, :create, :update]
     resources :scenario_automations, controller: 'scenario_automations', only: :index

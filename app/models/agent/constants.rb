@@ -18,6 +18,16 @@ class Agent < ActiveRecord::Base
     [ :assigned_tickets, 3, I18n.t("agent.individual")]
   ]
 
+  FIELD_AGENT_TICKET_PERMISSION = [
+    [ :group_tickets,  2, I18n.t("agent.group_access")], 
+    [ :assigned_tickets, 3, I18n.t("agent.individual")]
+  ].freeze
+
+  AGENT_TYPES = [
+    [:support_agent, 1],
+    [:field_agent, 2]
+  ].freeze
+
   AGENT_LOGIN_LOGOUT_ACTIONS = [
     [true, :logged_in],
     [true, :logged_out]
@@ -28,8 +38,10 @@ class Agent < ActiveRecord::Base
     [true, :logged_out]
   ].freeze 
   PERMISSION_TOKENS_BY_KEY = Hash[*TICKET_PERMISSION.map { |i| [i[1], i[0]] }.flatten]
+  PERMISSIONS_TOKEN_FOR_FIELD_AGENT = Hash[*FIELD_AGENT_TICKET_PERMISSION.map { |i| [i[1], i[0]] }.flatten]
   PERMISSION_KEYS_BY_TOKEN = Hash[*TICKET_PERMISSION.map { |i| [i[0], i[1]] }.flatten]
   PERMISSION_KEYS_OPTIONS = Hash[*TICKET_PERMISSION.map { |i| [i[1], i[2]] }.flatten]
+  PERMISSION_KEYS_FOR_AGENT_TYPES = Hash[*AGENT_TYPES.map { |i| [i[1], i[0]] }.flatten]
 
   EXPORT_FIELDS = [
     {:label => "export_data.agents.fields.name",         :value => "agent_name",      :selected => true,  :feature => nil,                                 :association => :user               },

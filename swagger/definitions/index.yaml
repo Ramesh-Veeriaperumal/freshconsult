@@ -116,6 +116,8 @@ profile_input:
   $ref: ./request/profiles/profile.yaml
 agent_input:
   $ref: ./request/agents/agent.yaml
+agent_create_input:
+  $ref: ./request/agents/agent_create.yaml
 bulk_agent_input:
   $ref: ./request/agents/bulk_agent.yaml
 onboarding_update_activation_email_input:

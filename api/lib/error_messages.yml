@@ -257,6 +257,7 @@ api_error_messages:
   something_wrong_in_fsm_enable: "Something went wrong while trying to reserve fields for field service management."
   agent_type_change_not_allowed: "You cannot change the agent type"
   should_not_be_support_group: "Field technicians cannot join Support groups"
+  user_details_present_in_freshid: "User details already present in your Freshworks organisation for the name, mobile, phone and job fields"
   invalid_date_time_range: "Invalid date time range, end time should be greater or equal to the start time."
   field_agent_scope: "Field technician should have restricted or group scope"
   field_agent_state: "Field technician cannot be an occasional agent"
