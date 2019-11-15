@@ -32,5 +32,9 @@ module AccountSetup
       return true unless respond_to?("#{current_setup_flag}_eligible?")
       safe_send("#{current_setup_flag}_eligible?")
     end
+
+    def reports_eligible?
+      !current_account.new_onboarding_enabled?
+    end  
   end
 end

@@ -27,9 +27,6 @@ class UserSessionsController < ApplicationController
   before_filter :redirect_to_customer_sso_freshid_authorize, only: :customer_login, if: -> { !logged_in? && freshid_integration_enabled? }
   before_filter :check_exisiting_saml_session, only: :saml_login
 
-  ONBOARDING_ROUTE = '/a/getstarted'.freeze
-  ROOT_PATH = '/'.freeze
-
   def new
     flash.keep
     # Login normal supersets all login access (can be used by agents)
@@ -363,7 +360,7 @@ class UserSessionsController < ApplicationController
       return redirect_to login_url 
     end
     if @current_user.active_freshid_agent?
-      cookies[:return_to] = ONBOARDING_ROUTE
+      cookies[:return_to] = '/a/getstarted'
       redirect_to support_login_url(params: {new_account_signup: true, signup_email: @current_user.email}) and return
     elsif freshid_integration_enabled?
       new_freshid_signup = @current_user.active = true
@@ -375,7 +372,11 @@ class UserSessionsController < ApplicationController
       @current_user.deliver_admin_activation
       #SubscriptionNotifier.send_later(:deliver_welcome, current_account)
       flash[:notice] = t('signup_complete_activate_info')
-      redirect_to (current_account.anonymous_account? ? ROOT_PATH : ONBOARDING_ROUTE)
+      if current_account.launched?(:onboarding_v2) && !current_account.anonymous_account?
+        redirect_to '/a/getstarted'
+      else
+        redirect_to '/'
+      end
     else
       flash[:notice] = "Please provide valid login details!"
       render :action => :new
