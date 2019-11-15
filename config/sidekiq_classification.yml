@@ -138,6 +138,7 @@
     - reset_internal_group
     - reset_internal_agent
     - reset_gamification_score
+    - reset_archive_tickets
     - export_agents
     - deactivate_monitorship
     - tag_uses_destroy
