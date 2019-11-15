@@ -1,8 +1,10 @@
 class ContactMergeController < ApplicationController
   include ApplicationHelper
+  include ContactsCompaniesHelper
 
   before_filter :source_user
   before_filter :set_target_users, :check_limits, :only => [:confirm, :merge]
+  before_filter :validate_user_companies_limit, :only => :merge
 
   def new
     @contact_search = Array.new
@@ -122,6 +124,12 @@ class ContactMergeController < ApplicationController
       User::MERGE_VALIDATIONS.each do |att|
         set_error(att[2], att[1]) if exceded_user_attribute(att[0], att[1])
       end
+    end
+
+    def validate_user_companies_limit
+      @error="" if @error.blank?
+      company_attributes = ['company_names', user_companies_limit, 'companies']
+      set_error(company_attributes[2], company_attributes[1]) if exceded_user_attribute(company_attributes[0], company_attributes[1])
     end
 
     def exceded_user_attribute att, max

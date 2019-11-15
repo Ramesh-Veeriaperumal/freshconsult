@@ -24,6 +24,7 @@ class AnonymousAccountCleanupTest < ActionView::TestCase
   def test_anonymous_account_cleanup
     create_sample_account(Faker::Lorem.word, Faker::Internet.email)
     account_id = @account.id
+    @account.reload
     @account.account_additional_settings.mark_account_as_anonymous
     Account.stubs(:current).returns(@account.reload)
     args = { account_id: @account.id }

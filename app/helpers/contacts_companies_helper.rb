@@ -73,4 +73,13 @@ module ContactsCompaniesHelper
   def company_description description
     description.gsub(/(\r\n|\n|\r)/, '<br />').html_safe
   end
+
+  def user_companies_limit
+    account_additional_settings = Account.current.account_additional_settings
+    if account_additional_settings.present?
+      (account_additional_settings.additional_settings || {})['extended_user_companies'] || User::MAX_USER_COMPANIES
+    else
+      User::MAX_USER_COMPANIES
+    end
+  end
 end

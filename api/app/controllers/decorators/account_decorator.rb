@@ -36,6 +36,7 @@ class AccountDecorator < ApiDecorator
     ret_hash[:anonymous_account] = true if record.anonymous_account?
     ret_hash[:organisation_domain] = organisation_domain
     ret_hash[:freshdesk_sso_enabled] = record.freshdesk_sso_enabled?
+    ret_hash[:extended_user_companies] = extended_user_companies if extended_user_companies.present? 
     ret_hash
   end
 
@@ -181,6 +182,10 @@ class AccountDecorator < ApiDecorator
           lp_features.delete :trial_subscription
         end
       end
+    end
+
+    def extended_user_companies
+      (record.account_additional_settings.additional_settings || {})['extended_user_companies']
     end
 
     def account_admin?

@@ -773,6 +773,7 @@ class AccountsController < ApplicationController
     end
 
     def mark_account_as_anonymous
+      @signup.account.reload
       @signup.account.account_additional_settings.mark_account_as_anonymous
     end
 

@@ -106,6 +106,18 @@ module Ember
       Account.current.reload
     end
 
+    def set_max_extended_companies
+      account_additional_settings = Account.current.account_additional_settings
+      account_additional_settings.additional_settings['extended_user_companies'] = 500
+      account_additional_settings.save
+    end
+
+    def reset_max_extended_companies
+      account_additional_settings = Account.current.account_additional_settings
+      account_additional_settings.additional_settings.delete('extended_user_companies')
+      account_additional_settings.save
+    end
+
     def test_create_with_incorrect_avatar_type
       params_hash = contact_params_hash.merge(avatar_id: 'ABC')
       post :create, construct_params({ version: 'private' }, params_hash)
@@ -360,6 +372,25 @@ module Ember
       match_json([{ field: 'other_companies',
                     message: "Has #{User::MAX_USER_COMPANIES} elements, it can have maximum of #{ContactConstants::MAX_OTHER_COMPANIES_COUNT} elements",
                     code: :invalid_value }])
+    end
+
+    def test_error_in_create_with_more_than_max_extended_companies
+      set_max_extended_companies
+      company_ids = (1..user_companies_limit + 1).to_a
+      other_companies_param = construct_other_companies_hash(company_ids)
+      post :create, construct_params({ version: 'private' }, name: Faker::Lorem.characters(10),
+                                                             email: Faker::Internet.email,
+                                                             company: {
+                                                               id: company_ids[0],
+                                                               view_all_tickets: true
+                                                             },
+                                                             other_companies: other_companies_param)
+      assert_response 400
+      match_json([{ field: 'other_companies',
+                    message: "Has #{user_companies_limit} elements, it can have maximum of #{user_companies_limit - 1} elements",
+                    code: :invalid_value }])
+    ensure
+      reset_max_extended_companies
     end
 
     def test_error_in_create_contact_with_other_companies
