@@ -1,4 +1,4 @@
-module Admin::AutomationErrorHelper
+module Admin::ConditionErrorHelper
   def errors_for_invalid_attributes
     @invalid_attributes.each do |invalid_param|
       unexpected_parameter(invalid_param)
@@ -74,6 +74,13 @@ module Admin::AutomationErrorHelper
     errors[construct_key(name)] << message
     error_message = {}
     error_message[construct_key(name)] = {name: name}
+    error_options.merge!(error_message)
+  end
+
+  def invalid_position_error(name, max_position)
+    errors[construct_key(name)] << :invalid_position
+    error_message = {}
+    error_message[construct_key(name)] = { max_position: max_position }
     error_options.merge!(error_message)
   end
 

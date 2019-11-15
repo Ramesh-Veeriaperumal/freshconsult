@@ -1,20 +1,22 @@
-module Admin::Automation::Condition::ContactFieldConstants
-  CONDITION_CONTACT_FIELDS_HASH = [
-    { name: :email, field_type: :email, data_type: :String,
+module Admin::Condition::CompanyFieldConstants
+  CONDITION_COMPANY_FIELDS_HASH = [
+    { name: :domains, field_type: :object_id, data_type: :String,
       invalid_rule_types: [3] }.freeze,
-    { name: :name, field_type: :text, data_type: :String,
-      invalid_rule_types: [3] }.freeze,
-    { name: :job_title, field_type: :text, data_type: :String,
-      invalid_rule_types: [3] }.freeze,
-    { name: :time_zone, field_type: :choicelist, data_type: :String,
-      invalid_rule_types: [3] }.freeze,
-    { name: :language, field_type: :choicelist, data_type: :String,
+    { name: :name, field_type: :object_id, data_type: :String,
       invalid_rule_types: [3] }.freeze,
     { name: :segments, field_type: :object_id, data_type: :Integer,
+      invalid_rule_types: [3] }.freeze,
+    { name: :health_score, field_type: :choicelist, data_type: :String,
+      invalid_rule_types: [3] }.freeze,
+    { name: :account_tier, field_type: :object_id, data_type: :String,
+      invalid_rule_types: [3] }.freeze,
+    { name: :industry, field_type: :object_id, data_type: :String,
+      invalid_rule_types: [3] }.freeze,
+    { name: :renewal_date, field_type: :date, data_type: :String,
       invalid_rule_types: [3] }.freeze
   ].freeze
 
-  CUSTOM_CONDITION_CONTACT_HASH = {
+  CUSTOM_CONDITION_COMPANY_HASH = {
     custom_dropdown: { field_type: :dropdown, data_type: :String, custom_field: true,
                        invalid_rule_types: [3] }.freeze,
     custom_checkbox: { field_type: :checkbox, data_type: :String, custom_field: true,

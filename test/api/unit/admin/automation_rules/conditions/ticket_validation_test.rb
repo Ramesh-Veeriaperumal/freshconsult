@@ -4,7 +4,9 @@ require_relative '../../../../helpers/automation/condition_validation_test_helpe
 module Admin::AutomationRules::Conditions
   class TicketValidationTest < ActionView::TestCase
     include Automation::ConditionValidationTestHelper
-    include Admin::Automation::CustomFieldHelper
+    include Admin::CustomFieldHelper
+    include Admin::EventCustomFieldHelper
+    include Admin::ActionCustomFieldHelper
 
     # invalid test
     def test_invalid_ticket_conditions
@@ -31,7 +33,6 @@ module Admin::AutomationRules::Conditions
                       custom_company_condition: custom_condition_company }
         validation = automation_validation_class.new(params, cf_fields, nil, false)
         assert validation.valid?
-        Account.unstub(:current)
       end
     end
 
@@ -45,8 +46,13 @@ module Admin::AutomationRules::Conditions
                       custom_company_condition: custom_condition_company }
         validation = automation_validation_class.new(params, cf_fields, nil, false)
         assert validation.invalid?
-        Account.unstub(:current)
       end
     end
+
+    private
+
+      def automation_validation_class
+        'Admin::AutomationValidation'.constantize
+      end
   end
 end

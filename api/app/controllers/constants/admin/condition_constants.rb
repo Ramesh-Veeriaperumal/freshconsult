@@ -1,7 +1,5 @@
-module Admin::Automation::ConditionConstants
-  include Admin::Automation::Condition::TicketFieldConstants
-  include Admin::Automation::Condition::ContactFieldConstants
-  include Admin::Automation::Condition::CompanyFieldConstants
+module Admin::ConditionConstants
+  include Admin::ConditionFieldConstants
 
   FIELD_TYPE = {
     text: %i[is is_not contains does_not_contain starts_with ends_with is_any_of is_none_of],
@@ -48,4 +46,36 @@ module Admin::Automation::ConditionConstants
   SUPERVISOR_SINGLE_VALUE_OPERATOR = %i[contains does_not_contain starts_with ends_with].freeze
 
   NO_VALUE_EXPECTING_OPERATOR = %i[selected not_selected].freeze
+
+  NESTED_EVENT_LABEL = %i[from_nested_field to_nested_field].freeze
+
+  NESTED_LEVEL_COUNT = 2
+
+  CONDITION_SET_NAMES = %w[condition_set_1 condition_set_2].freeze
+
+  MAXIMUM_CONDITION_SET_COUNT = 2
+
+  MAXIMUM_SUPERVISOR_CONDITION_SET_COUNT = 1
+
+  CONDITION_RESOURCE_TYPES = %i[ticket contact company].freeze
+
+  CONDITION_SET_PROPERTIES = %i[resource_type field_name operator value].freeze
+
+  LEVELS = %i[level2 level3].freeze
+
+  PERMITTED_DEFAULT_CONDITION_SET_VALUES = %i[field_name operator value].freeze
+
+  BUSINESS_HOURS_FIELDS = %i[created_at updated_at].freeze
+
+  ANY_NONE_VALUES = ['', '--', '##'].freeze
+
+  CONDITION_SET_OPERATOR = %w[or and].freeze
+
+  CUSTOM_FIELD_NONE_OR_ANY = %i[nested_field dropdown].freeze
+
+  EMAIL_VALIDATOR_OPERATORS = %i[is is_not is_any_of is_none_of].freeze
+
+  TICKET_ASSOCIATION_TYPES = [1, 2, 3, 4].freeze
+
+  DISPATCHER_CONDITION_TICKET_ASSOCIATION_TYPES = [2, 3].freeze
 end

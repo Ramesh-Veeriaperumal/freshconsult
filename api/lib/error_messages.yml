@@ -415,4 +415,8 @@ api_error_messages:
   delete_default_field_error: "Default field '%{name}' can't be deleted"
   section_inside_ticket_field_error: "Ticket field '%{name}' has sections, so it can't be deleted"
   nested_field_child_delete_error: "Can not delete Level2 and Level3 dependent field, if you want to remove please update the parent field"
+
+  #Skills
+  duplicate_skill_name: "A skill already exists with name - '%{name}'"
+
   cannot_delete_file_ticket_field_attachment: "Attachment associated with a file ticket field cannot be deleted."

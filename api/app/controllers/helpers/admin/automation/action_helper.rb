@@ -1,6 +1,6 @@
 module Admin::Automation::ActionHelper
   include Admin::AutomationConstants
-  include Admin::AutomationValidationHelper
+  include Admin::ConditionValidationHelper
   include Admin::Automation::WebhookValidations
 
   def action_validation(expected, actual)

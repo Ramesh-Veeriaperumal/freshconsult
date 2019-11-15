@@ -344,6 +344,8 @@ Helpkit::Application.routes.draw do
     scope '/automations/:rule_type' do
       resources :rules, controller: 'admin/automations', only: [:index, :create, :update, :destroy, :show]
     end
+
+    resources :skills, controller: 'admin/api_skills', only: [:index, :show, :create, :update, :destroy]
   end
 
   ember_routes = proc do

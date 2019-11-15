@@ -1,6 +1,6 @@
 module Admin::Automation::EventHelper
   include Admin::AutomationConstants
-  include Admin::AutomationValidationHelper
+  include Admin::ConditionValidationHelper
 
   def event_validation(expected, actual)
     case expected[:field_type]

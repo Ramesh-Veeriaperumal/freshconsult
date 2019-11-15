@@ -1,4 +1,4 @@
-module Admin::AutomationRules::Conditions
+module Admin::Conditions
   class TicketDelegator < BaseDelegator
     include Admin::AutomationDelegatorHelper
     include Admin::AutomationConstants

@@ -174,6 +174,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :'admin/freshcaller_account', only: [:show]
     resource :"admin/ticket_field", only: [:create, :update, :destroy, :show, :index]
     resource :"admin/section", only: [:create, :update, :destroy, :show, :index]
+    resource :"admin/api_skill", only: [:index, :create, :show, :update, :destroy]
   end
 
   edit_ticket_properties do
@@ -284,5 +285,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/automation", only: [:index, :create, :show, :update, :destroy]
     resource :"api_business_hour", :only => [:index, :show]
     resource :"api_search/automation", only: [:results]
+  end
+
+  manage_skills do
+    resource :"admin/api_skill", only: [:index, :create, :show, :update, :destroy]
   end
 end

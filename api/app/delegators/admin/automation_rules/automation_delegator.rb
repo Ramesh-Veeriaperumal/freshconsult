@@ -57,7 +57,7 @@ module Admin::AutomationRules
     end
 
     def evaluate_on_condition(evaluate_on, condition_set)
-      condition_delegator_klass ="Admin::AutomationRules::Conditions::#{evaluate_on.to_s.capitalize}Delegator".constantize
+      condition_delegator_klass ="Admin::Conditions::#{evaluate_on.to_s.capitalize}Delegator".constantize
       condition_delegator = condition_delegator_klass.new(@rule, condition_set)
       merge_errors(condition_delegator) if condition_delegator.invalid?
     end
