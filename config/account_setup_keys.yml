@@ -7,6 +7,7 @@
   data_import: 6
 :condition_based_setup_keys:
   twitter: 4
+  custom_app: 7
   freshfone_number: 8
   email_notification: 9
   reports: 10
@@ -41,6 +42,7 @@
   - reply_to_ticket
   - customize_domain
   - support_email
+  - custom_app
   - agents
   - email_notification
   - freshfone_number

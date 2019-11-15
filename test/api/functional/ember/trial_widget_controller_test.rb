@@ -21,9 +21,15 @@ class Ember::TrialWidgetControllerTest < ActionController::TestCase
 
   def test_index
     # new onboarding.
+    Account.current.launch(:onboarding_v2)
     get :index, controller_params({ version: 'private' }, false)
     assert_response 200
     match_json(new_trial_widget_index_pattern)
+    # old onboarding.
+    Account.current.rollback(:onboarding_v2)
+    get :index, controller_params({ version: 'private' }, false)
+    assert_response 200
+    match_json(old_trial_widget_index_pattern)
   end
 
   def test_index_with_forums_enabled
@@ -32,7 +38,7 @@ class Ember::TrialWidgetControllerTest < ActionController::TestCase
     get :index, controller_params({ version: 'private' }, false)
     assert_response 200
     assert_equal parse_response(response.body)['tasks'].include?('name' => 'forums', 'isComplete' => false), true
-    match_json(new_trial_widget_index_pattern)
+    match_json(old_trial_widget_index_pattern)
     Account.any_instance.unstub(:forums_setup?)
     Account.any_instance.unstub(:forums_eligible?)
   end
@@ -43,12 +49,13 @@ class Ember::TrialWidgetControllerTest < ActionController::TestCase
     get :index, controller_params({ version: 'private' }, false)
     assert_response 200
     assert_equal parse_response(response.body)['tasks'].include?('name' => 'email_notification', 'isComplete' => true), true
-    match_json(new_trial_widget_index_pattern)
+    match_json(old_trial_widget_index_pattern)
     Account.any_instance.unstub(:email_notification_setup?)
     Account.any_instance.unstub(:email_notification_eligible?)
   end
 
   def test_index_with_onboarding_v2_tasks_complete
+    Account.current.launch(:onboarding_v2)
     setup_keys = @account.setup_keys
     setup_keys.map { |setup_key| Account.any_instance.stubs("#{setup_key}_setup?".to_sym).returns(true) }
     Account.any_instance.stubs(:support_channel_setup?).returns(true)
@@ -70,6 +77,7 @@ class Ember::TrialWidgetControllerTest < ActionController::TestCase
     assert_equal response_tasks.include?('name' => 'explore_extend_capability_features', 'isComplete' => true), true
     match_json(new_trial_widget_index_pattern)
   ensure
+    Account.current.rollback(:onboarding_v2)
     setup_keys.map { |setup_key| Account.any_instance.unstub("#{setup_key}_setup?".to_sym) }
   end
 
@@ -96,6 +104,7 @@ class Ember::TrialWidgetControllerTest < ActionController::TestCase
   end
 
   def test_complete_support_channel_step_completes_admin_onboarding
+    Account.current.launch(:onboarding_v2)
     post :complete_step, construct_params(step: 'support_channel', version: 'private')
     assert_response 204
     refute Account.current.account_onboarding_pending?
