@@ -66,4 +66,5 @@ module AuditLog::AuditLogExportHelper
       value = rule_name unless rule_name.nil?
       value
     end
+
 end

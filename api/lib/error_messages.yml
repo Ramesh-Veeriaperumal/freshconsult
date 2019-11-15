@@ -416,6 +416,35 @@ api_error_messages:
   section_inside_ticket_field_error: "Ticket field '%{name}' has sections, so it can't be deleted"
   nested_field_child_delete_error: "Can not delete Level2 and Level3 dependent field, if you want to remove please update the parent field"
 
+  #audit_log_export
+  archived: 'value for format should be true/false'
+  date_range_months: 'date range should be three months within 6 months'
+  date_range_year: 'date range should not exceed two years'
+  receive_via: 'receive_via should not be empty'
+  receive_via_content: 'receive_via value should be email/api'
+  filter: 'values not in array'
+  filter_content: '%{query_param} should not be empty'
+  filter_set_count: 'Maximum number of filters allowed is four'
+  invalid_filter_set: '%{filter_set} is a invalid filter value'
+  invalid_performed_by_type: '%{val} must be in integer'
+  entity: 'filer_set without ids should be given in single filter set'
+  ids_content: 'ids should have interger value'
+  entity_type: 'filter_value not in array'
+  ids_type: 'ids not in array'
+  entity_minimum_value: 'filter_set should have one value'
+  rule_ids_type: 'rule ids value must be in Integer'
+  filter_set_empty_check: 'filter_set should not be empty'
+  rule_name_type: 'rulename value must be in string'
+  invalid_condition: 'invalid condition'
+  invalid_filter_condition: 'filter is not present'
+  condition_empty: 'condition is not present'
+  condition_mismatch: 'filter and condition is mismatching'
+  export_format_empty: 'export_format should not be empty'
+  invalid_date_range_audit_log: 'start and end date should not be in future'
+  action_value: 'value must be create/delete/update'
+  invalid_filter_set_content: 'valid entities are %{entities}'
+  export_format: 'value for format should be %{export_format}'
+  
   #Skills
   duplicate_skill_name: "A skill already exists with name - '%{name}'"
 

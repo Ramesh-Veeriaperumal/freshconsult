@@ -26,13 +26,16 @@ class AuditLogsController < ApiApplicationController
   def export
     export_params = sanitize_export_params
     Rails.logger.info "Api params for hyper trail #{export_params}"
+    archived = params[:archived] ? params[:archived] : false
+    export_params[:archived] = archived
+    export_params[:action] = params[:action]
     resp = HyperTrail::AuditLog.new(export_params).trigger_export
     Rails.logger.info "Job_id : #{resp['job_id']}"
     if resp[:data]
       @items = { response: resp[:data].body.to_json }
       return
     end
-    resp[:receive_via] = params[:receive_via]
+    resp.merge!({receive_via: params[:receive_via], export_format: params[:export_format], archived: archived})
     HyperTrail::AuditLog.new(resp).retrive_export_data if resp['job_id']
     if params[:receive_via] == AuditLogConstants::RECEIVE_VIA[0]
       @items = { status: 'generating export' }
@@ -87,10 +90,10 @@ class AuditLogsController < ApiApplicationController
     end
 
     def validate_export_limit
-    if DataExport.audit_log_export_limit_reached?
-      render_request_error_with_info(:audit_log_export, 429)
+      if DataExport.audit_log_export_limit_reached?
+        render_request_error_with_info(:audit_log_export, 429)
+      end
     end
-  end
 
     def load_data_export
       fetch_data_export_item(AuditLogConstants::EXPORT_TYPE)
@@ -137,7 +140,6 @@ class AuditLogsController < ApiApplicationController
                                else
                                 DateTime.parse(params[:to]).end_of_day.strftime('%Q').to_i
                                end
-
       export_params[:cond] = construct_export_condition if params[:condition]
       export_params.merge!(export_filter_params) if export_filter_params
       export_params

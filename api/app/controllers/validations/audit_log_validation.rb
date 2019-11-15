@@ -5,10 +5,12 @@ class AuditLogValidation < ApiValidation
   validate :validate_automation_rules?, if: -> { type.present? && @request_params[:action] == 'filter' }
   validate :validate_time?, if: -> { time.present? && @request_params[:action] == 'filter' }
   validate :validate_agent?, if: -> { agent.present? && @request_params[:action] == 'filter' }
+  validate :validate_archived_format, if: -> { @request_params[:archived].present? && @request_params[:action] == 'export' }
   validate :validate_from_to?, if: -> { @request_params[:action] == 'export' }
   validate :validate_receive_via, if: -> { @request_params[:action] == 'export' }
   validate :validate_filter_set?, if: -> { @request_params[:filter] && @request_params[:action] == 'export' }
   validate :validate_condition, if: -> { (@request_params[:condition] || (@request_params[:filter] && @request_params[:filter].count > 1)) && @request_params[:action] == 'export' }
+  validate :validate_export_format, if: -> { @request_params[:action] == 'export' }
 
   def initialize(request_params, item = nil, allow_string_param = false)
     super(request_params, item, allow_string_param)
@@ -50,7 +52,8 @@ class AuditLogValidation < ApiValidation
   def validate_export_automation_rules(entity)
     entity.each do |val|
       if !(AuditLogConstants::TYPES.include? val) && !(AuditLogConstants::AUTOMATION_TYPES.include? val)
-        errors[:entity] << :"valid entity is #{ AuditLogConstants::TYPES.join(',') }, #{ AuditLogConstants::AUTOMATION_TYPES.join(',') }"
+        errors[:entity] << :invalid_filter_set_content
+        error_options[:entity] = { entities: "#{AuditLogConstants::TYPES.join(', ')}, #{AuditLogConstants::AUTOMATION_TYPES.join(', ')}" }
       end
     end
   end
@@ -61,14 +64,21 @@ class AuditLogValidation < ApiValidation
         value = @request_params[:filter][query_param]
         next unless @request_params[:filter].key?(query_param)
 
-        return errors[:filter_value] << :values_not_in_array unless value.is_a?(Array)
+        return errors[:filter_value] << :filter unless value.is_a?(Array)
 
-        return errors[:filter_value] << "#{query_param} should not be empty" if value.empty?
+        if value.empty?
+          errors[:filter_value] << :filter_content
+          error_options[:filter_value] = { query_param: query_param }
+          return errors[:filter_value]
+        end
 
         if query_param == :action
           check_action_values(value)
         elsif query_param == :performed_by
-          value.each { |val| errors[:filter_value] << :"#{val} must be in integer" unless val.is_a?(Integer) }
+          value.each do |val|
+            errors[:performed_by] << :invalid_performed_by_type unless val.is_a?(Integer)
+            error_options[:performed_by] = { val: val }
+          end
         end
       end
     end
@@ -79,12 +89,13 @@ class AuditLogValidation < ApiValidation
     type_count = 0
     filter_count = 0
     @request_params[:filter].each do |filter_sets|
-      return errors[:filters] << :'Maximum number of filters allowed is four' unless filter_count <= 4
+      return errors[:filters] << :filter_set_count unless filter_count <= 4
       filter_count += 1
       filter_sets.each do |filter_set|
         if filter_set.is_a?(String)
-          return errors[:'filter values'] << :"#{filter_set} is a invalid filter value" unless AuditLogConstants::EXPORT_FILTER_PARAMS.to_s.include?(filter_set) ||
-                                                                                               filter_set.include?('filter_set')
+          errors[:'filter values'] << :invalid_filter_set unless AuditLogConstants::EXPORT_FILTER_PARAMS.to_s.include?(filter_set) ||
+                                                                 filter_set.include?('filter_set')
+          error_options[:filter_values] = { filter_set: filter_set }
         end
         filter_sets_key = filter_set.to_sym if filter_set.include? 'filter_set'
         filter_set_value = @request_params[:filter][filter_sets_key]
@@ -94,24 +105,23 @@ class AuditLogValidation < ApiValidation
         entity_name = filter_set_value[:entity]
         if entity_ids.nil?
           type_count += 1
-          return errors[:entity] << :'entity without ids should be given in single filter set' if type_count > 1
+          return errors[:entity] << :entity if type_count > 1
         end
-        return errors[:entity] << :'ids should have interger value' if filter_set_value.key?(:ids) && entity_ids.blank?
+        return errors[:entity] << :ids_content if filter_set_value.key?(:ids) && entity_ids.blank?
 
-        return errors[:filter_value] << :'entity not in array' unless entity_name.is_a?(Array)
+        return errors[:filter_value] << :entity_type unless entity_name.is_a?(Array)
 
         if entity_ids
-          return errors[:filter_value] << :'ids not in array' unless entity_ids.is_a?(Array)
-          return errors[:entity] << :'entity should have one value' if entity_name.count > 1
+          return errors[:filter_value] << :ids_type unless entity_ids.is_a?(Array)
+          return errors[:entity] << :entity_minimum_value if entity_name.count > 1
         end
-        entity_ids.each { |ruleid| errors[:ids] << :'ids value must be in Integer' unless ruleid.is_a?(Integer) } if entity_ids && entity_ids.is_a?(Array)
+        entity_ids.each { |ruleid| errors[:ids] << :rule_ids_type unless ruleid.is_a?(Integer) } if entity_ids && entity_ids.is_a?(Array)
 
-        if entity_name && entity_name.is_a?(Array)
-          return errors[:filter_value] << :'entity should not be empty' if entity_name.empty?
+        next unless entity_name && entity_name.is_a?(Array)
+        return errors[:filter_value] << :filter_set_empty_check if entity_name.empty?
 
-          entity_name.each { |rulename| errors[:entity] << :'entity value must be in string' unless rulename.is_a?(String) }
-          validate_export_automation_rules(entity_name)
-        end
+        entity_name.each { |rulename| errors[:entity] << :rule_name_type unless rulename.is_a?(String) }
+        validate_export_automation_rules(entity_name)
       end
     end
   end
@@ -121,32 +131,45 @@ class AuditLogValidation < ApiValidation
     since = Date.parse @request_params[:from]
     before = Date.parse @request_params[:to]
     check_date(before, since)
-    days = (before - since)+1.to_i
+    days = ((before - since) + 1).to_i
     current_date = Time.now.in_time_zone(User.current.time_zone).to_date
-    month_days = (current_date - since)+1.to_i
-    return errors[:'from/to'] << :'date range should be three months within 6 months' if (days > 92) || (month_days > 183)
+    month_days = ((current_date - since) + 1).to_i
+    return errors[:'from/to'] << :date_range_months if (@request_params[:archived] != true) && ((days > 92) || (month_days > 183))
+    return errors[:'from/to'] << :date_range_year if (days > 730) && (@request_params[:archived] == true)
   end
 
   def validate_condition
-    return errors[:condition] << :'filter is not present' if @request_params[:condition] && !@request_params[:filter]
+    return errors[:condition] << :invalid_filter_condition if @request_params[:condition] && !@request_params[:filter]
 
-    return errors[:condition] << :'condition is not present' if @request_params[:filter].count > 1 && !@request_params[:condition]
+    return errors[:condition] << :condition_empty if @request_params[:filter].count > 1 && !@request_params[:condition]
 
     condition = @request_params[:condition].split(' ')
-    return errors[:condition] << :'filter and condition is mismatching' if @request_params[:filter].count != condition.each_slice(2).map(&:first).count
+    return errors[:condition] << :condition_mismatch if @request_params[:filter].count != condition.each_slice(2).map(&:first).count
 
     condition.each do |con|
       next if AuditLogConstants::CONDITION_LOWER_CASE.include? con
 
-      errors[:condition] << :'invalid condition' if AuditLogConstants::CONDITION_UPPER_CASE.include? con
-      errors[:condition] << :'invalid condition' unless @request_params[:filter].include? con
+      errors[:condition] << :invalid_condition if AuditLogConstants::CONDITION_UPPER_CASE.include? con
+      errors[:condition] << :invalid_condition unless @request_params[:filter].include? con
     end
   end
 
   def validate_receive_via
     receive_via = @request_params[:receive_via]
-    return errors[:receive_via] << :'receive_via should not be empty' if receive_via.blank?
-    errors[:receive_via] << :'receive_via value should be email/api' unless AuditLogConstants::RECEIVE_VIA.include? receive_via
+    return errors[:receive_via] << :receive_via_blank if receive_via.blank?
+    errors[:receive_via] << :receive_via_content unless AuditLogConstants::RECEIVE_VIA.include? receive_via
+  end
+
+  def validate_export_format
+    return errors[:format] << :export_format_empty if @request_params[:export_format].nil?
+    unless AuditLogConstants::FORMAT.include? @request_params[:export_format]
+      errors[:format] << :export_format
+      error_options[:format] = { export_format: " #{AuditLogConstants::FORMAT.join(',')}" }
+    end
+  end
+
+  def validate_archived_format
+    return errors[:archived] << :archived unless AuditLogConstants::ARCHIVED.include? @request_params[:archived]
   end
 
   private
@@ -161,13 +184,15 @@ class AuditLogValidation < ApiValidation
 
     def check_action_values(value)
       value.each do |val|
-        return errors[:action] << :'value must be create/delete/update' unless AuditLogConstants::ACTION_VALUES.include? val
+        return errors[:action] << :action_value unless AuditLogConstants::ACTION_VALUES.include? val
       end
     end
 
     def check_date(since, before)
-      if since > Time.now.in_time_zone(User.current.time_zone).to_date || before > Time.now.in_time_zone(User.current.time_zone).to_date
-        errors[:'from/to'] << :'start and end date should not be in future'
+      if @request_params[:archived] != true && (since > Time.now.in_time_zone(User.current.time_zone).to_date || before > Time.now.in_time_zone(User.current.time_zone).to_date)
+        errors[:'from/to'] << :invalid_date_range_audit_log
+      elsif @request_params[:archived] == true && (since >= Time.now.in_time_zone(User.current.time_zone).to_date || before >= Time.now.in_time_zone(User.current.time_zone).to_date)
+        errors[:'from/to'] << :invalid_date_range_audit_log_archived
       end
     end
 end

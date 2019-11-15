@@ -509,6 +509,11 @@ topic_first_post:
 freshmarketer_sessions:
   $ref: './response/tickets/freshmarketer_sessions.yaml'
 
+# Audit log
+audit_log_export:
+  $ref: './response/audit_log_export.yaml'
+
+
 # Dashboard activities
 dashboard_activities:
   $ref: './response/dashboard/activities.yaml'

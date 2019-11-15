@@ -2,6 +2,7 @@ require_relative '../test_helper'
 class AuditLogsControllerTest < ActionController::TestCase
   include UsersTestHelper
   include AttachmentsTestHelper
+  include TestCaseMethods
 
   def setup
     super
@@ -16,7 +17,7 @@ class AuditLogsControllerTest < ActionController::TestCase
   @@initial_setup_run = false
 
   def initial_setup
-    @account ||= Account.first.make_current
+    @account = Account.first.present? ? Account.first.make_current : create_test_account
     @@initial_setup_run = true
   end
 
@@ -36,109 +37,117 @@ class AuditLogsControllerTest < ActionController::TestCase
     match_json resp
   end
 
-  # def test_audit_log_filtered_export
-  #   HyperTrail::AuditLog.any_instance.stubs(:fetch_job_id).returns(filtered_job_id)
-  #   HyperTrail::AuditLog.any_instance.stubs(:trigger_export).returns('ce4550a7f2debda6efb7476e')
-  #   post :export, construct_params(audit_log_filtered_params)
-  #   assert_response 200
-  #   resp = { status: 'onprocess' }
-  #   match_json resp
-  # end
+  def test_audit_log_filtered_export
+    HyperTrail::AuditLog.any_instance.stubs(:trigger_export).returns(filtered_job_id)
+    HyperTrail::AuditLog.any_instance.stubs(:retrive_export_data).returns('ce4550a7f2debda6efb7476e')
+    post :export, construct_params(audit_log_filtered_params)
+    puts("test_audit_log_filtered_export: #{@response.body}")
+    assert_response 200
+    resp = { status: 'generating export' }
+    match_json resp
+  end
 
-  # def test_audit_log_filtered_export_single_entity
-  #   HyperTrail::AuditLog.any_instance.stubs(:fetch_job_id).returns(filtered_job_id)
-  #   HyperTrail::AuditLog.any_instance.stubs(:trigger_export).returns('ce4550a7f2debda6efb7476e')
-  #   post :export, construct_params(audit_log_filtered_params_single_entity)
-  #   assert_response 200
-  #   resp = { status: 'onprocess' }
-  #   match_json resp
-  # end
+  def test_audit_log_filtered_export_single_entity
+    HyperTrail::AuditLog.any_instance.stubs(:trigger_export).returns(filtered_job_id)
+    HyperTrail::AuditLog.any_instance.stubs(:retrive_export_data).returns('ce4550a7f2debda6efb7476e')
+    post :export, construct_params(audit_log_filtered_params_single_entity)
+    assert_response 200
+    puts("test_audit_log_filtered_export_single_entity: #{@response.body}")
+    resp = { status: 'generating export' }
+    match_json resp
+  end
 
-#   def test_audit_log_archived_export
-#     HyperTrail::AuditLog.any_instance.stubs(:fetch_job_id).returns(archived_job_id)
-#     HyperTrail::AuditLog.any_instance.stubs(:trigger_export).returns('43c55bfa344136373c091b15')
-#     post :export, construct_params(audit_log_archived_params)
-#   end
+  def test_audit_log_archived_export
+    HyperTrail::AuditLog.any_instance.stubs(:trigger_export).returns(archived_job_id)
+    HyperTrail::AuditLog.any_instance.stubs(:retrive_export_data).returns('ce4550a7f2debda6efb7476e')
+    DataExport.destroy_all(source: DataExport::EXPORT_TYPE[:audit_log], account_id: @account.id)
+    @data_export = @account.data_exports.new(source: DataExport::EXPORT_TYPE['audit_log'.to_sym],
+                                             user: User.current,
+                                             status: DataExport::EXPORT_STATUS[:completed],
+                                             token: archived_job_id['job_id'])
+    post :export, construct_params(audit_log_archived_params)
+    resp = { status: 'generating export' }
+    match_json resp
+    assert_response 200
+  end
 
-  # def test_audit_log_api_export
-  #   HyperTrail::AuditLog.any_instance.stubs(:fetch_job_id).returns(api_export_response_job_id)
-  #   HyperTrail::AuditLog.any_instance.stubs(:trigger_export).returns('bcb899c2f4adb6f774eaf37e')
-  #   post :export, construct_params(audit_log_api_export_params)
-  #   response = Account.current.full_domain + '/api/v2/audit_log/export_api/' + api_export_response_job_id['job_id']
-  #   resp = { response: response }
-  #   match_json resp
-  #   assert_response 200
-  # end
+  def test_audit_log_api_export
+    HyperTrail::AuditLog.any_instance.stubs(:trigger_export).returns(api_export_response_job_id)
+    HyperTrail::AuditLog.any_instance.stubs(:retrive_export_data).returns('ce4550a7f2debda6efb7476e')
+    post :export, construct_params(audit_log_api_export_params)
+    @response.body.include? api_export_response_job_id['job_id']
+    assert_response 200
+  end
 
-  # def test_audit_log_export_api_response_with_valid_token
-  #   DataExport.destroy_all(source: DataExport::EXPORT_TYPE[:audit_log], account_id: @account.id)
-  #   @data_export = @account.data_exports.new(source: DataExport::EXPORT_TYPE['audit_log'.to_sym],
-  #                                            user: User.current,
-  #                                            status: DataExport::EXPORT_STATUS[:completed],
-  #                                            token: '0795f174-0bdc-466f-b78e-bc6613a39742')
-  #   @data_export.save
-  #   attachment = @account.attachments.new(content_file_name: 'audit_log/1.zip', content_content_type: 'application/octet-stream',
-  #                                         content_file_size: 40_994, attachable_id: @data_export.id, attachable_type: 'DataExport')
-  #   attachment.save
-  #   AwsWrapper::S3Object.stubs(:url_for).returns(export_api_response_url)
-  #   get :export_api_response, construct_params(id: '0795f174-0bdc-466f-b78e-bc6613a39742')
-  #   assert_response 200
-  #   resp = { url: export_api_response_url }
-  #   match_json resp
-  # end
+  def test_audit_log_export_api_response_with_valid_token
+    DataExport.destroy_all(source: DataExport::EXPORT_TYPE[:audit_log], account_id: @account.id)
+    @data_export = @account.data_exports.new(source: DataExport::EXPORT_TYPE['audit_log'.to_sym],
+                                             user: User.current,
+                                             status: DataExport::EXPORT_STATUS[:completed],
+                                             token: '0795f174-0bdc-466f-b78e-bc6613a39742')
+    @data_export.save
+    attachment = @account.attachments.new(content_file_name: 'audit_log/1.zip', content_content_type: 'application/octet-stream',
+                                          content_file_size: 40_994, attachable_id: @data_export.id, attachable_type: 'DataExport')
+    attachment.save
+    AwsWrapper::S3Object.stubs(:url_for).returns(export_api_response_url)
+    get :export_s3_url, construct_params(id: '0795f174-0bdc-466f-b78e-bc6613a39742')
+    assert_response 200
+    resp = { url: export_api_response_url }
+    match_json resp
+  end
 
-  # def test_audit_log_export_api_response_with_failed_status
-  #   DataExport.destroy_all(source: DataExport::EXPORT_TYPE[:audit_log], account_id: @account.id)
-  #   @data_export = @account.data_exports.new(source: DataExport::EXPORT_TYPE['audit_log'.to_sym],
-  #                                            user: User.current,
-  #                                            status: DataExport::EXPORT_STATUS[:failed],
-  #                                            token: '2affda4a520d08440b81636db30790b89dc626d8')
-  #   @data_export.save
-  #   get :export_api_response, construct_params(id: '2affda4a520d08440b81636db30790b89dc626d8')
-  #   assert_response 200
-  #   resp = { status: 'failed' }
-  #   match_json resp
-  # end
+  def test_audit_log_export_api_response_with_failed_status
+    DataExport.destroy_all(source: DataExport::EXPORT_TYPE[:audit_log], account_id: @account.id)
+    @data_export = @account.data_exports.new(source: DataExport::EXPORT_TYPE['audit_log'.to_sym],
+                                             user: User.current,
+                                             status: DataExport::EXPORT_STATUS[:failed],
+                                             token: '2affda4a520d08440b81636db30790b89dc626d8')
+    @data_export.save
+    get :export_s3_url, construct_params(id: '2affda4a520d08440b81636db30790b89dc626d8')
+    assert_response 200
+    resp = { export_status: 'failed' }
+    match_json resp
+  end
 
-  # def test_audit_log_export_api_response_with_invalid_token
-  #   DataExport.destroy_all(source: DataExport::EXPORT_TYPE[:audit_log], account_id: @account.id)
-  #   export_entry = @account.data_exports.new(source: DataExport::EXPORT_TYPE['audit_log'.to_sym],
-  #                                            user: User.current,
-  #                                            status: DataExport::EXPORT_STATUS[:completed],
-  #                                            token: '39a26281-4a66-4842-af5b-337fa2741c60')
-  #   export_entry.save
-  #   get :export_api_response, construct_params(id: '000')
-  #   assert_response 404
-  # end
+  def test_audit_log_export_api_response_with_invalid_token
+    DataExport.destroy_all(source: DataExport::EXPORT_TYPE[:audit_log], account_id: @account.id)
+    export_entry = @account.data_exports.new(source: DataExport::EXPORT_TYPE['audit_log'.to_sym],
+                                             user: User.current,
+                                             status: DataExport::EXPORT_STATUS[:completed],
+                                             token: '39a26281-4a66-4842-af5b-337fa2741c60')
+    export_entry.save
+    get :export_s3_url, construct_params(id: '000')
+    assert_response 404
+  end
 
-  # def test_audit_log_export_api_response_with_invalid_export_type
-  #   DataExport.destroy_all(source: DataExport::EXPORT_TYPE[:audit_log], account_id: @account.id)
-  #   export_entry = @account.data_exports.new(source: DataExport::EXPORT_TYPE['ticket'.to_sym],
-  #                                            user: User.current,
-  #                                            status: DataExport::EXPORT_STATUS[:completed],
-  #                                            token: '39a26281-4a66-4842-af5b-337fa2741c60')
-  #   export_entry.save
-  #   get :export_api_response, construct_params(id: '39a26281-4a66-4842-af5b-337fa2741c60')
-  #   assert_response 404
-  # end
+  def test_audit_log_export_api_response_with_invalid_export_type
+    DataExport.destroy_all(source: DataExport::EXPORT_TYPE[:audit_log], account_id: @account.id)
+    export_entry = @account.data_exports.new(source: DataExport::EXPORT_TYPE['ticket'.to_sym],
+                                             user: User.current,
+                                             status: DataExport::EXPORT_STATUS[:completed],
+                                             token: '39a26281-4a66-4842-af5b-337fa2741c60')
+    export_entry.save
+    get :export_s3_url, construct_params(id: '39a26281-4a66-4842-af5b-337fa2741c60')
+    assert_response 404
+  end
 
-  # def test_audit_log_api_export_without_privilege
-  #   User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
-  #   DataExport.destroy_all(source: DataExport::EXPORT_TYPE[:audit_log], account_id: @account.id)
-  #   export_entry = @account.data_exports.new(
-  #     source: DataExport::EXPORT_TYPE['audit_log'.to_sym],
-  #     user: User.current,
-  #     status: DataExport::EXPORT_STATUS[:started],
-  #     token: '39a26281-4a66-4842-af5b-337fa2741c60'
-  #   )
-  #   export_entry.save
-  #   post :export_api_response, construct_params(id: '39a26281-4a66-4842-af5b-337fa2741c60')
-  #   assert_response 403
-  #   User.any_instance.unstub(:privilege?)
-  # end
+  def test_audit_log_api_export_without_privilege
+    User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
+    DataExport.destroy_all(source: DataExport::EXPORT_TYPE[:audit_log], account_id: @account.id)
+    export_entry = @account.data_exports.new(
+      source: DataExport::EXPORT_TYPE['audit_log'.to_sym],
+      user: User.current,
+      status: DataExport::EXPORT_STATUS[:started],
+      token: '39a26281-4a66-4842-af5b-337fa2741c60'
+    )
+    export_entry.save
+    post :export_s3_url, construct_params(id: '39a26281-4a66-4842-af5b-337fa2741c60')
+    assert_response 403
+    User.any_instance.unstub(:privilege?)
+  end
 
   def test_response_job_id
-    HyperTrail::AuditLog.any_instance.stubs(:fetch_job_id).returns(data: [])
+    HyperTrail::AuditLog.any_instance.stubs(:trigger_export).returns(data: [])
     post :export, construct_params(audit_log_export_failed_params)
     assert_response 400
   end
@@ -169,17 +178,18 @@ class AuditLogsControllerTest < ActionController::TestCase
   end
 
   def audit_log_filtered_params
-    { version: 'private', format: 'json', from: '2018-09-06', to: '2018-10-30',
+    { version: 'private', format: 'json', from: (Date.today - 1).to_s, to: (Date.today - 4).to_s,
       condition: 'filter_set_1 or action or filter_set_3 or filter_set_2',
       receive_via: 'email',
+      export_format: 'csv',
       filter: {
         filter_set_1: {
           entity: ['agent'],
-          ids: ['1']
+          ids: [1]
         },
         filter_set_2: {
           entity: ['automation_4'],
-          ids: ['8']
+          ids: [8]
         },
         filter_set_3: {
           entity: ['subscription', 'automation_1']
@@ -189,17 +199,18 @@ class AuditLogsControllerTest < ActionController::TestCase
   end
 
   def audit_log_filtered_params_single_entity
-    { version: 'private', format: 'json', from: '2018-09-06', to: '2018-10-30',
+    { version: 'private', format: 'json', from: (Date.today - 1).to_s, to: (Date.today - 4).to_s,
       condition: 'filter_set_1 or action or filter_set_3 or filter_set_2',
       receive_via: 'email',
+      export_format: 'xls',
       filter: {
         filter_set_1: {
           entity: ['agent'],
-          ids: ['1']
+          ids: [1]
         },
         filter_set_2: {
           entity: ['automation_4'],
-          ids: ['8']
+          ids: [8]
         },
         filter_set_3: {
           entity: ['subscription']
@@ -212,6 +223,7 @@ class AuditLogsControllerTest < ActionController::TestCase
     { version: 'private', format: 'json', from: '2018-09-06', to: '2018-10-30',
       condition: 'filter_set_1 or action',
       receive_via: 'email',
+      export_format: 'csv',
       filter: {
         filter_set_1: {
           entity: ['automation_1'],
@@ -225,6 +237,7 @@ class AuditLogsControllerTest < ActionController::TestCase
     { version: 'private', format: 'json', from: '2018-09-06', to: '2018-10-30',
       condition: 'filter_set_1 or action',
       receive_via: 'email',
+      export_format: 'xls',
       filter: {
         filter_set_1: {
           entity: ['automation_4'],
@@ -238,6 +251,7 @@ class AuditLogsControllerTest < ActionController::TestCase
     { version: 'private', format: 'json', from: '2018-09-06', to: '2018-10-30',
       condition: 'filter_set_1 or action',
       receive_via: 'email',
+      export_format: 'csv',
       filter: {
         filter_set_1: {
           entity: ['automation_3'],
@@ -251,6 +265,7 @@ class AuditLogsControllerTest < ActionController::TestCase
     { version: 'private', format: 'json', from: '2018-09-06', to: '2018-10-30',
       condition: 'filter_set_1 or action',
       receive_via: 'email',
+      export_format: 'csv',
       filter: {
         filter_set_1: {
           entity: ['agent'],
@@ -263,6 +278,7 @@ class AuditLogsControllerTest < ActionController::TestCase
   def audit_log_delegator_params_actor
     { version: 'private', format: 'json', from: '2018-09-06', to: '2018-10-30',
       receive_via: 'email',
+      export_format: 'xls',
       condition: 'performed_by or action',
       filter: {
         action: ['update', 'delete'],
@@ -287,15 +303,15 @@ class AuditLogsControllerTest < ActionController::TestCase
   end
 
   def audit_log_archived_params
-    { version: 'private', format: 'json', from: '2018-09-06', to: '2018-10-30', receive_via: 'email' }
+    { version: 'private', format: 'json', from: (Date.today - 1).to_s, to: (Date.today - 4).to_s, receive_via: 'email', export_format: 'csv', archived: true }
   end
 
   def audit_log_export_failed_params
-    { version: 'private', format: 'json', from: '2015-09-06', to: '2018-10-30', receive_via: 'email' }
+    { version: 'private', format: 'json', from: '2015-09-06', to: '2018-10-30', receive_via: 'email', export_format: 'xls' }
   end
 
   def audit_log_api_export_params
-    { version: 'private', format: 'json', from: '2018-09-06', to: '2018-10-30', receive_via: 'api' }
+    { from: (Date.today - 1).to_s, to: (Date.today - 4).to_s, receive_via: 'api', export_format: 'csv' }
   end
 
   def filtered_job_id
@@ -303,7 +319,7 @@ class AuditLogsControllerTest < ActionController::TestCase
   end
 
   def archived_job_id
-    { 'job_id' => '94cb6f60-bb25-425f-9b66-4d9df34504ef' }
+    { 'job_id' => '91736a8e-85c7-4942-b676-84769f622493' }
   end
 
   def api_export_response_job_id

@@ -121,7 +121,8 @@ Sidekiq.configure_client do |config|
       'Admin::Sandbox::MergeWorker',
       'Tickets::UndoSendWorker',
       'Freshid::V2::ProcessEvents',
-      "Roles::UpdateAgentsRoles"
+      "Roles::UpdateAgentsRoles",
+      'AuditLogExport'
     ]
   end
 end
@@ -244,7 +245,8 @@ Sidekiq.configure_server do |config|
       "Admin::Sandbox::DiffWorker",
       "Admin::Sandbox::MergeWorker",
       'Tickets::UndoSendWorker',
-      "Roles::UpdateAgentsRoles"
+      "Roles::UpdateAgentsRoles",
+      'AuditLogExport'
     ]
 
     chain.add Middleware::Sidekiq::Server::Throttler, :required_classes => ["WebhookV1Worker"]
@@ -339,7 +341,8 @@ Sidekiq.configure_server do |config|
       "Admin::Sandbox::DiffWorker",
       "Admin::Sandbox::MergeWorker",
       'Tickets::UndoSendWorker',
-      "Roles::UpdateAgentsRoles"
+      "Roles::UpdateAgentsRoles",
+      'AuditLogExport'
     ]
   end
 end

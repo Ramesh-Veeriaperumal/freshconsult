@@ -1,9 +1,17 @@
 get:
-  tags: [audit_log]
-  summary: Audit log export
+  summary: Audit log export get response
+  tags: [audit log get response]
   description: Audit log export file will be responded in json format which contains s3 link.
+  parameters: 
+    - name: id
+      in: path
+      type: integer
+      description: job_id
+      required: true
   responses:
     200:
-      description: URL of the s3 link to be downloaded
+      description: Success
+      schema:
+        $ref: '#/definitions/audit_log_export' 
     404:
       description: Data Export not found

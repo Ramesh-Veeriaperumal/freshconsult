@@ -1,6 +1,9 @@
 module AuditLog::AuditLogHelper
   include Admin::Automation::CustomStatusHelper
+  require 'erb'
+
   private
+
     # options can have the likes of type (ex. :default, :currency), and any other custom value
     def description_properties(*params)
       key, value, options = params
@@ -154,40 +157,62 @@ module AuditLog::AuditLogHelper
       end
     end
 
-    def export_csv(report_data, csv_file)
-      CSV.open(csv_file, 'ab') do |csv|
-        value_arr = []
-        if report_data
-          report_data.each_pair do |key, value|
-            if AuditLogConstants::EXPORT_ENRICHED_KEYS.include?(key)
-              value = value == :destroy ? ['delete'] : value.to_s.to_a
-              value_arr.push(value)
-            elsif key == :name
-              name = value[:name].to_s.to_a
-              type = value[:url_type].to_s.to_a
-              value_arr.push("#{name}\n#{type}")
-            elsif key == :description
-              description_arr = []
-              description_arr = description_field_csv(description_arr, value)
-              description_arr = description_arr.join('')
-              value_arr.push(description_arr)
-            end
+    def format_file_data(report_data, file_path, file_format)
+      value_arr = []
+      if report_data
+        report_data.each_pair do |key, value|
+          case true
+          when AuditLogConstants::EXPORT_ENRICHED_KEYS.include?(key)
+            value = value == :destroy ? 'delete' : value.to_s
+            value_arr.push(value)
+          when key == :name
+            name = value[:name].to_s
+            type = value[:url_type].to_s
+            value_arr.push("#{name}\n#{type}")
+          when key == :description
+            description_arr = []
+            description_arr = format_description_array(description_arr, value)
+            description_arr = description_arr.join('')
+            value_arr.push(description_arr)
           end
         end
-        csv << value_arr
+        safe_send("write_#{file_format}_data", value_arr, file_path)
         value_arr.clear
       end
     end
 
-    def description_field_csv(description_arr, value)
+    def write_csv_data(value_arr, file_path)
+      CSV.open(file_path, 'ab') do |csv|
+        csv << value_arr
+      end
+    end
+
+    def write_xls_data(value_arr, file_path)
+      write_xls(file_path, xls_erb('data'), value_arr)
+    end
+
+    def write_xls(file_path, erb, record = [])
+      @record = record
+      File.open(file_path, 'ab') do |file|
+        file.write(erb.result(binding))
+      end
+    end
+
+    def xls_erb(file_name)
+      erb_file_path = format(AuditLogConstants::ERB_PATH, file_name: file_name)
+      ERB.new(File.read(erb_file_path))
+    end
+
+    def format_description_array(description_arr, value)
       value.each do |description|
         next if (description[:field]).nil?
         description[:field] = description[:field] == 'Performer' ? 'Action Performed By' : description[:field]
-        if description[:type] == :array
+        case true
+        when description[:type] == :array
           description[:value].each do |changes|
             description_arr = description_array_extract(description_arr, changes, description)
           end
-        elsif description[:type] == :default
+        when description[:type] == :default
           if description[:value].present?
             value_from = description[:value][:from].presence || '--'
             value_to = description[:value][:to].presence || '--'

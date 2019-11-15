@@ -12020,7 +12020,7 @@
       "post": {
         "summary": "Audit log export",
         "tags": [
-          "audit_log"
+          "Audit log export request"
         ],
         "parameters": [
           {
@@ -12047,6 +12047,35 @@
             "schema": {
               "$ref": "#/definitions/request_error_with_data"
             }
+          }
+        }
+      }
+    },
+    "/audit_log/export/{id}": {
+      "get": {
+        "summary": "Audit log export get response",
+        "tags": [
+          "audit log get response"
+        ],
+        "description": "Audit log export file will be responded in json format which contains s3 link.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "description": "job_id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/audit_log_export"
+            }
+          },
+          "404": {
+            "description": "Data Export not found"
           }
         }
       }
@@ -17177,20 +17206,35 @@
       "properties": {
         "from": {
           "type": "string",
-          "enum": [
+          "example": [
             "2018-11-05"
           ]
         },
         "to": {
           "type": "string",
-          "enum": [
+          "example": [
             "2018-11-30"
           ]
         },
         "recieve_via": {
           "type": "string",
           "enum": [
-            "email/api"
+            "email",
+            "api"
+          ]
+        },
+        "export_format": {
+          "type": "string",
+          "enum": [
+            "xls",
+            "csv"
+          ]
+        },
+        "archived": {
+          "type": "string",
+          "enum": [
+            "true",
+            "false"
           ]
         },
         "condition": {
@@ -17234,7 +17278,8 @@
       "required": [
         "from",
         "to",
-        "recieve_via"
+        "recieve_via",
+        "export_format"
       ]
     },
     "email_mailbox_input": {
@@ -22704,6 +22749,14 @@
           "duration": {
             "type": "string"
           }
+        }
+      }
+    },
+    "audit_log_export": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
         }
       }
     },
