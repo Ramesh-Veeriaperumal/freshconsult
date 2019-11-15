@@ -34,7 +34,7 @@ class FsmTicketValidationTest < ActionView::TestCase
 	end
 
 	def destroy_all_fsm_fields_with_section_and_type
-		fsm_fields = CUSTOM_FIELDS_TO_RESERVE.collect { |x| x[:name] + "_#{Account.current.id}" }
+		fsm_fields = fsm_custom_field_to_reserve.collect { |x| x[:name] + "_#{Account.current.id}" }
     	fsm_fields.each do |fsm_field|
 			Account.current.ticket_fields.find_by_name(fsm_field).try(:destroy)
 		end

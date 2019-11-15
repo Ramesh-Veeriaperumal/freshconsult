@@ -3,7 +3,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
     include ::Dashboard::Custom::CustomDashboardConstants
     include ApiTicketConstants
 
-    CUSTOM_FIELDS_TO_RESERVE = [
+    FSM_DEFAULT_TICKET_FIELDS = [
       {
         label: 'Contact',
         type: 'text',
@@ -49,6 +49,18 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       }
     ].freeze
 
+    FSM_SIGNATURE_TICKET_FIELD = [
+      {
+        label: "Customer's signature",
+        type: 'file',
+        field_type: 'custom_file',
+        label_in_portal: "Customer's signature",
+        name: 'cf_fsm_customer_signature',
+        required: false,
+        flexifield_alias: 'fsm_customer_signature'
+      }
+    ].freeze
+
     FSM_FEATURE = :field_service_management
     SERVICE_TASK_TYPE = 'Service Task'
     FIELD_AGENT = :field_agent
@@ -84,7 +96,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       SERVICE_TASKS_OVERDUE_WIDGET_NAME => WIDGET_MODULE_TOKEN_BY_NAME[SCORE_CARD]
     }.freeze
 
-    FSM_TICKET_FILTERS = ["service_tasks_due_today", "unassigned_service_tasks", "overdue_service_tasks"].freeze
+    FSM_TICKET_FILTERS = ['service_tasks_due_today', 'unassigned_service_tasks', 'overdue_service_tasks'].freeze
 
     FSM_WIDGETS_COUNT = WIDGETS_NAME_TO_TYPE_MAP.size
 
@@ -95,7 +107,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       { 'condition' => 'spam', 'operator' => 'is', 'value' => false },
       { 'condition' => 'deleted', 'operator' => 'is', 'value' => false },
       { 'condition' => 'ticket_type', 'operator' => 'is_in', 'value' => SERVICE_TASK_TYPE, 'ff_name' => 'default' }
-   ].freeze
+    ].freeze
 
     Y_AXIS_POSITION = { trend: 0, scorecard: 1 }.freeze
 

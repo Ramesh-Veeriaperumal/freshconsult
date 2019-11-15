@@ -5,7 +5,7 @@ class Account < ActiveRecord::Base
     :customer_sentiment_ui, :dkim, :dkim_email_service, :scheduled_ticket_export,
     :ticket_contact_export, :email_failures, :disable_emails,
     :falcon_portal_theme, :freshid, :freshchat_integration, :allow_huge_ccs,
-    :facebook_page_redirect, :announcements_tab,
+    :facebook_page_redirect, :announcements_tab, :customer_signature,
     :ticket_central_publish, :company_central_publish, :solutions_central_publish,
     :launch_smart_filter, :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
     :whitelist_sso_login, :admin_only_mint, :customer_notes_s3,

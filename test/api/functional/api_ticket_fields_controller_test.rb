@@ -251,7 +251,7 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
   def test_index_with_fsm_fields
     Account.stubs(:current).returns(Account.first)
     old_ticket_fields_count = @account.ticket_fields.size
-    fsm_fields = ::Admin::AdvancedTicketing::FieldServiceManagement::Constant::CUSTOM_FIELDS_TO_RESERVE
+    fsm_fields = fsm_custom_field_to_reserve
     fsm_fields_count = fsm_fields.count
     reserve_fsm_custom_fields(fsm_fields)
     get :index, controller_params({}, {})
