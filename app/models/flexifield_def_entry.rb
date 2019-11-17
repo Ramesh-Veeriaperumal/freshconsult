@@ -17,7 +17,7 @@ class FlexifieldDefEntry < ActiveRecord::Base
               :conditions => [ "flexifield_coltype = 'dropdown' or flexifield_coltype = 'checkbox'" ]  
   
   before_save :ensure_alias_is_one_word
-  after_commit :clear_custom_date_field_cache, :clear_custom_date_time_field_cache
+  after_commit :clear_custom_date_field_cache, :clear_custom_date_time_field_cache, :clear_custom_file_field_name_cache
   before_create :set_account_id
   after_commit ->(obj) { obj.clear_flexifield_def_entry_cache }, on: :create	
   after_commit ->(obj) { obj.clear_flexifield_def_entry_cache }, on: :destroy
@@ -97,6 +97,10 @@ class FlexifieldDefEntry < ActiveRecord::Base
     if self.flexifield_coltype == Helpdesk::TicketField::DATE_TIME_FIELD
       Account.current.clear_custom_date_time_fields_cache
     end
+  end
+
+  def clear_custom_file_field_name_cache
+    Account.current.clear_custom_file_field_names_cache if flexifield_coltype == Helpdesk::TicketField::FILE_FIELD
   end
 
   def set_account_id

@@ -145,6 +145,16 @@ module Cache::Memcache::Account
     MemcacheKeys.delete_from_cache(custom_date_time_fields_memcache_key)
   end
 
+  def custom_file_field_names_cache
+    fetch_from_cache(custom_file_field_names_memcache_key) do
+      ticket_fields.where(field_type: Helpdesk::TicketField::CUSTOM_FILE).find(:all).map(&:name)
+    end
+  end
+
+  def clear_custom_file_field_names_cache
+    delete_value_from_cache(custom_file_field_names_memcache_key)
+  end
+
   def agents_hash_from_cache
     @agents_hash_from_cache ||= begin
       key = agent_hash_memcache_key
@@ -775,6 +785,10 @@ module Cache::Memcache::Account
 
     def custom_date_time_fields_memcache_key
       format(ACCOUNT_CUSTOM_DATE_TIME_FIELDS, account_id: self.id)
+    end
+
+    def custom_file_field_names_memcache_key
+      format(ACCOUNT_CUSTOM_FILE_FIELD_NAMES, account_id: id)
     end
 
     def agent_hash_memcache_key

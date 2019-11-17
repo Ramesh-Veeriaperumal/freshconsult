@@ -1151,8 +1151,8 @@ private
   end
 
     def fetch_and_validate_file_field_attachment_ids
-      account_file_fields = account.ticket_fields.select { |ticket_field| ticket_field.field_type == Helpdesk::TicketField::CUSTOM_FILE }
-      self.file_field_attachment_ids = account_file_fields.map { |file_field| self.safe_send(file_field.name) }.compact
+      account_file_field_names = account.custom_file_field_names_cache
+      self.file_field_attachment_ids = account_file_field_names.map { |file_field| self.safe_send(file_field) }.compact
       return if self.file_field_attachment_ids.empty?
 
       total_file_size = account.attachments.where(id: self.file_field_attachment_ids).collect(&:content_file_size).sum
