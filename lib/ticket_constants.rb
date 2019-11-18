@@ -213,6 +213,8 @@ module TicketConstants
   DUE_BY_TYPES_KEYS_BY_TOKEN = Hash[*DUE_BY_TYPES.map { |i| [i[0], i[2]] }.flatten]
   DUE_BY_TYPES_NAMES_BY_SYMBOL = Hash[*DUE_BY_TYPES.map { |i| [i[0], i[1]] }.flatten]
 
+  OLD_DUE_BY_TYPES = [1, 2, 3, 4].freeze
+
   CREATED_BY_VALUES = [
     [ :thirt_days,    I18n.t("export_data.thirt_days"),   30 ],
     [ :seven_days,    I18n.t("export_data.seven_days"),    7 ],
