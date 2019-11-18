@@ -3,7 +3,7 @@ module TicketsFilter
   include Helpdesk::Ticketfields::TicketStatus
   
   DEFAULT_FILTER = "new_and_my_open"
-  DEFAULT_VISIBLE_FILTERS = %w[new_and_my_open ongoing_collab shared_by_me shared_with_me unresolved all_tickets raised_by_me monitored_by spam deleted unresolved_service_tasks].freeze
+  DEFAULT_VISIBLE_FILTERS = %w[new_and_my_open ongoing_collab shared_by_me shared_with_me unresolved all_tickets raised_by_me monitored_by spam deleted unassigned_service_tasks unresolved_service_tasks].freeze
   DEFAULT_FILTERS_FEATURES = [
     ["shared_by_me",   :shared_ownership, "Shared ownership"],
     ["shared_with_me", :shared_ownership, "Shared ownership"],
@@ -12,8 +12,9 @@ module TicketsFilter
     ["overdue",        :sla_management,   "SLA Policy"],
     ["monitored_by",   :add_watcher,      "Add watcher"],
     ["watching",       :add_watcher,      "Add watcher"],
+    ['unassigned_service_tasks', :field_service_management, 'Field service management'],
     ['unresolved_service_tasks', :field_service_management, 'Field service management']
-  ]
+  ].freeze
 
   IGNORE_FILTER_ON_FEATURE = {
     'ongoing_collab' => :freshconnect
@@ -205,6 +206,8 @@ module TicketsFilter
   end
 
   def self.accessible_filter?(filter, feature_keys = FEATURES_KEYS_BY_FILTER_KEY)
+    return false if filter == 'unassigned_service_tasks' && !Account.current.default_unassigned_service_tasks_filter_enabled?
+
     feature = feature_keys[filter]
     return false if ignore_filter_feature(filter)
     Account.current and (feature.nil? or Account.current.safe_send("#{feature}_enabled?"))

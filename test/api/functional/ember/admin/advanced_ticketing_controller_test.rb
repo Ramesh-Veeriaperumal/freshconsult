@@ -650,6 +650,43 @@ module Ember
       ensure
         Account.any_instance.unstub(:denormalized_flexifields_enabled?)
       end
+
+      def test_unassigned_service_task_filter_present_with_fsm_enabled_with_lp
+        enable_fsm do
+          begin
+            Account.current.launch(:default_unassigned_service_tasks_filter)
+            Account.current.ticket_filters.where(name: 'Unassigned service tasks').destroy_all
+            Account.current.dashboards.destroy_all
+            Sidekiq::Testing.inline! do
+              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+            end
+            dashboard = Account.current.dashboards.where(name: I18n.t('fsm_dashboard.name'))
+            filter = Account.current.ticket_filters.find_by_name('Unassigned service tasks')
+            widget = dashboard.first.widgets.select { |x| x.config_data[:ticket_filter_id] == 'unassigned_service_tasks' }
+            assert widget.present?
+            assert_nil filter
+          ensure
+            Account.current.rollback(:default_unassigned_service_tasks_filter)
+          end
+        end
+      end
+
+      def test_unassigned_service_task_filter_present_with_fsm_enabled_without_lp
+        enable_fsm do
+          begin
+            Account.current.ticket_filters.where(name: 'Unassigned service tasks').destroy_all
+            Account.current.dashboards.destroy_all
+            Sidekiq::Testing.inline! do
+              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+            end
+            dashboard = Account.current.dashboards.where(name: I18n.t('fsm_dashboard.name'))
+            filter = Account.current.ticket_filters.find_by_name('Unassigned service tasks')
+            widget = dashboard.first.widgets.select { |x| x.config_data[:ticket_filter_id] == 'unassigned_service_tasks' }
+            assert widget.blank?
+            assert_not_nil filter
+          end
+        end
+      end
     end
   end
 end

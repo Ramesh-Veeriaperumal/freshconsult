@@ -7832,6 +7832,8 @@ en:
         invalid_requester: Invalid requester
         ongoing_collab: My Active Huddles
         unresolved_service_tasks: Unresolved service tasks
+        unassigned_service_tasks: Unassigned service tasks
+
       note:
         posted_on: "%{user_name} on %{note_date}"
         created_on:

@@ -226,7 +226,11 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         WIDGETS_NAME_TO_TYPE_MAP.each do |widget_name, type|
           if type == WIDGET_MODULE_TOKEN_BY_NAME[SCORE_CARD]
             position = { x: scorecard_x_postion, y: Y_AXIS_POSITION[:scorecard] }
-            dashboard_object.add_widget(type, position, I18n.t("fsm_dashboard.widgets.#{widget_name}"), options[widget_name])
+            if widget_name == SERVICE_TASKS_UNASSIGNED_WIDGET_NAME && Account.current.default_unassigned_service_tasks_filter_enabled?
+              dashboard_object.add_widget(type, position, I18n.t('helpdesk.tickets.views.unassigned_service_tasks'), ticket_filter_id: 'unassigned_service_tasks')
+            else
+              dashboard_object.add_widget(type, position, I18n.t("fsm_dashboard.widgets.#{widget_name}"), options[widget_name])
+            end
             scorecard_x_postion += SCORECARD_DIMENSIONS[:width]
           else
             position = { x: trends_x_position, y: Y_AXIS_POSITION[:trend] }
@@ -278,8 +282,8 @@ module Admin::AdvancedTicketing::FieldServiceManagement
                                 ]
                               }
                             }
+        filter_conditions.except!(FSM_TICKET_FILTERS[1]) if Account.current.default_unassigned_service_tasks_filter_enabled?
         all_filter_conditions = filter_conditions.each { |k,v| v[:filter] += COMMON_FILTER_CONDITIONS }
-        all_filter_conditions
       end
 
       def cleanup_fsm

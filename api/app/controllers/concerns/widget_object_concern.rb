@@ -30,7 +30,9 @@ class WidgetObjectConcern
     {
       name: name,
       refresh_interval: refresh_interval
-    }.merge(if req_type == :db && config_data
+    }.merge(if req_type == :db && config_data && (config_data[:ticket_filter_id] == 'unassigned_service_tasks' && Account.current.default_unassigned_service_tasks_filter_enabled?)
+              { widget_type: type, config_data: config_data }.merge(grid_config.symbolize_keys)
+            elsif req_type == :db && config_data
               { widget_type: type, grid_config: grid_config }.merge(config_data.symbolize_keys)
             elsif req_type == :db
               { widget_type: type, grid_config: grid_config }
