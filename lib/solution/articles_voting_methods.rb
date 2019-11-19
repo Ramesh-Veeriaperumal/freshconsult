@@ -15,7 +15,6 @@ module Solution::ArticlesVotingMethods
   def thumbs_down
     # Voting down the article
     success = update_votes(:thumbs_down, 0)
-
     # Getting a new object for submitting the feeback for the article
     @ticket = Helpdesk::Ticket.new
     respond_to do |format|
@@ -29,7 +28,8 @@ module Solution::ArticlesVotingMethods
   end
 
   def update_votes(incr_attr, vote)
-    return false if @portal && current_user && current_user.agent? && !current_account.solutions_agent_metrics_enabled?
+    return false if (@portal || @help_widget) && current_user && current_user.agent? && !current_account.solutions_agent_metrics_enabled?
+
     return @article.safe_send("#{incr_attr}!") unless current_user
 
     @vote.vote = vote
@@ -42,6 +42,6 @@ module Solution::ArticlesVotingMethods
   end
 
   def load_vote
-    @vote = @article.votes.where(:user_id => current_user.id).first_or_initialize if current_user
+    @vote = @article.votes.where(user_id: current_user.id).first_or_initialize if current_user
   end
 end
