@@ -99,6 +99,46 @@ module DkimTestHelper
       'id' => 122_001
     }.to_json
   end
+  
+  def email_service_verify_hash
+    {
+      'accountId' => 1,
+      'default' => false,
+      'RequestId' => 'c72f59cc-be94-43cd-8bf5-a1ee796494ff',
+      'records' => {
+        'dkim' => [
+          {
+            'host' => '2ryzss1._domainkey.test.com',
+            'verified' => true,
+            'type' => 'CNAME',
+            'value' => 'wl122001s1.domainkey.freshpo.com'
+          },
+          {
+            'host' => 'yoqz5s2._domainkey.test.com',
+            'verified' => true,
+            'type' => 'CNAME',
+            'value' => 'wl122001s2.domainkey.freshpo.com'
+          },
+          {
+            'host' => 'btnz1s3._domainkey.test.com',
+            'verified' => true,
+            'type' => 'CNAME',
+            'value' => 'wl122001s3.domainkey.freshpo.com'
+          }
+        ],
+        'spfmx' => {
+          'host' => 'fwdkim.test.com',
+          'verified' => true,
+          'type' => 'CNAME',
+          'value' => 'spfmx.domainkey.freshpo.com'
+        }
+      },
+      'domain' => 'fresh.com',
+      'subdomain' => 'fwdkim',
+      'verified' => true,
+      'id' => 122_001
+    }.to_json
+  end
 
   def sg_response_1
     [ 201, 

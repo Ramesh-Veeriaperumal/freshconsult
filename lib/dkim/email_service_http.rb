@@ -25,6 +25,14 @@ module Dkim
         fetch_request_params(REQUEST_TYPES[:post])
       )
     end
+    
+    def verify_domain
+      hrp.fetch_using_req_params(
+        fetch_service_params(EMAIL_SERVICE_VERIFY_DOMAIN,
+          EMAIL_SERVICE_ACTION[:verify_domain]),
+        fetch_request_params(REQUEST_TYPES[:post])
+      )
+    end
 
     private
 
@@ -36,9 +44,7 @@ module Dkim
       end
 
       def fetch_service_params(email_service_url, email_service_action)
-        service_params = {
-          domain: EMAIL_SERVICE_HOST
-        }
+        service_params = { domain: EMAIL_SERVICE_HOST }
         case email_service_action
         when EMAIL_SERVICE_ACTION[:get_domains]  
           service_params.merge({ 
@@ -49,13 +55,25 @@ module Dkim
             rest_url: email_service_url,
             body: build_configure_body.to_json 
           })
-        end 
+        when EMAIL_SERVICE_ACTION[:verify_domain] 
+          service_params.merge({
+            rest_url: email_service_url,
+            body: build_verify_body.to_json 
+          })
+        end
       end
 
       def build_configure_body
         {
           "accountId": account_id,
           "signingDomain": domain
+        }
+      end
+      
+      def build_verify_body
+        {
+          "accountId": account_id,
+          "domain": domain
         }
       end
   end
