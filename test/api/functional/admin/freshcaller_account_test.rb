@@ -1,8 +1,15 @@
 require_relative '../../../test_helper'
+require 'sidekiq/testing'
+Sidekiq::Testing.fake!
 
 module Admin
   class FreshcallerAccountControllerTest < ActionController::TestCase
     include ::Freshcaller::TestHelper
+
+    def setup
+      super
+      Sidekiq::Worker.clear_all
+    end
 
     def launch_freshcaller_features
       Account.current.launch :freshcaller_admin_new_ui
@@ -72,6 +79,38 @@ module Admin
     ensure
       Account.current.rollback :freshcaller_admin_new_ui
       Account.current.revoke_feature :freshcaller
+    end
+
+    def test_freshcaller_destroy
+      current_account = Account.current
+      launch_freshcaller_features
+      create_freshcaller_account unless Account.current.freshcaller_account
+      create_freshcaller_enabled_agent
+      freshcaller_account = Account.current.freshcaller_account
+      stub_freshcaller_request(200)
+      Sidekiq::Testing.inline! do
+        delete :destroy, construct_params(id: freshcaller_account.id)
+      end
+      unstub_freshcaller_request
+      assert_response 204
+      assert_equal @agent.agent.freshcaller_agent, nil, 'Freshcaller Agent not destroyed!'
+    ensure
+      unstub_freshcaller_request
+      current_account.make_current
+      delete_freshcaller_account
+      delete_freshcaller_agent unless @agent.agent.freshcaller_agent.nil?
+      revoke_freshcaller_features
+    end
+
+    def test_freshcaller_destroy_without_account
+      launch_freshcaller_features
+      Account.current.freshcaller_account.destroy unless Account.current.freshcaller_account.nil?
+      Sidekiq::Testing.inline! do
+        delete :destroy, construct_params({})
+      end
+      assert_response 400
+    ensure
+      revoke_freshcaller_features
     end
 
     def test_freshcaller_enable

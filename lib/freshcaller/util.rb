@@ -8,6 +8,12 @@ module Freshcaller::Util
     freshcaller_response
   end
 
+  def disconnect_account
+    freshcaller_response = freshcaller_request({}, freshcaller_disconnect_url, :put, email: current_user.email)
+    Freshcaller::AccountDeleteWorker.perform_async(account_id: Account.current.id) if freshcaller_response.code == 200
+    freshcaller_response
+  end
+
   def enable_integration
     freshcaller_response = freshcaller_request({}, freshcaller_enable_url, :put, email: current_user.email)
     Account.current.freshcaller_account.enable if freshcaller_response.code == 200

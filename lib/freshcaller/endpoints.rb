@@ -2,6 +2,7 @@ module Freshcaller
   module Endpoints
     include Freshcaller::JwtAuthentication
 
+    DELETE_INTEGRATION = '/integrations/freshdesk/delete'.freeze
     ENABLE_INTEGRATION = '/integrations/freshdesk/enable'.freeze
     DISABLE_INTEGRATION = '/integrations/freshdesk/disable'.freeze
 
@@ -30,6 +31,10 @@ module Freshcaller
       "#{protocol}#{::Account.current.freshcaller_account.domain}"
     end
 
+    def freshcaller_disconnect_url
+      "#{freshcaller_url}#{DELETE_INTEGRATION}"
+    end
+
     def freshcaller_enable_url
       "#{freshcaller_url}#{ENABLE_INTEGRATION}"
     end
@@ -41,6 +46,5 @@ module Freshcaller
     def protocol
       Rails.env.development? ? 'http://' : 'https://'
     end
-
   end
 end
