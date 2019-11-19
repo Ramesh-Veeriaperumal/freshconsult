@@ -1178,6 +1178,7 @@ en:
           convert_only_relevant: "Convert only relevant posts"
           convert_visitor: "Convert all posts added by visitors into tickets"
           convert_company: "On posts added by the Page, capture comments from visitors as tickets when they contain the following keywords:"
+          convert_company_with_adpost: "On posts and ad posts added by the Page, capture comments from visitors as tickets when they contain the following keywords:"
           view_info_text: "You can still view all other visitor comments in your Social Tab"
           assign_to_gp: "Assign to group"
           convert_everything: "Convert everything"

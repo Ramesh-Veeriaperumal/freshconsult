@@ -37,9 +37,10 @@ class ChannelMessagePollerTest < ActionView::TestCase
     payload, command_payload = twitter_create_ticket_command('dm')
     push_to_channel(command_payload)
 
-    ticket = @account.tickets.last
-    tweet = @account.tweets.last
+    ticket = @account.tickets.where(subject: payload[:subject]).first
+    tweet = ticket.tweet
 
+    assert_not_nil tweet
     assert_equal tweet[:tweetable_id], ticket.id
     assert_equal ticket.description, payload[:description]
     assert_equal tweet.tweet_type, 'dm'
@@ -49,9 +50,10 @@ class ChannelMessagePollerTest < ActionView::TestCase
     payload, command_payload = twitter_create_ticket_command('mention')
     push_to_channel(command_payload)
 
-    ticket = @account.tickets.last
-    tweet = @account.tweets.last
+    ticket = @account.tickets.where(subject: payload[:subject]).first
+    tweet = ticket.tweet
 
+    assert_not_nil tweet
     assert_equal tweet[:tweetable_id], ticket.id
     assert_equal ticket.description, payload[:description]
     assert_equal tweet.tweet_type, 'mention'
@@ -75,9 +77,10 @@ class ChannelMessagePollerTest < ActionView::TestCase
     payload, command_payload = twitter_create_ticket_command('mention')
     push_to_channel(command_payload)
 
-    ticket = @account.tickets.last
-    tweet = @account.tweets.last
+    ticket = @account.tickets.where(subject: payload[:subject]).first
+    tweet = ticket.tweet
 
+    assert_not_nil tweet
     assert_equal tweet[:tweetable_id], ticket.id
     assert_equal ticket.description, payload[:description]
   end
@@ -293,7 +296,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
 
     def twitter_create_ticket_command(tweet_type)
       payload = {
-        "subject": Faker::Lorem.characters(50),
+        "subject": SecureRandom.uuid,
         "description": Faker::Lorem.characters(100),
         "requester_id": @account.users.last.id,
         "tweet_type": tweet_type,

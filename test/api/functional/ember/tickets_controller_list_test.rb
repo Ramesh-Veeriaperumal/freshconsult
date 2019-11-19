@@ -438,6 +438,77 @@ module Ember
       Account.any_instance.unstub(:field_service_management_enabled?)
     end
 
+    def test_fsm_appointment_time_with_to_filter
+      Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+      perform_fsm_operations
+      Account.first.make_current
+      value = { 'to' => DateTime.now.to_s }
+      query_hash_params = { '0' => query_hash_param('cf_fsm_appointment_start_time', 'is', value, 'custom_field') }
+      match_db_and_es_query_responses(query_hash_params)
+    ensure
+      cleanup_fsm
+      Account.reset_current_account
+      Account.any_instance.unstub(:field_service_management_enabled?)
+    end
+
+    def test_fsm_appointment_time_with_to_filter_invalid_params
+      Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+      perform_fsm_operations
+      Account.first.make_current
+      value = { 'to' => '48 Hrs' }
+      query_hash_params = { '0' => query_hash_param('cf_fsm_appointment_start_time', 'is', value, 'custom_field') }
+      params = { version: 'private', query_hash: query_hash_params, order_by: 'created_at', order_type: 'asc' }
+      get :index, controller_params(params, false)
+      assert_response 400
+    ensure
+      cleanup_fsm
+      Account.reset_current_account
+      Account.any_instance.unstub(:field_service_management_enabled?)
+    end
+
+    def test_fsm_appointment_time_with_from_filter
+      Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+      perform_fsm_operations
+      Account.first.make_current
+      value = { 'from' => DateTime.now.to_s }
+      query_hash_params = { '0' => query_hash_param('cf_fsm_appointment_start_time', 'is', value, 'custom_field') }
+      match_db_and_es_query_responses(query_hash_params)
+    ensure
+      cleanup_fsm
+      Account.reset_current_account
+      Account.any_instance.unstub(:field_service_management_enabled?)
+    end
+
+    def test_fsm_appointment_time_with_from_filter_invalid_params
+      Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+      perform_fsm_operations
+      Account.first.make_current
+      value = { 'from' => '6:40 PM' }
+      query_hash_params = { '0' => query_hash_param('cf_fsm_appointment_start_time', 'is', value, 'custom_field') }
+      params = { version: 'private', query_hash: query_hash_params, order_by: 'created_at', order_type: 'asc' }
+      get :index, controller_params(params, false)
+      assert_response 400
+    ensure
+      cleanup_fsm
+      Account.reset_current_account
+      Account.any_instance.unstub(:field_service_management_enabled?)
+    end
+
+    def test_fsm_appointment_times_with_to_and_from_filters
+      Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+      perform_fsm_operations
+      Account.first.make_current
+      before_value = { 'to' => DateTime.now.end_of_day.to_s }
+      after_value = { 'from' => DateTime.now.beginning_of_day.to_s}
+      query_hash_params = { '0' => query_hash_param('cf_fsm_appointment_start_time', 'is', before_value, 'custom_field'),
+                            '1' => query_hash_param('cf_fsm_appointment_end_time', 'is', after_value, 'custom_field') }
+      match_db_and_es_query_responses(query_hash_params)
+    ensure
+      cleanup_fsm
+      Account.reset_current_account
+      Account.any_instance.unstub(:field_service_management_enabled?)
+    end
+
     def test_fsm_in_the_past_appointment_time_filter
       Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
       perform_fsm_operations

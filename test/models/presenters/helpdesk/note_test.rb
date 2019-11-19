@@ -148,6 +148,38 @@ class NoteTest < ActiveSupport::TestCase
   def test_central_publish_payload_with_source_additional_info_facebook
     ticket = create_fb_ticket
     note = create_note(source: 7, ticket_id: ticket.id, user_id: ticket.requester_id, private: false, body: Faker::Lorem.paragraph)
+    note.build_fb_post({
+      post_id: Faker::Number.number(12),
+      facebook_page_id: ticket.fb_post.facebook_page_id,
+      account_id: ticket.account_id,
+      parent_id: ticket.fb_post.id,
+      post_attributes: {
+        can_comment: false,
+        post_type: 3
+      }
+    })
+    note.save
+    note.reload
+    payload = note.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_note_pattern(note))
+  end
+
+  def test_central_publish_payload_with_source_additional_info_facebook_with_parent
+    ticket = create_fb_post_ticket
+    ticket.reload
+    note = create_note(source: 7, ticket_id: ticket.id, user_id: ticket.requester_id, private: false, body: Faker::Lorem.paragraph)
+    note.build_fb_post({
+      post_id: Faker::Number.number(12),
+      facebook_page_id: ticket.fb_post.facebook_page_id,
+      account_id: ticket.account_id,
+      parent_id: ticket.fb_post.id,
+      post_attributes: {
+        can_comment: false,
+        post_type: 3
+      }
+    })
+    note.save
+    note.reload
     payload = note.central_publish_payload.to_json
     payload.must_match_json_expression(central_publish_note_pattern(note))
   end
@@ -155,6 +187,16 @@ class NoteTest < ActiveSupport::TestCase
   def test_source_additional_info_fb_page_destroy_note_update
     ticket = create_fb_ticket
     note = create_note(source: 7, ticket_id: ticket.id, user_id: ticket.requester_id, private: false, body: Faker::Lorem.paragraph)
+    note.build_fb_post({
+      post_id: Faker::Number.number(12),
+      facebook_page_id: ticket.fb_post.facebook_page_id,
+      account_id: ticket.account_id,
+      parent_id: ticket.fb_post.id,
+      post_attributes: {
+        can_comment: false,
+        post_type: 3
+      }
+    })
     ticket.fb_post.facebook_page.delete
     note.update_attributes(body: Faker::Lorem.paragraph)
     payload = note.central_publish_payload.to_json

@@ -2,6 +2,8 @@ module ApiSearch
   class SolutionsController < Ember::Search::SpotlightController
     ROOT_KEY = :article
 
+    before_filter :convert_language_code, only: [:results]
+
     def results
       @klasses = ['Solution::Article']
       @category_id = params[:category_id].to_i if params[:category_id].present?
@@ -63,6 +65,15 @@ module ApiSearch
 
           es_params[:size]  = @size
           es_params[:from]  = @offset
+        end
+      end
+
+      def convert_language_code
+        if !params[:language].present? && params[:language_code] 
+          language = Language.find_by_code(params[:language_code])
+          return unless language
+          params[:language] = language.id
+          params.delete(:language_code)
         end
       end
   end

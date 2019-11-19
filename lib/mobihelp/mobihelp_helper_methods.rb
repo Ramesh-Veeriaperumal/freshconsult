@@ -42,7 +42,6 @@ module Mobihelp::MobihelpHelperMethods
       elsif @mobihelp_app.deleted
         render_json(generate_mh_err_resp(MOBIHELP_STATUS_CODE_BY_NAME[:MHC_APP_DELETED], MOBIHELP_STATUS_MESSAGE_BY_NAME[:MHC_APP_DELETED]))
       end
-
     end
 
     def save_user(user_params, device_uuid)
@@ -116,7 +115,8 @@ module Mobihelp::MobihelpHelperMethods
     end
 
     def valid_user?
-      current_user.present? and not (current_user.deleted? or current_user.blocked?)
+      return false if current_account.launched?(:disable_mobihelp) 
+      current_user.present? && !(current_user.deleted? || current_user.blocked?)
     end
 
     def render_json(data)

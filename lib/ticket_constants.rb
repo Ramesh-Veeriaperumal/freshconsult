@@ -118,7 +118,7 @@ module TicketConstants
   DEFAULT_COLUMNS_ORDER = [ :responder_id, :group_id, :created_at, :due_by, :frDueBy, :status, :priority,
     :ticket_type, :source, "helpdesk_tags.name", :owner_id,
     :requester_id, :sl_skill_id, "helpdesk_schema_less_tickets.product_id", :association_type ]
-  
+
   ARCHIVE_DEFAULT_COLUMNS_ORDER = [ :responder_id, :group_id, :created_at, :due_by, :status, :priority,
     :ticket_type, :source, "helpdesk_tags.name", "users.customer_id", :owner_id,
     :requester_id, :sl_skill_id, :product_id, :association_type ]
@@ -212,6 +212,8 @@ module TicketConstants
   DUE_BY_TYPES_NAMES_BY_KEY = Hash[*DUE_BY_TYPES.map { |i| [i[2], i[1]] }.flatten]
   DUE_BY_TYPES_KEYS_BY_TOKEN = Hash[*DUE_BY_TYPES.map { |i| [i[0], i[2]] }.flatten]
   DUE_BY_TYPES_NAMES_BY_SYMBOL = Hash[*DUE_BY_TYPES.map { |i| [i[0], i[1]] }.flatten]
+
+  OLD_DUE_BY_TYPES = [1, 2, 3, 4].freeze
 
   CREATED_BY_VALUES = [
     [ :thirt_days,    I18n.t("export_data.thirt_days"),   30 ],

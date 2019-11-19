@@ -1074,7 +1074,7 @@ class User < ActiveRecord::Base
 
   def default_agent_role(agent_type)
     if agent_type == Agent::FIELD_AGENT
-      Account.current.field_tech_role_enabled? ? account.roles.field_agent.map(&:id) : account.roles.agent.map(&:id)
+      account.roles.field_agent.map(&:id)
     else
       account.roles.agent.map(&:id)
     end
@@ -1413,16 +1413,10 @@ class User < ActiveRecord::Base
       end
     end
 
-    # Checks are temporary. Need to cleanup after field tech role migration.
     def check_roles_for_field_agents
       valid_role = true
-      if Account.current.field_tech_role_enabled?
-        if (self.role_ids - account.roles.field_agent.map(&:id)).present?
-          self.errors.add(:role_ids, :field_agent_roles, role: 'field technician')
-          valid_role = false
-        end
-      elsif (self.role_ids - account.roles.agent.map(&:id)).present?
-        self.errors.add(:role_ids, :field_agent_roles, role: 'agent')
+      if (self.role_ids - account.roles.field_agent.map(&:id)).present?
+        self.errors.add(:role_ids, :field_agent_roles, role: 'field technician')
         valid_role = false
       end
       valid_role

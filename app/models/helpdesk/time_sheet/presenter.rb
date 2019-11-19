@@ -28,6 +28,11 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     t.add :id
     t.add :account_id
     t.add :_workable, as: :workable
+    t.add :billable
+    t.add :time_spent
+    t.add :timer_running
+    t.add :user_id
+    t.add proc { |x| x.utc_format(x.executed_at) }, as: :executed_at
   end
 
   def self.central_publish_enabled?

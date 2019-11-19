@@ -35,14 +35,14 @@ class RabbitmqWorker
       end
 
       unless Rails.env.development?
-        sqs_msg_obj = (Ryuken::SearchSplitter.perform_async(message) rescue nil)
+        sqs_msg_obj = (enqueue_search_sqs(message) rescue nil)
       else
         sqs_msg_obj = (Ryuken::SearchSplitter.new.perform(nil, JSON.parse(message)) rescue nil)
       end
       Rails.logger.info "Searchv2 SQS Message id - #{sqs_msg_obj.try(:message_id)} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
     end
-    
-    # Publish to Autorefresh, AgentCollision, Collaboration (User and ticket) 
+
+    # Publish to Autorefresh, AgentCollision, Collaboration (User and ticket)
     #
     if LAMBDA_ENABLED and lambda_feature
       invoke_lambda(exchange_key, message, rounting_key)
@@ -63,14 +63,14 @@ class RabbitmqWorker
       sqs_msg_obj = sqs_v2_push(SQS[:activity_queue], message, nil)
       Rails.logger.info "SQS Activities Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
     end
-    
+
     Rails.logger.info("Published RMQ message via Sidekiq")
   end
-  
+
   protected
 
     def invoke_lambda(exchange, message, routing_key)
-      options = { function_name: $lambda_interchange[exchange], 
+      options = { function_name: $lambda_interchange[exchange],
                   invocation_type: "Event",
                   payload: message }
       if options[:function_name].present?
@@ -78,7 +78,7 @@ class RabbitmqWorker
         response = $lambda_client.invoke(options)
         raise LambdaRequestError, "Lambda returned #{response[:status_code]}" if response[:status_code] != 202
       end
-    rescue => e 
+    rescue => e
       NewRelic::Agent.notice_error(e, {
                                    :custom_params => {
                                      :description => "Lambda Sidekiq Invoke Error",
@@ -86,8 +86,8 @@ class RabbitmqWorker
                                      :exchange    => exchange,
       }})
       Rails.logger.error("Lambda Sidekiq Publish Error: \n#{e.message}\n#{e.backtrace.join("\n")}")
-      push_directly_to_sqs(exchange, message, routing_key) 
-    end 
+      push_directly_to_sqs(exchange, message, routing_key)
+    end
 
     def push_directly_to_sqs(exchange_key, message, routing_key)
       if agent_collision_routing_key?(exchange_key, routing_key)
@@ -147,7 +147,7 @@ class RabbitmqWorker
                                      :message     => message
       }})
       # Re-raising the error to have retry
-      raise e        
+      raise e
     end
 
     def collaboration_ticket_routing_key?(exchange, key)
@@ -161,38 +161,38 @@ class RabbitmqWorker
     def collaboration_account_routing_key?(exchange, key)
       (exchange.starts_with?("account") && key[6] == "1")
     end
-    
+
     def autorefresh_routing_key?(exchange, key)
-      (exchange.starts_with?("tickets") && key[0] == "1") 
+      (exchange.starts_with?("tickets") && key[0] == "1")
     end
 
     def agent_collision_routing_key?(exchange, key)
-      ((exchange.starts_with?("tickets") || exchange.starts_with?("notes")) && key[0] == "1") 
+      ((exchange.starts_with?("tickets") || exchange.starts_with?("notes")) && key[0] == "1")
     end
 
     def activities_routing_key?(exchange, key)
       (
-        ((exchange.starts_with?("tickets") && key[8] == "1") || 
+        ((exchange.starts_with?("tickets") && key[8] == "1") ||
             (exchange.starts_with?("notes") && key[6] == "1") ||
-            ((exchange.starts_with?("accounts") || exchange.starts_with?("article") || 
+            ((exchange.starts_with?("accounts") || exchange.starts_with?("article") ||
               exchange.starts_with?("topic") || exchange.starts_with?("post")) && key[2] == "1") ||
-            ((exchange.starts_with?("forum_category") || exchange.starts_with?("forum") || 
-              exchange.starts_with?("time_sheet") || exchange.starts_with?("subscription") || 
+            ((exchange.starts_with?("forum_category") || exchange.starts_with?("forum") ||
+              exchange.starts_with?("time_sheet") || exchange.starts_with?("subscription") ||
               exchange.starts_with?("ticket_old_body")) && key[0] == "1")
         )
       )
     end
 
     def reports_routing_key?(exchange, key)
-      ((exchange.starts_with?("tickets") || exchange.starts_with?("notes")) && key[2] == "1") || 
+      ((exchange.starts_with?("tickets") || exchange.starts_with?("notes")) && key[2] == "1") ||
         ((exchange.starts_with?("archive_tickets") || exchange.starts_with?("accounts")) && key[0] == "1") ||
           (exchange.starts_with?("tag_uses") && key[2] == "1") || (exchange.starts_with?("tags") && key[2] == "1")
     end
 
     def iris_routing_key?(exchange, key)
-      (exchange.starts_with?("tickets") && key[14] == "1") || 
-      	(exchange.starts_with?("notes") && key[8] == "1") || 
-        (exchange.starts_with?("archive_tickets") && key[4] == "1") || 
+      (exchange.starts_with?("tickets") && key[14] == "1") ||
+      	(exchange.starts_with?("notes") && key[8] == "1") ||
+        (exchange.starts_with?("archive_tickets") && key[4] == "1") ||
         (exchange.starts_with?("accounts") && key[4] == "1") ||
         (exchange.starts_with?("users") && key[4] == "1")
     end
@@ -202,7 +202,7 @@ class RabbitmqWorker
     end
 
     def scheduled_ticket_export_key?(exchange, key)
-      (exchange.starts_with?("tickets") && key[16] == "1") || 
+      (exchange.starts_with?("tickets") && key[16] == "1") ||
       (exchange.starts_with?("users") && key[6] == "1") ||
       (exchange.starts_with?("companies") && key[2] == "1")
     end
@@ -214,12 +214,12 @@ class RabbitmqWorker
     # Exchange will be like tickets_0, tickets_1
     #
     def search_routing_key?(exchange, key)
-      ((exchange.starts_with?("tickets") || exchange.starts_with?("notes")) && key[4] == "1") || 
-      ((exchange.starts_with?("archive_tickets") || exchange.starts_with?("accounts")) && key[2] == "1") || 
+      ((exchange.starts_with?("tickets") || exchange.starts_with?("notes")) && key[4] == "1") ||
+      ((exchange.starts_with?("archive_tickets") || exchange.starts_with?("accounts")) && key[2] == "1") ||
       ((
-        exchange.starts_with?("archive_notes") || exchange.starts_with?("articles") || 
-        exchange.starts_with?("topics") || exchange.starts_with?("posts") || exchange.starts_with?("tags") || 
-        exchange.starts_with?("companies") || exchange.starts_with?("users") || exchange.starts_with?("tag_uses") || 
+        exchange.starts_with?("archive_notes") || exchange.starts_with?("articles") ||
+        exchange.starts_with?("topics") || exchange.starts_with?("posts") || exchange.starts_with?("tags") ||
+        exchange.starts_with?("companies") || exchange.starts_with?("users") || exchange.starts_with?("tag_uses") ||
         exchange.starts_with?('callers') || exchange.starts_with?('va_rules')
       ) && key[0] == "1")
     end
@@ -254,7 +254,7 @@ class RabbitmqWorker
     def publish_to_legacy_count_cluster(message, rounting_key, exchange_key)
       message[:legacy] = true
       message[:analytics] = false
-      sqs_msg_obj = Ryuken::LegacyCountPerformer.perform_async(message.to_json)
+      sqs_msg_obj = enqueue_legacy_count_sqs(message.to_json)
       Rails.logger.info "CountES Legacy SQS Message id - #{sqs_msg_obj.try(:message_id)} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
     rescue Exception => e
       Rails.logger.debug "Error while publishing to legacy count cluster :: #{e.message}"
@@ -263,9 +263,22 @@ class RabbitmqWorker
     def publish_to_analytics_cluster(message, rounting_key, exchange_key)
       message[:legacy] = false
       message[:analytics] = true
-      sqs_msg_obj = Ryuken::AnalyticsCountPerformer.perform_async(message.to_json)
+      sqs_msg_obj = enqueue_analytics_sqs(message.to_json)
       Rails.logger.info "CountES Analytics SQS Message id - #{sqs_msg_obj.try(:message_id)} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
     rescue Exception => e
       Rails.logger.debug "Error while publishing to analytics cluster :: #{e.message}"
     end
+
+    def enqueue_search_sqs(message)
+      Ryuken::SearchSplitter.perform_async(message)
+    end
+
+    def enqueue_legacy_count_sqs(message)
+      Ryuken::LegacyCountPerformer.perform_async(message)
+    end
+
+    def enqueue_analytics_sqs(message)
+      Ryuken::AnalyticsCountPerformer.perform_async(message)
+    end
+
 end

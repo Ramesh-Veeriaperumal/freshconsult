@@ -6,6 +6,10 @@ get:
       in: query
       type: string
       description: search term for articles
+    - name: language_code
+      in: path
+      type: string
+      description: language code for articles
   responses:
     200:
       description: Success

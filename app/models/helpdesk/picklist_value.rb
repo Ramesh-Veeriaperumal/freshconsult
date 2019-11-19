@@ -41,7 +41,7 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
   after_commit :clear_ticket_types_cache
   
   concerned_with :presenter
-
+  # TODO: Need to change this once migration done
   scope :section_picklist_join, lambda { |conditions = nil|
     picklist_value_table_name = 'helpdesk_picklist_values'
     section_picklist_table_name = 'section_picklist_value_mappings'

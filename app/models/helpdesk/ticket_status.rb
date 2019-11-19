@@ -326,6 +326,18 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
     include Cache::Memcache::Helpdesk::TicketStatus
   end
 
+  def new_response_hash
+    {
+      id: status_id,
+      label_for_customer: Helpdesk::TicketStatus.translate_status_name(self, 'customer_display_name'),
+      value: Helpdesk::TicketStatus.translate_status_name(self, 'name'),
+      stop_sla_timer: stop_sla_timer,
+      default: is_default,
+      deleted: deleted,
+      group_ids: status_groups_from_cache.map(&:group_id)
+    }
+  end
+
   private
 
     def sync_task_changes_to_ocr(ticket, changes)

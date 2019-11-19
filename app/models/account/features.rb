@@ -25,10 +25,10 @@ class Account < ActiveRecord::Base
     :bot_email_channel, :bot_email_central_publish, :description_by_default,
     :bot_chat_history, :new_es_api, :filter_factory, :ticket_fields_central_publish,
     :skip_invoice_due_warning, :automation_revamp,
-    :scheduled_export_fix, :compact_lang_detection, :field_tech_role,
+    :scheduled_export_fix, :compact_lang_detection,
     :agent_group_central_publish, :custom_fields_search,
     :update_billing_info, :allow_billing_info_update, :tag_central_publish,
-    :native_apps, :archive_tickets_api, :bot_agent_response,
+    :native_apps, :archive_tickets_api, :bot_agent_response, :fb_ad_post_text,
     :fetch_ticket_from_ref_first, :query_from_singleton, :surveys_central_publish,
     :id_for_choices_write, :fluffy, :session_logs, :nested_field_revamp, :service_worker, :kbase_mint,
     :freshvisual_configs, :ticket_field_limit_increase, :join_ticket_field_data, :bypass_signup_captcha,
@@ -45,7 +45,7 @@ class Account < ActiveRecord::Base
     :fluffy_min_level, :allow_update_agent, :help_widget_solution_categories, :optar_cache,
     :ticket_field_revamp, :facebook_dm_outgoing_attachment, :skip_posting_to_fb, :hide_mailbox_error_from_agents, :hide_og_meta_tags,
     :freshcaller_admin_new_ui, :facebook_post_outgoing_attachment, :outgoing_tweets_to_tms, :incoming_mentions_in_tms, :help_widget_login, :occlusion_rendering_ticket_fields,
-    :prevent_lang_detect_for_spam, :jira_onpremise_reporter, :css_sanitizer, :support_ticket_rate_limit, :sidekiq_logs_to_central, :portal_central_publish, :global_navbar, :advanced_automations, :encode_emoji_in_solutions,
+    :prevent_lang_detect_for_spam, :jira_onpremise_reporter, :support_ticket_rate_limit, :sidekiq_logs_to_central, :portal_central_publish, :global_navbar, :advanced_automations, :encode_emoji_in_solutions,
     :forums_agent_portal, :agent_shifts, :mailbox_google_oauth, :helpdesk_tickets_by_product
   ].freeze
 

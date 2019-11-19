@@ -6,7 +6,7 @@ module SearchTestHelper
   include CompaniesTestHelper
   include ContactFieldsHelper
 
-  SEARCH_CONTEXTS_WITHOUT_DESCRIPTION = [:agent_insert_solution, :filtered_solution_search]
+  SEARCH_CONTEXTS_WITHOUT_DESCRIPTION = [:agent_insert_solution, :filtered_solution_search, :portal_based_solutions]
   SPOTLIGHT_SEARCH_CONTEXT = :agent_spotlight_solution
 
   STATUSES = {

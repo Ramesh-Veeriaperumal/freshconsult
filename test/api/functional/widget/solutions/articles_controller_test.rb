@@ -1,6 +1,7 @@
 require_relative '../../../test_helper'
 require Rails.root.join('spec', 'support', 'solution_builder_helper.rb')
 require Rails.root.join('spec', 'support', 'solutions_helper.rb')
+require Rails.root.join('spec', 'support', 'company_helper.rb')
 
 module Widget
   module Solutions
@@ -10,8 +11,7 @@ module Widget
       include SolutionsHelper
       include SolutionBuilderHelper
       include AttachmentsTestHelper
-
-      ALL_USER_VISIBILITY = 1
+      include CompanyHelper
 
       def setup
         super
@@ -52,11 +52,11 @@ module Widget
         @request.env['HTTP_X_CLIENT_ID'] = @client_id
       end
 
-      def article_params(category, status = nil)
+      def article_params(category, status = nil, visibility = Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone])
         {
           title: 'Test',
           description: 'Test',
-          folder_id: create_folder_with_language_reset(visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone],
+          folder_id: create_folder_with_language_reset(visibility: visibility,
                                                        category_id: category.id,
                                                        lang_codes: ['es', 'en'],
                                                        name: Faker::Name.name).id,
@@ -65,14 +65,15 @@ module Widget
         }
       end
 
-      def portal
-        @portal ||= @account.portals.find_by_product_id(@widget.product_id)
-      end
-
-      def create_articles
+      def create_articles(visibility = Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], user = nil)
         @category = create_category_with_language_reset(lang_codes: ['es', 'en'])
         set_category
-        article_meta = create_article_with_language_reset(article_params(@category))
+        params = article_params(@category, 2, visibility)
+        article_meta = create_article_with_language_reset(params)
+        if visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users]
+          folder_meta = @account.solution_folder_meta.find(params[:folder_id])
+          folder_meta.customer_folders.create(customer_id: user.company_id)
+        end
         @article = @account.solution_articles.where(parent_id: article_meta.id, language_id: main_portal_language_id).first
       end
 
@@ -99,13 +100,15 @@ module Widget
         help_widget_category.save
       end
 
-      def solution_category_meta_ids
-        @account.solution_article_meta.for_help_widget(@widget).published.order(hits: :desc, thumbs_up: :desc).limit(5).pluck(:id)
+      def solution_category_meta_ids(user = nil)
+        @account.solution_article_meta
+                .for_help_widget(@widget, user)
+                .published.order(hits: :desc).limit(5).pluck(:id)
       end
 
-      def get_suggested_articles(lang_code = @account.main_portal.language)
+      def get_suggested_articles(lang_code: @account.main_portal.language, user: nil)
         result = []
-        meta_item_ids = solution_category_meta_ids
+        meta_item_ids = solution_category_meta_ids(user)
         articles = @account.solution_articles.where(parent_id: meta_item_ids, language_id: Language.find_by_code(lang_code).id)
         articles.each do |art|
           result << widget_article_search_pattern(art)
@@ -123,7 +126,7 @@ module Widget
         solution_folder_meta = @article.parent.solution_folder_meta
         solution_category_meta_id = solution_folder_meta.solution_category_meta_id
         help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
-        assert_equal solution_folder_meta.visibility, ALL_USER_VISIBILITY
+        assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         result = parse_response(@response.body)
         assert_equal result['title'], 'en Test'
         assert_nil Language.current
@@ -142,7 +145,7 @@ module Widget
         solution_folder_meta = @article.parent.solution_folder_meta
         solution_category_meta_id = solution_folder_meta.solution_category_meta_id
         help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
-        assert_equal solution_folder_meta.visibility, ALL_USER_VISIBILITY
+        assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         result = parse_response(@response.body)
         assert_equal result['title'], 'en Test'
         assert_nil Language.current
@@ -170,7 +173,7 @@ module Widget
         solution_folder_meta = @article.parent.solution_folder_meta
         solution_category_meta_id = solution_folder_meta.solution_category_meta_id
         help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
-        assert_equal solution_folder_meta.visibility, ALL_USER_VISIBILITY
+        assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         result = parse_response(@response.body)
         assert_equal result['title'], 'en Test'
         assert_nil Language.current
@@ -229,7 +232,7 @@ module Widget
         solution_folder_meta = @article.parent.solution_folder_meta
         solution_category_meta_id = solution_folder_meta.solution_category_meta_id
         help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
-        assert_equal solution_folder_meta.visibility, ALL_USER_VISIBILITY
+        assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         result = parse_response(@response.body)
         assert_equal result['title'], 'en Test'
         assert_nil Language.current
@@ -243,7 +246,7 @@ module Widget
         solution_folder_meta = @article.parent.solution_folder_meta
         solution_category_meta_id = solution_folder_meta.solution_category_meta_id
         help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
-        assert_equal solution_folder_meta.visibility, ALL_USER_VISIBILITY
+        assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         result = parse_response(@response.body)
         assert_equal result['title'], 'es Test'
         assert_nil Language.current
@@ -257,7 +260,7 @@ module Widget
         solution_folder_meta = @article.parent.solution_folder_meta
         solution_category_meta_id = solution_folder_meta.solution_category_meta_id
         help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
-        assert_equal solution_folder_meta.visibility, ALL_USER_VISIBILITY
+        assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         result = parse_response(@response.body)
         assert_equal result['title'], 'en Test'
         assert_nil Language.current
@@ -278,7 +281,7 @@ module Widget
         solution_folder_meta = @article.parent.solution_folder_meta
         solution_category_meta_id = solution_folder_meta.solution_category_meta_id
         help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
-        assert_equal solution_folder_meta.visibility, ALL_USER_VISIBILITY
+        assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         match_json(widget_article_show_pattern(att_article))
         assert_nil Language.current
       end
@@ -314,7 +317,7 @@ module Widget
         solution_folder_meta = @article.parent.solution_folder_meta
         solution_category_meta_id = solution_folder_meta.solution_category_meta_id
         help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
-        assert_equal solution_folder_meta.visibility, ALL_USER_VISIBILITY
+        assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         @article.reload
         assert_equal @article.hits, 1
         assert_nil Language.current
@@ -328,7 +331,7 @@ module Widget
         solution_folder_meta = @article.parent.solution_folder_meta
         solution_category_meta_id = solution_folder_meta.solution_category_meta_id
         help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
-        assert_equal solution_folder_meta.visibility, ALL_USER_VISIBILITY
+        assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         @article.reload
         assert_equal @article.hits, 1
         assert_nil Language.current
@@ -342,7 +345,7 @@ module Widget
         solution_folder_meta = @article.parent.solution_folder_meta
         solution_category_meta_id = solution_folder_meta.solution_category_meta_id
         help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
-        assert_equal solution_folder_meta.visibility, ALL_USER_VISIBILITY
+        assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         @article.reload
         assert_equal @article.thumbs_up, old_count + 1
         assert_nil Language.current
@@ -357,7 +360,7 @@ module Widget
         solution_folder_meta = @article.parent.solution_folder_meta
         solution_category_meta_id = solution_folder_meta.solution_category_meta_id
         help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
-        assert_equal solution_folder_meta.visibility, ALL_USER_VISIBILITY
+        assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         @article.reload
         assert_equal @article.thumbs_up, old_count + 1
         assert_nil Language.current
@@ -371,7 +374,7 @@ module Widget
         solution_folder_meta = @article.parent.solution_folder_meta
         solution_category_meta_id = solution_folder_meta.solution_category_meta_id
         help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
-        assert_equal solution_folder_meta.visibility, ALL_USER_VISIBILITY
+        assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         @article.reload
         assert_equal @article.thumbs_down, old_count + 1
         assert_nil Language.current
@@ -387,7 +390,7 @@ module Widget
         solution_folder_meta = @article.parent.solution_folder_meta
         solution_category_meta_id = solution_folder_meta.solution_category_meta_id
         help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
-        assert_equal solution_folder_meta.visibility, ALL_USER_VISIBILITY
+        assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         @article.reload
         assert_equal @article.thumbs_down, old_count + 1
         assert_nil Language.current
@@ -400,7 +403,7 @@ module Widget
         solution_folder_meta = @article.parent.solution_folder_meta
         solution_category_meta_id = solution_folder_meta.solution_category_meta_id
         help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
-        assert_equal solution_folder_meta.visibility, ALL_USER_VISIBILITY
+        assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         match_json(get_suggested_articles)
         assert_nil Language.current
       ensure
@@ -410,14 +413,91 @@ module Widget
       def test_suggested_articles_es
         get :suggested_articles, controller_params(language: 'es')
         assert_response 200
-        match_json(get_suggested_articles('es'))
+        match_json(get_suggested_articles(lang_code: 'es'))
         result = parse_response(@response.body)
         solution_folder_meta = @article.parent.solution_folder_meta
         solution_category_meta_id = solution_folder_meta.solution_category_meta_id
         help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
-        assert_equal solution_folder_meta.visibility, ALL_USER_VISIBILITY
+        assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         assert_equal result.first['title'], 'es Test'
         assert_nil Language.current
+      end
+
+      def test_suggested_articles_with_login
+        User.unstub(:current)
+        @account.launch :help_widget_login
+        secret_key = SecureRandom.hex
+        @account.stubs(:help_widget_secret).returns(secret_key)
+        user = add_new_user(@account)
+        @widget.help_widget_solution_categories.destroy_all
+        create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
+        timestamp = Time.zone.now.utc.iso8601
+        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
+        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+        get :suggested_articles, controller_params(language: 'es')
+        assert_response 200
+        match_json(get_suggested_articles(lang_code: 'es', user: user))
+        result = parse_response(@response.body)
+        result = parse_response(@response.body)
+        logged_user_response = result.find { |x| x['id'] == @article.parent_id }
+        assert_not_nil logged_user_response
+        assert_equal User.current.id, user.id
+      ensure
+        @account.rollback :help_widget_login
+        @account.unstub(:help_widget_secret)
+        User.stubs(:current).returns(nil)
+      end
+
+      def test_suggested_articles_with_company_user_login
+        User.unstub(:current)
+        @account.launch :help_widget_login
+        secret_key = SecureRandom.hex
+        @account.stubs(:help_widget_secret).returns(secret_key)
+        customer = create_company
+        user = add_new_user(@account, customer_id: customer.id)
+        @widget.help_widget_solution_categories.destroy_all
+        create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users], user)
+        timestamp = Time.zone.now.utc.iso8601
+        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
+        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+        get :suggested_articles, controller_params(language: 'es')
+        assert_response 200
+        match_json(get_suggested_articles(lang_code: 'es', user: user))
+        result = parse_response(@response.body)
+        company_response = result.find { |x| x['id'] == @article.parent_id }
+        assert_not_nil company_response
+        assert_equal User.current.id, user.id
+      ensure
+        @account.rollback :help_widget_login
+        @account.unstub(:help_widget_secret)
+        User.stubs(:current).returns(nil)
+      end
+
+      def test_suggested_articles_with_invalid_company_user_login
+        User.unstub(:current)
+        @account.launch :help_widget_login
+        secret_key = SecureRandom.hex
+        @account.stubs(:help_widget_secret).returns(secret_key)
+        customer = create_company
+        user = add_new_user(@account, customer_id: customer.id)
+        @widget.help_widget_solution_categories.destroy_all
+        create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users], user)
+        customer1 = create_company
+        user1 = add_new_user(@account, customer_id: customer1.id)
+        timestamp = Time.zone.now.utc.iso8601
+        auth_token = JWT.encode({ name: user1.name, email: user1.email, timestamp: timestamp }, secret_key)
+        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+        get :suggested_articles, controller_params(language: 'es')
+        assert_response 200
+        match_json(get_suggested_articles(lang_code: 'es', user: user1))
+        result = parse_response(@response.body)
+        company_response = result.find { |x| x['id'] == @article.parent_id }
+        assert_nil company_response
+        assert_equal User.current.id, user1.id
+      ensure
+        @account.rollback :help_widget_login
+        @account.unstub(:help_widget_secret)
+        User.stubs(:current).returns(nil)
       end
 
       def test_suggested_articles_with_solution_disabled
@@ -428,7 +508,7 @@ module Widget
         solution_folder_meta = @article.parent.solution_folder_meta
         solution_category_meta_id = solution_folder_meta.solution_category_meta_id
         help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
-        assert_equal solution_folder_meta.visibility, ALL_USER_VISIBILITY
+        assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         match_json(get_suggested_articles)
         assert_nil Language.current
       end
@@ -457,7 +537,7 @@ module Widget
         solution_folder_meta = @article.parent.solution_folder_meta
         solution_category_meta_id = solution_folder_meta.solution_category_meta_id
         help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
-        assert_equal solution_folder_meta.visibility, ALL_USER_VISIBILITY
+        assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         match_json(widget_article_show_pattern(@article))
         assert_nil Language.current
       end

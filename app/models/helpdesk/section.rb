@@ -14,6 +14,8 @@ class Helpdesk::Section < ActiveRecord::Base
   concerned_with :presenter
   
   belongs_to_account
+
+  swindle :all_sections, attrs: %i[id label ticket_field_id]
   has_many :section_fields, :dependent => :destroy, :order => 'position'
   has_many :section_picklist_mappings, :class_name => 'Helpdesk::SectionPicklistValueMapping', 
                                        :dependent => :destroy
@@ -28,6 +30,7 @@ class Helpdesk::Section < ActiveRecord::Base
   after_commit :clear_cache
 
   def parent_ticket_field_id
+    # TODO: remove the second part of the code once migration goes live and working
     ticket_field_id || section_picklist_mappings[0].picklist_value.pickable_id
   end
 end

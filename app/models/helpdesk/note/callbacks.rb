@@ -179,16 +179,24 @@ class Helpdesk::Note < ActiveRecord::Base
           Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT, notable, self)
         end
 
+        additional_emails = []
+        ignore_emails = []
+        send_cc_email_notification = false
+
         if inbound_email? && !self.private? && notable.included_in_cc?(user.email)
-          additional_emails = [notable.requester.email] if !notable.included_in_cc?(notable.requester.email)
-          # Using cc notification to send notification to requester about new comment by cc
-          Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {:additional_emails => additional_emails,
-                                                                                   :ignore_emails => [user.email]}) unless notable.spam?
+          send_cc_email_notification = true
+          additional_emails << notable.requester.email if !notable.included_in_cc?(notable.requester.email)
+          ignore_emails << user.email
         end
         handle_notification_for_agent_as_req if ( !incoming && notable.agent_as_requester?(user.id))
 
         if notable.cc_email.present? && user.id == notable.requester_id && !self.private?
-          Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {}) unless notable.spam?
+          send_cc_email_notification = true
+        end
+
+        if send_cc_email_notification
+          Helpdesk::TicketNotifier.send_later(:send_cc_email, notable, self, {:additional_emails => additional_emails,
+                                                                             ignore_emails: ignore_emails}) unless notable.spam?
         end
 
         # Jira notes notifier was sending emails for portal added notes with no notifying emails. Added a to emails check to prevent that.

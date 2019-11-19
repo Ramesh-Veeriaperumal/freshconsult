@@ -33,7 +33,8 @@
                 <label><%= check_box_tag 'social_ticket_rule[][import_visitor_posts]', true, ticket_rule.import_visitor_posts? %>&nbsp;<%= t(".convert_visitor") %></label>  
               </div>
               <div class="checkbox">
-                <label><%= check_box_tag 'social_ticket_rule[][import_company_comments]', true, ticket_rule.import_company_comments? %>&nbsp;<%= t(".convert_company") %></label>
+                <% convert_company_message = current_account.fb_ad_post_text_enabled? ? t(".convert_company_with_adpost") : t(".convert_company") %>
+                <label><%= check_box_tag 'social_ticket_rule[][import_company_comments]', true, ticket_rule.import_company_comments? %>&nbsp;<%= convert_company_message %></label>
               </div>
               
               <div class="form-group clearfix pl20">
