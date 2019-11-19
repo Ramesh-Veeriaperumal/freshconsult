@@ -171,9 +171,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/account_feature", only: [:create, :destroy]
     resource :"api_search/automation", only: [:results]
     resource :"ember/admin/freddy_skill", only: [:index, :show, :update]
-    resource :'admin/freshcaller_account', only: [:show]
     resource :"admin/ticket_field", only: [:create, :update, :destroy, :show, :index]
     resource :"admin/section", only: [:create, :update, :destroy, :show, :index]
+    resource :"admin/freshcaller_account", only: [:show, :enable, :disable]
     resource :"admin/api_skill", only: [:index, :create, :show, :update, :destroy]
   end
 

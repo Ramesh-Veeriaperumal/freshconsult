@@ -33,7 +33,12 @@ Helpkit::Application.routes.draw do
       end
       put '/custom_translations', to: 'custom_translations#upload'
       get '/custom_translations', to: 'custom_translations#download'
-      get '/freshcaller_account', to: 'freshcaller_account#show'
+      resource :freshcaller_account, controller: 'freshcaller_account', only: [:show] do
+        member do
+          put 'enable'
+          put 'disable'
+        end
+      end
     end
 
     resources :accounts, path: 'admin/accounts' do

@@ -403,6 +403,11 @@ api_error_messages:
   account_cancellation_destroy_error: 'Error while removing account cancellation request!'
   active_mailbox_verification: 'Cannot send verification to an active mailbox'
 
+  #Freshcaller Integration
+  fc_invalid_token: "Given token is invalid"
+  fc_invalid_request: "Invalid request"
+  fc_account_absent: "Freshcaller integration not present"
+
   # Search settings
   ticket_search_settings_blank: "ticket search settings should not be blank"
 

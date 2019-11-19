@@ -27,7 +27,7 @@ class Freshcaller::Account < ActiveRecord::Base
   end
 
   def central_payload_type
-    action = [:create, :destroy].find{ |action| 
+    action = [:create, :destroy, :update].find { |action|
       transaction_include_action? action }
     "freshcaller_account_#{action}"
   end

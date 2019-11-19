@@ -2,6 +2,9 @@ module Freshcaller
   module Endpoints
     include Freshcaller::JwtAuthentication
 
+    ENABLE_INTEGRATION = '/integrations/freshdesk/enable'.freeze
+    DISABLE_INTEGRATION = '/integrations/freshdesk/disable'.freeze
+
     def freshcaller_base_sso_url
       "#{protocol}#{current_account.freshcaller_account.domain}/sso/freshdesk/#{sign_payload(email: current_user.email)}"
     end
@@ -21,6 +24,18 @@ module Freshcaller
 
     def freshcaller_link_url
       "#{protocol}#{params[:url]}#{FreshcallerConfig['domain_suffix']}/link_account"
+    end
+
+    def freshcaller_url
+      "#{protocol}#{::Account.current.freshcaller_account.domain}"
+    end
+
+    def freshcaller_enable_url
+      "#{freshcaller_url}#{ENABLE_INTEGRATION}"
+    end
+
+    def freshcaller_disable_url
+      "#{freshcaller_url}#{DISABLE_INTEGRATION}"
     end
 
     def protocol
