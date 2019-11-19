@@ -1798,7 +1798,7 @@ module Ember
       def test_article_filters_with_secondary_language
         languages = @account.supported_languages + ['primary']
         language = @account.supported_languages.first
-        articles = @account.solution_articles.where(language_id: Language.find_by_code(language).id)
+        articles = get_portal_articles(@portal_id, [Language.find_by_code(language).id]).first(30)
         if articles.blank?
           article_meta = create_article(article_params(lang_codes: languages))
           articles = [article_meta.safe_send("#{language}_article")]
@@ -1871,7 +1871,7 @@ module Ember
       def test_article_filters_by_status_with_sec_lang
         languages = @account.supported_languages + ['primary']
         language  = @account.supported_languages.first
-        articles = @account.solution_articles.where(status: '2', language_id: 8)
+        articles = get_portal_articles(@portal_id, [8]).where(status: '2').first(30)
         if articles.blank?
           article_meta = create_article(folder_meta_id: @@folder_meta.id, lang_codes: languages)
           articles = [article_meta.safe_send("#{language}_article")]
