@@ -146,6 +146,7 @@ class Solution::ArticleVersion < ActiveRecord::Base
     cloud_files = article.cloud_files
     draft = article.draft
 
+
     # to handle draft attachment changes, draft should be present,
     # and the version should not be created from article migration script, for draft migration script we can handle as usual
 

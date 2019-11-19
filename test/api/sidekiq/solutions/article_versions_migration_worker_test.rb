@@ -126,7 +126,6 @@ class ArticleVersionsMigrationWorkerTest < ActionView::TestCase
 
     def deleted_attachments(draft, type)
       return draft.meta[:deleted_attachments][type] if draft.meta.present? && draft.meta[:deleted_attachments].present? && draft.meta[:deleted_attachments][type].present?
-
       []
     end
 end

@@ -2407,6 +2407,8 @@ module Ember
       include SolutionsTestHelper
       include SolutionsHelper
       include SolutionBuilderHelper
+      include InstalledApplicationsTestHelper
+      include AttachmentsTestHelper
       tests Ember::Solutions::ArticlesController
 
       def setup
@@ -2891,6 +2893,23 @@ module Ember
         old_live_version.reload
         assert_equal 105, article.read_attribute(:hits)
         assert_equal 105, old_live_version.hits
+      end
+
+      def test_publish_with_cloud_attachments
+        sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
+        app = create_application('dropbox')
+        cloud_file_params = [{ name: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: app.application_id }]
+        should_create_version(sample_article) do
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, status: 2, cloud_file_attachments: cloud_file_params, session: nil)
+          assert_response 200
+          latest_version = get_latest_version(sample_article)          
+          match_json(private_api_solution_article_pattern(sample_article))
+          assert_equal sample_article.cloud_files.count, 1
+          assert_equal latest_version[:meta][:cloud_files].length, 1
+          latest_version[:meta][:cloud_files].each do |file|
+            assert !file[:id].nil?
+          end
+        end
       end
 
       private
