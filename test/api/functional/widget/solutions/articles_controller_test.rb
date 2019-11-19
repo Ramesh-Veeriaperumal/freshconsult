@@ -231,6 +231,53 @@ module Widget
         @account.unstub(:multilingual?)
       end
 
+      def test_show_article_with_company_user_visibility
+        @account.stubs(:multilingual?).returns(false)
+        User.unstub(:current)
+        @account.launch :help_widget_login
+        timestamp = Time.zone.now.utc.iso8601
+        User.any_instance.stubs(:agent?).returns(false)
+        secret_key = SecureRandom.hex
+        @account.stubs(:help_widget_secret).returns(secret_key)
+        company = create_company
+        user = add_new_user(@account, customer_id: company.id)
+        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
+        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users], user)
+        put :show, controller_params(id: @article.parent_id)
+        assert_response 200
+      ensure
+        @account.unstub(:multilingual?)
+        User.stubs(:current).returns(nil)
+        User.unstub(:agent?)
+        @account.unstub(:help_widget_secret)
+        @account.rollback :help_widget_login
+      end
+
+      def test_show_article_with_invalid_company_user_visibility
+        @account.stubs(:multilingual?).returns(false)
+        User.unstub(:current)
+        @account.launch :help_widget_login
+        timestamp = Time.zone.now.utc.iso8601
+        User.any_instance.stubs(:agent?).returns(false)
+        secret_key = SecureRandom.hex
+        @account.stubs(:help_widget_secret).returns(secret_key)
+        company = create_company
+        company_user = add_new_user(@account, customer_id: company.id)
+        user = add_new_user(@account)
+        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
+        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users], company_user)
+        put :show, controller_params(id: @article.parent_id)
+        assert_response 404
+      ensure
+        @account.unstub(:multilingual?)
+        User.stubs(:current).returns(nil)
+        User.unstub(:agent?)
+        @account.unstub(:help_widget_secret)
+        @account.rollback :help_widget_login
+      end
+
       def test_show_article_with_primary_language
         create_widget(language: 'es')
         @article = create_articles
@@ -334,6 +381,24 @@ module Widget
         @account.unstub(:multilingual?)
       end
 
+      def test_hit_article_with_wrong_x_widget_auth
+        @account.launch :help_widget_login
+        @account.stubs(:multilingual?).returns(false)
+        timestamp = Time.zone.now.utc.iso8601
+        User.any_instance.stubs(:agent?).returns(false)
+        secret_key = SecureRandom.hex
+        @account.stubs(:help_widget_secret).returns(secret_key)
+        auth_token = JWT.encode({ name: 'Padmashri', email: 'praaji.longbottom@freshworks.com', timestamp: timestamp }, secret_key + 'oyo')
+        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+        get :hit, controller_params(id: @article.parent_id)
+        assert_response 401
+      ensure
+        @account.unstub(:multilingual?)
+        @account.rollback :help_widget_login
+        @account.unstub(:help_widget_secret)
+        User.any_instance.unstub(:agent?)
+      end
+
       def test_hit_article_with_solution_article_disabled
         HelpWidget.any_instance.stubs(:solution_articles_enabled?).returns(false)
         put :hit, controller_params(id: @article.parent_id)
@@ -374,6 +439,57 @@ module Widget
       ensure
         @account.unstub(:multilingual?)
         User.stubs(:current).returns(nil)
+        @account.unstub(:help_widget_secret)
+        @account.rollback :help_widget_login
+      end
+
+      def test_hit_article_with_company_user_visibility
+        @account.stubs(:multilingual?).returns(false)
+        User.unstub(:current)
+        @account.launch :help_widget_login
+        timestamp = Time.zone.now.utc.iso8601
+        User.any_instance.stubs(:agent?).returns(false)
+        secret_key = SecureRandom.hex
+        @account.stubs(:help_widget_secret).returns(secret_key)
+        company = create_company
+        user = add_new_user(@account, customer_id: company.id)
+        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
+        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users], user)
+        put :hit, controller_params(id: @article.parent_id)
+        assert_response 204
+        @article.reload
+        assert_equal @article.hits, 1
+        assert_nil Language.current
+        assert_equal User.current.id, user.id
+      ensure
+        @account.unstub(:multilingual?)
+        User.stubs(:current).returns(nil)
+        User.unstub(:agent?)
+        @account.unstub(:help_widget_secret)
+        @account.rollback :help_widget_login
+      end
+
+      def test_hit_article_with_invalid_company_user_visibility
+        @account.stubs(:multilingual?).returns(false)
+        User.unstub(:current)
+        @account.launch :help_widget_login
+        timestamp = Time.zone.now.utc.iso8601
+        User.any_instance.stubs(:agent?).returns(false)
+        secret_key = SecureRandom.hex
+        @account.stubs(:help_widget_secret).returns(secret_key)
+        company = create_company
+        company_user = add_new_user(@account, customer_id: company.id)
+        user = add_new_user(@account)
+        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
+        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users], company_user)
+        put :hit, controller_params(id: @article.parent_id)
+        assert_response 404
+      ensure
+        @account.unstub(:multilingual?)
+        User.stubs(:current).returns(nil)
+        User.unstub(:agent?)
         @account.unstub(:help_widget_secret)
         @account.rollback :help_widget_login
       end
