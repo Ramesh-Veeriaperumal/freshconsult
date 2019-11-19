@@ -58,6 +58,33 @@ class AccountAdminsControllerTest < ActionController::TestCase
     assert_equal @account.launched?(:update_billing_info), false
   end
 
+  def test_preferences_get
+    additional_settings = @account.account_additional_settings.additional_settings
+    get :preferences, controller_params
+    assert_response 200
+    match_json(preferences_response(additional_settings)) if additional_settings.key? :skip_mandatory_checks
+  end
+
+  def test_forbidden_access_without_manage_account_privilege_preferences_set
+    remove_privilege(@agent, :manage_account)
+    put :preferences=, controller_params
+    assert_response 403
+  ensure
+    add_privilege(@agent, :manage_account)
+  end
+
+  def test_bad_request_preferences_set
+    put :preferences=, construct_params('skip_mandatory_checks' => 'invalid')
+    assert_response 400
+    match_json(account_admin_bad_request_error_patterns(:skip_mandatory_checks, 'Value set is of type String.It should be a/an Boolean', code: 'datatype_mismatch'))
+  end
+
+  def test_successful_preferences_set
+    put :preferences=, construct_params('skip_mandatory_checks' => true)
+    assert_response 204
+    assert_equal @account.account_additional_settings.additional_settings[:skip_mandatory_checks], true
+  end
+
   def test_third_party_apps_not_called_for_anonymous_signup
     Account.any_instance.stubs(:anonymous_account?).returns(true)
     Account.any_instance.stubs(:sandbox?).returns(true)

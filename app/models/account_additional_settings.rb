@@ -26,6 +26,14 @@ class AccountAdditionalSettings < ActiveRecord::Base
     save!
   end
 
+  def enable_skip_mandatory
+    toggle_skip_mandatory_option(true) unless additional_settings[:skip_mandatory_checks]
+  end
+
+  def disable_skip_mandatory
+    toggle_skip_mandatory_option(false) if additional_settings[:skip_mandatory_checks]
+  end
+
   def handle_email_notification_outdate
     if supported_languages_changed?
     	removed = supported_languages_was - supported_languages

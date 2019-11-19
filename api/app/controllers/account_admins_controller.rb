@@ -1,6 +1,6 @@
 class AccountAdminsController < ApiApplicationController
   before_filter :load_object
-  before_filter :validate_params, only: [:update]
+  before_filter :validate_params, only: [:update, :preferences=]
 
   def load_object
     @item = current_account.account_configuration
@@ -17,13 +17,27 @@ class AccountAdminsController < ApiApplicationController
     head 204
   end
 
+  def preferences
+    @preferences = current_account.account_additional_settings.additional_settings
+    response.api_root_key = :preferences
+  end
+
+  def preferences=
+    if params.key? :skip_mandatory_checks
+      if params[:skip_mandatory_checks]
+        current_account.account_additional_settings.enable_skip_mandatory
+      else
+        current_account.account_additional_settings.disable_skip_mandatory
+      end
+    end
+    head 204
+  end
+
   private
 
   def validate_params
     account_admin_validation = AccountAdminValidation.new(params[cname], nil, true)
-    if account_admin_validation.invalid?
-      render_errors(account_admin_validation.errors, account_admin_validation.error_options)
-    end
+    render_errors(account_admin_validation.errors, account_admin_validation.error_options) if account_admin_validation.invalid?(params[:action].to_sym)
   end
 
   def sanitize_params

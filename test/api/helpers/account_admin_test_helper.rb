@@ -21,4 +21,10 @@ module AccountAdminTestHelper
       ]
     }
   end
+
+  def preferences_response(params)
+    response = {
+      skip_mandatory_checks: params[:skip_mandatory_checks]
+    }
+  end
 end

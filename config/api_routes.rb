@@ -515,6 +515,9 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    get 'admin/accounts/preferences', to: 'account_admins#preferences'
+    put 'admin/accounts/preferences', to: 'account_admins#preferences='
+
     scope module: 'admin' do
       post 'features/:name', to: 'account_features#create'
       delete 'features/:name', to: 'account_features#destroy'
