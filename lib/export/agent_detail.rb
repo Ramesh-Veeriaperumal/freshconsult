@@ -47,7 +47,11 @@ module Export
         return csv_string unless @send_mail
         check_and_create_export('agent')
         build_file(csv_string, 'agent')
-        mail_to_user
+        if @args[:receive_via] == AgentConstants::RECEIVE_VIA[1]
+          @data_export.save_hash!(@args[:export_job_id])
+        else
+          mail_to_user
+        end
       end
 
       def map_csv csv

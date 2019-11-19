@@ -29,4 +29,23 @@ module AgentConstants
     user_id: 0, group_id: 1
   }.freeze
   RESTRICTED_PARAMS = ['name', 'job_title', 'phone', 'mobile'].freeze
+  EXPORT_FIELDS = ['response_type', 'fields'].freeze
+  RECEIVE_VIA = ['email', 'api'].freeze
+  AGENT_EXPORT_FIELDS_WITHOUT_SKILLS = ['name', 'email', 'agent_type', 'ticket_scope', 'roles', 'groups', 'phone', 'mobile', 'language', 'time_zone', 'last_seen'].freeze
+  AGENT_EXPORT_FIELDS_WITH_SKILLS =  AGENT_EXPORT_FIELDS_WITHOUT_SKILLS | ['skills'].freeze
+  FIELD_TO_CSV_HEADER_MAP = {
+    'name' =>         { 'Name' => 'agent_name' },
+    'email' =>        { 'Email' => 'agent_email' },
+    'agent_type' =>   { 'Agent Type' => 'agent_type' },
+    'ticket_scope' => { 'Ticket Scope' => 'ticket_scope' },
+    'roles' =>        { 'Roles' => 'agent_roles' },
+    'groups' =>       { 'Groups' => 'groups' },
+    'phone' =>        { 'Phone' => 'agent_phone' },
+    'mobile' =>       { 'Mobile' => 'agent_mobile' },
+    'language' =>     { 'Language' => 'agent_language' },
+    'time_zone' =>    { 'Time Zone' => 'agent_time_zone' },
+    'last_seen' =>    { 'Last Seen' => 'last_active_at' },
+    'skills' =>       { 'Skills' => 'skills_name' }
+  }.freeze
+  EXPORT_TYPE = 'agent'.freeze
 end.freeze

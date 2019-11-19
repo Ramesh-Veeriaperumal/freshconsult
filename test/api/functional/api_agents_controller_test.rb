@@ -720,6 +720,50 @@ class ApiAgentsControllerTest < ActionController::TestCase
     specimen_agent.destroy
   end
 
+  def test_valid_agents_export
+    Account.stubs(:current).returns(Account.first)
+    params = { 'response_type' => 'api', 'fields' => ['email', 'name', 'phone'] }
+    post :export, construct_params(params)
+    assert_response 200
+  ensure
+    Account.unstub(:current)
+  end
+
+  def test_invalid_response_type_for_export
+    Account.stubs(:current).returns(Account.first)
+    params = { 'response_type' => 'call', 'fields' => ['email', 'name', 'phone'] }
+    post :export, construct_params(params)
+    response = JSON.parse @response.body
+    assert_response 400
+    match_json([bad_request_error_pattern('response_type', :"It should be one of these values: 'email,api'", code: :invalid_value)])
+  ensure
+    Account.unstub(:current)
+  end
+
+  def test_export_with_invalid_field_value
+    Account.stubs(:current).returns(Account.first)
+    params = { 'response_type' => 'email', 'fields' => ['email', 'name', 'phone', 'emp_id'] }
+    post :export, construct_params(params)
+    response = JSON.parse @response.body
+    assert_response 400
+    match_json([bad_request_error_pattern('fields', :"Invalid value(s) for field(s): emp_id", code: :invalid_value)])
+  ensure
+    Account.unstub(:current)
+  end
+
+  def test_get_export_s3_url_with_failed_status
+    Account.stubs(:current).returns(Account.first)
+    ApiAgentsController.any_instance.stubs(:fetch_export_details).returns(status: 'failed')
+    ApiAgentsController.any_instance.stubs(:load_data_export).returns({})
+    get :export_s3_url, controller_params(id: 'testid')
+    response = JSON.parse @response.body
+    assert_response 200
+    assert_equal response['status'], 'failed'
+  ensure
+    Account.unstub(:current)
+    ApiAgentsController.any_instance.unstub(:fetch_export_details)
+    ApiAgentsController.any_instance.unstub(:load_data_export)
+
   def test_create_agent_without_freshid
     Account.stubs(:current).returns(Account.first)
     Account.any_instance.stubs(:freshid_integration_enabled?).returns(false)

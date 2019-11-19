@@ -194,7 +194,7 @@ class DataExportMailer < ActionMailer::Base
 
   def agent_export options={}
     headers = {
-      :subject => I18n.t('mailer_notifier_subject.agent_export'),
+      :subject => I18n.t('mailer_notifier_subject.agent_export', account: options[:domain]),
       :to      => options[:user].email,
       :from    => AppConfig['from_email'],
       :sent_on   => Time.now

@@ -345,6 +345,8 @@ Helpkit::Application.routes.draw do
 
     post '/audit_log/export', to: 'audit_logs#export'
     get '/audit_log/export/:id', to: 'audit_logs#export_s3_url'
+    post '/agents/export', to: 'api_agents#export'
+    get '/agents/export/:id', to: 'api_agents#export_s3_url'
 
     scope '/automations/:rule_type' do
       resources :rules, controller: 'admin/automations', only: [:index, :create, :update, :destroy, :show]

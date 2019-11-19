@@ -13032,7 +13032,7 @@ en:
     account_data_export: "Data Export for %{account}"
     no_tickets_to_export: "No tickets in range - %{domain}"
     no_articles_to_export: "No articles - %{domain}"
-    agent_export: Agents List Export
+    agent_export: "Agents List Export for %{account}"
     audit_log_export: Audit Log Export
     spam_watcher: "Freshdesk :: Spam watcher"
     account_cancelled: "%{account_domain} has been cancelled"

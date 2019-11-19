@@ -1,8 +1,12 @@
 class ApiAgentsController < ApiApplicationController
   include HelperConcern
+  include ContactsCompaniesConcern
+  include Export::Util
 
   skip_before_filter :check_privilege, only: :revert_identity
   before_filter :check_gdpr_pending?, only: :complete_gdpr_acceptance
+  before_filter :load_data_export, only: [:export_s3_url]
+  before_filter :validate_params_for_export, only: [:export]
   SLAVE_ACTIONS = %w[index achievements].freeze
 
   def check_edit_privilege
@@ -62,6 +66,29 @@ class ApiAgentsController < ApiApplicationController
     head 204
   end
 
+  def export
+    csv_header_data = {}
+    params[cname][:fields].each do |field|
+      csv_header_data.merge!(AgentConstants::FIELD_TO_CSV_HEADER_MAP[field])
+    end
+    job_id = ExportAgents.perform_async(csv_hash: csv_header_data, user: current_user.id, portal_url: fetch_portal_url, receive_via: params[:response_type])
+    if params[:response_type] == AgentConstants::RECEIVE_VIA[0]
+      @items = { status: 'generating export' }
+    elsif params[:response_type] == AgentConstants::RECEIVE_VIA[1]
+      url = "#{request.url}/#{job_id}"
+      @items = { href: url }
+    end
+  end
+
+  def export_s3_url
+    resp = fetch_export_details
+    @items = if resp[:status] == :completed
+               { download_url: resp[:download_url] }
+             else
+               { status: resp[:status] }
+             end
+    end
+
   def complete_gdpr_acceptance
     User.current.remove_gdpr_preference
     User.current.save ? (head 204) : render_errors(gdpr_acceptance: :not_allowed_to_accept_gdpr)
@@ -115,6 +142,12 @@ class ApiAgentsController < ApiApplicationController
       params[cname].permit(*allowed_fields)
       agent = AgentValidation.new(params[cname], @item, string_request_params?)
       render_custom_errors(agent, true) unless agent.valid?(action_name.to_sym)
+    end
+
+    def validate_params_for_export
+      params[cname].permit(*AgentConstants::EXPORT_FIELDS)
+      agent_export = AgentExportValidation.new(params[cname])
+      render_custom_errors(agent_export, true) unless agent_export.valid?(action_name.to_sym)
     end
 
     def sanitize_params
@@ -224,5 +257,13 @@ class ApiAgentsController < ApiApplicationController
 
     def error_options_mappings
       AgentConstants::FIELD_MAPPINGS
+    end
+
+    def fetch_portal_url
+      main_portal? ? current_account.host : current_portal.portal_url
+    end
+
+    def load_data_export
+      fetch_data_export_item(AgentConstants::EXPORT_TYPE)
     end
 end
