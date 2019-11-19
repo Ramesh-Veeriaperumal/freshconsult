@@ -476,7 +476,7 @@ class AccountsControllerTest < ActionController::TestCase
 
   def test_cancel
     Billing::Subscription.any_instance.stubs(:cancel_subscription).returns(true)
-    Account.any_instance.stubs(:paid_account?).returns(true)
+    Account.any_instance.stubs(:free_or_active_account?).returns(true)
     Account.any_instance.stubs(:add_churn).returns(true)
     Account.any_instance.stubs(:schedule_cleanup).returns(true)
     Account.any_instance.stubs(:update_crm).returns(true)
@@ -486,12 +486,12 @@ class AccountsControllerTest < ActionController::TestCase
     post :cancel, confirm: true
     assert_response 302
 
-    Account.any_instance.stubs(:paid_account?).returns(false)
+    Account.any_instance.stubs(:active?).returns(false)
     post :cancel, confirm: true
     assert_response 302
   ensure
     Billing::Subscription.any_instance.unstub(:cancel_subscription)
-    Account.any_instance.unstub(:paid_account?)
+    Account.any_instance.unstub(:free_or_active_account?)
     Account.any_instance.unstub(:add_churn)
     Account.any_instance.unstub(:schedule_cleanup)
     Account.any_instance.unstub(:update_crm)

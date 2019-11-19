@@ -101,6 +101,15 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
     @account.delete_account_cancellation_request_job_key
   end
 
+  def test_account_cancellation_for_active_accounts
+    reset_account_subscription_state('active')
+    put :cancel, construct_params(get_valid_params_for_cancel)
+    assert_response 204
+    reset_account_subscription_state('trial')
+  ensure
+    @account.subscription_payments.destroy_all
+  end
+
   def test_account_cancellation_state_validation_fail
     reset_account_subscription_state('suspended')
     put :cancel, construct_params(get_valid_params_for_cancel)
