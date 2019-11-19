@@ -56,6 +56,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:fluffy_info] = fetch_fluffy_details(account)
     account_summary[:fluffy_min_level] = { enabled: account.fluffy_min_level_enabled? }
     account_summary[:trial_subscription] = trial_subscription_hash(account.trial_subscriptions.last)
+    account_summary[:subscription_request] = fetch_requested_subscription_details(account.subscription.subscription_request)
+    account_summary[:account_cancellation_requested_on] = fetch_account_cancellation_requested_time(account)
     respond_to do |format|
       format.json do
         render :json => account_summary
