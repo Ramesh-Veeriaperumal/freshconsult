@@ -33,6 +33,14 @@ module Dkim
         fetch_request_params(REQUEST_TYPES[:post])
       )
     end
+    
+    def remove_domain
+      hrp.fetch_using_req_params(
+        fetch_service_params(build_remove_url(EMAIL_SERVICE_REMOVE_DOMAIN),
+          EMAIL_SERVICE_ACTION[:remove_domain]),
+        fetch_request_params(REQUEST_TYPES[:delete])
+      )
+    end
 
     private
 
@@ -58,7 +66,11 @@ module Dkim
         when EMAIL_SERVICE_ACTION[:verify_domain] 
           service_params.merge({
             rest_url: email_service_url,
-            body: build_verify_body.to_json 
+            body: build_params.to_json 
+          })
+        when EMAIL_SERVICE_ACTION[:remove_domain] 
+          service_params.merge({
+            rest_url: email_service_url 
           })
         end
       end
@@ -70,11 +82,18 @@ module Dkim
         }
       end
       
-      def build_verify_body
+      def build_params
         {
           "accountId": account_id,
           "domain": domain
         }
+      end
+      
+      def build_remove_url(base_url)
+        params_array = build_params.inject([]) do |url_params_arr, (k, v)|
+          url_params_arr << "#{k}=#{ERB::Util.url_encode(v)}"
+        end
+        base_url += "?#{params_array.join('&')}"
       end
   end
 end

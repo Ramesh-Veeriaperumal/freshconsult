@@ -18,8 +18,11 @@ class DkimRecordDeletionWorker
     args.symbolize_keys!
     return if args[:domain_id].blank?
     execute_on_master(args[:account_id], args[:domain_id]){
-      Dkim::RemoveDkimConfig.new(@domain_category).remove_records if @domain_category.present? and @domain_category.status == OutgoingEmailDomainCategory::STATUS['delete']
+      if Account.current.launched?(:dkim_email_service)
+        Dkim::RemoveDkim.new(@domain_category).remove if @domain_category.present? and @domain_category.status == OutgoingEmailDomainCategory::STATUS['delete']
+      else
+        Dkim::RemoveDkimConfig.new(@domain_category).remove_records if @domain_category.present? and @domain_category.status == OutgoingEmailDomainCategory::STATUS['delete']
+      end
     }
   end
 end 
-

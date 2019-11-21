@@ -143,7 +143,7 @@ class UserNotifier < ActionMailer::Base
   def notify_dev_dkim_failure(args)
     headers = {
       :subject    => "Dkim Failure Notification",
-      :to         => "ramkumar@freshdesk.com",
+      :to         => "fd-avengers@freshworks.com",
       :from       => AppConfig['from_email'],
       :sent_on    => Time.now,
       "Reply-to"       => "",
