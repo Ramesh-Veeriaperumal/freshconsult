@@ -50,7 +50,7 @@
 		  			<dd> 
 		  				<%= @subscription.non_free_agents %> x
 		  				<span id="cost-per-agent">
-		  					<%= cost_per_agent(@subscription_plan.name, billing_cycle, @subscription.currency_name) %> x <%= billing_cycle %>
+		  					<%= cost_per_agent(@subscription_plan.name, billing_cycle, @subscription.currency_name) %> x <b id="number-of-months"> <%= billing_cycle %> </b>
 		  				</span>
 		  			</dd>
 		  		</dl>
