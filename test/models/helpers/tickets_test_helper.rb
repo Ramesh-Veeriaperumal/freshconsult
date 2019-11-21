@@ -267,12 +267,40 @@ module TicketsTestHelper
   end
 
   def cp_assoc_ticket_pattern(expected_output = {}, ticket)
-    {
+    assoc_ticket_pattern = {
       requester: Hash,
       responder: (ticket.responder ? Hash : nil),
       group: (ticket.group ? Hash : nil),
       attachments: Array,
       skill: (ticket.skill ? Hash : nil)
+    }
+    return assoc_ticket_pattern.merge({ internal_agent: (ticket.internal_agent ? Hash : nil), internal_group: (ticket.internal_group ? Hash : nil) }) if Account.current.shared_ownership_enabled?
+
+    assoc_ticket_pattern
+  end
+
+  def internal_agent_association_pattern(ticket)
+    {
+      id: ticket.internal_agent_id,
+      name: ticket.internal_agent.name,
+      type: ticket.internal_agent.agent_or_contact,
+      email: ticket.internal_agent.email,
+      account_id: ticket.account_id,
+      active: ticket.internal_agent.active
+    }
+  end
+
+  def internal_group_association_pattern(ticket)
+    {
+      id: ticket.internal_group_id,
+      name: ticket.internal_group.name,
+      account_id: ticket.account_id,
+      group_type:
+        {
+          id: ticket.internal_group.group_type_hash[:id],
+          name: ticket.internal_group.group_type_hash[:name]
+        },
+      business_calendar_id: ticket.internal_group.business_calendar_id
     }
   end
 
