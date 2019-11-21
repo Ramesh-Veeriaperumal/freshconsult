@@ -129,12 +129,16 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
   private
 
     def assign_ticket_field_id
-      self.ticket_field_id = pickable_id if self.ticket_field_id.blank?
+      return if destroyed?
+
+      self.ticket_field_id = pickable_id
       sub_picklist_values.each do |level2|
-        next if destroyed? || level2.ticket_field_id.present?
+        next if level2.destroyed?
+
         level2.ticket_field_id = pickable_id
         level2.sub_picklist_values.each do |level3|
-          next if level3.ticket_field_id.present? || level2.destroyed?
+          next if level3.destroyed?
+
           level3.ticket_field_id = pickable_id
         end
       end
