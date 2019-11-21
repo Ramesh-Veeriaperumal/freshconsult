@@ -29,8 +29,6 @@ module Widget
             es_params[:article_company_id]  = User.current.company_ids if User.current && User.current.has_company?
             es_params[:size]  = 5
             es_params[:from]  = 1
-            es_params[:sort_by]         = 'hits'
-            es_params[:sort_direction]  = 'desc'
           end
         end
 
