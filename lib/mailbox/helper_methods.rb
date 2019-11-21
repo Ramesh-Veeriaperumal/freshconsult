@@ -1,4 +1,5 @@
 module Mailbox::HelperMethods
+  include Email::Mailbox::GmailOauthHelper
 
   PUBLIC_KEY = OpenSSL::PKey::RSA.new(File.read('config/cert/public.pem'))
 
@@ -43,5 +44,23 @@ module Mailbox::HelperMethods
       password = 'freshprivate'
       private_key = OpenSSL::PKey::RSA.new(File.read(private_key_file), password)
       private_key.private_decrypt(Base64.decode64(field))
+    end
+
+    def nullify_error_type_on_reauth(mailbox)
+      if mailbox.changed.include?('password') && mailbox.changed.include?('refresh_token') && mailbox.error_type.present?
+        mailbox.error_type = nil
+      end
+    end
+
+    def set_access_token_key(mailbox)
+      set_valid_access_token_key(mailbox.account_id, mailbox.id)
+    end
+
+    def changed_credentials?(mailbox)
+      mailbox.previous_changes.key?(:password)
+    end
+
+    def delete_access_token_key(mailbox)
+      delete_valid_access_token_key(mailbox.account_id, mailbox.id)
     end
 end

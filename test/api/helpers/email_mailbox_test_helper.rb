@@ -114,7 +114,7 @@ module EmailMailboxTestHelper
   end
   
   def create_incoming_type_hash(options = {})
-    {
+    incoming_hash = {
       mail_server: options[:imap_server_name] || 'imap.gmail.com',
       port: options[:imap_port] || 993,
       use_ssl: options[:imap_use_ssl] || true,
@@ -123,10 +123,12 @@ module EmailMailboxTestHelper
       user_name: options[:imap_user_name] || 'smtp@gmail.com',
       password: options[:imap_password] || 'password'
     }
+    incoming_hash.merge!(refresh_token: options[:imap_refresh_token] || 'refreshtoken') if options[:imap_authentication] == 'xoauth2'
+    incoming_hash
   end
   
   def create_outgoing_type_hash(options = {})
-    {
+    outgoing_hash = {
       mail_server: options[:smtp_server_name] || 'smtp.gmail.com',
       port: options[:smtp_port] || 587,
       use_ssl: options[:smtp_use_ssl] || true,
@@ -134,6 +136,8 @@ module EmailMailboxTestHelper
       user_name: options[:smtp_user_name] || 'smtp@gmail.com',
       password: options[:smtp_password] || 'password'
     }
+    outgoing_hash.merge!(refresh_token: options[:smtp_refresh_token] || 'refreshtoken') if options[:smtp_authentication] == 'xoauth2'
+    outgoing_hash
   end
 end
 
