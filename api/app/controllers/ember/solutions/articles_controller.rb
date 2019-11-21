@@ -17,7 +17,8 @@ module Ember
       before_filter :filter_ids, only: [:index]
       before_filter :modify_and_cleanup_language_param, only: [:article_content]
       before_filter :validate_language, only: [:filter, :export, :bulk_update, :untranslated_articles, :article_content, :index]
-      before_filter :modify_and_cleanup_status_param, only: [:filter, :export]
+      before_filter :modify_and_cleanup_status_param, only: [:filter]
+      before_filter :modify_and_cleanup_status_cname_param, only: [:export]
       before_filter :check_filter_feature, only: [:filter]
       before_filter :check_export_feature, only: [:export]
       before_filter :validate_filter, only: [:article_content, :filter, :untranslated_articles]
@@ -288,11 +289,15 @@ module Ember
           params.delete(:language_id)
         end
 
-        def modify_and_cleanup_status_param
-          return true unless params[:status] == OUTDATED
+        def modify_and_cleanup_status_cname_param
+          modify_and_cleanup_status_param(cname_params)
+        end
 
-          params[:outdated] = true
-          params.delete(:status)
+        def modify_and_cleanup_status_param(params_hash = params)
+          return true unless params_hash[:status] == OUTDATED
+
+          params_hash[:outdated] = true
+          params_hash.delete(:status)
         end
 
         # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.
