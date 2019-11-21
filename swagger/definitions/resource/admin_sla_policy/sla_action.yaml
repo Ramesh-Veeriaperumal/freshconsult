@@ -1,0 +1,14 @@
+type: object
+properties:
+  first_response:
+    type: array
+    items:
+      $ref: '#/definitions/admin_sla_action_common'
+  every_response:
+    type: array
+    items:
+      $ref: '#/definitions/admin_sla_action_common'
+  resolution:
+    type: array
+    items:
+      $ref: '#/definitions/admin_sla_action_common'

@@ -358,6 +358,8 @@ meta:
   $ref: './response/meta.yaml'
 next_page_meta:
   $ref: './response/next_page_meta.yaml'
+pagination_meta:
+  $ref: './response/pagination_meta.yaml'
 rank:
   $ref: ./response/rank.yaml
 automation_rule_meta:
@@ -764,6 +766,18 @@ sla_policy_response:
   $ref: ./response/admin/sla_policy.yaml
 sla_policy_common:
   $ref: ./resource/sla_policy_common.yaml
+
+# Admin SLA Policy
+admin_sla_policy:
+  $ref: ./resource/admin_sla_policy/sla_policy.yaml
+admin_sla_target:
+  $ref: ./resource/admin_sla_policy/sla_target.yaml
+admin_sla_condition:
+  $ref: ./resource/admin_sla_policy/sla_condition.yaml
+admin_sla_action:
+  $ref: ./resource/admin_sla_policy/sla_action.yaml
+admin_sla_action_common:
+  $ref: ./resource/admin_sla_policy/sla_action_common.yaml
 
 #Widget
 widget_attachment_create:

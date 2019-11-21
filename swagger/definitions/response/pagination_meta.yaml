@@ -1,0 +1,17 @@
+type: object
+properties:
+  total_items:
+    type: integer
+    format: int64
+    description: "Total Items"
+    example: 100
+  total_pages:
+    type: integer
+    format: int64
+    description: "Total number of pages"
+    example: 10
+  current_page:
+    type: integer
+    format: int64
+    description: "Current page number"
+    example: 1

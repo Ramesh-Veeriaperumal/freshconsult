@@ -1,0 +1,52 @@
+get:
+  tags: [Admin SLA Policy]
+  summary: List all SLA Policies
+  description: List all SLA Policies
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          sla_policies:
+            type: array
+            items:
+              $ref: '#/definitions/admin_sla_policy'
+          meta:
+            type: object
+            allOf:
+              - $ref: '#/definitions/pagination_meta'
+              - type: object
+                properties:
+                  active_rules:
+                    type: integer
+                    format: int64
+                    description: "Total number of active rules"
+                    example: 25
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+post:
+  tags: [Admin SLA Policy]
+  summary: Create SLA Policy
+  description: Create an SLA Policy
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/admin_sla_policy'
+  responses:
+    201:
+      description: Success
+      schema:
+        $ref: '#/definitions/admin_sla_policy'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
