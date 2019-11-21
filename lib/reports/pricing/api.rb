@@ -28,7 +28,7 @@ module Reports::Pricing
     def update_restrictions
       url = format(API_RESOURCES[:update_restriction], tenant_id: current_account.id)
       body = construct_restrictions_payload
-
+      Rails.logger.info "FD Payload for Account #{current_account.id}: #{body.inspect}"
       http_request('restriction', 'put', url, body)
     end
 
