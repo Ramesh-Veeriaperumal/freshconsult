@@ -1,5 +1,6 @@
 class ImapMailbox < ActiveRecord::Base
   include Cache::Memcache::EmailConfig
+  include Mailbox::HelperMethods
 
   include EmailHelper
   

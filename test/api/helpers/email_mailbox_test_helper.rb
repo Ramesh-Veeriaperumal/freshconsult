@@ -107,8 +107,9 @@ module EmailMailboxTestHelper
   def create_custom_mailbox_hash(options = {})
     mailbox_access_type = options[:access_type] || 'incoming'
     result_hash = { access_type: mailbox_access_type }
-    result_hash.merge!({incoming: create_incoming_type_hash(options)}) if [Email::Mailbox::Constants::INCOMING_ACCESS_TYPE, Email::Mailbox::Constants::BOTH_ACCESS_TYPE].include?(mailbox_access_type)
-    result_hash.merge!({outgoing: create_outgoing_type_hash(options)}) if [Email::Mailbox::Constants::OUTGOING_ACCESS_TYPE, Email::Mailbox::Constants::BOTH_ACCESS_TYPE].include?(mailbox_access_type)
+    result_hash[:reference_key] = options[:reference_key] if options[:reference_key].present?
+    result_hash[:incoming] = create_incoming_type_hash(options) if [Email::Mailbox::Constants::INCOMING_ACCESS_TYPE, Email::Mailbox::Constants::BOTH_ACCESS_TYPE].include?(mailbox_access_type)
+    result_hash[:outgoing] = create_outgoing_type_hash(options) if [Email::Mailbox::Constants::OUTGOING_ACCESS_TYPE, Email::Mailbox::Constants::BOTH_ACCESS_TYPE].include?(mailbox_access_type)
     { custom_mailbox: result_hash }
   end
   
