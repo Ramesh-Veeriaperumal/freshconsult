@@ -37,7 +37,7 @@ class Language
 	end
 	
 	def to_liquid
-		@language_drop ||= LanguageDrop.new self
+		LanguageDrop.new self
 	end
 
 	class << self
