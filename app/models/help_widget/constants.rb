@@ -58,7 +58,8 @@ class HelpWidget < ActiveRecord::Base
         form_submit_message: I18n.t('help_widget.form_submit_message'),
         attach_file: true,
         screenshot: false,
-        captcha: true
+        captcha: true,
+        require_login: false
       },
       appearance: {
         position: POSITION_TYPES[:bottom_right],

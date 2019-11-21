@@ -10,6 +10,15 @@ class HelpWidgetsValidationTest < ActionView::TestCase
     @account = Account.stubs(:current).returns(Account.new)
   end
 
+  def request_params_setting(id: 1, level_one: 'settings', level_two: 'components', value: {})
+    ActionController::Parameters.new ({
+      'id' => id,
+      level_one => {
+        level_two => value
+      }
+    })
+  end
+
   def test_create_invalid_without_settings
     request_params = {
       'product_id' => 1,
@@ -89,6 +98,22 @@ class HelpWidgetsValidationTest < ActionView::TestCase
     refute helpwidgetsvalidation.valid?(:update)
     errors = helpwidgetsvalidation.errors.full_messages
     errors.include?('Sdsd Invalid settings hash with contact_form : sdsd')
+  end
+
+  def test_update_with_require_login
+    request_hash = { 'require_login' => true }
+    request_params = request_params_setting(level_two: 'contact_form', value: request_hash)
+    helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
+    assert helpwidgetsvalidation.valid?(:update)
+  end
+
+  def test_update_invalid_with_invalid_require_login
+    request_hash = { 'require_login' => 'ssdsd' }
+    request_params = request_params_setting(level_two: 'contact_form', value: request_hash)
+    helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
+    refute helpwidgetsvalidation.valid?(:update)
+    errors = helpwidgetsvalidation.errors.full_messages
+    assert errors.include?('Settings datatype_mismatch')
   end
 
   def test_update_valid_with_valid_hashes
