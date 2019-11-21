@@ -2762,6 +2762,23 @@ ActiveRecord::Schema.define(version: 20191021120954) do
     t.integer   "associates_rdb"
     t.integer   "sla_state"
     t.integer   "dirty"
+    t.datetime  "nr_due_by"
+    t.boolean   "nr_reminded",                :default => false
+    t.boolean   "nr_escalated",               :default => false
+    t.integer   "int_tc01"
+    t.integer   "int_tc02"
+    t.integer   "int_tc03"
+    t.integer   "int_tc04"
+    t.integer   "int_tc05"
+    t.integer   "long_tc01",        :limit => 8
+    t.integer   "long_tc02",        :limit => 8
+    t.integer   "long_tc03",        :limit => 8
+    t.integer   "long_tc04",        :limit => 8
+    t.integer   "long_tc05",        :limit => 8
+    t.datetime  "datetime_tc01"
+    t.datetime  "datetime_tc02"
+    t.datetime  "datetime_tc03"
+    t.column    "json_tc01",        :json
   end
 
   add_index "helpdesk_tickets", ["account_id", "created_at", "id"], :name => "index_helpdesk_tickets_on_account_id_and_created_at_and_id"
@@ -2775,6 +2792,9 @@ ActiveRecord::Schema.define(version: 20191021120954) do
   add_index "helpdesk_tickets", ["account_id", "responder_id", "created_at"],  :name => "index_account_id_and_responder_id_and_created_at"
   add_index "helpdesk_tickets", ["account_id", "group_id"],  :name => "index_account_id_group_id"
   add_index "helpdesk_tickets", ["account_id", "requester_id","updated_at"],  :name => "index_account_id_requester_id_updated_at"
+
+  add_index "helpdesk_tickets", ["account_id", "frDueBy"], :name => "index_helpdesk_tickets_on_account_id_and_frDueBy"
+  add_index "helpdesk_tickets", ["account_id", "nr_due_by"], :name => "index_helpdesk_tickets_on_account_id_and_nr_due_by"
 
   execute "ALTER TABLE helpdesk_tickets ADD PRIMARY KEY (id,account_id)"
 
@@ -3348,6 +3368,7 @@ ActiveRecord::Schema.define(version: 20191021120954) do
     t.integer  "priority",           :limit => 8
     t.integer  "response_time"
     t.integer  "resolution_time"
+    t.integer  "next_response_time"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "sla_policy_id",      :limit => 8
