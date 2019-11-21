@@ -16,26 +16,37 @@ module Fdadmin::AccountsControllerMethods
 		account_info
 	end
 
-	def fetch_agents_details(account)
-		agent_array = []
-		account.agents.includes({:user => :user_emails}).each do |agent|
-			agent_hash = {}
-			agent_hash[:email] = agent.user.email
-			agent_hash[:active] = (agent.user.active && agent.user.user_emails.first.verified?)
-			agent_hash[:occasional] = agent.occasional
-			agent_hash[:created_at] = agent.created_at
-			agent_hash[:last_active] = agent.last_active_at
-			agent_hash[:is_admin] = agent.user.privilege?(:admin_tasks)
-			agent_array << agent_hash
-		end
-		return {  free_agents: account.subscription.free_agents,
-							agent_limit: account.subscription.agent_limit,
-							full_time: account.full_time_support_agents.count,
-							total_agents: account.agents.count,
-							agents_detail: agent_array
-							}
-
-	end
+ def fetch_agents_details(account)
+   agent_array = []
+   field_agent_array = []
+   fsm_enabled = account.field_service_management_enabled?
+   field_agent_type = AgentType.agent_type_id(Agent::FIELD_AGENT) if fsm_enabled
+   account.agents.includes(user: :user_emails).find_each(batch_size: 100) do |agent|
+     agent_hash = {}
+     agent_hash[:email] = agent.user.email
+     agent_hash[:active] = (agent.user.active && agent.user.user_emails.first.verified?)
+     agent_hash[:created_at] = agent.created_at
+     agent_hash[:last_active] = agent.last_active_at
+     if agent.agent_type == Agent::SUPPORT_AGENT_TYPE
+       agent_hash[:occasional] = agent.occasional
+       agent_hash[:is_admin] = agent.user.privilege?(:admin_tasks)
+       agent_array << agent_hash
+     elsif fsm_enabled && agent.agent_type == field_agent_type
+       field_agent_array << agent_hash
+     end
+   end
+   response_data = { free_agents: account.subscription.free_agents,
+                     agent_limit: account.subscription.agent_limit,
+                     full_time: account.full_time_support_agents.count,
+                     occasional_agents: account.agents.occasional_agents.count,
+                     total_agents: account.agents.count,
+                     agents_detail: agent_array }
+   if fsm_enabled
+     response_data[:field_agents] = field_agent_array.count
+     response_data[:field_agents_details] = field_agent_array
+   end
+   response_data
+ end
 
 	def fetch_subscription_account_details(account)
 		return {
