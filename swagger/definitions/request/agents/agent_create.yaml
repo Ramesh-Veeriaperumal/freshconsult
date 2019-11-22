@@ -1,0 +1,42 @@
+type: object
+properties:
+  name:
+    type: string
+  email: 
+    type: string
+  phone:
+    type: string
+  mobile:
+    type: string
+  time_zone:
+    type: string
+  job_title:
+    type: string
+  language:
+    type: string
+  signature:
+    type: string
+  ticket_scope:
+    type: integer
+    minimum: 1
+    maximum: 3
+    description: 1 - Global Access 2 - Groups 3 - Restricted Access
+  occasional:
+    type: boolean
+  agent_type:
+    type: integer
+  group_ids:
+      type: array
+      items:
+        type: integer
+  role_ids:
+      type: array
+      items:
+        type: integer
+  ticket_assignment:
+    type: object
+    properties:
+      available:
+        type: boolean
+  avatar_id:
+    type: integer

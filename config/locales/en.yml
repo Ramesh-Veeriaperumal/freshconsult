@@ -2539,7 +2539,10 @@ en:
         delete_ticket: Delete a ticket
         solutions: Solutions
         view_solutions: View solutions tab
-        publish_solution: Publish a solution
+        publish_solution: Publish an article
+        create_and_edit_article: Create or edit article
+        approve_article: Approve an article
+        publish_approved_solution: Publish an article, if approved
         delete_solution: Delete a solution
         manage_solutions: Create / Edit category or folder
         forums: Forums
@@ -4991,6 +4994,7 @@ en:
     assign_group: Associate Groups
     cannot_edit_roles: You will only be able to view your roles and scope, not edit them.
     role_assign_error: You are not allowed to perform this action
+    role_assign_field_agent_error: You are not allowed to pass role_ids for field_agent
     assign: Assign
     role : Agent Role
     title: Agents
@@ -7828,6 +7832,8 @@ en:
         invalid_requester: Invalid requester
         ongoing_collab: My Active Huddles
         unresolved_service_tasks: Unresolved service tasks
+        unassigned_service_tasks: Unassigned service tasks
+
       note:
         posted_on: "%{user_name} on %{note_date}"
         created_on:
@@ -13026,7 +13032,7 @@ en:
     account_data_export: "Data Export for %{account}"
     no_tickets_to_export: "No tickets in range - %{domain}"
     no_articles_to_export: "No articles - %{domain}"
-    agent_export: Agents List Export
+    agent_export: "Agents List Export for %{account}"
     audit_log_export: Audit Log Export
     spam_watcher: "Freshdesk :: Spam watcher"
     account_cancelled: "%{account_domain} has been cancelled"

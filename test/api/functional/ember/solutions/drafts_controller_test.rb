@@ -152,6 +152,7 @@ module Ember
       end
 
       def test_autosave_without_privilege
+        User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(false)
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
         article_with_draft
         put :autosave, construct_params({ version: 'private', article_id: @article.parent_id }, autosave_params)
@@ -387,6 +388,7 @@ module Ember
 
       def test_update_without_privilege
         article_with_draft
+        User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(false)
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
         put :update, construct_params({ version: 'private', article_id: @article.parent_id }, update_params)
         assert_response 403
@@ -480,6 +482,7 @@ module Ember
       end
 
       def test_delete_attachment_without_privilege
+        User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(false)
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
         delete :delete_attachment, controller_params(version: 'private', article_id: 1, attachment_type: 'attachment', attachment_id: 1)
         assert_response 403

@@ -1,6 +1,6 @@
 module Admin::AutomationConstants
   include Admin::Automation::ActionConstants
-  include Admin::Automation::ConditionConstants
+  include Admin::ConditionConstants
   include Admin::Automation::EventConstants
 
   VALIDATION_CLASS = 'Admin::AutomationValidation'.freeze
@@ -56,8 +56,6 @@ module Admin::AutomationConstants
 
   TAGS = %w[tag_names add_tag].freeze
 
-  CONDITION_SET_NAMES = %w[condition_set_1 condition_set_2].freeze
-
   DEFAULT_TEXT_FIELDS = %i[subject description subject_or_description].freeze
 
   LANGUAGE_HASH = I18n.available_locales_with_name.each_with_object({}) do |arr, hash|
@@ -102,8 +100,6 @@ module Admin::AutomationConstants
 
   RESPONDER_ACTIONS_ID = [0, -2].freeze
 
-  LEVELS = %i[level2 level3].freeze
-
   PERMITTED_ASSOCIATED_FIELDS = %i[field_name operator value].freeze
 
   DB_FIELD_NAME_CHANGE_MAPPING = FIELD_NAME_CHANGE_MAPPING.inject({}) { |hash, field_mapping| hash.merge!(field_mapping[1] => field_mapping[0]) }
@@ -129,10 +125,6 @@ module Admin::AutomationConstants
                             custom_headers content_layout params nested_rules
                             fwd_to fwd_cc fwd_bcc fwd_note_body evaluate_on
                             show_quoted_text note_body notify_agents resource_type].freeze
-  
-  TICKET_ASSOCIATION_TYPES = [1, 2, 3, 4].freeze
-
-  DISPATCHER_CONDITION_TICKET_ASSOCIATION_TYPES = [2, 3].freeze
 
   PARENT_CHILD_ASSOCIATION_TYPES = [1, 2].freeze
 
@@ -164,8 +156,6 @@ module Admin::AutomationConstants
 
   PERMITTED_PARAMS = %i[name position active performer events conditions operator actions preview custom_ticket_event
                         custom_ticket_action custom_ticket_condition custom_contact_condition custom_company_condition].freeze
-
-  PERMITTED_DEFAULT_CONDITION_SET_VALUES = %i[field_name operator value].freeze
 
   PERMITTED_CONDITION_SET_VALUES = (PERMITTED_DEFAULT_CONDITION_SET_VALUES + %i[case_sensitive rule_type nested_fields 
                                                                                 business_hours_id associated_fields
@@ -223,13 +213,7 @@ module Admin::AutomationConstants
 
   ANY_NONE = { NONE: '', ANY: '--', ANY_WITHOUT_NONE: '##' }.freeze
 
-  ANY_NONE_VALUES = ['', '--', '##'].freeze
-
   CHECKBOX_OPERATORS = %w[selected not_selected].freeze
-
-  MAXIMUM_CONDITION_SET_COUNT = 2
-
-  MAXIMUM_SUPERVISOR_CONDITION_SET_COUNT = 1
 
   CONDITION_SET_PARAMS = %i[ticket contact company].freeze
 
@@ -293,8 +277,6 @@ module Admin::AutomationConstants
   PERFORMER_HASH = { type: { data_type: { rules: Integer } }, members: { data_type: { rules: Array },
                                                                          array: { data_type: { rules: Integer } } } }.freeze
 
-  EMAIL_VALIDATOR_OPERATORS = [:is, :is_not, :is_any_of, :is_none_of].freeze
-
   MAXIMUM_CONDITIONAL_SET_COUNT = 2
 
   WEBHOOK_PERMITTED_PARAMS = %w[field_name request_type url content_layout content_type
@@ -318,8 +300,6 @@ module Admin::AutomationConstants
 
   CONDITIONS_REQUEST_PRAMS = %i[condition_set_1 operator condition_set_2].freeze
 
-  CONDITION_SET_OPERATOR = %w[or and].freeze
-
   MAP_CONDITION_SET_OPERATOR = { or: 'any', and: 'all' }.freeze
 
   DEFAULT_CONDITION_SET_OPERATOR = 'condition_set_1 and condition_set_2'.freeze
@@ -330,13 +310,9 @@ module Admin::AutomationConstants
 
   CONDITION_SET_DEFAULT_PARAMS = %i[name match_type properties].freeze
 
-  CONDITION_RESOURCE_TYPES = %i[ticket contact company].freeze
-
   CONDITION_PROPERTIES_REQUEST_PARAMS = %i[resource_type field_name operator value].freeze
 
   SUPERVISOR_IGNORE_CONDITION_PARAMS = %i[contact company].freeze
-
-  CONDITION_SET_PROPERTIES = %i[resource_type field_name operator value].freeze
 
   CONDITION_SET_REQUEST_VALUES = (CONDITION_SET_PROPERTIES + %i[nested_fields case_sensitive business_hours_id 
                                                                 custom_status_id associated_fields]).freeze
@@ -386,13 +362,9 @@ module Admin::AutomationConstants
     not_in: :not_in
   }.freeze
 
-  BUSINESS_HOURS_FIELDS = %i[created_at updated_at].freeze
-
   FREDDY_ACCEPTED_VALUES = %w[thank_you_note].freeze
 
   CASE_SENSITIVE_FIELDS = %i[text paragraph].freeze
-
-  NESTED_LEVEL_COUNT = 2
 
   NESTED_FIELD_CONSTANTS = {
     from: :from_nested_field,
@@ -401,10 +373,6 @@ module Admin::AutomationConstants
   }.freeze
 
   VALID_DEFAULT_REQUEST_PARAMS_HASH = %i[field_name operator value from to].freeze
-
-  CUSTOM_FIELD_NONE_OR_ANY = %i[nested_field dropdown].freeze
-
-  NESTED_EVENT_LABEL = %i[from_nested_field to_nested_field].freeze
 
   DEFAULT_FIELD_VALUE_TYPE = {
     status: :Integer, priority: :Integer, source: :Integer, responder_id: :Integer, group_id: :Integer,

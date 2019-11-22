@@ -2,6 +2,7 @@ module Widget
   module Solutions
     class ArticlesController < ApiApplicationController
       include WidgetConcern
+      include Solution::ArticlesVotingMethods
 
       RELAXED_ACTIONS = [:suggested_articles, :show].freeze
 
@@ -11,9 +12,11 @@ module Widget
 
       before_filter :set_current_language
 
-      before_filter :solution_article_enabled, only: :suggested_articles
+      before_filter :solution_article_enabled?
 
       before_filter :load_article, except: :suggested_articles
+
+      before_filter :load_vote, only: [:thumbs_up, :thumbs_down]
 
       def suggested_articles
         load_articles
@@ -21,17 +24,17 @@ module Widget
       end
 
       def thumbs_up
-        @item.thumbs_up!
+        update_votes(:thumbs_up, 1)
         head 204
       end
 
       def thumbs_down
-        @item.thumbs_down!
+        update_votes(:thumbs_down, 0)
         head 204
       end
 
       def hit
-        @item.hit!
+        @item.hit! if !agent? || current_account.solutions_agent_metrics_enabled?
         head 204
       end
 
@@ -45,11 +48,11 @@ module Widget
 
         def load_article
           meta_item = scoper.find_by_id(params[:id])
-          @item = meta_item.current_article if meta_item.present?
+          @article = @item = meta_item.current_article if meta_item.present?
           log_and_render_404 if @item.blank?
         end
 
-        def solution_article_enabled
+        def solution_article_enabled?
           return true if RELAXED_ACTIONS.include?(action_name.to_sym)
 
           render_request_error(:solution_article_not_enabled, 400, id: @widget_id) unless @help_widget.solution_articles_enabled?
@@ -62,6 +65,14 @@ module Widget
         def load_articles
           meta_item_ids = scoper.order('solution_article_meta.hits desc').limit(5).pluck(:id)
           @items = current_account.solution_articles.where(parent_id: meta_item_ids, language_id: Language.current.id)
+        end
+
+        def agent?
+          current_user && current_user.agent?
+        end
+
+        def current_user
+          @current_user = User.current
         end
     end
   end

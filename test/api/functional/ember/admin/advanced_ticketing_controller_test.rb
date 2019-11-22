@@ -27,7 +27,7 @@ module Ember
       end
 
       def destroy_fsm_fields_and_section
-        CUSTOM_FIELDS_TO_RESERVE.each do |field|
+        fsm_custom_field_to_reserve.each do |field|
           Account.current.ticket_fields.find_by_name(field[:name] + "_#{Account.current.id}").try(:destroy)
         end
         Account.current.sections.find_by_label(SERVICE_TASK_SECTION).try(:destroy)
@@ -102,8 +102,10 @@ module Ember
           begin
             old_ticket_filter_count = Account.current.ticket_filters.count
             Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
+            Account.any_instance.stubs(:customer_signature_enabled?).returns(true)
+            Account.any_instance.stubs(:scheduling_fsm_dashboard_enabled?).returns(true)
             fields_count_before_installation = Account.current.ticket_fields.size
-            total_fsm_fields_count = CUSTOM_FIELDS_TO_RESERVE.size
+            total_fsm_fields_count = fsm_custom_field_to_reserve.size
             Account.current.subscription.update_attributes(additional_info: { field_agent_limit: 10 })
             Sidekiq::Testing.inline! do
               post :create, construct_params({ version: 'private' }, name: 'field_service_management')
@@ -128,8 +130,37 @@ module Ember
             widget = widgets.find { |element| element.name == I18n.t('fsm_dashboard.widgets.' + SERVICE_TASKS_AVG_RESOLUTION_WIDGET_NAME) }
             assert_equal widget[:config_data][:ticket_type], pick_list_id
             assert_equal widget[:config_data][:metric], ::Dashboard::Custom::TimeTrendCard::METRICS_MAPPING.key('AVG_RESOLUTION_TIME')
+            assert_not_nil Account.current.ticket_fields.find { |x| x.name == "cf_fsm_customer_signature_#{Account.current.id}" }
+            assert Account.current.roles.map(&:name).include?(I18n.t('fsm_scheduling_dashboard.name'))
+          ensure
+            destroy_fsm_fields_and_section
+            Account.any_instance.unstub(:disable_old_ui_enabled?)
+            Account.any_instance.unstub(:customer_signature_enabled?)
+            Account.any_instance.unstub(:scheduling_fsm_dashboard_enabled?)
+            destroy_fsm_dashboard_and_filters
+          end
+        end
+      end
+
+      def test_create_fsm_without_customer_signature_feature
+        enable_fsm do
+          begin
+            Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
+            Account.any_instance.stubs(:customer_signature_enabled?).returns(false)
+            fields_count_before_installation = Account.current.ticket_fields.size
+            total_fsm_fields_count = fsm_custom_field_to_reserve.size
+            Account.current.subscription.update_attributes(additional_info: { field_agent_limit: 10 })
+            Sidekiq::Testing.inline! do
+              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+            end
+            assert_response 204
+            assert Account.current.field_service_management_enabled?
+            fields_count_after_installation = Account.current.ticket_fields.size
+            assert fields_count_after_installation == (total_fsm_fields_count + fields_count_before_installation)
+            assert_nil Account.current.ticket_fields.find { |x| x.name == "cf_fsm_customer_signature_#{Account.current.id}" }
           ensure
             Account.any_instance.unstub(:disable_old_ui_enabled?)
+            Account.any_instance.unstub(:customer_signature_enabled?)
             destroy_fsm_dashboard_and_filters
           end
         end
@@ -143,7 +174,9 @@ module Ember
             end
             assert_response 204
             assert Account.current.field_service_management_enabled?
-            assert_equal Role.last.name, Helpdesk::Roles::FIELD_TECHNICIAN_ROLE[:name]
+            assert Account.current.roles.map(&:name).include?(Helpdesk::Roles::FIELD_TECHNICIAN_ROLE[:name])
+          ensure
+            Account.current.rollback(:field_tech_role)
           end
         end
       end
@@ -189,7 +222,7 @@ module Ember
               assert Account.current.field_service_management_enabled?
               assert_equal true, Account.current.picklist_values.find_by_value(SERVICE_TASK_TYPE).present?
               assert_equal true, Account.current.sections.find_by_label(SERVICE_TASK_SECTION).present?
-              assert Account.current.sections.find_by_label(SERVICE_TASK_SECTION).section_fields.size == CUSTOM_FIELDS_TO_RESERVE.size
+              assert Account.current.sections.find_by_label(SERVICE_TASK_SECTION).section_fields.size == fsm_custom_field_to_reserve.size
             end
           ensure
             Account.any_instance.unstub(:disable_old_ui_enabled?)
@@ -208,7 +241,7 @@ module Ember
               User.any_instance.stubs(:privilege?).with(:manage_account).returns(true)
               User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
               fields_count_after_installation = Account.current.ticket_fields.size
-              total_fsm_fields_count = CUSTOM_FIELDS_TO_RESERVE.size
+              total_fsm_fields_count = fsm_custom_field_to_reserve.size
               Account.current.subscription.update_attributes(additional_info: { field_agent_limit: 10 })
               Account.current.subscription.addons = Subscription::Addon.where(name: Subscription::Addon::FSM_ADDON)
               Account.current.subscription.save
@@ -261,13 +294,13 @@ module Ember
               delete :destroy, controller_params(version: 'private', id: 'field_service_management')
               assert_equal false, Account.current.field_service_management_enabled?
 
-              Account.current.ticket_fields.find_by_name(CUSTOM_FIELDS_TO_RESERVE.first[:name] + "_#{Account.current.id}").destroy
+              Account.current.ticket_fields.find_by_name(fsm_custom_field_to_reserve.first[:name] + "_#{Account.current.id}").destroy
               Account.reset_current_account
               Account.stubs(:current).returns(Account.first)
               post :create, construct_params({ version: 'private' }, name: 'field_service_management')
               assert_response 204
               assert Account.current.field_service_management_enabled?
-              assert_equal true, Account.current.ticket_fields.find_by_name(CUSTOM_FIELDS_TO_RESERVE.first[:name] + "_#{Account.current.id}").present?
+              assert_equal true, Account.current.ticket_fields.find_by_name(fsm_custom_field_to_reserve.first[:name] + "_#{Account.current.id}").present?
             end
           ensure
             Account.any_instance.unstub(:disable_old_ui_enabled?)
@@ -295,7 +328,7 @@ module Ember
               assert_response 204
               assert Account.current.field_service_management_enabled?
               assert_equal true, Account.current.sections.find_by_label(SERVICE_TASK_SECTION).present?
-              assert Account.current.sections.find_by_label(SERVICE_TASK_SECTION).section_fields.size == CUSTOM_FIELDS_TO_RESERVE.size
+              assert Account.current.sections.find_by_label(SERVICE_TASK_SECTION).section_fields.size == fsm_custom_field_to_reserve.size
             end
           ensure
             Account.any_instance.unstub(:disable_old_ui_enabled?)
@@ -325,7 +358,7 @@ module Ember
               assert Account.current.field_service_management_enabled?
               assert_equal true, Account.current.picklist_values.find_by_value(SERVICE_TASK_TYPE).present?
               assert_equal true, Account.current.sections.find_by_label(SERVICE_TASK_SECTION).present?
-              assert Account.current.sections.find_by_label(SERVICE_TASK_SECTION).section_fields.size == CUSTOM_FIELDS_TO_RESERVE.size
+              assert Account.current.sections.find_by_label(SERVICE_TASK_SECTION).section_fields.size == fsm_custom_field_to_reserve.size
             end
           ensure
             Account.any_instance.unstub(:disable_old_ui_enabled?)
@@ -377,7 +410,7 @@ module Ember
             assert_response 204
             assert Account.current.field_service_management_enabled?
             assert Account.current.sections.find_by_label(SERVICE_TASK_SECTION).present?
-            assert Account.current.sections.find_by_label(SERVICE_TASK_SECTION).section_fields.size == CUSTOM_FIELDS_TO_RESERVE.size
+            assert Account.current.sections.find_by_label(SERVICE_TASK_SECTION).section_fields.size == fsm_custom_field_to_reserve.size
           ensure
             destroy_fsm_fields_and_section
             Account.any_instance.unstub(:ticket_field_limit_increase_enabled?)
@@ -616,6 +649,43 @@ module Ember
         end
       ensure
         Account.any_instance.unstub(:denormalized_flexifields_enabled?)
+      end
+
+      def test_unassigned_service_task_filter_present_with_fsm_enabled_with_lp
+        enable_fsm do
+          begin
+            Account.current.launch(:default_unassigned_service_tasks_filter)
+            Account.current.ticket_filters.where(name: 'Unassigned service tasks').destroy_all
+            Account.current.dashboards.destroy_all
+            Sidekiq::Testing.inline! do
+              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+            end
+            dashboard = Account.current.dashboards.where(name: I18n.t('fsm_dashboard.name'))
+            filter = Account.current.ticket_filters.find_by_name('Unassigned service tasks')
+            widget = dashboard.first.widgets.select { |x| x.config_data[:ticket_filter_id] == 'unassigned_service_tasks' }
+            assert widget.present?
+            assert_nil filter
+          ensure
+            Account.current.rollback(:default_unassigned_service_tasks_filter)
+          end
+        end
+      end
+
+      def test_unassigned_service_task_filter_present_with_fsm_enabled_without_lp
+        enable_fsm do
+          begin
+            Account.current.ticket_filters.where(name: 'Unassigned service tasks').destroy_all
+            Account.current.dashboards.destroy_all
+            Sidekiq::Testing.inline! do
+              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+            end
+            dashboard = Account.current.dashboards.where(name: I18n.t('fsm_dashboard.name'))
+            filter = Account.current.ticket_filters.find_by_name('Unassigned service tasks')
+            widget = dashboard.first.widgets.select { |x| x.config_data[:ticket_filter_id] == 'unassigned_service_tasks' }
+            assert widget.blank?
+            assert_not_nil filter
+          end
+        end
       end
     end
   end

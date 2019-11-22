@@ -96,6 +96,10 @@ module Redis::OthersRedis
     newrelic_begin_rescue { $redis_others.perform_redis_op('hgetall', key) }
   end
 
+  def del_other_redis_hash_value(key, members)
+    newrelic_begin_rescue { $redis_others.perform_redis_op('hdel', key, members || []) }
+  end
+
   def set_others_redis_hash_set(key, member, value)
     newrelic_begin_rescue { $redis_others.perform_redis_op('hset', key, member, value) }
   end

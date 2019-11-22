@@ -625,8 +625,11 @@
 /admin/accounts/languages:
   $ref: ./admin/accounts/languages.yaml
 
+#Audit log export
 /audit_log/export:
   $ref: ./audit_logs/export.yaml
+/audit_log/export/{id}:
+  $ref: ./audit_logs/export_api_response.yaml
 
 # Solutions
 /solutions/home/summary:
@@ -693,6 +696,8 @@
   $ref: ./solutions/article_version/list.yml
 /solutions/articles/{article_id}/versions/{id}/{language}:
   $ref: ./solutions/article_version/show.yml
+/solutions/articles/{article_id}/versions/{id}/restore/{language}:
+  $ref: ./solutions/article_version/restore.yml
 
 /configs/{id}:
   $ref: ./configs/show.yaml

@@ -1,6 +1,6 @@
 post:
   summary: Audit log export
-  tags: [audit_log]
+  tags: [Audit log export request]
   parameters:
     - name: data
       in: body

@@ -38,7 +38,7 @@ class Solution::Article < ActiveRecord::Base
   
   serialize :seo_data, Hash
   
-  attr_accessor :highlight_title, :highlight_desc_un_html, :tags_changed, :prev_tags, :latest_tags, :session, :unpublishing, :false_delete_attachment_trigger, :attachment_added
+  attr_accessor :highlight_title, :highlight_desc_un_html, :tags_changed, :prev_tags, :latest_tags, :session, :unpublishing, :false_delete_attachment_trigger, :attachment_added, :version_through
   alias_attribute :body, :article_body
   attr_accessible :title, :description, :user_id, :status, :import_id, :seo_data, :outdated
 

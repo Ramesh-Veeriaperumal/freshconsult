@@ -97,12 +97,12 @@
   :forum_basic_moderator: 96
   :untitled_solution_admin_1: 97
   :untitled_forums_admin_1: 98
-  :untitled_solution_supervisor_1: 99
+  :export_articles: 99
   :untitled_solution_supervisor_2: 100
   :untitled_forums_supervisor_1: 101
   :untitled_forums_supervisor_2: 102
-  :untitled_solution_agent_1: 103
-  :untitled_solution_agent_2: 104
+  :create_and_edit_article: 103
+  :approve_article: 104
   :untitled_solution_agent_3: 105
   :untitled_forum_agent_1: 106
   :untitled_forum_agent_2: 107
@@ -128,4 +128,5 @@
   :untitled_core_supervisor_2019_3: 127
   :untitled_core_supervisor_2019_4: 128
   :untitled_core_supervisor_2019_5: 129
-:max_value: 129
+  :publish_approved_solution: 130
+:max_value: 130

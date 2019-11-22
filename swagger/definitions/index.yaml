@@ -116,6 +116,8 @@ profile_input:
   $ref: ./request/profiles/profile.yaml
 agent_input:
   $ref: ./request/agents/agent.yaml
+agent_create_input:
+  $ref: ./request/agents/agent_create.yaml
 bulk_agent_input:
   $ref: ./request/agents/bulk_agent.yaml
 onboarding_update_activation_email_input:
@@ -506,6 +508,11 @@ topic_first_post:
 
 freshmarketer_sessions:
   $ref: './response/tickets/freshmarketer_sessions.yaml'
+
+# Audit log
+audit_log_export:
+  $ref: './response/audit_log_export.yaml'
+
 
 # Dashboard activities
 dashboard_activities:

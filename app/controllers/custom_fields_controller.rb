@@ -6,7 +6,7 @@ class CustomFieldsController < Admin::AdminController
   include Cache::Memcache::Helpdesk::Section
   include FlexifieldConstants
   include Helpdesk::Ticketfields::Validations
-  include Admin::AdvancedTicketing::FieldServiceManagement::Constant
+  include Admin::AdvancedTicketing::FieldServiceManagement::Util
 
   before_filter :check_ticket_field_count, :only => [ :update ]
   helper_method :denormalized_field?
@@ -350,7 +350,7 @@ class CustomFieldsController < Admin::AdminController
       fields_deleted_from_section = fsm_section.first['section_fields'].collect { |x| x['ticket_field_id'] if x.key?('action') && x['action'].eql?('delete') }.compact
       return if fields_deleted_from_section.blank?
       ticket_field_data = ActiveSupport::JSON.decode(params[:jsonData])
-      fsm_fields = CUSTOM_FIELDS_TO_RESERVE.collect { |x| x[:label] }
+      fsm_fields = fsm_custom_field_to_reserve.collect { |x| x[:label] }
 
       fsm_fields_moved = ticket_field_data.collect { |x| x['label'] if fields_deleted_from_section.include?(x['id']) && fsm_fields.include?(x['label'])  }.compact
       return if fsm_fields_moved.blank?

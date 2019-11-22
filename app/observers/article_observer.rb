@@ -9,13 +9,12 @@ class ArticleObserver < ActiveRecord::Observer
 		create_draft_for_article(article)
 		article.seo_data ||= {}
       # article body change is captured only here
-      if article.article_body.changed? || article.title_changed? || article.status_changed? || (article.draft && article.draft.publishing) || article.attachment_added
+      if content_changed?(article) || article.status_changed? || (article.draft && article.draft.publishing) || article.attachment_added
         modify_date_and_author(article)
         return unless article.account.article_versioning_enabled?
 
-        only_status = article.status_changed? && !(article.article_body.changed? || article.title_changed?)
         # When i directly unpublish, versions should be marked unlive
-        article.unpublishing = only_status && !article.published?
+        article.unpublishing = only_status_changed?(article) && !article.published?
         # When "Published : edit + autosave and Unpublish" draft observer will not be triggered, so sending draft for versioning
         can_version_draft = article.draft && !article.draft.new_record? && article.unpublishing && !article.draft.unpublishing
         can_version_article = article.draft ? (!article.draft.new_record? && (!article.draft.unpublishing || article.draft.publishing)) : true
@@ -25,14 +24,27 @@ class ArticleObserver < ActiveRecord::Observer
           # Flush article and version votes on article publish
           article.flush_hits! if (article.draft && article.draft.publishing) || (!article.status_changed? && article.published?)
           if can_version_draft
-            article.draft.session = article.session
-            version_create_or_update(article.draft)
+            article.version_through = :draft
           elsif can_version_article
-            version_create_or_update(article)
+            article.version_through = :article
           end
+        elsif article.published?
+          # For new record, if the article is directly published (without autosave or save) we can create version
+          article.version_through = :article
         end
       end
 	end
+
+  # only in after save callback ids for article record and cloud files are generated. but after save the model will be in clean state ({attr}_changed? will be false for everything). 
+  # Thus set flag in before_save and handle version creation in after_save
+  def after_save(article)
+    if article.version_through == :draft
+      article.draft.session = article.session
+      version_create_or_update(article.draft)
+    elsif article.version_through == :article
+      version_create_or_update(article)
+    end
+  end
 
 	def after_update(article)
 		article.create_activity('published_article') if article.published? and article.status_changed?
@@ -45,7 +57,6 @@ class ArticleObserver < ActiveRecord::Observer
   end
 
   def after_create(article)
-    version_create_or_update(article) if article.account.article_versioning_enabled? && article.published?
   	enqueue_article_for_kbase_check(article)
   end
 
@@ -86,6 +97,14 @@ private
 				Rails.logger.debug "Comes inside enqueue_article_for_kbase_check loop for account : #{article.account} and article #{article.id}"
 				Solution::CheckContentForSpam.perform_async({:article_id => article.id})
 			end
+    end
+
+    def content_changed?(article)
+      article.title_changed? || article.article_body.changed?
+    end
+
+    def only_status_changed?(article)
+      article.status_changed? && !content_changed?(article)
     end
 end
 

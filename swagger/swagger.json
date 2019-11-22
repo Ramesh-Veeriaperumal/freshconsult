@@ -4951,6 +4951,39 @@
             "description": "Resource not found"
           }
         }
+      },
+      "post": {
+        "tags": [
+          "agent"
+        ],
+        "summary": "Create an agent",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/agent_create_input"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/agent"
+            }
+          },
+          "400": {
+            "description": "Bad request error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
       }
     },
     "/agents/{id}/achievements": {
@@ -11987,7 +12020,7 @@
       "post": {
         "summary": "Audit log export",
         "tags": [
-          "audit_log"
+          "Audit log export request"
         ],
         "parameters": [
           {
@@ -12014,6 +12047,35 @@
             "schema": {
               "$ref": "#/definitions/request_error_with_data"
             }
+          }
+        }
+      }
+    },
+    "/audit_log/export/{id}": {
+      "get": {
+        "summary": "Audit log export get response",
+        "tags": [
+          "audit log get response"
+        ],
+        "description": "Audit log export file will be responded in json format which contains s3 link.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "description": "job_id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/audit_log_export"
+            }
+          },
+          "404": {
+            "description": "Data Export not found"
           }
         }
       }
@@ -13638,6 +13700,50 @@
           },
           "404": {
             "description": "Article not found"
+          }
+        }
+      }
+    },
+    "/solutions/articles/{article_id}/versions/{id}/restore/{language}": {
+      "post": {
+        "tags": [
+          "Solution Article Version"
+        ],
+        "summary": "Restore an article version",
+        "parameters": [
+          {
+            "$ref": "#/parameters/language"
+          },
+          {
+            "name": "article_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "article meta id"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "version number"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Unable to restore"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Article not found"
+          },
+          "412": {
+            "description": "Cannot restore latest current version"
           }
         }
       }
@@ -16665,6 +16771,70 @@
         }
       }
     },
+    "agent_create_input": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "mobile": {
+          "type": "string"
+        },
+        "time_zone": {
+          "type": "string"
+        },
+        "job_title": {
+          "type": "string"
+        },
+        "language": {
+          "type": "string"
+        },
+        "signature": {
+          "type": "string"
+        },
+        "ticket_scope": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3,
+          "description": "1 - Global Access 2 - Groups 3 - Restricted Access"
+        },
+        "occasional": {
+          "type": "boolean"
+        },
+        "agent_type": {
+          "type": "integer"
+        },
+        "group_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "role_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "ticket_assignment": {
+          "type": "object",
+          "properties": {
+            "available": {
+              "type": "boolean"
+            }
+          }
+        },
+        "avatar_id": {
+          "type": "integer"
+        }
+      }
+    },
     "bulk_agent_input": {
       "type": "object",
       "properties": {
@@ -17036,20 +17206,35 @@
       "properties": {
         "from": {
           "type": "string",
-          "enum": [
+          "example": [
             "2018-11-05"
           ]
         },
         "to": {
           "type": "string",
-          "enum": [
+          "example": [
             "2018-11-30"
           ]
         },
         "recieve_via": {
           "type": "string",
           "enum": [
-            "email/api"
+            "email",
+            "api"
+          ]
+        },
+        "export_format": {
+          "type": "string",
+          "enum": [
+            "xls",
+            "csv"
+          ]
+        },
+        "archived": {
+          "type": "string",
+          "enum": [
+            "true",
+            "false"
           ]
         },
         "condition": {
@@ -17093,7 +17278,8 @@
       "required": [
         "from",
         "to",
-        "recieve_via"
+        "recieve_via",
+        "export_format"
       ]
     },
     "email_mailbox_input": {
@@ -22563,6 +22749,14 @@
           "duration": {
             "type": "string"
           }
+        }
+      }
+    },
+    "audit_log_export": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
         }
       }
     },

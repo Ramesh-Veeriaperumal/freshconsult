@@ -1,7 +1,6 @@
-module Admin::AutomationValidationHelper
-  include Admin::AutomationConstants
-  include Admin::Automation::CustomFieldHelper
-  include Admin::AutomationErrorHelper
+module Admin::ConditionValidationHelper
+  include Admin::CustomFieldHelper
+  include Admin::ConditionErrorHelper
 
   def initialize_params(request_params, default_fields, custom_fields, rule_type)
     @rule_type = rule_type.to_i
@@ -205,7 +204,7 @@ module Admin::AutomationValidationHelper
     result = []
     condition_sets.map do |condition_set|
       cond = { field_name: condition_set[:field_name], operator: condition_set[:operator] }
-      cond[:value] = condition_set[:value] if condition_set.key? :value
+      %i[value nested_fields].each { |key| cond[key] = condition_set[key] if condition_set.key? key }
       result << cond if (condition_set[:resource_type].try(:to_sym) || :ticket) == resource_type
     end
     result
@@ -291,7 +290,7 @@ module Admin::AutomationValidationHelper
   end
 
   def add_watcher_feature
-    unless Account.current.add_watcher_enabled?
+    unless current_account.add_watcher_enabled?
       errors[:"watcher[:condition]"] << :require_feature
       error_options.merge!(:"watcher[:condition]" => {feature: :add_watcher,
                                                       code: :access_denied})
@@ -299,7 +298,7 @@ module Admin::AutomationValidationHelper
   end
 
   def multi_product_feature
-    unless Account.current.multi_product_enabled?
+    unless current_account.multi_product_enabled?
       errors[:"multi_product[:condition]"] << :require_feature
       error_options.merge!(:"multi_product[:condition]" => {feature: :multi_product,
                                                             code: :access_denied})
@@ -307,7 +306,7 @@ module Admin::AutomationValidationHelper
   end
 
   def shared_ownership_feature
-    unless Account.current.shared_ownership_enabled?
+    unless current_account.shared_ownership_enabled?
       errors[:"shared_ownership[:condition]"] << :require_feature
       error_options.merge!(:"shared_ownership[:condition]" => {feature: :shared_ownership,
                                                                code: :access_denied})
@@ -315,7 +314,7 @@ module Admin::AutomationValidationHelper
   end
 
   def multiple_business_hours?
-    unless Account.current.multiple_business_hours_enabled?
+    unless current_account.multiple_business_hours_enabled?
       errors[:"multiple_business_hours[:condition]"] << :require_feature
       error_options.merge!(:"multiple_business_hours[:condition]" => {feature: :multiple_business_hours,
                                                                       code: :access_denied})
@@ -323,7 +322,7 @@ module Admin::AutomationValidationHelper
   end
 
   def system_observer_events
-    unless Account.current.system_observer_events_enabled?
+    unless current_account.system_observer_events_enabled?
       errors[:condition] << :require_feature
       error_options.merge!(condition: {feature: :system_observer_events,
                                        code: :access_denied})
@@ -331,7 +330,7 @@ module Admin::AutomationValidationHelper
   end
 
   def custom_survey_feature
-    unless Account.current.any_survey_feature_enabled_and_active?
+    unless current_account.any_survey_feature_enabled_and_active?
       errors[:"any_survey[:condition]"] << :require_feature
       error_options.merge!(:"any_survey[:condition]" => {feature: :survey, # I am not sure about the feature please check
                                                          code: :access_denied})
@@ -339,7 +338,7 @@ module Admin::AutomationValidationHelper
   end
 
   def supervisor_text_field?
-    unless Account.current.supervisor_text_field_enabled?
+    unless current_account.supervisor_text_field_enabled?
       errors[:"supervisor_text_field[:condition]"] << :require_feature
       error_options.merge!(:"supervisor_text_field[:condition]" => {feature: :supervisor_text_field, # I am not sure about the feature please check
                                                          code: :access_denied})
@@ -347,10 +346,14 @@ module Admin::AutomationValidationHelper
   end
 
   def detect_thank_you_note_feature
-    unless Account.current.detect_thank_you_note_enabled?
+    unless current_account.detect_thank_you_note_enabled?
       errors[:"freddy_suggestion[:condition]"] << :require_feature
       error_options.merge!("freddy_suggestion[:condition]": { feature: :detect_thank_you_note,
                                                               code: :access_denied })
     end
+  end
+
+  def current_account
+    @current_account ||= Account.current
   end
 end

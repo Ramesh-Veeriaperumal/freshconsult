@@ -28,7 +28,7 @@ class Solution::Draft < ActiveRecord::Base
   after_create :add_activity_new
 
   attr_accessible :title, :meta, :description
-  attr_accessor :discarding, :publishing, :keep_previous_author, :session, :cancelling, :unpublishing, :false_delete_attachment_trigger
+  attr_accessor :discarding, :publishing, :keep_previous_author, :session, :cancelling, :unpublishing, :false_delete_attachment_trigger, :restored_version
 
   alias_attribute :modified_by, :user_id
   alias_attribute :body, :draft_body

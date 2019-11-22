@@ -112,7 +112,7 @@ class Social::TwitterStream < Social::Stream
   end
 
   def build_smart_rule(rule)
-    group_id = rule[:group_id].to_i unless rule[:group_id].nil?
+    group_id = rule[:group_id].to_i unless (rule[:group_id].to_i == 0)
     product_id = twitter_handle.product_id
     rule_type = SMART_FILTER_RULE_TYPE
     smart_rule_params = {

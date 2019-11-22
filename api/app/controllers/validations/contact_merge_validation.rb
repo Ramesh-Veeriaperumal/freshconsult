@@ -1,4 +1,6 @@
 class ContactMergeValidation < ApiValidation
+  include ContactsCompaniesHelper
+
   MERGE_FIELD_VALIDATIONS = {
     fb_profile_id: { data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
     external_id: { data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
@@ -23,7 +25,7 @@ class ContactMergeValidation < ApiValidation
         allow_nil: false
       },
       custom_length: {
-        maximum: User::MAX_USER_COMPANIES,
+        maximum: @max_companies_count,
         message_options: { element_type: :integer }
       }
     }
@@ -61,6 +63,7 @@ class ContactMergeValidation < ApiValidation
     super(request_params, item)
     @item = item
     @contact_validation_params = request_params[:contact] || {}
+    @max_companies_count = user_companies_limit
   end
 
   def check_duplicate_companies

@@ -59,6 +59,7 @@ module TicketsTestHelper
                                          :cc_email => Helpdesk::Ticket.default_cc_hash.merge(cc_emails: cc_emails, fwd_emails: fwd_emails),
                                          :created_at => params[:created_at],
                                          :account_id => account_id,
+                                         :sl_skill_id => params[:skill_id],
                                          :custom_field => params[:custom_field])
     test_ticket.build_ticket_body(:description => Faker::Lorem.paragraph)
     if params[:attachments]
@@ -270,7 +271,8 @@ module TicketsTestHelper
       requester: Hash,
       responder: (ticket.responder ? Hash : nil),
       group: (ticket.group ? Hash : nil),
-      attachments: Array
+      attachments: Array,
+      skill: (ticket.skill ? Hash : nil)
     }
   end
 
@@ -283,12 +285,29 @@ module TicketsTestHelper
     }
   end
 
+  def cp_ticket_destroy_pattern_for_archive_action(expected_output = {}, ticket)
+    {
+      id: ticket.id,
+      display_id: ticket.display_id,
+      account_id: ticket.account_id,
+      archive: true
+    }
+  end
+
   def render_assoc_hash(current_association_type)
     return nil if current_association_type.blank?
 
     {
       id: current_association_type,
       type: TicketConstants::TICKET_ASSOCIATION_TOKEN_BY_KEY[current_association_type]
+    }
+  end
+  
+  def skill_key_value_pairs(ticket)
+    {
+      id: ticket.skill.id,
+      name: ticket.skill.name,
+      account_id: ticket.skill.account_id
     }
   end
 end

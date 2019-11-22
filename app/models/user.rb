@@ -24,6 +24,7 @@ class User < ActiveRecord::Base
   include AccountConstants
   include PasswordPolicies::UserHelpers
   include Redis::FreshidPasswordRedis
+  include ContactsCompaniesHelper
 
   concerned_with :constants, :associations, :callbacks, :user_email_callbacks, :rabbitmq, :esv2_methods, :presenter, :freshid_methods
 
@@ -141,8 +142,8 @@ class User < ActiveRecord::Base
   end
 
   def max_user_companies
-    self.errors.add(:base, I18n.t('activerecord.errors.messages.max_user_companies', :max_companies => MAX_USER_COMPANIES)) \
-      if (self.user_companies.reject(&:marked_for_destruction?).length > MAX_USER_COMPANIES)
+    self.errors.add(:base, I18n.t('activerecord.errors.messages.max_user_companies', :max_companies => user_companies_limit)) \
+      if (self.user_companies.reject(&:marked_for_destruction?).length > user_companies_limit)
   end
 
   def has_multiple_companies_feature?

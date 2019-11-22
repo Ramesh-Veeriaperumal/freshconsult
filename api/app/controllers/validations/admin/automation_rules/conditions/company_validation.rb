@@ -1,6 +1,6 @@
 module Admin::AutomationRules::Conditions
   class CompanyValidation < ApiValidation
-    include Admin::Automation::ConditionHelper
+    include Admin::ConditionHelper
     include Admin::AutomationConstants
 
     DEFAULT_ATTRIBUTES = (Admin::AutomationConstants::CONDITION_COMPANY_FIELDS +

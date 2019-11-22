@@ -27,7 +27,7 @@ class HyperTrail::Base
   def trigger_export
     url = export_base_url
     Rails.logger.info "Export Request => url #{url}, params #{params.inspect}"
-    response = HTTParty.post(url, basic_auth: basic_auth, headers: { 'Content-Type' => 'application/json' }, body: params.to_json)
+    response = HTTParty.post(url, basic_auth: basic_auth_export, headers: { 'Content-Type' => 'application/json' }, body: params.to_json)
 
     if response.code != 202
       Rails.logger.debug "HT Fail. #{response.code} #{response.body}"
@@ -39,7 +39,7 @@ class HyperTrail::Base
   def retrive_export_data
     user_id = User.current.id
     AuditLogExport.perform_at(2.seconds.from_now, export_job_id: params['job_id'], time: 0, user_id: user_id,
-                                                  receive_via: params[:receive_via])
+                                                  archived: params[:archived], receive_via: params[:receive_via], format: params[:export_format])
   end
 
   private
@@ -61,8 +61,13 @@ class HyperTrail::Base
     end
 
     def export_base_url
-      format((HyperTrail::CONFIG[hyper_trail_filtered_export]['api_endpoint']).to_s,
-             account_id: Account.current.id)
+      if params[:archived] == AuditLogConstants::ARCHIVED[0]
+        format((HyperTrail::CONFIG[hyper_trail_archived_export]['api_endpoint']).to_s,
+               account_id: Account.current.id)
+      else
+        format((HyperTrail::CONFIG[hyper_trail_filtered_export]['api_endpoint']).to_s,
+               account_id: Account.current.id)
+      end
     end
 
     def next_link_valid?(link)
@@ -73,6 +78,13 @@ class HyperTrail::Base
       {
         username: HyperTrail::CONFIG[hyper_trail_type]['username'],
         password: HyperTrail::CONFIG[hyper_trail_type]['password']
+      }
+    end
+
+    def basic_auth_export
+      {
+        username: HyperTrail::CONFIG[hyper_trail_filtered_export]['username'],
+        password: HyperTrail::CONFIG[hyper_trail_filtered_export]['password']
       }
     end
 end

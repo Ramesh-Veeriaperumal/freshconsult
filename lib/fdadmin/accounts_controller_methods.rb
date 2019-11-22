@@ -46,7 +46,9 @@ module Fdadmin::AccountsControllerMethods
 			amount: account.subscription.amount,
 			billing_cycle: account.subscription.renewal_period,
 			subscription_plan_id: account.subscription.subscription_plan_id,
-			paid_account: account.subscription.non_new_sprout? && account.subscription_payments.count != 0
+			paid_account: account.subscription.non_new_sprout? && account.subscription_payments.count != 0,
+			agent_seats: account.subscription.agent_limit == Fdadmin::BillingController::DEFAULT_AGENT_LIMIT ? account.full_time_support_agents.count : account.subscription.agent_limit,
+			fsm_agents: account.subscription.field_agent_limit || 0
 		}
 	end
 
@@ -199,5 +201,22 @@ module Fdadmin::AccountsControllerMethods
         ends_at: trial_subscription.ends_at.to_date,
         upsell_plan: trial_subscription.trial_plan
     }
+  end
+
+  def fetch_requested_subscription_details(subscription_request)
+    return {} if subscription_request.blank?
+    {
+      created_at: subscription_request.created_at,
+      from_plan: subscription_request.subscription.plan_name,
+      to_plan: subscription_request.plan_name,
+      to_plan_cost: SubscriptionPlan.find(subscription_request.plan_id).amount,
+      agent_seats: subscription_request.agent_limit,
+      renewal_period: subscription_request.renewal_period,
+      fsm_agents: subscription_request.fsm_field_agents || 0
+    }
+  end
+
+  def fetch_account_cancellation_requested_time(account)
+  	Time.zone.at(account.account_cancellation_requested_time.to_i / 1000).utc.to_date if account.account_cancellation_requested?
   end
 end

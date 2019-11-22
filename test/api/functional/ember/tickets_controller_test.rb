@@ -72,7 +72,7 @@ module Ember
     end
 
     def destroy_all_fsm_fields_and_service_task_type
-      fsm_fields = CUSTOM_FIELDS_TO_RESERVE.collect { |x| x[:name] + "_#{Account.current.id}" }
+      fsm_fields = fsm_custom_field_to_reserve.collect { |x| x[:name] + "_#{Account.current.id}" }
       fsm_fields.each do |fsm_field|
         Account.current.ticket_fields.find_by_name(fsm_field).try(:destroy)
       end
@@ -204,7 +204,7 @@ module Ember
       valid_filters = %w(
         spam deleted overdue pending open due_today new
         monitored_by new_and_my_open all_tickets unresolved
-        article_feedback unresolved_article_feedback my_article_feedback
+        article_feedback unresolved_article_feedback my_article_feedback unassigned_service_tasks
         watching on_hold
         raised_by_me shared_by_me shared_with_me
         unresolved_service_tasks

@@ -1,7 +1,7 @@
 module Admin
   class AutomationValidation < ApiValidation
     include Admin::AutomationConstants
-    include Admin::AutomationValidationHelper
+    include Admin::ConditionValidationHelper
 
     attr_accessor(*AutomationConstants::PERMITTED_PARAMS)
     attr_accessor :type_name, :rule_type, :field_position

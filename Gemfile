@@ -49,7 +49,7 @@ gem 'iconv', '~> 1.0.4'
 gem 'thrift', '~> 0.9.2.0'
 gem 'charlock_holmes', "0.7.3"
 gem "tnef", "1.0.2"
-gem "central-publisher", git: 'git@github.com:freshdesk/central-publisher.git', tag: 'v2.0.7'
+gem "central-publisher", git: 'git@github.com:freshdesk/central-publisher.git', tag: 'v2.0.10'
 
 gem 'optar', git: 'git@github.com:freshdesk/optar.git', tag: 'v1.1.3'
 
@@ -125,7 +125,7 @@ gem "ruby-saml", "1.7.0"
 
 gem 'xeroizer', :git => "git@github.com:freshdesk/xeroizer.git"
 
-gem 'rubyzip', '1.2.2' # will load new rubyzip version
+gem 'rubyzip', '1.3.0' # will load new rubyzip version
 gem 'zip-zip' # will load compatibility for old rubyzip API.
 
 gem "riak-client", "1.4.2"

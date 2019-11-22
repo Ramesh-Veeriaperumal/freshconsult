@@ -35,14 +35,14 @@ module Dkim::UtilityMethods
     end
   end
 
-  def es_response_success?(email_service_response)
-    email_service_response == Dkim::Constants::EMAIL_SERVICE_RESPONSE_CODE[:success]
+  def es_response_success?(email_service_response_status)
+    email_service_response_status == Dkim::Constants::EMAIL_SERVICE_RESPONSE_CODE[:success]
   end
 
-  def construct_dkim_hash(email_service_domains)
+  def construct_dkim_hash(email_service_domains, domain = nil)
     email_service_domains.inject({}) do |dkim, value|
-      dkim[value['domain'].to_sym] = [] | value['records']['dkim']
-      dkim[value['domain'].to_sym].push(value['records']['spfmx'])
+      dkim[(domain.present? ? domain : value['domain']).to_sym] = [] | value['records']['dkim']
+      dkim[(domain.present? ? domain : value['domain']).to_sym].push(value['records']['spfmx'])
       dkim
     end
   end

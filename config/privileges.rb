@@ -276,6 +276,18 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_solutions/article", :only => [:folder_articles, :show]
   end
 
+  create_and_edit_article do
+    resource :"solution/article", :only => [:new, :create, :edit, :update, :delete_tag, :reorder, :properties, :move_to, :move_back, :mark_as_outdated, :mark_as_uptodate]
+    resource :"solution/tag_use"
+    resource :solutions_uploaded_image, :only => [:create, :create_file, :index]
+    resource :"solution/draft", :only => [:autosave, :publish, :attachments_delete, :destroy]
+
+    # Used by V2 API
+    resource :"api_solutions/article", :only => [:create, :update]
+  end
+
+
+  #--start- This resource mapping is here to handle delta phase backward compatablility.
   publish_solution do
     resource :"solution/article", :only => [:new, :create, :edit, :update, :delete_tag, :reorder, :properties, :move_to, :move_back, :mark_as_outdated, :mark_as_uptodate]
     resource :"solution/tag_use"
@@ -285,6 +297,7 @@ Authority::Authorization::PrivilegeList.build do
     # Used by V2 API
     resource :"api_solutions/article", :only => [:create, :update]
   end
+  #--end-
 
   delete_solution do
     resource :"solution/article", :only => [:destroy, :reset_ratings], :owned_by =>
@@ -528,7 +541,7 @@ Authority::Authorization::PrivilegeList.build do
 
     # Used by V2 API
     resource :"api_contact", :only => [:make_agent]
-    resource :"api_agent", :only => [:show, :index, :update, :destroy]
+    resource :"api_agent", :only => [:show, :index, :update, :destroy, :create, :export, :export_s3_url]
   end
 
   manage_availability do

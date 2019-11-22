@@ -187,8 +187,21 @@ class Agent < ActiveRecord::Base
   end
 
   def nullify_tickets
-    reason = {:delete_agent => [self.user_id]}
-    Helpdesk::ResetResponder.perform_async({:user_id => self.user_id, :reason => reason})
+    reset_responder_form_tickets
+    reset_internal_agent_from_tickets
+    reset_responder_from_archive_tickets
+  end
+
+  def reset_responder_form_tickets
+    Helpdesk::ResetResponder.perform_async(user_id: user_id, reason: { delete_agent: [user_id] })
+  end
+
+  def reset_internal_agent_from_tickets
+    Helpdesk::ResetInternalAgent.perform_async(internal_agent_id: user_id, reason: { delete_internal_agent: [user_id] }) if Account.current.shared_ownership_enabled?
+  end
+
+  def reset_responder_from_archive_tickets
+    Helpdesk::ResetArchiveTickets.perform_async(user_id: user_id) if Account.current.features_included?(:archive_tickets)
   end
 
   def reset_gamification

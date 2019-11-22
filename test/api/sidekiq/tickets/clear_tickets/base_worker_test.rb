@@ -23,6 +23,10 @@ class BaseWorkerTest < ActionView::TestCase
       @user.make_current
     else
       @account = Account.current
+      if User.current.nil?
+        @user = create_dummy_customer
+        @user.make_current
+      end
     end
   end
 

@@ -51,17 +51,22 @@ class Admin::DkimConfigurationsController < Admin::AdminController
   end
 
   def verify_email_domain
-    Dkim::ValidateDkimRecord.new(@domain_category).validate if @domain_category.present?
-    Rails.logger.debug "verify_email_domain result ::: #{@domain_category.inspect}"
-    if domain_unverified?
-      set_others_redis_key(dkim_verify_key(@domain_category), Time.now, 48.hours)
+    if current_account.launched?(:dkim_email_service)
+      @dkim_records = Dkim::ValidateDkimRecord.new(@domain_category).validate_with_email_service if @domain_category.present?
+      flash[:notice] = t('email_configs.dkim.verify_fail') if @dkim_records.nil?
+    else
+      Dkim::ValidateDkimRecord.new(@domain_category).validate if @domain_category.present?
+      Rails.logger.debug "verify_email_domain result ::: #{@domain_category.inspect}"
+      if domain_unverified?
+        set_others_redis_key(dkim_verify_key(@domain_category), Time.now, 48.hours)
 
-      DkimRecordVerificationWorker.perform_at(DEFAULT_MINUTES.from_now, {:account_id => current_account.id,
-        :record_id => @domain_category.id})
+        DkimRecordVerificationWorker.perform_at(DEFAULT_MINUTES.from_now, {:account_id => current_account.id,
+          :record_id => @domain_category.id})
 
-      flash[:notice] = t('email_configs.dkim.verify_fail')
-    elsif @domain_category.status == OutgoingEmailDomainCategory::STATUS['active']
-      remove_others_redis_key(dkim_verify_key(@domain_category))
+        flash[:notice] = t('email_configs.dkim.verify_fail')
+      elsif @domain_category.status == OutgoingEmailDomainCategory::STATUS['active']
+        remove_others_redis_key(dkim_verify_key(@domain_category))
+      end
     end
   rescue Dkim::DomainAlreadyConfiguredError => e
     Rails.logger.debug "Exception in verify_email_domain :: #{e.message} :: account id - #{current_account.id} :: Domain - #{@domain_category.email_domain}"

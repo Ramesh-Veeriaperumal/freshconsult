@@ -21,8 +21,6 @@ class Helpdesk::ResetGroup < BaseWorker
     Sharding.run_on_slave do
       handle_dashboards_widgets
       handle_group_tickets(options)
-      handle_internal_group_tickets(reason.dup)
-      handle_archive_tickets
     end
   rescue Exception => e
     Rails.logger.info "Error in ResetGroup worker :: #{e.inspect}, #{args.inspect}"
@@ -35,25 +33,6 @@ class Helpdesk::ResetGroup < BaseWorker
       update_all_params = [{ group_id: nil }, {}, options]
       tickets = @account.tickets.where(group_id: @group_id)
       tickets.update_all_with_publish(*update_all_params)
-    end
-
-    def handle_internal_group_tickets(reason)
-      return unless @account.shared_ownership_enabled?
-
-      #  Changed reason hash for shared ownership
-      reason[:delete_internal_group] = reason.delete(:delete_group)
-      options = { reason: reason, manual_publish: true }
-      updates_hash = { internal_group_id: nil, internal_agent_id: nil }
-
-      tickets = @account.tickets.where(internal_group_id: @group_id)
-      tickets.update_all_with_publish(updates_hash, {}, options)
-    end
-
-    def handle_archive_tickets
-      return unless @account.features_included?(:archive_tickets)
-
-      archive_tickets = @account.archive_tickets.where(group_id: @group_id)
-      archive_tickets.update_all_with_publish({ group_id: nil }, {})
     end
 
     def handle_dashboards_widgets

@@ -8,6 +8,8 @@ class Admin::Skill < ActiveRecord::Base
   include Redis::RoundRobinRedis
   include DataVersioning::Model
 
+  concerned_with :presenter
+
   NOT_OPERATORS = ['is_not', 'does_not_contain', 'not_selected', 'not_in']
   MAX_NO_OF_SKILLS_PER_ACCOUNT = 180
   VERSION_MEMBER_KEY = 'TICKET_FIELD_LIST'.freeze
@@ -23,6 +25,7 @@ class Admin::Skill < ActiveRecord::Base
 
   before_validation :assign_last_position, :unless => :position?
   before_validation :remove_whitespaces
+  before_validation :add_match_type
 
   validates_presence_of :name
   validates :name, length: { maximum: 50 }
@@ -34,11 +37,13 @@ class Admin::Skill < ActiveRecord::Base
   validates_presence_of :match_type
   validates_inclusion_of :match_type, :in => %w( any all )
   validates_uniqueness_of :name, :case_sensitive => false, :scope => :account_id
-  
+
+  attr_accessor :conditions, :position_changes
+
   after_commit :clear_skills_cache
   after_commit :destroy_sbrr_queues, :clear_tickets_skill, on: :destroy
+  after_commit :reorder_skills_position, on: :update, if: :api_request
 
-  attr_accessor :conditions
   accepts_nested_attributes_for :user_skills, :allow_destroy => true
   attr_accessible :name, :description, :match_type, :filter_data, :position, :user_ids, :user_skills_attributes
 
@@ -108,6 +113,24 @@ class Admin::Skill < ActiveRecord::Base
       last_skill = account.skills[-2] #last object happens to be the unsaved self
       last_skill_position = (last_skill && last_skill.position).to_i 
       self.position = last_skill_position + 1
+    end
+
+    def add_match_type
+      self.match_type ||= 'all'
+    end
+
+    def api_request
+      position_changes.present?
+    end
+
+    def reorder_skills_position
+      old_index, new_index = position_changes
+      reorder_from_higher_pos = old_index > new_index
+      reorder_by = reorder_from_higher_pos ? '+' : '-'
+      position_upper_index = reorder_from_higher_pos ? old_index : new_index
+      position_lower_index = reorder_from_higher_pos ? new_index : old_index
+      Account.current.skills.where('position >= ? and position <= ? and id != ?',
+                   position_lower_index, position_upper_index, id).update_all("position = position #{reorder_by} 1")
     end
 
     def no_of_skills_per_account

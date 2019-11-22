@@ -5,6 +5,7 @@ class ExportAgents < BaseWorker
   def perform args
     begin
       args.symbolize_keys!
+      args[:export_job_id] = @jid
       Export::AgentDetail.new(args).perform
     ensure
       User.reset_current_user

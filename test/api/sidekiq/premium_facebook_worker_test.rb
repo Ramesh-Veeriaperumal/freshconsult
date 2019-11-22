@@ -212,6 +212,26 @@ class PremiumFacebookWorkerTest < ActionView::TestCase
     del_semaphore(semaphore_key)
   end
 
+  def test_threads_count_in_fb_conversations_request
+    options_for_page_limit_fifty = {
+      fields: 'updated_time,messages.limit(25).fields(id,message,from,created_time,attachments.fields(id,image_data,mime_type,name,size,video_data,file_url.fields(mime_type,name,id,size)),shares.fields(description,id,link,name))',
+      limit: 25,
+      request: {
+        timeout: 10,
+        open_timeout: 10
+      }
+    }
+    @fb_page.update_attributes(realtime_messaging: false)
+    del_semaphore(semaphore_key)
+    dm = sample_dms(rand(10**10), @user_id, rand(10**10), Time.now.utc)
+    Koala::Facebook::API.any_instance.stubs(:get_connections).with(Facebook::Constants::FB_API_ME, Facebook::Constants::FB_API_CONVERSATIONS, options_for_page_limit_fifty, Facebook::Constants::FB_API_HTTP_COMPONENT).returns(dm.to_json)
+    Social::PremiumFacebookWorker.new.perform('account_id' => @account.id)
+    Koala::Facebook::API.any_instance.unstub(:get_connections)
+    direct_message_data = HashWithIndifferentAccess.new(dm['data'][0])['messages']['data'][0]
+    dm_msg_id = direct_message_data['id']
+    assert @account.facebook_posts.find_by_post_id(dm_msg_id).present?
+  end
+
   # def test_post_is_converted_to_ticket
   #   @fb_page.update_attributes(import_visitor_posts: true, message_since: nil)
 

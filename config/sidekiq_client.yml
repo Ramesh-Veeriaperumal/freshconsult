@@ -48,6 +48,7 @@ defaults: &defaults
     - [reset_responder]
     - [reset_internal_group]
     - [reset_internal_agent]
+    - [reset_archive_tickets]
     - [new_es_index]
     - [reset_gamification_score]
     - [solution_language_change]

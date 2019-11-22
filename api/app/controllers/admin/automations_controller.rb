@@ -5,7 +5,9 @@ class Admin::AutomationsController < ApiApplicationController
   include Redis::AutomationRuleRedis
   include AutomationRuleHelper
   include Va::Constants
-  include Admin::Automation::CustomFieldHelper
+  include Admin::CustomFieldHelper
+  include Admin::EventCustomFieldHelper
+  include Admin::ActionCustomFieldHelper
 
   prepend_before_filter :check_for_allowed_rule_type
   before_filter :check_privilege

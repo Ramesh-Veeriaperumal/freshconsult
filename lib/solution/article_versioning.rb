@@ -2,13 +2,13 @@ module Solution::ArticleVersioning
   extend ActiveSupport::Concern
 
   included do
-    def version_create_or_update(record, exclude_article_payload = false)
+    def version_create_or_update(record, from_migration_worker = false)
       @delegator = if record.instance_of? Solution::Article
                      ArticleHandler.new(record)
                    else
                      DraftHandler.new(record)
                    end
-      @delegator.exclude_article_payload = exclude_article_payload
+      @delegator.from_migration_worker = from_migration_worker
       @delegator.create_or_update
     end
 
@@ -63,11 +63,6 @@ module Solution::ArticleVersioning
       @latest_version
     end
 
-    def same_session?
-      redis_session = latest_version.session
-      redis_session ? redis_session == session : false
-    end
-
     def mark_unlive
       live_version = article_version_scoper.where(live: true).first
       if live_version
@@ -79,13 +74,13 @@ module Solution::ArticleVersioning
       version_record.version_no = (article_version_scoper.maximum(:version_no) || 0) + 1 if create_version?
     end
 
-    def exclude_article_payload=(val)
-      @exclude_article_payload = val
+    def from_migration_worker=(val)
+      @from_migration_worker = val
     end
 
     def assign_common_attributes(version_record)
       assign_version_no(version_record)
-      version_record.exclude_article_payload = @exclude_article_payload
+      version_record.from_migration_worker = @from_migration_worker
       version_record.user_id = current_user
       Solution::ArticleVersion::COMMON_ATTRIBUTES.each do |attribute|
         version_record.safe_send("#{attribute}=", safe_send(attribute))
@@ -114,6 +109,12 @@ module Solution::ArticleVersioning
       @article_version_scoper ||= solution_article_versions
     end
 
+    # check if same session incase publishing an article over published article before autosave
+    def same_session?
+      redis_session = latest_version.session
+      redis_session ? redis_session == session : false
+    end
+
     def current_user
       @current_user ||= User.current ? User.current.id : modified_by
       # When migration is run, current user will not be present. We need to take modified_by into consideration for article and user_id for draft
@@ -128,6 +129,7 @@ module Solution::ArticleVersioning
       assign_common_attributes(version_record)
       version_record.status = Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
       mark_unlive if article.unpublishing
+      version_record.restore(self.restored_version) if self.restored_version
       version_record.live = false
       version_record.triggered_from = 'draft'
     end
@@ -151,10 +153,16 @@ module Solution::ArticleVersioning
       @article_version_scoper ||= article.solution_article_versions
     end
 
+    def same_session?
+      return false if restored_version # restore should always create a new version
+
+      redis_session = latest_version.session
+      redis_session ? redis_session == session : false
+    end
+
     def current_user
       @current_user ||= User.current ? User.current.id : user_id
       # When migration is run, current user will not be present. We need to take modified_by into consideration for article and user_id for draft
     end
-
   end
 end

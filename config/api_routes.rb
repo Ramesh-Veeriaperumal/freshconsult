@@ -33,7 +33,12 @@ Helpkit::Application.routes.draw do
       end
       put '/custom_translations', to: 'custom_translations#upload'
       get '/custom_translations', to: 'custom_translations#download'
-      get '/freshcaller_account', to: 'freshcaller_account#show'
+      resource :freshcaller_account, controller: 'freshcaller_account', only: [:show, :destroy] do
+        member do
+          put 'enable'
+          put 'disable'
+        end
+      end
     end
 
     resources :accounts, path: 'admin/accounts' do
@@ -131,8 +136,7 @@ Helpkit::Application.routes.draw do
     match 'agents/me' => 'api_profiles#update', :defaults => { format: 'json', id: 'me' }, via: :put
     match 'agents/me/reset_api_key' => 'api_profiles#reset_api_key', :defaults => { format: 'json', id: 'me' }, via: :post
 
-    resources :agents, controller: 'api_agents', only: [:index, :show, :update, :destroy]
-
+    resources :agents, controller: 'api_agents', only: [:index, :show, :update, :destroy, :create]
     resources :canned_response_folders, controller: 'canned_response_folders', only: [:index, :show, :create, :update]
     resources :canned_responses, controller: 'canned_responses', only: [:index, :show, :create, :update]
     resources :scenario_automations, controller: 'scenario_automations', only: :index
@@ -341,10 +345,14 @@ Helpkit::Application.routes.draw do
 
     post '/audit_log/export', to: 'audit_logs#export'
     get '/audit_log/export/:id', to: 'audit_logs#export_s3_url'
+    post '/agents/export', to: 'api_agents#export'
+    get '/agents/export/:id', to: 'api_agents#export_s3_url'
 
     scope '/automations/:rule_type' do
       resources :rules, controller: 'admin/automations', only: [:index, :create, :update, :destroy, :show]
     end
+
+    resources :skills, controller: 'admin/api_skills', only: [:index, :show, :create, :update, :destroy]
   end
 
   ember_routes = proc do
@@ -420,6 +428,7 @@ Helpkit::Application.routes.draw do
 
             member do
               get '/:id(/:language)', to: :show, constraints: { language: Regexp.union(Language.all_codes) }
+              post '/:id(/:language)/restore', to: :restore, constraints: { language: Regexp.union(Language.all_codes) }
             end
           end
 
@@ -505,6 +514,9 @@ Helpkit::Application.routes.draw do
         get :support_tickets
       end
     end
+
+    get 'admin/accounts/preferences', to: 'account_admins#preferences'
+    put 'admin/accounts/preferences', to: 'account_admins#preferences='
 
     scope module: 'admin' do
       post 'features/:name', to: 'account_features#create'

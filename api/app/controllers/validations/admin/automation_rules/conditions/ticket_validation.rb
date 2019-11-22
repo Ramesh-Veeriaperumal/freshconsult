@@ -1,6 +1,6 @@
 module Admin::AutomationRules::Conditions
   class TicketValidation < ApiValidation
-    include Admin::Automation::ConditionHelper
+    include Admin::ConditionHelper
     include Admin::AutomationConstants
 
     DEFAULT_ATTRIBUTES = (DEFAULT_CONDITION_TICKET_FIELDS + OBSERVER_CONDITION_TICKET_FIELDS +

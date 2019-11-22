@@ -662,6 +662,26 @@ module Ember
         match_json(private_api_solution_article_pattern(sample_article.reload))
       end
 
+      def test_update_article_with_new_tags_without_publish_solution_privilege
+        sample_article = get_article_without_draft
+        initial_tag_count = sample_article.tags.count
+        tags = Faker::Lorem.words(3).uniq
+        tags = tags.map do |tag|
+          tag = "#{tag}-#{Time.now.to_i}"
+          assert_equal @account.tags.map(&:name).include?(tag), false
+          tag
+        end
+        User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
+        User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
+        put :update, construct_params({ version: 'private', id: sample_article.parent_id }, status: 2, tags: tags)
+        assert_response 403
+        error_info_hash = { details: 'dont have permission to perfom on published article' }
+        match_json(request_error_pattern_with_info(:published_article_privilege_error, error_info_hash, error_info_hash))
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
       def test_update_article_with_existing_tags
         sample_article = get_article_without_draft
         initial_tag_count = sample_article.tags.count
@@ -775,10 +795,11 @@ module Ember
         Solution::Draft.any_instance.unstub(:locked?)
       end
 
-      def test_create_without_publish_solution_privilege
+      def test_create_without_create_and_edit_article_privilege
         folder_meta = get_folder_meta
         title = Faker::Name.name
         paragraph = Faker::Lorem.paragraph
+        User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(false)
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
         post :create, construct_params({ version: 'private', id: folder_meta.id }, title: title, description: paragraph, status: 1)
         assert_response 403
@@ -786,15 +807,45 @@ module Ember
         User.any_instance.unstub(:privilege?)
       end
 
+      def test_create_published_article_with_create_and_edit_article_privilege_and_without_publish_solution_privilege
+        without_publish_solution_privilege do
+          folder_meta = get_folder_meta
+          title = Faker::Name.name
+          paragraph = Faker::Lorem.paragraph
+          post :create, construct_params({ version: 'private', id: folder_meta.id }, title: title, description: paragraph, status: 2)
+          assert_response 403
+          error_info_hash = { details: 'dont have permission to perfom on published article' }
+          match_json(request_error_pattern_with_info(:published_article_privilege_error, error_info_hash, error_info_hash))
+        end
+      end
+
+      def test_update_draft_state_article_without_publish_solution_privilege
+        without_publish_solution_privilege do
+          default_category = @account.solution_category_meta.where(is_default: true).first
+          default_folder = default_category.solution_folder_meta.first
+          article_meta = create_article(folder_meta_id: default_folder.id, status: '1')
+          article = article_meta.solution_articles.first
+          create_draft(article: article, keep_previous_author: true)
+          paragraph = Faker::Lorem.paragraph
+          params_hash = { title: 'new draft title', description: paragraph, status: 1, agent_id: @agent.id }
+          put :update, construct_params({ version: 'private', id: article.parent_id }, params_hash)
+          assert_response 200
+          article.reload
+          match_json(private_api_solution_article_pattern(article))
+          assert_equal Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], article.status
+        end
+      end
+
       def test_update_without_publish_solution_privilege
-        sample_article = get_article_without_draft
-        paragraph = Faker::Lorem.paragraph
-        params_hash = { title: 'new draft title', description: paragraph, status: 1, agent_id: @agent.id }
-        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
-        put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
-        assert_response 403
-        match_json(request_error_pattern(:access_denied))
-        User.any_instance.unstub(:privilege?)
+        without_publish_solution_privilege do
+          sample_article = get_article_without_draft
+          paragraph = Faker::Lorem.paragraph
+          params_hash = { title: 'new draft title', description: paragraph, status: 2, agent_id: @agent.id }
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+          assert_response 403
+          error_info_hash = { details: 'dont have permission to perfom on published article' }
+          match_json(request_error_pattern_with_info(:published_article_privilege_error, error_info_hash, error_info_hash))
+        end
       end
 
       def test_show_without_view_solution_privilege
@@ -837,26 +888,24 @@ module Ember
       end
 
       def test_bulk_update_tags_without_tags_privilege
-        User.any_instance.stubs(:privilege?).with(:create_tags).returns(false)
-        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
-        article = @account.solution_articles.where(language_id: 6).last
-        tags = [Faker::Name.name, Faker::Name.name]
-        put :bulk_update, construct_params({ version: 'private' }, ids: [article.parent_id], properties: { tags: tags })
-        assert_response 400
-      ensure
-        User.any_instance.unstub(:privilege?)
+        with_publish_solution_privilege do
+          User.any_instance.stubs(:privilege?).with(:create_tags).returns(false)
+          article = @account.solution_articles.where(language_id: 6).last
+          tags = [Faker::Name.name, Faker::Name.name]
+          put :bulk_update, construct_params({ version: 'private' }, ids: [article.parent_id], properties: { tags: tags })
+          assert_response 400
+        end
       end
 
       def test_bulk_update_old_tags_without_tags_privilege
-        User.any_instance.stubs(:privilege?).with(:create_tags).returns(false)
-        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
-        article = @account.solution_articles.where(language_id: 6).last
-        tag = Helpdesk::Tag.where(name: Faker::Name.name, account_id: @account.id).first_or_create
-        put :bulk_update, construct_params({ version: 'private' }, ids: [article.parent_id], properties: { tags: [tag.name] })
-        assert_response 204
-        assert ([tag.name] - article.reload.tags.map(&:name)).empty?
-      ensure
-        User.any_instance.unstub(:privilege?)
+        with_publish_solution_privilege do
+          User.any_instance.stubs(:privilege?).with(:create_tags).returns(false)
+          article = @account.solution_articles.where(language_id: 6).last
+          tag = Helpdesk::Tag.where(name: Faker::Name.name, account_id: @account.id).first_or_create
+          put :bulk_update, construct_params({ version: 'private' }, ids: [article.parent_id], properties: { tags: [tag.name] })
+          assert_response 204
+          assert ([tag.name] - article.reload.tags.map(&:name)).empty?
+        end
       end
 
       def test_bulk_update_author_without_feature
@@ -865,6 +914,7 @@ module Ember
         populate_articles(folder)
         articles = folder.solution_article_meta.pluck(:id)
         agent_id = add_test_agent.id
+        User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
         User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
         put :bulk_update, construct_params({ version: 'private' }, ids: articles, properties: { agent_id: agent_id })
@@ -875,17 +925,15 @@ module Ember
       end
 
       def test_bulk_update_author
-        folder = @account.solution_folder_meta.where(is_default: false).first
-        populate_articles(folder)
-        articles = folder.solution_article_meta.pluck(:id)
-        agent_id = add_test_agent.id
-        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
-        User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
-        put :bulk_update, construct_params({ version: 'private' }, ids: articles, properties: { agent_id: agent_id })
-        assert_response 204
-        assert folder.reload.solution_article_meta.all? { |meta| meta.solution_articles.where(language_id: @account.language_object.id).first.user_id == agent_id }
-      ensure
-        User.any_instance.unstub(:privilege?)
+        with_publish_solution_privilege do
+          folder = @account.solution_folder_meta.where(is_default: false).first
+          populate_articles(folder)
+          articles = folder.solution_article_meta.pluck(:id)
+          agent_id = add_test_agent.id
+          put :bulk_update, construct_params({ version: 'private' }, ids: articles, properties: { agent_id: agent_id })
+          assert_response 204
+          assert folder.reload.solution_article_meta.all? { |meta| meta.solution_articles.where(language_id: @account.language_object.id).first.user_id == agent_id }
+        end
       end
 
       def test_bulk_update_author_without_publish_solution
@@ -893,6 +941,8 @@ module Ember
         populate_articles(folder)
         articles = folder.solution_article_meta.pluck(:id)
         agent_id = @account.agents.first.id
+        User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
+        User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
         put :bulk_update, construct_params({ version: 'private' }, ids: articles, properties: { agent_id: agent_id })
         assert_response 403
@@ -905,6 +955,7 @@ module Ember
         populate_articles(folder)
         articles = folder.solution_article_meta.pluck(:id)
         agent_id = @account.agents.first.id
+        User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
         User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
         put :bulk_update, construct_params({ version: 'private' }, ids: articles, properties: { agent_id: agent_id })
@@ -984,6 +1035,7 @@ module Ember
         populate_articles(folder)
         articles = folder.solution_article_meta.pluck(:id)
         agent_id = add_test_agent.id
+        User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
         User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
         put :bulk_update, construct_params({ version: 'private', language: @account.language }, ids: articles, properties: { agent_id: agent_id })
@@ -999,6 +1051,7 @@ module Ember
         agent_id = add_test_agent.id
         article_translations = article_meta.children.pluck(:language_id)
         language = Language.find((article_translations - [Language.find_by_code(@account.language).code]).sample)
+        User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
         User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
         put :bulk_update, construct_params({ version: 'private', language: language.code }, ids: articles, properties: { agent_id: agent_id })
@@ -1009,26 +1062,26 @@ module Ember
       end
 
       def test_bulk_update_author_for_non_supported_language
-        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
-        User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
-        non_supported_language = get_valid_not_supported_language
-        put :bulk_update, construct_params({ version: 'private', language: non_supported_language }, ids: [1], properties: { agent_id: 1 })
-        assert_response 404
-        match_json(request_error_pattern(:language_not_allowed, code: non_supported_language, list: (@account.supported_languages + [@account.language]).sort.join(', ')))
-      ensure
-        User.any_instance.unstub(:privilege?)
+        with_publish_solution_privilege do
+          User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+          User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+          User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
+          non_supported_language = get_valid_not_supported_language
+          put :bulk_update, construct_params({ version: 'private', language: non_supported_language }, ids: [1], properties: { agent_id: 1 })
+          assert_response 404
+          match_json(request_error_pattern(:language_not_allowed, code: non_supported_language, list: (@account.supported_languages + [@account.language]).sort.join(', ')))
+        end
       end
 
       def test_bulk_update_with_language_without_multilingual_feature
-        Account.any_instance.stubs(:multilingual?).returns(false)
-        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
-        User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
-        put :bulk_update, construct_params({ version: 'private', language: get_valid_not_supported_language }, ids: [1], properties: { agent_id: 1 })
-        assert_response 404
-        match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
+        with_publish_solution_privilege do
+          Account.any_instance.stubs(:multilingual?).returns(false)
+          put :bulk_update, construct_params({ version: 'private', language: get_valid_not_supported_language }, ids: [1], properties: { agent_id: 1 })
+          assert_response 404
+          match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
+        end
       ensure
         Account.any_instance.unstub(:multilingual?)
-        User.any_instance.unstub(:privilege?)
       end
 
       def test_update_article_unpublish_with_incorrect_credentials
@@ -1040,13 +1093,12 @@ module Ember
         @controller.unstub(:api_current_user)
       end
 
-      def test_update_article_unpublish_without_publish_solution_privilege
+      def test_update_article_unpublish_without_create_and_edit_article_privilege
+        User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(false)
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
         put :update, construct_params(version: 'private', id: 1, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
         assert_response 403
         match_json(request_error_pattern(:access_denied))
-      ensure
-        User.any_instance.unstub(:privilege?)
       end
 
       def test_update_article_unpublish_without_access
@@ -1549,7 +1601,7 @@ module Ember
                                  allow_skip: true)
         tag2 = "#{Faker::Lorem.characters(7)}#{rand(999_999)}"
         create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag2,
-                                  allow_skip: true)
+                                 allow_skip: true)
         get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, tags: [tag1, tag2] }, false)
         article.reload
         assert_equal article.tags.count, 2
@@ -1599,6 +1651,15 @@ module Ember
         post :export, construct_params({ version: 'private' }, export_params)
         assert_response 204
         assert_equal(' ', response.body)
+      end
+
+      def test_export_articles_without_article_export_privilege
+        User.any_instance.stubs(:privilege?).with(:export_articles).returns(false)
+        export_params = { portal_id: @portal_id.to_s, author: 1, status: 1, category: ['2'], folder: ['4'], tags: ['Tag1'], article_fields: [{ field_name: 'title', column_name: 'Title' }] }
+        post :export, construct_params({ version: 'private' }, export_params)
+        assert_response 403
+      ensure
+        User.any_instance.unstub(:privilege?)
       end
 
       def test_export_articles_without_feature
@@ -1713,9 +1774,11 @@ module Ember
       end
 
       def test_reorder_without_privilege
+        User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
         folder = @account.solution_folder_meta.where(is_default: false).first
         populate_articles(folder)
+        folder.reload
         put :reorder, construct_params({ version: 'private' }, id: folder.solution_article_meta.first.id, position: 2)
         assert_response 403
       ensure
@@ -1735,7 +1798,7 @@ module Ember
       def test_article_filters_with_secondary_language
         languages = @account.supported_languages + ['primary']
         language = @account.supported_languages.first
-        articles = @account.solution_articles.where(language_id: Language.find_by_code(language).id)
+        articles = get_portal_articles(@portal_id, [Language.find_by_code(language).id]).first(30)
         if articles.blank?
           article_meta = create_article(article_params(lang_codes: languages))
           articles = [article_meta.safe_send("#{language}_article")]
@@ -1808,7 +1871,7 @@ module Ember
       def test_article_filters_by_status_with_sec_lang
         languages = @account.supported_languages + ['primary']
         language  = @account.supported_languages.first
-        articles = @account.solution_articles.where(status: '2', language_id: 8)
+        articles = get_portal_articles(@portal_id, [8]).where(status: '2').first(30)
         if articles.blank?
           article_meta = create_article(folder_meta_id: @@folder_meta.id, lang_codes: languages)
           articles = [article_meta.safe_send("#{language}_article")]
@@ -1953,7 +2016,7 @@ module Ember
         assert_response 400
         match_json([bad_request_error_pattern('outdated', :cannot_mark_primary_as_uptodate, code: :invalid_value)])
       end
- 
+
       def test_bulk_update_publish_without_feature
         Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(false)
         draft = @account.solution_drafts.last
@@ -1985,13 +2048,13 @@ module Ember
         Account.any_instance.stubs(:multilingual?).returns(false)
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
         article_title1 = Faker::Lorem.characters(10)
-        article_meta1 = create_article(article_params(title: article_title1,status: 1))
-        sample_article1 = article_meta1.safe_send("primary_article")
+        article_meta1 = create_article(article_params(title: article_title1, status: 1))
+        sample_article1 = article_meta1.safe_send('primary_article')
         create_draft(article: sample_article1)
         draft1 = sample_article1.draft
         article_title2 = Faker::Lorem.characters(10)
-        article_meta2 = create_article(article_params(title: article_title2,status: 1))
-        sample_article2 = article_meta2.safe_send("primary_article")
+        article_meta2 = create_article(article_params(title: article_title2, status: 1))
+        sample_article2 = article_meta2.safe_send('primary_article')
         create_draft(article: sample_article2)
         draft2 = sample_article2.draft
         put :bulk_update, construct_params({ version: 'private' }, ids: [draft1.article.parent_id, draft2.article.parent_id], properties: { status: 2 })
@@ -2025,8 +2088,8 @@ module Ember
         Account.any_instance.stubs(:multilingual?).returns(true)
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
         languages = @account.supported_languages + ['primary']
-        unsupported_languages = Language.all.map(&:code).reject {|language| languages.include?(language) }
-        language  = unsupported_languages.first
+        unsupported_languages = Language.all.map(&:code).reject { |language| languages.include?(language) }
+        language = unsupported_languages.first
         draft = @account.solution_drafts.last
         put :bulk_update, construct_params({ version: 'private', language: language }, ids: [draft.article.parent_id], properties: { status: 2 })
         assert_response 404
@@ -2047,8 +2110,8 @@ module Ember
       def test_bulk_update_publish_for_article_with_no_draft
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
         article_title = Faker::Lorem.characters(10)
-        article_meta = create_article(article_params(title: article_title,status: 1))
-        sample_article = article_meta.safe_send("primary_article")
+        article_meta = create_article(article_params(title: article_title, status: 1))
+        sample_article = article_meta.safe_send('primary_article')
         sample_article.draft.destroy if sample_article.draft.present?
         put :bulk_update, construct_params({ version: 'private' }, ids: [sample_article.parent_id], properties: { status: 2 })
         assert_response 202
@@ -2058,15 +2121,15 @@ module Ember
         User.any_instance.unstub(:privilege?)
       end
 
-      def test_bulk_update_publish_for_article_with_draft_locked   
+      def test_bulk_update_publish_for_article_with_draft_locked
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
         article_title = Faker::Lorem.characters(10)
-        article_meta = create_article(article_params(title: article_title,status: 1))
-        sample_article = article_meta.safe_send("primary_article")
+        article_meta = create_article(article_params(title: article_title, status: 1))
+        sample_article = article_meta.safe_send('primary_article')
         create_draft(article: sample_article)
         draft = sample_article.draft
         Solution::Draft.any_instance.stubs(:locked?).returns(true)
-        put :bulk_update, construct_params({ version: 'private' }, ids: [sample_article.parent_id], properties: { status: 2 })       
+        put :bulk_update, construct_params({ version: 'private' }, ids: [sample_article.parent_id], properties: { status: 2 })
         assert_response 202
         sample_article.destroy
         draft.destroy
@@ -2085,7 +2148,7 @@ module Ember
         article = article_meta.safe_send("#{language}_article")
         article.outdated = true
         article.save
-        put :bulk_update, construct_params({ version: 'private', language: language}, ids: [article_meta.parent_id], properties: { outdated: false })
+        put :bulk_update, construct_params({ version: 'private', language: language }, ids: [article_meta.parent_id], properties: { outdated: false })
         assert_response 204
         assert !article_meta.reload.safe_send("#{language}_article").outdated
       ensure
@@ -2101,7 +2164,7 @@ module Ember
         article = article_meta.safe_send("#{language}_article")
         article.outdated = true
         article.save
-        put :bulk_update, construct_params({ version: 'private', language: language}, ids: [article_meta.parent_id], properties: { outdated: false })
+        put :bulk_update, construct_params({ version: 'private', language: language }, ids: [article_meta.parent_id], properties: { outdated: false })
         assert_response 403
         match_json(validation_error_pattern(bad_request_error_pattern('properties[:outdated]', :require_feature, feature: :adv_article_bulk_actions, code: :access_denied)))
       ensure
@@ -2117,7 +2180,7 @@ module Ember
         article = article_meta.safe_send("#{language}_article")
         article.outdated = true
         article.save
-        put :bulk_update, construct_params({ version: 'private', language: language}, ids: [article_meta.parent_id], properties: { outdated: false })
+        put :bulk_update, construct_params({ version: 'private', language: language }, ids: [article_meta.parent_id], properties: { outdated: false })
         assert_response 403
       ensure
         Account.any_instance.unstub(:adv_article_bulk_actions_enabled?)
@@ -2133,7 +2196,7 @@ module Ember
         article = article_meta.safe_send("#{language}_article")
         article.outdated = true
         article.save
-        put :bulk_update, construct_params({ version: 'private', language: language}, ids: [article_meta.parent_id], properties: { outdated: true })
+        put :bulk_update, construct_params({ version: 'private', language: language }, ids: [article_meta.parent_id], properties: { outdated: true })
         assert_response 400
       ensure
         Account.any_instance.unstub(:adv_article_bulk_actions_enabled?)
@@ -2148,7 +2211,7 @@ module Ember
         article_meta = create_article(article_params(lang_codes: languages))
         article = article_meta.safe_send("#{language}_article")
         article.save
-        put :bulk_update, construct_params({ version: 'private', language: language}, ids: [article_meta.parent_id], properties: { outdated: false })
+        put :bulk_update, construct_params({ version: 'private', language: language }, ids: [article_meta.parent_id], properties: { outdated: false })
         assert_response 204
       ensure
         Account.any_instance.unstub(:adv_article_bulk_actions_enabled?)
@@ -2160,7 +2223,7 @@ module Ember
         folder_meta = get_folder_meta
         title = '<span> hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is title with emoji </span>'
         paragraph = '<span> hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is line after emoji </span>'
-        post :create, construct_params({ version: 'private', id: folder_meta.id }, { title: title, description: paragraph, status: 2 })
+        post :create, construct_params({ version: 'private', id: folder_meta.id }, title: title, description: paragraph, status: 2)
         paragraph_with_emoji_enabled = UnicodeSanitizer.utf84b_html_c(paragraph)
         paragraph_with_emoji_disabled = UnicodeSanitizer.remove_4byte_chars(paragraph)
         paragraph_desc_un_html = Helpdesk::HTMLSanitizer.plain(paragraph_with_emoji_disabled)
@@ -2190,13 +2253,12 @@ module Ember
         Account.current.rollback(:encode_emoji_in_solutions)
       end
 
-      
       def test_create_draft_with_emoji_content_in_description_and_title_with_encode_emoji_enabled
         Account.current.launch(:encode_emoji_in_solutions)
         folder_meta = get_folder_meta
         title = '<span> hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is title with emoji </span>'
         paragraph = '<span> hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is line after emoji </span>'
-        post :create, construct_params({ version: 'private', id: folder_meta.id }, { title: title, description: paragraph, status: 1 })
+        post :create, construct_params({ version: 'private', id: folder_meta.id }, title: title, description: paragraph, status: 1)
         paragraph_with_emoji_enabled = UnicodeSanitizer.utf84b_html_c(paragraph)
         assert_equal Solution::Article.last.draft.description, paragraph_with_emoji_enabled
         assert_response 201
@@ -2225,7 +2287,7 @@ module Ember
         folder_meta = get_folder_meta
         title = '<span> hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is title with emoji </span>'
         paragraph = '<span> hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is line after emoji </span>'
-        post :create, construct_params({ version: 'private', id: folder_meta.id }, { title: title, description: paragraph, status: 2 })
+        post :create, construct_params({ version: 'private', id: folder_meta.id }, title: title, description: paragraph, status: 2)
         paragraph_with_emoji_disabled = UnicodeSanitizer.remove_4byte_chars(paragraph)
         paragraph_desc_un_html = Helpdesk::HTMLSanitizer.plain(paragraph_with_emoji_disabled)
         assert_equal Solution::Article.last.description, paragraph_with_emoji_disabled
@@ -2249,13 +2311,12 @@ module Ember
         match_json(private_api_solution_article_pattern(sample_article.reload))
       end
 
-      
       def test_create_draft_with_emoji_content_in_description_and_title_with_encode_emoji_disabled
         Account.current.rollback(:encode_emoji_in_solutions)
         folder_meta = get_folder_meta
         title = '<span> hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is title with emoji </span>'
         paragraph = '<span> hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is line after emoji </span>'
-        post :create, construct_params({ version: 'private', id: folder_meta.id }, { title: title, description: paragraph, status: 1 })
+        post :create, construct_params({ version: 'private', id: folder_meta.id }, title: title, description: paragraph, status: 1)
         paragraph_with_emoji_disabled = UnicodeSanitizer.remove_4byte_chars(paragraph)
         assert_equal Solution::Article.last.draft.description, paragraph_with_emoji_disabled
         assert_response 201
@@ -2279,7 +2340,7 @@ module Ember
         folder_meta = get_folder_meta
         title = Faker::Name.name
         paragraph = '<span> This is a paragraph </span><script>alert(ALERT!)</script>'
-        post :create, construct_params({ version: 'private', id: folder_meta.id }, { title: title, description: paragraph, status: 1 })
+        post :create, construct_params({ version: 'private', id: folder_meta.id }, title: title, description: paragraph, status: 1)
         paragraph = '<span> This is a paragraph </span>'
         assert_equal Solution::Article.last.draft.description, paragraph
         assert_response 201
@@ -2290,24 +2351,25 @@ module Ember
         folder_meta = get_folder_meta
         title = Faker::Name.name
         paragraph = '<span> This is a paragraph </span><script>alert(ALERT!)</script>'
-        post :create, construct_params({ version: 'private', id: folder_meta.id }, { title: title, description: paragraph, status: 2 })
+        post :create, construct_params({ version: 'private', id: folder_meta.id }, title: title, description: paragraph, status: 2)
         paragraph = '<span> This is a paragraph </span>'
         assert_equal Solution::Article.last.description, paragraph
         assert_response 201
         match_json(private_api_solution_article_pattern(Solution::Article.last))
       end
-  
+
       private
+
         def version
           'private'
         end
 
         def article_pattern(article, expected_output = {}, user = nil)
-          private_api_solution_article_pattern(article, expected_output.merge({ request_language: true }), true, user)
+          private_api_solution_article_pattern(article, expected_output.merge(request_language: true), true, user)
         end
 
         def article_draft_pattern(article, _draft)
-          private_api_solution_article_pattern(article, { request_language: true })
+          private_api_solution_article_pattern(article, request_language: true)
         end
 
         def article_pattern_index(article)
@@ -2345,6 +2407,8 @@ module Ember
       include SolutionsTestHelper
       include SolutionsHelper
       include SolutionBuilderHelper
+      include InstalledApplicationsTestHelper
+      include AttachmentsTestHelper
       tests Ember::Solutions::ArticlesController
 
       def setup
@@ -2401,7 +2465,7 @@ module Ember
       def test_draft_autosave_save
         sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 1)).primary_article
         draft_version = create_draft_version_for_article(sample_article)
-        assert sample_article.draft != nil
+        assert !sample_article.draft.nil?
         session = 'lorem-ipsum'
         should_not_create_version(sample_article) do
           stub_version_session(session) do
@@ -2445,7 +2509,7 @@ module Ember
 
       def test_published_autosave_save
         sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
-        assert sample_article.draft == nil
+        assert sample_article.draft.nil?
         draft_version = create_draft_version_for_article(sample_article)
         session = 'lorem-ipsum'
         should_not_create_version(sample_article) do
@@ -2464,22 +2528,22 @@ module Ember
 
       def test_published_save
         sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
-        assert sample_article.draft == nil
+        assert sample_article.draft.nil?
         should_create_version(sample_article) do
-          params_hash = { status: 1, session: nil}
+          params_hash = { status: 1, session: nil }
           put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
           assert_response 200
           latest_version = get_latest_version(sample_article)
-          assert_version_draft(latest_version)   
+          assert_version_draft(latest_version)
         end
       end
 
       def test_published_edit_save
         sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
-        assert sample_article.draft == nil        
+        assert sample_article.draft.nil?
         should_create_version(sample_article) do
           description = Faker::Lorem.paragraph
-          params_hash = { status: 1, session: nil, description: description}
+          params_hash = { status: 1, session: nil, description: description }
           put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
           assert_response 200
           latest_version = get_latest_version(sample_article)
@@ -2490,9 +2554,9 @@ module Ember
 
       def test_published_draft_save
         sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
-        assert sample_article.draft == nil
+        assert sample_article.draft.nil?
         draft_version = create_draft_version_for_article(sample_article)
-        assert sample_article.draft != nil
+        assert !sample_article.draft.nil?
         should_create_version(sample_article) do
           params_hash = { status: 1, session: nil }
           put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
@@ -2501,14 +2565,14 @@ module Ember
           assert_version_draft(latest_version)
         end
       end
-      
+
       def test_published_draft_edit_save
         sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
-        assert sample_article.draft == nil
+        assert sample_article.draft.nil?
         draft_version = create_draft_version_for_article(sample_article)
         should_create_version(sample_article) do
           description = Faker::Lorem.paragraph
-          params_hash = { status: 1, session: nil, description: description}
+          params_hash = { status: 1, session: nil, description: description }
           put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
           assert_response 200
           latest_version = get_latest_version(sample_article)
@@ -2521,7 +2585,7 @@ module Ember
       def test_draft_autosave_publish
         sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 1)).primary_article
         draft_version = create_draft_version_for_article(sample_article)
-        assert sample_article.draft != nil
+        assert !sample_article.draft.nil?
         session = 'lorem-ipsum'
         should_not_create_version(sample_article) do
           stub_version_session(session) do
@@ -2537,7 +2601,7 @@ module Ember
           end
         end
       end
-      
+
       def test_draft_publish
         sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 1)).primary_article
         assert sample_article.status == 1
@@ -2550,7 +2614,7 @@ module Ember
           assert_version_live(latest_version)
         end
       end
-      
+
       def test_draft_edit_publish
         sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 1)).primary_article
         assert sample_article.status == 1
@@ -2593,10 +2657,10 @@ module Ember
           assert_equal sample_article.description, description
         end
       end
-      
+
       def test_published_autosave_publish
         sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
-        assert sample_article.draft == nil
+        assert sample_article.draft.nil?
         draft_version = create_draft_version_for_article(sample_article)
         session = 'lorem-ipsum'
         should_not_create_version(sample_article) do
@@ -2613,12 +2677,12 @@ module Ember
           end
         end
       end
-  
+
       def test_published_draft_publish
         sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
-        assert sample_article.draft == nil
+        assert sample_article.draft.nil?
         draft_version = create_draft_version_for_article(sample_article)
-        assert sample_article.draft != nil
+        assert !sample_article.draft.nil?
         should_create_version(sample_article) do
           params_hash = { status: 2, session: nil }
           put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
@@ -2631,7 +2695,7 @@ module Ember
 
       def test_published_draft_autosave_publish
         sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
-        assert sample_article.draft == nil
+        assert sample_article.draft.nil?
         draft_version = create_draft_version_for_article(sample_article)
         session = 'lorem-ipsum'
         should_not_create_version(sample_article) do
@@ -2650,11 +2714,11 @@ module Ember
 
       def test_published_draft_edit_publish
         sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
-        assert sample_article.draft == nil
+        assert sample_article.draft.nil?
         draft_version = create_draft_version_for_article(sample_article)
         should_create_version(sample_article) do
           description = Faker::Lorem.paragraph
-          params_hash = { status: 2, session: nil, description: description}
+          params_hash = { status: 2, session: nil, description: description }
           put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
           assert_response 200
           latest_version = get_latest_version(sample_article)
@@ -2662,25 +2726,25 @@ module Ember
           assert_equal sample_article.description, description
         end
       end
-      
+
       # unpublish actions
       def test_published_unpublish
         sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
-        assert sample_article.draft == nil
+        assert sample_article.draft.nil?
         should_create_version(sample_article) do
-          params_hash = { status: 1, session: nil}
+          params_hash = { status: 1, session: nil }
           put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
           assert_response 200
           latest_version = get_latest_version(sample_article)
           assert_version_draft(latest_version)
-          assert sample_article.reload.draft != nil
+          assert !sample_article.reload.draft.nil?
           assert sample_article.solution_article_versions.where(live: true).empty?
         end
       end
 
       def test_published_draft_autosave_unpublish
         sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
-        assert sample_article.draft == nil
+        assert sample_article.draft.nil?
         draft_version = create_draft_version_for_article(sample_article)
         session = 'lorem-ipsum'
         should_not_create_version(sample_article) do
@@ -2699,15 +2763,15 @@ module Ember
 
       def test_published_draft_unpublish
         sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
-        assert sample_article.draft == nil
+        assert sample_article.draft.nil?
         draft_version = create_draft_version_for_article(sample_article)
         should_create_version(sample_article) do
-          params_hash = { status: 1, session: nil}
+          params_hash = { status: 1, session: nil }
           put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
           assert_response 200
           latest_version = get_latest_version(sample_article)
           assert_version_draft(latest_version)
-          assert sample_article.reload.draft != nil
+          assert !sample_article.reload.draft.nil?
           assert sample_article.solution_article_versions.where(live: true).empty?
         end
       end
@@ -2796,7 +2860,7 @@ module Ember
 
       def test_version_hits
         article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
-        assert article.draft == nil
+        assert article.draft.nil?
         create_draft_version_for_article(article)
         105.times do
           article.hit!
@@ -2807,9 +2871,9 @@ module Ember
       end
 
       def test_flush_hits_article_publish
-        #Published article with hits/views count
+        # Published article with hits/views count
         article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
-        assert article.draft == nil
+        assert article.draft.nil?
         create_draft_version_for_article(article)
         105.times do
           article.hit!
@@ -2818,10 +2882,10 @@ module Ember
         old_live_version = article.live_version
         assert_equal article.read_attribute(:hits), old_live_version.hits
 
-        #Publishing article should flush hits/views count
+        # Publishing article should flush hits/views count
         should_create_version(article) do
           description = Faker::Lorem.paragraph
-          params_hash = { status: 2, session: nil, description: description}
+          params_hash = { status: 2, session: nil, description: description }
           put :update, construct_params({ version: 'private', id: article.parent_id }, params_hash)
           assert_response 200
         end
@@ -2829,7 +2893,24 @@ module Ember
         old_live_version.reload
         assert_equal 105, article.read_attribute(:hits)
         assert_equal 105, old_live_version.hits
-      end      
+      end
+
+      def test_publish_with_cloud_attachments
+        sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
+        app = create_application('dropbox')
+        cloud_file_params = [{ name: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: app.application_id }]
+        should_create_version(sample_article) do
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, status: 2, cloud_file_attachments: cloud_file_params, session: nil)
+          assert_response 200
+          latest_version = get_latest_version(sample_article)          
+          match_json(private_api_solution_article_pattern(sample_article))
+          assert_equal sample_article.cloud_files.count, 1
+          assert_equal latest_version[:meta][:cloud_files].length, 1
+          latest_version[:meta][:cloud_files].each do |file|
+            assert !file[:id].nil?
+          end
+        end
+      end
 
       private
 

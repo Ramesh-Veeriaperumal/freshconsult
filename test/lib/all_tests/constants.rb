@@ -15,7 +15,6 @@ INTEGRATION_TESTS = [
   'test/api/integration/flows/sla_flow_test.rb'
 ].freeze
 PRESENTER_TESTS = [
-  'test/models/presenters/bot/response_test.rb',
   'test/models/presenters/account_test.rb',
   'test/models/presenters/helpdesk/ticket_test.rb',
   'test/models/presenters/group_test.rb',

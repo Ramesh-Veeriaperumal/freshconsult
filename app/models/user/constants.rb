@@ -41,7 +41,6 @@ class User < ActiveRecord::Base
                        ['twitter_id', 1, 'Twitter User'],
                        ['fb_profile_id', 1, 'Facebook User'],
                        ['external_id', 1, 'Ecommerce User or Mobihelp User'],
-                       ['company_names', MAX_USER_COMPANIES, 'companies'],
                        ['mobile', 1, 'mobile phone'],
                        ['phone', 1, 'work phone'],
                        ['unique_external_id', 1, 'Unique external id']].freeze

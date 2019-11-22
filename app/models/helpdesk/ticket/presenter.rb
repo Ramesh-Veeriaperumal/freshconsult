@@ -81,6 +81,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     t.add :responder, template: :central_publish
     t.add :group, template: :central_publish
     t.add :attachments, template: :central_publish
+    t.add :skill, template: :skill_as_association, :if => proc { Account.current.skill_based_round_robin_enabled? }
   end
 
   api_accessible :central_publish_destroy do |t|

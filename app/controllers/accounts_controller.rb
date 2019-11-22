@@ -538,7 +538,7 @@ class AccountsController < ApplicationController
         current_account.send_account_deleted_email(feedback)
       end
       current_account.create_deleted_customers_info
-      if current_account.paid_account?
+      if current_account.free_or_active_account?
         current_account.add_churn
         current_account.schedule_cleanup
       else
@@ -773,6 +773,7 @@ class AccountsController < ApplicationController
     end
 
     def mark_account_as_anonymous
+      @signup.account.reload
       @signup.account.account_additional_settings.mark_account_as_anonymous
     end
 

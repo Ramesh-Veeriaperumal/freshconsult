@@ -1,7 +1,7 @@
 class Dkim::ValidateDkimRecord
   include Dkim::Methods
 
-  attr_accessor :domain_category, :current_account
+  attr_accessor :domain_category, :current_account, :email_service_response
 
   def initialize(domain_category)
     @domain_category = domain_category
@@ -30,6 +30,16 @@ class Dkim::ValidateDkimRecord
     domain_category
   end
 
+  def validate_with_email_service
+    response = Dkim::EmailServiceHttp.new(current_account.id, domain_category.email_domain).verify_domain
+    if es_response_success?(response[:status])
+      @email_service_response = JSON.parse(response[:text])
+      dkim_records = construct_dkim_hash([email_service_response], domain_category.email_domain)
+      process_verification_response
+      dkim_records
+    end
+  end
+
   private
     def set_first_verification_time
       return if domain_category.first_verified_at
@@ -56,5 +66,22 @@ class Dkim::ValidateDkimRecord
 
     def update_email_configs
       domain_category.email_configs.update_all(:category => domain_category.category)
+    end
+    
+    def process_verification_response
+      if @email_service_response['verified']
+        set_first_verification_time
+        set_last_verified
+        update_domain_category
+        update_email_configs
+      else
+        update_verified_time
+      end
+    end
+
+    def update_domain_category
+      domain_category.status = OutgoingEmailDomainCategory::STATUS['active']
+      domain_category.category = fetch_smtp_category
+      domain_category.save!
     end
 end

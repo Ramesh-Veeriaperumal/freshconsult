@@ -1,4 +1,4 @@
-module Admin::Automation::Condition::TicketFieldConstants
+module Admin::Condition::TicketFieldConstants
   CONDITION_TICKET_FIELDS_HASH = [
     { name: :from_email, field_type: :email, data_type: :String,
       invalid_rule_types: [] }.freeze,

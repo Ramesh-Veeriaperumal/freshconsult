@@ -3,14 +3,28 @@ class Freshcaller::Account < ActiveRecord::Base
   self.primary_key = :id
   
   belongs_to_account
-  publishable on: [:create, :destroy]
+  publishable on: [:create, :destroy, :update]
   concerned_with :presenter
 
+  before_save :construct_model_changes, on: :update
   before_destroy :save_deleted_freshchat_account_info
 
   attr_accessor :model_changes, :deleted_model_info
 
+  def construct_model_changes
+    @model_changes = changes.clone.to_hash
+    @model_changes.symbolize_keys!
+  end
+
   def save_deleted_freshchat_account_info
     @deleted_model_info = as_api_response(:central_publish_destroy)
+  end
+
+  def enable
+    update_attributes(enabled: true)
+  end
+
+  def disable
+    update_attributes(enabled: false)
   end
 end

@@ -131,6 +131,12 @@ class PrivateApiFlowsTest < ActionDispatch::IntegrationTest
       old_acc_version = Digest::MD5.hexdigest(version_set.values.join)
       @account.launch(:test_feature)
       data_version_after_launch = get_others_redis_hash(version_redis_key)
+      data_version_after_launch.each_pair do |key, value|
+        if key.starts_with?('TICKET_FIELD_LIST:TRANSLATION')
+          del_other_redis_hash_value(version_redis_key, *key)
+          data_version_after_launch.delete key
+        end
+      end
       new_acc_version = Digest::MD5.hexdigest(data_version_after_launch.values.compact.join)
       get requests.first
       data_version_after_controller_hit = get_others_redis_hash(version_redis_key)

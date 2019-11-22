@@ -56,7 +56,7 @@ Authority::Authorization::PrivilegeList.build do
   manage_account do
     resource :"channel/freshcaller/account", only: [:destroy]
     resource :"admin/trial_subscription", only: [:create, :cancel]
-    resource :account_admin, only: [:update, :disable_billing_info_updation]
+    resource :account_admin, only: [:update, :disable_billing_info_updation, :preferences, :preferences=]
     resource :"admin/api_account", only: [:cancel, :download_file, :support_tickets, :reactivate]
     resource :"admin/api_data_export", only: [:account_export]
     resource :"ember/admin/onboarding", only: %i[update_activation_email resend_activation_email update_channel_config suggest_domains validate_domain_name customize_domain anonymous_to_trial]
@@ -171,9 +171,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/account_feature", only: [:create, :destroy]
     resource :"api_search/automation", only: [:results]
     resource :"ember/admin/freddy_skill", only: [:index, :show, :update]
-    resource :'admin/freshcaller_account', only: [:show]
     resource :"admin/ticket_field", only: [:create, :update, :destroy, :show, :index]
     resource :"admin/section", only: [:create, :update, :destroy, :show, :index]
+    resource :"admin/freshcaller_account", only: [:show, :enable, :disable, :destroy]
+    resource :"admin/api_skill", only: [:index, :create, :show, :update, :destroy]
   end
 
   edit_ticket_properties do
@@ -205,7 +206,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   view_solutions do
-    resource :'ember/solutions/article', only: %i[index article_content folder_articles show votes filter untranslated_articles export]
+    resource :'ember/solutions/article', only: %i[index article_content folder_articles show votes filter untranslated_articles]
     resource :'ember/solutions/category', only: %i[index show]
     resource :'ember/solutions/folder', only: %i[index category_folders show]
     resource :"ember/search/multiquery", only: [:search_results]
@@ -213,6 +214,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :'ember/solutions/home', only: %i[summary quick_views]
     resource :'ember/solutions/draft', only: %i[index]
     resource :'ember/solutions/article_version', only: %i[index show]
+  end
+
+  export_articles do
+    resource :'ember/solutions/article', only: %i[export]
   end
 
   manage_solutions do
@@ -224,9 +229,17 @@ Authority::Authorization::PrivilegeList.build do
     resource :'ember/flow'
   end
 
-  publish_solution do
-    resource :'ember/solutions/article', only: %i[bulk_update create update reorder]
+  create_and_edit_article do
+    resource :'ember/solutions/article', only: %i[create update]
     resource :'ember/solutions/draft', only: %i[autosave update delete_attachment]
+  end
+
+  publish_solution do
+    #---start-This resource mapping is here to handle delta phase backward compatablility.
+    resource :'ember/solutions/article', only: %i[bulk_update reorder create update]
+    resource :'ember/solutions/draft', only: %i[autosave update delete_attachment]
+    resource :'ember/solutions/article_version', only: %i[restore]
+    #---end-
   end
 
   delete_solution do
@@ -284,5 +297,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/automation", only: [:index, :create, :show, :update, :destroy]
     resource :"api_business_hour", :only => [:index, :show]
     resource :"api_search/automation", only: [:results]
+  end
+
+  manage_skills do
+    resource :"admin/api_skill", only: [:index, :create, :show, :update, :destroy]
   end
 end

@@ -1,6 +1,6 @@
 module Admin::AutomationRules::Conditions
   class ContactValidation < ApiValidation
-    include Admin::Automation::ConditionHelper
+    include Admin::ConditionHelper
     include Admin::AutomationConstants
 
     DEFAULT_ATTRIBUTES = Admin::AutomationConstants::CONDITION_CONTACT_FIELDS

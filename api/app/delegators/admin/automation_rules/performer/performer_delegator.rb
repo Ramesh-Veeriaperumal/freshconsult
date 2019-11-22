@@ -1,7 +1,7 @@
 module Admin::AutomationRules::Performer
   class PerformerDelegator < BaseDelegator
     include Admin::AutomationDelegatorHelper
-    include Admin::AutomationValidationHelper
+    include Admin::ConditionValidationHelper
     include Admin::AutomationConstants
 
     attr_accessor :type, :members

@@ -1,4 +1,6 @@
 class ContactMergeDelegator < BaseDelegator
+  include ContactsCompaniesHelper
+  
   attr_accessor :secondary_contacts, :primary_fields
 
   validate :validate_secondary_contact_ids, if: -> { @secondary_contact_ids.present? }
@@ -95,10 +97,10 @@ class ContactMergeDelegator < BaseDelegator
     if !Account.current.multiple_user_companies_enabled?
       errors[:company_ids] << :fill_a_value
       error_options[:company_ids] = { values: @primary_fields[:company_ids].join(', ') }
-    elsif @primary_fields[:company_ids].length > User::MAX_USER_COMPANIES
+    elsif @primary_fields[:company_ids].length > user_companies_limit
       errors[:company_ids] << :fill_values_upto_max_limit
       error_options[:company_ids] = { values: @primary_fields[:company_ids].join(', '),
-                                      max_limit: User::MAX_USER_COMPANIES }
+                                      max_limit: user_companies_limit }
     end
   end
 

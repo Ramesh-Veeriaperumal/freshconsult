@@ -1,5 +1,5 @@
-module Admin::Automation::CustomFieldHelper
-  include Admin::AutomationConstants
+module Admin::CustomFieldHelper
+  include Admin::ConditionConstants
 
   def validate_nested_field(expected, actual, validator_type, nested_name)
     # parent_data = actual.select { |key| VALID_DEFAULT_REQUEST_PARAMS_HASH.include?(key) }
@@ -52,37 +52,6 @@ module Admin::Automation::CustomFieldHelper
     !no_nested # not expecting nested level
   end
 
-
-  def custom_event_ticket_field
-    event_field = custom_ticket_fields.select{ |tf| CUSTOM_FIELD_EVENT_HASH[tf.field_type.to_sym].present? }
-    custom_fields = []
-    field_hash = []
-    event_field.each do |ef|
-      cf_name = TicketDecorator.display_name(ef.name).to_sym
-      next if ef.level.present? # ignore nested sublevel
-      custom_data = { name: cf_name }
-      custom_data.merge!(nested_field_sublevel_names(ef.id)) if ef.field_type == "nested_field"
-      field_hash << CUSTOM_FIELD_EVENT_HASH[ef.field_type.to_sym].merge(custom_data)
-      custom_fields << cf_name
-    end
-    [custom_fields, field_hash]
-  end
-
-  def custom_action_ticket_field
-    action_field = custom_ticket_fields.select{ |tf| CUSTOM_FIELD_ACTION_HASH[tf.field_type.to_sym].present? }
-    custom_fields = []
-    field_hash = []
-    action_field.each do |ef|
-      cf_name = TicketDecorator.display_name(ef.name).to_sym
-      next if ef.level.present? # ignore nested sublevel
-      custom_data = { name: cf_name }
-      custom_data.merge!(nested_field_sublevel_names(ef.id)) if ef.field_type == "nested_field"
-      field_hash << CUSTOM_FIELD_ACTION_HASH[ef.field_type.to_sym].merge(custom_data)
-      custom_fields << cf_name
-    end
-    [custom_fields, field_hash]
-  end
-
   def custom_condition_ticket_field
     condition_field = custom_ticket_fields.select do |tf|
       CUSTOM_FIELD_CONDITION_HASH[tf.field_type.to_sym].present? &&
@@ -127,17 +96,21 @@ module Admin::Automation::CustomFieldHelper
   end
 
   def custom_ticket_fields
-    @custom_ticket_fields ||= Account.current.ticket_fields_from_cache.select{ |tf| !tf.default }
+    @custom_ticket_fields ||= ticket_fields.select{ |tf| !tf.default }
   end
 
   def nested_field_sublevel_names(parent_id)
     nested_field_sub_level = custom_ticket_fields.select{ |tf| tf.parent_id == parent_id }
     nested_field_sub_level.sort{|tf1, tf2| tf1.level <=> tf2.level }
     level2name = nested_field_sub_level.try(:[], 0).try(:[], 'name')
-    level2name = level2name.split("_#{Account.current.id}")[0].to_sym if level2name.present?
+    level2name = level2name.split("_#{current_account.id}")[0].to_sym if level2name.present?
     level3name = nested_field_sub_level.try(:[], 1).try(:[], 'name')
-    level3name = level3name.split("_#{Account.current.id}")[0].to_sym if level3name.present?
+    level3name = level3name.split("_#{current_account.id}")[0].to_sym if level3name.present?
     { level2: level2name, level3: level3name }
+  end
+
+  def ticket_fields
+    @ticket_fields ||= current_account.ticket_fields_from_cache
   end
 
   def company_form_fields
@@ -145,7 +118,7 @@ module Admin::Automation::CustomFieldHelper
   end
 
   def company_form
-    @company_form ||= Account.current.company_form
+    @company_form ||= current_account.company_form
   end
 
   def contact_form_fields
@@ -153,6 +126,10 @@ module Admin::Automation::CustomFieldHelper
   end
 
   def contact_form
-    @contact_form ||= Account.current.contact_form
+    @contact_form ||= current_account.contact_form
+  end
+
+  def current_account
+    @current_account ||= Account.current
   end
 end

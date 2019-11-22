@@ -1,10 +1,11 @@
 require_relative '../../test_helper'
-['ticket_fields_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
+['ticket_fields_test_helper.rb', 'tickets_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
 ['note_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 ['social_tickets_creation_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 
 class TicketTest < ActiveSupport::TestCase
   include TicketsTestHelper
+  include ApiTicketsTestHelper
   include TicketFieldsTestHelper
   include ModelsGroupsTestHelper
   include NoteHelper
@@ -253,6 +254,19 @@ class TicketTest < ActiveSupport::TestCase
     job['args'][1]['model_properties'].must_match_json_expression(pattern_to_match)
   end
 
+  def test_central_publish_ticket_destroy_while_archive_action
+    archive_enabled = @account.archive_tickets_enabled?
+    archive_action = true
+    @account.features.archive_tickets.create unless archive_enabled
+    t = create_ticket(ticket_params_hash)
+    pattern_to_match = cp_ticket_destroy_pattern_for_archive_action(t)
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    t = @account.tickets.find(t.id)
+    t.destroy
+    assert_equal t.save_deleted_ticket_info(archive_action), pattern_to_match
+    @account.features.archive_tickets.delete unless archive_enabled
+  end
+
   def test_block_central_publish_for_suspended_accounts
     skip('skip failing test cases')
     @account.subscription.state = 'suspended'
@@ -349,5 +363,17 @@ class TicketTest < ActiveSupport::TestCase
                    'first_response_by_bhrs' => [nil, ticket_state.first_resp_time_by_bhrs] }, ticket_state_job['args'][1]['model_changes'])
     assert_equal({ 'first_response_id' => [nil, schema_less_ticket.reports_hash['first_response_id']],
                    'first_response_agent_id' => [nil, schema_less_ticket.reports_hash['first_response_agent_id']] }, schema_less_ticket_job['args'][1]['model_changes'])
+  end
+
+  def test_central_publish_payload_with_skill
+    Account.any_instance.stubs(:skill_based_round_robin_enabled?).returns(true)
+    create_skill_tickets
+    t = @account.tickets.last
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    assoc_payload = t.associations_to_publish
+    assert_equal assoc_payload[:skill], skill_key_value_pairs(t)
+    assoc_payload.to_json.must_match_json_expression(cp_assoc_ticket_pattern(t))
+    Account.any_instance.unstub(:skill_based_round_robin_enabled?)
   end
 end

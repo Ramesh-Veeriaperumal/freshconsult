@@ -1,6 +1,6 @@
 module Admin::AutomationRules
   class PerformerValidation < ApiValidation
-    include Admin::AutomationValidationHelper
+    include Admin::ConditionValidationHelper
 
     attr_accessor :type, :members
     attr_accessor :invalid_attributes, :type_name, :rule_type, :field_position

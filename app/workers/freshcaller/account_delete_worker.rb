@@ -17,7 +17,7 @@ module Freshcaller
           ActiveRecord::Base.connection.execute(freshcaller_calls_delete)
           freshcaller_agents_delete = "DELETE from freshcaller_agents where account_id = #{account.id}"
           ActiveRecord::Base.connection.execute(freshcaller_agents_delete)
-          account.freshcaller_account.delete if account.freshcaller_account.present?
+          account.freshcaller_account.destroy if account.freshcaller_account.present?
 
         end
       rescue Exception => e

@@ -12,6 +12,7 @@ module ApiSolutions
     before_filter :validate_query_parameters, only: [:folder_articles]
     before_filter :validate_draft_state, only: [:update, :destroy]
     before_filter :language_metric_presence
+    before_filter :validate_publish_solution_privilege, only: [:update, :create]
 
     def show
       @prefer_published = params[:prefer_published].to_bool unless params[:prefer_published].nil?
@@ -104,6 +105,22 @@ module ApiSolutions
         validate_delegator(@item, delegator_params)
       end
 
+      def validate_publish_solution_privilege
+        # If user does not have publish priviledge then user can only save article
+        unless publish_privilege? || draft_params?
+          error_info_hash = { details: 'dont have permission to perfom on published article' }
+          render_request_error_with_info(:published_article_privilege_error, 403, error_info_hash, error_info_hash)
+        end
+      end
+
+      def publish_privilege?
+        api_current_user.privilege?(:publish_solution)
+      end
+
+      def draft_params?
+        @article_params[language_scoper][:status] == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft] && !article_properties? && !unpublish?
+      end
+
       def set_session
         # For autosave in versioning
         @item.session = @article_params[:session]
@@ -134,7 +151,6 @@ module ApiSolutions
       end
 
       def unpublish?
-        # If only status is present in params, then it means unpublish article
         !article_properties? && @article_params[language_scoper].keys.length == 1 && @article_params[language_scoper][:status] == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
       end
 

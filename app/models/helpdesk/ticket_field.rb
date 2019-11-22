@@ -41,6 +41,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   CUSTOM_DATE_TIME = 'custom_date_time'.freeze
 
   CUSTOM_FILE = 'custom_file'.freeze
+  FILE_FIELD = 'file'.freeze
 
   SKIP_FIELD_TYPES = [CUSTOM_DATE_TIME.to_sym, CUSTOM_FILE.to_sym].freeze
 

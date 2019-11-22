@@ -260,8 +260,22 @@ class Group < ActiveRecord::Base
     end
 
     def nullify_tickets_and_widgets
+      reset_group_form_tickets
+      reset_internal_group_from_tickets
+      reset_group_from_archive_tickets
+    end
+
+    def reset_group_form_tickets
       # Nullifies tickets and also clears group related filters on dashboard widgets
-      Helpdesk::ResetGroup.perform_async({group_id: self.id, reason: {delete_group: [self.name]}})
+      Helpdesk::ResetGroup.perform_async(group_id: id, reason: { delete_group: [name] })
+    end
+
+    def reset_internal_group_from_tickets
+      Helpdesk::ResetInternalGroup.perform_async(internal_group_id: id, reason: { delete_internal_group: [name] }) if Account.current.shared_ownership_enabled?
+    end
+
+    def reset_group_from_archive_tickets
+      Helpdesk::ResetArchiveTickets.perform_async(group_id: id) if Account.current.features_included?(:archive_tickets)
     end
 
     def touch_agent_group_change(agent_group)

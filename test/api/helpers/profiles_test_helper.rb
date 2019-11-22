@@ -19,6 +19,7 @@ module ProfilesTestHelper
         signature: expected_output[:signature_html] || agent.signature_html,
         role_ids: expected_output[:role_ids] || agent.user.role_ids,
         group_ids: expected_output[:group_ids] || agent.group_ids,
+        skill_ids: expected_output[:skill_ids] || agent.user.skill_ids,
         available_since: expected_output[:available_since] || agent.active_since,
         contact: contact_pattern(expected_output[:user] || agent.user),
         created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},

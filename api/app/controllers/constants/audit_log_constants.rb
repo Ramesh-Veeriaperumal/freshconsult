@@ -59,8 +59,7 @@ module AuditLogConstants
     'automation_4' => 4
   }.freeze
 
-  
-  EXPORT_PARAMS = [:from, :to, :filter, :condition, :receive_via, :export_format].freeze
+  EXPORT_PARAMS = [:from, :to, :filter, :condition, :receive_via, :export_format, :archived].freeze
 
   EXPORT_FILTER_SET_PARAMS = [:entity, :ids].freeze
 
@@ -76,7 +75,7 @@ module AuditLogConstants
 
   FAILURE_STATUSES = ['2001', '4000'].freeze
 
-  CSV_FILE = Rails.root.join('tmp', 'files')
+  EXPORT_FILE_PATH = Rails.root.join('tmp', 'files')
 
   TEMP_FILE = '%{time}_account_%{id}'.freeze
 
@@ -91,4 +90,10 @@ module AuditLogConstants
   CONDITION_LOWER_CASE = ['and', 'or'].freeze
 
   RECEIVE_VIA = ['email', 'api'].freeze
+
+  ERB_PATH = Rails.root.join('app/views/support/audit_log_export/%<file_name>s.xls.erb').to_path
+
+  FORMAT = ['csv', 'xls'].freeze
+
+  ARCHIVED = [true, false].freeze
 end.freeze

@@ -445,6 +445,7 @@ module SolutionsArticlesCommonTests
 
   def test_update_article_with_user_id_without_privilege
     User.any_instance.stubs(:privilege?).with(:manage_solutions).returns(true)
+    User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
     User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
     User.any_instance.stubs(:privilege?).with(:delete_solution).returns(true)
     User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
@@ -763,10 +764,13 @@ module SolutionsArticlesCommonTests
   end
 
   def test_update_article_unpublish_without_publish_solution_privilege
+    User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
+    User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
     User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
     put :update, construct_params(version: version, id: 1, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
     assert_response 403
-    match_json(request_error_pattern(:access_denied))
+    error_info_hash = { details: 'dont have permission to perfom on published article' }
+    match_json(request_error_pattern_with_info(:published_article_privilege_error, error_info_hash, error_info_hash))
   ensure
     User.any_instance.unstub(:privilege?)
   end

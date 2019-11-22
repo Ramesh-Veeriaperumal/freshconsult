@@ -13,14 +13,11 @@ class Helpdesk::ResetInternalGroup < BaseWorker
     options             = {:reason => args[:reason], :manual_publish => true}
     updates_hash        = {:internal_group_id => nil, :internal_agent_id => nil}
 
-    tickets = nil
-    Sharding.run_on_slave do
-      tickets = account.tickets.where(:internal_group_id => internal_group_id, :status => status_id)
-    end
-    tickets.update_all_with_publish(updates_hash, {}, options)
+    condition = { internal_group_id: internal_group_id }
+    condition[:status] = status_id if status_id
 
+    account.tickets.where(condition).update_all_with_publish(updates_hash, {}, options)
   rescue Exception => e
-    puts e.inspect, args.inspect
     NewRelic::Agent.notice_error(e, {:args => args})
     raise e
   end

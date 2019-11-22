@@ -1,4 +1,6 @@
 class ContactValidation < ApiValidation
+  include ContactsCompaniesHelper
+
   DEFAULT_FIELD_VALIDATIONS = {
     job_title:  { data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING } },
     language: { custom_inclusion: { in: ContactConstants::LANGUAGES } },
@@ -99,10 +101,10 @@ class ContactValidation < ApiValidation
                 }
   }, unless: -> { private_api? }
 
-  validates :other_companies, custom_length: {
-    maximum: ContactConstants::MAX_OTHER_COMPANIES_COUNT,
-    message_options: { element_type: :elements }
+  validate :validate_maximum_other_companies, if: lambda {
+    other_companies.present? && errors[:other_companies].blank?
   }
+
   validate :check_duplicates_multiple_companies, if: lambda {
     other_companies.present? && errors[:other_companies].blank?
   }
@@ -134,6 +136,7 @@ class ContactValidation < ApiValidation
   def initialize(request_params, item, allow_string_param = false)
     super(request_params, item, allow_string_param)
     @current_email = item.email if item
+    @max_other_companies_count = user_companies_limit - 1
     fill_custom_fields(request_params, item.custom_field) if item && item.custom_field.present?
     company_string_validation = {
       company_name: {
@@ -249,6 +252,15 @@ class ContactValidation < ApiValidation
     def check_for_default_company_before_adding_other_companies
       errors[:company_id] << :conditional_not_blank
       self.error_options.merge!(company_id: { child: 'other_companies' })
+    end
+
+    def validate_maximum_other_companies
+      ids = other_companies.collect { |x| x[:company_id] }
+      if ids.length > @max_other_companies_count
+        errors[:other_companies] << :other_companies_limit_exceeded
+        error_options[:other_companies] = { max_companies: ids.length, 
+                                            max_other_companies: @max_other_companies_count }
+      end
     end
 
     def check_duplicates_multiple_companies

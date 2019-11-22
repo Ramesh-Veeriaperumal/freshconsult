@@ -1,4 +1,4 @@
-module Admin::AutomationRules::Conditions
+module Admin::Conditions
   class CompanyDelegator < BaseDelegator
     include Admin::AutomationDelegatorHelper
     include Admin::AutomationConstants

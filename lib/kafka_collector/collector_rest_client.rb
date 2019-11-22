@@ -1,10 +1,13 @@
 module KafkaCollector
   module CollectorRestClient
-    POST_TO_COLLECTOR_TIMEOUT = 10
+    POST_TO_COLLECTOR_TIMEOUT = 2
     def post_to_collector(data, msg_id=nil, is_channel_token=true)
       token = is_channel_token ? KafkaCollectorConfig['service'] : CentralConfig['service_token']
 
       con = Faraday.new(KafkaCollectorConfig['kafka_collector_endpoint']) do |faraday|
+        # Retry for 3 times with interval of 1 sec with backoff factor as 2
+        # By default, timeout exceptions are retried
+        faraday.request(:retry, max: 3, interval: 1, backoff_factor: 2)
         faraday.response :json, content_type: /\bjson$/ # log requests to STDOUT
         faraday.adapter Faraday.default_adapter # make requests with Net::HTTP
       end

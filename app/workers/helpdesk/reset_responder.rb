@@ -20,8 +20,6 @@ class Helpdesk::ResetResponder < BaseWorker
       Sharding.run_on_slave do
         handle_automatic_ticket_assignments
         handle_agent_tickets(options)
-        handle_internal_agent_tickets(reason.dup)
-        handle_archive_tickets
       end
     rescue Exception => e
       NewRelic::Agent.notice_error(e, args: args)
@@ -49,25 +47,6 @@ class Helpdesk::ResetResponder < BaseWorker
       @account.tickets
               .where(responder_id: @user.id)
               .update_all_with_publish({ responder_id: nil }, {}, options)
-    end
-
-    def handle_internal_agent_tickets(reason)
-      return unless @account.shared_ownership_enabled?
-
-      reason[:delete_internal_agent]  = reason.delete(:delete_agent)
-      options                         = { reason: reason, manual_publish: true }
-      updates_hash                    = { internal_agent_id: nil }
-
-      tickets = @account.tickets.where(internal_agent_id: @user.id)
-      tickets.update_all_with_publish(updates_hash, {}, options)
-    end
-
-    def handle_archive_tickets
-      return unless @account.features_included?(:archive_tickets)
-
-      @account.archive_tickets
-              .where(responder_id: @user.id)
-              .update_all_with_publish({ responder_id: nil }, {})
     end
 
     def fetch_auto_ticket_assign_groups

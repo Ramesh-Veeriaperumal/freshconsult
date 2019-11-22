@@ -2,13 +2,19 @@ type: object
 properties:
   from:
     type: string
-    enum: ["2018-11-05"]
+    example: ["2018-11-05"]
   to:
     type: string
-    enum: ["2018-11-30"]
+    example: ["2018-11-30"]
   recieve_via:
     type: string
-    enum: ['email/api']
+    enum: ['email', 'api']
+  export_format:
+    type: string
+    enum: ['xls', 'csv']
+  archived:
+    type: string
+    enum: ['true', 'false']
   condition:
     type: string
   filter:
@@ -37,3 +43,4 @@ required:
   - from
   - to
   - recieve_via
+  - export_format

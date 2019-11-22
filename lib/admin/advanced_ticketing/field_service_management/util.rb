@@ -5,7 +5,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
     include Helpdesk::Ticketfields::ControllerMethods
     include Cache::Memcache::Helpdesk::Section
     include GroupConstants
-       
+
     def notify_fsm_dev(subject, message)
       message = {} unless message
       message[:environment] = Rails.env
@@ -80,7 +80,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
 
       def create_service_task_field_type
         return if Account.current.ticket_types_from_cache.map(&:value).include?(SERVICE_TASK_TYPE)
-        
+
         type_field = Account.current.ticket_fields.find_by_field_type('default_ticket_type')
         picklist_values = type_field.picklist_values
         picklist_choices = picklist_values.map { |picklist| { value: picklist.value, id: picklist.id, position: picklist.position, _destroy: 0 } }
@@ -89,7 +89,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         type_field_options = {
           choices: picklist_choices,
           picklist_values_attributes: picklist_choices,
-          field_options: { "section_present": true }
+          field_options: { section_present: true }
         }
 
         raise "Couldn't create a new ticket type for service task" unless type_field.update_attributes(type_field_options)
@@ -100,11 +100,11 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         last_occupied_position = ticket_fields.count + 1
         fields_to_be_created.each_with_index do |custom_field, index|
           payload = custom_field_generator(custom_field.merge(position: last_occupied_position + index))
-          create_field(payload, Account.current)
+          create_fsm_field(payload, Account.current)
         end
       end
 
-      def create_field(field_details, account)
+      def create_fsm_field(field_details, account)
         field_name = field_details.delete(:name)
         ff_def_entry = FlexifieldDefEntry.new ff_meta_data(field_details, account, true)
         field_details.merge!(flexifield_def_entry_details(ff_def_entry))
@@ -166,7 +166,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         # Build Section fields
         section_fields = []
         if service_task_section.section_fields.blank?
-          fields_to_be_created = CUSTOM_FIELDS_TO_RESERVE
+          fields_to_be_created = fsm_custom_field_to_reserve
           fields_to_be_created.each do |field|
             field_data = Account.current.ticket_fields.find_by_name(field[:name]+ "_#{Account.current.id}")
             next if field_data.field_options["section"] 
@@ -194,14 +194,14 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       def create_field_group_type
         if Account.current.group_types.find_by_name(FIELD_GROUP_NAME).nil?
           group_type = GroupType.create_group_type(Account.current, FIELD_GROUP_NAME)
-          raise "Field group type did not get created" unless group_type
+          raise 'Field group type did not get created' unless group_type
         end
       end
 
       def create_field_agent_type
         if Account.current.agent_types.find_by_name(FIELD_AGENT).nil?
           agent_type = AgentType.create_agent_type(Account.current, FIELD_AGENT)
-          raise "Field agent type did not get created" unless agent_type
+          raise 'Field agent type did not get created' unless agent_type
         end
       end
       
@@ -226,7 +226,11 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         WIDGETS_NAME_TO_TYPE_MAP.each do |widget_name, type|
           if type == WIDGET_MODULE_TOKEN_BY_NAME[SCORE_CARD]
             position = { x: scorecard_x_postion, y: Y_AXIS_POSITION[:scorecard] }
-            dashboard_object.add_widget(type, position, I18n.t("fsm_dashboard.widgets.#{widget_name}"), options[widget_name])
+            if widget_name == SERVICE_TASKS_UNASSIGNED_WIDGET_NAME && Account.current.default_unassigned_service_tasks_filter_enabled?
+              dashboard_object.add_widget(type, position, I18n.t('helpdesk.tickets.views.unassigned_service_tasks'), ticket_filter_id: 'unassigned_service_tasks')
+            else
+              dashboard_object.add_widget(type, position, I18n.t("fsm_dashboard.widgets.#{widget_name}"), options[widget_name])
+            end
             scorecard_x_postion += SCORECARD_DIMENSIONS[:width]
           else
             position = { x: trends_x_position, y: Y_AXIS_POSITION[:trend] }
@@ -278,8 +282,8 @@ module Admin::AdvancedTicketing::FieldServiceManagement
                                 ]
                               }
                             }
+        filter_conditions.except!(FSM_TICKET_FILTERS[1]) if Account.current.default_unassigned_service_tasks_filter_enabled?
         all_filter_conditions = filter_conditions.each { |k,v| v[:filter] += COMMON_FILTER_CONDITIONS }
-        all_filter_conditions
       end
 
       def cleanup_fsm
@@ -330,12 +334,6 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         params[:id] == FSM_FEATURE.to_s
       end
 
-      def fetch_already_available_fields
-        custom_fields_available = Account.current.flexifield_def_entries.map(&:flexifield_alias)
-        fields_to_be_created = CUSTOM_FIELDS_TO_RESERVE.select { |x| !custom_fields_available.include?(x[:name] + "_#{Account.current.id}") }
-        fields_to_be_created
-      end
-
       def reset_field_agent_limit
         Account.current.subscription.reset_field_agent_limit unless Account.current.field_service_management_enabled?
       end
@@ -351,17 +349,12 @@ module Admin::AdvancedTicketing::FieldServiceManagement
 
       def fetch_fsm_fields_to_be_created
         custom_fields_available = Account.current.flexifield_def_entries.map(&:flexifield_alias)
-        CUSTOM_FIELDS_TO_RESERVE.select { |x| !custom_fields_available.include?(x[:name] + "_#{Account.current.id}") }
+        fsm_custom_field_to_reserve.select { |x| !custom_fields_available.include?(x[:name] + "_#{Account.current.id}") }
       end
 
       def fsm_appointment_start_time_ff_column_name
         start_time = Account.current.custom_date_time_fields_from_cache.find { |x| x.name == TicketFilterConstants::FSM_APPOINTMENT_START_TIME + "_#{Account.current.id}" }
         start_time.column_name
-      end
-
-      def fsm_appointment_end_time_ff_column_name
-        end_time = Account.current.custom_date_time_fields_from_cache.find { |x| x.name == TicketFilterConstants::FSM_APPOINTMENT_END_TIME + "_#{Account.current.id}" }
-        end_time.column_name
       end
 
       def fsm_custom_fields_to_validate
@@ -371,6 +364,10 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         fsm_field_ids = fsm_section.section_fields.map(&:ticket_field_id)
         fsm_fields_to_validate = TicketsValidationHelper.custom_non_dropdown_fields(self).select { |x| fsm_field_ids.include?(x.id) }
         fsm_fields_to_validate
+      end
+
+      def fsm_custom_field_to_reserve
+        Account.current.customer_signature_enabled? ? (FSM_DEFAULT_TICKET_FIELDS + FSM_SIGNATURE_TICKET_FIELD) : FSM_DEFAULT_TICKET_FIELDS
       end
   end
 end

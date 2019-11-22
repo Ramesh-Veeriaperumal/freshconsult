@@ -1,6 +1,6 @@
-module Admin::Automation::ConditionHelper
-  include Admin::AutomationConstants
-  include Admin::AutomationValidationHelper
+module Admin::ConditionHelper
+  include Admin::ConditionValidationHelper
+  include Admin::ConditionConstants
 
   def condition_validation(expected, actual)
     if expected[:field_type] == :nested_field
