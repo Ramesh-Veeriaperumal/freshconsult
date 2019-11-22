@@ -10,6 +10,7 @@ get:
       in: path
       type: string
       description: language code for articles
+      required: true
   responses:
     200:
       description: Success

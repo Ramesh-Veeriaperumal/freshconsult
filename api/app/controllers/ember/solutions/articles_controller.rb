@@ -99,7 +99,7 @@ module Ember
             @failed_list << (article_meta.errors.any? ? article_meta : article_meta.safe_send(language_scoper))
           end
         end
-        render_bulk_action_response(@succeeded_list, @failed_list)
+        render_bulk_action_response(@succeeded_list, @failed_list, 'ember/solutions/articles/partial_success')
       end
 
       def reset_ratings

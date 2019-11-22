@@ -13,12 +13,12 @@ module Ember
       def bulk_update
         @succeeded_list = []
         @failed_list = []
-        @folders = meta_scoper.where(id: cname_params[:ids]).preload(:solution_category_meta, :primary_folder)
-        @folders.each do |folder|
-          if update_folder_properties(folder)
-            @succeeded_list << folder.id
+        @folders_meta = meta_scoper.where(id: cname_params[:ids]).preload(:solution_category_meta, :primary_folder)
+        @folders_meta.each do |folder_meta|
+          if update_folder_properties(folder_meta)
+            @succeeded_list << folder_meta.id
           else
-            @failed_list << folder
+            @failed_list << folder_meta
           end
         end
         render_bulk_action_response(@succeeded_list, @failed_list)

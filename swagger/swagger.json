@@ -6158,7 +6158,7 @@
         }
       }
     },
-    "/search/solutions": {
+    "/search/solutions/{language_code}": {
       "get": {
         "tags": [
           "search"
@@ -6175,7 +6175,8 @@
             "name": "language_code",
             "in": "path",
             "type": "string",
-            "description": "language code for articles"
+            "description": "language code for articles",
+            "required": true
           }
         ],
         "responses": {

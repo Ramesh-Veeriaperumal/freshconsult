@@ -25,9 +25,9 @@ module BulkActionConcern
       prepare_array_fields ApiConstants::BULK_ACTION_ARRAY_FIELDS.map(&:to_sym)
     end
 
-    def render_bulk_action_response(succeeded, failed)
+    def render_bulk_action_response(succeeded, failed, render_path = nil)
       if async_process? || failed.any?
-        render_partial_success(succeeded, failed)
+        render_partial_success(succeeded, failed, render_path)
       else
         head 204
       end

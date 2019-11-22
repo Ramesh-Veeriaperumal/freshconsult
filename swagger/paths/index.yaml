@@ -317,7 +317,7 @@
   $ref: ./surveys/satisfaction_survey.yaml
 
 #Search
-/search/solutions:
+/search/solutions/{language_code}:
   $ref: ./search/solutions.yaml
 /companies/autocomplete:
   $ref: ./search/companies.yaml
