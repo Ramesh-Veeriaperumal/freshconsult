@@ -143,7 +143,7 @@ gem "lockfile","1.4.3"
 
 gem "newrelic_rpm","~> 5.5.0"
 
-gem "prometheus_exporter", :git => "git@github.com:freshdesk/prometheus_exporter.git", :tag => "v1.0.3"
+gem "prometheus_exporter", :git => "git@github.com:freshdesk/prometheus_exporter.git", :tag => "v1.0.4"
 gem "ddtrace"
 gem "dogstatsd-ruby"
 
