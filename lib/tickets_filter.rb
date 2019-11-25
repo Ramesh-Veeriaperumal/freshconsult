@@ -234,7 +234,7 @@ module TicketsFilter
   def self.default_visible_filters(param_filter_id = nil)
     visible_filters = default_accessible_filters(param_filter_id)
     visible_filters.collect do |filter|
-      filter.merge!(field_agent_sort_options) if filter[:id] == 'unresolved_service_tasks'
+      filter.merge!(field_agent_sort_options) if TicketFilterConstants::SORT_BY_APPOINTMENT_TIME_FILTERS.include? filter[:id]
       CustomFilterConstants::REMOVE_QUERY_HASH.include?(filter[:id]) ? filter :
           filter.merge(query_hash: Helpdesk::Filters::CustomTicketFilter.new.default_filter_query_hash(filter[:id]))
     end
