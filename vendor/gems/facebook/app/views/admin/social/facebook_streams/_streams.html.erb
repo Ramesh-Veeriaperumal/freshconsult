@@ -15,7 +15,7 @@
             </td>
             <td class="text-left">
               <%= link_to stream.name, edit_admin_social_facebook_stream_url(stream) %>
-              <% if page.reauth_required? %>
+              <% if page.reauth_required? || euc_non_migrated_page?(current_account, page.page_id)%>
                   <a onclick="<%= onclick_strategy(@auth_redirect_url)%>" class="label label-important align-fix"><%= t('.reauthorize')%></a>
               <%end%>
             </td>

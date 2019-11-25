@@ -11,11 +11,11 @@ module Facebook
     private
 
       def page_tokens
-        fallback_account? ? fallback_page_tokens : default_page_tokens
+        fallback_account? && !Account.current.migrate_euc_pages_to_us_enabled? ? fallback_page_tokens : default_page_tokens
       end
 
       def app_tokens
-        fallback_account? ? fallback_app_tokens : default_app_tokens
+        fallback_account? && !Account.current.migrate_euc_pages_to_us_enabled? ? fallback_app_tokens : default_app_tokens
       end
 
       def fallback_account?

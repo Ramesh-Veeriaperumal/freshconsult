@@ -27,6 +27,8 @@ class Social::FacebookPage < ActiveRecord::Base
   end
 
   def model_changes_for_central
+    @model_changes[:access_token].map! { |x| encrypt_for_central(x, 'facebook') } if @model_changes[:access_token].present?
+    @model_changes[:page_token].map! { |x| encrypt_for_central(x, 'facebook') } if @model_changes[:page_token].present?
     @model_changes
   end
   
