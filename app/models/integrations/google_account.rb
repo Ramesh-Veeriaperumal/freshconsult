@@ -11,7 +11,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
   belongs_to :account
   belongs_to :sync_tag, :class_name => "Helpdesk::Tag"
   attr_protected :account_id, :sync_tag_id
-  attr_accessible :overwrite_existing_user, :sync_group_id, :sync_group_name, :name, :email, :token, :secret
+  attr_accessible :overwrite_existing_user, :sync_group_id, :sync_group_name, :name, :email, :token, :secret, :import_groups
 
   serialize :last_sync_status, Hash
   has_many :google_contacts, :dependent => :destroy # TODO: Handle the destroy through single query.
@@ -22,18 +22,19 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     id = params[:id]
     id = params[:integrations_google_account][:id] if id.blank?
     sync_tag_name = params[:integrations_google_account][:sync_tag]
-    params[:integrations_google_account][:sync_tag] = sync_tag_name.blank? ? nil : account.tags.find_or_create_by_name(sync_tag_name)
-    params[:integrations_google_account][:account] = account
     if id.blank?
       # The below line has to be removed, to support multiple sync for same google account.
       goog_acc = Integrations::GoogleAccount.find(:first, :conditions => ["email=? and account_id=?", params[:integrations_google_account][:email], account]) unless params[:integrations_google_account][:email].blank?
     else
       goog_acc = Integrations::GoogleAccount.find(:first, :conditions => ["id=? and account_id=?", id, account])
     end
+    filtered_google_account_params = params[:integrations_google_account].except(:id, :sync_tag, :account)
     if goog_acc.blank?
-      goog_acc = Integrations::GoogleAccount.new(params[:integrations_google_account])
+      goog_acc = Integrations::GoogleAccount.new(filtered_google_account_params)
     end
-    goog_acc.attributes = params[:integrations_google_account]
+    goog_acc.attributes = filtered_google_account_params
+    goog_acc.account = account
+    goog_acc.sync_tag = sync_tag_name.blank? ? nil : account.tags.find_or_create_by_name(sync_tag_name)
     return goog_acc
   end
 
@@ -216,7 +217,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
                 inc +=1
                 Rails.logger.info "Newly added contact id #{goog_id} and status  #{stats}"
               else
-                update_google_contact_id(db_contact, goog_id)
+                update_google_contact_id(db_contacts_slice[inc], goog_id)
                 inc +=1
                 operation == DELETE ? stats[0][2]+=1 : stats[0][1]+=1
                 Rails.logger.info "Successfully #{operation}d contact with id #{id} and status_code #{status_code} #{stats}."
