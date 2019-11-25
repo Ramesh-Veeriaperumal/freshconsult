@@ -6,7 +6,8 @@ class Billing::ChargebeeWrapper
   CB_RESOURCES       = {
                           plans: 'plans',
                           add_credits: 'promotional_credits/add',
-                          estimate: 'estimates/update_subscription'
+                          estimate_update: 'estimates/update_subscription',
+                          estimate_create: 'estimates/create_subscription'
                        }.freeze
 
 	def initialize
@@ -134,7 +135,8 @@ class Billing::ChargebeeWrapper
 	end
 
   def retrieve_estimate_content(subscription, addon_data)
-    url = format(CHARGEBEE_REST_URL, subdomain: subscription.currency.billing_site, resource_type: CB_RESOURCES[:estimate])
+    cb_resource_type = subscription.active? ? CB_RESOURCES[:estimate_update] : CB_RESOURCES[:estimate_create]
+    url = format(CHARGEBEE_REST_URL, subdomain: subscription.currency.billing_site, resource_type: cb_resource_type)
     JSON.parse(RestClient::Request.execute(build_rest_format(url, estimate_params(subscription, addon_data))))['estimate']
   end
 
@@ -149,14 +151,19 @@ class Billing::ChargebeeWrapper
 
     def estimate_params(subscription, addon_data)
       subscription_plan = "#{subscription.subscription_plan.canon_name}_#{Billing::Subscription::BILLING_PERIOD[subscription.renewal_period]}"
-      {
+      ret_hash = {
         'billing_cycles' => 1,
-        'subscription[id]' => subscription.account_id,
         'subscription[plan_id]' => subscription_plan,
         'subscription[plan_quantity]' => subscription.agent_limit,
         'addon[id]' => addon_data[:ids],
         'addon[quantity]' => addon_data[:quantity]
       }
+      if subscription.free?
+        ret_hash['subscription[trial_end]'] = 0
+      else
+        ret_hash['subscription[id]'] = subscription.account_id
+      end
+      ret_hash
     end
 
     def build_rest_format(url, params, req_type = :post)

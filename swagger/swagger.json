@@ -9533,6 +9533,14 @@
         ],
         "description": "Account subscription details",
         "summary": "Account subscription details",
+        "parameters": [
+          {
+            "name": "include",
+            "in": "query",
+            "type": "string",
+            "description": "Comma-separated, possible values - update_payment_site"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -9608,6 +9616,12 @@
             "type": "integer",
             "description": "One of the renewal period from [1, 3, 6, 12]",
             "required": true
+          },
+          {
+            "name": "currency",
+            "in": "query",
+            "type": "string",
+            "description": "Type of currency selected"
           }
         ],
         "responses": {
@@ -9641,6 +9655,32 @@
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/plans"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/subscription/update_payment": {
+      "post": {
+        "tags": [
+          "subscription"
+        ],
+        "description": "Add/update the card details in our database fetching it from chargebee",
+        "summary": "Update payment method",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/subscription_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
             }
           },
           "403": {
@@ -25150,6 +25190,17 @@
         },
         "paying_account": {
           "type": "boolean"
+        },
+        "update_payment_site": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string"
+            },
+            "site": {
+              "type": "string"
+            }
+          }
         }
       }
     },
@@ -25203,6 +25254,9 @@
         "agent_seats": {
           "type": "integer",
           "format": "int64"
+        },
+        "currency": {
+          "type": "string"
         }
       }
     },

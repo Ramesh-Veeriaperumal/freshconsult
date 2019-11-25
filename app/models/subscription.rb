@@ -11,6 +11,8 @@ class Subscription < ActiveRecord::Base
 
   TRIAL_DAYS = 21
 
+  ANNUAL_PERIOD = 12
+
   SUBSCRIPTION_ATTRIBUTES = { :account_id => :account_id, :amount => :amount, :state => :state,
                               :subscription_plan_id => :subscription_plan_id, :agent_limit => :agent_limit,
                               :free_agents => :free_agents, :renewal_period => :renewal_period,
@@ -444,6 +446,20 @@ class Subscription < ActiveRecord::Base
     self.update_billing_address(card)
   end
 
+  def fetch_billing_address(card_details)
+    {
+      billing_address: {
+        first_name: card_details.first_name,
+        last_name: card_details.last_name,
+        line1: "#{card_details.billing_addr1} #{card_details.billing_addr2}",
+        city: card_details.billing_city,
+        state: card_details.billing_state,
+        zip: card_details.billing_zip,
+        country: card_details.billing_country
+      }
+    }
+  end
+
   def clear_billing_info
     self.card_number = nil
     self.card_expiration = nil
@@ -555,10 +571,19 @@ class Subscription < ActiveRecord::Base
     end
   end
 
-  def fetch_subscription_estimate
+  def fetch_subscription_estimate(coupon)
     updated_addons = applicable_addons(present_subscription.addons, subscription_plan)
-    applicable_coupon = verify_coupon(present_subscription.coupon)
+    applicable_coupon = verify_coupon(coupon)
     subscription_estimate(updated_addons, applicable_coupon)
+  end
+
+  def fetch_update_payment_site
+    result = Billing::Subscription.new.update_payment_method(account.id)
+    hosted_page = result.hosted_page
+    {
+      url: hosted_page.url,
+      site: currency_billing_site
+    }
   end
 
   def reseller_paid_account?
@@ -610,7 +635,51 @@ class Subscription < ActiveRecord::Base
     active? && amount > 0
   end
 
+  def switch_currency(currency)
+    # cancel subscription in old site and clone the subscription in the new site
+    data = fetch_migration_data
+    billing.cancel_subscription(account)
+    set_billing_params(currency)
+    clone_subscription(data)
+    save!
+  end
+
+  def add_card_to_billing
+    customer_details = billing.retrieve_subscription(account_id)
+    set_billing_info(customer_details.card)
+    save!
+  rescue StandardError => e
+    Rails.logger.info "Exception occurred while updating card details #{e.inspect}"
+    NewRelic::Agent.notice_error(e, description: "Exception while adding card details, Account:: #{Account.current.id}, Message: #{e.message}")
+    false
+  end
+
+  def activate_subscription
+    customer_details = billing.retrieve_subscription(account_id)
+    billing_address = fetch_billing_address(customer_details.card)
+    result = billing.activate_subscription(self, billing_address)
+    self.state = ACTIVE
+    set_next_renewal_at(result.subscription)
+    save!
+  rescue StandardError => e
+    Rails.logger.info "Exception occurred while activating subscription #{e.inspect}"
+    NewRelic::Agent.notice_error(e, description: "Exception while activating subscription, Account:: #{Account.current.id}, Message: #{e.message}")
+    false
+  end
+
+  def percentage_difference
+    return if renewal_period == ANNUAL_PERIOD || annual_cost_per_agent.zero?
+
+    current_cycle_cost = cost_per_agent
+    annual_cycle_cost = annual_cost_per_agent
+    ((((current_cycle_cost - annual_cycle_cost) / annual_cycle_cost.to_f) * 100) / 5).floor * 5
+  end
+
   protected
+
+    def annual_cost_per_agent
+      @annual_cost_per_agent ||= cost_per_agent(ANNUAL_PERIOD)
+    end
 
     def set_renewal_at
       return if self.subscription_plan.nil? || self.next_renewal_at
@@ -686,6 +755,29 @@ class Subscription < ActiveRecord::Base
     end
 
   private
+
+    def fetch_migration_data
+      data = billing.retrieve_subscription(account_id)
+      migration_data = {
+        coupon: data.subscription.coupon
+      }
+      migration_data[:trial_end] = if suspended?
+                                     1.hour.from_now.to_i
+                                   elsif free?
+                                     0
+                                   else
+                                     data.subscription.trial_end
+                                   end
+      migration_data
+    end
+
+    def clone_subscription(data)
+      if billing.subscription_exists?(account_id)
+        billing.reactivate_subscription(self, data)
+      else
+        billing.create_subscription(account, data)
+      end
+    end
 
     def save_subscription(params)
       self.renewal_period = params[:renewal_period] if params[:renewal_period].present?

@@ -1,0 +1,15 @@
+post:
+  tags: [subscription]
+  description: Add/update the card details in our database fetching it from chargebee
+  summary: Update payment method
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/subscription_response'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
