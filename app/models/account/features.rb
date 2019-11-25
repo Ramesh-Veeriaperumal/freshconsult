@@ -20,7 +20,7 @@ class Account < ActiveRecord::Base
     :denormalized_select_for_update, :trial_subscription, :installed_app_publish, :es_tickets,
     :twitter_dm_outgoing_attachment, :twitter_mention_outgoing_attachment,
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017, :year_in_review_2018,
-    :new_onboarding, :onboarding_v2, :onboarding_i18n, :onboarding_inlinemanual, :skip_portal_cname_chk,
+    :onboarding_inlinemanual, :skip_portal_cname_chk,
     :product_central_publish, :help_widget, :redis_picklist_id,
     :bot_email_channel, :bot_email_central_publish, :description_by_default,
     :bot_chat_history, :new_es_api, :filter_factory, :ticket_fields_central_publish,
@@ -382,9 +382,6 @@ class Account < ActiveRecord::Base
     has_feature?(:undo_send) || launched?(:undo_send)
   end
 
-  def new_onboarding_enabled?
-    launched?(:new_onboarding) || launched?(:onboarding_v2)
-  end
   def email_spoof_check_feature?
     email_spoof_check_enabled? && !disable_email_spoof_check_enabled?
   end

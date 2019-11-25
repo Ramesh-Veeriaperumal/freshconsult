@@ -478,6 +478,7 @@ class UserSessionsControllerTest < ActionController::TestCase
     User.any_instance.stubs(:active_freshid_agent?).returns(true)
     get :signup_complete, token: user.perishable_token
     assert_response 302
+    assert_includes response.cookies['return_to'], '/a/getstarted'
   ensure
     User.any_instance.unstub(:active_freshid_agent?)
   end
@@ -1018,5 +1019,17 @@ class UserSessionsControllerTest < ActionController::TestCase
     @controller.unstub(:validate_saml_response)
     User.any_instance.unstub(:save)
     UserSession.any_instance.unstub(:save)
+  end
+
+  def test_root_path_on_signup_complete_for_anonymous_account
+    user = create_user_for_session
+    User.any_instance.stubs(:active_freshid_agent?).returns(true)
+    Account.any_instance.stubs(:anonymous_account?).returns(true)
+    get :signup_complete, token: user.perishable_token
+    assert_response 302
+    assert_includes response.cookies['return_to'], '/'
+  ensure
+    User.any_instance.unstub(:active_freshid_agent?)
+    Account.any_instance.unstub(:anonymous_account?)
   end
 end

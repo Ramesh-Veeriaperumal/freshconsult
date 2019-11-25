@@ -98,6 +98,7 @@ class AccountsControllerTest < ActionController::TestCase
     user_email = Faker::Internet.email
     get :email_signup, action: 'email_signup', callback: '', user: { name: Faker::Name.name, email: user_email, time_zone: 'Chennai', language: 'en' }, account: { account_name: account_name, account_domain: domain_name, locale: I18n.default_locale, time_zone: 'Chennai', user_name: 'Support', user_password: 'test1234', user_password_confirmation: 'test1234', user_email: user_email, user_helpdesk_agent: true, new_plan_test: true }, format: 'json'
     assert_response 200
+    assert JSON.parse(response.body)['url'].include?('signup_complete'), 'expecting signup_complete url'
   ensure
     unstub_signup_calls
     Rails.env.unstub(:staging?)
@@ -680,7 +681,6 @@ class AccountsControllerTest < ActionController::TestCase
 
   def test_anonymous_signup
     Account.any_instance.stubs(:anonymous_account?).returns(true)
-    Account.any_instance.stubs(:onboarding_applicable?).returns(true)
     anonymous_signup_key = ANONYMOUS_ACCOUNT_SIGNUP_ENABLED
     set_others_redis_key(anonymous_signup_key, true)
     Account.any_instance.expects(:add_to_billing).never
@@ -703,7 +703,6 @@ class AccountsControllerTest < ActionController::TestCase
     assert_equal value[:signup_id], params[:signup_id]
   ensure
     Account.any_instance.unstub(:anonymous_account?)
-    Account.any_instance.unstub(:onboarding_applicable?)
     remove_others_redis_key(anonymous_signup_key)
     account.destroy if account.present?
   end

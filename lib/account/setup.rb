@@ -80,12 +80,12 @@ module Account::Setup
 
   # TRIAL WIDGET CLEANUP - can be removed after trial widget deprecation
   def custom_app_eligible?
-    !new_onboarding_enabled?
+    false
   end
 
   # TRIAL WIDGET CLEANUP - can be removed after trial widget deprecation
   def reports_eligible?
-    !new_onboarding_enabled?
+    false
   end
 
 
