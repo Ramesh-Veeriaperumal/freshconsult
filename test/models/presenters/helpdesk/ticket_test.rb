@@ -379,6 +379,15 @@ class TicketTest < ActiveSupport::TestCase
     Account.any_instance.unstub(:skill_based_round_robin_enabled?)
   end
 
+  def test_central_publish_payload_event_info_on_round_robin
+    t = create_ticket(ticket_params_hash.merge(responder_id: @agent.id))
+    t.activity_type = { type: 'round_robin', responder_id: [nil, t.responder_id] }
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    event_info = t.event_info(:create)
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t))
+  end
+ 
   def test_central_publish_internal_agent_associations
     Account.any_instance.stubs(:shared_ownership_enabled?).returns(true)
     initialize_internal_agent_with_default_internal_group(permission = 3)

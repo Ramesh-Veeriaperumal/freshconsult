@@ -16,6 +16,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   DONT_CARE_VALUE = '*'.freeze
   SPLIT_TICKET_ACTIVITY = 'ticket_split_target'.freeze
   MERGE_TICKET_ACTIVITY = 'ticket_merge_source'.freeze
+  ROUND_ROBIN_ACTIVITY = 'round_robin'.freeze
   acts_as_api
 
   api_accessible :central_publish do |t|
@@ -374,12 +375,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def construct_activity_hash
-    if activity_type && activity_type[:type] == SPLIT_TICKET_ACTIVITY
-      split_ticket_hash(activity_type)
-    elsif activity_type && activity_type[:type] == MERGE_TICKET_ACTIVITY
-      merge_ticket_hash(activity_type)
-    elsif activity_type && activity_type[:type] == Social::Constants::TWITTER_FEED_TICKET
-      social_tab_ticket_hash(activity_type)
+    if activity_type
+      case activity_type[:type]
+      when SPLIT_TICKET_ACTIVITY
+        split_ticket_hash(activity_type)
+      when MERGE_TICKET_ACTIVITY
+        merge_ticket_hash(activity_type)
+      when Social::Constants::TWITTER_FEED_TICKET
+        social_tab_ticket_hash(activity_type)
+      when ROUND_ROBIN_ACTIVITY
+        round_robin_hash(activity_type)
+      else
+        {}
+      end
     else
       {}
     end
@@ -410,6 +418,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
       activity_type: {
         type: Social::Constants::TWITTER_FEED_TICKET
       }
+    }
+  end
+
+  def round_robin_hash(activity_type)
+    {
+      activity_type: activity_type
     }
   end
 

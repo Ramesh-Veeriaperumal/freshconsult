@@ -90,12 +90,19 @@ module TicketsTestHelper
     # TODO: Testing lifecycle_hash.
     lifecycle_hash = {}
     activity_type = ticket.activity_type
-    activity_type_hash = if activity_type && activity_type[:type] == Helpdesk::Ticket::SPLIT_TICKET_ACTIVITY
-                           split_ticket_hash(activity_type)
-                         elsif activity_type && activity_type[:type] == Helpdesk::Ticket::MERGE_TICKET_ACTIVITY
-                           merge_ticket_hash(activity_type)
-                         elsif activity_type && activity_type[:type] == Social::Constants::TWITTER_FEED_TICKET
-                           social_tab_ticket_hash(activity_type)
+    activity_type_hash = if activity_type
+                           case activity_type[:type]
+                           when Helpdesk::Ticket::SPLIT_TICKET_ACTIVITY
+                             split_ticket_hash(activity_type)
+                           when Helpdesk::Ticket::MERGE_TICKET_ACTIVITY
+                             merge_ticket_hash(activity_type)
+                           when Social::Constants::TWITTER_FEED_TICKET
+                             social_tab_ticket_hash(activity_type)
+                           when Helpdesk::Ticket::ROUND_ROBIN_ACTIVITY
+                             round_robin_hash(activity_type)
+                           else
+                             {}
+                           end
                          else
                            {}
                          end
@@ -130,6 +137,12 @@ module TicketsTestHelper
       activity_type: {
         type: Social::Constants::TWITTER_FEED_TICKET
       }
+    }
+  end
+
+  def round_robin_hash(activity_type)
+    {
+      activity_type: activity_type
     }
   end
 
