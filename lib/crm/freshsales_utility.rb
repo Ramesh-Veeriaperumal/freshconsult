@@ -525,7 +525,8 @@ class CRM::FreshsalesUtility
       status,response = request_freshsales(config)
       source = response[:fields].detect {|s| s.try(:[],:name) == "lead_source_id"}
       campaign = response[:fields].detect {|s| s.try(:[],:name) == "campaign_id"}
-      source_id = source[:choices].detect {|n| n.try(:[],:value) == "Inbound"}[:id]
+      new_source = source[:choices].detect { |n| n.try(:[], :value) == (@account.conversion_metric.lead_source_choice.presence || 'Inbound') }
+      source_id = new_source.present? ? new_source[:id] : source[:choices].detect { |n| n.try(:[], :value) == 'Inbound' }[:id]
       campaign_id = campaign[:choices].detect{|n| n.try(:[],:value) == "Trial Signup"}[:id]
       { lead_source_id: source_id, campaign_id: campaign_id }
     end

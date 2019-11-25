@@ -16,12 +16,36 @@ class FreshsalesUtilityTest < ActionView::TestCase
     create_test_account
     @cmrr = @account.subscription.cmrr
     @subscription = @account.subscription
+    @account.conversion_metric = ConversionMetric.new(account_id: @account.id)
+    @account.conversion_metric.save!
     Account.stubs(:first).returns(Account.current)
     @@before_all_run = true
   end
 
   def teardown
     super
+  end
+
+  def test_lead_and_campaign_info
+    CRM::FreshsalesUtility.any_instance.stubs(:get_entity_id).returns(1)
+    options = { rest_url: '/settings/leads/fields', method: 'get' }
+    CRM::FreshsalesUtility.any_instance.stubs(:request_freshsales).with(options).returns([200, { fields: [{ name: 'lead_source_id', choices: [{ id: 1, value: 'Inbound' }, { id: 2, value: 'Text in FS' }] }, { name: 'campaign_id', choices: [{ id: 2, value: 'Trial Signup' }] }] }])
+    @fresh_sales_utility = CRM::FreshsalesUtility.new(cmrr: @account.subscription.cmrr, account: @account, subscription: @account.subscription)
+    ConversionMetric.any_instance.stubs(:lead_source_choice).returns(nil)
+    response = @fresh_sales_utility.send(:get_lead_source_and_campaign_id)
+    assert_equal response[:lead_source_id], 1
+
+    ConversionMetric.any_instance.stubs(:lead_source_choice).returns('Text in FS')
+    response = @fresh_sales_utility.send(:get_lead_source_and_campaign_id)
+    assert_equal response[:lead_source_id], 2
+
+    ConversionMetric.any_instance.stubs(:lead_source_choice).returns('Text not in FS')
+    response = @fresh_sales_utility.send(:get_lead_source_and_campaign_id)
+    assert_equal response[:lead_source_id], 1
+  ensure
+    CRM::FreshsalesUtility.any_instance.unstub(:request_freshsales)
+    CRM::FreshsalesUtility.any_instance.unstub(:get_entity_id)
+    ConversionMetric.any_instance.unstub(:lead_source_choice)
   end
 
   def test_get_signup_data
