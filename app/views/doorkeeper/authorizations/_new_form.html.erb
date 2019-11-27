@@ -1,5 +1,5 @@
 <%= stylesheet_link_tag_with_rtl :'cdn/dev_oauth' %>
-<% hide_page =  @pre_auth.client.name == Marketplace::Constants::ADMIN_PORTAL_NAME || current_user.developer? %>
+<% hide_page =  @pre_auth.client.name == Marketplace::Constants::ADMIN_PORTAL_NAME || current_user.developer? || @pre_auth.client.name == Marketplace::Constants::GALLERY_NAME %>
 <% hideClass = hide_page ? 'hide' : '' %>
 <% portal_name = @pre_auth.client.name == Marketplace::Constants::DEV_PORTAL_NAME ? t('.dev_portal') : t('.admin_portal') %>
 
@@ -50,7 +50,7 @@ jQuery(document).on('click', '#allow', function (ev) {
     this.form.submit()
 })
 
-var allowUser = <%= @pre_auth.client.name == Marketplace::Constants::ADMIN_PORTAL_NAME || current_user.developer? %>
+var allowUser = <%= @pre_auth.client.name == Marketplace::Constants::ADMIN_PORTAL_NAME || current_user.developer? || @pre_auth.client.name == Marketplace::Constants::GALLERY_NAME %>
 if(allowUser) {
   jQuery("#allow").trigger("click");
 }

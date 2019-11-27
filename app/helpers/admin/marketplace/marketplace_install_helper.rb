@@ -29,7 +29,9 @@ include FalconHelperMethods
               data-url="#{payment_info_admin_marketplace_extensions_path(@extension['extension_id'])}" 
               data-install-url="#{install_url}" >
               <p class="buy-app-btn"> #{t('marketplace.buy_app')} </p>
-              <p class="app-price"> #{t('marketplace.app_price', :price => format_amount(addon_details['price'], addon_details['currency_code']), :addon_type => addon_type)} </p>
+              <p class="app-price"> #{t('marketplace.app_price',
+                :price => format_amount(addon_details['price'], addon_details['currency_code']),
+                :addon_type => addon_type)} </p>
               </a>)
     if @is_oauth_app
      _btn << link_to(install_btn_text, '#', 'data-url' => oauth_settings_url,

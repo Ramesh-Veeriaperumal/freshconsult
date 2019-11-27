@@ -323,8 +323,9 @@ class Billing::Subscription < Billing::ChargebeeWrapper
           marketplace_addon_ids = all_addons.select { |addon| addon.id.include?(Marketplace::Constants::ADDON_ID_PREFIX) }.map(&:id)
           marketplace_addon_ids.each do |addon_id|
             ext = extension_details(mkp_extension_id(addon_id), Marketplace::Constants::EXTENSION_TYPE[:plug]).body
+            addon_type = ext['addons'].find { |data| data['currency_code'] == subscription.account.currency_name }['addon_type']
             marketplace_addons << { :id => addon_id,
-            :quantity => mkp_app_units_count(ext["addon"]["addon_type"], subscription) }
+            :quantity => mkp_app_units_count(addon_type, subscription) }
           end
         end
       rescue

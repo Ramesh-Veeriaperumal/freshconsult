@@ -78,7 +78,7 @@ class Admin::Marketplace::ExtensionsController < Admin::AdminController
   def payment_info
     btn_class = is_oauth_app?(@extension) ? 'install-oauth-btn' : 'install-form-btn'
     btn_class = 'oauth-iparams-btn' if has_oauth_iparams?
-    @addon_details = @extension['addon']['metadata'].find { |data| data['currency_code'] == current_account.currency_name }
+    @addon_details = @extension['addons'].find { |data| data['currency_code'] == current_account.currency_name }
     render :json => { 
       :message => I18n.t(trial_subscription? ? 'marketplace.payment_trial' : 'marketplace.payment_ok',
       :trial_period => @addon_details['trial_period'],
