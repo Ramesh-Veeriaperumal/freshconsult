@@ -15,11 +15,11 @@ class SAAS::SubscriptionEventActions
                            :dynamic_sections, :custom_survey, :mailbox,
                            :helpdesk_restriction_toggle, :ticket_templates,
                            :round_robin_load_balancing, :multi_timezone, :field_service_management, :custom_translations,
-                           :field_service_management_toggle, :sitemap].freeze
+                           :field_service_management_toggle, :sitemap, :article_versioning].freeze
 
   ADD_DATA_FEATURES_V2  = [:link_tickets_toggle, :parent_child_tickets_toggle, :multiple_companies_toggle,
                            :tam_default_fields, :smart_filter, :contact_company_notes, :unique_contact_identifier, :custom_dashboard, 
-                           :personal_canned_response, :round_robin, :field_service_management, :multi_language].freeze
+                           :personal_canned_response, :round_robin, :field_service_management, :multi_language, :article_versioning].freeze
 
   DASHBOARD_PLANS = [SubscriptionPlan::SUBSCRIPTION_PLANS[:estate],
                      SubscriptionPlan::SUBSCRIPTION_PLANS[:forest],
