@@ -8,7 +8,9 @@ class SolutionArticleFilterValidation < FilterValidation
                                            ignore_string: :allow_string_param }
   validates :portal_id, required: true, data_type: { rules: String, allow_nil: false }, if: :filter_actions
   validates :term, data_type: { rules: String }, on: :filter
-  validates :author, custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param }, if: :filter_export_actions
+  validates :author, custom_numericality: { only_integer: true, greater_than: -2, ignore_string: :allow_string_param }, if: :filter_export_actions
+  validate  :not_zero_author?, if: :filter_export_actions
+
   validates :status, custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param }, if: :filter_actions
   validates :outdated, data_type: { rules: 'Boolean' }
   validates :created_at, :last_modified, data_type: { rules: Hash },
@@ -59,5 +61,19 @@ class SolutionArticleFilterValidation < FilterValidation
       field_name: { data_type: { rules: String, required: true }, custom_inclusion: { in: SolutionConstants::ARTICLE_EXPORT_HEADER_MASTER_LIST } },
       column_name: { data_type: { rules: String, required: true } }
     }
+  end
+
+  def numeric?(check)
+    true if Integer(check) rescue false
+  end
+
+  def not_zero_author?
+    if @request_params[:author].present?
+      if @request_params[:author].to_i.zero? && numeric?(@request_params[:author])
+        errors.add(:message, 'It should be a/an Positive Integer')
+        return false
+      end
+    end
+    true
   end
 end

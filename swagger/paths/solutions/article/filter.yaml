@@ -14,7 +14,7 @@ get:
     - name: author
       in: query
       type: string
-      description: Filter by author
+      description: Filter by author, provide -1 for deleted agents articles
     - name: status
       in: query
       type: string

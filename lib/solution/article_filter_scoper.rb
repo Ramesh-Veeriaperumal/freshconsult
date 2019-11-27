@@ -70,10 +70,16 @@ module Solution::ArticleFilterScoper
 
     scope :by_author, lambda { |author, only_draft|
       # if status filter is draft we need to query only in drafts table.
-      if only_draft
-        where(format(%(solution_drafts.user_id=%{user_id}), user_id: author))
+      author = author.to_i
+      if author == -1
+        cond = format(%(users.id is NULL OR helpdesk_agent=0 OR users.deleted=1))
+        cond += format(%( AND solution_articles.status=%{draft_status}), draft_status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]) if only_draft
+        {
+          joins: format(%(LEFT JOIN users ON users.id=solution_articles.user_id  AND users.account_id = %{account_id} ), account_id: Account.current.id),
+          conditions: [cond]
+        }
       else
-        where(format(%(solution_articles.user_id=%{user_id} OR IFNULL(solution_drafts.user_id, solution_articles.modified_by)=%{user_id}), user_id: author))
+        only_draft ? where(format(%(solution_drafts.user_id=%{user_id} OR solution_articles.user_id=%{user_id}), user_id: author)) : where(format(%(solution_articles.user_id=%{user_id} OR IFNULL(solution_drafts.user_id, solution_articles.modified_by)=%{user_id}), user_id: author))
       end
     }
   end
