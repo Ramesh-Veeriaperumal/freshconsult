@@ -20,10 +20,17 @@ module Integrations
     def generate_mkp_update_button(extension, installation_details)
       url = "#"
       if(is_oauth_app?(extension))
-        update_url = admin_marketplace_installed_extensions_oauth_install_path(extension['extension_id'], extension['version_id'])
-        update_params = {}
-        update_button_class = "update-oauth"
-        url = ""
+        if has_oauth_iparams?(extension)
+          update_url = admin_marketplace_installed_extensions_new_oauth_iparams_path(extension['extension_id'], extension['version_id'])
+          update_params = { "type" => extension['type'], "installation_type" => "settings",
+            "display_name" => extension['display_name'], "installed_version" =>  installation_details['version_id']}
+          update_button_class = "update"
+        else
+          update_url = admin_marketplace_installed_extensions_oauth_install_path(extension['extension_id'], extension['version_id'])
+          update_params = {}
+          update_button_class = "update-oauth"
+          url = ""
+        end
       else
         update_params = { "type" => extension['type'], "installation_type" => "update", 
                          "display_name" => extension['display_name'],

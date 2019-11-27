@@ -30,7 +30,9 @@ defaults: &defaults
   fresh_parent: "fdk/2.0/assets/fresh_parent-v1.5.1.js"
   account_api_poll_interval: 3000 ### In milliseconds
   tenant_id: 4
-  sudodev_acc_number: 6000060890
+  sudodev_acc_number: 6000060890  
+  mkp_cipher_key: LKJSDoiemsd23eDlLKJSDoiemsd23eDl
+  mkp_cipher_iv: d3ldme9s8ejcJwoL
 
 development:
   <<: *defaults
