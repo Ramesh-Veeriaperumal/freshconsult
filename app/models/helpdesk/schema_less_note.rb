@@ -81,6 +81,14 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
     note_properties[:last_modified_timestamp] = curr_time.to_s
   end
 
+  def on_state_time
+    note_properties[:on_state_time]
+  end
+
+  def on_state_time=(value)
+    note_properties[:on_state_time] = value
+  end
+
   def cc_emails
     emails = read_attribute(:cc_emails)
     if (emails.is_a? Array) || (emails.is_a? String)

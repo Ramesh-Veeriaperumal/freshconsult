@@ -16,6 +16,7 @@ module Tickets
 
         evaluate_on = account.tickets.find_by_id ticket_id
         evaluate_on.thank_you_note_id = args[:note_id]
+        evaluate_on.current_note_id = args[:note_id] if account.next_response_sla_enabled?
         evaluate_on.attributes = args[:attributes]
         doer = account.users.find_by_id doer_id unless system_event
 

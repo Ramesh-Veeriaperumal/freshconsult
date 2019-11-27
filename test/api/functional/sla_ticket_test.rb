@@ -1,4 +1,6 @@
 require_relative '../test_helper'
+require_relative '../../../test/core/helpers/note_test_helper'
+require_relative '../../api/sidekiq/create_ticket_helper'
 require 'sidekiq/testing'
 require 'webmock/minitest'
 ['sla_test_helper'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
@@ -9,6 +11,9 @@ class TicketsControllerTest < ActionController::TestCase
   include SlaTestHelper
   include AccountTestHelper
   include BusinessCalendarsTestHelper
+  include NoteTestHelper
+  include CreateTicketHelper
+
   @@before_all_run_sla = false
   def setup
     super
@@ -17,9 +22,11 @@ class TicketsControllerTest < ActionController::TestCase
 
   def before_all
     return if @@before_all_run_sla
-    create_test_account
+    @account = create_test_account if @account.nil?
+    @account.make_current
     @account.business_calendar.destroy_all
     @account.sla_policies.destroy_all
+    @account.stubs(:next_response_sla_enabled?).returns(true)
     @business_calendar = create_business_calendar(is_default: 1)
     @@before_all_run_sla = true
   end
@@ -125,4 +132,278 @@ class TicketsControllerTest < ActionController::TestCase
     BusinessCalendar.any_instance.unstub(:holiday_data)
   end
 
+  def test_nr_dueBy
+    sla_policy
+    freeze_time_now(get_datetime('10:00', '5 Nov 2019')) do
+      params = ticket_params_hash_sla
+      post :create, construct_params({}, params)
+    end
+    ticket = @account.tickets.last
+    assert_nil ticket.nr_due_by
+    agent = add_agent(@account)
+    freeze_time_now(get_datetime('11:00', '5 Nov 2019')) do
+      params_hash = {
+          ticket_id: ticket.id,
+          user_id: agent.id,
+          created_at: Time.zone.now
+      }
+      note = create_note params_hash
+      ticket.reload
+      assert_equal ticket.first_response_time, get_datetime('11:00', '5 Nov 2019')
+      assert_nil ticket.nr_due_by
+      assert_nil ticket.last_customer_note_id
+    end
+    freeze_time_now(get_datetime('12:00', '5 Nov 2019')) do
+      params_hash = {
+          ticket_id: ticket.id,
+          user_id: ticket.requester_id,
+          created_at: Time.zone.now
+      }
+      note = create_note params_hash
+      ticket.reload
+      assert_equal ticket.nr_due_by , note.created_at + 14400
+      assert_equal note.id, ticket.last_customer_note_id
+      assert_equal ticket.nr_updated_at, note.created_at
+    end
+    freeze_time_now(get_datetime('13:00', '5 Nov 2019')) do
+      params_hash = {
+          ticket_id: ticket.id,
+          user_id: ticket.requester_id,
+          created_at: Time.zone.now
+      }
+      note = create_note params_hash
+      ticket.reload
+      assert_equal ticket.nr_due_by , note.created_at + 10800
+      assert_not_nil ticket.last_customer_note_id
+      assert_equal ticket.nr_updated_at, get_datetime('12:00', '5 Nov 2019')
+      assert_not_equal note.id, ticket.last_customer_note_id
+    end
+    freeze_time_now(get_datetime('14:00', '5 Nov 2019')) do
+      params_hash = {
+          ticket_id: ticket.id,
+          user_id: agent.id,
+          created_at: Time.zone.now
+      }
+      note = create_note params_hash
+      ticket.reload
+      assert_nil ticket.nr_due_by
+      assert_nil ticket.last_customer_note_id
+      assert_nil ticket.nr_updated_at
+    end
+  ensure
+    ticket.destroy
+  end
+
+  def test_nr_dueBy_on_priority_change
+    sla_policy
+    @note = nil
+    freeze_time_now(get_datetime('10:00', '5 Nov 2019')) do
+      params = ticket_params_hash_sla
+      post :create, construct_params({}, params)
+    end
+    ticket = @account.tickets.last
+    agent = add_agent(@account)
+    freeze_time_now(get_datetime('10:15', '5 Nov 2019')) do
+      params_hash = {
+          ticket_id: ticket.id,
+          user_id: agent.id,
+          created_at: Time.zone.now
+      }
+      @note = create_note params_hash
+      ticket.reload
+    end
+    freeze_time_now(get_datetime('11:00', '5 Nov 2019')) do
+      params_hash = {
+          ticket_id: ticket.id,
+          user_id: ticket.requester_id,
+          created_at: Time.zone.now
+      }
+      @note = create_note params_hash
+      ticket.reload
+      assert_equal @note.id, ticket.last_customer_note_id
+      assert_equal ticket.nr_due_by, get_datetime('15:00', '5 Nov 2019')
+    end
+    freeze_time_now(get_datetime('12:00', '5 Nov 2019')) do
+      params_hash = { priority: 4 }
+      put :update, construct_params({ id: ticket.display_id }, params_hash)
+      ticket.reload
+      @note.reload
+      assert_nil ticket.nr_due_by
+      assert_equal @note.id, ticket.last_customer_note_id
+      assert_equal 3600, @note.on_state_time
+    end
+    freeze_time_now(get_datetime('13:00', '5 Nov 2019')) do
+      params_hash = { priority: 2 }
+      put :update, construct_params({ id: ticket.display_id }, params_hash)
+      ticket.reload
+      @note.reload
+      assert_equal ticket.nr_due_by, get_datetime('14:00', '5 Nov 2019')
+      assert_equal 7200, @note.on_state_time
+    end
+  ensure
+    ticket.destroy
+  end
+
+  def test_nr_dueBy_on_sla_timer_toggle
+    sla_policy
+    freeze_time_now(get_datetime('14:00', '5 Nov 2019')) do
+      params = ticket_params_hash_sla
+      post :create, construct_params({}, params)
+    end
+    ticket = @account.tickets.last
+    agent = add_agent(@account)
+    freeze_time_now(get_datetime('14:30', '5 Nov 2019')) do
+      params_hash = {
+          ticket_id: ticket.id,
+          user_id: agent.id,
+          created_at: Time.zone.now
+      }
+      note = create_note params_hash
+      ticket.reload
+    end
+    freeze_time_now(get_datetime('15:00', '5 Nov 2019')) do
+      params_hash = {
+          ticket_id: ticket.id,
+          user_id: ticket.requester_id,
+          created_at: Time.zone.now
+      }
+      note = create_note params_hash
+      ticket.reload
+      assert_equal ticket.nr_due_by, get_datetime('10:00', '6 Nov 2019')
+    end
+    freeze_time_now(get_datetime('9:00', '6 Nov 2019')) do
+      params_hash = { status: 3 }
+      put :update, construct_params({ id: ticket.display_id }, params_hash)
+      ticket.reload
+    end
+    freeze_time_now(get_datetime('9:30', '6 Nov 2019')) do
+      params_hash = {
+          ticket_id: ticket.id,
+          user_id: ticket.requester_id,
+          created_at: Time.zone.now
+      }
+      note = create_note params_hash
+      ticket.reload
+      assert ticket.last_customer_note_id.present?
+      assert_not_equal note.id, ticket.last_customer_note_id
+      assert_equal ticket.nr_due_by, get_datetime('10:00', '6 Nov 2019')
+    end
+    freeze_time_now(get_datetime('10:00', '6 Nov 2019')) do
+      params_hash = { status: 2 }
+      put :update, construct_params({ id: ticket.display_id }, params_hash)
+      ticket.reload
+      assert_equal ticket.nr_due_by, get_datetime('11:00', '6 Nov 2019')
+    end
+    freeze_time_now(get_datetime('10:30', '6 Nov 2019')) do
+      params_hash = { status: 3 }
+      put :update, construct_params({ id: ticket.display_id }, params_hash)
+      ticket.reload
+    end
+    freeze_time_now(get_datetime('10:40', '6 Nov 2019')) do
+      params_hash = {
+          ticket_id: ticket.id,
+          user_id: agent.id,
+          created_at: Time.zone.now,
+          private: true
+      }
+      note = create_note params_hash
+      ticket.reload
+      assert_equal ticket.nr_due_by, get_datetime('11:00', '6 Nov 2019')
+      assert_not_nil ticket.last_customer_note_id
+    end
+    freeze_time_now(get_datetime('10:50', '6 Nov 2019')) do
+      params_hash = {
+          ticket_id: ticket.id,
+          user_id: agent.id,
+          created_at: Time.zone.now
+      }
+      note = create_note params_hash
+      ticket.reload
+      assert_nil ticket.nr_due_by
+      assert_nil ticket.last_customer_note_id
+    end
+  ensure
+    ticket.destroy
+  end
+
+  def test_nr_dueBy_off_sla_timer
+    sla_policy
+    @note = nil
+    freeze_time_now(get_datetime('10:00', '5 Nov 2019')) do
+      params = ticket_params_hash_sla
+      post :create, construct_params({}, params)
+    end
+    ticket = @account.tickets.last
+    agent = add_agent(@account)
+    freeze_time_now(get_datetime('11:00', '5 Nov 2019')) do
+      params_hash = {
+          ticket_id: ticket.id,
+          user_id: agent.id,
+          created_at: Time.zone.now
+      }
+      @note = create_note params_hash
+      ticket.reload
+    end
+    freeze_time_now(get_datetime('11:30', '5 Nov 2019')) do
+      params_hash = { status: 3 }
+      put :update, construct_params({ id: ticket.display_id }, params_hash)
+      ticket.reload
+      @note.reload
+    end
+    freeze_time_now(get_datetime('12:00', '5 Nov 2019')) do
+      params_hash = {
+          ticket_id: ticket.id,
+          user_id: ticket.requester_id,
+          created_at: Time.zone.now
+      }
+      @note = create_note params_hash
+      ticket.reload
+      @note.reload
+      assert_nil ticket.nr_due_by
+      assert_equal @note.id, ticket.last_customer_note_id
+    end
+    freeze_time_now(get_datetime('12:30', '5 Nov 2019')) do
+      params_hash = {
+          ticket_id: ticket.id,
+          user_id: agent.id,
+          created_at: Time.zone.now
+      }
+      @note = create_note params_hash
+      ticket.reload
+      assert_nil ticket.nr_due_by
+      assert_nil ticket.last_customer_note_id
+    end
+    freeze_time_now(get_datetime('12:45', '5 Nov 2019')) do
+      params_hash = {
+          ticket_id: ticket.id,
+          user_id: ticket.requester_id,
+          created_at: Time.zone.now
+      }
+      @note = create_note params_hash
+      ticket.reload
+      assert_nil ticket.nr_due_by
+      assert_equal @note.id, ticket.last_customer_note_id
+    end
+    freeze_time_now(get_datetime('12:50', '5 Nov 2019')) do
+      params_hash = {
+          ticket_id: ticket.id,
+          user_id: ticket.requester_id,
+          created_at: Time.zone.now
+      }
+      @note = create_note params_hash
+      ticket.reload
+      assert_nil ticket.nr_due_by
+      assert_not_nil ticket.last_customer_note_id
+      assert_not_equal @note.id, ticket.last_customer_note_id
+    end
+    freeze_time_now(get_datetime('13:00', '5 Nov 2019')) do
+      params_hash = { status: 2 }
+      put :update, construct_params({ id: ticket.display_id }, params_hash)
+      ticket.reload
+      @note.reload
+      assert_equal ticket.nr_due_by, get_datetime('17:00', '5 Nov 2019')
+    end
+  ensure
+    ticket.destroy
+  end
 end

@@ -23,15 +23,34 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def update_dueby(ticket_status_changed=false)
-    BusinessCalendar.execute(self, {:dueby_calculation => true}) { 
-      set_sla_time(ticket_status_changed) 
-    } if update_dueby? && !disable_sla_calculation
+    BusinessCalendar.execute(self, {:dueby_calculation => true}) {
+      set_sla_time(ticket_status_changed) if update_dueby?
+      calculate_next_response if calculate_nr_dueBy?
+    } if !disable_sla_calculation
+
   end
 
   def set_sla_time(ticket_status_changed)
     sla_detail = self.sla_policy.sla_details.where(:priority => priority).first
     set_dueby(sla_detail)
     log_dueby(sla_detail, "New SLA logic")
+  end
+
+  def calculate_next_response
+    if current_note_id.present?
+      note = self.notes.find_by_id(current_note_id)
+      if set_nr_dueBy?(note)
+        self.last_customer_note_id = current_note_id
+        self.nr_updated_at = note.created_at
+        note.on_state_time = 0
+        set_nr_dueBy if !ticket_status.stop_sla_timer
+      elsif reset_nr_dueBy?(note)
+        self.nr_due_by = self.nr_updated_at = self.last_customer_note_id = nil
+        note.on_state_time = 0
+      end
+    elsif self.last_customer_note_id.present? && update_dueby?
+      set_nr_dueBy
+    end
   end
 
   def set_dueby(sla_detail)
@@ -41,6 +60,30 @@ class Helpdesk::Ticket < ActiveRecord::Base
     set_sla_calculation_time_at_with_zone if update_sla
     self.due_by = sla_detail.calculate_due_by(created_time, sla_calculation_time, total_time_worked, business_calendar)
     self.frDueBy = sla_detail.calculate_frDue_by(created_time, sla_calculation_time, total_time_worked, business_calendar) if self.ticket_states.first_response_time.nil?
+  end
+
+  def set_nr_dueBy(sla_detail = nil)
+    Rails.logger.debug "Starting nr_due_by calculation :: Note_id ::#{self.last_customer_note_id}"
+    note = self.notes.find_by_id(self.last_customer_note_id)
+    sla_detail ||= sla_policy.sla_details.where(:priority => priority).first
+    created_time = note.created_at || time_zone_now
+    total_time_worked = note.on_state_time.to_i
+    business_calendar = Group.default_business_calendar(group)
+    set_sla_calculation_time_at_with_zone if update_sla
+    self.nr_due_by = sla_detail.calculate_nr_dueBy(created_time, sla_calculation_time, total_time_worked, business_calendar)
+    Rails.logger.debug "Finished nr_due_by calculation :: Nr_due_by ::#{self.nr_due_by}"
+  end
+
+  def calculate_nr_dueBy?
+    self.account.next_response_sla_enabled? && first_response_time.present?
+  end
+
+  def set_nr_dueBy?(note)
+    self.last_customer_note_id.nil? && customer_performed?(note.user)
+  end
+
+  def reset_nr_dueBy?(note)
+    !note.private? && agent_performed?(note.user)
   end
 
   def calculate_dueby_and_frdueby?
@@ -114,10 +157,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def update_on_state_time
     self.ticket_states ||= Helpdesk::TicketState.new
-    self.ticket_states.resolution_time_updated_at = time_zone_now
-    Rails.logger.debug "SLA :::: Account id #{self.account_id} :: #{self.new_record? ? 'New' : self.id} ticket :: Updating resolution time :: resolution_time_updated_at :: #{self.ticket_states.resolution_time_updated_at}"
+    nr_updated_at_was = self.nr_updated_at
+    set_updated_time(self)
     if self.ticket_states.sla_timer_stopped_at.nil? && !self.new_record?
       ticket_states.change_on_state_time(ticket_states.resolution_time_updated_at_was, ticket_states.resolution_time_updated_at)
+      unless self.last_customer_note_id.nil?
+        note = self.notes.find_by_id(self.last_customer_note_id)
+        ticket_states.change_on_state_time(nr_updated_at_was, self.nr_updated_at, note)
+      end
     end
   end
 
