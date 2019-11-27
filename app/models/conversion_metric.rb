@@ -300,4 +300,8 @@ class ConversionMetric < ActiveRecord::Base
   def signup_method
     try(:[], :session_json).try(:[], :signup_method)
   end
+
+  def lead_source_choice
+    try(:[], :session_json).try(:[], :current_session).try(:[], 'lead_source_choice')
+  end
 end

@@ -767,9 +767,7 @@ class AccountsController < ApplicationController
     end
 
     def email_signup_redirect_url
-      @signup.account.launched?(:new_onboarding) ? 
-        signup_complete_url(:token => @signup.user.perishable_token, :host => @signup.account.full_domain) :
-        edit_account_domain_url(:perishable_token => @signup.user.perishable_token, :host => @signup.account.full_domain)
+      signup_complete_url(:token => @signup.user.perishable_token, :host => @signup.account.full_domain)
     end
 
     def mark_account_as_anonymous

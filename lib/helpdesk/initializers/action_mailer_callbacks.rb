@@ -12,6 +12,7 @@ module ActionMailerCallbacks
   include ParserUtil
   include EmailHelper
   include Email::EmailService::IpPoolHelper
+  include Email::Mailbox::GmailOauthHelper
 
   def send_email(notification_type, recipient, *args)
     language = mailer_language(recipient)
@@ -82,6 +83,9 @@ module ActionMailerCallbacks
       email_config = Thread.current[:email_config]
       if (email_config && email_config.smtp_mailbox)
         smtp_mailbox = email_config.smtp_mailbox
+        refresh_access_token(smtp_mailbox) if smtp_mailbox.authentication == Email::Mailbox::Constants::OAUTH && 
+          access_token_expired?(smtp_mailbox.account_id, smtp_mailbox.id) &&
+          smtp_mailbox.error_type.nil?
         smtp_settings = {
           tls: smtp_mailbox.use_ssl,
           enable_starttls_auto: true,

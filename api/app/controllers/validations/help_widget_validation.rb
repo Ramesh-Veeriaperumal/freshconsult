@@ -172,6 +172,11 @@ class HelpWidgetValidation < ApiValidation
         data_type: {
           rules: 'Boolean'
         }
+      },
+      require_login: {
+        data_type: {
+          rules: 'Boolean'
+        }
       }
     }
   end

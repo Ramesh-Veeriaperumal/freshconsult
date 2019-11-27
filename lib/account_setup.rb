@@ -34,7 +34,7 @@ module AccountSetup
     end
 
     def reports_eligible?
-      !current_account.new_onboarding_enabled?
+      false
     end  
   end
 end

@@ -37,5 +37,6 @@ module TicketFilterConstants
 
   SORTABLE_CUSTOM_FIELDS = { 'appointment_start_time' => FSM_APPOINTMENT_START_TIME }.freeze
 
-  ES_SUPPORTED_FILTERS = ['unresolved_service_tasks'].freeze
+  ES_SUPPORTED_FILTERS = ['unresolved_service_tasks', 'unassigned_service_tasks'].freeze
+  SORT_BY_APPOINTMENT_TIME_FILTERS = ['unresolved_service_tasks', 'unassigned_service_tasks'].freeze
 end.freeze

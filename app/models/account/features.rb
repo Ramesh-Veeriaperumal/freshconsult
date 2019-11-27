@@ -20,7 +20,7 @@ class Account < ActiveRecord::Base
     :denormalized_select_for_update, :trial_subscription, :installed_app_publish, :es_tickets,
     :twitter_dm_outgoing_attachment, :twitter_mention_outgoing_attachment,
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017, :year_in_review_2018,
-    :new_onboarding, :onboarding_v2, :onboarding_i18n, :onboarding_inlinemanual, :skip_portal_cname_chk,
+    :onboarding_inlinemanual, :skip_portal_cname_chk,
     :product_central_publish, :help_widget, :redis_picklist_id,
     :bot_email_channel, :bot_email_central_publish, :description_by_default,
     :bot_chat_history, :new_es_api, :filter_factory, :ticket_fields_central_publish,
@@ -46,7 +46,7 @@ class Account < ActiveRecord::Base
     :ticket_field_revamp, :facebook_dm_outgoing_attachment, :skip_posting_to_fb, :hide_mailbox_error_from_agents, :hide_og_meta_tags,
     :freshcaller_admin_new_ui, :facebook_post_outgoing_attachment, :outgoing_tweets_to_tms, :incoming_mentions_in_tms, :help_widget_login, :occlusion_rendering_ticket_fields,
     :prevent_lang_detect_for_spam, :default_unassigned_service_tasks_filter, :jira_onpremise_reporter, :support_ticket_rate_limit, :sidekiq_logs_to_central, :portal_central_publish, :global_navbar, :advanced_automations, :encode_emoji_in_solutions,
-    :forums_agent_portal, :agent_shifts, :mailbox_google_oauth, :helpdesk_tickets_by_product, :send_and_set
+    :forums_agent_portal, :agent_shifts, :mailbox_google_oauth, :helpdesk_tickets_by_product, :send_and_set, :migrate_euc_pages_to_us
   ].freeze
 
   DB_FEATURES = [
@@ -81,7 +81,7 @@ class Account < ActiveRecord::Base
     :ticket_properties_suggester, :ticket_properties_suggester_eligible,
     :hide_first_response_due, :agent_articles_suggest, :email_articles_suggest, :customer_journey, :botflow,
     :help_widget, :help_widget_appearance, :help_widget_predictive, :portal_article_filters, :supervisor_custom_status, :lbrr_by_omniroute,
-    :secure_attachments, :article_versioning, :article_export, :article_approval_workflow
+    :secure_attachments, :article_versioning, :article_export, :article_approval_workflow, :next_response_sla
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
@@ -382,9 +382,6 @@ class Account < ActiveRecord::Base
     has_feature?(:undo_send) || launched?(:undo_send)
   end
 
-  def new_onboarding_enabled?
-    launched?(:new_onboarding) || launched?(:onboarding_v2)
-  end
   def email_spoof_check_feature?
     email_spoof_check_enabled? && !disable_email_spoof_check_enabled?
   end

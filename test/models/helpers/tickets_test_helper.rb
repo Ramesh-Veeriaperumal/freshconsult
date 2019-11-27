@@ -90,12 +90,19 @@ module TicketsTestHelper
     # TODO: Testing lifecycle_hash.
     lifecycle_hash = {}
     activity_type = ticket.activity_type
-    activity_type_hash = if activity_type && activity_type[:type] == Helpdesk::Ticket::SPLIT_TICKET_ACTIVITY
-                           split_ticket_hash(activity_type)
-                         elsif activity_type && activity_type[:type] == Helpdesk::Ticket::MERGE_TICKET_ACTIVITY
-                           merge_ticket_hash(activity_type)
-                         elsif activity_type && activity_type[:type] == Social::Constants::TWITTER_FEED_TICKET
-                           social_tab_ticket_hash(activity_type)
+    activity_type_hash = if activity_type
+                           case activity_type[:type]
+                           when Helpdesk::Ticket::SPLIT_TICKET_ACTIVITY
+                             split_ticket_hash(activity_type)
+                           when Helpdesk::Ticket::MERGE_TICKET_ACTIVITY
+                             merge_ticket_hash(activity_type)
+                           when Social::Constants::TWITTER_FEED_TICKET
+                             social_tab_ticket_hash(activity_type)
+                           when Helpdesk::Ticket::ROUND_ROBIN_ACTIVITY
+                             round_robin_hash(activity_type)
+                           else
+                             {}
+                           end
                          else
                            {}
                          end
@@ -130,6 +137,12 @@ module TicketsTestHelper
       activity_type: {
         type: Social::Constants::TWITTER_FEED_TICKET
       }
+    }
+  end
+
+  def round_robin_hash(activity_type)
+    {
+      activity_type: activity_type
     }
   end
 
@@ -267,12 +280,40 @@ module TicketsTestHelper
   end
 
   def cp_assoc_ticket_pattern(expected_output = {}, ticket)
-    {
+    assoc_ticket_pattern = {
       requester: Hash,
       responder: (ticket.responder ? Hash : nil),
       group: (ticket.group ? Hash : nil),
       attachments: Array,
       skill: (ticket.skill ? Hash : nil)
+    }
+    return assoc_ticket_pattern.merge({ internal_agent: (ticket.internal_agent ? Hash : nil), internal_group: (ticket.internal_group ? Hash : nil) }) if Account.current.shared_ownership_enabled?
+
+    assoc_ticket_pattern
+  end
+
+  def internal_agent_association_pattern(ticket)
+    {
+      id: ticket.internal_agent_id,
+      name: ticket.internal_agent.name,
+      type: ticket.internal_agent.agent_or_contact,
+      email: ticket.internal_agent.email,
+      account_id: ticket.account_id,
+      active: ticket.internal_agent.active
+    }
+  end
+
+  def internal_group_association_pattern(ticket)
+    {
+      id: ticket.internal_group_id,
+      name: ticket.internal_group.name,
+      account_id: ticket.account_id,
+      group_type:
+        {
+          id: ticket.internal_group.group_type_hash[:id],
+          name: ticket.internal_group.group_type_hash[:name]
+        },
+      business_calendar_id: ticket.internal_group.business_calendar_id
     }
   end
 

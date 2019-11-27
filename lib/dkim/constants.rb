@@ -87,12 +87,15 @@ module Dkim::Constants
   EMAIL_SERVICE_GET_DOMAINS = FD_EMAIL_SERVICE['get_domains']
   EMAIL_SERVICE_CONFIGURE_DOMAIN = FD_EMAIL_SERVICE['configure_domain']
   EMAIL_SERVICE_VERIFY_DOMAIN = FD_EMAIL_SERVICE['verify_domain']
+  EMAIL_SERVICE_REMOVE_DOMAIN = FD_EMAIL_SERVICE['remove_domain']
   EMAIL_SERVICE_RESPONSE_CODE = {
-    success: 200
+    success: 200,
+    delete_success: 204
   }.freeze
   EMAIL_SERVICE_ACTION = {
     get_domains: :get_domains,
     configure_domain: :configure_domain,
-    verify_domain: :verify_domain
+    verify_domain: :verify_domain,
+    remove_domain: :remove_domain
   }.freeze
 end

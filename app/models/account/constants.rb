@@ -49,7 +49,7 @@ class Account < ActiveRecord::Base
 
     :estate => {
       :features => [ :collision, :layout_customization, :round_robin, :enterprise_reporting,
-        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :dynamic_sections,
+        :custom_ssl, :custom_roles, :multiple_business_hours, :dynamic_sections,
         :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies,
         :multiple_companies_toggle, :round_robin_on_update, :multi_dynamic_sections ],
       :inherits => [ :garden ]
@@ -78,7 +78,7 @@ class Account < ActiveRecord::Base
 
     :estate_classic => {
       :features => [ :collision, :layout_customization, :round_robin, :enterprise_reporting,
-        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :dynamic_sections,
+        :custom_ssl, :custom_roles, :multiple_business_hours, :dynamic_sections,
         :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies,
         :multiple_companies_toggle, :round_robin_on_update, :multi_dynamic_sections ],
       :inherits => [ :garden_classic ]
@@ -104,7 +104,7 @@ class Account < ActiveRecord::Base
     :estate_jan_17 => {
       :features => [ :multi_product, :customer_slas, :multi_timezone ,
         :collision, :layout_customization, :round_robin, :enterprise_reporting,
-        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :dynamic_sections,
+        :custom_ssl, :custom_roles, :multiple_business_hours, :dynamic_sections,
         :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies,
         :multiple_companies_toggle, :round_robin_on_update, :multi_dynamic_sections, :custom_dashboard],
       :inherits => [ :garden_jan_17 ]
@@ -247,7 +247,7 @@ class Account < ActiveRecord::Base
       es_v1_enabled: false, es_v2_reads: false, fb_msg_realtime: false,
       force_index_tickets: false, freshfone_call_tracker: false, freshfone_caller_id_masking: false,
       freshfone_new_notifications: false, freshfone_onboarding: false, gamification_perf: false,
-      gamification_quest_perf: false, onboarding_v2: false, lambda_exchange: false, automation_revamp: false,
+      gamification_quest_perf: false, lambda_exchange: false, automation_revamp: false,
       list_page_new_cluster: false, meta_read: false, most_viewed_articles: false,
       multifile_attachments: true, new_footer_feedback_box: false, new_leaderboard: false,
       periodic_login_feature: false, restricted_helpdesk: false,
@@ -283,7 +283,7 @@ class Account < ActiveRecord::Base
       contact_delete_forever: false, imap_error_status_check: false, va_any_field_without_none: false,
       auto_complete_off: false, freshworks_omnibar: false, dependent_field_validation: false,
       post_central_publish: false, twitter_common_redirect: false, installed_app_publish: false,
-      euc_migrated_twitter: false, new_onboarding: false, new_ticket_recieved_metric: false,
+      euc_migrated_twitter: false, new_ticket_recieved_metric: false,
       es_msearch: true, canned_forms: false, attachment_virus_detection: false,
       undo_send: false, timeline: false, twitter_microservice: true, twitter_handle_publisher: true,
       old_link_back_url_validation: false, stop_contacts_count_query: false,
@@ -308,7 +308,7 @@ class Account < ActiveRecord::Base
       allow_update_agent: false, facebook_dm_outgoing_attachment: true, hide_mailbox_error_from_agents: false,
       facebook_post_outgoing_attachment: true, outgoing_tweets_to_tms: false, incoming_mentions_in_tms: false, default_unassigned_service_tasks_filter: false,
       prevent_lang_detect_for_spam: false, jira_onpremise_reporter: false, support_ticket_rate_limit: false, sidekiq_logs_to_central: false, portal_central_publish: false, encode_emoji_in_solutions: false,
-      forums_agent_portal: false, mailbox_google_oauth: false, send_and_set: false
+      forums_agent_portal: false, mailbox_google_oauth: false, send_and_set: false, migrate_euc_pages_to_us: false
     }, :merge
   )
 

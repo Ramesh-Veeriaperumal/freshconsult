@@ -385,6 +385,24 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern_with_nested_field(:settings, 'form_type', "It should be one of these values: '1,2'", code: 'invalid_value')])
   end
 
+  def test_update_with_require_login
+    widget = create_widget
+    params_hash = widget_hash(widget)
+    request_params = {
+      settings: {
+        contact_form: {
+          require_login: true
+        }
+      }
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    assert_response 200
+    widget.reload
+    id = JSON.parse(@response.body)['id']
+    match_json(widget_show_pattern(widget))
+    assert widget.contact_form_require_login?
+  end
+
   def test_update_with_solution_articles
     widget = create_widget
     params_hash = widget_hash(widget)
@@ -1331,7 +1349,8 @@ class HelpWidgetsControllerTest < ActionController::TestCase
           form_submit_message: 'Your message is sent!',
           screenshot: true,
           attach_file: false,
-          captcha: false
+          captcha: false,
+          require_login: true
         },
         appearance: {
           position: 1,
@@ -1360,6 +1379,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     assert widget.settings[:contact_form][:screenshot] == request_params[:settings][:contact_form][:screenshot]
     assert widget.settings[:contact_form][:attach_file] == request_params[:settings][:contact_form][:attach_file]
     assert widget.settings[:contact_form][:captcha] == request_params[:settings][:contact_form][:captcha]
+    assert widget.contact_form_require_login?
     assert widget.settings[:appearance][:position] == request_params[:settings][:appearance][:position]
     assert widget.settings[:appearance][:offset_from_bottom] == request_params[:settings][:appearance][:offset_from_bottom]
     assert widget.settings[:appearance][:offset_from_left] == request_params[:settings][:appearance][:offset_from_left]

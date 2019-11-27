@@ -376,6 +376,7 @@
       :supervisor_custom_status: 371
       :lbrr_by_omniroute: 372
       :secure_attachments: 373
+      :next_response_sla: 374
 :selectable_features:
   :redis_display_id: true
   :branding: true

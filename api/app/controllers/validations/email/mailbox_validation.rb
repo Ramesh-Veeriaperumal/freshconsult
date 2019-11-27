@@ -4,13 +4,21 @@ class Email::MailboxValidation < ApiValidation
   MANDATORY_FIELD_ARRAY = %i[name support_email mailbox_type].freeze
 
   attr_accessor :name, :support_email, :default_reply_email, :mailbox_type, :custom_mailbox,
-                :group_id, :product_id, :incoming, :outgoing
+                :group_id, :product_id, :incoming, :outgoing, :reference_key
 
   validates :name, data_type: { rules: String, allow_nil: true }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
-  validates :support_email, required: true, data_type: { rules: String }, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, accepted: :'valid email address' }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
+  validates :support_email,
+            required: true,
+            data_type: { rules: String },
+            custom_format: {
+              with: ApiConstants::EMAIL_VALIDATOR,
+              accepted: :'valid email address'
+            },
+            custom_length: {
+              maximum: ApiConstants::MAX_LENGTH_STRING
+            }
   validates :mailbox_type, required: true, custom_inclusion: { in: MAILBOX_TYPES }
   validate :custom_mailbox_feature_check, if: :custom_mailbox?
-
   validates :group_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true }
   validate :product_feature, if: -> { product_id }
   validates :product_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true }
@@ -23,9 +31,14 @@ class Email::MailboxValidation < ApiValidation
             allow_nil: true,
             hash: {
               access_type: { custom_inclusion: { in: ACCESS_TYPES, required: true } },
+              reference_key: { data_type: { rules: String } },
               incoming: { data_type: { rules: Hash } },
               outgoing: { data_type: { rules: Hash } }
             }, if: -> { errors[:custom_mailbox].blank? }
+
+  validates :reference_key,
+            required: true,
+            if: :reference_key_required?
 
   validates :incoming,
             required: true,
@@ -35,9 +48,9 @@ class Email::MailboxValidation < ApiValidation
               port: { custom_numericality: { only_integer: true, greater_than: 0, required: true } },
               use_ssl: { data_type: { rules: 'Boolean', required: true } },
               delete_from_server: { data_type: { rules: 'Boolean', required: true } },
-              authentication: { custom_inclusion: { in: IMAP_AUTHENTICATION_TYPES, required: true } },
-              user_name: { data_type: { rules: String, required: true } },
-              password: { data_type: { rules: String, required: true } }
+              authentication: { data_type: { rules: String, required: true } },
+              user_name: { data_type: { rules: String, required: true, presence: true } },
+              password: { data_type: { rules: String, allow_blank: true, allow_nil: true } }
             }, if: :incoming_required?
 
   validates :outgoing,
@@ -47,13 +60,22 @@ class Email::MailboxValidation < ApiValidation
               mail_server: { data_type: { rules: String, required: true } },
               port: { custom_numericality: { only_integer: true, greater_than: 0, required: true } },
               use_ssl: { data_type: { rules: 'Boolean', required: true } },
-              authentication: { custom_inclusion: { in: SMTP_AUTHENTICATION_TYPES, required: true } },
-              user_name: { data_type: { rules: String, required: true } },
-              password: { data_type: { rules: String, required: true } }
+              authentication: { data_type: { rules: String, required: true } },
+              user_name: { data_type: { rules: String, required: true, presence: true } },
+              password: { data_type: { rules: String, allow_blank: true, allow_nil: true } }
             }, if: :outgoing_required?
 
   validate :incoming_absence, if: -> { errors[:custom_mailbox].blank? && outgoing_access_type? }
   validate :outgoing_absence, if: -> { errors[:custom_mailbox].blank? && incoming_access_type? }
+
+  validate :validate_reference, if: -> { errors[:custom_mailbox].blank? && oauth? && oauth_reference }
+  validate :validate_oauth_email, if: -> { errors[:custom_mailbox].blank? && oauth? && oauth_reference }
+  validate :invalid_reference_presence, if: -> { errors[:custom_mailbox].blank? }
+  validate :incoming_password_presence, if: -> { errors[:custom_mailbox].blank? && (incoming_access_type? || both_access_type?) && incoming && !incoming_oauth? }
+  validate :outgoing_password_presence, if: -> { errors[:custom_mailbox].blank? && (outgoing_access_type? || both_access_type?) && outgoing && !outgoing_oauth? }
+
+  validate :incoming_authentication_type, if: -> { errors[:custom_mailbox].blank? && (incoming_access_type? || both_access_type?) && incoming }
+  validate :outgoing_authentication_type, if: -> { errors[:custom_mailbox].blank? && (outgoing_access_type? || both_access_type?) && outgoing }
 
   def initialize(request_params, item, allow_string_param = false)
     super(request_params, item, allow_string_param, item_decorator_class)
@@ -107,6 +129,13 @@ class Email::MailboxValidation < ApiValidation
       [OUTGOING_ACCESS_TYPE, BOTH_ACCESS_TYPE].include?(custom_mailbox[:access_type])
   end
 
+  def reference_key_required?
+    custom_mailbox? &&
+      errors[:custom_mailbox].blank? &&
+      custom_mailbox.present? &&
+      create? && incoming_or_outgoing_oauth?
+  end
+
   def custom_mailbox?
     mailbox_type == CUSTOM_MAILBOX
   end
@@ -121,6 +150,12 @@ class Email::MailboxValidation < ApiValidation
     custom_mailbox? &&
       custom_mailbox.present? &&
       custom_mailbox[:access_type] == INCOMING_ACCESS_TYPE
+  end
+
+  def both_access_type?
+    custom_mailbox? &&
+      custom_mailbox.present? &&
+      custom_mailbox[:access_type] == BOTH_ACCESS_TYPE
   end
 
   def custom_mailbox_marked_for_destruction?
@@ -144,7 +179,79 @@ class Email::MailboxValidation < ApiValidation
 
   private
 
+    def invalid_reference_presence
+      errors[:reference_key] = :invalid_field if !oauth? && reference_key.present?
+    end
+
     def item_decorator_class
       @item_decorator_class ||= EmailMailboxConstants::DECORATOR_CLASS.constantize
+    end
+
+    def oauth_reference
+      custom_mailbox[:reference_key]
+    end
+
+    def oauth?
+      custom_mailbox.present? && private_api? &&
+        incoming_or_outgoing_oauth?
+    end
+
+    def incoming_or_outgoing_oauth?
+      incoming_oauth? || outgoing_oauth?
+    end
+
+    def incoming_oauth?
+      incoming && incoming[:authentication] == OAUTH
+    end
+
+    def outgoing_oauth?
+      outgoing && outgoing[:authentication] == OAUTH
+    end
+
+    def validate_reference
+      errors[:reference_key] = :invalid_oauth_reference unless gmail_redis_obj.exists?
+    end
+
+    def gmail_redis_obj
+      @gmail_redis_obj ||= Email::Mailbox::GmailOauthRedis.new(redis_key: oauth_reference)
+    end
+
+    def validate_oauth_email
+      errors[:reference_key] = :invalid_oauth_reference if invalid_reference?
+    end
+
+    def invalid_reference?
+      cached_oauth_hash = gmail_redis_obj.fetch_hash
+      oauth_email = cached_oauth_hash[OAUTH_EMAIL]
+      (incoming && incoming[:user_name] && incoming[:user_name] != oauth_email ||
+        outgoing && outgoing[:user_name] && outgoing[:user_name] != oauth_email)
+    end
+
+    def incoming_password_presence
+      errors[:incoming] = :missing_or_blank if incoming[:password].blank?
+    end
+
+    def outgoing_password_presence
+      errors[:outgoing] = :missing_or_blank if outgoing[:password].blank?
+    end
+
+    def incoming_authentication_type
+      return if IMAP_AUTHENTICATION_TYPES.include?(incoming[:authentication]) || (private_api? && (IMAP_AUTHENTICATION_TYPES | [OAUTH]).include?(incoming[:authentication]))
+
+      errors[:incoming] = :invalid_value_in_field
+      error_options[:incoming] = {
+        value: incoming[:authentication],
+        field_name: 'authentication'
+      }
+    end
+
+    def outgoing_authentication_type
+      return if SMTP_AUTHENTICATION_TYPES.include?(outgoing[:authentication]) || (private_api? && (SMTP_AUTHENTICATION_TYPES | [OAUTH]).include?(outgoing[:authentication]))
+
+      errors[:outgoing] = :invalid_value_in_field
+      error_options[:outgoing] = {
+        value: outgoing[:authentication],
+        field_name: 'authentication'
+      }
     end
 end

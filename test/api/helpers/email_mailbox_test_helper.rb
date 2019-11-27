@@ -107,13 +107,14 @@ module EmailMailboxTestHelper
   def create_custom_mailbox_hash(options = {})
     mailbox_access_type = options[:access_type] || 'incoming'
     result_hash = { access_type: mailbox_access_type }
-    result_hash.merge!({incoming: create_incoming_type_hash(options)}) if [Email::Mailbox::Constants::INCOMING_ACCESS_TYPE, Email::Mailbox::Constants::BOTH_ACCESS_TYPE].include?(mailbox_access_type)
-    result_hash.merge!({outgoing: create_outgoing_type_hash(options)}) if [Email::Mailbox::Constants::OUTGOING_ACCESS_TYPE, Email::Mailbox::Constants::BOTH_ACCESS_TYPE].include?(mailbox_access_type)
+    result_hash[:reference_key] = options[:reference_key] if options[:reference_key].present?
+    result_hash[:incoming] = create_incoming_type_hash(options) if [Email::Mailbox::Constants::INCOMING_ACCESS_TYPE, Email::Mailbox::Constants::BOTH_ACCESS_TYPE].include?(mailbox_access_type)
+    result_hash[:outgoing] = create_outgoing_type_hash(options) if [Email::Mailbox::Constants::OUTGOING_ACCESS_TYPE, Email::Mailbox::Constants::BOTH_ACCESS_TYPE].include?(mailbox_access_type)
     { custom_mailbox: result_hash }
   end
   
   def create_incoming_type_hash(options = {})
-    {
+    incoming_hash = {
       mail_server: options[:imap_server_name] || 'imap.gmail.com',
       port: options[:imap_port] || 993,
       use_ssl: options[:imap_use_ssl] || true,
@@ -122,10 +123,12 @@ module EmailMailboxTestHelper
       user_name: options[:imap_user_name] || 'smtp@gmail.com',
       password: options[:imap_password] || 'password'
     }
+    incoming_hash.merge!(refresh_token: options[:imap_refresh_token] || 'refreshtoken') if options[:imap_authentication] == 'xoauth2'
+    incoming_hash
   end
   
   def create_outgoing_type_hash(options = {})
-    {
+    outgoing_hash = {
       mail_server: options[:smtp_server_name] || 'smtp.gmail.com',
       port: options[:smtp_port] || 587,
       use_ssl: options[:smtp_use_ssl] || true,
@@ -133,6 +136,8 @@ module EmailMailboxTestHelper
       user_name: options[:smtp_user_name] || 'smtp@gmail.com',
       password: options[:smtp_password] || 'password'
     }
+    outgoing_hash.merge!(refresh_token: options[:smtp_refresh_token] || 'refreshtoken') if options[:smtp_authentication] == 'xoauth2'
+    outgoing_hash
   end
 end
 

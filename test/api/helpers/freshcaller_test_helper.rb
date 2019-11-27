@@ -35,4 +35,69 @@ module Freshcaller::TestHelper
     @agent.agent.freshcaller_agent.delete
     @agent.agent.reload
   end
+
+  def link_url
+    'https://test.freshcaller.com/link_account'
+  end
+
+  def stub_link_account_success(email)
+    response_hash = {
+      user_details: [
+        {
+          email: email,
+          user_id: 1234
+        }
+      ],
+      freshcaller_account_id: 1234,
+      freshcaller_account_domain: 'test.freshcaller.com'
+    }
+    @req = stub_request(:put, link_url).to_return(body: response_hash.to_json,
+                                                  status: 200,
+                                                  headers: { 'Content-Type' => 'application/json' })
+  end
+
+  def stub_link_account_access_restricted
+    response_hash = {
+      error: 'No Access',
+      error_code: 'access_restricted'
+    }
+    @req = stub_request(:put, link_url).to_return(body: response_hash.to_json,
+                                                  status: 200,
+                                                  headers: { 'Content-Type' => 'application/json' })
+  end
+
+  def stub_link_account_password_incorrect
+    response_hash = {
+      error: 'password_incorrect',
+      error_code: 'password_incorrect'
+    }
+    @req = stub_request(:put, link_url).to_return(body: response_hash.to_json,
+                                                  status: 200,
+                                                  headers: { 'Content-Type' => 'application/json' })
+  end
+
+  def stub_link_account_invalid_domain
+    @req = stub_request(:put, link_url).to_return(body: '{}',
+                                                  status: 404,
+                                                  headers: { 'Content-Type' => 'application/json' })
+  end
+
+  def stub_link_account_access_denied
+    response_hash = {
+      access: 'denied'
+    }
+    @req = stub_request(:put, link_url).to_return(body: response_hash.to_json,
+                                                  status: 403,
+                                                  headers: { 'Content-Type' => 'application/json' })
+  end
+
+  def stub_link_account_unprocessible_entity
+    @req = stub_request(:put, link_url).to_return(body: '{}',
+                                                  status: 422,
+                                                  headers: { 'Content-Type' => 'application/json' })
+  end
+
+  def remove_stubs
+    remove_request_stub(@req)
+  end
 end

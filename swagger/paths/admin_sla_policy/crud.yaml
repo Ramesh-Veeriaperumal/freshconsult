@@ -1,0 +1,129 @@
+get:
+  tags: [Admin SLA Policy]
+  summary: Get SLA Policy
+  description: Get an SLA Policy
+  parameters:
+    - $ref: '#/parameters/id'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/admin_sla_policy'
+        example:
+          id: 1
+          default: false
+          position: 2
+          created_at: "2020-01-01T00:00:00Z"
+          updated_at: "2020-01-01T00:00:00Z"
+          name: 'SLA Policy - Asia'
+          description: 'SLA for tickets from customers in Asia regions'
+          active: true
+          sla_targets:
+            - priority: 4
+              first_response_time: 'P1H'
+              every_response_time: 'P1H'
+              resolution_time: 'P1H'
+              operational_hours: "business_hours"
+              escalation_enabled: true
+          conditions:
+            - name: 'condition_set_1'
+              match_type: 'all'
+              properties:
+                - resource_type: 'ticket'
+                  field_name: 'cf_continent'
+                  operator: 'is'
+                  value: 'Asia'
+                  case_senstive: true
+                  nested_fields:
+                    type: object
+                    properties:
+                      level2:
+                        properties:
+                          field_name: 'cf_country'
+                          value: 'India'
+                      level3:
+                        properties:
+                          field_name: 'cf_state'
+                          value: 'Tamil Nadu'
+                  associated_fields:
+                    properties:
+                      field_name: 'associated_ticket_count'
+                      operator: 'is'
+                      value: 1
+          reminders:
+            first_response:
+              - level: 1
+                time: 0
+                agents:
+                  - id: 1
+            every_response:
+              - level: 1
+                time: 0
+                agents:
+                  - id: 1
+            resolution:
+              - level: 1
+                time: 0
+                agents:
+                  - id: 1
+          escalations:
+            first_response:
+              - level: 1
+                time: 0
+                agents:
+                  - id: 1
+            every_response:
+              - level: 1
+                time: 0
+                agents:
+                  - id: 1
+            resolution:
+              - level: 1
+                time: 0
+                agents:
+                  - id: 1
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+    404:
+      description: Rule not found
+put:
+  tags: [Admin SLA Policy]
+  summary: Update SLA Policy
+  description: Update an SLA Policy
+  parameters:
+    - $ref: '#/parameters/id'
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/admin_sla_policy'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/admin_sla_policy'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+    404:
+      description: SLA Policy not found
+delete:
+  tags: [Admin SLA Policy]
+  summary: Delete SLA Policy
+  description: Delete an SLA Policy
+  parameters:
+    - $ref: '#/parameters/id'
+  responses:
+    204:
+      description: Success
+    403:
+      description: Access denied
+    404:
+      description: SLA Policy not found

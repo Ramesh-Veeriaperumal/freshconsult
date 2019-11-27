@@ -763,6 +763,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
     Account.unstub(:current)
     ApiAgentsController.any_instance.unstub(:fetch_export_details)
     ApiAgentsController.any_instance.unstub(:load_data_export)
+  end
 
   def test_create_agent_without_freshid
     Account.stubs(:current).returns(Account.first)

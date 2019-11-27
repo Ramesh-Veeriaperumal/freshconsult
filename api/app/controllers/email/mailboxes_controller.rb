@@ -18,6 +18,7 @@ class Email::MailboxesController < ApiApplicationController
     return unless validate_delegator(@item)
 
     if @item.save
+      remove_cached_oauth_value if oauth_reference
       render :create, status: 201
     else
       render_custom_errors
@@ -29,6 +30,7 @@ class Email::MailboxesController < ApiApplicationController
     return unless validate_delegator(@item)
 
     if @item.update_attributes(cname_params)
+      remove_cached_oauth_value if oauth_reference
       @item.reload
       render :update, status: 200
     else
@@ -71,7 +73,7 @@ class Email::MailboxesController < ApiApplicationController
       render_request_error(:require_feature, 403, feature: 'multiple_emails') unless current_account.multiple_emails_enabled?
     end
 
-    def after_load_object      
+    def after_load_object
       @item.imap_mailbox.try(:mark_for_destruction) if update? && imap_be_destroyed?
       @item.smtp_mailbox.try(:mark_for_destruction) if update? && smtp_be_destroyed?
     end
@@ -117,7 +119,15 @@ class Email::MailboxesController < ApiApplicationController
         cname_params[:imap_mailbox_attributes] = cname_params[:custom_mailbox].delete(:incoming)
         cname_params[:imap_mailbox_attributes][:authentication] = IMAP_CRAM_MD5 if cname_params[:imap_mailbox_attributes][:authentication] == CRAM_MD5
         cname_params[:imap_mailbox_attributes][:id] = @item.imap_mailbox.id if update? && @item.imap_mailbox.present?
+        sanitize_incoming_params_for_oauth if incoming_oauth?
       end
+    end
+
+    def sanitize_incoming_params_for_oauth
+      update_cached_values(IMAP) && return if valid_reference?
+      cname_params[:imap_mailbox_attributes][:password] = @item.imap_mailbox.decrypt_password(@item.imap_mailbox.password) if update? && @item.imap_mailbox.present?
+      update_incoming_and_outgoing(IMAP) && return if update? && incoming_to_be_updated?
+      render_errors(error: :invalid_oauth_reference) if update? && invalid_incoming_update?
     end
 
     def sanitize_outgoing_params
@@ -125,7 +135,30 @@ class Email::MailboxesController < ApiApplicationController
         ParamsHelper.assign_and_clean_params(EmailMailboxConstants::ACCESS_TYPE_PARAMS_MAPPING, cname_params[:custom_mailbox][:outgoing])
         cname_params[:smtp_mailbox_attributes] = cname_params[:custom_mailbox].delete(:outgoing)
         cname_params[:smtp_mailbox_attributes][:id] = @item.smtp_mailbox.id if update? && @item.smtp_mailbox.present?
+        sanitize_outgoing_params_for_oauth if outgoing_oauth?
       end
+    end
+
+    def update_incoming_and_outgoing(type)
+      mailbox_type = type == SMTP ? IMAP_MAILBOX : SMTP_MAILBOX
+      mailbox = @item.safe_send(mailbox_type)
+      attribute = "#{type}_mailbox_attributes".to_sym
+      cname_params[attribute][:password] = mailbox.decrypt_password(mailbox.password)
+      cname_params[attribute][:refresh_token] = mailbox.decrypt_refresh_token(mailbox.refresh_token)
+    end
+
+    def update_cached_values(type)
+      oauth_token, refresh_token = fetch_cached_auth_values
+      attribute = "#{type}_mailbox_attributes".to_sym
+      cname_params[attribute][:password] = oauth_token
+      cname_params[attribute][:refresh_token] = refresh_token
+    end
+
+    def sanitize_outgoing_params_for_oauth
+      update_cached_values(SMTP) && return if valid_reference?
+      cname_params[:smtp_mailbox_attributes][:password] = @item.smtp_mailbox.decrypt_password(@item.smtp_mailbox.password) if update? && @item.smtp_mailbox.present?
+      update_incoming_and_outgoing(SMTP) && return if update? && outgoing_to_be_updated?
+      render_errors(error: :invalid_oauth_reference) if update? && invalid_outgoing_update?
     end
 
     def assign_to_email

@@ -9,3 +9,5 @@ properties:
   agent_seats:
     type: integer
     format: int64
+  currency:
+    type: string

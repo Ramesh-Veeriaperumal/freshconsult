@@ -1,0 +1,17 @@
+type: object
+properties:
+  level: 
+    type: integer
+    x-enum: [1, 2, 3, 4]
+  time:
+    type: integer
+  agents:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: integer
+required:
+  - time
+  - agents

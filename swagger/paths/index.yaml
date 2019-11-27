@@ -317,7 +317,7 @@
   $ref: ./surveys/satisfaction_survey.yaml
 
 #Search
-/search/solutions:
+/search/solutions/{language_code}:
   $ref: ./search/solutions.yaml
 /companies/autocomplete:
   $ref: ./search/companies.yaml
@@ -505,6 +505,8 @@
   $ref: ./subscription/estimate.yaml
 /plans:
   $ref: ./subscription/plans.yaml
+/subscription/update_payment:
+  $ref: ./subscription/update_payment.yaml
 
 # Outreach
 /proactive/rules:
@@ -614,6 +616,12 @@
   $ref: ./sla_policy/list_and_create.yaml
 /sla_policy/{id}:
   $ref: ./sla_policy/crud.yaml
+
+# Admin SLA Policy
+/admin/sla_policies:
+  $ref: ./admin_sla_policy/list_and_create.yaml
+/admin/sla_policies/{id}:
+  $ref: ./admin_sla_policy/crud.yaml
 
 # Custom Translations
 /admin/custom_translations/{id}/upload:

@@ -172,24 +172,40 @@ class Admin::DkimConfigurationsControllerTest < ActionController::TestCase
     Dkim::ConfigureDkimRecord.any_instance.unstub(:add_dns_records_to_aws)
   end
   
-  def test_dkim_verify_with_feature
-    @verified_email_config = create_email_config(support_email: 'test@fresh.com')
+  def test_dkim_remove
+    @verified_email_config = create_email_config(support_email: 'test@fresh7.com')
     make_email_config_active(@verified_email_config)
+    non_configured_domain1 = @account.outgoing_email_domain_categories.find_by_email_domain('fresh7.com')
+    change_domain_status(non_configured_domain1, 2)
+  
     Account.any_instance.stubs(:launched?).returns(true)
-    HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(status: 200, text: email_service_verify_hash)
-    non_configured_domain1 = @account.outgoing_email_domain_categories.find_by_email_domain('fresh.com')
-    change_domain_status(non_configured_domain1, 0)
-    post :create, {id: non_configured_domain1.id}
-    assert_response 200
-    get :verify_email_domain, {id: non_configured_domain1.id}
-    assert_response 200
-    non_configured_domain1.reload
-    assert_equal true, response.body.include?('fresh.com')
-    assert_equal 2, non_configured_domain1.status
-    assert_equal 1, response.body.scan('dkim-table-wraper').count
+    HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(status: 204, text: {}.to_json)
+
+    post :remove_dkim_config, {id: non_configured_domain1.id}
+    assert_response 302
   ensure
     @verified_email_config.destroy
     Account.any_instance.unstub(:launched?)
     HttpRequestProxy.any_instance.unstub(:fetch_using_req_params)
-  end  
+  end
+  
+  def test_dkim_remove_for_migrated_sendgrid_accounts
+    @verified_email_config = create_email_config(support_email: 'test@fresh8.com')
+    make_email_config_active(@verified_email_config)
+    non_configured_domain1 = @account.outgoing_email_domain_categories.find_by_email_domain('fresh8.com')
+    change_domain_status(non_configured_domain1, 2)
+
+    Account.any_instance.stubs(:launched?).returns(true)
+    HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(status: 204, text: {}.to_json)
+    Dkim::RemoveDkim.any_instance.stubs(:last_email_domain?).returns(true)
+    Dkim::UtilityMethods.stubs(:handle_dns_action).returns(true)
+    post :remove_dkim_config, {id: non_configured_domain1.id}
+    assert_response 302
+    non_configured_domain1.reload
+    assert_equal 3, non_configured_domain1.status
+  ensure
+    @verified_email_config.destroy
+    Account.any_instance.unstub(:launched?)
+    HttpRequestProxy.any_instance.unstub(:fetch_using_req_params)
+  end
 end

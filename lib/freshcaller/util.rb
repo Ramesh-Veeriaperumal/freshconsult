@@ -41,7 +41,7 @@ module Freshcaller::Util
     end
 
     def add_freshcaller_account(freshcaller_response)
-      current_account.create_freshcaller_account(freshcaller_account_id: freshcaller_response['freshcaller_account_id'], domain: freshcaller_response['freshcaller_account_domain'])
+      @item = current_account.create_freshcaller_account(freshcaller_account_id: freshcaller_response['freshcaller_account_id'], domain: freshcaller_response['freshcaller_account_domain'])
     end
 
     def enable_freshcaller
@@ -96,5 +96,37 @@ module Freshcaller::Util
       }
       freshid_params[:join_token] = Freshid::V2::Models::Organisation.join_token if create_new_account
       freshid_params
+    end
+
+    def link_freshcaller(freshcaller_response)
+      freshcaller_activation_actions(freshcaller_response)
+      link_freshcaller_agents(freshcaller_response)
+    end
+
+    def link_freshcaller_agents(freshcaller_response)
+      email_user_id_hash = freshcaller_response['user_details'].map { |user_hash| [user_hash['email'], user_hash['user_id']] }.to_h
+      users = current_account.technicians.active(true).preload(:agent).where(email: email_user_id_hash.keys)
+      users.each do |user|
+        user.agent.create_freshcaller_agent(agent_id: user.agent.id,
+                                            fc_enabled: true,
+                                            fc_user_id: email_user_id_hash[user.email])
+      end
+    end
+
+    def privileged_user?(user)
+      (user.privilege?(:manage_account) || user.privilege?(:admin_tasks)) && user.active? if user
+    end
+
+    def linking_params
+      link_params = params.merge(account_name: current_account.name,
+                                 account_id: current_account.id,
+                                 activation_required: false,
+                                 app: 'Freshdesk',
+                                 freshdesk_calls_url: "#{protocol}#{current_account.full_domain}/api/channel/freshcaller_calls",
+                                 domain_url: "#{protocol}#{current_account.full_domain}",
+                                 access_token: current_user.single_access_token,
+                                 account_region: ShardMapping.fetch_by_account_id(current_account.id).region)
+      link_params.merge!(freshid_v2_params) if current_account.freshid_org_v2_enabled?
+      link_params
     end
 end

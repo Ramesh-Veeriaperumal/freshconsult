@@ -102,6 +102,10 @@ gem "omniauth-salesforce", :git => "git://github.com/freshdesk/omniauth-salesfor
 gem "omniauth-mailchimp", "2.1.0"
 gem "omniauth-constantcontact2", "1.0.4"
 
+# To access Gmail IMAP and STMP via OAuth (XOAUTH2)
+# using the standard Ruby Net libraries
+gem 'gmail_xoauth', '~> 0.4.2'
+
 gem "dynamics_crm", :git => 'git@github.com:TinderBox/dynamics_crm.git', :branch => "master"
 gem "google-api-client", "~> 0.7.0"
 gem "ipaddress", "0.8.0"
@@ -139,7 +143,7 @@ gem "lockfile","1.4.3"
 
 gem "newrelic_rpm","~> 5.5.0"
 
-gem "prometheus_exporter", :git => "git@github.com:freshdesk/prometheus_exporter.git", :tag => "v1.0.3"
+gem "prometheus_exporter", :git => "git@github.com:freshdesk/prometheus_exporter.git", :tag => "v1.0.4"
 gem "ddtrace"
 gem "dogstatsd-ruby"
 

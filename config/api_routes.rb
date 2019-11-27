@@ -33,10 +33,14 @@ Helpkit::Application.routes.draw do
       end
       put '/custom_translations', to: 'custom_translations#upload'
       get '/custom_translations', to: 'custom_translations#download'
+
       resource :freshcaller_account, controller: 'freshcaller_account', only: [:show, :destroy] do
+        collection do
+          post :link
+        end
         member do
-          put 'enable'
-          put 'disable'
+          put :enable
+          put :disable
         end
       end
     end
@@ -833,13 +837,14 @@ Helpkit::Application.routes.draw do
     resources :contact_password_policy, controller: 'ember/contact_password_policies',
                                         only: [:index]
     resources :agent_password_policy, controller: 'ember/agent_password_policies',
-                                        only: [:index]
+                                      only: [:index]
 
-   resource :subscription, controller: 'admin/subscriptions', only: [:show, :update] do
+    resource :subscription, controller: 'admin/subscriptions', only: [:show, :update] do
       collection do
         get :estimate
+        post :update_payment
       end
-   end
+    end
 
     get '/plans', to: 'admin/subscriptions#plans'
 

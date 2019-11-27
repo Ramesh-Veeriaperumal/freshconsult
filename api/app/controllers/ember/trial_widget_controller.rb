@@ -9,9 +9,8 @@ class Ember::TrialWidgetController < ApiApplicationController
   before_filter :validate_body_params, only: [:complete_step]
 
   def index
-    setup_keys = current_account.new_onboarding_enabled? ? current_account.setup_keys : current_account.current_setup_keys
     @account_setup = {
-      tasks: setup_keys.map { |setup_key| setup_key_info(setup_key) }
+      tasks: current_account.setup_keys.map { |setup_key| setup_key_info(setup_key) }
     }
     response.api_root_key = :account_setup
   end

@@ -1,0 +1,45 @@
+type: object
+properties:
+  id:
+    type: integer
+    readOnly: true
+  default:
+    type: boolean
+    readOnly: true
+  position:
+    type: integer
+    readOnly: true
+  created_at:
+    type: string
+    readOnly: true
+    format: date-time
+  updated_at:
+    type: string
+    readOnly: true
+    format: date-time
+  name:
+    type: string
+  description:
+    type: string
+  active:
+    type: boolean
+  sla_targets:
+    type: array
+    items:
+      $ref: '#/definitions/admin_sla_target'
+    minItems: 4
+  conditions:
+    type: array
+    items:
+      $ref: '#/definitions/admin_sla_condition'
+  reminders:
+    type: object
+    $ref: '#/definitions/admin_sla_action'
+  escalations:
+    type: object
+    $ref: '#/definitions/admin_sla_action'
+required:
+  - name
+  - active
+  - sla_target
+  - conditions

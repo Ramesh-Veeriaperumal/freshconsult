@@ -1,11 +1,11 @@
 class Email::MailboxDelegator < BaseDelegator
   include MailboxValidator
+  include Email::Mailbox::Constants
 
-  MAILBOX_ATTRIBUTES = %w[server_name port use_ssl delete_from_server
-  authentication user_name password].freeze
+  MAILBOX_ATTRIBUTES = %w[server_name port use_ssl delete_from_server authentication user_name password].freeze
 
-  validate :imap_mailbox, if: -> { @record.imap_mailbox.present? && @record.imap_mailbox.changed? }
-  validate :smtp_mailbox, if: -> { @record.smtp_mailbox.present? && @record.smtp_mailbox.changed? }
+  validate :imap_mailbox, if: -> { @record.imap_mailbox.present? && @record.imap_mailbox.changed? && !incoming_oauth? }
+  validate :smtp_mailbox, if: -> { @record.smtp_mailbox.present? && @record.smtp_mailbox.changed? && !outgoing_oauth? }
   validate :group_presence, if: -> { group_id && attr_changed?('group_id') }
   validate :product_presence, if: -> { product_id && attr_changed?('product_id') }
   validate :changes_to_default_primary_role, unless: -> { primary_role && attr_changed?('primary_role') }
@@ -57,4 +57,14 @@ class Email::MailboxDelegator < BaseDelegator
   def changes_to_product_id_on_default_mailbox
     errors[:product_id] << :default_mailbox_product_changed if primary_role_was == true
   end
+
+  private
+
+    def incoming_oauth?
+      @record.imap_mailbox.authentication == OAUTH
+    end
+
+    def outgoing_oauth?
+      @record.smtp_mailbox.authentication == OAUTH
+    end
 end

@@ -54,6 +54,15 @@ class User < ActiveRecord::Base
     end
   end
 
+  api_accessible :internal_agent_central_publish_associations do |t|
+    t.add :id
+    t.add :name
+    t.add :agent_or_contact, as: :type
+    t.add :email
+    t.add :account_id
+    t.add :active
+  end
+
   api_accessible :widget do |u|
     u.add :id
     u.add :name

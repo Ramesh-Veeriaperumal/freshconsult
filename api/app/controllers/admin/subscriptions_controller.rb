@@ -1,7 +1,6 @@
 class Admin::SubscriptionsController < ApiApplicationController
-  include SubscriptionsHelper
   include HelperConcern
-  decorate_views(decorate_objects: [:plans], decorate_object: [:estimate])
+  decorate_views(decorate_objects: [:plans], decorate_object: [:estimate, :update_payment])
   before_filter :validate_query_params, only: [:plans, :estimate]
   before_filter -> { validate_delegator(nil, cname_params) }, only: [:update]
 
@@ -13,6 +12,7 @@ class Admin::SubscriptionsController < ApiApplicationController
   end
 
   def update
+    @item.switch_currency(cname_params[:currency]) if currency_switched?
     if @item.update_subscription(cname_params)
       @item = @item.present_subscription if @item.subscription_downgrade?
       render(action: :show)
@@ -23,16 +23,42 @@ class Admin::SubscriptionsController < ApiApplicationController
 
   def estimate
     return unless validate_delegator(nil, params)
+    @coupon = @item.coupon
+    @item.set_billing_params(params[:currency]) if params[:currency].present?
     @item.agent_limit = fetch_agent_limit
     @item.plan_id = params[:plan_id] if params[:plan_id].present?
     @item.renewal_period = params[:renewal_period]
     response.api_root_key = :estimate
   end
 
+  def update_payment
+    if @item.add_card_to_billing && @item.activate_subscription
+      response.api_root_key = :subscription
+      render(action: :show)
+    else
+      head 400
+    end
+  end
+
   private
+
+    def currency_switched?
+      cname_params[:currency].present? && @item.currency_name != cname_params[:currency]
+    end
+
+    def sanitize_params
+      if @item.new_sprout?
+        @item.agent_limit = cname_params[:agent_seats].present? && cname_params[:agent_seats] != @item.free_agents ? cname_params[:agent_seats] : current_account.full_time_support_agents.count
+      end
+    end
 
     def validate_params
       validate_body_params
+    end
+
+    def validate_url_params
+      @validation_klass = 'AdminSubscriptionValidation'
+      validate_query_params
     end
 
     def load_object
@@ -43,9 +69,15 @@ class Admin::SubscriptionsController < ApiApplicationController
       @item.new_sprout? && @item.agent_limit == params[:agent_seats].to_i && @item.agent_limit == @item.free_agents ? current_account.full_time_support_agents.count : params[:agent_seats]
     end
 
+    def sideload_options
+      @validator.include_array
+    end
+
     def decorator_options
       options = {}
-      if action_name.to_sym == :plans
+      if show? && sideload_options.present?
+        options[:update_payment_site] = @item.fetch_update_payment_site if sideload_options.include?('update_payment_site')
+      elsif action_name.to_sym == :plans
         currency = params[:currency].blank? ? current_account.subscription.currency
           : Subscription::Currency.currency_by_name(params[:currency]).first
         options[:currency] = currency.name
@@ -60,7 +92,7 @@ class Admin::SubscriptionsController < ApiApplicationController
     def fetch_estimate_details_from_chargebee
       {
         immediate_subscription_estimate: @item.fetch_immediate_estimate,
-        future_subscription_estimate: @item.fetch_subscription_estimate
+        future_subscription_estimate: @item.fetch_subscription_estimate(@coupon)
       }
     end
 

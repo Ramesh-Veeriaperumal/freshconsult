@@ -50,6 +50,14 @@ class Group < ActiveRecord::Base
     t.add :business_calendar, template: :central_publish
   end
   
+  api_accessible :internal_group_central_publish_associations do |t|
+    t.add :id
+    t.add :name
+    t.add :account_id
+    t.add :group_type_hash, as: :group_type
+    t.add :business_calendar_id
+  end
+
   api_accessible :central_publish_destroy do |t|
     t.add :id
     t.add :account_id   

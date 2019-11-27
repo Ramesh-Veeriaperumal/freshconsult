@@ -402,6 +402,7 @@ api_error_messages:
   subscription_request_destroy_error: 'Error while destroying subscription request!'
   account_cancellation_destroy_error: 'Error while removing account cancellation request!'
   active_mailbox_verification: 'Cannot send verification to an active mailbox'
+  invalid_oauth_reference: "OAuth reference is invalid. Please retry oauth process"
 
   #Freshcaller Integration
   fc_invalid_token: "Given token is invalid"
@@ -454,3 +455,9 @@ api_error_messages:
   duplicate_skill_name: "A skill already exists with name - '%{name}'"
 
   cannot_delete_file_ticket_field_attachment: "Attachment associated with a file ticket field cannot be deleted."
+  cannot_update_currency_unless_free_plan: "Cannot update currency for account in %{account_state} state"
+  fc_invalid_domain_name: "Freshcaller account with the given domain doesn't exist"
+  fc_access_denied: "Freshcaller access denied"
+  fc_unprocessable_entity: "Freshcaller unprocessable entity"
+  fc_password_incorrect: "Freshcaller account password is incorrect"
+  fc_access_restricted: "The given email id is not allowed to link"

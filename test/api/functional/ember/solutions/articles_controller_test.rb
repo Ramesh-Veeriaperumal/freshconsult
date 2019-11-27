@@ -1653,6 +1653,15 @@ module Ember
         assert_equal(' ', response.body)
       end
 
+      def test_export_articles_with_outdated_status
+        export_params = { portal_id: @portal_id.to_s, status: 'outdated', article_fields: [{ field_name: 'title', column_name: 'Title' }] }
+        expected_params = { filter_params: { 'portal_id' => @portal_id.to_s, 'article_fields' => [{ 'field_name' => 'title', 'column_name' => 'Title' }], 'outdated' => true }, lang_id: Account.current.language_object.id, lang_code: Account.current.language, current_user_id: User.current.id, export_fields: { 'title' => 'Title' }, portal_url: Account.current.portals.where(id: @portal_id.to_s).first.portal_url.presence || Account.current.host }
+        Export::Article.expects(:enqueue).with(expected_params).once
+        post :export, construct_params({ version: 'private' }, export_params)
+        assert_response 204
+        assert_equal(' ', response.body)
+      end
+
       def test_export_articles_without_article_export_privilege
         User.any_instance.stubs(:privilege?).with(:export_articles).returns(false)
         export_params = { portal_id: @portal_id.to_s, author: 1, status: 1, category: ['2'], folder: ['4'], tags: ['Tag1'], article_fields: [{ field_name: 'title', column_name: 'Title' }] }
@@ -2356,6 +2365,117 @@ module Ember
         assert_equal Solution::Article.last.description, paragraph
         assert_response 201
         match_json(private_api_solution_article_pattern(Solution::Article.last))
+      end
+
+      # agent without publish solution privileges tests
+
+      def test_update_draft_article_folder_without_publish_solution_privilege
+        without_publish_solution_privilege do
+          sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 1)).primary_article
+          lang_hash = { lang_codes: all_account_languages }
+          category = create_category({ portal_id: Account.current.main_portal.id }.merge(lang_hash))
+          new_folder_id = create_folder({ visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: category.id }.merge(lang_hash)).id
+          params_hash = { status: 1, folder_id: new_folder_id }
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+          assert_response 200
+          sample_article.reload
+          match_json(private_api_solution_article_pattern(sample_article))
+        end
+      end
+
+      def test_update_published_article_folder_without_publish_solution_privilege
+        without_publish_solution_privilege do
+          sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
+          lang_hash = { lang_codes: all_account_languages }
+          category = create_category({ portal_id: Account.current.main_portal.id }.merge(lang_hash))
+          new_folder_id = create_folder({ visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: category.id }.merge(lang_hash)).id
+          params_hash = { status: 1, folder_id: new_folder_id }
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+          assert_response 403
+          error_info_hash = { details: 'dont have permission to perfom on published article' }
+          match_json(request_error_pattern_with_info(:published_article_privilege_error, error_info_hash, error_info_hash))
+        end
+      end
+
+      def test_update_draft_article_tags_without_publish_solution_privilege
+        without_publish_solution_privilege do
+          User.any_instance.stubs(:privilege?).with(:create_tags).returns(true)
+          sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 1)).primary_article
+          params_hash = { status: 1, tags: ['sample tag1', 'sample tag2'] }
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+          assert_response 200
+          sample_article.reload
+          match_json(private_api_solution_article_pattern(sample_article))
+        end
+      end
+
+      def test_update_published_article_tags_without_publish_solution_privilege
+        without_publish_solution_privilege do
+          User.any_instance.stubs(:privilege?).with(:create_tags).returns(true)
+          sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
+          params_hash = { status: 1, tags: ['sample tag1', 'sample tag2'] }
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+          assert_response 403
+          error_info_hash = { details: 'dont have permission to perfom on published article' }
+          match_json(request_error_pattern_with_info(:published_article_privilege_error, error_info_hash, error_info_hash))
+        end
+      end
+
+      def test_unpublish_a_published_article_without_publish_solution_privilege
+        without_publish_solution_privilege do
+          sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
+          params_hash = { status: 1 }
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+          assert_response 403
+          error_info_hash = { details: 'dont have permission to perfom on published article' }
+          match_json(request_error_pattern_with_info(:published_article_privilege_error, error_info_hash, error_info_hash))
+        end
+      end
+
+      def test_create_and_publish_article_without_publish_solution_privilege
+        without_publish_solution_privilege do
+          folder_meta = get_folder_meta
+          title = Faker::Name.name
+          paragraph = Faker::Lorem.paragraph
+          post :create, construct_params({ version: 'private', id: folder_meta.id }, title: title, description: paragraph, status: 2)
+          assert_response 403
+          error_info_hash = { details: 'dont have permission to perfom on published article' }
+          match_json(request_error_pattern_with_info(:published_article_privilege_error, error_info_hash, error_info_hash))
+        end
+      end
+
+      def test_create_a_draft_article_without_publish_solution_privilege
+        without_publish_solution_privilege do
+          folder_meta = get_folder_meta
+          title = Faker::Name.name
+          paragraph = Faker::Lorem.paragraph
+          post :create, construct_params({ version: 'private', id: folder_meta.id }, title: title, description: paragraph, status: 1)
+          assert_response 201
+          assert Solution::Article.last.draft
+          match_json(private_api_solution_article_pattern(Solution::Article.last))
+        end
+      end
+
+      def test_update_draft_article_author_without_publish_solution_privilege
+        without_publish_solution_privilege do
+          sample_article = get_article_with_draft
+          params_hash = { title: 'publish without draft title', status: 1, agent_id: @agent.id }
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id, agent_id: @agent.id }, params_hash)
+          assert_response 200
+          sample_article.reload
+          match_json(private_api_solution_article_pattern(sample_article))
+        end
+      end
+
+      def test_update_published_article_author_without_publish_solution_privilege
+        without_publish_solution_privilege do
+          sample_article = get_article_with_draft
+          params_hash = { title: 'publish without draft title', status: 2, agent_id: @agent.id }
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id, agent_id: @agent.id }, params_hash)
+          assert_response 403
+          error_info_hash = { details: 'dont have permission to perfom on published article' }
+          match_json(request_error_pattern_with_info(:published_article_privilege_error, error_info_hash, error_info_hash))
+        end
       end
 
       private

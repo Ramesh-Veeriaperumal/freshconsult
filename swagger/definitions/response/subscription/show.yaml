@@ -64,3 +64,10 @@ properties:
             type: string
   paying_account:
     type: boolean
+  update_payment_site:
+    type: object
+    properties:
+      url:
+        type: string
+      site:
+        type: string

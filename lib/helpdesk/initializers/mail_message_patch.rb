@@ -2,6 +2,7 @@
 
 require 'mail'
 Mail::Message.class_eval do
+  include Email::Mailbox::GmailOauthHelper
 
     def deliver
       inform_interceptors
@@ -11,13 +12,15 @@ Mail::Message.class_eval do
       else
         response = do_delivery
       end
-      Rails.logger.info "Email successfully relayed to SMTP mail server. Response from mail server: #{response.string}" if (response.present? && response.class == Net::SMTP::Response)
+      retry_mail if response.nil? && oauth_retry?
+      Rails.logger.info "Email successfully relayed to SMTP mail server. Response from mail server: #{response.string}" if response.present? && response.class == Net::SMTP::Response
       inform_observers
       self
     end
 
     private
       
+
       HEADER_SEPARATOR_WITH_MATCH_PATTERN = /(#{Mail::Patterns::CRLF}#{Mail::Patterns::CRLF}|#{Mail::Patterns::CRLF}#{Mail::Patterns::WSP}*#{Mail::Patterns::CRLF}(?!#{Mail::Patterns::WSP}))/m
       HEADER_SEPARATOR_WITH_NO_WHITESPACE = /#{Mail::Patterns::CRLF}#{Mail::Patterns::CRLF}(?!#{Mail::Patterns::WSP})/m
       HEADER_FIELD_PATTERN = /^\w(.*):(.*)$/
@@ -37,6 +40,14 @@ Mail::Message.class_eval do
       self.header = header_part
       self.body   = body_part
     end
+
+      def oauth_retry?
+        self.delivery_method.settings[:authentication] == Email::Mailbox::Constants::OAUTH && !failed_mailbox?(self.from)
+      end
+
+      def retry_mail
+        self.deliver
+      end
 end
 
 #Added disposition_type check to inline? method of part class

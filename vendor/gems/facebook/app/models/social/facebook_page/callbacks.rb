@@ -116,6 +116,25 @@ class Social::FacebookPage < ActiveRecord::Base
   def fetch_fb_wall_posts
     Social::FacebookDelta.perform_async({ :page_id => self.page_id }) if fetch_delta?
     Social::GatewayFacebookWorker.perform_async(page_id: page_id, action: 'update') if page_token_changed?
+    check_and_remove_euc_pages if page_token_changed?
+  end
+
+  def check_and_remove_euc_pages
+    return unless Account.current.launched?(:migrate_euc_pages_to_us)
+
+    key = format(MIGRATE_EUC_FB_PAGES, account_id: Account.current.id)
+    if remove_member_from_redis_set(key, page_id)
+      remaining_pages = get_all_members_in_a_redis_set(key)
+      Rails.logger.info("Found EUC Page #{page_id} and remaining pages are #{remaining_pages.inspect}")
+      launch_attachment if remaining_pages.blank?
+    end
+  end
+
+  def launch_attachment
+    Account.current.launch(:skip_posting_to_fb)
+    Account.current.launch(:facebook_dm_outgoing_attachment)
+    Account.current.launch(:facebook_post_outgoing_attachment)
+    Rails.logger.info("Launched attachment for the non migrated euc account #{Account.current.id}")
   end
 
   def send_mixpanel_event

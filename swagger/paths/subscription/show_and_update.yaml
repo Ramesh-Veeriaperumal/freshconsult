@@ -2,6 +2,11 @@ get:
   tags: [subscription]
   description: Account subscription details
   summary: Account subscription details
+  parameters:
+    - name: include
+      in: query
+      type: string
+      description: Comma-separated, possible values - update_payment_site
   responses:
     200:
       description: Success

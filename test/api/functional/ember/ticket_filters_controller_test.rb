@@ -280,6 +280,8 @@ module Ember
           match_custom_json(response.body, ticket_filter_index_pattern)
           fsm_filter = JSON.parse(response.body).find { |x| x['id'] == 'unassigned_service_tasks' }
           assert_not_nil fsm_filter
+          assert_equal 'appointment_start_time', fsm_filter['order_by']
+          assert_equal 'asc', fsm_filter['order_type']
         ensure
           Account.current.rollback(:default_unassigned_service_tasks_filter)
           Account.any_instance.unstub(:field_service_management_enabled?)

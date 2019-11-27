@@ -52,7 +52,8 @@ module HelpWidgetsTestHelper
       form_submit_message: 'Thank you for your feedback',
       screenshot: true,
       attach_file: options[:attach_file] || true,
-      captcha: options[:captcha] || true
+      captcha: options[:captcha] || true,
+      require_login: options[:require_login] || false
     }
   end
 

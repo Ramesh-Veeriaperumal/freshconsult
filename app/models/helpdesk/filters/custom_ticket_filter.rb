@@ -427,7 +427,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
 
     if params[:data_hash].blank?
       action_hash = default_filter(params[:filter_name], !!params[:export_fields], ['json', 'xml', 'nmobile'].include?(params[:format]))
-      if params[:filter_name].eql?('unresolved_service_tasks')
+      if TicketFilterConstants::SORT_BY_APPOINTMENT_TIME_FILTERS.include? params[:filter_name]
         sort_options = TicketsFilter.field_agent_sort_options
         @order = sort_options[:order_by] unless params[:wf_order]
         @order_type = sort_options[:order_type] unless params[:wf_order_type]

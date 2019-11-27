@@ -2,6 +2,7 @@ require_relative '../../test_helper'
 ['ticket_fields_test_helper.rb', 'tickets_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
 ['note_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 ['social_tickets_creation_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+['shared_ownership_test_helper.rb'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 
 class TicketTest < ActiveSupport::TestCase
   include TicketsTestHelper
@@ -10,6 +11,7 @@ class TicketTest < ActiveSupport::TestCase
   include ModelsGroupsTestHelper
   include NoteHelper
   include SocialTicketsCreationHelper
+  include SharedOwnershipTestHelper
 
   CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
   DROPDOWN_CHOICES = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon']
@@ -375,5 +377,40 @@ class TicketTest < ActiveSupport::TestCase
     assert_equal assoc_payload[:skill], skill_key_value_pairs(t)
     assoc_payload.to_json.must_match_json_expression(cp_assoc_ticket_pattern(t))
     Account.any_instance.unstub(:skill_based_round_robin_enabled?)
+  end
+
+  def test_central_publish_payload_event_info_on_round_robin
+    t = create_ticket(ticket_params_hash.merge(responder_id: @agent.id))
+    t.activity_type = { type: 'round_robin', responder_id: [nil, t.responder_id] }
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    event_info = t.event_info(:create)
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t))
+  end
+ 
+  def test_central_publish_internal_agent_associations
+    Account.any_instance.stubs(:shared_ownership_enabled?).returns(true)
+    initialize_internal_agent_with_default_internal_group(permission = 3)
+    ticket = create_ticket({ status: @status.status_id, responder_id: nil, internal_agent_id: @internal_agent.id }, nil, @internal_group)
+    payload = ticket.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(ticket))
+    assoc_payload = ticket.associations_to_publish.to_json
+    assoc_payload.must_match_json_expression(cp_assoc_ticket_pattern(ticket))
+    internal_agent_pattern = ticket.internal_agent.as_api_response(:internal_agent_central_publish_associations).to_json
+    internal_agent_pattern.must_match_json_expression(internal_agent_association_pattern(ticket))
+    Account.any_instance.unstub(:shared_ownership_enabled?)
+  end
+
+  def test_central_publish_internal_group_associations
+    Account.any_instance.stubs(:shared_ownership_enabled?).returns(true)
+    initialize_internal_agent_with_default_internal_group(permission = 3)
+    ticket = create_ticket({ status: @status.status_id, responder_id: nil, internal_agent_id: @internal_agent.id }, nil, @internal_group)
+    payload = ticket.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(ticket))
+    assoc_payload = ticket.associations_to_publish.to_json
+    assoc_payload.must_match_json_expression(cp_assoc_ticket_pattern(ticket))
+    internal_group_pattern = ticket.internal_group.as_api_response(:internal_group_central_publish_associations).to_json
+    internal_group_pattern.must_match_json_expression(internal_group_association_pattern(ticket))
+    Account.any_instance.unstub(:shared_ownership_enabled?)
   end
 end

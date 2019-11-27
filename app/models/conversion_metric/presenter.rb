@@ -16,6 +16,7 @@ class ConversionMetric < ActiveRecord::Base
     s.add :ga_client_id
     s.add :signup_method, as: :signup_type
     s.add :spam_score
+    s.add :lead_source_choice
     s.add proc { |x| x.utc_format(x.created_at) }, as: :created_at
     s.add proc { |x| x.utc_format(x.updated_at) }, as: :updated_at
   end

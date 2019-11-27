@@ -223,10 +223,7 @@ module Redis::Keys::Others
   TWITTER_APP_BLOCKED = 'TWITTER_APP_BLOCKED'.freeze
 
   ANONYMOUS_ACCOUNT_SIGNUP_ENABLED  = 'ANONYMOUS_ACCOUNT_SIGNUP_ENABLED'.freeze
-  ONBOARDING_V2_ENABLED             = 'ONBOARDING_V2_ENABLED'.freeze
   ACCOUNT_SIGNUP_IN_PROGRESS        = 'ACCOUNT_SIGNUP_IN_PROGRESS:%{domain}'.freeze
-  LANGUAGES_UNDERTAKEN_FOR_NEW_ONBOARDING = 'LANGUAGES_UNDERTAKEN_FOR_NEW_ONBOARDING'.freeze
-  ONBOARDING_I18N_ENABLED = 'ONBOARDING_I18N_ENABLED'.freeze
 
   # Proactive service
   CUSTOM_EMAIL_OUTREACH_LIMIT = "CUSTOM_EMAIL_OUTREACH_LIMIT".freeze
@@ -253,7 +250,11 @@ module Redis::Keys::Others
   SUPPORT_TICKET_LIMIT = "SUPPORT_TICKET_LIMIT:%{account_id}%{user_id}".freeze
 
   MAILBOX_GMAIL_OAUTH = 'GMAIL_OAUTH:%{account_id}:%{user_id}:%{random_number}'.freeze
+  GMAIL_ACCESS_TOKEN_VALIDITY = 'GMAIL_ACCESS_TOKEN:%{account_id}:%{smtp_mailbox_id}'.freeze 
 
   #Increasing Domains for accounts as per request by the account holder
   INCREASE_DOMAIN_FOR_EMAILS = 'INCREASE_DOMAIN_FOR_EMAILS'.freeze
+
+  # Holds the pages to be migrated to the us app
+  MIGRATE_EUC_FB_PAGES = 'MIGRATE_EUC_FB_PAGES:%{account_id}'.freeze
 end

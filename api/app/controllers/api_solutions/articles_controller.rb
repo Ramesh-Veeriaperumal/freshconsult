@@ -107,7 +107,7 @@ module ApiSolutions
 
       def validate_publish_solution_privilege
         # If user does not have publish priviledge then user can only save article
-        unless publish_privilege? || draft_params?
+        if !publish_privilege? && changing_published_properties?
           error_info_hash = { details: 'dont have permission to perfom on published article' }
           render_request_error_with_info(:published_article_privilege_error, 403, error_info_hash, error_info_hash)
         end
@@ -117,8 +117,12 @@ module ApiSolutions
         api_current_user.privilege?(:publish_solution)
       end
 
-      def draft_params?
-        @article_params[language_scoper][:status] == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft] && !article_properties? && !unpublish?
+      # If agent dont have publish_solution privilege, he should not be able to perform update
+      # 1. if article publish || unpublish activity
+      # 2. if article is published and if any of the article property update
+      # i.e folder_id, agent_id, seo_data, tags
+      def changing_published_properties?
+        publish_action? || unpublish? || (@item.try(:status) == Solution::Article::STATUS_KEYS_BY_TOKEN[:published] && article_properties?)
       end
 
       def set_session
@@ -152,6 +156,10 @@ module ApiSolutions
 
       def unpublish?
         !article_properties? && @article_params[language_scoper].keys.length == 1 && @article_params[language_scoper][:status] == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
+      end
+
+      def publish_action?
+        @status == Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
       end
 
       def construct_article_object

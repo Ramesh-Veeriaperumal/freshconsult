@@ -9,7 +9,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
   include SubscriptionTestHelper
   include Redis::OthersRedis
   include Redis::Keys::Others
-  
+
   CHARGEBEE_LIST_PLANS_API_RESPONSE = '{"list":[{"plan":{"id":"sprout_monthly",
     "name":"Sprout Monthly", "invoice_name":"Sprout Monthly 2016","price":1500,
     "period":1,"period_unit":"month","trial_period":30,"trial_period_unit":"day",
@@ -38,7 +38,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
   def teardown
     PLANS[:subscription_plans][:forest_jan_19][:features].map { |feature| @account.add_feature(feature) }
   end
-  
+
   def test_show_with_subscription_request
     subscription_request = @account.subscription.subscription_request
     subscription_request.destory if subscription_request.present?
@@ -53,7 +53,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     Subscription.any_instance.stubs(:cost_per_agent).with(12).returns(49)
     @account.subscription.build_subscription_request(subscription_request_params).save!
     subscription_request_params.merge!(feature_loss: @account.subscription.subscription_request.feature_loss?)
-    get :show, construct_params(version: 'private')
+    get :show, controller_params(version: 'private')
     assert_response 200
     match_json(subscription_response(@account.subscription, subscription_request_params))
   ensure
@@ -66,7 +66,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     Subscription.any_instance.stubs(:cost_per_agent).returns(65)
     Subscription.any_instance.stubs(:cost_per_agent).with(12).returns(49)
     subscription_request.destroy if subscription_request.present?
-    get :show, construct_params(version: 'private')
+    get :show, controller_params(version: 'private')
     assert_response 200
     match_json(subscription_response(@account.subscription))
   ensure
@@ -75,9 +75,31 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
 
   def test_show_no_privilege
     stub_admin_tasks_privilege
-    get :show, construct_params(version: 'private')
+    get :show, controller_params(version: 'private')
     assert_response 403
     unstub_privilege
+  end
+
+  def test_show_with_valid_sideload_options
+    Subscription.any_instance.stubs(:fetch_update_payment_site).returns(url: Faker::Internet.url, site: Faker::Internet.url)
+    get :show, controller_params(version: 'private', include: 'update_payment_site')
+    assert_response 200
+    match_json(subscription_response(@account.subscription, nil, true))
+  ensure
+    Subscription.any_instance.unstub(:fetch_update_payment_site)
+  end
+
+  def test_show_with_invalid_sideload_options
+    get :show, controller_params(version: 'private', include: Faker::Lorem.word)
+    assert_response 400
+    match_json([bad_request_error_pattern('include', :not_included, code: 'invalid_value', list: ['update_payment_site'])])
+  end
+
+  def test_show_with_invalid_parameters
+    key = Faker::Lorem.word
+    get :show, controller_params(version: 'private', key: key)
+    assert_response 400
+    match_json([bad_request_error_pattern('key', :invalid_field)])
   end
 
   def test_plans_for_account_default_currency
@@ -129,8 +151,6 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     put :update, construct_params({ version: 'private', plan_id: sprout_plan_id, renewal_period: 6 })
     assert_equal @account.subscription_plan.renewal_period, 1
     assert_response 200
-    put :update, construct_params({ version: 'private', renewal_period: 6 })
-    assert_response 400
   ensure
     unstub_methods
     Subscription.any_instance.unstub(:cost_per_agent)
@@ -177,7 +197,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     put :update, construct_params({ version: 'private', plan_id: '8' }, {})
     assert_response 400
   ensure
-    ChargeBee::Subscription.unstub(:update) 
+    ChargeBee::Subscription.unstub(:update)
   end
 
   def test_update_subscription_with_invalid_renewal_period
@@ -227,7 +247,43 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     Subscription.any_instance.unstub(:card_number)
     ChargeBee::Subscription.unstub(:update)
   end
-  
+
+  def test_update_with_currency_change_on_active_plan
+    account = Account.current
+    result = ChargeBee::Result.new(stub_update_params(account.id))
+    ChargeBee::Subscription.stubs(:update).returns(result)
+    Subscription.any_instance.stubs(:state).returns('active')
+    put :update, construct_params(version: 'private', currency: 'INR')
+    assert_response 400
+    match_json([bad_request_error_pattern('currency', :cannot_update_currency_unless_free_plan, code: :invalid_value, account_state: 'active')])
+  ensure
+    ChargeBee::Subscription.unstub(:update)
+    Subscription.any_instance.unstub(:state)
+  end
+
+  def test_update_with_currency_change_on_free_plan
+    account = Account.current
+    result = ChargeBee::Result.new(stub_update_params(account.id))
+    Billing::Subscription.any_instance.stubs(:retrieve_subscription).returns(result)
+    Billing::Subscription.any_instance.stubs(:cancel_subscription).returns(true)
+    Billing::Subscription.any_instance.stubs(:subscription_exists?).returns(true)
+    Billing::Subscription.any_instance.stubs(:reactivate_subscription).returns(true)
+    ChargeBee::Subscription.stubs(:update).returns(result)
+    Subscription.any_instance.stubs(:state).returns('free')
+    Subscription.any_instance.stubs(:non_new_sprout?).returns(false)
+    put :update, construct_params(version: 'private', currency: 'INR')
+    assert_response 200
+    assert_equal account.subscription.reload.currency.name, 'INR'
+  ensure
+    Billing::Subscription.any_instance.unstub(:retrieve_subscription)
+    Billing::Subscription.any_instance.unstub(:cancel_subscription)
+    Billing::Subscription.any_instance.unstub(:subscription_exists?)
+    Billing::Subscription.any_instance.unstub(:reactivate_subscription)
+    ChargeBee::Subscription.unstub(:update)
+    Subscription.any_instance.unstub(:non_new_sprout?)
+    Subscription.any_instance.unstub(:state)
+  end
+
   def test_subscription_estimate_without_mandatory_params
     get :estimate, controller_params({ version: 'private' }, false)
     assert_response 400
@@ -310,6 +366,28 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     unstub_methods
     $redis_others.perform_redis_op('del', DOWNGRADE_POLICY_TO_ALL)
     Subscription.any_instance.unstub(:cost_per_agent)
+  end
+
+  def test_update_payment
+    chargebee_subscription = ChargeBee::Result.new(stub_update_params(@account.id))
+    Billing::Subscription.any_instance.stubs(:retrieve_subscription).returns(chargebee_subscription)
+    Subscription.any_instance.stubs(:set_billing_info).returns(true)
+    Subscription.any_instance.stubs(:save).returns(true)
+    post :update_payment, construct_params(agent_limit: Faker::Number.number(2))
+    assert_response 200
+    match_json(subscription_response(@account.subscription))
+  ensure
+    Billing::Subscription.any_instance.unstub(:retrieve_subscription)
+    Subscription.any_instance.unstub(:set_billing_info)
+    Subscription.any_instance.unstub(:save)
+  end
+
+  def test_update_payment_error_out
+    Billing::Subscription.any_instance.stubs(:retrieve_subscription).raises(ChargeBee::InvalidRequestError)
+    post :update_payment, construct_params(agent_limit: Faker::Number.number(2))
+    assert_response 400
+  ensure
+    Billing::Subscription.any_instance.unstub(:retrieve_subscription)
   end
 
   private
@@ -500,17 +578,18 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
         card_expiration: subscription.card_expiration,
         name_on_card: (subscription.billing_address.name_on_card if subscription.billing_address.present?),
         reseller_paid_account: subscription.reseller_paid_account?,
-        switch_to_annual_percentage: subscription.cost_per_agent(12).zero? ? nil : 30,
+        switch_to_annual_percentage: subscription.percentage_difference,
         subscription_request: nil,
         updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
         created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
         currency: subscription.currency.name,
         addons: nil,
-        paying_account: subscription.paying_account?
+        paying_account: subscription.paying_account?,
+        update_payment_site: nil
       }
     end
 
-    def subscription_response(subscription, subscription_request_params = nil)
+    def subscription_response(subscription, subscription_request_params = nil, is_sideload_present = false)
       response_hash = {
         id: subscription.id,
         state: subscription.state,
@@ -523,7 +602,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
         card_expiration: subscription.card_expiration,
         name_on_card: (subscription.billing_address.name_on_card if subscription.billing_address.present?),
         reseller_paid_account: subscription.reseller_paid_account?,
-        switch_to_annual_percentage: 30,
+        switch_to_annual_percentage: subscription.percentage_difference,
         updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
         created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
         currency: subscription.currency.name,
@@ -531,6 +610,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
         subscription_request: nil,
         paying_account: subscription.paying_account?
       }
+      response_hash[:update_payment_site] = is_sideload_present ? subscription.fetch_update_payment_site : nil
       if subscription_request_params.present?
         subscription_plan = SubscriptionPlan.find(subscription_request_params[:plan_id])
         request_hash = {}.tap do |hash|
