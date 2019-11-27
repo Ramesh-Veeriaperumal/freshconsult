@@ -103,7 +103,6 @@ module Ember
             old_ticket_filter_count = Account.current.ticket_filters.count
             Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
             Account.any_instance.stubs(:customer_signature_enabled?).returns(true)
-            Account.any_instance.stubs(:scheduling_fsm_dashboard_enabled?).returns(true)
             fields_count_before_installation = Account.current.ticket_fields.size
             total_fsm_fields_count = fsm_custom_field_to_reserve.size
             Account.current.subscription.update_attributes(additional_info: { field_agent_limit: 10 })
@@ -136,7 +135,6 @@ module Ember
             destroy_fsm_fields_and_section
             Account.any_instance.unstub(:disable_old_ui_enabled?)
             Account.any_instance.unstub(:customer_signature_enabled?)
-            Account.any_instance.unstub(:scheduling_fsm_dashboard_enabled?)
             destroy_fsm_dashboard_and_filters
           end
         end
