@@ -38,10 +38,12 @@ class ActionMailerCallbacksTest < ActiveSupport::TestCase
     mailbox = create_email_config(
       support_email: 'test@test.com',
       imap_mailbox_attributes: {
-        imap_authentication: 'xoauth2' 
+        imap_authentication: 'xoauth2',
+        with_refresh_token: true
       },
       smtp_mailbox_attributes: {
-        smtp_authentication: 'xoauth2' 
+        smtp_authentication: 'xoauth2',
+        with_refresh_token: true
       }
     )
     mailbox.active = true
