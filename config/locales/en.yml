@@ -6177,6 +6177,7 @@ en:
     preview_email_verification: "<p>Hi %{name},<br/><br/>This email is to give a preview of how customer satisfaction survey feedback is done.<br/><br/></p>"
     preview_email_verification_plain_text: "Hi %{name},\nThis email is to give a preview of how customer satisfaction survey feedback is done."
     default_font: "Default Font : "
+    default_font_settings: "Default Font Settings : "
     customize_email: Customize Email
     edit_reply_template: Edit Template
     default_reply_template_title: Agent Reply Template

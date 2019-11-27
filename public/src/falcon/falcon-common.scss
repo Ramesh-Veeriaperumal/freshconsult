@@ -153,6 +153,15 @@ $survey-options-color: (
   }
 }
 
+/* This css is written to fix the bug FD-41692 - Font size is not reflected in redactor pages
+Elements appearing inside redactor is hardcoded like .redactor_editor p {font-size:13px;} in _custom_mixin.scss
+So the font-size mentioned in parent is not getting applied to the child elements. So, we are inheriting the
+font size from parent to all elements inside the class .redactor_editor */
+#body-container {
+  .redactor_editor * {
+    font-size: inherit;
+  }
+}
 
 .ui-form {
   .conditionset{
