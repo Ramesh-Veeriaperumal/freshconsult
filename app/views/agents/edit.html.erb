@@ -44,7 +44,8 @@
             if(errors) {
             var errorsHtml= '';
             $.each( errors, function( key, value ) {
-                errorsHtml += '<li>' + value[0] + '</li>';
+                error_message =  value[1] ? value[1] : value[0];
+                errorsHtml += '<li>' + error_message + '</li>';
             });
             if( $('#noticeajax').is(":hidden") ) {
             $('#noticeajax').contents(':not(a)').remove();
