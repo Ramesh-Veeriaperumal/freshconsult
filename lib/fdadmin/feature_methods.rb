@@ -9,6 +9,8 @@ module Fdadmin::FeatureMethods
 
     BLACKLISTED_LP_FEATURES = [:freshid, :freshid_org_v2, :fluffy, :fluffy_min_level].freeze
 
+    BITMAP_FEATURES_TO_IGNORE = [:support_bot].freeze
+
     private
 
     def feature_types(feature_name)
@@ -77,6 +79,8 @@ module Fdadmin::FeatureMethods
         else
           raise "Not applicable"
         end
+      elsif feature_name.to_sym.in?(BITMAP_FEATURES_TO_IGNORE)
+        raise 'Not applicable'
       else
         @account.add_feature(feature_name)
       end
