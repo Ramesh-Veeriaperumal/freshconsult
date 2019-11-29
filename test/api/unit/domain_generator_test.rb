@@ -87,8 +87,61 @@ class DomainGeneratorTest < ActiveSupport::TestCase
     #   fulldomain_should_not_have_more_than_three_dots
     # end
 
+    def test_non_global_pod_domain_validation_to_return_false
+      domain_name = Faker::Internet.domain_name
+      stub_fdadmins_call(domain_name, '{"account_id":232323}')
+      refute DomainGenerator.valid_domain?(domain_name)
+    ensure
+      unstub_fdadmins_call
+    end
+
+    def test_non_global_pod_domain_validation_to_return_true
+      domain_name = Faker::Internet.domain_name
+      stub_fdadmins_call(domain_name, '{}')
+      assert DomainGenerator.valid_domain?(domain_name)
+    ensure
+      unstub_fdadmins_call
+    end
+
+    def test_non_global_pod_domain_validation_to_return_true_on_instance_method
+      domain_name = Faker::Internet.domain_name
+      stub_fdadmins_call(domain_name, '{}')
+      assert DomainGenerator.new('freshdeskdemo123@example.com').valid_domain?(domain_name)
+    ensure
+      unstub_fdadmins_call
+    end
+
+    def test_non_global_pod_domain_validation_to_return_false_on_instance_method
+      domain_name = Faker::Internet.domain_name
+      stub_fdadmins_call(domain_name, '{"account_id":232323}')
+      refute DomainGenerator.new('freshdeskdemo123@example.com').valid_domain?(domain_name)
+    ensure
+      unstub_fdadmins_call
+    end
+
+    def test_non_global_pod_domain_validation_to_return_false_on_exception
+      domain_name = Faker::Internet.domain_name
+      stub_fdadmins_call(domain_name, '')
+      refute DomainGenerator.valid_domain?(domain_name)
+    ensure
+      unstub_fdadmins_call
+    end
+
     private
 
+      def stub_fdadmins_call(domain_name, response)
+        response_mock = Minitest::Mock.new
+        response_mock.expect :body, response
+        Fdadmin::APICalls.stubs(:non_global_pods?).returns true
+        Fdadmin::APICalls.stubs(:connect_main_pod).with(new_domain: domain_name,
+          target_method: :check_domain_availability).returns(response_mock)
+      end
+      
+      def unstub_fdadmins_call
+        Fdadmin::APICalls.unstub(:non_global_pods?)
+        Fdadmin::APICalls.unstub(:connect_main_pod)
+      end
+      
       # TODO: - Need to accomodate reserved domain validation in DomainGenerator
       def subdomain_should_not_be_one_of_the_reserved_keywords
         full_domain = "#{Account::RESERVED_DOMAINS.sample}.#{DomainGenerator::HELPDESK_BASE_DOMAIN}"

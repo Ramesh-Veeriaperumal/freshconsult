@@ -47,14 +47,13 @@ class DomainGenerator
 	def self.valid_domain?(full_domain)
 		sample_account = Account.new
 		sample_account.full_domain = full_domain
-		(DomainMapping.new(:domain => full_domain).valid? && 
-			sample_account.run_domain_validations)
+		(domain_exists?(full_domain) && sample_account.run_domain_validations)
 	end
 
 	def valid_domain?(full_domain)
 		sample_account = Account.new
 		sample_account.full_domain = full_domain
-		!excluded_domains.include?(full_domain) && (DomainMapping.new(:domain => full_domain).valid? && 
+		!excluded_domains.include?(full_domain) && (DomainGenerator.domain_exists?(full_domain) && 
 			sample_account.run_domain_validations)
 	end
 
@@ -72,6 +71,25 @@ class DomainGenerator
 		end
 		sample_domains
 	end
+
+  def self.domain_exists?(full_domain)
+    if Fdadmin::APICalls.non_global_pods?
+      find_in_global_pod(full_domain).blank?
+    else
+      DomainMapping.new(domain: full_domain).valid?
+    end
+  end
+
+  def self.find_in_global_pod(full_domain)
+    request_parameters = {
+      new_domain: full_domain,
+      target_method: :check_domain_availability
+    }
+    JSON.parse(Fdadmin::APICalls.connect_main_pod(request_parameters).body)['account_id']
+  rescue StandardError => e
+    Rails.logger.error "Message: #{e.message} :::: #{e.backtrace.join('\n')}"
+    true
+  end
 
 	private
 
