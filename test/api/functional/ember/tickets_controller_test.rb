@@ -5315,5 +5315,16 @@ module Ember
       assert_response 400
       match_json([bad_request_error_pattern('order_by', :not_included, list: sort_field_options.join(','), code: :invalid_value)])
     end
+
+    def test_unassign_group_id_on_ticket_created_from_email
+      group = create_group @account
+      email_config = create_email_config(group_id: group.id)
+      params_hash = { source: 1, email_config_id: email_config.id }
+      ticket = create_ticket(params_hash, group)
+      assert_equal group.id, ticket.group_id
+      put :update, construct_params({ version: 'private', id: ticket.display_id }, { group_id: nil })
+      assert_response 200
+      assert_nil JSON.parse(response.body)['group_id']
+    end
   end
 end
