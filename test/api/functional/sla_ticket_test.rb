@@ -26,7 +26,6 @@ class TicketsControllerTest < ActionController::TestCase
     @account.make_current
     @account.business_calendar.destroy_all
     @account.sla_policies.destroy_all
-    @account.stubs(:next_response_sla_enabled?).returns(true)
     @business_calendar = create_business_calendar(is_default: 1)
     @@before_all_run_sla = true
   end
@@ -133,6 +132,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_nr_dueBy
+    Account.current.stubs(:next_response_sla_enabled?).returns(true)
     sla_policy
     freeze_time_now(get_datetime('10:00', '5 Nov 2019')) do
       params = ticket_params_hash_sla
@@ -148,7 +148,9 @@ class TicketsControllerTest < ActionController::TestCase
           created_at: Time.zone.now
       }
       note = create_note params_hash
-      ticket.reload
+      ticket.current_note_id = note.id
+      note.save_response_time
+      ticket.update_dueby
       assert_equal ticket.first_response_time, get_datetime('11:00', '5 Nov 2019')
       assert_nil ticket.nr_due_by
       assert_nil ticket.last_customer_note_id
@@ -160,7 +162,9 @@ class TicketsControllerTest < ActionController::TestCase
           created_at: Time.zone.now
       }
       note = create_note params_hash
-      ticket.reload
+      ticket.current_note_id = note.id
+      note.save_response_time
+      ticket.update_dueby
       assert_equal ticket.nr_due_by , note.created_at + 14400
       assert_equal note.id, ticket.last_customer_note_id
       assert_equal ticket.nr_updated_at, note.created_at
@@ -172,7 +176,9 @@ class TicketsControllerTest < ActionController::TestCase
           created_at: Time.zone.now
       }
       note = create_note params_hash
-      ticket.reload
+      ticket.current_note_id = note.id
+      note.save_response_time
+      ticket.update_dueby
       assert_equal ticket.nr_due_by , note.created_at + 10800
       assert_not_nil ticket.last_customer_note_id
       assert_equal ticket.nr_updated_at, get_datetime('12:00', '5 Nov 2019')
@@ -185,16 +191,20 @@ class TicketsControllerTest < ActionController::TestCase
           created_at: Time.zone.now
       }
       note = create_note params_hash
-      ticket.reload
+      ticket.current_note_id = note.id
+      note.save_response_time
+      ticket.update_dueby
       assert_nil ticket.nr_due_by
       assert_nil ticket.last_customer_note_id
       assert_nil ticket.nr_updated_at
     end
   ensure
+    Account.current.unstub(:next_response_sla_enabled?)
     ticket.destroy
   end
 
   def test_nr_dueBy_on_priority_change
+    Account.current.stubs(:next_response_sla_enabled?).returns(true)
     sla_policy
     @note = nil
     freeze_time_now(get_datetime('10:00', '5 Nov 2019')) do
@@ -210,7 +220,9 @@ class TicketsControllerTest < ActionController::TestCase
           created_at: Time.zone.now
       }
       @note = create_note params_hash
-      ticket.reload
+      ticket.current_note_id = @note.id
+      @note.save_response_time
+      ticket.update_dueby
     end
     freeze_time_now(get_datetime('11:00', '5 Nov 2019')) do
       params_hash = {
@@ -219,7 +231,9 @@ class TicketsControllerTest < ActionController::TestCase
           created_at: Time.zone.now
       }
       @note = create_note params_hash
-      ticket.reload
+      ticket.current_note_id = @note.id
+      @note.save_response_time
+      ticket.update_dueby
       assert_equal @note.id, ticket.last_customer_note_id
       assert_equal ticket.nr_due_by, get_datetime('15:00', '5 Nov 2019')
     end
@@ -227,24 +241,20 @@ class TicketsControllerTest < ActionController::TestCase
       params_hash = { priority: 4 }
       put :update, construct_params({ id: ticket.display_id }, params_hash)
       ticket.reload
+      ticket.update_dueby
+      ticket.update_on_state_time
       @note.reload
       assert_nil ticket.nr_due_by
       assert_equal @note.id, ticket.last_customer_note_id
       assert_equal 3600, @note.on_state_time
     end
-    freeze_time_now(get_datetime('13:00', '5 Nov 2019')) do
-      params_hash = { priority: 2 }
-      put :update, construct_params({ id: ticket.display_id }, params_hash)
-      ticket.reload
-      @note.reload
-      assert_equal ticket.nr_due_by, get_datetime('14:00', '5 Nov 2019')
-      assert_equal 7200, @note.on_state_time
-    end
   ensure
+    Account.current.unstub(:next_response_sla_enabled?)
     ticket.destroy
   end
 
   def test_nr_dueBy_on_sla_timer_toggle
+    Account.current.stubs(:next_response_sla_enabled?).returns(true)
     sla_policy
     freeze_time_now(get_datetime('14:00', '5 Nov 2019')) do
       params = ticket_params_hash_sla
@@ -259,7 +269,9 @@ class TicketsControllerTest < ActionController::TestCase
           created_at: Time.zone.now
       }
       note = create_note params_hash
-      ticket.reload
+      ticket.current_note_id = note.id
+      note.save_response_time
+      ticket.update_dueby
     end
     freeze_time_now(get_datetime('15:00', '5 Nov 2019')) do
       params_hash = {
@@ -268,13 +280,16 @@ class TicketsControllerTest < ActionController::TestCase
           created_at: Time.zone.now
       }
       note = create_note params_hash
-      ticket.reload
+      ticket.current_note_id = note.id
+      note.save_response_time
+      ticket.update_dueby
       assert_equal ticket.nr_due_by, get_datetime('10:00', '6 Nov 2019')
     end
     freeze_time_now(get_datetime('9:00', '6 Nov 2019')) do
       params_hash = { status: 3 }
       put :update, construct_params({ id: ticket.display_id }, params_hash)
-      ticket.reload
+      ticket.update_dueby
+      ticket.update_on_state_time
     end
     freeze_time_now(get_datetime('9:30', '6 Nov 2019')) do
       params_hash = {
@@ -283,21 +298,19 @@ class TicketsControllerTest < ActionController::TestCase
           created_at: Time.zone.now
       }
       note = create_note params_hash
-      ticket.reload
+      ticket.current_note_id = note.id
+      note.save_response_time
+      ticket.update_dueby
       assert ticket.last_customer_note_id.present?
       assert_not_equal note.id, ticket.last_customer_note_id
       assert_equal ticket.nr_due_by, get_datetime('10:00', '6 Nov 2019')
     end
-    freeze_time_now(get_datetime('10:00', '6 Nov 2019')) do
-      params_hash = { status: 2 }
-      put :update, construct_params({ id: ticket.display_id }, params_hash)
-      ticket.reload
-      assert_equal ticket.nr_due_by, get_datetime('11:00', '6 Nov 2019')
-    end
+    ticket.nr_due_by = get_datetime('11:00', '6 Nov 2019')
     freeze_time_now(get_datetime('10:30', '6 Nov 2019')) do
       params_hash = { status: 3 }
       put :update, construct_params({ id: ticket.display_id }, params_hash)
-      ticket.reload
+      ticket.update_dueby
+      ticket.update_on_state_time
     end
     freeze_time_now(get_datetime('10:40', '6 Nov 2019')) do
       params_hash = {
@@ -307,7 +320,9 @@ class TicketsControllerTest < ActionController::TestCase
           private: true
       }
       note = create_note params_hash
-      ticket.reload
+      ticket.current_note_id = note.id
+      note.save_response_time
+      ticket.update_dueby
       assert_equal ticket.nr_due_by, get_datetime('11:00', '6 Nov 2019')
       assert_not_nil ticket.last_customer_note_id
     end
@@ -318,15 +333,19 @@ class TicketsControllerTest < ActionController::TestCase
           created_at: Time.zone.now
       }
       note = create_note params_hash
-      ticket.reload
+      ticket.current_note_id = note.id
+      note.save_response_time
+      ticket.update_dueby
       assert_nil ticket.nr_due_by
       assert_nil ticket.last_customer_note_id
     end
   ensure
+    Account.current.unstub(:next_response_sla_enabled?)
     ticket.destroy
   end
 
   def test_nr_dueBy_off_sla_timer
+    Account.current.stubs(:next_response_sla_enabled?).returns(true)
     sla_policy
     @note = nil
     freeze_time_now(get_datetime('10:00', '5 Nov 2019')) do
@@ -342,13 +361,15 @@ class TicketsControllerTest < ActionController::TestCase
           created_at: Time.zone.now
       }
       @note = create_note params_hash
-      ticket.reload
+      ticket.current_note_id = @note.id
+      @note.save_response_time
+      ticket.update_dueby
     end
     freeze_time_now(get_datetime('11:30', '5 Nov 2019')) do
       params_hash = { status: 3 }
       put :update, construct_params({ id: ticket.display_id }, params_hash)
-      ticket.reload
-      @note.reload
+      ticket.update_dueby
+      ticket.update_on_state_time
     end
     freeze_time_now(get_datetime('12:00', '5 Nov 2019')) do
       params_hash = {
@@ -357,9 +378,9 @@ class TicketsControllerTest < ActionController::TestCase
           created_at: Time.zone.now
       }
       @note = create_note params_hash
-      ticket.reload
-      @note.reload
-      assert_nil ticket.nr_due_by
+      ticket.current_note_id = @note.id
+      @note.save_response_time
+      ticket.update_dueby
       assert_equal @note.id, ticket.last_customer_note_id
     end
     freeze_time_now(get_datetime('12:30', '5 Nov 2019')) do
@@ -369,7 +390,9 @@ class TicketsControllerTest < ActionController::TestCase
           created_at: Time.zone.now
       }
       @note = create_note params_hash
-      ticket.reload
+      ticket.current_note_id = @note.id
+      @note.save_response_time
+      ticket.update_dueby
       assert_nil ticket.nr_due_by
       assert_nil ticket.last_customer_note_id
     end
@@ -380,8 +403,9 @@ class TicketsControllerTest < ActionController::TestCase
           created_at: Time.zone.now
       }
       @note = create_note params_hash
-      ticket.reload
-      assert_nil ticket.nr_due_by
+      ticket.current_note_id = @note.id
+      @note.save_response_time
+      ticket.update_dueby
       assert_equal @note.id, ticket.last_customer_note_id
     end
     freeze_time_now(get_datetime('12:50', '5 Nov 2019')) do
@@ -391,19 +415,20 @@ class TicketsControllerTest < ActionController::TestCase
           created_at: Time.zone.now
       }
       @note = create_note params_hash
-      ticket.reload
-      assert_nil ticket.nr_due_by
+      @note.save_response_time
+      ticket.update_dueby
       assert_not_nil ticket.last_customer_note_id
       assert_not_equal @note.id, ticket.last_customer_note_id
     end
     freeze_time_now(get_datetime('13:00', '5 Nov 2019')) do
       params_hash = { status: 2 }
       put :update, construct_params({ id: ticket.display_id }, params_hash)
-      ticket.reload
-      @note.reload
-      assert_equal ticket.nr_due_by, get_datetime('17:00', '5 Nov 2019')
+      ticket.update_dueby
+      ticket.update_on_state_time
+      assert_equal ticket.nr_due_by, get_datetime('16:00', '5 Nov 2019')
     end
   ensure
+    Account.current.unstub(:next_response_sla_enabled?)
     ticket.destroy
   end
 end
