@@ -11,6 +11,8 @@ module Facebook
         "pages_messaging"
       ]
 
+      AD_POST_PERMISSIONS = ['ads_management']
+
       PAGE_TAB_PERMISSIONS = [
         "public_profile",
         "user_likes",

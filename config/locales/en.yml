@@ -1162,6 +1162,7 @@ en:
           cancel: "Cancel"
           update: "Update"
           tke_rule_breif_desc: "Convert posts and comments into tickets"
+          tke_rule_breif_desc_with_ad_posts: "Convert posts, ad posts and comments into tickets"
           edit_stream: "Edit Page"
         page_tab:
           page_tab_head: "Facebook Page Tab"
@@ -1178,7 +1179,6 @@ en:
           convert_only_relevant: "Convert only relevant posts"
           convert_visitor: "Convert all posts added by visitors into tickets"
           convert_company: "On posts added by the Page, capture comments from visitors as tickets when they contain the following keywords:"
-          convert_company_with_adpost: "On posts and ad posts added by the Page, capture comments from visitors as tickets when they contain the following keywords:"
           view_info_text: "You can still view all other visitor comments in your Social Tab"
           assign_to_gp: "Assign to group"
           convert_everything: "Convert everything"

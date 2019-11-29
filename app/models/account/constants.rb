@@ -297,7 +297,7 @@ class Account < ActiveRecord::Base
       agent_group_central_publish: false, custom_fields_search: true,
       update_billing_info: false, allow_billing_info_update: false, tag_central_publish: false,
       archive_tickets_api: false, redis_picklist_id: true, bot_agent_response: false, fluffy: false,
-      fb_ad_post_text: false, customer_signature: false,
+      scheduling_fsm_dashboard: false, fb_ad_post_permission: false, customer_signature: false,
       nested_field_revamp: true, service_worker: false, kbase_mint: true, freshvisual_configs: false,
       freshid_org_v2: false, hide_agent_login: false, office365_adaptive_card: false,
       text_custom_fields_in_etl: false, email_spoof_check: false, disable_email_spoof_check: false,
