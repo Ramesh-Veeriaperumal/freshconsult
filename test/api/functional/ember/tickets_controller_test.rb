@@ -180,8 +180,15 @@ module Ember
     def test_index_with_all_tickets_filter
       # Private API should filter all tickets with last 30 days created_at limit
       test_ticket = create_ticket(created_at: 2.months.ago)
+      Account.any_instance.stubs(:next_response_sla_enabled?).returns(true)
       get :index, controller_params(version: 'private', filter: 'all_tickets')
       assert_response 200
+      response_body = JSON.parse(response.body)
+      fetched_ticket = response_body.first
+      assert_equal fetched_ticket['nr_due_by'], nil
+      assert_equal fetched_ticket['nr_escalated'], false
+    ensure
+      Account.any_instance.unstub(:next_response_sla_enabled?)
     end
 
     def test_index_with_custom_file_field
@@ -551,14 +558,18 @@ module Ember
       custom_field = create_custom_field_dn('test_file_field', 'file')
       Account.first.make_current
       params_hash = ticket_params_hash.merge(custom_fields: { test_file_field: attachment.id })
+      Account.any_instance.stubs(:next_response_sla_enabled?).returns(true)
       post :create, construct_params({ version: 'private' }, params_hash)
       assert_response 201
       response_body = JSON.parse(response.body)
+      assert_equal response_body['nr_due_by'], nil
+      assert_equal response_body['nr_escalated'], false
       assert_equal attachment.id, response_body['custom_fields']['test_file_field']
       attachment = Account.current.attachments.find(attachment.id)
       assert_equal attachment.attachable_type, 'Helpdesk::FileTicketField'
       assert_equal attachment.description, custom_field.column_name
     ensure
+      Account.any_instance.unstub(:next_response_sla_enabled?)
       custom_field.destroy
       Account.reset_current_account
     end
@@ -757,15 +768,19 @@ module Ember
       ticket = create_ticket(custom_field: { custom_field1.name => attachment1.id, custom_field2.name => attachment2.id })
       assert_not_nil ticket
       update_params = { custom_fields: { test_file_field1: nil } }
+      Account.any_instance.stubs(:next_response_sla_enabled?).returns(true)
       put :update, construct_params({ id: ticket.display_id, version: 'private' }, update_params)
       assert_response 200
       Account.current.reload
       assert_equal true, Account.current.attachments.where(id: attachment1.id).blank?
       assert_equal false, Account.current.attachments.where(id: attachment2.id).blank?
       response_body = JSON.parse(response.body)
+      assert_equal response_body['nr_due_by'], nil
+      assert_equal response_body['nr_escalated'], false
       assert_nil response_body['custom_fields']['test_file_field1']
       assert_equal attachment2.id, response_body['custom_fields']['test_file_field2']
     ensure
+      Account.any_instance.unstub(:next_response_sla_enabled?)
       custom_field2.destroy
       custom_field1.destroy
       ticket.reload.destroy
@@ -3002,14 +3017,19 @@ module Ember
       company.update_attributes(custom_field: {cf_company_date: time_now})
       user = add_new_user(@account, { customer_id: company.id, custom_fields: { cf_requester_date: time_now}})
       ticket = create_ticket(requester_id: user.id)
+      Account.any_instance.stubs(:next_response_sla_enabled?).returns(true)
       get :show, controller_params(version: 'private', id: ticket.display_id, include: 'requester,company')
       assert_response 200
       res = JSON.parse(response.body)
+      assert_equal res['nr_due_by'], nil
+      assert_equal res['nr_escalated'], false
       ticket_date_format = Time.now.in_time_zone(@account.time_zone).strftime('%F')
       contact_field.destroy
       company_field.destroy
       assert_equal ticket_date_format, res['requester']['custom_fields']['requester_date']
       assert_equal ticket_date_format, res['company']['custom_fields']['company_date']
+    ensure
+      Account.any_instance.unstub(:next_response_sla_enabled?)
     end
 
     def test_show_with_requester

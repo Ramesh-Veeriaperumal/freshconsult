@@ -256,6 +256,7 @@ class TicketsControllerTest < ActionController::TestCase
     CUSTOM_FIELDS.each do |custom_field|
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
+    Account.any_instance.stubs(:next_response_sla_enabled?).returns(true)
     post :create, construct_params({}, params)
     match_json(ticket_pattern(params, Helpdesk::Ticket.last))
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
@@ -265,6 +266,10 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 201
     assert_equal '<b>test</b>', Helpdesk::Ticket.last.description_html
     assert_equal 'test', Helpdesk::Ticket.last.description
+    assert_equal result['nr_due_by'], nil
+    assert_equal result['nr_escalated'], false
+  ensure
+    Account.any_instance.unstub(:next_response_sla_enabled?)
   end
 
   def test_description_html_only_tags
@@ -761,13 +766,19 @@ class TicketsControllerTest < ActionController::TestCase
     t.ticket_type = nil
     t.save
     update_params = { type: 'Question' }
+    Account.any_instance.stubs(:next_response_sla_enabled?).returns(true)
     put :update, construct_params({ id: t.display_id }, update_params)
     t = @account.tickets.find(t.id)
     Helpdesk::TicketField.where(default: true).update_all(required: false)
     match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
+    result = parse_response(@response.body)
     assert_equal t.ticket_type, 'Question'
+    assert_equal result['nr_due_by'], nil
+    assert_equal result['nr_escalated'], false
     disable_skip_mandatory_checks_option
+  ensure
+    Account.any_instance.unstub(:next_response_sla_enabled?)
   end
 
   def test_update_ticket_agent_without_mandatory_fields_with_skip_mandatory_checks_enabled
@@ -3540,10 +3551,16 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_show
+    Account.any_instance.stubs(:next_response_sla_enabled?).returns(true)
     ticket.update_column(:deleted, false)
     get :show, controller_params(id: ticket.display_id)
     assert_response 200
     match_json(show_ticket_pattern({}, ticket))
+    result = parse_response(@response.body)
+    assert_equal result['nr_due_by'], nil
+    assert_equal result['nr_escalated'], false
+  ensure
+    Account.any_instance.unstub(:next_response_sla_enabled?)
   end
 
   def test_show_with_conversations
@@ -3754,10 +3771,16 @@ class TicketsControllerTest < ActionController::TestCase
     Helpdesk::Ticket.update_all(created_at: 2.months.ago)
     Helpdesk::Ticket.first.update_attributes(created_at: 1.months.ago,
                                              deleted: false, spam: false)
+    Account.any_instance.stubs(:next_response_sla_enabled?).returns(true)
     get :index, controller_params
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
+    ticket = response.first
+    assert_equal ticket['nr_due_by'], nil
+    assert_equal ticket['nr_escalated'], false
+  ensure
+    Account.any_instance.unstub(:next_response_sla_enabled?)
   end
 
   def test_index_with_default_filter_order_type

@@ -31,7 +31,12 @@ end
 json.set! :is_escalated, @item.isescalated
 json.set! :tags, @item.tag_names
 
-json.partial! 'shared/utc_date_format', item: @item, add: { due_by: :due_by, frDueBy: :fr_due_by }
+sla_dates = { due_by: :due_by, frDueBy: :fr_due_by }
+if Account.current.next_response_sla_enabled?
+  sla_dates.merge!(nr_due_by: :nr_due_by)
+  json.set! :nr_escalated, @item.nr_escalated
+end
+json.partial! 'shared/utc_date_format', item: @item, add: sla_dates
 
 channel_v2_attributes = @item.channel_v2_attributes
 stats_hash = @item.stats
