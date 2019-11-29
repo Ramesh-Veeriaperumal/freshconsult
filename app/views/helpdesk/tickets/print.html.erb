@@ -45,6 +45,10 @@
       <% value = @ticket.safe_send(field.field_name) %>
       <% if value.present? && field.field_type == "custom_date" %>
         <%= value.utc.strftime(@date_format) %> 
+      <% elsif value.present? &&  field.field_type == "custom_date_time"%>
+        <%= formated_date(value) %>
+      <% elsif value.present? && field.field_type == "custom_file"%>
+        <%= @ticket.file_field_attachments.find(value).try(:content_file_name) %>
       <% else %>
         <%= value %>
       <% end %>     
