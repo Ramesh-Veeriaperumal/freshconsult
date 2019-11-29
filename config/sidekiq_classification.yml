@@ -199,6 +199,8 @@
     - archive_tickets_channel_queue
     - update_agents_roles
     - kbase_article_versions_reset_rating
+    - search_analytics_account_reindex
+    - search_analytics_tickets_reindex
 
   :external:
     - thank_you_note

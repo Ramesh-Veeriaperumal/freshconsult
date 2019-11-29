@@ -379,6 +379,8 @@ defaults: &defaults
     - [kbase_article_versions_migration_worker]
     - [kbase_article_versions_reset_rating]
     - [articles_export_queue]
+    - [search_analytics_account_reindex]
+    - [search_analytics_tickets_reindex]
 
 development:
   <<: *defaults
