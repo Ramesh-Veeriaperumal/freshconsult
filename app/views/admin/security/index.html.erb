@@ -249,7 +249,19 @@
             <a class="tooltip copy-icon" title="<%= t('.widget.copy_to_clipboard') %>" id='copy-icon'>
               <i class="ficon-clone fsize-18"></i>
             </a>
-            <%= link_to "<i class='ficon-undo fsize-14 mr3'></i>#{t('.widget.reset_key')}".html_safe, '', :class => 'reset-key' %>
+            <div class='hide' id='reset-confirm'>
+              <%= t('.widget.reset_key_confirmation') %>
+            </div>
+            <%= link_to "<i class='ficon-undo fsize-14 mr3'></i>#{t('.widget.reset')}".html_safe, "#reset-confirm", 
+                        :rel => 'freshdialog', 
+                        :id => "reset-key",
+                        :class => "reset-key",
+                        :data => {
+                          :title => t('.widget.reset_key'),
+                          :"submit-label" => t('confirm'), 
+                          :"close-label" => t('cancel')
+                        }%>
+            </a>
           </div>
         </div>
       </li>
@@ -508,6 +520,20 @@
         e.clearSelection();
       });
 
+    });
+
+    $(document).on('click', '#reset-confirm-submit', function(){ 
+      $.ajax({
+        type: 'POST',
+        url: '/api/_/admin/security_keys/widget/regenerate',
+        success: function(data){
+          $('.clip-data').val(data.data.key);
+          $('#reset-confirm').modal('hide');
+          $('#noticeajax').html("<%= t('.widget.reset_flash') %>");
+          $('#noticeajax').show();
+          closeableFlash('#noticeajax');
+        }
+      });
     });
 
   })(jQuery)

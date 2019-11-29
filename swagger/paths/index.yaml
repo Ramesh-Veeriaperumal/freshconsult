@@ -633,6 +633,10 @@
 /admin/accounts/languages:
   $ref: ./admin/accounts/languages.yaml
 
+#Admin Security
+/admin/security_keys/widget/regenerate:
+  $ref: ./admin/security_keys/widget/regenerate.yaml
+
 #Audit log export
 /audit_log/export:
   $ref: ./audit_logs/export.yaml

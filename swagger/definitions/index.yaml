@@ -855,3 +855,6 @@ skill_response:
 #Freshcaller
 freshcaller:
   $ref: './resource/freshcaller.yaml'
+
+security_regenerate_widget_sso:
+  $ref: ./response/admin/security_keys/widget/regenerate.yaml

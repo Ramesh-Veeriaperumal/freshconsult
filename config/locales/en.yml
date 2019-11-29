@@ -2333,6 +2333,9 @@ en:
           info1: If you have solution articles or the contact form restricted to just logged in users, use this token to authenticate users into the widget.
           info2: "Learn more about authentication in the widget <a href='https://support.freshdesk.com/support/solutions/articles/50000000978' target='_blank'>here</a>."
           reset_key: Reset key
+          reset: Reset
+          reset_key_confirmation: Resetting the secret key will invalidate all the existing sessions. Do you want to proceed?
+          reset_flash: The widget sso key has been reset. Use the current key for authentication.
           copy_to_clipboard: Copy to clipboard
           copied: Copied
       errors:

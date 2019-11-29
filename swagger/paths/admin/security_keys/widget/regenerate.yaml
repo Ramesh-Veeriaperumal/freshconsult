@@ -1,0 +1,11 @@
+post:
+  tags: [Admin Security]
+  summary: Regenerate Widget SSO key
+  description: Regenerates the widget SSO key
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/security_regenerate_widget_sso'
+    403:
+      description: Access denied
