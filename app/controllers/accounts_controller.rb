@@ -188,6 +188,8 @@ class AccountsController < ApplicationController
       respond_to do |format|
         format.json {
           render :json => { :success => true,
+                            :spam_score => fetch_spam_score,
+                            :product_signup_response => fetch_product_signup_response,
                             :url => signup_complete_url(:token => @signup.user.perishable_token, :host => @signup.account.full_domain),
                             :account_id => @signup.account.id  },
                             :callback => params[:callback],
@@ -195,6 +197,8 @@ class AccountsController < ApplicationController
         }
         format.html {
           render :json => { :success => true,
+                            :spam_score => fetch_spam_score,
+                            :product_signup_response => fetch_product_signup_response,
                             :url => signup_complete_url(:token => @signup.user.perishable_token, :host => @signup.account.full_domain),
                             :account_id => @signup.account.id  },
                             :callback => params[:callback],
@@ -312,6 +316,37 @@ class AccountsController < ApplicationController
     else
       render :action => 'manage_languages'
     end
+  end
+
+  def fetch_spam_score
+    # we are sending default values for now. This will be updated while building Aloha flow.
+    key = ACCOUNT_SIGN_UP_PARAMS % { :account_id => @signup.account.id }
+    json_response = get_others_redis_key(key)
+    parsed_response = JSON.parse(json_response) if json_response.present?
+    parsed_response = { 'api_response' => {} } unless parsed_response && parsed_response['api_response']
+    {
+      'Status': parsed_response['api_response']['status'],
+      'RequestId': nil,
+      'Results': {
+        'RISK LEVEL': parsed_response['api_response']['RISK LEVEL'],
+        'RISK SCORE': 0,
+        'REASON': []
+      }
+    }
+  end
+
+  def fetch_product_signup_response
+    # we are sending default values for now. This will be updated while building Aloha flow.
+    {
+      "redirect_url": signup_complete_url(:token => @signup.user.perishable_token, :host => @signup.account.full_domain),
+      "account": {
+        "id": @signup.account.id,
+        "domain": @signup.account.full_domain,
+        "name": @signup.account.name,
+        "locale": @signup.account.language,
+        "timezone": @signup.account.time_zone
+      }
+    }
   end
 
   def anonymous_signup_complete
@@ -516,7 +551,7 @@ class AccountsController < ApplicationController
       params[:signup][:metrics] = metrics_obj
       params[:signup][:account_details] = account_obj
       if params[:join_token].present?
-        params[:signup][:fresh_id_version] = params[:fresh_id_version].present? ? params[:fresh_id_version] : Freshid::V2::Constants::FRESHID_SIGNUP_VERSION_V1
+        params[:signup][:fresh_id_version] = params[:fresh_id_version].presence || Freshid::V2::Constants::FRESHID_SIGNUP_VERSION_V2
       end
     end
 
