@@ -9,6 +9,7 @@ class TicketFieldsControllerTest < ActionController::TestCase
     super
     Sidekiq::Worker.clear_all
     before_all
+    Account.current.rollback(:nested_field_revamp) # nested_field_revamp should only be available for UI based request
   end
 
   @@before_all_run = false

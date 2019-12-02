@@ -14,7 +14,8 @@ module SlaTestHelper
     conditions = { 'ticket_type' => ['Incident'] }
     resolution_time = [7200, 10_800, 14_400, 18_000] # [urgent, high, medium, low]
     response_time = [3600, 7200, 10_800, 14_400]
-    build_sla_policy(true, conditions, {}, {}, resolution_time: resolution_time, response_time: response_time)
+    next_response_time = [nil, 7200, 10_800, 14_400]
+    build_sla_policy(true, conditions, {}, {}, resolution_time: resolution_time, response_time: response_time, next_response_time: next_response_time)
   end
 
   def build_sla_policy(is_active = true, conditions = {}, response_rule = '', resolution_rule = '', options = {})
@@ -34,10 +35,10 @@ module SlaTestHelper
       }
     )
     sla_policy.save
-    create_sla_details(sla_policy.id, options[:response_time] || [], options[:resolution_time] || [], options[:override_bhrs] || [])
+    create_sla_details(sla_policy.id, options[:response_time] || [], options[:resolution_time] || [], options[:override_bhrs] || [],  options[:next_response_time] || [])
   end
 
-  def create_sla_details(sla_policy_id, response_time = [], resolution_time = [], override_bhrs = [])
+  def create_sla_details(sla_policy_id, response_time = [], resolution_time = [], override_bhrs = [], next_response_time = [])
     details = {
       '0' => { level: 'urgent', priority: '4' },
       '1' => { level: 'high', priority: '3' },
@@ -48,6 +49,7 @@ module SlaTestHelper
     details.each_pair do |key, value|
       sla_details = FactoryGirl.build(:sla_details, name: "SLA for #{value[:level]} priority",
                                                     priority: value[:priority], response_time: (response_time[key.to_i] || '900'),
+                                                    next_response_time: (next_response_time[key.to_i]),
                                                     resolution_time: (resolution_time[key.to_i] || '900'), account_id: @account.id,
                                                     override_bhrs: override_bhrs[key.to_i] || false, escalation_enabled: '1', sla_policy_id: sla_policy_id)
       sla_details.save

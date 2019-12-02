@@ -14,6 +14,10 @@ module AccountAdditionalSettings::AdditionalSettings
     additional_settings = self.additional_settings
     email_template = (self.email_template_settings || {}).merge(settings)
 
+    DEFAULTS_FONT_SETTINGS[:email_template].keys.each do |font_style|
+      email_template[font_style] = DEFAULTS_FONT_SETTINGS[:email_template][font_style] if email_template[font_style].blank?
+    end
+
     unless additional_settings.nil?
       additional_settings[:email_template] = email_template
       self.save

@@ -10,6 +10,10 @@ module SAAS::DropFeatureData
     Role.remove_manage_availability_privilege account
   end
 
+  def handle_article_versioning_drop_data
+    ::Solution::ArticleVersionsMigrationWorker.perform_async(action: 'drop')
+  end
+
   def handle_custom_domain_drop_data
     account.main_portal.portal_url = nil
     account.save!

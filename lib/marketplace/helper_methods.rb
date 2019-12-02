@@ -49,7 +49,7 @@ module Marketplace::HelperMethods
   end
 
   def paid_app?
-    @extension['addon']
+    @extension['addons']
   end
   
   def is_oauth_app?(extension)
@@ -62,23 +62,23 @@ module Marketplace::HelperMethods
   end
 
   def addon_details
-    @addon_details ||= @extension['addon']['metadata'].find { |data| data['currency_code'] == Account.current.currency_name }
+    @addon_details ||= @extension['addons'].find { |data| data['currency_code'] == Account.current.currency_name }
   end
 
   def paid_app_params
     paid_app? ? {
       :billing => {
-        :addon_id => @extension['addon']['id']  
+        :addon_id => addon_details['addon_id']
       }.merge(account_params)
     } : {}
   end
 
   def per_agent_plan?
-    @extension['addon']['addon_type'] == Marketplace::Constants::ADDON_TYPES[:agent]
+    addon_details['addon_type'] == Marketplace::Constants::ADDON_TYPES[:agent]
   end
 
   def addon_type
-   per_agent_plan? ? t('marketplace.agent') : t('marketplace.account')
+    per_agent_plan? ? t('marketplace.agent') : t('marketplace.account')
   end
 
   def app_units_count

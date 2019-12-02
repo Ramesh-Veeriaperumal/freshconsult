@@ -68,6 +68,7 @@
       - :session_replay
       - :canned_forms
       - :help_widget_appearance
+      - :article_export
     :inherits:
       - :sprout_jan_17
     :exclude: []
@@ -118,6 +119,7 @@
       - :audit_log_ui
       - :field_service_management_toggle
       - :segments
+      - :article_versioning
     :inherits:
       - :garden_jan_17
     :exclude: []
@@ -206,6 +208,7 @@
       - :article_filters
       - :auto_article_order
       - :help_widget_appearance
+      - :article_export
     :inherits:
       - :sprout_jan_19
     :exclude: []
@@ -250,6 +253,7 @@
       - :adv_article_bulk_actions
       - :customer_journey
       - :help_widget_predictive
+      - :article_versioning
     :inherits:
       - :blossom_jan_19
     :exclude: []

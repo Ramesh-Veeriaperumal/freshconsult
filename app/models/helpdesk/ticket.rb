@@ -33,7 +33,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed",
                             "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "sender_email",
                             "parent_ticket", "reports_hash","sla_response_reminded","sla_resolution_reminded", "dirty_attributes",
-                            "sentiment", "spam_score", "dynamodb_range_key", "failure_count", "subsidiary_tkts_count"]
+                            "sentiment", "spam_score", "dynamodb_range_key", "failure_count", "subsidiary_tkts_count",
+                            "last_customer_note_id", "nr_updated_at"]
 
   TICKET_STATE_ATTRIBUTES = ["opened_at", "pending_since", "resolved_at", "closed_at", "first_assigned_at", "assigned_at",
                              "first_response_time", "requester_responded_at", "agent_responded_at", "group_escalated",
@@ -67,7 +68,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :schedule_observer, :required_fields_on_closure, :observer_args, :skip_sbrr_save,
     :sbrr_state_attributes, :escape_liquid_attributes, :update_sla, :sla_on_background,
     :sla_calculation_time, :disable_sla_calculation, :import_ticket, :ocr_update, :skip_ocr_sync,
-    :custom_fields_hash, :thank_you_note_id, :perform_post_observer_actions, :prime_ticket_args
+    :custom_fields_hash, :thank_you_note_id, :perform_post_observer_actions, :prime_ticket_args, :current_note_id
+
     # :skip_sbrr_assigner and :skip_sbrr_save can be combined together if needed.
     # Added :system_changes, :activity_type, :misc_changes for activity_revamp -
     # - will be clearing these after activity publish.

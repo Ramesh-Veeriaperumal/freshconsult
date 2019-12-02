@@ -1,33 +1,65 @@
 <% font_setting = JSON.parse(email_template_settings) %>
 <% font_family = font_setting["font-family"] %>
+<% font_size = font_setting["font-size"] %>
 <div id="font_setting_partial" class="font-setting-wrapper">
-	<div class="pull-right mt10" id="font-show">
-		<span id="font-tab" class="show-font-title"><%= t('email_notifications.default_font')%><span id="font-name" rel="<%= font_family %>" style="font-family:<%= font_family %>"><%= font_family %></span> -
-			<a href="#"id="font-change" class="font-change">
+  <!-- adding separate section for font size settings -->
+  <div class="pull-right pl10 mt10" id="font-size-show">
+    <span id="font-tab" class="show-font-title"><span id="font-size" rel="<%= font_size %>" style="font-size:<%= font_size %>"><%= font_size %></span> -
+      <a href="javascript:void(0);"id="font-size-change" class="font-change">
+      <%= t("change") %></a>
+    </span>
+  </div>
+
+  <!-- when user clicks on dropdown, the font size edit section gets activated -->
+  <div class="hide pull-right font-edit mt10 " id="font-size-edit">
+    <span class="edit-font-family" id="font-size-select">
+      <div class="family-selected-text" id="size-selected-text">
+        <div id="size-text" class="font-content" rel="<%= font_size %>" style="font-size:<%= font_size %>" ><%= font_size %></div>
+        <span class="pr5 pull-right"><%= font_icon "caret-down", :size => 12 %> </span>
+      </div>
+    </span>
+
+    <span class="font-btn" id="font-btn">
+      <a href="javascript:void(0);" class="vertical-alignment tooltip ml15" id="save-font" data-placement="below" data-original-title="<%= t('save') %>" twipsy-content-set="true">
+        <%= font_icon "save", :size => 18 %>
+      </a>
+      <a href="javascript:void(0);" class="vertical-alignment tooltip ml15" id="font-size-cancel" data-placement="below" data-original-title="<%= t('cancel') %>" twipsy-content-set="true">
+        <%= font_icon "cross", :size => 18 %>
+      </a>
+    </span>
+  </div>
+
+  <!-- Font Family section -->
+  <div class="pull-right font-family-show pr10 mt10" id="font-family-show">
+		<span id="font-tab" class="show-font-title"><%= t('email_notifications.default_font_settings')%><span id="font-name" rel="<%= font_family %>" style="font-family:<%= font_family %>;font-size:<%= font_size %>">
+      <%= font_family %></span> -
+			<a href="javascript:void(0);" id="font-family-change" class="font-change">
 			<%= t("change") %></a>
 		</span>
-	</div>
-	<div class="hide pull-right font-edit" id="font-edit">
-		<span class="edit-font-family" id="font-family-select">
-			<div class="family-selected-text" id="family-selected-text"> 
-				<div id="family-text" class="font-content" rel="<%= font_family %>" style="font-family:<%= font_family %>" ><%= font_family %></div>
-				<span class="pr5 pull-right"><%= font_icon "caret-down", :size => 12 %> </span>
-			</div>
-		</span>
+  </div>
 
-		<span class="font-btn" id="font-btn">
-			<a href="#" class="vertical-alignment tooltip ml15" id="save-font" data-placement="below" data-original-title="<%= t('save') %>" twipsy-content-set="true">
-				<%= font_icon "save", :size => 18 %> 
-			</a>
-			<a href="#" class="vertical-alignment tooltip ml15" id="font-cancel" data-placement="below" data-original-title="<%= t('cancel') %>" twipsy-content-set="true">
-				<%= font_icon "cross", :size => 18 %> 
-			</a>
-		</span>
-	</div>
+  <!-- when user clicks on font family dropdown, the edit section gets activated -->
+  <div class="hide pull-right font-edit mt10" id="font-family-edit">
+    <span class="edit-font-family" id="font-family-select">
+      <div class="family-selected-text" id="family-selected-text">
+        <div id="family-text" class="font-content" rel="<%= font_family %>" style="font-family:<%= font_family %>" ><%= font_family %></div>
+        <span class="pr5 pull-right"><%= font_icon "caret-down", :size => 12 %> </span>
+      </div>
+    </span>
+
+    <span class="font-btn" id="font-btn">
+      <a href="javascript:void(0);" class="vertical-alignment tooltip ml15" id="save-font" data-placement="below" data-original-title="<%= t('save') %>" twipsy-content-set="true">
+        <%= font_icon "save", :size => 18 %>
+      </a>
+      <a href="javascript:void(0);" class="vertical-alignment tooltip ml15" id="font-family-cancel" data-placement="below" data-original-title="<%= t('cancel') %>" twipsy-content-set="true">
+        <%= font_icon "cross", :size => 18 %>
+      </a>
+    </span>
+  </div>
 </div>
 <%= javascript_tag do %>
 if(App.Admin && App.Admin.AdminFontSettings) {
 	App.Admin.AdminFontSettings.onLeave();
-	App.Admin.AdminFontSettings.initialize();		
+	App.Admin.AdminFontSettings.initialize();
 }
 <% end %>

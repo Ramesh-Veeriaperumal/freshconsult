@@ -1397,6 +1397,69 @@ module Ember
         match_json(pattern)
       end
 
+      def test_article_filters_with_deleted_agent_drafts
+        author_id = @account.agents.first.id
+        article_meta = create_article(user_id: 999_999, folder_meta_id: @@folder_meta.id, status: '1')
+        article = article_meta.solution_articles.first
+        tag = 'tagnamefordeletedagent' + Random.rand(99_999_999).to_s
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
+                                 allow_skip: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '1',
+                                         author: -1.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
+                                         created_at: { start: '20190101', end: '21190101' }, last_modified: { start: '20190101', end: '21190101' }, tags: [tag] }, false)
+        article.reload
+        assert_response 200
+        pattern = private_api_solution_article_pattern(article, action: :filter)
+        match_json([pattern])
+      end
+
+      def test_article_filters_with_deleted_agent_published_article
+        article_meta = create_article(user_id: 999_998, folder_meta_id: @@folder_meta.id)
+        article = article_meta.solution_articles.first
+        tag = 'tagfordeletedagent' + Random.rand(99_999_999).to_s
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
+                                 allow_skip: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s,
+                                         author: -1.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
+                                         created_at: { start: '20190101', end: '21190101' }, last_modified: { start: '20190101', end: '21190101' }, tags: [tag] }, false)
+        article.reload
+        assert_response 200
+        pattern = private_api_solution_article_pattern(article, action: :filter)
+        match_json([pattern])
+      end
+
+      def test_article_filters_with_user_deleted_agent_for_published_articles
+        user = add_new_user(@account, active: true, deleted: true)
+        article_meta = create_article(user_id: user.id, folder_meta_id: @@folder_meta.id)
+        article = article_meta.solution_articles.first
+        tag = 'tagfordeletedagentname' + Random.rand(99_999_999).to_s
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
+                                 allow_skip: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s,
+                                         author: -1.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
+                                         created_at: { start: '20190101', end: '21190101' }, last_modified: { start: '20190101', end: '21190101' }, tags: [tag] }, false)
+        article.reload
+        assert_response 200
+        pattern = private_api_solution_article_pattern(article, action: :filter)
+        match_json([pattern])
+      end
+
+      def test_article_filters_with_user_deleted_agent_for_draft_articles
+        user = add_new_user(@account, active: true, deleted: true)
+        article_meta = create_article(user_id: user.id, folder_meta_id: @@folder_meta.id, status: '1')
+        article = article_meta.solution_articles.first
+        tag = 'tagfordeletedagentname' + Random.rand(99_999_999).to_s
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
+                                 allow_skip: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s,
+                                         author: -1.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s], status: '1',
+                                         created_at: { start: '20190101', end: '21190101' }, last_modified: { start: '20190101', end: '21190101' }, tags: [tag] }, false)
+        article.reload
+        assert_response 200
+        pattern = private_api_solution_article_pattern(article, action: :filter)
+        match_json([pattern])
+      end
+
       def test_article_filters_with_invalid_language
         get :filter, controller_params(version: 'private', portal_id: @portal_id, language: 'sample')
         assert_response 404
@@ -1467,6 +1530,24 @@ module Ember
         match_json([pattern])
       end
 
+      def test_article_filters_unpublished_with_diff_user_draft
+        author_id = @account.agents.first.id
+        article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id)
+        article = article_meta.solution_articles.first
+        new_user = add_test_agent
+        create_draft(article: article, user_id: new_user.id, keep_previous_author: true)
+        tag = Faker::Lorem.characters(7)
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
+                                 allow_skip: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '1',
+                                         author: new_user.id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
+                                         created_at: { start: '20190101', end: '21190101' }, last_modified: { start: '20190101', end: '21190101' }, tags: [tag] }, false)
+        article.reload
+        assert_response 200
+        pattern = private_api_solution_article_pattern(article, action: :filter)
+        match_json([pattern])
+      end
+
       def test_article_filters_unpublished_diff_user
         author_id = add_test_agent.id
         article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id, status: '1')
@@ -1477,8 +1558,10 @@ module Ember
         get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '1',
                                          author: author_id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
                                          created_at: { start: '20190101', end: '21190101' }, last_modified: { start: '20190101', end: '21190101' }, tags: [tag] }, false)
+        article.reload
         assert_response 200
-        match_json([])
+        pattern = private_api_solution_article_pattern(article, action: :filter)
+        match_json([pattern])
       end
 
       def test_article_filters_unpublished

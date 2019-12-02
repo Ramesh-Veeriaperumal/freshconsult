@@ -19,10 +19,12 @@ class Mailbox::GmailOauthHelperTest < ActiveSupport::TestCase
     mailbox = create_email_config(
       support_email: 'testoauth@fdtest.com',
       imap_mailbox_attributes: {
-        imap_authentication: 'xoauth2' 
+        imap_authentication: 'xoauth2',
+        with_refresh_token: true
       },
       smtp_mailbox_attributes: {
-        smtp_authentication: 'xoauth2' 
+        smtp_authentication: 'xoauth2',
+        with_refresh_token: true
       }
     )
     Mailbox::GmailOauthHelperTest.any_instance.stubs(:decrypt_refresh_token).returns('refreshtoken')
@@ -57,10 +59,12 @@ class Mailbox::GmailOauthHelperTest < ActiveSupport::TestCase
     mailbox = create_email_config(
       support_email: 'testoauth@fdtest.com',
       imap_mailbox_attributes: {
-        imap_authentication: 'xoauth2' 
+        imap_authentication: 'xoauth2',
+        with_refresh_token: true
       },
       smtp_mailbox_attributes: {
-        smtp_authentication: 'xoauth2' 
+        smtp_authentication: 'xoauth2',
+        with_refresh_token: true
       }
     )
     Mailbox::GmailOauthHelperTest.any_instance.stubs(:decrypt_refresh_token).returns('refreshtoken')
@@ -90,10 +94,12 @@ class Mailbox::GmailOauthHelperTest < ActiveSupport::TestCase
     mailbox = create_email_config(
       support_email: 'testoauth@fdtest.com',
       imap_mailbox_attributes: {
-        imap_authentication: 'xoauth2'
+        imap_authentication: 'xoauth2',
+        with_refresh_token: true
       },
       smtp_mailbox_attributes: {
-        smtp_authentication: 'xoauth2'
+        smtp_authentication: 'xoauth2',
+        with_refresh_token: true
       }
     )
     mailbox.active = true
@@ -109,10 +115,12 @@ class Mailbox::GmailOauthHelperTest < ActiveSupport::TestCase
     mailbox = create_email_config(
       support_email: 'testoauth@fdtest.com',
       imap_mailbox_attributes: {
-        imap_authentication: 'xoauth2'
+        imap_authentication: 'xoauth2',
+        with_refresh_token: true
       },
       smtp_mailbox_attributes: {
-        smtp_authentication: 'xoauth2'
+        smtp_authentication: 'xoauth2',
+        with_refresh_token: true
       }
     )
     mailbox.smtp_mailbox.error_type = 401

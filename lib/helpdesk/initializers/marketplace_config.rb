@@ -31,6 +31,8 @@ module MarketplaceConfig
   TENANT_ID = config[:tenant_id]
   FRESH_PARENT = config[:fresh_parent]
   ACCOUNT_API_POLL_INTERVAL = config[:account_api_poll_interval]
+  MARKETPLACE_CIPHER_KEY = config[:mkp_cipher_key]
+  MARKETPLACE_CIPHER_IV = config[:mkp_cipher_iv]
   MKP_CB = FreshRequest::RedisUrlCb.new(
                 max_failures: 5,
                 trip_off_interval: 20,

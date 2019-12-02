@@ -155,12 +155,12 @@ class Helpdesk::TicketState <  ActiveRecord::Base
       self.resolution_time_by_bhrs = calculate_time_in_bhrs(time, resolved_at, default_group)
     }
   end
-  
-  def change_on_state_time(from_time, to_time)
+
+  def change_on_state_time(from_time, to_time, note = nil)
     priority_for_sla_calculation = tickets.priority_changed? ? tickets.priority_was : tickets.priority
     sla_policy = tickets.sla_policy || account.sla_policies.default.first
     sla_detail = sla_policy.sla_details.where(:priority => priority_for_sla_calculation).first
-    if sla_detail.override_bhrs 
+    if sla_detail.override_bhrs
       updated_time = (to_time - from_time).round()
     else
       BusinessCalendar.execute(self.tickets) {
@@ -168,8 +168,10 @@ class Helpdesk::TicketState <  ActiveRecord::Base
         updated_time = calculate_time_in_bhrs(from_time, to_time, default_group)
       }
     end
-    log_on_state_time(from_time, to_time, sla_policy, sla_detail, updated_time)
-    self.on_state_time = self.on_state_time.to_i + updated_time
+    obj = note.present? ? note : self
+    log_on_state_time(from_time, to_time, sla_policy, sla_detail, updated_time, obj)
+    obj.on_state_time = obj.on_state_time.to_i + updated_time
+    obj.schema_less_note.save unless note.nil?
   end
 
   def set_avg_response_time
@@ -186,7 +188,7 @@ class Helpdesk::TicketState <  ActiveRecord::Base
   def update_search_index
     tickets.update_es_index if (@ticket_state_changes.keys & TICKET_STATE_SEARCH_FIELDS).any?
   end
-  
+
   # Needed when ticket update happens via update_ticket_states_queue
   #
   def esv2_fields_updated?
@@ -340,9 +342,8 @@ private
     !("false".eql?(get_reports_redis_key ENTERPRISE_REPORTS_ENABLED))
   end
 
-  def log_on_state_time(from_time, to_time, sla_policy, sla_detail, updated_time)
-    Rails.logger.debug "SLA :::: Account id #{self.account_id} :: #{self.id} ticket :: Inputs for updating on state time :: from_time :: #{from_time} to_time :: #{to_time} sla_policy :: #{sla_policy.id} - #{sla_policy.name} sla_detail :: #{sla_detail.id} - #{sla_detail.name} override_bhrs :: #{sla_detail.override_bhrs}"
-    Rails.logger.debug "SLA :::: Account id #{self.account_id} :: #{self.id} ticket :: Updating on state time :: on_state_time_was :: #{self.on_state_time.to_i} updated_time :: #{updated_time} on_state_time :: #{self.on_state_time.to_i + updated_time}"
+  def log_on_state_time(from_time, to_time, sla_policy, sla_detail, updated_time, obj)
+    Rails.logger.debug "SLA :::: Account id #{obj.account_id} :: #{obj.id} #{obj.class} :: Inputs for updating on state time :: from_time :: #{from_time} to_time :: #{to_time} sla_policy :: #{sla_policy.id} - #{sla_policy.name} sla_detail :: #{sla_detail.id} - #{sla_detail.name} override_bhrs :: #{sla_detail.override_bhrs}"
+    Rails.logger.debug "SLA :::: Account id #{obj.account_id} :: #{obj.id} #{obj.class} :: Updating on state time :: on_state_time_was :: #{obj.on_state_time.to_i} updated_time :: #{updated_time} on_state_time :: #{obj.on_state_time.to_i + updated_time}"
   end
-
 end

@@ -20,7 +20,7 @@ module Solution::ArticleFilters
         @order_by = 'IFNULL(solution_drafts.modified_at, solution_articles.modified_at) desc'
       end
       join_sql = format(%(%{join_type} JOIN solution_drafts ON solution_drafts.article_id = solution_articles.id AND solution_drafts.account_id = %{account_id}), account_id: Account.current.id, join_type: @join_type)
-      apply_scopes(article_scoper, @reorg_params).joins(join_sql).order(@order_by)
+      apply_scopes(article_scoper.joins(join_sql), @reorg_params).order(@order_by)
     end
 
     private
@@ -37,7 +37,7 @@ module Solution::ArticleFilters
       def reorg_params
         rebuild_params = params.deep_dup
         @reorg_params  = {}.with_indifferent_access
-        rebuild_params.each do |key,value|
+        rebuild_params.each do |key, value|
           key = ::SolutionConstants::FILTER_ATTRIBUTES.include?(key.to_s) ? :"by_#{key}" : key
           @reorg_params.merge!(key => value)
         end
@@ -49,12 +49,10 @@ module Solution::ArticleFilters
       end
 
       def esv2_agent_article_model
-        {'article' => { model: 'Solution::Article',
-          associations: [:user, :article_body, :recent_author, { draft: :draft_body }, 
-            { solution_article_meta: { solution_category_meta: :"#{Language.for_current_account.to_key}_category" } }, 
-            { solution_folder_meta: [:customer_folders, :"#{Language.for_current_account.to_key}_folder"] }] 
-          }
-        }
+        { 'article' => { model: 'Solution::Article',
+                         associations: [:user, :article_body, :recent_author, { draft: :draft_body },
+                                        { solution_article_meta: { solution_category_meta: :"#{Language.for_current_account.to_key}_category" } },
+                                        { solution_folder_meta: [:customer_folders, :"#{Language.for_current_account.to_key}_folder"] }] } }
       end
 
       def construct_es_params

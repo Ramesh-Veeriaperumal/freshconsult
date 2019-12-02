@@ -264,8 +264,9 @@ class AgentsController < ApplicationController
     else
       check_email_exist @agent.user
       @agent.user = @user       
-      errors = @agent.user.errors.present? ? @agent.user.errors.full_messages : 
-                @agent.errors.full_messages
+      errors = @agent.user.errors.present? ? @agent.user.errors : 
+                @agent.errors
+      errors =  errors.messages.has_key?(:"user.base") ? errors.values : errors.full_messages
       result = { errors: errors }
       respond_to do |format|
         format.html {

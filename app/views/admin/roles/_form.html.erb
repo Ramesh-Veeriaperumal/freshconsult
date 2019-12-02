@@ -48,7 +48,7 @@
 				<li><a href="#outreaches"><%= t('admin.roles.scroll.outreaches').html_safe%></a></li>
 			<%end%>
 			<li><a href="#customers"><%= t('admin.roles.scroll.customers').html_safe%></a></li>
-      <% if current_account.field_service_management_enabled? && current_account.scheduling_fsm_dashboard_enabled? %>
+      <% if current_account.field_service_management_enabled? %>
         <li><a href="#fieldservice"><%= t('admin.roles.scroll.fieldservice').html_safe%></a></li>
       <%end%>
 			<li><a href="#reports"><%= t('admin.roles.scroll.reports').html_safe%></a></li>

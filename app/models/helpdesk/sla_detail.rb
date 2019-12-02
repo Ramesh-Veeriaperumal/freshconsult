@@ -98,6 +98,13 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
     calculate_due(created_time, time_zone_now, response_time.seconds, total_time_worked, calendar)
   end
 
+  def calculate_nr_dueBy(created_time, time_zone_now, total_time_worked, calendar)
+    unless next_response_time.nil?
+      Rails.logger.debug "SLA :::: Account id #{self.account_id} :: Calculating nr due by :: created_time :: #{created_time} next response_time :: #{next_response_time.seconds} total_time_worked :: #{total_time_worked} calendar :: #{calendar.id} - #{calendar.name} override_bhrs :: #{override_bhrs}"
+      calculate_due(created_time, time_zone_now, next_response_time.seconds, total_time_worked, calendar)
+    end
+  end
+
   def self.sla_options
     SLA_OPTIONS.map { |i| [I18n.t(i[1]), i[2]] }
   end
@@ -149,6 +156,11 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
     def check_sla_time
       self.response_time = response_time >= SECONDS_RANGE[:min_seconds] ? (response_time <= SECONDS_RANGE[:max_seconds_by_days] ? response_time : SECONDS_RANGE[:max_seconds_by_months]) : SECONDS_RANGE[:min_seconds]
       self.resolution_time = resolution_time >= SECONDS_RANGE[:min_seconds] ? (resolution_time <= SECONDS_RANGE[:max_seconds_by_days] ? resolution_time : SECONDS_RANGE[:max_seconds_by_months]) : SECONDS_RANGE[:min_seconds]
+      if next_response_time.nil?
+        self.next_response_time = nil
+      else
+        self.next_response_time = next_response_time >= SECONDS_RANGE[:min_seconds] ? (next_response_time <= SECONDS_RANGE[:max_seconds_by_days] ? next_response_time : SECONDS_RANGE[:max_seconds_by_months]) : SECONDS_RANGE[:min_seconds]
+      end
     end
 
     def calculate_due(created_time, time_zone_now, resolution_time_in_seconds, total_time_worked, calendar)

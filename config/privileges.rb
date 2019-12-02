@@ -651,6 +651,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/outlook_contact", :only => [:install, :settings, :edit, :destroy, :update, :render_fields, :new]
     resource :"integrations/cti_admin"
     resource :"admin/integrations/freshplug"
+    resource :"admin/marketplace/app"
     resource :"admin/marketplace/extension"
     resource :"admin/marketplace/installed_extension"
     resource :"doorkeeper/authorization"

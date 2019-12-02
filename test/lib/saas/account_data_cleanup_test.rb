@@ -71,7 +71,7 @@ class AccountDataCleanupTest < ActionView::TestCase
     assert_equal @account.contact_form.custom_contact_fields.length, 1
     assert_equal @account.company_form.custom_company_fields.length, 1
 
-    SAAS::AccountDataCleanup.new(@account, ['create_observer', 'supervisor', 'basic_twitter', 'add_watcher', 'basic_facebook', 'skill_based_round_robin', 'occasional_agent', 'custom_status', 'custom_ticket_fields', 'custom_contact_fields', 'custom_company_fields', 'custom_ticket_views', 'multi_timezone', 'multiple_emails', 'multi_product', 'shared_ownership_toggle', 'shared_ownership', 'link_tickets', 'parent_child_tickets_toggle', 'auto_ticket_export', 'multiple_companies_toggle', 'support_bot', 'custom_dashboard', 'hipaa', 'rebranding', 'customer_slas', 'unique_contact_identifier', 'link_tickets_toggle', 'ticket_activity_export', 'disable_old_ui'], 'drop').perform_cleanup
+    SAAS::AccountDataCleanup.new(@account, ['create_observer', 'supervisor', 'basic_twitter', 'add_watcher', 'basic_facebook', 'skill_based_round_robin', 'occasional_agent', 'custom_status', 'custom_ticket_fields', 'custom_contact_fields', 'custom_company_fields', 'custom_ticket_views', 'multi_timezone', 'multiple_emails', 'multi_product', 'shared_ownership_toggle', 'shared_ownership', 'link_tickets', 'parent_child_tickets_toggle', 'auto_ticket_export', 'multiple_companies_toggle', 'support_bot', 'custom_dashboard', 'hipaa', 'rebranding', 'customer_slas', 'unique_contact_identifier', 'link_tickets_toggle', 'ticket_activity_export', 'disable_old_ui', 'article_versioning'], 'drop').perform_cleanup
     @account.reload
     assert_nil @account.all_observer_rules.find_by_id(va_rule.id)
     assert_equal @account.all_supervisor_rules.length, 0
@@ -82,6 +82,7 @@ class AccountDataCleanupTest < ActionView::TestCase
     assert_equal @account.ticket_fields.where(default: false).length, 0
     assert_equal @account.contact_form.custom_contact_fields.length, 0
     assert_equal @account.company_form.custom_company_fields.length, 0
+    assert_equal @account.solution_article_versions.count, 0
 
     Account.any_instance.stubs(:features_included?).raises(StandardError)
     SAAS::AccountDataCleanup.new(@account, ['custom_apps'], 'drop').perform_cleanup
@@ -121,7 +122,7 @@ class AccountDataCleanupTest < ActionView::TestCase
     @account.contact_form.default_fields.find { |tf| tf.name == 'unique_external_id' }.destroy
     @account.reload
 
-    SAAS::AccountDataCleanup.new(@account, ['smart_filter', 'shared_ownership', 'link_tickets', 'parent_child_tickets_toggle', 'parent_child_tickets', 'multiple_companies_toggle', 'tam_default_fields', 'unique_contact_identifier', 'custom_dashboard', 'disable_old_ui', 'link_tickets_toggle'], 'add').perform_cleanup
+    SAAS::AccountDataCleanup.new(@account, ['smart_filter', 'shared_ownership', 'link_tickets', 'parent_child_tickets_toggle', 'parent_child_tickets', 'multiple_companies_toggle', 'tam_default_fields', 'unique_contact_identifier', 'custom_dashboard', 'disable_old_ui', 'link_tickets_toggle', 'article_versioning'], 'add').perform_cleanup
   ensure
     Account.current.destroy if !Account.current.nil? && Account.current.id != 1 && !Account.current.id.nil?
   end

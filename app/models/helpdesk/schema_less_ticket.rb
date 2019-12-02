@@ -302,6 +302,22 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
     additional_info[:thank_you_notes] = value
   end
 
+  def last_customer_note_id
+    additional_info[:last_customer_note_id]
+  end
+
+  def last_customer_note_id=(value)
+    additional_info[:last_customer_note_id] = value
+  end
+
+  def nr_updated_at
+    additional_info[:nr_updated_at]
+  end
+
+  def nr_updated_at=(value)
+    additional_info[:nr_updated_at] = value
+  end
+
   def override_exchange_model(_action)
     changes = attribute_changes('text_tc02')
     ticket.model_changes = changes if changes.present?

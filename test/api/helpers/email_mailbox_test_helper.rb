@@ -1,4 +1,6 @@
 module EmailMailboxTestHelper
+  include Email::Mailbox::Constants
+
   def mailbox_pattern(expected_output, mailbox)
     response_pattern = {
       id: Fixnum,
@@ -7,7 +9,7 @@ module EmailMailboxTestHelper
       group_id: expected_output[:group_id] || mailbox.group_id,
       default_reply_email: expected_output[:default_reply_email] || mailbox.primary_role,
       active: expected_output[:active] || mailbox.active,
-      mailbox_type: expected_output[:mailbox_type] || ((mailbox.imap_mailbox.present? || mailbox.smtp_mailbox.present?) ? Email::Mailbox::Constants::CUSTOM_MAILBOX : Email::Mailbox::Constants::FRESHDESK_MAILBOX),
+      mailbox_type: expected_output[:mailbox_type] || (mailbox.imap_mailbox.present? || mailbox.smtp_mailbox.present?) ? CUSTOM_MAILBOX : FRESHDESK_MAILBOX,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
@@ -53,7 +55,7 @@ module EmailMailboxTestHelper
         port: mailbox.imap_mailbox.port,
         use_ssl: mailbox.imap_mailbox.use_ssl,
         delete_from_server: mailbox.imap_mailbox.delete_from_server,
-        authentication: mailbox.imap_mailbox.authentication == Email::Mailbox::Constants::IMAP_CRAM_MD5 ? Email::Mailbox::Constants::CRAM_MD5 : mailbox.imap_mailbox.authentication,
+        authentication: mailbox.imap_mailbox.authentication == IMAP_CRAM_MD5 ? CRAM_MD5 : mailbox.imap_mailbox.authentication,
         user_name: mailbox.imap_mailbox.user_name,
         failure_code: mailbox.imap_mailbox.error_type ? Admin::EmailConfig::Imap::ErrorMapper.new(error_type: mailbox.imap_mailbox.error_type).fetch_error_mapping : nil
         })
@@ -108,8 +110,8 @@ module EmailMailboxTestHelper
     mailbox_access_type = options[:access_type] || 'incoming'
     result_hash = { access_type: mailbox_access_type }
     result_hash[:reference_key] = options[:reference_key] if options[:reference_key].present?
-    result_hash[:incoming] = create_incoming_type_hash(options) if [Email::Mailbox::Constants::INCOMING_ACCESS_TYPE, Email::Mailbox::Constants::BOTH_ACCESS_TYPE].include?(mailbox_access_type)
-    result_hash[:outgoing] = create_outgoing_type_hash(options) if [Email::Mailbox::Constants::OUTGOING_ACCESS_TYPE, Email::Mailbox::Constants::BOTH_ACCESS_TYPE].include?(mailbox_access_type)
+    result_hash[:incoming] = create_incoming_type_hash(options) if [INCOMING_ACCESS_TYPE, BOTH_ACCESS_TYPE].include?(mailbox_access_type)
+    result_hash[:outgoing] = create_outgoing_type_hash(options) if [OUTGOING_ACCESS_TYPE, BOTH_ACCESS_TYPE].include?(mailbox_access_type)
     { custom_mailbox: result_hash }
   end
   
@@ -123,7 +125,7 @@ module EmailMailboxTestHelper
       user_name: options[:imap_user_name] || 'smtp@gmail.com',
       password: options[:imap_password] || 'password'
     }
-    incoming_hash.merge!(refresh_token: options[:imap_refresh_token] || 'refreshtoken') if options[:imap_authentication] == 'xoauth2'
+    incoming_hash[:refresh_token] = options[:imap_refresh_token] || 'refreshtoken' if options[:imap_authentication] == OAUTH && options[:with_refresh_token]
     incoming_hash
   end
   
@@ -136,7 +138,7 @@ module EmailMailboxTestHelper
       user_name: options[:smtp_user_name] || 'smtp@gmail.com',
       password: options[:smtp_password] || 'password'
     }
-    outgoing_hash.merge!(refresh_token: options[:smtp_refresh_token] || 'refreshtoken') if options[:smtp_authentication] == 'xoauth2'
+    outgoing_hash[:refresh_token] = options[:smtp_refresh_token] || 'refreshtoken' if options[:smtp_authentication] == OAUTH && options[:with_refresh_token]
     outgoing_hash
   end
 end

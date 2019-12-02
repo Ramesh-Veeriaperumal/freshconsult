@@ -19,10 +19,12 @@ class Email::Mailbox::HelperMethodsTest < ActiveSupport::TestCase
     mailbox = create_email_config(
       support_email: 'test@test1.com',
       imap_mailbox_attributes: {
-        imap_authentication: 'xoauth2' 
+        imap_authentication: 'xoauth2',
+        with_refresh_token: true
       },
       smtp_mailbox_attributes: {
-        smtp_authentication: 'xoauth2' 
+        smtp_authentication: 'xoauth2',
+        with_refresh_token: true
       }
     )
     mailbox.active = true
@@ -37,10 +39,12 @@ class Email::Mailbox::HelperMethodsTest < ActiveSupport::TestCase
     mailbox = create_email_config(
       support_email: 'test@test2.com',
       imap_mailbox_attributes: {
-        imap_authentication: 'xoauth2' 
+        imap_authentication: 'xoauth2',
+        with_refresh_token: true
       },
       smtp_mailbox_attributes: {
-        smtp_authentication: 'xoauth2' 
+        smtp_authentication: 'xoauth2',
+        with_refresh_token: true
       }
     )
     mailbox.active = true
@@ -55,10 +59,12 @@ class Email::Mailbox::HelperMethodsTest < ActiveSupport::TestCase
     mailbox = create_email_config(
       support_email: 'test@test3.com',
       imap_mailbox_attributes: {
-        imap_authentication: 'xoauth2' 
+        imap_authentication: 'xoauth2',
+        with_refresh_token: true
       },
       smtp_mailbox_attributes: {
-        smtp_authentication: 'xoauth2' 
+        smtp_authentication: 'xoauth2',
+        with_refresh_token: true
       }
     )
     mailbox.active = true
@@ -73,10 +79,12 @@ class Email::Mailbox::HelperMethodsTest < ActiveSupport::TestCase
     mailbox = create_email_config(
       support_email: 'test@test4.com',
       imap_mailbox_attributes: {
-        imap_authentication: 'xoauth2' 
+        imap_authentication: 'xoauth2',
+        with_refresh_token: true
       },
       smtp_mailbox_attributes: {
-        smtp_authentication: 'xoauth2' 
+        smtp_authentication: 'xoauth2',
+        with_refresh_token: true
       }
     )
     mailbox.active = true
@@ -91,10 +99,12 @@ class Email::Mailbox::HelperMethodsTest < ActiveSupport::TestCase
     mailbox = create_email_config(
       support_email: 'test@test5.com',
       imap_mailbox_attributes: {
-        imap_authentication: 'xoauth2' 
+        imap_authentication: 'xoauth2',
+        with_refresh_token: true
       },
       smtp_mailbox_attributes: {
-        smtp_authentication: 'xoauth2' 
+        smtp_authentication: 'xoauth2',
+        with_refresh_token: true
       }
     )
     mailbox.active = true
@@ -109,10 +119,12 @@ class Email::Mailbox::HelperMethodsTest < ActiveSupport::TestCase
     mailbox = create_email_config(
       support_email: 'test@test6.com',
       imap_mailbox_attributes: {
-        imap_authentication: 'xoauth2' 
+        imap_authentication: 'xoauth2',
+        with_refresh_token: true
       },
       smtp_mailbox_attributes: {
-        smtp_authentication: 'xoauth2' 
+        smtp_authentication: 'xoauth2',
+        with_refresh_token: true
       }
     )
     mailbox.active = true
@@ -130,10 +142,12 @@ class Email::Mailbox::HelperMethodsTest < ActiveSupport::TestCase
     mailbox = create_email_config(
       support_email: 'test@test7.com',
       imap_mailbox_attributes: {
-        imap_authentication: 'xoauth2' 
+        imap_authentication: 'xoauth2',
+        with_refresh_token: true
       },
       smtp_mailbox_attributes: {
-        smtp_authentication: 'xoauth2' 
+        smtp_authentication: 'xoauth2',
+        with_refresh_token: true
       }
     )
     mailbox.active = true

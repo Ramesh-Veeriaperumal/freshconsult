@@ -7,7 +7,8 @@ class Admin::Marketplace::InstalledExtensionsController < Admin::AdminController
 
   before_filter { |c| c.requires_feature :marketplace }
   before_filter :verify_oauth_callback , :only => [:oauth_callback]
-  before_filter :extension, :only => [:install, :reinstall, :uninstall, :oauth_callback, :new_configs, :new_oauth_iparams, :edit_oauth_iparams]
+  before_filter :extension, :only => [:install, :reinstall, :uninstall, :oauth_callback, :new_configs,
+    :new_oauth_iparams, :edit_oauth_iparams, :edit_oauth_configs]
   before_filter :extension_has_config?, :only => [:new_configs]
   before_filter :verify_billing_info, :only => [:install, :reinstall], :if => :account_subscription_verify?
   after_filter  :update_timestamp, only: [:install, :reinstall, :uninstall, :enable, :disable, :update_config]
@@ -18,6 +19,7 @@ class Admin::Marketplace::InstalledExtensionsController < Admin::AdminController
     params[:page] = "iparams"
     if platform_version == Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2]
       configs_page_v2
+      get_configs_from_installed if ['update', 'upgrade'].include?(params[:installation_type])
     else
       extn_configs = extension_configs
       render_error_response && return if error_status?(extn_configs)
@@ -30,7 +32,8 @@ class Admin::Marketplace::InstalledExtensionsController < Admin::AdminController
   # Gets called only for the v2 apps with ouath_iparams.
   def new_oauth_iparams
     oauth_iparams_page
-    params[:page] = "oauth_iparams"
+    params[:page] = 'oauth_iparams'
+    get_oauth_configs_from_installed if params[:installation_type] == 'settings'
     render 'admin/marketplace/installed_extensions/configs'
   rescue => e
     render_error_response
@@ -89,7 +92,9 @@ class Admin::Marketplace::InstalledExtensionsController < Admin::AdminController
   end
 
   def edit_oauth_configs
-    render :json => { :redirect_url => oauth_handshake }
+    # Reauthorize an oauth app will always upgrade the version if there is any new version
+    version_id = @extension['version_id']
+    render :json => { :redirect_url => oauth_handshake(false, params[:extension_id], version_id) }
   end
 
   def oauth_callback
@@ -121,7 +126,8 @@ class Admin::Marketplace::InstalledExtensionsController < Admin::AdminController
   end
 
   def update_config
-    update_ext(update_config_params(JSON.parse(params[:configs])))
+    configs = params[:configs].blank? ? {} : JSON.parse(params[:configs])
+    update_ext(update_config_params(configs))
   end
 
   def app_status
@@ -269,5 +275,17 @@ class Admin::Marketplace::InstalledExtensionsController < Admin::AdminController
                  paid_app? ? {} : account_params) } if addon_id
       end
       return {}
+    end
+
+    def get_configs_from_installed
+      acc_config = account_configs(params[:installed_version])
+      render_error_response && return if error_status?(acc_config)
+      @configs = acc_config.body
+    end
+
+    def get_oauth_configs_from_installed
+      acc_config = account_configs(params[:installed_version])
+      render_error_response && return if error_status?(acc_config)
+      @configs = acc_config.body['oauth_iparams']
     end
 end

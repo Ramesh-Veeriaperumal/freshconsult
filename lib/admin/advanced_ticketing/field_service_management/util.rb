@@ -26,7 +26,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         create_field_agent_type
         create_field_group_type
         create_fsm_dashboard
-        create_field_service_manager_role if Account.current.scheduling_fsm_dashboard_enabled?
+        create_field_service_manager_role
         expire_cache
         Rails.logger.info "Completed adding FSM artifacts for Account - #{Account.current.id}"
       rescue StandardError => e
