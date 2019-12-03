@@ -202,8 +202,8 @@ class Billing::BillingController < ApplicationController
     end
     alias :card_updated :card_added
 
-    def card_deleted(content)
-      return unless (@billing_data && @billing_data.card.present?)
+    def card_deleted(_content)
+      return if @billing_data && @billing_data.card.present?
 
       @account.subscription.clear_billing_info
       @account.subscription.save

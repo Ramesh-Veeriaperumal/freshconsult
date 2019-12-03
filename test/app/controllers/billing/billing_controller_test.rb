@@ -276,6 +276,22 @@ class Billing::BillingControllerTest < ActionController::TestCase
     unstub_subscription_settings
   end
 
+  def test_card_deleted_event_should_not_delete_card_if_subscription_has_card
+    stub_subscription_settings
+    user = add_new_user(@account)
+    subscription = @account.subscription
+    card_number = subscription.card_number
+    subscription.card_number = '************4242'
+    subscription.save
+    post :trigger, event_type: 'card_deleted', content: normal_event_content, format: 'json'
+    assert_response 200
+    assert_equal @account.subscription.card_number, '************4242'
+  ensure
+    subscription.card_number = card_number
+    subscription.save
+    unstub_subscription_settings
+  end
+
   def test_card_expiring_event
     stub_subscription_settings
     user = add_new_user(@account)
