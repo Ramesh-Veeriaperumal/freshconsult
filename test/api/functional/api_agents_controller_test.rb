@@ -994,4 +994,26 @@ class ApiAgentsControllerTest < ActionController::TestCase
     group.destroy
     Account.unstub(:current)
   end
+
+  def test_update_focus_mode_preferences_with_feature_enabled
+    Account.any_instance.stubs(:focus_mode_enabled?).returns(true)
+    user = add_test_agent(@account)
+    params = { focus_mode: false }
+    put :update, construct_params({ id: user.id }, params)
+    assert_response 200
+    assert_equal user.agent.focus_mode?, false
+  ensure
+    Account.any_instance.unstub(:focus_mode_enabled?)
+  end
+
+  def test_update_focus_mode_preferences_without_feature_enabled
+    Account.any_instance.stubs(:focus_mode_enabled?).returns(false)
+    user = add_test_agent(@account)
+    params = { focus_mode: false }
+    put :update, construct_params({ id: user.id }, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('focus_mode', :focus_mode_feature_is_not_enabled, code: :invalid_value)])
+  ensure
+    Account.any_instance.unstub(:focus_mode_enabled?)
+  end
 end

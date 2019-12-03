@@ -76,6 +76,21 @@
           </div>
         </div>
       <%end%>
+
+      <% if current_account.focus_mode_enabled? %>
+        <div class="sidepanel">
+          <div class="row-fluid focus-mode-option">
+            <div class="span10 align-left focus-mode-toggle"><%= t("focus_mode_toggle") %></div>
+            <div class="span2 align-right">
+              <input rel="toggle" type="checkbox" id="focus_mode" name="focus_mode_toggle" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" <%if current_user.preferences[:agent_preferences][:focus_mode]%>checked="true"<%end%> />
+            </div>
+          </div>
+          <div class="row-fluid">
+            <div class=" span12 align-left focus-mode-tip"><%= t("focus_mode_toggle_tip") %></div>
+          </div>
+        </div>
+      <% end %>
+
     <% end %>
 
 
@@ -114,7 +129,9 @@
             }, 2500);
         }
 
-        function update_preferences(status_url, reqType = 'post', dataObject = {}, callback){
+        function update_preferences(status_url, reqType, dataObject, callback){
+            var reqType = reqType || 'post';
+            var dataObject = dataObject || {};
             jQuery.ajax({
                 url: status_url,
                 data: dataObject,
@@ -133,6 +150,15 @@
             }
             else{
                 update_preferences("<%= disable_undo_send_path%>");
+            }
+        });
+
+        jQuery("#focus_mode").on('change', function(){
+            if(this.checked){
+                update_preferences("<%= change_focus_mode_path(value: true) %>");
+            }
+            else{
+                update_preferences("<%= change_focus_mode_path(value: false) %>");
             }
         });
 

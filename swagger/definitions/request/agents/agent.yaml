@@ -27,6 +27,8 @@ properties:
         type: boolean
   shortcuts_enabled:
     type: boolean
+  focus_mode:
+    type: boolean
   avatar_id:
     type: integer
   search_settings:

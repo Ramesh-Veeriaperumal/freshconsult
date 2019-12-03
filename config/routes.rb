@@ -725,6 +725,7 @@ Helpkit::Application.routes.draw do
   match '/disable_falcon' => 'users#disable_falcon', :as => :disable_falcon, via: :post
   match '/enable_undo_send' => 'users#enable_undo_send', :as => :enable_undo_send, via: :post
   match '/disable_undo_send' => 'users#disable_undo_send', :as => :disable_undo_send, via: :post
+  match '/change_focus_mode' => 'users#change_focus_mode', :as => :change_focus_mode, via: :post
   match '/set_notes_order' => 'users#set_conversation_preference', :as => :set_notes_order, via: :put
   match '/enable_skip_mandatory' => 'admin/account_additional_settings#enable_skip_mandatory', :as => :enable_skip_mandatory, via: :post
   match '/disable_skip_mandatory' => 'admin/account_additional_settings#disable_skip_mandatory', :as => :disable_skip_mandatory, via: :post

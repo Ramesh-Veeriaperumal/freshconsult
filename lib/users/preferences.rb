@@ -10,6 +10,7 @@ module Users
         :falcon_ui => false,
         freshchat_token: nil,
         undo_send: false,
+        focus_mode: false,
         search_settings: {
           tickets: {
             include_subject: true,

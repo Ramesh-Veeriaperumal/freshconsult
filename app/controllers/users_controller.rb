@@ -11,7 +11,7 @@ class UsersController < ApplicationController
                      :only => [:revert_identity, :profile_image,
                                :profile_image_no_blank, :enable_falcon, :disable_falcon,
                                :accept_gdpr_compliance, :enable_undo_send,
-                               :disable_undo_send, :set_conversation_preference]
+                               :disable_undo_send, :set_conversation_preference, :change_focus_mode]
   before_filter :set_ui_preference, :only => [:show]
   before_filter :set_selected_tab
   skip_before_filter :load_object , :only => [ :show, :edit ]
@@ -189,6 +189,14 @@ class UsersController < ApplicationController
   def disable_undo_send
     head 400 unless current_account.undo_send_enabled?
     current_user.toggle_undo_send(false) if current_user.enabled_undo_send?
+    head :no_content
+  end
+
+  def change_focus_mode
+    head 400 unless current_account.focus_mode_enabled?
+    value = params[:value].to_bool rescue false
+    current_user.agent.focus_mode = value
+    current_user.agent.save
     head :no_content
   end
 

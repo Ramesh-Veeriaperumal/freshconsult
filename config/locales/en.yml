@@ -442,6 +442,8 @@ en:
   undo_toggle_error: "Sorry, something went wrong!"
   undo_toggle_success: "Please refresh for this setting to take effect."
   undo_send_solution_error: "Ticket %{ticket_display_id} subject is too short to be an article title"
+  focus_mode_toggle: "Focus Mode"
+  focus_mode_toggle_tip: "On closing a ticket, quickly move to the next available ticket in your queue"
   attach: Attach
   attachment: Attachment
   attachments: Attachments
