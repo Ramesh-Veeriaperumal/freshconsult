@@ -1,5 +1,6 @@
 class AccountsController < ApplicationController
 
+  include Admin::AdvancedTicketing::FieldServiceManagement::Util
   include ModelControllerMethods
   include Redis::RedisKeys
   include Redis::OthersRedis
@@ -89,6 +90,7 @@ class AccountsController < ApplicationController
   def email_signup
     @signup = Signup.new(params[:signup])
     if @signup.save
+      enable_field_service_management if fsm_signup_page?
       finish_signup
       respond_to do |format|
         format.json {
@@ -113,6 +115,7 @@ class AccountsController < ApplicationController
     @signup.account.is_anonymous_account = true
     if @signup.save
       mark_account_as_anonymous
+      enable_field_service_management if fsm_signup_page?
       finish_signup
       render json: { success: true,
         url: signup_complete_url(token: @signup.user.perishable_token, host: @signup.account.full_domain),
@@ -184,6 +187,7 @@ class AccountsController < ApplicationController
   def new_signup_free
    @signup = Signup.new(params[:signup])
    if @signup.save
+     enable_field_service_management if fsm_signup_page?
       finish_signup
       respond_to do |format|
         format.json {
@@ -812,5 +816,19 @@ class AccountsController < ApplicationController
 
     def whitelisted_email?
       !ismember?(INCREASE_DOMAIN_FOR_EMAILS, params["user"]["email"])
+    end
+
+    def fsm_signup_page?
+      conversion_metric = @signup.account.conversion_metric
+      return false if conversion_metric.nil? || conversion_metric.landing_url.nil?
+
+      fsm_sign_up_pages = get_all_members_in_a_redis_set(FSM_SIGN_UP_ENABLED_PAGES_LIST)
+      fsm_sign_up_pages.any? { |page_url| conversion_metric.landing_url.start_with?(page_url) }
+    end
+
+    def enable_field_service_management
+      account = @signup.account.reload
+      account.add_feature(:field_service_management)
+      perform_fsm_operations(fsm_singup_flow: true)
     end
 end

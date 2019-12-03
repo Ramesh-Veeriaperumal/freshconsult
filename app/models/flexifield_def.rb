@@ -159,9 +159,7 @@ class FlexifieldDef < ActiveRecord::Base
   end
 
   def field_mappings_required(type)
-    if type.eql?('date') || type.eql?('date_time')
-      [FIELD_COLUMN_MAPPING['date'.to_sym][0], FIELD_COLUMN_MAPPING['date_time'.to_sym][0]]
-    elsif text_group_include?(type)
+    if text_group_include?(type)
       if type == 'text'
         FIELD_COLUMN_MAPPING['dropdown'.to_sym][0] + ['file']
       else

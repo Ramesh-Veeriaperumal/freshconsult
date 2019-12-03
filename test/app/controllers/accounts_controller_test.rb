@@ -48,6 +48,61 @@ class AccountsControllerTest < ActionController::TestCase
     Account.unstub(:current)
   end
 
+  def test_fsm_enabled_on_signup
+    stub_signup_calls
+    Signup.any_instance.unstub(:save)
+    account_name = Faker::Lorem.word
+    domain_name = Faker::Lorem.word
+    user_email = Faker::Internet.email
+    landing_url = Faker::Internet.url
+    @controller.stubs(:get_all_members_in_a_redis_set).returns([landing_url])
+    session = { current_session: { referrer: Faker::Lorem.word, url: landing_url, search: { engine: Faker::Lorem.word, query: Faker::Lorem.word } },
+                device: {}, location: { countryName: 'India', countryCode: 'IND', cityName: 'Chennai', ipAddress: '127.0.0.1' },
+                locale: 'en', browser: {}, time: {} }.to_json
+    account_info = { account_name: account_name, account_domain: domain_name, locale: I18n.default_locale, time_zone: 'Chennai',
+                     user_name: 'Support', user_password: 'test1234', user_password_confirmation: 'test1234',
+                     user_email: user_email, user_helpdesk_agent: true, new_plan_test: true }
+    user_info = { name: Faker::Name.name, email: user_email, time_zone: 'Chennai', language: 'en' }
+    get :new_signup_free, callback: '', user: user_info, account: account_info, session_json: session, format: 'json'
+    assert_response 200
+    resp = JSON.parse(response.body)
+    assert_not_nil resp['account_id']
+    account = Account.find(resp['account_id'])
+    assert_equal true, account.field_service_management_toggle_enabled?
+    assert_equal true, account.field_service_management_enabled?
+    account.try(:destroy)
+  ensure
+    unstub_signup_calls
+    @controller.unstub(:get_all_members_in_a_redis_set)
+  end
+
+  def test_fsm_not_enabled_on_signup
+    stub_signup_calls
+    Signup.any_instance.unstub(:save)
+    account_name = Faker::Lorem.word
+    domain_name = Faker::Lorem.word
+    user_email = Faker::Internet.email
+    landing_url = Faker::Internet.url
+    @controller.stubs(:get_all_members_in_a_redis_set).returns(['http:://fake.google.com'])
+    session = { current_session: { referrer: Faker::Lorem.word, url: landing_url, search: { engine: Faker::Lorem.word, query: Faker::Lorem.word } },
+                device: {}, location: { countryName: 'India', countryCode: 'IND', cityName: 'Chennai', ipAddress: '127.0.0.1' },
+                locale: 'en', browser: {}, time: {} }.to_json
+    account_info = { account_name: account_name, account_domain: domain_name, locale: I18n.default_locale, time_zone: 'Chennai',
+                     user_name: 'Support', user_password: 'test1234', user_password_confirmation: 'test1234',
+                     user_email: user_email, user_helpdesk_agent: true, new_plan_test: true }
+    user_info = { name: Faker::Name.name, email: user_email, time_zone: 'Chennai', language: 'en' }
+    get :new_signup_free, callback: '', user: user_info, account: account_info, session_json: session, format: 'json'
+    assert_response 200
+    resp = JSON.parse(response.body)
+    assert_not_nil resp['account_id']
+    account = Account.find(resp['account_id'])
+    assert_equal false, account.field_service_management_enabled?
+    account.try(:destroy)
+  ensure
+    unstub_signup_calls
+    @controller.unstub(:get_all_members_in_a_redis_set)
+  end
+
   def test_signup_with_session_params
     Account.any_instance.stubs(:needs_payment_info?).returns(true)
     Account.any_instance.stubs(:save).returns(true)
