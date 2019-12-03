@@ -2452,6 +2452,7 @@ ja-JP:
     follower:
       title: フォーラムのフォロワー
       description: フォロワーとして追加されたエージェントには、新しいトピックが投稿されると通知メールが送信されます
+    max_description_length_allowed: 最小250文字
   password_reset_email: パスワード再設定メール
   default_reply_template: エージェント返信定型文
   additional_email_verification: その他のメール通知

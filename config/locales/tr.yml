@@ -2907,7 +2907,7 @@ tr:
   trial_day: Day
   current_plan: Mevcut Plan
   current_free_plan: Current Free Plan
-  medium: Ortam
+  medium: Orta
   suspended_plan_admin_info: >-
     Your account has been suspended please contact your account administrator
     (%{email})

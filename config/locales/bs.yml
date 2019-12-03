@@ -1,419 +1,413 @@
 bs:
   meta:
     language_name: Bosnian
-  attach_file: Priložite datoteku
+  attach_file: Priloži fajl
   edit_forum_category: Uredi kategoriju foruma
   total: Ukupno
   export_data:
-    thirt_days: Poslednjih 30 dana
-    seven_days: Zadnjih 7 dana
-    twenty_four: Od juče
-    custom_filter: Set date
+    thirt_days: Posljednjih 30 dana
+    seven_days: Posljednjih 7 dana
+    twenty_four: Od jučer
+    custom_filter: Postavi datum
     customer_export:
       note: Ova veza će isteći za 15 dana.
-    no_fields_selected: >-
-      Molimo vas da proverite najmanje jedno od navedenih polja da biste
-      nastavili.
+    no_fields_selected: Označite najmanje jedno od navedenih polja da biste nastavili.
     no_tickets_mail:
-      body: Izgleda da nema ulaznica u datom vremenskom rasponu.
+      body: Izgleda da nema tiketa u datom vremenskom rasponu.
     export: Izvoz
     csv: CSV
     xls: Excel
-    select_all: Označi sve
-    select_header: Izaberite sva polja
+    select_all: Izaberi sve
+    select_header: Izaberi sva polja
     from: Od
     select_format: 'Izvezi kao:'
-    filter_label_customer: Filter ulaznice stvorene u
+    filter_label_customer: Filtriraj tikete kreirane u
     data_backup_failure:
-      body: 'Izvoz podataka nije uspio. Možete li, molim vas, ponovo pokrenuti izvoz?'
+      body: Izvoz podataka nije uspio. Možete li ponovo pokrenuti izvoz?
     data_backup:
       body: Izvoz podataka je spreman za preuzimanje.
-    to: To
-    check_uncheck_title: Označi / poništi sve
+    to: U
+    check_uncheck_title: Označi/Poništi sve
     view_all_tickets: Izvezi kao CSV
-    field_select_title: Izaberite polja za izvoz
+    field_select_title: Izaberi polja za izvoz
     ticket_export:
       note: Ova veza će isteći za 15 dana.
   go_back: Vrati se
-  change_plan_title: Jeste li sigurni da želite promijeniti plan?
+  change_plan_title: Sigurni ste da želite promijeniti plan?
   mailbox:
     imap_port: Port
-    authentication: 'Autentifikacija:'
+    authentication: 'Provjera identiteta:'
     user_name: Korisničko ime
-    imap_server_info: Ime IMAP servera za preuzimanje e-poruka
+    imap_server_info: Naziv IMAP servera za preuzimanje e-poruka
     outgoing_mail_settings: Postavke odlazne pošte
-    use_mail_server_for: 'Koristi mail server za:'
-    domain_name: Ime domena
+    use_mail_server_for: 'Koristi server e-pošte za:'
+    domain_name: Naziv domene
     delete_from_server: Izbrisati e-poštu sa servera nakon preuzimanja?
-    use_your_own: Koristite svoj mail server
-    verifying_mailbox_input: Provjera ...
-    use_ssl_tls: Koristite SSL / TLS
-    use_default: Default (Freshdesk)
+    use_your_own: Koristi sopstveni server e-pošte
+    verifying_mailbox_input: Provjeravanje...
+    use_ssl_tls: Koristi SSL/TLS
+    use_default: Zadano (Freshdesk)
     domain: 'Domena:'
-    use_ssl: Koristite SSL
+    use_ssl: Koristi SSL
     smtp_port: Port
     smtp_alert_gmail: >-
       Gmail ograničava broj e-poruka poslanih po danu. <a target="_blank"
-      href="https://support.google.com/a/answer/166852?hl=en">Kliknite ovde</a>
+      href="https://support.google.com/a/answer/166852?hl=en">Kliknite ovdje</a>
       da biste saznali više.
     incoming_and_outgoing: Dolazni i odlazni
-    imap_server_name: IMAP Server Name
+    imap_server_name: Naziv IMAP servera
     password: Lozinka
     outgoing_mail_server: 'Server odlazne pošte:'
-    smtp_server_name: Ime SMTP servera
+    smtp_server_name: Naziv SMTP servera
     outgoing_only: Samo odlazni
-    mail_server: 'Mail Server:'
-    incoming_mail_server: 'Poslužitelj dolazne pošte:'
-    smtp_server_info: Ime SMTP servera za slanje e-pošte
+    mail_server: 'Server pošte:'
+    incoming_mail_server: 'Server dolazne pošte:'
+    smtp_server_info: Naziv SMTP servera za slanje e-poruka
     email_system: 'Sistem e-pošte:'
-    incoming_mail_settings: Podešavanja dolazne pošte
+    incoming_mail_settings: Postavke dolazne pošte
   success: Uspjeh
   forum:
     max_description_length_allowed: Najviše 250 znakova
     verb:
       announcement: Najavio
-      questions: Pitanje koje je postavio
-      problems: Problem prijavljen
-      ideas: Ideja koju dijeli
-    new: New Forum
+      questions: Pitanje postavio
+      problems: Problem prijavio
+      ideas: Ideju dijelio
+    new: Novi forum
     visible_to: Vidljivo za
-    edit: Edit Forum
-    convert_to_ticket: Auto-Convert Topics to Tickets
+    edit: Uredi forum
+    convert_to_ticket: Automatsko konvertiranje tema u tikete
     start_topic: Započni temu
     title: Forumi
     type: Tip foruma
     category: Kategorija foruma
     convert_to_ticket_info: >-
       Sve nove teme kreirane na ovom forumu automatski će se konvertirati i
-      kreirati kao ulaznica.
+      kreirati kao tiket.
   your_feedback: Vaše povratne informacije
-  agent_working_on_this_ticket: Agent radi na ovoj karti
+  agent_working_on_this_ticket: Agent radi na ovom tiketu
   zendesk_import_status:
     extracting: >-
-      <b>Korak (1/2) Preuzimanje Zendesk datoteke sigurnosne kopije.</b><br/>To
-      može potrajati nekoliko minuta, ovisno o veličini vaših podataka. Molimo
+      <b>Korak (1/2) Preuzimanje Zendesk fajla sigurnosne kopije.</b><br/>Moglo
+      bi potrajati nekoliko minuta, ovisno o veličini vaših podataka. Molimo
       sačekajte.
     info: >-
-      <b>Korak (2/2) Uvoz je u toku. Molimo sačekajte.</b><br/>Dobit ćete
-      e-poštu od nas kada završi uvoz.
+      <b>Korak (2/2) Uvoz je u toku. Molimo sačekajte.</b><br/>Kada uvoz bude
+      završen, primit ćete e-poruku od nas.
   more: više
   message: Poruka
-  level_label: Level
+  level_label: Nivo
   topics:
     edit_title: Uredi
     show:
-      mark_this_idea_as: Označite ovu ideju kao
-      mark_this_problem_as: Označite ovaj problem kao
+      mark_this_idea_as: Označi ovu ideju kao
+      mark_this_problem_as: Označi ovaj problem kao
   step1: Korak 1
   contacts:
-    contacts: kontakte
+    contacts: kontakti
     deleted_user_info: >-
-      Napomena: Sva komunikacija od izbrisanih korisnika će biti označena kao
+      Napomena: Sva komunikacija sa izbrisanim korisnicima će biti označena kao
       SPAM.
-    reply: Odgovori
+    reply: Odgovor
     new: Novi kontakt
-    send_activation: Pošalji e-poruku za aktivaciju
-    add_new_requester: Dodajte novog podnosioca zahtjeva
+    send_activation: Pošalji aktivacionu e-poruku
+    add_new_requester: Dodaj novog podnosioca zahtjeva
     new_topic: Nova tema
     status_title:
       verified: Aktivni kontakti
-      unverified: Kontakti sa neprovjerenim e-porukama
+      unverified: Kontakti sa neprovjerenom adresom e-pošte
       blocked: Blokirani kontakti
       all: Svi kontakti
-      deleted: Obrisani kontakti
+      deleted: Izbrisani kontakti
     showing: 'Prikaz:'
     status:
-      all: Sve
-      unverified: Unverified
-      deleted: Izbrisano
-      blocked: Blokiran
-      verified: Verified
-      spam: Neželjena pošta
+      all: Svi
+      unverified: Neprovjereni
+      deleted: Izbrisani
+      blocked: Blokirani
+      verified: Provjereni
+      spam: Spam
     title: Kontakti
-    restore: Restore
+    restore: Obnovi
   no_message:
-    products: Još niste kreirali nijedan proizvod.
-  forum_confirm_msg1: Jeste li sigurni da želite izbrisati ovu kategoriju?
+    products: Još uvijek niste kreirali nijedan proizvod.
+  forum_confirm_msg1: Sigurni ste da želite izbrisati ovu kategoriju?
   undo_toggle: Poništi slanje
-  reorder: Promeni redosled
+  reorder: Preuredi
   email_command_settings_heading: Postavke naredbi e-pošte
-  billing_address: Adresa računa
-  view_invoices: 'Prikaži fakture: '
-  reported_by: 'Prijavljeno '
-  requesting: Requesting ...
-  save: Spremi
-  change_password: Change Password
+  billing_address: Adresa za naplatu
+  view_invoices: 'Pregledaj fakture: '
+  reported_by: 'Prijavio '
+  requesting: Upućivanje zahtjeva...
+  save: Sačuvaj
+  change_password: Promijeni lozinku
   filter_options:
     tags: Oznake
     source: Izvor
-    unassigned: Unassigned
+    unassigned: Nedodijeljeno
   no_topics_text: Nema tema
   folder:
-    edit: Uredi mapu
+    edit: Uredi fasciklu
   example: primjer
   conv_contacts_info: '%{conv_type_msg} : %{to_emails} %{cc_emails_key} %{bcc_emails_key}'
-  customers: Kupci
+  customers: Klijenti
   import_solution_article_info: 'Napomena: Nećemo čuvati komentare na forumu'
-  none: Nema
+  none: Nijedan
   mailer_notifier:
     security_notification:
       update_agent_billing_plain: >-
-        Da biste odrazili ovu promjenu u naplati, ažurirajte informacije o
+        Da bi se ova promjena odrazila na naplatu, ažurirajte informacije o
         agentu na stranici za naplatu.
       update_agent_billing: >-
-        Odražavali ovu promjenu u naplatu, molimo <a
-        href="%{billing_url}">ažuriranje</a> informacije agent stranici naplate.
+        Da bi se ova promjena odrazila na naplatu, <a
+        href="%{billing_url}">ažurirajte</a> informacije o agentu na stranici za
+        naplatu.
       unauthorized_change_contact: >-
         Ako je ova izmjena izvršena bez vašeg odobrenja, odmah se obratite
         administratoru računa.
-      configure_change: Sigurnost.
-      trusted_ip_disabled: Dopuštena IP adresa je onemogućena na vašem računu.
+      configure_change: Ove postavke obavještenja možete konfigurirati pod Admin -> Bezbjednost.
+      trusted_ip_disabled: Popis dopuštenih IP adresa je onemogućen na vašem računu.
       unauthorized_change_info: 'Ako je ova izmjena izvršena bez vašeg odobrenja, pošaljite nam odgovor.'
       configure_change_html: >-
-        Možete konfigurirati ove postavke obavijesti <a href="%{security_url}">
-        klikom ovdje </a> ili odlaskom na Admin -> Security na svom računu
-    hi: 'Zdravo,'
+        Možete konfigurirati ove postavke obavještenja <a
+        href="%{security_url}"> klikom ovdje </a> ili odlaskom na Admin ->
+        Bezbjednost na svom računu
+    hi: 'Pozdrav,'
     freshdesk_customer_support: Freshdesk korisnička podrška
     thanks: 'Hvala,'
   copied_link: Kopirano
-  Email: Email
-  zendesk_backup_info: Odaberite Zendesk datoteku sigurnosne kopije preuzete iz zendesk-a
-  mint: prebacite se na Mint.
-  right: U redu
+  Email: E-pošta
+  zendesk_backup_info: Izaberite Zendesk fajl sigurnosne kopije preuzet iz zendeska
+  mint: prebaci se na Mint.
+  right: Ispravno
   agent:
-    insert_placeholder: Insert Placeholder
+    insert_placeholder: Ubaci rezervirano mjesto
     permissions: Dozvole
     delete_agent_confirmation: >-
-      Obrisani agent će biti dostupan kao kontakt. Ovo će ukloniti sve
-      informacije o agentu iz helpdeska. Jeste li sigurni da želite nastaviti?
-    days_ago: '%{days} ago'
+      Izbrisani agent će biti dostupan kao kontakt. Ovo će ukloniti sve
+      informacije o agentu iz odjela za pomoć. Sigurni ste da želite nastaviti?
+    days_ago: 'prije %{days}'
     more: više
-    role: Agent Role
+    role: Uloga agenta
     agent_restored: Agent je vraćen
     member: Član
-    ticket_scope: Ticket Scope
-    assign: Assign
-    info3: Jeste li sigurni da želite izbrisati
-    ago: '%{time} ago.'
-    day_pass_used: 'Koristi se %{count} dan pass do datuma'
-    last_logged: Last logged in
+    ticket_scope: Opseg tiketa
+    assign: Dodijeli
+    info3: Sigurni ste da želite izbrisati
+    ago: 'prije %{time}.'
+    day_pass_used: 'Korišteno %{count} dnevnih propusnica do datuma'
+    last_logged: Posljednji prijavljen
     group_info: >-
-      Može pregledati ulaznice u svojim grupama i ulaznicama koje su im
-      dodijeljene
-    full_time_agent: Full-Time Agent
+      Može pregledati tikete u njihovoj grupi/ama i tikete koji su im
+      dodijeljeni
+    full_time_agent: Agent s punim radnim vremenom
     remove_role: Ukloni ulogu
     add_signature: Dodaj potpis
     remove_group: Ukloni grupu
     group: Grupe
     export: Izvoz
-    convert_to_contact: Pretvori u kontakt
+    convert_to_contact: Konvertiraj u kontakt
     individual: Ograničeni pristup
-    contact_exists: 'Zahtjev sa e-poštom ''%{existing_email}'' već postoji, %{use_email}'
-    password_reset_note: >-
-      Napomena: Ponovno slanje pošte sa uputstvima će biti poslato na
-      %{requester}
+    contact_exists: >-
+      Podnosilac zahtjeva s e-adresom '%{existing_email}' već postoji,
+      %{use_email}
+    password_reset_note: 'Napomena: E-pošta s uputama za resetiranje bit će poslana %{requester}'
     info1: Ovo je izbrisani agent
-    available_seats_without_count: Dostupna su mjesta zastupnika
+    available_seats_without_count: Dostupna su mjesta agenta
     occasional_agent: Povremeni agent
     day_pass_expired: >-
-      Vaša dnevna propusnica je istekla, prijavite se da biste dobili novu
-      dnevnu propusnicu.
+      Vaša dnevna propusnica je istekla, prijavite se da dobijete novu dnevnu
+      propusnicu.
     occasional: Povremeno
-    admin_info: Može izvesti sve administrativne zadatke
+    admin_info: Može izvoditi sve zadatke Admina
     admin: Administrator
-    last_logged_in: 'Zadnji prijavljeni prije %{time}.'
-    new: New Agent
-    cannot_edit_roles: 'Moći ćete samo da pregledate svoje uloge i opseg, a ne da ih uređujete.'
+    last_logged_in: 'Zadnji put prijavljen prije %{time}.'
+    new: Novi agent
+    cannot_edit_roles: 'Moći ćete samo da pregledate svoje uloge i opseg, ne i da ih uređujete.'
     supervisor: Supervizor
     reset_scores: Resetirajte značke i bodove
-    add_skills: Add Skills
+    add_skills: Dodaj vještine
     reset_score_alert_you: >-
-      Izgubićete značke i vaše tačke će biti resetovane na %{points}. Jeste li
-      sigurni da želite nastaviti?
-    update: Update
+      Izgubit ćete značke i vaši bodovi će biti resetirani na %{points}. Sigurni
+      ste da želite nastaviti?
+    update: Ažuriraj
     supervisor_info: >-
-      Može pregledati sve ulaznice u Helpdesku i pristupiti izvješćima (bez
-      administratorskih privilegija)
-    available_seats: '%{count} Dostupna zastupnička mjesta'
-    invalid_export_params: >-
-      Došlo je do pogreške prilikom izvoza podataka o agentu. Molimo pokušajte
-      ponovo.
-    never_logged_in: Nikad se niste prijavili
-    invalid_placeholder: Uneseni su nevažeći rezervisani podaci
-    individual_info: Može pogledati samo ulaznice koje su im dodijeljene
+      Može pregledati sve Tikete u Odjelu za pomoć i pristupiti Izvještajima
+      (bez privilegija admina)
+    available_seats: '%{count} dostupnih mjesta agenta'
+    invalid_export_params: Došlo je do greške prilikom izvoza podataka o agentu. Pokušajte ponovo.
+    never_logged_in: Nikad nije bio prijavljen
+    invalid_placeholder: Ubačena su nevažeća rezervirana mjesta
+    individual_info: Moguće je pogledati samo tikete koje su im dodijeljeni
     reset_score_alert_them: >-
-      %{name} će izgubiti svoje značke i bodovi će biti vraćeni na %{points}.
-      Jeste li sigurni da želite nastaviti?
-    full_time: Puno vrijeme
-    info4: Pretvori u kontakt
+      %{name} će izgubiti svoje značke i bodovi će biti resetirani na %{points}.
+      Sigurni ste da želite nastaviti?
+    full_time: Puno radno vrijeme
+    info4: Konvertiraj u kontakt
     roles_description: Povežite jednu ili više uloga sa ovim agentom.
     buy: Kupi više
     showing: 'Prikaz:'
     edit: Uredi agenta
-    use_email: Koristite ovu e-poštu
-    view_user: View User
-    insufficient_day_pass: 'Nemoguće vam dodijeliti dnevnu propusnicu, obratite se administratoru.'
+    use_email: Koristi ovu e-adresu
+    view_user: Prikaz korisnika
+    insufficient_day_pass: 'Ne može vam se dodijeliti dnevna propusnica, kontaktirajte administratora.'
     groups_description: Povežite jednu ili više grupa sa ovim agentom.
     helpcard:
       title4: Opsezi i uloge
       info9: >-
-        Agenti za puno radno vrijeme su oni u vašem timu za podršku koji će se
-        svaki dan prijaviti na vašu službu za pomoć.
-      info8: Saznajte više o Agentskim ulogama
+        Agenti sa punim radnim vremenom su oni u vašem timu za podršku koji se
+        svakodnevno prijavljuju na vaš odjel za pomoć.
+      info8: Saznajte više o ulogama agenata
       info14: >-
-        Možete izabrati koje će karte vaši agenti vidjeti, mijenjajući njihov
-        opseg. Trebalo bi takođe da navedete koje akcije agent može da izvrši u
-        okviru vašeg helpdeska tako što će izabrati ulogu.
-      info5: Saznajte više o Dnevnim prolazima
+        Možete izabrati koje će tikete vaši agenti vidjeti, mijenjajući njihov
+        opseg tiketa. Izborom uloge treba da odredite koje će akcije agent moći
+        izvršiti u okviru vašeg odjela za pomoć.
+      info5: Saznaj više o Dnevnim propusnicama
       info11: >-
-        Agente možete organizovati u određene grupe kao što su Prodaja i
-        Upravljanje proizvodima. Segmentiranje agenata u podjele omogućuje vam
-        da jednostavno dodijelite karte, kreirate specifične konzervirane
-        odgovore, upravljate radnim procesima i generirate izvještaje na razini
-        grupe. Imajte na umu da agent može biti član više grupa.
+        Agente možete organizirati u određene grupe poput Prodaja i Upravljanje
+        proizvodima. Dijeljenje agenata u odjele dopušta vam jednostavno
+        dodijeljivanje tiketa, kreiranje specifičnih unaprijed određenih
+        odgovora, upravljanje radnim procesima i generiranje izvještaja na nivou
+        grupe. Imajte u vidu da agent može biti član više grupa.
       info12: >-
-        Agent u Freshdesk-u je svatko tko treba pristupiti, raditi i riješiti
-        vaše ulaznice za podršku. Lista prikazuje sve agente koji se trenutno
-        nalaze u vašoj službi za pomoć. Lebdite iznad agenta da biste uredili
-        detalje ili kliknite na New Agent da biste dodali novog agenta. Agenti
+        Agent u Freshdesku je svako ko treba pristupiti, raditi i riješiti vaše
+        tikete za podršku. Lista prikazuje sve agente koji se trenutno nalaze u
+        vašem odjelu za pomoć. Prođite kursorom preko agenta da biste uredili
+        detalje ili kliknite na Novi agent da biste dodali novog agenta. Agenti
         koje dodate će primiti e-poruku sa linkom za potvrdu da bi aktivirali
-        svoj račun nakon čega mogu pristupiti i odgovarati na ulaznice.
-      title1: Full-time vs povremeni agenti
+        svoj račun nakon čega mogu pristupiti i odgovarati na tikete.
+      title1: Ageniti sa punim radnim vremenom vs Povremeni agenti
       title3: Grupe
       info15: >-
-        Imajte na umu da nećete moći da menjate svoje uloge ili da se izbrišete
-        kao agent.
+        Imajte na umu da nećete moći da mijenjate svoje uloge niti da izbrišete
+        sebe kao agenta.
       info10: >-
-        Povremeni agenti su oni koji bi se morali prijavljivati s vremena na
-        vrijeme, kao što je vaš menadžer prodaje i marketinga da se brinu o
-        specifičnim upitima kupaca. Za takve agente ne morate kupovati dodatno
-        sjedište agenta za cijeli mjesec.
+        Povremeni agenti su oni koji se moraju prijavljivati samo s vremena na
+        vrijeme, poput vašeg menadžera prodaje i marketinga, kako bi se
+        pobrinuli za specifične upite klijenata. Za takve agente ne morate
+        kupovati dodatno mjesto agenta za cijeli mjesec.
       info13: >-
-        Možete izabrati da li će vaši agenti pristupiti vašem portalu podrške na
+        Možete izabrati da li će vaši agenti pristupati vašem portalu podrške na
         puno radno vrijeme, ili se prijavljivati samo povremeno. Povremeni
         agenti će iskoristiti dnevnu propusnicu za svaki dan kada se prijave na
-        vaš portal za podršku. Možete kupiti kupovinu dnevnih pošiljki u grupi
-        sa kartice Admin. Imajte na umu da će vam se naplaćivati samo broj
-        agenata za puno radno vrijeme koje dodate u odjeljku o planovima i
-        naplati.
-    export_title: Agenti za izvoz u CSV
+        vaš portal za podršku. Možete kupiti grupne dnevne propusnice iz kartice
+        Admin. Imajte na umu da će vam se naplaćivati samo za broj agenata sa
+        punim radnim vremenom koje dodate u odjeljke za planove i naplatu.
+    export_title: Izvezi agenta u CSV
     signature: Potpis
     convert_agent_confirmation: >-
-      Upozorenje - Pretvaranje agenta u kontakt će trajno ukloniti sve
-      informacije o agentu. Jeste li sigurni da želite nastaviti?
-    password_reset_message: 'Da li želite da poništite %{requester}''s lozinku?'
-    export_successfull: Vaši podaci o agentima će uskoro biti poslani na vašu e-poštu!
-    no_seats: Nema raspoloživih zastupničkih mjesta
+      Upozorenje - Konvertiranje agenta u kontakt trajno će ukloniti sve
+      informacije o agentu. Sigurni ste da želite nastaviti?
+    password_reset_message: 'Da li želite resetirati %{requester} lozinku?'
+    export_successfull: Podaci o vašim agentima bit će ubrzo poslani na vašu e-adresu!
+    no_seats: Nema dostupnih mjesta agenata
     deleted_agent_info: >-
-      Napomena: Sva komunikacija sa izbrisanih agenata će biti označena kao
+      Napomena: Sva komunikacija sa izbrisanim agentima će biti označena kao
       SPAM.
-    title: Agents
+    title: Agenti
     no_recent_activity: Nema nedavnih aktivnosti
-    type: Agent Type
+    type: Vrsta agenta
     deleted:
       no_agents: Nemate izbrisanih agenata
       agent_deleted: Agent je izbrisan
     occasional_description: Ovaj agent će pristupiti portalu za podršku
-    manage_skills: Manage Skills
+    manage_skills: Upravljaj vještinama
     delete_agent: Izbriši agenta
-    make_admin: Učinite ovog agenta administratorom
-    global_info: Može pregledati sve ulaznice u Helpdesku
+    make_admin: Učinite ovog agenta adminom
+    global_info: Može pregledati sve tikete u Odjelu za pomoć
     skill: Vještine
-    info2: E-pošta je već preuzeta
-    assign_role: Associate Roles
+    info2: E-adresa se već koristi
+    assign_role: Pridružene uloge
     active:
-      no_agents: Niste dodali nijedan agent na listu
-    restore: Restore
+      no_agents: Niste dodali nijednog agenta na listu
+    restore: Obnovi
     global: Globalni pristup
-    reset_score_title: Poništite značke i bodove
-    account_suspended: račun obustavljen
+    reset_score_title: Resetiraj značke i bodove
+    account_suspended: račun suspendiran
     roles: Uloge
     last_seen_at: Zadnji put viđen u
     trial: U probnoj verziji
     role_and_scope: Uloge i opseg
-    assign_group: Associate Groups
+    assign_group: Pridružene grupe
     search_placeholder: Pretražite sve agente
   back: Nazad
-  change_plan: Plan promjene
-  current_free_plan: Trenutni slobodni plan
-  agent_emailnotverified: E-pošta nije potvrđena za ovog agenta!
-  zendesk_url_info: 'npr: - http://acme.zendesk.com ili https://acme.zendesk.com'
-  add_holiday: Add Holiday
-  next: Sledeće
-  send_test_email: Pošalji testnu e-poštu
-  top: Top
-  enter_a_value: Unesite vrijednost
+  change_plan: Promijeni plan
+  current_free_plan: Trenutni besplatni plan
+  agent_emailnotverified: E-adresa nije potvrđena za ovog agenta!
+  zendesk_url_info: 'npr.:- http://acme.zendesk.com or https://acme.zendesk.com'
+  add_holiday: Dodaj praznik
+  next: Sljedeći
+  send_test_email: Pošalji provjernu e-poštu
+  top: Vrh
+  enter_a_value: Unesi vrijednost
   backup_error_msg: >-
-    Datoteke premašuje propisani limit od 50 MB, molimo <a href='#'
-    id='import_request'>obratite se podršci</a> da nastavi sa uvozom.
+    Fajl premašuje propisani limit od 50 MB, molimo <a href='#'
+    id='import_request'>kontaktirajte podršku</a> da biste nastavili sa uvozom.
   email_command_preview_to_email_value: support@acme.freshdesk.com
   dispatch:
-    reorder: Promeni redosled
-    match_any: Match <b>ANY</b> od dolje
-    info3: Kada ulaznica zadovoljava ove uslove
+    reorder: Preuredi
+    match_any: Upari <b>BILO KOJI</b> od dolje navedenih
+    info3: Kada tiket zadovoljava ove uslove
     rule_name: Naziv pravila
-    new_rule: New Rule
-    new: Dispatch'r - Novo pravilo
-    add_new_action: Dodajte novu akciju
-    info_help: 'Za svaku ulaznu kartu, izvršite prvo pravilo podudaranja'
-    dispatch_rules: Dispatch'r - Pravila
-    edit: Dispatch'r - Uredi pravilo
+    new_rule: Novo pravilo
+    new: Dispečer - Novo pravilo
+    add_new_action: Dodaj novu akciju
+    info_help: 'Za svaki ulazni tiket, izvrši prvo pravilo podudaranja'
+    dispatch_rules: Dispečer - Pravila
+    edit: Dispečer- Uredi pravilo
     helpcard:
       info1: >-
-        Dispatch'r vam omogućava da unesete vaša poslovna pravila u vaš radni
-        proces podrške, tako što ćete izvršiti unaprijed definirani skup akcija
-        na novostvorene ulaznice. Na primer, možete koristiti Dispatch'r da
-        automatski kategorišete, odredite prioritete i dodelite svaku ulaznu
-        ulaznicu pravom agentu u vašem timu, na osnovu uslova koje odredite.
+        Dispatch'r vam omogućava unos vaših poslovnih pravila u radni proces
+        vaše podrške izvršavanjem unaprijed definiranog skupa akcija na
+        novokreirane tikete. Na primjer, možete koristiti Dispatch'r da
+        automatski kategorišete, odredite prioritete i dodijelite svaki ulazni
+        tiket pravom agentu u svom timu, na osnovu uslova koje odredite.
       info2: >-
-        Zapamtite, poredak pravila Dispatch'r je važan. Za svaku ulaznu kartu,
-        Dispatch'r će izvršiti prvo pravilo podudaranja i zaustaviti. Možete
-        promeniti redosled lista pravila da biste na vrhu imali najvažnija
-        pravila.
+        Zapamtite, poredak Dispatch'r pravila je važan. Za svaki ulazni tiket,
+        Dispatch'r će izvršiti prvo pravilo podudaranja i stati. Možete
+        promijeniti listu pravila da biste na vrhu imali najvažnija pravila.
       tour_v2: Pomozi mi da napravim Dispatch'r pravilo
-    default_rule_desc: Sve ulaznice vezane za pretplatu bit će dodijeljene timu za naplatu
+    default_rule_desc: Svi tiketi vezani za pretplatu bit će dodijeljeni timu za naplatu
     inactive_rules: Neaktivna pravila
     title: Dispatch'r
     clone: Dispatch'r - Pravilo kloniranja
-    match_all: Match <b>ALL</b> od dolje
-    add_condition: Dodajte novo stanje
-    cascade_text: 'Za svaku ulaznu kartu, izvršite'
-    default_rule_name: Sve ulaznice vezane za pretplatu idu na Billing
+    match_all: Upari <b>SVE</b> od dolje navedenih
+    add_condition: Dodaj novi uslov
+    cascade_text: 'Za svaki ulazni tiket, izvrši'
+    default_rule_name: Svi tiketi vezani za pretplatu idu na Naplatu
     description: Opis
-    act_to_perform: Izvršite ove radnje
+    act_to_perform: Izvrši ove radnje
     conditions: Uslovi
     actions: Akcije
   custom_mailbox_admin_email_notifications:
     regards: Pozdravi
-    welcome_message: Dragi Admin
+    welcome_message: Poštovani Admine
   warning: UPOZORENJE
-  zendesk_url: Zendesk URL
-  downgrade_plan_title: Jeste li sigurni da želite da smanjite?
-  delete_topic_msg: Izbrišite ovu temu zauvijek
-  resolved_tickets: Resolved Tickets
-  errors_in_payment_info: 'Došlo je do grešaka s podacima o plaćanju:'
+  zendesk_url: URL Zendeska
+  downgrade_plan_title: Sigurni ste da želite da smanjite?
+  delete_topic_msg: Izbriši ovu temu zauvijek
+  resolved_tickets: Riješeni tiketi
+  errors_in_payment_info: 'Došlo je do grešaka s vašim podacima o plaćanju:'
   change_plan_info: >-
-    Možete promijeniti plan u bilo kojem trenutku, vaš sljedeći datum računa je
+    Možete promijeniti plan u svakom trenutku, vaš sljedeći datum naplate je
     %{date}.
   custom_mailbox_error_type:
     unkown_error: >-
-      Nije moguće dohvatiti e-poštu s prilagođenog poslužitelja e-pošte. Molimo
-      kontaktirajte support@freshdesk.com
+      Nije moguće dohvatiti e-poruke s prilagođenog servera e-pošte.
+      Kontaktirajte support@freshdesk.com
     ssl_errror: SSL greška.
-    server_response_invalid: >-
-      Odgovor poslužitelja je u nevažećem formatu za vrijeme povezivanja s
-      poslužiteljem.
-    unable_to_connect: Nije moguće povezati fasciklu u Poštansko sanduče.
-    tcp_connection: Nije moguće stvoriti TCP vezu.
-    tcp_refused: Email server je odbio TCP konekciju.
+    server_response_invalid: Odgovor servera je u nevažećem formatu tokom povezivanja sa serverom.
+    unable_to_connect: Nije moguće povezati fasciklu u Poštanskom sandučiću.
+    tcp_connection: Nije moguće kreirati TCP konekciju.
+    tcp_refused: Server e-pošte odbija TCP konekciju.
     mailbox_idle: Poštanski sandučić ne podržava IDLE mogućnosti.
-    unable_fetch_status: Nije moguće dohvatiti status mape.
-    io_error: Pogreška I / O veze.
-    mailbox_suspended: Email server je obustavljen
-    server_no_resp: Email server je poslao NO odgovor dok se povezuje na server.
-    bye_response: Email server je poslao BYE odgovor dok se povezuje na server.
+    unable_fetch_status: Nije moguće dohvatiti status fascikle.
+    io_error: Greška I/O konekcije.
+    mailbox_suspended: Server e-pošte je suspendiran
+    server_no_resp: Server e-pošte poslao je NE odgovor dok se povezuje na server.
+    bye_response: Server e-pošte poslao je BYE odgovor dok se povezuje na server.
     invalid_login: Nevažeći podaci za prijavu.
-    folder_unavailable: Folder nije dostupan u poštanskom sandučetu.
+    folder_unavailable: Fascikla nije dostupna u Poštanskom sandučiću.
     tcp_socket: Nije moguće stvoriti TCP socket za poslužitelj e-pošte.
     email_bad_request: >-
       Poslužitelj e-pošte je poslao BAD odgovor prilikom povezivanja na
@@ -578,7 +572,7 @@ bs:
       scenario: Scenariji
       jump_to_views: Skoči na prikaze
       add_note: Add note
-      reply: Odgovori
+      reply: Odgovor
       prev_next: Krećite se između stranica pregleda liste ulaznica
       forward: Naprijed
       close: >-
@@ -593,7 +587,7 @@ bs:
       tickets: Tickets
       dashboard: Dashboard
       forums: Forumi
-      customers: Kupci
+      customers: Klijenti
       solutions: Rešenja
       title: Goto Tab
     title: Prečice na tastaturi
@@ -668,11 +662,11 @@ bs:
         koja su vidljiva samo vašim agentima.
       title2: Prilagođavanje polja kontakta
   add_note: Add Note
-  reply: Odgovori
+  reply: Odgovor
   user_sessions:
     new:
       forgot: Zaboravio sam lozinku?
-      email: Email
+      email: E-pošta
       sign_in_using_google: Prijavite se pomoću Google računa
       password: Lozinka
       remember: zapamti me na ovom kompjuteru
@@ -696,7 +690,7 @@ bs:
       karata i dostupnosti agenta za grupe kojima pripadaju -
     sbrr_plan_text: <span class="muted"> Dostupno na </span> <b> Plan šuma </b>
     toggle_availability_for_rr: Omogućite agentima da promene svoju dostupnost za automatsku dodelu karata
-    info1: Agents
+    info1: Agenti
     new: New Group
     maximum: Maksimalno
     enable: Omogući
@@ -769,7 +763,7 @@ bs:
       Da li ste znali da možete dodijeliti karte na osnovu vještina vaših
       agenata? <a href="https://support.freshdesk.com/solution/articles/222692"
       target="_blank">Saznajte više</a>
-  email_command_preview_to_email: To
+  email_command_preview_to_email: U
   ticket_field:
     helpcard:
       info4_v3: >-
@@ -883,7 +877,7 @@ bs:
         preparing_chart_for: Priprema karte za
         no_remarks: Nema odgovora
         answered: Answered
-        all: Sve
+        all: Svi
         all_responses: Svi odgovori
         rating: Rating
         deleted_list: DELETED SURVEYS
@@ -912,7 +906,7 @@ bs:
       fcr: Rezolucija prvog poziva
       title: Sažetak karata
       received_tickets: Primljene karte
-      resolved_tickets: Resolved Tickets
+      resolved_tickets: Riješeni tiketi
       sla_compliance: SLA Compliance
     timeline_chart_title: Ulaznice primljene vs Rešeno
     discard_changes: Odbacite promjene
@@ -977,7 +971,7 @@ bs:
       select_call_type: Izaberite Vrsta poziva
       options:
         all_groups: Sve grupe
-        unassigned: Unassigned
+        unassigned: Nedodijeljeno
         incoming: Dolazni
         outgoing: Outgoing
       filter_by_title: Filtrirano po
@@ -1051,7 +1045,7 @@ bs:
     ticket_url: URL ulaznice
     action: Akcija
     compose:
-      to_address_placeholder: Unesite adresu klijenta
+      to_address_placeholder: Unesi adresu klijenta
     available_commands: Available Commands
     submit_loading: Slanje ..
     source: Izvor
@@ -1072,7 +1066,7 @@ bs:
     choose_another_photo: Izaberite drugu fotografiju
     profile_picture: Slika profila
     remove_photo: Ukloni fotografiju
-    email: Email
+    email: E-pošta
     industry: Industrija
     ie9_file_change_msg: '%{filename} Sačuvajte da biste ažurirali sliku profila'
     name: Ime
@@ -1125,7 +1119,7 @@ bs:
         edit_portal: Save & Edit Portal
         enable_portal: Save & Enable Portal
       product:
-        email_not_verified: Unverified
+        email_not_verified: Neprovjereni
         customize_portal: Prilagodite portal
         portal_disabled: Portal onemogućen
         delete: Jeste li sigurni da želite izbrisati ovaj Proizvod?
@@ -1180,7 +1174,7 @@ bs:
         agent_label: Agent
         nav_skill_list_text: Lista vještina
         nav_agent_skill_text: Agents 'Skill
-        agents_label: Agents
+        agents_label: Agenti
         new: New Skill
         no_skill_info_2: Obratite se administratoru službe za pomoć.
         confirm_delete_message_v2: >-
@@ -1190,7 +1184,7 @@ bs:
         info_help: >-
           Stvorite vještine za izdavanje karata i povežite ih s agentima koji ih
           mogu riješiti. Prva veština uparivanja će biti primenjena na kartu.
-        agents: Agents
+        agents: Agenti
         agent_skills: Agents 'Skills
         add_agents: Dodaj agente
         not_in_any_groups_info: >-
@@ -1328,7 +1322,7 @@ bs:
           Industrijski standardni OAuth protokol omogućava delegiranje agenta i
           provjeru autentičnosti korisnika usluzi koja hostira njihove
           korisničke račune.
-        only_agents: Agents
+        only_agents: Agenti
         remote_login_url_info: >-
           Ovo je URL na koji će Freshdesk preusmjeriti korisnike za provjeru
           autentičnosti kada pokušaju pristupiti Freshdesk-u.
@@ -1428,10 +1422,10 @@ bs:
       index:
         turn_on: Uključi
         more: više
-        add_skills: Add Skills
+        add_skills: Dodaj vještine
         admin_info_help: Dodajte vještine agentima u opadajućem redoslijedu
         any: Bilo koji
-        manage_skills: Manage Skills
+        manage_skills: Upravljaj vještinama
         supervisor_info_help: >-
           Rasporedite vještine agenata u opadajućem redoslijedu njihovih
           preferencija
@@ -1493,7 +1487,7 @@ bs:
         feedbackwidget_form_submit_title: Gumb za slanje obrasca
         feedbackwidget_search_area: Search Articles
         feedbackwidget_use_captcha: Enable CAPTCHA
-        feedbackwidget_attach_a_file: Priložite datoteku
+        feedbackwidget_attach_a_file: Priloži fajl
         feedbackwidget_popup_code: Popup šifra Widgeta
         feedbackwidget_use_https: Koristite https
         feedbackwidget_text_button: Taster za tekst
@@ -1521,7 +1515,7 @@ bs:
         feedbackwidget_px: px
         feedbackwidget_offset_placeholder: '235'
         feedbackwidget_search_area: Search Articles
-        feedbackwidget_attach_a_file: Priložite datoteku
+        feedbackwidget_attach_a_file: Priloži fajl
         feedbackwidget_popup_code: Popup šifra Widgeta
         feedbackwidget_use_https: Koristite https
         feedbackwidget_text_button: Taster za tekst
@@ -1545,7 +1539,7 @@ bs:
         feedbackwidget_form_submit_title: Gumb za slanje obrasca
         feedbackwidget_search_area: Search Articles
         feedbackwidget_use_captcha: Enable CAPTCHA
-        feedbackwidget_attach_a_file: Priložite datoteku
+        feedbackwidget_attach_a_file: Priloži fajl
         feedbackwidget_use_https: Koristite https
         feedbackwidget_form_height: Visina forme
         feedbackwidget_form_height_message: 'Ako vidite klizne trake u widgetu, podesite visinu widgeta.'
@@ -1646,7 +1640,7 @@ bs:
         feedback_survey_begin: Slanje ankete na vaš e-mail id
         feedback_survey_end: Anketa je poslana na vaš e-mail id
         update: update
-        save_survey: Spremi
+        save_survey: Sačuvaj
         edit: Uredi
         survey_help_msg_v3: >-
           Kada se odabere ocjena zadovoljstva, prikazuje se stranica zahvalnosti
@@ -1794,11 +1788,11 @@ bs:
       disabled: 'Da biste uključili, aktivirajte svoj račun.'
     shared:
       filter_jsinit:
-        insert_placeholder: Insert Placeholder
+        insert_placeholder: Ubaci rezervirano mjesto
         user_pass?: Imam korisničko ime i lozinku?
         selected: Izabrano
         api_key: API ključ
-        change_password: Change Password
+        change_password: Promijeni lozinku
         url: Callback URL
         add_custom_headers: Dodaj prilagođena zaglavlja
         body: Body
@@ -1820,13 +1814,14 @@ bs:
         subject: Predmet
         webhook_usecase: Webhook Usecases
         advanced_webhook_tip: >-
-          Ovaj odjeljak vam omogućuje pisanje korisničkih API zahtjeva. Kliknite
-          na dugme Insert Placeholders kako biste uključili detalje o ulaznici
-          kao što su ime podnosioca zahtjeva, prioritet, status karte itd.
+          Ovaj odjeljak vam dopušta pisanje prilagođenih API zahtjeva. Kliknite
+          na dugme Ubaci rezervirana mjesta da biste u svoj zahtjev uključili
+          detalje tiketa poput imena podnosioca zahtjeva, prioriteta, statusa
+          tiketa itd.
         not_selected: Nije odabrano
         password: Lozinka
         advanced_layout: Napredno
-        to: To
+        to: U
         remove_custom_headers: Uklanjanje prilagođenih zaglavlja
         checked: check
         custom_headers_tip: Unesite jedan prilagođeni par vrijednosti zaglavlja po retku.
@@ -2090,8 +2085,8 @@ bs:
         portal_freshdesk_link: Pogledaj
         customize_the_layout: >-
           Možete prilagoditi izgled svake stranice na vašem Freshdesk portalu.
-          Potrebno je da dizajnirate svoj izgled koristeći rezervatore Freshdesk
-          portala i okvir Liquid templating.
+          Potrebno je da dizajnirate svoj izgled koristeći rezervirana mjesta
+          Freshdesk portala i Liquid šablonski okvir.
         stylize_color_and_font: >-
           Možete stilizovati, obojiti i podesiti font skoro svakog elementa na
           portalu podrške, postaviti svoj logotip i prilagoditi svoj favicon.
@@ -2136,13 +2131,13 @@ bs:
           informacije.
         auto_suggest_solutions: Auto predlaže rešenja pri kreiranju nove karte
         reset_portal_changes: Poništi promjene portala
-        simple_none: Nema
+        simple_none: Nijedan
         everyone: Svi
         allow_signin: Omogući korisnicima da se prijave putem ...
         public_ticket_urls_help: >-
-          Korisnici mogu pregledati ulaznice bez prijave putem javnih URL-ova za
-          karte. Mogu se ubaciti u obaveštenja putem e-pošte i odgovore na karte
-          poslati klijentima preko rezervisanih mesta.
+          Korisnici mogu pregledati tikete bez prijave putem javnih URL-ova
+          tiketa. Mogu se ubaciti u obavještenja putem e-pošte i u odgovore na
+          tikete poslane klijentima preko rezerviranih mjesta.
         moderate_all_help: >-
           Omogućite ovu funkciju ako želite biti strogi za svaki post koji se
           kreira u vašoj zajednici.
@@ -2154,7 +2149,7 @@ bs:
         payment_info: Unesite informacije o plaćanju da biste dodali više dana
         no_of_day_passes: '# Dana prolazi'
         usage_history: Istorija korišćenja
-        email: Email
+        email: E-pošta
         available_passes: Dostupan dan prolazi
         auto_recharge_notice: 'Trenutna količina punjenja je podešena na '
         auto_recharge: Auto recharge
@@ -2173,7 +2168,7 @@ bs:
           prolazni dan svodi na 2.
         auto_renewal_enabled_notice: Omogućeno je automatsko obnavljanje dnevne propusnice.
         no_credit_card: Ne postoji kreditna kartica.
-        all: Sve
+        all: Svi
         filtered_by: 'Filtrirano prema:'
       helpnote:
         title: Day Pass
@@ -2227,11 +2222,11 @@ bs:
         rebrand_bg_invalid: Kod boje pozadine je nevažeći.
         email_send_problem: Problem pri slanju pošte.
         implement_changes: Implementacija izmjena ...
-        rebrand_company_field_placeholder: Unesite naziv svoje tvrtke
+        rebrand_company_field_placeholder: Unesi naziv svoje kompanije
         rebrand_tab_invalid: Kôd boje kartice je nevažeći.
         back_link: Nazad
         agent_email_required: ID e-pošte potreban za slanje poziva.
-        agent_invite_field_placeholder: Unesite e-poruke članova tima
+        agent_invite_field_placeholder: Unesi e-adrese članova svog tima
         send_invite: Send Invite
         congratulations: Congrats! Vaš Freshdesk je spreman!
         sending_test_mail_progress: 'Slanje probne e-pošte, pričekajte ...'
@@ -2255,7 +2250,7 @@ bs:
         agent_email_sending: Slanje poziva ...
         successfully_updated: Uspješno ažurirano.
         rebrand_submit_label: Rebrand
-        next_link: Sledeće
+        next_link: Sljedeći
         footer_msg: >-
           <strong>Napomena:<strong> Ove postavke možete promijeniti u bilo koje
           vrijeme odlaskom na karticu <a href='/admin/home' target='_blank'
@@ -2452,7 +2447,7 @@ bs:
         twitter_streams:
           reauthorize: Reauthorize
           edit: Uredi
-        update: Update
+        update: Ažuriraj
         last_stream_delete_alert: >-
           Jeste li sigurni da želite obrisati ovaj Twitter stream? Nećete moći
           da vidite svoje prilagođene tokove kada niste povezani sa
@@ -2476,7 +2471,7 @@ bs:
       add_agent_label: Dodaj agenta
       scroll:
         administration: Administracija
-        customers: Kupci
+        customers: Klijenti
         reports: Izvještaji
         solutions: Rešenja
         general: General
@@ -2484,7 +2479,7 @@ bs:
         tickets: Tickets
         forums: Forumi
         scroll_to: Listajte do
-      agents_label: Agents
+      agents_label: Agenti
       new: Nova uloga
       default_role_edit: >-
         Ovo je podrazumevana sistemska uloga. Ne može se uređivati ili
@@ -2518,7 +2513,7 @@ bs:
       cancel_label: Odustani
       done_label: Gotovo
       title: Agent Roles
-      save_label: Spremi
+      save_label: Sačuvaj
       manage_label: Manage
       add_label: Dodati
       no_agent_label: Bez agenta
@@ -2597,7 +2592,7 @@ bs:
         prestaju da rade. Jeste li sigurni da želite nastaviti?
       reset: Reset API ključa
       title: Vaš API ključ
-    change_password: Change Password
+    change_password: Promijeni lozinku
     freshid_profile_info: Bićete preusmjereni na stranicu računa za nove račune
     edit: Uredi profil
     freshid_profile_link: Promenite informacije o profilu ili lozinku
@@ -2606,7 +2601,7 @@ bs:
     current_password: Trenutna šifra
   classic_label: Classic
   canned_folders:
-    insert_placeholder: Insert Placeholder
+    insert_placeholder: Ubaci rezervirano mjesto
   enable: Omogući
   choose_a_plan: Izaberite plan
   plain_yes: Da
@@ -2630,7 +2625,7 @@ bs:
   footer:
     helpdesk_software: Help Desk Software
     by_freshdesk: by Freshdesk
-  email: Email
+  email: E-pošta
   undo_toggle_error: 'Žao nam je, nešto je pošlo po zlu!'
   reset: Resetovati
   feedbackwidget_intro: >-
@@ -2654,7 +2649,7 @@ bs:
   medium: Srednje
   yes_password_reset: Da
   dropbox_attach_from_text: Priloži iz <b>Dropbox-a</b>
-  update: Update
+  update: Ažuriraj
   note: 'Bilješka: '
   downgrade_contact_us: >-
     Pogledajte naše <a target="_blank"
@@ -2669,7 +2664,7 @@ bs:
       do_not_link: Ne povezujte se
       view_in_detail: Pogledajte detaljno
       ok: Uredu
-      update: Update
+      update: Ažuriraj
       addcc: Dodaj cc
       hide_cc: Hide Cc
       announcement_hide: Sakrij ovu poruku
@@ -2721,7 +2716,7 @@ bs:
         open_or_pending: Otvori ili na čekanju
         raised_by_me: Karte koje sam tražio
         my_article_feedback: Moji članci Povratne informacije
-        spam: Neželjena pošta
+        spam: Spam
         all: Sve karte
         my_all: Sve moje karte
         overdue: Overdue Tickets
@@ -2729,7 +2724,7 @@ bs:
         open: Otvorene karte
         all_tickets: Sve karte
         due_today: Tickets Due Today
-        resolved: Resolved Tickets
+        resolved: Riješeni tiketi
       friendly_status:
         customer_responded: Customer Responded
         elapsed: Response Due
@@ -2750,7 +2745,7 @@ bs:
           not_added: (Nije dodano)
           not_added_greater: (> 15 mb nije dodano)
         public_note_tip: Vidljiv kupcu
-        deleted_note: Izbrisano
+        deleted_note: Izbrisani
       add_watcher:
         mail:
           hi: Zdravo
@@ -2789,7 +2784,7 @@ bs:
   currency_note: >-
     <a href='/subscription'>Kliknite ovdje</a> za promjenu valute. <br> Imajte
     na umu da nakon unosa podataka o kartici ne možete promijeniti valutu.
-  agents: Agents
+  agents: Agenti
   google_signup:
     associate_google:
       login: Ulogovati se
@@ -2861,7 +2856,7 @@ bs:
     nastavak korištenja Freshdesk-a
   name: Ime
   email_notifications:
-    insert_placeholder: Insert Placeholders
+    insert_placeholder: Ubaci rezervirana mjesta
     disabled_toggle: Ne možete isključiti ovu obavijest.
     no_agents: Dodaj agente
     last_saved: Last saved
@@ -2911,15 +2906,15 @@ bs:
           potvrde novo dodani ID e-pošte za njihov kontakt.
         topic: Dodan je novi ID e-pošte
       info3: >-
-        Možete konfigurirati Freshdesk za slanje automatskih e-mail obavijesti
-        agentima i podnositelju zahtjeva kada se pojave određeni događaji. Ove
-        obavijesti mogu se prilagoditi i dinamički sadržaj može se dodati pomoću
-        rezerviranih mjesta. Na primjer, možete obavijestiti kupce kada agenti
-        dodaju komentare ili javne bilješke na svoje ulaznice pomoću prilagođene
-        e-pošte s vezom na kartu.<br/><br/>Ako vaš plan podržava višestruke
-        jezike, moći ćete dodati jezike obavijesti i prilagoditi predloške za
-        svaki jezik. Ikona <i class="common-icon-outdated"></i> označava da su
-        prevodi obaveštenja na drugim jezicima možda zastareli.
+        Možete konfigurirati Freshdesk za slanje automatskih obavještenja putem
+        e-pošte agentima i podnosiocu zahtjeva kada dođe do određenih događaja.
+        Ova obavještenja mogu se prilagoditi i dinamički sadržaj može se dodati
+        pomoću rezerviranih mjesta. Na primjer, možete obavijestiti klijente
+        kada agenti dodaju komentare ili javne bilješke na svoje tikete pomoću
+        prilagođene e-pošte s vezom na tiket.<br/><br/>Ako vaš plan podržava
+        više jezika, moći ćete dodati jezike obavještenja i prilagoditi šablone
+        za svaki jezik. Ikona <i class="common-icon-outdated"></i> označava da
+        su prijevodi obavještenja na drugim jezicima možda zastareli.
       cc_notification_20:
         topic: Javna nota cc
         info1: >-
@@ -3035,15 +3030,15 @@ bs:
         topic: Agent dodaje komentar na kartu
         info1: >-
           Ovaj e-mail se šalje podnosiocu zahtjeva kad god agent doda komentar
-          na kartu koju je podigao. Ova e-pošta bi u idealnom slučaju trebala
-          sadržavati ID ulaznice i javnu URL vezu do ulaznice. Komentar agenta
-          može se dodati i poštom pomoću ovih rezervisanih mesta:<br/>
+          na tiket koji je postavio. Ova e-pošta bi u idealnom slučaju trebala
+          sadržavati ID tiketa i javnu URL vezu do tiketa. Komentar agenta može
+          se dodati i e-poštom pomoću ovih rezerviranih mjesta:<br/>
           {{comment.commenter.name}} - ime agenta koji je
-          komentirao<br/>{{comment.body}} - novi komentar dodan u
-          ulaznicu.<br/><br/>Ako ste postavili više podržanih jezika u vašoj
-          službi za pomoć, možete kreirati ovu obavijest specifičnu za svaki
-          jezik. Ikona <i class="common-icon-outdated"></i> označava da su
-          prevodi obaveštenja na drugim jezicima možda zastareli.
+          komentirao<br/>{{comment.body}} - novi komentar dodan na
+          tiket.<br/><br/>Ako ste postavili više podržanih jezika u vašem odjelu
+          za pomoć, možete kreirati ovo obavještenje specifično za svaki jezik.
+          Ikona <i class="common-icon-outdated"></i> označava da su prijevodi
+          obavještenja na drugim jezicima možda zastarjeli.
       requester_template_8:
         info1: >-
           Ovaj e-mail se šalje podnosiocima zahtjeva da ih obavijesti da je
@@ -3084,14 +3079,14 @@ bs:
           prevodi obaveštenja na drugim jezicima možda zastareli.
       agent_template_14:
         info1: >-
-          Poništavanje lozinke E-pošta će biti poslana vašim agentima kada
-          zatraže novu lozinku na vašoj službi za pomoć. Oznaka mjesta
-          {{password_reset_url}} je potrebna za pružanje dinamički generirane
-          veze za poništavanje lozinke u e-poruci.<br/><br/>Ako ste postavili
-          više podržanih jezika u vašoj službi za pomoć, možete kreirati ovu
-          obavijest specifičnu za svaki jezik. Ikona <i
-          class="common-icon-outdated"></i> označava da su prevodi obaveštenja
-          na drugim jezicima možda zastareli.
+          E-poruka za resetiranje lozinke bit će poslana vašim agentima kada
+          zatraže novu lozinku u vašem odjelu za pomoć. Rezervirano mjesto
+          {{password_reset_url}} je potrebno za pružanje dinamički generirane
+          veze za resetiranje lozinke u e-poruci.<br/><br/>Ako ste postavili
+          više podržanih jezika u vašem odjelu za pomoć, možete kreirati ovo
+          obavještenje specifično za svaki jezik. Ikona <i
+          class="common-icon-outdated"></i> označava da su prijevodi
+          obavještenja na drugim jezicima možda zastarjeli.
         topic: Password Reset Email
       agent_template_1:
         topic: Kreirana nova ulaznica
@@ -3138,14 +3133,14 @@ bs:
           prevodi obaveštenja na drugim jezicima možda zastareli.
       requester_template_14:
         info1: >-
-          Poništavanje lozinke E-pošta će biti poslana vašim podnosiocima
-          zahtjeva kada zatraže novu lozinku na vašoj službi za pomoć. Oznaka
-          mjesta {{password_reset_url}} je potrebna za pružanje dinamički
-          generirane veze za poništavanje lozinke u e-poruci.<br/><br/>Ako ste
-          postavili više podržanih jezika u vašoj službi za pomoć, možete
-          kreirati ovu obavijest specifičnu za svaki jezik. Ikona <i
-          class="common-icon-outdated"></i> označava da su prevodi obaveštenja
-          na drugim jezicima možda zastareli.
+          E-poruka za resetiranje lozinke bit će poslana vašim podnosiocima
+          zahtjeva kada zatraže novu lozinku u vašem odjelu za pomoć.
+          Rezervirano mjesto {{password_reset_url}} je potrebno za pružanje
+          dinamički generirane veze za resetiranje lozinke u
+          e-poruci.<br/><br/>Ako ste postavili više podržanih jezika u vašem
+          odjelu za pomoć, možete kreirati ovo obavještenje specifično za svaki
+          jezik. Ikona <i class="common-icon-outdated"></i> označava da su
+          prijevodi obavještenja na drugim jezicima možda zastarjeli.
         topic: Password Reset Email
     requestor_notification: Obaveštenje podnosioca zahteva
     subject: Predmet
@@ -3275,7 +3270,7 @@ bs:
     canned_form:
       okay: U redu
       hey: Hej
-      next: Sledeće
+      next: Sljedeći
       thank_you_text: Hvala ti
       move_to_form_field: ili pritisnite enter
       form_submit: Pošalji
@@ -3359,7 +3354,7 @@ bs:
           vaše nove funkcije ili koji deo vašeg proizvoda je teško razumeti.
       delete_topic: Izbriši temu
       close_topic: Zaključaj temu
-      reply: Odgovori
+      reply: Odgovor
       merge_topic: Merge Topic
       edit_topic: Uredi temu
       post:
@@ -3397,14 +3392,14 @@ bs:
           new_topic: stvorio temu
         tags:
           new_topic: Nova tema
-          reply: Odgovori
+          reply: Odgovor
       post:
         approve_tooltip: Odobri i objavi
         ban_tooltip: Označite korisnika i sve njegove postove kao Spam
     unpublished:
       spam:
         reply:
-          title: Odgovori
+          title: Odgovor
           posted: replied to
         new_topic:
           title: Nova tema
@@ -3419,7 +3414,7 @@ bs:
         unpublished: Čekajući na odobrenje
         deletion_alert: Teme / odgovori stariji od 30 dana automatski će biti izbrisani odavde
         waiting: Čekajući na odobrenje
-        title: Neželjena pošta
+        title: Spam
         no_forum_unpublished: Sve teme i odgovori su pregledani.
       invalid_topic:
         try_later: Nije moguće odobriti post. Pokušajte ponovo kasnije.
@@ -3478,7 +3473,7 @@ bs:
       index:
         empty_folder: Empty Folder
         moderation_solution: Saznajte više o Forum moderiranju
-        title: Neželjena pošta
+        title: Spam
         no_waiting_for_approval: Sve teme i odgovori su pregledani.
         no_unpublished_spam: Ovde nema spama. Kunemo se!
         waiting: Čekajući na odobrenje
@@ -3489,7 +3484,7 @@ bs:
           title: Nova tema
         reply:
           posted: replied to
-          title: Odgovori
+          title: Odgovor
         approve: Odobri i objavi
       after_ban:
         cleared_rest: >-
@@ -3548,7 +3543,7 @@ bs:
             Ovaj račun Freshcaller ne postoji. Navedite važeći URL ili napravite
             novi Freshcaller račun.
           authentication_error: Navedena e-adresa ili lozinka nisu važeći.
-        email: Email
+        email: E-pošta
         account_url: URL adresa računa Freshcaller
         continue: Nastavi
         password: Lozinka
@@ -3597,7 +3592,7 @@ bs:
     phone_number: Telefonski broj
     regex: Regex
     dropdown: Ispustiti
-    email: Email
+    email: E-pošta
     checkbox: Checkbox
     drag_drop_field_intro: >-
       Povucite i ispustite bilo koji tip polja u obrazac "%{name}" ispod da
@@ -3629,7 +3624,7 @@ bs:
       će biti naplaćena srazmjerno od datuma promjene pretplate do sljedećeg
       datuma obračuna.
     billing: Naplata
-    agents: Agents
+    agents: Agenti
     free_plan_currency_note: 'Kada nadogradite ili dodate agente, vaša uplata će biti uplaćena '
     unit_price: Cijena po jedinici
     quantity: Količina
@@ -3773,7 +3768,7 @@ bs:
         Generirajte XML svih dostupnih Help Desk podataka i pošaljite ih putem
         e-pošte
       account_settings: Podešavanja naloga
-      contact_email: Email
+      contact_email: E-pošta
       contact_phone: Telefon
       primary_contact: Osnovni kontakt detalji
       invoice_email_info: Pošalji fakture na
@@ -3896,7 +3891,7 @@ bs:
     us: MJESEC-DAN-GODINA
     gdpr_terms: 'Klikom na Prihvati, slažete se s našim'
     gdpr_terms_link: Uslovi
-    save: Spremi
+    save: Sačuvaj
     change_favicon: Change favicon
     rebrand: Rebrandirajte vaš Helpdesk
     date_format: Format datuma
@@ -4016,9 +4011,9 @@ bs:
     integrate_msg: >-
       Kopirajte i zalijepite ovaj kôd prije posljednje </body> oznake na
       web-lokaciji ili aplikaciji
-    save: Spremi
+    save: Sačuvaj
     wait_title: Poruka dok čekate da se agent pridruži
-    msgbox_placeholder_title: Odgovorni okvir za pohranu
+    msgbox_placeholder_title: Rezervirano mjesto okvira za odgovor
     help_offline_thank_header_msg: Zaglavlje nakon slanja poruke
     prechat_desc: >-
       Prikupite detalje o svojim posjetiteljima tako da imate bolji kontekst dok
@@ -4128,12 +4123,12 @@ bs:
     odabranog poravnanja.
   automations:
     info4: >-
-      Kliknite da ubacite Placeholders u sadržaj koji će se dinamički
+      Kliknite da ubacite Rezervirana mjesta u sadržaj koji će se dinamički
       razriješiti u odgovarajuće podatke
-    available_placeholders: Insert Placeholders
+    available_placeholders: Ubaci rezervirana mjesta
   portalcss:
     reset_all_changes: Resetiraj SVE promjene
-    save_and_continue: Spremi
+    save_and_continue: Sačuvaj
     mint: Mint
     mint_preview: Pregledajte novi izgled
     apply_mint: Apply
@@ -4185,8 +4180,9 @@ bs:
           Napomena: Da bi pregled bio prikazan, molimo provjerite da li imate
           bar jednu temu foruma.
         archive_ticket_list: >-
-          Napomena: Za pristup i prikaz arhiviranih karata, koristite „arhivske“
-          rezervisane lokacije kao što je {% snippet archive_ticket_filters %}.
+          Napomena: Za pristup i prikaz arhiviranih tiketa, koristite
+          'arhivirana' rezervirana mjesta kao što su {% snippet
+          archive_ticket_filters %}.
         ticket_view: >-
           Napomena: Da bi se prikazao pregled, molimo da se pobrinete da imate
           barem jednu kartu.
@@ -4200,10 +4196,10 @@ bs:
           Napomena: Da bi se prikazao pregled, proverite da li imate bar jedan
           članak rešenja.
         archive_ticket_view: >-
-          Bilješka: Zahtjevnici ulaznica ne mogu odgovoriti ili promijeniti
-          svojstva arhiviranih ulaznica. Placeholderi koji se odnose na
-          ažuriranje svojstava ulaznica poput {% snippet ticket_reply %} neće
-          raditi.
+          Napomena: Podnosioci zahtjeva za tiket ne mogu odgovoriti na ili
+          promijeniti svojstva arhiviranih tiketa. Rezervirana mjesta koja se
+          odnose na ažuriranje svojstava tiketa poput {% snippet ticket_reply %}
+          neće raditi.
       footer_layout_help_message: Promijenite područje podnožja portala podrške
       pages_help_message: Ovdje ćete moći prilagoditi područje tijela pojedinačnih stranica.
       head_layout_help_message: Izmijenite odjeljak glave portala html.
@@ -4307,11 +4303,11 @@ bs:
       edit_article: Izmijeni članak
     search:
       filters:
-        all: Sve
+        all: Svi
         solutions: Rešenja
         topics: Teme
         tickets: Tickets
-      placeholder: Ovdje unesite pojam za pretraživanje ...
+      placeholder: Ovdje unesite pojam za pretragu...
       results_for: Rezultati pretrage za
     popular_topics: Popularne teme
     my_topics: Moje teme
@@ -4449,14 +4445,14 @@ bs:
       ticket_list: Lista ulaznica
       mark_closed: Označite ulaznicu kao zatvorenu
       add_people: Dodajte ljude
-      reply_placeholder: Kliknite ovde da odgovorite na ovu kartu
+      reply_placeholder: Kliknite ovdje da odgovorite na tiket
       comments: Komentari
       details: Detalji o ulaznicama
       add_or_remove_emails: >-
         Dodajte ili uklonite e-poruke koje treba kopirati kada se pošalje
         obavijest za ovu kartu.
       add_people_title: Dodajte ljude u razgovor
-      reopen_reply: Odgovori
+      reopen_reply: Odgovor
       related_articles: Povezani članci...
   title: Naslov
   free_plan_agents_v2: Neograničeni agenti
@@ -4619,7 +4615,7 @@ bs:
       ivr:
         turn_on: 'On'
         simple_message_title: Simple Message
-        save: Spremi
+        save: Sačuvaj
         turn_off: Isključeno
         rename: rename
         add_new_option: Dodaj <b>Keypress</b> Opcija
@@ -4685,7 +4681,7 @@ bs:
         title_text: Upravljanje pozivnim centrom
         attachment_help_text: Prihvata audio fajl (mp3) <5mb
         queue_position_disable: ISKLJUČENO
-        queue_position_message_placeholder: 'Trenutno ste u redu čekanja. Vaša pozicija reda je {{queue.position}}'
+        queue_position_message_placeholder: 'Trenutno čekate u redu. Vaša pozicija u redu je {{queue.position}}'
         preparing_recording: Priprema vaše poruke ...
         info_content: >-
           <b>Dodeljivanje telefonskih poziva agentima i grupama</b></br>Možete
@@ -4716,10 +4712,10 @@ bs:
         recording_privacy_private: Vidljivo samo agentima
         business_calendar: Izaberite Business Hour
         queue_position_message_alert: >-
-          Za čitanje pozicije reda, koristite placeholder {{queue.position}}
-          <br/> Eg: Trenutno ste u redu. Vaša pozicija reda je
-          {{queue.position}}
-        name_placeholder: Unesite prijateljsko ime za svoj broj
+          Za čitanje pozicije u reda, koristite rezervirana mjesta
+          {{queue.position}} <br/> Eg: Trenutno ste u redu. Vaša pozicija u redu
+          je {{queue.position}}
+        name_placeholder: Unesite prepoznatljivo ime za svoj broj
         welcome_message: Poruka dobrodošlice
         change: Promjena
         stop_recording: <span></span>Zaustavite snimanje
@@ -4788,7 +4784,7 @@ bs:
   ticket_fields:
     index:
       title: Ticket Fields
-      save_ticket_fields: Spremi
+      save_ticket_fields: Sačuvaj
     untitled: Untitled
     customer_label_missing: Oznaka korisnika ne može biti prazna
     confirm_delete: Jeste li sigurni da želite izbrisati ovo polje?
@@ -4860,7 +4856,7 @@ bs:
       dropdown_choice_disabled: Zadani izbor ne može se izbrisati
       cc_any_email: Može CC bilo koju adresu e-pošte
       customer_mandatory: Potrebno prilikom podnošenja obrasca
-      level: Level
+      level: Nivo
       sla_timer: SLA timer
       drop_down_items_edit: Stavke padajućeg menija - Uredi
       field_label_customer: Oznaka polja za korisnike
@@ -4911,13 +4907,13 @@ bs:
       data_help: Vrijednost koja se dodjeljuje DNS zapisu
       cname: CNAME
       name: DKIM
-      verified: Verified
+      verified: Provjereni
       verify: Verify
       status: Status
       remove: Ukloni
       host_value_help: Ime hosta za TXT zapis
       title: Postavke DKIM
-      unverified: Unverified
+      unverified: Neprovjereni
       type: Tip
       help: Kako konfigurirati DKIM postavke?
       data: Podaci
@@ -4991,7 +4987,7 @@ bs:
       created_at: Datum kreiranja
       asc: Uzlazno
       desc: Descending
-      last_login_at: Last logged in
+      last_login_at: Posljednji prijavljen
       name: Ime
   feedbackwidget_help_para1: >-
     Widget za povratne informacije vam omogućava da ugradite obrazac za karte
@@ -5036,7 +5032,7 @@ bs:
     saved_report:
       error_title_unavailable: Ovaj naslov već postoji
       delete_cnfm_message: Jeste li sigurni da želite izbrisati ovo spremljeno izvješće?
-      save: Spremi
+      save: Sačuvaj
       cancel: Odustani
       dialog_sub_header: Ovaj izveštaj će biti vidljiv samo vama
       delete_dialog_header: Izbriši izveštaj
@@ -5097,9 +5093,9 @@ bs:
         ticket_fields_title: Ticket Fields
         delivery: Primanje putem
         max_field: (do 150 polja)
-        email: Email
+        email: E-pošta
         contact_fields_title: Polja kontakta
-        select_all: Označi sve
+        select_all: Izaberi sve
         filter: Izaberite Filteri
         title: Naziv rasporeda  <span class='required_star'>*</span>
         api: API
@@ -5126,7 +5122,7 @@ bs:
       dialog:
         monthly: Mjesečno
         generate_report: Generate report
-        email: Email
+        email: E-pošta
         'on': 'On'
         desc: Opis
         daily: Daily
@@ -5137,7 +5133,7 @@ bs:
     ticket_volume:
       busiest_hour_resolved_tickets: Većina ulaznica je riješena
       average_resolved_tickets: Average Resolved Tickets
-      resolved_tickets: Resolved Tickets
+      resolved_tickets: Riješeni tiketi
       busiest_hour_received_tickets: Većina karata je primljena oko
       received_tickets: Primljene karte
       total_resolved_tickets: Ukupno riješenih ulaznica
@@ -5295,7 +5291,7 @@ bs:
       index:
         go_to_ticket: Idi na kartu
         reauth_required: Potrebna je ponovna autorizacija
-        reply: Odgovori
+        reply: Odgovor
         note_title: 'Bilješka: '
         show_more_results: Prikaži više rezultata
         note: >-
@@ -5344,7 +5340,7 @@ bs:
         click_activity: Kliknite na stream da biste videli aktivnost
         no_activity_available: Nema dostupnih aktivnosti
         retweets: Retweets
-        all: Sve
+        all: Svi
         search_twitter: 'Pretražite twitter za ažuriranja '
       recent_searches: Your Recent Searches
       tooltip:
@@ -5581,7 +5577,7 @@ bs:
         social_channel: Društveno
         forums_channel: Forumi
         chat_channel: Live Chat
-        email_channel: Email
+        email_channel: E-pošta
         phone_channel: Telefon
         title: Kako razgovarate sa svojim klijentima danas?
         message2: 'Ne brinite, kasnije ih možete dodati ili ukloniti.'
@@ -5838,7 +5834,7 @@ bs:
       desc: Ostanite u toku sa Freshdesk ulaznicama u Slacku
     ilos:
       portal_forum:
-        placeholder: 'Tema #'
+        placeholder: 'Tema#'
         back_to_page: Nazad na temu
       settings:
         create_solution: Rešenja članak
@@ -5851,15 +5847,15 @@ bs:
         api_key: Unesite ilosvideos Api Key
       agent_forum:
         back_to_page: Nazad na temu
-        placeholder: 'Tema #'
+        placeholder: 'Tema#'
       portal_ticket:
-        placeholder: 'Ulaznica#'
+        placeholder: 'Tiket#'
         back_to_page: Nazad na kartu
       desc: >-
         Snimite i delite video-snimke na ulaznicama, forumima i člancima o
         rešenjima.
       agent_ticket:
-        placeholder: 'Ulaznica#'
+        placeholder: 'Tiket#'
         back_to_page: Nazad na kartu
       helptext: >-
         <h4>Freshdesk Ilos Integration</h4><p><br/>Zalijepite API API ključ za
@@ -5885,7 +5881,7 @@ bs:
         private_note: Sačuvaj kao privatnu napomenu
         video_title: Naslov videa
       solution:
-        placeholder: 'Članak #'
+        placeholder: 'Članak#'
         back_to_page: Nazad na članak
     logmein:
       desc: >-
@@ -6039,7 +6035,7 @@ bs:
         user_name: Ime
         existing_user: Postojeći račun
         helpdesk_url: URL za pomoć
-        email: Email
+        email: E-pošta
         your_freshdesk_url: Vaš URL za pomoć
         submit: Pošalji
         company_name: Ime kompanije
@@ -6400,7 +6396,7 @@ bs:
         kompanije ili e-pošte podnosioca zahtjeva.
     hootsuite:
       no_ticket_msg: Nemate ulaznica za ovaj filter
-      reply_btn: Odgovori
+      reply_btn: Odgovor
       send: Send
       signup_message: Još niste kupac Freshdesk? Prijaviti se
       reset: Resetovati
@@ -6410,7 +6406,7 @@ bs:
         domain_error: Nije moguće autorizirati freshdesk domenu
       filter:
         priority: Prioritet
-        all: Sve
+        all: Svi
         status: Status
       submit: Pošalji
       agent_error: Trebalo bi da budete agent za pregled ulaznica
@@ -6427,16 +6423,16 @@ bs:
         successfully_converted: Ticket je uspješno kreiran
       login:
         password: Lozinka
-        email: Email
+        email: E-pošta
       cc_bcc: Cc / Bcc
       search:
         ticket_id: ID ulaznice
-        placeholder_keyword: Pretražite karte po ključnoj riječi
+        placeholder_keyword: Pretraži tikete po ključnoj riječi
         keyword: Keyword
-        placeholder_ticket_id: Pretražite ulaznice po identifikacijskoj karti
+        placeholder_ticket_id: Pretraži tikete po Id-u tiketa
       header:
         try_again: Pokušaj ponovo
-        reply: Odgovori
+        reply: Odgovor
     custom_apps:
       ticket_detail_page: Stranica sa detaljima ulaznice
       preview_helptext: Ova prilagođena aplikacija će se pojaviti na bočnoj traci
@@ -6550,7 +6546,7 @@ bs:
       import_later_success: >-
         Uspešno je pokrenut uvoz Google kontakata. Status uvoza možete
         provjeriti na stranici postavki.
-      edit_app: Update
+      edit_app: Ažuriraj
       delete: Izbriši
       group: Ime grupe za sinhronizaciju
       sync_type: Kako sinkronizirati?
@@ -6570,7 +6566,7 @@ bs:
         account_settings: ''
       add_more: Sync new account
       MERGE_REMOTE: Spajanje Google i Freshdesk kontakata (Google prednost)
-      email: Email
+      email: E-pošta
       tag_label: Sync tag
       last_sync_time: Vreme poslednje sinhronizacije
       OVERWRITE_REMOTE: Uvezite Google kontakte i sva ažuriranja u Freshdesk kontakte
@@ -6674,7 +6670,7 @@ bs:
       title: CTI postavke
       iframe_toggle: Omogući Softphone Iframe
       phone:
-        save: Spremi
+        save: Sačuvaj
         cancel: Odustani
         add_number: Dodaj broj
         number_not_in_use: Nije u upotrebi
@@ -6715,7 +6711,7 @@ bs:
         widget_script: Isječak koda widgeta
         create_n_enable: Kreirajte i omogućite
         widget_title: Naziv widgeta
-        insert_placeholder: Insert Placeholder
+        insert_placeholder: Ubaci rezervirano mjesto
       get_custom_apps: Nabavite prilagođene aplikacije
       edit_custom_app: Uredi prilagođenu aplikaciju
       desc: >-
@@ -7218,7 +7214,7 @@ bs:
   sales: Prodaja
   feedbackwidget_button_text: Label
   ticket_form:
-    your_email_address: Email
+    your_email_address: E-pošta
     your_name: Tvoje ime
   done: Gotovo
   sign_in_info: Prijavićete se sa
@@ -7317,7 +7313,7 @@ bs:
     show_languages: Prikaži jezike
     draft:
       portal:
-        all: Sve
+        all: Svi
       my_drafts: My Drafts
       name: Drafts
       all_drafts: Svi nacrti
@@ -7435,8 +7431,8 @@ bs:
   change: Promjena
   freshchat:
     admin:
-      widget_token_placeholder: 'Npr: d0bb2ebf-2746-481a-ll64-0bdfb91cb2de'
-      save: Spremi
+      widget_token_placeholder: 'Npr.: d0bb2ebf-2746-481a-ll64-0bdfb91cb2de'
+      save: Sačuvaj
       sidebar_title: Freshchat
       cancel: Odustani
       sign_up_btn: Prijavi se sada
@@ -7472,7 +7468,7 @@ bs:
       enable_chat_in_portal_info: >-
         Olakšajte svojim klijentima da razgovaraju sa vama kada dođu na vaš
         portal za podršku.
-      app_id_placeholder: 'Npr .: 09901344-2b17-4d55-b412-2fd41811a83f'
+      app_id_placeholder: 'Npr.: 09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         Za pretvaranje Freshchat razgovora na karte, idite na ovu <a
         href='%{url}' target='_blank'>stranicu</a>, kopirajte pojedinosti
@@ -7517,7 +7513,7 @@ bs:
     problems:
       unsolved: Nerešeno
       solved: Solved
-    filter_0: Sve
+    filter_0: Svi
     select_stamps: Odaberite Marke
     msg1: Komentari su zatvoreni za ovu temu
     spam_delete_confirm: >-
@@ -7539,8 +7535,8 @@ bs:
     sticky_info: Lepljive teme ostaju na vrhu foruma za dodatnu vidljivost
     mark_topic: Označi temu kao
     filter_3: Not Taken
-    spam: Neželjena pošta
-    all: Sve
+    spam: Spam
+    all: Svi
     visible_in: Vidljivo u
     locked: Zaključajte temu i sprečite korisnike da postave odgovore.
     full_conversation: Posljednjih 5 razgovora (osim privatnih bilješki)
@@ -7565,3 +7561,14 @@ bs:
       Primjetili smo zastoj. Recite nam šta ste pokušali da postignete, a naš
       tim za podršku će vam se javiti što je prije moguće.
     success_message: Hvala. Bićemo u kontaktu!
+    name: 'Dobro došli u %{name} podršku'
+    message: Dobro došli u podršku
+    form_submit_message: Hvala vam na povratnim informacijama.
+    untitled_widget: 'Neimenovani vidžet %{count}'
+    invalid_components: 'Nevažeće heš komponente sa %{key}'
+    freshmarketer_sign_up_error: >-
+      Žao nam je, praćenje frustracije mora biti uključeno kada se integrira s
+      Freshmarketerom
+    invalid_settings: 'Nevažeće heš postavke sa %{key}'
+    invalid_domain: Molimo unesite važeću domenu.
+    domain_list_empty: Molimo navedite URL-ove za praćenje zbog predvidljive podrške.

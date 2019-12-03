@@ -3339,9 +3339,7 @@ pt-PT:
     Tudo contido no plano "Basic" mais Automação de Cenários, SLAs de Clientes,
     Horas de Serviço, Fóruns, Apoio Técnico via Comunidade &amp; Email.
   problem: Problema
-  proceed_now: |-
-
-    Proceed now?
+  proceed_now: Proceed now?
   profile:
     change_password: Alterar palavra-passe
     confirm_password: Confirmar password

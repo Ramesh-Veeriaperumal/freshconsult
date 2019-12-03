@@ -1195,19 +1195,19 @@ ar:
           the additional questions. Do you wish to continue?
       choice_contents:
         strongly_disagree: غير موافق مطلقًا
-        extremly_dissatisfied: Extremely dissatisfied
+        extremly_dissatisfied: غير راض للغاية
         some_what_disagree: غير موافق لحدٍ ما
         mostly_dissatisfied: Mostly dissatisfied
         disagree: غير موافق
         slightly_dissatisfied: Slightly dissatisfied
         neutral: محايد
-        neutral_v2: Neither satisfied nor dissatisfied
+        neutral_v2: لا راض ولا غير راض
         agree: موافق
         slightly_satisfied: Slightly satisfied
         some_what_agree: موافق لحدٍ ما
         mostly_satisfied: Mostly satisfied
         strongly_agree: موافق بشدة
-        extremely_satisfied: Extremely satisfied
+        extremely_satisfied: راض لأقصى درجة
       thanks_contents:
         title_text: رسالة شكر لتصنيف رضى العملاء
         title_text_v2: رسالة شكر لاستطلاع رضى العملاء.
@@ -4627,7 +4627,7 @@ ar:
         subject: 'اختبار البريد بحثًا عن الاستطلاع - %{title}'
         survey_preview_ticket_message: هذا نموذج بطاقة تم إنشاؤها خلال معاينة استطلاع رضى العملاء
         title: استطلاع العملاء
-        title_v2: Satisfaction Rating
+        title_v2: تقييم الرضا
         rating_sub_title: لقد قمتنا
         rating_sub_title_v2: Your ratings as
         survey_title: >-

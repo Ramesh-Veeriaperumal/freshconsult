@@ -14,13 +14,13 @@ lt:
     no_fields_selected: 'Jei norite tęsti, pasirinkite bent vieną iš žemiau pateiktų laukelių.'
     no_tickets_mail:
       body: Pasirinktomis dienomis nėra užklausų.
-    export: Eksportuoti
+    export: Perkėlimas
     csv: CSV
     xls: Excel
     select_all: Pasirinkti viską
     select_header: Pasirinkti visus laukelius
     from: Nuo
-    select_format: 'Eksportuoti kaip:'
+    select_format: 'Perkelti kaip:'
     filter_label_customer: Rūšiuoti sukurtas užklausas
     data_backup_failure:
       body: Duomenų perkėlimas nepavyko. Ar pradėti perkėlimą iš naujo?
@@ -203,7 +203,7 @@ lt:
     add_signature: Pridėti parašą
     remove_group: Pašalinti grupę
     group: Grupės
-    export: Eksportuoti
+    export: Perkėlimas
     convert_to_contact: Konvertuoti į kontaktą
     individual: Apribotas priėjimas
     contact_exists: 'Prašantysis, turintis el. paštą „%{existing_email}“, jau yra, %{use_email}'
@@ -293,7 +293,7 @@ lt:
         Galite pasirinkti, ar jūsų agentai visą laiką turės prieigą prie jūsų
         pagalbos portalo, ar prisijungs tik retkarčiais. Retkarčiais dirbantys
         agentai prisijungs prie jūsų pagalbos portalo naudodamiesi dienos
-        leidimais. Galite įsigyti kelis „Dienos leidimus“ Administracijos
+        leidimais. Galite įsigyti kelius „Dienos leidimus“ Administracijos
         skirtuke. Atkreipkite dėmesį, kad mokėsite tik už visą darbo dieną
         dirbančių agentų, kuriuos įtraukėte į planus ir atsiskaitymo skiltį,
         skaičių.
@@ -538,8 +538,8 @@ lt:
       Jei norite naršyti ir įdiegti, spustelėkite „Gauti pritaikytas
       programėles“.
     version: VERSIJA
-    reauthorize: Patvirtinti
-    reauthorize_header: Patvirtinkite programėlę
+    reauthorize: Iš naujo patvirtinti
+    reauthorize_header: Iš naujo patvirtinkite programėlę
     install_action:
       app_setup_error: Diegiant įvyko klaida.
     custom_app_gallery: „Custom App Gallery“
@@ -694,7 +694,7 @@ lt:
     info8: >-
       Naujas: leiskite vadovui valdyti automatinį užklausų priskyrimą ir agentų
       prieinamumą grupėms, kurioms jie priklauso -
-    sbrr_plan_text: <span class="muted"> Leidžiama </span> <b> miško plane </b>
+    sbrr_plan_text: <span class="muted"> Leidžiama </span> <b> „Forest“ plane </b>
     toggle_availability_for_rr: Leiskite agentams pakeisti jų prieinamumą automatiniam užklausų paskyrimui
     info1: Agentai
     new: Nauja grupė
@@ -771,8 +771,8 @@ lt:
   ticket_field:
     helpcard:
       info4_v3: >-
-        Jei esate nekilnojamojo turto plane ar aukščiau, galite matyti skiltis
-        su dinaminiais laukeliais, atsižvelgiant į išskleidžiamame laukelyje
+        Jei naudojatės „Estate“ planą ar aukštesnį, galite matyti skiltis su
+        dinaminiais laukeliais, atsižvelgiant į išskleidžiamame laukelyje
         pasirinktą parinktį. Kiekvienam skyriui galite pridėti užklausų
         laukelius ir susieti skyrių su parinktimis išplečiamajame laukelyje.
         Jei, pavyzdžiui, valdote el. prekybos parduotuvę, galite turėti skyrių,
@@ -801,13 +801,13 @@ lt:
         hierarchiškai.
       title1: Užklausos laukeliai
       info4_v2: >-
-        Jei esate nekilnojamojo turto plane arba aukščiau, galite turėti
-        dinaminius laukelius, kurie rodomi pagal pasirinkto tipo laukelį.
-        Kiekvieno tipo laukelio parinktyje galite sukurti kitą skyrių. Tada
-        kiekvienam skyriui galite pridėti daugiau užklausos laukelių, pvz., el.
-        prekybos scenarijuje, kai tipas yra pasirinktas kaip „Pakeitimas“, gali
-        būti pasirenkamas „Priežasties“ laukelis, kuriame bus pateikiama
-        priežastis, kodėl klientas nori pakeisti prekę.
+        Jei esate „Estate“ plane arba aukščiau, galite turėti dinaminius
+        laukelius, kurie rodomi pagal pasirinkto tipo laukelį. Kiekvieno tipo
+        laukelio parinktyje galite sukurti kitą skyrių. Tada kiekvienam skyriui
+        galite pridėti daugiau užklausos laukelių, pvz., el. prekybos
+        scenarijuje, kai tipas yra pasirinktas kaip „Pakeitimas“, gali būti
+        pasirenkamas „Priežasties“ laukelis, kuriame bus pateikiama priežastis,
+        kodėl klientas nori pakeisti prekę.
   activations:
     helpnote3: Patvirtinkite savo duomenis ir nustatykite savo paskyros slaptažodį
     helpnote1: >-
@@ -836,7 +836,7 @@ lt:
     el. paštas ir t. t.). CSV failo laukeliai gali būti pateikti bet kokia
     tvarka.
   downgrade_plan_v2: 'Pastaba: jei sumažinsite savo planą, galite prarasti kai kurias funkcijas!'
-  export: Eksportuoti
+  export: Perkėlimas
   no_tags: Žymos nerastos.
   save_changes: Išsaugoti pakeitimus
   onedrive_attach_from_text: Pridėkite iš <b>OneDrive“ (nebenaudojamas)</b>
@@ -2467,7 +2467,7 @@ lt:
           title: Socialiniai srautai
           new_account: Nauja paskyra
         twitter_streams:
-          reauthorize: Patvirtinti
+          reauthorize: Iš naujo patvirtinti
           edit: Redaguoti
         update: Atnaujinti
         last_stream_delete_alert: >-
@@ -2481,7 +2481,7 @@ lt:
       hipchat_hook_description: >-
         Galite išsiųsti pranešimą „HipChat“ kambariui, kai prašantysis siunčia
         atsakymą į užklausą „Freshdesk“.
-      jira_hook_alt: „JIRA Issue Creation Post Request“
+      jira_hook_alt: „JIRA“ problemos kūrimo prašymas
       hipchat_hook_alt: „Hipchat Pinging GET“ užklausa
       jira_hook_title: JIRA problemos kūrimas
     roles:
@@ -3439,7 +3439,7 @@ lt:
         try_later: Nepavyko patvirtinti įrašo. Pabandykite dar kartą vėliau.
         went_wrong: Kažkas negerai
       after_approve:
-        goto_post: „Goto Post“
+        goto_post: „Goto“ pranešimas
         published: Pranešimas paskelbtas
       spam_actions:
         ban_confirm: >-
@@ -3485,7 +3485,7 @@ lt:
     views_categories: Peržiūros ir kategorijos
     moderation:
       after_approve:
-        goto_post: „Goto Post“
+        goto_post: „Goto“ pranešimas
         published: Pranešimas paskelbtas
       index:
         empty_folder: Tuščias aplankas
@@ -3811,7 +3811,7 @@ lt:
         Jei norite konfigūruoti savo produkto portalą, naudokite parinktį
         Redaguoti portalą.
       info7: >-
-        Jei esate Sodo plane ar aukščiau, parinktyje „Kalbos“ galėsite
+        Jei esate „Garden“ plane ar aukščiau, parinktyje „Kalbos“ galėsite
         pasirinkti daugiakalbį palaikymą.
       info6: čia.
       info3: >-
@@ -3886,7 +3886,7 @@ lt:
     info5: Atostogos bus ignoruojamos apskaičiuojant užklausos SLA
     helpdesk_hours: Pagalbos tarnybos valandos
     description_eg: 'pvz.: šis verslo kalendorius priklauso Čikagos laiko juostai'
-    time_zone: Laiko zona
+    time_zone: Laiko juosta
     holiday_added: Šventė jau pridėta
     title: Darbo valandos
     holidays: Šventės
@@ -3898,11 +3898,11 @@ lt:
       Galite keisti numatytąją laiko juostą pagal <a href='/account/edit'
       >pagalbos tarnybos nustatymus</a>
     info2: >-
-      Atostogos dirba lygiai taip pat, kaip darbo valandos. Jei jūsų pagalbos
-      tarnyba dirba nuo 9 iki 18 val. Pirmadieniais – penktadieniais, o klientas
-      penktadienį 20 val. Siunčia vidutinio prioriteto bilietą 24 valandų
-      skiriamuoju laiku, antradienį bilietas „Laimingas laikas“ nustatomas 9
-      val.
+      Atostogos veikia lygiai taip pat kaip darbo valandos. Jei jūsų pagalbos
+      tarnyba dirba nuo 9 iki 18 val. pirmadieniais – penktadieniais, o klientas
+      penktadienį 20 val. atsiunčia užklausą, kuri yra vidutiniškai svarbi ir
+      jai atsakyti yra skiriama 24 valandos. Tuomet atsakymas į užklausą turi
+      būti pateiktas iki 9 val. ryto antradienį (ne šeštadienį 20 val.)
     to: iki
     info6: 24 val. X 7 dienos
     invalid_holiday: Pridėta neegzistuojanti šventė
@@ -3944,7 +3944,7 @@ lt:
       title: „Freshdesk“ prekės ženklas
     supported_portal_languages: Vartotojams matomos kalbos
     gdpr_policy: Privatumo politika.
-    customize_portal: „Helpdesk“ pertvarkymas
+    customize_portal: Pagalbos tarnybos pakeitimas
     helpdesk: Pagalbos tarnyba
     name: Paskyros pavadinimas
     info5: Iš naujo nustatyti spalvas
@@ -3953,21 +3953,19 @@ lt:
       nei sukurtos paskutinės užklausos ID). Tai turės įtakos nuo šiol sukurtoms
       užklausoms.
     portal_languages: 'Portale matomos kalbos (%{count})'
-    time_zone: Laiko zona
+    time_zone: Laiko juosta
     use_default: Naudoti numatytą
     supported_languages: 'Palaikomos kalbos (%{count})'
-    logo_and_favicon: Logo & favicon
+    logo_and_favicon: Logotipas & svetainės piktograma
     languages: Kalbos
     permission:
       users_from_any_domain: Vartotojai iš bet kurio domeno
       who_can_create: Kas gali prisijungti (arba) užsiregistruoti (arba) kurti užklausas?
       helpdesk_restrictions: Pagalbos tarnybos apribojimai
-      users_from_selected_domains: Vartotojai iš baltojo sąrašo domenų
+      users_from_selected_domains: Vartotojai iš patikimų domenų
     gdpr_agent: Agentas
-    time_zone_updation: >-
-      Laiko juosta atnaujinama visiems agentams ir kontaktams. Bandykite po
-      kurio laiko.
-    non_us: DIENA-MĖNESIO METAI
+    time_zone_updation: Laiko juosta atnaujinama visiems agentams ir kontaktams. Bandykite vėliau.
+    non_us: DIENA-MĖNESIS-METAI
     same_language_alert: Tarp palaikomų kalbų neturėtų būti portalo kalbos.
     gdpr_admin_details: pakeitė jūsų vartotojo teises iš
     active_since: Aktyvus nuo
@@ -4046,61 +4044,61 @@ lt:
     save: Išsaugoti
     wait_title: 'Pranešimas laukiant, kol agentas prisijungs'
     msgbox_placeholder_title: Atsakymo laukelio vietos žymeklis
-    help_offline_thank_header_msg: Antraštė po pranešimo pateikimo
+    help_offline_thank_header_msg: Antraštė pateikus pranešimą
     prechat_desc: >-
-      Surinkite informaciją apie savo lankytojus, kad galėtumėte geriau
-      bendrauti, kai kalbate su jais. Kai tai įgalinta, lankytojai turės
-      pateikti formą, kad galėtų pradėti pokalbį.
+      Rinkite informaciją apie savo lankytojus, kad bendraudami geriau juos
+      suprastumėte. Tai įgalinus, lankytojai turės užpildyti formą, kad galėtų
+      pradėti pokalbį.
     installation: Valdiklio kodas
     show_widget: Kai agentai yra prisijungę ir priima pokalbius
     cancel: Atšaukti
-    integrate_livechat_title: „Live Chat“ integruoti į savo svetainę ir programas
+    integrate_livechat_title: Integruoti tiesioginius pokalbius į savo svetainę ir programėles
     header_title: Antraštė
     maximum_chat_desc: >-
       Nustatykite pokalbių, kuriuos agentas gali tvarkyti vienu metu, skaičių.
-      Kai agentas pasiekia šią ribą, jie negaus jokių naujų pokalbių pranešimų.
+      Kai agentas pasiekia šį limitą, jis negaus jokių naujų pokalbių pranešimų.
     chatbox_bgcolor: Spalva
     maximum_chat_title: Didžiausias lankytojų pokalbių skaičius
     valid_code: Įveskite teisingą spalvos vertę
     non_availability_msg_help: >-
-      Jei norite susieti savo pranešimo frazę, nukreiptą į jūsų URL, pridėkite
-      jį „# #“
+      Jei norite susieti savo pranešimo frazę su jūsų URL, rašykite ją tarp „#
+      #“
     maximum_change_label: Redaguoti
     chat_availability: Pokalbių prieinamumas
     proactive_title: Aktyvus pokalbis
     intro: >-
-      „Freshdesk“ integruotas „Live Chat“ sprendimas leidžia peržiūrėti ir
-      kalbėtis su naudotojais jūsų svetainėje, internetinėje programinėje
+      „Freshdesk“ integruotas tiesioginis pokalbis leidžia peržiūrėti ir
+      kalbėtis su vartotojais jūsų svetainėje, internetinėje programinėje
       įrangoje ar palaikymo portale tiesiogiai iš „Freshdesk“. Taip pat galite
       aktyviai pradėti pokalbį su savo svetainės lankytojais. Baigę pokalbių
-      sesiją, galite pasirinkti konvertuoti pokalbį į bilietą ir toliau stebėti
-      lankytoją el. Paštu arba archyvuoti pokalbio tekstą.
+      sesiją, galite pasirinkti konvertuoti pokalbį į užklausą ir susisiekti su
+      lankytoju el. paštu arba archyvuoti susirašinėjimą.
     texton: Įjungta
     show_chat_hours: Rodyti pokalbį
-    agent_network_disconnect_msg_title: 'Pranešimas, kai agentas atjungiamas'
+    agent_network_disconnect_msg_title: 'Pranešimas, kai agentas atsijungia'
     thank_title: Dėkojame už pranešimą
     prechat_msg: Išankstinis pokalbio pranešimas
     enable: Įgalinti
     enabled: Įgalintas
-    welcome: Sveiki atvykę
+    welcome: Sveiki atvykę pranešimas
     portal_desc: >-
       Nors pokalbių valdiklis jūsų svetainėje yra matomas visiems, galite jį
-      įjungti tik savo klientų aptarnavimo portale.
+      įgalinti tik savo klientams aptarnavimo portale.
     copy_to_clipboard: Nukopijuoti į iškarpinę
     missed_chat_title: Praleista pokalbio forma
     portal_option_info: Rodyti pokalbių valdiklį
-    missed_chat_desc: 'Surinkite lankytojų duomenis, kai jūs negalite.'
+    missed_chat_desc: 'Rinkti lankytojo duomenis, kai jūs sate neprieinamas.'
     proactive_note: >-
-      Pastaba: prieš pokalbio formą nebus rodoma, kai pokalbis bus pradėtas. Vis
-      dar galite rankiniu būdu įtraukti visus lankytojų duomenis.
+      Pastaba: prieš pokalbį užpildoma forma nebus rodoma, kai pokalbis yra
+      pradėtas. Vis dar galite rankiniu būdu pateikti visus lankytojo duomenis.
     edit: Redaguoti
-    default_routing: Numatytasis maršrutas
-    routing: Pokalbių maršrutai
+    default_routing: Numatytasis nukreipimas
+    routing: Pokalbių nukreipimas
     anytime: Visada (24/7)
     help_text_wait_onhold_msg: >-
       Šis pranešimas bus rodomas, kai lankytojas laukia agento ilgiau nei vieną
       minutę
-    support_portal: Kalbėkite apie savo palaikymo portalą
+    support_portal: Bendraukite už savo pagalbos portalą
     chat_hours_msg_note: 'Pastaba: pokalbių langas nebus rodomas ne šiuo laikotarpiu.'
     form_details: Formos informacija
     show_chat_hours_msg: 'Nustatykite, kada jūsų pokalbių langas bus prieinamas jūsų lankytojams.'
@@ -4112,7 +4110,7 @@ lt:
     business_hours: Darbo valandomis
     chat_enabled_label: Įgalinti pokalbį
     chat_transfer_msg_title: Pokalbio perdavimo pranešimas
-    offline_message: Pranešimai apie svečius
+    offline_message: 'Pranešimai, kai agentai nėra prisijungę'
     window_position: Padėtis
     custom_chat_window: Pokalbio langas
     help_offline_title: Antraštė
@@ -4122,9 +4120,9 @@ lt:
     enabling: Leidimas
     use_custom_link: 'Peradresuokite lankytojus į atskirą puslapį '
     procative_info: >-
-      Automatiškai inicijuokite pokalbių pokalbius su lankytojais, jei tame
-      pačiame puslapyje jie praleidžia daugiau nei tam tikrą laiką.
-    dropdown_based_routing: Nukreipimas pagal maršrutą
+      Automatiškai pradėkite pokalbius su lankytojais, jei tame pačiame
+      puslapyje jie praleidžia daugiau nei tam tikrą laiką.
+    dropdown_based_routing: Išskleidžiamasis pasirinkimas pagal nukreipimą
     widgets_list_info: >-
       Kiekvienam jūsų produktui „Freshdesk“ turėsite atitinkamą pokalbių
       valdiklį
@@ -4142,7 +4140,7 @@ lt:
       Savo klientams padėkite efektyviau pokalbių metu, turėdami pasirinką
       peržiūrėti ir valdyti jų ekraną.
     window_offset_error_msg: Įveskite tinkamą nuokrypio vertę (<500px).
-    preferences: Prioritetai
+    preferences: Nuostatos
   feedbackwidget_custom_image_info: 'jei naudojate pasirinktinį paveikslėlį, spalva ir tekstas bus ignoruojami.'
   reset_password_title: Atstatyti slaptažodį
   uncheck_remember_tooltip: >-
@@ -4242,7 +4240,7 @@ lt:
   retype_password: Pakartokite slaptažodį
   date_title: Data
   open_tickets: Atidarykite užklausas
-  zendesk_backup: Atsarginė rinkmena
+  zendesk_backup: Atsarginis failas
   suspended_plan_admin_info: >-
     Paskyra buvo sustabdyta, susisiekite su paskyros administratoriumi
     (%{email})
@@ -4251,15 +4249,16 @@ lt:
     helpcard:
       note: Pastaba
       info2: >-
-        El. Pašto komandos turi atitikti teisingą sintaksę ir turi būti
-        išdėstytos iš anksto sukonfigūruotame skirtuko tekste. Pavyzdžiui,
-        komanda „@simonsays agent: John Roberts Status: Resolved @simonsays“
-        priskirs bilietą agentui John Roberts ir pažymės Bilietą kaip išspręstą.
+        El. pašto komandos turi turėti teisingą sintaksę ir turi būti pateiktos
+        iš anksto sukonfigūruotame skirtuko tekste. Pavyzdžiui, komanda
+        „@simonsays agentas: John Roberts būsena: išspręsta @simonsays“
+        priskirti užklausą agentui John Roberts ir pažymėti užklausą kaip
+        išspręstą.
       info1: >-
-        Atsakydami į el. Laiškus iš savo pašto dėžutės, galite įtraukti „El.
-        Pašto komandas“, kad nurodytumėte Freshdesk atlikti tam tikrus veiksmus
-        biliete. „Freshdesk“ bus pašalintas el. Pašto komandos tekstas, kurio
-        prašytojas nematys, o likęs tekstas taps pokalbio dalimi.
+        Atsakydami į el. laiškus iš savo el. pašto dėžutės, galite įtraukti „El.
+        pašto komandas“, kad nurodytumėte „Freshdesk“, kokius veiksmus reikia
+        atlikti užklausoje. „Freshdesk“ pašalins el. pašto komandos tekstą ir
+        prašantysis jo nematys, o likęs tekstas taps pokalbio dalimi.
       ticket_type_example: Klausimas
       heading: ' El. pašto komandų nustatymai'
       info3: >-
@@ -4283,19 +4282,19 @@ lt:
         tinkamai, jei išjungsite juos. 
       cookie_dialog_info3: >-
         Taip pat darysime prielaidą, kad sutinkate su slapukų naudojimu, kaip
-        aprašyta mūsų %{privacy_link}, nebent nuspręsite juos išjungti per
+        aprašyta mūsų %{privacy_link}, nebent nuspręsite juos išjungti per savo
         naršyklę. 
       privacy_policy: Privatumo politika
-    no_topics_in_this_view: ~ Šioje kategorijoje nėra temų ~
+    no_topics_in_this_view: ~ Šioje peržiūroje nėra temų ~
     reported: pranešta
     said: sakė
-    solutions_home: Pradžia
+    solutions_home: Sprendimų pradžia
     print_title: Spausdinti šį straipsnį
     attach_file: Pridėti <b>failą</b>
     header:
       preview_message: >-
-        <b>Peržiūra</b> - <a href='javascript:window.close()'>Paspauskite
-        čia</a> norite grįžti.
+        <b>Peržiūros režimas</b> - <a
+        href='javascript:window.close()'>Paspauskite čia</a>, kad grįžti.
     new_support_ticket: Nauja pagalbos užklausa
     submit_new_ticket: ... arba pateikite naują užklausą
     login: Prisijungti
@@ -4349,8 +4348,8 @@ lt:
     topic_not_found: 'Atrodo, kad ši tema buvo ištrinta'
     post_not_found: 'Atrodo, kad šis pranešimas buvo ištrintas'
     showing_my_topics: Rodomos jūsų sekamos temos
-    community_forums: Bendrijos forumai
-    knowledge_base: Žinių bazė
+    community_forums: Bendruomenės forumai
+    knowledge_base: Naudinga informacija
     showing_recent_updates: Rodomi naujausi atnaujinimai
     no_articles_info_1: 'Apgailestaujame, mes nesidalinome jokiais straipsniais šiame skyriuje. '
     no_articles_info_2: 'Vėliau patikrinkite dar kartą. '
@@ -4446,33 +4445,33 @@ lt:
         other: mėgsta šią idėją
       problem:
         one: turi šią problemą
-        few: turi šią problemą
-        many: turi šią problemą
-        other: turi šią problemą
+        few: turi šias problemas
+        many: turi šias problemas
+        other: turi šias problemas
       howto:
         one: turi šį klausimą
-        few: turėti šį klausimą
-        many: turi šį klausimą
-        other: turi šį klausimą
-      votes: balsų
+        few: turi šiuos klausimus
+        many: turi šiuos klausimus
+        other: turi šiuos klausimus
+      votes: balsai
       upvote: balsuoti
       upvoted: balsavo
       user_upvote_list_title: 'Žmonės, kurie balsavo'
-      announce_button: Ar jums patinka tai?
+      announce_button: Ar jums tai patinka?
       ideas_button: Ar jums patinka ši idėja?
-      problem_button: Ar turite šią problemą?
-      howto_button: Ar turite šį klausimą?
-      announce_unlike_button: skirtingai!
-      ideas_unlike_button: skirtingai!
-      problem_unlike_button: Aš neturiu šios problemos!
-      howto_unlike_button: Aš neturiu šio klausimo!
+      problem_button: Ar jums iškilo ši problema?
+      howto_button: Ar jums taip pat iškilo šis klausimas?
+      announce_unlike_button: nebemėgti!
+      ideas_unlike_button: nebemėgti!
+      problem_unlike_button: Aš nesusidūriau su šia problema!
+      howto_unlike_button: Man neiškilo šis klausimas!
       announce_users_voted_title: 'Žmonės, kuriems tai patinka'
       ideas_users_voted_title: 'Žmonės, kuriems patinka ši idėja'
       problem_users_voted_title: 'Žmonės, susiduriantis su šia problema'
       howto_users_voted_title: 'Žmonės, turintys šį klausimą'
     post_vote:
-      upvoted: Jūs esate atnaujinęs
-      upvote: Atnaujinti
+      upvoted: Jūs pabalsavote
+      upvote: Balsuoti
       like:
         one: Mėgsta tai
         few: mėgsta tai
@@ -4481,9 +4480,9 @@ lt:
     tickets:
       merged_topic_note: Sujungta tema negali būti konvertuojama į užklausą.
       export: Perkelti užklausas
-      submit_export: Eksportuoti
+      submit_export: Perkėlimas
       export_ticket_data: Perkelti užklausas
-      export_to_csv: Eksportuoti į CSV
+      export_to_csv: Perkelti į CSV
       ticket_list: Užklausų sąrašas
       mark_closed: Pažymėti užklausą kaip uždarytą
       add_people: Pridėti žmonių
@@ -4501,9 +4500,9 @@ lt:
   freshfone:
     admin:
       purchase_numbers_text: >-
-        Pirkite vietinį arba nemokamą numerį ir palaikykite klientus visame
+        Pirkite vietinį arba nemokamą numerį ir teikite pagalbą klientams visame
         pasaulyje telefonu
-      greetings: Sveikinimai
+      greetings: Pasveikinimai
       settings: Nustatymai
       important: Svarbu
       toll_free: Nemokamas
@@ -4511,15 +4510,15 @@ lt:
         Pirkite kreditus, kad galėtumėte nusipirkti numerius, skambinti ir
         priimti skambučius naudodami telefono kanalą.
       suspended_alert: >-
-        <b>Svarbu:</b> Išjungus telefono kanalą, nebus užkirstas kelias mėnesio
-        nuoma jūsų numeriuose. Norėdami išvengti apmokestinimo, ištrinkite
-        įsigytus numerius.
+        <b>Svarbu:</b> Išjungus telefono kanalą, jūsų numerių mėnesinė nuoma
+        nebus nutraukta. Norėdami išvengti apmokestinimo, ištrinkite įsigytus
+        numerius.
       freshfone_numbers_title: Telefonas
       welcome_page:
         title_text: Telefonas
       number:
         simultaneous: Skambinkite visiems agentams
-        round_robin: Pirmiausia skambinkite tuščiosios eigos agentu
+        round_robin: 'Pirmiausia skambinkite agentams, kurie laikinai nedirba'
       numbers:
         sidebar_content_v2: >-
           Naudodamiesi telefono kanalu, galite skambinti ir priimti skambučius
@@ -4553,20 +4552,19 @@ lt:
         buy_loading_text: Pirkimas ...
         buy_phone_numbers: Pirkti telefono numerius
         caller_id:
-          no_number_added: Nėra pridėta skambintojo ID
-          call_id_mask: Apsaugokite šį numerį
-          manage_caller_id: 'Tvarkyti skambintojo ID '
+          no_number_added: Skambinančio ID nepridėta
+          call_id_mask: Paslėpti šį numerį
+          manage_caller_id: 'Valdyti skambinančio ID '
           add_new: Pridėti naują
-        tour_link: Padėkite man nustatyti telefono kanalą
+        tour_link: Padėkite nustatyti telefono kanalą
         failure_purchase: >-
-          Nepavyko įsigyti telefono numerio. Prašome įsitikinti, kad adresas yra
-          galiojantis vietinis adresas <span
-          class='certification-country'></span>.
+          Nepavyko įsigyti telefono numerio. Prašome įsitikinti, kad pateikėte
+          galiojantį vietinį adresą <span class='certification-country'></span>.
         buy: Pirkimo numeris
         buy_button_text: Pirkti
         address:
           address: Adresas
-          state: Valstija / Provincija / Regionas
+          state: Valstija / Provincija / Rajonas
           city: Miestas
           postal_code: Pašto kodas
           required_field: Visi laukeliai yra privalomi
@@ -4701,9 +4699,9 @@ lt:
         wait_music: Laukimo muzika
         recording_help_info: Įjunkite mikrofoną. Trukmė <5 min.
         record_alert: >-
-          Daugelyje šalių skambučių įrašymo gairės reikalauja pranešti
-          klientams, kad jų skambučiai yra įrašomi. Atitinkamai sukonfigūruokite
-          sveikinimo pranešimą.
+          Daugelyje šalių skambučių įrašymo nuorods nurodymai reikalauja
+          pranešti klientams, kad jų skambučiai yra įrašomi. Atitinkamai
+          sukonfigūruokite sveikinimo pranešimą.
         record_none: Neįrašinėti skambučių
         non_availability_message: Pranešimas apie neprieinamumą
         voicemail_message: Balso pašto pranešimas
@@ -4762,9 +4760,9 @@ lt:
         stop_recording: <span></span>Sustabdyti įrašymą
       trial:
         request_activation_msg: >-
-          Telefono bandomojo laikotarpio metu galite pasirinkti naudoti tik
-          vieną numerį iš riboto šalių.<br> Tačiau galite įsigyti kelis numerius
-          iš 41 šalių, kai įjungiate pilną versiją
+          Bandomojo telefono naudojimo metu galite pasirinkti naudoti tik vieną
+          numerį iš riboto šalių skaičiaus.<br> Tačiau aktyvavęs pilną versiją,
+          galite įsigyti kelis numerius iš 41 šalies
         activate_btn_text: Prašymas aktyvuoti
         numbers:
           search:
@@ -4772,23 +4770,25 @@ lt:
               Jūs paprašėte aktyvuoti telefono kanalą <br> Mes susisieksime su
               jumis per 2 darbo dienas.
             buy_confirmation: Ar tikrai norite pasirinkti šį numerį?
-            can_use_after_activation: Šį numerį galite tęsti naudodami telefono kanalą.
-        requested_activation: Mes gavome jūsų prašymą aktyvavimo<br>Tai pagal pažangą
+            can_use_after_activation: >-
+              Galite ir toliau naudotis šiuo numeriu, aktyvuodami telefono
+              kanalą.
+        requested_activation: Mes gavome jūsų prašymą aktyvuoti<br>Jūsų prašymas vykdomas
     subscription:
-      recharge_now_text: Užpildykite savo balansą vienkartiniu mokėjimu
+      recharge_now_text: Papildykite savo balansą vienkartiniu mokėjimu
       purchase_credits: Pirkimo kreditai
-      setup_auto_recharge: Nustatykite automatinį įkrovimą
-      auto_recharge_amt: Automatinis įkrovimo kiekis
+      setup_auto_recharge: Nustatykite automatinį papildymą
+      auto_recharge_amt: Automatinio papildymo suma
       see_detailed_pricing: Peržiūrėkite išsamią kainodarą
       followup_text: verta telefono kreditų
       auto_recharge_text: >-
         Nuskaitysime lėšas iš jūsų sąskaitos tik tada, kai likutis bus mažesnis
         nei 5 Usd
       purchase_text: Pirkite telefono kreditus
-      current_balance: Jūsų esamas balansas
+      current_balance: Dabartinis jūsų balansas
       followup: verta telefono kreditų
       no_credit_card_text: 'Įveskite mokėjimo informaciją, kad įsigytumėte telefono kreditus'
-  special_beta_offer: Specialus pasiūlymas beta versijoms
+  special_beta_offer: Specialus pasiūlymas bandomosioms versijoms
   days: Dienos
   tickets_filter:
     sort_fields:
@@ -4911,7 +4911,7 @@ lt:
       agent_mandatory_closure: Reikalingas uždarant užklausą
       level3: 3 lygis
       display_cc_field: Rodyti CC lauką
-      field_has_section: Lauke yra skyrius
+      field_has_section: Laukelyje yra skyrius
       for_agents: Agentams
       status_choices: Būsenos pasirinkimai
       add_new_choice: Pridėti naują pasirinkimą
@@ -4919,8 +4919,8 @@ lt:
       agent_mandatory_submission: Būtina pateikiant formą
       nested_field_helptext: >-
         Naudokite žemiau esantį tekstą, jei norite pridėti arba redaguoti
-        elementus išplečiamajame meniu. Įterpti elementus, vieną ar du kartus
-        paspausdami skirtuką. Mes ją konvertuosime į išskleidžiamuosius
+        elementus išplečiamajame meniu. Įterpkite elementus, vieną ar du kartus
+        paspausdami skirtuką. Mes juos konvertuosime į išskleidžiamuosius
         elementus pagal įtraukimą. <a target='_blank'
         href='https://support.freshdesk.com/solution/categories/45957/folders/74594/articles/37599-using-dependent-fields'>Sužinokite
         daugiau</a> 
@@ -4929,19 +4929,19 @@ lt:
       delete_field: Ištrinti laukelį
       nested_tree_validation: Jums reikia bent vienos kategorijos ir subkategorijos
       description: Aprašymas
-      form_title: Lauko savybės
+      form_title: Laukelio savybės
     no_choice_message: Turi būti bent vienas galiojantis pasirinkimas
-  export_to_CSV: Eksportuoti į CSV
+  export_to_CSV: Perkelti į CSV
   email_configs:
     info7: 'Tai taip pat yra jūsų atsakymo adresas, pvz. support@yourcompany.com'
-    remove_msg: Ar tikrai norite pašalinti šį el. Laišką?
+    remove_msg: Ar tikrai norite pašalinti šį el. laišką?
     dkim:
       last_verified: Paskutinį kartą patvirtinta
-      new_dkim: Dar nesukūrėte paramos el. Laiško su priskirtu domenu!
+      new_dkim: Dar nesukūrėte elektroninio pagalbos pašto su pritaikytu domenu!
       help_note: >-
-        DKIM padeda jums elektroniniu būdu pasirašyti el. Paštą iš pagalbos
-        tarnybos su el. Pašto domeno pavadinimu (-ais). Tai padeda sukurti jūsų
-        prekės ženklo tapatybę visuose ryšiuose su klientais.
+        DKIM padeda elektroniniu būdu pasirašyti el. laiškus iš jūsų pagalbos
+        tarnybos su jūsų el. pašto domeno pavadinimu (-ais). Taip galėsite
+        sukurti savo prekės ženklo tapatybę bendraudami su klientais.
       verification_sent: Patvirtinimas išsiųstas
       config: Konfigūruoti
       configuring: Konfigūravimas ...
@@ -4961,54 +4961,54 @@ lt:
       description: >-
         Atnaujinkite šiuos DNS parametrus savo interneto paslaugų teikėjo
         svetainėje. Kai nukopijuosite visus kiekvieno domeno nustatymus, galite
-        spustelėti mygtuką Patvirtinti, kad patvirtintumėte, kad nustatymai yra
-        aktyvūs
-      host_value: Priimančioji vertė
+        spustelėti mygtuką „Patvirtinti“, kad patvirtintumėte, kad nustatymai
+        yra aktyvūs
+      host_value: Serverio vertė
       dkim_remove_message: Ar tikrai norite pašalinti DKIM konfigūraciją
     info17: >-
-      Šis el. Pašto adresas bus automatiškai įtrauktas į „Bcc“ lauką visiems
-      bilietų ryšiams
+      Šis el. pašto adresas bus automatiškai įtrauktas į „Bcc“ lauką visoms
+      užklausoms
     freshdesk: „Freshdesk“
     info9: Priskirti grupei
-    info8: Persiųskite el. Laiškus į
-    send_verification_email: Siųsti aktyvinimą
-    reply_email: Jūsų paramos el
-    primary_email_delete_alert: Negalima ištrinti pirminio el. Laiško
+    info8: Persiųskite el. laiškus į
+    send_verification_email: Siųsti aktyvavimą
+    reply_email: Jūsų pagalbos el. pašto adresas
+    primary_email_delete_alert: Negalima ištrinti pirminio el. laiško
     bcc_text: Bcc
-    secondary_supp_email_tool_tip: Padarykite šį el. Laišką pagrindiniu
-    global_support_emails: Pasaulinio palaikymo el. Laiškai
+    secondary_supp_email_tool_tip: Padarykite šį el. pašto adresą pagrindiniu
+    global_support_emails: Pasaulinės pagalbos teikimo el. pašto adresas
     enable_compose_info: >-
       Jei taip, agentai galės išsiųsti el. laiškus naujiems ar esamiems
       klientams, kurie bus konvertuojami į pateiktas užklausas.
-    assign_to_product_msg: Susieti šį pagalbos el. Laišką su produktu
+    assign_to_product_msg: Susieti šį pagalbos el. pašto adresą su produktu
     enable_compose: Leisti agentams pradėti pokalbį su klientais?
-    delete_confirm: Ar tikrai norite ištrinti šį konfigūravimą?
+    delete_confirm: Ar tikrai norite ištrinti šį nustatymą?
     name: Vardas
-    name_info_msg: 'Elektroninio pašto adresas, kuris bus naudojamas bilietų atsakymuose'
+    name_info_msg: 'Elektroninio pašto adresas, kuris bus naudojamas užklausų atsakymuose'
     Personalized_email_replies_no: Ne
     edit: Redaguoti
     helpcard:
       info21: >-
         Savo pagalbos tarnyboje galite pridėti neribotą gaunamų ir siunčiamų
-        pašto dėžučių (pvz., Info@yourcompany.com, sales@yourcompany.com ir
-        kt.). Jūs netgi galite nustatyti „Freshdesk“, kad automatiškai priskirtų
-        el. Laiškus iš kiekvienos pašto dėžutės į konkrečią grupę.
-      tour1: Padėkite man įdiegti palaikymo el. Paštą
+        pašto dėžučių (pvz., Info@yourcompany.com, sales@yourcompany.com ir kt.)
+        kiekį. Jūs netgi galite nustatyti, kad „Freshdesk“ automatiškai
+        priskirtų kiekvienos pašto dėžutės el. laiškus konkrečiai grupei.
+      tour1: Padėkite man nustatyti pagalbos el. pašto adresą
       info20: Naudojant kelias pašto dėžutes
-      edit_info: 'Jei norite sukurti naują paramos el. Pašto dėžutę, visuotiniuose el.'
+      edit_info: >-
+        Jei norite sukurti naują pagalbos el. pašto dėžutę, pasauliniuose el.
+        pašto nustatymuose paspauskite „Redaguoti“.
     new_support_email: Naujas pagalbos el. pašto adresas
-    info11: Visų palaikymo el. Pašto adresų sąrašas
-    set_bcc_email_text: Nustatykite automatinį „Bcc“ el. Laišką
-    personalized_email_replies_title: >-
-      Naudokite agentų pavadinimus bilietų atsakymuose ir išeinančiuose
-      laiškuose?
+    info11: Visų pagalbos el. pašto adresų sąrašas
+    set_bcc_email_text: Nustatykite automatinį „Bcc“ el. laišką
+    personalized_email_replies_title: Naudoti agentų vardus užklausų atsakymuose ir siunčiamuose laiškuose?
     unverified_info1: >-
-      Prašome aktyvuoti šį el. Laišką spustelėdami patvirtinimo nuorodą savo
-      gautuosiuose.
+      Prašome aktyvuoti šį el. pašto adresą spustelėdami patvirtinimo nuorodą
+      savo gautuosiuose laiškuose.
     title: El. pašto nustatymai
     reply_to_tickets: >-
-      Jei norite sukurti užklausos adresatus, naudokite el. Pašto adresą
-      „Atsakymas“
+      Jei norite atsakyti užklausos pateikėjui, naudokite „Atsakyti“ el. pašto
+      adresą
     add_bcc_text: Pridėti „Bcc“
     mark_as_primary_msg: >-
       Ar tikrai norite, kad tai būtų pagrindinis pagalbos teikimo el. pašto
@@ -5125,15 +5125,15 @@ lt:
         delete_title: Ištrinti tvarkaraštį
         delete_text: Ar tikrai norite ištrinti šį tvarkaraštį?
         ticket_properties_title: Atsisiųsti užklausų ypatybes
-        ticket_properties_note: Jūsų paskyra išnaudojo visą galimų sukurti tvarkaraščių skaičių
+        ticket_properties_note: Jūsų paskyroje nebėra jokių galimų planavimų
         cancel: Atšaukti
         confirm: Patvirtinti
       new:
         helpnote:
-          api_info1: API turės nuorodą į naujausią eksportą.
+          api_info1: API turės nuorodą į naujausią perkėlimą.
           api_info2: >-
-            Eksportas bus generuojamas periodiškai, kuriame bus pasirinkti
-            pasirinktų bilietų, kontaktų ir įmonių laukai.
+            Perkėlimas su pasirinktomis užklausomis, kontaktine informacija ir
+            įmonės laukeliais bus vykdomas periodiškai.
         fields_to_export: 'Pasirinkite laukelius, kuriuos norite iškelti'
         ticket_fields_title: Užklausos laukeliai
         delivery: Gauti per
@@ -5142,15 +5142,15 @@ lt:
         contact_fields_title: Kontaktų laukeliai
         select_all: Pasirinkti viską
         filter: Pasirinkite filtrus
-        title: Tvarkaraštis Vardas  <span class='required_star'>*</span>
+        title: Tvarkaraščio pavadinimas  <span class='required_star'>*</span>
         api: API
         one_time_export_label: >-
-          Eksportuokite bilieto turinį nuo mėnesio pradžios, kai prasideda šis
-          tvarkaraštis
+          Perkelti užklausos turinį nuo mėnesio pradžios, prasidėjus nustatytam
+          laikui
         company_fields_title: Įmonės laukeliai
         description: Aprašymas
         frequency: Tvarkaraštis
-      schedule_export: Tvarkyti eksportą
+      schedule_export: Tvarkyti perkėlimą
       schedule: Tvarkaraštis
       all_reports: Visos ataskaitos
       no_schedule: Nėra tvarkaraščių
@@ -5161,7 +5161,7 @@ lt:
       title: Agentų našumas
     generate: Sukurti
     this_month: Šį mėnesį
-    jump_to_a_saved_report: Peršokti į išsaugotą ataskaitą
+    jump_to_a_saved_report: Pereiti į išsaugotą ataskaitą
     edit_filter: Filtras
     scheduled_reports:
       errors:
@@ -5197,7 +5197,7 @@ lt:
         title: Apkrovos analizė
       total_unresolved_tickets: Iš viso neišspręstų užklausų
       total_received_tickets: Iš viso gautų užklausų
-      title: Bilietų apimties tendencijos
+      title: Užklausų kiekio tendencijos
       busiest_day_resolved_tickets: Dauguma užklausų buvo išspręsta
       unresolved_tickets: Neišspręstos užklausos
       average_unresolved_tickets: Vidutiniškai neišspręstos užklausos
@@ -5205,29 +5205,29 @@ lt:
         subtitle: >-
           Pažiūrėkite, kurią valandą gaunamas didžiausias bilietų skaičius ir
           atitinkamai paskirstykite savo darbuotojus
-        title: Savaitės diena ir dienos valanda
+        title: Savaitės dienų ir valandų tendencijos
     view_new_reports: Peržiūrėti naujas ataskaitas
     summary: Santrauka
     timespent:
-      title: Bilieto gyvavimo ciklas
+      title: Užklausos gyvavimo ciklas
     show: 'Rodyti:'
     this_year: Šiais metais
     productivity: Produktyvumas
     date_range: Laikotarpis
     filter_by: Filtruoti pagal
     glance:
-      title: Pagalbos tarnyba
+      title: Pagalbos tarnyba išsamiai
       index_title: Pagalbos tarnyba<br/>Išsamiai
     solution_article_text: Kaip skaityti šią ataskaitą?
     tickets: Užklausų sąrašas
-    customer_happiness: Klientų laimė
+    customer_happiness: Klientų pasitenkinimas
     timesheet_reports:
-      title: Laiko lapo santrauka
+      title: Laiko santrauka
     timespent_export:
-      export_csv: Eksportuoti CSV
+      export_csv: Perkelti CSV
       dialog_sub_header: Galima atsiųsti tik 25 duomenų stulpelius
       dialog_header: Atsisiųsti ataskaitas
-      button_export: Eksportuoti
+      button_export: Perkėlimas
       aggregate_title: Bendra informacija
       ticket_title: „Ticketwise“ informacija
       ticket_dropdown: 'Įtraukite laiką, praleistą:'
@@ -5254,7 +5254,7 @@ lt:
         api_info2: >-
           Ataskaitoje bus pateikta informacija, susijusi su visomis užklausomis
           vakar.
-        api_info1: API turės nuorodą į naujausią eksportą.
+        api_info1: API turės nuorodą į naujausią perkėlimą.
       edit: Redaguoti tvarkaraštį
       title: Atsisiųsti užklausų veiklą
       learn_more: Sužinokite daugiau
@@ -5307,12 +5307,13 @@ lt:
   social:
     welcome:
       turn_on: Įjunkite Socialinį
-      helptext_title2: Apskaičiuokite savo socialinio atsako rodiklį
-      turn_off: Išjungti socialinę
+      helptext_title2: Apskaičiuokite savo atsakymų spartą socialiniuose tinkluose
+      turn_off: Išjungti Socialinę
       30to70_html: >-
-        Pagerinkite savo socialinį klientų pasitenkinimą <a %{link_meta}>
-        pridedant „Twitter“ paskyrą</a> savo „Freshdesk“ ir atsakykite į juos
-        taip pat, kaip jūs tvarkote skundus dėl el. Pašto ar telefono.
+        Pagerinkite savo klientų pasitenkinimą socialiniuose tinkluose <a
+        %{link_meta}> pridėdami „Twitter“ paskyrą</a> savo „Freshdesk“ ir
+        atsakydami į pranešimus taip pat, kaip atsakote į skundus el. paštu ar
+        telefonu.
       helptext_title1: Kodėl turėtumėte teikti pagalbą klientams per socialinius tinklus?
       helptext3: >-
         Pridėkite savo socialinių tinklų paskyras į „Freshdesk“ ir bendraukite
@@ -5325,12 +5326,12 @@ lt:
       response_rate_html: '„Twitter“ atsakymų rodiklis yra %{perct}.'
       title: Pagalba socialiniuose tinkluose
       lt30_html: >-
-        Atrodo, kad nesate pastebėję savo klientų „Twitter“. Pradėkite nuo <a
+        Atrodo, kad napastebite savo klientų „Twitter“. Pradėkite nuo <a
         %{link_meta} >pridėdami „Twitter“ paskyrą</a> į „Freshdesk“.
       helptext2: >-
-        Jei padarysite socialinį klientą patenkintu greitu ir efektyviu
-        atsakymu, jie rekomenduos jums savo draugams 71 kartus iš 100. Kodėl
-        norėtumėte tai praleisti?
+        Jei jūsų klientas socialiniuose tinkluose bus patenkintas greitu ir
+        efektyviu atsakymu, jie rekomenduos jus savo draugams 71 kartus iš 100.
+        Kodėl norėtumėte tai praleisti?
       gt70_html: >-
         Puikiai padirbėta! <a %{link_meta}> Pridėkite „Twitter“ paskyrą</a> į
         „Freshdesk“, kad atsakyti į klientų užklausas socialiniuose tinkluose
@@ -5352,18 +5353,18 @@ lt:
         convert_to_ticket: Keisti į užklausą
         no_tweet_results: 'Nėra jūsų užklausos rezultatų '
         title: „Twitter“ paskyros
-        reauthorize: Patvirtinti
+        reauthorize: Iš naujo patvirtinti
         from: 'Nuo: '
         remove_handle_msg: Ar tikrai norite pašalinti šią „Twitter“ paskyrą?
         results_for: Rezultatai
         no_search_default: >-
-          Nėra paieškos Numatytasis paieškos raktinis žodis yra apibrėžtas bet
-          kuriam jūsų „Twitter“ rankenos.
+          Nėra jokių Numatytos paieškos raktinių žodžių bet kurioje iš jūsų
+          „Twitter“ paskyrų.
         search: Paieška
       form:
         dm_time_info: >-
           Maksimalus laikas, per kurį reikia atsižvelgti į tiesioginius
-          pranešimus iš to paties naudotojo, kaip ir sriegiu.
+          pranešimus iš to paties vartotojo ir juos sujungti.
         dm_time_msg: AŽ laikas
         capture_dm_info: >-
           „Freshdesk“ automatiškai konvertuos į šią „Twitter“ paskyrą gautas
@@ -5373,7 +5374,7 @@ lt:
           „@paminėjimą“ į užklausą.
         product: Produktas
         search_keywords: Ieškoti raktinių žodžių
-        capture_dm_msg: Įrašykite <strong>„Tiesioginius pranešimus“</strong> kaip bilietą
+        capture_dm_msg: Paverskite <strong>„Tiesioginius pranešimus“</strong> kaip užklausą
         capture_mentions_msg: Registruokite <strong>„@paminėjimus“</strong> kaip užklausas
         info_data: >-
           Padeda greitai stebėti „Twitter“ paiešką, susijusią su jūsų produktu /
@@ -5392,7 +5393,7 @@ lt:
         no_activity_available: Nėra jokios veiklos
         retweets: Pasidalinti „tweets“
         all: Viskas
-        search_twitter: 'Ieškokite Twitter, jei norite atnaujinti '
+        search_twitter: 'Ieškokite „Twitter“, jei norite atnaujinti '
       recent_searches: Jūsų paskutinės paieškos
       tooltip:
         convert_to_tkt: Keisti į užklausą
@@ -5402,7 +5403,7 @@ lt:
       twitter:
         user_profile: Vartotojo profilis
         no_older_results: Naujausių pranešimų šiame sraute nėra.
-        wrong_call: 'Bandoma nepalanki „tweet“, kuri nebuvo mėgstama'
+        wrong_call: 'Bandoma nebemėgti „tweet“, kuris nebuvo pamėgtas'
         post: ' Rašyti '
         flash_card_text: Suprasti socialinį skirtuką
         add_search_keywords: Įveskite paieškos terminą.
@@ -5455,9 +5456,9 @@ lt:
         Prašome sekti instrukcijas pateiktas šioje <a href =
         '%{solution_link}'>nuorodoje</a>, kad patikrinti CSV failo formatavimą
       info7: >-
-        %{type} importuoti nepavyko inicijuoti csv, kurį pateikėte kaip
-        neteisingą failo formatą. Prašome pakartotinai failą po ją pertvarkyti
-        pagal minėtų šiame tirpale straipsnio gairėmis <a href =
+        %{type} jūsų pateiktas csv perkelimas nepavyko, nes failo formatas buvo
+        neteisingas. Prašome pakartotinai įkelti failą pakeitus jo formatą pagal
+        šiame sprendimų straipsnyje pateiktus nurodymus <a href =
         '%{solution_link}'>nuoroda</a>.
     general:
       access_denied: Jūs negalite pasiekti šio puslapio!
@@ -5478,9 +5479,9 @@ lt:
       Bet kokie pridėti nauji agentai arba bet kokie pakeitimai agentų
       profiliuose nebus sinchronizuojami su „Freshdesk“ paskyra.
     sandbox_notification_for_ticketfields: >-
-      Ar žinojote, kad prieš naudodamiesi čia tiesiogiai pakeisdami, redaguodami
-      ar ištrindami bilietų laukus, galėtumėte naudoti „ <a
-      href="/a/admin/sandbox" class="group_item_link" target="_top">Sandbox</a>?
+      Ar žinojote, kad galite naudoti <a href="/a/admin/sandbox"
+      class="group_item_link" target="_top">Sandbox</a>, kad pridėti, redaguoti
+      ar ištrinti užklausos laukelius prieš juos tiesiogiai pakeičiant čia?
     sandbox_notification_for_rules: >-
       Ar žinote, kad galite naudoti <a href="/a/admin/sandbox"
       class="group_item_link" target="_top">„ Sandbox“</a>, kad išbandytumėte
@@ -5514,13 +5515,13 @@ lt:
         matomi jūsų klientams.
       title1: Pritaikykite savo įmonės laukelius
       info1: >-
-        Be kontaktų, „Freshdesk“ leidžia jums kurti savo pagalbos tarnyboje
-        įmones ir palengvinti to paties klientų grupės paramos užklausų
-        tvarkymą. Galite pridėti priskirtus laukus įmonėms ir išsaugoti svarbią
-        informaciją apie savo paskyrą, kad jūsų pagalbos komanda galėtų greitai
-        pasiekti. Galite turėti tokius laukelius kaip paskyros valdytojas,
-        pirminis kontaktas, mėnesinės pajamos ir kt., Ir visa, kas yra bendra
-        visai paskyrai.
+        Be kontaktų, „Freshdesk“ leidžia jums kurti įmones savo pagalbos
+        tarnyboje ir palengvina tos pačios klientų grupės pagalbos užklausų
+        tvarkymą. Galite pridėti priskirtus laukelius įmonėms ir išsaugoti
+        svarbią informaciją apie savo paskyrą, kad jūsų pagalbos komanda galėtų
+        greitai suteikti reikiamą pagalbą. Galite turėti tokius laukelius kaip
+        paskyros valdytojas, pirminis kontaktinis adresas, mėnesinės pajamos ir
+        kt., ir visa, kas yra bendra visai paskyrai.
   widget_config_tour_text: Padėkite man pradėti naudotis atsiliepimų valdikliu
   support_multi_languge: Klientų aptarnavimas keliomis kalbomis?
   password_confirmation: 'Slaptažodžio patvirtinimas:'
@@ -5544,76 +5545,76 @@ lt:
     <span class="label label-important">Svarbu</span> Šių funkcijų duomenys ir
     pakeitimai bus visam laikui pašalinti:
   features:
-    machine_learning: Mašinų mokymas
-    skill_based_assignment_desc: Įgūdžių pagrindimas
-    bot: Bot
+    machine_learning: Kompiuterinis mokymąsis
+    skill_based_assignment_desc: Užduoties paremtos įgūdžiais paskyrimas
+    bot: Automatizuota kompiuterinė programa
     helpdesk_report: Išsamios pagalbos tarnybos ataskaitos
-    multiple_mailbox_desc: El. Laiškai iš kelių pašto dėžučių
+    multiple_mailbox_desc: El. laiškai iš kelių pašto dėžučių
     advanced_phone_integration: Išplėstinė telefono integracija
     custom_ssl_desc: Priskirti SSL sertifikatai
     multiple_languages: Kelios kalbos
-    everything_in_sprout: Viskas koše
+    everything_in_sprout: Viskas „Sprout“
     portal_customization: Portalo pritaikymas
     advanced_phone_desc: Išplėstinės telefono funkcijos
     gamification: Žaidimizavimas
     app_gallery: Prieiga prie prekyvietės
-    custom_survey_desc: Individualūs pasitenkinimo tyrimai
-    forums_desc: Bendrijos forumo diskusijos
-    parent_child: Tėvų ir vaikų bilietų pardavimas
+    custom_survey_desc: Individualios pasitenkinimo apklausos
+    forums_desc: Bendruomenės forumo diskusijos
+    parent_child: Tėvų ir vaikų užklausos
     adv_social_desc: Išplėstinės socialinės savybės
     auto_ticket_assignment: Automatinis užklausų priskyrimas
-    custom_dashboard: Valdykite komandų prietaisų skydus
-    custom_mailbox_desc: Pasirinktiniai el. Pašto serveriai
-    shared_ticket_views_desc: Pasirinktiniai ir bendrinami bilietų vaizdai
-    custom_ticket_views_desc: Pasirinktiniai bilietų rodiniai
-    social_support: Socialinė parama
-    custom_domain: Priskirtas domenas
+    custom_dashboard: Valdykite komandų valdymo skydus
+    custom_mailbox_desc: Pasirinktiniai el. pašto serveriai
+    shared_ticket_views_desc: Pritaikytų ir pasidalintų užklausų peržiūra
+    custom_ticket_views_desc: Pasirinktiniai užklausų rodiniai
+    social_support: Socialinė pagalba
+    custom_domain: Pritaikytas domenas
     cname_dkim_desc: CNAME ir DKIM konfigūracijos
-    time_event_automation: Laiko ir įvykio automatika
-    email_ticketing: Siųsti bilietus paštu
+    time_event_automation: Laiko ir įvykio automatizacija
+    email_ticketing: Siųsti užklausas el. paštu
     scheduled_reports: Planuojamos ataskaitos
-    knowledge_base: Žinių bazė
+    knowledge_base: Naudinga informacija
     phone_integration: Telefono integracija
-    custom_fields_desc: Priskirtų bilietų ir kontaktų laukai
-    skill_based_assignment: Įgūdžių pagrindimas
+    custom_fields_desc: Pritaikyta užklausa ir kontaktų laukeliai
+    skill_based_assignment: Užduoties paremtos įgūdžiais paskyrimas
     agent_collision: Agentų susidūrimas
     custom_data_center: Duomenų centro vieta
-    live_chat_desc: Tiesioginės pokalbių konfigūracijos ir transkriptai
-    m_k_base: Daugiakalbė žinių bazė
+    live_chat_desc: Tiesioginės pokalbių konfigūracijos ir transkripcijos
+    m_k_base: Naudinga informacija įvairiomis kalbomis
     role_dashboard: Pareigų informacijos valdymo skydeliai
-    mobile_apps: Mobiliosios programos
+    mobile_apps: Mobiliosios programėlės
     custom_ssl: Pasirinktinis SSL
-    custom_mailbox: Priskirti pašto serveriai
-    custom_ticket_fields_and_views: Priskirtų bilietų laukai / peržiūros
+    custom_mailbox: Pritaikyti pašto serveriai
+    custom_ticket_fields_and_views: Pritaikyti užklausų laukeliai / peržiūros
     feedback_widget: Atsiliepimų valdiklis
-    everything_in_garden: Viskas sode
+    everything_in_garden: Viskas „Garden“
     multiple_sla_business_desc: 'Keli SLA, laiko juostos ir darbo valandos'
-    automations: Automatika
+    automations: Automatizacijos
     multiple_mailboxes: Kelios pašto dėžutės
-    ip_whitelisting: IP baltasis sąrašas
+    ip_whitelisting: IP patikimas sąrašas
     enterprise_reports: Įmonių ataskaitos
     multiple_products: Keli produktai
-    multilingual_kbase_desc: Daugiakalbiai žinių bazės straipsniai
+    multilingual_kbase_desc: Daugiakalbiai naudingos informacijos straipsniai
     basic_phone: Pagrindiniai telefono ir socialiniai kanalai
-    forums: Bendrijos forumai
-    whitelisted_ip_desc: Baltųjų sąrašų IP adresai
-    portal_customization_desc: Klientų portalo pritaikymai
-    dynamic_email_alert: Dinamiški el. Pašto pranešimai
-    multiple_products_desc: Keli produktų portalai / žinių bazė
-    ticket_dispatch_automation: Bilietų išsiuntimo automatika
-    satisfaction_survey: Pasitenkinimo tyrimai
-    ip_restriction: Saugus IP apribojimas
-    custom_surveys: Individualaus pasitenkinimo tyrimai
-    sla_reminders: SLA priminimai ir eskalavimas
-    everything_in_estate: Viskas turtas
-    multiple_sla: Keli SLA ir laiko juosta
-    time_event_automation_desc: 'Laiko ir įvykių automatizavimo taisyklės (prižiūrėtojas, stebėtojas)'
+    forums: Bendruomenės forumai
+    whitelisted_ip_desc: Patikimi IP adresai
+    portal_customization_desc: Kliento portalo pritaikymai
+    dynamic_email_alert: Dinamiški el. pašto pranešimai
+    multiple_products_desc: Keli produktų portalai / naudinga informacija
+    ticket_dispatch_automation: Užklausų išsiuntimo automatizacija
+    satisfaction_survey: Pasitenkinimo apklausos
+    ip_restriction: Saugaus IP apribojimas
+    custom_surveys: Pritaikytos pasitenkinimo apklausos
+    sla_reminders: SLA priminimai ir pagreitinimas
+    everything_in_estate: Viskas „Estate“
+    multiple_sla: Keli SLA ir laiko juostos
+    time_event_automation_desc: 'Laiko ir įvykių automatizavimo taisyklės (vadovas, stebėtojas)'
     custom_roles: Priskirtos pareigos
-    integrations: Integruotos integracijos
+    integrations: Įtrauktos integracijos
     custom_roles_desc: Individualios agento pareigos
-    multiple_timezones: Keli laiko juostos
-    ticket_templates: Bilietų šablonai
-    everything_in_blossom: Viskas žydi
+    multiple_timezones: Kelios laiko juostos
+    ticket_templates: Užklausų šablonai
+    everything_in_blossom: Viskas „Blossom“
     freshchat: „Freshchat“ integracija
     enterprise_reports_desc: Įmonių ataskaitos
     css_customization: CSS pritaikymas
@@ -5621,98 +5622,100 @@ lt:
     modal:
       channels_frame:
         message: >-
-          Be elektroninio pašto, „Freshdesk“ leidžia palaikyti klientus
-          telefonu, pokalbiais, socialiniais ir kitais. Spustelėkite kanalus,
-          kuriuos norite bandyti įgalinti savo paskyroje.
+          Be elektroninio pašto, „Freshdesk“ leidžia teikti pagalbą klientams
+          telefonu, pokalbiais, per socialinius tinklus ir kitais būdais.
+          Spustelėkite kanalus, kuriuos norite įgalinti savo paskyroje.
         social_channel: Socialinis
         forums_channel: Forumai
         chat_channel: Tiesioginis pokalbis
         email_channel: El. paštas
         phone_channel: Telefonas
         title: Kaip šiandien kalbate su savo klientais?
-        message2: 'Nesijaudinkite, vėliau galite juos įtraukti arba pašalinti.'
+        message2: 'Nesijaudinkite, vėliau galėsite juos pridėti arba pašalinti.'
         forward_link: Pakvieskite savo komandą
-        default_channel: Pridėta pagal nutylėjimą
+        default_channel: Pridėta pagal numatymą
       overview_frame:
-        title: Darbo pradžia su „Freshdesk“
+        title: Pradedant dirbti su „Freshdesk“
         message: >-
           Prieš pradėdami, čia rasite 2 minučių vaizdo įrašą apie savo pagalbos
           tarnybą.
         forward_link: Pradėkime
       agents_frame:
         message: >-
-          Pridėkite savo komandos narius į savo sąskaitą ir kartu sužinokite
-          Freshdesk
+          Pridėkite savo komandos narius į savo paskyrą ir kartu tyrinėkite
+          „Freshdesk“
         send_invite: Siųsti kvietimą
         emails_invalid: Vienas ar daugiau el. pašto adresų yra neteisingi.
         emails_placeholder: 'bruce@just.ly, diana@just.ly, clark@just.ly'
         forward_link: Žiūrėti apžvalgą
-        title: Kam jūs dirbate?
+        title: Su kuo dirbsite?
       welcome_frame:
-        forward_link: Pasirinkite palaikymo kanalus
+        forward_link: Pasirinkite pagalbos kanalus
         message2: >-
-          Bandymo metu patirsite, kaip lengva naudoti „Freshdesk“ kalbėti su
-          savo klientais. Pradėkime nuo pagrindų.
+          Bandomuoju laikotarpiu pamatysite, kaip paprasta naudotis „Freshdesk“
+          bendravimui su savo klientais. Pradėkime nuo pagrindų.
         title: Sveiki atvykę į „Freshdesk“
         message: >-
-          Aš esu Girish, Freshdesk generalinis direktorius, ir aš norėjau jus
-          asmeniškai pasveikinti laive ir pranešti, kad mūsų komanda yra čia,
-          kad padėtų, jei jums reikia.
+          Aš esu Girish, „Freshdesk“ generalinis direktorius, ir aš norėjau jus
+          asmeniškai pasveikinti prisijungus ir pranešti, kad mūsų komanda yra
+          čia, kad padėtų jums prireikus.
     account_verification_message:
       helpnote_or: arba
-      modal_sending_button: Siuntimo aktyvinimas
-      modal_title: Prisiregistravote naudojant neteisingą el. Pašto adresą?
-      helpnote1: Negaliu matyti?
-      modal_user_exists_error: El. Paštas jau susietas su agentu.
-      modal_helpnote1: 'Toliau įveskite teisingą el. Laišką, kad gautumėte aktyvinimo nuorodą.'
+      modal_sending_button: Siunčiant aktyvavimą
+      modal_title: Prisiregistravote naudodami neteisingą el. pašto adresą?
+      helpnote1: Nematote?
+      modal_user_exists_error: El. pašto adresas jau susietas su agentu.
+      modal_helpnote1: >-
+        Toliau įveskite teisingą el. pašto adresą, kad gautumėte aktyvacijos
+        nuorodą.
       modal_invalid_email_error: Prašome įvesti galiojantį elektroninio pašto adresą.
-      modal_send_button: Siųsti aktyvinimą
-      resend_message: Išsiųsti aktyvinimą
+      modal_send_button: Siųsti aktyvacijos nuorodą
+      resend_message: Išsiųsti aktyvacijos nuorodą
       cancel_button: Atšaukti
-      change_email: pakeiskite el. paštą
+      change_email: pakeiskite savo el. pašto adresą
       non_admin_message: >-
-        Jūsų paskyra dar neįjungta. Prašome susisiekti su paskyros
+        Jūsų paskyra dar neaktyvuota. Prašome susisiekti su paskyros
         administratoriumi.
     falcon_invite:
       maybe_later: GALBŪT VĖLIAU
-      try_new_look: IŠBANDYK
+      try_new_look: IŠBANDYKITE
       greetings: Sveiki atvykę į „Freshdesk Mint“
   Group: Grupė
   feedbackwidget_defaulttitle: Pagalba &amp; Pagalba
-  pending: Kol
+  pending: Laukiama
   adv_reports:
     no_data_to_display_msg: Nėra rodomų duomenų!
     report_title_mandatory: Ataskaitos pavadinimas yra privalomas.
     customer_at_a_glance: Klientas iš pirmo žvilgsnio
-    helpdesk_load_analysis: „Helpdesk“ apkrovos analizė
-    agent_top_n_analysis: Agentas „Top-N Analysis“
-    helpdesk_performance_analysis: „Helpdesk“ veiklos analizė
+    helpdesk_load_analysis: Pagalbos tarnybos apkrovos analizė
+    agent_top_n_analysis: Agento „Top-N“ analizė
+    helpdesk_performance_analysis: Pagalbos tarnybos veiklos analizė
     agent_comparison: Agentų palyginimas
     group_comparison: Grupių palyginimas
     comparison: Palyginimas
     select_option_msg: Pasirinkite parinktį
     load:
       resp_accuracy: Atsakymo tikslumas
-      num_of_operations: Bilietų operacijų skaičius
+      num_of_operations: Užklausų veiksmų skaičius
       num_of_tickets: Užklausų skaičius
       time_in_hrs: Laikas valandomis
       recived_resolved_backlog: Gautos užklausos prieš išspręstas prieš neišspręstas
-      avg_num_of_interactions: Vid. Sąveikų skaičius
+      avg_num_of_interactions: Vidutinis pokalbių skaičius
       resp_time: Atsakymo laikas
       time_of_arrival: Atvykimo laikas
       tkt_assignment: Užklausų priskyrimas
     reports: Ataskaitos
-    jump_to_saved: Peršokti į išsaugotą ataskaitą
-    at_a_glance: Žvilgsniu
+    jump_to_saved: Pereiti į išsaugotą ataskaitą
+    at_a_glance: Iš pirmo žvilgsnio
     saved_report_filters: Nėra išsaugotos ataskaitos.
     group_at_a_glance: Grupė iš pirmo žvilgsnio
     select_an_option: Pasirinkite parinktį
     agent_comparison_report: Agentų palyginimo ataskaita
     summary: Santrauka
-    customer_top_n_analysis: Kliento top-N analizė
-    helpdesk_at_a_glance: Pagalbos tarnyba „A A Glance“
+    customer_top_n_analysis: Kliento „Top-N“ analizė
+    helpdesk_at_a_glance: Pagalbos tarnyba iš pirmo žvilgsnio
     load_analysis: Apkrovos analizė
-    top_n_analysis: Top-N analizė
+    top_n_analysis: „Top-N“ analizė
     group_comparison_report: Grupių palyginimo ataskaita
     save_filter_title: Išsaugokite šią ataskaitą
     group_top_n_analysis: Grupės „Top-N“ analizė
@@ -5720,10 +5723,10 @@ lt:
       sla_percentage: SLA%
       select_customer_msg: Pasirinkite Klientą
       select_group_msg: Pasirinkite grupę
-      num_of_reopens: Num. iš Reopens
+      num_of_reopens: Pakartotinių atidarymų skaičius
       download: Atsisiųsti kaip PDF
       avg_first_resp_time_in_hrs: Vidutinis pirmojo atsakymo laikas (valandomis)
-      avg_resolution_time_in_hrs: Vidutinis skyros laikas (valandomis)
+      avg_resolution_time_in_hrs: Vidutinis sprendimo laikas (valandomis)
       avg_resp_time_in_hrs: Vidutinis atsakymo laikas (valandomis)
       avg_cust_intr: Vidutinė klientų sąveika
       backlog_tickets: Susikaupusios užklausos
@@ -5731,21 +5734,23 @@ lt:
       all_reports: Visos ataskaitos
       avg_agent_intr: Vidutinė agentų sąveika
       no_customers_msg: Jūs neturite klientų
-      num_of_reassigns: Num. iš Reassigns
-      report_view: Ataskaitos vaizdas
+      num_of_reassigns: Pakartotinių paskyrimų skaičius
+      report_view: Ataskaitos peržiūra
       select_agent_msg: Pasirinkite Agentą
       loading_msg: Kuriamos ataskaitos...
     unsaved_report_filter: Neišsaugota ataskaita
-    report_export_success: Netrukus ataskaitos bus išsiųstos į jūsų el.
+    report_export_success: Netrukus ataskaitos bus išsiųstos į jūsų el. paštą!
     helptext:
       glance:
         group_recieved_tickets: Bendras grupės gautų užklausų skaičius per pasirinktą laikotarpį
-        group_avg_resp_time: 'Vidutinis laikas, per kurį ši grupė atsako į bilietą'
-        group_avg_resol_time: 'Vidutinis laikas, kurį ši grupė prisiėmė sprendžiant bilietą'
-        agent_avg_resp_time: 'Vidutinis laikas, per kurį šis agentas turi atsakyti į bilietą'
-        agent_avg_resol_time: 'Vidutinis laikas, kurį šis agentas laiko bilietui išspręsti'
-        customer_avg_first_resp_time: 'Vidutinis laikas, per kurį klientas gauna pirmąjį atsakymą į bilietą'
-        helpdesk_avg_resp_time: 'Vidutinis pagalbos tarnybos laikas, skirtas atsakyti į bilietą'
+        group_avg_resp_time: 'Vidutinis laikas, per kurį ši grupė atsako į užklausą'
+        group_avg_resol_time: 'Vidutinis laikas, kurio šiai grupei reikia sprendžiant užklausą'
+        agent_avg_resp_time: 'Vidutinis laikas, per kurį šis agentas turi atsakyti į užklausą'
+        agent_avg_resol_time: 'Vidutinis laikas, kurį šis agentas užtrunka užklausai išspręsti'
+        customer_avg_first_resp_time: >-
+          Vidutinis laikas, per kurį klientas gauna pirmąjį atsakymą į jo
+          užklausą
+        helpdesk_avg_resp_time: 'Vidutinis laikas, kurį pagalbos tarnyba užtrunka atsakyti į užklausą'
         group_resolved_tickets: Bendras grupės išspręstų užklausų skaičius per pasirinktą laikotarpį
         agent_fcr: >-
           Šiam agentui priskirtų užklausų, išspręstų per pirmą atsakymą,
@@ -5773,26 +5778,26 @@ lt:
           kiekvienos dienos pabaigoje
         customer_recieved_tickets: Bendras iš kliento gautų užklausų skaičius per pasirinktą laikotarpį
         agent_avg_first_resp_time: >-
-          Vidutinis laikas, per kurį šie agentai siunčia pirmąjį atsakymą į
-          bilietą
-        group_reopens: Atnaujinta šiai grupei priskirtų ar uždarytų bilietų skaičius
+          Vidutinis laikas, per kurį šis agentai išsiunčia pirmąjį atsakymą į
+          užklausą
+        group_reopens: Atnaujintas šiai grupei priskirtų ar uždarytų užklausų skaičius
         agent_avg_agent_inter: >-
           Vidutinis agento atsakymų skaičius į jam priskirtas užklausas
           kiekvienos dienos pabaigoje
-        customer_avg_resp_time: Vidutinis šio kliento atsakymas į bilietą
+        customer_avg_resp_time: 'Vidutinis laikas, per kurį atsakoma į šio kliento užklausą'
         helpdesk_backlog_tickets: >-
           Bendras pagalbos tarnybos neišspręstų užklausų skaičius kiekvienos
           dienos pabaigoje pasirinktu laikotarpiu
         helpdesk_reassigns: >-
-          Paskirto bilieto, esančio pagalbos tarnyboje, skaičius buvo
-          perkeliamas kitam agentui
+          Pagalbos tarnyboje paskirtos užklausos peradresavimų kitam aptarnavimo
+          tarnybos agentui skaičius
         customer_resolved_tickets: >-
           Bendras iš kliento gautų išspręstų užklausų skaičius per pasirinktą
           laikotarpį
         agent_avg_cust_inter: >-
           Vidutinis kliento atsakymų skaičius į šiam agentui priskirtas
           užklausas kiekvienos dienos pabaigoje
-        customer_avg_resol_time: 'Vidutinis laikas, reikalingas bilietui iš kliento išspręsti'
+        customer_avg_resol_time: 'Vidutinis laikas, per kurį atsakoma į kliento užklausą'
         group_fcr: >-
           Šiai grupei priskirtų užklausų, išspręstų per pirmą atsakymą,
           procentas
@@ -5807,35 +5812,39 @@ lt:
           Vidutinis kliento atsakymų skaičius į užklausas pagalbos tarnyboje
           kiekvienos dienos pabaigoje
         helpdesk_reopens: >-
-          Iš naujo atidarytas išspręstų ar uždarytų bilietų skaičius pagalbos
-          tarnyboje
+          Pagalbos tarnyboje išspręstos ar uždarytos užklausos atidarymų iš
+          naujo skaičius
         helpdesk_fcr: Per pirmą atsakymą išspręstų užklausų procentas pagalbos tarnyboje
         customer_avg_cust_inter: >-
-          Vidutinis kiekvieno kliento bilietų atsakymų skaičius kiekvienos
-          dienos pabaigoje
+          Vidutinis atsakymų į šio kliento pateiktas užklausas kiekvienos dienos
+          pabaigoje skaičius
         customer_sla: Šio kliento pateiktų ir išspręstų per nustatytą SLA užklausų procentas
-        group_avg_first_resp_time: 'Vidutinis laikas, per kurį ši grupė siunčia pirmąjį atsakymą į bilietą'
+        group_avg_first_resp_time: >-
+          Vidutinis laikas, per kurį ši grupė išsiunčia pirmąjį atsakymą į
+          užklausą
         helpdesk_recieved_tickets: >-
           Bendras jūsų pagalbos portale gautų užklausų skaičius per pasirinktą
           laikotarpį
         group_avg_cust_inter: >-
           Vidutinis kliento atsakymų skaičius į šiai grupei priskirtas užklausas
           kiekvienos dienos pabaigoje
-        helpdesk_avg_resol_time: Vidutinis pagalbos tarnybos laikas bilietui išspręsti
+        helpdesk_avg_resol_time: >-
+          Vidutinis laikas, per kurį pagalbos tarnyboje yra išsprendžiama
+          užklausa
         how_to_read: Kaip skaityti šią ataskaitą
         agent_recieved_tickets: Bendras agento gautų užklausų skaičius per pasirinktą laikotarpį
-        agent_reassigns: Šiam agentui priskirtų bilietų skaičius buvo paskiriamas kitam
+        agent_reassigns: Šiam agentui paskirtų ir kitam agentui perduotų užklausų skaičius
         agent_resolved_tickets: Bendras agento išspręstų užklausų skaičius per pasirinktą laikotarpį
         group_reassigns: >-
-          Šio grupės agentui priskirtų bilietų skaičius pakartotinai priskirtas
-          kitam agentui
-        customer_reopens: Klientas iš naujo atidarė išspręstą arba uždarą bilietą
-        customer_reassigns: >-
-          Iš naujo paskirta šio kliento išleisto bilieto, skirto agentui,
+          Šios grupės agentui paskirtų ir kitam agentui perduotų užklausų
           skaičius
+        customer_reopens: Klientas iš naujo atidarė išspręstą arba uždarytą užklausą
+        customer_reassigns: >-
+          Kartai, kai šio kliento pateikta užklausa buvo paskirta agentui ir
+          paskui iš naujo paskirta
         agent_reopens: >-
-          Iš naujo atidarytas išspręstas ar uždaras bilietas, priskirtas šiam
-          agentui
+          Kartai, kai išspręsta arba uždaryta užklausa paskirta šiam agentui
+          buvo iš naujo atidaryta
         helpdesk_sla: Per nustatytą SLA išspręstų užklausų procentas pagalbos tarnyboje
         customer_fcr: >-
           Šio kliento pateiktų ir išspręstų per pirmą atsakymą užklausų
@@ -5844,31 +5853,33 @@ lt:
     delete_filter_title: Ištrinti šią ataskaitą
     comparison_reports:
       select_metrics_msg: Pasirinkite Metrika
-      select_group_msg: Pasirinkite grupę (maks. 4)
-      select_agent_msg: Pasirinkite agentą (maks. 4)
+      select_group_msg: Pasirinkite grupę (daugiausiai 4)
+      select_agent_msg: Pasirinkite agentą (daugiausiai 4)
     report_filter_title: Išsaugotos ataskaitos pavadinimas
-    agent_at_a_glance: Agentas „A Glance“
+    agent_at_a_glance: Agentas iš pirmo žvilgsnio
   linkback_info: >-
-    Jei klientas spusteli ant antraštės logotipo, galite pasirinkti „Linkback“ į
-    savo svetainę
-  forgot_password_intro: Užpildykite žemiau esančią formą ir jums bus išsiųsti el. Laiškai
+    Jei klientas spusteli ant antraštės logotipo, galite pasirinkti, kad jis
+    būtų nukreiptas į jūsų svetainę
+  forgot_password_intro: >-
+    Užpildykite žemiau esančią formą ir jums bus atsiųstas el. laiškas su
+    slaptažodžio atkūrimo instrukcijomis
   credit_card_info: Kredito kortelės informacija
   no_password_reset: Ne
   no_forum_category: Šioje kategorijoje nėra forumų
   begin_subscription_confirm: >-
-    Jūsų kredito kortelė bus apmokėta už %{cost}\nsumą, o jūsų prenumerata bus
-    pradėta nedelsiant. \n\nPereikite dabar?
+    Nuo jūsų kredito kortelės bus nuskaičiuota %{cost}\nsumą, o jūsų prenumerata
+    pradės galioti nedelsiant. \n\nAr norite tęsti?
   integrations:
     slack:
       form:
         slack_setting: ''
         slack_info: ''
       helptext: >-
-        <h4>Slack“ integravimas</h4><br><p>Kad būtų galima integruoti,
+        <h4>„Slack“ integravimas</h4><br><p>Kad būtų galima integruoti,
         išskleidžiamajame meniu pasirinkite „Slack“ kanalus ir pasirinkite
-        pranešimus, kuriuos norite matyti „Slack“.<br>Gaukite momentinius
-        „Slack“ naujinimus, kai sukuriamas ar atnaujinamas „Freshdesk“ bilietas
-        ir aktyviai bendradarbiaujate su klientais</p>
+        pranešimus, kuriuos norite matyti „Slack“.<br>Gaukite „Slack“
+        pranešimus, kai sukuriama arba atnaujinama „Freshdesk“ užklausa ir
+        aktyviai bendraukite su savo klientais</p>
       desc: Susipažinkite su „Freshdesk“ užklausomis per „Slack“
     ilos:
       portal_forum:
@@ -5876,23 +5887,23 @@ lt:
         back_to_page: Grįžti į temą
       settings:
         create_solution: Sprendimų straipsnis
-        enable_ilosvideos_recording: Įgalinti ilos vaizdo įrašų įrašymą
+        enable_ilosvideos_recording: Įgalinti „ilos“ vaizdo įrašymą
         forum_interaction: Forumų puslapis
         for_agents: Agentams
         for_customer: Klientams
         ticket_interaction: Užklausų puslapis
       form:
-        api_key: Įveskite ilosvideos Api Key
+        api_key: Įveskite „ilosvideos“ Api raktą
       agent_forum:
         back_to_page: Grįžti į temą
         placeholder: 'Tema #'
       portal_ticket:
-        placeholder: 'Bilietas #'
-        back_to_page: Atgal į bilietą
+        placeholder: 'Užklausa #'
+        back_to_page: Atgal į užklausą
       desc: 'Įrašykite ir bendrinkite užklausas, forumus ir sprendimų straipsnius.'
       agent_ticket:
-        placeholder: 'Bilietas #'
-        back_to_page: Atgal į bilietą
+        placeholder: 'Užklausa #'
+        back_to_page: Atgal į užklausą
       helptext: >-
         <h4>Freshdesk Ilos integracija</h4><p><br/>Įklijuokite savo „Ilos“
         paskyros administratoriaus API raktą. Šioje paskyroje bus visi vaizdo
@@ -5904,17 +5915,17 @@ lt:
         about_recording: Sužinokite daugiau apie ekrano įrašymą
         ilos_video_initialized: >-
           <p id='ilos-paragraph'><span><b>Pradėta įrašinėti
-          „Screencast“.</b></span></br>ilos įrašų įskiepiai bus paleisti
-          automatiškai. Norėdami gauti daugiau informacijos apie scenarijų
-          įrašymą, vadovaukitės <a
+          „Screencast“.</b></span></br>„ilos“ įrašymo papildinys bus paleistas
+          automatiškai. Norėdami gauti daugiau informacijos apie „Screencast“
+          įrašymą, sekite <a
           href='https://support.freshdesk.com/solution/articles/214400-ilos-videos-integration-with-freshdesk'
-          target='blank'>instrukcijomis</a>.<br/><br/>Klaidos
-          įrašant?<br/>Įsitikinkite, kad jau turite <a
+          target='blank'>instrukcijas</a>.<br/><br/>Klaidos
+          įrašant?<br/>Įsitikinkite, kad jau įdiegėte <a
           href='https://app.ilosvideos.com/downloadRecorder/?returnTo=Freshdesk'
-          target='blank'>ilos įskiepių</a> . Jei įdiegiate pirmą kartą, tada
-          grįžkite atgal ir dar kartą spustelėkite „įrašyti“ po to, kai įskiepis
-          įdiegtas.<br/></p>
-        moderated_forums: Moderuotiems forumams įrašymas pasirodys po patvirtinimo.
+          target='blank'>„ilos“ papildinį</a>. Jei įdiegiate pirmą kartą,
+          grįžkite atgal ir dar kartą spustelėkite „įrašyti“ po to, kai
+          papildinys įdiegtas.<br/></p>
+        moderated_forums: Prižiūrimuose forumuose įrašymas prasidės po patvirtinimo.
         private_note: Išsaugoti kaip privačią pastabą
         video_title: Vaizdo įrašo pavadinimas
       solution:
@@ -5922,88 +5933,90 @@ lt:
         back_to_page: Atgal į straipsnį
     logmein:
       desc: >-
-        Suteikite tiesioginę nuotolinę pagalbą savo klientams ir darbuotojams
+        Suteikite tiesioginę nuotolinę pagalbą savo klientams ir darbuotojams su
         „LogMeIn Rescue“
       helptext: >-
-        <h4>LogMeIn“ gelbėjimo integracijos pagalba</h4><p><br/> Norėdami
-        integruoti „LogMeIn Rescue“ su „Freshdesk“, įveskite savo „LogMeIn“
-        gelbėjimo įmonės ID ir SSO slaptažodį ir spustelėkite „Atnaujinti“.
-        <br/>Įjungus „LogMeIn“ gelbėjimo valdiklį galima rasti bilieto
-        informacijos puslapyje. <br/><br/>Norėdami paleisti technikos konsolę
-        tiesiai iš „Freshdesk“ valdiklio, naudokite  &quot;paleidimo technikos
-        konsolę&quot; . <br/>Dabar galite generuoti kodą ir pasidalinti
-        instrukcijomis su prašytoju, kad galėtumėte toliau palaikyti „LogMeIn
-        Rescue“. <br/><br/> <b>Pastaba:</b> Agento el. Laiškas turi atitikti
-        „LogMeIn Rescue“ techniko SSO ID. Norėdami nustatyti savo SSO ID, eikite
-        į administratoriaus centrą -> Techniko pavadinimas -> Organizacija ->
-        SSOID
+        <h4>LogMeIn Rescue“ integracijos pagalba</h4><p><br/> Norėdami
+        integruoti „LogMeIn Rescue“ su „Freshdesk“, įveskite savo „LogMeIn
+        Rescue“ įmonės ID ir SSO slaptažodį ir spustelėkite „Atnaujinti“.
+        <br/>Įjungę „LogMeIn Rescue“ valdiklį, galėsite rasti užklausos
+        informaciją puslapyje. <br/><br/>Norėdami paleisti techninę pagalbą
+        tiesiai iš „Freshdesk“ valdiklio, naudokite  &quot;Techninės pagalbos
+        paleidimą&quot;. <br/>Dabar galite generuoti kodą ir pasidalinti
+        instrukcijomis su prašančiuoju, kad galėtumėte  ir toliau teikti pagalbą
+        „LogMeIn Rescue“. <br/><br/> <b>Pastaba:</b> Agento el. pašto adresas
+        turi sutapti su „LogMeIn Rescue“ techniko SSO ID. Norėdami nustatyti
+        savo SSO ID, eikite į administracijos centrą -> Techniko pavadinimas ->
+        Organizacija -> SSOID
       form:
         password: SSO slaptažodis
         logmein_company_info: >-
-          Norėdami gauti įmonės ID, eikite į administratoriaus centrą ->
-          Techniko grupė -> Pasauliniai nustatymai -> ASP.Net C # serverio pusės
-          pavyzdys 
+          Norėdami gauti įmonės ID, eikite į administracijos centrą -> Technikų
+          grupė -> Pasauliniai nustatymai -> ASP.Net C # serverio pavyzdys 
         widget_title: Valdiklio pavadinimas
         company_id: Įmonės ID
         logmein_sso_pwd_info: >-
           Norėdami nustatyti SSO slaptažodį, eikite į Administravimo centrą ->
-          Techniko grupė -> Pasauliniai nustatymai -> Vieno prisijungimo ->
+          Technikų grupė -> Pasauliniai nustatymai -> Vienas prisijungimas ->
           naujas SSO slaptažodis
     google_analytics:
-      account_number: Įveskite stebėjimo ID
+      account_number: Įveskite sekimo ID
       form:
-        tracking_id: 'Stebėjimo ID '
+        tracking_id: 'Sekimo ID '
         google_analytics_settings: ''
-        copy_settings: Naudokite aukščiau nurodytą stebėjimo ID visiems portalams
+        copy_settings: Naudokite aukščiau nurodytą sekimo ID visiems portalams
         tracking_id_example: 'Pvz .: UA-123456-1'
         google_analytics_settings_info: ''
       helptext: >-
-        <h4>Google Analytics“ integravimo žinynas</h4><p><br/>Jei norite
+        <h4>„Google Analytics“ integravimo žinynas</h4><p><br/>Jei norite
         integruoti „Google Analytics“ su „Freshdesk“, rekomenduojama sukurti
-        „Google Analytics“ savo įmonės paskyroje skirtą nuosavybę. <br/><br/>Jei
-        norite sukurti nuosavybę, prisijunkite prie „Google Analytics“ paskyros
-        ir eikite į „Admin“ skirtuką ir pasirinkite norimą paskyrą. Spustelėkite
-        <b>„Nauja nuosavybė“</b> kad sukurtumėte vieną. „<b>svetainės
-        URL“</b>įveskite savo paramos portalo URL ir spustelėkite <b>„Sukurti
-        nuosavybę“</b>. Dabar spustelėkite turtą, kurį ką tik sukūrėte, ir
-        galėsite matyti <b>„Turto ID“</b> esančią žemiau nuosavybės pavadinimo.
-        Nukopijuokite jį į „Google Analytics“ nustatymus „Freshdesk“.</p>
+        savo įmonės „Google Analytics“ paskyroje tam skirtą vietą. <br/><br/>Jei
+        norite sukurti vietą, prisijunkite prie „Google Analytics“ paskyros ir
+        eikite į „Administracijos“ skirtuką ir pasirinkite norimą paskyrą.
+        Spustelėkite <b>„Nauja vieta“</b> kad sukurtumėte. „<b>Svetainės
+        URL“</b>įveskite savo pagalbos portalo URL ir spustelėkite <b>„Sukurti
+        vietą“</b>. Dabar spustelėkite ant vietos, kurią ką tik sukūrėte, ir
+        galėsite matyti <b>„Vietos ID“</b> žemiau vietos pavadinimo.
+        Nukopijuokite jį į „Google Analytics“ nustatymus, esančius
+        „Freshdesk“.</p>
       desc: >-
-        Stebėkite lankytojų statistiką savo palaikymo portale naudodami „Google
+        Stebėkite lankytojų statistiką savo pagalbos portale naudodami „Google
         Analytics“
     icontact:
       form:
         api_url: API URL
-        username: „iContact“ naudotojo vardas
+        username: „iContact“ vartotojo vardas
         api_url_info: >-
           Jei norite gauti API URL, eikite į
           https://app.icontact.com/icp/core/externallogin ir nukopijuokite API
           URL iš &quot;paskyros informacijos&quot; skilties. 
         api_password: API slaptažodis
-        app_id: Programos ID
+        app_id: Programėlės ID
       desc: >-
-        Eksportuokite klientų informaciją, valdykite esamas prenumeratas ir
-        pateikite įžvalgas apie klientų naudojimo statistiką tiesiai Freshdesk.
+        Perkelkite klientų informaciją, valdykite esamas prenumeratas ir
+        pateikite įžvalgas apie klientų naudojimo statistiką tiesiai
+        „Freshdesk“.
       helptext: >-
-        <h4>iContact“ integravimo žinynas</h4><br/> Norėdami integruotis į
+        <h4>„iContact“ integravimo žinynas</h4><br/> Norėdami integruotis į
         „iContact“, eikite į <a target='_blank'
         href='https://app.icontact.com/icp/core/externallogin'>https://app.icontact.com/icp/core/externallogin</a>
-        ir suteikite prieigą prie „Freshdesk“ programos įvesdami žemiau esančią
-        programos ID <br/><br/><b>qB7RYQgliAPwl5dwezYF0kAN4Islhj4e</b><br/><br/>
-        Nustatykite pasirinktą slaptažodį ir spustelėkite &quot;Išsaugoti&quot;.
-        Šis API slaptažodis bus naudojamas visiems „Freshdesk“ API užklausoms.
-        <br/><br/> Kopijuokite API URL iš &quot;paskyros informacijos&quot; ir
-        įklijuokite jį į API URL lauką čia. Įveskite savo „iContact“ naudotojo
-        vardą ir naują API slaptažodį ir spustelėkite „Atnaujinti“. 
+        ir suteikite prieigą prie „Freshdesk“ programėlės įvesdami žemiau
+        esančią programėlės ID
+        <br/><br/><b>qB7RYQgliAPwl5dwezYF0kAN4Islhj4e</b><br/><br/> Nustatykite
+        pasirinktą slaptažodį ir spustelėkite &quot;Išsaugoti&quot;. Šis API
+        slaptažodis bus naudojamas visoms „Freshdesk“ API užklausoms. <br/><br/>
+        Kopijuokite API URL iš &quot;paskyros informacijos&quot; ir įklijuokite
+        jį į API URL laukelį čia. Įveskite savo „iContact“ vartotojo vardą ir
+        naują API slaptažodį ir spustelėkite „Atnaujinti“. 
     dynamics_v2:
       form:
         username: Vartotojo vardas
         password: Slaptažodis
-        freshdesk_to_crm: Nuo „Freshdesk To Dynamics“
+        freshdesk_to_crm: Nuo „Freshdesk“ iki „Dynamics“
         dynamics_v2_settings: „Dynamics“ nustatymai
         crm_to_freshdesk: Nuo „Dynamics“ iki „Freshdesk“
         dynamics_v2_info: ''
-        opportunity_settings: Agentai gali sukurti / susieti ar atsieti galimybes iš bilieto
+        opportunity_settings: Agentai gali sukurti / susieti ar atsieti užklausas
         site_url: Svetainės URL
       desc: >-
         Galite sinchronizuoti kontaktus ir paskyros informaciją tarp „Dynamics
@@ -6012,34 +6025,32 @@ lt:
         <h4>Dynamics Plus“</h4><p><br/>„Dynamics Sync“ konfigūracijos nustatymo
         instrukcijose ir gairėse žr. <a
         href='https://support.freshdesk.com/solution/articles/224667-the-dynamics-crm-v2-app'
-        target='_blank'>„Dynamics Plus App</a> straipsnį. </p>
+        target='_blank'>„Dynamics Plus programėlė“</a> straipsnį. </p>
     remote_login:
       connect: Prisijungti
       freshdesk_url: „Freshdesk“ URL
-      new_to_freshdesk: 'Naujas „Freshdesk“? '
-      freshdesk_api_key: Freshdesk API raktas
+      new_to_freshdesk: 'Tik pradėjote naudotis „Freshdesk“? '
+      freshdesk_api_key: „Freshdesk“ API raktas
       api_key_available: 'API raktą galite gauti „Freshdesk“ paskyros profilio nustatymuose '
       sign_up: Registruotis
     five9:
       desc: >-
-        Skambinkite įeinančius ir išeinančius skambučius, užregistruokite
-        skambučio duomenis ir prisiregistruokite į Freshdesk bilietą
+        Skambinkite ir gaukite skambučius, užregistruokite skambučio duomenis ir
+        kurkite „Freshdesk“ užklausą
       helptext: >-
-        <h4>Five9 Integration Help</h4><p><br/>Įdiekite „Five9 Agent Desktop
-        Toolkit“ ir galite įvesti „Five9“ naudotojo vardą ir slaptažodį, kad
-        galėtumėte prisijungti.<br/>Dabar, kai gaunate skambutį, bus rodomas
-        automatinis ekrano langas, kuriame pateikiami kontekstiniai duomenys
-        apie klientus</p>
+        <h4>„Five9“ integracijos pagalba</h4><p><br/>Įdiekite „Five9 Agent
+        Desktop Toolkit“ ir įveskite „Five9“ vartotojo vardą ir slaptažodį, kad
+        galėtumėte prisijungti.<br/>Dabar, kai gausite skambutį, bus rodomas
+        automatinis iššokantis ekrano langas, kuriame bus pateikiama kontekstinė
+        informacija apie klientus</p>
     quickbooks:
       form:
-        quickbooks_note: Pažymi tekstą
-        quickbooks_note_info: >-
-          Šis tekstas bus pridėtas pastabos pradžioje, nurodant praleistą
-          žurnalo laiką.
+        quickbooks_note: Pastabų tekstas
+        quickbooks_note_info: 'Šis tekstas bus pridėtas pastabos pradžioje, nurodant praleistą laiką.'
         account_settings: ''
         timeactivity: Leisti agentams prisijungti prie „QuickBooks“ laiko įrašo
         invoices: Agentai gali peržiūrėti sąskaitas
-        invoice_option: 'Rodyti komercinius duomenis, pvz., Normą, sumą ir bendrą sumą'
+        invoice_option: 'Rodyti komercinius duomenis, pvz., vertinimą, sumą ir bendrą sumą'
         account_settings_info: ''
       connect_text: >-
         Prisijungimas prie „QuickBooks“ leis jūsų agentams lengviau pasiekti ir
@@ -6059,7 +6070,7 @@ lt:
         sąskaitas faktūras užklausų puslapyje.</p>
       desc: >-
         Peržiūrėkite „QuickBooks Online“ paskyros kliento duomenis, sąskaitas ir
-        pridėkite laiko lapo įrašus.
+        pridėkite praleisto laiko įrašus.
     marketplace_login:
       admin_credentials:
         link_your_helpdesk: Susiekite savo pagalbos tarnybą
@@ -6091,11 +6102,11 @@ lt:
           įveskite „apple“
         helpdesk_name: Pagalbos tarnybos pavadinimas
     slack_settings:
-      ticket_create: Bilietų kūrimas
+      ticket_create: Užklausų kūrimas
       status_update: Būsenos atnaujinimas
       notify: Pranešimas
       channels: 'Kanalai, kuriuos norite paskelbti'
-      note_create: Pastaba kūrimas
+      note_create: Pastabos kūrimas
     github:
       helptext: >-
         <h4>„GitHub“ integracijos pagalba“</h4><p><br/>Pasirinkite visas
@@ -6123,26 +6134,26 @@ lt:
         bcc_drop_box_mail: Pašto dėžutės adresas
         widget_title: Valdiklio pavadinimas
         api_key: Api raktas
-        domain_info: 'Tiesiog suteikite domeną be https. Pavyzdžiui, pavyzdys.capsulecrm.com'
+        domain_info: 'Tiesiog pateikite domeną be https. Pavyzdžiui, pavyzdys.capsulecrm.com'
         domain: Domenas
         bcc_drop_box_mail_info: >-
-          Jūs galite rasti savo unikalų Kapsulės Drop dėžutė El.pašto adresas
-          pagal <b>"Nustatymai -> Paštas lašas langelis"</b>.<br /> (Tai galite
-          rasti viršutiniame dešiniajame puslapio kampe).<br /> Nukopijuokite
-          el. Pašto adresą ir įklijuokite jį į aukščiau esantį teksto lauką. <br
-          /> Atsakydamas į bilietą „Freshdesk“ automatiškai pridės šį el. Pašto
-          adresą į „Bcc“ lauką
+          Jūs galite rasti savo unikalią „Capsule Drop“ el. pašto dėžutę
+          <b>„Nustatymai“ -> „Drop“ pašto dežutė"</b>.<br /> (Ją galite rasti
+          viršutiniame dešiniajame puslapio kampe).<br /> Nukopijuokite el.
+          pašto adresą ir įklijuokite jį į aukščiau esantį teksto laukelį. <br
+          /> Atsakant į užklausą „Freshdesk“, šis el. pašto adresas bus
+          automatiškai pridėtas „Bcc“ laukelyje
         api_key_info: >-
           Jei norite gauti unikalų API raktą, prisijunkite prie „Capsule CRM“
-          paskyros ir eikite į <br /> <b>„User -> My Preferences“</b>. (Tai
-          galite rasti viršutiniame dešiniajame puslapio kampe).<br />
-          Spustelėkite <b>„API autentifikavimo raktą“</b>ir gaukite unikalų API
-          raktą.<br /> Nukopijuokite klavišą ir įklijuokite jį į aukščiau esantį
-          teksto lauką.
+          paskyros ir eikite į <br /> <b>„Vartotojas -> Mano pasirinkimai“</b>.
+          (Tai galite rasti viršutiniame dešiniajame puslapio kampe).<br />
+          Spustelėkite <b>„API autentifikavimo raktas“</b>ir gaukite unikalų API
+          raktą.<br /> Nukopijuokite raktą ir įklijuokite jį į aukščiau esantį
+          teksto laukelį.
       desc: >-
-        Galite peržiūrėti kontaktinę informaciją iš „Capsule CRM“ Freshdesk. Šią
-        informaciją galima rasti puslapyje Bilietų informacija ir kontaktinių
-        duomenų puslapyje.
+        Galite peržiūrėti kontaktinę informaciją iš „Capsule CRM“ „Freshdesk“.
+        Šią informaciją galima rasti puslapyje Užklausų informacija ir
+        kontaktinių duomenų puslapyje.
     ticket_summary:
       desc: >-
         Spręsdami užklausas, sukurkite ir pasidalinkite problemų, su kuriomis
@@ -6151,7 +6162,9 @@ lt:
       form:
         google_calendar_settings: „Google“ kalendoriaus nustatymai
         google_calendar_settings_info: ''
-      desc: Kiekvieno bilieto įvykius galite tvarkyti naudodami „Google“ kalendorių.
+      desc: >-
+        Kiekvienos užklausos įvykius galite tvarkyti naudodami „Google“
+        kalendorių.
       helptext: >-
         „Google“ kalendorius leidžia sekti įvykius, susijusius su užklausomis.
         Agentai turi susieti „Google“ paskyrą su „Freshdesk“, kad galėtų
@@ -6163,12 +6176,12 @@ lt:
         užklausomis su kitais agentais.
     sugarcrm:
       form:
-        sugarcrm_settings: SugarCRM nustatymai
+        sugarcrm_settings: „SugarCRM“ nustatymai
         username: Vartotojo vardas
-        lead: Švino laukai
-        error: Nepavyko prisijungti prie „SugarCRM“. Prašome pabandyti kada nors.
-        domain: SugarCRM paskyros URL
-        account: Paskyros laukai
+        lead: Vadovo laukeliai
+        error: Nepavyko prisijungti prie „SugarCRM“. Prašome pabandyti vėliau.
+        domain: „SugarCRM“ paskyros URL
+        account: Paskyros laukeliai
         password: Slaptažodis
         widget_title: Valdiklio pavadinimas
         contact: Kontaktų laukeliai
@@ -6176,30 +6189,32 @@ lt:
           Pridėkite „SugarCRM“ pagrindinio domeno URL, kuris paprastai yra
           http://mycompany.com arba https://mycompany.com formatu</span>
       helptext: >-
-        <h4>SugarCRM integracijos žinynas</h4><p><br/> SugarCRM“ kontaktus,
-        vadovus ir sąskaitas galite gauti Freshdesk bilietų ir kontaktų
-        puslapiuose. <br /><br/> Pasirinkite laukų sąrašą, kuris turi būti
-        rodomas „SugarCRM“ valdiklyje. Galite pasirinkti ne daugiau kaip 10
-        laukų.</p><p><strong>Pastaba:</strong><br/>Pavadinimas yra numatytasis
-        kontaktų, vadovų ir sąskaitų laukas, kurio negalima pašalinti.</p> <br
-        /><br/>
-      desc: 'Galite peržiūrėti „SugarCRM“ kontaktus, vadovus ir sąskaitas Freshdesk.'
+        <h4>„SugarCRM“ integracijos žinynas</h4><p><br/> Galite gauti prieigą
+        prie „SugarCRM“ kontaktų, vadovų ir sąskaitų Freshdesk užklausų ir
+        kontaktų puslapiuose. <br /><br/> Pasirinkite laukelių sąrašą, kuris
+        turi būti rodomas „SugarCRM“ valdiklyje. Galite pasirinkti ne daugiau
+        kaip 10 laukelių.</p><p><strong>Pastaba:</strong><br/>Pavadinimas yra
+        numatytas laukelis kontaktams, vadovams ir paskyroms ir jo negalima
+        pašalinti.</p> <br /><br/>
+      desc: >-
+        Galite peržiūrėti „SugarCRM“ kontaktų, vadovų ir paskyrų informaciją
+        „Freshdesk“.
     jira_settings:
-      none: Nieko nedaryk.
-      info3: 'Įrašius komentarą „Freshdesk“ '
-      sync_updates: Sinchronizavimo naujinimai
-      update_jira_status: Atnaujinkite JIRA būseną
+      none: Nieko nedarykite.
+      info3: 'Pridėjus komentarą „Freshdesk“ '
+      sync_updates: Sinchronizavimo atnaujinimai
+      update_jira_status: Atnaujinkite „JIRA“ būseną
       add_private_note_in_fd: Pridėkite privačią pastabą „Freshdesk“ ir praneškite agentui.
       info1: >-
-        Kai „Freshdesk“ bilietas susijęs su „JIRA“ problema, atlikite toliau
-        nurodytus veiksmus.
-      info5: Kai JIRA pridedamas komentaras
-      info4: Kai išdavimo būsena atnaujinama „JIRA“
+        Kai „Freshdesk“ užklausa yra susijusi su „JIRA“ problema, imkitės toliau
+        nurodytų veiksmų.
+      info5: Kai „JIRA“ pridedamas komentaras
+      info4: Kai problemos būsena atnaujinama „JIRA“
       update_status_in_fd: Atnaujinti būseną „Freshdesk“.
-      add_comment_in_jira: Pridėti komentarą JIRA
-      add_attachments_in_jira: Sinchronizuojant neįtraukite bilieto priedų
-      info2: 'Kai bilieto būsena atnaujinama „Freshdesk“ '
-      send_reply_in_fd: Praneškite klientui el. Paštu
+      add_comment_in_jira: Pridėti komentarą „JIRA“
+      add_attachments_in_jira: Sinchronizuojant neįtraukite užklausos priedų
+      info2: 'Kai užklausos būsena atnaujinama „Freshdesk“ '
+      send_reply_in_fd: Praneškite klientui el. paštu
       add_public_note_in_fd: Pridėti viešą pastabą „Freshdesk“.
     applications:
       contacts_sync:
@@ -6207,41 +6222,41 @@ lt:
         resolve_the_errors: Prieš tęsdami išspręskite formos klaidas!
       crm:
         mapping:
-          freshdesk_contact_fields: ' „Freshdesk“ kontaktiniai laukai '
-          freshdesk_company_fields: ' „Freshdesk“ kompanijos laukai '
+          freshdesk_contact_fields: ' „Freshdesk“ kontaktiniai laukeliai '
+          freshdesk_company_fields: ' „Freshdesk“ įmonės laukeliai '
           company: Įmonė
           contact: Kontaktai
-          contact_fields: ' Kontaktų laukai '
-          account_fields: ' Paskyros laukai '
+          contact_fields: ' Kontaktų laukeliai '
+          account_fields: ' Paskyros laukeliai '
           sync: ' Sinchronizuoti '
     mailchimp:
       desc: >-
         Į „Freshdesk“ pridėkite „MailChimp“ ir pradėkite tvarkyti savo
-        prenumeratas, eksportuokite klientų sąrašus ir iš pagalbos tarnybos
-        ištraukite reikiamą informaciją apie savo veiklą.  
-      helptext: <h4>MailChimp Integration Help“</h4>
+        prenumeratas, perkelkite klientų sąrašus ir iš pagalbos tarnybos gaukite
+        reikiamą informaciją apie savo veiklą.  
+      helptext: <h4>„MailChimp“ integracijos pagalba“</h4>
     google_drive:
-      desc: Pridėkite ir bendrinkite duomenis / failus iš „GoogleDrive“.
+      desc: Pridėkite ir dalinkitės duomenimis / failus iš „GoogleDrive“.
       form:
-        developer_key: 'API raktas, gautas iš „Google“ kūrėjų konsolės.'
+        developer_key: 'API raktas, gautas iš „Google“ kūrėjų valdymo pulto.'
         client_id: „OAuth“ kliento ID jūsų domenui
       helptext: >-
-        <h4>Google“ disko integravimo pagalba</h4><br/><p>„Google“ disko
-        integracija leidžia agentams ir naudotojams naršyti failus iš „Google“
-        disko aplanko ir dalintis jais, kai siunčiate ar atsakote į bilietą
-        „Freshdesk“. Tiesioginė nuoroda į failą yra bendrinama biliete,
-        pašalinant priedų ir el. Pašto dydžio apribojimų poreikį.</p><p>Prieš
-        diegdami integraciją, eikite į <a target='_blank'
-        href='https://console.developers.google.com/'><b>Google“ kūrėjų
+        <h4>Google Drive“ integravimo pagalba</h4><br/><p>„Google Drive“
+        integracija leidžia agentams ir vartotojams rasti failus iš „Google
+        Drive“ aplanko ir dalintis jais, kai siunčiate ar atsakote į užklausą
+        „Freshdesk“. Tiesioginė nuoroda į failą yra bendrinama užklausoje,
+        pašalinant priedų ir el. laiško dydžio apribojimų poreikį.</p><p>Prieš
+        susiejant, eikite į <a target='_blank'
+        href='https://console.developers.google.com/'><b>„Google“ kūrėjų
         puslapį</b></a>.</p><p>1. Pasirinkite <b>Sukurti savo projektą</b> iš
-        <b>API ir paslaugos</b> skyriuje.</p><p>2. Iki <b>Įgalinti API ir
-        paslaugas</b>, leiskite <b>Google“ diskų API ir „Google“ parinkiklio
-        API</b>.</p><p>3. Pagal <b>skyrių „</b> sukurkite OAuth kliento ID ir
-        API raktą, o kurdami OAuth kliento ID, prašome įvesti „freshdesk url“
-        skyriuje „Įgaliotas„ Javascript “šaltinis. </p><p>4. <p>Galiausiai
-        nukopijuokite Kliento ID ir API raktą į šį puslapį ir išsaugokite
-        pakeitimus. Dabar „Google“ diskų parinkėjas turėtų būti pasiruošęs.
-        Galite jį patikrinti naujajame bilieto formoje.</p>
+        <b>API ir paslaugos</b> skiltyje.</p><p>2. Skiltyje <b>Įgalinti API ir
+        paslaugas</b>, paleiskite <b>Google Drive“ API ir „Google Picker“
+        API</b>.</p><p>3. Skiltyje<b>Prisijungimo duomenys </b> sukurkite savo
+        „OAuth“ kliento ID ir API raktą, o kurdami „OAuth“ kliento ID,
+        autorizuotoje „Javascript„ skiltyje įveskite „Freshdesk“ URL. </p><p>4.
+        <p>Galiausiai nukopijuokite Kliento ID ir API raktą į šį puslapį ir
+        išsaugokite pakeitimus. Dabar „Google Drive Picker“ turėtų būti
+        paruoštas. Galite jį patikrinti naujoje užklausos formoje.</p>
     shopify:
       edit:
         sidebar: >-
@@ -6253,103 +6268,104 @@ lt:
           bet kurios parduotuvės, kai dirbate su užklausomis.</p><p><a
           href="https://support.freshdesk.com/support/solutions/articles/195382-the-shopify-app"
           target="_blank">Sužinokite daugiau</a></p>
-        label: Shopify - prijungtos parduotuvės
-        sidebar_label: Apsilankykite „Freshdesk“
+        label: „Shopify“ - susietos parduotuvės
+        sidebar_label: „Shopify“ „Freshdesk“
         confirm_remove_store: Ar tikrai norite atjungti šią parduotuvę?
         connect: Prijunkite kitą parduotuvę
         desc: >-
-          Prijunkite „Shopify“ parduotuvę, lengvai peržiūrėkite užsakymus ir
-          grąžinkite grąžinamąsias išmokas iš „Freshdesk“
+          Prijunkite „Shopify“ parduotuvę, paprastai peržiūrėkite užsakymus ir
+          vykdykite grąžinimus „Freshdesk“
         helpkit_cannot_edit: >-
-          Jei norite atjungti esamą parduotuvę, pašalinkite ir įdiegkite
-          „Shopify“ programą iš rinkos. Jei norite valdyti keletą parduotuvių,
-          pereikite prie monetų kalyklos patirties.
-        disconnect: Atjunkite
+          Jei norite atjungti esamą parduotuvę, pašalinkite ir įdiekite
+          „Shopify“ programėlę iš prekyvietės. Jei norite valdyti keletą
+          parduotuvių, pradėkite naudotis „Mint“.
+        disconnect: Atjungti
       form:
         shop_name_info_mint: >-
-          Jei tai <b>yourstore.myshopify.com</b>, tiesiog įveskite
-          <b>parduotuvę</b> čia.
+          Jei tai yra <b>yourstore.myshopify.com</b>, tiesiog įveskite <b>savo
+          parduotuvę</b> čia.
         shop_name_mint: Parduotuvės URL
         shop_name_info: >-
           Pavyzdžiui, jei jūsų „Shopify“ URL yra
-          <strong>https://my_shop_name.shopify.com</strong>, įveskite
-          <strong>my_shop_name</strong>.
+          <strong>https://mano_parduotuvės_pavadinimas.shopify.com</strong>,
+          įveskite <strong>mano_parduotuvės_pavadinimas</strong>.
         shop_name: Parduotuvės pavadinimas
-      title_mint: Prijunkite „Shopify“ parduotuvę
+      title_mint: Prijunkite savo „Shopify“ parduotuvę
       helptext: >-
-        <h4>Shopify integracija</h4><br/><p>Konfigūruokite savo parduotuvės
+        <h4>„Shopify“ integracija</h4><br/><p>Konfigūruokite savo parduotuvės
         pavadinimą, kad būtų rodomi paskutiniai užsakymai „Freshdesk“. Jūs
-        būsite nukreipti į „Shopify“ parduotuvę, kad galėtumėte įgalioti
-        „Freshdesk“. Kai tik gavote leidimą, galėsite peržiūrėti naujausius
-        Kliento užsakymus ir užsakymo duomenis Bilieto informacijai ir
-        kontaktinių duomenų puslapiuose. Galite greitai pasiekti „Shopify“
-        duomenis su vienu spustelėjimu iš valdiklio.</p>
+        būsite nukreipti į „Shopify“ parduotuvę, kad galėtumėte patvirtinti
+        „Freshdesk“. Gavę leidimą, galėsite peržiūrėti naujausius Kliento
+        užsakymus ir užsakymo duomenis užklausos informacijos ir kontaktinių
+        duomenų puslapiuose. Galite greitai peržiūrėti „Shopify“ duomenis su
+        vienu spustelėjimu iš valdiklio.</p>
       desc: >-
         Peržiūrėkite kliento naujausius užsakymus ir užsakymų informaciją
         „Freshdesk“, spręsdami užklausas
     dynamicscrm:
       form:
         login_url: >-
-          Gali būti kliento organizacijoje WSDL. https: //<HostName>/
+          Gali būti kliento organizacijos WSDL. https: //<HostName>/
           XRMServices/2011/Organization.svc?wsdl=wsdl0 ir suraskite prisijungimo
-          URL: Politika -> Emitentas -> Adresas.
+          URL: Politika -> Leidėjas -> Adresas.
         dynamicscrm_settings: „Dynamics CRM“ nustatymai
-        contact_email: Kontaktinis Elektroninis paštas
-        api_error: Problema rinkti API duomenis!
+        contact_email: Kontaktinis elektroninis pašto adresas
+        api_error: Iškilo problema renkant API duomenis!
         end_point_info: >-
           Pavyzdys:
           https://freshpo4.api.crm5.dynamics.com/XRMServices/2011/Organization.svc.
-          Norėdami rasti tai, eikite į „Dynamics CRM“ nustatymus -> Pritaikymai
-          -> „DeveloperResources“>> „SOAP“ protokolo organizavimo paslaugą
+          Norėdami tai rasti, eikite į „Dynamics CRM“ nustatymus -> Pritaikymai
+          -> „DeveloperResources“>> „SOAP“ protokolo organizavimo paslaugos
           kūrėjo išteklių puslapio apačioje.
-        account_email: Paskyros el. Paštas (pasirinktinai)
-        lead: Švino laukai
-        lead_email: Pagrindinis el. Paštas (pasirinktinai)
-        organization_name: Unikalus pavadinimas
+        account_email: Paskyros el. pašto adresas (pasirinktinai)
+        lead: Vadovo laukeliai
+        lead_email: Pagrindinis el. pašto adresas (pasirinktinai)
+        organization_name: Unikalus įmonės pavadinimas
         error: 'Oi! Kažkas negerai! Patikrinkite, ar įvedėte teisingas vertes.'
         lead_email_info: >-
-          Įveskite galiojantį el. Pašto ID, susietą su bet kuriuo „Dynamics CRM“
-          vadovu (pagal kurį pagrindiniame susietame CRM lauke pateikiami kiti
-          veiksmai)
+          Įveskite galiojančią el. pašto ID, susietą su bet kuriuo „Dynamics
+          CRM“ vadovu (pagal kurį pagrindiniame susietame CRM laukelyje
+          pateikiami kiti veiksmai)
         region_info: >-
-          Gali būti kliento organizacijoje WSDL. https: //<HostName>/
-          XRMServices/2011/Organization.svc?wsdl=wsdl0 ir suraskite regioną:
-          SecureTokenService -> AppliesTo.
-        region: Regionas
+          Gali būti kliento organizacijos WSDL. https: //<HostName>/
+          XRMServices/2011/Organization.svc?wsdl=wsdl0 ir suraskite rajoną:
+          SecureTokenService -> Taikoma.
+        region: Rajonas
         instance_info: >-
-          Šios integracijos darbui atlikti „On-Demand“ atvejai turėtų būti
-          konvertuojami į IFD.
+          Užsakomieji darbai turi būti paversti į IFD, kad ši integracija
+          veiktų.
         domain: Vartotojo ID
         instance_type: „Dynamics CRM“ instancijos tipas
-        account: Paskyros laukai
+        account: Paskyros laukeliai
         account_email_info: >-
-          Įveskite galiojantį el. Pašto ID, susietą su bet kuria „Dynamics CRM“
-          paskyra (pagal kurią paskyroje susieti CRM laukai išvardyti kitame
+          Įveskite galiojantį el. pašto ID, susietą su bet kuria „Dynamics CRM“
+          paskyra (pagal kurią paskyroje susieti CRM laukeliai išvardyti kitame
           etape)
         organization_name_info: >-
-          Norėdami rasti tai, eikite į „Dynamics CRM“ nustatymus -> Pritaikymai
+          Norėdami tai rasti, eikite į „Dynamics CRM“ nustatymus -> Pritaikymai
           -> Kūrėjo ištekliai -> Jūsų organizacijos informacija -> Organizacijos
           unikalus pavadinimas.
         password: Slaptažodis
-        endpoint: Organizavimo paslaugos SOAP pabaigos taškas
+        endpoint: Įmonės paslaugos SOAP pabaigos taškas
         contact_email_info: >-
-          Įveskite galiojantį el. Pašto ID, susietą su bet kuriuo „Dynamics CRM“
-          kontaktu (pagal kurį kontaktų susieti CRM laukai išvardyti kitame
+          Įveskite galiojantį el. pašto ID, susietą su bet kuriuo „Dynamics CRM“
+          kontaktu (pagal kurį susieti kontakto CRM laukeliai išvardyti kitame
           etape)
         loginurl: Prisijungimo URL
-        entity_error: 'nėra galiojantis el. pašto adresas, skirtas „Entity“ tipui'
+        entity_error: 'nėra galiojantis el. pašto adresas, skirtas „Organizacijos“ tipui'
         contact: Kontaktų laukeliai
         domain_info: >-
           Jei naudojate užsakymą, naudokite super administratoriaus 365
-          vartotojo ID, pvz., Name@company.onmicrosoft.com.
+          vartotojo ID, pvz., pavadinimas@įmonė.onmicrosoft.com.
       desc: Jūs galite peržiūrėti „Dynamics CRM“ kontaktinę informaciją „Freshdesk“.
       helptext: >-
         <h4>Dynamics CRM“ integravimo žinynas</h4><p><br/> Kai įgalinsite šią
-        integraciją, jūsų agentai gali pasiekti „Dynamics CRM“ kontaktinę
-        informaciją tiesiai Freshdesk bilietų ir kontaktų puslapiuose. <br /><br
-        /> Atkreipkite dėmesį, kad jūsų agentai gali peržiūrėti tik tuos laukus,
-        kuriuos jūs nustatėte nustatymų puslapyje, o paieškos funkcija yra
-        pagrįsta el. Pašto adreso žemėlapiu.
+        integraciją, jūsų agentai galės gauti prieigą prie „Dynamics CRM“
+        kontaktinės informacijos tiesiai Freshdesk užklausų ir kontaktų
+        puslapiuose. <br /><br /> Atkreipkite dėmesį, kad jūsų agentai gali
+        peržiūrėti tik tuos laukelius, kuriuos jūs nustatėte nustatymų
+        puslapyje, o paieškos funkcija yra pagrįsta el. pašto adreso
+        atvaizdavimu.
     link_ticket:
       desc: >-
         Valdykite ir stebėkite susijusias užklausas kartu, kad būtų užtikrintas
@@ -6365,41 +6381,41 @@ lt:
         requester: Prašančiojo vardas
         cancel: Atšaukti
         do_not_link: Nesusiekite
-        link_to_ticket: Nuoroda į šį bilietą
+        link_to_ticket: Nuoroda į šią užklausą
         call_actions: Skambučių veiksmai
-        new_ticket_with_id: Naujas bilietas sukurtas naudojant ID
-        link_to_new_ticket: Nuoroda į naują bilietą
-        add_note_to_ticket: Pridėti pastabą į bilietą
+        new_ticket_with_id: Nauja užklausa sukurta naudojant id
+        link_to_new_ticket: Nuoroda į naują užklausą
+        add_note_to_ticket: Pridėti pastabą į užklausą
         agent_phone_details: Agento telefono duomenys
         add_note_text: Skambučių pastabos
         agent_phone_updated: Agento telefono informacija Atnaujinta
         subject: Tema
         recent_tickets: Naujausios užklausos
         create: Sukurti
-        ticket_reference_id: Skambučio nuorodos ID
+        ticket_reference_id: Skambučio ID
     dropbox:
       helptext: >-
         <h4>Dropbox“ integravimo pagalba</h4><br/><p>„Dropbox“ integracija
-        leidžia agentams ir vartotojams naršyti failus iš jų „Dropbox“ aplanko
-        ir dalintis jais, kai siunčiate ar atsakote į bilietą „Freshdesk“.
-        Tiesioginė nuoroda į failą yra bendrinama biliete, pašalinant priedų ir
-        el. Pašto dydžio apribojimų poreikį.</p><p>prieš pradėdami sąrankos
-        integracija, eikite į <a target='_blank'
+        leidžia agentams ir vartotojams ieškoti failų jų „Dropbox“ aplanke ir
+        dalintis jais, kai siunčiate ar atsakote į užklausą „Freshdesk“.
+        Tiesioginė nuoroda į failą yra bendrinama užklausoje, pašalinant priedų
+        ir el. pašto dydžio apribojimų poreikį.</p><p>Prieš pradėdami sąrankos
+        integraciją, eikite į <a target='_blank'
         href='https://dropbox.com/developers'><b>ZMI kūrėjų
-        puslapyje</b></a>.</p><p>1. <b>API v2</b> skyriuje pasirinkite <b>Create
-        Your App</b> .</p><p>2. Mažiau nei <b>Pasirinkite API</b>, pasirinkite
-        <a>Dropbox API</a>.</p><p>3. Prieigos tipui pasirinkite <b>Full
-        Dropbox</b>.</p><p>4. Nurodykite savo programos pavadinimą ir
-        spustelėkite <b>Create App</b>.</p><p>5. Programos puslapyje, skirtuke
-        <b>Parametrai</b> , <b>parinkčių / taupytojų srityse</b>pridėkite
-        pagalbos tarnybos URL be https arba www, pvz .:
-        <a>sauls.freshdesk.com</a>.</p><p>Galiausiai, kopijuoti įklijuokite
-        taikymo raktą naują app į šį puslapį ir išsaugokite pakeitimus. Dabar
-        „Dropbox“ parinkėjas turėtų būti pasiruošęs. Galite jį patikrinti
-        naujajame bilieto formoje.</p>
+        puslapį</b></a>.</p><p>1. <b>API v2</b> skyriuje pasirinkite <b>Kurti
+        savo programėlę</b>.</p><p>2. Skiltyje <b>Pasirinkti API</b>,
+        pasirinkite <a>Dropbox API</a>.</p><p>3. Prieigos tipui pasirinkite
+        <b>Pilnas Dropbox</b>.</p><p>4. Nurodykite savo programėlės pavadinimą
+        ir spustelėkite <b>Sukurti programėlę</b>.</p><p>5. Programėlės
+        puslapyje, skirtuke <b>Parametrai</b>,<b>Parinkčių / Taupytojų
+        domenuose</b>pridėkite savo pagalbos tarnybos URL be https arba www,
+        pvz.: <a>sauls.freshdesk.com</a>.</p><p>Galiausiai, nukopijuokite
+        įklijuokite naujos programėlės raktą į šį puslapį ir išsaugokite
+        pakeitimus. Dabar „Dropbox“ parinkėjas turėtų būti paruoštas. Galite jį
+        patikrinti naujoje užklausos formoje.</p>
       form:
-        app_key: Registruotas programos raktas jūsų domenui
-        app_key_info: Sukurkite programą „dropbox“ ir pateikite programos raktą čia.
+        app_key: Registruotas programėlės raktas jūsų domenui
+        app_key_info: Sukurkite programėlę „Dropbox“ ir pateikite programėlės raktą čia.
       desc: Pridėti ir bendrinti savo duomenis / failus iš „DropBox“.
     freshbooks:
       form:
@@ -6407,19 +6423,17 @@ lt:
           Įveskite visą API URL su https. Pavyzdžiui:
           https://example.freshbooks.com/api/2.1/xml-in
         api_key: Autentifikavimo raktas
-        timeactivity: Leiskite agentams prisijungti prie „FreshBooks“ laiko įrašo
-        freshbooks_note_info: >-
-          Šis tekstas bus pridėtas pastabos pabaigoje, nurodant praleistą
-          žurnalo laiką.
-        freshbooks_note: Pažymi tekstą
+        timeactivity: Leiskite agentams pridėti laiką „FreshBooks“
+        freshbooks_note_info: 'Šis tekstas bus pridėtas pastabos pabaigoje, nurodant praleistą laiką.'
+        freshbooks_note: Pastabų tekstas
         api_key_info: ''
         api_url: API URL
         widget_title: Valdiklio pavadinimas
         invoices: Agentai gali peržiūrėti sąskaitas
-        invoice_option: 'Rodyti komercinius duomenis, pvz., Kainą, sumą ir bendrą sumą'
+        invoice_option: 'Rodyti komercinius duomenis, pvz., kainą, sumą ir bendrą sumą'
       desc: >-
-        Peržiūrėkite kliento duomenis, sąskaitas ir pridėkite laiko lapo įrašus
-        į „FreshBooks“ paskyrą
+        Peržiūrėkite kliento duomenis, sąskaitas ir pridėkite laiko įrašus į
+        „FreshBooks“ paskyrą
       helptext: >-
         <h4>„Freshbooks“ integracijos pagalba</h4><p><br/>Norėdami integruoti
         „Freshbooks“ su „Freshdesk“, pirmiausia turite gauti „FreshBooks“ API ir
@@ -6441,12 +6455,12 @@ lt:
       no_ticket_msg: Jūs neturite jokių užklausų šiam filtro pasirinkimui
       reply_btn: Atsakyti
       send: Siųsti
-      signup_message: Dar ne „Freshdesk“ klientas? Registruotis
+      signup_message: Dar ne „Freshdesk“ klientas? Registruokitės
       reset: Atstatyti
       domain:
-        continue_to_login: Toliau prisijungti
+        continue_to_login: Tęsti prisijungimą
         domain_message: Įveskite pagalbos tarnybos URL
-        domain_error: Nepavyko patvirtinti freshdesk domeno
+        domain_error: Nepavyko patvirtinti „Freshdesk“ domeno
       filter:
         priority: Pirmenybė
         all: Viskas
@@ -6455,97 +6469,97 @@ lt:
       agent_error: 'Jūs turite būti agentas, kad galėtumėte peržiūrėti užklausas'
       social:
         description: Aprašymas
-        facebook_name: „Facebook“ vardas
-        already_converted: Šis pranešimas jau konvertuotas į bilietą
-        twitter_handles: Reikalaujama Twitter
+        facebook_name: Prašančiojo „Facebook“ vardas
+        already_converted: Šis pranešimas jau konvertuotas į užklausą
+        twitter_handles: Prašančiojo vartotojo vardas „Twitter“
         convert_to_ticket: Keisti į užklausą
         twitter_limit_exceed: >-
           Jūs viršijote „Twitter“ simbolių limitą. Turėsite pakeisti savo
           atsakymą.
         requester: Prašytojas
-        successfully_converted: Bilietas sėkmingai sukurtas
+        successfully_converted: Užklausa sėkmingai sukurta
       login:
         password: Slaptažodis
         email: El. paštas
-      cc_bcc: Kopija / Bcc
+      cc_bcc: Cc / Bcc
       search:
-        ticket_id: Bilieto ID
+        ticket_id: Užklausos ID
         placeholder_keyword: Ieškoti užklausų pagal raktinį žodį
         keyword: Raktinis žodis
         placeholder_ticket_id: Ieškoti užklausų pagal užklausų id
       header:
-        try_again: Bandyk iš naujo
+        try_again: Bandykite iš naujo
         reply: Atsakyti
     custom_apps:
-      ticket_detail_page: Bilieto detalių puslapis
-      preview_helptext: Ši pasirinktinė programa bus rodoma šoninėje juostoje
+      ticket_detail_page: Informacijos apie užklausą puslapis
+      preview_helptext: Ši pasirinktinė programėlė bus rodoma šoninėje juostoje
       hide_preview: Slėpti peržiūrą
-      custom_app_used_in: Pasirinkta individuali programa
-      contact_detail_page: Kontaktų informacijos puslapis
+      custom_app_used_in: Pasirinkta programėlė rodoma
+      contact_detail_page: Kontaktinės informacijos puslapis
       refresh: Atnaujinti
       show_preview: Rodyti peržiūrą
-      custom_app_preview: Individualizuotos programos peržiūra
+      custom_app_preview: Pasirinktos programėlės peržiūra
     microsoft_teams:
-      teams_connect_desc: Tai jungia jūsų freshdesk paskyrą su „Microsoft“ komandomis.
+      teams_connect_desc: Tai susieja jūsų „Freshdesk“ paskyrą su „Microsoft“ komandomis.
       teams_prof_label: Prisijunkite prie „Microsoft“ komandų
-      desc: Gaukite pranešimą apie „Freshdesk“ bilietą ir pastabų atnaujinimus.
-      reauth_btn: Iš naujo autorizuokite
-      auth_btn: Įgalioti
+      desc: Gaukite pranešimą dėl „Freshdesk“ užklausų ir pastabų atnaujinimų.
+      reauth_btn: Patvirtinkite iš naujo
+      auth_btn: Patvirtinti
     infusionsoft:
       form:
         infusionsoft_settings: „Infusionsoft“ nustatymai
         infusionsoft_settings_info: ''
         contact: Kontaktų laukeliai
-        account: Paskyros laukai
+        account: Paskyros laukeliai
         select: Pasirinkite parinktį
       desc: >-
         Jūs galite peržiūrėti „Infusionsoft crm“ kontaktinę informaciją
         „Freshdesk“.
       helptext: >-
-        <h4>Infusionsoft integracija</h4><p><br/>Pasirinkite laukų, kuriuos
-        reikia rodyti infuzijų programoje, sąrašą. Galite pasirinkti ne daugiau
-        kaip 10 laukų.</p><p><strong>Pastaba:</strong><br/>FirstName“ ir
-        „Company“ yra numatytieji laukai, kurių negalima pašalinti.</p>
+        <h4>„Infusionsoft“ integracija</h4><p><br/>Pasirinkite laukelių, kuriuos
+        reikia rodyti „Infusionsoft“ valdiklyje, sąrašą. Galite pasirinkti ne
+        daugiau kaip 10 laukelių.</p><p><strong>Pastaba:</strong><br/>Vardas ir
+        Įmonė yra numatytieji laukeliai, kurių negalima pašalinti.</p>
     onedrive_mint:
       form:
-        application_id: „OneDrive“ programos ID jūsų „Freshdesk“ paskyrai
+        application_id: „OneDrive“ programėlės ID jūsų „Freshdesk“ paskyrai
       desc: Pridėkite ir bendrinkite duomenis / failus iš „OneDrive“.
     box:
-      desc: Pridėti ir bendrinti savo duomenis / failus iš dėžutės.
+      desc: Pridėkite ir bendrinkite savo duomenis / failus iš „Box“.
       helptext: >-
-        <h4>Dėžutės integravimo pagalba</h4><br/><p>Dėžutės integracija leidžia
-        agentams ir vartotojams naršyti failus iš savo aplanko aplanko ir
-        dalintis jais, kai siunčiate ar atsakote į bilietą „Freshdesk“.
-        Tiesioginė nuoroda į failą yra bendrinama biliete, pašalinant priedų ir
-        el. Pašto dydžio apribojimų poreikį.</p> Jūsų „Box Chooser“ turėtų būti
-        pasirengęs. Galite jį patikrinti naujajame bilieto formoje.</p>
+        <h4>„Box“ integravimo pagalba</h4><br/><p>„Box“ integracija leidžia
+        agentams ir vartotojams ieškoti failus iš savo „Box“ aplanko ir dalintis
+        jais, kai siunčiate ar atsakote į užklausą „Freshdesk“. Tiesioginė
+        nuoroda į failą yra bendrinama užklausoje, pašalinant priedų ir el.
+        pašto dydžio apribojimų poreikį.</p> Jūsų „Box Chooser“ turėtų būti
+        paruoštas. Galėsite jį patikrinti naujoje užklausos formoje.</p>
     seoshop:
       form:
-        nl: Nederlands
+        nl: Olandija
         language_info: Pasirinkite parduotuvės kalbą
         api_key: Api raktas
         pt: Portugalų
         en: Anglų
-        api_secret: Api paslaptis
+        api_secret: „Api Secret“
         nor: Norvegų
         tr: Turkų
         shop_name: Parduotuvės pavadinimas / ID
-        it: Italų kalba
+        it: Italų
         el: Graikų
-        pl: lenkas
-        sv: Švedijos
-        api_secret_info: Gaukite „Api Secret“ už „SEOshop“ palaikymo parduotuvę
-        fr: Prancūzų kalba
+        pl: Lenkų
+        sv: Švedų
+        api_secret_info: Gaukite „Api Secret“ parduotuvei iš „SEOshop“ pagalbos portalo
+        fr: Prancūzų
         da: Danų
-        de: Deutsch
+        de: Vokiečių
         ru: Rusų
         es: Ispanų
-        api_key_info: Gaukite „Api“ raktą parduotuvei iš „SEOshop“ palaikymo
-        bg: Bulgarų kalba
+        api_key_info: Gaukite API raktą parduotuvei iš „SEOshop“ pagalbos
+        bg: Bulgarų
         shop_name_info: >-
           Pavyzdžiui, jei jūsų „SEOshop“ URL yra
           <strong>https://my_shop_name.webshopapp.com</strong>, įveskite
-          <strong>my_shop_name</strong>.
+          <strong>mano_parduotuvės_pavadinimas</strong>.
         language: Kalba
       helptext: >-
         <h4>SEOshop“ integracijos pagalba</h4><p><br/>Įdiekite „Freshdesk“
@@ -6559,39 +6573,39 @@ lt:
         užklausas į „Freshdesk“ ir padėti jiems kuo greičiau gauti atsakymus.
     campaignmonitor:
       helptext: >-
-        <h4>Kampanijos monitoriaus integravimo pagalba</h4><br/>Jei norite
-        integruotis su „Campaign Monitor“, turėtumėte įvesti API raktą ir
-        „ClientID“ iš „Kampanijos monitoriaus“. <br/></br/> API raktą galima
-        gauti iš „Kampanijos monitoriaus“ paskyros nustatymų.<br/><br/>
-        Instrukcijos gauti jūsų ClientID galima gauti iš <a target='_blank'
+        <h4>„Campaign Monitor“ integravimo pagalba</h4><br/>Jei norite
+        integruoti su „Campaign Monitor“, turėtumėte įvesti API raktą ir
+        „ClientID“ iš „Campaign Monitor“. <br/></br/> API raktą galite gauti iš
+        „Campaign Monitor“ paskyros nustatymų.<br/><br/> Instrukcijos, kaip
+        galite gauti savo „ClientID“, yra <a target='_blank'
         href='http://www.campaignmonitor.com/api/getting-started/#clientid'>
         http://www.campaignmonitor.com/api/getting-started/#clientid </a> .
-        <br/><br/>Spustelėkite &quot;naujinimas&quot; kad pradėtumėte savo
-        kampanijos monitoriaus integraciją.
+        <br/><br/>Spustelėkite &quot;Atnaujinti&quot; kad pradėtumėte savo
+        „Campaign Monitor“ integraciją.
       desc: >-
-        Ieškokite ir valdykite „Campaign Monitor“ paskyros abonementus ir
-        pateikite įžvalgas apie klientų naudojimo statistiką tiesiai
-        „Freshdesk“. 
+        Savo „Kampanijos stebėjimo“ paskyroje ieškokite ir valdykite
+        prenumeratas bei pateikite įžvalgas apie klientų naudojimo statistiką
+        tiesiai „Freshdesk“. 
       form:
         client_id: Kliento ID
-        api_key_info: Gaukite API raktą iš paskyros nustatymų
+        api_key_info: Gaukite savo API raktą iš paskyros nustatymų
         client_id_info: >-
-          Jei norite gauti savo kliento ID, vadovaukitės
-          http://www.campaignmonitor.com/api/getting-started/#clientid
-          pateiktomis instrukcijomis
+          Jei norite gauti savo kliento ID, sekite
+          http://www.campaignmonitor.com/api/getting-started/#clientid pateiktas
+          instrukcijas
         api_key: API raktas
     google_contacts:
-      import_complete: Vieną kartą importas baigtas.
-      internal_error: Įvyko vidinė klaida. Prašome susisiekti su palaikymo tarnyba.
-      fetch_problem: Problema gaunant „Google“ kontaktus.
+      import_complete: Vienkartinis įkėlimas baigtas.
+      internal_error: Įvyko vidaus klaida. Prašome susisiekti su pagalbos tarnyba.
+      fetch_problem: Iškilo problema gaunant „Google“ kontaktus.
       last_sync: Paskutinis sinchronizavimas
       MERGE_LATEST: >-
-        Sujungti „Freshdesk“ ir „Google“ kontaktus (naujausias naujinimas turi
-        pirmenybę)
+        Sujungti „Freshdesk“ ir „Google“ kontaktus (pirmenybė teikiama
+        naujausiam atnaujinimui)
       OVERWRITE_REMOTE_small: Įkelti
       import_later_success: >-
-        „Google“ kontaktų importas prasidėjo sėkmingai. Importo būseną galite
-        patikrinti pačiame nustatymų puslapyje.
+        „Google“ kontaktų įkėlimas pradėtas sėkmingai. Perkėlimo būseną galite
+        patikrinti nustatymų puslapyje.
       edit_app: Atnaujinti
       delete: Ištrinti
       group: Sinchronizuoti grupės pavadinimą
@@ -6600,11 +6614,11 @@ lt:
       info1: >-
         Naudojant tą pačią sinchronizavimo žymą keliose „Google“ paskyrose,
         galite bendrinti „Freshdesk“ kontaktus su visomis paskyromis. Jei
-        nenorite sinchronizuoti jokių kontaktų su „Google“, galite palikti jį
+        nenorite sinchronizuoti jokių kontaktų „Google“, galite palikti jį
         tuščią.
       already_exist: >-
-        Šis el. Laiškas jau sukonfigūruotas. Negalite dar kartą pridėti to
-        paties el. Pašto.
+        Šis el. laiškas jau sukonfigūruotas. Negalite dar kartą pridėti to
+        paties el. pašto adreso.
       form:
         sync_type: Sinchronizacijos tipas
         account_not_configured: >-
@@ -6617,10 +6631,8 @@ lt:
       MERGE_REMOTE: Sujungti „Google“ ir „Freshdesk“ kontaktus („Google“ pirmenybė)
       email: El. paštas
       tag_label: Sinchronizuoti žymą
-      last_sync_time: Paskutinis sinchronizavimo laikas
-      OVERWRITE_REMOTE: >-
-        Importuokite „Google“ kontaktus ir visus atnaujinimus į „Freshdesk“
-        kontaktus
+      last_sync_time: Naujausias sinchronizavimo laikas
+      OVERWRITE_REMOTE: Įkelti „Google“ kontaktus ir visus atnaujinimus į „Freshdesk“ kontaktus
       tag: Sinchronizavimo nustatymas
       MERGE_REMOTE_small: Sujungti („Google“ pirmenybė)
       import: Įkelti
@@ -6628,37 +6640,36 @@ lt:
       MERGE_LOCAL_small: Sujungti („Freshdesk“ pirmenybė)
       edit_helptext: >-
         <h4>Google“ kontaktų sinchronizavimo pagalba</h4><p><br/> <b>Pasirinkite
-        grupes importuoti</b> <br/> Be „Google“ sinchronizavimo nustatymo,
-        pasirinktinai galite importuoti kontaktus iš esamų čia išvardytų grupių.
-        Pasirinkite grupes, iš kurių norite importuoti kontaktus į
+        grupes įkelimui</b> <br/> Be „Google“ sinchronizavimo nustatymo,
+        pasirinktinai galite įkelti kontaktus iš esamų čia išvardytų grupių.
+        Pasirinkite grupes, iš kurių norite įkelti kontaktus į
         „Freshdesk“.<br/><br/> <b>Sinchronizavimo nustatymas</b><br/> Šis
-        nustatymas kontroliuoja „Google“ ir „Freshdesk“ kontaktų
-        sinchronizavimą. „Freshdesk“ kontaktai, pažymėti nurodytu
-        <b>„Sinchronizavimo žyma“</b> bus sinchronizuojami su „Google“. Be to,
-        „Google“ importuojami kontaktai bus pažymėti <b>„Sync“
-        žyme</b>.<br/><br/> Čia bus sukurta speciali grupė, skirta
-        sinchronizuoti kontaktus su „Google“. Po pirmojo importo, visi prie šios
-        grupės pridėti kontaktai bus sinchronizuojami atgal į „Freshdesk“ ir
-        atvirkščiai.
+        nustatymas vadovauja „Google“ ir „Freshdesk“ kontaktų sinchronizavimą.
+        „Freshdesk“ kontaktai, pažymėti nurodyta <b>Sinchronizavimo žyma</b> bus
+        sinchronizuojami su „Google“. Be to, „Google“ įkeliami kontaktai bus
+        pažymėti <b>Sinchronizavimo žyma</b>.<br/><br/> Čia bus sukurta speciali
+        grupė, skirta sinchronizuoti kontaktus su „Google“. Po pirmojo įkėlimo,
+        visi prie šios grupės pridėti kontaktai bus sinchronizuojami atgal į
+        „Freshdesk“ ir atvirkščiai.
       syncing_in_progress: Sinchronizavimas vyksta
-      install: Importuoti ir aktyvuoti
+      install: Įkelti ir aktyvuoti
       desc: Periodiškai sinchronizuokite „Google“ ir „Freshdesk“ kontaktus.
       account: Paskyra
       OVERWRITE_LOCAL: >-
-        Eksportuokite „Freshdesk“ kontaktus ir visus naujinimus į „Google“
+        Perkelkite „Freshdesk“ kontaktus ir visus naujinimus į „Google“
         kontaktus
       enable_integration: >-
-        Pradėję automatinį sinchronizavimą, kai importas baigiamas (kasdien
+        Pradėkite automatinį sinchronizavimą, kai įkėlimas baigtas (kasdien
         kartą).
       overwrite_existing_user: Pakeiskite esamus kontaktinius duomenis „Freshdesk“
-      OVERWRITE_LOCAL_small: Eksportuoti
+      OVERWRITE_LOCAL_small: Perkėlimas
       MERGE_LOCAL: Sujungti „Freshdesk“ ir „Google“ kontaktus („Freshdesk“ pirmenybė)
       no_status: Nėra
       account_not_configured: >-
-        „Google“ paskyra nėra tinkamai sukonfigūruota. Prašau, pabandykite dar
+        „Google“ paskyra nėra tinkamai sukonfigūruota. Prašome pabandyti dar
         kartą.
       sync_group_info: >-
-        Gmail paskyroje bus sukurta nauja kontaktų grupė
+        „Gmail“ paskyroje bus sukurta nauja kontaktų grupė
         <strong>%{group_name}</strong> kontaktų sinchronizavimui.
       not_yet_synced: Sinchronizavimas nepradėtas.
       helptext: >-
@@ -6666,42 +6677,42 @@ lt:
         Spustelėkite <b>„Sinchronizuoti naują paskyrą“</b> kad pridėtumėte naują
         „Google“ paskyrą sinchronizavimui. Kai bus paprašyta, suteikite prieigą
         prie „Freshdesk“, kad galėtumėte naudoti „Google“ kontaktus (jei
-        prašoma, įveskite „Google“ naudotojo vardą ir slaptažodį).<br/><br/>Jei
-        nenorite sinchronizuoti su šia paskyra, galite ištrinti
-        paskyrą.<br/><br/><b>Pastaba:</b> Prieš pradėdami sinchronizavimą,
+        prašoma, įveskite „Google“ vartotojo vardą ir slaptažodį).<br/><br/>Jei
+        daugiau nenorite sinchronizuoti su šia paskyra, galite ją
+        ištrinti.<br/><br/><b>Pastaba:</b> Prieš pradedant sinchronizavimą,
         rekomenduojama naudoti ir saugoti „Google“ kontaktų atsarginę kopiją.
       import_success: |-
-        Sėkmingai importuoti „Google“ kontaktai.
+        „Google“ kontaktai sėkmingai įkelti.
         Būsena: %{added} Pridėta, %{updated} Atnaujinta ir %{deleted} Ištrinta.
       sync_status:
         added: pridėta
-        modified: modifikuotas
-        freshdesk: Importuotas kontaktų statusas „Freshdesk“
-        google: „Google“ eksportuotų kontaktų būsena
+        modified: pakeista
+        freshdesk: Įkeltų kontaktų būsena „Freshdesk“
+        google: Perkeltų kontaktų būsena „Google“
         deleted: ištrinta
-      import_success_no_stats: Sėkmingai importuoti „Google“ kontaktai.
-      last_sync_status: Paskutinė sinchronizavimo būsena
-      import_problem: Problema importuojant „Google“ kontaktus.
+      import_success_no_stats: „Google“ kontaktai sėkmingai įkelti.
+      last_sync_status: Naujausia sinchronizavimo būsena
+      import_problem: Problema įkeliant „Google“ kontaktus.
       edit_form:
-        install_title: „Google“ kontaktų sinchronizavimo nustatymas
+        install_title: „Google“ kontaktų sinchronizavimo nustatymai
         edit_app_title: Redaguokite „Google“ kontaktų sinchronizavimo nustatymą
         mail_box_detail: Sinchronizuoti su
-        import_group: 'Pasirinkite grupes, kurias norite importuoti (neprivaloma)'
-        import_title: „Google“ kontaktų importavimo nustatymas
+        import_group: 'Pasirinkite grupes, kurias norite įkelti (neprivaloma)'
+        import_title: „Google“ kontaktų įkėlimo nustatymas
     batchbook:
       form:
         api_key: API raktas
         api_key_info: >-
-          Jūsų „Batchbook“ API raktą galima rasti vadovaudamiesi nuoroda „
-          <i>jūsų paskyra</i>.
+          Jūsų „Batchbook“ API raktą galite rasti sekdami „<i>Jūsų paskyros</i>
+          nuoroda „Batchbook“.
         widget_title: Valdiklio pavadinimas
         domain_info: >-
-          Pavyzdžiui, jei jūsų partijos knygos URL yra
+          Pavyzdžiui, jei jūsų „Batchbook“ URL yra
           <strong>http://mycompany.batchbook.com/</strong> , įveskite <strong>
-          mycompany“ </strong>. </span>
+          manoįmonė“ </strong>. </span>
         version_info: >-
-          Versijų laukas leidžia pasirinkti tarp <i>Classic“</i> ir
-          <i>Batchbook“</i>.
+          Versijų laukeliai leidžia pasirinkti tarp <i>„Classic“</i> ir
+          <i>„Batchbook“</i>.
         domain: '„Batchbook“ domenas:'
       helptext: >-
         <h4>„Batchbook“ integracija</h4>„Batchbook“ integravimas
@@ -6716,13 +6727,13 @@ lt:
       desc: Įtraukite kontaktinę informaciją iš „Batchbook“ paskyros į „Freshdesk“
     cti_admin:
       save_agent_private_note: Išsaugokite skambučių pastabas kaip privačias
-      ctd_toggle: 'Konfigūruoti spragtelėjimą, kad rinktumėte'
+      ctd_toggle: 'Konfigūruoti spragtelėjimą, kad skambinti'
       softfone:
-        max_dimension: Max 550px &times; 250 taškų
+        max_dimension: Daugiausia 550 taškų &times; 250 taškų
         width: Plotis
         height: Aukštis
         url: „Iframe“ URL
-      desc: Suvienodinkite savo telefonijos patirtį „Freshdesk“
+      desc: Suvienodinkite savo telefono naudojimosi patirtį „Freshdesk“
       title: CTI nustatymai
       iframe_toggle: Įgalinti „Softphone Iframe“
       phone:
@@ -6730,20 +6741,20 @@ lt:
         cancel: Atšaukti
         add_number: Pridėti numerį
         number_not_in_use: Nenaudojama
-        add_number_tooltip: Kiekvienoje eilutėje turi būti tik vienas numeris
+        add_number_tooltip: Kiekvienoje eilutėje turi būti tik vienas skaičius
         title: Pagalbos tarnybos numeriai
         delete_number: Patvirtinkite
         delete_msg: Ar tikrai norite ištrinti šį numerį?
         number_in_use: Naudojami numeriai
       helptext: >-
         <p>Integruokite savo telefono sistemą su savo internetine pagalbos
-        tarnyba, naudodami Freshdesk CTI sistemą. Su mūsų paprasta dokumentacija
-        ir paprasta API, prisijungti prie savo interneto pagalbos telefonu su
-        telefono sistema tampa pėsčiomis parke.</p><p>Kai baigsite nustatyti
-        savo adapterį su mūsų pagalbos tarnyba, jūsų palaikymo agentai galės
-        skambinti, priimti skambučių duomenis, skambučių metu užsirašinėti ir
-        palaikyti kontekstą, kad būtų užtikrinta, jog žandikaulio laužymas yra
-        nuostabus klientų aptarnavimas.</p><p><a href='
+        tarnyba, naudodami „Freshdesk“ CTI sistemą. Su mūsų paprasta
+        dokumentacija ir API, susieti savo internetinę pagalbos tarnybą su
+        telefonų sistema yra vieni juokai.</p><p>Nustačius savo adapterį mūsų
+        pagalbos tarnyboje, jūsų pagalbą teikiantys agentai galės skambinti,
+        priimti skambučius, matyti klientų duomenis, skambučių metu užsirašinėti
+        ir sekti situaciją, taip užtikrindami nuostabų aptarnavimą.</p><p><a
+        href='
         https://support.freshdesk.com/solution/articles/221418-computer-telephony-integration-framework'>
         Sužinokite daugiau </a>
       ctd:
@@ -6758,7 +6769,7 @@ lt:
         password: Slaptažodis
         have_user_pass: Turiu vartotojo vardą ir slaptažodį?
     uninstall: Pašalinti
-    native_integrations: Gimtosios integracijos
+    native_integrations: Vietinės integracijos
     custom_application:
       script: Scenarijus
       name: Vardas
@@ -6768,29 +6779,31 @@ lt:
         create_n_enable: Sukurti ir įgalinti
         widget_title: Valdiklio pavadinimas
         insert_placeholder: Įterpti vietos žymeklį
-      get_custom_apps: Gaukite pritaikytas programas
-      edit_custom_app: Redaguoti pritaikytą programą
+      get_custom_apps: Gaukite pritaikytas programėles
+      edit_custom_app: Redaguoti pritaikytą programėlę
       desc: >-
-        Galite pridėti pasirinktinį valdiklį, kad būtų rodoma bet kokia detalė,
-        naudodama savo pasirinktą scenarijų.
-      new_custom_app: Nauja pritaikyta programa
+        Galite pridėti pasirinktinį valdiklį su savo pasirinktu scenarijumi, kad
+        būtų rodoma bet kokia detalė.
+      new_custom_app: Nauja pritaikyta programėlė
     github_settings:
       resolved: Išspręsta
-      none: Nieko nedaryk
+      none: Nieko nedarykite
       closed: Uždaryta
     slack_v3:
       slack_reauth_btn: Iš naujo autorizuokite „Slack“
       slack_prof_label: Prisijunkite prie „Slack“
       slack_connect_desc: 'Konfigūruokite paskyrą, kad sukurtumėte „Slack“ užklausas iš „Slack“'
-      slack_auth_btn: Įgalioti „Slack“
+      slack_auth_btn: Patvirtinti „Slack“
     knowlarity:
-      desc: Sklandžiai sujunkite savo „Knowlarity“ ryšį su „Freshdesk“
+      desc: >-
+        Sklandžiai susiekite savo „Knowlarity“ aptarnavimui telefonu su
+        „Freshdesk“
       helptext: >-
-        <h4>knowlarity Integracijos žinynas</h4><p><br/>Šią integraciją galite
-        nustatyti įvesdami žinios numerį ir API raktą.</p><p>Kai įgalinsite,
-        puslapio apačioje galėsite matyti telefono piktogramą.</p>
+        <h4>„Knowlarity“ Integracijos žinynas</h4><p><br/>Šią integraciją galite
+        nustatyti įvesdami „Knowlarity“ numerį ir API raktą.</p><p>Kai
+        įgalinsite, puslapio apačioje galėsite matyti telefono piktogramą.</p>
     google_hangout_chat:
-      desc: Gaukite pranešimą apie „Freshdesk“ bilietą ir pastabų atnaujinimus.
+      desc: Gaukite pranešimą dėl „Freshdesk“ užklausų ir pastabų atnaujinimų.
     workflow_max:
       desc: >-
         Galite įvesti laiką, kurį užtrukote atsakydami į pateiktas užklausas į
@@ -6799,96 +6812,94 @@ lt:
         workflow_max_note: 'Pažymi tekstą, kurį norite pridėti'
         widget_title: Valdiklio pavadinimas
         account_key: Paskyros raktas
-        workflow_max_note_info: >-
-          Šis tekstas bus pridėtas pastabos pabaigoje, nurodant praleistą
-          žurnalo laiką.
+        workflow_max_note_info: 'Šis tekstas bus pridėtas pastabos pabaigoje, nurodant praleistą laiką.'
         api_key_info: >-
-          Paprašykite savo „API“ rakto iš „Workflow Max“ palaikyti ir įklijuoti
-          tą patį čia.
+          Paprašykite savo „API“ rakto iš „Workflow Max“ pagalbos ir įklijuoti
+          jį čia.
         account_key_info: >-
-          Paprašykite savo sąskaitos rakto iš darbo eigos maksimalios palaikymo
-          ir įklijuokite tą patį čia.
+          Paprašykite savo paskyros rakto iš „Workflow Max“ pagalbos ir
+          įklijuoti jį čia.
         api_key: API raktas
       helptext: >-
-        <h4>Darbo eigos maksimalios integracijos žinynas</h4><p><br/> Norėdami
-        integruoti „Workflow Max“ laiko stebėjimą su „Freshdesk“, turite gauti
-        „Account Key“ ir „API“ raktą iš <a
-        href='mailto:support@workflowmax.com'>WorkflowMax“ palaikymo</a>.
-        Įveskite raktus į nurodytus laukus, kad užbaigtumėte integraciją.
-        <br/><br/>Integravus spustelėkite bet kurį bilietą ir eikite į skirtuką
-        Laiko lapas. Tada galite pasirinkti darbuotojus, darbą ir užduotį, kad
-        pridėtumėte laiko įrašus į „Workflow Max“.
+        <h4>„Workflow Max“ integracijos pagalba</h4><p><br/> Norėdami integruoti
+        „Workflow Max“ laiko stebėjimą su „Freshdesk“, turite turėti paskyros
+        raktą ir API raktą iš <a
+        href='mailto:support@workflowmax.com'>„WorkflowMax“ pagalbos</a>.
+        Įveskite raktus į nurodytus laukelius, kad užbaigtumėte integraciją.
+        <br/><br/>Integravus spustelėkite bet kurią užklausą ir eikite į
+        skirtuką Laiko lakšto ąselė. Tada galite pasirinkti darbuotojus, darbą
+        ir užduotį, kad pridėtumėte laiko įrašus į „Workflow Max“.
     office365:
       desc: >-
-        „Office 365“ programa, skirta „Freshdesk“, leidžia atlikti „Outlook“
-        vidaus bilietų veiksmus, apimančius prioritetų keitimą, agento
-        priskyrimą, būsenos keitimą ir kt.
-      helptext: <h4>Office 365“</h4>
+        „Office 365“ programėlė, skirta „Freshdesk“, leidžia tvarkyti „Outlook“
+        vidines užklausas: keisti pirmenybę, priskirti agentą, pakeisti būseną
+        ir kt
+      helptext: <h4>„Office 365“</h4>
     drishti:
       helptext: >-
-        <h4>Ameyo integracijos žinynas</h4><p><br/>Šią integraciją galite
-        nustatyti įvesdami Ameyo CTI juostos adresą, kuris gali būti IP adresas
-        arba domeno vardas</p><p>Galite pasirinkti konvertuoti skambučių įrašus
-        į bilietą arba pridėti kaip pastabą prie esamo bilieto . Spustelėkite
-        parinktį "konvertuoti visus įrašus į bilieto", kad ji numatytąją
-        sąranką</p><p>Kai įjungta, jums bus suteikta galimybė pamatyti telefono
-        piktogramą puslapio apačioje</p>
+        <h4>„Ameyo“ integracijos pagalba</h4><p><br/>Šią integraciją galite
+        nustatyti įvesdami „Ameyo“ CTI juostos adresą, kuris gali būti IP
+        adresas arba domeno pavadinimas</p><p>Galite pasirinkti konvertuoti
+        skambučių įrašus į užklausą arba pridėti kaip pastabą prie esamos
+        užklausos. Spustelėkite parinktį "konvertuoti visus įrašus į užklausą",
+        kad ji taptų numatytu nustatymu</p><p>Kai įgalinsite, galėsite matyti
+        telefono piktogramą puslapio apačioje</p>
       desc: >-
-        Atsakykite į skambučius arba paleiskite skambutį su šiuo galingu „Ameyo“
-        telefonijos pajėgumu, įtvirtintu Freshdesk
+        Atsakykite į skambučius arba skambinkite su šia galinga „Ameyo“ telefono
+        sistema „Freshdesk“
     xero:
       form:
         xero_settings: 'Organizacijos pavadinimas:'
         accounts: Sąskaitų pasirinkimo diagrama (pajamos)
-        default_desc: Numatytojo sąskaitos faktūros aprašymas
+        default_desc: Numatytojos sąskaitos faktūros aprašymas
         inventory_items: Inventoriaus elementų pasirinkimas
-      desc: Sukurkite „Xero“ sąskaitas už Freshdesk bilieto laiko lapo įrašus.
+      desc: Sukurkite „Xero“ sąskaitas už „Freshdesk“ užklausos laiko įrašus.
       helptext: >-
-        <h4>Xero Integration Options“ („Xero integracijos
-        parinktys“)</h4><br><P>Pasirinkite „Xero“ paskyrų pavadinimus, esančius
-        „Revenue“ paskyros dalyje, kurią agentai gali pasiekti kurdami
-        sąskaitas. Pardavimai galimi pagal numatytuosius nustatymus. Jei
-        Pardavimų nėra, pirmasis prieinamas paskyros pavadinimas yra nustatytas
-        kaip numatytasis.</p><p>Taip pat galite pasirinkti Xero inventorizacijos
-        elementus, kuriuos agentai gali susieti su laiko apskaitos žinutės
+        <h4>„Xero“ integracijos parinktys</h4><br><P>Pasirinkite „Xero“ paskyrų
+        pavadinimus, esančius „Revenue“ paskyros dalyje, prie kurios agentai
+        turi prieigą kurdami paskyras. Pardavimai galimi pagal numatytuosius
+        nustatymus. Jei Pardavimų nėra, pirmasis prieinamas paskyros pavadinimas
+        yra nustatytas kaip numatytasis.</p><p>Taip pat galite pasirinkti „Xero“
+        inventoriaus elementus, kuriuos agentai gali susieti su laiko apskaitos
         įrašais, kurdami sąskaitos faktūros eilutės elementus.</p><p>Galima
-        pasirinkti ne daugiau kaip 20 sąskaitų pavadinimų ir 30 atsargų.</p>
+        pasirinkti ne daugiau kaip 20 paskyrų pavadinimų ir 30 inventoriaus
+        elementų.</p>
     magento:
       form:
         admin_url_info: 'Pavyzdžiui, <strong>https://my_shop_name.com/admin</strong>.'
         remove_shop: Pašalinkite šią parduotuvę
         shop_name: Parduotuvės pavadinimas
         invalid_shop_url: Įvestas parduotuvės URL yra neteisingas.
-        consumer_secret: Vartotojų paslaptis
+        consumer_secret: Vartotojo paslaptis
         add_shop: + Pridėti parduotuvę
         product: Produktas
         admin_url: Administratoriaus URL
         shop_url: Parduotuvės URL
-        shop_url_info: 'Pavyzdžiui, <strong>https://my_shop_name.com</strong>.'
+        shop_url_info: 'Pavyzdžiui, <strong>https://mano_parduotuvės_pavadinimas.com</strong>.'
         invalid_admin_url: Įvestas administratoriaus URL neteisingas.
-        consumer_key: Vartotojų raktas
+        consumer_key: Vartotojo prieigos raktas
       desc: >-
         Peržiūrėkite kliento naujausius užsakymus ir užsakymų informaciją
         „Freshdesk“, spręsdami užklausas
       helptext: >-
-        <h4>Magneto integracija</h4><br/><p>Konfigūruokite savo parduotuvės
-        pavadinimą, kad būtų rodomi paskutiniai užsakymai „Freshdesk“. Jūs
-        būsite nukreipti į „Magento“ parduotuvę, kad galėtumėte įgalioti
-        „Freshdesk“. Patvirtinus galėsite peržiūrėti kliento naujausius
-        užsakymus ir užsakymo duomenis Bilietų informacijos puslapyje. Galite
+        <h4>„Magento“ integracija</h4><br/><p>Konfigūruokite savo parduotuvės
+        pavadinimą, kad būtų rodomi paskutiniai kliento užsakymai „Freshdesk“.
+        Jūs būsite nukreipti į „Magento“ parduotuvę, kur galėsite patvirtinti
+        „Freshdesk“. Patvirtinę, galėsite peržiūrėti kliento naujausius
+        užsakymus ir užsakymo duomenis užklausų informacijos puslapyje. Galite
         greitai pasiekti „Magento“ duomenis su vienu spustelėjimu iš
         valdiklio.</p>
     surveymonkey:
       edit_form:
-        send_while_title: 'Pasirinkite, kurie el. Laiškai turi apklausos nuorodą'
+        send_while_title: 'Pasirinkite, kurie el. pašto adresai turi apklausos nuorodą'
         survey_link_text:
           description: >-
-            Šis tekstas rodomas žemiau jūsų parašo klientui siunčiamo el. Laiško
+            Šis tekstas rodomas žemiau jūsų parašo klientui siunčiamo el. laiško
             apačioje, kartu su apklausos nuoroda.
           label: Apklausos nuorodos tekstas
           default_content: >-
-            Prašome atlikti šį tyrimą, kad padėtų mums geriau aptarnauti jus.
-            Tai negaus daugiau nei 2 min.
+            Prašome atlikti šią apklausą, kad padėtumėte pagerinti mūsų
+            aptarnavimą. Tai neužtruks daugiau nei 2 min.
       enable_integration_text: >-
         Spustelėkite mygtuką Įjungti, jei norite prisijungti prie „Surveymonkey“
         paskyros ir konfigūruoti integraciją.
@@ -6896,26 +6907,26 @@ lt:
         survey_settings: ''
         survey_settings_info: ''
       helptext: >-
-        <h4>SurveyMonkey“ integracija</h4><p>Ši integracija leidžia susieti
-        pasirinktą pasirinktą apklausą iš „SurveyMonkey“ paskyros, kad gautumėte
-        atsakymus į „Freshdesk“, remiantis grupe, kuriai priklauso bilietas. Ją
-        galima naudoti, kad pakeistumėte numatytąjį pasitenkinimo tyrimą savo
-        pagalbos tarnyboje arba naudokite kartu su juo.</p><p>Sujungę savo
-        „SurveyMonkey“ paskyrą, galite pasirinkti apklausą ir <a
+        <h4>„SurveyMonkey“ integracija</h4><p>Ši integracija leidžia susieti
+        pasirinktą apklausą iš „SurveyMonkey“ paskyros ir siųsti atsakymus į
+        „Freshdesk“, remiantis tuo, kuriai grupei priklauso užklausa. Ją galima
+        naudoti vietoj numatytos pasitenkinimo apklausos savo pagalbos tarnyboje
+        arba naudoti kartu su ja.</p><p>Sujungę savo „SurveyMonkey“ paskyrą,
+        galite pasirinkti apklausą ir <a
         href='http://help.surveymonkey.com/articles/en_US/kb/How-do-I-send-my-survey-to-respondents-or-get-responses-to-my-survey'
         target='_blank'>rinktuvą</a> kurį norite naudoti, naudodami
-        išskleidžiamuosius langelius ir žemėlapius į įvairias Freshdesk bilietų
-        grupes. </p><p>Jūs taip pat nuspręsite, kada norite, kad apklausos
-        nuorodos būtų įtrauktos į atsakymus. Pavyzdžiui, ji gali būti
-        sukonfigūruota prijungti apklausas automatiškai, kai bilietas tampa
-        uždarytas ar išspręstas arba nustatytas rankiniu būdu, kad agentai
-        galėtų pasirinkti save su kiekvienu bilietu. </p>
+        išskleidžiamuosius langelius ir nukreipti jas į įvairias „Freshdesk“
+        užklausų grupes. </p><p>Jūs taip pat galite nuspręsite, kada norite, kad
+        apklausos nuorodos būtų įtrauktos į atsakymus. Pavyzdžiui, galima
+        nustatyti, kad uždarius arba išsprendus užklausą, apklausa būtų
+        pridedama automatiškai arba nustatyti rankiniu būdu, kad agentai galėtų
+        pasirinkti patys kiekvienoje užklausoje. </p>
       desc: >-
         Integruokite „Freshdesk“ su „SurveyMonkey“ ir leiskite savo agentams
         susieti visus jūsų pritaikytus tyrimus su jų pranešimais, kai jie atsako
         į užklausas.
     nimble:
-      desc: Jūs galite peržiūrėti kontaktinę informaciją iš Nimble crm Freshdesk.
+      desc: Jūs galite peržiūrėti kontaktinę „Nimble crm“ informaciją „Freshdesk“.
     salesforce_v2:
       form:
         salesforce_v2_settings_info: ''
@@ -6924,55 +6935,57 @@ lt:
         ticket_sync: Sinchronizuokite užklausas į „Salesforce“
         freshdesk_to_crm: Nuo „Freshdesk“ iki „Salesforce“
       helptext: >-
-        <h4>Salesforce Plus</h4><p><br/>„Salesforce Sync“ konfigūracijos
-        nustatymo instrukcijose ir instrukcijose žr. <a
+        <h4>„Salesforce Plus“</h4><p><br/>Norėdami peržiūrėti „Salesforce Sync“
+        konfigūracijos instrukcijas, skaitykite <a
         href='https://support.freshdesk.com/solution/articles/224042-the-salesforce-app-for-v2'
-        target='_blank'>„Salesforce Plus App</a> straipsnį. </p>
+        target='_blank'>„Salesforce Plus“ programėlės</a> straipsnį. </p>
       desc: >-
-        Galite sinchronizuoti „Contact and Account“ informaciją tarp „Salesforce
-        crm“ ir „Freshdesk“.
+        Galite sinchronizuoti kontaktinę ir paskyros informaciją tarp
+        „Salesforce crm“ ir „Freshdesk“.
     fullcontact:
       form:
         api_key: „FullContact“ API raktas
       desc: >-
-        Automatizuokite kontaktų duomenų praturtinimą naujiems kontaktams ir
+        Automatizuokite kontaktinių duomenų papildymą naujiems kontaktams ir
         atnaujinkite pasenusius kontaktinius duomenis
       helptext: >-
-        <h4>Įmonės nustatymai</h4><br/>Įmonės duomenys yra išgauti iš
+        <h4>Įmonės nustatymai</h4><br/>Įmonės duomenys yra gaunami iš
         „FullContact“ ir atnaujinami jūsų „Freshdesk“ sistemoje, jei įmonė yra
-        sukurta arba kai pagalbos tarnyboje atnaujinamas įmonės domenas. Galite
-        atsiųsti iki 6 laukų iš „FullContact“, kad atnaujintumėte
-        „Freshdesk“.<br/><br/><h4>Adresų nustatymai</h4><br/>Kontaktiniai
-        duomenys gaunami iš „FullContact“ ir atnaujinami jūsų „Freshdesk“, kai
-        jūsų pagalbos tarnyboje sukuriamas kontaktas. Esami „Freshdesk“ duomenys
-        nebus perrašyti. Galite pasirinkti ne daugiau kaip penkis socialinius
-        profilius.<br/><br/>Norėdami išsaugoti „FullContact“ duomenis,
-        „Freshdesk“ sukuriamas numatytasis žemėlapis. Jei norite nustatyti
-        vietos ir socialinius profilius, turėsite sukurti naujus priskirtus
-        stulpelius. Jei reikia, administratorius gali bet kuriuo metu pakeisti
-        arba ištrinti „FullContact“ duomenų elemento žemėlapius.
+        sukurta arba kai jūsų pagalbos tarnyboje yra atnaujinamas įmonės
+        domenas. Galite atsiųsti iki 6 laukelių iš „FullContact“, kad
+        atnaujintumėte „Freshdesk“.<br/><br/><h4>Kontaktinės informacijos
+        nustatymai</h4><br/>Kontaktiniai duomenys gaunami iš „FullContact“ ir
+        atnaujinami jūsų „Freshdesk“, kai jūsų pagalbos tarnyboje sukuriamas
+        kontaktas. Esami „Freshdesk“ duomenys nebus perrašyti. Galite pasirinkti
+        ne daugiau kaip penkis socialinių tinklų profilius.<br/><br/>Norint
+        išsaugoti „FullContact“ duomenis, „Freshdesk“ sukuriamas numatytasis
+        atvaizdavimas. Jei norite nustatyti vietos ir socialinių tinklų
+        profilius, turėsite sukurti naujus priskirtus stulpelius. Jei reikia,
+        administratorius gali bet kuriuo metu pakeisti arba ištrinti
+        „FullContact“ duomenų elemento atvaizdavimą.
     constantcontact:
       desc: >-
-        Integruokite savo „Constant Contact“ paskyrą, kad galėtumėte
-        kontroliuoti savo prenumeratą „Freshdesk“ ir gauti atnaujintą
-        informaciją apie klientus ir jų veiklą.
-      helptext: <h4>ConstantContact“ integracijos pagalba</h4>
+        Integruokite savo „Constant Contact“ paskyrą, kad galėtumėte valdyti
+        savo prenumeratą „Freshdesk“ ir gauti atnaujintą informaciją apie
+        klientus ir jų veiklą.
+      helptext: <h4>„ConstantContact“ integracijos pagalba</h4>
     salesforce:
       form:
         select: Pasirinkite parinktį
-        opportunity: Galimybių laukai
-        lead: Švino laukai
-        opportunity_settings: Agentai gali sukurti / susieti ar atsieti galimybes iš bilieto
+        opportunity: Galimybių laukeliai
+        lead: Vadovo laukeliai
+        opportunity_settings: Agentai gali sukurti / susieti ar atsieti užklausas
         salesforce_settings_info: ''
         contact: Kontaktų laukeliai
         salesforce_settings: „Salesforce“ nustatymai
-        account: Paskyros laukai
-      desc: Kontaktinę informaciją galite peržiūrėti „Salesforce crm“ Freshdesk.
+        account: Paskyros laukeliai
+      desc: Kontaktinę informaciją galite peržiūrėti „Salesforce crm“ „Freshdesk“.
       helptext: >-
-        <h4>Salesforce integracija</h4><p><br/>Pasirinkite laukų sąrašą, kuris
-        turi būti rodomas salesforce valdiklyje. Galite pasirinkti ne daugiau
-        kaip 10 laukų.</p><p><strong>Pastaba:</strong><br/>Pavadinimas yra
-        numatytasis laukas ir negali būti pašalintas.</p>
+        <h4>„Salesforce“ integracija</h4><p><br/>Pasirinkite laukelių sąrašą,
+        kuris turi būti rodomas „Salesforce“ valdiklyje. Galite pasirinkti ne
+        daugiau kaip 10
+        laukelių.</p><p><strong>Pastaba:</strong><br/>Pavadinimas yra
+        numatytasis laukelis ir negali būti pašalintas.</p>
     capsule_crm:
       helptext: >-
         <h4>Nuoroda iš „Capsule“ į „Freshdesk“</h4><p><br/>Galite sukurti
@@ -6987,79 +7000,80 @@ lt:
     freshsales:
       form:
         auth_token: Autentifikavimo raktas
-        deal: Spręsti laukus
-        lead: Švino laukai
+        deal: Sanderio laukeliai
+        lead: Vadovo laukeliai
         error: Patikrinkite nustatymus ir bandykite dar kartą
-        deal_settings: Agentai gali sukurti / susieti ar atsieti sandorius iš bilieto
+        deal_settings: Agentai gali sukurti / susieti ar atsieti sandorius iš užklausų
         freshsales_settings: „Freshsales“ nustatymai
-        auth_token_info: Įveskite autentifikavimo raktą
+        auth_token_info: Įveskite savo autentifikavimo raktą
         select: Pasirinkite parinktį
         domain: Paskyros domenas
-        account: Paskyros laukai
+        account: Paskyros laukeliai
         contact: Kontaktų laukeliai
         domain_info: >-
           Įveskite savo naujienų domeną be https. Pavyzdžiui,
           pavyzdys.freshsales.io
       helptext: >-
-        <h4>Freshsales Integration Help</h4><p><br/> Kai įgalinsite šią
-        integraciją, jūsų agentai gali gauti „Freshsales“ kontaktinę informaciją
-        tiesiai Freshdesk bilietų ir kontaktų puslapiuose. <br /><br />
-        Atkreipkite dėmesį, kad jūsų agentai gali peržiūrėti tik tuos laukus,
-        kuriuos jūs nustatėte nustatymų puslapyje, o paieškos funkcija yra
-        pagrįsta el. Pašto adreso žemėlapiu.
-      desc: Kontaktinę informaciją galite peržiūrėti „Freshsales“ Freshdesk.
+        <h4>„Freshsales“ integravimo pagalba</h4><p><br/> Kai įgalinsite šią
+        integraciją, jūsų agentai galės gauti „Freshsales“ kontaktinę
+        informaciją tiesiai iš „Freshdesk“ užklausų ir kontaktinių puslapių. <br
+        /><br /> Atkreipkite dėmesį, kad jūsų agentai gali peržiūrėti tik tuos
+        laukelius, kuriuos jūs nustatėte nustatymų puslapyje, o paieškos
+        funkcija yra pagrįsta el. pašto adreso atvaizdavimu.
+      desc: Kontaktinę informaciją galite peržiūrėti iš „Freshsales“ „Freshdesk“.
     slack_v2:
       helptext: >-
-        <h4>Slack Integration</h4><br><p>Pasirinkite viešųjų kanalų ir privačių
-        grupių sąrašą, kurį norite pateikti „Freshdesk“ dispečeriui ir
-        stebėtojui. Nustatydami automatizavimo taisykles, galite nurodyti, kurį
-        kanalą norite siųsti. </p>
-      desc: Pasilikite su Freshdesk dėl „Slack“.
+        <h4>„Slack“ integracija</h4><br><p>Pasirinkite viešųjų kanalų ir
+        privačių grupių sąrašą, kurį norite pateikti „Freshdesk“ dispečeriui ir
+        stebėtojui. Nustatydami automatizavimo taisykles, galite nurodyti, į
+        kurį kanalą norite siųsti pranešimus. </p>
+      desc: Naudokitės tik naujausia „Freshdesk“ versija „Slack“.
       form:
-        access_private_channel: Leisti prieigą prie privačių kanalų
-        access_public_channel: Leisti prieigą prie viešųjų kanalų
-        allow_dm_agent: Leiskite DM agentui
+        access_private_channel: Suteikti prieigą prie privačių kanalų
+        access_public_channel: Suteikti prieigą prie viešųjų kanalų
+        allow_dm_agent: Leiskite AŽ agentui
         allow_slash_command: >-
-          Leisti slinkties komandą (<a
+          Leisti „Slash“ komandas (<a
           href='https://support.freshdesk.com/support/solutions/articles/206103'
-          target='_blank'> Konvertuoti „Slack DM“ į „Freshdesk“ bilietą </a>)
-        slash_command_token: Slash Command Token
-        slack_v2_settings: Atlaisvinkite nustatymus
+          target='_blank'> Konvertuoti „Slack“ AŽ į „Freshdesk“ užklausą </a>)
+        slash_command_token: „Slash“ komandos prieigos raktas
+        slack_v2_settings: „Slack“ nustatymai
     czentrix:
       desc: >-
-        Atsakykite į skambučius arba paleiskite skambutį su šiuo galingu
-        „C-zentrix“ telefonijos pajėgumu, įtvirtintu Freshdesk
+        Atsakykite į skambučius arba skambinkite su šia galinga „C-zentrix“
+        telefono sistema „Freshdesk“
       helptext: >-
-        <h4>C-Zentrix integracijos pagalba</h4><p><br/>Šią integraciją galite
-        nustatyti įvesdami C-zentrix CTI juostos adresą, kuris gali būti IP
-        adresas arba domeno vardas</p><p>Galite pasirinkti, kad pokalbio įrašai
-        būtų konvertuoti į bilietą arba pridėti kaip pastabą į esamą bilietą.
-        Spustelėkite parinktį "konvertuoti visus įrašus į bilieto", kad ji
-        numatytąją sąranką</p><p>Kai įjungta, jums bus suteikta galimybė
-        pamatyti telefono piktogramą puslapio apačioje</p>
+        <h4>„C-zentrix“ integracijos pagalba</h4><p><br/>Šią integraciją galite
+        nustatyti įvesdami „C-zentrix“ kompiuterinės telefono integracijos
+        juostos adresą, kuris gali būti IP adresas arba domeno
+        pavadinimas</p><p>Galite pasirinkti, kad pokalbio įrašai būtų
+        konvertuoti į užklausas arba pridėti kaip pastabas esamoje užklausoje.
+        Spustelėkite parinktį "konvertuoti visus įrašus į užklausas", kad ji
+        taptų numatytu nustatymu</p><p>Kai įgalinsite, galėsite matyti telefono
+        piktogramą puslapio apačioje</p>
     jira:
       form:
-        add_note: Pridėkite jį kaip asmeninę pastabą.
-        update_jira_status: Atnaujinkite JIRA būseną.
+        add_note: Pridėkite kaip asmeninę pastabą.
+        update_jira_status: Atnaujinkite „JIRA“ būseną.
         username: Vartotojo vardas
-        fd_status_sync: 'Dėl bet kokio Freshdesk statuso pasikeitimo %{dropdown}'
+        fd_status_sync: 'Dėl bet kokio „Freshdesk“ būsenos pasikeitimo %{dropdown}'
         jira_note: Aprašymo tekstas
         send_reply: Siųsti jį kaip atsakymą klientui.
-        jira_comment_sync: 'Dėl bet kokių komentarų, pridėtų JIRA %{dropdown}numeryje'
-        do_nothing: Nieko nedaryk.
+        jira_comment_sync: 'Dėl bet kokių komentarų, pridėtų „JIRA“ %{dropdown} problemoje'
+        do_nothing: Nieko nedarykite.
         domain: Domenas
-        jira_note_info: Šis tekstas bus pridėtas prie problemos aprašymo JIRA.
-        fd_comment_sync: 'Dėl bet kokių komentarų, pridėtų Freshdesk %{dropdown}'
+        jira_note_info: Šis tekstas bus pridėtas prie problemos aprašymo „JIRA“.
+        fd_comment_sync: 'Dėl bet kokių komentarų, pridėtų „Freshdesk“ %{dropdown}'
         password: Slaptažodis
         widget_title: Valdiklio pavadinimas
-        jira_status_sync_update_customer: Siųsti atsakymą į klientų ir atnaujinti būsenos lauką.
-        jira_status_sync: 'Dėl bet kokių JIRA išdavimo būsenos pasikeitimų %{dropdown}'
-        add_jira_comment: Pridėti kaip komentarą JIRA.
-        jira_status_sync_update_field: Atnaujinkite „Freshdesk“ būsenos lauką.
+        jira_status_sync_update_customer: Siųsti atsakymą klientui ir atnaujinti būsenos laukelį.
+        jira_status_sync: 'Dėl bet kokių pasikeitimų „JIRA“ problemos būsenoje %{dropdown}'
+        add_jira_comment: Pridėti kaip komentarą „JIRA“.
+        jira_status_sync_update_field: Atnaujinkite „Freshdesk“ būsenos laukelį.
         domain_info: >-
-          Įveskite visą JIRA paskyros URL su https / http. Ex.
+          Įveskite visą „JIRA“ paskyros URL su https / http. Pvz.,
           https://example.atlassian.net. <br /><span class='italics'> Pastaba:
-          JIRA patalpos variantai turi būti veikiami internete. </span>
+          „JIRA“ variantai turi būti rodomi internete. </span>
       desc: 'Konvertuokite užklausas į klausimus, kuriuos galima stebėti „JIRA“.'
       helptext: >-
         <h4>„JIRA“ integracijos pagalba“</h4><p><br/>Norėdami susieti „JIRA“ su
@@ -7094,40 +7108,38 @@ lt:
         integruoti, turėsite sukonfigūruoti „Pivotal Tracker“ paskyros
         informaciją ir API raktą. „API Token“ bus jūsų profilio puslapyje
         „Pivotal Tracker“ paskyroje.</p>
-      desc: Sukurkite istorijas „Pivotal Tracker“ ir sekite juos iš freshdesk
-      label: Pivotal Tracker
+      desc: Sukurkite istorijas „Pivotal Tracker“ ir sekite jas „Freshdesk“
+      label: „Pivotal Tracker“
     harvest:
       desc: >-
         Galite įvesti laiką, kurį užtrukote atsakydami į pateiktas užklausas į
         savo „Harvest“ darbus ir užduotis.
       form:
-        harvest_note: Pažymi tekstą
+        harvest_note: Pastabų tekstas
         domain_info: 'Įveskite domeną be https. Pavyzdžiui, pavyzdys.harvestapp.com'
         widget_title: Valdiklio pavadinimas
         domain: Domenas
-        harvest_note_info: >-
-          Šis tekstas, kuris bus pridėtas pastabos pabaigoje, su praleistu
-          žurnalu.
+        harvest_note_info: Šis pastabos pabaigoje pridėtas tekstas bus su praleistu laiku.
       helptext: >-
-        <h4>Derliaus integravimo pagalba</h4><p><br/>Norėdami integruoti
-        „Harvest“ su „Freshdesk“, įveskite <b>domeno vardą</b> ir spustelėkite
-        „Enable“.<br/><br/>Spustelėkite bilietą, eikite į <b>laiko lapo
-        skirtuką</b>. Tada galite įvesti savo Harvest <b></b> ir
-        <b>slaptažodį</b> prisijungti. Dabar galite pridėti savo laiko sekimo
+        <h4>„Harvest“ integravimo pagalba</h4><p><br/>Norėdami integruoti
+        „Harvest“ su „Freshdesk“, įveskite <b>domeno pavadinimą</b> ir
+        spustelėkite „Įgalinti“.<br/><br/>Spustelėkite užklausą, eikite į
+        <b>laiko skirtuką</b>. Tada galite įvesti savo „Harvest“ <b></b> ir
+        <b>slaptažodį</b>, kad prisijungti. Dabar galite pridėti savo laiko
         įrašą į „Harvest“.<br/><br/>Pastaba: galite spustelėti <b>Prisiminti
-        mane</b>, kad kiekvieną kartą nereikėtų įvesti „Harvest“ įgaliojimų.
+        mane</b>, kad kaskart prisijungiant nereikėtų įvesti „Harvest“
+        prisijungimo duomenų.
     onedrive:
-      deprecated_title: „OneDrive“ programa pasenusi
-      desc: Pridėkite ir bendrinkite duomenis / failus iš onedrive.
+      deprecated_title: „OneDrive“ programėlė pasenusi
+      desc: Pridėkite ir bendrinkite duomenis / failus iš „OneDrive“.
       deprecated_message: >-
-        „OneDrive“ nebepalaikoma klasikinėje „Freshdesk“ versijoje. Perjunkite į
-        <a
+        „OneDrive“ nebeveikia su klasikine „Freshdesk“ versija. Pereikite į <a
         href='https://support.freshdesk.com/support/solutions/articles/229464'
         target='_blank'>monetų kalyklos patirtį</a> ir įdiekite naują programą,
         kad galėtumėte toliau naudoti „OneDrive“.
     highrise:
       form:
-        domain: 'Highrise domenas:'
+        domain: '„Highrise“ domenas:'
         widget_title: Valdiklio pavadinimas
         api_key: API raktas
         api_key_info: >-
@@ -7136,7 +7148,7 @@ lt:
         domain_info: >-
           Pavyzdžiui, jei jūsų „Highrise“ URL yra
           <strong>http://mycompany.highrisehq.com/</strong> , įveskite <strong>
-          mycompany </strong>. </span>
+          manoįmonė </strong>. </span>
       desc: >-
         Peržiūrėkite „Highrise CRM“ kontaktinę informaciją „Freshdesk“,
         spręsdami užklausas.
@@ -7158,9 +7170,9 @@ lt:
           nenorite sinchronizuoti jokių kontaktų į „Outlook“, galite palikti jį
           tuščią.
         sync_tag_label: Sinchronizuoti žymą
-        import_group: 'Pasirinkite aplankus, kuriuos norite importuoti (neprivaloma)'
+        import_group: 'Pasirinkite aplankus, kuriuos norite įkelti (neprivaloma)'
         sync_tag: Sinchronizavimo nustatymas
-        submit: Importuoti ir aktyvuoti
+        submit: Įkelti ir aktyvuoti
         overwrite_existing_user: Pakeiskite esamus kontaktinius duomenis „Freshdesk“
         title: „Outlook“ kontaktų sinchronizavimo nustatymai
         account_not_configured: >-
@@ -7177,138 +7189,138 @@ lt:
         tag_label: Sinchronizuoti žymą
         add_more: Sinchronizuoti naują paskyrą
         delete_account: Ištrinti
-        last_sync_time: Paskutinis sinchronizavimo laikas
+        last_sync_time: Naujausias sinchronizavimo laikas
         syncing_in_progress: Sinchronizavimas vyksta
       sync_settings:
-        outlook_fields: „Outlook“ laukai
-        freshdesk_fields: Freshdesk laukai
+        outlook_fields: „Outlook“ laukeliai
+        freshdesk_fields: „Freshdesk“ laukeliai
       helptext: >-
-        <h4>Outlook kontaktų sinchronizavimo sąrankos pagalbos</h4><p><br/>
-        Paspauskite ant <b>'Sync naują sąskaitą "</b> pridėti naują" Outlook
-        "paskyros sinchronizavimo. Kai bus paprašyta, suteikite prieigą prie
-        „Freshdesk“, kad galėtumėte naudoti „Outlook“ kontaktus (jei prašoma,
-        įveskite „Outlook“ naudotojo vardą ir slaptažodį).<br/><br/>Jei nenorite
-        sinchronizuoti su šia paskyra, galite ištrinti
-        paskyrą.<br/><br/><b>Pastaba:</b> Prieš pradėdami sinchronizavimą,
-        rekomenduojama naudoti ir išsaugoti „Outlook“ kontaktų atsarginę kopiją.
+        <h4>„Outlook“ kontaktų sinchronizavimo pagalba</h4><p><br/> Paspauskite
+        ant <b>„Sinchronizuoti naują sąskaitą“</b>, kad pridėtumėte naują
+        „Outlook“ paskyrą sinchronizavimui. Kai bus paprašyta, suteikite prieigą
+        prie „Freshdesk“, kad galėtumėte naudoti „Outlook“ kontaktus (jei
+        prašoma, įveskite „Outlook“ vartotojo vardą ir slaptažodį).<br/><br/>Jei
+        nenorite sinchronizuoti su šia paskyra, galite ištrinti
+        paskyrą.<br/><br/><b>Pastaba:</b> Prieš pradedant sinchronizavimą,
+        rekomenduojama turėti ir išsaugoti „Outlook“ kontaktų atsarginę kopiją.
     zohocrm:
       helptext: >-
-        <h4>Zoho CRM integracijos pagalba</h4><p><br/>Norėdami integruoti „Zoho
-        CRM“ su „Freshdesk“, <a
+        <h4>„Zoho CRM“ integracijos pagalba</h4><p><br/>Norėdami integruoti
+        „Zoho CRM“ su „Freshdesk“, <a
         href='http://www.zoho.com/crm/help/api/using-authentication-token.html#Generate_Auth_Token'
-        target='_blank'>generuokite „Auth Token</a> “ Zoho CRM per naršyklės
-        režimą ir įklijuokite generuojamą „Auth Token“ čia. Jei jau sukūrėte
-        „Auth Token“, galite jį gauti iš <a
+        target='_blank'>generuokite patvirtinimo raktą</a> „Zoho CRM“ per
+        naršyklės režimą ir įklijuokite sugeneruotą patvirtinimo raktą čia. Jei
+        jau sukūrėte patvirtinimo raktą, galite jį gauti iš <a
         href='https://accounts.zoho.com/u/h#setting/authtoken'
-        target='_blank'>paskyros puslapių.</a> <br/><br/>Kai tik tai atliksite,
-        kontaktinę informaciją galite peržiūrėti bet kuriame bilieto ar kontaktų
+        target='_blank'>paskyros puslapių.</a> <br/><br/>Tai atlikę, galėsite
+        peržiūrėti kontaktinę informaciją bet kuriame užklausos ar kontaktų
         rodinyje.</p>
-      desc: Kontaktinę informaciją galite peržiūrėti „Zoho crm“ Freshdesk.
+      desc: Kontaktinę „Zoho crm“ informaciją galite peržiūrėti „Freshdesk“.
       form:
         api_key_info: >-
           <a
           href='http://www.zoho.com/crm/help/api/using-authentication-token.html#Generate_Auth_Token'
-          target='_blank'>Sukurkite „Auth Token</a> “ Zoho CRM per naršyklės
-          režimą ir įklijuokite generuojamą „Auth Token“ čia.
-        api_key: „Auth Token“
+          target='_blank'>Sukurkite patvirtinimo raktą</a>„Zoho CRM“ per
+          naršyklės režimą ir įklijuokite generuojamą patvirtinimo raktą čia.
+        api_key: Patvirtinimo raktas
     slack_msg:
       update_notice: >-
-        Atnaujinta naujausia paleidimo integracija. Atlikite šį <a
+        Atnaujinta naujausia „Slack“ integracija. Norėdami sužinoti daugiau apie
+        įgyvendintus pakeitimus, perskaitykite <a
         href='https://support.freshdesk.com/support/solutions/articles/206103'
-        target='_blank'>tirpalas straipsnį</a>  žinoti išsamias veiksmų apie
-        pakeitimus
+        target='_blank'>šį sprendimo straipsnį</a>
       deprecation_notice: >-
-        Dabar yra nauja „Freshdesk Slack“ programos versija. Dabar ši versija
-        yra pasenusi. Išsamūs žingsniai, kaip pereiti prie naujo įgyvendinimo,
-        atlikite šį <a
+        Dabar yra nauja „Freshdesk Slack“ programėlės versija. Dabar ši versija
+        yra pasenusi. Norėdami sužinoti, kaip pereiti prie naujo diegimo,
+        peržiūrėkite šį <a
         href='https://support.freshdesk.com/support/solutions/articles/206103'
         target='_blank'>sprendimo straipsnį</a>.
     cloud_elements:
       form:
-        field_visibility: Lauko matomumas
+        field_visibility: Laukelio matomumas
         sync_info: Sinchronizuoti kontaktą ir įmonę ...
         source_of_truth: Pagrindinis duomenų šaltinis
-        lead: Švino laukai
+        lead: Vadovo laukeliai
         daily: Kasdien
-        account: Paskyros laukai
-        sync_frequency: Sinchronizavimo dažnis
-        order: Užsakymų laukai
+        account: Paskyros laukeliai
+        sync_frequency: Sinchronizavimo dažnumas
+        order: Užsakymų laukeliai
         two_way: Dvipusis sinchronizavimas
-        contract: Sutarties laukai
-        field_mapping: Lauko atvaizdavimas
-        opportunity: Galimybių laukai
-        sync_settings: Sinchronizavimo parametrai
-        instant: 30 min
-        opportunity_settings: Agentai gali sukurti / susieti ar atsieti galimybes iš bilieto
+        contract: Sutarties laukeliai
+        field_mapping: Laukelio atvaizdavimas
+        opportunity: Galimybių laukeliai
+        sync_settings: Sinchronizavimo nustatymai
+        instant: Kas 30 min
+        opportunity_settings: Agentai gali sukurti / susieti ar atsieti užklausas
         hourly: Kas valandą
         contact: Kontaktų laukeliai
       mail:
         no_data_found: Nerasta duomenų
-        no_event: Šiandien nėra įvykių
+        no_event: Šiandien nėra jokių įvykių
   chatwidget_help_content:
     title: Tiesioginis pokalbis
     info1: >-
       „Freshdesk“ integruotas „Live Chat“ sprendimas leidžia peržiūrėti ir
-      kalbėtis su naudotojais jūsų svetainėje, internetinėje programinėje
-      įrangoje ar palaikymo portale tiesiogiai iš „Freshdesk“. Galite tinkinti
-      visą pokalbio langą (įskaitant numatytuosius tekstus, spalvas ir tt) ir
-      netgi aktyviai pradėti pokalbių sesijas, kai lankytojai daugiau laiko
-      praleidžia jūsų svetainėje.
+      kalbėtis su vartotojais jūsų svetainėje, internetinėje programinėje
+      įrangoje ar pagalbos portale tiesiogiai iš „Freshdesk“. Galite pritaikyti
+      visą pokalbio langą (įskaitant numatytuosius tekstus, spalvas ir t. t.) ir
+      netgi inicijuoti pokalbius, kai lankytojai daugiau laiko praleidžia jūsų
+      svetainėje.
     info2: >-
-      Kiekviena pokalbių sesija bus meta informacija apie lankytojus, įskaitant
-      jų buvimo vietą, įrenginį ir pan. Baigę pokalbių sesiją, galite pasirinkti
-      konvertuoti pokalbį į bilietą ir toliau stebėti lankytoją el. Paštu arba
-      archyvuoti pokalbio tekstą.
-    info4: Padėkite man įdiegti pokalbį
+      Kiekvienos pokalbių sesijos metu bus renkama meta informacija apie
+      lankytojus, įskaitant jų buvimo vietą, įrenginį ir pan. Baigę pokalbių
+      sesiją, galite pasirinkti konvertuoti pokalbį į užklausą ir toliau
+      bendrauti su lankytoju el. paštu arba archyvuoti pokalbio tekstą.
+    info4: Padėkite man įdiegti tiesioginio pokalbio funkciją
   please_wait: Prašome palaukti...
   close_this_ticket: Uždaryti šią užklausą
-  cancel_my_account: Atšaukti paskyrą
-  no_images_uploaded_yet: Dar neįkelta nuotraukų.
+  cancel_my_account: Atšaukti mano paskyrą
+  no_images_uploaded_yet: Dar neįkelta jokių nuotraukų.
   search:
     in: į
     by: 'pateikė:'
-    searching: Paieška
+    searching: Ieškoma
     no_results_msg: Nieko nerasta
-  created_on: 'Sukurtas '
+  created_on: 'Sukurta '
   add_all: Pridėti viską
   total_price: Iš viso
   paid_with: Mokama su
   attachments: Priedai
   choose_plan_trial: >-
-    Po bandomojo laikotarpio jūsų paskyra bus išjungta. <br /> Jei norite tęsti
-    Freshdesk naudojimą, pasirinkite planą.
+    Po bandomojo laikotarpio jūsų paskyra bus išjungta. <br /> Jei norite ir
+    toliau naudotis „Freshdesk“, pasirinkite planą.
   billing_selected_plan: 'Pasirinktas planas: '
   sales: Pardavimai
   feedbackwidget_button_text: Etiketė
   ticket_form:
     your_email_address: El. paštas
-    your_name: Tavo vardas
+    your_name: Jūsų vardas
   done: Atlikta
-  sign_in_info: Jūs prisijungsite
+  sign_in_info: Jūs prisijungsite su
   user_notifications:
     notification_preferences: Pranešimų nuostatos
     enable_desktop_notifications_help: 'Kai prašoma, spustelėkite „Leisti“'
-    muted: Išjungta
+    muted: Nutildyta
     toggle_web_notifications: Perjungti žiniatinklio pranešimus
     mute: Nutildyti
     enable_desktop_notifications: Įgalinti darbalaukio pranešimus
-    notify_when: 'Pranešti, kada ...'
+    notify_when: 'Pranešti, kai...'
     desktop_notifications_enabled_flash: Darbalaukio pranešimai įjungti!
-    mark_all_as_read: pažymėti visus kaip skaitytus
-    desktop_notifications_disabled: Išjungėte pranešimus apie darbalaukį
+    mark_all_as_read: Pažymėti visus kaip skaitytus
+    desktop_notifications_disabled: Darbalaukio pranešimai išjungti
     toggle_mobile_notifications: Perjungti mobiliuosius pranešimus
     header: Pranešimai
-    preferences: Prioritetai
+    preferences: Nuostatos
   at: '-'
   click_here: >-
-    <a href='javascript: switchToOld()'> Spauskite čia </a> norite išbandyti
-    kitas senas Freshdesk kalbas
+    <a href='javascript: switchToOld()'> Spauskite čia </a>, jei norite
+    išbandyti kitas senas „Freshdesk“ kalbas
   email_command_settings_info: >-
-    Konfigūruokite ribotuvą, naudojamą el. Pašto komandų atpažinimui ir
-    ištraukimui iš pašto
+    Konfigūruokite derinį, kuri naudosite el. pašto komandų atpažinimui ir
+    gavimui iš pašto
   import_ticket_group: Užklausos
   header:
-    welcome: Sveiki
+    welcome: Sveiki atvykę
     login: <b>Prisijungti</b>
     signout: Atsijungti
     search: Paieška
@@ -7316,7 +7328,7 @@ lt:
     assumed_text: Jūs žiūrite kaip
     help_center: Kaip galime jums padėti šiandien?
     new_support_ticket: Nauja pagalbos užklausa
-    check_ticket_status: Patikrinkite bilieto būseną
+    check_ticket_status: Patikrinkite užklausos būseną
     goto_customer_portal: Eikite į klientų portalą
     goto_agent_portal: Agento portalas
     tabs:
@@ -7487,7 +7499,7 @@ lt:
     view_feedback: Peržiūrėkite visus atsiliepimus
     info31: >-
       Galite pasirinkti, kad aplankai būtų matomi skirtingoms žmonių grupėms
-      (<b>Visi, Prisijungę naudotojai, Agentai ir pasirinktos įmonės)</b>.
+      (<b>Visi, Prisijungę vartotojai, Agentai ir Pasirinktos įmonės)</b>.
     info16: >-
       <b>Paskelbti</b> straipsniai bus matomi savitarnos portale ir taip pat bus
       rodomi paieškos rezultatuose. 
@@ -7511,8 +7523,8 @@ lt:
       sidebar_content:
         para2:
           header: >-
-            Naudokite „Freshdesk“ pasiuntinį, kad kartu palaikytumėte savo
-            palaikymo ir pranešimų mainus:
+            Naudokite „Freshdesk“ žinučių siuntimo ir gavimo programėlę, kad
+            galėtumėte ir siųsti, ir gauti pagalbos pranešimus:
           point2: >-
             Žinokite, kas yra jūsų klientai: jų profilis, naršymo istorija ir
             ankstesnės užklausos informacija, kad atsakydami galėtumėte remtis
@@ -7522,11 +7534,11 @@ lt:
             Atsakykite į pokalbį ir pasirinkite: ar jį paversti nauja užklausa,
             ar pridėti prie esamos.
         para1: >-
-          „Freshdesk“ integruotas pokalbių kanalas, kurį naudoja „Freshchat“,
-          padeda įsitraukti į pokalbius su klientais, kurie esate svetainėje,
-          mobiliajame, palaikymo portale ar programoje. Taip pat galite siųsti
-          aktyvius pranešimus lankytojams ir naudotojams ir vairuoti juos
-          pirkdami, užsiregistruodami arba dalindamiesi atsiliepimais apie savo
+          „Freshdesk“ integruotas pokalbių kanalas, kurį sukūrė „Freshchat“,
+          padeda palaikyti pokalbius su klientais, kurie lankosi svetainėje,
+          mobiliajame ar pagalbos portale, ar programėlėje. Taip pat leidžia
+          siųsti aktyvius pranešimus lankytojams ir vartotojams bei skatinti
+          juos pirkti, užsiregistruoti arba dalintis atsiliepimais apie jūsų
           produktą.
       enable_chat: Susieti „Freshchat“ su „Freshdesk“ paskyra
       admin_apikey: 'API raktas:'
@@ -7535,8 +7547,8 @@ lt:
         Bendraukite su klientais savo svetainėje, portale ar mobilioje
         programėlėje.
       enable_chat_in_portal_info: >-
-        Padėkite klientams lengvai bendrauti su jumis, kai jie nusileidžia į
-        jūsų palaikymo portalą.
+        Palengvinti klientų bendravimą su jumis, jiems atėjus į jūsų pagalbos
+        portalą.
       app_id_placeholder: 'Pvz .: 09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         Jei norite konvertuoti „Freshchat“ pokalbius į užklausas, eikite į šį <a
@@ -7639,3 +7651,5 @@ lt:
     invalid_settings: 'Netinkami nustatymai nesutampa su %{key}'
     invalid_domain: 'Atsiprašome, prašome įvesti galiojantį domeną.'
     domain_list_empty: 'Prašome nurodyti URL adresus, kad galėtumėme suteikti pagalbą.'
+    untitled_widget: 'Valdiklis be pavadinimo %{count}'
+    invalid_components: 'Netinkami elementai nesutampa su %{key}'

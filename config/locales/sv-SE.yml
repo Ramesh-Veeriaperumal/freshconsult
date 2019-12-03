@@ -174,10 +174,7 @@ sv-SE:
     unassigned: Ej tilldelade
     products: Produkter
     created_date_range: Tidsperiod
-  proceed_now: |-
-
-
-    Fortsätt nu?
+  proceed_now: Fortsätt nu?
   forward: Vidarebefordra
   apply: Verkställ
   myself: Mig
@@ -1493,29 +1490,25 @@ sv-SE:
       successfully_deleted: Undersökningen har tagits bort.
       error_updated: Ett fel uppstod när undersökningsinställningarna skulle uppdateras.
       custom_helptext: >-
-        <p><b>Aktivera nöjdhetsundersökningar</b> <br>
-
-        Du kan lägga till en nöjdhetsundersökning i ärendesvaren från
-        representanterna och se hur nöjda kunderna är med supporten, företaget
-        eller produkten. Du kan välja att skicka med undersökningar i alla
-        e-postmeddelanden eller bara när en fråga markeras som ”stängd” eller
-        ”löst”. Du kan se svaren från kunderna om du går till <b> Rapporter >
-        Kundnöjdhetsrapport </b> <br><br> <b>Undersökning om representant och
-        uppföljningsundersökningar</b><br> Du kan ställa en undersökningsfråga
-        om representanten och flera uppföljande undersökningsfrågor.
-        Undersökningen om representanten visas i e-postmeddelandet, och när
-        kunderna väljer ett undersökningsalternativ skickas de vidare till en
-        sida med en uppföljningsundersökning. Reglerna för övervakaren och
-        spelifieringspoängen baseras endast på poängen representanten får i
-        undersökningen.<br> <br><br> <b>Poängskala</b><br>Du kan välja olika
-        poängskalor för undersökningen om representanten och
-        uppföljningsundersökningen. Det kan vara<br> 2 poäng (t.ex. Ja eller
-        Nej)<br>3 poäng (t.ex. Instämmer, Vet inte, Instämmer ej)<br> 5 poäng
-        (t.ex. Alltid till Aldrig)<br> 7 poäng (t.ex. Väldigt dålig till
-        Utmärkt)<br><br>
-
-        När kunden deltar i undersökningen blir skalorna låsta så att de inte
-        kan redigeras.</p>
+        <p><b>Aktivera nöjdhetsundersökningar</b> <br> Du kan lägga till en
+        nöjdhetsundersökning i ärendesvaren från representanterna och se hur
+        nöjda kunderna är med supporten, företaget eller produkten. Du kan välja
+        att skicka med undersökningar i alla e-postmeddelanden eller bara när en
+        fråga markeras som ”stängd” eller ”löst”. Du kan se svaren från kunderna
+        om du går till <b> Rapporter > Kundnöjdhetsrapport </b> <br><br>
+        <b>Undersökning om representant och uppföljningsundersökningar</b><br>
+        Du kan ställa en undersökningsfråga om representanten och flera
+        uppföljande undersökningsfrågor. Undersökningen om representanten visas
+        i e-postmeddelandet, och när kunderna väljer ett undersökningsalternativ
+        skickas de vidare till en sida med en uppföljningsundersökning. Reglerna
+        för övervakaren och spelifieringspoängen baseras endast på poängen
+        representanten får i undersökningen.<br> <br><br>
+        <b>Poängskala</b><br>Du kan välja olika poängskalor för undersökningen
+        om representanten och uppföljningsundersökningen. Det kan vara<br> 2
+        poäng (t.ex. Ja eller Nej)<br>3 poäng (t.ex. Instämmer, Vet inte,
+        Instämmer ej)<br> 5 poäng (t.ex. Alltid till Aldrig)<br> 7 poäng (t.ex.
+        Väldigt dålig till Utmärkt)<br><br> När kunden deltar i undersökningen
+        blir skalorna låsta så att de inte kan redigeras.</p>
       helptext: >-
         <p><b>Varför bör man aktivera kundnöjdhetsundersökningar?</b> <br>
 

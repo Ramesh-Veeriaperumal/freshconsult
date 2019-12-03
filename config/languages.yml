@@ -125,10 +125,13 @@ sr:
 is:
   - 42
   - Icelandic
+fil:
+  - 43
+  - Filipino
 # !!!! please add new languages above test languages !!!!
 test-ui:
-  - 43
+  - 44
   - Test-UI
 long-text:
-  - 44
+  - 45
   - Long-Text
