@@ -48,8 +48,16 @@ class Discussions::TopicsController < ApplicationController
 		
 		@post.account_id = current_account.id
 		@post.portal = current_portal.id
+		
 		# only save topic if post is valid so in the view topic will be a new record if there was an error
-		@topic.body_html = @post.body_html # incase save fails and we go back to the form
+		# incase save fails and we go back to the form
+		@topic.body_html = @post.body_html
+		
+		# sanitizing only for editors with code view
+		if current_account.launched?(:topic_editor_with_html)
+			@topic.body_html = Helpdesk::HTMLSanitizer.sanitize_topic(@topic.body_html)
+		end
+
 		build_attachments
 
 		if @topic.save
@@ -81,7 +89,14 @@ class Discussions::TopicsController < ApplicationController
 		assign_protected
 		@post = @topic.first_post
 		@post.attributes = post_param
+
 		@topic.body_html = @post.body_html
+		
+		# sanitizing topic with article config, only for editors with code view
+		if current_account.launched?(:topic_editor_with_html)
+			@topic.body_html = Helpdesk::HTMLSanitizer.sanitize_topic(@topic.body_html)
+		end
+		
 		build_attachments
 		
 		if @topic.save

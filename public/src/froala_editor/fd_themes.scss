@@ -2,7 +2,7 @@
 @import "../../fonts/glyphs-variables";
 @import "../../shared/mixins";
 
-.solutions .editor-body {
+.solutions .editor-body, .community .editor-body#topic-html-editor {
   /* To break the unicode character in production. have to fix this bug */
   .dumm-class {cursor: default;}
 
