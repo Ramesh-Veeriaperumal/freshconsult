@@ -43,7 +43,7 @@ module ChannelIntegrations::Commands::Services
 
     def receive_create_ticket(payload)
       context = payload[:context]
-      create_ticket_payload = validate_command_payload(payload, true)
+      create_ticket_payload = validate_and_build_command_payload(payload, true)
       ticket = create_ticket(create_ticket_payload)
       Rails.logger.info("Ticket created for #{context.inspect} :: Account ID : #{payload[:account_id]}")
       ticket
@@ -55,7 +55,7 @@ module ChannelIntegrations::Commands::Services
 
     def receive_create_note(payload)
       context = payload[:context]
-      create_note_payload = validate_command_payload(payload, false)
+      create_note_payload = validate_and_build_command_payload(payload, false)
       note = create_note(create_note_payload)
       Rails.logger.info("Facebook::CreateNote, account_id: #{current_account.id}, post_id: #{context[:post_id]}")
       note
@@ -68,12 +68,13 @@ module ChannelIntegrations::Commands::Services
 
     private
 
-      def validate_command_payload(payload, is_ticket=true)
+      def validate_and_build_command_payload(payload, is_ticket = true)
         return error_message('Invalid request') unless check_ticket_params?(payload)
         user_id = is_ticket ? payload[:data][:requester_id] : payload[:data][:user_id]
         set_current_user(user_id)
         facebook_page_present?(payload[:context][:facebook_page_id])
-        payload[:data][:fb_post_attributes]= build_fb_post_attributes(payload, is_ticket)
+        payload[:data].merge(get_source_hash(payload[:owner], is_ticket))
+        payload[:data][:fb_post_attributes] = build_fb_post_attributes(payload, is_ticket)
         payload
       end
 
@@ -108,6 +109,14 @@ module ChannelIntegrations::Commands::Services
 
       def facebook_page_present?(page_id)
         raise 'Facebook Page Not found' if current_account.facebook_pages.find_by_page_id(page_id).blank?
+      end
+
+      def get_source_hash(owner, is_ticket)
+        { source: if is_ticket
+                    TicketConstants::SOURCE_KEYS_BY_TOKEN[owner.to_sym]
+                  else
+                    Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[owner]
+                  end }
       end
 
       def build_fb_post_attributes(payload, is_ticket=true)
