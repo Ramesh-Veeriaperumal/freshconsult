@@ -541,15 +541,13 @@ module Helpdesk
 				parent_ticket_id = ticket.schema_less_ticket.parent_ticket
 				if !parent_ticket_id
 					return nil
-				elsif account.features_included?(:archive_tickets) && parent_ticket_id
-					parent_ticket = ticket.parent
-					unless parent_ticket
-						archive_ticket = Helpdesk::ArchiveTicket.find_by_ticket_id(parent_ticket_id)
-						archive_child_ticket = archive_ticket.ticket if archive_ticket
-						return archive_child_ticket if archive_child_ticket
-						self.archived_ticket = archive_ticket
-						return archived_ticket
-					end
+				elsif account.features_included?(:archive_tickets) && !ticket.parent
+					archive_ticket = Helpdesk::ArchiveTicket.find_by_ticket_id(parent_ticket_id)
+					archive_child_ticket = archive_ticket.ticket if archive_ticket
+					return archive_child_ticket if archive_child_ticket
+
+					self.archived_ticket = archive_ticket
+					return archived_ticket
 				else
 					return ticket.parent
 				end
