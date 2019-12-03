@@ -5,7 +5,7 @@ class Support::Solutions::ArticlesController < SupportController
   include Solution::ArticlesVotingMethods
   include Solution::PathHelper
   include Helpdesk::Permission::Ticket
-
+  before_filter :redirect_to_support, :only => [:show], :if => :facebook?
   before_filter :load_and_check_permission, :except => [:index]
   
   before_filter :check_version_availability, :only => [:show]
@@ -31,9 +31,13 @@ class Support::Solutions::ArticlesController < SupportController
 
   before_filter :cleanup_params_for_title, :only => [:show]
   before_filter :load_current_object_id, :only => [:show]
+ 
 
    CREATE_TICKET_VALID_FIELDS = ["email"]
 
+  def redirect_to_support
+    redirect_to "/support/solutions/articles/#{params[:id]}"
+  end 
 
   def handle_unknown
      redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE)
