@@ -105,6 +105,7 @@ run "ln -nfs #{shared_path}/config/automation_rule_redis.yml #{node[:rel_path]}/
 run "ln -nfs #{shared_path}/config/freddy_skills_config.yml #{node[:rel_path]}/config/freddy_skills_config.yml"
 run "ln -nfs #{shared_path}/config/facebook_gateway.yml #{node[:rel_path]}/config/facebook_gateway.yml"
 run "ln -nfs #{shared_path}/config/cron_hooks.yml #{node[:rel_path]}/config/cron_hooks.yml"
+run "ln -nfs #{shared_path}/config/rts.yml #{node[:rel_path]}/config/rts.yml"
 
 # supreme-code-console
 run "ln -nfs #{shared_path}/config/api_config_internal_tools.yml #{node[:rel_path]}/config/api_config_internal_tools.yml"

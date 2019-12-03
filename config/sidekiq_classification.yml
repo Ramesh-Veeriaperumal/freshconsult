@@ -43,6 +43,7 @@
     - model_destroy
     - gateway_facebook_page
     - kbase_article_versions_worker
+    - rts_account_create
 
   :central_realtime:
     - central_publish

@@ -77,3 +77,5 @@ FreddySkillsConfig = YAML.load_file(Rails.root.join('config', 'freddy_skills_con
 FacebookGatewayConfig = YAML.load_file(Rails.root.join('config', 'facebook_gateway.yml'))[Rails.env]
 
 CentralConfig = YAML.load(File.read("#{Rails.root}/config/central.yml"))[Rails.env]
+
+RTSConfig = YAML.load_file(Rails.root.join('config', 'rts.yml'))[Rails.env]

@@ -65,6 +65,7 @@ class Account < ActiveRecord::Base
 
   after_commit :remove_organisation_account_mapping, on: :destroy, if: :freshid_org_v2_enabled?
   after_commit :update_help_widgets, on: :update, if: [:help_widget_enabled?, :branding_feature_toggled?]
+  after_commit :create_rts_account, on: :create
 
   after_rollback :destroy_freshid_account_on_rollback, on: :create, if: -> { freshid_integration_signup_allowed? && !domain_already_exists? }
   after_rollback :signup_completed, on: :create
@@ -119,6 +120,10 @@ class Account < ActiveRecord::Base
 
   def enable_fresh_connect
     ::Freshconnect::RegisterFreshconnect.perform_async if freshconnect_signup_allowed?
+  end
+
+  def create_rts_account
+    AccountCreation::RTSAccountCreate.perform_async if agent_collision_revamp_enabled?
   end
 
   def populate_features
