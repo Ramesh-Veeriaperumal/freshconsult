@@ -71,11 +71,11 @@ class Email::MailboxValidation < ApiValidation
   validate :validate_reference, if: -> { errors[:custom_mailbox].blank? && oauth? && oauth_reference }
   validate :validate_oauth_email, if: -> { errors[:custom_mailbox].blank? && oauth? && oauth_reference }
   validate :invalid_reference_presence, if: -> { errors[:custom_mailbox].blank? }
-  validate :incoming_password_presence, if: -> { errors[:custom_mailbox].blank? && (incoming_access_type? || both_access_type?) && incoming && !incoming_oauth? }
-  validate :outgoing_password_presence, if: -> { errors[:custom_mailbox].blank? && (outgoing_access_type? || both_access_type?) && outgoing && !outgoing_oauth? }
+  validate :incoming_password_presence, if: -> { errors[:custom_mailbox].blank? && (incoming_access_type? || both_access_type?) && errors[:incoming].blank? && !incoming_oauth? }
+  validate :outgoing_password_presence, if: -> { errors[:custom_mailbox].blank? && (outgoing_access_type? || both_access_type?) && errors[:outgoing].blank? && !outgoing_oauth? }
 
-  validate :incoming_authentication_type, if: -> { errors[:custom_mailbox].blank? && (incoming_access_type? || both_access_type?) && incoming }
-  validate :outgoing_authentication_type, if: -> { errors[:custom_mailbox].blank? && (outgoing_access_type? || both_access_type?) && outgoing }
+  validate :incoming_authentication_type, if: -> { errors[:custom_mailbox].blank? && (incoming_access_type? || both_access_type?) && errors[:incoming].blank? }
+  validate :outgoing_authentication_type, if: -> { errors[:custom_mailbox].blank? && (outgoing_access_type? || both_access_type?) && errors[:outgoing].blank? }
 
   def initialize(request_params, item, allow_string_param = false)
     super(request_params, item, allow_string_param, item_decorator_class)
@@ -133,7 +133,7 @@ class Email::MailboxValidation < ApiValidation
     custom_mailbox? &&
       errors[:custom_mailbox].blank? &&
       custom_mailbox.present? &&
-      create? && incoming_or_outgoing_oauth?
+      private_api? && create? && incoming_or_outgoing_oauth?
   end
 
   def custom_mailbox?
@@ -228,30 +228,40 @@ class Email::MailboxValidation < ApiValidation
     end
 
     def incoming_password_presence
-      errors[:incoming] = :missing_or_blank if incoming[:password].blank?
+      return if incoming[:password].present?
+
+      errors[:incoming] = :missing_field
+      error_options[:incoming] = {
+        nested_field: :password
+      }
     end
 
     def outgoing_password_presence
-      errors[:outgoing] = :missing_or_blank if outgoing[:password].blank?
+      return if outgoing[:password].present?
+
+      errors[:outgoing] = :missing_field
+      error_options[:outgoing] = {
+        nested_field: :password
+      }
     end
 
     def incoming_authentication_type
       return if IMAP_AUTHENTICATION_TYPES.include?(incoming[:authentication]) || (private_api? && (IMAP_AUTHENTICATION_TYPES | [OAUTH]).include?(incoming[:authentication]))
 
-      errors[:incoming] = :invalid_value_in_field
+      errors[:incoming] = :not_included
       error_options[:incoming] = {
-        value: incoming[:authentication],
-        field_name: 'authentication'
+        nested_field: :authentication,
+        list: IMAP_AUTHENTICATION_TYPES.join(',')
       }
     end
 
     def outgoing_authentication_type
       return if SMTP_AUTHENTICATION_TYPES.include?(outgoing[:authentication]) || (private_api? && (SMTP_AUTHENTICATION_TYPES | [OAUTH]).include?(outgoing[:authentication]))
 
-      errors[:outgoing] = :invalid_value_in_field
+      errors[:outgoing] = :not_included
       error_options[:outgoing] = {
-        value: outgoing[:authentication],
-        field_name: 'authentication'
+        nested_field: :authentication,
+        list: SMTP_AUTHENTICATION_TYPES.join(',')
       }
     end
 end

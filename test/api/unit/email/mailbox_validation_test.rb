@@ -129,8 +129,8 @@ class Email::MailboxValidationTest < ActionView::TestCase
     mailbox = Email::MailboxValidation.new(params, nil)
     refute mailbox.valid?(:create)
     errors = mailbox.errors.full_messages
-    assert errors.include?('Incoming invalid_value_in_field')
-    assert errors.include?('Outgoing invalid_value_in_field')
+    assert errors.include?('Incoming not_included')
+    assert errors.include?('Outgoing not_included')
   end
 
   def test_invalid_mail_server
