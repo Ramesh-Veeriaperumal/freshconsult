@@ -574,7 +574,10 @@ class Subscription < ActiveRecord::Base
   def fetch_subscription_estimate(coupon)
     updated_addons = applicable_addons(present_subscription.addons, subscription_plan)
     applicable_coupon = verify_coupon(coupon)
-    subscription_estimate(updated_addons, applicable_coupon)
+    response = subscription_estimate(updated_addons, applicable_coupon)
+    self.amount = to_currency(response.estimate.sub_total)
+    self.additional_info[:amount_with_tax] = to_currency(response.estimate.amount)
+    response
   end
 
   def fetch_update_payment_site
