@@ -69,7 +69,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_update :update_ticket_states
 
   after_commit :create_initial_activity, on: :create
-  after_commit :trigger_dispatcher, on: :create, :unless => :skip_dispatcher?
+  after_commit :trigger_dispatcher, on: :create, :unless => :skip_dispatcher_with_advanced_automations?
 
   # TODO: Need to remove once we start supporting dispatcher for service tasks
   after_commit :service_task_create_notification, on: :create, if: :service_task?
@@ -334,6 +334,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
 
+  def skip_dispatcher_with_advanced_automations?
+    skip_dispatcher? || advanced_automations_and_tracker_ticket?
+  end
+
+  def advanced_automations_and_tracker_ticket?
+    Account.current.advanced_automations_enabled? && tracker_ticket? &&
+      related_ticket_ids.present? && (related_ticket_ids.count > TicketConstants::SYNC_RELATED_TICKETS_COUNT)
+  end
+
   def trigger_dispatcher
     Helpdesk::Dispatcher.enqueue(self, (User.current.blank? ? nil : User.current.id)) unless Account.current.skip_dispatcher?
   end
@@ -474,13 +483,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def set_links
     Rails.logger.debug "Linking Related tickets [#{related_ticket_ids}] to tracker_ticket #{self.display_id}"
-    if related_ticket_ids.count == 1
+    if related_ticket_ids.count == TicketConstants::SYNC_RELATED_TICKETS_COUNT
       if @related_ticket.present?
         set_tkt_assn_type(@related_ticket, :related) ? (self.associates = [@related_ticket.display_id]) :
           update_associates_count(self)
       end
-    elsif related_ticket_ids.count > 1
-      ::Tickets::LinkTickets.perform_async({:tracker_id => self.display_id, :related_ticket_ids => related_ticket_ids})
+    elsif related_ticket_ids.count > TicketConstants::SYNC_RELATED_TICKETS_COUNT
+      ::Tickets::LinkTickets.perform_async(tracker_id: self.display_id, related_ticket_ids: related_ticket_ids, action: :create)
     end
   end
 

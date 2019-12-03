@@ -377,6 +377,8 @@ module TicketConstants
 
   DEFAULT_FILTER_EXPORT = ['monitored_by'].freeze
 
+  SYNC_RELATED_TICKETS_COUNT = 1
+
   def self.translate_priority_name(priority)
     I18n.t(PRIORITY_NAMES_BY_KEY[priority])
   end
