@@ -282,7 +282,7 @@ module FreshdeskCore::Model
       begin
         function.call
       rescue ReplicationLagError => e
-        @continue_account_destroy_from = index
+        @continue_account_destroy_from += index
         raise e
       end
     end

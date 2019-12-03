@@ -12,7 +12,7 @@ class ConversionMetric < ActiveRecord::Base
     s.add :country
     s.add :zip_code
     s.add :first_referrer
-    s.add :first_landing_url, as: :landing_url
+    s.add :landing_url
     s.add :ga_client_id
     s.add :signup_method, as: :signup_type
     s.add :spam_score
