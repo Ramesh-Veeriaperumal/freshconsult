@@ -346,9 +346,7 @@ class AccountsController < ApplicationController
       "account": {
         "id": @signup.account.id,
         "domain": @signup.account.full_domain,
-        "name": @signup.account.name,
-        "locale": @signup.account.language,
-        "timezone": @signup.account.time_zone
+        "name": @signup.account.name
       }
     }
   end
