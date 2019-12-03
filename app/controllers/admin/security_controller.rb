@@ -33,8 +33,8 @@ class Admin::SecurityController <  Admin::AdminController
     if params[:ssl_type].present?
       current_account.main_portal.update_attributes( :ssl_enabled => params[:ssl_type] )
     end
-    freshid_saml_sso_disabled = true if @account.freshid_saml_sso_enabled? && params[:account][:sso_options][:sso_type] != SsoUtil::SSO_TYPES[:freshid_saml]
-    oauth2_sso_disabled = true if @account.oauth2_sso_enabled? && params[:account][:sso_options][:sso_type] != SsoUtil::SSO_TYPES[:oauth2]
+    freshid_saml_sso_disabled = true if @account.freshid_saml_sso_enabled? && params[:account].key?(:sso_options) && params[:account][:sso_options][:sso_type] != SsoUtil::SSO_TYPES[:freshid_saml]
+    oauth2_sso_disabled = true if @account.oauth2_sso_enabled? && params[:account].key?(:sso_options) && params[:account][:sso_options][:sso_type] != SsoUtil::SSO_TYPES[:oauth2]
     if @account.sso_enabled?
       @account.sso_options = params[:account][:sso_options]
       @account.remove_oauth2_sso_options if oauth2_sso_disabled
