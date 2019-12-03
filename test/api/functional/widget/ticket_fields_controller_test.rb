@@ -15,6 +15,12 @@ module Widget
       current_product = @widget.product_id
       @account.launch :help_widget
       @current_portal = current_product ? @account.portals.find_by_product_id(current_product) : current_account.main_portal_from_cache
+      User.stubs(:current).returns(nil)
+    end
+
+    def teardown
+      super
+      User.unstub(:current)
     end
 
     def wrap_cname(_params)
@@ -54,7 +60,6 @@ module Widget
       @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
       get :index, controller_params
       assert_response 200
-      assert_equal User.current.id, user.id
       assert JSON.parse(response.body).count > 1
     ensure
       @account.rollback :help_widget_login
@@ -209,19 +214,6 @@ module Widget
       end
     end
 
-    def test_ticket_field_cache_miss_agent_with_non_account_supported_language
-      acc_supported_language = 'fr'
-      language = 'da'
-      with_product = Account.current.main_portal
-      stub_account_language(acc_supported_language, language, with_product) do
-        cache_data = { 'test': 'test' }
-        Widget::TicketFieldsController.any_instance.stubs(:response_cache_data).returns(cache_data)
-        get :index, controller_params(version: 'private', language: language)
-        assert_response 400
-        Widget::TicketFieldsController.any_instance.unstub(:response_cache_data)
-      end
-    end
-
     def test_ticket_field_cache_hit_with_language_not_present
       with_product = Account.current.main_portal
       stub_account_language(nil, nil, with_product) do
@@ -234,6 +226,23 @@ module Widget
         Widget::TicketFieldsController.any_instance.unstub(:response_cache_data)
         Widget::TicketFieldsController.any_instance.unstub(:load_objects)
       end
+    end
+
+    def test_index_with_url_language
+      stub_params_for_user_login
+      status_field = Account.current.ticket_fields.find_by_field_type(:default_status)
+      status_field.editable_in_portal = true
+      status_field.visible_in_portal = true
+      status_field.save
+      ct_es = create_custom_translation(status_field.id, 'es', status_field.name, status_field.label_in_portal).translations
+      get :index, controller_params.merge(language: 'es')
+      assert_response 200
+      response = parse_response @response.body
+      response_field = response.find { |field| field['type'] == 'default_status' }
+      assert_equal ct_es['label'], response_field['label']
+      assert_not_equal status_field.label, response_field['label']
+    ensure
+      unstub_params_for_user_login
     end
 
     private
@@ -252,6 +261,32 @@ module Widget
         yield
         Widget::TicketFieldsController.any_instance.unstub(:response_cache_key)
         Account.any_instance.unstub(:all_languages)
+      end
+
+      def stub_params_for_user_login
+        additional = @account.account_additional_settings
+        additional.supported_languages = ['es', 'en', 'fr']
+        additional.additional_settings[:portal_languages] = ['es', 'en', 'fr']
+        additional.save!
+        @account.features.enable_multilingual.create
+        Account.any_instance.stubs(:custom_translations_enabled?).returns(true)
+        Account.any_instance.stubs(:all_languages).returns(['es', 'en', 'fr'])
+        @account.stubs(:valid_portal_language?).returns(true)
+        @account.launch :help_widget_login
+        timestamp = Time.zone.now.utc.iso8601
+        user = add_new_user(@account)
+        secret_key = SecureRandom.hex
+        @account.stubs(:help_widget_secret).returns(secret_key)
+        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
+        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+      end
+
+      def unstub_params_for_user_login
+        Account.any_instance.unstub(:custom_translations_enabled?)
+        @account.unstub(:help_widget_secret)
+        Account.any_instance.unstub(:all_languages)
+        @account.unstub(:valid_portal_language?)
+        @account.features.enable_multilingual.destroy
       end
   end
 end
