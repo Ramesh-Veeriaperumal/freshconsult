@@ -3,6 +3,7 @@ require_relative '../test_helper'
 require 'sidekiq/testing'
 require 'webmock/minitest'
 require Rails.root.join('test', 'api', 'helpers', 'privileges_helper.rb')
+require Rails.root.join('test', 'api', 'helpers', 'tickets_test_helper.rb')
 ['social_tickets_creation_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 ['shared_ownership_test_helper'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 
@@ -21,6 +22,7 @@ class TicketsControllerTest < ActionController::TestCase
   include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
   include ::Admin::AdvancedTicketing::FieldServiceManagement::Constant
   include PrivilegesHelper
+  include ApiTicketsTestHelper
   CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
 
   VALIDATABLE_CUSTOM_FIELDS =  %w(number checkbox decimal text paragraph date)
@@ -1030,6 +1032,13 @@ class TicketsControllerTest < ActionController::TestCase
     disable_adv_ticketing
   end
 
+  def test_update_ecommerce_ticket_using_public_api
+    ticket = create_ebay_ticket
+    update_params = { priority: 2, status: 3 }
+    put :update, construct_params({ id: ticket.display_id }, update_params)
+    assert_response 200
+  end
+
    # test update ticket without mandatory default fields that are required for closure with skip_mandatory_checks enabled for current user having :admin_tasks privilege thorough public API only
 
   def test_reslove_ticket_without_type_with_required_for_closure_default_fields_withotut_skip_mandatory_skips_enabled
@@ -1476,7 +1485,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_create_inclusion_invalid
-    sources_list = @account.compose_email_enabled? ? '1,2,3,5,6,7,8,9,10' : '1,2,3,5,6,7,8,9'
+    sources_list = @account.compose_email_enabled? ? '1,2,3,5,6,7,8,9,11,10' : '1,2,3,5,6,7,8,9,11'
     type_field_names = @account.ticket_fields.where(field_type: 'default_ticket_type').all.first.picklist_values.map(&:value).join(',')
     params = ticket_params_hash.merge(requester_id: requester.id, priority: 90, status: 56, type: 'jk', source: '89')
     post :create, construct_params({}, params)
@@ -1489,7 +1498,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_create_inclusion_invalid_datatype
-    sources_list = @account.compose_email_enabled? ? '1,2,3,5,6,7,8,9,10' : '1,2,3,5,6,7,8,9'
+    sources_list = @account.compose_email_enabled? ? '1,2,3,5,6,7,8,9,11,10' : '1,2,3,5,6,7,8,9,11'
     params = ticket_params_hash.merge(requester_id: requester.id, priority: '1', status: '2', source: '9')
     post :create, construct_params({}, params)
     match_json([bad_request_error_pattern('priority', :not_included, code: :datatype_mismatch, list: '1,2,3,4', prepend_msg: :input_received, given_data_type: String),
@@ -2982,7 +2991,7 @@ class TicketsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
                 bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7'),
                 bad_request_error_pattern('type', :not_included, list: ticket_type_list),
-                bad_request_error_pattern('source', :not_included, list: '1,2,3,5,6,7,8,9,10')])
+                bad_request_error_pattern('source', :not_included, list: '1,2,3,5,6,7,8,9,11,10')])
   end
 
   def test_update_length_invalid
@@ -4484,7 +4493,7 @@ class TicketsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
                 bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7'),
                 bad_request_error_pattern('type', :not_included, list: ticket_type_list),
-                bad_request_error_pattern('source', :not_included, list: '1,2,3,5,6,7,8,9,10')])
+                bad_request_error_pattern('source', :not_included, list: '1,2,3,5,6,7,8,9,11,10')])
     assert_response 400
   ensure
     default_non_required_fiels.map { |x| x.toggle!(:required) }
@@ -4784,7 +4793,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.except(:email).merge(source: 100)
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('source', :not_included, list: '1,2,3,5,6,7,8,9')])
+    match_json([bad_request_error_pattern('source', :not_included, list: '1,2,3,5,6,7,8,9,11')])
   ensure
     Account.any_instance.unstub(:compose_email_enabled?)
   end
