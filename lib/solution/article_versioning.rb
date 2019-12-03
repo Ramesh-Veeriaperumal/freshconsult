@@ -116,7 +116,7 @@ module Solution::ArticleVersioning
     end
 
     def current_user
-      @current_user ||= User.current ? User.current.id : modified_by
+      @current_user ||= User.current ? User.current.id : (modified_by || user_id)
       # When migration is run, current user will not be present. We need to take modified_by into consideration for article and user_id for draft
     end
   end

@@ -9,6 +9,7 @@ class ArticleVersionsMigrationWorkerTest < ActionView::TestCase
   include SolutionsArticlesTestHelper
 
   def setup
+    setup_redis_for_articles
     Account.stubs(:current).returns(Account.first)
     @account = Account.current
     setup_articles
@@ -108,6 +109,38 @@ class ArticleVersionsMigrationWorkerTest < ActionView::TestCase
       # if version is already available for all articles it shouldn't create new version
       Solution::ArticleVersionsMigrationWorker.any_instance.expects(:version_create_or_update).never
       Solution::ArticleVersionsMigrationWorker.perform_async(account_id: @account.id, action: 'add')
+    end
+  end
+
+  # in some cases modified by will be nill, for those articles we need take user id
+  def test_add_article_version_modified_by_nill
+    Sidekiq::Testing.inline! do
+      @account.solution_article_versions.map(&:destroy)
+      @account.solution_articles.limit(5).each do |article|
+        article.modified_by = nil
+        article.save
+      end
+      @account.reload
+      Solution::ArticleVersionsMigrationWorker.perform_async(account_id: @account.id, action: 'add')
+      @account.reload
+      assert @account.solution_articles.where(modified_by: nil).present?
+      @account.solution_articles.each do |solution_article|
+        if solution_article.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
+          if solution_article.draft
+            published_version = solution_article.solution_article_versions.latest.last
+            assert_equal published_version.user_id, solution_article.modified_by || solution_article.user_id
+            draft_version = solution_article.solution_article_versions.latest.first
+            assert_equal draft_version.user_id, solution_article.draft.user_id
+          else
+            published_version = solution_article.solution_article_versions.latest.first
+            assert_equal published_version.user_id, solution_article.modified_by || solution_article.user_id
+          end
+        else
+          draft_version = solution_article.solution_article_versions.latest.first
+          assert_equal draft_version.user_id, solution_article.draft.user_id
+        end
+      end
+      assert_equal @account.solution_articles.where(status: Solution::Article::STATUS_KEYS_BY_TOKEN[:published]).count + @account.solution_drafts.count, @account.solution_article_versions.count
     end
   end
 
