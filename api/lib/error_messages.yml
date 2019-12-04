@@ -402,7 +402,9 @@ api_error_messages:
   subscription_request_destroy_error: 'Error while destroying subscription request!'
   account_cancellation_destroy_error: 'Error while removing account cancellation request!'
   active_mailbox_verification: 'Cannot send verification to an active mailbox'
-  invalid_oauth_reference: "OAuth reference is invalid. Please retry oauth process"
+  invalid_oauth_reference: 'OAuth reference is invalid. Please retry oauth process'
+  invalid_custom_mailbox_verification: 'Cannot send verification to a custom mailbox'
+  forwarding_ticket_not_found: 'No forwarding ticket has been created yet'
 
   #Freshcaller Integration
   fc_invalid_token: "Given token is invalid"

@@ -68,6 +68,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"email/setting", only: %i[show update]
     resource :"email/mailbox"
     resource :"notifications/email/bcc", only: %i[update show]
+    resource :"ember/email/mailbox"
   end
 
   reply_ticket do

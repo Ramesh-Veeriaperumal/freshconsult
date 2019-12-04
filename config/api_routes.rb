@@ -471,6 +471,15 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    scope '/email' do
+      resources :mailboxes, controller: 'ember/email/mailboxes' do
+        member do
+          post :send_test_email
+          get :verify_forward_email
+        end
+      end
+    end
+
     resources :ocr_proxy, controller: 'ember/ocr_proxy' do
       collection do
         get '*all', to: 'ember/ocr_proxy#execute'

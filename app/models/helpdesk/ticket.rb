@@ -165,6 +165,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
      [ "requester_id=? and helpdesk_tickets.created_at > ?",
        user.id, duration ], :order => 'helpdesk_tickets.created_at DESC' } }
 
+  scope :forward_setup_latest_tickets, lambda { |requester, email, duration|
+    {
+      conditions: ['requester_id=? and to_email=? and helpdesk_tickets.created_at > ?', requester.id, email, duration],
+      order: 'helpdesk_tickets.created_at DESC'
+    }
+  }
+
   scope :requester_completed, lambda { |user| { :conditions =>
     [ "requester_id=? and status in (#{RESOLVED}, #{CLOSED})",
       user.id ] } }
