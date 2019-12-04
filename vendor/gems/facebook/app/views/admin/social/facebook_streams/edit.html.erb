@@ -20,7 +20,9 @@
     <div class="rules-wrapper">
       
       <div class="head">
-        <label class="label-bold">&nbsp;<%= t('.tke_rule_breif_desc') %></label>
+        <% tkt_rule_des = Account.current.fb_ad_post_permission_enabled? ? t('.tke_rule_breif_desc_with_ad_posts') :
+                              t('.tke_rule_breif_desc') %>
+        <label class="label-bold">&nbsp;<%= tkt_rule_des %></label>
       </div>
       <div id = "ticket_rules" class="adm-social sts adm-bg-color">
         <%= render :partial => 'ticket_rules', :locals => { :ticket_rule => @ticket_rules.first } %>

@@ -14,7 +14,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
                 :migrate_to_freshconnect, :add_feature, :change_url, :single_sign_on, :remove_feature,:change_account_name,
                 :change_api_limit, :reset_login_count,:contact_import_destroy, :change_currency, :extend_trial, :reactivate_account,
                 :suspend_account, :change_webhook_limit, :change_primary_language, :trigger_action, :clone_account, :enable_fluffy,
-                :change_fluffy_limit, :change_fluffy_min_level_limit, :enable_fluffy_min_level , :disable_fluffy_min_level]
+                :change_fluffy_limit, :change_fluffy_min_level_limit, :enable_min_level_fluffy , :disable_min_level_fluffy, :min_level_fluffy_info]
   before_filter :validate_params, :only => [:change_api_limit, :change_webhook_limit, :change_fluffy_limit, :change_fluffy_min_level_limit]
   before_filter :load_account, :only => [:user_info, :reset_login_count,
     :migrate_to_freshconnect, :extend_higher_plan_trial, :change_trial_plan]

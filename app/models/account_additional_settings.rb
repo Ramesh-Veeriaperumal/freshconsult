@@ -212,6 +212,16 @@ class AccountAdditionalSettings < ActiveRecord::Base
     additional_settings[:widget_count] || AccountConstants::WIDGET_COUNT_FOR_PLAN[key]
   end
 
+  def regenerate_help_widget_secret
+    self.secret_keys = {} if secret_keys.nil?
+    self.secret_keys[:help_widget] = SecureRandom.hex
+    self.save
+  end
+
+  def help_widget_secret
+    secret_keys[:help_widget]
+  end
+
   private
 
   def update_help_widget_languages

@@ -31,6 +31,11 @@ Helpkit::Application.routes.draw do
           post :upload, to: 'custom_translations/upload#upload'
         end
       end
+      resources :security_keys, only: [:regenerate_widget_key] do
+        collection do
+          post 'widget/regenerate', to: :regenerate_widget_key
+        end
+      end
       put '/custom_translations', to: 'custom_translations#upload'
       get '/custom_translations', to: 'custom_translations#download'
 

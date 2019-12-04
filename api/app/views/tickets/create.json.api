@@ -53,5 +53,6 @@
                 response_hash[:associated_tickets_list] = @item.associates
               end
               response_hash[:failed_related_ticket_ids] = @failed_related_ticket_ids if @failed_related_ticket_ids.present?
+              render partial: 'shared/nr_params', locals: { response_hash: response_hash, item: @item }
               JSON.generate(response_hash)
 

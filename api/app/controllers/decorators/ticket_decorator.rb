@@ -7,7 +7,7 @@ class TicketDecorator < ApiDecorator
     :internal_agent_id, :association_type, :associates, :associated_ticket?,
     :can_be_associated?, :description_html, :tag_names, :attachments,
     :attachments_sharable, :company_id, :cloud_files, :ticket_states, :skill_id,
-    :subsidiary_tkts_count, :import_id, :id, to: :record
+    :subsidiary_tkts_count, :import_id, :id, :nr_escalated, :nr_due_by, to: :record
 
   delegate :multiple_user_companies_enabled?, to: 'Account.current'
 
@@ -342,6 +342,7 @@ class TicketDecorator < ApiDecorator
     hash[:custom_fields] = custom_fields unless @discard_options.include?('custom_fields')
     result = [hash, simple_hash, feedback_hash, shared_ownership_hash, skill_hash].inject(&:merge!)
     result.merge!(predict_ticket_fields_hash) if ticket_properties_suggester_enabled?
+    result.merge!(next_response_hash) if Account.current.next_response_sla_enabled?
     result
   end
 
@@ -469,6 +470,13 @@ class TicketDecorator < ApiDecorator
 
   def email_spam_data
     record.schema_less_ticket.additional_info[:email_spoof_data] if Account.current.email_spoof_check_feature?
+  end
+
+  def next_response_hash
+    {
+      nr_escalated: nr_escalated,
+      nr_due_by: nr_due_by.try(:utc)
+    }
   end
 
   private

@@ -30,7 +30,11 @@ module Facebook
           permissions = Facebook::Oauth::Constants::PAGE_TAB_PERMISSIONS.join(',')
           url = Facebook::Oauth::Constants::PAGE_TAB_URL
         else
-          permissions = Facebook::Oauth::Constants::PAGE_PERMISSIONS.join(',')
+          page_permissions = Facebook::Oauth::Constants::PAGE_PERMISSIONS
+          ad_post_permissions = Facebook::Oauth::Constants::AD_POST_PERMISSIONS
+          fb_permissions =
+              Account.current.fb_ad_post_permission_enabled? ? (page_permissions + ad_post_permissions) : page_permissions
+          permissions = fb_permissions.join(',')
           url = Facebook::Oauth::Constants::FB_AUTH_DIALOG_URL
         end
         set_others_redis_key(state, "#{@account_url}", 180) if @account_url

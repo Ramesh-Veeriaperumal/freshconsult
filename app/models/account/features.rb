@@ -28,7 +28,7 @@ class Account < ActiveRecord::Base
     :scheduled_export_fix, :compact_lang_detection,
     :agent_group_central_publish, :custom_fields_search,
     :update_billing_info, :allow_billing_info_update, :tag_central_publish,
-    :native_apps, :archive_tickets_api, :bot_agent_response, :fb_ad_post_text,
+    :native_apps, :archive_tickets_api, :bot_agent_response, :fb_ad_post_permission,
     :fetch_ticket_from_ref_first, :query_from_singleton, :surveys_central_publish,
     :id_for_choices_write, :fluffy, :session_logs, :nested_field_revamp, :service_worker, :kbase_mint,
     :freshvisual_configs, :ticket_field_limit_increase, :join_ticket_field_data, :bypass_signup_captcha,

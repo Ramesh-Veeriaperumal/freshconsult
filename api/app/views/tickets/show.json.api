@@ -65,4 +65,5 @@ response_hash.merge!(company: company_hash) if company_hash
 response_hash[:sla_policy] = sla_policy_hash if sla_policy_hash
 response_hash.merge!(conversations: conversations_hash) if conversations_hash
 response_hash.merge!(internal_agent_id: @item.internal_agent_id, internal_group_id: @item.internal_group_id) if Account.current.shared_ownership_enabled?
+render partial: 'shared/nr_params', locals: { response_hash: response_hash, item: @item }
 JSON.generate(response_hash)

@@ -218,8 +218,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
                   custom_dropdown: { type: :custom,  dom_type: 'dropdown_blank' },
                   nested_field: { type: :custom,  dom_type: 'nested_field' },
                   encrypted_text: { type: :custom,  dom_type: 'encrypted_text' },
-                  custom_date_time: { type: :custom, dom_type: 'date', visible_in_view_form: false },
-                  custom_file: { type: :custom, dom_type: 'file', visible_in_view_form: false }}.freeze
+                  custom_date_time: { type: :custom, dom_type: 'date' },
+                  custom_file: { type: :custom, dom_type: 'file' } }.freeze
 
   CUSTOM_FIELD_TYPES = Helpdesk::TicketField::FIELD_CLASS.select { |field_name, prop| prop[:type] == :custom }.keys.map(&:to_s).freeze
 

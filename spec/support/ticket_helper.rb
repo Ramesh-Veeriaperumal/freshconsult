@@ -29,7 +29,8 @@ module TicketHelper
                                          :sl_skill_id => params[:skill_id],
                                          :company_id => params[:company_id],
                                          :import_id => params[:import_id],
-                                         :ticket_type => params[:type] || "Question")
+                                         :ticket_type => params[:type] || "Question",
+                                         :email_config_id => params[:email_config_id])
     test_ticket.build_ticket_body(:description => params[:description] || Faker::Lorem.paragraph)
     if params[:attachments]
       attachment_params = params[:attachments].is_a?(Array) ? params[:attachments] : [params[:attachments]]

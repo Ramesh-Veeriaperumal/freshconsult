@@ -1,0 +1,1 @@
+response_hash.merge!(nr_due_by: item.nr_due_by.try(:utc), nr_escalated: item.nr_escalated) if Account.current.next_response_sla_enabled?

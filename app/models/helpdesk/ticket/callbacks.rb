@@ -143,7 +143,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.ticket_type  = nil if self.ticket_type.blank?
 
     self.subject    ||= ''
-    self.group_id   ||= email_config.try(:group_id)
+    self.group_id   ||= email_config.try(:group_id) if self.new_record?
     self.priority   ||= PRIORITY_KEYS_BY_TOKEN[:low]
     self.created_at ||= Time.now.in_time_zone(account.time_zone)
 

@@ -323,6 +323,11 @@ module ApiTicketsTestHelper
       )
     end
 
+    if @account.next_response_sla_enabled?
+      ticket_hash.merge!( nr_due_by: ticket.nr_due_by.try(:utc).try(:iso8601),
+                          nr_escalated: ticket.nr_escalated.to_s.to_bool )
+    end
+
     if @private_api
       ticket_hash
     else
