@@ -89,6 +89,7 @@ fields:
         mail_del_failed_others: change
         response_due: change
         resolution_due: change
+        next_response_due: change
 
         custom_checkbox: value
         custom_dropdown: update

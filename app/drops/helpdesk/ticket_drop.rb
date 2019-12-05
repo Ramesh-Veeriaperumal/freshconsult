@@ -153,6 +153,14 @@ class Helpdesk::TicketDrop < BaseDrop
     in_user_time_zone(@source.frDueBy).strftime("%I:%M %p %Z")
   end
 
+  def nr_due_by_hrs
+    in_user_time_zone(@source.nr_due_by).strftime("%I:%M %p %Z") if @source.nr_due_by.present?
+  end
+
+  def nr_remaining_time
+    Time.at(@source.nr_due_by - Time.zone.now.utc).utc.strftime("%H hr %M min %S sec") if @source.nr_due_by.present?
+  end
+
   def sla_policy_name
     @source.sla_policy_name.to_s
   end

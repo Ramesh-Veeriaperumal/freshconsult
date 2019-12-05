@@ -5,7 +5,7 @@ class SlaNotifier < ActionMailer::Base
 	layout "email_font"
 
   def agent_escalation(ticket, agent, n_type)
-    e_notification = ticket.account.email_notifications.find_by_notification_type(n_type)
+    e_notification = find_email_notification(ticket.account, n_type)
     return unless e_notification.agent_notification
     agent.make_current
     email_subject, email_body = get_email_content(e_notification, agent, ticket)
@@ -17,7 +17,7 @@ class SlaNotifier < ActionMailer::Base
 
   def group_escalation(ticket, agent_ids, n_type)
     Time.use_zone(ticket.account.time_zone) {
-      e_notification = ticket.account.email_notifications.find_by_notification_type(n_type)
+      e_notification = find_email_notification(ticket.account, n_type)
       return unless e_notification.agent_notification?
 
       agents_arr = ticket.account.users.technicians.visible
@@ -30,6 +30,24 @@ class SlaNotifier < ActionMailer::Base
                           { :email_body => email_body,  :subject => email_subject })
       end 
     }
+  end
+
+  def find_email_notification(account, n_type)
+    email_notification = account.email_notifications.find_by_notification_type(n_type)
+    if account.next_response_sla_enabled? && email_notification.nil?
+      template = ''
+      case n_type
+      when EmailNotification::NEXT_RESPONSE_SLA_REMINDER
+        template = EmailNotificationConstants::DEFAULT_NR_REMINDER_TEMPLATE
+      when EmailNotification::NEXT_RESPONSE_SLA_VIOLATION
+        template = EmailNotificationConstants::DEFAULT_NR_VIOLATION_TEMPLATE
+      end
+      if template.present?
+        email_notification = account.safe_send(:add_email_notification, n_type, template)
+        NewRelic::Agent.notice_error('Email notification template missing', template: email_notification)
+      end
+    end
+    email_notification
   end
 
   def trigger_escalation(ticket, agent, n_type, params)

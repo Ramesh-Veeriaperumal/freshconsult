@@ -33,7 +33,7 @@ module Admin
         rule.condition_data = { performer: { 'type' => '4' }, events: [{ name: 'resolution_due' }], conditions: { any: [{ evaluate_on: :ticket, name: 'priority', operator: 'in', value: [1, 2, 3, 4] }] } }
         rule.action_data = [{ name: 'status', value: 5 }]
         rule.save!
-        rule.check_rule_events(nil, ticket, construct_resolution_due_hash)
+        rule.check_rule_events(nil, ticket, construct_overdue_type_hash('resolution'))
         rule.action_data.each { |action| assert_equal ticket.status, action[:value] }
       end
 
@@ -46,18 +46,26 @@ module Admin
         rule.condition_data = { performer: { 'type' => '4' }, events: [{ name: 'response_due' }], conditions: { any: [{ evaluate_on: :ticket, name: 'priority', operator: 'in', value: [1, 2, 3, 4] }] } }
         rule.action_data = [{ name: 'status', value: 5 }]
         rule.save!
-        rule.check_rule_events(nil, ticket, construct_response_due_hash)
+        rule.check_rule_events(nil, ticket, construct_overdue_type_hash('response'))
+        rule.action_data.each { |action| assert_equal ticket.status, action[:value] }
+      end
+
+      def test_next_response_due_condition_in_observer
+        ticket_params = ticket_params_hash.merge(created_at: (Time.zone.now - 2.hours), nr_due_by: 30.minutes.ago.iso8601)
+        ticket = create_ticket(ticket_params)
+        rule = @account.observer_rules.first
+        rule.name = 'check_next_response_due'
+        rule.filter_data = []
+        rule.condition_data = { performer: { 'type' => '4' }, events: [{ name: 'next_response_due' }], conditions: { any: [{ evaluate_on: :ticket, name: 'priority', operator: 'in', value: [1, 2, 3, 4] }] } }
+        rule.action_data = [{ name: 'status', value: 5 }]
+        rule.save!
+        rule.check_rule_events(nil, ticket, construct_overdue_type_hash('next_response'))
         rule.action_data.each { |action| assert_equal ticket.status, action[:value] }
       end
 
       private
-
-        def construct_response_due_hash
-          { response_due: true }
-        end
-
-        def construct_resolution_due_hash
-          { resolution_due: true }
+        def construct_overdue_type_hash(overdue_type)
+          { "#{overdue_type}_due".to_sym => true}
         end
     end
   end

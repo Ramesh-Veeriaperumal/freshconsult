@@ -39,7 +39,7 @@ module VA::Search::Constants
     event: {
       fields_with_filter_search: %i[priority ticket_type status group_id responder_id note_type ticket_action
                                     time_sheet_action customer_feedback],
-      fields_without_filter_search: %i[reply_sent due_by mail_del_failed_others mail_del_failed_requester response_due resolution_due],
+      fields_without_filter_search: %i[reply_sent due_by mail_del_failed_others mail_del_failed_requester response_due resolution_due next_response_due],
       transformable_fields: %i[ticket_type]
     }.freeze
 

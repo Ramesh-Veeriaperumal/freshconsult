@@ -34,7 +34,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
                             "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "sender_email",
                             "parent_ticket", "reports_hash","sla_response_reminded","sla_resolution_reminded", "dirty_attributes",
                             "sentiment", "spam_score", "dynamodb_range_key", "failure_count", "subsidiary_tkts_count",
-                            "last_customer_note_id", "nr_updated_at"]
+                            "last_customer_note_id", "nr_updated_at", "nr_escalation_level"]
 
   TICKET_STATE_ATTRIBUTES = ["opened_at", "pending_since", "resolved_at", "closed_at", "first_assigned_at", "assigned_at",
                              "first_response_time", "requester_responded_at", "agent_responded_at", "group_escalated",
@@ -267,6 +267,21 @@ class Helpdesk::Ticket < ActiveRecord::Base
           :joins => "inner join helpdesk_schema_less_tickets on helpdesk_tickets.account_id = helpdesk_schema_less_tickets.account_id  AND
                             helpdesk_tickets.id = helpdesk_schema_less_tickets.ticket_id",
           :conditions => ['helpdesk_schema_less_tickets.boolean_tc05=? AND helpdesk_schema_less_tickets.long_tc01 in (?)',
+                            false, sla_rule_ids]
+  }}
+
+  scope :next_response_sla, lambda { |account,due_by| {
+          :select => "helpdesk_tickets.*",
+          :conditions => ["nr_due_by <=? AND nr_escalated=? AND status IN (?) AND source != ?",
+                            due_by,false,Helpdesk::TicketStatus::donot_stop_sla_statuses(account),
+                            Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email]]
+  }}
+
+  scope :next_response_reminder, lambda {|sla_rule_ids|{
+          :select => "helpdesk_tickets.*",
+          :joins => "inner join helpdesk_schema_less_tickets on helpdesk_tickets.account_id = helpdesk_schema_less_tickets.account_id  AND
+                            helpdesk_tickets.id = helpdesk_schema_less_tickets.ticket_id",
+          :conditions => ['nr_reminded=? AND helpdesk_schema_less_tickets.long_tc01 in (?)',
                             false, sla_rule_ids]
   }}
 

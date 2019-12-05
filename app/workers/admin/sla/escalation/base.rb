@@ -5,9 +5,6 @@ module Admin::Sla::Escalation
 
     sidekiq_options :queue => :sla, :retry => 0, :failures => :exhausted
 
-    RESOLUTION_DUE = { resolution_due: true }.freeze
-    RESPONSE_DUE = { response_due: true }.freeze
-
     def perform
       account = Account.current
       schedule_error = false
@@ -19,24 +16,34 @@ module Admin::Sla::Escalation
       end
 
       #Resolution overdue
-      overdue_tickets_start_time=Time.now.utc
+      overdue_tickets_start_time = curr_time
       overdue_tickets = escalate_overdue(sla_default,sla_rule_based,"resolution")
-      overdue_tickets_end_time=Time.now.utc
+      overdue_tickets_end_time = curr_time
       overdue_tickets_time_taken=overdue_tickets_end_time - overdue_tickets_start_time
       total_tickets(overdue_tickets)
 
       #Response overdue
-      froverdue_tickets_start_time=Time.now.utc
+      froverdue_tickets_start_time = curr_time
       froverdue_tickets = escalate_overdue(sla_default,sla_rule_based,"response")
-      froverdue_tickets_end_time=Time.now.utc
+      froverdue_tickets_end_time = curr_time
       froverdue_tickets_time_taken=froverdue_tickets_end_time - froverdue_tickets_start_time
       total_tickets(froverdue_tickets)
+
+      # Next Response overdue
+      nr_overdue_tickets = nr_overdue_tickets_time_taken = 0
+      if account.next_response_sla_enabled?
+        nr_overdue_tickets_start_time = curr_time
+        nr_overdue_tickets = escalate_overdue(sla_default, sla_rule_based, 'next_response')
+        nr_overdue_tickets_end_time = curr_time
+        nr_overdue_tickets_time_taken = nr_overdue_tickets_end_time - nr_overdue_tickets_start_time
+        total_tickets(nr_overdue_tickets)
+      end
 
       #group escalate
       group_escalate
 
       log_format=logging_format(account,overdue_tickets,overdue_tickets_time_taken,
-        froverdue_tickets,froverdue_tickets_time_taken)
+        froverdue_tickets,froverdue_tickets_time_taken,nr_overdue_tickets,nr_overdue_tickets_time_taken)
       custom_logger.info "#{log_format}" unless custom_logger.nil?
     rescue Exception => e
       schedule_error = true
@@ -64,7 +71,7 @@ module Admin::Sla::Escalation
               sla_policy.safe_send("escalate_#{overdue_type}_overdue", ticket)
             end
             if account.automation_revamp_enabled?
-              event = overdue_type == 'response' ? RESPONSE_DUE : RESOLUTION_DUE
+              event = { "#{overdue_type}_due".to_sym => true }
               ticket.trigger_observer(event, false, true)
             end
           end
@@ -98,14 +105,16 @@ module Admin::Sla::Escalation
         @log_file_path ||= "#{Rails.root}/log/sla.log"      
       end 
       
-      def logging_format(account, overdue_tickets, overdue_tickets_time_taken, froverdue_tickets, froverdue_tickets_time_taken)
+      def logging_format(account, overdue_tickets, overdue_tickets_time_taken, froverdue_tickets, froverdue_tickets_time_taken, nr_overdue_tickets, nr_overdue_tickets_time_taken)
         "account_id=#{account.id}, account_name=#{account.name}, 
         fullname=#{account.full_domain}, overdue_tickets=#{overdue_tickets}, 
         overdue_tickets_time_taken=#{overdue_tickets_time_taken}, 
         froverdue_tickets=#{froverdue_tickets}, 
-        froverdue_tickets_time_taken=#{froverdue_tickets_time_taken}, 
-        total_tickets=#{overdue_tickets + froverdue_tickets} 
-        total_time_taken=#{froverdue_tickets_time_taken + overdue_tickets_time_taken} , 
+        froverdue_tickets_time_taken=#{froverdue_tickets_time_taken},
+        nr_overdue_tickets=#{nr_overdue_tickets}, 
+        nr_overdue_tickets_time_taken=#{nr_overdue_tickets_time_taken}, 
+        total_tickets=#{overdue_tickets + froverdue_tickets + nr_overdue_tickets} 
+        total_time_taken=#{froverdue_tickets_time_taken + overdue_tickets_time_taken + nr_overdue_tickets_time_taken} , 
         host_name=#{Socket.gethostname} ".squish
       end
 
@@ -116,6 +125,10 @@ module Admin::Sla::Escalation
       def total_tickets(tickets_count = 0)
         @total_tickets = @total_tickets.to_i + tickets_count
       end
-
+    private
+      def curr_time
+        Time.zone.now.utc
+      end
   end
+
 end

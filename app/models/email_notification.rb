@@ -54,6 +54,9 @@ class EmailNotification < ActiveRecord::Base
   RESOLUTION_SLA_REMINDER = 23
   DEFAULT_FORWARD_TEMPLATE = 24
 
+  NEXT_RESPONSE_SLA_REMINDER  = 27
+  NEXT_RESPONSE_SLA_VIOLATION = 28
+
   # Bot template
   BOT_RESPONSE_TEMPLATE = 201
 
@@ -110,7 +113,9 @@ class EmailNotification < ActiveRecord::Base
     [:system_notify_note_cc,          SYSTEM_NOTIFY_NOTE_CC,          VISIBILITY[:AGENT_ONLY]         ],
     [:new_ticket_cc,                  NEW_TICKET_CC,                  VISIBILITY[:CC_NOTIFICATION]    ],
     [:public_note_cc,                 PUBLIC_NOTE_CC,                 VISIBILITY[:CC_NOTIFICATION]    ],
-    [:bot_response_template,          BOT_RESPONSE_TEMPLATE,          VISIBILITY[:REQUESTER_ONLY]     ]
+    [:bot_response_template,          BOT_RESPONSE_TEMPLATE,          VISIBILITY[:REQUESTER_ONLY]     ],
+    [:next_response_reminder_sla,     NEXT_RESPONSE_SLA_REMINDER,     VISIBILITY[:AGENT_ONLY]         ],
+    [:next_response_sla,              NEXT_RESPONSE_SLA_VIOLATION,    VISIBILITY[:AGENT_ONLY]         ]
   ]
 
   # List of notfications to agents which cannot be turned off
@@ -132,7 +137,8 @@ class EmailNotification < ActiveRecord::Base
 
   scope :response_sla_reminder, :conditions => { :notification_type => RESPONSE_SLA_REMINDER } 
   scope :resolution_sla_reminder, :conditions => { :notification_type => RESOLUTION_SLA_REMINDER }
-  scope :non_sla_notifications, :conditions => ["notification_type not in (?)", [TICKET_UNATTENDED_IN_GROUP,FIRST_RESPONSE_SLA_VIOLATION,RESOLUTION_TIME_SLA_VIOLATION,RESPONSE_SLA_REMINDER,RESOLUTION_SLA_REMINDER]]
+  scope :next_response_sla_reminder, :conditions => { :notification_type => NEXT_RESPONSE_SLA_REMINDER }
+  scope :non_sla_notifications, :conditions => ["notification_type not in (?)", [TICKET_UNATTENDED_IN_GROUP,FIRST_RESPONSE_SLA_VIOLATION,RESOLUTION_TIME_SLA_VIOLATION,RESPONSE_SLA_REMINDER,RESOLUTION_SLA_REMINDER,NEXT_RESPONSE_SLA_REMINDER,NEXT_RESPONSE_SLA_VIOLATION]]
 
   def token
     TOKEN_BY_KEY[self.notification_type]
