@@ -2,12 +2,10 @@ module AccountCreation
   class RTSAccountCreate < BaseWorker
     include RTS::Constants
 
-    sidekiq_options queue: :rts_account_create, retry: 1, failures: :exhausted
+    sidekiq_options queue: :rts_account_create, retry: 3, failures: :exhausted
 
     def perform
       acc = Account.current
-      raise 'Account is not present' if acc.blank?
-
       service_response = make_rts_http_call
       if SUCCESS_CODES.include?(service_response[:status])
         data = JSON.parse(service_response[:text])
@@ -29,7 +27,8 @@ module AccountCreation
       service_params = {
         domain: RTSConfig['end_point'],
         rest_url: RTS_ACCOUNT_REGISTER[:end_point],
-        body: payload.to_json
+        body: payload.to_json,
+        custom_auth_header: custom_auth_header.stringify_keys
       }
       request_params = { method: RTS_ACCOUNT_REGISTER[:http_method] }
       hrp.fetch_using_req_params(service_params, request_params)
@@ -40,6 +39,21 @@ module AccountCreation
         name: Account.current.id.to_s,
         version: RTS_ACCOUNT_REGISTER[:default_version],
         desc: format(RTS_ACCOUNT_REGISTER[:default_description], account_name: Account.current.name)
+      }
+    end
+
+    def custom_auth_header
+      { token: generate_jwt_token }
+    end
+
+    def generate_jwt_token
+      JWT.encode generate_jwt_payload.stringify_keys, RTSConfig['app_secret'], RTS_JWT_ALGO
+    end
+
+    def generate_jwt_payload
+      {
+        name: Account.current.id.to_s,
+        exp: Time.now.to_i + RTSConfig['jwt_default_expiry'].to_i
       }
     end
   end
