@@ -48,6 +48,16 @@ module Helpdesk::HTMLSanitizer
     end
   end
 
+  def self.sanitize_topic(html)
+    if html
+      begin
+        Sanitize.fragment(html, Sanitize::Config::TOPIC_WHITELIST) 
+      rescue Exception => e
+        Sanitize.fragment(html, Sanitize::Config::HTML_RELAXED) 
+      end
+    end
+  end
+
   def self.sanitize_for_insert_solution(html)
     if html
       begin

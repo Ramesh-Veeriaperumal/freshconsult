@@ -57,7 +57,7 @@ module Social
 
       def subscribe_realtime(page_id)
         page = Account.current.facebook_pages.find_by_page_id(page_id)
-        Facebook::PageTab::Configure.new(page).execute('subscribe_realtime') if page.enable_page && page.company_or_visitor?
+        Facebook::PageTab::Configure.new(page).execute('subscribe_realtime') if page.present? && page.enable_page && page.company_or_visitor?
       end
   end
 end

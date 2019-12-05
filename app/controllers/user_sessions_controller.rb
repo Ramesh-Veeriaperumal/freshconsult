@@ -276,7 +276,8 @@ class UserSessionsController < ApplicationController
     return if current_account.sso_enabled? and current_account.sso_logout_url.present? and !is_native_mobile?
     if current_user.present? && freshid_agent?(current_user.email)
       Rails.logger.info "FRESHID destroy :: a=#{current_account.try(:id)}, u=#{current_user.try(:id)}"
-      if current_account.freshid_org_v2_enabled?
+      org_mapping = current_account.organisation_account_mapping
+      if current_account.freshid_org_v2_enabled? && org_mapping.present? && org_mapping.created_at < current_user.current_login_at
         redirect_url = params[:mobile_logout]? mobile_freshid_logout_url : support_home_url
         redirect_to Freshid::V2::UrlGenerator.freshid_logout(redirect_url) and return
       else
@@ -331,7 +332,7 @@ class UserSessionsController < ApplicationController
     Rails.logger.info "FRESHID freshid_destroy :: a=#{current_account.try(:id)}, u=#{current_user.try(:id)}"
     logout_user
     return if current_account.sso_enabled? and current_account.sso_logout_url.present? and !is_native_mobile?
-    redirect_to Freshid::V2::UrlGenerator.freshid_logout(support_home_url) and return if current_account.freshid_org_v2_enabled?
+    redirect_to Freshid::V2::UrlGenerator.freshid_logout(support_home_url) and return if current_account.freshid_org_v2_enabled? && !params.key?(:redirect_uri)
     redirect_to params[:redirect_uri]
   end
 

@@ -78,6 +78,39 @@ function invokeEditor(element_id,type,attr) {
 		// locale
 		language: I18n.locale
 	}
+
+	// common froala forum options
+	var invokeForumEditor = function(allowHtml) {
+		var allowHtml = allowHtml || false;
+
+		froala_forum_options = {
+			pluginsEnabled: ['fullscreen', 'paragraphFormat', 'paragraphStyle', 'fontSize', 'fontFamily', 'colors', 'align', 'lists', 'quote', 'image', 'imageManager', 'video', 'table', 'link', 'codeView', 'lineBreaker', 'codeInsert','pasteHandler', 'codeBeautifier', 'commonEvents'],
+			toolbarButtons: ['bold', 'italic', 'underline', 'color', 'strikethrough', 'paragraphStyle', '|',  'align', '|', 'formatOL', 'formatUL', 'outdent', 'indent', '|', 'insertLink', 'insertTable', 'insertImage', 'insertVideo',  'codeInsert', 'insertHR', '|', 'fullscreen'],
+			imageUploadURL: '/forums_uploaded_images',
+			imageManagerLoadURL: '/forums_uploaded_images',
+			sanitizeType: "forum",
+		}
+
+
+		if (allowHtml) {
+			froala_forum_options.toolbarButtons.splice(froala_forum_options.toolbarButtons.length-1 , 0, "html") // push before fullscreen;
+		}
+
+		jQuery(element_id).froalaEditor(jQuery.extend({}, froala_common_options, froala_forum_options))
+
+		// enabling image uploaded event for inline images
+		jQuery(element_id).on('froalaEditor.image.uploaded', function (e, editor, data) {
+			var currentForm = editor.$el.parents('form');
+			var inlineAttachmentScoper = editor.$oel.attr('name').replace(/\[.*\]/g, "");
+			var inlineAttachmentInput = jQuery('<input type="hidden">').attr({
+				name: inlineAttachmentScoper + '[inline_attachment_ids][]',
+				value: JSON.parse(data).fileid
+			});
+			currentForm.append(inlineAttachmentInput);
+		});
+	};
+
+
 	switch(type) {
 		case 'solution':
 		  froala_solution_options = {
@@ -89,27 +122,15 @@ function invokeEditor(element_id,type,attr) {
 				toolbarSticky: false
 			}
 			jQuery(element_id).froalaEditor(jQuery.extend({}, froala_common_options, froala_solution_options))
+			break;
 
-			case 'forum':
-			froala_forum_options = {
-				pluginsEnabled: ['fullscreen', 'paragraphFormat', 'paragraphStyle', 'fontSize', 'fontFamily', 'colors', 'align', 'lists', 'quote', 'image', 'imageManager', 'video', 'table', 'link', 'codeView', 'lineBreaker', 'codeInsert','pasteHandler', 'codeBeautifier', 'commonEvents'],
-				toolbarButtons: ['bold', 'italic', 'underline', 'color', 'strikethrough', 'paragraphStyle', '|',  'align', '|', 'formatOL', 'formatUL', 'outdent', 'indent', '|', 'insertLink', 'insertTable', 'insertImage', 'insertVideo',  'codeInsert', 'insertHR', '|', 'fullscreen'],
-				imageUploadURL: '/forums_uploaded_images',
-				imageManagerLoadURL: '/forums_uploaded_images',
-				sanitizeType: "forum"
-			}
-
-			jQuery(element_id).froalaEditor(jQuery.extend({}, froala_common_options, froala_forum_options))
-			// enabling image uploaded event for inline images
-			jQuery(element_id).on('froalaEditor.image.uploaded', function (e, editor, data) {
-				var currentForm = editor.$el.parents('form');
-				var inlineAttachmentScoper = editor.$oel.attr('name').replace(/\[.*\]/g, "");
-				var inlineAttachmentInput = jQuery('<input type="hidden">').attr({
-					name: inlineAttachmentScoper + '[inline_attachment_ids][]',
-					value: JSON.parse(data).fileid
-				});
-				currentForm.append(inlineAttachmentInput);
-			});
+		case 'forum':
+			invokeForumEditor();
+			break;
+		
+		case 'topic':
+			invokeForumEditor(true);
+			break;
 
 		default:
 	}

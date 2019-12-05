@@ -39,6 +39,8 @@ properties:
                 type: boolean
               falcon_ui:
                 type: boolean
+              focus_mode:
+                type: boolean
               freshchat_token:
                 type: string
               search_settings:

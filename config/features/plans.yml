@@ -252,6 +252,7 @@
       - :adv_article_bulk_actions
       - :customer_journey
       - :help_widget_predictive
+      - :advanced_automations
       - :article_versioning
     :inherits:
       - :blossom_jan_19
@@ -315,6 +316,7 @@
       - :supervisor_custom_status
       - :omni_channel_routing
       - :lbrr_by_omniroute
+      - :advanced_automations
     :inherits:
       - :garden_jan_19
     :exclude: []
@@ -331,6 +333,7 @@
       - :skill_based_round_robin
       - :sandbox
       - :hipaa
+      - :advanced_automations
     :inherits:
       - :estate_jan_19
     :exclude: []

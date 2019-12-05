@@ -21,7 +21,7 @@ class CustomSurvey::SurveyResult < ActiveRecord::Base
 
   def custom_ratings
     custom_ratings_map = {}
-    survey_questions_map.each_pair do |id, column_name|
+    survey.survey_questions_map_from_cache.each_pair do |id, column_name|
       custom_ratings_map[id] = survey_result_data[column_name.to_sym]
     end 
     custom_ratings_map
@@ -195,18 +195,5 @@ class CustomSurvey::SurveyResult < ActiveRecord::Base
           question_details
         end
       end
-    end 
-
-    #Map of Survey Question label and column name for easy retrieval of survey_result_data values
-    def survey_questions_map
-      questions_map = {}
-      survey.survey_questions.map do |survey_question|
-        if survey_question.default
-          questions_map["default_question"] =  survey_question.column_name
-        else
-          questions_map["question_#{survey_question.id}"] =  survey_question.column_name
-        end
-       end
-      questions_map
     end
 end

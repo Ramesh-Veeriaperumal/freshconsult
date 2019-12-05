@@ -288,6 +288,8 @@ module MemcacheKeys
 
   CUSTOM_NESTED_FIELD_CHOICES = 'v1/CUSTOM_NESTED_FIELD_CHOICES:%{account_id}'.freeze
 
+  SURVEY_QUESTIONS_MAP_KEY = 'v1/SURVEY_QUESTIONS_MAP:%{account_id}:%{survey_id}'.freeze
+
   CHARGEBEE_SUBSCRIPTION_PLAN = 'CHARGEBEE_SUBSCRIPTION_PLAN:%{plan_name}:%{period}:%{currency}'.freeze
 
   PICKLIST_MAPPING_BY_FIELD_ID = 'v1/PICKLIST_MAPPING_BY_FIELD_ID:%{account_id}:%{ticket_field_id}'

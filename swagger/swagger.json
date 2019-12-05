@@ -14911,6 +14911,9 @@
                     "falcon_ui": {
                       "type": "boolean"
                     },
+                    "focus_mode": {
+                      "type": "boolean"
+                    },
                     "freshchat_token": {
                       "type": "string"
                     },
@@ -17095,6 +17098,9 @@
           }
         },
         "shortcuts_enabled": {
+          "type": "boolean"
+        },
+        "focus_mode": {
           "type": "boolean"
         },
         "avatar_id": {

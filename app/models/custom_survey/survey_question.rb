@@ -5,6 +5,7 @@ class CustomSurvey::SurveyQuestion < ActiveRecord::Base
   belongs_to :survey
 
   include Surveys::PresenterHelper
+  include MemcacheKeys
   
   DEFAULT_FIELD_PROPS = {}
   CUSTOM_FIELDS_SUPPORTED = [:custom_survey_radio]
@@ -43,6 +44,8 @@ class CustomSurvey::SurveyQuestion < ActiveRecord::Base
   publishable
   concerned_with :presenter
 
+  after_commit :clear_survey_map_cache
+
   def survey_method(param_survey_id)
     (Account.current || account).custom_surveys.find_by_id(param_survey_id)
   end
@@ -51,4 +54,8 @@ class CustomSurvey::SurveyQuestion < ActiveRecord::Base
     choices.map { |c| c[:face_value] }
   end
 
+  def clear_survey_map_cache
+    key = format(SURVEY_QUESTIONS_MAP_KEY, account_id: account_id, survey_id: survey_id)
+    delete_value_from_cache(key)
+  end
 end

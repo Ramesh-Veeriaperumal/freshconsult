@@ -256,6 +256,9 @@ module Redis::Keys::Others
   #Increasing Domains for accounts as per request by the account holder
   INCREASE_DOMAIN_FOR_EMAILS = 'INCREASE_DOMAIN_FOR_EMAILS'.freeze
 
+  # Field service management
+  FSM_SIGN_UP_ENABLED_PAGES_LIST = 'FSM_SIGN_UP_ENABLED_PAGES_LIST'.freeze
+
   # Holds the pages to be migrated to the us app
   MIGRATE_EUC_FB_PAGES = 'MIGRATE_EUC_FB_PAGES:%{account_id}'.freeze
 end

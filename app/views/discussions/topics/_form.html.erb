@@ -56,8 +56,11 @@
 
 		<div class="controls flow-form">
         <div id="sticky_redactor_toolbar" class="hide sticky_editor_toolbar"></div>
-        <div class='editor-body'>
-		   		<%= form.text_area  :body_html, 'editor-type' => :forum, :height => "400px", 
+        <% editor_with_html = current_account.launched?(:topic_editor_with_html) %>
+        <div class='editor-body' <% if editor_with_html %> id="topic-html-editor" <% end %>>
+		   		<%= form.text_area  :body_html, 
+		   		'editor-type' => editor_with_html ? :topic : :forum, 
+		   		:height => "400px", 
         		:class => "required_redactor", 
         		:value => !@topic.posts.empty? ? @topic.posts.first.body_html : "",
         		:id => :topic_forums_description,

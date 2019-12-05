@@ -21,12 +21,14 @@ module Widget
 
       def validate_filter_params
         params.permit(:language, *ApiConstants::DEFAULT_INDEX_FIELDS)
-        errors = [[:language, :not_included]] if params.key?(:language) && Account.current.all_languages.exclude?(params[:language])
-        render_errors errors, list: Account.current.all_languages.join(', ') if errors
       end
 
       def set_locale
         I18n.locale = Language.current.code || I18n.default_locale
+      end
+
+      def set_current_user?
+        false
       end
   end
 end

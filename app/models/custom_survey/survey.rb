@@ -11,11 +11,13 @@ class CustomSurvey::Survey < ActiveRecord::Base
   VERSION_MEMBER_KEY = 'SURVEY_LIST'.freeze
   
   concerned_with :constants, :associations, :presenter
+
   attr_protected :account_id, :active, :default, :deleted
   attr_accessible :link_text, :happy_text, :neutral_text, :unhappy_text, :title_text, :thanks_text, :feedback_response_text, :comments_text,
                   :send_while, :good_to_bad, :can_comment
 
-  after_commit :clear_custom_survey_cache, :if => :active_survey_updated?
+  after_commit :clear_custom_survey_cache, if: :active_survey_updated?
+  after_commit :clear_survey_map_cache
 
   publishable on: [:create, :update]
   xss_sanitize :only => [:link_text, :happy_text, :neutral_text , :unhappy_text , :title_text, :thanks_text , :feedback_response_text, :comments_text ], 

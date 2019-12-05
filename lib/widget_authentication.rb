@@ -30,7 +30,7 @@ module WidgetAuthentication
 
     def set_user
       @user = Account.current.user_emails.user_for_email(jwt_auth.payload[:email])
-      @user.try(:make_current)
+      @user.try(:make_current) if set_current_user?
     end
 
     def check_and_update_user
@@ -53,5 +53,9 @@ module WidgetAuthentication
 
     def auth_token_required?
       false
+    end
+
+    def set_current_user?
+      true
     end
 end

@@ -4,6 +4,7 @@ class Tickets::LinkTickets < BaseWorker
 
   def perform(args)
     args.symbolize_keys!
+    @action = args[:action].try(:to_sym)
     @tracker_ticket = Account.current.tickets.find_by_display_id(args[:tracker_id])
     @related_tickets = Account.current.tickets.includes(:schema_less_ticket).not_associated.permissible(User.current).readonly(false).where('display_id IN (?)', args[:related_ticket_ids])
     @tracker_ticket.misc_changes = {:tracker_link => @related_tickets.pluck(:display_id)}
@@ -25,6 +26,8 @@ class Tickets::LinkTickets < BaseWorker
                                             :description => "Link Tickets error",
                                             :args => args }})
     Rails.logger.error("Link Tickets Error: \n#{e.message}\n#{e.backtrace.join("\n")}")
+  ensure
+    @tracker_ticket.trigger_dispatcher if enqueue_delayed_dispatcher?
   end
 
   private
@@ -32,4 +35,10 @@ class Tickets::LinkTickets < BaseWorker
     def associations_count_exceeded?
       ( @tracker_ticket.associates.nil? ? 0 : @tracker_ticket.associates.count ) + @related_tickets.count > TicketConstants::MAX_RELATED_TICKETS
     end
+
+    def enqueue_delayed_dispatcher?
+      @tracker_ticket.present? && @tracker_ticket.tracker_ticket? && @action.try(:to_sym) == :create &&
+        !@tracker_ticket.skip_dispatcher? && Account.current.advanced_automations_enabled?
+    end
+
 end

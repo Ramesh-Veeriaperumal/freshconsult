@@ -852,6 +852,24 @@ module Helpdesk
         assert_equal nil, primary_ticket
       end
 
+      def test_incoming_email_check_primary_with_archive_ticket_feature_when_ticket_parent_is_set
+        id = Faker::Lorem.characters(50)
+        subject = 'Test Subject'
+        params = default_params(id, subject)
+        @account = Account.current
+        ticket = create_ticket(requester_id: User.first.id)
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
+        fake_parent_ticket = make_parent_ticket
+        ticket.parent = fake_parent_ticket
+        Account.any_instance.stubs(:features_included?).returns(true)
+        Helpdesk::SchemaLessTicket.any_instance.stubs(:parent_ticket).returns(fake_parent_ticket.id)
+        primary_ticket = incoming_email_handler.check_primary(ticket, Account.first)
+        assert_equal fake_parent_ticket, primary_ticket
+      ensure
+        Account.any_instance.unstub(:features_included?)
+        Helpdesk::SchemaLessTicket.any_instance.unstub(:parent_ticket)
+      end
+
       def test_incoming_email_check_primary
         id = Faker::Lorem.characters(50)
         subject = 'Test Subject'

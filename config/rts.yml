@@ -1,0 +1,13 @@
+defaults: &defaults
+  app_id: dummy
+  app_secret: dummy
+  end_point: https://rts-staging.freshworksapi.com
+  db_cipher_key: c6d28822fe84346e669d536edeab861dd61b2b2082b7
+development:
+  <<: *defaults
+staging:
+  <<: *defaults
+test:
+  <<: *defaults
+production:
+  <<: *defaults

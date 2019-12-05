@@ -404,7 +404,8 @@ class ChannelMessagePollerTest < ActionView::TestCase
             "post_type": "ad_post",
             "facebook_page_id": page_id,
             "fbms_stream_id": 1,
-            "contact_facebook_user_id": "323232"
+            'contact_facebook_user_id': '323232',
+            'parent_post_id': 12
           },
           "data": {
             "subject": "Sample Subject",
@@ -413,7 +414,6 @@ class ChannelMessagePollerTest < ActionView::TestCase
             "product_id": "12",
             "description": "<div>Test Description</div>",
             "status": 2,
-            "source": 6,
             "created_at": Time.now.utc.iso8601,
             "priority": 1
           },
@@ -447,14 +447,14 @@ class ChannelMessagePollerTest < ActionView::TestCase
             "post_type":"ad_post",
             "facebook_page_id": page_id,
             "fbms_stream_id": 1,
-            "contact_facebook_user_id": "323232"
+            'contact_facebook_user_id': '323232',
+            'parent_post_id': 12
           },
           "data": {
             "body": "<div>Hi</div>",
             "user_id": @account.users.first.id,
             "ticket_id": ticket_id,
             "incoming": true,
-            "source": 7,
             "created_at": Time.now.utc.iso8601,
             "private": true
           },

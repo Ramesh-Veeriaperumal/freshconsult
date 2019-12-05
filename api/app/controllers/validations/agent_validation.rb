@@ -1,6 +1,6 @@
 class AgentValidation < ApiValidation
   attr_accessor :name, :phone, :mobile, :email, :time_zone, :language, :occasional, :signature, :ticket_scope,
-                :role_ids, :group_ids, :job_title, :id, :shortcuts_enabled, :avatar_id, :search_settings, :agent_type
+                :role_ids, :group_ids, :job_title, :id, :avatar_id, :search_settings, :agent_type, :focus_mode, :shortcuts_enabled
 
   CHECK_PARAMS_SET_FIELDS = %w[time_zone language occasional role_ids ticket_scope search_settings].freeze
 
@@ -26,6 +26,8 @@ class AgentValidation < ApiValidation
   validate :check_agent_limit, if: -> { (@occasional_set && @previous_occasional && @occasional == false && self.validation_context == :update) || (self.validation_context == :create) }
   validate :check_field_agent_limit, :check_agent_type_with_role_ids, if: -> { Account.current.field_service_management_enabled? }, on: :create
   validates :shortcuts_enabled, data_type: { rules: 'Boolean' }
+  validates :focus_mode, data_type: { rules: 'Boolean' }
+  validate :focus_mode_enabled?, unless: -> { focus_mode.nil? }
   validates :search_settings, data_type: { rules: Hash }, presence: true, hash: { validatable_fields_hash: proc { |x| x.search_settings_format } }, if: -> { @search_settings }
   validate :check_ticket_search_settings, if: -> { @search_settings.present? }
 
@@ -112,6 +114,10 @@ class AgentValidation < ApiValidation
 
   def archive_tickets_enabled?
     Account.current.archive_tickets_enabled?
+  end
+
+  def focus_mode_enabled?
+    errors[:focus_mode] = :focus_mode_feature_is_not_enabled unless Account.current.focus_mode_enabled?
   end
 
   private

@@ -73,11 +73,12 @@ module Helpdesk::Ticketfields::ControllerMethods
       }
     end
 
-    def ff_meta_data(field_details, account = current_account, alias_present = false)
+    def ff_meta_data(field_details, account = current_account, options = {})
+      @signup_flow = options[:signup_flow].presence || false
       type = field_details.delete(:type)
       column_name = available_columns(type).first
       add_to_used_columns(type, column_name)
-      label = alias_present ? field_details[:flexifield_alias] : field_details[:label]
+      label = options[:alias_present] ? field_details[:flexifield_alias] : field_details[:label]
       is_encrypted = type.to_sym == Helpdesk::TicketField::CUSTOM_FIELD_PROPS[:encrypted_text][:dom_type]
       {
         flexifield_def_id:  account.ticket_field_def.id,
@@ -109,9 +110,9 @@ module Helpdesk::Ticketfields::ControllerMethods
     def used_columns(type)
       @used_columns ||= {}
       @used_columns[type] ||= begin
-        Sharding.run_on_slave do
-          field_mapping = type.eql?('date') || type.eql?('date_time') ? [ FIELD_COLUMN_MAPPING['date'.to_sym][0], FIELD_COLUMN_MAPPING['date_time'.to_sym][0] ] : FIELD_COLUMN_MAPPING[type.to_sym][0]
-          Account.current.ticket_field_def.flexifield_def_entries.select(:flexifield_name).where(flexifield_coltype: field_mapping ).map(&:flexifield_name)
+        master_or_slave = @signup_flow ? :run_on_master : :run_on_slave
+        Sharding.safe_send(master_or_slave) do
+          Account.current.ticket_field_def.flexifield_def_entries.select(:flexifield_name).where(flexifield_coltype: FIELD_COLUMN_MAPPING[type.to_sym][0]).map(&:flexifield_name)
         end
       end
     end

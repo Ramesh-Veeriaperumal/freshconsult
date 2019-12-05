@@ -603,10 +603,11 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     params_hash = create_mailbox_params_hash.merge(create_custom_mailbox_hash(options)).merge(mailbox_type: CUSTOM_MAILBOX)
     post :create, construct_params({}, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern(
+    match_json([bad_request_error_pattern_with_nested_field(
       :incoming,
-      :'Field is missing/blank',
-      code: :invalid_value
+      :password,
+      :'Mandatory attribute missing',
+      code: :missing_field
     )])
   ensure
     Account.any_instance.unstub(:has_features?)
@@ -620,9 +621,9 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     Email::MailboxesController.any_instance.stubs(:private_api?).returns(false)
     options = {
       support_email: 'testactivefilter@fd.com',
-      imap_authentication: 'xoauth2',
-      smtp_authentication: 'xoauth2',
-      imap_password: '',
+      imap_authentication: 'plain',
+      smtp_authentication: 'plain',
+      imap_password: '764768',
       reference_key: 'hffhyugewg',
       access_type: 'both'
     }

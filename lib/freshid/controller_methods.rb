@@ -10,7 +10,7 @@ module Freshid::ControllerMethods
     session[:flash_message] = flash[:notice]
     session[:authorize] = true
     session[:freshid_auth_failure_return_to] = request.original_fullpath
-    ( freshid_org_v2_enabled? ? redirect_to_freshid_v2_authorize : redirect_to_freshid_authorize ) and return
+    ( current_account.freshid_org_v2_enabled? ? redirect_to_freshid_v2_authorize : redirect_to_freshid_authorize ) and return
   end
 
   def redirect_to_agent_sso_freshid_authorize

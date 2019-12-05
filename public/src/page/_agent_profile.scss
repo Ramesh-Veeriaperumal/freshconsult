@@ -74,6 +74,35 @@
 	padding-right: 20px;
 }
 
+.focus-mode-option {
+	padding-top: 4px;
+}
+.focus-mode-toggle {
+	font-size: 16px;
+	font-weight: 600;
+}
+.focus-mode-toggle-freshid {
+	font-size: 16px;
+	font-weight: 600;
+	padding-left: 20px;
+}
+.focus-mode-tip {
+	color: $grayLight;
+	margin-top: -4px;
+	line-height: 1.4;
+	font-size: 12px;
+}
+.focus-mode-tip-freshid {
+	color: $grayLight;
+	padding-left: 20px;
+	margin-top: -4px;
+	line-height: 1.4;
+	font-size: 12px;
+}
+.focus-mode-toggle-button-freshid {
+	padding-right: 20px;
+}
+
 .profile-edit {
     margin: 0 -20px -40px -20px;
     display: table;

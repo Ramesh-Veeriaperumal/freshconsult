@@ -14,6 +14,16 @@ module Agents
       update_preferences({:shortcuts_enabled => enabled})
     end
 
+    # Helpers for getting and settings user based focus mode
+    def focus_mode?
+      preferences[:focus_mode]
+    end
+    alias focus_mode focus_mode?
+
+    def focus_mode=(enabled)
+      update_preferences(focus_mode: enabled)
+    end
+
     # Helpers for getting and settings user based keyboard shortcuts key mapping
     def shortcuts_mapping
       preferences[:shortcuts_mapping]
