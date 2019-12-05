@@ -244,6 +244,7 @@
     - sandbox_cleanup
     - update_sandbox_subscription
     - ticket_properties_suggester
+    - image_meta_data_delete
   :free:
     - free_sla
     - free_supervisor
