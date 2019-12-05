@@ -63,7 +63,7 @@ class Email::MailboxesController < ApiApplicationController
 
     def scoper
       if index? && params[:order_by] == EmailMailboxConstants::FAILURE_CODE
-        current_account.all_email_configs.reorder('imap_mailboxes.error_type > 0 DESC, primary_role DESC')
+        current_account.all_email_configs.reorder('imap_mailboxes.error_type > 0 or smtp_mailboxes.error_type > 0 DESC, primary_role DESC')
       else
         current_account.all_email_configs.reorder('primary_role DESC')
       end
