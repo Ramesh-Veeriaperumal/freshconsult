@@ -96,7 +96,7 @@ module Conversations::Twitter
       :in_reply_to_user_id => twt.attrs[:in_reply_to_user_id_str],
       :body => twt.attrs[:text],
       :in_reply_to_id => "#{status_id}",
-      :attachment_id => note.attachments.map(&:id),
+      :attachment_id => note.nil? ? [] : note.attachments.map(&:id),
       :posted_at => twt.attrs[:created_at],
       :user => {
         :name => twt.attrs[:user][:name],
