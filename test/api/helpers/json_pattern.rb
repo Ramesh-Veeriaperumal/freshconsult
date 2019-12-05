@@ -14,6 +14,12 @@ module JsonPattern
     )
   end
 
+  def bad_request_error_pattern_with_additional_info(field, additional_info, value, params_hash = {})
+    bad_request_error_pattern(field, value, params_hash).merge(
+      additional_info: additional_info
+    )
+  end
+
   def partial_success_response_pattern(succeeded_ids, failures = {})
     {
       succeeded: succeeded_ids,

@@ -87,6 +87,26 @@ module Ember
       other_companies
     end
 
+    def test_create_contact_with_existing_email
+      email = Faker::Internet.email
+      add_new_user(@account, name: Faker::Lorem.characters(15), email: email)
+      post :create, construct_params({},  name: Faker::Lorem.characters(15),
+                                          email: email)
+      additional_info = parse_response(@response.body)['errors'][0]['additional_info']
+      match_json([bad_request_error_pattern_with_additional_info('email', additional_info, :'Email has already been taken')])
+      assert_response 409
+    end
+
+    def test_update_contact_with_existing_email
+      user1 = add_new_user(@account)
+      user2 = add_new_user_without_email(@account)
+      email = user1.email
+      put :update, construct_params({ id: user2.id }, email: email)
+      additional_info = parse_response(@response.body)['errors'][0]['additional_info']
+      assert_response 409
+      match_json([bad_request_error_pattern_with_additional_info('email', additional_info, :'Email has already been taken')])
+    end
+
     def test_create_contact_without_name
       name_field = Account.current.contact_form.default_fields.find_by_name('name')
       name_field.required_for_agent = false
