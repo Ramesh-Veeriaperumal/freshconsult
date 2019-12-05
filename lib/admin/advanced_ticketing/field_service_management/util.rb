@@ -17,7 +17,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
 
       def perform_fsm_operations(enable_options = {})
         Rails.logger.info "Started adding FSM artifacts for Account - #{Account.current.id}"
-        @fsm_signup_flow = enable_options[:fsm_singup_flow].presence || false
+        @fsm_signup_flow = enable_options[:fsm_signup_flow].presence || false
         create_field_tech_role
         update_field_agent_limit_for_active_account
         create_service_task_field_type
