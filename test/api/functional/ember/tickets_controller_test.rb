@@ -3015,6 +3015,15 @@ module Ember
       match_json(ticket_show_pattern(t, nil, true))
     end
 
+    def test_ticket_with_secret_id
+      Account.current.launch(:agent_collision_revamp)
+      t = create_ticket
+      get :show, controller_params(version: 'private', id: t.display_id, include: 'requester')
+      assert_response 200
+      match_json(ticket_show_pattern(t, nil, true))
+      Account.current.rollback(:agent_collision_revamp)
+    end
+
     def test_show_with_restricted_requester_info
       t = create_ticket
       remove_privilege(User.current, :view_contacts)
