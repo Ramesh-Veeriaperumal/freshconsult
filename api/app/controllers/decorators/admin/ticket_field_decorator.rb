@@ -13,6 +13,9 @@ class Admin::TicketFieldDecorator < ApiDecorator
     return response if ignored_fields? && list
     TICKET_FIELDS_RESPONSE_HASH.each_pair do |key, value|
       response[key] = record.safe_send(value) unless record.safe_send(value).nil?
+      if NOT_ALLOWED_PORTAL_PARAMS.include?(key)
+        response[key] ||= false
+      end
       response[key] = TicketDecorator.display_name(record.name) if key == :name && !record.default?
     end
     add_requester_field(response)
@@ -21,6 +24,8 @@ class Admin::TicketFieldDecorator < ApiDecorator
       response[:sections] = construct_sections(record) if @include_rel.respond_to?(:include?) && @include_rel.include?('section')
     end
     response[:choices] = record.new_formatted_choices if record.choices? && !list
+    section_mapping_response(record, response)
+    dependent_fields_response(record, response)
     response
   end
 

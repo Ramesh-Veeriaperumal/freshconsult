@@ -329,7 +329,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   def new_response_hash
     {
       id: status_id,
-      label_for_customer: Helpdesk::TicketStatus.translate_status_name(self, 'customer_display_name'),
+      label_for_customers: Helpdesk::TicketStatus.translate_status_name(self, 'customer_display_name'),
       value: Helpdesk::TicketStatus.translate_status_name(self, 'name'),
       stop_sla_timer: stop_sla_timer,
       default: is_default,

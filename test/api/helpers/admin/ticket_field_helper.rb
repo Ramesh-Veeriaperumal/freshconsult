@@ -168,4 +168,68 @@ module Admin::TicketFieldHelper
     tf = create_custom_field_dropdown_with_sections(name, DROPDOWN_CHOICES_TICKET_TYPE)
     create_section_fields(tf.id)
   end
+
+  def ticket_field_common_params(args = {})
+    params_hash = {
+        label: args[:label] || Faker::Lorem.characters(10),
+        label_for_customers: args[:label_for_customers] || Faker::Lorem.characters(10),
+        position: args[:position] || Faker::Number.number(2).to_i,
+        type: args[:type] || 'custom_text'
+    }
+    params_hash.merge(args.except(*params_hash.keys))
+  end
+
+  def ticket_field_portal_params(args = {})
+    params_hash = {
+        required_for_closure: args[:required_for_closure] || false,
+        required_for_agents: args[:required_for_agents] || false,
+        required_for_customers: args[:required_for_customers] || false,
+        customers_can_edit: args[:customers_can_edit] || false,
+        displayed_to_customers: args[:displayed_to_customers] || false,
+    }
+    params_hash.merge(args.except(*params_hash.keys))
+  end
+
+  def section_mapping_params(args = {})
+    params_hash = {
+        section_id: args[:section_id] || Faker::Number.number(2).to_i,
+        position: args[:position] || Faker::Number.number(2).to_i,
+    }
+    params_hash.merge(args.except(*params_hash.keys))
+  end
+
+  def ticket_field_response_pattern(expected_output, ticket_field)
+    {
+        id: expected_output[:id] || ticket_field.id,
+        label: expected_output[:label] || ticket_field.label,
+        label_for_customers: expected_output[:label_for_customers] || ticket_field.label_in_portal,
+        position: ticket_field.position,
+        created_at: ticket_field.utc_format(expected_output[:created_at] || ticket_field.created_at),
+        updated_at: ticket_field.utc_format(expected_output[:updated_at] || ticket_field.updated_at),
+        name: TicketDecorator.display_name(ticket_field.name),
+        type: expected_output[:type] || ticket_field.field_type,
+        required_for_agents: expected_output[:required_for_agents] || ticket_field.required,
+        required_for_customers: expected_output[:required_for_customers] || ticket_field.required_in_portal,
+        displayed_to_customers: expected_output[:displayed_to_customers] || ticket_field.visible_in_portal,
+        customers_can_edit: expected_output[:customers_can_edit] || ticket_field.editable_in_portal,
+        required_for_closure: expected_output[:required_for_closure] || ticket_field.required_for_closure,
+        default: expected_output[:default] || ticket_field.default
+    }.stringify_keys
+  end
+
+  def section_field_response_pattern(expected_output, ticket_field)
+    section_mappings = []
+    ticket_field.section_fields.each do |sf|
+      section_mappings << { section_id: sf.section_id, position: sf.position }
+    end
+    { section_mappings: section_mappings }
+  end
+
+  def json_response(response)
+    ActiveSupport::JSON.decode(response.body).symbolize_keys
+  end
+
+  def wrap_cname(params)
+    params
+  end
 end

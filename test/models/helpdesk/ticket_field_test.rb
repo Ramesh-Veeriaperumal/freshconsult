@@ -35,4 +35,44 @@ class TicketFieldTest < ActiveSupport::TestCase
     tkt_field.update_attributes(label_in_portal: new_label)
     Time.unstub(:now)
   end
+
+  def test_field_name_helper_base
+    label = "test"
+    account_id = 1
+    expected_field_name = "cf_test_1"
+    field_name = Helpdesk::TicketField.field_name(label, account_id)
+    assert_match(expected_field_name, field_name)
+  end
+
+  def test_field_name_helper_encrypted_field
+    label = "test"
+    account_id = 1
+    expected_field_name = "cf_enc_test_1"
+    field_name = Helpdesk::TicketField.field_name(label, account_id, false, true)
+    assert_match(expected_field_name, field_name)
+  end
+
+  def test_field_name_helper_random
+    label = "test"
+    account_id = 1
+    field_name = Helpdesk::TicketField.field_name(label, account_id, true)
+    random = field_name.split('_')[1]
+    assert(random.include?(label) && random != label)
+  end
+
+  def test_field_name_helper_random_with_non_alpha_characters
+    label = ""
+    account_id = 1
+    field_name = Helpdesk::TicketField.field_name(label, account_id)
+    random = field_name.split('_')[1]
+    assert(random.include?('rand') && random != 'rand')
+  end
+
+  def test_field_name_helper_random_and_non_alpha_characters
+    label = ""
+    account_id = 1
+    field_name = Helpdesk::TicketField.field_name(label, account_id, true)
+    random = field_name.split('_')[1]
+    assert(random.include?('rand') && random != 'rand')
+  end
 end

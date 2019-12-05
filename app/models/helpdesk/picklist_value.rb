@@ -3,14 +3,14 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
   include Redis::DisplayIdRedis
   include Redis::RedisKeys
 
-  clear_memcache [ACCOUNT_SECTION_FIELD_PARENT_FIELD_MAPPING, ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING, TICKET_FIELDS_FULL, ACCOUNT_CUSTOM_DROPDOWN_FIELDS, ACCOUNT_TICKET_TYPES, CUSTOMER_EDITABLE_TICKET_FIELDS_FULL, CUSTOMER_EDITABLE_TICKET_FIELDS_WITHOUT_PRODUCT]
+  clear_memcache [ACCOUNT_SECTION_FIELD_PARENT_FIELD_MAPPING, ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING, TICKET_FIELDS_FULL, ACCOUNT_CUSTOM_DROPDOWN_FIELDS, ACCOUNT_TICKET_TYPES, CUSTOMER_EDITABLE_TICKET_FIELDS_FULL, CUSTOMER_EDITABLE_TICKET_FIELDS_WITHOUT_PRODUCT, ACCOUNT_SECTION_FIELDS]
 
   belongs_to_account
   self.table_name =  "helpdesk_picklist_values"
   validates_presence_of :value
   validates_uniqueness_of :value, :scope => [:pickable_id, :pickable_type, :account_id], :if => 'pickable_id.present?'
 
-  attr_accessor :required_ticket_fields, :section_ticket_fields
+  attr_accessor :required_ticket_fields, :section_ticket_fields, :sub_level_choices, :skip_ticket_field_id_assignment
   
   belongs_to :pickable, :polymorphic => true
 
@@ -32,14 +32,18 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
 
   before_create :assign_picklist_id, if: :redis_picklist_id_enabled?
 
-  before_save :assign_ticket_field_id, if: -> { pickable_type == 'Helpdesk::TicketField' }
+  before_save :assign_ticket_field_id, if: -> { pickable_type == 'Helpdesk::TicketField' && !skip_ticket_field_id_assignment }
 
   before_save :construct_model_changes
 
   before_destroy :save_deleted_picklist_info
 
+  before_update :reorder_choice_position, if: -> { position_changed? }
+
   after_commit :clear_ticket_types_cache
-  
+
+  acts_as_list scope: [:pickable_id, :pickable_type]
+
   concerned_with :presenter
   # TODO: Need to change this once migration done
   scope :section_picklist_join, lambda { |conditions = nil|
@@ -56,10 +60,26 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
 
   CACHEABLE_ATTRIBUTES = ["id", "account_id", "pickable_id", "pickable_type", "value", "position", "created_at", "updated_at"]
   
-  # scope_condition for acts_as_list and as well for using index in fetching sub_picklist_values
-  def scope_condition
-    "pickable_id = #{pickable_id} AND #{connection.quote_column_name("pickable_type")} = 
-    '#{pickable_type}'"
+  # # scope_condition for acts_as_list and as well for using index in fetching sub_picklist_values
+  # removing it as of now, as it will overriden by acts_as_list
+  # def scope_condition
+  #   "pickable_id = #{pickable_id} AND #{connection.quote_column_name("pickable_type")} =
+  #   '#{pickable_type}'"
+  # end
+
+  def reorder_choice_position
+    if Account.current.ticket_field_revamp_enabled?
+      # calling it manually to avoid deadlock/failure
+      # logic behind this - decrement all the
+      old_position = changes[:position][0]
+      new_position = changes[:position][1]
+
+      # moving all the choices upwards by 1 relative to current field old position
+      acts_as_list_class.update_all('position = (position - 1)', "#{scope_condition} AND position > #{old_position}")
+      update_column(:position, nil) # making it null to avoid including in below update
+      increment_positions_on_lower_items(new_position) # moving all the choices downward by 1 relative to new position
+      update_column(:position, new_position) # update to new position
+    end
   end
 
   def custom_cache_attributes

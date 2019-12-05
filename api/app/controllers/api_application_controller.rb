@@ -216,8 +216,10 @@ class ApiApplicationController < MetalApiController
     end
 
     def render_500(e)
-      raise e if Rails.env.development? || Rails.env.test?
       notify_new_relic_agent(e, description: 'Error occured while processing api request')
+      unless Rails.env.production?
+        Rails.logger.error("API 500 error: #{e.message} \n #{e.backtrace.to_a.join("\n")}")
+      end
       render_base_error(:internal_error, 500)
     end
 
