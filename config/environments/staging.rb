@@ -2,7 +2,7 @@ Helpkit::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
   # Code is not reloaded between requests
-  config.cache_classes = true
+  config.cache_classes = !(ENV['HELPKIT_TEST_SETUP_ENABLE'] == 1)
 
   # Full error reports are disabled and caching is turned on
   config.consider_all_requests_local       = false
