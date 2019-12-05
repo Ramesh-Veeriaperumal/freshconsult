@@ -1,9 +1,12 @@
 module Widget
   module Search
     class SolutionsController < ApiSearch::SolutionsController
+      include HelperConcern
       include WidgetConcern
+      include Widget::Search::SolutionConstants
 
       before_filter :set_current_language
+      before_filter :validate_query_params, only: [:results]
 
       def results
         @search_context = :portal_spotlight_solution
@@ -11,6 +14,9 @@ module Widget
       end
 
       private
+        def constants_class
+          Widget::Search::SolutionConstants
+        end
 
         def decorator_options
           [Widget::Solutions::ArticleDecorator]
@@ -27,8 +33,8 @@ module Widget
             es_params[:article_visibility] = user_visibility
             es_params[:article_category_id] = solution_category_meta_ids
             es_params[:article_company_id]  = User.current.company_ids if User.current && User.current.has_company?
-            es_params[:size]  = 5
-            es_params[:from]  = 1
+            es_params[:page] = params.fetch(:page, DEFAULT_PAGE)
+            es_params[:size] = params.fetch(:per_page, DEFAULT_PER_PAGE)
           end
         end
 

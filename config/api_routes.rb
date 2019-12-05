@@ -1018,6 +1018,7 @@ Helpkit::Application.routes.draw do
       namespace :search do
         resources :solutions, controller: 'solutions' do
           collection do
+            get :results, path: ''
             post :results, path: ''
           end
         end
