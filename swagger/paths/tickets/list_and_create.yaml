@@ -60,7 +60,17 @@ get:
     200:
       description: Success
       schema:
-        $ref: '#/definitions/ticket_index'
+        type: object
+        properties:
+          tickets:
+            type: array
+            items:
+              $ref: '#/definitions/ticket_index'
+          meta:
+            type: object
+            properties:
+              next_page:
+                type: boolean
     400:
       description: Bad Request Error
       schema:

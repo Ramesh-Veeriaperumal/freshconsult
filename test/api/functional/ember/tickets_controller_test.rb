@@ -391,6 +391,29 @@ module Ember
       match_json([])
     end
 
+    def test_meta_data_with_next_page
+      tickets = []
+      31.times do
+        tickets << create_ticket
+      end
+      get :index, controller_params(version: 'private')
+      assert_response 200
+      assert response.api_meta[:next_page] == true
+    ensure
+      tickets.each(&:destroy)
+    end
+
+    def test_meta_data_without_next_page
+      ticket = create_ticket
+      ticket_count = Account.current.tickets.count
+      last_page = (ticket_count.to_f / 30).ceil
+      get :index, controller_params(version: 'private', page: last_page)
+      assert_response 200
+      assert response.api_meta[:next_page] == false
+    ensure
+      ticket.destroy
+    end
+
     def test_index_with_exclude_custom_fields
       get :index, controller_params(version: 'private', exclude: 'custom_fields')
       assert_response 200
@@ -3886,12 +3909,12 @@ module Ember
           child_template.save
 
           params_hash = ticket_params_hash.merge(parent_template_id: parent_template.id, child_template_ids: [child_template.id])
-          current_ticket_id = Helpdesk::Ticket.last.id
+          current_ticket_count = Helpdesk::Ticket.count
           post :create, construct_params({ version: 'private' }, params_hash)
           assert_response 201
-          last_ticket_id = Helpdesk::Ticket.last.id
+          updated_ticket_count = Helpdesk::Ticket.count
           assert_equal Helpdesk::Ticket.last.subject, 'Test new ticket with parent and single child'
-          assert_equal current_ticket_id, (last_ticket_id - 2)
+          assert_equal (updated_ticket_count - current_ticket_count), 2
         end
       end
     end

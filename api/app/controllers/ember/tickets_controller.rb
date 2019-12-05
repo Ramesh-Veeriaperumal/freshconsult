@@ -42,8 +42,8 @@ module Ember
       return unless validate_delegator(nil, params)
       assign_filter_params
       super
-      response.api_meta = { count: @items_count } if params[:only] == 'count'
-      (response.api_meta ||= {}).merge!(background_info)
+      response.api_meta = params[:only] == 'count' ? { count: @items_count } : { next_page: @more_items }
+      response.api_meta.merge!(background_info)
     end
 
     def create
