@@ -5,7 +5,7 @@ module CentralConstants
   MODEL_PAYLOAD_VERSION = {
     'Account' => '1.2',
     'Helpdesk::Ticket' => '2.9',
-    'Helpdesk::Note' => '0.5',
+    'Helpdesk::Note' => '0.6',
     'Solution::Category' => '0.1',
     'Solution::Folder' => '0.1',
     'Solution::Article' => '0.1',

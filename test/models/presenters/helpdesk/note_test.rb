@@ -134,6 +134,15 @@ class NoteTest < ActiveSupport::TestCase
   #   assoc_payload.must_match_json_expression(central_assoc_note_pattern(note))
   # end
 
+  def test_note_create_with_notifier_ids
+    @ticket = Helpdesk::Ticket.last
+    note = create_note_with_notifier(@ticket)
+    payload = note.central_publish_payload.to_json
+    event_info = note.event_info(:create)
+    payload.must_match_json_expression(central_publish_note_pattern(note))
+    event_info.must_match_json_expression(event_info(:create))
+  end
+
   def test_note_central_publish_payload_for_note_containing_survey_remark
     @ticket = Helpdesk::Ticket.last
     note = create_note_with_survey_result(@ticket)

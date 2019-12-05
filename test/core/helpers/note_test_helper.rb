@@ -102,4 +102,23 @@ module NoteTestHelper
     survey_result.save!
     note
   end
+
+  def create_note_with_notifier(_ticket, _params = {})
+    note = create_note(note_params_hash(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['feedback']))
+    schema_less_note = @account.schema_less_notes.find_by_note_id(note.id)
+    schema_less_note.to_emails = [@account.users.first.email]
+    schema_less_note.save
+    survey = @account.surveys.first
+    survey.send_while = 4
+    survey.save
+    survey_handle = @ticket.survey_handles.build
+    survey_handle.survey = survey
+    survey_handle.response_note_id = note.id
+    survey_handle.save!
+    survey_handle.create_survey_result(Survey::HAPPY)
+    survey_result = survey_handle.survey_result
+    survey_result.build_survey_remark(note_id: note.id)
+    survey_result.save!
+    note
+  end
 end

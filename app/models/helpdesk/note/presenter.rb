@@ -26,6 +26,7 @@ class Helpdesk::Note < ActiveRecord::Base
     t.add :response_time_in_seconds
     t.add :response_time_by_bhrs
     t.add :last_modified_user_id
+    t.add proc { |x| x.account.user_emails.where(email: x.to_emails).map(&:id) }, as: :to_emails_users
     DATETIME_FIELDS.each do |key|
       t.add proc { |x| x.utc_format(x.safe_send(key)) }, as: key
     end
