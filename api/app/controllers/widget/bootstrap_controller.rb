@@ -15,6 +15,7 @@ module Widget
 
       def create_user
         @user = Account.current.users.new
+        @user.active = true
         if @user.signup!({ user: jwt_auth.payload.slice(*USER_PAYLOAD_KEYS) }, nil, false)
           @user.make_current
         else

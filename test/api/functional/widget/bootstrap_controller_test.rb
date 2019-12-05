@@ -41,6 +41,7 @@ module Widget
       match_json(widget_bootstrap_pattern(user, expire_at))
       refute @response.header.include?('_helpkit_session')
       assert_equal User.current.id, user.id
+      assert user.active
     ensure
       User.any_instance.unstub(:agent?)
     end
@@ -60,6 +61,8 @@ module Widget
       refute @response.header['Set-Cookie'].include?('_helpkit_session')
       assert_equal user.id, id
       assert_equal User.current.id, user.id
+      user.reload
+      assert user.active
     ensure
       User.any_instance.unstub(:agent?)
     end
@@ -85,6 +88,7 @@ module Widget
       assert_equal User.current.id, user.id
       assert_equal User.current.name, 'JohnMichy Steapo Kan'
       refute_equal User.current.name, user_name
+      assert user.active
     ensure
       User.any_instance.unstub(:agent?)
     end
@@ -107,6 +111,31 @@ module Widget
       refute @response.header['Set-Cookie'].include?('_helpkit_session')
       assert_equal user.id, id
       assert_equal User.current.id, user.id
+      user.reload
+      assert user.active
+    ensure
+      User.any_instance.unstub(:agent?)
+    end
+
+    def test_widget_bootstrap_with_non_active_user
+      user = @account.users.new(name: 'Oppo', email: 'oppo@gmail.com')
+      user.active = false
+      user.save
+      User.any_instance.stubs(:agent?).returns(false)
+      timestamp = Time.now.utc.iso8601
+      auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, @secret_key)
+      @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+      get :index, construct_params(version: 'widget')
+      assert_response 200
+      id = JSON.parse(@response.body)['user']['id']
+      parsed_time = Time.iso8601(timestamp.to_datetime.to_s) && Time.zone.parse(timestamp.to_s)
+      expire_at = (parsed_time + 2.hours).strftime('%Y-%m-%dT%H:%M:%SZ')
+      match_json(widget_bootstrap_pattern(user, expire_at, user.email))
+      refute @response.header['Set-Cookie'].include?('_helpkit_session')
+      assert_equal user.id, id
+      assert_equal User.current.id, user.id
+      user.reload
+      assert user.active
     ensure
       User.any_instance.unstub(:agent?)
     end
@@ -127,6 +156,7 @@ module Widget
       refute @response.header['Set-Cookie'].include?('_helpkit_session')
       assert_equal user.id, id
       assert_equal User.current.id, user.id
+      assert user.active
     ensure
       User.any_instance.unstub(:agent?)
     end
@@ -149,6 +179,7 @@ module Widget
       refute @response.header['Set-Cookie'].include?('_helpkit_session')
       assert_equal User.current.id, user.id
       assert_nil @account.users.find(id).phone
+      assert user.active
     ensure
       User.any_instance.unstub(:agent?)
     end
@@ -172,6 +203,7 @@ module Widget
       match_json(widget_bootstrap_pattern(user, expire_at))
       refute @response.header.include?('_helpkit_session')
       assert_equal User.current.id, user.id
+      assert user.active
     ensure
       User.any_instance.unstub(:agent?)
       @account.features.restricted_helpdesk.destroy
@@ -192,6 +224,7 @@ module Widget
       refute @response.header['Set-Cookie'].include?('_helpkit_session')
       assert_equal user.id, id
       assert_equal User.current.id, user.id
+      assert user.active
     end
 
     def test_widget_bootstap_without_token
@@ -239,6 +272,23 @@ module Widget
       match_json(request_error_pattern('invalid_user', id: user.id, name: user.name))
     ensure
       User.any_instance.unstub(:spam?)
+      User.any_instance.unstub(:agent?)
+    end
+
+    def test_widget_boostrap_with_user_blocked_user_name_changed
+      user = @account.users.first
+      name = user.name
+      User.any_instance.stubs(:blocked?).returns(true)
+      User.any_instance.stubs(:agent?).returns(false)
+      auth_token = JWT.encode({ name: "#{name} RANA", email: user.email, timestamp: Time.now.utc.iso8601 }, @secret_key)
+      @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+      get :index, construct_params(version: 'widget')
+      assert_response 403
+      match_json(request_error_pattern('invalid_user', id: user.id, name: user.name))
+      user.reload
+      assert_equal user.name, name
+    ensure
+      User.any_instance.unstub(:blocked?)
       User.any_instance.unstub(:agent?)
     end
 
