@@ -136,12 +136,20 @@ class Solution::Object
 						   (@params["#{lang}_#{short_name}"] || {})[:attachments],
 						   (@params["#{lang}_#{short_name}"] || {})[:cloud_file_attachments],
 						   (@params["#{lang}_#{short_name}"] || {})[:attachments_list] || @args["attachments_list"])
-		build_tags(object, lang)
+		build_tags(object)
 	end
 
-	def build_tags(object, lang)
-		object.tags = @args["tags"] if @args["tags"]
-	end
+  def build_tags(object)
+    object.tags = @args["tags"] if array_of_tag_objects?(@args["tags"])
+  end
+
+  # For V2 api and New UI @tag will Array[Helpdesk::Tag]
+  # for old api and old ui its an object.
+  def array_of_tag_objects?(tags)
+    return false unless tags && tags.is_a?(Array)
+
+    tags.all? { |tag| tag.is_a?(Helpdesk::Tag) }
+  end
 
 	def primary_version_check?
     return true unless @meta_obj.new_record?
