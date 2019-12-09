@@ -362,6 +362,7 @@ Helpkit::Application.routes.draw do
     end
 
     resources :skills, controller: 'admin/api_skills', only: [:index, :show, :create, :update, :destroy]
+    resources :shifts, controller: 'admin/shifts', only: [:index, :show, :create, :update, :destroy]
   end
 
   ember_routes = proc do

@@ -78,4 +78,6 @@ FacebookGatewayConfig = YAML.load_file(Rails.root.join('config', 'facebook_gatew
 
 CentralConfig = YAML.load(File.read("#{Rails.root}/config/central.yml"))[Rails.env]
 
+ShiftConfig = YAML.load(File.read("#{Rails.root}/config/shift_config.yml"))[Rails.env]
+
 RTSConfig = YAML.load_file(Rails.root.join('config', 'rts.yml'))[Rails.env]

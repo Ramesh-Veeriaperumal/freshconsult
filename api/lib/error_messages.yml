@@ -457,6 +457,13 @@ api_error_messages:
   duplicate_skill_name: "A skill already exists with name - '%{name}'"
 
   cannot_delete_file_ticket_field_attachment: "Attachment associated with a file ticket field cannot be deleted."
+
+  #Shifts
+  resource_not_found: 'Requested resource not found'
+  validation_failed: "Validation failed"
+  duplicate_shift_name: 'A shift already exists with the same name'
+  duplicate_agent_present: 'Duplicate agent ids present'
+
   cannot_update_currency_unless_free_plan: "Cannot update currency for account in %{account_state} state"
   fc_invalid_domain_name: "Freshcaller account with the given domain doesn't exist"
   fc_access_denied: "Freshcaller access denied"
