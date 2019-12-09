@@ -8,6 +8,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   include Cache::Memcache::Helpdesk::TicketField
   include DataVersioning::Model
   include Helpdesk::Ticketfields::PublisherMethods
+  include Helpdesk::Ticketfields::Constants
   include Cache::Memcache::Admin::TicketField
   include Admin::TicketFieldConstants
 
@@ -22,7 +23,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
     :level, :parent_id, :prefered_ff_col, :import_id, :choices, :picklist_values_attributes,
     :ticket_statuses_attributes, :ticket_form_id, :column_name, :flexifield_coltype
 
-  attr_accessor :skip_populate_choices, :section_mappings, :dependent_fields
+  attr_accessor :skip_populate_choices, :error_on_limit_exceeded, :parent_level_choices
 
   CUSTOM_FIELD_PROPS = {
     custom_text: { type: :custom, dom_type: :text },
@@ -53,7 +54,6 @@ class Helpdesk::TicketField < ActiveRecord::Base
   SECTION_DROPDOWNS = ["default_ticket_type", "custom_dropdown"]
   NESTED_FIELD = 'nested_field'.freeze
   VERSION_MEMBER_KEY = 'TICKET_FIELD_LIST'.freeze
-
   concerned_with :presenter
 
   belongs_to_account
@@ -63,7 +63,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
                           :foreign_key => "parent_id",
                           :conditions => {:field_type => 'nested_field'},
                           :dependent => :destroy,
-                          :order => "level"
+                          :order => "level", autosave: true
 
   has_many :custom_translations, :class_name => "CustomTranslation", :as => :translatable, :dependent => :destroy
 
@@ -74,6 +74,9 @@ class Helpdesk::TicketField < ActiveRecord::Base
       :class_name => "CustomTranslation",
       :as => :translatable
   end
+
+  has_many :list_all_choices, :class_name => 'Helpdesk::PicklistValue',
+           foreign_key: :ticket_field_id, dependent: :destroy, autosave: true
 
   has_many :picklist_values, :as => :pickable,
                              :class_name => 'Helpdesk::PicklistValue',
@@ -89,7 +92,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   has_many :nested_ticket_fields, :class_name => 'Helpdesk::NestedTicketField',
                                   :dependent => :destroy,
-                                  :order => "level"
+                                  :order => "level",
+                                  autosave: true
 
   has_many :nested_fields_with_flexifield_def_entries, :class_name => 'Helpdesk::NestedTicketField',
                                   :include => :flexifield_def_entry,
@@ -128,8 +132,11 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   before_update :set_internal_field_values
 
+  after_initialize :initialize_default_values
+
+  before_update :reorder_relative_position, if: -> { position_changed? }
   # xss_terminate
-  acts_as_list :scope => 'account_id = #{account_id}'
+  acts_as_list :scope => 'account_id = #{account_id} AND parent_id is null'
 
   after_commit :clear_cache
   after_commit :clear_new_ticket_field_cache
@@ -137,6 +144,96 @@ class Helpdesk::TicketField < ActiveRecord::Base
   after_commit :construct_model_changes
 
   publishable
+
+  def initialize_default_values
+    self.field_options ||= {}
+    self.field_type ||= ''
+  end
+
+  def reorder_relative_position
+    if Account.current.ticket_field_revamp_enabled?
+      # calling it manually to avoid deadlock/failure
+      # logic behind this - decrement all the
+      old_position = changes[:position][0]
+      new_position = changes[:position][1]
+
+      # moving all the ticket_field upwards by 1 relative to current field old position
+      acts_as_list_class.update_all('position = (position - 1)', "#{scope_condition} AND position > #{old_position}")
+      update_column(:position, nil) # making it null to avoid including in below update
+      increment_positions_on_lower_items(new_position) # moving all the ticket field downward by 1 relative to new position
+      update_column(:position, new_position) # update to new position
+    end
+  end
+
+  def picklist_values_with_sublevels
+    list_choices = picklist_values_from_cache
+    picklist_id_to_choice_map = list_choices.group_by { |choice| choice.pickable_id }
+    list_choices.each do |choice|
+      choice.sub_level_choices ||= []
+      choice.sub_level_choices.push(*(picklist_id_to_choice_map[choice.id] || []))
+    end
+    picklist_id_to_choice_map[id] || []
+  end
+
+  def fetch_available_column(type)
+    return nil unless new_record?
+
+    type = type.to_s.to_sym
+    field_constant = if Account.current.ticket_field_limit_increase_enabled?
+                       REVAMPED_TICKET_FIELD_DATA_LIMITS[type]
+                     else
+                       REVAMPED_FLEXIFIELD_LIMITS[type]
+                     end
+    common_types, all_fields, max_allowed_count = field_constant
+    used_fields = []
+    common_types = *common_types
+    common_types.each { |col_type| used_fields += (fetch_flexifield_columns[col_type] || []) }
+    used_fields.compact!
+    return nil if used_fields.length >= max_allowed_count
+
+    (all_fields - used_fields).sort.first
+  end
+
+  def choices_by_sub_level(ticket_field)
+    list_choices = ticket_field.picklist_values_from_cache
+    picklist_id_to_choice_map = list_choices.group_by { |choice| choice.pickable_id }
+    list_choices.each do |choice|
+      choice.sub_level_choices ||= []
+      choice.sub_level_choices.push(*(picklist_id_to_choice_map[choice.id] || []))
+    end
+    picklist_id_to_choice_map[ticket_field.id] || []
+  end
+
+  def separate_choices_by_level
+    @separate_choices_by_level ||= begin
+      level_choice_index = Admin::TicketFieldConstants::PICKLIST_COLUMN_MAPPING[:choices]
+      custom_picklist_choice_mapping.each do |choices|
+        @tf_level1_choices ||= []
+        @tf_level1_choices << (choices[0, 6]) # getting only level1 choices
+        (choices[level_choice_index] || []).each do |level2_choices|
+          @tf_level2_choices ||= []
+          @tf_level2_choices << (level2_choices[0, 6]) # getting only level2 choices data
+          @tf_level3_choices ||= []
+          @tf_level3_choices << (level2_choices[level_choice_index] || []) # getting level3 choices
+        end
+      end
+    end
+  end
+
+  def tf_level1_choices
+    separate_choices_by_level
+    @tf_level1_choices || []
+  end
+
+  def tf_level2_choices
+    separate_choices_by_level
+    @tf_level2_choices || []
+  end
+
+  def tf_level3_choices
+    separate_choices_by_level
+    @tf_level3_choices || []
+  end
 
   def self.custom_fields_to_show
     CUSTOM_FIELD_PROPS.except(*SKIP_FIELD_TYPES)
@@ -232,7 +329,15 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   def section_ticket_fields
     return [] unless has_sections?
-    account_section_fields_from_cache[id]
+    account_section_fields_from_cache[:parent_ticket_field][id]
+  end
+
+  def section_mappings
+    account_section_fields_from_cache[:ticket_field][id] || []
+  end
+
+  def dependent_fields
+    account_nested_ticket_field_children[id] || []
   end
 
   def section_picklist_mappings
@@ -244,7 +349,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
     !(encrypted_field? && !current_account.hipaa_and_encrypted_fields_enabled?) &&
       !(!default? && !current_account.custom_ticket_fields_enabled?) &&
       !(company_field? && !current_account.multiple_user_companies_enabled?) &&
-      !(product_field? && current_account.products_from_cache.empty?) && true
+      !(product_field? && current_account.products_from_cache.empty?) && (parent_id.nil?) && true
   end
 
   def company_field?
@@ -757,11 +862,25 @@ class Helpdesk::TicketField < ActiveRecord::Base
     self.field_type == CUSTOM_DATE_TIME
   end
 
-  def self.field_name(label, account_id)
+  def self.field_name(label, account_id, exist = false, encrypted = false)
     label = label.gsub(/[^ _0-9a-zA-Z]+/, '')
-    label = "rand#{rand(999_999)}" if label.blank?
-    label = "cf_#{label}"
-    "#{label.strip.gsub(/\s/, '_').gsub(/\W/, '').downcase}_#{account_id}".squeeze('_')
+    label = "#{label.strip.gsub(/\s/, '_').gsub(/\W/, '').downcase}".squeeze('_')
+    label = if label.blank?
+      "rand#{rand(999_999)}"
+    elsif exist
+      "#{label}#{rand(999_999)}"
+    else
+      label
+    end
+    prefix = encrypted ? ENCRYPTED_FIELD_LABEL_PREFIX : CUSTOM_FIELD_LABEL_PREFIX
+    "#{prefix}#{label}_#{account_id}"
+  end
+
+  def self.construct_label(label, encrypted = false)
+    label = label.gsub(/[^ _0-9a-zA-Z]+/, '')
+    label = label.strip.gsub(/\s/, '_').gsub(/\W/, '').downcase.squeeze('_')
+    prefix = encrypted ? ENCRYPTED_LABEL_PREFIX_WITHOUT_CF : ''
+    "#{prefix}#{label}"
   end
 
   def new_formatted_choices

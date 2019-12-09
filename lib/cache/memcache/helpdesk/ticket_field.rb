@@ -20,6 +20,8 @@ module Cache::Memcache::Helpdesk::TicketField
     MemcacheKeys.delete_from_cache key
     key = ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING % { account_id: account_id }
     MemcacheKeys.delete_from_cache key
+    key = ACCOUNT_SECTION_FIELDS % { account_id: account_id }
+    MemcacheKeys.delete_from_cache key
     key = format(ACCOUNT_SECTION_FIELD_PARENT_FIELD_MAPPING, account_id: account_id)
     MemcacheKeys.delete_from_cache(key)
     key = format(ACCOUNT_REQUIRED_TICKET_FIELDS, account_id: account_id)

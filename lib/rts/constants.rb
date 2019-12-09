@@ -7,5 +7,6 @@ module RTS
       default_description: 'Freshdesk RTS Account for %{account_name}',
       http_method: 'post'
     }.freeze
+    RTS_JWT_ALGO = 'HS256'.freeze
   end
 end

@@ -21,6 +21,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   DRAFT_ATTACHMENTS = ['UserDraft', 'WidgetDraft'].freeze
   ATTACHMENT_EXPIRY = 5.minutes
   ATTACHMENT_REDIRECT_EXPIRY = 10.seconds
+  IMAGE_TYPES_WITH_EXIF_DATA = ['image/jpeg', 'image/tiff', 'image/png'].freeze
 
   NON_THUMBNAIL_RESOURCES = ["Helpdesk::Ticket", "Helpdesk::Note", "Account",
     "Helpdesk::ArchiveTicket", "Helpdesk::ArchiveNote"]
@@ -77,6 +78,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
     before_post_process :image?, :valid_image?
     before_create :set_content_type
     after_commit :clear_user_avatar_cache, if: :user_attachment?
+  after_commit :remove_image_meta_data, if: [:image?, :image_with_exif?, :remove_image_meta_data_feature_enabled?]
     before_save :set_account_id
     validate :virus_in_attachment?, if: :attachment_virus_detection_enabled?
 
@@ -177,6 +179,14 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
   def image?
     (!(content_content_type =~ /^image.*/).nil?) and (content_file_size < 5242880)
+  end
+
+  def image_with_exif?
+    IMAGE_TYPES_WITH_EXIF_DATA.include?(content_content_type)
+  end
+
+  def remove_image_meta_data_feature_enabled?
+    Account.current.launched?(:remove_image_attachment_meta_data)
   end
 
   def audio?(content_type = /^audio.*/)
@@ -319,13 +329,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def fetch_from_s3
-    output_dir = Rails.root.join('tmp', 'twitter')
-    FileUtils.mkdir_p output_dir
-    attachment_filename = "#{output_dir}/tempfile-#{SecureRandom.uuid}"
-    file = File.new(attachment_filename, 'w+b', 0o644)
-    file.write(AwsWrapper::S3Object.read(self.content.path, self.content.bucket_name))
-    file.flush.seek(0, IO::SEEK_SET) # flush data to file and set RW pointer to beginning
-    file
+    AwsWrapper::S3Functions.fetch_from_s3(content.path, content.bucket_name, 'twitter')
   end
 
   def expiry
@@ -375,6 +379,16 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
   def randomize_filename
     self.content_file_name = SecureRandom.urlsafe_base64(25) + File.extname(self.content_file_name)
+  end
+
+  def remove_image_meta_data
+    if content.path.present? && content.bucket_name.present?
+      s3_paths = [content.path]
+      attachment_sizes.keys.each do |size|
+        s3_paths << content.path.gsub('original', size.to_s)
+      end
+      ImageMetaDataDeleteWorker.perform_async(s3_paths: s3_paths, s3_bucket: content.bucket_name, s3_permissions: s3_permissions)
+    end
   end
 
   def content_file_name_changed?

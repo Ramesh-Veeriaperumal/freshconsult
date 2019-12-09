@@ -827,6 +827,6 @@ class AccountsController < ApplicationController
     def enable_field_service_management
       account = @signup.account.reload
       account.add_feature(:field_service_management)
-      perform_fsm_operations(fsm_singup_flow: true)
+      perform_fsm_operations(fsm_signup_flow: true)
     end
 end

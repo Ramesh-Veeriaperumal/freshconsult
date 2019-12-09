@@ -1,0 +1,1 @@
+json.merge! @decorated_item.to_hash

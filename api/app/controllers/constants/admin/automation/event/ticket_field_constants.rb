@@ -29,6 +29,8 @@ module Admin::Automation::Event::TicketFieldConstants
     { name: :response_due, field_type: :label, expect_from_to: false,
       invalid_rule_types: [1, 3] }.freeze,
     { name: :resolution_due, field_type: :label, expect_from_to: false,
+      invalid_rule_types: [1, 3] }.freeze,
+    { name: :next_response_due, field_type: :label, expect_from_to: false,
       invalid_rule_types: [1, 3] }.freeze
   ].freeze
 

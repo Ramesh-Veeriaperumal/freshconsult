@@ -1395,6 +1395,8 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
                                                                  field_name,
                                                                  element_class).html_safe,
                                             :class => "controls input-date-field")
+    when 'file' then
+      element = hidden_field(object_name, field_name, value: field_value)
 
     end
     fd_class = "#{ dom_type } #{ field.field_type } field"

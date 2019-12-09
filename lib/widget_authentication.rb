@@ -37,7 +37,8 @@ module WidgetAuthentication
       if @user.blank? && cname != BOOTSTRAP_CONTROLLER
         render_request_error(:absent_in_db, 404, resource: 'user', attribute: 'email')
       elsif @user.present?
-        render_request_error(:invalid_user, 403, id: @user.id, name: @user.name) unless @user.valid_user?
+        return render_request_error(:invalid_user, 403, id: @user.id, name: @user.name) unless @user.valid_user?
+
         update_user_details if cname == BOOTSTRAP_CONTROLLER
       end
     end
@@ -48,6 +49,7 @@ module WidgetAuthentication
 
         @user.send("#{user_attr}=", jwt_auth.payload[user_attr])
       end
+      @user.active = true
       @user.save!
     end
 

@@ -328,8 +328,8 @@ class Billing::Subscription < Billing::ChargebeeWrapper
             :quantity => mkp_app_units_count(addon_type, subscription) }
           end
         end
-      rescue
-        Rails.logger.info "No Subscription in Chargebee"
+      rescue StandardError => e
+        Rails.logger.info "Exception occurred while finding marketplace_addons #{e.message}"
       ensure
         return marketplace_addons
       end

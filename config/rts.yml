@@ -3,6 +3,8 @@ defaults: &defaults
   app_secret: dummy
   end_point: https://rts-staging.freshworksapi.com
   db_cipher_key: c6d28822fe84346e669d536edeab861dd61b2b2082b7
+  channel_cipher_key: e3b0c44298fc1c149afbf4c8996fb92427ae41e4
+  jwt_default_expiry: 100
 development:
   <<: *defaults
 staging:

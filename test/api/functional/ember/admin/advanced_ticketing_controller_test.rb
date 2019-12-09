@@ -574,11 +574,15 @@ module Ember
       end
 
       def test_fsm_disable_failure
-        AdvancedTicketingControllerTest.any_instance.stubs(:remove_fsm_addon_and_reset_agent_limit).raises(RuntimeError)
+        Subscription.any_instance.stubs(:addons).returns([Subscription::Addon.new])
+        Subscription::Addon.any_instance.stubs(:name).returns(Subscription::Addon::FSM_ADDON)
+        Billing::Subscription.any_instance.stubs(:update_subscription).raises(RuntimeError)
         Ember::Admin::AdvancedTicketingControllerTest.any_instance.expects(:notify_fsm_dev).once
         cleanup_fsm
       ensure
-        AdvancedTicketingControllerTest.any_instance.unstub(:remove_fsm_addon_and_reset_agent_limit)
+        Billing::Subscription.any_instance.unstub(:update_subscription)
+        Subscription::Addon.any_instance.unstub(:name)
+        Subscription.any_instance.unstub(:addons)
       end
 
       def test_fsm_artifacts_with_8_date_fields

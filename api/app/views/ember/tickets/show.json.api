@@ -17,5 +17,6 @@ response_hash.merge!(collaboration: @item.collaboration_hash) if Account.current
 response_hash[:sla_policy] = sla_policy_hash if sla_policy_hash
 response_hash.merge!(sender_email: @item.sender_email) if @item.sender_email
 response_hash.merge!(archive_ticket: archive_hash) if archive_hash
+response_hash[:meta][:secret_id] = @item.generate_secret_id if Account.current.agent_collision_revamp_enabled?
 
 JSON.generate(response_hash)

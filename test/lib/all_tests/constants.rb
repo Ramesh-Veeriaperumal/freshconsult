@@ -38,7 +38,7 @@ PRESENTER_TESTS = [
 
 ].freeze
 SIDEKIQ_TESTS = Dir.glob('test/api/sidekiq/**/*_test.rb')
-SKIP_FILES_SIDEKIQ = Dir.glob('test/api/sidekiq/sandbox/*_test.rb') + Dir.glob('test/api/sidekiq/admin/sla/*_test.rb') + Dir.glob('test/api/sidekiq/community/clear_site_map_test.rb')
+SKIP_FILES_SIDEKIQ = Dir.glob('test/api/sidekiq/sandbox/*_test.rb') + Dir.glob('test/api/sidekiq/community/clear_site_map_test.rb')
 SHORYUKEN_TESTS = Dir.glob('test/api/shoryuken/*_test.rb')
 SKIP_FILES_FALCON = [
   'test/api/unit/api_throttler_test.rb',

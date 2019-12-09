@@ -564,31 +564,73 @@ class Email::MailboxesControllerTest < ActionController::TestCase
   def test_list_with_failure_code_filter
     Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
     @account.all_email_configs.delete_all
-    mailbox1 = create_email_config(support_email: 'testafailurecodefilter1@fd.com', imap_mailbox_attributes: { imap_server_name: 'imap.gmail.com' }, default_reply_email: true)
+    mailbox1 = create_email_config(support_email: 'testafailurecodefilter1@fd.com', default_reply_email: true, imap_mailbox_attributes: { imap_server_name: 'imap.gmail.com' })
     mailbox2 = create_email_config(support_email: 'testafailurecodefilter2@fd.com', imap_mailbox_attributes: { imap_server_name: 'imap.gmail.com' })
-    mailbox3 = create_email_config(support_email: 'testafailurecodefilter3@fd.com')
+    mailbox3 = create_email_config(support_email: 'testafailurecodefilter3@fd.com', default_reply_email: true, imap_mailbox_attributes: { imap_server_name: 'imap.gmail.com' })
+    mailbox4 = create_email_config(support_email: 'testafailurecodefilter4@fd.com', smtp_mailbox_attributes: { smtp_server_name: 'smtp.gmail.com' })
     mailbox1.active = true
     mailbox1.imap_mailbox.error_type = 543
     mailbox1.save!
     mailbox2.active = true
     mailbox2.imap_mailbox.error_type = 541
     mailbox2.save!
+    mailbox4.smtp_mailbox.error_type = 554
+    mailbox4.save!
     Email::MailboxFilterValidation.any_instance.stubs(:private_api?).returns(true)
     get :index, controller_params(order_by: 'failure_code')
     assert_response 200
     response = parse_response @response.body
-    primary_error_email = response[0]
-    secondary_error_email = response[1]
-    normal_email = response[2]
-    assert_not_nil primary_error_email['custom_mailbox']['incoming']['failure_code']
-    assert_not_nil secondary_error_email['custom_mailbox']['incoming']['failure_code']
-    assert primary_error_email['id'] == mailbox1.id && secondary_error_email['id'] == mailbox2.id && normal_email['id'] == mailbox3.id
+    first_error_email = response[0]
+    second_error_email = response[1]
+    third_error_email = response[2]
+    normal_email = response[3]
+    assert_not_nil first_error_email['custom_mailbox']['incoming']['failure_code']
+    assert_not_nil second_error_email['custom_mailbox']['outgoing']['failure_code']
+    assert_not_nil third_error_email['custom_mailbox']['incoming']['failure_code']
+    assert_equal true, normal_email['id'] == mailbox3.id
   ensure
     Account.any_instance.unstub(:has_features?)
     @account.email_configs.destroy(mailbox1)
     @account.email_configs.destroy(mailbox2)
     @account.email_configs.destroy(mailbox3)
+    @account.email_configs.destroy(mailbox4)
     Email::MailboxFilterValidation.any_instance.unstub(:private_api?)
+  end
+
+  def test_oauth_imap_params
+    Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
+    Email::MailboxValidation.any_instance.stubs(:private_api?).returns(true)
+    Email::MailboxesController.any_instance.stubs(:private_api?).returns(true)
+    redis_key = 'GMAIL::test:xyz'
+    value = {
+      oauth_token: 'ya29.Il-vB0K5x3',
+      support_email: 'testactivefilter12@fd.com',
+      refresh_token: 'xugvqw377',
+      type: 'new',
+      oauth_email: 'test@gmail.com'
+    }
+    $redis_others.perform_redis_op('mapped_hmset', redis_key, value)
+    options = {
+      support_email: 'testactivefilter12@fd.com',
+      imap_authentication: 'xoauth2',
+      smtp_authentication: 'xoauth2',
+      imap_user_name: 'test@gmail.com',
+      smtp_user_name: 'test@gmail.com',
+      imap_password: '',
+      smtp_password: '',
+      reference_key: redis_key,
+      access_type: 'both'
+    }
+    Rails.env.stubs(:test?).returns(false)
+    params_hash = create_mailbox_params_hash.merge(create_custom_mailbox_hash(options)).merge(mailbox_type: CUSTOM_MAILBOX)
+    post :create, construct_params({}, params_hash)
+    assert_response 201
+  ensure
+    Account.any_instance.unstub(:has_features?)
+    Email::MailboxValidation.any_instance.unstub(:private_api?)
+    Email::MailboxesController.any_instance.unstub(:private_api?)
+    Rails.env.unstub(:test?)
+    $redis_others.perform_redis_op('del', redis_key)
   end
 
   def test_invalid_password_for_non_oauth

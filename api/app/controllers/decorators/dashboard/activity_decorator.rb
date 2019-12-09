@@ -97,7 +97,6 @@ class Dashboard::ActivityDecorator < ApiDecorator
 
   def to_hash
     if record.user.blank?
-      logging_error
       return nil
     end
     record.activity_data = HashWithIndifferentAccess.new(activity_data)
@@ -294,14 +293,5 @@ class Dashboard::ActivityDecorator < ApiDecorator
       @ticket_statuses ||= Account.current.ticket_status_values_from_cache.each_with_object({}) {|_status, _collector|
         _collector[_status.name] = [_status.id, _status.is_default]
       }
-    end
-
-    def logging_error
-      error_details_hash = {
-        account_id: record.account_id,
-        user_id: record.user_id,
-        activity_id: record.id
-      }
-      NewRelic::Agent.notice_error(error_description: "User is missing : #{error_details_hash.inspect} | Record: #{record.inspect}")
     end
 end

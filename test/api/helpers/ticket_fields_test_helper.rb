@@ -18,6 +18,12 @@ module TicketFieldsTestHelper
     'requester' => 'email'
   }.freeze
 
+  DN_COL_PREFIX_MAPPING = {
+    text: 'dn_slt_',
+    paragraph: 'dn_mlt_',
+    encrypted_text: 'dn_eslt_'
+  }.freeze
+
   def create_custom_field(name, type, field_num = '05', required = false, required_for_closure = false, editable_in_portal = false)
     ticket_field_exists = @account.ticket_fields.find_by_name("#{name}_#{@account.id}")
     if ticket_field_exists
@@ -56,8 +62,7 @@ module TicketFieldsTestHelper
       ticket_field_exists.update_attributes(required: required, required_for_closure: required_for_closure)
       return ticket_field_exists
     end
-
-    flexifield_mapping = options[:flexifield_name] ? options[:flexifield_name] : "dn_#{FIELD_MAPPING_DN[type]}_005"
+    flexifield_mapping = options[:flexifield_name] ? options[:flexifield_name] : available_dn_column(type)
     flexifield_def_entry = FactoryGirl.build(:flexifield_def_entry,
                                              flexifield_def_id: @account.flexi_field_defs.find_by_module('Ticket').id,
                                              flexifield_alias: "#{name.downcase}_#{@account.id}",
@@ -71,7 +76,7 @@ module TicketFieldsTestHelper
                                                            name: "#{name.downcase}_#{@account.id}",
                                                            label: name,
                                                            label_in_portal: name,
-                                                           field_type: "custom_#{type}",
+                                                           field_type: (type.to_s == 'encrypted_text' ? type : "custom_#{type}"),
                                                            description: '',
                                                            required: required,
                                                            required_for_closure: required_for_closure,
@@ -928,10 +933,17 @@ module TicketFieldsTestHelper
       ff_col = "ff_#{field_type}#{field_num}"
       return ff_col unless ffs_col_taken? ff_col
 
-      (1..10).each do |i|
+      (1..20).each do |i|
         ff_col = "ff_#{field_type}#{i.to_s.rjust(2, '0')}"
         break unless ffs_col_taken? ff_col
       end
       ff_col
+    end
+
+    def available_dn_column(type)
+      col_prefix = DN_COL_PREFIX_MAPPING[type.to_sym]
+      used_columns = @account.reload.flexifield_def_entries.where("flexifield_name LIKE ?", "#{col_prefix}%").select(:flexifield_name).map(&:flexifield_name)
+      all_columns = Helpdesk::Ticketfields::Constants::FIELD_COLUMN_MAPPING[type.to_sym][1]
+      (all_columns - used_columns).first
     end
 end

@@ -17,7 +17,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
 
       def perform_fsm_operations(enable_options = {})
         Rails.logger.info "Started adding FSM artifacts for Account - #{Account.current.id}"
-        @fsm_signup_flow = enable_options[:fsm_singup_flow].presence || false
+        @fsm_signup_flow = enable_options[:fsm_signup_flow].presence || false
         create_field_tech_role
         update_field_agent_limit_for_active_account
         create_service_task_field_type
@@ -39,8 +39,11 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         return unless subscription.active?
 
         if subscription.field_agent_limit.nil?
-          subscription.field_agent_limit=0
-          subscription.save!
+          additional_info = subscription.additional_info
+          additional_info[:field_agent_limit] = 0
+          # rubocop:disable SkipsModelValidations
+          subscription.update_column(:additional_info, additional_info.to_yaml)
+          # rubocop:enable SkipsModelValidations
         end
       end
 
@@ -124,7 +127,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       end
 
       def custom_field_generator(options)
-        payload = {
+        {
           type: options[:type],
           label: options[:label],
           field_type: options[:field_type],
@@ -141,13 +144,6 @@ module Admin::AdvancedTicketing::FieldServiceManagement
           required_in_portal: false,
           flexifield_alias: options[:flexifield_alias]
         }
-        payload.merge!(custom_dropdown_options) if options[:type] == 'dropdown'
-
-        payload
-      end
-
-      def custom_dropdown_options
-        { choices: FSM_DROPDOWN_OPTIONS, picklist_values_attributes: FSM_DROPDOWN_OPTIONS }
       end
 
       # create a dynamic section named "Service Task" and attach the reserved custom fields to them.

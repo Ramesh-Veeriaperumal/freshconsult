@@ -41,6 +41,7 @@ module NotesTestHelper
       response_time_in_seconds: note.response_time_in_seconds,
       response_time_by_bhrs: note.response_time_by_bhrs,
       last_modified_user_id: note.last_modified_user_id,
+      to_emails_users: Account.current.user_emails.where(email: note.to_emails).map(&:id),
       last_modified_timestamp: note.last_modified_timestamp.try(:utc).try(:iso8601),
       created_at: note.created_at.try(:utc).try(:iso8601),
       updated_at: note.updated_at.try(:utc).try(:iso8601),

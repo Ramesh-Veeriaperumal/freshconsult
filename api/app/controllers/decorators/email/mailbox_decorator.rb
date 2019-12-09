@@ -106,7 +106,7 @@ class Email::MailboxDecorator < ApiDecorator
           authentication: imap_mailbox.authentication == IMAP_CRAM_MD5 ? CRAM_MD5 : imap_mailbox.authentication,
           user_name: imap_mailbox.user_name,
           password: imap_mailbox.password,
-          failure_code: failure_code
+          failure_code: imap_failure_code
         )
       end
       result_hash
@@ -121,13 +121,18 @@ class Email::MailboxDecorator < ApiDecorator
           use_ssl: smtp_mailbox.use_ssl,
           authentication: smtp_mailbox.authentication,
           user_name: smtp_mailbox.user_name,
-          password: smtp_mailbox.password
+          password: smtp_mailbox.password,
+          failure_code: smtp_failure_code
         )
       end
       result_hash
     end
 
-    def failure_code
+    def imap_failure_code
       Admin::EmailConfig::Imap::ErrorMapper.new(error_type: imap_mailbox.error_type).fetch_error_mapping if imap_mailbox.error_type.present?
+    end
+
+    def smtp_failure_code
+      Admin::EmailConfig::Smtp::ErrorMapper.new(error_type: smtp_mailbox.error_type).fetch_error_mapping if smtp_mailbox.error_type.present?
     end
 end

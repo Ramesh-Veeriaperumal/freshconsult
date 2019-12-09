@@ -550,7 +550,7 @@ class Subscription < ActiveRecord::Base
     rescue StandardError => e
       attempt += 1
       retry if attempt < no_of_retries
-      Rails.logger.error "Exception while removing addon:: #{addon_name} Account:: #{Account.current.id} #{e.message} \n #{e.body}"
+      Rails.logger.error "Exception while removing addon:: #{addon_name} Account:: #{Account.current.id} #{e.message}"
       NewRelic::Agent.notice_error(e, description: "Exception while removing addon:: #{addon_name}, Account:: #{Account.current.id}, Message: #{e.message}")
       raise e
     end
@@ -705,6 +705,8 @@ class Subscription < ActiveRecord::Base
         self.amount = to_currency(response.estimate.sub_total)
         self.additional_info.merge!(amount_with_tax: to_currency(response.estimate.amount))
       end
+    rescue StandardError => e
+      Rails.logger.error "Exception occurred while updating amount #{e.message}"
     end
 
     def subscription_estimate(addons, coupon_code)

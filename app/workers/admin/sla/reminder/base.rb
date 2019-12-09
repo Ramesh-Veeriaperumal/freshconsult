@@ -16,26 +16,41 @@ module Admin::Sla::Reminder
 
       resolution_reminder_rules = user_based_sla.reject{|e| 
         e.escalations[:reminder_resolution].nil? 
-      }.inject ({}) do |sp_hash, sp|sp_hash[sp.id] = sp; sp_hash end 
+      }.inject ({}) do |sp_hash, sp|sp_hash[sp.id] = sp; sp_hash end
 
       # Response Reminder
       if (!response_reminder_rules.empty? && account.email_notifications.response_sla_reminder.first.agent_notification?)
-        response_reminder_start_time = Time.now.utc
+        response_reminder_start_time = curr_time
         reminder_response_tickets = escalate_reminder(response_reminder_rules, "response")
-        response_reminder_time_taken = Time.now.utc - response_reminder_start_time
+        response_reminder_time_taken = curr_time - response_reminder_start_time
         total_tickets(reminder_response_tickets)
       end
 
       #Resolution Reminder
       if (!resolution_reminder_rules.empty? && account.email_notifications.resolution_sla_reminder.first.agent_notification?)
-        reminder_tickets_start_time = Time.now.utc
+        reminder_tickets_start_time = curr_time
         reminder_resolution_tickets = escalate_reminder(resolution_reminder_rules, "resolution")
-        reminder_ticket_time_taken = Time.now.utc - reminder_tickets_start_time
+        reminder_ticket_time_taken = curr_time - reminder_tickets_start_time
         total_tickets(reminder_resolution_tickets)
       end
 
+      # Next Response Reminder
+      nr_reminder_time_taken = 0
+      if account.next_response_sla_enabled?
+        nr_reminder_rules = user_based_sla.reject{|e| 
+          e.escalations[:reminder_next_response].nil? 
+        }.inject ({}) do |sp_hash, sp|sp_hash[sp.id] = sp; sp_hash end
+
+        if (nr_reminder_rules.present? && account.email_notifications.next_response_sla_reminder.first.agent_notification?)
+          nr_reminder_tickets_start_time = curr_time
+          nr_reminder_resolution_tickets = escalate_reminder(nr_reminder_rules, 'next_response')
+          nr_reminder_time_taken = curr_time - nr_reminder_tickets_start_time
+          total_tickets(nr_reminder_resolution_tickets)
+        end
+      end
+
       log_format=logging_format(account, total_tickets, response_reminder_time_taken, 
-        reminder_ticket_time_taken)
+        reminder_ticket_time_taken, nr_reminder_time_taken)
       custom_logger.info "#{log_format}" unless custom_logger.nil?
     rescue Exception => e
       schedule_error = true
@@ -77,16 +92,22 @@ module Admin::Sla::Reminder
         @log_file_path ||= "#{Rails.root}/log/sla_reminders.log"      
       end 
       
-      def logging_format(account, total_tickets, response_reminder_time_taken, reminder_ticket_time_taken)
+      def logging_format(account, total_tickets, response_reminder_time_taken, reminder_ticket_time_taken, nr_reminder_time_taken)
         "account_id=#{account.id}, account_name=#{account.name}, fullname=#{account.full_domain}, 
         total_tickets=#{total_tickets}, response_reminder_time_taken=#{response_reminder_time_taken.to_i},  
         reminder_resolution_time_taken=#{reminder_ticket_time_taken.to_i},
-        total_time_taken=#{response_reminder_time_taken.to_i + reminder_ticket_time_taken.to_i},
+        nr_reminder_time_taken = #{nr_reminder_time_taken.to_i},
+        total_time_taken=#{response_reminder_time_taken.to_i + reminder_ticket_time_taken.to_i + nr_reminder_time_taken.to_i},
         host_name=#{Socket.gethostname} ".squish
       end
 
       def total_tickets(tickets_count = 0)
         @total_tickets = @total_tickets.to_i + tickets_count
+      end
+
+    private
+      def curr_time
+        Time.zone.now.utc
       end
 
   end

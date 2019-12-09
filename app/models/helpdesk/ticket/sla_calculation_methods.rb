@@ -141,6 +141,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
     true
   end
 
+  def check_nr_due_by_change
+    nr_due_by_changed? && (self.nr_due_by.nil? || self.nr_due_by > time_zone_now) && self.nr_escalated
+  end
+
+  def update_nr_escalated
+    self.nr_escalated = false
+    self.nr_escalation_level = nil
+    true
+  end
+
   def common_updation_condition
     self.new_record? || priority_changed? || group_id_changed? || self.schema_less_ticket.sla_policy_id_changed?
   end

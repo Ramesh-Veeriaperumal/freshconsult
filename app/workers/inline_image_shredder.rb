@@ -14,9 +14,7 @@ class InlineImageShredder < BaseWorker
     return unless AwsWrapper::S3Object.exists?(path, S3_CONFIG[:bucket])
     content = AwsWrapper::S3Object.read(path, S3_CONFIG[:bucket])
     attachment_ids = get_attachment_ids(content)
-    Rails.logger.debug " Deleting ------> #{attachment_ids}"
     Account.current.attachments.where(id: attachment_ids).find_each(batch_size: 300) do |attachment|
-      Rails.logger.debug " Deleting ------> #{attachment.id}"
       attachment.destroy if should_delete?(attachment.id, attachment.attachable_type, attachment.attachable_id, args[:model_id])
     end
     AwsWrapper::S3Object.delete(path, S3_CONFIG[:bucket])

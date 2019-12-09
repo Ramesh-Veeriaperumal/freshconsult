@@ -318,6 +318,14 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
     additional_info[:nr_updated_at] = value
   end
 
+  def nr_escalation_level
+    additional_info[:nr_escalation_level]
+  end
+
+  def nr_escalation_level=(value)
+    additional_info[:nr_escalation_level] = value
+  end
+
   def override_exchange_model(_action)
     changes = attribute_changes('text_tc02')
     ticket.model_changes = changes if changes.present?

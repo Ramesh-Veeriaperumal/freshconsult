@@ -18,6 +18,7 @@ module ApiTicketsTestHelper
   include AttachmentsTestHelper
   include Helpdesk::Email::Constants
   include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
+  include Crypto::TokenHashing
 
   CUSTOM_FIELDS_CHOICES = Faker::Lorem.words(5).uniq.freeze
   DROPDOWN_OPTIONS = Faker::Lorem.words(5).freeze
@@ -888,9 +889,14 @@ module ApiTicketsTestHelper
   def ticket_meta_pattern(ticket)
     meta_info = ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta']).body
     meta_info = YAML.load(meta_info)
+    handle_secret_id(meta_info, ticket) if Account.current.agent_collision_revamp_enabled?
     handle_timestamps(meta_info)
   rescue
     {}
+  end
+
+  def handle_secret_id(meta_info, ticket)
+    meta_info[:secret_id] = mask_id(ticket.display_id)
   end
 
   def ticket_topic_pattern(ticket)

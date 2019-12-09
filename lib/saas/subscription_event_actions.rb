@@ -37,6 +37,8 @@ class SAAS::SubscriptionEventActions
                            Account::TEMPORARY_FEATURES.keys +
                            Account::ADMIN_CUSTOMER_PORTAL_FEATURES.keys).freeze
 
+  TOGGLES_AND_FEATURES = [[:field_service_management_toggle, :field_service_management]].freeze
+
   ####################################################################################################################
   #ideally we need to initialize this class with account object, old subscription object and addons
   #
@@ -163,8 +165,15 @@ class SAAS::SubscriptionEventActions
       Fluffy::Constants::FLUFFY_FEATURES
     end
 
+    def similar_toggle_features
+      TOGGLES_AND_FEATURES
+    end
+
     def handle_feature_drop_data
       drop_data_features_v2 = features_list_to_drop_data.select { |feature| feature unless account.has_feature?(feature) }
+      similar_toggle_features.each do |toggle, feature|
+        drop_data_features_v2.delete(toggle) if drop_data_features_v2.include?(toggle) && drop_data_features_v2.include?(feature)
+      end
       handle_feature_data(drop_data_features_v2, DROP) if drop_data_features_v2.present?
     end
 

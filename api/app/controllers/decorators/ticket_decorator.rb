@@ -1,5 +1,7 @@
 class TicketDecorator < ApiDecorator
   include TicketPropertiesSuggester::Util
+  include Crypto::TokenHashing
+
   delegate :ticket_body, :custom_field_via_mapping, :cc_email, :email_config_id,
     :fr_escalated, :group_id, :priority, :requester_id, :responder, :responder_id,
     :source, :spam, :status, :subject, :display_id, :ticket_type, :schema_less_ticket,
@@ -442,6 +444,10 @@ class TicketDecorator < ApiDecorator
     {
       convo_token: Collaboration::Ticket.new.convo_token(display_id)
     }
+  end
+
+  def generate_secret_id
+    mask_id(display_id)
   end
 
   def sender_email

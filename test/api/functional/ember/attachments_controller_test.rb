@@ -42,6 +42,11 @@ class Ember::AttachmentsControllerTest < ActionController::TestCase
     params_hash = { content: file }
   end
 
+  def image_with_exif_attachment_params_hash
+    file = fixture_file_upload('files/image_with_exif.jpg', 'image/jpeg')
+    params_hash = { content: file }
+  end
+
   def test_create_with_no_params
     post :create, construct_params({version: 'private'}, {})
     match_json([bad_request_error_pattern('content', :missing_field)])
@@ -219,5 +224,60 @@ class Ember::AttachmentsControllerTest < ActionController::TestCase
     assert_equal latest_attachment.attachable_id, @agent.id
     p latest_attachment
     assert_equal latest_attachment.content_file_name, 'shib_E2_80_AE3pm.txt'
+  end
+
+  def test_create_jpeg_image_remove_image_meta_data
+    Account.current.launch(:remove_image_attachment_meta_data)
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    Helpdesk::Attachment.any_instance.stubs(:valid_image?).returns(true)
+    post :create, construct_params({ version: 'private' }, image_with_exif_attachment_params_hash)
+    assert_response 200
+    latest_attachment = Helpdesk::Attachment.last
+    match_json(attachment_pattern(latest_attachment))
+  ensure
+    Account.current.rollback(:remove_image_attachment_meta_data)
+    Helpdesk::Attachment.any_instance.unstub(:valid_image?)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+  end
+
+  def test_image_meta_data_delete_worker
+    input_file = 'test/api/fixtures/files/image_with_exif.jpg'
+    file = File.open(input_file)
+    file_content = file.read
+    expected_file = File.open('test/api/fixtures/files/image_without_exif.jpg')
+    expected_file_content = expected_file.read
+    AwsWrapper::S3Object.stubs(:read).returns(file_content)
+    AwsWrapper::S3Object.stubs(:store).returns(true)
+    File.stubs(:delete).returns(true)
+    args = { 's3_paths': [input_file], 's3_bucket': 'irrelevant' }
+    ImageMetaDataDeleteWorker.new.perform(args)
+    output_file = File.open(Dir[File.join(Dir.tmpdir, '**', 'image-attachments*')][0])
+    output_file_content = output_file.read
+    assert_equal expected_file_content, output_file_content
+  ensure
+    AwsWrapper::S3Object.unstub(:read)
+    AwsWrapper::S3Object.unstub(:store)
+    File.unstub(:delete)
+    File.delete(output_file)
+    file.close
+    expected_file.close
+  end
+
+  def test_image_meta_data_delete_worker_invalid_image
+    input_file = 'test/api/fixtures/files/image_with_exif.jpg'
+    file = File.open(input_file)
+    file_content = file.read
+    AwsWrapper::S3Object.stubs(:read).returns(file_content[0, 400])
+    AwsWrapper::S3Object.stubs(:store).returns(true)
+    SecureRandom.stubs(:uuid).returns('image_exif_mod')
+    args = { 's3_paths': [input_file], 's3_bucket': 'irrelevant' }
+    assert_raises StandardError do
+      ImageMetaDataDeleteWorker.new.perform(args)
+    end
+  ensure
+    AwsWrapper::S3Object.unstub(:read)
+    AwsWrapper::S3Object.unstub(:store)
+    SecureRandom.unstub(:uuid)
+    file.close
   end
 end

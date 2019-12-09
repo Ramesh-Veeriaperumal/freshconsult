@@ -220,4 +220,19 @@ module EmailNotificationConstants
     <div>{{ticket.portal.name}}</div></div>"
   }.freeze
   
+  DEFAULT_NR_REMINDER_TEMPLATE = {
+    agent_template: '<p>Hi {{agent.firstname}},<br><br>Your response to ticket #{{ticket.id}} is due in {{ticket.nr_remaining_time}}. 
+                    <br><br>Ticket Details: <br><br>Subject - {{ticket.subject}}<br>
+                    <br>Requestor - {{ticket.requester.email}}<br><br>Ticket link - {{ticket.url}}<br><br>This is a 
+                    reminder email from {{helpdesk_name}}</p>',
+    agent_subject_template: 'Next Response due for - {{ticket.subject}}'
+  }
+
+  DEFAULT_NR_VIOLATION_TEMPLATE = {
+    agent_template: '<p>Hi,<br><br>There has been no response to the customer for the ticket {{ticket.id}} . The response was due on {{ticket.nr_due_by_hrs}} today.<br>
+                    <br>Ticket Details: <br><br>Subject - {{ticket.subject}}<br>
+                    <br>Requestor - {{ticket.requester.email}}<br><br>This is an escalation email from {{helpdesk_name}}
+                    <br>{{ticket.url}}</p>',
+    agent_subject_template: 'Next Response time SLA violated - {{ticket.subject}}'
+  }
 end

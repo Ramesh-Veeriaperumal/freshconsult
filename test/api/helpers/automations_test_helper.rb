@@ -164,6 +164,12 @@ module AutomationTestHelper
     observer_payload
   end
 
+  def observer_rule_json_with_next_response_due_event
+    observer_payload = JSON.parse('{"active": true, "performer": { "type": 4 }, "events": [ { "field_name": "next_response_due" } ], "conditions": [ { "name": "condition_set_1", "match_type": "any", "properties": [{"field_name": "priority","resource_type": "ticket","operator": "in","value": [1,2,3,4]}]}], "actions": [{"field_name": "status", "value": 5}] }')
+    observer_payload['name'] = Faker::Lorem.characters(19)
+    observer_payload
+  end
+
   def observer_rule_json_with_invalid_response_due_event
     observer_payload = JSON.parse('{"active": true, "performer": { "type": 4 }, "events": [ { "field_name": "response" } ], "conditions": [ { "name": "condition_set_1", "match_type": "any", "properties": [{"field_name": "priority","resource_type": "ticket","operator": "in","value": [1,2,3,4]}]}], "actions": [{"field_name": "status", "value": 5}] }')
     observer_payload['name'] = Faker::Lorem.characters(21)
@@ -173,6 +179,12 @@ module AutomationTestHelper
   def observer_rule_json_with_invalid_resolution_due_event
     observer_payload = JSON.parse('{"active": true, "performer": { "type": 4 }, "events": [ { "field_name": "resolution" } ], "conditions": [ { "name": "condition_set_1", "match_type": "any", "properties": [{"field_name": "priority","resource_type": "ticket","operator": "in","value": [1,2,3,4]}]}], "actions": [{"field_name": "status", "value": 5}] }')
     observer_payload['name'] = Faker::Lorem.characters(25)
+    observer_payload
+  end
+
+  def observer_rule_json_with_invalid_next_response_due_event
+    observer_payload = JSON.parse('{"active": true, "performer": { "type": 4 }, "events": [ { "field_name": "next_response" } ], "conditions": [ { "name": "condition_set_1", "match_type": "any", "properties": [{"field_name": "priority","resource_type": "ticket","operator": "in","value": [1,2,3,4]}]}], "actions": [{"field_name": "status", "value": 5}] }')
+    observer_payload['name'] = Faker::Lorem.characters(19)
     observer_payload
   end
 

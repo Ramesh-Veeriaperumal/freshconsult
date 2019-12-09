@@ -70,6 +70,8 @@ class Account < ActiveRecord::Base
   after_rollback :destroy_freshid_account_on_rollback, on: :create, if: -> { freshid_integration_signup_allowed? && !domain_already_exists? }
   after_rollback :signup_completed, on: :create
 
+  after_save :add_or_remove_email_notification_templates, if: :next_response_sla_feature_changed?
+
   publishable on: [:create, :update]
 
   include MemcacheKeys
@@ -234,6 +236,10 @@ class Account < ActiveRecord::Base
     else
       self.reset_feature(:private_inline)
     end
+  end
+
+  def add_or_remove_email_notification_templates
+    next_response_sla_enabled? ? add_nr_email_notifications : remove_nr_email_notifications
   end
 
   protected
@@ -676,5 +682,26 @@ class Account < ActiveRecord::Base
     def domain_already_exists?
       domain_mapping = DomainMapping.find_by_domain(full_domain) if full_domain.present?
       domain_mapping.present? && id != domain_mapping.account_id
+    end
+
+    def add_nr_email_notifications
+      add_email_notification(EmailNotification::NEXT_RESPONSE_SLA_REMINDER, EmailNotificationConstants::DEFAULT_NR_REMINDER_TEMPLATE)
+      add_email_notification(EmailNotification::NEXT_RESPONSE_SLA_VIOLATION, EmailNotificationConstants::DEFAULT_NR_VIOLATION_TEMPLATE)
+    end
+
+    def add_email_notification(type, template)
+      email_notification = email_notifications.build(
+        notification_type: type,
+        requester_notification: false,
+        agent_notification: true,
+        agent_subject_template: template[:agent_subject_template],
+        agent_template: template[:agent_template]
+      )
+      email_notification.save
+      email_notification
+    end
+
+    def remove_nr_email_notifications
+      email_notifications.where(notification_type: [ EmailNotification::NEXT_RESPONSE_SLA_REMINDER, EmailNotification::NEXT_RESPONSE_SLA_VIOLATION ]).destroy_all
     end
 end

@@ -46,6 +46,7 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
 
   ESCALATION_LEVELS_OPTIONS = ESCALATION_LEVELS.map { |i| i[1] }
   ESCALATION_LEVELS_MAX = ESCALATION_LEVELS_OPTIONS.last
+  NR_ESCALATION_LEVELS_MAX = 1
 
   ESCALATION_TIME = [
     [ :immediately,     0 ], 
@@ -69,8 +70,8 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
     [:after_fifteen_minutes,  900] 
   ]
 
-  ESCALATION_TYPES = [:resolution, :response]
-  REMINDER_TYPES = [:reminder_response,:reminder_resolution]
+  ESCALATION_TYPES = [:resolution, :response, :next_response]
+  REMINDER_TYPES = [:reminder_response,:reminder_resolution,:reminder_next_response]
 
   REMINDER_TIME = [
     [ :eight, -28800],
@@ -134,33 +135,13 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
 
   end
 
-  def escalate_resolution_overdue(ticket)
-    unless escalation_enabled?(ticket) && escalations.key?(:resolution)
-      ticket.update_attributes({:escalation_level => ESCALATION_LEVELS_MAX, :isescalated => true})
-      return
+  def escalate_next_response_reminder ticket
+    next_response_reminder = escalations[:reminder_next_response]["1"]
+
+    if next_response_reminder && escalate_to_agents(ticket, next_response_reminder, EmailNotification::NEXT_RESPONSE_SLA_REMINDER, :nr_due_by)
+      ticket.update_attribute(:nr_reminded, true)
     end
-
-    (((ticket.escalation_level || 0)+1)..ESCALATION_LEVELS_MAX).each do |escalation_level|
-
-      resolution_escalation = escalations[:resolution][escalation_level.to_s]
-      if !resolution_escalation
-        ticket.update_attributes({:escalation_level => ESCALATION_LEVELS_MAX, :isescalated => true})
-        break
-      end
-
-      if resolution_escalation && escalate_to_agents(ticket, resolution_escalation, 
-                                      EmailNotification::RESOLUTION_TIME_SLA_VIOLATION, :due_by)
-        ticket.update_attribute(:escalation_level, escalation_level)
-      else 
-        break
-      end
-    end
-
-    if ticket.escalation_level == ESCALATION_LEVELS_MAX && !ticket.isescalated
-      ticket.update_attributes({:isescalated => true})
-    end
-
-  end
+  end  
 
   def escalate_response_overdue(ticket)
     unless escalation_enabled?(ticket) && escalations.key?(:response)
@@ -174,6 +155,16 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
           EmailNotification::FIRST_RESPONSE_SLA_VIOLATION, :frDueBy)
       ticket.update_attribute(:fr_escalated , true)
     end
+  end
+
+  def escalate_resolution_overdue(ticket)
+    params = {activity: :resolution, level: :escalation_level, max_levels: ESCALATION_LEVELS_MAX, escalated_field: :isescalated, due_by: :due_by}
+    escalate_overdue(ticket, params, EmailNotification::RESOLUTION_TIME_SLA_VIOLATION)
+  end
+
+  def escalate_next_response_overdue(ticket)
+    params = {activity: :next_response, level: :nr_escalation_level, max_levels: NR_ESCALATION_LEVELS_MAX, escalated_field: :nr_escalated, due_by: :nr_due_by}
+    escalate_overdue(ticket, params, EmailNotification::NEXT_RESPONSE_SLA_VIOLATION)
   end
 
   def can_be_activated?
@@ -237,7 +228,7 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
     def escalate_to_agents(ticket, escalation, type, due_by)
       notify_time_interval = escalation[:time].seconds.since(ticket.safe_send(due_by))
 
-      if type == EmailNotification::RESPONSE_SLA_REMINDER || EmailNotification::RESOLUTION_SLA_REMINDER 
+      if type == EmailNotification::RESPONSE_SLA_REMINDER || EmailNotification::RESOLUTION_SLA_REMINDER || EmailNotification::NEXT_RESPONSE_SLA_REMINDER
         return false if notify_time_interval <= ticket.created_at
         notify_time_interval -= SLA_WORKER_INTERVAL
       end
@@ -287,6 +278,29 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
 
     def validate_conditions?
       !active || (!conditions.blank? || is_default)
+    end
+
+    def escalate_overdue(ticket, params, notification)
+      unless escalation_enabled?(ticket) && escalations.key?(params[:activity])
+        ticket.update_attributes({ params[:level] => params[:max_levels], params[:escalated_field] => true })
+        return
+      end
+
+      (((ticket.safe_send(params[:level]) || 0)+1)..params[:max_levels]).each do |escalation_level|
+        escalation = escalations[params[:activity]][escalation_level.to_s]
+        if !escalation
+          ticket.update_attributes({ params[:level] => params[:max_levels], params[:escalated_field] => true })
+          break
+        end
+        if escalation && escalate_to_agents(ticket, escalation, notification, params[:due_by])
+          ticket.update_attribute(params[:level], escalation_level)
+        else 
+          break
+        end
+      end
+      if ticket.safe_send(params[:level]) == params[:max_levels] && !ticket.safe_send(params[:escalated_field])
+        ticket.update_attributes({params[:escalated_field] => true})
+      end
     end
 
 end

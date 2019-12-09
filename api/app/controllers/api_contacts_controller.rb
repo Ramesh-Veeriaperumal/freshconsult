@@ -2,6 +2,8 @@ class ApiContactsController < ApiApplicationController
   include Helpdesk::TagMethods
   decorate_views
 
+  before_filter :check_if_email_already_exist, only: [:create, :update]
+
   def create
     assign_protected
     delegator_params = {
@@ -98,6 +100,18 @@ class ApiContactsController < ApiApplicationController
   end
 
   private
+
+    def check_if_email_already_exist
+      primary_email = params[cname][:email] || @email_objects[:primary_email]
+      return if primary_email.blank?
+      
+      user = Account.current.all_users.find_by_email(primary_email)
+      if user && user.id.to_s != params[:id]
+        @item.errors[:email] << :"Email has already been taken"
+        @additional_info = { user_id: user.id }
+        render_custom_errors
+      end
+    end
 
     # Same as http://apidock.com/rails/Hash/extract! without the shortcomings in http://apidock.com/rails/Hash/extract%21#1530-Non-existent-key-semantics-changed-
     # extract the keys from the hash & delete the same in the original hash to avoid repeat assignments

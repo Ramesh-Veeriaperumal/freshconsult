@@ -135,6 +135,30 @@ class Social::TwitterControllerTest < ActionController::TestCase
     @controller.unstub(:current_user)
   end
 
+  def test_twitter_reply_to_non_ticket_tweet_from_social_tab
+    user = Account.current.account_managers.first.make_current
+    @controller.stubs(:current_user).returns(user)
+    Account.current.stubs(:outgoing_tweets_to_tms_enabled?).returns(false)
+    @request.env['HTTP_ACCEPT'] = 'application/json'
+    with_twitter_update_stubbed do
+      @account = Account.current
+      params_hash = {
+        tweet: {
+          body: Faker::Lorem.sentence[0..130]
+        },
+        twitter_handle_id: @handle.id,
+        search_type: 'streams'
+      }
+      User.any_instance.stubs(:privilege?).with(:reply_ticket).returns(true)
+      post :reply, params_hash, format: 'js'
+      assert_response 200
+    end
+  ensure
+    Account.current.unstub(:outgoing_tweets_to_tms_enabled?)
+    User.any_instance.unstub(:privilege?)
+    @controller.unstub(:current_user)
+  end
+
   def test_twitter_reply_to_tweet_ticket_from_social_tab_with_feature_enabled
     user = Account.current.account_managers.first.make_current
     @controller.stubs(:current_user).returns(user)

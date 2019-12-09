@@ -26,4 +26,6 @@ module Email::Mailbox::Constants
   ACCESS_TOKEN_EXPIRY = 3420
   GOOGLE_OAUTH2 = 'google_oauth2'.freeze
   AUTH_ERROR = 401
+
+  TEST_MAIL_VERIFY_DURATION = 30.minutes
 end

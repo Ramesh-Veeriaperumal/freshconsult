@@ -71,7 +71,8 @@ module EmailMailboxTestHelper
         port: mailbox.smtp_mailbox.port,
         use_ssl: mailbox.smtp_mailbox.use_ssl,
         authentication: mailbox.smtp_mailbox.authentication,
-        user_name: mailbox.smtp_mailbox.user_name
+        user_name: mailbox.smtp_mailbox.user_name,
+        failure_code: mailbox.smtp_mailbox.error_type ? Admin::EmailConfig::Smtp::ErrorMapper.new(error_type: mailbox.smtp_mailbox.error_type).fetch_error_mapping : nil
         })
     end
     result_hash    

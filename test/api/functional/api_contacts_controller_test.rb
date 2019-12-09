@@ -163,7 +163,8 @@ class ApiContactsControllerTest < ActionController::TestCase
     add_new_user(@account, name: Faker::Lorem.characters(15), email: email)
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         email: email)
-    match_json([bad_request_error_pattern('email', :'Email has already been taken')])
+    additional_info = parse_response(@response.body)['errors'][0]['additional_info']
+    match_json([bad_request_error_pattern_with_additional_info('email', additional_info, :'Email has already been taken')])
     assert_response 409
   end
 
@@ -666,8 +667,9 @@ class ApiContactsControllerTest < ActionController::TestCase
     user2 = add_new_user_without_email(@account)
     email = user1.email
     put :update, construct_params({ id: user2.id }, email: email)
+    additional_info = parse_response(@response.body)['errors'][0]['additional_info']
     assert_response 409
-    match_json([bad_request_error_pattern('email', :'Email has already been taken')])
+    match_json([bad_request_error_pattern_with_additional_info('email', additional_info, :'Email has already been taken')])
   end
 
   def test_update_length_invalid
@@ -1938,9 +1940,9 @@ class ApiContactsControllerTest < ActionController::TestCase
     post :create, construct_params({},  name: Faker::Lorem.characters(10),
                                         email: email,
                                         other_emails: email_array)
-    match_json([bad_request_error_pattern('email', :'Email has already been taken'),
-                bad_request_error_pattern('other_emails', :email_already_taken, invalid_emails: email_array.sort.join(', '))])
     assert_response 409
+    additional_info = parse_response(@response.body)['errors'][0]['additional_info']
+    match_json([bad_request_error_pattern_with_additional_info('email', additional_info, :'Email has already been taken')])
   end
 
   def test_update_contact_with_email_and_other_emails_of_another_contact
@@ -1950,9 +1952,9 @@ class ApiContactsControllerTest < ActionController::TestCase
 
     sample_contact = add_new_user(@account)
     put :update, construct_params({ id: sample_contact.id }, email: email, other_emails: email_array)
-    match_json([bad_request_error_pattern('email', :'Email has already been taken'),
-                bad_request_error_pattern('other_emails', :email_already_taken, invalid_emails: email_array.sort.join(', '))])
     assert_response 409
+    additional_info = parse_response(@response.body)['errors'][0]['additional_info']
+    match_json([bad_request_error_pattern_with_additional_info('email', additional_info, :'Email has already been taken')])
   end
 
   def test_update_contact_with_already_associated_email_in_uppercase
@@ -2004,8 +2006,9 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert contact_a.reload.email == email.downcase
     contact_b = add_new_user(@account)
     put :update, construct_params({ id: contact_b.id }, email: email.downcase)
-    match_json([bad_request_error_pattern('email', :'Email has already been taken')])
     assert_response 409
+    additional_info = parse_response(@response.body)['errors'][0]['additional_info']
+    match_json([bad_request_error_pattern_with_additional_info('email', additional_info, :'Email has already been taken')])
   end
 
   def test_update_email_and_pass_other_emails_without_change

@@ -65,7 +65,7 @@
   	<% field_spacing = widget_view ? "form-portal" : "field-order" %>
   	<div class="<%= field_spacing %>">
 		<% @ticket_fields.each do |field| %>
-			<% next if field.section_field? %>
+			<% next if field.section_field? || field.field_type.eql?('custom_file') %>
 			<div class="control-group <%= field.field_type %> <%= " hide" if field.field_type == "default_company" %>">
     		<%= ticket_field_container f, :helpdesk_ticket, field, widget_prefilled_value(field) %>
     	</div>

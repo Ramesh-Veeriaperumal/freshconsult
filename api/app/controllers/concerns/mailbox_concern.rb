@@ -83,4 +83,8 @@ module MailboxConcern
   def remove_cached_oauth_value
     gmail_redis_obj.remove_hash
   end
+
+  def custom_mailbox?
+    @item.imap_mailbox.present? || @item.smtp_mailbox.present?
+  end
 end

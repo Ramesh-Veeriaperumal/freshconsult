@@ -74,7 +74,8 @@ module Pipe
       add_new_user(@account, name: Faker::Lorem.characters(15), email: email)
       post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                           email: email)
-      match_json([bad_request_error_pattern('email', :'Email has already been taken')])
+      additional_info = parse_response(@response.body)['errors'][0]['additional_info']
+      match_json([bad_request_error_pattern_with_additional_info('email', additional_info, :'Email has already been taken')])
       assert_response 409
     end
 
@@ -576,7 +577,8 @@ module Pipe
       email = user1.email
       put :update, construct_params({ id: user2.id }, email: email)
       assert_response 409
-      match_json([bad_request_error_pattern('email', :'Email has already been taken')])
+      additional_info = parse_response(@response.body)['errors'][0]['additional_info']
+      match_json([bad_request_error_pattern_with_additional_info('email', additional_info, :'Email has already been taken')])
     end
 
     def test_update_length_invalid

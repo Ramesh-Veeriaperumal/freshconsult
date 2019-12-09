@@ -553,6 +553,22 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
     va_rules.destroy if va_rules.present?
   end
 
+  def test_create_observer_rule_for_next_response_due
+    Account.current.account_va_rules.destroy_all
+    va_rule_request = observer_rule_json_with_next_response_due_event
+    post :create, construct_params({ rule_type: VAConfig::RULES[:observer] }.merge(va_rule_request), va_rule_request)
+    assert_response 201
+    parsed_response = JSON.parse(response.body)
+    va_rule_id = parsed_response['id'].to_i
+    rule = Account.current.account_va_rules.find(va_rule_id)
+    @status = nil
+    sample_response = automation_rule_pattern(rule)
+    match_custom_json(parsed_response, sample_response)
+  ensure
+    va_rules = Account.current.account_va_rules.find_by_id(va_rule_id)
+    va_rules.destroy if va_rules.present?
+  end
+
   def test_create_observer_rule_for_invalid_response_due
     Account.current.account_va_rules.destroy_all
     va_rule_request = observer_rule_json_with_invalid_response_due_event
@@ -569,6 +585,16 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
     post :create, construct_params({ rule_type: VAConfig::RULES[:observer] }.merge(va_rule_request), va_rule_request)
     assert_response 400
     match_json({ 'description': 'Validation failed', 'errors': [{ 'field': 'events[:resolution]', 'message': 'Unexpected/invalid field in request', 'code': 'invalid_field' }, { 'field': 'conditions[:conditions_set_1][:resolution]', 'message': 'Unexpected/invalid field in request', 'code': 'invalid_field' }] })
+  ensure
+    Account.current.reload
+  end
+
+  def test_create_observer_rule_for_invalid_next_response_due
+    Account.current.account_va_rules.destroy_all
+    va_rule_request = observer_rule_json_with_invalid_next_response_due_event
+    post :create, construct_params({ rule_type: VAConfig::RULES[:observer] }.merge(va_rule_request), va_rule_request)
+    assert_response 400
+    match_json({ 'description': 'Validation failed', 'errors': [{ 'field': 'events[:next_response]', 'message': 'Unexpected/invalid field in request', 'code': 'invalid_field' }, { 'field': 'conditions[:conditions_set_1][:next_response]', 'message': 'Unexpected/invalid field in request', 'code': 'invalid_field' }] })
   ensure
     Account.current.reload
   end

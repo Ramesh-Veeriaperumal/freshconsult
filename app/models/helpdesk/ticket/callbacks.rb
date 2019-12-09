@@ -57,6 +57,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_update :update_isescalated, :if => :check_due_by_change
   before_update :update_fr_escalated, :if => :check_frdue_by_change
+  before_update :update_nr_escalated, if: -> { Account.current.next_response_sla_enabled? && check_nr_due_by_change } 
 
   before_destroy :save_deleted_ticket_info
 
@@ -146,6 +147,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.group_id   ||= email_config.try(:group_id) if self.new_record?
     self.priority   ||= PRIORITY_KEYS_BY_TOKEN[:low]
     self.created_at ||= Time.now.in_time_zone(account.time_zone)
+    #marking the default value as false as we mistakenly set default as null in table - venky
+    self.nr_escalated ||= false
+    self.nr_reminded ||= false
 
     build_ticket_body(:description_html => self.description_html,
       :description => self.description) unless ticket_body

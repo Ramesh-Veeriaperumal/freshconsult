@@ -143,12 +143,14 @@ class Billing::BillingControllerTest < ActionController::TestCase
     Subscription.any_instance.unstub(:update_attributes)
     Subscription.any_instance.unstub(:save)
     ChargeBee::Subscription.any_instance.unstub(:plan_id)
+    Billing::Subscription.any_instance.stubs(:calculate_update_subscription_estimate).raises(RuntimeError)
     post :trigger, event_type: 'subscription_changed', content: normal_event_content, format: 'json'
     assert_response 200
     assert_equal 10, @account.subscription.reload.field_agent_limit
   ensure
     @account.subscription.agent_limit = old_subscription.agent_limit
     @account.subscription.save
+    Billing::Subscription.any_instance.unstub(:calculate_update_subscription_estimate)
     unstub_subscription_settings
   end
 
@@ -185,6 +187,25 @@ class Billing::BillingControllerTest < ActionController::TestCase
   ensure
     @account.subscription.agent_limit = old_subscription.agent_limit
     @account.subscription.save
+    unstub_subscription_settings
+  end
+
+  def test_subscription_changed_event_with_marketplace_addon
+    addon_params = { addons: [{ id: 'marketplaceapp_', quantity: 10, object: 'addon' }] }
+    stub_subscription_settings(addons: addon_params, plan_id: 'estate_jan_19_annual')
+    setup_fsm_addon_with_field_agent_count(2)
+    old_subscription = @account.subscription
+    Rails.env.stubs(:test?).returns(false)
+    Subscription.any_instance.unstub(:update_attributes)
+    Subscription.any_instance.unstub(:save)
+    ChargeBee::Subscription.any_instance.unstub(:plan_id)
+    Billing::Subscription.any_instance.stubs(:extension_details).raises(RuntimeError)
+    post :trigger, event_type: 'subscription_changed', content: normal_event_content, format: 'json'
+    assert_response 200
+  ensure
+    @account.subscription.agent_limit = old_subscription.agent_limit
+    @account.subscription.save
+    Billing::Subscription.any_instance.unstub(:extension_details)
     unstub_subscription_settings
   end
 
