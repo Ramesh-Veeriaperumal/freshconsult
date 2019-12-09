@@ -2,7 +2,7 @@ module Admin
   class SectionsValidation < ApiValidation
     include Admin::TicketFieldHelper
 
-    attr_accessor :id, :ticket_field_id, :tf, :correct_mapping, :section_data
+    attr_accessor :id, :ticket_field_id, :tf, :correct_mapping, :section_data, :type
 
     validate :invalid_ticket_field, if: -> { tf.blank? }
     validate :dynamic_section?, if: :default_ticket_type?

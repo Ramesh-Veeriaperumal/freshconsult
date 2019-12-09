@@ -139,14 +139,16 @@ module TicketFieldsTestHelper
         array << { ticket_field_id: ticket_field.id, parent_ticket_field_id: parent_ticket_field_id, position: (pos + 1) }
       end
       section_object = FactoryGirl.build(:section, label: section[:title],
-                                                   account_id: @account.id)
+                                                   account_id: @account.id, ticket_field_id: parent_ticket_field_id)
       section_object.save
       section_id << section_object.id
       section_picklist_mappings = []
       section[:value_mapping].each do |value|
+        picklist_value = Helpdesk::PicklistValue.find_by_value(value)
         section_picklist_mappings << FactoryGirl.build(:section_picklist_mapping,  account_id: @account.id,
                                                                                    section_id: section_object.id,
-                                                                                   picklist_value_id: Helpdesk::PicklistValue.find_by_value(value).id)
+                                                                                   picklist_value_id: picklist_value.id,
+                                                                                    picklist_id: picklist_value.picklist_id)
         section_picklist_mappings.last.save
       end
 

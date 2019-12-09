@@ -10,6 +10,7 @@ class TicketFieldsControllerTest < ActionController::TestCase
     Sidekiq::Worker.clear_all
     before_all
     Account.current.rollback(:nested_field_revamp) # nested_field_revamp should only be available for UI based request
+    Account.current.rollback(:ticket_field_revamp) # its for emberized ticket field/ test cases are old so affect model variables
   end
 
   @@before_all_run = false

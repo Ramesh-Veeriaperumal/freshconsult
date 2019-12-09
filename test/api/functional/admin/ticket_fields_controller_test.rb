@@ -293,7 +293,7 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
       tf = create_custom_field_dropdown_with_sections(name, DROPDOWN_CHOICES_TICKET_TYPE)
       create_section_fields(tf.id)
       tf.reload
-      get :show, construct_params(id: tf.id)
+      get :show, construct_params(id: tf.id, include: 'section')
       assert_response 200
       assert_json_match(custom_field_response(tf), response.body)
     end

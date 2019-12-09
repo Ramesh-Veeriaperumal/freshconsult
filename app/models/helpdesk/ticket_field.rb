@@ -132,7 +132,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   before_update :set_internal_field_values
 
-  after_initialize :initialize_default_values
+  after_initialize :initialize_default_values, if: -> { Account.current.ticket_field_revamp_enabled? }
 
   before_update :reorder_relative_position, if: -> { position_changed? }
   # xss_terminate
