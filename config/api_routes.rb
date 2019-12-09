@@ -477,6 +477,8 @@ Helpkit::Application.routes.draw do
         member do
           post :send_test_email
           get :verify_forward_email
+          get :email_forward_verification_code
+          get :email_provider
         end
       end
     end
