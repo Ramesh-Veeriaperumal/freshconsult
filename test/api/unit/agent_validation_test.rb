@@ -161,4 +161,16 @@ class AgentValidationTest < ActionView::TestCase
     Account.current.unstub(:field_service_management_enabled?)
     Account.current.unstub(:features?)
   end
+
+  def test_invalid_datatype_agent_create_skill_ids
+    Account.stubs(:current).returns(Account.first)
+    agent_item = Agent.new
+    agent_item.user = User.new
+    agent = AgentValidation.new({ name: Faker::Lorem.characters(15), email: Faker::Internet.email, ticket_scope: 2, time_zone: 'Central Time (US & Canada)', skill_ids: '1' }, agent_item, false)
+    refute agent.valid?(:create)
+    errors = agent.errors.sort.to_h
+    error_options = agent.error_options.sort.to_h
+    assert_equal({ skill_ids: :datatype_mismatch }, errors)
+    assert_equal({ email: {}, language: {}, name: {}, role_ids: {}, skill_ids: { expected_data_type: Array, prepend_msg: :input_received, given_data_type: String }, ticket_scope: {}, time_zone: {} }, error_options)
+ end
 end

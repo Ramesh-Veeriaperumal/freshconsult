@@ -234,7 +234,7 @@
 
 # Agents
 /agents:
-  $ref: ./agents/list.yaml
+  $ref: ./agents/list_and_create.yaml
 /agents/{id}:
   $ref: ./agents/crud.yaml
 /agents/{id}/achievements:

@@ -24,11 +24,13 @@ class ApiAgentsController < ApiApplicationController
   def create
     assign_protected
     return unless validate_delegator(params[cname].slice(:role_ids, :group_ids,
-                                                         :user_attributes, :agent_type, :occasional), agent_delegator_params)
+                                                         :user_attributes, :agent_type, :occasional, :skill_ids), agent_delegator_params)
 
     @user = current_account.users.new
     params[:user] = params[cname][:user_attributes]
+
     check_and_assign_field_agent_roles if Account.current.field_service_management_enabled?
+    check_and_assign_skills_for_create if Account.current.skill_based_round_robin_enabled?
     assign_user_attributes
     if @user.signup!({ user: params[:user] }, nil, !Account.current.freshid_integration_enabled?)
       assign_agent_attributes
@@ -44,7 +46,9 @@ class ApiAgentsController < ApiApplicationController
 
   def update
     assign_protected
-    return unless validate_delegator(params[cname].slice(:role_ids, :group_ids), agent_delegator_params)
+    return unless validate_delegator(params[cname].slice(:role_ids, :group_ids, :user_attributes), agent_delegator_params)
+
+    check_and_assign_skills_for_update if Account.current.skill_based_round_robin_enabled?
 
     params[cname][:user_attributes].each do |k, v|
       @item.user.safe_send("#{k}=", v)
@@ -113,7 +117,7 @@ class ApiAgentsController < ApiApplicationController
     end
 
     def agent_delegator_params
-      {}
+      { action: action_name }
     end
 
     def after_load_object
@@ -139,6 +143,7 @@ class ApiAgentsController < ApiApplicationController
 
     def validate_params
       allowed_fields = "#{constants_class}::#{action_name.upcase}_FIELDS".constantize
+      allowed_fields += AgentConstants::SKILLS_FIELDS if current_account.skill_based_round_robin_enabled?
       params[cname].permit(*allowed_fields)
       agent = AgentValidation.new(params[cname], @item, string_request_params?)
       render_custom_errors(agent, true) unless agent.valid?(action_name.to_sym)
@@ -213,6 +218,43 @@ class ApiAgentsController < ApiApplicationController
       if params[cname][:agent_type] == Account.current.agent_types.find_by_name(Agent::FIELD_AGENT).agent_type_id
         params[:user][:role_ids] = [Account.current.roles.find_by_name('Field technician').id]
       end
+    end
+
+    def check_and_assign_skills_for_create
+      return if params[:skill_ids].blank?
+
+      formatted_skills = []
+      rank = 1
+      params[:skill_ids].each do |id|
+        formatted_skills.push(skill_id: id, rank: rank, rank_handled_in_ui: true)
+        rank += 1
+      end
+      params[:user][:user_skills_attributes] = formatted_skills
+    end
+
+    def check_and_assign_skills_for_update
+      return unless params[cname].key?(:user_attributes) && params[cname][:user_attributes].key?(:skill_ids)
+
+      current_skill_ids = params[cname][:user_attributes][:skill_ids]
+      prev_skill_data = @item.user.user_skills.preload(:skill).map do |user_skill|
+        { id: user_skill.id, skill_id: user_skill.skill_id }
+      end
+      prev_skill_ids = prev_skill_data.map { |skill_data| skill_data[:skill_id] }
+      removed_skill_ids = prev_skill_ids - current_skill_ids
+      formatted_skills = []
+      rank = 1
+      current_skill_ids.each do |skill_id|
+        skill_hash = { skill_id: skill_id, rank: rank, rank_handled_in_ui: true }
+        rank_index = prev_skill_ids.find_index(skill_id)
+        skill_hash[:id] = prev_skill_data[rank_index][:id] if rank_index.present?
+        formatted_skills.push(skill_hash)
+        rank += 1
+      end
+      removed_skill_ids.each do |skill_id|
+        formatted_skills.push(id: prev_skill_data[prev_skill_ids.find_index(skill_id)][:id], _destroy: true, rank_handled_in_ui: true)
+      end
+      params[cname][:user_attributes][:user_skills_attributes] = formatted_skills
+      params[cname][:user_attributes].delete(:skill_ids)
     end
 
     def agents_filter(agents)
