@@ -21999,6 +21999,10 @@
           "stats": {
             "$ref": "#/definitions/ticket_stats"
           },
+          "priority": {
+            "description": "Ticket's priority",
+            "type": "integer"
+          },
           "created_at": {
             "description": "Ticket's created time",
             "type": "string",
