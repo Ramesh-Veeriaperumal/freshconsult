@@ -143,4 +143,3 @@ module EmailMailboxTestHelper
     outgoing_hash
   end
 end
-

@@ -1,7 +1,6 @@
 module UsersHelper
   def add_test_agent(account=nil, options={})
     account = account || @account
-
     role_id = options[:role].nil? ? account.roles.find_by_name("Account Administrator").id : options[:role]
 
     add_agent(account, {:name => Faker::Name.name,

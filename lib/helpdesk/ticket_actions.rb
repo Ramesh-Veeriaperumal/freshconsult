@@ -200,7 +200,8 @@ module Helpdesk::TicketActions
     # for split ticket activity, 
     # target ticket id will be added after ticket is created while publishing rmq msg
     @item.activity_type = {:type => "ticket_split_target", 
-      :source_ticket_id => [@source_ticket.display_id]}
+      :source_ticket_id => [@source_ticket.display_id],
+      :source_note_id => [@note.id]}
     if @item.save_ticket
       move_attachments
       @note.remove_activity
