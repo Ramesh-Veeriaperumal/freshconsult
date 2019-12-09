@@ -37,6 +37,16 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
 
   attr_accessor :datatype
 
+  CONDITIONS_EVALUATE_ON_HASH = {
+    "company_id"        => [:company_id,  :ticket],
+    "group_id"          => [:group_id,    :ticket],
+    "product_id"        => [:product_id,  :ticket],
+    "source"            => [:source,      :ticket],
+    "ticket_type"       => [:ticket_type, :ticket],
+    "contact_segment"   => [:segments,    :requester],
+    "company_segment"   => [:segments,    :company]
+  }
+
   ESCALATION_LEVELS = [
     [ :level_1,   1 ], 
     [ :level_2,   2 ], 
@@ -110,9 +120,9 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
   }
   acts_as_list :scope => 'account_id = #{account_id}'
 
-  def matches?(evaluate_on)
+  def matches?(ticket)
     return false if va_conditions.empty?
-    va_conditions.all? { |c| c.matches(evaluate_on) }
+    va_conditions.all? { |c| c.evaluate_on_type != 'ticket' ? c.matches(ticket.safe_send(c.evaluate_on_type)) : c.matches(ticket) }
   end
 
 #sla_resolution_reminder / sla_response_reminder
@@ -215,8 +225,13 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
     def deserialize_conditions
       to_return = []
       conditions.each_pair do |k, v| #each_pair
-        to_return << (Va::Condition.new({:name => k, :value => v, 
-                        :operator => "in"} , Account.current))
+        condition_name, evaluate_on = k, :ticket
+        if CONDITIONS_EVALUATE_ON_HASH.key?(k)
+          condition_name = CONDITIONS_EVALUATE_ON_HASH[k][0]
+          evaluate_on = CONDITIONS_EVALUATE_ON_HASH[k][1]
+        end
+        to_return << (Va::Condition.new({:name => condition_name, :value => v, 
+                        :operator => "in", :evaluate_on => evaluate_on.to_s} , Account.current))
       end if conditions
       to_return
     end

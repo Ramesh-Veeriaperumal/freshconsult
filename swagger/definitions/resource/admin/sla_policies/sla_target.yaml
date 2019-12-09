@@ -23,5 +23,5 @@ required:
   - priority
   - first_response_time
   - resolution_time
-  - business_hours
+  - operational_hours
   - escalation_enabled

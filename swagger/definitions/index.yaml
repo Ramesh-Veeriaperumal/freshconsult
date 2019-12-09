@@ -769,15 +769,15 @@ sla_policy_common:
 
 # Admin SLA Policy
 admin_sla_policy:
-  $ref: ./resource/admin_sla_policy/sla_policy.yaml
+  $ref: ./resource/admin/sla_policies/sla_policy.yaml
 admin_sla_target:
-  $ref: ./resource/admin_sla_policy/sla_target.yaml
+  $ref: ./resource/admin/sla_policies/sla_target.yaml
 admin_sla_condition:
-  $ref: ./resource/admin_sla_policy/sla_condition.yaml
+  $ref: ./resource/admin/sla_policies/sla_condition.yaml
 admin_sla_action:
-  $ref: ./resource/admin_sla_policy/sla_action.yaml
+  $ref: ./resource/admin/sla_policies/sla_action.yaml
 admin_sla_action_common:
-  $ref: ./resource/admin_sla_policy/sla_action_common.yaml
+  $ref: ./resource/admin/sla_policies/sla_action_common.yaml
 
 #Widget
 widget_attachment_create:

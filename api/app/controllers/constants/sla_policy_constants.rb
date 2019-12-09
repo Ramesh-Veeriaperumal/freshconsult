@@ -5,6 +5,7 @@ module SlaPolicyConstants
   ASSIGNED_AGENT = -1
 
   VALID_ESCLATION_TIME = Helpdesk::SlaPolicy::ESCALATION_TIME.map{|i| i[1] }.freeze
+  VALID_REMINDER_TIME = Helpdesk::SlaPolicy::REMINDER_TIME.map{|i| i[1] }.freeze
 
   VALID_SLA_LEVEL = Helpdesk::SlaPolicy::ESCALATION_LEVELS
 
@@ -27,7 +28,9 @@ module SlaPolicyConstants
                     group_id: { method: "groups_from_cache", attribute: "id" },
                     product_id: { method: "products_from_cache", attribute: "id" },
                     ticket_type: { method: "ticket_types_from_cache", attribute: "value" },
-                    source: { method: "sources", attribute: "" }
+                    source: { method: "sources", attribute: "" },
+                    contact_segment: { method: "contact_filters_from_cache", attribute: "id" },
+                    company_segment: { method: "company_filters_from_cache", attribute: "id" }
                   }.freeze
 
   ESCALATION_ARRAY_HASH = {
@@ -44,6 +47,7 @@ module SlaPolicyConstants
 
   ALLOWED_HASH_SLA_TARGET_PRIORITY = [ 
                           {'respond_within' => [nil]}, 'respond_within',
+                          {'next_respond_within' => [nil]}, 'next_respond_within',
                           {'resolve_within' => [nil]}, 'resolve_within',
                           {'business_hours' => [nil]}, 'business_hours',
                           {'escalation_enabled' => [nil]}, 'escalation_enabled'
@@ -60,7 +64,9 @@ module SlaPolicyConstants
                           {'group_ids' => [nil]}, 'group_ids',
                           {'product_ids' => [nil]}, 'product_ids',
                           {'ticket_types' => [nil]}, 'ticket_types',
-                          {'sources' => [nil]}, 'sources'
+                          {'sources' => [nil]}, 'sources',
+                          {'contact_segments' => [nil]}, 'contact_segments',
+                          {'company_segments' => [nil]}, 'company_segments'
                         ].freeze
 
   ALLOWED_HASH_ESCALATIONS_RESOLUTION_FIELD =  [
@@ -70,8 +76,15 @@ module SlaPolicyConstants
                                       { 'level_4' => ALLOWED_HASH_FIELD }, 'level_4'
                                     ]            
 
+  ESCALATION_TYPES_EXCEPT_RESOLUTION = %w(reminder_response reminder_next_response reminder_resolution response next_response).freeze
+  ESCALATION_TYPES = (ESCALATION_TYPES_EXCEPT_RESOLUTION + ['resolution']).freeze
+
   ALLOWED_HASH_ESCALATIONS_FIELD = [
+                                    { 'reminder_response' => ALLOWED_HASH_FIELD }, 'reminder_response',
+                                    { 'reminder_next_response' => ALLOWED_HASH_FIELD }, 'reminder_next_response',
+                                    { 'reminder_resolution' => ALLOWED_HASH_FIELD }, 'reminder_resolution',
                                     { 'response' => ALLOWED_HASH_FIELD }, 'response',
+                                    { 'next_response' => ALLOWED_HASH_FIELD }, 'next_response',
                                     { 'resolution' => ALLOWED_HASH_ESCALATIONS_RESOLUTION_FIELD }, 'resolution'
                                   ].freeze                      
 

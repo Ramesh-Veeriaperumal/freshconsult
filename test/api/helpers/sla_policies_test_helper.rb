@@ -49,9 +49,11 @@ module SlaPoliciesTestHelper
     group = create_group(@account)
     product = create_product
     ticket_type = "Question"
+    contact_segment = create_contact_segment
+    company_segment = create_company_segment
     sla_policy = FactoryGirl.build(:sla_policies, name: "#{Faker::Lorem.word}#{rand(1_000_000)}", description: Faker::Lorem.paragraph, active: true, account_id: @account.id,
 
-                                                  conditions: { group_id: ["#{group.id}"], company_id: ["#{company.id}"], product_id: ["#{product.id}"], source: ['2'] }
+                                                  conditions: { group_id: ["#{group.id}"], company_id: ["#{company.id}"], product_id: ["#{product.id}"], source: ['2'], contact_segment: ["#{contact_segment.id}"], company_segment: ["#{company_segment.id}"] }
                                                   )
     sla_policy.save(validate: false)
     sla_policy
@@ -100,6 +102,18 @@ module SlaPoliciesTestHelper
       sla_details.save(validate: false)
     end
     sla_policy
+  end
+
+  def create_contact_segment
+    contact_filter = @account.contact_filters.new({name: Faker::Name.name, data: SegmentFiltersTestHelper::CONTACT_FILTER_PARAMS["query_hash"]})
+    contact_filter.save!
+    contact_filter
+  end
+
+  def create_company_segment
+    company_filter = @account.company_filters.new({name: Faker::Name.name, data: SegmentFiltersTestHelper::COMPANY_FILTER_PARAMS["query_hash"]})
+    company_filter.save!
+    company_filter
   end
 
   # Helpers

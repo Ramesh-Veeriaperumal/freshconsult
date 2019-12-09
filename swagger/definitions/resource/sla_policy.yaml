@@ -42,10 +42,26 @@ properties:
         items:
           type: string
           enum: ['Question','Incident','Problem','Feature Request']
+      contact_segments:
+        type: array
+        items:
+          type: integer
+      company_segments:
+        type: array
+        items:
+          type: integer
   escalation:
     type: object
     properties:
+      reminder_response:
+        $ref: '#/definitions/sla_escalation_level'
+      reminder_next_response:
+        $ref: '#/definitions/sla_escalation_level'
+      reminder_resolution:
+        $ref: '#/definitions/sla_escalation_level'
       response:
+        $ref: '#/definitions/sla_escalation_level'
+      next_response:
         $ref: '#/definitions/sla_escalation_level'
       resolution:
         $ref: '#/definitions/sla_escalation_response'

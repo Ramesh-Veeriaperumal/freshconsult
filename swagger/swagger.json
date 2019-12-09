@@ -27098,13 +27098,37 @@
                   "Feature Request"
                 ]
               }
+            },
+            "contact_segments": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "company_segments": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
             }
           }
         },
         "escalation": {
           "type": "object",
           "properties": {
+            "reminder_response": {
+              "$ref": "#/definitions/sla_escalation_level"
+            },
+            "reminder_next_response": {
+              "$ref": "#/definitions/sla_escalation_level"
+            },
+            "reminder_resolution": {
+              "$ref": "#/definitions/sla_escalation_level"
+            },
             "response": {
+              "$ref": "#/definitions/sla_escalation_level"
+            },
+            "next_response": {
               "$ref": "#/definitions/sla_escalation_level"
             },
             "resolution": {
@@ -27123,6 +27147,9 @@
       "type": "object",
       "properties": {
         "respond_within": {
+          "type": "integer"
+        },
+        "next_respond_within": {
           "type": "integer"
         },
         "resolve_within": {
@@ -27268,7 +27295,7 @@
       "required": [
         "name",
         "active",
-        "sla_target",
+        "sla_targets",
         "conditions"
       ]
     },
@@ -27311,7 +27338,7 @@
         "priority",
         "first_response_time",
         "resolution_time",
-        "business_hours",
+        "operational_hours",
         "escalation_enabled"
       ]
     },

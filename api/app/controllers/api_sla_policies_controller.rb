@@ -1,4 +1,9 @@
 class ApiSlaPoliciesController < ApiApplicationController
+  def index
+    super
+    response.api_meta = { count: @items_count, active_rules: scoper.active.count }
+  end
+
   def update
     assign_protected
     sla_policy_delegator = SlaPolicyDelegator.new(@item,{:params => params[cname]})
@@ -31,7 +36,9 @@ class ApiSlaPoliciesController < ApiApplicationController
         @item[field] = params[cname][field] if params[cname].has_key?(field)
       end
       @item.conditions = ActiveSupport::HashWithIndifferentAccess.new unless action_name == 'update' && !params[cname].has_key?(:applicable_to)
-      @item.escalations = ActiveSupport::HashWithIndifferentAccess.new(response: {}, resolution: {}) unless action_name == 'update' && !params[cname].has_key?(:escalation)
+      escalations_hash = { reminder_response: {}, reminder_resolution: {}, response: {}, resolution: {} }
+      escalations_hash.merge!(reminder_next_response: {}, next_response: {}) if current_account.next_response_sla_enabled?
+      @item.escalations = ActiveSupport::HashWithIndifferentAccess.new(escalations_hash) unless action_name == 'update' && !params[cname].key?(:escalation)
       @item.sla_details ||= ActiveSupport::HashWithIndifferentAccess.new
 
       if params[cname].has_key?(:applicable_to)
@@ -64,7 +71,10 @@ class ApiSlaPoliciesController < ApiApplicationController
     end
 
     def update_escalation
-      @item.escalations[:response]["1"] = tranform_escalation_keys(params[cname][:escalation][:response]) if params[cname][:escalation][:response].present?
+      SlaPolicyConstants::ESCALATION_TYPES_EXCEPT_RESOLUTION.each do |escalation_type|
+        next if ['reminder_next_response', 'next_response'].include?(escalation_type) && !Account.current.next_response_sla_enabled?
+        @item.escalations[escalation_type.to_sym]['1'] = tranform_escalation_keys(params[cname][:escalation][escalation_type.to_sym]) if params[cname][:escalation][escalation_type.to_sym].present?
+      end
       
       if params[cname][:escalation][:resolution].present?
         Helpdesk::SlaPolicy::ESCALATION_LEVELS.each do |key,value|
@@ -95,6 +105,7 @@ class ApiSlaPoliciesController < ApiApplicationController
     def tranform_sla_target_keys(sla_target,priority,sla_detail)
       sla_detail = ActiveSupport::HashWithIndifferentAccess.new(priority: priority,name: SlaPolicyConstants::SLA_DETAILS_NAME[priority] )  if action_name.eql?("create")
       sla_detail[:response_time] = sla_target[:respond_within] 
+      sla_detail[:next_response_time] = sla_target[:next_respond_within]
       sla_detail[:resolution_time] = sla_target[:resolve_within] 
       sla_detail[:override_bhrs] = !sla_target[:business_hours] 
       sla_detail[:escalation_enabled] = sla_target[:escalation_enabled] 

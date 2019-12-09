@@ -15,7 +15,7 @@ class SlaPolicyDecorator < ApiDecorator
 
     def pluralize_escalations(input_hash)
       input_hash.inject({}) do |return_hash,(key,val)|
-        if key == "response"
+        if SlaPolicyConstants::ESCALATION_TYPES_EXCEPT_RESOLUTION.include?(key)
           return_hash[key] = response_hash(val["1"])
         else
           return_hash[key] = resolution_hash(val)
@@ -41,12 +41,13 @@ class SlaPolicyDecorator < ApiDecorator
     end
 
     def sla_target_hash(input_hash)
-      {
+      hash = {
         respond_within:       input_hash.response_time,
         resolve_within:       input_hash.resolution_time, 
         business_hours:       !input_hash.override_bhrs, 
         escalation_enabled:   input_hash.escalation_enabled
       }
+      Account.current.next_response_sla_enabled? ? hash.merge!(next_respond_within: input_hash.next_response_time) : hash
     end
 
   end
