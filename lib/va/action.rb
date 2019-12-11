@@ -273,7 +273,7 @@ class Va::Action
     note.schema_less_note.cc_emails = act_hash[:fwd_cc] || []
     note.schema_less_note.bcc_emails = act_hash[:fwd_bcc] || []
     note.schema_less_note.from_email = act_on.account.default_email
-    note.attachments.push(*attachment) if attachment.present?
+    [*attachment].each { |att| note.attachments.build(content: att.to_io) } if attachment.present?
     sanitize_note note
     note.safe_send(:add_cc_email)
     activity_params = { helpdesk_name: act_on.account.helpdesk_name, to_emails: act_hash[:fwd_to], cc_emails: act_hash[:fwd_cc], bcc_emails: act_hash[:fwd_bcc] }
