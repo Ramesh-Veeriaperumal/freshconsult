@@ -9,8 +9,8 @@ module SolutionsArticlesTestHelper
     article.reload
   end
 
-  def get_article_with_draft
-    article = @account.solution_category_meta.where(is_default: false).collect(&:solution_folder_meta).flatten.map { |x| x unless x.is_default }.collect(&:solution_article_meta).flatten.collect(&:children).flatten.first
+  def get_article_with_draft(language = Account.current.language_object)
+    article = @account.solution_category_meta.where(is_default: false).collect(&:solution_folder_meta).flatten.map { |x| x unless x.is_default }.collect(&:solution_article_meta).flatten.collect(&:children).flatten.select{ |art| art.language_id == language.id }.first
     if article.draft.blank?
       draft = article.build_draft_from_article
       draft.title = 'Sample'

@@ -133,7 +133,7 @@ class Solutions::ArticleDecorator < ApiDecorator
   end
 
   def visibility_hash
-    return {} unless @user.present?
+    return {} if @user.blank?
     {
       visibility: { @user.id => parent.visible?(@user) || false }
     }
@@ -252,7 +252,7 @@ class Solutions::ArticleDecorator < ApiDecorator
 
     def category_and_folder
       if category_meta.is_default
-        { :source => ::SolutionConstants::KBASE_EMAIL_SOURCE }
+        { source: ::SolutionConstants::KBASE_EMAIL_SOURCE }
       else
         { category_id: @draft.try(:category_meta_id) || category_meta.id,
           folder_id: parent.solution_folder_meta.id }
@@ -291,7 +291,7 @@ class Solutions::ArticleDecorator < ApiDecorator
       @feedback_count ||= tickets.unresolved.reject(&:spam_or_deleted?).count
     end
 
-    def last_modified resp_hash
+    def last_modified(resp_hash)
       {
         last_modifier: resp_hash[:draft_modified_by] || resp_hash[:modified_by],
         last_modified_at: resp_hash[:draft_modified_at] || resp_hash[:modified_at]

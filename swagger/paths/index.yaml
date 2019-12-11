@@ -678,6 +678,8 @@
   $ref: ./solutions/reset_ratings.yaml
 /solutions/articles/{id}/{language}/send_for_review:
   $ref: ./solutions/article/send_for_review.yaml
+/solutions/articles/{id}/{language}/approve:
+  $ref: ./solutions/article/approve.yaml
 /solutions/articles/{id}/{language}/votes:
   $ref: ./solutions/article/votes.yaml
 /solutions/folders/bulk_update:

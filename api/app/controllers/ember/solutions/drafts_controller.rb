@@ -4,6 +4,7 @@ module Ember
       include HelperConcern
       include SolutionConcern
       include DraftsConcern
+      include SolutionApprovalConcern
 
       before_filter :validate_language, only: [:index]
       before_filter :load_attachment, only: [:delete_attachment]
@@ -29,7 +30,13 @@ module Ember
 
       def update
         assign_draft_attributes
-        render_errors(@draft.errors) unless @draft.update_attributes(cname_params.slice(*Solution::Draft::COMMON_ATTRIBUTES))
+        ActiveRecord::Base.transaction do
+          @draft.update_attributes!(cname_params.slice(*Solution::Draft::COMMON_ATTRIBUTES))
+          restore_approval_status! if Account.current.article_approval_workflow_enabled? && cname_params[:approval_data]
+        end
+      rescue StandardError
+        render_errors(@draft.errors) and return if @draft && @draft.errors.present?
+        render_errors(@helpdesk_approval.errors) and return if @helpdesk_approval && @helpdesk_approval.errors.present?
       end
 
       def destroy
@@ -98,6 +105,17 @@ module Ember
         def set_session
           # For cancel action (destroy), the session is sent in query params and hence the below checks
           @draft.session = params[:session] || cname_params[:session] if params[:session] || (cname_params.present? && cname_params[:session])
+        end
+
+        def restore_approval_status!
+          # after draft save. all objects are frozen.
+          @article.reload
+          @helpdesk_approval = get_or_build_approval_record(@article)
+          @helpdesk_approval.user_id = cname_params[:approval_data][:user_id]
+          @helpdesk_approver_mapping = get_or_build_approver_mapping(@helpdesk_approval, cname_params[:approval_data][:approver_id])
+          @helpdesk_approver_mapping.approval_status = cname_params[:approval_data][:approval_status]
+          @helpdesk_approval.approval_status = cname_params[:approval_data][:approval_status]
+          @helpdesk_approval.save!
         end
 
         def preload_options

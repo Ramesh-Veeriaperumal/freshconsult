@@ -234,7 +234,11 @@ Authority::Authorization::PrivilegeList.build do
 
   create_and_edit_article do
     resource :'ember/solutions/article', only: %i[create update send_for_review]
-    resource :'ember/solutions/draft', only: %i[autosave update delete_attachment]
+    resource :'ember/solutions/draft', only: %i[autosave update delete_attachment destroy]
+  end
+
+  approve_article do
+    resource :'ember/solutions/article', only: %i[approve]
   end
 
   publish_solution do
@@ -246,7 +250,6 @@ Authority::Authorization::PrivilegeList.build do
 
   delete_solution do
     resource :'ember/solutions/article', only: %i[destroy reset_ratings]
-    resource :'ember/solutions/draft', only: %i[destroy]
   end
 
   view_reports do

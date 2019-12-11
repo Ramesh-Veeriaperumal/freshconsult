@@ -1,6 +1,8 @@
 require_relative '../../../test_helper'
 ['solutions_helper.rb', 'solution_builder_helper.rb'].each { |file| require Rails.root.join('spec', 'support', file) }
 
+require Rails.root.join('test', 'core', 'helpers', 'users_test_helper.rb')
+
 module Ember
   module Solutions
     module DraftsTestParameters
@@ -52,6 +54,9 @@ module Ember
       include AttachmentsTestHelper
       include SolutionsArticleVersionsTestHelper
       include DraftsTestParameters
+      include CoreUsersTestHelper
+      include PrivilegesHelper
+      include SolutionsApprovalsTestHelper
 
       def setup
         super
@@ -149,6 +154,59 @@ module Ember
         match_json(autosave_pattern(@draft.reload))
         assert_equal @draft.title, @title
         assert_equal @draft.description, @description
+      end
+
+      def test_autosave_with_article_approval
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        add_privilege(User.current, :approve_article)
+        User.current.reload
+        @article = get_in_review_article
+        @draft = @article.draft
+        put :autosave, construct_params({ version: 'private', article_id: @article.parent_id }, autosave_params)
+        assert_response 200
+        match_json(autosave_pattern(@draft.reload))
+        assert_equal @draft.title, @title
+        assert_equal @draft.description, @description
+        assert_in_review @article
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_autosave_with_article_approval_different_user
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        user = User.current
+        add_test_agent.make_current
+        add_privilege(User.current, :approve_article)
+        User.current.reload
+        @article = get_in_review_article
+        user.make_current
+        add_test_agent.make_current
+        @draft = @article.draft
+        put :autosave, construct_params({ version: 'private', article_id: @article.parent_id }, autosave_params)
+        assert_response 200
+        match_json(autosave_pattern(@draft.reload))
+        assert_equal @draft.title, @title
+        assert_equal @draft.description, @description
+        assert_no_approval @article
+      ensure
+        user.make_current
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_autosave_with_article_approval_in_approved_state
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        add_privilege(User.current, :approve_article)
+        User.current.reload
+        @article = get_approved_article
+        @draft = @article.draft
+        put :autosave, construct_params({ version: 'private', article_id: @article.parent_id }, autosave_params)
+        assert_response 200
+        match_json(autosave_pattern(@draft.reload))
+        assert_equal @draft.title, @title
+        assert_equal @draft.description, @description
+        assert_no_approval @article
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
       end
 
       def test_autosave_without_privilege
@@ -320,7 +378,7 @@ module Ember
 
       def test_destroy_without_privilege
         article_with_draft
-        User.any_instance.stubs(:privilege?).with(:delete_solution).returns(false)
+        User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(false)
         delete :destroy, controller_params(version: 'private', article_id: @article.parent_id)
         assert_response 403
         match_json(request_error_pattern(:access_denied))
@@ -389,10 +447,10 @@ module Ember
       def test_update_without_privilege
         article_with_draft
         User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(false)
-        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
         put :update, construct_params({ version: 'private', article_id: @article.parent_id }, update_params)
         assert_response 403
         match_json(request_error_pattern(:access_denied))
+      ensure
         User.any_instance.unstub(:privilege?)
       end
 
@@ -416,7 +474,7 @@ module Ember
       def test_update_with_invalid_author
         article_with_draft
         params = update_params
-        params[:user_id] = 9999
+        params[:user_id] = 999_999_999
         put :update, construct_params({ version: 'private', article_id: @article.parent_id }, params)
         assert_response 400
         match_json([bad_request_error_pattern('user_id', :invalid_draft_author)])
@@ -432,6 +490,90 @@ module Ember
         article_without_draft
         put :update, construct_params({ version: 'private', article_id: @article.parent_id }, title: Faker::Name.name)
         assert_response 404
+      end
+
+      def test_update_without_article_approval
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(false)
+        language = @account.supported_languages.first
+        article_with_draft(language)
+        put :update, construct_params({ version: 'private', article_id: @article.parent_id, language: language }, update_params.merge(approval_data: { user_id: 1 }))
+        assert_response 400
+        match_json([bad_request_error_pattern('approval_data', :approval_data_not_allowed, code: :invalid_value)])
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_update_with_approval
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        language = @account.supported_languages.first
+        article_with_draft(language)
+        approver = add_test_agent(@account)
+        add_privilege(approver, :approve_article)
+        user = add_test_agent(@account)
+        put :update, construct_params({ version: 'private', article_id: @article.parent_id, language: language }, update_params.merge(approval_data: { user_id: user.id, approver_id: approver.id, approval_status: Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved] }))
+        assert_response 200
+        approval_data = JSON.parse(response.body)['approval_data']
+        assert_equal approval_data['approver_id'], approver.id
+        assert_equal approval_data['user_id'], user.id
+        assert_equal approval_data['approval_status'], Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved]
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_update_with_approval_without_all_properties
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        language = @account.supported_languages.first
+        article_with_draft(language)
+        approver = add_test_agent(@account)
+        add_privilege(approver, :approve_article)
+        user = add_test_agent(@account)
+        put :update, construct_params({ version: 'private', article_id: @article.parent_id, language: language }, update_params.merge(approval_data: { user_id: user.id, approver_id: approver.id }))
+        assert_response 400
+        match_json([bad_request_error_pattern('approval_data', :approval_data_invalid, code: :invalid_value)])
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_update_with_approval_invalid_status
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        language = @account.supported_languages.first
+        article_with_draft(language)
+        approver = add_test_agent(@account)
+        add_privilege(approver, :approve_article)
+        user = add_test_agent(@account)
+        put :update, construct_params({ version: 'private', article_id: @article.parent_id, language: language }, update_params.merge(approval_data: { user_id: user.id, approver_id: approver.id, approval_status: -1 }))
+        assert_response 400
+        match_json(approval_data_validation_error_pattern(:approval_status, :invalid_value))
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_update_with_approval_invalid_user
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        language = @account.supported_languages.first
+        article_with_draft(language)
+        approver = add_test_agent(@account)
+        add_privilege(approver, :approve_article)
+        user = add_test_agent(@account)
+        put :update, construct_params({ version: 'private', article_id: @article.parent_id, language: language }, update_params.merge(approval_data: { user_id: 999_999_999, approver_id: approver.id, approval_status: Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved] }))
+        assert_response 400
+        match_json(approval_data_validation_error_pattern(:user_id, :invalid_user_id))
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_update_with_approval_invalid_approver
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        language = @account.supported_languages.first
+        article_with_draft(language)
+        approver = add_test_agent(@account)
+        add_privilege(approver, :approve_article)
+        user = add_test_agent(@account)
+        put :update, construct_params({ version: 'private', article_id: @article.parent_id, language: language }, update_params.merge(approval_data: { user_id: user.id, approver_id: 999_999_999, approval_status: Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved] }))
+        assert_response 400
+        match_json(approval_data_validation_error_pattern(:approver_id, :invalid_approver_id))
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
       end
 
       def test_update_with_invalid_last_modified_at

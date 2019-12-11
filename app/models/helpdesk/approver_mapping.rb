@@ -12,4 +12,10 @@ class Helpdesk::ApproverMapping < ActiveRecord::Base
   validates :approval_status, inclusion: {
     in: [Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:in_review], Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved], Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:rejected]]
   }, presence: true
+
+  def approve!
+    self.approval_status = Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved]
+    save
+    approval.update_approval_status!
+  end
 end

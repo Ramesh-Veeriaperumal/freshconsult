@@ -365,6 +365,8 @@ api_error_messages:
   content_changed: "Content has been changed elsewhere"
   cannot_create_new_tag: "cannot_create_new_tag: %{tags}"
   cannot_mark_primary_as_uptodate: "Cannot mark primary article as uptodate"
+  approval_data_not_allowed: :"Approval data not allowed"
+  approval_data_invalid:  "Approval data is invalid"
   invalid_ebay_ticket_source: "Invalid ticket source"
   webhook_auth_header_error: "Both username and api_key should not be present"
 

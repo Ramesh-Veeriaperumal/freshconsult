@@ -17,7 +17,7 @@ module Ember
       skip_before_filter :initialize_search_parameters, unless: :search_articles?
       before_filter :filter_ids, only: [:index]
       before_filter :modify_and_cleanup_language_param, only: [:article_content]
-      before_filter :validate_language, only: [:filter, :export, :bulk_update, :untranslated_articles, :article_content, :index, :send_for_review]
+      before_filter :validate_language, only: [:filter, :export, :bulk_update, :untranslated_articles, :article_content, :index, :send_for_review, :approve]
       before_filter :modify_and_cleanup_status_param, only: [:filter]
       before_filter :modify_and_cleanup_status_cname_param, only: [:export]
       before_filter :check_filter_feature, only: [:filter]
@@ -30,10 +30,11 @@ module Ember
       before_filter :validate_bulk_update_article_params, only: [:bulk_update]
       before_filter :filter_delegator_validation, only: [:filter, :export, :untranslated_articles]
       before_filter :article_export_limit_reached?, only: [:export]
-      before_filter :check_approval_feature, only: [:send_for_review]
+      before_filter :check_approval_feature, only: [:send_for_review, :approve]
       before_filter :validate_approval_params, only: [:send_for_review]
       before_filter :approval_delegator_validation, only: [:send_for_review]
       around_filter :use_time_zone, only: [:filter, :export, :untranslated_articles]
+      before_filter :load_helpdesk_approval_record, only: [:approve]
 
       decorate_views(decorate_object: [:article_content, :votes])
 
@@ -133,7 +134,13 @@ module Ember
         helpdesk_approval.save ? head(204) : render_errors(helpdesk_approval.errors)
       end
 
+      def approve
+        @helpdesk_approver_mapping = get_or_build_approver_mapping(@helpdesk_approval_record, User.current.id)
+        @helpdesk_approver_mapping.approve! ? head(204) : render_errors(@helpdesk_approver_mapping.errors)
+      end
+
       private
+
         def construct_header_fields(header_fields)
           header = {}
           header_fields.each { |column| header[column[:field_name]] = column[:column_name] }
@@ -168,6 +175,11 @@ module Ember
           # we are going to tolerate and send response for the good ones alone.
           # Because the primary use case for this is Recently used Solution articles
           log_and_render_404 if @items.blank?
+        end
+
+        def load_helpdesk_approval_record
+          @helpdesk_approval_record = @item.helpdesk_approval
+          log_and_render_404 if @helpdesk_approval_record.blank?
         end
 
         def conditional_preload_options

@@ -1,14 +1,25 @@
 module SolutionApprovalConcern
   extend ActiveSupport::Concern
 
+  def approve_permission?(user)
+    user = get_user_record(user)
+    user && user.privilege?(:approve_article)
+  end
+
   def get_or_build_approval_record(article)
     article.helpdesk_approval || construct_approval_record(article)
   end
 
   def get_or_build_approver_mapping(helpdesk_approval, approver_id)
+    # TODO : for multplie aprovers, need to think of an efficient way other than :sample. :autosave won't work if we use :where of :first condition
     helpdesk_approver = helpdesk_approval.approver_mappings.sample || construct_approver_mapping(helpdesk_approval, approver_id)
     helpdesk_approver.approver_id = approver_id
     helpdesk_approver
+  end
+
+  def get_user_record(user)
+    return user if user.instance_of? User
+    Account.current.technicians.where(id: user).first
   end
 
   private

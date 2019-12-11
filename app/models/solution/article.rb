@@ -338,6 +338,10 @@ class Solution::Article < ActiveRecord::Base
     @deleted_model_info = as_api_response(:central_publish_destroy) 
   end
 
+  def clear_approvals
+    helpdesk_approval.try(:destroy)
+  end
+
   private
 
     def queue_quest_job
