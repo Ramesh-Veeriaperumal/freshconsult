@@ -452,7 +452,7 @@ api_error_messages:
   action_value: 'value must be create/delete/update'
   invalid_filter_set_content: 'valid entities are %{entities}'
   export_format: 'value for format should be %{export_format}'
-  
+
   #Skills
   duplicate_skill_name: "A skill already exists with name - '%{name}'"
 
@@ -470,7 +470,7 @@ api_error_messages:
   fc_unprocessable_entity: "Freshcaller unprocessable entity"
   fc_password_incorrect: "Freshcaller account password is incorrect"
   fc_access_restricted: "The given email id is not allowed to link"
-
+  fc_spam_email: "The given email is a spam email"
   incorrect_section_mapping: "Section with id %{section_id} does not exist"
   invalid_section_mapping: "Ticket field can not reside inside sections belonging to two separate ticket fields"
   missing_ticket_field_params: "Mandatory parameters missing: (%{params})"

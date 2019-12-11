@@ -4,13 +4,22 @@ class Admin::FreshcallerAccountController < ApiApplicationController
   include FreshcallerConcern
   include Freshcaller::Util
 
+  skip_before_filter :build_object, only: [:create]
   before_filter :check_feature
-  before_filter :validate_params, :validate_linking, only: [:link]
+  before_filter :validate_params, only: [:link]
+  before_filter :validate_linking, only: [:create, :link]
 
   attr_accessor :freshcaller_response
 
   def show
     head 204 unless @item
+  end
+
+  def create
+    signup_account
+    return render_client_error if client_error?
+
+    render :show
   end
 
   def link
@@ -79,6 +88,8 @@ class Admin::FreshcallerAccountController < ApiApplicationController
 
     def validate_linking
       return render_request_error(:account_linked, 403) if scoper.present?
+
+      return true if current_action?('create')
 
       linking_user = current_account.users.find_by_email(cname_params[:email])
       render_request_error(:action_restricted, 403, action: 'link',

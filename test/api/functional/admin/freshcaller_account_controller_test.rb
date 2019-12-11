@@ -189,6 +189,23 @@ module Admin
       remove_stubs
     end
 
+    def test_link_for_already_linked
+      create_freshcaller_account
+      agent = add_test_agent(@account)
+      stub_link_account_success(agent.email)
+      params_hash = {
+        url: 'test.freshcaller.com',
+        email: agent.email,
+        password: 'test1234'
+      }
+      post :link, construct_params({ version: 'private' }.merge(params_hash), params_hash)
+      assert_response 403
+      match_json(request_error_pattern(:account_linked))
+    ensure
+      delete_freshcaller_account
+      remove_stubs
+    end
+
     def test_link_wrong_domain
       agent = add_test_agent(@account)
       stub_link_account_invalid_domain
@@ -260,6 +277,63 @@ module Admin
       post :link, construct_params({ version: 'private' }.merge(params_hash), params_hash)
       assert_response 400
       match_json(request_error_pattern(:fc_unprocessable_entity))
+    ensure
+      remove_stubs
+    end
+
+    def test_create_new_account_success
+      agent = add_test_agent(@account)
+      stub_create_success
+      post :create, controller_params(version: 'private')
+      assert_response 200
+      match_json(Account.current.freshcaller_account.as_api_response(:api))
+      assert ::Freshcaller::Agent.find_by_fc_user_id(1234).present?
+      assert Account.current.freshcaller_account.present?
+      assert Account.current.freshcaller_account.domain, 'test.freshcaller.com'
+      assert Account.current.freshcaller_account.freshcaller_account_id, '1234'
+    ensure
+      delete_freshcaller_account
+      remove_stubs
+    end
+
+    def test_create_with_already_linked
+      create_freshcaller_account
+      agent = add_test_agent(@account)
+      stub_create_success
+      post :create, controller_params(version: 'private')
+      assert_response 403
+      match_json(request_error_pattern(:account_linked))
+    ensure
+      delete_freshcaller_account
+      remove_stubs
+    end
+
+    def test_create_new_account_spam_email_error
+      agent = add_test_agent(@account)
+      stub_create_spam_email_error
+      post :create, controller_params(version: 'private')
+      assert_response 403
+      match_json(request_error_pattern(:fc_spam_email))
+    ensure
+      remove_stubs
+    end
+
+    def test_create_new_account_domain_taken_error
+      agent = add_test_agent(@account)
+      stub_create_domain_taken_error
+      post :create, controller_params(version: 'private')
+      assert_response 400
+      match_json(request_error_pattern(:fc_domain_taken))
+    ensure
+      remove_stubs
+    end
+
+    def test_create_new_account_unknown_error
+      agent = add_test_agent(@account)
+      stub_create_unknown_error
+      post :create, controller_params(version: 'private')
+      assert_response 400
+      match_json(request_error_pattern(:unknown_error))
     ensure
       remove_stubs
     end

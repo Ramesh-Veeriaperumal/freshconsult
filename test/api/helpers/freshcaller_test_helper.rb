@@ -40,6 +40,10 @@ module Freshcaller::TestHelper
     'https://test.freshcaller.com/link_account'
   end
 
+  def signup_url
+    "#{FreshcallerConfig['signup_domain']}/accounts"
+  end
+
   def stub_link_account_success(email)
     response_hash = {
       user_details: [
@@ -95,6 +99,73 @@ module Freshcaller::TestHelper
     @req = stub_request(:put, link_url).to_return(body: '{}',
                                                   status: 422,
                                                   headers: { 'Content-Type' => 'application/json' })
+  end
+
+  def stub_create_error
+    response_hash = {
+      success: false,
+      errors: {
+        user_email: ['spam email'],
+        spam_email: true
+      },
+      error_code: 'spam_email'
+    }
+    @req = stub_request(:post, signup_url).to_return(body: response_hash.to_json,
+                                                     status: 200,
+                                                     headers: { 'Content-Type' => 'application/json' })
+  end
+
+  def stub_create_success
+    response_hash = {
+      user: {
+        id: 1234
+      },
+      freshcaller_account_id: 1234,
+      freshcaller_account_domain: 'test.freshcaller.com'
+    }
+    @req = stub_request(:post, signup_url).to_return(body: response_hash.to_json,
+                                                     status: 200,
+                                                     headers: { 'Content-Type' => 'application/json' })
+  end
+
+  def stub_create_spam_email_error
+    response_hash = {
+      success: false,
+      errors: {
+        user_email: ['spam email'],
+        spam_email: true
+      },
+      error_code: 'spam_email'
+    }
+    @req = stub_request(:post, signup_url).to_return(body: response_hash.to_json,
+                                                     status: 422,
+                                                     headers: { 'Content-Type' => 'application/json' })
+  end
+
+  def stub_create_domain_taken_error
+    response_hash = {
+      success: false,
+      errors: {
+        domain: ['taken']
+      },
+      error_code: 'domain_taken'
+    }
+    @req = stub_request(:post, signup_url).to_return(body: response_hash.to_json,
+                                                     status: 200,
+                                                     headers: { 'Content-Type' => 'application/json' })
+  end
+
+  def stub_create_unknown_error
+    response_hash = {
+      success: false,
+      errors: {
+        domain: ['taken']
+      },
+      error_code: 'unknown_error'
+    }
+    @req = stub_request(:post, signup_url).to_return(body: response_hash.to_json,
+                                                     status: 400,
+                                                     headers: { 'Content-Type' => 'application/json' })
   end
 
   def remove_stubs
