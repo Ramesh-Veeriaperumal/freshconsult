@@ -1,11 +1,15 @@
 require_relative '../../api/unit_test_helper'
 require_relative '../../core/helpers/tickets_test_helper'
 require_relative '../../../lib/email/perform_util'
+require_relative '../../core/helpers/note_test_helper'
+require_relative '../../core/helpers/users_test_helper.rb'
 module Helpdesk
   module Email
     class IncomingEmailHandlerTest < ActionView::TestCase
       include CoreTicketsTestHelper
       include ::Email::PerformUtil
+      include NoteTestHelper
+      include CoreUsersTestHelper
 
       def setup
         Account.stubs(:current).returns(Account.first)
@@ -16,6 +20,7 @@ module Helpdesk
         shard.save
         @from_email = Faker::Internet.email
         @to_email = Faker::Internet.email
+        @account = Account.current
       end
 
       def teardown
@@ -828,6 +833,37 @@ module Helpdesk
         incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
         ticket_cc_hash = incoming_email_handler.ticket_cc_emails_hash(Helpdesk::Ticket.first, Helpdesk::Note.first)
         assert_equal [], ticket_cc_hash[:fwd_emails]
+      end
+
+      def test_incoming_email_ticket_cc_emails_hash_with_reply_cc_email
+        id = Faker::Lorem.characters(50)
+        subject = 'Test Subject'
+        params = default_params(id, subject)
+        params[:cc] = [Faker::Internet.email, Faker::Internet.email, Faker::Internet.email]
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
+        ticket_cc_hash = incoming_email_handler.ticket_cc_emails_hash(Helpdesk::Ticket.first, Helpdesk::Note.first)
+        assert_equal params[:cc], ticket_cc_hash[:reply_cc]
+      end
+
+      def test_incoming_email_ticket_cc_emails_hash_with_customer_reply
+        id = Faker::Lorem.characters(50)
+        subject = 'Test Subject'
+        params = default_params(id, subject)
+        ticket = create_ticket(requester_id: User.first.id)
+        ticket_cc_email = Faker::Internet.email
+        ticket.cc_email[:cc_emails] = [ticket_cc_email]
+        ticket.cc_email[:reply_cc] = [ticket_cc_email]
+        ticket.save
+        user = add_agent(Account.current, email: ticket_cc_email)
+        note = create_note(user_id: user.id, ticket_id: Helpdesk::Ticket.first.id, account_id: Account.current.id)
+        note_cc_email = Faker::Internet.email
+        note.cc_emails = [note_cc_email]
+        note.save
+        params[:cc] = [note_cc_email]
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
+        ticket_cc_hash = incoming_email_handler.ticket_cc_emails_hash(ticket, note)
+        assert_equal ticket_cc_hash[:reply_cc].include?(note_cc_email), true
+        assert_equal ticket_cc_hash[:reply_cc].include?(ticket_cc_email), true
       end
 
       def test_incoming_email_check_for_spam_exception
