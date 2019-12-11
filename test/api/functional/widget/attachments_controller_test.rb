@@ -11,6 +11,13 @@ module Widget
     def setup
       super
       before_all
+      log_out
+      controller.class.any_instance.stubs(:api_current_user).returns(nil)
+    end
+
+    def teardown
+      super
+      controller.class.any_instance.unstub(:api_current_user)
     end
 
     def before_all
@@ -158,10 +165,10 @@ module Widget
       assert_response 400
     end
 
-    def test_create_attachment_with_user_id
-      post :create, construct_params({ version: 'widget' }, attachment_params_hash.merge(user_id: 1))
+    def test_create_attachment_with_invalid_param
+      post :create, construct_params({ version: 'widget' }, attachment_params_hash.merge(test: 1))
       assert_response 400
-      match_json(validation_error_pattern(bad_request_error_pattern(:user_id, 'Unexpected/invalid field in request', code: 'invalid_field')))
+      match_json(validation_error_pattern(bad_request_error_pattern(:test, 'Unexpected/invalid field in request', code: 'invalid_field')))
     end
 
     def test_create_attachment_without_content
@@ -183,6 +190,17 @@ module Widget
       DataTypeValidator.any_instance.unstub(:valid_type?)
       Helpdesk::Attachment.any_instance.unstub(:save)
       assert_response 500
+    end
+
+    def test_create_with_login_required_without_auth_token
+      HelpWidget.any_instance.stubs(:contact_form_require_login?).returns(true)
+      @account.launch :help_widget_login
+      post :create, construct_params({ version: 'widget' }, attachment_params_hash)
+      assert_response 400
+      match_json(request_error_pattern(:x_widget_auth_required, 'x_widget_auth_required'))
+    ensure
+      HelpWidget.any_instance.unstub(:contact_form_require_login?)
+      @account.rollback(:help_widget_login)
     end
   end
 end
