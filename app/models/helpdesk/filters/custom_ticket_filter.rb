@@ -505,9 +505,9 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     unless Account.current.shared_ownership_enabled?
       reject_conditions = TicketConstants::SHARED_AGENT_COLUMNS_ORDER + TicketConstants::SHARED_GROUP_COLUMNS_ORDER
     end
-    # unless Account.current.next_response_sla_enabled?
-    #   reject_conditions << TicketConstants::DEFAULT_COLUMNS_OPTIONS[:nr_due_by]
-    # end
+    
+    reject_conditions << TicketConstants::DEFAULT_COLUMNS_OPTIONS[:nr_due_by] unless Account.current.next_response_sla_enabled?
+    
     action_hash.reject!{|condition_hash| reject_conditions.include?(condition_hash["condition"])} if reject_conditions.present?
     action_hash
   end

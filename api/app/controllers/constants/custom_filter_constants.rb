@@ -4,20 +4,19 @@ module CustomFilterConstants
   QUERY_TYPE_OPTIONS = %w(default custom_field).freeze
   INDEX_FIELDS = [:name, :order_by, :order_type, :per_page, :query_hash, visibility: [:visibility, :group_id]].freeze
 
-  # TODO: nr_due_by
-  CONDITIONAL_FIELDS = ['responder_id', 'group_id', 'created_at', 'due_by', 'fr_due_by', 'status',
+  CONDITIONAL_FIELDS = ['responder_id', 'group_id', 'created_at', 'due_by', 'fr_due_by', 'nr_due_by', 'status',
                         'priority', 'ticket_type', 'source', 'association_type', 'helpdesk_tags.name',
                         'owner_id', 'requester_id', 'helpdesk_schema_less_tickets.product_id',
                         'internal_agent_id', 'internal_group_id', 'any_agent_id', 'any_group_id', 'sl_skill_id'].freeze
 
-  # TODO: nr_due_by
   FEATURE_BASED_CONDITIONAL_FIELDS = [
     ['internal_agent_id', :shared_ownership, 'Shared Ownership'],
     ['internal_group_id', :shared_ownership, 'Shared Ownership'],
     ['any_agent_id',      :shared_ownership, 'Shared Ownership'],
     ['any_group_id',      :shared_ownership, 'Shared Ownership'],
     ['due_by',            :sla_management_v2, 'Sla Management v2'],
-    ['fr_due_by',         :sla_management_v2, 'Sla Management v2']
+    ['fr_due_by',         :sla_management_v2, 'Sla Management v2'],
+    ['nr_due_by',         :next_response_sla, 'Every response sla']
   ].freeze
 
   FEATURES_KEYS_BY_FIELD   = Hash[*FEATURE_BASED_CONDITIONAL_FIELDS.map { |i| [i[0], i[1]] }.flatten]

@@ -40,10 +40,13 @@ module Wf
       def split_values
         cond_str = ""
         cond_arr = values[0].split(TEXT_DELIMITER).collect! {|n| n}
+        min_value = minimum_required_condition(cond_arr.collect(&:to_i))
         cond_arr.each do |val|
-         cond_str <<  " (#{get_due_by_con(val)}) ||"
-       end
-       cond_str.chomp("||")
+          next if min_value.present? && val.to_i > min_value
+
+          cond_str << " (#{get_due_by_con(val)}) ||"
+        end
+        cond_str.chomp('||')
      end
      
       def get_due_by_con(val)
@@ -56,13 +59,7 @@ module Wf
           TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_next_hour] => "#{condition.full_key} >= '#{::Time.zone.now.to_s(:db)}' and #{condition.full_key} <= '#{1.hour.from_now.to_s(:db)}' ",
           TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_next_half_hour] => "#{condition.full_key} >= '#{::Time.zone.now.to_s(:db)}' and #{condition.full_key} <= '#{30.minutes.from_now.to_s(:db)}' "}
 
-        response_due_conditions = ""
-        case condition.to_s
-        when :frDueBy
-          response_due_conditions = " and helpdesk_tickets.source != #{TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]} and helpdesk_ticket_states.first_response_time IS NULL "
-        # when :nr_due_by
-        #   response_due_conditions = " and nr_due_by IS NOT NULL "
-        end
+        response_due_conditions = (condition.to_s == :frDueBy) ? (' and ' + fr_due_condition) : ''
 
         due_by_hash.each_pair{ |option, query_cond| due_by_hash[option] = query_cond + response_due_conditions } if response_due_conditions.present?
           
@@ -71,6 +68,14 @@ module Wf
 
       def sql_condition
         return [" #{STATUS_QUERY % Account.current.id} and  (#{split_values}) "] 
+      end
+
+      def fr_due_condition
+        "helpdesk_tickets.source != #{TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]} and helpdesk_ticket_states.agent_responded_at IS NULL "
+      end
+
+      def minimum_required_condition(conditions)
+        (conditions - TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN.slice(:all_due, :due_today, :due_tomo).values).min
       end
     end
   end  
