@@ -18,6 +18,10 @@ module ApiSolutions
     validate :valid_folder?, if: -> { @folder_id }
     validate :validate_ratings, on: :reset_ratings
     validate :validate_portal_id, if: :filters?
+    validate :validate_create_and_edit_permission, on: :send_for_review
+    validate :validate_approval_permission, on: :send_for_review, if: -> { errors.blank? }
+    validate :validate_draft, on: :send_for_review, if: -> { errors.blank? }
+    validate :validate_draft_locked?, on: :send_for_review, if: -> { errors.blank? }
 
     FILTER_ACTIONS = %i[filter untranslated_articles].freeze
 
@@ -34,6 +38,7 @@ module ApiSolutions
       @cloud_files = params[:cloud_file_attachments]
       @folder_id = params[:folder_id]
       @outdated = params[:outdated]
+      @approver_id = params[:approver_id]
       super(params)
       check_params_set(params.slice(:folder_name, :category_name))
     end
@@ -107,6 +112,27 @@ module ApiSolutions
 
     def validate_ratings
       errors[:id] << :no_ratings unless @item.thumbs_up > 0 || @item.thumbs_down > 0
+    end
+
+    def validate_approval_permission
+      approver = Account.current.users.find_by_id(@approver_id)
+      if approver
+        errors[:publish_permission] << :no_publish_article_privilege unless approver.privilege?(:approve_article)
+      else
+        errors[:invalid_user_id] << :invalid_user_id
+      end
+    end
+
+    def validate_create_and_edit_permission
+      errors[:create_and_edit_article] << :no_create_and_edit_article_privilege unless User.current.privilege?(:create_and_edit_article)
+    end
+
+    def validate_draft
+      errors[:draft] << :article_not_in_draft_state unless @item.draft
+    end
+
+    def validate_draft_locked?
+      errors[:draft_locked] << :draft_locked if @item.draft.locked?
     end
   end
 end

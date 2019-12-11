@@ -118,4 +118,13 @@ module SolutionsArticlesTestHelper
     languages = account.supported_languages + [account.language]
     Language.all.map(&:code).find { |language| !languages.include?(language) }
   end
+
+  def approver_record(article)
+    @approver_record = approval_record(article).approver_mappings.first
+  end
+
+  def approval_record(article)
+    @approval_record = article.helpdesk_approval
+  end
+
 end

@@ -13306,6 +13306,48 @@
         }
       }
     },
+    "/solutions/articles/{id}/{language}/send_for_review": {
+      "post": {
+        "tags": [
+          "Solution Article"
+        ],
+        "summary": "Send an article for review",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          },
+          {
+            "$ref": "#/parameters/language"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/send_for_review"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/solutions/articles/{id}/{language}/votes": {
       "get": {
         "tags": [
@@ -19360,6 +19402,23 @@
               "type": "array",
               "items": {
                 "type": "string"
+              }
+            },
+            "approval_data": {
+              "type": "object",
+              "properties": {
+                "approval_status": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "approver_id": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "user_id": {
+                  "type": "integer",
+                  "format": "int64"
+                }
               }
             }
           }
@@ -27791,6 +27850,15 @@
               }
             }
           }
+        }
+      }
+    },
+    "send_for_review": {
+      "type": "object",
+      "properties": {
+        "approver_id": {
+          "type": "integer",
+          "description": "The id of the user to whom approval is sent."
         }
       }
     },

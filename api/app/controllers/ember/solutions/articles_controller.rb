@@ -10,13 +10,14 @@ module Ember
       include SolutionReorderConcern
       include CloudFilesHelper
       include SanitizeSerializeValues
+      include SolutionApprovalConcern
 
       SLAVE_ACTIONS = %w[index folder_articles filter untranslated_articles].freeze
 
       skip_before_filter :initialize_search_parameters, unless: :search_articles?
       before_filter :filter_ids, only: [:index]
       before_filter :modify_and_cleanup_language_param, only: [:article_content]
-      before_filter :validate_language, only: [:filter, :export, :bulk_update, :untranslated_articles, :article_content, :index]
+      before_filter :validate_language, only: [:filter, :export, :bulk_update, :untranslated_articles, :article_content, :index, :send_for_review]
       before_filter :modify_and_cleanup_status_param, only: [:filter]
       before_filter :modify_and_cleanup_status_cname_param, only: [:export]
       before_filter :check_filter_feature, only: [:filter]
@@ -29,6 +30,9 @@ module Ember
       before_filter :validate_bulk_update_article_params, only: [:bulk_update]
       before_filter :filter_delegator_validation, only: [:filter, :export, :untranslated_articles]
       before_filter :article_export_limit_reached?, only: [:export]
+      before_filter :check_approval_feature, only: [:send_for_review]
+      before_filter :validate_approval_params, only: [:send_for_review]
+      before_filter :approval_delegator_validation, only: [:send_for_review]
       around_filter :use_time_zone, only: [:filter, :export, :untranslated_articles]
 
       decorate_views(decorate_object: [:article_content, :votes])
@@ -121,11 +125,23 @@ module Ember
         ::SolutionConstants::ARTICLE_WRAP_PARAMS
       end
 
+      def send_for_review
+        helpdesk_approval = get_or_build_approval_record(@item)
+        get_or_build_approver_mapping(helpdesk_approval, params[cname][:approver_id])
+        @draft.unlock
+        @draft.save
+        helpdesk_approval.save ? head(204) : render_errors(helpdesk_approval.errors)
+      end
+
       private
         def construct_header_fields(header_fields)
           header = {}
           header_fields.each { |column| header[column[:field_name]] = column[:column_name] }
           header
+        end
+
+        def check_approval_feature
+          render_request_error(:require_feature, 403, feature: :article_approval_workflow) unless Account.current.article_approval_workflow_enabled?
         end
 
         def constants_class
@@ -264,6 +280,17 @@ module Ember
 
         def untranslated_articles_preload_options
           [{ solution_folder_meta: [{ solution_category_meta: :primary_category }, :primary_folder] }, :draft]
+        end
+
+        def validate_approval_params
+          @constants_klass  = 'SolutionConstants'.freeze
+          @validation_klass = 'ApiSolutions::SolutionArticleApprovalValidation'.freeze
+          return unless validate_body_params
+        end
+
+        def approval_delegator_validation
+          @delegator_klass = 'ApiSolutions::ArticleDelegator'
+          return unless validate_delegator(@item, approver_id: cname_params[:approver_id])
         end
 
         def filter_delegator_validation

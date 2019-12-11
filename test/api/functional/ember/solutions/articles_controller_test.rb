@@ -2470,6 +2470,160 @@ module Ember
         match_json(private_api_solution_article_pattern(Solution::Article.last))
       end
 
+      def test_create_article_review_record
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        sample_article = get_article_with_draft
+        approver = add_test_agent
+        add_privilege(approver, :approve_article)
+        User.current.reload
+        remove_privilege(User.current, :publish_solution)
+        post :send_for_review, construct_params({ version: 'private', id: sample_article.parent_id }, approver_id: approver.id)
+        assert_response 204
+        approval_record = approval_record(sample_article)
+        approver_mapping = approver_record(sample_article)
+        assert approval_record
+        assert approver_mapping
+        assert_equal approval_record.approval_status, Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:in_review]
+        assert_equal approval_record.approvable_id, sample_article.id
+        assert_equal approval_record.approvable_type, 'Solution::Article'
+        assert_equal approval_record.user_id,  User.current.id
+        assert_equal approval_record.account_id,  Account.current.id
+        assert_equal approver_mapping.approver_id, approver.id
+        assert_equal approver_mapping.approval_status, Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:in_review]
+        assert_equal approver_mapping.account_id, Account.current.id
+        assert_equal approver_mapping.approval_id, approval_record.id
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+        add_privilege(User.current, :publish_solution)
+      end
+
+      def test_create_article_review_record_without_create_article_permission
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        sample_article = get_article_with_draft
+        approver = add_test_agent
+        add_privilege(approver, :approve_article)
+        remove_privilege(User.current, :create_and_edit_article)
+        User.current.reload
+        post :send_for_review, construct_params({ version: 'private', id: sample_article.parent_id }, approver_id: approver.id)
+        assert_response 403
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+        add_privilege(User.current, :create_and_edit_article)
+      end       
+
+      def test_create_article_review_record_without_approval_permission
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        sample_article = get_article_with_draft
+        approver = add_test_agent
+        remove_privilege(approver, :approve_article)
+        User.current.reload
+        remove_privilege(User.current, :publish_solution)
+        post :send_for_review, construct_params({ version: 'private', id: sample_article.parent_id }, approver_id: approver.id)
+        assert_response 400
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+        add_privilege(User.current, :publish_solution)
+      end 
+
+      def test_create_article_review_record_for_published_article
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        sample_article = get_article_without_draft
+        approver = add_test_agent
+        add_privilege(approver, :approve_article)
+        User.current.reload
+        remove_privilege(User.current, :publish_solution)
+        post :send_for_review, construct_params({ version: 'private', id: sample_article.parent_id }, approver_id: approver.id)
+        assert_response 400
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+        add_privilege(User.current, :publish_solution)  
+      end
+
+      def test_create_article_review_record_without_feature
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(false)
+        sample_article = get_article_with_draft
+        approver = add_test_agent
+        add_privilege(approver, :approve_article)
+        User.current.reload
+        remove_privilege(User.current, :publish_solution)
+        post :send_for_review, construct_params({ version: 'private', id: sample_article.parent_id }, approver_id: approver.id)
+        assert_response 403
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+        add_privilege(User.current, :publish_solution)        
+      end
+
+      def test_update_article_review_record
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        sample_article = get_article_with_draft
+        approver = add_test_agent
+        add_privilege(approver, :approve_article)
+        User.current.reload
+        remove_privilege(User.current, :publish_solution)
+        post :send_for_review, construct_params({ version: 'private', id: sample_article.parent_id }, approver_id: approver.id)
+        assert_response 204
+        approval_record = approval_record(sample_article)
+        approver_mapping = approver_record(sample_article)
+        assert approval_record
+        assert approver_mapping
+        assert_equal approver_mapping.approver_id, approver.id
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+        add_privilege(User.current, :publish_solution)
+      end
+
+      def test_create_article_review_record_with_not_supported_language
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(false)
+        sample_article = get_article_with_draft
+        approver = add_test_agent
+        add_privilege(approver, :approve_article)
+        non_supported_language = get_valid_not_supported_language
+        post :send_for_review, construct_params({version: 'private', id: sample_article.id, language: non_supported_language}, approver_id: approver.id)
+        match_json(request_error_pattern(:language_not_allowed, code: non_supported_language, list: (@account.supported_languages + [@account.language]).sort.join(', ')))
+        assert_response 404
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_create_article_review_record_with_invalid_langauge
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(false)
+        sample_article = get_article_with_draft
+        approver = add_test_agent
+        add_privilege(approver, :approve_article)
+        post :send_for_review, construct_params({version: 'private', id: sample_article.id, language: 'demo'}, approver_id: approver.id)
+        assert_response 404
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_create_article_review_record_when_someone_is_editing
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        Solution::Draft.any_instance.stubs(:locked?).returns(true)
+        sample_article = get_article_with_draft
+        approver = add_test_agent
+        add_privilege(approver, :approve_article)
+        User.current.reload
+        remove_privilege(User.current, :publish_solution)
+        post :send_for_review, construct_params({ version: 'private', id: sample_article.parent_id }, approver_id: approver.id)
+        assert_response 400
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+        Solution::Draft.any_instance.unstub(:locked?)
+        add_privilege(User.current, :publish_solution)
+      end
+
+      def test_create_article_review_record_with_invalid_user
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        sample_article = get_article_with_draft
+        User.current.reload
+        remove_privilege(User.current, :publish_solution)
+        post :send_for_review, construct_params({ version: 'private', id: sample_article.parent_id }, approver_id: 9999)
+        assert_response 400
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+        add_privilege(User.current, :publish_solution)
+      end
+
       # agent without publish solution privileges tests
 
       def test_update_draft_article_folder_without_publish_solution_privilege

@@ -41,6 +41,14 @@ class Account < ActiveRecord::Base
   has_many :solution_article_versions, # rubocop:disable HasManyOrHasOneDependent,InverseOf
            class_name: 'Solution::ArticleVersion'
 
+  has_many :helpdesk_approvals,
+           class_name: 'Helpdesk::Approval',
+           inverse_of: :approvable
+
+  has_many :helpdesk_approver_mappings,
+           class_name: 'Helpdesk::ApproverMapping',
+           inverse_of: :accounts
+
   # Alias
 
   alias_method :folders, :solution_folders
