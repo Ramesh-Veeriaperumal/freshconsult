@@ -69,11 +69,12 @@ module ChannelIntegrations::Commands::Services
     private
 
       def validate_and_build_command_payload(payload, is_ticket = true)
-        return error_message('Invalid request') unless check_ticket_params?(payload)
+        raise 'Invalid request' unless check_ticket_params?(payload)
+
         user_id = is_ticket ? payload[:data][:requester_id] : payload[:data][:user_id]
         set_current_user(user_id)
         facebook_page_present?(payload[:context][:facebook_page_id])
-        payload[:data].merge(get_source_hash(payload[:owner], is_ticket))
+        payload[:data].merge!(get_source_hash(payload[:owner], is_ticket))
         payload[:data][:fb_post_attributes] = build_fb_post_attributes(payload, is_ticket)
         payload
       end
@@ -147,7 +148,7 @@ module ChannelIntegrations::Commands::Services
       end
 
       def base_validation?(context)
-        context[:post_type] && context[:facebook_page_id] && context[:stream_id]
+        context[:post_type] && context[:facebook_page_id] # && context[:stream_id] Will be added after adpost stream changes are done
       end
   end
 end

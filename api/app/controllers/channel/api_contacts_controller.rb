@@ -90,7 +90,7 @@ module Channel
       end
 
       def skip_privilege_check?
-        channel_source?(:twitter) || channel_source?(:proactive)
+        channel_source?(:twitter) || channel_source?(:proactive) || channel_source?(:facebook)
       end
   end
 end
