@@ -5,6 +5,10 @@ module Widget
     include Recaptcha::Verify
     include Helpdesk::Permission::Ticket
 
+    before_filter :ticket_creation_enabled?
+    before_filter :validate_params
+    before_filter :sanitize_params
+    before_filter :build_object
     before_filter :check_ticket_permission, only: :create
     before_filter :check_recaptcha, unless: :predictive_ticket?
     before_filter :validate_attachment_ids, if: :attachment_ids?
@@ -24,16 +28,13 @@ module Widget
       end
 
       def check_ticket_permission
-        if api_current_user.nil? || (api_current_user && api_current_user.customer?)
+        if current_user.nil? || (current_user && current_user.customer?)
           render_request_error :invalid_requester, 400 unless can_create_ticket?(params[cname][:email])
         end
       end
 
       def validate_params
         @attachment_ids = cname_params.delete(:attachment_ids)
-        validate_widget
-        return if @error.present?
-        return render_request_error(:ticket_creation_not_allowed, 400, id: @widget_id) unless @help_widget.ticket_creation_enabled?
         @ticket_fields = ticket_fields_scoper
         @name_mapping = TicketsValidationHelper.name_mapping(@ticket_fields) # -> {:text_1 => :text}
         # Should not allow any key value pair inside custom fields hash if no custom fields are available for accnt.
@@ -103,6 +104,24 @@ module Widget
 
       def predictive_ticket?
         @predictive && @help_widget.predictive?
+      end
+
+      def ticket_creation_enabled?
+        render_request_error(:ticket_creation_not_allowed, 400, id: @widget_id) unless @help_widget.ticket_creation_enabled?
+      end
+
+      def sanitize_params
+        super
+
+        if current_user.present? &&
+           current_user.email != cname_params[:email] &&
+           !current_user.emails.include?(cname_params[:email])
+          params[cname][:email] = current_user.email
+        end
+      end
+
+      def auth_token_required?
+        current_account.help_widget_login_enabled? && @help_widget.contact_form_require_login?
       end
   end
 end
