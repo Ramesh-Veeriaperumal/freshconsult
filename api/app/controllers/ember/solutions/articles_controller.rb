@@ -76,7 +76,14 @@ module Ember
         @search_context = :filtered_solution_search
         @category_ids   = portal_catagory_ids if portal_catagory_ids.present?
         @language_id    = @lang_id
-        @results        = esv2_query_results(esv2_agent_article_model)
+        if es_for_filter?
+          @count_request = true
+          @results = esv2_query_results(esv2_agent_article_model)
+          @results_count = @results.total_entries
+          @results = (@results.records['results'].presence || {}).map { |result| result['id'] }
+          return @results
+        end
+        @results = esv2_query_results(esv2_agent_article_model)
       end
 
       def untranslated_articles
@@ -204,8 +211,8 @@ module Ember
 
         def properties_and_term_filters
           # uniq is needed for tags filter, if article contains mutliple tags and filtered by the same set of tags
-          if params[:term].present?
-            @items.where('solution_articles.id in (?)', @results.map(&:id)).uniq
+          if search_articles?
+            @items.where('solution_articles.id in (?)', es_for_filter? ? @results : @results.map(&:id)).uniq
           else
             @items.uniq
           end
@@ -265,9 +272,13 @@ module Ember
         end
 
         def paginate_filter_items
-          @items_count = @items.size
-          @items = paginate_items(@items)
-          @items = reorder_articles_by_relevance if params[:term].present?
+          if es_for_filter?
+            @items_count = @results_count
+          else
+            @items_count = @items.size
+            @items = paginate_items(@items) unless es_for_filter?
+          end
+          @items = reorder_articles_by_relevance if search_articles?
           response.api_root_key = :articles
           response.api_meta = { count: @items_count, next_page: @more_items }
         end
@@ -276,7 +287,7 @@ module Ember
           items_map = {}
           @items.map { |item| items_map[item.id] = item }
           ordered_items = []
-          @results.map { |result| ordered_items.push(items_map[result.id]) if items_map.keys.include?(result.id) }
+          es_for_filter? ? @results.map { |result| ordered_items.push(items_map[result]) if items_map.keys.include?(result) } : @results.map { |result| ordered_items.push(items_map[result.id]) if items_map.keys.include?(result.id) }
           ordered_items
         end
 

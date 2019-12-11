@@ -9,7 +9,9 @@ module Solution::Constants
   STATUS_OPTIONS = STATUSES.map { |i| [i[1], i[2]] }
   STATUS_NAMES_BY_KEY = Hash[*STATUSES.map { |i| [i[2], i[1]] }.flatten]
   STATUS_KEYS_BY_TOKEN = Hash[*STATUSES.map { |i| [i[0], i[2]] }.flatten]
-  
+
+  DRAFT_STATUSES_ES = { draft_not_present: 0, draft_present: 1 }.freeze
+
   TYPES = [
     [ :permanent,  "solutions.types.permanent",   1 ],
     [ :workaround, "solutions.types.workaround",  2 ]

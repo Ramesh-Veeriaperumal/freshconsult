@@ -343,7 +343,14 @@ module SearchTestHelper
   ensure
     Search::V2::QueryHandler.any_instance.unstub(:query_results)
   end
-  
+
+  def stub_private_search_response_with_object(object)
+    Search::V2::QueryHandler.any_instance.stubs(:query_results).returns(object)
+    yield
+  ensure
+    Search::V2::QueryHandler.any_instance.unstub(:query_results)
+  end
+
   def stub_public_search_response(objects)
     SearchService::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new(objects, { total_entries: objects.size }))
     yield

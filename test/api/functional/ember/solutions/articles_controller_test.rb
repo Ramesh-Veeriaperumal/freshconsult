@@ -1618,6 +1618,26 @@ module Ember
         match_json([pattern])
       end
 
+      def test_article_filters_with_search_term_with_es_filter_privilege
+        Account.current.launch(:article_es_search_by_filter)
+        article_title = Faker::Lorem.characters(10)
+        article = create_article(article_params(title: article_title)).primary_article
+        base_struct = Struct.new(:records, :total_entries)
+        records_struct = Struct.new(:results)
+        result_struct = Struct.new(:id)
+        @results = base_struct.new(records_struct.new(), 1)
+        @results.records['results'] = [result_struct.new(article.id)]
+        stub_private_search_response_with_object(@results) do
+          get :filter, controller_params(version: 'private', portal_id: @portal_id, term: article_title)
+        end
+        article.reload
+        assert_response 200
+        pattern = private_api_solution_article_pattern(article, action: :filter)
+        match_json([pattern])
+      ensure
+        Account.current.rollback(:article_es_search_by_filter)
+      end
+
       def test_article_filters_with_default_article
         default_category = @account.solution_category_meta.where(is_default: true).first
         default_folder = default_category.solution_folder_meta.first
