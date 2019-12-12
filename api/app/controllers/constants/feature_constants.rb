@@ -26,4 +26,5 @@ module FeatureConstants
   AGENT_ARTICLES_SUGGEST = :agent_articles_suggest
   ADMIN_FRESHCALLER = %w(freshcaller freshcaller_admin_new_ui).freeze
   TICKET_FIELD_REVAMP = :ticket_field_revamp
+  AGENT_SHIFTS = :agent_shifts.freeze
 end

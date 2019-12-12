@@ -2,11 +2,12 @@
 <% @ticket.build_ticket_body %>
 <% @ticket.email = current_user.email if current_user %>
 <% cache_options = {}%>
+<% skip_frag_cache = params && params['action']!= 'new' %>
 <%= form_for @ticket, :url => support_tickets_path, :html => { :multipart => true,
     :class => "form-portal ticket-form", :rel => "validate" } do |f| %>
   <%= f.error_messages %>
 
-  <% enable_fragment_cache(:support_new_ticket) do %>
+  <% enable_fragment_cache(:support_new_ticket, skip_frag_cache) do %>
     <% current_portal.customer_editable_ticket_fields(true).each do |field|
         next if field.section_field? || field.exclude_encrypted_field? || field.field_type.eql?('custom_file')
       %>

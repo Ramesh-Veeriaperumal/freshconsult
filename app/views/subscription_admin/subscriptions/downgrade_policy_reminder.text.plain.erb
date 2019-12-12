@@ -1,6 +1,6 @@
 <%= render layout: 'shared/email_header_footer.plain.erb', locals: { sent_by: :freshdesk_team, other_recipients_note: true } do %>
       <p><%= @email_body %></p>
-     
+    
       <% unless Account.current.account_cancellation_requested? %>
          <% sprout_plan = @subscription_request.subscription_plan.amount.zero?
          from_field_agents =  @subscription.field_agent_limit.to_i

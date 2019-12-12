@@ -177,6 +177,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/security_key", only: [:regenerate_widget_key]
     resource :"admin/freshcaller_account", only: [:show, :link, :enable, :disable, :destroy]
     resource :"admin/api_skill", only: [:index, :create, :show, :update, :destroy]
+    resource :"admin/shift", only: [:index, :show, :create, :update, :destroy]
   end
 
   edit_ticket_properties do

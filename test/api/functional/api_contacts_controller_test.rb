@@ -1124,7 +1124,8 @@ class ApiContactsControllerTest < ActionController::TestCase
       sample_user = add_new_user(@account)
       role_ids = Role.limit(2).pluck(:id)
       group_ids = [create_group(@account).id]
-      params = { occasional: false, signature: Faker::Lorem.paragraph, ticket_scope: 2, role_ids: role_ids, group_ids: group_ids, type: Agent::SUPPORT_AGENT }
+      @controller.stubs(:agent_limit_reached?).returns(false)
+      params = { occasional: false, signature: Faker::Lorem.paragraph, ticket_scope: 2, role_ids: role_ids, group_ids: group_ids }
       put :make_agent, construct_params({ id: sample_user.id }, params)
       assert_response 200
       assert sample_user.reload.helpdesk_agent == true
@@ -1133,6 +1134,8 @@ class ApiContactsControllerTest < ActionController::TestCase
       assert Agent.last.user.id == sample_user.id
       assert Agent.last.occasional == false
     end
+  ensure
+    @controller.unstub(:agent_limit_reached?)
   end
 
   def test_make_agent_with_invalid_params

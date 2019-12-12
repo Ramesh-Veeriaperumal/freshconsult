@@ -20,6 +20,11 @@ module Widget
       end
 
       def before_all
+        main_portal = @account.main_portal
+        if main_portal.language.nil?
+          main_portal.language = 'en'
+          main_portal.save
+        end
         additional = @account.account_additional_settings
         additional.supported_languages = ['es', 'en', 'ar']
         additional.additional_settings[:portal_languages] = ['es', 'en', 'ar']
@@ -350,7 +355,7 @@ module Widget
       end
 
       def test_show_article_with_wrong_widget_id
-        @request.env['HTTP_X_WIDGET_ID'] = 100
+        @request.env['HTTP_X_WIDGET_ID'] = 10001
         get :show, controller_params(id: @article.parent_id)
         assert_response 400
         assert_nil Language.current

@@ -19,6 +19,8 @@ module Account::Setup
 
   SETUP_KEYS_DISPLAY_ORDER = ACCOUNT_SETUP_FEATURES_LIST[:setup_keys_display_order]
 
+  ONBOARDING_V2_GOALS = ACCOUNT_SETUP_FEATURES_LIST[:onboarding_v2_goals]
+
   SETUP_EXPIRY = 60.days
 
   CONTROLLER_SETUP_KEYS = {

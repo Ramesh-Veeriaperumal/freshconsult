@@ -35,6 +35,37 @@
   app_video: 29
   app_integration: 30
   explore_extend_capability_features: 31
+  tickets_intro: 32
+  support_efficiently: 33
+  tickets_details_tour: 34
+  bench_mark_customer: 35
+  set_up_sla: 36
+  awesome_ticket_features: 37
+  omni_support: 38
+  explore_channels: 39
+  automate_redundancy: 40
+  automation_first: 41
+  never_lose_ticket_track: 42
+  reminder_escalation: 43
+  intelligent_automation: 44
+  self_service: 45
+  write_faq: 46
+  answer_bot: 47
+  strengthen_self_service: 48
+  analytics_overview: 49
+  customer_satisfaction_level: 50
+  curated_reports: 51
+  marketplace: 52
+  integration: 53
+  explore_apps: 54
+
+:onboarding_v2_goals:
+  - organiseand_keep_track
+  - unify_support_channels
+  - automate_repetitive_tasks
+  - offer_self_service
+  - track_agents_performance
+  - integrate_with_apps
 
 :setup_keys_display_order:
   - new_account
@@ -69,3 +100,26 @@
   - app_video
   - app_integration
   - explore_extend_capability_features
+  - tickets_intro
+  - support_efficiently
+  - tickets_details_tour
+  - bench_mark_customer
+  - set_up_sla
+  - awesome_ticket_features
+  - omni_support
+  - explore_channels
+  - automate_redundancy
+  - automation_first
+  - never_lose_ticket_track
+  - reminder_escalation
+  - intelligent_automation
+  - self_service
+  - write_faq
+  - answer_bot
+  - strengthen_self_service
+  - analytics_overview
+  - customer_satisfaction_level
+  - curated_reports
+  - marketplace
+  - integration
+  - explore_apps

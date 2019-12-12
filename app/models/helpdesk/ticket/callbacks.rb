@@ -19,7 +19,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_create :set_subsidiary_count, :if => :tracker_ticket?
 
-	before_update :assign_email_config
+      before_update :assign_email_config
 
   before_update :update_message_id, :if => :deleted_changed?
 

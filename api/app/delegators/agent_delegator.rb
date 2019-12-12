@@ -4,14 +4,16 @@ class AgentDelegator < BaseDelegator
   validate :validate_group_ids, if: -> { self[:group_ids] }
   validate :validate_role_ids, :check_role_permission, if: -> { self[:role_ids] }
   validate :validate_avatar_extension, if: -> { @avatar_attachment && errors[:attachment_ids].blank? }
-  validate :validate_email_in_freshid, if: -> { self[:user_attributes] && Account.current.freshid_integration_enabled? }
+  validate :validate_email_in_freshid, if: -> { self[:user_attributes] && Account.current.freshid_integration_enabled? && @action == 'create' }
   validate :validate_occasional_with_agent_type, if: -> { self[:occasional] && self[:agent_type] && is_a_field_agent? }
   validate :validate_field_agent_groups, if: -> { self[:agent_type] && is_a_field_agent? }
+  validate :validate_skill_ids, if: -> { self[:user_attributes] && self[:user_attributes][:skill_ids] }
 
   def initialize(record, options = {})
     options[:attachment_ids] = Array.wrap(options[:avatar_id].to_i) if options[:avatar_id]
     super(record, options)
     @avatar_attachment = @draft_attachments.first if @draft_attachments
+    @action = options[:action]
   end
 
   def validate_role_ids
@@ -35,6 +37,18 @@ class AgentDelegator < BaseDelegator
     if invalid_groups.present?
       err_msg = ErrorConstants::ERROR_MESSAGES[:should_not_be_support_group] + ': ' + invalid_groups.join(', ')
       self.errors.add(:groups_ids, err_msg)
+    end
+  end
+
+  def validate_skill_ids
+    invalid_skills = self[:user_attributes][:skill_ids] - Account.current.skills_from_cache.collect(&:id)
+    duplicate_skills_list = self[:user_attributes][:skill_ids].select { |skill| self[:user_attributes][:skill_ids].count(skill) > 1 }.uniq
+    if invalid_skills.present?
+      errors[:skill_ids] << :invalid_list
+      (@error_options ||= {}).merge!(skill_ids: { list: invalid_skills.join(', ') })
+    elsif duplicate_skills_list.present?
+      errors[:skill_ids] << :duplicate_not_allowed
+      (@error_options ||= {}).merge!(name: 'skill_ids', list: duplicate_skills_list.join(', ').to_s)
     end
   end
 

@@ -53,6 +53,7 @@ module Dkim
 
       def fetch_service_params(email_service_url, email_service_action)
         service_params = { domain: EMAIL_SERVICE_HOST }
+
         case email_service_action
         when EMAIL_SERVICE_ACTION[:get_domains]  
           service_params.merge({ 

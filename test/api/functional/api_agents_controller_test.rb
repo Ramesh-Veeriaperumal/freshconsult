@@ -1,8 +1,10 @@
 require_relative '../test_helper'
 ['agents_test_helper.rb', 'attachments_test_helper.rb'].each { |file| require Rails.root.join('test', 'api', 'helpers', file) }
+require_relative '../helpers/admin/skills_test_helper'
 class ApiAgentsControllerTest < ActionController::TestCase
   include AgentsTestHelper
   include AttachmentsTestHelper
+  include Admin::SkillsTestHelper
   def wrap_cname(params)
     { api_agent: params }
   end
@@ -993,6 +995,133 @@ class ApiAgentsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:freshid_integration_enabled?)
     group.destroy
     Account.unstub(:current)
+  end
+
+  def test_create_agent_with_skills
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(false)
+    Account.current.stubs(:skill_based_round_robin_enabled?).returns(true)
+    User.current.stubs(:privilege?).with(:manage_skills).returns(true)
+    group = create_group(@account)
+    skill1 = create_dummy_skill
+    skill2 = create_dummy_skill
+    params_hash = { email: Faker::Internet.email, ticket_scope: 2, name: Faker::Name.name, group_ids: [group.id], skill_ids: [skill1[:id], skill2[:id]] }
+    post :create, construct_params(params_hash)
+    response = parse_response @response.body
+    agent_id = response['id']
+    assert_response 201
+  ensure
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    group.destroy
+    Account.current.unstub(:skill_based_round_robin_enabled?)
+    User.current.unstub(:privilege?)
+    Account.current.agents.find_by_user_id(agent_id).destroy
+    Account.unstub(:current)
+    skill1.destroy
+    skill2.destroy
+  end
+
+  def test_create_agent_sbrr_not_enabled
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(false)
+    Account.current.stubs(:skill_based_round_robin_enabled?).returns(false)
+    User.current.stubs(:privilege?).with(:manage_skills).returns(true)
+    group = create_group(@account)
+    skill1 = create_dummy_skill
+    skill2 = create_dummy_skill
+    params_hash = { email: Faker::Internet.email, ticket_scope: 2, name: Faker::Name.name, group_ids: [group.id], skill_ids: [skill1[:id], skill2[:id]] }
+    post :create, construct_params(params_hash)
+    response = parse_response @response.body
+    assert_response 400
+    match_json([bad_request_error_pattern('skill_ids', :invalid_field)])
+  ensure
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    group.destroy
+    Account.current.unstub(:skill_based_round_robin_enabled?)
+    User.current.unstub(:privilege?)
+    Account.unstub(:current)
+    skill1.destroy
+    skill2.destroy
+  end
+
+  def test_create_agent_without_skill_privilege
+    Account.stubs(:current).returns(Account.first)
+    User.stubs(:current).returns(User.first)
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(false)
+    Account.current.stubs(:skill_based_round_robin_enabled?).returns(true)
+    User.current.stubs(:privilege?).with(:manage_skills).returns(false)
+    group = create_group(@account)
+    skill1 = create_dummy_skill
+    skill2 = create_dummy_skill
+    params_hash = { email: Faker::Internet.email, ticket_scope: 2, name: Faker::Name.name, group_ids: [group.id], skill_ids: [skill1[:id], skill2[:id]] }
+    post :create, construct_params(params_hash)
+    response = parse_response @response.body
+    assert_response 400
+    match_json([bad_request_error_pattern('skill_ids', :inaccessible_field)])
+  ensure
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    group.destroy
+    Account.current.unstub(:skill_based_round_robin_enabled?)
+    User.current.unstub(:privilege?)
+    Account.unstub(:current)
+    User.unstub(:current)
+    skill1.destroy
+    skill2.destroy
+  end
+
+  def test_update_admin_with_skills
+    agent = add_test_agent(@account, role: Role.find_by_name('Account Administrator').id)
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(false)
+    Account.current.stubs(:skill_based_round_robin_enabled?).returns(true)
+    User.current.stubs(:privilege?).with(:manage_skills).returns(true)
+    skill1 = create_dummy_skill
+    skill2 = create_dummy_skill
+    params = { skill_ids: [skill1[:id], skill2[:id]] }
+    put :update, construct_params({ id: agent.id }, params)
+    updated_agent = User.find(agent.id)
+    match_json(agent_pattern_with_additional_details(params, updated_agent))
+    match_json(agent_pattern_with_additional_details({}, updated_agent))
+    assert_response 200
+  ensure
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    Account.current.unstub(:skill_based_round_robin_enabled?)
+    User.current.unstub(:privilege?)
+    User.unstub(:current)
+    skill1.destroy
+    skill2.destroy
+    agent.destroy
+  end
+
+  def test_update_agent_sbrr_not_enabled
+    agent = add_test_agent(@account, role: Role.find_by_name('Account Administrator').id)
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(false)
+    Account.current.stubs(:skill_based_round_robin_enabled?).returns(false)
+    User.current.stubs(:privilege?).with(:manage_skills).returns(true)
+    skill1 = create_dummy_skill
+    skill2 = create_dummy_skill
+    params = { skill_ids: [skill1[:id], skill2[:id]] }
+    put :update, construct_params({ id: agent.id }, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('skill_ids', :invalid_field)])
+  ensure
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    Account.current.unstub(:skill_based_round_robin_enabled?)
+    User.current.unstub(:privilege?)
+    skill1.destroy
+    skill2.destroy
+    agent.destroy
   end
 
   def test_update_focus_mode_preferences_with_feature_enabled

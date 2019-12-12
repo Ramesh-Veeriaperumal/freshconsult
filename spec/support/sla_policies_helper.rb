@@ -8,11 +8,13 @@ module SlaPoliciesHelper
 			:escalations =>{"response"=>{"1"=>{:time =>"1800", :agents_id =>["#{@agent.id}"]}}, 
 			                "resolution"=>{"1"=>{:time=>"3600", :agents_id=>["#{new_agent.id}"]}}
 			                })
+    sla_policy.escalations.merge({"next_response"=>{"1"=>{:time =>"1800", :agents_id =>["#{@agent.id}"]}}}) if @account.next_response_sla_enabled?
 		sla_policy.save(validate: false)
     details = {"4"=>{:level=>"urgent"},"3"=>{:level=>"high"}, "2"=>{:level=>"medium"}, "1"=>{:level=>"low"}}
     details.each_pair do |k,v|
 			sla_details = FactoryGirl.build(:sla_details, :name=>"SLA for #{v[:level]} priority", :priority=>"#{k}", :response_time=>"900", :resolution_time=>"900", 
 				 	                     :account_id => @account.id, :override_bhrs=>"false", :escalation_enabled=>"1", :sla_policy_id => sla_policy.id)
+      sla_details.next_response_time = "900" if @account.next_response_sla_enabled?
 			sla_details.save(validate: false)
 		end
     sla_policy

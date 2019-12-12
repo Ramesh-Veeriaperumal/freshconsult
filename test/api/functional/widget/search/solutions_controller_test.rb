@@ -30,7 +30,7 @@ module Widget
       end
 
       def set_widget
-        @widget = HelpWidget.last || create_widget
+        @widget = create_widget
         @widget.settings[:components][:solution_articles] = true
         @widget.save
         @request.env['HTTP_X_WIDGET_ID'] = @widget.id
@@ -239,7 +239,7 @@ module Widget
       end
 
       def test_results_with_invalid_widget_id
-        @request.env['HTTP_X_WIDGET_ID'] = 100
+        @request.env['HTTP_X_WIDGET_ID'] = 10001
         stub_private_search_response([@article]) do
           post :results, construct_params(version: 'widget', term: @article.title)
         end
@@ -428,7 +428,7 @@ module Widget
       end
 
       def test_results_with_invalid_widget_id_get
-        @request.env['HTTP_X_WIDGET_ID'] = 100
+        @request.env['HTTP_X_WIDGET_ID'] = 10001
         stub_private_search_response([@article]) do
           get :results, construct_params(version: 'widget', term: @article.title)
         end

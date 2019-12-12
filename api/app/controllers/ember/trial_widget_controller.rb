@@ -10,7 +10,8 @@ class Ember::TrialWidgetController < ApiApplicationController
 
   def index
     @account_setup = {
-      tasks: current_account.setup_keys.map { |setup_key| setup_key_info(setup_key) }
+      tasks: current_account.setup_keys.map { |setup_key| setup_key_info(setup_key) },
+      goals: current_account.account_additional_settings_from_cache.additional_settings[:onboarding_goals]
     }
     response.api_root_key = :account_setup
   end
@@ -23,11 +24,14 @@ class Ember::TrialWidgetController < ApiApplicationController
 
   def complete_step
     step_name = params[cname][:step]
-    if current_account.respond_to?("#{step_name}_setup?") && !current_account.send("#{step_name}_setup?")
+    if step_name.present? && current_account.respond_to?("#{step_name}_setup?") && !current_account.send("#{step_name}_setup?")
       current_account.try("mark_#{step_name}_setup_and_save")
       complete_admin_onboarding if step_name == TrialWidgetConstants::SUPPORT_CHANNEL_STEP
     end
+    current_account.account_additional_settings.update_onboarding_goals(params[cname][:goals]) if params[cname][:goals].present?
     head 204
+  rescue StandardError
+    render_request_error :unable_to_perform, 400
   end
 
   private

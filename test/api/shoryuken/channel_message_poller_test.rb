@@ -302,7 +302,6 @@ class ChannelMessagePollerTest < ActionView::TestCase
         "tweet_type": tweet_type,
         "tweet_id": SecureRandom.hex
       }
-
       [payload, sample_twitter_create_ticket_command(@account, @handle, @stream, payload)]
     end
 

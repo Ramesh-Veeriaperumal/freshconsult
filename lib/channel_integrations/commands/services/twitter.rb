@@ -26,7 +26,6 @@ module ChannelIntegrations::Commands::Services
       reply
     rescue StandardError => e
       Rails.logger.error "Something wrong in Twitter::CreateTicket account_id: #{current_account.id}, context: #{context.inspect} #{e.message}"
-
       return conflict_error(context) if e.message.include? Social::Constants::TWEET_ALREADY_EXISTS
       error_message("Error in creating ticket, account_id: #{current_account.id}, context: #{context.inspect}")
     end

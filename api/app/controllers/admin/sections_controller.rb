@@ -36,6 +36,6 @@ class Admin::SectionsController < ApiApplicationController
       @item = current_account.sections.find_by_id(params[:id])
       log_and_render_404 unless @item
       @tf = current_account.ticket_fields_only.find_by_id(params[:ticket_field_id])
-      @correct_value_mapping = @tf.picklist_values.section_picklist_join("section_id = #{@item.id}").exists? if @tf.present?
+      @correct_value_mapping = @item.present? && @tf.present? && (@item.ticket_field_id == @tf.id)
     end
 end

@@ -412,5 +412,5 @@ class TicketTest < ActiveSupport::TestCase
     internal_group_pattern = ticket.internal_group.as_api_response(:internal_group_central_publish_associations).to_json
     internal_group_pattern.must_match_json_expression(internal_group_association_pattern(ticket))
     Account.any_instance.unstub(:shared_ownership_enabled?)
-  end
+  end 
 end

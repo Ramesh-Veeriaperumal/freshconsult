@@ -1,0 +1,16 @@
+defaults: &defaults
+  shift_service_host: 'http://localhost:8080/'
+  jwt_secret: 'freshdesk'
+  time_out: 10
+
+development:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults
+
+test:
+  <<: *defaults

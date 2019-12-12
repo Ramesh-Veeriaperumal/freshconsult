@@ -208,6 +208,72 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
                                                 prepend_msg: :input_received, given_data_type: Integer)])
   end
 
+  # ********************************************************* Contact Segments Validation
+
+    def test_update_contact_segments_sla_policies
+      @sla_policy = quick_create_sla_policy
+      contact_segment = create_contact_segment
+      put :update, construct_params({ id: @sla_policy.id }, applicable_to: { contact_segments: [contact_segment.id] })
+      assert_response 200
+      match_json(sla_policy_pattern(@sla_policy.reload))
+    end
+
+    def test_update_remove_contact_segments_sla_policy
+      @sla_policy = quick_create_sla_policy
+      put :update, construct_params({ id: @sla_policy.id }, applicable_to: { contact_segments: [], group_ids: [1] })
+      assert_response 200
+      match_json(sla_policy_pattern(@sla_policy.reload))
+      match_json(sla_policy_pattern({ applicable_to: { group_ids: [1] } }, @sla_policy))
+    end
+
+    def test_update_with_invalid_contact_segments
+      @sla_policy = quick_create_sla_policy
+      put :update, construct_params({ id: @sla_policy.id }, applicable_to: { contact_segments: [10000, 1000001] })
+      assert_response 400
+      match_json([bad_request_error_pattern('contact_segments', :invalid_list, list: '10000, 1000001')])
+    end
+
+    def test_update_with_invalid_contact_segments_data_type
+      @sla_policy = quick_create_sla_policy
+      put :update, construct_params({ id: @sla_policy.id }, applicable_to: { contact_segments: '1,2' })
+      assert_response 400
+      match_json([bad_request_error_pattern('contact_segments', :datatype_mismatch, expected_data_type: Array,
+                                                   prepend_msg: :input_received, given_data_type: String)])
+    end
+
+    # ********************************************************* Company Segments Validation
+
+      def test_update_company_segments_sla_policies
+        @sla_policy = quick_create_sla_policy
+        company_segment = create_company_segment
+        put :update, construct_params({ id: @sla_policy.id }, applicable_to: { company_segments: [company_segment.id] })
+        assert_response 200
+        match_json(sla_policy_pattern(@sla_policy.reload))
+      end
+
+      def test_update_remove_company_segments_sla_policy
+        @sla_policy = quick_create_sla_policy
+        put :update, construct_params({ id: @sla_policy.id }, applicable_to: { company_segments: [], group_ids: [1] })
+        assert_response 200
+        match_json(sla_policy_pattern(@sla_policy.reload))
+        match_json(sla_policy_pattern({ applicable_to: { group_ids: [1] } }, @sla_policy))
+      end
+
+      def test_update_with_invalid_company_segments
+        @sla_policy = quick_create_sla_policy
+        put :update, construct_params({ id: @sla_policy.id }, applicable_to: { company_segments: [10000, 1000001] })
+        assert_response 400
+        match_json([bad_request_error_pattern('company_segments', :invalid_list, list: '10000, 1000001')])
+      end
+
+      def test_update_with_invalid_company_segments_data_type
+        @sla_policy = quick_create_sla_policy
+        put :update, construct_params({ id: @sla_policy.id }, applicable_to: { company_segments: '1,2' })
+        assert_response 400
+        match_json([bad_request_error_pattern('company_segments', :datatype_mismatch, expected_data_type: Array,
+                                                     prepend_msg: :input_received, given_data_type: String)])
+      end
+
 # ********************************************************* SLA Target
 
   def test_update_sla_target_sla_policy
@@ -397,40 +463,156 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('sla_target[priority_4][resolve_within]', "must be greater than or equal to 900" )])
   end
 
+  def test_update_next_respond_within_without_feature
+    @account.stubs(:next_response_sla_enabled?).returns(false)
+    @sla_policy = create_complete_sla_policy
+    put :update, construct_params({ id: @sla_policy.id }, sla_target: {
+                                  "priority_4": { respond_within: 3600, next_respond_within: 3600, resolve_within: 3600, business_hours: false, escalation_enabled: true },
+                                  "priority_3": { respond_within: 1800, next_respond_within: 1800, resolve_within: 1800, business_hours: true, escalation_enabled: true },
+                                  "priority_2": { respond_within: 1200, next_respond_within: 1200, resolve_within: 1200, business_hours: false, escalation_enabled: true },
+                                  "priority_1": { respond_within: 900, next_respond_within: 900, resolve_within: 900, business_hours: false, escalation_enabled: true }
+                                }) 
+    assert_response 400
+    match_json([bad_request_error_pattern('sla_target[priority_4][next_respond_within]', :require_feature_for_attribute, code: :inaccessible_field, feature: :next_response_sla, attribute: 'next_respond_within'),
+    bad_request_error_pattern('sla_target[priority_3][next_respond_within]', :require_feature_for_attribute, code: :inaccessible_field, feature: :next_response_sla, attribute: 'next_respond_within'),
+    bad_request_error_pattern('sla_target[priority_2][next_respond_within]', :require_feature_for_attribute, code: :inaccessible_field, feature: :next_response_sla, attribute: 'next_respond_within'),
+    bad_request_error_pattern('sla_target[priority_1][next_respond_within]', :require_feature_for_attribute, code: :inaccessible_field, feature: :next_response_sla, attribute: 'next_respond_within')])
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_update_next_respond_within_with_feature
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    @sla_policy = create_complete_sla_policy
+    put :update, construct_params({ id: @sla_policy.id }, sla_target: {
+                                  "priority_4": { respond_within: 3600, next_respond_within: 3600, resolve_within: 3600, business_hours: false, escalation_enabled: true },
+                                  "priority_3": { respond_within: 1800, next_respond_within: 1800, resolve_within: 1800, business_hours: true, escalation_enabled: true },
+                                  "priority_2": { respond_within: 1200, next_respond_within: 1200, resolve_within: 1200, business_hours: false, escalation_enabled: true },
+                                  "priority_1": { respond_within: 900, next_respond_within: 900, resolve_within: 900, business_hours: false, escalation_enabled: true }
+                                }) 
+    assert_response 200
+    match_json(sla_policy_pattern(@sla_policy.reload))
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_update_invalid_datatype_next_respond_within
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    @sla_policy = create_complete_sla_policy
+    put :update, construct_params({ id: @sla_policy.id }, sla_target: {
+                                  "priority_4": { respond_within: 3600, next_respond_within: "test", resolve_within: 3600, business_hours: false, escalation_enabled: true },
+                                  "priority_3": { respond_within: 1800, next_respond_within: 1800, resolve_within: 1800, business_hours: true, escalation_enabled: true },
+                                  "priority_2": { respond_within: 1200, next_respond_within: 1200, resolve_within: 1200, business_hours: false, escalation_enabled: true },
+                                  "priority_1": { respond_within: 900, next_respond_within: 900, resolve_within: 900, business_hours: false, escalation_enabled: true }
+                                }) 
+    assert_response 400
+    match_json([bad_request_error_pattern('sla_target[priority_4][next_respond_within]', :datatype_mismatch, expected_data_type: Integer, 
+                                          prepend_msg: :input_received, given_data_type: String)])
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_update_lessthan_900_next_respond_within
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    @sla_policy = create_complete_sla_policy
+    put :update, construct_params({ id: @sla_policy.id }, sla_target: {
+                                  "priority_4": { respond_within: 3600, next_respond_within: 600, resolve_within: 3600, business_hours: false, escalation_enabled: true },
+                                  "priority_3": { respond_within: 1800, next_respond_within: 1800, resolve_within: 1800, business_hours: true, escalation_enabled: true },
+                                  "priority_2": { respond_within: 1200, next_respond_within: 1200, resolve_within: 1200, business_hours: false, escalation_enabled: true },
+                                  "priority_1": { respond_within: 900, next_respond_within: 900, resolve_within: 900, business_hours: false, escalation_enabled: true }
+                                }) 
+    assert_response 400
+    match_json([bad_request_error_pattern('sla_target[priority_4][next_respond_within]', 'must be greater than or equal to 900')])
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_update_invalid_next_respond_within
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    @sla_policy = create_complete_sla_policy
+    put :update, construct_params({ id: @sla_policy.id }, sla_target: {
+                                  "priority_4": { respond_within: 3600, next_respond_within: 3601, resolve_within: 3600, business_hours: false, escalation_enabled: true },
+                                  "priority_3": { respond_within: 1800, next_respond_within: 1800, resolve_within: 1800, business_hours: true, escalation_enabled: true },
+                                  "priority_2": { respond_within: 1200, next_respond_within: 1200, resolve_within: 1200, business_hours: false, escalation_enabled: true },
+                                  "priority_1": { respond_within: 900, next_respond_within: 900, resolve_within: 900, business_hours: false, escalation_enabled: true }
+                                }) 
+    assert_response 400
+    match_json([bad_request_error_pattern('sla_target[priority_4][next_respond_within]', :Multiple_of_60)])
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
 # ********************************************************* Escalations
  
- def test_update_Escalation_sla_policy
+ def test_update_escalation_sla_policy
     @sla_policy = create_complete_sla_policy
     get_agents
-    put :update, construct_params({ id: @sla_policy.id }, "escalation":  { "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
-                                                                        "resolution": {"level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
-                                                                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
-                                                                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
-                                                                      }) 
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+      { "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+        "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] },
+                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id] }
+                      }
+      })
     assert_response 200
     match_json(sla_policy_pattern(@sla_policy.reload))
   end
 
-  def test_update_Escalation_without_response_sla_policy
+  def test_update_escalation_without_reminder_response_sla_policy
     @sla_policy = create_complete_sla_policy
     get_agents
-    put :update, construct_params({ id: @sla_policy.id }, "escalation":  { "resolution": 
-                                                                        {"level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
-                                                                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
-                                                                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}} }) 
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+      { "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+        "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] },
+                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id] }
+                      }
+      })
     assert_response 200
     match_json(sla_policy_pattern(@sla_policy.reload))
   end
 
-  def test_update_Escalation_without_resolution_sla_policy 
+  def test_update_escalation_without_reminder_resolution_sla_policy
     @sla_policy = create_complete_sla_policy
     get_agents
-    put :update, construct_params({ id: @sla_policy.id }, "escalation":  { "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] } }) 
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+      { "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+        "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] },
+                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id] }
+                      }
+      })
     assert_response 200
     match_json(sla_policy_pattern(@sla_policy.reload))
   end
 
-  def test_update_Escalation_without_resolution_and_response_sla_policy 
+  def test_update_escalation_without_response_sla_policy
+    @sla_policy = create_complete_sla_policy
+    get_agents
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+      { "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] },
+                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id] }
+                      }
+      })
+    assert_response 200
+    match_json(sla_policy_pattern(@sla_policy.reload))
+  end
+
+  def test_update_escalation_without_resolution_sla_policy 
+    @sla_policy = create_complete_sla_policy
+    get_agents
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+      { "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] }
+      })
+    assert_response 200
+    match_json(sla_policy_pattern(@sla_policy.reload))
+  end
+
+  def test_update_escalation_without_resolution_and_response_sla_policy 
     @sla_policy = create_complete_sla_policy
     @agent_1 = add_agent_to_account(@account, {name: Faker::Lorem.word ,active: 1, role: 1} )
     @agent_2 = add_agent_to_account(@account, {name: Faker::Lorem.word ,active: 1, role: 1} )
@@ -439,204 +621,744 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     match_json(sla_policy_pattern(@sla_policy.reload))
   end
 
-  def test_update_Escalation_with_empty_resolution_and_response_sla_policy 
+  def test_update_escalation_with_empty_resolution_and_response_sla_policy 
     @sla_policy = create_complete_sla_policy
     @agent_1 = add_agent_to_account(@account, {name: Faker::Lorem.word ,active: 1, role: 1} )
     @agent_2 = add_agent_to_account(@account, {name: Faker::Lorem.word ,active: 1, role: 1} )
-    put :update, construct_params({ id: @sla_policy.id }, "escalation":  {"response": {}, "resolution":{}} ) 
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  {"reminder_response": {}, "reminder_resolution":{}, "response": {}, "resolution":{}} ) 
     assert_response 200
     match_json(sla_policy_pattern(@sla_policy.reload))
   end
 
-  def test_update_Escalation_without_response_escalation_time_sla_policy
+  def test_update_escalation_without_reminder_response_escalation_time_sla_policy
     @sla_policy = create_complete_sla_policy
     get_agents
-    put :update, construct_params({ id: @sla_policy.id }, "escalation":  { "response": { agent_ids:[@agent_1.user_id] },
-                                                                        "resolution": {"level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
-                                                                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
-                                                                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
-                                                                      }) 
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+     { "reminder_response": { agent_ids:[@agent_1.user_id] },
+       "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+       "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+       "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                       "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] },
+                       "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id] }
+                     }
+     })
+    assert_response 400
+    match_json([bad_request_error_pattern("reminder_response[escalation_time]", :missing_field )])
+  end
+
+  def test_update_escalation_without_reminder_resolution_escalation_time_sla_policy
+    @sla_policy = create_complete_sla_policy
+    get_agents
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+     { "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+       "reminder_resolution": { agent_ids:[@agent_1.user_id] },
+       "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+       "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                       "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] },
+                       "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id] }
+                     }
+     })
+    assert_response 400
+    match_json([bad_request_error_pattern("reminder_resolution[escalation_time]", :missing_field )])
+  end
+
+  def test_update_escalation_without_response_escalation_time_sla_policy
+    @sla_policy = create_complete_sla_policy
+    get_agents
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+      { "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "response": { agent_ids:[@agent_1.user_id] },
+        "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] },
+                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id] }
+                      }
+      })
     assert_response 400
     match_json([bad_request_error_pattern("response[escalation_time]", :missing_field )])
   end
 
-  def test_update_Escalation_without_resolution_escalation_time_sla_policy
+  def test_update_escalation_without_resolution_escalation_time_sla_policy
     @sla_policy = create_complete_sla_policy
     get_agents
-    put :update, construct_params({ id: @sla_policy.id }, "escalation":  { "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
-                                                                        "resolution": {"level_1": { agent_ids:[@agent_1.user_id]},
-                                                                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
-                                                                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
-                                                                      }) 
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+      { "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+        "resolution": { "level_1": { agent_ids:[@agent_1.user_id] },
+                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] },
+                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id] }
+                      }
+      })
     assert_response 400
     match_json([bad_request_error_pattern("resolution[level_1][escalation_time]", :missing_field )])
   end
 
-  def test_update_Escalation_invalid_response_escalation_time_sla_policy
+  def test_update_escalation_invalid_reminder_response_escalation_time_sla_policy
     @sla_policy = create_complete_sla_policy
     get_agents
-    put :update, construct_params({ id: @sla_policy.id }, "escalation":  { "response": { escalation_time: 780, agent_ids:[@agent_1.user_id] },
-                                                                        "resolution": {"level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
-                                                                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
-                                                                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
-                                                                      }) 
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+      { "reminder_response": { escalation_time: -600, agent_ids:[@agent_1.user_id] },
+        "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+        "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] },
+                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id] }
+                      }
+      })
+    assert_response 400
+    match_json([bad_request_error_pattern("reminder_response[escalation_time]", 
+      :not_included, list: '-28800, -14400, -7200, -3600, -1800')])
+  end
+
+  def test_update_escalation_invalid_reminder_resolution_escalation_time_sla_policy
+    @sla_policy = create_complete_sla_policy
+    get_agents
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+      { "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "reminder_resolution": { escalation_time: -600, agent_ids:[@agent_1.user_id] },
+        "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+        "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] },
+                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id] }
+                      }
+      })
+    assert_response 400
+    match_json([bad_request_error_pattern("reminder_resolution[escalation_time]", 
+      :not_included, list: '-28800, -14400, -7200, -3600, -1800')])
+  end
+
+  def test_update_escalation_invalid_response_escalation_time_sla_policy
+    @sla_policy = create_complete_sla_policy
+    get_agents
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+      { "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "response": { escalation_time: 780, agent_ids:[@agent_1.user_id] },
+        "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] },
+                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id] }
+                      }
+      })
     assert_response 400
     match_json([bad_request_error_pattern("response[escalation_time]", 
       :not_included, list: '0, 1800, 3600, 7200, 14400, 28800, 43200, 86400, 172800, 259200, 604800, 1209600, 2592000')])
   end
 
-  def test_update_Escalation_invalid_resolution_escalation_time_sla_policy
+  def test_update_escalation_invalid_resolution_escalation_time_sla_policy
     @sla_policy = create_complete_sla_policy
     get_agents
-    put :update, construct_params({ id: @sla_policy.id }, "escalation":  { "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
-                                                                        "resolution": {"level_1": { escalation_time: 780, agent_ids:[@agent_1.user_id]},
-                                                                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
-                                                                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
-                                                                      }) 
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+      { "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+        "resolution": { "level_1": { escalation_time: 780, agent_ids:[@agent_1.user_id] },
+                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] },
+                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id] }
+                      }
+      })
     assert_response 400
     match_json([bad_request_error_pattern("resolution[level_1][escalation_time]", 
       :not_included, list: '0, 1800, 3600, 7200, 14400, 28800, 43200, 86400, 172800, 259200, 604800, 1209600, 2592000' )])
   end
 
-  def test_update_Escalation_duplicate_resolution_escalation_time_sla_policy
+  def test_update_escalation_duplicate_resolution_escalation_time_sla_policy
     @sla_policy = create_complete_sla_policy
     get_agents
-    put :update, construct_params({ id: @sla_policy.id }, "escalation":  { "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
-                                                                        "resolution": {"level_1": { escalation_time: 1800, agent_ids:[@agent_1.user_id]},
-                                                                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
-                                                                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
-                                                                      }) 
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+      { "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+        "resolution": { "level_1": { escalation_time: 1800, agent_ids:[@agent_1.user_id] },
+                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] },
+                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id] }
+                      }
+      })
     assert_response 400
     match_json([bad_request_error_pattern("resolution[escalation_time]", :duplicate_not_allowed, name: 'escalation time', list: '1800'),
                 bad_request_error_pattern("resolution[level_2][escalation_time]", :not_included, list: '3600, 7200, 14400, 28800, 43200, 86400, 172800, 259200, 604800, 1209600, 2592000')])
   end
 
-  def test_update_Escalation_invalid_response_Agent_id_sla_policy
+  def test_update_escalation_invalid_reminder_response_agent_id_sla_policy
     @sla_policy = create_complete_sla_policy
     get_agents
-    put :update, construct_params({ id: @sla_policy.id }, "escalation":  { "response": { escalation_time: 0, agent_ids:[8787] },
-                                                                        "resolution": {"level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
-                                                                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
-                                                                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
-                                                                      }) 
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+      { "reminder_response": { escalation_time: -3600, agent_ids:[8787] },
+        "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+        "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] },
+                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id] }
+                      }
+      })
+    assert_response 400
+    match_json([bad_request_error_pattern("reminder_response[agent_ids]", :invalid_list, list: '8787' )])
+  end
+
+  def test_update_escalation_invalid_reminder_resolution_agent_id_sla_policy
+    @sla_policy = create_complete_sla_policy
+    get_agents
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+      { "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "reminder_resolution": { escalation_time: -3600, agent_ids:[8787] },
+        "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+        "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] },
+                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id] }
+                      }
+      })
+    assert_response 400
+    match_json([bad_request_error_pattern("reminder_resolution[agent_ids]", :invalid_list, list: '8787' )])
+  end
+
+  def test_update_escalation_invalid_response_agent_id_sla_policy
+    @sla_policy = create_complete_sla_policy
+    get_agents
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+      { "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "response": { escalation_time: 0, agent_ids:[8787] },
+        "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] },
+                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id] }
+                      }
+      })
     assert_response 400
     match_json([bad_request_error_pattern("response[agent_ids]", :invalid_list, list: '8787' )])
   end
 
-  def test_update_Escalation_invalid_resolution_agent_id_sla_policy
+  def test_update_escalation_invalid_resolution_agent_id_sla_policy
     @sla_policy = create_complete_sla_policy
     get_agents
-    put :update, construct_params({ id: @sla_policy.id }, "escalation":  { "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
-                                                                        "resolution": {"level_1": { escalation_time: 0, agent_ids:[8787]},
-                                                                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
-                                                                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
-                                                                      }) 
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+      { "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+        "resolution": { "level_1": { escalation_time: 0, agent_ids:[8787] },
+                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] },
+                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id] }
+                      }
+      })
     assert_response 400
     match_json([bad_request_error_pattern("resolution[level_1][agent_ids]", :invalid_list, list: '8787')])
   end
 
-  def test_update_Escalation_without_response_Agent_id_sla_policy
+  def test_update_escalation_without_reminder_response_agent_id_sla_policy
     @sla_policy = create_complete_sla_policy
     get_agents
-    put :update, construct_params({ id: @sla_policy.id }, "escalation":  { "response": { escalation_time: 0 },
-                                                                        "resolution": {"level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
-                                                                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
-                                                                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
-                                                                      }) 
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+      { "reminder_response": { escalation_time: -3600 },
+        "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+        "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] },
+                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id] }
+                      }
+      })
+    assert_response 400
+    match_json([bad_request_error_pattern("reminder_response[agent_ids]", :missing_field )])
+  end
+
+  def test_update_escalation_without_reminder_resolution_agent_id_sla_policy
+    @sla_policy = create_complete_sla_policy
+    get_agents
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+      { "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "reminder_resolution": { escalation_time: -3600 },
+        "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+        "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] },
+                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id] }
+                      }
+      })
+    assert_response 400
+    match_json([bad_request_error_pattern("reminder_resolution[agent_ids]", :missing_field )])
+  end
+
+  def test_update_escalation_without_response_agent_id_sla_policy
+    @sla_policy = create_complete_sla_policy
+    get_agents
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+      { "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "response": { escalation_time: 0 },
+        "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] },
+                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id] }
+                      }
+      })
     assert_response 400
     match_json([bad_request_error_pattern("response[agent_ids]", :missing_field )])
   end
 
-  def test_update_Escalation_without_resolution_agent_id_sla_policy
+  def test_update_escalation_without_resolution_agent_id_sla_policy
     @sla_policy = create_complete_sla_policy
     get_agents
-    put :update, construct_params({ id: @sla_policy.id }, "escalation":  { "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
-                                                                        "resolution": {"level_1": { escalation_time: 0},
-                                                                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
-                                                                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
-                                                                      }) 
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+      { "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+        "resolution": { "level_1": { escalation_time: 0 },
+                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] },
+                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id] }
+                      }
+      })
     assert_response 400
     match_json([bad_request_error_pattern("resolution[level_1][agent_ids]", :missing_field )])
   end
 
-  def test_update_empty_response_Agent_id_sla_policy
+  def test_update_escalation_empty_reminder_response_agent_id_sla_policy
     @sla_policy = create_complete_sla_policy
     @agent_1 = add_agent_to_account(@account, {name: Faker::Lorem.word ,active: 1, role: 1} )
     @agent_2 = add_agent_to_account(@account, {name: Faker::Lorem.word ,active: 1, role: 1} )
-    put :update, construct_params({ id: @sla_policy.id }, "escalation":  { "response": { escalation_time: 0,agent_ids:[] },
-                                                                        "resolution": {"level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
-                                                                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
-                                                                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
-                                                                      }) 
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+      { "reminder_response": { escalation_time: -3600, agent_ids:[] },
+        "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+        "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] },
+                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id] }
+                      }
+      })
+    assert_response 400
+    match_json([bad_request_error_pattern("reminder_response[agent_ids]", :blank )])
+  end
+
+  def test_update_escalation_empty_reminder_resolution_agent_id_sla_policy
+    @sla_policy = create_complete_sla_policy
+    @agent_1 = add_agent_to_account(@account, {name: Faker::Lorem.word ,active: 1, role: 1} )
+    @agent_2 = add_agent_to_account(@account, {name: Faker::Lorem.word ,active: 1, role: 1} )
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+      { "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "reminder_resolution": { escalation_time: -3600, agent_ids:[] },
+        "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+        "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] },
+                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id] }
+                      }
+      })
+    assert_response 400
+    match_json([bad_request_error_pattern("reminder_resolution[agent_ids]", :blank )])
+  end
+
+  def test_update_escalation_empty_response_agent_id_sla_policy
+    @sla_policy = create_complete_sla_policy
+    @agent_1 = add_agent_to_account(@account, {name: Faker::Lorem.word ,active: 1, role: 1} )
+    @agent_2 = add_agent_to_account(@account, {name: Faker::Lorem.word ,active: 1, role: 1} )
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+      { "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "response": { escalation_time: 0, agent_ids:[] },
+        "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] },
+                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id] }
+                      }
+      })
     assert_response 400
     match_json([bad_request_error_pattern("response[agent_ids]", :blank )])
   end
 
-  def test_update_empty_resolution_agent_id_sla_policy
+  def test_update_escalation_empty_resolution_agent_id_sla_policy
     @sla_policy = create_complete_sla_policy
     @agent_1 = add_agent_to_account(@account, {name: Faker::Lorem.word ,active: 1, role: 1} )
     @agent_2 = add_agent_to_account(@account, {name: Faker::Lorem.word ,active: 1, role: 1} )
-    put :update, construct_params({ id: @sla_policy.id }, "escalation":  { "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
-                                                                        "resolution": {"level_1": { escalation_time: 0,agent_ids:[]},
-                                                                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
-                                                                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
-                                                                      }) 
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+      { "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+        "resolution": { "level_1": { escalation_time: 0, agent_ids:[] },
+                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] },
+                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id] }
+                      }
+      })
     assert_response 400
     match_json([bad_request_error_pattern("resolution[level_1][agent_ids]", :blank )])
   end
 
-  def test_update_Escalation_invalid_datatype_response_Agent_id
+  def test_update_escalation_invalid_datatype_reminder_response_agent_id
     @sla_policy = create_complete_sla_policy
     @agent_1 = add_agent_to_account(@account, {name: Faker::Lorem.word ,active: 1, role: 1} )
     @agent_2 = add_agent_to_account(@account, {name: Faker::Lorem.word ,active: 1, role: 1} )
-    put :update, construct_params({ id: @sla_policy.id }, "escalation":  { "response": { escalation_time: 0, agent_ids:["test"] },
-                                                                        "resolution": {"level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
-                                                                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
-                                                                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
-                                                                      }) 
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+      { "reminder_response": { escalation_time: -3600, agent_ids:["test"] },
+        "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+        "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] },
+                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id] }
+                      }
+      })
+    assert_response 400
+    match_json([bad_request_error_pattern("reminder_response[agent_ids]", :array_datatype_mismatch, expected_data_type: 'Integer' )])
+  end
+
+  def test_update_escalation_invalid_datatype_reminder_resolution_agent_id
+    @sla_policy = create_complete_sla_policy
+    @agent_1 = add_agent_to_account(@account, {name: Faker::Lorem.word ,active: 1, role: 1} )
+    @agent_2 = add_agent_to_account(@account, {name: Faker::Lorem.word ,active: 1, role: 1} )
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+      { "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "reminder_resolution": { escalation_time: -3600, agent_ids:["test"] },
+        "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+        "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] },
+                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id] }
+                      }
+      })
+    assert_response 400
+    match_json([bad_request_error_pattern("reminder_resolution[agent_ids]", :array_datatype_mismatch, expected_data_type: 'Integer' )])
+  end
+
+  def test_update_escalation_invalid_datatype_response_agent_id
+    @sla_policy = create_complete_sla_policy
+    @agent_1 = add_agent_to_account(@account, {name: Faker::Lorem.word ,active: 1, role: 1} )
+    @agent_2 = add_agent_to_account(@account, {name: Faker::Lorem.word ,active: 1, role: 1} )
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+      { "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "response": { escalation_time: 0, agent_ids:["test"] },
+        "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] },
+                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id] }
+                      }
+      })
     assert_response 400
     match_json([bad_request_error_pattern("response[agent_ids]", :array_datatype_mismatch, expected_data_type: 'Integer' )])
   end
 
-  def test_update_Escalation_invalid_datatype_resolution_agent_id
+  def test_update_escalation_invalid_datatype_resolution_agent_id
     @sla_policy = create_complete_sla_policy
     @agent_1 = add_agent_to_account(@account, {name: Faker::Lorem.word ,active: 1, role: 1} )
     @agent_2 = add_agent_to_account(@account, {name: Faker::Lorem.word ,active: 1, role: 1} )
-    put :update, construct_params({ id: @sla_policy.id }, "escalation":  { "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
-                                                                        "resolution": {"level_1": { escalation_time: 0, agent_ids:["test"]},
-                                                                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
-                                                                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
-                                                                      }) 
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+      { "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+        "resolution": { "level_1": { escalation_time: 0, agent_ids:["test"] },
+                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] },
+                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id] }
+                      }
+      })
     assert_response 400
     match_json([bad_request_error_pattern("resolution[level_1][agent_ids]", :array_datatype_mismatch, expected_data_type: 'Integer' )])
   end
 
-  def test_update_Escalation_with_2_resolution_sla_policy
+  def test_update_escalation_with_2_resolution_sla_policy
     @sla_policy = create_complete_sla_policy
     get_agents
-    put :update, construct_params({ id: @sla_policy.id }, "escalation":  { "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
-                                                                        "resolution": {"level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
-                                                                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]}}
-                                                                      }) 
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+      { "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+        "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_2.user_id] },
+                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] }
+                      }
+      })
     assert_response 200
     match_json(sla_policy_pattern(@sla_policy.reload))
   end
 
-  def test_update_Escalation_with_5_resolution_sla_policy
+  def test_update_escalation_with_5_resolution_sla_policy
     @sla_policy = create_complete_sla_policy
     get_agents
-    put :update, construct_params({ id: @sla_policy.id }, "escalation":  { "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
-                                                                        "resolution": {"level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
-                                                                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
-                                                                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]},
-                                                                        "level_4": { escalation_time: 28800, agent_ids:[@agent_2.user_id]},
-                                                                        "level_5": { escalation_time: 259200, agent_ids:[@agent_1.user_id]}}
-                                                                      }) 
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  
+      { "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+        "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+        "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_2.user_id] },
+                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id] },
+                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]},
+                        "level_4": { escalation_time: 28800, agent_ids:[@agent_2.user_id]},
+                        "level_5": { escalation_time: 259200, agent_ids:[@agent_1.user_id]}
+                      }
+      })
     assert_response 400
     match_json([bad_request_error_pattern('level_5', :invalid_field )])
   end
 
-# ********************************************************* Name Discraption and Active
+  def test_update_escalation_next_response_without_feature
+    @account.stubs(:next_response_sla_enabled?).returns(false)
+    @sla_policy = create_complete_sla_policy
+    get_agents
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_next_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "next_response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+    })
+    assert_response 400
+    match_json([bad_request_error_pattern('escalation_reminder_next_response', :require_feature_for_attribute, code: :inaccessible_field, feature: :next_response_sla, attribute: 'reminder_next_response'), bad_request_error_pattern('escalation_next_response', :require_feature_for_attribute, code: :inaccessible_field, feature: :next_response_sla, attribute: 'next_response')])
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+   end
+
+  def test_update_escalation_next_response_with_feature
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    @sla_policy = create_complete_sla_policy
+    get_agents
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_next_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "next_response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+    })
+    assert_response 200
+    match_json(sla_policy_pattern(@sla_policy.reload))
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_update_escalation_reminder_next_response_only
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    @sla_policy = create_complete_sla_policy
+    get_agents
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  { "reminder_next_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] } })
+    assert_response 200
+    match_json(sla_policy_pattern(@sla_policy.reload))
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_update_escalation_reminder_next_response_empty
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    @sla_policy = create_complete_sla_policy
+    get_agents
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  { "reminder_next_response": {} })
+    assert_response 200
+    match_json(sla_policy_pattern(@sla_policy.reload))
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_update_escalation_next_response_only
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    @sla_policy = create_complete_sla_policy
+    get_agents
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  { "next_response": { escalation_time: 0, agent_ids:[@agent_1.user_id] } })
+    assert_response 200
+    match_json(sla_policy_pattern(@sla_policy.reload))
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_update_escalation_next_response_empty
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    @sla_policy = create_complete_sla_policy
+    get_agents
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  { "next_response": {} })
+    assert_response 200
+    match_json(sla_policy_pattern(@sla_policy.reload))
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_update_escalation_reminder_next_response_without_escalation_time
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    @sla_policy = create_complete_sla_policy
+    get_agents
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_next_response": { agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "next_response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+    })
+    assert_response 400
+    match_json([bad_request_error_pattern("reminder_next_response[escalation_time]", :missing_field )])
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_update_escalation_next_response_without_escalation_time
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    @sla_policy = create_complete_sla_policy
+    get_agents
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_next_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "next_response": { agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+    })
+    assert_response 400
+    match_json([bad_request_error_pattern("next_response[escalation_time]", :missing_field )])
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_update_escalation_reminder_next_response_invalid_escalation_time
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    @sla_policy = create_complete_sla_policy
+    get_agents
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_next_response": { escalation_time: -600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "next_response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+    })
+    assert_response 400
+    match_json([bad_request_error_pattern("reminder_next_response[escalation_time]", 
+      :not_included, list: '-28800, -14400, -7200, -3600, -1800')])
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_update_escalation_next_response_invalid_escalation_time
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    @sla_policy = create_complete_sla_policy
+    get_agents
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_next_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "next_response": { escalation_time: 100, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+    })
+    assert_response 400
+    match_json([bad_request_error_pattern("next_response[escalation_time]", 
+      :not_included, list: '0, 1800, 3600, 7200, 14400, 28800, 43200, 86400, 172800, 259200, 604800, 1209600, 2592000')])
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_update_escalation_reminder_next_response_without_agent_ids
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    @sla_policy = create_complete_sla_policy
+    get_agents
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_next_response": { escalation_time: -3600 },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "next_response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+    })
+    assert_response 400
+    match_json([bad_request_error_pattern("reminder_next_response[agent_ids]", :missing_field )])
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_update_escalation_next_response_without_agent_ids
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    @sla_policy = create_complete_sla_policy
+    get_agents
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_next_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "next_response": { escalation_time: 0 },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+    })
+    assert_response 400
+    match_json([bad_request_error_pattern("next_response[agent_ids]", :missing_field )])
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_update_escalation_reminder_next_response_invalid_datatype_agent_id
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    @sla_policy = create_complete_sla_policy
+    get_agents
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_next_response": { escalation_time: -3600, agent_ids:["test"] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "next_response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+    })
+    assert_response 400
+    match_json([bad_request_error_pattern("reminder_next_response[agent_ids]", :array_datatype_mismatch, expected_data_type: 'Integer' )])
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_update_escalation_next_response_invalid_datatype_agent_id
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    @sla_policy = create_complete_sla_policy
+    get_agents
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_next_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "next_response": { escalation_time: 0, agent_ids:["test"] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+    })
+    assert_response 400
+    match_json([bad_request_error_pattern("next_response[agent_ids]", :array_datatype_mismatch, expected_data_type: 'Integer' )])
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_update_escalation_reminder_next_response_invalid_agent_id
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    @sla_policy = create_complete_sla_policy
+    get_agents
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_next_response": { escalation_time: -3600, agent_ids:[10001] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "next_response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+    })
+    assert_response 400
+    match_json([bad_request_error_pattern("reminder_next_response[agent_ids]", :invalid_list, list: '10001' )])
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_update_escalation_next_response_invalid_agent_id
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    @sla_policy = create_complete_sla_policy
+    get_agents
+    put :update, construct_params({ id: @sla_policy.id }, "escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_next_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "next_response": { escalation_time: 0, agent_ids:[10001] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+    })
+    assert_response 400
+    match_json([bad_request_error_pattern("next_response[agent_ids]", :invalid_list, list: '10001' )])
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+# ********************************************************* Name Description and Active
 
   def test_update_name_sla_policy
     @sla_policy = quick_create_sla_policy
@@ -749,7 +1471,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
 
 # ********************************************************* Company Validation for create
 
-  def test_create_sla_policy_with_comapany
+  def test_create_sla_policy_with_company
     params_hash = create_sla_params_hash_with_company
     post :create, construct_params(params_hash)
     assert_response 201
@@ -897,6 +1619,58 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
                                                 prepend_msg: :input_received, given_data_type: Integer)])
   end
 
+  # ********************************************************* Contact Segment Validation for create
+
+    def test_create_sla_policy_with_contact_segment
+      contact_segment = create_contact_segment
+      params_hash = { name: Faker::Lorem.word, applicable_to: { contact_segments: [contact_segment.id] }, sla_target:create_sla_target }
+      post :create, construct_params(params_hash)
+      assert_response 201
+      response = parse_response @response.body
+      match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
+      Helpdesk::SlaPolicy.first.delete
+    end
+
+    def test_create_with_invalid_contact_segment_ids
+      contact_segment = create_contact_segment
+      post :create, construct_params({ name: Faker::Lorem.word, applicable_to: { contact_segments: [10000, 1000001] }, sla_target: create_sla_target })
+      assert_response 400
+      match_json([bad_request_error_pattern('contact_segments', :invalid_list, list: '10000, 1000001')])
+    end
+
+    def test_create_with_invalid_contact_segment_ids_data_type
+      contact_segment = create_contact_segment
+      post :create, construct_params({ name: Faker::Lorem.word, applicable_to: { contact_segments: '1,2' }, sla_target: create_sla_target })
+      assert_response 400
+      match_json([bad_request_error_pattern('contact_segments', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String)])
+    end
+
+  # ********************************************************* Company Segment Validation for create
+
+    def test_create_sla_policy_with_company_segment
+      company_segment = create_company_segment
+      params_hash = { name: Faker::Lorem.word, applicable_to: { company_segments: [company_segment.id] }, sla_target: create_sla_target }
+      post :create, construct_params(params_hash)
+      assert_response 201
+      response = parse_response @response.body
+      match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
+      Helpdesk::SlaPolicy.first.delete
+    end
+
+    def test_create_with_invalid_company_segment_ids
+      company_segment = create_company_segment
+      post :create, construct_params({ name: Faker::Lorem.word, applicable_to: { company_segments: [10000, 1000001] }, sla_target: create_sla_target })
+      assert_response 400
+      match_json([bad_request_error_pattern('company_segments', :invalid_list, list: '10000, 1000001')])
+    end
+
+    def test_create_with_invalid_company_segment_ids_data_type
+      company_segment = create_company_segment
+      post :create, construct_params({ name: Faker::Lorem.word, applicable_to: { company_segments: '1,2' }, sla_target: create_sla_target })
+      assert_response 400
+      match_json([bad_request_error_pattern('company_segments', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String)])
+    end
+
 # ********************************************************* SLA Target for create
 
   def test_create_sla_target_with_3_sla_policy
@@ -984,7 +1758,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     Helpdesk::SlaPolicy.first.delete
   end
 
-  def test_update_lessthen_900_respond_within_sla_policy
+  def test_create_lessthen_900_respond_within_sla_policy
     params_hash = create_sla_params_hash_with_company_and_product
     sla_target = { sla_target:     { priority_4: { respond_within: 300,resolve_within: 900,business_hours: false,escalation_enabled: true},
       priority_3: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true},
@@ -997,7 +1771,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('sla_target[priority_4][respond_within]', "must be greater than or equal to 900" )])
   end 
 
-  def test_update_lessthen_900_resovle_within_sla_policy
+  def test_create_lessthen_900_resolve_within_sla_policy
     params_hash = create_sla_params_hash_with_company_and_product
     sla_target = { sla_target:     { priority_4: { respond_within: 900,resolve_within: 300,business_hours: false,escalation_enabled: true},
       priority_3: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true},
@@ -1009,9 +1783,95 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern('sla_target[priority_4][resolve_within]', "must be greater than or equal to 900" )])
   end 
+  def test_create_next_respond_within_without_feature
+    @account.stubs(:next_response_sla_enabled?).returns(false)
+    params_hash = create_sla_params_hash_with_company_and_product
+    sla_target = { sla_target: {
+      priority_4: { respond_within: 900, next_respond_within: 900, resolve_within: 900, business_hours: false, escalation_enabled: true },
+      priority_3: { respond_within: 1200, next_respond_within: 1200, resolve_within: 1200, business_hours: true, escalation_enabled: true },
+      priority_2: { respond_within: 1800, next_respond_within: 1800, resolve_within: 1800, business_hours: false, escalation_enabled: true },
+      priority_1: { respond_within: 3600, next_respond_within: 900, resolve_within: 900, business_hours: false, escalation_enabled: true }
+    }}
+    params_hash = params_hash.merge(sla_target)
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('sla_target[priority_4][next_respond_within]', :require_feature_for_attribute, code: :inaccessible_field, feature: :next_response_sla, attribute: 'next_respond_within'),
+    bad_request_error_pattern('sla_target[priority_3][next_respond_within]', :require_feature_for_attribute, code: :inaccessible_field, feature: :next_response_sla, attribute: 'next_respond_within'),
+    bad_request_error_pattern('sla_target[priority_2][next_respond_within]', :require_feature_for_attribute, code: :inaccessible_field, feature: :next_response_sla, attribute: 'next_respond_within'),
+    bad_request_error_pattern('sla_target[priority_1][next_respond_within]', :require_feature_for_attribute, code: :inaccessible_field, feature: :next_response_sla, attribute: 'next_respond_within')])
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_create_next_respond_within_with_feature
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    params_hash = create_sla_params_hash_with_company_and_product
+    sla_target = { sla_target: {
+      priority_4: { respond_within: 900, next_respond_within: 900, resolve_within: 900, business_hours: false, escalation_enabled: true },
+      priority_3: { respond_within: 1200, next_respond_within: 1200, resolve_within: 1200, business_hours: true, escalation_enabled: true },
+      priority_2: { respond_within: 1800, next_respond_within: 1800, resolve_within: 1800, business_hours: false, escalation_enabled: true },
+      priority_1: { respond_within: 3600, next_respond_within: 900, resolve_within: 900, business_hours: false, escalation_enabled: true }
+    }}
+    params_hash = params_hash.merge(sla_target)
+    post :create, construct_params(params_hash)
+    assert_response 201
+    sla_policy = parse_response @response.body
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
+    Helpdesk::SlaPolicy.first.delete
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_create_invalid_datatype_next_respond_within
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    params_hash = create_sla_params_hash_with_company_and_product
+    sla_target = { sla_target: {
+      priority_4: { respond_within: 900, next_respond_within: "test", resolve_within: 900, business_hours: false, escalation_enabled: true },
+      priority_3: { respond_within: 1200, next_respond_within: 1200, resolve_within: 1200, business_hours: true, escalation_enabled: true },
+      priority_2: { respond_within: 1800, next_respond_within: 1800, resolve_within: 1800, business_hours: false, escalation_enabled: true },
+      priority_1: { respond_within: 3600, next_respond_within: 900, resolve_within: 900, business_hours: false, escalation_enabled: true }
+    }}
+    params_hash = params_hash.merge(sla_target)
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('sla_target[priority_4][next_respond_within]', :datatype_mismatch, expected_data_type: Integer, 
+                                          prepend_msg: :input_received, given_data_type: String )])
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_create_lessthan_900_next_respond_within
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    params_hash = create_sla_params_hash_with_company_and_product
+    sla_target = { sla_target: {
+      priority_4: { respond_within: 900, next_respond_within: 600, resolve_within: 900, business_hours: false, escalation_enabled: true },
+      priority_3: { respond_within: 1200, next_respond_within: 1200, resolve_within: 1200, business_hours: true, escalation_enabled: true },
+      priority_2: { respond_within: 1800, next_respond_within: 1800, resolve_within: 1800, business_hours: false, escalation_enabled: true },
+      priority_1: { respond_within: 3600, next_respond_within: 900, resolve_within: 900, business_hours: false, escalation_enabled: true }
+    }}
+    params_hash = params_hash.merge(sla_target)
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('sla_target[priority_4][next_respond_within]', 'must be greater than or equal to 900')])
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_create_invalid_next_respond_within
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    params_hash = create_sla_params_hash_with_company_and_product
+    sla_target = { sla_target: {
+      priority_4: { respond_within: 900, next_respond_within: 901, resolve_within: 900, business_hours: false, escalation_enabled: true },
+      priority_3: { respond_within: 1200, next_respond_within: 1200, resolve_within: 1200, business_hours: true, escalation_enabled: true },
+      priority_2: { respond_within: 1800, next_respond_within: 1800, resolve_within: 1800, business_hours: false, escalation_enabled: true },
+      priority_1: { respond_within: 3600, next_respond_within: 900, resolve_within: 900, business_hours: false, escalation_enabled: true }
+    }}
+    params_hash = params_hash.merge(sla_target)
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('sla_target[priority_4][next_respond_within]', :Multiple_of_60)])
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
 # ********************************************************* Escalations for create
  
-  def test_create_Escalation_without_response_sla_policy
+  def test_create_escalation_with_resolution_only
     params_hash = create_sla_params_hash_with_company
     get_agents
     params_hash = params_hash.merge({"escalation":  { "resolution": {"level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
@@ -1025,7 +1885,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     Helpdesk::SlaPolicy.first.delete
   end
 
-  def test_create_Escalation_without_resolution_sla_policy 
+  def test_create_escalation_with_response_only
     params_hash = create_sla_params_hash_with_company
     get_agents
     params_hash = params_hash.merge({ "escalation":  { "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] } }})
@@ -1037,135 +1897,357 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     Helpdesk::SlaPolicy.first.delete
   end
 
-  def test_create_Escalation_without_response_escalation_time_sla_policy
+  def test_create_escalation_with_reminder_response_only
     params_hash = create_sla_params_hash_with_company
     get_agents
-    params_hash = params_hash.merge({"escalation":  { "response": { agent_ids:[@agent_1.user_id] },
-                                                      "resolution": {"level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
-                                                                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
-                                                                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
-                                                                  }})
+    params_hash = params_hash.merge({ "escalation":  { "reminder_response": { escalation_time:-3600, agent_ids:[@agent_1.user_id] } }})
+    post :create, construct_params(params_hash) 
+    assert_response 201
+    sla_policy = parse_response @response.body
+    assert_equal sla_policy.size,11
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
+    Helpdesk::SlaPolicy.first.delete
+  end
+
+  def test_create_escalation_with_reminder_resolution_only
+    params_hash = create_sla_params_hash_with_company
+    get_agents
+    params_hash = params_hash.merge({ "escalation":  { "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] } }})
+    post :create, construct_params(params_hash) 
+    assert_response 201
+    sla_policy = parse_response @response.body
+    assert_equal sla_policy.size,11
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
+    Helpdesk::SlaPolicy.first.delete
+  end
+
+  def test_create_escalation_without_reminder_response_escalation_time_sla_policy
+    params_hash = create_sla_params_hash_with_company
+    get_agents
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
+    post :create, construct_params(params_hash) 
+    assert_response 400
+    match_json([bad_request_error_pattern("reminder_response[escalation_time]", :missing_field )])
+  end
+
+  def test_create_escalation_without_reminder_resolution_escalation_time_sla_policy
+    params_hash = create_sla_params_hash_with_company
+    get_agents
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
+    post :create, construct_params(params_hash) 
+    assert_response 400
+    match_json([bad_request_error_pattern("reminder_resolution[escalation_time]", :missing_field )])
+  end
+
+  def test_create_escalation_without_response_escalation_time_sla_policy
+    params_hash = create_sla_params_hash_with_company
+    get_agents
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
     post :create, construct_params(params_hash) 
     assert_response 400
     match_json([bad_request_error_pattern("response[escalation_time]", :missing_field )])
   end
 
-  def test_create_Escalation_without_resolution_escalation_time_sla_policy
+  def test_create_escalation_without_resolution_escalation_time_sla_policy
     params_hash = create_sla_params_hash_with_company
     get_agents
-    params_hash = params_hash.merge({ "escalation":  { "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
-                                                                        "resolution": {"level_1": { agent_ids:[@agent_1.user_id]},
-                                                                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
-                                                                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
-                                                                      }})
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { agent_ids:[@agent_1.user_id]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
     post :create, construct_params(params_hash) 
     assert_response 400
     match_json([bad_request_error_pattern("resolution[level_1][escalation_time]", :missing_field )])
   end
 
-  def test_create_Escalation_invalid_response_escalation_time_sla_policy
+  def test_create_escalation_invalid_reminder_response_escalation_time_sla_policy
     params_hash = create_sla_params_hash_with_company
     get_agents
-    params_hash = params_hash.merge({"escalation":  { "response": { escalation_time: 780, agent_ids:[@agent_1.user_id] },
-                                                      "resolution": {"level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
-                                                                    "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
-                                                                    "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
-                                                                      }})
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
+    post :create, construct_params(params_hash) 
+    assert_response 400
+    match_json([bad_request_error_pattern("reminder_response[escalation_time]", 
+      :not_included, list: '-28800, -14400, -7200, -3600, -1800')])
+  end
+
+  def test_create_escalation_invalid_reminder_resolution_escalation_time_sla_policy
+    params_hash = create_sla_params_hash_with_company
+    get_agents
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
+    post :create, construct_params(params_hash) 
+    assert_response 400
+    match_json([bad_request_error_pattern("reminder_resolution[escalation_time]", 
+      :not_included, list: '-28800, -14400, -7200, -3600, -1800')])
+  end
+
+  def test_create_escalation_invalid_response_escalation_time_sla_policy
+    params_hash = create_sla_params_hash_with_company
+    get_agents
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 780, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
     post :create, construct_params(params_hash) 
     assert_response 400
     match_json([bad_request_error_pattern("response[escalation_time]", 
       :not_included, list: '0, 1800, 3600, 7200, 14400, 28800, 43200, 86400, 172800, 259200, 604800, 1209600, 2592000')])
   end
 
-  def test_create_Escalation_invalid_resolution_escalation_time_sla_policy
+  def test_create_escalation_invalid_resolution_escalation_time_sla_policy
     params_hash = create_sla_params_hash_with_company
     get_agents
-    params_hash = params_hash.merge({"escalation":  { "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
-                                                     "resolution": {"level_1": { escalation_time: 780, agent_ids:[@agent_1.user_id]},
-                                                                    "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
-                                                                    "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
-                                                                      }})
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 780, agent_ids:[@agent_1.user_id]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
     post :create, construct_params(params_hash) 
     assert_response 400
     match_json([bad_request_error_pattern("resolution[level_1][escalation_time]", 
       :not_included, list: '0, 1800, 3600, 7200, 14400, 28800, 43200, 86400, 172800, 259200, 604800, 1209600, 2592000' )])
   end
 
-  def test_create_Escalation_duplicate_resolution_escalation_time_sla_policy
+  def test_create_escalation_duplicate_resolution_escalation_time_sla_policy
     params_hash = create_sla_params_hash_with_company
     get_agents
-    params_hash = params_hash.merge({"escalation":  { "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
-                                                     "resolution": {"level_1": { escalation_time: 1800, agent_ids:[@agent_1.user_id]},
-                                                                    "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
-                                                                    "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
-                                                                      }})
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 1800, agent_ids:[@agent_1.user_id]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
     post :create, construct_params(params_hash)
     assert_response 400
     match_json([bad_request_error_pattern("resolution[escalation_time]", :duplicate_not_allowed, name: 'escalation time', list: '1800'),
                 bad_request_error_pattern("resolution[level_2][escalation_time]", :not_included, list: '3600, 7200, 14400, 28800, 43200, 86400, 172800, 259200, 604800, 1209600, 2592000')])
   end
 
-  def test_create_Escalation_invalid_response_Agent_id_sla_policy
+  def test_create_escalation_invalid_reminder_response_agent_id_sla_policy
     params_hash = create_sla_params_hash_with_company
     get_agents
-    params_hash = params_hash.merge({"escalation":  { "response": { escalation_time: 0, agent_ids:[8787] },
-                                                      "resolution": {"level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
-                                                                    "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
-                                                                    "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
-                                                                      }})
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[8787] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
+    post :create, construct_params(params_hash) 
+    assert_response 400
+    match_json([bad_request_error_pattern("reminder_response[agent_ids]", :invalid_list, list: '8787' )])
+  end
+
+  def test_create_escalation_invalid_reminder_resolution_agent_id_sla_policy
+    params_hash = create_sla_params_hash_with_company
+    get_agents
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[8787] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
+    post :create, construct_params(params_hash) 
+    assert_response 400
+    match_json([bad_request_error_pattern("reminder_resolution[agent_ids]", :invalid_list, list: '8787' )])
+  end
+
+  def test_create_escalation_invalid_response_agent_id_sla_policy
+    params_hash = create_sla_params_hash_with_company
+    get_agents
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[8787] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
     post :create, construct_params(params_hash) 
     assert_response 400
     match_json([bad_request_error_pattern("response[agent_ids]", :invalid_list, list: '8787' )])
   end
 
-  def test_create_Escalation_invalid_resolution_agent_id_sla_policy
+  def test_create_escalation_invalid_resolution_agent_id_sla_policy
     params_hash = create_sla_params_hash_with_company
     get_agents
-    params_hash = params_hash.merge({"escalation":  { "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
-                                                      "resolution": {"level_1": { escalation_time: 0, agent_ids:[8787]},
-                                                                    "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
-                                                                    "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
-                                                                      }})
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[8787]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
     post :create, construct_params(params_hash) 
     assert_response 400
     match_json([bad_request_error_pattern("resolution[level_1][agent_ids]", :invalid_list, list: '8787')])
   end
 
-  def test_create_Escalation_without_response_Agent_id_sla_policy
+  def test_create_escalation_without_reminder_response_agent_id_sla_policy
     params_hash = create_sla_params_hash_with_company
     get_agents
-    params_hash = params_hash.merge({"escalation":  { "response": { escalation_time: 0 },
-                                                      "resolution": {"level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
-                                                                    "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
-                                                                    "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
-                                                                      }})
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: -3600 },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
+    post :create, construct_params(params_hash) 
+    sla_policy = parse_response @response.body
+    assert_response 400
+    match_json([bad_request_error_pattern("reminder_response[agent_ids]", :missing_field )])
+  end
+
+  def test_create_escalation_without_reminder_resolution_agent_id_sla_policy
+    params_hash = create_sla_params_hash_with_company
+    get_agents
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600 },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
+    post :create, construct_params(params_hash) 
+    sla_policy = parse_response @response.body
+    assert_response 400
+    match_json([bad_request_error_pattern("reminder_resolution[agent_ids]", :missing_field )])
+  end
+
+  def test_create_escalation_without_response_agent_id_sla_policy
+    params_hash = create_sla_params_hash_with_company
+    get_agents
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0 },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
     post :create, construct_params(params_hash) 
     sla_policy = parse_response @response.body
     assert_response 400
     match_json([bad_request_error_pattern("response[agent_ids]", :missing_field )])
   end
 
-  def test_create_Escalation_without_resolution_agent_id_sla_policy
+  def test_create_escalation_without_resolution_agent_id_sla_policy
     params_hash = create_sla_params_hash_with_company
     get_agents
-    params_hash = params_hash.merge({"escalation":  { "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
-                                                      "resolution": {"level_1": { escalation_time: 0},
-                                                                    "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
-                                                                    "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
-                                                                      }})
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0 },
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
     post :create, construct_params(params_hash) 
     sla_policy = parse_response @response.body
     assert_response 400
     match_json([bad_request_error_pattern("resolution[level_1][agent_ids]", :missing_field )])
   end
 
-  def test_create_Escalation_with_2_resolution_sla_policy
+  def test_create_escalation_with_2_resolution_sla_policy
     params_hash = create_sla_params_hash_with_company
     get_agents
-    params_hash = params_hash.merge({"escalation":  { "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
-                                                      "resolution": {"level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
-                                                                    "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]}}
-                                                                      }})
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
     post :create, construct_params(params_hash) 
     sla_policy = parse_response @response.body
     assert_response 201
@@ -1174,16 +2256,21 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     Helpdesk::SlaPolicy.first.delete
   end
 
-  def test_create_Escalation_with_5_resolution_sla_policy
+  def test_create_escalation_with_5_resolution_sla_policy
     params_hash = create_sla_params_hash_with_company
     get_agents
-    params_hash = params_hash.merge({"escalation":  { "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
-                                                      "resolution": {"level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
-                                                                    "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
-                                                                    "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]},
-                                                                    "level_4": { escalation_time: 28800, agent_ids:[@agent_2.user_id]},
-                                                                    "level_5": { escalation_time: 259200, agent_ids:[@agent_1.user_id]}}
-                                                                      }})
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]},
+                      "level_4": { escalation_time: 28800, agent_ids:[@agent_2.user_id]},
+                      "level_5": { escalation_time: 43200, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
     post :create, construct_params(params_hash) 
     assert_response 400
     match_json([bad_request_error_pattern('level_5', :invalid_field )])
@@ -1195,9 +2282,16 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
   def test_create_sla_policy_with_escalations
     get_agents
     params_hash = create_sla_params_hash_with_company
-    params_hash = params_hash.merge( {"escalation":  { "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
-                                                                        "resolution": {"level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},"level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},"level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
-                                                                      }} )
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
     post :create, construct_params(params_hash)
     assert_response 201
     sla_policy = parse_response @response.body
@@ -1206,7 +2300,333 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     Helpdesk::SlaPolicy.first.delete
   end
 
-# ********************************************************* Name Discraption and Active create
+  def test_create_escalation_next_response_without_feature
+    @account.stubs(:next_response_sla_enabled?).returns(false)
+    get_agents
+    params_hash = create_sla_params_hash_with_company
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_next_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "next_response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('escalation_reminder_next_response', :require_feature_for_attribute, code: :inaccessible_field, feature: :next_response_sla, attribute: 'reminder_next_response'), 
+    bad_request_error_pattern('escalation_next_response', :require_feature_for_attribute, code: :inaccessible_field, feature: :next_response_sla, attribute: 'next_response')])
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_create_escalation_next_response_with_feature
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    get_agents
+    params_hash = create_sla_params_hash_with_company
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_next_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "next_response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
+    post :create, construct_params(params_hash)
+    assert_response 201
+    sla_policy = parse_response @response.body
+    assert_equal sla_policy.size, 11
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
+    Helpdesk::SlaPolicy.first.delete
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_create_escalation_reminder_next_response_only
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    get_agents
+    params_hash = create_sla_params_hash_with_company
+    params_hash = params_hash.merge({ "escalation": { "reminder_next_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] } }})
+    post :create, construct_params(params_hash)
+    assert_response 201
+    sla_policy = parse_response @response.body
+    assert_equal sla_policy.size, 11
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
+    Helpdesk::SlaPolicy.first.delete
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_create_escalation_next_response_only
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    get_agents
+    params_hash = create_sla_params_hash_with_company
+    params_hash = params_hash.merge({ "escalation": { "next_response": { escalation_time: 0, agent_ids:[@agent_1.user_id] } }})
+    post :create, construct_params(params_hash)
+    assert_response 201
+    sla_policy = parse_response @response.body
+    assert_equal sla_policy.size, 11
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
+    Helpdesk::SlaPolicy.first.delete
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_create_escalation_reminder_next_response_empty
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    get_agents
+    params_hash = create_sla_params_hash_with_company
+    params_hash = params_hash.merge({ "escalation": { "reminder_next_response": {} } })
+    post :create, construct_params(params_hash)
+    assert_response 201
+    sla_policy = parse_response @response.body
+    assert_equal sla_policy.size, 11
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
+    Helpdesk::SlaPolicy.first.delete
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_create_escalation_next_response_empty
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    get_agents
+    params_hash = create_sla_params_hash_with_company
+    params_hash = params_hash.merge({ "escalation": { "next_response": {} } })
+    post :create, construct_params(params_hash)
+    assert_response 201
+    sla_policy = parse_response @response.body
+    assert_equal sla_policy.size, 11
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
+    Helpdesk::SlaPolicy.first.delete
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_create_escalation_reminder_next_response_without_escalation_time
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    get_agents
+    params_hash = create_sla_params_hash_with_company
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_next_response": { agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "next_response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern("reminder_next_response[escalation_time]", :missing_field )])
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_create_escalation_next_response_without_escalation_time
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    get_agents
+    params_hash = create_sla_params_hash_with_company
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_next_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "next_response": { agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern("next_response[escalation_time]", :missing_field )])
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_create_escalation_reminder_next_response_invalid_escalation_time
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    get_agents
+    params_hash = create_sla_params_hash_with_company
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_next_response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "next_response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern("reminder_next_response[escalation_time]", 
+      :not_included, list: '-28800, -14400, -7200, -3600, -1800')])
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_create_escalation_next_response_invalid_escalation_time
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    get_agents
+    params_hash = create_sla_params_hash_with_company
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_next_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "next_response": { escalation_time: 100, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern("next_response[escalation_time]", 
+      :not_included, list: '0, 1800, 3600, 7200, 14400, 28800, 43200, 86400, 172800, 259200, 604800, 1209600, 2592000')])
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_update_escalation_reminder_next_response_without_agent_ids
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    get_agents
+    params_hash = create_sla_params_hash_with_company
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_next_response": { escalation_time: -3600 },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "next_response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern("reminder_next_response[agent_ids]", :missing_field )])
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_update_escalation_next_response_without_agent_ids
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    get_agents
+    params_hash = create_sla_params_hash_with_company
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_next_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "next_response": { escalation_time: 0 },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern("next_response[agent_ids]", :missing_field )])
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_update_escalation_reminder_next_response_invalid_datatype_agent_id
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    get_agents
+    params_hash = create_sla_params_hash_with_company
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_next_response": { escalation_time: -3600, agent_ids:["test"] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "next_response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern("reminder_next_response[agent_ids]", :array_datatype_mismatch, expected_data_type: 'Integer' )])
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_update_escalation_next_response_invalid_datatype_agent_id
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    get_agents
+    params_hash = create_sla_params_hash_with_company
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_next_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "next_response": { escalation_time: 0, agent_ids:["test"] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern("next_response[agent_ids]", :array_datatype_mismatch, expected_data_type: 'Integer' )])
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_create_escalation_reminder_next_response_invalid_agent_id
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    get_agents
+    params_hash = create_sla_params_hash_with_company
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_next_response": { escalation_time: -3600, agent_ids:[10001] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "next_response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern("reminder_next_response[agent_ids]", :invalid_list, list: '10001' )])
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_create_escalation_next_response_invalid_agent_id
+    @account.stubs(:next_response_sla_enabled?).returns(true)
+    get_agents
+    params_hash = create_sla_params_hash_with_company
+    params_hash = params_hash.merge( {"escalation":  {
+      "reminder_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_next_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] },
+      "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+      "next_response": { escalation_time: 0, agent_ids:[10001] },
+      "resolution": { "level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}
+                    }
+      }
+    })
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern("next_response[agent_ids]", :invalid_list, list: '10001' )])
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+# ********************************************************* Name Description and Active create
 
 
   def test_create_with_invalid_name_sla_policy

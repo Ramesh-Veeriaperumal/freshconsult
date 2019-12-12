@@ -1,6 +1,6 @@
 class AgentValidation < ApiValidation
   attr_accessor :name, :phone, :mobile, :email, :time_zone, :language, :occasional, :signature, :ticket_scope,
-                :role_ids, :group_ids, :job_title, :id, :avatar_id, :search_settings, :agent_type, :focus_mode, :shortcuts_enabled
+                :role_ids, :group_ids, :job_title, :id, :avatar_id, :search_settings, :agent_type, :focus_mode, :shortcuts_enabled, :skill_ids
 
   CHECK_PARAMS_SET_FIELDS = %w[time_zone language occasional role_ids ticket_scope search_settings].freeze
 
@@ -32,6 +32,8 @@ class AgentValidation < ApiValidation
   validate :check_ticket_search_settings, if: -> { @search_settings.present? }
 
   validates :avatar_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param }, if: -> { private_api? }
+  validates :skill_ids, data_type: { rules: Array }, array: { custom_numericality: { only_integer: true, greater_than: 0 } }
+  validate :privilege_check_for_skills, if: -> { Account.current.skill_based_round_robin_enabled? && @skill_ids.present? }
 
   def initialize(request_params, item, allow_string_param = false)
     if item
@@ -91,6 +93,10 @@ class AgentValidation < ApiValidation
         errors[:agent_type] = :maximum_field_agents_reached
       end
     end
+  end
+
+  def privilege_check_for_skills
+    errors[:skill_ids] = :inaccessible_field unless User.current.privilege?(:manage_skills)
   end
 
   def check_ticket_search_settings

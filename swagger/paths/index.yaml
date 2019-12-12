@@ -234,7 +234,7 @@
 
 # Agents
 /agents:
-  $ref: ./agents/list.yaml
+  $ref: ./agents/list_and_create.yaml
 /agents/{id}:
   $ref: ./agents/crud.yaml
 /agents/{id}/achievements:
@@ -619,9 +619,9 @@
 
 # Admin SLA Policy
 /admin/sla_policies:
-  $ref: ./admin_sla_policy/list_and_create.yaml
+  $ref: ./admin/sla_policies/list_and_create.yaml
 /admin/sla_policies/{id}:
-  $ref: ./admin_sla_policy/crud.yaml
+  $ref: ./admin/sla_policies/crud.yaml
 
 # Custom Translations
 /admin/custom_translations/{id}/upload:

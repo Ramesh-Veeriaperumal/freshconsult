@@ -28,4 +28,18 @@ module Email::Mailbox::Constants
   AUTH_ERROR = 401
 
   TEST_MAIL_VERIFY_DURATION = 30.minutes
+
+  # TODO: should this be part of stack setting
+  GMAIL_DEFAULT_REQUESTER = 'forwarding-noreply@google.com'.freeze
+  CONFIRMATION_CODE_REGEX = /\(#(\d+)\)/.freeze
+
+  EMAIL_PROVIDER_TIMEOUT = 10.seconds
+  EMAIL_SERVICE_PROVIDER_MAPPING = {
+    'hotmail' => 'outlook',
+    'googlemail' => 'google',
+    'yahoodns' => 'yahoo'
+  }.freeze
+
+  EMAIL_SERVICE_PROVIDER_OTHER = 'other'.freeze
+  EMAIL_SERVICE_PROVIDER_GMAIL = 'google'.freeze
 end

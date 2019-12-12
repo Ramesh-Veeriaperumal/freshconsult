@@ -4895,6 +4895,39 @@
             }
           }
         }
+      },
+      "post": {
+        "tags": [
+          "agent"
+        ],
+        "summary": "Create an agent",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/agent_create_input"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/agent"
+            }
+          },
+          "400": {
+            "description": "Bad request error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
       }
     },
     "/agents/{id}": {
@@ -4965,39 +4998,6 @@
           },
           "404": {
             "description": "Resource not found"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "agent"
-        ],
-        "summary": "Create an agent",
-        "parameters": [
-          {
-            "name": "data",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/agent_create_input"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/agent"
-            }
-          },
-          "400": {
-            "description": "Bad request error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
-          },
-          "403": {
-            "description": "Access denied"
           }
         }
       }
@@ -21999,6 +21999,10 @@
           "stats": {
             "$ref": "#/definitions/ticket_stats"
           },
+          "priority": {
+            "description": "Ticket's priority",
+            "type": "integer"
+          },
           "created_at": {
             "description": "Ticket's created time",
             "type": "string",
@@ -27098,13 +27102,37 @@
                   "Feature Request"
                 ]
               }
+            },
+            "contact_segments": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "company_segments": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
             }
           }
         },
         "escalation": {
           "type": "object",
           "properties": {
+            "reminder_response": {
+              "$ref": "#/definitions/sla_escalation_level"
+            },
+            "reminder_next_response": {
+              "$ref": "#/definitions/sla_escalation_level"
+            },
+            "reminder_resolution": {
+              "$ref": "#/definitions/sla_escalation_level"
+            },
             "response": {
+              "$ref": "#/definitions/sla_escalation_level"
+            },
+            "next_response": {
               "$ref": "#/definitions/sla_escalation_level"
             },
             "resolution": {
@@ -27123,6 +27151,9 @@
       "type": "object",
       "properties": {
         "respond_within": {
+          "type": "integer"
+        },
+        "next_respond_within": {
           "type": "integer"
         },
         "resolve_within": {
@@ -27268,7 +27299,7 @@
       "required": [
         "name",
         "active",
-        "sla_target",
+        "sla_targets",
         "conditions"
       ]
     },
@@ -27311,7 +27342,7 @@
         "priority",
         "first_response_time",
         "resolution_time",
-        "business_hours",
+        "operational_hours",
         "escalation_enabled"
       ]
     },

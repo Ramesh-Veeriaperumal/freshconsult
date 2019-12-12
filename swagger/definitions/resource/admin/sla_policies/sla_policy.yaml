@@ -41,5 +41,5 @@ properties:
 required:
   - name
   - active
-  - sla_target
+  - sla_targets
   - conditions

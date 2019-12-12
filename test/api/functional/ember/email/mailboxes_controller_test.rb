@@ -24,18 +24,19 @@ module Ember
       User.any_instance.stubs(:has_privilege?).returns(true)
     end
 
-    def create_forwarding_test_ticket(email_config)
+    def create_forwarding_test_ticket(email_config, requester_email)
       email = new_email(
         email_config: email_config.to_email,
-        reply: Helpdesk::EMAIL[:default_requester_email],
-        from: Helpdesk::EMAIL[:default_requester_email],
+        reply: requester_email,
+        from: requester_email,
         include_to: email_config.to_email
       )
+      email[:subject] = "(#774985325) Gmail Forwarding Confirmation - Receive Mail from #{email_config.to_email}"
       Account.stubs(:current).returns(@account)
       ticket = Helpdesk::ProcessEmail.new(email).perform
       requester_id = @account.tickets.find(ticket['ticket_id']).requester.id
       user = User.find(requester_id)
-      user.email = Helpdesk::EMAIL[:default_requester_email]
+      user.email = requester_email
       user.save!
     ensure
       Account.unstub(:current)
@@ -111,11 +112,54 @@ module Ember
       )
       mailbox.active = false
       mailbox.save!
-      create_forwarding_test_ticket(mailbox)
+      create_forwarding_test_ticket(mailbox, Helpdesk::EMAIL[:default_requester_email])
       id = mailbox.id
       params = { version: 'private', id: id }
       get :verify_forward_email, construct_params(params)
       assert_response 200
+    end
+
+    def test_active_config_email_provider
+      mailbox = create_email_config(
+        support_email: 'support251@localhost.freshpo.com',
+        name: 'testname'
+      )
+      id = mailbox.id
+      params = { version: 'private', id: id }
+      post :email_provider, construct_params(params)
+      assert_response 200
+    end
+
+    def test_verify_confirmation_code_success
+      domain = @account.primary_email_config.to_email.split('@')[1]
+      mailbox = create_email_config(
+        support_email: "test12@#{domain}",
+        forward_email: "test12@#{domain}",
+        name: 'testname'
+      )
+      mailbox.active = false
+      mailbox.save!
+      create_forwarding_test_ticket(mailbox, 'forwarding-noreply@google.com')
+      id = mailbox.id
+      params = { version: 'private', id: id }
+      get :email_forward_verification_code, construct_params(params)
+      assert_response 200
+    end
+
+    def test_verify_confirmation_code_failure
+      domain = @account.primary_email_config.to_email.split('@')[1]
+      mailbox = create_email_config(
+        support_email: "test13@#{domain}",
+        forward_email: "test13@#{domain}",
+        name: 'testname'
+      )
+      mailbox.active = false
+      mailbox.save!
+      id = mailbox.id
+      params = { version: 'private', id: id }
+      get :email_forward_verification_code, construct_params(params)
+      assert_response 404
+      match_json(request_error_pattern(:forwarding_ticket_not_found))
     end
   end
 end

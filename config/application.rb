@@ -236,6 +236,10 @@ module Helpkit
         message_key = env['omniauth.error.type']
         origin = env['omniauth.origin']
         new_path = "#{env['SCRIPT_NAME']}#{OmniAuth.config.path_prefix}/failure?message=#{message_key}"
+        if env['omniauth.error.strategy'].name == 'gmail'
+          new_path = "#{env['SCRIPT_NAME']}#{OmniAuth.config.path_prefix}/gmail/failure?message=#{message_key}"
+        end
+
         unless origin.blank?
           origin = origin.split('?').last
           new_path += "&origin=#{URI.escape(origin)}"

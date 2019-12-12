@@ -379,6 +379,7 @@ class TicketDecorator < ApiDecorator
       id: display_id,
       responder_id: responder_id,
       source: source,
+      priority: priority,
       created_at: created_at.try(:utc),
       subject: subject,
       requester_id: requester_id,

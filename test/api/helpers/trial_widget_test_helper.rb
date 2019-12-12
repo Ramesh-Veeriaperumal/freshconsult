@@ -7,7 +7,8 @@ module TrialWidgetTestHelper
 
   def new_trial_widget_index_pattern
     {
-      tasks: Account.current.setup_keys.map { |setup_key| setup_key_info(setup_key) }
+      tasks: Account.current.setup_keys.map { |setup_key| setup_key_info(setup_key) },
+      goals: Account.current.account_additional_settings_from_cache.additional_settings[:onboarding_goals]
     }
   end
 
