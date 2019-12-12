@@ -11,17 +11,21 @@ staging:
 test:
   <<: *common
 production:
-  poduseast1: []
+  poduseast1:
+    - :support_bot
   podeucentral1:
     - :session_replay
-    - :freshconnect
     - :omni_channel_routing
     - :lbrr_by_omniroute
   podapsoutheast2:
     - :freshconnect
+    - :collaboration
     - :omni_channel_routing
     - :lbrr_by_omniroute
   podapsouth1:
+    - :autofaq
+    - :botflow
     - :freshconnect
+    - :collaboration
     - :omni_channel_routing
     - :lbrr_by_omniroute

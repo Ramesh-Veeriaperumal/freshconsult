@@ -1,0 +1,9 @@
+<% if node[:ymls][:facebook_gateway].present? %>
+<%= node[:opsworks][:environment]%>:
+  jwt_secret: <%= node[:ymls][:facebook_gateway][:jwt_secret] %>
+  jwt_default_expiry: <%= node[:ymls][:facebook_gateway][:jwt_default_expiry] %>
+  service_url: <%= node[:ymls][:facebook_gateway][:service_url] %>
+  route: <%= node[:ymls][:facebook_gateway][:route] %>
+  request_owner: <%= node[:ymls][:facebook_gateway][:request_owner] %>
+  max_page_limit: <%= node[:ymls][:facebook_gateway][:max_page_limit] %>
+<% end %>

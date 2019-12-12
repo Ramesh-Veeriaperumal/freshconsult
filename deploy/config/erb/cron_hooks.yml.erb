@@ -1,0 +1,4 @@
+<%= node[:opsworks][:environment] %>:
+  webhook_domain: <%= node[:ymls][:cron_webhook][:domain] %>
+  webhook_subdomain: <%= node[:ymls][:cron_webhook][:sub_domain] %>
+  auth_key: <%= node[:ymls][:cron_webhook][:auth_key] %>

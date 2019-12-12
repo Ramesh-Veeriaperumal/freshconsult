@@ -13,7 +13,12 @@
   ops_alert:
     call:
       from: <%= node[:ymls][:freshfone][:ops_alert_from] %>
-      to: ["+919945380200", "+917373157814"]
+      to: ['+919597517592', '+918500353698', '+917373157814']
     mail:
-      from: "freshfone@freshdesk.com"
-      to: ["freshfone-ops@freshdesk.com"]  
+      from: "freshfone@freshworks.com"
+      <%if node[:opsworks][:environment] == 'production' %>
+      to: ['support@freshcallerassistant.freshdesk.com']
+      <%else %> 
+      to: ['freshcaller-staging@freshcallerassistant.freshdesk.com']
+      <%end%>
+        

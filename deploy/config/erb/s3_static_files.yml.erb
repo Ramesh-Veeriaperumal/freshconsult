@@ -1,3 +1,6 @@
 <%= node[:opsworks][:environment]%>:
   access_key_id: <%= node[:opsworks_access_keys][:access_key_id]%>
   secret_access_key: <%= node[:opsworks_access_keys][:secret_access_key] %>
+  <% if @settings[:req_shadowing].present? && @settings[:req_shadowing][:ssl_ca_path].present? %>
+  ssl_ca_bundle: <%= @settings[:req_shadowing][:ssl_ca_path] %>
+  <% end %>

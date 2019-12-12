@@ -1,0 +1,7 @@
+check process resque_scheduler_<%= @app_name %>
+  with pidfile /data/<%= @app_name %>/shared/pids/resque_scheduler.pid
+  start program = "/usr/bin/resque-scheduler <%= @app_name %> start <%= @rails_env %>" with timeout 120 seconds
+  stop program = "/usr/bin/resque-scheduler <%= @app_name %> stop <%= @rails_env %>" with timeout 120 seconds # on purpose
+  if totalmem is greater than 1024 MB for 2 cycles then restart # eating up memory?
+  group resque_scheduler_<%= @app_name %>
+  group <%= @app_name %>_resque

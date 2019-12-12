@@ -1,0 +1,10 @@
+<% @workers.times do |count| %>
+# shoryuken worker <%= count %>
+check process shoryuken_<%= @app_name %>_<%= count %>
+  with pidfile /data/<%= @app_name %>/shared/pids/shoryuken_<%= count %>.pid
+  start program = "/bin/sh -c 'cd /data/helpkit/current; /usr/bin/shoryuken_wrapper <%= @app_name %> start <%= @environment %> <%= count %> '" with timeout 90 seconds
+  stop program = "/bin/env /usr/bin/shoryuken_wrapper <%= @app_name %> term <%= @environment %> <%= count %>" with timeout 90 seconds
+  if totalmem is greater than <%= @memory_limit %> MB for 3 cycles then restart 
+  group <%= @app_name %>_shoryuken
+  mode manual
+<% end %>

@@ -3,6 +3,9 @@ common: &common
   access_key_id: <%= node[:ymls][:lambda_exchange_keys][:access_key_id] %>
   secret_access_key: <%= node[:ymls][:lambda_exchange_keys][:secret_access_key] %>
   region: <%= region %>
+  <% if @settings[:req_shadowing].present? && @settings[:req_shadowing][:ssl_ca_path].present? %>
+  ssl_ca_bundle: <%= @settings[:req_shadowing][:ssl_ca_path] %>
+  <% end %>
   resources: ['tickets', 'notes', 'accounts', 'archive_tickets', 'users', 'companies']
 
 

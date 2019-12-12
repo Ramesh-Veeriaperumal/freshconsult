@@ -12,6 +12,7 @@ class Node < Hash
     self[:opsworks][:instance] = {}
     self[:opsworks][:instance][:layers] = [ @options[:layer] ]
     self[:opsworks][:instance][:hostname] = @options[:hostname]
+    self[:opsworks][:instance][:private_ip] = @options[:private_ip]
     self[:opsworks][:account_id] = @settings[:opsworks][:account_id]
     self[:opsworks][:stack] = { :name => @options[:stackname] }
 
@@ -33,6 +34,8 @@ class Node < Hash
     self[:newrelic] = @settings[:newrelic]
 
     self[:docker] = @settings[:docker]
+
+    self[:proxysql] = @settings[:proxysql]
 
     self[:cpu] = {
       :total => self.get_cpu_count()
@@ -72,16 +75,20 @@ class Node < Hash
       :bg => {
         :prefix => "fc-bg"
       },
+      :utility => {
+        :prefix =>  "fc-bg-utility"
+      },
       :sidekiq => {
         :prefix =>  "fc-bg-sidekiq",
         :archive => { :layer => "fc-bg-sidekiq-archive" }
       },
       :api => {
         :prefix => "fc-app-api",
-        :public => { :prefix => "fc-app-api-public" }
+        :public => { :prefix => "fc-app-api-public" },
+        :channel => { :prefix => "fc-app-api-channel" }
       },
       :resque => {
-        :prefix =>  "fc-bg-rescue"
+        :prefix =>  "resque"
       },
       :shoryuken => {
         :layer =>  "fc-bg-shoryuken"
@@ -96,8 +103,34 @@ class Node < Hash
   def get_cpu_count
     count = nil
 
-    # Handle dockerized environment correctly
-    if File.readable?("/sys/fs/cgroup/cpuset/cpuset.cpus")
+    # Handle cpu count properly. We need to support the following
+    # environments
+    #
+    # 1. K8s environment
+    # 2. Dockerized environement without k8s
+    # 3. Non-dockerized / standalone environment
+    #
+    # For 1: We will look for POD_CPU_REQUEST env value. Note that
+    #        "/sys/fs/cgroup/cpuset/cpuset.cpus" cannot be used in k8s,
+    #        since all host CPUs will be exposed to each container. k8s
+    #        relies on "cpu quota" for limiting CPU usage.
+    #
+    #        For k8s alone, we will return 1.5 times of this value, we will
+    #        overcommit for better utilization
+    #
+    # For 2: We will read from "/sys/fs/cgroup/cpuset/cpuset.cpus"
+    #
+    # For 3: We will read from "/proc/cpuinfo"
+    #
+    if ! ENV["POD_CPU_REQUEST"].nil?
+      available = ENV["POD_CPU_REQUEST"].to_f
+      if available < 1.0
+        available = 1
+      end
+
+      count = (available * 1.5).ceil
+    elsif File.readable?("/sys/fs/cgroup/cpuset/cpuset.cpus")
+      # Handle dockerized environment correctly
       count = 0
       cpuset = IO.read("/sys/fs/cgroup/cpuset/cpuset.cpus").strip()
       cpuset.split(",").each { |g|
@@ -126,6 +159,11 @@ class OpsWorks
   def initialize(node, options)
     @node = node
     @options = options
+  end
+
+  def migration_layer?()
+    layers = @node[:opsworks][:instance][:layers]
+    layers.any? { |layer| layer.include?("db-migration") }
   end
 
   def app_layer?()
@@ -181,32 +219,38 @@ class OpsWorks
   def sidekiq_archive_layer?()
     layers = Array::new()
     layers = @node[:opsworks][:instance][:layers]
-    layers.any? {|layer| layer.eql?(@node[:falcon][:sidekiq][:archive][:layer])}
+    layers.any? {|layer| layer.include?(@node[:falcon][:sidekiq][:archive][:layer])}
+  end
+
+  def maintenance_redis_enabled?()
+    is_buffer_shell = get_shell().eql?("buffer")
+    maintenance_redis_enabled = @node[:ymls][:sidekiq][:maintenance_host].present? && @node[:ymls][:sidekiq][:maintenance_port].present? && @node[:ymls][:sidekiq][:maintenance_password].present?
+    return is_buffer_shell && maintenance_redis_enabled
   end
 
   def shoryuken_layer?()
     layers = Array::new()
     layers = @node[:opsworks][:instance][:layers]
-    layers.any? {|layer| layer.eql?(@node[:helpkit][:shoryuken][:layer])}
+    layers.any? {|layer| layer.include?(@node[:helpkit][:shoryuken][:layer])}
   end
 
   def fc_shoryuken_layer?()
     layers = Array::new()
     layers = @node[:opsworks][:instance][:layers]
-    layers.any? {|layer| layer.eql?(@node[:falcon][:shoryuken][:layer])}
+    layers.any? {|layer| layer.include?(@node[:falcon][:shoryuken][:layer])}
   end
 
   # Checks for exact name
   def resque_layer?()
     layers = Array::new()
     layers = @node[:opsworks][:instance][:layers]
-    layers.any? {|layer| layer.eql?(@node[:falcon][:resque][:prefix])}
+    layers.any? {|layer| layer.include?(@node[:falcon][:resque][:prefix])}
   end
 
   def utility_layer?()
     layers = Array::new()
     layers = @node[:opsworks][:instance][:layers]
-    layers.any? {|layer| layer.eql?(@node[:helpkit][:utility][:prefix])}
+    layers.any? {|layer| layer.include?(@node[:helpkit][:utility][:prefix])}
   end
 
   def fc_api_layer?()
@@ -219,6 +263,12 @@ class OpsWorks
     layers = Array::new()
     layers = @node[:opsworks][:instance][:layers]
     layers.any? {|layer| layer.include?(@node[:falcon][:api][:public][:prefix])}
+  end
+
+  def fc_api_channel_layer?()
+    layers = Array::new()
+    layers = @node[:opsworks][:instance][:layers]
+    layers.any? {|layer| layer.include?(@node[:falcon][:api][:channel][:prefix])}
   end
 
   def fc_frontend?()
@@ -262,7 +312,11 @@ class OpsWorks
 
   def get_shell()
     stack = @node[:opsworks][:stack][:name]
-    stack.split("-")[-2]
+    if stack.end_with? "services"
+      "services"
+    else
+      stack.split("-")[-2]
+    end
   end
 
   def get_color()
@@ -277,8 +331,8 @@ class OpsWorks
 
   def get_pool_size()
     layer_name = @options[:layer]
-    if @node[:config_gen][:pool_size][:dedicated] && @node[:config_gen][:pool_size][:dedicated][layer_name]
-      concurrency = @node[:config_gen][:pool_size][:dedicated][layer_name]
+    if @node[:config_gen][:pool_size][:dedicated] && @node[:config_gen][:pool_size][:dedicated][layer_name.to_sym]
+      concurrency = @node[:config_gen][:pool_size][:dedicated][layer_name.to_sym]
 
     elsif @node[:config_gen][:pool_size][:default]
       if layer_name.include? "sidekiq"

@@ -5,8 +5,9 @@ defaults: &defaults
   :concurrency: <%= @concurrency %>
   <% if node[:opsworks][:instance][:hostname].include?("sidekiq-select-all-") %>
   :redis_pool_size: <%= @redis_pool_size %>
+  <% else %>
+  :redis_pool_size: <%= @concurrency + 2 %>
   <% end %>
-  :require: ./config/environment.rb
   :logfile: <%= @logfile%>
   :pidfile: <%= @pidfile %>
   :timeout: 30

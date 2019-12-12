@@ -30,10 +30,9 @@ common: &default_settings
   # "All UI" then specify a semicolon separated list of up to three
   # distinct names.  If you comment this out, it defaults to the 
   # capitalized RAILS_ENV (i.e., Production, Staging, etc)
-  <% if node[:docker][:enable] %>
-  app_name: docker-staging;
-  <% elsif @color_code %>
-  app_name: <%= @gb_collector %> <%= @current_pod%><%= @suffix%> ; <%= "#{@current_pod}-#{@color_code}" %>; 
+
+  <% if @color_code %>
+  app_name: <%= @gb_collector %> <%= @current_pod%><%= @suffix%> ; <%= "#{@current_pod}-#{@shell}-#{@color_code}" %>; 
   <% else %>
   app_name: <%= @gb_collector %> <%= @current_pod %><%= @suffix %> ;
   <% end %>
@@ -61,6 +60,11 @@ common: &default_settings
   # so it should not impact response times.
 
   ssl: <%= @ssl_enabled%>
+
+  # This is to enable the distributed tracing for request tracing purposes
+
+  distributed_tracing:
+    enabled: <%= @distributed_tracing_enabled%>
 
 
   # EXPERIMENTAL: enable verification of the SSL certificate sent by
@@ -146,6 +150,16 @@ common: &default_settings
     # Threshold for query execution time below which query plans will not 
     # not be captured.  Relevant only when `explain_enabled` is true.
     explain_threshold: 0.5
+
+    #If true, the agent collects slow SQL queries.
+  slow_sql:
+
+    enabled: true
+
+    # Determines whether the agent will capture query plans for slow
+    # SQL queries.  Only supported in mysql and postgres.  Should be
+    # set to false when using other adapters.
+    explain_enabled: false
   
   # Error collector captures information about uncaught exceptions and
   # sends them to RPM for viewing

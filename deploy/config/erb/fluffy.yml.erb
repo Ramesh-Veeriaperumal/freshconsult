@@ -1,0 +1,7 @@
+defaults: &defaults
+  host: <%= node[:ymls][:fluffy][:host] %>
+  username: <%= node[:ymls][:fluffy][:username] %>
+  password: <%= node[:ymls][:fluffy][:password] %>
+
+<%= node[:opsworks][:environment] %>:
+  <<: *defaults
