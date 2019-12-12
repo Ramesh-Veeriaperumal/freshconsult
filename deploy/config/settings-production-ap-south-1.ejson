@@ -956,12 +956,12 @@
         "_customer_base_url": "https://sso-in.api.freshworks.com"
       },
       "freshid_v2": {
-        "region_code": "EJ[1:DwsSiX3lVjF9cQXNjd8s3/Ze/WO+HhecnU6vZbI+3hU=:5/391++fyTlUfzJJXIUk8OaC9TxnpyWY:z3jJ7meycD8WFnA7wl7nIA==]",
-        "_end_point": "accounts-us.freshworks.com",
-        "client_id": "EJ[1:7vxiOecKLhbWWH1od4fCXpkkbCIqi2B7M4nxXL07rB8=:Ni0eBXvmmSk3vd4ClZ980TYJvMGLuQyh:WdjWtn+L97hBh8SQdH53pldOk0VQVhlDVQwE5S8yMagQ]",
-        "client_secret": "EJ[1:7vxiOecKLhbWWH1od4fCXpkkbCIqi2B7M4nxXL07rB8=:qUXVTk2klzTWywqP5ZVbU/8PJ4nizyUQ:+wodCIbciyTwWx7zog4hAjK3dQaaedLkY2tzDCEZl0ojiP0W1WjNCR1ez8Yg4DUd]",
-        "callback_api_secret": "EJ[1:DwsSiX3lVjF9cQXNjd8s3/Ze/WO+HhecnU6vZbI+3hU=:K9kLjlBkDAbJvu4F9YwFP1h2atkyhii5:xdPvzlrRyQjEWsYWfldoFg==]",
-        "_product_id": "41441393816600581",
+        "region_code": "EJ[1:sbifib06S0yp/eL6CCUaARxUqdiAruGpaE2Ng6B/VHw=:swNqgoJilqMofH8tsgwG8/LFnfqJQHb+:nUDp/yxiAB1icX1Iawd9+Dvs]",
+        "_end_point": "accounts-in.freshworks.com",
+        "client_id": "EJ[1:sbifib06S0yp/eL6CCUaARxUqdiAruGpaE2Ng6B/VHw=:w/qYt/1ypVUa8fd4wmxRzNUsowhtJM1Q:3Td2GI+IiTrSO6qBych9vuJcgr88W7K4NYHwkELMYINS3A==]",
+        "client_secret": "EJ[1:sbifib06S0yp/eL6CCUaARxUqdiAruGpaE2Ng6B/VHw=:6N7XSdg9lZzNp0Py41gRacRxF8VqUqT5:PswDAON/p1aqHcOjz9YYbSP7zCTwqddfPbw+nJ/pt7F7BGRHjHPwUNWMsOhZcm/k]",
+        "callback_api_secret": "EJ[1:sbifib06S0yp/eL6CCUaARxUqdiAruGpaE2Ng6B/VHw=:fba2Il4AMln99g2WOUNHXnN5lWpOGWld:FBkyhNmUiLnekgd6PPciYtHFIrBAdk7ls0G3YqcqDjSJ4Rz6PePEOQyUMjjQSJALMLjk0uKMyGKMZpxuzh/5MKxuhFuZZWabZXnbsNCNYlE=]",
+        "_product_id": "112141555574243337",
         "_product_domain": "freshdesk.com",
         "_freshid_request_timeout": 1,
         "_mobile_deep_link_protocol": "com.freshworks.freshdesk"
