@@ -2235,7 +2235,7 @@
       },
       "shift_config": {
         "_shift_service_host": "http://localhost:8080/",
-        "jwt_secret": "EJ[1:aincBz1BNgVhiUnbgvHfGonYVKmvdgV6sxvwksiEk04=:NB6rMiYQLmyM4+wFMCOb4nbIXE1+Lrc1:quJ6EEHr8AxhqHgkLuX4lZPUw65VOrZAAg==]",
+        "jwt_secret": "EJ[1:Wn6MLostOOJd9J42sj1a8nzwGvK8BM56MEADwWctcm4=:4suOUDJRMQ/4dROW1FoVD9kSKkCH/su5:GslQ5FHBoHHyrsRWOJaI1rf81tHmvtstMw==]",
         "_time_out": 10
       }
     },

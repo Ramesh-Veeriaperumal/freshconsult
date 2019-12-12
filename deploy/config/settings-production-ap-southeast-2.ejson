@@ -1409,7 +1409,7 @@
        },
       "shift_config": {
         "_shift_service_host": "http://localhost:8080/",
-        "jwt_secret": "EJ[1:aincBz1BNgVhiUnbgvHfGonYVKmvdgV6sxvwksiEk04=:NB6rMiYQLmyM4+wFMCOb4nbIXE1+Lrc1:quJ6EEHr8AxhqHgkLuX4lZPUw65VOrZAAg==]",
+        "jwt_secret": "EJ[1:cXUvpJYqt+7yQ0oSymGNuY0iKDQjGt/JTT9RGsFM7R4=:cjL1LZZgDwW9cUSJR3f2Mhu3eWbMmxPd:bP1pv4pY7RPRGtpxKoLWcz2I8yjxWA0lDA==]",
         "_time_out": 10
       }
     },
