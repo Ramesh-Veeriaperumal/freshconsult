@@ -136,7 +136,7 @@ module AuditLog::Translators::AutomationRule
     field_name, field_type = custom_field_name(name, action[:evaluate_on])
     action[:name] = customize_field_name(field_name, type) if field_name.present?
     if field_type.present? && field_type.include?('checkbox')
-      action[:value] = Va::Constants.checkbox_options[action[:value]]
+      action[:value] = Va::Constants.checkbox_options[action[:value].to_s]
       checkbox_values = ["selected", "not_selected"]
       unless action[:value].present?
         action[:operator] = Va::Constants.checkbox_options["#{checkbox_values.find_index(action[:operator])}"]
