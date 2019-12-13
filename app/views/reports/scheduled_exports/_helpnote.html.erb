@@ -1,5 +1,7 @@
 <h3 class="title"><%=t('helpdesk_reports.ticket_schedule.helpnote.help_title_1')%></h3>
 <p><%=t('helpdesk_reports.ticket_schedule.helpnote.help_info_1').html_safe%></p>
 
-<h3 class="title"><%=t('helpdesk_reports.ticket_schedule.helpnote.help_title_2')%></h3>
-<p><%=t('helpdesk_reports.ticket_schedule.helpnote.help_info_2').html_safe%></p>
+<% unless (current_account.disable_old_reports_enabled?) %>
+ <h3 class="title"><%=t('helpdesk_reports.ticket_schedule.helpnote.help_title_2')%></h3>
+ <p><%=t('helpdesk_reports.ticket_schedule.helpnote.help_info_2').html_safe%></p>
+<% end %>
