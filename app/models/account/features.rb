@@ -19,7 +19,7 @@ class Account < ActiveRecord::Base
     :sso_login_expiry_limitation, :undo_send, :old_link_back_url_validation, :stop_contacts_count_query,
     :denormalized_select_for_update, :trial_subscription, :installed_app_publish, :es_tickets,
     :twitter_dm_outgoing_attachment, :twitter_mention_outgoing_attachment,
-    :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017, :year_in_review_2018,
+    :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,:year_in_review_and_share,
     :onboarding_inlinemanual, :skip_portal_cname_chk,
     :product_central_publish, :help_widget, :redis_picklist_id,
     :bot_email_channel, :bot_email_central_publish, :description_by_default,
