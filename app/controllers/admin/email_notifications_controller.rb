@@ -118,12 +118,18 @@ class Admin::EmailNotificationsController < Admin::AdminController
     other_notifications_access = has_other_notifications_privilege?
     requester_access = has_requester_privilege?
     scoper.each do |e_notification|
-      @agent_notifications << e_notification if e_notification.visible_to_agent? && other_notifications_access
+      @agent_notifications << e_notification if e_notification.visible_to_agent? && other_notifications_access && !system_notify_private_template?(e_notification)
       @user_notifications << e_notification if e_notification.visible_to_requester? && requester_access
       @reply_templates << e_notification if e_notification.reply_template? && other_notifications_access
       @forward_templates << e_notification if e_notification.forward_template? && other_notifications_access
       @cc_notifications << e_notification if e_notification.cc_notification? && other_notifications_access
     end
+  end
+
+  def system_notify_private_template?(notification)
+    return false if notification.notification_type != EmailNotification::AUTOMATED_PRIVATE_NOTES
+
+    !Account.current.automated_private_notes_notification_enabled?
   end
 
   def check_privileges

@@ -85,8 +85,11 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       emails_string = comment.to_emails.join(", ")
       emails = get_email_array emails_string
       agents_list = ticket.account.technicians.where(:email => emails)
-      email_notification = (comment.source == EmailNotification::SOURCE_IS_AUTOMAION_RULE) ? ticket.account.email_notifications.find_by_notification_type(EmailNotification::SYSTEM_NOTIFY_NOTE_CC) : 
-      ticket.account.email_notifications.find_by_notification_type(EmailNotification::NOTIFY_COMMENT)
+      email_notification = if comment.source == EmailNotification::SOURCE_IS_AUTOMAION_RULE
+                             ticket.account.email_notifications.find_by_notification_type(EmailNotification::AUTOMATED_PRIVATE_NOTES)
+                           else
+                             ticket.account.email_notifications.find_by_notification_type(EmailNotification::NOTIFY_COMMENT)
+                           end
       language_group_agent_notification(agents_list, email_notification, ticket, comment)
   end
 

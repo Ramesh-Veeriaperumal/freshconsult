@@ -31,7 +31,7 @@ class SystemNoteCcTemplateNotification < ActiveRecord::Migration
     Sharding.run_on_all_shards do
       Account.active_accounts.find_in_batches(:batch_size => 500) do |accounts|
         accounts.each do |account|
-          EmailNotification.find_by_notification_type(EmailNotification::SYSTEM_NOTIFY_NOTE_CC).destroy
+          EmailNotification.find_by_notification_type(EmailNotification::AUTOMATED_PRIVATE_NOTES).destroy
         end
       end
     end
