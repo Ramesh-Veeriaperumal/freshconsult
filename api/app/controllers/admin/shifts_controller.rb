@@ -30,10 +30,9 @@ module Admin
             response.status = proxy_response[:code]
           end
         elsif response_body['errors'].present?
-          errors = { 'errors' => response_body['errors'] }
-          render_request_error_with_info(response_body['code'].try(:to_sym), proxy_response[:code], errors, errors)
+          proxy_errors(response_body, proxy_response[:code])
         else
-          index_page? ? @items = [] : render_request_error(response_body['code'].try(:to_sym), proxy_response[:code])
+          index_page? ? @items = [] : proxy_errors(response_body, proxy_response[:code])
         end
       end
 
@@ -48,6 +47,11 @@ module Admin
             check_shift_params
           end
         end
+      end
+
+      def proxy_errors(error_body, status)
+        render json: @item = error_body
+        response.status = status
       end
 
       def shift_validation_class
