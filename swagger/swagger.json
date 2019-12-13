@@ -13776,14 +13776,12 @@
           {
             "name": "created_at",
             "in": "query",
-            "type": "string",
-            "description": "properties: { start:\n    type: string,\n  end: \n    type: string }\n"
+            "type": "string"
           },
           {
             "name": "last_modified",
             "in": "query",
-            "type": "string",
-            "description": "properties: { start:\n    type: string,\n  end: \n    type: string }\n"
+            "type": "string"
           }
         ],
         "responses": {

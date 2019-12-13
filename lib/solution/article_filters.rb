@@ -103,5 +103,31 @@ module Solution::ArticleFilters
       def portal_catagory_ids
         @portal_catagory_ids ||= current_account.portal_solution_categories.where(portal_id: params[:portal_id]).pluck(:solution_category_meta_id).uniq
       end
+
+      def get_date_range(date_value)
+        end_of_day = Time.zone.now.end_of_day
+        case date_value
+        when 'today' then
+          return fetch_date_range(Time.zone.now.beginning_of_day, end_of_day)
+        when 'yesterday' then
+          return fetch_date_range(Time.zone.now.yesterday.beginning_of_day, Time.zone.now.yesterday.end_of_day)
+        when 'this_week' then
+          return fetch_date_range(Time.zone.now.beginning_of_week, Time.zone.now.end_of_week)
+        when '7days' then
+          return fetch_date_range(Time.zone.now.beginning_of_day.ago(7.days), end_of_day)
+        when 'this_month' then
+          return fetch_date_range(Time.zone.now.beginning_of_month, Time.zone.now.end_of_month)
+        when '30days' then
+          return fetch_date_range(Time.zone.now.beginning_of_day.ago(30.days), end_of_day)
+        when '60days' then
+          return fetch_date_range(Time.zone.now.beginning_of_day.ago(60.days), end_of_day)
+        when '180days' then
+          return fetch_date_range(Time.zone.now.beginning_of_day.ago(180.days), end_of_day)
+        end
+      end
+
+      def fetch_date_range(from, to)
+        { start: from.utc.iso8601, end: to.utc.iso8601 }
+      end
   end
 end

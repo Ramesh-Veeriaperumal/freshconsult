@@ -27,7 +27,6 @@ module Ember
         update_deleted_attachment_info
         return render_errors(@draft.errors) if !@draft.save
 
-        @article.reload
         restore_deleted_cloudfiles
         head 204
       end
@@ -111,7 +110,7 @@ module Ember
           if @item.meta[:cloud_files].present?
             @latest_version = scoper.latest.first
             @item.meta[:cloud_files].each do |cloud_file|
-              if @article.cloud_files.where(url: cloud_file[:url]).empty? && @article.draft.present? && @article.draft.cloud_files.where(url: cloud_file[:url]).empty?# find_by url to avoid duplicate record creation
+              if @article.cloud_files.where(url: cloud_file[:url]).empty? && @draft.cloud_files.where(url: cloud_file[:url]).empty? # find_by url to avoid duplicate record creation
                 result = build_cloud_files cloud_file.to_json
                 @attachment = @draft.cloud_files.build(result)
                 @attachment.save
