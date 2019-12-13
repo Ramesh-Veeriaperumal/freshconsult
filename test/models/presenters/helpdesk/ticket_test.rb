@@ -168,7 +168,7 @@ class TicketTest < ActiveSupport::TestCase
     assert_equal 1, CentralPublishWorker::ActiveTicketWorker.jobs.size
     job = CentralPublishWorker::ActiveTicketWorker.jobs.last
     assert_equal 'ticket_update', job['args'][0]
-    assert_equal({ 'priority' => [2, 4] }, job['args'][1]['model_changes'])
+    assert_equal({ 'priority' => [2, 4] }, job['args'][1]['model_changes'].except('due_by', 'frDueBy'))
   end
 
   def test_central_publish_tag_update
@@ -412,5 +412,22 @@ class TicketTest < ActiveSupport::TestCase
     internal_group_pattern = ticket.internal_group.as_api_response(:internal_group_central_publish_associations).to_json
     internal_group_pattern.must_match_json_expression(internal_group_association_pattern(ticket))
     Account.any_instance.unstub(:shared_ownership_enabled?)
-  end 
+  end
+
+  def test_central_publish_nr_due_by_update
+    Account.any_instance.stubs(:next_response_sla_enabled?).returns(true)
+    t = create_ticket(ticket_params_hash)
+    time_now = Time.zone.now
+    t.nr_due_by = Time.zone.now
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    t.save
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    assert_equal 1, CentralPublishWorker::ActiveTicketWorker.jobs.size
+    job = CentralPublishWorker::ActiveTicketWorker.jobs.last
+    assert_equal 'ticket_update', job['args'][0]
+    assert_equal([nil, time_now.utc.iso8601], job['args'][1]['model_changes']['nr_due_by'])
+  ensure
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
 end

@@ -25,6 +25,7 @@ class Helpdesk::Note < ActiveRecord::Base
     t.add :header_info
     t.add :response_time_in_seconds
     t.add :response_time_by_bhrs
+    t.add :response_violated, :if => proc { Account.current.next_response_sla_enabled? }
     t.add :last_modified_user_id
     t.add proc { |x| x.account.user_emails.where(email: x.to_emails).map(&:id) }, as: :to_emails_users
     DATETIME_FIELDS.each do |key|

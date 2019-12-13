@@ -236,6 +236,10 @@ module TicketsTestHelper
       source_additional_info: source_additional_info_hash(ticket)
     }
     ret_hash[:skill_id] = ticket.sl_skill_id if Account.current.skill_based_round_robin_enabled?
+    if Account.current.next_response_sla_enabled?
+      ret_hash[:nr_due_by] = ticket.nr_due_by.try(:utc).try(:iso8601)
+      ret_hash[:nr_escalated] = ticket.nr_escalated
+    end
     ret_hash
   end
 
